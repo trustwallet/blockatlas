@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
-	"trustwallet.com/blockatlas/platform"
 	"os"
 )
 
@@ -21,6 +20,6 @@ func main() {
 	// Start server
 	gin.SetMode(viper.GetString("gin.mode"))
 	router := gin.Default()
-	platform.Register(router)
+	loadPlatforms(router)
 	router.Run(":8080")
 }
