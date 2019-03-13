@@ -28,5 +28,5 @@ func main() {
 	gin.SetMode(viper.GetString("gin.mode"))
 	router := gin.Default()
 	loadPlatforms(router)
-	router.Run(":8080")
+	router.Run(viper.GetString("bind"))
 }

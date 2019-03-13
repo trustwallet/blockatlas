@@ -1,0 +1,9 @@
+bind: :8080
+gin:
+  mode: release
+
+platforms:
+  - binance
+
+binance:
+  api: https://binance-rpc.trustwalletapp.com/v1
