@@ -33,10 +33,17 @@ func getTransactions(c *gin.Context) {
 			Id:        tx.Hash,
 			From:      tx.FromAddr,
 			To:        tx.ToAddr,
-			Fee:       tx.Fee,
 			FeeUnit:   tx.Asset,
-			Value:     tx.Value,
 			ValueUnit: tx.Asset,
+		}
+		var err error
+		txs[i].Fee, err = DecimalToSatoshis(tx.Fee)
+		if err != nil {
+			c.AbortWithError(http.StatusServiceUnavailable, err)
+		}
+		txs[i].Value, err = DecimalToSatoshis(tx.Value)
+		if err != nil {
+			c.AbortWithError(http.StatusServiceUnavailable, err)
 		}
 	}
 	c.JSON(http.StatusOK, txs)

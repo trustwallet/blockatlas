@@ -36,9 +36,9 @@ type Tx struct {
 	ToAddr        string `json:"toAddr"`
 	Age           int64  `json:"txAge"`
 	Asset         string `json:"txAsset"`
-	Fee           uint64 `json:"txFee"`
+	Fee           string `json:"txFee"`
 	Hash          string `json:"txHash"`
-	Value         uint64 `json:"value"`
+	Value         string `json:"value"`
 }
 
 type TxPage struct {
