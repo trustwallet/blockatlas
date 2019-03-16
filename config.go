@@ -10,7 +10,12 @@ import (
 func loadConfig() {
 	loadDefaults()
 
-	// Load config
+	// Load config from environment
+	viper.BindEnv("port") // Heroku
+	viper.SetEnvPrefix("atlas")
+	viper.AutomaticEnv()
+
+	// Load config file
 	viper.AddConfigPath(".")
 	viper.SetConfigName("config")
 	viper.SetConfigType("yaml")
