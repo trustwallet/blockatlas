@@ -6,64 +6,73 @@ import (
 	"github.com/spf13/viper"
 	"net/http"
 	"trustwallet.com/blockatlas/models"
+	"trustwallet.com/blockatlas/platform/binance/source"
 )
 
-const keyRpc = "binance.rpc"
+const keyApi = "binance.api"
+
+var client = source.Client {
+	HttpClient: http.DefaultClient,
+}
 
 func Setup(router gin.IRouter) {
 	router.Use(context)
-	router.GET("/address/:address/transactions", getAddress)
-	router.GET("/tx/:id", getTransaction)
+	router.GET("/:address", getTransactions)
 }
 
-func getAddress(c *gin.Context) {
-	c.Status(http.StatusNotImplemented)
-}
-
-func getTransaction(c *gin.Context) {
-	s, err := sourceGetTx(c.GetString(keyRpc), c.Param("id"))
+func getTransactions(c *gin.Context) {
+	s, err := client.GetTxsOfAddress(c.Param("address"))
 	if apiError(c, err) {
 		return
-	} else if err != nil {
-		c.String(http.StatusInternalServerError, "Failed to access Binance API")
-		return
 	}
 
-	res := models.TransferTx{
-		Kind:      models.TxTransfer,
-		Id:        s.Hash,
-		From:      s.FromAddr,
-		To:        s.ToAddr,
-		Fee:       s.Fee,
-		FeeUnit:   s.Asset,
-		Value:     s.Value,
-		ValueUnit: s.Asset,
+	txs := make([]models.TransferTx, len(s.Txs))
+	for i, tx := range s.Txs {
+		txs[i] = models.TransferTx {
+			Kind:      models.TxTransfer,
+			Id:        tx.Hash,
+			From:      tx.FromAddr,
+			To:        tx.ToAddr,
+			Fee:       tx.Fee,
+			FeeUnit:   tx.Asset,
+			Value:     tx.Value,
+			ValueUnit: tx.Asset,
+		}
 	}
-	c.JSON(http.StatusOK, &res)
+	c.JSON(http.StatusOK, txs)
 }
 
 func context(c *gin.Context) {
 	// Load RPC URL
-	if !viper.IsSet(keyRpc) {
-		logrus.Errorf("%s not set!", keyRpc)
-		c.Status(http.StatusInternalServerError)
+	if !viper.IsSet(keyApi) {
+		logrus.Errorf("Config key %s not set!", keyApi)
+		c.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
-	c.Set(keyRpc, viper.GetString(keyRpc))
+	client.RpcUrl = viper.GetString(keyApi)
 	c.Next()
 }
 
 func apiError(c *gin.Context, err error) bool {
-	if err == ErrNotFound {
-		c.String(http.StatusNotFound, "not found")
+	if err == source.ErrNotFound {
+		c.String(http.StatusNotFound, err.Error())
 		return true
 	}
-	if err == ErrSourceConn {
+	if err == source.ErrInvalidAddr {
+		c.String(http.StatusBadRequest, err.Error())
+		return true
+	}
+	if err == source.ErrSourceConn {
 		c.String(http.StatusBadGateway, "connection to Binance API failed")
 		return true
 	}
-	if _, ok := err.(*SourceError); ok {
+	if _, ok := err.(*source.Error); ok {
 		c.String(http.StatusBadGateway, "Binance API returned an error")
+		return true
+	}
+	if err != nil {
+		logrus.WithError(err).Errorf("Unhandled error: %s", err)
+		c.AbortWithStatus(http.StatusInternalServerError)
 		return true
 	}
 	return false

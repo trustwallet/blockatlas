@@ -14,6 +14,7 @@ var loaders = map[string]func(gin.IRouter){
 
 func loadPlatforms(router gin.IRouter) {
 	enabled := viper.GetStringSlice("platforms")
+	v1 := router.Group("/v1")
 
 	for _, ns := range enabled {
 		loader := loaders[ns]
@@ -22,7 +23,7 @@ func loadPlatforms(router gin.IRouter) {
 			os.Exit(1)
 		}
 
-		loader(router)
+		loader(v1.Group(ns))
 		fmt.Printf("Loaded /%s\n", ns)
 	}
 }
