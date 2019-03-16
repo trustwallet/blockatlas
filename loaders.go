@@ -7,10 +7,12 @@ import (
 	"github.com/spf13/viper"
 	"os"
 	"trustwallet.com/blockatlas/platform/binance"
+	"trustwallet.com/blockatlas/platform/nimiq"
 )
 
 var loaders = map[string]func(gin.IRouter){
 	"binance": binance.Setup,
+	"nimiq":   nimiq.Setup,
 }
 
 func loadPlatforms(router gin.IRouter) {
