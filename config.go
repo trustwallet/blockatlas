@@ -26,7 +26,7 @@ func loadConfig() {
 	}
 
 	// Reload config if changed
-	viper.WatchConfig()
+	go viper.WatchConfig()
 	viper.OnConfigChange(func(e fsnotify.Event) {
 		logrus.Infof("Reloaded config: %s", e.Name)
 	})
