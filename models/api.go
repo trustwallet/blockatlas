@@ -25,8 +25,8 @@ type BasicTx struct {
 	From      string `json:"from"`
 	To        string `json:"to"`
 	Asset     string `json:"asset"`
-	Fee       uint64 `json:"fee"`
-	Value     uint64 `json:"value"`
+	Fee       string `json:"fee"`
+	Value     string `json:"value"`
 }
 
 func (_ *BasicTx) Type() string {
