@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"trustwallet.com/blockatlas/models"
 	"trustwallet.com/blockatlas/platform/binance/source"
+	"trustwallet.com/blockatlas/util"
 )
 
 const keyApi = "binance.api"
@@ -37,11 +38,11 @@ func getTransactions(c *gin.Context) {
 			ValueUnit: tx.Asset,
 		}
 		var err error
-		txs[i].Fee, err = DecimalToSatoshis(tx.Fee)
+		txs[i].Fee, err = util.DecimalToSatoshis(tx.Fee)
 		if err != nil {
 			c.AbortWithError(http.StatusServiceUnavailable, err)
 		}
-		txs[i].Value, err = DecimalToSatoshis(tx.Value)
+		txs[i].Value, err = util.DecimalToSatoshis(tx.Value)
 		if err != nil {
 			c.AbortWithError(http.StatusServiceUnavailable, err)
 		}
