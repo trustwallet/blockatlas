@@ -10,14 +10,16 @@ import (
 	"trustwallet.com/blockatlas/util"
 )
 
-const keyApi = "binance.api"
-
 var client = source.Client {
 	HttpClient: http.DefaultClient,
 }
 
 func Setup(router gin.IRouter) {
-	router.Use(context)
+	router.Use(util.RequireConfig("binance.api"))
+	router.Use(func(c *gin.Context) {
+		client.RpcUrl = viper.GetString("binance.api")
+		c.Next()
+	})
 	router.GET("/:address", getTransactions)
 }
 
@@ -47,17 +49,6 @@ func getTransactions(c *gin.Context) {
 		}
 	}
 	c.JSON(http.StatusOK, txs)
-}
-
-func context(c *gin.Context) {
-	// Load RPC URL
-	if !viper.IsSet(keyApi) {
-		logrus.Errorf("Config key %s not set!", keyApi)
-		c.AbortWithStatus(http.StatusInternalServerError)
-		return
-	}
-	client.RpcUrl = viper.GetString(keyApi)
-	c.Next()
 }
 
 func apiError(c *gin.Context, err error) bool {
