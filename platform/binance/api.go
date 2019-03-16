@@ -34,8 +34,7 @@ func getTransactions(c *gin.Context) {
 			Id:        tx.Hash,
 			From:      tx.FromAddr,
 			To:        tx.ToAddr,
-			FeeUnit:   tx.Asset,
-			ValueUnit: tx.Asset,
+			Asset:     tx.Asset,
 		}
 		var err error
 		txs[i].Fee, err = util.DecimalToSatoshis(tx.Fee)
