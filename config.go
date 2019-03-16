@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+	"strings"
 )
 
 func loadConfig() {
@@ -12,6 +13,7 @@ func loadConfig() {
 
 	// Load config from environment
 	viper.SetEnvPrefix("atlas")
+	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 	viper.AutomaticEnv()
 
 	// Load config file
