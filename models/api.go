@@ -1,8 +1,8 @@
 package models
 
 const (
-	TxTransfer = "transfer"
-	TxSwap     = "swap"
+	TxBasic = "basic"
+	TxSwap  = "swap"
 )
 
 type Balance struct {
@@ -19,7 +19,7 @@ type Tx interface {
 	Type() string
 }
 
-type TransferTx struct {
+type BasicTx struct {
 	Kind      string `json:"kind"`
 	Id        string `json:"id"`
 	From      string `json:"from"`
@@ -30,6 +30,6 @@ type TransferTx struct {
 	ValueUnit string `json:"value_unit"`
 }
 
-func (_ *TransferTx) Type() string {
-	return TxTransfer
+func (_ *BasicTx) Type() string {
+	return TxBasic
 }

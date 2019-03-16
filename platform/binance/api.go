@@ -27,10 +27,10 @@ func getTransactions(c *gin.Context) {
 		return
 	}
 
-	txs := make([]models.TransferTx, len(s.Txs))
+	txs := make([]models.BasicTx, len(s.Txs))
 	for i, tx := range s.Txs {
-		txs[i] = models.TransferTx {
-			Kind:      models.TxTransfer,
+		txs[i] = models.BasicTx{
+			Kind:      models.TxBasic,
 			Id:        tx.Hash,
 			From:      tx.FromAddr,
 			To:        tx.ToAddr,
