@@ -11,7 +11,6 @@ func loadConfig() {
 	loadDefaults()
 
 	// Load config from environment
-	viper.BindEnv("port") // Heroku
 	viper.SetEnvPrefix("atlas")
 	viper.AutomaticEnv()
 
@@ -19,7 +18,10 @@ func loadConfig() {
 	viper.AddConfigPath(".")
 	viper.SetConfigName("config")
 	viper.SetConfigType("yaml")
-	if err := viper.ReadInConfig(); err != nil {
+	err := viper.ReadInConfig()
+	if _, ok := err.(viper.ConfigFileNotFoundError); ok {
+		logrus.Info("Running without config file")
+	} else if err != nil {
 		logrus.WithError(err).Error("Failed to read config")
 	}
 
