@@ -48,7 +48,6 @@ func getTransactions(c *gin.Context) {
 			Id:    srcTx.Hash,
 			From:  srcTx.Tx.Account,
 			To:    srcTx.Tx.Destination,
-			Asset: "XRP",
 			Value: util.DecimalExp(srcAmount, 6),
 			Fee:   util.DecimalExp(srcTx.Tx.Fee, 6),
 		})

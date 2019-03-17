@@ -24,7 +24,6 @@ type BasicTx struct {
 	Id        string `json:"id"`
 	From      string `json:"from"`
 	To        string `json:"to"`
-	Asset     string `json:"asset"`
 	Fee       string `json:"fee"`
 	Value     string `json:"value"`
 }

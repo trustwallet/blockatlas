@@ -29,24 +29,31 @@ func getTransactions(c *gin.Context) {
 		return
 	}
 
-	txs := make([]models.BasicTx, len(s.Txs))
-	for i, tx := range s.Txs {
-		txs[i] = models.BasicTx{
-			Kind:      models.TxBasic,
-			Id:        tx.Hash,
-			From:      tx.FromAddr,
-			To:        tx.ToAddr,
-			Asset:     tx.Asset,
+	var txs []models.BasicTx
+	for _, tx := range s.Txs {
+		if tx.Asset != "BNB" {
+			continue
 		}
+
 		var err error
-		txs[i].Fee, err = util.DecimalToSatoshis(tx.Fee)
+		var fee, value string
+		fee, err = util.DecimalToSatoshis(tx.Fee)
 		if err != nil {
 			c.AbortWithError(http.StatusServiceUnavailable, err)
 		}
-		txs[i].Value, err = util.DecimalToSatoshis(tx.Value)
+		value, err = util.DecimalToSatoshis(tx.Value)
 		if err != nil {
 			c.AbortWithError(http.StatusServiceUnavailable, err)
 		}
+
+		txs = append(txs, models.BasicTx{
+			Kind:  models.TxBasic,
+			Id:    tx.Hash,
+			From:  tx.FromAddr,
+			To:    tx.ToAddr,
+			Fee:   fee,
+			Value: value,
+		})
 	}
 	c.JSON(http.StatusOK, txs)
 }
