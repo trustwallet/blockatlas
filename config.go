@@ -38,10 +38,6 @@ func loadDefaults() {
 	viper.SetDefault("gin.mode", gin.ReleaseMode)
 
 	// All platforms with public RPC endpoints
-	viper.SetDefault("platforms", []string{
-		"binance",
-		"ripple",
-	})
 	viper.SetDefault("binance.api", "https://testnet-dex.binance.org/api/v1")
 	viper.SetDefault("ripple.api", "https://data.ripple.com/v2")
 }
