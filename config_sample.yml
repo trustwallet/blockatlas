@@ -4,6 +4,7 @@ gin:
 
 platforms:
   - binance
+  - nimiq
   - ripple
 
 binance:
