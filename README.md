@@ -27,25 +27,20 @@ __With Docker__
 
 ## Configuration
 
+Block Atlas can run just fine without configuration.
+
+If you want to use custom RPC endpoints, or enable coins without public RPC (like Nimiq),
+you can configure Block Atlas over `config.yml` or environment variables.
+
 __Config File__
 
 By default, `config.yml` is loaded from the working directory.
 Live reload is supported across the app.
 
-Example:
+Example (`config.yml`):
 ```yaml
-# App settings
-gin:
-  mode: release
-
-# Enabled endpoints
-platforms:
-  - binance
-  - nimiq
-
-# Custom coin options
 nimiq:
-  rpc: http://localhost:8648
+  api: http://localhost:8648
 #...
 ```
 
@@ -56,7 +51,6 @@ Every config option is available under the `ATLAS_` prefix.
 
 Example:
 ```shell
-ATLAS_PLATFORMS="binance nimiq" \
 ATLAS_NIMIQ_API=http://localhost:8648 \
 blockatlas
 ```

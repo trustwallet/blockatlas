@@ -12,7 +12,7 @@ func main() {
 	switch len(os.Args) {
 	case 1:  bind = ":8420"
 	case 2:  bind = os.Args[1]
-	default: logrus.Fatal("Usage: blockatlas [port]")
+	default: logrus.Fatal("Usage: blockatlas [bind]")
 	}
 
 	loadConfig()

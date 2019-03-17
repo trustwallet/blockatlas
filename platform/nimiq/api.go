@@ -12,21 +12,21 @@ import (
 var client *source.Client
 
 func Setup(router gin.IRouter) {
-	router.Use(util.RequireConfig("nimiq.rpc"))
+	router.Use(util.RequireConfig("nimiq.api"))
 	router.Use(withClient)
 	router.GET("/:address", getTransactions)
 }
 
 func getTransactions(c *gin.Context) {
 	txs, err := client.GetTxsOfAddress(c.Param("address"))
-	if rpcError(c, err) {
+	if apiError(c, err) {
 		return
 	}
 	c.JSON(http.StatusOK, txs)
 }
 
 func withClient(c *gin.Context) {
-	rpcUrl := viper.GetString("nimiq.rpc")
+	rpcUrl := viper.GetString("nimiq.api")
 	if client == nil || rpcUrl != client.RpcUrl {
 		logrus.WithField("rpc", rpcUrl).Info("Created Nimiq RPC client")
 		client = source.NewClient(rpcUrl)
@@ -34,7 +34,7 @@ func withClient(c *gin.Context) {
 	c.Next()
 }
 
-func rpcError(c *gin.Context, err error) bool {
+func apiError(c *gin.Context, err error) bool {
 	if err == source.ErrInvalidAddr {
 		c.String(http.StatusBadRequest, err.Error())
 		return true

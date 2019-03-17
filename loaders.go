@@ -1,11 +1,10 @@
 package main
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
-	"os"
+	"net/http"
 	"trustwallet.com/blockatlas/platform/binance"
 	"trustwallet.com/blockatlas/platform/nimiq"
 	"trustwallet.com/blockatlas/platform/ripple"
@@ -25,14 +24,19 @@ func loadPlatforms(router gin.IRouter) {
 		logrus.Fatal("No platforms to load")
 	}
 
-	for _, ns := range enabled {
-		loader := loaders[ns]
-		if loader == nil {
-			fmt.Fprintf(os.Stderr, "Platform does not exist: %s\n", ns)
-			os.Exit(1)
-		}
+	for ns, setup := range loaders {
+		group := v1.Group(ns)
+		group.Use(checkEnabled(ns))
+		setup(group)
+	}
+}
 
-		loader(v1.Group(ns))
-		fmt.Printf("Loaded /%s\n", ns)
+func checkEnabled(name string) func(c *gin.Context) {
+	key := name + ".api"
+	return func(c *gin.Context) {
+		if !viper.IsSet(key) || viper.GetString(key) == "" {
+			c.String(http.StatusNotFound, "404 page not found")
+			c.Abort()
+		}
 	}
 }
