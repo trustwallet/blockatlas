@@ -21,6 +21,7 @@ func main() {
 	gin.SetMode(viper.GetString("gin.mode"))
 	router := gin.Default()
 	router.Use(util.CheckReverseProxy)
+	router.GET("/", getRoot)
 
 	loadPlatforms(router)
 

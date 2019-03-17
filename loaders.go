@@ -17,6 +17,7 @@ var loaders = map[string]func(gin.IRouter){
 
 func loadPlatforms(router gin.IRouter) {
 	v1 := router.Group("/v1")
+	v1.GET("/", getEnabledEndpoints)
 	for ns, setup := range loaders {
 		group := v1.Group(ns)
 		group.Use(checkEnabled(ns))
