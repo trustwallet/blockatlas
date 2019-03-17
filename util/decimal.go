@@ -6,7 +6,7 @@ import (
 	"unicode"
 )
 
-// DecimalToSatoshis straight up yeets the comma out of the number
+// DecimalToSatoshis removes the comma in a decimal string
 // "12.345" => "12345"
 // "0.0230" => "230"
 func DecimalToSatoshis(dec string) (string, error) {
