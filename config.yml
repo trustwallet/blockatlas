@@ -2,6 +2,9 @@
 gin:
   # Possible values: "debug", "release"
   mode: release
+  # App running behind a reverse proxy?
+  # If set, HTTP Forwarded headers will be respected
+  reverse_proxy: false
 
 # [BNB] Binance DEX: https://binance.org/
 binance:

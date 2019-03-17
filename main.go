@@ -5,6 +5,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"os"
+	"trustwallet.com/blockatlas/util"
 )
 
 func main() {
@@ -19,6 +20,7 @@ func main() {
 
 	gin.SetMode(viper.GetString("gin.mode"))
 	router := gin.Default()
+	router.Use(util.CheckReverseProxy)
 
 	loadPlatforms(router)
 

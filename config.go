@@ -36,6 +36,7 @@ func loadConfig() {
 
 func loadDefaults() {
 	viper.SetDefault("gin.mode", gin.ReleaseMode)
+	viper.SetDefault("gin.reverse_proxy", false)
 
 	// All platforms with public RPC endpoints
 	viper.SetDefault("binance.api", "https://testnet-dex.binance.org/api/v1")
