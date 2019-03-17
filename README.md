@@ -10,27 +10,24 @@ Clean explorer API for every crypto. WIP.
 
 ### Setup
 
-__Quick start:__ (with config file)
+#### Quick start
+
+Deploy it in less than 30 seconds!
+
+__From Source__ (Go Toolchain required)
 
 ```shell
-# Create a workspace
-mkdir blockatlas; cd blockatlas
-
-# Install the Go toolchain
-       apt install golang-go
-# or # brew install go
-
-# Download and build Block Atlas
-go get trustwallet.com/blockatlas
-
-# Use default config
-cp ~/go/src/trustwallet.com/blockatlas/config_sample.yml ./config.yml
-
-# Run app!
+go get -u trustwallet.com/blockatlas
 ~/go/bin/blockatlas
 ```
 
-__Detailed: Config File__
+__With Docker__
+
+`docker run -it -p 8420:8420 terorie/blockatlas`
+
+#### Configuration
+
+__Config File__
 
 By default, `config.yml` is loaded from the working directory.
 Live reload is supported across the app.
@@ -38,7 +35,6 @@ Live reload is supported across the app.
 Example:
 ```yaml
 # App settings
-port: 8080
 gin:
   mode: release
 
@@ -47,28 +43,25 @@ platforms:
   - binance
   - nimiq
 
-# Coin specific options
-binance:
-  api: https://testnet-dex.binance.org/api/v1
+# Custom coin options
 nimiq:
   rpc: http://localhost:8648
 #...
 ```
 
-__Detailed: Environment__
+__Environment__
 
-If no `config.yml` is found, the app can run solely on environment variables.
-Every config option is also available under the `ATLAS_` prefix.
+The rest gets loaded from the environment variables.
+Every config option is available under the `ATLAS_` prefix.
 
 Example:
 ```shell
-ATLAS_PORT=9999 \
 ATLAS_PLATFORMS="binance nimiq" \
-ATLAS_BINANCE_API=https://testnet-dex.binance.org/api/v1 \
 ATLAS_NIMIQ_API=http://localhost:8648 \
 blockatlas
 ```
 
-Other supported platforms:
- * [Heroku](http://heroku.com) (`Procfile` present)
- * Docker (`Dockerfile` present, Docker Hub image planned)
+Supported platforms:
+ * [Heroku](http://heroku.com)
+ * Docker _via Dockerfile_
+ * Docker _via Hub: `terorie/blockatlas`_
