@@ -3,15 +3,15 @@ gin:
   mode: release
 
 platforms:
-  - binance
-  - nimiq
-  - ripple
+#  - binance
+#  - nimiq
+#  - ripple
 
 binance:
-  api: https://binance-rpc.trustwalletapp.com/v1
+  api: https://testnet-dex.binance.org/api/v1
 
 nimiq:
-  rpc: https://nimiq-rpc.trustwalletapp.com/v1
+  rpc: http://localhost:8648
 
 ripple:
   api: https://data.ripple.com/v2

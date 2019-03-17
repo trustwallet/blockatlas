@@ -49,9 +49,9 @@ platforms:
 
 # Coin specific options
 binance:
-  api: https://binance-rpc.trustwalletapp.com/v1
+  api: https://testnet-dex.binance.org/api/v1
 nimiq:
-  rpc: https://nimiq-rpc.trustwalletapp.com/v1
+  rpc: http://localhost:8648
 #...
 ```
 
@@ -64,8 +64,8 @@ Example:
 ```shell
 ATLAS_PORT=9999 \
 ATLAS_PLATFORMS="binance nimiq" \
-ATLAS_BINANCE_API=https://binance-rpc.trustwalletapp.com/v1 \
-ATLAS_NIMIQ_API=https://nimiq-rpc.trustwalletapp.com/v1 \
+ATLAS_BINANCE_API=https://testnet-dex.binance.org/api/v1 \
+ATLAS_NIMIQ_API=http://localhost:8648 \
 blockatlas
 ```
 
