@@ -1,1 +1,1 @@
-web: bin/blockatlas $PORT
+web: bin/blockatlas :$PORT
