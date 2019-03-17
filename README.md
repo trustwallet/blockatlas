@@ -23,7 +23,7 @@ go get -u trustwallet.com/blockatlas
 
 __With Docker__
 
-`docker run -it -p 8420:8420 terorie/blockatlas`
+`docker run -it -p 8420:8420 trustwallet/blockatlas`
 
 #### Configuration
 
@@ -64,4 +64,4 @@ blockatlas
 Supported platforms:
  * [Heroku](http://heroku.com)
  * Docker _via Dockerfile_
- * Docker _via Hub: `terorie/blockatlas`_
+ * Docker _[via Hub](https://hub.docker.com/r/trustwallet/blockatlas): `trustwallet/blockatlas`_
