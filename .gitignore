@@ -2,9 +2,6 @@
 /blockatlas
 /blockatlas.exe
 
-# User config
-config.yml
-
 # Dev environment
 .DS_Store
 .idea/

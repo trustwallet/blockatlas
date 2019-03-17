@@ -2,7 +2,7 @@
 
 Please follow this checklist:
 
- - [ ] `config_sample.yml`
+ - [ ] `config.yml`
    - [ ] Add coin to the platforms list (commented out):
      `#  - mycoin`
    - Add your configuration block to the bottom of the file
