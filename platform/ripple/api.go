@@ -30,9 +30,9 @@ func getTransactions(c *gin.Context) {
 		return
 	}
 
-	var txs []models.BasicTx
+	txs := make([]models.BasicTx, 0)
 	for _, srcTx := range s {
-		// Only accept
+		// Only accept XRP payments (typeof tx.amount === 'string')
 		var p fastjson.Parser
 		v, pErr := p.ParseBytes(srcTx.Tx.Amount)
 		if pErr != nil {
@@ -41,12 +41,7 @@ func getTransactions(c *gin.Context) {
 		if v.Type() != fastjson.TypeString {
 			continue
 		}
-
 		srcAmount := string(v.GetStringBytes())
-
-		// TODO Fix
-		value, _ := util.DecimalToSatoshis(srcAmount)
-		fee, _ := util.DecimalToSatoshis(srcTx.Tx.Fee)
 
 		txs = append(txs, models.BasicTx{
 			Kind:  models.TxBasic,
@@ -54,10 +49,12 @@ func getTransactions(c *gin.Context) {
 			From:  srcTx.Tx.Account,
 			To:    srcTx.Tx.Destination,
 			Asset: "XRP",
-			Value: value,
-			Fee:   fee,
+			Value: util.DecimalExp(srcAmount, 6),
+			Fee:   util.DecimalExp(srcTx.Tx.Fee, 6),
 		})
 	}
+
+	c.JSON(http.StatusOK, txs)
 }
 
 func apiError(c *gin.Context, err error) bool {

@@ -27,7 +27,6 @@ func (c *Client) GetTxsOfAddress(address string) ([]Transaction, error) {
 	err = json.NewDecoder(httpRes.Body).Decode(&res)
 
 	if res.Result != "success" {
-		logrus.Error("not success")
 		return nil, ErrSourceConn
 	}
 

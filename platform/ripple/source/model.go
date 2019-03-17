@@ -12,7 +12,7 @@ type Amount struct {
 }
 
 type Response struct {
-	Result       string        `json:"success"`
+	Result       string        `json:"result"`
 	Count        uint64        `json:"count"`
 	Marker       string        `json:"marker"`
 	Transactions []Transaction `json:"transactions"`
@@ -39,4 +39,3 @@ type PaymentTx struct {
 }
 
 var ErrSourceConn  = errors.New("connection to servers failed")
-var ErrInvalidAddr = errors.New("invalid address")
