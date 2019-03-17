@@ -71,4 +71,4 @@ blockatlas
 
 Other supported platforms:
  * [Heroku](http://heroku.com) (`Procfile` present)
- * Docker (`Dockerfile` in progress)
+ * Docker (`Dockerfile` present, Docker Hub image planned)
