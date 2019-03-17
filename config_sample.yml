@@ -4,6 +4,10 @@ gin:
 
 platforms:
   - binance
+  - ripple
 
 binance:
   api: https://binance-rpc.trustwalletapp.com/v1
+
+ripple:
+  api: https://data.ripple.com/v2
