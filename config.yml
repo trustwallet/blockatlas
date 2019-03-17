@@ -1,11 +1,16 @@
+# Gin is the web framework
 gin:
+  # Possible values: "debug", "release"
   mode: release
 
+# [BNB] Binance DEX: https://binance.org/
 binance:
   api: https://testnet-dex.binance.org/api/v1
 
+# [NIM] Nimiq: https://nimiq.com/
 nimiq:
   api: http://localhost:8648
 
+# [XRP] Ripple: https://ripple.com/
 ripple:
   api: https://data.ripple.com/v2
