@@ -49,7 +49,7 @@ func getTransactions(c *gin.Context) {
 			From:  tx.Account,
 			To:    "TODO",
 			Fee:   strconv.FormatInt(int64(tx.FeePaid), 10),
-			Value: "",
+			Value: "TODO",
 		})
 	})
 	if err != nil {
