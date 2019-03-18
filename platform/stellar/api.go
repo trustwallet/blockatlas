@@ -6,6 +6,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"github.com/stellar/go/clients/horizon"
+	"github.com/stellar/go/xdr"
 	"net/http"
 	"strconv"
 	"sync"
@@ -43,21 +44,45 @@ func getTransactions(c *gin.Context) {
 		txMut.Lock()
 		defer txMut.Unlock()
 
-		txs = append(txs, models.BasicTx{
-			Kind:  models.TxBasic,
-			Id:    tx.Hash,
-			From:  tx.Account,
-			To:    "TODO",
-			Fee:   strconv.FormatInt(int64(tx.FeePaid), 10),
-			Value: "TODO",
-		})
+		if tx.ResultXdr == "" {
+			return
+		}
+		if !tx.Successful {
+			return
+		}
+
+		var envelope xdr.TransactionEnvelope
+		err = xdr.SafeUnmarshalBase64(tx.EnvelopeXdr, &envelope)
+		if err != nil {
+			return
+		}
+
+		for _, op := range envelope.Tx.Operations {
+			payment := op.Body.PaymentOp
+			if payment == nil {
+				continue
+			}
+			if payment.Asset.Type != xdr.AssetTypeAssetTypeNative {
+				continue
+			}
+			txs = append(txs, models.BasicTx{
+				Kind:  models.TxBasic,
+				Id:    tx.Hash,
+				From:  tx.Account,
+				To:    payment.Destination.Address(),
+				Fee:   strconv.FormatInt(int64(tx.FeePaid), 10),
+				Value: strconv.FormatInt(int64(payment.Amount), 10),
+			})
+		}
 	})
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
 
+	// Wait for transaction stream to finish
 	<-ctxt.Done()
+
 	txMut.Lock()
 	c.JSON(http.StatusOK, txs)
 	txMut.Unlock()
