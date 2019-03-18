@@ -17,3 +17,7 @@ nimiq:
 # [XRP] Ripple: https://ripple.com/
 ripple:
   api: https://data.ripple.com/v2
+
+# [XLM] Stellar Lumen: https://www.stellar.org
+stellar:
+  api: https://horizon.stellar.org

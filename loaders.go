@@ -7,12 +7,14 @@ import (
 	"trustwallet.com/blockatlas/platform/binance"
 	"trustwallet.com/blockatlas/platform/nimiq"
 	"trustwallet.com/blockatlas/platform/ripple"
+	"trustwallet.com/blockatlas/platform/stellar"
 )
 
 var loaders = map[string]func(gin.IRouter){
 	"binance": binance.Setup,
 	"nimiq":   nimiq.Setup,
 	"ripple":  ripple.Setup,
+	"stellar": stellar.Setup,
 }
 
 func loadPlatforms(router gin.IRouter) {
