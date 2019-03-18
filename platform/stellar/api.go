@@ -1,10 +1,16 @@
 package stellar
 
 import (
+	"context"
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"github.com/stellar/go/clients/horizon"
 	"net/http"
+	"strconv"
+	"sync"
+	"time"
+	"trustwallet.com/blockatlas/models"
 	"trustwallet.com/blockatlas/util"
 )
 
@@ -23,5 +29,45 @@ func Setup(router gin.IRouter) {
 
 
 func getTransactions(c *gin.Context) {
-	c.AbortWithStatus(http.StatusNotImplemented)
+	acc, err := client.LoadAccount(c.Param("address"))
+	if apiError(c, err) {
+		return
+	}
+
+	ctxt, _ := context.WithTimeout(context.Background(), time.Second)
+
+	var txMut sync.Mutex
+	var txs []models.BasicTx
+
+	err = client.StreamTransactions(ctxt, acc.ID, nil, func(tx horizon.Transaction) {
+		txMut.Lock()
+		defer txMut.Unlock()
+
+		txs = append(txs, models.BasicTx{
+			Kind:  models.TxBasic,
+			Id:    tx.Hash,
+			From:  tx.Account,
+			To:    "TODO",
+			Fee:   strconv.FormatInt(int64(tx.FeePaid), 10),
+			Value: "",
+		})
+	})
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	<-ctxt.Done()
+	txMut.Lock()
+	c.JSON(http.StatusOK, txs)
+	txMut.Unlock()
+}
+
+func apiError(c *gin.Context, err error) bool {
+	if err != nil {
+		logrus.WithError(err).Warning("Stellar API request failed")
+		c.String(http.StatusTeapot, "error: todo more descriptive")
+		return true
+	}
+	return false
 }
