@@ -89,9 +89,18 @@ func getTransactions(c *gin.Context) {
 }
 
 func apiError(c *gin.Context, err error) bool {
+	if hErr, ok := err.(*horizon.Error); ok {
+		if hErr.Problem.Type == "https://stellar.org/horizon-errors/bad_request" {
+			c.String(http.StatusBadRequest, "Bad request!")
+			return true
+		} else {
+			c.String(http.StatusBadRequest, hErr.Problem.Type)
+			return true
+		}
+	}
 	if err != nil {
 		logrus.WithError(err).Warning("Stellar API request failed")
-		c.String(http.StatusTeapot, "error: todo more descriptive")
+		c.String(http.StatusBadGateway, "Stellar API request failed")
 		return true
 	}
 	return false

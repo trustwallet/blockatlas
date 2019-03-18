@@ -11,8 +11,8 @@ type Balance struct {
 }
 
 type AccountInfo struct {
-	Balances  []Balance `json:"balances"`
-	Txs       []Tx      `json:"txs"`
+	Balances []Balance `json:"balances"`
+	Txs      []Tx      `json:"txs"`
 }
 
 type Tx interface {
@@ -20,12 +20,12 @@ type Tx interface {
 }
 
 type BasicTx struct {
-	Kind      string `json:"kind"`
-	Id        string `json:"id"`
-	From      string `json:"from"`
-	To        string `json:"to"`
-	Fee       string `json:"fee"`
-	Value     string `json:"value"`
+	Kind  string `json:"kind"`
+	Id    string `json:"id"`
+	From  string `json:"from"`
+	To    string `json:"to"`
+	Fee   string `json:"fee"`
+	Value string `json:"value"`
 }
 
 func (_ *BasicTx) Type() string {
