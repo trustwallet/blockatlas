@@ -15,7 +15,7 @@ import (
 	"trustwallet.com/blockatlas/util"
 )
 
-var client = horizon.Client {
+var client = horizon.Client{
 	HTTP: http.DefaultClient,
 }
 
@@ -28,7 +28,6 @@ func Setup(router gin.IRouter) {
 	router.GET("/:address", getTransactions)
 }
 
-
 func getTransactions(c *gin.Context) {
 	acc, err := client.LoadAccount(c.Param("address"))
 	if apiError(c, err) {
@@ -38,7 +37,7 @@ func getTransactions(c *gin.Context) {
 	ctxt, _ := context.WithTimeout(context.Background(), time.Second)
 
 	var txMut sync.Mutex
-	var txs []models.BasicTx
+	var txs []models.LegacyTx
 
 	err = client.StreamTransactions(ctxt, acc.ID, nil, func(tx horizon.Transaction) {
 		txMut.Lock()
@@ -65,13 +64,18 @@ func getTransactions(c *gin.Context) {
 			if payment.Asset.Type != xdr.AssetTypeAssetTypeNative {
 				continue
 			}
-			txs = append(txs, models.BasicTx{
-				Kind:  models.TxBasic,
-				Id:    tx.Hash,
-				From:  tx.Account,
-				To:    payment.Destination.Address(),
-				Fee:   strconv.FormatInt(int64(tx.FeePaid), 10),
-				Value: strconv.FormatInt(int64(payment.Amount), 10),
+			txs = append(txs, models.LegacyTx{
+				Id:          tx.Hash,
+				BlockNumber: uint64(tx.Ledger),
+				Timestamp:   strconv.FormatInt(tx.LedgerCloseTime.Unix(), 10),
+				From:        tx.Account,
+				To:          payment.Destination.Address(),
+				Value:       strconv.FormatInt(int64(payment.Amount), 10),
+				Gas:         "1",
+				GasPrice:    strconv.FormatInt(int64(tx.FeePaid), 10),
+				GasUsed:     "1",
+				Nonce:       10,
+				Coin:        148,
 			})
 		}
 	})

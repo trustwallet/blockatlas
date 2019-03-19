@@ -29,7 +29,7 @@ func getTransactions(c *gin.Context) {
 		return
 	}
 
-	var txs []models.BasicTx
+	var txs []models.LegacyTx
 	for _, tx := range s.Txs {
 		if tx.Asset != "BNB" {
 			continue
@@ -46,16 +46,24 @@ func getTransactions(c *gin.Context) {
 			c.AbortWithError(http.StatusServiceUnavailable, err)
 		}
 
-		txs = append(txs, models.BasicTx{
-			Kind:  models.TxBasic,
-			Id:    tx.Hash,
-			From:  tx.FromAddr,
-			To:    tx.ToAddr,
-			Fee:   fee,
-			Value: value,
+		txs = append(txs, models.LegacyTx{
+			Id:          tx.Hash,
+			BlockNumber: tx.BlockHeight,
+			Timestamp:   tx.Timestamp,
+			From:        tx.FromAddr,
+			To:          tx.ToAddr,
+			Value:       value,
+			Gas:         "1",
+			GasPrice:    fee,
+			GasUsed:     "1",
+			Nonce:       10,
+			Coin:        714,
 		})
 	}
-	c.JSON(http.StatusOK, txs)
+	c.JSON(http.StatusOK, models.Response {
+		 Total: len(txs),
+		 Docs:  txs,
+	})
 }
 
 func apiError(c *gin.Context, err error) bool {

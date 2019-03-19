@@ -6,6 +6,7 @@ import (
 	"github.com/spf13/viper"
 	"github.com/valyala/fastjson"
 	"net/http"
+	"strconv"
 	"trustwallet.com/blockatlas/models"
 	"trustwallet.com/blockatlas/platform/ripple/source"
 	"trustwallet.com/blockatlas/util"
@@ -30,7 +31,7 @@ func getTransactions(c *gin.Context) {
 		return
 	}
 
-	txs := make([]models.BasicTx, 0)
+	txs := make([]models.LegacyTx, 0)
 	for _, srcTx := range s {
 		// Only accept XRP payments (typeof tx.amount === 'string')
 		var p fastjson.Parser
@@ -43,17 +44,30 @@ func getTransactions(c *gin.Context) {
 		}
 		srcAmount := string(v.GetStringBytes())
 
-		txs = append(txs, models.BasicTx{
-			Kind:  models.TxBasic,
-			Id:    srcTx.Hash,
-			From:  srcTx.Tx.Account,
-			To:    srcTx.Tx.Destination,
-			Value: util.DecimalExp(srcAmount, 6),
-			Fee:   util.DecimalExp(srcTx.Tx.Fee, 6),
+		blockNum, err := strconv.ParseUint(srcTx.LedgerIndex, 10, 64)
+		if err != nil {
+			continue
+		}
+
+		txs = append(txs, models.LegacyTx{
+			Id:          srcTx.Hash,
+			BlockNumber: blockNum,
+			Timestamp:   srcTx.Date,
+			From:        srcTx.Tx.Account,
+			To:          srcTx.Tx.Destination,
+			Value:       util.DecimalExp(srcAmount, 6),
+			Gas:         "1",
+			GasPrice:    util.DecimalExp(srcTx.Tx.Fee, 6),
+			GasUsed:     "1",
+			Nonce:       10,
+			Coin:        144,
 		})
 	}
 
-	c.JSON(http.StatusOK, txs)
+	c.JSON(http.StatusOK, models.Response{
+		Total: len(txs),
+		Docs:  txs,
+	})
 }
 
 func apiError(c *gin.Context, err error) bool {
