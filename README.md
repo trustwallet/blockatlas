@@ -2,6 +2,8 @@
 
 Clean explorer API for every crypto. WIP.
 
+_Note: Legacy TrustWallet API support currently enabled._
+
 __Supported Coins__
 
 <a href="https://binance.org" target="_blank"><img src="https://raw.githubusercontent.com/TrustWallet/tokens/master/coins/714.png" width="32" /></a>
