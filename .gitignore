@@ -5,3 +5,4 @@
 # Dev environment
 .DS_Store
 .idea/
+config_*.yml

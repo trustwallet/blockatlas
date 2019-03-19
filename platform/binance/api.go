@@ -5,6 +5,8 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"net/http"
+	"strconv"
+	"time"
 	"trustwallet.com/blockatlas/models"
 	"trustwallet.com/blockatlas/platform/binance/source"
 	"trustwallet.com/blockatlas/util"
@@ -46,19 +48,21 @@ func getTransactions(c *gin.Context) {
 			c.AbortWithError(http.StatusServiceUnavailable, err)
 		}
 
-		txs = append(txs, models.LegacyTx{
+		date, _ := time.Parse("2006-01-02T15:04:05.999Z", tx.Timestamp)
+
+		legacy := models.LegacyTx{
 			Id:          tx.Hash,
 			BlockNumber: tx.BlockHeight,
-			Timestamp:   tx.Timestamp,
+			Timestamp:   strconv.FormatInt(date.Unix(), 10),
 			From:        tx.FromAddr,
 			To:          tx.ToAddr,
 			Value:       value,
-			Gas:         "1",
 			GasPrice:    fee,
-			GasUsed:     "1",
-			Nonce:       10,
 			Coin:        714,
-		})
+		}
+		legacy.Init()
+
+		txs = append(txs, legacy)
 	}
 	c.JSON(http.StatusOK, models.Response {
 		 Total: len(txs),

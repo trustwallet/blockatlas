@@ -64,19 +64,18 @@ func getTransactions(c *gin.Context) {
 			if payment.Asset.Type != xdr.AssetTypeAssetTypeNative {
 				continue
 			}
-			txs = append(txs, models.LegacyTx{
+			legacy := models.LegacyTx{
 				Id:          tx.Hash,
 				BlockNumber: uint64(tx.Ledger),
 				Timestamp:   strconv.FormatInt(tx.LedgerCloseTime.Unix(), 10),
 				From:        tx.Account,
 				To:          payment.Destination.Address(),
 				Value:       strconv.FormatInt(int64(payment.Amount), 10),
-				Gas:         "1",
 				GasPrice:    strconv.FormatInt(int64(tx.FeePaid), 10),
-				GasUsed:     "1",
-				Nonce:       10,
 				Coin:        148,
-			})
+			}
+			legacy.Init()
+			txs = append(txs, legacy)
 		}
 	})
 	if err != nil {
@@ -88,8 +87,11 @@ func getTransactions(c *gin.Context) {
 	<-ctxt.Done()
 
 	txMut.Lock()
-	c.JSON(http.StatusOK, txs)
-	txMut.Unlock()
+	defer txMut.Unlock()
+	c.JSON(http.StatusOK, models.Response {
+		Total: len(txs),
+		Docs:  txs,
+	})
 }
 
 func apiError(c *gin.Context, err error) bool {

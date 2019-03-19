@@ -65,3 +65,9 @@ type LegacyTx struct {
 func (_ *LegacyTx) Type() string {
 	return TxLegacy
 }
+
+func (t *LegacyTx) Init() {
+	t.Gas     = "1"
+	t.GasUsed = "1"
+	t.Nonce   = 10
+}

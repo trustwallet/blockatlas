@@ -34,12 +34,10 @@ func getTransactions(c *gin.Context) {
 			From:        srcTx.FromAddress,
 			To:          srcTx.ToAddress,
 			Value:       strconv.FormatUint(srcTx.Value, 10),
-			Gas:         "1",
 			GasPrice:    strconv.FormatUint(srcTx.Fee, 10),
-			GasUsed:     "1",
-			Nonce:       10,
 			Coin:        242,
 		}
+		txs[i].Init()
 	}
 	c.JSON(http.StatusOK, models.Response{
 		Total: len(txs),

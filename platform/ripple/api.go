@@ -49,19 +49,19 @@ func getTransactions(c *gin.Context) {
 			continue
 		}
 
-		txs = append(txs, models.LegacyTx{
+		legacy := models.LegacyTx{
 			Id:          srcTx.Hash,
 			BlockNumber: blockNum,
 			Timestamp:   srcTx.Date,
 			From:        srcTx.Tx.Account,
 			To:          srcTx.Tx.Destination,
 			Value:       util.DecimalExp(srcAmount, 6),
-			Gas:         "1",
 			GasPrice:    util.DecimalExp(srcTx.Tx.Fee, 6),
-			GasUsed:     "1",
-			Nonce:       10,
 			Coin:        144,
-		})
+		}
+		legacy.Init()
+
+		txs = append(txs, legacy)
 	}
 
 	c.JSON(http.StatusOK, models.Response{
