@@ -26,6 +26,8 @@ func main() {
 	}
 	b := os.Args[1]
 
+	http.DefaultClient.Timeout = 5 * time.Second
+
 	for ns, test := range addresses {
 		runTest(ns, test, b)
 	}
@@ -34,7 +36,7 @@ func main() {
 }
 
 func log(endpoint string) *logrus.Entry {
-	return logrus.WithField("platform", endpoint)
+	return logrus.WithField("@platform", endpoint)
 }
 
 func runTest(endpoint string, address string, baseUrl string) {
