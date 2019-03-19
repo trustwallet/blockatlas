@@ -1,9 +1,11 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"github.com/sirupsen/logrus"
+	"io"
 	"net/http"
 	"os"
 	"strings"
@@ -26,6 +28,7 @@ func main() {
 	}
 	b := os.Args[1]
 
+	logrus.SetOutput(os.Stdout)
 	http.DefaultClient.Timeout = 5 * time.Second
 
 	for ns, test := range addresses {
@@ -73,10 +76,31 @@ func test(endpoint string, address string, baseUrl string) {
 		panic("Unexpected Content-Type " + res.Header.Get("Content-Type"))
 	}
 
+	var buffer bytes.Buffer
+
+	// Parse model and read into buffer
 	var model models.Response
-	dec := json.NewDecoder(res.Body)
+	dec := json.NewDecoder(io.TeeReader(res.Body, &buffer))
 	err = dec.Decode(&model)
 	if err != nil {
 		panic(err)
 	}
+
+	if len(model.Docs) != model.Total {
+		panic("Mismatch len(docs) vs total")
+	}
+
+	if len(model.Docs) == 0 {
+		log(endpoint).Warning("No transactions")
+		return
+	}
+
+	// Pretty-print to console
+	var msg struct {
+		Docs []json.RawMessage
+	}
+	json.Unmarshal(buffer.Bytes(), &msg)
+	pretty, _ := json.MarshalIndent(msg.Docs[0], "", "\t")
+	os.Stdout.Write(pretty)
+	fmt.Println()
 }

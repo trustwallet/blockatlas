@@ -6,7 +6,7 @@ type Tx struct {
 	Hash          string `json:"hash"`
 	BlockHash     string `json:"blockHash"`
 	BlockNumber   uint64 `json:"blockNumber"`
-	Timestamp     string `json:"timestamp"`
+	Timestamp     int64  `json:"timestamp"`
 	Confirmations int    `json:"confirmations"`
 	TxIndex       int    `json:"transactionIndex"`
 	FromAddress   string `json:"fromAddress"`

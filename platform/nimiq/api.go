@@ -30,7 +30,7 @@ func getTransactions(c *gin.Context) {
 		txs[i] = models.LegacyTx{
 			Id:          srcTx.Hash,
 			BlockNumber: srcTx.BlockNumber,
-			Timestamp:   srcTx.Timestamp,
+			Timestamp:   strconv.FormatInt(srcTx.Timestamp, 10),
 			From:        srcTx.FromAddress,
 			To:          srcTx.ToAddress,
 			Value:       strconv.FormatUint(srcTx.Value, 10),
