@@ -58,6 +58,7 @@ func getTransactions(c *gin.Context) {
 			Value:       util.DecimalExp(srcAmount, 6),
 			GasPrice:    util.DecimalExp(srcTx.Tx.Fee, 6),
 			Coin:        144,
+			Nonce:       0,
 		}
 		legacy.Init()
 

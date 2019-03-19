@@ -59,6 +59,7 @@ func getTransactions(c *gin.Context) {
 			Value:       value,
 			GasPrice:    fee,
 			Coin:        714,
+			Nonce:       0,
 		}
 		legacy.Init()
 

@@ -69,7 +69,6 @@ func (_ *LegacyTx) Type() string {
 func (t *LegacyTx) Init() {
 	t.Gas     = "1"
 	t.GasUsed = "1"
-	t.Nonce   = 10
 	if t.Operations == nil {
 		t.Operations = make([]json.RawMessage, 0)
 	}

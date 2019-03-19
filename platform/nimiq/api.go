@@ -36,6 +36,7 @@ func getTransactions(c *gin.Context) {
 			Value:       strconv.FormatUint(srcTx.Value, 10),
 			GasPrice:    strconv.FormatUint(srcTx.Fee, 10),
 			Coin:        242,
+			Nonce:       0,
 		}
 		txs[i].Init()
 	}
