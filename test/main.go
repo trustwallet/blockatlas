@@ -1,14 +1,14 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/sirupsen/logrus"
-	"github.com/valyala/fastjson"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"strings"
 	"time"
+	"trustwallet.com/blockatlas/models"
 )
 
 var failedFlag = 0
@@ -71,12 +71,10 @@ func test(endpoint string, address string, baseUrl string) {
 		panic("Unexpected Content-Type " + res.Header.Get("Content-Type"))
 	}
 
-	bytes, err := ioutil.ReadAll(res.Body)
+	var model models.Response
+	dec := json.NewDecoder(res.Body)
+	err = dec.Decode(&model)
 	if err != nil {
-		panic(err)
-	}
-
-	if err := fastjson.ValidateBytes(bytes); err != nil {
 		panic(err)
 	}
 }
