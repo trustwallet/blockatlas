@@ -6,6 +6,8 @@ import (
 	"github.com/spf13/viper"
 	"github.com/valyala/fastjson"
 	"net/http"
+	"strconv"
+	"time"
 	"trustwallet.com/blockatlas/models"
 	"trustwallet.com/blockatlas/platform/ripple/source"
 	"trustwallet.com/blockatlas/util"
@@ -43,10 +45,16 @@ func getTransactions(c *gin.Context) {
 		}
 		srcAmount := string(v.GetStringBytes())
 
+		date, err := time.Parse("2006-01-02T15:04:05-07:00", srcTx.Date)
+		unix := date.Unix()
+		if err != nil {
+			unix = 0
+		}
+
 		legacy := models.LegacyTx{
 			Id:          srcTx.Hash,
 			BlockNumber: srcTx.LedgerIndex,
-			Timestamp:   srcTx.Date,
+			Timestamp:   strconv.FormatInt(unix, 10),
 			From:        srcTx.Tx.Account,
 			To:          srcTx.Tx.Destination,
 			Value:       util.DecimalExp(srcAmount, 6),

@@ -48,12 +48,16 @@ func getTransactions(c *gin.Context) {
 			c.AbortWithError(http.StatusServiceUnavailable, err)
 		}
 
-		date, _ := time.Parse("2006-01-02T15:04:05.999Z", tx.Timestamp)
+		date, err := time.Parse("2006-01-02T15:04:05.999Z", tx.Timestamp)
+		unix := date.Unix()
+		if err != nil {
+			unix = 0
+		}
 
 		legacy := models.LegacyTx{
 			Id:          tx.Hash,
 			BlockNumber: tx.BlockHeight,
-			Timestamp:   strconv.FormatInt(date.Unix(), 10),
+			Timestamp:   strconv.FormatInt(unix, 10),
 			From:        tx.FromAddr,
 			To:          tx.ToAddr,
 			Value:       value,
