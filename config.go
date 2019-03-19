@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-func loadConfig() {
+func loadConfig(confPath string) {
 	loadDefaults()
 
 	// Load config from environment
@@ -17,14 +17,18 @@ func loadConfig() {
 	viper.AutomaticEnv()
 
 	// Load config file
-	viper.AddConfigPath(".")
-	viper.SetConfigName("config")
-	viper.SetConfigType("yaml")
+	viper.SetConfigFile(confPath)
 	err := viper.ReadInConfig()
 	if _, ok := err.(viper.ConfigFileNotFoundError); ok {
-		logrus.Info("Running without config file")
+		if confPath == defaultConfigName {
+			logrus.WithField("config_file", confPath).Fatal("Config file not found")
+		} else {
+			logrus.Info("Running without config file")
+		}
 	} else if err != nil {
 		logrus.WithError(err).Error("Failed to read config")
+	} else {
+		logrus.WithField("config_file", confPath).Info("Using config file")
 	}
 
 	// Reload config if changed
