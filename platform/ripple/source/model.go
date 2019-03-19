@@ -21,7 +21,7 @@ type Response struct {
 type Transaction struct {
 	Hash        string    `json:"hash"`
 	Date        string    `json:"date"`
-	LedgerIndex string    `json:"ledger_index"`
+	LedgerIndex uint64    `json:"ledger_index"`
 	LedgerHash  string    `json:"ledger_hash"`
 	Tx          PaymentTx `json:"tx"`
 }

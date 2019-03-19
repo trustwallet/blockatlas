@@ -6,7 +6,6 @@ import (
 	"github.com/spf13/viper"
 	"github.com/valyala/fastjson"
 	"net/http"
-	"strconv"
 	"trustwallet.com/blockatlas/models"
 	"trustwallet.com/blockatlas/platform/ripple/source"
 	"trustwallet.com/blockatlas/util"
@@ -44,14 +43,9 @@ func getTransactions(c *gin.Context) {
 		}
 		srcAmount := string(v.GetStringBytes())
 
-		blockNum, err := strconv.ParseUint(srcTx.LedgerIndex, 10, 64)
-		if err != nil {
-			continue
-		}
-
 		legacy := models.LegacyTx{
 			Id:          srcTx.Hash,
-			BlockNumber: blockNum,
+			BlockNumber: srcTx.LedgerIndex,
 			Timestamp:   srcTx.Date,
 			From:        srcTx.Tx.Account,
 			To:          srcTx.Tx.Destination,
