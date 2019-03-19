@@ -5,11 +5,11 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"github.com/stellar/go/clients/horizon"
+	"github.com/trustwallet/blockatlas/models"
+	"github.com/trustwallet/blockatlas/platform/stellar/source"
+	"github.com/trustwallet/blockatlas/util"
 	"net/http"
 	"strconv"
-	"trustwallet.com/blockatlas/models"
-	"trustwallet.com/blockatlas/platform/stellar/source"
-	"trustwallet.com/blockatlas/util"
 )
 
 func Setup(router gin.IRouter) {

@@ -4,11 +4,11 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+	"github.com/trustwallet/blockatlas/models"
+	"github.com/trustwallet/blockatlas/platform/nimiq/source"
+	"github.com/trustwallet/blockatlas/util"
 	"net/http"
 	"strconv"
-	"trustwallet.com/blockatlas/models"
-	"trustwallet.com/blockatlas/platform/nimiq/source"
-	"trustwallet.com/blockatlas/util"
 )
 
 var client *source.Client

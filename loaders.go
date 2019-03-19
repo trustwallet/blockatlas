@@ -3,11 +3,11 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
+	"github.com/trustwallet/blockatlas/platform/binance"
+	"github.com/trustwallet/blockatlas/platform/nimiq"
+	"github.com/trustwallet/blockatlas/platform/ripple"
+	"github.com/trustwallet/blockatlas/platform/stellar"
 	"net/http"
-	"trustwallet.com/blockatlas/platform/binance"
-	"trustwallet.com/blockatlas/platform/nimiq"
-	"trustwallet.com/blockatlas/platform/ripple"
-	"trustwallet.com/blockatlas/platform/stellar"
 )
 
 var loaders = map[string]func(gin.IRouter){

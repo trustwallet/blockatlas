@@ -1,11 +1,11 @@
 FROM golang:alpine as builder
-ADD . /go/src/trustwallet.com/blockatlas
+ADD . /go/src/github.com/trustwallet/blockatlas
 RUN apk add git \
- && go get -d -v trustwallet.com/blockatlas \
+ && go get -d -v github.com/trustwallet/blockatlas \
  && CGO_ENABLED=0 go install -a \
     -installsuffix cgo \
     -ldflags="-s -w" \
-    trustwallet.com/blockatlas
+    github.com/trustwallet/blockatlas
 
 FROM scratch
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/

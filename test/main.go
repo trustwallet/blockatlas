@@ -5,12 +5,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/sirupsen/logrus"
+	"github.com/trustwallet/blockatlas/models"
 	"io"
 	"net/http"
 	"os"
 	"strings"
 	"time"
-	"trustwallet.com/blockatlas/models"
 )
 
 var failedFlag = 0

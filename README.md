@@ -20,7 +20,7 @@ Deploy it in less than 30 seconds!
 __From Source__ (Go Toolchain required)
 
 ```shell
-go get -u trustwallet.com/blockatlas
+go get -u github.com/trustwallet/blockatlas
 ~/go/bin/blockatlas
 ```
 
