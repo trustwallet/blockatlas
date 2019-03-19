@@ -41,6 +41,7 @@ func getTransactions(c *gin.Context) {
 			Nonce:       0,
 		}
 		legacy.Init()
+		txs = append(txs, legacy)
 	}
 
 	c.JSON(http.StatusOK, models.Response {
