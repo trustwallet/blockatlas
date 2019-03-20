@@ -2,6 +2,7 @@ package source
 
 import (
 	"github.com/sirupsen/logrus"
+	"github.com/trustwallet/blockatlas/models"
 	"github.com/ybbus/jsonrpc"
 )
 
@@ -21,7 +22,7 @@ func (c *Client) GetTxsOfAddress(address string) (txs []Tx, err error) {
 	var res *jsonrpc.RPCResponse
 	res, err = c.RpcClient.CallRaw(&jsonrpc.RPCRequest {
 		Method: "getTransactionsByAddress",
-		Params: []interface{}{ address },
+		Params: []interface{}{ address, models.TxPerPage },
 		ID: 42,
 		JSONRPC: "2.0",
 	})

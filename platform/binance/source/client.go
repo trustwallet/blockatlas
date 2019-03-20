@@ -4,8 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/sirupsen/logrus"
+	"github.com/trustwallet/blockatlas/models"
 	"net/http"
 	"net/url"
+	"strconv"
 )
 
 // TODO Headers + rate limiting
@@ -18,7 +20,10 @@ type Client struct {
 func (c *Client) GetTxsOfAddress(address string) (*TxPage, error) {
 	uri := fmt.Sprintf("%s/transactions?%s",
 		c.RpcUrl,
-		url.Values{"address": {address}}.Encode())
+		url.Values{
+			"address": {address},
+			"limit":   {strconv.FormatInt(models.TxPerPage, 10)},
+		}.Encode())
 	res, err := c.HttpClient.Get(uri)
 	if err != nil {
 		logrus.WithError(err).Error("Binance: Failed to get transactions")

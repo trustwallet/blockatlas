@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/sirupsen/logrus"
+	"github.com/trustwallet/blockatlas/models"
 	"net/http"
 	"net/url"
 )
@@ -14,9 +15,10 @@ type Client struct {
 }
 
 func (c *Client) GetTxsOfAddress(address string) ([]Transaction, error) {
-	uri := fmt.Sprintf("%s/accounts/%s/transactions?type=Payment&result=tesSUCCESS",
+	uri := fmt.Sprintf("%s/accounts/%s/transactions?type=Payment&result=tesSUCCESS&limit=%d",
 		c.RpcUrl,
-		url.PathEscape(address))
+		url.PathEscape(address),
+		models.TxPerPage)
 	httpRes, err := c.HttpClient.Get(uri)
 	if err != nil {
 		logrus.WithError(err).Error("Ripple: Failed to get transactions")

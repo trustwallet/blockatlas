@@ -8,6 +8,8 @@ const (
 	TxLegacy = "legacy"
 )
 
+const TxPerPage = 25
+
 type Response struct {
 	Total int        `json:"total"`
 	Docs  []LegacyTx `json:"docs"`

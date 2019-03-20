@@ -82,6 +82,9 @@ func streamTransactions(ctxt context.Context, cancel context.CancelFunc, address
 				Envelope: envelope,
 				Payment:  payment,
 			})
+			if len(stream.Txs) >= 25 {
+				return
+			}
 		}
 	})
 	if err != nil {
