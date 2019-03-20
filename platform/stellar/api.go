@@ -11,19 +11,30 @@ import (
 	"github.com/trustwallet/blockatlas/util"
 	"net/http"
 	"strconv"
+	"time"
 )
+
+var stellarClient = source.Client{
+	Client: horizon.Client{
+		HTTP: &http.Client{
+			Timeout: 2 * time.Second,
+		},
+	},
+}
 
 func Setup(router gin.IRouter) {
 	router.Use(util.RequireConfig("stellar.api"))
 	router.Use(func(c *gin.Context) {
-		source.Client.URL = viper.GetString("stellar.api")
+		stellarClient.URL = viper.GetString("stellar.api")
 		c.Next()
 	})
-	router.GET("/:address", getTransactions)
+	router.GET("/:address", func(c *gin.Context) {
+		GetTransactions(c, &stellarClient)
+	})
 }
 
-func getTransactions(c *gin.Context) {
-	s, err := source.GetTxsOfAddress(c.Param("address"))
+func GetTransactions(c *gin.Context, client *source.Client) {
+	s, err := client.GetTxsOfAddress(c.Param("address"))
 	if apiError(c, err) {
 		return
 	}
