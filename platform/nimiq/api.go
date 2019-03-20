@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/models"
 	"github.com/trustwallet/blockatlas/platform/nimiq/source"
 	"github.com/trustwallet/blockatlas/util"
@@ -35,7 +36,7 @@ func getTransactions(c *gin.Context) {
 			To:          srcTx.ToAddress,
 			Value:       strconv.FormatUint(srcTx.Value, 10),
 			GasPrice:    strconv.FormatUint(srcTx.Fee, 10),
-			Coin:        242,
+			Coin:        coin.IndexNIM,
 			Nonce:       0,
 		}
 		txs[i].Init()

@@ -5,6 +5,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"github.com/stellar/go/clients/horizon"
+	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/models"
 	"github.com/trustwallet/blockatlas/platform/stellar/source"
 	"github.com/trustwallet/blockatlas/util"
@@ -37,7 +38,7 @@ func getTransactions(c *gin.Context) {
 			To:          srcTx.Payment.Destination.Address(),
 			Value:       strconv.FormatInt(int64(srcTx.Payment.Amount), 10),
 			GasPrice:    strconv.FormatInt(int64(srcTx.Tx.FeePaid), 10),
-			Coin:        148,
+			Coin:        coin.IndexXLM,
 			Nonce:       0,
 		}
 		legacy.Init()

@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/models"
 	"github.com/trustwallet/blockatlas/platform/binance/source"
 	"github.com/trustwallet/blockatlas/util"
@@ -62,7 +63,7 @@ func getTransactions(c *gin.Context) {
 			To:          tx.ToAddr,
 			Value:       value,
 			GasPrice:    fee,
-			Coin:        714,
+			Coin:        coin.IndexBNB,
 			Nonce:       0,
 		}
 		legacy.Init()
