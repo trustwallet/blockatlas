@@ -41,10 +41,12 @@ func getTransactions(c *gin.Context) {
 		}
 		txs[i].Init()
 	}
-	c.JSON(http.StatusOK, models.Response{
+	page := models.Response {
 		Total: len(txs),
 		Docs:  txs,
-	})
+	}
+	page.Sort()
+	c.JSON(http.StatusOK, &page)
 }
 
 func withClient(c *gin.Context) {

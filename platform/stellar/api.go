@@ -45,10 +45,12 @@ func getTransactions(c *gin.Context) {
 		txs = append(txs, legacy)
 	}
 
-	c.JSON(http.StatusOK, models.Response {
+	page := models.Response {
 		Total: len(txs),
 		Docs:  txs,
-	})
+	}
+	page.Sort()
+	c.JSON(http.StatusOK, &page)
 }
 
 func apiError(c *gin.Context, err error) bool {

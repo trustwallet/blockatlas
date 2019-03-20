@@ -1,6 +1,10 @@
 package models
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"github.com/spf13/cast"
+	"sort"
+)
 
 const (
 	TxBasic  = "basic"
@@ -13,6 +17,14 @@ const TxPerPage = 25
 type Response struct {
 	Total int        `json:"total"`
 	Docs  []LegacyTx `json:"docs"`
+}
+
+func (r *Response) Sort() {
+	sort.Slice(r.Docs, func(i, j int) bool {
+		ti := cast.ToUint64(r.Docs[i].Timestamp)
+		tj := cast.ToUint64(r.Docs[j].Timestamp)
+		return ti >= tj
+	})
 }
 
 type Balance struct {

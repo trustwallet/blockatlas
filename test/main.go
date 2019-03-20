@@ -9,6 +9,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -93,6 +94,21 @@ func test(endpoint string, address string, baseUrl string) {
 	if len(model.Docs) == 0 {
 		log(endpoint).Warning("No transactions")
 		return
+	}
+
+	// Enumerate transactions
+	var lastTime = ^uint64(0)
+	for _, tx := range model.Docs {
+		point, err := strconv.ParseUint(tx.Timestamp, 10, 64)
+		if err != nil {
+			panic(err)
+		}
+
+		if point <= lastTime {
+			lastTime = point
+		} else {
+			panic("Transactions not in chronological order")
+		}
 	}
 
 	// Pretty-print to console
