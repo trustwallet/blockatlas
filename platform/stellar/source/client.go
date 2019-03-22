@@ -2,6 +2,7 @@ package source
 
 import (
 	"context"
+	"github.com/davecgh/go-spew/spew"
 	"github.com/stellar/go/clients/horizon"
 	"github.com/stellar/go/xdr"
 	"sync"
@@ -71,6 +72,7 @@ func (c *Client) streamTransactions(ctxt context.Context, cancel context.CancelF
 			if payment == nil {
 				continue
 			}
+			spew.Dump(payment)
 			if payment.Asset.Type != xdr.AssetTypeAssetTypeNative {
 				continue
 			}
