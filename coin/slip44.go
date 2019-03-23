@@ -9,6 +9,7 @@ type Coin struct {
 }
 
 const (
+	IndexETH = 60
 	IndexXRP = 144
 	IndexXLM = 148
 	IndexNIM = 242
@@ -60,13 +61,21 @@ var Coins = map[uint]Coin {
 		Website:  "https://tezos.com",
 		Decimals: 6,
 	},
+	IndexETH: {
+		Index:    IndexETH,
+		Symbol:   "ETH",
+		Title:    "Ether",
+		Website:  "https://www.ethereum.org",
+		Decimals: 18,
+	},
 }
 
 var (
+	ETH = Coins[IndexETH]
 	XRP = Coins[IndexXRP]
 	XLM = Coins[IndexXLM]
 	NIM = Coins[IndexNIM]
 	BNB = Coins[IndexBNB]
-	KIN = Coins[IndexKIN]
 	XTZ = Coins[IndexXTZ]
+	KIN = Coins[IndexKIN]
 )
