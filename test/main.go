@@ -1,15 +1,12 @@
 package main
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas/models"
-	"io"
 	"net/http"
 	"os"
-	"strconv"
 	"strings"
 	"time"
 )
@@ -77,46 +74,38 @@ func test(endpoint string, address string, baseUrl string) {
 		panic("Unexpected Content-Type " + res.Header.Get("Content-Type"))
 	}
 
-	var buffer bytes.Buffer
-
 	// Parse model and read into buffer
-	var model models.Response
-	dec := json.NewDecoder(io.TeeReader(res.Body, &buffer))
+	var model []models.Tx
+	dec := json.NewDecoder(res.Body)
 	err = dec.Decode(&model)
 	if err != nil {
 		panic(err)
 	}
 
-	if len(model.Docs) != model.Total {
-		panic("Mismatch len(docs) vs total")
-	}
-
-	if len(model.Docs) == 0 {
+	if len(model) == 0 {
 		log(endpoint).Warning("No transactions")
 		return
 	}
 
 	// Enumerate transactions
 	var lastTime = ^uint64(0)
-	for _, tx := range model.Docs {
-		point, err := strconv.ParseUint(tx.Timestamp, 10, 64)
-		if err != nil {
-			panic(err)
-		}
+	for _, tx := range model {
+		point := tx.Date
 
-		if point <= lastTime {
-			lastTime = point
+		if uint64(point) <= lastTime {
+			lastTime = uint64(point)
 		} else {
 			panic("Transactions not in chronological order")
 		}
 	}
 
-	// Pretty-print to console
-	var msg struct {
-		Docs []json.RawMessage
+	// Pretty-print first transaction to console
+	if len(model) > 0 {
+		pretty, err := json.MarshalIndent(model[0], "", "\t")
+		if err != nil {
+			panic("Can't serialize transaction " + err.Error())
+		}
+		os.Stdout.Write(pretty)
+		fmt.Println()
 	}
-	json.Unmarshal(buffer.Bytes(), &msg)
-	pretty, _ := json.MarshalIndent(msg.Docs[0], "", "\t")
-	os.Stdout.Write(pretty)
-	fmt.Println()
 }

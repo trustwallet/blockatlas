@@ -9,11 +9,10 @@ import (
 	"github.com/trustwallet/blockatlas/platform/binance/source"
 	"github.com/trustwallet/blockatlas/util"
 	"net/http"
-	"strconv"
 	"time"
 )
 
-var client = source.Client {
+var client = source.Client{
 	HttpClient: http.DefaultClient,
 }
 
@@ -32,7 +31,7 @@ func getTransactions(c *gin.Context) {
 		return
 	}
 
-	var txs []models.LegacyTx
+	var txs []models.Tx
 	for _, tx := range s.Txs {
 		if tx.Asset != "BNB" {
 			continue
@@ -55,25 +54,22 @@ func getTransactions(c *gin.Context) {
 			unix = 0
 		}
 
-		legacy := models.LegacyTx{
-			Id:          tx.Hash,
-			BlockNumber: tx.BlockHeight,
-			Timestamp:   strconv.FormatInt(unix, 10),
-			From:        tx.FromAddr,
-			To:          tx.ToAddr,
-			Value:       value,
-			GasPrice:    fee,
-			Coin:        coin.IndexBNB,
-			Nonce:       0,
-		}
-		legacy.Init()
-
-		txs = append(txs, legacy)
+		txs = append(txs, models.Tx{
+			Id:   tx.Hash,
+			Date: unix,
+			From: tx.FromAddr,
+			To:   tx.ToAddr,
+			Fee:  fee,
+			Type: models.TxTransfer,
+			Meta: models.Transfer{
+				Name:     coin.BNB.Title,
+				Symbol:   coin.BNB.Symbol,
+				Decimals: coin.BNB.Decimals,
+				Value:    value,
+			},
+		})
 	}
-	page := models.Response {
-		Total: len(txs),
-		Docs:  txs,
-	}
+	page := models.Response(txs)
 	page.Sort()
 	c.JSON(http.StatusOK, &page)
 }

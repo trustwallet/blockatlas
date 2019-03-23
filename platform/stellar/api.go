@@ -39,27 +39,25 @@ func GetTransactions(c *gin.Context, client *source.Client) {
 		return
 	}
 
-	txs := make([]models.LegacyTx, 0)
+	txs := make([]models.Tx, 0)
 	for _, srcTx := range s {
-		legacy := models.LegacyTx{
-			Id:          srcTx.Tx.Hash,
-			BlockNumber: uint64(srcTx.Tx.Ledger),
-			Timestamp:   strconv.FormatInt(srcTx.Tx.LedgerCloseTime.Unix(), 10),
-			From:        srcTx.Tx.Account,
-			To:          srcTx.Payment.Destination.Address(),
-			Value:       strconv.FormatInt(int64(srcTx.Payment.Amount), 10),
-			GasPrice:    strconv.FormatInt(int64(srcTx.Tx.FeePaid), 10),
-			Coin:        coin.IndexXLM,
-			Nonce:       0,
-		}
-		legacy.Init()
-		txs = append(txs, legacy)
+		txs = append(txs, models.Tx{
+			Id:   srcTx.Tx.Hash,
+			Date: srcTx.Tx.LedgerCloseTime.Unix(),
+			From: srcTx.Tx.Account,
+			To:   srcTx.Payment.Destination.Address(),
+			Fee:  strconv.FormatInt(int64(srcTx.Tx.FeePaid), 10),
+			Type: models.TxTransfer,
+			Meta: models.Transfer{
+				Name:     coin.XLM.Title,
+				Symbol:   coin.XLM.Symbol,
+				Decimals: coin.XLM.Decimals,
+				Value:    strconv.FormatInt(int64(srcTx.Payment.Amount), 10),
+			},
+		})
 	}
 
-	page := models.Response {
-		Total: len(txs),
-		Docs:  txs,
-	}
+	page := models.Response(txs)
 	page.Sort()
 	c.JSON(http.StatusOK, &page)
 }

@@ -26,25 +26,24 @@ func getTransactions(c *gin.Context) {
 		return
 	}
 
-	txs := make([]models.LegacyTx, len(s))
+	txs := make([]models.Tx, len(s))
 	for i, srcTx := range s {
-		txs[i] = models.LegacyTx{
-			Id:          srcTx.Hash,
-			BlockNumber: srcTx.BlockNumber,
-			Timestamp:   strconv.FormatInt(srcTx.Timestamp, 10),
-			From:        srcTx.FromAddress,
-			To:          srcTx.ToAddress,
-			Value:       strconv.FormatUint(srcTx.Value, 10),
-			GasPrice:    strconv.FormatUint(srcTx.Fee, 10),
-			Coin:        coin.IndexNIM,
-			Nonce:       0,
+		txs[i] = models.Tx{
+			Id:   srcTx.Hash,
+			Date: srcTx.Timestamp,
+			From: srcTx.FromAddress,
+			To:   srcTx.ToAddress,
+			Fee:  strconv.FormatUint(srcTx.Fee, 10),
+			Type: models.TxTransfer,
+			Meta: models.Transfer{
+				Name:     coin.NIM.Title,
+				Symbol:   coin.NIM.Symbol,
+				Decimals: coin.NIM.Decimals,
+				Value:    strconv.FormatUint(srcTx.Value, 10),
+			},
 		}
-		txs[i].Init()
 	}
-	page := models.Response {
-		Total: len(txs),
-		Docs:  txs,
-	}
+	page := models.Response(txs)
 	page.Sort()
 	c.JSON(http.StatusOK, &page)
 }
