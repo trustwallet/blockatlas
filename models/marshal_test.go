@@ -9,19 +9,19 @@ import (
 
 func TestTx_UnmarshalJSON(t *testing.T) {
 	source := `{
-        "id": "14beb212aaefd06d7c6c0b25fc5ec242a2de2725af0a2827c105e743222cacd6",
-        "from": "NQ11 P00L 2HYP TUK8 VY6L 2N22 MMBU MHHR BSAA",
-        "to": "NQ86 2H8F YGU5 RM77 QSN9 LYLH C56A CYYR 0MLA",
-        "fee": "138",
-        "date": 1548954343,
-        "type": "transfer",
-        "metadata": {
-            "name": "Nimiq",
-            "symbol": "NIM",
-            "decimals": 5,
-            "value": "5004160"
-        }
-    }`
+		"id": "14beb212aaefd06d7c6c0b25fc5ec242a2de2725af0a2827c105e743222cacd6",
+		"from": "NQ11 P00L 2HYP TUK8 VY6L 2N22 MMBU MHHR BSAA",
+		"to": "NQ86 2H8F YGU5 RM77 QSN9 LYLH C56A CYYR 0MLA",
+		"fee": "138",
+		"date": 1548954343,
+		"type": "transfer",
+		"metadata": {
+			"name": "Nimiq",
+			"symbol": "NIM",
+			"decimals": 5,
+			"value": "5004160"
+		}
+	}`
 	expected := Tx{
 		Id:   "14beb212aaefd06d7c6c0b25fc5ec242a2de2725af0a2827c105e743222cacd6",
 		From: "NQ11 P00L 2HYP TUK8 VY6L 2N22 MMBU MHHR BSAA",
