@@ -28,6 +28,8 @@ func (t *Tx) UnmarshalJSON(data []byte) error {
 		t.Meta = new(CollectibleTransfer)
 	case TxTokenSwap:
 		t.Meta = new(TokenSwap)
+	case TxContractCall:
+		t.Meta = new(ContractCall)
 	default:
 		return fmt.Errorf(`unsupported tx type "%s"`, t.Type)
 	}

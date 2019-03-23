@@ -60,3 +60,7 @@ type TokenSwap struct {
 	Input  TokenTransfer `json:"input"`
 	Output TokenTransfer `json:"output"`
 }
+
+type ContractCall struct {
+	// TODO
+}
