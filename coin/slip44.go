@@ -39,17 +39,18 @@ var Coins = map[int]Coin {
 		Decimals: 5,
 	},
 	IndexBNB: {
-		Index:   IndexBNB,
-		Symbol:    "BNB",
+		Index:    IndexBNB,
+		Symbol:   "BNB",
 		Title:    "Binance Coin",
 		Website:  "https://binance.org",
 		Decimals: 18,
 	},
 	IndexKIN: {
-		Index:   IndexKIN,
-		Symbol:  "KIN",
-		Title:   "Kin",
-		Website: "https://www.kin.org",
+		Index:    IndexKIN,
+		Symbol:   "KIN",
+		Title:    "Kin",
+		Website:  "https://www.kin.org",
+		Decimals: 18,
 	},
 }
 
