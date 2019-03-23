@@ -10,50 +10,39 @@ import (
 	"github.com/trustwallet/blockatlas/platform/stellar/source"
 	"github.com/trustwallet/blockatlas/util"
 	"net/http"
-	"strconv"
 	"time"
 )
 
 var stellarClient = source.Client{
-	Client: horizon.Client{
-		HTTP: &http.Client{
-			Timeout: 2 * time.Second,
-		},
+	HTTP: &http.Client{
+		Timeout: 2 * time.Second,
 	},
 }
 
 func Setup(router gin.IRouter) {
 	router.Use(util.RequireConfig("stellar.api"))
 	router.Use(func(c *gin.Context) {
-		stellarClient.URL = viper.GetString("stellar.api")
+		stellarClient.API = viper.GetString("stellar.api")
 		c.Next()
 	})
 	router.GET("/:address", func(c *gin.Context) {
-		GetTransactions(c, &stellarClient)
+		GetTransactions(c, &coin.XLM, &stellarClient)
 	})
 }
 
-func GetTransactions(c *gin.Context, client *source.Client) {
-	s, err := client.GetTxsOfAddress(c.Param("address"))
+func GetTransactions(c *gin.Context, nativeCoin *coin.Coin, client *source.Client) {
+	payments, err := client.GetTxsOfAddress(c.Param("address"))
 	if apiError(c, err) {
 		return
 	}
 
 	txs := make([]models.Tx, 0)
-	for _, srcTx := range s {
-		txs = append(txs, models.Tx{
-			Id:   srcTx.Tx.Hash,
-			Date: srcTx.Tx.LedgerCloseTime.Unix(),
-			From: srcTx.Tx.Account,
-			To:   srcTx.Payment.Destination.Address(),
-			Fee:  strconv.FormatInt(int64(srcTx.Tx.FeePaid), 10),
-			Meta: models.Transfer{
-				Name:     coin.XLM.Title,
-				Symbol:   coin.XLM.Symbol,
-				Decimals: coin.XLM.Decimals,
-				Value:    strconv.FormatInt(int64(srcTx.Payment.Amount), 10),
-			},
-		})
+	for _, payment := range payments {
+		tx, ok := FormatTx(&payment, nativeCoin)
+		if !ok {
+			continue
+		}
+		txs = append(txs, tx)
 	}
 
 	page := models.Response(txs)
@@ -77,4 +66,37 @@ func apiError(c *gin.Context, err error) bool {
 		return true
 	}
 	return false
+}
+
+func FormatTx(payment *horizon.Payment, nativeCoin *coin.Coin) (tx models.Tx, ok bool) {
+	if payment.Type != "payment" {
+		return tx, false
+	}
+	if payment.AssetType != "native" {
+		return tx, false
+	}
+	date, err := time.Parse("2006-01-02T15:04:05Z", payment.CreatedAt)
+	if err != nil {
+		return tx, false
+	}
+	value, err := util.DecimalToSatoshis(payment.Amount)
+	if err != nil {
+		return tx, false
+	}
+	value += "00" // 5 decimal places to 7
+	return models.Tx{
+		Id:   payment.TransactionHash,
+		From: payment.From,
+		To:   payment.To,
+		// https://www.stellar.org/developers/guides/concepts/fees.html
+		// Fee fixed at 100 stroops
+		Fee:  "100",
+		Date: date.Unix(),
+		Meta: models.Transfer{
+			Name:     nativeCoin.Title,
+			Symbol:   nativeCoin.Symbol,
+			Decimals: 7,
+			Value:    value,
+		},
+	}, true
 }

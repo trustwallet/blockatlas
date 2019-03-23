@@ -13,6 +13,7 @@ const (
 	IndexXLM = 148
 	IndexNIM = 242
 	IndexBNB = 714
+	IndexKIN = 2017
 )
 
 var Coins = map[int]Coin {
@@ -38,10 +39,17 @@ var Coins = map[int]Coin {
 		Decimals: 5,
 	},
 	IndexBNB: {
-		Index:   IndexBNB,
-		Symbol:    "BNB",
+		Index:    IndexBNB,
+		Symbol:   "BNB",
 		Title:    "Binance Coin",
 		Website:  "https://binance.org",
+		Decimals: 18,
+	},
+	IndexKIN: {
+		Index:    IndexKIN,
+		Symbol:   "KIN",
+		Title:    "Kin",
+		Website:  "https://www.kin.org",
 		Decimals: 18,
 	},
 }
@@ -51,4 +59,5 @@ var (
 	XLM = Coins[IndexXLM]
 	NIM = Coins[IndexNIM]
 	BNB = Coins[IndexBNB]
+	KIN = Coins[IndexKIN]
 )
