@@ -47,7 +47,6 @@ func GetTransactions(c *gin.Context, client *source.Client) {
 			From: srcTx.Tx.Account,
 			To:   srcTx.Payment.Destination.Address(),
 			Fee:  strconv.FormatInt(int64(srcTx.Tx.FeePaid), 10),
-			Type: models.TxTransfer,
 			Meta: models.Transfer{
 				Name:     coin.XLM.Title,
 				Symbol:   coin.XLM.Symbol,

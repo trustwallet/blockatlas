@@ -57,7 +57,6 @@ func getTransactions(c *gin.Context) {
 			From: srcTx.Tx.Account,
 			To:   srcTx.Tx.Destination,
 			Fee:  util.DecimalExp(srcTx.Tx.Fee, 6),
-			Type: models.TxTransfer,
 			Meta: models.Transfer{
 				Name:     coin.XRP.Title,
 				Symbol:   coin.XRP.Symbol,
