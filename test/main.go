@@ -29,8 +29,23 @@ func main() {
 	logrus.SetOutput(os.Stdout)
 	http.DefaultClient.Timeout = 5 * time.Second
 
+	supportedList, err := supportedEndpoints(b)
+	if err != nil {
+		logrus.WithError(err).Error("Failed to get supported platforms")
+		os.Exit(1)
+	}
+
+	var supported = make(map[string]bool)
+	for _, ns := range supportedList {
+		supported[ns] = true
+	}
+
 	for ns, test := range addresses {
-		runTest(ns, test, b)
+		if !supported[ns] {
+			log(ns).Warning("Platform not enabled at server, skipping")
+		} else {
+			runTest(ns, test, b)
+		}
 	}
 
 	os.Exit(failedFlag)
@@ -108,4 +123,21 @@ func test(endpoint string, address string, baseUrl string) {
 		os.Stdout.Write(pretty)
 		fmt.Println()
 	}
+}
+
+func supportedEndpoints(baseUrl string) (endpoints []string, err error) {
+	var data struct {
+		Endpoints []string `json:"endpoints"`
+	}
+	res, err := http.Get(fmt.Sprintf("%s/v1/", baseUrl))
+	if err != nil {
+		return nil, err
+	}
+	defer res.Body.Close()
+	dec := json.NewDecoder(res.Body)
+	err = dec.Decode(&data)
+	if err != nil {
+		return nil, err
+	}
+	return data.Endpoints, nil
 }
