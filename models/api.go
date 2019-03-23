@@ -1,89 +1,66 @@
 package models
 
 import (
-	"encoding/json"
 	"github.com/spf13/cast"
 	"sort"
 )
 
 const (
-	TxBasic  = "basic"
-	TxSwap   = "swap"
-	TxLegacy = "legacy"
+	TxTransfer            = "transfer"
+	TxTokenTransfer       = "token_transfer"
+	TxCollectibleTransfer = "collectible_transfer"
+	TxTokenSwap           = "token_swap"
+	TxContractCall        = "contract_call"
 )
 
 const TxPerPage = 25
 
-type Response struct {
-	Total int        `json:"total"`
-	Docs  []LegacyTx `json:"docs"`
-}
+type Response []Tx
 
 func (r *Response) Sort() {
-	sort.Slice(r.Docs, func(i, j int) bool {
-		ti := cast.ToUint64(r.Docs[i].Timestamp)
-		tj := cast.ToUint64(r.Docs[j].Timestamp)
+	sort.Slice(*r, func(i, j int) bool {
+		ti := cast.ToUint64((*r)[i].Date)
+		tj := cast.ToUint64((*r)[j].Date)
 		return ti >= tj
 	})
 }
 
-type Balance struct {
-	Amount uint64 `json:"amount"`
-	Unit   string `json:"unit"`
+type Tx struct {
+	Id   string      `json:"id"`
+	From string      `json:"from"`
+	To   string      `json:"to"`
+	Fee  string      `json:"fee"`
+	Date int64       `json:"date"`
+	Type string      `json:"type"`
+	Meta interface{} `json:"metadata"`
 }
 
-type AccountInfo struct {
-	Balances []Balance `json:"balances"`
-	Txs      []Tx      `json:"txs"`
+type Transfer struct {
+	Name     string `json:"name"`
+	Symbol   string `json:"symbol"`
+	Decimals uint   `json:"decimals"`
+	Value    string `json:"value"`
 }
 
-type Tx interface {
-	Type() string
+type TokenTransfer struct {
+	Name     string `json:"name"`
+	Symbol   string `json:"symbol"`
+	Contract string `json:"contract"`
+	Decimals uint   `json:"decimals"`
+	Value    string `json:"value"`
 }
 
-type BasicTx struct {
-	Kind  string `json:"kind"`
-	Id    string `json:"id"`
-	From  string `json:"from"`
-	To    string `json:"to"`
-	Fee   string `json:"fee"`
-	Value string `json:"value"`
+type CollectibleTransfer struct {
+	Name     string `json:"name"`
+	Contract string `json:"contract"`
+	ImageUrl string `json:"image_url"`
 }
 
-func (_ *BasicTx) Type() string {
-	return TxBasic
+type TokenSwap struct {
+	Input  TokenTransfer `json:"input"`
+	Output TokenTransfer `json:"output"`
 }
 
-type LegacyTx struct {
-	Id          string `json:"id"`
-
-	// Empty array
-	Operations []json.RawMessage `json:"operations"`
-	// Null pointer
-	Contract   *json.RawMessage  `json:"contract"`
-
-	BlockNumber uint64 `json:"blockNumber"`
-	Timestamp   string `json:"timeStamp"`
-	Nonce       int    `json:"nonce"`
-	From        string `json:"from"`
-	To          string `json:"to"`
-	Value       string `json:"value"`
-	Gas         string `json:"gas"`
-	GasPrice    string `json:"gasPrice"`
-	GasUsed     string `json:"gasUsed"`
-	Input       string `json:"input"`
-	Coin        uint   `json:"coin"`
-	Error       string `json:"error"`
-}
-
-func (_ *LegacyTx) Type() string {
-	return TxLegacy
-}
-
-func (t *LegacyTx) Init() {
-	t.Gas     = "1"
-	t.GasUsed = "1"
-	if t.Operations == nil {
-		t.Operations = make([]json.RawMessage, 0)
-	}
+type ContractCall struct {
+	// TODO
 }

@@ -4,15 +4,12 @@ import (
 	"context"
 	"github.com/stellar/go/clients/horizon"
 	"github.com/stellar/go/xdr"
-	"net/http"
 	"sync"
 	"time"
 )
 
-var Client = horizon.Client{
-	HTTP: &http.Client{
-		Timeout: 2 * time.Second,
-	},
+type Client struct {
+	horizon.Client
 }
 
 type Tx struct {
@@ -27,7 +24,7 @@ type txStream struct {
 	Err error
 }
 
-func GetTxsOfAddress(address string) ([]Tx, error) {
+func (c *Client) GetTxsOfAddress(address string) ([]Tx, error) {
 	var ctxt context.Context
 	var cancel context.CancelFunc
 	ctxt = context.Background()
@@ -35,7 +32,7 @@ func GetTxsOfAddress(address string) ([]Tx, error) {
 	ctxt, cancel = context.WithCancel(ctxt)
 
 	var stream txStream
-	go streamTransactions(ctxt, cancel, address, &stream)
+	go c.streamTransactions(ctxt, cancel, address, &stream)
 
 	// Wait for transaction stream to finish
 	<-ctxt.Done()
@@ -49,10 +46,10 @@ func GetTxsOfAddress(address string) ([]Tx, error) {
 	return stream.Txs, nil
 }
 
-func streamTransactions(ctxt context.Context, cancel context.CancelFunc, address string, stream *txStream) {
+func (c *Client) streamTransactions(ctxt context.Context, cancel context.CancelFunc, address string, stream *txStream) {
 	defer cancel()
 
-	err := Client.StreamTransactions(ctxt, address, nil, func(tx horizon.Transaction) {
+	err := c.StreamTransactions(ctxt, address, nil, func(tx horizon.Transaction) {
 		if tx.ResultXdr == "" {
 			return
 		}

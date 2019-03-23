@@ -1,10 +1,11 @@
 package coin
 
 type Coin struct {
-	Index   int    `json:"id"`
-	Symbol  string `json:"symbol"`
-	Title   string `json:"title"`
-	Website string `json:"website"`
+	Index    int    `json:"id"`
+	Symbol   string `json:"symbol"`
+	Title    string `json:"title"`
+	Website  string `json:"website"`
+	Decimals uint   `json:"decimals"`
 }
 
 const (
@@ -16,28 +17,32 @@ const (
 
 var Coins = map[int]Coin {
 	IndexXRP: {
-		Index:   IndexXRP,
-		Symbol:  "XRP",
-		Title:   "Ripple",
-		Website: "https://ripple.com",
+		Index:    IndexXRP,
+		Symbol:   "XRP",
+		Title:    "Ripple",
+		Website:  "https://ripple.com",
+		Decimals: 6,
 	},
 	IndexXLM: {
-		Index:   IndexXLM,
-		Symbol:  "XLM",
-		Title:   "Stellar Lumens",
-		Website: "https://www.stellar.org/",
+		Index:    IndexXLM,
+		Symbol:   "XLM",
+		Title:    "Stellar Lumens",
+		Website:  "https://www.stellar.org/",
+		Decimals: 7,
 	},
 	IndexNIM: {
-		Index:   IndexNIM,
-		Symbol:  "NIM",
-		Title:   "Nimiq",
-		Website: "https://nimiq.com",
+		Index:    IndexNIM,
+		Symbol:   "NIM",
+		Title:    "Nimiq",
+		Website:  "https://nimiq.com",
+		Decimals: 5,
 	},
 	IndexBNB: {
 		Index:   IndexBNB,
-		Symbol:  "BNB",
-		Title:   "Binance Coin",
-		Website: "https://binance.org",
+		Symbol:    "BNB",
+		Title:    "Binance Coin",
+		Website:  "https://binance.org",
+		Decimals: 18,
 	},
 }
 

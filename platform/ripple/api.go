@@ -10,7 +10,6 @@ import (
 	"github.com/trustwallet/blockatlas/util"
 	"github.com/valyala/fastjson"
 	"net/http"
-	"strconv"
 	"time"
 )
 
@@ -33,7 +32,7 @@ func getTransactions(c *gin.Context) {
 		return
 	}
 
-	txs := make([]models.LegacyTx, 0)
+	txs := make([]models.Tx, 0)
 	for _, srcTx := range s {
 		// Only accept XRP payments (typeof tx.amount === 'string')
 		var p fastjson.Parser
@@ -52,26 +51,22 @@ func getTransactions(c *gin.Context) {
 			unix = 0
 		}
 
-		legacy := models.LegacyTx{
-			Id:          srcTx.Hash,
-			BlockNumber: srcTx.LedgerIndex,
-			Timestamp:   strconv.FormatInt(unix, 10),
-			From:        srcTx.Tx.Account,
-			To:          srcTx.Tx.Destination,
-			Value:       util.DecimalExp(srcAmount, 6),
-			GasPrice:    util.DecimalExp(srcTx.Tx.Fee, 6),
-			Coin:        coin.IndexXRP,
-			Nonce:       0,
-		}
-		legacy.Init()
-
-		txs = append(txs, legacy)
+		txs = append(txs, models.Tx{
+			Id:   srcTx.Hash,
+			Date: unix,
+			From: srcTx.Tx.Account,
+			To:   srcTx.Tx.Destination,
+			Fee:  util.DecimalExp(srcTx.Tx.Fee, 6),
+			Meta: models.Transfer{
+				Name:     coin.XRP.Title,
+				Symbol:   coin.XRP.Symbol,
+				Decimals: coin.XRP.Decimals,
+				Value:    util.DecimalExp(srcAmount, 6),
+			},
+		})
 	}
 
-	page := models.Response {
-		Total: len(txs),
-		Docs:  txs,
-	}
+	page := models.Response(txs)
 	page.Sort()
 	c.JSON(http.StatusOK, &page)
 }
