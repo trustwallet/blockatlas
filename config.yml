@@ -11,8 +11,8 @@ binance:
   api: https://testnet-dex.binance.org/api/v1
 
 # [NIM] Nimiq: https://nimiq.com/
-nimiq:
-  api: http://localhost:8648
+#nimiq:
+#  api: http://localhost:8648
 
 # [XRP] Ripple: https://ripple.com/
 ripple:
