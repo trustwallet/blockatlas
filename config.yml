@@ -21,3 +21,7 @@ ripple:
 # [XLM] Stellar Lumen: https://www.stellar.org
 stellar:
   api: https://horizon.stellar.org
+
+# [KIN] Kin: https://www.kin.org
+kin:
+  api: https://horizon.kinfederation.com
