@@ -1,8 +1,6 @@
 # Block Atlas by Trust Wallet
 
-Clean explorer API for every crypto. WIP.
-
-_Note: Legacy TrustWallet API support currently enabled._
+Clean explorer API for crypto currencies.
 
 __Supported Coins__
 
