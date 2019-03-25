@@ -13,6 +13,7 @@ const (
 	IndexXLM = 148
 	IndexNIM = 242
 	IndexBNB = 714
+	IndexXTZ = 1729
 	IndexKIN = 2017
 )
 
@@ -52,6 +53,13 @@ var Coins = map[int]Coin {
 		Website:  "https://www.kin.org",
 		Decimals: 18,
 	},
+	IndexXTZ: {
+		Index:    IndexXTZ,
+		Symbol:   "XTZ",
+		Title:    "Tezos",
+		Website:  "https://tezos.com",
+		Decimals: 6,
+	},
 }
 
 var (
@@ -60,4 +68,5 @@ var (
 	NIM = Coins[IndexNIM]
 	BNB = Coins[IndexBNB]
 	KIN = Coins[IndexKIN]
+	XTZ = Coins[IndexXTZ]
 )

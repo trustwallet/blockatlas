@@ -25,3 +25,7 @@ stellar:
 # [KIN] Kin: https://www.kin.org
 kin:
   api: https://horizon.kinfederation.com
+
+# [XTZ] Tezos: https://tezos.com
+tezos:
+  api: https://api1.tzscan.io/v3

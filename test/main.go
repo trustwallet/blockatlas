@@ -19,6 +19,7 @@ var addresses = map[string]string {
 	"ripple":  "rMQ98K56yXJbDGv49ZSmW51sLn94Xe1mu1",
 	"stellar": "GDKIJJIKXLOM2NRMPNQZUUYK24ZPVFC6426GZAEP3KUK6KEJLACCWNMX",
 	"kin":     "GBHKUZ7C2SZ5N3X2S7O6TT6LNUWSEA2BXMSR5GTTSR6VZARSVAXIQNGH",
+	"tezos":   "tz1WCd2jm4uSt4vntk4vSuUWoZQGhLcDuR9q",
 }
 
 func main() {

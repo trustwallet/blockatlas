@@ -8,6 +8,7 @@ import (
 	"github.com/trustwallet/blockatlas/platform/nimiq"
 	"github.com/trustwallet/blockatlas/platform/ripple"
 	"github.com/trustwallet/blockatlas/platform/stellar"
+	"github.com/trustwallet/blockatlas/platform/tezos"
 	"net/http"
 )
 
@@ -17,6 +18,7 @@ var loaders = map[string]func(gin.IRouter){
 	"ripple":  ripple.Setup,
 	"stellar": stellar.Setup,
 	"kin":     kin.Setup,
+	"tezos":   tezos.Setup,
 }
 
 func loadPlatforms(router gin.IRouter) {
