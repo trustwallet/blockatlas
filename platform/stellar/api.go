@@ -10,6 +10,7 @@ import (
 	"github.com/trustwallet/blockatlas/platform/stellar/source"
 	"github.com/trustwallet/blockatlas/util"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -75,6 +76,10 @@ func FormatTx(payment *horizon.Payment, nativeCoin *coin.Coin) (tx models.Tx, ok
 	if payment.AssetType != "native" {
 		return tx, false
 	}
+	id, err := strconv.ParseUint(payment.ID, 10, 64)
+	if err != nil {
+		return tx, false
+	}
 	date, err := time.Parse("2006-01-02T15:04:05Z", payment.CreatedAt)
 	if err != nil {
 		return tx, false
@@ -85,14 +90,15 @@ func FormatTx(payment *horizon.Payment, nativeCoin *coin.Coin) (tx models.Tx, ok
 	}
 	value += "00" // 5 decimal places to 7
 	return models.Tx{
-		Id:   payment.TransactionHash,
-		From: payment.From,
-		To:   payment.To,
+		Id:    payment.TransactionHash,
+		From:  payment.From,
+		To:    payment.To,
 		// https://www.stellar.org/developers/guides/concepts/fees.html
 		// Fee fixed at 100 stroops
-		Fee:  "100",
-		Date: date.Unix(),
-		Meta: models.Transfer{
+		Fee:   "100",
+		Date:  date.Unix(),
+		Block: id,
+		Meta:  models.Transfer{
 			Name:     nativeCoin.Title,
 			Symbol:   nativeCoin.Symbol,
 			Decimals: 7,

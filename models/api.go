@@ -26,13 +26,14 @@ func (r *Response) Sort() {
 }
 
 type Tx struct {
-	Id   string      `json:"id"`
-	From string      `json:"from"`
-	To   string      `json:"to"`
-	Fee  string      `json:"fee"`
-	Date int64       `json:"date"`
-	Type string      `json:"type"`
-	Meta interface{} `json:"metadata"`
+	Id    string      `json:"id"`
+	From  string      `json:"from"`
+	To    string      `json:"to"`
+	Fee   string      `json:"fee"`
+	Date  int64       `json:"date"`
+	Type  string      `json:"type"`
+	Block uint64      `json:"block,omitempty"`
+	Meta  interface{} `json:"metadata"`
 }
 
 type Transfer struct {

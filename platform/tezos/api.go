@@ -57,12 +57,13 @@ func getTransactions(c *gin.Context) {
 			continue
 		}
 		txs = append(txs, models.Tx{
-			Id:   srcTx.Hash,
-			Date: unix,
-			From: op.Src.Tz,
-			To:   op.Dest.Tz,
-			Fee:  strconv.FormatUint(op.Fee, 10),
-			Meta: models.Transfer{
+			Id:    srcTx.Hash,
+			Date:  unix,
+			From:  op.Src.Tz,
+			To:    op.Dest.Tz,
+			Fee:   strconv.FormatUint(op.Fee, 10),
+			Block: op.OpLevel,
+			Meta:  models.Transfer{
 				Name:     coin.XTZ.Title,
 				Symbol:   coin.XTZ.Symbol,
 				Decimals: coin.XTZ.Decimals,
