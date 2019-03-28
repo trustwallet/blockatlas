@@ -60,7 +60,7 @@ func getTransactions(c *gin.Context) {
 			From:  tx.FromAddr,
 			To:    tx.ToAddr,
 			Fee:   fee,
-			Block: int64(tx.BlockHeight),
+			Block: tx.BlockHeight,
 			Meta:  models.Transfer{
 				Name:     coin.BNB.Title,
 				Symbol:   coin.BNB.Symbol,

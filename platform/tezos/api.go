@@ -62,7 +62,7 @@ func getTransactions(c *gin.Context) {
 			From:  op.Src.Tz,
 			To:    op.Dest.Tz,
 			Fee:   strconv.FormatUint(op.Fee, 10),
-			Block: int64(op.OpLevel),
+			Block: op.OpLevel,
 			Meta:  models.Transfer{
 				Name:     coin.XTZ.Title,
 				Symbol:   coin.XTZ.Symbol,

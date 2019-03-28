@@ -32,7 +32,7 @@ type Tx struct {
 	Fee   string      `json:"fee"`
 	Date  int64       `json:"date"`
 	Type  string      `json:"type"`
-	Block int64       `json:"block,omitempty"`
+	Block uint64      `json:"block,omitempty"`
 	Meta  interface{} `json:"metadata"`
 }
 

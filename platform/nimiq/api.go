@@ -34,7 +34,7 @@ func getTransactions(c *gin.Context) {
 			From:  srcTx.FromAddress,
 			To:    srcTx.ToAddress,
 			Fee:   strconv.FormatUint(srcTx.Fee, 10),
-			Block: int64(srcTx.BlockNumber),
+			Block: srcTx.BlockNumber,
 			Meta:  models.Transfer{
 				Name:     coin.NIM.Title,
 				Symbol:   coin.NIM.Symbol,
