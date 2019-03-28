@@ -7,6 +7,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/util"
+	"net/http"
 	"os"
 )
 
@@ -44,6 +45,11 @@ func run(cmd *cobra.Command, args []string) {
 	router := gin.Default()
 	router.Use(util.CheckReverseProxy)
 	router.GET("/", getRoot)
+	router.GET("/status", func(c *gin.Context) {
+		c.JSON(http.StatusOK, map[string]interface{}{
+			"status": true,
+		})
+	})
 
 	loadPlatforms(router)
 
