@@ -4,7 +4,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
-	"github.com/stellar/go/clients/horizon"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/models"
 	"github.com/trustwallet/blockatlas/platform/stellar/source"
@@ -52,15 +51,6 @@ func GetTransactions(c *gin.Context, coinIndex uint, client *source.Client) {
 }
 
 func apiError(c *gin.Context, err error) bool {
-	if hErr, ok := err.(*horizon.Error); ok {
-		if hErr.Problem.Type == "https://stellar.org/horizon-errors/bad_request" {
-			c.String(http.StatusBadRequest, "Bad request!")
-			return true
-		} else {
-			c.String(http.StatusBadRequest, hErr.Problem.Type)
-			return true
-		}
-	}
 	if err != nil {
 		logrus.WithError(err).Warning("Stellar API request failed")
 		c.String(http.StatusBadGateway, "Stellar API request failed")
@@ -69,7 +59,7 @@ func apiError(c *gin.Context, err error) bool {
 	return false
 }
 
-func FormatTx(payment *horizon.Payment, nativeCoinIndex uint) (tx models.Tx, ok bool) {
+func FormatTx(payment *source.Payment, nativeCoinIndex uint) (tx models.Tx, ok bool) {
 	if payment.Type != "payment" {
 		return tx, false
 	}

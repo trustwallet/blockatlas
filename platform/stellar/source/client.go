@@ -3,7 +3,6 @@ package source
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/stellar/go/clients/horizon"
 	"net/http"
 	"net/url"
 )
@@ -13,7 +12,7 @@ type Client struct {
 	API        string
 }
 
-func (c *Client) GetTxsOfAddress(address string) (txs []horizon.Payment, err error) {
+func (c *Client) GetTxsOfAddress(address string) (txs []Payment, err error) {
 	path := fmt.Sprintf("%s/accounts/%s/payments",
 		c.API, url.PathEscape(address))
 
@@ -31,11 +30,4 @@ func (c *Client) GetTxsOfAddress(address string) (txs []horizon.Payment, err err
 	}
 
 	return payments.Embedded.Records, nil
-}
-
-// Payments contains page of payments returned by Horizon.
-type PaymentsPage struct {
-	Embedded struct {
-		Records []horizon.Payment
-	} `json:"_embedded"`
 }
