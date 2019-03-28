@@ -27,11 +27,11 @@ func Setup(router gin.IRouter) {
 		c.Next()
 	})
 	router.GET("/:address", func(c *gin.Context) {
-		GetTransactions(c, &coin.XLM, &stellarClient)
+		GetTransactions(c, coin.IndexXLM, &stellarClient)
 	})
 }
 
-func GetTransactions(c *gin.Context, nativeCoin *coin.Coin, client *source.Client) {
+func GetTransactions(c *gin.Context, coinIndex uint, client *source.Client) {
 	payments, err := client.GetTxsOfAddress(c.Param("address"))
 	if apiError(c, err) {
 		return
@@ -39,7 +39,7 @@ func GetTransactions(c *gin.Context, nativeCoin *coin.Coin, client *source.Clien
 
 	txs := make([]models.Tx, 0)
 	for _, payment := range payments {
-		tx, ok := FormatTx(&payment, nativeCoin)
+		tx, ok := FormatTx(&payment, coinIndex)
 		if !ok {
 			continue
 		}
@@ -69,7 +69,7 @@ func apiError(c *gin.Context, err error) bool {
 	return false
 }
 
-func FormatTx(payment *horizon.Payment, nativeCoin *coin.Coin) (tx models.Tx, ok bool) {
+func FormatTx(payment *horizon.Payment, nativeCoinIndex uint) (tx models.Tx, ok bool) {
 	if payment.Type != "payment" {
 		return tx, false
 	}
@@ -91,6 +91,7 @@ func FormatTx(payment *horizon.Payment, nativeCoin *coin.Coin) (tx models.Tx, ok
 	value += "00" // 5 decimal places to 7
 	return models.Tx{
 		Id:    payment.TransactionHash,
+		Coin:  nativeCoinIndex,
 		From:  payment.From,
 		To:    payment.To,
 		// https://www.stellar.org/developers/guides/concepts/fees.html
@@ -99,9 +100,6 @@ func FormatTx(payment *horizon.Payment, nativeCoin *coin.Coin) (tx models.Tx, ok
 		Date:  date.Unix(),
 		Block: id,
 		Meta:  models.Transfer{
-			Name:     nativeCoin.Title,
-			Symbol:   nativeCoin.Symbol,
-			Decimals: 7,
 			Value:    value,
 		},
 	}, true

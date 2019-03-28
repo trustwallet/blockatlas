@@ -56,15 +56,13 @@ func getTransactions(c *gin.Context) {
 
 		txs = append(txs, models.Tx{
 			Id:    tx.Hash,
+			Coin:  coin.IndexBNB,
 			Date:  unix,
 			From:  tx.FromAddr,
 			To:    tx.ToAddr,
 			Fee:   fee,
 			Block: tx.BlockHeight,
 			Meta:  models.Transfer{
-				Name:     coin.BNB.Title,
-				Symbol:   coin.BNB.Symbol,
-				Decimals: coin.BNB.Decimals,
 				Value:    value,
 			},
 		})

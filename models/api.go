@@ -27,6 +27,7 @@ func (r *Response) Sort() {
 
 type Tx struct {
 	Id    string      `json:"id"`
+	Coin  uint        `json:"coin"`
 	From  string      `json:"from"`
 	To    string      `json:"to"`
 	Fee   string      `json:"fee"`
@@ -37,9 +38,6 @@ type Tx struct {
 }
 
 type Transfer struct {
-	Name     string `json:"name"`
-	Symbol   string `json:"symbol"`
-	Decimals uint   `json:"decimals"`
 	Value    string `json:"value"`
 }
 

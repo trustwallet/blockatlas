@@ -30,15 +30,13 @@ func getTransactions(c *gin.Context) {
 	for i, srcTx := range s {
 		txs[i] = models.Tx{
 			Id:    srcTx.Hash,
+			Coin:  coin.IndexNIM,
 			Date:  srcTx.Timestamp,
 			From:  srcTx.FromAddress,
 			To:    srcTx.ToAddress,
 			Fee:   strconv.FormatUint(srcTx.Fee, 10),
 			Block: srcTx.BlockNumber,
 			Meta:  models.Transfer{
-				Name:     coin.NIM.Title,
-				Symbol:   coin.NIM.Symbol,
-				Decimals: coin.NIM.Decimals,
 				Value:    strconv.FormatUint(srcTx.Value, 10),
 			},
 		}

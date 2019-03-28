@@ -53,15 +53,13 @@ func getTransactions(c *gin.Context) {
 
 		txs = append(txs, models.Tx{
 			Id:    srcTx.Hash,
+			Coin:  coin.IndexXRP,
 			Date:  unix,
 			From:  srcTx.Tx.Account,
 			To:    srcTx.Tx.Destination,
 			Fee:   util.DecimalExp(srcTx.Tx.Fee, 6),
 			Block: srcTx.LedgerIndex,
 			Meta:  models.Transfer{
-				Name:     coin.XRP.Title,
-				Symbol:   coin.XRP.Symbol,
-				Decimals: coin.XRP.Decimals,
 				Value:    util.DecimalExp(srcAmount, 6),
 			},
 		})
