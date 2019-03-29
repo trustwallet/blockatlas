@@ -1,6 +1,7 @@
 package observer
 
 import (
+	"bytes"
 	"encoding/json"
 	"github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas/models"
@@ -25,17 +26,13 @@ func (d Dispatcher) NotifyObservers(txs []models.Tx) {
 func (d Dispatcher) notify(ob models.Observer, tx models.Tx) {
 	txJson, jsonErr := json.Marshal(&tx)
 	if jsonErr != nil {
-		logrus.WithError(jsonErr).Errorf("Failed to marshal json: %s", jsonErr)
+		logrus.WithError(jsonErr).Errorf("Failed to convert Tx to JSON: %s", jsonErr)
 		return
 	}
 
-	logrus.Info("POST %s - JSON: %s", ob.Webhook, txJson)
-
-	/*
 	body := bytes.NewBuffer(txJson)
 	_, postError := d.Client.Post(ob.Webhook, "application/json", body)
 	if postError != nil {
 		logrus.WithError(postError).Errorf("Failed to call webhook %s: %s", ob.Webhook, postError)
 	}
-	*/
 }

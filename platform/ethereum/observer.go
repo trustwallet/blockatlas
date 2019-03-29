@@ -47,7 +47,7 @@ func ListenForLatestBlock(dispatcher observer.Dispatcher) {
 
 			var txs []models.Tx
 			for _, blockTx := range block.Transactions() {
-				if msg, err := blockTx.AsMessage(types.NewEIP155Signer(chainID)); err != nil {
+				if msg, err := blockTx.AsMessage(types.NewEIP155Signer(chainID)); err == nil {
 					if msg.To() == nil {
 						continue
 					}
