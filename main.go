@@ -6,6 +6,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"github.com/trustwallet/blockatlas/observer"
 	"github.com/trustwallet/blockatlas/util"
 	"net/http"
 	"os"
@@ -50,6 +51,9 @@ func run(cmd *cobra.Command, args []string) {
 			"status": true,
 		})
 	})
+
+	observerGroup := router.Group("/observers")
+	observer.Setup(observerGroup)
 
 	loadPlatforms(router)
 

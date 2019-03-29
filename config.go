@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+	"github.com/trustwallet/blockatlas/observer/storage"
 	"strings"
 )
 
@@ -48,4 +49,7 @@ func loadDefaults() {
 	viper.SetDefault("stellar.api", "https://horizon.stellar.org")
 	viper.SetDefault("kin.api", "https://horizon.kinfederation.com/")
 	viper.SetDefault("tezos.api", "https://api1.tzscan.io/v3")
+
+	// Storage default
+	viper.SetDefault("storage", storage.MemoryStorageKey)
 }

@@ -9,17 +9,28 @@ type MemoryStorage struct {
 	observerMap map[string]models.Observer
 }
 
+func (m *MemoryStorage) Setup() {
+
+}
+
 func (m *MemoryStorage) Get(coin uint, address string) models.Observer {
 	return m.observerMap[key(coin, address)]
 }
 
-func (m *MemoryStorage) Add(coin uint, address, webhook string) {
+func (m *MemoryStorage) Contains(coin uint, address string) bool {
+	_, ok := m.observerMap[key(coin, address)]
+	return ok
+}
+
+func (m *MemoryStorage) Add(coin uint, address, webhook string) models.Observer {
 	value := models.Observer{
 		Coin: coin,
 		Address: address,
 		Webhook: webhook,
 	}
 	m.init().observerMap[key(coin, address)] = value
+
+	return  value
 }
 
 func (m *MemoryStorage) List() []models.Observer {
