@@ -13,25 +13,30 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 )
 
-var dispatcher observer.Dispatcher
+var dispatcher *observer.Dispatcher
 var queue = make([]*types.Header, 0)
 var minBlockDelay = 3
 
-func Setup(d observer.Dispatcher, delay int) {
+func Setup(d *observer.Dispatcher, delay int) {
 	dispatcher = d
 	minBlockDelay = delay
 }
 
-func ListenForLatestBlock() {
+func ObserveNewBlocks() {
+	if dispatcher == nil {
+		logrus.Error("Please, run Setup function before start listening")
+		return
+	}
+
 	ws := viper.GetString("ethereum.ws")
 	client, err := ethclient.Dial(ws)
-
-	logrus.Infof("ETH: Observing new blocks from %s", ws)
 
 	if err != nil {
 		logrus.WithError(err).Error("Failed to connect to endpoint")
 		return
 	}
+
+	logrus.Infof("ETH: Observing new blocks from %s", ws)
 
 	newHeaders := make(chan *types.Header)
 	sub, err := client.SubscribeNewHead(context.Background(), newHeaders)
@@ -45,12 +50,12 @@ func ListenForLatestBlock() {
 		case err := <- sub.Err():
 			logrus.WithError(err)
 		case header := <-newHeaders:
-			enqueueHeader(context.Background(), client, header)
+			enqueue(client, header)
 		}
 	}
 }
 
-func enqueueHeader(context context.Context, client *ethclient.Client, header *types.Header, ) {
+func enqueue(client *ethclient.Client, header *types.Header, ) {
 	logrus.Debugf("Enqueueing header %s", header.Hash().String())
 
 	queue = append(queue, header)
@@ -58,13 +63,13 @@ func enqueueHeader(context context.Context, client *ethclient.Client, header *ty
 	if len(queue) > minBlockDelay {
 		var h *types.Header
 		h, queue = queue[0], queue[1:] // Pop the first header in queue
-		go processHeader(context, client, h)
+		go process(client, h)
 	}
 }
 
-func processHeader(context context.Context, client *ethclient.Client, header *types.Header) {
+func process(client *ethclient.Client, header *types.Header) {
 	chainID := new(big.Int).SetInt64(viper.GetInt64("ethereum.chainID"))
-	block, err := client.BlockByHash(context, header.Hash())
+	block, err := client.BlockByHash(context.Background(), header.Hash())
 
 	if err != nil {
 		logrus.WithError(err).Error("Failed to get block")
@@ -98,5 +103,5 @@ func processHeader(context context.Context, client *ethclient.Client, header *ty
 		}
 	}
 
-	dispatcher.NotifyObservers(txs)
+	dispatcher.DispatchTransactions(txs)
 }

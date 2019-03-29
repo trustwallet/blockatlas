@@ -13,17 +13,17 @@ type Dispatcher struct {
 	Client *http.Client
 }
 
-func (d Dispatcher) NotifyObservers(txs []models.Tx) {
+func (d Dispatcher) DispatchTransactions(txs []models.Tx) {
 	s := storage.GetInstance()
 	for _, tx := range txs {
 		logrus.Debugf("Tx: %s, From: %s, To: %s", tx.Id, tx.From, tx.To)
 		if s.Contains(tx.Coin, tx.To) {
-			go d.notify(s.Get(tx.Coin, tx.To), tx)
+			go d.dispatch(s.Get(tx.Coin, tx.To), tx)
 		}
 	}
 }
 
-func (d Dispatcher) notify(ob models.Observer, tx models.Tx) {
+func (d Dispatcher) dispatch(ob models.Observer, tx models.Tx) {
 	txJson, jsonErr := json.Marshal(&tx)
 	if jsonErr != nil {
 		logrus.WithError(jsonErr).Errorf("Failed to convert Tx to JSON: %s", jsonErr)

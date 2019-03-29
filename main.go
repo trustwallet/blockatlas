@@ -64,7 +64,7 @@ func run(cmd *cobra.Command, args []string) {
 
 	loadPlatforms(router)
 
-	startBlockListeners()
+	startBlockObservers()
 
 	logrus.WithField("bind", bind).Info("Running application")
 	if err := router.Run(bind); err != nil {

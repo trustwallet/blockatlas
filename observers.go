@@ -6,10 +6,11 @@ import (
 	"net/http"
 )
 
-func startBlockListeners() {
+func startBlockObservers() {
 	dispatcher := observer.Dispatcher{
 		Client: http.DefaultClient,
 	}
-	ethereum.Setup(dispatcher, 3)
-	go ethereum.ListenForLatestBlock()
+
+	ethereum.Setup(&dispatcher, 3)
+	go ethereum.ObserveNewBlocks()
 }
