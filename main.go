@@ -7,7 +7,6 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/observer"
-	"github.com/trustwallet/blockatlas/platform/ethereum"
 	"github.com/trustwallet/blockatlas/util"
 	"net/http"
 	"os"
@@ -64,12 +63,8 @@ func run(cmd *cobra.Command, args []string) {
 	observer.Setup(observerGroup)
 
 	loadPlatforms(router)
-	
-	dispatcher := observer.Dispatcher{
-		Client: http.DefaultClient,
-	}
 
-	go ethereum.ListenForLatestBlock(dispatcher)
+	startBlockListeners()
 
 	logrus.WithField("bind", bind).Info("Running application")
 	if err := router.Run(bind); err != nil {
