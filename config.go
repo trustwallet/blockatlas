@@ -49,7 +49,7 @@ func loadDefaults() {
 	viper.SetDefault("stellar.api", "https://horizon.stellar.org")
 	viper.SetDefault("kin.api", "https://horizon.kinfederation.com/")
 	viper.SetDefault("tezos.api", "https://api1.tzscan.io/v3")
-	viper.SetDefault("ethereum.wss", "wss://ropsten.infura.io/ws")
+	viper.SetDefault("ethereum.ws", "wss://mainnet.infura.io/ws")
 	viper.SetDefault("ethereum.chainID", 1)
 
 	// Storage default

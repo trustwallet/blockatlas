@@ -3,6 +3,7 @@ package storage
 import (
 	"fmt"
 	"github.com/trustwallet/blockatlas/models"
+	"strings"
 )
 
 type MemoryStorage struct {
@@ -53,5 +54,5 @@ func (m *MemoryStorage) init() *MemoryStorage {
 }
 
 func key(coin uint, address string) string {
-	return fmt.Sprintf("%d-%s", coin, address)
+	return fmt.Sprintf("%d-%s", coin, strings.ToUpper(address))
 }

@@ -10,6 +10,12 @@ gin:
 binance:
   api: https://testnet-dex.binance.org/api/v1
 
+# [ETH] Ethereum: https://ethereum.org
+# Websocket: wss://mainnet.infura.io/ws
+ethereum:
+  ws: wss://mainnet.infura.io/ws
+  chainID: 1
+
 # [NIM] Nimiq: https://nimiq.com/
 #nimiq:
 #  api: http://localhost:8648

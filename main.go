@@ -25,6 +25,7 @@ const defaultConfigName = "config.yml"
 
 func main() {
 	app.Flags().StringP("config", "c", defaultConfigName, "Config file (optional)")
+	app.Flags().BoolP("verbose", "v", false, "Verbose")
 
 	if err := app.Execute(); err != nil {
 		fmt.Fprintln(os.Stderr, err)
@@ -42,6 +43,12 @@ func run(cmd *cobra.Command, args []string) {
 
 	confPath, _ := cmd.Flags().GetString("config")
 	loadConfig(confPath)
+
+	if verbose, _ := cmd.Flags().GetBool("verbose"); verbose {
+		logrus.SetLevel(logrus.DebugLevel)
+	} else {
+		logrus.SetLevel(logrus.InfoLevel)
+	}
 
 	gin.SetMode(viper.GetString("gin.mode"))
 	router := gin.Default()
@@ -62,7 +69,7 @@ func run(cmd *cobra.Command, args []string) {
 		Client: http.DefaultClient,
 	}
 
-	go ethereum.StartObserver(dispatcher)
+	go ethereum.ListenForLatestBlock(dispatcher)
 
 	logrus.WithField("bind", bind).Info("Running application")
 	if err := router.Run(bind); err != nil {
