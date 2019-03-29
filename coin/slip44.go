@@ -9,6 +9,7 @@ type Coin struct {
 }
 
 const (
+	IndexETH = 60
 	IndexXRP = 144
 	IndexXLM = 148
 	IndexNIM = 242
@@ -18,6 +19,13 @@ const (
 )
 
 var Coins = map[int]Coin {
+	IndexETH: {
+		Index:    IndexETH,
+		Symbol:   "ETH",
+		Title:    "Ethereum",
+		Website:  "https://ethereum.org",
+		Decimals: 18,
+	},
 	IndexXRP: {
 		Index:    IndexXRP,
 		Symbol:   "XRP",
@@ -69,4 +77,5 @@ var (
 	BNB = Coins[IndexBNB]
 	KIN = Coins[IndexKIN]
 	XTZ = Coins[IndexXTZ]
+	ETH = Coins[IndexETH]
 )
