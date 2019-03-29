@@ -24,8 +24,8 @@ func Setup(d observer.Dispatcher, delay int) {
 
 func ListenForLatestBlock() {
 	ws := viper.GetString("ethereum.ws")
-
 	client, err := ethclient.Dial(ws)
+
 	logrus.Infof("ETH: Observing new blocks from %s", ws)
 
 	if err != nil {
@@ -34,77 +34,69 @@ func ListenForLatestBlock() {
 	}
 
 	newHeaders := make(chan *types.Header)
-	headers := make(chan *types.Header)
-
 	sub, err := client.SubscribeNewHead(context.Background(), newHeaders)
 	if err != nil {
 		logrus.WithError(err).Errorf("Failed to subscribe")
 		return
 	}
 
-	go processHeader(context.Background(), client, headers)
-
 	for {
 		select {
 		case err := <- sub.Err():
 			logrus.WithError(err)
 		case header := <-newHeaders:
-			enqueueHeader(header, headers)
+			enqueueHeader(context.Background(), client, header)
 		}
 	}
 }
 
-func enqueueHeader(header *types.Header, headers chan *types.Header) {
+func enqueueHeader(context context.Context, client *ethclient.Client, header *types.Header, ) {
 	logrus.Debugf("Enqueueing header %s", header.Hash().String())
 
 	queue = append(queue, header)
 
 	if len(queue) > minBlockDelay {
 		var h *types.Header
-		h, queue = queue[0], queue[1:] // Pop the first queue element
-		headers <- h // Signal process header to proceed
+		h, queue = queue[0], queue[1:] // Pop the first header in queue
+		go processHeader(context, client, h)
 	}
 }
 
-func processHeader(context context.Context, client *ethclient.Client, headers chan *types.Header) {
+func processHeader(context context.Context, client *ethclient.Client, header *types.Header) {
 	chainID := new(big.Int).SetInt64(viper.GetInt64("ethereum.chainID"))
+	block, err := client.BlockByHash(context, header.Hash())
 
-	for {
-		header := <- headers
-		block, err := client.BlockByHash(context, header.Hash())
-
-		if err != nil {
-			logrus.WithError(err).Error("Failed to get block")
-			break
-		}
-
-		logrus.Debugf("Processing block %s", block.Hash().String())
-
-		var txs []models.Tx
-		for _, blockTx := range block.Transactions() {
-			if msg, err := blockTx.AsMessage(types.NewEIP155Signer(chainID)); err == nil {
-				if msg.To() == nil {
-					continue
-				}
-
-				tx := models.Tx{
-					Id: blockTx.Hash().String(),
-					Coin: coin.ETH.Index,
-					To: msg.To().Hex(),
-					From: msg.From().Hex(),
-					Fee: blockTx.Cost().String(),
-					Block: block.NumberU64(),
-					Date: block.Time().Int64(),
-					Type: models.TxTransfer,
-					Meta: models.Transfer{
-						Value:blockTx.Value().String(),
-					},
-				}
-
-				txs = append(txs, tx)
-			}
-		}
-
-		dispatcher.NotifyObservers(txs)
+	if err != nil {
+		logrus.WithError(err).Error("Failed to get block")
+		return
 	}
+
+	logrus.Debugf("Processing block %s", block.Hash().String())
+
+	var txs []models.Tx
+	for _, blockTx := range block.Transactions() {
+		if msg, err := blockTx.AsMessage(types.NewEIP155Signer(chainID)); err == nil {
+			if msg.To() == nil {
+				continue
+			}
+
+			tx := models.Tx{
+				Id: blockTx.Hash().String(),
+				Coin: coin.ETH.Index,
+				To: msg.To().Hex(),
+				From: msg.From().Hex(),
+				Fee: blockTx.Cost().String(),
+				Block: block.NumberU64(),
+				Date: block.Time().Int64(),
+				Type: models.TxTransfer,
+				Meta: models.Transfer{
+					Value:blockTx.Value().String(),
+				},
+			}
+
+			txs = append(txs, tx)
+		}
+	}
+
+	dispatcher.NotifyObservers(txs)
 }
