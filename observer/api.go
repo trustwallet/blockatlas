@@ -43,10 +43,11 @@ func removeObserver(c *gin.Context) {
 
 	s := storage.GetInstance()
 	if !s.Contains(r.Coin, r.Address) {
-		c.JSON(404, gin.H{})
+		c.JSON(404, gin.H{"message": "observer not found"})
 		return
 	}
 
+	s.Remove(r.Coin, r.Address)
 	c.JSON(200, gin.H{})
 }
 
