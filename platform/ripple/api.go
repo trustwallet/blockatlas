@@ -57,10 +57,10 @@ func getTransactions(c *gin.Context) {
 			Date:  unix,
 			From:  srcTx.Tx.Account,
 			To:    srcTx.Tx.Destination,
-			Fee:   util.DecimalExp(srcTx.Tx.Fee, 6),
+			Fee:   srcTx.Tx.Fee,
 			Block: srcTx.LedgerIndex,
 			Meta:  models.Transfer{
-				Value:    util.DecimalExp(srcAmount, 6),
+				Value: srcAmount,
 			},
 		})
 	}
