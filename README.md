@@ -58,7 +58,8 @@ ATLAS_NIMIQ_API=http://localhost:8648 \
 blockatlas
 ```
 
-Supported platforms:
- * [Heroku](http://heroku.com)
- * Docker _via Dockerfile_
- * Docker _[via Hub](https://hub.docker.com/r/trustwallet/blockatlas): `trustwallet/blockatlas`_
+#### Supported platforms
+
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://www.heroku.com/deploy/?template=https://github.com/TrustWallet/trust-wallet-backend)
+
+[![Docker](https://img.shields.io/docker/cloud/build/trustwallet/blockatlas.svg?style=for-the-badge)](https://hub.docker.com/r/trustwallet/blockatlas)
