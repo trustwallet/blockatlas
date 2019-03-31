@@ -1,6 +1,9 @@
 package source
 
-import "errors"
+import (
+	"errors"
+	"github.com/trustwallet/blockatlas/models"
+)
 
 type Tx struct {
 	Hash          string `json:"hash"`
@@ -11,8 +14,8 @@ type Tx struct {
 	TxIndex       int    `json:"transactionIndex"`
 	FromAddress   string `json:"fromAddress"`
 	ToAddress     string `json:"toAddress"`
-	Value         uint64 `json:"value"`
-	Fee           uint64 `json:"fee"`
+	Value         models.Amount `json:"value"`
+	Fee           models.Amount `json:"fee"`
 }
 
 var ErrSourceConn  = errors.New("connection to servers failed")

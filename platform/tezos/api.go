@@ -9,7 +9,6 @@ import (
 	"github.com/trustwallet/blockatlas/platform/tezos/source"
 	"github.com/trustwallet/blockatlas/util"
 	"net/http"
-	"strconv"
 	"time"
 )
 
@@ -62,10 +61,10 @@ func getTransactions(c *gin.Context) {
 			Date:  unix,
 			From:  op.Src.Tz,
 			To:    op.Dest.Tz,
-			Fee:   strconv.FormatUint(op.Fee, 10),
+			Fee:   op.Fee,
 			Block: op.OpLevel,
 			Meta:  models.Transfer{
-				Value:    op.Amount,
+				Value: op.Amount,
 			},
 		})
 	}

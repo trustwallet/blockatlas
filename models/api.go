@@ -25,12 +25,14 @@ func (r *Response) Sort() {
 	})
 }
 
+type Amount string
+
 type Tx struct {
 	Id    string      `json:"id"`
 	Coin  uint        `json:"coin"`
 	From  string      `json:"from"`
 	To    string      `json:"to"`
-	Fee   string      `json:"fee"`
+	Fee   Amount      `json:"fee"`
 	Date  int64       `json:"date"`
 	Type  string      `json:"type"`
 	Block uint64      `json:"block,omitempty"`
@@ -38,7 +40,7 @@ type Tx struct {
 }
 
 type Transfer struct {
-	Value    string `json:"value"`
+	Value Amount `json:"value"`
 }
 
 type TokenTransfer struct {
@@ -46,7 +48,7 @@ type TokenTransfer struct {
 	Symbol   string `json:"symbol"`
 	Contract string `json:"contract"`
 	Decimals uint   `json:"decimals"`
-	Value    string `json:"value"`
+	Value    Amount `json:"value"`
 }
 
 type CollectibleTransfer struct {

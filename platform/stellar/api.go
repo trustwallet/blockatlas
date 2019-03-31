@@ -90,7 +90,7 @@ func FormatTx(payment *source.Payment, nativeCoinIndex uint) (tx models.Tx, ok b
 		Date:  date.Unix(),
 		Block: id,
 		Meta:  models.Transfer{
-			Value:    value,
+			Value: models.Amount(value),
 		},
 	}, true
 }

@@ -3,7 +3,12 @@ package models
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/trustwallet/blockatlas/util"
+	"regexp"
+	"strings"
 )
+
+var matchNumber = regexp.MustCompile(`^\d+(\.\d+)?$`)
 
 // Tx, but with default JSON marshalling methods
 type wrappedTx Tx
@@ -59,4 +64,22 @@ func (t *Tx) MarshalJSON() ([]byte, error) {
 
 	// Wrap the Tx type to avoid infinite recursion
 	return json.Marshal(wrappedTx(*t))
+}
+
+func (a *Amount) UnmarshalJSON(data []byte) error {
+	var n json.Number
+	json.Unmarshal(data, &n)
+	str := string(n)
+	if !matchNumber.MatchString(str) {
+		return fmt.Errorf("not a regular decimal number")
+	}
+	if strings.ContainsRune(str, '.') {
+		str, _ = util.DecimalToSatoshis(str)
+	}
+	*a = Amount(str)
+	return nil
+}
+
+func (a *Amount) MarshalJSON() ([]byte, error) {
+	return json.Marshal(string(*a))
 }

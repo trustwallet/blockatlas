@@ -38,16 +38,6 @@ func getTransactions(c *gin.Context) {
 		}
 
 		var err error
-		var fee, value string
-		fee, err = util.DecimalToSatoshis(tx.Fee)
-		if err != nil {
-			c.AbortWithError(http.StatusServiceUnavailable, err)
-		}
-		value, err = util.DecimalToSatoshis(tx.Value)
-		if err != nil {
-			c.AbortWithError(http.StatusServiceUnavailable, err)
-		}
-
 		date, err := time.Parse("2006-01-02T15:04:05.999Z", tx.Timestamp)
 		unix := date.Unix()
 		if err != nil {
@@ -60,10 +50,10 @@ func getTransactions(c *gin.Context) {
 			Date:  unix,
 			From:  tx.FromAddr,
 			To:    tx.ToAddr,
-			Fee:   fee,
+			Fee:   tx.Fee,
 			Block: tx.BlockHeight,
 			Meta:  models.Transfer{
-				Value:    value,
+				Value: tx.Value,
 			},
 		})
 	}

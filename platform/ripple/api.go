@@ -60,7 +60,7 @@ func getTransactions(c *gin.Context) {
 			Fee:   srcTx.Tx.Fee,
 			Block: srcTx.LedgerIndex,
 			Meta:  models.Transfer{
-				Value: srcAmount,
+				Value: models.Amount(srcAmount),
 			},
 		})
 	}

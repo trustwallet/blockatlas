@@ -3,6 +3,7 @@ package source
 import (
 	"errors"
 	"fmt"
+	"github.com/trustwallet/blockatlas/models"
 )
 
 type Account struct {
@@ -36,9 +37,9 @@ type Tx struct {
 	ToAddr        string `json:"toAddr"`
 	Age           int64  `json:"txAge"`
 	Asset         string `json:"txAsset"`
-	Fee           string `json:"txFee"`
+	Fee           models.Amount `json:"txFee"`
 	Hash          string `json:"txHash"`
-	Value         string `json:"value"`
+	Value         models.Amount `json:"value"`
 }
 
 type TxPage struct {

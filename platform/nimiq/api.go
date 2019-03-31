@@ -9,7 +9,6 @@ import (
 	"github.com/trustwallet/blockatlas/platform/nimiq/source"
 	"github.com/trustwallet/blockatlas/util"
 	"net/http"
-	"strconv"
 )
 
 var client *source.Client
@@ -34,10 +33,10 @@ func getTransactions(c *gin.Context) {
 			Date:  srcTx.Timestamp,
 			From:  srcTx.FromAddress,
 			To:    srcTx.ToAddress,
-			Fee:   strconv.FormatUint(srcTx.Fee, 10),
+			Fee:   srcTx.Fee,
 			Block: srcTx.BlockNumber,
 			Meta:  models.Transfer{
-				Value:    strconv.FormatUint(srcTx.Value, 10),
+				Value: srcTx.Value,
 			},
 		}
 	}

@@ -3,10 +3,11 @@ package source
 import (
 	"encoding/json"
 	"errors"
+	"github.com/trustwallet/blockatlas/models"
 )
 
 type Amount struct {
-	Value    string `json:"string"`
+	Value    models.Amount `json:"string"`
 	Currency string `json:"string"`
 	Issuer   string `json:"string"`
 }
@@ -31,7 +32,7 @@ type PaymentTx struct {
 	Flags           uint64 `json:"Flags"`
 	Sequence        uint64 `json:"Sequence"`
 	Amount          json.RawMessage `json:"Amount"`
-	Fee             string `json:"Fee"`
+	Fee             models.Amount `json:"Fee"`
 	SigningPubKey   string `json:"SigningPubKey"`
 	TxnSignature    string `json:"TxnSignature"`
 	Account         string `json:"Account"`

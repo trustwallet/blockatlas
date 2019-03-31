@@ -1,6 +1,9 @@
 package source
 
-import "errors"
+import (
+	"errors"
+	"github.com/trustwallet/blockatlas/models"
+)
 
 type Transaction struct {
 	Hash        string  `json:"hash"`
@@ -16,23 +19,23 @@ type Manager struct {
 }
 
 type Operation struct {
-	Kind         string  `json:"kind"`
-	Src          Address `json:"src"`
-	Dest         Address `json:"destination"`
-	Amount       string  `json:"amount"`
-	Failed       bool    `json:"failed"`
-	Internal     bool    `json:"internal"`
-	Burn         int     `json:"burn"`
-	Counter      int     `json:"counter"`
-	Fee          uint64  `json:"fee"`
-	GasLimit     string  `json:"gas_limit"`
-	StorageLimit string  `json:"storage_limit"`
-	OpLevel      uint64  `json:"op_level"`
-	Timestamp    string  `json:"timestamp"`
+	Kind         string        `json:"kind"`
+	Src          Address       `json:"src"`
+	Dest         Address       `json:"destination"`
+	Amount       models.Amount `json:"amount"`
+	Failed       bool          `json:"failed"`
+	Internal     bool          `json:"internal"`
+	Burn         int           `json:"burn"`
+	Counter      int           `json:"counter"`
+	Fee          models.Amount `json:"fee"`
+	GasLimit     string        `json:"gas_limit"`
+	StorageLimit string        `json:"storage_limit"`
+	OpLevel      uint64        `json:"op_level"`
+	Timestamp    string        `json:"timestamp"`
 }
 
 type Address struct {
 	Tz string `json:"tz"`
 }
 
-var ErrSourceConn  = errors.New("connection to servers failed")
+var ErrSourceConn = errors.New("connection to servers failed")
