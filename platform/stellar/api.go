@@ -60,7 +60,7 @@ func apiError(c *gin.Context, err error) bool {
 }
 
 func FormatTx(payment *source.Payment, nativeCoinIndex uint) (tx models.Tx, ok bool) {
-	if payment.Type != "payment" {
+	if payment.Type != "payment" && payment.Type != "create_account" {
 		return tx, false
 	}
 	if payment.AssetType != "native" {
@@ -74,7 +74,18 @@ func FormatTx(payment *source.Payment, nativeCoinIndex uint) (tx models.Tx, ok b
 	if err != nil {
 		return tx, false
 	}
-	value, err := util.DecimalToSatoshis(payment.Amount)
+	var value, from, to string
+	if payment.Amount != "" {
+		value, err = util.DecimalToSatoshis(payment.Amount)
+		from = payment.From
+		to = payment.To
+	} else if payment.StartingBalance != "" {
+		value, err = util.DecimalToSatoshis(payment.StartingBalance)
+		from = payment.Funder
+		to = payment.Account
+	} else {
+		return tx, false
+	}
 	if err != nil {
 		return tx, false
 	}
@@ -82,8 +93,8 @@ func FormatTx(payment *source.Payment, nativeCoinIndex uint) (tx models.Tx, ok b
 	return models.Tx{
 		Id:    payment.TransactionHash,
 		Coin:  nativeCoinIndex,
-		From:  payment.From,
-		To:    payment.To,
+		From:  from,
+		To:    to,
 		// https://www.stellar.org/developers/guides/concepts/fees.html
 		// Fee fixed at 100 stroops
 		Fee:   "100",
