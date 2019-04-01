@@ -23,6 +23,7 @@ ethereum:
 # [XRP] Ripple: https://ripple.com/
 ripple:
   api: https://data.ripple.com/v2
+  ws: wss://s2.ripple.com:443
 
 # [XLM] Stellar Lumen: https://www.stellar.org
 stellar:

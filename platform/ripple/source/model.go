@@ -26,16 +26,26 @@ type Transaction struct {
 	Tx          PaymentTx `json:"tx"`
 }
 
-type PaymentTx struct {
-	TransactionType string `json:"string"`
-	Flags           uint64 `json:"Flags"`
-	Sequence        uint64 `json:"Sequence"`
-	Amount          json.RawMessage `json:"Amount"`
-	Fee             string `json:"Fee"`
-	SigningPubKey   string `json:"SigningPubKey"`
-	TxnSignature    string `json:"TxnSignature"`
-	Account         string `json:"Account"`
-	Destination     string `json:"Destination"`
+type Ledger struct {
+	Accepted       bool        `json:"accepted"`
+	CloseTimeHuman string      `json:"close_time_human"`
+	Closed         bool        `json:"closed"`
+	Hash           string      `json:"ledger_hash"`
+	Index          string      `json:"ledger_index"`
+	Transactions   []PaymentTx `json:"transactions"`
 }
 
-var ErrSourceConn  = errors.New("connection to servers failed")
+type PaymentTx struct {
+	TransactionType string          `json:"TransactionType"`
+	Hash            string          `json:"hash"`
+	Flags           uint64          `json:"Flags"`
+	Sequence        uint64          `json:"Sequence"`
+	Amount          json.RawMessage `json:"Amount"`
+	Fee             string          `json:"Fee"`
+	SigningPubKey   string          `json:"SigningPubKey"`
+	TxnSignature    string          `json:"TxnSignature"`
+	Account         string          `json:"Account"`
+	Destination     string          `json:"Destination"`
+}
+
+var ErrSourceConn = errors.New("connection to servers failed")

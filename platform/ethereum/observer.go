@@ -17,14 +17,14 @@ var dispatcher *observer.Dispatcher
 var queue = make([]*types.Header, 0)
 var minBlockDelay = 3
 
-func Setup(d *observer.Dispatcher, delay int) {
+func SetupObserver(d *observer.Dispatcher, delay int) {
 	dispatcher = d
 	minBlockDelay = delay
 }
 
 func ObserveNewBlocks() {
 	if dispatcher == nil {
-		logrus.Error("Please, run Setup function before start listening")
+		logrus.Error("Please, run SetupObserver function before start listening")
 		return
 	}
 
@@ -49,7 +49,7 @@ func ObserveNewBlocks() {
 		select {
 		case err := <- sub.Err():
 			logrus.WithError(err)
-		case header := <-newHeaders:
+		case header := <- newHeaders:
 			enqueue(client, header)
 		}
 	}

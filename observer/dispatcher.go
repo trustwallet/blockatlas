@@ -16,7 +16,7 @@ type Dispatcher struct {
 func (d Dispatcher) DispatchTransactions(txs []models.Tx) {
 	s := storage.GetInstance()
 	for _, tx := range txs {
-		logrus.Debugf("Tx: %s, From: %s, To: %s", tx.Id, tx.From, tx.To)
+		logrus.Debugf("Coin: %d, Tx: %s, From: %s, To: %s", tx.Coin, tx.Id, tx.From, tx.To)
 		if s.Contains(tx.Coin, tx.To) {
 			go d.dispatch(s.Get(tx.Coin, tx.To), tx)
 		}
