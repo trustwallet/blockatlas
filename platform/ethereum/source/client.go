@@ -2,6 +2,7 @@ package source
 
 import (
 	"fmt"
+	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ybbus/jsonrpc"
 )
 
@@ -17,8 +18,18 @@ func NewClient(rpcUrl string) *Client {
 	}
 }
 
-func (c *Client) GetLatestBlock() (*Block, error) {
-	return c.GetBlockByNumber("latest")
+func (c *Client) BlockNumber() (uint64, error) {
+	res, err := c.RpcClient.Call("eth_blockNumber")
+	if err != nil {
+		return 0, err
+	}
+
+	var number hexutil.Uint64
+	if err := res.GetObject(&number); err != nil {
+		return 0, err
+	}
+
+	return uint64(number), nil
 }
 
 func (c *Client) GetBlockByNumber(num interface{}) (*Block, error) {

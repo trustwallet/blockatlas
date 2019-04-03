@@ -1,7 +1,7 @@
 package source
 
 import (
-	"github.com/trustwallet/blockatlas/hexutil"
+	"github.com/ethereum/go-ethereum/common/hexutil"
 )
 
 type Block struct {
