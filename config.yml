@@ -13,8 +13,7 @@ binance:
 # [ETH] Ethereum: https://ethereum.org
 # Websocket: wss://mainnet.infura.io/ws
 ethereum:
-  ws: wss://mainnet.infura.io/ws
-  chainID: 1
+  api: https://mainnet.infura.io/llyrtzQ3YhkdESt2Fzr
 
 # [NIM] Nimiq: https://nimiq.com/
 #nimiq:
