@@ -33,38 +33,33 @@ func ObserveNewBlocks() {
 
 	var currentBlockNumber uint64
 
-	for {
-		blockNumber, err := client.BlockNumber()
-		if err != nil {
-			logrus.WithError(err).Error("Failed to get latest block")
-			sleep()
-			continue
-		}
-
-		if blockNumber == 0 || blockNumber <= currentBlockNumber {
-			sleep()
-			continue
-		}
-		// Initialize current block number
+	observeLoop(func(blockNumber uint64) {
 		if currentBlockNumber == 0 {
 			currentBlockNumber = blockNumber
+			go dispatchBlock(currentBlockNumber)
+			return
 		}
-		// Process all blocks from current to the latest block numbers
+
 		if blockNumber > currentBlockNumber {
-			var n uint64; n = 1
-			for ; n < blockNumber - currentBlockNumber; n++ {
+			var n, diff uint64; n = 1; diff = blockNumber - currentBlockNumber
+			for ; n <= diff; n++ {
 				go dispatchBlock(currentBlockNumber + n)
 			}
 			currentBlockNumber = blockNumber
 		}
-
-		go dispatchBlock(currentBlockNumber)
-		sleep()
-	}
+	})
 }
 
-func sleep() {
-	time.Sleep(interval * time.Second)
+func observeLoop(f func(uint64)) {
+	for {
+		if blockNumber, err := client.BlockNumber(); err == nil && blockNumber > 0 {
+			f(blockNumber)
+		} else {
+			logrus.WithError(err).Error("Failed to get latest block")
+		}
+
+		time.Sleep(interval * time.Second)
+	}
 }
 
 func dispatchBlock(blockNumber uint64) {
