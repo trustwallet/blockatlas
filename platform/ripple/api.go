@@ -2,6 +2,7 @@ package ripple
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/gorilla/websocket"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/coin"
@@ -15,6 +16,7 @@ import (
 
 var client = source.Client{
 	HttpClient: http.DefaultClient,
+	Dialer: websocket.DefaultDialer,
 }
 
 func Setup(router gin.IRouter) {

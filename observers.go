@@ -1,10 +1,12 @@
 package main
 
 import (
+	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/observer"
 	"github.com/trustwallet/blockatlas/platform/ethereum"
 	"github.com/trustwallet/blockatlas/platform/ripple"
 	"net/http"
+	"time"
 )
 
 func startBlockObservers() {
@@ -12,7 +14,7 @@ func startBlockObservers() {
 		Client: http.DefaultClient,
 	}
 
-	ethereum.SetupObserver(&dispatcher, 3)
+	ethereum.SetupObserver(&dispatcher, time.Duration(viper.GetInt("ethereum.interval")))
 	go ethereum.ObserveNewBlocks()
 
 	ripple.SetupObserver(&dispatcher)

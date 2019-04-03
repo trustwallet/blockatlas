@@ -1,25 +1,25 @@
 package ethereum
 
 import (
-	"context"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/models"
 	"github.com/trustwallet/blockatlas/observer"
-	"math/big"
-
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/ethclient"
+	"github.com/trustwallet/blockatlas/platform/ethereum/source"
+	"github.com/trustwallet/blockatlas/util"
+	"strconv"
+	"time"
 )
 
 var dispatcher *observer.Dispatcher
-var queue = make([]*types.Header, 0)
-var minBlockDelay = 3
+var interval time.Duration
+var client *source.Client
 
-func SetupObserver(d *observer.Dispatcher, delay int) {
+func SetupObserver(d *observer.Dispatcher, sleepInterval time.Duration) {
 	dispatcher = d
-	minBlockDelay = delay
+	interval = sleepInterval
+	client = source.NewClient(viper.GetString("ethereum.api"))
 }
 
 func ObserveNewBlocks() {
@@ -28,80 +28,82 @@ func ObserveNewBlocks() {
 		return
 	}
 
-	ws := viper.GetString("ethereum.ws")
-	client, err := ethclient.Dial(ws)
+	ethApi := viper.GetString("ethereum.api")
+	logrus.Infof("ETH: Observing new blocks from %s each %d seconds", ethApi, interval)
 
-	if err != nil {
-		logrus.WithError(err).Error("Failed to connect to endpoint")
-		return
-	}
+	bChan := make(chan uint64)
+	go dispatchBlocks(bChan)
 
-	logrus.Infof("ETH: Observing new blocks from %s", ws)
-
-	newHeaders := make(chan *types.Header)
-	sub, err := client.SubscribeNewHead(context.Background(), newHeaders)
-	if err != nil {
-		logrus.WithError(err).Errorf("Failed to subscribe")
-		return
-	}
+	var currentBlockNumber uint64
 
 	for {
+		block, err := client.GetLatestBlock()
+		if err != nil {
+			logrus.WithError(err).Error("Failed to get latest block")
+			sleep()
+			continue
+		}
+
+		blockNumber := uint64(block.Number)
+		if blockNumber == 0 || blockNumber <= currentBlockNumber {
+			sleep()
+			continue
+		}
+		// Initialize current block number
+		if currentBlockNumber == 0 {
+			currentBlockNumber = blockNumber
+		}
+		// Process all blocks from current to the latest block numbers
+		if blockNumber > currentBlockNumber {
+			var n uint64; n = 1
+			for ; n < blockNumber - currentBlockNumber; n++ {
+				bChan <- currentBlockNumber + n
+			}
+			currentBlockNumber = blockNumber
+		}
+
+		bChan <- currentBlockNumber
+		sleep()
+	}
+}
+
+func sleep() {
+	time.Sleep(interval * time.Second)
+}
+
+func dispatchBlocks(bChan chan uint64) {
+	MessageLoop:
+	for {
 		select {
-		case err := <- sub.Err():
-			logrus.WithError(err)
-		case header := <- newHeaders:
-			enqueue(client, header)
-		}
-	}
-}
-
-func enqueue(client *ethclient.Client, header *types.Header, ) {
-	logrus.Debugf("Enqueueing header %s", header.Hash().String())
-
-	queue = append(queue, header)
-
-	if len(queue) > minBlockDelay {
-		var h *types.Header
-		h, queue = queue[0], queue[1:] // Pop the first header in queue
-		go process(client, h)
-	}
-}
-
-func process(client *ethclient.Client, header *types.Header) {
-	chainID := new(big.Int).SetInt64(viper.GetInt64("ethereum.chainID"))
-	block, err := client.BlockByHash(context.Background(), header.Hash())
-
-	if err != nil {
-		logrus.WithError(err).Error("Failed to get block")
-		return
-	}
-
-	logrus.Debugf("Processing block %s", block.Hash().String())
-
-	var txs []models.Tx
-	for _, blockTx := range block.Transactions() {
-		if msg, err := blockTx.AsMessage(types.NewEIP155Signer(chainID)); err == nil {
-			if msg.To() == nil {
-				continue
+		case blockNumber := <- bChan:
+			block, err := client.GetBlockByNumber(blockNumber)
+			if err != nil {
+				logrus.WithError(err).Errorf("Failed to fetch block n %d", blockNumber)
+				continue MessageLoop
 			}
 
-			tx := models.Tx{
-				Id: blockTx.Hash().String(),
-				Coin: coin.ETH.Index,
-				To: msg.To().Hex(),
-				From: msg.From().Hex(),
-				Fee: blockTx.Cost().String(),
-				Block: block.NumberU64(),
-				Date: block.Time().Int64(),
-				Type: models.TxTransfer,
-				Meta: models.Transfer{
-					Value:blockTx.Value().String(),
-				},
+			txs := make([]models.Tx, 0)
+			for _, srcTx := range block.Transactions {
+				if len(srcTx.To) == 0 {
+					continue
+				}
+
+				txs = append(txs, models.Tx{
+					Coin: coin.IndexETH,
+					Type: models.TxTransfer,
+					Id: srcTx.Hash,
+					From: srcTx.From,
+					To: srcTx.To,
+					Date: int64(block.Timestamp),
+					Block: uint64(block.Number),
+					Fee: strconv.FormatUint(uint64(srcTx.Gas * srcTx.GasPrice), 10),
+					Meta: models.Transfer{
+						Value: util.DecimalExp(srcTx.Value.ToInt().String(), int(coin.ETH.Decimals)),
+					},
+				})
 			}
 
-			txs = append(txs, tx)
+			dispatcher.DispatchTransactions(txs)
 		}
 	}
-
-	dispatcher.DispatchTransactions(txs)
 }
