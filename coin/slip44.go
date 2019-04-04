@@ -51,7 +51,7 @@ var Coins = map[int]Coin {
 		Symbol:   "KIN",
 		Title:    "Kin",
 		Website:  "https://www.kin.org",
-		Decimals: 18,
+		Decimals: 5,
 	},
 	IndexXTZ: {
 		Index:    IndexXTZ,

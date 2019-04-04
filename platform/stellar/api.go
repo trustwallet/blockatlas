@@ -89,7 +89,6 @@ func FormatTx(payment *source.Payment, nativeCoinIndex uint) (tx models.Tx, ok b
 	if err != nil {
 		return tx, false
 	}
-	value += "00" // 5 decimal places to 7
 	return models.Tx{
 		Id:    payment.TransactionHash,
 		Coin:  nativeCoinIndex,
