@@ -76,6 +76,6 @@ var (
 	XLM = Coins[IndexXLM]
 	NIM = Coins[IndexNIM]
 	BNB = Coins[IndexBNB]
-	XTZ = Coins[IndexXTZ]
 	KIN = Coins[IndexKIN]
+	XTZ = Coins[IndexXTZ]
 )
