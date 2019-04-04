@@ -13,6 +13,12 @@ const (
 	TxContractCall        = "contract_call"
 )
 
+const (
+	StatusCompleted = "completed"
+	StatusPending   = "pending"
+	StatusFailed    = "failed"
+)
+
 const TxPerPage = 25
 
 type Response []Tx
@@ -28,15 +34,17 @@ func (r *Response) Sort() {
 type Amount string
 
 type Tx struct {
-	Id    string      `json:"id"`
-	Coin  uint        `json:"coin"`
-	From  string      `json:"from"`
-	To    string      `json:"to"`
-	Fee   Amount      `json:"fee"`
-	Date  int64       `json:"date"`
-	Type  string      `json:"type"`
-	Block uint64      `json:"block,omitempty"`
-	Meta  interface{} `json:"metadata"`
+	Id     string      `json:"id"`
+	Coin   uint        `json:"coin"`
+	From   string      `json:"from"`
+	To     string      `json:"to"`
+	Fee    Amount      `json:"fee"`
+	Date   int64       `json:"date"`
+	Type   string      `json:"type"`
+	Block  uint64      `json:"block,omitempty"`
+	Status string      `json:"status"`
+	Error  string      `json:"error,omitempty"`
+	Meta   interface{} `json:"metadata"`
 }
 
 type Transfer struct {
@@ -62,6 +70,5 @@ type TokenSwap struct {
 	Output TokenTransfer `json:"output"`
 }
 
-type ContractCall struct {
-	// TODO
-}
+// Free-form
+type ContractCall interface{}

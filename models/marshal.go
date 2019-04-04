@@ -62,6 +62,11 @@ func (t *Tx) MarshalJSON() ([]byte, error) {
 		return nil, fmt.Errorf("unsupported tx metadata")
 	}
 
+	// Set status to completed by default
+	if t.Status == "" {
+		t.Status = StatusCompleted
+	}
+
 	// Wrap the Tx type to avoid infinite recursion
 	return json.Marshal(wrappedTx(*t))
 }
