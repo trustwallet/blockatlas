@@ -42,22 +42,32 @@ func sendResult(c *gin.Context, page *source.Page, err error) {
 
 	var txs []models.Tx
 	for _, srcTx := range page.Docs {
+		baseTx := models.Tx{
+			Id:    srcTx.Id,
+			Coin:  srcTx.Coin, // SLIP-0044
+			From:  srcTx.From,
+			To:    srcTx.To,
+			Fee:   models.Amount(srcTx.Gas),
+			Date:  srcTx.TimeStamp,
+			Block: srcTx.BlockNumber,
+		}
+
+		// Native ETH transaction
+		if srcTx.Value != "0" {
+			transferTx := baseTx
+			transferTx.Meta = models.Transfer{
+				Value: models.Amount(srcTx.Value),
+			}
+		}
+
+		// Contract operations
 		if len(srcTx.Ops) < 1 {
 			continue
 		}
 		op := &srcTx.Ops[0]
+
 		switch op.Type {
 		case "token_transfer":
-			baseTx := models.Tx{
-				Id:    op.TxId,
-				Coin:  op.Coin, // SLIP-0044
-				From:  op.From,
-				To:    op.To,
-				Fee:   models.Amount(srcTx.Gas),
-				Date:  srcTx.TimeStamp,
-				Block: srcTx.BlockNumber,
-			}
-
 			tokenTx    := baseTx
 			contractTx := baseTx
 
