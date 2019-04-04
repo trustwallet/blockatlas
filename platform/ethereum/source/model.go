@@ -11,7 +11,7 @@ type Doc struct {
 	Ops         []Op      `json:"operations"`
 	Contract    *Contract `json:"contract"`
 	Id          string    `json:"id"`
-	BlockNumber int       `json:"blockNumber"`
+	BlockNumber uint64    `json:"blockNumber"`
 	TimeStamp   int64     `json:"timeStamp"`
 	Nonce       uint64    `json:"nonce"`
 	From        string    `json:"from"`
