@@ -71,8 +71,17 @@ func sendResult(c *gin.Context, srcPage *source.Page, err error) {
 			txs = append(txs, transferTx)
 		}
 
-		// Contract operations
-		if len(srcTx.Ops) < 1 {
+		// Contract call
+		if srcTx.Input != "" && srcTx.Input != "0x" {
+			contractTx := baseTx
+			contractTx.Meta = models.ContractCall(ethContractMeta{
+				Input:    srcTx.Input,
+			})
+			txs = append(txs, contractTx)
+		}
+
+		// Common operations
+		if status != models.StatusCompleted || len(srcTx.Ops) < 1 {
 			continue
 		}
 		op := &srcTx.Ops[0]
@@ -88,14 +97,6 @@ func sendResult(c *gin.Context, srcPage *source.Page, err error) {
 				Value:    models.Amount(op.Value),
 			}
 			txs = append(txs, tokenTx)
-			fallthrough
-		case "contract_call":
-			contractTx := baseTx
-			contractTx.Meta = models.ContractCall(ethContractMeta{
-				Contract: op.Contract.Address,
-				Input:    srcTx.Input,
-			})
-			txs = append(txs, contractTx)
 		}
 	}
 	page := models.Response(txs)
@@ -112,8 +113,8 @@ func apiError(c *gin.Context, err error) bool {
 	return false
 }
 
-// TODO @vikmeup, let's refactor this to models.ContractCall?
+// TODO @vikmeup discussion needed
 type ethContractMeta struct {
-	Contract string `json:"contract"`
+	//Contract string `json:"contract"`
 	Input    string `json:"input"`
 }
