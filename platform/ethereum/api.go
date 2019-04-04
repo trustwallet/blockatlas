@@ -79,8 +79,6 @@ func sendResult(c *gin.Context, page *source.Page, err error) {
 		switch op.Type {
 		case "token_transfer":
 			tokenTx    := baseTx
-			contractTx := baseTx
-
 			tokenTx.Meta = models.TokenTransfer{
 				Name:     op.Contract.Name,
 				Symbol:   op.Contract.Symbol,
@@ -88,13 +86,15 @@ func sendResult(c *gin.Context, page *source.Page, err error) {
 				Decimals: op.Contract.Decimals,
 				Value:    models.Amount(op.Value),
 			}
-
+			txs = append(txs, tokenTx)
+			fallthrough
+		case "contract_call":
+			contractTx := baseTx
 			contractTx.Meta = models.ContractCall(ethContractMeta{
 				Contract: op.Contract.Address,
 				Input:    srcTx.Input,
 			})
-
-			txs = append(txs, tokenTx, contractTx)
+			txs = append(txs, contractTx)
 		}
 	}
 }
