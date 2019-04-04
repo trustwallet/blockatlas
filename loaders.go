@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/platform/binance"
+	"github.com/trustwallet/blockatlas/platform/ethereum"
 	"github.com/trustwallet/blockatlas/platform/kin"
 	"github.com/trustwallet/blockatlas/platform/nimiq"
 	"github.com/trustwallet/blockatlas/platform/ripple"
@@ -13,12 +14,13 @@ import (
 )
 
 var loaders = map[string]func(gin.IRouter){
-	"binance": binance.Setup,
-	"nimiq":   nimiq.Setup,
-	"ripple":  ripple.Setup,
-	"stellar": stellar.Setup,
-	"kin":     kin.Setup,
-	"tezos":   tezos.Setup,
+	"binance":  binance.Setup,
+	"nimiq":    nimiq.Setup,
+	"ripple":   ripple.Setup,
+	"stellar":  stellar.Setup,
+	"kin":      kin.Setup,
+	"tezos":    tezos.Setup,
+	"ethereum": ethereum.Setup,
 }
 
 func loadPlatforms(router gin.IRouter) {

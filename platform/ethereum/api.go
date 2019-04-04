@@ -35,13 +35,13 @@ func getTransactionsOfContract(c *gin.Context) {
 	sendResult(c, page, err)
 }
 
-func sendResult(c *gin.Context, page *source.Page, err error) {
+func sendResult(c *gin.Context, srcPage *source.Page, err error) {
 	if apiError(c, err) {
 		return
 	}
 
 	var txs []models.Tx
-	for _, srcTx := range page.Docs {
+	for _, srcTx := range srcPage.Docs {
 		var status, errReason string
 		if srcTx.Error == "" {
 			status = models.StatusCompleted
@@ -97,6 +97,9 @@ func sendResult(c *gin.Context, page *source.Page, err error) {
 			txs = append(txs, contractTx)
 		}
 	}
+	page := models.Response(txs)
+	page.Sort()
+	c.JSON(http.StatusOK, &page)
 }
 
 func apiError(c *gin.Context, err error) bool {
