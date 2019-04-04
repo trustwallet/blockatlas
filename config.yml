@@ -6,15 +6,15 @@ gin:
   # If set, HTTP Forwarded headers will be respected
   reverse_proxy: false
 
-# [BNB] Binance DEX: https://binance.org/
+# [BNB] Binance DEX: https://binance.org
 binance:
   api: https://testnet-dex.binance.org/api/v1
 
-# [NIM] Nimiq: https://nimiq.com/
+# [NIM] Nimiq: https://nimiq.com
 #nimiq:
 #  api: http://localhost:8648
 
-# [XRP] Ripple: https://ripple.com/
+# [XRP] Ripple: https://ripple.com
 ripple:
   api: https://data.ripple.com/v2
 

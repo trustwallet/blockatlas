@@ -1,7 +1,7 @@
 package coin
 
 type Coin struct {
-	Index    int    `json:"id"`
+	Index    uint   `json:"id"`
 	Symbol   string `json:"symbol"`
 	Title    string `json:"title"`
 	Website  string `json:"website"`
@@ -17,7 +17,7 @@ const (
 	IndexKIN = 2017
 )
 
-var Coins = map[int]Coin {
+var Coins = map[uint]Coin {
 	IndexXRP: {
 		Index:    IndexXRP,
 		Symbol:   "XRP",
