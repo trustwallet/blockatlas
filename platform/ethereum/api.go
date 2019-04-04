@@ -42,14 +42,24 @@ func sendResult(c *gin.Context, page *source.Page, err error) {
 
 	var txs []models.Tx
 	for _, srcTx := range page.Docs {
+		var status, errReason string
+		if srcTx.Error == "" {
+			status = models.StatusCompleted
+		} else {
+			status = models.StatusFailed
+			errReason = srcTx.Error
+		}
+
 		baseTx := models.Tx{
-			Id:    srcTx.Id,
-			Coin:  srcTx.Coin, // SLIP-0044
-			From:  srcTx.From,
-			To:    srcTx.To,
-			Fee:   models.Amount(srcTx.Gas),
-			Date:  srcTx.TimeStamp,
-			Block: srcTx.BlockNumber,
+			Id:     srcTx.Id,
+			Coin:   srcTx.Coin, // SLIP-0044
+			From:   srcTx.From,
+			To:     srcTx.To,
+			Fee:    models.Amount(srcTx.Gas),
+			Date:   srcTx.TimeStamp,
+			Block:  srcTx.BlockNumber,
+			Status: status,
+			Error:  errReason,
 		}
 
 		// Native ETH transaction
