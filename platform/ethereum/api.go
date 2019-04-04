@@ -68,6 +68,7 @@ func sendResult(c *gin.Context, srcPage *source.Page, err error) {
 			transferTx.Meta = models.Transfer{
 				Value: models.Amount(srcTx.Value),
 			}
+			txs = append(txs, transferTx)
 		}
 
 		// Contract operations
