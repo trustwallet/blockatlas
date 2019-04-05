@@ -12,7 +12,7 @@ type Doc struct {
 	Contract    *Contract `json:"contract"`
 	Id          string    `json:"id"`
 	BlockNumber uint64    `json:"blockNumber"`
-	TimeStamp   int64     `json:"timeStamp"`
+	TimeStamp   string    `json:"timeStamp"`
 	Nonce       uint64    `json:"nonce"`
 	From        string    `json:"from"`
 	To          string    `json:"to"`
