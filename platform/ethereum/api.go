@@ -89,9 +89,9 @@ func ExtractTxs(in []models.Tx, srcTx *source.Doc) (out []models.Tx) {
 	// Contract call
 	if srcTx.Input != "" && srcTx.Input != "0x" {
 		contractTx := baseTx
-		contractTx.Meta = models.ContractCall(ethContractMeta{
+		contractTx.Meta = models.ContractCall{
 			Input:    srcTx.Input,
-		})
+		}
 		out = append(out, contractTx)
 	}
 
@@ -104,6 +104,7 @@ func ExtractTxs(in []models.Tx, srcTx *source.Doc) (out []models.Tx) {
 	switch op.Type {
 	case "token_transfer":
 		tokenTx    := baseTx
+		tokenTx.To   = op.To
 		tokenTx.Meta = models.TokenTransfer{
 			Name:     op.Contract.Name,
 			Symbol:   op.Contract.Symbol,
@@ -123,10 +124,4 @@ func apiError(c *gin.Context, err error) bool {
 		return true
 	}
 	return false
-}
-
-// TODO @vikmeup discussion needed
-type ethContractMeta struct {
-	//Contract string `json:"contract"`
-	Input    string `json:"input"`
 }
