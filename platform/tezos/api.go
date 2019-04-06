@@ -52,20 +52,26 @@ func getTransactions(c *gin.Context) {
 		if op.Kind != "transaction" {
 			continue
 		}
-		if op.Failed {
-			continue
+		var status, errMsg string
+		if !op.Failed {
+			status = models.StatusCompleted
+		} else {
+			status = models.StatusFailed
+			errMsg = "transaction failed"
 		}
 		txs = append(txs, models.Tx{
-			Id:    srcTx.Hash,
-			Coin:  coin.IndexXTZ,
-			Date:  unix,
-			From:  op.Src.Tz,
-			To:    op.Dest.Tz,
-			Fee:   op.Fee,
-			Block: op.OpLevel,
-			Meta:  models.Transfer{
+			Id:     srcTx.Hash,
+			Coin:   coin.IndexXTZ,
+			Date:   unix,
+			From:   op.Src.Tz,
+			To:     op.Dest.Tz,
+			Fee:    op.Fee,
+			Block:  op.OpLevel,
+			Meta:   models.Transfer{
 				Value: op.Amount,
 			},
+			Status: status,
+			Error:  errMsg,
 		})
 	}
 
