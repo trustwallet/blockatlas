@@ -30,9 +30,6 @@ var txModel = Tx{
 	Fee:  "138",
 	Date: 1548954343,
 	Meta: &Transfer{
-		Name:     "Nimiq",
-		Symbol:   "NIM",
-		Decimals: 5,
 		Value:    "5004160",
 	},
 }
