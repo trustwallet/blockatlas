@@ -1,8 +1,8 @@
 package source
 
 import (
+	"encoding/json"
 	"fmt"
-	"github.com/gin-gonic/gin/json"
 	"github.com/sirupsen/logrus"
 	"net/http"
 	"net/url"
