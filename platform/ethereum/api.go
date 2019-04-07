@@ -26,33 +26,37 @@ func Setup(router gin.IRouter) {
 
 func getTransactions(c *gin.Context) {
 	contract := c.Query("contract")
-	var page *source.Page
+	var srcPage *source.Page
 	var err error
+
 	if contract != "" {
-		page, err = client.GetTxsWithContract(
+		srcPage, err = client.GetTxsWithContract(
 			c.Param("address"), c.Query("contract"))
 	} else {
-		page, err = client.GetTxs(c.Param("address"))
+		srcPage, err = client.GetTxs(c.Param("address"))
 	}
-	sendResult(c, page, err)
-}
 
-func sendResult(c *gin.Context, srcPage *source.Page, err error) {
 	if apiError(c, err) {
 		return
 	}
 
 	var txs []models.Tx
-	for _, srcTx := range srcPage.Docs {
-		txs = ExtractTxs(txs, &srcTx)
+	if contract != "" {
+		for _, srcTx := range srcPage.Docs {
+			txs = AppendTokenTxs(txs, &srcTx)
+		}
+	} else {
+		for _, srcTx := range srcPage.Docs {
+			txs = AppendTxs(txs, &srcTx)
+		}
 	}
+
 	page := models.Response(txs)
 	page.Sort()
-	c.JSON(http.StatusOK, &page)
+	c.JSON(http.StatusOK, &srcPage)
 }
 
-func ExtractTxs(in []models.Tx, srcTx *source.Doc) (out []models.Tx) {
-	out = in
+func extractBase(srcTx *source.Doc) (base models.Tx, ok bool) {
 	var status, errReason string
 	if srcTx.Error == "" {
 		status = models.StatusCompleted
@@ -63,10 +67,10 @@ func ExtractTxs(in []models.Tx, srcTx *source.Doc) (out []models.Tx) {
 
 	unix, err := strconv.ParseInt(srcTx.TimeStamp, 10, 64)
 	if err != nil {
-		return
+		return base, false
 	}
 
-	baseTx := models.Tx{
+	base = models.Tx{
 		Id:     srcTx.Id,
 		Coin:   srcTx.Coin, // SLIP-0044
 		From:   srcTx.From,
@@ -76,6 +80,15 @@ func ExtractTxs(in []models.Tx, srcTx *source.Doc) (out []models.Tx) {
 		Block:  srcTx.BlockNumber,
 		Status: status,
 		Error:  errReason,
+	}
+	return base, true
+}
+
+func AppendTxs(in []models.Tx, srcTx *source.Doc) (out []models.Tx) {
+	out = in
+	baseTx, ok := extractBase(srcTx)
+	if !ok {
+		return
 	}
 
 	// Native ETH transaction
@@ -96,14 +109,22 @@ func ExtractTxs(in []models.Tx, srcTx *source.Doc) (out []models.Tx) {
 		out = append(out, contractTx)
 	}
 
-	// Common operations
-	if status != models.StatusCompleted || len(srcTx.Ops) < 1 {
+	return
+}
+
+func AppendTokenTxs(in []models.Tx, srcTx *source.Doc) (out []models.Tx) {
+	out = in
+	baseTx, ok := extractBase(srcTx)
+	if !ok {
+		return
+	}
+
+	if len(srcTx.Ops) == 0 {
 		return
 	}
 	op := &srcTx.Ops[0]
 
-	switch op.Type {
-	case "token_transfer":
+	if op.Type == "token_transfer" {
 		tokenTx    := baseTx
 		tokenTx.To   = op.To
 		tokenTx.Meta = models.TokenTransfer{

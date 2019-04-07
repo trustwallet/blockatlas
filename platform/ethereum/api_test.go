@@ -107,27 +107,23 @@ const failedSrc = `
 	"coin": 60
 }`
 
-var tokenTransferBaseDst = models.Tx{
-	Id:     "0x7777854580f273df61e0162e1a41b3e1e05ab8b9f553036fa9329a90dd7e9ab2",
-	Coin:   coin.IndexETH,
-	From:   "0xd35f30d194684a391c63a6deced7d3dd5207c265",
-	To:     "0xf3586684107ce0859c44aa2b2e0fb8cd8731a15a",
+var tokenTransferDst = models.Tx{
+	Id:   "0x7777854580f273df61e0162e1a41b3e1e05ab8b9f553036fa9329a90dd7e9ab2",
+	Coin: coin.IndexETH,
+	From: "0xd35f30d194684a391c63a6deced7d3dd5207c265",
+	To:   "0xaa4d790076f1bf7511a0a0ac498c89e13e1efe17",
+	//To:   "0xf3586684107ce0859c44aa2b2e0fb8cd8731a15a", Contract
 	Fee:    "67497",
 	Date:   1554248437,
 	Block:  7491945,
 	Status: models.StatusCompleted,
-}
-
-var tokenTransferMeta1Dst = models.TokenTransfer{
-	Name:     "KaratBank Coin",
-	Symbol:   "KBC",
-	Contract: "0xf3586684107ce0859c44aa2b2e0fb8cd8731a15a",
-	Decimals: 7,
-	Value:    "4291000000",
-}
-
-var tokenTransferMeta2Dst = models.ContractCall{
-	Input: "0xa9059cbb000000000000000000000000aa4d790076f1bf7511a0a0ac498c89e13e1efe1700000000000000000000000000000000000000000000000000000000ffc376c0",
+	Meta: models.TokenTransfer{
+		Name:     "KaratBank Coin",
+		Symbol:   "KBC",
+		Contract: "0xf3586684107ce0859c44aa2b2e0fb8cd8731a15a",
+		Decimals: 7,
+		Value:    "4291000000",
+	},
 }
 
 var contractCallBaseDst = models.Tx{
@@ -149,53 +145,38 @@ var contractCallMeta2Dst = models.ContractCall{
 	Input: "0xfffdefefed",
 }
 
-var transferBaseDst = models.Tx{
-	Id: "0x77f8a3b2203933493d103a1637de814b4853410b1fb2981c4d2cff4d7a3071ab",
-	Coin: coin.IndexETH,
-	From: "0xf5aea47e57c058881b31ee8fce1002c409188f06",
-	To: "0x0ae933a89d9e249d0873cfc7ca022fcb3f1280ce",
-	Fee: "21000",
-	Date: 1554663642,
-	Block: 7522781,
+var transferDst = models.Tx{
+	Id:     "0x77f8a3b2203933493d103a1637de814b4853410b1fb2981c4d2cff4d7a3071ab",
+	Coin:   coin.IndexETH,
+	From:   "0xf5aea47e57c058881b31ee8fce1002c409188f06",
+	To:     "0x0ae933a89d9e249d0873cfc7ca022fcb3f1280ce",
+	Fee:    "21000",
+	Date:   1554663642,
+	Block:  7522781,
 	Status: models.StatusCompleted,
+	Meta: models.Transfer{
+		Value: "1999895000000000000",
+	},
 }
 
-var transferMeta1Dst = models.Transfer{
-	Value: "1999895000000000000",
-}
-
-var failedBaseDst = models.Tx{
-	Id: "0x8dfe7e859f7bdcea4e6f4ada18567d96a51c3aa29e618ef09b80ae99385e191e",
-	Coin: coin.IndexETH,
-	From: "0x4b55af7ce28a113d794f9a9940fe1506f37aa619",
-	To: "0xe65f787c8561a4b15771111bb427274dedfe85d7",
-	Fee: "21000",
-	Date: 1554662399,
-	Block: 7522678,
+var failedDst = models.Tx{
+	Id:     "0x8dfe7e859f7bdcea4e6f4ada18567d96a51c3aa29e618ef09b80ae99385e191e",
+	Coin:   coin.IndexETH,
+	From:   "0x4b55af7ce28a113d794f9a9940fe1506f37aa619",
+	To:     "0xe65f787c8561a4b15771111bb427274dedfe85d7",
+	Fee:    "21000",
+	Date:   1554662399,
+	Block:  7522678,
 	Status: models.StatusFailed,
-	Error: "Error",
+	Error:  "Error",
+	Meta: models.Transfer{
+		Value: "59859820000000000",
+	},
 }
 
-var failedMeta1Dst = models.Transfer{
-	Value: "59859820000000000",
-}
-
-var tokenTransferDst []models.Tx
 var contractCallDst []models.Tx
-var transferDst []models.Tx
-var failedDst []models.Tx
 
 func init() {
-	{
-		// ERC-20
-		tx1 := tokenTransferBaseDst
-		tx1.Meta = tokenTransferMeta1Dst
-		tx1.To = "0xaa4d790076f1bf7511a0a0ac498c89e13e1efe17"
-		// Contract Call
-		tx2 := tokenTransferBaseDst
-		tx2.Meta = tokenTransferMeta2Dst
-		tokenTransferDst = []models.Tx{ tx2, tx1 }
-	}
 	{
 		// Transfer
 		tx1 := contractCallBaseDst
@@ -203,55 +184,72 @@ func init() {
 		// Contract Call
 		tx2 := contractCallBaseDst
 		tx2.Meta = contractCallMeta2Dst
-		contractCallDst = []models.Tx{ tx1, tx2 }
+		contractCallDst = []models.Tx{tx1, tx2}
 	}
-	{
-		// Transfer
-		tx1 := failedBaseDst
-		tx1.Meta = failedMeta1Dst
-		failedDst = []models.Tx{ tx1 }
-	}
-	{
-		// Transfer
-		tx1 := transferBaseDst
-		tx1.Meta = transferMeta1Dst
-		transferDst = []models.Tx{ tx1 }
-	}
+}
+
+type test struct {
+	name        string
+	apiResponse string
+	expected    []models.Tx
+	token       bool
 }
 
 func TestExtractTxs(t *testing.T) {
-	testExtract(t, "token transfer", tokenTransferSrc, tokenTransferDst)
-	testExtract(t, "contract call", contractCallSrc, contractCallDst)
-	testExtract(t, "transfer", transferSrc, transferDst)
-	testExtract(t, "failed transaction", failedSrc, failedDst)
+	testExtract(t, &test{
+		name:        "transfer",
+		apiResponse: transferSrc,
+		expected:    []models.Tx{transferDst},
+	})
+	testExtract(t, &test{
+		name:        "token transfer",
+		apiResponse: tokenTransferSrc,
+		expected:    []models.Tx{tokenTransferDst},
+		token:       true,
+	})
+	testExtract(t, &test{
+		name:        "contract call",
+		apiResponse: contractCallSrc,
+		expected:    contractCallDst,
+	})
+	testExtract(t, &test{
+		name:        "failed transaction",
+		apiResponse: failedSrc,
+		expected:    []models.Tx{failedDst},
+	})
 }
 
-func testExtract(t *testing.T, test string, src string, dst []models.Tx) {
+func testExtract(t *testing.T, _test *test) {
 	var doc source.Doc
-	err := json.Unmarshal([]byte(src), &doc)
+	err := json.Unmarshal([]byte(_test.apiResponse), &doc)
 	if err != nil {
 		t.Error(err)
 		return
 	}
-	res := ExtractTxs(nil, &doc)
+	var res []models.Tx
+	if _test.token {
+		res = AppendTokenTxs(nil, &doc)
+	} else {
+		res = AppendTxs(nil, &doc)
+	}
 
 	resJson, err := json.Marshal(res)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	dstJson, err := json.Marshal(dst)
+	dstJson, err := json.Marshal(_test.expected)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	if !bytes.Equal(resJson, dstJson) {
-		t.Error(test + ": tx don't equal")
+		t.Error(_test.name + ": tx don't equal")
 		println("---- EXPECTED ----")
-		spew.Dump(dst)
+		spew.Dump(_test.expected)
 		println("---- GOT ----")
 		spew.Dump(res)
+	} else {
+		println(_test.name + " works")
 	}
-
-	println(test + " works")
 }
