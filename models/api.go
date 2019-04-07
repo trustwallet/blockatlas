@@ -83,5 +83,6 @@ type TokenSwap struct {
 	Output TokenTransfer `json:"output"`
 }
 
-// Free-form
-type ContractCall interface{}
+type ContractCall struct {
+	Input string `json:"input"`
+}
