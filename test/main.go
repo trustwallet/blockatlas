@@ -92,21 +92,23 @@ func test(endpoint string, address string, baseUrl string) {
 	}
 
 	// Parse model and read into buffer
-	var model []models.Tx
+	var model struct {
+		Docs []models.Tx `json:"docs"`
+	}
 	dec := json.NewDecoder(res.Body)
 	err = dec.Decode(&model)
 	if err != nil {
 		panic(err)
 	}
 
-	if len(model) == 0 {
+	if len(model.Docs) == 0 {
 		log(endpoint).Warning("No transactions")
 		return
 	}
 
 	// Enumerate transactions
 	var lastTime = ^uint64(0)
-	for _, tx := range model {
+	for _, tx := range model.Docs {
 		point := tx.Date
 
 		if uint64(point) <= lastTime {
@@ -117,8 +119,8 @@ func test(endpoint string, address string, baseUrl string) {
 	}
 
 	// Pretty-print first transaction to console
-	if len(model) > 0 {
-		pretty, err := json.MarshalIndent(model[0], "", "\t")
+	if len(model.Docs) > 0 {
+		pretty, err := json.MarshalIndent(model.Docs[0], "", "\t")
 		if err != nil {
 			panic("Can't serialize transaction " + err.Error())
 		}

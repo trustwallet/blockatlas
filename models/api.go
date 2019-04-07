@@ -1,6 +1,7 @@
 package models
 
 import (
+	"encoding/json"
 	"github.com/spf13/cast"
 	"sort"
 )
@@ -29,6 +30,18 @@ func (r *Response) Sort() {
 		tj := cast.ToUint64((*r)[j].Date)
 		return ti >= tj
 	})
+}
+
+func (r *Response) MarshalJSON() ([]byte, error) {
+	var page struct {
+		Total  int    `json:"total"`
+		Docs   []Tx   `json:"docs"`
+		Status string `json:"status"`
+	}
+	page.Docs   = []Tx(*r)
+	page.Total  = len(page.Docs)
+	page.Status = "success"
+	return json.Marshal(page)
 }
 
 type Amount string
