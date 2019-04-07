@@ -67,6 +67,26 @@ const contractCallSrc = `
 }
 `
 
+const transferSrc = `
+{
+	"operations": [],
+	"contract": null,
+	"_id": "0x77f8a3b2203933493d103a1637de814b4853410b1fb2981c4d2cff4d7a3071ab",
+	"blockNumber": 7522781,
+	"timeStamp": "1554663642",
+	"nonce": 88,
+	"from": "0xf5aea47e57c058881b31ee8fce1002c409188f06",
+	"to": "0x0ae933a89d9e249d0873cfc7ca022fcb3f1280ce",
+	"value": "1999895000000000000",
+	"gas": "21000",
+	"gasPrice": "5000000000",
+	"gasUsed": "21000",
+	"input": "0x",
+	"error": "",
+	"id": "0x77f8a3b2203933493d103a1637de814b4853410b1fb2981c4d2cff4d7a3071ab",
+	"coin": 60
+}`
+
 const failedSrc = `
 {
 	"operations": [],
@@ -129,6 +149,21 @@ var contractCallMeta2Dst = models.ContractCall{
 	Input: "0xfffdefefed",
 }
 
+var transferBaseDst = models.Tx{
+	Id: "0x77f8a3b2203933493d103a1637de814b4853410b1fb2981c4d2cff4d7a3071ab",
+	Coin: coin.IndexETH,
+	From: "0xf5aea47e57c058881b31ee8fce1002c409188f06",
+	To: "0x0ae933a89d9e249d0873cfc7ca022fcb3f1280ce",
+	Fee: "21000",
+	Date: 1554663642,
+	Block: 7522781,
+	Status: models.StatusCompleted,
+}
+
+var transferMeta1Dst = models.Transfer{
+	Value: "1999895000000000000",
+}
+
 var failedBaseDst = models.Tx{
 	Id: "0x8dfe7e859f7bdcea4e6f4ada18567d96a51c3aa29e618ef09b80ae99385e191e",
 	Coin: coin.IndexETH,
@@ -170,11 +205,25 @@ func init() {
 		tx2.Meta = contractCallMeta2Dst
 		contractCallDst = []models.Tx{ tx1, tx2 }
 	}
+	{
+		// Transfer
+		tx1 := failedBaseDst
+		tx1.Meta = failedMeta1Dst
+		failedDst = []models.Tx{ tx1 }
+	}
+	{
+		// Transfer
+		tx1 := transferBaseDst
+		tx1.Meta = transferMeta1Dst
+		transferDst = []models.Tx{ tx1 }
+	}
 }
 
 func TestExtractTxs(t *testing.T) {
 	testExtract(t, "token transfer", tokenTransferSrc, tokenTransferDst)
 	testExtract(t, "contract call", contractCallSrc, contractCallDst)
+	testExtract(t, "transfer", transferSrc, transferDst)
+	testExtract(t, "failed transaction", failedSrc, failedDst)
 }
 
 func testExtract(t *testing.T, test string, src string, dst []models.Tx) {
@@ -203,4 +252,6 @@ func testExtract(t *testing.T, test string, src string, dst []models.Tx) {
 		println("---- GOT ----")
 		spew.Dump(res)
 	}
+
+	println(test + " works")
 }
