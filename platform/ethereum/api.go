@@ -53,7 +53,7 @@ func getTransactions(c *gin.Context) {
 
 	page := models.Response(txs)
 	page.Sort()
-	c.JSON(http.StatusOK, &srcPage)
+	c.JSON(http.StatusOK, &page)
 }
 
 func extractBase(srcTx *source.Doc) (base models.Tx, ok bool) {
@@ -104,7 +104,7 @@ func AppendTxs(in []models.Tx, srcTx *source.Doc) (out []models.Tx) {
 	if srcTx.Input != "" && srcTx.Input != "0x" {
 		contractTx := baseTx
 		contractTx.Meta = models.ContractCall{
-			Input:    srcTx.Input,
+			Input: srcTx.Input,
 		}
 		out = append(out, contractTx)
 	}
@@ -141,7 +141,7 @@ func AppendTokenTxs(in []models.Tx, srcTx *source.Doc) (out []models.Tx) {
 
 func apiError(c *gin.Context, err error) bool {
 	if err != nil {
-		logrus.WithError(err).Errorf("Unhandled error: %s", err)
+		logrus.WithError(err).Errorf("Unhandled error")
 		c.AbortWithStatus(http.StatusInternalServerError)
 		return true
 	}
