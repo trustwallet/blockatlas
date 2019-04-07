@@ -22,17 +22,18 @@ func Setup(router gin.IRouter) {
 		c.Next()
 	})
 	router.GET("/:address", getTransactions)
-	router.GET("/:address/:token", getTransactionsOfContract)
 }
 
 func getTransactions(c *gin.Context) {
-	page, err := client.GetTxs(c.Param("address"))
-	sendResult(c, page, err)
-}
-
-func getTransactionsOfContract(c *gin.Context) {
-	page, err := client.GetTxsWithContract(
-		c.Param("address"), c.Query("contract"))
+	contract := c.Query("contract")
+	var page *source.Page
+	var err error
+	if contract != "" {
+		page, err = client.GetTxsWithContract(
+			c.Param("address"), c.Query("contract"))
+	} else {
+		page, err = client.GetTxs(c.Param("address"))
+	}
 	sendResult(c, page, err)
 }
 
