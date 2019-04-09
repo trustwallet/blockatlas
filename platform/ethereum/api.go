@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/models"
 	"github.com/trustwallet/blockatlas/platform/ethereum/source"
 	"github.com/trustwallet/blockatlas/util"
@@ -72,7 +73,7 @@ func extractBase(srcTx *source.Doc) (base models.Tx, ok bool) {
 
 	base = models.Tx{
 		Id:     srcTx.Id,
-		Coin:   srcTx.Coin, // SLIP-0044
+		Coin:   coin.IndexETH,
 		From:   srcTx.From,
 		To:     srcTx.To,
 		Fee:    models.Amount(srcTx.Gas),
