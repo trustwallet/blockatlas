@@ -73,15 +73,16 @@ func extractBase(srcTx *source.Doc) (base models.Tx, ok bool) {
 	}
 
 	base = models.Tx{
-		Id:     srcTx.Id,
-		Coin:   coin.ETH,
-		From:   srcTx.From,
-		To:     srcTx.To,
-		Fee:    models.Amount(srcTx.Gas),
-		Date:   unix,
-		Block:  srcTx.BlockNumber,
-		Status: status,
-		Error:  errReason,
+		Id:       srcTx.Id,
+		Coin:     coin.ETH,
+		From:     srcTx.From,
+		To:       srcTx.To,
+		Fee:      models.Amount(srcTx.Gas),
+		Date:     unix,
+		Block:    srcTx.BlockNumber,
+		Status:   status,
+		Error:    errReason,
+		Sequence: srcTx.Nonce,
 	}
 	return base, true
 }

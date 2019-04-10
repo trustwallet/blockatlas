@@ -48,17 +48,18 @@ func (r *Response) MarshalJSON() ([]byte, error) {
 type Amount string
 
 type Tx struct {
-	Id     string      `json:"id"`
-	Coin   uint        `json:"coin"`
-	From   string      `json:"from"`
-	To     string      `json:"to"`
-	Fee    Amount      `json:"fee"`
-	Date   int64       `json:"date"`
-	Type   string      `json:"type"`
-	Block  uint64      `json:"block,omitempty"`
-	Status string      `json:"status"`
-	Error  string      `json:"error,omitempty"`
-	Meta   interface{} `json:"metadata"`
+	Id       string      `json:"id"`
+	Coin     uint        `json:"coin"`
+	From     string      `json:"from"`
+	To       string      `json:"to"`
+	Fee      Amount      `json:"fee"`
+	Date     int64       `json:"date"`
+	Type     string      `json:"type"`
+	Block    uint64      `json:"block,omitempty"`
+	Status   string      `json:"status"`
+	Error    string      `json:"error,omitempty"`
+	Sequence uint64      `json:"sequence"`
+	Meta     interface{} `json:"metadata"`
 }
 
 type Transfer struct {
