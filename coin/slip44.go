@@ -9,13 +9,14 @@ type Coin struct {
 }
 
 const (
-	IndexETH = 60
-	IndexXRP = 144
-	IndexXLM = 148
-	IndexNIM = 242
-	IndexBNB = 714
-	IndexXTZ = 1729
-	IndexKIN = 2017
+	IndexETH  = 60
+	IndexXRP  = 144
+	IndexXLM  = 148
+	IndexNIM  = 242
+	IndexAION = 425
+	IndexBNB  = 714
+	IndexXTZ  = 1729
+	IndexKIN  = 2017
 )
 
 var Coins = map[uint]Coin {
@@ -71,11 +72,12 @@ var Coins = map[uint]Coin {
 }
 
 var (
-	ETH = Coins[IndexETH]
-	XRP = Coins[IndexXRP]
-	XLM = Coins[IndexXLM]
-	NIM = Coins[IndexNIM]
-	BNB = Coins[IndexBNB]
-	KIN = Coins[IndexKIN]
-	XTZ = Coins[IndexXTZ]
+	ETH  = Coins[IndexETH]
+	XRP  = Coins[IndexXRP]
+	XLM  = Coins[IndexXLM]
+	NIM  = Coins[IndexNIM]
+	BNB  = Coins[IndexBNB]
+	KIN  = Coins[IndexKIN]
+	XTZ  = Coins[IndexXTZ]
+	AION = Coins[IndexAION]
 )

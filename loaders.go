@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
+	"github.com/trustwallet/blockatlas/platform/aion"
 	"github.com/trustwallet/blockatlas/platform/binance"
 	"github.com/trustwallet/blockatlas/platform/ethereum"
 	"github.com/trustwallet/blockatlas/platform/kin"
@@ -21,6 +22,7 @@ var loaders = map[string]func(gin.IRouter){
 	"kin":      kin.Setup,
 	"tezos":    tezos.Setup,
 	"ethereum": ethereum.Setup,
+	"aion": 	aion.Setup,
 }
 
 func loadPlatforms(router gin.IRouter) {

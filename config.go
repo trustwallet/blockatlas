@@ -48,4 +48,5 @@ func loadDefaults() {
 	viper.SetDefault("stellar.api", "https://horizon.stellar.org")
 	viper.SetDefault("kin.api", "https://horizon.kinfederation.com/")
 	viper.SetDefault("tezos.api", "https://api1.tzscan.io/v3")
+	viper.SetDefault("aion.api", "https://mainnet-api.aion.network/aion/dashboard")
 }
