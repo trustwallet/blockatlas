@@ -101,6 +101,11 @@ func AppendTxs(in []models.Tx, srcTx *source.Doc) (out []models.Tx) {
 		out = append(out, transferTx)
 	}
 
+	// Skip if token transfer
+	if len(srcTx.Ops) > 0 && srcTx.Ops[0].Type == "token_transfer" {
+		return
+	}
+
 	// Contract call
 	if srcTx.Input != "" && srcTx.Input != "0x" {
 		contractTx := baseTx
