@@ -1,7 +1,6 @@
 package aion
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -35,26 +34,25 @@ func getTransactions(c *gin.Context) {
 				c.Param("address"))
 	}
 
-	txs := make([]models.Tx, 0)
-	for _, srcTx := range srcPage {
+	var txs []models.Tx
+	for _, srcTx := range srcPage.Content {
 		fee := strconv.Itoa(srcTx.NrgConsumed)
-		value := fmt.Sprintf("%g", srcTx.Value)
 
 		txs = append(txs, models.Tx{
 			Id:    srcTx.BlockHash,
 			Coin:  coin.IndexAION,
 			Date:  srcTx.BlockTimestamp,
-			From:  srcTx.FromAddr,
-			To:    srcTx.ToAddr,
+			From:  "0x" + srcTx.FromAddr,
+			To:    "0x" + srcTx.ToAddr,
 			Fee:   models.Amount(fee),
 			Block: srcTx.BlockNumber,
 			Meta:  models.Transfer{
-				Value: models.Amount(value),
+				Value: srcTx.Value,
 			},
 		})
 	}
 
 	page := models.Response(txs)
 	page.Sort()
-	c.JSON(http.StatusOK, &txs)
+	c.JSON(http.StatusOK, &page)
 }
