@@ -36,23 +36,28 @@ func getTransactions(c *gin.Context) {
 
 	var txs []models.Tx
 	for _, srcTx := range srcPage.Content {
-		fee := strconv.Itoa(srcTx.NrgConsumed)
-
-		txs = append(txs, models.Tx{
-			Id:    srcTx.BlockHash,
-			Coin:  coin.AION,
-			Date:  srcTx.BlockTimestamp,
-			From:  "0x" + srcTx.FromAddr,
-			To:    "0x" + srcTx.ToAddr,
-			Fee:   models.Amount(fee),
-			Block: srcTx.BlockNumber,
-			Meta:  models.Transfer{
-				Value: srcTx.Value,
-			},
-		})
+		txs = append(txs, Normalize(&srcTx))
 	}
 
 	page := models.Response(txs)
 	page.Sort()
 	c.JSON(http.StatusOK, &page)
+}
+
+func Normalize(srcTx *source.Tx) models.Tx {
+	fee := strconv.Itoa(srcTx.NrgConsumed)
+	value := util.DecimalExp(string(srcTx.Value), 18)
+
+	return models.Tx{
+		Id:    srcTx.TransactionHash,
+		Coin:  coin.AION,
+		Date:  srcTx.BlockTimestamp,
+		From:  "0x" + srcTx.FromAddr,
+		To:    "0x" + srcTx.ToAddr,
+		Fee:   models.Amount(fee),
+		Block: srcTx.BlockNumber,
+		Meta:  models.Transfer{
+			Value: models.Amount(value),
+		},
+	}
 }

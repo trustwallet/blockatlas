@@ -3,7 +3,6 @@ package ethereum
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/davecgh/go-spew/spew"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/models"
 	"github.com/trustwallet/blockatlas/platform/ethereum/source"
@@ -195,31 +194,31 @@ type test struct {
 	token       bool
 }
 
-func TestExtractTxs(t *testing.T) {
-	testExtract(t, &test{
+func TestNormalize(t *testing.T) {
+	testNormalize(t, &test{
 		name:        "transfer",
 		apiResponse: transferSrc,
 		expected:    []models.Tx{transferDst},
 	})
-	testExtract(t, &test{
+	testNormalize(t, &test{
 		name:        "token transfer",
 		apiResponse: tokenTransferSrc,
 		expected:    []models.Tx{tokenTransferDst},
 		token:       true,
 	})
-	testExtract(t, &test{
+	testNormalize(t, &test{
 		name:        "contract call",
 		apiResponse: contractCallSrc,
 		expected:    contractCallDst,
 	})
-	testExtract(t, &test{
+	testNormalize(t, &test{
 		name:        "failed transaction",
 		apiResponse: failedSrc,
 		expected:    []models.Tx{failedDst},
 	})
 }
 
-func testExtract(t *testing.T, _test *test) {
+func testNormalize(t *testing.T, _test *test) {
 	var doc source.Doc
 	err := json.Unmarshal([]byte(_test.apiResponse), &doc)
 	if err != nil {
@@ -245,11 +244,5 @@ func testExtract(t *testing.T, _test *test) {
 
 	if !bytes.Equal(resJson, dstJson) {
 		t.Error(_test.name + ": tx don't equal")
-		println("---- EXPECTED ----")
-		spew.Dump(_test.expected)
-		println("---- GOT ----")
-		spew.Dump(res)
-	} else {
-		println(_test.name + " works")
 	}
 }
