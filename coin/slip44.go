@@ -8,7 +8,6 @@ type Coin struct {
 	Decimals uint   `json:"decimals"`
 }
 
-// List of coin indexes
 const (
 	IndexETH  = 60
 	IndexXRP  = 144
@@ -73,11 +72,12 @@ var Coins = map[uint]Coin {
 }
 
 var (
-	ETH = Coins[IndexETH]
-	XRP = Coins[IndexXRP]
-	XLM = Coins[IndexXLM]
-	NIM = Coins[IndexNIM]
-	BNB = Coins[IndexBNB]
-	KIN = Coins[IndexKIN]
-	XTZ = Coins[IndexXTZ]
+	ETH  = Coins[IndexETH]
+	XRP  = Coins[IndexXRP]
+	XLM  = Coins[IndexXLM]
+	NIM  = Coins[IndexNIM]
+	BNB  = Coins[IndexBNB]
+	KIN  = Coins[IndexKIN]
+	XTZ  = Coins[IndexXTZ]
+	AION = Coins[IndexAION]
 )
