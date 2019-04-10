@@ -2,8 +2,9 @@ package models
 
 import (
 	"encoding/json"
-	"github.com/spf13/cast"
 	"sort"
+
+	"github.com/spf13/cast"
 )
 
 const (
@@ -38,8 +39,8 @@ func (r *Response) MarshalJSON() ([]byte, error) {
 		Docs   []Tx   `json:"docs"`
 		Status string `json:"status"`
 	}
-	page.Docs   = []Tx(*r)
-	page.Total  = len(page.Docs)
+	page.Docs = []Tx(*r)
+	page.Total = len(page.Docs)
 	page.Status = "success"
 	return json.Marshal(page)
 }
@@ -67,7 +68,7 @@ type Transfer struct {
 type TokenTransfer struct {
 	Name     string `json:"name"`
 	Symbol   string `json:"symbol"`
-	Contract string `json:"contract"`
+	TokenID  string `json:"token_id"`
 	Decimals uint   `json:"decimals"`
 	Value    Amount `json:"value"`
 }
