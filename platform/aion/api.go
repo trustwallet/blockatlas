@@ -1,16 +1,16 @@
 package aion
 
 import (
-	"github.com/trustwallet/blockatlas/platform/aion/source"
-	"github.com/trustwallet/blockatlas/models"
-	"github.com/trustwallet/blockatlas/coin"
-	"github.com/trustwallet/blockatlas/util"
-	"github.com/sirupsen/logrus"
+	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+	"github.com/trustwallet/blockatlas/coin"
+	"github.com/trustwallet/blockatlas/models"
+	"github.com/trustwallet/blockatlas/platform/aion/source"
+	"github.com/trustwallet/blockatlas/util"
 	"net/http"
 	"strconv"
-	"fmt"
 )
 
 var client = source.Client{

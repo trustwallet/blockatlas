@@ -1,13 +1,13 @@
 package source
 
 import (
-	"github.com/trustwallet/blockatlas/models"
-	"github.com/sirupsen/logrus"
 	"encoding/json"
+	"fmt"
+	"github.com/sirupsen/logrus"
+	"github.com/trustwallet/blockatlas/models"
 	"net/http"
 	"net/url"
 	"strconv"
-	"fmt"
 )
 
 type Client struct {
