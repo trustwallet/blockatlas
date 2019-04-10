@@ -3,10 +3,11 @@ package ethereum
 import (
 	"bytes"
 	"encoding/json"
+	"testing"
+
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/models"
 	"github.com/trustwallet/blockatlas/platform/ethereum/source"
-	"testing"
 )
 
 const tokenTransferSrc = `
@@ -119,7 +120,7 @@ var tokenTransferDst = models.Tx{
 	Meta: models.TokenTransfer{
 		Name:     "KaratBank Coin",
 		Symbol:   "KBC",
-		Contract: "0xf3586684107ce0859c44aa2b2e0fb8cd8731a15a",
+		TokenID:  "0xf3586684107ce0859c44aa2b2e0fb8cd8731a15a",
 		Decimals: 7,
 		Value:    "4291000000",
 	},

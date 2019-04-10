@@ -1,6 +1,9 @@
 package ethereum
 
 import (
+	"net/http"
+	"strconv"
+
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -8,8 +11,6 @@ import (
 	"github.com/trustwallet/blockatlas/models"
 	"github.com/trustwallet/blockatlas/platform/ethereum/source"
 	"github.com/trustwallet/blockatlas/util"
-	"net/http"
-	"strconv"
 )
 
 var client = source.Client{
@@ -131,12 +132,12 @@ func AppendTokenTxs(in []models.Tx, srcTx *source.Doc) (out []models.Tx) {
 	op := &srcTx.Ops[0]
 
 	if op.Type == "token_transfer" {
-		tokenTx    := baseTx
-		tokenTx.To   = op.To
+		tokenTx := baseTx
+		tokenTx.To = op.To
 		tokenTx.Meta = models.TokenTransfer{
 			Name:     op.Contract.Name,
 			Symbol:   op.Contract.Symbol,
-			Contract: op.Contract.Address,
+			TokenID:  op.Contract.Address,
 			Decimals: op.Contract.Decimals,
 			Value:    models.Amount(op.Value),
 		}
