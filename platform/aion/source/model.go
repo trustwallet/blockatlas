@@ -1,10 +1,10 @@
 package source
 
-type AionTransactionRPCResponse struct {
-	Content []AionTransaction 
+type TxPage struct {
+	Content []Tx
 } 
 
-type AionTransaction struct {
+type Tx struct {
 	BlockHash            string  `json:"blockHash"`
 	ToAddr               string  `json:"toAddr"`
 	ContractAddr         string  `json:"contractAddr"`

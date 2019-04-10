@@ -15,8 +15,8 @@ type Client struct {
 	RpcUrl     string
 }
 
-func (c *Client) GetTxsOfAddress(address string) ([]AionTransaction, error) {
-	uri := fmt.Sprintf("%sgetTransactionsByAddress?%s",
+func (c *Client) GetTxsOfAddress(address string) ([]Tx, error) {
+	uri := fmt.Sprintf("%s/getTransactionsByAddress?%s",
 		c.RpcUrl,
 		url.Values{
 			"accountAddress": {address},
@@ -29,7 +29,7 @@ func (c *Client) GetTxsOfAddress(address string) ([]AionTransaction, error) {
 	}
 	defer res.Body.Close()
 
-	var trxs AionTransactionRPCResponse
+	var trxs TxPage
 	err = json.NewDecoder(res.Body).Decode(&trxs)
 	
 	return trxs.Content, nil

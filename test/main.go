@@ -21,6 +21,7 @@ var addresses = map[string]string {
 	"kin":      "GBHKUZ7C2SZ5N3X2S7O6TT6LNUWSEA2BXMSR5GTTSR6VZARSVAXIQNGH",
 	"tezos":    "tz1WCd2jm4uSt4vntk4vSuUWoZQGhLcDuR9q",
 	"ethereum": "0xfc10cab6a50a1ab10c56983c80cc82afc6559cf1",
+	"aion":     "0xa07981da70ce919e1db5f051c3c386eb526e6ce8b9e2bfd56e3f3d754b0a17f3",
 }
 
 func main() {

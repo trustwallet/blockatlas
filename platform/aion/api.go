@@ -27,25 +27,27 @@ func Setup(router gin.IRouter) {
 }
 
 func getTransactions(c *gin.Context) {
-	trxs, err := client.GetTxsOfAddress(c.Param("address"))
+	srcPage, err := client.GetTxsOfAddress(c.Param("address"))
 
 	if err != nil {
-		logrus.WithError(err).Errorf("Aion: Failed to get transactions for address %v", c.Param("address"))
+		logrus.WithError(err).
+			Errorf("Aion: Failed to get transactions for %s",
+				c.Param("address"))
 	}
 
 	txs := make([]models.Tx, 0)
-	for _, trx := range trxs {
-		fee := strconv.Itoa(trx.NrgConsumed)
-		value := fmt.Sprintf("%g", trx.Value)
+	for _, srcTx := range srcPage {
+		fee := strconv.Itoa(srcTx.NrgConsumed)
+		value := fmt.Sprintf("%g", srcTx.Value)
 
 		txs = append(txs, models.Tx{
-			Id:    trx.BlockHash,
+			Id:    srcTx.BlockHash,
 			Coin:  coin.IndexAION,
-			Date:  trx.BlockTimestamp,
-			From:  trx.FromAddr,
-			To:    trx.ToAddr,
+			Date:  srcTx.BlockTimestamp,
+			From:  srcTx.FromAddr,
+			To:    srcTx.ToAddr,
 			Fee:   models.Amount(fee),
-			Block: trx.BlockNumber,
+			Block: srcTx.BlockNumber,
 			Meta:  models.Transfer{
 				Value: models.Amount(value),
 			},
