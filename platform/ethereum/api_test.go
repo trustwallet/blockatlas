@@ -143,6 +143,7 @@ var contractCallMeta1Dst = models.Transfer{
 
 var contractCallMeta2Dst = models.ContractCall{
 	Input: "0xfffdefefed",
+	Value: "123",
 }
 
 var transferDst = models.Tx{

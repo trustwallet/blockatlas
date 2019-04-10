@@ -86,4 +86,5 @@ type TokenSwap struct {
 
 type ContractCall struct {
 	Input string `json:"input"`
+	Value string `json:"value"`
 }

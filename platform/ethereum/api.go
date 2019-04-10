@@ -112,6 +112,7 @@ func AppendTxs(in []models.Tx, srcTx *source.Doc) (out []models.Tx) {
 		contractTx := baseTx
 		contractTx.Meta = models.ContractCall{
 			Input: srcTx.Input,
+			Value: srcTx.Value,
 		}
 		out = append(out, contractTx)
 	}
