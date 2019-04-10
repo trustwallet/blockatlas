@@ -109,7 +109,7 @@ const failedSrc = `
 
 var tokenTransferDst = models.Tx{
 	Id:   "0x7777854580f273df61e0162e1a41b3e1e05ab8b9f553036fa9329a90dd7e9ab2",
-	Coin: coin.IndexETH,
+	Coin: coin.ETH,
 	From: "0xd35f30d194684a391c63a6deced7d3dd5207c265",
 	To:   "0xaa4d790076f1bf7511a0a0ac498c89e13e1efe17",
 	//To:   "0xf3586684107ce0859c44aa2b2e0fb8cd8731a15a", Contract
@@ -128,7 +128,7 @@ var tokenTransferDst = models.Tx{
 
 var contractCallBaseDst = models.Tx{
 	Id:     "0x34ab0028a9aa794d5cc12887e7b813cec17889948276b301028f24a408da6da4",
-	Coin:   coin.IndexETH,
+	Coin:   coin.ETH,
 	From:   "0xc9a16a82c284efc3cb0fe8c891ab85d6eba0eefb",
 	To:     "0xc67f9c909c4d185e4a5d21d642c27d05a145a76c",
 	Fee:    "1000000",
@@ -147,7 +147,7 @@ var contractCallMeta2Dst = models.ContractCall{
 
 var transferDst = models.Tx{
 	Id:     "0x77f8a3b2203933493d103a1637de814b4853410b1fb2981c4d2cff4d7a3071ab",
-	Coin:   coin.IndexETH,
+	Coin:   coin.ETH,
 	From:   "0xf5aea47e57c058881b31ee8fce1002c409188f06",
 	To:     "0x0ae933a89d9e249d0873cfc7ca022fcb3f1280ce",
 	Fee:    "21000",
@@ -161,7 +161,7 @@ var transferDst = models.Tx{
 
 var failedDst = models.Tx{
 	Id:     "0x8dfe7e859f7bdcea4e6f4ada18567d96a51c3aa29e618ef09b80ae99385e191e",
-	Coin:   coin.IndexETH,
+	Coin:   coin.ETH,
 	From:   "0x4b55af7ce28a113d794f9a9940fe1506f37aa619",
 	To:     "0xe65f787c8561a4b15771111bb427274dedfe85d7",
 	Fee:    "21000",
