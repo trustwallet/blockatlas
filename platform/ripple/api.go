@@ -53,7 +53,7 @@ func getTransactions(c *gin.Context) {
 
 		txs = append(txs, models.Tx{
 			Id:    srcTx.Hash,
-			Coin:  coin.IndexXRP,
+			Coin:  coin.XRP,
 			Date:  unix,
 			From:  srcTx.Tx.Account,
 			To:    srcTx.Tx.Destination,

@@ -29,7 +29,7 @@ func getTransactions(c *gin.Context) {
 	for i, srcTx := range s {
 		txs[i] = models.Tx{
 			Id:    srcTx.Hash,
-			Coin:  coin.IndexNIM,
+			Coin:  coin.NIM,
 			Date:  srcTx.Timestamp,
 			From:  srcTx.FromAddress,
 			To:    srcTx.ToAddress,

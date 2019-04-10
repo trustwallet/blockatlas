@@ -26,7 +26,7 @@ func Setup(router gin.IRouter) {
 		c.Next()
 	})
 	router.GET("/:address", func(c *gin.Context) {
-		GetTransactions(c, coin.IndexXLM, &stellarClient)
+		GetTransactions(c, coin.XLM, &stellarClient)
 	})
 }
 

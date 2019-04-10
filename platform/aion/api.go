@@ -40,7 +40,7 @@ func getTransactions(c *gin.Context) {
 
 		txs = append(txs, models.Tx{
 			Id:    srcTx.BlockHash,
-			Coin:  coin.IndexAION,
+			Coin:  coin.AION,
 			Date:  srcTx.BlockTimestamp,
 			From:  "0x" + srcTx.FromAddr,
 			To:    "0x" + srcTx.ToAddr,

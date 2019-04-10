@@ -9,75 +9,71 @@ type Coin struct {
 }
 
 const (
-	IndexETH  = 60
-	IndexXRP  = 144
-	IndexXLM  = 148
-	IndexNIM  = 242
-	IndexAION = 425
-	IndexBNB  = 714
-	IndexXTZ  = 1729
-	IndexKIN  = 2017
+	ETH  = 60
+	XRP  = 144
+	XLM  = 148
+	NIM  = 242
+	AION = 425
+	BNB  = 714
+	XTZ  = 1729
+	KIN  = 2017
 )
 
 var Coins = map[uint]Coin {
-	IndexXRP: {
-		Index:    IndexXRP,
+	XRP: {
+		Index:    XRP,
 		Symbol:   "XRP",
 		Title:    "Ripple",
 		Website:  "https://ripple.com",
 		Decimals: 6,
 	},
-	IndexXLM: {
-		Index:    IndexXLM,
+	XLM: {
+		Index:    XLM,
 		Symbol:   "XLM",
 		Title:    "Stellar Lumens",
 		Website:  "https://www.stellar.org/",
 		Decimals: 7,
 	},
-	IndexNIM: {
-		Index:    IndexNIM,
+	NIM: {
+		Index:    NIM,
 		Symbol:   "NIM",
 		Title:    "Nimiq",
 		Website:  "https://nimiq.com",
 		Decimals: 5,
 	},
-	IndexBNB: {
-		Index:    IndexBNB,
+	BNB: {
+		Index:    BNB,
 		Symbol:   "BNB",
 		Title:    "Binance Coin",
 		Website:  "https://binance.org",
 		Decimals: 18,
 	},
-	IndexKIN: {
-		Index:    IndexKIN,
+	KIN: {
+		Index:    KIN,
 		Symbol:   "KIN",
 		Title:    "Kin",
 		Website:  "https://www.kin.org",
 		Decimals: 5,
 	},
-	IndexXTZ: {
-		Index:    IndexXTZ,
+	XTZ: {
+		Index:    XTZ,
 		Symbol:   "XTZ",
 		Title:    "Tezos",
 		Website:  "https://tezos.com",
 		Decimals: 6,
 	},
-	IndexETH: {
-		Index:    IndexETH,
+	ETH: {
+		Index:    ETH,
 		Symbol:   "ETH",
 		Title:    "Ether",
 		Website:  "https://www.ethereum.org",
 		Decimals: 18,
 	},
+	AION: {
+		Index:    AION,
+		Symbol:   "AION",
+		Title:    "Aion",
+		Website:  "https://aion.network",
+		Decimals: 18,
+	},
 }
-
-var (
-	ETH  = Coins[IndexETH]
-	XRP  = Coins[IndexXRP]
-	XLM  = Coins[IndexXLM]
-	NIM  = Coins[IndexNIM]
-	BNB  = Coins[IndexBNB]
-	KIN  = Coins[IndexKIN]
-	XTZ  = Coins[IndexXTZ]
-	AION = Coins[IndexAION]
-)

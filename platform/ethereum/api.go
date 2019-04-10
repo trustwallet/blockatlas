@@ -73,7 +73,7 @@ func extractBase(srcTx *source.Doc) (base models.Tx, ok bool) {
 
 	base = models.Tx{
 		Id:     srcTx.Id,
-		Coin:   coin.IndexETH,
+		Coin:   coin.ETH,
 		From:   srcTx.From,
 		To:     srcTx.To,
 		Fee:    models.Amount(srcTx.Gas),
