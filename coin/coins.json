@@ -1,0 +1,3181 @@
+[
+	{
+		"index": 0,
+		"hex": "0x80000000",
+		"symbol": "BTC",
+		"name": "Bitcoin",
+		"link": "https://bitcoin.org/"
+	},
+	{
+		"index": 2,
+		"hex": "0x80000002",
+		"symbol": "LTC",
+		"name": "Litecoin",
+		"link": "https://litecoin.org/"
+	},
+	{
+		"index": 3,
+		"hex": "0x80000003",
+		"symbol": "DOGE",
+		"name": "Dogecoin",
+		"link": "https://github.com/dogecoin/dogecoin"
+	},
+	{
+		"index": 4,
+		"hex": "0x80000004",
+		"symbol": "RDD",
+		"name": "Reddcoin"
+	},
+	{
+		"index": 5,
+		"hex": "0x80000005",
+		"symbol": "DASH",
+		"name": "Dash",
+		"link": "https://github.com/dashpay/dash"
+	},
+	{
+		"index": 6,
+		"hex": "0x80000006",
+		"symbol": "PPC",
+		"name": "Peercoin",
+		"link": "https://peercoin.net/"
+	},
+	{
+		"index": 7,
+		"hex": "0x80000007",
+		"symbol": "NMC",
+		"name": "Namecoin",
+		"link": "http://namecoin.info/"
+	},
+	{
+		"index": 8,
+		"hex": "0x80000008",
+		"symbol": "FTC",
+		"name": "Feathercoin",
+		"link": "https://www.feathercoin.com/"
+	},
+	{
+		"index": 9,
+		"hex": "0x80000009",
+		"symbol": "XCP",
+		"name": "Counterparty",
+		"link": "http://counterparty.io/"
+	},
+	{
+		"index": 10,
+		"hex": "0x8000000a",
+		"symbol": "BLK",
+		"name": "Blackcoin",
+		"link": "http://blackcoin.co/"
+	},
+	{
+		"index": 11,
+		"hex": "0x8000000b",
+		"symbol": "NSR",
+		"name": "NuShares",
+		"link": "https://nubits.com/nushares/introduction"
+	},
+	{
+		"index": 12,
+		"hex": "0x8000000c",
+		"symbol": "NBT",
+		"name": "NuBits"
+	},
+	{
+		"index": 13,
+		"hex": "0x8000000d",
+		"symbol": "MZC",
+		"name": "Mazacoin"
+	},
+	{
+		"index": 14,
+		"hex": "0x8000000e",
+		"symbol": "VIA",
+		"name": "Viacoin"
+	},
+	{
+		"index": 15,
+		"hex": "0x8000000f",
+		"symbol": "XCH",
+		"name": "ClearingHouse"
+	},
+	{
+		"index": 16,
+		"hex": "0x80000010",
+		"symbol": "RBY",
+		"name": "Rubycoin"
+	},
+	{
+		"index": 17,
+		"hex": "0x80000011",
+		"symbol": "GRS",
+		"name": "Groestlcoin"
+	},
+	{
+		"index": 18,
+		"hex": "0x80000012",
+		"symbol": "DGC",
+		"name": "Digitalcoin"
+	},
+	{
+		"index": 19,
+		"hex": "0x80000013",
+		"symbol": "CCN",
+		"name": "Cannacoin"
+	},
+	{
+		"index": 20,
+		"hex": "0x80000014",
+		"symbol": "DGB",
+		"name": "DigiByte"
+	},
+	{
+		"index": 22,
+		"hex": "0x80000016",
+		"symbol": "MONA",
+		"name": "Monacoin"
+	},
+	{
+		"index": 23,
+		"hex": "0x80000017",
+		"symbol": "CLAM",
+		"name": "Clams"
+	},
+	{
+		"index": 24,
+		"hex": "0x80000018",
+		"symbol": "XPM",
+		"name": "Primecoin"
+	},
+	{
+		"index": 25,
+		"hex": "0x80000019",
+		"symbol": "NEOS",
+		"name": "Neoscoin"
+	},
+	{
+		"index": 26,
+		"hex": "0x8000001a",
+		"symbol": "JBS",
+		"name": "Jumbucks"
+	},
+	{
+		"index": 27,
+		"hex": "0x8000001b",
+		"symbol": "ZRC",
+		"name": "ziftrCOIN"
+	},
+	{
+		"index": 28,
+		"hex": "0x8000001c",
+		"symbol": "VTC",
+		"name": "Vertcoin"
+	},
+	{
+		"index": 29,
+		"hex": "0x8000001d",
+		"symbol": "NXT",
+		"name": "NXT"
+	},
+	{
+		"index": 30,
+		"hex": "0x8000001e",
+		"symbol": "BURST",
+		"name": "Burst"
+	},
+	{
+		"index": 31,
+		"hex": "0x8000001f",
+		"symbol": "MUE",
+		"name": "MonetaryUnit"
+	},
+	{
+		"index": 32,
+		"hex": "0x80000020",
+		"symbol": "ZOOM",
+		"name": "Zoom"
+	},
+	{
+		"index": 33,
+		"hex": "0x80000021",
+		"symbol": "VASH",
+		"name": "Virtual Cash",
+		"link": "http://www.bitnet.cc/"
+	},
+	{
+		"index": 34,
+		"hex": "0x80000022",
+		"symbol": "CDN",
+		"name": "Canada eCoin",
+		"link": "https://github.com/Canada-eCoin/"
+	},
+	{
+		"index": 35,
+		"hex": "0x80000023",
+		"symbol": "SDC",
+		"name": "ShadowCash"
+	},
+	{
+		"index": 36,
+		"hex": "0x80000024",
+		"symbol": "PKB",
+		"name": "ParkByte",
+		"link": "https://github.com/parkbyte/"
+	},
+	{
+		"index": 37,
+		"hex": "0x80000025",
+		"symbol": "PND",
+		"name": "Pandacoin"
+	},
+	{
+		"index": 38,
+		"hex": "0x80000026",
+		"symbol": "START",
+		"name": "StartCOIN"
+	},
+	{
+		"index": 39,
+		"hex": "0x80000027",
+		"symbol": "MOIN",
+		"name": "MOIN",
+		"link": "https://discovermoin.com"
+	},
+	{
+		"index": 40,
+		"hex": "0x80000028",
+		"symbol": "EXP",
+		"name": "Expanse",
+		"link": "http://www.expanse.tech/"
+	},
+	{
+		"index": 41,
+		"hex": "0x80000029",
+		"symbol": "EMC2",
+		"name": "Einsteinium",
+		"link": "https://www.emc2.foundation/"
+	},
+	{
+		"index": 42,
+		"hex": "0x8000002a",
+		"symbol": "DCR",
+		"name": "Decred",
+		"link": "https://decred.org/"
+	},
+	{
+		"index": 43,
+		"hex": "0x8000002b",
+		"symbol": "XEM",
+		"name": "NEM",
+		"link": "https://github.com/NemProject"
+	},
+	{
+		"index": 44,
+		"hex": "0x8000002c",
+		"symbol": "PART",
+		"name": "Particl",
+		"link": "https://particl.io/"
+	},
+	{
+		"index": 45,
+		"hex": "0x8000002d",
+		"symbol": "ARG",
+		"name": "Argentum",
+		"link": "http://www.argentum.io"
+	},
+	{
+		"index": 48,
+		"hex": "0x80000030",
+		"symbol": "SHR",
+		"name": "Shreeji",
+		"link": "https://github.com/SMJBIT/SHREEJI"
+	},
+	{
+		"index": 49,
+		"hex": "0x80000031",
+		"symbol": "GCR",
+		"name": "Global Currency Reserve (GCRcoin)"
+	},
+	{
+		"index": 50,
+		"hex": "0x80000032",
+		"symbol": "NVC",
+		"name": "Novacoin",
+		"link": "https://github.com/novacoin-project/novacoin"
+	},
+	{
+		"index": 51,
+		"hex": "0x80000033",
+		"symbol": "AC",
+		"name": "Asiacoin",
+		"link": "https://github.com/AsiaCoin/AsiaCoinFix"
+	},
+	{
+		"index": 52,
+		"hex": "0x80000034",
+		"symbol": "BTCD",
+		"name": "Bitcoindark",
+		"link": "https://github.com/jl777/btcd"
+	},
+	{
+		"index": 53,
+		"hex": "0x80000035",
+		"symbol": "DOPE",
+		"name": "Dopecoin",
+		"link": "https://github.com/dopecoin-dev/DopeCoinV3"
+	},
+	{
+		"index": 54,
+		"hex": "0x80000036",
+		"symbol": "TPC",
+		"name": "Templecoin",
+		"link": "https://github.com/9cat/templecoin"
+	},
+	{
+		"index": 55,
+		"hex": "0x80000037",
+		"symbol": "AIB",
+		"name": "AIB",
+		"link": "https://github.com/iobond/aib"
+	},
+	{
+		"index": 56,
+		"hex": "0x80000038",
+		"symbol": "EDRC",
+		"name": "EDRCoin",
+		"link": "https://github.com/EDRCoin/EDRcoin-src"
+	},
+	{
+		"index": 57,
+		"hex": "0x80000039",
+		"symbol": "SYS",
+		"name": "Syscoin",
+		"link": "https://github.com/syscoin/syscoin2"
+	},
+	{
+		"index": 58,
+		"hex": "0x8000003a",
+		"symbol": "SLR",
+		"name": "Solarcoin",
+		"link": "https://github.com/onsightit/solarcoin"
+	},
+	{
+		"index": 59,
+		"hex": "0x8000003b",
+		"symbol": "SMLY",
+		"name": "Smileycoin",
+		"link": "https://github.com/tutor-web/smileyCoin"
+	},
+	{
+		"index": 60,
+		"hex": "0x8000003c",
+		"symbol": "ETH",
+		"name": "Ether",
+		"link": "https://ethereum.org/ether",
+		"decimals": 18
+	},
+	{
+		"index": 61,
+		"hex": "0x8000003d",
+		"symbol": "ETC",
+		"name": "Ether Classic",
+		"link": "https://ethereumclassic.github.io"
+	},
+	{
+		"index": 62,
+		"hex": "0x8000003e",
+		"symbol": "PSB",
+		"name": "Pesobit",
+		"link": "https://github.com/pesobitph/pesobit-source"
+	},
+	{
+		"index": 63,
+		"hex": "0x8000003f",
+		"symbol": "LDCN",
+		"name": "Landcoin",
+		"link": "http://landcoin.co/"
+	},
+	{
+		"index": 65,
+		"hex": "0x80000041",
+		"symbol": "XBC",
+		"name": "Bitcoinplus",
+		"link": "https://bitcoinplus.org"
+	},
+	{
+		"index": 66,
+		"hex": "0x80000042",
+		"symbol": "IOP",
+		"name": "Internet of People",
+		"link": "http://www.fermat.org"
+	},
+	{
+		"index": 67,
+		"hex": "0x80000043",
+		"symbol": "NXS",
+		"name": "Nexus",
+		"link": "http://www.nexusearth.com/"
+	},
+	{
+		"index": 68,
+		"hex": "0x80000044",
+		"symbol": "INSN",
+		"name": "InsaneCoin",
+		"link": "http://insanecoin.com"
+	},
+	{
+		"index": 69,
+		"hex": "0x80000045",
+		"symbol": "OK",
+		"name": "OKCash",
+		"link": "https://github.com/okcashpro/"
+	},
+	{
+		"index": 70,
+		"hex": "0x80000046",
+		"symbol": "BRIT",
+		"name": "BritCoin",
+		"link": "https://britcoin.com"
+	},
+	{
+		"index": 71,
+		"hex": "0x80000047",
+		"symbol": "CMP",
+		"name": "Compcoin",
+		"link": "https://compcoin.com"
+	},
+	{
+		"index": 72,
+		"hex": "0x80000048",
+		"symbol": "CRW",
+		"name": "Crown",
+		"link": "http://crown.tech/"
+	},
+	{
+		"index": 73,
+		"hex": "0x80000049",
+		"symbol": "BELA",
+		"name": "BelaCoin",
+		"link": "http://belacoin.org"
+	},
+	{
+		"index": 74,
+		"hex": "0x8000004a",
+		"symbol": "ICX",
+		"name": "ICON",
+		"link": "https://icon.foundation/"
+	},
+	{
+		"index": 75,
+		"hex": "0x8000004b",
+		"symbol": "FJC",
+		"name": "FujiCoin",
+		"link": "http://www.fujicoin.org/"
+	},
+	{
+		"index": 76,
+		"hex": "0x8000004c",
+		"symbol": "MIX",
+		"name": "MIX",
+		"link": "https://www.mix-blockchain.org/"
+	},
+	{
+		"index": 77,
+		"hex": "0x8000004d",
+		"symbol": "XVG",
+		"name": "Verge",
+		"link": "https://github.com/vergecurrency/verge/"
+	},
+	{
+		"index": 78,
+		"hex": "0x8000004e",
+		"symbol": "EFL",
+		"name": "Electronic Gulden",
+		"link": "https://egulden.org/"
+	},
+	{
+		"index": 79,
+		"hex": "0x8000004f",
+		"symbol": "CLUB",
+		"name": "ClubCoin",
+		"link": "https://clubcoin.co/"
+	},
+	{
+		"index": 80,
+		"hex": "0x80000050",
+		"symbol": "RICHX",
+		"name": "RichCoin",
+		"link": "https://richcoin.us/"
+	},
+	{
+		"index": 81,
+		"hex": "0x80000051",
+		"symbol": "POT",
+		"name": "Potcoin",
+		"link": "http://potcoin.com/"
+	},
+	{
+		"index": 82,
+		"hex": "0x80000052",
+		"symbol": "QRK",
+		"name": "Quarkcoin"
+	},
+	{
+		"index": 83,
+		"hex": "0x80000053",
+		"symbol": "TRC",
+		"name": "Terracoin",
+		"link": "https://terracoin.io/"
+	},
+	{
+		"index": 84,
+		"hex": "0x80000054",
+		"symbol": "GRC",
+		"name": "Gridcoin"
+	},
+	{
+		"index": 85,
+		"hex": "0x80000055",
+		"symbol": "AUR",
+		"name": "Auroracoin",
+		"link": "http://auroracoin.is/"
+	},
+	{
+		"index": 86,
+		"hex": "0x80000056",
+		"symbol": "IXC",
+		"name": "IXCoin"
+	},
+	{
+		"index": 87,
+		"hex": "0x80000057",
+		"symbol": "NLG",
+		"name": "Gulden",
+		"link": "https://Gulden.com/"
+	},
+	{
+		"index": 88,
+		"hex": "0x80000058",
+		"symbol": "BITB",
+		"name": "BitBean",
+		"link": "http://bitbean.org/"
+	},
+	{
+		"index": 89,
+		"hex": "0x80000059",
+		"symbol": "BTA",
+		"name": "Bata",
+		"link": "http://bata.io/"
+	},
+	{
+		"index": 90,
+		"hex": "0x8000005a",
+		"symbol": "XMY",
+		"name": "Myriadcoin",
+		"link": "http://myriadcoin.org"
+	},
+	{
+		"index": 91,
+		"hex": "0x8000005b",
+		"symbol": "BSD",
+		"name": "BitSend",
+		"link": "http://bitsend.info"
+	},
+	{
+		"index": 92,
+		"hex": "0x8000005c",
+		"symbol": "UNO",
+		"name": "Unobtanium",
+		"link": "http://http://unobtanium.uno/"
+	},
+	{
+		"index": 93,
+		"hex": "0x8000005d",
+		"symbol": "MTR",
+		"name": "MasterTrader",
+		"link": "https://github.com/CrypticApplications/MTR-Update/"
+	},
+	{
+		"index": 94,
+		"hex": "0x8000005e",
+		"symbol": "GB",
+		"name": "GoldBlocks",
+		"link": "https://github.com/goldblockscoin/goldblocks"
+	},
+	{
+		"index": 95,
+		"hex": "0x8000005f",
+		"symbol": "SHM",
+		"name": "Saham",
+		"link": "https://github.com/SahamDev/SahamDev"
+	},
+	{
+		"index": 96,
+		"hex": "0x80000060",
+		"symbol": "CRX",
+		"name": "Chronos",
+		"link": "https://github.com/chronoscoin/Chronoscoin"
+	},
+	{
+		"index": 97,
+		"hex": "0x80000061",
+		"symbol": "BIQ",
+		"name": "Ubiquoin",
+		"link": "https://github.com/ubiquoin/ubiq"
+	},
+	{
+		"index": 98,
+		"hex": "0x80000062",
+		"symbol": "EVO",
+		"name": "Evotion",
+		"link": "https://github.com/evoshiun/Evotion"
+	},
+	{
+		"index": 99,
+		"hex": "0x80000063",
+		"symbol": "STO",
+		"name": "SaveTheOcean",
+		"link": "https://github.com/SaveTheOceanMovement/SaveTheOceanCoin"
+	},
+	{
+		"index": 100,
+		"hex": "0x80000064",
+		"symbol": "BIGUP",
+		"name": "BigUp",
+		"link": "https://github.com/BigUps/"
+	},
+	{
+		"index": 101,
+		"hex": "0x80000065",
+		"symbol": "GAME",
+		"name": "GameCredits",
+		"link": "https://github.com/gamecredits-project"
+	},
+	{
+		"index": 102,
+		"hex": "0x80000066",
+		"symbol": "DLC",
+		"name": "Dollarcoins",
+		"link": "https://github.com/dollarcoins/source"
+	},
+	{
+		"index": 103,
+		"hex": "0x80000067",
+		"symbol": "ZYD",
+		"name": "Zayedcoin",
+		"link": "https://github.com/ZayedCoin/Zayedcoin"
+	},
+	{
+		"index": 104,
+		"hex": "0x80000068",
+		"symbol": "DBIC",
+		"name": "Dubaicoin",
+		"link": "https://github.com/DubaiCoinDev/DubaiCoin"
+	},
+	{
+		"index": 105,
+		"hex": "0x80000069",
+		"symbol": "STRAT",
+		"name": "Stratis",
+		"link": "http://www.stratisplatform.com"
+	},
+	{
+		"index": 106,
+		"hex": "0x8000006a",
+		"symbol": "SH",
+		"name": "Shilling",
+		"link": "https://github.com/yavwa/Shilling"
+	},
+	{
+		"index": 107,
+		"hex": "0x8000006b",
+		"symbol": "MARS",
+		"name": "MarsCoin",
+		"link": "http://www.marscoin.org/"
+	},
+	{
+		"index": 108,
+		"hex": "0x8000006c",
+		"symbol": "UBQ",
+		"name": "Ubiq",
+		"link": "https://github.com/Ubiq"
+	},
+	{
+		"index": 109,
+		"hex": "0x8000006d",
+		"symbol": "PTC",
+		"name": "Pesetacoin",
+		"link": "http://pesetacoin.info/"
+	},
+	{
+		"index": 110,
+		"hex": "0x8000006e",
+		"symbol": "NRO",
+		"name": "Neurocoin",
+		"link": "https://neurocoin.org"
+	},
+	{
+		"index": 111,
+		"hex": "0x8000006f",
+		"symbol": "ARK",
+		"name": "ARK",
+		"link": "https://ark.io"
+	},
+	{
+		"index": 112,
+		"hex": "0x80000070",
+		"symbol": "USC",
+		"name": "UltimateSecureCashMain",
+		"link": "http://ultimatesecurecash.info"
+	},
+	{
+		"index": 113,
+		"hex": "0x80000071",
+		"symbol": "THC",
+		"name": "Hempcoin",
+		"link": "http://hempcoin.org"
+	},
+	{
+		"index": 114,
+		"hex": "0x80000072",
+		"symbol": "LINX",
+		"name": "Linx",
+		"link": "https://mylinx.io"
+	},
+	{
+		"index": 115,
+		"hex": "0x80000073",
+		"symbol": "ECN",
+		"name": "Ecoin",
+		"link": "https://www.ecoinsource.com"
+	},
+	{
+		"index": 116,
+		"hex": "0x80000074",
+		"symbol": "DNR",
+		"name": "Denarius",
+		"link": "https://denarius.io"
+	},
+	{
+		"index": 117,
+		"hex": "0x80000075",
+		"symbol": "PINK",
+		"name": "Pinkcoin",
+		"link": "http://getstarted.with.pink"
+	},
+	{
+		"index": 118,
+		"hex": "0x80000076",
+		"symbol": "ATOM",
+		"name": "Atom",
+		"link": "https://cosmos.network"
+	},
+	{
+		"index": 119,
+		"hex": "0x80000077",
+		"symbol": "PIVX",
+		"name": "Pivx",
+		"link": "https://github.com/PIVX-Project/PIVX"
+	},
+	{
+		"index": 120,
+		"hex": "0x80000078",
+		"symbol": "FLASH",
+		"name": "Flashcoin",
+		"link": "https://flashcoin.io"
+	},
+	{
+		"index": 121,
+		"hex": "0x80000079",
+		"symbol": "ZEN",
+		"name": "Zencash",
+		"link": "https://zensystem.io"
+	},
+	{
+		"index": 122,
+		"hex": "0x8000007a",
+		"symbol": "PUT",
+		"name": "Putincoin",
+		"link": "https://putincoin.info"
+	},
+	{
+		"index": 123,
+		"hex": "0x8000007b",
+		"symbol": "ZNY",
+		"name": "BitZeny",
+		"link": "http://bitzeny.org/"
+	},
+	{
+		"index": 124,
+		"hex": "0x8000007c",
+		"symbol": "UNIFY",
+		"name": "Unify",
+		"link": "http://unifycryptocurrency.com"
+	},
+	{
+		"index": 125,
+		"hex": "0x8000007d",
+		"symbol": "XST",
+		"name": "StealthCoin",
+		"link": "http://www.stealthcoin.com"
+	},
+	{
+		"index": 126,
+		"hex": "0x8000007e",
+		"symbol": "BRK",
+		"name": "Breakout Coin",
+		"link": "http://www.breakoutcoin.com"
+	},
+	{
+		"index": 127,
+		"hex": "0x8000007f",
+		"symbol": "VC",
+		"name": "Vcash",
+		"link": "https://vcash.info"
+	},
+	{
+		"index": 128,
+		"hex": "0x80000080",
+		"symbol": "XMR",
+		"name": "Monero",
+		"link": "https://getmonero.org/"
+	},
+	{
+		"index": 129,
+		"hex": "0x80000081",
+		"symbol": "VOX",
+		"name": "Voxels",
+		"link": "https://www.voxelus.com"
+	},
+	{
+		"index": 130,
+		"hex": "0x80000082",
+		"symbol": "NAV",
+		"name": "NavCoin",
+		"link": "https://github.com/navcoindev/navcoin2"
+	},
+	{
+		"index": 131,
+		"hex": "0x80000083",
+		"symbol": "FCT",
+		"name": "Factom Factoids",
+		"link": "https://github.com/FactomProject/FactomDocs/blob/master/wallet_info/wallet_test_vectors.md"
+	},
+	{
+		"index": 132,
+		"hex": "0x80000084",
+		"symbol": "EC",
+		"name": "Factom Entry Credits",
+		"link": "https://github.com/FactomProject"
+	},
+	{
+		"index": 133,
+		"hex": "0x80000085",
+		"symbol": "ZEC",
+		"name": "Zcash",
+		"link": "https://z.cash"
+	},
+	{
+		"index": 134,
+		"hex": "0x80000086",
+		"symbol": "LSK",
+		"name": "Lisk",
+		"link": "https://lisk.io/"
+	},
+	{
+		"index": 135,
+		"hex": "0x80000087",
+		"symbol": "STEEM",
+		"name": "Steem",
+		"link": "http://steem.io"
+	},
+	{
+		"index": 136,
+		"hex": "0x80000088",
+		"symbol": "XZC",
+		"name": "ZCoin",
+		"link": "https://zcoin.io"
+	},
+	{
+		"index": 137,
+		"hex": "0x80000089",
+		"symbol": "RBTC",
+		"name": "RSK",
+		"link": "http://www.rsk.co/"
+	},
+	{
+		"index": 139,
+		"hex": "0x8000008b",
+		"symbol": "RPT",
+		"name": "RealPointCoin",
+		"link": "https://github.com/MaxSmile/RealPointCoinQt"
+	},
+	{
+		"index": 140,
+		"hex": "0x8000008c",
+		"symbol": "LBC",
+		"name": "LBRY Credits",
+		"link": "https://lbry.io/"
+	},
+	{
+		"index": 141,
+		"hex": "0x8000008d",
+		"symbol": "KMD",
+		"name": "Komodo",
+		"link": "https://komodoplatform.com/"
+	},
+	{
+		"index": 142,
+		"hex": "0x8000008e",
+		"symbol": "BSQ",
+		"name": "bisq Token",
+		"link": "http://bisq.io/"
+	},
+	{
+		"index": 143,
+		"hex": "0x8000008f",
+		"symbol": "RIC",
+		"name": "Riecoin",
+		"link": "https://github.com/riecoin/riecoin"
+	},
+	{
+		"index": 144,
+		"hex": "0x80000090",
+		"symbol": "XRP",
+		"name": "Ripple",
+		"link": "https://ripple.com",
+		"decimals": 6
+	},
+	{
+		"index": 145,
+		"hex": "0x80000091",
+		"symbol": "BCH",
+		"name": "Bitcoin Cash",
+		"link": "https://www.bitcoincash.org"
+	},
+	{
+		"index": 146,
+		"hex": "0x80000092",
+		"symbol": "NEBL",
+		"name": "Neblio",
+		"link": "https://nebl.io"
+	},
+	{
+		"index": 147,
+		"hex": "0x80000093",
+		"symbol": "ZCL",
+		"name": "ZClassic",
+		"link": "http://zclassic.org/"
+	},
+	{
+		"index": 148,
+		"hex": "0x80000094",
+		"symbol": "XLM",
+		"name": "Stellar Lumens",
+		"link": "https://www.stellar.org/",
+		"decimals": 7
+	},
+	{
+		"index": 149,
+		"hex": "0x80000095",
+		"symbol": "NLC2",
+		"name": "NoLimitCoin2",
+		"link": "http://www.nolimitcoin.org"
+	},
+	{
+		"index": 150,
+		"hex": "0x80000096",
+		"symbol": "WHL",
+		"name": "WhaleCoin",
+		"link": "https://whalecoin.org/"
+	},
+	{
+		"index": 151,
+		"hex": "0x80000097",
+		"symbol": "ERC",
+		"name": "EuropeCoin",
+		"link": "https://www.europecoin.eu.org/"
+	},
+	{
+		"index": 152,
+		"hex": "0x80000098",
+		"symbol": "DMD",
+		"name": "Diamond",
+		"link": "http://bit.diamonds"
+	},
+	{
+		"index": 153,
+		"hex": "0x80000099",
+		"symbol": "BTM",
+		"name": "Bytom",
+		"link": "https://bytom.io"
+	},
+	{
+		"index": 154,
+		"hex": "0x8000009a",
+		"symbol": "BIO",
+		"name": "Biocoin",
+		"link": "https://biocoin.bio"
+	},
+	{
+		"index": 155,
+		"hex": "0x8000009b",
+		"symbol": "XWC",
+		"name": "Whitecoin",
+		"link": "https://www.whitecoin.info"
+	},
+	{
+		"index": 156,
+		"hex": "0x8000009c",
+		"symbol": "BTG",
+		"name": "Bitcoin Gold",
+		"link": "http://www.btcgpu.org"
+	},
+	{
+		"index": 157,
+		"hex": "0x8000009d",
+		"symbol": "BTC2X",
+		"name": "Bitcoin 2x",
+		"link": "https://medium.com/@DCGco/bitcoin-scaling-agreement-at-consensus-2017-133521fe9a77)"
+	},
+	{
+		"index": 158,
+		"hex": "0x8000009e",
+		"symbol": "SSN",
+		"name": "SuperSkynet",
+		"link": "http://wwww.superskynet.org/"
+	},
+	{
+		"index": 159,
+		"hex": "0x8000009f",
+		"symbol": "TOA",
+		"name": "TOACoin",
+		"link": "http://www.toacoin.com"
+	},
+	{
+		"index": 160,
+		"hex": "0x800000a0",
+		"symbol": "BTX",
+		"name": "Bitcore",
+		"link": "https://bitcore.cc"
+	},
+	{
+		"index": 161,
+		"hex": "0x800000a1",
+		"symbol": "ACC",
+		"name": "Adcoin",
+		"link": "https://www.getadcoin.com/"
+	},
+	{
+		"index": 162,
+		"hex": "0x800000a2",
+		"symbol": "BCO",
+		"name": "Bridgecoin",
+		"link": "https://bridgecoin.org/"
+	},
+	{
+		"index": 163,
+		"hex": "0x800000a3",
+		"symbol": "ELLA",
+		"name": "Ellaism",
+		"link": "https://ellaism.org"
+	},
+	{
+		"index": 164,
+		"hex": "0x800000a4",
+		"symbol": "PIRL",
+		"name": "Pirl",
+		"link": "https://pirl.io"
+	},
+	{
+		"index": 165,
+		"hex": "0x800000a5",
+		"symbol": "XRB",
+		"name": "RaiBlocks",
+		"link": "https://raiblocks.com"
+	},
+	{
+		"index": 166,
+		"hex": "0x800000a6",
+		"symbol": "VIVO",
+		"name": "Vivo",
+		"link": "https://www.vivocrypto.com/"
+	},
+	{
+		"index": 167,
+		"hex": "0x800000a7",
+		"symbol": "FRST",
+		"name": "Firstcoin",
+		"link": "http://firstcoinproject.com"
+	},
+	{
+		"index": 168,
+		"hex": "0x800000a8",
+		"symbol": "HNC",
+		"name": "Helleniccoin",
+		"link": "http://www.helleniccoin.gr/"
+	},
+	{
+		"index": 169,
+		"hex": "0x800000a9",
+		"symbol": "BUZZ",
+		"name": "BUZZ",
+		"link": "http://www.buzzcoin.info/"
+	},
+	{
+		"index": 170,
+		"hex": "0x800000aa",
+		"symbol": "MBRS",
+		"name": "Ember",
+		"link": "https://www.embercoin.io/"
+	},
+	{
+		"index": 171,
+		"hex": "0x800000ab",
+		"symbol": "HSR",
+		"name": "Hcash",
+		"link": "https://h.cash"
+	},
+	{
+		"index": 172,
+		"hex": "0x800000ac",
+		"symbol": "HTML",
+		"name": "HTMLCOIN",
+		"link": "https://htmlcoin.com/"
+	},
+	{
+		"index": 173,
+		"hex": "0x800000ad",
+		"symbol": "ODN",
+		"name": "Obsidian",
+		"link": "https://obsidianplatform.com/"
+	},
+	{
+		"index": 174,
+		"hex": "0x800000ae",
+		"symbol": "ONX",
+		"name": "OnixCoin",
+		"link": "https://www.onixcoin.com/"
+	},
+	{
+		"index": 175,
+		"hex": "0x800000af",
+		"symbol": "RVN",
+		"name": "Ravencoin",
+		"link": "https://ravencoin.org/"
+	},
+	{
+		"index": 176,
+		"hex": "0x800000b0",
+		"symbol": "GBX",
+		"name": "GoByte",
+		"link": "https://gobyte.network"
+	},
+	{
+		"index": 177,
+		"hex": "0x800000b1",
+		"symbol": "BTCZ",
+		"name": "BitcoinZ",
+		"link": "https://btcz.rocks/en/"
+	},
+	{
+		"index": 178,
+		"hex": "0x800000b2",
+		"symbol": "POA",
+		"name": "Poa",
+		"link": "https://poa.network"
+	},
+	{
+		"index": 179,
+		"hex": "0x800000b3",
+		"symbol": "NYC",
+		"name": "NewYorkCoin",
+		"link": "http://nycoin.net"
+	},
+	{
+		"index": 180,
+		"hex": "0x800000b4",
+		"symbol": "MXT",
+		"name": "MarteXcoin",
+		"link": "http://martexcoin.org"
+	},
+	{
+		"index": 181,
+		"hex": "0x800000b5",
+		"symbol": "WC",
+		"name": "Wincoin",
+		"link": "https://wincoin.co"
+	},
+	{
+		"index": 182,
+		"hex": "0x800000b6",
+		"symbol": "MNX",
+		"name": "Minexcoin",
+		"link": "https://minexcoin.com"
+	},
+	{
+		"index": 183,
+		"hex": "0x800000b7",
+		"symbol": "BTCP",
+		"name": "Bitcoin Private",
+		"link": "https://btcprivate.org"
+	},
+	{
+		"index": 184,
+		"hex": "0x800000b8",
+		"symbol": "MUSIC",
+		"name": "Musicoin",
+		"link": "https://www.musicoin.org"
+	},
+	{
+		"index": 185,
+		"hex": "0x800000b9",
+		"symbol": "BCA",
+		"name": "Bitcoin Atom",
+		"link": "https://bitcoinatom.io"
+	},
+	{
+		"index": 186,
+		"hex": "0x800000ba",
+		"symbol": "CRAVE",
+		"name": "Crave",
+		"link": "https://craveproject.net"
+	},
+	{
+		"index": 187,
+		"hex": "0x800000bb",
+		"symbol": "STAK",
+		"name": "STRAKS",
+		"link": "https://straks.io"
+	},
+	{
+		"index": 188,
+		"hex": "0x800000bc",
+		"symbol": "WBTC",
+		"name": "World Bitcoin",
+		"link": "http://www.wbtcteam.org/"
+	},
+	{
+		"index": 189,
+		"hex": "0x800000bd",
+		"symbol": "LCH",
+		"name": "LiteCash",
+		"link": "http://www.litecash.info/"
+	},
+	{
+		"index": 190,
+		"hex": "0x800000be",
+		"symbol": "EXCL",
+		"name": "ExclusiveCoin",
+		"link": "https://exclusivecoin.pw/"
+	},
+	{
+		"index": 192,
+		"hex": "0x800000c0",
+		"symbol": "LCC",
+		"name": "LitecoinCash",
+		"link": "https://litecoinca.sh"
+	},
+	{
+		"index": 193,
+		"hex": "0x800000c1",
+		"symbol": "XFE",
+		"name": "Feirm",
+		"link": "https://www.feirm.com"
+	},
+	{
+		"index": 194,
+		"hex": "0x800000c2",
+		"symbol": "EOS",
+		"name": "EOS",
+		"link": "https://eos.io"
+	},
+	{
+		"index": 195,
+		"hex": "0x800000c3",
+		"symbol": "TRX",
+		"name": "Tron",
+		"link": "https://tron.network/enindex.html"
+	},
+	{
+		"index": 196,
+		"hex": "0x800000c4",
+		"symbol": "KOBO",
+		"name": "Kobocoin",
+		"link": "https://kobocoin.com"
+	},
+	{
+		"index": 197,
+		"hex": "0x800000c5",
+		"symbol": "HUSH",
+		"name": "HUSH",
+		"link": "https://myhush.org"
+	},
+	{
+		"index": 198,
+		"hex": "0x800000c6",
+		"symbol": "BANANO",
+		"name": "Bananos",
+		"link": "https://banano.co.in"
+	},
+	{
+		"index": 199,
+		"hex": "0x800000c7",
+		"symbol": "ETF",
+		"name": "ETF",
+		"link": "http://ethereumfog.org"
+	},
+	{
+		"index": 200,
+		"hex": "0x800000c8",
+		"symbol": "OMNI",
+		"name": "Omni",
+		"link": "http://www.omnilayer.org"
+	},
+	{
+		"index": 201,
+		"hex": "0x800000c9",
+		"symbol": "BIFI",
+		"name": "BitcoinFile",
+		"link": "https://www.bitcoinfile.org"
+	},
+	{
+		"index": 202,
+		"hex": "0x800000ca",
+		"symbol": "UFO",
+		"name": "Uniform Fiscal Object",
+		"link": "https://ufobject.com"
+	},
+	{
+		"index": 203,
+		"hex": "0x800000cb",
+		"symbol": "CNMC",
+		"name": "Cryptonodes",
+		"link": "https://www.cryptonodes.ch"
+	},
+	{
+		"index": 204,
+		"hex": "0x800000cc",
+		"symbol": "BCN",
+		"name": "Bytecoin",
+		"link": "http://bytecoin.org"
+	},
+	{
+		"index": 205,
+		"hex": "0x800000cd",
+		"symbol": "RIN",
+		"name": "Ringo",
+		"link": "http://dkwzjw.github.io/ringo/"
+	},
+	{
+		"index": 206,
+		"hex": "0x800000ce",
+		"symbol": "ATP",
+		"name": "PlatON",
+		"link": "https://www.platon.network"
+	},
+	{
+		"index": 207,
+		"hex": "0x800000cf",
+		"symbol": "EVT",
+		"name": "everiToken",
+		"link": "https://everiToken.io"
+	},
+	{
+		"index": 208,
+		"hex": "0x800000d0",
+		"symbol": "ATN",
+		"name": "ATN",
+		"link": "https://atn.io"
+	},
+	{
+		"index": 209,
+		"hex": "0x800000d1",
+		"symbol": "BIS",
+		"name": "Bismuth",
+		"link": "http://www.bismuth.cz"
+	},
+	{
+		"index": 210,
+		"hex": "0x800000d2",
+		"symbol": "NEET",
+		"name": "NEETCOIN",
+		"link": "https://neetcoin.jp/"
+	},
+	{
+		"index": 211,
+		"hex": "0x800000d3",
+		"symbol": "BOPO",
+		"name": "BopoChain",
+		"link": "http://www.bopochain.org/"
+	},
+	{
+		"index": 212,
+		"hex": "0x800000d4",
+		"symbol": "OOT",
+		"name": "Utrum",
+		"link": "https://utrum.io/ootcoin/"
+	},
+	{
+		"index": 213,
+		"hex": "0x800000d5",
+		"symbol": "XSPEC",
+		"name": "Spectrecoin",
+		"link": "https://spectreproject.io/"
+	},
+	{
+		"index": 214,
+		"hex": "0x800000d5",
+		"symbol": "MONK",
+		"name": "Monkey Project",
+		"link": "https://www.monkey.vision"
+	},
+	{
+		"index": 215,
+		"hex": "0x800000d7",
+		"symbol": "BOXY",
+		"name": "BoxyCoin",
+		"link": "http://www.boxycoin.org/"
+	},
+	{
+		"index": 216,
+		"hex": "0x800000d8",
+		"symbol": "FLO",
+		"name": "Flo",
+		"link": "https://www.flo.cash/"
+	},
+	{
+		"index": 217,
+		"hex": "0x800000d9",
+		"symbol": "MEC",
+		"name": "Megacoin",
+		"link": "https://www.megacoin.eu"
+	},
+	{
+		"index": 218,
+		"hex": "0x800000da",
+		"symbol": "BTDX",
+		"name": "BitCloud",
+		"link": "https://bit-cloud.info"
+	},
+	{
+		"index": 219,
+		"hex": "0x800000db",
+		"symbol": "XAX",
+		"name": "Artax",
+		"link": "https://www.artaxcoin.org/"
+	},
+	{
+		"index": 220,
+		"hex": "0x800000dc",
+		"symbol": "ANON",
+		"name": "ANON",
+		"link": "https://www.anonfork.io/"
+	},
+	{
+		"index": 221,
+		"hex": "0x800000dd",
+		"symbol": "LTZ",
+		"name": "LitecoinZ",
+		"link": "https://litecoinz.org/"
+	},
+	{
+		"index": 222,
+		"hex": "0x800000de",
+		"symbol": "BITG",
+		"name": "Bitcoin Green",
+		"link": "https://savebitcoin.io"
+	},
+	{
+		"index": 223,
+		"hex": "0x800000df",
+		"symbol": "ASK",
+		"name": "AskCoin",
+		"link": "https://askcoin.org"
+	},
+	{
+		"index": 224,
+		"hex": "0x800000e0",
+		"symbol": "SMART",
+		"name": "Smartcash",
+		"link": "https://smartcash.cc"
+	},
+	{
+		"index": 225,
+		"hex": "0x800000e1",
+		"symbol": "XUEZ",
+		"name": "XUEZ",
+		"link": "https://xuezcoin.com"
+	},
+	{
+		"index": 226,
+		"hex": "0x800000e2",
+		"symbol": "HLM",
+		"name": "Helium",
+		"link": "https://www.heliumlabs.org/"
+	},
+	{
+		"index": 227,
+		"hex": "0x800000e3",
+		"symbol": "WEB",
+		"name": "Webchain",
+		"link": "https://webchain.network/"
+	},
+	{
+		"index": 228,
+		"hex": "0x800000e4",
+		"symbol": "ACM",
+		"name": "Actinium",
+		"link": "https://actinium.org"
+	},
+	{
+		"index": 229,
+		"hex": "0x800000e5",
+		"symbol": "NOS",
+		"name": "NOS Stable Coins",
+		"link": "https://nos.cash"
+	},
+	{
+		"index": 230,
+		"hex": "0x800000e6",
+		"symbol": "BITC",
+		"name": "BitCash",
+		"link": "https://www.choosebitcash.com"
+	},
+	{
+		"index": 231,
+		"hex": "0x800000e7",
+		"symbol": "HTH",
+		"name": "Help The Homeless Coin",
+		"link": "https://hthcoin.world"
+	},
+	{
+		"index": 232,
+		"hex": "0x800000e8",
+		"symbol": "TZC",
+		"name": "Trezarcoin",
+		"link": "https://trezarcoin.com"
+	},
+	{
+		"index": 233,
+		"hex": "0x800000e9",
+		"symbol": "VAR",
+		"name": "Varda",
+		"link": "https://varda.io"
+	},
+	{
+		"index": 234,
+		"hex": "0x800000ea",
+		"symbol": "IOV",
+		"name": "IOV",
+		"link": "https://www.iov.one"
+	},
+	{
+		"index": 235,
+		"hex": "0x800000eb",
+		"symbol": "FIO",
+		"name": "FIO",
+		"link": "https://fio.foundation"
+	},
+	{
+		"index": 236,
+		"hex": "0x800000ec",
+		"symbol": "BSV",
+		"name": "BitcoinSV",
+		"link": "https://bitcoinsv.io"
+	},
+	{
+		"index": 237,
+		"hex": "0x800000ed",
+		"symbol": "DXN",
+		"name": "DEXON",
+		"link": "https://dexon.org/"
+	},
+	{
+		"index": 238,
+		"hex": "0x800000ee",
+		"symbol": "QRL",
+		"name": "Quantum Resistant Ledger",
+		"link": "https://www.theqrl.org/"
+	},
+	{
+		"index": 239,
+		"hex": "0x800000ef",
+		"symbol": "PCX",
+		"name": "ChainX",
+		"link": "https://github.com/chainx-org/ChainX"
+	},
+	{
+		"index": 240,
+		"hex": "0x800000f0",
+		"symbol": "LOKI",
+		"name": "Loki",
+		"link": "https://github.com/loki-project/loki"
+	},
+	{
+		"index": 242,
+		"hex": "0x800000f2",
+		"symbol": "NIM",
+		"name": "Nimiq",
+		"link": "https://nimiq.com/",
+		"decimals": 5
+	},
+	{
+		"index": 243,
+		"hex": "0x800000f3",
+		"symbol": "SOV",
+		"name": "Sovereign Coin",
+		"link": "http://www.sovcore.org/"
+	},
+	{
+		"index": 244,
+		"hex": "0x800000f4",
+		"symbol": "JCT",
+		"name": "Jibital Coin",
+		"link": "https://jibital.ir/"
+	},
+	{
+		"index": 245,
+		"hex": "0x800000f5",
+		"symbol": "SLP",
+		"name": "Simple Ledger Protocol",
+		"link": "https://simpleledger.cash"
+	},
+	{
+		"index": 246,
+		"hex": "0x800000f6",
+		"symbol": "EWT",
+		"name": "Energy Web",
+		"link": "https://energyweb.org"
+	},
+	{
+		"index": 247,
+		"hex": "0x800000f7",
+		"symbol": "UC",
+		"name": "Ulord",
+		"link": "http://ulord.one"
+	},
+	{
+		"index": 248,
+		"hex": "0x800000f8",
+		"symbol": "CIVX",
+		"name": "CivX",
+		"link": "https://civxeconomy.com"
+	},
+	{
+		"index": 249,
+		"hex": "0x800000f9",
+		"symbol": "ECA",
+		"name": "Electra",
+		"link": "https://www.electraproject.org"
+	},
+	{
+		"index": 250,
+		"hex": "0x800000fa",
+		"symbol": "SOOM",
+		"name": "Soom",
+		"link": "http://www.fourthblockchain.org/"
+	},
+	{
+		"index": 251,
+		"hex": "0x800000fb",
+		"symbol": "XRD",
+		"name": "Redstone",
+		"link": "https://www.redstoneplatform.com/"
+	},
+	{
+		"index": 252,
+		"hex": "0x800000fc",
+		"symbol": "FREE",
+		"name": "FreeCoin",
+		"link": "https://web.freepay.biz"
+	},
+	{
+		"index": 253,
+		"hex": "0x800000fd",
+		"symbol": "NPW",
+		"name": "NewPowerCoin",
+		"link": "https://npw.live"
+	},
+	{
+		"index": 254,
+		"hex": "0x800000fe",
+		"symbol": "BST",
+		"name": "BlockStamp",
+		"link": "https://blockstamp.info"
+	},
+	{
+		"index": 256,
+		"hex": "0x80000100",
+		"symbol": "NANO",
+		"name": "Bitcoin Nano",
+		"link": "https://www.btcnano.org"
+	},
+	{
+		"index": 257,
+		"hex": "0x80000101",
+		"symbol": "BTCC",
+		"name": "Bitcoin Core",
+		"link": "https://thebitcoincore.org"
+	},
+	{
+		"index": 259,
+		"hex": "0x80000103",
+		"symbol": "ZEST",
+		"name": "Zest",
+		"link": "https://www.zestcoin.io"
+	},
+	{
+		"index": 260,
+		"hex": "0x80000104",
+		"symbol": "ABT",
+		"name": "ArcBlock",
+		"link": "https://arcblock.io"
+	},
+	{
+		"index": 261,
+		"hex": "0x80000105",
+		"symbol": "PION",
+		"name": "Pion",
+		"link": "https://pioncoin.org/"
+	},
+	{
+		"index": 262,
+		"hex": "0x80000106",
+		"symbol": "DT3",
+		"name": "DreamTeam3",
+		"link": "https://crypto-dreamteam.com"
+	},
+	{
+		"index": 263,
+		"hex": "0x80000107",
+		"symbol": "ZBUX",
+		"name": "Zbux",
+		"link": "https://z-bux.org"
+	},
+	{
+		"index": 264,
+		"hex": "0x80000108",
+		"symbol": "KPL",
+		"name": "Kepler",
+		"link": "https://kepler.cash"
+	},
+	{
+		"index": 265,
+		"hex": "0x80000109",
+		"symbol": "TPAY",
+		"name": "TokenPay",
+		"link": "https://tokenpay.com"
+	},
+	{
+		"index": 266,
+		"hex": "0x8000010a",
+		"symbol": "ZILLA",
+		"name": "ChainZilla",
+		"link": "https://www.chainzilla.io"
+	},
+	{
+		"index": 267,
+		"hex": "0x8000010b",
+		"symbol": "ANK",
+		"name": "Anker",
+		"link": "https://ankerid.com"
+	},
+	{
+		"index": 268,
+		"hex": "0x8000010c",
+		"symbol": "BCC",
+		"name": "BCChain",
+		"link": "https://github.com/bc-chain/BCC"
+	},
+	{
+		"index": 269,
+		"hex": "0x8000010d",
+		"symbol": "HPB",
+		"name": "HPB",
+		"link": "https://hpb.io"
+	},
+	{
+		"index": 270,
+		"hex": "0x8000010e",
+		"symbol": "ONE",
+		"name": "ONE",
+		"link": "http://www.onechain.one/"
+	},
+	{
+		"index": 271,
+		"hex": "0x8000010f",
+		"symbol": "SBC",
+		"name": "SBC",
+		"link": "http://www.smartbitcoin.one"
+	},
+	{
+		"index": 272,
+		"hex": "0x80000110",
+		"symbol": "IPC",
+		"name": "IPChain",
+		"link": "https://www.ipcchain.org"
+	},
+	{
+		"index": 273,
+		"hex": "0x80000111",
+		"symbol": "DMTC",
+		"name": "Dominantchain",
+		"link": "https://dominantchain.com/"
+	},
+	{
+		"index": 274,
+		"hex": "0x80000112",
+		"symbol": "OGC",
+		"name": "Onegram",
+		"link": "https://onegram.org/"
+	},
+	{
+		"index": 275,
+		"hex": "0x80000113",
+		"symbol": "SHIT",
+		"name": "Shitcoin",
+		"link": "https://shitcoin.org"
+	},
+	{
+		"index": 276,
+		"hex": "0x80000114",
+		"symbol": "ANDES",
+		"name": "Andescoin",
+		"link": "https://andes-coin.com"
+	},
+	{
+		"index": 277,
+		"hex": "0x80000115",
+		"symbol": "AREPA",
+		"name": "Arepacoin",
+		"link": "https://arepacoinve.info"
+	},
+	{
+		"index": 278,
+		"hex": "0x80000116",
+		"symbol": "BOLI",
+		"name": "Bolivarcoin",
+		"link": "https://bolis.info"
+	},
+	{
+		"index": 279,
+		"hex": "0x80000117",
+		"symbol": "RIL",
+		"name": "Rilcoin",
+		"link": "https://www.rilcoincrypto.org"
+	},
+	{
+		"index": 280,
+		"hex": "0x80000118",
+		"symbol": "HTR",
+		"name": "Hathor Network",
+		"link": "https://hathor.network/"
+	},
+	{
+		"index": 281,
+		"hex": "0x80000119",
+		"symbol": "FCTID",
+		"name": "Factom ID",
+		"link": "https://github.com/FactomProject"
+	},
+	{
+		"index": 282,
+		"hex": "0x8000011a",
+		"symbol": "BRAVO",
+		"name": "BRAVO",
+		"link": "https://bravocoin.com/"
+	},
+	{
+		"index": 283,
+		"hex": "0x8000011b",
+		"symbol": "ALGO",
+		"name": "Algorand",
+		"link": "https://www.algorand.com/"
+	},
+	{
+		"index": 284,
+		"hex": "0x8000011c",
+		"symbol": "BZX",
+		"name": "Bitcoinzero",
+		"link": "https://bitcoinzerox.net"
+	},
+	{
+		"index": 285,
+		"hex": "0x8000011d",
+		"symbol": "GXX",
+		"name": "GravityCoin",
+		"link": "https://www.gravitycoin.io/"
+	},
+	{
+		"index": 286,
+		"hex": "0x8000011e",
+		"symbol": "HEAT",
+		"name": "HEAT",
+		"link": "https://heatledger.com/"
+	},
+	{
+		"index": 287,
+		"hex": "0x8000011f",
+		"symbol": "XDN",
+		"name": "DigitalNote",
+		"link": "https://digitalnote.biz"
+	},
+	{
+		"index": 288,
+		"hex": "0x80000120",
+		"symbol": "FSN",
+		"name": "FUSION",
+		"link": "https://www.fusion.org/"
+	},
+	{
+		"index": 289,
+		"hex": "0x80000121",
+		"symbol": "CPC",
+		"name": "Capricoin",
+		"link": "https://capricoin.org"
+	},
+	{
+		"index": 290,
+		"hex": "0x80000122",
+		"symbol": "BOLD",
+		"name": "Bold",
+		"link": "https://boldprivate.network"
+	},
+	{
+		"index": 291,
+		"hex": "0x80000123",
+		"symbol": "IOST",
+		"name": "IOST",
+		"link": "https://iost.io/"
+	},
+	{
+		"index": 292,
+		"hex": "0x80000124",
+		"symbol": "TKEY",
+		"name": "Tkeycoin",
+		"link": "https://tkeycoin.com"
+	},
+	{
+		"index": 293,
+		"hex": "0x80000125",
+		"symbol": "USE",
+		"name": "Usechain",
+		"link": "https://usechain.net"
+	},
+	{
+		"index": 299,
+		"hex": "0x8000012b",
+		"symbol": "NUKO",
+		"name": "Nekonium",
+		"link": "https://nekonium.github.io/"
+	},
+	{
+		"index": 300,
+		"hex": "0x8000012c",
+		"symbol": "GNX",
+		"name": "Genaro Network",
+		"link": "https://genaro.network/"
+	},
+	{
+		"index": 301,
+		"hex": "0x8000012d",
+		"symbol": "DIVI",
+		"name": "Divi Project",
+		"link": "https://diviproject.org"
+	},
+	{
+		"index": 303,
+		"hex": "0x8000012f",
+		"symbol": "EUNO",
+		"name": "EUNO",
+		"link": "https://euno.co/"
+	},
+	{
+		"index": 311,
+		"hex": "0x80000137",
+		"symbol": "ADS",
+		"name": "Adshares",
+		"link": "https://adshares.net/"
+	},
+	{
+		"index": 312,
+		"hex": "0x80000138",
+		"symbol": "ARA",
+		"name": "Aura",
+		"link": "https://auraledger.com/"
+	},
+	{
+		"index": 313,
+		"hex": "0x80000139",
+		"symbol": "ZIL",
+		"name": "Zilliqa",
+		"link": "https://zilliqa.com/"
+	},
+	{
+		"index": 314,
+		"hex": "0x8000013a",
+		"symbol": "MOAC",
+		"name": "MOAC",
+		"link": "https://moac.io/"
+	},
+	{
+		"index": 315,
+		"hex": "0x8000013b",
+		"symbol": "SWTC",
+		"name": "SWTC",
+		"link": "http://swtc.top/"
+	},
+	{
+		"index": 316,
+		"hex": "0x8000013c",
+		"symbol": "VNSC",
+		"name": "vnscoin",
+		"link": "http://www.vnscoin.org/"
+	},
+	{
+		"index": 321,
+		"hex": "0x80000141",
+		"symbol": "RAP",
+		"name": "Rapture",
+		"link": "https://our-rapture.com/"
+	},
+	{
+		"index": 322,
+		"hex": "0x80000142",
+		"symbol": "GARD",
+		"name": "Hashgard",
+		"link": "https://www.hashgard.io/"
+	},
+	{
+		"index": 328,
+		"hex": "0x80000148",
+		"symbol": "BLOCK",
+		"name": "Blocknet",
+		"link": "https://blocknet.co/"
+	},
+	{
+		"index": 333,
+		"hex": "0x8000014d",
+		"symbol": "MEM",
+		"name": "MemCoin",
+		"link": "https://memcoin.org"
+	},
+	{
+		"index": 369,
+		"hex": "0x80000171",
+		"symbol": "XAS",
+		"name": "Asch",
+		"link": "https://asch.io"
+	},
+	{
+		"index": 384,
+		"hex": "0x80000180",
+		"symbol": "XSN",
+		"name": "Stakenet",
+		"link": "https://xsncoin.io/"
+	},
+	{
+		"index": 392,
+		"hex": "0x80000188",
+		"symbol": "CENNZ",
+		"name": "CENNZnet",
+		"link": "https://centrality.ai"
+	},
+	{
+		"index": 398,
+		"hex": "0x8000018e",
+		"symbol": "XPC",
+		"name": "XPChain",
+		"link": "https://www.xpchain.io/"
+	},
+	{
+		"index": 400,
+		"hex": "0x80000190",
+		"symbol": "NIX",
+		"name": "NIX",
+		"link": "https://nixplatform.io"
+	},
+	{
+		"index": 404,
+		"hex": "0x80000194",
+		"symbol": "XBI",
+		"name": "XBI",
+		"link": "https://bitcoinincognito.org"
+	},
+	{
+		"index": 412,
+		"hex": "0x8000019c",
+		"symbol": "AIN",
+		"name": "AIN",
+		"link": "https://www.ainetwork.ai"
+	},
+	{
+		"index": 416,
+		"hex": "0x800001a0",
+		"symbol": "SLX",
+		"name": "SLX",
+		"link": "https://slate.io/"
+	},
+	{
+		"index": 420,
+		"hex": "0x800001a4",
+		"symbol": "NODE",
+		"name": "NodeHost",
+		"link": "https://nodehost.online"
+	},
+	{
+		"index": 425,
+		"hex": "0x800001a9",
+		"symbol": "AION",
+		"name": "Aion",
+		"link": "https://aion.network",
+		"decimals": 18
+	},
+	{
+		"index": 444,
+		"hex": "0x800001bc",
+		"symbol": "PHR",
+		"name": "Phore",
+		"link": "https://phore.io"
+	},
+	{
+		"index": 447,
+		"hex": "0x800001bf",
+		"symbol": "DIN",
+		"name": "Dinero",
+		"link": "https://dinerocoin.org/"
+	},
+	{
+		"index": 457,
+		"hex": "0x800001c9",
+		"symbol": "AE",
+		"name": "æternity",
+		"link": "https://aeternity.com"
+	},
+	{
+		"index": 464,
+		"hex": "0x800001d0",
+		"symbol": "ETI",
+		"name": "EtherInc",
+		"link": "https://einc.io"
+	},
+	{
+		"index": 488,
+		"hex": "0x800001e8",
+		"symbol": "VEO",
+		"name": "Amoveo",
+		"link": "https://github.com/zack-bitcoin/amoveo/"
+	},
+	{
+		"index": 500,
+		"hex": "0x800001f4",
+		"symbol": "THETA",
+		"name": "Theta",
+		"link": "https://www.thetatoken.org/"
+	},
+	{
+		"index": 510,
+		"hex": "0x800001fe",
+		"symbol": "KOTO",
+		"name": "Koto",
+		"link": "https://ko-to.org/"
+	},
+	{
+		"index": 516,
+		"hex": "0x80000204",
+		"symbol": "VEE",
+		"name": "Virtual Economy Era",
+		"link": "https://www.vee.tech/"
+	},
+	{
+		"index": 518,
+		"hex": "0x80000206",
+		"symbol": "LET",
+		"name": "Linkeye",
+		"link": "https://www.linkeye.com/"
+	},
+	{
+		"index": 520,
+		"hex": "0x80000208",
+		"symbol": "BTCV",
+		"name": "BitcoinVIP",
+		"link": "https://www.bitvip.org/"
+	},
+	{
+		"index": 526,
+		"hex": "0x8000020e",
+		"symbol": "BU",
+		"name": "BUMO",
+		"link": "https://www.bumo.io/"
+	},
+	{
+		"index": 528,
+		"hex": "0x80000210",
+		"symbol": "YAP",
+		"name": "Yapstone",
+		"link": "https://yapstone.pro/"
+	},
+	{
+		"index": 533,
+		"hex": "0x80000215",
+		"symbol": "PRJ",
+		"name": "ProjectCoin",
+		"link": "https://projectcoin.net/"
+	},
+	{
+		"index": 555,
+		"hex": "0x8000022b",
+		"symbol": "BCS",
+		"name": "Bitcoin Smart",
+		"link": "http://bcs.info"
+	},
+	{
+		"index": 557,
+		"hex": "0x8000022d",
+		"symbol": "LKR",
+		"name": "Lkrcoin",
+		"link": "https://lkrcoin.io/"
+	},
+	{
+		"index": 600,
+		"hex": "0x80000258",
+		"symbol": "UTE",
+		"name": "Unit-e",
+		"link": "https://dtr.org/unit-e/"
+	},
+	{
+		"index": 618,
+		"hex": "0x8000026a",
+		"symbol": "SSP",
+		"name": "SmartShare",
+		"link": "http://www.smartshare.vip/"
+	},
+	{
+		"index": 625,
+		"hex": "0x80000271",
+		"symbol": "EAST",
+		"name": "Eastcoin",
+		"link": "http://easthub.io/"
+	},
+	{
+		"index": 663,
+		"hex": "0x80000297",
+		"symbol": "SFRX",
+		"name": "EtherGem Sapphire",
+		"link": "https://egem.io"
+	},
+	{
+		"index": 666,
+		"hex": "0x8000029a",
+		"symbol": "ACT",
+		"name": "Achain",
+		"link": "https://www.achain.com/"
+	},
+	{
+		"index": 668,
+		"hex": "0x8000029c",
+		"symbol": "SSC",
+		"name": "SelfSell",
+		"link": "https://www.selfsell.com/"
+	},
+	{
+		"index": 698,
+		"hex": "0x800002ba",
+		"symbol": "VEIL",
+		"name": "Veil",
+		"link": "https://www.veil-project.com"
+	},
+	{
+		"index": 700,
+		"hex": "0x800002bc",
+		"symbol": "XDAI",
+		"name": "xDai",
+		"link": "https://blockscout.com/poa/dai"
+	},
+	{
+		"index": 713,
+		"hex": "0x800002c9",
+		"symbol": "KTS",
+		"name": "Katallassos",
+		"link": "https://katallassos.com"
+	},
+	{
+		"index": 714,
+		"hex": "0x800002ca",
+		"symbol": "BNB",
+		"name": "Binance",
+		"link": "https://www.binance.org",
+		"decimals": 18
+	},
+	{
+		"index": 768,
+		"hex": "0x80000300",
+		"symbol": "BALLZ",
+		"name": "Ballzcoin",
+		"link": "https://ballzcoin.org"
+	},
+	{
+		"index": 777,
+		"hex": "0x80000309",
+		"symbol": "BTW",
+		"name": "Bitcoin World",
+		"link": "http://btw.one"
+	},
+	{
+		"index": 800,
+		"hex": "0x80000320",
+		"symbol": "BEET",
+		"name": "Beetle Coin",
+		"link": "https://beetlecoin.io/"
+	},
+	{
+		"index": 801,
+		"hex": "0x80000321",
+		"symbol": "DST",
+		"name": "DSTRA",
+		"link": "https://dstra.io/"
+	},
+	{
+		"index": 808,
+		"hex": "0x80000328",
+		"symbol": "QVT",
+		"name": "Qvolta",
+		"link": "https://qvolta.com"
+	},
+	{
+		"index": 818,
+		"hex": "0x80000332",
+		"symbol": "VET",
+		"name": "VeChain Token",
+		"link": "https://vechain.com/"
+	},
+	{
+		"index": 820,
+		"hex": "0x80000334",
+		"symbol": "CLO",
+		"name": "Callisto",
+		"link": "http://callisto.network/"
+	},
+	{
+		"index": 886,
+		"hex": "0x80000376",
+		"symbol": "ADF",
+		"name": "AD Token",
+		"link": "http://adfunds.org"
+	},
+	{
+		"index": 888,
+		"hex": "0x80000378",
+		"symbol": "NEO",
+		"name": "NEO",
+		"link": "https://neo.org/"
+	},
+	{
+		"index": 889,
+		"hex": "0x80000379",
+		"symbol": "TOMO",
+		"name": "TOMO",
+		"link": "https://tomochain.com/"
+	},
+	{
+		"index": 890,
+		"hex": "0x8000037a",
+		"symbol": "XSEL",
+		"name": "Seln",
+		"link": "https://selnx.jp/"
+	},
+	{
+		"index": 900,
+		"hex": "0x80000384",
+		"symbol": "LMO",
+		"name": "Lumeneo",
+		"link": "https://lumeneo.network/"
+	},
+	{
+		"index": 916,
+		"hex": "0x80000394",
+		"symbol": "META",
+		"name": "Metadium",
+		"link": "https://www.metadium.com/"
+	},
+	{
+		"index": 970,
+		"hex": "0x800003ca",
+		"symbol": "TWINS",
+		"name": "TWINS",
+		"link": "https://win.win/"
+	},
+	{
+		"index": 996,
+		"hex": "0x800003e4",
+		"symbol": "OKP",
+		"name": "OK Points",
+		"link": "https://www.okcoin.com/chain"
+	},
+	{
+		"index": 998,
+		"hex": "0x800003e6",
+		"symbol": "LBTC",
+		"name": "Lightning Bitcoin",
+		"link": "http://lbtc.io/"
+	},
+	{
+		"index": 999,
+		"hex": "0x800003e7",
+		"symbol": "BCD",
+		"name": "Bitcoin Diamond",
+		"link": "http://btcd.io/"
+	},
+	{
+		"index": 1000,
+		"hex": "0x800003e8",
+		"symbol": "BTN",
+		"name": "Bitcoin New",
+		"link": "http://bitcoinnew.org/"
+	},
+	{
+		"index": 1001,
+		"hex": "0x800003e9",
+		"symbol": "TT",
+		"name": "ThunderCore",
+		"link": "https://thundercore.com/"
+	},
+	{
+		"index": 1002,
+		"hex": "0x800003ea",
+		"symbol": "BKT",
+		"name": "BanKitt",
+		"link": "https://www.bankitt.network/"
+	},
+	{
+		"index": 1024,
+		"hex": "0x80000400",
+		"symbol": "ONT",
+		"name": "Ontology",
+		"link": "https://ont.io"
+	},
+	{
+		"index": 1111,
+		"hex": "0x80000457",
+		"symbol": "BBC",
+		"name": "Big Bitcoin",
+		"link": "http://bigbitcoins.org/"
+	},
+	{
+		"index": 1120,
+		"hex": "0x80000460",
+		"symbol": "RISE",
+		"name": "RISE",
+		"link": "https://rise.vision"
+	},
+	{
+		"index": 1122,
+		"hex": "0x80000462",
+		"symbol": "CMT",
+		"name": "CyberMiles Token",
+		"link": "https://www.cybermiles.io"
+	},
+	{
+		"index": 1128,
+		"hex": "0x80000468",
+		"symbol": "ETSC",
+		"name": "Ethereum Social",
+		"link": "https://ethereumsocial.kr/"
+	},
+	{
+		"index": 1145,
+		"hex": "0x80000479",
+		"symbol": "CDY",
+		"name": "Bitcoin Candy",
+		"link": "http://www.bitcoincandy.one"
+	},
+	{
+		"index": 1337,
+		"hex": "0x80000539",
+		"symbol": "DFC",
+		"name": "Defcoin",
+		"link": "http://defcoin-ng.org"
+	},
+	{
+		"index": 1397,
+		"hex": "0x80000575",
+		"symbol": "HYC",
+		"name": "Hycon",
+		"link": "https://hycon.io"
+	},
+	{
+		"index": 1620,
+		"hex": "0x80000654",
+		"symbol": "ATH",
+		"name": "Atheios",
+		"link": "https://atheios.com"
+	},
+	{
+		"index": 1688,
+		"hex": "0x80000698",
+		"symbol": "BCX",
+		"name": "BitcoinX",
+		"link": "https://bcx.org"
+	},
+	{
+		"index": 1729,
+		"hex": "0x800006c1",
+		"symbol": "XTZ",
+		"name": "Tezos",
+		"link": "https://tezos.com",
+		"decimals": 6
+	},
+	{
+		"index": 1815,
+		"hex": "0x80000717",
+		"symbol": "ADA",
+		"name": "Cardano",
+		"link": "https://www.cardanohub.org/en/home/"
+	},
+	{
+		"index": 1856,
+		"hex": "0x80000743",
+		"symbol": "TES",
+		"name": "Teslacoin",
+		"link": "https://www.tesla-coin.com/"
+	},
+	{
+		"index": 1901,
+		"hex": "0x8000076d",
+		"symbol": "CLC",
+		"name": "Classica",
+		"link": "https://github.com/classica/"
+	},
+	{
+		"index": 1919,
+		"hex": "0x8000077f",
+		"symbol": "VIPS",
+		"name": "VIPSTARCOIN",
+		"link": "https://www.vipstarcoin.jp/"
+	},
+	{
+		"index": 1926,
+		"hex": "0x80000786",
+		"symbol": "CITY",
+		"name": "City Coin",
+		"link": "https://city-chain.org/"
+	},
+	{
+		"index": 1977,
+		"hex": "0x800007b9",
+		"symbol": "XMX",
+		"name": "Xuma",
+		"link": "http://www.xumacoin.org/"
+	},
+	{
+		"index": 1984,
+		"hex": "0x800007c0",
+		"symbol": "TRTL",
+		"name": "TurtleCoin",
+		"link": "https://turtlecoin.lol/"
+	},
+	{
+		"index": 1987,
+		"hex": "0x800007c3",
+		"symbol": "EGEM",
+		"name": "EtherGem",
+		"link": "https://egem.io"
+	},
+	{
+		"index": 1989,
+		"hex": "0x800007c5",
+		"symbol": "HODL",
+		"name": "HOdlcoin",
+		"link": "https://hodlcoin.com/"
+	},
+	{
+		"index": 1990,
+		"hex": "0x800007c6",
+		"symbol": "PHL",
+		"name": "Placeholders",
+		"link": "https://placeh.io/"
+	},
+	{
+		"index": 1997,
+		"hex": "0x800007cd",
+		"symbol": "POLIS",
+		"name": "Polis",
+		"link": "https://polispay.org/"
+	},
+	{
+		"index": 1998,
+		"hex": "0x800007ce",
+		"symbol": "XMCC",
+		"name": "Monoeci",
+		"link": "https://monoeci.io/"
+	},
+	{
+		"index": 1999,
+		"hex": "0x800007cf",
+		"symbol": "COLX",
+		"name": "ColossusXT",
+		"link": "https://colossusxt.io/"
+	},
+	{
+		"index": 2000,
+		"hex": "0x800007d0",
+		"symbol": "GIN",
+		"name": "GinCoin",
+		"link": "https://gincoin.io/"
+	},
+	{
+		"index": 2001,
+		"hex": "0x800007d1",
+		"symbol": "MNP",
+		"name": "MNPCoin",
+		"link": "https://mnpcoin.pro/"
+	},
+	{
+		"index": 2017,
+		"hex": "0x800007e1",
+		"symbol": "KIN",
+		"name": "Kin",
+		"link": "https://www.kinecosystem.org/",
+		"decimals": 5
+	},
+	{
+		"index": 2018,
+		"hex": "0x800007e2",
+		"symbol": "EOSC",
+		"name": "EOSClassic",
+		"link": "https://eos-classic.io/"
+	},
+	{
+		"index": 2019,
+		"hex": "0x800007e3",
+		"symbol": "GBT",
+		"name": "GoldBean Token",
+		"link": "http://www.adfunds.org/"
+	},
+	{
+		"index": 2020,
+		"hex": "0x800007e4",
+		"symbol": "PKC",
+		"name": "PKC",
+		"link": "https://www.pkc.ink/"
+	},
+	{
+		"index": 2049,
+		"hex": "0x80000801",
+		"symbol": "TRUE",
+		"name": "TrueChain",
+		"link": "https://www.truechain.pro/"
+	},
+	{
+		"index": 2112,
+		"hex": "0x80000840",
+		"symbol": "IoTE",
+		"name": "IoTE",
+		"link": "https://www.iote.one/"
+	},
+	{
+		"index": 2301,
+		"hex": "0x800008fd",
+		"symbol": "QTUM",
+		"name": "QTUM",
+		"link": "https://qtum.org/en/"
+	},
+	{
+		"index": 2302,
+		"hex": "0x800008fe",
+		"symbol": "ETP",
+		"name": "Metaverse",
+		"link": "https://mvs.org/"
+	},
+	{
+		"index": 2303,
+		"hex": "0x800008ff",
+		"symbol": "GXC",
+		"name": "GXChain",
+		"link": "https://www.gxb.io"
+	},
+	{
+		"index": 2304,
+		"hex": "0x80000900",
+		"symbol": "CRP",
+		"name": "CranePay",
+		"link": "https://cranepay.io"
+	},
+	{
+		"index": 2305,
+		"hex": "0x80000901",
+		"symbol": "ELA",
+		"name": "Elastos",
+		"link": "https://www.elastos.org/"
+	},
+	{
+		"index": 2338,
+		"hex": "0x80000922",
+		"symbol": "SNOW",
+		"name": "Snowblossom",
+		"link": "https://snowblossom.org/"
+	},
+	{
+		"index": 2570,
+		"hex": "0x80000a0a",
+		"symbol": "AOA",
+		"name": "Aurora",
+		"link": "https://www.aurorachain.io/"
+	},
+	{
+		"index": 2894,
+		"hex": "0x80000b4e",
+		"symbol": "REOSC",
+		"name": "REOSC Ecosystem",
+		"link": "https://www.reosc.io/"
+	},
+	{
+		"index": 3003,
+		"hex": "0x80000bbb",
+		"symbol": "LUX",
+		"name": "LUX",
+		"link": "https://luxcore.io/"
+	},
+	{
+		"index": 3381,
+		"hex": "0x80000d35",
+		"symbol": "DYN",
+		"name": "Dynamic",
+		"link": "https://duality.solutions/dynamic/"
+	},
+	{
+		"index": 3383,
+		"hex": "0x80000d37",
+		"symbol": "SEQ",
+		"name": "Sequence",
+		"link": "https://duality.solutions/sequence/"
+	},
+	{
+		"index": 3552,
+		"hex": "0x80000de0",
+		"symbol": "DEO",
+		"name": "Destocoin",
+		"link": "https://desto.io"
+	},
+	{
+		"index": 2718,
+		"hex": "0x80000a9e",
+		"symbol": "NAS",
+		"name": "Nebulas",
+		"link": "https://nebulas.io/"
+	},
+	{
+		"index": 2941,
+		"hex": "0x80000b7d",
+		"symbol": "BND",
+		"name": "Blocknode",
+		"link": "https://blocknode.tech"
+	},
+	{
+		"index": 3276,
+		"hex": "0x80000ccc",
+		"symbol": "CCC",
+		"name": "CodeChain",
+		"link": "https://codechain.io/"
+	},
+	{
+		"index": 3377,
+		"hex": "0x80000d31",
+		"symbol": "ROI",
+		"name": "ROIcoin",
+		"link": "https://roi-coin.com/"
+	},
+	{
+		"index": 4218,
+		"hex": "0x8000107a",
+		"symbol": "IOTA",
+		"name": "IOTA",
+		"link": "https://www.iota.org/"
+	},
+	{
+		"index": 4242,
+		"hex": "0x80001092",
+		"symbol": "AXE",
+		"name": "Axe",
+		"link": "https://github.com/AXErunners/axe"
+	},
+	{
+		"index": 5248,
+		"hex": "0x00001480",
+		"symbol": "FIC",
+		"name": "FIC",
+		"link": "https://ficnetwork.com"
+	},
+	{
+		"index": 5353,
+		"hex": "0x000014e9",
+		"symbol": "HNS",
+		"name": "Handshake",
+		"link": "https://handshake.org"
+	},
+	{
+		"index": 5920,
+		"hex": "0x80001720",
+		"symbol": "SLU",
+		"name": "SILUBIUM",
+		"link": "https://github.com/SilubiumProject/slucore"
+	},
+	{
+		"index": 6060,
+		"hex": "0x800017ac",
+		"symbol": "GO",
+		"name": "GoChain GO",
+		"link": "https://gochain.io/"
+	},
+	{
+		"index": 6666,
+		"hex": "0x80001a0a",
+		"symbol": "BPA",
+		"name": "Bitcoin Pizza",
+		"link": "http://p.top/"
+	},
+	{
+		"index": 6688,
+		"hex": "0x80001a20",
+		"symbol": "SAFE",
+		"name": "SAFE",
+		"link": "http://www.anwang.com/"
+	},
+	{
+		"index": 6969,
+		"hex": "0x80001b39",
+		"symbol": "ROGER",
+		"name": "TheHolyrogerCoin",
+		"link": "https://github.com/TheHolyRoger/TheHolyRogerCoin"
+	},
+	{
+		"index": 7777,
+		"hex": "0x80001e61",
+		"symbol": "BTV",
+		"name": "Bitvote",
+		"link": "https://www.bitvote.one"
+	},
+	{
+		"index": 8339,
+		"hex": "0x80002093",
+		"symbol": "BTQ",
+		"name": "BitcoinQuark",
+		"link": "https://www.bitcoinquark.org"
+	},
+	{
+		"index": 8888,
+		"hex": "0x800022b8",
+		"symbol": "SBTC",
+		"name": "Super Bitcoin",
+		"link": "https://www.superbtc.org"
+	},
+	{
+		"index": 8964,
+		"hex": "0x80002304",
+		"symbol": "NULS",
+		"name": "NULS",
+		"link": "https://nuls.io"
+	},
+	{
+		"index": 8999,
+		"hex": "0x80002327",
+		"symbol": "BTP",
+		"name": "Bitcoin Pay",
+		"link": "http://www.btceasypay.com"
+	},
+	{
+		"index": 9797,
+		"hex": "0x80002645",
+		"symbol": "NRG",
+		"name": "Energi",
+		"link": "https://www.energi.world/"
+	},
+	{
+		"index": 9888,
+		"hex": "0x800026a0",
+		"symbol": "BTF",
+		"name": "Bitcoin Faith",
+		"link": "http://bitcoinfaith.org"
+	},
+	{
+		"index": 9999,
+		"hex": "0x8000270f",
+		"symbol": "GOD",
+		"name": "Bitcoin God",
+		"link": "https://www.bitcoingod.org"
+	},
+	{
+		"index": 10000,
+		"hex": "0x80002710",
+		"symbol": "FO",
+		"name": "FIBOS",
+		"link": "https://fibos.io/"
+	},
+	{
+		"index": 10291,
+		"hex": "0x80002833",
+		"symbol": "BTR",
+		"name": "Bitcoin Rhodium",
+		"link": "https://www.bitcoinrh.org"
+	},
+	{
+		"index": 11111,
+		"hex": "0x80002B67",
+		"symbol": "ESS",
+		"name": "Essentia One",
+		"link": "https://essentia.one/"
+	},
+	{
+		"index": 13107,
+		"hex": "0x80003333",
+		"symbol": "BTY",
+		"name": "BitYuan",
+		"link": "https://www.bityuan.com"
+	},
+	{
+		"index": 13108,
+		"hex": "0x80003334",
+		"symbol": "YCC",
+		"name": "Yuan Chain Coin",
+		"link": "https://www.yuan.org"
+	},
+	{
+		"index": 15845,
+		"hex": "0x80003de5",
+		"symbol": "SDGO",
+		"name": "SanDeGo",
+		"link": "http://www.sandego.net"
+	},
+	{
+		"index": 19167,
+		"hex": "0x80004adf",
+		"symbol": "ZEL",
+		"name": "ZelCash",
+		"link": "https://www.zel.cash"
+	},
+	{
+		"index": 19169,
+		"hex": "0x80004ae1",
+		"symbol": "RITO",
+		"name": "Ritocoin",
+		"link": "https://www.ritocoin.org"
+	},
+	{
+		"index": 20036,
+		"hex": "0x80004e44",
+		"symbol": "NDAU",
+		"name": "ndau",
+		"link": "https://ndau.io/"
+	},
+	{
+		"index": 22504,
+		"hex": "0x800057e8",
+		"symbol": "PWR",
+		"name": "PWRcoin",
+		"link": "https://github.com/Plainkoin/PWRcoin"
+	},
+	{
+		"index": 25252,
+		"hex": "0x800062a4",
+		"symbol": "BELL",
+		"name": "Bellcoin",
+		"link": "https://bellcoin.web4u.jp/"
+	},
+	{
+		"index": 31102,
+		"hex": "0x8000797e",
+		"symbol": "ESN",
+		"name": "EtherSocial Network",
+		"link": "https://ethersocial.network"
+	},
+	{
+		"index": 33878,
+		"hex": "0x80008456",
+		"symbol": "BTCS",
+		"name": "Bitcoin Stake",
+		"link": "http://www.btcscoin.com/"
+	},
+	{
+		"index": 34952,
+		"hex": "0x80008888",
+		"symbol": "BTT",
+		"name": "ByteTrade",
+		"link": "https://bytetrade.io/"
+	},
+	{
+		"index": 37992,
+		"hex": "0x80009468",
+		"symbol": "FXTC",
+		"name": "FixedTradeCoin",
+		"link": "https://fixedtradecoin.org/"
+	},
+	{
+		"index": 39321,
+		"hex": "0x80009999",
+		"symbol": "AMA",
+		"name": "Amabig",
+		"link": "https://amabig.com/"
+	},
+	{
+		"index": 65536,
+		"hex": "0x80010000",
+		"symbol": "KETH",
+		"name": "Krypton World",
+		"link": "http:/krypton.world/"
+	},
+	{
+		"index": 88888,
+		"hex": "0x80015b38",
+		"symbol": "RYO",
+		"name": "c0ban",
+		"link": "https://www.c0ban.co/"
+	},
+	{
+		"index": 99999,
+		"hex": "0x8001869f",
+		"symbol": "WICC",
+		"name": "Waykichain",
+		"link": "http://www.waykichain.com"
+	},
+	{
+		"index": 200625,
+		"hex": "0x80030fb1",
+		"symbol": "AKA",
+		"name": "Akroma",
+		"link": "https://akroma.io"
+	},
+	{
+		"index": 200665,
+		"hex": "0x80011000",
+		"symbol": "GENOM",
+		"name": "GENOM",
+		"link": "https://genom.tech"
+	},
+	{
+		"index": 246529,
+		"hex": "0x8003C301",
+		"symbol": "ATS",
+		"name": "ARTIS sigma1",
+		"link": "https://artis.eco/"
+	},
+	{
+		"index": 424242,
+		"hex": "0x80067932",
+		"symbol": "X42",
+		"name": "x42",
+		"link": "http://www.x42.tech"
+	},
+	{
+		"index": 666666,
+		"hex": "0x800a2c2a",
+		"symbol": "VITE",
+		"name": "Vite",
+		"link": "https://www.vite.org"
+	},
+	{
+		"index": 1171337,
+		"hex": "0x8011df89",
+		"symbol": "ILT",
+		"name": "iOlite",
+		"link": "https://iolite.io/"
+	},
+	{
+		"index": 1313114,
+		"hex": "0x8014095a",
+		"symbol": "ETHO",
+		"name": "Ether-1",
+		"link": "https://www.ether1.org"
+	},
+	{
+		"index": 1712144,
+		"hex": "0x801a2010",
+		"symbol": "LAX",
+		"name": "LAPO",
+		"link": "https://lapo.io"
+	},
+	{
+		"index": 5249354,
+		"hex": "0x8050194a",
+		"symbol": "BHD",
+		"name": "BitcoinHD",
+		"link": "http://btchd.net/"
+	},
+	{
+		"index": 5264462,
+		"hex": "0x8050544e",
+		"symbol": "PTN",
+		"name": "PalletOne",
+		"link": "https://pallet.one/"
+	},
+	{
+		"index": 5718350,
+		"hex": "0x8057414e",
+		"symbol": "WAN",
+		"name": "Wanchain",
+		"link": "https://wanchain.org/"
+	},
+	{
+		"index": 5741564,
+		"hex": "0x80579bfc",
+		"symbol": "WAVES",
+		"name": "Waves",
+		"link": "https://wavesplatform.com/"
+	},
+	{
+		"index": 7562605,
+		"hex": "0x8073656d",
+		"symbol": "SEM",
+		"name": "Semux",
+		"link": "https://semux.org"
+	},
+	{
+		"index": 7567736,
+		"hex": "0x80737978",
+		"symbol": "ION",
+		"name": "ION",
+		"link": "https://ionomy.com/"
+	},
+	{
+		"index": 7825266,
+		"hex": "0x80776772",
+		"symbol": "WGR",
+		"name": "WGR",
+		"link": "https://wagerr.com"
+	},
+	{
+		"index": 7825267,
+		"hex": "0x80776773",
+		"symbol": "OBSR",
+		"name": "OBServer",
+		"link": "https://obsr.org/"
+	},
+	{
+		"index": 61717561,
+		"hex": "0x83adbc39",
+		"symbol": "AQUA",
+		"name": "Aquachain",
+		"link": "https://aquachain.github.io/"
+	},
+	{
+		"index": 91927009,
+		"hex": "0x857ab1e1",
+		"symbol": "kUSD",
+		"name": "kUSD",
+		"link": "https://kowala.tech"
+	},
+	{
+		"index": 99999998,
+		"hex": "0x85f5e0fe",
+		"symbol": "FLUID",
+		"name": "Fluid Chains",
+		"link": "https://www.fluidchains.com"
+	},
+	{
+		"index": 99999999,
+		"hex": "0x85f5e0ff",
+		"symbol": "QKC",
+		"name": "QuarkChain",
+		"link": "https://www.quarkchain.io"
+	}
+]
