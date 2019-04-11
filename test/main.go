@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/sirupsen/logrus"
+	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/models"
 	"net/http"
 	"os"
@@ -13,15 +14,20 @@ import (
 
 var failedFlag = 0
 
-var addresses = map[string]string {
-	"binance":  "tbnb12hlquylu78cjylk5zshxpdj6hf3t0tahwjt3ex",
-	"nimiq":    "NQ86 2H8F YGU5 RM77 QSN9 LYLH C56A CYYR 0MLA",
-	"ripple":   "rMQ98K56yXJbDGv49ZSmW51sLn94Xe1mu1",
-	"stellar":  "GDKIJJIKXLOM2NRMPNQZUUYK24ZPVFC6426GZAEP3KUK6KEJLACCWNMX",
-	"kin":      "GBHKUZ7C2SZ5N3X2S7O6TT6LNUWSEA2BXMSR5GTTSR6VZARSVAXIQNGH",
-	"tezos":    "tz1WCd2jm4uSt4vntk4vSuUWoZQGhLcDuR9q",
-	"ethereum": "0xfc10cab6a50a1ab10c56983c80cc82afc6559cf1",
-	"aion":     "0xa07981da70ce919e1db5f051c3c386eb526e6ce8b9e2bfd56e3f3d754b0a17f3",
+type Entry struct {
+	Index uint
+	Addr string
+}
+
+var addresses = map[string]Entry {
+	"binance":  {coin.BNB,  "tbnb12hlquylu78cjylk5zshxpdj6hf3t0tahwjt3ex"},
+	"nimiq":    {coin.NIM,  "NQ86 2H8F YGU5 RM77 QSN9 LYLH C56A CYYR 0MLA"},
+	"ripple":   {coin.XRP,  "rMQ98K56yXJbDGv49ZSmW51sLn94Xe1mu1"},
+	"stellar":  {coin.XLM,  "GDKIJJIKXLOM2NRMPNQZUUYK24ZPVFC6426GZAEP3KUK6KEJLACCWNMX"},
+	"kin":      {coin.KIN,  "GBHKUZ7C2SZ5N3X2S7O6TT6LNUWSEA2BXMSR5GTTSR6VZARSVAXIQNGH"},
+	"tezos":    {coin.XTZ,  "tz1WCd2jm4uSt4vntk4vSuUWoZQGhLcDuR9q"},
+	"ethereum": {coin.ETH,  "0xfc10cab6a50a1ab10c56983c80cc82afc6559cf1"},
+	"aion":     {coin.AION, "0xa07981da70ce919e1db5f051c3c386eb526e6ce8b9e2bfd56e3f3d754b0a17f3"},
 }
 
 func main() {
@@ -48,7 +54,7 @@ func main() {
 		if !supported[ns] {
 			log(ns).Warning("Platform not enabled at server, skipping")
 		} else {
-			runTest(ns, test, b)
+			runTest(ns, &test, b)
 		}
 	}
 
@@ -59,7 +65,7 @@ func log(endpoint string) *logrus.Entry {
 	return logrus.WithField("@platform", endpoint)
 }
 
-func runTest(endpoint string, address string, baseUrl string) {
+func runTest(endpoint string, entry *Entry, baseUrl string) {
 	start := time.Now()
 
 	defer func() {
@@ -74,12 +80,12 @@ func runTest(endpoint string, address string, baseUrl string) {
 	}()
 
 	log(endpoint).Info("Testing endpoint")
-	test(endpoint, address, baseUrl)
+	test(endpoint, entry, baseUrl)
 	log(endpoint).Info("Endpoint works")
 }
 
-func test(endpoint string, address string, baseUrl string) {
-	res, err := http.Get(fmt.Sprintf("%s/v1/%s/%s", baseUrl, endpoint, address))
+func test(endpoint string, entry *Entry, baseUrl string) {
+	res, err := http.Get(fmt.Sprintf("%s/v1/%s/%s", baseUrl, endpoint, entry.Addr))
 	if err != nil {
 		panic(err)
 	}
@@ -117,6 +123,10 @@ func test(endpoint string, address string, baseUrl string) {
 			lastTime = uint64(point)
 		} else {
 			panic("Transactions not in chronological order")
+		}
+
+		if tx.Coin != entry.Index {
+			panic("Wrong coin index")
 		}
 	}
 
