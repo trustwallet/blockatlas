@@ -371,7 +371,8 @@
 		"hex": "0x8000003c",
 		"symbol": "ETH",
 		"name": "Ether",
-		"link": "https://ethereum.org/ether"
+		"link": "https://ethereum.org/ether",
+		"decimals": 18
 	},
 	{
 		"index": 61,
@@ -942,7 +943,8 @@
 		"hex": "0x80000090",
 		"symbol": "XRP",
 		"name": "Ripple",
-		"link": "https://ripple.com"
+		"link": "https://ripple.com",
+		"decimals": 6
 	},
 	{
 		"index": 145,
@@ -970,7 +972,8 @@
 		"hex": "0x80000094",
 		"symbol": "XLM",
 		"name": "Stellar Lumens",
-		"link": "https://www.stellar.org/"
+		"link": "https://www.stellar.org/",
+		"decimals": 7
 	},
 	{
 		"index": 149,
@@ -1613,7 +1616,8 @@
 		"hex": "0x800000f2",
 		"symbol": "NIM",
 		"name": "Nimiq",
-		"link": "https://nimiq.com/"
+		"link": "https://nimiq.com/",
+		"decimals": 5
 	},
 	{
 		"index": 243,
@@ -2124,7 +2128,8 @@
 		"hex": "0x800001a9",
 		"symbol": "AION",
 		"name": "Aion",
-		"link": "https://aion.network"
+		"link": "https://aion.network",
+		"decimals": 18
 	},
 	{
 		"index": 444,
@@ -2305,7 +2310,8 @@
 		"hex": "0x800002ca",
 		"symbol": "BNB",
 		"name": "Binance",
-		"link": "https://www.binance.org"
+		"link": "https://www.binance.org",
+		"decimals": 18
 	},
 	{
 		"index": 768,
@@ -2522,7 +2528,8 @@
 		"hex": "0x800006c1",
 		"symbol": "XTZ",
 		"name": "Tezos",
-		"link": "https://tezos.com"
+		"link": "https://tezos.com",
+		"decimals": 6
 	},
 	{
 		"index": 1776,
@@ -2641,7 +2648,8 @@
 		"hex": "0x800007e1",
 		"symbol": "KIN",
 		"name": "Kin",
-		"link": "https://www.kinecosystem.org/"
+		"link": "https://www.kinecosystem.org/",
+		"decimals": 5
 	},
 	{
 		"index": 2018,
