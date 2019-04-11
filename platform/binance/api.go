@@ -23,6 +23,26 @@ func Setup(router gin.IRouter) {
 	router.GET("/:address", getTransactions)
 }
 
+func extractBase(srcTx *source.Tx) (base models.Tx, ok bool) {
+	var err error
+	date, err := time.Parse("2006-01-02T15:04:05.999Z", srcTx.Timestamp)
+	unix := date.Unix()
+	if err != nil {
+		return base, false
+	}
+
+	base = models.Tx{
+		Id:    srcTx.Hash,
+		Coin:  coin.BNB,
+		Date:  unix,
+		From:  srcTx.FromAddr,
+		To:    srcTx.ToAddr,
+		Fee:   srcTx.Fee,
+		Block: srcTx.BlockHeight,
+	}
+	return base, true
+}
+
 func getTransactions(c *gin.Context) {
 	s, err := client.GetTxsOfAddress(c.Param("address"))
 	if apiError(c, err) {
