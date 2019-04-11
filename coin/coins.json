@@ -2180,13 +2180,6 @@
 		"link": "https://ko-to.org/"
 	},
 	{
-		"index": 512,
-		"hex": "0x80000200",
-		"symbol": "XRD",
-		"name": "Radiant",
-		"link": "https://radiant.cash/"
-	},
-	{
 		"index": 516,
 		"hex": "0x80000204",
 		"symbol": "VEE",
@@ -2532,13 +2525,6 @@
 		"decimals": 6
 	},
 	{
-		"index": 1776,
-		"hex": "0x800006f0",
-		"symbol": "LBTC",
-		"name": "Liquid BTC",
-		"link": "https://blockstream.com/liquid/"
-	},
-	{
 		"index": 1815,
 		"hex": "0x80000717",
 		"symbol": "ADA",
@@ -2771,13 +2757,6 @@
 		"link": "https://desto.io"
 	},
 	{
-		"index": 3564,
-		"hex": "0x80000dec",
-		"symbol": "DST",
-		"name": "DeStream",
-		"link": "https://destream.io"
-	},
-	{
 		"index": 2718,
 		"hex": "0x80000a9e",
 		"symbol": "NAS",
@@ -2967,13 +2946,6 @@
 		"link": "http://www.sandego.net"
 	},
 	{
-		"index": 19165,
-		"hex": "0x80004add",
-		"symbol": "SAFE",
-		"name": "Safecoin",
-		"link": "https://www.safecoin.org"
-	},
-	{
 		"index": 19167,
 		"hex": "0x80004adf",
 		"symbol": "ZEL",
@@ -3119,13 +3091,6 @@
 		"symbol": "LAX",
 		"name": "LAPO",
 		"link": "https://lapo.io"
-	},
-	{
-		"index": 5249353,
-		"hex": "0x80501949",
-		"symbol": "BCO",
-		"name": "BitcoinOre",
-		"link": "http://bitcoinore.org/"
 	},
 	{
 		"index": 5249354,
