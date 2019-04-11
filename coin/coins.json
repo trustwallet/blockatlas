@@ -1035,7 +1035,8 @@
 		"index": 157,
 		"hex": "0x8000009d",
 		"symbol": "BTC2X",
-		"name": "[Bitcoin 2x](https://medium.com/@DCGco/bitcoin-scaling-agreement-at-consensus-2017-133521fe9a77)"
+		"name": "Bitcoin 2x",
+		"link": "https://medium.com/@DCGco/bitcoin-scaling-agreement-at-consensus-2017-133521fe9a77)"
 	},
 	{
 		"index": 158,
@@ -2156,7 +2157,8 @@
 		"index": 464,
 		"hex": "0x800001d0",
 		"symbol": "ETI",
-		"name": " [EtherInc](https://einc.io)"
+		"name": "EtherInc",
+		"link": "https://einc.io"
 	},
 	{
 		"index": 488,
