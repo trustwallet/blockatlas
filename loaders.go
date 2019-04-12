@@ -28,7 +28,7 @@ var loaders = map[string]func(gin.IRouter){
 	"gochain":          ethereum.MakeSetup(coin.GO,   "gochain"),
 	"wanchain":         ethereum.MakeSetup(coin.WAN,  "wanchain"),
 	"tomochain":        ethereum.MakeSetup(coin.TOMO, "tomochain"),
-	"thunder":          ethereum.MakeSetup(coin.TT,   "thunder"),
+	"thundertoken":     ethereum.MakeSetup(coin.TT,   "thundertoken"),
 	"aion":             aion.Setup,
 }
 

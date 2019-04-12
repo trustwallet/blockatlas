@@ -2442,7 +2442,8 @@
 		"hex": "0x800003e9",
 		"symbol": "TT",
 		"name": "ThunderCore",
-		"link": "https://thundercore.com/"
+		"link": "https://thundercore.com/",
+		"decimals": 18
 	},
 	{
 		"index": 1002,

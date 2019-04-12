@@ -2558,6 +2558,7 @@ var Coins = map[uint]Coin {
 		Symbol: "TT",
 		Title: "ThunderCore",
 		Website: "https://thundercore.com/",
+		Decimals: 18,
 	},
 	BKT: {
 		Index: BKT,
