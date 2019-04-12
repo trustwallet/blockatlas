@@ -33,6 +33,7 @@ var addresses = map[string]Entry {
 	"callisto": {coin.CLO,  "0x39ec1c88a7a7c1a575e8c8f42eff7630d9278179"},
 	"gochain":  {coin.GO,   "0x76c2F81716A8D198a00502Ae9a59126418899FDe"},
 	"wanchain": {coin.WAN,  "0x36cEdc3A9d969306AF4F7CA2b83ABBf74095914d"},
+	"tomochain":{coin.TOMO, "0x7daa83030e3086477b79b6e757ca8608899fe783"},
 	"aion":     {coin.AION, "0xa07981da70ce919e1db5f051c3c386eb526e6ce8b9e2bfd56e3f3d754b0a17f3"},
 }
 
