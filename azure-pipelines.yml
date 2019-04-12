@@ -33,6 +33,16 @@ steps:
   workingDirectory: '$(modulePath)'
   displayName: 'Get dependencies'
 
+- powershell: |
+  env:
+    ATLAS_BINANCE_API: $(atlas.binance.api)
+    ATLAS_ETHEREUM_API: $(atlas.ethereum.api)
+    ATLAS_KIN_API: $(atlas.kin.api)
+    ATLAS_NIMIQ_API: $(atlas.nimiq.api)
+    ATLAS_RIPPLE_API: $(atlas.ripple.api)
+    ATLAS_STELLAR_API: $(atlas.stellar.api)
+  displayName: "Set environment variables"
+
 - script: go test -v ./...
   workingDirectory: '$(modulePath)'
   displayName: 'Run tests'
