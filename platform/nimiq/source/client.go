@@ -19,13 +19,7 @@ func NewClient(rpcUrl string) *Client {
 }
 
 func (c *Client) GetTxsOfAddress(address string) (txs []Tx, err error) {
-	var res *jsonrpc.RPCResponse
-	res, err = c.RpcClient.CallRaw(&jsonrpc.RPCRequest {
-		Method: "getTransactionsByAddress",
-		Params: []interface{}{ address, models.TxPerPage },
-		ID: 42,
-		JSONRPC: "2.0",
-	})
+	err = c.RpcClient.CallFor(&txs, "getTransactionsByAddress", address, models.TxPerPage)
 	if jErr, ok := err.(*jsonrpc.RPCError); ok {
 		if jErr.Code == 1 {
 			return nil, ErrInvalidAddr
@@ -36,6 +30,5 @@ func (c *Client) GetTxsOfAddress(address string) (txs []Tx, err error) {
 	} else if err != nil {
 		return nil, err
 	}
-	res.GetObject(&txs)
 	return
 }
