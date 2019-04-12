@@ -117,14 +117,13 @@ func AppendTxs(in []models.Tx, srcTx *source.Doc) (out []models.Tx) {
 		tokenTx.To = op.To
 
 		tokenTx.Meta = models.TokenTransfer{
-			Name:           op.Contract.Name,
-			Symbol:         op.Contract.Symbol,
-			TokenID:        op.Contract.Address,
-			Decimals:       op.Contract.Decimals,
-			Value:          models.Amount(op.Value),
-			From:           op.From,
-			To:             op.To,
-			IsContractCall: true,
+			Name:     op.Contract.Name,
+			Symbol:   op.Contract.Symbol,
+			TokenID:  op.Contract.Address,
+			Decimals: op.Contract.Decimals,
+			Value:    models.Amount(op.Value),
+			From:     op.From,
+			To:       op.To,
 		}
 		out = append(out, tokenTx)
 	}
