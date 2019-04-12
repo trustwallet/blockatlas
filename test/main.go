@@ -27,6 +27,12 @@ var addresses = map[string]Entry {
 	"kin":      {coin.KIN,  "GBHKUZ7C2SZ5N3X2S7O6TT6LNUWSEA2BXMSR5GTTSR6VZARSVAXIQNGH"},
 	"tezos":    {coin.XTZ,  "tz1WCd2jm4uSt4vntk4vSuUWoZQGhLcDuR9q"},
 	"ethereum": {coin.ETH,  "0xfc10cab6a50a1ab10c56983c80cc82afc6559cf1"},
+	"ethereum-classic":
+		        {coin.ETC,  "0xf3524415b6D873205B4c3Cda783527b2aC4daAA9"},
+	"poa":      {coin.POA,  "0x1fddEc96688e0538A316C64dcFd211c491ECf0d8"},
+	"callisto": {coin.CLO,  "0x39ec1c88a7a7c1a575e8c8f42eff7630d9278179"},
+	"gochain":  {coin.GO,   "0x76c2F81716A8D198a00502Ae9a59126418899FDe"},
+	"wanchain": {coin.WAN,  "0x36cEdc3A9d969306AF4F7CA2b83ABBf74095914d"},
 	"aion":     {coin.AION, "0xa07981da70ce919e1db5f051c3c386eb526e6ce8b9e2bfd56e3f3d754b0a17f3"},
 }
 
