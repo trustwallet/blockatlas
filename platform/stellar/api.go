@@ -4,7 +4,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
-	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/models"
 	"github.com/trustwallet/blockatlas/platform/stellar/source"
 	"github.com/trustwallet/blockatlas/util"
@@ -13,21 +12,25 @@ import (
 	"time"
 )
 
-var stellarClient = source.Client{
-	HTTP: &http.Client{
-		Timeout: 2 * time.Second,
-	},
-}
+func MakeSetup(coinIndex uint, platform string) func(gin.IRouter) {
+	return func(router gin.IRouter) {
+		apiKey := platform + ".api"
 
-func Setup(router gin.IRouter) {
-	router.Use(util.RequireConfig("stellar.api"))
-	router.Use(func(c *gin.Context) {
-		stellarClient.API = viper.GetString("stellar.api")
-		c.Next()
-	})
-	router.GET("/:address", func(c *gin.Context) {
-		GetTransactions(c, coin.XLM, &stellarClient)
-	})
+		stellarClient := source.Client{
+			HTTP: &http.Client{
+				Timeout: 2 * time.Second,
+			},
+		}
+
+		router.Use(util.RequireConfig(apiKey))
+		router.Use(func(c *gin.Context) {
+			stellarClient.API = viper.GetString(apiKey)
+			c.Next()
+		})
+		router.GET("/:address", func(c *gin.Context) {
+			GetTransactions(c, coinIndex, &stellarClient)
+		})
+	}
 }
 
 func GetTransactions(c *gin.Context, coinIndex uint, client *source.Client) {
