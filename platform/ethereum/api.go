@@ -122,6 +122,8 @@ func AppendTxs(in []models.Tx, srcTx *source.Doc) (out []models.Tx) {
 			TokenID:    op.Contract.Address,
 			Decimals:   op.Contract.Decimals,
 			Value:      models.Amount(op.Value),
+			From:       op.From,
+			To:         op.To,
 			IsContract: true,
 		}
 		out = append(out, tokenTx)

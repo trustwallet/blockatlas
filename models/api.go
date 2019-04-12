@@ -72,6 +72,8 @@ type TokenTransfer struct {
 	TokenID    string `json:"token_id"`
 	Decimals   uint   `json:"decimals"`
 	Value      Amount `json:"value"`
+	From       string `json:"from"`
+	To         string `json:"to"`
 	IsContract bool   `json:"isContract"`
 }
 
