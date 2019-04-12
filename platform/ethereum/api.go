@@ -1,6 +1,7 @@
 package ethereum
 
 import (
+	"math/big"
 	"net/http"
 	"strconv"
 
@@ -71,12 +72,14 @@ func extractBase(srcTx *source.Doc, coinIndex uint) (base models.Tx, ok bool) {
 		return base, false
 	}
 
+	fee := calcFee(srcTx.GasPrice, srcTx.GasUsed)
+
 	base = models.Tx{
 		Id:       srcTx.Id,
 		Coin:     coinIndex,
 		From:     srcTx.From,
 		To:       srcTx.To,
-		Fee:      models.Amount(srcTx.Gas),
+		Fee:      models.Amount(fee),
 		Date:     unix,
 		Block:    srcTx.BlockNumber,
 		Status:   status,
@@ -133,6 +136,17 @@ func AppendTxs(in []models.Tx, srcTx *source.Doc, coinIndex uint) (out []models.
 		out = append(out, tokenTx)
 	}
 	return
+}
+
+func calcFee(gasPrice string, gasUsed string) string {
+	var gasPriceBig, gasUsedBig, feeBig big.Int
+
+	gasPriceBig.SetString(gasPrice, 10)
+	gasUsedBig.SetString(gasUsed, 10)
+
+	feeBig.Mul(&gasPriceBig, &gasUsedBig)
+
+	return feeBig.String()
 }
 
 func apiError(c *gin.Context, err error) bool {
