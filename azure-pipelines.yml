@@ -35,12 +35,12 @@ steps:
 
 - powershell: |
   env:
-    ATLAS_BINANCE_API: $(atlas.binance.api)
-    ATLAS_ETHEREUM_API: $(atlas.ethereum.api)
-    ATLAS_KIN_API: $(atlas.kin.api)
-    ATLAS_NIMIQ_API: $(atlas.nimiq.api)
-    ATLAS_RIPPLE_API: $(atlas.ripple.api)
-    ATLAS_STELLAR_API: $(atlas.stellar.api)
+    ATLAS_BINANCE_API: $(ATLAS_BINANCE_API)
+    ATLAS_ETHEREUM_API: $(ATLAS_ETHEREUM_API)
+    ATLAS_KIN_API: $(ATLAS_KIN_API)
+    ATLAS_NIMIQ_API: $(ATLAS_NIMIQ_API)
+    ATLAS_RIPPLE_API: $(ATLAS_RIPPLE_API)
+    ATLAS_STELLAR_API: $(ATLAS_STELLAR_API)
   displayName: "Set environment variables"
 
 - script: go test -v ./...
