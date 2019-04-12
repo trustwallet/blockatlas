@@ -1184,7 +1184,8 @@
 		"hex": "0x800000b2",
 		"symbol": "POA",
 		"name": "Poa",
-		"link": "https://poa.network"
+		"link": "https://poa.network",
+		"decimals": 18
 	},
 	{
 		"index": 179,
@@ -2356,7 +2357,8 @@
 		"hex": "0x80000334",
 		"symbol": "CLO",
 		"name": "Callisto",
-		"link": "http://callisto.network/"
+		"link": "http://callisto.network/",
+		"decimals": 18
 	},
 	{
 		"index": 886,
@@ -2827,7 +2829,8 @@
 		"hex": "0x800017ac",
 		"symbol": "GO",
 		"name": "GoChain GO",
-		"link": "https://gochain.io/"
+		"link": "https://gochain.io/",
+		"decimals": 18
 	},
 	{
 		"index": 6666,
@@ -3114,7 +3117,8 @@
 		"hex": "0x8057414e",
 		"symbol": "WAN",
 		"name": "Wanchain",
-		"link": "https://wanchain.org/"
+		"link": "https://wanchain.org/",
+		"decimals": 18
 	},
 	{
 		"index": 5741564,

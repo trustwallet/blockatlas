@@ -1479,6 +1479,7 @@ var Coins = map[uint]Coin {
 		Symbol: "POA",
 		Title: "Poa",
 		Website: "https://poa.network",
+		Decimals: 18,
 	},
 	NYC: {
 		Index: NYC,
@@ -2484,6 +2485,7 @@ var Coins = map[uint]Coin {
 		Symbol: "CLO",
 		Title: "Callisto",
 		Website: "http://callisto.network/",
+		Decimals: 18,
 	},
 	ADF: {
 		Index: ADF,
@@ -2888,6 +2890,7 @@ var Coins = map[uint]Coin {
 		Symbol: "GO",
 		Title: "GoChain GO",
 		Website: "https://gochain.io/",
+		Decimals: 18,
 	},
 	BPA: {
 		Index: BPA,
@@ -3134,6 +3137,7 @@ var Coins = map[uint]Coin {
 		Symbol: "WAN",
 		Title: "Wanchain",
 		Website: "https://wanchain.org/",
+		Decimals: 18,
 	},
 	WAVES: {
 		Index: WAVES,
