@@ -1,12 +1,5 @@
 package models
 
-import (
-	"encoding/json"
-	"sort"
-
-	"github.com/spf13/cast"
-)
-
 const (
 	TxTransfer            = "transfer"
 	TxTokenTransfer       = "token_transfer"
@@ -24,26 +17,6 @@ const (
 const TxPerPage = 25
 
 type Response []Tx
-
-func (r *Response) Sort() {
-	sort.Slice(*r, func(i, j int) bool {
-		ti := cast.ToUint64((*r)[i].Date)
-		tj := cast.ToUint64((*r)[j].Date)
-		return ti >= tj
-	})
-}
-
-func (r *Response) MarshalJSON() ([]byte, error) {
-	var page struct {
-		Total  int    `json:"total"`
-		Docs   []Tx   `json:"docs"`
-		Status string `json:"status"`
-	}
-	page.Docs = []Tx(*r)
-	page.Total = len(page.Docs)
-	page.Status = "success"
-	return json.Marshal(page)
-}
 
 type Amount string
 

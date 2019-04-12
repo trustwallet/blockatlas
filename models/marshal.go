@@ -3,8 +3,10 @@ package models
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/spf13/cast"
 	"github.com/trustwallet/blockatlas/util"
 	"regexp"
+	"sort"
 	"strings"
 )
 
@@ -90,4 +92,27 @@ func (a *Amount) UnmarshalJSON(data []byte) error {
 
 func (a *Amount) MarshalJSON() ([]byte, error) {
 	return json.Marshal(string(*a))
+}
+
+func (r *Response) Sort() {
+	sort.Slice(*r, func(i, j int) bool {
+		ti := cast.ToUint64((*r)[i].Date)
+		tj := cast.ToUint64((*r)[j].Date)
+		return ti >= tj
+	})
+}
+
+func (r *Response) MarshalJSON() ([]byte, error) {
+	var page struct {
+		Total  int    `json:"total"`
+		Docs   []Tx   `json:"docs"`
+		Status string `json:"status"`
+	}
+	page.Docs = []Tx(*r)
+	if page.Docs == nil {
+		page.Docs = make([]Tx, 0)
+	}
+	page.Total = len(page.Docs)
+	page.Status = "success"
+	return json.Marshal(page)
 }
