@@ -67,11 +67,12 @@ type Transfer struct {
 }
 
 type TokenTransfer struct {
-	Name     string `json:"name"`
-	Symbol   string `json:"symbol"`
-	TokenID  string `json:"token_id"`
-	Decimals uint   `json:"decimals"`
-	Value    Amount `json:"value"`
+	Name       string `json:"name"`
+	Symbol     string `json:"symbol"`
+	TokenID    string `json:"token_id"`
+	Decimals   uint   `json:"decimals"`
+	Value      Amount `json:"value"`
+	IsContract bool   `json:"isContract"`
 }
 
 type CollectibleTransfer struct {

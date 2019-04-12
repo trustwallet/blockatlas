@@ -27,13 +27,13 @@ func Setup(router gin.IRouter) {
 }
 
 func getTransactions(c *gin.Context) {
-	contract := c.Query("contract")
+	token := c.Query("token")
 	var srcPage *source.Page
 	var err error
 
-	if contract != "" {
+	if token != "" {
 		srcPage, err = client.GetTxsWithContract(
-			c.Param("address"), c.Query("contract"))
+			c.Param("address"), token)
 	} else {
 		srcPage, err = client.GetTxs(c.Param("address"))
 	}
@@ -43,14 +43,8 @@ func getTransactions(c *gin.Context) {
 	}
 
 	var txs []models.Tx
-	if contract != "" {
-		for _, srcTx := range srcPage.Docs {
-			txs = AppendTokenTxs(txs, &srcTx)
-		}
-	} else {
-		for _, srcTx := range srcPage.Docs {
-			txs = AppendTxs(txs, &srcTx)
-		}
+	for _, srcTx := range srcPage.Docs {
+		txs = AppendTxs(txs, &srcTx)
 	}
 
 	page := models.Response(txs)
@@ -95,7 +89,7 @@ func AppendTxs(in []models.Tx, srcTx *source.Doc) (out []models.Tx) {
 	}
 
 	// Native ETH transaction
-	if srcTx.Value != "0" {
+	if len(srcTx.Ops) == 0 && srcTx.Input == "0x" {
 		transferTx := baseTx
 		transferTx.Meta = models.Transfer{
 			Value: models.Amount(srcTx.Value),
@@ -103,29 +97,14 @@ func AppendTxs(in []models.Tx, srcTx *source.Doc) (out []models.Tx) {
 		out = append(out, transferTx)
 	}
 
-	// Skip if token transfer
-	if len(srcTx.Ops) > 0 && srcTx.Ops[0].Type == "token_transfer" {
-		return
-	}
-
-	// Contract call
-	if srcTx.Input != "" && srcTx.Input != "0x" {
+	// Smart Contract Call
+	if len(srcTx.Ops) == 0 && srcTx.Input != "0x" {
 		contractTx := baseTx
 		contractTx.Meta = models.ContractCall{
 			Input: srcTx.Input,
 			Value: srcTx.Value,
 		}
 		out = append(out, contractTx)
-	}
-
-	return
-}
-
-func AppendTokenTxs(in []models.Tx, srcTx *source.Doc) (out []models.Tx) {
-	out = in
-	baseTx, ok := extractBase(srcTx)
-	if !ok {
-		return
 	}
 
 	if len(srcTx.Ops) == 0 {
@@ -136,12 +115,14 @@ func AppendTokenTxs(in []models.Tx, srcTx *source.Doc) (out []models.Tx) {
 	if op.Type == "token_transfer" {
 		tokenTx := baseTx
 		tokenTx.To = op.To
+
 		tokenTx.Meta = models.TokenTransfer{
-			Name:     op.Contract.Name,
-			Symbol:   op.Contract.Symbol,
-			TokenID:  op.Contract.Address,
-			Decimals: op.Contract.Decimals,
-			Value:    models.Amount(op.Value),
+			Name:       op.Contract.Name,
+			Symbol:     op.Contract.Symbol,
+			TokenID:    op.Contract.Address,
+			Decimals:   op.Contract.Decimals,
+			Value:      models.Amount(op.Value),
+			IsContract: true,
 		}
 		out = append(out, tokenTx)
 	}
