@@ -116,6 +116,7 @@ var tokenTransferDst = models.Tx{
 	Fee:    "67497",
 	Date:   1554248437,
 	Block:  7491945,
+	Sequence: 88,
 	Status: models.StatusCompleted,
 	Meta: models.TokenTransfer{
 		Name:     "KaratBank Coin",
@@ -123,10 +124,12 @@ var tokenTransferDst = models.Tx{
 		TokenID:  "0xf3586684107ce0859c44aa2b2e0fb8cd8731a15a",
 		Decimals: 7,
 		Value:    "4291000000",
+		From:     "0xd35f30d194684a391c63a6deced7d3dd5207c265",
+		To:       "0xaa4d790076f1bf7511a0a0ac498c89e13e1efe17",
 	},
 }
 
-var contractCallBaseDst = models.Tx{
+var contractCallDst = models.Tx{
 	Id:     "0x34ab0028a9aa794d5cc12887e7b813cec17889948276b301028f24a408da6da4",
 	Coin:   coin.ETH,
 	From:   "0xc9a16a82c284efc3cb0fe8c891ab85d6eba0eefb",
@@ -134,16 +137,12 @@ var contractCallBaseDst = models.Tx{
 	Fee:    "1000000",
 	Date:   1554661737,
 	Block:  7522627,
+	Sequence: 534,
 	Status: models.StatusCompleted,
-}
-
-var contractCallMeta1Dst = models.Transfer{
-	Value: "1800000000000000000",
-}
-
-var contractCallMeta2Dst = models.ContractCall{
-	Input: "0xfffdefefed",
-	Value: "123",
+	Meta:   models.ContractCall{
+		Input: "0xfffdefefed",
+		Value: "1800000000000000000",
+	},
 }
 
 var transferDst = models.Tx{
@@ -154,6 +153,7 @@ var transferDst = models.Tx{
 	Fee:    "21000",
 	Date:   1554663642,
 	Block:  7522781,
+	Sequence: 88,
 	Status: models.StatusCompleted,
 	Meta: models.Transfer{
 		Value: "1999895000000000000",
@@ -168,6 +168,7 @@ var failedDst = models.Tx{
 	Fee:    "21000",
 	Date:   1554662399,
 	Block:  7522678,
+	Sequence: 1,
 	Status: models.StatusFailed,
 	Error:  "Error",
 	Meta: models.Transfer{
@@ -175,24 +176,10 @@ var failedDst = models.Tx{
 	},
 }
 
-var contractCallDst []models.Tx
-
-func init() {
-	{
-		// Transfer
-		tx1 := contractCallBaseDst
-		tx1.Meta = contractCallMeta1Dst
-		// Contract Call
-		tx2 := contractCallBaseDst
-		tx2.Meta = contractCallMeta2Dst
-		contractCallDst = []models.Tx{tx1, tx2}
-	}
-}
-
 type test struct {
 	name        string
 	apiResponse string
-	expected    []models.Tx
+	expected    *models.Tx
 	token       bool
 }
 
@@ -200,23 +187,23 @@ func TestNormalize(t *testing.T) {
 	testNormalize(t, &test{
 		name:        "transfer",
 		apiResponse: transferSrc,
-		expected:    []models.Tx{transferDst},
+		expected:    &transferDst,
 	})
 	testNormalize(t, &test{
 		name:        "token transfer",
 		apiResponse: tokenTransferSrc,
-		expected:    []models.Tx{tokenTransferDst},
+		expected:    &tokenTransferDst,
 		token:       true,
 	})
 	testNormalize(t, &test{
 		name:        "contract call",
 		apiResponse: contractCallSrc,
-		expected:    contractCallDst,
+		expected:    &contractCallDst,
 	})
 	testNormalize(t, &test{
 		name:        "failed transaction",
 		apiResponse: failedSrc,
-		expected:    []models.Tx{failedDst},
+		expected:    &failedDst,
 	})
 }
 
@@ -227,24 +214,21 @@ func testNormalize(t *testing.T, _test *test) {
 		t.Error(err)
 		return
 	}
-	var res []models.Tx
-	if _test.token {
-		res = AppendTokenTxs(nil, &doc)
-	} else {
-		res = AppendTxs(nil, &doc)
-	}
+	res := AppendTxs(nil, &doc, coin.ETH)
 
 	resJson, err := json.Marshal(res)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	dstJson, err := json.Marshal(_test.expected)
+	dstJson, err := json.Marshal([]models.Tx{*_test.expected})
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	if !bytes.Equal(resJson, dstJson) {
+		println(string(resJson))
+		println(string(dstJson))
 		t.Error(_test.name + ": tx don't equal")
 	}
 }
