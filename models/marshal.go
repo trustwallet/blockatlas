@@ -73,7 +73,10 @@ func (t *Tx) MarshalJSON() ([]byte, error) {
 
 func (a *Amount) UnmarshalJSON(data []byte) error {
 	var n json.Number
-	json.Unmarshal(data, &n)
+	err := json.Unmarshal(data, &n)
+	if err != nil {
+		return err
+	}
 	str := string(n)
 	if !matchNumber.MatchString(str) {
 		return fmt.Errorf("not a regular decimal number")

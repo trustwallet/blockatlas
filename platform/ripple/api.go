@@ -46,9 +46,11 @@ func getTransactions(c *gin.Context) {
 		srcAmount := string(v.GetStringBytes())
 
 		date, err := time.Parse("2006-01-02T15:04:05-07:00", srcTx.Date)
-		unix := date.Unix()
+		var unix int64
 		if err != nil {
 			unix = 0
+		} else {
+			unix = date.Unix()
 		}
 
 		txs = append(txs, models.Tx{
