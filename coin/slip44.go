@@ -789,6 +789,7 @@ var Coins = map[uint]Coin {
 		Symbol: "ETC",
 		Title: "Ether Classic",
 		Website: "https://ethereumclassic.github.io",
+		Decimals: 18,
 	},
 	PSB: {
 		Index: PSB,

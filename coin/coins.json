@@ -379,7 +379,8 @@
 		"hex": "0x8000003d",
 		"symbol": "ETC",
 		"name": "Ether Classic",
-		"link": "https://ethereumclassic.github.io"
+		"link": "https://ethereumclassic.github.io",
+		"decimals": 18
 	},
 	{
 		"index": 62,
