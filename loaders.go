@@ -22,7 +22,7 @@ var loaders = map[string]func(gin.IRouter){
 	"kin":              stellar.MakeSetup(coin.KIN, "kin"),
 	"tezos":            tezos.Setup,
 	"ethereum":         ethereum.MakeSetup(coin.ETH,  "ethereum"),
-	"ethereum-classic": ethereum.MakeSetup(coin.ETC,  "ethereum-classic"),
+	"classic":          ethereum.MakeSetup(coin.ETC,  "classic"),
 	"poa":              ethereum.MakeSetup(coin.POA,  "poa"),
 	"callisto":         ethereum.MakeSetup(coin.CLO,  "callisto"),
 	"gochain":          ethereum.MakeSetup(coin.GO,   "gochain"),
