@@ -27,18 +27,7 @@ func getTransactions(c *gin.Context) {
 
 	txs := make([]models.Tx, len(s))
 	for i, srcTx := range s {
-		txs[i] = models.Tx{
-			Id:    srcTx.Hash,
-			Coin:  coin.NIM,
-			Date:  srcTx.Timestamp,
-			From:  srcTx.FromAddress,
-			To:    srcTx.ToAddress,
-			Fee:   srcTx.Fee,
-			Block: srcTx.BlockNumber,
-			Meta:  models.Transfer{
-				Value: srcTx.Value,
-			},
-		}
+		txs[i] = Normalize(&srcTx)
 	}
 	page := models.Response(txs)
 	page.Sort()
@@ -52,6 +41,21 @@ func withClient(c *gin.Context) {
 		client = source.NewClient(rpcUrl)
 	}
 	c.Next()
+}
+
+func Normalize(srcTx *source.Tx) (tx models.Tx) {
+	return models.Tx{
+		Id:    srcTx.Hash,
+		Coin:  coin.NIM,
+		Date:  srcTx.Timestamp,
+		From:  srcTx.FromAddress,
+		To:    srcTx.ToAddress,
+		Fee:   srcTx.Fee,
+		Block: srcTx.BlockNumber,
+		Meta:  models.Transfer{
+			Value: srcTx.Value,
+		},
+	}
 }
 
 func apiError(c *gin.Context, err error) bool {
