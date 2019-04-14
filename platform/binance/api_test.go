@@ -53,7 +53,7 @@ func TestNormalize(t *testing.T) {
 
 	tx, ok := Normalize(&srcTx)
 	if !ok {
-		t.Errorf("basic: tx could not be normalized")
+		t.Errorf("transfer: tx could not be normalized")
 	}
 
 	resJson, err := json.Marshal(&tx)

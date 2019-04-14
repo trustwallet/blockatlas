@@ -41,7 +41,7 @@ func GetTransactions(c *gin.Context, coinIndex uint, client *source.Client) {
 
 	txs := make([]models.Tx, 0)
 	for _, payment := range payments {
-		tx, ok := FormatTx(&payment, coinIndex)
+		tx, ok := Normalize(&payment, coinIndex)
 		if !ok {
 			continue
 		}
@@ -62,7 +62,7 @@ func apiError(c *gin.Context, err error) bool {
 	return false
 }
 
-func FormatTx(payment *source.Payment, nativeCoinIndex uint) (tx models.Tx, ok bool) {
+func Normalize(payment *source.Payment, nativeCoinIndex uint) (tx models.Tx, ok bool) {
 	switch payment.Type {
 	case "payment":
 		if payment.AssetType != "native" {
