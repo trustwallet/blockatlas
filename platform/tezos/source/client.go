@@ -13,7 +13,7 @@ type Client struct {
 	RpcUrl     string
 }
 
-func (c *Client) GetTxsOfAddress(address string) ([]Transaction, error) {
+func (c *Client) GetTxsOfAddress(address string) ([]Tx, error) {
 	uri := fmt.Sprintf("%s/operations/%s?type=Transaction",
 		c.RpcUrl, url.PathEscape(address))
 	httpRes, err := c.HttpClient.Get(uri)
@@ -26,7 +26,7 @@ func (c *Client) GetTxsOfAddress(address string) ([]Transaction, error) {
 		return nil, fmt.Errorf("http status %s", httpRes.Status)
 	}
 
-	var res []Transaction
+	var res []Tx
 	err = json.NewDecoder(httpRes.Body).Decode(&res)
 
 	return res, nil

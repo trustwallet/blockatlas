@@ -5,7 +5,7 @@ import (
 	"github.com/trustwallet/blockatlas/models"
 )
 
-type Transaction struct {
+type Tx struct {
 	Hash        string  `json:"hash"`
 	BlockHash   string  `json:"block_hash"`
 	NetworkHash string  `json:"network_hash"`
