@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/models"
-	"github.com/trustwallet/blockatlas/platform/binance/source"
 	"testing"
 )
 
@@ -36,7 +35,7 @@ var transferDst = models.Tx{
 	Fee: "125",
 	Date: 1555049867,
 	Block: 7761368,
-	Status: "completed",
+	Status: models.StatusCompleted,
 	Meta: models.Transfer{
 		Value: "10000000000",
 	},
@@ -44,7 +43,7 @@ var transferDst = models.Tx{
 
 
 func TestNormalize(t *testing.T) {
-	var srcTx source.Tx
+	var srcTx Tx
 	err := json.Unmarshal([]byte(transferSrc), &srcTx)
 	if err != nil {
 		t.Error(err)

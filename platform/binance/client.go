@@ -1,4 +1,4 @@
-package source
+package binance
 
 import (
 	"encoding/json"

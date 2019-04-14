@@ -5,7 +5,6 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/models"
-	"github.com/trustwallet/blockatlas/platform/stellar/source"
 	"github.com/trustwallet/blockatlas/util"
 	"net/http"
 	"strconv"
@@ -16,7 +15,7 @@ func MakeSetup(coinIndex uint, platform string) func(gin.IRouter) {
 	return func(router gin.IRouter) {
 		apiKey := platform + ".api"
 
-		stellarClient := source.Client{
+		stellarClient := Client{
 			HTTP: &http.Client{
 				Timeout: 2 * time.Second,
 			},
@@ -33,7 +32,7 @@ func MakeSetup(coinIndex uint, platform string) func(gin.IRouter) {
 	}
 }
 
-func GetTransactions(c *gin.Context, coinIndex uint, client *source.Client) {
+func GetTransactions(c *gin.Context, coinIndex uint, client *Client) {
 	payments, err := client.GetTxsOfAddress(c.Param("address"))
 	if apiError(c, err) {
 		return
@@ -62,7 +61,7 @@ func apiError(c *gin.Context, err error) bool {
 	return false
 }
 
-func Normalize(payment *source.Payment, nativeCoinIndex uint) (tx models.Tx, ok bool) {
+func Normalize(payment *Payment, nativeCoinIndex uint) (tx models.Tx, ok bool) {
 	switch payment.Type {
 	case "payment":
 		if payment.AssetType != "native" {

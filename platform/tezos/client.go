@@ -1,4 +1,4 @@
-package source
+package tezos
 
 import (
 	"encoding/json"

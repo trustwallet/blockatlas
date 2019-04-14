@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/models"
-	"github.com/trustwallet/blockatlas/platform/aion/source"
 	"testing"
 )
 
@@ -47,7 +46,7 @@ var transferDst = models.Tx{
 }
 
 func TestNormalize(t *testing.T) {
-	var srcTx source.Tx
+	var srcTx Tx
 	err := json.Unmarshal([]byte(transferSrc), &srcTx)
 	if err != nil {
 		t.Error(err)

@@ -1,4 +1,4 @@
-package source
+package ripple
 
 import (
 	"encoding/json"

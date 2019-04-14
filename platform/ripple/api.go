@@ -6,14 +6,13 @@ import (
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/models"
-	"github.com/trustwallet/blockatlas/platform/ripple/source"
 	"github.com/trustwallet/blockatlas/util"
 	"github.com/valyala/fastjson"
 	"net/http"
 	"time"
 )
 
-var client = source.Client{
+var client = Client{
 	HttpClient: http.DefaultClient,
 }
 
@@ -46,7 +45,7 @@ func getTransactions(c *gin.Context) {
 	c.JSON(http.StatusOK, &page)
 }
 
-func Normalize(srcTx *source.Tx) (tx models.Tx, ok bool) {
+func Normalize(srcTx *Tx) (tx models.Tx, ok bool) {
 	// Only accept XRP payments (typeof tx.amount === 'string')
 	var p fastjson.Parser
 	v, pErr := p.ParseBytes(srcTx.Payment.Amount)

@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/models"
-	"github.com/trustwallet/blockatlas/platform/ripple/source"
 	"testing"
 )
 
@@ -103,7 +102,7 @@ func TestNormalize(t *testing.T) {
 }
 
 func testNormalize(t *testing.T, _test *test) {
-	var payment source.Tx
+	var payment Tx
 	err := json.Unmarshal([]byte(_test.apiResponse), &payment)
 	if err != nil {
 		t.Error(err)

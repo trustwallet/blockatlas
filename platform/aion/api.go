@@ -6,13 +6,12 @@ import (
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/models"
-	"github.com/trustwallet/blockatlas/platform/aion/source"
 	"github.com/trustwallet/blockatlas/util"
 	"net/http"
 	"strconv"
 )
 
-var client = source.Client{
+var client = Client{
 	HttpClient: http.DefaultClient,
 }
 
@@ -44,7 +43,7 @@ func getTransactions(c *gin.Context) {
 	c.JSON(http.StatusOK, &page)
 }
 
-func Normalize(srcTx *source.Tx) models.Tx {
+func Normalize(srcTx *Tx) models.Tx {
 	fee := strconv.Itoa(srcTx.NrgConsumed)
 	value := util.DecimalExp(string(srcTx.Value), 18)
 

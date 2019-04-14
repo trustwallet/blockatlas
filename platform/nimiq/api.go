@@ -6,12 +6,11 @@ import (
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/models"
-	"github.com/trustwallet/blockatlas/platform/nimiq/source"
 	"github.com/trustwallet/blockatlas/util"
 	"net/http"
 )
 
-var client *source.Client
+var client *Client
 
 func Setup(router gin.IRouter) {
 	router.Use(util.RequireConfig("nimiq.api"))
@@ -38,12 +37,12 @@ func withClient(c *gin.Context) {
 	rpcUrl := viper.GetString("nimiq.api")
 	if client == nil || rpcUrl != client.RpcUrl {
 		logrus.WithField("rpc", rpcUrl).Info("Created Nimiq RPC client")
-		client = source.NewClient(rpcUrl)
+		client = NewClient(rpcUrl)
 	}
 	c.Next()
 }
 
-func Normalize(srcTx *source.Tx) (tx models.Tx) {
+func Normalize(srcTx *Tx) (tx models.Tx) {
 	return models.Tx{
 		Id:    srcTx.Hash,
 		Coin:  coin.NIM,
@@ -59,11 +58,11 @@ func Normalize(srcTx *source.Tx) (tx models.Tx) {
 }
 
 func apiError(c *gin.Context, err error) bool {
-	if err == source.ErrInvalidAddr {
+	if err == ErrInvalidAddr {
 		c.String(http.StatusBadRequest, err.Error())
 		return true
 	}
-	if err == source.ErrInvalidAddr {
+	if err == ErrInvalidAddr {
 		c.String(http.StatusBadGateway, "Nimiq RPC returned an error")
 		return true
 	}

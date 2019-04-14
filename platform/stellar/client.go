@@ -1,4 +1,4 @@
-package source
+package stellar
 
 import (
 	"encoding/json"

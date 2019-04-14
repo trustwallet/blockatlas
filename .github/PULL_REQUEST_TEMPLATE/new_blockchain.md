@@ -2,11 +2,9 @@
 
 Please follow this checklist:
 
- - `platform/mycoin/source`
-   - Define access to blockchain data here
+ - `platform/mycoin`
    - [ ] `model.go`: Platform-specific models
    - [ ] `client.go`: Platform getter methods (API, RPC)
- - `platform/mycoin`
    - [ ] `api.go`:
      - Gin route: _GET /mycoin/txs_
      - Getting blockchain info

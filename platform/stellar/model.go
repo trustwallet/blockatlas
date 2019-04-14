@@ -1,4 +1,4 @@
-package source
+package stellar
 
 // Payments contains page of payments returned by Horizon.
 type PaymentsPage struct {

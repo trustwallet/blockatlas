@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/models"
-	"github.com/trustwallet/blockatlas/platform/stellar/source"
 	"testing"
 )
 
@@ -88,7 +87,7 @@ func TestNormalize(t *testing.T) {
 }
 
 func testNormalize(t *testing.T, _test *test) {
-	var payment source.Payment
+	var payment Payment
 	err := json.Unmarshal([]byte(_test.apiResponse), &payment)
 	if err != nil {
 		t.Error(err)

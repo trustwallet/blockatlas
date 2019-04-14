@@ -9,14 +9,13 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/models"
-	"github.com/trustwallet/blockatlas/platform/ethereum/source"
 	"github.com/trustwallet/blockatlas/util"
 )
 
 func MakeSetup(coinIndex uint, platform string) func(gin.IRouter) {
 	apiKey := platform + ".api"
 
-	client := source.Client{
+	client := Client{
 		HttpClient: http.DefaultClient,
 	}
 
@@ -32,9 +31,9 @@ func MakeSetup(coinIndex uint, platform string) func(gin.IRouter) {
 	}
 }
 
-func GetTransactions(c *gin.Context, coinIndex uint, client *source.Client) {
+func GetTransactions(c *gin.Context, coinIndex uint, client *Client) {
 	token := c.Query("token")
-	var srcPage *source.Page
+	var srcPage *Page
 	var err error
 
 	if token != "" {
@@ -58,7 +57,7 @@ func GetTransactions(c *gin.Context, coinIndex uint, client *source.Client) {
 	c.JSON(http.StatusOK, &page)
 }
 
-func extractBase(srcTx *source.Doc, coinIndex uint) (base models.Tx, ok bool) {
+func extractBase(srcTx *Doc, coinIndex uint) (base models.Tx, ok bool) {
 	var status, errReason string
 	if srcTx.Error == "" {
 		status = models.StatusCompleted
@@ -89,7 +88,7 @@ func extractBase(srcTx *source.Doc, coinIndex uint) (base models.Tx, ok bool) {
 	return base, true
 }
 
-func AppendTxs(in []models.Tx, srcTx *source.Doc, coinIndex uint) (out []models.Tx) {
+func AppendTxs(in []models.Tx, srcTx *Doc, coinIndex uint) (out []models.Tx) {
 	out = in
 	baseTx, ok := extractBase(srcTx, coinIndex)
 	if !ok {

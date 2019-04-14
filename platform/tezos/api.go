@@ -6,13 +6,12 @@ import (
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/models"
-	"github.com/trustwallet/blockatlas/platform/tezos/source"
 	"github.com/trustwallet/blockatlas/util"
 	"net/http"
 	"time"
 )
 
-var client = source.Client{
+var client = Client{
 	HttpClient: http.DefaultClient,
 }
 
@@ -45,7 +44,7 @@ func getTransactions(c *gin.Context) {
 	c.JSON(http.StatusOK, &page)
 }
 
-func Normalize(srcTx *source.Tx) (tx models.Tx, ok bool) {
+func Normalize(srcTx *Tx) (tx models.Tx, ok bool) {
 	if srcTx.Type.Kind != "manager" {
 		return tx, false
 	}

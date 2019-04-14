@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/models"
-	"github.com/trustwallet/blockatlas/platform/nimiq/source"
 	"testing"
 )
 
@@ -42,7 +41,7 @@ var basicDst = models.Tx{
 }
 
 func TestNormalize(t *testing.T) {
-	var srcTx source.Tx
+	var srcTx Tx
 	err := json.Unmarshal([]byte(basicSrc), &srcTx)
 	if err != nil {
 		t.Error(err)

@@ -1,4 +1,4 @@
-package source
+package nimiq
 
 import (
 	"github.com/sirupsen/logrus"

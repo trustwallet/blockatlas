@@ -7,7 +7,6 @@ import (
 
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/models"
-	"github.com/trustwallet/blockatlas/platform/ethereum/source"
 )
 
 const tokenTransferSrc = `
@@ -208,7 +207,7 @@ func TestNormalize(t *testing.T) {
 }
 
 func testNormalize(t *testing.T, _test *test) {
-	var doc source.Doc
+	var doc Doc
 	err := json.Unmarshal([]byte(_test.apiResponse), &doc)
 	if err != nil {
 		t.Error(err)

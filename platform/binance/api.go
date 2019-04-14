@@ -6,12 +6,11 @@ import (
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/models"
-	"github.com/trustwallet/blockatlas/platform/binance/source"
 	"github.com/trustwallet/blockatlas/util"
 	"net/http"
 )
 
-var client = source.Client{
+var client = Client{
 	HttpClient: http.DefaultClient,
 }
 
@@ -43,7 +42,7 @@ func getTransactions(c *gin.Context) {
 	c.JSON(http.StatusOK, &page)
 }
 
-func Normalize(srcTx *source.Tx) (tx models.Tx, ok bool) {
+func Normalize(srcTx *Tx) (tx models.Tx, ok bool) {
 	if srcTx.Asset != "BNB" {
 		return tx, false
 	}
@@ -65,19 +64,19 @@ func Normalize(srcTx *source.Tx) (tx models.Tx, ok bool) {
 }
 
 func apiError(c *gin.Context, err error) bool {
-	if err == source.ErrNotFound {
+	if err == ErrNotFound {
 		c.String(http.StatusNotFound, err.Error())
 		return true
 	}
-	if err == source.ErrInvalidAddr {
+	if err == ErrInvalidAddr {
 		c.String(http.StatusBadRequest, err.Error())
 		return true
 	}
-	if err == source.ErrSourceConn {
+	if err == ErrSourceConn {
 		c.String(http.StatusBadGateway, "connection to Binance API failed")
 		return true
 	}
-	if _, ok := err.(*source.Error); ok {
+	if _, ok := err.(*Error); ok {
 		c.String(http.StatusBadGateway, "Binance API returned an error")
 		return true
 	}
