@@ -62,4 +62,7 @@ func setupEmpty(router gin.IRouter) {
 	router.GET("/:address", func(c *gin.Context) {
 		c.JSON(http.StatusOK, models.Response(nil))
 	})
+	router.GET("/:token/transactions/:address", func(c *gin.Context) {
+		c.JSON(http.StatusOK, models.Response(nil))
+	})
 }
