@@ -34,42 +34,50 @@ func getTransactions(c *gin.Context) {
 
 	txs := make([]models.Tx, 0)
 	for _, srcTx := range s {
-		// Only accept XRP payments (typeof tx.amount === 'string')
-		var p fastjson.Parser
-		v, pErr := p.ParseBytes(srcTx.Tx.Amount)
-		if pErr != nil {
+		tx, ok := Normalize(&srcTx)
+		if !ok {
 			continue
 		}
-		if v.Type() != fastjson.TypeString {
-			continue
-		}
-		srcAmount := string(v.GetStringBytes())
-
-		date, err := time.Parse("2006-01-02T15:04:05-07:00", srcTx.Date)
-		var unix int64
-		if err != nil {
-			unix = 0
-		} else {
-			unix = date.Unix()
-		}
-
-		txs = append(txs, models.Tx{
-			Id:    srcTx.Hash,
-			Coin:  coin.XRP,
-			Date:  unix,
-			From:  srcTx.Tx.Account,
-			To:    srcTx.Tx.Destination,
-			Fee:   srcTx.Tx.Fee,
-			Block: srcTx.LedgerIndex,
-			Meta:  models.Transfer{
-				Value: models.Amount(srcAmount),
-			},
-		})
+		txs = append(txs, tx)
 	}
 
 	page := models.Response(txs)
 	page.Sort()
 	c.JSON(http.StatusOK, &page)
+}
+
+func Normalize(srcTx *source.Tx) (tx models.Tx, ok bool) {
+	// Only accept XRP payments (typeof tx.amount === 'string')
+	var p fastjson.Parser
+	v, pErr := p.ParseBytes(srcTx.Payment.Amount)
+	if pErr != nil {
+		return tx, false
+	}
+	if v.Type() != fastjson.TypeString {
+		return tx, false
+	}
+	srcAmount := string(v.GetStringBytes())
+
+	date, err := time.Parse("2006-01-02T15:04:05-07:00", srcTx.Date)
+	var unix int64
+	if err != nil {
+		unix = 0
+	} else {
+		unix = date.Unix()
+	}
+
+	return models.Tx{
+		Id:    srcTx.Hash,
+		Coin:  coin.XRP,
+		Date:  unix,
+		From:  srcTx.Payment.Account,
+		To:    srcTx.Payment.Destination,
+		Fee:   srcTx.Payment.Fee,
+		Block: srcTx.LedgerIndex,
+		Meta:  models.Transfer{
+			Value: models.Amount(srcAmount),
+		},
+	}, true
 }
 
 func apiError(c *gin.Context, err error) bool {

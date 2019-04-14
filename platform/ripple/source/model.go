@@ -13,21 +13,21 @@ type Amount struct {
 }
 
 type Response struct {
-	Result       string        `json:"result"`
-	Count        uint64        `json:"count"`
-	Marker       string        `json:"marker"`
-	Transactions []Transaction `json:"transactions"`
+	Result       string `json:"result"`
+	Count        uint64 `json:"count"`
+	Marker       string `json:"marker"`
+	Transactions []Tx   `json:"transactions"`
 }
 
-type Transaction struct {
-	Hash        string    `json:"hash"`
-	Date        string    `json:"date"`
-	LedgerIndex uint64    `json:"ledger_index"`
-	LedgerHash  string    `json:"ledger_hash"`
-	Tx          PaymentTx `json:"tx"`
+type Tx struct {
+	Hash        string  `json:"hash"`
+	Date        string  `json:"date"`
+	LedgerIndex uint64  `json:"ledger_index"`
+	LedgerHash  string  `json:"ledger_hash"`
+	Payment     Payment `json:"tx"`
 }
 
-type PaymentTx struct {
+type Payment struct {
 	TransactionType string `json:"string"`
 	Flags           uint64 `json:"Flags"`
 	Sequence        uint64 `json:"Sequence"`

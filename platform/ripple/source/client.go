@@ -14,7 +14,7 @@ type Client struct {
 	RpcUrl     string
 }
 
-func (c *Client) GetTxsOfAddress(address string) ([]Transaction, error) {
+func (c *Client) GetTxsOfAddress(address string) ([]Tx, error) {
 	uri := fmt.Sprintf("%s/accounts/%s/transactions?type=Payment&result=tesSUCCESS&limit=%d",
 		c.RpcUrl,
 		url.PathEscape(address),
