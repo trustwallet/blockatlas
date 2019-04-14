@@ -15,10 +15,10 @@ type Account struct {
 }
 
 type Balance struct {
-	Symbol        string `json:"symbol"`
-	Free          uint64 `json:"free"`
-	Locked        uint64 `json:"locked"`
-	Frozen        uint64 `json:"frozen"`
+	Symbol string `json:"symbol"`
+	Free   uint64 `json:"free"`
+	Locked uint64 `json:"locked"`
+	Frozen uint64 `json:"frozen"`
 }
 
 type Error struct {
@@ -27,29 +27,29 @@ type Error struct {
 }
 
 type Tx struct {
-	BlockHeight   uint64 `json:"blockHeight"`
-	Code          int    `json:"code"`
-	ConfirmBlocks int    `json:"confirmBlocks"`
-	Data          string `json:"data"`
-	FromAddr      string `json:"fromAddr"`
-	OrderId       string `json:"orderId"`
-	Timestamp     string `json:"timeStamp"`
-	ToAddr        string `json:"toAddr"`
-	Age           int64  `json:"txAge"`
-	Asset         string `json:"txAsset"`
+	BlockHeight   uint64        `json:"blockHeight"`
+	Code          int           `json:"code"`
+	ConfirmBlocks int           `json:"confirmBlocks"`
+	Data          string        `json:"data"`
+	FromAddr      string        `json:"fromAddr"`
+	OrderId       string        `json:"orderId"`
+	Timestamp     int64         `json:"timeStamp"`
+	ToAddr        string        `json:"toAddr"`
+	Age           int64         `json:"txAge"`
+	Asset         string        `json:"txAsset"`
 	Fee           models.Amount `json:"txFee"`
-	Hash          string `json:"txHash"`
+	Hash          string        `json:"txHash"`
 	Value         models.Amount `json:"value"`
 }
 
 type TxPage struct {
-	Total uint64 `json:"total"`
-	Txs   []Tx   `json:"tx"`
+	Nums int  `json:"txNums"`
+	Txs  []Tx `json:"txArray"`
 }
 
-var ErrSourceConn  = errors.New("connection to servers failed")
+var ErrSourceConn = errors.New("connection to servers failed")
 var ErrInvalidAddr = errors.New("invalid address")
-var ErrNotFound    = errors.New("not found")
+var ErrNotFound = errors.New("not found")
 
 func (e *Error) Error() string {
 	return fmt.Sprintf("%d: %s", e.Code, e.Message)

@@ -9,7 +9,6 @@ import (
 	"github.com/trustwallet/blockatlas/platform/binance/source"
 	"github.com/trustwallet/blockatlas/util"
 	"net/http"
-	"time"
 )
 
 var client = source.Client{
@@ -32,36 +31,37 @@ func getTransactions(c *gin.Context) {
 	}
 
 	var txs []models.Tx
-	for _, tx := range s.Txs {
-		if tx.Asset != "BNB" {
+	for _, srcTx := range s.Txs {
+		tx, ok := Normalize(&srcTx)
+		if !ok {
 			continue
 		}
-
-		var err error
-		date, err := time.Parse("2006-01-02T15:04:05.999Z", tx.Timestamp)
-		var unix int64
-		if err != nil {
-			unix = 0
-		} else {
-			unix = date.Unix()
-		}
-
-		txs = append(txs, models.Tx{
-			Id:    tx.Hash,
-			Coin:  coin.BNB,
-			Date:  unix,
-			From:  tx.FromAddr,
-			To:    tx.ToAddr,
-			Fee:   tx.Fee,
-			Block: tx.BlockHeight,
-			Meta:  models.Transfer{
-				Value: tx.Value,
-			},
-		})
+		txs = append(txs, tx)
 	}
 	page := models.Response(txs)
 	page.Sort()
 	c.JSON(http.StatusOK, &page)
+}
+
+func Normalize(srcTx *source.Tx) (tx models.Tx, ok bool) {
+	if srcTx.Asset != "BNB" {
+		return tx, false
+	}
+
+	value := util.DecimalExp(string(srcTx.Value), 5)
+
+	return models.Tx{
+		Id:    srcTx.Hash,
+		Coin:  coin.BNB,
+		Date:  srcTx.Timestamp / 1000,
+		From:  srcTx.FromAddr,
+		To:    srcTx.ToAddr,
+		Fee:   srcTx.Fee,
+		Block: srcTx.BlockHeight,
+		Meta:  models.Transfer{
+			Value: models.Amount(value),
+		},
+	}, true
 }
 
 func apiError(c *gin.Context, err error) bool {

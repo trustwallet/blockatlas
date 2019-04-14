@@ -8,7 +8,7 @@ gin:
 
 # [BNB] Binance DEX: https://binance.org
 binance:
-  api: https://testnet-dex.binance.org/api/v1
+  api: https://testnet-explorer.binance.org/api/v1
 
 # [NIM] Nimiq: https://nimiq.com
 #nimiq:

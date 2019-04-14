@@ -20,7 +20,7 @@ type Entry struct {
 }
 
 var addresses = map[string]Entry{
-	"binance":          {coin.BNB, "tbnb12hlquylu78cjylk5zshxpdj6hf3t0tahwjt3ex"},
+	"binance":          {coin.BNB, "tbnb1fhr04azuhcj0dulm7ka40y0cqjlafwae9k9gk2"},
 	"nimiq":            {coin.NIM, "NQ86 2H8F YGU5 RM77 QSN9 LYLH C56A CYYR 0MLA"},
 	"ripple":           {coin.XRP, "rMQ98K56yXJbDGv49ZSmW51sLn94Xe1mu1"},
 	"stellar":          {coin.XLM, "GDKIJJIKXLOM2NRMPNQZUUYK24ZPVFC6426GZAEP3KUK6KEJLACCWNMX"},

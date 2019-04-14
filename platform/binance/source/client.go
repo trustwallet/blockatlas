@@ -18,11 +18,12 @@ type Client struct {
 }
 
 func (c *Client) GetTxsOfAddress(address string) (*TxPage, error) {
-	uri := fmt.Sprintf("%s/transactions?%s",
+	uri := fmt.Sprintf("%s/txs?%s",
 		c.RpcUrl,
 		url.Values{
 			"address": {address},
-			"limit":   {strconv.FormatInt(models.TxPerPage, 10)},
+			"rows":    {strconv.Itoa(models.TxPerPage)},
+			"page":    {"1"},
 		}.Encode())
 	res, err := c.HttpClient.Get(uri)
 	if err != nil {
@@ -33,6 +34,10 @@ func (c *Client) GetTxsOfAddress(address string) (*TxPage, error) {
 	switch res.StatusCode {
 	case http.StatusBadRequest, http.StatusNotFound:
 		return nil, getHttpError(res, "get transactions")
+	case http.StatusOK:
+		break
+	default:
+		return nil, fmt.Errorf("%s", res.Status)
 	}
 
 	stx := new(TxPage)
