@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/coin"
+	"github.com/trustwallet/blockatlas/models"
 	"github.com/trustwallet/blockatlas/platform/aion"
 	"github.com/trustwallet/blockatlas/platform/binance"
 	"github.com/trustwallet/blockatlas/platform/ethereum"
@@ -30,6 +31,11 @@ var loaders = map[string]func(gin.IRouter){
 	"tomochain":        ethereum.MakeSetup(coin.TOMO, "tomochain"),
 	"thundertoken":     ethereum.MakeSetup(coin.TT,   "thundertoken"),
 	"aion":             aion.Setup,
+	"tron":             setupEmpty,
+	"icon":             setupEmpty,
+	"cosmos":           setupEmpty,
+	"theta":            setupEmpty,
+	"vechain":          setupEmpty,
 }
 
 func loadPlatforms(router gin.IRouter) {
@@ -50,4 +56,10 @@ func checkEnabled(name string) func(c *gin.Context) {
 			c.Abort()
 		}
 	}
+}
+
+func setupEmpty(router gin.IRouter) {
+	router.GET("/:address", func(c *gin.Context) {
+		c.JSON(http.StatusOK, models.Response(nil))
+	})
 }
