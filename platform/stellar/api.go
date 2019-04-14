@@ -63,10 +63,14 @@ func apiError(c *gin.Context, err error) bool {
 }
 
 func FormatTx(payment *source.Payment, nativeCoinIndex uint) (tx models.Tx, ok bool) {
-	if payment.Type != "payment" && payment.Type != "create_account" {
-		return tx, false
-	}
-	if payment.AssetType != "native" {
+	switch payment.Type {
+	case "payment":
+		if payment.AssetType != "native" {
+			return tx, false
+		}
+	case "create_account":
+		break
+	default:
 		return tx, false
 	}
 	id, err := strconv.ParseUint(payment.ID, 10, 64)
