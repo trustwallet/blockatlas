@@ -36,7 +36,14 @@ __With Docker__
 
 `docker run -it -p 8420:8420 trustwallet/blockatlas`
 
-## Configuration
+## Deploy
+
+#### Supported platforms
+
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://www.heroku.com/deploy/?template=https://github.com/TrustWallet/blockatlas)
+
+[![Docker](https://img.shields.io/docker/cloud/build/trustwallet/blockatlas.svg?style=for-the-badge)](https://hub.docker.com/r/trustwallet/blockatlas)
+
 
 Block Atlas can run just fine without configuration.
 
@@ -66,8 +73,16 @@ ATLAS_NIMIQ_API=http://localhost:8648 \
 blockatlas
 ```
 
-#### Supported platforms
+## Authors
 
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://www.heroku.com/deploy/?template=https://github.com/TrustWallet/blockatlas)
+* [Richard Patel](https://github.com/terorie)
 
-[![Docker](https://img.shields.io/docker/cloud/build/trustwallet/blockatlas.svg?style=for-the-badge)](https://hub.docker.com/r/trustwallet/blockatlas)
+## Contributing
+
+If you'd like to add support for a new blockchain, feel free to file a pull request.
+Note that most tokens that run on top of other chains are already supported and
+don't require code changes (e.g. ERC-20).
+
+The best way to submit feedback and report bugs is to open a GitHub issue.
+Please be sure to include your operating system, version number, and
+steps to reproduce reported bugs.
