@@ -35,6 +35,7 @@ var addresses = map[string]Entry{
 	"tomochain":        {coin.TOMO, "0x7daa83030e3086477b79b6e757ca8608899fe783"},
 	"aion":             {coin.AION, "0xa07981da70ce919e1db5f051c3c386eb526e6ce8b9e2bfd56e3f3d754b0a17f3"},
 	"thundertoken":     {coin.TT,  "0x0ad80a408eac4f17ba0a9de8a12d8736f60700c3"},
+	"icon":             {coin.ICX,  "hxee691e7bccc4eb11fee922896e9f51490e62b12e"},
 }
 
 func main() {
