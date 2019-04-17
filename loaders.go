@@ -4,15 +4,14 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/coin"
-	"github.com/trustwallet/blockatlas/models"
 	"github.com/trustwallet/blockatlas/platform/aion"
 	"github.com/trustwallet/blockatlas/platform/binance"
 	"github.com/trustwallet/blockatlas/platform/ethereum"
+	"github.com/trustwallet/blockatlas/platform/icon"
 	"github.com/trustwallet/blockatlas/platform/nimiq"
 	"github.com/trustwallet/blockatlas/platform/ripple"
 	"github.com/trustwallet/blockatlas/platform/stellar"
 	"github.com/trustwallet/blockatlas/platform/tezos"
-	"github.com/trustwallet/blockatlas/platform/icon"
 	"net/http"
 )
 
@@ -60,10 +59,12 @@ func checkEnabled(name string) func(c *gin.Context) {
 }
 
 func setupEmpty(router gin.IRouter) {
-	router.GET("/:address", func(c *gin.Context) {
-		c.JSON(http.StatusOK, models.Response(nil))
-	})
-	router.GET("/:address/transactions/:token", func(c *gin.Context) {
-		c.JSON(http.StatusOK, models.Response(nil))
-	})
+	mkEmpty := func(c *gin.Context) {
+		c.Writer.Header().Set("content-type", "application/json")
+		c.Writer.WriteHeader(http.StatusOK)
+		_, _ = c.Writer.WriteString(
+			`{total: 0, docs: [], status: "success"}` + "\n")
+	}
+	router.GET("/:address", mkEmpty)
+	router.GET("/:address/transactions/:token", mkEmpty)
 }
