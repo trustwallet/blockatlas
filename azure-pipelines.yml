@@ -1,11 +1,11 @@
 pool:
- vmImage: 'macOS-10.14'
+ vmImage: 'Ubuntu 16.04'
 
 variables:
   GOBIN:  '$(GOPATH)/bin' # Go binaries path
   GOROOT: '/usr/local/go1.11' # Go installation path
   GOPATH: '$(system.defaultWorkingDirectory)/gopath' # Go workspace path
-  modulePath: '$(GOPATH)/src/github.com/$(build.repository.name)' # Path to the module's code
+  modulePath: '$(GOPATH)/src/github.com/trust-wallet/blockatlas' # Path to the module's code
 
 steps:
 - script: |
@@ -17,6 +17,7 @@ steps:
     mv !(gopath) '$(modulePath)'
     echo '##vso[task.prependpath]$(GOBIN)'
     echo '##vso[task.prependpath]$(GOROOT)/bin'
+    echo '$(go env)'
   displayName: 'Set up the Go workspace'
 
 - script: |
@@ -32,6 +33,16 @@ steps:
     go get -u gopkg.in/matm/v1/gocov-html
   workingDirectory: '$(modulePath)'
   displayName: 'Get dependencies'
+
+- powershell: |
+  env:
+    ATLAS_BINANCE_API: $(ATLAS_BINANCE_API)
+    ATLAS_ETHEREUM_API: $(ATLAS_ETHEREUM_API)
+    ATLAS_KIN_API: $(ATLAS_KIN_API)
+    ATLAS_NIMIQ_API: $(ATLAS_NIMIQ_API)
+    ATLAS_RIPPLE_API: $(ATLAS_RIPPLE_API)
+    ATLAS_STELLAR_API: $(ATLAS_STELLAR_API)
+  displayName: "Set environment variables"
 
 - script: go test -v ./...
   workingDirectory: '$(modulePath)'
