@@ -31,11 +31,7 @@ var loaders = map[string]func(gin.IRouter){
 	"tomochain":        ethereum.MakeSetup(coin.TOMO, "tomochain"),
 	"thundertoken":     ethereum.MakeSetup(coin.TT,   "thundertoken"),
 	"aion":             aion.Setup,
-	"tron":             setupEmpty,
 	"icon":             icon.Setup,
-	"cosmos":           setupEmpty,
-	"theta":            setupEmpty,
-	"vechain":          setupEmpty,
 }
 
 func loadPlatforms(router gin.IRouter) {
@@ -56,15 +52,4 @@ func checkEnabled(name string) func(c *gin.Context) {
 			c.Abort()
 		}
 	}
-}
-
-func setupEmpty(router gin.IRouter) {
-	mkEmpty := func(c *gin.Context) {
-		c.Writer.Header().Set("content-type", "application/json")
-		c.Writer.WriteHeader(http.StatusOK)
-		_, _ = c.Writer.WriteString(
-			`{total: 0, docs: [], status: "success"}` + "\n")
-	}
-	router.GET("/:address", mkEmpty)
-	router.GET("/:address/transactions/:token", mkEmpty)
 }

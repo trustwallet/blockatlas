@@ -43,6 +43,12 @@ func run(cmd *cobra.Command, args []string) {
 
 	gin.SetMode(viper.GetString("gin.mode"))
 	router := gin.Default()
+	router.NoRoute(func(c *gin.Context) {
+		c.Writer.Header().Set("content-type", "application/json")
+		c.Writer.WriteHeader(http.StatusOK)
+		_, _ = c.Writer.WriteString(
+			`{total: 0, docs: [], status: "success"}` + "\n")
+	})
 	router.Use(util.CheckReverseProxy)
 	router.GET("/", getRoot)
 	router.GET("/status", func(c *gin.Context) {
