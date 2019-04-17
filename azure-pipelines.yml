@@ -1,5 +1,5 @@
 pool:
- vmImage: 'macOS-10.14'
+ vmImage: 'ubuntu-16.04'
 
 variables:
   GOBIN:  '$(GOPATH)/bin' # Go binaries path
