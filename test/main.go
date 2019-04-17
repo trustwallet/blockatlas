@@ -35,25 +35,26 @@ var addresses = map[string]Entry{
 	"tomochain":        {coin.TOMO, "0x7daa83030e3086477b79b6e757ca8608899fe783"},
 	"aion":             {coin.AION, "0xa07981da70ce919e1db5f051c3c386eb526e6ce8b9e2bfd56e3f3d754b0a17f3"},
 	"thundertoken":     {coin.TT,  "0x0ad80a408eac4f17ba0a9de8a12d8736f60700c3"},
+	"icon":             {coin.ICX,  "hxee691e7bccc4eb11fee922896e9f51490e62b12e"},
 }
 
 func main() {
 	if len(os.Args) != 2 {
 		logrus.Fatal("Usage: ./test <base_url>")
 	}
-	b := os.Args[1]
+	baseURL := os.Args[1]
 
 	logrus.SetOutput(os.Stdout)
 	http.DefaultClient.Timeout = 5 * time.Second
 
-	supportedList, err := supportedEndpoints(b)
+	supportedEndpoints, err := supportedEndpoints(baseURL)
 	if err != nil {
 		logrus.WithError(err).Error("Failed to get supported platforms")
 		os.Exit(1)
 	}
 
 	var supported = make(map[string]bool)
-	for _, ns := range supportedList {
+	for _, ns := range supportedEndpoints {
 		supported[ns] = true
 	}
 
@@ -61,7 +62,7 @@ func main() {
 		if !supported[ns] {
 			log(ns).Warning("Platform not enabled at server, skipping")
 		} else {
-			runTest(ns, &test, b)
+			runTest(ns, &test, baseURL)
 		}
 	}
 
@@ -148,11 +149,11 @@ func test(endpoint string, entry *Entry, baseUrl string) {
 	}
 }
 
-func supportedEndpoints(baseUrl string) (endpoints []string, err error) {
+func supportedEndpoints(baseURL string) (endpoints []string, err error) {
 	var data struct {
 		Endpoints []string `json:"endpoints"`
 	}
-	res, err := http.Get(fmt.Sprintf("%s/v1/", baseUrl))
+	res, err := http.Get(fmt.Sprintf("%s/v1/", baseURL))
 	if err != nil {
 		return nil, err
 	}

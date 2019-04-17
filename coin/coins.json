@@ -464,7 +464,8 @@
 		"hex": "0x8000004a",
 		"symbol": "ICX",
 		"name": "ICON",
-		"link": "https://icon.foundation/"
+		"link": "https://icon.foundation/",
+		"decimals": 18
 	},
 	{
 		"index": 75,
