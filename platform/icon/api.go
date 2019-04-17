@@ -47,6 +47,8 @@ func Normalize(trx *Tx) (tx models.Tx, b bool) {
 		return tx, false
 	}
 
+	value := util.DecimalExp(string(trx.Amount), 18)
+
 	return models.Tx{
 		Id     : trx.TxHash,
 		Coin   : coin.ICX,
@@ -58,7 +60,7 @@ func Normalize(trx *Tx) (tx models.Tx, b bool) {
 		Type   : models.TxTransfer,
 		Block  : trx.Height,
 		Meta: models.Transfer{
-			Value : models.Amount(trx.Amount),
+			Value : models.Amount(value),
 		},
 	}, true
 }
