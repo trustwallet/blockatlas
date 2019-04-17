@@ -17,7 +17,7 @@ const basicSrc = `
 	"toAddr": "cx334db6519871cb2bfd154cec0905ced4ea142de1",
 	"txType": "1",
 	"dataType": "call",
-	"amount": "0",
+	"amount": "0.00347",
 	"fee": "0.0017476",
 	"state": 1,
 	"targetContractAddr": "cx334db6519871cb2bfd154cec0905ced4ea142de1",
@@ -30,11 +30,11 @@ var basicDst = models.Tx{
 	Coin:  coin.ICX,
 	From:  "hx1b8959dd5c57d2c502e22ee0a887d33baec09091",
 	To:    "cx334db6519871cb2bfd154cec0905ced4ea142de1",
-	Fee:   "0.0017476",
+	Fee:   "1747600000000000",
 	Date:  1555396594,
 	Block: 357832,
 	Meta:  models.Transfer{
-		Value: "0",
+		Value: "3470000000000000",
 	},
 }
 

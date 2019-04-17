@@ -46,7 +46,7 @@ func Normalize(trx *Tx) (tx models.Tx, b bool) {
 		fmt.Printf("%v\n", err)
 		return tx, false
 	}
-
+	fee := util.DecimalExp(string(trx.Fee), 18)
 	value := util.DecimalExp(string(trx.Amount), 18)
 
 	return models.Tx{
@@ -54,7 +54,7 @@ func Normalize(trx *Tx) (tx models.Tx, b bool) {
 		Coin   : coin.ICX,
 		From   : trx.FromAddr,
 		To     : trx.ToAddr,
-		Fee    : models.Amount(trx.Fee),
+		Fee    : models.Amount(fee),
 		Status : models.StatusCompleted,
 		Date   : date.Unix(),
 		Type   : models.TxTransfer,
