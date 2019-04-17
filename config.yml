@@ -38,6 +38,6 @@ tezos:
 aion:
   api: https://mainnet-api.aion.network/aion/dashboard
 
-#[ICX] ICON: https://icon.foundation
+# [ICX] ICON: https://icon.foundation
 icon:
   api: https://tracker.icon.foundation/v3
