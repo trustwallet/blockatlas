@@ -47,3 +47,6 @@ icon:
 #tron:
 #  api: https://api.trongrid.io/v1
 #  token: my-access-token
+# [VET] VeChain: https://www.vechain.org
+#vechain:
+#  api: http://localhost:4567
