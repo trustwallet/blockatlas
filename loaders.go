@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/coin"
+	"github.com/trustwallet/blockatlas/models"
 	"github.com/trustwallet/blockatlas/platform/aion"
 	"github.com/trustwallet/blockatlas/platform/binance"
 	"github.com/trustwallet/blockatlas/platform/ethereum"
@@ -16,22 +17,26 @@ import (
 )
 
 var loaders = map[string]func(gin.IRouter){
-	"binance":          binance.Setup,
-	"nimiq":            nimiq.Setup,
-	"ripple":           ripple.Setup,
-	"stellar":          stellar.MakeSetup(coin.XLM, "stellar"),
-	"kin":              stellar.MakeSetup(coin.KIN, "kin"),
-	"tezos":            tezos.Setup,
-	"ethereum":         ethereum.MakeSetup(coin.ETH,  "ethereum"),
-	"classic":          ethereum.MakeSetup(coin.ETC,  "classic"),
-	"poa":              ethereum.MakeSetup(coin.POA,  "poa"),
-	"callisto":         ethereum.MakeSetup(coin.CLO,  "callisto"),
-	"gochain":          ethereum.MakeSetup(coin.GO,   "gochain"),
-	"wanchain":         ethereum.MakeSetup(coin.WAN,  "wanchain"),
-	"tomochain":        ethereum.MakeSetup(coin.TOMO, "tomochain"),
-	"thundertoken":     ethereum.MakeSetup(coin.TT,   "thundertoken"),
-	"aion":             aion.Setup,
-	"icon":             icon.Setup,
+	"binance":      binance.Setup,
+	"nimiq":        nimiq.Setup,
+	"ripple":       ripple.Setup,
+	"stellar":      stellar.MakeSetup(coin.XLM, "stellar"),
+	"kin":          stellar.MakeSetup(coin.KIN, "kin"),
+	"tezos":        tezos.Setup,
+	"ethereum":     ethereum.MakeSetup(coin.ETH, "ethereum"),
+	"classic":      ethereum.MakeSetup(coin.ETC, "classic"),
+	"poa":          ethereum.MakeSetup(coin.POA, "poa"),
+	"callisto":     ethereum.MakeSetup(coin.CLO, "callisto"),
+	"gochain":      ethereum.MakeSetup(coin.GO, "gochain"),
+	"wanchain":     ethereum.MakeSetup(coin.WAN, "wanchain"),
+	"tomochain":    ethereum.MakeSetup(coin.TOMO, "tomochain"),
+	"thundertoken": ethereum.MakeSetup(coin.TT, "thundertoken"),
+	"aion":         aion.Setup,
+	"tron":         setupEmpty,
+	"icon":         icon.Setup,
+	"cosmos":       setupEmpty,
+	"theta":        setupEmpty,
+	"vechain":      setupEmpty,
 }
 
 func loadPlatforms(router gin.IRouter) {
@@ -52,4 +57,16 @@ func checkEnabled(name string) func(c *gin.Context) {
 			c.Abort()
 		}
 	}
+}
+
+func setupEmpty(router gin.IRouter) {
+	var emptyModel models.Response
+	emptyResponse, _ := emptyModel.MarshalJSON()
+	mkEmpty := func(c *gin.Context) {
+		c.Writer.Header().Set("content-type", "application/json")
+		c.Writer.WriteHeader(http.StatusOK)
+		_, _ = c.Writer.Write(emptyResponse)
+	}
+	router.GET("/:address", mkEmpty)
+	router.GET("/:address/transactions/:token", mkEmpty)
 }
