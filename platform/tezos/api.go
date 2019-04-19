@@ -15,10 +15,11 @@ var client = Client{
 	HTTPClient: http.DefaultClient,
 }
 
+// Setup registers the Tezos route
 func Setup(router gin.IRouter) {
 	router.Use(util.RequireConfig("tezos.api"))
 	router.Use(func(c *gin.Context) {
-		client.RpcURL = viper.GetString("tezos.api")
+		client.BaseURL = viper.GetString("tezos.api")
 		c.Next()
 	})
 	router.GET("/:address", getTransactions)
@@ -44,6 +45,7 @@ func getTransactions(c *gin.Context) {
 	c.JSON(http.StatusOK, &page)
 }
 
+// Normalize converts a Tezos transaction into the generic model
 func Normalize(srcTx *Tx) (tx models.Tx, ok bool) {
 	if srcTx.Type.Kind != "manager" {
 		return tx, false

@@ -1,10 +1,10 @@
 package tezos
 
 import (
-	"errors"
 	"github.com/trustwallet/blockatlas/models"
 )
 
+// Tx is a Tezos blockchain transaction
 type Tx struct {
 	Hash        string  `json:"hash"`
 	BlockHash   string  `json:"block_hash"`
@@ -12,12 +12,14 @@ type Tx struct {
 	Type        Manager `json:"type"`
 }
 
+// Manager contains transfer operations
 type Manager struct {
 	Kind       string      `json:"kind"`
 	Src        Address     `json:"src"`
 	Operations []Operation `json:"operations"`
 }
 
+// Operation is a Tezos transfer operation
 type Operation struct {
 	Kind         string        `json:"kind"`
 	Src          Address       `json:"src"`
@@ -34,8 +36,7 @@ type Operation struct {
 	Timestamp    string        `json:"timestamp"`
 }
 
+// Address is a Tezos address object
 type Address struct {
 	Tz string `json:"tz"`
 }
-
-var ErrSourceConn = errors.New("connection to servers failed")

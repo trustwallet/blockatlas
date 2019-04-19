@@ -14,12 +14,12 @@ import (
 
 type Client struct {
 	HTTPClient *http.Client
-	RpcURL     string
+	BaseURL    string
 }
 
 func (c *Client) GetTxsOfAddress(address string) (*TxPage, error) {
 	uri := fmt.Sprintf("%s/txs?%s",
-		c.RpcURL,
+		c.BaseURL,
 		url.Values{
 			"address": {address},
 			"rows":    {strconv.Itoa(models.TxPerPage)},
@@ -28,12 +28,12 @@ func (c *Client) GetTxsOfAddress(address string) (*TxPage, error) {
 	res, err := c.HTTPClient.Get(uri)
 	if err != nil {
 		logrus.WithError(err).Error("Binance: Failed to get transactions")
-		return nil, ErrSourceConn
+		return nil, models.ErrSourceConn
 	}
 
 	switch res.StatusCode {
 	case http.StatusBadRequest, http.StatusNotFound:
-		return nil, getHttpError(res, "get transactions")
+		return nil, getHTTPError(res, "get transactions")
 	case http.StatusOK:
 		break
 	default:
@@ -45,23 +45,23 @@ func (c *Client) GetTxsOfAddress(address string) (*TxPage, error) {
 	return stx, nil
 }
 
-func getHttpError(res *http.Response, desc string) error {
+func getHTTPError(res *http.Response, desc string) error {
 	var sErr Error
 	err := json.NewDecoder(res.Body).Decode(&sErr)
 	if err != nil {
 		logrus.WithError(err).Error("Binance: Failed to get error")
-		return ErrSourceConn
-	} else {
-		switch sErr.Message {
-		case "address is not valid":
-			return ErrInvalidAddr
-		}
-
-		logrus.WithFields(logrus.Fields {
-			"status":  res.StatusCode,
-			"code":    sErr.Code,
-			"message": sErr.Message,
-		}).Error("Binance: Failed to " + desc)
-		return ErrSourceConn
+		return models.ErrSourceConn
 	}
+
+	switch sErr.Message {
+	case "address is not valid":
+		return models.ErrInvalidAddr
+	}
+
+	logrus.WithFields(logrus.Fields {
+		"status":  res.StatusCode,
+		"code":    sErr.Code,
+		"message": sErr.Message,
+	}).Error("Binance: Failed to " + desc)
+	return models.ErrSourceConn
 }

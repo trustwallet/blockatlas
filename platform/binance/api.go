@@ -14,10 +14,11 @@ var client = Client{
 	HTTPClient: http.DefaultClient,
 }
 
+// Setup registers the Binance DEX route
 func Setup(router gin.IRouter) {
 	router.Use(util.RequireConfig("binance.api"))
 	router.Use(func(c *gin.Context) {
-		client.RpcURL = viper.GetString("binance.api")
+		client.BaseURL = viper.GetString("binance.api")
 		c.Next()
 	})
 	router.GET("/:address", getTransactions)
@@ -42,6 +43,7 @@ func getTransactions(c *gin.Context) {
 	c.JSON(http.StatusOK, &page)
 }
 
+// Normalize converts a Binance transaction into the generic model
 func Normalize(srcTx *Tx) (tx models.Tx, ok bool) {
 	value := util.DecimalExp(string(srcTx.Value), 8)
 	fee := util.DecimalExp(string(srcTx.Fee), 8)
@@ -72,15 +74,15 @@ func Normalize(srcTx *Tx) (tx models.Tx, ok bool) {
 }
 
 func apiError(c *gin.Context, err error) bool {
-	if err == ErrNotFound {
+	if err == models.ErrNotFound {
 		c.String(http.StatusNotFound, err.Error())
 		return true
 	}
-	if err == ErrInvalidAddr {
+	if err == models.ErrInvalidAddr {
 		c.String(http.StatusBadRequest, err.Error())
 		return true
 	}
-	if err == ErrSourceConn {
+	if err == models.ErrSourceConn {
 		c.String(http.StatusBadGateway, "connection to Binance API failed")
 		return true
 	}

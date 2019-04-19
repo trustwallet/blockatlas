@@ -12,12 +12,12 @@ import (
 
 type Client struct {
 	HTTPClient *http.Client
-	RpcURL     string
+	BaseURL    string
 }
 
 func (c *Client) GetTxsOfAddress(address string) (*TxPage, error) {
 	uri := fmt.Sprintf("%s/getTransactionsByAddress?%s",
-		c.RpcURL,
+		c.BaseURL,
 		url.Values{
 			"accountAddress": {address},
 			"size":           {strconv.FormatInt(models.TxPerPage, 10)},

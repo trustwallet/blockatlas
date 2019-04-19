@@ -1,7 +1,5 @@
 package ethereum
 
-import "errors"
-
 type Page struct {
 	Total uint  `json:"total"`
 	Docs  []Doc `json:"docs"`
@@ -42,5 +40,3 @@ type Contract struct {
 	TotalSupply string `json:"totalSupply"`
 	Name        string `json:"name"`
 }
-
-var ErrSourceConn  = errors.New("connection to servers failed")

@@ -2,7 +2,6 @@ package ripple
 
 import (
 	"encoding/json"
-	"errors"
 	"github.com/trustwallet/blockatlas/models"
 )
 
@@ -38,5 +37,3 @@ type Payment struct {
 	Account         string `json:"Account"`
 	Destination     string `json:"Destination"`
 }
-
-var ErrSourceConn  = errors.New("connection to servers failed")

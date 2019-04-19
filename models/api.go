@@ -1,5 +1,7 @@
 package models
 
+import "errors"
+
 // Types of transaction metadata
 const (
 	TxTransfer            = "transfer"
@@ -102,3 +104,12 @@ type ContractCall struct {
 	Input string `json:"input"`
 	Value string `json:"value"`
 }
+
+// ErrSourceConn signals that the connection to the source API failed
+var ErrSourceConn  = errors.New("connection to servers failed")
+
+// ErrInvalidAddr signals that the requested address is invalid
+var ErrInvalidAddr = errors.New("invalid address")
+
+// ErrNotFound signals that the resource has not been found
+var ErrNotFound = errors.New("not found")

@@ -16,10 +16,11 @@ var client = Client{
 	HTTPClient: http.DefaultClient,
 }
 
+// Setup registers the Ripple route
 func Setup(router gin.IRouter) {
 	router.Use(util.RequireConfig("ripple.api"))
 	router.Use(func(c *gin.Context) {
-		client.RpcURL = viper.GetString("ripple.api")
+		client.BaseURL = viper.GetString("ripple.api")
 		c.Next()
 	})
 	router.GET("/:address", getTransactions)
@@ -45,6 +46,7 @@ func getTransactions(c *gin.Context) {
 	c.JSON(http.StatusOK, &page)
 }
 
+// Normalize converts a Ripple transaction into the generic model
 func Normalize(srcTx *Tx) (tx models.Tx, ok bool) {
 	// Only accept XRP payments (typeof tx.amount === 'string')
 	var p fastjson.Parser

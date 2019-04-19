@@ -11,6 +11,7 @@ import (
 	"time"
 )
 
+// MakeSetup returns a function used to register a Stellar-based platform route
 func MakeSetup(coinIndex uint, platform string) func(gin.IRouter) {
 	return func(router gin.IRouter) {
 		apiKey := platform + ".api"
@@ -61,6 +62,7 @@ func apiError(c *gin.Context, err error) bool {
 	return false
 }
 
+// Normalize converts a Stellar-based transaction into the generic model
 func Normalize(payment *Payment, nativeCoinIndex uint) (tx models.Tx, ok bool) {
 	switch payment.Type {
 	case "payment":

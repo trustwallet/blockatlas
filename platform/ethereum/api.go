@@ -12,6 +12,7 @@ import (
 	"github.com/trustwallet/blockatlas/util"
 )
 
+// MakeSetup returns a function used to register an Ethereum-based platform route
 func MakeSetup(coinIndex uint, platform string) func(gin.IRouter) {
 	apiKey := platform + ".api"
 
@@ -22,7 +23,7 @@ func MakeSetup(coinIndex uint, platform string) func(gin.IRouter) {
 	return func(router gin.IRouter) {
 		router.Use(util.RequireConfig(apiKey))
 		router.Use(func(c *gin.Context) {
-			client.RpcURL = viper.GetString(apiKey)
+			client.BaseURL = viper.GetString(apiKey)
 			c.Next()
 		})
 		router.GET("/:address", func(c *gin.Context) {

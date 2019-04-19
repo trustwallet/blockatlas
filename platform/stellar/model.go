@@ -1,6 +1,6 @@
 package stellar
 
-// PaymentPage of payments returned by Horizon
+// PaymentsPage of payments returned by Horizon
 type PaymentsPage struct {
 	Embedded struct {
 		Records []Payment

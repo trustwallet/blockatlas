@@ -12,6 +12,7 @@ import (
 
 var client *Client
 
+// Setup registers the Nimiq route
 func Setup(router gin.IRouter) {
 	router.Use(util.RequireConfig("nimiq.api"))
 	router.Use(withClient)
@@ -35,13 +36,15 @@ func getTransactions(c *gin.Context) {
 
 func withClient(c *gin.Context) {
 	rpcURL := viper.GetString("nimiq.api")
-	if client == nil || rpcURL != client.RpcURL {
+	if client == nil || rpcURL != client.BaseURL {
 		logrus.WithField("rpc", rpcURL).Info("Created Nimiq RPC client")
-		client = NewClient(rpcURL)
+		client = &Client{BaseURL: rpcURL}
+		client.Init()
 	}
 	c.Next()
 }
 
+// Normalize converts a Nimiq transaction into the generic model
 func Normalize(srcTx *Tx) (tx models.Tx) {
 	return models.Tx{
 		ID:    srcTx.Hash,
@@ -51,18 +54,18 @@ func Normalize(srcTx *Tx) (tx models.Tx) {
 		To:    srcTx.ToAddress,
 		Fee:   srcTx.Fee,
 		Block: srcTx.BlockNumber,
-		Meta:  models.Transfer{
+		Meta: models.Transfer{
 			Value: srcTx.Value,
 		},
 	}
 }
 
 func apiError(c *gin.Context, err error) bool {
-	if err == ErrInvalidAddr {
+	if err == models.ErrInvalidAddr {
 		c.String(http.StatusBadRequest, err.Error())
 		return true
 	}
-	if err == ErrInvalidAddr {
+	if err == models.ErrInvalidAddr {
 		c.String(http.StatusBadGateway, "Nimiq RPC returned an error")
 		return true
 	}
