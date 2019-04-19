@@ -107,10 +107,10 @@ const failedSrc = `
 }`
 
 var tokenTransferDst = models.Tx{
-	Id:     "0x7777854580f273df61e0162e1a41b3e1e05ab8b9f553036fa9329a90dd7e9ab2",
-	Coin:   coin.ETH,
-	From:   "0xd35f30d194684a391c63a6deced7d3dd5207c265",
-	To:     "0xaa4d790076f1bf7511a0a0ac498c89e13e1efe17",
+	ID:   "0x7777854580f273df61e0162e1a41b3e1e05ab8b9f553036fa9329a90dd7e9ab2",
+	Coin: coin.ETH,
+	From: "0xd35f30d194684a391c63a6deced7d3dd5207c265",
+	To:   "0xaa4d790076f1bf7511a0a0ac498c89e13e1efe17",
 	//To:   "0xf3586684107ce0859c44aa2b2e0fb8cd8731a15a", Contract
 	Fee:    "358254913291776",
 	Date:   1554248437,
@@ -129,15 +129,15 @@ var tokenTransferDst = models.Tx{
 }
 
 var contractCallDst = models.Tx{
-	Id:     "0x34ab0028a9aa794d5cc12887e7b813cec17889948276b301028f24a408da6da4",
-	Coin:   coin.ETH,
-	From:   "0xc9a16a82c284efc3cb0fe8c891ab85d6eba0eefb",
-	To:     "0xc67f9c909c4d185e4a5d21d642c27d05a145a76c",
-	Fee:    "42680000000000",
-	Date:   1554661737,
-	Block:  7522627,
+	ID:       "0x34ab0028a9aa794d5cc12887e7b813cec17889948276b301028f24a408da6da4",
+	Coin:     coin.ETH,
+	From:     "0xc9a16a82c284efc3cb0fe8c891ab85d6eba0eefb",
+	To:       "0xc67f9c909c4d185e4a5d21d642c27d05a145a76c",
+	Fee:      "42680000000000",
+	Date:     1554661737,
+	Block:    7522627,
 	Sequence: 534,
-	Status: models.StatusCompleted,
+	Status:   models.StatusCompleted,
 	Meta:   models.ContractCall{
 		Input: "0xfffdefefed",
 		Value: "1800000000000000000",
@@ -145,31 +145,31 @@ var contractCallDst = models.Tx{
 }
 
 var transferDst = models.Tx{
-	Id:     "0x77f8a3b2203933493d103a1637de814b4853410b1fb2981c4d2cff4d7a3071ab",
-	Coin:   coin.ETH,
-	From:   "0xf5aea47e57c058881b31ee8fce1002c409188f06",
-	To:     "0x0ae933a89d9e249d0873cfc7ca022fcb3f1280ce",
-	Fee:    "105000000000000",
-	Date:   1554663642,
-	Block:  7522781,
+	ID:       "0x77f8a3b2203933493d103a1637de814b4853410b1fb2981c4d2cff4d7a3071ab",
+	Coin:     coin.ETH,
+	From:     "0xf5aea47e57c058881b31ee8fce1002c409188f06",
+	To:       "0x0ae933a89d9e249d0873cfc7ca022fcb3f1280ce",
+	Fee:      "105000000000000",
+	Date:     1554663642,
+	Block:    7522781,
 	Sequence: 88,
-	Status: models.StatusCompleted,
+	Status:   models.StatusCompleted,
 	Meta: models.Transfer{
 		Value: "1999895000000000000",
 	},
 }
 
 var failedDst = models.Tx{
-	Id:     "0x8dfe7e859f7bdcea4e6f4ada18567d96a51c3aa29e618ef09b80ae99385e191e",
-	Coin:   coin.ETH,
-	From:   "0x4b55af7ce28a113d794f9a9940fe1506f37aa619",
-	To:     "0xe65f787c8561a4b15771111bb427274dedfe85d7",
-	Fee:    "63000000000000",
-	Date:   1554662399,
-	Block:  7522678,
+	ID:       "0x8dfe7e859f7bdcea4e6f4ada18567d96a51c3aa29e618ef09b80ae99385e191e",
+	Coin:     coin.ETH,
+	From:     "0x4b55af7ce28a113d794f9a9940fe1506f37aa619",
+	To:       "0xe65f787c8561a4b15771111bb427274dedfe85d7",
+	Fee:      "63000000000000",
+	Date:     1554662399,
+	Block:    7522678,
 	Sequence: 1,
-	Status: models.StatusFailed,
-	Error:  "Error",
+	Status:   models.StatusFailed,
+	Error:    "Error",
 	Meta: models.Transfer{
 		Value: "59859820000000000",
 	},
@@ -215,19 +215,19 @@ func testNormalize(t *testing.T, _test *test) {
 	}
 	res := AppendTxs(nil, &doc, coin.ETH)
 
-	resJson, err := json.Marshal(res)
+	resJSON, err := json.Marshal(res)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	dstJson, err := json.Marshal([]models.Tx{*_test.expected})
+	dstJSON, err := json.Marshal([]models.Tx{*_test.expected})
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if !bytes.Equal(resJson, dstJson) {
-		println(string(resJson))
-		println(string(dstJson))
+	if !bytes.Equal(resJSON, dstJSON) {
+		println(string(resJSON))
+		println(string(dstJSON))
 		t.Error(_test.name + ": tx don't equal")
 	}
 }

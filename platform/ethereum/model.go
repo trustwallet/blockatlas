@@ -10,7 +10,7 @@ type Page struct {
 type Doc struct {
 	Ops         []Op      `json:"operations"`
 	Contract    *Contract `json:"contract"`
-	Id          string    `json:"id"`
+	ID          string    `json:"id"`
 	BlockNumber uint64    `json:"blockNumber"`
 	TimeStamp   string    `json:"timeStamp"`
 	Nonce       uint64    `json:"nonce"`
@@ -26,7 +26,7 @@ type Doc struct {
 }
 
 type Op struct {
-	TxId     string    `json:"transactionId"`
+	TxID     string    `json:"transactionId"`
 	Contract *Contract `json:"contract"`
 	From     string    `json:"from"`
 	To       string    `json:"to"`

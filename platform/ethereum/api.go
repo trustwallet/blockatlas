@@ -16,13 +16,13 @@ func MakeSetup(coinIndex uint, platform string) func(gin.IRouter) {
 	apiKey := platform + ".api"
 
 	client := Client{
-		HttpClient: http.DefaultClient,
+		HTTPClient: http.DefaultClient,
 	}
 
 	return func(router gin.IRouter) {
 		router.Use(util.RequireConfig(apiKey))
 		router.Use(func(c *gin.Context) {
-			client.RpcUrl = viper.GetString(apiKey)
+			client.RpcURL = viper.GetString(apiKey)
 			c.Next()
 		})
 		router.GET("/:address", func(c *gin.Context) {
@@ -74,7 +74,7 @@ func extractBase(srcTx *Doc, coinIndex uint) (base models.Tx, ok bool) {
 	fee := calcFee(srcTx.GasPrice, srcTx.GasUsed)
 
 	base = models.Tx{
-		Id:       srcTx.Id,
+		ID:       srcTx.ID,
 		Coin:     coinIndex,
 		From:     srcTx.From,
 		To:       srcTx.To,

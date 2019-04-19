@@ -34,17 +34,17 @@ func getTransactions(c *gin.Context) {
 }
 
 func withClient(c *gin.Context) {
-	rpcUrl := viper.GetString("nimiq.api")
-	if client == nil || rpcUrl != client.RpcUrl {
-		logrus.WithField("rpc", rpcUrl).Info("Created Nimiq RPC client")
-		client = NewClient(rpcUrl)
+	rpcURL := viper.GetString("nimiq.api")
+	if client == nil || rpcURL != client.RpcURL {
+		logrus.WithField("rpc", rpcURL).Info("Created Nimiq RPC client")
+		client = NewClient(rpcURL)
 	}
 	c.Next()
 }
 
 func Normalize(srcTx *Tx) (tx models.Tx) {
 	return models.Tx{
-		Id:    srcTx.Hash,
+		ID:    srcTx.Hash,
 		Coin:  coin.NIM,
 		Date:  srcTx.Timestamp,
 		From:  srcTx.FromAddress,

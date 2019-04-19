@@ -28,7 +28,7 @@ const basicSrc = `
 `
 
 var basicDst = models.Tx{
-	Id:    "8b219949f4c1dfe9e7a9cdc5dbbc507e40dc16f44a1a5182ed6125c9a6891a50",
+	ID:    "8b219949f4c1dfe9e7a9cdc5dbbc507e40dc16f44a1a5182ed6125c9a6891a50",
 	Coin:  coin.NIM,
 	From:  "NQ69 9A4A MB83 HXDQ 4J46 BH5R 4JFF QMA9 C3GN",
 	To:    "NQ15 MLJN 23YB 8FBM 61TN 7LYG 2212 LVBG 4V19",
@@ -49,19 +49,19 @@ func TestNormalize(t *testing.T) {
 	}
 
 	tx := Normalize(&srcTx)
-	resJson, err := json.Marshal(&tx)
+	resJSON, err := json.Marshal(&tx)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	dstJson, err := json.Marshal(&basicDst)
+	dstJSON, err := json.Marshal(&basicDst)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if !bytes.Equal(resJson, dstJson) {
-		println(string(resJson))
-		println(string(dstJson))
+	if !bytes.Equal(resJSON, dstJSON) {
+		println(string(resJSON))
+		println(string(dstJSON))
 		t.Error("basic: tx don't equal")
 	}
 }

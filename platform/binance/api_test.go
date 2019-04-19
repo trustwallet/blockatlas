@@ -49,13 +49,13 @@ const nativeTransferSrc = `
 }`
 
 var transferDst = models.Tx{
-	Id: "1681EE543FB4B5A628EF21D746E031F018E226D127044A4F9BA5EE2542A44555",
-	Coin: coin.BNB,
-	From: "tbnb1fhr04azuhcj0dulm7ka40y0cqjlafwae9k9gk2",
-	To: "tbnb1sylyjw032eajr9cyllp26n04300qzzre38qyv5",
-	Fee: "125000",
-	Date: 1555049867,
-	Block: 7761368,
+	ID:     "1681EE543FB4B5A628EF21D746E031F018E226D127044A4F9BA5EE2542A44555",
+	Coin:   coin.BNB,
+	From:   "tbnb1fhr04azuhcj0dulm7ka40y0cqjlafwae9k9gk2",
+	To:     "tbnb1sylyjw032eajr9cyllp26n04300qzzre38qyv5",
+	Fee:    "125000",
+	Date:   1555049867,
+	Block:  7761368,
 	Status: models.StatusCompleted,
 	Meta: models.Transfer{
 		Value: "10000000000000",
@@ -63,18 +63,18 @@ var transferDst = models.Tx{
 }
 
 var nativeTransferDst = models.Tx{
-	Id: "95CF63FAA27579A9B6AF84EF8B2DFEAC29627479E9C98E7F5AE4535E213FA4C9",
-	Coin: coin.BNB,
-	From: "tbnb1ttyn4csghfgyxreu7lmdu3lcplhqhxtzced45a",
-	To: "tbnb12hlquylu78cjylk5zshxpdj6hf3t0tahwjt3ex",
-	Fee: "125000",
-	Date: 1555117625,
-	Block: 7928667,
+	ID:     "95CF63FAA27579A9B6AF84EF8B2DFEAC29627479E9C98E7F5AE4535E213FA4C9",
+	Coin:   coin.BNB,
+	From:   "tbnb1ttyn4csghfgyxreu7lmdu3lcplhqhxtzced45a",
+	To:     "tbnb12hlquylu78cjylk5zshxpdj6hf3t0tahwjt3ex",
+	Fee:    "125000",
+	Date:   1555117625,
+	Block:  7928667,
 	Status: models.StatusCompleted,
 	Meta: models.NativeTokenTransfer{
 		TokenID: "YLC-D8B",
-		Symbol: "YLC",
-		Value: "210572645",
+		Symbol:  "YLC",
+		Value:   "210572645",
 	},
 }
 
@@ -86,14 +86,14 @@ type test struct {
 
 func TestNormalize(t *testing.T) {
 	testNormalize(t, &test{
-		name: "transfer",
+		name:        "transfer",
 		apiResponse: transferSrc,
-		expected: &transferDst,
+		expected:    &transferDst,
 	})
 	testNormalize(t, &test{
-		name: "native token transfer",
+		name:        "native token transfer",
 		apiResponse: nativeTransferSrc,
-		expected: &nativeTransferDst,
+		expected:    &nativeTransferDst,
 	})
 }
 
@@ -110,20 +110,19 @@ func testNormalize(t *testing.T, _test *test) {
 		t.Errorf("transfer: tx could not be normalized")
 	}
 
-	resJson, err := json.Marshal(&tx)
+	resJSON, err := json.Marshal(&tx)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	dstJson, err := json.Marshal(_test.expected)
+	dstJSON, err := json.Marshal(_test.expected)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if !bytes.Equal(resJson, dstJson) {
-		println(string(resJson))
-		println(string(dstJson))
+	if !bytes.Equal(resJSON, dstJSON) {
+		println(string(resJSON))
+		println(string(dstJSON))
 		t.Error("transfer: tx don't equal")
 	}
 }
-

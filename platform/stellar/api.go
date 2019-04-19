@@ -96,10 +96,10 @@ func Normalize(payment *Payment, nativeCoinIndex uint) (tx models.Tx, ok bool) {
 		return tx, false
 	}
 	return models.Tx{
-		Id:    payment.TransactionHash,
-		Coin:  nativeCoinIndex,
-		From:  from,
-		To:    to,
+		ID:   payment.TransactionHash,
+		Coin: nativeCoinIndex,
+		From: from,
+		To:   to,
 		// https://www.stellar.org/developers/guides/concepts/fees.html
 		// Fee fixed at 100 stroops
 		Fee:   "100",

@@ -18,7 +18,7 @@ var client = Client{
 func Setup(router gin.IRouter) {
 	router.Use(util.RequireConfig("icon.api"))
 	router.Use(func(c *gin.Context) {
-		client.RPCUrl = viper.GetString("icon.api")
+		client.RPCURL = viper.GetString("icon.api")
 	})
 	router.GET("/:address", getTransactions)
 }
@@ -50,7 +50,7 @@ func Normalize(trx *Tx) (tx models.Tx, b bool) {
 	value := util.DecimalExp(string(trx.Amount), 18)
 
 	return models.Tx{
-		Id     : trx.TxHash,
+		ID:      trx.TxHash,
 		Coin   : coin.ICX,
 		From   : trx.FromAddr,
 		To     : trx.ToAddr,

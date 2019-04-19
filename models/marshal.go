@@ -15,6 +15,8 @@ var matchNumber = regexp.MustCompile(`^\d+(\.\d+)?$`)
 // Tx, but with default JSON marshalling methods
 type wrappedTx Tx
 
+// UnmarshalJSON creates a transaction along with metadata from a JSON object.
+// Fails if the meta object can't be read.
 func (t *Tx) UnmarshalJSON(data []byte) error {
 	// Wrap the Tx type to avoid infinite recursion
 	var wrapped wrappedTx
@@ -49,6 +51,8 @@ func (t *Tx) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// MarshalJSON creates a JSON object from a transaction.
+// Sets the Type field to the currect value based on the Meta type.
 func (t *Tx) MarshalJSON() ([]byte, error) {
 	// Set type from metadata content
 	switch t.Meta.(type) {
@@ -77,6 +81,8 @@ func (t *Tx) MarshalJSON() ([]byte, error) {
 	return json.Marshal(wrappedTx(*t))
 }
 
+// UnmarshalJSON reads an amount from a JSON string or number.
+// Comma separators get dropped with util.DecimalToSatoshis.
 func (a *Amount) UnmarshalJSON(data []byte) error {
 	var n json.Number
 	err := json.Unmarshal(data, &n)
@@ -94,10 +100,12 @@ func (a *Amount) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// MarshalJSON returns a JSON string representing the amount
 func (a *Amount) MarshalJSON() ([]byte, error) {
 	return json.Marshal(string(*a))
 }
 
+// Sort sorts the response by date, descending
 func (r *Response) Sort() {
 	sort.Slice(*r, func(i, j int) bool {
 		ti := cast.ToUint64((*r)[i].Date)
@@ -106,6 +114,7 @@ func (r *Response) Sort() {
 	})
 }
 
+// MarshalJSON returns a wrapped list of transactions in JSON
 func (r *Response) MarshalJSON() ([]byte, error) {
 	var page struct {
 		Total  int    `json:"total"`

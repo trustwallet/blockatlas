@@ -11,13 +11,13 @@ import (
 )
 
 var client = Client{
-	HttpClient: http.DefaultClient,
+	HTTPClient: http.DefaultClient,
 }
 
 func Setup(router gin.IRouter) {
 	router.Use(util.RequireConfig("binance.api"))
 	router.Use(func(c *gin.Context) {
-		client.RpcUrl = viper.GetString("binance.api")
+		client.RpcURL = viper.GetString("binance.api")
 		c.Next()
 	})
 	router.GET("/:address", getTransactions)
@@ -44,10 +44,10 @@ func getTransactions(c *gin.Context) {
 
 func Normalize(srcTx *Tx) (tx models.Tx, ok bool) {
 	value := util.DecimalExp(string(srcTx.Value), 8)
-	fee   := util.DecimalExp(string(srcTx.Fee), 8)
+	fee := util.DecimalExp(string(srcTx.Fee), 8)
 
 	tx = models.Tx{
-		Id:    srcTx.Hash,
+		ID:    srcTx.Hash,
 		Coin:  coin.BNB,
 		Date:  srcTx.Timestamp / 1000,
 		From:  srcTx.FromAddr,
@@ -64,8 +64,8 @@ func Normalize(srcTx *Tx) (tx models.Tx, ok bool) {
 	} else {
 		tx.Meta = models.NativeTokenTransfer{
 			TokenID: srcTx.Asset,
-			Symbol: srcTx.MappedAsset,
-			Value:  models.Amount(value),
+			Symbol:  srcTx.MappedAsset,
+			Value:   models.Amount(value),
 		}
 		return tx, true
 	}

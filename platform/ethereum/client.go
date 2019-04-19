@@ -9,29 +9,29 @@ import (
 )
 
 type Client struct {
-	HttpClient *http.Client
-	RpcUrl     string
+	HTTPClient *http.Client
+	RpcURL     string
 }
 
 func (c *Client) GetTxs(address string) (*Page, error) {
-	return c.getTxsFromUri(fmt.Sprintf("%s/transactions?%s",
-		c.RpcUrl,
+	return c.getTxs(fmt.Sprintf("%s/transactions?%s",
+		c.RpcURL,
 		url.Values{
 			"address":  {address},
 		}.Encode()))
 }
 
 func (c *Client) GetTxsWithContract(address, contract string) (*Page, error) {
-	return c.getTxsFromUri(fmt.Sprintf("%s/transactions?%s",
-		c.RpcUrl,
+	return c.getTxs(fmt.Sprintf("%s/transactions?%s",
+		c.RpcURL,
 		url.Values{
 			"address":  {address},
 			"contract": {contract},
 		}.Encode()))
 }
 
-func (c *Client) getTxsFromUri(uri string) (*Page, error) {
-	res, err := c.HttpClient.Get(uri)
+func (c *Client) getTxs(uri string) (*Page, error) {
+	res, err := c.HTTPClient.Get(uri)
 	if err != nil {
 		logrus.WithError(err).Error("Ethereum/Trust Ray: Failed to get transactions")
 		return nil, ErrSourceConn

@@ -13,19 +13,19 @@ import (
 // TODO Headers + rate limiting
 
 type Client struct {
-	HttpClient *http.Client
-	RpcUrl     string
+	HTTPClient *http.Client
+	RpcURL     string
 }
 
 func (c *Client) GetTxsOfAddress(address string) (*TxPage, error) {
 	uri := fmt.Sprintf("%s/txs?%s",
-		c.RpcUrl,
+		c.RpcURL,
 		url.Values{
 			"address": {address},
 			"rows":    {strconv.Itoa(models.TxPerPage)},
 			"page":    {"1"},
 		}.Encode())
-	res, err := c.HttpClient.Get(uri)
+	res, err := c.HTTPClient.Get(uri)
 	if err != nil {
 		logrus.WithError(err).Error("Binance: Failed to get transactions")
 		return nil, ErrSourceConn

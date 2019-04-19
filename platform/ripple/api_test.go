@@ -74,7 +74,7 @@ const paymentSrc = `
 `
 
 var paymentDst = models.Tx{
-	Id:     "40279A3DE51148BD41409DADF29DE8DCCD50F5AEE30840827B2C4C81C4E36505",
+	ID:     "40279A3DE51148BD41409DADF29DE8DCCD50F5AEE30840827B2C4C81C4E36505",
 	Coin:   coin.XRP,
 	From:   "rGSxFjoqmWz54PycrgQBQ5dB6e7TUpMxzq",
 	To:     "rMQ98K56yXJbDGv49ZSmW51sLn94Xe1mu1",
@@ -113,19 +113,19 @@ func testNormalize(t *testing.T, _test *test) {
 		t.Errorf("%s: tx could not be normalized", _test.name)
 	}
 
-	resJson, err := json.Marshal(&tx)
+	resJSON, err := json.Marshal(&tx)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	dstJson, err := json.Marshal(&_test.expected)
+	dstJSON, err := json.Marshal(&_test.expected)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if !bytes.Equal(resJson, dstJson) {
-		println(string(resJson))
-		println(string(dstJson))
+	if !bytes.Equal(resJSON, dstJSON) {
+		println(string(resJSON))
+		println(string(dstJSON))
 		t.Error(_test.name + ": tx don't equal")
 	}
 }

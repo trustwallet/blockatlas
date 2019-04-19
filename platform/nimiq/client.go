@@ -8,13 +8,13 @@ import (
 
 type Client struct {
 	RpcClient jsonrpc.RPCClient
-	RpcUrl    string
+	RpcURL    string
 }
 
-func NewClient(rpcUrl string) *Client {
+func NewClient(rpcURL string) *Client {
 	return &Client {
-		RpcUrl:    rpcUrl,
-		RpcClient: jsonrpc.NewClient(rpcUrl),
+		RpcURL:    rpcURL,
+		RpcClient: jsonrpc.NewClient(rpcURL),
 	}
 }
 

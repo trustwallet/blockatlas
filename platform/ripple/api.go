@@ -13,13 +13,13 @@ import (
 )
 
 var client = Client{
-	HttpClient: http.DefaultClient,
+	HTTPClient: http.DefaultClient,
 }
 
 func Setup(router gin.IRouter) {
 	router.Use(util.RequireConfig("ripple.api"))
 	router.Use(func(c *gin.Context) {
-		client.RpcUrl = viper.GetString("ripple.api")
+		client.RpcURL = viper.GetString("ripple.api")
 		c.Next()
 	})
 	router.GET("/:address", getTransactions)
@@ -66,7 +66,7 @@ func Normalize(srcTx *Tx) (tx models.Tx, ok bool) {
 	}
 
 	return models.Tx{
-		Id:    srcTx.Hash,
+		ID:    srcTx.Hash,
 		Coin:  coin.XRP,
 		Date:  unix,
 		From:  srcTx.Payment.Account,

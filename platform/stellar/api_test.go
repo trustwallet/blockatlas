@@ -25,7 +25,7 @@ const createSrc = `
 `
 
 var createDst = models.Tx{
-	Id:    "8b96cf3a660b85ef80b5a84c032cacdb93bb139cfe7e929b974ea9eaa0d29141",
+	ID:    "8b96cf3a660b85ef80b5a84c032cacdb93bb139cfe7e929b974ea9eaa0d29141",
 	Coin:  coin.XLM,
 	From:  "GBEZOC5U4TVH7ZY5N3FLYHTCZSI6VFGTULG7PBITLF5ZEBPJXFT46YZM",
 	To:    "GDKIJJIKXLOM2NRMPNQZUUYK24ZPVFC6426GZAEP3KUK6KEJLACCWNMX",
@@ -55,7 +55,7 @@ const transferSrc = `
 `
 
 var transferDst = models.Tx{
-	Id:    "a596dc910bae20b5bbe64aa7aa3f42acbd55769b98307878f5ad095e994bc9cf",
+	ID:    "a596dc910bae20b5bbe64aa7aa3f42acbd55769b98307878f5ad095e994bc9cf",
 	Coin:  coin.XLM,
 	From:  "GDKIJJIKXLOM2NRMPNQZUUYK24ZPVFC6426GZAEP3KUK6KEJLACCWNMX",
 	To:    "GAX3BRBNB5WTJ2GNEFFH7A4CZKT2FORYABDDBZR5FIIT3P7FLS2EFOZZ",
@@ -98,19 +98,19 @@ func testNormalize(t *testing.T, _test *test) {
 		t.Errorf("%s: tx could not be normalized", _test.name)
 	}
 
-	resJson, err := json.Marshal(&tx)
+	resJSON, err := json.Marshal(&tx)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	dstJson, err := json.Marshal(&_test.expected)
+	dstJSON, err := json.Marshal(&_test.expected)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if !bytes.Equal(resJson, dstJson) {
-		println(string(resJson))
-		println(string(dstJson))
+	if !bytes.Equal(resJSON, dstJSON) {
+		println(string(resJSON))
+		println(string(dstJSON))
 		t.Error(_test.name + ": tx don't equal")
 	}
 }

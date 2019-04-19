@@ -7,6 +7,7 @@ import (
 	"net/http"
 )
 
+// RequireConfig aborts a request if one of the supplied keys is not set
 func RequireConfig(keys ...string) func(c *gin.Context) {
 	return func(c *gin.Context) {
 		for _, key := range keys {
