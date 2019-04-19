@@ -10,20 +10,21 @@ type Tx struct {
 type Meta struct {
 	BlockID        string `json:"blockID"`
 	BlockNumber    uint64 `json:"blockNumber"`
-	BlockTimestamp uint64 `json:"blockTimestamp"`
+	BlockTimestamp int64  `json:"blockTimestamp"`
 	TxID           string `json:"txID"`
 }
 
 type TxReceipt struct {
-	Id      string   `json:"id"`
-	Clauses []Clause `json:"clauses"`
-	Nonce   string   `json:"nonce"`
-	Gas     uint64   `json:"gas"`
+	Id     			 string   `json:"id"`
+	Clauses 		 []Clause `json:"clauses"`
+	Nonce   		 string   `json:"nonce"`
+	Gas              uint64   `json:"gas"`
+	GasPriceCoef     uint64   `json:"gasPriceCoef"`
  }
 
  type Clause struct {
-	 to    string `json:"to"`
-	 value string `json:"value"`
-	 data  string `json:"data"`
+	 To    string `json:"to"`
+	 Value string `json:"value"`
+	 Data  string `json:"data"`
 
  }
