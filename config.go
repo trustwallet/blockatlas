@@ -50,4 +50,5 @@ func loadDefaults() {
 	viper.SetDefault("tezos.api", "https://api1.tzscan.io/v3")
 	viper.SetDefault("aion.api", "https://mainnet-api.aion.network/aion/dashboard")
 	viper.SetDefault("icon.api", "https://tracker.icon.foundation/v3")
+	viper.SetDefault("tron.api", "https://api.trongrid.io/v1")
 }

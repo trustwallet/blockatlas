@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas/models"
-
-	// "github.com/trustwallet/blockatlas/models"
 	"net/http"
 	"net/url"
 )
