@@ -16,7 +16,7 @@ const transferSrc = `
 	"timeStamp": 1555049867552,
 	"fromAddr": "tbnb1fhr04azuhcj0dulm7ka40y0cqjlafwae9k9gk2",
 	"toAddr": "tbnb1sylyjw032eajr9cyllp26n04300qzzre38qyv5",
-	"value": 100000,
+	"value": 0.01,
 	"txAsset": "BNB",
 	"mappedTxAsset": "BNB",
 	"txFee": 0.00125,
@@ -37,7 +37,7 @@ var transferDst = models.Tx{
 	Block: 7761368,
 	Status: models.StatusCompleted,
 	Meta: models.Transfer{
-		Value: "10000000000",
+		Value: "1000000",
 	},
 }
 
