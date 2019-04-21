@@ -47,7 +47,7 @@ func Normalize(srcTx *Tx) (tx models.Tx, ok bool) {
 		return tx, false
 	}
 
-	value := util.DecimalExp(string(srcTx.Value), coin.Coins[coin.BNB].Decimals)
+	value := util.DecimalExp(string(srcTx.Value), int(coin.Coins[uint(coin.BNB)].Decimals))
 
 	return models.Tx{
 		Id:    srcTx.Hash,
