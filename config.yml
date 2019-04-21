@@ -6,9 +6,10 @@ gin:
   # If set, HTTP Forwarded headers will be respected
   reverse_proxy: false
 
-# [BNB] Binance DEX: https://binance.org
+# [BNB] Binance DEX: https://wallet.binance.org
+#       Binance Chain: https://explorer.binance.org
 binance:
-  api: https://testnet-explorer.binance.org/api/v1
+  api: https://explorer.binance.org/api/v1
 
 # [NIM] Nimiq: https://nimiq.com
 #nimiq:
