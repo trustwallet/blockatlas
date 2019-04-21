@@ -47,7 +47,9 @@ func Normalize(srcTx *Tx) (tx models.Tx, ok bool) {
 		return tx, false
 	}
 
-	value := util.DecimalExp(string(srcTx.Value), int(coin.Coins[uint(coin.BNB)].Decimals))
+	decimals := int(coin.Coins[uint(coin.BNB)].Decimals)
+	value := util.DecimalExp(srcTx.Value.String(), decimals)
+	fee := util.DecimalExp(srcTx.Fee.String(), decimals)
 
 	return models.Tx{
 		Id:    srcTx.Hash,
@@ -55,7 +57,7 @@ func Normalize(srcTx *Tx) (tx models.Tx, ok bool) {
 		Date:  srcTx.Timestamp / 1000,
 		From:  srcTx.FromAddr,
 		To:    srcTx.ToAddr,
-		Fee:   srcTx.Fee,
+		Fee:   models.Amount(fee),
 		Block: srcTx.BlockHeight,
 		Meta:  models.Transfer{
 			Value: models.Amount(value),

@@ -3,7 +3,7 @@ package binance
 import (
 	"errors"
 	"fmt"
-	"github.com/trustwallet/blockatlas/models"
+	"github.com/shopspring/decimal"
 )
 
 type Account struct {
@@ -37,9 +37,9 @@ type Tx struct {
 	ToAddr        string        `json:"toAddr"`
 	Age           int64         `json:"txAge"`
 	Asset         string        `json:"txAsset"`
-	Fee           models.Amount `json:"txFee"`
+	Fee           decimal.Decimal `json:"txFee"`
 	Hash          string        `json:"txHash"`
-	Value         models.Amount `json:"value"`
+	Value         decimal.Decimal `json:"value"`
 }
 
 type TxPage struct {
