@@ -2309,7 +2309,7 @@
 		"symbol": "BNB",
 		"name": "Binance",
 		"link": "https://www.binance.org",
-		"decimals": 18
+		"decimals": 8
 	},
 	{
 		"index": 768,
