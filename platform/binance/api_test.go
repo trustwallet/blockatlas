@@ -32,7 +32,7 @@ var transferDst = models.Tx{
 	Coin: coin.BNB,
 	From: "tbnb1fhr04azuhcj0dulm7ka40y0cqjlafwae9k9gk2",
 	To: "tbnb1sylyjw032eajr9cyllp26n04300qzzre38qyv5",
-	Fee: "125000",
+	Fee: "1250000000000000",
 	Date: 1555049867,
 	Block: 7761368,
 	Status: models.StatusCompleted,
