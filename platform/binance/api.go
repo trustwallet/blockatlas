@@ -43,7 +43,8 @@ func getTransactions(c *gin.Context) {
 }
 
 func Normalize(srcTx *Tx) (tx models.Tx, ok bool) {
-	value := util.DecimalExp(string(srcTx.Value), 5)
+	value := util.DecimalExp(string(srcTx.Value), 8)
+	fee   := util.DecimalExp(string(srcTx.Fee), 8)
 
 	tx = models.Tx{
 		Id:    srcTx.Hash,
@@ -51,7 +52,7 @@ func Normalize(srcTx *Tx) (tx models.Tx, ok bool) {
 		Date:  srcTx.Timestamp / 1000,
 		From:  srcTx.FromAddr,
 		To:    srcTx.ToAddr,
-		Fee:   srcTx.Fee,
+		Fee:   models.Amount(fee),
 		Block: srcTx.BlockHeight,
 	}
 
@@ -62,8 +63,9 @@ func Normalize(srcTx *Tx) (tx models.Tx, ok bool) {
 		return tx, true
 	} else {
 		tx.Meta = models.NativeTokenTransfer{
-			Symbol: srcTx.Asset,
-			Value: srcTx.Value,
+			TokenID: srcTx.Asset,
+			Symbol: srcTx.MappedAsset,
+			Value:  models.Amount(value),
 		}
 		return tx, true
 	}

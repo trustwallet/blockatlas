@@ -1,9 +1,9 @@
 package binance
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/trustwallet/blockatlas/models"
 )
 
 type Account struct {
@@ -36,10 +36,11 @@ type Tx struct {
 	Timestamp     int64         `json:"timeStamp"`
 	ToAddr        string        `json:"toAddr"`
 	Age           int64         `json:"txAge"`
+	MappedAsset   string        `json:"mappedTxAsset"`
 	Asset         string        `json:"txAsset"`
-	Fee           models.Amount `json:"txFee"`
+	Fee           json.Number   `json:"txFee"`
 	Hash          string        `json:"txHash"`
-	Value         models.Amount `json:"value"`
+	Value         json.Number   `json:"value"`
 }
 
 type TxPage struct {

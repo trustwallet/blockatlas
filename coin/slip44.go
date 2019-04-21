@@ -211,7 +211,7 @@ var Coins = map[uint]Coin {
 		Symbol: "BNB",
 		Title: "Binance",
 		Website: "https://www.binance.org",
-		Decimals: 18,
+		Decimals: 8,
 	},
 	VET: {
 		Index: VET,
