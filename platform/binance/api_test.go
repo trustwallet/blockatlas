@@ -52,7 +52,7 @@ func TestNormalize(t *testing.T) {
 
 	tx, ok := Normalize(&srcTx)
 	if !ok {
-		t.Errorf("transfer: tx could not be normalized")
+		t.Errorf("Binance: transaction could not be normalized")
 	}
 
 	resJson, err := json.Marshal(&tx)
