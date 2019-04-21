@@ -23,26 +23,6 @@ func Setup(router gin.IRouter) {
 	router.GET("/:address", getTransactions)
 }
 
-func extractBase(srcTx *source.Tx) (base models.Tx, ok bool) {
-	var err error
-	date, err := time.Parse("2006-01-02T15:04:05.999Z", srcTx.Timestamp)
-	unix := date.Unix()
-	if err != nil {
-		return base, false
-	}
-
-	base = models.Tx{
-		Id:    srcTx.Hash,
-		Coin:  coin.BNB,
-		Date:  unix,
-		From:  srcTx.FromAddr,
-		To:    srcTx.ToAddr,
-		Fee:   srcTx.Fee,
-		Block: srcTx.BlockHeight,
-	}
-	return base, true
-}
-
 func getTransactions(c *gin.Context) {
 	s, err := client.GetTxsOfAddress(c.Param("address"))
 	if apiError(c, err) {
@@ -63,13 +43,9 @@ func getTransactions(c *gin.Context) {
 }
 
 func Normalize(srcTx *Tx) (tx models.Tx, ok bool) {
-	if srcTx.Asset != "BNB" {
-		return tx, false
-	}
-
 	value := util.DecimalExp(string(srcTx.Value), 5)
 
-	return models.Tx{
+	tx = models.Tx{
 		Id:    srcTx.Hash,
 		Coin:  coin.BNB,
 		Date:  srcTx.Timestamp / 1000,
@@ -77,10 +53,20 @@ func Normalize(srcTx *Tx) (tx models.Tx, ok bool) {
 		To:    srcTx.ToAddr,
 		Fee:   srcTx.Fee,
 		Block: srcTx.BlockHeight,
-		Meta:  models.Transfer{
+	}
+
+	if srcTx.Asset == "BNB" {
+		tx.Meta = models.Transfer{
 			Value: models.Amount(value),
-		},
-	}, true
+		}
+		return tx, true
+	} else {
+		tx.Meta = models.NativeTokenTransfer{
+			Symbol: srcTx.Asset,
+			Value: srcTx.Value,
+		}
+		return tx, true
+	}
 }
 
 func apiError(c *gin.Context, err error) bool {

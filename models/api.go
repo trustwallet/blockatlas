@@ -2,6 +2,7 @@ package models
 
 const (
 	TxTransfer            = "transfer"
+	TxNativeTokenTransfer = "native_token_transfer"
 	TxTokenTransfer       = "token_transfer"
 	TxCollectibleTransfer = "collectible_transfer"
 	TxTokenSwap           = "token_swap"
@@ -37,6 +38,14 @@ type Tx struct {
 
 type Transfer struct {
 	Value Amount `json:"value"`
+}
+
+type NativeTokenTransfer struct {
+	Name     string `json:"name"`
+	Symbol   string `json:"symbol"`
+	TokenID  string `json:"token_id"`
+	Decimals uint   `json:"decimals"`
+	Value    Amount `json:"value"`
 }
 
 type TokenTransfer struct {
