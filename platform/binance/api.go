@@ -43,24 +43,32 @@ func getTransactions(c *gin.Context) {
 }
 
 func Normalize(srcTx *Tx) (tx models.Tx, ok bool) {
-	if srcTx.Asset != "BNB" {
-		return tx, false
-	}
+	value := util.DecimalExp(string(srcTx.Value), 8)
+	fee   := util.DecimalExp(string(srcTx.Fee), 8)
 
-	value := util.DecimalExp(string(srcTx.Value), 5)
-
-	return models.Tx{
+	tx = models.Tx{
 		Id:    srcTx.Hash,
 		Coin:  coin.BNB,
 		Date:  srcTx.Timestamp / 1000,
 		From:  srcTx.FromAddr,
 		To:    srcTx.ToAddr,
-		Fee:   srcTx.Fee,
+		Fee:   models.Amount(fee),
 		Block: srcTx.BlockHeight,
-		Meta:  models.Transfer{
+	}
+
+	if srcTx.Asset == "BNB" {
+		tx.Meta = models.Transfer{
 			Value: models.Amount(value),
-		},
-	}, true
+		}
+		return tx, true
+	} else {
+		tx.Meta = models.NativeTokenTransfer{
+			TokenID: srcTx.Asset,
+			Symbol: srcTx.MappedAsset,
+			Value:  models.Amount(value),
+		}
+		return tx, true
+	}
 }
 
 func apiError(c *gin.Context, err error) bool {

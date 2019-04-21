@@ -30,6 +30,8 @@ func (t *Tx) UnmarshalJSON(data []byte) error {
 	switch t.Type {
 	case TxTransfer:
 		t.Meta = new(Transfer)
+	case TxNativeTokenTransfer:
+		t.Meta = new(NativeTokenTransfer)
 	case TxTokenTransfer:
 		t.Meta = new(TokenTransfer)
 	case TxCollectibleTransfer:
@@ -52,6 +54,8 @@ func (t *Tx) MarshalJSON() ([]byte, error) {
 	switch t.Meta.(type) {
 	case Transfer, *Transfer:
 		t.Type = TxTransfer
+	case NativeTokenTransfer, *NativeTokenTransfer:
+		t.Type = TxNativeTokenTransfer
 	case TokenTransfer, *TokenTransfer:
 		t.Type = TxTokenTransfer
 	case CollectibleTransfer, *CollectibleTransfer:
