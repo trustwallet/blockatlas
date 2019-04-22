@@ -114,6 +114,6 @@ func calculateFee(gasPriceCoef uint64, gasUsed uint64) string {
 	gasUsedBig.SetString(string(gasUsed), 10)
 
 	feeBig.Mul(&gasPriceCoefBig, &gasUsedBig)
-	println("fee  - ", feeBig.String())
+
 	return feeBig.String()
 }
