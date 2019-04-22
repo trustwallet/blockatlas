@@ -51,10 +51,8 @@ func getTransactions(c *gin.Context) {
 		r := receiptsMap[tr.Meta.TxID]
 
 		for _, clause := range r.Clauses {
-			if len(txsNormalized) <= models.TxPerPage {
-				if tx, ok := Normalize(&tr, &r, &clause, addr); ok {
-					txsNormalized = append(txsNormalized, tx)
-				}
+			if tx, ok := Normalize(&tr, &r, &clause, addr); ok {
+				txsNormalized = append(txsNormalized, tx)
 			}
 		}
 
@@ -82,7 +80,7 @@ func Normalize(tr *Tx, r *TxReceipt, clause *Clause, address string) (models.Tx,
 	value := strconv.FormatInt(hexaToUint64(clause.Value), 10)
 
 	return models.Tx{
-		Id:    tr.Meta.TxID,
+		ID:    tr.Meta.TxID,
 		Coin:  coin.VET,
 		From:  from,
 		To:    to,

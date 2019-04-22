@@ -51,7 +51,7 @@ const receipe = `
 }
 `
 var finalTx = models.Tx{
-	Id:    "0xe282bc330b660759ac4060e33f8d74b71a59dd8dea041d71046b32d2a84e8fdd",
+	ID:    "0xe282bc330b660759ac4060e33f8d74b71a59dd8dea041d71046b32d2a84e8fdd",
 	Coin:  coin.VET,
 	From:  "0x7b41d6451eaa012c551b6ed3af9f871a00602e88",
 	To:    "0xa4adafaef9ec07bc4dc6de146934c7119341ee25",
