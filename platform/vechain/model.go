@@ -15,16 +15,15 @@ type Meta struct {
 }
 
 type TxReceipt struct {
-	Id     			 string   `json:"id"`
-	Clauses 		 []Clause `json:"clauses"`
-	Nonce   		 string   `json:"nonce"`
-	Gas              uint64   `json:"gas"`
-	GasPriceCoef     uint64   `json:"gasPriceCoef"`
- }
+	Id           string   `json:"id"`
+	Clauses      []Clause `json:"clauses"`
+	Nonce        string   `json:"nonce"`
+	Gas          uint64   `json:"gas"`
+	GasPriceCoef uint64   `json:"gasPriceCoef"`
+}
 
- type Clause struct {
-	 To    string `json:"to"`
-	 Value string `json:"value"`
-	 Data  string `json:"data"`
-
- }
+type Clause struct {
+	To    string `json:"to"`
+	Value string `json:"value"`
+	Data  string `json:"data"`
+}

@@ -14,7 +14,7 @@ import(
 )
 
 var client = Client{
-	HttpClient: http.DefaultClient,
+	HTTPClient: http.DefaultClient,
 }
 
 var wg sync.WaitGroup
@@ -22,7 +22,7 @@ var wg sync.WaitGroup
 func Setup(router gin.IRouter) {
 	router.Use(util.RequireConfig("vechain.api"))
 	router.Use(func(c *gin.Context) {
-		client.RPCURI = viper.GetString("vechain.api")
+		client.URL = viper.GetString("vechain.api")
 		c.Next()
 	})
 	router.GET("/:address", getTransactions)
@@ -39,8 +39,6 @@ func getTransactions(c *gin.Context) {
 		wg.Add(1)
 		go client.GetTransactionReceipt(receiptsChan, t.Meta.TxID)
 	}
-	wg.Wait()
-	close(receiptsChan)
 
 	for receipt := range receiptsChan {
 		receiptsMap[receipt.Id] = receipt

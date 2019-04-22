@@ -10,12 +10,12 @@ import(
 )
 
 type Client struct {
-	HttpClient *http.Client
-	RPCURI     string
+	HTTPClient *http.Client
+	URL        string
 }
 
 func (c *Client) GetAddressTransactions(address string) ([]Tx, error) {
-	url := fmt.Sprintf("%s/logs/transfer", c.RPCURI)
+	url := fmt.Sprintf("%s/logs/transfer", c.URL)
 
 	addressEscaped, _ := json.Marshal(address)
 
@@ -40,7 +40,7 @@ func (c *Client) GetAddressTransactions(address string) ([]Tx, error) {
 		"order": "desc"
 	}`, string(addressEscaped))
 
-	resp, err := c.HttpClient.Post(url, "application/json", strings.NewReader(payload))
+	resp, err := c.HTTPClient.Post(url, "application/json", strings.NewReader(payload))
 	if err != nil {
 		logrus.WithError(err).Error("VeChain: Failed HTTP get transactions")
 		return nil, err
@@ -66,9 +66,9 @@ func (c *Client) GetAddressTransactions(address string) ([]Tx, error) {
 func (c *Client) GetTransactionReceipt(cn chan<- TxReceipt, id string) {
 	defer wg.Done()
 
-	url := fmt.Sprintf("%s/transactions/%s", c.RPCURI, id)
+	url := fmt.Sprintf("%s/transactions/%s", c.URL, id)
 
-	resp, err := c.HttpClient.Get(url)
+	resp, err := c.HTTPClient.Get(url)
 	if err != nil {
 		logrus.WithError(err).Error("VeChain: Failed HTTP get transaction receipt")
 	}
