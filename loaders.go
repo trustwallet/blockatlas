@@ -13,6 +13,7 @@ import (
 	"github.com/trustwallet/blockatlas/platform/ripple"
 	"github.com/trustwallet/blockatlas/platform/stellar"
 	"github.com/trustwallet/blockatlas/platform/tezos"
+	"github.com/trustwallet/blockatlas/platform/tron"
 	"net/http"
 )
 
@@ -32,7 +33,7 @@ var loaders = map[string]func(gin.IRouter){
 	"tomochain":    ethereum.MakeSetup(coin.TOMO, "tomochain"),
 	"thundertoken": ethereum.MakeSetup(coin.TT, "thundertoken"),
 	"aion":         aion.Setup,
-	"tron":         setupEmpty,
+	"tron":         tron.Setup,
 	"icon":         icon.Setup,
 	"cosmos":       setupEmpty,
 	"theta":        setupEmpty,

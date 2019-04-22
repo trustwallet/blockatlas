@@ -91,7 +91,7 @@ func (a *Amount) UnmarshalJSON(data []byte) error {
 	}
 	str := string(n)
 	if !matchNumber.MatchString(str) {
-		return fmt.Errorf("not a regular decimal number")
+		return fmt.Errorf("not a regular decimal number: %s", str)
 	}
 	if strings.ContainsRune(str, '.') {
 		str, _ = util.DecimalToSatoshis(str)
