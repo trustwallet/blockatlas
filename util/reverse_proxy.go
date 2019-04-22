@@ -5,6 +5,8 @@ import (
 	"github.com/spf13/viper"
 )
 
+// CheckReverseProxy removes untrusted forwarded HTTP headers
+// if gin.reverse_proxy is defined
 func CheckReverseProxy(c *gin.Context) {
 	if !viper.GetBool("gin.reverse_proxy") {
 		c.Request.Header.Del("Forwarded")

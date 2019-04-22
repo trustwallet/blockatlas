@@ -11,19 +11,19 @@ import (
 )
 
 type Client struct {
-	HttpClient *http.Client
-	RpcUrl     string
+	HTTPClient *http.Client
+	BaseURL    string
 }
 
 func (c *Client) GetTxsOfAddress(address string) (*TxPage, error) {
 	uri := fmt.Sprintf("%s/getTransactionsByAddress?%s",
-		c.RpcUrl,
+		c.BaseURL,
 		url.Values{
 			"accountAddress": {address},
 			"size":           {strconv.FormatInt(models.TxPerPage, 10)},
 		}.Encode())
 
-	res, err := c.HttpClient.Get(uri)
+	res, err := c.HTTPClient.Get(uri)
 	if err != nil {
 		logrus.WithError(err).Errorf("Aion: Failed to get transactions for address %s", address)
 	}

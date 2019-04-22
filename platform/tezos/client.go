@@ -4,22 +4,25 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/sirupsen/logrus"
+	"github.com/trustwallet/blockatlas/models"
 	"net/http"
 	"net/url"
 )
 
+// Client is used to request data from the Tezos blockchain
+// over the TzScan API.
 type Client struct {
-	HttpClient *http.Client
-	RpcUrl     string
+	HTTPClient *http.Client
+	BaseURL    string
 }
 
 func (c *Client) GetTxsOfAddress(address string) ([]Tx, error) {
 	uri := fmt.Sprintf("%s/operations/%s?type=Transaction",
-		c.RpcUrl, url.PathEscape(address))
-	httpRes, err := c.HttpClient.Get(uri)
+		c.BaseURL, url.PathEscape(address))
+	httpRes, err := c.HTTPClient.Get(uri)
 	if err != nil {
 		logrus.WithError(err).Error("Tezos: Failed to get transactions")
-		return nil, ErrSourceConn
+		return nil, models.ErrSourceConn
 	}
 
 	if httpRes.StatusCode != http.StatusOK {

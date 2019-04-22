@@ -15,10 +15,11 @@ var client = Client{
 	HTTPClient : http.DefaultClient,
 }
 
+// Setup registers the Icon chain route
 func Setup(router gin.IRouter) {
 	router.Use(util.RequireConfig("icon.api"))
 	router.Use(func(c *gin.Context) {
-		client.RPCUrl = viper.GetString("icon.api")
+		client.RPCURL = viper.GetString("icon.api")
 	})
 	router.GET("/:address", getTransactions)
 }
@@ -40,6 +41,7 @@ func getTransactions(c *gin.Context) {
 	c.JSON(http.StatusOK, &page)
 }
 
+// Normalize converts an Icon transaction into the generic model
 func Normalize(trx *Tx) (tx models.Tx, b bool) {
 	date, err := time.Parse("2006-01-02T15:04:05.999Z0700", trx.CreateDate)
 	if err != nil {
@@ -50,7 +52,7 @@ func Normalize(trx *Tx) (tx models.Tx, b bool) {
 	value := util.DecimalExp(string(trx.Amount), 18)
 
 	return models.Tx{
-		Id     : trx.TxHash,
+		ID:      trx.TxHash,
 		Coin   : coin.ICX,
 		From   : trx.FromAddr,
 		To     : trx.ToAddr,

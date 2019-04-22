@@ -14,8 +14,11 @@ import (
 
 var failedFlag = 0
 
+// Entry describes a test
 type Entry struct {
+	// Coin index
 	Index uint
+	// Test address
 	Addr  string
 }
 
@@ -73,7 +76,7 @@ func log(endpoint string) *logrus.Entry {
 	return logrus.WithField("@platform", endpoint)
 }
 
-func runTest(endpoint string, entry *Entry, baseUrl string) {
+func runTest(endpoint string, entry *Entry, baseURL string) {
 	start := time.Now()
 
 	defer func() {
@@ -88,12 +91,12 @@ func runTest(endpoint string, entry *Entry, baseUrl string) {
 	}()
 
 	log(endpoint).Info("Testing endpoint")
-	test(endpoint, entry, baseUrl)
+	test(endpoint, entry, baseURL)
 	log(endpoint).Info("Endpoint works")
 }
 
-func test(endpoint string, entry *Entry, baseUrl string) {
-	res, err := http.Get(fmt.Sprintf("%s/v1/%s/%s", baseUrl, endpoint, entry.Addr))
+func test(endpoint string, entry *Entry, baseURL string) {
+	res, err := http.Get(fmt.Sprintf("%s/v1/%s/%s", baseURL, endpoint, entry.Addr))
 	if err != nil {
 		panic(err)
 	}

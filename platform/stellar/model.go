@@ -1,12 +1,13 @@
 package stellar
 
-// Payments contains page of payments returned by Horizon.
+// PaymentsPage of payments returned by Horizon
 type PaymentsPage struct {
 	Embedded struct {
 		Records []Payment
 	} `json:"_embedded"`
 }
 
+// Payment model returned by Horizon
 type Payment struct {
 	ID          string `json:"id"`
 	Type        string `json:"type"`

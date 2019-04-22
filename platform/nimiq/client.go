@@ -7,20 +7,17 @@ import (
 )
 
 type Client struct {
-	RpcClient jsonrpc.RPCClient
-	RpcUrl    string
+	BaseURL   string
+	rpcClient jsonrpc.RPCClient
 }
 
-func NewClient(rpcUrl string) *Client {
-	return &Client {
-		RpcUrl:    rpcUrl,
-		RpcClient: jsonrpc.NewClient(rpcUrl),
-	}
+func (c *Client) Init() {
+	c.rpcClient = jsonrpc.NewClient(c.BaseURL)
 }
 
 func (c *Client) GetTxsOfAddress(address string) (txs []Tx, err error) {
 	var res *jsonrpc.RPCResponse
-	res, err = c.RpcClient.CallRaw(&jsonrpc.RPCRequest {
+	res, err = c.rpcClient.CallRaw(&jsonrpc.RPCRequest {
 		Method: "getTransactionsByAddress",
 		Params: []interface{}{ address, models.TxPerPage },
 		ID: 42,
@@ -28,10 +25,10 @@ func (c *Client) GetTxsOfAddress(address string) (txs []Tx, err error) {
 	})
 	if jErr, ok := err.(*jsonrpc.RPCError); ok {
 		if jErr.Code == 1 {
-			return nil, ErrInvalidAddr
+			return nil, models.ErrInvalidAddr
 		} else {
 			logrus.WithError(err).Error("Nimiq: Failed to get transactions")
-			return nil, ErrSourceConn
+			return nil, models.ErrSourceConn
 		}
 	} else if err != nil {
 		return nil, err

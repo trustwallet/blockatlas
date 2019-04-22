@@ -44,7 +44,7 @@ const transferSrc = `
 `
 
 var transferDst = models.Tx{
-	Id:    "oo3zTBHCkRkYDumt5t3rUyJ777wsr3dVMxYCU1FEV5xyftoih2Y",
+	ID:    "oo3zTBHCkRkYDumt5t3rUyJ777wsr3dVMxYCU1FEV5xyftoih2Y",
 	Coin:  coin.XTZ,
 	From:  "tz1WCd2jm4uSt4vntk4vSuUWoZQGhLcDuR9q",
 	To:    "tz1gcsKzDRzEkN6HNyngmoiGEuxojYrAJeC6",
@@ -69,19 +69,19 @@ func TestNormalize(t *testing.T) {
 		t.Errorf("transfer: tx could not be normalized")
 	}
 
-	resJson, err := json.Marshal(&tx)
+	resJSON, err := json.Marshal(&tx)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	dstJson, err := json.Marshal(&transferDst)
+	dstJSON, err := json.Marshal(&transferDst)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if !bytes.Equal(resJson, dstJson) {
-		println(string(resJson))
-		println(string(dstJson))
+	if !bytes.Equal(resJSON, dstJSON) {
+		println(string(resJSON))
+		println(string(dstJSON))
 		t.Error("basic: tx don't equal")
 	}
 }

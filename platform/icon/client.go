@@ -12,12 +12,12 @@ import(
 
 type Client struct {
 	HTTPClient *http.Client
-	RPCUrl     string
+	RPCURL     string
 }
 
 func (c *Client) GetAddressTransactions(address string) ([]Tx, error) {
 	uri := fmt.Sprintf("%s/address/txList?%s",
-		c.RPCUrl,
+		c.RPCURL,
 		url.Values{
 			"address": {address},
 			"count": {strconv.FormatInt(models.TxPerPage, 10)},

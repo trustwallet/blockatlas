@@ -2,7 +2,6 @@ package binance
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 )
 
@@ -32,7 +31,7 @@ type Tx struct {
 	ConfirmBlocks int           `json:"confirmBlocks"`
 	Data          string        `json:"data"`
 	FromAddr      string        `json:"fromAddr"`
-	OrderId       string        `json:"orderId"`
+	OrderID       string        `json:"orderId"`
 	Timestamp     int64         `json:"timeStamp"`
 	ToAddr        string        `json:"toAddr"`
 	Age           int64         `json:"txAge"`
@@ -47,10 +46,6 @@ type TxPage struct {
 	Nums int  `json:"txNums"`
 	Txs  []Tx `json:"txArray"`
 }
-
-var ErrSourceConn = errors.New("connection to servers failed")
-var ErrInvalidAddr = errors.New("invalid address")
-var ErrNotFound = errors.New("not found")
 
 func (e *Error) Error() string {
 	return fmt.Sprintf("%d: %s", e.Code, e.Message)

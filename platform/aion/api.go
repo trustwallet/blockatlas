@@ -12,13 +12,14 @@ import (
 )
 
 var client = Client{
-	HttpClient: http.DefaultClient,
+	HTTPClient: http.DefaultClient,
 }
 
+// Setup registers the Aion route
 func Setup(router gin.IRouter) {
 	router.Use(util.RequireConfig("aion.api"))
 	router.Use(func(c *gin.Context) {
-		client.RpcUrl = viper.GetString("aion.api")
+		client.BaseURL = viper.GetString("aion.api")
 		c.Next()
 	})
 	router.GET("/:address", getTransactions)
@@ -43,12 +44,13 @@ func getTransactions(c *gin.Context) {
 	c.JSON(http.StatusOK, &page)
 }
 
+// Normalize converts an Aion transaction into the generic model
 func Normalize(srcTx *Tx) models.Tx {
 	fee := strconv.Itoa(srcTx.NrgConsumed)
 	value := util.DecimalExp(string(srcTx.Value), 18)
 
 	return models.Tx{
-		Id:    srcTx.TransactionHash,
+		ID:    srcTx.TransactionHash,
 		Coin:  coin.AION,
 		Date:  srcTx.BlockTimestamp,
 		From:  "0x" + srcTx.FromAddr,

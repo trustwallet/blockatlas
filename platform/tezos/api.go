@@ -12,13 +12,14 @@ import (
 )
 
 var client = Client{
-	HttpClient: http.DefaultClient,
+	HTTPClient: http.DefaultClient,
 }
 
+// Setup registers the Tezos route
 func Setup(router gin.IRouter) {
 	router.Use(util.RequireConfig("tezos.api"))
 	router.Use(func(c *gin.Context) {
-		client.RpcUrl = viper.GetString("tezos.api")
+		client.BaseURL = viper.GetString("tezos.api")
 		c.Next()
 	})
 	router.GET("/:address", getTransactions)
@@ -44,6 +45,7 @@ func getTransactions(c *gin.Context) {
 	c.JSON(http.StatusOK, &page)
 }
 
+// Normalize converts a Tezos transaction into the generic model
 func Normalize(srcTx *Tx) (tx models.Tx, ok bool) {
 	if srcTx.Type.Kind != "manager" {
 		return tx, false
@@ -73,13 +75,13 @@ func Normalize(srcTx *Tx) (tx models.Tx, ok bool) {
 		errMsg = "transaction failed"
 	}
 	return models.Tx{
-		Id:     srcTx.Hash,
-		Coin:   coin.XTZ,
-		Date:   unix,
-		From:   op.Src.Tz,
-		To:     op.Dest.Tz,
-		Fee:    op.Fee,
-		Block:  op.OpLevel,
+		ID:    srcTx.Hash,
+		Coin:  coin.XTZ,
+		Date:  unix,
+		From:  op.Src.Tz,
+		To:    op.Dest.Tz,
+		Fee:   op.Fee,
+		Block: op.OpLevel,
 		Meta:   models.Transfer{
 			Value: op.Amount,
 		},

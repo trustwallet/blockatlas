@@ -1,9 +1,6 @@
 package nimiq
 
-import (
-	"errors"
-	"github.com/trustwallet/blockatlas/models"
-)
+import "github.com/trustwallet/blockatlas/models"
 
 type Tx struct {
 	Hash          string `json:"hash"`
@@ -17,6 +14,3 @@ type Tx struct {
 	Value         models.Amount `json:"value"`
 	Fee           models.Amount `json:"fee"`
 }
-
-var ErrSourceConn  = errors.New("connection to servers failed")
-var ErrInvalidAddr = errors.New("invalid address")
