@@ -40,6 +40,9 @@ func getTransactions(c *gin.Context) {
 		go client.GetTransactionReceipt(receiptsChan, t.Meta.TxID)
 	}
 
+	wg.Wait()
+	close(receiptsChan)
+
 	for receipt := range receiptsChan {
 		receiptsMap[receipt.Id] = receipt
 	}
