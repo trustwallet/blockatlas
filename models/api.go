@@ -71,6 +71,8 @@ type NativeTokenTransfer struct {
 	TokenID  string `json:"token_id"`
 	Decimals uint   `json:"decimals"`
 	Value    Amount `json:"value"`
+	From     string `json:"from"`
+	To       string `json:"to"`
 }
 
 // TokenTransfer describes the transfer of non-native tokens.
@@ -106,7 +108,7 @@ type ContractCall struct {
 }
 
 // ErrSourceConn signals that the connection to the source API failed
-var ErrSourceConn  = errors.New("connection to servers failed")
+var ErrSourceConn = errors.New("connection to servers failed")
 
 // ErrInvalidAddr signals that the requested address is invalid
 var ErrInvalidAddr = errors.New("invalid address")

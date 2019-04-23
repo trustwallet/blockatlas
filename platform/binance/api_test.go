@@ -3,9 +3,10 @@ package binance
 import (
 	"bytes"
 	"encoding/json"
+	"testing"
+
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/models"
-	"testing"
 )
 
 const transferSrc = `
@@ -72,9 +73,12 @@ var nativeTransferDst = models.Tx{
 	Block:  7928667,
 	Status: models.StatusCompleted,
 	Meta: models.NativeTokenTransfer{
-		TokenID: "YLC-D8B",
-		Symbol:  "YLC",
-		Value:   "210572645",
+		TokenID:  "YLC-D8B",
+		Symbol:   "YLC",
+		Value:    "210572645",
+		Decimals: 8,
+		From:     "tbnb1ttyn4csghfgyxreu7lmdu3lcplhqhxtzced45a",
+		To:       "tbnb12hlquylu78cjylk5zshxpdj6hf3t0tahwjt3ex",
 	},
 }
 
