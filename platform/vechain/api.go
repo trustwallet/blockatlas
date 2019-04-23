@@ -1,17 +1,18 @@
 package vechain
 
-import(
-	"github.com/trustwallet/blockatlas/util"
-	"github.com/trustwallet/blockatlas/models"
+import (
 	"github.com/trustwallet/blockatlas/coin"
-	// "github.com/sirupsen/logrus"
+	"github.com/trustwallet/blockatlas/models"
+	"github.com/trustwallet/blockatlas/util"
+
+	"math/big"
+	"net/http"
+	"strconv"
+	"strings"
+	"sync"
+
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
-	"net/http"
-	"math/big"
-	"strings"
-	"strconv"
-	"sync"
 )
 
 var client = Client{
@@ -37,7 +38,7 @@ func getTransactions(c *gin.Context) {
 
 	var txsNormalized []models.Tx
 
-	if address != "" && token == VTHOContract {
+	if address != "" && token == strings.ToLower(VTHOContract) {
 		txsNormalized = GetTokenTransactions(address)
 	} else {
 		txsNormalized = GetAddressTransactionsOnly(address)
@@ -62,30 +63,31 @@ func Normalize(tr *Tx, r *TxId, clause *Clause, address string) (models.Tx, bool
 	}
 
 	fee := calculateFee(r.GasPriceCoef, r.Gas)
+	println("fee -", fee)
 	value := hexaToIntegerString(clause.Value)
 	sequence, _ := strconv.ParseUint(hexaToIntegerString(r.Nonce), 10, 64)
 
 	return models.Tx{
-		ID:    tr.Meta.TxID,
-		Coin:  coin.VET,
-		From:  from,
-		To:    to,
-		Fee:   models.Amount(fee),
-		Date:  tr.Meta.BlockTimestamp,
-		Type:  transferType,
-		Block: tr.Meta.BlockNumber,
+		ID:       tr.Meta.TxID,
+		Coin:     coin.VET,
+		From:     from,
+		To:       to,
+		Fee:      models.Amount(fee),
+		Date:     tr.Meta.BlockTimestamp,
+		Type:     transferType,
+		Block:    tr.Meta.BlockNumber,
 		Sequence: sequence,
 		Meta: models.Transfer{
 			Value: models.Amount(value),
 		},
-	}, true 
+	}, true
 }
 
 func transferType(clause Clause) (string, error) {
 	switch clause.Data {
 	case "0x":
 		return string(models.TxTransfer), nil
-    default:
+	default:
 		return string(models.TxContractCall), nil
 	}
 }
@@ -101,7 +103,8 @@ func hexaToIntegerString(str string) string {
 
 func calculateFee(gasPriceCoef uint64, gasUsed uint64) string {
 	var gasPriceCoefBig, gasUsedBig, feeBig big.Int
-
+	println("gasPriceCoef", gasPriceCoef)
+	println("gasUsed", gasUsed)
 	gasPriceCoefBig.SetString(string(gasPriceCoef), 10)
 	gasUsedBig.SetString(string(gasUsed), 10)
 
@@ -113,7 +116,7 @@ func calculateFee(gasPriceCoef uint64, gasUsed uint64) string {
 func GetAddressTransactionsOnly(address string) []models.Tx {
 	txsNormalized := make([]models.Tx, 0)
 	txs, _ := client.GetAddressTransactions(address)
-	
+
 	var receiptsMap = make(map[string]TxId)
 	receiptsChan := make(chan TxId, len(txs))
 
@@ -128,7 +131,7 @@ func GetAddressTransactionsOnly(address string) []models.Tx {
 	for receipt := range receiptsChan {
 		receiptsMap[receipt.Id] = receipt
 	}
-	
+
 	for _, tr := range txs {
 		r := receiptsMap[tr.Meta.TxID]
 
@@ -181,17 +184,17 @@ func NormalizeToken(output *TxReceiptOutput, receipt *TxReceipt) (models.Tx, boo
 	var blockNum uint64 = receipt.Meta.BlockNumber
 
 	return models.Tx{
-		ID:    receipt.Meta.TxID,
-		Coin:  coin.VET,
-		From:  transfer.Sender,
-		To:    transfer.Recipient,
-		Fee:   models.Amount("0"),
-		Date:  receipt.Meta.BlockTimestamp,
-		Type:  models.TxContractCall,
-		Block: blockNum,
+		ID:       receipt.Meta.TxID,
+		Coin:     coin.VET,
+		From:     transfer.Sender,
+		To:       transfer.Recipient,
+		Fee:      models.Amount("0"),
+		Date:     receipt.Meta.BlockTimestamp,
+		Type:     models.TxContractCall,
+		Block:    blockNum,
 		Sequence: blockNum,
 		Meta: models.Transfer{
 			Value: models.Amount(value),
 		},
-	}, true 
+	}, true
 }
