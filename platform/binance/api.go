@@ -1,13 +1,14 @@
 package binance
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/models"
 	"github.com/trustwallet/blockatlas/util"
-	"net/http"
 )
 
 var client = Client{
@@ -65,9 +66,12 @@ func Normalize(srcTx *Tx) (tx models.Tx, ok bool) {
 		return tx, true
 	} else {
 		tx.Meta = models.NativeTokenTransfer{
-			TokenID: srcTx.Asset,
-			Symbol:  srcTx.MappedAsset,
-			Value:   models.Amount(value),
+			TokenID:  srcTx.Asset,
+			Symbol:   srcTx.MappedAsset,
+			Value:    models.Amount(value),
+			Decimals: 8,
+			From:     srcTx.FromAddr,
+			To:       srcTx.ToAddr,
 		}
 		return tx, true
 	}
