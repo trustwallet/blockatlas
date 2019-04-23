@@ -63,10 +63,31 @@ func (c *Client) GetAddressTransactions(address string) ([]Tx, error) {
 	return transactions, nil
 }
 
-func (c *Client) GetTransactionReceipt(cn chan<- TxReceipt, id string) {
+func (c *Client) GetTransactionId(cn chan<- TxId, id string) {
 	defer wg.Done()
 
 	url := fmt.Sprintf("%s/transactions/%s", c.URL, id)
+
+	resp, err := c.HTTPClient.Get(url)
+	if err != nil {
+		logrus.WithError(err).Error("VeChain: Failed HTTP get transaction")
+	}
+	defer resp.Body.Close()
+
+	var transaction TxId
+	err = json.NewDecoder(resp.Body).Decode(&transaction)
+
+	if err != nil {
+		logrus.WithError(err).Error("VeChain: Error decode transaction response body")
+	} else {
+		cn <- transaction
+	}
+}
+
+func (c *Client) GetTransacionReceipt(cn chan <- TxReceipt, id string) {
+	defer wg.Done()
+
+	url := fmt.Sprintf("%s/transactions/%s/receipt", c.URL, id)
 
 	resp, err := c.HTTPClient.Get(url)
 	if err != nil {
@@ -75,11 +96,12 @@ func (c *Client) GetTransactionReceipt(cn chan<- TxReceipt, id string) {
 	defer resp.Body.Close()
 
 	var receipt TxReceipt
-	err = json.NewDecoder(resp.Body).Decode(&receipt)
 
+	err = json.NewDecoder(resp.Body).Decode(&receipt)
 	if err != nil {
 		logrus.WithError(err).Error("VeChain: Error decode transaction receipt response body")
 	} else {
 		cn <- receipt
 	}
 }
+
