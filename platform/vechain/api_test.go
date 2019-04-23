@@ -60,9 +60,9 @@ var finalTx = models.Tx{
 	Type:   "transfer",
 	Status: "completed",
 	Block: 2533108,
-	Sequence: 9223372036854775807,
+	Sequence: 18236731166897477649,
 	Meta:  models.Transfer{
-		Value: "9223372036854775807",
+		Value: "17521910000000000000000",
 	},
 }
 

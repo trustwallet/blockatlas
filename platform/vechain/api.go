@@ -78,7 +78,8 @@ func Normalize(tr *Tx, r *TxReceipt, clause *Clause, address string) (models.Tx,
 	}
 
 	fee := calculateFee(r.GasPriceCoef, r.Gas)
-	value := strconv.FormatInt(hexaToUint64(clause.Value), 10)
+	value := hexaToIntegerString(clause.Value)
+	sequence, _ := strconv.ParseUint(hexaToIntegerString(r.Nonce), 10, 64)
 
 	return models.Tx{
 		ID:    tr.Meta.TxID,
@@ -89,7 +90,7 @@ func Normalize(tr *Tx, r *TxReceipt, clause *Clause, address string) (models.Tx,
 		Date:  tr.Meta.BlockTimestamp,
 		Type:  transferType,
 		Block: tr.Meta.BlockNumber,
-		Sequence: uint64(hexaToUint64(r.Nonce)),
+		Sequence: sequence,
 		Meta: models.Transfer{
 			Value: models.Amount(value),
 		},
@@ -105,9 +106,11 @@ func transferType(clause Clause) (string, error) {
 	}
 }
 
-func hexaToUint64(str string) int64 {
-	 val, _ := strconv.ParseInt(str, 0, 64)
-	 return val
+func hexaToIntegerString(str string) string {
+	i := new(big.Int)
+	i.SetString(str, 0)
+
+	 return i.String()
 }
 
 func calculateFee(gasPriceCoef uint64, gasUsed uint64) string {
