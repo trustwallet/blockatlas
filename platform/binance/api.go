@@ -65,9 +65,10 @@ func Normalize(srcTx *Tx) (tx models.Tx, ok bool) {
 		return tx, true
 	} else {
 		tx.Meta = models.NativeTokenTransfer{
-			TokenID: srcTx.Asset,
-			Symbol:  srcTx.MappedAsset,
-			Value:   models.Amount(value),
+			TokenID:  srcTx.Asset,
+			Symbol:   srcTx.MappedAsset,
+			Value:    models.Amount(value),
+			Decimals: 8,
 		}
 		return tx, true
 	}
