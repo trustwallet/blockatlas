@@ -38,13 +38,23 @@ func Normalize(srcTx *Tx) (tx models.Tx, ok bool) {
 	switch contract.Parameter.(type) {
 	case TransferContract:
 		transfer := contract.Parameter.(TransferContract)
+
+		from, err := HexToAddress(transfer.Value.OwnerAddress)
+		if err != nil {
+			return tx, false
+		}
+		to, err := HexToAddress(transfer.Value.ToAddress)
+		if err != nil {
+			return tx, false
+		}
+
 		return models.Tx{
-			ID: srcTx.ID,
+			ID:   srcTx.ID,
 			Coin: coin.TRX,
-			Date: srcTx.Data.Timestamp,
-			From: transfer.Value.OwnerAddress,
-			To: transfer.Value.ToAddress,
-			Fee: "0",
+			Date: srcTx.Data.Timestamp / 1000,
+			From: from,
+			To:   to,
+			Fee:  "0",
 			Meta: models.Transfer{
 				Value: transfer.Value.Amount,
 			},

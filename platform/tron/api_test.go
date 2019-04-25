@@ -47,10 +47,10 @@ const transferSrc = `
 var transferDst = models.Tx{
 	ID: "24a10f7a503e78adc0d7e380b68005531b09e16b9e3f7b524e33f40985d287df",
 	Coin: coin.TRX,
-	From: "4182dd6b9966724ae2fdc79b416c7588da67ff1b35",
-	To: "410583a68a3bcd86c25ab1bee482bac04a216b0261",
+	From: "TMuA6YqfCeX8EhbfYEg5y7S4DqzSJireY9",
+	To: "TAUN6FwrnwwmaEqYcckffC7wYmbaS6cBiX",
 	Fee: "0", // TODO
-	Date: 1551357920889,
+	Date: 1551357920,
 	Block: 0, // TODO
 	Status: models.StatusCompleted,
 	Meta: models.Transfer{

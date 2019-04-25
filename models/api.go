@@ -44,7 +44,7 @@ type Tx struct {
 	// Unix timestamp of the block the transaction was included in
 	Date int64 `json:"date"`
 	// Height of the block the transaction was included in
-	Block uint64 `json:"block,omitempty"`
+	Block uint64 `json:"block"`
 	// Status of the transaction
 	Status string `json:"status"`
 	// Empty if the transaction was successful,
