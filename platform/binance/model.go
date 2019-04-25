@@ -27,6 +27,7 @@ type Error struct {
 
 type Tx struct {
 	BlockHeight   uint64        `json:"blockHeight"`
+	Type		  string        `json:"txType"`
 	Code          int           `json:"code"`
 	ConfirmBlocks int           `json:"confirmBlocks"`
 	Data          string        `json:"data"`
