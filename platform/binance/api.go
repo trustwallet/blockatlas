@@ -26,17 +26,20 @@ func Setup(router gin.IRouter) {
 }
 
 func getTransactions(c *gin.Context) {
-	s, err := client.GetTxsOfAddress(c.Param("address"))
+	token := c.Query("token")
+
+	s, err := client.GetTxsOfAddress(c.Param("address"), token)
 	if apiError(c, err) {
 		return
 	}
 
 	var txs []models.Tx
 	for _, srcTx := range s.Txs {
-		tx, ok := Normalize(&srcTx)
-		if !ok {
+		tx, ok := Normalize(&srcTx, token)
+		if !ok || len(txs) >= models.TxPerPage {
 			continue
 		}
+
 		txs = append(txs, tx)
 	}
 	page := models.Response(txs)
@@ -45,7 +48,7 @@ func getTransactions(c *gin.Context) {
 }
 
 // Normalize converts a Binance transaction into the generic model
-func Normalize(srcTx *Tx) (tx models.Tx, ok bool) {
+func Normalize(srcTx *Tx, token string) (tx models.Tx, ok bool) {
 	value := util.DecimalExp(string(srcTx.Value), 8)
 	fee := util.DecimalExp(string(srcTx.Fee), 8)
 
@@ -58,13 +61,17 @@ func Normalize(srcTx *Tx) (tx models.Tx, ok bool) {
 		Fee:   models.Amount(fee),
 		Block: srcTx.BlockHeight,
 	}
-
-	if srcTx.Asset == "BNB" {
+	
+	// Condition for native transfer (BNB)
+	if srcTx.Asset == "BNB" && srcTx.Type == "TRANSFER" && token == "" {
 		tx.Meta = models.Transfer{
 			Value: models.Amount(value),
 		}
 		return tx, true
-	} else {
+	} 
+	
+	// Condiiton for native token transfer
+	if srcTx.Asset == token && srcTx.Type == "TRANSFER" {
 		tx.Meta = models.NativeTokenTransfer{
 			TokenID:  srcTx.Asset,
 			Symbol:   srcTx.MappedAsset,
@@ -73,8 +80,11 @@ func Normalize(srcTx *Tx) (tx models.Tx, ok bool) {
 			From:     srcTx.FromAddr,
 			To:       srcTx.ToAddr,
 		}
+
 		return tx, true
 	}
+	
+	return tx, false
 }
 
 func apiError(c *gin.Context, err error) bool {

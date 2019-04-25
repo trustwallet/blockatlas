@@ -7,7 +7,6 @@ import (
 	"github.com/trustwallet/blockatlas/models"
 	"net/http"
 	"net/url"
-	"strconv"
 )
 
 // TODO Headers + rate limiting
@@ -17,14 +16,15 @@ type Client struct {
 	BaseURL    string
 }
 
-func (c *Client) GetTxsOfAddress(address string) (*TxPage, error) {
+func (c *Client) GetTxsOfAddress(address string, token string) (*TxPage, error) {
 	uri := fmt.Sprintf("%s/txs?%s",
 		c.BaseURL,
 		url.Values{
 			"address": {address},
-			"rows":    {strconv.Itoa(models.TxPerPage)},
+			"rows":    {"100"},
 			"page":    {"1"},
 		}.Encode())
+
 	res, err := c.HTTPClient.Get(uri)
 	if err != nil {
 		logrus.WithError(err).Error("Binance: Failed to get transactions")

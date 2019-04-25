@@ -9,7 +9,7 @@ import (
 	"github.com/trustwallet/blockatlas/models"
 )
 
-const transferSrc = `
+const nativeTransferTransaction = `
 {
 	"blockHeight": 7761368,
 	"code": 0,
@@ -29,7 +29,7 @@ const transferSrc = `
 	"value": 100000
 }`
 
-const nativeTransferSrc = `
+const nativeTokenTransferTransaction = `
 {
 	"blockHeight": 7928667,
 	"code": 0,
@@ -86,18 +86,21 @@ type test struct {
 	name        string
 	apiResponse string
 	expected    *models.Tx
+	token	    string
 }
 
 func TestNormalize(t *testing.T) {
 	testNormalize(t, &test{
 		name:        "transfer",
-		apiResponse: transferSrc,
+		apiResponse: nativeTransferTransaction,
 		expected:    &transferDst,
+		token:       "",
 	})
 	testNormalize(t, &test{
 		name:        "native token transfer",
-		apiResponse: nativeTransferSrc,
+		apiResponse: nativeTokenTransferTransaction,
 		expected:    &nativeTransferDst,
+		token: 	 	 "YLC-D8B",
 	})
 }
 
@@ -109,7 +112,7 @@ func testNormalize(t *testing.T, _test *test) {
 		return
 	}
 
-	tx, ok := Normalize(&srcTx)
+	tx, ok := Normalize(&srcTx, _test.token)
 	if !ok {
 		t.Errorf("transfer: tx could not be normalized")
 	}
