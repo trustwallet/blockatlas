@@ -33,7 +33,7 @@ func (c *Client) GetTxsWithContract(address, contract string, build string) (*Pa
 
 func (c *Client) getTxs(uri string, build string) (*Page, error) {
 	req, _ := http.NewRequest("GET", uri, nil)
-	req.Header.Set("client-build", "build")
+	req.Header.Set("client-build", build)
 
 	res, err := c.HTTPClient.Do((req))
 	if err != nil {
