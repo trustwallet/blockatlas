@@ -34,14 +34,15 @@ func MakeSetup(coinIndex uint, platform string) func(gin.IRouter) {
 
 func GetTransactions(c *gin.Context, coinIndex uint, client *Client) {
 	token := c.Query("token")
+	address := c.Param("address")
+	build := c.Request.Header.Get("client-build")
 	var srcPage *Page
 	var err error
 
 	if token != "" {
-		srcPage, err = client.GetTxsWithContract(
-			c.Param("address"), token)
+		srcPage, err = client.GetTxsWithContract(address, token, build)
 	} else {
-		srcPage, err = client.GetTxs(c.Param("address"))
+		srcPage, err = client.GetTxs(address, build)
 	}
 
 	if apiError(c, err) {
