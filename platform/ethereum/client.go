@@ -14,25 +14,28 @@ type Client struct {
 	BaseURL    string
 }
 
-func (c *Client) GetTxs(address string) (*Page, error) {
+func (c *Client) GetTxs(address string, build string) (*Page, error) {
 	return c.getTxs(fmt.Sprintf("%s/transactions?%s",
 		c.BaseURL,
 		url.Values{
 			"address":  {address},
-		}.Encode()))
+		}.Encode()), build)
 }
 
-func (c *Client) GetTxsWithContract(address, contract string) (*Page, error) {
+func (c *Client) GetTxsWithContract(address, contract string, build string) (*Page, error) {
 	return c.getTxs(fmt.Sprintf("%s/transactions?%s",
 		c.BaseURL,
 		url.Values{
 			"address":  {address},
 			"contract": {contract},
-		}.Encode()))
+		}.Encode()), build)
 }
 
-func (c *Client) getTxs(uri string) (*Page, error) {
-	res, err := c.HTTPClient.Get(uri)
+func (c *Client) getTxs(uri string, build string) (*Page, error) {
+	req, _ := http.NewRequest("GET", uri, nil)
+	req.Header.Set("client-build", "build")
+
+	res, err := c.HTTPClient.Do((req))
 	if err != nil {
 		logrus.WithError(err).Error("Ethereum/Trust Ray: Failed to get transactions")
 		return nil, models.ErrSourceConn
