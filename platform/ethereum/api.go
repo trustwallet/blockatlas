@@ -115,27 +115,26 @@ func AppendTxs(in []models.Tx, srcTx *Doc, coinIndex uint) (out []models.Tx) {
 		}
 		out = append(out, contractTx)
 	}
-
+	
 	if len(srcTx.Ops) == 0 {
 		return
 	}
-	op := &srcTx.Ops[0]
 
-	if op.Type == "token_transfer" {
-		tokenTx := baseTx
-		tokenTx.To = op.To
-
-		tokenTx.Meta = models.TokenTransfer{
-			Name:     op.Contract.Name,
-			Symbol:   op.Contract.Symbol,
-			TokenID:  op.Contract.Address,
-			Decimals: op.Contract.Decimals,
-			Value:    models.Amount(op.Value),
-			From:     op.From,
-			To:       op.To,
+	for _, op := range srcTx.Ops {
+		if op.Type == models.TxTokenTransfer && (op.From == baseTx.From || op.To == baseTx.To) {
+			baseTx.Meta = models.TokenTransfer{
+				Name:     op.Contract.Name,
+				Symbol:   op.Contract.Symbol,
+				TokenID:  op.Contract.Address,
+				Decimals: op.Contract.Decimals,
+				Value:    models.Amount(op.Value),
+				From:     op.From,
+				To:       op.To,
+			}
+			out = append(out, baseTx)
 		}
-		out = append(out, tokenTx)
 	}
+
 	return
 }
 
