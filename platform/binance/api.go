@@ -28,13 +28,13 @@ func Setup(router gin.IRouter) {
 func getTransactions(c *gin.Context) {
 	token := c.Query("token")
 
-	s, err := client.GetTxsOfAddress(c.Param("address"), token)
+	transactions, err := client.GetTxsOfAddress(c.Param("address"), token)
 	if apiError(c, err) {
 		return
 	}
 
 	var txs []models.Tx
-	for _, srcTx := range s.Txs {
+	for _, srcTx := range transactions.Txs {
 		tx, ok := Normalize(&srcTx, token)
 		if !ok || len(txs) >= models.TxPerPage {
 			continue
