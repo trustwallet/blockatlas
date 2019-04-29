@@ -13,7 +13,7 @@ type Client struct {
 }
 
 func (c *Client) GetTxsOfAddress(address string) (txs []Payment, err error) {
-	path := fmt.Sprintf("%s/accounts/%s/payments?descending=true",
+	path := fmt.Sprintf("%s/accounts/%s/payments?order=desc&limit=25",
 		c.API, url.PathEscape(address))
 
 	res, err := http.Get(path)
