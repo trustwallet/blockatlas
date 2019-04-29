@@ -19,7 +19,7 @@ var client = Client{
 	HTTPClient: http.DefaultClient,
 }
 
-const VTHOContract = "0x0000000000000000000000000000456e65726779"
+const VeThorContract = "0x0000000000000000000000000000456e65726779"
 
 var wg sync.WaitGroup
 
@@ -38,21 +38,21 @@ func getTransactions(c *gin.Context) {
 
 	var txsNormalized []models.Tx
 
-	if address != "" && token == strings.ToLower(VTHOContract) {
-		txsNormalized = GetTokenTransactions(address)
+	if address != "" && token == VeThorContract {
+		txsNormalized = GetVeThorTransactions(address)
 	} else {
 		txsNormalized = GetAddressTransactionsOnly(address)
 	}
+	// TODO: Add support for address tokens
 
 	page := models.Response(txsNormalized)
 	page.Sort()
 	c.JSON(http.StatusOK, &page)
 }
 
-func Normalize(tr *Tx, r *TxId, clause *Clause, address string) (models.Tx, bool) {
+func Normalize(tr *Tx, receipt *TxId, clause *Clause, address string) (models.Tx, bool) {
 	transferType, _ := transferType(*clause)
-	var from string
-	var to string
+	var from, to string
 
 	if address == tr.Sender {
 		from = address
@@ -62,10 +62,10 @@ func Normalize(tr *Tx, r *TxId, clause *Clause, address string) (models.Tx, bool
 		to = clause.To
 	}
 
-	fee := calculateFee(r.GasPriceCoef, r.Gas)
+	fee := calculateFee(receipt.GasPriceCoef, receipt.Gas)
 	println("fee -", fee)
 	value := hexaToIntegerString(clause.Value)
-	sequence, _ := strconv.ParseUint(hexaToIntegerString(r.Nonce), 10, 64)
+	sequence, _ := strconv.ParseUint(hexaToIntegerString(receipt.Nonce), 10, 64)
 
 	return models.Tx{
 		ID:       tr.Meta.TxID,
@@ -136,8 +136,10 @@ func GetAddressTransactionsOnly(address string) []models.Tx {
 		r := receiptsMap[tr.Meta.TxID]
 
 		for _, clause := range r.Clauses {
-			if tx, ok := Normalize(&tr, &r, &clause, address); ok {
-				txsNormalized = append(txsNormalized, tx)
+			if tr.Sender == address || address == clause.To  {
+				if tx, ok := Normalize(&tr, &r, &clause, address); ok {
+					txsNormalized = append(txsNormalized, tx)
+				}
 			}
 		}
 	}
@@ -145,7 +147,7 @@ func GetAddressTransactionsOnly(address string) []models.Tx {
 	return txsNormalized
 }
 
-func GetTokenTransactions(tokenAddr string) []models.Tx {
+func GetVeThorTransactions(tokenAddr string) []models.Tx {
 	txsNormalized := make([]models.Tx, 0)
 	txs, _ := client.GetAddressTransactions(tokenAddr)
 
