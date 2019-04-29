@@ -14,20 +14,6 @@ type Meta struct {
 	TxID           string `json:"txID"`
 }
 
-type TxId struct {
-	Id           string   `json:"id"`
-	Clauses      []Clause `json:"clauses"`
-	Nonce        string   `json:"nonce"`
-	Gas          uint64   `json:"gas"`
-	GasPriceCoef uint64   `json:"gasPriceCoef"`
-}
-
-type Clause struct {
-	To    string `json:"to"`
-	Value string `json:"value"`
-	Data  string `json:"data"`
-}
-
 type TxReceipt struct {
 	Paid    string            `json:paid`
 	Meta    Meta              `json:meta`
@@ -36,6 +22,7 @@ type TxReceipt struct {
 
 type TxReceiptOutput struct {
 	Transfers []TxReceiptTransfer `json:transfers`
+	Events    []interface{}       `json:events`
 }
 type TxReceiptTransfer struct {
 	Sender    string `json:sender`

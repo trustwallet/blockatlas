@@ -38,11 +38,11 @@ func getTransactions(c *gin.Context) {
 
 	var txsNormalized []models.Tx
 
-	if address != "" && token == VeThorContract {
-		txsNormalized = GetVeThorTransactions(address)
-	} else {
-		txsNormalized = GetAddressTransactionsOnly(address)
-	}
+	// if address != "" && token == VeThorContract {
+	// 	txsNormalized = GetVeThorTransactions(address)
+	// } else {
+		txsNormalized = GetAddressTransactions(address, token)
+	// }
 	// TODO: Add support for address tokens
 
 	page := models.Response(txsNormalized)
@@ -50,42 +50,9 @@ func getTransactions(c *gin.Context) {
 	c.JSON(http.StatusOK, &page)
 }
 
-func Normalize(tr *Tx, receipt *TxId, clause *Clause, address string) (models.Tx, bool) {
-	transferType, _ := transferType(*clause)
-	var from, to string
-
-	if address == tr.Sender {
-		from = address
-		to = clause.To
-	} else {
-		from = tr.Sender
-		to = clause.To
-	}
-
-	fee := calculateFee(receipt.GasPriceCoef, receipt.Gas)
-	println("fee -", fee)
-	value := hexaToIntegerString(clause.Value)
-	sequence, _ := strconv.ParseUint(hexaToIntegerString(receipt.Nonce), 10, 64)
-
-	return models.Tx{
-		ID:       tr.Meta.TxID,
-		Coin:     coin.VET,
-		From:     from,
-		To:       to,
-		Fee:      models.Amount(fee),
-		Date:     tr.Meta.BlockTimestamp,
-		Type:     transferType,
-		Block:    tr.Meta.BlockNumber,
-		Sequence: sequence,
-		Meta: models.Transfer{
-			Value: models.Amount(value),
-		},
-	}, true
-}
-
-func transferType(clause Clause) (string, error) {
-	switch clause.Data {
-	case "0x":
+func transferType(output TxReceiptOutput) (string, error) {
+	switch len(output.Events) {
+	case 0:
 		return string(models.TxTransfer), nil
 	default:
 		return string(models.TxContractCall), nil
@@ -101,55 +68,9 @@ func hexaToIntegerString(str string) string {
 	return i.String()
 }
 
-func calculateFee(gasPriceCoef uint64, gasUsed uint64) string {
-	var gasPriceCoefBig, gasUsedBig, feeBig big.Int
-	println("gasPriceCoef", gasPriceCoef)
-	println("gasUsed", gasUsed)
-	gasPriceCoefBig.SetString(string(gasPriceCoef), 10)
-	gasUsedBig.SetString(string(gasUsed), 10)
-
-	feeBig.Mul(&gasPriceCoefBig, &gasUsedBig)
-
-	return feeBig.String()
-}
-
-func GetAddressTransactionsOnly(address string) []models.Tx {
+func GetAddressTransactions(address string, token string) []models.Tx {
 	txsNormalized := make([]models.Tx, 0)
 	txs, _ := client.GetAddressTransactions(address)
-
-	var receiptsMap = make(map[string]TxId)
-	receiptsChan := make(chan TxId, len(txs))
-
-	for _, t := range txs {
-		wg.Add(1)
-		go client.GetTransactionId(receiptsChan, t.Meta.TxID)
-	}
-
-	wg.Wait()
-	close(receiptsChan)
-
-	for receipt := range receiptsChan {
-		receiptsMap[receipt.Id] = receipt
-	}
-
-	for _, tr := range txs {
-		r := receiptsMap[tr.Meta.TxID]
-
-		for _, clause := range r.Clauses {
-			if tr.Sender == address || address == clause.To  {
-				if tx, ok := Normalize(&tr, &r, &clause, address); ok {
-					txsNormalized = append(txsNormalized, tx)
-				}
-			}
-		}
-	}
-
-	return txsNormalized
-}
-
-func GetVeThorTransactions(tokenAddr string) []models.Tx {
-	txsNormalized := make([]models.Tx, 0)
-	txs, _ := client.GetAddressTransactions(tokenAddr)
 
 	var receiptsMap = make(map[string]TxReceipt)
 	receiptsChan := make(chan TxReceipt, len(txs))
@@ -167,36 +88,62 @@ func GetVeThorTransactions(tokenAddr string) []models.Tx {
 	}
 
 	for _, tr := range txs {
-		r := receiptsMap[tr.Meta.TxID]
+		repeipt := receiptsMap[tr.Meta.TxID]
 
-		for _, output := range r.Outputs {
-			if tx, ok := NormalizeToken(&output, &r); ok {
+		for _, output := range repeipt.Outputs {
+			if tx, ok := Normalize(&tr, &repeipt, &output, address, token); ok {
 				txsNormalized = append(txsNormalized, tx)
 			}
 		}
 	}
 
 	return txsNormalized
-
 }
 
-func NormalizeToken(output *TxReceiptOutput, receipt *TxReceipt) (models.Tx, bool) {
-	value := hexaToIntegerString(receipt.Paid)
-	transfer := output.Transfers[0]
-	var blockNum uint64 = receipt.Meta.BlockNumber
+func Normalize(tr *Tx, receipt *TxReceipt, output *TxReceiptOutput, address string, token string) (models.Tx, bool) {
+	transferType, _ := transferType(*output)
+	outputTransfers := output.Transfers
+	sender := outputTransfers[0].Sender
+	recipient := outputTransfers[0].Recipient
 
-	return models.Tx{
-		ID:       receipt.Meta.TxID,
-		Coin:     coin.VET,
-		From:     transfer.Sender,
-		To:       transfer.Recipient,
-		Fee:      models.Amount("0"),
-		Date:     receipt.Meta.BlockTimestamp,
-		Type:     models.TxContractCall,
-		Block:    blockNum,
-		Sequence: blockNum,
-		Meta: models.Transfer{
-			Value: models.Amount(value),
-		},
-	}, true
+	if transferType == models.TxTransfer && (sender == address || recipient == address) { // Currently supports only transfer transactions
+		var from, to, fee, value string
+
+		if address == sender {
+			from = address
+			to = recipient
+		} else {
+			from = recipient
+			to = sender
+		}
+
+		if token == VeThorContract {
+			fee = "0"
+			value = hexaToIntegerString(receipt.Paid)
+		} else {
+			fee = hexaToIntegerString(receipt.Paid)
+			value = hexaToIntegerString(output.Transfers[0].Amount)
+		}
+	
+		sequence, _ := strconv.ParseUint(hexaToIntegerString(string(receipt.Meta.BlockNumber)), 10, 64)
+
+		return models.Tx{
+			ID:       tr.Meta.TxID,
+			Coin:     coin.VET,
+			From:     from,
+			To:       to,
+			Fee:      models.Amount(fee),
+			Date:     tr.Meta.BlockTimestamp,
+			Type:     transferType,
+			Block:    tr.Meta.BlockNumber,
+			Sequence: sequence,
+			Meta: models.Transfer{
+				Value: models.Amount(value),
+			},
+		}, true
+
+	}
+
+	return models.Tx{}, false
 }
+
