@@ -109,7 +109,7 @@ func Normalize(tr *Tx, receipt *TxReceipt, output *TxReceiptOutput, address stri
 		Sequence: uint64(timestamp),
 	}
 
-	if transferType == models.TxTransfer && token == "" {
+	if transferType == models.TxTransfer && token == "" && (sender == address || recipient == address) {
 		tx.Fee = models.Amount(hexaToIntegerString(receipt.Paid))
 		tx.Meta = models.Transfer{
 			Value: models.Amount(hexaToIntegerString(output.Transfers[0].Amount)),
