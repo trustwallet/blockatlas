@@ -82,8 +82,14 @@ var expectedVeThorTrx = models.Tx{
 	Status: "completed",
 	Sequence: 1532802660,
 	Block:  248545,
-	Meta:  models.Transfer{
+	Meta:  models.NativeTokenTransfer{
+		Name: "VeThor Token",
+		Symbol: "VTHO",
+		TokenID: "0x0000000000000000000000000000456e65726779",
+		Decimals: 18,
 		Value: "21000000000000000000",
+		From: "0xb6b6c3ad63192cadd9064432242f3a52329302f3",
+		To: "0xb853d6a965fbc047aaa9f04d774d53861d7ed653",
 	},
 }
 func TestNormalize(t *testing.T) {

@@ -46,7 +46,7 @@ func transferType(output TxReceiptOutput) (string, error) {
 	case 0:
 		return string(models.TxTransfer), nil
 	default:
-		return string(models.TxTokenTransfer), nil
+		return "", nil
 	}
 }
 
@@ -91,44 +91,48 @@ func GetAddressTransactions(address string, token string) []models.Tx {
 	return txsNormalized
 }
 
-func Normalize(tr *Tx, receipt *TxReceipt, output *TxReceiptOutput, address string, token string) (models.Tx, bool) {
+func Normalize(tr *Tx, receipt *TxReceipt, output *TxReceiptOutput, address string, token string) (tx models.Tx, ok bool) {
 	transferType, _ := transferType(*output)
+	var timestamp = tr.Meta.BlockTimestamp
 	transfer := output.Transfers[0]
 	sender := transfer.Sender
 	recipient := transfer.Recipient
 
-	if transferType == models.TxTransfer && (sender == address || recipient == address) { // Currently supports only transfer transactions
-		var from  = sender
-		var to = recipient
-		
-		var fee, value string
-		if token == VeThorContract {
-			fee = "0"
-			value = hexaToIntegerString(receipt.Paid)
-		} else {
-			fee = hexaToIntegerString(receipt.Paid)
-			value = hexaToIntegerString(output.Transfers[0].Amount)
-		}
-
-		var timestamp = tr.Meta.BlockTimestamp
-
-		return models.Tx{
-			ID:       tr.Meta.TxID,
-			Coin:     coin.VET,
-			From:     from,
-			To:       to,
-			Fee:      models.Amount(fee),
-			Date:     timestamp,
-			Type:     transferType,
-			Block:    tr.Meta.BlockNumber,
-			Sequence: uint64(timestamp),
-			Meta: models.Transfer{
-				Value: models.Amount(value),
-			},
-		}, true
-
+	tx = models.Tx{
+		ID:       tr.Meta.TxID,
+		Coin:     coin.VET,
+		From:     sender,
+		To:       recipient,
+		Date:     timestamp,
+		Type:     transferType,
+		Block:    tr.Meta.BlockNumber,
+		Sequence: uint64(timestamp),
 	}
 
-	return models.Tx{}, false
+	if transferType == models.TxTransfer && token == "" {
+		tx.Fee = models.Amount(hexaToIntegerString(receipt.Paid))
+		tx.Meta = models.Transfer{
+			Value: models.Amount(hexaToIntegerString(output.Transfers[0].Amount)),
+		}
+		
+		return tx, true
+	}
+
+	if transferType == models.TxTransfer && token == VeThorContract {
+		tx.Fee = "0"
+		tx.Meta = models.NativeTokenTransfer{
+			Name: 	  "VeThor Token",
+			Symbol:   "VTHO",
+			TokenID:  VeThorContract,
+			Decimals: 18,
+			Value:    models.Amount(models.Amount(hexaToIntegerString(receipt.Paid))),
+			From:     sender,
+			To:       recipient,
+		}
+
+		return tx, true
+	}
+
+	return tx, false
 }
 
