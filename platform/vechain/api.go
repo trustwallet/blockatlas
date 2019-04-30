@@ -118,7 +118,7 @@ func Normalize(tr *Tx, receipt *TxReceipt, output *TxReceiptOutput, address stri
 		return tx, true
 	}
 
-	if transferType == models.TxTransfer && token == VeThorContract {
+	if transferType == models.TxTransfer && token == VeThorContract && sender == address {
 		tx.Fee = "0"
 		tx.Meta = models.NativeTokenTransfer{
 			Name: 	  "VeThor Token",
@@ -126,8 +126,8 @@ func Normalize(tr *Tx, receipt *TxReceipt, output *TxReceiptOutput, address stri
 			TokenID:  VeThorContract,
 			Decimals: 18,
 			Value:    models.Amount(models.Amount(hexaToIntegerString(receipt.Paid))),
-			From:     sender,
-			To:       recipient,
+			From:     recipient,
+			To:       sender,
 		}
 
 		return tx, true
