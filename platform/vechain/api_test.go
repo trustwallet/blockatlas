@@ -78,7 +78,7 @@ var expectedVeThorTrx = models.Tx{
 	To:     "0xb853d6a965fbc047aaa9f04d774d53861d7ed653",
 	Fee:    "0",
 	Date:   1532802660,
-	Type:   "transfer",
+	Type:   "token_transfer",
 	Status: "completed",
 	Sequence: 1532802660,
 	Block:  248545,

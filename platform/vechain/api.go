@@ -46,7 +46,7 @@ func transferType(output TxReceiptOutput) (string, error) {
 	case 0:
 		return string(models.TxTransfer), nil
 	default:
-		return string(models.TxContractCall), nil
+		return string(models.TxTokenTransfer), nil
 	}
 }
 
