@@ -7,7 +7,6 @@ import (
 
 	"math/big"
 	"net/http"
-	"strconv"
 	"strings"
 	"sync"
 
@@ -33,17 +32,9 @@ func Setup(router gin.IRouter) {
 }
 
 func getTransactions(c *gin.Context) {
-	address := strings.ToLower(c.Param("address"))
-	token := c.Query("token")
-
 	var txsNormalized []models.Tx
-
-	// if address != "" && token == VeThorContract {
-	// 	txsNormalized = GetVeThorTransactions(address)
-	// } else {
-		txsNormalized = GetAddressTransactions(address, token)
-	// }
-	// TODO: Add support for address tokens
+	txsNormalized = GetAddressTransactions(strings.ToLower(c.Param("address")), c.Query("token"))
+	// TODO: Add support for token transfers
 
 	page := models.Response(txsNormalized)
 	page.Sort()
@@ -102,21 +93,15 @@ func GetAddressTransactions(address string, token string) []models.Tx {
 
 func Normalize(tr *Tx, receipt *TxReceipt, output *TxReceiptOutput, address string, token string) (models.Tx, bool) {
 	transferType, _ := transferType(*output)
-	outputTransfers := output.Transfers
-	sender := outputTransfers[0].Sender
-	recipient := outputTransfers[0].Recipient
+	transfer := output.Transfers[0]
+	sender := transfer.Sender
+	recipient := transfer.Recipient
 
 	if transferType == models.TxTransfer && (sender == address || recipient == address) { // Currently supports only transfer transactions
-		var from, to, fee, value string
-
-		if address == sender {
-			from = address
-			to = recipient
-		} else {
-			from = recipient
-			to = sender
-		}
-
+		var from  = sender
+		var to = recipient
+		
+		var fee, value string
 		if token == VeThorContract {
 			fee = "0"
 			value = hexaToIntegerString(receipt.Paid)
@@ -124,8 +109,8 @@ func Normalize(tr *Tx, receipt *TxReceipt, output *TxReceiptOutput, address stri
 			fee = hexaToIntegerString(receipt.Paid)
 			value = hexaToIntegerString(output.Transfers[0].Amount)
 		}
-	
-		sequence, _ := strconv.ParseUint(hexaToIntegerString(string(receipt.Meta.BlockNumber)), 10, 64)
+
+		var timestamp = tr.Meta.BlockTimestamp
 
 		return models.Tx{
 			ID:       tr.Meta.TxID,
@@ -133,10 +118,10 @@ func Normalize(tr *Tx, receipt *TxReceipt, output *TxReceiptOutput, address stri
 			From:     from,
 			To:       to,
 			Fee:      models.Amount(fee),
-			Date:     tr.Meta.BlockTimestamp,
+			Date:     timestamp,
 			Type:     transferType,
 			Block:    tr.Meta.BlockNumber,
-			Sequence: sequence,
+			Sequence: uint64(timestamp),
 			Meta: models.Transfer{
 				Value: models.Amount(value),
 			},
