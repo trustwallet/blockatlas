@@ -94,7 +94,6 @@ var expectedVeThorTrx = models.Tx{
 }
 func TestNormalize(t *testing.T) {
 	const address = "0xb853d6a965fbc047aaa9f04d774d53861d7ed653"
-	const VeThorContract = "0x0000000000000000000000000000456e65726779" 
 
 	var tests = []struct {
 		Tx 		  string

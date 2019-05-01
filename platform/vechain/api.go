@@ -18,7 +18,7 @@ var client = Client{
 	HTTPClient: http.DefaultClient,
 }
 
-const VeThorContract = "0x0000000000000000000000000000456e65726779"
+const VeThorContract = "0x0000000000000000000000000000456E65726779"
 
 var wg sync.WaitGroup
 
@@ -124,7 +124,7 @@ func Normalize(tr *Tx, receipt *TxReceipt, output *TxReceiptOutput, address stri
 			tx.Meta = models.NativeTokenTransfer{
 				Name: 	  "VeThor Token",
 				Symbol:   "VTHO",
-				TokenID:  VeThorContract,
+				TokenID:  strings.ToLower(VeThorContract),
 				Decimals: 18,
 				Value:    models.Amount(models.Amount(hexaToIntegerString(receipt.Paid))),
 				From:     sender,
