@@ -109,28 +109,30 @@ func Normalize(tr *Tx, receipt *TxReceipt, output *TxReceiptOutput, address stri
 		Sequence: uint64(timestamp),
 	}
 
-	if transferType == models.TxTransfer && token == "" && (sender == address || recipient == address) {
-		tx.Fee = models.Amount(hexaToIntegerString(receipt.Paid))
-		tx.Meta = models.Transfer{
-			Value: models.Amount(hexaToIntegerString(output.Transfers[0].Amount)),
+	if transferType == models.TxTransfer {
+		if token == "" && (sender == address || recipient == address) {
+			tx.Fee = models.Amount(hexaToIntegerString(receipt.Paid))
+			tx.Meta = models.Transfer{
+				Value: models.Amount(hexaToIntegerString(output.Transfers[0].Amount)),
+			}
+			
+			return tx, true
 		}
 		
-		return tx, true
-	}
-
-	if transferType == models.TxTransfer && token == VeThorContract && sender == address {
-		tx.Fee = "0"
-		tx.Meta = models.NativeTokenTransfer{
-			Name: 	  "VeThor Token",
-			Symbol:   "VTHO",
-			TokenID:  VeThorContract,
-			Decimals: 18,
-			Value:    models.Amount(models.Amount(hexaToIntegerString(receipt.Paid))),
-			From:     recipient,
-			To:       sender,
+		if token == VeThorContract && sender == address {
+			tx.Fee = "0"
+			tx.Meta = models.NativeTokenTransfer{
+				Name: 	  "VeThor Token",
+				Symbol:   "VTHO",
+				TokenID:  VeThorContract,
+				Decimals: 18,
+				Value:    models.Amount(models.Amount(hexaToIntegerString(receipt.Paid))),
+				From:     sender,
+				To:       recipient,
+			}
+	
+			return tx, true
 		}
-
-		return tx, true
 	}
 
 	return tx, false

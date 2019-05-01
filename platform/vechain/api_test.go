@@ -10,15 +10,15 @@ import (
 
 const transferTrx = `
 {
-	"sender": "0xb6b6c3ad63192cadd9064432242f3a52329302f3",
-	"recipient": "0xb853d6a965fbc047aaa9f04d774d53861d7ed653",
-	"amount": "0xaf6751326c8d4a80000",
+	"sender": "0xb853d6a965fbc047aaa9f04d774d53861d7ed653",
+	"recipient": "0xda623049a13df5c8a24f0d7713f4add4ab136b1f",
+	"amount": "0x29bde5885d7ac80000",
 	"meta": {
-		"blockID": "0x0003cae121113a2e3c7bf510629ceab7ead48b6cf2cf1a18747e7fe058b3e190",
-		"blockNumber": 248545,
-		"blockTimestamp": 1532802660,
-		"txID": "0xd989ab9e91e9af849666d507758f75ea2d4dcbe0a658284d8196ac527dbee181",
-		"txOrigin": "0xb6b6c3ad63192cadd9064432242f3a52329302f3"
+		"blockID": "0x0027fb06c4c12ee0116b8a525d8f4bf502562486abb70affa211d07c8cfba37b",
+		"blockNumber": 2620166,
+		"blockTimestamp": 1556569300,
+		"txID": "0x2b8776bd4679fa2afa28b55d66d4f6c7c77522fc878ce294d25e32475b704517",
+		"txOrigin": "0xb853d6a965fbc047aaa9f04d774d53861d7ed653"
 	}
 }
 `
@@ -26,16 +26,16 @@ const transferTrx = `
 const transferReceipt = `
 {
     "gasUsed": 21000,
-    "gasPayer": "0xb6b6c3ad63192cadd9064432242f3a52329302f3",
+    "gasPayer": "0xb853d6a965fbc047aaa9f04d774d53861d7ed653",
     "paid": "0x1236efcbcbb340000",
     "reward": "0x576e189f04f60000",
     "reverted": false,
     "meta": {
-        "blockID": "0x0003cae121113a2e3c7bf510629ceab7ead48b6cf2cf1a18747e7fe058b3e190",
-        "blockNumber": 248545,
-        "blockTimestamp": 1532802660,
-        "txID": "0xd989ab9e91e9af849666d507758f75ea2d4dcbe0a658284d8196ac527dbee181",
-        "txOrigin": "0xb6b6c3ad63192cadd9064432242f3a52329302f3"
+        "blockID": "0x0027fb06c4c12ee0116b8a525d8f4bf502562486abb70affa211d07c8cfba37b",
+        "blockNumber": 2620166,
+        "blockTimestamp": 1556569300,
+        "txID": "0x2b8776bd4679fa2afa28b55d66d4f6c7c77522fc878ce294d25e32475b704517",
+        "txOrigin": "0xb853d6a965fbc047aaa9f04d774d53861d7ed653"
     },
     "outputs": []
 }
@@ -47,49 +47,49 @@ const transferOutput = `
 	"events": [],
 	"transfers": [
 		{
-			"sender": "0xb6b6c3ad63192cadd9064432242f3a52329302f3",
-			"recipient": "0xb853d6a965fbc047aaa9f04d774d53861d7ed653",
-			"amount": "0xaf6751326c8d4a80000"
+			"sender": "0xb853d6a965fbc047aaa9f04d774d53861d7ed653",
+			"recipient": "0xda623049a13df5c8a24f0d7713f4add4ab136b1f",
+			"amount": "0x29bde5885d7ac80000"
 		}
 	]
 }
 `
 
 var expectedTransferTrx = models.Tx{
-	ID:    "0xd989ab9e91e9af849666d507758f75ea2d4dcbe0a658284d8196ac527dbee181",
+	ID:    "0x2b8776bd4679fa2afa28b55d66d4f6c7c77522fc878ce294d25e32475b704517",
 	Coin:  coin.VET,
-	From:  "0xb6b6c3ad63192cadd9064432242f3a52329302f3",
-	To:    "0xb853d6a965fbc047aaa9f04d774d53861d7ed653",
+	From:  "0xb853d6a965fbc047aaa9f04d774d53861d7ed653",
+	To:    "0xda623049a13df5c8a24f0d7713f4add4ab136b1f",
 	Fee:   "21000000000000000000",
-	Date:  1532802660,
+	Date:  1556569300,
 	Type:   "transfer",
 	Status: "completed",
-	Block: 248545,
-	Sequence: 1532802660,
+	Block: 2620166,
+	Sequence: 1556569300,
 	Meta:  models.Transfer{
-		Value: "51770000000000000000000",
+		Value: "770000000000000000000",
 	},
 }
 
 var expectedVeThorTrx = models.Tx{
-	ID:     "0xd989ab9e91e9af849666d507758f75ea2d4dcbe0a658284d8196ac527dbee181",
+	ID:     "0x2b8776bd4679fa2afa28b55d66d4f6c7c77522fc878ce294d25e32475b704517",
 	Coin:   coin.VET,
-	From:   "0xb6b6c3ad63192cadd9064432242f3a52329302f3",
-	To:     "0xb853d6a965fbc047aaa9f04d774d53861d7ed653",
+	From:   "0xb853d6a965fbc047aaa9f04d774d53861d7ed653",
+	To:     "0xda623049a13df5c8a24f0d7713f4add4ab136b1f",
 	Fee:    "0",
-	Date:   1532802660,
+	Date:   1556569300,
 	Type:   "token_transfer",
 	Status: "completed",
-	Sequence: 1532802660,
-	Block:  248545,
+	Sequence: 1556569300,
+	Block:  2620166,
 	Meta:  models.NativeTokenTransfer{
 		Name: "VeThor Token",
 		Symbol: "VTHO",
 		TokenID: "0x0000000000000000000000000000456e65726779",
 		Decimals: 18,
 		Value: "21000000000000000000",
-		From: "0xb6b6c3ad63192cadd9064432242f3a52329302f3",
-		To: "0xb853d6a965fbc047aaa9f04d774d53861d7ed653",
+		From: "0xb853d6a965fbc047aaa9f04d774d53861d7ed653",
+		To: "0xda623049a13df5c8a24f0d7713f4add4ab136b1f",
 	},
 }
 func TestNormalize(t *testing.T) {
