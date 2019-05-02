@@ -6,7 +6,6 @@ import(
 	"io/ioutil"
 	"fmt"
 	"encoding/json"
-	"strings"
 )
 
 type Client struct {
@@ -14,67 +13,69 @@ type Client struct {
 	URL        string
 }
 
-func (c *Client) GetAddressTransactions(address string) ([]Tx, error) {
-	url := fmt.Sprintf("%s/logs/transfer", c.URL)
+func (c *Client) GetAddressTransactions(address string) (TransferTx, error) {
+	var transfers TransferTx
 
-	addressEscaped, _ := json.Marshal(address)
-
-	payload := fmt.Sprintf(`{
-		"range": {
-			"unit": "block",
-			"from": 0,
-			"to": 9000000
-		},
-		"options": {
-			"offset": 0,
-			"limit": 25
-		},
-		"criteriaSet": [
-			{
-				"sender": %[1]s
-			},
-			{
-				"recipient": %[1]s
-			}
-		],
-		"order": "desc"
-	}`, string(addressEscaped))
-
-	resp, err := c.HTTPClient.Post(url, "application/json", strings.NewReader(payload))
+	url := fmt.Sprintf("%s/transactions?address=%s&count=25&offset=0", c.URL, address)
+	resp, err := c.HTTPClient.Get(url)
 	if err != nil {
 		logrus.WithError(err).Error("VeChain: Failed HTTP get transactions")
-		return nil, err
+		return transfers, err
 	}
 	defer resp.Body.Close()
 
 	body, errBody := ioutil.ReadAll(resp.Body)
-	var transactions []Tx
 	if errBody != nil {
 		logrus.WithError(err).Error("VeChain: Error decode transaction response body")
-		return nil, err
+		return transfers, err
 	}
 
-	errUnm := json.Unmarshal(body, &transactions)
+	errUnm := json.Unmarshal(body, &transfers)
 	if errUnm != nil {
 		logrus.WithError(err).Error("VeChain: Error Unmarshal transaction response body")
-		return nil, err
+		return transfers, err
 	}
 
-	return transactions, nil
+	return transfers, nil
 }
 
-func (c *Client) GetTransacionReceipt(cn chan <- TxReceipt, id string) {
+func (c *Client) GetTokenTransferTransactions(address string) (TokenTransferTxs, error) {
+	var transfers TokenTransferTxs
+
+	url := fmt.Sprintf("%s/tokenTransfers?address=%s&count=25&offset=0", c.URL, address)
+	resp, err := c.HTTPClient.Get(url)
+	if err != nil {
+		logrus.WithError(err).Error("VeChain: Failed HTTP get token trasnfer transactions")
+		return transfers, err
+	}
+	defer resp.Body.Close()
+
+	body, errBody := ioutil.ReadAll(resp.Body)
+	if errBody != nil {
+		logrus.WithError(err).Error("VeChain: Error decode token transfer transaction response body")
+		return transfers, err
+	}
+
+	errUnm := json.Unmarshal(body, &transfers)
+	if errUnm != nil {
+		logrus.WithError(err).Error("VeChain: Error Unmarshal token transfer transaction response body")
+		return transfers, err
+	}
+
+	return transfers, nil
+}
+
+func (c *Client) GetTransacionReceipt(cn chan <- TransferReceipt, id string) {
 	defer wg.Done()
 
-	url := fmt.Sprintf("%s/transactions/%s/receipt", c.URL, id)
-
+	url := fmt.Sprintf("%s/transactions/%s", c.URL, id)
 	resp, err := c.HTTPClient.Get(url)
 	if err != nil {
 		logrus.WithError(err).Error("VeChain: Failed HTTP get transaction receipt")
 	}
 	defer resp.Body.Close()
 
-	var receipt TxReceipt
+	var receipt TransferReceipt
 
 	err = json.NewDecoder(resp.Body).Decode(&receipt)
 	if err != nil {

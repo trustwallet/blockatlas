@@ -8,6 +8,7 @@ import (
 	"math/big"
 	"net/http"
 	"strings"
+	"strconv"
 	"sync"
 
 	"github.com/gin-gonic/gin"
@@ -19,6 +20,7 @@ var client = Client{
 }
 
 const VeThorContract = "0x0000000000000000000000000000456E65726779"
+const VeThorContractLow = "0x0000000000000000000000000000456e65726779"
 
 var wg sync.WaitGroup
 
@@ -34,20 +36,118 @@ func Setup(router gin.IRouter) {
 func getTransactions(c *gin.Context) {
 	var txsNormalized []models.Tx
 	txsNormalized = GetAddressTransactions(strings.ToLower(c.Param("address")), c.Query("token"))
-	// TODO: Add support for token transfers
 
 	page := models.Response(txsNormalized)
 	page.Sort()
 	c.JSON(http.StatusOK, &page)
 }
 
-func transferType(output TxReceiptOutput) (string, error) {
-	switch len(output.Events) {
-	case 0:
+func transferType(address string, token string) (string, error) {
+	if address != "" && token == "" {
 		return string(models.TxTransfer), nil
-	default:
-		return "", nil
 	}
+	if address != "" && (token == VeThorContractLow || token == VeThorContract) {
+		return string(models.TxNativeTokenTransfer), nil
+	}
+
+	return "", nil
+}
+
+func GetAddressTransactions(address string, token string) []models.Tx {
+	txsNormalized := make([]models.Tx, 0)
+	transferType, err := transferType(address, token)
+	if err != nil {
+		return txsNormalized
+	}
+	
+	if transferType == models.TxTransfer {
+		txs, _ := client.GetAddressTransactions(address)
+
+		receiptsChan := make(chan TransferReceipt, len(txs.Transactions))
+		
+		for _, t := range txs.Transactions {
+			wg.Add(1)
+			go client.GetTransacionReceipt(receiptsChan, t.ID)
+		}
+			
+		wg.Wait()
+		close(receiptsChan)
+
+		for receipt := range receiptsChan {
+			for _, clause := range receipt.Clauses {
+				if receipt.Origin == address || clause.To == address {
+					if tx, ok := NormalizeTransfer(&receipt, &clause); ok {
+						txsNormalized = append(txsNormalized, tx)	
+					}
+				}
+			}
+		}
+
+		return txsNormalized
+	}
+
+	if transferType == models.TxNativeTokenTransfer {
+		txs, _ := client.GetTokenTransferTransactions(address)
+
+		for _, t := range txs.TokenTransfers {
+			if t.ContractAddress == VeThorContractLow {
+				if tx, ok := NormalizeTokenTransfer(&t); ok {
+					txsNormalized = append(txsNormalized, tx)
+				}
+			}
+		}
+	}
+		
+	return txsNormalized
+}
+
+func NormalizeTransfer(receipt *TransferReceipt, clause *Clause) (tx models.Tx, ok bool) {
+	fee := models.Amount(hexaToIntegerString(receipt.Receipt.Paid))
+	time := receipt.Timestamp
+	nonce, _ := strconv.ParseUint(hexaToIntegerString(receipt.Nonce), 10, 64)
+
+	return models.Tx{
+		ID:       receipt.ID,
+		Coin:     coin.VET,
+		From:     receipt.Origin,
+		To:       clause.To,
+		Fee:      fee,
+		Date:     int64(time),
+		Type:     models.TxTransfer,
+		Block:    receipt.Block,
+		Sequence: nonce,
+		Meta: models.Transfer{
+			Value: models.Amount(hexaToIntegerString(clause.Value)),
+		},
+	}, true
+}
+
+func NormalizeTokenTransfer(t *TokenTransfer) (tx models.Tx, ok bool) {
+	value :=models.Amount(models.Amount(hexaToIntegerString(t.Amount)))
+	from := t.Origin
+	to := t.Receiver
+	block := t.Block
+
+	return models.Tx{
+		ID:       t.TxID,
+		Coin:     coin.VET,
+		From:     from,
+		To:       to,
+		Fee:      "0",
+		Date:     t.Timestamp,
+		Type:     models.TxNativeTokenTransfer,
+		Block:    block,
+		Sequence: block,
+		Meta: models.NativeTokenTransfer{
+			Name: 	  "VeThor Token",
+			Symbol:   "VTHO",
+			TokenID:  VeThorContractLow,
+			Decimals: 18,
+			Value:    value,
+			From:     from,
+			To:       to,
+		},
+	}, true
 }
 
 func hexaToIntegerString(str string) string {
@@ -57,84 +157,5 @@ func hexaToIntegerString(str string) string {
 	}
 
 	return i.String()
-}
-
-func GetAddressTransactions(address string, token string) []models.Tx {
-	txsNormalized := make([]models.Tx, 0)
-	txs, _ := client.GetAddressTransactions(address)
-
-	var receiptsMap = make(map[string]TxReceipt)
-	receiptsChan := make(chan TxReceipt, len(txs))
-
-	for _, t := range txs {
-		wg.Add(1)
-		go client.GetTransacionReceipt(receiptsChan, t.Meta.TxID)
-	}
-
-	wg.Wait()
-	close(receiptsChan)
-
-	for receipt := range receiptsChan {
-		receiptsMap[receipt.Meta.TxID] = receipt
-	}
-
-	for _, tr := range txs {
-		repeipt := receiptsMap[tr.Meta.TxID]
-
-		for _, output := range repeipt.Outputs {
-			if tx, ok := Normalize(&tr, &repeipt, &output, address, token); ok {
-				txsNormalized = append(txsNormalized, tx)
-			}
-		}
-	}
-
-	return txsNormalized
-}
-
-func Normalize(tr *Tx, receipt *TxReceipt, output *TxReceiptOutput, address string, token string) (tx models.Tx, ok bool) {
-	transferType, _ := transferType(*output)
-	var timestamp = tr.Meta.BlockTimestamp
-	transfer := output.Transfers[0]
-	sender := transfer.Sender
-	recipient := transfer.Recipient
-
-	tx = models.Tx{
-		ID:       tr.Meta.TxID,
-		Coin:     coin.VET,
-		From:     sender,
-		To:       recipient,
-		Date:     timestamp,
-		Type:     transferType,
-		Block:    tr.Meta.BlockNumber,
-		Sequence: uint64(timestamp),
-	}
-
-	if transferType == models.TxTransfer {
-		if token == "" && (sender == address || recipient == address) {
-			tx.Fee = models.Amount(hexaToIntegerString(receipt.Paid))
-			tx.Meta = models.Transfer{
-				Value: models.Amount(hexaToIntegerString(output.Transfers[0].Amount)),
-			}
-			
-			return tx, true
-		}
-		
-		if token == VeThorContract && sender == address {
-			tx.Fee = "0"
-			tx.Meta = models.NativeTokenTransfer{
-				Name: 	  "VeThor Token",
-				Symbol:   "VTHO",
-				TokenID:  strings.ToLower(VeThorContract),
-				Decimals: 18,
-				Value:    models.Amount(models.Amount(hexaToIntegerString(receipt.Paid))),
-				From:     sender,
-				To:       recipient,
-			}
-	
-			return tx, true
-		}
-	}
-
-	return tx, false
 }
 

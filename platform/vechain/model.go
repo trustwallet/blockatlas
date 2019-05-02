@@ -1,32 +1,52 @@
 package vechain
 
+type TransferTx struct {
+	Transactions []Tx   `json:"transactions"`
+}
+
 type Tx struct {
-	Sender    string `json:"sender"`
-	Recipient string `json:"recipient"`
-	Amount    string `json:"amount"`
-	Meta      Meta   `json:"meta"`
+	ID string `json:"id"`
+}
+
+type TransferReceipt struct {
+	Block        uint64   `json:"block"`
+	Clauses      []Clause `json:"clauses"`
+	ID           string   `json:"id"`
+	Nonce        string   `json:"nonce"`
+	Origin       string   `json:"origin"`
+	Receipt      Receipt  `json:"receipt"`
+	Timestamp    uint64   `json:"timestamp"`
+}
+
+type Clause struct {
+	To    string `json:"to"`
+	Value string `json:"value"`
 }
 
 type Meta struct {
 	BlockID        string `json:"blockID"`
-	BlockNumber    uint64 `json:"blockNumber"`
-	BlockTimestamp int64  `json:"blockTimestamp"`
+	BlockNumber    int    `json:"blockNumber"`
+	BlockTimestamp int    `json:"blockTimestamp"`
 	TxID           string `json:"txID"`
+	TxOrigin       string `json:"txOrigin"`
 }
 
-type TxReceipt struct {
-	Paid    string            `json:paid`
-	Meta    Meta              `json:meta`
-	Outputs []TxReceiptOutput `json:outputs`
+type Receipt struct {
+	Paid string `json:"paid"`
 }
 
-type TxReceiptOutput struct {
-	Transfers []TxReceiptTransfer `json:transfers`
-	Events    []interface{}       `json:events`
+type TokenTransferTxs struct {
+	TokenTransfers []TokenTransfer `json:"tokenTransfers"`
 }
-type TxReceiptTransfer struct {
-	Sender    string `json:sender`
-	Recipient string `json:recipient`
-	Amount    string `json:amount`
+
+type TokenTransfer struct {
+	Amount          string `json:"amount"`
+	Block           uint64 `json:"block"`
+	ContractAddress string `json:"contractAddress"`
+	Origin          string `json:"origin"`
+	Receiver        string `json:"receiver"`
+	Timestamp       int64  `json:"timestamp"`
+	TxID            string `json:"txId"`
 }
+
 
