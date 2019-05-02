@@ -14,6 +14,7 @@ import (
 	"github.com/trustwallet/blockatlas/platform/stellar"
 	"github.com/trustwallet/blockatlas/platform/tezos"
 	"github.com/trustwallet/blockatlas/platform/tron"
+	"github.com/trustwallet/blockatlas/platform/vechain"
 	"net/http"
 )
 
@@ -37,7 +38,7 @@ var loaders = map[string]func(gin.IRouter){
 	"icon":         icon.Setup,
 	"cosmos":       setupEmpty,
 	"theta":        setupEmpty,
-	"vechain":      setupEmpty,
+	"vechain":      vechain.Setup,
 }
 
 func loadPlatforms(router gin.IRouter) {
