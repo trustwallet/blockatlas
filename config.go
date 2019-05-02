@@ -51,4 +51,5 @@ func loadDefaults() {
 	viper.SetDefault("aion.api", "https://mainnet-api.aion.network/aion/dashboard")
 	viper.SetDefault("icon.api", "https://tracker.icon.foundation/v3")
 	viper.SetDefault("tron.api", "https://api.trongrid.io/v1")
+	viper.SetDefault("vechain.api", "https://explore.veforge.com/api")
 }
