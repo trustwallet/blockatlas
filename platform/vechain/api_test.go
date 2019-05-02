@@ -73,8 +73,6 @@ var expectedVeThorTrx = models.Tx{
 	},
 }
 func TestNormalizeTransfer(t *testing.T) {
-	// const address = "0xb853d6a965fbc047aaa9f04d774d53861d7ed653"
-
 	var tests = []struct {
 		Receipt  string
 		Clause   string

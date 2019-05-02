@@ -42,7 +42,6 @@ steps:
     ATLAS_NIMIQ_API: $(ATLAS_NIMIQ_API)
     ATLAS_RIPPLE_API: $(ATLAS_RIPPLE_API)
     ATLAS_STELLAR_API: $(ATLAS_STELLAR_API)
-    ATLAS_VECHAIN_API: $(ATLAS_VECHAIN_API)
   displayName: "Set environment variables"
 
 - script: go test -v ./...
