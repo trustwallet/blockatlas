@@ -110,8 +110,7 @@ var tokenTransferDst = models.Tx{
 	ID:   "0x7777854580f273df61e0162e1a41b3e1e05ab8b9f553036fa9329a90dd7e9ab2",
 	Coin: coin.ETH,
 	From: "0xd35f30d194684a391c63a6deced7d3dd5207c265",
-	To:   "0xaa4d790076f1bf7511a0a0ac498c89e13e1efe17",
-	//To:   "0xf3586684107ce0859c44aa2b2e0fb8cd8731a15a", Contract
+	To:   "0xf3586684107ce0859c44aa2b2e0fb8cd8731a15a",
 	Fee:    "358254913291776",
 	Date:   1554248437,
 	Block:  7491945,
