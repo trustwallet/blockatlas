@@ -121,9 +121,8 @@ func AppendTxs(in []models.Tx, srcTx *Doc, coinIndex uint) (out []models.Tx) {
 	}
 	op := &srcTx.Ops[0]
 
-	if op.Type == "token_transfer" {
+	if op.Type == models.TxTokenTransfer {
 		tokenTx := baseTx
-		tokenTx.To = op.To
 
 		tokenTx.Meta = models.TokenTransfer{
 			Name:     op.Contract.Name,
