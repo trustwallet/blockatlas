@@ -55,6 +55,7 @@ type Tx struct {
 	// Type of metadata
 	Type string `json:"type"`
 	// Meta data object
+	Memo string      `json:"memo"`
 	Meta interface{} `json:"metadata"`
 }
 

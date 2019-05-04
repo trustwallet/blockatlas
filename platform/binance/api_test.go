@@ -18,7 +18,6 @@ const nativeTransferTransaction = `
 	"hasChildren": 0,
 	"log": "Msg 0: ",
 	"mappedTxAsset": "BNB",
-	"memo": "",
 	"timeStamp": 1555049867552,
 	"toAddr": "tbnb1sylyjw032eajr9cyllp26n04300qzzre38qyv5",
 	"txAge": 836729,
@@ -26,7 +25,8 @@ const nativeTransferTransaction = `
 	"txFee": 0.00125,
 	"txHash": "1681EE543FB4B5A628EF21D746E031F018E226D127044A4F9BA5EE2542A44555",
 	"txType": "TRANSFER",
-	"value": 100000
+	"value": 100000,
+	"memo": "test"
 }`
 
 const nativeTokenTransferTransaction = `
@@ -38,7 +38,6 @@ const nativeTokenTransferTransaction = `
 	"hasChildren": 0,
 	"log": "Msg 0: ",
 	"mappedTxAsset": "YLC",
-	"memo": "",
 	"timeStamp": 1555117625829,
 	"toAddr": "tbnb12hlquylu78cjylk5zshxpdj6hf3t0tahwjt3ex",
 	"txAge": 768924,
@@ -46,7 +45,8 @@ const nativeTokenTransferTransaction = `
 	"txFee": 0.00125,
 	"txHash": "95CF63FAA27579A9B6AF84EF8B2DFEAC29627479E9C98E7F5AE4535E213FA4C9",
 	"txType": "TRANSFER",
-	"value": 2.10572645
+	"value": 2.10572645,
+	"memo": "test"
 }`
 
 var transferDst = models.Tx{
@@ -58,6 +58,7 @@ var transferDst = models.Tx{
 	Date:   1555049867,
 	Block:  7761368,
 	Status: models.StatusCompleted,
+	Memo:   "test",
 	Meta: models.Transfer{
 		Value: "10000000000000",
 	},
@@ -72,6 +73,7 @@ var nativeTransferDst = models.Tx{
 	Date:   1555117625,
 	Block:  7928667,
 	Status: models.StatusCompleted,
+	Memo:   "test",
 	Meta: models.NativeTokenTransfer{
 		TokenID:  "YLC-D8B",
 		Symbol:   "YLC",
@@ -86,7 +88,7 @@ type test struct {
 	name        string
 	apiResponse string
 	expected    *models.Tx
-	token	    string
+	token       string
 }
 
 func TestNormalize(t *testing.T) {
@@ -100,7 +102,7 @@ func TestNormalize(t *testing.T) {
 		name:        "native token transfer",
 		apiResponse: nativeTokenTransferTransaction,
 		expected:    &nativeTransferDst,
-		token: 	 	 "YLC-D8B",
+		token:       "YLC-D8B",
 	})
 }
 

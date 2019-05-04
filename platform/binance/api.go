@@ -60,16 +60,17 @@ func Normalize(srcTx *Tx, token string) (tx models.Tx, ok bool) {
 		To:    srcTx.ToAddr,
 		Fee:   models.Amount(fee),
 		Block: srcTx.BlockHeight,
+		Memo:  srcTx.Memo,
 	}
-	
+
 	// Condition for native transfer (BNB)
 	if srcTx.Asset == "BNB" && srcTx.Type == "TRANSFER" && token == "" {
 		tx.Meta = models.Transfer{
 			Value: models.Amount(value),
 		}
 		return tx, true
-	} 
-	
+	}
+
 	// Condiiton for native token transfer
 	if srcTx.Asset == token && srcTx.Type == "TRANSFER" {
 		tx.Meta = models.NativeTokenTransfer{
@@ -83,7 +84,7 @@ func Normalize(srcTx *Tx, token string) (tx models.Tx, ok bool) {
 
 		return tx, true
 	}
-	
+
 	return tx, false
 }
 

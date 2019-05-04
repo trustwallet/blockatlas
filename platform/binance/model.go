@@ -26,21 +26,22 @@ type Error struct {
 }
 
 type Tx struct {
-	BlockHeight   uint64        `json:"blockHeight"`
-	Type		  string        `json:"txType"`
-	Code          int           `json:"code"`
-	ConfirmBlocks int           `json:"confirmBlocks"`
-	Data          string        `json:"data"`
-	FromAddr      string        `json:"fromAddr"`
-	OrderID       string        `json:"orderId"`
-	Timestamp     int64         `json:"timeStamp"`
-	ToAddr        string        `json:"toAddr"`
-	Age           int64         `json:"txAge"`
-	MappedAsset   string        `json:"mappedTxAsset"`
-	Asset         string        `json:"txAsset"`
-	Fee           json.Number   `json:"txFee"`
-	Hash          string        `json:"txHash"`
-	Value         json.Number   `json:"value"`
+	BlockHeight   uint64      `json:"blockHeight"`
+	Type          string      `json:"txType"`
+	Code          int         `json:"code"`
+	ConfirmBlocks int         `json:"confirmBlocks"`
+	Data          string      `json:"data"`
+	FromAddr      string      `json:"fromAddr"`
+	OrderID       string      `json:"orderId"`
+	Timestamp     int64       `json:"timeStamp"`
+	ToAddr        string      `json:"toAddr"`
+	Age           int64       `json:"txAge"`
+	MappedAsset   string      `json:"mappedTxAsset"`
+	Asset         string      `json:"txAsset"`
+	Fee           json.Number `json:"txFee"`
+	Hash          string      `json:"txHash"`
+	Value         json.Number `json:"value"`
+	Memo          string      `json:"memo"`
 }
 
 type TxPage struct {
