@@ -1,6 +1,8 @@
 package main
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/coin"
@@ -15,7 +17,6 @@ import (
 	"github.com/trustwallet/blockatlas/platform/tezos"
 	"github.com/trustwallet/blockatlas/platform/tron"
 	"github.com/trustwallet/blockatlas/platform/vechain"
-	"net/http"
 )
 
 var loaders = map[string]func(gin.IRouter){
@@ -38,6 +39,7 @@ var loaders = map[string]func(gin.IRouter){
 	"icon":         icon.Setup,
 	"cosmos":       setupEmpty,
 	"theta":        setupEmpty,
+	"ontology":     setupEmpty,
 	"vechain":      vechain.Setup,
 }
 
