@@ -41,6 +41,7 @@ var addresses = map[string]Entry{
 	"icon":             {coin.ICX, "hxee691e7bccc4eb11fee922896e9f51490e62b12e"},
 	"tron":             {coin.TRX, "TMuA6YqfCeX8EhbfYEg5y7S4DqzSJireY9"},
 	"vechain":          {coin.VET,  "0xB5e883349e68aB59307d1604555AC890fAC47128"},
+	"cosmos":           {coin.ATOM,  "cosmos1rw62phusuv9vzraezr55k0vsqssvz6ed52zyrl"}
 }
 
 func main() {
