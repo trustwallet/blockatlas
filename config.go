@@ -1,11 +1,12 @@
 package main
 
 import (
+	"strings"
+
 	"github.com/fsnotify/fsnotify"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
-	"strings"
 )
 
 func loadConfig(confPath string) {
@@ -52,4 +53,5 @@ func loadDefaults() {
 	viper.SetDefault("icon.api", "https://tracker.icon.foundation/v3")
 	viper.SetDefault("tron.api", "https://api.trongrid.io/v1")
 	viper.SetDefault("vechain.api", "https://explore.veforge.com/api")
+	viper.SetDefault("cosmos.api", "https://stargate.cosmos.network")
 }
