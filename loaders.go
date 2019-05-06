@@ -40,6 +40,7 @@ var loaders = map[string]func(gin.IRouter){
 	"cosmos":       setupEmpty,
 	"theta":        setupEmpty,
 	"ontology":     setupEmpty,
+	"theta":        theta.Setup,
 	"vechain":      vechain.Setup,
 }
 

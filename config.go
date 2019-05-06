@@ -52,4 +52,5 @@ func loadDefaults() {
 	viper.SetDefault("icon.api", "https://tracker.icon.foundation/v3")
 	viper.SetDefault("tron.api", "https://api.trongrid.io/v1")
 	viper.SetDefault("vechain.api", "https://explore.veforge.com/api")
+	viper.SetDefault("theta.api", "https://explorer.thetatoken.org:9000/api")
 }

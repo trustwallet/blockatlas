@@ -51,3 +51,7 @@ icon:
 #[VET] VeChain: https://www.vechain.org
 vechain:
  api: https://explore.veforge.com/api
+
+#[THETA] THETA: https://www.thetatoken.org/
+theta:
+ api: https://explorer.thetatoken.org:9000/api
