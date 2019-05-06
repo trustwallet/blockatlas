@@ -307,5 +307,12 @@
 		"symbol": "WAVES",
 		"name": "Waves",
 		"link": "https://wavesplatform.com/"
+	},
+	{
+		"index": 118,
+		"hex": "0x80000076",
+		"symbol": "ATOM",
+		"name": "Cosmos ATOM",
+		"link": "https://cosmos.network/"
 	}
 ]
