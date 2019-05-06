@@ -40,7 +40,8 @@ var addresses = map[string]Entry{
 	"thundertoken":     {coin.TT,  "0x0ad80a408eac4f17ba0a9de8a12d8736f60700c3"},
 	"icon":             {coin.ICX, "hxee691e7bccc4eb11fee922896e9f51490e62b12e"},
 	"tron":             {coin.TRX, "TMuA6YqfCeX8EhbfYEg5y7S4DqzSJireY9"},
-	"vechain":          {coin.VET,  "0xB5e883349e68aB59307d1604555AC890fAC47128"},
+	"vechain":          {coin.VET, "0xB5e883349e68aB59307d1604555AC890fAC47128"},
+	"theta":            {coin.THETA, "0xac0eeb6ee3e32e2c74e14ac74155063e4f4f981f"},
 }
 
 func main() {
