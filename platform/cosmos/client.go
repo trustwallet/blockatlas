@@ -1,6 +1,7 @@
 package cosmos
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -10,13 +11,37 @@ import (
 	"github.com/trustwallet/blockatlas/models"
 )
 
+// Client - the HTTP client
 type Client struct {
 	HTTPClient *http.Client
 	BaseURL    string
 }
 
-func (c *Client) GetTxsOfAddress(address string) (*Tx, error) {
-	uri := fmt.Sprintf("%s/address/txList?%s",
+// GetInputs - get all ATOM transactions for a given address, via recipient
+func (c *Client) GetInputs(address string) (txs []Tx, err error) {
+	uri := fmt.Sprintf("%s/txs?%s",
+		c.BaseURL,
+		url.Values{
+			"recipient": {address},
+			"page":      {strconv.FormatInt(1, 10)},
+			"limit":     {strconv.FormatInt(models.TxPerPage, 10)},
+		}.Encode())
+
+	fmt.Println(uri)
+
+	res, err := c.HTTPClient.Get(uri)
+	if err != nil {
+		logrus.WithError(err).Errorf("Cosmos: Failed to get transactions for address %s", address)
+	}
+
+	dec := json.NewDecoder(res.Body)
+	err = dec.Decode(&txs)
+	return
+}
+
+// GetOutputs - get all ATOM transactions for a given address, via sender
+func (c *Client) GetOutputs(address string) (txs []Tx, err error) {
+	uri := fmt.Sprintf("%s/txs?%s",
 		c.BaseURL,
 		url.Values{
 			"sender": {address},
@@ -24,21 +49,14 @@ func (c *Client) GetTxsOfAddress(address string) (*Tx, error) {
 			"limit":  {strconv.FormatInt(models.TxPerPage, 10)},
 		}.Encode())
 
+	fmt.Println(uri)
+
 	res, err := c.HTTPClient.Get(uri)
 	if err != nil {
-		logrus.WithError(err).Error("Cosmos: Failed to get transactions")
-		return nil, models.ErrSourceConn
+		logrus.WithError(err).Errorf("Cosmos: Failed to get transactions for address %s", address)
 	}
 
-	switch res.StatusCode {
-	case http.StatusBadRequest, http.StatusNotFound:
-		logrus.WithError(err).Error("Cosmos: Bad request or 404 error")
-		return nil, models.ErrSourceConn
-	case http.StatusOK:
-		break
-	default:
-		return nil, fmt.Errorf("%s", res.Status)
-	}
-
-	return res, nil
+	dec := json.NewDecoder(res.Body)
+	err = dec.Decode(&txs)
+	return
 }

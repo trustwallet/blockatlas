@@ -16,5 +16,6 @@ require (
 	github.com/spf13/viper v1.3.2
 	github.com/valyala/fastjson v1.4.1
 	github.com/ybbus/jsonrpc v2.1.2+incompatible
+	golang.org/x/net v0.0.0-20190503192946-f4e77d36d62c // indirect
 	gopkg.in/go-playground/validator.v8 v8.18.2 // indirect
 )
