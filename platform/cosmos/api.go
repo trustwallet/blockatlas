@@ -26,12 +26,18 @@ func Setup(router gin.IRouter) {
 }
 
 func getTransactions(c *gin.Context) {
-	txs, _ := client.GetAddressTransactions(c.Param("address"))
+	inputTxes, _ := client.GetInputs(c.Param("address"))
+	outputTxes, _ := client.GetOutputs(c.Param("address"))
 
 	normalisedTxes := make([]models.Tx, 0)
-	for _, tx := range txs {
-		normalisedTx := Normalize(&tx)
-		normalisedTxes = append(normalisedTxes, normalisedTx)
+
+	for _, inputTx := range inputTxes {
+		normalisedInputTx := Normalize(&inputTx)
+		normalisedTxes = append(normalisedTxes, normalisedInputTx)
+	}
+	for _, outputTx := range outputTxes {
+		normalisedOutputTx := Normalize(&outputTx)
+		normalisedTxes = append(normalisedTxes, normalisedOutputTx)
 	}
 
 	page := models.Response(normalisedTxes)
@@ -42,9 +48,15 @@ func getTransactions(c *gin.Context) {
 // Normalize converts an Cosmos transaction into the generic model
 func Normalize(srcTx *Tx) (tx models.Tx) {
 	date, _ := time.Parse("2006-01-02T15:04:05Z", srcTx.Date)
-	fee, _ := util.DecimalToSatoshis(srcTx.TxData.TxContents.TxFee.FeeAmount[0].Quantity)
 	value, _ := util.DecimalToSatoshis(srcTx.TxData.TxContents.TxMessage[0].TxParticulars.TxAmount[0].Quantity)
 	block, _ := strconv.ParseUint(srcTx.Block, 10, 64)
+	// Sometimes fees can be null objects (in the case of no fees e.g. F044F91441C460EDCD90E0063A65356676B7B20684D94C731CF4FAB204035B41)
+	var fee string
+	if len(srcTx.TxData.TxContents.TxFee.FeeAmount) == 0 {
+		fee = "0"
+	} else {
+		fee, _ = util.DecimalToSatoshis(srcTx.TxData.TxContents.TxFee.FeeAmount[0].Quantity)
+	}
 	return models.Tx{
 		ID:    srcTx.ID,
 		Coin:  coin.ATOM,

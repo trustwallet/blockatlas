@@ -17,8 +17,30 @@ type Client struct {
 	BaseURL    string
 }
 
-// GetAddressTransactions - get all ATOM transactions for a given address, via sender
-func (c *Client) GetAddressTransactions(address string) (txs []Tx, err error) {
+// GetInputs - get all ATOM transactions for a given address, via recipient
+func (c *Client) GetInputs(address string) (txs []Tx, err error) {
+	uri := fmt.Sprintf("%s/txs?%s",
+		c.BaseURL,
+		url.Values{
+			"recipient": {address},
+			"page":      {strconv.FormatInt(1, 10)},
+			"limit":     {strconv.FormatInt(models.TxPerPage, 10)},
+		}.Encode())
+
+	fmt.Println(uri)
+
+	res, err := c.HTTPClient.Get(uri)
+	if err != nil {
+		logrus.WithError(err).Errorf("Cosmos: Failed to get transactions for address %s", address)
+	}
+
+	dec := json.NewDecoder(res.Body)
+	err = dec.Decode(&txs)
+	return
+}
+
+// GetOutputs - get all ATOM transactions for a given address, via sender
+func (c *Client) GetOutputs(address string) (txs []Tx, err error) {
 	uri := fmt.Sprintf("%s/txs?%s",
 		c.BaseURL,
 		url.Values{
@@ -27,7 +49,7 @@ func (c *Client) GetAddressTransactions(address string) (txs []Tx, err error) {
 			"limit":  {strconv.FormatInt(models.TxPerPage, 10)},
 		}.Encode())
 
-	//fmt.Println(uri)
+	fmt.Println(uri)
 
 	res, err := c.HTTPClient.Get(uri)
 	if err != nil {
