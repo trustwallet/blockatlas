@@ -18,6 +18,7 @@ import (
 	"github.com/trustwallet/blockatlas/platform/tezos"
 	"github.com/trustwallet/blockatlas/platform/tron"
 	"github.com/trustwallet/blockatlas/platform/vechain"
+	"github.com/trustwallet/blockatlas/platform/theta"
 )
 
 var loaders = map[string]func(gin.IRouter){
@@ -39,7 +40,7 @@ var loaders = map[string]func(gin.IRouter){
 	"tron":         tron.Setup,
 	"icon":         icon.Setup,
 	"cosmos":       cosmos.Setup,
-	"theta":        setupEmpty,
+	"theta":        theta.Setup,
 	"ontology":     setupEmpty,
 	"vechain":      vechain.Setup,
 }

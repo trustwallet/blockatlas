@@ -54,4 +54,5 @@ func loadDefaults() {
 	viper.SetDefault("tron.api", "https://api.trongrid.io/v1")
 	viper.SetDefault("vechain.api", "https://explore.veforge.com/api")
 	viper.SetDefault("cosmos.api", "https://stargate.cosmos.network")
+	viper.SetDefault("theta.api", "https://explorer.thetatoken.org:9000/api")
 }

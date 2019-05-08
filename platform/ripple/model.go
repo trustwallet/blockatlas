@@ -2,13 +2,14 @@ package ripple
 
 import (
 	"encoding/json"
+
 	"github.com/trustwallet/blockatlas/models"
 )
 
 type Amount struct {
 	Value    models.Amount `json:"string"`
-	Currency string `json:"string"`
-	Issuer   string `json:"string"`
+	Currency string        `json:"string"`
+	Issuer   string        `json:"string"`
 }
 
 type Response struct {
@@ -27,13 +28,13 @@ type Tx struct {
 }
 
 type Payment struct {
-	TransactionType string `json:"string"`
-	Flags           uint64 `json:"Flags"`
-	Sequence        uint64 `json:"Sequence"`
+	TransactionType string          `json:"string"`
+	Flags           uint64          `json:"Flags"`
+	Sequence        uint64          `json:"Sequence"`
 	Amount          json.RawMessage `json:"Amount"`
-	Fee             models.Amount `json:"Fee"`
-	SigningPubKey   string `json:"SigningPubKey"`
-	TxnSignature    string `json:"TxnSignature"`
-	Account         string `json:"Account"`
-	Destination     string `json:"Destination"`
+	Fee             models.Amount   `json:"Fee"`
+	SigningPubKey   string          `json:"SigningPubKey"`
+	TxnSignature    string          `json:"TxnSignature"`
+	Account         string          `json:"Account"`
+	Destination     string          `json:"Destination"`
 }
