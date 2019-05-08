@@ -2,39 +2,38 @@ package cosmos
 
 // Tx - Base transaction object. Always returned as part of an array
 type Tx struct {
-	Block  string `json:"height"`
-	Date   string `json:"timestamp"`
-	ID     string `json:"txhash"`
-	TxData TxData `json:"tx"`
+	Block string `json:"height"`
+	Date  string `json:"timestamp"`
+	ID    string `json:"txhash"`
+	Data  Data   `json:"tx"`
 }
 
-// TxData - "tx" sub object
-type TxData struct {
-	TxType     string     `json:"type"`
-	TxContents TxContents `json:"value"`
+// Data - "tx" sub object
+type Data struct {
+	Contents Contents `json:"value"`
 }
 
-// TxContents - amount, fee, and memo
-type TxContents struct {
-	TxMessage []TxMessage `json:"msg"`
-	TxFee     TxFee       `json:"fee"`
-	TxMemo    string      `json:"memo"`
+// Contents - amount, fee, and memo
+type Contents struct {
+	Message []Message `json:"msg"`
+	Fee     Fee       `json:"fee"`
+	Memo    string    `json:"memo"`
 }
 
-// TxMessage - an array that holds multiple 'particulars' entries. Possibly used for multiple transfers in one transaction?
-type TxMessage struct {
-	TxParticulars TxParticulars `json:"value"`
+// Message - an array that holds multiple 'particulars' entries. Possibly used for multiple transfers in one transaction?
+type Message struct {
+	Particulars Particulars `json:"value"`
 }
 
-// TxParticulars - from, to, and amount
-type TxParticulars struct {
+// Particulars - from, to, and amount
+type Particulars struct {
 	FromAddr string   `json:"from_address"`
 	ToAddr   string   `json:"to_address"`
-	TxAmount []Amount `json:"amount"`
+	Amount   []Amount `json:"amount"`
 }
 
-// TxFee - also references the "amount" struct
-type TxFee struct {
+// Fee - also references the "amount" struct
+type Fee struct {
 	FeeAmount []Amount `json:"amount"`
 }
 

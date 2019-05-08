@@ -1,12 +1,11 @@
 package main
 
 import (
-	"strings"
-
 	"github.com/fsnotify/fsnotify"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+	"strings"
 )
 
 func loadConfig(confPath string) {

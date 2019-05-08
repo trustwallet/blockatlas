@@ -313,6 +313,7 @@
 		"hex": "0x80000076",
 		"symbol": "ATOM",
 		"name": "Cosmos ATOM",
-		"link": "https://cosmos.network/"
+		"link": "https://cosmos.network/",
+		"decimals": 6
 	}
 ]
