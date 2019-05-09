@@ -16,7 +16,6 @@ type Tx struct {
 }
 
 type Account struct {
-	Address                 string        `json:"address"`
 	Available               models.Amount `json:"available"`
 	Locked                  models.Amount `json:"locked"`
 	Nonce                   string        `json:"nonce"`
@@ -25,13 +24,9 @@ type Account struct {
 }
 
 type GetAccountTransactionsResponse struct {
-	Message string `json:"message"`
 	Result  []Tx   `json:"result"`
-	Success bool   `json:"success"`
 }
 
 type GetAccountResponse struct {
-	Message string  `json:"message"`
 	Result  Account `json:"result"`
-	Success bool    `json:"success"`
 }

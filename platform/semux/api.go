@@ -52,7 +52,7 @@ func withClient(c *gin.Context) {
 // Normalize converts a semux transaction into the generic model
 func Normalize(srcTx *Tx) (tx models.Tx, err error) {
 	logrus.Info(srcTx)
-	blockNumber, err := strconv.ParseInt(srcTx.BlockNumber, 10, 64)
+	blockNumber, err := strconv.ParseUint(srcTx.BlockNumber, 10, 64)
 	if err != nil {
 		logrus.Error("Failed to convert TX blockNumber for Semux API")
 		return models.Tx{}, err
@@ -71,7 +71,7 @@ func Normalize(srcTx *Tx) (tx models.Tx, err error) {
 		From:  srcTx.From,
 		To:    srcTx.To,
 		Fee:   srcTx.Fee,
-		Block: uint64(blockNumber),
+		Block: blockNumber,
 		Meta: models.Transfer{
 			Value: srcTx.Value,
 		},
