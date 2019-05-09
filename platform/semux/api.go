@@ -26,10 +26,14 @@ func getTransactions(c *gin.Context) {
 		return
 	}
 
-	txs := make([]models.Tx, len(s))
-	for i, srcTx := range s {
-		txs[i] = Normalize(&srcTx)
+	var txs []models.Tx
+	for _, srcTx := range s {
+		tx, err := Normalize(&srcTx)
+		if err == nil {
+			txs = append(txs, tx)
+		}
 	}
+
 	page := models.Response(txs)
 	page.Sort()
 	c.JSON(http.StatusOK, &page)
@@ -46,18 +50,18 @@ func withClient(c *gin.Context) {
 }
 
 // Normalize converts a semux transaction into the generic model
-func Normalize(srcTx *Tx) (tx models.Tx) {
+func Normalize(srcTx *Tx) (tx models.Tx, err error) {
 	logrus.Info(srcTx)
 	blockNumber, err := strconv.ParseInt(srcTx.BlockNumber, 10, 64)
 	if err != nil {
 		logrus.Error("Failed to convert TX blockNumber for Semux API")
-		return models.Tx{}
+		return models.Tx{}, err
 	}
 
 	date, err := strconv.ParseInt(srcTx.Timestamp, 10, 64)
 	if err != nil {
 		logrus.Error("Failed to convert TX timestamp for Semux API")
-		return models.Tx{}
+		return models.Tx{}, err
 	}
 
 	return models.Tx{
@@ -71,7 +75,7 @@ func Normalize(srcTx *Tx) (tx models.Tx) {
 		Meta: models.Transfer{
 			Value: srcTx.Value,
 		},
-	}
+	}, nil
 }
 
 func apiError(c *gin.Context, err error) bool {

@@ -76,7 +76,11 @@ func TestNormalize(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	tx := Normalize(&getAccountTransactionsResponse.Result[0])
+	tx, err := Normalize(&getAccountTransactionsResponse.Result[0])
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	resJSON, err := json.Marshal(&tx)
 	if err != nil {
 		t.Fatal(err)
