@@ -21,7 +21,7 @@ const getAccountResponseStr = `
   },
   "success": true
 }
-`;
+`
 
 const getAccountTransactionsResponseStr = `
 {
