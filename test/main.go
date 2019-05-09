@@ -42,6 +42,7 @@ var addresses = map[string]Entry{
 	"tron":             {coin.TRX, "TMuA6YqfCeX8EhbfYEg5y7S4DqzSJireY9"},
 	"vechain":          {coin.VET, "0xB5e883349e68aB59307d1604555AC890fAC47128"},
 	"theta":            {coin.THETA, "0xac0eeb6ee3e32e2c74e14ac74155063e4f4f981f"},
+	"semux":            {coin.SEM, "0x8197987c401a3466ad678b2080b24838ebd95b41"},
 }
 
 func main() {
