@@ -42,7 +42,6 @@ func getTransactions(c *gin.Context) {
 func withClient(c *gin.Context) {
 	rpcURL := viper.GetString("semux.api")
 	if client == nil || rpcURL != client.BaseURL {
-		logrus.WithField("rpc", rpcURL).Info("Created semux RPC client")
 		client = &Client{BaseURL: rpcURL}
 		client.Init()
 	}
@@ -51,7 +50,6 @@ func withClient(c *gin.Context) {
 
 // Normalize converts a semux transaction into the generic model
 func Normalize(srcTx *Tx) (tx models.Tx, err error) {
-	logrus.Info(srcTx)
 	blockNumber, err := strconv.ParseUint(srcTx.BlockNumber, 10, 64)
 	if err != nil {
 		logrus.Error("Failed to convert TX blockNumber for Semux API")
