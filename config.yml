@@ -55,3 +55,7 @@ vechain:
 #[THETA] THETA: https://www.thetatoken.org/
 theta:
  api: https://explorer.thetatoken.org:9000/api
+
+#[SEMUX] SEMUX: https://semux.org/
+semux:
+ api: https://sempy.online/api
