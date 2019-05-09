@@ -9,15 +9,16 @@ import (
 	"github.com/trustwallet/blockatlas/models"
 	"github.com/trustwallet/blockatlas/platform/aion"
 	"github.com/trustwallet/blockatlas/platform/binance"
+	"github.com/trustwallet/blockatlas/platform/cosmos"
 	"github.com/trustwallet/blockatlas/platform/ethereum"
 	"github.com/trustwallet/blockatlas/platform/icon"
 	"github.com/trustwallet/blockatlas/platform/nimiq"
 	"github.com/trustwallet/blockatlas/platform/ripple"
 	"github.com/trustwallet/blockatlas/platform/stellar"
 	"github.com/trustwallet/blockatlas/platform/tezos"
+	"github.com/trustwallet/blockatlas/platform/theta"
 	"github.com/trustwallet/blockatlas/platform/tron"
 	"github.com/trustwallet/blockatlas/platform/vechain"
-	"github.com/trustwallet/blockatlas/platform/theta"
 )
 
 var loaders = map[string]func(gin.IRouter){
@@ -38,7 +39,7 @@ var loaders = map[string]func(gin.IRouter){
 	"aion":         aion.Setup,
 	"tron":         tron.Setup,
 	"icon":         icon.Setup,
-	"cosmos":       setupEmpty,
+	"cosmos":       cosmos.Setup,
 	"theta":        theta.Setup,
 	"ontology":     setupEmpty,
 	"vechain":      vechain.Setup,
