@@ -309,6 +309,14 @@
 		"link": "https://wavesplatform.com/"
 	},
 	{
+		"index": 7562605,
+		"hex": "0x8073656d",
+		"symbol": "SEM",
+		"name": "Semux",
+		"link": "https://semux.org/",
+		"decimals": 9
+	},
+	{
 		"index": 118,
 		"hex": "0x80000076",
 		"symbol": "ATOM",

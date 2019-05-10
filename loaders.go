@@ -14,6 +14,7 @@ import (
 	"github.com/trustwallet/blockatlas/platform/icon"
 	"github.com/trustwallet/blockatlas/platform/nimiq"
 	"github.com/trustwallet/blockatlas/platform/ripple"
+	"github.com/trustwallet/blockatlas/platform/semux"
 	"github.com/trustwallet/blockatlas/platform/stellar"
 	"github.com/trustwallet/blockatlas/platform/tezos"
 	"github.com/trustwallet/blockatlas/platform/theta"
@@ -43,6 +44,7 @@ var loaders = map[string]func(gin.IRouter){
 	"theta":        theta.Setup,
 	"ontology":     setupEmpty,
 	"vechain":      vechain.Setup,
+	"semux":        semux.Setup,
 }
 
 func loadPlatforms(router gin.IRouter) {

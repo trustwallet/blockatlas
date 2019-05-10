@@ -17,6 +17,7 @@ const (
 	XVG   = 77
 	GAME  = 101
 	ARK   = 111
+	XMR   = 128
 	ZEC   = 133
 	LSK   = 134
 	STEEM = 135
@@ -41,11 +42,13 @@ const (
 	XTZ   = 1729
 	ADA   = 1815
 	KIN   = 2017
+	QTUM  = 2301
 	DYN   = 3381
 	IOTA  = 4218
 	GO    = 6060
 	WAN   = 5718350
 	WAVES = 5741564
+	SEM   = 7562605
 	ATOM  = 118
 )
 
@@ -99,6 +102,7 @@ var Coins = map[uint]Coin{
 		Symbol:  "ICX",
 		Title:   "ICON",
 		Website: "https://icon.foundation/",
+		Decimals: 18,
 	},
 	XVG: {
 		Index:   XVG,
@@ -117,6 +121,12 @@ var Coins = map[uint]Coin{
 		Symbol:  "ARK",
 		Title:   "ARK",
 		Website: "https://ark.io",
+	},
+	XMR: {
+		Index: XMR,
+		Symbol: "XMR",
+		Title: "Monero",
+		Website: "https://getmonero.org/",
 	},
 	ZEC: {
 		Index:   ZEC,
@@ -272,6 +282,12 @@ var Coins = map[uint]Coin{
 		Website:  "https://www.kinecosystem.org/",
 		Decimals: 5,
 	},
+	QTUM: {
+		Index: QTUM,
+		Symbol: "QTUM",
+		Title: "QTUM",
+		Website: "https://qtum.org/en/",
+	},
 	DYN: {
 		Index:   DYN,
 		Symbol:  "DYN",
@@ -303,6 +319,14 @@ var Coins = map[uint]Coin{
 		Symbol:  "WAVES",
 		Title:   "Waves",
 		Website: "https://wavesplatform.com/",
+	},
+	SEM: {
+		Index: SEM,
+		Symbol: "SEM",
+		Title: "Semux",
+		Website: "https://semux.org/",
+		Decimals: 9,
+
 	},
 	ATOM: {
 		Index:   ATOM,

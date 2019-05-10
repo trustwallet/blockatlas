@@ -42,7 +42,8 @@ var addresses = map[string]Entry{
 	"tron":             {coin.TRX, "TMuA6YqfCeX8EhbfYEg5y7S4DqzSJireY9"},
 	"vechain":          {coin.VET, "0xB5e883349e68aB59307d1604555AC890fAC47128"},
 	"theta":            {coin.THETA, "0xac0eeb6ee3e32e2c74e14ac74155063e4f4f981f"},
-	"cosmos":           {coin.ATOM,  "cosmos1rw62phusuv9vzraezr55k0vsqssvz6ed52zyrl"} // Alternative with Memos: cosmos1txgkd2la7nm38rtsckx8jytu7rv8pd4w7amlhe
+  "semux":            {coin.SEM, "0x8197987c401a3466ad678b2080b24838ebd95b41"},
+	"cosmos":           {coin.ATOM,  "cosmos1rw62phusuv9vzraezr55k0vsqssvz6ed52zyrl"}, // Alternative with Memos: cosmos1txgkd2la7nm38rtsckx8jytu7rv8pd4w7amlhe
 }
 
 func main() {

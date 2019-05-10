@@ -55,4 +55,5 @@ func loadDefaults() {
 	viper.SetDefault("vechain.api", "https://explore.veforge.com/api")
 	viper.SetDefault("theta.api", "https://explorer.thetatoken.org:9000/api")
 	viper.SetDefault("cosmos.api", "https://stargate.cosmos.network")
+	viper.SetDefault("semux.api", "https://sempy.online/api")
 }
