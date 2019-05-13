@@ -72,3 +72,7 @@ ontology:
 # zilliqa:
 #  api: https://api.viewblock.io/v1/zilliqa
 #  key: YOUR_API_KEY
+
+#[IoTeX] IoTeX: https://iotex.io/
+iotex:
+ api: https://pharos.iotex.io/v1

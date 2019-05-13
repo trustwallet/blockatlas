@@ -47,6 +47,7 @@ var addresses = map[string]Entry{
 	"cosmos":       {coin.ATOM, "cosmos1rw62phusuv9vzraezr55k0vsqssvz6ed52zyrl"}, // Alternative with Memos: cosmos1txgkd2la7nm38rtsckx8jytu7rv8pd4w7amlhe
 	"ontology":     {coin.ONT, "AUyL4TZ1zFEcSKDJrjFnD7vsq5iFZMZqT7"},
 	"zilliqa":      {coin.ZIL, "0x88aF5BA10796D9091D6893eED4db23ef0bbbCa37"},
+	"iotex":        {coin.IOTX, "io1mwekae7qqwlr23220k5n9z3fmjxz72tuchra3m"},
 }
 
 func main() {

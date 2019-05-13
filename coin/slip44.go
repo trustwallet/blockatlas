@@ -28,6 +28,7 @@ const (
 	EOS   = 194
 	TRX   = 195
 	NIM   = 242
+	IOTX  = 304
 	ZIL   = 313
 	AION  = 425
 	THETA = 500
@@ -191,6 +192,13 @@ var Coins = map[uint]Coin{
 		Title:    "Nimiq",
 		Website:  "https://nimiq.com/",
 		Decimals: 5,
+	},
+	IOTX: {
+		Index: IOTX,
+		Symbol: "IOTX",
+		Title: "IoTeX",
+		Website: "https://iotex.io/",
+		Decimals: 18,
 	},
 	ZIL: {
 		Index:   ZIL,
