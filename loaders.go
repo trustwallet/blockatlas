@@ -13,6 +13,7 @@ import (
 	"github.com/trustwallet/blockatlas/platform/ethereum"
 	"github.com/trustwallet/blockatlas/platform/icon"
 	"github.com/trustwallet/blockatlas/platform/nimiq"
+	"github.com/trustwallet/blockatlas/platform/ontology"
 	"github.com/trustwallet/blockatlas/platform/ripple"
 	"github.com/trustwallet/blockatlas/platform/semux"
 	"github.com/trustwallet/blockatlas/platform/stellar"
@@ -42,9 +43,9 @@ var loaders = map[string]func(gin.IRouter){
 	"icon":         icon.Setup,
 	"cosmos":       cosmos.Setup,
 	"theta":        theta.Setup,
-	"ontology":     setupEmpty,
 	"vechain":      vechain.Setup,
 	"semux":        semux.Setup,
+	"ontology":     ontology.Setup,
 }
 
 func loadPlatforms(router gin.IRouter) {

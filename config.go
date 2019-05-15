@@ -56,4 +56,5 @@ func loadDefaults() {
 	viper.SetDefault("theta.api", "https://explorer.thetatoken.org:9000/api")
 	viper.SetDefault("cosmos.api", "https://stargate.cosmos.network")
 	viper.SetDefault("semux.api", "https://sempy.online/api")
+	viper.SetDefault("ontology.api", "https://explorer.ont.io/api/v1/explorer")
 }

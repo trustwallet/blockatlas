@@ -64,3 +64,6 @@ cosmos:
 semux:
  api: https://sempy.online/api
 
+#[ONTOLOGY] ONT: http://ont.io/
+ontology:
+  api: https://explorer.ont.io/api/v1/explorer
