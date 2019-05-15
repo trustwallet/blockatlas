@@ -30,8 +30,6 @@ func (c *Client) GetTxsOfAddress(address string, assetName string, page uint) (*
 	}
 	defer res.Body.Close()
 
-	print(res)
-
 	txPage := new(TxPage)
 	err = json.NewDecoder(res.Body).Decode(txPage)
 	return txPage, err
