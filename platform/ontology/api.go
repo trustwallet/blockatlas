@@ -15,9 +15,11 @@ var client = Client{
 	HTTPClient: http.DefaultClient,
 }
 
-const GovernanceContract = "AFmseVrdL9f9oyCzZefL9tG6UbviEH9ugK"
-const ONTAssetName = "ont"
-const ONGAssetName = "ong"
+const (
+	GovernanceContract = "AFmseVrdL9f9oyCzZefL9tG6UbviEH9ugK"
+    ONTAssetName = "ont"
+    ONGAssetName = "ong"
+)
 
 // Setup registers the Ontology route
 func Setup(router gin.IRouter) {
