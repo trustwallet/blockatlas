@@ -16,6 +16,8 @@ var client = Client{
 }
 
 const GovernanceContract = "AFmseVrdL9f9oyCzZefL9tG6UbviEH9ugK"
+const ONTAssetName = "ont"
+const ONGAssetName = "ong"
 
 // Setup registers the Ontology route
 func Setup(router gin.IRouter) {
@@ -28,7 +30,7 @@ func Setup(router gin.IRouter) {
 }
 
 func getTransactions(c *gin.Context) {
-	var token = c.DefaultQuery("token", "ont")
+	var token = c.DefaultQuery("token", ONTAssetName)
 	var address = c.Param("address")
 
 	txPage, error := client.GetTxsOfAddress(address, token, 1)
@@ -71,7 +73,7 @@ func Normalize(srcTx *Tx, assetName string) (tx models.Tx, ok bool) {
 	}
 
 	// Condition for transfer ONT
-	if assetName == "ont" {
+	if assetName == ONTAssetName {
 		i := strings.IndexRune(transfer.Amount, '.')
 		value := transfer.Amount[:i]
 
@@ -86,7 +88,7 @@ func Normalize(srcTx *Tx, assetName string) (tx models.Tx, ok bool) {
 	}
 
 	// Condition for transfer ONG
-	if assetName == "ong" {
+	if assetName == ONGAssetName {
 
 		var value string
 		if transfer.ToAddress == GovernanceContract {
