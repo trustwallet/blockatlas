@@ -26,7 +26,6 @@ func NewClient() *Client {
 
 func (c *Client) newRequest(method string, path string) (*http.Request, error) {
 	url := fmt.Sprintf("%s%s", c.baseURL, path)
-	fmt.Println(url)
 	req, error := http.NewRequest(method, url, nil)
 	req.Header.Set("X-APIKEY", c.apiKey)
 	return req, error
