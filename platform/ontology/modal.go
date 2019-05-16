@@ -1,7 +1,6 @@
 package ontology
 
 type TxPage struct {
-	// Action string `json:"action"`
 	Result Result `json:"result"`
 }
 
@@ -13,7 +12,6 @@ type Transfer struct {
 	Amount      string `json:amount`
 	FromAddress string `json:from_address`
 	ToAddress   string `json:to_address`
-	// AssetName   string `json:asset_name`
 }
 
 type Tx struct {
