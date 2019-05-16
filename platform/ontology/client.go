@@ -28,10 +28,15 @@ func (c *Client) GetTxsOfAddress(address, assetName string) (*TxPage, error) {
 	res, err := c.HTTPClient.Get(uri)
 	if err != nil {
 		logrus.WithError(err).Errorf("Ontology: Failed to get transactions for address %s for asset %s", address, assetName)
+		return nil, err
 	}
 	defer res.Body.Close()
 
 	txPage := new(TxPage)
 	err = json.NewDecoder(res.Body).Decode(txPage)
-	return txPage, err
+	if err != nil {
+		return nil, err
+	}
+
+	return txPage, nil
 }
