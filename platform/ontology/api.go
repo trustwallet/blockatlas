@@ -35,7 +35,7 @@ func getTransactions(c *gin.Context) {
 	var token = c.DefaultQuery("token", ONTAssetName)
 	var address = c.Param("address")
 
-	txPage, error := client.GetTxsOfAddress(address, token, 1)
+	txPage, error := client.GetTxsOfAddress(address, token)
 
 	if error != nil {
 		logrus.WithError(error).

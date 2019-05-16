@@ -13,15 +13,16 @@ type Client struct {
 	BaseURL    string
 }
 
+// Explorer API max returned transactions per page
 const TxPerPage = 20
 
-func (c *Client) GetTxsOfAddress(address, assetName string, page uint) (*TxPage, error) {
+func (c *Client) GetTxsOfAddress(address, assetName string) (*TxPage, error) {
 	uri := fmt.Sprintf("%s/address/%s/%s/%d/%d",
 		c.BaseURL,
 		address,
 		assetName,
 		TxPerPage,
-		page,
+		1,
 	)
 
 	res, err := c.HTTPClient.Get(uri)
