@@ -71,3 +71,4 @@ ontology:
 # [ZIL] Zilliqa: https://zilliqa.com
 zilliqa:
  api: https://api.viewblock.io/v1/zilliqa
+ key: test-api-key
