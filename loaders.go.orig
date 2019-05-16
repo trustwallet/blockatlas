@@ -46,8 +46,11 @@ var loaders = map[string]func(gin.IRouter){
 	"theta":        theta.Setup,
 	"vechain":      vechain.Setup,
 	"semux":        semux.Setup,
+<<<<<<< HEAD
 	"ontology":     ontology.Setup,
+=======
 	"zilliqa":      zilliqa.Setup,
+>>>>>>> b694eb5... Add zilliqa transactions
 }
 
 func loadPlatforms(router gin.IRouter) {
