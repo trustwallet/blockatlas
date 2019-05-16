@@ -35,22 +35,24 @@ func (c *Client) GetTxsOfAddress(address string) ([]Tx, error) {
 	path := fmt.Sprintf("/addresses/%s/txs", address)
 	req, _ := c.newRequest("GET", path)
 	res, err := c.client.Do(req)
-	txs := make([]Tx, 0)
 	if err != nil {
 		logrus.WithError(err).Error("Zilliqa: Failed to get transactions for ", address)
-		return txs, err
+		return nil, err
 	}
 	defer res.Body.Close()
-
+	
 	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
 		logrus.WithError(err).Error("Zilliqa: Error read response body")
-		return txs, err
+		return nil, err
 	}
-
+	
+	txs := make([]Tx, 0)
 	err = json.Unmarshal(body, &txs)
 	if err != nil {
 		logrus.WithError(err).Error("Zilliqa: Error decode json transaction response")
+		return nil, err
 	}
-	return txs, err
+
+	return txs, nil
 }
