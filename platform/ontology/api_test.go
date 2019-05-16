@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/models"
-	"github.com/trustwallet/blockatlas/platform/ontology"
 	"testing"
 )
 
@@ -138,9 +137,9 @@ func TestNormalize(t *testing.T) {
 		AssetName        string
 		Expected 		 models.Tx
 	}{
-		{ONTTransfer, ontology.ONTAssetName, expectedONTTransferTrx},
-		{ONGTransferOfONTTransfer, ontology.ONGAssetName, expectedONGTransferOfONTTransferTrx},
-		{ONGTransfer, ontology.ONGAssetName, expectedONGTransferTrx},
+		{ONTTransfer, ONTAssetName, expectedONTTransferTrx},
+		{ONGTransferOfONTTransfer, ONGAssetName, expectedONGTransferOfONTTransferTrx},
+		{ONGTransfer, ONGAssetName, expectedONGTransferTrx},
 	}
 	
 
