@@ -42,7 +42,7 @@ func getTxsOfAddress(address string) []models.Tx {
 
 	for _, srcTx := range txs {
 		tx := Normalize(&srcTx)
-		if len(txs) >= models.TxPerPage {
+		if len(normalized) >= models.TxPerPage {
 			continue
 		}
 		normalized = append(normalized, tx)
