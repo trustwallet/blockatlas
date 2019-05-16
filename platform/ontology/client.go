@@ -15,7 +15,7 @@ type Client struct {
 
 const TxPerPage = 20
 
-func (c *Client) GetTxsOfAddress(address string, assetName string, page uint) (*TxPage, error) {
+func (c *Client) GetTxsOfAddress(address, assetName string, page uint) (*TxPage, error) {
 	uri := fmt.Sprintf("%s/address/%s/%s/%d/%d",
 		c.BaseURL,
 		address,
