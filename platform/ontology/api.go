@@ -44,7 +44,7 @@ func getTransactions(c *gin.Context) {
 
 	var txs []models.Tx
 	for _, tx := range txPage.Result.TxnList {
-		if txNormalized, ok := Normalize(&tx, token); ok == true {
+		if txNormalized, ok := Normalize(&tx, token); ok {
 			txs = append(txs, txNormalized)
 		}
 	}
