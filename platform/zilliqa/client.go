@@ -5,36 +5,27 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"os"
 
 	"github.com/sirupsen/logrus"
 )
 
 type Client struct {
-	client  *http.Client
-	apiKey  string
-	baseURL string
+	HTTPClient *http.Client
+	BaseURL    string
+	APIKey     string
 }
 
-func NewClient() *Client {
-	apiKey := os.Getenv("ATLAS_ZILLIQA_KEY")
-	return &Client{
-		client: http.DefaultClient,
-		apiKey: apiKey,
-	}
-}
-
-func (c *Client) newRequest(method string, path string) (*http.Request, error) {
-	url := fmt.Sprintf("%s%s", c.baseURL, path)
+func (c *Client) newRequest(method, path string) (*http.Request, error) {
+	url := fmt.Sprintf("%s%s", c.BaseURL, path)
 	req, error := http.NewRequest(method, url, nil)
-	req.Header.Set("X-APIKEY", c.apiKey)
+	req.Header.Set("X-APIKEY", c.APIKey)
 	return req, error
 }
 
 func (c *Client) GetTxsOfAddress(address string) ([]Tx, error) {
 	path := fmt.Sprintf("/addresses/%s/txs", address)
 	req, _ := c.newRequest("GET", path)
-	res, err := c.client.Do(req)
+	res, err := c.HTTPClient.Do(req)
 	if err != nil {
 		logrus.WithError(err).Error("Zilliqa: Failed to get transactions for ", address)
 		return nil, err

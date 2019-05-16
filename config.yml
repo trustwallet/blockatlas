@@ -69,6 +69,6 @@ ontology:
   api: https://explorer.ont.io/api/v1/explorer
 
 # [ZIL] Zilliqa: https://zilliqa.com
-zilliqa:
- api: https://api.viewblock.io/v1/zilliqa
- key: test-api-key
+# zilliqa:
+#  api: https://api.viewblock.io/v1/zilliqa
+#  key: YOUR_API_KEY

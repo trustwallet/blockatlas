@@ -6,25 +6,27 @@ import (
 	"github.com/trustwallet/blockatlas/util"
 
 	"net/http"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 )
 
-var client = *NewClient()
+var client = Client{
+	HTTPClient: http.DefaultClient,
+}
 
 func Setup(router gin.IRouter) {
-	router.Use(util.RequireConfig("zilliqa.api"))
+	router.Use(util.RequireConfig("zilliqa.api", "zilliqa.key"))
 	router.Use(func(c *gin.Context) {
-		client.baseURL = viper.GetString("zilliqa.api")
+		client.BaseURL = viper.GetString("zilliqa.api")
+		client.APIKey = viper.GetString("zilliqa.key")
 		c.Next()
 	})
 	router.GET("/:address", getTransactions)
 }
 
 func getTransactions(c *gin.Context) {
-	address := strings.ToLower(c.Param("address"))
+	address := c.Param("address")
 	txs := getTxsOfAddress(address)
 	page := models.Response(txs)
 
