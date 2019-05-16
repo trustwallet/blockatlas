@@ -57,4 +57,5 @@ func loadDefaults() {
 	viper.SetDefault("cosmos.api", "https://stargate.cosmos.network")
 	viper.SetDefault("semux.api", "https://sempy.online/api")
 	viper.SetDefault("ontology.api", "https://explorer.ont.io/api/v1/explorer")
+	viper.SetDefault("zilliqa.api", "https://api.viewblock.io/v1/zilliqa")
 }

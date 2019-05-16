@@ -21,6 +21,7 @@ import (
 	"github.com/trustwallet/blockatlas/platform/theta"
 	"github.com/trustwallet/blockatlas/platform/tron"
 	"github.com/trustwallet/blockatlas/platform/vechain"
+	"github.com/trustwallet/blockatlas/platform/zilliqa"
 )
 
 var loaders = map[string]func(gin.IRouter){
@@ -46,6 +47,7 @@ var loaders = map[string]func(gin.IRouter){
 	"vechain":      vechain.Setup,
 	"semux":        semux.Setup,
 	"ontology":     ontology.Setup,
+	"zilliqa":      zilliqa.Setup,
 }
 
 func loadPlatforms(router gin.IRouter) {

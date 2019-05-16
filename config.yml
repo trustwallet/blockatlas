@@ -48,22 +48,27 @@ icon:
 #  api: https://api.trongrid.io/v1
 #  token: my-access-token
 
-#[VET] VeChain: https://www.vechain.org
+# [VET] VeChain: https://www.vechain.org
 vechain:
  api: https://explore.veforge.com/api
 
-#[THETA] THETA: https://www.thetatoken.org/
+# [THETA] THETA: https://www.thetatoken.org/
 theta:
  api: https://explorer.thetatoken.org:9000/api
- 
-#[ATOM] Cosmos: https://cosmos.network/
+
+# [ATOM] Cosmos: https://cosmos.network/
 cosmos:
  api: https://stargate.cosmos.network
 
-#[SEMUX] SEMUX: https://semux.org/
+# [SEMUX] SEMUX: https://semux.org/
 semux:
  api: https://sempy.online/api
 
-#[ONTOLOGY] ONT: https://ont.io/
+# [ONTOLOGY] ONT: https://ont.io/
 ontology:
   api: https://explorer.ont.io/api/v1/explorer
+
+# [ZIL] Zilliqa: https://zilliqa.com
+# zilliqa:
+#  api: https://api.viewblock.io/v1/zilliqa
+#  key: YOUR_API_KEY
