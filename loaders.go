@@ -12,6 +12,7 @@ import (
 	"github.com/trustwallet/blockatlas/platform/cosmos"
 	"github.com/trustwallet/blockatlas/platform/ethereum"
 	"github.com/trustwallet/blockatlas/platform/icon"
+	"github.com/trustwallet/blockatlas/platform/iotex"
 	"github.com/trustwallet/blockatlas/platform/nimiq"
 	"github.com/trustwallet/blockatlas/platform/ontology"
 	"github.com/trustwallet/blockatlas/platform/ripple"
@@ -48,6 +49,7 @@ var loaders = map[string]func(gin.IRouter){
 	"semux":        semux.Setup,
 	"ontology":     ontology.Setup,
 	"zilliqa":      zilliqa.Setup,
+	"iotex":        iotex.Setup,
 }
 
 func loadPlatforms(router gin.IRouter) {

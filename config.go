@@ -58,4 +58,5 @@ func loadDefaults() {
 	viper.SetDefault("semux.api", "https://sempy.online/api")
 	viper.SetDefault("ontology.api", "https://explorer.ont.io/api/v1/explorer")
 	viper.SetDefault("zilliqa.api", "https://api.viewblock.io/v1/zilliqa")
+	viper.SetDefault("iotex.api", "https://pharos.iotex.io/v1")
 }
