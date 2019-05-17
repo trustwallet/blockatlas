@@ -27,11 +27,15 @@ func (c *Client) GetTxsOfAddress(address string) (*Response, error) {
 	)
 
 	res, err := c.HTTPClient.Get(uri)
-	defer res.Body.Close()
+	if res != nil {
+		defer res.Body.Close()
+	}
+
 	if err != nil {
 		logrus.WithError(err).Errorf("IOTEX: Failed to get transactions for address %s", address)
 		return nil, models.ErrSourceConn
 	}
+
 	if res.StatusCode != http.StatusOK {
 		logrus.WithError(err).Error(res.Status)
 		return nil, fmt.Errorf("%s", res.Status)
@@ -41,5 +45,6 @@ func (c *Client) GetTxsOfAddress(address string) (*Response, error) {
 	if err := json.NewDecoder(res.Body).Decode(&act); err != nil {
 		return nil, models.ErrNotFound
 	}
+
 	return &act, nil
 }
