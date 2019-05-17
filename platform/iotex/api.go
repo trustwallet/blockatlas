@@ -7,8 +7,6 @@ import(
 
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
-	"github.com/iotexproject/go-pkgs/crypto"
-	"github.com/iotexproject/iotex-address/address"
 
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/models"
@@ -50,7 +48,7 @@ func getTransactions(c *gin.Context) {
 
 // Normalize converts an Iotex transaction into the generic model
 func Normalize(trx *ActionInfo) (models.Tx, bool) {
-	pk, err := crypto.BytesToPublicKey(trx.Action.SenderPubKey)
+	date, err := time.Parse(time.RFC3339, trx.Timestamp)
 	if err != nil {
 		return models.Tx{
 			Coin: coin.IOTX,
@@ -58,13 +56,19 @@ func Normalize(trx *ActionInfo) (models.Tx, bool) {
 			Error: err.Error(),
 		}, false
 	}
-	from, _ := address.FromBytes(pk.Hash())
-	date, err := time.Parse(time.RFC3339, trx.Timestamp)
+	height, err := strconv.ParseInt(trx.BlkHeight, 10, 64)
 	if err != nil {
 		return models.Tx{
 			Coin: coin.IOTX,
 			Status: models.StatusFailed,
 			Error: err.Error(),
+		}, false
+	}
+	if height <= 0 {
+		return models.Tx{
+			Coin: coin.IOTX,
+			Status: models.StatusFailed,
+			Error: "invalid block height",
 		}, false
 	}
 	nonce, err := strconv.ParseInt(trx.Action.Core.Nonce, 10, 64)
@@ -79,11 +83,11 @@ func Normalize(trx *ActionInfo) (models.Tx, bool) {
 	return models.Tx{
 		ID       : trx.ActHash,
 		Coin     : coin.IOTX,
-		From     : from.String(),
+		From     : trx.Sender,
 		To       : trx.Action.Core.Transfer.Recipient,
 		Fee      : models.Amount(TransferFee),
 		Date     : date.Unix(),
-		Block    : 0,
+		Block    : uint64(height),
 		Status   : models.StatusCompleted,
 		Sequence : uint64(nonce),
 		Type     : models.TxTransfer,
