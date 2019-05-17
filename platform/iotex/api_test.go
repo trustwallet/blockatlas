@@ -39,6 +39,7 @@ transfer = `
       "blkHash":"42ace162549ec8d44641d7da7184d1e12ebd4111b0d2888a2d97d88a7c4fa04b",
       "blkHeight":"96202",
       "sender":"io1mwekae7qqwlr23220k5n9z3fmjxz72tuchra3m",
+      "gasFee":"10000000000000000",
       "timestamp":"2019-05-03T06:09:00Z"
     },
     {
@@ -63,6 +64,7 @@ transfer = `
       "blkHash":"42ace162549ec8d44641d7da7184d1e12ebd4111b0d2888a2d97d88a7c4fa04b",
       "blkHeight":"0",
       "sender":"io1mwekae7qqwlr23220k5n9z3fmjxz72tuchra3m",
+      "gasFee":"10000000000000000",
       "timestamp":"2019-05-03T06:09:00Z"
     },
     {
@@ -87,6 +89,7 @@ transfer = `
       "blkHash":"42ace162549ec8d44641d7da7184d1e12ebd4111b0d2888a2d97d88a7c4fa04b",
       "blkHeight":"96202",
       "sender":"io1mwekae7qqwlr23220k5n9z3fmjxz72tuchra3m",
+      "gasFee":"10000000000000000",
       "timestamp":"2019-05-03T06:09:00Z"
     }
   ]
@@ -100,7 +103,7 @@ var expected = []models.Tx {
 		Coin     : coin.IOTX,
 		From     : "io1mwekae7qqwlr23220k5n9z3fmjxz72tuchra3m",
 		To       : "io1mwekae7qqwlr23220k5n9z3fmjxz72tuchra3m",
-		Fee      : models.Amount(TransferFee),
+		Fee      : models.Amount("10000000000000000"),
 		Date     : int64(1556863740),
 		Block    : 96202,
 		Status   : models.StatusCompleted,

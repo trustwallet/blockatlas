@@ -1,7 +1,5 @@
 package iotex
 
-const TransferFee = "10000000000000000"
-
 type Response struct {
 	Total      uint64        `json:"total"`
 	ActionInfo []*ActionInfo `json:"actionInfo"`
@@ -13,6 +11,7 @@ type ActionInfo struct {
 	BlkHash   string  `json:"blkHash"`
 	BlkHeight string  `json:"blkHeight"`
 	Sender    string  `json:"sender"`
+	GasFee    string  `json:"gasFee"`
 	Timestamp string  `json:"timestamp"`
 }
 

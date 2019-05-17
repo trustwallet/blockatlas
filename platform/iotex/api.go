@@ -85,7 +85,7 @@ func Normalize(trx *ActionInfo) (models.Tx, bool) {
 		Coin     : coin.IOTX,
 		From     : trx.Sender,
 		To       : trx.Action.Core.Transfer.Recipient,
-		Fee      : models.Amount(TransferFee),
+		Fee      : models.Amount(trx.GasFee),
 		Date     : date.Unix(),
 		Block    : uint64(height),
 		Status   : models.StatusCompleted,
