@@ -1,6 +1,7 @@
 # Block Atlas by Trust Wallet
 
 [![Build Status](https://dev.azure.com/TrustWallet/Trust%20BlockAtlas/_apis/build/status/TrustWallet.blockatlas?branchName=master)](https://dev.azure.com/TrustWallet/Trust%20BlockAtlas/_build/latest?definitionId=27&branchName=master)
+[![codebeat badge](https://codebeat.co/badges/543659a5-0da7-4282-8fb2-060e2da1340b)](https://codebeat.co/projects/github-com-trustwallet-blockatlas-master)
 
 Clean explorer API for crypto currencies.
 
