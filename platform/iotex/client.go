@@ -16,12 +16,12 @@ type Client struct {
 	BaseURL    string
 }
 
-func (c *Client) GetTxsOfAddress(address string) (*Response, error) {
+func (c *Client) GetTxsOfAddress(address string, start int64) (*Response, error) {
 	uri := fmt.Sprintf("%s/actions/addr/%s?%s",
 		c.BaseURL,
 		address,
 		url.Values{
-			"start": {"0"},
+			"start": {strconv.FormatInt(start, 10)},
 			"count": {strconv.FormatInt(models.TxPerPage, 10)},
 		}.Encode(),
 	)
