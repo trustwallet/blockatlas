@@ -16,12 +16,12 @@ type Client struct {
 	BaseURL    string
 }
 
-func (c *Client) GetTxsOfAddress(address string, start int64) (*Response, error) {
+func (c *Client) GetTxsOfAddress(address string) (*Response, error) {
 	uri := fmt.Sprintf("%s/actions/addr/%s?%s",
 		c.BaseURL,
 		address,
 		url.Values{
-			"start": {strconv.FormatInt(start, 10)},
+			"start": {"0"},
 			"count": {strconv.FormatInt(models.TxPerPage, 10)},
 		}.Encode(),
 	)
@@ -36,12 +36,13 @@ func (c *Client) GetTxsOfAddress(address string, start int64) (*Response, error)
 		return nil, models.ErrSourceConn
 	}
 
+	var act Response
 	if res.StatusCode != http.StatusOK {
 		logrus.WithError(err).Error(res.Status)
-		return nil, fmt.Errorf("%s", res.Status)
+
+		return &act, nil
 	}
 
-	var act Response
 	if err := json.NewDecoder(res.Body).Decode(&act); err != nil {
 		return nil, models.ErrNotFound
 	}

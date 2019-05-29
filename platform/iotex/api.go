@@ -1,9 +1,6 @@
 package iotex
 
 import(
-	"encoding/json"
-	"fmt"
-	"io/ioutil"
 	"net/http"
 	"strconv"
 	"time"
@@ -31,35 +28,7 @@ func Setup(router gin.IRouter) {
 }
 
 func getTransactions(c *gin.Context) {
-	// get total number of txs
-	uri := fmt.Sprintf("%s/accounts/%s",
-		client.BaseURL,
-		c.Param("address"))
-	res, err := client.HTTPClient.Get(uri)
-	if apiError(c, err) {
-		return
-	}
-	defer res.Body.Close()
-
-	bytes, err := ioutil.ReadAll(res.Body)
-	if apiError(c, err) {
-		return
-	}
-
-	var account AccountInfo
-	if apiError(c, json.Unmarshal(bytes, &account)) {
-		return
-	}
-	numActions, err := strconv.ParseInt(account.AccountMeta.NumActions, 10, 64)
-	if apiError(c, err) {
-		return
-	}
-	start := int64(0)
-	if numActions >= models.TxPerPage {
-		start = numActions - models.TxPerPage
-	}
-
-	trxs, err := client.GetTxsOfAddress(c.Param("address"), start)
+	trxs, err := client.GetTxsOfAddress(c.Param("address"))
 	if apiError(c, err) {
 		return
 	}

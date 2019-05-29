@@ -1,17 +1,5 @@
 package iotex
 
-type AccountInfo struct {
-	AccountMeta *AccountMeta `json:"accountMeta"`
-}
-
-type AccountMeta struct {
-	Address      string   `json:"address"`
-	Balance      string   `json:"balance"`
-	Nonce        string   `json:"nonce"`
-	PendingNonce string   `json:"pendingNonce"`
-	NumActions   string   `json:"numActions"`
-}
-
 type Response struct {
 	ActionInfo []*ActionInfo `json:"actionInfo"`
 }

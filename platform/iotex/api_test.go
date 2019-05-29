@@ -3,9 +3,7 @@ package iotex
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/http"
-	"strconv"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -142,22 +140,6 @@ func TestClient(t *testing.T) {
 	assert.NoError(err)
 	defer res.Body.Close()
 	assert.Equal(http.StatusOK, res.StatusCode)
-
-	// check one sample account
-	uri = fmt.Sprintf("%s/accounts/%s",
-		c.BaseURL,
-		"io1066kus4vlyvk0ljql39fzwqw0k22h7j8wmef3n")
-	res, err = c.HTTPClient.Get(uri)
-	assert.NoError(err)
-	defer res.Body.Close()
-	bytes, err := ioutil.ReadAll(res.Body)
-	assert.NoError(err)
-	var account AccountInfo
-	assert.NoError(json.Unmarshal(bytes, &account))
-	assert.Equal("io1066kus4vlyvk0ljql39fzwqw0k22h7j8wmef3n", account.AccountMeta.Address)
-	numActions, err := strconv.ParseInt(account.AccountMeta.NumActions, 10, 64)
-	assert.NoError(err)
-	assert.True(numActions >= 13)
 }
 
 func TestNormalize(t *testing.T) {
