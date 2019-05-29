@@ -4,6 +4,14 @@ type Response struct {
 	ActionInfo []*ActionInfo `json:"actionInfo"`
 }
 
+type AccountInfo struct {
+	AccountMeta *AccountMeta `json:"accountMeta"`
+}
+
+type AccountMeta struct {
+	NumActions   string   `json:"numActions"`
+}
+
 type ActionInfo struct {
 	Action    *Action `json:"action"`
 	ActHash   string  `json:"actHash"`

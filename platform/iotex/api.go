@@ -28,7 +28,16 @@ func Setup(router gin.IRouter) {
 }
 
 func getTransactions(c *gin.Context) {
-	trxs, err := client.GetTxsOfAddress(c.Param("address"))
+	address := c.Param("address")
+	var start int64
+
+	totalTrx, err := client.GetAddressTotalTransactions(address)
+
+	if totalTrx >= models.TxPerPage {
+		start = totalTrx - models.TxPerPage
+	}
+
+	trxs, err := client.GetTxsOfAddress(address, start)
 	if apiError(c, err) {
 		return
 	}
