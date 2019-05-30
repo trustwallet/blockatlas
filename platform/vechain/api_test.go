@@ -45,7 +45,7 @@ var expectedTransferTrx = models.Tx{
 	Type:   "transfer",
 	Status: "completed",
 	Block: 2620166,
-	Sequence: 3915776532023472767,
+	Sequence: 2620166,
 	Meta:  models.Transfer{
 		Value: "770000000000000000000",
 	},

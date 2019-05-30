@@ -8,7 +8,6 @@ import (
 	"math/big"
 	"net/http"
 	"strings"
-	"strconv"
 	"sync"
 
 	"github.com/gin-gonic/gin"
@@ -104,7 +103,7 @@ func GetAddressTransactions(address string, token string) []models.Tx {
 func NormalizeTransfer(receipt *TransferReceipt, clause *Clause) (tx models.Tx, ok bool) {
 	fee := models.Amount(hexaToIntegerString(receipt.Receipt.Paid))
 	time := receipt.Timestamp
-	nonce, _ := strconv.ParseUint(hexaToIntegerString(receipt.Nonce), 10, 64)
+	block := receipt.Block
 
 	return models.Tx{
 		ID:       receipt.ID,
@@ -114,8 +113,8 @@ func NormalizeTransfer(receipt *TransferReceipt, clause *Clause) (tx models.Tx, 
 		Fee:      fee,
 		Date:     int64(time),
 		Type:     models.TxTransfer,
-		Block:    receipt.Block,
-		Sequence: nonce,
+		Block:    block,
+		Sequence: block,
 		Meta: models.Transfer{
 			Value: models.Amount(hexaToIntegerString(clause.Value)),
 		},
