@@ -49,6 +49,43 @@ type TxPage struct {
 	Txs  []Tx `json:"txArray"`
 }
 
+type Receipt struct {
+	TxReceipts  TxReceipt `json:"tx"`
+}
+
+type TxReceipt struct {
+	Value Value `json:"value"`
+}
+
+type Value struct {
+	Msg []Msg `json:"msg"`
+}
+
+type Msg struct {
+	MsgValue MsgValue `json:"value"`
+}
+
+type MsgValue struct {
+	Inputs  []Input  `json:"inuts"`
+	Outputs []Output `json:"outputs"`
+}
+
+type Input struct {
+	Address string `json:"address"`
+	Coins   []Coin `json:"coin"`
+}
+
+type Output struct {
+	Address string `json:"address"`
+	Coins   []Coin `json:"coin"`
+}
+
+type Coin struct {
+	Amount string `json:"amoun"`
+	Denom  string `json:"denom"`
+}
+
+
 func (e *Error) Error() string {
 	return fmt.Sprintf("%d: %s", e.Code, e.Message)
 }

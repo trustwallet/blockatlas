@@ -12,19 +12,20 @@ import (
 // TODO Headers + rate limiting
 
 type Client struct {
-	HTTPClient *http.Client
-	BaseURL    string
+	HTTPClient         *http.Client
+	ExplorerBaseURL    string
+	RPCBaseURL         string
 }
 
 func (c *Client) GetTxsOfAddress(address string, token string) (*TxPage, error) {
 	uri := fmt.Sprintf("%s/txs?%s",
-		c.BaseURL,
+		c.ExplorerBaseURL,
 		url.Values{
 			"address": {address},
 			"rows":    {"100"},
 			"page":    {"1"},
 		}.Encode())
-
+		println(uri)
 	res, err := c.HTTPClient.Get(uri)
 	if err != nil {
 		logrus.WithError(err).Error("Binance: Failed to get transactions")
@@ -45,6 +46,26 @@ func (c *Client) GetTxsOfAddress(address string, token string) (*TxPage, error) 
 	return stx, nil
 }
 
+func (c *Client) getTransactionReceipt(hash string) (*Receipt, error) {
+	url := fmt.Sprintf("%s/tx/%s?format=json", c.RPCBaseURL, hash)
+	println(url)
+	res, err := c.HTTPClient.Get(url)
+	if err != nil {
+		return nil, err
+	}
+	defer res.Body.Close()
+
+	recp := new(Receipt)
+	err = json.NewDecoder(res.Body).Decode(recp)
+	if err != nil {
+		logrus.WithError(err).Error("Binance: Failed to decode transaction receipt API response")
+		return nil, models.ErrSourceConn
+	}
+
+	return recp, nil
+
+}
+ 
 func getHTTPError(res *http.Response, desc string) error {
 	var sErr Error
 	err := json.NewDecoder(res.Body).Decode(&sErr)

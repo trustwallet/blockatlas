@@ -10,6 +10,7 @@ gin:
 #       Binance Chain: https://explorer.binance.org
 binance:
   api: https://explorer.binance.org/api/v1
+  rpc: https://dex.binance.org/api/v1
 
 # [NIM] Nimiq: https://nimiq.com
 #nimiq:
