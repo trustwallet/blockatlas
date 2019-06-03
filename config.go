@@ -45,6 +45,7 @@ func loadDefaults() {
 
 	// All platforms with public RPC endpoints
 	viper.SetDefault("binance.api", "https://explorer.binance.org/api/v1")
+	viper.SetDefault("binance.rpc", "https://dex.binance.org/api/v1")
 	viper.SetDefault("ripple.api", "https://data.ripple.com/v2")
 	viper.SetDefault("stellar.api", "https://horizon.stellar.org")
 	viper.SetDefault("kin.api", "https://horizon.kinfederation.com/")
