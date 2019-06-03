@@ -55,7 +55,7 @@ func Normalize(srcTx *Tx, token, address string) (tx models.Tx, ok bool) {
 	hash := srcTx.Hash
 	value := util.DecimalExp(string(srcTx.Value), 8)
 	fee := util.DecimalExp(string(srcTx.Fee), 8)
-
+	asset := srcTx.Asset
 	tx = models.Tx{
 		ID:    hash,
 		Coin:  coin.BNB,
@@ -66,7 +66,7 @@ func Normalize(srcTx *Tx, token, address string) (tx models.Tx, ok bool) {
 	}
 
 	// Condition for native transfer (BNB)
-	if srcTx.Asset == "BNB" && srcTx.Type == "TRANSFER" && token == "" {
+	if asset == "BNB" && srcTx.Type == TRANSFER && token == "" {
 		tx.From = srcTx.FromAddr
 		tx.To = srcTx.ToAddr
 		tx.Meta = models.Transfer{
@@ -76,7 +76,7 @@ func Normalize(srcTx *Tx, token, address string) (tx models.Tx, ok bool) {
 	}
 
 	// Condiiton for native token transfer
-	if srcTx.Asset == token && srcTx.Type == "TRANSFER" {
+	if (asset != "" && asset == token) && srcTx.Type == TRANSFER {
 		tx.From = srcTx.FromAddr
 		tx.To = srcTx.ToAddr
 		tx.Meta = models.NativeTokenTransfer{
@@ -91,43 +91,82 @@ func Normalize(srcTx *Tx, token, address string) (tx models.Tx, ok bool) {
 		return tx, true
 	}
 
-	
-	// Condition for native transfer
-	// Condition for multisend
-	receipt, _ := client.getTransactionReceipt(hash)
+	// Conditin where explorer does not return sender/recepient for multisend transaction
+	if (srcTx.FromAddr == "" || srcTx.ToAddr == "") && srcTx.Type == TRANSFER {
+		receipt, _ := client.getTransactionReceipt(hash)
+		zeroMsgValue := receipt.TxReceipts.Value.Msg[0].MsgValue
+		zeroInput := zeroMsgValue.Inputs[0]
+		outputs := zeroMsgValue.Outputs
+		zeroOutputAdress := outputs[0].Address
 
-	outputs := receipt.TxReceipts.Value.Msg[0].MsgValue.Outputs
-	zeroInput := receipt.TxReceipts.Value.Msg[0].MsgValue.Inputs[0]
-	zeroOutputAdress := outputs[0].Address
-	if (srcTx.FromAddr == "" || srcTx.ToAddr == "") && zeroInput.Coins[0].Denom == "BNB" {
-		if zeroInput.Address == address {
-			tx.From = address
-			tx.To = zeroOutputAdress  // Pick 0 index as main receipient
+		// Condition for native transfer
+		if zeroInput.Coins[0].Denom == "BNB" {
+			if zeroInput.Address == address {
+				tx.From = address
+				tx.To = zeroOutputAdress  // Pick 0 index as main receipient
+				tx.Meta = models.Transfer{
+					Value: models.Amount(zeroInput.Coins[0].Amount),
+				}
+				return tx, true
+			}
+
+			coin := getCoinOutput(outputs, address)
+			tx.To = address
+			tx.From = zeroOutputAdress
 			tx.Meta = models.Transfer{
-				Value: models.Amount(zeroInput.Coins[0].Amount),
+				Value: models.Amount(coin.Amount),
 			}
 			return tx, true
 		}
 
-		tx.To = address
-		tx.From = zeroOutputAdress
-		tx.Meta = models.Transfer{
-			Value: models.Amount(getAmount(outputs, address)),
+		// Condition for token_transfer
+		if zeroInput.Coins[0].Denom != "BNB" {
+			if zeroInput.Address == address {
+				tx.From = address
+				tx.To = zeroOutputAdress  // Pick 0 index as main receipient
+				tx.Meta = models.TokenTransfer{
+					Name: "", // TODO: Replace with actual name
+					Symbol: zeroInput.Coins[0].Denom,
+					TokenID: "", // TODO: Replace with actual tokenID
+					Decimals: 8,
+					From: address,
+					To: zeroOutputAdress,
+					Value: models.Amount(zeroInput.Coins[0].Amount),
+				}
+				return tx, true
+			}
+
+			coin := getCoinOutput(outputs, address)
+			tx.From = zeroOutputAdress
+			tx.To = address
+			tx.Meta = models.TokenTransfer{
+				Name: "", // TODO: Replace with actual name
+				Symbol: coin.Denom,
+				TokenID: "", // TODO: Replace with actual tokenID
+				Decimals: 8,
+				From: zeroOutputAdress,
+				To: address,
+				Value: models.Amount(coin.Amount),
+
+			}
+
+			return tx, true
 		}
-		return tx, true
 	}
 
 	return tx, false
 }
 
-func getAmount(outputs []Output, address string) string {
+func getCoinOutput(outputs []Output, address string) Coin {
+	var coin Coin
 	for _, out := range outputs {
 		if out.Address == address {
-			return out.Coins[0].Amount
+			coin = out.Coins[0]
+			continue
 		}
 	}
 
-	return "0"
+	return coin
 }
 
 func apiError(c *gin.Context, err error) bool {
