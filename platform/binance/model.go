@@ -5,6 +5,10 @@ import (
 	"fmt"
 )
 
+const (
+	TRANSFER = "TRANSFER"
+)
+
 type Account struct {
 	AccountNumber int       `json:"account_number"`
 	Address       string    `json:"address"`
@@ -50,6 +54,7 @@ type TxPage struct {
 }
 
 type Receipt struct {
+	Hash        string    `json:"hash"`
 	TxReceipts  TxReceipt `json:"tx"`
 }
 
@@ -66,25 +71,24 @@ type Msg struct {
 }
 
 type MsgValue struct {
-	Inputs  []Input  `json:"inuts"`
+	Inputs  []Input  `json:"inputs"`
 	Outputs []Output `json:"outputs"`
 }
 
 type Input struct {
 	Address string `json:"address"`
-	Coins   []Coin `json:"coin"`
+	Coins   []Coin `json:"coins"`
 }
 
 type Output struct {
 	Address string `json:"address"`
-	Coins   []Coin `json:"coin"`
+	Coins   []Coin `json:"coins"`
 }
 
 type Coin struct {
-	Amount string `json:"amoun"`
+	Amount string `json:"amount"`
 	Denom  string `json:"denom"`
 }
-
 
 func (e *Error) Error() string {
 	return fmt.Sprintf("%d: %s", e.Code, e.Message)
