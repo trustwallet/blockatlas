@@ -6,8 +6,8 @@ gin:
   # If set, HTTP Forwarded headers will be respected
   reverse_proxy: false
 
-# [BNB] Binance DEX: https://wallet.binance.org
-#       Binance Chain: https://explorer.binance.org
+# [BNB] Binance DEX: https://binance.org
+#       Binance DEX Explorer: https://explorer.binance.org
 binance:
   api: https://explorer.binance.org/api/v1
   rpc: https://dex.binance.org/api/v1

@@ -89,6 +89,7 @@ type test struct {
 	apiResponse string
 	expected    *models.Tx
 	token       string
+	address     string
 }
 
 func TestNormalize(t *testing.T) {
@@ -97,12 +98,14 @@ func TestNormalize(t *testing.T) {
 		apiResponse: nativeTransferTransaction,
 		expected:    &transferDst,
 		token:       "",
+		address:     "",
 	})
 	testNormalize(t, &test{
 		name:        "native token transfer",
 		apiResponse: nativeTokenTransferTransaction,
 		expected:    &nativeTransferDst,
 		token:       "YLC-D8B",
+		address:     "",
 	})
 }
 
@@ -114,9 +117,9 @@ func testNormalize(t *testing.T, _test *test) {
 		return
 	}
 
-	tx, ok := Normalize(&srcTx, _test.token)
+	tx, ok := Normalize(&srcTx, _test.token, _test.address)
 	if !ok {
-		t.Errorf("transfer: tx could not be normalized")
+		t.Errorf("Binance: Transfer could not be normalized")
 	}
 
 	resJSON, err := json.Marshal(&tx)
@@ -132,6 +135,6 @@ func testNormalize(t *testing.T, _test *test) {
 	if !bytes.Equal(resJSON, dstJSON) {
 		println(string(resJSON))
 		println(string(dstJSON))
-		t.Error("transfer: tx don't equal")
+		t.Error("Binance: transactions not equal")
 	}
 }
