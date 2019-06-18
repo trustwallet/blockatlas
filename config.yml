@@ -8,7 +8,12 @@ gin:
 
 # The transaction watcher
 observer:
+  # Redis Subscription Database
   redis: localhost:6379
+  # Smallest possible block polling interval
+  min_poll: 250ms
+  # Don't request blocks older than this
+  backlog: 3h
 
 # [BNB] Binance DEX: https://wallet.binance.org
 #       Binance Chain: https://explorer.binance.org

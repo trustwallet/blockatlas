@@ -10,10 +10,10 @@ import (
 )
 
 var Cmd = cobra.Command{
-	Use:     "api <bind>",
-	Short:   "API server",
-	Args:    cobra.MaximumNArgs(1),
-	Run:     run,
+	Use:   "api <bind>",
+	Short: "API server",
+	Args:  cobra.MaximumNArgs(1),
+	Run:   run,
 }
 
 var engine *gin.Engine

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/spf13/cobra"
 	"github.com/trustwallet/blockatlas/cmd/api"
+	"github.com/trustwallet/blockatlas/cmd/observer"
 	"github.com/trustwallet/blockatlas/platform"
 	"os"
 )
@@ -23,6 +24,7 @@ var app = cobra.Command{
 func init() {
 	app.PersistentFlags().StringP("config", "c", defaultConfigName, "Config file (optional)")
 	app.AddCommand(&api.Cmd)
+	app.AddCommand(&observer.Cmd)
 }
 
 func main() {

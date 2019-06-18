@@ -2,6 +2,7 @@ package main
 
 import (
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
@@ -35,6 +36,8 @@ func loadConfig(confPath string) {
 func loadDefaults() {
 	viper.SetDefault("gin.mode", gin.ReleaseMode)
 	viper.SetDefault("gin.reverse_proxy", false)
+	viper.SetDefault("observer.min_poll", 250 * time.Millisecond)
+	viper.SetDefault("observer.backlog", 3 * time.Hour)
 
 	// All platforms with public RPC endpoints
 	viper.SetDefault("binance.api", "https://explorer.binance.org/api/v1")

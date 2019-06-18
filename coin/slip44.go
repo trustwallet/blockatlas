@@ -5,6 +5,8 @@
 // coins.json
 package coin
 
+import "time"
+
 const (
 	BTC   = 0
 	LTC   = 2
@@ -59,6 +61,7 @@ var Coins = map[uint]Coin{
 		Symbol:  "BTC",
 		Title:   "Bitcoin",
 		Website: "https://bitcoin.org/",
+		BlockTime: 10 * time.Minute,
 	},
 	LTC: {
 		Index:   LTC,
@@ -192,6 +195,7 @@ var Coins = map[uint]Coin{
 		Title:    "Nimiq",
 		Website:  "https://nimiq.com/",
 		Decimals: 5,
+		BlockTime: time.Minute,
 	},
 	IOTX: {
 		Index: IOTX,
