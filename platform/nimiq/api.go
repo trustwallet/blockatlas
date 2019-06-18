@@ -39,7 +39,7 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 	}
 }
 
-func (p *Platform) GetTxsByAddress(address string) ([]blockatlas.Tx, error) {
+func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 	if srcTxs, err := p.client.GetTxsOfAddress(address, blockatlas.TxPerPage); err == nil {
 		return NormalizeTxs(srcTxs), err
 	} else {

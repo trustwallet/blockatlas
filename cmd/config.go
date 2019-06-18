@@ -3,7 +3,6 @@ package main
 import (
 	"strings"
 
-	"github.com/fsnotify/fsnotify"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -31,12 +30,6 @@ func loadConfig(confPath string) {
 	} else {
 		logrus.WithField("config_file", confPath).Info("Using config file")
 	}
-
-	// Reload config if changed
-	go viper.WatchConfig()
-	viper.OnConfigChange(func(e fsnotify.Event) {
-		logrus.Infof("Reloaded config: %s", e.Name)
-	})
 }
 
 func loadDefaults() {

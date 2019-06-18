@@ -16,6 +16,8 @@ var Cmd = cobra.Command{
 	Run:     run,
 }
 
+var engine *gin.Engine
+
 func run(_ *cobra.Command, args []string) {
 	var bind string
 	if len(args) == 0 {
@@ -25,19 +27,19 @@ func run(_ *cobra.Command, args []string) {
 	}
 
 	gin.SetMode(viper.GetString("gin.mode"))
-	router := gin.Default()
-	router.Use(util.CheckReverseProxy)
-	router.GET("/", getRoot)
-	router.GET("/status", func(c *gin.Context) {
+	engine = gin.Default()
+	engine.Use(util.CheckReverseProxy)
+	engine.GET("/", getRoot)
+	engine.GET("/status", func(c *gin.Context) {
 		c.JSON(http.StatusOK, map[string]interface{}{
 			"status": true,
 		})
 	})
 
-	loadPlatforms(router)
+	loadPlatforms(engine)
 
 	logrus.WithField("bind", bind).Info("Running application")
-	if err := router.Run(bind); err != nil {
+	if err := engine.Run(bind); err != nil {
 		logrus.WithError(err).Fatal("Application failed")
 	}
 }

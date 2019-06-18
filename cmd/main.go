@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"github.com/spf13/cobra"
+	"github.com/trustwallet/blockatlas/cmd/api"
+	"github.com/trustwallet/blockatlas/platform"
 	"os"
 )
 
@@ -14,11 +16,13 @@ var app = cobra.Command{
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		confPath, _ := cmd.Flags().GetString("config")
 		loadConfig(confPath)
+		platform.Init()
 	},
 }
 
 func init() {
 	app.PersistentFlags().StringP("config", "c", defaultConfigName, "Config file (optional)")
+	app.AddCommand(&api.Cmd)
 }
 
 func main() {

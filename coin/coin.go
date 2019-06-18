@@ -19,6 +19,6 @@ type Coin struct {
 	Decimals uint   `json:"decimals"`
 }
 
-func (c *Coin) String() string {
+func (c Coin) String() string {
 	return fmt.Sprintf("[%s] %s (#%d)", c.Symbol, c.Title, c.Index)
 }
