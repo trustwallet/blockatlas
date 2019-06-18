@@ -20,7 +20,7 @@ type Platform interface {
 // TxAPI provides transaction lookups
 type TxAPI interface {
 	Platform
-	GetTxsByAddress(address string) ([]Tx, error)
+	GetTxsByAddress(address string) (TxPage, error)
 }
 
 // BlockAPI provides block information and lookups

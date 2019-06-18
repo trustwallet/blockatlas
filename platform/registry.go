@@ -1,7 +1,9 @@
 package platform
 
 import (
+	"fmt"
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/platform/nimiq"
 )
@@ -22,7 +24,7 @@ var BlockAPIs map[string]blockatlas.BlockAPI
 // CustomAPIs contains platforms with custom HTTP services
 var CustomAPIs map[string]blockatlas.CustomAPI
 
-func init() {
+func Init() {
 	Platforms  = make(map[string]blockatlas.Platform)
 	TxAPIs     = make(map[string]blockatlas.TxAPI)
 	BlockAPIs  = make(map[string]blockatlas.BlockAPI)
@@ -30,6 +32,11 @@ func init() {
 
 	for _, platform := range platformList {
 		handle := platform.Handle()
+
+		if !viper.IsSet(fmt.Sprintf("%s.api", handle)) {
+			continue
+		}
+
 		log := logrus.WithFields(logrus.Fields{
 			"platform": handle,
 			"coin": platform.Coin(),

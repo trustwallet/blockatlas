@@ -2,7 +2,6 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/spf13/viper"
 	"net/http"
 )
 
@@ -22,14 +21,10 @@ If you know what you're doing:
 
 func getEnabledEndpoints(c *gin.Context) {
 	var resp struct {
-		Endpoints []string `json:"endpoints"`
+		Endpoints []string `json:"endpoints,omitempty"`
 	}
-	for ns := range loaders {
-		key := ns + ".api"
-		if !viper.IsSet(key) || viper.GetString(key) == "" {
-			continue
-		}
-		resp.Endpoints = append(resp.Endpoints, ns)
+	for handle := range routers {
+		resp.Endpoints = append(resp.Endpoints, handle)
 	}
 	c.JSON(http.StatusOK, &resp)
 }
