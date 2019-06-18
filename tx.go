@@ -1,6 +1,4 @@
-package models
-
-import "errors"
+package blockatlas
 
 // Types of transaction metadata
 const (
@@ -22,14 +20,14 @@ const (
 // TxPerPage says how many transactions to return per page
 const TxPerPage = 25
 
-// Response is a page of transactions
-type Response []Tx
+// TxPage is a page of transactions
+type TxPage []Tx
 
 // Amount is a positive decimal integer string.
 // It is written in the smallest possible unit (e.g. Wei, Satoshis)
 type Amount string
 
-// Tx is a generic
+// Tx describes an on-chain transaction generically
 type Tx struct {
 	// Unique identifier
 	ID string `json:"id"`
@@ -107,12 +105,3 @@ type ContractCall struct {
 	Input string `json:"input"`
 	Value string `json:"value"`
 }
-
-// ErrSourceConn signals that the connection to the source API failed
-var ErrSourceConn = errors.New("connection to servers failed")
-
-// ErrInvalidAddr signals that the requested address is invalid
-var ErrInvalidAddr = errors.New("invalid address")
-
-// ErrNotFound signals that the resource has not been found
-var ErrNotFound = errors.New("not found")

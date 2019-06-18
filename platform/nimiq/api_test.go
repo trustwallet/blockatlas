@@ -3,8 +3,8 @@ package nimiq
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
-	"github.com/trustwallet/blockatlas/models"
 	"testing"
 )
 
@@ -27,7 +27,7 @@ const basicSrc = `
 }
 `
 
-var basicDst = models.Tx{
+var basicDst = blockatlas.Tx{
 	ID:    "8b219949f4c1dfe9e7a9cdc5dbbc507e40dc16f44a1a5182ed6125c9a6891a50",
 	Coin:  coin.NIM,
 	From:  "NQ69 9A4A MB83 HXDQ 4J46 BH5R 4JFF QMA9 C3GN",
@@ -35,12 +35,12 @@ var basicDst = models.Tx{
 	Fee:   "138",
 	Date:  1538924505,
 	Block: 252575,
-	Meta: models.Transfer{
+	Meta: blockatlas.Transfer{
 		Value: "10000000000000",
 	},
 }
 
-func TestNormalize(t *testing.T) {
+func TestNormalizeTx(t *testing.T) {
 	var srcTx Tx
 	err := json.Unmarshal([]byte(basicSrc), &srcTx)
 	if err != nil {
@@ -48,7 +48,7 @@ func TestNormalize(t *testing.T) {
 		return
 	}
 
-	tx := Normalize(&srcTx)
+	tx := NormalizeTx(&srcTx)
 	resJSON, err := json.Marshal(&tx)
 	if err != nil {
 		t.Fatal(err)

@@ -1,5 +1,7 @@
 package coin
 
+import "fmt"
+
 //go:generate rm -f slip44.go
 //go:generate go run gen.go
 
@@ -15,4 +17,8 @@ type Coin struct {
 	Website  string `json:"link"`
 	// Number of decimals
 	Decimals uint   `json:"decimals"`
+}
+
+func (c *Coin) String() string {
+	return fmt.Sprintf("[%s] %s (#%d)", c.Symbol, c.Title, c.Index)
 }

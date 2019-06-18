@@ -62,7 +62,6 @@ you can configure Block Atlas over `config.yml` or environment variables.
 __Config File__
 
 By default, `config.yml` is loaded from the working directory.
-Live reload is supported across the app.
 
 Example (`config.yml`):
 ```yaml
