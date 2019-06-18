@@ -1,6 +1,9 @@
 package coin
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
 //go:generate rm -f slip44.go
 //go:generate go run gen.go
@@ -17,6 +20,8 @@ type Coin struct {
 	Website  string `json:"link"`
 	// Number of decimals
 	Decimals uint   `json:"decimals"`
+	// Average time between blocks
+	BlockTime time.Duration `json:"blockTime"`
 }
 
 func (c Coin) String() string {
