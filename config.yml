@@ -6,6 +6,10 @@ gin:
   # If set, HTTP Forwarded headers will be respected
   reverse_proxy: false
 
+# The transaction watcher
+observer:
+  redis: localhost:6379
+
 # [BNB] Binance DEX: https://wallet.binance.org
 #       Binance Chain: https://explorer.binance.org
 binance:

@@ -1,4 +1,4 @@
-package models
+package blockatlas
 
 import (
 	"encoding/json"
@@ -106,7 +106,7 @@ func (a *Amount) MarshalJSON() ([]byte, error) {
 }
 
 // Sort sorts the response by date, descending
-func (r *Response) Sort() {
+func (r *TxPage) Sort() {
 	sort.Slice(*r, func(i, j int) bool {
 		ti := cast.ToUint64((*r)[i].Date)
 		tj := cast.ToUint64((*r)[j].Date)
@@ -115,7 +115,7 @@ func (r *Response) Sort() {
 }
 
 // MarshalJSON returns a wrapped list of transactions in JSON
-func (r *Response) MarshalJSON() ([]byte, error) {
+func (r *TxPage) MarshalJSON() ([]byte, error) {
 	var page struct {
 		Total  int    `json:"total"`
 		Docs   []Tx   `json:"docs"`

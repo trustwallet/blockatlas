@@ -21,7 +21,7 @@ func loadConfig(confPath string) {
 	viper.SetConfigFile(confPath)
 	err := viper.ReadInConfig()
 	if _, ok := err.(viper.ConfigFileNotFoundError); ok {
-		if confPath == defaultConfigName {
+		if confPath != defaultConfigName {
 			logrus.WithField("config_file", confPath).Fatal("Config file not found")
 		} else {
 			logrus.Info("Running without config file")
