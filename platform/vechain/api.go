@@ -3,6 +3,7 @@ package vechain
 import (
 	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
+	"github.com/trustwallet/blockatlas/util"
 	"math/big"
 	"net/http"
 	"strings"
@@ -69,6 +70,8 @@ func (p *Platform) GetAddressTransactions(address string, token string) []blocka
 	if err != nil {
 		return txsNormalized
 	}
+
+	semaphore := util.NewSemaphore(16)
 	
 	if transferType == blockatlas.TxTransfer {
 		txs, _ := p.client.GetAddressTransactions(address)
@@ -77,7 +80,11 @@ func (p *Platform) GetAddressTransactions(address string, token string) []blocka
 		
 		for _, t := range txs.Transactions {
 			wg.Add(1)
-			go p.client.GetTransacionReceipt(receiptsChan, t.ID)
+			go func() {
+				semaphore.Acquire()
+				defer semaphore.Release()
+				p.client.GetTransactionReceipt(receiptsChan, t.ID)
+			}()
 		}
 			
 		wg.Wait()

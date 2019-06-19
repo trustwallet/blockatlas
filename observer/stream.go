@@ -3,7 +3,11 @@ package observer
 import (
 	"context"
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas"
+	"github.com/trustwallet/blockatlas/util"
+	"sync"
+	"sync/atomic"
 	"time"
 )
 
@@ -14,11 +18,21 @@ type Stream struct {
 	BacklogCount int
 	coin         uint
 	log          *logrus.Entry
+
+	// Concurrency
+	blockNumber  int64
+	semaphore    *util.Semaphore
+	wg           sync.WaitGroup
 }
 
 func (s *Stream) Execute(ctx context.Context) <-chan *blockatlas.Block {
 	s.coin = s.BlockAPI.Coin().Index
 	s.log = logrus.WithField("platform", s.BlockAPI.Handle())
+	conns := viper.GetInt("observer.stream_conns")
+	if conns == 0 {
+		logrus.Fatal("observer.stream_conns is 0")
+	}
+	s.semaphore = util.NewSemaphore(conns)
 	c := make(chan *blockatlas.Block)
 	go s.run(ctx, c)
 	return c
@@ -55,19 +69,33 @@ func (s *Stream) load(c chan<- *blockatlas.Block) {
 		lastHeight = height - int64(s.BacklogCount)
 	}
 
+	atomic.StoreInt64(&s.blockNumber, lastHeight)
 	for i := lastHeight + 1; i <= height; i++ {
-		block, err := s.BlockAPI.GetBlockByNumber(i)
-		if err != nil {
-			s.log.WithError(err).Errorf("Polling failed: could not get block %d", i)
-			return
-		}
-		c <- block
-		s.log.WithField("num", i).Info("Got new block")
+		s.wg.Add(1)
+		go s.loadBlock(c, i)
+	}
+	s.wg.Wait()
+}
 
-		err = s.Tracker.SetBlockNumber(s.coin, i)
-		if err != nil {
-			s.log.WithError(err).Error("Polling failed: could not update block number at tracker")
-			return
-		}
+func (s *Stream) loadBlock(c chan<- *blockatlas.Block, num int64) {
+	defer s.wg.Done()
+	s.semaphore.Acquire()
+	defer s.semaphore.Release()
+
+	block, err := s.BlockAPI.GetBlockByNumber(num)
+	if err != nil {
+		s.log.WithError(err).Errorf("Polling failed: could not get block %d", num)
+		return
+	}
+	c <- block
+	s.log.WithField("num", num).Info("Got new block")
+
+	// Not strictly correct nor avoids race conditions
+	// But good enough
+	newNum := atomic.AddInt64(&s.blockNumber, 1)
+	err = s.Tracker.SetBlockNumber(s.coin, newNum)
+	if err != nil {
+		s.log.WithError(err).Error("Polling failed: could not update block number at tracker")
+		return
 	}
 }

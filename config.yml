@@ -18,6 +18,8 @@ observer:
   min_poll: 250ms
   # Don't request blocks older than this
   backlog: 3h
+  # Max connections to open to API
+  stream_conns: 16
 
 # [BNB] Binance DEX: https://wallet.binance.org
 #       Binance Chain: https://explorer.binance.org
