@@ -25,6 +25,16 @@ type Error struct {
 	Message string `json:"message"`
 }
 
+type BlockDescriptor struct {
+	BlockHeight int64 `json:"blockHeight"`
+	BlockHash string `json:"blockHash"`
+	TxNum int `json:"txNum"`
+}
+
+type BlockList struct {
+	BlockArray []BlockDescriptor `json:"blockArray"`
+}
+
 type Tx struct {
 	BlockHeight   uint64      `json:"blockHeight"`
 	Type          string      `json:"txType"`

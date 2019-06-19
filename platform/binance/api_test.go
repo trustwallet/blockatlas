@@ -91,14 +91,14 @@ type test struct {
 	token       string
 }
 
-func TestNormalize(t *testing.T) {
-	testNormalize(t, &test{
+func TestNormalizeTx(t *testing.T) {
+	testNormalizeTx(t, &test{
 		name:        "transfer",
 		apiResponse: nativeTransferTransaction,
 		expected:    &transferDst,
 		token:       "",
 	})
-	testNormalize(t, &test{
+	testNormalizeTx(t, &test{
 		name:        "native token transfer",
 		apiResponse: nativeTokenTransferTransaction,
 		expected:    &nativeTransferDst,
@@ -106,7 +106,7 @@ func TestNormalize(t *testing.T) {
 	})
 }
 
-func testNormalize(t *testing.T, _test *test) {
+func testNormalizeTx(t *testing.T, _test *test) {
 	var srcTx Tx
 	err := json.Unmarshal([]byte(_test.apiResponse), &srcTx)
 	if err != nil {
@@ -114,7 +114,7 @@ func testNormalize(t *testing.T, _test *test) {
 		return
 	}
 
-	tx, ok := Normalize(&srcTx, _test.token)
+	tx, ok := NormalizeTx(&srcTx, _test.token)
 	if !ok {
 		t.Errorf("transfer: tx could not be normalized")
 	}
