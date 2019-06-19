@@ -32,8 +32,17 @@ func (s *Storage) Contains(coin uint, address string) (bool, error) {
 	return ok, nil
 }
 
-func (s *Storage) Add(o observer.Subscription) error {
-	s.observers[key(o.Coin, o.Address)] = o
+func (s *Storage) Add(subs []observer.Subscription) error {
+	for _, sub := range subs {
+		s.observers[key(sub.Coin, sub.Address)] = sub
+	}
+	return nil
+}
+
+func (s *Storage) Delete(subs []observer.Subscription) error {
+	for _, sub := range subs {
+		delete(s.observers, key(sub.Coin, sub.Address))
+	}
 	return nil
 }
 
@@ -43,11 +52,6 @@ func (s *Storage) List() []observer.Subscription {
 		values = append(values, value)
 	}
 	return values
-}
-
-func (s *Storage) Remove(coin uint, address string) error {
-	delete(s.observers, key(coin, address))
-	return nil
 }
 
 func (s *Storage) GetBlockNumber(coin uint) (int64, error) {

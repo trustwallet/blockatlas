@@ -12,8 +12,8 @@ import (
 
 func setupObserverAPI(router gin.IRouter) {
 	router.Use(requireAuth)
-	router.POST("/:coin", addObserver)
-	router.DELETE("/:coin/:address", removeObserver)
+	router.POST("/", addCall)
+	router.DELETE("/", deleteCall)
 }
 
 func requireAuth(c *gin.Context) {
@@ -25,51 +25,74 @@ func requireAuth(c *gin.Context) {
 	}
 }
 
-func addObserver(c *gin.Context) {
-	coinStr := c.Param("coin")
-	coin, err := strconv.Atoi(coinStr)
-	if err != nil {
-		c.String(http.StatusNotFound, "404 page not found")
-		return
-	}
-
+func addCall(c *gin.Context) {
 	var req struct {
-		Address string `form:"address" binding:"required"`
-		Webhook string `form:"webhook" binding:"required"`
+		Subscriptions map[string][]string `json:"subscriptions"`
+		Webhook string `json:"webhook"`
 	}
-	if c.Bind(&req) != nil {
+	if c.BindJSON(&req) != nil {
 		return
 	}
 
-	sub := observer.Subscription{
-		Coin:    uint(coin),
-		Address: req.Address,
-		Webhook: req.Webhook,
+	if len(req.Subscriptions) == 0 {
+		c.String(http.StatusOK, "Added")
+		return
 	}
 
-	err = observerStorage.App.Add(sub)
+	var subs []observer.Subscription
+	for coinStr, perCoin := range req.Subscriptions {
+		coin, _ := strconv.Atoi(coinStr)
+		if coin == 0 {
+			continue
+		}
+		for _, addr := range perCoin {
+			subs = append(subs, observer.Subscription{
+				Coin:    uint(coin),
+				Address: addr,
+				Webhook: req.Webhook,
+			})
+		}
+	}
+
+	err := observerStorage.App.Add(subs)
 	if err != nil {
 		_ = c.Error(err)
 		return
 	}
 
-	c.JSON(200, &sub)
+	c.String(http.StatusOK, "Added")
 }
 
-func removeObserver(c *gin.Context) {
-	coinStr := c.Param("coin")
-	coin, err := strconv.Atoi(coinStr)
-	if err != nil {
-		c.String(http.StatusNotFound, "404 page not found")
+func deleteCall(c *gin.Context) {
+	var req map[string][]string
+	if c.BindJSON(&req) != nil {
 		return
 	}
-	address := c.Param("address")
 
-	err = observerStorage.App.Remove(uint(coin), address)
+	if len(req) == 0 {
+		c.String(http.StatusOK, "Deleted")
+		return
+	}
+
+	var subs []observer.Subscription
+	for coinStr, perCoin := range req {
+		coin, _ := strconv.Atoi(coinStr)
+		if coin == 0 {
+			continue
+		}
+		for _, addr := range perCoin {
+			subs = append(subs, observer.Subscription{
+				Coin:    uint(coin),
+				Address: addr,
+			})
+		}
+	}
+
+	err := observerStorage.App.Delete(subs)
 	if err != nil {
 		_ = c.Error(err)
 		return
 	}
 
-	c.String(http.StatusOK, "Removed")
+	c.String(http.StatusOK, "Deleted")
 }
