@@ -8,8 +8,12 @@ gin:
 
 # The transaction watcher
 observer:
+  enabled: false
+
+  # Required auth token
+  #auth: changeMe!!!
   # Redis Subscription Database
-  redis: localhost:6379
+  redis: redis://localhost:6379
   # Smallest possible block polling interval
   min_poll: 250ms
   # Don't request blocks older than this

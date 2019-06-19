@@ -2,11 +2,13 @@ package main
 
 import (
 	"fmt"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/cmd/api"
 	"github.com/trustwallet/blockatlas/cmd/observer"
 	"github.com/trustwallet/blockatlas/coin"
+	observerStorage "github.com/trustwallet/blockatlas/observer/storage"
 	"github.com/trustwallet/blockatlas/platform"
 	"os"
 )
@@ -17,11 +19,20 @@ var app = cobra.Command{
 	Use: "blockatlas",
 	Short: "BlockAtlas by Trust Wallet",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		// Load config
 		confPath, _ := cmd.Flags().GetString("config")
 		loadConfig(confPath)
+
+		// Load coin index
 		coinFile := viper.GetString("coins")
 		coin.Load(coinFile)
+
+		// Load app components
 		platform.Init()
+		if viper.GetBool("observer.enabled") {
+			logrus.Info("Loading Observer API")
+			observerStorage.Load()
+		}
 	},
 }
 

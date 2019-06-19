@@ -37,6 +37,7 @@ func loadDefaults() {
 	viper.SetDefault("coins", "coin/coins.json")
 	viper.SetDefault("gin.mode", gin.ReleaseMode)
 	viper.SetDefault("gin.reverse_proxy", false)
+	viper.SetDefault("observer.redis", "redis://localhost:6379")
 	viper.SetDefault("observer.min_poll", 250 * time.Millisecond)
 	viper.SetDefault("observer.backlog", 3 * time.Hour)
 
