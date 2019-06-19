@@ -17,19 +17,28 @@ func loadConfig(confPath string) {
 	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 	viper.AutomaticEnv()
 
+	viper.AddConfigPath(".")
+	viper.SetConfigName("config")
+	viper.SetConfigType("yml")
+
 	// Load config file
-	viper.SetConfigFile(confPath)
-	err := viper.ReadInConfig()
-	if _, ok := err.(viper.ConfigFileNotFoundError); ok {
-		if confPath != defaultConfigName {
-			logrus.WithField("config_file", confPath).Fatal("Config file not found")
-		} else {
+	if confPath == "" {
+		err := viper.ReadInConfig()
+		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
 			logrus.Info("Running without config file")
+		} else if err != nil {
+			logrus.Fatal(err)
+		} else {
+			logrus.Info("Using config.yml")
 		}
-	} else if err != nil {
-		logrus.WithError(err).Error("Failed to read config")
 	} else {
-		logrus.WithField("config_file", confPath).Info("Using config file")
+		viper.SetConfigFile(confPath)
+		err := viper.ReadInConfig()
+		if err != nil {
+			logrus.WithError(err).Error("Failed to read config")
+		} else {
+			logrus.WithField("config_file", confPath).Info("Using config file")
+		}
 	}
 }
 
