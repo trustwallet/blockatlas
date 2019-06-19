@@ -3,10 +3,10 @@ package zilliqa
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/trustwallet/blockatlas"
 	"testing"
 
 	"github.com/trustwallet/blockatlas/coin"
-	"github.com/trustwallet/blockatlas/models"
 )
 
 const transferTransaction = `
@@ -24,7 +24,7 @@ const transferTransaction = `
     "events": []
 }`
 
-var transferDst = models.Tx{
+var transferDst = blockatlas.Tx{
 	ID:       "0xd44413c79e7518152f3b05ef1edff8ef59afd06119b16d09c8bc72e94fed7843",
 	Coin:     coin.ZIL,
 	From:     "0x88af5ba10796d9091d6893eed4db23ef0bbbca37",
@@ -32,10 +32,10 @@ var transferDst = models.Tx{
 	Fee:      "1000000000",
 	Date:     1557889788,
 	Block:    104282,
-	Status:   models.StatusCompleted,
+	Status:   blockatlas.StatusCompleted,
 	Sequence: 3,
 	Memo:     "",
-	Meta: models.Transfer{
+	Meta: blockatlas.Transfer{
 		Value: "7997000000000",
 	},
 }
@@ -43,7 +43,7 @@ var transferDst = models.Tx{
 type test struct {
 	name        string
 	apiResponse string
-	expected    *models.Tx
+	expected    *blockatlas.Tx
 	token       string
 }
 

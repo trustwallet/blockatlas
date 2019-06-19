@@ -3,8 +3,8 @@ package vechain
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
-	"github.com/trustwallet/blockatlas/models"
 	"testing"
 )
 
@@ -35,7 +35,7 @@ const tokenTransfer = `
 }
 `
 
-var expectedTransferTrx = models.Tx{
+var expectedTransferTrx = blockatlas.Tx{
 	ID:    "0x2b8776bd4679fa2afa28b55d66d4f6c7c77522fc878ce294d25e32475b704517",
 	Coin:  coin.VET,
 	From:  "0xb853d6a965fbc047aaa9f04d774d53861d7ed653",
@@ -46,23 +46,23 @@ var expectedTransferTrx = models.Tx{
 	Status: "completed",
 	Block: 2620166,
 	Sequence: 2620166,
-	Meta:  models.Transfer{
+	Meta:  blockatlas.Transfer{
 		Value: "770000000000000000000",
 	},
 }
 
-var expectedVeThorTrx = models.Tx{
+var expectedVeThorTrx = blockatlas.Tx{
 	ID:     "0xd17dd968610fb4a39ab02a5d8827b26f4cdcd147fb4a4f7a5d5ab14066525d4b",
 	Coin:   coin.VET,
 	From:   "0xb853d6a965fbc047aaa9f04d774d53861d7ed653",
 	To:     "0x9f3742c2c2fe66c7fca08d77d2262c22e3d56ac8",
 	Fee:    "0",
 	Date:   1555009870,
-	Type:   models.TxNativeTokenTransfer,
+	Type:   blockatlas.TxNativeTokenTransfer,
 	Status: "completed",
 	Sequence: 2465269,
 	Block:  2465269,
-	Meta:  models.NativeTokenTransfer{
+	Meta:  blockatlas.NativeTokenTransfer{
 		Name: "VeThor Token",
 		Symbol: "VTHO",
 		TokenID: VeThorContractLow,
@@ -76,7 +76,7 @@ func TestNormalizeTransfer(t *testing.T) {
 	var tests = []struct {
 		Receipt  string
 		Clause   string
-		Expected models.Tx
+		Expected blockatlas.Tx
 	}{
 		{transferReceipt, transferClause, expectedTransferTrx},
 		// {transferTrx, transferReceipt, transferOutput, address, VeThorContract, expectedVeThorTrx},
@@ -97,7 +97,7 @@ func TestNormalizeTransfer(t *testing.T) {
 			t.Fatal(cErr)
 		}
 
-		var readyTx models.Tx
+		var readyTx blockatlas.Tx
 		normTx, ok := NormalizeTransfer(&receipt, &clause)
 		if !ok {
 			t.Fatal("VeChain: Can't normalize transaction", readyTx)
@@ -125,7 +125,7 @@ func TestNormalizeTransfer(t *testing.T) {
 func TestNormalizeTokenTransfer(t *testing.T) {
 	var tests = []struct {
 		Transfer  string
-		Expected models.Tx
+		Expected blockatlas.Tx
 	}{
 		{tokenTransfer, expectedVeThorTrx},
 	}
@@ -138,7 +138,7 @@ func TestNormalizeTokenTransfer(t *testing.T) {
 			t.Fatal(ttErr)
 		}
 
-		var readyTx models.Tx
+		var readyTx blockatlas.Tx
 		normTx, ok := NormalizeTokenTransfer(&tt)
 		if !ok {
 			t.Fatal("VeChain: Can't normalize token transaction", readyTx)

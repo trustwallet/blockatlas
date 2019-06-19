@@ -3,8 +3,8 @@ package tezos
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
-	"github.com/trustwallet/blockatlas/models"
 	"testing"
 )
 
@@ -43,7 +43,7 @@ const transferSrc = `
 }
 `
 
-var transferDst = models.Tx{
+var transferDst = blockatlas.Tx{
 	ID:    "oo3zTBHCkRkYDumt5t3rUyJ777wsr3dVMxYCU1FEV5xyftoih2Y",
 	Coin:  coin.XTZ,
 	From:  "tz1WCd2jm4uSt4vntk4vSuUWoZQGhLcDuR9q",
@@ -51,7 +51,7 @@ var transferDst = models.Tx{
 	Fee:   "1420",
 	Date:  1555102504,
 	Block: 393070,
-	Meta: models.Transfer{
+	Meta: blockatlas.Transfer{
 		Value: "2597000000",
 	},
 }

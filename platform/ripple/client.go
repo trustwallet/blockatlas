@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/sirupsen/logrus"
-	"github.com/trustwallet/blockatlas/models"
+	"github.com/trustwallet/blockatlas"
 	"net/http"
 	"net/url"
 )
@@ -23,14 +23,14 @@ func (c *Client) GetTxsOfAddress(address string) ([]Tx, error) {
 	httpRes, err := c.HTTPClient.Get(uri)
 	if err != nil {
 		logrus.WithError(err).Error("Ripple: Failed to get transactions")
-		return nil, models.ErrSourceConn
+		return nil, blockatlas.ErrSourceConn
 	}
 
 	var res Response
 	err = json.NewDecoder(httpRes.Body).Decode(&res)
 
 	if res.Result != "success" {
-		return nil, models.ErrSourceConn
+		return nil, blockatlas.ErrSourceConn
 	}
 
 	return res.Transactions, nil

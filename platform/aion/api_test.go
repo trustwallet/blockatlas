@@ -3,8 +3,8 @@ package aion
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
-	"github.com/trustwallet/blockatlas/models"
 	"testing"
 )
 
@@ -31,7 +31,7 @@ const transferSrc = `
 	"txError": ""
 }`
 
-var transferDst = models.Tx{
+var transferDst = blockatlas.Tx{
 	ID:     "af3c2f5087fc3332154dc9d11c27e312f30ff829dbc5436aec8cc4342c7dc384",
 	Coin:   coin.AION,
 	From:   "0xa07981da70ce919e1db5f051c3c386eb526e6ce8b9e2bfd56e3f3d754b0a17f3",
@@ -39,8 +39,8 @@ var transferDst = models.Tx{
 	Fee:    "21000",
 	Date:   1554862228,
 	Block:  2880919,
-	Status: models.StatusCompleted,
-	Meta:   models.Transfer{
+	Status: blockatlas.StatusCompleted,
+	Meta:   blockatlas.Transfer{
 		Value: "11903810405853733000",
 	},
 }
@@ -53,7 +53,7 @@ func TestNormalize(t *testing.T) {
 		return
 	}
 
-	resTx := Normalize(&srcTx)
+	resTx := NormalizeTx(&srcTx)
 
 	resJSON, err := json.Marshal(&resTx)
 	if err != nil {

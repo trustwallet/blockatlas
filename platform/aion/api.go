@@ -11,7 +11,7 @@ import (
 
 const Handle = "aion"
 
-type Platform struct{
+type Platform struct {
 	client Client
 }
 

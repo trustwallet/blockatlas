@@ -1,37 +1,40 @@
 package tezos
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
-	"github.com/trustwallet/blockatlas/models"
-	"github.com/trustwallet/blockatlas/util"
 	"net/http"
 	"time"
 )
 
-var client = Client{
-	HTTPClient: http.DefaultClient,
+const Handle = "tezos"
+
+type Platform struct {
+	client Client
 }
 
-// Setup registers the Tezos route
-func Setup(router gin.IRouter) {
-	router.Use(util.RequireConfig("tezos.api"))
-	router.Use(func(c *gin.Context) {
-		client.BaseURL = viper.GetString("tezos.api")
-		c.Next()
-	})
-	router.GET("/:address", getTransactions)
+func (p *Platform) Handle() string {
+	return Handle
 }
 
-func getTransactions(c *gin.Context) {
-	s, err := client.GetTxsOfAddress(c.Param("address"))
-	if apiError(c, err) {
-		return
+func (p *Platform) Init() error {
+	p.client.BaseURL = viper.GetString("tezos.api")
+	p.client.HTTPClient = http.DefaultClient
+	return nil
+}
+
+func (p *Platform) Coin() coin.Coin {
+	return coin.Coins[coin.XTZ]
+}
+
+func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
+	s, err := p.client.GetTxsOfAddress(address)
+	if err != nil {
+		return nil, err
 	}
 
-	txs := make([]models.Tx, 0)
+	txs := make([]blockatlas.Tx, 0)
 	for _, srcTx := range s {
 		tx, ok := Normalize(&srcTx)
 		if !ok {
@@ -40,13 +43,11 @@ func getTransactions(c *gin.Context) {
 		txs = append(txs, tx)
 	}
 
-	page := models.Response(txs)
-	page.Sort()
-	c.JSON(http.StatusOK, &page)
+	return txs, nil
 }
 
 // Normalize converts a Tezos transaction into the generic model
-func Normalize(srcTx *Tx) (tx models.Tx, ok bool) {
+func Normalize(srcTx *Tx) (tx blockatlas.Tx, ok bool) {
 	if srcTx.Type.Kind != "manager" {
 		return tx, false
 	}
@@ -69,12 +70,12 @@ func Normalize(srcTx *Tx) (tx models.Tx, ok bool) {
 	}
 	var status, errMsg string
 	if !op.Failed {
-		status = models.StatusCompleted
+		status = blockatlas.StatusCompleted
 	} else {
-		status = models.StatusFailed
+		status = blockatlas.StatusFailed
 		errMsg = "transaction failed"
 	}
-	return models.Tx{
+	return blockatlas.Tx{
 		ID:    srcTx.Hash,
 		Coin:  coin.XTZ,
 		Date:  unix,
@@ -82,20 +83,10 @@ func Normalize(srcTx *Tx) (tx models.Tx, ok bool) {
 		To:    op.Dest.Tz,
 		Fee:   op.Fee,
 		Block: op.OpLevel,
-		Meta:   models.Transfer{
+		Meta:   blockatlas.Transfer{
 			Value: op.Amount,
 		},
 		Status: status,
 		Error:  errMsg,
 	}, true
 }
-
-func apiError(c *gin.Context, err error) bool {
-	if err != nil {
-		logrus.WithError(err).Errorf("Unhandled error: %s", err)
-		c.AbortWithStatus(http.StatusInternalServerError)
-		return true
-	}
-	return false
-}
-

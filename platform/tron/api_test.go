@@ -3,8 +3,8 @@ package tron
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
-	"github.com/trustwallet/blockatlas/models"
 	"testing"
 )
 
@@ -44,7 +44,7 @@ const transferSrc = `
 }
 `
 
-var transferDst = models.Tx{
+var transferDst = blockatlas.Tx{
 	ID: "24a10f7a503e78adc0d7e380b68005531b09e16b9e3f7b524e33f40985d287df",
 	Coin: coin.TRX,
 	From: "TMuA6YqfCeX8EhbfYEg5y7S4DqzSJireY9",
@@ -52,8 +52,8 @@ var transferDst = models.Tx{
 	Fee: "0", // TODO
 	Date: 1551357920,
 	Block: 0, // TODO
-	Status: models.StatusCompleted,
-	Meta: models.Transfer{
+	Status: blockatlas.StatusCompleted,
+	Meta: blockatlas.Transfer{
 		Value: "100666888000000",
 	},
 }
@@ -61,7 +61,7 @@ var transferDst = models.Tx{
 type test struct {
 	name string
 	apiResponse string
-	expected *models.Tx
+	expected *blockatlas.Tx
 }
 
 func TestNormalize(t *testing.T) {

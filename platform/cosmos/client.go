@@ -3,12 +3,12 @@ package cosmos
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/trustwallet/blockatlas"
 	"net/http"
 	"net/url"
 	"strconv"
 
 	"github.com/sirupsen/logrus"
-	"github.com/trustwallet/blockatlas/models"
 )
 
 // Client - the HTTP client
@@ -27,7 +27,7 @@ func (c *Client) GetAddrTxes(address string, inOrOut string) (txs []Tx, err erro
 			url.Values{
 				"recipient": {address},
 				"page":      {strconv.FormatInt(1, 10)},
-				"limit":     {strconv.FormatInt(models.TxPerPage, 10)},
+				"limit":     {strconv.FormatInt(blockatlas.TxPerPage, 10)},
 			}.Encode())
 	} else {
 		uri = fmt.Sprintf("%s/txs?%s",
@@ -35,7 +35,7 @@ func (c *Client) GetAddrTxes(address string, inOrOut string) (txs []Tx, err erro
 			url.Values{
 				"sender": {address},
 				"page":   {strconv.FormatInt(1, 10)},
-				"limit":  {strconv.FormatInt(models.TxPerPage, 10)},
+				"limit":  {strconv.FormatInt(blockatlas.TxPerPage, 10)},
 			}.Encode())
 	}
 

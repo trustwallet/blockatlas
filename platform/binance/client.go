@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/sirupsen/logrus"
-	"github.com/trustwallet/blockatlas/models"
+	"github.com/trustwallet/blockatlas"
 	"net/http"
 	"net/url"
 )
@@ -28,7 +28,7 @@ func (c *Client) GetTxsOfAddress(address string, token string) (*TxPage, error) 
 	res, err := c.HTTPClient.Get(uri)
 	if err != nil {
 		logrus.WithError(err).Error("Binance: Failed to get transactions")
-		return nil, models.ErrSourceConn
+		return nil, blockatlas.ErrSourceConn
 	}
 
 	switch res.StatusCode {
@@ -50,12 +50,12 @@ func getHTTPError(res *http.Response, desc string) error {
 	err := json.NewDecoder(res.Body).Decode(&sErr)
 	if err != nil {
 		logrus.WithError(err).Error("Binance: Failed to get error")
-		return models.ErrSourceConn
+		return blockatlas.ErrSourceConn
 	}
 
 	switch sErr.Message {
 	case "address is not valid":
-		return models.ErrInvalidAddr
+		return blockatlas.ErrInvalidAddr
 	}
 
 	logrus.WithFields(logrus.Fields {
@@ -63,5 +63,5 @@ func getHTTPError(res *http.Response, desc string) error {
 		"code":    sErr.Code,
 		"message": sErr.Message,
 	}).Error("Binance: Failed to " + desc)
-	return models.ErrSourceConn
+	return blockatlas.ErrSourceConn
 }

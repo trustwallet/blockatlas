@@ -2,7 +2,7 @@ package tron
 
 import (
 	"encoding/json"
-	"github.com/trustwallet/blockatlas/models"
+	"github.com/trustwallet/blockatlas"
 )
 
 type Page struct {
@@ -33,7 +33,7 @@ type TransferContract struct {
 }
 
 type TransferValue struct {
-	Amount       models.Amount `json:"amount"`
+	Amount       blockatlas.Amount `json:"amount"`
 	OwnerAddress string        `json:"owner_address"`
 	ToAddress    string        `json:"to_address"`
 }

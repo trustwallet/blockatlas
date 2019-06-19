@@ -37,12 +37,12 @@ func (s *Storage) Add(o observer.Subscription) error {
 	return nil
 }
 
-func (s *Storage) List() ([]observer.Subscription, error) {
+func (s *Storage) List() []observer.Subscription {
 	var values []observer.Subscription
 	for _, value := range s.observers {
 		values = append(values, value)
 	}
-	return values, nil
+	return values
 }
 
 func (s *Storage) Remove(coin uint, address string) error {

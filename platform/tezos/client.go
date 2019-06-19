@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/sirupsen/logrus"
-	"github.com/trustwallet/blockatlas/models"
+	"github.com/trustwallet/blockatlas"
 	"net/http"
 	"net/url"
 )
@@ -22,7 +22,7 @@ func (c *Client) GetTxsOfAddress(address string) ([]Tx, error) {
 	httpRes, err := c.HTTPClient.Get(uri)
 	if err != nil {
 		logrus.WithError(err).Error("Tezos: Failed to get transactions")
-		return nil, models.ErrSourceConn
+		return nil, blockatlas.ErrSourceConn
 	}
 
 	if httpRes.StatusCode != http.StatusOK {

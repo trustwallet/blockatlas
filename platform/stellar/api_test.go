@@ -3,8 +3,8 @@ package stellar
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
-	"github.com/trustwallet/blockatlas/models"
 	"testing"
 )
 
@@ -24,7 +24,7 @@ const createSrc = `
 }
 `
 
-var createDst = models.Tx{
+var createDst = blockatlas.Tx{
 	ID:    "8b96cf3a660b85ef80b5a84c032cacdb93bb139cfe7e929b974ea9eaa0d29141",
 	Coin:  coin.XLM,
 	From:  "GBEZOC5U4TVH7ZY5N3FLYHTCZSI6VFGTULG7PBITLF5ZEBPJXFT46YZM",
@@ -32,7 +32,7 @@ var createDst = models.Tx{
 	Fee:   "100",
 	Date:  1470850220,
 	Block: 25002129911451649,
-	Meta: models.Transfer{
+	Meta: blockatlas.Transfer{
 		Value: "473269393700000000",
 	},
 }
@@ -54,7 +54,7 @@ const transferSrc = `
 }
 `
 
-var transferDst = models.Tx{
+var transferDst = blockatlas.Tx{
 	ID:    "a596dc910bae20b5bbe64aa7aa3f42acbd55769b98307878f5ad095e994bc9cf",
 	Coin:  coin.XLM,
 	From:  "GDKIJJIKXLOM2NRMPNQZUUYK24ZPVFC6426GZAEP3KUK6KEJLACCWNMX",
@@ -62,15 +62,15 @@ var transferDst = models.Tx{
 	Fee:   "100",
 	Date:  1470857941,
 	Block: 25008572362395649,
-	Meta: models.Transfer{
-		Value: models.Amount("1000000000000000"),
+	Meta: blockatlas.Transfer{
+		Value: blockatlas.Amount("1000000000000000"),
 	},
 }
 
 type test struct {
 	name        string
 	apiResponse string
-	expected    *models.Tx
+	expected    *blockatlas.Tx
 }
 
 func TestNormalize(t *testing.T) {

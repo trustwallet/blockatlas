@@ -1,11 +1,11 @@
 package icon
 
-import(
-	"github.com/trustwallet/blockatlas/models"
-	"github.com/trustwallet/blockatlas/coin"
-	"encoding/json"
-	"testing"
+import (
 	"bytes"
+	"encoding/json"
+	"github.com/trustwallet/blockatlas"
+	"github.com/trustwallet/blockatlas/coin"
+	"testing"
 )
 
 const basicSrc = `
@@ -25,7 +25,7 @@ const basicSrc = `
 }
 `
 
-var basicDst = models.Tx{
+var basicDst = blockatlas.Tx{
 	ID:    "0x34b8b6ec3a52710c24074f5e298f4a9c67bb61a0a1dde20e695efaeb30ff3754",
 	Coin:  coin.ICX,
 	From:  "hx1b8959dd5c57d2c502e22ee0a887d33baec09091",
@@ -33,7 +33,7 @@ var basicDst = models.Tx{
 	Fee:   "1747600000000000",
 	Date:  1555396594,
 	Block: 357832,
-	Meta:  models.Transfer{
+	Meta:  blockatlas.Transfer{
 		Value: "3470000000000000",
 	},
 }

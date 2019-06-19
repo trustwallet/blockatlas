@@ -3,8 +3,8 @@ package ontology
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
-	"github.com/trustwallet/blockatlas/models"
 	"testing"
 )
 
@@ -28,7 +28,7 @@ var ONTTransfer = `
       }
 `
 
-var expectedONTTransferTrx = models.Tx{
+var expectedONTTransferTrx = blockatlas.Tx{
 	ID:    "4804e1be63ebe1715d6b4a039cc9d84b86cde74c8a8c8411578e6dcadc1e5405",
 	Coin:  coin.ONT,
 	From:  "AUyL4TZ1zFEcSKDJrjFnD7vsq5iFZMZqT7",
@@ -38,7 +38,7 @@ var expectedONTTransferTrx = models.Tx{
 	Type:   "transfer",
 	Status: "completed",
 	Block: 3411115,
-	Meta:  models.Transfer{
+	Meta:  blockatlas.Transfer{
 		Value: "2",
 	},
 }
@@ -63,17 +63,17 @@ var ONGTransferOfONTTransfer = `
       }
 `
 
-var expectedONGTransferOfONTTransferTrx = models.Tx{
+var expectedONGTransferOfONTTransferTrx = blockatlas.Tx{
 	ID:     "f494d7aeae2b88d313465d1f5f588b213795b38988a0bef182d9d3c2012f6e6e",
 	Coin:   coin.ONT,
 	From:   "AUyL4TZ1zFEcSKDJrjFnD7vsq5iFZMZqT7",
 	To:     "AFmseVrdL9f9oyCzZefL9tG6UbviEH9ugK",
 	Fee:    "10000000",
 	Date:   1555341286,
-	Type:   models.TxNativeTokenTransfer,
+	Type:   blockatlas.TxNativeTokenTransfer,
 	Status: "completed",
 	Block:  2863855,
-	Meta:  models.NativeTokenTransfer{
+	Meta:  blockatlas.NativeTokenTransfer{
 		Name: "Ontology Gas",
 		Symbol: "ONG",
 		TokenID: "ong",
@@ -110,17 +110,17 @@ var ONGTransfer = `
         "Height": 3411141
       }
 `
-var expectedONGTransferTrx = models.Tx{
+var expectedONGTransferTrx = blockatlas.Tx{
 	ID:     "eccbfd040925a22884d87e73f818f30ab42d06046460b86e9a042a1e9cba7561",
 	Coin:   coin.ONT,
 	From:   "AUyL4TZ1zFEcSKDJrjFnD7vsq5iFZMZqT7",
 	To:     "AQ9kzzHNLCcyrPwJuVMrSPgGzqmuQNVwMF",
 	Fee:    "10000000",
 	Date:   1556952520,
-	Type:   models.TxNativeTokenTransfer,
+	Type:   blockatlas.TxNativeTokenTransfer,
 	Status: "completed",
 	Block:  3411141,
-	Meta:  models.NativeTokenTransfer{
+	Meta:  blockatlas.NativeTokenTransfer{
 		Name: "Ontology Gas",
 		Symbol: "ONG",
 		TokenID: "ong",
@@ -135,7 +135,7 @@ func TestNormalize(t *testing.T) {
 	var tests = []struct {
 		Transaction  string
 		AssetName        string
-		Expected 		 models.Tx
+		Expected 		 blockatlas.Tx
 	}{
 		{ONTTransfer, ONTAssetName, expectedONTTransferTrx},
 		{ONGTransferOfONTTransfer, ONGAssetName, expectedONGTransferOfONTTransferTrx},
@@ -151,7 +151,7 @@ func TestNormalize(t *testing.T) {
 			t.Fatal("Ontology: Can't unmarshall transaction", tErr)
 		}
 
-		var readyTx models.Tx
+		var readyTx blockatlas.Tx
 		normTx, ok := Normalize(&trx, test.AssetName)
 		if !ok {
 			t.Fatal("Ontology: Can't normalize transaction", readyTx)

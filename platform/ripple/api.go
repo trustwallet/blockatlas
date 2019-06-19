@@ -1,38 +1,41 @@
 package ripple
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
-	"github.com/trustwallet/blockatlas/models"
-	"github.com/trustwallet/blockatlas/util"
 	"github.com/valyala/fastjson"
 	"net/http"
 	"time"
 )
 
-var client = Client{
-	HTTPClient: http.DefaultClient,
+const Handle = "ripple"
+
+type Platform struct {
+	client Client
 }
 
-// Setup registers the Ripple route
-func Setup(router gin.IRouter) {
-	router.Use(util.RequireConfig("ripple.api"))
-	router.Use(func(c *gin.Context) {
-		client.BaseURL = viper.GetString("ripple.api")
-		c.Next()
-	})
-	router.GET("/:address", getTransactions)
+func (p *Platform) Handle() string {
+	return Handle
 }
 
-func getTransactions(c *gin.Context) {
-	s, err := client.GetTxsOfAddress(c.Param("address"))
-	if apiError(c, err) {
-		return
+func (p *Platform) Init() error {
+	p.client.BaseURL = viper.GetString("ripple.api")
+	p.client.HTTPClient = http.DefaultClient
+	return nil
+}
+
+func (p *Platform) Coin() coin.Coin {
+	return coin.Coins[coin.XRP]
+}
+
+func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
+	s, err := p.client.GetTxsOfAddress(address)
+	if err != nil {
+		return nil, err
 	}
 
-	txs := make([]models.Tx, 0)
+	txs := make([]blockatlas.Tx, 0)
 	for _, srcTx := range s {
 		tx, ok := Normalize(&srcTx)
 		if !ok {
@@ -41,13 +44,11 @@ func getTransactions(c *gin.Context) {
 		txs = append(txs, tx)
 	}
 
-	page := models.Response(txs)
-	page.Sort()
-	c.JSON(http.StatusOK, &page)
+	return txs, nil
 }
 
 // Normalize converts a Ripple transaction into the generic model
-func Normalize(srcTx *Tx) (tx models.Tx, ok bool) {
+func Normalize(srcTx *Tx) (tx blockatlas.Tx, ok bool) {
 	// Only accept XRP payments (typeof tx.amount === 'string')
 	var p fastjson.Parser
 	v, pErr := p.ParseBytes(srcTx.Payment.Amount)
@@ -67,7 +68,7 @@ func Normalize(srcTx *Tx) (tx models.Tx, ok bool) {
 		unix = date.Unix()
 	}
 
-	return models.Tx{
+	return blockatlas.Tx{
 		ID:    srcTx.Hash,
 		Coin:  coin.XRP,
 		Date:  unix,
@@ -75,17 +76,8 @@ func Normalize(srcTx *Tx) (tx models.Tx, ok bool) {
 		To:    srcTx.Payment.Destination,
 		Fee:   srcTx.Payment.Fee,
 		Block: srcTx.LedgerIndex,
-		Meta:  models.Transfer{
-			Value: models.Amount(srcAmount),
+		Meta:  blockatlas.Transfer{
+			Value: blockatlas.Amount(srcAmount),
 		},
 	}, true
-}
-
-func apiError(c *gin.Context, err error) bool {
-	if err != nil {
-		logrus.WithError(err).Errorf("Unhandled error: %s", err)
-		c.AbortWithStatus(http.StatusInternalServerError)
-		return true
-	}
-	return false
 }
