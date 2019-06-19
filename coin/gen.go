@@ -16,11 +16,7 @@ import (
 )
 
 type Coin struct {
-	Index    uint   `json:"index"`
-	Symbol   string `json:"symbol"`
-	Title    string `json:"name"`
-	Website  string `json:"link"`
-	Decimals uint   `json:"decimals"`
+	Index uint `json:"index"`
 }
 
 func main() {
@@ -60,20 +56,4 @@ const (
 	{{ .Symbol }} = {{ .Index }}
 {{- end }}
 )
-
-var Coins = map[uint]Coin {
-{{- range .Coins }}
-	{{ .Symbol }}: {
-		Index: {{ .Symbol }},
-		Symbol: "{{ .Symbol }}",
-		Title: "{{ .Title }}",
-		{{- if .Website }}
-		Website: "{{ .Website }}",
-		{{- end }}
-		{{- if .Decimals }}
-		Decimals: {{ .Decimals }},
-		{{- end }}
-	},
-{{- end }}
-}
 `))

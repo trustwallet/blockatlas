@@ -10,6 +10,7 @@ import (
 	sredis "github.com/trustwallet/blockatlas/observer/storage/redis"
 	"github.com/trustwallet/blockatlas/platform"
 	"sync"
+	"time"
 )
 
 var Cmd = cobra.Command{
@@ -37,7 +38,8 @@ func run(_ *cobra.Command, _ []string) {
 	wg.Add(len(platform.BlockAPIs))
 	for _, api := range platform.BlockAPIs {
 		coin := api.Coin()
-		pollInterval := coin.BlockTime / 4
+		blockTime := time.Duration(coin.BlockTime) * time.Millisecond
+		pollInterval := blockTime / 4
 		if pollInterval < minInterval {
 			pollInterval = minInterval
 		}
@@ -49,7 +51,7 @@ func run(_ *cobra.Command, _ []string) {
 			logrus.WithField("coin", coin.Index).
 				Warning("Unknown block time")
 		} else {
-			backlogCount = int(backlogTime / coin.BlockTime)
+			backlogCount = int(backlogTime / blockTime)
 		}
 		stream := observer.Stream{
 			BlockAPI:     api,
