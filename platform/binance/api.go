@@ -22,7 +22,7 @@ func (p *Platform) Handle() string {
 }
 
 func (p *Platform) Init() error {
-	p.client.BaseURL = viper.GetString("ontology.api")
+	p.client.BaseURL = viper.GetString("binance.api")
 	p.client.HTTPClient = http.DefaultClient
 	return nil
 }

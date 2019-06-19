@@ -3,8 +3,6 @@ package vechain
 import (
 	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
-	"github.com/trustwallet/blockatlas/util"
-
 	"math/big"
 	"net/http"
 	"strings"
@@ -31,7 +29,7 @@ func (p *Platform) Init() error {
 }
 
 func (p *Platform) Coin() coin.Coin {
-	return coin.Coins[coin.THETA]
+	return coin.Coins[coin.VET]
 }
 
 const VeThorContract = "0x0000000000000000000000000000456E65726779"
@@ -40,11 +38,6 @@ const VeThorContractLow = "0x0000000000000000000000000000456e65726779"
 var wg sync.WaitGroup
 
 func (p *Platform) RegisterRoutes(router gin.IRouter) {
-	router.Use(util.RequireConfig("vechain.api"))
-	router.Use(func(c *gin.Context) {
-		p.client.URL = viper.GetString("vechain.api")
-		c.Next()
-	})
 	router.GET("/:address", func(c *gin.Context) {
 		p.getTransactions(c)
 	})
@@ -140,7 +133,7 @@ func NormalizeTransfer(receipt *TransferReceipt, clause *Clause) (tx blockatlas.
 }
 
 func NormalizeTokenTransfer(t *TokenTransfer) (tx blockatlas.Tx, ok bool) {
-	value :=blockatlas.Amount(blockatlas.Amount(hexaToIntegerString(t.Amount)))
+	value := blockatlas.Amount(hexaToIntegerString(t.Amount))
 	from := t.Origin
 	to := t.Receiver
 	block := t.Block

@@ -13,10 +13,6 @@ import(
 
 const Handle = "iotex"
 
-var client = Client{
-	HTTPClient : http.DefaultClient,
-}
-
 type Platform struct {
 	client Client
 }
@@ -38,13 +34,13 @@ func (p *Platform) Coin() coin.Coin {
 func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 	var start int64
 
-	totalTrx, err := client.GetAddressTotalTransactions(address)
+	totalTrx, err := p.client.GetAddressTotalTransactions(address)
 
 	if totalTrx >= blockatlas.TxPerPage {
 		start = totalTrx - blockatlas.TxPerPage
 	}
 
-	trxs, err := client.GetTxsOfAddress(address, start)
+	trxs, err := p.client.GetTxsOfAddress(address, start)
 	if err != nil {
 		return nil, err
 	}

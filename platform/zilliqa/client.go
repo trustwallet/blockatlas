@@ -1,6 +1,7 @@
 package zilliqa
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -36,6 +37,10 @@ func (c *Client) GetTxsOfAddress(address string) ([]Tx, error) {
 	if err != nil {
 		logrus.WithError(err).Error("Zilliqa: Error read response body")
 		return nil, err
+	}
+
+	if bytes.HasPrefix(body, []byte(`{"message":"Invalid API key specified"`)) {
+		return nil, fmt.Errorf("invalid Zilliqa API key")
 	}
 	
 	txs := make([]Tx, 0)

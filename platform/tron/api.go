@@ -27,7 +27,7 @@ func (p *Platform) Init() error {
 }
 
 func (p *Platform) Coin() coin.Coin {
-	return coin.Coins[coin.THETA]
+	return coin.Coins[coin.TRX]
 }
 
 func (p *Platform) RegisterRoutes(router gin.IRouter) {

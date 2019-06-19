@@ -51,9 +51,9 @@ func (c *Client) GetTxsOfAddress(address string, start int64) (*Response, error)
 }
 
 func (c *Client) GetAddressTotalTransactions(address string) (int64, error) {
-	uri := fmt.Sprintf("%s/accounts/%s", client.BaseURL, address)
+	uri := fmt.Sprintf("%s/accounts/%s", c.BaseURL, address)
 
-	res, err := client.HTTPClient.Get(uri)
+	res, err := c.HTTPClient.Get(uri)
 	if res != nil {
 		defer res.Body.Close()
 	}
