@@ -1,11 +1,11 @@
 package vechain
 
-import(
-	"github.com/sirupsen/logrus"
-	"net/http"
-	"io/ioutil"
-	"fmt"
+import (
 	"encoding/json"
+	"fmt"
+	"github.com/sirupsen/logrus"
+	"io/ioutil"
+	"net/http"
 )
 
 type Client struct {
@@ -65,7 +65,7 @@ func (c *Client) GetTokenTransferTransactions(address string) (TokenTransferTxs,
 	return transfers, nil
 }
 
-func (c *Client) GetTransacionReceipt(cn chan <- TransferReceipt, id string) {
+func (c *Client) GetTransactionReceipt(cn chan <- TransferReceipt, id string) {
 	defer wg.Done()
 
 	url := fmt.Sprintf("%s/transactions/%s", c.URL, id)
