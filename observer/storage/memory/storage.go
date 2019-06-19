@@ -32,8 +32,10 @@ func (s *Storage) Contains(coin uint, address string) (bool, error) {
 	return ok, nil
 }
 
-func (s *Storage) Add(o observer.Subscription) error {
-	s.observers[key(o.Coin, o.Address)] = o
+func (s *Storage) Add(subs []observer.Subscription) error {
+	for _, sub := range subs {
+		s.observers[key(sub.Coin, sub.Address)] = sub
+	}
 	return nil
 }
 

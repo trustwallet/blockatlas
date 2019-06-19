@@ -14,7 +14,5 @@ type Tracker interface {
 type Storage interface {
 	Tracker
 	Lookup(coin uint, addresses ...string) ([]Subscription, error)
-	Add(Subscription) error
-	Remove(coin uint, address string) error
-	Contains(coin uint, address string) (bool, error)
+	Add([]Subscription) error
 }

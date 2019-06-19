@@ -52,17 +52,12 @@ func (s *Storage) Lookup(coin uint, addresses ...string) (observers []observer.S
 	return
 }
 
-func (s *Storage) Contains(coin uint, address string) (bool, error) {
-	return s.client.HExists(keyObservers, key(coin, address)).Result()
-}
-
-func (s *Storage) Add(o observer.Subscription) error {
-	cmd := s.client.HSet(keyObservers, key(o.Coin, o.Address), o.Webhook)
-	return cmd.Err()
-}
-
-func (s *Storage) Remove(coin uint, address string) error {
-	cmd := s.client.HDel(keyObservers, key(coin, address))
+func (s *Storage) Add(subs []observer.Subscription) error {
+	fields := make(map[string]interface{})
+	for _, sub := range subs {
+		fields[key(sub.Coin, sub.Address)] = sub.Webhook
+	}
+	cmd := s.client.HMSet(keyObservers, fields)
 	return cmd.Err()
 }
 

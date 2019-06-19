@@ -13,7 +13,6 @@ import (
 func setupObserverAPI(router gin.IRouter) {
 	router.Use(requireAuth)
 	router.POST("/:coin", addObserver)
-	router.DELETE("/:coin/:address", removeObserver)
 }
 
 func requireAuth(c *gin.Context) {
@@ -34,42 +33,33 @@ func addObserver(c *gin.Context) {
 	}
 
 	var req struct {
-		Address string `form:"address" binding:"required"`
-		Webhook string `form:"webhook" binding:"required"`
+		Address []string `json:"addresses"`
+		Webhook string `json:"webhook"`
 	}
-	if c.Bind(&req) != nil {
+	if c.BindJSON(&req) != nil {
 		return
 	}
 
-	sub := observer.Subscription{
-		Coin:    uint(coin),
-		Address: req.Address,
-		Webhook: req.Webhook,
+	if len(req.Address) == 0 {
+		c.String(http.StatusOK, "Added")
+		return
 	}
 
-	err = observerStorage.App.Add(sub)
+	subs := make([]observer.Subscription, len(req.Address))
+
+	for i, addr := range req.Address {
+		subs[i] = observer.Subscription{
+			Coin: uint(coin),
+			Address: addr,
+			Webhook: req.Webhook,
+		}
+	}
+
+	err = observerStorage.App.Add(subs)
 	if err != nil {
 		_ = c.Error(err)
 		return
 	}
 
-	c.JSON(200, &sub)
-}
-
-func removeObserver(c *gin.Context) {
-	coinStr := c.Param("coin")
-	coin, err := strconv.Atoi(coinStr)
-	if err != nil {
-		c.String(http.StatusNotFound, "404 page not found")
-		return
-	}
-	address := c.Param("address")
-
-	err = observerStorage.App.Remove(uint(coin), address)
-	if err != nil {
-		_ = c.Error(err)
-		return
-	}
-
-	c.String(http.StatusOK, "Removed")
+	c.String(http.StatusOK, "Added")
 }
