@@ -62,6 +62,7 @@ func (s *Stream) load(c chan<- *blockatlas.Block) {
 			return
 		}
 		c <- block
+		s.log.WithField("num", i).Info("Got new block")
 
 		err = s.Tracker.SetBlockNumber(s.coin, i)
 		if err != nil {
