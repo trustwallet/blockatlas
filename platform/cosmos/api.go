@@ -1,35 +1,41 @@
 package cosmos
 
 import (
+	"github.com/trustwallet/blockatlas"
 	"net/http"
 	"strconv"
 	"time"
 
-	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/coin"
-	"github.com/trustwallet/blockatlas/models"
 	"github.com/trustwallet/blockatlas/util"
 )
 
-var client = Client{
-	HTTPClient: http.DefaultClient,
+const Handle = "cosmos"
+
+type Platform struct {
+	client Client
 }
 
-// Setup registers the Cosmos chain route
-func Setup(router gin.IRouter) {
-	router.Use(util.RequireConfig("cosmos.api"))
-	router.Use(func(c *gin.Context) {
-		client.BaseURL = viper.GetString("cosmos.api")
-	})
-	router.GET("/:address", getTransactions)
+func (p *Platform) Handle() string {
+	return Handle
 }
 
-func getTransactions(c *gin.Context) {
-	inputTxes, _ := client.GetAddrTxes(c.Param("address"), "inputs")
-	outputTxes, _ := client.GetAddrTxes(c.Param("address"), "outputs")
+func (p *Platform) Init() error {
+	p.client.BaseURL = viper.GetString("cosmos.api")
+	p.client.HTTPClient = http.DefaultClient
+	return nil
+}
 
-	normalisedTxes := make([]models.Tx, 0)
+func (p *Platform) Coin() coin.Coin {
+	return coin.Coins[coin.ATOM]
+}
+
+func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
+	inputTxes, _ := p.client.GetAddrTxes(address, "inputs")
+	outputTxes, _ := p.client.GetAddrTxes(address, "outputs")
+
+	normalisedTxes := make([]blockatlas.Tx, 0)
 
 	for _, inputTx := range inputTxes {
 		normalisedInputTx := Normalize(&inputTx)
@@ -40,13 +46,11 @@ func getTransactions(c *gin.Context) {
 		normalisedTxes = append(normalisedTxes, normalisedOutputTx)
 	}
 
-	page := models.Response(normalisedTxes)
-	page.Sort()
-	c.JSON(http.StatusOK, &page)
+	return normalisedTxes, nil
 }
 
 // Normalize converts an Cosmos transaction into the generic model
-func Normalize(srcTx *Tx) (tx models.Tx) {
+func Normalize(srcTx *Tx) (tx blockatlas.Tx) {
 	date, _ := time.Parse("2006-01-02T15:04:05Z", srcTx.Date)
 	value, _ := util.DecimalToSatoshis(srcTx.Data.Contents.Message[0].Particulars.Amount[0].Quantity)
 	block, _ := strconv.ParseUint(srcTx.Block, 10, 64)
@@ -57,17 +61,17 @@ func Normalize(srcTx *Tx) (tx models.Tx) {
 	} else {
 		fee, _ = util.DecimalToSatoshis(srcTx.Data.Contents.Fee.FeeAmount[0].Quantity)
 	}
-	return models.Tx{
+	return blockatlas.Tx{
 		ID:    srcTx.ID,
 		Coin:  coin.ATOM,
 		Date:  date.Unix(),
 		From:  srcTx.Data.Contents.Message[0].Particulars.FromAddr, // This will need to be adjusted for multi-outputs, later
 		To:    srcTx.Data.Contents.Message[0].Particulars.ToAddr,   // Likewise
-		Fee:   models.Amount(fee),
+		Fee:   blockatlas.Amount(fee),
 		Block: block,
 		Memo:  srcTx.Data.Contents.Memo,
-		Meta: models.Transfer{
-			Value: models.Amount(value),
+		Meta: blockatlas.Transfer{
+			Value: blockatlas.Amount(value),
 		},
 	}
 }
