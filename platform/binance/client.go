@@ -7,6 +7,7 @@ import (
 	"github.com/trustwallet/blockatlas"
 	"net/http"
 	"net/url"
+	"strconv"
 )
 
 // TODO Headers + rate limiting
@@ -14,6 +15,53 @@ import (
 type Client struct {
 	HTTPClient *http.Client
 	BaseURL    string
+}
+
+func (c *Client) GetBlockList(count int) (*BlockList, error) {
+	uri := fmt.Sprintf("%s/blocks?page=1&rows=%d",
+		c.BaseURL, count)
+
+	res, err := c.HTTPClient.Get(uri)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := getHTTPError(res, "GetBlockList"); err != nil {
+		return nil, err
+	}
+
+	var blockList BlockList
+	err = json.NewDecoder(res.Body).Decode(&blockList)
+	if err != nil {
+		return nil, err
+	} else {
+		return &blockList, nil
+	}
+}
+
+func (c *Client) GetBlockByNumber(num int64) (*TxPage, error) {
+	uri := fmt.Sprintf("%s/txs?%s",
+		c.BaseURL,
+		url.Values{
+			"blockHeight": {strconv.FormatInt(num, 10)},
+			// Only first 100 transactions of block returned
+			// Shouldn't be a problem at the current transaction rate
+			"rows":        {"100"},
+			"page":        {"1"},
+		}.Encode())
+
+	res, err := c.HTTPClient.Get(uri)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := getHTTPError(res, "GetBlockByNumber"); err != nil {
+		return nil, err
+	}
+
+	stx := new(TxPage)
+	err = json.NewDecoder(res.Body).Decode(stx)
+	return stx, nil
 }
 
 func (c *Client) GetTxsOfAddress(address string, token string) (*TxPage, error) {
@@ -31,13 +79,8 @@ func (c *Client) GetTxsOfAddress(address string, token string) (*TxPage, error) 
 		return nil, blockatlas.ErrSourceConn
 	}
 
-	switch res.StatusCode {
-	case http.StatusBadRequest, http.StatusNotFound:
-		return nil, getHTTPError(res, "get transactions")
-	case http.StatusOK:
-		break
-	default:
-		return nil, fmt.Errorf("%s", res.Status)
+	if err := getHTTPError(res, "GetTxsOfAddress"); err != nil {
+		return nil, err
 	}
 
 	stx := new(TxPage)
@@ -46,6 +89,17 @@ func (c *Client) GetTxsOfAddress(address string, token string) (*TxPage, error) 
 }
 
 func getHTTPError(res *http.Response, desc string) error {
+	switch res.StatusCode {
+	case http.StatusBadRequest, http.StatusNotFound:
+		return getAPIError(res, desc)
+	case http.StatusOK:
+		return nil
+	default:
+		return fmt.Errorf("%s", res.Status)
+	}
+}
+
+func getAPIError(res *http.Response, desc string) error {
 	var sErr Error
 	err := json.NewDecoder(res.Body).Decode(&sErr)
 	if err != nil {

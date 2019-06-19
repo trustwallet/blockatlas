@@ -148,7 +148,8 @@
 		"symbol": "BNB",
 		"name": "Binance",
 		"link": "https://www.binance.org",
-		"decimals": 18
+		"decimals": 18,
+		"blockTime": 1000
 	},
 	{
 		"index": 818,
