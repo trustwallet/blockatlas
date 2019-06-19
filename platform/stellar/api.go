@@ -1,8 +1,10 @@
 package stellar
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/util"
@@ -22,6 +24,7 @@ func (p *Platform) Handle() string {
 }
 
 func (p *Platform) Init() error {
+	p.client.API = viper.GetString(fmt.Sprintf("%s.api", p.HandleStr))
 	p.client.HTTP = &http.Client{
 		Timeout: 2 * time.Second,
 	}

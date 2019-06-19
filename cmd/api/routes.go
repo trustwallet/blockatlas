@@ -54,7 +54,9 @@ func getRouter(router gin.IRouter, handle string) gin.IRouter {
 	if group, ok := routers[handle]; ok {
 		return group
 	} else {
-		group := router.Group(fmt.Sprintf("/%s", handle))
+		path := fmt.Sprintf("/%s", handle)
+		logrus.Debugf("Registering %s", path)
+		group := router.Group(path)
 		routers[handle] = group
 		return group
 	}

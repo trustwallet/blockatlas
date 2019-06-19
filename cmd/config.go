@@ -48,12 +48,10 @@ func loadDefaults() {
 	viper.SetDefault("tezos.api", "https://api1.tzscan.io/v3")
 	viper.SetDefault("aion.api", "https://mainnet-api.aion.network/aion/dashboard")
 	viper.SetDefault("icon.api", "https://tracker.icon.foundation/v3")
-	viper.SetDefault("tron.api", "https://api.trongrid.io/v1")
 	viper.SetDefault("vechain.api", "https://explore.veforge.com/api")
 	viper.SetDefault("theta.api", "https://explorer.thetatoken.org:9000/api")
 	viper.SetDefault("cosmos.api", "https://stargate.cosmos.network")
 	viper.SetDefault("semux.api", "https://sempy.online/api")
 	viper.SetDefault("ontology.api", "https://explorer.ont.io/api/v1/explorer")
-	viper.SetDefault("zilliqa.api", "https://api.viewblock.io/v1/zilliqa")
 	viper.SetDefault("iotex.api", "https://pharos.iotex.io/v1")
 }

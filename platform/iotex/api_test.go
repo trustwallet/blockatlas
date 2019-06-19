@@ -2,9 +2,7 @@ package iotex
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/trustwallet/blockatlas"
-	"net/http"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -123,23 +121,6 @@ var expected = []blockatlas.Tx {
 		Status : blockatlas.StatusFailed,
 		Error  : "strconv.ParseInt: parsing \"3.1\": invalid syntax",
 	},
-}
-
-func TestClient(t *testing.T) {
-	assert := assert.New(t)
-
-	c := Client{
-		HTTPClient: http.DefaultClient,
-		BaseURL:    "https://pharos.iotex.io/v1",
-	}
-	uri := fmt.Sprintf("%s/actions/hash/%s",
-		c.BaseURL,
-		"109b75cb688a5347268cbf11b20fa90fd0a14e92a42ba735c046bbf1a6e66ad7")
-
-	res, err := c.HTTPClient.Get(uri)
-	assert.NoError(err)
-	defer res.Body.Close()
-	assert.Equal(http.StatusOK, res.StatusCode)
 }
 
 func TestNormalize(t *testing.T) {
