@@ -3,6 +3,7 @@ package icon
 import(
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
+	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/models"
 	"github.com/trustwallet/blockatlas/util"
@@ -11,23 +12,33 @@ import(
 	"fmt"
 )
 
-var client = Client{
-	HTTPClient : http.DefaultClient,
+const Handle = "icon"
+
+type Platform struct {
+	client Client
 }
 
-// Setup registers the Icon chain route
-func Setup(router gin.IRouter) {
-	router.Use(util.RequireConfig("icon.api"))
-	router.Use(func(c *gin.Context) {
-		client.RPCURL = viper.GetString("icon.api")
-	})
-	router.GET("/:address", getTransactions)
+func (p *Platform) Handle() string {
+	return Handle
 }
 
-func getTransactions(c *gin.Context) {
-	trxs, _ := client.GetAddressTransactions(c.Param("address"))
+func (p *Platform) Init() error {
+	p.client.RPCURL = viper.GetString("icon.api")
+	p.client.HTTPClient = http.DefaultClient
+	return nil
+}
 
-	nTrxs := make([]models.Tx, 0)
+func (p *Platform) Coin() coin.Coin {
+	return coin.Coins[coin.ICX]
+}
+
+func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
+	trxs, err := p.client.GetAddressTransactions(address)
+	if err != nil {
+		return nil, err
+	}
+
+	nTrxs := make([]blockatlas.Tx, 0)
 	for _, trx := range trxs {
 		nTrx, ok := Normalize(&trx)
 		if !ok {
@@ -36,13 +47,11 @@ func getTransactions(c *gin.Context) {
 		nTrxs = append(nTrxs, nTrx)
 	}
 
-	page := models.Response(nTrxs)
-	page.Sort()
-	c.JSON(http.StatusOK, &page)
+	return nTrxs, nil
 }
 
 // Normalize converts an Icon transaction into the generic model
-func Normalize(trx *Tx) (tx models.Tx, b bool) {
+func Normalize(trx *Tx) (tx blockatlas.Tx, b bool) {
 	date, err := time.Parse("2006-01-02T15:04:05.999Z0700", trx.CreateDate)
 	if err != nil {
 		fmt.Printf("%v\n", err)
@@ -51,18 +60,18 @@ func Normalize(trx *Tx) (tx models.Tx, b bool) {
 	fee := util.DecimalExp(string(trx.Fee), 18)
 	value := util.DecimalExp(string(trx.Amount), 18)
 
-	return models.Tx{
+	return blockatlas.Tx{
 		ID:      trx.TxHash,
 		Coin   : coin.ICX,
 		From   : trx.FromAddr,
 		To     : trx.ToAddr,
-		Fee    : models.Amount(fee),
-		Status : models.StatusCompleted,
+		Fee    : blockatlas.Amount(fee),
+		Status : blockatlas.StatusCompleted,
 		Date   : date.Unix(),
-		Type   : models.TxTransfer,
+		Type   : blockatlas.TxTransfer,
 		Block  : trx.Height,
-		Meta: models.Transfer{
-			Value : models.Amount(value),
+		Meta: blockatlas.Transfer{
+			Value : blockatlas.Amount(value),
 		},
 	}, true
 }

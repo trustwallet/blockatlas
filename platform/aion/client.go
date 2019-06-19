@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/sirupsen/logrus"
-	"github.com/trustwallet/blockatlas/models"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -15,12 +14,12 @@ type Client struct {
 	BaseURL    string
 }
 
-func (c *Client) GetTxsOfAddress(address string) (*TxPage, error) {
+func (c *Client) GetTxsOfAddress(address string, num int) (*TxPage, error) {
 	uri := fmt.Sprintf("%s/getTransactionsByAddress?%s",
 		c.BaseURL,
 		url.Values{
 			"accountAddress": {address},
-			"size":           {strconv.FormatInt(models.TxPerPage, 10)},
+			"size":           {strconv.Itoa(num)},
 		}.Encode())
 
 	res, err := c.HTTPClient.Get(uri)

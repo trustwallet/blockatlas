@@ -106,6 +106,14 @@
 		"blockTime": 60000
 	},
 	{
+		"index": 304,
+		"hex": "0x80000130",
+		"symbol": "IOTX",
+		"name": "IoTeX",
+		"link": "https://iotex.io/",
+		"decimals": 0
+	},
+	{
 		"index": 313,
 		"hex": "0x80000139",
 		"symbol": "ZIL",

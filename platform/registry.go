@@ -5,10 +5,18 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas"
+	"github.com/trustwallet/blockatlas/platform/aion"
+	"github.com/trustwallet/blockatlas/platform/cosmos"
+	"github.com/trustwallet/blockatlas/platform/icon"
+	"github.com/trustwallet/blockatlas/platform/iotex"
 	"github.com/trustwallet/blockatlas/platform/nimiq"
 )
 
 var platformList = []blockatlas.Platform{
+	new(aion.Platform),
+	new(cosmos.Platform),
+	new(icon.Platform),
+	new(iotex.Platform),
 	new(nimiq.Platform),
 }
 

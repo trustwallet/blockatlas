@@ -63,7 +63,7 @@ func NormalizeTx(srcTx *Tx) blockatlas.Tx {
 	}
 }
 
-// NormalizeTxs converts mulitple Nimiq transactions
+// NormalizeTxs converts multiple Nimiq transactions
 func NormalizeTxs(srcTxs []Tx) []blockatlas.Tx {
 	txs := make([]blockatlas.Tx, len(srcTxs))
 	for i, srcTx := range srcTxs {
