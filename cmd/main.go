@@ -13,8 +13,6 @@ import (
 	"os"
 )
 
-const defaultConfigName = "config.yml"
-
 var app = cobra.Command{
 	Use: "blockatlas",
 	Short: "BlockAtlas by Trust Wallet",
@@ -37,7 +35,7 @@ var app = cobra.Command{
 }
 
 func init() {
-	app.PersistentFlags().StringP("config", "c", defaultConfigName, "Config file (optional)")
+	app.PersistentFlags().StringP("config", "c", "", "Config file (optional)")
 	app.AddCommand(&api.Cmd)
 	app.AddCommand(&observer.Cmd)
 }
