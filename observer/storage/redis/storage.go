@@ -25,6 +25,10 @@ func (s *Storage) Lookup(coin uint, addresses ...string) (observers []observer.S
 		keys[i] = key(coin, address)
 	}
 
+	if len(addresses) == 0 {
+		return nil, nil
+	}
+
 	cmd := s.client.HMGet(keyObservers, keys...)
 	if err := cmd.Err(); err != nil {
 		return nil, err
