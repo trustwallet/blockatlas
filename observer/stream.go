@@ -68,6 +68,10 @@ func (s *Stream) load(c chan<- *blockatlas.Block) {
 	if height - lastHeight > int64(s.BacklogCount) {
 		lastHeight = height - int64(s.BacklogCount)
 	}
+	backLogMax := viper.GetInt64("observer.backlog_max_blocks")
+	if height - lastHeight > backLogMax {
+		lastHeight = height - backLogMax
+	}
 
 	atomic.StoreInt64(&s.blockNumber, lastHeight)
 	for i := lastHeight + 1; i <= height; i++ {
