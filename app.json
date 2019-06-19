@@ -13,6 +13,10 @@
     "web": {
       "quantity": 1,
       "size": "Free"
+    },
+    "observer": {
+      "quantity": 1,
+      "size": "Free"
     }
   }
 }
