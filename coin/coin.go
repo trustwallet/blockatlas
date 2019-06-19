@@ -1,12 +1,16 @@
 package coin
 
 import (
+	"encoding/json"
 	"fmt"
-	"time"
+	"github.com/sirupsen/logrus"
+	"io/ioutil"
 )
 
 //go:generate rm -f slip44.go
 //go:generate go run gen.go
+
+var Coins map[uint]Coin
 
 // Coin is the native currency of a blockchain
 type Coin struct {
@@ -21,9 +25,25 @@ type Coin struct {
 	// Number of decimals
 	Decimals uint   `json:"decimals"`
 	// Average time between blocks
-	BlockTime time.Duration `json:"blockTime"`
+	BlockTime int `json:"blockTime"`
 }
 
 func (c Coin) String() string {
 	return fmt.Sprintf("[%s] %s (#%d)", c.Symbol, c.Title, c.Index)
+}
+
+func Load(fPath string) {
+	buf, err := ioutil.ReadFile(fPath)
+	if err != nil {
+		logrus.WithError(err).Fatal("Failed to load coins")
+	}
+	var coinList []Coin
+	err = json.Unmarshal(buf, &coinList)
+	if err != nil {
+		logrus.WithError(err).Fatal("Failed to load coins")
+	}
+	Coins = make(map[uint]Coin)
+	for _, coin := range coinList {
+		Coins[coin.Index] = coin
+	}
 }

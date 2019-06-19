@@ -28,13 +28,6 @@
 		"link": "https://github.com/dashpay/dash"
 	},
 	{
-		"index": 42,
-		"hex": "0x8000002a",
-		"symbol": "DCR",
-		"name": "Decred",
-		"link": "https://decred.org/"
-	},
-	{
 		"index": 60,
 		"hex": "0x8000003c",
 		"symbol": "ETH",
@@ -59,53 +52,11 @@
 		"decimals": 18
 	},
 	{
-		"index": 77,
-		"hex": "0x8000004d",
-		"symbol": "XVG",
-		"name": "Verge",
-		"link": "https://github.com/vergecurrency/verge/"
-	},
-	{
-		"index": 101,
-		"hex": "0x80000065",
-		"symbol": "GAME",
-		"name": "GameCredits",
-		"link": "https://github.com/gamecredits-project"
-	},
-	{
 		"index": 111,
 		"hex": "0x8000006f",
 		"symbol": "ARK",
 		"name": "ARK",
 		"link": "https://ark.io"
-	},
-	{
-		"index": 128,
-		"hex": "0x80000080",
-		"symbol": "XMR",
-		"name": "Monero",
-		"link": "https://getmonero.org/"
-	},
-	{
-		"index": 133,
-		"hex": "0x80000085",
-		"symbol": "ZEC",
-		"name": "Zcash",
-		"link": "https://z.cash"
-	},
-	{
-		"index": 134,
-		"hex": "0x80000086",
-		"symbol": "LSK",
-		"name": "Lisk",
-		"link": "https://lisk.io/"
-	},
-	{
-		"index": 135,
-		"hex": "0x80000087",
-		"symbol": "STEEM",
-		"name": "Steem",
-		"link": "http://steem.io"
 	},
 	{
 		"index": 144,
@@ -122,13 +73,6 @@
 		"name": "Stellar Lumens",
 		"link": "https://www.stellar.org/",
 		"decimals": 7
-	},
-	{
-		"index": 165,
-		"hex": "0x800000a5",
-		"symbol": "XRB",
-		"name": "RaiBlocks",
-		"link": "https://raiblocks.com"
 	},
 	{
 		"index": 178,
@@ -158,7 +102,8 @@
 		"symbol": "NIM",
 		"name": "Nimiq",
 		"link": "https://nimiq.com/",
-		"decimals": 5
+		"decimals": 5,
+		"blockTime": 60000
 	},
 	{
 		"index": 313,
@@ -265,13 +210,6 @@
 		"decimals": 5
 	},
 	{
-		"index": 2301,
-		"hex": "0x800008fd",
-		"symbol": "QTUM",
-		"name": "QTUM",
-		"link": "https://qtum.org/en/"
-	},
-	{
 		"index": 3381,
 		"hex": "0x80000d35",
 		"symbol": "DYN",
@@ -300,13 +238,6 @@
 		"name": "Wanchain",
 		"link": "https://wanchain.org/",
 		"decimals": 18
-	},
-	{
-		"index": 5741564,
-		"hex": "0x80579bfc",
-		"symbol": "WAVES",
-		"name": "Waves",
-		"link": "https://wavesplatform.com/"
 	},
 	{
 		"index": 7562605,

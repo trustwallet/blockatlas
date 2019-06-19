@@ -3,8 +3,10 @@ package main
 import (
 	"fmt"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/cmd/api"
 	"github.com/trustwallet/blockatlas/cmd/observer"
+	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/platform"
 	"os"
 )
@@ -17,6 +19,8 @@ var app = cobra.Command{
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		confPath, _ := cmd.Flags().GetString("config")
 		loadConfig(confPath)
+		coinFile := viper.GetString("coins")
+		coin.Load(coinFile)
 		platform.Init()
 	},
 }
