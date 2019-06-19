@@ -5,6 +5,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	observerStorage "github.com/trustwallet/blockatlas/observer/storage"
 	"github.com/trustwallet/blockatlas/util"
 	"net/http"
 )
@@ -37,6 +38,10 @@ func run(_ *cobra.Command, args []string) {
 	})
 
 	loadPlatforms(engine)
+	if observerStorage.App != nil {
+		observerAPI := engine.Group("/observer/v1")
+		setupObserverAPI(observerAPI)
+	}
 
 	logrus.WithField("bind", bind).Info("Running application")
 	if err := engine.Run(bind); err != nil {

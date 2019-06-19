@@ -2,12 +2,11 @@ package observer
 
 import (
 	"context"
-	"github.com/go-redis/redis"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/observer"
-	sredis "github.com/trustwallet/blockatlas/observer/storage/redis"
+	observerStorage "github.com/trustwallet/blockatlas/observer/storage"
 	"github.com/trustwallet/blockatlas/platform"
 	"sync"
 	"time"
@@ -21,11 +20,9 @@ var Cmd = cobra.Command{
 }
 
 func run(_ *cobra.Command, _ []string) {
-	client := redis.NewClient(&redis.Options{})
-	if err := client.Ping().Err(); err != nil {
-		logrus.WithError(err).Fatal("Redis connection test failed")
+	if observerStorage.App == nil {
+		logrus.Fatal("Observer is not enabled")
 	}
-	storage := sredis.New(client)
 
 	if len(platform.BlockAPIs) == 0 {
 		logrus.Fatal("No APIs to observe")
@@ -55,7 +52,7 @@ func run(_ *cobra.Command, _ []string) {
 		}
 		stream := observer.Stream{
 			BlockAPI:     api,
-			Tracker:      storage,
+			Tracker:      observerStorage.App,
 			PollInterval: pollInterval,
 			BacklogCount: backlogCount,
 		}
@@ -63,8 +60,8 @@ func run(_ *cobra.Command, _ []string) {
 
 		// Check for transaction events
 		obs := observer.Observer{
-			Storage: storage,
-			Coin: coin.Index,
+			Storage: observerStorage.App,
+			Coin:    coin.Index,
 		}
 		events := obs.Execute(blocks)
 
