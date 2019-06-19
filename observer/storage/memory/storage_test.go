@@ -20,11 +20,11 @@ func TestMemoryStorage_Add(t *testing.T) {
 		observers: observerMap,
 	}
 
-	_ = storage.Add(observer.Subscription{
+	_ = storage.Add([]observer.Subscription{{
 		Coin: ethCoin,
 		Address: addr1,
 		Webhook: webhook1,
-	})
+	}})
 
 	if len(observerMap) != 1 {
 		t.Error("observer not added")
@@ -105,7 +105,7 @@ func TestMemoryStorage_Get(t *testing.T) {
 
 func TestMemoryStorage_Contains(t *testing.T) {
 	var observerMap = make(map[string]observer.Subscription)
-	var storage observer.Storage = &Storage{
+	var storage = &Storage{
 		observers: observerMap,
 	}
 	obs1 := observer.Subscription{
