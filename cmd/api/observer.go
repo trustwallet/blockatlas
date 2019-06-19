@@ -7,12 +7,11 @@ import (
 	"github.com/trustwallet/blockatlas/observer"
 	observerStorage "github.com/trustwallet/blockatlas/observer/storage"
 	"net/http"
-	"strconv"
 )
 
 func setupObserverAPI(router gin.IRouter) {
 	router.Use(requireAuth)
-	router.POST("/:coin", addObserver)
+	router.POST("/", addObserver)
 }
 
 func requireAuth(c *gin.Context) {
@@ -25,37 +24,31 @@ func requireAuth(c *gin.Context) {
 }
 
 func addObserver(c *gin.Context) {
-	coinStr := c.Param("coin")
-	coin, err := strconv.Atoi(coinStr)
-	if err != nil {
-		c.String(http.StatusNotFound, "404 page not found")
-		return
-	}
-
 	var req struct {
-		Address []string `json:"addresses"`
+		Subscriptions map[uint][]string `json:"subscriptions"`
 		Webhook string `json:"webhook"`
 	}
 	if c.BindJSON(&req) != nil {
 		return
 	}
 
-	if len(req.Address) == 0 {
+	if len(req.Subscriptions) == 0 {
 		c.String(http.StatusOK, "Added")
 		return
 	}
 
-	subs := make([]observer.Subscription, len(req.Address))
-
-	for i, addr := range req.Address {
-		subs[i] = observer.Subscription{
-			Coin: uint(coin),
-			Address: addr,
-			Webhook: req.Webhook,
+	var subs []observer.Subscription
+	for coin, perCoin := range req.Subscriptions {
+		for _, addr := range perCoin {
+			subs = append(subs, observer.Subscription{
+				Coin:    uint(coin),
+				Address: addr,
+				Webhook: req.Webhook,
+			})
 		}
 	}
 
-	err = observerStorage.App.Add(subs)
+	err := observerStorage.App.Add(subs)
 	if err != nil {
 		_ = c.Error(err)
 		return
