@@ -1,6 +1,7 @@
 package binance
 
 import (
+	"fmt"
 	"github.com/trustwallet/blockatlas"
 	"net/http"
 
@@ -28,7 +29,34 @@ func (p *Platform) Init() error {
 }
 
 func (p *Platform) Coin() coin.Coin {
-	return coin.Coins[coin.ONT]
+	return coin.Coins[coin.BNB]
+}
+
+func (p *Platform) CurrentBlockNumber() (int64, error) {
+	// No native function to get height in explorer API
+	// Workaround: Request list of blocks
+	// and return number of the newest one
+	list, err := p.client.GetBlockList(1)
+	if err != nil {
+		return 0, err
+	}
+	if len(list.BlockArray) == 0 {
+		return 0, fmt.Errorf("no block descriptor found")
+	}
+	return list.BlockArray[0].BlockHeight, nil
+}
+
+func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
+	srcTxs, err := p.client.GetBlockByNumber(num)
+	if err != nil {
+		return nil, err
+	}
+	// TODO: Only returns BNB transactions for now
+	txs := NormalizeTxs(srcTxs.Txs, "")
+	return &blockatlas.Block{
+		Number: num,
+		Txs:    txs,
+	}, nil
 }
 
 func (p *Platform) RegisterRoutes(router gin.IRouter) {
@@ -40,27 +68,19 @@ func (p *Platform) RegisterRoutes(router gin.IRouter) {
 func (p *Platform) getTransactions(c *gin.Context) {
 	token := c.Query("token")
 
-	transactions, err := p.client.GetTxsOfAddress(c.Param("address"), token)
+	srcTxs, err := p.client.GetTxsOfAddress(c.Param("address"), token)
 	if apiError(c, err) {
 		return
 	}
+	txs := NormalizeTxs(srcTxs.Txs, token)
 
-	var txs []blockatlas.Tx
-	for _, srcTx := range transactions.Txs {
-		tx, ok := Normalize(&srcTx, token)
-		if !ok || len(txs) >= blockatlas.TxPerPage {
-			continue
-		}
-
-		txs = append(txs, tx)
-	}
 	page := blockatlas.TxPage(txs)
 	page.Sort()
 	c.JSON(http.StatusOK, &page)
 }
 
-// Normalize converts a Binance transaction into the generic model
-func Normalize(srcTx *Tx, token string) (tx blockatlas.Tx, ok bool) {
+// NormalizeTx converts a Binance transaction into the generic model
+func NormalizeTx(srcTx *Tx, token string) (tx blockatlas.Tx, ok bool) {
 	value := util.DecimalExp(string(srcTx.Value), 8)
 	fee := util.DecimalExp(string(srcTx.Fee), 8)
 
@@ -83,7 +103,7 @@ func Normalize(srcTx *Tx, token string) (tx blockatlas.Tx, ok bool) {
 		return tx, true
 	}
 
-	// Condiiton for native token transfer
+	// Condition for native token transfer
 	if srcTx.Asset == token && srcTx.Type == "TRANSFER" {
 		tx.Meta = blockatlas.NativeTokenTransfer{
 			TokenID:  srcTx.Asset,
@@ -98,6 +118,18 @@ func Normalize(srcTx *Tx, token string) (tx blockatlas.Tx, ok bool) {
 	}
 
 	return tx, false
+}
+
+// NormalizeTxs converts multiple Binance transactions
+func NormalizeTxs(srcTxs []Tx, token string) (txs []blockatlas.Tx) {
+	for _, srcTx := range srcTxs {
+		tx, ok := NormalizeTx(&srcTx, token)
+		if !ok || len(txs) >= blockatlas.TxPerPage {
+			continue
+		}
+		txs = append(txs, tx)
+	}
+	return
 }
 
 func apiError(c *gin.Context, err error) bool {
