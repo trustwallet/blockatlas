@@ -40,6 +40,7 @@ func loadDefaults() {
 	viper.SetDefault("observer.redis", "redis://localhost:6379")
 	viper.SetDefault("observer.min_poll", 250 * time.Millisecond)
 	viper.SetDefault("observer.backlog", 3 * time.Hour)
+	viper.SetDefault("observer.stream_conns", 16)
 
 	// All platforms with public RPC endpoints
 	viper.SetDefault("binance.api", "https://explorer.binance.org/api/v1")
