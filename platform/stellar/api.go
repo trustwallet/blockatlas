@@ -3,52 +3,57 @@ package stellar
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
-	"github.com/spf13/viper"
-	"github.com/trustwallet/blockatlas/models"
+	"github.com/trustwallet/blockatlas"
+	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/util"
 	"net/http"
 	"strconv"
 	"time"
 )
 
-// MakeSetup returns a function used to register a Stellar-based platform route
-func MakeSetup(coinIndex uint, platform string) func(gin.IRouter) {
-	return func(router gin.IRouter) {
-		apiKey := platform + ".api"
-
-		stellarClient := Client{
-			HTTP: &http.Client{
-				Timeout: 2 * time.Second,
-			},
-		}
-
-		router.Use(util.RequireConfig(apiKey))
-		router.Use(func(c *gin.Context) {
-			stellarClient.API = viper.GetString(apiKey)
-			c.Next()
-		})
-		router.GET("/:address", func(c *gin.Context) {
-			GetTransactions(c, coinIndex, &stellarClient)
-		})
-	}
+type Platform struct {
+	client Client
+	CoinIndex uint
+	HandleStr string
 }
 
-func GetTransactions(c *gin.Context, coinIndex uint, client *Client) {
-	payments, err := client.GetTxsOfAddress(c.Param("address"))
+func (p *Platform) Handle() string {
+	return p.HandleStr
+}
+
+func (p *Platform) Init() error {
+	p.client.HTTP = &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	return nil
+}
+
+func (p *Platform) Coin() coin.Coin {
+	return coin.Coins[p.CoinIndex]
+}
+
+func (p *Platform) RegisterRoutes(router gin.IRouter) {
+	router.GET("/:address", func(c *gin.Context) {
+		p.getTransactions(c)
+	})
+}
+
+func (p *Platform) getTransactions(c *gin.Context) {
+	payments, err := p.client.GetTxsOfAddress(c.Param("address"))
 	if apiError(c, err) {
 		return
 	}
 
-	txs := make([]models.Tx, 0)
+	txs := make([]blockatlas.Tx, 0)
 	for _, payment := range payments {
-		tx, ok := Normalize(&payment, coinIndex)
+		tx, ok := Normalize(&payment, p.CoinIndex)
 		if !ok {
 			continue
 		}
 		txs = append(txs, tx)
 	}
 
-	page := models.Response(txs)
+	page := blockatlas.TxPage(txs)
 	page.Sort()
 	c.JSON(http.StatusOK, &page)
 }
@@ -63,7 +68,7 @@ func apiError(c *gin.Context, err error) bool {
 }
 
 // Normalize converts a Stellar-based transaction into the generic model
-func Normalize(payment *Payment, nativeCoinIndex uint) (tx models.Tx, ok bool) {
+func Normalize(payment *Payment, nativeCoinIndex uint) (tx blockatlas.Tx, ok bool) {
 	switch payment.Type {
 	case "payment":
 		if payment.AssetType != "native" {
@@ -97,7 +102,7 @@ func Normalize(payment *Payment, nativeCoinIndex uint) (tx models.Tx, ok bool) {
 	if err != nil {
 		return tx, false
 	}
-	return models.Tx{
+	return blockatlas.Tx{
 		ID:   payment.TransactionHash,
 		Coin: nativeCoinIndex,
 		From: from,
@@ -107,8 +112,8 @@ func Normalize(payment *Payment, nativeCoinIndex uint) (tx models.Tx, ok bool) {
 		Fee:   "100",
 		Date:  date.Unix(),
 		Block: id,
-		Meta:  models.Transfer{
-			Value: models.Amount(value),
+		Meta:  blockatlas.Transfer{
+			Value: blockatlas.Amount(value),
 		},
 	}, true
 }

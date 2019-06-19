@@ -3,10 +3,10 @@ package binance
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/trustwallet/blockatlas"
 	"testing"
 
 	"github.com/trustwallet/blockatlas/coin"
-	"github.com/trustwallet/blockatlas/models"
 )
 
 const nativeTransferTransaction = `
@@ -49,7 +49,7 @@ const nativeTokenTransferTransaction = `
 	"memo": "test"
 }`
 
-var transferDst = models.Tx{
+var transferDst = blockatlas.Tx{
 	ID:     "1681EE543FB4B5A628EF21D746E031F018E226D127044A4F9BA5EE2542A44555",
 	Coin:   coin.BNB,
 	From:   "tbnb1fhr04azuhcj0dulm7ka40y0cqjlafwae9k9gk2",
@@ -57,14 +57,14 @@ var transferDst = models.Tx{
 	Fee:    "125000",
 	Date:   1555049867,
 	Block:  7761368,
-	Status: models.StatusCompleted,
+	Status: blockatlas.StatusCompleted,
 	Memo:   "test",
-	Meta: models.Transfer{
+	Meta: blockatlas.Transfer{
 		Value: "10000000000000",
 	},
 }
 
-var nativeTransferDst = models.Tx{
+var nativeTransferDst = blockatlas.Tx{
 	ID:     "95CF63FAA27579A9B6AF84EF8B2DFEAC29627479E9C98E7F5AE4535E213FA4C9",
 	Coin:   coin.BNB,
 	From:   "tbnb1ttyn4csghfgyxreu7lmdu3lcplhqhxtzced45a",
@@ -72,9 +72,9 @@ var nativeTransferDst = models.Tx{
 	Fee:    "125000",
 	Date:   1555117625,
 	Block:  7928667,
-	Status: models.StatusCompleted,
+	Status: blockatlas.StatusCompleted,
 	Memo:   "test",
-	Meta: models.NativeTokenTransfer{
+	Meta: blockatlas.NativeTokenTransfer{
 		TokenID:  "YLC-D8B",
 		Symbol:   "YLC",
 		Value:    "210572645",
@@ -87,7 +87,7 @@ var nativeTransferDst = models.Tx{
 type test struct {
 	name        string
 	apiResponse string
-	expected    *models.Tx
+	expected    *blockatlas.Tx
 	token       string
 }
 

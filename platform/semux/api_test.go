@@ -3,8 +3,8 @@ package semux
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
-	"github.com/trustwallet/blockatlas/models"
 	"testing"
 )
 
@@ -44,7 +44,7 @@ const getAccountTransactionsResponseStr = `
 }
 `
 
-var basicDst = models.Tx{
+var basicDst = blockatlas.Tx{
 	ID:    "0x76274d1e328882095ad0369ea5e5bdf2c3c233c8715365092dfab542d33a1142",
 	Coin:  coin.SEM,
 	From:  "0x8197987c401a3466ad678b2080b24838ebd95b41",
@@ -52,7 +52,7 @@ var basicDst = models.Tx{
 	Fee:   "5000000",
 	Date:  1557392426,
 	Block: 1333625,
-	Meta: models.Transfer{
+	Meta: blockatlas.Transfer{
 		Value: "10266598890",
 	},
 }

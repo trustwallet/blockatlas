@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/trustwallet/blockatlas"
 	"net/http"
 	"os"
 	"strings"
@@ -10,7 +11,6 @@ import (
 
 	"github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas/coin"
-	"github.com/trustwallet/blockatlas/models"
 )
 
 var failedFlag = 0
@@ -121,7 +121,7 @@ func test(endpoint string, entry *Entry, baseURL string) {
 
 	// Parse model and read into buffer
 	var model struct {
-		Docs []models.Tx `json:"docs"`
+		Docs []blockatlas.Tx `json:"docs"`
 	}
 	dec := json.NewDecoder(res.Body)
 	err = dec.Decode(&model)

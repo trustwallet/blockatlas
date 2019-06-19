@@ -3,8 +3,8 @@ package cosmos
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
-	"github.com/trustwallet/blockatlas/models"
 	"testing"
 )
 
@@ -79,7 +79,7 @@ const basicSrc = `
   }
 `
 
-var basicDst = models.Tx{
+var basicDst = blockatlas.Tx{
 	ID:    "E19B011D20D862DA0BEA7F24E3BC6DFF666EE6E044FCD9BD95B073478086DBB6",
 	Coin:  coin.ATOM,
 	From:  "cosmos1rw62phusuv9vzraezr55k0vsqssvz6ed52zyrl",
@@ -87,7 +87,7 @@ var basicDst = models.Tx{
 	Fee:   "1",
 	Date:  1556992677,
 	Block: 151980,
-	Meta: models.Transfer{
+	Meta: blockatlas.Transfer{
 		Value: "2271999999",
 	},
 }

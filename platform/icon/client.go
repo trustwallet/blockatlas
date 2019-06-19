@@ -1,13 +1,13 @@
 package icon
 
-import(
-	"github.com/trustwallet/blockatlas/models"
-	"github.com/sirupsen/logrus"
-	"net/http"
-	"strconv"
-	"net/url"
+import (
 	"encoding/json"
 	"fmt"
+	"github.com/sirupsen/logrus"
+	"github.com/trustwallet/blockatlas"
+	"net/http"
+	"net/url"
+	"strconv"
 )
 
 type Client struct {
@@ -20,7 +20,7 @@ func (c *Client) GetAddressTransactions(address string) ([]Tx, error) {
 		c.RPCURL,
 		url.Values{
 			"address": {address},
-			"count": {strconv.FormatInt(models.TxPerPage, 10)},
+			"count": {strconv.FormatInt(blockatlas.TxPerPage, 10)},
 		}.Encode())
 
 	httpRes, err := c.HTTPClient.Get(uri)

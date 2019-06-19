@@ -3,7 +3,7 @@ package semux
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/trustwallet/blockatlas/models"
+	"github.com/trustwallet/blockatlas"
 	"github.com/ybbus/jsonrpc"
 	"net/http"
 	"net/url"
@@ -44,10 +44,10 @@ func (c *Client) GetTxsOfAddress(address string) (txs []Tx, err error) {
 	}
 
 	start := uint64(0)
-	if account.TransactionCount > models.TxPerPage {
-		start = account.TransactionCount - models.TxPerPage
+	if account.TransactionCount > blockatlas.TxPerPage {
+		start = account.TransactionCount - blockatlas.TxPerPage
 	}
-	end := start + models.TxPerPage
+	end := start + blockatlas.TxPerPage
 
 	path := fmt.Sprintf("%s/account/transactions?address=%s&start=%d&end=%d", c.BaseURL, url.PathEscape(address), start, end)
 

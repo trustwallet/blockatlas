@@ -4,71 +4,81 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
-	"github.com/trustwallet/blockatlas/models"
 	"github.com/trustwallet/blockatlas/util"
 	"net/http"
 	"strings"
 )
 
-var client = Client{
-	HTTPClient: http.DefaultClient,
+type Platform struct {
+	client Client
 }
 
 const (
+	Handle = "ontology"
 	GovernanceContract = "AFmseVrdL9f9oyCzZefL9tG6UbviEH9ugK"
     ONTAssetName = "ont"
     ONGAssetName = "ong"
 )
 
-// Setup registers the Ontology route
-func Setup(router gin.IRouter) {
-	router.Use(util.RequireConfig("ontology.api"))
-	router.Use(func(c *gin.Context) {
-		client.BaseURL = viper.GetString("ontology.api")
-		c.Next()
-	})
-	router.GET("/:address", getTransactions)
+func (p *Platform) Handle() string {
+	return Handle
 }
 
-func getTransactions(c *gin.Context) {
+func (p *Platform) Init() error {
+	p.client.BaseURL = viper.GetString("ontology.api")
+	p.client.HTTPClient = http.DefaultClient
+	return nil
+}
+
+func (p *Platform) Coin() coin.Coin {
+	return coin.Coins[coin.ONT]
+}
+
+func (p *Platform) RegisterRoutes(router gin.IRouter) {
+	router.GET("/:address", func(c *gin.Context) {
+		p.getTransactions(c)
+	})
+}
+
+func (p *Platform) getTransactions(c *gin.Context) {
 	var token = c.DefaultQuery("token", ONTAssetName)
 	var address = c.Param("address")
 
-	txPage, error := client.GetTxsOfAddress(address, token)
+	txPage, error := p.client.GetTxsOfAddress(address, token)
 
 	if error != nil {
 		logrus.WithError(error).
 			Errorf("Ontology: Failed to get transactions for %s, token %s", address, token)
 	}
 
-	var txs []models.Tx
+	var txs []blockatlas.Tx
 	for _, tx := range txPage.Result.TxnList {
 		if txNormalized, ok := Normalize(&tx, token); ok {
 			txs = append(txs, txNormalized)
 		}
 	}
 
-	page := models.Response(txs)
+	page := blockatlas.TxPage(txs)
 	page.Sort()
 	c.JSON(http.StatusOK, &page)
 }
 
-func Normalize(srcTx *Tx, assetName string) (tx models.Tx, ok bool) {
-
+func Normalize(srcTx *Tx, assetName string) (tx blockatlas.Tx, ok bool) {
 	transfer := srcTx.TransferList[0]
 	fee := util.DecimalExp(srcTx.Fee, 9)
 	var status string
 	if srcTx.ConfirmFlag == 1 {
-		status = models.StatusCompleted
+		status = blockatlas.StatusCompleted
 	} else {
-		status = models.StatusFailed
+		status = blockatlas.StatusFailed
 	}
 
-	tx = models.Tx{
+	tx = blockatlas.Tx{
 		ID: srcTx.TxnHash,
 		Coin: coin.ONT,
-		Fee: models.Amount(fee),
+		Fee: blockatlas.Amount(fee),
 		Date:  srcTx.TxnTime,
 		Block: srcTx.Height,
 		Status: status,
@@ -81,9 +91,9 @@ func Normalize(srcTx *Tx, assetName string) (tx models.Tx, ok bool) {
 
 		tx.From = transfer.FromAddress
 		tx.To = transfer.ToAddress
-		tx.Type = models.TxTransfer
-		tx.Meta = models.Transfer{
-			Value: models.Amount(value),
+		tx.Type = blockatlas.TxTransfer
+		tx.Meta = blockatlas.Transfer{
+			Value: blockatlas.Amount(value),
 		}
 
 		return tx, true
@@ -103,13 +113,13 @@ func Normalize(srcTx *Tx, assetName string) (tx models.Tx, ok bool) {
 		to := transfer.ToAddress
 		tx.From = from
 		tx.To = to
-		tx.Type = models.TxNativeTokenTransfer
-		tx.Meta = models.NativeTokenTransfer{
+		tx.Type = blockatlas.TxNativeTokenTransfer
+		tx.Meta = blockatlas.NativeTokenTransfer{
 			Name: "Ontology Gas",
 			Symbol: "ONG",
 			TokenID: "ong",
 			Decimals: 9,
-			Value: models.Amount(value),
+			Value: blockatlas.Amount(value),
 			From: from,
 			To: to,
 		}

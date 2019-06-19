@@ -5,19 +5,44 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas"
+	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/platform/aion"
+	"github.com/trustwallet/blockatlas/platform/binance"
 	"github.com/trustwallet/blockatlas/platform/cosmos"
+	"github.com/trustwallet/blockatlas/platform/ethereum"
 	"github.com/trustwallet/blockatlas/platform/icon"
 	"github.com/trustwallet/blockatlas/platform/iotex"
 	"github.com/trustwallet/blockatlas/platform/nimiq"
+	"github.com/trustwallet/blockatlas/platform/ontology"
+	"github.com/trustwallet/blockatlas/platform/ripple"
+	"github.com/trustwallet/blockatlas/platform/semux"
+	"github.com/trustwallet/blockatlas/platform/stellar"
+	"github.com/trustwallet/blockatlas/platform/tezos"
+	"github.com/trustwallet/blockatlas/platform/theta"
+	"github.com/trustwallet/blockatlas/platform/tron"
+	"github.com/trustwallet/blockatlas/platform/vechain"
+	"github.com/trustwallet/blockatlas/platform/zilliqa"
 )
 
 var platformList = []blockatlas.Platform{
-	new(aion.Platform),
-	new(cosmos.Platform),
-	new(icon.Platform),
-	new(iotex.Platform),
-	new(nimiq.Platform),
+	&aion.Platform{},
+	&binance.Platform{},
+	&cosmos.Platform{},
+	&ethereum.Platform{ CoinIndex: coin.ETH, HandleStr: "ethereum" },
+	&ethereum.Platform{ CoinIndex: coin.ETC, HandleStr: "classic"},
+	&icon.Platform{},
+	&iotex.Platform{},
+	&nimiq.Platform{},
+	&ontology.Platform{},
+	&ripple.Platform{},
+	&semux.Platform{},
+	&stellar.Platform{ CoinIndex: coin.XLM, HandleStr: "stellar" },
+	&stellar.Platform{ CoinIndex: coin.KIN, HandleStr: "kin" },
+	&tezos.Platform{},
+	&theta.Platform{},
+	&tron.Platform{},
+	&vechain.Platform{},
+	&zilliqa.Platform{},
 }
 
 // Platforms contains all registered platforms by handle

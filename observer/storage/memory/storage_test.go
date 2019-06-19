@@ -20,7 +20,11 @@ func TestMemoryStorage_Add(t *testing.T) {
 		observers: observerMap,
 	}
 
-	storage.Add(ethCoin, addr1, webhook1)
+	_ = storage.Add(observer.Subscription{
+		Coin: ethCoin,
+		Address: addr1,
+		Webhook: webhook1,
+	})
 
 	if len(observerMap) != 1 {
 		t.Error("observer not added")
@@ -29,7 +33,7 @@ func TestMemoryStorage_Add(t *testing.T) {
 
 func TestMemoryStorage_List(t *testing.T) {
 	var observerMap = make(map[string]observer.Subscription)
-	var storage observer.Storage = &Storage{
+	var storage = &Storage{
 		observers: observerMap,
 	}
 
@@ -54,7 +58,7 @@ func TestMemoryStorage_List(t *testing.T) {
 
 func TestMemoryStorage_Remove(t *testing.T) {
 	var observerMap = make(map[string]observer.Subscription)
-	var storage observer.Storage = &Storage{
+	var storage = &Storage{
 		observers: observerMap,
 	}
 
@@ -92,7 +96,9 @@ func TestMemoryStorage_Get(t *testing.T) {
 	observerMap[key(ethCoin, addr1)] = obs1
 	observerMap[key(ethCoin, addr2)] = obs2
 
-	if !reflect.DeepEqual(storage.Get(ethCoin, addr1), obs1) {
+	res, _ := storage.Lookup(ethCoin, addr1)
+
+	if !reflect.DeepEqual(res, []observer.Subscription{obs1}) {
 		t.Error("wrong observer")
 	}
 }
@@ -110,11 +116,11 @@ func TestMemoryStorage_Contains(t *testing.T) {
 
 	observerMap[key(ethCoin, addr1)] = obs1
 
-	if !storage.Contains(ethCoin, addr1) {
+	if yes, _ := storage.Contains(ethCoin, addr1); !yes {
 		t.Errorf("observer should contain coint:%d address:%s", ethCoin, addr1)
 	}
 
-	if storage.Contains(ethCoin, addr2) {
+	if yes, _ := storage.Contains(ethCoin, addr2); yes {
 		t.Errorf("observer should not contain coint:%d address:%s", ethCoin, addr2)
 	}
 }

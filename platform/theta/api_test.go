@@ -3,8 +3,8 @@ package theta
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
-	"github.com/trustwallet/blockatlas/models"
 	"testing"
 )
 var transferReceipt = `{
@@ -76,7 +76,7 @@ var tFuelTransfer = `
 }
 `
 
-var expectedTransferTrx = models.Tx{
+var expectedTransferTrx = blockatlas.Tx{
 	ID:    "0x413d8423fd1e6df99fc57f425dfd58c791c877657b364c62c15905ade5114a70",
 	Coin:  coin.THETA,
 	From:  "0xac0eeb6ee3e32e2c74e14ac74155063e4f4f981f",
@@ -87,23 +87,23 @@ var expectedTransferTrx = models.Tx{
 	Status: "completed",
 	Block: 700321,
 	Sequence: 43,
-	Meta:  models.Transfer{
+	Meta:  blockatlas.Transfer{
 		Value: "4000000000000000000",
 	},
 }
 
-var expectedTfuelTransfer = models.Tx{
+var expectedTfuelTransfer = blockatlas.Tx{
 	ID:     "0x558cb5ec877119c2c84a677277efb5b3059adb830c6e74971b3dbe93221b7132",
 	Coin:   coin.THETA,
 	From:   "0xac0eeb6ee3e32e2c74e14ac74155063e4f4f981f",
 	To:     "0x0a7d7141e9abe5d1c760cffa1129c6eb94f35a2a",
 	Fee:    "2000000000000",
 	Date:   1557136821,
-	Type:   models.TxNativeTokenTransfer,
+	Type:   blockatlas.TxNativeTokenTransfer,
 	Status: "completed",
 	Sequence: 44,
 	Block:  700327,
-	Meta:  models.NativeTokenTransfer{
+	Meta:  blockatlas.NativeTokenTransfer{
 		Name: "Theta Fuel",
 		Symbol: "TFUEL",
 		TokenID: "tfuel",
@@ -119,7 +119,7 @@ func TestNormalize(t *testing.T) {
 		Transaction  string
 		Address  	 string
 		Token        string
-		Expected 		 models.Tx
+		Expected 		 blockatlas.Tx
 	}{
 		{transferReceipt, "0xac0eeb6ee3e32e2c74e14ac74155063e4f4f981f", "", expectedTransferTrx},
 		{tFuelTransfer, "0xac0eeb6ee3e32e2c74e14ac74155063e4f4f981f", "tfuel", expectedTfuelTransfer},
@@ -133,7 +133,7 @@ func TestNormalize(t *testing.T) {
 			t.Fatal("THETA: Can't unmarshall transaction", tErr)
 		}
 
-		var readyTx models.Tx
+		var readyTx blockatlas.Tx
 		normTx, ok := Normalize(&trx, test.Address, test.Token)
 		if !ok {
 			t.Fatal("THETA: Can't normalize transaction", readyTx)

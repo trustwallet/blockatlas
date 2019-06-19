@@ -1,6 +1,9 @@
 package ethereum
 
 import (
+	"fmt"
+	"github.com/trustwallet/blockatlas"
+	"github.com/trustwallet/blockatlas/coin"
 	"math/big"
 	"net/http"
 	"strconv"
@@ -8,31 +11,35 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
-	"github.com/trustwallet/blockatlas/models"
-	"github.com/trustwallet/blockatlas/util"
 )
 
-// MakeSetup returns a function used to register an Ethereum-based platform route
-func MakeSetup(coinIndex uint, platform string) func(gin.IRouter) {
-	apiKey := platform + ".api"
-
-	client := Client{
-		HTTPClient: http.DefaultClient,
-	}
-
-	return func(router gin.IRouter) {
-		router.Use(util.RequireConfig(apiKey))
-		router.Use(func(c *gin.Context) {
-			client.BaseURL = viper.GetString(apiKey)
-			c.Next()
-		})
-		router.GET("/:address", func(c *gin.Context) {
-			GetTransactions(c, coinIndex, &client)
-		})
-	}
+type Platform struct {
+	client Client
+	CoinIndex uint
+	HandleStr string
 }
 
-func GetTransactions(c *gin.Context, coinIndex uint, client *Client) {
+func (p *Platform) Handle() string {
+	return p.HandleStr
+}
+
+func (p *Platform) Init() error {
+	p.client.BaseURL = viper.GetString(fmt.Sprintf("%s.api", p.HandleStr))
+	p.client.HTTPClient = http.DefaultClient
+	return nil
+}
+
+func (p *Platform) Coin() coin.Coin {
+	return coin.Coins[p.CoinIndex]
+}
+
+func (p *Platform) RegisterRoutes(router gin.IRouter) {
+	router.GET("/:address", func(c *gin.Context) {
+		p.getTransactions(c)
+	})
+}
+
+func (p *Platform) getTransactions(c *gin.Context) {
 	token := c.Query("token")
 	address := c.Param("address")
 	build := c.Request.Header.Get("client-build")
@@ -40,31 +47,31 @@ func GetTransactions(c *gin.Context, coinIndex uint, client *Client) {
 	var err error
 
 	if token != "" {
-		srcPage, err = client.GetTxsWithContract(address, token, build)
+		srcPage, err = p.client.GetTxsWithContract(address, token, build)
 	} else {
-		srcPage, err = client.GetTxs(address, build)
+		srcPage, err = p.client.GetTxs(address, build)
 	}
 
 	if apiError(c, err) {
 		return
 	}
 
-	var txs []models.Tx
+	var txs []blockatlas.Tx
 	for _, srcTx := range srcPage.Docs {
-		txs = AppendTxs(txs, &srcTx, coinIndex)
+		txs = AppendTxs(txs, &srcTx, p.CoinIndex)
 	}
 
-	page := models.Response(txs)
+	page := blockatlas.TxPage(txs)
 	page.Sort()
 	c.JSON(http.StatusOK, &page)
 }
 
-func extractBase(srcTx *Doc, coinIndex uint) (base models.Tx, ok bool) {
+func extractBase(srcTx *Doc, coinIndex uint) (base blockatlas.Tx, ok bool) {
 	var status, errReason string
 	if srcTx.Error == "" {
-		status = models.StatusCompleted
+		status = blockatlas.StatusCompleted
 	} else {
-		status = models.StatusFailed
+		status = blockatlas.StatusFailed
 		errReason = srcTx.Error
 	}
 
@@ -75,12 +82,12 @@ func extractBase(srcTx *Doc, coinIndex uint) (base models.Tx, ok bool) {
 
 	fee := calcFee(srcTx.GasPrice, srcTx.GasUsed)
 
-	base = models.Tx{
+	base = blockatlas.Tx{
 		ID:       srcTx.ID,
 		Coin:     coinIndex,
 		From:     srcTx.From,
 		To:       srcTx.To,
-		Fee:      models.Amount(fee),
+		Fee:      blockatlas.Amount(fee),
 		Date:     unix,
 		Block:    srcTx.BlockNumber,
 		Status:   status,
@@ -90,7 +97,7 @@ func extractBase(srcTx *Doc, coinIndex uint) (base models.Tx, ok bool) {
 	return base, true
 }
 
-func AppendTxs(in []models.Tx, srcTx *Doc, coinIndex uint) (out []models.Tx) {
+func AppendTxs(in []blockatlas.Tx, srcTx *Doc, coinIndex uint) (out []blockatlas.Tx) {
 	out = in
 	baseTx, ok := extractBase(srcTx, coinIndex)
 	if !ok {
@@ -100,8 +107,8 @@ func AppendTxs(in []models.Tx, srcTx *Doc, coinIndex uint) (out []models.Tx) {
 	// Native ETH transaction
 	if len(srcTx.Ops) == 0 && srcTx.Input == "0x" {
 		transferTx := baseTx
-		transferTx.Meta = models.Transfer{
-			Value: models.Amount(srcTx.Value),
+		transferTx.Meta = blockatlas.Transfer{
+			Value: blockatlas.Amount(srcTx.Value),
 		}
 		out = append(out, transferTx)
 	}
@@ -109,7 +116,7 @@ func AppendTxs(in []models.Tx, srcTx *Doc, coinIndex uint) (out []models.Tx) {
 	// Smart Contract Call
 	if len(srcTx.Ops) == 0 && srcTx.Input != "0x" {
 		contractTx := baseTx
-		contractTx.Meta = models.ContractCall{
+		contractTx.Meta = blockatlas.ContractCall{
 			Input: srcTx.Input,
 			Value: srcTx.Value,
 		}
@@ -121,15 +128,15 @@ func AppendTxs(in []models.Tx, srcTx *Doc, coinIndex uint) (out []models.Tx) {
 	}
 	op := &srcTx.Ops[0]
 
-	if op.Type == models.TxTokenTransfer {
+	if op.Type == blockatlas.TxTokenTransfer {
 		tokenTx := baseTx
 
-		tokenTx.Meta = models.TokenTransfer{
+		tokenTx.Meta = blockatlas.TokenTransfer{
 			Name:     op.Contract.Name,
 			Symbol:   op.Contract.Symbol,
 			TokenID:  op.Contract.Address,
 			Decimals: op.Contract.Decimals,
-			Value:    models.Amount(op.Value),
+			Value:    blockatlas.Amount(op.Value),
 			From:     op.From,
 			To:       op.To,
 		}

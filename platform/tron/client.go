@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/sirupsen/logrus"
-	"github.com/trustwallet/blockatlas/models"
+	"github.com/trustwallet/blockatlas"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -24,12 +24,12 @@ func (c *Client) GetTxsOfAddress(address string) ([]Tx, error) {
 		url.Values{
 			"experimental": {c.Token},
 			"only_confirmed": {"true"},
-			"limit": {strconv.Itoa(models.TxPerPage)},
+			"limit": {strconv.Itoa(blockatlas.TxPerPage)},
 		}.Encode())
 	httpRes, err := c.HTTPClient.Get(uri)
 	if err != nil {
 		logrus.WithError(err).Error("Tron: Failed to get transactions")
-		return nil, models.ErrSourceConn
+		return nil, blockatlas.ErrSourceConn
 	}
 	defer httpRes.Body.Close()
 
@@ -37,12 +37,12 @@ func (c *Client) GetTxsOfAddress(address string) ([]Tx, error) {
 	err = json.NewDecoder(httpRes.Body).Decode(&res)
 	if err != nil {
 		logrus.WithError(err).Error("Tron: Failed to decode API response")
-		return nil, models.ErrSourceConn
+		return nil, blockatlas.ErrSourceConn
 	}
 
 	if !res.Success {
 		logrus.WithField("error", res.Error).Error("Tron: API returned error")
-		return nil, models.ErrSourceConn
+		return nil, blockatlas.ErrSourceConn
 	}
 
 	return res.Txs, nil

@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/sirupsen/logrus"
-	"github.com/trustwallet/blockatlas/models"
+	"github.com/trustwallet/blockatlas"
 	"net/http"
 	"net/url"
 )
@@ -38,7 +38,7 @@ func (c *Client) getTxs(uri string, build string) (*Page, error) {
 	res, err := c.HTTPClient.Do((req))
 	if err != nil {
 		logrus.WithError(err).Error("Ethereum/Trust Ray: Failed to get transactions")
-		return nil, models.ErrSourceConn
+		return nil, blockatlas.ErrSourceConn
 	}
 	defer res.Body.Close()
 

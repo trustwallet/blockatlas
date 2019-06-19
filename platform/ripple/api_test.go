@@ -3,8 +3,8 @@ package ripple
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
-	"github.com/trustwallet/blockatlas/models"
 	"testing"
 )
 
@@ -73,7 +73,7 @@ const paymentSrc = `
 }
 `
 
-var paymentDst = models.Tx{
+var paymentDst = blockatlas.Tx{
 	ID:     "40279A3DE51148BD41409DADF29DE8DCCD50F5AEE30840827B2C4C81C4E36505",
 	Coin:   coin.XRP,
 	From:   "rGSxFjoqmWz54PycrgQBQ5dB6e7TUpMxzq",
@@ -81,8 +81,8 @@ var paymentDst = models.Tx{
 	Fee:    "3115",
 	Date:   1512168330,
 	Block:  34698103,
-	Status: models.StatusCompleted,
-	Meta: models.Transfer{
+	Status: blockatlas.StatusCompleted,
+	Meta: blockatlas.Transfer{
 		Value: "100000000",
 	},
 }
@@ -90,7 +90,7 @@ var paymentDst = models.Tx{
 type test struct {
 	name        string
 	apiResponse string
-	expected    *models.Tx
+	expected    *blockatlas.Tx
 }
 
 func TestNormalize(t *testing.T) {

@@ -1,15 +1,13 @@
 package icon
 
-import(
-	"github.com/gin-gonic/gin"
+import (
+	"fmt"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
-	"github.com/trustwallet/blockatlas/models"
 	"github.com/trustwallet/blockatlas/util"
 	"net/http"
 	"time"
-	"fmt"
 )
 
 const Handle = "icon"

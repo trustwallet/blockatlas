@@ -3,12 +3,12 @@ package iotex
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/trustwallet/blockatlas"
 	"net/http"
 	"net/url"
 	"strconv"
 
 	"github.com/sirupsen/logrus"
-	"github.com/trustwallet/blockatlas/models"
 )
 
 type Client struct {
@@ -22,7 +22,7 @@ func (c *Client) GetTxsOfAddress(address string, start int64) (*Response, error)
 		address,
 		url.Values{
 			"start": {strconv.FormatInt(start, 10)},
-			"count": {strconv.FormatInt(models.TxPerPage, 10)},
+			"count": {strconv.FormatInt(blockatlas.TxPerPage, 10)},
 		}.Encode(),
 	)
 
@@ -33,7 +33,7 @@ func (c *Client) GetTxsOfAddress(address string, start int64) (*Response, error)
 
 	if err != nil {
 		logrus.WithError(err).Errorf("IOTEX: Failed to get transactions for address %s", address)
-		return nil, models.ErrSourceConn
+		return nil, blockatlas.ErrSourceConn
 	}
 
 	var act Response
@@ -44,7 +44,7 @@ func (c *Client) GetTxsOfAddress(address string, start int64) (*Response, error)
 	}
 
 	if err := json.NewDecoder(res.Body).Decode(&act); err != nil {
-		return nil, models.ErrNotFound
+		return nil, blockatlas.ErrNotFound
 	}
 
 	return &act, nil
