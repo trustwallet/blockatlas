@@ -61,6 +61,15 @@ func (s *Storage) Add(subs []observer.Subscription) error {
 	return cmd.Err()
 }
 
+func (s *Storage) Delete(subs []observer.Subscription) error {
+	fields := make([]string, len(subs))
+	for i, sub := range subs {
+		fields[i] = key(sub.Coin, sub.Address)
+	}
+	cmd := s.client.HDel(keyObservers, fields...)
+	return cmd.Err()
+}
+
 func (s *Storage) GetBlockNumber(coin uint) (int64, error) {
 	key := fmt.Sprintf(keyBlockNumber, coin)
 	cmd := s.client.Get(key)

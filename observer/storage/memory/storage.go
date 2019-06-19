@@ -39,17 +39,19 @@ func (s *Storage) Add(subs []observer.Subscription) error {
 	return nil
 }
 
+func (s *Storage) Delete(subs []observer.Subscription) error {
+	for _, sub := range subs {
+		delete(s.observers, key(sub.Coin, sub.Address))
+	}
+	return nil
+}
+
 func (s *Storage) List() []observer.Subscription {
 	var values []observer.Subscription
 	for _, value := range s.observers {
 		values = append(values, value)
 	}
 	return values
-}
-
-func (s *Storage) Remove(coin uint, address string) error {
-	delete(s.observers, key(coin, address))
-	return nil
 }
 
 func (s *Storage) GetBlockNumber(coin uint) (int64, error) {

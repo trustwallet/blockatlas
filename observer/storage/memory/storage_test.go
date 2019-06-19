@@ -69,7 +69,7 @@ func TestMemoryStorage_Remove(t *testing.T) {
 	}
 	observerMap[key(ethCoin, addr1)] = obs
 
-	storage.Remove(ethCoin, addr1)
+	_ = storage.Delete([]observer.Subscription{ obs })
 
 	if len(storage.List()) != 0 {
 		t.Error("observer not removed")
