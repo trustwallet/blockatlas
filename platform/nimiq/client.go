@@ -16,14 +16,7 @@ func (c *Client) Init() {
 }
 
 func (c *Client) GetTxsOfAddress(address string, count int) (txs []Tx, err error) {
-	// err = c.rpcClient.CallFor(&txs, "getTransactionsByAddress", address, count)
-	var res *jsonrpc.RPCResponse
-	res, err = c.rpcClient.CallRaw(&jsonrpc.RPCRequest{
-		Method:  "getTransactionsByAddress",
-		Params:  []interface{}{address, count},
-		ID:      42,
-		JSONRPC: "2.0",
-	})
+	err = c.rpcClient.CallFor(&txs, "getTransactionsByAddress", address, count)
 	if jErr, ok := err.(*jsonrpc.RPCError); ok {
 		if jErr.Code == 1 {
 			return nil, blockatlas.ErrInvalidAddr
@@ -34,7 +27,6 @@ func (c *Client) GetTxsOfAddress(address string, count int) (txs []Tx, err error
 	} else if err != nil {
 		return nil, err
 	}
-	res.GetObject(&txs)
 	return
 }
 
