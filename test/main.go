@@ -3,64 +3,58 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/spf13/cobra"
 	"github.com/trustwallet/blockatlas"
+	"github.com/trustwallet/blockatlas/util"
 	"net/http"
 	"os"
 	"strings"
+	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas/coin"
 )
 
-var failedFlag = 0
+var failedFlag int32 = 0
+var baseURL string
+var requireAll bool
+var coinFile string
+var concurrency int
 
-// Entry describes a test
-type Entry struct {
-	// Coin index
-	Index uint
-	// Test address
-	Addr string
+var app = cobra.Command{
+	Use: "test <base_url>",
+	Short: "Test a live API",
+	Long: "Test a live API by requesting the sample addresses found in coin list",
+	Args: cobra.ExactArgs(1),
+	Run: run,
 }
 
-var addresses = map[string]Entry{
-	"binance":      {coin.BNB, "tbnb1fhr04azuhcj0dulm7ka40y0cqjlafwae9k9gk2"},
-	"nimiq":        {coin.NIM, "NQ86 2H8F YGU5 RM77 QSN9 LYLH C56A CYYR 0MLA"},
-	"ripple":       {coin.XRP, "rMQ98K56yXJbDGv49ZSmW51sLn94Xe1mu1"},
-	"stellar":      {coin.XLM, "GDKIJJIKXLOM2NRMPNQZUUYK24ZPVFC6426GZAEP3KUK6KEJLACCWNMX"},
-	"kin":          {coin.KIN, "GBHKUZ7C2SZ5N3X2S7O6TT6LNUWSEA2BXMSR5GTTSR6VZARSVAXIQNGH"},
-	"tezos":        {coin.XTZ, "tz1WCd2jm4uSt4vntk4vSuUWoZQGhLcDuR9q"},
-	"ethereum":     {coin.ETH, "0xfc10cab6a50a1ab10c56983c80cc82afc6559cf1"},
-	"classic":      {coin.ETC, "0xf3524415b6D873205B4c3Cda783527b2aC4daAA9"},
-	"poa":          {coin.POA, "0x1fddEc96688e0538A316C64dcFd211c491ECf0d8"},
-	"callisto":     {coin.CLO, "0x39ec1c88a7a7c1a575e8c8f42eff7630d9278179"},
-	"gochain":      {coin.GO, "0x76c2F81716A8D198a00502Ae9a59126418899FDe"},
-	"wanchain":     {coin.WAN, "0x36cEdc3A9d969306AF4F7CA2b83ABBf74095914d"},
-	"tomochain":    {coin.TOMO, "0x7daa83030e3086477b79b6e757ca8608899fe783"},
-	"aion":         {coin.AION, "0xa07981da70ce919e1db5f051c3c386eb526e6ce8b9e2bfd56e3f3d754b0a17f3"},
-	"thundertoken": {coin.TT, "0x0ad80a408eac4f17ba0a9de8a12d8736f60700c3"},
-	"icon":         {coin.ICX, "hxee691e7bccc4eb11fee922896e9f51490e62b12e"},
-	"tron":         {coin.TRX, "TMuA6YqfCeX8EhbfYEg5y7S4DqzSJireY9"},
-	"vechain":      {coin.VET, "0xB5e883349e68aB59307d1604555AC890fAC47128"},
-	"theta":        {coin.THETA, "0xac0eeb6ee3e32e2c74e14ac74155063e4f4f981f"},
-	"semux":        {coin.SEM, "0x8197987c401a3466ad678b2080b24838ebd95b41"},
-	"cosmos":       {coin.ATOM, "cosmos1rw62phusuv9vzraezr55k0vsqssvz6ed52zyrl"}, // Alternative with Memos: cosmos1txgkd2la7nm38rtsckx8jytu7rv8pd4w7amlhe
-	"ontology":     {coin.ONT, "AUyL4TZ1zFEcSKDJrjFnD7vsq5iFZMZqT7"},
-	"zilliqa":      {coin.ZIL, "0x88aF5BA10796D9091D6893eED4db23ef0bbbCa37"},
-	"iotex":        {coin.IOTX, "io1mwekae7qqwlr23220k5n9z3fmjxz72tuchra3m"},
-	"waves":        {coin.WAVES, "3PC4roN512iugc6xGVTTM2XkoWKEdSiiscd"},
+func init() {
+	flags := app.Flags()
+	flags.BoolVarP(&requireAll, "all", "a", false, "Don't skip platforms not supported server-side")
+	flags.StringVar(&coinFile, "coins", "./coins.yml", "Path to coin list")
+	flags.IntVarP(&concurrency, "concurrency", "c", 8, "Tests to run at once")
 }
 
 func main() {
-	if len(os.Args) != 2 {
-		logrus.Fatal("Usage: ./test <base_url>")
+	err := app.Execute()
+	if err != nil {
+		_, _ = fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
 	}
-	baseURL := os.Args[1]
+}
+
+func run(_ *cobra.Command, args []string) {
+	coin.Load(coinFile)
+
+	baseURL = args[0]
 
 	logrus.SetOutput(os.Stdout)
 	http.DefaultClient.Timeout = 5 * time.Second
 
-	supportedEndpoints, err := supportedEndpoints(baseURL)
+	supportedEndpoints, err := supportedEndpoints()
 	if err != nil {
 		logrus.WithError(err).Error("Failed to get supported platforms")
 		os.Exit(1)
@@ -71,42 +65,71 @@ func main() {
 		supported[ns] = true
 	}
 
-	for ns, test := range addresses {
-		if !supported[ns] {
-			log(ns).Warning("Platform not enabled at server, skipping")
-		} else {
-			runTest(ns, &test, baseURL)
+	logrus.Infof("Running test with %d goroutines", concurrency)
+
+	var wg sync.WaitGroup
+	sem := util.NewSemaphore(concurrency)
+
+	var tests []coin.Coin
+
+	for _, c := range coin.Coins {
+		if !supported[c.Handle] {
+			if requireAll {
+				log(&c).Error("Platform not enabled at server but required")
+				atomic.StoreInt32(&failedFlag, 1)
+			} else {
+				log(&c).Warning("Platform not enabled at server, skipping")
+			}
+			continue
 		}
+		tests = append(tests, c)
 	}
 
-	os.Exit(failedFlag)
+	logrus.Infof("%d platforms to test", len(supportedEndpoints))
+
+	wg.Add(len(tests))
+	for _, c := range tests {
+		go runTest(c, sem, &wg)
+	}
+
+	wg.Wait()
+
+	failed := atomic.LoadInt32(&failedFlag)
+	if failed == 1 {
+		logrus.Fatal("Test failed")
+	} else {
+		logrus.Info("Test passed")
+	}
 }
 
-func log(endpoint string) *logrus.Entry {
-	return logrus.WithField("@platform", endpoint)
+func log(c *coin.Coin) *logrus.Entry {
+	return logrus.WithField("@platform", c.Handle)
 }
 
-func runTest(endpoint string, entry *Entry, baseURL string) {
+func runTest(c coin.Coin, sem *util.Semaphore, wg *sync.WaitGroup) {
+	defer wg.Done()
+	sem.Acquire()
+	defer sem.Release()
+
 	start := time.Now()
 
 	defer func() {
 		if r := recover(); r != nil {
-			log(endpoint).
+			log(&c).
 				WithField("error", r).
 				Error("Endpoint failed")
-			failedFlag = 1
+			atomic.StoreInt32(&failedFlag, 1)
 		}
 
-		log(endpoint).WithField("time", time.Since(start)).Info("Endpoint tested")
+		log(&c).WithField("time", time.Since(start)).Info("Endpoint tested")
 	}()
 
-	log(endpoint).Info("Testing endpoint")
-	test(endpoint, entry, baseURL)
-	log(endpoint).Info("Endpoint works")
+	test(&c)
+	log(&c).Info("Endpoint works")
 }
 
-func test(endpoint string, entry *Entry, baseURL string) {
-	res, err := http.Get(fmt.Sprintf("%s/v1/%s/%s", baseURL, endpoint, entry.Addr))
+func test(c *coin.Coin) {
+	res, err := http.Get(fmt.Sprintf("%s/v1/%s/%s", baseURL, c.Handle, c.SampleAddr))
 	if err != nil {
 		panic(err)
 	}
@@ -131,7 +154,7 @@ func test(endpoint string, entry *Entry, baseURL string) {
 	}
 
 	if len(model.Docs) == 0 {
-		log(endpoint).Warning("No transactions")
+		log(c).Warning("No transactions")
 		return
 	}
 
@@ -146,23 +169,13 @@ func test(endpoint string, entry *Entry, baseURL string) {
 			panic("Transactions not in chronological order")
 		}
 
-		if tx.Coin != entry.Index {
+		if tx.Coin != c.ID {
 			panic("Wrong coin index")
 		}
 	}
-
-	// Pretty-print first transaction to console
-	if len(model.Docs) > 0 {
-		pretty, err := json.MarshalIndent(model.Docs[0], "", "\t")
-		if err != nil {
-			panic("Can't serialize transaction " + err.Error())
-		}
-		os.Stdout.Write(pretty)
-		fmt.Println()
-	}
 }
 
-func supportedEndpoints(baseURL string) (endpoints []string, err error) {
+func supportedEndpoints() (endpoints []string, err error) {
 	var data struct {
 		Endpoints []string `json:"endpoints"`
 	}
