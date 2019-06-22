@@ -22,10 +22,6 @@ const (
     ONGAssetName = "ong"
 )
 
-func (p *Platform) Handle() string {
-	return Handle
-}
-
 func (p *Platform) Init() error {
 	p.client.BaseURL = viper.GetString("ontology.api")
 	p.client.HTTPClient = http.DefaultClient

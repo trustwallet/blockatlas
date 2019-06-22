@@ -45,7 +45,7 @@ func run(_ *cobra.Command, _ []string) {
 		var backlogCount int
 		if coin.BlockTime == 0 {
 			backlogCount = 50
-			logrus.WithField("coin", coin.Index).
+			logrus.WithField("coin", coin.ID).
 				Warning("Unknown block time")
 		} else {
 			backlogCount = int(backlogTime / blockTime)
@@ -61,7 +61,7 @@ func run(_ *cobra.Command, _ []string) {
 		// Check for transaction events
 		obs := observer.Observer{
 			Storage: observerStorage.App,
-			Coin:    coin.Index,
+			Coin:    coin.ID,
 		}
 		events := obs.Execute(blocks)
 

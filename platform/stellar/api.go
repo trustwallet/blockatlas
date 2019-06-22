@@ -16,15 +16,11 @@ import (
 type Platform struct {
 	client Client
 	CoinIndex uint
-	HandleStr string
-}
-
-func (p *Platform) Handle() string {
-	return p.HandleStr
 }
 
 func (p *Platform) Init() error {
-	p.client.API = viper.GetString(fmt.Sprintf("%s.api", p.HandleStr))
+	handle := coin.Coins[p.CoinIndex].Handle
+	p.client.API = viper.GetString(fmt.Sprintf("%s.api", handle))
 	p.client.HTTP = &http.Client{
 		Timeout: 2 * time.Second,
 	}

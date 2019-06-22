@@ -38,9 +38,8 @@ func (c *Client) GetTxsOfAddress(address string, start int64) (*Response, error)
 
 	var act Response
 	if res.StatusCode != http.StatusOK {
-		logrus.WithError(err).Error(res.Status)
-
-		return &act, nil
+		err = fmt.Errorf("HTTP status: %s", res.Status)
+		return &act, err
 	}
 
 	if err := json.NewDecoder(res.Body).Decode(&act); err != nil {

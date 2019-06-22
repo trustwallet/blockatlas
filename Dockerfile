@@ -10,6 +10,6 @@ RUN apk add git \
 FROM scratch
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=builder /go/bin/cmd /bin/blockatlas
-COPY --from=builder /go/src/github.com/trustwallet/blockatlas/coin/coins.json /coins.json
-ENV ATLAS_COINS /coins.json
+COPY --from=builder /go/src/github.com/trustwallet/blockatlas/coins.yml /coins.yml
+ENV ATLAS_COINS /coins.yml
 CMD ["/bin/blockatlas", "api"]

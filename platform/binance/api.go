@@ -12,14 +12,8 @@ import (
 	"github.com/trustwallet/blockatlas/util"
 )
 
-const Handle = "binance"
-
 type Platform struct {
 	client Client
-}
-
-func (p *Platform) Handle() string {
-	return Handle
 }
 
 func (p *Platform) Init() error {

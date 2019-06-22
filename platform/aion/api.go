@@ -9,14 +9,8 @@ import (
 	"strconv"
 )
 
-const Handle = "aion"
-
 type Platform struct {
 	client Client
-}
-
-func (p *Platform) Handle() string {
-	return Handle
 }
 
 func (p *Platform) Init() error {

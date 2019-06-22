@@ -13,14 +13,8 @@ import (
 	"github.com/spf13/viper"
 )
 
-const Handle = "vechain"
-
 type Platform struct {
 	client Client
-}
-
-func (p *Platform) Handle() string {
-	return Handle
 }
 
 func (p *Platform) Init() error {

@@ -14,7 +14,6 @@ type Initer interface {
 type Platform interface {
 	Initer
 	Coin() coin.Coin
-	Handle() string
 }
 
 // TxAPI provides transaction lookups
