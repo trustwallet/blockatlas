@@ -20,13 +20,19 @@ steps:
     echo '$(go env)'
   displayName: 'Set up the Go workspace'
 
+- powershell: |
+  env:
+    CONF_PASS: $(CONF_PASS)
+    CONF_URL: $(CONF_URL)
+  displayName: "Set environment variables"
+
+- bash: wget --user=azureci --password="$CONF_PASS" "$CONF_URL" -O config_ci.yml > /dev/null 2>&1
+  workingDirectory: '$(modulePath)'
+  displayName: 'Fetch config'
+
 - script: |
     go version
     go get -v -t -d ./...
-    if [ -f Gopkg.toml ]; then
-        curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
-        dep ensure
-    fi
     go get github.com/jstemmer/go-junit-report
     go get github.com/axw/gocov/gocov
     go get github.com/AlekSi/gocov-xml
@@ -34,21 +40,18 @@ steps:
   workingDirectory: '$(modulePath)'
   displayName: 'Get dependencies'
 
-- powershell: |
-  env:
-    ATLAS_BINANCE_API: $(ATLAS_BINANCE_API)
-    ATLAS_ETHEREUM_API: $(ATLAS_ETHEREUM_API)
-    ATLAS_KIN_API: $(ATLAS_KIN_API)
-    ATLAS_NIMIQ_API: $(ATLAS_NIMIQ_API)
-    ATLAS_RIPPLE_API: $(ATLAS_RIPPLE_API)
-    ATLAS_STELLAR_API: $(ATLAS_STELLAR_API)
-    ATLAS_COSMOS_API: $(ATLAS_COSMOS_API)
-  displayName: "Set environment variables"
-
 - script: go test -v ./...
   workingDirectory: '$(modulePath)'
-  displayName: 'Run tests'
+  displayName: 'Run unit tests'
 
-- script: go build -v .
+- script: go build -v -o blockatlas ./cmd
   workingDirectory: '$(modulePath)'
   displayName: 'Build'
+
+- bash: |
+    set -e
+    ./blockatlas api --config=config_ci.yml &
+    sleep 3 # Wait for BlockAtlas to spin up
+    go run ./test/main.go --all http://localhost:8420
+  workingDirectory: '$(modulePath)'
+  displayName: 'Run integration test'
