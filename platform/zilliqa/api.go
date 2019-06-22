@@ -30,6 +30,12 @@ func (p *Platform) Coin() coin.Coin {
 	return coin.Coins[coin.ZIL]
 }
 
+func (p *Platform) RegisterRoutes(router gin.IRouter) {
+	router.GET("/:address", func(c *gin.Context) {
+		p.GetTxsByAddress(c)
+	})
+}
+
 func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 	var normalized []blockatlas.Tx
 	txs, err := p.client.GetTxsOfAddress(address)
