@@ -12,4 +12,5 @@ require (
 	github.com/spf13/viper v1.4.0
 	github.com/valyala/fastjson v1.4.1
 	github.com/ybbus/jsonrpc v2.1.2+incompatible
+	gopkg.in/yaml.v2 v2.2.2
 )

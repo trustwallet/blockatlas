@@ -43,7 +43,7 @@ func loadConfig(confPath string) {
 }
 
 func loadDefaults() {
-	viper.SetDefault("coins", "coin/coins.json")
+	viper.SetDefault("coins", "coins.yml")
 	viper.SetDefault("gin.mode", gin.ReleaseMode)
 	viper.SetDefault("gin.reverse_proxy", false)
 	viper.SetDefault("observer.redis", "redis://localhost:6379")

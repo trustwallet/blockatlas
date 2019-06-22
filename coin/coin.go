@@ -1,10 +1,10 @@
 package coin
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/sirupsen/logrus"
-	"io/ioutil"
+	"gopkg.in/yaml.v2"
+	"os"
 )
 
 //go:generate rm -f slip44.go
@@ -14,36 +14,48 @@ var Coins map[uint]Coin
 
 // Coin is the native currency of a blockchain
 type Coin struct {
-	// SLIP-44 index
-	Index    uint   `json:"index"`
-	// Symbol of native currency
-	Symbol   string `json:"symbol"`
-	// Full name of native currency
-	Title    string `json:"name"`
-	// Project website
-	Website  string `json:"link"`
-	// Number of decimals
-	Decimals uint   `json:"decimals"`
-	// Average time between blocks
-	BlockTime int `json:"blockTime"`
+	ID         uint   `yaml:"id"`         // SLIP-44 ID (e.g. 242)
+	Handle     string `yaml:"trust"`      // Trust Wallet handle (e.g. nimiq)
+	Symbol     string `yaml:"symbol"`     // Symbol of native currency
+	Title      string `yaml:"name"`       // Full name of native currency
+	Website    string `yaml:"link"`       // Project website
+	Decimals   uint   `yaml:"decimals"`   // Number of decimals
+	BlockTime  int    `yaml:"blockTime"`  // Average time between blocks (ms)
+	SampleAddr string `yaml:"sample"`     // Random address seen on chain
 }
 
 func (c Coin) String() string {
-	return fmt.Sprintf("[%s] %s (#%d)", c.Symbol, c.Title, c.Index)
+	return fmt.Sprintf("[%s] %s (#%d)", c.Symbol, c.Title, c.ID)
 }
 
 func Load(fPath string) {
-	buf, err := ioutil.ReadFile(fPath)
+	err := load(fPath)
 	if err != nil {
 		logrus.WithError(err).Fatal("Failed to load coins")
 	}
+}
+
+func load(fPath string) error {
+	f, err := os.Open(fPath)
+	if err != nil {
+		return err
+	}
+
 	var coinList []Coin
-	err = json.Unmarshal(buf, &coinList)
+
+	dec := yaml.NewDecoder(f)
+	err = dec.Decode(&coinList)
 	if err != nil {
-		logrus.WithError(err).Fatal("Failed to load coins")
+		return err
 	}
+
 	Coins = make(map[uint]Coin)
 	for _, coin := range coinList {
-		Coins[coin.Index] = coin
+		if coin.Handle == "" {
+			return fmt.Errorf("coin %d has no handle", coin.ID)
+		}
+		Coins[coin.ID] = coin
 	}
+
+	return nil
 }

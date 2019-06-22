@@ -29,16 +29,16 @@ var platformList = []blockatlas.Platform{
 	&binance.Platform{},
 	&nimiq.Platform{},
 	&ripple.Platform{},
-	&stellar.Platform{ CoinIndex: coin.XLM, HandleStr: "stellar" },
-	&stellar.Platform{ CoinIndex: coin.KIN, HandleStr: "kin" },
-	&ethereum.Platform{ CoinIndex: coin.ETH,  HandleStr: "ethereum" },
-	&ethereum.Platform{ CoinIndex: coin.ETC,  HandleStr: "classic"},
-	&ethereum.Platform{ CoinIndex: coin.POA,  HandleStr: "poa"},
-	&ethereum.Platform{ CoinIndex: coin.CLO,  HandleStr: "callisto"},
-	&ethereum.Platform{ CoinIndex: coin.GO,   HandleStr: "gochain"},
-	&ethereum.Platform{ CoinIndex: coin.WAN,  HandleStr: "wanchain"},
-	&ethereum.Platform{ CoinIndex: coin.TOMO, HandleStr: "tomochain"},
-	&ethereum.Platform{ CoinIndex: coin.TT,   HandleStr: "thundertoken"},
+	&stellar.Platform{ CoinIndex: coin.XLM },
+	&stellar.Platform{ CoinIndex: coin.KIN },
+	&ethereum.Platform{ CoinIndex: coin.ETH  },
+	&ethereum.Platform{ CoinIndex: coin.ETC  },
+	&ethereum.Platform{ CoinIndex: coin.POA  },
+	&ethereum.Platform{ CoinIndex: coin.CLO  },
+	&ethereum.Platform{ CoinIndex: coin.GO   },
+	&ethereum.Platform{ CoinIndex: coin.WAN  },
+	&ethereum.Platform{ CoinIndex: coin.TOMO },
+	&ethereum.Platform{ CoinIndex: coin.TT   },
 	&tezos.Platform{},
 	&aion.Platform{},
 	&cosmos.Platform{},
@@ -72,7 +72,7 @@ func Init() {
 	CustomAPIs = make(map[string]blockatlas.CustomAPI)
 
 	for _, platform := range platformList {
-		handle := platform.Handle()
+		handle := platform.Coin().Handle
 		apiKey := fmt.Sprintf("%s.api", handle)
 
 		if !viper.IsSet(apiKey) {

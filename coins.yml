@@ -1,0 +1,212 @@
+- id: 60
+  index: 0x8000003c
+  symbol: ETH
+  trust: ethereum
+  name: Ether
+  link: https://ethereum.org/ether
+  decimals: 18
+  sample: '0xfc10cab6a50a1ab10c56983c80cc82afc6559cf1'
+
+- id: 61
+  index: 0x8000003d
+  symbol: ETC
+  trust: classic
+  name: Ether Classic
+  link: https://ethereumclassic.github.io
+  decimals: 18
+  sample: '0xf3524415b6D873205B4c3Cda783527b2aC4daAA9'
+
+- id: 74
+  index: 0x8000004a
+  symbol: ICX
+  trust: icon
+  name: ICON
+  link: https://icon.foundation/
+  decimals: 18
+  sample: 'hxee691e7bccc4eb11fee922896e9f51490e62b12e'
+
+- id: 118
+  index: 0x80000076
+  symbol: ATOM
+  trust: cosmos
+  name: Cosmos ATOM
+  link: https://cosmos.network/
+  decimals: 6
+  sample: 'cosmos1rw62phusuv9vzraezr55k0vsqssvz6ed52zyrl'
+
+- id: 144
+  index: 0x80000090
+  symbol: XRP
+  trust: ripple
+  name: Ripple
+  link: https://ripple.com
+  decimals: 6
+  sample: 'rMQ98K56yXJbDGv49ZSmW51sLn94Xe1mu1'
+
+- id: 148
+  index: 0x80000094
+  symbol: XLM
+  trust: stellar
+  name: Stellar Lumens
+  link: https://www.stellar.org/
+  decimals: 7
+  sample: 'GDKIJJIKXLOM2NRMPNQZUUYK24ZPVFC6426GZAEP3KUK6KEJLACCWNMX'
+
+- id: 178
+  index: 0x800000b2
+  symbol: POA
+  trust: poa
+  name: Poa
+  link: https://poa.network
+  decimals: 18
+  sample: '0x1fddEc96688e0538A316C64dcFd211c491ECf0d8'
+
+- id: 195
+  index: 0x800000c3
+  symbol: TRX
+  trust: tron
+  name: Tron
+  link: https://tron.network/enindex.html
+  decimals: 6
+  sample: 'TMuA6YqfCeX8EhbfYEg5y7S4DqzSJireY9'
+
+- id: 242
+  index: 0x800000f2
+  symbol: NIM
+  trust: nimiq
+  name: Nimiq
+  link: https://nimiq.com/
+  decimals: 5
+  blockTime: 60000
+  sample: 'NQ86 2H8F YGU5 RM77 QSN9 LYLH C56A CYYR 0MLA'
+
+- id: 304
+  index: 0x80000130
+  symbol: IOTX
+  trust: iotex
+  name: IoTeX
+  link: https://iotex.io/
+  decimals: 0
+  sample: 'io1mwekae7qqwlr23220k5n9z3fmjxz72tuchra3m'
+
+- id: 313
+  index: 0x80000139
+  symbol: ZIL
+  trust: zilliqa
+  name: Zilliqa
+  link: https://zilliqa.com/
+  sample: '0x88aF5BA10796D9091D6893eED4db23ef0bbbCa37'
+
+- id: 425
+  index: 0x800001a9
+  symbol: AION
+  trust: aion
+  name: Aion
+  link: https://aion.network
+  decimals: 18
+  sample: '0xa07981da70ce919e1db5f051c3c386eb526e6ce8b9e2bfd56e3f3d754b0a17f3'
+
+- id: 500
+  index: 0x800001f4
+  symbol: THETA
+  trust: theta
+  name: Theta
+  link: https://www.thetatoken.org/
+  sample: '0xac0eeb6ee3e32e2c74e14ac74155063e4f4f981f'
+
+- id: 714
+  index: 0x800002ca
+  symbol: BNB
+  trust: binance
+  name: Binance
+  link: https://www.binance.org
+  decimals: 18
+  blockTime: 1000
+  sample: 'tbnb1fhr04azuhcj0dulm7ka40y0cqjlafwae9k9gk2'
+
+- id: 818
+  index: 0x80000332
+  symbol: VET
+  trust: vechain
+  name: VeChain Token
+  link: https://vechain.com/
+  sample: '0xB5e883349e68aB59307d1604555AC890fAC47128'
+
+- id: 820
+  index: 0x80000334
+  symbol: CLO
+  trust: callisto
+  name: Callisto
+  link: http://callisto.network/
+  decimals: 18
+  sample: '0x39ec1c88a7a7c1a575e8c8f42eff7630d9278179'
+
+- id: 889
+  index: 0x80000379
+  symbol: TOMO
+  trust: tomochain
+  name: TOMO
+  link: https://tomochain.com/
+  sample: '0x7daa83030e3086477b79b6e757ca8608899fe783'
+
+- id: 1001
+  index: 0x800003e9
+  symbol: TT
+  trust: thundertoken
+  name: ThunderCore
+  link: https://thundercore.com/
+  decimals: 18
+  sample: '0x0ad80a408eac4f17ba0a9de8a12d8736f60700c3'
+
+- id: 1024
+  index: 0x80000400
+  symbol: ONT
+  trust: ontology
+  name: Ontology
+  link: https://ont.io
+  sample: 'AUyL4TZ1zFEcSKDJrjFnD7vsq5iFZMZqT7'
+
+- id: 1729
+  index: 0x800006c1
+  symbol: XTZ
+  trust: tezos
+  name: Tezos
+  link: https://tezos.com
+  decimals: 6
+  sample: 'tz1WCd2jm4uSt4vntk4vSuUWoZQGhLcDuR9q'
+
+- id: 2017
+  index: 0x800007e1
+  symbol: KIN
+  trust: kin
+  name: Kin
+  link: https://www.kinecosystem.org/
+  decimals: 5
+  sample: 'GBHKUZ7C2SZ5N3X2S7O6TT6LNUWSEA2BXMSR5GTTSR6VZARSVAXIQNGH'
+
+- id: 6060
+  index: 0x800017ac
+  symbol: GO
+  trust: gochain
+  name: GoChain GO
+  link: https://gochain.io/
+  decimals: 18
+  sample: '0x76c2F81716A8D198a00502Ae9a59126418899FDe'
+
+- id: 5718350
+  index: 0x8057414e
+  symbol: WAN
+  trust: wanchain
+  name: Wanchain
+  link: https://wanchain.org/
+  decimals: 18
+  sample: '0x36cEdc3A9d969306AF4F7CA2b83ABBf74095914d'
+
+- id: 7562605
+  index: 0x8073656d
+  symbol: SEM
+  trust: semux
+  name: Semux
+  link: https://semux.org/
+  decimals: 9
+  sample: '0x8197987c401a3466ad678b2080b24838ebd95b41'

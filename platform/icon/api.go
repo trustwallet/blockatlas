@@ -10,14 +10,8 @@ import (
 	"time"
 )
 
-const Handle = "icon"
-
 type Platform struct {
 	client Client
-}
-
-func (p *Platform) Handle() string {
-	return Handle
 }
 
 func (p *Platform) Init() error {

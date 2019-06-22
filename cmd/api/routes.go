@@ -12,23 +12,16 @@ import (
 
 var routers = make(map[string]gin.IRouter)
 
-// Placeholder for WIP APIs.
-var emptyAPIs = []string{}
-
 func loadPlatforms(root gin.IRouter) {
 	v1 := root.Group("/v1")
 
 	for _, txAPI := range platform.TxAPIs {
-		router := getRouter(v1, txAPI.Handle())
+		router := getRouter(v1, txAPI.Coin().Handle)
 		makeGenericAPI(router, txAPI)
 	}
 	for _, customAPI := range platform.CustomAPIs {
-		router := getRouter(v1, customAPI.Handle())
+		router := getRouter(v1, customAPI.Coin().Handle)
 		customAPI.RegisterRoutes(router)
-	}
-	for _, handle := range emptyAPIs {
-		router := getRouter(v1, handle)
-		setupEmpty(router)
 	}
 
 	logrus.WithField("routes", len(routers)).

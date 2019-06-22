@@ -1,6 +1,6 @@
 package iotex
 
-import(
+import (
 	"github.com/trustwallet/blockatlas"
 	"net/http"
 	"strconv"
@@ -11,14 +11,8 @@ import(
 	"github.com/trustwallet/blockatlas/coin"
 )
 
-const Handle = "iotex"
-
 type Platform struct {
 	client Client
-}
-
-func (p *Platform) Handle() string {
-	return Handle
 }
 
 func (p *Platform) Init() error {
@@ -47,63 +41,56 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 
 	var txs []blockatlas.Tx
 	for _, srcTx := range trxs.ActionInfo {
-		tx, ok := Normalize(srcTx)
-		if !ok || len(txs) >= blockatlas.TxPerPage {
-			continue
+		tx := Normalize(srcTx)
+		if tx != nil {
+			txs = append(txs, *tx)
 		}
-		txs = append(txs, tx)
 	}
-	
+
 	return txs, nil
 }
 
 // Normalize converts an Iotex transaction into the generic model
-func Normalize(trx *ActionInfo) (blockatlas.Tx, bool) {
+func Normalize(trx *ActionInfo) *blockatlas.Tx {
+	if trx.Action == nil {
+		return nil
+	}
+	if trx.Action.Core == nil {
+		return nil
+	}
+	if trx.Action.Core.Transfer == nil {
+		return nil
+	}
+
 	date, err := time.Parse(time.RFC3339, trx.Timestamp)
 	if err != nil {
-		return blockatlas.Tx{
-			Coin: coin.IOTX,
-			Status: blockatlas.StatusFailed,
-			Error: err.Error(),
-		}, false
+		return nil
 	}
 	height, err := strconv.ParseInt(trx.BlkHeight, 10, 64)
 	if err != nil {
-		return blockatlas.Tx{
-			Coin: coin.IOTX,
-			Status: blockatlas.StatusFailed,
-			Error: err.Error(),
-		}, false
+		return nil
 	}
 	if height <= 0 {
-		return blockatlas.Tx{
-			Coin: coin.IOTX,
-			Status: blockatlas.StatusFailed,
-			Error: "invalid block height",
-		}, false
+		return nil
 	}
 	nonce, err := strconv.ParseInt(trx.Action.Core.Nonce, 10, 64)
 	if err != nil {
-		return blockatlas.Tx{
-			Coin: coin.IOTX,
-			Status: blockatlas.StatusFailed,
-			Error: err.Error(),
-		}, false
+		return nil
 	}
 
-	return blockatlas.Tx{
-		ID       : trx.ActHash,
-		Coin     : coin.IOTX,
-		From     : trx.Sender,
-		To       : trx.Action.Core.Transfer.Recipient,
-		Fee      : blockatlas.Amount(trx.GasFee),
-		Date     : date.Unix(),
-		Block    : uint64(height),
-		Status   : blockatlas.StatusCompleted,
-		Sequence : uint64(nonce),
-		Type     : blockatlas.TxTransfer,
-		Meta     : blockatlas.Transfer{
-			Value : blockatlas.Amount(trx.Action.Core.Transfer.Amount),
+	return &blockatlas.Tx{
+		ID:       trx.ActHash,
+		Coin:     coin.IOTX,
+		From:     trx.Sender,
+		To:       trx.Action.Core.Transfer.Recipient,
+		Fee:      blockatlas.Amount(trx.GasFee),
+		Date:     date.Unix(),
+		Block:    uint64(height),
+		Status:   blockatlas.StatusCompleted,
+		Sequence: uint64(nonce),
+		Type:     blockatlas.TxTransfer,
+		Meta: blockatlas.Transfer{
+			Value: trx.Action.Core.Transfer.Amount,
 		},
-	}, true
+	}
 }
