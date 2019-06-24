@@ -66,4 +66,5 @@ func loadDefaults() {
 	viper.SetDefault("semux.api", "https://sempy.online/api")
 	viper.SetDefault("ontology.api", "https://explorer.ont.io/api/v1/explorer")
 	viper.SetDefault("iotex.api", "https://pharos.iotex.io/v1")
+	viper.SetDefault("waves.api", "https://nodes.wavesnodes.com")
 }

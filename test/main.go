@@ -48,6 +48,7 @@ var addresses = map[string]Entry{
 	"ontology":     {coin.ONT, "AUyL4TZ1zFEcSKDJrjFnD7vsq5iFZMZqT7"},
 	"zilliqa":      {coin.ZIL, "0x88aF5BA10796D9091D6893eED4db23ef0bbbCa37"},
 	"iotex":        {coin.IOTX, "io1mwekae7qqwlr23220k5n9z3fmjxz72tuchra3m"},
+	"waves":        {coin.WAVES, "3PC4roN512iugc6xGVTTM2XkoWKEdSiiscd"},
 }
 
 func main() {

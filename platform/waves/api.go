@@ -1,40 +1,48 @@
 package waves
 
 import (
+	"fmt"
+	"github.com/trustwallet/blockatlas/coin"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas"
-	"github.com/trustwallet/blockatlas/util"
 )
 
-// MakeSetup returns a function used to register an Waves-based platform route
-func MakeSetup(coinIndex uint, platform string) func(gin.IRouter) {
-	apiKey := platform + ".api"
-
-	client := Client{
-		HTTPClient: http.DefaultClient,
-	}
-
-	return func(router gin.IRouter) {
-		router.Use(util.RequireConfig(apiKey))
-		router.Use(func(c *gin.Context) {
-			client.BaseURL = viper.GetString(apiKey)
-			c.Next()
-		})
-		router.GET("/:address", func(c *gin.Context) {
-			GetTransactions(c, coinIndex, &client)
-		})
-	}
+type Platform struct {
+	client    Client
+	CoinIndex uint
+	HandleStr string
 }
 
-func GetTransactions(c *gin.Context, coinIndex uint, client *Client) {
+func (p *Platform) Handle() string {
+	return p.HandleStr
+}
+
+func (p *Platform) Init() error {
+	p.client.BaseURL = viper.GetString(fmt.Sprintf("%s.api", p.HandleStr))
+	p.client.HTTPClient = http.DefaultClient
+	return nil
+}
+
+func (p *Platform) Coin() coin.Coin {
+	return coin.Coins[p.CoinIndex]
+}
+
+func (p *Platform) RegisterRoutes(router gin.IRouter) {
+	router.GET("/:address", func(c *gin.Context) {
+		p.getTransactions(c)
+	})
+}
+
+func (p *Platform) getTransactions(c *gin.Context) {
 	address := c.Param("address")
 	var err error
 
-	addressTxs, err := client.GetTxs(address, 25, "")
+	addressTxs, err := p.client.GetTxs(address, 25, "")
 
 	if apiError(c, err) {
 		return
@@ -42,10 +50,7 @@ func GetTransactions(c *gin.Context, coinIndex uint, client *Client) {
 
 	var txs []blockatlas.Tx
 	for _, srcTx := range addressTxs {
-		// support only transfer transaction
-		if srcTx.Type == 4 {
-			txs = AppendTxs(txs, &srcTx, coinIndex, client)
-		}
+		txs = AppendTxs(txs, &srcTx, p.CoinIndex)
 	}
 
 	page := blockatlas.TxPage(txs)
@@ -53,7 +58,7 @@ func GetTransactions(c *gin.Context, coinIndex uint, client *Client) {
 	c.JSON(http.StatusOK, &page)
 }
 
-func AppendTxs(in []blockatlas.Tx, srcTx *Transaction, coinIndex uint, client *Client) (out []blockatlas.Tx) {
+func AppendTxs(in []blockatlas.Tx, srcTx *Transaction, coinIndex uint) (out []blockatlas.Tx) {
 	out = in
 	baseTx, ok := extractBase(srcTx, coinIndex)
 	if !ok {
@@ -63,21 +68,17 @@ func AppendTxs(in []blockatlas.Tx, srcTx *Transaction, coinIndex uint, client *C
 	// Waves transaction
 	if len(srcTx.AssetId) == 0 {
 		baseTx.Meta = blockatlas.Transfer{
-			Value: blockatlas.Amount(srcTx.Amount),
+			Value: blockatlas.Amount(strconv.Itoa(int(srcTx.Amount))),
 		}
 		out = append(out, baseTx)
 	} else {
 		// Token transaction
-		tokenInfo, err := client.GetTokenInfo(srcTx.AssetId)
-		if err != nil {
-			return
-		}
 		baseTx.Meta = blockatlas.NativeTokenTransfer{
-			Name:     tokenInfo.Description,
-			Symbol:   tokenInfo.Name,
+			Name:     srcTx.Asset.Description,
+			Symbol:   srcTx.Asset.Name,
 			TokenID:  srcTx.AssetId,
-			Decimals: tokenInfo.Decimals,
-			Value:    blockatlas.Amount(srcTx.Amount),
+			Decimals: srcTx.Asset.Decimals,
+			Value:    blockatlas.Amount(strconv.Itoa(int(srcTx.Amount))),
 			From:     srcTx.Sender,
 			To:       srcTx.Recipient,
 		}
@@ -95,9 +96,10 @@ func extractBase(srcTx *Transaction, coinIndex uint) (base blockatlas.Tx, ok boo
 		Coin:   coinIndex,
 		From:   srcTx.Sender,
 		To:     srcTx.Recipient,
-		Fee:    blockatlas.Amount(srcTx.Fee),
+		Fee:    blockatlas.Amount(strconv.Itoa(int(srcTx.Fee))),
 		Date:   int64(srcTx.Timestamp),
 		Block:  srcTx.Block,
+		Memo:   srcTx.Attachment,
 		Status: status,
 	}
 	return base, true

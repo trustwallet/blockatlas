@@ -12,6 +12,7 @@ type Transaction struct {
 	Attachment string `json:"attachment"`
 	Block      uint64 `json:"height"`
 	Type       uint64 `json:"type"`
+	Asset      *TokenInfo
 }
 
 type TokenInfo struct {

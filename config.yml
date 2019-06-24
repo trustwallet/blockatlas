@@ -93,3 +93,7 @@ ontology:
 #[IoTeX] IoTeX: https://iotex.io/
 iotex:
  api: https://pharos.iotex.io/v1
+
+# [WAVES] Waves: http://wavesplatform.com/
+waves:
+ api: https://nodes.wavesnodes.com

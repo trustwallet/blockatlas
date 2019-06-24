@@ -3,6 +3,7 @@ package waves
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/mr-tron/base58"
 	"github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas"
 	"net/http"
@@ -35,14 +36,35 @@ func (c *Client) getTxs(uri string) ([]Transaction, error) {
 		return nil, fmt.Errorf("http %s", res.Status)
 	}
 
-	txs := new([][]Transaction)
-	err = json.NewDecoder(res.Body).Decode(txs)
+	txsArrays := new([][]Transaction)
+	err = json.NewDecoder(res.Body).Decode(txsArrays)
 	if err != nil {
 		return nil, err
 	}
-	txsObj := *txs
+	txsObj := *txsArrays
+	txs := txsObj[0]
 
-	return txsObj[0], nil
+	var result []Transaction
+	for _, tx := range txs {
+		// support only transfer transaction
+		if tx.Type == 4 {
+			if len(tx.AssetId) != 0 {
+				tokenInfo, err := c.GetTokenInfo(tx.AssetId)
+				if err != nil {
+					return nil, err
+				}
+				tx.Asset = tokenInfo
+			}
+		}
+		attachmentBytes, err := base58.DecodeAlphabet(tx.Attachment, base58.BTCAlphabet)
+		if err != nil {
+			return nil, err
+		}
+		tx.Attachment = string(attachmentBytes)
+		result = append(result, tx)
+	}
+
+	return result, nil
 }
 
 func (c *Client) GetTokenInfo(tokenId string) (*TokenInfo, error) {
