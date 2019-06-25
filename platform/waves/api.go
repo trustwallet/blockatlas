@@ -64,25 +64,11 @@ func AppendTxs(in []blockatlas.Tx, srcTx *Transaction, coinIndex uint) (out []bl
 		return
 	}
 
-	// Waves transaction
-	if len(srcTx.AssetId) == 0 {
-		baseTx.Meta = blockatlas.Transfer{
-			Value: blockatlas.Amount(strconv.Itoa(int(srcTx.Amount))),
-		}
-		out = append(out, baseTx)
-	} else {
-		// Token transaction
-		baseTx.Meta = blockatlas.NativeTokenTransfer{
-			Name:     srcTx.Asset.Description,
-			Symbol:   srcTx.Asset.Name,
-			TokenID:  srcTx.AssetId,
-			Decimals: srcTx.Asset.Decimals,
-			Value:    blockatlas.Amount(strconv.Itoa(int(srcTx.Amount))),
-			From:     srcTx.Sender,
-			To:       srcTx.Recipient,
-		}
-		out = append(out, baseTx)
+	baseTx.Meta = blockatlas.Transfer{
+		Value: blockatlas.Amount(strconv.Itoa(int(srcTx.Amount))),
 	}
+	out = append(out, baseTx)
+
 	return
 }
 

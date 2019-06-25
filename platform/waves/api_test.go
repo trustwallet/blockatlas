@@ -28,27 +28,6 @@ const transferV1 = `
 	"height":1580410
 }`
 
-// btc asset field was added, signature is invalid but this's ok for us
-const transferV2 = `
-{
-	"type":4,
-	"id":"EZxdiLRKvjouSGy4NW8sqfbiEYXgcVvGiAsa3q4pdFcj",
-	"sender":"3P4w1A96SojL9VnJMAaCenNySEL11NDvXK8",
-	"senderPublicKey":"6yHwbWHmGQEeBXSvEhpyxhJNXWFXroQDQFqCxVzeKzk1",
-	"fee":100000,
-    "timestamp":1560414208156,
-	"proofs":["2drH4pV4LsoNESm6Ec3X9eqJYWetSaRr4mE7P4vmVMETKRJYwN5KidhGGWddfjiRkj1Pxb7nZVBAXkiu7GwZi5mS"],
-	"version":2,
-	"recipient":"3P6cRBnTfnvNWsYKdznDPCTRMZhjJHJxJxs",
-	"assetId":"8LQW8f7P5d5PZM7GtZEBgaqRPGSzS3DfPuiXrURJ4AJS",
-	"feeAssetId":null,
-	"feeAsset":null,
-	"amount":675133100,
-	"attachment":"",
-	"height":1569685
-}
-`
-
 const differentTxs = `
 [[
 	{
@@ -111,27 +90,6 @@ var transferV1Obj = blockatlas.Tx{
 	},
 }
 
-var transferV2Obj = blockatlas.Tx{
-	ID:     "EZxdiLRKvjouSGy4NW8sqfbiEYXgcVvGiAsa3q4pdFcj",
-	Coin:   coin.WAVES,
-	From:   "3P4w1A96SojL9VnJMAaCenNySEL11NDvXK8",
-	To:     "3P6cRBnTfnvNWsYKdznDPCTRMZhjJHJxJxs",
-	Fee:    "100000",
-	Date:   1560414208156,
-	Block:  1569685,
-	Status: blockatlas.StatusCompleted,
-	Memo:   "",
-	Meta: blockatlas.NativeTokenTransfer{
-		Name:     "Bitcoin Token",
-		Symbol:   "WBTC",
-		TokenID:  "8LQW8f7P5d5PZM7GtZEBgaqRPGSzS3DfPuiXrURJ4AJS",
-		Decimals: 8,
-		Value:    blockatlas.Amount("675133100"),
-		From:     "3P4w1A96SojL9VnJMAaCenNySEL11NDvXK8",
-		To:       "3P6cRBnTfnvNWsYKdznDPCTRMZhjJHJxJxs",
-	},
-}
-
 var differentTxsObjs = []blockatlas.Tx{{
 	ID:     "52GG9U2e6foYRKp5vAzsTQ86aDAABfRJ7synz7ohBp19",
 	Coin:   coin.WAVES,
@@ -165,16 +123,6 @@ func TestNormalize(t *testing.T) {
 		name:        "transfer",
 		apiResponse: transferV1,
 		expected:    &transferV1Obj,
-	})
-	testParseTx(t, &txParseTest{
-		name:        "token transfer",
-		apiResponse: transferV2,
-		expected:    &transferV2Obj,
-		tokenInfo: &TokenInfo{
-			Name:        "WBTC",
-			Description: "Bitcoin Token",
-			Decimals:    8,
-		},
 	})
 	testFilterTxs(t, &txFilterTest{
 		name:        "filter transfer transactions txParseTest",
