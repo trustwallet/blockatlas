@@ -49,7 +49,7 @@ func (p *Platform) getTransactions(c *gin.Context) {
 
 	var txs []blockatlas.Tx
 	for _, srcTx := range addressTxs {
-		txs = AppendTxs(txs, &srcTx, p.Coin().Decimals)
+		txs = AppendTxs(txs, &srcTx, p.Coin().Index)
 	}
 
 	page := blockatlas.TxPage(txs)
