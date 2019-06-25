@@ -109,7 +109,6 @@ type txParseTest struct {
 	name        string
 	apiResponse string
 	expected    *blockatlas.Tx
-	tokenInfo   *TokenInfo
 }
 
 type txFilterTest struct {
@@ -138,7 +137,7 @@ func testParseTx(t *testing.T, _test *txParseTest) {
 		t.Error(err)
 		return
 	}
-	tx.Asset = _test.tokenInfo
+
 	res := AppendTxs(nil, &tx, coin.WAVES)
 
 	resJSON, err := json.Marshal(res)
