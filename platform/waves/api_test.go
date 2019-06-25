@@ -77,7 +77,7 @@ const differentTxs = `
 
 var transferV1Obj = blockatlas.Tx{
 	ID:     "7QoQc9qMUBCfY4QV35mgBsT8eTXybvGkM2HTumtAvBUL",
-	Coin:   coin.WAVES,
+	Coin:   5741564,
 	From:   "3PLrCnhKyX5iFbGDxbqqMvea5VAqxMcinPW",
 	To:     "3PKWyVAmHom1sevggiXVfbGUc3kS85qT4Va",
 	Fee:    "100000",
@@ -92,7 +92,7 @@ var transferV1Obj = blockatlas.Tx{
 
 var differentTxsObjs = []blockatlas.Tx{{
 	ID:     "52GG9U2e6foYRKp5vAzsTQ86aDAABfRJ7synz7ohBp19",
-	Coin:   coin.WAVES,
+	Coin:   5741564,
 	From:   "3NBVqYXrapgJP9atQccdBPAgJPwHDKkh6A8",
 	To:     "3NBVqYXrapgJP9atQccdBPAgJPwHDKkh6A8",
 	Fee:    "100000",
