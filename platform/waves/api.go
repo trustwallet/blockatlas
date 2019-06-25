@@ -1,10 +1,10 @@
 package waves
 
 import (
-	"fmt"
-	"github.com/trustwallet/blockatlas/coin"
 	"net/http"
 	"strconv"
+
+	"github.com/trustwallet/blockatlas/coin"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
@@ -12,24 +12,24 @@ import (
 	"github.com/trustwallet/blockatlas"
 )
 
+const Handle = "waves"
+
 type Platform struct {
 	client    Client
-	CoinIndex uint
-	HandleStr string
 }
 
 func (p *Platform) Handle() string {
-	return p.HandleStr
+	return Handle
 }
 
 func (p *Platform) Init() error {
-	p.client.BaseURL = viper.GetString(fmt.Sprintf("%s.api", p.HandleStr))
+	p.client.URL = viper.GetString("waves.api")
 	p.client.HTTPClient = http.DefaultClient
 	return nil
 }
 
 func (p *Platform) Coin() coin.Coin {
-	return coin.Coins[p.CoinIndex]
+	return coin.Coins[coin.WAVES]
 }
 
 func (p *Platform) RegisterRoutes(router gin.IRouter) {
@@ -42,15 +42,14 @@ func (p *Platform) getTransactions(c *gin.Context) {
 	address := c.Param("address")
 	var err error
 
-	addressTxs, err := p.client.GetTxs(address, 25, "")
-
+	addressTxs, err := p.client.GetTxs(address, 25)
 	if apiError(c, err) {
 		return
 	}
 
 	var txs []blockatlas.Tx
 	for _, srcTx := range addressTxs {
-		txs = AppendTxs(txs, &srcTx, p.CoinIndex)
+		txs = AppendTxs(txs, &srcTx, p.Coin().Decimals)
 	}
 
 	page := blockatlas.TxPage(txs)
@@ -88,9 +87,6 @@ func AppendTxs(in []blockatlas.Tx, srcTx *Transaction, coinIndex uint) (out []bl
 }
 
 func extractBase(srcTx *Transaction, coinIndex uint) (base blockatlas.Tx, ok bool) {
-	var status string
-	status = blockatlas.StatusCompleted
-
 	base = blockatlas.Tx{
 		ID:     srcTx.Id,
 		Coin:   coinIndex,
@@ -100,7 +96,7 @@ func extractBase(srcTx *Transaction, coinIndex uint) (base blockatlas.Tx, ok boo
 		Date:   int64(srcTx.Timestamp),
 		Block:  srcTx.Block,
 		Memo:   srcTx.Attachment,
-		Status: status,
+		Status: blockatlas.StatusCompleted,
 	}
 	return base, true
 }
