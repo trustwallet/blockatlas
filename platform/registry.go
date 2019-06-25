@@ -22,6 +22,7 @@ import (
 	"github.com/trustwallet/blockatlas/platform/tron"
 	"github.com/trustwallet/blockatlas/platform/vechain"
 	"github.com/trustwallet/blockatlas/platform/zilliqa"
+	"github.com/trustwallet/blockatlas/platform/waves"
 )
 
 var platformList = []blockatlas.Platform{
@@ -49,6 +50,7 @@ var platformList = []blockatlas.Platform{
 	&tron.Platform{},
 	&vechain.Platform{},
 	&zilliqa.Platform{},
+	&waves.Platform{},
 }
 
 // Platforms contains all registered platforms by handle
