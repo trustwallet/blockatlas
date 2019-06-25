@@ -59,6 +59,14 @@
 		"link": "https://ark.io"
 	},
 	{
+		"index": 118,
+		"hex": "0x80000076",
+		"symbol": "ATOM",
+		"name": "Cosmos ATOM",
+		"link": "https://cosmos.network/",
+		"decimals": 6
+	},
+	{
 		"index": 144,
 		"hex": "0x80000090",
 		"symbol": "XRP",
@@ -249,19 +257,19 @@
 		"decimals": 18
 	},
 	{
+		"index": 5741564,
+		"hex": "0x80579bfc",
+		"symbol": "WAVES",
+		"name": "Waves",
+		"link": "https://wavesplatform.com/",
+		"decimals": 8
+	},
+	{
 		"index": 7562605,
 		"hex": "0x8073656d",
 		"symbol": "SEM",
 		"name": "Semux",
 		"link": "https://semux.org/",
 		"decimals": 9
-	},
-	{
-		"index": 118,
-		"hex": "0x80000076",
-		"symbol": "ATOM",
-		"name": "Cosmos ATOM",
-		"link": "https://cosmos.network/",
-		"decimals": 6
 	}
 ]
