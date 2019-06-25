@@ -79,7 +79,7 @@ func extractBase(srcTx *Transaction, coinIndex uint) (base blockatlas.Tx, ok boo
 		From:   srcTx.Sender,
 		To:     srcTx.Recipient,
 		Fee:    blockatlas.Amount(strconv.Itoa(int(srcTx.Fee))),
-		Date:   int64(srcTx.Timestamp),
+		Date:   int64(srcTx.Timestamp) / 1000,
 		Block:  srcTx.Block,
 		Memo:   srcTx.Attachment,
 		Status: blockatlas.StatusCompleted,
