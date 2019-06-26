@@ -202,6 +202,15 @@
   decimals: 18
   sample: '0x36cEdc3A9d969306AF4F7CA2b83ABBf74095914d'
 
+- id: 5741564
+  index: 0x80579bfc
+  symbol: WAVES
+  trust: waves
+  name: Wanchain
+  link: https://wavesplatform.com/
+  decimals: 8
+  sample: '3P7wz6TXienpw3BHe8eHUEuZWb6WE58kgnQ'
+
 - id: 7562605
   index: 0x8073656d
   symbol: SEM
