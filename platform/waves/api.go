@@ -12,14 +12,8 @@ import (
 	"github.com/trustwallet/blockatlas"
 )
 
-const Handle = "waves"
-
 type Platform struct {
 	client    Client
-}
-
-func (p *Platform) Handle() string {
-	return Handle
 }
 
 func (p *Platform) Init() error {
@@ -49,7 +43,7 @@ func (p *Platform) getTransactions(c *gin.Context) {
 
 	var txs []blockatlas.Tx
 	for _, srcTx := range addressTxs {
-		txs = AppendTxs(txs, &srcTx, p.Coin().Index)
+		txs = AppendTxs(txs, &srcTx)
 	}
 
 	page := blockatlas.TxPage(txs)
@@ -57,9 +51,9 @@ func (p *Platform) getTransactions(c *gin.Context) {
 	c.JSON(http.StatusOK, &page)
 }
 
-func AppendTxs(in []blockatlas.Tx, srcTx *Transaction, coinIndex uint) (out []blockatlas.Tx) {
+func AppendTxs(in []blockatlas.Tx, srcTx *Transaction) (out []blockatlas.Tx) {
 	out = in
-	baseTx, ok := extractBase(srcTx, coinIndex)
+	baseTx, ok := extractBase(srcTx)
 	if !ok {
 		return
 	}
@@ -72,10 +66,10 @@ func AppendTxs(in []blockatlas.Tx, srcTx *Transaction, coinIndex uint) (out []bl
 	return
 }
 
-func extractBase(srcTx *Transaction, coinIndex uint) (base blockatlas.Tx, ok bool) {
+func extractBase(srcTx *Transaction) (base blockatlas.Tx, ok bool) {
 	base = blockatlas.Tx{
 		ID:     srcTx.Id,
-		Coin:   coinIndex,
+		Coin:   coin.WAVES,
 		From:   srcTx.Sender,
 		To:     srcTx.Recipient,
 		Fee:    blockatlas.Amount(strconv.Itoa(int(srcTx.Fee))),

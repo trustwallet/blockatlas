@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"github.com/trustwallet/blockatlas"
-	"github.com/trustwallet/blockatlas/coin"
 	"testing"
 )
 
@@ -138,7 +137,7 @@ func testParseTx(t *testing.T, _test *txParseTest) {
 		return
 	}
 
-	res := AppendTxs(nil, &tx, coin.WAVES)
+	res := AppendTxs(nil, &tx)
 
 	resJSON, err := json.Marshal(res)
 	if err != nil {
@@ -167,7 +166,7 @@ func testFilterTxs(t *testing.T, _test *txFilterTest) {
 	var res []blockatlas.Tx
 	for _, tx := range txs[0] {
 		if tx.Type == 4 {
-			res = AppendTxs(nil, &tx, coin.WAVES)
+			res = AppendTxs(nil, &tx)
 		}
 	}
 
