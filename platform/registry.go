@@ -21,8 +21,8 @@ import (
 	"github.com/trustwallet/blockatlas/platform/theta"
 	"github.com/trustwallet/blockatlas/platform/tron"
 	"github.com/trustwallet/blockatlas/platform/vechain"
-	"github.com/trustwallet/blockatlas/platform/zilliqa"
 	"github.com/trustwallet/blockatlas/platform/waves"
+	"github.com/trustwallet/blockatlas/platform/zilliqa"
 )
 
 var platformList = []blockatlas.Platform{
@@ -56,9 +56,6 @@ var platformList = []blockatlas.Platform{
 // Platforms contains all registered platforms by handle
 var Platforms map[string]blockatlas.Platform
 
-// TxAPIs contains platforms with transaction services
-var TxAPIs map[string]blockatlas.TxAPI
-
 // BlockAPIs contains platforms with block services
 var BlockAPIs map[string]blockatlas.BlockAPI
 
@@ -67,7 +64,6 @@ var CustomAPIs map[string]blockatlas.CustomAPI
 
 func Init() {
 	Platforms  = make(map[string]blockatlas.Platform)
-	TxAPIs     = make(map[string]blockatlas.TxAPI)
 	BlockAPIs  = make(map[string]blockatlas.BlockAPI)
 	CustomAPIs = make(map[string]blockatlas.CustomAPI)
 
@@ -98,9 +94,6 @@ func Init() {
 
 		Platforms[handle] = platform
 
-		if txAPI, ok := platform.(blockatlas.TxAPI); ok {
-			TxAPIs[handle] = txAPI
-		}
 		if blockAPI, ok := platform.(blockatlas.BlockAPI); ok {
 			BlockAPIs[handle] = blockAPI
 		}

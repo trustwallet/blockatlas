@@ -12,7 +12,7 @@ var routers = make(map[string]gin.IRouter)
 func loadPlatforms(root gin.IRouter) {
 	v1 := root.Group("/v1")
 
-	for _, txAPI := range platform.TxAPIs {
+	for _, txAPI := range platform.Platforms {
 		router := getRouter(v1, txAPI.Coin().Handle)
 		makeTxRoute(router, txAPI)
 	}
