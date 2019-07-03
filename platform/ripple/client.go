@@ -19,7 +19,6 @@ func (c *Client) GetTxsOfAddress(address string) ([]Tx, error) {
 		c.BaseURL,
 		url.PathEscape(address),
 		200)
-	print(uri)
 	httpRes, err := c.HTTPClient.Get(uri)
 	if err != nil {
 		logrus.WithError(err).Error("Ripple: Failed to get transactions")

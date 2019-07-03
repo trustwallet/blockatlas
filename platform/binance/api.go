@@ -53,6 +53,11 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 	}, nil
 }
 
+func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
+	// Endpoint supports queries without token query parameter
+	return p.GetTokenTxsByAddress(address, "")
+}
+
 func (p *Platform) GetTokenTxsByAddress(address string, token string) (blockatlas.TxPage, error) {
 	srcTxs, err := p.client.GetTxsOfAddress(address, token)
 	if err != nil {

@@ -22,6 +22,11 @@ func (p *Platform) Coin() coin.Coin {
 	return coin.Coins[coin.THETA]
 }
 
+func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
+	// Endpoint supports queries without token query parameter
+	return p.GetTokenTxsByAddress(address, "")
+}
+
 func (p *Platform) GetTokenTxsByAddress(address string, token string) (blockatlas.TxPage, error) {
 	trx, err := p.client.FetchAddressTransactions(address)
 	if err != nil {

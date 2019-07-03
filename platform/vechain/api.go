@@ -28,19 +28,19 @@ func (p *Platform) Coin() coin.Coin {
 
 const VeThorContract = "0x0000000000000000000000000000456e65726779"
 
-func (p *Platform) GetTokenTxsByAddress(address string, token string) ([]blockatlas.Tx, error) {
-	if address == "" {
-		return nil, nil
-	}
+func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
+	return p.getTokenTxsByAddress(address)
+}
 
+func (p *Platform) GetTokenTxsByAddress(address string, token string) (blockatlas.TxPage, error) {
 	if strings.ToLower(token) == VeThorContract {
-		return p.getThorTxsByAddress(address, token)
+		return p.getThorTxsByAddress(address)
 	} else {
-		return p.getTokenTxsByAddress(address, token)
+		return nil, nil
 	}
 }
 
-func (p *Platform) getThorTxsByAddress(address string, token string) ([]blockatlas.Tx, error) {
+func (p *Platform) getThorTxsByAddress(address string) ([]blockatlas.Tx, error) {
 	sourceTxs, _ := p.client.GetTokenTransfers(address)
 
 	var txs []blockatlas.Tx
@@ -57,7 +57,7 @@ func (p *Platform) getThorTxsByAddress(address string, token string) ([]blockatl
 	return txs, nil
 }
 
-func (p *Platform) getTokenTxsByAddress(address string, token string) ([]blockatlas.Tx, error) {
+func (p *Platform) getTokenTxsByAddress(address string) ([]blockatlas.Tx, error) {
 	sourceTxs, _ := p.client.GetTransactions(address)
 
 	receiptsChan := make(chan *TransferReceipt, len(sourceTxs.Transactions))
