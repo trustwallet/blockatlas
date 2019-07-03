@@ -6,8 +6,6 @@ import (
 
 	"github.com/trustwallet/blockatlas/coin"
 
-	"github.com/gin-gonic/gin"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas"
 )
@@ -15,7 +13,7 @@ import (
 const Handle = "waves"
 
 type Platform struct {
-	client    Client
+	client Client
 }
 
 func (p *Platform) Handle() string {
@@ -32,44 +30,33 @@ func (p *Platform) Coin() coin.Coin {
 	return coin.Coins[coin.WAVES]
 }
 
-func (p *Platform) RegisterRoutes(router gin.IRouter) {
-	router.GET("/:address", func(c *gin.Context) {
-		p.getTransactions(c)
-	})
-}
-
-func (p *Platform) getTransactions(c *gin.Context) {
-	address := c.Param("address")
-	var err error
-
+func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 	addressTxs, err := p.client.GetTxs(address, 25)
-	if apiError(c, err) {
-		return
+	if err != nil {
+		return nil, err
 	}
 
 	var txs []blockatlas.Tx
 	for _, srcTx := range addressTxs {
-		txs = AppendTxs(txs, &srcTx, p.Coin().Index)
+		tx, ok := NormalizeTx(&srcTx, p.Coin().ID)
+		if !ok {
+			continue
+		}
+		txs = append(txs, tx)
 	}
 
-	page := blockatlas.TxPage(txs)
-	page.Sort()
-	c.JSON(http.StatusOK, &page)
+	return txs, nil
 }
 
-func AppendTxs(in []blockatlas.Tx, srcTx *Transaction, coinIndex uint) (out []blockatlas.Tx) {
-	out = in
+func NormalizeTx(srcTx *Transaction, coinIndex uint) (tx blockatlas.Tx, ok bool) {
 	baseTx, ok := extractBase(srcTx, coinIndex)
 	if !ok {
-		return
+		return tx, false
 	}
-
 	baseTx.Meta = blockatlas.Transfer{
 		Value: blockatlas.Amount(strconv.Itoa(int(srcTx.Amount))),
 	}
-	out = append(out, baseTx)
-
-	return
+	return tx, true
 }
 
 func extractBase(srcTx *Transaction, coinIndex uint) (base blockatlas.Tx, ok bool) {
@@ -85,13 +72,4 @@ func extractBase(srcTx *Transaction, coinIndex uint) (base blockatlas.Tx, ok boo
 		Status: blockatlas.StatusCompleted,
 	}
 	return base, true
-}
-
-func apiError(c *gin.Context, err error) bool {
-	if err != nil {
-		logrus.WithError(err).Errorf("Unhandled error")
-		c.AbortWithStatus(http.StatusInternalServerError)
-		return true
-	}
-	return false
 }
