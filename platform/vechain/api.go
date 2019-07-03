@@ -1,15 +1,14 @@
 package vechain
 
 import (
+	"github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/util"
-	"math/big"
 	"net/http"
 	"strings"
 	"sync"
 
-	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 )
 
@@ -27,93 +26,90 @@ func (p *Platform) Coin() coin.Coin {
 	return coin.Coins[coin.VET]
 }
 
-const VeThorContract = "0x0000000000000000000000000000456E65726779"
-const VeThorContractLow = "0x0000000000000000000000000000456e65726779"
+const VeThorContract = "0x0000000000000000000000000000456e65726779"
 
-var wg sync.WaitGroup
-
-func (p *Platform) RegisterRoutes(router gin.IRouter) {
-	router.GET("/:address", func(c *gin.Context) {
-		p.getTransactions(c)
-	})
-}
-
-func (p *Platform) getTransactions(c *gin.Context) {
-	var txsNormalized []blockatlas.Tx
-	txsNormalized = p.GetAddressTransactions(strings.ToLower(c.Param("address")), c.Query("token"))
-
-	page := blockatlas.TxPage(txsNormalized)
-	page.Sort()
-	c.JSON(http.StatusOK, &page)
-}
-
-func transferType(address string, token string) (string, error) {
-	if address != "" && token == "" {
-		return string(blockatlas.TxTransfer), nil
-	}
-	if address != "" && (token == VeThorContractLow || token == VeThorContract) {
-		return string(blockatlas.TxNativeTokenTransfer), nil
+func (p *Platform) GetTokenTxsByAddress(address string, token string) ([]blockatlas.Tx, error) {
+	if address == "" {
+		return nil, nil
 	}
 
-	return "", nil
+	if strings.ToLower(token) == VeThorContract {
+		return p.getThorTxsByAddress(address, token)
+	} else {
+		return p.getTokenTxsByAddress(address, token)
+	}
 }
 
-func (p *Platform) GetAddressTransactions(address string, token string) []blockatlas.Tx {
-	txsNormalized := make([]blockatlas.Tx, 0)
-	transferType, err := transferType(address, token)
-	if err != nil {
-		return txsNormalized
-	}
+func (p *Platform) getThorTxsByAddress(address string, token string) ([]blockatlas.Tx, error) {
+	sourceTxs, _ := p.client.GetTokenTransfers(address)
 
-	semaphore := util.NewSemaphore(16)
-	
-	if transferType == blockatlas.TxTransfer {
-		txs, _ := p.client.GetAddressTransactions(address)
-
-		receiptsChan := make(chan TransferReceipt, len(txs.Transactions))
-		
-		for _, t := range txs.Transactions {
-			wg.Add(1)
-			go func() {
-				semaphore.Acquire()
-				defer semaphore.Release()
-				p.client.GetTransactionReceipt(receiptsChan, t.ID)
-			}()
+	var txs []blockatlas.Tx
+	for _, t := range sourceTxs.TokenTransfers {
+		if strings.ToLower(t.ContractAddress) != VeThorContract {
+			continue
 		}
-			
-		wg.Wait()
-		close(receiptsChan)
 
-		for receipt := range receiptsChan {
-			for _, clause := range receipt.Clauses {
-				if receipt.Origin == address || clause.To == address {
-					if tx, ok := NormalizeTransfer(&receipt, &clause); ok {
-						txsNormalized = append(txsNormalized, tx)	
-					}
-				}
+		if tx, ok := NormalizeTokenTransfer(&t); ok {
+			txs = append(txs, tx)
+		}
+	}
+
+	return txs, nil
+}
+
+func (p *Platform) getTokenTxsByAddress(address string, token string) ([]blockatlas.Tx, error) {
+	sourceTxs, _ := p.client.GetTransactions(address)
+
+	receiptsChan := make(chan *TransferReceipt, len(sourceTxs.Transactions))
+
+	sem := util.NewSemaphore(16)
+	var wg sync.WaitGroup
+	wg.Add(len(sourceTxs.Transactions))
+	for _, t := range sourceTxs.Transactions {
+		go func() {
+			defer wg.Done()
+			sem.Acquire()
+			defer sem.Release()
+			receipt, err := p.client.GetTransactionReceipt(t.ID)
+			if err != nil {
+				logrus.WithError(err).WithField("platform", "vechain").
+					Warnf("Failed to get tx receipt for %s", t.ID)
 			}
-		}
-
-		return txsNormalized
+			receiptsChan <- receipt
+		}()
 	}
 
-	if transferType == blockatlas.TxNativeTokenTransfer {
-		txs, _ := p.client.GetTokenTransferTransactions(address)
+	wg.Wait()
+	close(receiptsChan)
 
-		for _, t := range txs.TokenTransfers {
-			if t.ContractAddress == VeThorContractLow {
-				if tx, ok := NormalizeTokenTransfer(&t); ok {
-					txsNormalized = append(txsNormalized, tx)
-				}
+	var txs []blockatlas.Tx
+	for receipt := range receiptsChan {
+		for _, clause := range receipt.Clauses {
+			if receipt.Origin != address && clause.To != address {
+				continue
 			}
+			tx, ok := NormalizeTransfer(receipt, &clause)
+			if !ok {
+				continue
+			}
+			txs = append(txs, tx)
 		}
 	}
-		
-	return txsNormalized
+
+	return txs, nil
 }
 
 func NormalizeTransfer(receipt *TransferReceipt, clause *Clause) (tx blockatlas.Tx, ok bool) {
-	fee := blockatlas.Amount(hexaToIntegerString(receipt.Receipt.Paid))
+	feeBase10, err := util.HexToDecimal(receipt.Receipt.Paid)
+	if err != nil {
+		return tx, false
+	}
+	valueBase10, err := util.HexToDecimal(clause.Value)
+	if err != nil {
+		return tx, false
+	}
+
+	fee := blockatlas.Amount(feeBase10)
 	time := receipt.Timestamp
 	block := receipt.Block
 
@@ -128,13 +124,17 @@ func NormalizeTransfer(receipt *TransferReceipt, clause *Clause) (tx blockatlas.
 		Block:    block,
 		Sequence: block,
 		Meta: blockatlas.Transfer{
-			Value: blockatlas.Amount(hexaToIntegerString(clause.Value)),
+			Value: blockatlas.Amount(valueBase10),
 		},
 	}, true
 }
 
 func NormalizeTokenTransfer(t *TokenTransfer) (tx blockatlas.Tx, ok bool) {
-	value := blockatlas.Amount(hexaToIntegerString(t.Amount))
+	valueBase10, err := util.HexToDecimal(t.Amount)
+	if err != nil {
+		return tx, false
+	}
+	value := blockatlas.Amount(valueBase10)
 	from := t.Origin
 	to := t.Receiver
 	block := t.Block
@@ -152,7 +152,7 @@ func NormalizeTokenTransfer(t *TokenTransfer) (tx blockatlas.Tx, ok bool) {
 		Meta: blockatlas.NativeTokenTransfer{
 			Name: 	  "VeThor Token",
 			Symbol:   "VTHO",
-			TokenID:  VeThorContractLow,
+			TokenID:  VeThorContract,
 			Decimals: 18,
 			Value:    value,
 			From:     from,
@@ -160,13 +160,3 @@ func NormalizeTokenTransfer(t *TokenTransfer) (tx blockatlas.Tx, ok bool) {
 		},
 	}, true
 }
-
-func hexaToIntegerString(str string) string {
-	i := new(big.Int)
-	if _, ok := i.SetString(str, 0); !ok {
-		return ""
-	}
-
-	return i.String()
-}
-

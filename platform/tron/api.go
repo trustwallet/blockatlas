@@ -1,8 +1,6 @@
 package tron
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
@@ -24,10 +22,21 @@ func (p *Platform) Coin() coin.Coin {
 	return coin.Coins[coin.TRX]
 }
 
-func (p *Platform) RegisterRoutes(router gin.IRouter) {
-	router.GET("/:address", func(c *gin.Context) {
-		p.getTransactions(c)
-	})
+func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
+	srcTxs, err := p.client.GetTxsOfAddress(address)
+	if err != nil {
+		return nil, err
+	}
+
+	var txs []blockatlas.Tx
+	for _, srcTx := range srcTxs {
+		tx, ok := Normalize(&srcTx)
+		if ok {
+			txs = append(txs, tx)
+		}
+	}
+
+	return txs, nil
 }
 
 /// Normalize converts a Tron transaction into the generic model
@@ -65,25 +74,4 @@ func Normalize(srcTx *Tx) (tx blockatlas.Tx, ok bool) {
 	default:
 		return tx, false
 	}
-}
-
-func (p *Platform) getTransactions(c *gin.Context) {
-	srcTxs, err := p.client.GetTxsOfAddress(c.Param("address"))
-	if err != nil {
-		logrus.WithError(err).
-			Errorf("Tron: Failed to get transactions for %s", c.Param("address"))
-		// TODO AbortWithError
-	}
-
-	var txs []blockatlas.Tx
-	for _, srcTx := range srcTxs {
-		tx, ok := Normalize(&srcTx)
-		if ok {
-			txs = append(txs, tx)
-		}
-	}
-
-	page := blockatlas.TxPage(txs)
-	page.Sort()
-	c.JSON(http.StatusOK, &page)
 }

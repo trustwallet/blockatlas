@@ -13,7 +13,7 @@ type Client struct {
 	URL        string
 }
 
-func (c *Client) GetAddressTransactions(address string) (TransferTx, error) {
+func (c *Client) GetTransactions(address string) (TransferTx, error) {
 	var transfers TransferTx
 
 	url := fmt.Sprintf("%s/transactions?address=%s&count=25&offset=0", c.URL, address)
@@ -39,7 +39,7 @@ func (c *Client) GetAddressTransactions(address string) (TransferTx, error) {
 	return transfers, nil
 }
 
-func (c *Client) GetTokenTransferTransactions(address string) (TokenTransferTxs, error) {
+func (c *Client) GetTokenTransfers(address string) (TokenTransferTxs, error) {
 	var transfers TokenTransferTxs
 
 	url := fmt.Sprintf("%s/tokenTransfers?address=%s&count=25&offset=0", c.URL, address)
@@ -65,23 +65,20 @@ func (c *Client) GetTokenTransferTransactions(address string) (TokenTransferTxs,
 	return transfers, nil
 }
 
-func (c *Client) GetTransactionReceipt(cn chan <- TransferReceipt, id string) {
-	defer wg.Done()
-
+func (c *Client) GetTransactionReceipt(id string) (*TransferReceipt, error) {
 	url := fmt.Sprintf("%s/transactions/%s", c.URL, id)
 	resp, err := c.HTTPClient.Get(url)
 	if err != nil {
-		logrus.WithError(err).Error("VeChain: Failed HTTP get transaction receipt")
+		return nil, err
 	}
 	defer resp.Body.Close()
 
 	var receipt TransferReceipt
-
 	err = json.NewDecoder(resp.Body).Decode(&receipt)
 	if err != nil {
-		logrus.WithError(err).Error("VeChain: Error decode transaction receipt response body")
-	} else {
-		cn <- receipt
+		return nil, err
 	}
+
+	return &receipt, nil
 }
 

@@ -130,7 +130,7 @@ func TestNormalize(t *testing.T) {
 
 		tErr := json.Unmarshal([]byte(test.Transaction), &trx)
 		if tErr != nil {
-			t.Fatal("THETA: Can't unmarshall transaction", tErr)
+			t.Fatal("THETA: Can't unmarshal transaction", tErr)
 		}
 
 		var readyTx blockatlas.Tx

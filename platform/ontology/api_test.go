@@ -29,16 +29,16 @@ var ONTTransfer = `
 `
 
 var expectedONTTransferTrx = blockatlas.Tx{
-	ID:    "4804e1be63ebe1715d6b4a039cc9d84b86cde74c8a8c8411578e6dcadc1e5405",
-	Coin:  coin.ONT,
-	From:  "AUyL4TZ1zFEcSKDJrjFnD7vsq5iFZMZqT7",
-	To:    "AQ9kzzHNLCcyrPwJuVMrSPgGzqmuQNVwMF",
-	Fee:   "10000000",
-	Date:  1556952450,
+	ID:     "4804e1be63ebe1715d6b4a039cc9d84b86cde74c8a8c8411578e6dcadc1e5405",
+	Coin:   coin.ONT,
+	From:   "AUyL4TZ1zFEcSKDJrjFnD7vsq5iFZMZqT7",
+	To:     "AQ9kzzHNLCcyrPwJuVMrSPgGzqmuQNVwMF",
+	Fee:    "10000000",
+	Date:   1556952450,
 	Type:   "transfer",
 	Status: "completed",
-	Block: 3411115,
-	Meta:  blockatlas.Transfer{
+	Block:  3411115,
+	Meta: blockatlas.Transfer{
 		Value: "2",
 	},
 }
@@ -73,17 +73,16 @@ var expectedONGTransferOfONTTransferTrx = blockatlas.Tx{
 	Type:   blockatlas.TxNativeTokenTransfer,
 	Status: "completed",
 	Block:  2863855,
-	Meta:  blockatlas.NativeTokenTransfer{
-		Name: "Ontology Gas",
-		Symbol: "ONG",
-		TokenID: "ong",
+	Meta: blockatlas.NativeTokenTransfer{
+		Name:     "Ontology Gas",
+		Symbol:   "ONG",
+		TokenID:  "ong",
 		Decimals: 9,
-		Value: "0",
-		From: "AUyL4TZ1zFEcSKDJrjFnD7vsq5iFZMZqT7",
-		To: "AFmseVrdL9f9oyCzZefL9tG6UbviEH9ugK",
+		Value:    "0",
+		From:     "AUyL4TZ1zFEcSKDJrjFnD7vsq5iFZMZqT7",
+		To:       "AFmseVrdL9f9oyCzZefL9tG6UbviEH9ugK",
 	},
 }
-
 
 var ONGTransfer = `
       {
@@ -120,41 +119,40 @@ var expectedONGTransferTrx = blockatlas.Tx{
 	Type:   blockatlas.TxNativeTokenTransfer,
 	Status: "completed",
 	Block:  3411141,
-	Meta:  blockatlas.NativeTokenTransfer{
-		Name: "Ontology Gas",
-		Symbol: "ONG",
-		TokenID: "ong",
+	Meta: blockatlas.NativeTokenTransfer{
+		Name:     "Ontology Gas",
+		Symbol:   "ONG",
+		TokenID:  "ong",
 		Decimals: 9,
-		Value: "10000000000",
-		From: "AUyL4TZ1zFEcSKDJrjFnD7vsq5iFZMZqT7",
-		To: "AQ9kzzHNLCcyrPwJuVMrSPgGzqmuQNVwMF",
+		Value:    "10000000000",
+		From:     "AUyL4TZ1zFEcSKDJrjFnD7vsq5iFZMZqT7",
+		To:       "AQ9kzzHNLCcyrPwJuVMrSPgGzqmuQNVwMF",
 	},
 }
 
 func TestNormalize(t *testing.T) {
 	var tests = []struct {
-		Transaction  string
-		AssetName        string
-		Expected 		 blockatlas.Tx
+		Transaction string
+		AssetName   string
+		Expected    blockatlas.Tx
 	}{
 		{ONTTransfer, ONTAssetName, expectedONTTransferTrx},
 		{ONGTransferOfONTTransfer, ONGAssetName, expectedONGTransferOfONTTransferTrx},
 		{ONGTransfer, ONGAssetName, expectedONGTransferTrx},
 	}
-	
 
 	for _, test := range tests {
 		var trx Tx
 
 		tErr := json.Unmarshal([]byte(test.Transaction), &trx)
 		if tErr != nil {
-			t.Fatal("Ontology: Can't unmarshall transaction", tErr)
+			t.Fatal("Ontology: Can't unmarshal transaction", tErr)
 		}
 
 		var readyTx blockatlas.Tx
 		normTx, ok := Normalize(&trx, test.AssetName)
 		if !ok {
-			t.Fatal("Ontology: Can't normalize transaction", readyTx)
+			t.Fatal("Ontology: Can't normalize transaction")
 		}
 		readyTx = normTx
 
@@ -175,5 +173,3 @@ func TestNormalize(t *testing.T) {
 		}
 	}
 }
-
-

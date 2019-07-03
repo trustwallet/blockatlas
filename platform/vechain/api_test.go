@@ -65,7 +65,7 @@ var expectedVeThorTrx = blockatlas.Tx{
 	Meta:  blockatlas.NativeTokenTransfer{
 		Name: "VeThor Token",
 		Symbol: "VTHO",
-		TokenID: VeThorContractLow,
+		TokenID: VeThorContract,
 		Decimals: 18,
 		Value: "250000000000000000000",
 		From: "0xb853d6a965fbc047aaa9f04d774d53861d7ed653",
@@ -162,10 +162,3 @@ func TestNormalizeTokenTransfer(t *testing.T) {
 		}
 	}
 }
-
-// func Unmarshal(t testing.T, input string, i *interface{}) {
-// 	err := json.Unmarshal([]byte(input), i)
-// 	if err != nil {
-// 		t.Fatal(err)
-// 	}
-// }

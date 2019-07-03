@@ -2,8 +2,6 @@ package stellar
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
@@ -31,19 +29,13 @@ func (p *Platform) Coin() coin.Coin {
 	return coin.Coins[p.CoinIndex]
 }
 
-func (p *Platform) RegisterRoutes(router gin.IRouter) {
-	router.GET("/:address", func(c *gin.Context) {
-		p.getTransactions(c)
-	})
-}
-
-func (p *Platform) getTransactions(c *gin.Context) {
-	payments, err := p.client.GetTxsOfAddress(c.Param("address"))
-	if apiError(c, err) {
-		return
+func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
+	payments, err := p.client.GetTxsOfAddress(address)
+	if err != nil {
+		return nil, err
 	}
 
-	txs := make([]blockatlas.Tx, 0)
+	var txs []blockatlas.Tx
 	for _, payment := range payments {
 		tx, ok := Normalize(&payment, p.CoinIndex)
 		if !ok {
@@ -52,18 +44,7 @@ func (p *Platform) getTransactions(c *gin.Context) {
 		txs = append(txs, tx)
 	}
 
-	page := blockatlas.TxPage(txs)
-	page.Sort()
-	c.JSON(http.StatusOK, &page)
-}
-
-func apiError(c *gin.Context, err error) bool {
-	if err != nil {
-		logrus.WithError(err).Warning("Stellar API request failed")
-		c.String(http.StatusBadGateway, "Stellar API request failed")
-		return true
-	}
-	return false
+	return txs, nil
 }
 
 // Normalize converts a Stellar-based transaction into the generic model

@@ -2,6 +2,7 @@ package util
 
 import (
 	"fmt"
+	"math/big"
 	"strings"
 	"unicode"
 )
@@ -56,4 +57,13 @@ func DecimalExp(dec string, exp int) string {
 	}
 	// No bound fix needed
 	return dec[:i] + "." + dec[i:]
+}
+
+// HexToDecimal converts a hexadecimal integer to a base-10 integer
+func HexToDecimal(hex string) (string, error) {
+	var i big.Int
+	if _, ok := i.SetString(hex, 0); !ok {
+		return "", fmt.Errorf("invalid hex")
+	}
+	return i.String(), nil
 }

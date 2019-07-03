@@ -53,24 +53,12 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 	}, nil
 }
 
-func (p *Platform) RegisterRoutes(router gin.IRouter) {
-	router.GET("/:address", func(c *gin.Context) {
-		p.getTransactions(c)
-	})
-}
-
-func (p *Platform) getTransactions(c *gin.Context) {
-	token := c.Query("token")
-
-	srcTxs, err := p.client.GetTxsOfAddress(c.Param("address"), token)
-	if apiError(c, err) {
-		return
+func (p *Platform) GetTokenTxsByAddress(address string, token string) (blockatlas.TxPage, error) {
+	srcTxs, err := p.client.GetTxsOfAddress(address, token)
+	if err != nil {
+		return nil, err
 	}
-	txs := NormalizeTxs(srcTxs.Txs, token)
-
-	page := blockatlas.TxPage(txs)
-	page.Sort()
-	c.JSON(http.StatusOK, &page)
+	return NormalizeTxs(srcTxs.Txs, token), nil
 }
 
 // NormalizeTx converts a Binance transaction into the generic model
