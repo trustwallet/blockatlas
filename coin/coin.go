@@ -15,7 +15,7 @@ var Coins map[uint]Coin
 // Coin is the native currency of a blockchain
 type Coin struct {
 	ID         uint   `yaml:"id"`            // SLIP-44 ID (e.g. 242)
-	Handle     string `yaml:"trust"`         // Trust Wallet handle (e.g. nimiq)
+	Handle     string `yaml:"handle"`        // Trust Wallet handle (e.g. nimiq)
 	Symbol     string `yaml:"symbol"`        // Symbol of native currency
 	Title      string `yaml:"name"`          // Full name of native currency
 	Decimals   uint   `yaml:"decimals"`      // Number of decimals

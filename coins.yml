@@ -1,62 +1,62 @@
 - id: 60
   symbol: ETH
-  trust: ethereum
+  handle: ethereum
   name: Ether
   decimals: 18
   sampleAddress: '0xfc10cab6a50a1ab10c56983c80cc82afc6559cf1'
 
 - id: 61
   symbol: ETC
-  trust: classic
+  handle: classic
   name: Ether Classic
   decimals: 18
   sampleAddress: '0xf3524415b6D873205B4c3Cda783527b2aC4daAA9'
 
 - id: 74
   symbol: ICX
-  trust: icon
+  handle: icon
   name: ICON
   decimals: 18
   sampleAddress: 'hxee691e7bccc4eb11fee922896e9f51490e62b12e'
 
 - id: 118
   symbol: ATOM
-  trust: cosmos
+  handle: cosmos
   name: Cosmos ATOM
   decimals: 6
   sampleAddress: 'cosmos1rw62phusuv9vzraezr55k0vsqssvz6ed52zyrl'
 
 - id: 144
   symbol: XRP
-  trust: ripple
+  handle: ripple
   name: Ripple
   decimals: 6
   sampleAddress: 'rMQ98K56yXJbDGv49ZSmW51sLn94Xe1mu1'
 
 - id: 148
   symbol: XLM
-  trust: stellar
+  handle: stellar
   name: Stellar Lumens
   decimals: 7
   sampleAddress: 'GDKIJJIKXLOM2NRMPNQZUUYK24ZPVFC6426GZAEP3KUK6KEJLACCWNMX'
 
 - id: 178
   symbol: POA
-  trust: poa
+  handle: poa
   name: Poa
   decimals: 18
   sampleAddress: '0x1fddEc96688e0538A316C64dcFd211c491ECf0d8'
 
 - id: 195
   symbol: TRX
-  trust: tron
+  handle: tron
   name: Tron
   decimals: 6
   sampleAddress: 'TMuA6YqfCeX8EhbfYEg5y7S4DqzSJireY9'
 
 - id: 242
   symbol: NIM
-  trust: nimiq
+  handle: nimiq
   name: Nimiq
   decimals: 5
   blockTime: 60000
@@ -64,33 +64,33 @@
 
 - id: 304
   symbol: IOTX
-  trust: iotex
+  handle: iotex
   name: IoTeX
   decimals: 0
   sampleAddress: 'io1mwekae7qqwlr23220k5n9z3fmjxz72tuchra3m'
 
 - id: 313
   symbol: ZIL
-  trust: zilliqa
+  handle: zilliqa
   name: Zilliqa
   sampleAddress: '0x88aF5BA10796D9091D6893eED4db23ef0bbbCa37'
 
 - id: 425
   symbol: AION
-  trust: aion
+  handle: aion
   name: Aion
   decimals: 18
   sampleAddress: '0xa07981da70ce919e1db5f051c3c386eb526e6ce8b9e2bfd56e3f3d754b0a17f3'
 
 - id: 500
   symbol: THETA
-  trust: theta
+  handle: theta
   name: Theta
   sampleAddress: '0xac0eeb6ee3e32e2c74e14ac74155063e4f4f981f'
 
 - id: 714
   symbol: BNB
-  trust: binance
+  handle: binance
   name: Binance
   decimals: 18
   blockTime: 1000
@@ -98,74 +98,74 @@
 
 - id: 818
   symbol: VET
-  trust: vechain
+  handle: vechain
   name: VeChain Token
   sampleAddress: '0xB5e883349e68aB59307d1604555AC890fAC47128'
 
 - id: 820
   symbol: CLO
-  trust: callisto
+  handle: callisto
   name: Callisto
   decimals: 18
   sampleAddress: '0x39ec1c88a7a7c1a575e8c8f42eff7630d9278179'
 
 - id: 889
   symbol: TOMO
-  trust: tomochain
+  handle: tomochain
   name: TOMO
   sampleAddress: '0x7daa83030e3086477b79b6e757ca8608899fe783'
 
 - id: 1001
   symbol: TT
-  trust: thundertoken
+  handle: thundertoken
   name: ThunderCore
   decimals: 18
   sampleAddress: '0x0ad80a408eac4f17ba0a9de8a12d8736f60700c3'
 
 - id: 1024
   symbol: ONT
-  trust: ontology
+  handle: ontology
   name: Ontology
   sampleAddress: 'AUyL4TZ1zFEcSKDJrjFnD7vsq5iFZMZqT7'
 
 - id: 1729
   symbol: XTZ
-  trust: tezos
+  handle: tezos
   name: Tezos
   decimals: 6
   sampleAddress: 'tz1WCd2jm4uSt4vntk4vSuUWoZQGhLcDuR9q'
 
 - id: 2017
   symbol: KIN
-  trust: kin
+  handle: kin
   name: Kin
   decimals: 5
   sampleAddress: 'GBHKUZ7C2SZ5N3X2S7O6TT6LNUWSEA2BXMSR5GTTSR6VZARSVAXIQNGH'
 
 - id: 6060
   symbol: GO
-  trust: gochain
+  handle: gochain
   name: GoChain GO
   decimals: 18
   sampleAddress: '0x76c2F81716A8D198a00502Ae9a59126418899FDe'
 
 - id: 5718350
   symbol: WAN
-  trust: wanchain
+  handle: wanchain
   name: Wanchain
   decimals: 18
   sampleAddress: '0x36cEdc3A9d969306AF4F7CA2b83ABBf74095914d'
 
 - id: 5741564
   symbol: WAVES
-  trust: waves
+  handle: waves
   name: Wanchain
   decimals: 8
   sampleAddress: '3P7wz6TXienpw3BHe8eHUEuZWb6WE58kgnQ'
 
 - id: 7562605
   symbol: SEM
-  trust: semux
+  handle: semux
   name: Semux
   decimals: 9
   sampleAddress: '0x8197987c401a3466ad678b2080b24838ebd95b41'
