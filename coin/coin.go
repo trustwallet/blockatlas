@@ -18,7 +18,6 @@ type Coin struct {
 	Handle     string `yaml:"trust"`      // Trust Wallet handle (e.g. nimiq)
 	Symbol     string `yaml:"symbol"`     // Symbol of native currency
 	Title      string `yaml:"name"`       // Full name of native currency
-	Website    string `yaml:"link"`       // Project website
 	Decimals   uint   `yaml:"decimals"`   // Number of decimals
 	BlockTime  int    `yaml:"blockTime"`  // Average time between blocks (ms)
 	SampleAddr string `yaml:"sample"`     // Random address seen on chain
