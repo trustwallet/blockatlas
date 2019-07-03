@@ -34,7 +34,7 @@ steps:
   workingDirectory: '$(modulePath)'
   displayName: 'Get dependencies'
 
-  - powershell: |
+- powershell: |
   env:
     ATLAS_BINANCE_API: $(ATLAS_BINANCE_API)
     ATLAS_ETHEREUM_API: $(ATLAS_ETHEREUM_API)
