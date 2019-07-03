@@ -10,14 +10,8 @@ import (
 	"github.com/trustwallet/blockatlas"
 )
 
-const Handle = "waves"
-
 type Platform struct {
 	client Client
-}
-
-func (p *Platform) Handle() string {
-	return Handle
 }
 
 func (p *Platform) Init() error {
@@ -38,29 +32,14 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 
 	var txs []blockatlas.Tx
 	for _, srcTx := range addressTxs {
-		tx, ok := NormalizeTx(&srcTx, p.Coin().ID)
-		if !ok {
-			continue
-		}
-		txs = append(txs, tx)
+		txs = append(txs, NormalizeTx(&srcTx, p.Coin().ID))
 	}
 
 	return txs, nil
 }
 
-func NormalizeTx(srcTx *Transaction, coinIndex uint) (tx blockatlas.Tx, ok bool) {
-	baseTx, ok := extractBase(srcTx, coinIndex)
-	if !ok {
-		return tx, false
-	}
-	baseTx.Meta = blockatlas.Transfer{
-		Value: blockatlas.Amount(strconv.Itoa(int(srcTx.Amount))),
-	}
-	return tx, true
-}
-
-func extractBase(srcTx *Transaction, coinIndex uint) (base blockatlas.Tx, ok bool) {
-	base = blockatlas.Tx{
+func NormalizeTx(srcTx *Transaction, coinIndex uint) blockatlas.Tx {
+	return blockatlas.Tx{
 		ID:     srcTx.Id,
 		Coin:   coinIndex,
 		From:   srcTx.Sender,
@@ -70,6 +49,8 @@ func extractBase(srcTx *Transaction, coinIndex uint) (base blockatlas.Tx, ok boo
 		Block:  srcTx.Block,
 		Memo:   srcTx.Attachment,
 		Status: blockatlas.StatusCompleted,
+		Meta:   blockatlas.Transfer{
+			Value: blockatlas.Amount(strconv.Itoa(int(srcTx.Amount))),
+		},
 	}
-	return base, true
 }
