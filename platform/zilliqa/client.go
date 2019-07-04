@@ -18,9 +18,12 @@ type Client struct {
 
 func (c *Client) newRequest(method, path string) (*http.Request, error) {
 	url := fmt.Sprintf("%s%s", c.BaseURL, path)
-	req, error := http.NewRequest(method, url, nil)
+	req, err := http.NewRequest(method, url, nil)
+	if err != nil {
+		return nil, err
+	}
 	req.Header.Set("X-APIKEY", c.APIKey)
-	return req, error
+	return req, nil
 }
 
 func (c *Client) GetTxsOfAddress(address string) ([]Tx, error) {

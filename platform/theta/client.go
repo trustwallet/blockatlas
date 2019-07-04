@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/sirupsen/logrus"
-	"net/http"
 	"io/ioutil"
+	"net/http"
 	"net/url"
 )
 

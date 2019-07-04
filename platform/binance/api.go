@@ -5,8 +5,6 @@ import (
 	"github.com/trustwallet/blockatlas"
 	"net/http"
 
-	"github.com/gin-gonic/gin"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/util"
@@ -117,29 +115,4 @@ func NormalizeTxs(srcTxs []Tx, token string) (txs []blockatlas.Tx) {
 		txs = append(txs, tx)
 	}
 	return
-}
-
-func apiError(c *gin.Context, err error) bool {
-	if err == blockatlas.ErrNotFound {
-		c.String(http.StatusNotFound, err.Error())
-		return true
-	}
-	if err == blockatlas.ErrInvalidAddr {
-		c.String(http.StatusBadRequest, err.Error())
-		return true
-	}
-	if err == blockatlas.ErrSourceConn {
-		c.String(http.StatusBadGateway, "connection to Binance API failed")
-		return true
-	}
-	if _, ok := err.(*Error); ok {
-		c.String(http.StatusBadGateway, "Binance API returned an error")
-		return true
-	}
-	if err != nil {
-		logrus.WithError(err).Errorf("Unhandled error: %s", err)
-		c.AbortWithStatus(http.StatusInternalServerError)
-		return true
-	}
-	return false
 }
