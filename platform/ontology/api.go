@@ -55,6 +55,9 @@ func (p *Platform) GetTokenTxsByAddress(address string, token string) (blockatla
 }
 
 func Normalize(srcTx *Tx, assetName string) (tx blockatlas.Tx, ok bool) {
+	if len(srcTx.TransferList) < 1 {
+		return tx, false
+	}
 	transfer := srcTx.TransferList[0]
 	fee := util.DecimalExp(srcTx.Fee, 9)
 	var status string

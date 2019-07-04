@@ -1,27 +1,27 @@
 package ontology
 
 type TxPage struct {
-	Result Result `json:"result"`
+	Result Result `json:"Result"`
 }
 
 type Result struct {
-	TxnList []Tx `json:"txn_list"`
+	TxnList []Tx `json:"TxnList"`
 }
 
 type Transfer struct {
-	Amount      string `json:"amount"`
-	FromAddress string `json:"from_address"`
-	ToAddress   string `json:"to_address"`
+	Amount      string `json:"Amount"`
+	FromAddress string `json:"FromAddress"`
+	ToAddress   string `json:"ToAddress"`
 }
 
 type Tx struct {
-	TxnHash     string `json:"txn_hash"`
-	ConfirmFlag uint64 `json:"confirm_flag"`
-	TxnType     uint64 `json:"txn_type"`
-	TxnTime     int64  `json:"txn_time"`
-	Height      uint64 `json:"height"`
-	Fee         string `json:"fee"`
-	BlockIndex  uint64 `json:"block_index"`
+	TxnHash     string `json:"TxnHash"`
+	ConfirmFlag uint64 `json:"ConfirmFlag"`
+	TxnType     uint64 `json:"TxnType"`
+	TxnTime     int64  `json:"TxnTime"`
+	Height      uint64 `json:"Height"`
+	Fee         string `json:"Fee"`
+	BlockIndex  uint64 `json:"BlockIndex"`
 
-	TransferList []Transfer `json:"transfer_list"`
+	TransferList []Transfer `json:"TransferList"`
 }
