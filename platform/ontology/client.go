@@ -17,12 +17,11 @@ type Client struct {
 const TxPerPage = 20
 
 func (c *Client) GetTxsOfAddress(address, assetName string) (*TxPage, error) {
-	uri := fmt.Sprintf("%s/address/%s/%s/%d/%d",
+	uri := fmt.Sprintf("%s/address/%s/%s/%d/1",
 		c.BaseURL,
 		address,
 		assetName,
 		TxPerPage,
-		1,
 	)
 
 	res, err := c.HTTPClient.Get(uri)

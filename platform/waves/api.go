@@ -6,20 +6,12 @@ import (
 
 	"github.com/trustwallet/blockatlas/coin"
 
-	"github.com/gin-gonic/gin"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas"
 )
 
-const Handle = "waves"
-
 type Platform struct {
-	client    Client
-}
-
-func (p *Platform) Handle() string {
-	return Handle
+	client Client
 }
 
 func (p *Platform) Init() error {
@@ -32,48 +24,22 @@ func (p *Platform) Coin() coin.Coin {
 	return coin.Coins[coin.WAVES]
 }
 
-func (p *Platform) RegisterRoutes(router gin.IRouter) {
-	router.GET("/:address", func(c *gin.Context) {
-		p.getTransactions(c)
-	})
-}
-
-func (p *Platform) getTransactions(c *gin.Context) {
-	address := c.Param("address")
-	var err error
-
+func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 	addressTxs, err := p.client.GetTxs(address, 25)
-	if apiError(c, err) {
-		return
+	if err != nil {
+		return nil, err
 	}
 
 	var txs []blockatlas.Tx
 	for _, srcTx := range addressTxs {
-		txs = AppendTxs(txs, &srcTx, p.Coin().Index)
+		txs = append(txs, NormalizeTx(&srcTx, p.Coin().ID))
 	}
 
-	page := blockatlas.TxPage(txs)
-	page.Sort()
-	c.JSON(http.StatusOK, &page)
+	return txs, nil
 }
 
-func AppendTxs(in []blockatlas.Tx, srcTx *Transaction, coinIndex uint) (out []blockatlas.Tx) {
-	out = in
-	baseTx, ok := extractBase(srcTx, coinIndex)
-	if !ok {
-		return
-	}
-
-	baseTx.Meta = blockatlas.Transfer{
-		Value: blockatlas.Amount(strconv.Itoa(int(srcTx.Amount))),
-	}
-	out = append(out, baseTx)
-
-	return
-}
-
-func extractBase(srcTx *Transaction, coinIndex uint) (base blockatlas.Tx, ok bool) {
-	base = blockatlas.Tx{
+func NormalizeTx(srcTx *Transaction, coinIndex uint) blockatlas.Tx {
+	return blockatlas.Tx{
 		ID:     srcTx.Id,
 		Coin:   coinIndex,
 		From:   srcTx.Sender,
@@ -83,15 +49,8 @@ func extractBase(srcTx *Transaction, coinIndex uint) (base blockatlas.Tx, ok boo
 		Block:  srcTx.Block,
 		Memo:   srcTx.Attachment,
 		Status: blockatlas.StatusCompleted,
+		Meta:   blockatlas.Transfer{
+			Value: blockatlas.Amount(strconv.Itoa(int(srcTx.Amount))),
+		},
 	}
-	return base, true
-}
-
-func apiError(c *gin.Context, err error) bool {
-	if err != nil {
-		logrus.WithError(err).Errorf("Unhandled error")
-		c.AbortWithStatus(http.StatusInternalServerError)
-		return true
-	}
-	return false
 }

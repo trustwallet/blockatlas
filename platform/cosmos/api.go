@@ -11,14 +11,8 @@ import (
 	"github.com/trustwallet/blockatlas/util"
 )
 
-const Handle = "cosmos"
-
 type Platform struct {
 	client Client
-}
-
-func (p *Platform) Handle() string {
-	return Handle
 }
 
 func (p *Platform) Init() error {

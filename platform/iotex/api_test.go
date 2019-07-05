@@ -11,7 +11,7 @@ import (
 )
 
 const (
-transfer = `
+	transfer = `
 {
   "actionInfo":
   [
@@ -95,43 +95,35 @@ transfer = `
 `
 )
 
-var expected = []blockatlas.Tx {
+var expected = []*blockatlas.Tx{
 	{
-		ID       : "109b75cb688a5347268cbf11b20fa90fd0a14e92a42ba735c046bbf1a6e66ad7",
-		Coin     : coin.IOTX,
-		From     : "io1mwekae7qqwlr23220k5n9z3fmjxz72tuchra3m",
-		To       : "io1mwekae7qqwlr23220k5n9z3fmjxz72tuchra3m",
-		Fee      : blockatlas.Amount("10000000000000000"),
-		Date     : int64(1556863740),
-		Block    : 96202,
-		Status   : blockatlas.StatusCompleted,
-		Sequence : uint64(3),
-		Type     : blockatlas.TxTransfer,
-		Meta     : blockatlas.Transfer{
-			Value : blockatlas.Amount("21000000000000000000"),
+		ID:       "109b75cb688a5347268cbf11b20fa90fd0a14e92a42ba735c046bbf1a6e66ad7",
+		Coin:     coin.IOTX,
+		From:     "io1mwekae7qqwlr23220k5n9z3fmjxz72tuchra3m",
+		To:       "io1mwekae7qqwlr23220k5n9z3fmjxz72tuchra3m",
+		Fee:      blockatlas.Amount("10000000000000000"),
+		Date:     int64(1556863740),
+		Block:    96202,
+		Status:   blockatlas.StatusCompleted,
+		Sequence: uint64(3),
+		Type:     blockatlas.TxTransfer,
+		Meta: blockatlas.Transfer{
+			Value: blockatlas.Amount("21000000000000000000"),
 		},
 	},
-	{
-		Coin   : coin.IOTX,
-		Status : blockatlas.StatusFailed,
-		Error  : "invalid block height",
-	},
-	{
-		Coin   : coin.IOTX,
-		Status : blockatlas.StatusFailed,
-		Error  : "strconv.ParseInt: parsing \"3.1\": invalid syntax",
-	},
+	nil,
+	nil,
 }
 
 func TestNormalize(t *testing.T) {
-	assert := assert.New(t)
+	a := assert.New(t)
 
 	var act Response
-	assert.NoError(json.Unmarshal([]byte(transfer), &act))
-	assert.Equal(3, len(act.ActionInfo))
+	a.NoError(json.Unmarshal([]byte(transfer), &act))
+	a.Equal(3, len(act.ActionInfo))
 
 	for i, v := range act.ActionInfo {
-		tx, _ := Normalize(v)
-		assert.Equal(expected[i], tx)
+		tx := Normalize(v)
+		a.Equal(expected[i], tx)
 	}
 }

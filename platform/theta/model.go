@@ -7,7 +7,7 @@ const (
 
 // Response from Explorer
 type AccountTxList struct {
-	Body []Tx `json:body`
+	Body []Tx `json:"body"`
 }
 
 type Tx struct {

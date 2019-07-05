@@ -14,13 +14,18 @@ type Initer interface {
 type Platform interface {
 	Initer
 	Coin() coin.Coin
-	Handle() string
 }
 
 // TxAPI provides transaction lookups
 type TxAPI interface {
 	Platform
 	GetTxsByAddress(address string) (TxPage, error)
+}
+
+// TokenTxAPI provides token transaction lookups
+type TokenTxAPI interface {
+	Platform
+	GetTokenTxsByAddress(address string, token string) (TxPage, error)
 }
 
 // BlockAPI provides block information and lookups

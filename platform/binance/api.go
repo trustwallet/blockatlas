@@ -5,21 +5,13 @@ import (
 	"github.com/trustwallet/blockatlas"
 	"net/http"
 
-	"github.com/gin-gonic/gin"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/util"
 )
 
-const Handle = "binance"
-
 type Platform struct {
 	client Client
-}
-
-func (p *Platform) Handle() string {
-	return Handle
 }
 
 func (p *Platform) Init() error {
@@ -59,24 +51,17 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 	}, nil
 }
 
-func (p *Platform) RegisterRoutes(router gin.IRouter) {
-	router.GET("/:address", func(c *gin.Context) {
-		p.getTransactions(c)
-	})
+func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
+	// Endpoint supports queries without token query parameter
+	return p.GetTokenTxsByAddress(address, "")
 }
 
-func (p *Platform) getTransactions(c *gin.Context) {
-	token := c.Query("token")
-
-	srcTxs, err := p.client.GetTxsOfAddress(c.Param("address"), token)
-	if apiError(c, err) {
-		return
+func (p *Platform) GetTokenTxsByAddress(address string, token string) (blockatlas.TxPage, error) {
+	srcTxs, err := p.client.GetTxsOfAddress(address, token)
+	if err != nil {
+		return nil, err
 	}
-	txs := NormalizeTxs(srcTxs.Txs, token)
-
-	page := blockatlas.TxPage(txs)
-	page.Sort()
-	c.JSON(http.StatusOK, &page)
+	return NormalizeTxs(srcTxs.Txs, token), nil
 }
 
 // NormalizeTx converts a Binance transaction into the generic model
@@ -130,29 +115,4 @@ func NormalizeTxs(srcTxs []Tx, token string) (txs []blockatlas.Tx) {
 		txs = append(txs, tx)
 	}
 	return
-}
-
-func apiError(c *gin.Context, err error) bool {
-	if err == blockatlas.ErrNotFound {
-		c.String(http.StatusNotFound, err.Error())
-		return true
-	}
-	if err == blockatlas.ErrInvalidAddr {
-		c.String(http.StatusBadRequest, err.Error())
-		return true
-	}
-	if err == blockatlas.ErrSourceConn {
-		c.String(http.StatusBadGateway, "connection to Binance API failed")
-		return true
-	}
-	if _, ok := err.(*Error); ok {
-		c.String(http.StatusBadGateway, "Binance API returned an error")
-		return true
-	}
-	if err != nil {
-		logrus.WithError(err).Errorf("Unhandled error: %s", err)
-		c.AbortWithStatus(http.StatusInternalServerError)
-		return true
-	}
-	return false
 }

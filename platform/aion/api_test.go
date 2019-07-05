@@ -53,7 +53,10 @@ func TestNormalize(t *testing.T) {
 		return
 	}
 
-	resTx := NormalizeTx(&srcTx)
+	resTx, ok := NormalizeTx(&srcTx)
+	if !ok {
+		t.Fatal("Can't normalize transaction")
+	}
 
 	resJSON, err := json.Marshal(&resTx)
 	if err != nil {

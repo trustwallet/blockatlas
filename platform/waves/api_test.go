@@ -90,7 +90,7 @@ var transferV1Obj = blockatlas.Tx{
 	},
 }
 
-var differentTxsObjs = []blockatlas.Tx{{
+var differentTxsObj = blockatlas.Tx{
 	ID:     "52GG9U2e6foYRKp5vAzsTQ86aDAABfRJ7synz7ohBp19",
 	Coin:   5741564,
 	From:   "3NBVqYXrapgJP9atQccdBPAgJPwHDKkh6A8",
@@ -103,7 +103,7 @@ var differentTxsObjs = []blockatlas.Tx{{
 	Meta: blockatlas.Transfer{
 		Value: blockatlas.Amount("100000"),
 	},
-}}
+}
 
 type txParseTest struct {
 	name        string
@@ -114,7 +114,7 @@ type txParseTest struct {
 type txFilterTest struct {
 	name        string
 	apiResponse string
-	expected    []blockatlas.Tx
+	expected    blockatlas.Tx
 }
 
 func TestNormalize(t *testing.T) {
@@ -126,7 +126,7 @@ func TestNormalize(t *testing.T) {
 	testFilterTxs(t, &txFilterTest{
 		name:        "filter transfer transactions txParseTest",
 		apiResponse: differentTxs,
-		expected:    differentTxsObjs,
+		expected:    differentTxsObj,
 	})
 }
 
@@ -138,14 +138,14 @@ func testParseTx(t *testing.T, _test *txParseTest) {
 		return
 	}
 
-	res := AppendTxs(nil, &tx, coin.WAVES)
+	res := NormalizeTx(&tx, coin.WAVES)
 
-	resJSON, err := json.Marshal(res)
+	resJSON, err := json.Marshal(&res)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	dstJSON, err := json.Marshal([]blockatlas.Tx{*_test.expected})
+	dstJSON, err := json.Marshal(&_test.expected)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -164,19 +164,19 @@ func testFilterTxs(t *testing.T, _test *txFilterTest) {
 		t.Error(err)
 		return
 	}
-	var res []blockatlas.Tx
+	var res blockatlas.Tx
 	for _, tx := range txs[0] {
 		if tx.Type == 4 {
-			res = AppendTxs(nil, &tx, coin.WAVES)
+			res = NormalizeTx(&tx, coin.WAVES)
 		}
 	}
 
-	resJSON, err := json.Marshal(res)
+	resJSON, err := json.Marshal(&res)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	dstJSON, err := json.Marshal(_test.expected)
+	dstJSON, err := json.Marshal(&_test.expected)
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -3,8 +3,6 @@ package waves
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/sirupsen/logrus"
-	"github.com/trustwallet/blockatlas"
 	"net/http"
 )
 
@@ -20,10 +18,9 @@ func (c *Client) GetTxs(address string, limit int) ([]Transaction, error) {
 	limit)
 	req, _ := http.NewRequest("GET", uri, nil)
 
-	res, err := c.HTTPClient.Do((req))
+	res, err := c.HTTPClient.Do(req)
 	if err != nil {
-		logrus.WithError(err).Error("Waves: Failed to get transactions")
-		return nil, blockatlas.ErrSourceConn
+		return nil, err
 	}
 	defer res.Body.Close()
 

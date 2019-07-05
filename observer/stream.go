@@ -26,8 +26,9 @@ type Stream struct {
 }
 
 func (s *Stream) Execute(ctx context.Context) <-chan *blockatlas.Block {
-	s.coin = s.BlockAPI.Coin().Index
-	s.log = logrus.WithField("platform", s.BlockAPI.Handle())
+	cn := s.BlockAPI.Coin()
+	s.coin = cn.ID
+	s.log = logrus.WithField("platform", cn.Handle)
 	conns := viper.GetInt("observer.stream_conns")
 	if conns == 0 {
 		logrus.Fatal("observer.stream_conns is 0")

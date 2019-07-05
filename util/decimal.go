@@ -2,6 +2,7 @@ package util
 
 import (
 	"fmt"
+	"math/big"
 	"strings"
 	"unicode"
 )
@@ -56,4 +57,37 @@ func DecimalExp(dec string, exp int) string {
 	}
 	// No bound fix needed
 	return dec[:i] + "." + dec[i:]
+}
+
+// HexToDecimal converts a hexadecimal integer to a base-10 integer
+func HexToDecimal(hex string) (string, error) {
+	var i big.Int
+	if _, ok := i.SetString(hex, 0); !ok {
+		return "", fmt.Errorf("invalid hex")
+	}
+	return i.String(), nil
+}
+
+// CutZeroFractional cuts off a decimal separator and zeros to the right.
+// Fails if the fractional part contains contains other digits than zeros.
+//  - CutZeroFractional("123.00000") => ("123", true)
+//  - CutZeroFractional("123.456") => ("", false)
+func CutZeroFractional(dec string) (integer string, ok bool) {
+	// Get comma position
+	comma := strings.IndexRune(dec, '.')
+	if comma == -1 {
+		return dec, true
+	}
+
+	for i := len(dec) - 1; i > comma; i-- {
+		if dec[i] != '0' {
+			return "", false
+		}
+	}
+
+	if comma == 0 {
+		return "0", true
+	} else {
+		return dec[:comma], true
+	}
 }

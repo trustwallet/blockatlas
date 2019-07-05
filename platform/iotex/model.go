@@ -1,5 +1,7 @@
 package iotex
 
+import "github.com/trustwallet/blockatlas"
+
 type Response struct {
 	ActionInfo []*ActionInfo `json:"actionInfo"`
 }
@@ -31,6 +33,6 @@ type ActionCore struct {
 }
 
 type Transfer struct {
-	Amount    string   `json:"amount"`
-	Recipient string   `json:"recipient"`
+	Amount    blockatlas.Amount `json:"amount"`
+	Recipient string `json:"recipient"`
 }

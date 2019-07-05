@@ -35,7 +35,7 @@ func (c *Client) getTxs(uri string, build string) (*Page, error) {
 	req, _ := http.NewRequest("GET", uri, nil)
 	req.Header.Set("client-build", build)
 
-	res, err := c.HTTPClient.Do((req))
+	res, err := c.HTTPClient.Do(req)
 	if err != nil {
 		logrus.WithError(err).Error("Ethereum/Trust Ray: Failed to get transactions")
 		return nil, blockatlas.ErrSourceConn
@@ -43,7 +43,7 @@ func (c *Client) getTxs(uri string, build string) (*Page, error) {
 	defer res.Body.Close()
 
 	if res.StatusCode != 200 {
-		return nil, fmt.Errorf("http %s", res.Status)
+		return nil, fmt.Errorf("http %s (%s)", res.Status, uri)
 	}
 
 	txs := new(Page)

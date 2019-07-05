@@ -1,8 +1,6 @@
 package theta
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
@@ -10,14 +8,8 @@ import (
 	"strconv"
 )
 
-const Handle = "theta"
-
 type Platform struct {
 	client Client
-}
-
-func (p *Platform) Handle() string {
-	return Handle
 }
 
 func (p *Platform) Init() error {
@@ -30,34 +22,30 @@ func (p *Platform) Coin() coin.Coin {
 	return coin.Coins[coin.THETA]
 }
 
-func (p *Platform) RegisterRoutes(router gin.IRouter) {
-	router.GET("/:address", func(c *gin.Context) {
-		p.getTransactions(c)
-	})
+func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
+	// Endpoint supports queries without token query parameter
+	return p.GetTokenTxsByAddress(address, "")
 }
 
-// Get transactions for THETA address
-func (p *Platform) getTransactions(c *gin.Context) {
-	address := c.Param("address")
-	token := c.Query("token")
-	
+func (p *Platform) GetTokenTxsByAddress(address string, token string) (blockatlas.TxPage, error) {
 	trx, err := p.client.FetchAddressTransactions(address)
-	if apiError(c, err) {
-		return
+	if err != nil {
+		return nil, err
 	}
 
-	var txsNormalized []blockatlas.Tx
+	var txs []blockatlas.Tx
 	for _, tr := range trx {
-		if tr.Type == SendTransaction {
-			if tx, ok := Normalize(&tr, address, token); ok && len(txsNormalized) < blockatlas.TxPerPage {
-				txsNormalized = append(txsNormalized, tx)
-			}
+		if tr.Type != SendTransaction {
+			continue
 		}
+		tx, ok := Normalize(&tr, address, token)
+		if !ok {
+			continue
+		}
+		txs = append(txs, tx)
 	}
 
-	page := blockatlas.TxPage(txsNormalized)
-	page.Sort()
-	c.JSON(http.StatusOK, &page)
+	return txs, nil
 }
 
 func Normalize(trx *Tx, address, token string) (tx blockatlas.Tx, ok bool) {
@@ -112,13 +100,4 @@ func Normalize(trx *Tx, address, token string) (tx blockatlas.Tx, ok bool) {
 	}
 
 	return tx, false
-}
-
-func apiError(c *gin.Context, err error) bool {
-	if err != nil {
-		logrus.WithError(err).Errorf("Unhandled error: %s", err)
-		c.AbortWithStatus(http.StatusInternalServerError)
-		return true
-	}
-	return false
 }
