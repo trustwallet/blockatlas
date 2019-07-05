@@ -32,9 +32,13 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 }
 
 // NormalizeTx converts an Aion transaction into the generic model
-func NormalizeTx(srcTx *Tx) blockatlas.Tx {
+func NormalizeTx(srcTx *Tx) (tx blockatlas.Tx, ok bool) {
 	fee := strconv.Itoa(srcTx.NrgConsumed)
 	value := util.DecimalExp(string(srcTx.Value), 18)
+	value, ok = util.CutZeroFractional(value)
+	if !ok {
+		return tx, false
+	}
 
 	return blockatlas.Tx{
 		ID:    srcTx.TransactionHash,
@@ -47,14 +51,17 @@ func NormalizeTx(srcTx *Tx) blockatlas.Tx {
 		Meta:  blockatlas.Transfer{
 			Value: blockatlas.Amount(value),
 		},
-	}
+	}, true
 }
 
 // NormalizeTxs converts multiple Aion transactions
 func NormalizeTxs(srcTxs []Tx) []blockatlas.Tx {
-	txs := make([]blockatlas.Tx, len(srcTxs))
-	for i, srcTx := range srcTxs {
-		txs[i] = NormalizeTx(&srcTx)
+	var txs []blockatlas.Tx
+	for _, srcTx := range srcTxs {
+		tx, ok := NormalizeTx(&srcTx)
+		if ok {
+			txs = append(txs, tx)
+		}
 	}
 	return txs
 }
