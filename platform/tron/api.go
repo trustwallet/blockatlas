@@ -39,11 +39,6 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 	return txs, nil
 }
 
-func (p *Platform) GetTokenTxsByAddress(address string, _ string) (blockatlas.TxPage, error) {
-	// TODO: Filter by tokens
-	return p.GetTxsByAddress(address)
-}
-
 /// Normalize converts a Tron transaction into the generic model
 func Normalize(srcTx *Tx) (tx blockatlas.Tx, ok bool) {
 	if len(srcTx.Data.Contracts) < 1 {
