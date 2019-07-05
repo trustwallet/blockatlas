@@ -19,7 +19,7 @@ func makeTxRoute(router gin.IRouter, api blockatlas.Platform) {
 	router.GET("/:address", func(c *gin.Context) {
 		address := c.Param("address")
 		if address == "" {
-			c.String(http.StatusNoContent, "no content")
+			emptyPage(c)
 			return
 		}
 		token := c.Query("token")
@@ -32,7 +32,7 @@ func makeTxRoute(router gin.IRouter, api blockatlas.Platform) {
 		case token != "" && tokenTxAPI != nil:
 			page, err = tokenTxAPI.GetTokenTxsByAddress(address, token)
 		default:
-			c.String(http.StatusNoContent, "no content")
+			emptyPage(c)
 			return
 		}
 
@@ -54,4 +54,8 @@ func makeTxRoute(router gin.IRouter, api blockatlas.Platform) {
 		page.Sort()
 		c.JSON(http.StatusOK, &page)
 	})
+}
+
+func emptyPage(c *gin.Context) {
+	c.JSON(http.StatusOK, blockatlas.TxPage(nil))
 }
