@@ -5,6 +5,12 @@ import (
 	"fmt"
 )
 
+// Binance cahin transfer types
+const (
+	TRANSFER  = "TRANSFER"
+	NEW_ORDER = "NEW_ORDER"
+)
+
 type Account struct {
 	AccountNumber int       `json:"account_number"`
 	Address       string    `json:"address"`
