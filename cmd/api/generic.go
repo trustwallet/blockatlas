@@ -57,5 +57,6 @@ func makeTxRoute(router gin.IRouter, api blockatlas.Platform) {
 }
 
 func emptyPage(c *gin.Context) {
-	c.JSON(http.StatusOK, blockatlas.TxPage(nil))
+	var page blockatlas.TxPage
+	c.JSON(http.StatusOK, &page)
 }

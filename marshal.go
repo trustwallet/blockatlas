@@ -119,13 +119,13 @@ func (r *TxPage) MarshalJSON() ([]byte, error) {
 	var page struct {
 		Total  int    `json:"total"`
 		Docs   []Tx   `json:"docs"`
-		Status string `json:"status"`
+		Status bool `json:"status"`
 	}
 	page.Docs = []Tx(*r)
 	if page.Docs == nil {
 		page.Docs = make([]Tx, 0)
 	}
 	page.Total = len(page.Docs)
-	page.Status = "success"
+	page.Status = true
 	return json.Marshal(page)
 }
