@@ -43,6 +43,17 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 	return normalisedTxes, nil
 }
 
+func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
+	results := make([]blockatlas.StakeValidator, 0)
+	validators, _ := p.client.GetValidators()
+
+	for _, validator := range validators {
+		results = append(results, normalizeValidator(validator))
+	}
+
+	return results, nil
+}
+
 // Normalize converts an Cosmos transaction into the generic model
 func Normalize(srcTx *Tx) (tx blockatlas.Tx) {
 	date, _ := time.Parse("2006-01-02T15:04:05Z", srcTx.Date)
@@ -67,5 +78,18 @@ func Normalize(srcTx *Tx) (tx blockatlas.Tx) {
 		Meta: blockatlas.Transfer{
 			Value: blockatlas.Amount(value),
 		},
+	}
+}
+
+func normalizeValidator(v CosmosValidator) (validator blockatlas.StakeValidator) {
+	return blockatlas.StakeValidator{
+		Info: blockatlas.StakeValidatorInfo{
+			Website:     v.Description.Website,
+			Name:        v.Description.Moniker,
+			Description: v.Description.Description,
+		},
+		Status:    bool(v.Status == 2),
+		Address:   v.Operator_Address,
+		PublicKey: v.Consensus_Pubkey,
 	}
 }
