@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/trustwallet/blockatlas"
-	"log"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -57,11 +56,10 @@ func (c *Client) GetValidators() (validators []CosmosValidator, err error) {
 		c.BaseURL,
 		url.Values{
 			"status": {"bonded"},
-			"page":      {strconv.FormatInt(1, 10)},
-			"limit":     {strconv.FormatInt(blockatlas.ValidatorsPerPage, 10)},
+			"page":   {strconv.FormatInt(1, 10)},
+			"limit":  {strconv.FormatInt(blockatlas.ValidatorsPerPage, 10)},
 		}.Encode())
 
-	log.Print(uri)
 	res, err := c.HTTPClient.Get(uri)
 
 	if err != nil {
@@ -71,6 +69,6 @@ func (c *Client) GetValidators() (validators []CosmosValidator, err error) {
 
 	dec := json.NewDecoder(res.Body)
 	err = dec.Decode(&validators)
-	return validators, err
 
+	return validators, err
 }

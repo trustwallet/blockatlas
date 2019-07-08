@@ -3,6 +3,7 @@ package cosmos
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
 	"testing"
@@ -79,6 +80,32 @@ const basicSrc = `
   }
 `
 
+const validatorSrc = `
+{
+    "operator_address": "cosmosvaloper1qwl879nx9t6kef4supyazayf7vjhennyh568ys",
+    "consensus_pubkey": "cosmosvalconspub1zcjduepqwrjpn0slu86e32zfu5xxg8l42uk40guuw6er44vw2yl6s7wc38est6l0ux",
+    "jailed": false,
+    "status": 2,
+    "tokens": "9538882295763",
+    "delegator_shares": "9538882295763.000000000000000000",
+    "description": {
+      "moniker": "Certus One",
+      "identity": "ABD51DF68C0D1ECF",
+      "website": "https://certus.one",
+      "details": "Stake and earn rewards with the most secure and stable validator."
+    },
+    "unbonding_height": "0",
+    "unbonding_time": "1970-01-01T00:00:00Z",
+    "commission": {
+      "rate": "0.125000000000000000",
+      "max_rate": "0.300000000000000000",
+      "max_change_rate": "0.010000000000000000",
+      "update_time": "2019-03-13T23:00:00Z"
+    },
+    "min_self_delegation": "1"
+  }
+`
+
 var basicDst = blockatlas.Tx{
 	ID:    "E19B011D20D862DA0BEA7F24E3BC6DFF666EE6E044FCD9BD95B073478086DBB6",
 	Coin:  coin.ATOM,
@@ -116,4 +143,24 @@ func TestNormalize(t *testing.T) {
 		println(string(dstJSON))
 		t.Error("basic: tx don't equal")
 	}
+}
+
+func TestNormalizeValidator(t *testing.T) {
+	var v CosmosValidator
+	_ = json.Unmarshal([]byte(validatorSrc), &v)
+
+	expected := blockatlas.StakeValidator{
+		Status: true,
+		Info: blockatlas.StakeValidatorInfo{
+			Name:        v.Description.Moniker,
+			Description: v.Description.Description,
+			Website:     v.Description.Website,
+		},
+		Address:   v.Operator_Address,
+		PublicKey: v.Consensus_Pubkey,
+	}
+
+	result := normalizeValidator(v)
+
+	assert.Equal(t, result, expected)
 }

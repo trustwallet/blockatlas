@@ -44,14 +44,13 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 }
 
 func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
+	results := make([]blockatlas.StakeValidator, 0)
 	validators, _ := p.client.GetValidators()
 
-	results := make([]blockatlas.StakeValidator, 0)
-
 	for _, validator := range validators {
-		normalisedInputTx := NormalizeValidator(&validator)
-		results = append(results, normalisedInputTx)
+		results = append(results, normalizeValidator(validator))
 	}
+
 	return results, nil
 }
 
@@ -82,7 +81,7 @@ func Normalize(srcTx *Tx) (tx blockatlas.Tx) {
 	}
 }
 
-func NormalizeValidator(v *CosmosValidator) (validator blockatlas.StakeValidator) {
+func normalizeValidator(v CosmosValidator) (validator blockatlas.StakeValidator) {
 	return blockatlas.StakeValidator{
 		Info: blockatlas.StakeValidatorInfo{
 			Website:     v.Description.Website,
