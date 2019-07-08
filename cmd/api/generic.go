@@ -6,7 +6,15 @@ import (
 	"net/http"
 )
 
-func makeTxRoute(router gin.IRouter, api blockatlas.Platform) {
+func makeTxRouteV1(router gin.IRouter, api blockatlas.Platform) {
+	makeTxRoute(router, api, "/:address")
+}
+
+func makeTxRouteV2(router gin.IRouter, api blockatlas.Platform) {
+	makeTxRoute(router, api, "/transactions/:address")
+}
+
+func makeTxRoute(router gin.IRouter, api blockatlas.Platform, path string) {
 	var txAPI blockatlas.TxAPI
 	var tokenTxAPI blockatlas.TokenTxAPI
 	txAPI, _ = api.(blockatlas.TxAPI)
@@ -16,7 +24,7 @@ func makeTxRoute(router gin.IRouter, api blockatlas.Platform) {
 		return
 	}
 
-	router.GET("/transactions/:address", func(c *gin.Context) {
+	router.GET(path, func(c *gin.Context) {
 		address := c.Param("address")
 		if address == "" {
 			emptyPage(c)
