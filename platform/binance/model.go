@@ -68,3 +68,41 @@ type TxPage struct {
 func (e *Error) Error() string {
 	return fmt.Sprintf("%d: %s", e.Code, e.Message)
 }
+
+// Transaction receipt structure
+type Receipt struct {
+	Hash        string    `json:"hash"`
+	TxReceipts  TxReceipt `json:"tx"`
+}
+
+type TxReceipt struct {
+	Value Value `json:"value"`
+}
+
+type Value struct {
+	Msg []Msg `json:"msg"`
+}
+
+type Msg struct {
+	MsgValue MsgValue `json:"value"`
+}
+
+type MsgValue struct {
+	Inputs  []Input  `json:"inputs"`
+	Outputs []Output `json:"outputs"`
+}
+
+type Input struct {
+	Address string `json:"address"`
+	Coins   []Coin `json:"coins"`
+}
+
+type Output struct {
+	Address string `json:"address"`
+	Coins   []Coin `json:"coins"`
+}
+
+type Coin struct {
+	Amount string `json:"amount"`
+	Denom  string `json:"denom"`
+}
