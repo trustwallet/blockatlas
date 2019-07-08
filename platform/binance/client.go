@@ -15,6 +15,7 @@ import (
 type Client struct {
 	HTTPClient *http.Client
 	BaseURL    string
+	RPCBaseURL string
 }
 
 func (c *Client) GetBlockList(count int) (*BlockList, error) {
@@ -86,6 +87,26 @@ func (c *Client) GetTxsOfAddress(address string, token string) (*TxPage, error) 
 	stx := new(TxPage)
 	err = json.NewDecoder(res.Body).Decode(stx)
 	return stx, nil
+}
+
+func (c *Client) GetTransactionReceipt(hash string) (*Receipt, error) {
+	url := fmt.Sprintf("%s/tx/%s?format=json", c.RPCBaseURL, hash)
+	println(url)
+	res, err := c.HTTPClient.Get(url)
+	if err != nil {
+		return nil, err
+	}
+	defer res.Body.Close()
+
+	recp := new(Receipt)
+	err = json.NewDecoder(res.Body).Decode(recp)
+	if err != nil {
+		logrus.WithError(err).Error("Binance: Failed to decode transaction receipt API response")
+		return nil, blockatlas.ErrSourceConn
+	}
+
+	return recp, nil
+
 }
 
 func getHTTPError(res *http.Response, desc string) error {
