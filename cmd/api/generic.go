@@ -16,7 +16,7 @@ func makeTxRoute(router gin.IRouter, api blockatlas.Platform) {
 		return
 	}
 
-	router.GET("/:address", func(c *gin.Context) {
+	router.GET("/transactions/:address", func(c *gin.Context) {
 		address := c.Param("address")
 		if address == "" {
 			emptyPage(c)
@@ -53,6 +53,26 @@ func makeTxRoute(router gin.IRouter, api blockatlas.Platform) {
 
 		page.Sort()
 		c.JSON(http.StatusOK, &page)
+	})
+}
+
+func makeStakingRoute(router gin.IRouter, api blockatlas.Platform) {
+	var stakingAPI blockatlas.StakeAPI
+	stakingAPI, _ = api.(blockatlas.StakeAPI)
+
+	if stakingAPI == nil {
+		return
+	}
+
+	router.GET("/staking/validators", func(c *gin.Context) {
+
+		validators, err := stakingAPI.GetValidators()
+
+		if err != nil {
+			c.JSON(http.StatusServiceUnavailable, err)
+		}
+
+		c.JSON(http.StatusOK, blockatlas.DocsResponse{Docs: validators})
 	})
 }
 

@@ -43,3 +43,10 @@ type Amount struct {
 	Denom    string `json:"denom"`
 	Quantity string `json:"amount"`
 }
+
+// # Staking
+
+type CosmosValidator struct {
+	Operator_Address    string `json:"operator_address"`
+	Consensus_Pubkey    string `json:"consensus_pubkey"`
+}
