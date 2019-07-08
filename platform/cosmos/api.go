@@ -83,8 +83,14 @@ func Normalize(srcTx *Tx) (tx blockatlas.Tx) {
 }
 
 func NormalizeValidator(v *CosmosValidator) (validator blockatlas.StakeValidator) {
-	return blockatlas.StakeValidator {
-		Address: v.Operator_Address,
+	return blockatlas.StakeValidator{
+		Info: blockatlas.StakeValidatorInfo{
+			Website:     v.Description.Website,
+			Name:        v.Description.Moniker,
+			Description: v.Description.Description,
+		},
+		Status:    bool(v.Status == 2),
+		Address:   v.Operator_Address,
 		PublicKey: v.Consensus_Pubkey,
 	}
 }

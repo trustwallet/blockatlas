@@ -9,16 +9,15 @@ type DocsResponse struct {
 const ValidatorsPerPage = 100
 
 type StakeValidatorInfo struct {
-	Name     string `json:"website"`
-	Description      string `json:"image"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	Image       string `json:"image"`
+	Website     string `json:"website"`
 }
 
 type StakeValidator struct {
-	//Name     string `json:"name"`
-	//Description      string `json:"description"`
-	//Status    string   `json:"status"`
-	//Uptime int `json:"uptime"`
-	//Info        StakeValidatorInfo `json:"info"`
-	Address        string `json:"address"`
-	PublicKey        string `json:"pubkey"`
+	Status    bool               `json:"status"`
+	Info      StakeValidatorInfo `json:"info"`
+	Address   string             `json:"address"`
+	PublicKey string             `json:"pubkey"`
 }
