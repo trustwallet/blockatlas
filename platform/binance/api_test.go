@@ -106,7 +106,7 @@ func TestNormalizeTx(t *testing.T) {
 	})
 }
 
-func testNormalizeTx(t *testing.T, _test *test) {
+func (p *Platform) testNormalizeTx(t *testing.T, _test *test) {
 	var srcTx Tx
 	err := json.Unmarshal([]byte(_test.apiResponse), &srcTx)
 	if err != nil {
@@ -114,7 +114,7 @@ func testNormalizeTx(t *testing.T, _test *test) {
 		return
 	}
 
-	tx, ok := NormalizeTx(&srcTx, _test.token)
+	tx, ok := NormalizeTx(&srcTx, _test.token, p)
 	if !ok {
 		t.Errorf("transfer: tx could not be normalized")
 	}

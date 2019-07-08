@@ -91,7 +91,6 @@ func (c *Client) GetTxsOfAddress(address string, token string) (*TxPage, error) 
 
 func (c *Client) GetTransactionReceipt(hash string) (*Receipt, error) {
 	url := fmt.Sprintf("%s/tx/%s?format=json", c.RPCBaseURL, hash)
-	println(url)
 	res, err := c.HTTPClient.Get(url)
 	if err != nil {
 		return nil, err

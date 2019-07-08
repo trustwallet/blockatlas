@@ -108,9 +108,8 @@ func NormalizeTx(srcTx *Tx, token, address string, p *Platform) (tx blockatlas.T
 		return tx, true
 	}
 
-	// Conditin where explorer does not return sender/recepient for multisend transaction
+	// Condition where explorer does not return sender/recepient for multisend transaction
 	if (srcTx.FromAddr == "" || srcTx.ToAddr == "") && srcTx.Type == TRANSFER {
-		println("hash :", hash)
 		receipt, _ := p.client.GetTransactionReceipt(hash)
 		zeroMsgValue := receipt.TxReceipts.Value.Msg[0].MsgValue
 		zeroInput := zeroMsgValue.Inputs[0]
