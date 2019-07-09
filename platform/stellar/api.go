@@ -58,8 +58,7 @@ func NormalizeBlock(block *Block, nativeCoinIndex uint) blockatlas.Block {
 	}
 }
 
-func NormalizePayments(payments []Payment, nativeCoinIndex uint) (tx []blockatlas.Tx) {
-	var txs []blockatlas.Tx
+func NormalizePayments(payments []Payment, nativeCoinIndex uint) (txs []blockatlas.Tx) {
 	for _, payment := range payments {
 		tx, ok := Normalize(&payment, nativeCoinIndex)
 		if !ok {
@@ -67,7 +66,7 @@ func NormalizePayments(payments []Payment, nativeCoinIndex uint) (tx []blockatla
 		}
 		txs = append(txs, tx)
 	}
-	return tx
+	return txs
 }
 
 // Normalize converts a Stellar-based transaction into the generic model
