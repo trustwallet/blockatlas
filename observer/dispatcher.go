@@ -11,6 +11,11 @@ type Dispatcher struct {
 	Client http.Client
 }
 
+type DispatchEvent struct {
+	Action string      `json:"action"`
+	Result interface{} `json:"result"`
+}
+
 func (d *Dispatcher) Run(events <-chan Event) {
 	for event := range events {
 		d.dispatch(event)
@@ -18,7 +23,11 @@ func (d *Dispatcher) Run(events <-chan Event) {
 }
 
 func (d *Dispatcher) dispatch(event Event) {
-	txJson, err := json.Marshal(&event.Tx)
+	action := DispatchEvent{
+		Action: event.Tx.Type,
+		Result: event.Tx,
+	}
+	txJson, err := json.Marshal(&action)
 	if err != nil {
 		logrus.Panic(err)
 	}
@@ -26,8 +35,8 @@ func (d *Dispatcher) dispatch(event Event) {
 	webhook := event.Subscription.Webhook
 	log := logrus.WithFields(logrus.Fields{
 		"webhook": webhook,
-		"coin": event.Subscription.Coin,
-		"txID": event.Tx.ID,
+		"coin":    event.Subscription.Coin,
+		"txID":    event.Tx.ID,
 	})
 
 	_, err = d.Client.Post(webhook, "application/json", bytes.NewReader(txJson))
