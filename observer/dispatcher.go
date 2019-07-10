@@ -27,7 +27,7 @@ func (d *Dispatcher) dispatch(event Event) {
 		Action: event.Tx.Type,
 		Result: event.Tx,
 	}
-	txJson, err := json.Marshal(&action)
+	txJson, err := json.Marshal(action)
 	if err != nil {
 		logrus.Panic(err)
 	}
