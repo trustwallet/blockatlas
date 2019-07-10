@@ -1,4 +1,4 @@
-FROM golang:1.12.7 as builder
+FROM golang:alpine as builder
 ADD . /go/src/github.com/trustwallet/blockatlas
 RUN apk add git \
  && go get -d -v github.com/trustwallet/blockatlas/cmd \
