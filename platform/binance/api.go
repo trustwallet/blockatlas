@@ -89,7 +89,7 @@ func NormalizeTx(srcTx *Tx, token string) (tx blockatlas.Tx, ok bool) {
 	}
 
 	// Condition for native token transfer
-	if srcTx.Asset == token && srcTx.Type == "TRANSFER" {
+	if srcTx.Asset == token && srcTx.Type == "TRANSFER" && srcTx.FromAddr != "" && srcTx.ToAddr != "" {
 		tx.Meta = blockatlas.NativeTokenTransfer{
 			TokenID:  srcTx.Asset,
 			Symbol:   srcTx.MappedAsset,
