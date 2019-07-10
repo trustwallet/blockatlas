@@ -57,7 +57,7 @@ func (c *Client) GetBlockByNumber(num int64) (block *Block, err error) {
 	if err != nil {
 		return nil, err
 	}
-	path := fmt.Sprintf("%s/ledgers/%s/payments?limit=100&order=desc", c.API, num)
+	path := fmt.Sprintf("%s/ledgers/%d/payments?limit=100&order=desc", c.API, num)
 	payments, err := c.getTxs(path)
 	if err != nil {
 		return nil, err
@@ -67,7 +67,7 @@ func (c *Client) GetBlockByNumber(num int64) (block *Block, err error) {
 }
 
 func (c *Client) getLedger(num int64) (ledger *Ledger, err error) {
-	path := fmt.Sprintf("%s/ledgers/%s", c.API, num)
+	path := fmt.Sprintf("%s/ledgers/%d", c.API, num)
 	res, err := http.Get(path)
 	if err != nil {
 		return nil, err
