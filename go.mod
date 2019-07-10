@@ -1,6 +1,6 @@
 module github.com/trustwallet/blockatlas
 
-go 1.12
+go 1.12.6
 
 require (
 	github.com/gin-gonic/gin v1.4.0
