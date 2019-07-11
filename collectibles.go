@@ -10,7 +10,7 @@ type Collection struct {
 	CategoryAddress string `json:"category_address"`
 	Address         string `json:"address"`
 	Version         string `json:"version"`
-	Coin            int    `json:"coin"`
+	Coin            uint   `json:"coin"`
 	Type            string `json:"type"`
 }
 
@@ -22,5 +22,6 @@ type Collectible struct {
 	ExternalLink    string `json:"external_link"`
 	Type            string `json:"type"`
 	Description     string `json:"description"`
-	Coin            int    `json:"coin"`
+	Coin            uint   `json:"coin"`
+	Name            string `json:"name"`
 }

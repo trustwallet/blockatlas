@@ -14,13 +14,15 @@ import (
 )
 
 type Platform struct {
-	client Client
+	client    Client
 	CoinIndex uint
 }
 
 func (p *Platform) Init() error {
 	handle := coin.Coins[p.CoinIndex].Handle
 	p.client.BaseURL = viper.GetString(fmt.Sprintf("%s.api", handle))
+	p.client.CollectionsURL = viper.GetString(fmt.Sprintf("%s.collections_api", handle))
+	p.client.CollectionsApiKey = viper.GetString(fmt.Sprintf("%s.collections_api_key", handle))
 	p.client.HTTPClient = http.DefaultClient
 	return nil
 }
@@ -32,6 +34,12 @@ func (p *Platform) Coin() coin.Coin {
 func (p *Platform) RegisterRoutes(router gin.IRouter) {
 	router.GET("/:address", func(c *gin.Context) {
 		p.getTransactions(c)
+	})
+	router.GET("/:address/collections", func(c *gin.Context) {
+		p.getCollections(c)
+	})
+	router.GET("/:address/collections/:contractAddress", func(c *gin.Context) {
+		p.getCollectibles(c)
 	})
 }
 
@@ -159,4 +167,71 @@ func apiError(c *gin.Context, err error) bool {
 		return true
 	}
 	return false
+}
+
+func (p *Platform) getCollections(c *gin.Context) {
+	ownerAddress := c.Param("address")
+	items, err := p.client.GetCollections(ownerAddress)
+	if apiError(c, err) {
+		return
+	}
+	page := NormalizeCollectionPage(items, p.CoinIndex)
+	c.JSON(http.StatusOK, &page)
+}
+
+func (p *Platform) getCollectibles(c *gin.Context) {
+	ownerAddress := c.Param("address")
+	contractAddress := c.Param("contractAddress")
+	items, err := p.client.GetCollectibles(ownerAddress, contractAddress)
+	if apiError(c, err) {
+		return
+	}
+	page := NormalizeCollectiblePage(items, p.CoinIndex)
+	c.JSON(http.StatusOK, &page)
+}
+
+func NormalizeCollectionPage(srcPage []Collection, coinIndex uint) (page []blockatlas.Collection) {
+	for _, src := range srcPage {
+		item := NormalizeCollection(src, coinIndex)
+		page = append(page, item)
+	}
+	return
+}
+
+func NormalizeCollection(c Collection, coinIndex uint) blockatlas.Collection {
+	return blockatlas.Collection{
+		Name:            c.Name,
+		Symbol:          c.Contract[0].Symbol,
+		ImageUrl:        c.ImageUrl,
+		Description:     c.Contract[0].Description,
+		ExternalLink:    c.ExternalUrl,
+		Total:           strconv.Itoa(c.Total),
+		CategoryAddress: c.Contract[0].Address,
+		Address:         "",
+		Version:         c.Contract[0].NftVersion,
+		Coin:            coinIndex,
+		Type:            "ERC721",
+	}
+}
+
+func NormalizeCollectiblePage(srcPage []Collectible, coinIndex uint) (page []blockatlas.Collectible) {
+	for _, src := range srcPage {
+		item := NormalizeCollectible(src, coinIndex)
+		page = append(page, item)
+	}
+	return
+}
+
+func NormalizeCollectible(a Collectible, coinIndex uint) blockatlas.Collectible {
+	return blockatlas.Collectible{
+		TokenID:         a.TokenId,
+		ContractAddress: a.AssetContract.Address,
+		Name:            a.Name,
+		Category:        a.AssetContract.Category,
+		ImageURL:        a.ImageUrl,
+		ExternalLink:    a.ExternalLink,
+		Type:            "ERC721",
+		Description:     a.Description,
+		Coin:            coinIndex,
+	}
 }
