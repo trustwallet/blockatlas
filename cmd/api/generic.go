@@ -102,7 +102,7 @@ func makeCollectionRoute(router gin.IRouter, api blockatlas.Platform) {
 		c.JSON(http.StatusOK, collections)
 	})
 
-	router.GET("/collections/:owner/contract/:contract", func(c *gin.Context) {
+	router.GET("/collections/:owner/collection/:contract", func(c *gin.Context) {
 		collectibles, err := collectionAPI.GetCollectibles(c.Param("owner"), c.Param("contract"))
 
 		if err != nil {
