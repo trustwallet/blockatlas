@@ -190,7 +190,7 @@ func (p *Platform) getCollectibles(c *gin.Context) {
 	c.JSON(http.StatusOK, &page)
 }
 
-func NormalizeCollectionPage(srcPage []Collection, coinIndex uint) (page []blockatlas.Collection) {
+func NormalizeCollectionPage(srcPage []Collection, coinIndex uint) (page blockatlas.CollectionPage) {
 	for _, src := range srcPage {
 		item := NormalizeCollection(src, coinIndex)
 		page = append(page, item)
@@ -214,7 +214,7 @@ func NormalizeCollection(c Collection, coinIndex uint) blockatlas.Collection {
 	}
 }
 
-func NormalizeCollectiblePage(srcPage []Collectible, coinIndex uint) (page []blockatlas.Collectible) {
+func NormalizeCollectiblePage(srcPage []Collectible, coinIndex uint) (page blockatlas.CollectiblePage) {
 	for _, src := range srcPage {
 		item := NormalizeCollectible(src, coinIndex)
 		page = append(page, item)
@@ -228,7 +228,7 @@ func NormalizeCollectible(a Collectible, coinIndex uint) blockatlas.Collectible 
 		ContractAddress: a.AssetContract.Address,
 		Name:            a.Name,
 		Category:        a.AssetContract.Category,
-		ImageURL:        a.ImageUrl,
+		ImageUrl:        a.ImageUrl,
 		ExternalLink:    a.ExternalLink,
 		Type:            "ERC721",
 		Description:     a.Description,

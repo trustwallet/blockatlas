@@ -14,14 +14,18 @@ type Collection struct {
 	Type            string `json:"type"`
 }
 
+type CollectionPage []Collection
+
 type Collectible struct {
 	TokenID         string `json:"token_id"`
 	ContractAddress string `json:"contract_address"`
 	Category        string `json:"category"`
-	ImageURL        string `json:"image_url"`
+	ImageUrl        string `json:"image_url"`
 	ExternalLink    string `json:"external_link"`
 	Type            string `json:"type"`
 	Description     string `json:"description"`
 	Coin            uint   `json:"coin"`
 	Name            string `json:"name"`
 }
+
+type CollectiblePage []Collectible
