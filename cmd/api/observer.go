@@ -6,14 +6,16 @@ import (
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/observer"
 	observerStorage "github.com/trustwallet/blockatlas/observer/storage"
+	"github.com/trustwallet/blockatlas/platform"
 	"net/http"
 	"strconv"
 )
 
 func setupObserverAPI(router gin.IRouter) {
 	router.Use(requireAuth)
-	router.POST("/", addCall)
-	router.DELETE("/", deleteCall)
+	router.POST("/webhook/register", addCall)
+	router.POST("/webhook/delete", deleteCall)
+	router.GET("/status", statusCall)
 }
 
 func requireAuth(c *gin.Context) {
@@ -28,7 +30,7 @@ func requireAuth(c *gin.Context) {
 func addCall(c *gin.Context) {
 	var req struct {
 		Subscriptions map[string][]string `json:"subscriptions"`
-		Webhook string `json:"webhook"`
+		Webhook       string              `json:"webhook"`
 	}
 	if c.BindJSON(&req) != nil {
 		return
@@ -95,4 +97,29 @@ func deleteCall(c *gin.Context) {
 	}
 
 	c.String(http.StatusOK, "Deleted")
+}
+
+func statusCall(c *gin.Context) {
+	type coinStatus struct {
+		Height int64  `json:"height"`
+		Error  string `json:"error,omitempty"`
+	}
+
+	result := make(map[string]coinStatus)
+
+	for _, api := range platform.BlockAPIs {
+		coin := api.Coin()
+		num, err := observerStorage.App.GetBlockNumber(coin.ID)
+		var status coinStatus
+		if err != nil {
+			status = coinStatus{Error: err.Error()}
+		} else if num == 0 {
+			status = coinStatus{Error: "no blocks"}
+		} else {
+			status = coinStatus{Height: num}
+		}
+		result[coin.Handle] = status
+	}
+
+	c.JSON(http.StatusOK, result)
 }

@@ -7,6 +7,22 @@ type PaymentsPage struct {
 	} `json:"_embedded"`
 }
 
+type LedgersPage struct {
+	Embedded struct {
+		Records []Ledger
+	} `json:"_embedded"`
+}
+
+type Ledger struct {
+	Sequence int64  `json:"sequence"`
+	Id       string `json:"id"`
+}
+
+type Block struct {
+	Ledger   Ledger
+	Payments []Payment
+}
+
 // Payment model returned by Horizon
 type Payment struct {
 	ID          string `json:"id"`

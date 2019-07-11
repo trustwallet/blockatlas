@@ -35,6 +35,12 @@ type BlockAPI interface {
 	GetBlockByNumber(num int64) (*Block, error)
 }
 
+// StakingAPI provides staking information
+type StakeAPI interface {
+	Platform
+	GetValidators() (ValidatorPage, error)
+}
+
 // CustomAPI provides custom HTTP routes
 type CustomAPI interface {
 	Platform

@@ -46,14 +46,13 @@ func (p *Platform) RegisterRoutes(router gin.IRouter) {
 func (p *Platform) getTransactions(c *gin.Context) {
 	token := c.Query("token")
 	address := c.Param("address")
-	build := c.Request.Header.Get("client-build")
 	var srcPage *Page
 	var err error
 
 	if token != "" {
-		srcPage, err = p.client.GetTxsWithContract(address, token, build)
+		srcPage, err = p.client.GetTxsWithContract(address, token)
 	} else {
-		srcPage, err = p.client.GetTxs(address, build)
+		srcPage, err = p.client.GetTxs(address)
 	}
 
 	if apiError(c, err) {

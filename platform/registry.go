@@ -59,12 +59,16 @@ var Platforms map[string]blockatlas.Platform
 // BlockAPIs contains platforms with block services
 var BlockAPIs map[string]blockatlas.BlockAPI
 
+// StakeAPIs contains platforms with staking services
+var StakeAPIs map[string]blockatlas.StakeAPI
+
 // CustomAPIs contains platforms with custom HTTP services
 var CustomAPIs map[string]blockatlas.CustomAPI
 
 func Init() {
 	Platforms  = make(map[string]blockatlas.Platform)
 	BlockAPIs  = make(map[string]blockatlas.BlockAPI)
+	StakeAPIs  = make(map[string]blockatlas.StakeAPI)
 	CustomAPIs = make(map[string]blockatlas.CustomAPI)
 
 	for _, platform := range platformList {
@@ -96,6 +100,9 @@ func Init() {
 
 		if blockAPI, ok := platform.(blockatlas.BlockAPI); ok {
 			BlockAPIs[handle] = blockAPI
+		}
+		if stakeAPI, ok := platform.(blockatlas.StakeAPI); ok {
+			StakeAPIs[handle] = stakeAPI
 		}
 		if customAPI, ok := platform.(blockatlas.CustomAPI); ok {
 			CustomAPIs[handle] = customAPI

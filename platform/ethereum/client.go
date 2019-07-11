@@ -17,26 +17,25 @@ type Client struct {
 	CollectionsApiKey string
 }
 
-func (c *Client) GetTxs(address string, build string) (*Page, error) {
+func (c *Client) GetTxs(address string) (*Page, error) {
 	return c.getTxs(fmt.Sprintf("%s/transactions?%s",
 		c.BaseURL,
 		url.Values{
-			"address": {address},
-		}.Encode()), build)
+			"address":  {address},
+		}.Encode()))
 }
 
-func (c *Client) GetTxsWithContract(address, contract string, build string) (*Page, error) {
+func (c *Client) GetTxsWithContract(address, contract string) (*Page, error) {
 	return c.getTxs(fmt.Sprintf("%s/transactions?%s",
 		c.BaseURL,
 		url.Values{
 			"address":  {address},
 			"contract": {contract},
-		}.Encode()), build)
+		}.Encode()))
 }
 
-func (c *Client) getTxs(uri string, build string) (*Page, error) {
+func (c *Client) getTxs(uri string) (*Page, error) {
 	req, _ := http.NewRequest("GET", uri, nil)
-	req.Header.Set("client-build", build)
 
 	res, err := c.HTTPClient.Do(req)
 	if err != nil {

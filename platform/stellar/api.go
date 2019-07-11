@@ -12,7 +12,7 @@ import (
 )
 
 type Platform struct {
-	client Client
+	client    Client
 	CoinIndex uint
 }
 
@@ -34,17 +34,39 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 	if err != nil {
 		return nil, err
 	}
+	return NormalizePayments(payments, p.CoinIndex), nil
+}
 
-	var txs []blockatlas.Tx
+func (p *Platform) CurrentBlockNumber() (int64, error) {
+	return p.client.CurrentBlockNumber()
+}
+
+func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
+	if srcBlock, err := p.client.GetBlockByNumber(num); err == nil {
+		block := NormalizeBlock(srcBlock, p.CoinIndex)
+		return &block, nil
+	} else {
+		return nil, err
+	}
+}
+
+func NormalizeBlock(block *Block, nativeCoinIndex uint) blockatlas.Block {
+	return blockatlas.Block{
+		ID:     block.Ledger.Id,
+		Number: block.Ledger.Sequence,
+		Txs:    NormalizePayments(block.Payments, nativeCoinIndex),
+	}
+}
+
+func NormalizePayments(payments []Payment, nativeCoinIndex uint) (txs []blockatlas.Tx) {
 	for _, payment := range payments {
-		tx, ok := Normalize(&payment, p.CoinIndex)
+		tx, ok := Normalize(&payment, nativeCoinIndex)
 		if !ok {
 			continue
 		}
 		txs = append(txs, tx)
 	}
-
-	return txs, nil
+	return txs
 }
 
 // Normalize converts a Stellar-based transaction into the generic model
@@ -92,7 +114,7 @@ func Normalize(payment *Payment, nativeCoinIndex uint) (tx blockatlas.Tx, ok boo
 		Fee:   "100",
 		Date:  date.Unix(),
 		Block: id,
-		Meta:  blockatlas.Transfer{
+		Meta: blockatlas.Transfer{
 			Value: blockatlas.Amount(value),
 		},
 	}, true

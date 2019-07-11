@@ -50,3 +50,25 @@ func (c *Client) GetAddrTxes(address string, inOrOut string) (txs []Tx, err erro
 	err = dec.Decode(&txs)
 	return txs, err
 }
+
+func (c *Client) GetValidators() (validators []CosmosValidator, err error) {
+	uri := fmt.Sprintf("%s/staking/validators?%s",
+		c.BaseURL,
+		url.Values{
+			"status": {"bonded"},
+			"page":   {strconv.FormatInt(1, 10)},
+			"limit":  {strconv.FormatInt(blockatlas.ValidatorsPerPage, 10)},
+		}.Encode())
+
+	res, err := c.HTTPClient.Get(uri)
+
+	if err != nil {
+		logrus.WithError(err).Errorf("Cosmos: Failed to get validators for address")
+		return validators, err
+	}
+
+	dec := json.NewDecoder(res.Body)
+	err = dec.Decode(&validators)
+
+	return validators, err
+}
