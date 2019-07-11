@@ -41,6 +41,12 @@ type StakeAPI interface {
 	GetValidators() (ValidatorPage, error)
 }
 
+type CollectionAPI interface {
+	Platform
+	GetCollections(owner string) (CollectionPage, error)
+	GetCollectibles(owner string, contract string) (CollectiblePage, error)
+}
+
 // CustomAPI provides custom HTTP routes
 type CustomAPI interface {
 	Platform

@@ -131,13 +131,13 @@ func (r *TxPage) MarshalJSON() ([]byte, error) {
 }
 
 // MarshalJSON returns a wrapped list of collections in JSON
-func (r *CollectionPage) MarshalJSON() ([]byte, error) {
+func (r CollectionPage) MarshalJSON() ([]byte, error) {
 	var page struct {
 		Total  int          `json:"total"`
 		Docs   []Collection `json:"docs"`
 		Status bool         `json:"status"`
 	}
-	page.Docs = []Collection(*r)
+	page.Docs = []Collection(r)
 	if page.Docs == nil {
 		page.Docs = make([]Collection, 0)
 	}
@@ -147,13 +147,13 @@ func (r *CollectionPage) MarshalJSON() ([]byte, error) {
 }
 
 // MarshalJSON returns a wrapped list of collectibles in JSON
-func (r *CollectiblePage) MarshalJSON() ([]byte, error) {
+func (r CollectiblePage) MarshalJSON() ([]byte, error) {
 	var page struct {
 		Total  int           `json:"total"`
 		Docs   []Collectible `json:"docs"`
 		Status bool          `json:"status"`
 	}
-	page.Docs = []Collectible(*r)
+	page.Docs = []Collectible(r)
 	if page.Docs == nil {
 		page.Docs = make([]Collectible, 0)
 	}

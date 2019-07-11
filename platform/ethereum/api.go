@@ -35,12 +35,6 @@ func (p *Platform) RegisterRoutes(router gin.IRouter) {
 	router.GET("/:address", func(c *gin.Context) {
 		p.getTransactions(c)
 	})
-	router.GET("/:address/collections", func(c *gin.Context) {
-		p.getCollections(c)
-	})
-	router.GET("/:address/collections/:contractAddress", func(c *gin.Context) {
-		p.getCollectibles(c)
-	})
 }
 
 func (p *Platform) getTransactions(c *gin.Context) {
@@ -168,25 +162,22 @@ func apiError(c *gin.Context, err error) bool {
 	return false
 }
 
-func (p *Platform) getCollections(c *gin.Context) {
-	ownerAddress := c.Param("address")
-	items, err := p.client.GetCollections(ownerAddress)
-	if apiError(c, err) {
-		return
+func (p *Platform) GetCollections(owner string) (blockatlas.CollectionPage, error) {
+	items, err := p.client.GetCollections(owner)
+	if err != nil {
+		return nil, err
 	}
 	page := NormalizeCollectionPage(items, p.CoinIndex)
-	c.JSON(http.StatusOK, &page)
+	return page, nil
 }
 
-func (p *Platform) getCollectibles(c *gin.Context) {
-	ownerAddress := c.Param("address")
-	contractAddress := c.Param("contractAddress")
-	items, err := p.client.GetCollectibles(ownerAddress, contractAddress)
-	if apiError(c, err) {
-		return
+func (p *Platform) GetCollectibles(owner string, contract string) (blockatlas.CollectiblePage, error) {
+	items, err := p.client.GetCollectibles(owner, contract)
+	if err != nil {
+		return nil, err
 	}
 	page := NormalizeCollectiblePage(items, p.CoinIndex)
-	c.JSON(http.StatusOK, &page)
+	return page, nil
 }
 
 func NormalizeCollectionPage(srcPage []Collection, coinIndex uint) (page blockatlas.CollectionPage) {
