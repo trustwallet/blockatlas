@@ -47,7 +47,7 @@ const tokenTransferSrc = `
 
 const contractCallSrc = `
 {
-	addresses: [
+	"addresses": [
 		"0x09862ed5908c0a336f9f92e5ffeb9768deac6091"
 	],
 	"operations": [],
