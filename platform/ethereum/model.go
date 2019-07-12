@@ -44,3 +44,36 @@ type Contract struct {
 type NodeInfo struct {
 	LatestBlock int64 `json:"latest_block"`
 }
+
+type Collection struct {
+	Name        string                 `json:"name"`
+	ImageUrl    string                 `json:"image_url"`
+	ExternalUrl string                 `json:"external_url"`
+	Total       int                    `json:"owned_asset_count"`
+	Contract    []PrimaryAssetContract `json:"primary_asset_contracts"`
+}
+
+type PrimaryAssetContract struct {
+	Address     string `json:"address"`
+	NftVersion  string `json:"nft_version"`
+	Symbol      string `json:"symbol"`
+	Description string `json:"description"`
+}
+
+type CollectiblePage struct {
+	Collectibles []Collectible `json:"assets"`
+}
+
+type Collectible struct {
+	TokenId       string              `json:"token_id"`
+	AssetContract CollectibleContract `json:"asset_contract"`
+	ImageUrl      string              `json:"image_url"`
+	Name          string              `json:"name"`
+	ExternalLink  string              `json:"external_link"`
+	Description   string              `json:"description"`
+}
+
+type CollectibleContract struct {
+	Address  string `json:"address"`
+	Category string `json:"name"`
+}

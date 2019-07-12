@@ -84,6 +84,35 @@ func makeStakingRoute(router gin.IRouter, api blockatlas.Platform) {
 	})
 }
 
+func makeCollectionRoute(router gin.IRouter, api blockatlas.Platform) {
+	var collectionAPI blockatlas.CollectionAPI
+	collectionAPI, _ = api.(blockatlas.CollectionAPI)
+
+	if collectionAPI == nil {
+		return
+	}
+
+	router.GET("/collections/:owner/", func(c *gin.Context) {
+		collections, err := collectionAPI.GetCollections(c.Param("owner"))
+
+		if err != nil {
+			c.JSON(http.StatusServiceUnavailable, err)
+		}
+
+		c.JSON(http.StatusOK, collections)
+	})
+
+	router.GET("/collections/:owner/collection/:contract", func(c *gin.Context) {
+		collectibles, err := collectionAPI.GetCollectibles(c.Param("owner"), c.Param("contract"))
+
+		if err != nil {
+			c.JSON(http.StatusServiceUnavailable, err)
+		}
+
+		c.JSON(http.StatusOK, collectibles)
+	})
+}
+
 func emptyPage(c *gin.Context) {
 	var page blockatlas.TxPage
 	c.JSON(http.StatusOK, &page)
