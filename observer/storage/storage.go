@@ -22,5 +22,8 @@ func Load() {
 	if viper.GetString("observer.auth") == "" {
 		logrus.Fatal("Refusing to run observer API without a password")
 	}
-	App = sredis.New(client)
+	App, err = sredis.New(client)
+	if err != nil {
+		logrus.WithError(err).Fatal("Failed to start Redis client")
+	}
 }

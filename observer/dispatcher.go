@@ -33,7 +33,7 @@ func (d *Dispatcher) dispatch(event Event) {
 		logrus.Panic(err)
 	}
 
-	webhook := event.Subscription.Webhook
+	webhook := event.Subscription.WebHook
 	log := logrus.WithFields(logrus.Fields{
 		"webhook": webhook,
 		"coin":    event.Subscription.Coin,

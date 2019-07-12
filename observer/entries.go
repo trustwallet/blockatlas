@@ -1,9 +1,9 @@
 package observer
 
 type Subscription struct{
-	Coin    uint    `json:"coin"`
-	Address string  `json:"address"`
-	Webhook string  `json:"webhook"`
+	Coin    uint   `json:"coin"`
+	Address string `json:"address"`
+	WebHook string `json:"webhook"`
 }
 
 type Tracker interface {
