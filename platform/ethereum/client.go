@@ -7,7 +7,6 @@ import (
 	"github.com/trustwallet/blockatlas"
 	"net/http"
 	"net/url"
-	"strconv"
 )
 
 type Client struct {
@@ -51,41 +50,4 @@ func (c *Client) getTxs(uri string) (*Page, error) {
 	txs := new(Page)
 	err = json.NewDecoder(res.Body).Decode(txs)
 	return txs, nil
-}
-
-func (c Client) GetCollections(owner string) ([]Collection, error) {
-	uri := fmt.Sprintf("%s/api/v1/collections?%s",
-		c.CollectionsURL,
-		url.Values{
-			"asset_owner": {owner},
-			"limit":       {strconv.Itoa(1000)},
-		}.Encode())
-	req, _ := http.NewRequest("GET", uri, nil)
-	//req.Header.Set("X-API-KEY", c.CollectionsApiKey)
-	res, err := c.HTTPClient.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer res.Body.Close()
-	var page []Collection
-	err = json.NewDecoder(res.Body).Decode(&page)
-	return page, err
-}
-
-func (c Client) GetCollectibles(owner string, collectibleID string) ([]Collectible, error) {
-	uri := fmt.Sprintf("%s/api/v1/assets/?%s",
-		c.CollectionsURL,
-		url.Values{
-			"owner":                  {owner},
-			"asset_contract_address": {collectibleID},
-			"limit":                  {strconv.Itoa(1000)},
-		}.Encode())
-	res, err := c.HTTPClient.Get(uri)
-	if err != nil {
-		return nil, err
-	}
-	defer res.Body.Close()
-	var page CollectiblePage
-	err = json.NewDecoder(res.Body).Decode(&page)
-	return page.Collectibles, err
 }

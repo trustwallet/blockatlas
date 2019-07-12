@@ -14,16 +14,20 @@ import (
 )
 
 type Platform struct {
-	client    Client
-	CoinIndex uint
+	client            Client
+	collectionsClient CollectionsClient
+	CoinIndex         uint
 }
 
 func (p *Platform) Init() error {
 	handle := coin.Coins[p.CoinIndex].Handle
-	p.client.BaseURL = viper.GetString(fmt.Sprintf("%s.api", handle))
-	p.client.CollectionsURL = viper.GetString(fmt.Sprintf("%s.collections_api", handle))
-	p.client.CollectionsApiKey = viper.GetString(fmt.Sprintf("%s.collections_api_key", handle))
+
 	p.client.HTTPClient = http.DefaultClient
+	p.client.BaseURL = viper.GetString(fmt.Sprintf("%s.api", handle))
+
+	p.collectionsClient.HTTPClient = http.DefaultClient
+	p.collectionsClient.CollectionsURL = viper.GetString(fmt.Sprintf("%s.collections_api", handle))
+	p.collectionsClient.CollectionsApiKey = viper.GetString(fmt.Sprintf("%s.collections_api_key", handle))
 	return nil
 }
 
@@ -163,7 +167,7 @@ func apiError(c *gin.Context, err error) bool {
 }
 
 func (p *Platform) GetCollections(owner string) (blockatlas.CollectionPage, error) {
-	items, err := p.client.GetCollections(owner)
+	items, err := p.collectionsClient.GetCollections(owner)
 	if err != nil {
 		return nil, err
 	}
@@ -172,7 +176,7 @@ func (p *Platform) GetCollections(owner string) (blockatlas.CollectionPage, erro
 }
 
 func (p *Platform) GetCollectibles(owner string, collectibleID string) (blockatlas.CollectiblePage, error) {
-	items, err := p.client.GetCollectibles(owner, collectibleID)
+	items, err := p.collectionsClient.GetCollectibles(owner, collectibleID)
 	if err != nil {
 		return nil, err
 	}
