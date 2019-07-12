@@ -47,8 +47,11 @@ const tokenTransferSrc = `
 
 const contractCallSrc = `
 {
+	addresses: [
+		"0x09862ed5908c0a336f9f92e5ffeb9768deac6091"
+	],
 	"operations": [],
-	"contract": null,
+	"contract": "0xe4dc0f23b1a3f2c47dc288a22f72e100e9b1cd70",
 	"_id": "0x34ab0028a9aa794d5cc12887e7b813cec17889948276b301028f24a408da6da4",
 	"blockNumber": 7522627,
 	"timeStamp": "1554661737",
@@ -107,15 +110,15 @@ const failedSrc = `
 }`
 
 var tokenTransferDst = blockatlas.Tx{
-	ID:   "0x7777854580f273df61e0162e1a41b3e1e05ab8b9f553036fa9329a90dd7e9ab2",
-	Coin: coin.ETH,
-	From: "0xd35f30d194684a391c63a6deced7d3dd5207c265",
-	To:   "0xf3586684107ce0859c44aa2b2e0fb8cd8731a15a",
-	Fee:    "358254913291776",
-	Date:   1554248437,
-	Block:  7491945,
+	ID:       "0x7777854580f273df61e0162e1a41b3e1e05ab8b9f553036fa9329a90dd7e9ab2",
+	Coin:     coin.ETH,
+	From:     "0xd35f30d194684a391c63a6deced7d3dd5207c265",
+	To:       "0xf3586684107ce0859c44aa2b2e0fb8cd8731a15a",
+	Fee:      "358254913291776",
+	Date:     1554248437,
+	Block:    7491945,
 	Sequence: 88,
-	Status: blockatlas.StatusCompleted,
+	Status:   blockatlas.StatusCompleted,
 	Meta: blockatlas.TokenTransfer{
 		Name:     "KaratBank Coin",
 		Symbol:   "KBC",
@@ -137,13 +140,28 @@ var contractCallDst = blockatlas.Tx{
 	Block:    7522627,
 	Sequence: 534,
 	Status:   blockatlas.StatusCompleted,
-	Meta:   blockatlas.ContractCall{
+	Meta: blockatlas.ContractCall{
 		Input: "0xfffdefefed",
 		Value: "1800000000000000000",
 	},
 }
 
 var transferDst = blockatlas.Tx{
+	ID:       "0x77f8a3b2203933493d103a1637de814b4853410b1fb2981c4d2cff4d7a3071ab",
+	Coin:     coin.ETH,
+	From:     "0xf5aea47e57c058881b31ee8fce1002c409188f06",
+	To:       "0x0ae933a89d9e249d0873cfc7ca022fcb3f1280ce",
+	Fee:      "105000000000000",
+	Date:     1554663642,
+	Block:    7522781,
+	Sequence: 88,
+	Status:   blockatlas.StatusCompleted,
+	Meta: blockatlas.Transfer{
+		Value: "1999895000000000000",
+	},
+}
+
+var transferContractDst = blockatlas.Tx{
 	ID:       "0x77f8a3b2203933493d103a1637de814b4853410b1fb2981c4d2cff4d7a3071ab",
 	Coin:     coin.ETH,
 	From:     "0xf5aea47e57c058881b31ee8fce1002c409188f06",
