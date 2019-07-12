@@ -40,3 +40,7 @@ type Contract struct {
 	TotalSupply string `json:"totalSupply"`
 	Name        string `json:"name"`
 }
+
+type NodeInfo struct {
+	LatestBlock int64 `json:"latest_block"`
+}
