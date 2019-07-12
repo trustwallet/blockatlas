@@ -41,6 +41,10 @@ type Contract struct {
 	Name        string `json:"name"`
 }
 
+type NodeInfo struct {
+	LatestBlock int64 `json:"latest_block"`
+}
+
 type Collection struct {
 	Name        string                 `json:"name"`
 	ImageUrl    string                 `json:"image_url"`

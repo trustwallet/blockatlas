@@ -51,3 +51,36 @@ func (c *Client) getTxs(uri string) (*Page, error) {
 	err = json.NewDecoder(res.Body).Decode(txs)
 	return txs, nil
 }
+
+func (c *Client) GetBlockByNumber(num int64) (page []Doc, err error) {
+	path := fmt.Sprintf("%s/transactions/block/%d", c.BaseURL, num)
+	res, err := http.Get(path)
+	if err != nil {
+		return nil, err
+	}
+	defer res.Body.Close()
+	dec := json.NewDecoder(res.Body)
+	err = dec.Decode(&page)
+	if err != nil {
+		return nil, err
+	}
+
+	return page, nil
+}
+
+func (c *Client) CurrentBlockNumber() (num int64, err error) {
+	path := fmt.Sprintf("%s/node_info", c.BaseURL)
+	res, err := http.Get(path)
+	if err != nil {
+		return num, err
+	}
+	defer res.Body.Close()
+	var nodeInfo NodeInfo
+	dec := json.NewDecoder(res.Body)
+	err = dec.Decode(&nodeInfo)
+	if err != nil {
+		return num, err
+	}
+
+	return nodeInfo.LatestBlock, nil
+}
