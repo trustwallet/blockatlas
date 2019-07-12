@@ -171,8 +171,8 @@ func (p *Platform) GetCollections(owner string) (blockatlas.CollectionPage, erro
 	return page, nil
 }
 
-func (p *Platform) GetCollectibles(owner string, contract string) (blockatlas.CollectiblePage, error) {
-	items, err := p.client.GetCollectibles(owner, contract)
+func (p *Platform) GetCollectibles(owner string, collectibleID string) (blockatlas.CollectiblePage, error) {
+	items, err := p.client.GetCollectibles(owner, collectibleID)
 	if err != nil {
 		return nil, err
 	}

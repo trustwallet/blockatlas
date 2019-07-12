@@ -21,7 +21,7 @@ func (c *Client) GetTxs(address string) (*Page, error) {
 	return c.getTxs(fmt.Sprintf("%s/transactions?%s",
 		c.BaseURL,
 		url.Values{
-			"address":  {address},
+			"address": {address},
 		}.Encode()))
 }
 
@@ -72,12 +72,12 @@ func (c Client) GetCollections(owner string) ([]Collection, error) {
 	return page, err
 }
 
-func (c Client) GetCollectibles(owner string, contract string) ([]Collectible, error) {
+func (c Client) GetCollectibles(owner string, collectibleID string) ([]Collectible, error) {
 	uri := fmt.Sprintf("%s/api/v1/assets/?%s",
 		c.CollectionsURL,
 		url.Values{
 			"owner":                  {owner},
-			"asset_contract_address": {contract},
+			"asset_contract_address": {collectibleID},
 			"limit":                  {strconv.Itoa(1000)},
 		}.Encode())
 	res, err := c.HTTPClient.Get(uri)
