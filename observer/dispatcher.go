@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"github.com/sirupsen/logrus"
+	"github.com/trustwallet/blockatlas"
 	"net/http"
 )
 
@@ -13,7 +14,7 @@ type Dispatcher struct {
 
 type DispatchEvent struct {
 	Action string      `json:"action"`
-	Result interface{} `json:"result"`
+	Result *blockatlas.Tx `json:"result"`
 }
 
 func (d *Dispatcher) Run(events <-chan Event) {
