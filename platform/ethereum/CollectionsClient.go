@@ -22,7 +22,7 @@ func (c CollectionsClient) GetCollections(owner string) ([]Collection, error) {
 			"limit":       {strconv.Itoa(1000)},
 		}.Encode())
 	req, _ := http.NewRequest("GET", uri, nil)
-	//req.Header.Set("X-API-KEY", c.CollectionsApiKey)
+	req.Header.Set("X-API-KEY", c.CollectionsApiKey)
 	res, err := c.HTTPClient.Do(req)
 	if err != nil {
 		return nil, err
