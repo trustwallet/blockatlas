@@ -242,7 +242,7 @@ func NormalizeCollectible(a Collectible, coinIndex uint) blockatlas.Collectible 
 		ContractAddress: a.AssetContract.Address,
 		Name:            a.Name,
 		Category:        a.AssetContract.Category,
-		ImageUrl:        a.ImageUrl,
+		ImageUrl:        a.ImagePreviewUrl,
 		ExternalLink:    a.ExternalLink,
 		Type:            "ERC721",
 		Description:     a.Description,

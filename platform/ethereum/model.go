@@ -65,12 +65,13 @@ type CollectiblePage struct {
 }
 
 type Collectible struct {
-	TokenId       string              `json:"token_id"`
-	AssetContract CollectibleContract `json:"asset_contract"`
-	ImageUrl      string              `json:"image_url"`
-	Name          string              `json:"name"`
-	ExternalLink  string              `json:"external_link"`
-	Description   string              `json:"description"`
+	TokenId         string              `json:"token_id"`
+	AssetContract   CollectibleContract `json:"asset_contract"`
+	ImageUrl        string              `json:"image_url"`
+	ImagePreviewUrl string              `json:"image_preview_url"`
+	Name            string              `json:"name"`
+	ExternalLink    string              `json:"external_link"`
+	Description     string              `json:"description"`
 }
 
 type CollectibleContract struct {
