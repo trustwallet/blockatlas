@@ -118,7 +118,7 @@
   symbol: TOMO
   handle: tomochain
   name: TOMO
-  blockTime: 10000
+  blockTime: 2000
   sampleAddress: '0x7daa83030e3086477b79b6e757ca8608899fe783'
 
 - id: 1001
@@ -126,7 +126,7 @@
   handle: thundertoken
   name: ThunderCore
   decimals: 18
-  blockTime: 10000
+  blockTime: 2000
   sampleAddress: '0x0ad80a408eac4f17ba0a9de8a12d8736f60700c3'
 
 - id: 1024
