@@ -93,7 +93,7 @@ func makeCollectionRoute(router gin.IRouter, api blockatlas.Platform) {
 		return
 	}
 
-	router.GET("/collections/:owner/", func(c *gin.Context) {
+	router.GET("/collections/:owner", func(c *gin.Context) {
 		collections, err := collectionAPI.GetCollections(c.Param("owner"))
 
 		if err != nil {
