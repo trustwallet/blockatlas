@@ -58,6 +58,7 @@ type PrimaryAssetContract struct {
 	NftVersion  string `json:"nft_version"`
 	Symbol      string `json:"symbol"`
 	Description string `json:"description"`
+	Type        string `json:"schema_name"`
 }
 
 type CollectiblePage struct {

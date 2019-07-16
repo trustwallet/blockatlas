@@ -224,7 +224,7 @@ func NormalizeCollection(c Collection, coinIndex uint, owner string) blockatlas.
 		Address:         owner,
 		Version:         c.Contract[0].NftVersion,
 		Coin:            coinIndex,
-		Type:            "ERC721",
+		Type:            c.Contract[0].Type,
 	}
 }
 
