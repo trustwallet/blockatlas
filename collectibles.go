@@ -6,7 +6,7 @@ type Collection struct {
 	ImageUrl        string `json:"image_url"`
 	Description     string `json:"description"`
 	ExternalLink    string `json:"external_link"`
-	Total           string `json:"total"`
+	Total           int    `json:"total"`
 	CategoryAddress string `json:"category_address"`
 	Address         string `json:"address"`
 	Version         string `json:"version"`

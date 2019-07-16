@@ -219,7 +219,7 @@ func NormalizeCollection(c Collection, coinIndex uint) blockatlas.Collection {
 		ImageUrl:        c.ImageUrl,
 		Description:     c.Contract[0].Description,
 		ExternalLink:    c.ExternalUrl,
-		Total:           strconv.Itoa(c.Total),
+		Total:           c.Total,
 		CategoryAddress: c.Contract[0].Address,
 		Address:         "",
 		Version:         c.Contract[0].NftVersion,
