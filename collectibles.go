@@ -9,7 +9,7 @@ type Collection struct {
 	Total           int    `json:"total"`
 	CategoryAddress string `json:"category_address"`
 	Address         string `json:"address"`
-	Version         string `json:"version"`
+	Version         string `json:"nft_version"`
 	Coin            uint   `json:"coin"`
 	Type            string `json:"type"`
 }
