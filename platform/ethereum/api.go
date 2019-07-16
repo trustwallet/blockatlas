@@ -191,7 +191,7 @@ func (p *Platform) GetCollections(owner string) (blockatlas.CollectionPage, erro
 	if err != nil {
 		return nil, err
 	}
-	page := NormalizeCollectionPage(items, p.CoinIndex)
+	page := NormalizeCollectionPage(items, p.CoinIndex, owner)
 	return page, nil
 }
 
@@ -204,15 +204,15 @@ func (p *Platform) GetCollectibles(owner string, collectibleID string) (blockatl
 	return page, nil
 }
 
-func NormalizeCollectionPage(srcPage []Collection, coinIndex uint) (page blockatlas.CollectionPage) {
+func NormalizeCollectionPage(srcPage []Collection, coinIndex uint, owner string) (page blockatlas.CollectionPage) {
 	for _, src := range srcPage {
-		item := NormalizeCollection(src, coinIndex)
+		item := NormalizeCollection(src, coinIndex, owner)
 		page = append(page, item)
 	}
 	return
 }
 
-func NormalizeCollection(c Collection, coinIndex uint) blockatlas.Collection {
+func NormalizeCollection(c Collection, coinIndex uint, owner string) blockatlas.Collection {
 	return blockatlas.Collection{
 		Name:            c.Name,
 		Symbol:          c.Contract[0].Symbol,
@@ -221,7 +221,7 @@ func NormalizeCollection(c Collection, coinIndex uint) blockatlas.Collection {
 		ExternalLink:    c.ExternalUrl,
 		Total:           c.Total,
 		CategoryAddress: c.Contract[0].Address,
-		Address:         "",
+		Address:         owner,
 		Version:         c.Contract[0].NftVersion,
 		Coin:            coinIndex,
 		Type:            "ERC721",
