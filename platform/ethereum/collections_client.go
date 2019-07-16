@@ -21,6 +21,7 @@ func (c CollectionsClient) GetCollections(owner string) ([]Collection, error) {
 			"asset_owner": {owner},
 			"limit":       {strconv.Itoa(1000)},
 		}.Encode())
+
 	req, _ := http.NewRequest("GET", uri, nil)
 	req.Header.Set("X-API-KEY", c.CollectionsApiKey)
 	res, err := c.HTTPClient.Do(req)
@@ -28,6 +29,7 @@ func (c CollectionsClient) GetCollections(owner string) ([]Collection, error) {
 		return nil, err
 	}
 	defer res.Body.Close()
+
 	var page []Collection
 	err = json.NewDecoder(res.Body).Decode(&page)
 	return page, err
@@ -41,11 +43,15 @@ func (c CollectionsClient) GetCollectibles(owner string, collectibleID string) (
 			"asset_contract_address": {collectibleID},
 			"limit":                  {strconv.Itoa(1000)},
 		}.Encode())
-	res, err := c.HTTPClient.Get(uri)
+
+	req, _ := http.NewRequest("GET", uri, nil)
+	req.Header.Set("X-API-KEY", c.CollectionsApiKey)
+	res, err := c.HTTPClient.Do(req)
 	if err != nil {
 		return nil, err
 	}
 	defer res.Body.Close()
+
 	var page CollectiblePage
 	err = json.NewDecoder(res.Body).Decode(&page)
 	return page.Collectibles, err
