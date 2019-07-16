@@ -26,8 +26,8 @@ func (p *Platform) Init() error {
 	p.client.BaseURL = viper.GetString(fmt.Sprintf("%s.api", handle))
 
 	p.collectionsClient.HTTPClient = http.DefaultClient
-	p.collectionsClient.CollectionsURL = viper.GetString(fmt.Sprintf("%s.collections_api", handle))
-	p.collectionsClient.CollectionsApiKey = viper.GetString(fmt.Sprintf("%s.collections_api_key", handle))
+	p.collectionsClient.CollectionsURL = viper.GetString(fmt.Sprintf("%s.opensea_api", handle))
+	p.collectionsClient.CollectionsApiKey = viper.GetString(fmt.Sprintf("%s.opensea_api_key", handle))
 	return nil
 }
 

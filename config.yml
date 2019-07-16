@@ -51,8 +51,8 @@ tezos:
 # [ETH] Ethereum: https://ethereum.org (Trust-Ray API)
 #ethereum:
 #  api: https://localhost:4567
-#  collections_api: https://api.opensea.io
-#  collections_api_key: [opensea_api_key]
+#  opensea_api: https://api.opensea.io
+#  opensea_api_key: [opensea_api_key]
 
 # [ETC] Ethereum Classic: https://ethereumclassic.org (Trust-Ray API)
 # classic:
