@@ -2,10 +2,12 @@ package ethereum
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
 	"strconv"
+	"strings"
 )
 
 type CollectionsClient struct {
@@ -36,13 +38,25 @@ func (c CollectionsClient) GetCollections(owner string) ([]Collection, error) {
 }
 
 func (c CollectionsClient) GetCollectibles(owner string, collectibleID string) ([]Collectible, error) {
+	collections, err := c.GetCollections(owner)
+	if err != nil {
+		return nil, err
+	}
+	collection := searchCollection(&collections, collectibleID)
+	if collection == nil {
+		return nil, errors.New(fmt.Sprintf("%s not found", collectibleID))
+	}
+
+	uriValues := url.Values{
+		"owner": {owner},
+		"limit": {strconv.Itoa(1000)},
+	}
+	for _, i := range collection.Contracts {
+		uriValues.Add("asset_contract_addresses", i.Address)
+	}
 	uri := fmt.Sprintf("%s/api/v1/assets/?%s",
 		c.CollectionsURL,
-		url.Values{
-			"owner":                  {owner},
-			"asset_contract_address": {collectibleID},
-			"limit":                  {strconv.Itoa(1000)},
-		}.Encode())
+		uriValues.Encode())
 
 	req, _ := http.NewRequest("GET", uri, nil)
 	req.Header.Set("X-API-KEY", c.CollectionsApiKey)
@@ -55,4 +69,15 @@ func (c CollectionsClient) GetCollectibles(owner string, collectibleID string) (
 	var page CollectiblePage
 	err = json.NewDecoder(res.Body).Decode(&page)
 	return page.Collectibles, err
+}
+
+func searchCollection(collections *[]Collection, collectibleID string) *Collection {
+	for _, i := range *collections {
+		for _, contract := range i.Contracts {
+			if strings.EqualFold(contract.Address, collectibleID) {
+				return &i
+			}
+		}
+	}
+	return nil
 }

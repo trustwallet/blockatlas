@@ -206,17 +206,8 @@ func (p *Platform) GetCollectibles(owner string, collectibleID string) (blockatl
 
 func NormalizeCollectionPage(collections []Collection, coinIndex uint, owner string) (page blockatlas.CollectionPage) {
 	for _, collection := range collections {
-		l := len(collection.Contracts)
-		switch {
-		case l == 1:
-			item := NormalizeCollection(collection, coinIndex, owner)
-			page = append(page, item)
-		case l > 1:
-			for _, col := range collection.Contracts {
-				item := NormalizeMultiCollection(col, coinIndex, owner)
-				page = append(page, item)
-			}
-		}
+		item := NormalizeCollection(collection, coinIndex, owner)
+		page = append(page, item)
 	}
 	return
 }
@@ -234,27 +225,6 @@ func NormalizeCollection(c Collection, coinIndex uint, owner string) blockatlas.
 		Version:         c.Contracts[0].NftVersion,
 		Coin:            coinIndex,
 		Type:            c.Contracts[0].Type,
-	}
-}
-
-func NormalizeMultiCollection(c PrimaryAssetContract, coinIndex uint, owner string) blockatlas.Collection {
-	var imageUrl string
-	if len(c.Data.Images) > 0 {
-		imageUrl = c.Data.Images[0]
-	}
-
-	return blockatlas.Collection{
-		Name:            c.Name,
-		Symbol:          c.Symbol,
-		ImageUrl:        imageUrl,
-		Description:     c.Description,
-		ExternalLink:    c.Url,
-		Total:           1,
-		CategoryAddress: c.Address,
-		Address:         owner,
-		Version:         c.NftVersion,
-		Coin:            coinIndex,
-		Type:            c.Type,
 	}
 }
 
