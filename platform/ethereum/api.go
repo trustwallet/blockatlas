@@ -206,18 +206,16 @@ func (p *Platform) GetCollectibles(owner string, collectibleID string) (blockatl
 
 func NormalizeCollectionPage(collections []Collection, coinIndex uint, owner string) (page blockatlas.CollectionPage) {
 	for _, collection := range collections {
-		if len(collection.Contracts) == 1 {
+		l := len(collection.Contracts)
+		switch {
+		case l == 1:
 			item := NormalizeCollection(collection, coinIndex, owner)
 			page = append(page, item)
-			continue
-		}
-
-		if len(collection.Contracts) > 1 {
+		case l > 1:
 			for _, col := range collection.Contracts {
 				item := NormalizeMultiCollection(col, coinIndex, owner)
 				page = append(page, item)
 			}
-			continue
 		}
 	}
 	return
