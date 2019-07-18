@@ -239,9 +239,9 @@ func NormalizeCollectiblePage(c *Collection, srcPage []Collectible, coinIndex ui
 func NormalizeCollectible(c *Collection, a Collectible, coinIndex uint) blockatlas.Collectible {
 	return blockatlas.Collectible{
 		TokenID:         a.TokenId,
-		ContractAddress: c.Contracts[0].Address,
+		ContractAddress: c.Contracts[0].Address, ///a.AssetContract.Address
 		Name:            a.Name,
-		Category:        c.Name,
+		Category:        c.Name, //a.AssetContract.Category
 		ImageUrl:        a.ImagePreviewUrl,
 		ExternalLink:    a.ExternalLink,
 		Type:            "ERC721",
