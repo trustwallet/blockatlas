@@ -79,6 +79,7 @@ type Collectible struct {
 	ImagePreviewUrl string              `json:"image_preview_url"`
 	Name            string              `json:"name"`
 	ExternalLink    string              `json:"external_link"`
+	Permalink       string              `json:"permalink"`
 	Description     string              `json:"description"`
 }
 

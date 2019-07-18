@@ -22,6 +22,7 @@ type Collectible struct {
 	Category        string `json:"category"`
 	ImageUrl        string `json:"image_url"`
 	ExternalLink    string `json:"external_link"`
+	ProviderLink    string `json:"provider_link"`
 	Type            string `json:"type"`
 	Description     string `json:"description"`
 	Coin            uint   `json:"coin"`

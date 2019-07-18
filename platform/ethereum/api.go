@@ -244,6 +244,7 @@ func NormalizeCollectible(c *Collection, a Collectible, coinIndex uint) blockatl
 		Category:        c.Name, //a.AssetContract.Category
 		ImageUrl:        a.ImagePreviewUrl,
 		ExternalLink:    a.ExternalLink,
+		ProviderLink:    a.Permalink,
 		Type:            "ERC721",
 		Description:     a.Description,
 		Coin:            coinIndex,
