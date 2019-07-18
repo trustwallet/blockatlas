@@ -37,14 +37,14 @@ func (c CollectionsClient) GetCollections(owner string) ([]Collection, error) {
 	return page, err
 }
 
-func (c CollectionsClient) GetCollectibles(owner string, collectibleID string) ([]Collectible, error) {
+func (c CollectionsClient) GetCollectibles(owner string, collectibleID string) (*Collection, []Collectible, error) {
 	collections, err := c.GetCollections(owner)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	collection := searchCollection(&collections, collectibleID)
 	if collection == nil {
-		return nil, errors.New(fmt.Sprintf("%s not found", collectibleID))
+		return nil, nil, errors.New(fmt.Sprintf("%s not found", collectibleID))
 	}
 
 	uriValues := url.Values{
@@ -62,13 +62,13 @@ func (c CollectionsClient) GetCollectibles(owner string, collectibleID string) (
 	req.Header.Set("X-API-KEY", c.CollectionsApiKey)
 	res, err := c.HTTPClient.Do(req)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	defer res.Body.Close()
 
 	var page CollectiblePage
 	err = json.NewDecoder(res.Body).Decode(&page)
-	return page.Collectibles, err
+	return collection, page.Collectibles, err
 }
 
 func searchCollection(collections *[]Collection, collectibleID string) *Collection {

@@ -196,11 +196,11 @@ func (p *Platform) GetCollections(owner string) (blockatlas.CollectionPage, erro
 }
 
 func (p *Platform) GetCollectibles(owner string, collectibleID string) (blockatlas.CollectiblePage, error) {
-	items, err := p.collectionsClient.GetCollectibles(owner, collectibleID)
+	collection, items, err := p.collectionsClient.GetCollectibles(owner, collectibleID)
 	if err != nil {
 		return nil, err
 	}
-	page := NormalizeCollectiblePage(items, p.CoinIndex)
+	page := NormalizeCollectiblePage(collection, items, p.CoinIndex)
 	return page, nil
 }
 
@@ -228,20 +228,20 @@ func NormalizeCollection(c Collection, coinIndex uint, owner string) blockatlas.
 	}
 }
 
-func NormalizeCollectiblePage(srcPage []Collectible, coinIndex uint) (page blockatlas.CollectiblePage) {
+func NormalizeCollectiblePage(c *Collection, srcPage []Collectible, coinIndex uint) (page blockatlas.CollectiblePage) {
 	for _, src := range srcPage {
-		item := NormalizeCollectible(src, coinIndex)
+		item := NormalizeCollectible(c, src, coinIndex)
 		page = append(page, item)
 	}
 	return
 }
 
-func NormalizeCollectible(a Collectible, coinIndex uint) blockatlas.Collectible {
+func NormalizeCollectible(c *Collection, a Collectible, coinIndex uint) blockatlas.Collectible {
 	return blockatlas.Collectible{
 		TokenID:         a.TokenId,
-		ContractAddress: a.AssetContract.Address,
+		ContractAddress: c.Contracts[0].Address,
 		Name:            a.Name,
-		Category:        a.AssetContract.Category,
+		Category:        c.Name,
 		ImageUrl:        a.ImagePreviewUrl,
 		ExternalLink:    a.ExternalLink,
 		Type:            "ERC721",
