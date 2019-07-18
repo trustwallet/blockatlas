@@ -187,11 +187,11 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 }
 
 func (p *Platform) GetCollections(owner string) (blockatlas.CollectionPage, error) {
-	items, err := p.collectionsClient.GetCollections(owner)
+	collections, err := p.collectionsClient.GetCollections(owner)
 	if err != nil {
 		return nil, err
 	}
-	page := NormalizeCollectionPage(items, p.CoinIndex, owner)
+	page := NormalizeCollectionPage(collections, p.CoinIndex, owner)
 	return page, nil
 }
 
@@ -204,10 +204,21 @@ func (p *Platform) GetCollectibles(owner string, collectibleID string) (blockatl
 	return page, nil
 }
 
-func NormalizeCollectionPage(srcPage []Collection, coinIndex uint, owner string) (page blockatlas.CollectionPage) {
-	for _, src := range srcPage {
-		item := NormalizeCollection(src, coinIndex, owner)
-		page = append(page, item)
+func NormalizeCollectionPage(collections []Collection, coinIndex uint, owner string) (page blockatlas.CollectionPage) {
+	for _, collection := range collections {
+		if len(collection.Contracts) == 1 {
+			item := NormalizeCollection(collection, coinIndex, owner)
+			page = append(page, item)
+			continue
+		}
+
+		if len(collection.Contracts) > 1 {
+			for _, col := range collection.Contracts {
+				item := NormalizeMultiCollection(col, coinIndex, owner)
+				page = append(page, item)
+			}
+			continue
+		}
 	}
 	return
 }
@@ -215,16 +226,37 @@ func NormalizeCollectionPage(srcPage []Collection, coinIndex uint, owner string)
 func NormalizeCollection(c Collection, coinIndex uint, owner string) blockatlas.Collection {
 	return blockatlas.Collection{
 		Name:            c.Name,
-		Symbol:          c.Contract[0].Symbol,
+		Symbol:          c.Contracts[0].Symbol,
 		ImageUrl:        c.ImageUrl,
-		Description:     c.Contract[0].Description,
+		Description:     c.Contracts[0].Description,
 		ExternalLink:    c.ExternalUrl,
 		Total:           c.Total,
-		CategoryAddress: c.Contract[0].Address,
+		CategoryAddress: c.Contracts[0].Address,
 		Address:         owner,
-		Version:         c.Contract[0].NftVersion,
+		Version:         c.Contracts[0].NftVersion,
 		Coin:            coinIndex,
-		Type:            c.Contract[0].Type,
+		Type:            c.Contracts[0].Type,
+	}
+}
+
+func NormalizeMultiCollection(c PrimaryAssetContract, coinIndex uint, owner string) blockatlas.Collection {
+	var imageUrl string
+	if len(c.Data.Images) > 0 {
+		imageUrl = c.Data.Images[0]
+	}
+
+	return blockatlas.Collection{
+		Name:            c.Name,
+		Symbol:          c.Symbol,
+		ImageUrl:        imageUrl,
+		Description:     c.Description,
+		ExternalLink:    c.Url,
+		Total:           1,
+		CategoryAddress: c.Address,
+		Address:         owner,
+		Version:         c.NftVersion,
+		Coin:            coinIndex,
+		Type:            c.Type,
 	}
 }
 

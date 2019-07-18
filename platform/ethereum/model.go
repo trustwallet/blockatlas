@@ -50,15 +50,22 @@ type Collection struct {
 	ImageUrl    string                 `json:"image_url"`
 	ExternalUrl string                 `json:"external_url"`
 	Total       int                    `json:"owned_asset_count"`
-	Contract    []PrimaryAssetContract `json:"primary_asset_contracts"`
+	Contracts   []PrimaryAssetContract `json:"primary_asset_contracts"`
 }
 
 type PrimaryAssetContract struct {
-	Address     string `json:"address"`
-	NftVersion  string `json:"nft_version"`
-	Symbol      string `json:"symbol"`
-	Description string `json:"description"`
-	Type        string `json:"schema_name"`
+	Name        string 		`json:"name"`
+	Address     string 		`json:"address"`
+	NftVersion  string      `json:"nft_version"`
+	Symbol      string      `json:"symbol"`
+	Description string      `json:"description"`
+	Type        string      `json:"schema_name"`
+	Data        DisplayData `json:"display_data"`
+	Url         string      `json:"external_link"`
+}
+
+type DisplayData struct {
+	Images []string `json:"images"`
 }
 
 type CollectiblePage struct {
