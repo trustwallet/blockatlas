@@ -49,7 +49,7 @@ func (c CollectionsClient) GetCollectibles(owner string, collectibleID string) (
 
 	uriValues := url.Values{
 		"owner": {owner},
-		"limit": {strconv.Itoa(1000)},
+		"limit": {strconv.Itoa(300)},
 	}
 	for _, i := range collection.Contracts {
 		uriValues.Add("asset_contract_addresses", i.Address)
