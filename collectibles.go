@@ -17,7 +17,10 @@ type Collection struct {
 type CollectionPage []Collection
 
 type Collectible struct {
-	TokenID         string `json:"token_id"`
+	CollectionID     string `json:"collection_id"`
+	TokenID          string `json:"token_id"`
+	CategoryContract string `json:"category_contract"`
+	// Deprecated: for support old client, ContractAddress eq CollectionID
 	ContractAddress string `json:"contract_address"`
 	Category        string `json:"category"`
 	ImageUrl        string `json:"image_url"`
