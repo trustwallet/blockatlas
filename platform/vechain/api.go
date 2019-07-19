@@ -29,7 +29,7 @@ func (p *Platform) Coin() coin.Coin {
 const VeThorContract = "0x0000000000000000000000000000456e65726779"
 
 func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
-	return p.getTokenTxsByAddress(address)
+	return p.getTxsByAddress(address)
 }
 
 func (p *Platform) GetTokenTxsByAddress(address string, token string) (blockatlas.TxPage, error) {
@@ -43,13 +43,36 @@ func (p *Platform) GetTokenTxsByAddress(address string, token string) (blockatla
 func (p *Platform) getThorTxsByAddress(address string) ([]blockatlas.Tx, error) {
 	sourceTxs, _ := p.client.GetTokenTransfers(address)
 
+	receiptsChan := make(chan *TransferReceipt, len(sourceTxs.TokenTransfers))
+
+	sem := util.NewSemaphore(16)
+	var wg sync.WaitGroup
+	wg.Add(len(sourceTxs.TokenTransfers))
+	for _, t := range sourceTxs.TokenTransfers {
+		go func(t TokenTransfer) {
+			defer wg.Done()
+			sem.Acquire()
+			defer sem.Release()
+			receipt, err := p.client.GetTransactionReceipt(t.TxID)
+			if err != nil {
+				logrus.WithError(err).WithField("platform", "vechain").
+					Warnf("Failed to get tx receipt for %s", t.TxID)
+			}
+			receiptsChan <- receipt
+		}(t)
+	}
+
+	wg.Wait()
+	close(receiptsChan)
+
 	var txs []blockatlas.Tx
 	for _, t := range sourceTxs.TokenTransfers {
-		if strings.ToLower(t.ContractAddress) != VeThorContract {
+		if !strings.EqualFold(t.ContractAddress, VeThorContract) {
 			continue
 		}
 
-		if tx, ok := NormalizeTokenTransfer(&t); ok {
+		receipt := findTransferReceiptByTxID(receiptsChan, t.TxID)
+		if tx, ok := NormalizeTokenTransfer(&t, &receipt); ok {
 			txs = append(txs, tx)
 		}
 	}
@@ -57,7 +80,21 @@ func (p *Platform) getThorTxsByAddress(address string) ([]blockatlas.Tx, error) 
 	return txs, nil
 }
 
-func (p *Platform) getTokenTxsByAddress(address string) ([]blockatlas.Tx, error) {
+func findTransferReceiptByTxID(receiptsChan chan *TransferReceipt, txID string) (TransferReceipt) {
+
+	var transferReceipt TransferReceipt
+
+	for receipt := range receiptsChan {
+		if receipt.ID == txID {
+			transferReceipt = *receipt
+			break
+		}
+	}
+
+	return transferReceipt
+}
+
+func (p *Platform) getTxsByAddress(address string) ([]blockatlas.Tx, error) {
 	sourceTxs, _ := p.client.GetTransactions(address)
 
 	receiptsChan := make(chan *TransferReceipt, len(sourceTxs.Transactions))
@@ -66,7 +103,7 @@ func (p *Platform) getTokenTxsByAddress(address string) ([]blockatlas.Tx, error)
 	var wg sync.WaitGroup
 	wg.Add(len(sourceTxs.Transactions))
 	for _, t := range sourceTxs.Transactions {
-		go func() {
+		go func(t Tx) {
 			defer wg.Done()
 			sem.Acquire()
 			defer sem.Release()
@@ -76,7 +113,7 @@ func (p *Platform) getTokenTxsByAddress(address string) ([]blockatlas.Tx, error)
 					Warnf("Failed to get tx receipt for %s", t.ID)
 			}
 			receiptsChan <- receipt
-		}()
+		}(t)
 	}
 
 	wg.Wait()
@@ -85,7 +122,7 @@ func (p *Platform) getTokenTxsByAddress(address string) ([]blockatlas.Tx, error)
 	var txs []blockatlas.Tx
 	for receipt := range receiptsChan {
 		for _, clause := range receipt.Clauses {
-			if receipt.Origin != address && clause.To != address {
+			if !strings.EqualFold(receipt.Origin, address) && !strings.EqualFold(clause.To, address) {
 				continue
 			}
 			tx, ok := NormalizeTransfer(receipt, &clause)
@@ -129,11 +166,16 @@ func NormalizeTransfer(receipt *TransferReceipt, clause *Clause) (tx blockatlas.
 	}, true
 }
 
-func NormalizeTokenTransfer(t *TokenTransfer) (tx blockatlas.Tx, ok bool) {
+func NormalizeTokenTransfer(t *TokenTransfer, receipt *TransferReceipt) (tx blockatlas.Tx, ok bool) {
+	feeBase10, err := util.HexToDecimal(receipt.Receipt.Paid)
+	if err != nil {
+		return tx, false
+	}
 	valueBase10, err := util.HexToDecimal(t.Amount)
 	if err != nil {
 		return tx, false
 	}
+	fee := blockatlas.Amount(feeBase10)
 	value := blockatlas.Amount(valueBase10)
 	from := t.Origin
 	to := t.Receiver
@@ -144,7 +186,7 @@ func NormalizeTokenTransfer(t *TokenTransfer) (tx blockatlas.Tx, ok bool) {
 		Coin:     coin.VET,
 		From:     from,
 		To:       to,
-		Fee:      "0",
+		Fee:      fee,
 		Date:     t.Timestamp,
 		Type:     blockatlas.TxNativeTokenTransfer,
 		Block:    block,
@@ -160,3 +202,4 @@ func NormalizeTokenTransfer(t *TokenTransfer) (tx blockatlas.Tx, ok bool) {
 		},
 	}, true
 }
+
