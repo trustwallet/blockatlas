@@ -38,8 +38,14 @@ func TestMemoryStorage_Add(t *testing.T) {
 		},
 	})
 
-	if len(observerMap) != 3 {
-		t.Error("observer not added")
+	if len(observerMap) != 2 {
+		t.Error("incorrect map")
+	}
+	if len(observerMap[encodeKey(ethCoin, addr1)]) != 2 {
+		t.Error("incorrect hook list")
+	}
+	if len(observerMap[encodeKey(ethCoin, addr2)]) != 1 {
+		t.Error("incorrect hook list")
 	}
 }
 
@@ -52,7 +58,7 @@ func TestMemoryStorage_List(t *testing.T) {
 	observerMap[encodeKey(ethCoin, addr1)] = []string{webhook1, webhook2}
 	observerMap[encodeKey(ethCoin, addr2)] = []string{webhook2}
 
-	if len(storage.List()) != 2 {
+	if len(storage.List()) != 3 {
 		t.Error("observers not listed properly")
 	}
 }

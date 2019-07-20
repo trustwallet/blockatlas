@@ -132,7 +132,7 @@ func encodeKey(coin uint, address string) string {
 }
 
 func decodeKey(key string) (coin uint, address string) {
-	parts := strings.SplitN(key, "-", 1)
+	parts := strings.SplitN(key, "-", 2)
 	coin64, _ := strconv.ParseUint(parts[0], 10, 32)
 	coin = uint(coin64)
 	address = parts[1]
