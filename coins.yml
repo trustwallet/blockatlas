@@ -3,6 +3,7 @@
   handle: ethereum
   name: Ether
   decimals: 18
+  blockTime: 10000
   sampleAddress: '0xfc10cab6a50a1ab10c56983c80cc82afc6559cf1'
 
 - id: 61
@@ -10,6 +11,7 @@
   handle: classic
   name: Ether Classic
   decimals: 18
+  blockTime: 10000
   sampleAddress: '0xf3524415b6D873205B4c3Cda783527b2aC4daAA9'
 
 - id: 74
@@ -38,6 +40,7 @@
   handle: stellar
   name: Stellar Lumens
   decimals: 7
+  blockTime: 1000
   sampleAddress: 'GDKIJJIKXLOM2NRMPNQZUUYK24ZPVFC6426GZAEP3KUK6KEJLACCWNMX'
 
 - id: 178
@@ -45,6 +48,7 @@
   handle: poa
   name: Poa
   decimals: 18
+  blockTime: 10000
   sampleAddress: '0x1fddEc96688e0538A316C64dcFd211c491ECf0d8'
 
 - id: 195
@@ -107,12 +111,14 @@
   handle: callisto
   name: Callisto
   decimals: 18
+  blockTime: 10000
   sampleAddress: '0x39ec1c88a7a7c1a575e8c8f42eff7630d9278179'
 
 - id: 889
   symbol: TOMO
   handle: tomochain
   name: TOMO
+  blockTime: 2000
   sampleAddress: '0x7daa83030e3086477b79b6e757ca8608899fe783'
 
 - id: 1001
@@ -120,6 +126,7 @@
   handle: thundertoken
   name: ThunderCore
   decimals: 18
+  blockTime: 2000
   sampleAddress: '0x0ad80a408eac4f17ba0a9de8a12d8736f60700c3'
 
 - id: 1024
@@ -147,6 +154,7 @@
   handle: gochain
   name: GoChain GO
   decimals: 18
+  blockTime: 10000
   sampleAddress: '0x76c2F81716A8D198a00502Ae9a59126418899FDe'
 
 - id: 5718350
@@ -154,6 +162,7 @@
   handle: wanchain
   name: Wanchain
   decimals: 18
+  blockTime: 10000
   sampleAddress: '0x36cEdc3A9d969306AF4F7CA2b83ABBf74095914d'
 
 - id: 5741564

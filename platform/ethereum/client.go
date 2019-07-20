@@ -10,8 +10,10 @@ import (
 )
 
 type Client struct {
-	HTTPClient *http.Client
-	BaseURL    string
+	HTTPClient        *http.Client
+	BaseURL           string
+	CollectionsURL    string
+	CollectionsApiKey string
 }
 
 func (c *Client) GetTxs(address string) (*Page, error) {

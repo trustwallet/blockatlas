@@ -26,6 +26,11 @@ func loadPlatforms(root gin.IRouter) {
 		makeStakingRoute(router, stakeAPI)
 	}
 
+	for _, collectionAPI := range platform.Platforms {
+		router := getRouter(v2, collectionAPI.Coin().Handle)
+		makeCollectionRoute(router, collectionAPI)
+	}
+
 	for _, customAPI := range platform.CustomAPIs {
 		router := getRouter(v1, customAPI.Coin().Handle)
 		customAPI.RegisterRoutes(router)
