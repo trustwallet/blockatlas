@@ -17,6 +17,7 @@ type Platform struct {
 
 func (p *Platform) Init() error {
 	p.client.BaseURL = viper.GetString("binance.api")
+	p.client.BaseDexURL = viper.GetString("binance.dex")
 	p.client.HTTPClient = http.DefaultClient
 	return nil
 }
