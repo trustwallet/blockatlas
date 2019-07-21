@@ -104,3 +104,16 @@ type ContractCall struct {
 	Input string `json:"input"`
 	Value string `json:"value"`
 }
+
+// TokenPage is a page of transactions.
+type TokenPage []Token
+
+// TokenTransfer describes the non-native tokens.
+// Examples: ERC-20, TRC20
+type Token struct {
+	Name     string `json:"name"`
+	Symbol   string `json:"symbol"`
+	Decimals uint   `json:"decimals"`
+	TokenId  string `json:"tokenID"`
+	Coin     uint   `coin:"data"`
+}
