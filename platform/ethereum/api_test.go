@@ -292,12 +292,12 @@ func testNormalizeToken(t *testing.T, _test *testToken) {
 		t.Error(err)
 		return
 	}
-	tx, ok := NormalizeToken(&token)
+	tk, ok := NormalizeToken(&token)
 	if !ok {
-		t.Errorf("transfer: tx could not be normalized")
+		t.Errorf("token: token could not be normalized")
 	}
 
-	resJSON, err := json.Marshal(&tx)
+	resJSON, err := json.Marshal(&tk)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -310,6 +310,6 @@ func testNormalizeToken(t *testing.T, _test *testToken) {
 	if !bytes.Equal(resJSON, dstJSON) {
 		println(string(resJSON))
 		println(string(dstJSON))
-		t.Error("transfer: tx don't equal")
+		t.Error("token: token don't equal")
 	}
 }
