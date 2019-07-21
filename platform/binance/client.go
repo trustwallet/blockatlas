@@ -15,6 +15,7 @@ import (
 type Client struct {
 	HTTPClient *http.Client
 	BaseURL    string
+	BaseDexURL string
 }
 
 func (c *Client) GetBlockList(count int) (*BlockList, error) {
@@ -46,8 +47,8 @@ func (c *Client) GetBlockByNumber(num int64) (*TxPage, error) {
 			"blockHeight": {strconv.FormatInt(num, 10)},
 			// Only first 100 transactions of block returned
 			// Shouldn't be a problem at the current transaction rate
-			"rows":        {"100"},
-			"page":        {"1"},
+			"rows": {"100"},
+			"page": {"1"},
 		}.Encode())
 
 	res, err := c.HTTPClient.Get(uri)
@@ -88,6 +89,47 @@ func (c *Client) GetTxsOfAddress(address string, token string) (*TxPage, error) 
 	return stx, nil
 }
 
+func (c *Client) GetAccountMetadata(address string) (*Account, error) {
+	uri := fmt.Sprintf("%s/account/%s", c.BaseDexURL, address)
+
+	res, err := c.HTTPClient.Get(uri)
+	if err != nil {
+		logrus.WithError(err).Error("Binance: Failed to get account metadata")
+		return nil, blockatlas.ErrSourceConn
+	}
+
+	if err := getHTTPError(res, "GetAccountMetadata"); err != nil {
+		return nil, err
+	}
+
+	sac := new(Account)
+	err = json.NewDecoder(res.Body).Decode(sac)
+	return sac, nil
+}
+
+func (c *Client) GetTokens() (*TokenPage, error) {
+	uri := fmt.Sprintf("%s/tokens?%s",
+		c.BaseDexURL,
+		url.Values{
+			"limits": {"1000"},
+			"offset": {"0"},
+		}.Encode())
+
+	res, err := c.HTTPClient.Get(uri)
+	if err != nil {
+		logrus.WithError(err).Error("Binance: Failed to get tokens")
+		return nil, blockatlas.ErrSourceConn
+	}
+
+	if err := getHTTPError(res, "GetTokens"); err != nil {
+		return nil, err
+	}
+
+	stp := new(TokenPage)
+	err = json.NewDecoder(res.Body).Decode(stp)
+	return stp, nil
+}
+
 func getHTTPError(res *http.Response, desc string) error {
 	switch res.StatusCode {
 	case http.StatusBadRequest, http.StatusNotFound:
@@ -112,7 +154,7 @@ func getAPIError(res *http.Response, desc string) error {
 		return blockatlas.ErrInvalidAddr
 	}
 
-	logrus.WithFields(logrus.Fields {
+	logrus.WithFields(logrus.Fields{
 		"status":  res.StatusCode,
 		"code":    sErr.Code,
 		"message": sErr.Message,

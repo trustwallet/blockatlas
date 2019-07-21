@@ -15,9 +15,9 @@ type Account struct {
 
 type Balance struct {
 	Symbol string `json:"symbol"`
-	Free   uint64 `json:"free"`
-	Locked uint64 `json:"locked"`
-	Frozen uint64 `json:"frozen"`
+	Free   string `json:"free"`
+	Locked string `json:"locked"`
+	Frozen string `json:"frozen"`
 }
 
 type Error struct {
@@ -57,6 +57,27 @@ type Tx struct {
 type TxPage struct {
 	Nums int  `json:"txNums"`
 	Txs  []Tx `json:"txArray"`
+}
+
+type Token struct {
+	Mintable       bool   `json:"mintable"`
+	Name           string `json:"name"`
+	OriginalSymbol string `json:"original_symbol"`
+	Owner          string `json:"owner"`
+	Symbol         string `json:"symbol"`
+	TotalSupply    string `json:"total_supply"`
+}
+
+type TokenPage []Token
+
+// findToken find a token into a token list
+func (a TokenPage) findToken(symbol string) *Token {
+	for _, t := range a {
+		if t.Symbol == symbol {
+			return &t
+		}
+	}
+	return nil
 }
 
 func (e *Error) Error() string {

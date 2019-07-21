@@ -135,3 +135,116 @@ func testNormalizeTx(t *testing.T, _test *test) {
 		t.Error("transfer: tx don't equal")
 	}
 }
+
+const myToken = `
+{
+	"free": "17199.38841739",
+	"frozen": "0.00000000",
+	"locked": "0.00000000",
+	"symbol": "ARN-71B"
+}
+`
+
+const tokenList = `
+[
+  {
+    "mintable": false,
+    "name": "Aeron",
+    "original_symbol": "ARN",
+    "owner": "bnb1dq8ae0ayztqp99peggq5sygzf3n7u2ze4t0jne",
+    "symbol": "ARN-71B",
+    "total_supply": "20000000.00000000"
+  },
+  {
+    "mintable": false,
+    "name": "BOLT Token",
+    "original_symbol": "BOLT",
+    "owner": "bnb177ujwmshxu8r9za4vy9ztqn65tmr54ddw958rt",
+    "symbol": "BOLT-4C6",
+    "total_supply": "995000000.00000000"
+  }
+]
+`
+
+var tokenDst = blockatlas.Token{
+	Name:     "Aeron",
+	Symbol:   "ARN",
+	Decimals: 8,
+	TokenId:  "ARN-71B",
+	Coin:     coin.BNB,
+}
+
+type testToken struct {
+	name        string
+	apiResponse string
+	expected    *blockatlas.Token
+	tokens      string
+}
+
+func TestNormalizeToken(t *testing.T) {
+	testNormalizeToken(t, &testToken{
+		name:        "token",
+		apiResponse: myToken,
+		tokens:      tokenList,
+		expected:    &tokenDst,
+	})
+}
+
+func testNormalizeToken(t *testing.T, _test *testToken) {
+	var srcToken Balance
+	err := json.Unmarshal([]byte(_test.apiResponse), &srcToken)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	var srcTokens TokenPage
+	err = json.Unmarshal([]byte(_test.tokens), &srcTokens)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	tx, ok := NormalizeToken(&srcToken, &srcTokens)
+	if !ok {
+		t.Errorf("transfer: tx could not be normalized")
+	}
+
+	resJSON, err := json.Marshal(&tx)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	dstJSON, err := json.Marshal(_test.expected)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !bytes.Equal(resJSON, dstJSON) {
+		println(string(resJSON))
+		println(string(dstJSON))
+		t.Error("transfer: tx don't equal")
+	}
+}
+
+func TestDecimalPlaces(t *testing.T) {
+	tests := []struct {
+		name  string
+		value string
+		want  int
+	}{
+		{"Test text value with dot", "decimal.places", 6},
+		{"Test float value", "1234.543212222", 9},
+		{"Test float value", "5.33333333", 8},
+		{"Test text value", "decimal", 0},
+		{"Test integer value", "4", 0},
+		{"Test empty value", "", 0},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := decimalPlaces(tt.value); got != tt.want {
+				t.Errorf("decimalPlaces() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
