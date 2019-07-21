@@ -252,3 +252,36 @@ func NormalizeCollectible(c *Collection, a Collectible, coinIndex uint) blockatl
 		Coin:             coinIndex,
 	}
 }
+
+func (p *Platform) GetTokenListByAddress(address string) (blockatlas.TokenPage, error) {
+	account, err := p.client.GetTokens(address)
+	if err != nil {
+		return nil, err
+	}
+	return NormalizeTokens(account.Docs), nil
+}
+
+// NormalizeToken converts a Ethereum token into the generic model
+func NormalizeToken(srcToken *Token) (t blockatlas.Token, ok bool) {
+	t = blockatlas.Token{
+		Name:     srcToken.Contract.Name,
+		Symbol:   srcToken.Contract.Symbol,
+		TokenId:  srcToken.Contract.Contract,
+		Coin:     coin.ETH,
+		Decimals: srcToken.Contract.Decimals,
+	}
+
+	return t, true
+}
+
+// NormalizeTxs converts multiple Ethereum tokens
+func NormalizeTokens(srcTokens []Token) (tokenPage []blockatlas.Token) {
+	for _, srcToken := range srcTokens {
+		token, ok := NormalizeToken(&srcToken)
+		if !ok {
+			continue
+		}
+		tokenPage = append(tokenPage, token)
+	}
+	return
+}

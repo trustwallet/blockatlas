@@ -248,3 +248,68 @@ func testNormalize(t *testing.T, _test *test) {
 		t.Error(_test.name + ": tx don't equal")
 	}
 }
+
+
+const tokenSrc = `
+{
+	"balance": "0",
+	"contract": {
+		"contract": "0xa14839c9837657efcde754ebeaf5cbecdd801b2a",
+		"address": "0xa14839c9837657efcde754ebeaf5cbecdd801b2a",
+		"name": "FusChain",
+		"decimals": 18,
+		"symbol": "FUS"
+	}
+}`
+
+var tokenDst = blockatlas.Token{
+	Name:     "FusChain",
+	Symbol:   "FUS",
+	Decimals: 18,
+	TokenId:  "0xa14839c9837657efcde754ebeaf5cbecdd801b2a",
+	Coin:     coin.ETH,
+}
+
+type testToken struct {
+	name        string
+	apiResponse string
+	expected    *blockatlas.Token
+	token       bool
+}
+
+func TestNormalizeToken(t *testing.T) {
+	testNormalizeToken(t, &testToken{
+		name:        "token",
+		apiResponse: tokenSrc,
+		expected:    &tokenDst,
+	})
+}
+
+func testNormalizeToken(t *testing.T, _test *testToken) {
+	var token Token
+	err := json.Unmarshal([]byte(_test.apiResponse), &token)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	tx, ok := NormalizeToken(&token)
+	if !ok {
+		t.Errorf("transfer: tx could not be normalized")
+	}
+
+	resJSON, err := json.Marshal(&tx)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	dstJSON, err := json.Marshal(_test.expected)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !bytes.Equal(resJSON, dstJSON) {
+		println(string(resJSON))
+		println(string(dstJSON))
+		t.Error("transfer: tx don't equal")
+	}
+}

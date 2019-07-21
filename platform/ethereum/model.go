@@ -5,6 +5,16 @@ type Page struct {
 	Docs  []Doc `json:"docs"`
 }
 
+type TokenPage struct {
+	Total uint    `json:"total"`
+	Docs  []Token `json:"docs"`
+}
+
+type Token struct {
+	Balance  string   `json:"balance"`
+	Contract Contract `json:"contract"`
+}
+
 type Doc struct {
 	Ops         []Op   `json:"operations"`
 	Contract    string `json:"contract"`
@@ -37,8 +47,9 @@ type Contract struct {
 	Address     string `json:"address"`
 	Symbol      string `json:"symbol"`
 	Decimals    uint   `json:"decimals"`
-	TotalSupply string `json:"totalSupply"`
+	TotalSupply string `json:"totalSupply,omitempty"`
 	Name        string `json:"name"`
+	Contract    string `json:"contract,omitempty"`
 }
 
 type NodeInfo struct {
