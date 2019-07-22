@@ -56,20 +56,6 @@ brew install redis // Install Redis using Homebrew
 ln -sfv /usr/local/opt/redis/*.plist ~/Library/LaunchAgents  // Enable Redis autostart
 ```
 
-[Steps Links][https://gist.github.com/nrollr/eb24336b8fb8e7ba5630]
-
-
-- Setup MongoDB
-```shell
-brew install mongodb
-```
-
-```shell
-# Add Mongo DB data directory and set relevant permissions
-mkdir -p /data/db
-sudo chown -R `id -un` /data/db
-```
-
 - Running in the IDE ( GoLand )
 1. Run
 2. Edit configuration
