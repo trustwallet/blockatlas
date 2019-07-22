@@ -74,8 +74,7 @@ clean:
 test: go-test
 
 ## fmt: Run `go fmt` for all go files.
-fmt:
-	go fmt -w $(GOFMT_FILES)
+fmt: go-fmt
 
 go-compile: go-get go-build
 
@@ -101,6 +100,10 @@ go-clean:
 go-test:
 	@echo "  >  Cleaning build cache"
 	GOBIN=$(GOBIN) go test -v ${TESTABLE_PACKAGES}
+
+go-fmt:
+	@echo "  >  Format all go files"
+	GOBIN=$(GOBIN) gofmt -w ${GOFMT_FILES}
 
 .PHONY: help
 all: help
