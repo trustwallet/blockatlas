@@ -1,6 +1,7 @@
 # Binary
 /blockatlas
 /blockatlas.exe
+/bin/*
 
 # Dev environment
 .DS_Store
