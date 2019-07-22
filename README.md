@@ -45,6 +45,41 @@ __With Docker__
 
 `docker run -it -p 8420:8420 trustwallet/blockatlas`
 
+__Tools__
+- Setup Redis
+
+```shell
+brew install redis // Install Redis using Homebrew
+```
+
+```shell
+ln -sfv /usr/local/opt/redis/*.plist ~/Library/LaunchAgents  // Enable Redis autostart
+```
+
+[Steps Links][https://gist.github.com/nrollr/eb24336b8fb8e7ba5630]
+
+
+- Setup MongoDB
+```shell
+brew install mongodb
+```
+
+```shell
+# Add Mongo DB data directory and set relevant permissions
+mkdir -p /data/db
+sudo chown -R `id -un` /data/db
+```
+
+- Running in the IDE ( GoLand )
+1. Run
+2. Edit configuration
+3. New Go build configuration
+4. Select `directory` as configuration type
+5. Set `api` as program argument and `-i` as Go tools argument 
+
+
+
+
 ## Deploy
 
 #### Supported platforms
@@ -94,3 +129,6 @@ don't require code changes (e.g. ERC-20).
 The best way to submit feedback and report bugs is to open a GitHub issue.
 Please be sure to include your operating system, version number, and
 steps to reproduce reported bugs.
+
+
+[Steps Links]: https://gist.github.com/nrollr/eb24336b8fb8e7ba5630
