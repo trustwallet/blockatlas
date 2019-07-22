@@ -14,7 +14,7 @@ import (
 func setupObserverAPI(router gin.IRouter) {
 	router.Use(requireAuth)
 	router.POST("/webhook/register", addCall)
-	router.POST("/webhook/delete", deleteCall)
+	router.DELETE("/webhook/register", deleteCall)
 	router.GET("/status", statusCall)
 }
 
