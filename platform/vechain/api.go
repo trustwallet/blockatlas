@@ -43,27 +43,11 @@ func (p *Platform) GetTokenTxsByAddress(address string, token string) (blockatla
 func (p *Platform) getThorTxsByAddress(address string) ([]blockatlas.Tx, error) {
 	sourceTxs, _ := p.client.GetTokenTransfers(address)
 
-	receiptsChan := make(chan *TransferReceipt, len(sourceTxs.TokenTransfers))
-
-	sem := util.NewSemaphore(16)
-	var wg sync.WaitGroup
-	wg.Add(len(sourceTxs.TokenTransfers))
-	for _, t := range sourceTxs.TokenTransfers {
-		go func(t TokenTransfer) {
-			defer wg.Done()
-			sem.Acquire()
-			defer sem.Release()
-			receipt, err := p.client.GetTransactionReceipt(t.TxID)
-			if err != nil {
-				logrus.WithError(err).WithField("platform", "vechain").
-					Warnf("Failed to get tx receipt for %s", t.TxID)
-			}
-			receiptsChan <- receipt
-		}(t)
+	var ids []string
+	for _, tx := range sourceTxs.TokenTransfers {
+		ids = append(ids, tx.TxID)
 	}
-
-	wg.Wait()
-	close(receiptsChan)
+	receiptsChan := p.getTransactionReceipt(ids)
 
 	var txs []blockatlas.Tx
 	for _, t := range sourceTxs.TokenTransfers {
@@ -78,6 +62,32 @@ func (p *Platform) getThorTxsByAddress(address string) ([]blockatlas.Tx, error) 
 	}
 
 	return txs, nil
+}
+
+func (p *Platform)getTransactionReceipt(ids []string)(chan *TransferReceipt)  {
+	receiptsChan := make(chan *TransferReceipt, len(ids))
+
+	sem := util.NewSemaphore(16)
+	var wg sync.WaitGroup
+	wg.Add(len(ids))
+	for _, id := range ids {
+		go func(id string) {
+			defer wg.Done()
+			sem.Acquire()
+			defer sem.Release()
+			receipt, err := p.client.GetTransactionReceipt(id)
+			if err != nil {
+				logrus.WithError(err).WithField("platform", "vechain").
+					Warnf("Failed to get tx receipt for %s", id)
+			}
+			receiptsChan <- receipt
+		}(id)
+	}
+
+	wg.Wait()
+	close(receiptsChan)
+
+	return receiptsChan
 }
 
 func findTransferReceiptByTxID(receiptsChan chan *TransferReceipt, txID string) (TransferReceipt) {
@@ -97,27 +107,11 @@ func findTransferReceiptByTxID(receiptsChan chan *TransferReceipt, txID string) 
 func (p *Platform) getTxsByAddress(address string) ([]blockatlas.Tx, error) {
 	sourceTxs, _ := p.client.GetTransactions(address)
 
-	receiptsChan := make(chan *TransferReceipt, len(sourceTxs.Transactions))
-
-	sem := util.NewSemaphore(16)
-	var wg sync.WaitGroup
-	wg.Add(len(sourceTxs.Transactions))
-	for _, t := range sourceTxs.Transactions {
-		go func(t Tx) {
-			defer wg.Done()
-			sem.Acquire()
-			defer sem.Release()
-			receipt, err := p.client.GetTransactionReceipt(t.ID)
-			if err != nil {
-				logrus.WithError(err).WithField("platform", "vechain").
-					Warnf("Failed to get tx receipt for %s", t.ID)
-			}
-			receiptsChan <- receipt
-		}(t)
+	var ids []string
+	for _, tx := range sourceTxs.Transactions {
+		ids = append(ids, tx.ID)
 	}
-
-	wg.Wait()
-	close(receiptsChan)
+	receiptsChan := p.getTransactionReceipt(ids)
 
 	var txs []blockatlas.Tx
 	for receipt := range receiptsChan {
@@ -125,11 +119,9 @@ func (p *Platform) getTxsByAddress(address string) ([]blockatlas.Tx, error) {
 			if !strings.EqualFold(receipt.Origin, address) && !strings.EqualFold(clause.To, address) {
 				continue
 			}
-			tx, ok := NormalizeTransfer(receipt, &clause)
-			if !ok {
-				continue
+			if tx, ok := NormalizeTransfer(receipt, &clause); ok {
+				txs = append(txs, tx)
 			}
-			txs = append(txs, tx)
 		}
 	}
 
