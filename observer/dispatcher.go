@@ -13,7 +13,7 @@ type Dispatcher struct {
 }
 
 type DispatchEvent struct {
-	Action string      `json:"action"`
+	Action string         `json:"action"`
 	Result *blockatlas.Tx `json:"result"`
 }
 
@@ -33,17 +33,19 @@ func (d *Dispatcher) dispatch(event Event) {
 		logrus.Panic(err)
 	}
 
-	webhook := event.Subscription.Webhook
+	webhooks := event.Subscription.Webhooks
 	log := logrus.WithFields(logrus.Fields{
-		"webhook": webhook,
+		"webhook": webhooks,
 		"coin":    event.Subscription.Coin,
 		"txID":    event.Tx.ID,
 	})
 
-	_, err = d.Client.Post(webhook, "application/json", bytes.NewReader(txJson))
-	if err != nil {
-		log.WithError(err).Errorf("Failed to dispatch event %s: %s", webhook, err)
-	}
+	for _, hook := range webhooks {
+		_, err = d.Client.Post(hook, "application/json", bytes.NewReader(txJson))
+		if err != nil {
+			log.WithError(err).Errorf("Failed to dispatch event %s: %s", hook, err)
+		}
 
-	log.Debug("Dispatch")
+		log.Debug("Dispatch")
+	}
 }
