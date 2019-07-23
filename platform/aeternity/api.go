@@ -1,10 +1,8 @@
 package aeternity
 
 import (
-	"net/http"
-	"strconv"
-
 	"github.com/trustwallet/blockatlas/coin"
+	"net/http"
 
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas"
@@ -44,13 +42,13 @@ func NormalizeTx(srcTx *Transaction, coinIndex uint) blockatlas.Tx {
 		Coin:   coinIndex,
 		From:   srcTx.TxValue.Sender,
 		To:     srcTx.TxValue.Recipient,
-		Fee:    blockatlas.Amount(strconv.Itoa(int(srcTx.TxValue.Fee))),
+		Fee:    blockatlas.Amount(srcTx.TxValue.Fee),
 		Date:   int64(srcTx.Timestamp) / 1000,
 		Block:  srcTx.TxValue.BlockHeight,
 		Memo:   "",
 		Status: blockatlas.StatusCompleted,
 		Meta: blockatlas.Transfer{
-			Value: blockatlas.Amount(strconv.Itoa(int(srcTx.TxValue.Amount))),
+			Value: blockatlas.Amount(srcTx.TxValue.Amount),
 		},
 	}
 }
