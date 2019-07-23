@@ -8,10 +8,10 @@ gin:
 
 # The transaction watcher
 observer:
-  enabled: true
+  enabled: false
 
   # Required auth token
-  auth: changeMe!!!
+  # auth: changeMe!!!
   # Redis Subscription Database
   redis: redis://localhost:6379
   # Smallest possible block polling interval
@@ -50,7 +50,7 @@ tezos:
 
 # [ETH] Ethereum: https://ethereum.org (Trust-Ray API)
 ethereum:
-  api: https://localhost:4567
+#  api: https://localhost:4567
 #  collections_api: https://api.opensea.io
 #  collections_api_key: [opensea_api_key]
 
