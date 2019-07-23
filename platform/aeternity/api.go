@@ -30,16 +30,15 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 
 	var txs []blockatlas.Tx
 	for _, srcTx := range addressTxs {
-		txs = append(txs, NormalizeTx(&srcTx, p.Coin().ID))
+		txs = append(txs, NormalizeTx(&srcTx))
 	}
-
 	return txs, nil
 }
 
-func NormalizeTx(srcTx *Transaction, coinIndex uint) blockatlas.Tx {
+func NormalizeTx(srcTx *Transaction) blockatlas.Tx {
 	return blockatlas.Tx{
 		ID:     srcTx.Hash,
-		Coin:   coinIndex,
+		Coin:   coin.AE,
 		From:   srcTx.TxValue.Sender,
 		To:     srcTx.TxValue.Recipient,
 		Fee:    blockatlas.Amount(srcTx.TxValue.Fee),
