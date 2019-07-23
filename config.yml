@@ -127,3 +127,7 @@ iotex:
 # [WAVES] Waves: http://wavesplatform.com/
 waves:
  api: https://nodes.wavesnodes.com
+
+# [AE] Aeternity: https://aeternity.com/
+aeternity:
+  api: https://mdw.aepps.com/middleware/transactions/account/
