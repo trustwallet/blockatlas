@@ -6,6 +6,7 @@ import (
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
+	"github.com/trustwallet/blockatlas/platform/aeternity"
 	"github.com/trustwallet/blockatlas/platform/aion"
 	"github.com/trustwallet/blockatlas/platform/binance"
 	"github.com/trustwallet/blockatlas/platform/cosmos"
@@ -29,16 +30,16 @@ var platformList = []blockatlas.Platform{
 	&binance.Platform{},
 	&nimiq.Platform{},
 	&ripple.Platform{},
-	&stellar.Platform{ CoinIndex: coin.XLM },
-	&stellar.Platform{ CoinIndex: coin.KIN },
-	&ethereum.Platform{ CoinIndex: coin.ETH  },
-	&ethereum.Platform{ CoinIndex: coin.ETC  },
-	&ethereum.Platform{ CoinIndex: coin.POA  },
-	&ethereum.Platform{ CoinIndex: coin.CLO  },
-	&ethereum.Platform{ CoinIndex: coin.GO   },
-	&ethereum.Platform{ CoinIndex: coin.WAN  },
-	&ethereum.Platform{ CoinIndex: coin.TOMO },
-	&ethereum.Platform{ CoinIndex: coin.TT   },
+	&stellar.Platform{CoinIndex: coin.XLM},
+	&stellar.Platform{CoinIndex: coin.KIN},
+	&ethereum.Platform{CoinIndex: coin.ETH},
+	&ethereum.Platform{CoinIndex: coin.ETC},
+	&ethereum.Platform{CoinIndex: coin.POA},
+	&ethereum.Platform{CoinIndex: coin.CLO},
+	&ethereum.Platform{CoinIndex: coin.GO},
+	&ethereum.Platform{CoinIndex: coin.WAN},
+	&ethereum.Platform{CoinIndex: coin.TOMO},
+	&ethereum.Platform{CoinIndex: coin.TT},
 	&tezos.Platform{},
 	&aion.Platform{},
 	&cosmos.Platform{},
@@ -51,6 +52,7 @@ var platformList = []blockatlas.Platform{
 	&vechain.Platform{},
 	&zilliqa.Platform{},
 	&waves.Platform{},
+	&aeternity.Platform{},
 }
 
 // Platforms contains all registered platforms by handle
@@ -66,9 +68,9 @@ var StakeAPIs map[string]blockatlas.StakeAPI
 var CustomAPIs map[string]blockatlas.CustomAPI
 
 func Init() {
-	Platforms  = make(map[string]blockatlas.Platform)
-	BlockAPIs  = make(map[string]blockatlas.BlockAPI)
-	StakeAPIs  = make(map[string]blockatlas.StakeAPI)
+	Platforms = make(map[string]blockatlas.Platform)
+	BlockAPIs = make(map[string]blockatlas.BlockAPI)
+	StakeAPIs = make(map[string]blockatlas.StakeAPI)
 	CustomAPIs = make(map[string]blockatlas.CustomAPI)
 
 	for _, platform := range platformList {
@@ -84,7 +86,7 @@ func Init() {
 
 		log := logrus.WithFields(logrus.Fields{
 			"platform": handle,
-			"coin": platform.Coin(),
+			"coin":     platform.Coin(),
 		})
 
 		if _, exists := Platforms[handle]; exists {

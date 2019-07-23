@@ -130,4 +130,4 @@ waves:
 
 # [AE] Aeternity: https://aeternity.com/
 aeternity:
-  api: https://mdw.aepps.com/middleware/transactions/account/
+  api: https://mdw.aepps.com/

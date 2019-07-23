@@ -1,4 +1,4 @@
-package waves
+package aeternity
 
 type Transaction struct {
 	Hash        string `json:"hash"`

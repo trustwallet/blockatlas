@@ -1,4 +1,4 @@
-package waves
+package aeternity
 
 import (
 	"net/http"
@@ -40,17 +40,17 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 
 func NormalizeTx(srcTx *Transaction, coinIndex uint) blockatlas.Tx {
 	return blockatlas.Tx{
-		ID:     srcTx.Id,
+		ID:     srcTx.Hash,
 		Coin:   coinIndex,
-		From:   srcTx.Sender,
-		To:     srcTx.Recipient,
-		Fee:    blockatlas.Amount(strconv.Itoa(int(srcTx.Fee))),
+		From:   srcTx.TxValue.Sender,
+		To:     srcTx.TxValue.Recipient,
+		Fee:    blockatlas.Amount(strconv.Itoa(int(srcTx.TxValue.Fee))),
 		Date:   int64(srcTx.Timestamp) / 1000,
-		Block:  srcTx.Block,
-		Memo:   srcTx.Attachment,
+		Block:  srcTx.TxValue.BlockHeight,
+		Memo:   "",
 		Status: blockatlas.StatusCompleted,
 		Meta: blockatlas.Transfer{
-			Value: blockatlas.Amount(strconv.Itoa(int(srcTx.Amount))),
+			Value: blockatlas.Amount(strconv.Itoa(int(srcTx.TxValue.Amount))),
 		},
 	}
 }
