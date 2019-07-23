@@ -43,7 +43,7 @@ func NormalizeTx(srcTx *Transaction) blockatlas.Tx {
 		To:     srcTx.TxValue.Recipient,
 		Fee:    blockatlas.Amount(srcTx.TxValue.Fee),
 		Date:   int64(srcTx.Timestamp) / 1000,
-		Block:  srcTx.TxValue.BlockHeight,
+		Block:  srcTx.BlockHeight,
 		Memo:   "",
 		Status: blockatlas.StatusCompleted,
 		Meta: blockatlas.Transfer{

@@ -9,6 +9,7 @@ import (
 )
 
 const transferTransaction = `
+{
 	"block_hash": "mh_sJqfsWuuhA7vXDJLYFVtpagCSTmfmhzdqKWFR4pU5LK4D8W8T",
     "block_height": 113579,
     "hash": "th_oJfBC6KZKaKsL4WXTq1ZtFiSE8Wp2PQYEnwyZqtudyHcU3Qg6",
@@ -26,7 +27,7 @@ const transferTransaction = `
       "type": "SpendTx",
       "version": 1
     }
-  },
+  }
 `
 
 var transferDst = blockatlas.Tx{
