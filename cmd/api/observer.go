@@ -49,9 +49,9 @@ func addCall(c *gin.Context) {
 		}
 		for _, addr := range perCoin {
 			subs = append(subs, observer.Subscription{
-				Coin:    uint(coin),
-				Address: addr,
-				Webhook: req.Webhook,
+				Coin:     uint(coin),
+				Address:  addr,
+				Webhooks: []string{req.Webhook},
 			})
 		}
 	}
@@ -66,26 +66,30 @@ func addCall(c *gin.Context) {
 }
 
 func deleteCall(c *gin.Context) {
-	var req map[string][]string
+	var req struct {
+		Subscriptions map[string][]string `json:"subscriptions"`
+		Webhook       string              `json:"webhook"`
+	}
 	if c.BindJSON(&req) != nil {
 		return
 	}
 
-	if len(req) == 0 {
+	if len(req.Subscriptions) == 0 {
 		c.String(http.StatusOK, "Deleted")
 		return
 	}
 
 	var subs []observer.Subscription
-	for coinStr, perCoin := range req {
+	for coinStr, perCoin := range req.Subscriptions {
 		coin, _ := strconv.Atoi(coinStr)
 		if coin == 0 {
 			continue
 		}
 		for _, addr := range perCoin {
 			subs = append(subs, observer.Subscription{
-				Coin:    uint(coin),
-				Address: addr,
+				Coin:     uint(coin),
+				Address:  addr,
+				Webhooks: []string{req.Webhook},
 			})
 		}
 	}
