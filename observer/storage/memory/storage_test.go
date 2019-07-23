@@ -9,10 +9,12 @@ import (
 
 const ethCoin = coin.ETH
 const addr1 = "0xde0B295669a9FD93d5F28D9Ec85E40f4cb697BAe"
-const webhook1 = "http://apple.com/push"
+
+var webhook1 = []string{"http://apple.com/push"}
 
 const addr2 = "0xEA674fdDe714fd979de3EdF0F56AA9716B898ec8"
-const webhook2 = "http://trustwallet.com/webhook"
+
+var webhook2 = []string{"http://trustwallet.com/webhook"}
 
 func TestMemoryStorage_Add(t *testing.T) {
 	var observerMap = make(map[string]observer.Subscription)
@@ -21,9 +23,9 @@ func TestMemoryStorage_Add(t *testing.T) {
 	}
 
 	_ = storage.Add([]observer.Subscription{{
-		Coin: ethCoin,
-		Address: addr1,
-		Webhook: webhook1,
+		Coin:     ethCoin,
+		Address:  addr1,
+		Webhooks: webhook1,
 	}})
 
 	if len(observerMap) != 1 {
@@ -38,14 +40,14 @@ func TestMemoryStorage_List(t *testing.T) {
 	}
 
 	obs1 := observer.Subscription{
-		Coin:    ethCoin,
-		Address: addr1,
-		Webhook: webhook1,
+		Coin:     ethCoin,
+		Address:  addr1,
+		Webhooks: webhook1,
 	}
 	obs2 := observer.Subscription{
-		Coin:    ethCoin,
-		Address: addr2,
-		Webhook: webhook2,
+		Coin:     ethCoin,
+		Address:  addr2,
+		Webhooks: webhook2,
 	}
 
 	observerMap[key(ethCoin, addr1)] = obs1
@@ -63,13 +65,13 @@ func TestMemoryStorage_Remove(t *testing.T) {
 	}
 
 	obs := observer.Subscription{
-		Coin:    ethCoin,
-		Address: addr1,
-		Webhook: webhook1,
+		Coin:     ethCoin,
+		Address:  addr1,
+		Webhooks: webhook1,
 	}
 	observerMap[key(ethCoin, addr1)] = obs
 
-	_ = storage.Delete([]observer.Subscription{ obs })
+	_ = storage.Delete([]observer.Subscription{obs})
 
 	if len(storage.List()) != 0 {
 		t.Error("observer not removed")
@@ -83,14 +85,14 @@ func TestMemoryStorage_Get(t *testing.T) {
 	}
 
 	obs1 := observer.Subscription{
-		Coin:    ethCoin,
-		Address: addr1,
-		Webhook: webhook1,
+		Coin:     ethCoin,
+		Address:  addr1,
+		Webhooks: webhook1,
 	}
 	obs2 := observer.Subscription{
-		Coin:    ethCoin,
-		Address: addr2,
-		Webhook: webhook2,
+		Coin:     ethCoin,
+		Address:  addr2,
+		Webhooks: webhook2,
 	}
 
 	observerMap[key(ethCoin, addr1)] = obs1
@@ -109,9 +111,9 @@ func TestMemoryStorage_Contains(t *testing.T) {
 		observers: observerMap,
 	}
 	obs1 := observer.Subscription{
-		Coin:    ethCoin,
-		Address: addr1,
-		Webhook: webhook1,
+		Coin:     ethCoin,
+		Address:  addr1,
+		Webhooks: webhook1,
 	}
 
 	observerMap[key(ethCoin, addr1)] = obs1
