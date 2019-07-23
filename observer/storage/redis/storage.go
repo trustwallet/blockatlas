@@ -60,7 +60,13 @@ func (s *Storage) Add(subs []observer.Subscription) error {
 		if old == nil {
 			return *changes
 		} else {
-			return append(*old, *changes...)
+			var result []string
+			for _, i := range *changes {
+				if !contains(old, i) {
+					result = append(*old, i)
+				}
+			}
+			return append(*old, result...)
 		}
 	})
 }
@@ -132,4 +138,13 @@ func (s *Storage) updateWebHooks(subs []observer.Subscription, operation webHook
 		fields[key] = strings.Join(newWebHooks, "\n")
 	}
 	return s.client.HMSet(keyObservers, fields).Err()
+}
+
+func contains(s *[]string, e string) bool {
+	for _, a := range *s {
+		if a == e {
+			return true
+		}
+	}
+	return false
 }
