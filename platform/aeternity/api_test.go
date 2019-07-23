@@ -1,8 +1,8 @@
 package aeternity
 
 import (
-	"bytes"
 	"encoding/json"
+	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
 	"testing"
@@ -81,9 +81,5 @@ func testNormalize(t *testing.T, _test *test) {
 		t.Fatal(err)
 	}
 
-	if !bytes.Equal(resJSON, dstJSON) {
-		println(string(resJSON))
-		println(string(dstJSON))
-		t.Error("transfer: tx don't equal")
-	}
+	assert.Equal(t,resJSON, dstJSON)
 }
