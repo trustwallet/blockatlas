@@ -56,7 +56,7 @@ var expectedVeThorTrx = blockatlas.Tx{
 	Coin:   coin.VET,
 	From:   "0xb853d6a965fbc047aaa9f04d774d53861d7ed653",
 	To:     "0x9f3742c2c2fe66c7fca08d77d2262c22e3d56ac8",
-	Fee:    "0",
+	Fee:    "21000000000000000000",
 	Date:   1555009870,
 	Type:   blockatlas.TxNativeTokenTransfer,
 	Status: "completed",
@@ -124,14 +124,22 @@ func TestNormalizeTransfer(t *testing.T) {
 
 func TestNormalizeTokenTransfer(t *testing.T) {
 	var tests = []struct {
+		Receipt  string
 		Transfer  string
 		Expected blockatlas.Tx
 	}{
-		{tokenTransfer, expectedVeThorTrx},
+		{transferReceipt,tokenTransfer, expectedVeThorTrx},
 	}
 
 	for _, test := range tests {
+		var receipt TransferReceipt
 		var tt TokenTransfer
+
+		// Unmarshal(*t, test.Receipt, &receipt)
+		rErr := json.Unmarshal([]byte(test.Receipt), &receipt)
+		if rErr != nil {
+			t.Fatal(rErr)
+		}
 
 		ttErr := json.Unmarshal([]byte(test.Transfer), &tt)
 		if ttErr != nil {
@@ -139,7 +147,7 @@ func TestNormalizeTokenTransfer(t *testing.T) {
 		}
 
 		var readyTx blockatlas.Tx
-		normTx, ok := NormalizeTokenTransfer(&tt)
+		normTx, ok := NormalizeTokenTransfer(&tt, &receipt)
 		if !ok {
 			t.Fatal("VeChain: Can't normalize token transaction", readyTx)
 		}
