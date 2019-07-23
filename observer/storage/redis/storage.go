@@ -63,7 +63,7 @@ func (s *Storage) Add(subs []observer.Subscription) error {
 			var result []string
 			for _, i := range *changes {
 				if !contains(old, i) {
-					result = append(*old, i)
+					result = append(result, i)
 				}
 			}
 			return append(*old, result...)
