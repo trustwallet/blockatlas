@@ -3,7 +3,6 @@ module github.com/trustwallet/blockatlas
 go 1.12.6
 
 require (
-	github.com/davecgh/go-spew v1.1.1
 	github.com/gin-gonic/gin v1.4.0
 	github.com/go-redis/redis v6.15.2+incompatible
 	github.com/mr-tron/base58 v1.1.2
