@@ -3,6 +3,7 @@ package aeternity
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 )
 
@@ -12,34 +13,34 @@ type Client struct {
 }
 
 func (c *Client) GetTxs(address string, limit int) ([]Transaction, error) {
-	uri := fmt.Sprintf("%s/middleware/transactions/account/%s?limit%d",
+	uri := fmt.Sprintf("%s/middleware/transactions/account/%s?limit=%d",
 		c.URL,
 		address,
 		limit)
-	req, _ := http.NewRequest("GET", uri, nil)
-
-	res, err := c.HTTPClient.Do(req)
+	res, err := http.Get(uri)
 	if err != nil {
 		return nil, err
 	}
+
 	defer res.Body.Close()
 
 	if res.StatusCode != 200 {
 		return nil, fmt.Errorf("http %s", res.Status)
 	}
 
-	txsArrays := new([][]Transaction)
-	err = json.NewDecoder(res.Body).Decode(txsArrays)
-	fmt.Printf("Logged arrays: %v", txsArrays)
-	if err != nil {
-		return nil, err
+	body, err := ioutil.ReadAll(res.Body)
+
+	var txsArrays []Transaction
+	decodeError := json.Unmarshal([]byte(string(body)), &txsArrays)
+	if decodeError != nil {
+		return nil, decodeError
 	}
-	txsObj := *txsArrays
-	txs := txsObj[0]
+	if len(txsArrays) == 0 {
+		return make([]Transaction, 0), nil
+	}
 
 	var result []Transaction
-	for _, tx := range txs {
-		// Support only AETERNITY coin transfer transaction
+	for _, tx := range txsArrays {
 		if tx.TxValue.Type == "SpendTx" {
 			result = append(result, tx)
 		}
