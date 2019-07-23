@@ -10,7 +10,7 @@ import (
 const keyObservers = "ATLAS_OBSERVERS"
 const keyBlockNumber = "ATLAS_BLOCK_NUMBER_%d"
 
-type webHookOperation func(fields *map[string]interface{}, old *[]string, changes *[]string) []string
+type webHookOperation func(old []string, changes []string) []string
 
 type Storage struct {
 	client *redis.Client
@@ -56,25 +56,30 @@ func (s *Storage) Lookup(coin uint, addresses ...string) (observers []observer.S
 }
 
 func (s *Storage) Add(subs []observer.Subscription) error {
-	return s.updateWebHooks(subs, func(fields *map[string]interface{}, old *[]string, changes *[]string) []string {
-		if old == nil {
-			return *changes
-		} else {
-			var result []string
-			for _, i := range *changes {
-				if !contains(old, i) {
-					result = append(*old, i)
-				}
+	return s.updateWebHooks(subs, add)
+}
+
+func add(old []string, changes []string) []string {
+	if changes == nil {
+		return old
+	}
+	if old == nil {
+		return changes
+	} else {
+		var result []string
+		for _, i := range changes {
+			if !contains(old, i) {
+				result = append(result, i)
 			}
-			return append(*old, result...)
 		}
-	})
+		return append(old, result...)
+	}
 }
 
 func (s *Storage) Delete(subs []observer.Subscription) error {
-	return s.updateWebHooks(subs, func(fields *map[string]interface{}, old *[]string, changes *[]string) []string {
+	return s.updateWebHooks(subs, func(old []string, changes []string) []string {
 		if old != nil {
-			return removeWebHooks(*old, *changes)
+			return removeWebHooks(old, changes)
 		} else {
 			return make([]string, 0)
 		}
@@ -131,17 +136,17 @@ func (s *Storage) updateWebHooks(subs []observer.Subscription, operation webHook
 		var newWebHooks []string
 		if oldWebHooks, ok := result.(string); ok && len(oldWebHooks) > 0 {
 			old := strings.Fields(oldWebHooks)
-			newWebHooks = operation(&fields, &old, &subs[i].Webhooks)
+			newWebHooks = operation(old, subs[i].Webhooks)
 		} else {
-			newWebHooks = operation(&fields, nil, &subs[i].Webhooks)
+			newWebHooks = operation(nil, subs[i].Webhooks)
 		}
 		fields[key] = strings.Join(newWebHooks, "\n")
 	}
 	return s.client.HMSet(keyObservers, fields).Err()
 }
 
-func contains(s *[]string, e string) bool {
-	for _, a := range *s {
+func contains(s []string, e string) bool {
+	for _, a := range s {
 		if a == e {
 			return true
 		}
