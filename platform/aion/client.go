@@ -32,4 +32,3 @@ func (c *Client) GetTxsOfAddress(address string, num int) (*TxPage, error) {
 	err = json.NewDecoder(res.Body).Decode(txPage)
 	return txPage, err
 }
-

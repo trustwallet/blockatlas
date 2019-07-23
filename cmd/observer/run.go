@@ -73,9 +73,9 @@ func run(_ *cobra.Command, _ []string) {
 		}()
 
 		logrus.WithFields(logrus.Fields{
-			"coin": coin,
+			"coin":     coin,
 			"interval": pollInterval,
-			"backlog": backlogCount,
+			"backlog":  backlogCount,
 		}).Info("Observing")
 	}
 

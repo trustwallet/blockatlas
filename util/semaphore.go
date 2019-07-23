@@ -5,7 +5,7 @@ type Semaphore struct {
 }
 
 func NewSemaphore(n int) *Semaphore {
-	return &Semaphore{ make(chan bool, n) }
+	return &Semaphore{make(chan bool, n)}
 }
 
 func (s *Semaphore) Acquire() {

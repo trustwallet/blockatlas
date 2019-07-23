@@ -40,7 +40,7 @@ var transferDst = blockatlas.Tx{
 	Date:   1554862228,
 	Block:  2880919,
 	Status: blockatlas.StatusCompleted,
-	Meta:   blockatlas.Transfer{
+	Meta: blockatlas.Transfer{
 		Value: "11903810405853733000",
 	},
 }

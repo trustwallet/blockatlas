@@ -8,14 +8,14 @@ import (
 
 type Client struct {
 	HTTPClient *http.Client
-	URL    string
+	URL        string
 }
 
 func (c *Client) GetTxs(address string, limit int) ([]Transaction, error) {
 	uri := fmt.Sprintf("%s/transactions/address/%s/limit/%d",
-	c.URL,
-	address,
-	limit)
+		c.URL,
+		address,
+		limit)
 	req, _ := http.NewRequest("GET", uri, nil)
 
 	res, err := c.HTTPClient.Do(req)

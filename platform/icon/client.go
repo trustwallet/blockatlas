@@ -20,7 +20,7 @@ func (c *Client) GetAddressTransactions(address string) ([]Tx, error) {
 		c.RPCURL,
 		url.Values{
 			"address": {address},
-			"count": {strconv.FormatInt(blockatlas.TxPerPage, 10)},
+			"count":   {strconv.FormatInt(blockatlas.TxPerPage, 10)},
 		}.Encode())
 
 	httpRes, err := c.HTTPClient.Get(uri)
