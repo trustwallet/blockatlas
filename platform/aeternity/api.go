@@ -56,7 +56,7 @@ func NormalizeTx(srcTx *Transaction) blockatlas.Tx {
 }
 
 func getPayload(encodedPayload string) string {
-	payload := []byte(strings.ReplaceAll(encodedPayload, "ba_", ""))
+	payload := []byte(strings.Replace(encodedPayload, "ba_", "", 1))
 	if len(payload) <= 8 {
 		return ""
 	} else {
