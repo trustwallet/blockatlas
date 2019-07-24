@@ -16,8 +16,8 @@ type Platform struct {
 
 const (
 	GovernanceContract = "AFmseVrdL9f9oyCzZefL9tG6UbviEH9ugK"
-    ONTAssetName = "ont"
-    ONGAssetName = "ong"
+	ONTAssetName       = "ont"
+	ONGAssetName       = "ong"
 )
 
 func (p *Platform) Init() error {
@@ -68,11 +68,11 @@ func Normalize(srcTx *Tx, assetName string) (tx blockatlas.Tx, ok bool) {
 	}
 
 	tx = blockatlas.Tx{
-		ID: srcTx.TxnHash,
-		Coin: coin.ONT,
-		Fee: blockatlas.Amount(fee),
-		Date:  srcTx.TxnTime,
-		Block: srcTx.Height,
+		ID:     srcTx.TxnHash,
+		Coin:   coin.ONT,
+		Fee:    blockatlas.Amount(fee),
+		Date:   srcTx.TxnTime,
+		Block:  srcTx.Height,
 		Status: status,
 	}
 
@@ -96,7 +96,9 @@ func normalizeONT(tx *blockatlas.Tx, transfer *Transfer) {
 	tx.To = transfer.ToAddress
 	tx.Type = blockatlas.TxTransfer
 	tx.Meta = blockatlas.Transfer{
-		Value: blockatlas.Amount(value),
+		Value:    blockatlas.Amount(value),
+		Symbol:   coin.Coins[coin.ONT].Symbol,
+		Decimals: coin.Coins[coin.ONT].Decimals,
 	}
 }
 
@@ -114,12 +116,12 @@ func normalizeONG(tx *blockatlas.Tx, transfer *Transfer) {
 	tx.To = to
 	tx.Type = blockatlas.TxNativeTokenTransfer
 	tx.Meta = blockatlas.NativeTokenTransfer{
-		Name: "Ontology Gas",
-		Symbol: "ONG",
-		TokenID: "ong",
+		Name:     "Ontology Gas",
+		Symbol:   "ONG",
+		TokenID:  "ong",
 		Decimals: 9,
-		Value: blockatlas.Amount(value),
-		From: from,
-		To: to,
+		Value:    blockatlas.Amount(value),
+		From:     from,
+		To:       to,
 	}
 }

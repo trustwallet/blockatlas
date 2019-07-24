@@ -53,7 +53,11 @@ func Normalize(srcTx *Tx) (tx blockatlas.Tx) {
 		Fee:      blockatlas.Amount(srcTx.Fee),
 		Block:    srcTx.BlockHeight,
 		Sequence: srcTx.Nonce,
-		Meta:     blockatlas.Transfer{Value: blockatlas.Amount(srcTx.Value)},
+		Meta: blockatlas.Transfer{
+			Value:    blockatlas.Amount(srcTx.Value),
+			Symbol:   coin.Coins[coin.ZIL].Symbol,
+			Decimals: coin.Coins[coin.ZIL].Decimals,
+		},
 	}
 	if !srcTx.ReceiptSuccess {
 		tx.Status = blockatlas.StatusFailed

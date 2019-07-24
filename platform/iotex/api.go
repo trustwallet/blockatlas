@@ -90,7 +90,9 @@ func Normalize(trx *ActionInfo) *blockatlas.Tx {
 		Sequence: uint64(nonce),
 		Type:     blockatlas.TxTransfer,
 		Meta: blockatlas.Transfer{
-			Value: trx.Action.Core.Transfer.Amount,
+			Value:    trx.Action.Core.Transfer.Amount,
+			Symbol:   coin.Coins[coin.IOTX].Symbol,
+			Decimals: coin.Coins[coin.IOTX].Decimals,
 		},
 	}
 }

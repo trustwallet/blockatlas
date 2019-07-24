@@ -49,8 +49,10 @@ func NormalizeTx(srcTx *Transaction, coinIndex uint) blockatlas.Tx {
 		Block:  srcTx.Block,
 		Memo:   srcTx.Attachment,
 		Status: blockatlas.StatusCompleted,
-		Meta:   blockatlas.Transfer{
-			Value: blockatlas.Amount(strconv.Itoa(int(srcTx.Amount))),
+		Meta: blockatlas.Transfer{
+			Value:    blockatlas.Amount(strconv.Itoa(int(srcTx.Amount))),
+			Symbol:   coin.Coins[coin.WAVES].Symbol,
+			Decimals: coin.Coins[coin.WAVES].Decimals,
 		},
 	}
 }

@@ -51,5 +51,5 @@ func (d *Dispatcher) postWebhook(hook string, data []byte, log *logrus.Entry) {
 	if err != nil {
 		log.WithError(err).Errorf("Failed to dispatch event %s: %s", hook, err)
 	}
-	log.Infoln(fmt.Sprintf("Dispatch: hook = %s & data = %s", hook, bytes.NewReader(data)))
+	log.Info("Dispatch: hook: ", hook)
 }

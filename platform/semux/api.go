@@ -62,7 +62,9 @@ func Normalize(srcTx *Tx) (tx blockatlas.Tx, err error) {
 		Fee:   srcTx.Fee,
 		Block: blockNumber,
 		Meta: blockatlas.Transfer{
-			Value: srcTx.Value,
+			Value:    srcTx.Value,
+			Symbol:   coin.Coins[coin.SEM].Symbol,
+			Decimals: coin.Coins[coin.SEM].Decimals,
 		},
 	}, nil
 }
