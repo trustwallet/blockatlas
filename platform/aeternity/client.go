@@ -13,7 +13,11 @@ type Client struct {
 }
 
 func (c *Client) GetTxs(address string, limit int) ([]Transaction, error) {
-	res, err := c.loadTxs(address, limit)
+	uri := fmt.Sprintf("%s/middleware/transactions/account/%s?limit=%d",
+		c.URL,
+		address,
+		limit)
+	res, err := http.Get(uri)
 	if err != nil {
 		return nil, err
 	}
@@ -24,7 +28,10 @@ func (c *Client) GetTxs(address string, limit int) ([]Transaction, error) {
 		return nil, fmt.Errorf("http %s", res.Status)
 	}
 
-	transactions, decodeError := c.decodeResponse(err, res)
+	body, err := ioutil.ReadAll(res.Body)
+
+	var transactions []Transaction
+	decodeError := json.Unmarshal([]byte(string(body)), &transactions)
 	if decodeError != nil {
 		return nil, decodeError
 	}
@@ -40,20 +47,4 @@ func (c *Client) GetTxs(address string, limit int) ([]Transaction, error) {
 	}
 
 	return result, nil
-}
-
-func (c *Client) decodeResponse(err error, res *http.Response) ([]Transaction, error) {
-	body, err := ioutil.ReadAll(res.Body)
-	var transactions []Transaction
-	decodeError := json.Unmarshal([]byte(string(body)), &transactions)
-	return transactions, decodeError
-}
-
-func (c *Client) loadTxs(address string, limit int) (*http.Response, error) {
-	uri := fmt.Sprintf("%s/middleware/transactions/account/%s?limit=%d",
-		c.URL,
-		address,
-		limit)
-	res, err := http.Get(uri)
-	return res, err
 }

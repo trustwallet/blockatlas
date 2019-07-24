@@ -64,9 +64,10 @@ func getPayload(encodedPayload string) string {
 		payload = payload[:len(payload)-8]
 		data, err := base64.StdEncoding.DecodeString(string(payload))
 		if err != nil || len(data) <= 4 {
-			return ""
+			payload = []byte("")
 		} else {
-			return string(payload)
+			payload = data
 		}
+		return string(payload)
 	}
 }
