@@ -53,11 +53,11 @@ func Normalize(trx *Tx, address, token string) (tx blockatlas.Tx, ok bool) {
 	block, _ := strconv.ParseUint(trx.BlockHeight, 10, 64)
 
 	tx = blockatlas.Tx{
-		ID: trx.Hash,
-		Coin: coin.THETA,
-		Fee: blockatlas.Amount(trx.Data.Fee.Tfuelwei),
-		Date:  time,
-		Block: block,
+		ID:       trx.Hash,
+		Coin:     coin.THETA,
+		Fee:      blockatlas.Amount(trx.Data.Fee.Tfuelwei),
+		Date:     time,
+		Block:    block,
 		Sequence: block,
 	}
 
@@ -72,7 +72,9 @@ func Normalize(trx *Tx, address, token string) (tx blockatlas.Tx, ok bool) {
 		tx.Sequence = sequence
 		tx.Type = blockatlas.TxTransfer
 		tx.Meta = blockatlas.Transfer{
-			Value: blockatlas.Amount(output.Coins.Thetawei),
+			Value:    blockatlas.Amount(output.Coins.Thetawei),
+			Symbol:   coin.Coins[coin.THETA].Symbol,
+			Decimals: coin.Coins[coin.THETA].Decimals,
 		}
 
 		return tx, true
@@ -87,13 +89,13 @@ func Normalize(trx *Tx, address, token string) (tx blockatlas.Tx, ok bool) {
 		tx.Sequence = sequence
 		tx.Type = blockatlas.TxNativeTokenTransfer
 		tx.Meta = blockatlas.NativeTokenTransfer{
-			Name: "Theta Fuel",
-			Symbol: "TFUEL",
-			TokenID: "tfuel",
+			Name:     "Theta Fuel",
+			Symbol:   "TFUEL",
+			TokenID:  "tfuel",
 			Decimals: 18,
-			Value: blockatlas.Amount(output.Coins.Tfuelwei),
-			From: from,
-			To: to,
+			Value:    blockatlas.Amount(output.Coins.Tfuelwei),
+			From:     from,
+			To:       to,
 		}
 
 		return tx, true

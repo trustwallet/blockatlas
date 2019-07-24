@@ -64,7 +64,7 @@ func (p *Platform) getThorTxsByAddress(address string) ([]blockatlas.Tx, error) 
 	return txs, nil
 }
 
-func (p *Platform)getTransactionReceipt(ids []string)(chan *TransferReceipt)  {
+func (p *Platform) getTransactionReceipt(ids []string) chan *TransferReceipt {
 	receiptsChan := make(chan *TransferReceipt, len(ids))
 
 	sem := util.NewSemaphore(16)
@@ -90,7 +90,7 @@ func (p *Platform)getTransactionReceipt(ids []string)(chan *TransferReceipt)  {
 	return receiptsChan
 }
 
-func findTransferReceiptByTxID(receiptsChan chan *TransferReceipt, txID string) (TransferReceipt) {
+func findTransferReceiptByTxID(receiptsChan chan *TransferReceipt, txID string) TransferReceipt {
 
 	var transferReceipt TransferReceipt
 
@@ -153,7 +153,9 @@ func NormalizeTransfer(receipt *TransferReceipt, clause *Clause) (tx blockatlas.
 		Block:    block,
 		Sequence: block,
 		Meta: blockatlas.Transfer{
-			Value: blockatlas.Amount(valueBase10),
+			Value:    blockatlas.Amount(valueBase10),
+			Symbol:   coin.Coins[coin.VET].Symbol,
+			Decimals: coin.Coins[coin.VET].Decimals,
 		},
 	}, true
 }
@@ -184,7 +186,7 @@ func NormalizeTokenTransfer(t *TokenTransfer, receipt *TransferReceipt) (tx bloc
 		Block:    block,
 		Sequence: block,
 		Meta: blockatlas.NativeTokenTransfer{
-			Name: 	  "VeThor Token",
+			Name:     "VeThor Token",
 			Symbol:   "VTHO",
 			TokenID:  VeThorContract,
 			Decimals: 18,
@@ -194,4 +196,3 @@ func NormalizeTokenTransfer(t *TokenTransfer, receipt *TransferReceipt) (tx bloc
 		},
 	}, true
 }
-

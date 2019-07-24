@@ -115,7 +115,9 @@ func Normalize(payment *Payment, nativeCoinIndex uint) (tx blockatlas.Tx, ok boo
 		Date:  date.Unix(),
 		Block: id,
 		Meta: blockatlas.Transfer{
-			Value: blockatlas.Amount(value),
+			Value:    blockatlas.Amount(value),
+			Symbol:   coin.Coins[nativeCoinIndex].Symbol,
+			Decimals: coin.Coins[nativeCoinIndex].Decimals,
 		},
 	}, true
 }

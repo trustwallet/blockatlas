@@ -70,8 +70,10 @@ func Normalize(srcTx *Tx) (tx blockatlas.Tx, ok bool) {
 		To:    srcTx.Payment.Destination,
 		Fee:   srcTx.Payment.Fee,
 		Block: srcTx.LedgerIndex,
-		Meta:  blockatlas.Transfer{
-			Value: blockatlas.Amount(srcAmount),
+		Meta: blockatlas.Transfer{
+			Value:    blockatlas.Amount(srcAmount),
+			Symbol:   coin.Coins[coin.XRP].Symbol,
+			Decimals: coin.Coins[coin.XRP].Decimals,
 		},
 	}, true
 }

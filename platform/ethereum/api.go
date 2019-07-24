@@ -109,7 +109,9 @@ func AppendTxs(in []blockatlas.Tx, srcTx *Doc, coinIndex uint) (out []blockatlas
 	if len(srcTx.Ops) == 0 && srcTx.Input == "0x" {
 		transferTx := baseTx
 		transferTx.Meta = blockatlas.Transfer{
-			Value: blockatlas.Amount(srcTx.Value),
+			Value:    blockatlas.Amount(srcTx.Value),
+			Symbol:   coin.Coins[coinIndex].Symbol,
+			Decimals: coin.Coins[coinIndex].Decimals,
 		}
 		out = append(out, transferTx)
 	}

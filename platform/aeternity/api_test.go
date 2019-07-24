@@ -42,6 +42,8 @@ var transferDst = blockatlas.Tx{
 	Memo:   "Hello, Miner! /Yours Beepool./",
 	Meta: blockatlas.Transfer{
 		Value: "252550000000000000000",
+		Symbol:   "AE",
+		Decimals: 18,
 	},
 }
 
@@ -86,6 +88,5 @@ func testNormalize(t *testing.T, _test *test) {
 	if err != nil {
 		t.Fatal(err)
 	}
-
 	assert.Equal(t,resJSON, dstJSON)
 }
