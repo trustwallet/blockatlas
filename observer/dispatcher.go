@@ -3,6 +3,7 @@ package observer
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas"
 	"net/http"
@@ -42,6 +43,7 @@ func (d *Dispatcher) dispatch(event Event) {
 	for _, hook := range webhooks {
 		go d.postWebhook(hook, txJson, log)
 	}
+	log.Infoln(fmt.Sprintf("Dispatch: hook count = %d", len(webhooks)))
 }
 
 func (d *Dispatcher) postWebhook(hook string, data []byte, log *logrus.Entry) {
@@ -49,5 +51,5 @@ func (d *Dispatcher) postWebhook(hook string, data []byte, log *logrus.Entry) {
 	if err != nil {
 		log.WithError(err).Errorf("Failed to dispatch event %s: %s", hook, err)
 	}
-	log.Debug("Dispatch")
+	log.Infoln(fmt.Sprintf("Dispatch: hook = %s & data = %s", hook, bytes.NewReader(data)))
 }
