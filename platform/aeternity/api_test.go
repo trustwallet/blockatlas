@@ -39,7 +39,7 @@ var transferDst = blockatlas.Tx{
 	Date:   1563848658,
 	Block:  113579,
 	Status: blockatlas.StatusCompleted,
-	Memo:   "",
+	Memo:   "Hello, Miner! /Yours Beepool./",
 	Meta: blockatlas.Transfer{
 		Value: "252550000000000000000",
 	},
@@ -59,6 +59,12 @@ func TestNormalize(t *testing.T) {
 		expected:    &transferDst,
 		token:       "",
 	})
+}
+
+func TestPayloadEncoding(t *testing.T) {
+	assert.Equal(t, getPayload("ba_SGVsbG8sIE1pbmVyISAvWW91cnMgQmVlcG9vbC4vKXcQag=="), "Hello, Miner! /Yours Beepool./")
+	assert.Equal(t, getPayload("xvass-///BadEncoding///Test"), "")
+	assert.Equal(t, getPayload(""), "")
 }
 
 func testNormalize(t *testing.T, _test *test) {

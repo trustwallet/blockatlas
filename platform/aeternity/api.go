@@ -1,8 +1,10 @@
 package aeternity
 
 import (
+	"encoding/base64"
 	"github.com/trustwallet/blockatlas/coin"
 	"net/http"
+	"strings"
 
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas"
@@ -36,6 +38,7 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 }
 
 func NormalizeTx(srcTx *Transaction) blockatlas.Tx {
+
 	return blockatlas.Tx{
 		ID:     srcTx.Hash,
 		Coin:   coin.AE,
@@ -44,10 +47,26 @@ func NormalizeTx(srcTx *Transaction) blockatlas.Tx {
 		Fee:    blockatlas.Amount(srcTx.TxValue.Fee),
 		Date:   int64(srcTx.Timestamp) / 1000,
 		Block:  srcTx.BlockHeight,
-		Memo:   "",
+		Memo:   getPayload(srcTx.TxValue.Payload),
 		Status: blockatlas.StatusCompleted,
 		Meta: blockatlas.Transfer{
 			Value: blockatlas.Amount(srcTx.TxValue.Amount),
 		},
+	}
+}
+
+func getPayload(encodedPayload string) string {
+	payload := []byte(strings.ReplaceAll(encodedPayload, "ba_", ""))
+	if len(payload) <= 8 {
+		return ""
+	} else {
+		payload = payload[:len(payload)-8]
+		data, err := base64.StdEncoding.DecodeString(string(payload))
+		if err != nil || len(data) <= 4 {
+			payload = []byte("")
+		} else {
+			payload = data
+		}
+		return string(payload)
 	}
 }

@@ -30,17 +30,17 @@ func (c *Client) GetTxs(address string, limit int) ([]Transaction, error) {
 
 	body, err := ioutil.ReadAll(res.Body)
 
-	var txsArrays []Transaction
-	decodeError := json.Unmarshal([]byte(string(body)), &txsArrays)
+	var transactions []Transaction
+	decodeError := json.Unmarshal([]byte(string(body)), &transactions)
 	if decodeError != nil {
 		return nil, decodeError
 	}
-	if len(txsArrays) == 0 {
+	if len(transactions) == 0 {
 		return make([]Transaction, 0), nil
 	}
 
 	var result []Transaction
-	for _, tx := range txsArrays {
+	for _, tx := range transactions {
 		if tx.TxValue.Type == "SpendTx" {
 			result = append(result, tx)
 		}

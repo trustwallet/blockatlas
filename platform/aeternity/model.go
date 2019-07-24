@@ -15,4 +15,5 @@ type Tx struct {
 	Amount    json.Number `json:"amount"`
 	Fee       json.Number `json:"fee"`
 	Type      string      `json:"type"`
+	Payload   string      `json:"payload"`
 }
