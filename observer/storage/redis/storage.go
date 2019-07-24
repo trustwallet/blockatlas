@@ -4,10 +4,13 @@ import (
 	"fmt"
 	"github.com/go-redis/redis"
 	"github.com/trustwallet/blockatlas/observer"
+	"strings"
 )
 
 const keyObservers = "ATLAS_OBSERVERS"
 const keyBlockNumber = "ATLAS_BLOCK_NUMBER_%d"
+
+type webHookOperation func(old []string, changes []string) []string
 
 type Storage struct {
 	client *redis.Client
@@ -40,11 +43,11 @@ func (s *Storage) Lookup(coin uint, addresses ...string) (observers []observer.S
 		if result == nil {
 			continue
 		}
-		if webhook, ok := result.(string); ok {
+		if webhooks, ok := result.(string); ok {
 			observers = append(observers, observer.Subscription{
-				Coin:    coin,
-				Address: addresses[i],
-				Webhook: webhook,
+				Coin:     coin,
+				Address:  addresses[i],
+				Webhooks: strings.Fields(webhooks),
 			})
 		}
 	}
@@ -53,21 +56,34 @@ func (s *Storage) Lookup(coin uint, addresses ...string) (observers []observer.S
 }
 
 func (s *Storage) Add(subs []observer.Subscription) error {
-	fields := make(map[string]interface{})
-	for _, sub := range subs {
-		fields[key(sub.Coin, sub.Address)] = sub.Webhook
+	return s.updateWebHooks(subs, add)
+}
+
+func add(old []string, changes []string) []string {
+	if changes == nil {
+		return old
 	}
-	cmd := s.client.HMSet(keyObservers, fields)
-	return cmd.Err()
+	if old == nil {
+		return changes
+	} else {
+		var result []string
+		for _, i := range changes {
+			if !contains(old, i) {
+				result = append(result, i)
+			}
+		}
+		return append(old, result...)
+	}
 }
 
 func (s *Storage) Delete(subs []observer.Subscription) error {
-	fields := make([]string, len(subs))
-	for i, sub := range subs {
-		fields[i] = key(sub.Coin, sub.Address)
-	}
-	cmd := s.client.HDel(keyObservers, fields...)
-	return cmd.Err()
+	return s.updateWebHooks(subs, func(old []string, changes []string) []string {
+		if old != nil {
+			return removeWebHooks(old, changes)
+		} else {
+			return make([]string, 0)
+		}
+	})
 }
 
 func (s *Storage) GetBlockNumber(coin uint) (int64, error) {
@@ -86,4 +102,54 @@ func (s *Storage) SetBlockNumber(coin uint, num int64) error {
 
 func key(coin uint, address string) string {
 	return fmt.Sprintf("%d-%s", coin, address)
+}
+
+func removeWebHooks(hooks []string, hooksToRemove []string) []string {
+	indices := make(map[string]bool)
+	for _, r := range hooksToRemove {
+		indices[r] = true
+	}
+	var n []string
+	for _, h := range hooks {
+		if _, ok := indices[h]; !ok {
+			n = append(n, h)
+		}
+	}
+	return n
+}
+
+func (s *Storage) updateWebHooks(subs []observer.Subscription, operation webHookOperation) error {
+	fields := make(map[string]interface{})
+	var keys []string
+	for _, sub := range subs {
+		keys = append(keys, key(sub.Coin, sub.Address))
+	}
+
+	cmd := s.client.HMGet(keyObservers, keys...)
+	if err := cmd.Err(); err != nil {
+		return err
+	}
+	results := cmd.Val()
+	for i := range results {
+		result := results[i]
+		key := keys[i]
+		var newWebHooks []string
+		if oldWebHooks, ok := result.(string); ok && len(oldWebHooks) > 0 {
+			old := strings.Fields(oldWebHooks)
+			newWebHooks = operation(old, subs[i].Webhooks)
+		} else {
+			newWebHooks = operation(nil, subs[i].Webhooks)
+		}
+		fields[key] = strings.Join(newWebHooks, "\n")
+	}
+	return s.client.HMSet(keyObservers, fields).Err()
+}
+
+func contains(s []string, e string) bool {
+	for _, a := range s {
+		if a == e {
+			return true
+		}
+	}
+	return false
 }
