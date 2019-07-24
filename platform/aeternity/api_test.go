@@ -54,19 +54,8 @@ type test struct {
 	token       string
 }
 
-func TestNormalize(t *testing.T) {
-	testNormalize(t, &test{
-		name:        "transfer",
-		apiResponse: transferTransaction,
-		expected:    &transferDst,
-		token:       "",
-	})
-}
-
-func TestPayloadEncoding(t *testing.T) {
-	assert.Equal(t, getPayload("ba_SGVsbG8sIE1pbmVyISAvWW91cnMgQmVlcG9vbC4vKXcQag=="), "Hello, Miner! /Yours Beepool./")
-	assert.Equal(t, getPayload("xvass-///BadEncoding///Test"), "")
-	assert.Equal(t, getPayload(""), "")
+func initCoins() {
+	coin.Load("../../coins.yml")
 }
 
 func testNormalize(t *testing.T, _test *test) {
@@ -89,4 +78,20 @@ func testNormalize(t *testing.T, _test *test) {
 		t.Fatal(err)
 	}
 	assert.Equal(t,resJSON, dstJSON)
+}
+
+func TestNormalize(t *testing.T) {
+	initCoins()
+	testNormalize(t, &test{
+		name:        "transfer",
+		apiResponse: transferTransaction,
+		expected:    &transferDst,
+		token:       "",
+	})
+}
+
+func TestPayloadEncoding(t *testing.T) {
+	assert.Equal(t, getPayload("ba_SGVsbG8sIE1pbmVyISAvWW91cnMgQmVlcG9vbC4vKXcQag=="), "Hello, Miner! /Yours Beepool./")
+	assert.Equal(t, getPayload("xvass-///BadEncoding///Test"), "")
+	assert.Equal(t, getPayload(""), "")
 }
