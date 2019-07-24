@@ -76,7 +76,9 @@ func Normalize(srcTx *Tx) (tx blockatlas.Tx) {
 		Block: block,
 		Memo:  srcTx.Data.Contents.Memo,
 		Meta: blockatlas.Transfer{
-			Value: blockatlas.Amount(value),
+			Value:    blockatlas.Amount(value),
+			Symbol:   coin.Coins[coin.ATOM].Symbol,
+			Decimals: coin.Coins[coin.ATOM].Decimals,
 		},
 	}
 }

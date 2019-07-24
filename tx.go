@@ -58,7 +58,9 @@ type Tx struct {
 
 // Transfer describes the transfer of currency native to the platform
 type Transfer struct {
-	Value Amount `json:"value"`
+	Value    Amount `json:"value"`
+	Symbol   string `json:"symbol"`
+	Decimals uint   `json:"decimals"`
 }
 
 // NativeTokenTransfer describes the transfer of native tokens.

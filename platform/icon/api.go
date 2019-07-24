@@ -53,17 +53,19 @@ func Normalize(trx *Tx) (tx blockatlas.Tx, b bool) {
 	value := util.DecimalExp(string(trx.Amount), 18)
 
 	return blockatlas.Tx{
-		ID:      trx.TxHash,
-		Coin   : coin.ICX,
-		From   : trx.FromAddr,
-		To     : trx.ToAddr,
-		Fee    : blockatlas.Amount(fee),
-		Status : blockatlas.StatusCompleted,
-		Date   : date.Unix(),
-		Type   : blockatlas.TxTransfer,
-		Block  : trx.Height,
+		ID:     trx.TxHash,
+		Coin:   coin.ICX,
+		From:   trx.FromAddr,
+		To:     trx.ToAddr,
+		Fee:    blockatlas.Amount(fee),
+		Status: blockatlas.StatusCompleted,
+		Date:   date.Unix(),
+		Type:   blockatlas.TxTransfer,
+		Block:  trx.Height,
 		Meta: blockatlas.Transfer{
-			Value : blockatlas.Amount(value),
+			Value:    blockatlas.Amount(value),
+			Symbol:   coin.Coins[coin.ICX].Symbol,
+			Decimals: coin.Coins[coin.ICX].Decimals,
 		},
 	}, true
 }

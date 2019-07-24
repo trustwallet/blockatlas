@@ -48,8 +48,10 @@ func NormalizeTx(srcTx *Tx) (tx blockatlas.Tx, ok bool) {
 		To:    "0x" + srcTx.ToAddr,
 		Fee:   blockatlas.Amount(fee),
 		Block: srcTx.BlockNumber,
-		Meta:  blockatlas.Transfer{
-			Value: blockatlas.Amount(value),
+		Meta: blockatlas.Transfer{
+			Value:    blockatlas.Amount(value),
+			Symbol:   coin.Coins[coin.AION].Symbol,
+			Decimals: coin.Coins[coin.AION].Decimals,
 		},
 	}, true
 }
