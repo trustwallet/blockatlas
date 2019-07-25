@@ -25,7 +25,7 @@ func (p *Platform) Coin() coin.Coin {
 }
 
 func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
-	addressTxs, err := p.client.GetTxs(address, 25)
+	addressTxs, err := p.client.GetTxs(address, blockatlas.TxPerPage)
 	if err != nil {
 		return nil, err
 	}
@@ -38,18 +38,19 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 }
 
 func NormalizeTx(srcTx *Transaction) blockatlas.Tx {
+	txValue := srcTx.TxValue
 	return blockatlas.Tx{
 		ID:     srcTx.Hash,
 		Coin:   coin.AE,
-		From:   srcTx.TxValue.Sender,
-		To:     srcTx.TxValue.Recipient,
-		Fee:    blockatlas.Amount(srcTx.TxValue.Fee),
+		From:   txValue.Sender,
+		To:     txValue.Recipient,
+		Fee:    blockatlas.Amount(txValue.Fee),
 		Date:   int64(srcTx.Timestamp) / 1000,
 		Block:  srcTx.BlockHeight,
-		Memo:   getPayload(srcTx.TxValue.Payload),
+		Memo:   getPayload(txValue.Payload),
 		Status: blockatlas.StatusCompleted,
 		Meta: blockatlas.Transfer{
-			Value:    blockatlas.Amount(srcTx.TxValue.Amount),
+			Value:    blockatlas.Amount(txValue.Amount),
 			Symbol:   coin.Coins[coin.AE].Symbol,
 			Decimals: coin.Coins[coin.AE].Decimals,
 		},
