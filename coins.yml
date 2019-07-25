@@ -178,3 +178,10 @@
   name: Semux
   decimals: 9
   sampleAddress: '0x8197987c401a3466ad678b2080b24838ebd95b41'
+
+- id: 457
+  symbol: AE
+  handle: aeternity
+  name: Aeternity
+  decimals: 18
+  sampleAddress: 'ak_2p5878zbFhxnrm7meL7TmqwtvBaqcBddyp5eGzZbovZ5FeVfcw'
