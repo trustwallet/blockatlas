@@ -16,4 +16,5 @@ type Tx struct {
 	Fee       json.Number `json:"fee"`
 	Type      string      `json:"type"`
 	Payload   string      `json:"payload"`
+	Nonce     uint64      `json:"nonce"`
 }

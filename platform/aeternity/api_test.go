@@ -40,6 +40,7 @@ var transferDst = blockatlas.Tx{
 	Block:  113579,
 	Status: blockatlas.StatusCompleted,
 	Memo:   "Hello, Miner! /Yours Beepool./",
+	Sequence: 251291,
 	Meta: blockatlas.Transfer{
 		Value: "252550000000000000000",
 		Symbol:   "AE",
