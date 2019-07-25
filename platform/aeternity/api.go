@@ -40,15 +40,16 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 func NormalizeTx(srcTx *Transaction) blockatlas.Tx {
 	txValue := srcTx.TxValue
 	return blockatlas.Tx{
-		ID:     srcTx.Hash,
-		Coin:   coin.AE,
-		From:   txValue.Sender,
-		To:     txValue.Recipient,
-		Fee:    blockatlas.Amount(txValue.Fee),
-		Date:   int64(srcTx.Timestamp) / 1000,
-		Block:  srcTx.BlockHeight,
-		Memo:   getPayload(txValue.Payload),
-		Status: blockatlas.StatusCompleted,
+		ID:       srcTx.Hash,
+		Coin:     coin.AE,
+		From:     txValue.Sender,
+		To:       txValue.Recipient,
+		Fee:      blockatlas.Amount(txValue.Fee),
+		Date:     int64(srcTx.Timestamp) / 1000,
+		Block:    srcTx.BlockHeight,
+		Memo:     getPayload(txValue.Payload),
+		Status:   blockatlas.StatusCompleted,
+		Sequence: txValue.Nonce,
 		Meta: blockatlas.Transfer{
 			Value:    blockatlas.Amount(txValue.Amount),
 			Symbol:   coin.Coins[coin.AE].Symbol,
