@@ -90,7 +90,7 @@ func (c *Client) GetTxsOfAddress(address string, token string) (*TxPage, error) 
 }
 
 func (c *Client) GetAccountMetadata(address string) (*Account, error) {
-	uri := fmt.Sprintf("%s/account/%s", c.BaseDexURL, address)
+	uri := fmt.Sprintf("%s/v1/account/%s", c.BaseDexURL, address)
 
 	res, err := c.HTTPClient.Get(uri)
 	if err != nil {
@@ -108,7 +108,7 @@ func (c *Client) GetAccountMetadata(address string) (*Account, error) {
 }
 
 func (c *Client) GetTokens() (*TokenPage, error) {
-	uri := fmt.Sprintf("%s/tokens?%s",
+	uri := fmt.Sprintf("%s/v1/tokens?%s",
 		c.BaseDexURL,
 		url.Values{
 			"limits": {"1000"},
