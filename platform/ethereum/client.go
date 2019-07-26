@@ -84,3 +84,26 @@ func (c *Client) CurrentBlockNumber() (num int64, err error) {
 
 	return nodeInfo.LatestBlock, nil
 }
+
+func (c *Client) GetTokens(address string) (*TokenPage, error) {
+	path := fmt.Sprintf("%s/tokens?%s",
+		c.BaseURL,
+		url.Values{
+			"address": {address},
+		}.Encode())
+
+	res, err := http.Get(path)
+	if err != nil {
+		logrus.WithError(err).Error("Ethereum/Trust Ray: Failed to get my tokens")
+		return nil, blockatlas.ErrSourceConn
+	}
+	defer res.Body.Close()
+
+	if res.StatusCode != 200 {
+		return nil, fmt.Errorf("http %s (%s)", res.Status, path)
+	}
+
+	tks := new(TokenPage)
+	err = json.NewDecoder(res.Body).Decode(tks)
+	return tks, err
+}

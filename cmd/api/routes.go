@@ -21,6 +21,11 @@ func loadPlatforms(root gin.IRouter) {
 		makeTxRouteV2(routerV2, txAPI)
 	}
 
+	for _, tokenAPI := range platform.Platforms {
+		router := getRouter(v2, tokenAPI.Coin().Handle)
+		makeTokenRoute(router, tokenAPI)
+	}
+
 	for _, stakeAPI := range platform.Platforms {
 		router := getRouter(v2, stakeAPI.Coin().Handle)
 		makeStakingRoute(router, stakeAPI)

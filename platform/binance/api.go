@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/trustwallet/blockatlas"
 	"net/http"
+	"strings"
 
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/coin"
@@ -16,6 +17,7 @@ type Platform struct {
 
 func (p *Platform) Init() error {
 	p.client.BaseURL = viper.GetString("binance.api")
+	p.client.BaseDexURL = viper.GetString("binance.dex")
 	p.client.HTTPClient = http.DefaultClient
 	return nil
 }
@@ -117,4 +119,55 @@ func NormalizeTxs(srcTxs []Tx, token string) (txs []blockatlas.Tx) {
 		txs = append(txs, tx)
 	}
 	return
+}
+
+func (p *Platform) GetTokenListByAddress(address string) (blockatlas.TokenPage, error) {
+	account, err := p.client.GetAccountMetadata(address)
+	if err != nil {
+		return nil, err
+	}
+	tokens, err := p.client.GetTokens()
+	if err != nil {
+		return nil, err
+	}
+	return NormalizeTokens(account.Balances, tokens), nil
+}
+
+// NormalizeToken converts a Binance token into the generic model
+func NormalizeToken(srcToken *Balance, tokens *TokenPage) (t blockatlas.Token, ok bool) {
+	tk := tokens.findToken(srcToken.Symbol)
+	if tk == nil {
+		return blockatlas.Token{}, false
+	}
+
+	t = blockatlas.Token{
+		Name:     tk.Name,
+		Symbol:   tk.OriginalSymbol,
+		TokenId:  tk.Symbol,
+		Coin:     coin.BNB,
+		Decimals: uint(decimalPlaces(tk.TotalSupply)),
+	}
+
+	return t, true
+}
+
+// NormalizeTxs converts multiple Binance tokens
+func NormalizeTokens(srcBalance []Balance, tokens *TokenPage) (tokenPage []blockatlas.Token) {
+	for _, srcToken := range srcBalance {
+		token, ok := NormalizeToken(&srcToken, tokens)
+		if !ok {
+			continue
+		}
+		tokenPage = append(tokenPage, token)
+	}
+	return
+}
+
+// decimalPlaces count the decimals places.
+func decimalPlaces(v string) int {
+	s := strings.Split(v, ".")
+	if len(s) < 2 {
+		return 0
+	}
+	return len(s[1])
 }

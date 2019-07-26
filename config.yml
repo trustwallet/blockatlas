@@ -27,6 +27,7 @@ observer:
 #       Binance Chain: https://explorer.binance.org
 binance:
   api: https://explorer.binance.org/api/v1
+  dex: https://dex.binance.org/api
 
 # [NIM] Nimiq: https://nimiq.com
 #nimiq:

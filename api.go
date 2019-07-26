@@ -28,6 +28,12 @@ type TokenTxAPI interface {
 	GetTokenTxsByAddress(address string, token string) (TxPage, error)
 }
 
+// TokenAPI provides token lookups
+type TokenAPI interface {
+	Platform
+	GetTokenListByAddress(address string) (TokenPage, error)
+}
+
 // BlockAPI provides block information and lookups
 type BlockAPI interface {
 	Platform

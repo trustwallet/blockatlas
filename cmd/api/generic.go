@@ -114,6 +114,31 @@ func makeCollectionRoute(router gin.IRouter, api blockatlas.Platform) {
 	})
 }
 
+func makeTokenRoute(router gin.IRouter, api blockatlas.Platform) {
+	var tokenAPI blockatlas.TokenAPI
+	tokenAPI, _ = api.(blockatlas.TokenAPI)
+
+	if tokenAPI == nil {
+		return
+	}
+
+	router.GET("/tokens/:address", func(c *gin.Context) {
+		address := c.Param("address")
+		if address == "" {
+			emptyPage(c)
+			return
+		}
+
+		tl, err := tokenAPI.GetTokenListByAddress(address)
+		if err != nil {
+			c.JSON(http.StatusServiceUnavailable, err)
+			return
+		}
+
+		c.JSON(http.StatusOK, blockatlas.DocsResponse{Docs: tl})
+	})
+}
+
 func emptyPage(c *gin.Context) {
 	var page blockatlas.TxPage
 	c.JSON(http.StatusOK, &page)
