@@ -108,8 +108,8 @@ type ContractCall struct {
 // TokenPage is a page of transactions.
 type TokenPage []Token
 
-// TokenTransfer describes the non-native tokens.
-// Examples: ERC-20, TRC20
+// Token describes the non-native tokens.
+// Examples: ERC-20, TRC-20, BEP-2
 type Token struct {
 	Name     string `json:"name"`
 	Symbol   string `json:"symbol"`
