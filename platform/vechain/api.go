@@ -2,14 +2,13 @@ package vechain
 
 import (
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/util"
 	"net/http"
 	"strings"
 	"sync"
-
-	"github.com/spf13/viper"
 )
 
 type Platform struct {
@@ -64,7 +63,7 @@ func (p *Platform) getThorTxsByAddress(address string) ([]blockatlas.Tx, error) 
 	return txs, nil
 }
 
-func (p *Platform)getTransactionReceipt(ids []string)(chan *TransferReceipt)  {
+func (p *Platform) getTransactionReceipt(ids []string) chan *TransferReceipt {
 	receiptsChan := make(chan *TransferReceipt, len(ids))
 
 	sem := util.NewSemaphore(16)
@@ -90,7 +89,7 @@ func (p *Platform)getTransactionReceipt(ids []string)(chan *TransferReceipt)  {
 	return receiptsChan
 }
 
-func findTransferReceiptByTxID(receiptsChan chan *TransferReceipt, txID string) (TransferReceipt) {
+func findTransferReceiptByTxID(receiptsChan chan *TransferReceipt, txID string) TransferReceipt {
 
 	var transferReceipt TransferReceipt
 
@@ -184,7 +183,7 @@ func NormalizeTokenTransfer(t *TokenTransfer, receipt *TransferReceipt) (tx bloc
 		Block:    block,
 		Sequence: block,
 		Meta: blockatlas.NativeTokenTransfer{
-			Name: 	  "VeThor Token",
+			Name:     "VeThor Token",
 			Symbol:   "VTHO",
 			TokenID:  VeThorContract,
 			Decimals: 18,
@@ -194,4 +193,3 @@ func NormalizeTokenTransfer(t *TokenTransfer, receipt *TransferReceipt) (tx bloc
 		},
 	}, true
 }
-
