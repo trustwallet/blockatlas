@@ -132,3 +132,7 @@ waves:
 # [AE] Aeternity: https://aeternity.com/
 aeternity:
   api: https://mdw.aepps.com/
+
+# [BTC] Bitcoin: https://btc1.trezor.io/
+bitcoin:
+  api: https://btc1.trezor.io/api

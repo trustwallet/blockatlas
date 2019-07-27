@@ -185,3 +185,10 @@
   name: Aeternity
   decimals: 18
   sampleAddress: 'ak_2p5878zbFhxnrm7meL7TmqwtvBaqcBddyp5eGzZbovZ5FeVfcw'
+
+- id: 0
+  symbol: BTC
+  handle: bitcoin
+  name: Bitcoin
+  decimals: 9
+  sampleAddress: '3QJmV3qfvL9SuYo34YihAf3sRCW3qSinyC'
