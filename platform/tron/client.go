@@ -13,8 +13,6 @@ import (
 type Client struct {
 	HTTPClient *http.Client
 	BaseURL    string
-	// Token is required to access the Beta API
-	Token      string
 }
 
 func (c *Client) GetTxsOfAddress(address string) ([]Tx, error) {
@@ -22,7 +20,6 @@ func (c *Client) GetTxsOfAddress(address string) ([]Tx, error) {
 		c.BaseURL,
 		url.PathEscape(address),
 		url.Values{
-			"experimental": {c.Token},
 			"only_confirmed": {"true"},
 			"limit": {strconv.Itoa(blockatlas.TxPerPage)},
 		}.Encode())

@@ -13,7 +13,6 @@ type Platform struct {
 
 func (p *Platform) Init() error {
 	p.client.BaseURL = viper.GetString("tron.api")
-	p.client.Token = viper.GetString("tron.token")
 	p.client.HTTPClient = http.DefaultClient
 	return nil
 }
