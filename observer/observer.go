@@ -31,22 +31,12 @@ func (o *Observer) run(events chan<- Event, blocks <-chan *blockatlas.Block) {
 }
 
 func (o *Observer) processBlock(events chan<- Event, block *blockatlas.Block) {
-	// Order transactions in block by addresses
-	txMap := make(map[string]*blockatlas.TxSet)
-
-	for _, tx := range block.Txs {
-		addresses := tx.GetAddresses()
-		for _, address := range addresses {
-			txMap[address].Add(tx)
-		}
-	}
-
+	txMap := GetTxs(block)
 	// Build list of unique addresses
 	var addresses []string
 	for address := range txMap {
 		addresses = append(addresses, address)
 	}
-
 	// Lookup subscriptions
 	subs, err := o.Storage.Lookup(o.Coin, addresses...)
 	if err != nil {
@@ -64,4 +54,19 @@ func (o *Observer) processBlock(events chan<- Event, block *blockatlas.Block) {
 			}
 		}
 	}
+}
+
+func GetTxs(block *blockatlas.Block) map[string]*blockatlas.TxSet {
+	txMap := make(map[string]*blockatlas.TxSet)
+
+	for _, tx := range block.Txs {
+		addresses := tx.GetAddresses()
+		for _, address := range addresses {
+			if txMap[address] == nil {
+				txMap[address] = new(blockatlas.TxSet)
+			}
+			txMap[address].Add(tx)
+		}
+	}
+	return txMap
 }
