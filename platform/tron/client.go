@@ -47,7 +47,7 @@ func (c *Client) GetTxsOfAddress(address string) ([]Tx, error) {
 
 func (c *Client) GetAccountMetadata(address string) (*Accounts, error) {
 	uri := fmt.Sprintf("%s/accounts/%s", c.BaseURL, address)
-	println(uri)
+
 	res, err := c.HTTPClient.Get(uri)
 	if err != nil {
 		logrus.WithError(err).Error("TRON: Failed to get account tokens")
@@ -62,7 +62,7 @@ func (c *Client) GetAccountMetadata(address string) (*Accounts, error) {
 
 func (c *Client) GetTokenInfo(id string) (*Asset, error) {
 	uri := fmt.Sprintf("%s/assets/%s", c.BaseURL, id)
-	println(uri)
+
 	res, err := c.HTTPClient.Get(uri)
 	if err != nil {
 		logrus.WithError(err).Errorf("TRON: Failed to get token %s info", id)
