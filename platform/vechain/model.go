@@ -1,7 +1,7 @@
 package vechain
 
 type TransferTx struct {
-	Transactions []Tx   `json:"transactions"`
+	Transactions []Tx `json:"transactions"`
 }
 
 type Tx struct {
@@ -9,13 +9,13 @@ type Tx struct {
 }
 
 type TransferReceipt struct {
-	Block        uint64   `json:"block"`
-	Clauses      []Clause `json:"clauses"`
-	ID           string   `json:"id"`
-	Nonce        string   `json:"nonce"`
-	Origin       string   `json:"origin"`
-	Receipt      Receipt  `json:"receipt"`
-	Timestamp    uint64   `json:"timestamp"`
+	Block     uint64   `json:"block"`
+	Clauses   []Clause `json:"clauses"`
+	ID        string   `json:"id"`
+	Nonce     string   `json:"nonce"`
+	Origin    string   `json:"origin"`
+	Receipt   Receipt  `json:"receipt"`
+	Timestamp uint64   `json:"timestamp"`
 }
 
 type Clause struct {
@@ -48,5 +48,3 @@ type TokenTransfer struct {
 	Timestamp       int64  `json:"timestamp"`
 	TxID            string `json:"txId"`
 }
-
-

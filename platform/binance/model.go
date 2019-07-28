@@ -26,9 +26,9 @@ type Error struct {
 }
 
 type BlockDescriptor struct {
-	BlockHeight int64 `json:"blockHeight"`
-	BlockHash string `json:"blockHash"`
-	TxNum int `json:"txNum"`
+	BlockHeight int64  `json:"blockHeight"`
+	BlockHash   string `json:"blockHash"`
+	TxNum       int    `json:"txNum"`
 }
 
 type BlockList struct {
@@ -46,7 +46,6 @@ type Tx struct {
 	Timestamp     int64       `json:"timeStamp"`
 	ToAddr        string      `json:"toAddr"`
 	Age           int64       `json:"txAge"`
-	MappedAsset   string      `json:"mappedTxAsset"`
 	Asset         string      `json:"txAsset"`
 	Fee           json.Number `json:"txFee"`
 	Hash          string      `json:"txHash"`

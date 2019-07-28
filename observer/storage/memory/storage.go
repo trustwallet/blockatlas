@@ -8,13 +8,13 @@ import (
 
 type Storage struct {
 	blockNumbers map[uint]int64
-	observers map[string]observer.Subscription
+	observers    map[string]observer.Subscription
 }
 
 func New() *Storage {
 	return &Storage{
 		blockNumbers: make(map[uint]int64),
-		observers: make(map[string]observer.Subscription),
+		observers:    make(map[string]observer.Subscription),
 	}
 }
 

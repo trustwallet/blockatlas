@@ -21,7 +21,7 @@ func (c *Client) GetTxsOfAddress(address string) ([]Tx, error) {
 		url.PathEscape(address),
 		url.Values{
 			"only_confirmed": {"true"},
-			"limit": {strconv.Itoa(blockatlas.TxPerPage)},
+			"limit":          {strconv.Itoa(blockatlas.TxPerPage)},
 		}.Encode())
 	httpRes, err := c.HTTPClient.Get(uri)
 	if err != nil {

@@ -96,7 +96,7 @@ func NormalizeTx(srcTx *Tx, token string) (tx blockatlas.Tx, ok bool) {
 	if srcTx.Asset == token && srcTx.Type == "TRANSFER" && srcTx.FromAddr != "" && srcTx.ToAddr != "" {
 		tx.Meta = blockatlas.NativeTokenTransfer{
 			TokenID:  srcTx.Asset,
-			Symbol:   srcTx.MappedAsset,
+			Symbol:   TokenSymbol(srcTx.Asset),
 			Value:    blockatlas.Amount(value),
 			Decimals: coin.Coins[coin.BNB].Decimals,
 			From:     srcTx.FromAddr,
@@ -107,6 +107,14 @@ func NormalizeTx(srcTx *Tx, token string) (tx blockatlas.Tx, ok bool) {
 	}
 
 	return tx, false
+}
+
+func TokenSymbol(asset string) string {
+	s := strings.Split(asset, "-")
+	if len(s) > 1 {
+		return s[0]
+	}
+	return asset
 }
 
 // NormalizeTxs converts multiple Binance transactions
