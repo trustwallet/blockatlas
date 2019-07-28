@@ -175,6 +175,7 @@
   handle: waves
   name: WAVES
   decimals: 8
+  blockTime: 50000
   sampleAddress: '3P7wz6TXienpw3BHe8eHUEuZWb6WE58kgnQ'
 
 - id: 7562605
