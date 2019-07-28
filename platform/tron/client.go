@@ -44,3 +44,33 @@ func (c *Client) GetTxsOfAddress(address string) ([]Tx, error) {
 
 	return res.Txs, nil
 }
+
+func (c *Client) GetAccountMetadata(address string) (*Accounts, error) {
+	uri := fmt.Sprintf("%s/accounts/%s", c.BaseURL, address)
+
+	res, err := c.HTTPClient.Get(uri)
+	if err != nil {
+		logrus.WithError(err).Error("TRON: Failed to get account tokens")
+		return nil, blockatlas.ErrSourceConn
+	}
+	defer res.Body.Close()
+
+	v2 := new(Accounts)
+	err = json.NewDecoder(res.Body).Decode(v2)
+	return v2, nil
+}
+
+func (c *Client) GetTokenInfo(id string) (*Asset, error) {
+	uri := fmt.Sprintf("%s/assets/%s", c.BaseURL, id)
+
+	res, err := c.HTTPClient.Get(uri)
+	if err != nil {
+		logrus.WithError(err).Errorf("TRON: Failed to get token %s info", id)
+		return nil, blockatlas.ErrSourceConn
+	}
+	defer res.Body.Close()
+
+	asset := new(Asset)
+	err = json.NewDecoder(res.Body).Decode(asset)
+	return asset, nil
+}
