@@ -98,7 +98,7 @@ func NormalizeTx(srcTx *Tx, token string) (tx blockatlas.Tx, ok bool) {
 			TokenID:  srcTx.Asset,
 			Symbol:   srcTx.MappedAsset,
 			Value:    blockatlas.Amount(value),
-			Decimals: 8,
+			Decimals: coin.Coins[coin.BNB].Decimals,
 			From:     srcTx.FromAddr,
 			To:       srcTx.ToAddr,
 		}
