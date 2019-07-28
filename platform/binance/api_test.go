@@ -93,7 +93,12 @@ type test struct {
 	token       string
 }
 
+func initCoins() {
+	coin.Load("../../coins.yml")
+}
+
 func TestNormalizeTx(t *testing.T) {
+	initCoins()
 	testNormalizeTx(t, &test{
 		name:        "transfer",
 		apiResponse: nativeTransferTransaction,
