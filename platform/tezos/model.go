@@ -19,19 +19,19 @@ type Manager struct {
 
 // Operation is a Tezos transfer operation
 type Operation struct {
-	Kind         string        `json:"kind"`
-	Src          Address       `json:"src"`
-	Dest         Address       `json:"destination"`
+	Kind         string            `json:"kind"`
+	Src          Address           `json:"src"`
+	Dest         Address           `json:"destination"`
 	Amount       blockatlas.Amount `json:"amount"`
-	Failed       bool          `json:"failed"`
-	Internal     bool          `json:"internal"`
-	Burn         int           `json:"burn"`
-	Counter      int           `json:"counter"`
+	Failed       bool              `json:"failed"`
+	Internal     bool              `json:"internal"`
+	Burn         int               `json:"burn"`
+	Counter      int               `json:"counter"`
 	Fee          blockatlas.Amount `json:"fee"`
-	GasLimit     string        `json:"gas_limit"`
-	StorageLimit string        `json:"storage_limit"`
-	OpLevel      uint64        `json:"op_level"`
-	Timestamp    string        `json:"timestamp"`
+	GasLimit     string            `json:"gas_limit"`
+	StorageLimit string            `json:"storage_limit"`
+	OpLevel      uint64            `json:"op_level"`
+	Timestamp    string            `json:"timestamp"`
 }
 
 // Address is a Tezos address object

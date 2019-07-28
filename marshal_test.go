@@ -32,8 +32,8 @@ var txModel = Tx{
 	Date:   1548954343,
 	Block:  419040,
 	Status: StatusCompleted,
-	Meta:   &Transfer{
-		Value:    "5004160",
+	Meta: &Transfer{
+		Value: "5004160",
 	},
 }
 

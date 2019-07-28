@@ -7,12 +7,12 @@ import (
 
 type Event struct {
 	Subscription Subscription
-	Tx *blockatlas.Tx
+	Tx           *blockatlas.Tx
 }
 
 type Observer struct {
 	Storage Storage
-	Coin uint
+	Coin    uint
 }
 
 func (o *Observer) Execute(blocks <-chan *blockatlas.Block) <-chan Event {
@@ -57,7 +57,7 @@ func (o *Observer) processBlock(events chan<- Event, block *blockatlas.Block) {
 		for _, tx := range txs {
 			events <- Event{
 				Subscription: sub,
-				Tx: tx,
+				Tx:           tx,
 			}
 		}
 	}

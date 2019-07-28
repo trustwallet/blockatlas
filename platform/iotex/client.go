@@ -63,7 +63,7 @@ func (c *Client) GetAddressTotalTransactions(address string) (int64, error) {
 	}
 
 	var account AccountInfo
-	
+
 	if err := json.NewDecoder(res.Body).Decode(&account); err != nil {
 		return 0, err
 	}

@@ -35,7 +35,7 @@ func (c *Client) GetTxsOfAddress(address string) ([]Tx, error) {
 		return nil, err
 	}
 	defer res.Body.Close()
-	
+
 	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
 		logrus.WithError(err).Error("Zilliqa: Error read response body")
@@ -45,7 +45,7 @@ func (c *Client) GetTxsOfAddress(address string) ([]Tx, error) {
 	if bytes.HasPrefix(body, []byte(`{"message":"Invalid API key specified"`)) {
 		return nil, fmt.Errorf("invalid Zilliqa API key")
 	}
-	
+
 	txs := make([]Tx, 0)
 	err = json.Unmarshal(body, &txs)
 	if err != nil {

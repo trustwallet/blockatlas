@@ -65,8 +65,8 @@ type Collection struct {
 }
 
 type PrimaryAssetContract struct {
-	Name        string 		`json:"name"`
-	Address     string 		`json:"address"`
+	Name        string      `json:"name"`
+	Address     string      `json:"address"`
 	NftVersion  string      `json:"nft_version"`
 	Symbol      string      `json:"symbol"`
 	Description string      `json:"description"`

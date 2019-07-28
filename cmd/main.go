@@ -14,7 +14,7 @@ import (
 )
 
 var app = cobra.Command{
-	Use: "blockatlas",
+	Use:   "blockatlas",
 	Short: "BlockAtlas by Trust Wallet",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		// Load config

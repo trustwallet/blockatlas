@@ -33,7 +33,7 @@ var basicDst = blockatlas.Tx{
 	Fee:   "1747600000000000",
 	Date:  1555396594,
 	Block: 357832,
-	Meta:  blockatlas.Transfer{
+	Meta: blockatlas.Transfer{
 		Value: "3470000000000000",
 	},
 }
