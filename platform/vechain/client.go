@@ -81,4 +81,3 @@ func (c *Client) GetTransactionReceipt(id string) (*TransferReceipt, error) {
 
 	return &receipt, nil
 }
-

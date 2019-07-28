@@ -249,7 +249,6 @@ func testNormalize(t *testing.T, _test *test) {
 	}
 }
 
-
 const tokenSrc = `
 {
 	"balance": "0",

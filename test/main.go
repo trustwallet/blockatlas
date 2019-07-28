@@ -24,11 +24,11 @@ var coinFile string
 var concurrency int
 
 var app = cobra.Command{
-	Use: "test <base_url>",
+	Use:   "test <base_url>",
 	Short: "Test a live API",
-	Long: "Test a live API by requesting the sample addresses found in coin list",
-	Args: cobra.ExactArgs(1),
-	Run: run,
+	Long:  "Test a live API by requesting the sample addresses found in coin list",
+	Args:  cobra.ExactArgs(1),
+	Run:   run,
 }
 
 func init() {

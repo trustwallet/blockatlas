@@ -7,7 +7,7 @@ import (
 
 func getRoot(c *gin.Context) {
 	c.String(http.StatusOK,
-`Welcome to the Block Atlas API!
+		`Welcome to the Block Atlas API!
 
 Don't know how you landed here?
 Visit https://trustwallet.com to get back to the main page.

@@ -129,4 +129,3 @@ func testNormalize(t *testing.T, _test *test) {
 		t.Error(_test.name + ": tx don't equal")
 	}
 }
-
