@@ -60,7 +60,9 @@ var transferDst = blockatlas.Tx{
 	Status: blockatlas.StatusCompleted,
 	Memo:   "test",
 	Meta: blockatlas.Transfer{
-		Value: "10000000000000",
+		Value:    "10000000000000",
+		Decimals: 8,
+		Symbol:   "BNB",
 	},
 }
 
@@ -91,7 +93,12 @@ type test struct {
 	token       string
 }
 
+func initCoins() {
+	coin.Load("../../coins.yml")
+}
+
 func TestNormalizeTx(t *testing.T) {
+	initCoins()
 	testNormalizeTx(t, &test{
 		name:        "transfer",
 		apiResponse: nativeTransferTransaction,
