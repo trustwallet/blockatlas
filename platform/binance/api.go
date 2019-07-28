@@ -46,7 +46,7 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 		return nil, err
 	}
 	// TODO: Only returns BNB transactions for now
-	txs := NormalizeTxs(srcTxs.Txs, "")
+	txs := NormalizeTxs(srcTxs.Txs, "", len(srcTxs.Txs))
 	return &blockatlas.Block{
 		Number: num,
 		Txs:    txs,
@@ -63,7 +63,7 @@ func (p *Platform) GetTokenTxsByAddress(address string, token string) (blockatla
 	if err != nil {
 		return nil, err
 	}
-	return NormalizeTxs(srcTxs.Txs, token), nil
+	return NormalizeTxs(srcTxs.Txs, token, blockatlas.TxPerPage), nil
 }
 
 // NormalizeTx converts a Binance transaction into the generic model
@@ -118,10 +118,10 @@ func TokenSymbol(asset string) string {
 }
 
 // NormalizeTxs converts multiple Binance transactions
-func NormalizeTxs(srcTxs []Tx, token string) (txs []blockatlas.Tx) {
+func NormalizeTxs(srcTxs []Tx, token string, pageSize int) (txs []blockatlas.Tx) {
 	for _, srcTx := range srcTxs {
 		tx, ok := NormalizeTx(&srcTx, token)
-		if !ok || len(txs) >= blockatlas.TxPerPage {
+		if !ok || len(txs) >= pageSize {
 			continue
 		}
 		txs = append(txs, tx)
