@@ -119,3 +119,30 @@ type Token struct {
 	TokenId  string `json:"tokenID"`
 	Coin     uint   `json:"coin"`
 }
+
+func (t *Tx) GetAddresses() (addresses []string) {
+	switch t.Meta.(type) {
+	case Transfer, *Transfer, CollectibleTransfer, *CollectibleTransfer, ContractCall, *ContractCall:
+		return append(addresses, t.From, t.To)
+	case NativeTokenTransfer:
+		return append(addresses, t.Meta.(NativeTokenTransfer).From, t.Meta.(NativeTokenTransfer).To)
+	case *NativeTokenTransfer:
+		return append(addresses, t.Meta.(*NativeTokenTransfer).From, t.Meta.(*NativeTokenTransfer).To)
+	case TokenTransfer:
+		return append(addresses, t.Meta.(TokenTransfer).From, t.Meta.(TokenTransfer).To)
+	case *TokenTransfer:
+		return append(addresses, t.Meta.(*TokenTransfer).From, t.Meta.(*TokenTransfer).To)
+	case TokenSwap:
+		{
+			m := t.Meta.(TokenSwap)
+			return append(addresses, m.Input.From, m.Input.To, m.Output.From, m.Output.To)
+		}
+	case *TokenSwap:
+		{
+			m := t.Meta.(*TokenSwap)
+			return append(addresses, m.Input.From, m.Input.To, m.Output.From, m.Output.To)
+		}
+	default:
+		return addresses
+	}
+}
