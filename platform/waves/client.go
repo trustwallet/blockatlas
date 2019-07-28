@@ -45,6 +45,7 @@ func (c *Client) GetBlockByNumber(num int64) (*Block, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer res.Body.Close()
 
 	stx := new(Block)
 	err = json.NewDecoder(res.Body).Decode(stx)
@@ -62,6 +63,7 @@ func (c *Client) GetCurrentBlock() (*CurrentBlock, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer res.Body.Close()
 
 	var currentBlock CurrentBlock
 	err = json.NewDecoder(res.Body).Decode(&currentBlock)
