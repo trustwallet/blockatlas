@@ -30,16 +30,16 @@ var platformList = []blockatlas.Platform{
 	&binance.Platform{},
 	&nimiq.Platform{},
 	&ripple.Platform{},
-	&stellar.Platform{ CoinIndex: coin.XLM },
-	&stellar.Platform{ CoinIndex: coin.KIN },
-	&ethereum.Platform{ CoinIndex: coin.ETH },
-	&ethereum.Platform{ CoinIndex: coin.ETC },
-	&ethereum.Platform{ CoinIndex: coin.POA },
-	&ethereum.Platform{ CoinIndex: coin.CLO },
-	&ethereum.Platform{ CoinIndex: coin.GO },
-	&ethereum.Platform{ CoinIndex: coin.WAN },
-	&ethereum.Platform{ CoinIndex: coin.TOMO },
-	&ethereum.Platform{ CoinIndex: coin.TT },
+	&stellar.Platform{CoinIndex: coin.XLM},
+	&stellar.Platform{CoinIndex: coin.KIN},
+	&ethereum.Platform{CoinIndex: coin.ETH},
+	&ethereum.Platform{CoinIndex: coin.ETC},
+	&ethereum.Platform{CoinIndex: coin.POA},
+	&ethereum.Platform{CoinIndex: coin.CLO},
+	&ethereum.Platform{CoinIndex: coin.GO},
+	&ethereum.Platform{CoinIndex: coin.WAN},
+	&ethereum.Platform{CoinIndex: coin.TOMO},
+	&ethereum.Platform{CoinIndex: coin.TT},
 	&tezos.Platform{},
 	&aion.Platform{},
 	&cosmos.Platform{},
@@ -86,7 +86,7 @@ func Init() {
 
 		log := logrus.WithFields(logrus.Fields{
 			"platform": handle,
-			"coin": platform.Coin(),
+			"coin":     platform.Coin(),
 		})
 
 		if _, exists := Platforms[handle]; exists {
