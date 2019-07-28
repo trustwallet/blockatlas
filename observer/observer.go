@@ -3,16 +3,17 @@ package observer
 import (
 	"github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas"
+	"github.com/trustwallet/blockatlas/util"
 )
 
 type Event struct {
 	Subscription Subscription
-	Tx *blockatlas.Tx
+	Tx           *blockatlas.Tx
 }
 
 type Observer struct {
 	Storage Storage
-	Coin uint
+	Coin    uint
 }
 
 func (o *Observer) Execute(blocks <-chan *blockatlas.Block) <-chan Event {
@@ -32,10 +33,13 @@ func (o *Observer) run(events chan<- Event, blocks <-chan *blockatlas.Block) {
 
 func (o *Observer) processBlock(events chan<- Event, block *blockatlas.Block) {
 	// Order transactions in block by addresses
-	txMap := make(map[string][]*blockatlas.Tx)
+	txMap := make(map[string]util.TxSet)
+
 	for _, tx := range block.Txs {
-		txMap[tx.From] = append(txMap[tx.From], &tx)
-		txMap[tx.To] = append(txMap[tx.To], &tx)
+		addresses := tx.GetAddresses()
+		for _, address := range addresses {
+			txMap[address].Add(tx)
+		}
 	}
 
 	// Build list of unique addresses
@@ -53,11 +57,11 @@ func (o *Observer) processBlock(events chan<- Event, block *blockatlas.Block) {
 
 	// Emit events
 	for _, sub := range subs {
-		txs := txMap[sub.Address]
+		txs := txMap[sub.Address].Txs()
 		for _, tx := range txs {
 			events <- Event{
 				Subscription: sub,
-				Tx: tx,
+				Tx:           &tx,
 			}
 		}
 	}
