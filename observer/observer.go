@@ -3,7 +3,6 @@ package observer
 import (
 	"github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas"
-	"github.com/trustwallet/blockatlas/util"
 )
 
 type Event struct {
@@ -33,7 +32,7 @@ func (o *Observer) run(events chan<- Event, blocks <-chan *blockatlas.Block) {
 
 func (o *Observer) processBlock(events chan<- Event, block *blockatlas.Block) {
 	// Order transactions in block by addresses
-	txMap := make(map[string]util.TxSet)
+	txMap := make(map[string]*blockatlas.TxSet)
 
 	for _, tx := range block.Txs {
 		addresses := tx.GetAddresses()

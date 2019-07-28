@@ -1,21 +1,20 @@
-package util
+package blockatlas
 
 import (
-	"github.com/trustwallet/blockatlas"
 	"sync"
 )
 
 type TxSet struct {
-	items map[blockatlas.Tx]bool
+	items map[Tx]bool
 	lock  sync.RWMutex
 }
 
 // Add adds a new element to the Set. Returns a pointer to the Set.
-func (s *TxSet) Add(t blockatlas.Tx) *TxSet {
+func (s *TxSet) Add(t Tx) *TxSet {
 	s.lock.Lock()
 	defer s.lock.Unlock()
 	if s.items == nil {
-		s.items = make(map[blockatlas.Tx]bool)
+		s.items = make(map[Tx]bool)
 	}
 	_, ok := s.items[t]
 	if !ok {
@@ -28,10 +27,10 @@ func (s *TxSet) Add(t blockatlas.Tx) *TxSet {
 func (s *TxSet) Clear() {
 	s.lock.Lock()
 	defer s.lock.Unlock()
-	s.items = make(map[blockatlas.Tx]bool)
+	s.items = make(map[Tx]bool)
 }
 
-func (s *TxSet) Delete(item blockatlas.Tx) bool {
+func (s *TxSet) Delete(item Tx) bool {
 	s.lock.Lock()
 	defer s.lock.Unlock()
 	_, ok := s.items[item]
@@ -41,17 +40,17 @@ func (s *TxSet) Delete(item blockatlas.Tx) bool {
 	return ok
 }
 
-func (s *TxSet) Has(item blockatlas.Tx) bool {
+func (s *TxSet) Has(item Tx) bool {
 	s.lock.RLock()
 	defer s.lock.RUnlock()
 	_, ok := s.items[item]
 	return ok
 }
 
-func (s *TxSet) Txs() []blockatlas.Tx {
+func (s *TxSet) Txs() []Tx {
 	s.lock.RLock()
 	defer s.lock.RUnlock()
-	items := []blockatlas.Tx{}
+	items := []Tx{}
 	for i := range s.items {
 		items = append(items, i)
 	}
