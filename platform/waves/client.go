@@ -34,15 +34,40 @@ func (c *Client) GetTxs(address string, limit int) ([]Transaction, error) {
 		return nil, err
 	}
 	txsObj := *txsArrays
-	txs := txsObj[0]
 
-	var result []Transaction
-	for _, tx := range txs {
-		// Support only WAVES coin transfer transaction
-		if tx.Type == 4 && len(tx.AssetId) == 0 {
-			result = append(result, tx)
-		}
+	return txsObj[0], nil
+}
+
+func (c *Client) GetBlockByNumber(num int64) (*Block, error) {
+	uri := fmt.Sprintf("%s/blocks/at/%d", c.URL, num)
+
+	res, err := c.HTTPClient.Get(uri)
+	if err != nil {
+		return nil, err
 	}
 
-	return result, nil
+	stx := new(Block)
+	err = json.NewDecoder(res.Body).Decode(stx)
+	if err != nil {
+		return nil, err
+	}
+
+	return stx, nil
+}
+
+func (c *Client) GetCurrentBlock() (*CurrentBlock, error) {
+	uri := fmt.Sprintf("%s/blocks/height", c.URL)
+
+	res, err := c.HTTPClient.Get(uri)
+	if err != nil {
+		return nil, err
+	}
+
+	var currentBlock CurrentBlock
+	err = json.NewDecoder(res.Body).Decode(&currentBlock)
+	if err != nil {
+		return nil, err
+	} else {
+		return &currentBlock, nil
+	}
 }

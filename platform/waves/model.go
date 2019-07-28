@@ -13,3 +13,11 @@ type Transaction struct {
 	Block      uint64 `json:"height"`
 	Type       uint64 `json:"type"`
 }
+
+type CurrentBlock struct {
+	Height int64 `json:"height"`
+}
+
+type Block struct {
+	Transactions []Transaction `json:"transactions"`
+}
