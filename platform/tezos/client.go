@@ -96,9 +96,6 @@ func (c *Client) GetBlockByNumber(num int64) ([]Tx, error) {
 	var list []Tx
 	err = json.NewDecoder(res.Body).Decode(&list)
 
-	log.Print("list2, ", res.Status)
-	log.Print("list2, ", list)
-
 	if err != nil {
 		return nil, err
 	}
