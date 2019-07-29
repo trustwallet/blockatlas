@@ -11,7 +11,7 @@ type AccountInfo struct {
 }
 
 type AccountMeta struct {
-	NumActions   string   `json:"numActions"`
+	NumActions string `json:"numActions"`
 }
 
 type ActionInfo struct {
@@ -24,7 +24,7 @@ type ActionInfo struct {
 }
 
 type Action struct {
-	Core         *ActionCore `json:"core"`
+	Core *ActionCore `json:"core"`
 }
 
 type ActionCore struct {
@@ -34,5 +34,5 @@ type ActionCore struct {
 
 type Transfer struct {
 	Amount    blockatlas.Amount `json:"amount"`
-	Recipient string `json:"recipient"`
+	Recipient string            `json:"recipient"`
 }

@@ -7,8 +7,8 @@ import (
 
 type Amount struct {
 	Value    blockatlas.Amount `json:"string"`
-	Currency string        `json:"string"`
-	Issuer   string        `json:"string"`
+	Currency string            `json:"string"`
+	Issuer   string            `json:"string"`
 }
 
 type Response struct {
@@ -27,13 +27,22 @@ type Tx struct {
 }
 
 type Payment struct {
-	TransactionType string          `json:"string"`
-	Flags           uint64          `json:"Flags"`
-	Sequence        uint64          `json:"Sequence"`
-	Amount          json.RawMessage `json:"Amount"`
-	Fee             blockatlas.Amount   `json:"Fee"`
-	SigningPubKey   string          `json:"SigningPubKey"`
-	TxnSignature    string          `json:"TxnSignature"`
-	Account         string          `json:"Account"`
-	Destination     string          `json:"Destination"`
+	TransactionType string            `json:"string"`
+	Flags           uint64            `json:"Flags"`
+	Sequence        uint64            `json:"Sequence"`
+	Amount          json.RawMessage   `json:"Amount"`
+	Fee             blockatlas.Amount `json:"Fee"`
+	SigningPubKey   string            `json:"SigningPubKey"`
+	TxnSignature    string            `json:"TxnSignature"`
+	Account         string            `json:"Account"`
+	Destination     string            `json:"Destination"`
+}
+
+type LedgerResponse struct {
+	Ledger LedgerInfo `json:"ledger"`
+}
+
+type LedgerInfo struct {
+	LedgerIndex  int64 `json:"ledger_index"`
+	Transactions []Tx  `json:"transactions,omitempty"`
 }

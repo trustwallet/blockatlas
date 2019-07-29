@@ -6,6 +6,7 @@ import (
 	"github.com/trustwallet/blockatlas"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas/coin"
 )
 
@@ -17,7 +18,6 @@ const nativeTransferTransaction = `
 	"fromAddr": "tbnb1fhr04azuhcj0dulm7ka40y0cqjlafwae9k9gk2",
 	"hasChildren": 0,
 	"log": "Msg 0: ",
-	"mappedTxAsset": "BNB",
 	"timeStamp": 1555049867552,
 	"toAddr": "tbnb1sylyjw032eajr9cyllp26n04300qzzre38qyv5",
 	"txAge": 836729,
@@ -37,7 +37,6 @@ const nativeTokenTransferTransaction = `
 	"fromAddr": "tbnb1ttyn4csghfgyxreu7lmdu3lcplhqhxtzced45a",
 	"hasChildren": 0,
 	"log": "Msg 0: ",
-	"mappedTxAsset": "YLC",
 	"timeStamp": 1555117625829,
 	"toAddr": "tbnb12hlquylu78cjylk5zshxpdj6hf3t0tahwjt3ex",
 	"txAge": 768924,
@@ -60,7 +59,9 @@ var transferDst = blockatlas.Tx{
 	Status: blockatlas.StatusCompleted,
 	Memo:   "test",
 	Meta: blockatlas.Transfer{
-		Value: "10000000000000",
+		Value:    "10000000000000",
+		Decimals: 8,
+		Symbol:   "BNB",
 	},
 }
 
@@ -91,7 +92,12 @@ type test struct {
 	token       string
 }
 
+func initCoins() {
+	coin.Load("../../coins.yml")
+}
+
 func TestNormalizeTx(t *testing.T) {
+	initCoins()
 	testNormalizeTx(t, &test{
 		name:        "transfer",
 		apiResponse: nativeTransferTransaction,
@@ -247,4 +253,9 @@ func TestDecimalPlaces(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestTokenSymbol(t *testing.T) {
+	assert.Equal(t, "UGAS", TokenSymbol("UGAS"))
+	assert.Equal(t, "UGAS", TokenSymbol("UGAS-B0C"))
 }

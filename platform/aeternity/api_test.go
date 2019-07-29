@@ -31,18 +31,18 @@ const transferTransaction = `
 `
 
 var transferDst = blockatlas.Tx{
-	ID:     "th_oJfBC6KZKaKsL4WXTq1ZtFiSE8Wp2PQYEnwyZqtudyHcU3Qg6",
-	Coin:   coin.AE,
-	From:   "ak_nv5B93FPzRHrGNmMdTDfGdd5xGZvep3MVSpJqzcQmMp59bBCv",
-	To:     "ak_ZWrS6xGhzxBasKmMbVSACfRioWqPyM5jNqMpBQ5ngP75RS6pS",
-	Fee:    "20500000000000",
-	Date:   1563848658,
-	Block:  113579,
-	Status: blockatlas.StatusCompleted,
-	Memo:   "Hello, Miner! /Yours Beepool./",
+	ID:       "th_oJfBC6KZKaKsL4WXTq1ZtFiSE8Wp2PQYEnwyZqtudyHcU3Qg6",
+	Coin:     coin.AE,
+	From:     "ak_nv5B93FPzRHrGNmMdTDfGdd5xGZvep3MVSpJqzcQmMp59bBCv",
+	To:       "ak_ZWrS6xGhzxBasKmMbVSACfRioWqPyM5jNqMpBQ5ngP75RS6pS",
+	Fee:      "20500000000000",
+	Date:     1563848658,
+	Block:    113579,
+	Status:   blockatlas.StatusCompleted,
+	Memo:     "Hello, Miner! /Yours Beepool./",
 	Sequence: 251291,
 	Meta: blockatlas.Transfer{
-		Value: "252550000000000000000",
+		Value:    "252550000000000000000",
 		Symbol:   "AE",
 		Decimals: 18,
 	},
@@ -78,7 +78,7 @@ func testNormalize(t *testing.T, _test *test) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	assert.Equal(t,resJSON, dstJSON)
+	assert.Equal(t, resJSON, dstJSON)
 }
 
 func TestNormalize(t *testing.T) {

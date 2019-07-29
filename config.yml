@@ -91,10 +91,9 @@ aion:
 icon:
   api: https://tracker.icon.foundation/v3
 
-# [TRX] Tron:
-#tron:
-#  api: https://api.trongrid.io/v1
-#  token: my-access-token
+# [TRX] Tron: https://tron.network/
+tron:
+  api: https://api.trongrid.io/v1
 
 # [VET] VeChain: https://www.vechain.org
 vechain:

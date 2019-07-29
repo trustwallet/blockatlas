@@ -108,7 +108,7 @@ func testNormalize(t *testing.T, _test *test) {
 		t.Error(err)
 		return
 	}
-	tx, ok := Normalize(&payment)
+	tx, ok := NormalizeTx(&payment)
 	if !ok {
 		t.Errorf("%s: tx could not be normalized", _test.name)
 	}
@@ -129,4 +129,3 @@ func testNormalize(t *testing.T, _test *test) {
 		t.Error(_test.name + ": tx don't equal")
 	}
 }
-

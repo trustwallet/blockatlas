@@ -20,9 +20,9 @@ type Stream struct {
 	log          *logrus.Entry
 
 	// Concurrency
-	blockNumber  int64
-	semaphore    *util.Semaphore
-	wg           sync.WaitGroup
+	blockNumber int64
+	semaphore   *util.Semaphore
+	wg          sync.WaitGroup
 }
 
 func (s *Stream) Execute(ctx context.Context) <-chan *blockatlas.Block {
@@ -66,11 +66,11 @@ func (s *Stream) load(c chan<- *blockatlas.Block) {
 		return
 	}
 
-	if height - lastHeight > int64(s.BacklogCount) {
+	if height-lastHeight > int64(s.BacklogCount) {
 		lastHeight = height - int64(s.BacklogCount)
 	}
 	backLogMax := viper.GetInt64("observer.backlog_max_blocks")
-	if height - lastHeight > backLogMax {
+	if height-lastHeight > backLogMax {
 		lastHeight = height - backLogMax
 	}
 

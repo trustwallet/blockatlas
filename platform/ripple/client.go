@@ -34,3 +34,39 @@ func (c *Client) GetTxsOfAddress(address string) ([]Tx, error) {
 
 	return res.Transactions, nil
 }
+
+func (c *Client) GetCurrentBlock() (int64, error) {
+	uri := fmt.Sprintf("%s/ledgers", c.BaseURL)
+
+	res, err := c.HTTPClient.Get(uri)
+	if err != nil {
+		return 0, err
+	}
+	defer res.Body.Close()
+
+	var ledgers LedgerResponse
+	err = json.NewDecoder(res.Body).Decode(&ledgers)
+	if err != nil {
+		return 0, err
+	} else {
+		return ledgers.Ledger.LedgerIndex, nil
+	}
+}
+
+func (c *Client) GetBlockByNumber(num int64) ([]Tx, error) {
+	uri := fmt.Sprintf("%s/ledgers/%d?transactions=true&binary=false&expand=true&limit=1000", c.BaseURL, num)
+
+	res, err := c.HTTPClient.Get(uri)
+	if err != nil {
+		return nil, err
+	}
+	defer res.Body.Close()
+
+	response := new(LedgerResponse)
+	err = json.NewDecoder(res.Body).Decode(response)
+	if err != nil {
+		return nil, err
+	}
+
+	return response.Ledger.Transactions, nil
+}

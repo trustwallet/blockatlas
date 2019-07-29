@@ -70,13 +70,14 @@
   symbol: IOTX
   handle: iotex
   name: IoTeX
-  decimals: 0
+  decimals: 18
   sampleAddress: 'io1mwekae7qqwlr23220k5n9z3fmjxz72tuchra3m'
 
 - id: 313
   symbol: ZIL
   handle: zilliqa
   name: Zilliqa
+  decimals: 12
   sampleAddress: '0x88aF5BA10796D9091D6893eED4db23ef0bbbCa37'
 
 - id: 425
@@ -90,13 +91,14 @@
   symbol: THETA
   handle: theta
   name: Theta
+  decimals: 18
   sampleAddress: '0xac0eeb6ee3e32e2c74e14ac74155063e4f4f981f'
 
 - id: 714
   symbol: BNB
   handle: binance
   name: Binance
-  decimals: 18
+  decimals: 8
   blockTime: 1000
   sampleAddress: 'tbnb1fhr04azuhcj0dulm7ka40y0cqjlafwae9k9gk2'
 
@@ -104,6 +106,7 @@
   symbol: VET
   handle: vechain
   name: VeChain Token
+  decimals: 18
   sampleAddress: '0xB5e883349e68aB59307d1604555AC890fAC47128'
 
 - id: 820
@@ -119,6 +122,7 @@
   handle: tomochain
   name: TOMO
   blockTime: 2000
+  decimals: 18
   sampleAddress: '0x7daa83030e3086477b79b6e757ca8608899fe783'
 
 - id: 1001
@@ -133,6 +137,7 @@
   symbol: ONT
   handle: ontology
   name: Ontology
+  decimals: 0
   sampleAddress: 'AUyL4TZ1zFEcSKDJrjFnD7vsq5iFZMZqT7'
 
 - id: 1729
@@ -170,6 +175,7 @@
   handle: waves
   name: WAVES
   decimals: 8
+  blockTime: 50000
   sampleAddress: '3P7wz6TXienpw3BHe8eHUEuZWb6WE58kgnQ'
 
 - id: 7562605

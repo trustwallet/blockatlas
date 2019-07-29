@@ -31,7 +31,7 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 
 	txs := make([]blockatlas.Tx, 0)
 	for _, srcTx := range s {
-		tx, ok := Normalize(&srcTx)
+		tx, ok := NormalizeTx(&srcTx)
 		if !ok {
 			continue
 		}
@@ -41,8 +41,35 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 	return txs, nil
 }
 
+func (p *Platform) CurrentBlockNumber() (int64, error) {
+	return p.client.GetCurrentBlock()
+}
+
+func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
+	if srcBlock, err := p.client.GetBlockByNumber(num); err == nil {
+		txs := NormalizeTxs(srcBlock)
+		return &blockatlas.Block{
+			Number: num,
+			Txs:    txs,
+		}, nil
+	} else {
+		return nil, err
+	}
+}
+
+func NormalizeTxs(srcTxs []Tx) (txs []blockatlas.Tx) {
+	for _, srcTx := range srcTxs {
+		tx, ok := NormalizeTx(&srcTx)
+		if !ok || len(txs) >= blockatlas.TxPerPage {
+			continue
+		}
+		txs = append(txs, tx)
+	}
+	return
+}
+
 // Normalize converts a Ripple transaction into the generic model
-func Normalize(srcTx *Tx) (tx blockatlas.Tx, ok bool) {
+func NormalizeTx(srcTx *Tx) (tx blockatlas.Tx, ok bool) {
 	// Only accept XRP payments (typeof tx.amount === 'string')
 	var p fastjson.Parser
 	v, pErr := p.ParseBytes(srcTx.Payment.Amount)

@@ -34,8 +34,31 @@ type TransferContract struct {
 
 type TransferValue struct {
 	Amount       blockatlas.Amount `json:"amount"`
-	OwnerAddress string        `json:"owner_address"`
-	ToAddress    string        `json:"to_address"`
+	OwnerAddress string            `json:"owner_address"`
+	ToAddress    string            `json:"to_address"`
+}
+
+type Accounts struct {
+	Data []AccountsData `json:data`
+}
+
+type AccountsData struct {
+	AssetsV2 []AssetV2 `json:"assetV2"`
+}
+
+type AssetV2 struct {
+	Key string `json:"key"`
+}
+
+type Asset struct {
+	Data []AssetInfo `json:"data"`
+}
+
+type AssetInfo struct {
+	Name     string `json:"name"`
+	Symbol   string `json:"abbr"`
+	ID       string `json:"id"`
+	Decimals uint   `json:"precision"`
 }
 
 func (c *Contract) UnmarshalJSON(buf []byte) error {

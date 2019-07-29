@@ -36,42 +36,43 @@ const tokenTransfer = `
 `
 
 var expectedTransferTrx = blockatlas.Tx{
-	ID:    "0x2b8776bd4679fa2afa28b55d66d4f6c7c77522fc878ce294d25e32475b704517",
-	Coin:  coin.VET,
-	From:  "0xb853d6a965fbc047aaa9f04d774d53861d7ed653",
-	To:    "0xda623049a13df5c8a24f0d7713f4add4ab136b1f",
-	Fee:   "21000000000000000000",
-	Date:  1556569300,
-	Type:   "transfer",
-	Status: "completed",
-	Block: 2620166,
+	ID:       "0x2b8776bd4679fa2afa28b55d66d4f6c7c77522fc878ce294d25e32475b704517",
+	Coin:     coin.VET,
+	From:     "0xb853d6a965fbc047aaa9f04d774d53861d7ed653",
+	To:       "0xda623049a13df5c8a24f0d7713f4add4ab136b1f",
+	Fee:      "21000000000000000000",
+	Date:     1556569300,
+	Type:     "transfer",
+	Status:   "completed",
+	Block:    2620166,
 	Sequence: 2620166,
-	Meta:  blockatlas.Transfer{
+	Meta: blockatlas.Transfer{
 		Value: "770000000000000000000",
 	},
 }
 
 var expectedVeThorTrx = blockatlas.Tx{
-	ID:     "0xd17dd968610fb4a39ab02a5d8827b26f4cdcd147fb4a4f7a5d5ab14066525d4b",
-	Coin:   coin.VET,
-	From:   "0xb853d6a965fbc047aaa9f04d774d53861d7ed653",
-	To:     "0x9f3742c2c2fe66c7fca08d77d2262c22e3d56ac8",
-	Fee:    "21000000000000000000",
-	Date:   1555009870,
-	Type:   blockatlas.TxNativeTokenTransfer,
-	Status: "completed",
+	ID:       "0xd17dd968610fb4a39ab02a5d8827b26f4cdcd147fb4a4f7a5d5ab14066525d4b",
+	Coin:     coin.VET,
+	From:     "0xb853d6a965fbc047aaa9f04d774d53861d7ed653",
+	To:       "0x9f3742c2c2fe66c7fca08d77d2262c22e3d56ac8",
+	Fee:      "21000000000000000000",
+	Date:     1555009870,
+	Type:     blockatlas.TxNativeTokenTransfer,
+	Status:   "completed",
 	Sequence: 2465269,
-	Block:  2465269,
-	Meta:  blockatlas.NativeTokenTransfer{
-		Name: "VeThor Token",
-		Symbol: "VTHO",
-		TokenID: VeThorContract,
+	Block:    2465269,
+	Meta: blockatlas.NativeTokenTransfer{
+		Name:     "VeThor Token",
+		Symbol:   "VTHO",
+		TokenID:  VeThorContract,
 		Decimals: 18,
-		Value: "250000000000000000000",
-		From: "0xb853d6a965fbc047aaa9f04d774d53861d7ed653",
-		To: "0x9f3742c2c2fe66c7fca08d77d2262c22e3d56ac8",
+		Value:    "250000000000000000000",
+		From:     "0xb853d6a965fbc047aaa9f04d774d53861d7ed653",
+		To:       "0x9f3742c2c2fe66c7fca08d77d2262c22e3d56ac8",
 	},
 }
+
 func TestNormalizeTransfer(t *testing.T) {
 	var tests = []struct {
 		Receipt  string
@@ -84,7 +85,7 @@ func TestNormalizeTransfer(t *testing.T) {
 
 	for _, test := range tests {
 		var receipt TransferReceipt
-		var clause  Clause
+		var clause Clause
 
 		// Unmarshal(*t, test.Receipt, &receipt)
 		rErr := json.Unmarshal([]byte(test.Receipt), &receipt)
@@ -92,7 +93,7 @@ func TestNormalizeTransfer(t *testing.T) {
 			t.Fatal(rErr)
 		}
 
-		cErr  := json.Unmarshal([]byte(test.Clause), &clause)
+		cErr := json.Unmarshal([]byte(test.Clause), &clause)
 		if cErr != nil {
 			t.Fatal(cErr)
 		}
@@ -103,17 +104,17 @@ func TestNormalizeTransfer(t *testing.T) {
 			t.Fatal("VeChain: Can't normalize transaction", readyTx)
 		}
 		readyTx = normTx
-	
+
 		actual, err := json.Marshal(&readyTx)
 		if err != nil {
 			t.Fatal(err)
 		}
-	
+
 		expected, err := json.Marshal(&test.Expected)
 		if err != nil {
 			t.Fatal(err)
 		}
-	
+
 		if !bytes.Equal(actual, expected) {
 			println(string(actual))
 			println(string(expected))
@@ -125,10 +126,10 @@ func TestNormalizeTransfer(t *testing.T) {
 func TestNormalizeTokenTransfer(t *testing.T) {
 	var tests = []struct {
 		Receipt  string
-		Transfer  string
+		Transfer string
 		Expected blockatlas.Tx
 	}{
-		{transferReceipt,tokenTransfer, expectedVeThorTrx},
+		{transferReceipt, tokenTransfer, expectedVeThorTrx},
 	}
 
 	for _, test := range tests {
@@ -152,17 +153,17 @@ func TestNormalizeTokenTransfer(t *testing.T) {
 			t.Fatal("VeChain: Can't normalize token transaction", readyTx)
 		}
 		readyTx = normTx
-	
+
 		actual, err := json.Marshal(&readyTx)
 		if err != nil {
 			t.Fatal(err)
 		}
-	
+
 		expected, err := json.Marshal(&test.Expected)
 		if err != nil {
 			t.Fatal(err)
 		}
-	
+
 		if !bytes.Equal(actual, expected) {
 			println(string(actual))
 			println(string(expected))
