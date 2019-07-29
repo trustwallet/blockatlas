@@ -111,7 +111,7 @@ func (c *Client) GetTokens() (*TokenPage, error) {
 	uri := fmt.Sprintf("%s/v1/tokens?%s",
 		c.BaseDexURL,
 		url.Values{
-			"limits": {"1000"},
+			"limit": {"1000"},
 			"offset": {"0"},
 		}.Encode())
 
