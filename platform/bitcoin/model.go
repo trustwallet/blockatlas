@@ -4,6 +4,10 @@ type TransferTx struct {
 	Transactions []string `json:"transactions"`
 }
 
+type XpubTransfers struct {
+	Transactions []TransferReceipt `json:"transactions"`
+}
+
 type Tx struct {
 	ID string `json:"id"`
 }

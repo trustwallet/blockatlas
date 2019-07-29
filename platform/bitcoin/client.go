@@ -41,6 +41,34 @@ func (c *Client) GetTransactions(address string) (TransferTx, error) {
 	return transfers, nil
 }
 
+func (c *Client) GetTransactionsByXpub(xpub string) (XpubTransfers, error) {
+	var transfers XpubTransfers
+
+	url := fmt.Sprintf("%s/v2/xpub/%s?details=txs", c.URL, xpub)
+	resp, err := c.HTTPClient.Get(url)
+	if err != nil {
+		logrus.WithError(err).Error("Bitcoin: Failed HTTP get transactions by xpub")
+		return transfers, err
+	}
+	defer resp.Body.Close()
+
+	body, errBody := ioutil.ReadAll(resp.Body)
+	logrus.Infof("Response string: %s", string(body))
+
+	if errBody != nil {
+		logrus.WithError(err).Error("Bitcoin: Error decode xpub-transactions response body")
+		return transfers, err
+	}
+
+	errUnm := json.Unmarshal(body, &transfers)
+	if errUnm != nil {
+		logrus.WithError(err).Error("Bitcoin: Error Unmarshal xpub-transactions response body")
+		return transfers, err
+	}
+
+	return transfers, nil
+}
+
 func (c *Client) GetTransactionReceipt(id string) (*TransferReceipt, error) {
 	url := fmt.Sprintf("%s/v2/tx/%s", c.URL, id)
 	resp, err := c.HTTPClient.Get(url)

@@ -1,6 +1,7 @@
 package bitcoin
 
 import (
+	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas"
@@ -25,8 +26,50 @@ func (p *Platform) Coin() coin.Coin {
 	return coin.Coins[coin.BTC]
 }
 
-func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
-	return p.getTxsByAddress(address)
+func (p *Platform) RegisterRoutes(router gin.IRouter) {
+	router.GET("/xpub/:key", func(c *gin.Context) {
+		p.handleXpubRoute(c)
+	})
+	router.GET("/address/:address", func(c *gin.Context) {
+		p.handleAddressRoute(c)
+	})
+}
+
+func (p *Platform) handleAddressRoute(c *gin.Context) {
+	address := c.Param("address")
+	txs, ok := p.getTxsByAddress(address)
+	txPage := blockatlas.TxPage(txs)
+	txPage.Sort()
+	if ok != nil {
+		c.JSON(http.StatusInternalServerError, ok)
+	} else {
+		c.JSON(http.StatusOK, &txPage)
+	}
+}
+
+func (p *Platform) handleXpubRoute(c *gin.Context) {
+	xpub := c.Param("key")
+	txs, ok := p.getTxsByXPub(xpub)
+	txPage := blockatlas.TxPage(txs)
+	txPage.Sort()
+	if ok != nil {
+		c.JSON(http.StatusInternalServerError, ok)
+	} else {
+		c.JSON(http.StatusOK, &txPage)
+	}
+}
+
+func (p *Platform) getTxsByXPub(xpub string) ([]blockatlas.Tx, error) {
+	sourceTxs, _ := p.client.GetTransactionsByXpub(xpub)
+
+	var txs []blockatlas.Tx
+	for _, receipt := range sourceTxs.Transactions {
+		if tx, ok := NormalizeTransfer(&receipt); ok {
+			txs = append(txs, tx)
+		}
+	}
+
+	return txs, nil
 }
 
 func (p *Platform) getTxsByAddress(address string) ([]blockatlas.Tx, error) {
