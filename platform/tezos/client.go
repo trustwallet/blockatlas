@@ -68,8 +68,8 @@ func (c *Client) GetBlockHashByNumber(num int64) (string, error) {
 	var list []string
 	err = json.NewDecoder(res.Body).Decode(&list)
 
-	if err != nil && len(list) < 1 {
-		return list[0], err
+	if err != nil && len(list) != 0 {
+		return "", err
 	} else {
 		return list[0], nil
 	}
