@@ -80,16 +80,12 @@ func (c *Client) GetBlockHashByNumber(num int64) (string, error) {
 }
 
 func (c *Client) GetBlockByNumber(num int64) ([]Tx, error) {
-	//return []Tx{}, nil
-
 	hash, err := c.GetBlockHashByNumber(num)
 	if err != nil {
 		return []Tx{}, err
 	}
 
 	uri := fmt.Sprintf("%s/operations/%s?type=Transaction", c.BaseURL, hash)
-
-	log.Print("uri", uri)
 
 	res, err := c.HTTPClient.Get(uri)
 	if err != nil {
