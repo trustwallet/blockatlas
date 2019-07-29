@@ -37,3 +37,12 @@ type Payment struct {
 	Account         string            `json:"Account"`
 	Destination     string            `json:"Destination"`
 }
+
+type LedgerResponse struct {
+	Ledger LedgerInfo `json:"ledger"`
+}
+
+type LedgerInfo struct {
+	LedgerIndex  int64 `json:"ledger_index"`
+	Transactions []Tx  `json:"transactions,omitempty"`
+}
