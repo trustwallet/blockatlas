@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas"
+	"log"
 	"net/http"
 	"net/url"
 )
@@ -33,4 +34,78 @@ func (c *Client) GetTxsOfAddress(address string) ([]Tx, error) {
 	err = json.NewDecoder(httpRes.Body).Decode(&res)
 
 	return res, nil
+}
+
+func (c *Client) GetCurrentBlock() (int64, error) {
+	uri := fmt.Sprintf("%s/head", c.BaseURL)
+
+	res, err := c.HTTPClient.Get(uri)
+	if err != nil {
+		return 0, err
+	}
+	defer res.Body.Close()
+
+	var head Head
+	err = json.NewDecoder(res.Body).Decode(&head)
+
+	log.Print("head, ", head)
+
+	if err != nil {
+		return 0, err
+	} else {
+		return head.Level, nil
+	}
+}
+
+func (c *Client) GetBlockHashByNumber(num int64) (string, error) {
+	uri := fmt.Sprintf("%s/block_hash_level/%d", c.BaseURL, num)
+
+	res, err := c.HTTPClient.Get(uri)
+	if err != nil {
+		return "", err
+	}
+	defer res.Body.Close()
+
+	var list []string
+	err = json.NewDecoder(res.Body).Decode(&list)
+
+	log.Print("list2, ", res.Status)
+	log.Print("list, ", list)
+
+	if err != nil && len(list) < 1 {
+		return list[0], err
+	} else {
+		return list[0], nil
+	}
+}
+
+func (c *Client) GetBlockByNumber(num int64) ([]Tx, error) {
+	//return []Tx{}, nil
+
+	hash, err := c.GetBlockHashByNumber(num)
+	if err != nil {
+		return []Tx{}, err
+	}
+
+	uri := fmt.Sprintf("%s/operations/%s?type=Transaction", c.BaseURL, hash)
+
+	log.Print("uri", uri)
+
+	res, err := c.HTTPClient.Get(uri)
+	if err != nil {
+		return nil, err
+	}
+	defer res.Body.Close()
+
+	var list []Tx
+	err = json.NewDecoder(res.Body).Decode(&list)
+
+	log.Print("list2, ", res.Status)
+	log.Print("list2, ", list)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return list, nil
 }

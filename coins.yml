@@ -145,6 +145,7 @@
   handle: tezos
   name: Tezos
   decimals: 6
+  blockTime: 50000
   sampleAddress: 'tz1WCd2jm4uSt4vntk4vSuUWoZQGhLcDuR9q'
 
 - id: 2017
