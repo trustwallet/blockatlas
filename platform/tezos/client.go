@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas"
-	"log"
 	"net/http"
 	"net/url"
 )
@@ -41,14 +40,13 @@ func (c *Client) GetCurrentBlock() (int64, error) {
 
 	res, err := c.HTTPClient.Get(uri)
 	if err != nil {
+		logrus.WithError(err).Error("Tezos: Failed to get a block number")
 		return 0, err
 	}
 	defer res.Body.Close()
 
 	var head Head
 	err = json.NewDecoder(res.Body).Decode(&head)
-
-	log.Print("head, ", head)
 
 	if err != nil {
 		return 0, err
@@ -62,6 +60,7 @@ func (c *Client) GetBlockHashByNumber(num int64) (string, error) {
 
 	res, err := c.HTTPClient.Get(uri)
 	if err != nil {
+		logrus.WithError(err).Error("Tezos: Failed to get hash by a number")
 		return "", err
 	}
 	defer res.Body.Close()
@@ -86,6 +85,7 @@ func (c *Client) GetBlockByNumber(num int64) ([]Tx, error) {
 
 	res, err := c.HTTPClient.Get(uri)
 	if err != nil {
+		logrus.WithError(err).Error("Tezos: Failed to get transactions for a block")
 		return nil, err
 	}
 	defer res.Body.Close()
