@@ -69,9 +69,6 @@ func (c *Client) GetBlockHashByNumber(num int64) (string, error) {
 	var list []string
 	err = json.NewDecoder(res.Body).Decode(&list)
 
-	log.Print("list2, ", res.Status)
-	log.Print("list, ", list)
-
 	if err != nil && len(list) < 1 {
 		return list[0], err
 	} else {
