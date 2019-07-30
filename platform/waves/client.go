@@ -15,11 +15,11 @@ type Client struct {
 func (c *Client) GetTxs(address string, limit int) ([]Transaction, error) {
 	path := fmt.Sprintf("transactions/address/%s/limit/%d", address, limit)
 
-	txsArrays := make([][]Transaction, 0)
-	err := client.Request(c.HTTPClient, c.URL, path, url.Values{}, &txsArrays)
+	txs := make([][]Transaction, 0)
+	err := client.Request(c.HTTPClient, c.URL, path, url.Values{}, &txs)
 
-	if len(txsArrays) > 0 {
-		return txsArrays[0], err
+	if len(txs) > 0 {
+		return txs[0], err
 	} else {
 		return []Transaction{}, err
 	}
