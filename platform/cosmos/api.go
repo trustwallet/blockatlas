@@ -45,7 +45,7 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 		return normalisedTxes[i].Date > normalisedTxes[j].Date
 	})
 
-	return normalisedTxes[0:blockatlas.TxPerPage], nil
+	return normalisedTxes, nil
 }
 
 func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
