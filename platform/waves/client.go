@@ -3,7 +3,9 @@ package waves
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/trustwallet/blockatlas/client"
 	"net/http"
+	"net/url"
 )
 
 type Client struct {
@@ -12,30 +14,16 @@ type Client struct {
 }
 
 func (c *Client) GetTxs(address string, limit int) ([]Transaction, error) {
-	uri := fmt.Sprintf("%s/transactions/address/%s/limit/%d",
-		c.URL,
-		address,
-		limit)
-	req, _ := http.NewRequest("GET", uri, nil)
+	path := fmt.Sprintf("transactions/address/%s/limit/%d", address, limit)
 
-	res, err := c.HTTPClient.Do(req)
-	if err != nil {
-		return nil, err
+	txsArrays := make([][]Transaction, 0)
+	err := client.Request(c.HTTPClient, c.URL, path, url.Values{}, &txsArrays)
+
+	if len(txsArrays) > 0 {
+		return txsArrays[0], err
+	} else {
+		return []Transaction{}, err
 	}
-	defer res.Body.Close()
-
-	if res.StatusCode != 200 {
-		return nil, fmt.Errorf("http %s", res.Status)
-	}
-
-	txsArrays := new([][]Transaction)
-	err = json.NewDecoder(res.Body).Decode(txsArrays)
-	if err != nil {
-		return nil, err
-	}
-	txsObj := *txsArrays
-
-	return txsObj[0], nil
 }
 
 func (c *Client) GetBlockByNumber(num int64) (*Block, error) {
