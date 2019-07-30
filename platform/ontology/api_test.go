@@ -169,8 +169,6 @@ func TestNormalize(t *testing.T) {
 		}
 
 		if !bytes.Equal(actual, expected) {
-			println(string(actual))
-			println(string(expected))
 			t.Error("Transactions not equal")
 		}
 	}
