@@ -132,6 +132,6 @@ waves:
 aeternity:
   api: https://mdw.aepps.com/
 
-# [BTC] Bitcoin: https://btc1.trezor.io/
+# [BTC] Bitcoin: https://bitcoin.org/ (Blockbook API https://github.com/trezor/blockbook)
 bitcoin:
   api: https://btc1.trezor.io/api
