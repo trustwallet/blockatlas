@@ -3,6 +3,7 @@ package cosmos
 import (
 	"github.com/trustwallet/blockatlas"
 	"net/http"
+	"sort"
 	"strconv"
 	"time"
 
@@ -40,7 +41,11 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 		normalisedTxes = append(normalisedTxes, normalisedOutputTx)
 	}
 
-	return normalisedTxes, nil
+	sort.Slice(normalisedTxes, func(i, j int) bool {
+		return normalisedTxes[i].Date > normalisedTxes[j].Date
+	})
+
+	return normalisedTxes[0:blockatlas.TxPerPage], nil
 }
 
 func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
