@@ -1,7 +1,6 @@
 package waves
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/trustwallet/blockatlas/client"
 	"net/http"
@@ -27,37 +26,19 @@ func (c *Client) GetTxs(address string, limit int) ([]Transaction, error) {
 }
 
 func (c *Client) GetBlockByNumber(num int64) (*Block, error) {
-	uri := fmt.Sprintf("%s/blocks/at/%d", c.URL, num)
+	path := fmt.Sprintf("blocks/at/%d", num)
 
-	res, err := c.HTTPClient.Get(uri)
-	if err != nil {
-		return nil, err
-	}
-	defer res.Body.Close()
+	block := new(Block)
+	err := client.Request(c.HTTPClient, c.URL, path, url.Values{}, &block)
 
-	stx := new(Block)
-	err = json.NewDecoder(res.Body).Decode(stx)
-	if err != nil {
-		return nil, err
-	}
-
-	return stx, nil
+	return block, err
 }
 
 func (c *Client) GetCurrentBlock() (*CurrentBlock, error) {
-	uri := fmt.Sprintf("%s/blocks/height", c.URL)
+	path := "blocks/height"
 
-	res, err := c.HTTPClient.Get(uri)
-	if err != nil {
-		return nil, err
-	}
-	defer res.Body.Close()
+	block := new(CurrentBlock)
+	err := client.Request(c.HTTPClient, c.URL, path, url.Values{}, &block)
 
-	var currentBlock CurrentBlock
-	err = json.NewDecoder(res.Body).Decode(&currentBlock)
-	if err != nil {
-		return nil, err
-	} else {
-		return &currentBlock, nil
-	}
+	return block, err
 }
