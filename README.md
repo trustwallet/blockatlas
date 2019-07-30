@@ -6,7 +6,7 @@
 
 Clean explorer API for crypto currencies.
 
-**Supported Coins**
+#### Supported Coins
 
 <a href="https://binance.com" target="_blank"><img src="https://raw.githubusercontent.com/TrustWallet/tokens/master/coins/714.png" width="32" /></a>
 <a href="https://nimiq.com" target="_blank"><img src="https://raw.githubusercontent.com/TrustWallet/tokens/master/coins/242.png" width="32" /></a>
@@ -31,22 +31,22 @@ Clean explorer API for crypto currencies.
 
 ## Setup
 
-#### Quick start
+### Quick start
 
 Deploy it in less than 30 seconds!
 
-**From Source** (Go Toolchain required)
+#### From Source (Go Toolchain required)
 
 ```shell
 go get -u github.com/trustwallet/blockatlas
 ~/go/bin/blockatlas
 ```
 
-**With Docker**
+#### With Docker
 
 `docker run -it -p 8420:8420 trustwallet/blockatlas`
 
-**Tools**
+#### Tools
 
 -   Setup Redis
 
@@ -79,7 +79,7 @@ Block Atlas can run just fine without configuration.
 If you want to use custom RPC endpoints, or enable coins without public RPC (like Nimiq),
 you can configure Block Atlas over `config.yml` or environment variables.
 
-**Config File**
+#### Config File
 
 By default, `config.yml` is loaded from the working directory.
 
@@ -91,7 +91,7 @@ nimiq:
 #...
 ```
 
-**Environment**
+#### Environment
 
 The rest gets loaded from the environment variables.
 Every config option is available under the `ATLAS_` prefix.
@@ -115,6 +115,4 @@ don't require code changes (e.g. ERC-20).
 
 The best way to submit feedback and report bugs is to open a GitHub issue.
 Please be sure to include your operating system, version number, and
-steps to reproduce reported bugs.
-
-[steps links]: https://gist.github.com/nrollr/eb24336b8fb8e7ba5630
+[steps](https://gist.github.com/nrollr/eb24336b8fb8e7ba5630) to reproduce reported bugs.
