@@ -25,20 +25,18 @@ func (c *Client) GetTxs(address string, limit int) ([]Transaction, error) {
 	}
 }
 
-func (c *Client) GetBlockByNumber(num int64) (*Block, error) {
+func (c *Client) GetBlockByNumber(num int64) (block *Block, err error) {
 	path := fmt.Sprintf("blocks/at/%d", num)
 
-	block := new(Block)
-	err := client.Request(c.HTTPClient, c.URL, path, url.Values{}, &block)
+	err = client.Request(c.HTTPClient, c.URL, path, url.Values{}, &block)
 
 	return block, err
 }
 
-func (c *Client) GetCurrentBlock() (*CurrentBlock, error) {
+func (c *Client) GetCurrentBlock() (block *CurrentBlock, err error) {
 	path := "blocks/height"
 
-	block := new(CurrentBlock)
-	err := client.Request(c.HTTPClient, c.URL, path, url.Values{}, &block)
+	err = client.Request(c.HTTPClient, c.URL, path, url.Values{}, &block)
 
 	return block, err
 }
