@@ -8,6 +8,7 @@ const (
 	TxCollectibleTransfer = "collectible_transfer"
 	TxTokenSwap           = "token_swap"
 	TxContractCall        = "contract_call"
+	TxAnyAction           = "any_action"
 )
 
 // Types of transaction statuses
@@ -105,6 +106,18 @@ type TokenSwap struct {
 type ContractCall struct {
 	Input string `json:"input"`
 	Value string `json:"value"`
+}
+
+// AnyAction describes all other types
+type AnyAction struct {
+	Coin     uint   `json:"coin"`
+	Title    string `json:"title"`
+	Key      string `json:"key"`
+	TokenId  string `json:"tokenID,omitempty"`
+	Name     string `json:"name"`
+	Symbol   string `json:"symbol"`
+	Decimals uint   `json:"decimals"`
+	Value    string `json:"value"`
 }
 
 // TokenPage is a page of transactions.
