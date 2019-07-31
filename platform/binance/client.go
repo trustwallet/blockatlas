@@ -13,121 +13,61 @@ import (
 // TODO Headers + rate limiting
 
 type Client struct {
-	HTTPClient *http.Client
+	Request    blockatlas.Request
 	BaseURL    string
 	BaseDexURL string
 }
 
+func ClientInit(httpClient *http.Client, baseUrl string, baseDexURL string) Client {
+	return Client{
+		Request: blockatlas.Request{
+			HttpClient:   httpClient,
+			ErrorHandler: getHTTPError,
+		},
+		BaseURL:    baseUrl,
+		BaseDexURL: baseDexURL,
+	}
+}
+
 func (c *Client) GetBlockList(count int) (*BlockList, error) {
-	uri := fmt.Sprintf("%s/blocks?page=1&rows=%d",
-		c.BaseURL, count)
-
-	res, err := c.HTTPClient.Get(uri)
-	if err != nil {
-		return nil, err
-	}
-
-	if err := getHTTPError(res, "GetBlockList"); err != nil {
-		return nil, err
-	}
-
-	var blockList BlockList
-	err = json.NewDecoder(res.Body).Decode(&blockList)
-	if err != nil {
-		return nil, err
-	} else {
-		return &blockList, nil
-	}
+	result := new(BlockList)
+	query := url.Values{"rows": {strconv.Itoa(count)}, "page": {"1"}}
+	err := c.Request.Get(result, c.BaseURL, "blocks", query)
+	return result, err
 }
 
 func (c *Client) GetBlockByNumber(num int64) (*TxPage, error) {
-	uri := fmt.Sprintf("%s/txs?%s",
-		c.BaseURL,
-		url.Values{
-			"blockHeight": {strconv.FormatInt(num, 10)},
-			// Only first 100 transactions of block returned
-			// Shouldn't be a problem at the current transaction rate
-			"rows": {"100"},
-			"page": {"1"},
-		}.Encode())
-
-	res, err := c.HTTPClient.Get(uri)
-	if err != nil {
-		return nil, err
-	}
-
-	if err := getHTTPError(res, "GetBlockByNumber"); err != nil {
-		return nil, err
-	}
-
 	stx := new(TxPage)
-	err = json.NewDecoder(res.Body).Decode(stx)
-	return stx, nil
+	query := url.Values{
+		"blockHeight": {strconv.FormatInt(num, 10)},
+		// Only first 100 transactions of block returned
+		// Shouldn't be a problem at the current transaction rate
+		"rows": {"100"},
+		"page": {"1"},
+	}
+	err := c.Request.Get(stx, c.BaseURL, "txs", query)
+	return stx, err
 }
 
 func (c *Client) GetTxsOfAddress(address string, token string) (*TxPage, error) {
-	uri := fmt.Sprintf("%s/txs?%s",
-		c.BaseURL,
-		url.Values{
-			"address": {address},
-			"rows":    {"100"},
-			"page":    {"1"},
-		}.Encode())
-
-	res, err := c.HTTPClient.Get(uri)
-	if err != nil {
-		logrus.WithError(err).Error("Binance: Failed to get transactions")
-		return nil, blockatlas.ErrSourceConn
-	}
-
-	if err := getHTTPError(res, "GetTxsOfAddress"); err != nil {
-		return nil, err
-	}
-
 	stx := new(TxPage)
-	err = json.NewDecoder(res.Body).Decode(stx)
-	return stx, nil
+	query := url.Values{"address": {address}, "rows": {"100"}, "page": {"1"}}
+	err := c.Request.Get(stx, c.BaseURL, "txs", query)
+	return stx, err
 }
 
 func (c *Client) GetAccountMetadata(address string) (*Account, error) {
-	uri := fmt.Sprintf("%s/v1/account/%s", c.BaseDexURL, address)
-
-	res, err := c.HTTPClient.Get(uri)
-	if err != nil {
-		logrus.WithError(err).Error("Binance: Failed to get account metadata")
-		return nil, blockatlas.ErrSourceConn
-	}
-
-	if err := getHTTPError(res, "GetAccountMetadata"); err != nil {
-		return nil, err
-	}
-
 	sac := new(Account)
-	err = json.NewDecoder(res.Body).Decode(sac)
-	return sac, nil
+	path := fmt.Sprintf("v1/account/%s", address)
+	err := c.Request.Get(sac, c.BaseURL, path, nil)
+	return sac, err
 }
 
 func (c *Client) GetTokens() (*TokenPage, error) {
-	uri := fmt.Sprintf("%s/v1/tokens?%s",
-		c.BaseDexURL,
-		url.Values{
-			"limit": {"1000"},
-			"offset": {"0"},
-		}.Encode())
-
-	res, err := c.HTTPClient.Get(uri)
-	if err != nil {
-		logrus.WithError(err).Error("Binance: Failed to get tokens")
-		return nil, blockatlas.ErrSourceConn
-	}
-
-	if err := getHTTPError(res, "GetTokens"); err != nil {
-		return nil, err
-	}
-
 	stp := new(TokenPage)
-	err = json.NewDecoder(res.Body).Decode(stp)
-	return stp, nil
+	query := url.Values{"limit": {"1000"}, "offset": {"0"}}
+	err := c.Request.Get(stp, c.BaseURL, "v1/tokens", query)
+	return stp, err
 }
 
 func getHTTPError(res *http.Response, desc string) error {

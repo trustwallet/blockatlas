@@ -3,22 +3,39 @@ package blockatlas
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"net/url"
 )
 
-func Request(c *http.Client, base string, path string, params url.Values, result interface{}) error {
+type Request struct {
+	HttpClient   *http.Client
+	ErrorHandler func(res *http.Response, uri string) error
+}
 
+func (r *Request) Get(result interface{}, base string, path string, query url.Values) error {
 	uri := fmt.Sprintf("%s/%s?%s",
 		base,
 		path,
-		params.Encode())
+		query.Encode())
+	return r.Execute("GET", uri, nil, result)
+}
 
-	res, err := c.Get(uri)
+func (r *Request) Execute(method string, url string, body io.Reader, result interface{}) error {
+	req, err := http.NewRequest(method, url, body)
+	if err != nil {
+		return err
+	}
+	res, err := r.HttpClient.Do(req)
 	if err != nil {
 		return err
 	}
 
+	err = r.ErrorHandler(res, url)
+	if err != nil {
+		return err
+	}
+	defer res.Body.Close()
 	err = json.NewDecoder(res.Body).Decode(result)
 	if err != nil {
 		return err
