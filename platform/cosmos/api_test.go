@@ -9,7 +9,7 @@ import (
 	"testing"
 )
 
-const basicSrc = `
+const transferSrc = `
 {
 	"height": "151980",
 	"txhash": "E19B011D20D862DA0BEA7F24E3BC6DFF666EE6E044FCD9BD95B073478086DBB6",
@@ -80,6 +80,134 @@ const basicSrc = `
   }
 `
 
+const delegateSrc = `
+{  
+   "height":"193844",
+   "txhash":"35399455114314D7DB99B2FD913705A0FFB5899336BD579495A5C9057B209AB7",
+   "raw_log":"[{\"msg_index\":\"0\",\"success\":true,\"log\":\"\"}]",
+   "logs":[  
+      {  
+         "msg_index":"0",
+         "success":true,
+         "log":""
+      }
+   ],
+   "gas_wanted":"200000",
+   "gas_used":"99610",
+   "tags":[  
+      {  
+         "key":"action",
+         "value":"delegate"
+      },
+      {  
+         "key":"delegator",
+         "value":"cosmos1rzwuwnwnwu7j8qtw2c8qynygfluzlz5he634v3"
+      },
+      {  
+         "key":"destination-validator",
+         "value":"cosmosvaloper1ey69r37gfxvxg62sh4r0ktpuc46pzjrm873ae8"
+      }
+   ],
+   "tx":{  
+      "type":"auth/StdTx",
+      "value":{  
+         "msg":[  
+            {  
+               "type":"cosmos-sdk/MsgDelegate",
+               "value":{  
+                  "delegator_address":"cosmos1rzwuwnwnwu7j8qtw2c8qynygfluzlz5he634v3",
+                  "validator_address":"cosmosvaloper1ey69r37gfxvxg62sh4r0ktpuc46pzjrm873ae8",
+                  "amount":{  
+                     "denom":"uatom",
+                     "amount":"6789000000"
+                  }
+               }
+            }
+         ],
+         "fee":{  
+            "amount":null,
+            "gas":"200000"
+         },
+         "signatures":[  
+            {  
+               "pub_key":{  
+                  "type":"tendermint/PubKeySecp256k1",
+                  "value":"ApcD+YmCvMKWG9rcodwUy5ueqDXpmN0csE7hUok6Ol1M"
+               },
+               "signature":"B7WgRyemnQFEP/zd7c7Mq7mDLDcr92OZuQeRG19ehaElxLKuXkGGIfjoA0xCXRikmQrKlwSxiZ5QgQ2wb3FsLg=="
+            }
+         ],
+         "memo":""
+      }
+   },
+   "timestamp":"2019-05-08T01:53:36Z"
+}
+`
+
+const unDelegateSrc = `
+{  
+   "height":"193844",
+   "txhash":"35399455114314D7DB99B2FD913705A0FFB5899336BD579495A5C9057B209AB7",
+   "raw_log":"[{\"msg_index\":\"0\",\"success\":true,\"log\":\"\"}]",
+   "logs":[  
+      {  
+         "msg_index":"0",
+         "success":true,
+         "log":""
+      }
+   ],
+   "gas_wanted":"200000",
+   "gas_used":"99610",
+   "tags":[  
+      {  
+         "key":"action",
+         "value":"delegate"
+      },
+      {  
+         "key":"delegator",
+         "value":"cosmos1rzwuwnwnwu7j8qtw2c8qynygfluzlz5he634v3"
+      },
+      {  
+         "key":"destination-validator",
+         "value":"cosmosvaloper1ey69r37gfxvxg62sh4r0ktpuc46pzjrm873ae8"
+      }
+   ],
+   "tx":{  
+      "type":"auth/StdTx",
+      "value":{  
+         "msg":[  
+            {  
+               "type":"cosmos-sdk/MsgUndelegate",
+               "value":{  
+                  "delegator_address":"cosmos1rzwuwnwnwu7j8qtw2c8qynygfluzlz5he634v3",
+                  "validator_address":"cosmosvaloper1ey69r37gfxvxg62sh4r0ktpuc46pzjrm873ae8",
+                  "amount":{  
+                     "denom":"uatom",
+                     "amount":"6789000000"
+                  }
+               }
+            }
+         ],
+         "fee":{  
+            "amount":null,
+            "gas":"200000"
+         },
+         "signatures":[  
+            {  
+               "pub_key":{  
+                  "type":"tendermint/PubKeySecp256k1",
+                  "value":"ApcD+YmCvMKWG9rcodwUy5ueqDXpmN0csE7hUok6Ol1M"
+               },
+               "signature":"B7WgRyemnQFEP/zd7c7Mq7mDLDcr92OZuQeRG19ehaElxLKuXkGGIfjoA0xCXRikmQrKlwSxiZ5QgQ2wb3FsLg=="
+            }
+         ],
+         "memo":""
+      }
+   },
+   "timestamp":"2019-05-08T01:53:36Z"
+}
+`
+
 const validatorSrc = `
 {
     "operator_address": "cosmosvaloper1qwl879nx9t6kef4supyazayf7vjhennyh568ys",
@@ -106,22 +234,62 @@ const validatorSrc = `
   }
 `
 
-var basicDst = blockatlas.Tx{
-	ID:    "E19B011D20D862DA0BEA7F24E3BC6DFF666EE6E044FCD9BD95B073478086DBB6",
-	Coin:  coin.ATOM,
-	From:  "cosmos1rw62phusuv9vzraezr55k0vsqssvz6ed52zyrl",
-	To:    "cosmos1nynns8ex9fq6sjjfj8k79ymkdz4sqth06xexae",
+var transferDst = blockatlas.Tx{
+	ID:   "E19B011D20D862DA0BEA7F24E3BC6DFF666EE6E044FCD9BD95B073478086DBB6",
+	Coin: coin.ATOM,
+	//From:  "cosmos1rw62phusuv9vzraezr55k0vsqssvz6ed52zyrl",
+	//To:    "cosmos1nynns8ex9fq6sjjfj8k79ymkdz4sqth06xexae",
 	Fee:   "1",
 	Date:  1556992677,
 	Block: 151980,
-	Meta: blockatlas.Transfer{
-		Value: "2271999999",
+	Meta:  blockatlas.Transfer{
+		//Value: "2271999999",
+	},
+}
+
+var delegateDst = blockatlas.Tx{
+	ID:    "35399455114314D7DB99B2FD913705A0FFB5899336BD579495A5C9057B209AB7",
+	Coin:  coin.ATOM,
+	From:  "",
+	To:    "",
+	Fee:   "0",
+	Date:  1557280416,
+	Block: 193844,
+	Meta: blockatlas.AnyAction{
+		Coin:     coin.ATOM,
+		Title:    "Delegation",
+		Symbol:   coin.Coins[coin.ATOM].Symbol,
+		Decimals: coin.Coins[coin.ATOM].Decimals,
+		Value:    "",
+	},
+}
+
+var unDelegateDst = blockatlas.Tx{
+	ID:    "35399455114314D7DB99B2FD913705A0FFB5899336BD579495A5C9057B209AB7",
+	Coin:  coin.ATOM,
+	From:  "",
+	To:    "",
+	Fee:   "0",
+	Date:  1557280416,
+	Block: 193844,
+	Meta: blockatlas.AnyAction{
+		Coin:     coin.ATOM,
+		Title:    "UnDelegation",
+		Symbol:   coin.Coins[coin.ATOM].Symbol,
+		Decimals: coin.Coins[coin.ATOM].Decimals,
+		Value:    "",
 	},
 }
 
 func TestNormalize(t *testing.T) {
+	testNormalize(t, transferSrc, &transferDst)
+	testNormalize(t, delegateSrc, &delegateDst)
+	testNormalize(t, unDelegateSrc, &unDelegateDst)
+}
+
+func testNormalize(t *testing.T, src string, dst *blockatlas.Tx) {
 	var srcTx Tx
-	err := json.Unmarshal([]byte(basicSrc), &srcTx)
+	err := json.Unmarshal([]byte(src), &srcTx)
 	if err != nil {
 		t.Error(err)
 		return
@@ -133,7 +301,7 @@ func TestNormalize(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	dstJSON, err := json.Marshal(&basicDst)
+	dstJSON, err := json.Marshal(&dst)
 	if err != nil {
 		t.Fatal(err)
 	}

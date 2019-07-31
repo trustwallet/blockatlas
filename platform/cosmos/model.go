@@ -1,5 +1,21 @@
 package cosmos
 
+const (
+	CosmosMsgSend                        = "cosmos-sdk/MsgSend"
+	CosmosMsgMultiSend                   = "cosmos-sdk/MsgMultiSend"
+	CosmosMsgCreateValidator             = "cosmos-sdk/MsgCreateValidator"
+	CosmosMsgDelegate                    = "cosmos-sdk/MsgDelegate"
+	CosmosMsgUndelegate                  = "cosmos-sdk/MsgUndelegate"
+	CosmosMsgBeginRedelegate             = "cosmos-sdk/MsgBeginRedelegate"
+	CosmosMsgWithdrawDelegationReward    = "cosmos-sdk/MsgWithdrawDelegationReward"
+	CosmosMsgWithdrawValidatorCommission = "cosmos-sdk/MsgWithdrawValidatorCommission"
+	CosmosMsgSubmitProposal              = "cosmos-sdk/MsgSubmitProposal"
+	CosmosMsgDeposit                     = "cosmos-sdk/MsgDeposit"
+	CosmosMsgVote                        = "cosmos-sdk/MsgVote"
+	CosmosTextProposal                   = "cosmos-sdk/TextProposal"
+	CosmosMsgUnjail                      = "cosmos-sdk/MsgUnjail"
+)
+
 // Tx - Base transaction object. Always returned as part of an array
 type Tx struct {
 	Block string `json:"height"`
@@ -22,14 +38,15 @@ type Contents struct {
 
 // Message - an array that holds multiple 'particulars' entries. Possibly used for multiple transfers in one transaction?
 type Message struct {
-	Particulars Particulars `json:"value"`
+	Type string `json:"type"`
+	//Particulars Particulars `json:"value"`
 }
 
 // Particulars - from, to, and amount
 type Particulars struct {
 	FromAddr string   `json:"from_address"`
 	ToAddr   string   `json:"to_address"`
-	Amount   []Amount `json:"amount"`
+	Amount   []Amount `json:"amount,omitempty"`
 }
 
 // Fee - also references the "amount" struct
