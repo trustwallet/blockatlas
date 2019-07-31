@@ -19,7 +19,7 @@ func (p *Platform) Init() error {
 	p.client.BaseURL = viper.GetString("zilliqa.api")
 	p.client.APIKey = viper.GetString("zilliqa.key")
 	p.client.HTTPClient = http.DefaultClient
-	p.client.RpcClient = jsonrpc.NewClient(viper.GetString("zilliqa.rpc"))
+	p.client.RPCClient = jsonrpc.NewClient(viper.GetString("zilliqa.rpc"))
 	return nil
 }
 

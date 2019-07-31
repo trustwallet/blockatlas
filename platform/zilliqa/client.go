@@ -14,7 +14,7 @@ import (
 
 type Client struct {
 	HTTPClient *http.Client
-	RpcClient  jsonrpc.RPCClient
+	RPCClient  jsonrpc.RPCClient
 	BaseURL    string
 	APIKey     string
 }
@@ -31,7 +31,7 @@ func (c *Client) newRequest(method, path string) (*http.Request, error) {
 
 func (c *Client) GetBlockchainInfo() (*ChainInfo, error) {
 	var info *ChainInfo
-	err := c.RpcClient.CallFor(&info, "GetBlockchainInfo")
+	err := c.RPCClient.CallFor(&info, "GetBlockchainInfo")
 	if err != nil {
 		logrus.WithError(err).Error("Zilliqa: Error read response body")
 		return nil, err
@@ -41,7 +41,7 @@ func (c *Client) GetBlockchainInfo() (*ChainInfo, error) {
 
 func (c *Client) GetTxInBlock(number int64) ([]Tx, error) {
 	strNumber := strconv.FormatInt(number, 10)
-	res, err := c.RpcClient.Call("GetTransactionsForTxBlock", strNumber)
+	res, err := c.RPCClient.Call("GetTransactionsForTxBlock", strNumber)
 	if err != nil {
 		return nil, err
 	}
@@ -65,17 +65,17 @@ func (c *Client) GetTxInBlock(number int64) ([]Tx, error) {
 		return txs, nil
 	}
 
-	responses, err := c.RpcClient.CallBatch(requests)
+	responses, err := c.RPCClient.CallBatch(requests)
 	if err != nil {
 		return nil, err
 	}
 
 	for _, result := range responses {
-		var txRpc TxRpc
-		if mapstructure.Decode(result.Result, &txRpc) != nil {
+		var txRPC TxRPC
+		if mapstructure.Decode(result.Result, &txRPC) != nil {
 			continue
 		}
-		txs = append(txs, txRpc.toTx())
+		txs = append(txs, txRPC.toTx())
 	}
 	return txs, nil
 }
