@@ -86,7 +86,7 @@ func (c *Client) GetBlockByNumber(num int64) (txs []Tx, err error) {
 		return nil, err
 	}
 
-	txs = make([]Tx, 0)
+	defer res.Body.Close()
 
 	err = json.NewDecoder(res.Body).Decode(&txs)
 
