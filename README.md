@@ -39,7 +39,8 @@ Deploy it in less than 30 seconds!
 
 ```shell
 go get -u github.com/trustwallet/blockatlas
-~/go/bin/blockatlas
+cd blockatlas
+go build -o blockatlas ./cmd && ./blockatlas api --config=config.yml
 ```
 
 #### With Docker
