@@ -17,6 +17,23 @@ const (
 	StatusFailed    = "failed"
 )
 
+// Titles of AnyAction meta
+const (
+	AnyActionDelegation   = "Delegation"
+	AnyActionUndelegation = "Undelegation"
+)
+
+// Keys of AnyAction meta
+const (
+	KeyPlaceOrder    = "place_order"
+	KeyCancelOrder   = "cancel_order"
+	KeyIssueToken    = "issue_token"
+	KeyBurnToken     = "burn_token"
+	KeyMintToken     = "mint_token"
+	KeyApproveToken  = "approve_token"
+	KeyStakeDelegate = "stake_delegate"
+)
+
 // TxPerPage says how many transactions to return per page
 const TxPerPage = 25
 
@@ -117,7 +134,7 @@ type AnyAction struct {
 	Name     string `json:"name"`
 	Symbol   string `json:"symbol"`
 	Decimals uint   `json:"decimals"`
-	Value    string `json:"value"`
+	Value    Amount `json:"value"`
 }
 
 // TokenPage is a page of transactions.

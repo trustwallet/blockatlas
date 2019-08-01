@@ -1,5 +1,9 @@
 package cosmos
 
+import (
+	"encoding/json"
+)
+
 const (
 	CosmosMsgSend                        = "cosmos-sdk/MsgSend"
 	CosmosMsgMultiSend                   = "cosmos-sdk/MsgMultiSend"
@@ -38,15 +42,22 @@ type Contents struct {
 
 // Message - an array that holds multiple 'particulars' entries. Possibly used for multiple transfers in one transaction?
 type Message struct {
-	Type string `json:"type"`
-	//Particulars Particulars `json:"value"`
+	Type  string      `json:"type"`
+	Value interface{} `json:"value"`
 }
 
-// Particulars - from, to, and amount
-type Particulars struct {
+// MessageValueTransfer - from, to, and amount
+type MessageValueTransfer struct {
 	FromAddr string   `json:"from_address"`
 	ToAddr   string   `json:"to_address"`
 	Amount   []Amount `json:"amount,omitempty"`
+}
+
+// MessageValueTransfer - from, to, and amount
+type MessageValueDelegate struct {
+	DelegatorAddr string `json:"delegator_address"`
+	ValidatorAddr string `json:"validator_address"`
+	Amount        Amount `json:"amount"`
 }
 
 // Fee - also references the "amount" struct
@@ -86,4 +97,30 @@ type BlockMeta struct {
 
 type BlockHeader struct {
 	Height string `json:"height"`
+}
+
+func (m *Message) UnmarshalJSON(buf []byte) error {
+	var messageInternal struct {
+		Type  string          `json:"type"`
+		Value json.RawMessage `json:"value"`
+	}
+
+	err := json.Unmarshal(buf, &messageInternal)
+	if err != nil {
+		return err
+	}
+
+	m.Type = messageInternal.Type
+
+	switch {
+	case messageInternal.Type == CosmosMsgUndelegate || messageInternal.Type == CosmosMsgDelegate:
+		var msgDelegate MessageValueDelegate
+		err = json.Unmarshal(messageInternal.Value, &msgDelegate)
+		m.Value = msgDelegate
+	case messageInternal.Type == CosmosMsgSend:
+		var msgTransfer MessageValueTransfer
+		err = json.Unmarshal(messageInternal.Value, &msgTransfer)
+		m.Value = msgTransfer
+	}
+	return err
 }

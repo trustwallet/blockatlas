@@ -146,8 +146,9 @@ const delegateSrc = `
 
 const unDelegateSrc = `
 {  
-   "height":"193844",
-   "txhash":"35399455114314D7DB99B2FD913705A0FFB5899336BD579495A5C9057B209AB7",
+   "height":"1257037",
+   "txhash":"A1EC36741FEF681F4A77B8F6032AD081100EE5ECB4CC76AEAC2174BC6B871CFE",
+   "data":"0C0889ECF7EA0510FB9D8CAD03",
    "raw_log":"[{\"msg_index\":\"0\",\"success\":true,\"log\":\"\"}]",
    "logs":[  
       {  
@@ -157,19 +158,23 @@ const unDelegateSrc = `
       }
    ],
    "gas_wanted":"200000",
-   "gas_used":"99610",
+   "gas_used":"107804",
    "tags":[  
       {  
          "key":"action",
-         "value":"delegate"
+         "value":"begin_unbonding"
       },
       {  
          "key":"delegator",
-         "value":"cosmos1rzwuwnwnwu7j8qtw2c8qynygfluzlz5he634v3"
+         "value":"cosmos137rrp4p8n0nqcft0mwc62tdnyhhzf80knv5t94"
       },
       {  
-         "key":"destination-validator",
-         "value":"cosmosvaloper1ey69r37gfxvxg62sh4r0ktpuc46pzjrm873ae8"
+         "key":"source-validator",
+         "value":"cosmosvaloper1te8nxpc2myjfrhaty0dnzdhs5ahdh5agzuym9v"
+      },
+      {  
+         "key":"end-time",
+         "value":"2019-08-22T01:55:21Z"
       }
    ],
    "tx":{  
@@ -179,32 +184,37 @@ const unDelegateSrc = `
             {  
                "type":"cosmos-sdk/MsgUndelegate",
                "value":{  
-                  "delegator_address":"cosmos1rzwuwnwnwu7j8qtw2c8qynygfluzlz5he634v3",
-                  "validator_address":"cosmosvaloper1ey69r37gfxvxg62sh4r0ktpuc46pzjrm873ae8",
+                  "delegator_address":"cosmos137rrp4p8n0nqcft0mwc62tdnyhhzf80knv5t94",
+                  "validator_address":"cosmosvaloper1te8nxpc2myjfrhaty0dnzdhs5ahdh5agzuym9v",
                   "amount":{  
                      "denom":"uatom",
-                     "amount":"6789000000"
+                     "amount":"5100000000"
                   }
                }
             }
          ],
          "fee":{  
-            "amount":null,
+            "amount":[  
+               {  
+                  "denom":"uatom",
+                  "amount":"5000"
+               }
+            ],
             "gas":"200000"
          },
          "signatures":[  
             {  
                "pub_key":{  
                   "type":"tendermint/PubKeySecp256k1",
-                  "value":"ApcD+YmCvMKWG9rcodwUy5ueqDXpmN0csE7hUok6Ol1M"
+                  "value":"A+tPzMXCW7vxmW5VN9Q/CO+fxnEXYlSMOklDVgaFutQD"
                },
-               "signature":"B7WgRyemnQFEP/zd7c7Mq7mDLDcr92OZuQeRG19ehaElxLKuXkGGIfjoA0xCXRikmQrKlwSxiZ5QgQ2wb3FsLg=="
+               "signature":"rh25A/RTm8TUTUGOGhufqxn9vLFef/04xEKMJLUD5QhBVabRADvEgAP1J842XTDtVBS0SpVD/MrPduqRp0nNzg=="
             }
          ],
          "memo":""
       }
    },
-   "timestamp":"2019-05-08T01:53:36Z"
+   "timestamp":"2019-08-01T01:55:21Z"
 }
 `
 
@@ -235,49 +245,51 @@ const validatorSrc = `
 `
 
 var transferDst = blockatlas.Tx{
-	ID:   "E19B011D20D862DA0BEA7F24E3BC6DFF666EE6E044FCD9BD95B073478086DBB6",
-	Coin: coin.ATOM,
-	//From:  "cosmos1rw62phusuv9vzraezr55k0vsqssvz6ed52zyrl",
-	//To:    "cosmos1nynns8ex9fq6sjjfj8k79ymkdz4sqth06xexae",
+	ID:    "E19B011D20D862DA0BEA7F24E3BC6DFF666EE6E044FCD9BD95B073478086DBB6",
+	Coin:  coin.ATOM,
+	From:  "cosmos1rw62phusuv9vzraezr55k0vsqssvz6ed52zyrl",
+	To:    "cosmos1nynns8ex9fq6sjjfj8k79ymkdz4sqth06xexae",
 	Fee:   "1",
 	Date:  1556992677,
 	Block: 151980,
-	Meta:  blockatlas.Transfer{
-		//Value: "2271999999",
+	Meta: blockatlas.Transfer{
+		Value: "2271999999",
 	},
 }
 
 var delegateDst = blockatlas.Tx{
 	ID:    "35399455114314D7DB99B2FD913705A0FFB5899336BD579495A5C9057B209AB7",
 	Coin:  coin.ATOM,
-	From:  "",
-	To:    "",
+	From:  "cosmos1rzwuwnwnwu7j8qtw2c8qynygfluzlz5he634v3",
+	To:    "cosmosvaloper1ey69r37gfxvxg62sh4r0ktpuc46pzjrm873ae8",
 	Fee:   "0",
 	Date:  1557280416,
 	Block: 193844,
 	Meta: blockatlas.AnyAction{
 		Coin:     coin.ATOM,
-		Title:    "Delegation",
+		Title:    blockatlas.AnyActionDelegation,
+		Key:      blockatlas.KeyStakeDelegate,
 		Symbol:   coin.Coins[coin.ATOM].Symbol,
 		Decimals: coin.Coins[coin.ATOM].Decimals,
-		Value:    "",
+		Value:    "6789000000",
 	},
 }
 
 var unDelegateDst = blockatlas.Tx{
-	ID:    "35399455114314D7DB99B2FD913705A0FFB5899336BD579495A5C9057B209AB7",
+	ID:    "A1EC36741FEF681F4A77B8F6032AD081100EE5ECB4CC76AEAC2174BC6B871CFE",
 	Coin:  coin.ATOM,
-	From:  "",
-	To:    "",
-	Fee:   "0",
-	Date:  1557280416,
-	Block: 193844,
+	From:  "cosmos137rrp4p8n0nqcft0mwc62tdnyhhzf80knv5t94",
+	To:    "cosmosvaloper1te8nxpc2myjfrhaty0dnzdhs5ahdh5agzuym9v",
+	Fee:   "5000",
+	Date:  1564624521,
+	Block: 1257037,
 	Meta: blockatlas.AnyAction{
 		Coin:     coin.ATOM,
-		Title:    "UnDelegation",
+		Title:    blockatlas.AnyActionUndelegation,
+		Key:      blockatlas.KeyStakeDelegate,
 		Symbol:   coin.Coins[coin.ATOM].Symbol,
 		Decimals: coin.Coins[coin.ATOM].Decimals,
-		Value:    "",
+		Value:    "5100000000",
 	},
 }
 
@@ -295,7 +307,7 @@ func testNormalize(t *testing.T, src string, dst *blockatlas.Tx) {
 		return
 	}
 
-	tx := Normalize(&srcTx)
+	tx, _ := Normalize(&srcTx)
 	resJSON, err := json.Marshal(&tx)
 	if err != nil {
 		t.Fatal(err)
