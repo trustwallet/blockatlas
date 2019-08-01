@@ -84,6 +84,6 @@ func (s *Stream) loadBlock(num int64) *blockatlas.Block {
 		s.log.WithError(err).Errorf("Polling failed: could not get block %d", num)
 		return nil
 	}
-	s.log.WithField("num", num).Info("Got new block")
+	s.log.WithField("num", num).WithField("tx count", len(block.Txs)).Info("Got new block")
 	return block
 }

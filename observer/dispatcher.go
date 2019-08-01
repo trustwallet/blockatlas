@@ -52,5 +52,5 @@ func (d *Dispatcher) postWebhook(hook string, data []byte, log *logrus.Entry) {
 		log.WithError(err).Errorf("Failed to dispatch event %s: %s", hook, err)
 	}
 	defer res.Body.Close()
-	log.Info("Dispatch: hook: ", hook)
+	log.Info("Dispatch: hook: ", hook, string(data))
 }
