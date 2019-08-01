@@ -103,7 +103,7 @@ type BlockHeader struct {
 	Height string `json:"height"`
 }
 
-//Unmarshal different message types
+//UnmarshalJSON reads different message types
 func (m *Message) UnmarshalJSON(buf []byte) error {
 	var messageInternal struct {
 		Type  string          `json:"type"`
