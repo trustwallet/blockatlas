@@ -46,7 +46,11 @@ func (o *Observer) processBlock(events chan<- Event, block *blockatlas.Block) {
 
 	// Emit events
 	for _, sub := range subs {
-		txs := txMap[sub.Address].Txs()
+		txSet := txMap[sub.Address]
+		if txSet == nil {
+			continue
+		}
+		txs := txSet.Txs()
 		for _, tx := range txs {
 			events <- Event{
 				Subscription: sub,
