@@ -152,7 +152,7 @@ type Token struct {
 
 func (t *Tx) GetAddresses() (addresses []string) {
 	switch t.Meta.(type) {
-	case Transfer, *Transfer, CollectibleTransfer, *CollectibleTransfer, ContractCall, *ContractCall:
+	case Transfer, *Transfer, CollectibleTransfer, *CollectibleTransfer, ContractCall, *ContractCall, AnyAction, *AnyAction:
 		return append(addresses, t.From, t.To)
 	case NativeTokenTransfer:
 		return append(addresses, t.Meta.(NativeTokenTransfer).From, t.Meta.(NativeTokenTransfer).To)
