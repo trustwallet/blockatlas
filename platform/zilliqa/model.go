@@ -23,21 +23,23 @@ type ChainInfo struct {
 	NumTxBlocks string `json:"NumTxBlocks"`
 }
 
+type TxReceipt struct {
+	CumulativeGas string `json:"cumulative_gas"`
+	EpochNum      string `json:"epoch_num"`
+	Success       bool   `json:"success"`
+}
+
 type TxRPC struct {
-	ID       string `json:"ID"`
-	Amount   string `json:"amount"`
-	GasLimit string `json:"gasLimit"`
-	GasPrice string `json:"gasPrice"`
-	Nonce    string `json:"nonce"`
-	Receipt  struct {
-		CumulativeGas string `json:"cumulative_gas"`
-		EpochNum      string `json:"epoch_num"`
-		Success       bool   `json:"success"`
-	} `json:"receipt"`
-	SenderPubKey string `json:"senderPubKey"`
-	Signature    string `json:"signature"`
-	ToAddr       string `json:"toAddr"`
-	Version      string `json:"version"`
+	ID           string    `json:"ID"`
+	Amount       string    `json:"amount"`
+	GasLimit     string    `json:"gasLimit"`
+	GasPrice     string    `json:"gasPrice"`
+	Nonce        string    `json:"nonce"`
+	Receipt      TxReceipt `json:"receipt"`
+	SenderPubKey string    `json:"senderPubKey"`
+	Signature    string    `json:"signature"`
+	ToAddr       string    `json:"toAddr"`
+	Version      string    `json:"version"`
 }
 
 func (t *TxRPC) toTx() Tx {
@@ -49,7 +51,7 @@ func (t *TxRPC) toTx() Tx {
 	fee := new(big.Int).Mul(gasLimt, gasPrice)
 
 	tx := Tx{
-		Hash:           t.ID,
+		Hash:           "0x" + t.ID,
 		BlockHeight:    height,
 		From:           EncodePublicKeyToAddress(t.SenderPubKey),
 		To:             EncodeKeyHashToAddress(to),
