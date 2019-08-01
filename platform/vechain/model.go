@@ -41,9 +41,8 @@ type Receipt struct {
 func (r *Receipt) Status() string {
 	if r.Reverted {
 		return blockatlas.StatusFailed
-	} else {
-		return blockatlas.StatusCompleted
 	}
+	return blockatlas.StatusCompleted
 }
 
 type TokenTransferTxs struct {
