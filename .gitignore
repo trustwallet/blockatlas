@@ -6,6 +6,7 @@
 # Dev environment
 .DS_Store
 .idea/
+.vscode/
 config_*.yml
 *.orig
 

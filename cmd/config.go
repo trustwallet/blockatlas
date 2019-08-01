@@ -68,4 +68,6 @@ func loadDefaults() {
 	viper.SetDefault("iotex.api", "https://pharos.iotex.io/v1")
 	viper.SetDefault("waves.api", "https://nodes.wavesnodes.com")
 	viper.SetDefault("aeternity.api", "https://mdw.aepps.com/")
+	viper.SetDefault("zilliqa.api", "https://api.viewblock.io/v1/zilliqa")
+	viper.SetDefault("zilliqa.rpc", "https://api.zilliqa.com/")
 }

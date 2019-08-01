@@ -78,7 +78,7 @@
   handle: zilliqa
   name: Zilliqa
   decimals: 12
-  sampleAddress: '0x88aF5BA10796D9091D6893eED4db23ef0bbbCa37'
+  sampleAddress: 'zil1anrjcsj2ntklaa3arq4w3s6gw4l4hqrycs9egy'
 
 - id: 425
   symbol: AION

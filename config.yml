@@ -119,6 +119,7 @@ ontology:
 # zilliqa:
 #  api: https://api.viewblock.io/v1/zilliqa
 #  key: YOUR_API_KEY
+#  rpc: https://api.zilliqa.com/
 
 #[IoTeX] IoTeX: https://iotex.io/
 iotex:
