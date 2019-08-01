@@ -3,12 +3,12 @@ package cosmos
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas"
+	"github.com/trustwallet/blockatlas/client"
 	"net/http"
 	"net/url"
 	"strconv"
-
-	"github.com/sirupsen/logrus"
 )
 
 // Client - the HTTP client
@@ -74,44 +74,24 @@ func (c *Client) GetValidators() (validators []CosmosValidator, err error) {
 }
 
 func (c *Client) GetBlockByNumber(num int64) (txs []Tx, err error) {
-	uri := fmt.Sprintf("%s/txs?%s",
-		c.BaseURL,
-		url.Values{
-			"tx.height": {strconv.FormatInt(num, 10)},
-		}.Encode())
+	urlValues := url.Values{"tx.height": {strconv.FormatInt(num, 10)}}
 
-	res, err := c.HTTPClient.Get(uri)
+	err = client.Request(c.HTTPClient, c.BaseURL, "txs", urlValues, &txs)
 
-	if err != nil {
-		return nil, err
-	}
-
-	defer res.Body.Close()
-
-	err = json.NewDecoder(res.Body).Decode(&txs)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return txs, nil
+	return txs, err
 }
 
 func (c *Client) CurrentBlockNumber() (num int64, err error) {
-	path := fmt.Sprintf("%s/blocks/latest", c.BaseURL)
-	res, err := http.Get(path)
-	if err != nil {
-		return num, err
-	}
-	defer res.Body.Close()
 	var block Block
-	dec := json.NewDecoder(res.Body)
-	err = dec.Decode(&block)
+
+	err = client.Request(c.HTTPClient, c.BaseURL, "blocks/latest", url.Values{}, &block)
+
 	if err != nil {
 		return num, err
 	}
 
 	num, err = strconv.ParseInt(block.Meta.Header.Height, 10, 64)
+
 	if err != nil {
 		return num, err
 	}
