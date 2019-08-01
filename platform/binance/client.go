@@ -59,14 +59,14 @@ func (c *Client) GetTxsOfAddress(address string, token string) (*TxPage, error) 
 func (c *Client) GetAccountMetadata(address string) (*Account, error) {
 	sac := new(Account)
 	path := fmt.Sprintf("v1/account/%s", address)
-	err := c.Request.Get(sac, c.BaseURL, path, nil)
+	err := c.Request.Get(sac, c.BaseDexURL, path, nil)
 	return sac, err
 }
 
 func (c *Client) GetTokens() (*TokenPage, error) {
 	stp := new(TokenPage)
 	query := url.Values{"limit": {"1000"}, "offset": {"0"}}
-	err := c.Request.Get(stp, c.BaseURL, "v1/tokens", query)
+	err := c.Request.Get(stp, c.BaseDexURL, "v1/tokens", query)
 	return stp, err
 }
 

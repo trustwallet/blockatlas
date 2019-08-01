@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"strings"
 )
 
 type Request struct {
@@ -14,10 +15,11 @@ type Request struct {
 }
 
 func (r *Request) Get(result interface{}, base string, path string, query url.Values) error {
-	uri := fmt.Sprintf("%s/%s?%s",
-		base,
-		path,
-		query.Encode())
+	var queryStr = ""
+	if query != nil {
+		queryStr = query.Encode()
+	}
+	uri := strings.Join([]string{fmt.Sprintf("%s/%s", base, path), queryStr}, "?")
 	return r.Execute("GET", uri, nil, result)
 }
 
