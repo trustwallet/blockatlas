@@ -153,7 +153,7 @@ func TestNormalize(t *testing.T) {
 		var tx blockatlas.Tx
 		var ok bool
 		tx, ok = Normalize(&sourceTx, test.AssetName)
-		spew.Dump(sourceTx)
+
 		if !ok {
 			t.Fatal("Ontology: Can't normalize transaction")
 		}
