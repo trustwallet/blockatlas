@@ -80,6 +80,7 @@ func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
 	return results, nil
 }
 
+// NormalizeTxs converts multiple Cosmos transactions
 func NormalizeTxs(srcTxs []Tx, token string, pageSize int) (txs []blockatlas.Tx) {
 	for _, srcTx := range srcTxs {
 		tx, ok := Normalize(&srcTx)
@@ -150,9 +151,9 @@ func fillDelegate(tx *blockatlas.Tx, delegate MessageValueDelegate, msgType stri
 
 	title := ""
 	switch msgType {
-	case CosmosMsgDelegate:
+	case MsgDelegate:
 		title = blockatlas.AnyActionDelegation
-	case CosmosMsgUndelegate:
+	case MsgUndelegate:
 		title = blockatlas.AnyActionUndelegation
 	}
 	tx.Meta = blockatlas.AnyAction{

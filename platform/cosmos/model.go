@@ -4,20 +4,21 @@ import (
 	"encoding/json"
 )
 
+// Types of messages
 const (
-	CosmosMsgSend                        = "cosmos-sdk/MsgSend"
-	CosmosMsgMultiSend                   = "cosmos-sdk/MsgMultiSend"
-	CosmosMsgCreateValidator             = "cosmos-sdk/MsgCreateValidator"
-	CosmosMsgDelegate                    = "cosmos-sdk/MsgDelegate"
-	CosmosMsgUndelegate                  = "cosmos-sdk/MsgUndelegate"
-	CosmosMsgBeginRedelegate             = "cosmos-sdk/MsgBeginRedelegate"
-	CosmosMsgWithdrawDelegationReward    = "cosmos-sdk/MsgWithdrawDelegationReward"
-	CosmosMsgWithdrawValidatorCommission = "cosmos-sdk/MsgWithdrawValidatorCommission"
-	CosmosMsgSubmitProposal              = "cosmos-sdk/MsgSubmitProposal"
-	CosmosMsgDeposit                     = "cosmos-sdk/MsgDeposit"
-	CosmosMsgVote                        = "cosmos-sdk/MsgVote"
-	CosmosTextProposal                   = "cosmos-sdk/TextProposal"
-	CosmosMsgUnjail                      = "cosmos-sdk/MsgUnjail"
+	MsgSend                        = "cosmos-sdk/MsgSend"
+	MsgMultiSend                   = "cosmos-sdk/MsgMultiSend"
+	MsgCreateValidator             = "cosmos-sdk/MsgCreateValidator"
+	MsgDelegate                    = "cosmos-sdk/MsgDelegate"
+	MsgUndelegate                  = "cosmos-sdk/MsgUndelegate"
+	MsgBeginRedelegate             = "cosmos-sdk/MsgBeginRedelegate"
+	MsgWithdrawDelegationReward    = "cosmos-sdk/MsgWithdrawDelegationReward"
+	MsgWithdrawValidatorCommission = "cosmos-sdk/MsgWithdrawValidatorCommission"
+	MsgSubmitProposal              = "cosmos-sdk/MsgSubmitProposal"
+	MsgDeposit                     = "cosmos-sdk/MsgDeposit"
+	MsgVote                        = "cosmos-sdk/MsgVote"
+	TextProposal                   = "cosmos-sdk/TextProposal"
+	MsgUnjail                      = "cosmos-sdk/MsgUnjail"
 )
 
 // Tx - Base transaction object. Always returned as part of an array
@@ -53,7 +54,7 @@ type MessageValueTransfer struct {
 	Amount   []Amount `json:"amount,omitempty"`
 }
 
-// MessageValueTransfer - from, to, and amount
+// MessageValueDelegate - from, to, and amount
 type MessageValueDelegate struct {
 	DelegatorAddr string `json:"delegator_address"`
 	ValidatorAddr string `json:"validator_address"`
@@ -87,18 +88,22 @@ type CosmosValidatorDescription struct {
 	Description string `json:"details"`
 }
 
+// Block - top object of get las block request
 type Block struct {
 	Meta BlockMeta `json:"block_meta"`
 }
 
+//BlockMeta - "Block" sub object
 type BlockMeta struct {
 	Header BlockHeader `json:"header"`
 }
 
+//BlockHeader - "BlockMeta" sub object, height
 type BlockHeader struct {
 	Height string `json:"height"`
 }
 
+//Unmarshal different message types
 func (m *Message) UnmarshalJSON(buf []byte) error {
 	var messageInternal struct {
 		Type  string          `json:"type"`
@@ -113,11 +118,11 @@ func (m *Message) UnmarshalJSON(buf []byte) error {
 	m.Type = messageInternal.Type
 
 	switch messageInternal.Type {
-	case CosmosMsgUndelegate, CosmosMsgDelegate:
+	case MsgUndelegate, MsgDelegate:
 		var msgDelegate MessageValueDelegate
 		err = json.Unmarshal(messageInternal.Value, &msgDelegate)
 		m.Value = msgDelegate
-	case CosmosMsgSend:
+	case MsgSend:
 		var msgTransfer MessageValueTransfer
 		err = json.Unmarshal(messageInternal.Value, &msgTransfer)
 		m.Value = msgTransfer

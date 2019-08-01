@@ -130,7 +130,7 @@ type AnyAction struct {
 	Coin     uint   `json:"coin"`
 	Title    string `json:"title"`
 	Key      string `json:"key"`
-	TokenId  string `json:"tokenID,omitempty"`
+	TokenID  string `json:"tokenID,omitempty"`
 	Name     string `json:"name"`
 	Symbol   string `json:"symbol"`
 	Decimals uint   `json:"decimals"`
