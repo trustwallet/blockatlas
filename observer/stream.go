@@ -5,8 +5,6 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas"
-	"github.com/trustwallet/blockatlas/util"
-	"sync"
 	"sync/atomic"
 	"time"
 )
@@ -21,19 +19,12 @@ type Stream struct {
 
 	// Concurrency
 	blockNumber int64
-	semaphore   *util.Semaphore
-	wg          sync.WaitGroup
 }
 
 func (s *Stream) Execute(ctx context.Context) <-chan *blockatlas.Block {
 	cn := s.BlockAPI.Coin()
 	s.coin = cn.ID
 	s.log = logrus.WithField("platform", cn.Handle)
-	conns := viper.GetInt("observer.stream_conns")
-	if conns == 0 {
-		logrus.Fatal("observer.stream_conns is 0")
-	}
-	s.semaphore = util.NewSemaphore(conns)
 	c := make(chan *blockatlas.Block)
 	go s.run(ctx, c)
 	return c
@@ -76,31 +67,23 @@ func (s *Stream) load(c chan<- *blockatlas.Block) {
 
 	atomic.StoreInt64(&s.blockNumber, lastHeight)
 	for i := lastHeight + 1; i <= height; i++ {
-		s.wg.Add(1)
-		go s.loadBlock(c, i)
+		block := s.loadBlock(i)
+		if block != nil {
+			c <- block
+		}
+		err = s.Tracker.SetBlockNumber(s.coin, i)
+		if err != nil {
+			s.log.WithError(err).Error("Polling failed: could not update block number at tracker")
+		}
 	}
-	s.wg.Wait()
 }
 
-func (s *Stream) loadBlock(c chan<- *blockatlas.Block, num int64) {
-	defer s.wg.Done()
-	s.semaphore.Acquire()
-	defer s.semaphore.Release()
-
+func (s *Stream) loadBlock(num int64) *blockatlas.Block {
 	block, err := s.BlockAPI.GetBlockByNumber(num)
 	if err != nil {
 		s.log.WithError(err).Errorf("Polling failed: could not get block %d", num)
-		return
+		return nil
 	}
-	c <- block
 	s.log.WithField("num", num).Info("Got new block")
-
-	// Not strictly correct nor avoids race conditions
-	// But good enough
-	newNum := atomic.AddInt64(&s.blockNumber, 1)
-	err = s.Tracker.SetBlockNumber(s.coin, newNum)
-	if err != nil {
-		s.log.WithError(err).Error("Polling failed: could not update block number at tracker")
-		return
-	}
+	return block
 }
