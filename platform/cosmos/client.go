@@ -72,3 +72,49 @@ func (c *Client) GetValidators() (validators []CosmosValidator, err error) {
 
 	return validators, err
 }
+
+func (c *Client) GetBlockByNumber(num int64) (txs []Tx, err error) {
+	uri := fmt.Sprintf("%s/txs?%s",
+		c.BaseURL,
+		url.Values{
+			"tx.height": {strconv.FormatInt(num, 10)},
+		}.Encode())
+
+	res, err := c.HTTPClient.Get(uri)
+
+	if err != nil {
+		return nil, err
+	}
+
+	txs = make([]Tx, 0)
+
+	err = json.NewDecoder(res.Body).Decode(&txs)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return txs, nil
+}
+
+func (c *Client) CurrentBlockNumber() (num int64, err error) {
+	path := fmt.Sprintf("%s/blocks/latest", c.BaseURL)
+	res, err := http.Get(path)
+	if err != nil {
+		return num, err
+	}
+	defer res.Body.Close()
+	var block Block
+	dec := json.NewDecoder(res.Body)
+	err = dec.Decode(&block)
+	if err != nil {
+		return num, err
+	}
+
+	num, err = strconv.ParseInt(block.Meta.Header.Height, 10, 64)
+	if err != nil {
+		return num, err
+	}
+
+	return num, nil
+}

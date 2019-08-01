@@ -75,3 +75,15 @@ type CosmosValidatorDescription struct {
 	Website     string `json:"website"`
 	Description string `json:"details"`
 }
+
+type Block struct {
+	Meta BlockMeta `json:"block_meta"`
+}
+
+type BlockMeta struct {
+	Header BlockHeader `json:"header"`
+}
+
+type BlockHeader struct {
+	Height string `json:"height"`
+}

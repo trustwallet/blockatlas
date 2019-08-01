@@ -25,6 +25,23 @@ func (p *Platform) Coin() coin.Coin {
 	return coin.Coins[coin.ATOM]
 }
 
+func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
+	srcTxs, err := p.client.GetBlockByNumber(num)
+	if err != nil {
+		return nil, err
+	}
+
+	txs := NormalizeTxs(srcTxs, "", len(srcTxs))
+	return &blockatlas.Block{
+		Number: num,
+		Txs:    txs,
+	}, nil
+}
+
+func (p *Platform) CurrentBlockNumber() (int64, error) {
+	return p.client.CurrentBlockNumber()
+}
+
 func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 	inputTxes, _ := p.client.GetAddrTxes(address, "inputs")
 	outputTxes, _ := p.client.GetAddrTxes(address, "outputs")
@@ -52,6 +69,17 @@ func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
 	}
 
 	return results, nil
+}
+
+func NormalizeTxs(srcTxs []Tx, token string, pageSize int) (txs []blockatlas.Tx) {
+	for _, srcTx := range srcTxs {
+		tx := Normalize(&srcTx)
+		if len(txs) >= pageSize {
+			continue
+		}
+		txs = append(txs, tx)
+	}
+	return
 }
 
 // Normalize converts an Cosmos transaction into the generic model
