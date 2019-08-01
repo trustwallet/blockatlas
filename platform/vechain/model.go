@@ -1,5 +1,7 @@
 package vechain
 
+import "github.com/trustwallet/blockatlas"
+
 type TransferTx struct {
 	Transactions []Tx `json:"transactions"`
 }
@@ -32,7 +34,16 @@ type Meta struct {
 }
 
 type Receipt struct {
-	Paid string `json:"paid"`
+	Paid     string `json:"paid"`
+	Reverted bool   `json:"reverted"`
+}
+
+func (r *Receipt) Status() string {
+	if r.Reverted {
+		return blockatlas.StatusFailed
+	} else {
+		return blockatlas.StatusCompleted
+	}
 }
 
 type TokenTransferTxs struct {
