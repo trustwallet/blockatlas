@@ -112,12 +112,12 @@ func (m *Message) UnmarshalJSON(buf []byte) error {
 
 	m.Type = messageInternal.Type
 
-	switch {
-	case messageInternal.Type == CosmosMsgUndelegate || messageInternal.Type == CosmosMsgDelegate:
+	switch messageInternal.Type {
+	case CosmosMsgUndelegate, CosmosMsgDelegate:
 		var msgDelegate MessageValueDelegate
 		err = json.Unmarshal(messageInternal.Value, &msgDelegate)
 		m.Value = msgDelegate
-	case messageInternal.Type == CosmosMsgSend:
+	case CosmosMsgSend:
 		var msgTransfer MessageValueTransfer
 		err = json.Unmarshal(messageInternal.Value, &msgTransfer)
 		m.Value = msgTransfer
