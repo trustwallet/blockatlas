@@ -82,8 +82,8 @@ const transferSrc = `
 
 const delegateSrc = `
 {  
-   "height":"193844",
-   "txhash":"35399455114314D7DB99B2FD913705A0FFB5899336BD579495A5C9057B209AB7",
+   "height":"1258202",
+   "txhash":"11078091D1D5BD84F4275B6CEE02170428944DB0E8EEC37E980551435F6D04C7",
    "raw_log":"[{\"msg_index\":\"0\",\"success\":true,\"log\":\"\"}]",
    "logs":[  
       {  
@@ -93,7 +93,7 @@ const delegateSrc = `
       }
    ],
    "gas_wanted":"200000",
-   "gas_used":"99610",
+   "gas_used":"103206",
    "tags":[  
       {  
          "key":"action",
@@ -101,11 +101,11 @@ const delegateSrc = `
       },
       {  
          "key":"delegator",
-         "value":"cosmos1rzwuwnwnwu7j8qtw2c8qynygfluzlz5he634v3"
+         "value":"cosmos1237l0vauhw78qtwq045jd24ay4urpec6r3xfn3"
       },
       {  
          "key":"destination-validator",
-         "value":"cosmosvaloper1ey69r37gfxvxg62sh4r0ktpuc46pzjrm873ae8"
+         "value":"cosmosvaloper12w6tynmjzq4l8zdla3v4x0jt8lt4rcz5gk7zg2"
       }
    ],
    "tx":{  
@@ -115,32 +115,37 @@ const delegateSrc = `
             {  
                "type":"cosmos-sdk/MsgDelegate",
                "value":{  
-                  "delegator_address":"cosmos1rzwuwnwnwu7j8qtw2c8qynygfluzlz5he634v3",
-                  "validator_address":"cosmosvaloper1ey69r37gfxvxg62sh4r0ktpuc46pzjrm873ae8",
+                  "delegator_address":"cosmos1237l0vauhw78qtwq045jd24ay4urpec6r3xfn3",
+                  "validator_address":"cosmosvaloper12w6tynmjzq4l8zdla3v4x0jt8lt4rcz5gk7zg2",
                   "amount":{  
                      "denom":"uatom",
-                     "amount":"6789000000"
+                     "amount":"49920"
                   }
                }
             }
          ],
          "fee":{  
-            "amount":null,
+            "amount":[  
+               {  
+                  "denom":"uatom",
+                  "amount":"5000"
+               }
+            ],
             "gas":"200000"
          },
          "signatures":[  
             {  
                "pub_key":{  
                   "type":"tendermint/PubKeySecp256k1",
-                  "value":"ApcD+YmCvMKWG9rcodwUy5ueqDXpmN0csE7hUok6Ol1M"
+                  "value":"AsZL4GaIEGW6ogh1rEasxHtmirpeBnycLz4VR0rSVr9p"
                },
-               "signature":"B7WgRyemnQFEP/zd7c7Mq7mDLDcr92OZuQeRG19ehaElxLKuXkGGIfjoA0xCXRikmQrKlwSxiZ5QgQ2wb3FsLg=="
+               "signature":"w6sNVzTSsE32ERbBdYYySSp6nj+4xNODuq5GKRVb8q04jMHUbx9AhuZeAhYrkvdkzOl3bD7vRYGx9P1V6yHj0A=="
             }
          ],
          "memo":""
       }
    },
-   "timestamp":"2019-05-08T01:53:36Z"
+   "timestamp":"2019-08-01T04:10:16Z"
 }
 `
 
@@ -258,20 +263,20 @@ var transferDst = blockatlas.Tx{
 }
 
 var delegateDst = blockatlas.Tx{
-	ID:    "35399455114314D7DB99B2FD913705A0FFB5899336BD579495A5C9057B209AB7",
+	ID:    "11078091D1D5BD84F4275B6CEE02170428944DB0E8EEC37E980551435F6D04C7",
 	Coin:  coin.ATOM,
-	From:  "cosmos1rzwuwnwnwu7j8qtw2c8qynygfluzlz5he634v3",
-	To:    "cosmosvaloper1ey69r37gfxvxg62sh4r0ktpuc46pzjrm873ae8",
-	Fee:   "0",
-	Date:  1557280416,
-	Block: 193844,
+	From:  "cosmos1237l0vauhw78qtwq045jd24ay4urpec6r3xfn3",
+	To:    "cosmosvaloper12w6tynmjzq4l8zdla3v4x0jt8lt4rcz5gk7zg2",
+	Fee:   "5000",
+	Date:  1564632616,
+	Block: 1258202,
 	Meta: blockatlas.AnyAction{
 		Coin:     coin.ATOM,
 		Title:    blockatlas.AnyActionDelegation,
 		Key:      blockatlas.KeyStakeDelegate,
 		Symbol:   coin.Coins[coin.ATOM].Symbol,
 		Decimals: coin.Coins[coin.ATOM].Decimals,
-		Value:    "6789000000",
+		Value:    "49920",
 	},
 }
 

@@ -117,42 +117,53 @@ func Normalize(srcTx *Tx) (tx blockatlas.Tx, ok bool) {
 		switch msg.Value.(type) {
 		case MessageValueTransfer:
 			transfer := msg.Value.(MessageValueTransfer)
-			value, _ := util.DecimalToSatoshis(transfer.Amount[0].Quantity)
-
-			tx.From = transfer.FromAddr
-			tx.To = transfer.ToAddr
-
-			tx.Meta = blockatlas.Transfer{
-				Value:    blockatlas.Amount(value),
-				Symbol:   coin.Coins[coin.ATOM].Symbol,
-				Decimals: coin.Coins[coin.ATOM].Decimals,
-			}
+			fillTransfer(&tx, transfer)
 			return tx, true
 		case MessageValueDelegate:
 			delegate := msg.Value.(MessageValueDelegate)
-			value, _ := util.DecimalToSatoshis(delegate.Amount.Quantity)
-
-			tx.From = delegate.DelegatorAddr
-			tx.To = delegate.ValidatorAddr
-
-			title := blockatlas.AnyActionDelegation
-			if msg.Type == CosmosMsgUndelegate {
-				title = blockatlas.AnyActionUndelegation
-			}
-			tx.Meta = blockatlas.AnyAction{
-				Coin:     coin.ATOM,
-				Title:    title,
-				Key:      blockatlas.KeyStakeDelegate,
-				Name:     "",
-				Symbol:   coin.Coins[coin.ATOM].Symbol,
-				Decimals: coin.Coins[coin.ATOM].Decimals,
-				Value:    blockatlas.Amount(value),
-			}
+			fillDelegate(&tx, delegate, msg.Type)
 			return tx, true
 		}
 	}
 
 	return tx, false
+}
+
+func fillTransfer(tx *blockatlas.Tx, transfer MessageValueTransfer) {
+	value, _ := util.DecimalToSatoshis(transfer.Amount[0].Quantity)
+
+	tx.From = transfer.FromAddr
+	tx.To = transfer.ToAddr
+
+	tx.Meta = blockatlas.Transfer{
+		Value:    blockatlas.Amount(value),
+		Symbol:   coin.Coins[coin.ATOM].Symbol,
+		Decimals: coin.Coins[coin.ATOM].Decimals,
+	}
+}
+
+func fillDelegate(tx *blockatlas.Tx, delegate MessageValueDelegate, msgType string) {
+	value, _ := util.DecimalToSatoshis(delegate.Amount.Quantity)
+
+	tx.From = delegate.DelegatorAddr
+	tx.To = delegate.ValidatorAddr
+
+	title := ""
+	switch msgType {
+	case CosmosMsgDelegate:
+		title = blockatlas.AnyActionDelegation
+	case CosmosMsgUndelegate:
+		title = blockatlas.AnyActionUndelegation
+	}
+	tx.Meta = blockatlas.AnyAction{
+		Coin:     coin.ATOM,
+		Title:    title,
+		Key:      blockatlas.KeyStakeDelegate,
+		Name:     "",
+		Symbol:   coin.Coins[coin.ATOM].Symbol,
+		Decimals: coin.Coins[coin.ATOM].Decimals,
+		Value:    blockatlas.Amount(value),
+	}
 }
 
 func normalizeValidator(v CosmosValidator) (validator blockatlas.StakeValidator) {

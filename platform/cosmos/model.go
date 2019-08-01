@@ -42,8 +42,8 @@ type Contents struct {
 
 // Message - an array that holds multiple 'particulars' entries. Possibly used for multiple transfers in one transaction?
 type Message struct {
-	Type  string      `json:"type"`
-	Value interface{} `json:"value"`
+	Type  string
+	Value interface{}
 }
 
 // MessageValueTransfer - from, to, and amount
