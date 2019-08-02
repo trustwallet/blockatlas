@@ -2,14 +2,9 @@ package ripple
 
 import (
 	"encoding/json"
+
 	"github.com/trustwallet/blockatlas"
 )
-
-type Amount struct {
-	Value    blockatlas.Amount `json:"string"`
-	Currency string            `json:"string"`
-	Issuer   string            `json:"string"`
-}
 
 type Response struct {
 	Result       string `json:"result"`
@@ -36,6 +31,7 @@ type Payment struct {
 	TxnSignature    string            `json:"TxnSignature"`
 	Account         string            `json:"Account"`
 	Destination     string            `json:"Destination"`
+	DestinationTag  int64             `json:"DestinationTag,omitempty"`
 }
 
 type LedgerResponse struct {

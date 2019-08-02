@@ -3,9 +3,10 @@ package ripple
 import (
 	"bytes"
 	"encoding/json"
+	"testing"
+
 	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
-	"testing"
 )
 
 const paymentSrc = `
@@ -18,6 +19,7 @@ const paymentSrc = `
 		"Flags": 2147483648,
 		"Sequence": 21,
 		"LastLedgerSequence": 34698105,
+		"DestinationTag": 2500,
 		"Amount": "100000000",
 		"Fee": "3115",
 		"SigningPubKey": "03807050F9E271B2E49B0FF658362EF37DBFDD31435E610B6E11C52879DF8A9907",
@@ -82,6 +84,7 @@ var paymentDst = blockatlas.Tx{
 	Date:   1512168330,
 	Block:  34698103,
 	Status: blockatlas.StatusCompleted,
+	Memo:   "2500",
 	Meta: blockatlas.Transfer{
 		Value: "100000000",
 	},

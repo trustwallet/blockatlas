@@ -93,7 +93,7 @@ func (s *Stream) loadBlock(c chan<- *blockatlas.Block, num int64) {
 		return
 	}
 	c <- block
-	s.log.WithField("num", num).Info("Got new block")
+	s.log.WithField("num", num).WithField("txs", len(block.Txs)).Info("Got new block")
 
 	// Not strictly correct nor avoids race conditions
 	// But good enough
