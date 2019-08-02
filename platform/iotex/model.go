@@ -6,6 +6,10 @@ type Response struct {
 	ActionInfo []*ActionInfo `json:"actionInfo"`
 }
 
+type BlockResponse struct {
+	Actions []*Action `json:"actions"`
+}
+
 type AccountInfo struct {
 	AccountMeta *AccountMeta `json:"accountMeta"`
 }
@@ -35,4 +39,8 @@ type ActionCore struct {
 type Transfer struct {
 	Amount    blockatlas.Amount `json:"amount"`
 	Recipient string            `json:"recipient"`
+}
+
+type ChainMeta struct {
+	Height string `json:"height"`
 }

@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/spf13/viper"
-
+	"fmt"
 	"github.com/trustwallet/blockatlas/coin"
 )
 
@@ -25,10 +25,34 @@ func (p *Platform) Coin() coin.Coin {
 	return coin.Coins[coin.IOTX]
 }
 
+func (p *Platform) CurrentBlockNumber() (int64, error) {
+	return p.client.GetLatestBlock()
+}
+
+func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
+	var normalized []blockatlas.Tx
+	txs, err := p.client.GetTxsInBlock(num)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, action := range txs {
+		fmt.Println(action.Core.Transfer.Recipient)
+	}
+
+	return  &blockatlas.Block{
+		Number: num,
+		Txs:    normalized,
+	}, nil
+}
+
 func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 	var start int64
 
 	totalTrx, err := p.client.GetAddressTotalTransactions(address)
+	if err != nil {
+		return nil, err
+	}
 
 	if totalTrx >= blockatlas.TxPerPage {
 		start = totalTrx - blockatlas.TxPerPage
