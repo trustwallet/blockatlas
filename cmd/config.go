@@ -13,7 +13,7 @@ func loadConfig(confPath string) {
 	loadDefaults()
 
 	// Load config from environment
-	viper.SetEnvPrefix("atlas")
+	viper.SetEnvPrefix("atlas") // will be uppercased automatically => ATLAS
 	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 	viper.AutomaticEnv()
 
@@ -29,7 +29,7 @@ func loadConfig(confPath string) {
 		} else if err != nil {
 			logrus.Fatal(err)
 		} else {
-			logrus.Info("Using config.yml")
+			logrus.Info("Viper using ", viper.ConfigFileUsed())
 		}
 	} else {
 		viper.SetConfigFile(confPath)
