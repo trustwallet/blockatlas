@@ -27,14 +27,14 @@ func (c *Client) GetLatestBlock() (int64, error) {
 	return strconv.ParseInt(chainMeta.Height, 10, 64)
 }
 
-func (c *Client) GetTxsInBlock(number int64) ([]*Action, error) {
+func (c *Client) GetTxsInBlock(number int64) ([]*ActionInfo, error) {
 	path := fmt.Sprintf("transfers/block/%d", number)
-	var resp BlockResponse
+	var resp Response
 	err := client.Request(c.HTTPClient, c.BaseURL, path, url.Values{}, &resp)
 	if err != nil {
 		return nil, err
 	}
-	return resp.Actions, nil
+	return resp.ActionInfo, nil
 }
 
 func (c *Client) GetTxsOfAddress(address string, start int64) (*Response, error) {

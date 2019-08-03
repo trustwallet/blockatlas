@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/spf13/viper"
-	"fmt"
 	"github.com/trustwallet/blockatlas/coin"
 )
 
@@ -37,7 +36,10 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 	}
 
 	for _, action := range txs {
-		fmt.Println(action.Core.Transfer.Recipient)
+		tx := Normalize(action)
+		if tx != nil {
+			normalized = append(normalized, *tx)
+		}
 	}
 
 	return  &blockatlas.Block{

@@ -6,10 +6,6 @@ type Response struct {
 	ActionInfo []*ActionInfo `json:"actionInfo"`
 }
 
-type BlockResponse struct {
-	Actions []*Action `json:"actions"`
-}
-
 type AccountInfo struct {
 	AccountMeta *AccountMeta `json:"accountMeta"`
 }
