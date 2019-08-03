@@ -3,10 +3,12 @@ package iotex
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/trustwallet/blockatlas"
 	"net/http"
 	"net/url"
 	"strconv"
+
+	"github.com/trustwallet/blockatlas"
+	"github.com/trustwallet/blockatlas/client"
 
 	"github.com/sirupsen/logrus"
 )
@@ -14,6 +16,25 @@ import (
 type Client struct {
 	HTTPClient *http.Client
 	BaseURL    string
+}
+
+func (c *Client) GetLatestBlock() (int64, error) {
+	var chainMeta ChainMeta
+	err := client.Request(c.HTTPClient, c.BaseURL, "chainmeta", url.Values{}, &chainMeta)
+	if err != nil {
+		return 0, err
+	}
+	return strconv.ParseInt(chainMeta.Height, 10, 64)
+}
+
+func (c *Client) GetTxsInBlock(number int64) ([]*ActionInfo, error) {
+	path := fmt.Sprintf("transfers/block/%d", number)
+	var resp Response
+	err := client.Request(c.HTTPClient, c.BaseURL, path, url.Values{}, &resp)
+	if err != nil {
+		return nil, err
+	}
+	return resp.ActionInfo, nil
 }
 
 func (c *Client) GetTxsOfAddress(address string, start int64) (*Response, error) {
