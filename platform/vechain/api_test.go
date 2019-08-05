@@ -3,9 +3,10 @@ package vechain
 import (
 	"bytes"
 	"encoding/json"
+	"testing"
+
 	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
-	"testing"
 )
 
 const transferReceipt = `{
@@ -15,7 +16,20 @@ const transferReceipt = `{
     "origin": "0xb853d6a965fbc047aaa9f04d774d53861d7ed653",
 	"timestamp": 1556569300,
 	"receipt": {
-		"paid": "0x1236efcbcbb340000"
+		"paid": "0x1236efcbcbb340000",
+		"reverted": false
+	}
+}`
+
+const transferFailedReceipt = `{
+    "block": 2620166,
+    "id": "0x2b8776bd4679fa2afa28b55d66d4f6c7c77522fc878ce294d25e32475b704517",
+    "nonce": "0x3657a2025b11f27f",
+    "origin": "0xb853d6a965fbc047aaa9f04d774d53861d7ed653",
+	"timestamp": 1556569300,
+	"receipt": {
+		"paid": "0x1236efcbcbb340000",
+		"reverted": true
 	}
 }`
 
@@ -59,7 +73,7 @@ var expectedVeThorTrx = blockatlas.Tx{
 	Fee:      "21000000000000000000",
 	Date:     1555009870,
 	Type:     blockatlas.TxNativeTokenTransfer,
-	Status:   "completed",
+	Status:   "failed",
 	Sequence: 2465269,
 	Block:    2465269,
 	Meta: blockatlas.NativeTokenTransfer{
@@ -129,7 +143,7 @@ func TestNormalizeTokenTransfer(t *testing.T) {
 		Transfer string
 		Expected blockatlas.Tx
 	}{
-		{transferReceipt, tokenTransfer, expectedVeThorTrx},
+		{transferFailedReceipt, tokenTransfer, expectedVeThorTrx},
 	}
 
 	for _, test := range tests {

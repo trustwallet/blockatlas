@@ -120,7 +120,7 @@ func testNormalizeTx(t *testing.T, _test *test) {
 		return
 	}
 
-	tx, ok := NormalizeTx(&srcTx, _test.token)
+	tx, ok := NormalizeTx(&srcTx, txTypeTransfer)
 	if !ok {
 		t.Errorf("transfer: tx could not be normalized")
 	}

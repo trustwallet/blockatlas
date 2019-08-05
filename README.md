@@ -1,7 +1,7 @@
 # Block Atlas by Trust Wallet
 
 [![Build Status](https://dev.azure.com/TrustWallet/Trust%20BlockAtlas/_apis/build/status/TrustWallet.blockatlas?branchName=master)](https://dev.azure.com/TrustWallet/Trust%20BlockAtlas/_build/latest?definitionId=27&branchName=master)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/ee824c09491d418da67825a96334dbfa)](https://app.codacy.com/app/TrustWallet/blockatlas?utm_source=github.com&utm_medium=referral&utm_content=TrustWallet/blockatlas&utm_campaign=Badge_Grade_Dashboard)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/43834b0c94ad4f6088629aa3e3bb5e94)](https://www.codacy.com/app/TrustWallet/blockatlas?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=TrustWallet/blockatlas&amp;utm_campaign=Badge_Grade)
 [![Go Report Card](https://goreportcard.com/badge/TrustWallet/blockatlas)](https://goreportcard.com/report/TrustWallet/blockatlas)
 
 Clean explorer API for crypto currencies.
@@ -39,7 +39,8 @@ Deploy it in less than 30 seconds!
 
 ```shell
 go get -u github.com/trustwallet/blockatlas
-~/go/bin/blockatlas
+cd blockatlas
+go build -o blockatlas ./cmd && ./blockatlas api --config=config.yml
 ```
 
 #### With Docker
