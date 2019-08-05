@@ -22,8 +22,7 @@ var app = cobra.Command{
 		loadConfig(confPath)
 
 		// Load coin index
-		coinFile := viper.GetString("coins")
-		coin.Load(coinFile)
+		coin.Load(viper.GetString("coins"))
 
 		// Load app components
 		platform.Init()

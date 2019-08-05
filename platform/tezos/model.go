@@ -38,3 +38,7 @@ type Operation struct {
 type Address struct {
 	Tz string `json:"tz"`
 }
+
+type Head struct {
+	Level int64 `json:"level"`
+}

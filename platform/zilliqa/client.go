@@ -4,14 +4,17 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/mitchellh/mapstructure"
+	"github.com/sirupsen/logrus"
+	"github.com/ybbus/jsonrpc"
 	"io/ioutil"
 	"net/http"
-
-	"github.com/sirupsen/logrus"
+	"strconv"
 )
 
 type Client struct {
 	HTTPClient *http.Client
+	RPCClient  jsonrpc.RPCClient
 	BaseURL    string
 	APIKey     string
 }
@@ -24,6 +27,57 @@ func (c *Client) newRequest(method, path string) (*http.Request, error) {
 	}
 	req.Header.Set("X-APIKEY", c.APIKey)
 	return req, nil
+}
+
+func (c *Client) GetBlockchainInfo() (*ChainInfo, error) {
+	var info *ChainInfo
+	err := c.RPCClient.CallFor(&info, "GetBlockchainInfo")
+	if err != nil {
+		logrus.WithError(err).Error("Zilliqa: Error read response body")
+		return nil, err
+	}
+	return info, nil
+}
+
+func (c *Client) GetTxInBlock(number int64) ([]Tx, error) {
+	strNumber := strconv.FormatInt(number, 10)
+	res, err := c.RPCClient.Call("GetTransactionsForTxBlock", strNumber)
+	if err != nil {
+		return nil, err
+	}
+	var results [][]string
+	err = res.GetObject(&results)
+	if err != nil {
+		return nil, err
+	}
+
+	var requests jsonrpc.RPCRequests
+	for _, ids := range results {
+		for _, id := range ids {
+			req := jsonrpc.NewRequest("GetTransaction", id)
+			requests = append(requests, req)
+		}
+	}
+
+	var txs []Tx
+
+	if len(requests) == 0 {
+		return txs, nil
+	}
+
+	responses, err := c.RPCClient.CallBatch(requests)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, result := range responses {
+		var txRPC TxRPC
+		if mapstructure.Decode(result.Result, &txRPC) != nil {
+			continue
+		}
+		txs = append(txs, txRPC.toTx())
+	}
+	return txs, nil
 }
 
 func (c *Client) GetTxsOfAddress(address string) ([]Tx, error) {

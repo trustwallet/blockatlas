@@ -36,3 +36,7 @@ type Transfer struct {
 	Amount    blockatlas.Amount `json:"amount"`
 	Recipient string            `json:"recipient"`
 }
+
+type ChainMeta struct {
+	Height string `json:"height"`
+}

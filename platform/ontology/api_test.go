@@ -3,7 +3,6 @@ package ontology
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/davecgh/go-spew/spew"
 	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
 	"testing"
@@ -153,7 +152,7 @@ func TestNormalize(t *testing.T) {
 		var tx blockatlas.Tx
 		var ok bool
 		tx, ok = Normalize(&sourceTx, test.AssetName)
-		spew.Dump(sourceTx)
+
 		if !ok {
 			t.Fatal("Ontology: Can't normalize transaction")
 		}
@@ -169,8 +168,6 @@ func TestNormalize(t *testing.T) {
 		}
 
 		if !bytes.Equal(actual, expected) {
-			println(string(actual))
-			println(string(expected))
 			t.Error("Transactions not equal")
 		}
 	}

@@ -28,16 +28,36 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 		return nil, err
 	}
 
-	txs := make([]blockatlas.Tx, 0)
-	for _, srcTx := range s {
+	txs := NormalizeTxs(s)
+
+	return txs, nil
+}
+
+func (p *Platform) CurrentBlockNumber() (int64, error) {
+	return p.client.GetCurrentBlock()
+}
+
+func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
+	if srcBlock, err := p.client.GetBlockByNumber(num); err == nil {
+		txs := NormalizeTxs(srcBlock)
+		return &blockatlas.Block{
+			Number: num,
+			Txs:    txs,
+		}, nil
+	} else {
+		return nil, err
+	}
+}
+
+func NormalizeTxs(srcTxs []Tx) (txs []blockatlas.Tx) {
+	for _, srcTx := range srcTxs {
 		tx, ok := Normalize(&srcTx)
-		if !ok {
+		if !ok || len(txs) >= blockatlas.TxPerPage {
 			continue
 		}
 		txs = append(txs, tx)
 	}
-
-	return txs, nil
+	return txs
 }
 
 // Normalize converts a Tezos transaction into the generic model

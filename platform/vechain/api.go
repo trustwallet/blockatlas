@@ -150,6 +150,7 @@ func NormalizeTransfer(receipt *TransferReceipt, clause *Clause) (tx blockatlas.
 		Date:     int64(time),
 		Type:     blockatlas.TxTransfer,
 		Block:    block,
+		Status:   receipt.Receipt.Status(),
 		Sequence: block,
 		Meta: blockatlas.Transfer{
 			Value:    blockatlas.Amount(valueBase10),
@@ -183,6 +184,7 @@ func NormalizeTokenTransfer(t *TokenTransfer, receipt *TransferReceipt) (tx bloc
 		Date:     t.Timestamp,
 		Type:     blockatlas.TxNativeTokenTransfer,
 		Block:    block,
+		Status:   receipt.Receipt.Status(),
 		Sequence: block,
 		Meta: blockatlas.NativeTokenTransfer{
 			Name:     "VeThor Token",
