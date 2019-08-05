@@ -9,6 +9,7 @@ import (
 	"github.com/trustwallet/blockatlas/platform/aeternity"
 	"github.com/trustwallet/blockatlas/platform/aion"
 	"github.com/trustwallet/blockatlas/platform/binance"
+	"github.com/trustwallet/blockatlas/platform/bitcoin"
 	"github.com/trustwallet/blockatlas/platform/cosmos"
 	"github.com/trustwallet/blockatlas/platform/ethereum"
 	"github.com/trustwallet/blockatlas/platform/icon"
@@ -53,6 +54,8 @@ var platformList = []blockatlas.Platform{
 	&zilliqa.Platform{},
 	&waves.Platform{},
 	&aeternity.Platform{},
+	&bitcoin.Platform{CoinIndex: coin.BTC},
+	&bitcoin.Platform{CoinIndex: coin.LTC},
 }
 
 // Platforms contains all registered platforms by handle

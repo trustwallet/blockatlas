@@ -104,12 +104,12 @@ func TestGetTxs(t *testing.T) {
 
 func TestTxSet_Add(t *testing.T) {
 	set := blockatlas.TxSet{}
-	set.Add(transferDst1)
+	set.Add(&transferDst1)
 	var txs = set.Txs()
 	assert.Equal(t, txs[0].ID, transferDst1.ID)
-	set.Add(transferDst1)
+	set.Add(&transferDst1)
 	assert.Equal(t, set.Size(), 1)
-	set.Add(nativeTransferDst1)
+	set.Add(&nativeTransferDst1)
 	assert.Equal(t, set.Size(), 2)
 }
 

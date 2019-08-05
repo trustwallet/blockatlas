@@ -2,14 +2,13 @@ package vechain
 
 import (
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/util"
 	"net/http"
 	"strings"
 	"sync"
-
-	"github.com/spf13/viper"
 )
 
 type Platform struct {
