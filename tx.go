@@ -52,9 +52,9 @@ type Tx struct {
 	// Type of metadata
 	Type string `json:"type"`
 	//Input addresses
-	Input []string `json:"inputs"`
+	Inputs []string `json:"inputs,omitempty"`
 	//Output addresses
-	Output []string `json:"outputs"`
+	Outputs []string `json:"outputs,omitempty"`
 	// Meta data object
 	Memo string      `json:"memo"`
 	Meta interface{} `json:"metadata"`

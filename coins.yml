@@ -196,5 +196,5 @@
   symbol: BTC
   handle: bitcoin
   name: Bitcoin
-  decimals: 9
+  decimals: 8
   sampleAddress: '3QJmV3qfvL9SuYo34YihAf3sRCW3qSinyC'

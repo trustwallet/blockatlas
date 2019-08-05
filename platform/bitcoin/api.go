@@ -13,7 +13,8 @@ import (
 )
 
 type Platform struct {
-	client Client
+	client    Client
+	CoinIndex int
 }
 
 func (p *Platform) Init() error {
@@ -23,7 +24,7 @@ func (p *Platform) Init() error {
 }
 
 func (p *Platform) Coin() coin.Coin {
-	return coin.Coins[coin.BTC]
+	return coin.Coins[p.CoinIndex]
 }
 
 func (p *Platform) RegisterRoutes(router gin.IRouter) {
@@ -124,8 +125,8 @@ func NormalizeTransfer(receipt *TransferReceipt) (tx blockatlas.Tx, ok bool) {
 	return blockatlas.Tx{
 		ID:       receipt.ID,
 		Coin:     coin.BTC,
-		Input:    parseTransfer(receipt.Vin),
-		Output:   parseTransfer(receipt.Vout),
+		Inputs:   parseTransfer(receipt.Vin),
+		Outputs:  parseTransfer(receipt.Vout),
 		Fee:      fee,
 		Date:     int64(time),
 		Type:     blockatlas.TxTransfer,
