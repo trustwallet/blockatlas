@@ -55,6 +55,7 @@ var platformList = []blockatlas.Platform{
 	&waves.Platform{},
 	&aeternity.Platform{},
 	&bitcoin.Platform{CoinIndex: coin.BTC},
+	&bitcoin.Platform{CoinIndex: coin.LTC},
 }
 
 // Platforms contains all registered platforms by handle

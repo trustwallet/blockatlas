@@ -6,6 +6,7 @@ package coin
 
 const (
 	BTC   = 0
+	LTC   = 2
 	ETH   = 60
 	ETC   = 61
 	ICX   = 74

@@ -203,3 +203,10 @@
   name: Bitcoin
   decimals: 8
   sampleAddress: '3QJmV3qfvL9SuYo34YihAf3sRCW3qSinyC'
+
+- id: 2
+  symbol: LTC
+  handle: litecoin
+  name: Litecoin
+  decimals: 8
+  sampleAddress: 'LamFJHBtU59fSDasrovfcp7hZ9AM5vpfdx'

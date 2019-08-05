@@ -14,7 +14,7 @@ import (
 
 type Platform struct {
 	client    Client
-	CoinIndex int
+	CoinIndex uint
 }
 
 func (p *Platform) Init() error {
@@ -65,7 +65,7 @@ func (p *Platform) getTxsByXPub(xpub string) ([]blockatlas.Tx, error) {
 
 	var txs []blockatlas.Tx
 	for _, receipt := range sourceTxs.Transactions {
-		if tx, ok := NormalizeTransfer(&receipt); ok {
+		if tx, ok := NormalizeTransfer(&receipt, p.CoinIndex); ok {
 			txs = append(txs, tx)
 		}
 	}
@@ -82,7 +82,7 @@ func (p *Platform) getTxsByAddress(address string) ([]blockatlas.Tx, error) {
 	for receipt := range receiptsChan {
 		// if block contains our address collect it
 		if containsAddress(receipt.Vin, address) || containsAddress(receipt.Vout, address) {
-			if tx, ok := NormalizeTransfer(receipt); ok {
+			if tx, ok := NormalizeTransfer(receipt, p.CoinIndex); ok {
 				txs = append(txs, tx)
 			}
 		}
@@ -117,14 +117,14 @@ func (p *Platform) getTransactionReceipt(ids []string) chan *TransferReceipt {
 	return receiptsChan
 }
 
-func NormalizeTransfer(receipt *TransferReceipt) (tx blockatlas.Tx, ok bool) {
+func NormalizeTransfer(receipt *TransferReceipt, coinIndex uint) (tx blockatlas.Tx, ok bool) {
 	fee := blockatlas.Amount(receipt.Fees)
 	time := receipt.BlockTime
 	block := receipt.BlockHeight
 
 	return blockatlas.Tx{
 		ID:       receipt.ID,
-		Coin:     coin.BTC,
+		Coin:     coinIndex,
 		Inputs:   parseTransfer(receipt.Vin),
 		Outputs:  parseTransfer(receipt.Vout),
 		Fee:      fee,
@@ -133,7 +133,9 @@ func NormalizeTransfer(receipt *TransferReceipt) (tx blockatlas.Tx, ok bool) {
 		Block:    block,
 		Sequence: block,
 		Meta: blockatlas.Transfer{
-			Value: blockatlas.Amount(receipt.Value),
+			Value:    blockatlas.Amount(receipt.Value),
+			Symbol:   coin.Coins[coinIndex].Symbol,
+			Decimals: coin.Coins[coinIndex].Decimals,
 		},
 	}, true
 }

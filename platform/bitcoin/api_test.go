@@ -45,8 +45,8 @@ var expectedTransferTrx = blockatlas.Tx{
 	Coin:     coin.BTC,
 	From:     "",
 	To:       "",
-	Input:    []string{"3QJmV3qfvL9SuYo34YihAf3sRCW3qSinyC"},
-	Output:   []string{"3FjBW1KL9L8aYtdKzJ8FhCNxmXB7dXDRw4"},
+	Inputs:   []string{"3QJmV3qfvL9SuYo34YihAf3sRCW3qSinyC"},
+	Outputs:  []string{"3FjBW1KL9L8aYtdKzJ8FhCNxmXB7dXDRw4"},
 	Fee:      "100188",
 	Date:     1562945790,
 	Type:     "transfer",
@@ -75,7 +75,7 @@ func TestNormalizeTransfer(t *testing.T) {
 		}
 
 		var readyTx blockatlas.Tx
-		normTx, ok := NormalizeTransfer(&receipt)
+		normTx, ok := NormalizeTransfer(&receipt, 0)
 		if !ok {
 			t.Fatal("Bitcoin: Can't normalize transaction", readyTx)
 		}
