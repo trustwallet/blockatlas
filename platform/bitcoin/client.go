@@ -3,9 +3,9 @@ package bitcoin
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/sirupsen/logrus"
-	"io/ioutil"
+	"github.com/trustwallet/blockatlas/client"
 	"net/http"
+	"net/url"
 )
 
 type Client struct {
@@ -13,60 +13,22 @@ type Client struct {
 	URL        string
 }
 
-func (c *Client) GetTransactions(address string) (TransferTx, error) {
-	var transfers TransferTx
+func (c *Client) GetTransactions(address string) (TransactionsList, error) {
+	var transfers TransactionsList
 
-	url := fmt.Sprintf("%s/address/%s", c.URL, address)
-	resp, err := c.HTTPClient.Get(url)
-	if err != nil {
-		logrus.WithError(err).Error("Bitcoin: Failed HTTP get transactions")
-		return transfers, err
-	}
-	defer resp.Body.Close()
+	path := fmt.Sprintf("address/%s", address)
+	err := client.Request(c.HTTPClient, c.URL, path, url.Values{"details": {"txs"}}, &transfers)
 
-	body, errBody := ioutil.ReadAll(resp.Body)
-	logrus.Infof("Response string: %s", string(body))
-
-	if errBody != nil {
-		logrus.WithError(err).Error("Bitcoin: Error decode transaction response body")
-		return transfers, err
-	}
-
-	errUnm := json.Unmarshal(body, &transfers)
-	if errUnm != nil {
-		logrus.WithError(err).Error("Bitcoin: Error Unmarshal transaction response body")
-		return transfers, err
-	}
-
-	return transfers, nil
+	return transfers, err
 }
 
-func (c *Client) GetTransactionsByXpub(xpub string) (XpubTransfers, error) {
-	var transfers XpubTransfers
+func (c *Client) GetTransactionsByXpub(xpub string) (TransactionsList, error) {
+	var transfers TransactionsList
 
-	url := fmt.Sprintf("%s/v2/xpub/%s?details=txs", c.URL, xpub)
-	resp, err := c.HTTPClient.Get(url)
-	if err != nil {
-		logrus.WithError(err).Error("Bitcoin: Failed HTTP get transactions by xpub")
-		return transfers, err
-	}
-	defer resp.Body.Close()
+	path := fmt.Sprintf("v2/xpub/%s", xpub)
+	err := client.Request(c.HTTPClient, c.URL, path, url.Values{"details": {"txs"}}, &transfers)
 
-	body, errBody := ioutil.ReadAll(resp.Body)
-	logrus.Infof("Response string: %s", string(body))
-
-	if errBody != nil {
-		logrus.WithError(err).Error("Bitcoin: Error decode xpub-transactions response body")
-		return transfers, err
-	}
-
-	errUnm := json.Unmarshal(body, &transfers)
-	if errUnm != nil {
-		logrus.WithError(err).Error("Bitcoin: Error Unmarshal xpub-transactions response body")
-		return transfers, err
-	}
-
-	return transfers, nil
+	return transfers, err
 }
 
 func (c *Client) GetTransactionReceipt(id string) (*TransferReceipt, error) {

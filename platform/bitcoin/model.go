@@ -1,10 +1,6 @@
 package bitcoin
 
-type TransferTx struct {
-	Transactions []string `json:"transactions"`
-}
-
-type XpubTransfers struct {
+type TransactionsList struct {
 	Transactions []TransferReceipt `json:"transactions"`
 }
 

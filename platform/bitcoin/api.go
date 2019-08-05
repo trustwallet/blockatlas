@@ -2,14 +2,11 @@ package bitcoin
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
-	"github.com/trustwallet/blockatlas/util"
 	"net/http"
 	"strings"
-	"sync"
 )
 
 type Platform struct {
@@ -61,60 +58,32 @@ func (p *Platform) handleXpubRoute(c *gin.Context) {
 }
 
 func (p *Platform) getTxsByXPub(xpub string) ([]blockatlas.Tx, error) {
-	sourceTxs, _ := p.client.GetTransactionsByXpub(xpub)
+	sourceTxs, err := p.client.GetTransactionsByXpub(xpub)
 
-	var txs []blockatlas.Tx
-	for _, receipt := range sourceTxs.Transactions {
-		if tx, ok := NormalizeTransfer(&receipt, p.CoinIndex); ok {
-			txs = append(txs, tx)
-		}
+	if err != nil {
+		return []blockatlas.Tx{}, err
 	}
 
-	return txs, nil
+	return NormalizeTxs(sourceTxs, p.CoinIndex), nil
 }
 
 func (p *Platform) getTxsByAddress(address string) ([]blockatlas.Tx, error) {
-	sourceTxs, _ := p.client.GetTransactions(address)
-
-	receiptsChan := p.getTransactionReceipt(sourceTxs.Transactions)
-
-	var txs []blockatlas.Tx
-	for receipt := range receiptsChan {
-		// if block contains our address collect it
-		if containsAddress(receipt.Vin, address) || containsAddress(receipt.Vout, address) {
-			if tx, ok := NormalizeTransfer(receipt, p.CoinIndex); ok {
-				txs = append(txs, tx)
-			}
-		}
+	sourceTxs, err := p.client.GetTransactions(address)
+	if err != nil {
+		return []blockatlas.Tx{}, err
 	}
 
-	return txs, nil
+	return NormalizeTxs(sourceTxs, p.CoinIndex), nil
 }
 
-func (p *Platform) getTransactionReceipt(ids []string) chan *TransferReceipt {
-	receiptsChan := make(chan *TransferReceipt, len(ids))
-
-	sem := util.NewSemaphore(16)
-	var wg sync.WaitGroup
-	wg.Add(len(ids))
-	for _, id := range ids {
-		go func(id string) {
-			defer wg.Done()
-			sem.Acquire()
-			defer sem.Release()
-			receipt, err := p.client.GetTransactionReceipt(id)
-			if err != nil {
-				logrus.WithError(err).WithField("platform", "Bitcoin").
-					Warnf("Failed to get tx receipt for %s", id)
-			}
-			receiptsChan <- receipt
-		}(id)
+func NormalizeTxs(sourceTxs TransactionsList, coinIndex uint) []blockatlas.Tx {
+	var txs []blockatlas.Tx
+	for _, receipt := range sourceTxs.Transactions {
+		if tx, ok := NormalizeTransfer(&receipt, coinIndex); ok {
+			txs = append(txs, tx)
+		}
 	}
-
-	wg.Wait()
-	close(receiptsChan)
-
-	return receiptsChan
+	return txs
 }
 
 func NormalizeTransfer(receipt *TransferReceipt, coinIndex uint) (tx blockatlas.Tx, ok bool) {
