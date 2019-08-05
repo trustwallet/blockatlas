@@ -11,7 +11,7 @@
   handle: classic
   name: Ether Classic
   decimals: 18
-  blockTime: 10000
+  blockTime: 30000
   sampleAddress: '0xf3524415b6D873205B4c3Cda783527b2aC4daAA9'
 
 - id: 74
@@ -26,6 +26,7 @@
   handle: cosmos
   name: Cosmos ATOM
   decimals: 6
+  blockTime: 5000
   sampleAddress: 'cosmos1rw62phusuv9vzraezr55k0vsqssvz6ed52zyrl'
 
 - id: 144
@@ -33,6 +34,7 @@
   handle: ripple
   name: Ripple
   decimals: 6
+  blockTime: 5000
   sampleAddress: 'rMQ98K56yXJbDGv49ZSmW51sLn94Xe1mu1'
 
 - id: 148
@@ -40,7 +42,7 @@
   handle: stellar
   name: Stellar Lumens
   decimals: 7
-  blockTime: 1000
+  blockTime: 5000
   sampleAddress: 'GDKIJJIKXLOM2NRMPNQZUUYK24ZPVFC6426GZAEP3KUK6KEJLACCWNMX'
 
 - id: 178
@@ -48,7 +50,7 @@
   handle: poa
   name: Poa
   decimals: 18
-  blockTime: 10000
+  blockTime: 30000
   sampleAddress: '0x1fddEc96688e0538A316C64dcFd211c491ECf0d8'
 
 - id: 195
@@ -78,7 +80,8 @@
   handle: zilliqa
   name: Zilliqa
   decimals: 12
-  sampleAddress: '0x88aF5BA10796D9091D6893eED4db23ef0bbbCa37'
+  blockTime: 30000
+  sampleAddress: 'zil1anrjcsj2ntklaa3arq4w3s6gw4l4hqrycs9egy'
 
 - id: 425
   symbol: AION
@@ -99,7 +102,7 @@
   handle: binance
   name: Binance
   decimals: 8
-  blockTime: 1000
+  blockTime: 4000
   sampleAddress: 'tbnb1fhr04azuhcj0dulm7ka40y0cqjlafwae9k9gk2'
 
 - id: 818
@@ -121,7 +124,7 @@
   symbol: TOMO
   handle: tomochain
   name: TOMO
-  blockTime: 2000
+  blockTime: 4000
   decimals: 18
   sampleAddress: '0x7daa83030e3086477b79b6e757ca8608899fe783'
 
@@ -130,7 +133,7 @@
   handle: thundertoken
   name: ThunderCore
   decimals: 18
-  blockTime: 2000
+  blockTime: 10000
   sampleAddress: '0x0ad80a408eac4f17ba0a9de8a12d8736f60700c3'
 
 - id: 1024
@@ -145,6 +148,7 @@
   handle: tezos
   name: Tezos
   decimals: 6
+  blockTime: 20000
   sampleAddress: 'tz1WCd2jm4uSt4vntk4vSuUWoZQGhLcDuR9q'
 
 - id: 2017
@@ -152,6 +156,7 @@
   handle: kin
   name: Kin
   decimals: 5
+  blockTime: 5000
   sampleAddress: 'GBHKUZ7C2SZ5N3X2S7O6TT6LNUWSEA2BXMSR5GTTSR6VZARSVAXIQNGH'
 
 - id: 6060
@@ -159,7 +164,7 @@
   handle: gochain
   name: GoChain GO
   decimals: 18
-  blockTime: 10000
+  blockTime: 20000
   sampleAddress: '0x76c2F81716A8D198a00502Ae9a59126418899FDe'
 
 - id: 5718350
@@ -167,7 +172,7 @@
   handle: wanchain
   name: Wanchain
   decimals: 18
-  blockTime: 10000
+  blockTime: 30000
   sampleAddress: '0x36cEdc3A9d969306AF4F7CA2b83ABBf74095914d'
 
 - id: 5741564
@@ -175,7 +180,7 @@
   handle: waves
   name: WAVES
   decimals: 8
-  blockTime: 50000
+  blockTime: 30000
   sampleAddress: '3P7wz6TXienpw3BHe8eHUEuZWb6WE58kgnQ'
 
 - id: 7562605

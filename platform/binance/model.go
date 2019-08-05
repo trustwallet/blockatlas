@@ -15,9 +15,6 @@ type Account struct {
 
 type Balance struct {
 	Symbol string `json:"symbol"`
-	Free   string `json:"free"`
-	Locked string `json:"locked"`
-	Frozen string `json:"frozen"`
 }
 
 type Error struct {

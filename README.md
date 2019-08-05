@@ -1,11 +1,12 @@
 # Block Atlas by Trust Wallet
 
 [![Build Status](https://dev.azure.com/TrustWallet/Trust%20BlockAtlas/_apis/build/status/TrustWallet.blockatlas?branchName=master)](https://dev.azure.com/TrustWallet/Trust%20BlockAtlas/_build/latest?definitionId=27&branchName=master)
-[![codebeat badge](https://codebeat.co/badges/543659a5-0da7-4282-8fb2-060e2da1340b)](https://codebeat.co/projects/github-com-trustwallet-blockatlas-master)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/43834b0c94ad4f6088629aa3e3bb5e94)](https://www.codacy.com/app/TrustWallet/blockatlas?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=TrustWallet/blockatlas&amp;utm_campaign=Badge_Grade)
+[![Go Report Card](https://goreportcard.com/badge/TrustWallet/blockatlas)](https://goreportcard.com/report/TrustWallet/blockatlas)
 
 Clean explorer API for crypto currencies.
 
-__Supported Coins__
+#### Supported Coins
 
 <a href="https://binance.com" target="_blank"><img src="https://raw.githubusercontent.com/TrustWallet/tokens/master/coins/714.png" width="32" /></a>
 <a href="https://nimiq.com" target="_blank"><img src="https://raw.githubusercontent.com/TrustWallet/tokens/master/coins/242.png" width="32" /></a>
@@ -31,23 +32,25 @@ __Supported Coins__
 
 ## Setup
 
-#### Quick start
+### Quick start
 
 Deploy it in less than 30 seconds!
 
-__From Source__ (Go Toolchain required)
+#### From Source (Go Toolchain required)
 
 ```shell
 go get -u github.com/trustwallet/blockatlas
-~/go/bin/blockatlas
+cd blockatlas
+go build -o blockatlas ./cmd && ./blockatlas api --config=config.yml
 ```
 
-__With Docker__
+#### With Docker
 
 `docker run -it -p 8420:8420 trustwallet/blockatlas`
 
-__Tools__
-- Setup Redis
+#### Tools
+
+-   Setup Redis
 
 ```shell
 brew install redis // Install Redis using Homebrew
@@ -57,15 +60,13 @@ brew install redis // Install Redis using Homebrew
 ln -sfv /usr/local/opt/redis/*.plist ~/Library/LaunchAgents  // Enable Redis autostart
 ```
 
-- Running in the IDE ( GoLand )
-1. Run
-2. Edit configuration
-3. New Go build configuration
-4. Select `directory` as configuration type
-5. Set `api` as program argument and `-i` as Go tools argument 
+-   Running in the IDE ( GoLand )
 
-
-
+1.  Run
+2.  Edit configuration
+3.  New Go build configuration
+4.  Select `directory` as configuration type
+5.  Set `api` as program argument and `-i` as Go tools argument 
 
 ## Deploy
 
@@ -75,29 +76,30 @@ ln -sfv /usr/local/opt/redis/*.plist ~/Library/LaunchAgents  // Enable Redis aut
 
 [![Docker](https://img.shields.io/docker/cloud/build/trustwallet/blockatlas.svg?style=for-the-badge)](https://hub.docker.com/r/trustwallet/blockatlas)
 
-
 Block Atlas can run just fine without configuration.
 
 If you want to use custom RPC endpoints, or enable coins without public RPC (like Nimiq),
 you can configure Block Atlas over `config.yml` or environment variables.
 
-__Config File__
+#### Config File
 
 By default, `config.yml` is loaded from the working directory.
 
 Example (`config.yml`):
+
 ```yaml
 nimiq:
   api: http://localhost:8648
 #...
 ```
 
-__Environment__
+#### Environment
 
 The rest gets loaded from the environment variables.
 Every config option is available under the `ATLAS_` prefix.
 
 Example:
+
 ```shell
 ATLAS_NIMIQ_API=http://localhost:8648 \
 blockatlas
@@ -105,7 +107,7 @@ blockatlas
 
 ## Authors
 
-* [Richard Patel](https://github.com/terorie)
+-   [Richard Patel](https://github.com/terorie)
 
 ## Contributing
 
@@ -115,7 +117,4 @@ don't require code changes (e.g. ERC-20).
 
 The best way to submit feedback and report bugs is to open a GitHub issue.
 Please be sure to include your operating system, version number, and
-steps to reproduce reported bugs.
-
-
-[Steps Links]: https://gist.github.com/nrollr/eb24336b8fb8e7ba5630
+[steps](https://gist.github.com/nrollr/eb24336b8fb8e7ba5630) to reproduce reported bugs.

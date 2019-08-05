@@ -291,7 +291,7 @@ func testNormalizeToken(t *testing.T, _test *testToken) {
 		t.Error(err)
 		return
 	}
-	tk, ok := NormalizeToken(&token)
+	tk, ok := NormalizeToken(&token, coin.ETH)
 	if !ok {
 		t.Errorf("token: token could not be normalized")
 	}

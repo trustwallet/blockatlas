@@ -260,16 +260,16 @@ func (p *Platform) GetTokenListByAddress(address string) (blockatlas.TokenPage, 
 	if err != nil {
 		return nil, err
 	}
-	return NormalizeTokens(account.Docs), nil
+	return NormalizeTokens(account.Docs, *p), nil
 }
 
 // NormalizeToken converts a Ethereum token into the generic model
-func NormalizeToken(srcToken *Token) (t blockatlas.Token, ok bool) {
+func NormalizeToken(srcToken *Token, coinIndex uint) (t blockatlas.Token, ok bool) {
 	t = blockatlas.Token{
 		Name:     srcToken.Contract.Name,
 		Symbol:   srcToken.Contract.Symbol,
 		TokenId:  srcToken.Contract.Contract,
-		Coin:     coin.ETH,
+		Coin:     coinIndex,
 		Decimals: srcToken.Contract.Decimals,
 	}
 
@@ -277,9 +277,9 @@ func NormalizeToken(srcToken *Token) (t blockatlas.Token, ok bool) {
 }
 
 // NormalizeTxs converts multiple Ethereum tokens
-func NormalizeTokens(srcTokens []Token) (tokenPage []blockatlas.Token) {
+func NormalizeTokens(srcTokens []Token, p Platform) (tokenPage []blockatlas.Token) {
 	for _, srcToken := range srcTokens {
-		token, ok := NormalizeToken(&srcToken)
+		token, ok := NormalizeToken(&srcToken, p.CoinIndex)
 		if !ok {
 			continue
 		}

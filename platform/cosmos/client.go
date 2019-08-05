@@ -27,7 +27,7 @@ func (c *Client) GetAddrTxes(address string, inOrOut string) (txs []Tx, err erro
 			url.Values{
 				"recipient": {address},
 				"page":      {strconv.FormatInt(1, 10)},
-				"limit":     {strconv.FormatInt(blockatlas.TxPerPage, 10)},
+				"limit":     {strconv.FormatInt(1000, 10)},
 			}.Encode())
 	} else {
 		uri = fmt.Sprintf("%s/txs?%s",
@@ -35,7 +35,7 @@ func (c *Client) GetAddrTxes(address string, inOrOut string) (txs []Tx, err erro
 			url.Values{
 				"sender": {address},
 				"page":   {strconv.FormatInt(1, 10)},
-				"limit":  {strconv.FormatInt(blockatlas.TxPerPage, 10)},
+				"limit":  {strconv.FormatInt(1000, 10)},
 			}.Encode())
 	}
 
