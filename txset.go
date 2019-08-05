@@ -8,15 +8,15 @@ type TxSet struct {
 }
 
 // Add adds a new element to the Set. Returns a pointer to the Set.
-func (s *TxSet) Add(t Tx) *TxSet {
+func (s *TxSet) Add(t *Tx) *TxSet {
 	s.lock.Lock()
 	defer s.lock.Unlock()
 	if s.items == nil {
 		s.items = make(map[*Tx]bool)
 	}
-	_, ok := s.items[&t]
+	_, ok := s.items[t]
 	if !ok {
-		s.items[&t] = true
+		s.items[t] = true
 	}
 	return s
 }
