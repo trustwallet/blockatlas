@@ -85,10 +85,16 @@ func (p *Platform) GetTokenListByAddress(address string) (blockatlas.TokenPage, 
 		return nil, err
 	}
 
+	tokenPage := make([]blockatlas.Token, 0)
 	var tokenIDs []string
-	for _, v := range tokens.Data[0].AssetsV2 {
-		tokenIDs = append(tokenIDs, v.Key)
+	if len(tokens.Data) > 0 {
+		for _, v := range tokens.Data[0].AssetsV2 {
+			tokenIDs = append(tokenIDs, v.Key)
+		}
+	} else {
+		return tokenPage, nil
 	}
+
 
 	tokensInfoChan := make(chan *Asset, len(tokenIDs))
 
@@ -112,7 +118,6 @@ func (p *Platform) GetTokenListByAddress(address string) (blockatlas.TokenPage, 
 		tokensInfoMap[info.Data[0].ID] = info.Data[0]
 	}
 
-	var tokenPage []blockatlas.Token
 	for _, v := range tokens.Data[0].AssetsV2 {
 		tokenPage = append(tokenPage, NormalizeToken(tokensInfoMap[v.Key]))
 	}
