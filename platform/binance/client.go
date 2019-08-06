@@ -18,10 +18,10 @@ type Client struct {
 	BaseDexURL string
 }
 
-func ClientInit(httpClient *http.Client, baseUrl string, baseDexURL string) Client {
+func ClientInit(baseUrl string, baseDexURL string) Client {
 	return Client{
 		Request: blockatlas.Request{
-			HttpClient:   httpClient,
+			HttpClient:   http.DefaultClient,
 			ErrorHandler: getHTTPError,
 		},
 		BaseURL:    baseUrl,

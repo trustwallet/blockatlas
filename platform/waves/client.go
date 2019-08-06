@@ -2,21 +2,32 @@ package waves
 
 import (
 	"fmt"
-	"github.com/trustwallet/blockatlas/client"
+	"github.com/spf13/viper"
+	"github.com/trustwallet/blockatlas"
 	"net/http"
-	"net/url"
 )
 
 type Client struct {
-	HTTPClient *http.Client
-	URL        string
+	Request blockatlas.Request
+	URL     string
+}
+
+func InitClient(baseUrl string) Client {
+	return Client{
+		URL: viper.GetString("waves.api"),
+		Request: blockatlas.Request{
+			HttpClient: http.DefaultClient,
+			ErrorHandler: func(res *http.Response, uri string) error {
+				return nil
+			},
+		},
+	}
 }
 
 func (c *Client) GetTxs(address string, limit int) ([]Transaction, error) {
 	path := fmt.Sprintf("transactions/address/%s/limit/%d", address, limit)
-
 	txs := make([][]Transaction, 0)
-	err := client.Request(c.HTTPClient, c.URL, path, url.Values{}, &txs)
+	err := c.Request.Get(&txs, c.URL, path, nil)
 
 	if len(txs) > 0 {
 		return txs[0], err
@@ -27,16 +38,14 @@ func (c *Client) GetTxs(address string, limit int) ([]Transaction, error) {
 
 func (c *Client) GetBlockByNumber(num int64) (block *Block, err error) {
 	path := fmt.Sprintf("blocks/at/%d", num)
-
-	err = client.Request(c.HTTPClient, c.URL, path, url.Values{}, &block)
+	err = c.Request.Get(&block, c.URL, path, nil)
 
 	return block, err
 }
 
 func (c *Client) GetCurrentBlock() (block *CurrentBlock, err error) {
 	path := "blocks/height"
-
-	err = client.Request(c.HTTPClient, c.URL, path, url.Values{}, &block)
+	err = c.Request.Get(&block, c.URL, path, nil)
 
 	return block, err
 }

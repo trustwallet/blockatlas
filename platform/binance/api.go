@@ -3,7 +3,6 @@ package binance
 import (
 	"fmt"
 	"github.com/trustwallet/blockatlas"
-	"net/http"
 	"strings"
 
 	"github.com/spf13/viper"
@@ -21,7 +20,7 @@ type Platform struct {
 }
 
 func (p *Platform) Init() error {
-	p.client = ClientInit(http.DefaultClient, viper.GetString("binance.api"), viper.GetString("binance.dex"))
+	p.client = ClientInit(viper.GetString("binance.api"), viper.GetString("binance.dex"))
 	return nil
 }
 

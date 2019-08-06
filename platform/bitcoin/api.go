@@ -15,8 +15,7 @@ type Platform struct {
 }
 
 func (p *Platform) Init() error {
-	p.client.URL = viper.GetString("bitcoin.api")
-	p.client.HTTPClient = http.DefaultClient
+	p.client = InitClient(viper.GetString("bitcoin.api"))
 	return nil
 }
 
