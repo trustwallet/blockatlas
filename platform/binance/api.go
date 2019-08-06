@@ -141,8 +141,8 @@ func NormalizeTxs(srcTxs []Tx, txType string, pageSize int) (txs []blockatlas.Tx
 
 func (p *Platform) GetTokenListByAddress(address string) (blockatlas.TokenPage, error) {
 	account, err := p.client.GetAccountMetadata(address)
-	if err != nil {
-		return nil, err
+	if err != nil || len(account.Balances) == 0 {
+		return []blockatlas.Token{}, nil
 	}
 	tokens, err := p.client.GetTokens()
 	if err != nil {
