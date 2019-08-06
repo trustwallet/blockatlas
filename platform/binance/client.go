@@ -95,12 +95,9 @@ func (c *Client) GetAccountMetadata(address string) (*Account, error) {
 	res, err := c.HTTPClient.Get(uri)
 	if err != nil {
 		logrus.WithError(err).Error("Binance: Failed to get account metadata")
-		return nil, blockatlas.ErrSourceConn
-	}
-
-	if err := getHTTPError(res, "GetAccountMetadata"); err != nil {
 		return nil, err
 	}
+	defer  res.Body.Close()
 
 	sac := new(Account)
 	err = json.NewDecoder(res.Body).Decode(sac)
@@ -145,7 +142,7 @@ func getAPIError(res *http.Response, desc string) error {
 	var sErr Error
 	err := json.NewDecoder(res.Body).Decode(&sErr)
 	if err != nil {
-		logrus.WithError(err).Error("Binance: Failed to get error")
+		logrus.WithError(err).Error("Binance: Failed to decode error response")
 		return blockatlas.ErrSourceConn
 	}
 
