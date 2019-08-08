@@ -55,6 +55,7 @@ func load(fPath string) error {
 		}
 		Coins[coin.ID] = coin
 	}
+	println("Coins loaded successfully")
 
 	return nil
 }

@@ -28,6 +28,7 @@ Clean explorer API for crypto currencies.
 <a href="https://www.thetatoken.org/" target="_blank"><img src="https://raw.githubusercontent.com/TrustWallet/tokens/master/coins/500.png" width="32" /></a>
 <a href="https://cosmos.network/" target="_blank"><img src="https://raw.githubusercontent.com/TrustWallet/tokens/master/coins/118.png" width="32" /></a>
 <a href="https://semux.org/" target="_blank"><img src="https://raw.githubusercontent.com/TrustWallet/tokens/master/coins/7562605.png" width="32" /></a>
+<a href="https://bitcoin.org/" target="_blank"><img src="https://raw.githubusercontent.com/TrustWallet/tokens/master/coins/0.png" width="32" /></a>
 
 ## Setup
 
@@ -39,7 +40,8 @@ Deploy it in less than 30 seconds!
 
 ```shell
 go get -u github.com/trustwallet/blockatlas
-~/go/bin/blockatlas
+cd blockatlas
+go build -o blockatlas ./cmd && ./blockatlas api --config=config.yml
 ```
 
 #### With Docker

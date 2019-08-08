@@ -59,13 +59,13 @@ func (o *Observer) processBlock(events chan<- Event, block *blockatlas.Block) {
 func GetTxs(block *blockatlas.Block) map[string]*blockatlas.TxSet {
 	txMap := make(map[string]*blockatlas.TxSet)
 
-	for _, tx := range block.Txs {
-		addresses := tx.GetAddresses()
+	for i := 0; i < len(block.Txs); i++ {
+		addresses := block.Txs[i].GetAddresses()
 		for _, address := range addresses {
 			if txMap[address] == nil {
 				txMap[address] = new(blockatlas.TxSet)
 			}
-			txMap[address].Add(tx)
+			txMap[address].Add(&block.Txs[i])
 		}
 	}
 	return txMap
