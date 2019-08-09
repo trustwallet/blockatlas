@@ -1,10 +1,14 @@
 package nebulas
 
 import (
-	"encoding/json"
 	"fmt"
+	"github.com/trustwallet/blockatlas/client"
 	"net/http"
+	"net/url"
+	"strconv"
 )
+
+const TxType = "binary"
 
 type Client struct {
 	HTTPClient *http.Client
@@ -13,29 +17,19 @@ type Client struct {
 
 func (c *Client) GetTxs(address string, page int) ([]Transaction, error) {
 
-	uri := fmt.Sprintf("%s/tx?a=%s&p=%d",
-		c.URL,
-		address,
-		page)
-	res, err := http.Get(uri)
-	if err != nil {
-		return nil, err
-	}
-
-	defer res.Body.Close()
-
-	if res.StatusCode != 200 {
-		return nil, fmt.Errorf("http %s", res.Status)
-	}
-
+	path := fmt.Sprintf("tx")
 	var response Response
-	if decodeError := json.NewDecoder(res.Body).Decode(&response); decodeError != nil {
-		return nil, decodeError
+	values := url.Values{
+		"a": {address},
+		"p": {strconv.Itoa(page)},
+	}
+	if err := client.Request(c.HTTPClient, c.URL, path, values, &response); err != nil {
+		return nil, err
 	}
 
 	var result []Transaction
 	for _, tx := range response.Data.TxnList {
-		if tx.Type == "binary" {
+		if tx.Type == TxType {
 			result = append(result, tx)
 		}
 	}
