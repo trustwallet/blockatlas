@@ -32,7 +32,7 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 		return nil, err
 	}
 
-	txs := NormalizeTxs(srcTxs, "", len(srcTxs))
+	txs := NormalizeTxs(srcTxs, len(srcTxs))
 	return &blockatlas.Block{
 		Number: num,
 		Txs:    txs,
@@ -81,7 +81,7 @@ func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
 }
 
 // NormalizeTxs converts multiple Cosmos transactions
-func NormalizeTxs(srcTxs []Tx, token string, pageSize int) (txs []blockatlas.Tx) {
+func NormalizeTxs(srcTxs []Tx, pageSize int) (txs []blockatlas.Tx) {
 	for _, srcTx := range srcTxs {
 		tx, ok := Normalize(&srcTx)
 		if !ok || len(txs) >= pageSize {
@@ -160,7 +160,7 @@ func fillDelegate(tx *blockatlas.Tx, delegate MessageValueDelegate, msgType stri
 		Coin:     coin.ATOM,
 		Title:    title,
 		Key:      blockatlas.KeyStakeDelegate,
-		Name:     "",
+		Name:     "ATOM",
 		Symbol:   coin.Coins[coin.ATOM].Symbol,
 		Decimals: coin.Coins[coin.ATOM].Decimals,
 		Value:    blockatlas.Amount(value),
