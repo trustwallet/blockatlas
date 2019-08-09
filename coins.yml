@@ -210,3 +210,10 @@
   name: Litecoin
   decimals: 8
   sampleAddress: 'LamFJHBtU59fSDasrovfcp7hZ9AM5vpfdx'
+
+- id: 2718
+  symbol: NAS
+  handle: nebulas
+  name: Nebulas
+  decimals: 18
+  sampleAddress: 'n1RCYwrpLMpSpUCQ8QUDzGRg6B2PnY8R94a'
