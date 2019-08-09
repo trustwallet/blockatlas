@@ -7,6 +7,7 @@ import (
 	"github.com/valyala/fastjson"
 	"net/http"
 	"time"
+	"strconv"
 )
 
 type Platform struct {
@@ -89,7 +90,7 @@ func NormalizeTx(srcTx *Tx) (tx blockatlas.Tx, ok bool) {
 		unix = date.Unix()
 	}
 
-	return blockatlas.Tx{
+	result :=  blockatlas.Tx{
 		ID:    srcTx.Hash,
 		Coin:  coin.XRP,
 		Date:  unix,
@@ -102,5 +103,9 @@ func NormalizeTx(srcTx *Tx) (tx blockatlas.Tx, ok bool) {
 			Symbol:   coin.Coins[coin.XRP].Symbol,
 			Decimals: coin.Coins[coin.XRP].Decimals,
 		},
-	}, true
+	}
+	if srcTx.Payment.DestinationTag > 0 {
+		result.Memo = strconv.FormatInt(srcTx.Payment.DestinationTag, 10)
+	}
+	return result, true
 }

@@ -13,7 +13,7 @@ func loadConfig(confPath string) {
 	loadDefaults()
 
 	// Load config from environment
-	viper.SetEnvPrefix("atlas")
+	viper.SetEnvPrefix("atlas") // will be uppercased automatically => ATLAS
 	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 	viper.AutomaticEnv()
 
@@ -29,7 +29,7 @@ func loadConfig(confPath string) {
 		} else if err != nil {
 			logrus.Fatal(err)
 		} else {
-			logrus.Info("Using config.yml")
+			logrus.Info("Viper using ", viper.ConfigFileUsed())
 		}
 	} else {
 		viper.SetConfigFile(confPath)
@@ -68,6 +68,6 @@ func loadDefaults() {
 	viper.SetDefault("iotex.api", "https://pharos.iotex.io/v1")
 	viper.SetDefault("waves.api", "https://nodes.wavesnodes.com")
 	viper.SetDefault("aeternity.api", "https://mdw.aepps.com/")
-	viper.SetDefault("zilliqa.api", "https://api.viewblock.io/v1/zilliqa")
+	viper.SetDefault("bitcoin.api", "https://btc1.trezor.io/api")
 	viper.SetDefault("zilliqa.rpc", "https://api.zilliqa.com/")
 }

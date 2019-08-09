@@ -116,10 +116,10 @@ ontology:
   api: https://explorer.ont.io/api/v1/explorer
 
 # [ZIL] Zilliqa: https://zilliqa.com
-# zilliqa:
+zilliqa:
 #  api: https://api.viewblock.io/v1/zilliqa
 #  key: YOUR_API_KEY
-#  rpc: https://api.zilliqa.com/
+  rpc: https://api.zilliqa.com/
 
 #[IoTeX] IoTeX: https://iotex.io/
 iotex:
@@ -132,3 +132,7 @@ waves:
 # [AE] Aeternity: https://aeternity.com/
 aeternity:
   api: https://mdw.aepps.com/
+
+# [BTC] Bitcoin: https://bitcoin.org/ (Blockbook API https://github.com/trezor/blockbook)
+bitcoin:
+  api: https://btc1.trezor.io/api

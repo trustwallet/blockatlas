@@ -19,6 +19,8 @@ func Request(c *http.Client, base string, path string, params url.Values, result
 		return err
 	}
 
+	defer res.Body.Close()
+
 	err = json.NewDecoder(res.Body).Decode(result)
 	if err != nil {
 		return err
