@@ -44,21 +44,21 @@ func (p *Platform) CurrentBlockNumber() (int64, error) {
 }
 
 func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
-	inputTxes, _ := p.client.GetAddrTxes(address, "inputs")
-	outputTxes, _ := p.client.GetAddrTxes(address, "outputs")
+	srcTxes := make([]Tx, 0)
+
+	tagsList := []string{"recipient", "sender", "delegator", "destination-validator"}
+
+	for _, tag := range tagsList {
+		responseTxes, _ := p.client.GetAddrTxes(address, tag)
+		srcTxes = append(srcTxes, responseTxes...)
+	}
 
 	normalisedTxes := make([]blockatlas.Tx, 0)
 
-	for _, inputTx := range inputTxes {
-		normalisedInputTx, ok := Normalize(&inputTx)
+	for _, srcTx := range srcTxes {
+		normalisedInputTx, ok := Normalize(&srcTx)
 		if ok {
 			normalisedTxes = append(normalisedTxes, normalisedInputTx)
-		}
-	}
-	for _, outputTx := range outputTxes {
-		normalisedOutputTx, ok := Normalize(&outputTx)
-		if ok {
-			normalisedTxes = append(normalisedTxes, normalisedOutputTx)
 		}
 	}
 
