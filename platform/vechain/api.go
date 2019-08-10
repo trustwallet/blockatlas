@@ -143,7 +143,7 @@ func (p *Platform) getTransactions(ids []string) chan *NativeTransaction {
 			receipt, err := p.client.GetTransactionById(id)
 			if err != nil {
 				logrus.WithError(err).WithField("platform", "vechain").
-					Warnf("Failed to get tx receipt for %s", id)
+					Warnf("Failed to get transaction for %s", id)
 			}
 			receiptsChan <- receipt
 		}(id)

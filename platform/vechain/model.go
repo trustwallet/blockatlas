@@ -61,10 +61,6 @@ type TokenTransfer struct {
 
 type CurrentBlockInfo struct {
 	BestBlockNum 		int64  `json:"bestBlockNum"`
-	KnownAccounts 		int64  `json:"knownAccounts"`
-	TokenTransferLength int64  `json:"tokenTransferLength"`
-	TotalClauses 		int64  `json:"totalClauses"`
-	TransactionsLength  int64  `json:"transactionsLength"`
 }
 
 type Block struct {
