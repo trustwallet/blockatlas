@@ -27,6 +27,46 @@ func (p *Platform) Coin() coin.Coin {
 
 const VeThorContract = "0x0000000000000000000000000000456e65726779"
 
+func (p *Platform) CurrentBlockNumber() (int64, error) {
+	cbi, err := p.client.GetCurrentBlockInfo()
+	if err != nil {
+		return 0, err
+	}
+	return cbi.BestBlockNum, nil
+}
+
+func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
+	block, err := p.client.GetBlockByNumber(num)
+	if err != nil {
+		return nil, err
+	}
+
+	receiptsChan := p.getTransactions(block.Transactions)
+
+	var txs []blockatlas.Tx
+	for t := range receiptsChan {
+		if len(t.Receipt.Outputs) == 0 {
+			continue
+		}
+		if len(t.Receipt.Outputs[0].Events) == 0 {
+			if tx, ok := NormalizeTransaction(t); ok {
+				txs = append(txs, tx)
+			}
+		} else if len(t.Receipt.Outputs[0].Transfers) == 0 &&
+			t.Receipt.Outputs[0].Events[0].Address == VeThorContract {
+			if tx, ok := NormalizeTokenTransaction(t); ok {
+				txs = append(txs, tx)
+			}
+		}
+	}
+
+	return &blockatlas.Block{
+		Number: num,
+		ID: block.Id,
+		Txs:    txs,
+	}, nil
+}
+
 func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 	return p.getTxsByAddress(address)
 }
@@ -75,6 +115,32 @@ func (p *Platform) getTransactionReceipt(ids []string) chan *TransferReceipt {
 			sem.Acquire()
 			defer sem.Release()
 			receipt, err := p.client.GetTransactionReceipt(id)
+			if err != nil {
+				logrus.WithError(err).WithField("platform", "vechain").
+					Warnf("Failed to get tx receipt for %s", id)
+			}
+			receiptsChan <- receipt
+		}(id)
+	}
+
+	wg.Wait()
+	close(receiptsChan)
+
+	return receiptsChan
+}
+
+func (p *Platform) getTransactions(ids []string) chan *NativeTransaction {
+	receiptsChan := make(chan *NativeTransaction, len(ids))
+
+	sem := util.NewSemaphore(16)
+	var wg sync.WaitGroup
+	wg.Add(len(ids))
+	for _, id := range ids {
+		go func(id string) {
+			defer wg.Done()
+			sem.Acquire()
+			defer sem.Release()
+			receipt, err := p.client.GetTransactionById(id)
 			if err != nil {
 				logrus.WithError(err).WithField("platform", "vechain").
 					Warnf("Failed to get tx receipt for %s", id)
@@ -150,7 +216,7 @@ func NormalizeTransfer(receipt *TransferReceipt, clause *Clause) (tx blockatlas.
 		Date:     int64(time),
 		Type:     blockatlas.TxTransfer,
 		Block:    block,
-		Status:   receipt.Receipt.Status(),
+		Status:   ReceiptStatus(receipt.Receipt.Reverted),
 		Sequence: block,
 		Meta: blockatlas.Transfer{
 			Value:    blockatlas.Amount(valueBase10),
@@ -184,7 +250,7 @@ func NormalizeTokenTransfer(t *TokenTransfer, receipt *TransferReceipt) (tx bloc
 		Date:     t.Timestamp,
 		Type:     blockatlas.TxNativeTokenTransfer,
 		Block:    block,
-		Status:   receipt.Receipt.Status(),
+		Status:   ReceiptStatus(receipt.Receipt.Reverted),
 		Sequence: block,
 		Meta: blockatlas.NativeTokenTransfer{
 			Name:     "VeThor Token",
@@ -197,3 +263,86 @@ func NormalizeTokenTransfer(t *TokenTransfer, receipt *TransferReceipt) (tx bloc
 		},
 	}, true
 }
+
+func NormalizeTokenTransaction(t *NativeTransaction) (tx blockatlas.Tx, ok bool) {
+	feeBase10, err := util.HexToDecimal(t.Receipt.Paid)
+	if err != nil {
+		return tx, false
+	}
+
+	if len(t.Receipt.Outputs) == 0 ||
+		len(t.Receipt.Outputs[0].Events) == 0 ||
+		len(t.Receipt.Outputs[0].Events[0].Topics) != 3 {
+		return tx, false
+	}
+	valueBase10, err := util.HexToDecimal(t.Receipt.Outputs[0].Events[0].Data)
+	if err != nil {
+		return tx, false
+	}
+	fee := blockatlas.Amount(feeBase10)
+	value := blockatlas.Amount(valueBase10)
+	fromHex := t.Receipt.Outputs[0].Events[0].Topics[1]
+	toHex := t.Receipt.Outputs[0].Events[0].Topics[2]
+	from := "0x" + fromHex[26:]
+	to := "0x" + toHex[26:]
+	block := t.Block
+
+	return blockatlas.Tx{
+		ID:       t.ID,
+		Coin:     coin.VET,
+		From:     from,
+		To:       to,
+		Fee:      fee,
+		Date:     t.Timestamp,
+		Type:     blockatlas.TxNativeTokenTransfer,
+		Block:    block,
+		Status:   ReceiptStatus(t.Receipt.Reverted),
+		Sequence: block,
+		Meta: blockatlas.NativeTokenTransfer{
+			Name:     "VeThor Token",
+			Symbol:   "VTHO",
+			TokenID:  VeThorContract,
+			Decimals: 18,
+			Value:    value,
+			From:     from,
+			To:       to,
+		},
+	}, true
+}
+
+func NormalizeTransaction(t *NativeTransaction) (tx blockatlas.Tx, ok bool) {
+	feeBase10, err := util.HexToDecimal(t.Receipt.Paid)
+	if err != nil {
+		return tx, false
+	}
+	if len(t.Clauses) == 0 {
+		return tx, false
+	}
+	valueBase10, err := util.HexToDecimal(t.Clauses[0].Value)
+	if err != nil {
+		return tx, false
+	}
+
+	fee := blockatlas.Amount(feeBase10)
+	time := t.Timestamp
+	block := t.Block
+
+	return blockatlas.Tx{
+		ID:       t.ID,
+		Coin:     coin.VET,
+		From:     t.Origin,
+		To:       t.Clauses[0].To,
+		Fee:      fee,
+		Date:     int64(time),
+		Type:     blockatlas.TxTransfer,
+		Block:    block,
+		Status:   ReceiptStatus(t.Receipt.Reverted),
+		Sequence: block,
+		Meta: blockatlas.Transfer{
+			Value:    blockatlas.Amount(valueBase10),
+			Symbol:   coin.Coins[coin.VET].Symbol,
+			Decimals: coin.Coins[coin.VET].Decimals,
+		},
+	}, true
+}
+

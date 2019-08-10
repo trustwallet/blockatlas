@@ -38,8 +38,8 @@ type Receipt struct {
 	Reverted bool   `json:"reverted"`
 }
 
-func (r *Receipt) Status() string {
-	if r.Reverted {
+func ReceiptStatus(r bool) string {
+	if r {
 		return blockatlas.StatusFailed
 	}
 	return blockatlas.StatusCompleted
@@ -57,4 +57,55 @@ type TokenTransfer struct {
 	Receiver        string `json:"receiver"`
 	Timestamp       int64  `json:"timestamp"`
 	TxID            string `json:"txId"`
+}
+
+type CurrentBlockInfo struct {
+	BestBlockNum 		int64  `json:"bestBlockNum"`
+	KnownAccounts 		int64  `json:"knownAccounts"`
+	TokenTransferLength int64  `json:"tokenTransferLength"`
+	TotalClauses 		int64  `json:"totalClauses"`
+	TransactionsLength  int64  `json:"transactionsLength"`
+}
+
+type Block struct {
+	Id  			string  	`json:"Id"`
+	Transactions  	[]string  	`json:"transactions"`
+}
+
+type Event struct {
+	Address string   `json:"address"`
+	Topics  []string `json:"topics"`
+	Data    string   `json:"data"`
+}
+
+type Transfer struct {
+	Address string   `json:"address"`
+	Topics  []string `json:"topics"`
+	Data    string   `json:"data"`
+}
+
+type Output struct {
+	Events 	[]Event `json:"events"`
+	Transfers []Transfer `json:"transfers"`
+}
+
+type TransactionReceipt struct {
+	Outputs []Output `json:"outputs"`
+	Paid     string `json:"paid"`
+	Reverted bool   `json:"reverted"`
+}
+
+type NativeTransaction struct {
+	Block    	 uint64    			`json:"block"`
+	Clauses  	 []Clause 			`json:"clauses"`
+	ID           string 			`json:"id"`
+	Origin     	 string 			`json:"origin"`
+	Receipt      TransactionReceipt `json:"receipt"`
+	Reverted   	 int64 				`json:"reverted"`
+	Timestamp  	 int64 				`json:"timestamp"`
+}
+
+type Error struct {
+	Code    int64  `json:"code"`
+	Message string `json:"message"`
 }
