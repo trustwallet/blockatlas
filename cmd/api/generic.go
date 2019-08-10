@@ -3,6 +3,8 @@ package api
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/trustwallet/blockatlas"
+	services "github.com/trustwallet/blockatlas/services/assets"
+	"log"
 	"net/http"
 )
 
@@ -74,14 +76,21 @@ func makeStakingRoute(router gin.IRouter, api blockatlas.Platform) {
 
 	router.GET("/staking/validators", func(c *gin.Context) {
 
-		validators, err := stakingAPI.GetValidators()
-
+		assetsValidators, err := services.GetValidators(api.Coin())
 		if err != nil {
+			log.Print("Unable to fetch validators list from the registry")
 			c.JSON(http.StatusServiceUnavailable, err)
 			return
 		}
 
-		c.JSON(http.StatusOK, blockatlas.DocsResponse{Docs: validators})
+		validators, err := stakingAPI.GetValidators()
+		if err != nil {
+			c.JSON(http.StatusServiceUnavailable, err)
+			return
+		}
+		results := services.NormalizeValidators(validators, assetsValidators)
+
+		c.JSON(http.StatusOK, blockatlas.DocsResponse{Docs: results})
 	})
 }
 

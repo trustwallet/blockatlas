@@ -149,7 +149,7 @@ func TestNormalizeValidator(t *testing.T) {
 	var v CosmosValidator
 	_ = json.Unmarshal([]byte(validatorSrc), &v)
 	coin := coin.Coin{}
-	expected := blockatlas.PlainStakeValidator{
+	expected := blockatlas.Validator{
 		Status: true,
 		ID:     v.Operator_Address,
 	}

@@ -2,7 +2,7 @@ package blockatlas
 
 import "github.com/trustwallet/blockatlas/coin"
 
-type ValidatorPage []StakeValidator
+type ValidatorPage []Validator
 
 type DocsResponse struct {
 	Docs interface{} `json:"docs"`
@@ -17,7 +17,7 @@ type StakeValidatorInfo struct {
 	Website     string `json:"website"`
 }
 
-type PlainStakeValidator struct {
+type Validator struct {
 	Coin   coin.Coin
 	ID     string `json:"id"`
 	Status bool   `json:"status"`
