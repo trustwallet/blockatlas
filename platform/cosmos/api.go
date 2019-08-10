@@ -2,6 +2,7 @@ package cosmos
 
 import (
 	"github.com/trustwallet/blockatlas"
+	"github.com/trustwallet/blockatlas/services"
 	"net/http"
 	"sort"
 	"strconv"
@@ -49,14 +50,20 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 }
 
 func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
-	results := make([]blockatlas.StakeValidator, 0)
+	results := make([]blockatlas.PlainStakeValidator, 0)
 	validators, _ := p.client.GetValidators()
 
-	for _, validator := range validators {
-		results = append(results, normalizeValidator(validator))
+	vals, err := services.GetValidators(p.Coin())
+	if err != nil {
+		return blockatlas.ValidatorPage{}, nil
 	}
 
-	return results, nil
+	for _, validator := range validators {
+		results = append(results, normalizeValidator(validator, p.Coin()))
+	}
+
+	return services.NormalizeValidators(results, vals)
+
 }
 
 // Normalize converts an Cosmos transaction into the generic model
@@ -88,15 +95,10 @@ func Normalize(srcTx *Tx) (tx blockatlas.Tx) {
 	}
 }
 
-func normalizeValidator(v CosmosValidator) (validator blockatlas.StakeValidator) {
-	return blockatlas.StakeValidator{
-		Info: blockatlas.StakeValidatorInfo{
-			Website:     v.Description.Website,
-			Name:        v.Description.Moniker,
-			Description: v.Description.Description,
-		},
-		Status:    bool(v.Status == 2),
-		Address:   v.Operator_Address,
-		PublicKey: v.Consensus_Pubkey,
+func normalizeValidator(v CosmosValidator, c coin.Coin) (validator blockatlas.PlainStakeValidator) {
+	return blockatlas.PlainStakeValidator{
+		Coin:   c,
+		Status: bool(v.Status == 2),
+		ID:     v.Operator_Address,
 	}
 }

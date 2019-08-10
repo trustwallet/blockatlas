@@ -148,19 +148,13 @@ func TestNormalize(t *testing.T) {
 func TestNormalizeValidator(t *testing.T) {
 	var v CosmosValidator
 	_ = json.Unmarshal([]byte(validatorSrc), &v)
-
-	expected := blockatlas.StakeValidator{
+	coin := coin.Coin{}
+	expected := blockatlas.PlainStakeValidator{
 		Status: true,
-		Info: blockatlas.StakeValidatorInfo{
-			Name:        v.Description.Moniker,
-			Description: v.Description.Description,
-			Website:     v.Description.Website,
-		},
-		Address:   v.Operator_Address,
-		PublicKey: v.Consensus_Pubkey,
+		ID:     v.Operator_Address,
 	}
 
-	result := normalizeValidator(v)
+	result := normalizeValidator(v, coin)
 
 	assert.Equal(t, result, expected)
 }
