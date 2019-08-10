@@ -76,16 +76,8 @@ type Amount struct {
 // # Staking
 
 type CosmosValidator struct {
-	Status           int                        `json:"status"`
-	Description      CosmosValidatorDescription `json:"description"`
-	Operator_Address string                     `json:"operator_address"`
-	Consensus_Pubkey string                     `json:"consensus_pubkey"`
-}
-
-type CosmosValidatorDescription struct {
-	Moniker     string `json:"moniker"`
-	Website     string `json:"website"`
-	Description string `json:"details"`
+	Status           int    `json:"status"`
+	Operator_Address string `json:"operator_address"`
 }
 
 // Block - top object of get las block request

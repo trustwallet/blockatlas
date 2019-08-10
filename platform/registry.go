@@ -14,6 +14,7 @@ import (
 	"github.com/trustwallet/blockatlas/platform/ethereum"
 	"github.com/trustwallet/blockatlas/platform/icon"
 	"github.com/trustwallet/blockatlas/platform/iotex"
+	"github.com/trustwallet/blockatlas/platform/nebulas"
 	"github.com/trustwallet/blockatlas/platform/nimiq"
 	"github.com/trustwallet/blockatlas/platform/ontology"
 	"github.com/trustwallet/blockatlas/platform/ripple"
@@ -56,6 +57,7 @@ var platformList = []blockatlas.Platform{
 	&aeternity.Platform{},
 	&bitcoin.Platform{CoinIndex: coin.BTC},
 	&bitcoin.Platform{CoinIndex: coin.LTC},
+	&nebulas.Platform{},
 }
 
 // Platforms contains all registered platforms by handle
