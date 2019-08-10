@@ -52,6 +52,7 @@ func (c *Client) GetAddrTxes(address string, inOrOut string) (txs []Tx, err erro
 }
 
 func (c *Client) GetValidators() (validators []CosmosValidator, err error) {
+
 	uri := fmt.Sprintf("%s/staking/validators?%s",
 		c.BaseURL,
 		url.Values{
