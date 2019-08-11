@@ -62,7 +62,7 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 
 	return &blockatlas.Block{
 		Number: num,
-		ID: block.Id,
+		ID:     block.Id,
 		Txs:    txs,
 	}, nil
 }
@@ -333,7 +333,7 @@ func NormalizeTransaction(t *NativeTransaction) (tx blockatlas.Tx, ok bool) {
 		From:     t.Origin,
 		To:       t.Clauses[0].To,
 		Fee:      fee,
-		Date:     int64(time),
+		Date:     time,
 		Type:     blockatlas.TxTransfer,
 		Block:    block,
 		Status:   ReceiptStatus(t.Receipt.Reverted),
@@ -345,4 +345,3 @@ func NormalizeTransaction(t *NativeTransaction) (tx blockatlas.Tx, ok bool) {
 		},
 	}, true
 }
-

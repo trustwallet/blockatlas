@@ -49,7 +49,7 @@ const tokenTransfer = `
 }
 `
 
-const vthoTransaction  = `
+const vthoTransaction = `
 {  
    "block":2465269,
    "blockRef":"0x003578d93e73a9ca",
@@ -115,7 +115,7 @@ const vthoTransaction  = `
 }
 `
 
-const vetTransaction  = `
+const vetTransaction = `
 {  
    "block":2620166,
    "blockRef":"0x003579c12289d87a",
@@ -314,11 +314,10 @@ func TestNormalizeTokenTransfer(t *testing.T) {
 	}
 }
 
-
 func TestNormalizeTransaction(t *testing.T) {
 	var tests = []struct {
-		Transaction  string
-		Expected blockatlas.Tx
+		Transaction string
+		Expected    blockatlas.Tx
 	}{
 		{vetTransaction, expectedTransferTrx},
 	}
@@ -358,8 +357,8 @@ func TestNormalizeTransaction(t *testing.T) {
 
 func TestNormalizeTokenTransaction(t *testing.T) {
 	var tests = []struct {
-		TokenTransaction  string
-		Expected blockatlas.Tx
+		TokenTransaction string
+		Expected         blockatlas.Tx
 	}{
 		{vthoTransaction, expectedVeThorTrx},
 	}

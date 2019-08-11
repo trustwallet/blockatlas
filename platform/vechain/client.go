@@ -4,9 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/sirupsen/logrus"
-	"github.com/trustwallet/blockatlas"
+	"github.com/trustwallet/blockatlas/client"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 )
 
 type Client struct {
@@ -14,40 +15,18 @@ type Client struct {
 	URL        string
 }
 
-func (c *Client) GetCurrentBlockInfo() (*CurrentBlockInfo, error) {
-	uri := fmt.Sprintf("%s/clientInit", c.URL)
+func (c *Client) GetCurrentBlockInfo() (cbi *CurrentBlockInfo, err error) {
+	err = client.Request(c.HTTPClient, c.URL, "clientInit", url.Values{}, &cbi)
 
-	resp, err := c.HTTPClient.Get(uri)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	if err := getHTTPError(resp, "GetCurrentBlockInfo"); err != nil {
-		return nil, err
-	}
-
-	cbi := new(CurrentBlockInfo)
-	err = json.NewDecoder(resp.Body).Decode(cbi)
-	return cbi, nil
+	return cbi, err
 }
 
-func (c *Client) GetBlockByNumber(num int64) (*Block, error) {
-	uri := fmt.Sprintf("%s/blocks/%d", c.URL, num)
+func (c *Client) GetBlockByNumber(num int64) (block *Block, err error) {
+	path := fmt.Sprintf("blocks/%d", num)
 
-	resp, err := c.HTTPClient.Get(uri)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
+	err = client.Request(c.HTTPClient, c.URL, path, url.Values{}, &block)
 
-	if err := getHTTPError(resp, "GetBlockByNumber"); err != nil {
-		return nil, err
-	}
-
-	block := new(Block)
-	err = json.NewDecoder(resp.Body).Decode(block)
-	return block, nil
+	return block, err
 }
 
 func (c *Client) GetTransactions(address string) (TransferTx, error) {
@@ -102,68 +81,18 @@ func (c *Client) GetTokenTransfers(address string) (TokenTransferTxs, error) {
 	return transfers, nil
 }
 
-func (c *Client) GetTransactionReceipt(id string) (*TransferReceipt, error) {
-	url := fmt.Sprintf("%s/transactions/%s", c.URL, id)
-	resp, err := c.HTTPClient.Get(url)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
+func (c *Client) GetTransactionReceipt(id string) (receipt *TransferReceipt, err error) {
+	path := fmt.Sprintf("transactions/%s", id)
 
-	var receipt TransferReceipt
-	err = json.NewDecoder(resp.Body).Decode(&receipt)
-	if err != nil {
-		return nil, err
-	}
+	err = client.Request(c.HTTPClient, c.URL, path, url.Values{}, &receipt)
 
-	return &receipt, nil
+	return receipt, err
 }
 
-func (c *Client) GetTransactionById(id string) (*NativeTransaction, error) {
-	url := fmt.Sprintf("%s/transactions/%s", c.URL, id)
-	resp, err := c.HTTPClient.Get(url)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
+func (c *Client) GetTransactionById(id string) (transaction *NativeTransaction, err error) {
+	path := fmt.Sprintf("transactions/%s", id)
 
-	var receipt NativeTransaction
-	err = json.NewDecoder(resp.Body).Decode(&receipt)
-	if err != nil {
-		return nil, err
-	}
+	err = client.Request(c.HTTPClient, c.URL, path, url.Values{}, &transaction)
 
-	return &receipt, nil
-}
-
-func getHTTPError(res *http.Response, desc string) error {
-	switch res.StatusCode {
-	case http.StatusBadRequest, http.StatusNotFound:
-		return getAPIError(res, desc)
-	case http.StatusOK:
-		return nil
-	default:
-		return fmt.Errorf("%s", res.Status)
-	}
-}
-
-func getAPIError(res *http.Response, desc string) error {
-	var sErr Error
-	err := json.NewDecoder(res.Body).Decode(&sErr)
-	if err != nil {
-		logrus.WithError(err).Error("VeChain: Failed to decode error response")
-		return blockatlas.ErrSourceConn
-	}
-
-	switch sErr.Message {
-	case "address is not valid":
-		return blockatlas.ErrInvalidAddr
-	}
-
-	logrus.WithFields(logrus.Fields{
-		"status":  res.StatusCode,
-		"code":    sErr.Code,
-		"message": sErr.Message,
-	}).Error("VeChain: Failed to " + desc)
-	return blockatlas.ErrSourceConn
+	return transaction, err
 }

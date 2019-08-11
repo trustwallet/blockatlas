@@ -60,12 +60,12 @@ type TokenTransfer struct {
 }
 
 type CurrentBlockInfo struct {
-	BestBlockNum 		int64  `json:"bestBlockNum"`
+	BestBlockNum int64 `json:"bestBlockNum"`
 }
 
 type Block struct {
-	Id  			string  	`json:"Id"`
-	Transactions  	[]string  	`json:"transactions"`
+	Id           string   `json:"Id"`
+	Transactions []string `json:"transactions"`
 }
 
 type Event struct {
@@ -81,24 +81,24 @@ type Transfer struct {
 }
 
 type Output struct {
-	Events 	[]Event `json:"events"`
+	Events    []Event    `json:"events"`
 	Transfers []Transfer `json:"transfers"`
 }
 
 type TransactionReceipt struct {
-	Outputs []Output `json:"outputs"`
-	Paid     string `json:"paid"`
-	Reverted bool   `json:"reverted"`
+	Outputs  []Output `json:"outputs"`
+	Paid     string   `json:"paid"`
+	Reverted bool     `json:"reverted"`
 }
 
 type NativeTransaction struct {
-	Block    	 uint64    			`json:"block"`
-	Clauses  	 []Clause 			`json:"clauses"`
-	ID           string 			`json:"id"`
-	Origin     	 string 			`json:"origin"`
-	Receipt      TransactionReceipt `json:"receipt"`
-	Reverted   	 int64 				`json:"reverted"`
-	Timestamp  	 int64 				`json:"timestamp"`
+	Block     uint64             `json:"block"`
+	Clauses   []Clause           `json:"clauses"`
+	ID        string             `json:"id"`
+	Origin    string             `json:"origin"`
+	Receipt   TransactionReceipt `json:"receipt"`
+	Reverted  int64              `json:"reverted"`
+	Timestamp int64              `json:"timestamp"`
 }
 
 type Error struct {
