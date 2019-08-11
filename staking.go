@@ -10,6 +10,17 @@ type DocsResponse struct {
 
 const ValidatorsPerPage = 100
 
+type StakingReward struct {
+	Annual float64 `json:"annual"`
+}
+
+type Validator struct {
+	Coin   coin.Coin
+	ID     string        `json:"id"`
+	Status bool          `json:"status"`
+	Reward StakingReward `json:"reward"`
+}
+
 type StakeValidatorInfo struct {
 	Name        string `json:"name"`
 	Description string `json:"description"`
@@ -17,14 +28,9 @@ type StakeValidatorInfo struct {
 	Website     string `json:"website"`
 }
 
-type Validator struct {
-	Coin   coin.Coin
-	ID     string `json:"id"`
-	Status bool   `json:"status"`
-}
-
 type StakeValidator struct {
 	ID     string             `json:"id"`
 	Status bool               `json:"status"`
 	Info   StakeValidatorInfo `json:"info"`
+	Reward StakingReward      `json:"reward"`
 }

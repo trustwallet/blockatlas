@@ -49,11 +49,23 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 }
 
 func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
-	results := blockatlas.ValidatorPage{}
-	validators, _ := p.client.GetValidators()
+	results := make(blockatlas.ValidatorPage, 0)
+	validators, err := p.client.GetValidators()
+	if err != nil {
+		return results, nil
+	}
+	pool, err := p.client.GetPool()
+	if err != nil {
+		return results, nil
+	}
+
+	inflation, err := p.client.GetInflation()
+	if err != nil {
+		return results, nil
+	}
 
 	for _, validator := range validators {
-		results = append(results, normalizeValidator(validator, p.Coin()))
+		results = append(results, normalizeValidator(validator, pool, inflation, p.Coin()))
 	}
 
 	return results, nil
@@ -88,10 +100,37 @@ func Normalize(srcTx *Tx) (tx blockatlas.Tx) {
 	}
 }
 
-func normalizeValidator(v CosmosValidator, c coin.Coin) (validator blockatlas.Validator) {
+func normalizeValidator(v CosmosValidator, p StakingPool, inflation float64, c coin.Coin) (validator blockatlas.Validator) {
+
+	reward := CalculateAnnualReward(p, inflation, v)
+
 	return blockatlas.Validator{
 		Coin:   c,
 		Status: bool(v.Status == 2),
 		ID:     v.Operator_Address,
+		Reward: blockatlas.StakingReward{Annual: reward},
 	}
+}
+
+func CalculateAnnualReward(p StakingPool, inflation float64, validator CosmosValidator) float64 {
+
+	notBondedTokens, err := strconv.ParseFloat(string(p.NotBondedTokens), 32)
+
+	if err != nil {
+		return 0
+	}
+
+	bondedTokens, err := strconv.ParseFloat(string(p.BondedTokens), 32)
+	if err != nil {
+		return 0
+	}
+
+	commission, err := strconv.ParseFloat(string(validator.Commission.Rate), 32)
+	if err != nil {
+		return 0
+	}
+
+	result := (notBondedTokens + bondedTokens) / bondedTokens * inflation
+
+	return (result - (result * commission)) * 100
 }

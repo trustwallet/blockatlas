@@ -46,7 +46,17 @@ type Amount struct {
 
 // # Staking
 
+type CosmosCommission struct {
+	Rate string `json:"rate"`
+}
+
 type CosmosValidator struct {
-	Status           int    `json:"status"`
-	Operator_Address string `json:"operator_address"`
+	Status           int              `json:"status"`
+	Operator_Address string           `json:"operator_address"`
+	Commission       CosmosCommission `json:"commission"`
+}
+
+type StakingPool struct {
+	NotBondedTokens string `json:"not_bonded_tokens"`
+	BondedTokens    string `json:"bonded_tokens"`
 }

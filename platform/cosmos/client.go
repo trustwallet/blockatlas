@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/trustwallet/blockatlas"
+	"github.com/trustwallet/blockatlas/client"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -72,4 +73,18 @@ func (c *Client) GetValidators() (validators []CosmosValidator, err error) {
 	err = dec.Decode(&validators)
 
 	return validators, err
+}
+
+func (c *Client) GetPool() (result StakingPool, err error) {
+	return result, client.Request(c.HTTPClient, c.BaseURL, "staking/pool", url.Values{}, &result)
+}
+
+func (c *Client) GetInflation() (float64, error) {
+	var result string
+
+	err := client.Request(c.HTTPClient, c.BaseURL, "minting/inflation", url.Values{}, &result)
+
+	s, err := strconv.ParseFloat(result, 32)
+
+	return s, err
 }
