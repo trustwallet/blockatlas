@@ -27,6 +27,7 @@ func (p *Platform) Coin() coin.Coin {
 
 const VeThorContract = "0x0000000000000000000000000000456e65726779"
 
+// CurrentBlockNumber implementation of interface function which gets a current blockchain height
 func (p *Platform) CurrentBlockNumber() (int64, error) {
 	cbi, err := p.client.GetCurrentBlockInfo()
 	if err != nil {
@@ -35,6 +36,7 @@ func (p *Platform) CurrentBlockNumber() (int64, error) {
 	return cbi.BestBlockNum, nil
 }
 
+// GetBlockByNumber implementation of interface function which gets a block for push notification
 func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 	block, err := p.client.GetBlockByNumber(num)
 	if err != nil {
@@ -140,7 +142,7 @@ func (p *Platform) getTransactions(ids []string) chan *NativeTransaction {
 			defer wg.Done()
 			sem.Acquire()
 			defer sem.Release()
-			receipt, err := p.client.GetTransactionById(id)
+			receipt, err := p.client.GetTransactionByID(id)
 			if err != nil {
 				logrus.WithError(err).WithField("platform", "vechain").
 					Warnf("Failed to get transaction for %s", id)
@@ -263,7 +265,7 @@ func NormalizeTokenTransfer(t *TokenTransfer, receipt *TransferReceipt) (tx bloc
 		},
 	}, true
 }
-
+// NormalizeTokenTransaction converts a VeChain VTHO token transaction into the generic model
 func NormalizeTokenTransaction(t *NativeTransaction) (tx blockatlas.Tx, ok bool) {
 	feeBase10, err := util.HexToDecimal(t.Receipt.Paid)
 	if err != nil {
@@ -309,7 +311,7 @@ func NormalizeTokenTransaction(t *NativeTransaction) (tx blockatlas.Tx, ok bool)
 		},
 	}, true
 }
-
+// NormalizeTransaction converts a VeChain transaction into the generic model
 func NormalizeTransaction(t *NativeTransaction) (tx blockatlas.Tx, ok bool) {
 	feeBase10, err := util.HexToDecimal(t.Receipt.Paid)
 	if err != nil {

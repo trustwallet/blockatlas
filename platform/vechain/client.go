@@ -15,12 +15,14 @@ type Client struct {
 	URL        string
 }
 
+// GetCurrentBlockInfo get request function which returns current  blockchain status model
 func (c *Client) GetCurrentBlockInfo() (cbi *CurrentBlockInfo, err error) {
 	err = client.Request(c.HTTPClient, c.URL, "clientInit", url.Values{}, &cbi)
 
 	return cbi, err
 }
 
+// GetBlockByNumber get request function which returns block model requested by number
 func (c *Client) GetBlockByNumber(num int64) (block *Block, err error) {
 	path := fmt.Sprintf("blocks/%d", num)
 
@@ -32,8 +34,8 @@ func (c *Client) GetBlockByNumber(num int64) (block *Block, err error) {
 func (c *Client) GetTransactions(address string) (TransferTx, error) {
 	var transfers TransferTx
 
-	url := fmt.Sprintf("%s/transactions?address=%s&count=25&offset=0", c.URL, address)
-	resp, err := c.HTTPClient.Get(url)
+	path := fmt.Sprintf("%s/transactions?address=%s&count=25&offset=0", c.URL, address)
+	resp, err := c.HTTPClient.Get(path)
 	if err != nil {
 		logrus.WithError(err).Error("VeChain: Failed HTTP get transactions")
 		return transfers, err
@@ -89,7 +91,7 @@ func (c *Client) GetTransactionReceipt(id string) (receipt *TransferReceipt, err
 	return receipt, err
 }
 
-func (c *Client) GetTransactionById(id string) (transaction *NativeTransaction, err error) {
+func (c *Client) GetTransactionByID(id string) (transaction *NativeTransaction, err error) {
 	path := fmt.Sprintf("transactions/%s", id)
 
 	err = client.Request(c.HTTPClient, c.URL, path, url.Values{}, &transaction)
