@@ -3,7 +3,6 @@ package vechain
 import (
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
-	"github.com/trustwallet/backend/common"
 	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/util"
@@ -284,8 +283,8 @@ func NormalizeTransaction(t *NativeTransaction) (txs []blockatlas.Tx) {
 				value := blockatlas.Amount(valueBase10)
 				fromHex := t.Receipt.Outputs[outputIndex].Events[eventIndex].Topics[1]
 				toHex := t.Receipt.Outputs[outputIndex].Events[eventIndex].Topics[2]
-				from := common.Checksum(formatHexToAddress(fromHex))
-				to := common.Checksum(formatHexToAddress(toHex))
+				from := util.Checksum(formatHexToAddress(fromHex))
+				to := util.Checksum(formatHexToAddress(toHex))
 				block := t.Block
 
 				txs = append(txs, blockatlas.Tx{
@@ -331,8 +330,8 @@ func NormalizeTransaction(t *NativeTransaction) (txs []blockatlas.Tx) {
 			txs = append(txs, blockatlas.Tx{
 				ID:       t.ID,
 				Coin:     coin.VET,
-				From:     common.Checksum(transfer.Sender),
-				To:       common.Checksum(transfer.Recipient),
+				From:     util.Checksum(transfer.Sender),
+				To:       util.Checksum(transfer.Recipient),
 				Fee:      fee,
 				Date:     time,
 				Type:     blockatlas.TxTransfer,
