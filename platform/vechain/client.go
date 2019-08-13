@@ -4,20 +4,40 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/sirupsen/logrus"
+	"github.com/trustwallet/blockatlas/client"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 )
 
+//Client model contains client instance and base url
 type Client struct {
 	HTTPClient *http.Client
 	URL        string
 }
 
+// GetCurrentBlockInfo get request function which returns current  blockchain status model
+func (c *Client) GetCurrentBlockInfo() (cbi *CurrentBlockInfo, err error) {
+	err = client.Request(c.HTTPClient, c.URL, "clientInit", url.Values{}, &cbi)
+
+	return cbi, err
+}
+
+// GetBlockByNumber get request function which returns block model requested by number
+func (c *Client) GetBlockByNumber(num int64) (block *Block, err error) {
+	path := fmt.Sprintf("blocks/%d", num)
+
+	err = client.Request(c.HTTPClient, c.URL, path, url.Values{}, &block)
+
+	return block, err
+}
+
+// GetTransactions get request function which returns a VET transfer transactions for given address
 func (c *Client) GetTransactions(address string) (TransferTx, error) {
 	var transfers TransferTx
 
-	url := fmt.Sprintf("%s/transactions?address=%s&count=25&offset=0", c.URL, address)
-	resp, err := c.HTTPClient.Get(url)
+	path := fmt.Sprintf("%s/transactions?address=%s&count=25&offset=0", c.URL, address)
+	resp, err := c.HTTPClient.Get(path)
 	if err != nil {
 		logrus.WithError(err).Error("VeChain: Failed HTTP get transactions")
 		return transfers, err
@@ -39,13 +59,14 @@ func (c *Client) GetTransactions(address string) (TransferTx, error) {
 	return transfers, nil
 }
 
+// GetTokenTransfers get request function which returns a token transfer transactions for given address
 func (c *Client) GetTokenTransfers(address string) (TokenTransferTxs, error) {
 	var transfers TokenTransferTxs
 
 	url := fmt.Sprintf("%s/tokenTransfers?address=%s&count=25&offset=0", c.URL, address)
 	resp, err := c.HTTPClient.Get(url)
 	if err != nil {
-		logrus.WithError(err).Error("VeChain: Failed HTTP get token trasnfer transactions")
+		logrus.WithError(err).Error("VeChain: Failed HTTP get token transfer transactions")
 		return transfers, err
 	}
 	defer resp.Body.Close()
@@ -65,19 +86,20 @@ func (c *Client) GetTokenTransfers(address string) (TokenTransferTxs, error) {
 	return transfers, nil
 }
 
-func (c *Client) GetTransactionReceipt(id string) (*TransferReceipt, error) {
-	url := fmt.Sprintf("%s/transactions/%s", c.URL, id)
-	resp, err := c.HTTPClient.Get(url)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
+// GetTransactionReceipt get request function which returns a transaction for given id and parses it to TransferReceipt
+func (c *Client) GetTransactionReceipt(id string) (receipt *TransferReceipt, err error) {
+	path := fmt.Sprintf("transactions/%s", id)
 
-	var receipt TransferReceipt
-	err = json.NewDecoder(resp.Body).Decode(&receipt)
-	if err != nil {
-		return nil, err
-	}
+	err = client.Request(c.HTTPClient, c.URL, path, url.Values{}, &receipt)
 
-	return &receipt, nil
+	return receipt, err
+}
+
+// GetTransactionByID get request function which returns a transaction for given id and parses it to NativeTransaction
+func (c *Client) GetTransactionByID(id string) (transaction *NativeTransaction, err error) {
+	path := fmt.Sprintf("transactions/%s", id)
+
+	err = client.Request(c.HTTPClient, c.URL, path, url.Values{}, &transaction)
+
+	return transaction, err
 }
