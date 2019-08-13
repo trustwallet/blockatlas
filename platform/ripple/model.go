@@ -1,8 +1,6 @@
 package ripple
 
 import (
-	"encoding/json"
-
 	"github.com/trustwallet/blockatlas"
 )
 
@@ -19,19 +17,24 @@ type Tx struct {
 	LedgerIndex uint64  `json:"ledger_index"`
 	LedgerHash  string  `json:"ledger_hash"`
 	Payment     Payment `json:"tx"`
+	Meta        Meta    `json:"meta"`
 }
 
 type Payment struct {
 	TransactionType string            `json:"string"`
 	Flags           uint64            `json:"Flags"`
 	Sequence        uint64            `json:"Sequence"`
-	Amount          json.RawMessage   `json:"Amount"`
+	Amount          string            `json:"Amount"`
 	Fee             blockatlas.Amount `json:"Fee"`
 	SigningPubKey   string            `json:"SigningPubKey"`
 	TxnSignature    string            `json:"TxnSignature"`
 	Account         string            `json:"Account"`
 	Destination     string            `json:"Destination"`
 	DestinationTag  int64             `json:"DestinationTag,omitempty"`
+}
+
+type Meta struct {
+	DeliveredAmount string `json:"delivered_amount"`
 }
 
 type LedgerResponse struct {
