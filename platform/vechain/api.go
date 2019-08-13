@@ -223,7 +223,7 @@ func NormalizeTransfer(receipt *TransferReceipt, clause *Clause) (tx blockatlas.
 		Meta: blockatlas.Transfer{
 			Value:    blockatlas.Amount(valueBase10),
 			Symbol:   coin.Coins[coin.VET].Symbol,
-			Decimals: coin.Coins[coin.VET].Decimals,
+			Decimals: 18,
 		},
 	}, true
 }
@@ -258,7 +258,7 @@ func NormalizeTokenTransfer(t *TokenTransfer, receipt *TransferReceipt) (tx bloc
 			Name:     GasName,
 			Symbol:   GasSymbol,
 			TokenID:  GasContract,
-			Decimals: coin.Coins[coin.VET].Decimals,
+			Decimals: 18,
 			Value:    value,
 			From:     from,
 			To:       to,
@@ -306,7 +306,7 @@ func NormalizeTransaction(t *NativeTransaction) (txs []blockatlas.Tx) {
 						Name:     GasName,
 						Symbol:   GasSymbol,
 						TokenID:  GasContract,
-						Decimals: coin.Coins[coin.VET].Decimals,
+						Decimals: 18,
 						Value:    value,
 						From:     from,
 						To:       to,
@@ -345,7 +345,7 @@ func NormalizeTransaction(t *NativeTransaction) (txs []blockatlas.Tx) {
 				Meta: blockatlas.Transfer{
 					Value:    blockatlas.Amount(valueBase10),
 					Symbol:   coin.Coins[coin.VET].Symbol,
-					Decimals: coin.Coins[coin.VET].Decimals,
+					Decimals: 18,
 				},
 			})
 		}

@@ -130,7 +130,8 @@ var expectedTransferTrx = blockatlas.Tx{
 	Block:    2620166,
 	Sequence: 2620166,
 	Meta: blockatlas.Transfer{
-		Value: "770000000000000000000",
+		Value:    "770000000000000000000",
+		Decimals: 18,
 	},
 }
 
@@ -146,9 +147,9 @@ var expectedVeThorTrx = blockatlas.Tx{
 	Sequence: 2620166,
 	Block:    2620166,
 	Meta: blockatlas.NativeTokenTransfer{
-		Name:     "VeThor Token",
-		Symbol:   "VTHO",
-		TokenID:  VeThorContract,
+		Name:     GasName,
+		Symbol:   GasSymbol,
+		TokenID:  GasContract,
 		Decimals: 18,
 		Value:    "250000000000000000000",
 		From:     "0xB853D6a965fBC047aaA9f04d774d53861d7eD653",
