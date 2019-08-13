@@ -25,8 +25,12 @@ func (p *Platform) Coin() coin.Coin {
 	return coin.Coins[coin.VET]
 }
 
-const VeThorContract = "0x0000000000000000000000000000456e65726779"
-const VeThorTransferEvent = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"
+const (
+	GasContract         = "0x0000000000000000000000000000456e65726779"
+	GasSymbol           = "VTHO"
+	GasName             = "VeThor Token"
+	VeThorTransferEvent = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"
+)
 
 // CurrentBlockNumber implementation of interface function which gets a current blockchain height
 func (p *Platform) CurrentBlockNumber() (int64, error) {
@@ -63,7 +67,7 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 }
 
 func (p *Platform) GetTokenTxsByAddress(address string, token string) (blockatlas.TxPage, error) {
-	if strings.ToLower(token) == VeThorContract {
+	if strings.ToLower(token) == GasContract {
 		return p.getThorTxsByAddress(address)
 	} else {
 		return nil, nil
@@ -81,7 +85,7 @@ func (p *Platform) getThorTxsByAddress(address string) ([]blockatlas.Tx, error) 
 
 	var txs []blockatlas.Tx
 	for _, t := range sourceTxs.TokenTransfers {
-		if !strings.EqualFold(t.ContractAddress, VeThorContract) {
+		if !strings.EqualFold(t.ContractAddress, GasContract) {
 			continue
 		}
 
@@ -251,10 +255,10 @@ func NormalizeTokenTransfer(t *TokenTransfer, receipt *TransferReceipt) (tx bloc
 		Status:   ReceiptStatus(receipt.Receipt.Reverted),
 		Sequence: block,
 		Meta: blockatlas.NativeTokenTransfer{
-			Name:     "VeThor Token",
-			Symbol:   "VTHO",
-			TokenID:  VeThorContract,
-			Decimals: 18,
+			Name:     GasName,
+			Symbol:   GasSymbol,
+			TokenID:  GasContract,
+			Decimals: coin.Coins[coin.VET].Decimals,
 			Value:    value,
 			From:     from,
 			To:       to,
@@ -299,10 +303,10 @@ func NormalizeTransaction(t *NativeTransaction) (txs []blockatlas.Tx) {
 					Status:   ReceiptStatus(t.Receipt.Reverted),
 					Sequence: block,
 					Meta: blockatlas.NativeTokenTransfer{
-						Name:     "VeThor Token",
-						Symbol:   "VTHO",
-						TokenID:  VeThorContract,
-						Decimals: 18,
+						Name:     GasName,
+						Symbol:   GasSymbol,
+						TokenID:  GasContract,
+						Decimals: coin.Coins[coin.VET].Decimals,
 						Value:    value,
 						From:     from,
 						To:       to,
