@@ -110,6 +110,7 @@
   handle: vechain
   name: VeChain Token
   decimals: 18
+  blockTime: 20000
   sampleAddress: '0xB5e883349e68aB59307d1604555AC890fAC47128'
 
 - id: 820

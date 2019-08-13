@@ -46,7 +46,7 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 
 	transactionsChan := p.getTransactions(block.Transactions)
 
-	var txs []blockatlas.Tx
+	txs := make([]blockatlas.Tx, 0)
 	for t := range transactionsChan {
 		txs = append(txs, NormalizeTransaction(t)...)
 	}
