@@ -43,10 +43,10 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 		return nil, err
 	}
 
-	receiptsChan := p.getTransactions(block.Transactions)
+	transactionsChan := p.getTransactions(block.Transactions)
 
 	var txs []blockatlas.Tx
-	for t := range receiptsChan {
+	for t := range transactionsChan {
 		if len(t.Receipt.Outputs) == 0 {
 			continue
 		}
@@ -64,7 +64,7 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 
 	return &blockatlas.Block{
 		Number: num,
-		ID:     block.Id,
+		ID:     block.ID,
 		Txs:    txs,
 	}, nil
 }

@@ -38,6 +38,7 @@ type Receipt struct {
 	Reverted bool   `json:"reverted"`
 }
 
+// ReceiptStatus function that describes transaction status
 func ReceiptStatus(r bool) string {
 	if r {
 		return blockatlas.StatusFailed
@@ -59,38 +60,45 @@ type TokenTransfer struct {
 	TxID            string `json:"txId"`
 }
 
+// CurrentBlockInfo type is a model with current blockchain height
 type CurrentBlockInfo struct {
 	BestBlockNum int64 `json:"bestBlockNum"`
 }
 
+// Block type is a VeChain block model
 type Block struct {
-	Id           string   `json:"Id"`
+	ID           string   `json:"Id"`
 	Transactions []string `json:"transactions"`
 }
 
+// Event type is a field in native transaction with contract call info
 type Event struct {
 	Address string   `json:"address"`
 	Topics  []string `json:"topics"`
 	Data    string   `json:"data"`
 }
 
+// Transfer type is a field in native transaction with VET transfer data
 type Transfer struct {
 	Address string   `json:"address"`
 	Topics  []string `json:"topics"`
 	Data    string   `json:"data"`
 }
 
+// Output type is a field in native transaction
 type Output struct {
 	Events    []Event    `json:"events"`
 	Transfers []Transfer `json:"transfers"`
 }
 
+// TransactionReceipt type for parsing receipt info
 type TransactionReceipt struct {
 	Outputs  []Output `json:"outputs"`
 	Paid     string   `json:"paid"`
 	Reverted bool     `json:"reverted"`
 }
 
+// NativeTransaction type for Native VeChain transaction with full transfer info
 type NativeTransaction struct {
 	Block     uint64             `json:"block"`
 	Clauses   []Clause           `json:"clauses"`
@@ -101,6 +109,7 @@ type NativeTransaction struct {
 	Timestamp int64              `json:"timestamp"`
 }
 
+// Error model for request error
 type Error struct {
 	Code    int64  `json:"code"`
 	Message string `json:"message"`

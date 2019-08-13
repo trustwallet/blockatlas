@@ -10,6 +10,7 @@ import (
 	"net/url"
 )
 
+//Client model contains client instance and base url
 type Client struct {
 	HTTPClient *http.Client
 	URL        string
@@ -31,6 +32,7 @@ func (c *Client) GetBlockByNumber(num int64) (block *Block, err error) {
 	return block, err
 }
 
+// GetTransactions get request function which returns a VET transfer transactions for given address
 func (c *Client) GetTransactions(address string) (TransferTx, error) {
 	var transfers TransferTx
 
@@ -57,6 +59,7 @@ func (c *Client) GetTransactions(address string) (TransferTx, error) {
 	return transfers, nil
 }
 
+// GetTokenTransfers get request function which returns a token transfer transactions for given address
 func (c *Client) GetTokenTransfers(address string) (TokenTransferTxs, error) {
 	var transfers TokenTransferTxs
 
@@ -83,6 +86,7 @@ func (c *Client) GetTokenTransfers(address string) (TokenTransferTxs, error) {
 	return transfers, nil
 }
 
+// GetTransactionReceipt get request function which returns a transaction for given id and parses it to TransferReceipt
 func (c *Client) GetTransactionReceipt(id string) (receipt *TransferReceipt, err error) {
 	path := fmt.Sprintf("transactions/%s", id)
 
@@ -91,6 +95,7 @@ func (c *Client) GetTransactionReceipt(id string) (receipt *TransferReceipt, err
 	return receipt, err
 }
 
+// GetTransactionByID get request function which returns a transaction for given id and parses it to NativeTransaction
 func (c *Client) GetTransactionByID(id string) (transaction *NativeTransaction, err error) {
 	path := fmt.Sprintf("transactions/%s", id)
 
