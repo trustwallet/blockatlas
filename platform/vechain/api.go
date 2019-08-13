@@ -48,9 +48,7 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 
 	var txs []blockatlas.Tx
 	for t := range transactionsChan {
-		for _, n := range NormalizeTransaction(t) {
-			txs = append(txs, n)
-		}
+		txs = append(txs, NormalizeTransaction(t)...)
 	}
 
 	return &blockatlas.Block{
@@ -313,7 +311,7 @@ func NormalizeTransaction(t *NativeTransaction) (txs []blockatlas.Tx) {
 			}
 		}
 		//Normalizes transfers in given transaction
-		for transferIndex, _ := range output.Transfers {
+		for transferIndex := range output.Transfers {
 			feeBase10, err := util.HexToDecimal(t.Receipt.Paid)
 			if err != nil {
 				continue

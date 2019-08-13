@@ -272,23 +272,22 @@ func TestNormalizeTransaction(t *testing.T) {
 		}
 
 		var readyTxs []blockatlas.Tx
-		for _, tx := range NormalizeTransaction(&transaction) {
-			readyTxs = append(readyTxs, tx)
-		}
+
+		readyTxs = append(readyTxs, NormalizeTransaction(&transaction)...)
 
 		actual, err := json.Marshal(&readyTxs)
 		if err != nil {
 			t.Fatal(err)
 		}
 
-		expectedTransaction, err := json.Marshal(&test.ExpectedTransaction)
+		expectedTransactions, err := json.Marshal(&test.ExpectedTransaction)
 		if err != nil {
 			t.Fatal(err)
 		}
 
-		if !bytes.Equal(actual, expectedTransaction) {
+		if !bytes.Equal(actual, expectedTransactions) {
 			println(string(actual))
-			println(string(expectedTransaction))
+			println(string(expectedTransactions))
 			t.Error("Transactions not equal")
 		}
 	}
