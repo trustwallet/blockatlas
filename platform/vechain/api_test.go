@@ -272,9 +272,9 @@ func TestNormalizeTransaction(t *testing.T) {
 		}
 
 		var readyTxs []blockatlas.Tx
-		normalizeTransactionByType(&transaction, func(tx blockatlas.Tx) {
+		for _, tx := range NormalizeTransaction(&transaction) {
 			readyTxs = append(readyTxs, tx)
-		})
+		}
 
 		actual, err := json.Marshal(&readyTxs)
 		if err != nil {
