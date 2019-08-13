@@ -80,9 +80,9 @@ type Event struct {
 
 // Transfer type is a field in native transaction with VET transfer data
 type Transfer struct {
-	Sender string   `json:"sender"`
-	Recipient  string `json:"recipient"`
-	Amount    string   `json:"amount"`
+	Sender    string `json:"sender"`
+	Recipient string `json:"recipient"`
+	Amount    string `json:"amount"`
 }
 
 // Output type is a field in native transaction

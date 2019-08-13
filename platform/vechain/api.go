@@ -48,7 +48,7 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 
 	var txs []blockatlas.Tx
 	for t := range transactionsChan {
-		normalizeTransactionByType(t, func (tx blockatlas.Tx){
+		normalizeTransactionByType(t, func(tx blockatlas.Tx) {
 			txs = append(txs, tx)
 		})
 	}
@@ -60,8 +60,8 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 	}, nil
 }
 
-func normalizeTransactionByType(t *NativeTransaction, append func (tx blockatlas.Tx)) {
-	for outputIndex, output := range t.Receipt.Outputs{
+func normalizeTransactionByType(t *NativeTransaction, append func(tx blockatlas.Tx)) {
+	for outputIndex, output := range t.Receipt.Outputs {
 		for eventIndex, event := range output.Events {
 			if len(event.Topics) == 3 && event.Topics[0] == VeThorTransferEvent {
 				if tx, ok := NormalizeTokenTransaction(t, outputIndex, eventIndex); ok {
@@ -280,6 +280,7 @@ func NormalizeTokenTransfer(t *TokenTransfer, receipt *TransferReceipt) (tx bloc
 		},
 	}, true
 }
+
 // NormalizeTokenTransaction converts a VeChain VTHO token transaction into the generic model
 func NormalizeTokenTransaction(t *NativeTransaction, outputIndex int, eventIndex int) (tx blockatlas.Tx, ok bool) {
 	feeBase10, err := util.HexToDecimal(t.Receipt.Paid)

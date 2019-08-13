@@ -257,8 +257,8 @@ func TestNormalizeTokenTransfer(t *testing.T) {
 
 func TestNormalizeTransaction(t *testing.T) {
 	var tests = []struct {
-		Transaction string
-		ExpectedTransaction    []blockatlas.Tx
+		Transaction         string
+		ExpectedTransaction []blockatlas.Tx
 	}{
 		{transaction, []blockatlas.Tx{expectedVeThorTrx, expectedTransferTrx}},
 	}
@@ -272,7 +272,7 @@ func TestNormalizeTransaction(t *testing.T) {
 		}
 
 		var readyTxs []blockatlas.Tx
-		normalizeTransactionByType(&transaction, func (tx blockatlas.Tx){
+		normalizeTransactionByType(&transaction, func(tx blockatlas.Tx) {
 			readyTxs = append(readyTxs, tx)
 		})
 
@@ -293,4 +293,3 @@ func TestNormalizeTransaction(t *testing.T) {
 		}
 	}
 }
-
