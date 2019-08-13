@@ -4,10 +4,9 @@ import (
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
-	"github.com/valyala/fastjson"
 	"net/http"
-	"time"
 	"strconv"
+	"time"
 )
 
 type Platform struct {
@@ -71,16 +70,6 @@ func NormalizeTxs(srcTxs []Tx) (txs []blockatlas.Tx) {
 
 // Normalize converts a Ripple transaction into the generic model
 func NormalizeTx(srcTx *Tx) (tx blockatlas.Tx, ok bool) {
-	// Only accept XRP payments (typeof tx.amount === 'string')
-	var p fastjson.Parser
-	v, pErr := p.ParseBytes(srcTx.Payment.Amount)
-	if pErr != nil {
-		return tx, false
-	}
-	if v.Type() != fastjson.TypeString {
-		return tx, false
-	}
-	srcAmount := string(v.GetStringBytes())
 
 	date, err := time.Parse("2006-01-02T15:04:05-07:00", srcTx.Date)
 	var unix int64
@@ -90,7 +79,7 @@ func NormalizeTx(srcTx *Tx) (tx blockatlas.Tx, ok bool) {
 		unix = date.Unix()
 	}
 
-	result :=  blockatlas.Tx{
+	result := blockatlas.Tx{
 		ID:    srcTx.Hash,
 		Coin:  coin.XRP,
 		Date:  unix,
@@ -99,7 +88,7 @@ func NormalizeTx(srcTx *Tx) (tx blockatlas.Tx, ok bool) {
 		Fee:   srcTx.Payment.Fee,
 		Block: srcTx.LedgerIndex,
 		Meta: blockatlas.Transfer{
-			Value:    blockatlas.Amount(srcAmount),
+			Value:    blockatlas.Amount(srcTx.Meta.DeliveredAmount),
 			Symbol:   coin.Coins[coin.XRP].Symbol,
 			Decimals: coin.Coins[coin.XRP].Decimals,
 		},
