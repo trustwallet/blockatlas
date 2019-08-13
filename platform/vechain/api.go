@@ -46,7 +46,7 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 
 	transactionsChan := p.getTransactions(block.Transactions)
 
-	var txs []blockatlas.Tx
+	txs := make([]blockatlas.Tx, 0)
 	for t := range transactionsChan {
 		txs = append(txs, NormalizeTransaction(t)...)
 	}
@@ -283,8 +283,8 @@ func NormalizeTransaction(t *NativeTransaction) (txs []blockatlas.Tx) {
 				value := blockatlas.Amount(valueBase10)
 				fromHex := t.Receipt.Outputs[outputIndex].Events[eventIndex].Topics[1]
 				toHex := t.Receipt.Outputs[outputIndex].Events[eventIndex].Topics[2]
-				from := formatHexToAddress(fromHex)
-				to := formatHexToAddress(toHex)
+				from := util.Checksum(formatHexToAddress(fromHex))
+				to := util.Checksum(formatHexToAddress(toHex))
 				block := t.Block
 
 				txs = append(txs, blockatlas.Tx{
@@ -330,8 +330,8 @@ func NormalizeTransaction(t *NativeTransaction) (txs []blockatlas.Tx) {
 			txs = append(txs, blockatlas.Tx{
 				ID:       t.ID,
 				Coin:     coin.VET,
-				From:     transfer.Sender,
-				To:       transfer.Recipient,
+				From:     util.Checksum(transfer.Sender),
+				To:       util.Checksum(transfer.Recipient),
 				Fee:      fee,
 				Date:     time,
 				Type:     blockatlas.TxTransfer,
