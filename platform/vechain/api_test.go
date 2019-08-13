@@ -331,7 +331,7 @@ func TestNormalizeTransaction(t *testing.T) {
 		}
 
 		var readyTx blockatlas.Tx
-		normTx, ok := NormalizeTransaction(&transaction)
+		normTx, ok := NormalizeTransaction(&transaction, 0, 0)
 		if !ok {
 			t.Fatal("VeChain: Can't normalize transaction", readyTx)
 		}
@@ -372,7 +372,7 @@ func TestNormalizeTokenTransaction(t *testing.T) {
 		}
 
 		var readyTx blockatlas.Tx
-		normTx, ok := NormalizeTokenTransaction(&tokenTransaction)
+		normTx, ok := NormalizeTokenTransaction(&tokenTransaction, 0, 0)
 		if !ok {
 			t.Fatal("VeChain: Can't normalize token transaction", readyTx)
 		}

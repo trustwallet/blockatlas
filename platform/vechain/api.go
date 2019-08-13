@@ -26,6 +26,7 @@ func (p *Platform) Coin() coin.Coin {
 }
 
 const VeThorContract = "0x0000000000000000000000000000456e65726779"
+const VeThorTransferEvent = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"
 
 // CurrentBlockNumber implementation of interface function which gets a current blockchain height
 func (p *Platform) CurrentBlockNumber() (int64, error) {
@@ -47,19 +48,9 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 
 	var txs []blockatlas.Tx
 	for t := range transactionsChan {
-		if len(t.Receipt.Outputs) == 0 {
-			continue
-		}
-		if len(t.Receipt.Outputs[0].Events) == 0 {
-			if tx, ok := NormalizeTransaction(t); ok {
-				txs = append(txs, tx)
-			}
-		} else if len(t.Receipt.Outputs[0].Transfers) == 0 &&
-			t.Receipt.Outputs[0].Events[0].Address == VeThorContract {
-			if tx, ok := NormalizeTokenTransaction(t); ok {
-				txs = append(txs, tx)
-			}
-		}
+		normalizeTransactionByType(t, func (tx blockatlas.Tx){
+			txs = append(txs, tx)
+		})
 	}
 
 	return &blockatlas.Block{
@@ -67,6 +58,23 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 		ID:     block.ID,
 		Txs:    txs,
 	}, nil
+}
+
+func normalizeTransactionByType(t *NativeTransaction, append func (tx blockatlas.Tx)) {
+	for outputIndex, output := range t.Receipt.Outputs{
+		for eventIndex, event := range output.Events {
+			if len(event.Topics) == 3 && event.Topics[0] == VeThorTransferEvent {
+				if tx, ok := NormalizeTokenTransaction(t, outputIndex, eventIndex); ok {
+					append(tx)
+				}
+			}
+		}
+		for transferIndex, _ := range output.Transfers {
+			if tx, ok := NormalizeTransaction(t, outputIndex, transferIndex); ok {
+				append(tx)
+			}
+		}
+	}
 }
 
 func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
@@ -195,6 +203,13 @@ func (p *Platform) getTxsByAddress(address string) ([]blockatlas.Tx, error) {
 	return txs, nil
 }
 
+func formatHexToAddress(hex string) string {
+	if len(hex) > 26 {
+		return "0x" + hex[26:]
+	}
+	return hex
+}
+
 func NormalizeTransfer(receipt *TransferReceipt, clause *Clause) (tx blockatlas.Tx, ok bool) {
 	feeBase10, err := util.HexToDecimal(receipt.Receipt.Paid)
 	if err != nil {
@@ -266,27 +281,22 @@ func NormalizeTokenTransfer(t *TokenTransfer, receipt *TransferReceipt) (tx bloc
 	}, true
 }
 // NormalizeTokenTransaction converts a VeChain VTHO token transaction into the generic model
-func NormalizeTokenTransaction(t *NativeTransaction) (tx blockatlas.Tx, ok bool) {
+func NormalizeTokenTransaction(t *NativeTransaction, outputIndex int, eventIndex int) (tx blockatlas.Tx, ok bool) {
 	feeBase10, err := util.HexToDecimal(t.Receipt.Paid)
 	if err != nil {
 		return tx, false
 	}
 
-	if len(t.Receipt.Outputs) == 0 ||
-		len(t.Receipt.Outputs[0].Events) == 0 ||
-		len(t.Receipt.Outputs[0].Events[0].Topics) != 3 {
-		return tx, false
-	}
-	valueBase10, err := util.HexToDecimal(t.Receipt.Outputs[0].Events[0].Data)
+	valueBase10, err := util.HexToDecimal(t.Receipt.Outputs[outputIndex].Events[eventIndex].Data)
 	if err != nil {
 		return tx, false
 	}
 	fee := blockatlas.Amount(feeBase10)
 	value := blockatlas.Amount(valueBase10)
-	fromHex := t.Receipt.Outputs[0].Events[0].Topics[1]
-	toHex := t.Receipt.Outputs[0].Events[0].Topics[2]
-	from := "0x" + fromHex[26:]
-	to := "0x" + toHex[26:]
+	fromHex := t.Receipt.Outputs[outputIndex].Events[eventIndex].Topics[1]
+	toHex := t.Receipt.Outputs[outputIndex].Events[eventIndex].Topics[2]
+	from := formatHexToAddress(fromHex)
+	to := formatHexToAddress(toHex)
 	block := t.Block
 
 	return blockatlas.Tx{
@@ -311,16 +321,16 @@ func NormalizeTokenTransaction(t *NativeTransaction) (tx blockatlas.Tx, ok bool)
 		},
 	}, true
 }
+
 // NormalizeTransaction converts a VeChain transaction into the generic model
-func NormalizeTransaction(t *NativeTransaction) (tx blockatlas.Tx, ok bool) {
+func NormalizeTransaction(t *NativeTransaction, outputIndex int, transferIndex int) (tx blockatlas.Tx, ok bool) {
 	feeBase10, err := util.HexToDecimal(t.Receipt.Paid)
 	if err != nil {
 		return tx, false
 	}
-	if len(t.Clauses) == 0 {
-		return tx, false
-	}
-	valueBase10, err := util.HexToDecimal(t.Clauses[0].Value)
+
+	transfer := t.Receipt.Outputs[outputIndex].Transfers[transferIndex]
+	valueBase10, err := util.HexToDecimal(transfer.Amount)
 	if err != nil {
 		return tx, false
 	}
@@ -332,8 +342,8 @@ func NormalizeTransaction(t *NativeTransaction) (tx blockatlas.Tx, ok bool) {
 	return blockatlas.Tx{
 		ID:       t.ID,
 		Coin:     coin.VET,
-		From:     t.Origin,
-		To:       t.Clauses[0].To,
+		From:     transfer.Sender,
+		To:       transfer.Recipient,
 		Fee:      fee,
 		Date:     time,
 		Type:     blockatlas.TxTransfer,
