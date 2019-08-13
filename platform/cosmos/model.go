@@ -1,5 +1,26 @@
 package cosmos
 
+import (
+	"encoding/json"
+)
+
+// Types of messages
+const (
+	MsgSend                        = "cosmos-sdk/MsgSend"
+	MsgMultiSend                   = "cosmos-sdk/MsgMultiSend"
+	MsgCreateValidator             = "cosmos-sdk/MsgCreateValidator"
+	MsgDelegate                    = "cosmos-sdk/MsgDelegate"
+	MsgUndelegate                  = "cosmos-sdk/MsgUndelegate"
+	MsgBeginRedelegate             = "cosmos-sdk/MsgBeginRedelegate"
+	MsgWithdrawDelegationReward    = "cosmos-sdk/MsgWithdrawDelegationReward"
+	MsgWithdrawValidatorCommission = "cosmos-sdk/MsgWithdrawValidatorCommission"
+	MsgSubmitProposal              = "cosmos-sdk/MsgSubmitProposal"
+	MsgDeposit                     = "cosmos-sdk/MsgDeposit"
+	MsgVote                        = "cosmos-sdk/MsgVote"
+	TextProposal                   = "cosmos-sdk/TextProposal"
+	MsgUnjail                      = "cosmos-sdk/MsgUnjail"
+)
+
 // Tx - Base transaction object. Always returned as part of an array
 type Tx struct {
 	Block string `json:"height"`
@@ -22,14 +43,22 @@ type Contents struct {
 
 // Message - an array that holds multiple 'particulars' entries. Possibly used for multiple transfers in one transaction?
 type Message struct {
-	Particulars Particulars `json:"value"`
+	Type  string
+	Value interface{}
 }
 
-// Particulars - from, to, and amount
-type Particulars struct {
+// MessageValueTransfer - from, to, and amount
+type MessageValueTransfer struct {
 	FromAddr string   `json:"from_address"`
 	ToAddr   string   `json:"to_address"`
-	Amount   []Amount `json:"amount"`
+	Amount   []Amount `json:"amount,omitempty"`
+}
+
+// MessageValueDelegate - from, to, and amount
+type MessageValueDelegate struct {
+	DelegatorAddr string `json:"delegator_address"`
+	ValidatorAddr string `json:"validator_address"`
+	Amount        Amount `json:"amount"`
 }
 
 // Fee - also references the "amount" struct
@@ -59,4 +88,46 @@ type CosmosValidator struct {
 type StakingPool struct {
 	NotBondedTokens string `json:"not_bonded_tokens"`
 	BondedTokens    string `json:"bonded_tokens"`
+}
+
+// Block - top object of get las block request
+type Block struct {
+	Meta BlockMeta `json:"block_meta"`
+}
+
+//BlockMeta - "Block" sub object
+type BlockMeta struct {
+	Header BlockHeader `json:"header"`
+}
+
+//BlockHeader - "BlockMeta" sub object, height
+type BlockHeader struct {
+	Height string `json:"height"`
+}
+
+//UnmarshalJSON reads different message types
+func (m *Message) UnmarshalJSON(buf []byte) error {
+	var messageInternal struct {
+		Type  string          `json:"type"`
+		Value json.RawMessage `json:"value"`
+	}
+
+	err := json.Unmarshal(buf, &messageInternal)
+	if err != nil {
+		return err
+	}
+
+	m.Type = messageInternal.Type
+
+	switch messageInternal.Type {
+	case MsgUndelegate, MsgDelegate:
+		var msgDelegate MessageValueDelegate
+		err = json.Unmarshal(messageInternal.Value, &msgDelegate)
+		m.Value = msgDelegate
+	case MsgSend:
+		var msgTransfer MessageValueTransfer
+		err = json.Unmarshal(messageInternal.Value, &msgTransfer)
+		m.Value = msgTransfer
+	}
+	return err
 }

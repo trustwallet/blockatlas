@@ -8,12 +8,30 @@ const (
 	TxCollectibleTransfer = "collectible_transfer"
 	TxTokenSwap           = "token_swap"
 	TxContractCall        = "contract_call"
+	TxAnyAction           = "any_action"
 )
 
 // Types of transaction statuses
 const (
 	StatusCompleted = "completed"
 	StatusFailed    = "failed"
+)
+
+// Titles of AnyAction meta
+const (
+	AnyActionDelegation   = "Delegation"
+	AnyActionUndelegation = "Undelegation"
+)
+
+// Keys of AnyAction meta
+const (
+	KeyPlaceOrder    = "place_order"
+	KeyCancelOrder   = "cancel_order"
+	KeyIssueToken    = "issue_token"
+	KeyBurnToken     = "burn_token"
+	KeyMintToken     = "mint_token"
+	KeyApproveToken  = "approve_token"
+	KeyStakeDelegate = "stake_delegate"
 )
 
 // TxPerPage says how many transactions to return per page
@@ -111,6 +129,18 @@ type ContractCall struct {
 	Value string `json:"value"`
 }
 
+// AnyAction describes all other types
+type AnyAction struct {
+	Coin     uint   `json:"coin"`
+	Title    string `json:"title"`
+	Key      string `json:"key"`
+	TokenID  string `json:"tokenID,omitempty"`
+	Name     string `json:"name"`
+	Symbol   string `json:"symbol"`
+	Decimals uint   `json:"decimals"`
+	Value    Amount `json:"value"`
+}
+
 // TokenPage is a page of transactions.
 type TokenPage []Token
 
@@ -126,7 +156,7 @@ type Token struct {
 
 func (t *Tx) GetAddresses() (addresses []string) {
 	switch t.Meta.(type) {
-	case Transfer, *Transfer, CollectibleTransfer, *CollectibleTransfer, ContractCall, *ContractCall:
+	case Transfer, *Transfer, CollectibleTransfer, *CollectibleTransfer, ContractCall, *ContractCall, AnyAction, *AnyAction:
 		return append(addresses, t.From, t.To)
 	case NativeTokenTransfer:
 		return append(addresses, t.Meta.(NativeTokenTransfer).From, t.Meta.(NativeTokenTransfer).To)
