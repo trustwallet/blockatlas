@@ -87,3 +87,18 @@ func (c *Client) CurrentBlockNumber() (num int64, err error) {
 
 	return num, nil
 }
+
+func (c *Client) GetPool() (result StakingPool, err error) {
+	return result, client.Request(c.HTTPClient, c.BaseURL, "staking/pool", url.Values{}, &result)
+}
+
+func (c *Client) GetInflation() (float64, error) {
+	var result string
+
+	err := client.Request(c.HTTPClient, c.BaseURL, "minting/inflation", url.Values{}, &result)
+
+	s, err := strconv.ParseFloat(result, 32)
+
+	return s, err
+}
+

@@ -303,6 +303,12 @@ var unDelegateDst = blockatlas.Tx{
 	},
 }
 
+var stakingPool = StakingPool{"1222", "200"}
+
+var cosmosValidator = CosmosValidator{Commission: CosmosCommission{Rate: "0.4"}}
+
+var inflation = 0.7
+
 func TestNormalize(t *testing.T) {
 	testNormalize(t, transferSrc, &transferDst)
 	testNormalize(t, delegateSrc, &delegateDst)
@@ -342,9 +348,17 @@ func TestNormalizeValidator(t *testing.T) {
 	expected := blockatlas.Validator{
 		Status: true,
 		ID:     v.Operator_Address,
+		Reward: blockatlas.StakingReward{Annual: 435.48749999999995},
 	}
 
-	result := normalizeValidator(v, coin)
+	result := normalizeValidator(v, stakingPool, inflation, coin)
 
 	assert.Equal(t, result, expected)
+}
+
+func TestCalculateAnnualReward(t *testing.T) {
+
+	result := CalculateAnnualReward(StakingPool{"1222", "200"}, inflation, CosmosValidator{Commission: CosmosCommission{Rate: "0.4"}})
+
+	assert.Equal(t, result, 298.61999703347686)
 }
