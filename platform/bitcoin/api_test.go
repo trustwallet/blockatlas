@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"testing"
 
+	"github.com/deckarep/golang-set"
 	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
 )
@@ -97,5 +98,58 @@ func TestNormalizeTransfer(t *testing.T) {
 			println(string(expected))
 			t.Error("Transactions not equal")
 		}
+	}
+}
+
+func TestInferDirectionSelf(t *testing.T) {
+	set := mapset.NewSet()
+	set.Add("3FjBW1KL9L8aYtdKzJ8FhCNxmXB7dXDRw4")
+	set.Add("3QJmV3qfvL9SuYo34YihAf3sRCW3qSinyC")
+	direction := inferDirection(&expectedTx, set)
+
+	if direction != blockatlas.DirectionSelf {
+		t.Error("direction is not self")
+	}
+}
+
+func TestInferDirection(t *testing.T) {
+	// zpub: zpub6r9CEhEkruYbEcu2yQCaRKQ1qufTa4zLrx6ezs31P627UpAepVNBE2td3d3mHnSaXyRbwksRwDJGzLBWQeZPFMut8N3BvXpcwRwEWGEwAnq
+	set := mapset.NewSet()
+	set.Add("bc1qfrrncxmf7skye2glyef95xlpmrlmf2e8qlav2l")
+	set.Add("bc1qxm90n0rxkadhdkvglev56k60qths73luzlnn7a")
+	set.Add("bc1q2sykr9c342mjpm9mwnps8ksk6e35lz75rpdlfe")
+	set.Add("bc1qs86ucvr3unce2grvfp77433npy66nzha9w0e3c")
+
+	inputs1 := []string{"bc1q2sykr9c342mjpm9mwnps8ksk6e35lz75rpdlfe"}
+	outputs1 := []string{"bc1q6wf7tj62f0uwr6almah3666th2ejefdg72ek6t"}
+	tx1 := blockatlas.Tx{
+		Inputs:  inputs1,
+		Outputs: outputs1,
+	}
+	direction1 := inferDirection(&tx1, set)
+
+	if direction1 != blockatlas.DirectionOutgoing {
+		t.Error("direction is not outgoing")
+	}
+
+	inputs2 := []string{
+		"3CgvDkzcJ7yMZe75jNBem6Bj6nkMAWwMEf",
+		"3LyzYcB54pm9EAMmzXpFfb1kzEDAFvqBgT",
+		"3Q6DYour5q5WdMhyXsyPgBeAqPCXchzCsF",
+		"3JZZM1rwst7G5izxbFL7KNvy7ZiZ47SVqG",
+	}
+	outputs2 := []string{
+		"139f1CrnLWvVajGzs3ZtpQhbGWxM599sho",
+		"3LyzYcB54pm9EAMmzXpFfb1kzEDAFvqBgT",
+		"bc1q9mx5tm66zs7epa4skvyuf2vfuwmtnlttj74cnl",
+	}
+	tx2 := blockatlas.Tx{
+		Inputs:  inputs2,
+		Outputs: outputs2,
+	}
+
+	direction2 := inferDirection(&tx2, set)
+	if direction2 != blockatlas.DirectionIncoming {
+		t.Error("direction is not incoming")
 	}
 }

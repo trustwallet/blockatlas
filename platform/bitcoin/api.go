@@ -5,6 +5,7 @@ import (
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
+	"github.com/deckarep/golang-set"
 	"net/http"
 )
 
@@ -63,7 +64,13 @@ func (p *Platform) getTxsByXPub(xpub string) ([]blockatlas.Tx, error) {
 		return []blockatlas.Tx{}, err
 	}
 
-	return NormalizeTxs(sourceTxs, p.CoinIndex), nil
+	addressSet := mapset.NewSet()
+	for _, token := range sourceTxs.Tokens {
+		addressSet.Add(token.Name)
+	}
+
+	txs := NormalizeTxs(sourceTxs, p.CoinIndex, addressSet)
+	return txs, nil
 }
 
 func (p *Platform) getTxsByAddress(address string) ([]blockatlas.Tx, error) {
@@ -71,14 +78,17 @@ func (p *Platform) getTxsByAddress(address string) ([]blockatlas.Tx, error) {
 	if err != nil {
 		return []blockatlas.Tx{}, err
 	}
-
-	return NormalizeTxs(sourceTxs, p.CoinIndex), nil
+	addressSet := mapset.NewSet()
+	addressSet.Add(address)
+	txs := NormalizeTxs(sourceTxs, p.CoinIndex, addressSet)
+	return txs, nil
 }
 
-func NormalizeTxs(sourceTxs TransactionsList, coinIndex uint) []blockatlas.Tx {
+func NormalizeTxs(sourceTxs TransactionsList, coinIndex uint, addressSet mapset.Set) []blockatlas.Tx {
 	var txs []blockatlas.Tx
 	for _, transaction := range sourceTxs.Transactions {
 		if tx, ok := NormalizeTransfer(&transaction, coinIndex); ok {
+			tx.Direction = inferDirection(&tx, addressSet)
 			txs = append(txs, tx)
 		}
 	}
@@ -132,4 +142,25 @@ func parseOutputs(outputs []Output) (addresses []string) {
 		}
 	}
 	return result
+}
+
+func inferDirection(tx *blockatlas.Tx, addressSet mapset.Set) (string) {
+	inputSet := mapset.NewSet()
+	for _, address := range tx.Inputs {
+		inputSet.Add(address)
+	}
+	outputSet := mapset.NewSet()
+	for _, address := range tx.Outputs {
+		outputSet.Add(address)
+	}
+	intersect := addressSet.Intersect(inputSet)
+	if intersect.Cardinality() == 0 {
+		return blockatlas.DirectionIncoming
+	} else {
+		if outputSet.IsProperSubset(addressSet) {
+			return blockatlas.DirectionSelf
+		} else {
+			return blockatlas.DirectionOutgoing
+		}
+	}
 }

@@ -15,6 +15,10 @@ const (
 const (
 	StatusCompleted = "completed"
 	StatusFailed    = "failed"
+
+	DirectionOutgoing = "outgoing"
+	DirectionIncoming = "incoming"
+	DirectionSelf     = "yourself"
 )
 
 // Titles of AnyAction meta
@@ -69,10 +73,12 @@ type Tx struct {
 	Sequence uint64 `json:"sequence,omitempty"`
 	// Type of metadata
 	Type string `json:"type"`
-	//Input addresses
+	// Input addresses
 	Inputs []string `json:"inputs,omitempty"`
-	//Output addresses
+	// Output addresses
 	Outputs []string `json:"outputs,omitempty"`
+	// Transaction Direction
+	Direction string `json:"direction,omitempty"`
 	// Meta data object
 	Memo string      `json:"memo"`
 	Meta interface{} `json:"metadata"`
