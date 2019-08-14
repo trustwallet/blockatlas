@@ -64,7 +64,8 @@ func (c *Client) GetTokenTransfers(address string) (TokenTransferTxs, error) {
 
 // GetTransactionReceipt get request function which returns a transaction for given id and parses it to TransferReceipt
 func (c *Client) GetTransactionReceipt(id string) (receipt *TransferReceipt, err error) {
-	err = c.Request.Get(&receipt, c.URL, id, nil)
+	path := fmt.Sprintf("transactions/%s", id)
+	err = c.Request.Get(&receipt, c.URL, path, nil)
 
 	return receipt, err
 }
