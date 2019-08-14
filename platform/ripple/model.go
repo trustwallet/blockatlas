@@ -24,7 +24,6 @@ type Payment struct {
 	TransactionType string            `json:"string"`
 	Flags           uint64            `json:"Flags"`
 	Sequence        uint64            `json:"Sequence"`
-	Amount          string            `json:"Amount"`
 	Fee             blockatlas.Amount `json:"Fee"`
 	SigningPubKey   string            `json:"SigningPubKey"`
 	TxnSignature    string            `json:"TxnSignature"`
