@@ -37,38 +37,6 @@ const paymentSrc = `
 	},
 	"meta": {
 		"TransactionIndex": 20,
-		"AffectedNodes": [
-			{
-				"CreatedNode": {
-					"LedgerEntryType": "AccountRoot",
-					"LedgerIndex": "564241023DCB6F74760910F17F78B179AEC159C701BBACD99A1D3259D77D3CFF",
-					"NewFields": {
-						"Sequence": 1,
-						"Balance": "100000000",
-						"Account": "rMQ98K56yXJbDGv49ZSmW51sLn94Xe1mu1"
-					}
-				}
-			},
-			{
-				"ModifiedNode": {
-					"LedgerEntryType": "AccountRoot",
-					"PreviousTxnLgrSeq": 34698098,
-					"PreviousTxnID": "7040A099F51E0DC386B909FB4C01DCCF23CB61D3D05B0EC562C01359FB60C754",
-					"LedgerIndex": "D242D4E3501E5829AB003BA788CF361D4717419D9653304E556A14C6166847E8",
-					"PreviousFields": {
-						"Sequence": 21,
-						"Balance": "1999935364"
-					},
-					"FinalFields": {
-						"Flags": 0,
-						"Sequence": 22,
-						"OwnerCount": 0,
-						"Balance": "1899932249",
-						"Account": "rGSxFjoqmWz54PycrgQBQ5dB6e7TUpMxzq"
-					}
-				}
-			}
-		],
 		"TransactionResult": "tesSUCCESS",
 		"delivered_amount": "100000000"
 	}
@@ -90,6 +58,61 @@ var paymentDst = blockatlas.Tx{
 	},
 }
 
+const paymentSrc2 = `
+{
+   "hash":"3D8512E02414EF5A6BC00281D945735E85DED9EF739B1DCA9EABE04D9EEC72C1",
+   "ledger_index":49163909,
+   "date":"2019-08-06T17:58:01+00:00",
+   "tx":{
+      "TransactionType":"Payment",
+      "Flags":2147614720,
+      "Sequence":115,
+      "DestinationTag":0,
+      "LastLedgerSequence":49163911,
+      "Amount":"1000000000",
+      "Fee":"120",
+      "SendMax":{
+         "value":"0.001",
+         "currency":"USD",
+         "issuer":"rhub8VRN55s94qWKDv6jmDy1pUykJzF3wq"
+      },
+      "SigningPubKey":"030E4853E7D0B0E2D3C1233EADCB1B1C35DE75AD4AECD94AC534B3057537753B94",
+      "TxnSignature":"3045022100EBBDDB5D2F59472463CA03429DDDED4F06648FF097662697CCFF3C5C9C36091202205367A18FE65F767D6C6D256B2F7058BBA3C5D35655AD881A94EFC4BA2C2422DF",
+      "Account":"raz97dHvnyBcnYTbXGYxhV8bGyr1aPrE5w",
+      "Destination":"rna8qC8Y9uLd2vzYtSEa1AJcdD3896zQ9S",
+      "Memos":[
+         {
+            "Memo":{
+               "MemoType":"636C69656E74",
+               "MemoData":"726D2D312E322E34"
+            }
+         }
+      ]
+   },
+   "meta":{
+      "TransactionIndex":24,
+      "DeliveredAmount":"3100",
+      "TransactionResult":"tesSUCCESS",
+      "delivered_amount":"3100"
+   }
+}
+`
+
+var paymentDst2 = blockatlas.Tx{
+	ID:     "3D8512E02414EF5A6BC00281D945735E85DED9EF739B1DCA9EABE04D9EEC72C1",
+	Coin:   coin.XRP,
+	From:   "raz97dHvnyBcnYTbXGYxhV8bGyr1aPrE5w",
+	To:     "rna8qC8Y9uLd2vzYtSEa1AJcdD3896zQ9S",
+	Fee:    "120",
+	Date:   1565114281,
+	Block:  49163909,
+	Status: blockatlas.StatusCompleted,
+	Memo:   "",
+	Meta: blockatlas.Transfer{
+		Value: "3100",
+	},
+}
+
 type test struct {
 	name        string
 	apiResponse string
@@ -101,6 +124,12 @@ func TestNormalize(t *testing.T) {
 		name:        "payment",
 		apiResponse: paymentSrc,
 		expected:    &paymentDst,
+	})
+
+	testNormalize(t, &test{
+		name:        "payment",
+		apiResponse: paymentSrc2,
+		expected:    &paymentDst2,
 	})
 }
 

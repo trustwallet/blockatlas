@@ -8,7 +8,6 @@ import (
 )
 
 type Client struct {
-	//HTTPClient *http.Client
 	Request blockatlas.Request
 	URL     string
 }

@@ -2,7 +2,6 @@ package iotex
 
 import (
 	"github.com/trustwallet/blockatlas"
-	"net/http"
 	"strconv"
 	"time"
 
@@ -15,8 +14,7 @@ type Platform struct {
 }
 
 func (p *Platform) Init() error {
-	p.client.BaseURL = viper.GetString("iotex.api")
-	p.client.HTTPClient = http.DefaultClient
+	p.client = InitClient(viper.GetString("iotex.api"))
 	return nil
 }
 
@@ -42,13 +40,15 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 		}
 	}
 
-	return  &blockatlas.Block{
+	return &blockatlas.Block{
 		Number: num,
 		Txs:    normalized,
 	}, nil
 }
 
 func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
+
+	txs := make([]blockatlas.Tx, 0)
 	var start int64
 
 	totalTrx, err := p.client.GetAddressTotalTransactions(address)
@@ -60,13 +60,12 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 		start = totalTrx - blockatlas.TxPerPage
 	}
 
-	trxs, err := p.client.GetTxsOfAddress(address, start)
+	actions, err := p.client.GetTxsOfAddress(address, start)
 	if err != nil {
 		return nil, err
 	}
 
-	var txs []blockatlas.Tx
-	for _, srcTx := range trxs.ActionInfo {
+	for _, srcTx := range actions.ActionInfo {
 		tx := Normalize(srcTx)
 		if tx != nil {
 			txs = append(txs, *tx)

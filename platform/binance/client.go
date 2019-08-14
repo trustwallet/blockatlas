@@ -56,11 +56,10 @@ func (c *Client) GetTxsOfAddress(address string, token string) (*TxPage, error) 
 	return stx, err
 }
 
-func (c *Client) GetAccountMetadata(address string) (*Account, error) {
-	sac := new(Account)
+func (c *Client) GetAccountMetadata(address string) (account *Account, err error) {
 	path := fmt.Sprintf("v1/account/%s", address)
-	err := c.Request.Get(sac, c.BaseDexURL, path, nil)
-	return sac, err
+	err = c.Request.Get(&account, c.BaseDexURL, path, nil)
+	return account, err
 }
 
 func (c *Client) GetTokens() (*TokenPage, error) {
@@ -85,7 +84,7 @@ func getAPIError(res *http.Response, desc string) error {
 	var sErr Error
 	err := json.NewDecoder(res.Body).Decode(&sErr)
 	if err != nil {
-		logrus.WithError(err).Error("Binance: Failed to get error")
+		logrus.WithError(err).Error("Binance: Failed to decode error response")
 		return blockatlas.ErrSourceConn
 	}
 

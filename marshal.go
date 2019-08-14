@@ -42,6 +42,8 @@ func (t *Tx) UnmarshalJSON(data []byte) error {
 		t.Meta = new(TokenSwap)
 	case TxContractCall:
 		t.Meta = new(ContractCall)
+	case TxAnyAction:
+		t.Meta = new(AnyAction)
 	default:
 		return fmt.Errorf(`unsupported tx type "%s"`, t.Type)
 	}
@@ -68,6 +70,8 @@ func (t *Tx) MarshalJSON() ([]byte, error) {
 		t.Type = TxTokenSwap
 	case ContractCall, *ContractCall:
 		t.Type = TxContractCall
+	case AnyAction, *AnyAction:
+		t.Type = TxAnyAction
 	default:
 		return nil, fmt.Errorf("unsupported tx metadata")
 	}

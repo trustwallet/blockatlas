@@ -110,6 +110,7 @@
   handle: vechain
   name: VeChain Token
   decimals: 18
+  blockTime: 20000
   sampleAddress: '0xB5e883349e68aB59307d1604555AC890fAC47128'
 
 - id: 820
@@ -210,3 +211,10 @@
   name: Litecoin
   decimals: 8
   sampleAddress: 'LamFJHBtU59fSDasrovfcp7hZ9AM5vpfdx'
+
+- id: 2718
+  symbol: NAS
+  handle: nebulas
+  name: Nebulas
+  decimals: 18
+  sampleAddress: 'n1RCYwrpLMpSpUCQ8QUDzGRg6B2PnY8R94a'

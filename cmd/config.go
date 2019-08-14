@@ -70,4 +70,5 @@ func loadDefaults() {
 	viper.SetDefault("aeternity.api", "https://mdw.aepps.com/")
 	viper.SetDefault("bitcoin.api", "https://btc1.trezor.io/api")
 	viper.SetDefault("zilliqa.rpc", "https://api.zilliqa.com/")
+	viper.SetDefault("nebulas.api", "https://explorer-backend.nebulas.io/api")
 }
