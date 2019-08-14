@@ -95,6 +95,7 @@ type Collectible struct {
 }
 
 type CollectibleContract struct {
-	Address  string `json:"address"`
-	Category string `json:"name"`
+	Address      string `json:"address"`
+	Category     string `json:"name"`
+	ExternalLink string `json:"external_link"`
 }
