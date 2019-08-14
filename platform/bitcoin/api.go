@@ -6,7 +6,6 @@ import (
 	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
 	"net/http"
-	"strings"
 )
 
 type Platform struct {
@@ -78,52 +77,57 @@ func (p *Platform) getTxsByAddress(address string) ([]blockatlas.Tx, error) {
 
 func NormalizeTxs(sourceTxs TransactionsList, coinIndex uint) []blockatlas.Tx {
 	var txs []blockatlas.Tx
-	for _, receipt := range sourceTxs.Transactions {
-		if tx, ok := NormalizeTransfer(&receipt, coinIndex); ok {
+	for _, transaction := range sourceTxs.Transactions {
+		if tx, ok := NormalizeTransfer(&transaction, coinIndex); ok {
 			txs = append(txs, tx)
 		}
 	}
 	return txs
 }
 
-func NormalizeTransfer(receipt *TransferReceipt, coinIndex uint) (tx blockatlas.Tx, ok bool) {
-	fee := blockatlas.Amount(receipt.Fees)
-	time := receipt.BlockTime
-	block := receipt.BlockHeight
+func NormalizeTransfer(transaction *Transaction, coinIndex uint) (tx blockatlas.Tx, ok bool) {
+	inputs := parseOutputs(transaction.Vin)
+	outputs := parseOutputs(transaction.Vout)
+	from := ""
+	to := ""
+
+	if len(inputs) > 0 {
+		from = inputs[0]
+	}
+
+	if len(outputs) > 0 {
+		to = outputs[0]
+	}
 
 	return blockatlas.Tx{
-		ID:       receipt.ID,
+		ID:       transaction.ID,
 		Coin:     coinIndex,
-		Inputs:   parseTransfer(receipt.Vin),
-		Outputs:  parseTransfer(receipt.Vout),
-		Fee:      fee,
-		Date:     int64(time),
+		From:     from,
+		To:       to,
+		Inputs:   inputs,
+		Outputs:  outputs,
+		Fee:      blockatlas.Amount(transaction.Fees),
+		Date:     int64(transaction.BlockTime),
 		Type:     blockatlas.TxTransfer,
-		Block:    block,
-		Sequence: block,
+		Block:    transaction.BlockHeight,
+		Sequence: 0,
 		Meta: blockatlas.Transfer{
-			Value:    blockatlas.Amount(receipt.Value),
+			Value:    blockatlas.Amount(transaction.Value),
 			Symbol:   coin.Coins[coinIndex].Symbol,
 			Decimals: coin.Coins[coinIndex].Decimals,
 		},
 	}, true
 }
 
-func containsAddress(transfers []Transfer, originAddress string) (contains bool) {
-	for _, transfer := range transfers {
-		for _, address := range transfer.Addresses {
-			if strings.EqualFold(address, originAddress) {
-				return true
+func parseOutputs(outputs []Output) (addresses []string) {
+	set := make(map[string]bool)
+	result := []string{}
+	for _, output := range outputs {
+		for _, address := range output.Addresses {
+			if set[address] {
+				continue
 			}
-		}
-	}
-	return false
-}
-
-func parseTransfer(transfers []Transfer) (addresses []string) {
-	var result []string
-	for _, transfer := range transfers {
-		for _, address := range transfer.Addresses {
+			set[address] = true
 			result = append(result, address)
 		}
 	}
