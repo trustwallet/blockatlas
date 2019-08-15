@@ -1,44 +1,43 @@
 package bitcoin
 
 type TransactionsList struct {
-	Transactions []TransferReceipt `json:"transactions"`
+	Page         int64         `json:"page"`
+	TotalPages   int64         `json:"totalPages"`
+	ItemsOnPage  int64         `json:"itemsOnPage"`
+	Transactions []Transaction `json:"transactions"`
+	Tokens       []Token       `json:"tokens,omitempty"`
 }
 
 type Tx struct {
 	ID string `json:"id"`
 }
 
-type TransferReceipt struct {
-	ID            string     `json:"txid"`
-	Version       uint64     `json:"version"`
-	Vin           []Transfer `json:"vin"`
-	Vout          []Transfer `json:"vout"`
-	BlockHash     string     `json:"blockHash"`
-	BlockHeight   uint64     `json:"blockHeight"`
-	Confirmations uint64     `json:"confirmations"`
-	BlockTime     uint64     `json:"blockTime"`
-	Value         string     `json:"value"`
-	ValueIn       string     `json:"valueIn"`
-	Fees          string     `json:"fees"`
-	Hex           string     `json:"hex"`
+type Transaction struct {
+	ID            string   `json:"txid"`
+	Version       uint64   `json:"version"`
+	Vin           []Output `json:"vin"`
+	Vout          []Output `json:"vout"`
+	BlockHash     string   `json:"blockHash"`
+	BlockHeight   uint64   `json:"blockHeight"`
+	Confirmations uint64   `json:"confirmations"`
+	BlockTime     uint64   `json:"blockTime"`
+	Value         string   `json:"value"`
+	ValueIn       string   `json:"valueIn"`
+	Fees          string   `json:"fees"`
+	Hex           string   `json:"hex"`
 }
 
-type Transfer struct {
-	TxId      string   `json:"txid"`
-	Sequence  uint64   `json:"sequence"`
-	Value     string   `json:"value"`
-	Addresses []string `json:"addresses"`
-	Hex       string   `json:"hex"`
+type Output struct {
+	TxId      string   `json:"txid,omitempty"`
+	Value     string   `json:"value,omitempty"`
+	Addresses []string `json:"addresses,omitempty"`
+	Hex       string   `json:"hex,omitempty"`
 }
 
-type Meta struct {
-	BlockID        string `json:"blockID"`
-	BlockNumber    int    `json:"blockNumber"`
-	BlockTimestamp int    `json:"blockTimestamp"`
-	TxID           string `json:"txID"`
-	TxOrigin       string `json:"txOrigin"`
-}
-
-type TransferAddress struct {
-	Address string `json:"address"`
+type Token struct {
+	Type      string `json:"type"`
+	Name      string `json:"name"`
+	Path      string `json:"path"`
+	Transfers int    `json:"transfers"`
+	Balance   string `json:"balance"`
 }

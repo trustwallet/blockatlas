@@ -1,11 +1,13 @@
 package bitcoin
 
 import (
-	"encoding/json"
 	"fmt"
-	"github.com/trustwallet/blockatlas/client"
 	"net/http"
 	"net/url"
+	"strconv"
+
+	"github.com/trustwallet/blockatlas"
+	"github.com/trustwallet/blockatlas/client"
 )
 
 type Client struct {
@@ -14,36 +16,28 @@ type Client struct {
 }
 
 func (c *Client) GetTransactions(address string) (TransactionsList, error) {
-	var transfers TransactionsList
+	var txs TransactionsList
 
-	path := fmt.Sprintf("address/%s", address)
-	err := client.Request(c.HTTPClient, c.URL, path, url.Values{"details": {"txs"}}, &transfers)
+	path := fmt.Sprintf("v2/address/%s", address)
+	query := url.Values{
+		"pageSize": {strconv.FormatInt(blockatlas.TxPerPage*4, 10)},
+		"details":  {"txs"},
+	}
+	err := client.Request(c.HTTPClient, c.URL, path, query, &txs)
 
-	return transfers, err
+	return txs, err
 }
 
 func (c *Client) GetTransactionsByXpub(xpub string) (TransactionsList, error) {
-	var transfers TransactionsList
+	var txs TransactionsList
 
 	path := fmt.Sprintf("v2/xpub/%s", xpub)
-	err := client.Request(c.HTTPClient, c.URL, path, url.Values{"details": {"txs"}}, &transfers)
-
-	return transfers, err
-}
-
-func (c *Client) GetTransactionReceipt(id string) (*TransferReceipt, error) {
-	url := fmt.Sprintf("%s/v2/tx/%s", c.URL, id)
-	resp, err := c.HTTPClient.Get(url)
-	if err != nil {
-		return nil, err
+	query := url.Values{
+		"pageSize": {strconv.FormatInt(blockatlas.TxPerPage*4, 10)},
+		"details":  {"txs"},
+		"tokens":   {"derived"},
 	}
-	defer resp.Body.Close()
+	err := client.Request(c.HTTPClient, c.URL, path, query, &txs)
 
-	var receipt TransferReceipt
-	err = json.NewDecoder(resp.Body).Decode(&receipt)
-	if err != nil {
-		return nil, err
-	}
-
-	return &receipt, nil
+	return txs, err
 }
