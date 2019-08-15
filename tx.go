@@ -14,6 +14,7 @@ const (
 // Types of transaction statuses
 const (
 	StatusCompleted = "completed"
+	StatusPending   = "pending"
 	StatusFailed    = "failed"
 
 	DirectionOutgoing = "outgoing"

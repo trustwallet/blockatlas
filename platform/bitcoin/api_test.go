@@ -43,18 +43,19 @@ const transaction = `{
 }`
 
 var expectedTx = blockatlas.Tx{
-	ID:       "df63ddab7d4eed2fb6cb40d4d0519e7e5ac7cf5ad556b2edbd45963ea1a2931c",
-	Coin:     coin.BTC,
-	From:     "3QJmV3qfvL9SuYo34YihAf3sRCW3qSinyC",
-	To:       "3FjBW1KL9L8aYtdKzJ8FhCNxmXB7dXDRw4",
-	Inputs:   []string{"3QJmV3qfvL9SuYo34YihAf3sRCW3qSinyC"},
-	Outputs:  []string{"3FjBW1KL9L8aYtdKzJ8FhCNxmXB7dXDRw4"},
-	Fee:      "100188",
-	Date:     1562945790,
-	Type:     "transfer",
-	Status:   "completed",
-	Block:    585094,
-	Sequence: 0,
+	ID:        "df63ddab7d4eed2fb6cb40d4d0519e7e5ac7cf5ad556b2edbd45963ea1a2931c",
+	Coin:      coin.BTC,
+	From:      "3QJmV3qfvL9SuYo34YihAf3sRCW3qSinyC",
+	To:        "3FjBW1KL9L8aYtdKzJ8FhCNxmXB7dXDRw4",
+	Inputs:    []string{"3QJmV3qfvL9SuYo34YihAf3sRCW3qSinyC"},
+	Outputs:   []string{"3FjBW1KL9L8aYtdKzJ8FhCNxmXB7dXDRw4"},
+	Fee:       "100188",
+	Date:      1562945790,
+	Type:      "transfer",
+	Status:    "completed",
+	Block:     585094,
+	Sequence:  0,
+	Direction: "yourself",
 	Meta: blockatlas.Transfer{
 		Value: "677012",
 	},
@@ -68,6 +69,10 @@ func TestNormalizeTransfer(t *testing.T) {
 		{transaction, expectedTx},
 	}
 
+	set := mapset.NewSet()
+	set.Add("3FjBW1KL9L8aYtdKzJ8FhCNxmXB7dXDRw4")
+	set.Add("3QJmV3qfvL9SuYo34YihAf3sRCW3qSinyC")
+
 	for _, test := range tests {
 		var transaction Transaction
 
@@ -77,7 +82,7 @@ func TestNormalizeTransfer(t *testing.T) {
 		}
 
 		var readyTx blockatlas.Tx
-		normTx, ok := NormalizeTransfer(&transaction, 0)
+		normTx, ok := NormalizeTransfer(&transaction, 0, set)
 		if !ok {
 			t.Fatal("Bitcoin: Can't normalize transaction", readyTx)
 		}
@@ -98,17 +103,6 @@ func TestNormalizeTransfer(t *testing.T) {
 			println(string(expected))
 			t.Error("Transactions not equal")
 		}
-	}
-}
-
-func TestInferDirectionSelf(t *testing.T) {
-	set := mapset.NewSet()
-	set.Add("3FjBW1KL9L8aYtdKzJ8FhCNxmXB7dXDRw4")
-	set.Add("3QJmV3qfvL9SuYo34YihAf3sRCW3qSinyC")
-	direction := inferDirection(&expectedTx, set)
-
-	if direction != blockatlas.DirectionSelf {
-		t.Error("direction is not self")
 	}
 }
 

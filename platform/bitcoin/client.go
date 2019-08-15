@@ -1,7 +1,6 @@
 package bitcoin
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -41,21 +40,4 @@ func (c *Client) GetTransactionsByXpub(xpub string) (TransactionsList, error) {
 	err := client.Request(c.HTTPClient, c.URL, path, query, &txs)
 
 	return txs, err
-}
-
-func (c *Client) GetTransactionById(id string) (*Transaction, error) {
-	url := fmt.Sprintf("%s/v2/tx/%s", c.URL, id)
-	resp, err := c.HTTPClient.Get(url)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	var transaction Transaction
-	err = json.NewDecoder(resp.Body).Decode(&transaction)
-	if err != nil {
-		return nil, err
-	}
-
-	return &transaction, nil
 }
