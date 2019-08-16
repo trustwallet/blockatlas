@@ -57,6 +57,16 @@ var platformList = []blockatlas.Platform{
 	&aeternity.Platform{},
 	&bitcoin.Platform{CoinIndex: coin.BTC},
 	&bitcoin.Platform{CoinIndex: coin.LTC},
+	&bitcoin.Platform{CoinIndex: coin.BCH},
+	&bitcoin.Platform{CoinIndex: coin.DASH},
+	&bitcoin.Platform{CoinIndex: coin.DOGE},
+	&bitcoin.Platform{CoinIndex: coin.ZEC},
+	&bitcoin.Platform{CoinIndex: coin.XZC},
+	&bitcoin.Platform{CoinIndex: coin.VIA},
+	&bitcoin.Platform{CoinIndex: coin.RVN},
+	&bitcoin.Platform{CoinIndex: coin.QTUM},
+	&bitcoin.Platform{CoinIndex: coin.GRS},
+	&bitcoin.Platform{CoinIndex: coin.ZEL},
 	&nebulas.Platform{},
 }
 

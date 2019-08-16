@@ -133,10 +133,43 @@ waves:
 aeternity:
   api: https://mdw.aepps.com/
 
+# [NAS] Nebulas: https://nebulas.io
+nebulas:
+  api: https://explorer-backend.nebulas.io/api
+
 # [BTC] Bitcoin: https://bitcoin.org/ (Blockbook API https://github.com/trezor/blockbook)
 bitcoin:
   api: https://btc1.trezor.io/api
 
-# [NAS] Nebulas: https://nebulas.io
-nebulas:
-  api: https://explorer-backend.nebulas.io/api
+litecoin:
+  api: https://ltc1.trezor.io/api
+
+bitcoincash:
+  api: https://bch1.trezor.io/api
+
+doge:
+  api: https://doge1.trezor.io/api
+
+dash:
+  api: https://dash1.trezor.io/api
+
+zcoin:
+  api: https://blockbook.zcoin.io/api
+
+zcash:
+  api: https://zec1.trezor.io/api
+
+zelcash:
+  api: https://blockbook.zel.network/api
+
+viacoin:
+  api: https://blockbook.viacoin.org/api
+
+qtum:
+  api: https://blockv3.qtum.info/api
+
+groestlcoin:
+  api: https://blockbook.groestlcoin.org/api
+
+ravencoin:
+  api: https://blockbook.ravencoin.org/api
