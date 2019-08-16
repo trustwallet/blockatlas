@@ -8,6 +8,7 @@ import (
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
+	"fmt"
 )
 
 type Platform struct {
@@ -16,13 +17,17 @@ type Platform struct {
 }
 
 func (p *Platform) Init() error {
-	p.client.URL = viper.GetString("bitcoin.api")
+	p.client.URL = viper.GetString(p.ConfigKey())
 	p.client.HTTPClient = http.DefaultClient
 	return nil
 }
 
 func (p *Platform) Coin() coin.Coin {
 	return coin.Coins[p.CoinIndex]
+}
+
+func (p *Platform) ConfigKey() string {
+	return fmt.Sprintf("%s.api", p.Coin().Handle)
 }
 
 func (p *Platform) RegisterRoutes(router gin.IRouter) {
