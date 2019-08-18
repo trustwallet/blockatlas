@@ -73,6 +73,7 @@
   handle: iotex
   name: IoTeX
   decimals: 18
+  blockTime: 10000
   sampleAddress: 'io1mwekae7qqwlr23220k5n9z3fmjxz72tuchra3m'
 
 - id: 313
@@ -88,6 +89,7 @@
   handle: aion
   name: Aion
   decimals: 18
+  blockTime: 10000
   sampleAddress: '0xa07981da70ce919e1db5f051c3c386eb526e6ce8b9e2bfd56e3f3d754b0a17f3'
 
 - id: 457
@@ -95,6 +97,7 @@
   handle: aeternity
   name: Aeternity
   decimals: 18
+  blockTime: 6000
   sampleAddress: 'ak_2p5878zbFhxnrm7meL7TmqwtvBaqcBddyp5eGzZbovZ5FeVfcw'
 
 - id: 500
@@ -210,6 +213,7 @@
   handle: bitcoin
   name: Bitcoin
   decimals: 8
+  blockTime: 600000
   sampleAddress: 'bc1quvuarfksewfeuevuc6tn0kfyptgjvwsvrprk9d'
 
 - id: 2
@@ -217,6 +221,7 @@
   handle: litecoin
   name: Litecoin
   decimals: 8
+  blockTime: 150000
   sampleAddress: 'ltc1qhd8fxxp2dx3vsmpac43z6ev0kllm4n53t5sk0u'
 
 - id: 3
@@ -224,6 +229,7 @@
   handle: doge
   name: Dogecoin
   decimals: 8
+  blockTime: 60000
   sampleAddress: 'DJRFZNg8jkUtjcpo2zJd92FUAzwRjitw6f'
 
 - id: 5
@@ -231,6 +237,7 @@
   handle: dash
   name: Dash
   decimals: 8
+  blockTime: 180000
   sampleAddress: 'XqHiz8EXYbTAtBEYs4pWTHh7ipEDQcNQeT'
 
 - id: 14
@@ -238,6 +245,7 @@
   handle: viacoin
   name: Viacoin
   decimals: 8
+  blockTime: 15000
   sampleAddress: 'via1qnmsgjd6cvfprnszdgmyg9kewtjfgqflz67wwhc'
 
 - id: 17
@@ -245,6 +253,7 @@
   handle: groestlcoin
   name: Groestlcoin
   decimals: 8
+  blockTime: 60000
   sampleAddress: 'grs1qexwmshts5pdpeqglkl39zyl6693tmfwp0cue4j'
 
 - id: 133
@@ -252,6 +261,7 @@
   handle: zcash
   name: Zcash
   decimals: 8
+  blockTime: 150000
   sampleAddress: 't1YYnByMzdGhQv3W3rnjHMrJs6HH4Y231gy'
 
 - id: 136
@@ -259,6 +269,7 @@
   handle: zcoin
   name: Zcoin
   decimals: 8
+  blockTime: 300000
   sampleAddress: 'aEd5XFChyXobvEics2ppAqgK3Bgusjxtik'
 
 - id: 145
@@ -266,6 +277,7 @@
   handle: bitcoincash
   name: Bitcoin Cash
   decimals: 8
+  blockTime: 600000
   sampleAddress: 'bitcoincash:qq07l6rr5lsdm3m80qxw80ku2ex0tj76vvsxpvmgme'
 
 - id: 175
@@ -273,6 +285,7 @@
   handle: ravencoin
   name: Raven
   decimals: 8
+  blockTime: 60000
   sampleAddress: 'RHoCwPc2FCQqwToYnSiAb3SrCET4zEHsbS'
 
 - id: 2301
@@ -280,6 +293,7 @@
   handle: qtum
   name: Qtum
   decimals: 8
+  blockTime: 60000
   sampleAddress: 'QhceuaTdeCZtcxmVc6yyEDEJ7Riu5gWFoF'
 
 - id: 19167
@@ -287,4 +301,5 @@
   handle: zelcash
   name: Zelcash
   decimals: 8
+  blockTime: 120000
   sampleAddress: 't1UKbRPzL4WN8Rs8aZ8RNiWoD2ftCMHKGUf'
