@@ -3,6 +3,7 @@ package nebulas
 import (
 	"fmt"
 	"github.com/trustwallet/blockatlas/client"
+	"log"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -35,4 +36,39 @@ func (c *Client) GetTxs(address string, page int) ([]Transaction, error) {
 	}
 
 	return result, nil
+}
+
+func (c *Client) GetLatestBlock() (NebulaBlock, error){
+	path := fmt.Sprintf("v1/user/lib")
+	var blockResponse BlockResponse
+	values := url.Values{}
+	if err := client.Request(c.HTTPClient, c.URL, path, values, &blockResponse); err != nil {
+		return NebulaBlock{}, err
+	}
+
+	return blockResponse.Result, nil
+}
+
+func (c *Client) GetBlockByHash(hash string, fullFillTransaction bool) (NebulaBlock, error){
+	path := fmt.Sprintf("v1/user/getBlockByHash")
+	var blockResponse BlockResponse
+	jsonBody := fmt.Sprintf(`{"hash":"%s","full_fill_transaction": %t}`, hash, fullFillTransaction)
+
+	if err := client.PostRequest(c.HTTPClient, c.URL, path, jsonBody, &blockResponse); err != nil {
+		return NebulaBlock{}, err
+	}
+
+	return blockResponse.Result, nil
+}
+
+func (c *Client) GetBlockByHeight(height int64, fullFillTransaction bool) (NebulaBlock, error){
+	path := fmt.Sprintf("v1/user/getBlockByHeight")
+	var blockResponse BlockResponse
+	jsonBody := fmt.Sprintf(`{"height":"%d","full_fill_transaction": %t}`, height, fullFillTransaction)
+
+	if err := client.PostRequest(c.HTTPClient, c.URL, path, jsonBody, &blockResponse); err != nil {
+		return NebulaBlock{}, err
+	}
+
+	return blockResponse.Result, nil
 }
