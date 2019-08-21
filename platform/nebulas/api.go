@@ -34,6 +34,35 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 	return normalizeTxs, nil
 }
 
+func (p *Platform) GetLatestIrreversibleBlock() (blockatlas.TxPage, error) {
+	nebulaBlock, err := p.client.GetLatestIrreversibleBlock()
+
+	return handleBlockResponse(nebulaBlock, err)
+}
+
+func (p *Platform) GetTxsByHash(hash string) (blockatlas.TxPage, error) {
+	nebulaBlock, err := p.client.GetBlockByHash(hash, true)
+
+	return handleBlockResponse(nebulaBlock, err)
+}
+
+func (p *Platform) GetTxsByHeight(height int64) (blockatlas.TxPage, error) {
+	nebulaBlock, err := p.client.GetBlockByHeight(height, true)
+
+	return handleBlockResponse(nebulaBlock, err)
+}
+
+func handleBlockResponse(block NebulaBlock, err error) (blockatlas.TxPage, error) {
+	if err != nil {
+		return nil, err
+	}
+	var normalizeTxs []blockatlas.Tx
+	for _, srcTx := range block.Transactions {
+		normalizeTxs = append(normalizeTxs, NormalizeTx(srcTx))
+	}
+	return normalizeTxs, nil
+}
+
 func NormalizeTx(srcTx Transaction) blockatlas.Tx {
 	var status string = blockatlas.StatusCompleted
 	if srcTx.Status == 0 {

@@ -3,7 +3,6 @@ package nebulas
 import (
 	"fmt"
 	"github.com/trustwallet/blockatlas/client"
-	"log"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -38,7 +37,7 @@ func (c *Client) GetTxs(address string, page int) ([]Transaction, error) {
 	return result, nil
 }
 
-func (c *Client) GetLatestBlock() (NebulaBlock, error){
+func (c *Client) GetLatestIrreversibleBlock() (NebulaBlock, error){
 	path := fmt.Sprintf("v1/user/lib")
 	var blockResponse BlockResponse
 	values := url.Values{}
