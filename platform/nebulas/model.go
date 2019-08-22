@@ -31,11 +31,11 @@ type Address struct {
 	Hash string `json:"hash"`
 }
 
-type LatestIrreversibleBlockResponse struct {
-	Result LatestIrreversibleBlock `json:"result"`
+type BlockResponse struct {
+	Result Result `json:"result"`
 }
 
-type LatestIrreversibleBlock struct {
+type Result struct {
 	ChainID       int    `json:"chain_id"`
 	Coinbase      string `json:"coinbase"`
 	ConsensusRoot struct {
@@ -43,35 +43,17 @@ type LatestIrreversibleBlock struct {
 		Proposer    string `json:"proposer"`
 		Timestamp   string `json:"timestamp"`
 	} `json:"consensus_root"`
-	EventsRoot   string `json:"events_root"`
-	Hash         string `json:"hash"`
-	Height       string `json:"height"`
-	IsFinality   bool   `json:"is_finality"`
-	Miner        string `json:"miner"`
-	Nonce        string `json:"nonce"`
-	ParentHash   string `json:"parent_hash"`
-	RandomProof  string `json:"randomProof"`
-	RandomSeed   string `json:"randomSeed"`
-	StateRoot    string `json:"state_root"`
-	Timestamp    string `json:"timestamp"`
-	Transactions []struct {
-		BlockHeight     string      `json:"block_height"`
-		ChainID         int         `json:"chainId"`
-		ContractAddress string      `json:"contract_address"`
-		Data            interface{} `json:"data"`
-		ExecuteError    string      `json:"execute_error"`
-		ExecuteResult   string      `json:"execute_result"`
-		From            string      `json:"from"`
-		GasLimit        string      `json:"gas_limit"`
-		GasPrice        string      `json:"gas_price"`
-		GasUsed         string      `json:"gas_used"`
-		Hash            string      `json:"hash"`
-		Nonce           string      `json:"nonce"`
-		Status          int         `json:"status"`
-		Timestamp       string      `json:"timestamp"`
-		To              string      `json:"to"`
-		Type            string      `json:"type"`
-		Value           string      `json:"value"`
-	} `json:"transactions"`
-	TxsRoot string `json:"txs_root"`
+	EventsRoot   string        `json:"events_root"`
+	Hash         string        `json:"hash"`
+	Height       string        `json:"height"`
+	IsFinality   bool          `json:"is_finality"`
+	Miner        string        `json:"miner"`
+	Nonce        string        `json:"nonce"`
+	ParentHash   string        `json:"parent_hash"`
+	RandomProof  string        `json:"randomProof"`
+	RandomSeed   string        `json:"randomSeed"`
+	StateRoot    string        `json:"state_root"`
+	Timestamp    string        `json:"timestamp"`
+	Transactions []Transaction `json:"transactions,omitempty"`
+	TxsRoot      string        `json:"txs_root"`
 }

@@ -37,13 +37,13 @@ func (c *Client) GetTxs(address string, page int) ([]Transaction, error) {
 	return result, nil
 }
 
-func (c *Client) GetLatestIrreversibleBlock() (LatestIrreversibleBlock, error) {
+func (c *Client) GetLatestIrreversibleBlock() (Result, error) {
 
 	path := fmt.Sprintf("v1/user/lib")
 	values := url.Values{}
-	var response LatestIrreversibleBlockResponse
+	var response BlockResponse
 	if err := client.Request(c.HTTPClient, c.URL, path, values, &response); err != nil {
-		return LatestIrreversibleBlock{}, err
+		return Result{}, err
 	}
 	return response.Result, nil
 }
