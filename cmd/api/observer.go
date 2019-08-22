@@ -30,7 +30,7 @@ func requireAuth(c *gin.Context) {
 func addCall(c *gin.Context) {
 	var req struct {
 		Subscriptions     map[string][]string `json:"subscriptions"`
-		XpubSubscriptions map[string][]string `json:"xpub_subscriptions"`
+		XPubSubscriptions map[string][]string `json:"xpub_subscriptions"`
 		Webhook           string              `json:"webhook"`
 	}
 	if c.BindJSON(&req) != nil {
@@ -58,16 +58,14 @@ func addCall(c *gin.Context) {
 	}
 
 	//TODO: Implemement register for xpub
-	for coinStr, perCoin := range req.XpubSubscriptions {
+	for coinStr, perCoin := range req.XPubSubscriptions {
 		coin, _ := strconv.Atoi(coinStr)
 		if coin == 0 {
 			continue
 		}
 		for _, xpub := range perCoin {
 			//TODO: Get addresses for xpub
-			xpub = "test"
 			addresses := []string{}
-			//xpub
 			for _, address := range addresses {
 				subs = append(subs, observer.Subscription{
 					Coin:     uint(coin),
