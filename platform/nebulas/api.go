@@ -78,7 +78,7 @@ func NormalizeTx(srcTx Transaction) blockatlas.Tx {
 	}
 }
 
-func NormalizeNasTx(srcTx Transaction, block Block) blockatlas.Tx {
+func NormalizeNasTx(srcTx NasTransaction, block Block) blockatlas.Tx {
 	var status string = blockatlas.StatusCompleted
 	if srcTx.Status == 0 {
 		status = blockatlas.StatusFailed
@@ -89,13 +89,13 @@ func NormalizeNasTx(srcTx Transaction, block Block) blockatlas.Tx {
 	return blockatlas.Tx{
 		ID:       srcTx.Hash,
 		Coin:     coin.NAS,
-		From:     srcTx.From.Hash,
-		To:       srcTx.To.Hash,
+		From:     srcTx.From,
+		To:       srcTx.To,
 		Fee:      blockatlas.Amount(fee),
-		Date:     int64(srcTx.Timestamp) / 1000,
+		Date:     srcTx.Timestamp,
 		Block:    block.Height,
 		Status:   status,
-		Sequence: block.Nonce,
+		Sequence: srcTx.Nonce,
 		Meta: blockatlas.Transfer{
 			Value:    blockatlas.Amount(srcTx.Value),
 			Symbol:   coin.Coins[coin.NAS].Symbol,
