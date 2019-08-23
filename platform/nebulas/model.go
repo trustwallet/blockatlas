@@ -7,7 +7,7 @@ type Response struct {
 }
 
 type NasResponse struct {
-	Result Block `json:"result"`
+	Result NasBlock `json:"result"`
 }
 
 
@@ -44,9 +44,14 @@ type NasTransaction struct {
 }
 
 type Block struct {
+	Height uint64 `json:"height"`
+}
+
+type NasBlock struct {
 	Height uint64 `json:"height,string"`
 	Nonce  uint64 `json:"nonce,string"`
 	TxnList []NasTransaction `json:"transactions"`
+
 }
 
 type Address struct {

@@ -78,7 +78,7 @@ func NormalizeTx(srcTx Transaction) blockatlas.Tx {
 	}
 }
 
-func NormalizeNasTx(srcTx NasTransaction, block Block) blockatlas.Tx {
+func NormalizeNasTx(srcTx NasTransaction, block NasBlock) blockatlas.Tx {
 	var status string = blockatlas.StatusCompleted
 	if srcTx.Status == 0 {
 		status = blockatlas.StatusFailed
