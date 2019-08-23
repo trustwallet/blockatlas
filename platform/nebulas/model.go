@@ -7,14 +7,9 @@ type Response struct {
 }
 
 type NasResponse struct {
-	Result NasBlock `json:"result"`
+	Result Block `json:"result"`
 }
 
-type NasBlock struct {
-	Block
-	Nonce  uint64 `json:"nonce"`
-	TxnList []NasTransaction `json:"transactions"`
-}
 
 type ResponseData struct {
 	TxnList []Transaction `json:"txnList"`
@@ -31,10 +26,6 @@ type Transaction struct {
 	To          Address     `json: "to"`
 	Timestamp   int64       `json:"timestamp"`
 	Status      int32       `json:"status"`
-}
-
-type NasTransaction struct {
-	Transaction
 	GasPrice	string		`json:"gas_price"`
 	GasLimit	string		`json:"gas_limit"`
 	GasUsed		string		`json:"gas_used"`
@@ -42,6 +33,8 @@ type NasTransaction struct {
 
 type Block struct {
 	Height uint64 `json:"height"`
+	Nonce  uint64 `json:"nonce"`
+	TxnList []Transaction `json:"transactions"`
 }
 
 type Address struct {

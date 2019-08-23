@@ -50,7 +50,7 @@ func (c *Client) GetLatestIrreversibleBlock() (int64, error) {
 	return height, nil
 }
 
-func (c *Client) GetBlockByNumber(num int64) (NasBlock, error) {
+func (c *Client) GetBlockByNumber(num int64) (Block, error) {
 	path := fmt.Sprintf("v1/user/getBlockByHeight")
 	var response NasResponse
 	m := make(map[string]string)
@@ -59,7 +59,7 @@ func (c *Client) GetBlockByNumber(num int64) (NasBlock, error) {
 
 	err := client.RequestPost(c.HTTPClient, c.URL, path, "application/json", m, &response)
 	if err != nil {
-		var nasBlock NasBlock
+		var nasBlock Block
 		return nasBlock, err
 	}
 	return response.Result, nil

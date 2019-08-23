@@ -43,7 +43,7 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 	if block, err := p.client.GetBlockByNumber(num); err == nil {
 		var normalizeTxs []blockatlas.Tx
 		for _, srcTx := range block.TxnList {
-			normalizeTxs = append(normalizeTxs, NormalizeNasTx(srcTx, block))
+			normalizeTxs = append(normalizeTxs, NormalizeTx(srcTx))
 		}
 
 		return &blockatlas.Block{
@@ -60,29 +60,6 @@ func NormalizeTx(srcTx Transaction) blockatlas.Tx {
 	if srcTx.Status == 0 {
 		status = blockatlas.StatusFailed
 	}
-	return blockatlas.Tx{
-		ID:       srcTx.Hash,
-		Coin:     coin.NAS,
-		From:     srcTx.From.Hash,
-		To:       srcTx.To.Hash,
-		Fee:      blockatlas.Amount(srcTx.TxFee),
-		Date:     int64(srcTx.Timestamp) / 1000,
-		Block:    srcTx.Block.Height,
-		Status:   status,
-		Sequence: srcTx.Nonce,
-		Meta: blockatlas.Transfer{
-			Value:    blockatlas.Amount(srcTx.Value),
-			Symbol:   coin.Coins[coin.NAS].Symbol,
-			Decimals: coin.Coins[coin.NAS].Decimals,
-		},
-	}
-}
-
-func NormalizeNasTx(srcTx NasTransaction, block NasBlock) blockatlas.Tx {
-	var status string = blockatlas.StatusCompleted
-	if srcTx.Status == 0 {
-		status = blockatlas.StatusFailed
-	}
 	//calculate fee
 	fee := calcFee(srcTx.GasPrice, srcTx.GasUsed)
 
@@ -93,9 +70,9 @@ func NormalizeNasTx(srcTx NasTransaction, block NasBlock) blockatlas.Tx {
 		To:       srcTx.To.Hash,
 		Fee:      blockatlas.Amount(fee),
 		Date:     int64(srcTx.Timestamp) / 1000,
-		Block:    block.Height,
+		Block:    srcTx.Block.Height,
 		Status:   status,
-		Sequence: block.Nonce,
+		Sequence: srcTx.Block.Nonce,
 		Meta: blockatlas.Transfer{
 			Value:    blockatlas.Amount(srcTx.Value),
 			Symbol:   coin.Coins[coin.NAS].Symbol,
