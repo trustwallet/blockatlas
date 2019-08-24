@@ -62,7 +62,7 @@ func (c *Client) GetBlockByHash(hash string, fullFillTransaction bool) (Result, 
 	return response.Result, nil
 }
 
-func (c *Client) GetBlockByHeight(height string, fullFillTransaction bool) (Result, error) {
+func (c *Client) GetBlockByHeight(height int, fullFillTransaction bool) (Result, error) {
 
 	path := fmt.Sprintf("v1/user/getBlockByHeight")
 	body := &GetBlockByHeightRequest{
