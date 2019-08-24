@@ -2,6 +2,7 @@ package nebulas
 
 import (
 	"fmt"
+	"github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas/client"
 	"net/http"
 	"net/url"
@@ -43,6 +44,7 @@ func (c *Client) GetLatestIrreversibleBlock() (int64, error) {
 
 	err := client.Request(c.HTTPClient, c.URL, path, nil, &response)
 	if err != nil {
+		logrus.Error("Error loading latest block height")
 		return 0, err
 	}
 
@@ -59,6 +61,7 @@ func (c *Client) GetBlockByNumber(num int64) (NasBlock, error) {
 
 	err := client.RequestPost(c.HTTPClient, c.URL, path, "application/json", m, &response)
 	if err != nil {
+		logrus.Error("Error loading current nebulas block")
 		var nasBlock NasBlock
 		return nasBlock, err
 	}
