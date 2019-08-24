@@ -40,11 +40,6 @@ type BlockAPI interface {
 	CurrentBlockNumber() (int64, error)
 	GetBlockByNumber(num int64) (*Block, error)
 
-	// new methods with nebula
-	LatestIrreversibleBlock() (*Block, error)
-	GetBlockByHash(hash string, fullFillTransaction bool) (*Block, error)
-	GetBlockByHeight(height string, fullFillTransaction bool) (*Block, error)
-
 }
 
 // StakingAPI provides staking information

@@ -69,3 +69,64 @@ func TestNormalize(t *testing.T) {
 		t.Error("tx don't equal")
 	}
 }
+
+const nebulaTransactionSource = `{
+            "hash":"1e96493de6b5ebe686e461822ec22e73fcbfb41a6358aa58c375b935802e4145",
+            "chainId":100,
+            "from":"n1Z6SbjLuAEXfhX1UJvXT6BB5osWYxVg3F3",
+            "to":"n1orSeSMj7nn8KHHN4JcQEw3r52TVExu63r",
+            "value":"10000000000000000000",
+			"nonce":"34",
+            "timestamp":"1522220087",
+            "type":"binary",
+            "data":null,
+            "gas_price":"1000000",
+            "gas_limit":"2000000",
+            "contract_address":"",
+            "status":1,
+            "gas_used":"20000"
+        }`
+
+const nebulaBlockHeightSource = "407"
+
+var nebulaTxDestination = blockatlas.Tx{
+	ID:     "1e96493de6b5ebe686e461822ec22e73fcbfb41a6358aa58c375b935802e4145",
+	Coin:   coin.NAS,
+	From:   "n1Z6SbjLuAEXfhX1UJvXT6BB5osWYxVg3F3",
+	To:     "n1orSeSMj7nn8KHHN4JcQEw3r52TVExu63r",
+	Fee:    "40000000000",
+	Sequence: 34,
+	Date:   1522220087,
+	Block:  407,
+	Status: blockatlas.StatusCompleted,
+	Meta: blockatlas.Transfer{
+		Value: "500000000000000000",
+		Symbol:   coin.Coins[coin.NAS].Symbol,
+		Decimals: coin.Coins[coin.NAS].Decimals,
+	},
+}
+
+func TestNormalizeNebulaTx(t *testing.T) {
+	var srcTx NebulaTransaction
+	err := json.Unmarshal([]byte(nebulaTransactionSource), &srcTx)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	resTx := NormalizeNebulaTx(srcTx, nebulaBlockHeightSource)
+
+	resJSON, err := json.Marshal(&resTx)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	dstJSON, err := json.Marshal(&transferDst)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !bytes.Equal(resJSON, dstJSON) {
+		t.Error("tx don't equal")
+	}
+}
