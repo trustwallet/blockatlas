@@ -94,13 +94,13 @@ var nebulaTxDestination = blockatlas.Tx{
 	Coin:   coin.NAS,
 	From:   "n1Z6SbjLuAEXfhX1UJvXT6BB5osWYxVg3F3",
 	To:     "n1orSeSMj7nn8KHHN4JcQEw3r52TVExu63r",
-	Fee:    "40000000000",
+	Fee:    "20000000000",
 	Sequence: 34,
 	Date:   1522220087,
 	Block:  407,
 	Status: blockatlas.StatusCompleted,
 	Meta: blockatlas.Transfer{
-		Value: "500000000000000000",
+		Value: "10000000000000000000",
 		Symbol:   coin.Coins[coin.NAS].Symbol,
 		Decimals: coin.Coins[coin.NAS].Decimals,
 	},
@@ -121,7 +121,7 @@ func TestNormalizeNebulaTx(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	dstJSON, err := json.Marshal(&transferDst)
+	dstJSON, err := json.Marshal(&nebulaTxDestination)
 	if err != nil {
 		t.Fatal(err)
 	}
