@@ -47,3 +47,31 @@ func (c *Client) GetLatestIrreversibleBlock() (Result, error) {
 	}
 	return response.Result, nil
 }
+
+func (c *Client) GetBlockByHash(hash string, fullFillTransaction bool) (Result, error) {
+
+	path := fmt.Sprintf("v1/user/getBlockByHash")
+	body := &GetBlockByHashRequest{
+		Hash:                hash,
+		FullFillTransaction: fullFillTransaction,
+	}
+	var response BlockResponse
+	if err := client.Send(c.HTTPClient, c.URL, path, body, &response); err != nil {
+		return Result{}, err
+	}
+	return response.Result, nil
+}
+
+func (c *Client) GetBlockByHeight(height string, fullFillTransaction bool) (Result, error) {
+
+	path := fmt.Sprintf("v1/user/getBlockByHeight")
+	body := &GetBlockByHeightRequest{
+		Height:              height,
+		FullFillTransaction: fullFillTransaction,
+	}
+	var response BlockResponse
+	if err := client.Send(c.HTTPClient, c.URL, path, body, &response); err != nil {
+		return Result{}, err
+	}
+	return response.Result, nil
+}

@@ -57,3 +57,13 @@ type Result struct {
 	Transactions []Transaction `json:"transactions,omitempty"`
 	TxsRoot      string        `json:"txs_root"`
 }
+
+type GetBlockByHashRequest struct {
+	Hash                string `json:"hash"`
+	FullFillTransaction bool   `json:"full_fill_transaction"`
+}
+
+type GetBlockByHeightRequest struct {
+	Height              string `json:"height"`
+	FullFillTransaction bool   `json:"full_fill_transaction"`
+}
