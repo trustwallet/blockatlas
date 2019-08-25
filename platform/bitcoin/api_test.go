@@ -43,12 +43,22 @@ const transaction = `{
 }`
 
 var expectedTx = blockatlas.Tx{
-	ID:        "df63ddab7d4eed2fb6cb40d4d0519e7e5ac7cf5ad556b2edbd45963ea1a2931c",
-	Coin:      coin.BTC,
-	From:      "3QJmV3qfvL9SuYo34YihAf3sRCW3qSinyC",
-	To:        "3FjBW1KL9L8aYtdKzJ8FhCNxmXB7dXDRw4",
-	Inputs:    []string{"3QJmV3qfvL9SuYo34YihAf3sRCW3qSinyC"},
-	Outputs:   []string{"3FjBW1KL9L8aYtdKzJ8FhCNxmXB7dXDRw4"},
+	ID:   "df63ddab7d4eed2fb6cb40d4d0519e7e5ac7cf5ad556b2edbd45963ea1a2931c",
+	Coin: coin.BTC,
+	From: "3QJmV3qfvL9SuYo34YihAf3sRCW3qSinyC",
+	To:   "3FjBW1KL9L8aYtdKzJ8FhCNxmXB7dXDRw4",
+	Inputs: []blockatlas.TxOutput{
+		blockatlas.TxOutput{
+			Address: "3QJmV3qfvL9SuYo34YihAf3sRCW3qSinyC",
+			Value:   "777200",
+		},
+	},
+	Outputs: []blockatlas.TxOutput{
+		blockatlas.TxOutput{
+			Address: "3FjBW1KL9L8aYtdKzJ8FhCNxmXB7dXDRw4",
+			Value:   "677012",
+		},
+	},
 	Fee:       "100188",
 	Date:      1562945790,
 	Type:      "transfer",
@@ -114,8 +124,18 @@ func TestInferDirection(t *testing.T) {
 	set.Add("bc1q2sykr9c342mjpm9mwnps8ksk6e35lz75rpdlfe")
 	set.Add("bc1qs86ucvr3unce2grvfp77433npy66nzha9w0e3c")
 
-	inputs1 := []string{"bc1q2sykr9c342mjpm9mwnps8ksk6e35lz75rpdlfe"}
-	outputs1 := []string{"bc1q6wf7tj62f0uwr6almah3666th2ejefdg72ek6t"}
+	inputs1 := []blockatlas.TxOutput{
+		blockatlas.TxOutput{
+			Address: "bc1q2sykr9c342mjpm9mwnps8ksk6e35lz75rpdlfe",
+			Value:   "",
+		},
+	}
+	outputs1 := []blockatlas.TxOutput{
+		blockatlas.TxOutput{
+			Address: "bc1q6wf7tj62f0uwr6almah3666th2ejefdg72ek6t",
+			Value:   "",
+		},
+	}
 	tx1 := blockatlas.Tx{
 		Inputs:  inputs1,
 		Outputs: outputs1,
@@ -126,16 +146,41 @@ func TestInferDirection(t *testing.T) {
 		t.Error("direction is not outgoing")
 	}
 
-	inputs2 := []string{
-		"3CgvDkzcJ7yMZe75jNBem6Bj6nkMAWwMEf",
-		"3LyzYcB54pm9EAMmzXpFfb1kzEDAFvqBgT",
-		"3Q6DYour5q5WdMhyXsyPgBeAqPCXchzCsF",
-		"3JZZM1rwst7G5izxbFL7KNvy7ZiZ47SVqG",
+	inputs2 := []blockatlas.TxOutput{
+		blockatlas.TxOutput{
+			Address: "3CgvDkzcJ7yMZe75jNBem6Bj6nkMAWwMEf",
+			Value:   "",
+		},
+		blockatlas.TxOutput{
+			Address: "3LyzYcB54pm9EAMmzXpFfb1kzEDAFvqBgT",
+			Value:   "",
+		},
+		blockatlas.TxOutput{
+			Address: "3Q6DYour5q5WdMhyXsyPgBeAqPCXchzCsF",
+			Value:   "",
+		},
+		blockatlas.TxOutput{
+			Address: "3JZZM1rwst7G5izxbFL7KNvy7ZiZ47SVqG",
+			Value:   "",
+		},
 	}
-	outputs2 := []string{
-		"139f1CrnLWvVajGzs3ZtpQhbGWxM599sho",
-		"3LyzYcB54pm9EAMmzXpFfb1kzEDAFvqBgT",
-		"bc1q9mx5tm66zs7epa4skvyuf2vfuwmtnlttj74cnl",
+	outputs2 := []blockatlas.TxOutput{
+		blockatlas.TxOutput{
+			Address: "139f1CrnLWvVajGzs3ZtpQhbGWxM599sho",
+			Value:   "",
+		},
+		blockatlas.TxOutput{
+			Address: "3LyzYcB54pm9EAMmzXpFfb1kzEDAFvqBgT",
+			Value:   "",
+		},
+		blockatlas.TxOutput{
+			Address: "bc1q9mx5tm66zs7epa4skvyuf2vfuwmtnlttj74cnl",
+			Value:   "",
+		},
+		blockatlas.TxOutput{
+			Address: "3JZZM1rwst7G5izxbFL7KNvy7ZiZ47SVqG",
+			Value:   "",
+		},
 	}
 	tx2 := blockatlas.Tx{
 		Inputs:  inputs2,
