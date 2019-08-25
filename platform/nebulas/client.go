@@ -44,7 +44,7 @@ func (c *Client) GetLatestBlock() (int64, error) {
 	values := url.Values{
 		"type": {"newblock"},
 	}
-	var response NasNewBlockResponse
+	var response NewBlockResponse
 
 	err := c.Request.Get(&response, c.BaseURL, path, values)
 	if err != nil || len(response.Data) == 0 {
@@ -71,11 +71,11 @@ func (c *Client) GetTransactions(values url.Values) ([]Transaction, error) {
 	}
 
 	result := make([]Transaction, 0)
-	for _, tx := range response.Data.TxnList {
+	for _, tx := range response.Data.Transactions {
 		if tx.Type == TxType {
 			result = append(result, tx)
 		}
 	}
 
-	return response.Data.TxnList, nil
+	return response.Data.Transactions, nil
 }
