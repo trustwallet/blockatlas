@@ -18,7 +18,7 @@ type Transaction struct {
 	Nonce     uint64      `json:"nonce"`
 	Block     Block       `json:"block"`
 	From      Address     `json:"from"`
-	To        Address     `json: "to"`
+	To        Address     `json:"to"`
 	Timestamp int64       `json:"timestamp"`
 	Status    int32       `json:"status"`
 }
@@ -43,19 +43,38 @@ type Result struct {
 		Proposer    string `json:"proposer"`
 		Timestamp   string `json:"timestamp"`
 	} `json:"consensus_root"`
-	EventsRoot   string        `json:"events_root"`
-	Hash         string        `json:"hash"`
-	Height       string        `json:"height"`
-	IsFinality   bool          `json:"is_finality"`
-	Miner        string        `json:"miner"`
-	Nonce        string        `json:"nonce"`
-	ParentHash   string        `json:"parent_hash"`
-	RandomProof  string        `json:"randomProof"`
-	RandomSeed   string        `json:"randomSeed"`
-	StateRoot    string        `json:"state_root"`
-	Timestamp    string        `json:"timestamp"`
-	Transactions []Transaction `json:"transactions,omitempty"`
-	TxsRoot      string        `json:"txs_root"`
+	EventsRoot   string           `json:"events_root"`
+	Hash         string           `json:"hash"`
+	Height       string           `json:"height"`
+	IsFinality   bool             `json:"is_finality"`
+	Miner        string           `json:"miner"`
+	Nonce        string           `json:"nonce"`
+	ParentHash   string           `json:"parent_hash"`
+	RandomProof  string           `json:"randomProof"`
+	RandomSeed   string           `json:"randomSeed"`
+	StateRoot    string           `json:"state_root"`
+	Timestamp    string           `json:"timestamp"`
+	Transactions []NasTransaction `json:"transactions,omitempty"`
+	TxsRoot      string           `json:"txs_root"`
+}
+
+type NasTransaction struct {
+	ChainID         int         `json:"chainId"`
+	ContractAddress string      `json:"contract_address"`
+	Data            interface{} `json:"data"`
+	ExecuteError    string      `json:"execute_error"`
+	ExecuteResult   string      `json:"execute_result"`
+	From            string      `json:"from"`
+	GasLimit        string      `json:"gas_limit"`
+	GasPrice        string      `json:"gas_price"`
+	GasUsed         string      `json:"gas_used"`
+	Hash            string      `json:"hash"`
+	Nonce           string      `json:"nonce"`
+	Status          int         `json:"status"`
+	Timestamp       string      `json:"timestamp"`
+	To              string      `json:"to"`
+	Type            string      `json:"type"`
+	Value           string      `json:"value"`
 }
 
 type GetBlockByHashRequest struct {
