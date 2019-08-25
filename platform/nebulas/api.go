@@ -13,7 +13,6 @@ type Platform struct {
 }
 
 func (p *Platform) Init() error {
-	p.client.URL = viper.GetString("nebulas.api")
 	p.client.HTTPClient = http.DefaultClient
 	return nil
 }
@@ -23,6 +22,7 @@ func (p *Platform) Coin() coin.Coin {
 }
 
 func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
+	p.client.URL = viper.GetString("nebulas.api")
 	txs, err := p.client.GetTxs(address, 1)
 	if err != nil {
 		return nil, err
@@ -36,10 +36,12 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 }
 
 func (p *Platform) CurrentBlockNumber() (int64, error) {
+	p.client.URL = viper.GetString("nebulas.mainnet")
 	return p.client.GetLatestIrreversibleBlock()
 }
 
 func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
+	p.client.URL = viper.GetString("nebulas.mainnet")
 	if block, err := p.client.GetBlockByNumber(num); err == nil {
 		var normalizeTxs []blockatlas.Tx
 		for _, srcTx := range block.TxnList {
