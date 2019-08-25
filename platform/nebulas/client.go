@@ -9,7 +9,7 @@ import (
 	"strconv"
 )
 
-const TxType = "binary"
+const TxTypeBinary = "binary"
 
 type Client struct {
 	HTTPClient *http.Client
@@ -63,19 +63,18 @@ func (c *Client) GetBlockByNumber(num int64) ([]Transaction, error) {
 }
 
 func (c *Client) GetTransactions(values url.Values) ([]Transaction, error) {
-	path := fmt.Sprintf("tx")
 	var response Response
-	err := c.Request.Get(&response, c.BaseURL, path, values)
+	err := c.Request.Get(&response, c.BaseURL, "tx", values)
 	if err != nil {
 		return nil, err
 	}
 
 	result := make([]Transaction, 0)
 	for _, tx := range response.Data.Transactions {
-		if tx.Type == TxType {
+		if tx.Type == TxTypeBinary {
 			result = append(result, tx)
 		}
 	}
 
-	return response.Data.Transactions, nil
+	return result, nil
 }

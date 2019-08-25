@@ -175,6 +175,7 @@
   handle: nebulas
   name: Nebulas
   decimals: 18
+  blockTime: 30000
   sampleAddress: 'n1RCYwrpLMpSpUCQ8QUDzGRg6B2PnY8R94a'
 
 - id: 6060
