@@ -14,12 +14,11 @@ const TxType = "binary"
 type Client struct {
 	HTTPClient *http.Client
 	BaseURL    string
-	RPCURL     string
 	Request    blockatlas.Request
 	URL        string
 }
 
-func InitClient(BaseURL string, RPCURL string) Client {
+func InitClient(BaseURL string) Client {
 	return Client{
 		Request: blockatlas.Request{
 			HttpClient: http.DefaultClient,
@@ -28,7 +27,6 @@ func InitClient(BaseURL string, RPCURL string) Client {
 			},
 		},
 		BaseURL: BaseURL,
-		RPCURL:  RPCURL,
 	}
 }
 
