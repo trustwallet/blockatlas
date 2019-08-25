@@ -25,15 +25,35 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 		return nil, err
 	}
 
-	var normalizeTxs []blockatlas.Tx
+	return NormalizeTxs(txs), nil
+}
+
+func (p *Platform) CurrentBlockNumber() (int64, error) {
+	return p.client.GetLatestBlock()
+}
+
+func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
+	txs, err := p.client.GetBlockByNumber(num)
+	if err != nil {
+		return nil, err
+	}
+
+	return &blockatlas.Block{
+		Number: num,
+		Txs:    NormalizeTxs(txs),
+	}, nil
+}
+
+func NormalizeTxs(txs []Transaction) []blockatlas.Tx {
+	normalizeTxs := make([]blockatlas.Tx, 0)
 	for _, srcTx := range txs {
 		normalizeTxs = append(normalizeTxs, NormalizeTx(srcTx))
 	}
-	return normalizeTxs, nil
+	return normalizeTxs
 }
 
 func NormalizeTx(srcTx Transaction) blockatlas.Tx {
-	var status string = blockatlas.StatusCompleted
+	var status = blockatlas.StatusCompleted
 	if srcTx.Status == 0 {
 		status = blockatlas.StatusFailed
 	}

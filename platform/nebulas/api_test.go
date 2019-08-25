@@ -3,6 +3,7 @@ package nebulas
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
 	"testing"
@@ -67,4 +68,13 @@ func TestNormalize(t *testing.T) {
 	if !bytes.Equal(resJSON, dstJSON) {
 		t.Error("tx don't equal")
 	}
+}
+
+func TestNormalizeTxs(t *testing.T) {
+	txs := []Transaction{
+		Transaction{},
+		Transaction{},
+	}
+
+	assert.Equal(t, 2, len(NormalizeTxs(txs)))
 }

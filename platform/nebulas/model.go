@@ -6,8 +6,12 @@ type Response struct {
 	Data ResponseData `json:"data"`
 }
 
+type NewBlockResponse struct {
+	Data []NewBlock `json:"data"`
+}
+
 type ResponseData struct {
-	TxnList []Transaction `json:"txnList"`
+	Transactions []Transaction `json:"txnList"`
 }
 
 type Transaction struct {
@@ -25,6 +29,10 @@ type Transaction struct {
 
 type Block struct {
 	Height uint64 `json:"height"`
+}
+
+type NewBlock struct {
+	Height int64 `json:"height"`
 }
 
 type Address struct {
