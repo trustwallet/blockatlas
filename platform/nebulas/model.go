@@ -64,6 +64,6 @@ type GetBlockByHashRequest struct {
 }
 
 type GetBlockByHeightRequest struct {
-	Height              int  `json:"height"`
-	FullFillTransaction bool `json:"full_fill_transaction"`
+	Height              int64 `json:"height"`
+	FullFillTransaction bool  `json:"full_fill_transaction"`
 }

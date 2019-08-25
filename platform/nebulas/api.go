@@ -5,6 +5,7 @@ import (
 	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
 	"net/http"
+	"strconv"
 )
 
 type Platform struct {
@@ -35,7 +36,7 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 }
 
 func NormalizeTx(srcTx Transaction) blockatlas.Tx {
-	var status string = blockatlas.StatusCompleted
+	var status = blockatlas.StatusCompleted
 	if srcTx.Status == 0 {
 		status = blockatlas.StatusFailed
 	}
@@ -55,4 +56,17 @@ func NormalizeTx(srcTx Transaction) blockatlas.Tx {
 			Decimals: coin.Coins[coin.NAS].Decimals,
 		},
 	}
+}
+
+func (p *Platform) CurrentBlockNumber() (int64, error) {
+	result, err := p.client.GetLatestIrreversibleBlock()
+	if err != nil {
+		return 0, err
+	}
+
+	height, err := strconv.ParseInt(result.Height, 10, 64)
+	if err != nil {
+		return 0, err
+	}
+	return height, nil
 }
