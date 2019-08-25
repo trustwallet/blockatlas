@@ -40,11 +40,14 @@ func (c *Client) GetTxs(address string, page int) ([]Transaction, error) {
 }
 
 func (c *Client) GetLatestBlock() (int64, error) {
-	path := fmt.Sprintf("/block?type=newblock")
+	path := fmt.Sprintf("/block")
+	values := url.Values{
+		"type": {"newblock"},
+	}
 	var response NasNewBlockResponse
 
-	err := c.Request.Get(&response, c.BaseURL, path, url.Values{})
-	if err != nil {
+	err := c.Request.Get(&response, c.BaseURL, path, values)
+	if err != nil || len(response.Data) == 0 {
 		logrus.Error("Error loading latest block height")
 		return 0, err
 	}

@@ -45,46 +45,6 @@ var transferDst = blockatlas.Tx{
 	},
 }
 
-const blockSrc = `{
-    "result":{
-        "hash":"c4a51d6241db372c1b8720e62c04426bd587e1f31054b7d04a3509f48ee58e9f",
-        "nonce":"0",
-        "height":"407",
-        
-        "transactions":[{
-            "hash":"1e96493de6b5ebe686e461822ec22e73fcbfb41a6358aa58c375b935802e4145",
-            "chainId":"100",
-            "from":"n1Z6SbjLuAEXfhX1UJvXT6BB5osWYxVg3F3",
-            "to":"n1orSeSMj7nn8KHHN4JcQEw3r52TVExu63r",
-            "value":"10000000000000000000",
-			"nonce":"34",
-            "timestamp":"1522220087",
-            "type":"binary",
-            "data":null,
-            "gas_price":"1000000",
-            "gas_limit":"2000000",
-            "contract_address":"",
-            "status":1,
-            "gas_used":"20000"
-        }]
-    }
-}`
-
-var tnxDst = blockatlas.Tx{
-	ID:       "1e96493de6b5ebe686e461822ec22e73fcbfb41a6358aa58c375b935802e4145",
-	Coin:     coin.NAS,
-	From:     "n1Z6SbjLuAEXfhX1UJvXT6BB5osWYxVg3F3",
-	To:       "n1orSeSMj7nn8KHHN4JcQEw3r52TVExu63r",
-	Fee:      "20000000000",
-	Sequence: 34,
-	Date:     1522220087,
-	Block:    407,
-	Status:   blockatlas.StatusCompleted,
-	Meta: blockatlas.Transfer{
-		Value: "10000000000000000000",
-	},
-}
-
 func TestNormalize(t *testing.T) {
 	var srcTx Transaction
 	err := json.Unmarshal([]byte(transferSrc), &srcTx)
