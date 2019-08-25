@@ -1,11 +1,8 @@
 package cosmos
 
 import (
-	"encoding/json"
-	"fmt"
 	"github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas"
-	"github.com/trustwallet/blockatlas/client"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -13,67 +10,60 @@ import (
 
 // Client - the HTTP client
 type Client struct {
-	HTTPClient *http.Client
-	BaseURL    string
+	Request blockatlas.Request
+	URL     string
+}
+
+func InitClient(URL string) Client {
+	return Client{
+		Request: blockatlas.Request{
+			HttpClient: http.DefaultClient,
+			ErrorHandler: func(res *http.Response, uri string) error {
+				return nil
+			},
+		},
+		URL: URL,
+	}
 }
 
 // GetAddrTxes - get all ATOM transactions for a given address
 func (c *Client) GetAddrTxes(address string, tag string) (txs []Tx, err error) {
-	uri := fmt.Sprintf("%s/txs?%s",
-		c.BaseURL,
-		url.Values{
-			tag:     {address},
-			"page":  {strconv.FormatInt(1, 10)},
-			"limit": {strconv.FormatInt(1000, 10)},
-		}.Encode())
-
-	res, err := c.HTTPClient.Get(uri)
-
-	if err != nil {
-		logrus.WithError(err).Errorf("Cosmos: Failed to get transactions for address %s", address)
-		return txs, err
+	query := url.Values{
+		tag:     {address},
+		"page":  {strconv.FormatInt(1, 10)},
+		"limit": {strconv.FormatInt(1000, 10)},
 	}
 
-	dec := json.NewDecoder(res.Body)
-	err = dec.Decode(&txs)
+	err = c.Request.Get(&txs, c.URL, "txs", query)
+	if err != nil {
+		logrus.WithError(err).Errorf("Cosmos: Failed to get transactions for address %s", address)
+		return nil, err
+	}
 	return txs, err
 }
 
 func (c *Client) GetValidators() (validators []CosmosValidator, err error) {
-
-	uri := fmt.Sprintf("%s/staking/validators?%s",
-		c.BaseURL,
-		url.Values{
-			"status": {"bonded"},
-			"page":   {strconv.FormatInt(1, 10)},
-			"limit":  {strconv.FormatInt(blockatlas.ValidatorsPerPage, 10)},
-		}.Encode())
-
-	res, err := c.HTTPClient.Get(uri)
-
+	query := url.Values{
+		"status": {"bonded"},
+		"page":   {strconv.FormatInt(1, 10)},
+		"limit":  {strconv.FormatInt(blockatlas.ValidatorsPerPage, 10)},
+	}
+	err = c.Request.Get(&validators, c.URL, "staking/validators", query)
 	if err != nil {
 		logrus.WithError(err).Errorf("Cosmos: Failed to get validators for address")
 		return validators, err
 	}
-
-	dec := json.NewDecoder(res.Body)
-	err = dec.Decode(&validators)
-
 	return validators, err
 }
 
 func (c *Client) GetBlockByNumber(num int64) (txs []Tx, err error) {
-	urlValues := url.Values{"tx.height": {strconv.FormatInt(num, 10)}}
-
-	err = client.Request(c.HTTPClient, c.BaseURL, "txs", urlValues, &txs)
-
+	err = c.Request.Get(&txs, c.URL, "txs", url.Values{"tx.height": {strconv.FormatInt(num, 10)}})
 	return txs, err
 }
 
 func (c *Client) CurrentBlockNumber() (num int64, err error) {
 	var block Block
-
-	err = client.Request(c.HTTPClient, c.BaseURL, "blocks/latest", url.Values{}, &block)
+	err = c.Request.Get(&block, c.URL, "blocks/latest", nil)
 
 	if err != nil {
 		return num, err
@@ -89,16 +79,15 @@ func (c *Client) CurrentBlockNumber() (num int64, err error) {
 }
 
 func (c *Client) GetPool() (result StakingPool, err error) {
-	return result, client.Request(c.HTTPClient, c.BaseURL, "staking/pool", url.Values{}, &result)
+	return result, c.Request.Get(&result, c.URL, "staking/pool", nil)
 }
 
 func (c *Client) GetInflation() (float64, error) {
 	var result string
 
-	err := client.Request(c.HTTPClient, c.BaseURL, "minting/inflation", url.Values{}, &result)
+	err := c.Request.Get(&result, c.URL, "minting/inflation", nil)
 
 	s, err := strconv.ParseFloat(result, 32)
 
 	return s, err
 }
-

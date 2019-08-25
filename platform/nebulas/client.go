@@ -1,8 +1,7 @@
 package nebulas
 
 import (
-	"fmt"
-	"github.com/trustwallet/blockatlas/client"
+	"github.com/trustwallet/blockatlas"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -11,19 +10,27 @@ import (
 const TxType = "binary"
 
 type Client struct {
-	HTTPClient *http.Client
-	URL        string
+	Request blockatlas.Request
+	URL     string
+}
+
+func InitClient(URL string) Client {
+	return Client{
+		Request: blockatlas.Request{
+			HttpClient: http.DefaultClient,
+			ErrorHandler: func(res *http.Response, uri string) error {
+				return nil
+			},
+		},
+		URL: URL,
+	}
 }
 
 func (c *Client) GetTxs(address string, page int) ([]Transaction, error) {
-
-	path := fmt.Sprintf("tx")
 	var response Response
-	values := url.Values{
-		"a": {address},
-		"p": {strconv.Itoa(page)},
-	}
-	if err := client.Request(c.HTTPClient, c.URL, path, values, &response); err != nil {
+	err := c.Request.Get(&response, c.URL, "tx", url.Values{"a": {address}, "p": {strconv.Itoa(page)}})
+
+	if err != nil {
 		return nil, err
 	}
 

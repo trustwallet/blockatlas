@@ -6,12 +6,7 @@ import (
 
 	"github.com/trustwallet/blockatlas/coin"
 	"net/http"
-	"net/url"
 )
-
-var client = http.Client{
-	Timeout: time.Second * 5,
-}
 
 const (
 	AssetsURL = "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/"
@@ -19,7 +14,15 @@ const (
 
 func GetValidators(coin coin.Coin) ([]AssetValidator, error) {
 	var results []AssetValidator
-	err := blockatlas.Request(&client, AssetsURL+coin.Handle, "/validators/list.json", url.Values{}, &results)
+	request := blockatlas.Request{
+		HttpClient: &http.Client{
+			Timeout: time.Second * 5,
+		},
+		ErrorHandler: func(res *http.Response, uri string) error {
+			return nil
+		},
+	}
+	err := request.Get(&results, AssetsURL+coin.Handle, "/validators/list.json", nil)
 	return results, err
 }
 

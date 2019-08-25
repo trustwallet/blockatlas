@@ -2,7 +2,6 @@ package cosmos
 
 import (
 	"github.com/trustwallet/blockatlas"
-	"net/http"
 	"sort"
 	"strconv"
 	"time"
@@ -17,8 +16,7 @@ type Platform struct {
 }
 
 func (p *Platform) Init() error {
-	p.client.BaseURL = viper.GetString("cosmos.api")
-	p.client.HTTPClient = http.DefaultClient
+	p.client = InitClient(viper.GetString("cosmos.api"))
 	return nil
 }
 

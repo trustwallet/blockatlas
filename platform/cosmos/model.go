@@ -29,6 +29,8 @@ type Tx struct {
 	Data  Data   `json:"tx"`
 }
 
+type TxPage []Tx
+
 // Data - "tx" sub object
 type Data struct {
 	Contents Contents `json:"value"`

@@ -7,37 +7,41 @@ import (
 	"strconv"
 
 	"github.com/trustwallet/blockatlas"
-	"github.com/trustwallet/blockatlas/client"
 )
 
 type Client struct {
-	HTTPClient *http.Client
-	URL        string
+	Request blockatlas.Request
+	URL     string
 }
 
-func (c *Client) GetTransactions(address string) (TransactionsList, error) {
-	var txs TransactionsList
-
-	path := fmt.Sprintf("v2/address/%s", address)
-	query := url.Values{
-		"pageSize": {strconv.FormatInt(blockatlas.TxPerPage*4, 10)},
-		"details":  {"txs"},
+func InitClient(URL string) Client {
+	return Client{
+		Request: blockatlas.Request{
+			HttpClient: http.DefaultClient,
+			ErrorHandler: func(res *http.Response, uri string) error {
+				return nil
+			},
+		},
+		URL: URL,
 	}
-	err := client.Request(c.HTTPClient, c.URL, path, query, &txs)
-
-	return txs, err
 }
 
-func (c *Client) GetTransactionsByXpub(xpub string) (TransactionsList, error) {
-	var txs TransactionsList
+func (c *Client) GetTransactions(address string) (transfers TransactionsList, err error) {
+	path := fmt.Sprintf("address/%s", address)
+	err = c.Request.Get(&transfers, c.URL, path, url.Values{
+		"details":  {"txs"},
+		"pageSize": {strconv.FormatInt(blockatlas.TxPerPage*4, 10)},
+	})
+	return transfers, err
+}
 
+func (c *Client) GetTransactionsByXpub(xpub string) (transfers TransactionsList, err error) {
 	path := fmt.Sprintf("v2/xpub/%s", xpub)
-	query := url.Values{
+	args := url.Values{
 		"pageSize": {strconv.FormatInt(blockatlas.TxPerPage*4, 10)},
 		"details":  {"txs"},
 		"tokens":   {"derived"},
 	}
-	err := client.Request(c.HTTPClient, c.URL, path, query, &txs)
-
-	return txs, err
+	err = c.Request.Get(&transfers, c.URL, path, args)
+	return transfers, err
 }
