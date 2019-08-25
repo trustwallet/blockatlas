@@ -3,6 +3,7 @@ package nebulas
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
 	"testing"
@@ -44,7 +45,7 @@ var transferDst = blockatlas.Tx{
 	},
 }
 
-const blockSrc  = `{
+const blockSrc = `{
     "result":{
         "hash":"c4a51d6241db372c1b8720e62c04426bd587e1f31054b7d04a3509f48ee58e9f",
         "nonce":"0",
@@ -69,16 +70,16 @@ const blockSrc  = `{
     }
 }`
 
-var tnxDst  = blockatlas.Tx{
-	ID:     "1e96493de6b5ebe686e461822ec22e73fcbfb41a6358aa58c375b935802e4145",
-	Coin:   coin.NAS,
-	From:   "n1Z6SbjLuAEXfhX1UJvXT6BB5osWYxVg3F3",
-	To:     "n1orSeSMj7nn8KHHN4JcQEw3r52TVExu63r",
-	Fee:    "20000000000",
+var tnxDst = blockatlas.Tx{
+	ID:       "1e96493de6b5ebe686e461822ec22e73fcbfb41a6358aa58c375b935802e4145",
+	Coin:     coin.NAS,
+	From:     "n1Z6SbjLuAEXfhX1UJvXT6BB5osWYxVg3F3",
+	To:       "n1orSeSMj7nn8KHHN4JcQEw3r52TVExu63r",
+	Fee:      "20000000000",
 	Sequence: 34,
-	Date:   1522220087,
-	Block:  407,
-	Status: blockatlas.StatusCompleted,
+	Date:     1522220087,
+	Block:    407,
+	Status:   blockatlas.StatusCompleted,
 	Meta: blockatlas.Transfer{
 		Value: "10000000000000000000",
 	},
@@ -109,26 +110,11 @@ func TestNormalize(t *testing.T) {
 	}
 }
 
-func TestNormalizeNasTx(t *testing.T) {
-	var srcBlock NasResponse
-	err := json.Unmarshal([]byte(blockSrc), &srcBlock)
-	if err != nil {
-		t.Error(err)
-		return
+func TestNormalizeTxs(t *testing.T) {
+	txs := []Transaction{
+		Transaction{},
+		Transaction{},
 	}
 
-	resTx := NormalizeNasTx(srcBlock.Result.TxnList[0], srcBlock.Result)
-
-	resJSON, err := json.Marshal(&resTx)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	dstJSON, err := json.Marshal(&tnxDst)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if !bytes.Equal(resJSON, dstJSON) {
-		t.Error("tx don't equal")
-	}
+	assert.Equal(t, 2, len(NormalizeTxs(txs)))
 }

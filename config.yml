@@ -136,7 +136,6 @@ aeternity:
 # [NAS] Nebulas: https://nebulas.io
 nebulas:
   api: https://explorer-backend.nebulas.io/api
-  mainnet: https://mainnet.nebulas.io
 
 # [BTC] Bitcoin: https://bitcoin.org/ (Blockbook API https://github.com/trezor/blockbook)
 bitcoin:
