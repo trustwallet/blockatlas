@@ -38,8 +38,6 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 		return nil, err
 	}
 
-	log.Print("normalizeTxs: ", txs, num)
-
 	return &blockatlas.Block{
 		Number: num,
 		Txs:    NormalizeTxs(txs),
