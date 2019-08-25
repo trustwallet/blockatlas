@@ -2,7 +2,6 @@ package iotex
 
 import (
 	"github.com/trustwallet/blockatlas"
-	"net/http"
 	"strconv"
 	"time"
 
@@ -15,8 +14,7 @@ type Platform struct {
 }
 
 func (p *Platform) Init() error {
-	p.client.BaseURL = viper.GetString("iotex.api")
-	p.client.HTTPClient = http.DefaultClient
+	p.client = InitClient(viper.GetString("iotex.api"))
 	return nil
 }
 

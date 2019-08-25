@@ -3,6 +3,7 @@ package nebulas
 import (
 	"fmt"
 	"github.com/sirupsen/logrus"
+	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/client"
 	"net/http"
 	"net/url"
@@ -13,18 +14,34 @@ const TxType = "binary"
 
 type Client struct {
 	HTTPClient *http.Client
+	BaseURL    string
+	RPCURL     string
+	Request    blockatlas.Request
 	URL        string
 }
 
-func (c *Client) GetTxs(address string, page int) ([]Transaction, error) {
+func InitClient(BaseURL string, RPCURL string) Client {
+	return Client{
+		Request: blockatlas.Request{
+			HttpClient: http.DefaultClient,
+			ErrorHandler: func(res *http.Response, uri string) error {
+				return nil
+			},
+		},
+		BaseURL: BaseURL,
+		RPCURL:  RPCURL,
+	}
+}
 
-	path := fmt.Sprintf("tx")
+func (c *Client) GetTxs(address string, page int) ([]Transaction, error) {
 	var response Response
 	values := url.Values{
 		"a": {address},
 		"p": {strconv.Itoa(page)},
 	}
-	if err := client.Request(c.HTTPClient, c.URL, path, values, &response); err != nil {
+	var path = ""
+	err := client.Request(c.HTTPClient, c.BaseURL, path, values, &response)
+	if err != nil {
 		return nil, err
 	}
 
@@ -42,14 +59,13 @@ func (c *Client) GetLatestIrreversibleBlock() (int64, error) {
 	path := fmt.Sprintf("v1/user/lib")
 	var response NasResponse
 
-	err := client.Request(c.HTTPClient, c.URL, path, nil, &response)
+	err := client.Request(c.HTTPClient, c.RPCURL, path, nil, &response)
 	if err != nil {
 		logrus.Error("Error loading latest block height")
 		return 0, err
 	}
 
-	var height int64 = int64(response.Result.Height)
-	return height, nil
+	return int64(response.Result.Height), nil
 }
 
 func (c *Client) GetBlockByNumber(num int64) (NasBlock, error) {
@@ -59,11 +75,11 @@ func (c *Client) GetBlockByNumber(num int64) (NasBlock, error) {
 	m["height"] = strconv.FormatInt(int64(num), 10)
 	m["full_fill_transaction"] = "true"
 
-	err := client.RequestPost(c.HTTPClient, c.URL, path, "application/json", m, &response)
+	err := client.RequestPost(c.HTTPClient, c.RPCURL, path, "application/json", m, &response)
 	if err != nil {
 		logrus.Error("Error loading current nebulas block")
-		var nasBlock NasBlock
-		return nasBlock, err
+		return NasBlock{}, err
 	}
+
 	return response.Result, nil
 }

@@ -17,8 +17,7 @@ type Platform struct {
 }
 
 func (p *Platform) Init() error {
-	p.client.URL = viper.GetString(p.ConfigKey())
-	p.client.HTTPClient = http.DefaultClient
+	p.client = InitClient(viper.GetString(p.ConfigKey()))
 	return nil
 }
 

@@ -1,12 +1,11 @@
 package waves
 
 import (
-	"net/http"
+	"github.com/spf13/viper"
 	"strconv"
 
 	"github.com/trustwallet/blockatlas/coin"
 
-	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas"
 )
 
@@ -15,8 +14,7 @@ type Platform struct {
 }
 
 func (p *Platform) Init() error {
-	p.client.URL = viper.GetString("waves.api")
-	p.client.HTTPClient = http.DefaultClient
+	p.client = InitClient(viper.GetString("waves.api"))
 	return nil
 }
 

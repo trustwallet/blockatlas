@@ -16,16 +16,16 @@ type ResponseData struct {
 }
 
 type Transaction struct {
-	Hash        string      `json:"hash"`
-	Type        string      `json:"type"`
-	Value       json.Number `json:"value"`
-	TxFee       string      `json:"txFee"`
-	Nonce       uint64      `json:"nonce"`
-	Block       Block       `json:"block"`
-	From        Address     `json:"from"`
-	To          Address     `json: "to"`
-	Timestamp   int64       `json:"timestamp"`
-	Status      int32       `json:"status"`
+	Hash      string      `json:"hash"`
+	Type      string      `json:"type"`
+	Value     json.Number `json:"value"`
+	TxFee     string      `json:"txFee"`
+	Nonce     uint64      `json:"nonce"`
+	Block     Block       `json:"block"`
+	From      Address     `json:"from"`
+	To        Address     `json: "to"`
+	Timestamp int64       `json:"timestamp"`
+	Status    int32       `json:"status"`
 }
 
 type NasTransaction struct {

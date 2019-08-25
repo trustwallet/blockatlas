@@ -6,7 +6,6 @@ import (
 	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/util"
-	"net/http"
 	"strings"
 	"sync"
 )
@@ -16,8 +15,7 @@ type Platform struct {
 }
 
 func (p *Platform) Init() error {
-	p.client.URL = viper.GetString("vechain.api")
-	p.client.HTTPClient = http.DefaultClient
+	p.client = InitClient(viper.GetString("vechain.api"))
 	return nil
 }
 
