@@ -48,13 +48,13 @@ var expectedTx = blockatlas.Tx{
 	From: "3QJmV3qfvL9SuYo34YihAf3sRCW3qSinyC",
 	To:   "3FjBW1KL9L8aYtdKzJ8FhCNxmXB7dXDRw4",
 	Inputs: []blockatlas.TxOutput{
-		blockatlas.TxOutput{
+		{
 			Address: "3QJmV3qfvL9SuYo34YihAf3sRCW3qSinyC",
 			Value:   "777200",
 		},
 	},
 	Outputs: []blockatlas.TxOutput{
-		blockatlas.TxOutput{
+		{
 			Address: "3FjBW1KL9L8aYtdKzJ8FhCNxmXB7dXDRw4",
 			Value:   "677012",
 		},
