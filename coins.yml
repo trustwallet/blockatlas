@@ -73,6 +73,7 @@
   handle: iotex
   name: IoTeX
   decimals: 18
+  blockTime: 10000
   sampleAddress: 'io1mwekae7qqwlr23220k5n9z3fmjxz72tuchra3m'
 
 - id: 313
@@ -88,7 +89,16 @@
   handle: aion
   name: Aion
   decimals: 18
+  blockTime: 10000
   sampleAddress: '0xa07981da70ce919e1db5f051c3c386eb526e6ce8b9e2bfd56e3f3d754b0a17f3'
+
+- id: 457
+  symbol: AE
+  handle: aeternity
+  name: Aeternity
+  decimals: 18
+  blockTime: 6000
+  sampleAddress: 'ak_2p5878zbFhxnrm7meL7TmqwtvBaqcBddyp5eGzZbovZ5FeVfcw'
 
 - id: 500
   symbol: THETA
@@ -160,6 +170,13 @@
   blockTime: 5000
   sampleAddress: 'GBHKUZ7C2SZ5N3X2S7O6TT6LNUWSEA2BXMSR5GTTSR6VZARSVAXIQNGH'
 
+- id: 2718
+  symbol: NAS
+  handle: nebulas
+  name: Nebulas
+  decimals: 18
+  sampleAddress: 'n1RCYwrpLMpSpUCQ8QUDzGRg6B2PnY8R94a'
+
 - id: 6060
   symbol: GO
   handle: gochain
@@ -191,30 +208,98 @@
   decimals: 9
   sampleAddress: '0x8197987c401a3466ad678b2080b24838ebd95b41'
 
-- id: 457
-  symbol: AE
-  handle: aeternity
-  name: Aeternity
-  decimals: 18
-  sampleAddress: 'ak_2p5878zbFhxnrm7meL7TmqwtvBaqcBddyp5eGzZbovZ5FeVfcw'
-
 - id: 0
   symbol: BTC
   handle: bitcoin
   name: Bitcoin
   decimals: 8
-  sampleAddress: '3QJmV3qfvL9SuYo34YihAf3sRCW3qSinyC'
+  blockTime: 600000
+  sampleAddress: 'bc1quvuarfksewfeuevuc6tn0kfyptgjvwsvrprk9d'
 
 - id: 2
   symbol: LTC
   handle: litecoin
   name: Litecoin
   decimals: 8
-  sampleAddress: 'LamFJHBtU59fSDasrovfcp7hZ9AM5vpfdx'
+  blockTime: 150000
+  sampleAddress: 'ltc1qhd8fxxp2dx3vsmpac43z6ev0kllm4n53t5sk0u'
 
-- id: 2718
-  symbol: NAS
-  handle: nebulas
-  name: Nebulas
-  decimals: 18
-  sampleAddress: 'n1RCYwrpLMpSpUCQ8QUDzGRg6B2PnY8R94a'
+- id: 3
+  symbol: DOGE
+  handle: doge
+  name: Dogecoin
+  decimals: 8
+  blockTime: 60000
+  sampleAddress: 'DJRFZNg8jkUtjcpo2zJd92FUAzwRjitw6f'
+
+- id: 5
+  symbol: DASH
+  handle: dash
+  name: Dash
+  decimals: 8
+  blockTime: 180000
+  sampleAddress: 'XqHiz8EXYbTAtBEYs4pWTHh7ipEDQcNQeT'
+
+- id: 14
+  symbol: VIA
+  handle: viacoin
+  name: Viacoin
+  decimals: 8
+  blockTime: 15000
+  sampleAddress: 'via1qnmsgjd6cvfprnszdgmyg9kewtjfgqflz67wwhc'
+
+- id: 17
+  symbol: GRS
+  handle: groestlcoin
+  name: Groestlcoin
+  decimals: 8
+  blockTime: 60000
+  sampleAddress: 'grs1qexwmshts5pdpeqglkl39zyl6693tmfwp0cue4j'
+
+- id: 133
+  symbol: ZEC
+  handle: zcash
+  name: Zcash
+  decimals: 8
+  blockTime: 150000
+  sampleAddress: 't1YYnByMzdGhQv3W3rnjHMrJs6HH4Y231gy'
+
+- id: 136
+  symbol: XZC
+  handle: zcoin
+  name: Zcoin
+  decimals: 8
+  blockTime: 300000
+  sampleAddress: 'aEd5XFChyXobvEics2ppAqgK3Bgusjxtik'
+
+- id: 145
+  symbol: BCH
+  handle: bitcoincash
+  name: Bitcoin Cash
+  decimals: 8
+  blockTime: 600000
+  sampleAddress: 'bitcoincash:qq07l6rr5lsdm3m80qxw80ku2ex0tj76vvsxpvmgme'
+
+- id: 175
+  symbol: RVN
+  handle: ravencoin
+  name: Raven
+  decimals: 8
+  blockTime: 60000
+  sampleAddress: 'RHoCwPc2FCQqwToYnSiAb3SrCET4zEHsbS'
+
+- id: 2301
+  symbol: QTUM
+  handle: qtum
+  name: Qtum
+  decimals: 8
+  blockTime: 60000
+  sampleAddress: 'QhceuaTdeCZtcxmVc6yyEDEJ7Riu5gWFoF'
+
+- id: 19167
+  symbol: ZEL
+  handle: zelcash
+  name: Zelcash
+  decimals: 8
+  blockTime: 120000
+  sampleAddress: 't1UKbRPzL4WN8Rs8aZ8RNiWoD2ftCMHKGUf'

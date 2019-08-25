@@ -50,7 +50,7 @@ type StakeAPI interface {
 type CollectionAPI interface {
 	Platform
 	GetCollections(owner string) (CollectionPage, error)
-	GetCollectibles(owner string, collectibleID string) (CollectiblePage, error)
+	GetCollectibles(owner, collectibleID string) (CollectiblePage, error)
 }
 
 // CustomAPI provides custom HTTP routes

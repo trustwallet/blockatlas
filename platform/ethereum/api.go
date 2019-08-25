@@ -197,7 +197,7 @@ func (p *Platform) GetCollections(owner string) (blockatlas.CollectionPage, erro
 	return page, nil
 }
 
-func (p *Platform) GetCollectibles(owner string, collectibleID string) (blockatlas.CollectiblePage, error) {
+func (p *Platform) GetCollectibles(owner, collectibleID string) (blockatlas.CollectiblePage, error) {
 	collection, items, err := p.collectionsClient.GetCollectibles(owner, collectibleID)
 	if err != nil {
 		return nil, err
@@ -248,7 +248,7 @@ func NormalizeCollectible(c *Collection, a Collectible, coinIndex uint) blockatl
 		Category:         c.Name,
 		ImageUrl:         a.ImagePreviewUrl,
 		ProviderLink:     a.Permalink,
-		ExternalLink:     a.ExternalLink,
+		ExternalLink:     GetExternalLink(a),
 		Type:             "ERC721",
 		Description:      a.Description,
 		Coin:             coinIndex,
@@ -261,6 +261,16 @@ func (p *Platform) GetTokenListByAddress(address string) (blockatlas.TokenPage, 
 		return nil, err
 	}
 	return NormalizeTokens(account.Docs, *p), nil
+}
+
+func GetExternalLink(c Collectible) string {
+	if c.ExternalLink != "" {
+		return c.ExternalLink
+	} else if c.AssetContract.ExternalLink != "" {
+		return c.AssetContract.ExternalLink
+	} else {
+		return ""
+	}
 }
 
 // NormalizeToken converts a Ethereum token into the generic model

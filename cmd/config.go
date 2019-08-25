@@ -47,7 +47,7 @@ func loadDefaults() {
 	viper.SetDefault("gin.mode", gin.ReleaseMode)
 	viper.SetDefault("gin.reverse_proxy", false)
 	viper.SetDefault("observer.redis", "redis://localhost:6379")
-	viper.SetDefault("observer.min_poll", 250*time.Millisecond)
+	viper.SetDefault("observer.min_poll", 1250*time.Millisecond)
 	viper.SetDefault("observer.backlog", 3*time.Hour)
 	viper.SetDefault("observer.backlog_max_blocks", 200)
 	viper.SetDefault("observer.stream_conns", 16)
