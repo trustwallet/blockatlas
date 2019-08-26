@@ -62,6 +62,11 @@ func (c *Client) GetTransactionsByBlockChan(number int64, page int64, out chan B
 	defer wg.Done()
 	block, err := c.GetTransactionsByBlock(number, page)
 	if err != nil {
+		errMsg := fmt.Sprintf("GetTransactionsByBlockChan err: %s", err.Error())
+		logrus.WithFields(logrus.Fields{
+			"number": number,
+			"page":   page,
+		}).Error(errMsg)
 		return
 	}
 	out <- block
