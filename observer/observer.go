@@ -3,6 +3,7 @@ package observer
 import (
 	"github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas"
+	observerStorage "github.com/trustwallet/blockatlas/observer/storage"
 )
 
 type Event struct {
@@ -42,13 +43,18 @@ func (o *Observer) processBlock(events chan<- Event, block *blockatlas.Block) {
 	}
 
 	// Emit events
+	emitted := make(map[string]string)
 	for _, sub := range subs {
 		txs := txMap[sub.Address].Txs()
 		for _, tx := range txs {
+			if _, ok := emitted[tx.ID]; ok {
+				continue
+			}
 			events <- Event{
 				Subscription: sub,
 				Tx:           &tx,
 			}
+			emitted[tx.ID] = tx.ID
 		}
 	}
 }

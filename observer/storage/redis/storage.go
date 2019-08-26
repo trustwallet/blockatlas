@@ -3,8 +3,10 @@ package redis
 import (
 	"fmt"
 	"github.com/go-redis/redis"
+	"github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas/observer"
 	"strings"
+	"time"
 )
 
 const keyObservers = "ATLAS_OBSERVERS"
