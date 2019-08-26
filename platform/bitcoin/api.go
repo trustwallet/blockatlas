@@ -7,7 +7,6 @@ import (
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
-	"math/big"
 	"net/http"
 	"strconv"
 	//"sync"
@@ -76,7 +75,7 @@ func (p *Platform) getTxsByXPub(xpub string) ([]blockatlas.Tx, error) {
 		addressSet.Add(token.Name)
 	}
 
-	txs := NormalizeTxs(sourceTxs, p.CoinIndex, addressSet)
+	txs := p.NormalizeTxs(sourceTxs, p.CoinIndex, addressSet)
 	return txs, nil
 }
 
@@ -87,7 +86,7 @@ func (p *Platform) getTxsByAddress(address string) ([]blockatlas.Tx, error) {
 	}
 	addressSet := mapset.NewSet()
 	addressSet.Add(address)
-	txs := NormalizeTxs(sourceTxs, p.CoinIndex, addressSet)
+	txs := p.NormalizeTxs(sourceTxs, p.CoinIndex, addressSet)
 	return txs, nil
 }
 
@@ -135,10 +134,10 @@ func (p *Platform) GetAddressesFromXpub(xpub string) ([]string, error) {
 //	}, nil
 //}
 
-func NormalizeTxs(sourceTxs TransactionsList, coinIndex uint, addressSet mapset.Set) []blockatlas.Tx {
+func (p *Platform) NormalizeTxs(sourceTxs TransactionsList, coinIndex uint, addressSet mapset.Set) []blockatlas.Tx {
 	var txs []blockatlas.Tx
 	for _, transaction := range sourceTxs.Transactions {
-		if tx, ok := NormalizeTransfer(&transaction, coinIndex, addressSet); ok {
+		if tx, ok := p.NormalizeTransfer(&transaction, coinIndex, addressSet); ok {
 			txs = append(txs, tx)
 		}
 	}
@@ -184,10 +183,10 @@ func NormalizeTransaction(transaction *Transaction, coinIndex uint) blockatlas.T
 	}
 }
 
-func NormalizeTransfer(transaction *Transaction, coinIndex uint, addressSet mapset.Set) (tx blockatlas.Tx, ok bool) {
+func (p *Platform) NormalizeTransfer(transaction *Transaction, coinIndex uint, addressSet mapset.Set) (tx blockatlas.Tx, ok bool) {
 	tx = NormalizeTransaction(transaction, coinIndex)
-	direction := InferDirection(&tx, addressSet)
-	value := InferValue(transaction, direction, addressSet)
+	direction := p.InferDirection(&tx, addressSet)
+	value := p.InferValue(&tx, direction, addressSet)
 
 	tx.Direction = direction
 	tx.Meta = blockatlas.Transfer{
@@ -205,7 +204,7 @@ func parseOutputs(outputs []Output) (addresses []blockatlas.TxOutput) {
 	for _, output := range outputs {
 		for _, address := range output.Addresses {
 			if val, ok := set[address]; ok {
-				val.Value = addAmount(string(val.Value), output.Value)
+				val.Value = AddAmount(string(val.Value), output.Value)
 			} else {
 				set[address] = blockatlas.TxOutput{
 					Address: address,
@@ -221,13 +220,13 @@ func parseOutputs(outputs []Output) (addresses []blockatlas.TxOutput) {
 	return addresses
 }
 
-func addAmount(left string, right string) (sum blockatlas.Amount) {
+func AddAmount(left string, right string) (sum blockatlas.Amount) {
 	amount1, _ := strconv.ParseInt(left, 10, 64)
 	amount2, _ := strconv.ParseInt(right, 10, 64)
 	return blockatlas.Amount(amount1 + amount2)
 }
 
-func InferDirection(tx *blockatlas.Tx, addressSet mapset.Set) string {
+func (p *Platform) InferDirection(tx *blockatlas.Tx, addressSet mapset.Set) string {
 	inputSet := mapset.NewSet()
 	for _, address := range tx.Inputs {
 		inputSet.Add(address.Address)
@@ -248,30 +247,21 @@ func InferDirection(tx *blockatlas.Tx, addressSet mapset.Set) string {
 	}
 }
 
-func InferValue(tx *Transaction, direction string, addressSet mapset.Set) blockatlas.Amount {
-	value := blockatlas.Amount(tx.Value)
-	if len(tx.Vout) == 0 {
+func (p *Platform) InferValue(tx *blockatlas.Tx, direction string, addressSet mapset.Set) blockatlas.Amount {
+	value := blockatlas.Amount(0)
+	if len(tx.Outputs) == 0 {
 		return value
 	}
 	if direction == blockatlas.DirectionOutgoing || direction == blockatlas.DirectionSelf {
-		value = blockatlas.Amount(tx.Vout[0].Value)
+		value = tx.Outputs[0].Value
 	} else if direction == blockatlas.DirectionIncoming {
-		amount := new(big.Int)
-		for _, output := range tx.Vout {
-			if len(output.Addresses) == 0 {
+		amount := value
+		for _, output := range tx.Outputs {
+			if !addressSet.Contains(output.Address) {
 				continue
 			}
-			if !addressSet.Contains(output.Addresses[0]) {
-				continue
-			}
-			v := new(big.Int)
-			v, ok := v.SetString(output.Value, 10)
-			if !ok {
-				continue
-			}
-			amount = amount.Add(amount, v)
+			amount = AddAmount(string(amount), string(output.Value))
 		}
-		value = blockatlas.Amount(amount.String())
 	}
 	return value
 }

@@ -1,9 +1,11 @@
 package observer
 
 import (
+	mapset "github.com/deckarep/golang-set"
 	"github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas"
-	observerStorage "github.com/trustwallet/blockatlas/observer/storage"
+	"github.com/trustwallet/blockatlas/coin"
+	"github.com/trustwallet/blockatlas/platform/bitcoin"
 )
 
 type Event struct {
@@ -44,17 +46,34 @@ func (o *Observer) processBlock(events chan<- Event, block *blockatlas.Block) {
 
 	// Emit events
 	emitted := make(map[string]string)
+	platform := &bitcoin.Platform{CoinIndex: o.Coin}
 	for _, sub := range subs {
 		txs := txMap[sub.Address].Txs()
 		for _, tx := range txs {
 			if _, ok := emitted[tx.ID]; ok {
 				continue
 			}
+			xpubAddrs := o.Storage.GetAddresses(sub.Address)
+			if len(xpubAddrs) != 0 {
+				addressSet := mapset.NewSet()
+				for _, addr := range xpubAddrs {
+					addressSet.Add(addr)
+				}
+				direction := platform.InferDirection(&tx, addressSet)
+				value := platform.InferValue(&tx, direction, addressSet)
+
+				tx.Direction = direction
+				tx.Meta = blockatlas.Transfer{
+					Value:    value,
+					Symbol:   coin.Coins[o.Coin].Symbol,
+					Decimals: coin.Coins[o.Coin].Decimals,
+				}
+			}
+			emitted[tx.ID] = tx.ID
 			events <- Event{
 				Subscription: sub,
 				Tx:           &tx,
 			}
-			emitted[tx.ID] = tx.ID
 		}
 	}
 }

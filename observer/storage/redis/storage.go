@@ -58,8 +58,9 @@ func (s *Storage) Lookup(coin uint, addresses ...string) (observers []observer.S
 }
 
 func (s *Storage) SaveAddresses(addresses []string, xpub string) {
+	err := s.save(xpub, addresses)
 	for _, address := range addresses {
-		err := s.save(address, xpub)
+		err = s.save(address, xpub)
 		if err != nil {
 			logrus.WithFields(logrus.Fields{
 				"xpub":    xpub,
@@ -69,9 +70,12 @@ func (s *Storage) SaveAddresses(addresses []string, xpub string) {
 	}
 }
 
-func (s *Storage) GetXpubFromAddress(address string) (string, error) {
-	r, err := s.get(address)
-	return r.(string), err
+func (s *Storage) GetAddresses(xpub string) []string {
+	addresses, err := s.get(xpub)
+	if err != nil {
+		return []string{}
+	}
+	return addresses.([]string)
 }
 
 func (s *Storage) save(key string, value interface{}) error {
@@ -84,7 +88,7 @@ func (s *Storage) get(key string) (interface{}, error) {
 	if cmd.Err() == redis.Nil {
 		return 0, nil
 	}
-	return cmd.Int64(), nil
+	return cmd, nil
 }
 
 func (s *Storage) Add(subs []observer.Subscription) error {

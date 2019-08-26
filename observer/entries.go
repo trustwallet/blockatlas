@@ -17,5 +17,5 @@ type Storage interface {
 	Add([]Subscription) error
 	Delete([]Subscription) error
 	SaveAddresses(addresses []string, xpub string)
-	GetXpubFromAddress(address string) (string, error)
+	GetAddresses(xpub string) []string
 }

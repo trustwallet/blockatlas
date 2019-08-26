@@ -86,8 +86,8 @@ func addCall(c *gin.Context) {
 }
 
 func cacheXPubAddress(xpub string, coin uint) {
-	btc := &bitcoin.Platform{CoinIndex: coin}
-	addresses, err := btc.GetAddressesFromXpub(xpub)
+	platform := &bitcoin.Platform{CoinIndex: coin}
+	addresses, err := platform.GetAddressesFromXpub(xpub)
 	if err != nil {
 		logrus.WithFields(logrus.Fields{
 			"xpub": xpub,
