@@ -174,7 +174,7 @@ func TestInferDirection(t *testing.T) {
 			Outputs: test.Outputs,
 		}
 
-		direction := inferDirection(&tx, set)
+		direction := InferDirection(&tx, set)
 		if direction != test.Expected {
 			t.Error("direction is not ", test.Expected)
 		}

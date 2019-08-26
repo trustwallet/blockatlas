@@ -3,10 +3,12 @@ package api
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/observer"
 	observerStorage "github.com/trustwallet/blockatlas/observer/storage"
 	"github.com/trustwallet/blockatlas/platform"
+	"github.com/trustwallet/blockatlas/platform/bitcoin"
 	"net/http"
 	"strconv"
 )
@@ -29,8 +31,9 @@ func requireAuth(c *gin.Context) {
 
 func addCall(c *gin.Context) {
 	var req struct {
-		Subscriptions map[string][]string `json:"subscriptions"`
-		Webhook       string              `json:"webhook"`
+		Subscriptions     map[string][]string `json:"subscriptions"`
+		XpubSubscriptions map[string][]string `json:"xpub_subscriptions"`
+		Webhook           string              `json:"webhook"`
 	}
 	if c.BindJSON(&req) != nil {
 		return
@@ -43,8 +46,8 @@ func addCall(c *gin.Context) {
 
 	var subs []observer.Subscription
 	for coinStr, perCoin := range req.Subscriptions {
-		coin, _ := strconv.Atoi(coinStr)
-		if coin == 0 {
+		coin, err := strconv.Atoi(coinStr)
+		if err != nil || coin == 0 {
 			continue
 		}
 		for _, addr := range perCoin {
@@ -56,6 +59,23 @@ func addCall(c *gin.Context) {
 		}
 	}
 
+	var xpubSubs []observer.Subscription
+	for coinStr, perCoin := range req.XpubSubscriptions {
+		coin, err := strconv.Atoi(coinStr)
+		if err != nil {
+			continue
+		}
+
+		for _, xpub := range perCoin {
+			xpubSubs = append(xpubSubs, observer.Subscription{
+				Coin:     uint(coin),
+				Address:  xpub,
+				Webhooks: []string{req.Webhook},
+			})
+			go cacheXPubAddress(xpub, uint(coin))
+		}
+	}
+
 	err := observerStorage.App.Add(subs)
 	if err != nil {
 		_ = c.Error(err)
@@ -63,6 +83,18 @@ func addCall(c *gin.Context) {
 	}
 
 	c.String(http.StatusOK, "Added")
+}
+
+func cacheXPubAddress(xpub string, coin uint) {
+	btc := &bitcoin.Platform{CoinIndex: coin}
+	addresses, err := btc.GetAddressesFromXpub(xpub)
+	if err != nil {
+		logrus.WithFields(logrus.Fields{
+			"xpub": xpub,
+			"coin": coin,
+		}).Error(err)
+	}
+	observerStorage.App.SaveAddresses(addresses, xpub)
 }
 
 func deleteCall(c *gin.Context) {

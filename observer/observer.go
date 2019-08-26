@@ -55,9 +55,9 @@ func (o *Observer) processBlock(events chan<- Event, block *blockatlas.Block) {
 
 func GetTxs(block *blockatlas.Block) map[string]*blockatlas.TxSet {
 	txMap := make(map[string]*blockatlas.TxSet)
-
 	for i := 0; i < len(block.Txs); i++ {
 		addresses := block.Txs[i].GetAddresses()
+		addresses = append(addresses, block.Txs[i].GetOutputs()...)
 		for _, address := range addresses {
 			if txMap[address] == nil {
 				txMap[address] = new(blockatlas.TxSet)

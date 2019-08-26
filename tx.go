@@ -166,6 +166,18 @@ type Token struct {
 	Coin     uint   `json:"coin"`
 }
 
+func (t *Tx) GetOutputs() (addresses []string) {
+	for _, input := range t.Inputs {
+		addresses = append(addresses, input.Address)
+	}
+
+	for _, output := range t.Outputs {
+		addresses = append(addresses, output.Address)
+	}
+
+	return addresses
+}
+
 func (t *Tx) GetAddresses() (addresses []string) {
 	switch t.Meta.(type) {
 	case Transfer, *Transfer, CollectibleTransfer, *CollectibleTransfer, ContractCall, *ContractCall, AnyAction, *AnyAction:

@@ -55,6 +55,36 @@ func (s *Storage) Lookup(coin uint, addresses ...string) (observers []observer.S
 	return
 }
 
+func (s *Storage) SaveAddresses(addresses []string, xpub string) {
+	for _, address := range addresses {
+		err := s.save(address, xpub)
+		if err != nil {
+			logrus.WithFields(logrus.Fields{
+				"xpub":    xpub,
+				"address": address,
+			}).Error(err)
+		}
+	}
+}
+
+func (s *Storage) GetXpubFromAddress(address string) (string, error) {
+	r, err := s.get(address)
+	return r.(string), err
+}
+
+func (s *Storage) save(key string, value interface{}) error {
+	_, err := s.client.Set(key, value, 10*time.Second).Result()
+	return err
+}
+
+func (s *Storage) get(key string) (interface{}, error) {
+	cmd := s.client.Get(key)
+	if cmd.Err() == redis.Nil {
+		return 0, nil
+	}
+	return cmd.Int64(), nil
+}
+
 func (s *Storage) Add(subs []observer.Subscription) error {
 	return s.updateWebHooks(subs, add)
 }

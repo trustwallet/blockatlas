@@ -91,6 +91,15 @@ func (p *Platform) getTxsByAddress(address string) ([]blockatlas.Tx, error) {
 	return txs, nil
 }
 
+func (p *Platform) GetAddressesFromXpub(xpub string) ([]string, error) {
+	tokens, err := p.client.GetAddressesFromXpub(xpub)
+	addresses := make([]string, 20)
+	for _, token := range tokens {
+		addresses = append(addresses, token.Name)
+	}
+	return addresses, err
+}
+
 //TODO: Enable when block parsing is ready
 //func (p *Platform) CurrentBlockNumber() (int64, error) {
 //	status, err := p.client.GetBlockNumber()
@@ -177,8 +186,8 @@ func NormalizeTransaction(transaction *Transaction, coinIndex uint) blockatlas.T
 
 func NormalizeTransfer(transaction *Transaction, coinIndex uint, addressSet mapset.Set) (tx blockatlas.Tx, ok bool) {
 	tx = NormalizeTransaction(transaction, coinIndex)
-	direction := inferDirection(&tx, addressSet)
-	value := inferValue(transaction, direction, addressSet)
+	direction := InferDirection(&tx, addressSet)
+	value := InferValue(transaction, direction, addressSet)
 
 	tx.Direction = direction
 	tx.Meta = blockatlas.Transfer{
@@ -218,7 +227,7 @@ func addAmount(left string, right string) (sum blockatlas.Amount) {
 	return blockatlas.Amount(amount1 + amount2)
 }
 
-func inferDirection(tx *blockatlas.Tx, addressSet mapset.Set) string {
+func InferDirection(tx *blockatlas.Tx, addressSet mapset.Set) string {
 	inputSet := mapset.NewSet()
 	for _, address := range tx.Inputs {
 		inputSet.Add(address.Address)
@@ -239,7 +248,7 @@ func inferDirection(tx *blockatlas.Tx, addressSet mapset.Set) string {
 	}
 }
 
-func inferValue(tx *Transaction, direction string, addressSet mapset.Set) blockatlas.Amount {
+func InferValue(tx *Transaction, direction string, addressSet mapset.Set) blockatlas.Amount {
 	value := blockatlas.Amount(tx.Value)
 	if len(tx.Vout) == 0 {
 		return value

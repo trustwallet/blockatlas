@@ -39,6 +39,7 @@ type BlockAPI interface {
 	Platform
 	CurrentBlockNumber() (int64, error)
 	GetBlockByNumber(num int64) (*Block, error)
+	GetAddressesFromXpub(xpub string) ([]string, error)
 }
 
 // StakingAPI provides staking information
