@@ -3,10 +3,11 @@ package cosmos
 import (
 	"bytes"
 	"encoding/json"
+	"testing"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
-	"testing"
 )
 
 const transferSrc = `

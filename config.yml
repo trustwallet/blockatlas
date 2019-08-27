@@ -137,6 +137,9 @@ aeternity:
 nebulas:
   api: https://explorer-backend.nebulas.io/api
 
+fio:
+  api: https://addresses.fio.foundation
+
 # [BTC] Bitcoin: https://bitcoin.org/ (Blockbook API https://github.com/trezor/blockbook)
 bitcoin:
   api: https://btc1.trezor.io/api
@@ -176,3 +179,4 @@ ravencoin:
 
 decred:
   api: https://blockbook.decred.org:9161/api
+  

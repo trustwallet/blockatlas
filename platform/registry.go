@@ -13,6 +13,7 @@ import (
 	"github.com/trustwallet/blockatlas/platform/bitcoin"
 	"github.com/trustwallet/blockatlas/platform/cosmos"
 	"github.com/trustwallet/blockatlas/platform/ethereum"
+	"github.com/trustwallet/blockatlas/platform/fio"
 	"github.com/trustwallet/blockatlas/platform/icon"
 	"github.com/trustwallet/blockatlas/platform/iotex"
 	"github.com/trustwallet/blockatlas/platform/nebulas"
@@ -70,6 +71,7 @@ var platformList = []blockatlas.Platform{
 	&bitcoin.Platform{CoinIndex: coin.ZEL},
 	&bitcoin.Platform{CoinIndex: coin.DCR},
 	&nebulas.Platform{},
+	&fio.Platform{},
 }
 
 // Platforms contains all registered platforms by handle
