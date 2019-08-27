@@ -60,6 +60,13 @@
   decimals: 6
   sampleAddress: 'TMuA6YqfCeX8EhbfYEg5y7S4DqzSJireY9'
 
+- id: 235
+  symbol: FIO
+  handle: fio
+  name: FIO
+  decimals: 9
+  sampleAddress: 'FIO5J2xdfWygeNdHZNZRzRws8YGbVxjUXtp4eP8KoGkGKoLFQ7CaU'
+
 - id: 242
   symbol: NIM
   handle: nimiq
