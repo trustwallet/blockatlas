@@ -173,3 +173,6 @@ groestlcoin:
 
 ravencoin:
   api: https://blockbook.ravencoin.org/api
+
+decred:
+  api: https://blockbook.decred.org:9161/api

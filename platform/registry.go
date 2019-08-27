@@ -2,6 +2,7 @@ package platform
 
 import (
 	"fmt"
+
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas"
@@ -67,6 +68,7 @@ var platformList = []blockatlas.Platform{
 	&bitcoin.Platform{CoinIndex: coin.QTUM},
 	&bitcoin.Platform{CoinIndex: coin.GRS},
 	&bitcoin.Platform{CoinIndex: coin.ZEL},
+	&bitcoin.Platform{CoinIndex: coin.DCR},
 	&nebulas.Platform{},
 }
 

@@ -304,3 +304,11 @@
   decimals: 8
   blockTime: 120000
   sampleAddress: 't1UKbRPzL4WN8Rs8aZ8RNiWoD2ftCMHKGUf'
+
+- id: 42
+  symbol: DCR
+  handle: decred
+  name: Decred
+  decimals: 8
+  blockTime: 300000
+  sampleAddress: 'DsTxPUVFxXeNgu5fzozr4mTR4tqqMaKcvpY'
