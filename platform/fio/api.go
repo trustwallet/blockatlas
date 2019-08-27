@@ -19,6 +19,6 @@ func (p *Platform) Coin() coin.Coin {
 	return coin.Coins[coin.FIO]
 }
 
-func (p *Platform) getTxsByAddress(address string) ([]blockatlas.Tx, error) {
-	return []blockatlas.Tx{}, nil
+func (p *Platform) GetTxsByAddress(address string) (page blockatlas.TxPage, err error) {
+	return page, err
 }
