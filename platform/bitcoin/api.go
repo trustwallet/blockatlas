@@ -1,14 +1,16 @@
 package bitcoin
 
 import (
-	"net/http"
-	"math/big"
+	"fmt"
 	"github.com/deckarep/golang-set"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
-	"fmt"
+	"math/big"
+	"net/http"
+	"strconv"
+	//"sync"
 )
 
 type Platform struct {
@@ -89,6 +91,41 @@ func (p *Platform) getTxsByAddress(address string) ([]blockatlas.Tx, error) {
 	return txs, nil
 }
 
+//TODO: Enable when block parsing is ready
+//func (p *Platform) CurrentBlockNumber() (int64, error) {
+//	status, err := p.client.GetBlockNumber()
+//	return status.Backend.Blocks, err
+//}
+//
+//func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
+//	block, err := p.client.GetTransactionsByBlock(num, 1)
+//	if err != nil {
+//		return nil, err
+//	}
+//	if block.Page < block.TotalPages {
+//		var wg sync.WaitGroup
+//		out := make(chan Block)
+//		for i := int64(2); i <= block.TotalPages; i++ {
+//			go p.client.GetTransactionsByBlockChan(num, i, out, &wg)
+//		}
+//
+//		wg.Wait()
+//		defer close(out)
+//		for r := range out {
+//			block.Transactions = append(block.Transactions, r.Transactions...)
+//		}
+//	}
+//	var normalized []blockatlas.Tx
+//	for _, tx := range block.Transactions {
+//		normalized = append(normalized, NormalizeTransaction(&tx, p.CoinIndex))
+//	}
+//	return &blockatlas.Block{
+//		Number: num,
+//		ID:     block.Hash,
+//		Txs:    normalized,
+//	}, nil
+//}
+
 func NormalizeTxs(sourceTxs TransactionsList, coinIndex uint, addressSet mapset.Set) []blockatlas.Tx {
 	var txs []blockatlas.Tx
 	for _, transaction := range sourceTxs.Transactions {
@@ -99,17 +136,17 @@ func NormalizeTxs(sourceTxs TransactionsList, coinIndex uint, addressSet mapset.
 	return txs
 }
 
-func NormalizeTransfer(transaction *Transaction, coinIndex uint, addressSet mapset.Set) (tx blockatlas.Tx, ok bool) {
+func NormalizeTransaction(transaction *Transaction, coinIndex uint) blockatlas.Tx {
 	inputs := parseOutputs(transaction.Vin)
 	outputs := parseOutputs(transaction.Vout)
 	from := ""
 	if len(inputs) > 0 {
-		from = inputs[0]
+		from = inputs[0].Address
 	}
 
 	to := ""
 	if len(outputs) > 0 {
-		to = outputs[0]
+		to = outputs[0].Address
 	}
 
 	status := blockatlas.StatusCompleted
@@ -117,58 +154,78 @@ func NormalizeTransfer(transaction *Transaction, coinIndex uint, addressSet maps
 		status = blockatlas.StatusPending
 	}
 
-	tempTx := blockatlas.Tx{
-		Inputs:  inputs,
-		Outputs: outputs,
-	}
-	direction := inferDirection(&tempTx, addressSet)
-	value := inferValue(transaction, direction, addressSet)
-
 	return blockatlas.Tx{
-		ID:        transaction.ID,
-		Coin:      coinIndex,
-		From:      from,
-		To:        to,
-		Inputs:    inputs,
-		Outputs:   outputs,
-		Fee:       blockatlas.Amount(transaction.Fees),
-		Date:      int64(transaction.BlockTime),
-		Type:      blockatlas.TxTransfer,
-		Block:     transaction.BlockHeight,
-		Status:    status,
-		Sequence:  0,
-		Direction: direction,
+		ID:       transaction.ID,
+		Coin:     coinIndex,
+		From:     from,
+		To:       to,
+		Inputs:   inputs,
+		Outputs:  outputs,
+		Fee:      blockatlas.Amount(transaction.Fees),
+		Date:     int64(transaction.BlockTime),
+		Type:     blockatlas.TxTransfer,
+		Block:    transaction.BlockHeight,
+		Status:   status,
+		Sequence: 0,
 		Meta: blockatlas.Transfer{
-			Value:    value,
+			Value:    blockatlas.Amount(transaction.Value),
 			Symbol:   coin.Coins[coinIndex].Symbol,
 			Decimals: coin.Coins[coinIndex].Decimals,
 		},
-	}, true
+	}
 }
 
-func parseOutputs(outputs []Output) (addresses []string) {
-	set := make(map[string]bool)
-	result := []string{}
+func NormalizeTransfer(transaction *Transaction, coinIndex uint, addressSet mapset.Set) (tx blockatlas.Tx, ok bool) {
+	tx = NormalizeTransaction(transaction, coinIndex)
+	direction := inferDirection(&tx, addressSet)
+	value := inferValue(transaction, direction, addressSet)
+
+	tx.Direction = direction
+	tx.Meta = blockatlas.Transfer{
+		Value:    blockatlas.Amount(value),
+		Symbol:   coin.Coins[coinIndex].Symbol,
+		Decimals: coin.Coins[coinIndex].Decimals,
+	}
+
+	return tx, true
+}
+
+func parseOutputs(outputs []Output) (addresses []blockatlas.TxOutput) {
+	set := make(map[string]blockatlas.TxOutput)
+	var ordered []string
 	for _, output := range outputs {
 		for _, address := range output.Addresses {
-			if set[address] {
-				continue
+			if val, ok := set[address]; ok {
+				val.Value = addAmount(string(val.Value), output.Value)
+			} else {
+				set[address] = blockatlas.TxOutput{
+					Address: address,
+					Value:   blockatlas.Amount(output.Value),
+				}
+				ordered = append(ordered, address)
 			}
-			set[address] = true
-			result = append(result, address)
 		}
 	}
-	return result
+	for _, val := range ordered {
+		addresses = append(addresses, set[val])
+	}
+	return addresses
+}
+
+func addAmount(left string, right string) (sum blockatlas.Amount) {
+	amount1, _ := strconv.ParseInt(left, 10, 64)
+	amount2, _ := strconv.ParseInt(right, 10, 64)
+	return blockatlas.Amount(amount1 + amount2)
 }
 
 func inferDirection(tx *blockatlas.Tx, addressSet mapset.Set) string {
 	inputSet := mapset.NewSet()
 	for _, address := range tx.Inputs {
-		inputSet.Add(address)
+		inputSet.Add(address.Address)
 	}
 	outputSet := mapset.NewSet()
 	for _, address := range tx.Outputs {
-		outputSet.Add(address)
+		outputSet.Add(address.Address)
 	}
 	intersect := addressSet.Intersect(inputSet)
 	if intersect.Cardinality() == 0 {

@@ -16,9 +16,6 @@ type Observer struct {
 }
 
 func (o *Observer) Execute(blocks <-chan *blockatlas.Block) <-chan Event {
-	if o.Coin == 0 {
-		panic("coin ID not set")
-	}
 	events := make(chan Event)
 	go o.run(events, blocks)
 	return events

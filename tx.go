@@ -75,14 +75,19 @@ type Tx struct {
 	// Type of metadata
 	Type string `json:"type"`
 	// Input addresses
-	Inputs []string `json:"inputs,omitempty"`
+	Inputs []TxOutput `json:"inputs,omitempty"`
 	// Output addresses
-	Outputs []string `json:"outputs,omitempty"`
+	Outputs []TxOutput `json:"outputs,omitempty"`
 	// Transaction Direction
 	Direction string `json:"direction,omitempty"`
 	// Meta data object
 	Memo string      `json:"memo"`
 	Meta interface{} `json:"metadata"`
+}
+
+type TxOutput struct {
+	Address string `json:"address"`
+	Value   Amount `json:"value"`
 }
 
 // Transfer describes the transfer of currency native to the platform

@@ -8,6 +8,15 @@ type TransactionsList struct {
 	Tokens       []Token       `json:"tokens,omitempty"`
 }
 
+type Block struct {
+	Page         int64         `json:"page"`
+	TotalPages   int64         `json:"totalPages"`
+	ItemsOnPage  int64         `json:"itemsOnPage"`
+	Transactions []Transaction `json:"txs"`
+	TxCount      int64         `json:"txCount"`
+	Hash         string        `json:"hash"`
+}
+
 type Tx struct {
 	ID string `json:"id"`
 }
@@ -40,4 +49,13 @@ type Token struct {
 	Path      string `json:"path"`
 	Transfers int    `json:"transfers"`
 	Balance   string `json:"balance"`
+}
+
+type BlockchainStatus struct {
+	Backend Backend `json:"backend"`
+}
+
+type Backend struct {
+	Chain  string `json:"chain"`
+	Blocks int64  `json:"blocks"`
 }
