@@ -10,7 +10,7 @@ import (
 	"math/big"
 	"net/http"
 	"strconv"
-	"sync"
+	//"sync"
 )
 
 type Platform struct {
@@ -91,39 +91,40 @@ func (p *Platform) getTxsByAddress(address string) ([]blockatlas.Tx, error) {
 	return txs, nil
 }
 
-func (p *Platform) CurrentBlockNumber() (int64, error) {
-	status, err := p.client.GetBlockNumber()
-	return status.Backend.Blocks, err
-}
-
-func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
-	block, err := p.client.GetTransactionsByBlock(num, 1)
-	if err != nil {
-		return nil, err
-	}
-	if block.Page < block.TotalPages {
-		var wg sync.WaitGroup
-		out := make(chan Block)
-		for i := int64(2); i <= block.TotalPages; i++ {
-			go p.client.GetTransactionsByBlockChan(num, i, out, &wg)
-		}
-
-		wg.Wait()
-		defer close(out)
-		for r := range out {
-			block.Transactions = append(block.Transactions, r.Transactions...)
-		}
-	}
-	var normalized []blockatlas.Tx
-	for _, tx := range block.Transactions {
-		normalized = append(normalized, NormalizeTransaction(&tx, p.CoinIndex))
-	}
-	return &blockatlas.Block{
-		Number: num,
-		ID:     block.Hash,
-		Txs:    normalized,
-	}, nil
-}
+//TODO: Enable when block parsing is ready
+//func (p *Platform) CurrentBlockNumber() (int64, error) {
+//	status, err := p.client.GetBlockNumber()
+//	return status.Backend.Blocks, err
+//}
+//
+//func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
+//	block, err := p.client.GetTransactionsByBlock(num, 1)
+//	if err != nil {
+//		return nil, err
+//	}
+//	if block.Page < block.TotalPages {
+//		var wg sync.WaitGroup
+//		out := make(chan Block)
+//		for i := int64(2); i <= block.TotalPages; i++ {
+//			go p.client.GetTransactionsByBlockChan(num, i, out, &wg)
+//		}
+//
+//		wg.Wait()
+//		defer close(out)
+//		for r := range out {
+//			block.Transactions = append(block.Transactions, r.Transactions...)
+//		}
+//	}
+//	var normalized []blockatlas.Tx
+//	for _, tx := range block.Transactions {
+//		normalized = append(normalized, NormalizeTransaction(&tx, p.CoinIndex))
+//	}
+//	return &blockatlas.Block{
+//		Number: num,
+//		ID:     block.Hash,
+//		Txs:    normalized,
+//	}, nil
+//}
 
 func NormalizeTxs(sourceTxs TransactionsList, coinIndex uint, addressSet mapset.Set) []blockatlas.Tx {
 	var txs []blockatlas.Tx
