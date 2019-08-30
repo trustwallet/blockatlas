@@ -166,8 +166,7 @@ type Token struct {
 	Coin     uint   `json:"coin"`
 }
 
-// TODO change the signature
-func (t *Tx) GetOutputs() (addresses []string) {
+func (t *Tx) GetUtxoAddresses() (addresses []string) {
 	for _, input := range t.Inputs {
 		addresses = append(addresses, input.Address)
 	}

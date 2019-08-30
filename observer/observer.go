@@ -46,14 +46,7 @@ func (o *Observer) processBlock(events chan<- Event, block *blockatlas.Block) {
 
 	// Emit events
 	emitted := make(map[string]bool)
-
-	//TODO do better implementation hete
-	platform := &bitcoin.Platform{CoinIndex: o.Coin}
-	err = platform.Init()
-	if err != nil {
-		return
-	}
-
+	platform := bitcoin.UtxoPlatform(o.Coin)
 	for _, sub := range subs {
 		txs := txMap[sub.Address].Txs()
 		for _, tx := range txs {
@@ -76,7 +69,6 @@ func (o *Observer) processBlock(events chan<- Event, block *blockatlas.Block) {
 					Decimals: coin.Coins[o.Coin].Decimals,
 				}
 			}
-			//TODO change the value to empty string
 			emitted[tx.ID] = true
 			events <- Event{
 				Subscription: sub,
@@ -90,7 +82,7 @@ func GetTxs(block *blockatlas.Block) map[string]*blockatlas.TxSet {
 	txMap := make(map[string]*blockatlas.TxSet)
 	for i := 0; i < len(block.Txs); i++ {
 		addresses := block.Txs[i].GetAddresses()
-		addresses = append(addresses, block.Txs[i].GetOutputs()...)
+		addresses = append(addresses, block.Txs[i].GetUtxoAddresses()...)
 		for _, address := range addresses {
 			if txMap[address] == nil {
 				txMap[address] = new(blockatlas.TxSet)

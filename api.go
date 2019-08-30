@@ -39,6 +39,11 @@ type BlockAPI interface {
 	Platform
 	CurrentBlockNumber() (int64, error)
 	GetBlockByNumber(num int64) (*Block, error)
+}
+
+// AddressAPI provides address information
+type AddressAPI interface {
+	Platform
 	GetAddressesFromXpub(xpub string) ([]string, error)
 }
 

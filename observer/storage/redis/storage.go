@@ -1,6 +1,7 @@
 package redis
 
 import (
+	"errors"
 	"fmt"
 	"github.com/go-redis/redis"
 	"github.com/sirupsen/logrus"
@@ -9,6 +10,7 @@ import (
 )
 
 const keyObservers = "ATLAS_OBSERVERS"
+const xpubAddresses = "ATLAS_XPUB"
 const keyBlockNumber = "ATLAS_BLOCK_NUMBER_%d"
 
 type webHookOperation func(old []string, changes []string) []string
@@ -24,20 +26,19 @@ func New(client *redis.Client) *Storage {
 }
 
 func (s *Storage) Lookup(coin uint, addresses ...string) (observers []observer.Subscription, err error) {
+	if len(addresses) == 0 {
+		return nil, errors.New("cannot look up an empty list")
+	}
+
 	keys := make([]string, len(addresses))
 	for i, address := range addresses {
 		keys[i] = key(coin, address)
 	}
 
-	if len(addresses) == 0 {
-		return nil, nil
-	}
-
-	cmd := s.client.HMGet(keyObservers, keys...)
-	if err := cmd.Err(); err != nil {
+	results, err := s.get(keyObservers, keys...)
+	if err != nil {
 		return nil, err
 	}
-	results := cmd.Val()
 
 	for i := range results {
 		result := results[i]
@@ -52,42 +53,7 @@ func (s *Storage) Lookup(coin uint, addresses ...string) (observers []observer.S
 			})
 		}
 	}
-
 	return
-}
-
-func (s *Storage) SaveAddresses(addresses []string, xpub string) {
-	for _, address := range addresses {
-		err := s.save(address, xpub)
-		if err != nil {
-			logrus.WithFields(logrus.Fields{
-				"xpub":    xpub,
-				"address": address,
-			}).Error(err)
-		}
-	}
-}
-
-func (s *Storage) GetAddresses(xpub string) []string {
-	addresses, err := s.get(xpub)
-	if err != nil {
-		return []string{}
-	}
-	return addresses.([]string)
-}
-
-// TODO create new entity for xpub (XPUB_OBSERVERS)
-func (s *Storage) save(key string, value interface{}) error {
-	_, err := s.client.Set(key, value, 0).Result()
-	return err
-}
-
-func (s *Storage) get(key string) (interface{}, error) {
-	cmd := s.client.Get(key)
-	if cmd.Err() == redis.Nil {
-		return 0, nil
-	}
-	return cmd, nil
 }
 
 func (s *Storage) Add(subs []observer.Subscription) error {
@@ -155,16 +121,15 @@ func removeWebHooks(hooks []string, hooksToRemove []string) []string {
 
 func (s *Storage) updateWebHooks(subs []observer.Subscription, operation webHookOperation) error {
 	fields := make(map[string]interface{})
-	var keys []string
+	keys := make([]string, 0)
 	for _, sub := range subs {
 		keys = append(keys, key(sub.Coin, sub.Address))
 	}
 
-	cmd := s.client.HMGet(keyObservers, keys...)
-	if err := cmd.Err(); err != nil {
+	results, err := s.get(keyObservers, keys...)
+	if err != nil {
 		return err
 	}
-	results := cmd.Val()
 	for i := range results {
 		result := results[i]
 		key := keys[i]
@@ -177,7 +142,7 @@ func (s *Storage) updateWebHooks(subs []observer.Subscription, operation webHook
 		}
 		fields[key] = strings.Join(newWebHooks, "\n")
 	}
-	return s.client.HMSet(keyObservers, fields).Err()
+	return s.save(keyObservers, fields)
 }
 
 func contains(s []string, e string) bool {
@@ -187,4 +152,36 @@ func contains(s []string, e string) bool {
 		}
 	}
 	return false
+}
+
+func (s *Storage) SaveAddresses(addresses []string, xpub string) {
+	for _, address := range addresses {
+		err := s.save(address, xpub)
+		if err != nil {
+			logrus.WithFields(logrus.Fields{
+				"xpub":    xpub,
+				"address": address,
+			}).Error(err)
+		}
+	}
+}
+
+func (s *Storage) GetAddresses(xpub string) []string {
+	addresses, err := s.get(xpub)
+	if err != nil {
+		return []string{}
+	}
+	return addresses.([]string)
+}
+
+func (s *Storage) save(db string, fields map[string]interface{}) error {
+	return s.client.HMSet(db, fields).Err()
+}
+
+func (s *Storage) get(db string, keys ...string) ([]interface{}, error) {
+	cmd := s.client.HMGet(db, keys...)
+	if err := cmd.Err(); err != nil {
+		return nil, err
+	}
+	return cmd.Val(), nil
 }

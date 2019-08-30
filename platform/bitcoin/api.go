@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/deckarep/golang-set"
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
@@ -17,6 +18,15 @@ import (
 type Platform struct {
 	client    Client
 	CoinIndex uint
+}
+
+func UtxoPlatform(index uint) *Platform {
+	platform := &Platform{CoinIndex: index}
+	err := platform.Init()
+	if err != nil {
+		logrus.Panicf("UtxoPlatform index %d error: %s", index, err)
+	}
+	return platform
 }
 
 func (p *Platform) Init() error {
@@ -94,7 +104,6 @@ func (p *Platform) getTxsByAddress(address string) ([]blockatlas.Tx, error) {
 
 func (p *Platform) GetAddressesFromXpub(xpub string) ([]string, error) {
 	tokens, err := p.client.GetAddressesFromXpub(xpub)
-	// TODO slice len fix
 	addresses := make([]string, 0)
 	for _, token := range tokens {
 		addresses = append(addresses, token.Name)
@@ -102,7 +111,6 @@ func (p *Platform) GetAddressesFromXpub(xpub string) ([]string, error) {
 	return addresses, err
 }
 
-//TODO: Enable when block parsing is ready
 func (p *Platform) CurrentBlockNumber() (int64, error) {
 	status, err := p.client.GetBlockNumber()
 	return status.Backend.Blocks, err
