@@ -1,3 +1,12 @@
+---
+name: Bug report
+about: Create a report to help us improve
+title: ''
+labels: 'Type: Bug'
+assignees: ''
+
+---
+
 <!-- < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < ☺ 
 v                            ✰  Thanks for opening an issue! ✰    
 v    Before smashing the submit button please review the template.
