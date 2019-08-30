@@ -37,16 +37,16 @@ stop: stop-server
 
 ## start-api: Start API in development mode.
 start-api: stop-server
-	@echo "  >  Starting $(PROJECT_NAME)"
+	@echo "  >  Starting $(PROJECT_NAME) API"
 	@-$(GOBIN)/$(PROJECT_NAME) $(API_COMMAND) 2>&1 & echo $$! > $(PID_API)
-	@cat $(PID_API) | sed "/^/s/^/  \>  PID: /"
+	@cat $(PID_API) | sed "/^/s/^/  \>  API PID: /"
 	@echo "  >  Error log: $(STDERR)"
 
 ## start-observer: Start Observer in development mode.
 start-observer: stop-server
-	@echo "  >  Starting $(PROJECT_NAME)"
+	@echo "  >  Starting $(PROJECT_NAME) Observer"
 	@-$(GOBIN)/$(PROJECT_NAME) $(OBSERVER_COMMAND) 2>&1 & echo $$! > $(PID_OBSERVER)
-	@cat $(PID_OBSERVER) | sed "/^/s/^/  \>  PID: /"
+	@cat $(PID_OBSERVER) | sed "/^/s/^/  \>  Observer PID: /"
 	@echo "  >  Error log: $(STDERR)"
 
 stop-server:
