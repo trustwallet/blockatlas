@@ -1,15 +1,13 @@
 VERSION := $(shell git describe --tags)
 BUILD := $(shell git rev-parse --short HEAD)
 PROJECT_NAME := $(shell basename "$(PWD)")
-START_COMMAND := api
+API_COMMAND := api
+OBSERVER_COMMAND := observer
 
 # Go related variables.
 GOBASE := $(shell pwd)
 GOBIN := $(GOBASE)/bin
 GOPKG := $(cmd)
-
-# Testable packages
-TESTABLE_PACKAGES=`find . -name *_test.go | xargs -n 1 dirname | uniq | sed -e 's|^\.|github.com/TrustWallet/blockatlas|g'`
 
 # Go files
 GOFMT_FILES?=$$(find . -name '*.go' | grep -v vendor)
@@ -21,7 +19,8 @@ LDFLAGS=-ldflags "-X=main.Version=$(VERSION) -X=main.Build=$(BUILD)"
 STDERR := /tmp/.$(PROJECT_NAME)-stderr.txt
 
 # PID file will keep the process id of the server
-PID := /tmp/.$(PROJECT_NAME).pid
+PID_API := /tmp/.$(PROJECT_NAME).$(API_COMMAND).pid
+PID_OBSERVER := /tmp/.$(PROJECT_NAME).$(OBSERVER_COMMAND).pid
 
 # Make is verbose in Linux. Make it silent.
 MAKEFLAGS += --silent
@@ -29,30 +28,34 @@ MAKEFLAGS += --silent
 ## install: Install missing dependencies. Runs `go get` internally. e.g; make install get=github.com/foo/bar
 install: go-get
 
-## start: Start in development mode. Auto-starts when code changes.
+## start: Start API and Observer in development mode.
 start:
-	@bash -c "trap 'make stop' EXIT; $(MAKE) clean compile start-server watch run='make clean compile start-server'"
+	@bash -c "trap 'make stop' EXIT; $(MAKE) clean compile start-api start-observer"
 
 ## stop: Stop development mode.
 stop: stop-server
 
-start-server: stop-server
+## start-api: Start API in development mode.
+start-api: stop-server
 	@echo "  >  Starting $(PROJECT_NAME)"
-	@-$(GOBIN)/$(PROJECT_NAME) $(START_COMMAND) 2>&1 & echo $$! > $(PID)
-	@cat $(PID) | sed "/^/s/^/  \>  PID: /"
+	@-$(GOBIN)/$(PROJECT_NAME) $(API_COMMAND) 2>&1 & echo $$! > $(PID_API)
+	@cat $(PID_API) | sed "/^/s/^/  \>  PID: /"
+	@echo "  >  Error log: $(STDERR)"
+
+## start-observer: Start Observer in development mode.
+start-observer: stop-server
+	@echo "  >  Starting $(PROJECT_NAME)"
+	@-$(GOBIN)/$(PROJECT_NAME) $(OBSERVER_COMMAND) 2>&1 & echo $$! > $(PID_OBSERVER)
+	@cat $(PID_OBSERVER) | sed "/^/s/^/  \>  PID: /"
 	@echo "  >  Error log: $(STDERR)"
 
 stop-server:
-	@-touch $(PID)
-	@-kill `cat $(PID)` 2> /dev/null || true
-	@-rm $(PID)
+	@-touch $(PID_API) $(PID_OBSERVER)
+	@-kill `cat $(PID_API)` 2> /dev/null || true
+	@-kill `cat $(PID_OBSERVER)` 2> /dev/null || true
+	@-rm $(PID_API) $(PID_OBSERVER)
 
 restart-server: stop-server start-server
-
-## watch: Run given command when code changes. e.g; make watch run="echo 'hey'"
-watch:
-	go get github.com/azer/yolo
-	GOBIN=$(GOBIN) yolo -i . -i .go -e vendor -e bin -c "$(run)"
 
 ## compile: Compile the binary.
 compile:
@@ -99,7 +102,7 @@ go-clean:
 
 go-test:
 	@echo "  >  Cleaning build cache"
-	GOBIN=$(GOBIN) go test -v ${TESTABLE_PACKAGES}
+	GOBIN=$(GOBIN) go test -v ./...
 
 go-fmt:
 	@echo "  >  Format all go files"
