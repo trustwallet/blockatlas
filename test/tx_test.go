@@ -182,6 +182,7 @@ func TestTx_GetAddresses(t *testing.T) {
 	assert.Equal(t, nativeTransferDst1.GetAddresses(), []string{"tbnb1ttyn4csghfgyxreu7lmdu3lcplhqhxtzced45a", "tbnb12hlquylu78cjylk5zshxpdj6hf3t0tahwjt3ex"})
 }
 
+// TODO change this signature too
 func TestTx_GetOutputs(t *testing.T) {
 	assert.Equal(t, utxoTransferDst1.GetOutputs(), []string{"bc1qhn03cww757mnnlpkdvvfkaydxqygm86nvkm92h", "bc1qc7ekqf2t0elfsmtgr2mgd7da2up4vgq8uqk2nh", "bc1qv454wacvnenr3hzzldjqn8cgfltdlxwe96h737", "bc1qjcslq88cht8llqmh3aqshjx9we9msv386jvxl6"})
 	assert.Equal(t, utxoTransferDst2.GetOutputs(), []string{"bc1q6e8sdxlgc7ekqkqyevtrx8wshfv7sg66z3z6ce", "bc1q7nn4txus4g6fc5v7d2tha35ely8mfpd8qvv6eg", "bc1q2fpry7zwqh575huc9urwfdvjtuvz508wez56ff", "bc1qk3yj6h79qw7tnsg4durc9sd5fpd3qt0p0m8u5p", "bc1qm8836plkzft2rhh23z6j8s9s8fxrzd4zag95z8"})

@@ -6,7 +6,6 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas/observer"
 	"strings"
-	"time"
 )
 
 const keyObservers = "ATLAS_OBSERVERS"
@@ -58,9 +57,8 @@ func (s *Storage) Lookup(coin uint, addresses ...string) (observers []observer.S
 }
 
 func (s *Storage) SaveAddresses(addresses []string, xpub string) {
-	err := s.save(xpub, addresses)
 	for _, address := range addresses {
-		err = s.save(address, xpub)
+		err := s.save(address, xpub)
 		if err != nil {
 			logrus.WithFields(logrus.Fields{
 				"xpub":    xpub,
@@ -78,8 +76,9 @@ func (s *Storage) GetAddresses(xpub string) []string {
 	return addresses.([]string)
 }
 
+// TODO create new entity for xpub (XPUB_OBSERVERS)
 func (s *Storage) save(key string, value interface{}) error {
-	_, err := s.client.Set(key, value, 10*time.Second).Result()
+	_, err := s.client.Set(key, value, 0).Result()
 	return err
 }
 

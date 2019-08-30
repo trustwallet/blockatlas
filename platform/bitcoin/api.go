@@ -9,6 +9,8 @@ import (
 	"github.com/trustwallet/blockatlas/coin"
 	"net/http"
 	"strconv"
+	"sync"
+
 	//"sync"
 )
 
@@ -92,7 +94,8 @@ func (p *Platform) getTxsByAddress(address string) ([]blockatlas.Tx, error) {
 
 func (p *Platform) GetAddressesFromXpub(xpub string) ([]string, error) {
 	tokens, err := p.client.GetAddressesFromXpub(xpub)
-	addresses := make([]string, 20)
+	// TODO slice len fix
+	addresses := make([]string, 0)
 	for _, token := range tokens {
 		addresses = append(addresses, token.Name)
 	}
@@ -100,39 +103,39 @@ func (p *Platform) GetAddressesFromXpub(xpub string) ([]string, error) {
 }
 
 //TODO: Enable when block parsing is ready
-//func (p *Platform) CurrentBlockNumber() (int64, error) {
-//	status, err := p.client.GetBlockNumber()
-//	return status.Backend.Blocks, err
-//}
-//
-//func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
-//	block, err := p.client.GetTransactionsByBlock(num, 1)
-//	if err != nil {
-//		return nil, err
-//	}
-//	if block.Page < block.TotalPages {
-//		var wg sync.WaitGroup
-//		out := make(chan Block)
-//		for i := int64(2); i <= block.TotalPages; i++ {
-//			go p.client.GetTransactionsByBlockChan(num, i, out, &wg)
-//		}
-//
-//		wg.Wait()
-//		defer close(out)
-//		for r := range out {
-//			block.Transactions = append(block.Transactions, r.Transactions...)
-//		}
-//	}
-//	var normalized []blockatlas.Tx
-//	for _, tx := range block.Transactions {
-//		normalized = append(normalized, NormalizeTransaction(&tx, p.CoinIndex))
-//	}
-//	return &blockatlas.Block{
-//		Number: num,
-//		ID:     block.Hash,
-//		Txs:    normalized,
-//	}, nil
-//}
+func (p *Platform) CurrentBlockNumber() (int64, error) {
+	status, err := p.client.GetBlockNumber()
+	return status.Backend.Blocks, err
+}
+
+func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
+	block, err := p.client.GetTransactionsByBlock(num, 1)
+	if err != nil {
+		return nil, err
+	}
+	if block.Page < block.TotalPages {
+		var wg sync.WaitGroup
+		out := make(chan Block)
+		for i := int64(2); i <= block.TotalPages; i++ {
+			go p.client.GetTransactionsByBlockChan(num, i, out, &wg)
+		}
+
+		wg.Wait()
+		defer close(out)
+		for r := range out {
+			block.Transactions = append(block.Transactions, r.Transactions...)
+		}
+	}
+	var normalized []blockatlas.Tx
+	for _, tx := range block.Transactions {
+		normalized = append(normalized, NormalizeTransaction(&tx, p.CoinIndex))
+	}
+	return &blockatlas.Block{
+		Number: num,
+		ID:     block.Hash,
+		Txs:    normalized,
+	}, nil
+}
 
 func (p *Platform) NormalizeTxs(sourceTxs TransactionsList, coinIndex uint, addressSet mapset.Set) []blockatlas.Tx {
 	var txs []blockatlas.Tx

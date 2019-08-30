@@ -45,8 +45,15 @@ func (o *Observer) processBlock(events chan<- Event, block *blockatlas.Block) {
 	}
 
 	// Emit events
-	emitted := make(map[string]string)
+	emitted := make(map[string]bool)
+
+	//TODO do better implementation hete
 	platform := &bitcoin.Platform{CoinIndex: o.Coin}
+	err = platform.Init()
+	if err != nil {
+		return
+	}
+
 	for _, sub := range subs {
 		txs := txMap[sub.Address].Txs()
 		for _, tx := range txs {
@@ -69,7 +76,8 @@ func (o *Observer) processBlock(events chan<- Event, block *blockatlas.Block) {
 					Decimals: coin.Coins[o.Coin].Decimals,
 				}
 			}
-			emitted[tx.ID] = tx.ID
+			//TODO change the value to empty string
+			emitted[tx.ID] = true
 			events <- Event{
 				Subscription: sub,
 				Tx:           &tx,

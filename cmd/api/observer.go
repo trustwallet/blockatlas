@@ -39,7 +39,7 @@ func addCall(c *gin.Context) {
 		return
 	}
 
-	if len(req.Subscriptions) == 0 {
+	if len(req.Subscriptions) == 0 && len(req.XpubSubscriptions) == 0 {
 		c.String(http.StatusOK, "Added")
 		return
 	}
@@ -47,7 +47,7 @@ func addCall(c *gin.Context) {
 	var subs []observer.Subscription
 	for coinStr, perCoin := range req.Subscriptions {
 		coin, err := strconv.Atoi(coinStr)
-		if err != nil || coin == 0 {
+		if err != nil {
 			continue
 		}
 		for _, addr := range perCoin {
@@ -87,6 +87,10 @@ func addCall(c *gin.Context) {
 
 func cacheXPubAddress(xpub string, coin uint) {
 	platform := &bitcoin.Platform{CoinIndex: coin}
+	err := platform.Init()
+	if err != nil {
+		return
+	}
 	addresses, err := platform.GetAddressesFromXpub(xpub)
 	if err != nil {
 		logrus.WithFields(logrus.Fields{
@@ -113,8 +117,8 @@ func deleteCall(c *gin.Context) {
 
 	var subs []observer.Subscription
 	for coinStr, perCoin := range req.Subscriptions {
-		coin, _ := strconv.Atoi(coinStr)
-		if coin == 0 {
+		coin, err := strconv.Atoi(coinStr)
+		if err != nil {
 			continue
 		}
 		for _, addr := range perCoin {
