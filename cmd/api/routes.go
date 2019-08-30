@@ -42,8 +42,6 @@ func loadPlatforms(root gin.IRouter) {
 	}
 
 	makeCoinRoute(root)
-	makeCoinRoute(getRouter(v1, ""))
-	makeCoinRoute(getRouter(v2, ""))
 
 	logrus.WithField("routes", len(routers)).Info("Routes set up")
 
