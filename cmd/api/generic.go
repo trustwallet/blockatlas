@@ -7,7 +7,6 @@ import (
 	services "github.com/trustwallet/blockatlas/services/assets"
 	"log"
 	"net/http"
-	"strconv"
 )
 
 func makeTxRouteV1(router gin.IRouter, api blockatlas.Platform) {
@@ -153,20 +152,6 @@ func makeTokenRoute(router gin.IRouter, api blockatlas.Platform) {
 func makeCoinRoute(router gin.IRouter) {
 	router.GET("/coins", func(c *gin.Context) {
 		c.JSON(http.StatusOK, coin.Coins)
-	})
-
-	router.GET("/coin/:id", func(c *gin.Context) {
-		id := c.Param("id")
-		u, err := strconv.ParseUint(id, 10, 64)
-		if err != nil {
-			c.String(http.StatusBadRequest, "Invalid coin")
-			return
-		}
-		if val, ok := coin.Coins[uint(u)]; ok {
-			c.JSON(http.StatusOK, val)
-			return
-		}
-		c.String(http.StatusBadRequest, "Coin not found")
 	})
 }
 
