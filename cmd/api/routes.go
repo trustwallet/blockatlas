@@ -41,6 +41,8 @@ func loadPlatforms(root gin.IRouter) {
 		customAPI.RegisterRoutes(router)
 	}
 
+	makeCoinRoute(root)
+
 	logrus.WithField("routes", len(routers)).Info("Routes set up")
 
 	v1.GET("/", getEnabledEndpoints)
