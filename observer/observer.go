@@ -55,7 +55,10 @@ func (o *Observer) processBlock(events chan<- Event, block *blockatlas.Block) {
 			}
 			xpub, _ := o.Storage.GetXpubFromAddress(o.Coin, sub.Address)
 			if len(xpub) != 0 {
-				addressSet := mapset.NewSet(xpub)
+				addressSet := mapset.NewSet()
+				for _, addr := range tx.GetUtxoAddresses() {
+					addressSet.Add(addr)
+				}
 				direction := platform.InferDirection(&tx, addressSet)
 				value := platform.InferValue(&tx, direction, addressSet)
 
