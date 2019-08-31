@@ -99,14 +99,15 @@ func cacheXPubAddress(xpub string, coin uint) {
 
 func deleteCall(c *gin.Context) {
 	var req struct {
-		Subscriptions map[string][]string `json:"subscriptions"`
-		Webhook       string              `json:"webhook"`
+		Subscriptions     map[string][]string `json:"subscriptions"`
+		XpubSubscriptions map[string][]string `json:"xpub_subscriptions"`
+		Webhook           string              `json:"webhook"`
 	}
 	if c.BindJSON(&req) != nil {
 		return
 	}
 
-	if len(req.Subscriptions) == 0 {
+	if len(req.Subscriptions) == 0 && len(req.XpubSubscriptions) == 0 {
 		c.String(http.StatusOK, "Deleted")
 		return
 	}
@@ -126,6 +127,22 @@ func deleteCall(c *gin.Context) {
 		}
 	}
 
+	var xpubSubs []observer.Subscription
+	for coinStr, perCoin := range req.XpubSubscriptions {
+		coin, err := strconv.Atoi(coinStr)
+		if err != nil {
+			continue
+		}
+		for _, addr := range perCoin {
+			xpubSubs = append(xpubSubs, observer.Subscription{
+				Coin:     uint(coin),
+				Address:  addr,
+				Webhooks: []string{req.Webhook},
+			})
+		}
+	}
+
+	subs = append(subs, xpubSubs...)
 	err := observerStorage.App.Delete(subs)
 	if err != nil {
 		_ = c.Error(err)

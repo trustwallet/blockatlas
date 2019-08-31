@@ -65,11 +65,12 @@ func (s *Storage) SetBlockNumber(coin uint, num int64) error {
 	return nil
 }
 
-func (s *Storage) SaveAddresses(addresses []string, xpub string) {
+func (s *Storage) SaveAddresses(addresses []string, xpub string) error {
 	if _, ok := s.addresses[xpub]; !ok {
 		s.addresses[xpub] = make([]string, 0)
 	}
 	s.addresses[xpub] = append(s.addresses[xpub], addresses...)
+	return nil
 }
 
 func (s *Storage) GetAddresses(xpub string) []string {

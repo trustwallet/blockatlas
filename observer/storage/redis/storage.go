@@ -1,16 +1,16 @@
 package redis
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/go-redis/redis"
-	"github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas/observer"
 	"strings"
 )
 
 const keyObservers = "ATLAS_OBSERVERS"
-const xpubAddresses = "ATLAS_XPUB"
+const keyXpub = "ATLAS_XPUB"
 const keyBlockNumber = "ATLAS_BLOCK_NUMBER_%d"
 
 type webHookOperation func(old []string, changes []string) []string
@@ -25,6 +25,45 @@ func New(client *redis.Client) *Storage {
 	}
 }
 
+func (s *Storage) GetBlockNumber(coin uint) (int64, error) {
+	key := fmt.Sprintf(keyBlockNumber, coin)
+	cmd := s.client.Get(key)
+	if cmd.Err() == redis.Nil {
+		return 0, nil
+	}
+	return cmd.Int64()
+}
+
+func (s *Storage) SetBlockNumber(coin uint, num int64) error {
+	key := fmt.Sprintf(keyBlockNumber, coin)
+	return s.client.Set(key, num, 0).Err()
+}
+
+func (s *Storage) SaveAddresses(addresses []string, xpub string) error {
+	j, err := json.Marshal(addresses)
+	if err != nil {
+		return err
+	}
+	return s.saveHashMap(keyXpub, map[string]interface{}{xpub: j})
+}
+
+func (s *Storage) GetAddresses(xpub string) []string {
+	r, err := s.getHashMap(keyXpub, xpub)
+	if err != nil {
+		return []string{}
+	}
+	a := make([]string, 0)
+	for _, val := range r {
+		var list []string
+		err := json.Unmarshal(val.([]byte), &list)
+		if err != nil {
+			continue
+		}
+		a = append(a, val.(string))
+	}
+	return a
+}
+
 func (s *Storage) Lookup(coin uint, addresses ...string) (observers []observer.Subscription, err error) {
 	if len(addresses) == 0 {
 		return nil, errors.New("cannot look up an empty list")
@@ -35,7 +74,7 @@ func (s *Storage) Lookup(coin uint, addresses ...string) (observers []observer.S
 		keys[i] = key(coin, address)
 	}
 
-	results, err := s.get(keyObservers, keys...)
+	results, err := s.getHashMap(keyObservers, keys...)
 	if err != nil {
 		return nil, err
 	}
@@ -60,6 +99,48 @@ func (s *Storage) Add(subs []observer.Subscription) error {
 	return s.updateWebHooks(subs, add)
 }
 
+func (s *Storage) Delete(subs []observer.Subscription) error {
+	return s.updateWebHooks(subs, delete)
+}
+
+func (s *Storage) updateWebHooks(subs []observer.Subscription, operation webHookOperation) error {
+	fields := make(map[string]interface{})
+	keys := make([]string, 0)
+	for _, sub := range subs {
+		keys = append(keys, key(sub.Coin, sub.Address))
+	}
+
+	results, err := s.getHashMap(keyObservers, keys...)
+	if err != nil {
+		return err
+	}
+	for i := range results {
+		result := results[i]
+		key := keys[i]
+		var newWebHooks []string
+		if oldWebHooks, ok := result.(string); ok && len(oldWebHooks) > 0 {
+			old := strings.Fields(oldWebHooks)
+			newWebHooks = operation(old, subs[i].Webhooks)
+		} else {
+			newWebHooks = operation(nil, subs[i].Webhooks)
+		}
+		fields[key] = strings.Join(newWebHooks, "\n")
+	}
+	return s.saveHashMap(keyObservers, fields)
+}
+
+func (s *Storage) saveHashMap(db string, field map[string]interface{}) error {
+	return s.client.HMSet(db, field).Err()
+}
+
+func (s *Storage) getHashMap(db string, keys ...string) ([]interface{}, error) {
+	cmd := s.client.HMGet(db, keys...)
+	if err := cmd.Err(); err != nil {
+		return nil, err
+	}
+	return cmd.Val(), nil
+}
+
 func add(old []string, changes []string) []string {
 	if changes == nil {
 		return old
@@ -77,41 +158,17 @@ func add(old []string, changes []string) []string {
 	}
 }
 
-func (s *Storage) Delete(subs []observer.Subscription) error {
-	return s.updateWebHooks(subs, func(old []string, changes []string) []string {
-		if old != nil {
-			return removeWebHooks(old, changes)
-		} else {
-			return make([]string, 0)
-		}
-	})
-}
-
-func (s *Storage) GetBlockNumber(coin uint) (int64, error) {
-	key := fmt.Sprintf(keyBlockNumber, coin)
-	cmd := s.client.Get(key)
-	if cmd.Err() == redis.Nil {
-		return 0, nil
+func delete(old []string, remove []string) []string {
+	n := make([]string, 0)
+	if old == nil {
+		return n
 	}
-	return cmd.Int64()
-}
 
-func (s *Storage) SetBlockNumber(coin uint, num int64) error {
-	key := fmt.Sprintf(keyBlockNumber, coin)
-	return s.client.Set(key, num, 0).Err()
-}
-
-func key(coin uint, address string) string {
-	return fmt.Sprintf("%d-%s", coin, address)
-}
-
-func removeWebHooks(hooks []string, hooksToRemove []string) []string {
 	indices := make(map[string]bool)
-	for _, r := range hooksToRemove {
+	for _, r := range remove {
 		indices[r] = true
 	}
-	var n []string
-	for _, h := range hooks {
+	for _, h := range old {
 		if _, ok := indices[h]; !ok {
 			n = append(n, h)
 		}
@@ -119,30 +176,8 @@ func removeWebHooks(hooks []string, hooksToRemove []string) []string {
 	return n
 }
 
-func (s *Storage) updateWebHooks(subs []observer.Subscription, operation webHookOperation) error {
-	fields := make(map[string]interface{})
-	keys := make([]string, 0)
-	for _, sub := range subs {
-		keys = append(keys, key(sub.Coin, sub.Address))
-	}
-
-	results, err := s.get(keyObservers, keys...)
-	if err != nil {
-		return err
-	}
-	for i := range results {
-		result := results[i]
-		key := keys[i]
-		var newWebHooks []string
-		if oldWebHooks, ok := result.(string); ok && len(oldWebHooks) > 0 {
-			old := strings.Fields(oldWebHooks)
-			newWebHooks = operation(old, subs[i].Webhooks)
-		} else {
-			newWebHooks = operation(nil, subs[i].Webhooks)
-		}
-		fields[key] = strings.Join(newWebHooks, "\n")
-	}
-	return s.save(keyObservers, fields)
+func key(coin uint, address string) string {
+	return fmt.Sprintf("%d-%s", coin, address)
 }
 
 func contains(s []string, e string) bool {
@@ -152,36 +187,4 @@ func contains(s []string, e string) bool {
 		}
 	}
 	return false
-}
-
-func (s *Storage) SaveAddresses(addresses []string, xpub string) {
-	for _, address := range addresses {
-		err := s.save(address, xpub)
-		if err != nil {
-			logrus.WithFields(logrus.Fields{
-				"xpub":    xpub,
-				"address": address,
-			}).Error(err)
-		}
-	}
-}
-
-func (s *Storage) GetAddresses(xpub string) []string {
-	addresses, err := s.get(xpub)
-	if err != nil {
-		return []string{}
-	}
-	return addresses.([]string)
-}
-
-func (s *Storage) save(db string, fields map[string]interface{}) error {
-	return s.client.HMSet(db, fields).Err()
-}
-
-func (s *Storage) get(db string, keys ...string) ([]interface{}, error) {
-	cmd := s.client.HMGet(db, keys...)
-	if err := cmd.Err(); err != nil {
-		return nil, err
-	}
-	return cmd.Val(), nil
 }
