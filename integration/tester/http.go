@@ -37,11 +37,11 @@ func NewClient(t *testing.T) *Client {
 	}
 }
 
-func (c *Client) TestPost(coin Coin, test HttpTest, wg *sync.WaitGroup) {
+func (c *Client) TestPost(coin, address string, test HttpTest, wg *sync.WaitGroup) {
 	defer wg.Done()
 
-	url := getBaseUrl(test.Version, coin.Handle, test.Path)
-	defer TimeTrack(coin.Symbol, test.Method, url, time.Now())
+	url := getBaseUrl(test.Version, coin, test.Path)
+	defer TimeTrack(coin, test.Method, url, time.Now())
 	request := c.e.POST(url)
 	if test.Body != nil {
 		request.WithJSON(test.Body)
@@ -50,15 +50,15 @@ func (c *Client) TestPost(coin Coin, test HttpTest, wg *sync.WaitGroup) {
 	response.Status(test.HttpCode)
 }
 
-func (c *Client) TestGet(coin Coin, test HttpTest, wg *sync.WaitGroup) {
+func (c *Client) TestGet(coin, address string, test HttpTest, wg *sync.WaitGroup) {
 	defer wg.Done()
 
-	q, err := getParameters(test.QueryString, coin.SampleAddr)
+	q, err := getParameters(test.QueryString, address)
 	if err != nil {
 		c.t.Error(err)
 	}
-	url := getParameterUrl(test.Version, coin.Handle, test.Path, q)
-	defer TimeTrack(coin.Symbol, test.Method, url, time.Now())
+	url := getParameterUrl(test.Version, coin, test.Path, q)
+	defer TimeTrack(coin, test.Method, url, time.Now())
 	request := c.e.GET(url)
 	response := request.Expect()
 	response.Status(test.HttpCode)
