@@ -178,7 +178,8 @@ func (t *Tx) GetUtxoAddresses() (addresses []string) {
 	return addresses
 }
 
-func (t *Tx) GetAddresses() (addresses []string) {
+func (t *Tx) GetAddresses() []string {
+	addresses := make([]string, 0)
 	switch t.Meta.(type) {
 	case Transfer, *Transfer, CollectibleTransfer, *CollectibleTransfer, ContractCall, *ContractCall, AnyAction, *AnyAction:
 		return append(addresses, t.From, t.To)

@@ -1,7 +1,6 @@
 package redis
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/go-redis/redis"
@@ -48,22 +47,20 @@ func (s *Storage) SaveXpubAddresses(coin uint, addresses []string, xpub string) 
 	return s.saveHashMap(key, a)
 }
 
-func (s *Storage) GetXpubFromAddress(coin uint, address string) []string {
+func (s *Storage) GetXpubFromAddress(coin uint, address string) (string, error) {
 	key := fmt.Sprintf(keyXpub, coin)
 	r, err := s.getHashMap(key, address)
 	if err != nil {
-		return []string{}
+		return "", err
 	}
-	a := make([]string, 0)
-	for _, val := range r {
-		var list []string
-		err := json.Unmarshal(val.([]byte), &list)
-		if err != nil {
-			continue
-		}
-		a = append(a, val.(string))
+	if len(r) == 0 {
+		return "", errors.New(fmt.Sprintf("xpub not found for the address: %s", address))
 	}
-	return a
+	xpub, ok := r[0].(string)
+	if !ok || len(xpub) == 0 {
+		return "", errors.New(fmt.Sprintf("invalid type for xpub: %s - %s", xpub, address))
+	}
+	return xpub, nil
 }
 
 func (s *Storage) Lookup(coin uint, addresses ...string) (observers []observer.Subscription, err error) {

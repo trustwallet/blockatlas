@@ -1,6 +1,7 @@
 package memory
 
 import (
+	"errors"
 	"fmt"
 	"github.com/trustwallet/blockatlas/observer"
 	"strings"
@@ -72,11 +73,11 @@ func (s *Storage) SaveXpubAddresses(coin uint, addresses []string, xpub string) 
 	return nil
 }
 
-func (s *Storage) GetXpubFromAddress(coin uint, address string) []string {
+func (s *Storage) GetXpubFromAddress(coin uint, address string) (string, error) {
 	if ad, ok := s.addresses[address]; ok {
-		return []string{ad}
+		return ad, nil
 	}
-	return []string{}
+	return "", errors.New(fmt.Sprintf("xpub not found for the address: %s", address))
 }
 
 func key(coin uint, address string) string {

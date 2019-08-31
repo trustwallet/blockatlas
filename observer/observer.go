@@ -53,12 +53,9 @@ func (o *Observer) processBlock(events chan<- Event, block *blockatlas.Block) {
 			if _, ok := emitted[tx.ID]; ok {
 				continue
 			}
-			xpubAddrs := o.Storage.GetXpubFromAddress(o.Coin, sub.Address)
-			if len(xpubAddrs) != 0 {
-				addressSet := mapset.NewSet()
-				for _, addr := range xpubAddrs {
-					addressSet.Add(addr)
-				}
+			xpub, _ := o.Storage.GetXpubFromAddress(o.Coin, sub.Address)
+			if len(xpub) != 0 {
+				addressSet := mapset.NewSet(xpub)
 				direction := platform.InferDirection(&tx, addressSet)
 				value := platform.InferValue(&tx, direction, addressSet)
 
