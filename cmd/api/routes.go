@@ -41,8 +41,6 @@ func loadPlatforms(root gin.IRouter) {
 		customAPI.RegisterRoutes(router)
 	}
 
-	makeCoinRoute(root)
-
 	logrus.WithField("routes", len(routers)).Info("Routes set up")
 
 	v1.GET("/", getEnabledEndpoints)
@@ -50,7 +48,7 @@ func loadPlatforms(root gin.IRouter) {
 
 // getRouter lazy loads routers
 func getRouter(router *gin.RouterGroup, handle string) gin.IRouter {
-	var key = router.BasePath() + handle
+	key := fmt.Sprintf("%s/%s", router.BasePath() , handle)
 	if group, ok := routers[key]; ok {
 		return group
 	} else {
