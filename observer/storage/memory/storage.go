@@ -9,14 +9,14 @@ import (
 type Storage struct {
 	blockNumbers map[uint]int64
 	observers    map[string]observer.Subscription
-	addresses    map[string][]string
+	addresses    map[string]string
 }
 
 func New() *Storage {
 	return &Storage{
 		blockNumbers: make(map[uint]int64),
 		observers:    make(map[string]observer.Subscription),
-		addresses:    make(map[string][]string),
+		addresses:    make(map[string]string),
 	}
 }
 
@@ -65,16 +65,18 @@ func (s *Storage) SetBlockNumber(coin uint, num int64) error {
 	return nil
 }
 
-func (s *Storage) SaveAddresses(addresses []string, xpub string) error {
-	if _, ok := s.addresses[xpub]; !ok {
-		s.addresses[xpub] = make([]string, 0)
+func (s *Storage) SaveXpubAddresses(coin uint, addresses []string, xpub string) error {
+	for _, addr := range addresses {
+		s.addresses[addr] = xpub
 	}
-	s.addresses[xpub] = append(s.addresses[xpub], addresses...)
 	return nil
 }
 
-func (s *Storage) GetAddresses(xpub string) []string {
-	return s.addresses[xpub]
+func (s *Storage) GetXpubFromAddress(coin uint, address string) []string {
+	if ad, ok := s.addresses[address]; ok {
+		return []string{ad}
+	}
+	return []string{}
 }
 
 func key(coin uint, address string) string {

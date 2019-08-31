@@ -94,7 +94,13 @@ func cacheXPubAddress(xpub string, coin uint) {
 			"coin": coin,
 		}).Error(err)
 	}
-	observerStorage.App.SaveAddresses(addresses, xpub)
+	err = observerStorage.App.SaveXpubAddresses(coin, addresses, xpub)
+	if err != nil {
+		logrus.WithFields(logrus.Fields{
+			"xpub": xpub,
+			"coin": coin,
+		}).Error(err)
+	}
 }
 
 func deleteCall(c *gin.Context) {

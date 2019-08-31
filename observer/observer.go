@@ -53,7 +53,7 @@ func (o *Observer) processBlock(events chan<- Event, block *blockatlas.Block) {
 			if _, ok := emitted[tx.ID]; ok {
 				continue
 			}
-			xpubAddrs := o.Storage.GetAddresses(sub.Address)
+			xpubAddrs := o.Storage.GetXpubFromAddress(o.Coin, sub.Address)
 			if len(xpubAddrs) != 0 {
 				addressSet := mapset.NewSet()
 				for _, addr := range xpubAddrs {

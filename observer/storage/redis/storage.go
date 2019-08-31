@@ -11,7 +11,7 @@ import (
 
 const keyObservers = "ATLAS_OBSERVERS"
 const keyBlockNumber = "ATLAS_BLOCK_NUMBER_%d"
-const keyXpub = "ATLAS_XPUB"
+const keyXpub = "ATLAS_XPUB_%d"
 
 type webHookOperation func(old []string, changes []string) []string
 
@@ -39,16 +39,18 @@ func (s *Storage) SetBlockNumber(coin uint, num int64) error {
 	return s.client.Set(key, num, 0).Err()
 }
 
-func (s *Storage) SaveAddresses(addresses []string, xpub string) error {
+func (s *Storage) SaveXpubAddresses(coin uint, addresses []string, xpub string) error {
 	a := make(map[string]interface{})
 	for _, address := range addresses {
 		a[address] = xpub
 	}
-	return s.saveHashMap(keyXpub, a)
+	key := fmt.Sprintf(keyXpub, coin)
+	return s.saveHashMap(key, a)
 }
 
-func (s *Storage) GetAddresses(xpub string) []string {
-	r, err := s.getHashMap(keyXpub, xpub)
+func (s *Storage) GetXpubFromAddress(coin uint, address string) []string {
+	key := fmt.Sprintf(keyXpub, coin)
+	r, err := s.getHashMap(key, address)
 	if err != nil {
 		return []string{}
 	}
@@ -74,7 +76,8 @@ func (s *Storage) Lookup(coin uint, addresses ...string) (observers []observer.S
 		keys[i] = key(coin, address)
 	}
 
-	xpubs, err := s.getHashMap(keyXpub, addresses...)
+	kx := fmt.Sprintf(keyXpub, coin)
+	xpubs, err := s.getHashMap(kx, addresses...)
 	if err != nil {
 		return nil, err
 	}
