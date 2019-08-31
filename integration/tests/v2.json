@@ -1,0 +1,34 @@
+[
+  {
+    "version": "v2",
+    "path": "/transactions",
+    "method": "get",
+    "query_string": "/{{.Address}}",
+    "http_code": 200
+  },
+  {
+    "version": "v2",
+    "path": "/staking/validators",
+    "method": "get",
+    "query_string": "",
+    "http_code": 200
+  },
+  {
+    "version": "v2",
+    "path": "/collections",
+    "method": "get",
+    "query_string": "/{{.Address}}",
+    "http_code": 200
+  },
+  {
+    "version": "v2",
+    "path": "/tokens",
+    "method": "get",
+    "query_string": "/{{.Address}}",
+    "http_code": 200
+  }
+]
+
+
+
+
