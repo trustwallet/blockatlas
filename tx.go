@@ -146,7 +146,7 @@ type AnyAction struct {
 	Coin     uint   `json:"coin"`
 	Title    string `json:"title"`
 	Key      string `json:"key"`
-	TokenID  string `json:"tokenID"`
+	TokenID  string `json:"token_id"`
 	Name     string `json:"name"`
 	Symbol   string `json:"symbol"`
 	Decimals uint   `json:"decimals"`
