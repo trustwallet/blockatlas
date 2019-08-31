@@ -76,7 +76,7 @@ func addCall(c *gin.Context) {
 		}
 	}
 	subs = append(subs, xpubSubs...)
-	err := observerStorage.App.Add(xpubSubs)
+	err := observerStorage.App.Add(subs)
 	if err != nil {
 		_ = c.Error(err)
 		return

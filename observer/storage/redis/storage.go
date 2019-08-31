@@ -10,8 +10,8 @@ import (
 )
 
 const keyObservers = "ATLAS_OBSERVERS"
-const keyXpub = "ATLAS_XPUB"
 const keyBlockNumber = "ATLAS_BLOCK_NUMBER_%d"
+const keyXpub = "ATLAS_XPUB"
 
 type webHookOperation func(old []string, changes []string) []string
 
@@ -40,11 +40,11 @@ func (s *Storage) SetBlockNumber(coin uint, num int64) error {
 }
 
 func (s *Storage) SaveAddresses(addresses []string, xpub string) error {
-	j, err := json.Marshal(addresses)
-	if err != nil {
-		return err
+	a := make(map[string]interface{})
+	for _, address := range addresses {
+		a[address] = xpub
 	}
-	return s.saveHashMap(keyXpub, map[string]interface{}{xpub: j})
+	return s.saveHashMap(keyXpub, a)
 }
 
 func (s *Storage) GetAddresses(xpub string) []string {
@@ -74,6 +74,20 @@ func (s *Storage) Lookup(coin uint, addresses ...string) (observers []observer.S
 		keys[i] = key(coin, address)
 	}
 
+	xpubs, err := s.getHashMap(keyXpub, addresses...)
+	if err != nil {
+		return nil, err
+	}
+	for i := range xpubs {
+		r := xpubs[i]
+		if r == nil {
+			continue
+		}
+		if xpub, ok := r.(string); ok {
+			keys[i] = key(coin, xpub)
+		}
+	}
+
 	results, err := s.getHashMap(keyObservers, keys...)
 	if err != nil {
 		return nil, err
@@ -100,7 +114,7 @@ func (s *Storage) Add(subs []observer.Subscription) error {
 }
 
 func (s *Storage) Delete(subs []observer.Subscription) error {
-	return s.updateWebHooks(subs, delete)
+	return s.updateWebHooks(subs, remove)
 }
 
 func (s *Storage) updateWebHooks(subs []observer.Subscription, operation webHookOperation) error {
@@ -158,7 +172,7 @@ func add(old []string, changes []string) []string {
 	}
 }
 
-func delete(old []string, remove []string) []string {
+func remove(old []string, remove []string) []string {
 	n := make([]string, 0)
 	if old == nil {
 		return n
