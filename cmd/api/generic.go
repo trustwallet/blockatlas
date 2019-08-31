@@ -151,7 +151,11 @@ func makeTokenRoute(router gin.IRouter, api blockatlas.Platform) {
 
 func makeCoinRoute(router gin.IRouter) {
 	router.GET("/coins", func(c *gin.Context) {
-		c.JSON(http.StatusOK, coin.Coins)
+		coins := make([]coin.Coin, 0)
+		for _, coin := range coin.Coins {
+			coins = append(coins, coin)
+		}
+		c.JSON(http.StatusOK, coins)
 	})
 }
 
