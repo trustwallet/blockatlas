@@ -5,6 +5,7 @@ import (
 	"github.com/gavv/httpexpect"
 	"github.com/trustwallet/blockatlas/integration/config"
 	log "github.com/trustwallet/blockatlas/integration/logger"
+	"net/http"
 	"sync"
 	"testing"
 	"time"
@@ -16,8 +17,22 @@ type Client struct {
 }
 
 func NewClient(t *testing.T) *Client {
+	http := httpexpect.WithConfig(httpexpect.Config{
+		BaseURL: config.Configuration.Server.Url,
+		Client: &http.Client{
+			Jar:     httpexpect.NewJar(),
+			Timeout: time.Second * 30,
+		},
+		// use fatal failures
+		Reporter: httpexpect.NewRequireReporter(t),
+		// use verbose logging
+		Printers: []httpexpect.Printer{
+			httpexpect.NewCurlPrinter(t),
+			httpexpect.NewDebugPrinter(t, true),
+		},
+	})
 	return &Client{
-		httpexpect.New(t, config.Configuration.Server.Url),
+		http,
 		t,
 	}
 }

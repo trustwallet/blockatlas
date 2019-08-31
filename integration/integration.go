@@ -1,4 +1,6 @@
-package main
+// +build integration
+
+package integration
 
 import (
 	"github.com/trustwallet/blockatlas/integration/config"
