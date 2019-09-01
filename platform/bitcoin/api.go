@@ -2,16 +2,16 @@ package bitcoin
 
 import (
 	"fmt"
-	"github.com/deckarep/golang-set"
+	"net/http"
+	"strconv"
+	"sync"
+
+	mapset "github.com/deckarep/golang-set"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
-	"net/http"
-	"strconv"
-	"sync"
-
 	//"sync"
 )
 
@@ -234,7 +234,7 @@ func parseOutputs(outputs []Output) (addresses []blockatlas.TxOutput) {
 func AddAmount(left string, right string) (sum blockatlas.Amount) {
 	amount1, _ := strconv.ParseInt(left, 10, 64)
 	amount2, _ := strconv.ParseInt(right, 10, 64)
-	return blockatlas.Amount(amount1 + amount2)
+	return blockatlas.Amount(strconv.FormatInt(amount1+amount2, 10))
 }
 
 func (p *Platform) InferDirection(tx *blockatlas.Tx, addressSet mapset.Set) string {
@@ -273,6 +273,7 @@ func (p *Platform) InferValue(tx *blockatlas.Tx, direction string, addressSet ma
 			}
 			amount = AddAmount(string(amount), string(output.Value))
 		}
+		value = amount
 	}
 	return value
 }
