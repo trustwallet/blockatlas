@@ -86,6 +86,10 @@ func addCall(c *gin.Context) {
 }
 
 func cacheXPubAddress(xpub string, coin uint) {
+	v := observerStorage.App.VerifyXpub(coin, xpub)
+	if v {
+		return
+	}
 	platform := bitcoin.UtxoPlatform(coin)
 	addresses, err := platform.GetAddressesFromXpub(xpub)
 	if err != nil {
@@ -95,6 +99,13 @@ func cacheXPubAddress(xpub string, coin uint) {
 		}).Error(err)
 	}
 	err = observerStorage.App.SaveXpubAddresses(coin, addresses, xpub)
+	if err != nil {
+		logrus.WithFields(logrus.Fields{
+			"xpub": xpub,
+			"coin": coin,
+		}).Error(err)
+	}
+	err = observerStorage.App.SaveXpub(coin, xpub)
 	if err != nil {
 		logrus.WithFields(logrus.Fields{
 			"xpub": xpub,
