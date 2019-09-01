@@ -11,6 +11,7 @@ type Storage struct {
 	blockNumbers map[uint]int64
 	observers    map[string]observer.Subscription
 	addresses    map[string]string
+	xpubs        map[string]bool
 }
 
 func New() *Storage {
@@ -78,6 +79,16 @@ func (s *Storage) GetXpubFromAddress(coin uint, address string) (string, error) 
 		return ad, nil
 	}
 	return "", errors.New(fmt.Sprintf("xpub not found for the address: %s", address))
+}
+
+func (s *Storage) SaveXpub(coin uint, xpub string) error {
+	s.xpubs[xpub] = true
+	return nil
+}
+
+func (s *Storage) VerifyXpub(coin uint, xpub string) bool {
+	v, ok := s.xpubs[xpub]
+	return ok && v
 }
 
 func key(coin uint, address string) string {
