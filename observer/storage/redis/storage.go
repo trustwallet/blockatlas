@@ -161,15 +161,15 @@ func add(old []string, changes []string) []string {
 	}
 	if old == nil {
 		return changes
-	} else {
-		var result []string
-		for _, i := range changes {
-			if !contains(old, i) {
-				result = append(result, i)
-			}
-		}
-		return append(old, result...)
 	}
+
+	var result []string
+	for _, i := range changes {
+		if !contains(old, i) {
+			result = append(result, i)
+		}
+	}
+	return append(old, result...)
 }
 
 func remove(old []string, remove []string) []string {
