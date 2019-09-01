@@ -201,7 +201,7 @@ func (p *Platform) NormalizeTransfer(transaction *Transaction, coinIndex uint, a
 
 	tx.Direction = direction
 	tx.Meta = blockatlas.Transfer{
-		Value:    blockatlas.Amount(value),
+		Value:    value,
 		Symbol:   coin.Coins[coinIndex].Symbol,
 		Decimals: coin.Coins[coinIndex].Decimals,
 	}
@@ -259,7 +259,7 @@ func (p *Platform) InferDirection(tx *blockatlas.Tx, addressSet mapset.Set) stri
 }
 
 func (p *Platform) InferValue(tx *blockatlas.Tx, direction string, addressSet mapset.Set) blockatlas.Amount {
-	value := blockatlas.Amount(0)
+	value := blockatlas.Amount("0")
 	if len(tx.Outputs) == 0 {
 		return value
 	}
