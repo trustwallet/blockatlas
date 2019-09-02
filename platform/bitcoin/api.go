@@ -237,7 +237,7 @@ func AddAmount(left string, right string) (sum blockatlas.Amount) {
 	return blockatlas.Amount(strconv.FormatInt(amount1+amount2, 10))
 }
 
-func (p *Platform) InferDirection(tx *blockatlas.Tx, addressSet mapset.Set) string {
+func (p *Platform) InferDirection(tx *blockatlas.Tx, addressSet mapset.Set) blockatlas.Direction {
 	inputSet := mapset.NewSet()
 	for _, address := range tx.Inputs {
 		inputSet.Add(address.Address)
@@ -258,7 +258,7 @@ func (p *Platform) InferDirection(tx *blockatlas.Tx, addressSet mapset.Set) stri
 	}
 }
 
-func (p *Platform) InferValue(tx *blockatlas.Tx, direction string, addressSet mapset.Set) blockatlas.Amount {
+func (p *Platform) InferValue(tx *blockatlas.Tx, direction blockatlas.Direction, addressSet mapset.Set) blockatlas.Amount {
 	value := blockatlas.Amount("0")
 	if len(tx.Outputs) == 0 {
 		return value

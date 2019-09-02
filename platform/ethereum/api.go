@@ -68,7 +68,8 @@ func (p *Platform) getTransactions(c *gin.Context) {
 }
 
 func extractBase(srcTx *Doc, coinIndex uint) (base blockatlas.Tx, ok bool) {
-	var status, errReason string
+	var status blockatlas.Status
+	var errReason string
 	if srcTx.Error == "" {
 		status = blockatlas.StatusCompleted
 	} else {

@@ -60,7 +60,7 @@ func Normalize(srcTx *Tx, assetName string) (tx blockatlas.Tx, ok bool) {
 	}
 	transfer := srcTx.TransferList[0]
 	fee := util.DecimalExp(srcTx.Fee, 9)
-	var status string
+	var status blockatlas.Status
 	if srcTx.ConfirmFlag == 1 {
 		status = blockatlas.StatusCompleted
 	} else {

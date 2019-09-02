@@ -11,15 +11,18 @@ const (
 	TxAnyAction           = "any_action"
 )
 
+type Direction string
+type Status string
+
 // Types of transaction statuses
 const (
-	StatusCompleted = "completed"
-	StatusPending   = "pending"
-	StatusFailed    = "failed"
+	StatusCompleted Status = "completed"
+	StatusPending   Status = "pending"
+	StatusFailed    Status = "failed"
 
-	DirectionOutgoing = "outgoing"
-	DirectionIncoming = "incoming"
-	DirectionSelf     = "yourself"
+	DirectionOutgoing Direction = "outgoing"
+	DirectionIncoming Direction = "incoming"
+	DirectionSelf     Direction = "yourself"
 )
 
 // Titles of AnyAction meta
@@ -66,7 +69,7 @@ type Tx struct {
 	// Height of the block the transaction was included in
 	Block uint64 `json:"block"`
 	// Status of the transaction
-	Status string `json:"status"`
+	Status Status `json:"status"`
 	// Empty if the transaction was successful,
 	// else error explaining why the transaction failed (optional)
 	Error string `json:"error,omitempty"`
@@ -79,7 +82,7 @@ type Tx struct {
 	// Output addresses
 	Outputs []TxOutput `json:"outputs,omitempty"`
 	// Transaction Direction
-	Direction string `json:"direction,omitempty"`
+	Direction Direction `json:"direction,omitempty"`
 	// Meta data object
 	Memo string      `json:"memo"`
 	Meta interface{} `json:"metadata"`

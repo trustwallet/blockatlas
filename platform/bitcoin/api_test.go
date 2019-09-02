@@ -101,7 +101,7 @@ var expectedOutgoingTx = blockatlas.Tx{
 	Status:    "completed",
 	Block:     585094,
 	Sequence:  0,
-	Direction: "yourself",
+	Direction: blockatlas.DirectionSelf,
 	Meta: blockatlas.Transfer{
 		Value: "677012",
 	},
@@ -205,7 +205,7 @@ func TestInferDirection(t *testing.T) {
 	var tests = []struct {
 		Inputs   []blockatlas.TxOutput
 		Outputs  []blockatlas.TxOutput
-		Expected string
+		Expected blockatlas.Direction
 	}{
 		{
 			[]blockatlas.TxOutput{{

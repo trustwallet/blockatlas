@@ -39,7 +39,7 @@ type Receipt struct {
 }
 
 // ReceiptStatus function that describes transaction status
-func ReceiptStatus(r bool) string {
+func ReceiptStatus(r bool) blockatlas.Status {
 	if r {
 		return blockatlas.StatusFailed
 	}
