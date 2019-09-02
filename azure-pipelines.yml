@@ -49,6 +49,10 @@ steps:
   workingDirectory: '$(modulePath)'
   displayName: 'Run tests'
 
+- script: go test -tags=integration -v ./pkg/integration
+  workingDirectory: '$(modulePath)'
+  displayName: 'Run integration tests'
+
 - script: go build -v .
   workingDirectory: '$(modulePath)'
   displayName: 'Build'
