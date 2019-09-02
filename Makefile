@@ -30,7 +30,7 @@ install: go-get
 
 ## start: Start API and Observer in development mode.
 start:
-	@bash -c "trap 'make stop' EXIT; $(MAKE) clean compile start-api start-observer"
+	@bash -c "$(MAKE) clean compile start-api start-observer"
 
 ## stop: Stop development mode.
 stop: stop-server
@@ -76,6 +76,9 @@ clean:
 ## test: Run all unit tests.
 test: go-test
 
+## integration: Run all integration tests.
+integration: go-integration
+
 ## fmt: Run `go fmt` for all go files.
 fmt: go-fmt
 
@@ -101,8 +104,12 @@ go-clean:
 	GOBIN=$(GOBIN) go clean
 
 go-test:
-	@echo "  >  Cleaning build cache"
+	@echo "  >  Runing unit tests"
 	GOBIN=$(GOBIN) go test -v ./...
+
+go-integration:
+	@echo "  >  Runing integration tests"
+	GOBIN=$(GOBIN) go test -tags=integration -v ./pkg/integration
 
 go-fmt:
 	@echo "  >  Format all go files"
