@@ -4,7 +4,8 @@
     "path": "",
     "method": "get",
     "query_string": "/{{.Address}}",
-    "http_code": 200
+    "http_code": 200,
+    "body": {}
   }
 ]
 

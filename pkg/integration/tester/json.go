@@ -1,12 +1,11 @@
+// +build integration
+
 package tester
 
 import (
 	"encoding/json"
-	"fmt"
-	"github.com/trustwallet/blockatlas/integration/config"
-	log "github.com/trustwallet/blockatlas/integration/logger"
 	"io/ioutil"
-	"os"
+	"path/filepath"
 )
 
 type HttpTest struct {
@@ -18,8 +17,24 @@ type HttpTest struct {
 	Body        map[string]interface{} `json:"body,omitempty"`
 }
 
+func GetTests() ([][]HttpTest, error) {
+	files, err := GetFilesFromFolder()
+	if err != nil {
+		return nil, err
+	}
+	tests := make([][]HttpTest, 0)
+	for _, f := range files {
+		t, err := GetHttpTests(f)
+		if err != nil {
+			continue
+		}
+		tests = append(tests, t)
+	}
+	return tests, nil
+}
+
 func GetFilesFromFolder() ([]string, error) {
-	files, err := ioutil.ReadDir(config.Configuration.Json.Path)
+	files, err := ioutil.ReadDir("testdata")
 	if err != nil {
 		return nil, err
 	}
@@ -32,18 +47,8 @@ func GetFilesFromFolder() ([]string, error) {
 }
 
 func GetHttpTests(file string) ([]HttpTest, error) {
-	jsonFile, err := os.Open(fmt.Sprintf("%s/%s", config.Configuration.Json.Path, file))
-	if err != nil {
-		return nil, err
-	}
-	defer func() {
-		err := jsonFile.Close()
-		if err != nil {
-			log.Error(err)
-		}
-	}()
-
-	byteValue, err := ioutil.ReadAll(jsonFile)
+	golden := filepath.Join("testdata", file)
+	byteValue, err := ioutil.ReadFile(golden)
 	if err != nil {
 		return nil, err
 	}

@@ -1,9 +1,11 @@
-package integration
+// +build integration
+
+package coins
 
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/trustwallet/blockatlas/integration/config"
+	config "github.com/trustwallet/blockatlas/pkg/integration/config"
 	"io/ioutil"
 	"net/http"
 )

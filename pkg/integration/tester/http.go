@@ -1,15 +1,24 @@
+// +build integration
+
 package tester
 
 import (
 	"fmt"
 	"github.com/gavv/httpexpect"
-	"github.com/trustwallet/blockatlas/integration/config"
-	log "github.com/trustwallet/blockatlas/integration/logger"
+	"github.com/trustwallet/blockatlas/pkg/integration/config"
 	"net/http"
-	"sync"
 	"testing"
 	"time"
 )
+
+type HttpResult struct {
+	Coin    string
+	Method  string
+	Version string
+	Path    string
+	Status  int
+	Elapsed time.Duration
+}
 
 type Client struct {
 	e *httpexpect.Expect
@@ -27,8 +36,6 @@ func NewClient(t *testing.T) *Client {
 		Reporter: httpexpect.NewRequireReporter(t),
 		// use verbose logging
 		Printers: []httpexpect.Printer{
-			httpexpect.NewCurlPrinter(t),
-			httpexpect.NewDebugPrinter(t, true),
 		},
 	})
 	return &Client{
@@ -37,31 +44,48 @@ func NewClient(t *testing.T) *Client {
 	}
 }
 
-func (c *Client) TestPost(coin, address string, test HttpTest, wg *sync.WaitGroup) {
-	defer wg.Done()
-
+func (c *Client) TestPost(coin, address string, test HttpTest) HttpResult {
 	url := getBaseUrl(test.Version, coin, test.Path)
-	defer TimeTrack(coin, test.Method, url, time.Now())
 	request := c.e.POST(url)
 	if test.Body != nil {
 		request.WithJSON(test.Body)
 	}
+	t := time.Now()
 	response := request.Expect()
-	response.Status(test.HttpCode)
+	elapsed := time.Since(t)
+	status := response.Raw().StatusCode
+
+	return HttpResult{
+		Coin:    coin,
+		Method:  test.Method,
+		Version: test.Version,
+		Path:    test.Path,
+		Status:  status,
+		Elapsed: elapsed,
+	}
 }
 
-func (c *Client) TestGet(coin, address string, test HttpTest, wg *sync.WaitGroup) {
-	defer wg.Done()
-
+func (c *Client) TestGet(coin, address string, test HttpTest) HttpResult {
 	q, err := getParameters(test.QueryString, address)
 	if err != nil {
 		c.t.Error(err)
 	}
 	url := getParameterUrl(test.Version, coin, test.Path, q)
-	defer TimeTrack(coin, test.Method, url, time.Now())
+
 	request := c.e.GET(url)
+	t := time.Now()
 	response := request.Expect()
-	response.Status(test.HttpCode)
+	elapsed := time.Since(t)
+	status := response.Raw().StatusCode
+
+	return HttpResult{
+		Coin:    coin,
+		Method:  test.Method,
+		Version: test.Version,
+		Path:    test.Path,
+		Status:  status,
+		Elapsed: elapsed,
+	}
 }
 
 func getParameterUrl(version, coin, path, params string) string {
@@ -70,10 +94,4 @@ func getParameterUrl(version, coin, path, params string) string {
 
 func getBaseUrl(version, coin, path string) string {
 	return fmt.Sprintf("%s/%s/%s%s", config.Configuration.Server.Url, version, coin, path)
-}
-
-func TimeTrack(name, method, url string, start time.Time) time.Duration {
-	elapsed := time.Since(start)
-	log.TimeTrack(name, method, url, elapsed)
-	return time.Since(start)
 }
