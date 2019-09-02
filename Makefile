@@ -30,7 +30,7 @@ install: go-get
 
 ## start: Start API and Observer in development mode.
 start:
-	@bash -c "trap 'make stop' EXIT; $(MAKE) clean compile start-api start-observer"
+	@bash -c "$(MAKE) clean compile start-api start-observer"
 
 ## stop: Stop development mode.
 stop: stop-server

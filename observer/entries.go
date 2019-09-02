@@ -16,4 +16,8 @@ type Storage interface {
 	Lookup(coin uint, addresses ...string) ([]Subscription, error)
 	Add([]Subscription) error
 	Delete([]Subscription) error
+	SaveXpubAddresses(coin uint, addresses []string, xpub string) error
+	GetXpubFromAddress(coin uint, address string) (string, error)
+	SaveXpub(coin uint, xpub string) error
+	VerifyXpub(coin uint, xpub string) bool
 }

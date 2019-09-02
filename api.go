@@ -41,6 +41,12 @@ type BlockAPI interface {
 	GetBlockByNumber(num int64) (*Block, error)
 }
 
+// AddressAPI provides address information
+type AddressAPI interface {
+	Platform
+	GetAddressesFromXpub(xpub string) ([]string, error)
+}
+
 // StakingAPI provides staking information
 type StakeAPI interface {
 	Platform

@@ -48,6 +48,18 @@ func (c *Client) GetTransactionsByXpub(xpub string) (transactions TransactionsLi
 	return transactions, err
 }
 
+func (c *Client) GetAddressesFromXpub(xpub string) (tokens []Token, err error) {
+	path := fmt.Sprintf("v2/xpub/%s", xpub)
+	args := url.Values{
+		"pageSize": {strconv.FormatInt(blockatlas.TxPerPage*4, 10)},
+		"details":  {"txs"},
+		"tokens":   {"derived"},
+	}
+	var transactions TransactionsList
+	err = c.Request.Get(&transactions, c.URL, path, args)
+	return transactions.Tokens, err
+}
+
 func (c *Client) GetTransactionsByBlock(number int64, page int64) (block Block, err error) {
 	path := fmt.Sprintf("v2/block/%s", strconv.FormatInt(number, 10))
 	args := url.Values{

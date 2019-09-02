@@ -1,8 +1,11 @@
 package observer
 
 import (
+	mapset "github.com/deckarep/golang-set"
 	"github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas"
+	"github.com/trustwallet/blockatlas/coin"
+	"github.com/trustwallet/blockatlas/platform/bitcoin"
 )
 
 type Event struct {
@@ -42,9 +45,31 @@ func (o *Observer) processBlock(events chan<- Event, block *blockatlas.Block) {
 	}
 
 	// Emit events
+	emitted := make(map[string]bool)
+	platform := bitcoin.UtxoPlatform(o.Coin)
 	for _, sub := range subs {
 		txs := txMap[sub.Address].Txs()
 		for _, tx := range txs {
+			if _, ok := emitted[tx.ID]; ok {
+				continue
+			}
+			xpub, _ := o.Storage.GetXpubFromAddress(o.Coin, sub.Address)
+			if len(xpub) != 0 {
+				addressSet := mapset.NewSet()
+				for _, addr := range tx.GetUtxoAddresses() {
+					addressSet.Add(addr)
+				}
+				direction := platform.InferDirection(&tx, addressSet)
+				value := platform.InferValue(&tx, direction, addressSet)
+
+				tx.Direction = direction
+				tx.Meta = blockatlas.Transfer{
+					Value:    value,
+					Symbol:   coin.Coins[o.Coin].Symbol,
+					Decimals: coin.Coins[o.Coin].Decimals,
+				}
+			}
+			emitted[tx.ID] = true
 			events <- Event{
 				Subscription: sub,
 				Tx:           &tx,
@@ -55,9 +80,9 @@ func (o *Observer) processBlock(events chan<- Event, block *blockatlas.Block) {
 
 func GetTxs(block *blockatlas.Block) map[string]*blockatlas.TxSet {
 	txMap := make(map[string]*blockatlas.TxSet)
-
 	for i := 0; i < len(block.Txs); i++ {
 		addresses := block.Txs[i].GetAddresses()
+		addresses = append(addresses, block.Txs[i].GetUtxoAddresses()...)
 		for _, address := range addresses {
 			if txMap[address] == nil {
 				txMap[address] = new(blockatlas.TxSet)

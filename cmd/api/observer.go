@@ -3,10 +3,12 @@ package api
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/observer"
 	observerStorage "github.com/trustwallet/blockatlas/observer/storage"
 	"github.com/trustwallet/blockatlas/platform"
+	"github.com/trustwallet/blockatlas/platform/bitcoin"
 	"net/http"
 	"strconv"
 )
@@ -29,22 +31,23 @@ func requireAuth(c *gin.Context) {
 
 func addCall(c *gin.Context) {
 	var req struct {
-		Subscriptions map[string][]string `json:"subscriptions"`
-		Webhook       string              `json:"webhook"`
+		Subscriptions     map[string][]string `json:"subscriptions"`
+		XpubSubscriptions map[string][]string `json:"xpub_subscriptions"`
+		Webhook           string              `json:"webhook"`
 	}
 	if c.BindJSON(&req) != nil {
 		return
 	}
 
-	if len(req.Subscriptions) == 0 {
+	if len(req.Subscriptions) == 0 && len(req.XpubSubscriptions) == 0 {
 		c.String(http.StatusOK, "Added")
 		return
 	}
 
 	var subs []observer.Subscription
 	for coinStr, perCoin := range req.Subscriptions {
-		coin, _ := strconv.Atoi(coinStr)
-		if coin == 0 {
+		coin, err := strconv.Atoi(coinStr)
+		if err != nil {
 			continue
 		}
 		for _, addr := range perCoin {
@@ -56,6 +59,23 @@ func addCall(c *gin.Context) {
 		}
 	}
 
+	var xpubSubs []observer.Subscription
+	for coinStr, perCoin := range req.XpubSubscriptions {
+		coin, err := strconv.Atoi(coinStr)
+		if err != nil {
+			continue
+		}
+
+		for _, xpub := range perCoin {
+			xpubSubs = append(xpubSubs, observer.Subscription{
+				Coin:     uint(coin),
+				Address:  xpub,
+				Webhooks: []string{req.Webhook},
+			})
+			go cacheXPubAddress(xpub, uint(coin))
+		}
+	}
+	subs = append(subs, xpubSubs...)
 	err := observerStorage.App.Add(subs)
 	if err != nil {
 		_ = c.Error(err)
@@ -65,24 +85,54 @@ func addCall(c *gin.Context) {
 	c.String(http.StatusOK, "Added")
 }
 
+func cacheXPubAddress(xpub string, coin uint) {
+	v := observerStorage.App.VerifyXpub(coin, xpub)
+	if v {
+		return
+	}
+	platform := bitcoin.UtxoPlatform(coin)
+	addresses, err := platform.GetAddressesFromXpub(xpub)
+	if err != nil {
+		logrus.WithFields(logrus.Fields{
+			"xpub": xpub,
+			"coin": coin,
+		}).Error(err)
+	}
+	err = observerStorage.App.SaveXpubAddresses(coin, addresses, xpub)
+	if err != nil {
+		logrus.WithFields(logrus.Fields{
+			"xpub": xpub,
+			"coin": coin,
+		}).Error(err)
+	}
+	err = observerStorage.App.SaveXpub(coin, xpub)
+	if err != nil {
+		logrus.WithFields(logrus.Fields{
+			"xpub": xpub,
+			"coin": coin,
+		}).Error(err)
+	}
+}
+
 func deleteCall(c *gin.Context) {
 	var req struct {
-		Subscriptions map[string][]string `json:"subscriptions"`
-		Webhook       string              `json:"webhook"`
+		Subscriptions     map[string][]string `json:"subscriptions"`
+		XpubSubscriptions map[string][]string `json:"xpub_subscriptions"`
+		Webhook           string              `json:"webhook"`
 	}
 	if c.BindJSON(&req) != nil {
 		return
 	}
 
-	if len(req.Subscriptions) == 0 {
+	if len(req.Subscriptions) == 0 && len(req.XpubSubscriptions) == 0 {
 		c.String(http.StatusOK, "Deleted")
 		return
 	}
 
 	var subs []observer.Subscription
 	for coinStr, perCoin := range req.Subscriptions {
-		coin, _ := strconv.Atoi(coinStr)
-		if coin == 0 {
+		coin, err := strconv.Atoi(coinStr)
+		if err != nil {
 			continue
 		}
 		for _, addr := range perCoin {
@@ -94,6 +144,22 @@ func deleteCall(c *gin.Context) {
 		}
 	}
 
+	var xpubSubs []observer.Subscription
+	for coinStr, perCoin := range req.XpubSubscriptions {
+		coin, err := strconv.Atoi(coinStr)
+		if err != nil {
+			continue
+		}
+		for _, addr := range perCoin {
+			xpubSubs = append(xpubSubs, observer.Subscription{
+				Coin:     uint(coin),
+				Address:  addr,
+				Webhooks: []string{req.Webhook},
+			})
+		}
+	}
+
+	subs = append(subs, xpubSubs...)
 	err := observerStorage.App.Delete(subs)
 	if err != nil {
 		_ = c.Error(err)

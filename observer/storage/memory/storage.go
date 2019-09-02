@@ -1,6 +1,7 @@
 package memory
 
 import (
+	"errors"
 	"fmt"
 	"github.com/trustwallet/blockatlas/observer"
 	"strings"
@@ -9,12 +10,15 @@ import (
 type Storage struct {
 	blockNumbers map[uint]int64
 	observers    map[string]observer.Subscription
+	addresses    map[string]string
+	xpubs        map[string]bool
 }
 
 func New() *Storage {
 	return &Storage{
 		blockNumbers: make(map[uint]int64),
 		observers:    make(map[string]observer.Subscription),
+		addresses:    make(map[string]string),
 	}
 }
 
@@ -61,6 +65,30 @@ func (s *Storage) GetBlockNumber(coin uint) (int64, error) {
 func (s *Storage) SetBlockNumber(coin uint, num int64) error {
 	s.blockNumbers[coin] = num
 	return nil
+}
+
+func (s *Storage) SaveXpubAddresses(coin uint, addresses []string, xpub string) error {
+	for _, addr := range addresses {
+		s.addresses[addr] = xpub
+	}
+	return nil
+}
+
+func (s *Storage) GetXpubFromAddress(coin uint, address string) (string, error) {
+	if ad, ok := s.addresses[address]; ok {
+		return ad, nil
+	}
+	return "", errors.New(fmt.Sprintf("xpub not found for the address: %s", address))
+}
+
+func (s *Storage) SaveXpub(coin uint, xpub string) error {
+	s.xpubs[xpub] = true
+	return nil
+}
+
+func (s *Storage) VerifyXpub(coin uint, xpub string) bool {
+	v, ok := s.xpubs[xpub]
+	return ok && v
 }
 
 func key(coin uint, address string) string {
