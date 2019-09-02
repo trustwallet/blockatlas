@@ -82,7 +82,8 @@ func Normalize(srcTx *Tx) (tx blockatlas.Tx, ok bool) {
 	if op.Kind != "transaction" {
 		return tx, false
 	}
-	var status, errMsg string
+	var status blockatlas.Status
+	var errMsg string
 	if !op.Failed {
 		status = blockatlas.StatusCompleted
 	} else {

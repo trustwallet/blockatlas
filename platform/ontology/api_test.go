@@ -36,7 +36,7 @@ var dstOntTransfer = blockatlas.Tx{
 	Fee:    "10000000",
 	Date:   1556952450,
 	Type:   "transfer",
-	Status: "completed",
+	Status: blockatlas.StatusCompleted,
 	Block:  3411115,
 	Meta: blockatlas.Transfer{
 		Value: "2",
@@ -71,7 +71,7 @@ var dstOngTransfer1 = blockatlas.Tx{
 	Fee:    "10000000",
 	Date:   1555341286,
 	Type:   blockatlas.TxNativeTokenTransfer,
-	Status: "completed",
+	Status: blockatlas.StatusCompleted,
 	Block:  2863855,
 	Meta: blockatlas.NativeTokenTransfer{
 		Name:     "Ontology Gas",
@@ -117,7 +117,7 @@ var dstOngTransfer = blockatlas.Tx{
 	Fee:    "10000000",
 	Date:   1556952520,
 	Type:   blockatlas.TxNativeTokenTransfer,
-	Status: "completed",
+	Status: blockatlas.StatusCompleted,
 	Block:  3411141,
 	Meta: blockatlas.NativeTokenTransfer{
 		Name:     "Ontology Gas",

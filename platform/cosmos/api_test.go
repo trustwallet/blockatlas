@@ -258,7 +258,7 @@ var transferDst = blockatlas.Tx{
 	Fee:    "1",
 	Date:   1556992677,
 	Block:  151980,
-	Status: "completed",
+	Status: blockatlas.StatusCompleted,
 	Meta: blockatlas.Transfer{
 		Value: "2271999999",
 	},
@@ -272,7 +272,7 @@ var delegateDst = blockatlas.Tx{
 	Fee:    "5000",
 	Date:   1564632616,
 	Block:  1258202,
-	Status: "completed",
+	Status: blockatlas.StatusCompleted,
 	Meta: blockatlas.AnyAction{
 		Coin:     coin.ATOM,
 		Title:    blockatlas.AnyActionDelegation,
@@ -292,7 +292,7 @@ var unDelegateDst = blockatlas.Tx{
 	Fee:    "5000",
 	Date:   1564624521,
 	Block:  1257037,
-	Status: "completed",
+	Status: blockatlas.StatusCompleted,
 	Meta: blockatlas.AnyAction{
 		Coin:     coin.ATOM,
 		Title:    blockatlas.AnyActionUndelegation,

@@ -98,10 +98,10 @@ var expectedOutgoingTx = blockatlas.Tx{
 	Fee:       "100188",
 	Date:      1562945790,
 	Type:      "transfer",
-	Status:    "completed",
+	Status:    blockatlas.StatusCompleted,
 	Block:     585094,
 	Sequence:  0,
-	Direction: "yourself",
+	Direction: blockatlas.DirectionSelf,
 	Meta: blockatlas.Transfer{
 		Value: "677012",
 	},
@@ -131,10 +131,10 @@ var expectedIncomingTx = blockatlas.Tx{
 	Fee:       "226",
 	Date:      1549793065,
 	Type:      "transfer",
-	Status:    "completed",
+	Status:    blockatlas.StatusCompleted,
 	Block:     479017,
 	Sequence:  0,
-	Direction: "incoming",
+	Direction: blockatlas.DirectionIncoming,
 	Meta: blockatlas.Transfer{
 		Value: "200997",
 	},
@@ -205,7 +205,7 @@ func TestInferDirection(t *testing.T) {
 	var tests = []struct {
 		Inputs   []blockatlas.TxOutput
 		Outputs  []blockatlas.TxOutput
-		Expected string
+		Expected blockatlas.Direction
 	}{
 		{
 			[]blockatlas.TxOutput{{
