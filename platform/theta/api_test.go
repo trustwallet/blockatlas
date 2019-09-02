@@ -85,7 +85,7 @@ var expectedTransferTrx = blockatlas.Tx{
 	Fee:      "2000000000000",
 	Date:     1557136781,
 	Type:     "transfer",
-	Status:   "completed",
+	Status:   blockatlas.StatusCompleted,
 	Block:    700321,
 	Sequence: 43,
 	Meta: blockatlas.Transfer{
@@ -101,7 +101,7 @@ var expectedTfuelTransfer = blockatlas.Tx{
 	Fee:      "2000000000000",
 	Date:     1557136821,
 	Type:     blockatlas.TxNativeTokenTransfer,
-	Status:   "completed",
+	Status:   blockatlas.StatusCompleted,
 	Sequence: 44,
 	Block:    700327,
 	Meta: blockatlas.NativeTokenTransfer{
