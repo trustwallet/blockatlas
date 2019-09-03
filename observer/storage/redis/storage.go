@@ -54,11 +54,11 @@ func (s *Storage) GetXpubFromAddress(coin uint, address string) (string, error) 
 		return "", err
 	}
 	if len(r) == 0 {
-		return "", errors.New(fmt.Sprintf("xpub not found for the address: %s", address))
+		return "", fmt.Errorf("xpub not found for the address: %s", address)
 	}
 	xpub, ok := r[0].(string)
 	if !ok || len(xpub) == 0 {
-		return "", errors.New(fmt.Sprintf("invalid type for xpub: %s - %s", xpub, address))
+		return "", fmt.Errorf("invalid type for xpub: %s - %s", xpub, address)
 	}
 	return xpub, nil
 }

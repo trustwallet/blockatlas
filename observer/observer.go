@@ -43,14 +43,11 @@ func (o *Observer) processBlock(events chan<- Event, block *blockatlas.Block) {
 	}
 
 	// Emit events
-	emitted := make(map[string]bool)
+	emitted := make(map[string]blockatlas.Direction)
 	platform := bitcoin.UtxoPlatform(o.Coin)
 	for _, sub := range subs {
 		txs := txMap[sub.Address].Txs()
 		for _, tx := range txs {
-			if _, ok := emitted[tx.ID]; ok {
-				continue
-			}
 			xpub, _ := o.Storage.GetXpubFromAddress(o.Coin, sub.Address)
 			if len(xpub) != 0 {
 				addressSet := mapset.NewSet()
@@ -67,7 +64,14 @@ func (o *Observer) processBlock(events chan<- Event, block *blockatlas.Block) {
 					Decimals: coin.Coins[o.Coin].Decimals,
 				}
 			}
-			emitted[tx.ID] = true
+			if d, ok := emitted[tx.ID]; ok {
+				if d == tx.Direction || d == blockatlas.DirectionSelf{
+					continue
+				}
+				emitted[tx.ID] = blockatlas.DirectionSelf
+			} else {
+				emitted[tx.ID] = tx.Direction
+			}
 			events <- Event{
 				Subscription: sub,
 				Tx:           &tx,
