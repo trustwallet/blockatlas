@@ -1,0 +1,27 @@
+[
+  {
+    "id": 714,
+    "handle": "binance",
+    "apis": [
+      "v1_tx",
+      "v2_tx",
+      "staking_validators",
+      "collections",
+      "tokens"
+    ],
+    "addresses": [
+      "bc1quvuarfksewfeuevuc6tn0kfyptgjvwsvrprk9d"
+    ]
+  },
+  {
+    "id": 0,
+    "handle": "bitcoin",
+    "apis": [
+      "v1_tx",
+      "v2_tx"
+    ],
+    "addresses": [
+      "bc1quvuarfksewfeuevuc6tn0kfyptgjvwsvrprk9d"
+    ]
+  }
+]

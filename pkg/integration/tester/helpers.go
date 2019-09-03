@@ -7,7 +7,7 @@ import (
 	"html/template"
 )
 
-func getParameters(url, address string) (string, error) {
+func getParameters(url, coin, address string) (string, error) {
 	tpl := template.New("url")
 	tpl, err := tpl.Parse(url)
 	if err != nil {
@@ -16,8 +16,10 @@ func getParameters(url, address string) (string, error) {
 
 	data := struct {
 		Address string
+		Coin    string
 	}{
 		address,
+		coin,
 	}
 
 	var out bytes.Buffer

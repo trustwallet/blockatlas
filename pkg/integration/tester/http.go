@@ -3,22 +3,14 @@
 package tester
 
 import (
-	"fmt"
 	"github.com/gavv/httpexpect"
+	"github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas/pkg/integration/config"
 	"net/http"
+	"sync"
 	"testing"
 	"time"
 )
-
-type HttpResult struct {
-	Coin    string
-	Method  string
-	Version string
-	Path    string
-	Status  int
-	Elapsed time.Duration
-}
 
 type Client struct {
 	e *httpexpect.Expect
@@ -36,6 +28,7 @@ func NewClient(t *testing.T) *Client {
 		Reporter: httpexpect.NewRequireReporter(t),
 		// use verbose logging
 		Printers: []httpexpect.Printer{
+			httpexpect.NewCurlPrinter(t),
 		},
 	})
 	return &Client{
@@ -44,54 +37,46 @@ func NewClient(t *testing.T) *Client {
 	}
 }
 
-func (c *Client) TestPost(coin, address string, test HttpTest) HttpResult {
-	url := getBaseUrl(test.Version, coin, test.Path)
-	request := c.e.POST(url)
-	if test.Body != nil {
-		request.WithJSON(test.Body)
-	}
-	t := time.Now()
-	response := request.Expect()
-	elapsed := time.Since(t)
-	status := response.Raw().StatusCode
+func (c *Client) TestGet(coin, address string, test Api, wg *sync.WaitGroup) {
+	defer wg.Done()
 
-	return HttpResult{
-		Coin:    coin,
-		Method:  test.Method,
-		Version: test.Version,
-		Path:    test.Path,
-		Status:  status,
-		Elapsed: elapsed,
-	}
-}
-
-func (c *Client) TestGet(coin, address string, test HttpTest) HttpResult {
-	q, err := getParameters(test.QueryString, address)
+	path, err := getParameters(test.Path, coin, address)
 	if err != nil {
 		c.t.Error(err)
 	}
-	url := getParameterUrl(test.Version, coin, test.Path, q)
+	request := c.e.GET(path).WithURL(config.Configuration.Server.Url)
 
-	request := c.e.GET(url)
 	t := time.Now()
 	response := request.Expect()
-	elapsed := time.Since(t)
-	status := response.Raw().StatusCode
+	timeTrack(coin, address, path, t)
 
-	return HttpResult{
-		Coin:    coin,
-		Method:  test.Method,
-		Version: test.Version,
-		Path:    test.Path,
-		Status:  status,
-		Elapsed: elapsed,
+	response.Text().Schema(test.Schema)
+	response.Status(http.StatusOK)
+}
+
+func DoTests(t *testing.T, apis map[string]Api, coin Coin) {
+	c := NewClient(t)
+
+	var wg sync.WaitGroup
+	for _, coinApi := range coin.Apis {
+		api, ok := apis[coinApi]
+		if !ok {
+			t.Errorf("invalid api %s for coin %s", coinApi, coin.Handle)
+			continue
+		}
+		for _, addr := range coin.Addresses {
+			wg.Add(1)
+			go c.TestGet(coin.Handle, addr, api, &wg)
+		}
 	}
+	wg.Wait()
 }
 
-func getParameterUrl(version, coin, path, params string) string {
-	return fmt.Sprintf("%s%s", getBaseUrl(version, coin, path), params)
-}
-
-func getBaseUrl(version, coin, path string) string {
-	return fmt.Sprintf("%s/%s/%s%s", config.Configuration.Server.Url, version, coin, path)
+func timeTrack(coin, address, path string, t time.Time) {
+	logrus.WithFields(logrus.Fields{
+		"coin":    coin,
+		"address": address,
+		"path":    path,
+		"time":    time.Since(t).String(),
+	}).Info("Test")
 }
