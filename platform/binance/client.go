@@ -71,8 +71,10 @@ func (c *Client) GetTokens() (*TokenPage, error) {
 
 func getHTTPError(res *http.Response, desc string) error {
 	switch res.StatusCode {
-	case http.StatusBadRequest, http.StatusNotFound:
+	case http.StatusBadRequest:
 		return getAPIError(res, desc)
+	case http.StatusNotFound:
+		return blockatlas.ErrNotFound
 	case http.StatusOK:
 		return nil
 	default:
