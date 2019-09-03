@@ -2,7 +2,6 @@ package observer
 
 import (
 	mapset "github.com/deckarep/golang-set"
-	"github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/platform/bitcoin"
@@ -40,7 +39,6 @@ func (o *Observer) processBlock(events chan<- Event, block *blockatlas.Block) {
 	// Lookup subscriptions
 	subs, err := o.Storage.Lookup(o.Coin, addresses...)
 	if err != nil {
-		logrus.WithError(err).Error("Failed to look up subscriptions")
 		return
 	}
 
