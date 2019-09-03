@@ -144,8 +144,10 @@ func TestMemoryStorage_Contains(t *testing.T) {
 
 func TestMemoryStorage_SaveAddresses(t *testing.T) {
 	var addresses = make(map[string]string)
+	var xAddresses = make(map[string][]string)
 	var storage observer.Storage = &Storage{
-		addresses: addresses,
+		addresses:     addresses,
+		xpubAddresses: xAddresses,
 	}
 
 	err := storage.SaveXpubAddresses(coin.BTC, xpubAddresses, xpub)
@@ -155,12 +157,17 @@ func TestMemoryStorage_SaveAddresses(t *testing.T) {
 	if len(addresses) == 0 {
 		t.Error("addresses not added")
 	}
+	if len(xAddresses) == 0 {
+		t.Error("xpub not added")
+	}
 }
 
 func TestMemoryStorage_GetAddresses(t *testing.T) {
 	var addresses = make(map[string]string)
+	var xAddresses = make(map[string][]string)
 	var storage observer.Storage = &Storage{
 		addresses: addresses,
+		xpubAddresses: xAddresses,
 	}
 
 	err := storage.SaveXpubAddresses(coin.BTC, xpubAddresses, xpub)
@@ -176,5 +183,12 @@ func TestMemoryStorage_GetAddresses(t *testing.T) {
 	}
 	if !reflect.DeepEqual(res, xpub) {
 		t.Error("wrong addresses")
+	}
+	a, err := storage.GetAddressFromXpub(coin.BTC, xpub)
+	if err != nil {
+		t.Error(err)
+	}
+	if !reflect.DeepEqual(xpubAddresses, a) {
+		t.Error("wrong xpub addresses")
 	}
 }
