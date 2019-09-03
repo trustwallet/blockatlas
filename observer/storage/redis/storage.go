@@ -59,19 +59,21 @@ func (s *Storage) SaveXpubAddresses(coin uint, addresses []string, xpub string) 
 
 func (s *Storage) GetAddressFromXpub(coin uint, xpub string) ([]string, error) {
 	key := fmt.Sprintf(keyXpub, coin)
-	r, err := s.getHashMap(key, xpub)
+	results, err := s.getHashMap(key, xpub)
 	if err != nil {
 		return nil, err
 	}
-	if len(r) == 0 {
+	if len(results) == 0 {
 		return nil, fmt.Errorf("xpub not found: %s", xpub)
 	}
-	var list []string
-	err = json.Unmarshal([]byte(r[0].(string)), &list)
-	if err != nil {
-		return nil, err
+	var addresses []string
+	for _, result := range results {
+		addr, ok := result.(string)
+		if ok {
+			addresses = append(addresses, addr)
+		}
 	}
-	return list, nil
+	return addresses, nil
 }
 
 func (s *Storage) GetXpubFromAddress(coin uint, address string) (string, error) {
