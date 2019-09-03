@@ -43,7 +43,7 @@ func (o *Observer) processBlock(events chan<- Event, block *blockatlas.Block) {
 	}
 
 	// Emit events
-	emitted := make(map[string]blockatlas.Direction)
+	emittedUtxo := make(map[string]blockatlas.Direction)
 	platform := bitcoin.UtxoPlatform(o.Coin)
 	for _, sub := range subs {
 
@@ -69,17 +69,16 @@ func (o *Observer) processBlock(events chan<- Event, block *blockatlas.Block) {
 					Symbol:   coin.Coins[o.Coin].Symbol,
 					Decimals: coin.Coins[o.Coin].Decimals,
 				}
-			}
 
-			if d, ok := emitted[tx.ID]; ok {
-				if d == tx.Direction || d == blockatlas.DirectionSelf {
-					continue
+				if d, ok := emittedUtxo[tx.ID]; ok {
+					if d == tx.Direction || d == blockatlas.DirectionSelf {
+						continue
+					}
+					emittedUtxo[tx.ID] = blockatlas.DirectionSelf
+				} else {
+					emittedUtxo[tx.ID] = tx.Direction
 				}
-				emitted[tx.ID] = blockatlas.DirectionSelf
-			} else {
-				emitted[tx.ID] = tx.Direction
 			}
-
 			events <- Event{
 				Subscription: sub,
 				Tx:           &tx,
