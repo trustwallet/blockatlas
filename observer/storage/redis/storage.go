@@ -47,26 +47,6 @@ func (s *Storage) SaveXpubAddresses(coin uint, addresses []string, xpub string) 
 	return s.saveHashMap(key, a)
 }
 
-func (s *Storage) SaveXpub(coin uint, xpub string) error {
-	a := make(map[string]interface{})
-	a[xpub] = ""
-	key := fmt.Sprintf(keyXpub, coin)
-	return s.saveHashMap(key, a)
-}
-
-func (s *Storage) VerifyXpub(coin uint, xpub string) bool {
-	key := fmt.Sprintf(keyXpub, coin)
-	r, err := s.getHashMap(key, xpub)
-	if err != nil {
-		return false
-	}
-	if len(r) == 0 {
-		return false
-	}
-	_, ok := r[0].(string)
-	return ok
-}
-
 func (s *Storage) GetXpubFromAddress(coin uint, address string) (string, error) {
 	key := fmt.Sprintf(keyXpub, coin)
 	r, err := s.getHashMap(key, address)
