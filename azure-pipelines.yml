@@ -47,7 +47,11 @@ steps:
 
 - script: go test -v ./...
   workingDirectory: '$(modulePath)'
-  displayName: 'Run tests'
+  displayName: 'Run unit tests'
+
+- script: make integration
+  workingDirectory: '$(modulePath)'
+  displayName: 'Run integration tests'
 
 - script: go build -v .
   workingDirectory: '$(modulePath)'
