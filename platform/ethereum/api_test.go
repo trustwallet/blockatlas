@@ -265,7 +265,7 @@ var tokenDst = blockatlas.Token{
 	Name:     "FusChain",
 	Symbol:   "FUS",
 	Decimals: 18,
-	TokenId:  "0xa14839c9837657efcde754ebeaf5cbecdd801b2a",
+	TokenID:  "0xa14839c9837657efcde754ebeaf5cbecdd801b2a",
 	Coin:     coin.ETH,
 }
 

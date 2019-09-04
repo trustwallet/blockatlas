@@ -1,8 +1,8 @@
 package tron
 
 import (
-	"github.com/spf13/viper"
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
 	"net/http"
@@ -95,7 +95,6 @@ func (p *Platform) GetTokenListByAddress(address string) (blockatlas.TokenPage, 
 		return tokenPage, nil
 	}
 
-
 	tokensInfoChan := make(chan *Asset, len(tokenIDs))
 
 	var wg sync.WaitGroup
@@ -125,12 +124,11 @@ func (p *Platform) GetTokenListByAddress(address string) (blockatlas.TokenPage, 
 	return tokenPage, nil
 }
 
-
 func NormalizeToken(info AssetInfo) blockatlas.Token {
 	return blockatlas.Token{
 		Name:     info.Name,
 		Symbol:   info.Symbol,
-		TokenId:  info.ID,
+		TokenID:  info.ID,
 		Coin:     coin.TRX,
 		Decimals: info.Decimals,
 	}

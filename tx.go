@@ -165,7 +165,7 @@ type Token struct {
 	Name     string `json:"name"`
 	Symbol   string `json:"symbol"`
 	Decimals uint   `json:"decimals"`
-	TokenId  string `json:"tokenID"`
+	TokenID  string `json:"token_id"`
 	Coin     uint   `json:"coin"`
 }
 
