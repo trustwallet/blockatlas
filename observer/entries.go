@@ -18,4 +18,5 @@ type Storage interface {
 	Delete([]Subscription) error
 	SaveXpubAddresses(coin uint, addresses []string, xpub string) error
 	GetXpubFromAddress(coin uint, address string) (string, error)
+	GetAddressFromXpub(coin uint, xpub string) ([]string, error)
 }

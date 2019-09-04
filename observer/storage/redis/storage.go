@@ -1,6 +1,7 @@
 package redis
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/go-redis/redis"
@@ -43,8 +44,34 @@ func (s *Storage) SaveXpubAddresses(coin uint, addresses []string, xpub string) 
 	for _, address := range addresses {
 		a[address] = xpub
 	}
+
 	key := fmt.Sprintf(keyXpub, coin)
-	return s.saveHashMap(key, a)
+	err := s.saveHashMap(key, a)
+	if err != nil {
+		return err
+	}
+	j, err := json.Marshal(addresses)
+	if err != nil {
+		return err
+	}
+	return s.saveHashMap(key, map[string]interface{}{xpub: j})
+}
+
+func (s *Storage) GetAddressFromXpub(coin uint, xpub string) ([]string, error) {
+	key := fmt.Sprintf(keyXpub, coin)
+	r, err := s.getHashMap(key, xpub)
+	if err != nil {
+		return nil, err
+	}
+	if len(r) == 0 {
+		return nil, fmt.Errorf("xpub not found: %s", xpub)
+	}
+	var list []string
+	err = json.Unmarshal([]byte(r[0].(string)), &list)
+	if err != nil {
+		return nil, err
+	}
+	return list, nil
 }
 
 func (s *Storage) GetXpubFromAddress(coin uint, address string) (string, error) {
@@ -54,11 +81,11 @@ func (s *Storage) GetXpubFromAddress(coin uint, address string) (string, error) 
 		return "", err
 	}
 	if len(r) == 0 {
-		return "", errors.New(fmt.Sprintf("xpub not found for the address: %s", address))
+		return "", fmt.Errorf("xpub not found for the address: %s", address)
 	}
 	xpub, ok := r[0].(string)
 	if !ok || len(xpub) == 0 {
-		return "", errors.New(fmt.Sprintf("invalid type for xpub: %s - %s", xpub, address))
+		return "", fmt.Errorf("invalid type for xpub: %s - %s", xpub, address)
 	}
 	return xpub, nil
 }
