@@ -279,7 +279,7 @@ func NormalizeToken(srcToken *Token, coinIndex uint) (t blockatlas.Token, ok boo
 	t = blockatlas.Token{
 		Name:     srcToken.Contract.Name,
 		Symbol:   srcToken.Contract.Symbol,
-		TokenId:  srcToken.Contract.Contract,
+		TokenID:  srcToken.Contract.Contract,
 		Coin:     coinIndex,
 		Decimals: srcToken.Contract.Decimals,
 	}
