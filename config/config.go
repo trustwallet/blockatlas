@@ -1,4 +1,4 @@
-package main
+package config
 
 import (
 	"strings"
@@ -9,7 +9,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-func loadConfig(confPath string) {
+func LoadConfig(confPath string) {
 	loadDefaults()
 
 	// Load config from environment

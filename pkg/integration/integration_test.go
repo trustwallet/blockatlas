@@ -3,24 +3,35 @@
 package integration
 
 import (
-	"github.com/trustwallet/blockatlas/pkg/integration/config"
-	"github.com/trustwallet/blockatlas/pkg/integration/tester"
+	"github.com/gin-gonic/gin"
+	"github.com/trustwallet/blockatlas/cmd/api"
+	"github.com/trustwallet/blockatlas/coin"
+	"github.com/trustwallet/blockatlas/config"
+	"github.com/trustwallet/blockatlas/platform"
+	"os"
+	"sync"
 	"testing"
+	"time"
 )
 
 func TestApis(t *testing.T) {
-	config.InitConfig()
-	apis, err := tester.GetApis()
-	if err != nil {
-		t.Error(err)
-		return
+	config.LoadConfig(os.Getenv("TEST_CONFIG"))
+	coin.Load(os.Getenv("TEST_COINS"))
+	platform.Init()
+
+	p := ":8080"
+	c := make(chan *gin.Engine)
+	go func() {
+		api.Run(p, c)
+	}()
+	e := <-c
+	time.Sleep(time.Second * 2)
+
+	var wg sync.WaitGroup
+	cl := newClient(t, p)
+	for _, r := range e.Routes() {
+		wg.Add(1)
+		go cl.doTests(r.Path, &wg)
 	}
-	coins, err := tester.GetCoins()
-	if err != nil {
-		t.Error(err)
-		return
-	}
-	for _, coin := range coins {
-		tester.DoTests(t, apis, coin)
-	}
+	wg.Wait()
 }
