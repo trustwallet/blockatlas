@@ -146,6 +146,7 @@ func (s *Storage) Delete(subs []observer.Subscription) error {
 
 func (s *Storage) updateWebHooks(subs []observer.Subscription, operation webHookOperation) error {
 	fields := make(map[string]interface{})
+	del := make([]string, 0)
 	keys := make([]string, 0)
 	for _, sub := range subs {
 		keys = append(keys, key(sub.Coin, sub.Address))
@@ -166,8 +167,19 @@ func (s *Storage) updateWebHooks(subs []observer.Subscription, operation webHook
 			newWebHooks = operation(nil, subs[i].Webhooks)
 		}
 		fields[key] = strings.Join(newWebHooks, "\n")
+		if len(newWebHooks) == 0 {
+			del = append(del, key)
+		}
 	}
-	return s.saveHashMap(keyObservers, fields)
+	err = s.saveHashMap(keyObservers, fields)
+	if err != nil {
+		return err
+	}
+	return s.deleteHashMapKey(keyObservers, del)
+}
+
+func (s *Storage) deleteHashMapKey(db string, fields []string) error {
+	return s.client.HDel(db, fields...).Err()
 }
 
 func (s *Storage) saveHashMap(db string, field map[string]interface{}) error {
