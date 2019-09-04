@@ -4,11 +4,11 @@ package integration
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas/coin"
 	"io/ioutil"
 	"path/filepath"
-	"strconv"
 	"strings"
 )
 
@@ -45,7 +45,7 @@ func getFile(file string) ([]byte, error) {
 
 func getCoin(path string) coin.Coin {
 	for _, coin := range coin.Coins {
-		if strings.Contains(path, coin.Handle) {
+		if strings.Contains(path, fmt.Sprintf("/%s/", coin.Handle)) {
 			return coin
 		}
 	}
@@ -57,7 +57,7 @@ func addFixtures(path string) string {
 	if (c == coin.Coin{}) {
 		return path
 	}
-	fix, ok := f[strconv.Itoa(int(c.ID))]
+	fix, ok := f[c.Handle]
 	if !ok {
 		return strings.Replace(path, ":address", c.SampleAddr, -1)
 	}

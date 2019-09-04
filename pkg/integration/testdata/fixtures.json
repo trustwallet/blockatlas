@@ -1,14 +1,158 @@
 {
-  "0": {
+  "bitcoin": {
     "address": "bc1quvuarfksewfeuevuc6tn0kfyptgjvwsvrprk9d",
     "key": "xpub6CUGRUonZSQ4TWtTMmzXdrXDtypWKiKrhko4egpiMZbpiaQL2jkwSB1icqYh2cfDfVxdx4df189oLKnC5fSwqPfgyP3hooxujYzAu3fDVmz"
   },
-  "2": {
-    "address": "bc1quvuarfksewfeuevuc6tn0kfyptgjvwsvrprk9d",
+  "litecoin": {
+    "address": "ltc1qhd8fxxp2dx3vsmpac43z6ev0kllm4n53t5sk0u",
     "key": "xprv9s21ZrQH143K277qXR6NRni1DS7qmSNBs96NmnF5VGdcejgrJtBHzRJYZxqDJZKX1pF5i6gmmDmWDbBCs4DcQ9T1bH65UttBRw2uMaNJnNQ"
   },
-  "714": {
-    "address": "bnb1jxfh2g85q3v0tdq56fnevx6xcxtcnhtsmcu64m",
-    "key": ""
+  "bitcoincash": {
+    "address": "bitcoincash:qq07l6rr5lsdm3m80qxw80ku2ex0tj76vvsxpvmgme",
+    "key": "xprv9s21ZrQH143K277qXR6NRni1DS7qmSNBs96NmnF5VGdcejgrJtBHzRJYZxqDJZKX1pF5i6gmmDmWDbBCs4DcQ9T1bH65UttBRw2uMaNJnNQ"
+  },
+  "viacoin": {
+    "address": "via1qnmsgjd6cvfprnszdgmyg9kewtjfgqflz67wwhc",
+    "key": "xprv9s21ZrQH143K277qXR6NRni1DS7qmSNBs96NmnF5VGdcejgrJtBHzRJYZxqDJZKX1pF5i6gmmDmWDbBCs4DcQ9T1bH65UttBRw2uMaNJnNQ"
+  },
+  "zcash": {
+    "address": "t1YYnByMzdGhQv3W3rnjHMrJs6HH4Y231gy",
+    "key": "xprv9s21ZrQH143K277qXR6NRni1DS7qmSNBs96NmnF5VGdcejgrJtBHzRJYZxqDJZKX1pF5i6gmmDmWDbBCs4DcQ9T1bH65UttBRw2uMaNJnNQ"
+  },
+  "zelcash": {
+    "address": "t1UKbRPzL4WN8Rs8aZ8RNiWoD2ftCMHKGUf",
+    "key": "xprv9s21ZrQH143K277qXR6NRni1DS7qmSNBs96NmnF5VGdcejgrJtBHzRJYZxqDJZKX1pF5i6gmmDmWDbBCs4DcQ9T1bH65UttBRw2uMaNJnNQ"
+  },
+  "zilliqa": {
+    "address": "zil1anrjcsj2ntklaa3arq4w3s6gw4l4hqrycs9egy",
+    "key": "xprv9s21ZrQH143K277qXR6NRni1DS7qmSNBs96NmnF5VGdcejgrJtBHzRJYZxqDJZKX1pF5i6gmmDmWDbBCs4DcQ9T1bH65UttBRw2uMaNJnNQ"
+  },
+  "dash": {
+    "address": "XqHiz8EXYbTAtBEYs4pWTHh7ipEDQcNQeT",
+    "key": "xprv9s21ZrQH143K277qXR6NRni1DS7qmSNBs96NmnF5VGdcejgrJtBHzRJYZxqDJZKX1pF5i6gmmDmWDbBCs4DcQ9T1bH65UttBRw2uMaNJnNQ"
+  },
+  "decred": {
+    "address": "DsTxPUVFxXeNgu5fzozr4mTR4tqqMaKcvpY",
+    "key": "xprv9s21ZrQH143K277qXR6NRni1DS7qmSNBs96NmnF5VGdcejgrJtBHzRJYZxqDJZKX1pF5i6gmmDmWDbBCs4DcQ9T1bH65UttBRw2uMaNJnNQ"
+  },
+  "doge": {
+    "address": "DJRFZNg8jkUtjcpo2zJd92FUAzwRjitw6f",
+    "key": "xprv9s21ZrQH143K277qXR6NRni1DS7qmSNBs96NmnF5VGdcejgrJtBHzRJYZxqDJZKX1pF5i6gmmDmWDbBCs4DcQ9T1bH65UttBRw2uMaNJnNQ"
+  },
+  "ravencoin": {
+    "address": "RHoCwPc2FCQqwToYnSiAb3SrCET4zEHsbS",
+    "key": "xprv9s21ZrQH143K277qXR6NRni1DS7qmSNBs96NmnF5VGdcejgrJtBHzRJYZxqDJZKX1pF5i6gmmDmWDbBCs4DcQ9T1bH65UttBRw2uMaNJnNQ"
+  },
+  "zcoin": {
+    "address": "aEd5XFChyXobvEics2ppAqgK3Bgusjxtik",
+    "key": "xprv9s21ZrQH143K277qXR6NRni1DS7qmSNBs96NmnF5VGdcejgrJtBHzRJYZxqDJZKX1pF5i6gmmDmWDbBCs4DcQ9T1bH65UttBRw2uMaNJnNQ"
+  },
+  "groestlcoin": {
+    "address": "grs1qexwmshts5pdpeqglkl39zyl6693tmfwp0cue4j",
+    "key": "xprv9s21ZrQH143K277qXR6NRni1DS7qmSNBs96NmnF5VGdcejgrJtBHzRJYZxqDJZKX1pF5i6gmmDmWDbBCs4DcQ9T1bH65UttBRw2uMaNJnNQ"
+  },
+  "qtum": {
+    "address": "QhceuaTdeCZtcxmVc6yyEDEJ7Riu5gWFoF",
+    "key": "xprv9s21ZrQH143K277qXR6NRni1DS7qmSNBs96NmnF5VGdcejgrJtBHzRJYZxqDJZKX1pF5i6gmmDmWDbBCs4DcQ9T1bH65UttBRw2uMaNJnNQ"
+  },
+  "tomochain": {
+    "address": "TMuA6YqfCeX8EhbfYEg5y7S4DqzSJireY9",
+    "owner": "TMuA6YqfCeX8EhbfYEg5y7S4DqzSJireY9",
+    "collections": "TMuA6YqfCeX8EhbfYEg5y7S4DqzSJireY9",
+    "collection_id": "TMuA6YqfCeX8EhbfYEg5y7S4DqzSJireY9"
+  },
+  "ethereum": {
+    "address": "0xfc10cab6a50a1ab10c56983c80cc82afc6559cf1",
+    "owner": "0xfc10cab6a50a1ab10c56983c80cc82afc6559cf1",
+    "collections": "0xfc10cab6a50a1ab10c56983c80cc82afc6559cf1",
+    "collection_id": "0xfc10cab6a50a1ab10c56983c80cc82afc6559cf1"
+  },
+  "classic": {
+    "address": "0xf3524415b6D873205B4c3Cda783527b2aC4daAA9",
+    "owner": "0xf3524415b6D873205B4c3Cda783527b2aC4daAA9",
+    "collections": "0xf3524415b6D873205B4c3Cda783527b2aC4daAA9",
+    "collection_id": "0xf3524415b6D873205B4c3Cda783527b2aC4daAA9"
+  },
+  "poa": {
+    "address": "0x1fddEc96688e0538A316C64dcFd211c491ECf0d8",
+    "owner": "0x1fddEc96688e0538A316C64dcFd211c491ECf0d8",
+    "collections": "0x1fddEc96688e0538A316C64dcFd211c491ECf0d8",
+    "collection_id": "0x1fddEc96688e0538A316C64dcFd211c491ECf0d8"
+  },
+  "thundertoken": {
+    "address": "0x0ad80a408eac4f17ba0a9de8a12d8736f60700c3",
+    "owner": "0x0ad80a408eac4f17ba0a9de8a12d8736f60700c3",
+    "collections": "0x0ad80a408eac4f17ba0a9de8a12d8736f60700c3",
+    "collection_id": "0x0ad80a408eac4f17ba0a9de8a12d8736f60700c3"
+  },
+  "callisto": {
+    "address": "0x39ec1c88a7a7c1a575e8c8f42eff7630d9278179",
+    "owner": "0x39ec1c88a7a7c1a575e8c8f42eff7630d9278179",
+    "collections": "0x39ec1c88a7a7c1a575e8c8f42eff7630d9278179",
+    "collection_id": "0x39ec1c88a7a7c1a575e8c8f42eff7630d9278179"
+  },
+  "gochain": {
+    "address": "0x76c2F81716A8D198a00502Ae9a59126418899FDe",
+    "owner": "0x76c2F81716A8D198a00502Ae9a59126418899FDe",
+    "collections": "0x76c2F81716A8D198a00502Ae9a59126418899FDe",
+    "collection_id": "0x76c2F81716A8D198a00502Ae9a59126418899FDe"
+  },
+  "theta": {
+    "address": "0xac0eeb6ee3e32e2c74e14ac74155063e4f4f981f"
+  },
+  "binance": {
+    "address": "bnb1jxfh2g85q3v0tdq56fnevx6xcxtcnhtsmcu64m"
+  },
+  "tezos": {
+    "address": "tz1WCd2jm4uSt4vntk4vSuUWoZQGhLcDuR9q"
+  },
+  "tron": {
+    "address": "TMuA6YqfCeX8EhbfYEg5y7S4DqzSJireY9"
+  },
+  "vechain": {
+    "address": "0xB5e883349e68aB59307d1604555AC890fAC47128"
+  },
+  "ripple": {
+    "address": "rMQ98K56yXJbDGv49ZSmW51sLn94Xe1mu1"
+  },
+  "cosmos": {
+    "address": "cosmos1rw62phusuv9vzraezr55k0vsqssvz6ed52zyrl"
+  },
+  "iotex": {
+    "address": "io1mwekae7qqwlr23220k5n9z3fmjxz72tuchra3m"
+  },
+  "icon": {
+    "address": "hxee691e7bccc4eb11fee922896e9f51490e62b12e"
+  },
+  "stellar": {
+    "address": "GDKIJJIKXLOM2NRMPNQZUUYK24ZPVFC6426GZAEP3KUK6KEJLACCWNMX"
+  },
+  "semux": {
+    "address": "0x8197987c401a3466ad678b2080b24838ebd95b41"
+  },
+  "nimiq": {
+    "address": "NQ86%202H8F%20YGU5%20RM77%20QSN9%20LYLH%20C56A%20CYYR%200MLA"
+  },
+  "nebulas": {
+    "address": "n1RCYwrpLMpSpUCQ8QUDzGRg6B2PnY8R94a"
+  },
+  "aeternity": {
+    "address": "ak_2p5878zbFhxnrm7meL7TmqwtvBaqcBddyp5eGzZbovZ5FeVfcw"
+  },
+  "aion": {
+    "address": "0xa07981da70ce919e1db5f051c3c386eb526e6ce8b9e2bfd56e3f3d754b0a17f3"
+  },
+  "fio": {
+    "address": "FIO5J2xdfWygeNdHZNZRzRws8YGbVxjUXtp4eP8KoGkGKoLFQ7CaU"
+  },
+  "kin": {
+    "address": "GBHKUZ7C2SZ5N3X2S7O6TT6LNUWSEA2BXMSR5GTTSR6VZARSVAXIQNGH"
+  },
+  "ontology": {
+    "address": "AUyL4TZ1zFEcSKDJrjFnD7vsq5iFZMZqT7"
+  },
+  "waves": {
+    "address": "3P7wz6TXienpw3BHe8eHUEuZWb6WE58kgnQ"
   }
 }
+
