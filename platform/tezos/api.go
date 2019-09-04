@@ -4,7 +4,6 @@ import (
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
-	"net/http"
 	"time"
 )
 
@@ -12,9 +11,10 @@ type Platform struct {
 	client Client
 }
 
+const Annual = 7.0
+
 func (p *Platform) Init() error {
-	p.client.BaseURL = viper.GetString("tezos.api")
-	p.client.HTTPClient = http.DefaultClient
+	p.client = InitClient(viper.GetString("tezos.api"), viper.GetString("tezos.rpc"))
 	return nil
 }
 
@@ -58,6 +58,32 @@ func NormalizeTxs(srcTxs []Tx) (txs []blockatlas.Tx) {
 		txs = append(txs, tx)
 	}
 	return txs
+}
+
+func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
+	results := make(blockatlas.ValidatorPage, 0)
+	validators, err := p.client.GetValidators()
+
+	if err != nil {
+		return results, err
+	}
+
+	for _, v := range validators {
+		results = append(results, normalizeValidator(v, p.Coin()))
+	}
+
+	return results, nil
+}
+
+func normalizeValidator(v Validator, c coin.Coin) (validator blockatlas.Validator) {
+	// How to calculate Tezos APR? I have no idea. Tezos team does not know either. let's assume it's around 7% - no way to calculate in decentralized manner
+	// Delegation rewards distributed by the validators manually, it's up to them to do it.
+
+	return blockatlas.Validator{
+		Status: true,
+		ID:     v.Address,
+		Reward: blockatlas.StakingReward{Annual: Annual},
+	}
 }
 
 // Normalize converts a Tezos transaction into the generic model

@@ -1,7 +1,6 @@
 package tezos
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas"
@@ -9,64 +8,44 @@ import (
 	"net/url"
 )
 
-// Client is used to request data from the Tezos blockchain
-// over the TzScan API.
 type Client struct {
-	HTTPClient *http.Client
-	BaseURL    string
+	Request blockatlas.Request
+	URL     string
+	RpcURL  string
+}
+
+func InitClient(baseUrl string, RpcURL string) Client {
+	return Client{
+		URL:    baseUrl,
+		RpcURL: RpcURL,
+		Request: blockatlas.Request{
+			HttpClient: http.DefaultClient,
+			ErrorHandler: func(res *http.Response, uri string) error {
+				return nil
+			},
+		},
+	}
 }
 
 func (c *Client) GetTxsOfAddress(address string) ([]Tx, error) {
-	uri := fmt.Sprintf("%s/operations/%s?type=Transaction",
-		c.BaseURL, url.PathEscape(address))
-	httpRes, err := c.HTTPClient.Get(uri)
-	if err != nil {
-		logrus.WithError(err).Error("Tezos: Failed to get transactions")
-		return nil, blockatlas.ErrSourceConn
-	}
+	var txs []Tx
+	path := fmt.Sprintf("operations/%s", address)
+	err := c.Request.Get(&txs, c.URL, path, url.Values{"type": {"Transaction"}})
 
-	if httpRes.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("http status %s", httpRes.Status)
-	}
-
-	var res []Tx
-	err = json.NewDecoder(httpRes.Body).Decode(&res)
-
-	return res, nil
+	return txs, err
 }
 
 func (c *Client) GetCurrentBlock() (int64, error) {
-	uri := fmt.Sprintf("%s/head", c.BaseURL)
-
-	res, err := c.HTTPClient.Get(uri)
-	if err != nil {
-		logrus.WithError(err).Error("Tezos: Failed to get a block number")
-		return 0, err
-	}
-	defer res.Body.Close()
-
 	var head Head
-	err = json.NewDecoder(res.Body).Decode(&head)
+	err := c.Request.Get(&head, c.URL, "head", nil)
 
-	if err != nil {
-		return 0, err
-	} else {
-		return head.Level, nil
-	}
+	return head.Level, err
 }
 
 func (c *Client) GetBlockHashByNumber(num int64) (string, error) {
-	uri := fmt.Sprintf("%s/block_hash_level/%d", c.BaseURL, num)
-
-	res, err := c.HTTPClient.Get(uri)
-	if err != nil {
-		logrus.WithError(err).Error("Tezos: Failed to get hash by a number")
-		return "", err
-	}
-	defer res.Body.Close()
-
 	var list []string
-	err = json.NewDecoder(res.Body).Decode(&list)
+	path := fmt.Sprintf("block_hash_level/%d", num)
+	err := c.Request.Get(&list, c.URL, path, nil)
 
 	if err != nil && len(list) != 0 {
 		return "", err
@@ -76,26 +55,23 @@ func (c *Client) GetBlockHashByNumber(num int64) (string, error) {
 }
 
 func (c *Client) GetBlockByNumber(num int64) ([]Tx, error) {
+	var list []Tx
 	hash, err := c.GetBlockHashByNumber(num)
 	if err != nil {
-		return []Tx{}, err
+		return list, err
 	}
 
-	uri := fmt.Sprintf("%s/operations/%s?type=Transaction", c.BaseURL, hash)
+	path := fmt.Sprintf("operations/%s", hash)
+	err = c.Request.Get(&list, c.URL, path, url.Values{"type": {"Transaction"}})
 
-	res, err := c.HTTPClient.Get(uri)
+	return list, err
+}
+
+func (c *Client) GetValidators() (validators []Validator, err error) {
+	err = c.Request.Get(&validators, c.RpcURL, "chains/main/blocks/head~32768/votes/listings", nil)
 	if err != nil {
-		logrus.WithError(err).Error("Tezos: Failed to get transactions for a block")
-		return nil, err
+		logrus.WithError(err).Errorf("Tezos: Failed to get validators for address")
+		return validators, err
 	}
-	defer res.Body.Close()
-
-	var list []Tx
-	err = json.NewDecoder(res.Body).Decode(&list)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return list, nil
+	return validators, err
 }

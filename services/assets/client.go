@@ -26,13 +26,13 @@ func GetValidators(coin coin.Coin) ([]AssetValidator, error) {
 	return results, err
 }
 
-func NormalizeValidators(validators []blockatlas.Validator, assets []AssetValidator) []blockatlas.StakeValidator {
+func NormalizeValidators(validators []blockatlas.Validator, assets []AssetValidator, coin coin.Coin) []blockatlas.StakeValidator {
 	results := make([]blockatlas.StakeValidator, 0)
 
 	for _, v := range validators {
 		for _, v2 := range assets {
 			if v.ID == v2.ID {
-				results = append(results, NormalizeValidator(v, v2))
+				results = append(results, NormalizeValidator(v, v2, coin))
 			}
 		}
 	}
@@ -40,14 +40,14 @@ func NormalizeValidators(validators []blockatlas.Validator, assets []AssetValida
 	return results
 }
 
-func NormalizeValidator(plainValidator blockatlas.Validator, validator AssetValidator) blockatlas.StakeValidator {
+func NormalizeValidator(plainValidator blockatlas.Validator, validator AssetValidator, coin coin.Coin) blockatlas.StakeValidator {
 	return blockatlas.StakeValidator{
 		ID:     validator.ID,
 		Status: plainValidator.Status,
 		Info: blockatlas.StakeValidatorInfo{
 			Name:        validator.Name,
 			Description: validator.Description,
-			Image:       GetImage(plainValidator.Coin, plainValidator.ID),
+			Image:       GetImage(coin, plainValidator.ID),
 			Website:     validator.Website,
 		},
 		Reward: plainValidator.Reward,

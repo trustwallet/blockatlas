@@ -89,7 +89,7 @@ func makeStakingRoute(router gin.IRouter, api blockatlas.Platform) {
 			c.JSON(http.StatusServiceUnavailable, err)
 			return
 		}
-		results := services.NormalizeValidators(validators, assetsValidators)
+		results := services.NormalizeValidators(validators, assetsValidators, api.Coin())
 
 		c.JSON(http.StatusOK, blockatlas.DocsResponse{Docs: results})
 	})

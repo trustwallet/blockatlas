@@ -42,7 +42,7 @@ func (c *Client) GetAddrTxes(address string, tag string) (txs []Tx, err error) {
 	return txs, err
 }
 
-func (c *Client) GetValidators() (validators []CosmosValidator, err error) {
+func (c *Client) GetValidators() (validators []Validator, err error) {
 	query := url.Values{
 		"status": {"bonded"},
 		"page":   {strconv.FormatInt(1, 10)},
@@ -86,6 +86,9 @@ func (c *Client) GetInflation() (float64, error) {
 	var result string
 
 	err := c.Request.Get(&result, c.URL, "minting/inflation", nil)
+	if err != nil {
+		return 0, err
+	}
 
 	s, err := strconv.ParseFloat(result, 32)
 

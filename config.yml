@@ -48,6 +48,7 @@ kin:
 # [XTZ] Tezos: https://tezos.com
 tezos:
   api: https://api1.tzscan.io/v3
+  rpc: https://mainnet-node.tzscan.io
 
 # [ETH] Ethereum: https://ethereum.org (Trust-Ray API)
 # ethereum:
@@ -179,4 +180,3 @@ ravencoin:
 
 decred:
   api: https://blockbook.decred.org:9161/api
-  
