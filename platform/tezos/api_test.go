@@ -92,7 +92,7 @@ func TestNormalizeValidator(t *testing.T) {
 	expected := blockatlas.Validator{
 		Status: true,
 		ID:     v.Address,
-		Reward: blockatlas.StakingReward{Annual: 7},
+		Reward: blockatlas.StakingReward{Annual: Annual},
 	}
 
 	result := normalizeValidator(v, coin)

@@ -11,6 +11,8 @@ type Platform struct {
 	client Client
 }
 
+const Annual = 7.0
+
 func (p *Platform) Init() error {
 	p.client = InitClient(viper.GetString("tezos.api"), viper.GetString("tezos.rpc"))
 	return nil
@@ -76,11 +78,11 @@ func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
 func normalizeValidator(v Validator, c coin.Coin) (validator blockatlas.Validator) {
 	// How to calculate Tezos APR? I have no idea. Tezos team does not know either. let's assume it's around 7% - no way to calculate in decentralized manner
 	// Delegation rewards distributed by the validators manually, it's up to them to do it.
-	annual := 7.0
+
 	return blockatlas.Validator{
 		Status: true,
 		ID:     v.Address,
-		Reward: blockatlas.StakingReward{Annual: annual},
+		Reward: blockatlas.StakingReward{Annual: Annual},
 	}
 }
 
