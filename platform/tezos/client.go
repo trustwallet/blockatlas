@@ -2,6 +2,7 @@ package tezos
 
 import (
 	"fmt"
+	"github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas"
 	"net/http"
 	"net/url"
@@ -10,11 +11,13 @@ import (
 type Client struct {
 	Request blockatlas.Request
 	URL     string
+	RpcURL  string
 }
 
-func InitClient(baseUrl string) Client {
+func InitClient(baseUrl string, RpcURL string) Client {
 	return Client{
-		URL: baseUrl,
+		URL:    baseUrl,
+		RpcURL: RpcURL,
 		Request: blockatlas.Request{
 			HttpClient: http.DefaultClient,
 			ErrorHandler: func(res *http.Response, uri string) error {
@@ -52,11 +55,23 @@ func (c *Client) GetBlockHashByNumber(num int64) (string, error) {
 }
 
 func (c *Client) GetBlockByNumber(num int64) ([]Tx, error) {
-	hash, err := c.GetBlockHashByNumber(num)
-
 	var list []Tx
+	hash, err := c.GetBlockHashByNumber(num)
+	if err != nil {
+		return list, err
+	}
+
 	path := fmt.Sprintf("operations/%s", hash)
 	err = c.Request.Get(&list, c.URL, path, url.Values{"type": {"Transaction"}})
 
 	return list, err
+}
+
+func (c *Client) GetValidators() (validators []Validator, err error) {
+	err = c.Request.Get(&validators, c.RpcURL, "chains/main/blocks/head~32768/votes/listings", nil)
+	if err != nil {
+		logrus.WithError(err).Errorf("Tezos: Failed to get validators for address")
+		return validators, err
+	}
+	return validators, err
 }

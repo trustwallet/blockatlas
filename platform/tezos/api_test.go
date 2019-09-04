@@ -1,8 +1,8 @@
 package tezos
 
 import (
-	"bytes"
 	"encoding/json"
+	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
 	"testing"
@@ -43,6 +43,12 @@ const transferSrc = `
 }
 `
 
+const validatorSrc = `
+[
+	{"pkh":"tz2TSvNTh2epDMhZHrw73nV9piBX7kLZ9K9m","rolls":3726}
+]
+`
+
 var transferDst = blockatlas.Tx{
 	ID:    "oo3zTBHCkRkYDumt5t3rUyJ777wsr3dVMxYCU1FEV5xyftoih2Y",
 	Coin:  coin.XTZ,
@@ -74,14 +80,22 @@ func TestNormalize(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	dstJSON, err := json.Marshal(&transferDst)
-	if err != nil {
-		t.Fatal(err)
+	dstJSON, _ := json.Marshal(&transferDst)
+
+	assert.Equal(t, resJSON, dstJSON)
+}
+
+func TestNormalizeValidator(t *testing.T) {
+	var v Validator
+	_ = json.Unmarshal([]byte(validatorSrc), &v)
+	coin := coin.Coin{}
+	expected := blockatlas.Validator{
+		Status: true,
+		ID:     v.Address,
+		Reward: blockatlas.StakingReward{Annual: 7},
 	}
 
-	if !bytes.Equal(resJSON, dstJSON) {
-		println(string(resJSON))
-		println(string(dstJSON))
-		t.Error("basic: tx don't equal")
-	}
+	result := normalizeValidator(v, coin)
+
+	assert.Equal(t, result, expected)
 }

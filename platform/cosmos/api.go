@@ -177,19 +177,18 @@ func fillDelegate(tx *blockatlas.Tx, delegate MessageValueDelegate, msgType stri
 	}
 }
 
-func normalizeValidator(v CosmosValidator, p StakingPool, inflation float64, c coin.Coin) (validator blockatlas.Validator) {
+func normalizeValidator(v Validator, p StakingPool, inflation float64, c coin.Coin) (validator blockatlas.Validator) {
 
 	reward := CalculateAnnualReward(p, inflation, v)
 
 	return blockatlas.Validator{
-		Coin:   c,
 		Status: bool(v.Status == 2),
-		ID:     v.Operator_Address,
+		ID:     v.Address,
 		Reward: blockatlas.StakingReward{Annual: reward},
 	}
 }
 
-func CalculateAnnualReward(p StakingPool, inflation float64, validator CosmosValidator) float64 {
+func CalculateAnnualReward(p StakingPool, inflation float64, validator Validator) float64 {
 
 	notBondedTokens, err := strconv.ParseFloat(string(p.NotBondedTokens), 32)
 

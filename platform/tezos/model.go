@@ -34,6 +34,10 @@ type Operation struct {
 	Timestamp    string            `json:"timestamp"`
 }
 
+type Validator struct {
+	Address string `json:"pkh"`
+}
+
 // Address is a Tezos address object
 type Address struct {
 	Tz string `json:"tz"`

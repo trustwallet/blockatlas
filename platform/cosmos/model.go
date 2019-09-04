@@ -81,10 +81,10 @@ type CosmosCommission struct {
 	Rate string `json:"rate"`
 }
 
-type CosmosValidator struct {
-	Status           int              `json:"status"`
-	Operator_Address string           `json:"operator_address"`
-	Commission       CosmosCommission `json:"commission"`
+type Validator struct {
+	Status     int              `json:"status"`
+	Address    string           `json:"operator_address"`
+	Commission CosmosCommission `json:"commission"`
 }
 
 type StakingPool struct {

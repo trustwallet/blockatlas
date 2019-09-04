@@ -10,12 +10,10 @@ import (
 var c = coin.Coin{Handle: "cosmos"}
 var validators = []blockatlas.Validator{
 	{
-		Coin:   c,
 		ID:     "test",
 		Status: true,
 	},
 	{
-		Coin:   c,
 		ID:     "test2",
 		Status: true,
 	},
@@ -40,8 +38,7 @@ var expectedStakeValidator = blockatlas.StakeValidator{
 }
 
 func TestGetImage(t *testing.T) {
-	coin := coin.Coin{Handle: "cosmos"}
-	image := GetImage(coin, "cosmosvaloper1qwl879nx9t6kef4supyazayf7vjhennyh568ys")
+	image := GetImage(c, "cosmosvaloper1qwl879nx9t6kef4supyazayf7vjhennyh568ys")
 
 	expected := "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/cosmos/validators/assets/cosmosvaloper1qwl879nx9t6kef4supyazayf7vjhennyh568ys/logo.png"
 
@@ -50,14 +47,14 @@ func TestGetImage(t *testing.T) {
 
 func TestNormalizeValidator(t *testing.T) {
 
-	result := NormalizeValidator(validators[0], assets[0])
+	result := NormalizeValidator(validators[0], assets[0], c)
 
 	assert.Equal(t, expectedStakeValidator, result)
 }
 
 func TestNormalizeValidators(t *testing.T) {
 
-	result := NormalizeValidators(validators, assets)
+	result := NormalizeValidators(validators, assets, c)
 
 	expected := []blockatlas.StakeValidator{expectedStakeValidator}
 
