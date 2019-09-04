@@ -4,7 +4,6 @@ import (
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
-	"net/http"
 	"time"
 )
 
@@ -13,8 +12,7 @@ type Platform struct {
 }
 
 func (p *Platform) Init() error {
-	p.client.BaseURL = viper.GetString("tezos.api")
-	p.client.HTTPClient = http.DefaultClient
+	p.client = InitClient(viper.GetString("tezos.api"))
 	return nil
 }
 
