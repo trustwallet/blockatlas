@@ -31,6 +31,7 @@ steps:
     go get github.com/axw/gocov/gocov
     go get github.com/AlekSi/gocov-xml
     go get -u gopkg.in/matm/v1/gocov-html
+    go get github.com/gavv/httpexpect
   workingDirectory: '$(modulePath)'
   displayName: 'Get dependencies'
 
