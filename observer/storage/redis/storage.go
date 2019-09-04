@@ -166,16 +166,19 @@ func (s *Storage) updateWebHooks(subs []observer.Subscription, operation webHook
 		} else {
 			newWebHooks = operation(nil, subs[i].Webhooks)
 		}
-		fields[key] = strings.Join(newWebHooks, "\n")
 		if len(newWebHooks) == 0 {
 			del = append(del, key)
+			continue
+		}
+		fields[key] = strings.Join(newWebHooks, "\n")
+	}
+	if len(del) > 0 {
+		err = s.deleteHashMapKey(keyObservers, del)
+		if err != nil {
+			return err
 		}
 	}
-	err = s.saveHashMap(keyObservers, fields)
-	if err != nil {
-		return err
-	}
-	return s.deleteHashMapKey(keyObservers, del)
+	return s.saveHashMap(keyObservers, fields)
 }
 
 func (s *Storage) deleteHashMapKey(db string, fields []string) error {
