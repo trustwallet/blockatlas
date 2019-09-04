@@ -5,7 +5,6 @@ package integration
 import (
 	"fmt"
 	"github.com/gavv/httpexpect"
-	"github.com/sirupsen/logrus"
 	"net/http"
 	"sync"
 	"testing"
@@ -36,7 +35,6 @@ func newClient(t *testing.T, port string) *Client {
 		Reporter: httpexpect.NewRequireReporter(t),
 		// use verbose logging
 		Printers: []httpexpect.Printer{
-			httpexpect.NewCurlPrinter(t),
 		},
 	})
 	return &Client{
@@ -48,9 +46,7 @@ func newClient(t *testing.T, port string) *Client {
 
 func (c *Client) testGet(url string) {
 	request := c.e.GET(url).WithURL(c.baseUrl)
-	t := time.Now()
 	response := request.Expect()
-	timeTrack(url, t)
 	response.JSON().Schema(schema)
 	response.Status(http.StatusOK)
 }
@@ -63,11 +59,4 @@ func (c *Client) doTests(path string, wg *sync.WaitGroup) {
 
 func getBaseUrl(port string) string {
 	return fmt.Sprintf(baseUrl, port)
-}
-
-func timeTrack(url string, t time.Time) {
-	logrus.WithFields(logrus.Fields{
-		"url":  url,
-		"time": time.Since(t).String(),
-	}).Info("Test")
 }
