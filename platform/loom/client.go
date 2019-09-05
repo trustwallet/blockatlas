@@ -45,10 +45,10 @@ func (c *Client) GetPool() (result StakingPool, err error) {
 	return result, c.Request.Get(&result, c.URL, "tw/staking/pool", nil)
 }
 
-func (c *Client) GetInflation() (float64, error) {
+func (c *Client) GetRate() (float64, error) {
 	var result string
 
-	err := c.Request.Get(&result, c.URL, "tw/inflation", nil)
+	err := c.Request.Get(&result, c.URL, "tw/staking/rate", nil)
 	if err != nil {
 		return 0, err
 	}
