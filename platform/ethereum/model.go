@@ -59,6 +59,7 @@ type NodeInfo struct {
 type Collection struct {
 	Name        string                 `json:"name"`
 	ImageUrl    string                 `json:"image_url"`
+	Description string                 `json:"description"`
 	ExternalUrl string                 `json:"external_url"`
 	Total       int                    `json:"owned_asset_count"`
 	Contracts   []PrimaryAssetContract `json:"primary_asset_contracts"`
