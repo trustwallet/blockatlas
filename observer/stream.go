@@ -87,7 +87,7 @@ func (s *Stream) loadBlock(c chan<- *blockatlas.Block, num int64) {
 	s.semaphore.Acquire()
 	defer s.semaphore.Release()
 
-	block, err := retry(3, time.Second*1, s.BlockAPI.GetBlockByNumber, num)
+	block, err := retry(5, time.Second*5, s.BlockAPI.GetBlockByNumber, num, s.log)
 	if err != nil {
 		s.log.WithError(err).Errorf("Polling failed: could not get block %d", num)
 		return
@@ -104,5 +104,3 @@ func (s *Stream) loadBlock(c chan<- *blockatlas.Block, num int64) {
 		return
 	}
 }
-
-
