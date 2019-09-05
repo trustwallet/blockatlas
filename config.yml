@@ -180,3 +180,7 @@ ravencoin:
 
 decred:
   api: https://blockbook.decred.org:9161/api
+
+#[LOOM]
+  loom:
+    rpc: http://localhost:46658/tw

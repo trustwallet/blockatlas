@@ -319,3 +319,11 @@
   decimals: 8
   blockTime: 300000
   sampleAddress: 'DsTxPUVFxXeNgu5fzozr4mTR4tqqMaKcvpY'
+
+- id: 46558
+  symbol: LOOM
+  handle: loomcoin
+  name: Loom
+  decimal: 18
+  blockTime: 1000
+  sampleAddress: looma7be1a438a5c1d8298a73b9936cec59c5d626eb1
