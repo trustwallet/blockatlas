@@ -64,6 +64,9 @@ func (c *Client) GetTxsOfAddress(address string, start int64) (*Response, error)
 func (c *Client) GetAddressTotalTransactions(address string) (int64, error) {
 	var account AccountInfo
 	err := c.Request.Get(&account, c.URL, "accounts/"+address, nil)
+	if err != nil {
+		return 0, nil
+	}
 	numActions, err := strconv.ParseInt(account.AccountMeta.NumActions, 10, 64)
 	if err != nil {
 		return 0, nil
