@@ -3,6 +3,7 @@ package ethereum
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas"
 	"testing"
 
@@ -414,29 +415,9 @@ var collectionsDst = blockatlas.Collection{
 func TestNormalizeCollection(t *testing.T) {
 	var collections []Collection
 	err := json.Unmarshal([]byte(collectionsSrc), &collections)
-	if err != nil {
-		t.Error(err)
-		return
-	}
+	assert.Nil(t, err)
 	page := NormalizeCollectionPage(collections, coin.ETH, collectionsOwner)
-	if len(page) == 0 {
-		t.Errorf("collections could not be normalized")
-	}
-
-	resJSON, err := json.Marshal(&page)
-	if err != nil {
-		t.Fatal(err)
-	}
-
+	assert.Equal(t, len(page), 1, "collections could not be normalized")
 	expected := blockatlas.CollectionPage{collectionsDst}
-	dstJSON, err := json.Marshal(expected)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if !bytes.Equal(resJSON, dstJSON) {
-		println(string(resJSON))
-		println(string(dstJSON))
-		t.Error("collections don't equal")
-	}
+	assert.Equal(t, page, expected, "collections don't equal")
 }
