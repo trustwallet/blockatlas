@@ -56,16 +56,16 @@
     "key": "xprv9s21ZrQH143K277qXR6NRni1DS7qmSNBs96NmnF5VGdcejgrJtBHzRJYZxqDJZKX1pF5i6gmmDmWDbBCs4DcQ9T1bH65UttBRw2uMaNJnNQ"
   },
   "tomochain": {
-    "address": "TMuA6YqfCeX8EhbfYEg5y7S4DqzSJireY9",
-    "owner": "TMuA6YqfCeX8EhbfYEg5y7S4DqzSJireY9",
-    "collections": "TMuA6YqfCeX8EhbfYEg5y7S4DqzSJireY9",
-    "collection_id": "TMuA6YqfCeX8EhbfYEg5y7S4DqzSJireY9"
+    "address": "0x7cB1Ae1a095Eb51AEd8a1488E866c030E0A78E29",
+    "owner": "0x7cB1Ae1a095Eb51AEd8a1488E866c030E0A78E29",
+    "collections": "0x7cB1Ae1a095Eb51AEd8a1488E866c030E0A78E29",
+    "collection_id": "0x7cB1Ae1a095Eb51AEd8a1488E866c030E0A78E29"
   },
   "ethereum": {
-    "address": "0xfc10cab6a50a1ab10c56983c80cc82afc6559cf1",
-    "owner": "0xfc10cab6a50a1ab10c56983c80cc82afc6559cf1",
-    "collections": "0xfc10cab6a50a1ab10c56983c80cc82afc6559cf1",
-    "collection_id": "0xfc10cab6a50a1ab10c56983c80cc82afc6559cf1"
+    "address": "0x52bc44d5378309ee2abf1539bf71de1b7d7be3b5",
+    "owner": "0x52bc44d5378309ee2abf1539bf71de1b7d7be3b5",
+    "collections": "0x52bc44d5378309ee2abf1539bf71de1b7d7be3b5",
+    "collection_id": "0x52bc44d5378309ee2abf1539bf71de1b7d7be3b5"
   },
   "classic": {
     "address": "0xf3524415b6D873205B4c3Cda783527b2aC4daAA9",
@@ -131,7 +131,7 @@
     "address": "0x8197987c401a3466ad678b2080b24838ebd95b41"
   },
   "nimiq": {
-    "address": "NQ86%202H8F%20YGU5%20RM77%20QSN9%20LYLH%20C56A%20CYYR%200MLA"
+    "address": "NQ94HC9AK9D83FSJM6PT8XGNNMXLR0E53Y07"
   },
   "nebulas": {
     "address": "n1RCYwrpLMpSpUCQ8QUDzGRg6B2PnY8R94a"
