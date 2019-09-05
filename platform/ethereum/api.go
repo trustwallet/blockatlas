@@ -216,11 +216,15 @@ func NormalizeCollectionPage(collections []Collection, coinIndex uint, owner str
 }
 
 func NormalizeCollection(c Collection, coinIndex uint, owner string) blockatlas.Collection {
+	description := c.Contracts[0].Description
+	if len(description) == 0 {
+		description = c.Description
+	}
 	return blockatlas.Collection{
 		Name:            c.Name,
 		Symbol:          c.Contracts[0].Symbol,
 		ImageUrl:        c.ImageUrl,
-		Description:     c.Contracts[0].Description,
+		Description:     description,
 		ExternalLink:    c.ExternalUrl,
 		Total:           c.Total,
 		CategoryAddress: c.Contracts[0].Address,
