@@ -3,6 +3,7 @@ package platform
 import (
 	"fmt"
 
+	"github.com/loomnetwork/blockatlas/platform/loom"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas"
@@ -72,6 +73,7 @@ var platformList = []blockatlas.Platform{
 	&bitcoin.Platform{CoinIndex: coin.DCR},
 	&nebulas.Platform{},
 	&fio.Platform{},
+	&loom.Platform{},
 }
 
 // Platforms contains all registered platforms by handle
