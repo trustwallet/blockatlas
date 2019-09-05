@@ -31,7 +31,9 @@ func TestApis(t *testing.T) {
 	cl := newClient(t, p)
 	for _, r := range e.Routes() {
 		wg.Add(1)
-		go cl.doTests(r.Path, &wg)
+		t.Run(r.Path, func(t *testing.T){
+			go cl.doTests(r.Path, &wg)
+		})
 	}
 	wg.Wait()
 }
