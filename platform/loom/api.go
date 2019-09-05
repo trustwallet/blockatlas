@@ -32,14 +32,23 @@ func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
 		return results, nil
 	}
 
-	for _, validator := range validators {
-		resp := blockatlas.Validator{
-			Status: bool(validator.Status == 2),
-			ID:     validator.Address,
+	for _, v := range validators {
+		validator := blockatlas.Validator{
+			Status: bool(v.Status == 2),
+			ID:     v.Address,
 			Reward: blockatlas.StakingReward{Annual: rate},
 		}
-		results = append(results, resp)
+		results = append(results, validator)
 	}
 
 	return results, nil
+}
+
+func (p *Platform) CurrentBlockNumber() (int64, error) {
+	return p.client.CurrentBlockNumber()
+}
+
+func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
+	// TODO
+	return blockatlas.TxPage{}, nil
 }

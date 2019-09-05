@@ -57,3 +57,38 @@ func (c *Client) GetRate() (float64, error) {
 
 	return s, err
 }
+
+func (c *Client) CurrentBlockNumber() (num int64, err error) {
+	var block Block
+	err = c.Request.Get(&block, c.URL, "query/getblockheight", nil)
+	if err != nil {
+		return num, err
+	}
+	num, err = strconv.ParseInt(block.Meta.Header.Height, 10, 64)
+
+	if err != nil {
+		return num, err
+	}
+
+	return num, nil
+}
+
+func (c *Client) GetBlockByNumber(num int64) (txs []Tx, err error) {
+	err = c.Request.Get(&txs, c.URL, "query/getevmblockbynumber", nil)
+	return txs, err
+}
+
+func (c *Client) GetTxsOfAddress(address string, tag string) (txs []Tx, err error) {
+	query := url.Values{
+		tag:     {address},
+		"page":  {strconv.FormatInt(1, 10)},
+		"limit": {strconv.FormatInt(1000, 10)},
+	}
+
+	err = c.Request.Get(&txs, c.URL, "txs", query)
+	if err != nil {
+		logrus.WithError(err).Errorf("LOOM: Failed to get transactions for address %s", address)
+		return nil, err
+	}
+	return txs, err
+}
