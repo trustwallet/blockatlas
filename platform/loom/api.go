@@ -5,8 +5,8 @@ import (
 
 	"github.com/trustwallet/blockatlas"
 
+	"github.com/loomnetwork/blockatlas/coin"
 	"github.com/spf13/viper"
-	"github.com/trustwallet/blockatlas/coin"
 )
 
 type Platform struct {
@@ -19,7 +19,7 @@ func (p *Platform) Init() error {
 }
 
 func (p *Platform) Coin() coin.Coin {
-	return coin.Coins[coin.GO] //TODO CHANGE TO LOOM
+	return coin.Coins[coin.LOOM]
 }
 
 func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
