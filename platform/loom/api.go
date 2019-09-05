@@ -1,4 +1,4 @@
-package cosmos
+package loom
 
 import (
 	"github.com/trustwallet/blockatlas"

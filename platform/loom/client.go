@@ -1,4 +1,4 @@
-package cosmos
+package loom
 
 import (
 	"net/http"
