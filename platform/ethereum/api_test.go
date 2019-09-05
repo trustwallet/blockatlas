@@ -312,3 +312,131 @@ func testNormalizeToken(t *testing.T, _test *testToken) {
 		t.Error("token: token don't equal")
 	}
 }
+
+const collectionsOwner = "0x0875BCab22dE3d02402bc38aEe4104e1239374a7"
+
+const collectionsSrc = `
+[
+  {
+    "primary_asset_contracts": [
+      {
+        "address": "0xfaafdc07907ff5120a76b34b731b278c38d6043c",
+        "name": "Enjin",
+        "symbol": "",
+        "image_url": null,
+        "large_image_url": null,
+        "featured_image_url": null,
+        "featured": false,
+        "description": "",
+        "external_link": null,
+        "wiki_link": null,
+        "hidden": true,
+        "nft_version": null,
+        "schema_name": "ERC1155",
+        "display_data": {},
+        "short_description": null,
+        "total_supply": null,
+        "owner": null,
+        "dev_buyer_fee_basis_points": 0,
+        "dev_seller_fee_basis_points": 0,
+        "opensea_buyer_fee_basis_points": 0,
+        "opensea_seller_fee_basis_points": 250,
+        "buyer_fee_basis_points": 0,
+        "seller_fee_basis_points": 250,
+        "payout_address": null,
+        "require_email": false,
+        "require_whitelist": false,
+        "only_proxied_transfers": false,
+        "default_to_fiat": false,
+        "created_date": "2019-08-02T23:43:14.666153",
+        "opensea_version": null,
+        "asset_contract_type": "semi-fungible"
+      }
+    ],
+    "traits": {
+      "Stage": {
+        "min": 1,
+        "max": 1
+      },
+      "Experience": {
+        "min": 0,
+        "max": 0
+      },
+      "property": {
+        "min": 1,
+        "max": 250
+      }
+    },
+    "name": "Enjin",
+    "slug": "enjin",
+    "image_url": "https://storage.opensea.io/0x8562c38485b1e8ccd82e44f89823da76c98eb0ab-featured-1556588805.png",
+    "short_description": null,
+    "description": "Enjin assets are unique digital ERC1155 assets used in a variety of games in the Enjin multiverse.",
+    "external_url": "https://enj1155.com",
+    "chat_url": null,
+    "wiki_url": null,
+    "large_image_url": null,
+    "featured_image_url": null,
+    "featured": false,
+    "banner_image_url": null,
+    "display_data": {
+      "card_display_style": "contain",
+      "images": [
+        "https://storage.opensea.io/0x8562c38485b1e8ccd82e44f89823da76c98eb0ab/11081664790290029703914123501093412959851005990698421485335279882236843786250-1550517150.png",
+        "https://storage.opensea.io/0x8562c38485b1e8ccd82e44f89823da76c98eb0ab/11081664790290028134638689654423222000903650188781817459746418766228215563559-1552773943.png",
+        "https://storage.opensea.io/0x8562c38485b1e8ccd82e44f89823da76c98eb0ab/50885195465617471177731255234521635734804147820253726770435014604985116655636-1551524003.jpg",
+        "https://storage.opensea.io/0x8562c38485b1e8ccd82e44f89823da76c98eb0ab/11081664790290028178578401802129987347754176151235482372462906877476457152527-1552773783.png",
+        "https://storage.opensea.io/0x8562c38485b1e8ccd82e44f89823da76c98eb0ab/7237005577332265873523498293477879557094607771672055840139323123026691620864-1551250671.jpg",
+        "https://storage.opensea.io/0x8562c38485b1e8ccd82e44f89823da76c98eb0ab/10855508365998398882471917397163648119753490024396247545386072295876434329600-1552747248.jpg"
+      ]
+    },
+    "hidden": false,
+    "created_date": "2019-08-02T23:43:14.650920",
+    "owned_asset_count": 1
+  }
+]
+`
+
+var collectionsDst = blockatlas.Collection{
+	Name:            "Enjin",
+	Symbol:          "",
+	ImageUrl:        "https://storage.opensea.io/0x8562c38485b1e8ccd82e44f89823da76c98eb0ab-featured-1556588805.png",
+	Description:     "Enjin assets are unique digital ERC1155 assets used in a variety of games in the Enjin multiverse.",
+	ExternalLink:    "https://enj1155.com",
+	Total:           1,
+	CategoryAddress: "0xfaafdc07907ff5120a76b34b731b278c38d6043c",
+	Address:         "0x0875BCab22dE3d02402bc38aEe4104e1239374a7",
+	Version:         "",
+	Coin:            60,
+	Type:            "ERC1155",
+}
+
+func TestNormalizeCollection(t *testing.T) {
+	var collections []Collection
+	err := json.Unmarshal([]byte(collectionsSrc), &collections)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	page := NormalizeCollectionPage(collections, coin.ETH, collectionsOwner)
+	if len(page) == 0 {
+		t.Errorf("collections could not be normalized")
+	}
+
+	resJSON, err := json.Marshal(&page)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected := blockatlas.CollectionPage{collectionsDst}
+	dstJSON, err := json.Marshal(expected)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !bytes.Equal(resJSON, dstJSON) {
+		println(string(resJSON))
+		println(string(dstJSON))
+		t.Error("collections don't equal")
+	}
+}
