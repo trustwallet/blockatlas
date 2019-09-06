@@ -111,8 +111,9 @@ func (p *Platform) getTransactionReceipt(ids []string) chan *TransferReceipt {
 			if err != nil {
 				logrus.WithError(err).WithField("platform", "vechain").
 					Warnf("Failed to get tx receipt for %s", id)
+			} else {
+				receiptsChan <- receipt
 			}
-			receiptsChan <- receipt
 		}(id)
 	}
 
@@ -137,8 +138,9 @@ func (p *Platform) getTransactions(ids []string) chan *NativeTransaction {
 			if err != nil {
 				logrus.WithError(err).WithField("platform", "vechain").
 					Warnf("Failed to get transaction for %s", id)
+			} else {
+				receiptsChan <- receipt
 			}
-			receiptsChan <- receipt
 		}(id)
 	}
 
