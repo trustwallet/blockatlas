@@ -27,22 +27,22 @@ func (c Coin) String() string {
 	return fmt.Sprintf("[%s] %s (#%d)", c.Symbol, c.Title, c.ID)
 }
 
-func Load(fPath string) {
-	err := load(fPath)
+func Load(coinPath string) {
+	err := load(coinPath)
 	if err != nil {
-		logrus.WithError(err).Fatal("Failed to load coins")
+		logrus.WithError(err).Fatal("Failed to load coins at path: ", coinPath)
 	}
 }
 
-func load(fPath string) error {
-	f, err := os.Open(fPath)
+func load(coinPath string) error {
+	coin, err := os.Open(coinPath)
 	if err != nil {
 		return err
 	}
 
 	var coinList []Coin
 
-	dec := yaml.NewDecoder(f)
+	dec := yaml.NewDecoder(coin)
 	err = dec.Decode(&coinList)
 	if err != nil {
 		return err
