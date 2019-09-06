@@ -57,6 +57,9 @@ func (c *Client) testGet(url string) {
 
 func (c *Client) doTests(path string, wg *sync.WaitGroup) {
 	defer wg.Done()
+	if isExcluded(path) {
+		return
+	}
 	url := addFixtures(path)
 	c.testGet(url)
 }

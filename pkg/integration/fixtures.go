@@ -14,15 +14,22 @@ import (
 
 const (
 	fixtures = "fixtures.json"
+	exclude  = "exclude.json"
 )
 
 type Fixture map[string]map[string]string
+type Exclude []string
 
 var f Fixture
+var e Exclude
 
 func init() {
 	var err error
 	f, err = getFixtures()
+	if err != nil {
+		logrus.Panic(err)
+	}
+	e, err = getExcludeApis()
 	if err != nil {
 		logrus.Panic(err)
 	}
@@ -38,15 +45,29 @@ func getFixtures() (Fixture, error) {
 	return r, err
 }
 
+func isExcluded(path string) bool {
+	return contains(e, path)
+}
+
+func getExcludeApis() (Exclude, error) {
+	b, err := getFile(exclude)
+	if err != nil {
+		return nil, err
+	}
+	var r Exclude
+	err = json.Unmarshal(b[:], &r)
+	return r, err
+}
+
 func getFile(file string) ([]byte, error) {
 	golden := filepath.Join("testdata", file)
 	return ioutil.ReadFile(golden)
 }
 
 func getCoin(path string) coin.Coin {
-	for _, coin := range coin.Coins {
-		if strings.Contains(path, fmt.Sprintf("/%s/", coin.Handle)) {
-			return coin
+	for _, c := range coin.Coins {
+		if strings.Contains(path, fmt.Sprintf("/%s/", c.Handle)) {
+			return c
 		}
 	}
 	return coin.Coin{}
@@ -69,4 +90,13 @@ func addFixtures(path string) string {
 		result = strings.Replace(result, ":"+key, value, -1)
 	}
 	return result
+}
+
+func contains(s []string, e string) bool {
+	for _, a := range s {
+		if a == e {
+			return true
+		}
+	}
+	return false
 }
