@@ -161,6 +161,7 @@ func NormalizeToken(srcToken *Balance, tokens *TokenPage) (t blockatlas.Token, o
 		TokenID:  tk.Symbol,
 		Coin:     coin.BNB,
 		Decimals: uint(decimalPlaces(tk.TotalSupply)),
+		Type:     blockatlas.TokenTypeBEP2,
 	}
 
 	return t, true

@@ -13,6 +13,7 @@ const (
 
 type Direction string
 type Status string
+type TokenType string
 
 // Types of transaction statuses
 const (
@@ -23,6 +24,10 @@ const (
 	DirectionOutgoing Direction = "outgoing"
 	DirectionIncoming Direction = "incoming"
 	DirectionSelf     Direction = "yourself"
+
+	TokenTypeERC20 TokenType = "ERC20"
+	TokenTypeBEP2  TokenType = "BEP2"
+	TokenTypeTRC10 TokenType = "TRC10"
 )
 
 // Titles of AnyAction meta
@@ -162,11 +167,12 @@ type TokenPage []Token
 // Token describes the non-native tokens.
 // Examples: ERC-20, TRC-20, BEP-2
 type Token struct {
-	Name     string `json:"name"`
-	Symbol   string `json:"symbol"`
-	Decimals uint   `json:"decimals"`
-	TokenID  string `json:"token_id"`
-	Coin     uint   `json:"coin"`
+	Name     string    `json:"name"`
+	Symbol   string    `json:"symbol"`
+	Decimals uint      `json:"decimals"`
+	TokenID  string    `json:"token_id"`
+	Coin     uint      `json:"coin"`
+	Type     TokenType `json:"type"`
 }
 
 func (t *Tx) GetUtxoAddresses() (addresses []string) {

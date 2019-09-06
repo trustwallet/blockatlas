@@ -3,6 +3,7 @@ package tron
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
 	"testing"
@@ -58,6 +59,15 @@ var transferDst = blockatlas.Tx{
 	},
 }
 
+var tokenDst = blockatlas.Token{
+	Name:     "Test",
+	Symbol:   "TST",
+	Decimals: 8,
+	TokenID:  "1",
+	Coin:     195,
+	Type:     "TRC10",
+}
+
 type test struct {
 	name        string
 	apiResponse string
@@ -100,4 +110,12 @@ func testNormalize(t *testing.T, _test *test) {
 		println(string(dstJSON))
 		t.Errorf("%s: tx don't equal", _test.name)
 	}
+}
+
+func TestNormalizeToken(t *testing.T) {
+	asset := AssetInfo{Name: "Test", Symbol: "TST", ID: "1", Decimals: 8}
+
+	actual := NormalizeToken(asset)
+
+	assert.Equal(t, tokenDst, actual)
 }

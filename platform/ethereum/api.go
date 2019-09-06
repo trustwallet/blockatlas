@@ -286,6 +286,7 @@ func NormalizeToken(srcToken *Token, coinIndex uint) (t blockatlas.Token, ok boo
 		TokenID:  srcToken.Contract.Contract,
 		Coin:     coinIndex,
 		Decimals: srcToken.Contract.Decimals,
+		Type:     blockatlas.TokenTypeERC20,
 	}
 
 	return t, true

@@ -268,6 +268,7 @@ var tokenDst = blockatlas.Token{
 	Decimals: 18,
 	TokenID:  "0xa14839c9837657efcde754ebeaf5cbecdd801b2a",
 	Coin:     coin.ETH,
+	Type:     blockatlas.TokenTypeERC20,
 }
 
 type testToken struct {

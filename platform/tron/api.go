@@ -131,5 +131,6 @@ func NormalizeToken(info AssetInfo) blockatlas.Token {
 		TokenID:  info.ID,
 		Coin:     coin.TRX,
 		Decimals: info.Decimals,
+		Type:     blockatlas.TokenTypeTRC10,
 	}
 }
