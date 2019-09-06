@@ -49,6 +49,9 @@ func (c *Client) testGet(url string) {
 	response := request.Expect()
 	//TODO create a logic to validate schemas
 	//response.JSON().Schema(schema)
+	if response.Raw().Status != "200" {
+		fmt.Printf("%s - %s", response.Raw().Status, url)
+	}
 	response.Status(http.StatusOK)
 }
 
