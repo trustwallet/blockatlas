@@ -32,7 +32,7 @@ func newClient(t *testing.T, port string) *Client {
 			Timeout: time.Second * 30,
 		},
 		// use fatal failures
-		Reporter: httpexpect.NewRequireReporter(t),
+		Reporter: httpexpect.NewAssertReporter(t),
 		// use verbose logging
 		Printers: []httpexpect.Printer{
 		},
