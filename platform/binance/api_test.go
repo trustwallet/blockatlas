@@ -178,6 +178,7 @@ var tokenDst = blockatlas.Token{
 	Decimals: 8,
 	TokenID:  "ARN-71B",
 	Coin:     coin.BNB,
+	Type:     blockatlas.TokenTypeBEP2,
 }
 
 type testToken struct {
