@@ -20,7 +20,6 @@ import (
 	"github.com/trustwallet/blockatlas/platform/nimiq"
 	"github.com/trustwallet/blockatlas/platform/ontology"
 	"github.com/trustwallet/blockatlas/platform/ripple"
-	"github.com/trustwallet/blockatlas/platform/semux"
 	"github.com/trustwallet/blockatlas/platform/stellar"
 	"github.com/trustwallet/blockatlas/platform/tezos"
 	"github.com/trustwallet/blockatlas/platform/theta"
@@ -50,7 +49,6 @@ var platformList = []blockatlas.Platform{
 	&icon.Platform{},
 	&iotex.Platform{},
 	&ontology.Platform{},
-	&semux.Platform{},
 	&theta.Platform{},
 	&tron.Platform{},
 	&vechain.Platform{},
