@@ -4,7 +4,7 @@
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/43834b0c94ad4f6088629aa3e3bb5e94)](https://www.codacy.com/app/TrustWallet/blockatlas?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=TrustWallet/blockatlas&amp;utm_campaign=Badge_Grade)
 [![Go Report Card](https://goreportcard.com/badge/TrustWallet/blockatlas)](https://goreportcard.com/report/TrustWallet/blockatlas)
 
-Clean explorer API for crypto currencies.
+Clean explorer API and events observer for crypto currencies.
 
 #### Supported Coins
 
@@ -36,17 +36,33 @@ Clean explorer API for crypto currencies.
 
 Deploy it in less than 30 seconds!
 
+### Prerequisite
+* [GO](https://golang.org/doc/install) `1.12+`
+* Locally running [Redis](https://redis.io/topics/quickstart) or url to remote instance (required for Observer only)
+
 #### From Source (Go Toolchain required)
 
 ```shell
 go get -u github.com/trustwallet/blockatlas
 cd blockatlas
+
+// Start API server
 go build -o blockatlas ./cmd && ./blockatlas api
+
+//Start Observer
+go build -o blockatlas ./cmd && ./blockatlas observer
 ```
 
-#### With Docker
+#### Docker
+
+Using Docker Hub:
 
 `docker run -it -p 8420:8420 trustwallet/blockatlas`
+
+Build and run from local Dockerfile:
+`docker build -t blockatlas .`
+`docker run -p 8420:8420 blockatlas`
+
 
 #### Tools
 
