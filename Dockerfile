@@ -11,4 +11,5 @@ FROM scratch
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=builder /go/bin/cmd /bin/blockatlas
 COPY --from=builder /go/src/github.com/trustwallet/blockatlas/coins.yml /coins.yml
+COPY --from=builder /go/src/github.com/trustwallet/blockatlas/config.yml /config.yml
 CMD ["/bin/blockatlas", "api"]
