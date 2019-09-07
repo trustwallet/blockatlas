@@ -22,7 +22,7 @@ var app = cobra.Command{
 		loadConfig(confPath)
 
 		// Load coin index
-		coin.Load()
+		coin.Load("./coins.yml")
 
 		// Load app components
 		platform.Init()

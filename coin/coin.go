@@ -27,8 +27,7 @@ func (c Coin) String() string {
 	return fmt.Sprintf("[%s] %s (#%d)", c.Symbol, c.Title, c.ID)
 }
 
-func Load() {
-	coinPath := "./coins.yml"
+func Load(coinPath string) {
 	err := load(coinPath)
 	if err != nil {
 		logrus.WithError(err).Fatal("Failed to load coins at path: ", coinPath)
