@@ -12,15 +12,13 @@ type Page struct {
 }
 
 type Tx struct {
-	ID   string `json:"txID"`
-	Data TxData `json:"raw_data"`
+	ID          string `json:"txID"`
+	BlockTime   int64  `json:"block_timestamp"`
+	Data 		TxData `json:"raw_data"`
 }
 
 type TxData struct {
 	Contracts     []Contract `json:"contract"`
-	RefBlockBytes string     `json:"ref_block_bytes"`
-	RefBlockHash  string     `json:"ref_block_hash"`
-	Timestamp     int64      `json:"timestamp"`
 }
 
 type Contract struct {

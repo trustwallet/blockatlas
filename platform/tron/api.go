@@ -51,7 +51,6 @@ func Normalize(srcTx *Tx) (tx blockatlas.Tx, ok bool) {
 	switch contract.Parameter.(type) {
 	case TransferContract:
 		transfer := contract.Parameter.(TransferContract)
-
 		from, err := HexToAddress(transfer.Value.OwnerAddress)
 		if err != nil {
 			return tx, false
@@ -64,7 +63,7 @@ func Normalize(srcTx *Tx) (tx blockatlas.Tx, ok bool) {
 		return blockatlas.Tx{
 			ID:   srcTx.ID,
 			Coin: coin.TRX,
-			Date: srcTx.Data.Timestamp / 1000,
+			Date: srcTx.BlockTime,
 			From: from,
 			To:   to,
 			Fee:  "0",
