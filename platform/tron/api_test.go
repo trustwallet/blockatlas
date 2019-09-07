@@ -11,11 +11,11 @@ import (
 
 const transferSrc = `
 {
+	"block_timestamp": 1564797900000,
 	"raw_data": {
 		"contract": [
 			{
 				"parameter": {
-					"type_url": "type.googleapis.com/protocol.TransferContract",
 					"value": {
 						"amount": 100666888000000,
 						"owner_address": "4182dd6b9966724ae2fdc79b416c7588da67ff1b35",
@@ -24,23 +24,8 @@ const transferSrc = `
 				},
 				"type": "TransferContract"
 			}
-		],
-		"expiration": 1551357978000,
-		"fee_limit": 0,
-		"ref_block_bytes": "1c17",
-		"ref_block_hash": "b25737f0375c676b",
-		"timestamp": 1551357920889
+		]
 	},
-	"ret": [
-		{
-			"code": "SUCESS",
-			"contractRet": "SUCCESS",
-			"fee": 0
-		}
-	],
-	"signature": [
-		"f34c94cfa2ac0d9dddfa9febce257684138dcbdfb31886f249f14da7eb8d134331d07e70642cc841d6191269348bc8dd63cc9be217670453d27bfb789572e7e9009000"
-	],
 	"txID": "24a10f7a503e78adc0d7e380b68005531b09e16b9e3f7b524e33f40985d287df"
 }
 `
@@ -51,7 +36,7 @@ var transferDst = blockatlas.Tx{
 	From:   "TMuA6YqfCeX8EhbfYEg5y7S4DqzSJireY9",
 	To:     "TAUN6FwrnwwmaEqYcckffC7wYmbaS6cBiX",
 	Fee:    "0", // TODO
-	Date:   1551357920,
+	Date:   1564797900000,
 	Block:  0, // TODO
 	Status: blockatlas.StatusCompleted,
 	Meta: blockatlas.Transfer{
