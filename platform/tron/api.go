@@ -63,7 +63,7 @@ func Normalize(srcTx *Tx) (tx blockatlas.Tx, ok bool) {
 		return blockatlas.Tx{
 			ID:   srcTx.ID,
 			Coin: coin.TRX,
-			Date: srcTx.BlockTime,
+			Date: srcTx.BlockTime / 1000,
 			From: from,
 			To:   to,
 			Fee:  "0",
