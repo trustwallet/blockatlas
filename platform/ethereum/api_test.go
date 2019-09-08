@@ -326,10 +326,10 @@ const collectionsSrc = `
         "name": "Enjin",
         "symbol": "",
         "description": "",
+        "external_link": null,
         "nft_version": null,
         "schema_name": "ERC1155",
-        "display_data": {},
-        "external_link": null
+        "display_data": {}
       }
     ],
     "name": "Enjin",
@@ -338,6 +338,26 @@ const collectionsSrc = `
     "description": "Enjin assets are unique digital ERC1155 assets used in a variety of games in the Enjin multiverse.",
     "external_url": "https://enj1155.com",
     "owned_asset_count": 1
+  },
+  {
+    "primary_asset_contracts": [
+      {
+        "address": "0xf629cbd94d3791c9250152bd8dfbdf380e2a3b9c",
+        "name": "EnjinCoin",
+        "symbol": "",
+        "description": null,
+        "external_link": null,
+        "nft_version": null,
+		"schema_name": "ERC20",
+        "display_data": {}
+      }
+    ],
+    "name": "Enjin Token",
+    "slug": "enjin-token",
+    "image_url": "https://storage.googleapis.com/opensea-static/tokens-high-res/ENJ.png",
+    "description": "This is the collection of owners of EnjinCoin",
+    "external_url": null,
+    "owned_asset_count": 20000000000000000000
   }
 ]
 `

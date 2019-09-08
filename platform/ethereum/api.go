@@ -13,6 +13,10 @@ import (
 	"github.com/spf13/viper"
 )
 
+var (
+	supportedTypes = map[string]bool{"ERC721": true, "ERC1155": true}
+)
+
 type Platform struct {
 	client            Client
 	collectionsClient CollectionsClient
@@ -210,6 +214,9 @@ func (p *Platform) GetCollectibles(owner, collectibleID string) (blockatlas.Coll
 func NormalizeCollectionPage(collections []Collection, coinIndex uint, owner string) (page blockatlas.CollectionPage) {
 	for _, collection := range collections {
 		item := NormalizeCollection(collection, coinIndex, owner)
+		if _, ok := supportedTypes[item.Type]; !ok {
+			continue
+		}
 		page = append(page, item)
 	}
 	return
@@ -226,7 +233,7 @@ func NormalizeCollection(c Collection, coinIndex uint, owner string) blockatlas.
 		ImageUrl:        c.ImageUrl,
 		Description:     description,
 		ExternalLink:    c.ExternalUrl,
-		Total:           c.Total,
+		Total:           int(c.Total.Int64()),
 		CategoryAddress: c.Contracts[0].Address,
 		Address:         owner,
 		Version:         c.Contracts[0].NftVersion,
