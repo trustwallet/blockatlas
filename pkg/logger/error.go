@@ -3,6 +3,7 @@ package logger
 import (
 	"fmt"
 	log "github.com/sirupsen/logrus"
+	"strings"
 )
 
 type Err struct {
@@ -51,12 +52,13 @@ func Panic(args ...interface{}) {
 
 func getError(args ...interface{}) *Err {
 	e := &Err{}
+	var message []string
 	for _, arg := range args {
 		switch arg := arg.(type) {
 		case nil:
 			continue
 		case string:
-			e.Message = arg
+			message = append(message, arg)
 		case error:
 			e.Err = arg
 		case Params:
@@ -66,6 +68,9 @@ func getError(args ...interface{}) *Err {
 		default:
 			continue
 		}
+	}
+	if len(message) > 0 {
+		e.Message = strings.Join(message[:], ": ")
 	}
 	return e
 }

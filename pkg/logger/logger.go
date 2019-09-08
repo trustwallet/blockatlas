@@ -3,6 +3,7 @@ package logger
 import (
 	"fmt"
 	log "github.com/sirupsen/logrus"
+	"strings"
 )
 
 type Params map[string]interface{}
@@ -54,12 +55,13 @@ func Warn(args ...interface{}) {
 func getMessage(args ...interface{}) *Msg {
 	msg := &Msg{}
 	var generic []string
+	var message []string
 	for _, arg := range args {
 		switch arg := arg.(type) {
 		case nil:
 			continue
 		case string:
-			msg.Message = arg
+			message = append(message, arg)
 		case Params:
 			msg.Params = arg
 		case map[string]interface{}:
@@ -68,8 +70,11 @@ func getMessage(args ...interface{}) *Msg {
 			generic = append(generic, fmt.Sprintf("%v", arg))
 		}
 	}
+	if len(message) > 0 {
+		msg.Message = strings.Join(message[:], ": ")
+	}
 	if len(generic) > 0 {
-		msg.Params["objects"] = generic
+		msg.Params["objects"] = strings.Join(generic[:], " | ")
 	}
 	return msg
 }
