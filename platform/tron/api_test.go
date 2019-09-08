@@ -36,7 +36,7 @@ var transferDst = blockatlas.Tx{
 	From:   "TMuA6YqfCeX8EhbfYEg5y7S4DqzSJireY9",
 	To:     "TAUN6FwrnwwmaEqYcckffC7wYmbaS6cBiX",
 	Fee:    "0", // TODO
-	Date:   1564797900000,
+	Date:   1564797900,
 	Block:  0, // TODO
 	Status: blockatlas.StatusCompleted,
 	Meta: blockatlas.Transfer{
