@@ -3,7 +3,7 @@ package api
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/sirupsen/logrus"
+	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/platform"
 )
 
@@ -41,19 +41,19 @@ func loadPlatforms(root gin.IRouter) {
 		customAPI.RegisterRoutes(router)
 	}
 
-	logrus.WithField("routes", len(routers)).Info("Routes set up")
+	logger.Info("Routes set up", logger.Params{"routes": len(routers)})
 
 	v1.GET("/", getEnabledEndpoints)
 }
 
 // getRouter lazy loads routers
 func getRouter(router *gin.RouterGroup, handle string) gin.IRouter {
-	key := fmt.Sprintf("%s/%s", router.BasePath() , handle)
+	key := fmt.Sprintf("%s/%s", router.BasePath(), handle)
 	if group, ok := routers[key]; ok {
 		return group
 	} else {
 		path := fmt.Sprintf("/%s", handle)
-		logrus.Debugf("Registering %s", path)
+		logger.Debug("Registering route", logger.Params{"path": len(path)})
 		group := router.Group(path)
 		routers[key] = group
 		return group

@@ -2,8 +2,8 @@ package platform
 
 import (
 	"fmt"
+	"github.com/trustwallet/blockatlas/pkg/logger"
 
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
@@ -101,18 +101,18 @@ func Init() {
 			continue
 		}
 
-		log := logrus.WithFields(logrus.Fields{
+		p := logger.Params{
 			"platform": handle,
 			"coin":     platform.Coin(),
-		})
+		}
 
 		if _, exists := Platforms[handle]; exists {
-			log.Fatal("Duplicate handle")
+			logger.Fatal("Duplicate handle", p)
 		}
 
 		err := platform.Init()
 		if err != nil {
-			log.WithError(err).Fatal("Failed to initialize API")
+			logger.Error("Failed to initialize API", err, p)
 		}
 
 		Platforms[handle] = platform

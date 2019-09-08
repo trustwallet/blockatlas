@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/cmd/api"
@@ -10,6 +9,7 @@ import (
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/config"
 	observerStorage "github.com/trustwallet/blockatlas/observer/storage"
+	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/platform"
 	"os"
 )
@@ -22,13 +22,16 @@ var app = cobra.Command{
 		confPath, _ := cmd.Flags().GetString("config")
 		config.LoadConfig(confPath)
 
+		// Init Logger
+		logger.InitLogger()
+
 		// Load coin index
 		coin.Load("./coins.yml")
 
 		// Load app components
 		platform.Init()
 		if viper.GetBool("observer.enabled") {
-			logrus.Info("Loading Observer API")
+			logger.Info("Loading Observer API")
 			observerStorage.Load()
 		}
 	},

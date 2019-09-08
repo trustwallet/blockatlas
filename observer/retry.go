@@ -3,6 +3,7 @@ package observer
 import (
 	"github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/logger"
 	"math/rand"
 	"time"
 )
@@ -24,11 +25,13 @@ func retry(attempts int, sleep time.Duration, f GetBlockByNumber, n int64, log *
 			jitter := time.Duration(rand.Int63n(int64(sleep)))
 			sleep = sleep + jitter/2
 
-			log.WithFields(logrus.Fields{
-				"number":   n,
-				"attempts": attempts,
-				"sleep":    sleep.String(),
-			}).Info("GetBlockByNumber retry")
+			logger.Info("GetBlockByNumber retry",
+				logger.Params{
+					"number":   n,
+					"attempts": attempts,
+					"sleep":    sleep.String(),
+				},
+			)
 
 			time.Sleep(sleep)
 			return retry(attempts, sleep*2, f, n, log)
