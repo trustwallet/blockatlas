@@ -56,46 +56,46 @@
     "key": "xprv9s21ZrQH143K277qXR6NRni1DS7qmSNBs96NmnF5VGdcejgrJtBHzRJYZxqDJZKX1pF5i6gmmDmWDbBCs4DcQ9T1bH65UttBRw2uMaNJnNQ"
   },
   "tomochain": {
-    "address": "0x7cB1Ae1a095Eb51AEd8a1488E866c030E0A78E29",
-    "owner": "0x7cB1Ae1a095Eb51AEd8a1488E866c030E0A78E29",
+    "address": "0x0875BCab22dE3d02402bc38aEe4104e1239374a7",
+    "owner": "0x0875BCab22dE3d02402bc38aEe4104e1239374a7",
     "collections": "0x0875BCab22dE3d02402bc38aEe4104e1239374a7",
-    "collection_id": "0x06012c8cf97bead5deae237070f9587f8e7a266d"
+    "collection_id": "0xfaafdc07907ff5120a76b34b731b278c38d6043c"
   },
   "ethereum": {
     "address": "0x0875BCab22dE3d02402bc38aEe4104e1239374a7",
     "owner": "0x0875BCab22dE3d02402bc38aEe4104e1239374a7",
     "collections": "0x0875BCab22dE3d02402bc38aEe4104e1239374a7",
-    "collection_id": "0x06012c8cf97bead5deae237070f9587f8e7a266d"
+    "collection_id": "0xfaafdc07907ff5120a76b34b731b278c38d6043c"
   },
   "classic": {
-    "address": "0xf3524415b6D873205B4c3Cda783527b2aC4daAA9",
-    "owner": "0xf3524415b6D873205B4c3Cda783527b2aC4daAA9",
+    "address": "0x0875BCab22dE3d02402bc38aEe4104e1239374a7",
+    "owner": "0x0875BCab22dE3d02402bc38aEe4104e1239374a7",
     "collections": "0x0875BCab22dE3d02402bc38aEe4104e1239374a7",
-    "collection_id": "0x06012c8cf97bead5deae237070f9587f8e7a266d"
+    "collection_id": "0xfaafdc07907ff5120a76b34b731b278c38d6043c"
   },
   "poa": {
-    "address": "0x1fddEc96688e0538A316C64dcFd211c491ECf0d8",
-    "owner": "0x1fddEc96688e0538A316C64dcFd211c491ECf0d8",
+    "address": "0x0875BCab22dE3d02402bc38aEe4104e1239374a7",
+    "owner": "0x0875BCab22dE3d02402bc38aEe4104e1239374a7",
     "collections": "0x0875BCab22dE3d02402bc38aEe4104e1239374a7",
-    "collection_id": "0x06012c8cf97bead5deae237070f9587f8e7a266d"
+    "collection_id": "0xfaafdc07907ff5120a76b34b731b278c38d6043c"
   },
   "thundertoken": {
-    "address": "0x0ad80a408eac4f17ba0a9de8a12d8736f60700c3",
-    "owner": "0x0ad80a408eac4f17ba0a9de8a12d8736f60700c3",
+    "address": "0x0875BCab22dE3d02402bc38aEe4104e1239374a7",
+    "owner": "0x0875BCab22dE3d02402bc38aEe4104e1239374a7",
     "collections": "0x0875BCab22dE3d02402bc38aEe4104e1239374a7",
-    "collection_id": "0x06012c8cf97bead5deae237070f9587f8e7a266d"
+    "collection_id": "0xfaafdc07907ff5120a76b34b731b278c38d6043c"
   },
   "callisto": {
-    "address": "0x39ec1c88a7a7c1a575e8c8f42eff7630d9278179",
-    "owner": "0x39ec1c88a7a7c1a575e8c8f42eff7630d9278179",
+    "address": "0x0875BCab22dE3d02402bc38aEe4104e1239374a7",
+    "owner": "0x0875BCab22dE3d02402bc38aEe4104e1239374a7",
     "collections": "0x0875BCab22dE3d02402bc38aEe4104e1239374a7",
-    "collection_id": "0x06012c8cf97bead5deae237070f9587f8e7a266d"
+    "collection_id": "0xfaafdc07907ff5120a76b34b731b278c38d6043c"
   },
   "gochain": {
-    "address": "0x76c2F81716A8D198a00502Ae9a59126418899FDe",
-    "owner": "0x76c2F81716A8D198a00502Ae9a59126418899FDe",
+    "address": "0x0875BCab22dE3d02402bc38aEe4104e1239374a7",
+    "owner": "0x0875BCab22dE3d02402bc38aEe4104e1239374a7",
     "collections": "0x0875BCab22dE3d02402bc38aEe4104e1239374a7",
-    "collection_id": "0x06012c8cf97bead5deae237070f9587f8e7a266d"
+    "collection_id": "0xfaafdc07907ff5120a76b34b731b278c38d6043c"
   },
   "theta": {
     "address": "0xac0eeb6ee3e32e2c74e14ac74155063e4f4f981f"
