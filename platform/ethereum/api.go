@@ -213,9 +213,6 @@ func (p *Platform) GetCollectibles(owner, collectibleID string) (blockatlas.Coll
 
 func NormalizeCollectionPage(collections []Collection, coinIndex uint, owner string) (page blockatlas.CollectionPage) {
 	for _, collection := range collections {
-		if len(collection.Contracts) == 0 {
-			continue
-		}
 		item := NormalizeCollection(collection, coinIndex, owner)
 		if _, ok := supportedTypes[item.Type]; !ok {
 			continue
@@ -226,22 +223,28 @@ func NormalizeCollectionPage(collections []Collection, coinIndex uint, owner str
 }
 
 func NormalizeCollection(c Collection, coinIndex uint, owner string) blockatlas.Collection {
-	description := c.Contracts[0].Description
-	if len(description) == 0 {
-		description = c.Description
+	var description, symbol, address, version = "", "", "", ""
+	cType := "ERC1155"
+	if len(c.Contracts) > 0 {
+		description = getValidParameter(c.Contracts[0].Description, c.Description)
+		symbol = getValidParameter(c.Contracts[0].Symbol, symbol)
+		address = getValidParameter(c.Contracts[0].Address, address)
+		version = getValidParameter(c.Contracts[0].NftVersion, version)
+		cType = getValidParameter(c.Contracts[0].Type, cType)
 	}
 	return blockatlas.Collection{
 		Name:            c.Name,
-		Symbol:          c.Contracts[0].Symbol,
+		Symbol:          symbol,
+		Slug:            c.Slug,
 		ImageUrl:        c.ImageUrl,
 		Description:     description,
 		ExternalLink:    c.ExternalUrl,
 		Total:           int(c.Total.Int64()),
-		CategoryAddress: c.Contracts[0].Address,
+		CategoryAddress: address,
 		Address:         owner,
-		Version:         c.Contracts[0].NftVersion,
+		Version:         version,
 		Coin:            coinIndex,
-		Type:            c.Contracts[0].Type,
+		Type:            cType,
 	}
 }
 
@@ -315,4 +318,11 @@ func NormalizeTokens(srcTokens []Token, p Platform) (tokenPage []blockatlas.Toke
 		tokenPage = append(tokenPage, token)
 	}
 	return
+}
+
+func getValidParameter(first, second string) string {
+	if len(first) > 0 {
+		return first
+	}
+	return second
 }

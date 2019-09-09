@@ -372,7 +372,7 @@ const collectionsSrc = `
 ]
 `
 
-var collectionDst = blockatlas.Collection{
+var collection1Dst = blockatlas.Collection{
 	Name:            "Enjin",
 	Symbol:          "",
 	ImageUrl:        "https://storage.opensea.io/0x8562c38485b1e8ccd82e44f89823da76c98eb0ab-featured-1556588805.png",
@@ -386,13 +386,27 @@ var collectionDst = blockatlas.Collection{
 	Type:            "ERC1155",
 }
 
+var collection2Dst = blockatlas.Collection{
+	Name:            "Dissolution",
+	Symbol:          "",
+	ImageUrl:        "https://storage.opensea.io/dissolution-1566503734.png",
+	Description:     "",
+	ExternalLink:    "https://dissolution.online",
+	Total:           20,
+	CategoryAddress: "",
+	Address:         "0x0875BCab22dE3d02402bc38aEe4104e1239374a7",
+	Version:         "",
+	Coin:            60,
+	Type:            "ERC1155",
+}
+
 func TestNormalizeCollection(t *testing.T) {
 	var collections []Collection
 	err := json.Unmarshal([]byte(collectionsSrc), &collections)
 	assert.Nil(t, err)
 	page := NormalizeCollectionPage(collections, coin.ETH, collectionsOwner)
-	assert.Equal(t, len(page), 1, "collections could not be normalized")
-	expected := blockatlas.CollectionPage{collectionDst}
+	assert.Equal(t, len(page), 2, "collections could not be normalized")
+	expected := blockatlas.CollectionPage{collection1Dst, collection2Dst}
 	assert.Equal(t, page, expected, "collections don't equal")
 }
 

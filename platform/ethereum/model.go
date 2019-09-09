@@ -63,6 +63,7 @@ type Collection struct {
 	ImageUrl    string                 `json:"image_url"`
 	Description string                 `json:"description"`
 	ExternalUrl string                 `json:"external_url"`
+	Slug        string                 `json:"slug"`
 	Total       *big.Int               `json:"owned_asset_count"`
 	Contracts   []PrimaryAssetContract `json:"primary_asset_contracts"`
 }
