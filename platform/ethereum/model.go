@@ -1,5 +1,7 @@
 package ethereum
 
+import "math/big"
+
 type Page struct {
 	Total uint  `json:"total"`
 	Docs  []Doc `json:"docs"`
@@ -61,7 +63,7 @@ type Collection struct {
 	ImageUrl    string                 `json:"image_url"`
 	Description string                 `json:"description"`
 	ExternalUrl string                 `json:"external_url"`
-	Total       int                    `json:"owned_asset_count"`
+	Total       *big.Int               `json:"owned_asset_count"`
 	Contracts   []PrimaryAssetContract `json:"primary_asset_contracts"`
 }
 
