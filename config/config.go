@@ -1,4 +1,4 @@
-package main
+package config
 
 import (
 	"github.com/sirupsen/logrus"
@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-func loadConfig(confPath string) {
+func LoadConfig(confPath string) {
 	// Load config from environment
 	viper.SetEnvPrefix("atlas") // will be uppercased automatically => ATLAS
 	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))

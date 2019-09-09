@@ -27,6 +27,10 @@ func run(_ *cobra.Command, args []string) {
 		bind = args[0]
 	}
 
+	Run(bind, nil)
+}
+
+func Run(bind string, c chan *gin.Engine) {
 	gin.SetMode(viper.GetString("gin.mode"))
 	engine = gin.Default()
 	engine.Use(util.CheckReverseProxy)
@@ -41,6 +45,10 @@ func run(_ *cobra.Command, args []string) {
 	if observerStorage.App != nil {
 		observerAPI := engine.Group("/observer/v1")
 		setupObserverAPI(observerAPI)
+	}
+
+	if c != nil {
+		c <- engine
 	}
 
 	logrus.WithField("bind", bind).Info("Running application")

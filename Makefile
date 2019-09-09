@@ -9,6 +9,10 @@ GOBASE := $(shell pwd)
 GOBIN := $(GOBASE)/bin
 GOPKG := $(cmd)
 
+# Environment variables
+TEST_CONFIG=$(GOBASE)/config.yml
+TEST_COINS=$(GOBASE)/coins.yml
+
 # Go files
 GOFMT_FILES?=$$(find . -name '*.go' | grep -v vendor)
 
@@ -76,6 +80,9 @@ clean:
 ## test: Run all unit tests.
 test: go-test
 
+## integration: Run all integration tests.
+integration: go-integration
+
 ## fmt: Run `go fmt` for all go files.
 fmt: go-fmt
 
@@ -101,8 +108,12 @@ go-clean:
 	GOBIN=$(GOBIN) go clean
 
 go-test:
-	@echo "  >  Cleaning build cache"
+	@echo "  >  Runing unit tests"
 	GOBIN=$(GOBIN) go test -v ./...
+
+go-integration:
+	@echo "  >  Runing integration tests"
+	GOBIN=$(GOBIN) TEST_CONFIG=$(TEST_CONFIG) TEST_COINS=$(TEST_COINS) go test -tags=integration -v ./pkg/integration
 
 go-fmt:
 	@echo "  >  Format all go files"
