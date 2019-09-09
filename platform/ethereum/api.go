@@ -213,6 +213,9 @@ func (p *Platform) GetCollectibles(owner, collectibleID string) (blockatlas.Coll
 
 func NormalizeCollectionPage(collections []Collection, coinIndex uint, owner string) (page blockatlas.CollectionPage) {
 	for _, collection := range collections {
+		if len(collection.Contracts) == 0 {
+			continue
+		}
 		item := NormalizeCollection(collection, coinIndex, owner)
 		if _, ok := supportedTypes[item.Type]; !ok {
 			continue

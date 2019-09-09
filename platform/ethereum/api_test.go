@@ -359,6 +359,15 @@ const collectionsSrc = `
     "description": "This is the collection of owners of EnjinCoin",
     "external_url": null,
     "owned_asset_count": 20000000000000000000
+  },
+  {
+    "primary_asset_contracts": [],
+    "name": "Dissolution",
+    "slug": "dissolution",
+    "image_url": "https://storage.opensea.io/dissolution-1566503734.png",
+    "description": "tactical FPS combat in a cutthroat universe ravaged by an ongoing war of extinction between humanity and AI. Fight for loot backed by blockchain in competitive game modes.",
+    "external_url": "https://dissolution.online",
+    "owned_asset_count": 20
   }
 ]
 `
