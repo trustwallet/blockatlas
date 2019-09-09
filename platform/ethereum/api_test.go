@@ -375,6 +375,7 @@ const collectionsSrc = `
 var collection1Dst = blockatlas.Collection{
 	Name:            "Enjin",
 	Symbol:          "",
+	Slug:            "enjin",
 	ImageUrl:        "https://storage.opensea.io/0x8562c38485b1e8ccd82e44f89823da76c98eb0ab-featured-1556588805.png",
 	Description:     "Enjin assets are unique digital ERC1155 assets used in a variety of games in the Enjin multiverse.",
 	ExternalLink:    "https://enj1155.com",
@@ -389,8 +390,9 @@ var collection1Dst = blockatlas.Collection{
 var collection2Dst = blockatlas.Collection{
 	Name:            "Dissolution",
 	Symbol:          "",
+	Slug:            "dissolution",
 	ImageUrl:        "https://storage.opensea.io/dissolution-1566503734.png",
-	Description:     "",
+	Description:     "tactical FPS combat in a cutthroat universe ravaged by an ongoing war of extinction between humanity and AI. Fight for loot backed by blockchain in competitive game modes.",
 	ExternalLink:    "https://dissolution.online",
 	Total:           20,
 	CategoryAddress: "",
