@@ -121,6 +121,34 @@ ATLAS_NIMIQ_API=http://localhost:8648 \
 blockatlas
 ```
 
+## Tests
+
+### Unit
+To run the unit tests: `make test`
+
+### Integration
+All integration tests are generated automatically. You only need to set the environment to your coin in the config file.
+The tests use a different build constraint, named `integration`.
+
+To run the integration tests: `make integration` 
+
+or you can run manually: `TEST_CONFIG=$(TEST_CONFIG) TEST_COINS=$(TEST_COINS) go test -tags=integration -v ./pkg/integration`
+
+##### Fixtures
+
+- If you need to change the parameters used in our tests, update the file `pkg/integration/testdata/fixtures.json`
+
+- To exclude an API from integration tests, you need to add the route inside the file `pkg/integration/testdata/exclude.json`
+
+    E.g.:
+```
+[
+  "/v2/ethereum/collections/:owner",
+  "/v2/ethereum/collections/:owner/collection/:collection_id"
+]
+```
+
+
 ## Authors
 
 -   [Richard Patel](https://github.com/terorie)
