@@ -223,8 +223,9 @@ func NormalizeCollectionPage(collections []Collection, coinIndex uint, owner str
 }
 
 func NormalizeCollection(c Collection, coinIndex uint, owner string) blockatlas.Collection {
-	var description, symbol, address, version = "", "", "", ""
+	var symbol, address, version = "", "", ""
 	cType := "ERC1155"
+	description := c.Description
 	if len(c.Contracts) > 0 {
 		description = getValidParameter(c.Contracts[0].Description, c.Description)
 		symbol = getValidParameter(c.Contracts[0].Symbol, symbol)
