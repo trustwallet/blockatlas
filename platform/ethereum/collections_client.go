@@ -54,6 +54,9 @@ func (c CollectionsClient) GetCollectibles(owner string, collectibleID string) (
 	for _, i := range collection.Contracts {
 		uriValues.Add("asset_contract_addresses", i.Address)
 	}
+	if len(collection.Contracts) == 0 {
+		uriValues.Set("collection", collection.Slug)
+	}
 	uri := fmt.Sprintf("%s/api/v1/assets/?%s",
 		c.CollectionsURL,
 		uriValues.Encode())
@@ -73,6 +76,9 @@ func (c CollectionsClient) GetCollectibles(owner string, collectibleID string) (
 
 func searchCollection(collections *[]Collection, collectibleID string) *Collection {
 	for _, i := range *collections {
+		if strings.EqualFold(i.Slug, collectibleID) {
+			return &i
+		}
 		for _, contract := range i.Contracts {
 			if strings.EqualFold(contract.Address, collectibleID) {
 				return &i

@@ -227,7 +227,7 @@ func NormalizeCollection(c Collection, coinIndex uint, owner string) blockatlas.
 	cType := "ERC1155"
 	description := c.Description
 	if len(c.Contracts) > 0 {
-		description = getValidParameter(c.Contracts[0].Description, c.Description)
+		description = getValidParameter(c.Contracts[0].Description, description)
 		symbol = getValidParameter(c.Contracts[0].Symbol, symbol)
 		address = getValidParameter(c.Contracts[0].Address, address)
 		version = getValidParameter(c.Contracts[0].NftVersion, version)
@@ -261,17 +261,24 @@ func NormalizeCollectiblePage(c *Collection, srcPage []Collectible, coinIndex ui
 }
 
 func NormalizeCollectible(c *Collection, a Collectible, coinIndex uint) blockatlas.Collectible {
+	var address, externalLink = "", ""
+	cType := "ERC1155"
+	if len(c.Contracts) > 0 {
+		address = getValidParameter(c.Contracts[0].Address, address)
+		cType = getValidParameter(c.Contracts[0].Type, cType)
+	}
+	externalLink = getValidParameter(a.ExternalLink, a.AssetContract.ExternalLink)
 	return blockatlas.Collectible{
-		CollectionID:     c.Contracts[0].Address,
-		ContractAddress:  c.Contracts[0].Address,
+		CollectionID:     address,
+		ContractAddress:  address,
 		TokenID:          a.TokenId,
 		CategoryContract: a.AssetContract.Address,
 		Name:             a.Name,
 		Category:         c.Name,
 		ImageUrl:         a.ImagePreviewUrl,
 		ProviderLink:     a.Permalink,
-		ExternalLink:     GetExternalLink(a),
-		Type:             c.Contracts[0].Type,
+		ExternalLink:     externalLink,
+		Type:             cType,
 		Description:      a.Description,
 		Coin:             coinIndex,
 	}
@@ -283,16 +290,6 @@ func (p *Platform) GetTokenListByAddress(address string) (blockatlas.TokenPage, 
 		return nil, err
 	}
 	return NormalizeTokens(account.Docs, *p), nil
-}
-
-func GetExternalLink(c Collectible) string {
-	if c.ExternalLink != "" {
-		return c.ExternalLink
-	} else if c.AssetContract.ExternalLink != "" {
-		return c.AssetContract.ExternalLink
-	} else {
-		return ""
-	}
 }
 
 // NormalizeToken converts a Ethereum token into the generic model
