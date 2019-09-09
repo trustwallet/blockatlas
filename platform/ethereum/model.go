@@ -101,4 +101,5 @@ type CollectibleContract struct {
 	Address      string `json:"address"`
 	Category     string `json:"name"`
 	ExternalLink string `json:"external_link"`
+	Type         string `json:"schema_name"`
 }

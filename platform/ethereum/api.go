@@ -245,6 +245,9 @@ func NormalizeCollection(c Collection, coinIndex uint, owner string) blockatlas.
 func NormalizeCollectiblePage(c *Collection, srcPage []Collectible, coinIndex uint) (page blockatlas.CollectiblePage) {
 	for _, src := range srcPage {
 		item := NormalizeCollectible(c, src, coinIndex)
+		if _, ok := supportedTypes[item.Type]; !ok {
+			continue
+		}
 		page = append(page, item)
 	}
 	return
@@ -261,7 +264,7 @@ func NormalizeCollectible(c *Collection, a Collectible, coinIndex uint) blockatl
 		ImageUrl:         a.ImagePreviewUrl,
 		ProviderLink:     a.Permalink,
 		ExternalLink:     GetExternalLink(a),
-		Type:             "ERC721",
+		Type:             c.Contracts[0].Type,
 		Description:      a.Description,
 		Coin:             coinIndex,
 	}

@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas"
+	"math/big"
 	"testing"
 
 	"github.com/trustwallet/blockatlas/coin"
@@ -362,7 +363,7 @@ const collectionsSrc = `
 ]
 `
 
-var collectionsDst = blockatlas.Collection{
+var collectionDst = blockatlas.Collection{
 	Name:            "Enjin",
 	Symbol:          "",
 	ImageUrl:        "https://storage.opensea.io/0x8562c38485b1e8ccd82e44f89823da76c98eb0ab-featured-1556588805.png",
@@ -382,6 +383,71 @@ func TestNormalizeCollection(t *testing.T) {
 	assert.Nil(t, err)
 	page := NormalizeCollectionPage(collections, coin.ETH, collectionsOwner)
 	assert.Equal(t, len(page), 1, "collections could not be normalized")
-	expected := blockatlas.CollectionPage{collectionsDst}
+	expected := blockatlas.CollectionPage{collectionDst}
 	assert.Equal(t, page, expected, "collections don't equal")
+}
+
+const collectibleSrc = `
+[
+  {
+    "token_id": "36185027886661312632864264926498481399258436586721613871817000674017446723584",
+    "image_url": "https://storage.opensea.io/0xfaafdc07907ff5120a76b34b731b278c38d6043c/36185027886661312632864264926498481399258436586721613871817000674017446723584-1565973585.jpg",
+    "image_preview_url": "https://storage.opensea.io/0xfaafdc07907ff5120a76b34b731b278c38d6043c-preview/36185027886661312632864264926498481399258436586721613871817000674017446723584-1565973586.png",
+    "name": "Aeonclipse Key",
+    "description": "Forged by unknown, mystical entities at the very beginning of the multiverse, countless Aeonclipse keys were taken by a group of Architects and dispersed through their creations—entire universes. The keys are said to unlock Primythical Chests, legendary vaults hiding immense treasures.",
+    "external_link": "",
+    "asset_contract": {
+      "address": "0xfaafdc07907ff5120a76b34b731b278c38d6043c",
+      "name": "Enjin",
+      "external_link": null,
+      "nft_version": null,
+      "schema_name": "ERC1155"
+    },
+    "permalink": "https://opensea.io/assets/0xfaafdc07907ff5120a76b34b731b278c38d6043c/36185027886661312632864264926498481399258436586721613871817000674017446723584"
+  }
+]
+`
+
+var collectibleCollectionDst = Collection{
+	Name:        "Enjin",
+	ImageUrl:    "https://storage.opensea.io/0x8562c38485b1e8ccd82e44f89823da76c98eb0ab-featured-1556588805.png",
+	Description: "Enjin assets are unique digital ERC1155 assets used in a variety of games in the Enjin multiverse.",
+	ExternalUrl: "https://enj1155.com",
+	Total:       big.NewInt(1),
+	Contracts: []PrimaryAssetContract{
+		{
+			Name:        "Enjin",
+			Address:     "0xfaafdc07907ff5120a76b34b731b278c38d6043c",
+			NftVersion:  "",
+			Symbol:      "",
+			Description: "",
+			Type:        "ERC1155",
+			Url:         "",
+		},
+	},
+}
+
+var collectibleDst = blockatlas.Collectible{
+	CollectionID:     "0xfaafdc07907ff5120a76b34b731b278c38d6043c",
+	TokenID:          "36185027886661312632864264926498481399258436586721613871817000674017446723584",
+	CategoryContract: "0xfaafdc07907ff5120a76b34b731b278c38d6043c",
+	ContractAddress:  "0xfaafdc07907ff5120a76b34b731b278c38d6043c",
+	Category:         "Enjin",
+	ImageUrl:         "https://storage.opensea.io/0xfaafdc07907ff5120a76b34b731b278c38d6043c-preview/36185027886661312632864264926498481399258436586721613871817000674017446723584-1565973586.png",
+	ExternalLink:     "",
+	ProviderLink:     "https://opensea.io/assets/0xfaafdc07907ff5120a76b34b731b278c38d6043c/36185027886661312632864264926498481399258436586721613871817000674017446723584",
+	Type:             "ERC1155",
+	Description:      "Forged by unknown, mystical entities at the very beginning of the multiverse, countless Aeonclipse keys were taken by a group of Architects and dispersed through their creations—entire universes. The keys are said to unlock Primythical Chests, legendary vaults hiding immense treasures.",
+	Coin:             60,
+	Name:             "Aeonclipse Key",
+}
+
+func TestNormalizeCollectible(t *testing.T) {
+	var collectible []Collectible
+	err := json.Unmarshal([]byte(collectibleSrc), &collectible)
+	assert.Nil(t, err)
+	page := NormalizeCollectiblePage(&collectibleCollectionDst, collectible, coin.ETH)
+	assert.Equal(t, len(page), 1, "collectible could not be normalized")
+	expected := blockatlas.CollectiblePage{collectibleDst}
+	assert.Equal(t, page, expected, "collectible don't equal")
 }
