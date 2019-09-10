@@ -1,19 +1,9 @@
 package blockatlas
 
-// Types of transaction metadata
-const (
-	TxTransfer            = "transfer"
-	TxNativeTokenTransfer = "native_token_transfer"
-	TxTokenTransfer       = "token_transfer"
-	TxCollectibleTransfer = "collectible_transfer"
-	TxTokenSwap           = "token_swap"
-	TxContractCall        = "contract_call"
-	TxAnyAction           = "any_action"
-)
-
 type Direction string
 type Status string
 type TokenType string
+type TransactionType string
 
 // Types of transaction statuses
 const (
@@ -28,6 +18,14 @@ const (
 	TokenTypeERC20 TokenType = "ERC20"
 	TokenTypeBEP2  TokenType = "BEP2"
 	TokenTypeTRC10 TokenType = "TRC10"
+
+	TxTransfer            TransactionType = "transfer"
+	TxNativeTokenTransfer TransactionType = "native_token_transfer"
+	TxTokenTransfer       TransactionType = "token_transfer"
+	TxCollectibleTransfer TransactionType = "collectible_transfer"
+	TxTokenSwap           TransactionType = "token_swap"
+	TxContractCall        TransactionType = "contract_call"
+	TxAnyAction           TransactionType = "any_action"
 )
 
 // Titles of AnyAction meta
@@ -81,7 +79,7 @@ type Tx struct {
 	// Transaction nonce or sequence
 	Sequence uint64 `json:"sequence,omitempty"`
 	// Type of metadata
-	Type string `json:"type"`
+	Type TransactionType `json:"type"`
 	// Input addresses
 	Inputs []TxOutput `json:"inputs,omitempty"`
 	// Output addresses

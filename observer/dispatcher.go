@@ -14,8 +14,8 @@ type Dispatcher struct {
 }
 
 type DispatchEvent struct {
-	Action string         `json:"action"`
-	Result *blockatlas.Tx `json:"result"`
+	Action blockatlas.TransactionType `json:"action"`
+	Result *blockatlas.Tx             `json:"result"`
 }
 
 func (d *Dispatcher) Run(events <-chan Event) {

@@ -1,6 +1,9 @@
 package ethereum
 
-import "math/big"
+import (
+	"github.com/trustwallet/blockatlas"
+	"math/big"
+)
 
 type Page struct {
 	Total uint  `json:"total"`
@@ -36,13 +39,13 @@ type Doc struct {
 }
 
 type Op struct {
-	TxID     string    `json:"transactionId"`
-	Contract *Contract `json:"contract"`
-	From     string    `json:"from"`
-	To       string    `json:"to"`
-	Type     string    `json:"type"`
-	Value    string    `json:"value"`
-	Coin     uint      `json:"coin"`
+	TxID     string                     `json:"transactionId"`
+	Contract *Contract                  `json:"contract"`
+	From     string                     `json:"from"`
+	To       string                     `json:"to"`
+	Type     blockatlas.TransactionType `json:"type"`
+	Value    string                     `json:"value"`
+	Coin     uint                       `json:"coin"`
 }
 
 type Contract struct {
