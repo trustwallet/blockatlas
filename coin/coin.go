@@ -2,7 +2,7 @@ package coin
 
 import (
 	"fmt"
-	"github.com/sirupsen/logrus"
+	"github.com/trustwallet/blockatlas/pkg/logger"
 	"gopkg.in/yaml.v2"
 	"os"
 )
@@ -30,7 +30,7 @@ func (c Coin) String() string {
 func Load(coinPath string) {
 	err := load(coinPath)
 	if err != nil {
-		logrus.WithError(err).Fatal("Failed to load coins at path: ", coinPath)
+		logger.Fatal("Failed to load coins at path", err, logger.Params{"coinPath": coinPath})
 	}
 }
 
