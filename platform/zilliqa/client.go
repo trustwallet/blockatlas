@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/mitchellh/mapstructure"
-	"github.com/sirupsen/logrus"
+	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/ybbus/jsonrpc"
 	"io/ioutil"
 	"net/http"
@@ -33,7 +33,7 @@ func (c *Client) GetBlockchainInfo() (*ChainInfo, error) {
 	var info *ChainInfo
 	err := c.RPCClient.CallFor(&info, "GetBlockchainInfo")
 	if err != nil {
-		logrus.WithError(err).Error("Zilliqa: Error read response body")
+		logger.Error(err, "Zilliqa: Error read response body")
 		return nil, err
 	}
 	return info, nil
@@ -85,14 +85,14 @@ func (c *Client) GetTxsOfAddress(address string) ([]Tx, error) {
 	req, _ := c.newRequest("GET", path)
 	res, err := c.HTTPClient.Do(req)
 	if err != nil {
-		logrus.WithError(err).Error("Zilliqa: Failed to get transactions for ", address)
+		logger.Error(err, "Zilliqa: Failed to get transactions", logger.Params{"address": address})
 		return nil, err
 	}
 	defer res.Body.Close()
 
 	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		logrus.WithError(err).Error("Zilliqa: Error read response body")
+		logger.Error(err, "Zilliqa: Error read response body")
 		return nil, err
 	}
 
@@ -103,7 +103,7 @@ func (c *Client) GetTxsOfAddress(address string) ([]Tx, error) {
 	txs := make([]Tx, 0)
 	err = json.Unmarshal(body, &txs)
 	if err != nil {
-		logrus.WithError(err).Error("Zilliqa: Error decode json transaction response")
+		logger.Error(err, "Zilliqa: Error decode json transaction response")
 		return nil, err
 	}
 

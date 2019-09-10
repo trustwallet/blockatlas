@@ -3,6 +3,7 @@ package logger
 import (
 	"fmt"
 	log "github.com/sirupsen/logrus"
+	"os"
 	"strings"
 )
 
@@ -10,6 +11,7 @@ type Params map[string]interface{}
 
 func InitLogger() {
 	log.SetFormatter(&log.TextFormatter{})
+	log.SetOutput(os.Stdout)
 	err := InitSentry()
 	if err != nil {
 		Error(err)

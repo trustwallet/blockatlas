@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/logger"
 	"net/http"
 )
 
@@ -31,7 +32,7 @@ func (d *Dispatcher) dispatch(event Event) {
 	}
 	txJson, err := json.Marshal(action)
 	if err != nil {
-		logrus.Panic(err)
+		logger.Panic(err)
 	}
 
 	webhooks := event.Subscription.Webhooks

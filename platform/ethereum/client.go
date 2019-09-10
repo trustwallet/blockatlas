@@ -3,8 +3,8 @@ package ethereum
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/logger"
 	"net/http"
 	"net/url"
 )
@@ -38,7 +38,7 @@ func (c *Client) getTxs(uri string) (*Page, error) {
 
 	res, err := c.HTTPClient.Do(req)
 	if err != nil {
-		logrus.WithError(err).Error("Ethereum/Trust Ray: Failed to get transactions")
+		logger.Error(err, "Ethereum/Trust Ray: Failed to get transactions")
 		return nil, blockatlas.ErrSourceConn
 	}
 	defer res.Body.Close()
@@ -94,7 +94,7 @@ func (c *Client) GetTokens(address string) (*TokenPage, error) {
 
 	res, err := http.Get(path)
 	if err != nil {
-		logrus.WithError(err).Error("Ethereum/Trust Ray: Failed to get my tokens")
+		logger.Error(err, "Ethereum/Trust Ray: Failed to get my tokens")
 		return nil, blockatlas.ErrSourceConn
 	}
 	defer res.Body.Close()

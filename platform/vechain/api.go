@@ -1,10 +1,10 @@
 package vechain
 
 import (
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
+	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/util"
 	"strings"
 	"sync"
@@ -109,11 +109,12 @@ func (p *Platform) getTransactionReceipt(ids []string) chan *TransferReceipt {
 			defer sem.Release()
 			receipt, err := p.client.GetTransactionReceipt(id)
 			if err != nil {
-				logrus.WithError(err).WithField("platform", "vechain").
-					Warnf("Failed to get tx receipt for %s", id)
-			} else {
-				receiptsChan <- receipt
+				logger.Error(err, "Vechain: Failed to get tx receipt", logger.Params{
+					"id": id,
+				})
+				return
 			}
+			receiptsChan <- receipt
 		}(id)
 	}
 
@@ -136,11 +137,12 @@ func (p *Platform) getTransactions(ids []string) chan *NativeTransaction {
 			defer sem.Release()
 			receipt, err := p.client.GetTransactionByID(id)
 			if err != nil {
-				logrus.WithError(err).WithField("platform", "vechain").
-					Warnf("Failed to get transaction for %s", id)
-			} else {
-				receiptsChan <- receipt
+				logger.Error(err, "Vechain: Failed to get transaction", logger.Params{
+					"id": id,
+				})
+				return
 			}
+			receiptsChan <- receipt
 		}(id)
 	}
 

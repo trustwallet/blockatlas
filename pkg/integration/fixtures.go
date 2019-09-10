@@ -5,8 +5,8 @@ package integration
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas/coin"
+	"github.com/trustwallet/blockatlas/pkg/logger"
 	"io/ioutil"
 	"path/filepath"
 	"strings"
@@ -27,11 +27,11 @@ func init() {
 	var err error
 	f, err = getFixtures()
 	if err != nil {
-		logrus.Panic(err)
+		logger.Panic(err)
 	}
 	e, err = getExcludeApis()
 	if err != nil {
-		logrus.Panic(err)
+		logger.Panic(err)
 	}
 }
 

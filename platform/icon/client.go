@@ -3,8 +3,8 @@ package icon
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/logger"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -26,7 +26,7 @@ func (c *Client) GetAddressTransactions(address string) ([]Tx, error) {
 	httpRes, err := c.HTTPClient.Get(uri)
 
 	if err != nil {
-		logrus.WithError(err).Errorf("ICON: Failed to get transactions for address %s", address)
+		logger.Error(err, "ICON: Failed to get transactions for address", logger.Params{"address": address})
 		return nil, err
 	}
 	defer httpRes.Body.Close()

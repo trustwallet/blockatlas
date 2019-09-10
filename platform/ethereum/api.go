@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
+	"github.com/trustwallet/blockatlas/pkg/logger"
 	"math/big"
 	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
@@ -166,7 +166,7 @@ func calcFee(gasPrice string, gasUsed string) string {
 
 func apiError(c *gin.Context, err error) bool {
 	if err != nil {
-		logrus.WithError(err).Errorf("Unhandled error")
+		logger.Error(err, "Unhandled error")
 		c.AbortWithStatus(http.StatusInternalServerError)
 		return true
 	}

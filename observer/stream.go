@@ -5,6 +5,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/util"
 	"sync"
 	"sync/atomic"
@@ -31,7 +32,7 @@ func (s *Stream) Execute(ctx context.Context) <-chan *blockatlas.Block {
 	s.log = logrus.WithField("platform", cn.Handle)
 	conns := viper.GetInt("observer.stream_conns")
 	if conns == 0 {
-		logrus.Fatal("observer.stream_conns is 0")
+		logger.Fatal("observer.stream_conns is 0")
 	}
 	s.semaphore = util.NewSemaphore(conns)
 	c := make(chan *blockatlas.Block)
