@@ -1,16 +1,5 @@
 package blockatlas
 
-// Types of transaction metadata
-const (
-	TxTransfer            = "transfer"
-	TxNativeTokenTransfer = "native_token_transfer"
-	TxTokenTransfer       = "token_transfer"
-	TxCollectibleTransfer = "collectible_transfer"
-	TxTokenSwap           = "token_swap"
-	TxContractCall        = "contract_call"
-	TxAnyAction           = "any_action"
-)
-
 type Direction string
 type Status string
 type TokenType string
@@ -29,6 +18,14 @@ const (
 	TokenTypeERC20 TokenType = "ERC20"
 	TokenTypeBEP2  TokenType = "BEP2"
 	TokenTypeTRC10 TokenType = "TRC10"
+
+	TxTransfer            TransactionType = "transfer"
+	TxNativeTokenTransfer TransactionType = "native_token_transfer"
+	TxTokenTransfer       TransactionType = "token_transfer"
+	TxCollectibleTransfer TransactionType = "collectible_transfer"
+	TxTokenSwap           TransactionType = "token_swap"
+	TxContractCall        TransactionType = "contract_call"
+	TxAnyAction           TransactionType = "any_action"
 )
 
 // Titles of AnyAction meta

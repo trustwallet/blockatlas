@@ -14,8 +14,8 @@ type Dispatcher struct {
 }
 
 type DispatchEvent struct {
-	Action string         `json:"action"`
-	Result *blockatlas.Tx `json:"result"`
+	Action blockatlas.TransactionType `json:"action"`
+	Result *blockatlas.Tx             `json:"result"`
 }
 
 func (d *Dispatcher) Run(events <-chan Event) {
@@ -26,7 +26,7 @@ func (d *Dispatcher) Run(events <-chan Event) {
 
 func (d *Dispatcher) dispatch(event Event) {
 	action := DispatchEvent{
-		Action: string(event.Tx.Type),
+		Action: event.Tx.Type,
 		Result: event.Tx,
 	}
 	txJson, err := json.Marshal(action)
