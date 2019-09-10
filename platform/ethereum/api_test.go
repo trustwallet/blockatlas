@@ -359,13 +359,23 @@ const collectionsSrc = `
     "description": "This is the collection of owners of EnjinCoin",
     "external_url": null,
     "owned_asset_count": 20000000000000000000
+  },
+  {
+    "primary_asset_contracts": [],
+    "name": "Dissolution",
+    "slug": "dissolution",
+    "image_url": "https://storage.opensea.io/dissolution-1566503734.png",
+    "description": "tactical FPS combat in a cutthroat universe ravaged by an ongoing war of extinction between humanity and AI. Fight for loot backed by blockchain in competitive game modes.",
+    "external_url": "https://dissolution.online",
+    "owned_asset_count": 20
   }
 ]
 `
 
-var collectionDst = blockatlas.Collection{
+var collection1Dst = blockatlas.Collection{
 	Name:            "Enjin",
 	Symbol:          "",
+	Slug:            "enjin",
 	ImageUrl:        "https://storage.opensea.io/0x8562c38485b1e8ccd82e44f89823da76c98eb0ab-featured-1556588805.png",
 	Description:     "Enjin assets are unique digital ERC1155 assets used in a variety of games in the Enjin multiverse.",
 	ExternalLink:    "https://enj1155.com",
@@ -377,13 +387,28 @@ var collectionDst = blockatlas.Collection{
 	Type:            "ERC1155",
 }
 
+var collection2Dst = blockatlas.Collection{
+	Name:            "Dissolution",
+	Symbol:          "",
+	Slug:            "dissolution",
+	ImageUrl:        "https://storage.opensea.io/dissolution-1566503734.png",
+	Description:     "tactical FPS combat in a cutthroat universe ravaged by an ongoing war of extinction between humanity and AI. Fight for loot backed by blockchain in competitive game modes.",
+	ExternalLink:    "https://dissolution.online",
+	Total:           20,
+	CategoryAddress: "",
+	Address:         "0x0875BCab22dE3d02402bc38aEe4104e1239374a7",
+	Version:         "",
+	Coin:            60,
+	Type:            "ERC1155",
+}
+
 func TestNormalizeCollection(t *testing.T) {
 	var collections []Collection
 	err := json.Unmarshal([]byte(collectionsSrc), &collections)
 	assert.Nil(t, err)
 	page := NormalizeCollectionPage(collections, coin.ETH, collectionsOwner)
-	assert.Equal(t, len(page), 1, "collections could not be normalized")
-	expected := blockatlas.CollectionPage{collectionDst}
+	assert.Equal(t, len(page), 2, "collections could not be normalized")
+	expected := blockatlas.CollectionPage{collection1Dst, collection2Dst}
 	assert.Equal(t, page, expected, "collections don't equal")
 }
 

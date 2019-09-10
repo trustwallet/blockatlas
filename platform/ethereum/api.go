@@ -223,22 +223,29 @@ func NormalizeCollectionPage(collections []Collection, coinIndex uint, owner str
 }
 
 func NormalizeCollection(c Collection, coinIndex uint, owner string) blockatlas.Collection {
-	description := c.Contracts[0].Description
-	if len(description) == 0 {
-		description = c.Description
+	var symbol, address, version = "", "", ""
+	cType := "ERC1155"
+	description := c.Description
+	if len(c.Contracts) > 0 {
+		description = getValidParameter(c.Contracts[0].Description, description)
+		symbol = getValidParameter(c.Contracts[0].Symbol, symbol)
+		address = getValidParameter(c.Contracts[0].Address, address)
+		version = getValidParameter(c.Contracts[0].NftVersion, version)
+		cType = getValidParameter(c.Contracts[0].Type, cType)
 	}
 	return blockatlas.Collection{
 		Name:            c.Name,
-		Symbol:          c.Contracts[0].Symbol,
+		Symbol:          symbol,
+		Slug:            c.Slug,
 		ImageUrl:        c.ImageUrl,
 		Description:     description,
 		ExternalLink:    c.ExternalUrl,
 		Total:           int(c.Total.Int64()),
-		CategoryAddress: c.Contracts[0].Address,
+		CategoryAddress: address,
 		Address:         owner,
-		Version:         c.Contracts[0].NftVersion,
+		Version:         version,
 		Coin:            coinIndex,
-		Type:            c.Contracts[0].Type,
+		Type:            cType,
 	}
 }
 
@@ -254,17 +261,24 @@ func NormalizeCollectiblePage(c *Collection, srcPage []Collectible, coinIndex ui
 }
 
 func NormalizeCollectible(c *Collection, a Collectible, coinIndex uint) blockatlas.Collectible {
+	var address, externalLink = "", ""
+	cType := "ERC1155"
+	if len(c.Contracts) > 0 {
+		address = getValidParameter(c.Contracts[0].Address, address)
+		cType = getValidParameter(c.Contracts[0].Type, cType)
+	}
+	externalLink = getValidParameter(a.ExternalLink, a.AssetContract.ExternalLink)
 	return blockatlas.Collectible{
-		CollectionID:     c.Contracts[0].Address,
-		ContractAddress:  c.Contracts[0].Address,
+		CollectionID:     address,
+		ContractAddress:  address,
 		TokenID:          a.TokenId,
 		CategoryContract: a.AssetContract.Address,
 		Name:             a.Name,
 		Category:         c.Name,
 		ImageUrl:         a.ImagePreviewUrl,
 		ProviderLink:     a.Permalink,
-		ExternalLink:     GetExternalLink(a),
-		Type:             c.Contracts[0].Type,
+		ExternalLink:     externalLink,
+		Type:             cType,
 		Description:      a.Description,
 		Coin:             coinIndex,
 	}
@@ -276,16 +290,6 @@ func (p *Platform) GetTokenListByAddress(address string) (blockatlas.TokenPage, 
 		return nil, err
 	}
 	return NormalizeTokens(account.Docs, *p), nil
-}
-
-func GetExternalLink(c Collectible) string {
-	if c.ExternalLink != "" {
-		return c.ExternalLink
-	} else if c.AssetContract.ExternalLink != "" {
-		return c.AssetContract.ExternalLink
-	} else {
-		return ""
-	}
 }
 
 // NormalizeToken converts a Ethereum token into the generic model
@@ -312,4 +316,11 @@ func NormalizeTokens(srcTokens []Token, p Platform) (tokenPage []blockatlas.Toke
 		tokenPage = append(tokenPage, token)
 	}
 	return
+}
+
+func getValidParameter(first, second string) string {
+	if len(first) > 0 {
+		return first
+	}
+	return second
 }
