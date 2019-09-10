@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/spf13/cobra"
 	"github.com/trustwallet/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/util"
 	"net/http"
 	"os"
@@ -56,7 +57,7 @@ func run(_ *cobra.Command, args []string) {
 
 	supportedEndpoints, err := supportedEndpoints()
 	if err != nil {
-		logrus.WithError(err).Error("Failed to get supported platforms")
+		logger.Error(err, "Failed to get supported platforms")
 		os.Exit(1)
 	}
 
@@ -65,7 +66,7 @@ func run(_ *cobra.Command, args []string) {
 		supported[ns] = true
 	}
 
-	logrus.Infof("Running test with %d goroutines", concurrency)
+	logger.Info("Running goroutines tests", logger.Params{"goroutines": concurrency})
 
 	var wg sync.WaitGroup
 	sem := util.NewSemaphore(concurrency)
@@ -84,8 +85,7 @@ func run(_ *cobra.Command, args []string) {
 		}
 		tests = append(tests, c)
 	}
-
-	logrus.Infof("%d platforms to test", len(supportedEndpoints))
+	logger.Info("Platforms to test", logger.Params{"count": len(supportedEndpoints)})
 
 	wg.Add(len(tests))
 	for _, c := range tests {
@@ -96,9 +96,9 @@ func run(_ *cobra.Command, args []string) {
 
 	failed := atomic.LoadInt32(&failedFlag)
 	if failed == 1 {
-		logrus.Fatal("Test failed")
+		logger.Fatal("Test failed")
 	} else {
-		logrus.Info("Test passed")
+		logger.Info("Test passed")
 	}
 }
 

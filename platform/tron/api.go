@@ -1,10 +1,10 @@
 package tron
 
 import (
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
+	"github.com/trustwallet/blockatlas/pkg/logger"
 	"net/http"
 	"sync"
 )
@@ -103,7 +103,7 @@ func (p *Platform) GetTokenListByAddress(address string) (blockatlas.TokenPage, 
 			defer wg.Done()
 			info, err := p.client.GetTokenInfo(id)
 			if err != nil {
-				logrus.WithError(err)
+				logger.Error("GetTokenInfo", err)
 			}
 			tokensInfoChan <- info
 		}(id)

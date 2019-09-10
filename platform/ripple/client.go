@@ -3,8 +3,8 @@ package ripple
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/logger"
 	"net/http"
 	"net/url"
 )
@@ -21,7 +21,7 @@ func (c *Client) GetTxsOfAddress(address string) ([]Tx, error) {
 		200)
 	httpRes, err := c.HTTPClient.Get(uri)
 	if err != nil {
-		logrus.WithError(err).Error("Ripple: Failed to get transactions")
+		logger.Error(err, "Ripple: Failed to get transactions")
 		return nil, blockatlas.ErrSourceConn
 	}
 

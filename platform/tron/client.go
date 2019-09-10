@@ -3,8 +3,8 @@ package tron
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/logger"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -25,7 +25,7 @@ func (c *Client) GetTxsOfAddress(address string) ([]Tx, error) {
 		}.Encode())
 	httpRes, err := c.HTTPClient.Get(uri)
 	if err != nil {
-		logrus.WithError(err).Error("Tron: Failed to get transactions")
+		logger.Error(err, "Tron: Failed to get transactions")
 		return nil, blockatlas.ErrSourceConn
 	}
 	defer httpRes.Body.Close()
@@ -33,12 +33,12 @@ func (c *Client) GetTxsOfAddress(address string) ([]Tx, error) {
 	var res Page
 	err = json.NewDecoder(httpRes.Body).Decode(&res)
 	if err != nil {
-		logrus.WithError(err).Error("Tron: Failed to decode API response")
+		logger.Error(err, "Tron: Failed to decode API response")
 		return nil, blockatlas.ErrSourceConn
 	}
 
 	if !res.Success {
-		logrus.WithField("error", res.Error).Error("Tron: API returned error")
+		logger.Error("Tron: API returned error", res.Error)
 		return nil, blockatlas.ErrSourceConn
 	}
 
@@ -50,7 +50,7 @@ func (c *Client) GetAccountMetadata(address string) (*Accounts, error) {
 
 	res, err := c.HTTPClient.Get(uri)
 	if err != nil {
-		logrus.WithError(err).Error("TRON: Failed to get account tokens")
+		logger.Error(err, "TRON: Failed to get account tokens")
 		return nil, blockatlas.ErrSourceConn
 	}
 	defer res.Body.Close()
@@ -65,7 +65,7 @@ func (c *Client) GetTokenInfo(id string) (*Asset, error) {
 
 	res, err := c.HTTPClient.Get(uri)
 	if err != nil {
-		logrus.WithError(err).Errorf("TRON: Failed to get token %s info", id)
+		logger.Error(err, "TRON: Failed to get token info", logger.Params{"id": id})
 		return nil, blockatlas.ErrSourceConn
 	}
 	defer res.Body.Close()

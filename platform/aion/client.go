@@ -3,7 +3,7 @@ package aion
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/sirupsen/logrus"
+	"github.com/trustwallet/blockatlas/pkg/logger"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -24,7 +24,7 @@ func (c *Client) GetTxsOfAddress(address string, num int) (*TxPage, error) {
 
 	res, err := c.HTTPClient.Get(uri)
 	if err != nil {
-		logrus.WithError(err).Errorf("Aion: Failed to get transactions for address %s", address)
+		logger.Error(err, "Aion: Failed to get transactions for address", logger.Params{"address": address})
 	}
 	defer res.Body.Close()
 

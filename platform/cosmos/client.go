@@ -1,8 +1,8 @@
 package cosmos
 
 import (
-	"github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/logger"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -36,7 +36,7 @@ func (c *Client) GetAddrTxes(address string, tag string) (txs []Tx, err error) {
 
 	err = c.Request.Get(&txs, c.URL, "txs", query)
 	if err != nil {
-		logrus.WithError(err).Errorf("Cosmos: Failed to get transactions for address %s", address)
+		logger.Error(err, "Cosmos: Failed to get transactions for address", logger.Params{"address": address})
 		return nil, err
 	}
 	return txs, err
@@ -50,7 +50,7 @@ func (c *Client) GetValidators() (validators []Validator, err error) {
 	}
 	err = c.Request.Get(&validators, c.URL, "staking/validators", query)
 	if err != nil {
-		logrus.WithError(err).Errorf("Cosmos: Failed to get validators for address")
+		logger.Error(err, "Cosmos: Failed to get validators for address")
 		return validators, err
 	}
 	return validators, err

@@ -1,8 +1,8 @@
 package nimiq
 
 import (
-	"github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/ybbus/jsonrpc"
 )
 
@@ -21,7 +21,7 @@ func (c *Client) GetTxsOfAddress(address string, count int) (txs []Tx, err error
 		if jErr.Code == 1 {
 			return nil, blockatlas.ErrInvalidAddr
 		} else {
-			logrus.WithError(err).Error("Nimiq: Failed to get transactions")
+			logger.Error(err, "Nimiq: Failed to get transactions")
 			return nil, blockatlas.ErrSourceConn
 		}
 	} else if err != nil {

@@ -2,11 +2,11 @@ package observer
 
 import (
 	"context"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/observer"
 	observerStorage "github.com/trustwallet/blockatlas/observer/storage"
+	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/platform"
 	"sync"
 	"time"
@@ -21,11 +21,11 @@ var Cmd = cobra.Command{
 
 func run(_ *cobra.Command, _ []string) {
 	if observerStorage.App == nil {
-		logrus.Fatal("Observer is not enabled")
+		logger.Fatal("Observer is not enabled")
 	}
 
 	if len(platform.BlockAPIs) == 0 {
-		logrus.Fatal("No APIs to observe")
+		logger.Fatal("No APIs to observe")
 	}
 
 	minInterval := viper.GetDuration("observer.min_poll")
@@ -45,8 +45,7 @@ func run(_ *cobra.Command, _ []string) {
 		var backlogCount int
 		if coin.BlockTime == 0 {
 			backlogCount = 50
-			logrus.WithField("coin", coin.ID).
-				Warning("Unknown block time")
+			logger.Warn("Unknown block time", logger.Params{"coin": coin.ID})
 		} else {
 			backlogCount = int(backlogTime / blockTime)
 		}
@@ -72,14 +71,14 @@ func run(_ *cobra.Command, _ []string) {
 			wg.Done()
 		}()
 
-		logrus.WithFields(logrus.Fields{
+		logger.Info("Observing", logger.Params{
 			"coin":     coin,
 			"interval": pollInterval,
 			"backlog":  backlogCount,
-		}).Info("Observing")
+		})
 	}
 
 	wg.Wait()
 
-	logrus.Info("Exiting cleanly")
+	logger.Info("Exiting cleanly")
 }

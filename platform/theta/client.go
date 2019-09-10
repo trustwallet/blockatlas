@@ -3,7 +3,7 @@ package theta
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/sirupsen/logrus"
+	"github.com/trustwallet/blockatlas/pkg/logger"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -23,20 +23,20 @@ func (c *Client) FetchAddressTransactions(address string) (txs []Tx, err error) 
 
 	resp, err := c.HTTPClient.Get(uri)
 	if err != nil {
-		logrus.WithError(err).Error("THETA: Failed HTTP get transactions")
+		logger.Error(err, "THETA: Failed HTTP get transactions")
 		return nil, err
 	}
 	defer resp.Body.Close()
 
 	body, errBody := ioutil.ReadAll(resp.Body)
 	if errBody != nil {
-		logrus.WithError(err).Error("THETA: Error decode transaction response body")
+		logger.Error(err, "THETA: Error decode transaction response body")
 		return nil, err
 	}
 
 	errUnm := json.Unmarshal(body, &transfers)
 	if errUnm != nil {
-		logrus.WithError(err).Error("THETA: Error Unmarshal transaction response body")
+		logger.Error(err, "THETA: Error Unmarshal transaction response body")
 		return nil, err
 	}
 

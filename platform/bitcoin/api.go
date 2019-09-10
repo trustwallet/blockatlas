@@ -2,13 +2,13 @@ package bitcoin
 
 import (
 	"fmt"
+	"github.com/trustwallet/blockatlas/pkg/logger"
 	"net/http"
 	"strconv"
 	"sync"
 
 	mapset "github.com/deckarep/golang-set"
 	"github.com/gin-gonic/gin"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
@@ -24,7 +24,7 @@ func UtxoPlatform(index uint) *Platform {
 	platform := &Platform{CoinIndex: index}
 	err := platform.Init()
 	if err != nil {
-		logrus.Panicf("UtxoPlatform index %d error: %s", index, err)
+		logger.Panic("UtxoPlatform index error", err, logger.Params{"index": index})
 	}
 	return platform
 }

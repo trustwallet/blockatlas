@@ -1,8 +1,8 @@
 package config
 
 import (
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+	"github.com/trustwallet/blockatlas/pkg/logger"
 	"strings"
 )
 
@@ -20,21 +20,20 @@ func LoadConfig(confPath string) {
 	if confPath == "" {
 		if err := viper.ReadInConfig(); err != nil {
 			if _, ok := err.(viper.ConfigFileNotFoundError); ok {
-				logrus.Info("Config file was not supplied")
+				logger.Info("Config file was not supplied")
 			} else {
-				logrus.Fatal("Issue reading config", err)
+				logger.Fatal("Issue reading config", err)
 			}
 		}
-
-		logrus.Info("Viper using config : ", viper.ConfigFileUsed())
+		logger.Info("Viper config", logger.Params{"config_file": viper.ConfigFileUsed()})
 	} else {
 		viper.SetConfigFile(confPath)
 		err := viper.ReadInConfig()
 		if err != nil {
-			logrus.WithError(err).Error("Failed to read config")
+			logger.Error("Failed to read config", err,
+				logger.Params{"config_file": confPath})
 		} else {
-			logrus.WithField("config_file", confPath).Info("Using config file")
+			logger.Info("Using config file", logger.Params{"config_file": confPath})
 		}
 	}
 }
-
