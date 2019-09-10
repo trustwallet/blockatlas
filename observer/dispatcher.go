@@ -26,7 +26,7 @@ func (d *Dispatcher) Run(events <-chan Event) {
 
 func (d *Dispatcher) dispatch(event Event) {
 	action := DispatchEvent{
-		Action: event.Tx.Type,
+		Action: string(event.Tx.Type),
 		Result: event.Tx,
 	}
 	txJson, err := json.Marshal(action)

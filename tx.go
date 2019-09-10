@@ -14,6 +14,7 @@ const (
 type Direction string
 type Status string
 type TokenType string
+type TransactionType string
 
 // Types of transaction statuses
 const (
@@ -81,7 +82,7 @@ type Tx struct {
 	// Transaction nonce or sequence
 	Sequence uint64 `json:"sequence,omitempty"`
 	// Type of metadata
-	Type string `json:"type"`
+	Type TransactionType `json:"type"`
 	// Input addresses
 	Inputs []TxOutput `json:"inputs,omitempty"`
 	// Output addresses
