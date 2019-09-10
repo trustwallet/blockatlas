@@ -110,7 +110,7 @@ func NormalizeTx(srcTx *Tx, txType string) (tx blockatlas.Tx, ok bool) {
 	return tx, false
 }
 
-func filterTx(src []Tx, token string, txType string) []Tx {
+func filterTx(src []Tx, token, txType string) []Tx {
 	return funk.Filter(src, func(tx Tx) bool {
 		return tx.Asset == token && tx.Type == txType
 	}).([]Tx)

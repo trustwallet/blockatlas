@@ -25,7 +25,7 @@ type TxAPI interface {
 // TokenTxAPI provides token transaction lookups
 type TokenTxAPI interface {
 	Platform
-	GetTokenTxsByAddress(address string, token string) (TxPage, error)
+	GetTokenTxsByAddress(address, token string) (TxPage, error)
 }
 
 // TokenAPI provides token lookups
