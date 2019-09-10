@@ -1,3 +1,14 @@
 [
-
+  "/v2/classic/collections/:owner",
+  "/v2/callisto/collections/:owner",
+  "/v2/poa/collections/:owner",
+  "/v2/thundertoken/collections/:owner",
+  "/v2/tomochain/collections/:owner",
+  "/v2/gochain/collections/:owner",
+  "/v2/classic/collections/:owner/collection/:collection_id",
+  "/v2/callisto/collections/:owner/collection/:collection_id",
+  "/v2/poa/collections/:owner/collection/:collection_id",
+  "/v2/thundertoken/collections/:owner/collection/:collection_id",
+  "/v2/tomochain/collections/:owner/collection/:collection_id",
+  "/v2/gochain/collections/:owner/collection/:collection_id"
 ]
