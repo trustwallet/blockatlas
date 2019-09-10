@@ -15,13 +15,14 @@ type Client struct {
 	BaseURL    string
 }
 
-func (c *Client) GetTxsOfAddress(address string) ([]Tx, error) {
+func (c *Client) GetTxsOfAddress(address, token string) ([]Tx, error) {
 	uri := fmt.Sprintf("%s/accounts/%s/transactions?%s",
 		c.BaseURL,
 		url.PathEscape(address),
 		url.Values{
 			"only_confirmed": {"true"},
 			"limit":          {strconv.Itoa(blockatlas.TxPerPage)},
+			"token_id":       {token},
 		}.Encode())
 	httpRes, err := c.HTTPClient.Get(uri)
 	if err != nil {
