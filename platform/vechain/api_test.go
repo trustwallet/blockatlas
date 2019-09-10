@@ -183,8 +183,8 @@ func TestNormalizeTransfer(t *testing.T) {
 		}
 
 		var readyTx blockatlas.Tx
-		normTx, ok := NormalizeTransfer(&receipt, &clause)
-		if !ok {
+		normTx, err := NormalizeTransfer(&receipt, &clause)
+		if err != nil {
 			t.Fatal("VeChain: Can't normalize transfer", readyTx)
 		}
 		readyTx = normTx
@@ -232,8 +232,8 @@ func TestNormalizeTokenTransfer(t *testing.T) {
 		}
 
 		var readyTx blockatlas.Tx
-		normTx, ok := NormalizeTokenTransfer(&tt, &receipt)
-		if !ok {
+		normTx, err := NormalizeTokenTransfer(&tt, &receipt)
+		if err != nil {
 			t.Fatal("VeChain: Can't normalize token transfer", readyTx)
 		}
 		readyTx = normTx
@@ -274,7 +274,8 @@ func TestNormalizeTransaction(t *testing.T) {
 
 		var readyTxs []blockatlas.Tx
 
-		readyTxs = append(readyTxs, NormalizeTransaction(&transaction)...)
+		ntxs := NormalizeBlockTransactions(&transaction)
+		readyTxs = append(readyTxs, ntxs...)
 
 		actual, err := json.Marshal(&readyTxs)
 		if err != nil {
