@@ -53,7 +53,7 @@ func Warn(args ...interface{}) {
 }
 
 func getMessage(args ...interface{}) *Msg {
-	msg := &Msg{}
+	msg := &Msg{Params: make(Params)}
 	var generic []string
 	var message []string
 	for _, arg := range args {
@@ -63,9 +63,9 @@ func getMessage(args ...interface{}) *Msg {
 		case string:
 			message = append(message, arg)
 		case Params:
-			msg.Params = arg
+			appendMap(msg.Params, arg)
 		case map[string]interface{}:
-			msg.Params = arg
+			appendMap(msg.Params, arg)
 		default:
 			generic = append(generic, fmt.Sprintf("%v", arg))
 		}
@@ -77,4 +77,10 @@ func getMessage(args ...interface{}) *Msg {
 		msg.Params["objects"] = strings.Join(generic[:], " | ")
 	}
 	return msg
+}
+
+func appendMap(root map[string]interface{}, tmp map[string]interface{}) {
+	for k, v := range tmp {
+		root[k] = v
+	}
 }

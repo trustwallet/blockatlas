@@ -17,10 +17,14 @@ var (
 )
 
 func (e *Err) Error() string {
-	if len(e.Params) > 0 {
-		return fmt.Sprintf("%s: %s\n%s", e.Message, e.Err, e.Params)
+	msg := e.Message
+	if e.Err != nil {
+		msg = fmt.Sprintf("%s: %s", msg, e.Err)
 	}
-	return fmt.Sprintf("%s: %s", e.Message, e.Err)
+	if len(e.Params) > 0 {
+		msg = fmt.Sprintf("%s - %s", msg, e.Params)
+	}
+	return msg
 }
 
 func Error(args ...interface{}) {
@@ -28,7 +32,7 @@ func Error(args ...interface{}) {
 		Panic("call to logger.Error with no arguments")
 	}
 	e := getError(args...)
-	log.WithFields(e.Params).Error(e)
+	log.WithFields(e.Params).Error(e.Message)
 	SendError(e)
 }
 
@@ -38,7 +42,7 @@ func Fatal(args ...interface{}) {
 	}
 	e := getError(args...)
 	SendFatal(e)
-	log.WithFields(e.Params).Fatal(e)
+	log.WithFields(e.Params).Fatal(e.Message)
 }
 
 func Panic(args ...interface{}) {
@@ -47,11 +51,11 @@ func Panic(args ...interface{}) {
 	}
 	e := getError(args...)
 	SendFatal(e)
-	log.WithFields(e.Params).Panic(e)
+	log.WithFields(e.Params).Panic(e.Message)
 }
 
 func getError(args ...interface{}) *Err {
-	e := &Err{}
+	e := &Err{Params: make(Params)}
 	var message []string
 	for _, arg := range args {
 		switch arg := arg.(type) {
@@ -62,9 +66,9 @@ func getError(args ...interface{}) *Err {
 		case error:
 			e.Err = arg
 		case Params:
-			e.Params = arg
+			appendMap(e.Params, arg)
 		case map[string]interface{}:
-			e.Params = arg
+			appendMap(e.Params, arg)
 		default:
 			continue
 		}
