@@ -48,17 +48,20 @@ func (c *Client) GetTxsInBlock(number int64) ([]*ActionInfo, error) {
 }
 
 func (c *Client) GetTxsOfAddress(address string, start int64) (*Response, error) {
-	var response Response
-	err := c.Request.Get(&response, c.URL, "actions/addr/"+address, url.Values{
-		"start": {strconv.FormatInt(start, 10)},
-		"count": {strconv.FormatInt(blockatlas.TxPerPage, 10)},
-	})
-
+	p := fmt.Sprintf("actions/addr/%s", address)
+	s := strconv.FormatInt(start, 10)
+	count := strconv.FormatInt(blockatlas.TxPerPage, 10)
+	q := url.Values{
+		"start": {s},
+		"count": {count},
+	}
+	var resp Response
+	err := c.Request.Get(&resp, c.URL, p, q)
 	if err != nil {
 		logrus.WithError(err).Errorf("IOTEX: Failed to get transactions for address %s", address)
 		return nil, blockatlas.ErrSourceConn
 	}
-	return &response, err
+	return &resp, err
 }
 
 func (c *Client) GetAddressTotalTransactions(address string) (int64, error) {
