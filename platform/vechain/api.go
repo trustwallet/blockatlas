@@ -1,6 +1,7 @@
 package vechain
 
 import (
+	"fmt"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
@@ -45,12 +46,12 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	transactionsChan := p.getTransactions(block.Transactions)
 
 	txs := make([]blockatlas.Tx, 0)
 	for t := range transactionsChan {
-		txs = append(txs, NormalizeTransaction(t)...)
+		ntxs := NormalizeBlockTransactions(t)
+		txs = append(txs, ntxs...)
 	}
 
 	return &blockatlas.Block{
@@ -68,12 +69,15 @@ func (p *Platform) GetTokenTxsByAddress(address string, token string) (blockatla
 	if strings.ToLower(token) == GasContract {
 		return p.getThorTxsByAddress(address)
 	} else {
-		return nil, nil
+		return nil, fmt.Errorf("vechain invalid token %s", token)
 	}
 }
 
 func (p *Platform) getThorTxsByAddress(address string) ([]blockatlas.Tx, error) {
-	sourceTxs, _ := p.client.GetTokenTransfers(address)
+	sourceTxs, err := p.client.GetTokenTransfers(address)
+	if err != nil {
+		return nil, err
+	}
 
 	var ids []string
 	for _, tx := range sourceTxs.TokenTransfers {
@@ -88,9 +92,15 @@ func (p *Platform) getThorTxsByAddress(address string) ([]blockatlas.Tx, error) 
 		}
 
 		receipt := findTransferReceiptByTxID(receiptsChan, t.TxID)
-		if tx, ok := NormalizeTokenTransfer(&t, &receipt); ok {
-			txs = append(txs, tx)
+		tx, err := NormalizeTokenTransfer(&t, receipt)
+		if err != nil {
+			logger.Error(err, "getTxsByAddress clause error", logger.Params{
+				"receipt":  receipt,
+				"transfer": t,
+			})
+			continue
 		}
+		txs = append(txs, tx)
 	}
 
 	return txs, nil
@@ -98,7 +108,6 @@ func (p *Platform) getThorTxsByAddress(address string) ([]blockatlas.Tx, error) 
 
 func (p *Platform) getTransactionReceipt(ids []string) chan *TransferReceipt {
 	receiptsChan := make(chan *TransferReceipt, len(ids))
-
 	sem := util.NewSemaphore(16)
 	var wg sync.WaitGroup
 	wg.Add(len(ids))
@@ -117,7 +126,6 @@ func (p *Platform) getTransactionReceipt(ids []string) chan *TransferReceipt {
 			receiptsChan <- receipt
 		}(id)
 	}
-
 	wg.Wait()
 	close(receiptsChan)
 
@@ -152,18 +160,13 @@ func (p *Platform) getTransactions(ids []string) chan *NativeTransaction {
 	return receiptsChan
 }
 
-func findTransferReceiptByTxID(receiptsChan chan *TransferReceipt, txID string) TransferReceipt {
-
-	var transferReceipt TransferReceipt
-
+func findTransferReceiptByTxID(receiptsChan chan *TransferReceipt, txID string) *TransferReceipt {
 	for receipt := range receiptsChan {
 		if receipt.ID == txID {
-			transferReceipt = *receipt
-			break
+			return receipt
 		}
 	}
-
-	return transferReceipt
+	return nil
 }
 
 func (p *Platform) getTxsByAddress(address string) ([]blockatlas.Tx, error) {
@@ -181,13 +184,170 @@ func (p *Platform) getTxsByAddress(address string) ([]blockatlas.Tx, error) {
 			if !strings.EqualFold(receipt.Origin, address) && !strings.EqualFold(clause.To, address) {
 				continue
 			}
-			if tx, ok := NormalizeTransfer(receipt, &clause); ok {
-				txs = append(txs, tx)
+			tx, err := NormalizeTransfer(receipt, &clause)
+			if err != nil {
+				logger.Error(err, "getTxsByAddress clause error", logger.Params{
+					"receipt": receipt,
+					"clause":  clause,
+				})
+				continue
 			}
+			txs = append(txs, tx)
 		}
 	}
 
 	return txs, nil
+}
+
+func NormalizeTransfer(receipt *TransferReceipt, clause *Clause) (blockatlas.Tx, error) {
+	feeBase10, err := util.HexToDecimal(receipt.Receipt.Paid)
+	if err != nil {
+		return blockatlas.Tx{}, err
+	}
+	valueBase10, err := util.HexToDecimal(clause.Value)
+	if err != nil {
+		return blockatlas.Tx{}, err
+	}
+	tx := blockatlas.Tx{
+		ID:       receipt.ID,
+		Coin:     coin.VET,
+		From:     receipt.Origin,
+		To:       clause.To,
+		Fee:      blockatlas.Amount(feeBase10),
+		Date:     int64(receipt.Timestamp),
+		Type:     blockatlas.TxTransfer,
+		Block:    receipt.Block,
+		Status:   ReceiptStatus(receipt.Receipt.Reverted),
+		Sequence: receipt.Block,
+		Meta: blockatlas.Transfer{
+			Value:    blockatlas.Amount(valueBase10),
+			Symbol:   coin.Coins[coin.VET].Symbol,
+			Decimals: 18,
+		},
+	}
+	return tx, nil
+}
+
+func NormalizeTokenTransfer(t *TokenTransfer, receipt *TransferReceipt) (blockatlas.Tx, error) {
+	feeBase10, err := util.HexToDecimal(receipt.Receipt.Paid)
+	if err != nil {
+		return blockatlas.Tx{}, err
+	}
+	valueBase10, err := util.HexToDecimal(t.Amount)
+	if err != nil {
+		return blockatlas.Tx{}, err
+	}
+
+	tx := blockatlas.Tx{
+		ID:       t.TxID,
+		Coin:     coin.VET,
+		From:     t.Origin,
+		To:       t.Receiver,
+		Fee:      blockatlas.Amount(feeBase10),
+		Date:     t.Timestamp,
+		Type:     blockatlas.TxNativeTokenTransfer,
+		Block:    t.Block,
+		Status:   ReceiptStatus(receipt.Receipt.Reverted),
+		Sequence: t.Block,
+		Meta: blockatlas.NativeTokenTransfer{
+			Name:     GasName,
+			Symbol:   GasSymbol,
+			TokenID:  GasContract,
+			Decimals: 18,
+			Value:    blockatlas.Amount(valueBase10),
+			From:     t.Origin,
+			To:       t.Receiver,
+		},
+	}
+	return tx, nil
+}
+
+// NormalizeTransaction converts a VeChain VTHO token transaction into the generic model
+func NormalizeBlockTransactions(t *NativeTransaction) (txs []blockatlas.Tx) {
+	for _, output := range t.Receipt.Outputs {
+		vthoTransfers := normalizeVthoTransfers(t, output.Events)
+		txs = append(txs, vthoTransfers...)
+		transfers := normalizeTxTransfers(t, output.Transfers)
+		txs = append(txs, transfers...)
+	}
+	return txs
+}
+
+// normalizeVthoTransfers normalizes vtho transfer events in given transaction
+func normalizeVthoTransfers(t *NativeTransaction, events []Event) (txs []blockatlas.Tx) {
+	for _, event := range events {
+		if len(event.Topics) == 3 && event.Topics[0] == VeThorTransferEvent {
+			feeBase10, err := util.HexToDecimal(t.Receipt.Paid)
+			if err != nil {
+				continue
+			}
+
+			valueBase10, err := util.HexToDecimal(event.Data)
+			if err != nil {
+				continue
+			}
+			fromHex := event.Topics[1]
+			toHex := event.Topics[2]
+			from := util.Checksum(formatHexToAddress(fromHex))
+			to := util.Checksum(formatHexToAddress(toHex))
+
+			txs = append(txs, blockatlas.Tx{
+				ID:       t.ID,
+				Coin:     coin.VET,
+				From:     from,
+				To:       to,
+				Fee:      blockatlas.Amount(feeBase10),
+				Date:     t.Timestamp,
+				Type:     blockatlas.TxNativeTokenTransfer,
+				Block:    t.Block,
+				Status:   ReceiptStatus(t.Receipt.Reverted),
+				Sequence: t.Block,
+				Meta: blockatlas.NativeTokenTransfer{
+					Name:     GasName,
+					Symbol:   GasSymbol,
+					TokenID:  GasContract,
+					Decimals: 18,
+					Value:    blockatlas.Amount(valueBase10),
+					From:     from,
+					To:       to,
+				},
+			})
+		}
+	}
+	return
+}
+
+// normalizeTxTransfers normalizes transfers in given transaction
+func normalizeTxTransfers(t *NativeTransaction, transfers []Transfer) (txs []blockatlas.Tx) {
+	for _, transfer := range transfers {
+		feeBase10, err := util.HexToDecimal(t.Receipt.Paid)
+		if err != nil {
+			continue
+		}
+
+		valueBase10, err := util.HexToDecimal(transfer.Amount)
+		if err != nil {
+			continue
+		}
+		txs = append(txs, blockatlas.Tx{
+			ID:       t.ID,
+			Coin:     coin.VET,
+			From:     util.Checksum(transfer.Sender),
+			To:       util.Checksum(transfer.Recipient),
+			Fee:      blockatlas.Amount(feeBase10),
+			Date:     t.Timestamp,
+			Type:     blockatlas.TxTransfer,
+			Block:    t.Block,
+			Status:   ReceiptStatus(t.Receipt.Reverted),
+			Sequence: t.Block,
+			Meta: blockatlas.Transfer{
+				Value:    blockatlas.Amount(valueBase10),
+				Symbol:   coin.Coins[coin.VET].Symbol,
+				Decimals: 18,
+			},
+		})
+	}
+	return
 }
 
 func formatHexToAddress(hex string) string {
@@ -195,163 +355,4 @@ func formatHexToAddress(hex string) string {
 		return "0x" + hex[26:]
 	}
 	return hex
-}
-
-func NormalizeTransfer(receipt *TransferReceipt, clause *Clause) (tx blockatlas.Tx, ok bool) {
-	feeBase10, err := util.HexToDecimal(receipt.Receipt.Paid)
-	if err != nil {
-		return tx, false
-	}
-	valueBase10, err := util.HexToDecimal(clause.Value)
-	if err != nil {
-		return tx, false
-	}
-
-	fee := blockatlas.Amount(feeBase10)
-	time := receipt.Timestamp
-	block := receipt.Block
-
-	return blockatlas.Tx{
-		ID:       receipt.ID,
-		Coin:     coin.VET,
-		From:     receipt.Origin,
-		To:       clause.To,
-		Fee:      fee,
-		Date:     int64(time),
-		Type:     blockatlas.TxTransfer,
-		Block:    block,
-		Status:   ReceiptStatus(receipt.Receipt.Reverted),
-		Sequence: block,
-		Meta: blockatlas.Transfer{
-			Value:    blockatlas.Amount(valueBase10),
-			Symbol:   coin.Coins[coin.VET].Symbol,
-			Decimals: 18,
-		},
-	}, true
-}
-
-func NormalizeTokenTransfer(t *TokenTransfer, receipt *TransferReceipt) (tx blockatlas.Tx, ok bool) {
-	feeBase10, err := util.HexToDecimal(receipt.Receipt.Paid)
-	if err != nil {
-		return tx, false
-	}
-	valueBase10, err := util.HexToDecimal(t.Amount)
-	if err != nil {
-		return tx, false
-	}
-	fee := blockatlas.Amount(feeBase10)
-	value := blockatlas.Amount(valueBase10)
-	from := t.Origin
-	to := t.Receiver
-	block := t.Block
-
-	return blockatlas.Tx{
-		ID:       t.TxID,
-		Coin:     coin.VET,
-		From:     from,
-		To:       to,
-		Fee:      fee,
-		Date:     t.Timestamp,
-		Type:     blockatlas.TxNativeTokenTransfer,
-		Block:    block,
-		Status:   ReceiptStatus(receipt.Receipt.Reverted),
-		Sequence: block,
-		Meta: blockatlas.NativeTokenTransfer{
-			Name:     GasName,
-			Symbol:   GasSymbol,
-			TokenID:  GasContract,
-			Decimals: 18,
-			Value:    value,
-			From:     from,
-			To:       to,
-		},
-	}, true
-}
-
-// NormalizeTransaction converts a VeChain VTHO token transaction into the generic model
-func NormalizeTransaction(t *NativeTransaction) (txs []blockatlas.Tx) {
-
-	for outputIndex, output := range t.Receipt.Outputs {
-		//Normalizes vtho transfer events in given transaction
-		for eventIndex, event := range output.Events {
-			if len(event.Topics) == 3 && event.Topics[0] == VeThorTransferEvent {
-
-				feeBase10, err := util.HexToDecimal(t.Receipt.Paid)
-				if err != nil {
-					continue
-				}
-
-				valueBase10, err := util.HexToDecimal(t.Receipt.Outputs[outputIndex].Events[eventIndex].Data)
-				if err != nil {
-					continue
-				}
-				fee := blockatlas.Amount(feeBase10)
-				value := blockatlas.Amount(valueBase10)
-				fromHex := t.Receipt.Outputs[outputIndex].Events[eventIndex].Topics[1]
-				toHex := t.Receipt.Outputs[outputIndex].Events[eventIndex].Topics[2]
-				from := util.Checksum(formatHexToAddress(fromHex))
-				to := util.Checksum(formatHexToAddress(toHex))
-				block := t.Block
-
-				txs = append(txs, blockatlas.Tx{
-					ID:       t.ID,
-					Coin:     coin.VET,
-					From:     from,
-					To:       to,
-					Fee:      fee,
-					Date:     t.Timestamp,
-					Type:     blockatlas.TxNativeTokenTransfer,
-					Block:    block,
-					Status:   ReceiptStatus(t.Receipt.Reverted),
-					Sequence: block,
-					Meta: blockatlas.NativeTokenTransfer{
-						Name:     GasName,
-						Symbol:   GasSymbol,
-						TokenID:  GasContract,
-						Decimals: 18,
-						Value:    value,
-						From:     from,
-						To:       to,
-					},
-				})
-			}
-		}
-		//Normalizes transfers in given transaction
-		for transferIndex := range output.Transfers {
-			feeBase10, err := util.HexToDecimal(t.Receipt.Paid)
-			if err != nil {
-				continue
-			}
-
-			transfer := t.Receipt.Outputs[outputIndex].Transfers[transferIndex]
-			valueBase10, err := util.HexToDecimal(transfer.Amount)
-			if err != nil {
-				continue
-			}
-
-			fee := blockatlas.Amount(feeBase10)
-			time := t.Timestamp
-			block := t.Block
-
-			txs = append(txs, blockatlas.Tx{
-				ID:       t.ID,
-				Coin:     coin.VET,
-				From:     util.Checksum(transfer.Sender),
-				To:       util.Checksum(transfer.Recipient),
-				Fee:      fee,
-				Date:     time,
-				Type:     blockatlas.TxTransfer,
-				Block:    block,
-				Status:   ReceiptStatus(t.Receipt.Reverted),
-				Sequence: block,
-				Meta: blockatlas.Transfer{
-					Value:    blockatlas.Amount(valueBase10),
-					Symbol:   coin.Coins[coin.VET].Symbol,
-					Decimals: 18,
-				},
-			})
-		}
-	}
-
-	return txs
 }
