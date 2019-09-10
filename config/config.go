@@ -33,7 +33,7 @@ func LoadConfig(confPath string) {
 			logger.Error("Failed to read config", err,
 				logger.Params{"config_file": confPath})
 		} else {
-			logger.Info("Using config file", logger.Params{"config_file": confPath}
+			logger.Info("Using config file", logger.Params{"config_file": confPath})
 		}
 	}
 }
