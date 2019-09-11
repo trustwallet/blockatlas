@@ -33,7 +33,7 @@ type Payment struct {
 }
 
 type Meta struct {
-	DeliveredAmount string `json:"delivered_amount"`
+	DeliveredAmount string `json:"delivered_amount,omitempty"`
 }
 
 type LedgerResponse struct {
