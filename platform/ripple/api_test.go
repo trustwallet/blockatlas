@@ -1,8 +1,8 @@
 package ripple
 
 import (
-	"bytes"
 	"encoding/json"
+	"github.com/stretchr/testify/assert"
 	"testing"
 
 	"github.com/trustwallet/blockatlas"
@@ -44,15 +44,14 @@ const paymentSrc = `
 `
 
 var paymentDst = blockatlas.Tx{
-	ID:     "40279A3DE51148BD41409DADF29DE8DCCD50F5AEE30840827B2C4C81C4E36505",
-	Coin:   coin.XRP,
-	From:   "rGSxFjoqmWz54PycrgQBQ5dB6e7TUpMxzq",
-	To:     "rMQ98K56yXJbDGv49ZSmW51sLn94Xe1mu1",
-	Fee:    "3115",
-	Date:   1512168330,
-	Block:  34698103,
-	Status: blockatlas.StatusCompleted,
-	Memo:   "2500",
+	ID:    "40279A3DE51148BD41409DADF29DE8DCCD50F5AEE30840827B2C4C81C4E36505",
+	Coin:  coin.XRP,
+	From:  "rGSxFjoqmWz54PycrgQBQ5dB6e7TUpMxzq",
+	To:    "rMQ98K56yXJbDGv49ZSmW51sLn94Xe1mu1",
+	Fee:   "3115",
+	Date:  1512168330,
+	Block: 34698103,
+	Memo:  "2500",
 	Meta: blockatlas.Transfer{
 		Value: "100000000",
 	},
@@ -99,65 +98,111 @@ const paymentSrc2 = `
 `
 
 var paymentDst2 = blockatlas.Tx{
-	ID:     "3D8512E02414EF5A6BC00281D945735E85DED9EF739B1DCA9EABE04D9EEC72C1",
-	Coin:   coin.XRP,
-	From:   "raz97dHvnyBcnYTbXGYxhV8bGyr1aPrE5w",
-	To:     "rna8qC8Y9uLd2vzYtSEa1AJcdD3896zQ9S",
-	Fee:    "120",
-	Date:   1565114281,
-	Block:  49163909,
-	Status: blockatlas.StatusCompleted,
-	Memo:   "",
+	ID:    "3D8512E02414EF5A6BC00281D945735E85DED9EF739B1DCA9EABE04D9EEC72C1",
+	Coin:  coin.XRP,
+	From:  "raz97dHvnyBcnYTbXGYxhV8bGyr1aPrE5w",
+	To:    "rna8qC8Y9uLd2vzYtSEa1AJcdD3896zQ9S",
+	Fee:   "120",
+	Date:  1565114281,
+	Block: 49163909,
+	Memo:  "",
 	Meta: blockatlas.Transfer{
 		Value: "3100",
 	},
 }
 
+const paymentSrc3 = `
+{
+   "hash":"3D8512E02414EF5A6BC00281D945735E85DED9EF739B1DCA9EABE04D9EEC72C1",
+   "ledger_index":49163909,
+   "date":"2019-08-06T17:58:01+00:00",
+   "tx":{
+      "TransactionType": "SetRegularKey"
+   }
+}
+`
+
+const paymentSrc4 = `
+{
+  "hash": "1D849E3A0041357EE373C7E17C9564F890047475492D9530B5F20A3BD6D95822",
+  "ledger_index": 49841027,
+  "date": "2019-09-06T01:48:32+00:00",
+  "tx": {
+    "TransactionType": "Payment",
+    "Flags": 2147942400,
+    "Sequence": 292765,
+    "LastLedgerSequence": 49841035,
+    "Amount": {
+      "value": "100000",
+      "currency": "ETH",
+      "issuer": "rJavT3eWaX9FubZFHtCvymJ6ZhSgJdMyNx"
+    },
+    "Fee": "162",
+    "SendMax": "100000000000",
+    "Account": "r4NT6UfELQyoS689VLye22B3SfgvpM3nHY",
+    "Destination": "rJavT3eWaX9FubZFHtCvymJ6ZhSgJdMyNx"
+  },
+  "meta": {
+    "TransactionIndex": 16,
+    "DeliveredAmount": {
+      "value": "533.92",
+      "currency": "ETH",
+      "issuer": "rJavT3eWaX9FubZFHtCvymJ6ZhSgJdMyNx"
+    },
+    "TransactionResult": "tesSUCCESS",
+    "delivered_amount": {
+      "value": "533.92",
+      "currency": "ETH",
+      "issuer": "rJavT3eWaX9FubZFHtCvymJ6ZhSgJdMyNx"
+    }
+  }
+}
+`
+
 type test struct {
 	name        string
 	apiResponse string
-	expected    *blockatlas.Tx
+	normalize   bool
+	expected    blockatlas.Tx
 }
 
 func TestNormalize(t *testing.T) {
 	testNormalize(t, &test{
-		name:        "payment",
+		name:        "payment 1",
 		apiResponse: paymentSrc,
-		expected:    &paymentDst,
+		expected:    paymentDst,
+		normalize:   true,
 	})
 
 	testNormalize(t, &test{
-		name:        "payment",
+		name:        "payment 2",
 		apiResponse: paymentSrc2,
-		expected:    &paymentDst2,
+		expected:    paymentDst2,
+		normalize:   true,
+	})
+
+	testNormalize(t, &test{
+		name:        "SetRegularKey transfer",
+		apiResponse: paymentSrc3,
+		expected:    blockatlas.Tx{},
+		normalize:   false,
+	})
+
+	testNormalize(t, &test{
+		name:        "token transfer",
+		apiResponse: paymentSrc4,
+		expected:    blockatlas.Tx{},
+		normalize:   false,
 	})
 }
 
 func testNormalize(t *testing.T, _test *test) {
-	var payment Tx
-	err := json.Unmarshal([]byte(_test.apiResponse), &payment)
-	if err != nil {
-		t.Error(err)
-		return
-	}
-	tx, ok := NormalizeTx(&payment)
-	if !ok {
-		t.Errorf("%s: tx could not be normalized", _test.name)
-	}
-
-	resJSON, err := json.Marshal(&tx)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	dstJSON, err := json.Marshal(&_test.expected)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if !bytes.Equal(resJSON, dstJSON) {
-		println(string(resJSON))
-		println(string(dstJSON))
-		t.Error(_test.name + ": tx don't equal")
-	}
+	t.Run(_test.name, func(t *testing.T) {
+		var payment Tx
+		err := json.Unmarshal([]byte(_test.apiResponse), &payment)
+		assert.Nil(t, err)
+		tx, ok := NormalizeTx(&payment)
+		assert.Equal(t, ok, _test.normalize, "tx could not be normalized")
+		assert.Equal(t, _test.expected, tx, "tx don't equal")
+	})
 }

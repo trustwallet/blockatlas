@@ -69,7 +69,7 @@ func NormalizeTxs(srcTxs []Tx) (txs []blockatlas.Tx) {
 }
 
 // Normalize converts a Ripple transaction into the generic model
-func NormalizeTx(srcTx *Tx) (tx blockatlas.Tx, ok bool) {
+func NormalizeTx(srcTx *Tx) (blockatlas.Tx, bool) {
 
 	date, err := time.Parse("2006-01-02T15:04:05-07:00", srcTx.Date)
 	var unix int64
@@ -77,6 +77,15 @@ func NormalizeTx(srcTx *Tx) (tx blockatlas.Tx, ok bool) {
 		unix = 0
 	} else {
 		unix = date.Unix()
+	}
+
+	v, vok := srcTx.Meta.DeliveredAmount.(string)
+	if !vok || len(v) == 0 {
+		return blockatlas.Tx{}, false
+	}
+
+	if srcTx.Payment.TransactionType != "Payment" {
+		return blockatlas.Tx{}, false
 	}
 
 	result := blockatlas.Tx{
@@ -88,7 +97,7 @@ func NormalizeTx(srcTx *Tx) (tx blockatlas.Tx, ok bool) {
 		Fee:   srcTx.Payment.Fee,
 		Block: srcTx.LedgerIndex,
 		Meta: blockatlas.Transfer{
-			Value:    blockatlas.Amount(srcTx.Meta.DeliveredAmount),
+			Value:    blockatlas.Amount(v),
 			Symbol:   coin.Coins[coin.XRP].Symbol,
 			Decimals: coin.Coins[coin.XRP].Decimals,
 		},
