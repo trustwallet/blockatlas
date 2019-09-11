@@ -28,20 +28,17 @@ func (r *Request) Execute(method string, url string, body io.Reader, result inte
 	if err != nil {
 		return err
 	}
+	req.Header.Add("Accept-Encoding", "*")
+	req.Header.Add("Accept", "*/*")
+	req.Header.Add("Content-Type","application/json; charset=utf-8")
 	res, err := r.HttpClient.Do(req)
 	if err != nil {
 		return err
 	}
-
 	err = r.ErrorHandler(res, url)
 	if err != nil {
 		return err
 	}
 	defer res.Body.Close()
-	err = json.NewDecoder(res.Body).Decode(result)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return json.NewDecoder(res.Body).Decode(result)
 }
