@@ -104,3 +104,17 @@ func TestNormalizeToken(t *testing.T) {
 
 	assert.Equal(t, tokenDst, actual)
 }
+
+func TestNormalizeValidator(t *testing.T) {
+	validator := Validator{Address: "414d1ef8673f916debb7e2515a8f3ecaf2611034aa"}
+
+	actual := normalizeValidator(validator)
+	expected := blockatlas.Validator{
+		ID:     "TGzz8gjYiYRqpfmDwnLxfgPuLVNmpCswVp",
+		Status: true,
+		Reward: blockatlas.StakingReward{
+			Annual,
+		},
+	}
+	assert.Equal(t, expected, actual)
+}

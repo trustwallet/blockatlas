@@ -5,7 +5,6 @@ import (
 	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/logger"
-	"net/http"
 	"sync"
 )
 
@@ -13,9 +12,10 @@ type Platform struct {
 	client Client
 }
 
+const Annual = 4.32
+
 func (p *Platform) Init() error {
-	p.client.BaseURL = viper.GetString("tron.api")
-	p.client.HTTPClient = http.DefaultClient
+	p.client = InitClient(viper.GetString("tron.api"))
 	return nil
 }
 
@@ -38,6 +38,31 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 	}
 
 	return txs, nil
+}
+
+func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
+	results := make(blockatlas.ValidatorPage, 0)
+	validators, err := p.client.GetValidators()
+
+	if err != nil {
+		return results, err
+	}
+
+	for _, v := range validators.Witnesses {
+		results = append(results, normalizeValidator(v))
+	}
+
+	return results, nil
+}
+
+func normalizeValidator(v Validator) (validator blockatlas.Validator) {
+	address, _ := HexToAddress(v.Address)
+
+	return blockatlas.Validator{
+		Status: true,
+		ID:     address,
+		Reward: blockatlas.StakingReward{Annual: Annual},
+	}
 }
 
 /// Normalize converts a Tron transaction into the generic model
