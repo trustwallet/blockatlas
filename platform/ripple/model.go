@@ -21,7 +21,7 @@ type Tx struct {
 }
 
 type Payment struct {
-	TransactionType string            `json:"string"`
+	TransactionType string            `json:"TransactionType"`
 	Flags           uint64            `json:"Flags"`
 	Sequence        uint64            `json:"Sequence"`
 	Fee             blockatlas.Amount `json:"Fee"`
@@ -33,7 +33,13 @@ type Payment struct {
 }
 
 type Meta struct {
-	DeliveredAmount string `json:"delivered_amount"`
+	DeliveredAmount interface{} `json:"delivered_amount,omitempty"`
+}
+
+type DeliveredAmount struct {
+	Value    string `json:"value"`
+	Currency string `json:"currency"`
+	Issuer   string `json:"issuer"`
 }
 
 type LedgerResponse struct {
