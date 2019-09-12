@@ -92,6 +92,13 @@ func (p *Platform) getThorTxsByAddress(address string) ([]blockatlas.Tx, error) 
 		}
 
 		receipt := findTransferReceiptByTxID(receiptsChan, t.TxID)
+		if receipt == nil {
+			logger.Error(err, "findTransferReceiptByTxID cannot find the receipt", logger.Params{
+				"transfer": t,
+			})
+			continue
+		}
+
 		tx, err := NormalizeTokenTransfer(&t, receipt)
 		if err != nil {
 			logger.Error(err, "getTxsByAddress clause error", logger.Params{
