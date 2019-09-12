@@ -30,7 +30,6 @@ func (r *Request) Execute(method string, url string, body io.Reader, result inte
 	}
 	req.Header.Add("Accept-Encoding", "*")
 	req.Header.Add("Accept", "*/*")
-	req.Header.Add("Content-Type","application/json; charset=utf-8")
 	res, err := r.HttpClient.Do(req)
 	if err != nil {
 		return err
