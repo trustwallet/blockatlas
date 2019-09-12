@@ -48,7 +48,7 @@ func (c *Client) GetAccountMetadata(address string) (*Accounts, error) {
 }
 
 func (c *Client) GetTokenInfo(id string) (*Asset, error) {
-	path := fmt.Sprintf("assets/%s", id)
+	path := fmt.Sprintf("v1/assets/%s", id)
 
 	var asset Asset
 	err := c.Request.Get(&asset, c.BaseURL, path, nil)
