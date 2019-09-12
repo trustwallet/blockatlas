@@ -2,6 +2,7 @@ package assets
 
 import (
 	"github.com/trustwallet/blockatlas"
+	"strings"
 	"time"
 
 	"github.com/trustwallet/blockatlas/coin"
@@ -55,5 +56,5 @@ func NormalizeValidator(plainValidator blockatlas.Validator, validator AssetVali
 }
 
 func GetImage(c coin.Coin, ID string) string {
-	return AssetsURL + c.Handle + "/validators/assets/" + ID + "/logo.png"
+	return AssetsURL + c.Handle + "/validators/assets/" + strings.ToLower(ID) + "/logo.png"
 }

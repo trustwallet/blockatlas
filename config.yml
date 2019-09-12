@@ -93,7 +93,7 @@ icon:
 
 # [TRX] Tron: https://tron.network/
 tron:
-  api: https://api.trongrid.io/v1
+  api: https://api.trongrid.io
 
 # [VET] VeChain: https://www.vechain.org
 vechain:

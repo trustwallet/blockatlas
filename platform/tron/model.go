@@ -12,13 +12,13 @@ type Page struct {
 }
 
 type Tx struct {
-	ID          string `json:"txID"`
-	BlockTime   int64  `json:"block_timestamp"`
-	Data 		TxData `json:"raw_data"`
+	ID        string `json:"txID"`
+	BlockTime int64  `json:"block_timestamp"`
+	Data      TxData `json:"raw_data"`
 }
 
 type TxData struct {
-	Contracts     []Contract `json:"contract"`
+	Contracts []Contract `json:"contract"`
 }
 
 type Contract struct {
@@ -57,6 +57,14 @@ type AssetInfo struct {
 	Symbol   string `json:"abbr"`
 	ID       string `json:"id"`
 	Decimals uint   `json:"precision"`
+}
+
+type Validators struct {
+	Witnesses []Validator `json:"witnesses"`
+}
+
+type Validator struct {
+	Address string `json:"address"`
 }
 
 func (c *Contract) UnmarshalJSON(buf []byte) error {
