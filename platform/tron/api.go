@@ -60,7 +60,7 @@ func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
 func normalizeValidator(v Validator) (validator blockatlas.Validator, ok bool) {
 	address, err := HexToAddress(v.Address)
 	if err != nil {
-		return blockatlas.Validator{}, false
+		return validator, false
 	}
 
 	return blockatlas.Validator{
