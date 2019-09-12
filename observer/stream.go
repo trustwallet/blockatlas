@@ -110,5 +110,5 @@ func (s *Stream) loadBlock(c chan<- *blockatlas.Block, num int64) {
 
 func (s *Stream) optimizeToMinConfirmations(height *int64) {
 	coin := s.BlockAPI.Coin()
-	*height -= coin.BlocksAfterFirstConfirmation
+	*height -= coin.MinConfirmations
 }

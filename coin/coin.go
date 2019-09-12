@@ -20,7 +20,7 @@ type Coin struct {
 	Title      string `yaml:"name" json:"name"`                   // Full name of native currency
 	Decimals   uint   `yaml:"decimals" json:"decimals"`           // Number of decimals
 	BlockTime  int    `yaml:"blockTime" json:"blockTime"`         // Average time between blocks (ms)
-	BlocksAfterFirstConfirmation  int64    `yaml:"blocksAfterFirstConfirmation" json:"blocksAfterFirstConfirmation"`         // Number of conformations to trigger a webhook
+	MinConfirmations  int64    `yaml:"minConfirmations" json:"minConfirmations"`         // Number of conformations to trigger a webhook
 	SampleAddr string `yaml:"sampleAddress" json:"sampleAddress"` // Random address seen on chain
 }
 
