@@ -49,20 +49,25 @@ func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
 	}
 
 	for _, v := range validators.Witnesses {
-		results = append(results, normalizeValidator(v))
+		if val, ok := normalizeValidator(v); ok {
+			results = append(results, val)
+		}
 	}
 
 	return results, nil
 }
 
-func normalizeValidator(v Validator) (validator blockatlas.Validator) {
-	address, _ := HexToAddress(v.Address)
+func normalizeValidator(v Validator) (validator blockatlas.Validator, ok bool) {
+	address, err := HexToAddress(v.Address)
+	if err != nil {
+		return blockatlas.Validator{}, false
+	}
 
 	return blockatlas.Validator{
 		Status: true,
 		ID:     address,
 		Reward: blockatlas.StakingReward{Annual: Annual},
-	}
+	}, true
 }
 
 /// Normalize converts a Tron transaction into the generic model
