@@ -36,6 +36,16 @@ type TransferValue struct {
 	ToAddress    string            `json:"to_address"`
 }
 
+// Type for token transfer
+type TransferAssetContract struct {
+	Value TransferAssetValue `json:value`
+}
+
+type TransferAssetValue struct {
+	TransferValue
+	AssetName string `json:"asset_name"`
+}
+
 type Accounts struct {
 	Data []AccountsData `json:data`
 }
@@ -81,6 +91,10 @@ func (c *Contract) UnmarshalJSON(buf []byte) error {
 		var transfer TransferContract
 		err = json.Unmarshal(contractInternal.Parameter, &transfer)
 		c.Parameter = transfer
+	case "TransferAssetContract":
+		var tokenTransfer TransferAssetContract
+		err = json.Unmarshal(contractInternal.Parameter, &tokenTransfer)
+		c.Parameter = tokenTransfer
 	}
 	return err
 }
