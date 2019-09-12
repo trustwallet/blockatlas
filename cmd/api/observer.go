@@ -11,7 +11,6 @@ import (
 	"github.com/trustwallet/blockatlas/platform/bitcoin"
 	"net/http"
 	"strconv"
-	"strings"
 )
 
 func setupObserverAPI(router gin.IRouter) {
@@ -68,7 +67,6 @@ func addCall(c *gin.Context) {
 		}
 
 		for _, xpub := range perCoin {
-			xpub = strings.TrimPrefix(xpub, "xpub:")
 			xpubSubs = append(xpubSubs, observer.Subscription{
 				Coin:     uint(coin),
 				Address:  xpub,
