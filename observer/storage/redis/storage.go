@@ -40,6 +40,10 @@ func (s *Storage) SetBlockNumber(coin uint, num int64) error {
 }
 
 func (s *Storage) SaveXpubAddresses(coin uint, addresses []string, xpub string) error {
+	if len(addresses) == 0 {
+		return fmt.Errorf("no addresses for xpub: %s", xpub)
+	}
+	
 	a := make(map[string]interface{})
 	for _, address := range addresses {
 		a[address] = xpub
