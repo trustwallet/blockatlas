@@ -24,7 +24,7 @@ func (p *Platform) Coin() coin.Coin {
 }
 
 func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
-	srcTxs, err := p.client.GetTxsOfAddress(address)
+	srcTxs, err := p.client.GetTxsOfAddress(address, "")
 	if err != nil {
 		return nil, err
 	}
@@ -38,6 +38,69 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 	}
 
 	return txs, nil
+}
+
+func (p *Platform) GetTokenTxsByAddress(address, token string) (blockatlas.TxPage, error) {
+	tokenTxs, err := p.client.GetTxsOfAddress(address, token)
+	if err != nil {
+		return nil, err
+	}
+
+	var tokenInfo AssetInfo
+	info, err := p.client.GetTokenInfo(token)
+	if err != nil {
+		return nil, err
+	}
+	tokenInfo = info.Data[0]
+
+	var txs []blockatlas.Tx
+	for _, trx := range tokenTxs {
+		tx, err := NormalizeTokenTransfer(&trx, tokenInfo)
+			if err != nil {
+				logger.Error(err)
+				continue
+			}
+			txs = append(txs, tx)
+	}
+
+	return txs, nil
+}
+
+func NormalizeTokenTransfer(srcTx *Tx, tokenInfo AssetInfo) (tx blockatlas.Tx, e error) {
+	contract := &srcTx.Data.Contracts[0]
+
+	switch contract.Parameter.(type) {
+	case TransferAssetContract:
+		transfer := contract.Parameter.(TransferAssetContract)
+		from, err := HexToAddress(transfer.Value.OwnerAddress)
+		if err != nil {
+			return tx, err
+		}
+		to, err := HexToAddress(transfer.Value.ToAddress)
+		if err != nil {
+			return tx, err
+		}
+
+		return blockatlas.Tx{
+			ID:   srcTx.ID,
+			Coin: coin.TRX,
+			Date: srcTx.BlockTime / 1000,
+			Fee:  "0",
+			From: from,
+			To: to,
+			Meta: blockatlas.TokenTransfer{
+				Name: tokenInfo.Name,
+				Symbol: tokenInfo.Symbol,
+				TokenID: tokenInfo.ID,
+				Decimals: tokenInfo.Decimals,
+				Value: transfer.Value.Amount,
+				From: from,
+				To: to,
+			},
+		}, nil
+	default:
+		return tx, nil
+	}
 }
 
 func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
