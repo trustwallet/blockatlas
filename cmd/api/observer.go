@@ -11,6 +11,7 @@ import (
 	"github.com/trustwallet/blockatlas/platform/bitcoin"
 	"net/http"
 	"strconv"
+	"strings"
 )
 
 func setupObserverAPI(router gin.IRouter) {
@@ -67,6 +68,7 @@ func addCall(c *gin.Context) {
 		}
 
 		for _, xpub := range perCoin {
+			xpub = strings.TrimPrefix(xpub, "xpub:")
 			xpubSubs = append(xpubSubs, observer.Subscription{
 				Coin:     uint(coin),
 				Address:  xpub,
@@ -88,7 +90,7 @@ func addCall(c *gin.Context) {
 func cacheXPubAddress(xpub string, coin uint) {
 	platform := bitcoin.UtxoPlatform(coin)
 	addresses, err := platform.GetAddressesFromXpub(xpub)
-	if err != nil {
+	if err != nil || len(addresses) == 0 {
 		logger.Error("GetAddressesFromXpub", err, logger.Params{
 			"xpub": xpub,
 			"coin": coin,
