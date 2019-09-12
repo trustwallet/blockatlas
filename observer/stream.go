@@ -22,7 +22,6 @@ type Stream struct {
 
 	// Concurrency
 	blockNumber int64
-	minConformations int64
 	semaphore   *util.Semaphore
 	wg          sync.WaitGroup
 }
