@@ -26,13 +26,14 @@ func InitClient(BaseURL string) Client {
 	}
 }
 
-func (c *Client) GetTxsOfAddress(address string) ([]Tx, error) {
+func (c *Client) GetTxsOfAddress(address, token string) ([]Tx, error) {
 	path := fmt.Sprintf("v1/accounts/%s/transactions", url.PathEscape(address))
 
 	var txs Page
 	err := c.Request.Get(&txs, c.BaseURL, path, url.Values{
 		"only_confirmed": {"true"},
 		"limit":          {strconv.Itoa(blockatlas.TxPerPage)},
+		"token_id":       {token},
 	})
 
 	return txs.Txs, err
