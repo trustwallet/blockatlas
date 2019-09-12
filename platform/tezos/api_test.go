@@ -88,14 +88,13 @@ func TestNormalize(t *testing.T) {
 func TestNormalizeValidator(t *testing.T) {
 	var v Validator
 	_ = json.Unmarshal([]byte(validatorSrc), &v)
-	coin := coin.Coin{}
 	expected := blockatlas.Validator{
 		Status: true,
 		ID:     v.Address,
 		Reward: blockatlas.StakingReward{Annual: Annual},
 	}
 
-	result := normalizeValidator(v, coin)
+	result := normalizeValidator(v)
 
 	assert.Equal(t, result, expected)
 }
