@@ -88,10 +88,11 @@ func addCall(c *gin.Context) {
 func cacheXPubAddress(xpub string, coin uint) {
 	platform := bitcoin.UtxoPlatform(coin)
 	addresses, err := platform.GetAddressesFromXpub(xpub)
-	if err != nil {
+	if err != nil || len(addresses) == 0 {
 		logger.Error("GetAddressesFromXpub", err, logger.Params{
-			"xpub": xpub,
-			"coin": coin,
+			"xpub":      xpub,
+			"coin":      coin,
+			"addresses": addresses,
 		})
 	}
 	err = observerStorage.App.SaveXpubAddresses(coin, addresses, xpub)
