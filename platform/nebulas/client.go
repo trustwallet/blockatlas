@@ -2,6 +2,7 @@ package nebulas
 
 import (
 	"fmt"
+	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"net/http"
@@ -18,7 +19,7 @@ type Client struct {
 	URL        string
 }
 
-func InitClient(BaseURL string) Client {
+func InitClient() Client {
 	return Client{
 		Request: blockatlas.Request{
 			HttpClient: http.DefaultClient,
@@ -26,7 +27,7 @@ func InitClient(BaseURL string) Client {
 				return nil
 			},
 		},
-		BaseURL: BaseURL,
+		BaseURL: viper.GetString("nebulas.api"),
 	}
 }
 

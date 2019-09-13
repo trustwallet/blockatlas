@@ -6,7 +6,6 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/util"
 )
@@ -16,7 +15,7 @@ type Platform struct {
 }
 
 func (p *Platform) Init() error {
-	p.client = InitClient(viper.GetString("cosmos.api"))
+	p.client = InitClient()
 	return nil
 }
 

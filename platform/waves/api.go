@@ -1,12 +1,9 @@
 package waves
 
 import (
-	"github.com/spf13/viper"
-	"strconv"
-
-	"github.com/trustwallet/blockatlas/coin"
-
 	"github.com/trustwallet/blockatlas"
+	"github.com/trustwallet/blockatlas/coin"
+	"strconv"
 )
 
 type Platform struct {
@@ -14,7 +11,7 @@ type Platform struct {
 }
 
 func (p *Platform) Init() error {
-	p.client = InitClient(viper.GetString("waves.api"))
+	p.client = InitClient()
 	return nil
 }
 

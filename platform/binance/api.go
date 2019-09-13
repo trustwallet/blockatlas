@@ -5,7 +5,6 @@ import (
 	"github.com/trustwallet/blockatlas"
 	"strings"
 
-	"github.com/spf13/viper"
 	"github.com/thoas/go-funk"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/util"
@@ -20,7 +19,7 @@ type Platform struct {
 }
 
 func (p *Platform) Init() error {
-	p.client = ClientInit(viper.GetString("binance.api"), viper.GetString("binance.dex"))
+	p.client = InitClient()
 	return nil
 }
 

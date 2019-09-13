@@ -3,6 +3,7 @@ package binance
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"net/http"
@@ -18,14 +19,14 @@ type Client struct {
 	BaseDexURL string
 }
 
-func ClientInit(baseUrl string, baseDexURL string) Client {
+func InitClient() Client {
 	return Client{
 		Request: blockatlas.Request{
 			HttpClient:   http.DefaultClient,
 			ErrorHandler: getHTTPError,
 		},
-		BaseURL:    baseUrl,
-		BaseDexURL: baseDexURL,
+		BaseURL:    viper.GetString("binance.api"),
+		BaseDexURL: viper.GetString("binance.dex"),
 	}
 }
 

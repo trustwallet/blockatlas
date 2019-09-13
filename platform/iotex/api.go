@@ -2,11 +2,9 @@ package iotex
 
 import (
 	"github.com/trustwallet/blockatlas"
+	"github.com/trustwallet/blockatlas/coin"
 	"strconv"
 	"time"
-
-	"github.com/spf13/viper"
-	"github.com/trustwallet/blockatlas/coin"
 )
 
 type Platform struct {
@@ -14,7 +12,7 @@ type Platform struct {
 }
 
 func (p *Platform) Init() error {
-	p.client = InitClient(viper.GetString("iotex.api"))
+	p.client = InitClient()
 	return nil
 }
 

@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/mitchellh/mapstructure"
+	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/ybbus/jsonrpc"
 	"io/ioutil"
@@ -17,6 +18,15 @@ type Client struct {
 	RPCClient  jsonrpc.RPCClient
 	BaseURL    string
 	APIKey     string
+}
+
+func InitClient() Client {
+	return Client{
+		HTTPClient: http.DefaultClient,
+		RPCClient:  jsonrpc.NewClient(viper.GetString("zilliqa.rpc")),
+		BaseURL:    viper.GetString("zilliqa.key"),
+		APIKey:     viper.GetString("zilliqa.api"),
+	}
 }
 
 func (c *Client) newRequest(method, path string) (*http.Request, error) {

@@ -2,6 +2,7 @@ package tezos
 
 import (
 	"fmt"
+	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"net/http"
@@ -14,10 +15,10 @@ type Client struct {
 	RpcURL  string
 }
 
-func InitClient(baseUrl string, RpcURL string) Client {
+func InitClient() Client {
 	return Client{
-		URL:    baseUrl,
-		RpcURL: RpcURL,
+		URL:    viper.GetString("tezos.api"),
+		RpcURL: viper.GetString("tezos.rpc"),
 		Request: blockatlas.Request{
 			HttpClient: http.DefaultClient,
 			ErrorHandler: func(res *http.Response, uri string) error {

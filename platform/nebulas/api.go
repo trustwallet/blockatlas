@@ -1,7 +1,6 @@
 package nebulas
 
 import (
-	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
 )
@@ -11,7 +10,7 @@ type Platform struct {
 }
 
 func (p *Platform) Init() error {
-	p.client = InitClient(viper.GetString("nebulas.api"))
+	p.client = InitClient()
 	return nil
 }
 

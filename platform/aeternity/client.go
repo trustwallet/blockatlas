@@ -3,6 +3,7 @@ package aeternity
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/spf13/viper"
 	"io/ioutil"
 	"net/http"
 )
@@ -10,6 +11,13 @@ import (
 type Client struct {
 	HTTPClient *http.Client
 	URL        string
+}
+
+func InitClient() Client {
+	return Client{
+		HTTPClient: http.DefaultClient,
+		URL:        viper.GetString("aeternity.api"),
+	}
 }
 
 func (c *Client) GetTxs(address string, limit int) ([]Transaction, error) {

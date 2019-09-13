@@ -3,6 +3,7 @@ package icon
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"net/http"
@@ -13,6 +14,13 @@ import (
 type Client struct {
 	HTTPClient *http.Client
 	RPCURL     string
+}
+
+func InitClient() Client {
+	return Client{
+		HTTPClient: http.DefaultClient,
+		RPCURL:     viper.GetString("icon.api"),
+	}
 }
 
 func (c *Client) GetAddressTransactions(address string) ([]Tx, error) {

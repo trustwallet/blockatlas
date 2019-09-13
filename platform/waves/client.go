@@ -2,6 +2,7 @@ package waves
 
 import (
 	"fmt"
+	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas"
 	"net/http"
 )
@@ -11,9 +12,9 @@ type Client struct {
 	URL     string
 }
 
-func InitClient(baseUrl string) Client {
+func InitClient() Client {
 	return Client{
-		URL: baseUrl,
+		URL: viper.GetString("waves.api"),
 		Request: blockatlas.Request{
 			HttpClient: http.DefaultClient,
 			ErrorHandler: func(res *http.Response, uri string) error {

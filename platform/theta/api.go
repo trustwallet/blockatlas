@@ -1,10 +1,8 @@
 package theta
 
 import (
-	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
-	"net/http"
 	"strconv"
 )
 
@@ -13,8 +11,7 @@ type Platform struct {
 }
 
 func (p *Platform) Init() error {
-	p.client.BaseURL = viper.GetString("theta.api")
-	p.client.HTTPClient = http.DefaultClient
+	p.client = InitClient()
 	return nil
 }
 

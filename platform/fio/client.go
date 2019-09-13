@@ -1,9 +1,9 @@
 package fio
 
 import (
-	"net/http"
-
+	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas"
+	"net/http"
 )
 
 type Client struct {
@@ -11,7 +11,7 @@ type Client struct {
 	URL     string
 }
 
-func InitClient(baseUrl string) Client {
+func InitClient() Client {
 	return Client{
 		Request: blockatlas.Request{
 			HttpClient: http.DefaultClient,
@@ -19,6 +19,6 @@ func InitClient(baseUrl string) Client {
 				return nil
 			},
 		},
-		URL: baseUrl,
+		URL: viper.GetString("fio.api"),
 	}
 }

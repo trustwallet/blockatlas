@@ -1,7 +1,6 @@
 package tron
 
 import (
-	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/logger"
@@ -15,7 +14,7 @@ type Platform struct {
 const Annual = 4.32
 
 func (p *Platform) Init() error {
-	p.client = InitClient(viper.GetString("tron.api"))
+	p.client = InitClient()
 	return nil
 }
 
@@ -28,7 +27,6 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	var txs []blockatlas.Tx
 	for _, srcTx := range srcTxs {
 		tx, ok := Normalize(&srcTx)

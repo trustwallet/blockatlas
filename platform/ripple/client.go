@@ -3,6 +3,7 @@ package ripple
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"net/http"
@@ -12,6 +13,13 @@ import (
 type Client struct {
 	HTTPClient *http.Client
 	BaseURL    string
+}
+
+func InitClient() Client {
+	return Client{
+		HTTPClient: http.DefaultClient,
+		BaseURL:    viper.GetString("ripple.api"),
+	}
 }
 
 func (c *Client) GetTxsOfAddress(address string) ([]Tx, error) {

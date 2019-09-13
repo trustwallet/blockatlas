@@ -1,7 +1,6 @@
 package tezos
 
 import (
-	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
 	"time"
@@ -14,7 +13,7 @@ type Platform struct {
 const Annual = 7.0
 
 func (p *Platform) Init() error {
-	p.client = InitClient(viper.GetString("tezos.api"), viper.GetString("tezos.rpc"))
+	p.client = InitClient()
 	return nil
 }
 

@@ -3,6 +3,7 @@ package aion
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"net/http"
 	"net/url"
@@ -12,6 +13,13 @@ import (
 type Client struct {
 	HTTPClient *http.Client
 	BaseURL    string
+}
+
+func InitClient() Client {
+	return Client{
+		HTTPClient: http.DefaultClient,
+		BaseURL:    viper.GetString("aion.api"),
+	}
 }
 
 func (c *Client) GetTxsOfAddress(address string, num int) (*TxPage, error) {

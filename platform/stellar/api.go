@@ -1,12 +1,9 @@
 package stellar
 
 import (
-	"fmt"
-	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/util"
-	"net/http"
 	"strconv"
 	"time"
 )
@@ -17,11 +14,7 @@ type Platform struct {
 }
 
 func (p *Platform) Init() error {
-	handle := coin.Coins[p.CoinIndex].Handle
-	p.client.API = viper.GetString(fmt.Sprintf("%s.api", handle))
-	p.client.HTTP = &http.Client{
-		Timeout: 2 * time.Second,
-	}
+	p.client = InitClient()
 	return nil
 }
 

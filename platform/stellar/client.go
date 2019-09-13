@@ -3,6 +3,7 @@ package stellar
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/spf13/viper"
 	"net/http"
 	"net/url"
 )
@@ -10,6 +11,13 @@ import (
 type Client struct {
 	HTTP *http.Client
 	API  string
+}
+
+func InitClient() Client {
+	return Client{
+		HTTP: http.DefaultClient,
+		API:    viper.GetString("stellar.api"),
+	}
 }
 
 func (c *Client) GetTxsOfAddress(address string) (txs []Payment, err error) {

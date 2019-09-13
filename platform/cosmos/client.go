@@ -1,6 +1,7 @@
 package cosmos
 
 import (
+	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"net/http"
@@ -14,7 +15,7 @@ type Client struct {
 	URL     string
 }
 
-func InitClient(URL string) Client {
+func InitClient() Client {
 	return Client{
 		Request: blockatlas.Request{
 			HttpClient: http.DefaultClient,
@@ -22,7 +23,7 @@ func InitClient(URL string) Client {
 				return nil
 			},
 		},
-		URL: URL,
+		URL: viper.GetString("cosmos.api"),
 	}
 }
 

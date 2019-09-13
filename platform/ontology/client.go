@@ -3,6 +3,7 @@ package ontology
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/spf13/viper"
 	"net/http"
 )
 
@@ -10,6 +11,13 @@ import (
 type Client struct {
 	HTTPClient *http.Client
 	BaseURL    string
+}
+
+func InitClient() Client {
+	return Client{
+		HTTPClient: http.DefaultClient,
+		BaseURL:    viper.GetString("ontology.api"),
+	}
 }
 
 // Explorer API max returned transactions per page

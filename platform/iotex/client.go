@@ -2,6 +2,7 @@ package iotex
 
 import (
 	"fmt"
+	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"net/http"
 	"net/url"
@@ -15,7 +16,7 @@ type Client struct {
 	URL     string
 }
 
-func InitClient(URL string) Client {
+func InitClient() Client {
 	return Client{
 		Request: blockatlas.Request{
 			HttpClient: http.DefaultClient,
@@ -23,7 +24,7 @@ func InitClient(URL string) Client {
 				return nil
 			},
 		},
-		URL: URL,
+		URL: viper.GetString("iotex.api"),
 	}
 }
 

@@ -1,6 +1,7 @@
 package nimiq
 
 import (
+	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/ybbus/jsonrpc"
@@ -11,8 +12,11 @@ type Client struct {
 	rpcClient jsonrpc.RPCClient
 }
 
-func (c *Client) Init() {
-	c.rpcClient = jsonrpc.NewClient(c.BaseURL)
+func InitClient() Client {
+	return Client{
+		BaseURL:   viper.GetString("nimiq.api"),
+		rpcClient: jsonrpc.NewClient(viper.GetString("nimiq.api")),
+	}
 }
 
 func (c *Client) GetTxsOfAddress(address string, count int) (txs []Tx, err error) {
