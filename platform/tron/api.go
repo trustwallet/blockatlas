@@ -26,11 +26,7 @@ func (p *Platform) Coin() coin.Coin {
 
 func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 	Txs, err := p.client.GetTxsOfAddress(address, "")
-	if err != nil {
-		return nil, err
-	}
-
-	if len(Txs) == 0 {
+	if err != nil && len(Txs) == 0 {
 		return nil, err
 	}
 
@@ -60,11 +56,7 @@ func (p *Platform) GetTokenTxsByAddress(address, token string) (blockatlas.TxPag
 
 	var tokenInfo AssetInfo
 	info, err := p.client.GetTokenInfo(token)
-	if err != nil {
-		return nil, err
-	}
-
-	if len(info.Data) == 0 {
+	if err != nil && len(info.Data) == 0 {
 		return nil, err
 	}
 
