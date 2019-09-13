@@ -89,6 +89,7 @@
   name: Zilliqa
   decimals: 12
   blockTime: 30000
+  minConfirmations: 1
   sampleAddress: 'zil1anrjcsj2ntklaa3arq4w3s6gw4l4hqrycs9egy'
 
 - id: 425
