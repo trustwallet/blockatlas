@@ -14,13 +14,14 @@ var Coins map[uint]Coin
 
 // Coin is the native currency of a blockchain
 type Coin struct {
-	ID         uint   `yaml:"id" json:"id"`                       // SLIP-44 ID (e.g. 242)
-	Handle     string `yaml:"handle" json:"handle"`               // Trust Wallet handle (e.g. nimiq)
-	Symbol     string `yaml:"symbol" json:"symbol"`               // Symbol of native currency
-	Title      string `yaml:"name" json:"name"`                   // Full name of native currency
-	Decimals   uint   `yaml:"decimals" json:"decimals"`           // Number of decimals
-	BlockTime  int    `yaml:"blockTime" json:"blockTime"`         // Average time between blocks (ms)
-	SampleAddr string `yaml:"sampleAddress" json:"sampleAddress"` // Random address seen on chain
+	ID               uint   `yaml:"id" json:"id"`                             // SLIP-44 ID (e.g. 242)
+	Handle           string `yaml:"handle" json:"handle"`                     // Trust Wallet handle (e.g. nimiq)
+	Symbol           string `yaml:"symbol" json:"symbol"`                     // Symbol of native currency
+	Title            string `yaml:"name" json:"name"`                         // Full name of native currency
+	Decimals         uint   `yaml:"decimals" json:"decimals"`                 // Number of decimals
+	BlockTime        int    `yaml:"blockTime" json:"blockTime"`               // Average time between blocks (ms)
+	MinConfirmations int64  `yaml:"minConfirmations" json:"minConfirmations"` // Number of confirmations before parsing a block
+	SampleAddr       string `yaml:"sampleAddress" json:"sampleAddress"`       // Random address seen on chain
 }
 
 func (c Coin) String() string {

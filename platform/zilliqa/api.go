@@ -37,7 +37,7 @@ func (p *Platform) CurrentBlockNumber() (int64, error) {
 		return 0, err
 	}
 
-	return block - 1, nil
+	return block, nil
 }
 
 func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {

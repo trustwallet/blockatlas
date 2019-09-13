@@ -166,7 +166,7 @@ func TestMemoryStorage_GetAddresses(t *testing.T) {
 	var addresses = make(map[string]string)
 	var xAddresses = make(map[string][]string)
 	var storage observer.Storage = &Storage{
-		addresses: addresses,
+		addresses:     addresses,
 		xpubAddresses: xAddresses,
 	}
 

@@ -62,6 +62,7 @@ func (s *Stream) load(c chan<- *blockatlas.Block) {
 	}
 
 	height, err := s.BlockAPI.CurrentBlockNumber()
+	height -= s.BlockAPI.Coin().MinConfirmations
 	if err != nil {
 		s.log.WithError(err).Error("Polling failed: source didn't return chain head number")
 		return

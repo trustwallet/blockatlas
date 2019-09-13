@@ -89,6 +89,7 @@
   name: Zilliqa
   decimals: 12
   blockTime: 30000
+  minConfirmations: 1
   sampleAddress: 'zil1anrjcsj2ntklaa3arq4w3s6gw4l4hqrycs9egy'
 
 - id: 425
@@ -207,6 +208,7 @@
   name: WAVES
   decimals: 8
   blockTime: 30000
+  minConfirmations: 1
   sampleAddress: '3P7wz6TXienpw3BHe8eHUEuZWb6WE58kgnQ'
 
 - id: 7562605
