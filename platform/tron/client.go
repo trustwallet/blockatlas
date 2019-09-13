@@ -6,7 +6,6 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"net/http"
 	"net/url"
-	"strconv"
 )
 
 type Client struct {
@@ -32,7 +31,7 @@ func (c *Client) GetTxsOfAddress(address, token string) ([]Tx, error) {
 	var txs Page
 	err := c.Request.Get(&txs, c.BaseURL, path, url.Values{
 		"only_confirmed": {"true"},
-		"limit":          {strconv.Itoa(blockatlas.TxPerPage)},
+		"limit":          {"200"},
 		"token_id":       {token},
 	})
 
