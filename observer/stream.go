@@ -62,7 +62,7 @@ func (s *Stream) load(c chan<- *blockatlas.Block) {
 	}
 
 	height, err := s.BlockAPI.CurrentBlockNumber()
-	s.optimizeToMinConfirmations(&height)
+	height -= s.BlockAPI.Coin().MinConfirmations
 	if err != nil {
 		s.log.WithError(err).Error("Polling failed: source didn't return chain head number")
 		return
@@ -105,9 +105,4 @@ func (s *Stream) loadBlock(c chan<- *blockatlas.Block, num int64) {
 		s.log.WithError(err).Error("Polling failed: could not update block number at tracker")
 		return
 	}
-}
-
-func (s *Stream) optimizeToMinConfirmations(height *int64) {
-	coin := s.BlockAPI.Coin()
-	*height -= coin.MinConfirmations
 }
