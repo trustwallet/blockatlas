@@ -1,6 +1,7 @@
 package tron
 
 import (
+	"fmt"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
@@ -56,17 +57,20 @@ func (p *Platform) GetTokenTxsByAddress(address, token string) (blockatlas.TxPag
 	var txs []blockatlas.Tx
 	for _, trx := range tokenTxs {
 		tx, err := NormalizeTokenTransfer(&trx, tokenInfo)
-			if err != nil {
-				logger.Error(err)
-				continue
-			}
-			txs = append(txs, tx)
+		if err != nil {
+			logger.Error(err)
+			continue
+		}
+		txs = append(txs, tx)
 	}
 
 	return txs, nil
 }
 
 func NormalizeTokenTransfer(srcTx *Tx, tokenInfo AssetInfo) (tx blockatlas.Tx, e error) {
+	if len(srcTx.Data.Contracts) == 0 {
+		return tx, fmt.Errorf("tron: token transfer without contract: %v - %v", tx, tokenInfo)
+	}
 	contract := &srcTx.Data.Contracts[0]
 
 	switch contract.Parameter.(type) {
@@ -87,15 +91,15 @@ func NormalizeTokenTransfer(srcTx *Tx, tokenInfo AssetInfo) (tx blockatlas.Tx, e
 			Date: srcTx.BlockTime / 1000,
 			Fee:  "0",
 			From: from,
-			To: to,
+			To:   to,
 			Meta: blockatlas.TokenTransfer{
-				Name: tokenInfo.Name,
-				Symbol: tokenInfo.Symbol,
-				TokenID: tokenInfo.ID,
+				Name:     tokenInfo.Name,
+				Symbol:   tokenInfo.Symbol,
+				TokenID:  tokenInfo.ID,
 				Decimals: tokenInfo.Decimals,
-				Value: transfer.Value.Amount,
-				From: from,
-				To: to,
+				Value:    transfer.Value.Amount,
+				From:     from,
+				To:       to,
 			},
 		}, nil
 	default:
@@ -179,14 +183,13 @@ func (p *Platform) GetTokenListByAddress(address string) (blockatlas.TokenPage, 
 
 	tokenPage := make([]blockatlas.Token, 0)
 	var tokenIDs []string
-	if len(tokens.Data) > 0 {
-		for _, v := range tokens.Data[0].AssetsV2 {
-			tokenIDs = append(tokenIDs, v.Key)
-		}
-	} else {
+	if len(tokens.Data) == 0 {
 		return tokenPage, nil
 	}
 
+	for _, v := range tokens.Data[0].AssetsV2 {
+		tokenIDs = append(tokenIDs, v.Key)
+	}
 	tokensInfoChan := make(chan *Asset, len(tokenIDs))
 
 	var wg sync.WaitGroup
@@ -206,6 +209,9 @@ func (p *Platform) GetTokenListByAddress(address string) (blockatlas.TokenPage, 
 
 	tokensInfoMap := make(map[string]AssetInfo)
 	for info := range tokensInfoChan {
+		if len(info.Data) == 0 {
+			continue
+		}
 		tokensInfoMap[info.Data[0].ID] = info.Data[0]
 	}
 
