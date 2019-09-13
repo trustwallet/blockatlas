@@ -136,7 +136,7 @@ func AppendTxs(in []blockatlas.Tx, srcTx *Doc, coinIndex uint) (out []blockatlas
 	}
 	op := &srcTx.Ops[0]
 
-	if op.Type == blockatlas.TxTokenTransfer {
+	if op.Type == blockatlas.TxTokenTransfer && op.Contract != nil {
 		tokenTx := baseTx
 
 		tokenTx.Meta = blockatlas.TokenTransfer{

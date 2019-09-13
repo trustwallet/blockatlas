@@ -207,6 +207,9 @@ func (p *Platform) getTxsByAddress(address string) ([]blockatlas.Tx, error) {
 }
 
 func NormalizeTransfer(receipt *TransferReceipt, clause *Clause) (blockatlas.Tx, error) {
+	if receipt.Receipt == nil || clause == nil {
+		return blockatlas.Tx{}, fmt.Errorf("vechain: invalid parameters: %v - %s", receipt, clause)
+	}
 	feeBase10, err := util.HexToDecimal(receipt.Receipt.Paid)
 	if err != nil {
 		return blockatlas.Tx{}, err

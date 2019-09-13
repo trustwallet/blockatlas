@@ -16,7 +16,7 @@ type TransferReceipt struct {
 	ID        string   `json:"id"`
 	Nonce     string   `json:"nonce"`
 	Origin    string   `json:"origin"`
-	Receipt   Receipt  `json:"receipt"`
+	Receipt   *Receipt  `json:"receipt"`
 	Timestamp uint64   `json:"timestamp"`
 }
 
