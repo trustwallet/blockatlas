@@ -424,7 +424,7 @@ var collection2Dst = blockatlas.Collection{
 	Description:     "Year 4424: The search begins for new life on the other side of the galaxy. Explore abandoned space stations, mysterious caverns, and ruins on far away worlds in order to unlock puzzles and secrets! Beware the rogue machines!",
 	ExternalLink:    "https://www.ageofrust.games/",
 	Total:           1,
-	CategoryAddress: "age-of-rust",
+	CategoryAddress: "0xfaafdc07907ff5120a76b34b731b278c38d6043c---age-of-rust",
 	Address:         "0x0875BCab22dE3d02402bc38aEe4104e1239374a7",
 	Version:         "",
 	Coin:            60,

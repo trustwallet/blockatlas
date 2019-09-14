@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
-	"strings"
 )
 
 type CollectionsClient struct {
@@ -42,7 +41,8 @@ func (c CollectionsClient) GetCollectibles(owner string, collectibleID string) (
 	if err != nil {
 		return nil, nil, err
 	}
-	collection := searchCollection(&collections, collectibleID)
+	id := getCollectionId(collectibleID)
+	collection := searchCollection(collections, id)
 	if collection == nil {
 		return nil, nil, errors.New(fmt.Sprintf("%s not found", collectibleID))
 	}
@@ -75,18 +75,4 @@ func (c CollectionsClient) GetCollectibles(owner string, collectibleID string) (
 	var page CollectiblePage
 	err = json.NewDecoder(res.Body).Decode(&page)
 	return collection, page.Collectibles, err
-}
-
-func searchCollection(collections *[]Collection, collectibleID string) *Collection {
-	for _, i := range *collections {
-		if strings.EqualFold(i.Slug, collectibleID) {
-			return &i
-		}
-		for _, contract := range i.Contracts {
-			if strings.EqualFold(contract.Address, collectibleID) {
-				return &i
-			}
-		}
-	}
-	return nil
 }
