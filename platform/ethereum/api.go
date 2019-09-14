@@ -15,6 +15,7 @@ import (
 
 var (
 	supportedTypes = map[string]bool{"ERC721": true, "ERC1155": true}
+	slugTokens     = map[string]bool{"ERC1155": true}
 )
 
 type Platform struct {
@@ -223,16 +224,17 @@ func NormalizeCollectionPage(collections []Collection, coinIndex uint, owner str
 }
 
 func NormalizeCollection(c Collection, coinIndex uint, owner string) blockatlas.Collection {
-	var symbol, version = "", ""
-	cType := "ERC1155"
+	var symbol, version, cType, categoryAddress = "", "", "", ""
 	description := c.Description
-	categoryAddress := c.Slug
 	if len(c.Contracts) > 0 {
 		description = getValidParameter(c.Contracts[0].Description, description)
 		symbol = getValidParameter(c.Contracts[0].Symbol, symbol)
 		categoryAddress = getValidParameter(c.Contracts[0].Address, categoryAddress)
 		version = getValidParameter(c.Contracts[0].NftVersion, version)
 		cType = getValidParameter(c.Contracts[0].Type, cType)
+	}
+	if _, ok := slugTokens[cType]; ok {
+		categoryAddress = c.Slug
 	}
 	return blockatlas.Collection{
 		Name:            c.Name,
@@ -262,13 +264,14 @@ func NormalizeCollectiblePage(c *Collection, srcPage []Collectible, coinIndex ui
 }
 
 func NormalizeCollectible(c *Collection, a Collectible, coinIndex uint) blockatlas.Collectible {
-	var address, externalLink = "", ""
-	cType := "ERC1155"
-	collectionID := c.Slug
+	var address, externalLink, collectionID, cType = "", "", "", ""
 	if len(c.Contracts) > 0 {
 		address = getValidParameter(c.Contracts[0].Address, address)
 		cType = getValidParameter(c.Contracts[0].Type, cType)
 		collectionID = address
+	}
+	if _, ok := slugTokens[cType]; ok {
+		collectionID = c.Slug
 	}
 	externalLink = getValidParameter(a.ExternalLink, a.AssetContract.ExternalLink)
 	return blockatlas.Collectible{

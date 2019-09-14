@@ -51,12 +51,15 @@ func (c CollectionsClient) GetCollectibles(owner string, collectibleID string) (
 		"owner": {owner},
 		"limit": {strconv.Itoa(300)},
 	}
+
 	for _, i := range collection.Contracts {
+		if _, ok := slugTokens[i.Type]; ok {
+			uriValues.Set("collection", collection.Slug)
+			break
+		}
 		uriValues.Add("asset_contract_addresses", i.Address)
 	}
-	if len(collection.Contracts) == 0 {
-		uriValues.Set("collection", collection.Slug)
-	}
+
 	uri := fmt.Sprintf("%s/api/v1/assets/?%s",
 		c.CollectionsURL,
 		uriValues.Encode())
