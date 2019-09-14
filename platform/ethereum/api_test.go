@@ -395,7 +395,7 @@ var collection2Dst = blockatlas.Collection{
 	Description:     "tactical FPS combat in a cutthroat universe ravaged by an ongoing war of extinction between humanity and AI. Fight for loot backed by blockchain in competitive game modes.",
 	ExternalLink:    "https://dissolution.online",
 	Total:           20,
-	CategoryAddress: "",
+	CategoryAddress: "dissolution",
 	Address:         "0x0875BCab22dE3d02402bc38aEe4104e1239374a7",
 	Version:         "",
 	Coin:            60,
