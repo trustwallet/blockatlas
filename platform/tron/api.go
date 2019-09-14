@@ -25,17 +25,20 @@ func (p *Platform) Coin() coin.Coin {
 }
 
 func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
-	srcTxs, err := p.client.GetTxsOfAddress(address, "")
-	if err != nil {
+	Txs, err := p.client.GetTxsOfAddress(address, "")
+	if err != nil && len(Txs) == 0 {
 		return nil, err
 	}
 
 	var txs []blockatlas.Tx
-	for _, srcTx := range srcTxs {
-		tx, ok := Normalize(&srcTx)
-		if ok {
-			txs = append(txs, tx)
+	for _, srcTx := range Txs {
+		if len(txs) <= blockatlas.TxPerPage {
+			tx, ok := Normalize(&srcTx)
+			if ok {
+				txs = append(txs, tx)
+			}
 		}
+
 	}
 
 	return txs, nil
@@ -47,11 +50,16 @@ func (p *Platform) GetTokenTxsByAddress(address, token string) (blockatlas.TxPag
 		return nil, err
 	}
 
-	var tokenInfo AssetInfo
-	info, err := p.client.GetTokenInfo(token)
-	if err != nil {
+	if len(tokenTxs) == 0 {
 		return nil, err
 	}
+
+	var tokenInfo AssetInfo
+	info, err := p.client.GetTokenInfo(token)
+	if err != nil && len(info.Data) == 0 {
+		return nil, err
+	}
+
 	tokenInfo = info.Data[0]
 
 	var txs []blockatlas.Tx
