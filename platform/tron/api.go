@@ -32,13 +32,10 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 
 	var txs []blockatlas.Tx
 	for _, srcTx := range Txs {
-		if len(txs) <= blockatlas.TxPerPage {
-			tx, ok := Normalize(&srcTx)
-			if ok {
-				txs = append(txs, tx)
-			}
+		tx, ok := Normalize(&srcTx)
+		if ok {
+			txs = append(txs, tx)
 		}
-
 	}
 
 	return txs, nil
