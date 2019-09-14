@@ -2,19 +2,19 @@ package ethereum
 
 import (
 	"fmt"
+	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"math/big"
 	"net/http"
 	"strconv"
-
-	"github.com/gin-gonic/gin"
-	"github.com/spf13/viper"
 )
 
 var (
 	supportedTypes = map[string]bool{"ERC721": true, "ERC1155": true}
+	slugTokens     = map[string]bool{"ERC1155": true}
 )
 
 type Platform struct {
@@ -213,6 +213,9 @@ func (p *Platform) GetCollectibles(owner, collectibleID string) (blockatlas.Coll
 
 func NormalizeCollectionPage(collections []Collection, coinIndex uint, owner string) (page blockatlas.CollectionPage) {
 	for _, collection := range collections {
+		if len(collection.Contracts) == 0 {
+			continue
+		}
 		item := NormalizeCollection(collection, coinIndex, owner)
 		if _, ok := supportedTypes[item.Type]; !ok {
 			continue
@@ -223,17 +226,19 @@ func NormalizeCollectionPage(collections []Collection, coinIndex uint, owner str
 }
 
 func NormalizeCollection(c Collection, coinIndex uint, owner string) blockatlas.Collection {
-	var symbol, version = "", ""
-	cType := "ERC1155"
-	description := c.Description
-	categoryAddress := c.Slug
-	if len(c.Contracts) > 0 {
-		description = getValidParameter(c.Contracts[0].Description, description)
-		symbol = getValidParameter(c.Contracts[0].Symbol, symbol)
-		categoryAddress = getValidParameter(c.Contracts[0].Address, categoryAddress)
-		version = getValidParameter(c.Contracts[0].NftVersion, version)
-		cType = getValidParameter(c.Contracts[0].Type, cType)
+	if len(c.Contracts) == 0 {
+		return blockatlas.Collection{}
 	}
+
+	description := getValidParameter(c.Contracts[0].Description, c.Description)
+	symbol := getValidParameter(c.Contracts[0].Symbol, "")
+	categoryAddress := getValidParameter(c.Contracts[0].Address, "")
+	version := getValidParameter(c.Contracts[0].NftVersion, "")
+	collectionType := getValidParameter(c.Contracts[0].Type, "")
+	if _, ok := slugTokens[collectionType]; ok {
+		categoryAddress = createCategoryAddress(categoryAddress, c.Slug)
+	}
+
 	return blockatlas.Collection{
 		Name:            c.Name,
 		Symbol:          symbol,
@@ -246,11 +251,14 @@ func NormalizeCollection(c Collection, coinIndex uint, owner string) blockatlas.
 		Address:         owner,
 		Version:         version,
 		Coin:            coinIndex,
-		Type:            cType,
+		Type:            collectionType,
 	}
 }
 
 func NormalizeCollectiblePage(c *Collection, srcPage []Collectible, coinIndex uint) (page blockatlas.CollectiblePage) {
+	if len(c.Contracts) == 0 {
+		return
+	}
 	for _, src := range srcPage {
 		item := NormalizeCollectible(c, src, coinIndex)
 		if _, ok := supportedTypes[item.Type]; !ok {
@@ -262,15 +270,13 @@ func NormalizeCollectiblePage(c *Collection, srcPage []Collectible, coinIndex ui
 }
 
 func NormalizeCollectible(c *Collection, a Collectible, coinIndex uint) blockatlas.Collectible {
-	var address, externalLink = "", ""
-	cType := "ERC1155"
-	collectionID := c.Slug
-	if len(c.Contracts) > 0 {
-		address = getValidParameter(c.Contracts[0].Address, address)
-		cType = getValidParameter(c.Contracts[0].Type, cType)
-		collectionID = address
+	address := getValidParameter(c.Contracts[0].Address, "")
+	collectionType := getValidParameter(c.Contracts[0].Type, "")
+	collectionID := address
+	if _, ok := slugTokens[collectionType]; ok {
+		collectionID = createCategoryAddress(address, c.Slug)
 	}
-	externalLink = getValidParameter(a.ExternalLink, a.AssetContract.ExternalLink)
+	externalLink := getValidParameter(a.ExternalLink, a.AssetContract.ExternalLink)
 	return blockatlas.Collectible{
 		CollectionID:     collectionID,
 		ContractAddress:  address,
@@ -281,7 +287,7 @@ func NormalizeCollectible(c *Collection, a Collectible, coinIndex uint) blockatl
 		ImageUrl:         a.ImagePreviewUrl,
 		ProviderLink:     a.Permalink,
 		ExternalLink:     externalLink,
-		Type:             cType,
+		Type:             collectionType,
 		Description:      a.Description,
 		Coin:             coinIndex,
 	}
@@ -319,11 +325,4 @@ func NormalizeTokens(srcTokens []Token, p Platform) (tokenPage []blockatlas.Toke
 		tokenPage = append(tokenPage, token)
 	}
 	return
-}
-
-func getValidParameter(first, second string) string {
-	if len(first) > 0 {
-		return first
-	}
-	return second
 }
