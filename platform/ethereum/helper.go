@@ -12,14 +12,14 @@ func getValidParameter(first, second string) string {
 	return second
 }
 
-func createCategoryAddress(address, slug string) string {
+func createCollectionId(address, slug string) string {
 	return fmt.Sprintf("%s---%s", address, slug)
 }
 
-func getCollectionId(categoryAddress string) string {
-	s := strings.Split(categoryAddress, "---")
+func getCollectionId(collectionId string) string {
+	s := strings.Split(collectionId, "---")
 	if len(s) != 2 {
-		return categoryAddress
+		return collectionId
 	}
 	return s[1]
 }

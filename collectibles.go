@@ -1,6 +1,7 @@
 package blockatlas
 
 type Collection struct {
+	CollectionId    string `json:"collection_id"`
 	Name            string `json:"name"`
 	Symbol          string `json:"symbol"`
 	Slug            string `json:"slug"`
