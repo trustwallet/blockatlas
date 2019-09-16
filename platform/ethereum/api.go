@@ -316,7 +316,8 @@ func NormalizeToken(srcToken *Token, coinIndex uint) (t blockatlas.Token, ok boo
 }
 
 // NormalizeTxs converts multiple Ethereum tokens
-func NormalizeTokens(srcTokens []Token, p Platform) (tokenPage []blockatlas.Token) {
+func NormalizeTokens(srcTokens []Token, p Platform) []blockatlas.Token {
+	tokenPage := make([]blockatlas.Token, 0)
 	for _, srcToken := range srcTokens {
 		token, ok := NormalizeToken(&srcToken, p.CoinIndex)
 		if !ok {
@@ -324,5 +325,5 @@ func NormalizeTokens(srcTokens []Token, p Platform) (tokenPage []blockatlas.Toke
 		}
 		tokenPage = append(tokenPage, token)
 	}
-	return
+	return tokenPage
 }
