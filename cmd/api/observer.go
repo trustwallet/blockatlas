@@ -94,6 +94,7 @@ func cacheXPubAddress(xpub string, coin uint) {
 			"coin":      coin,
 			"addresses": addresses,
 		})
+		return
 	}
 	err = observerStorage.App.SaveXpubAddresses(coin, addresses, xpub)
 	if err != nil {
