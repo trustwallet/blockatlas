@@ -42,10 +42,10 @@ func getError(args ...interface{}) *errMessage {
 	err := &errMessage{message: msg}
 	for _, arg := range args {
 		switch arg := arg.(type) {
+		case *errors.Error:
+			err.err = arg
 		case error:
 			err.err = errors.E(arg)
-		case errors.Error:
-			err.err = &arg
 		default:
 			continue
 		}

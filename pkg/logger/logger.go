@@ -62,6 +62,8 @@ func getMessage(args ...interface{}) *message {
 		switch arg := arg.(type) {
 		case nil:
 			continue
+		case error:
+			continue
 		case string:
 			message = append(message, arg)
 		case Params:
@@ -69,7 +71,7 @@ func getMessage(args ...interface{}) *message {
 		case map[string]interface{}:
 			appendMap(msg.params, arg)
 		default:
-			generic = append(generic, fmt.Sprintf("%v", arg))
+			generic = append(generic, fmt.Sprintf("%s", arg))
 		}
 	}
 	if len(message) > 0 {
