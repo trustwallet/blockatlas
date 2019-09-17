@@ -20,6 +20,10 @@ var (
 	_ error = (*Error)(nil)
 )
 
+func (e *Error) isEmpty() bool {
+	return e.meta == nil && e.Type == TypeNone && e.Err == nil
+}
+
 func (e *Error) Error() string {
 	r, _ := e.MarshalJSON()
 	return string(r)
