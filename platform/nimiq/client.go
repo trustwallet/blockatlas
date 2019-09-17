@@ -2,6 +2,7 @@ package nimiq
 
 import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/ybbus/jsonrpc"
 )
@@ -21,6 +22,7 @@ func (c *Client) GetTxsOfAddress(address string, count int) (txs []Tx, err error
 		if jErr.Code == 1 {
 			return nil, blockatlas.ErrInvalidAddr
 		} else {
+			err = errors.E(err, errors.TypePlatformRequest, errors.Params{"platform": "nimiq"})
 			logger.Error(err, "Nimiq: Failed to get transactions")
 			return nil, blockatlas.ErrSourceConn
 		}

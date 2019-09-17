@@ -1,8 +1,8 @@
 package binance
 
 import (
-	"fmt"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/errors"
 	"strings"
 
 	"github.com/spf13/viper"
@@ -39,7 +39,7 @@ func (p *Platform) CurrentBlockNumber() (int64, error) {
 		return 0, err
 	}
 	if len(list.BlockArray) == 0 {
-		return 0, fmt.Errorf("no block descriptor found")
+		return 0, errors.E("no block descriptor found", errors.TypePlatformApi)
 	}
 	return list.BlockArray[0].BlockHeight, nil
 }

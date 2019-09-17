@@ -5,6 +5,7 @@ import (
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/util"
 	"strings"
@@ -69,7 +70,8 @@ func (p *Platform) GetTokenTxsByAddress(address string, token string) (blockatla
 	if strings.ToLower(token) == GasContract {
 		return p.getThorTxsByAddress(address)
 	} else {
-		return nil, fmt.Errorf("vechain invalid token %s", token)
+		return nil, errors.E("vechain invalid token", errors.TypePlatformUnmarshal,
+			errors.Params{"token": token, "platform": "vechain"})
 	}
 }
 
@@ -93,7 +95,7 @@ func (p *Platform) getThorTxsByAddress(address string) ([]blockatlas.Tx, error) 
 
 		receipt := findTransferReceiptByTxID(receiptsChan, t.TxID)
 		if receipt == nil {
-			logger.Error(err, "findTransferReceiptByTxID cannot find the receipt", logger.Params{
+			logger.Error("findTransferReceiptByTxID cannot find the receipt", logger.Params{
 				"transfer": t,
 			})
 			continue
@@ -101,10 +103,9 @@ func (p *Platform) getThorTxsByAddress(address string) ([]blockatlas.Tx, error) 
 
 		tx, err := NormalizeTokenTransfer(&t, receipt)
 		if err != nil {
-			logger.Error(err, "getTxsByAddress clause error", logger.Params{
-				"receipt":  receipt,
-				"transfer": t,
-			})
+			p := logger.Params{"receipt": receipt, "transfer": t, "platform": "vechain"}
+			err = errors.E(err,"invalid token", errors.TypePlatformUnmarshal, p)
+			logger.Error(err, "getTxsByAddress clause error", p)
 			continue
 		}
 		txs = append(txs, tx)
@@ -125,9 +126,9 @@ func (p *Platform) getTransactionReceipt(ids []string) chan *TransferReceipt {
 			defer sem.Release()
 			receipt, err := p.client.GetTransactionReceipt(id)
 			if err != nil {
-				logger.Error(err, "Vechain: Failed to get tx receipt", logger.Params{
-					"id": id,
-				})
+				err = errors.E(err, "Failed to get tx receipt", errors.TypePlatformUnmarshal,
+					errors.Params{"id": id, "platform": "vechain"})
+				logger.Error(err, logger.Params{"id": id})
 				return
 			}
 			receiptsChan <- receipt
@@ -152,9 +153,9 @@ func (p *Platform) getTransactions(ids []string) chan *NativeTransaction {
 			defer sem.Release()
 			receipt, err := p.client.GetTransactionByID(id)
 			if err != nil {
-				logger.Error(err, "Vechain: Failed to get transaction", logger.Params{
-					"id": id,
-				})
+				err = errors.E(err, "Failed to get tx transaction", errors.TypePlatformUnmarshal,
+					errors.Params{"id": id, "platform": "vechain"})
+				logger.Error(err, logger.Params{"id": id})
 				return
 			}
 			receiptsChan <- receipt
@@ -193,10 +194,9 @@ func (p *Platform) getTxsByAddress(address string) ([]blockatlas.Tx, error) {
 			}
 			tx, err := NormalizeTransfer(receipt, &clause)
 			if err != nil {
-				logger.Error(err, "getTxsByAddress clause error", logger.Params{
-					"receipt": receipt,
-					"clause":  clause,
-				})
+				p := logger.Params{"receipt": receipt, "clause": clause, "platform": "vechain"}
+				err = errors.E(err, errors.TypePlatformUnmarshal, p)
+				logger.Error(err, "getTxsByAddress clause error", p)
 				continue
 			}
 			txs = append(txs, tx)

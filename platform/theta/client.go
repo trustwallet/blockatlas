@@ -3,7 +3,7 @@ package theta
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/trustwallet/blockatlas/pkg/logger"
+	"github.com/trustwallet/blockatlas/pkg/errors"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -23,21 +23,18 @@ func (c *Client) FetchAddressTransactions(address string) (txs []Tx, err error) 
 
 	resp, err := c.HTTPClient.Get(uri)
 	if err != nil {
-		logger.Error(err, "THETA: Failed HTTP get transactions")
-		return nil, err
+		return nil, errors.E(err, errors.TypePlatformRequest, errors.Params{"url": uri, "platform": "theta"})
 	}
 	defer resp.Body.Close()
 
 	body, errBody := ioutil.ReadAll(resp.Body)
 	if errBody != nil {
-		logger.Error(err, "THETA: Error decode transaction response body")
-		return nil, err
+		return nil, errors.E(errBody, errors.TypePlatformUnmarshal, errors.Params{"url": uri, "platform": "theta"})
 	}
 
 	errUnm := json.Unmarshal(body, &transfers)
 	if errUnm != nil {
-		logger.Error(err, "THETA: Error Unmarshal transaction response body")
-		return nil, err
+		return nil, errors.E(errUnm, errors.TypePlatformRequest, errors.Params{"url": uri, "platform": "theta"})
 	}
 
 	return transfers.Body, nil

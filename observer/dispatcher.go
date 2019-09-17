@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"net/http"
 )
@@ -50,7 +51,8 @@ func (d *Dispatcher) dispatch(event Event) {
 func (d *Dispatcher) postWebhook(hook string, data []byte, log *logrus.Entry) {
 	_, err := d.Client.Post(hook, "application/json", bytes.NewReader(data))
 	if err != nil {
-		log.WithError(err).Errorf("Failed to dispatch event %s: %s", hook, err)
+		err = errors.E(err, errors.TypeObserver, errors.Params{"hook": hook})
+		log.WithError(err).Errorf("Failed to dispatch event %s", hook)
 	}
 	log.Info("Dispatch: hook: ", hook)
 }

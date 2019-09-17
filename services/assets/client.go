@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/errors"
 	"strings"
 )
 
@@ -33,7 +34,10 @@ func GetValidatorsInfo(coin coin.Coin) ([]AssetValidator, error) {
 		ErrorHandler: blockatlas.DefaultErrorHandler,
 	}
 	err := request.Get(&results, "/validators/list.json", nil)
-	return results, err
+	if err != nil {
+		return nil, errors.E(err, errors.TypeAssets, errors.Params{"coin": coin.Handle})
+	}
+	return results, nil
 }
 
 func NormalizeValidators(validators []blockatlas.Validator, assets []AssetValidator, coin coin.Coin) []blockatlas.StakeValidator {

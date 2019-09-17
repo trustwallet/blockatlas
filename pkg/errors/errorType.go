@@ -13,13 +13,12 @@ const (
 	TypePlatformUnknown
 	TypePlatformRequest
 	TypePlatformClient
-	TypePlatformApi
 	TypePlatformError
-	TypeStorageSave
-	TypeStorageGet
+	TypePlatformApi
 	TypeLoadConfig
 	TypeLoadCoins
 	TypeObserver
+	TypeStorage
 	TypeAssets
 	TypeUtil
 	TypeCmd
@@ -44,10 +43,8 @@ func (e Type) String() string {
 		return "Platform Unknown Error"
 	case TypeObserver:
 		return "Observer Error"
-	case TypeStorageSave:
-		return "Storage Save Error"
-	case TypeStorageGet:
-		return "Storage Get Error"
+	case TypeStorage:
+		return "Storage Error"
 	case TypeLoadConfig:
 		return "Load Config Error"
 	case TypeLoadCoins:
