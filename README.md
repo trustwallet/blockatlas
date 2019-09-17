@@ -150,7 +150,7 @@ or you can run manually: `TEST_CONFIG=$(TEST_CONFIG) TEST_COINS=$(TEST_COINS) go
 ```
 
 
-## Logs
+## Error
 Use the package `pkg/errors` for create a new error.
 An error in Go is any implementing interface with an Error() string method. We overwrite the error object by our error struct:
 
