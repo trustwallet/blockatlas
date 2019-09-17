@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"runtime"
 	"strings"
 )
 
@@ -11,9 +12,10 @@ type Params map[string]interface{}
 
 // Error represents a error's specification.
 type Error struct {
-	Err  error
-	Type Type
-	meta interface{}
+	Err    error
+	Type   Type
+	meta   interface{}
+	caller string
 }
 
 var (
@@ -39,6 +41,9 @@ func (e *Error) String() string {
 	}
 	if len(e.Meta()) > 0 {
 		msg = fmt.Sprintf("%s | Meta: %s", msg, e.Meta())
+	}
+	if len(e.caller) > 0 {
+		msg = fmt.Sprintf("%s | Caller: %s", msg, e.caller)
 	}
 	return msg
 }
@@ -120,6 +125,11 @@ func E(args ...interface{}) *Error {
 	if len(message) > 0 {
 		msg := strings.Join(message[:], ": ")
 		e.Err = errors.New(msg)
+	}
+
+	_, fn, line, ok := runtime.Caller(1)
+	if ok {
+		e.caller = fmt.Sprintf("%s:%d", fn, line)
 	}
 	return e
 }
