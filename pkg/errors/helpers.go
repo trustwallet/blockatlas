@@ -2,16 +2,16 @@ package errors
 
 // Is reports whether err is an *Error of the given Type.
 // If err is nil then Is returns false.
-func Is(kind Type, err error) bool {
+func Is(err error, t Type) bool {
 	e, ok := err.(*Error)
 	if !ok {
 		return false
 	}
 	if e.Type != TypeNone {
-		return e.Type == kind
+		return e.Type == t
 	}
 	if e.Err != nil {
-		return Is(kind, e.Err)
+		return Is(e.Err, t)
 	}
 	return false
 }

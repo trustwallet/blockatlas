@@ -94,7 +94,7 @@ func (e *Error) JSON() interface{} {
 	if _, ok := p["error"]; !ok {
 		p["error"] = e.Err.Error()
 	}
-	if _, ok := p["type"]; !ok {
+	if _, ok := p["type"]; !ok && e.Type != TypeNone {
 		p["type"] = e.Type.String()
 	}
 	if _, ok := p["caller"]; !ok {
