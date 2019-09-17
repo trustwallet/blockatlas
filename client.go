@@ -28,8 +28,6 @@ func (r *Request) Execute(method string, url string, body io.Reader, result inte
 	if err != nil {
 		return err
 	}
-	req.Header.Add("Accept-Encoding", "*")
-	req.Header.Add("Accept", "*/*")
 	res, err := r.HttpClient.Do(req)
 	if err != nil {
 		return err
