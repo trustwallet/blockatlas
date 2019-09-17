@@ -3,7 +3,7 @@ package aion
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/trustwallet/blockatlas/pkg/logger"
+	"github.com/trustwallet/blockatlas/pkg/errors"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -24,11 +24,14 @@ func (c *Client) GetTxsOfAddress(address string, num int) (*TxPage, error) {
 
 	res, err := c.HTTPClient.Get(uri)
 	if err != nil {
-		logger.Error(err, "Aion: Failed to get transactions for address", logger.Params{"address": address})
+		return nil, errors.E(err, errors.TypePlatformRequest, errors.Params{"url": uri, "platform": "aion"})
 	}
 	defer res.Body.Close()
 
 	txPage := new(TxPage)
 	err = json.NewDecoder(res.Body).Decode(txPage)
-	return txPage, err
+	if err != nil {
+		return nil, errors.E(err, errors.TypePlatformUnmarshal, errors.Params{"url": uri, "platform": "aion"})
+	}
+	return txPage, nil
 }
