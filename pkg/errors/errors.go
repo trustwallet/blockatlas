@@ -25,7 +25,10 @@ func (e *Error) isEmpty() bool {
 }
 
 func (e *Error) Error() string {
-	r, _ := e.MarshalJSON()
+	r, err := e.MarshalJSON()
+	if err != nil {
+		return e.Err.Error()
+	}
 	return string(r)
 }
 
@@ -54,10 +57,16 @@ func (e *Error) Meta() string {
 	case string:
 		return meta
 	case Params:
-		r, _ := json.Marshal(arg)
+		r, err := json.Marshal(arg)
+		if err != nil {
+			return ""
+		}
 		return string(r)
 	case map[string]interface{}:
-		r, _ := json.Marshal(arg)
+		r, err := json.Marshal(arg)
+		if err != nil {
+			return ""
+		}
 		return string(r)
 	default:
 		return fmt.Sprintf("%v", arg)
