@@ -247,7 +247,7 @@ func NormalizeCollection(c Collection, coinIndex uint, owner string) blockatlas.
 		Description:     description,
 		ExternalLink:    c.ExternalUrl,
 		Total:           int(c.Total.Int64()),
-		CollectionId:    collectionId,
+		Id:              collectionId,
 		CategoryAddress: collectionId,
 		Address:         owner,
 		Version:         version,
