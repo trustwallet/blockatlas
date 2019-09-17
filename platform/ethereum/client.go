@@ -73,20 +73,14 @@ func (c *Client) CurrentBlockNumber() (num int64, err error) {
 	path := fmt.Sprintf("%s/node_info", c.BaseURL)
 	res, err := http.Get(path)
 	if err != nil {
-		return num, errors.E(err, errors.TypePlatformRequest, errors.Params{
-			"coin":   "Ethereum",
-			"method": "CurrentBlockNumber",
-		})
+		return num, errors.E(err, errors.TypePlatformRequest, errors.Params{"coin": "Ethereum"})
 	}
 	defer res.Body.Close()
 	var nodeInfo NodeInfo
 	dec := json.NewDecoder(res.Body)
 	err = dec.Decode(&nodeInfo)
 	if err != nil {
-		return num, errors.E(err, errors.TypePlatformUnmarshal, errors.Params{
-			"coin":   "Ethereum",
-			"method": "CurrentBlockNumber",
-		})
+		return num, errors.E(err, errors.TypePlatformUnmarshal, errors.Params{"coin": "Ethereum"})
 	}
 
 	return nodeInfo.LatestBlock, nil
