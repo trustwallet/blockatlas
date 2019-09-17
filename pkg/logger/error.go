@@ -1,30 +1,13 @@
 package logger
 
 import (
-	"fmt"
 	log "github.com/sirupsen/logrus"
-	"strings"
+	"github.com/trustwallet/blockatlas/pkg/errors"
 )
 
-type Err struct {
-	Message string
-	Params  map[string]interface{}
-	Err     error
-}
-
-var (
-	_ error = (*Err)(nil)
-)
-
-func (e *Err) Error() string {
-	msg := e.Message
-	if e.Err != nil {
-		msg = fmt.Sprintf("%s: %s", msg, e.Err)
-	}
-	if len(e.Params) > 0 {
-		msg = fmt.Sprintf("%s - %s", msg, e.Params)
-	}
-	return msg
+type errMessage struct {
+	*message
+	err *errors.Error
 }
 
 func Error(args ...interface{}) {
@@ -32,8 +15,8 @@ func Error(args ...interface{}) {
 		Panic("call to logger.Error with no arguments")
 	}
 	e := getError(args...)
-	log.WithFields(e.Params).Error(e.Message)
-	SendError(e)
+	log.WithFields(e.params).Error(e.err)
+	SendFatal(e.err)
 }
 
 func Fatal(args ...interface{}) {
@@ -41,8 +24,8 @@ func Fatal(args ...interface{}) {
 		Panic("call to logger.Fatal with no arguments")
 	}
 	e := getError(args...)
-	SendFatal(e)
-	log.WithFields(e.Params).Fatal(e.Message)
+	SendFatal(e.err)
+	log.WithFields(e.params).Fatal(e.err)
 }
 
 func Panic(args ...interface{}) {
@@ -50,31 +33,22 @@ func Panic(args ...interface{}) {
 		Panic("call to logger.Panic with no arguments")
 	}
 	e := getError(args...)
-	SendFatal(e)
-	log.WithFields(e.Params).Panic(e.Message)
+	SendFatal(e.err)
+	log.WithFields(e.params).Panic(e.err)
 }
 
-func getError(args ...interface{}) *Err {
-	e := &Err{Params: make(Params)}
-	var message []string
+func getError(args ...interface{}) *errMessage {
+	msg := getMessage(args...)
+	err := &errMessage{message: msg}
 	for _, arg := range args {
 		switch arg := arg.(type) {
-		case nil:
-			continue
-		case string:
-			message = append(message, arg)
 		case error:
-			e.Err = arg
-		case Params:
-			appendMap(e.Params, arg)
-		case map[string]interface{}:
-			appendMap(e.Params, arg)
+			err.err = errors.E(arg)
+		case errors.Error:
+			err.err = &arg
 		default:
 			continue
 		}
 	}
-	if len(message) > 0 {
-		e.Message = strings.Join(message[:], ": ")
-	}
-	return e
+	return err
 }
