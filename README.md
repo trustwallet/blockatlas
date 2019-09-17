@@ -151,6 +151,92 @@ or you can run manually: `TEST_CONFIG=$(TEST_CONFIG) TEST_COINS=$(TEST_COINS) go
 
 
 ## Logs
+Use the package `pkg/errors` for create a new error.
+An error in Go is any implementing interface with an Error() string method. We overwrite the error object by our error struct:
+
+```
+type Error struct {
+	Err   error
+	Type  Type
+	meta  map[string]interface{}
+	stack []string
+}
+```
+
+To be easier the error construction, the package provides a function named E, which is short and easy to type:
+
+`func E(args ...interface{}) *Error`
+
+E.g.:
+- just error:
+`errors.E(err)`
+
+- error with message:
+`errors.E(err, "new message to append")`
+
+- error with type:
+`errors.E(err, errors.TypePlatformReques)`
+
+- error with type and message:
+`errors.E(err, errors.TypePlatformReques, "new message to append")`
+
+- error with type and meta:
+```
+errors.E(err, errors.TypePlatformRequest, errors.Params{
+			"coin":   "Ethereum",
+			"method": "CurrentBlockNumber",
+		})
+```
+
+- error with meta:
+```
+errors.E(err, errors.Params{
+			"coin":   "Ethereum",
+			"method": "CurrentBlockNumber",
+		})
+```
+
+- error with type and meta:
+```
+errors.E(err, errors.TypePlatformRequest, errors.Params{
+			"coin":   "Ethereum",
+			"method": "CurrentBlockNumber",
+		})
+```
+
+- error with type, message and meta:
+```
+errors.E(err, errors.TypePlatformRequest, "new message to append", errors.Params{
+			"coin":   "Ethereum",
+			"method": "CurrentBlockNumber",
+		})
+```
+
+### Types
+
+```
+const (
+	TypeNone Type = iota
+	TypePlatformUnmarshal
+	TypePlatformNormalize
+	TypePlatformUnknown
+	TypePlatformRequest
+	TypePlatformClient
+	TypePlatformError
+	TypePlatformApi
+	TypeLoadConfig
+	TypeLoadCoins
+	TypeObserver
+	TypeStorage
+	TypeAssets
+	TypeUtil
+	TypeCmd
+	TypeUnknown
+)
+```
+
+
+## Logs
 Use the package `pkg/logger` for logs.
 
 E.g.:
