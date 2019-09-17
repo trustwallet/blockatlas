@@ -26,7 +26,7 @@ func TestGetValidParameter(t *testing.T) {
 	}
 }
 
-func TestCreateCategoryAddress(t *testing.T) {
+func TestCreateCollectionId(t *testing.T) {
 	var tests = []struct {
 		address string
 		slug    string
@@ -37,8 +37,8 @@ func TestCreateCategoryAddress(t *testing.T) {
 		{"", "trust", "---trust"},
 	}
 	for i, tt := range tests {
-		t.Run(fmt.Sprintf("createCategoryAddress %d", i), func(t *testing.T) {
-			s := createCategoryAddress(tt.address, tt.slug)
+		t.Run(fmt.Sprintf("createCollectionId %d", i), func(t *testing.T) {
+			s := createCollectionId(tt.address, tt.slug)
 			if s != tt.result {
 				t.Errorf("got %q, want %q", s, tt.result)
 			}
@@ -48,8 +48,8 @@ func TestCreateCategoryAddress(t *testing.T) {
 
 func TestGetCollectionId(t *testing.T) {
 	var tests = []struct {
-		categoryAddress string
-		result          string
+		collectionId string
+		result       string
 	}{
 		{"0x5574Cd97---trust", "trust"},
 		{"0x5574Cd97---", ""},
@@ -59,7 +59,7 @@ func TestGetCollectionId(t *testing.T) {
 	}
 	for i, tt := range tests {
 		t.Run(fmt.Sprintf("getCollectionId %d", i), func(t *testing.T) {
-			s := getCollectionId(tt.categoryAddress)
+			s := getCollectionId(tt.collectionId)
 			if s != tt.result {
 				t.Errorf("got %q, want %q", s, tt.result)
 			}
