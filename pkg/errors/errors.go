@@ -97,7 +97,7 @@ func (e *Error) JSON() interface{} {
 	if _, ok := p["type"]; !ok && e.Type != TypeNone {
 		p["type"] = e.Type.String()
 	}
-	if _, ok := p["stack"]; !ok {
+	if _, ok := p["stack"]; !ok && len(e.stack) > 0 {
 		p["stack"] = e.stack
 	}
 	return p
@@ -108,6 +108,19 @@ func (e *Error) MarshalJSON() ([]byte, error) {
 	return json.Marshal(e.JSON())
 }
 
+// T create a new error with runtime stack trace.
+func T(args ...interface{}) *Error {
+	e := E(args...)
+	for i := 1; i <= 5; i++ {
+		_, fn, line, ok := runtime.Caller(i)
+		if ok {
+			e.stack = append(e.stack, fmt.Sprintf("%s:%d", fn, line))
+		}
+	}
+	return e
+}
+
+// E create a new error.
 func E(args ...interface{}) *Error {
 	e := &Error{Type: TypeNone}
 	var message []string
@@ -130,11 +143,6 @@ func E(args ...interface{}) *Error {
 		e.Err = errors.New(msg)
 	}
 
-	for i := 1; i <= 5; i++ {
-		_, fn, line, ok := runtime.Caller(i)
-		if ok {
-			e.stack = append(e.stack, fmt.Sprintf("%s:%d", fn, line))
-		}
-	}
+	SendError(e)
 	return e
 }

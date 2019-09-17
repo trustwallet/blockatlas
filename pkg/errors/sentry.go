@@ -1,8 +1,9 @@
-package logger
+package errors
 
 import (
 	"github.com/getsentry/sentry-go"
 	"github.com/spf13/viper"
+	"github.com/trustwallet/blockatlas/pkg/logger"
 	"time"
 )
 
@@ -12,7 +13,7 @@ func InitSentry() error {
 		AttachStacktrace: true,
 	})
 	if err != nil {
-		Error("Set Sentry DSN error", err)
+		logger.Error("Set Sentry DSN error", err)
 	}
 	return err
 }
@@ -24,9 +25,9 @@ func SendError(err error) {
 func SendFatal(err error) {
 	sentry.CaptureException(err)
 	if sentry.Flush(time.Second * 5) {
-		Info("All sentry queued events delivered!")
+		logger.Info("All sentry queued events delivered!")
 	} else {
-		Info("Sentry flush timeout reached")
+		logger.Info("Sentry flush timeout reached")
 	}
 }
 
