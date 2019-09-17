@@ -11,7 +11,10 @@ func InitSentry() error {
 		Dsn:              viper.GetString("sentry.dsn"),
 		AttachStacktrace: true,
 	})
-	return E(err, "InitSentry failed")
+	if err != nil {
+		return E(err, "InitSentry failed")
+	}
+	return nil
 }
 
 func SendError(err error) error {
