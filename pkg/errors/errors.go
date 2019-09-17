@@ -12,10 +12,10 @@ type Params map[string]interface{}
 
 // Error represents a error's specification.
 type Error struct {
-	Err    error
-	Type   Type
-	meta   interface{}
-	caller string
+	Err   error
+	Type  Type
+	meta  interface{}
+	stack []string
 }
 
 var (
@@ -42,8 +42,8 @@ func (e *Error) String() string {
 	if len(e.Meta()) > 0 {
 		msg = fmt.Sprintf("%s | Meta: %s", msg, e.Meta())
 	}
-	if len(e.caller) > 0 {
-		msg = fmt.Sprintf("%s | Caller: %s", msg, e.caller)
+	if len(e.stack) > 0 {
+		msg = fmt.Sprintf("%s | Stack: %s", msg, e.stack)
 	}
 	return msg
 }
@@ -97,8 +97,8 @@ func (e *Error) JSON() interface{} {
 	if _, ok := p["type"]; !ok && e.Type != TypeNone {
 		p["type"] = e.Type.String()
 	}
-	if _, ok := p["caller"]; !ok {
-		p["caller"] = e.caller
+	if _, ok := p["stack"]; !ok {
+		p["stack"] = e.stack
 	}
 	return p
 }
@@ -130,9 +130,11 @@ func E(args ...interface{}) *Error {
 		e.Err = errors.New(msg)
 	}
 
-	_, fn, line, ok := runtime.Caller(1)
-	if ok {
-		e.caller = fmt.Sprintf("%s:%d", fn, line)
+	for i := 1; i <= 5; i++ {
+		_, fn, line, ok := runtime.Caller(i)
+		if ok {
+			e.stack = append(e.stack, fmt.Sprintf("%s:%d", fn, line))
+		}
 	}
 	return e
 }
