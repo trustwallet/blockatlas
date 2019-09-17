@@ -14,7 +14,7 @@ type Params map[string]interface{}
 type Error struct {
 	Err   error
 	Type  Type
-	meta  interface{}
+	meta  map[string]interface{}
 	stack []string
 }
 
@@ -49,47 +49,24 @@ func (e *Error) String() string {
 }
 
 // SetMeta sets the error's meta data.
-func (e *Error) SetMeta(data interface{}) *Error {
+func (e *Error) SetMeta(data Params) *Error {
 	e.meta = data
 	return e
 }
 
 func (e *Error) Meta() string {
-	var meta string
-	switch arg := e.meta.(type) {
-	case nil:
+	r, err := json.Marshal(e.meta)
+	if err != nil {
 		return ""
-	case string:
-		return meta
-	case Params:
-		r, err := json.Marshal(arg)
-		if err != nil {
-			return ""
-		}
-		return string(r)
-	case map[string]interface{}:
-		r, err := json.Marshal(arg)
-		if err != nil {
-			return ""
-		}
-		return string(r)
-	default:
-		return fmt.Sprintf("%v", arg)
 	}
+	return string(r)
 }
 
 // JSON creates a properly formatted JSON
 func (e *Error) JSON() interface{} {
 	p := Params{}
 	if e.meta != nil {
-		switch arg := e.meta.(type) {
-		case Params:
-			p = arg
-		case map[string]interface{}:
-			p = arg
-		default:
-			p["meta"] = e.Meta()
-		}
+		p["meta"] = e.Meta()
 	}
 	if _, ok := p["error"]; !ok {
 		p["error"] = e.Err.Error()
@@ -122,7 +99,7 @@ func T(args ...interface{}) *Error {
 
 // E create a new error.
 func E(args ...interface{}) *Error {
-	e := &Error{Type: TypeNone}
+	e := &Error{Type: TypeNone, meta: make(Params)}
 	var message []string
 	for _, arg := range args {
 		switch arg := arg.(type) {
@@ -134,8 +111,12 @@ func E(args ...interface{}) *Error {
 			message = append([]string{arg.Error()}, message...)
 		case Type:
 			e.Type = arg
+		case Params:
+			appendMap(e.meta, arg)
+		case map[string]interface{}:
+			appendMap(e.meta, arg)
 		default:
-			e.meta = arg
+			continue
 		}
 	}
 	if len(message) > 0 {

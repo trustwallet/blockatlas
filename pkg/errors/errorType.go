@@ -12,7 +12,9 @@ const (
 	TypePlatformNormalize
 	TypePlatformUnknown
 	TypePlatformRequest
+	TypePlatformClient
 	TypePlatformApi
+	TypePlatformError
 	TypeStorageSave
 	TypeStorageGet
 	TypeLoadConfig
@@ -32,6 +34,8 @@ func (e Type) String() string {
 		return "Platform Request Error"
 	case TypePlatformUnmarshal:
 		return "Platform Unmarshal Error"
+	case TypePlatformClient:
+		return "Platform Client Generic Error"
 	case TypePlatformApi:
 		return "Platform API Error"
 	case TypePlatformNormalize:
@@ -54,6 +58,8 @@ func (e Type) String() string {
 		return "Util Error"
 	case TypeCmd:
 		return "Cmd Error"
+	case TypePlatformError:
+		return "Custom Platform Error"
 	case TypeUnknown:
 		return "Unknown Error"
 	default:

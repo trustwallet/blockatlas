@@ -28,9 +28,6 @@ func Equal(err1, err2 error) bool {
 	if e1.Err != nil && e2.Err != e1.Err {
 		return false
 	}
-	if e1.meta != nil && e2.meta != e1.meta {
-		return false
-	}
 	if e1.Type != TypeNone && e2.Type != e1.Type {
 		return false
 	}
@@ -43,4 +40,10 @@ func Equal(err1, err2 error) bool {
 		}
 	}
 	return true
+}
+
+func appendMap(root map[string]interface{}, tmp map[string]interface{}) {
+	for k, v := range tmp {
+		root[k] = v
+	}
 }
