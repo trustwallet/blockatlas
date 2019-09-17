@@ -37,7 +37,7 @@ func (e *Error) Error() string {
 func (e *Error) String() string {
 	msg := e.Err.Error()
 	if e.Type != TypeNone {
-		msg = fmt.Sprintf("%s | Code: %s", msg, e.Type.String())
+		msg = fmt.Sprintf("%s | Type: %s", msg, e.Type.String())
 	}
 	if len(e.Meta()) > 0 {
 		msg = fmt.Sprintf("%s | Meta: %s", msg, e.Meta())
@@ -96,6 +96,9 @@ func (e *Error) JSON() interface{} {
 	}
 	if _, ok := p["type"]; !ok {
 		p["type"] = e.Type.String()
+	}
+	if _, ok := p["caller"]; !ok {
+		p["caller"] = e.caller
 	}
 	return p
 }
