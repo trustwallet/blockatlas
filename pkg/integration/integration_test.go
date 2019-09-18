@@ -5,7 +5,6 @@ package integration
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/trustwallet/blockatlas/cmd/api"
-	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/config"
 	"github.com/trustwallet/blockatlas/platform"
 	"os"
@@ -16,7 +15,6 @@ import (
 
 func TestApis(t *testing.T) {
 	config.LoadConfig(os.Getenv("TEST_CONFIG"))
-	coin.Load(os.Getenv("TEST_COINS"))
 	platform.Init()
 
 	p := ":8080"

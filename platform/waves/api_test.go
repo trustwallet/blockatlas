@@ -86,6 +86,8 @@ var transferV1Obj = blockatlas.Tx{
 	Memo:   "",
 	Meta: blockatlas.Transfer{
 		Value: blockatlas.Amount("9481600000"),
+		Symbol:   "WAVES",
+		Decimals: 8,
 	},
 }
 
@@ -100,7 +102,9 @@ var differentTxsObj = blockatlas.Tx{
 	Memo:   "string",
 	Status: blockatlas.StatusCompleted,
 	Meta: blockatlas.Transfer{
-		Value: blockatlas.Amount("100000"),
+		Value:    blockatlas.Amount("100000"),
+		Symbol:   "WAVES",
+		Decimals: 8,
 	},
 }
 

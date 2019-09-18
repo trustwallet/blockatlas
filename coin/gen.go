@@ -65,7 +65,7 @@ var Coins = map[uint]Coin{
 }
 
 {{- range .Coins }}
-func {{ .Title.RemoveSpaces }}() Coin {
+func {{ .Handle.Upper }}() Coin {
 	return Coins[{{ .Symbol }}]
 }
 
@@ -74,17 +74,17 @@ func {{ .Title.RemoveSpaces }}() Coin {
 `
 )
 
-type Title string
+type Handle string
 
-func (t Title) RemoveSpaces() string {
-	return strings.Replace(string(t), " ", "", -1)
+func (h Handle) Upper() string {
+	return strings.Title(string(h))
 }
 
 type Coin struct {
 	ID               uint   `yaml:"id"`
-	Handle           string `yaml:"handle"`
+	Handle           Handle `yaml:"handle"`
 	Symbol           string `yaml:"symbol"`
-	Title            Title  `yaml:"name"`
+	Title            string `yaml:"name"`
 	Decimals         uint   `yaml:"decimals"`
 	BlockTime        int    `yaml:"blockTime"`
 	MinConfirmations int64  `yaml:"minConfirmations"`

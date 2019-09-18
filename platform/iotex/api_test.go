@@ -108,7 +108,9 @@ var expected = []*blockatlas.Tx{
 		Sequence: uint64(3),
 		Type:     blockatlas.TxTransfer,
 		Meta: blockatlas.Transfer{
-			Value: blockatlas.Amount("21000000000000000000"),
+			Value:    blockatlas.Amount("21000000000000000000"),
+			Symbol:   "IOTX",
+			Decimals: 18,
 		},
 	},
 	nil,

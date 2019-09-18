@@ -89,7 +89,9 @@ var expectedTransferTrx = blockatlas.Tx{
 	Block:    700321,
 	Sequence: 43,
 	Meta: blockatlas.Transfer{
-		Value: "4000000000000000000",
+		Value:    "4000000000000000000",
+		Symbol:   "THETA",
+		Decimals: 18,
 	},
 }
 

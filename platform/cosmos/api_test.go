@@ -260,7 +260,9 @@ var transferDst = blockatlas.Tx{
 	Block:  151980,
 	Status: blockatlas.StatusCompleted,
 	Meta: blockatlas.Transfer{
-		Value: "2271999999",
+		Value:    "2271999999",
+		Symbol:   "ATOM",
+		Decimals: 6,
 	},
 }
 
