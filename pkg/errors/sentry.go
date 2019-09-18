@@ -1,4 +1,4 @@
-package logger
+package errors
 
 import (
 	"github.com/getsentry/sentry-go"
@@ -12,9 +12,9 @@ func InitSentry() error {
 		AttachStacktrace: true,
 	})
 	if err != nil {
-		Error("Set Sentry DSN error", err)
+		return E(err, "InitSentry failed")
 	}
-	return err
+	return nil
 }
 
 func SendError(err error) {
@@ -23,11 +23,7 @@ func SendError(err error) {
 
 func SendFatal(err error) {
 	sentry.CaptureException(err)
-	if sentry.Flush(time.Second * 5) {
-		Info("All sentry queued events delivered!")
-	} else {
-		Info("Sentry flush timeout reached")
-	}
+	sentry.Flush(time.Second * 5)
 }
 
 func SendMessage(msg string) {

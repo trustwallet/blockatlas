@@ -6,7 +6,7 @@ gin:
   # If set, HTTP Forwarded headers will be respected
   reverse_proxy: false
 
-# Setnry error tracking
+# Sentry error tracking
 #sentry:
 #  dsn: https://xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx@sentry.io/xxxxxxx
 

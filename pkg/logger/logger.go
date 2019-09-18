@@ -3,6 +3,7 @@ package logger
 import (
 	"fmt"
 	log "github.com/sirupsen/logrus"
+	"github.com/trustwallet/blockatlas/pkg/errors"
 	"os"
 	"strings"
 )
@@ -12,22 +13,22 @@ type Params map[string]interface{}
 func InitLogger() {
 	log.SetFormatter(&log.TextFormatter{})
 	log.SetOutput(os.Stdout)
-	err := InitSentry()
+	err := errors.InitSentry()
 	if err != nil {
 		Error(err)
 	}
 }
 
-type Msg struct {
-	Message string
-	Params  map[string]interface{}
+type message struct {
+	message string
+	params  map[string]interface{}
 }
 
-func (msg *Msg) String() string {
-	if len(msg.Params) > 0 {
-		return fmt.Sprintf("%s - %v", msg.Message, msg.Params)
+func (msg *message) String() string {
+	if len(msg.params) > 0 {
+		return fmt.Sprintf("%s - %v", msg.message, msg.params)
 	}
-	return fmt.Sprintf("%s", msg.Message)
+	return fmt.Sprintf("%s", msg.message)
 }
 
 func Info(args ...interface{}) {
@@ -35,7 +36,7 @@ func Info(args ...interface{}) {
 		Panic("call to logger.Info with no arguments")
 	}
 	msg := getMessage(args...)
-	log.WithFields(msg.Params).Info(msg.Message)
+	log.WithFields(msg.params).Info(msg.message)
 }
 
 func Debug(args ...interface{}) {
@@ -43,7 +44,7 @@ func Debug(args ...interface{}) {
 		Panic("call to logger.Debug with no arguments")
 	}
 	msg := getMessage(args...)
-	log.WithFields(msg.Params).Debug(msg.Message)
+	log.WithFields(msg.params).Debug(msg.message)
 }
 
 func Warn(args ...interface{}) {
@@ -51,32 +52,34 @@ func Warn(args ...interface{}) {
 		Panic("call to logger.Warn with no arguments")
 	}
 	msg := getMessage(args...)
-	log.WithFields(msg.Params).Warn(msg.Message)
+	log.WithFields(msg.params).Warn(msg.message)
 }
 
-func getMessage(args ...interface{}) *Msg {
-	msg := &Msg{Params: make(Params)}
+func getMessage(args ...interface{}) *message {
+	msg := &message{params: make(Params)}
 	var generic []string
 	var message []string
 	for _, arg := range args {
 		switch arg := arg.(type) {
 		case nil:
 			continue
+		case error:
+			continue
 		case string:
 			message = append(message, arg)
 		case Params:
-			appendMap(msg.Params, arg)
+			appendMap(msg.params, arg)
 		case map[string]interface{}:
-			appendMap(msg.Params, arg)
+			appendMap(msg.params, arg)
 		default:
-			generic = append(generic, fmt.Sprintf("%v", arg))
+			generic = append(generic, fmt.Sprintf("%s", arg))
 		}
 	}
 	if len(message) > 0 {
-		msg.Message = strings.Join(message[:], ": ")
+		msg.message = strings.Join(message[:], ": ")
 	}
 	if len(generic) > 0 {
-		msg.Params["objects"] = strings.Join(generic[:], " | ")
+		msg.params["objects"] = strings.Join(generic[:], " | ")
 	}
 	return msg
 }
