@@ -124,6 +124,5 @@ func E(args ...interface{}) *Error {
 		e.Err = errors.New(msg)
 	}
 
-	SendError(e)
 	return e
 }
