@@ -6,7 +6,6 @@ import (
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/cmd/api"
 	"github.com/trustwallet/blockatlas/cmd/observer"
-	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/config"
 	observerStorage "github.com/trustwallet/blockatlas/observer/storage"
 	"github.com/trustwallet/blockatlas/pkg/logger"
@@ -24,9 +23,6 @@ var app = cobra.Command{
 
 		// Init Logger
 		logger.InitLogger()
-
-		// Load coin index
-		coin.Load("./coins.yml")
 
 		// Load app components
 		platform.Init()
