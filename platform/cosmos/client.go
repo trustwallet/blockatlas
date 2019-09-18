@@ -39,7 +39,6 @@ func (c *Client) GetAddrTxes(address string, tag string) (txs []Tx, err error) {
 
 	err = c.Get(&txs, "txs", query)
 	if err != nil {
-		logger.Error(err, "Cosmos: Failed to get transactions for address", logger.Params{"address": address})
 		return nil, err
 	}
 	return txs, err

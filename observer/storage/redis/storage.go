@@ -112,7 +112,7 @@ func (s *Storage) GetXpubFromAddress(coin uint, address string) (string, error) 
 
 func (s *Storage) Lookup(coin uint, addresses ...string) (observers []observer.Subscription, err error) {
 	if len(addresses) == 0 {
-		return nil, err
+		return nil, fmt.Errorf("cannot look up an empty list")
 	}
 
 	keys := make([]string, len(addresses))

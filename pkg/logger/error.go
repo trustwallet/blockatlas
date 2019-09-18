@@ -7,7 +7,7 @@ import (
 
 type errMessage struct {
 	*message
-	err *errors.Error
+	err error
 }
 
 func Error(args ...interface{}) {
