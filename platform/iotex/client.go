@@ -68,7 +68,7 @@ func (c *Client) GetAddressTotalTransactions(address string) (int64, error) {
 	}
 	numActions, err := strconv.ParseInt(account.AccountMeta.NumActions, 10, 64)
 	if err != nil {
-		return 0, errors.E(err, "ParseInt failed", errors.TypePlatformUnmarshal, errors.Params{"platform": "iotex"})
+		return 0, nil
 	}
 	return numActions, nil
 }
