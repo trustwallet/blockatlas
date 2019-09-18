@@ -16,7 +16,6 @@ func Error(args ...interface{}) {
 	}
 	e := getError(args...)
 	log.WithFields(e.params).Error(e.err)
-	errors.SendError(e.err)
 }
 
 func Fatal(args ...interface{}) {

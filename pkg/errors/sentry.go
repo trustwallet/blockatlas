@@ -17,9 +17,8 @@ func InitSentry() error {
 	return nil
 }
 
-func SendError(err error) error {
+func SendError(err error) {
 	sentry.CaptureException(err)
-	return err
 }
 
 func SendFatal(err error) {
