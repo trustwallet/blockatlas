@@ -13,7 +13,7 @@ func HexToAddress(hexAddr string) (b58 string, err error) {
 	bytes, err := hex.DecodeString(hexAddr)
 	if err != nil {
 		return "", errors.E(err, errors.TypePlatformUnmarshal,
-			errors.Params{"hexAddr": hexAddr, "platform": "tron"})
+			errors.Params{"hexAddr": hexAddr})
 	}
 	var checksum [32]byte
 	checksum = sha256.Sum256(bytes)

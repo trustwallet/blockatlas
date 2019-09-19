@@ -71,7 +71,7 @@ func (p *Platform) GetTokenTxsByAddress(address string, token string) (blockatla
 		return p.getThorTxsByAddress(address)
 	} else {
 		return nil, errors.E("vechain invalid token", errors.TypePlatformUnmarshal,
-			errors.Params{"token": token, "platform": "vechain"})
+			errors.Params{"token": token})
 	}
 }
 
@@ -103,7 +103,7 @@ func (p *Platform) getThorTxsByAddress(address string) ([]blockatlas.Tx, error) 
 
 		tx, err := NormalizeTokenTransfer(&t, receipt)
 		if err != nil {
-			p := logger.Params{"receipt": receipt, "transfer": t, "platform": "vechain"}
+			p := logger.Params{"receipt": receipt, "transfer": t}
 			err = errors.E(err,"invalid token", errors.TypePlatformUnmarshal, p)
 			logger.Error(err, "getTxsByAddress clause error", p)
 			continue
@@ -127,7 +127,7 @@ func (p *Platform) getTransactionReceipt(ids []string) chan *TransferReceipt {
 			receipt, err := p.client.GetTransactionReceipt(id)
 			if err != nil {
 				err = errors.E(err, "Failed to get tx receipt", errors.TypePlatformUnmarshal,
-					errors.Params{"id": id, "platform": "vechain"})
+					errors.Params{"id": id})
 				logger.Error(err, logger.Params{"id": id})
 				return
 			}
@@ -154,7 +154,7 @@ func (p *Platform) getTransactions(ids []string) chan *NativeTransaction {
 			receipt, err := p.client.GetTransactionByID(id)
 			if err != nil {
 				err = errors.E(err, "Failed to get tx transaction", errors.TypePlatformUnmarshal,
-					errors.Params{"id": id, "platform": "vechain"})
+					errors.Params{"id": id})
 				logger.Error(err, logger.Params{"id": id})
 				return
 			}
@@ -194,7 +194,7 @@ func (p *Platform) getTxsByAddress(address string) ([]blockatlas.Tx, error) {
 			}
 			tx, err := NormalizeTransfer(receipt, &clause)
 			if err != nil {
-				p := logger.Params{"receipt": receipt, "clause": clause, "platform": "vechain"}
+				p := logger.Params{"receipt": receipt, "clause": clause}
 				err = errors.E(err, errors.TypePlatformUnmarshal, p)
 				logger.Error(err, "getTxsByAddress clause error", p)
 				continue

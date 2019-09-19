@@ -26,14 +26,14 @@ func (c *Client) GetTxsOfAddress(address, assetName string) (*TxPage, error) {
 
 	res, err := c.HTTPClient.Get(uri)
 	if err != nil {
-		return nil, errors.E(err, errors.TypePlatformRequest, errors.Params{"url": uri,"platform": "ontology"})
+		return nil, errors.E(err, errors.TypePlatformRequest, errors.Params{"url": uri})
 	}
 	defer res.Body.Close()
 
 	txPage := new(TxPage)
 	err = json.NewDecoder(res.Body).Decode(txPage)
 	if err != nil {
-		return nil, errors.E(err, errors.TypePlatformUnmarshal, errors.Params{"url": uri,"platform": "ontology"})
+		return nil, errors.E(err, errors.TypePlatformUnmarshal, errors.Params{"url": uri})
 	}
 
 	return txPage, nil

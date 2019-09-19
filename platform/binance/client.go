@@ -71,7 +71,7 @@ func getAPIError(res *http.Response, desc string) error {
 	var sErr Error
 	err := json.NewDecoder(res.Body).Decode(&sErr)
 	if err != nil {
-		err = errors.E(err, errors.TypePlatformUnmarshal, errors.Params{"desc": desc, "platform": "binance"})
+		err = errors.E(err, errors.TypePlatformUnmarshal, errors.Params{"desc": desc})
 		logger.Error(err, "Binance: Failed to decode error response")
 		return blockatlas.ErrSourceConn
 	}

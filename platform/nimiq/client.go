@@ -22,7 +22,7 @@ func (c *Client) GetTxsOfAddress(address string, count int) (txs []Tx, err error
 		if jErr.Code == 1 {
 			return nil, blockatlas.ErrInvalidAddr
 		} else {
-			err = errors.E(err, errors.TypePlatformRequest, errors.Params{"platform": "nimiq"})
+			err = errors.E(err, errors.TypePlatformRequest)
 			logger.Error(err, "Nimiq: Failed to get transactions")
 			return nil, blockatlas.ErrSourceConn
 		}

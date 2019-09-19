@@ -20,14 +20,14 @@ func (c *Client) GetTxs(address string, limit int) ([]Transaction, error) {
 		limit)
 	res, err := http.Get(uri)
 	if err != nil {
-		return nil, errors.E(err, errors.TypePlatformRequest, errors.Params{"url": uri, "platform": "aeternity"})
+		return nil, errors.E(err, errors.TypePlatformRequest, errors.Params{"url": uri})
 	}
 
 	defer res.Body.Close()
 
 	if res.StatusCode != 200 {
 		return nil, errors.E("http invalid statuc code", errors.TypePlatformRequest,
-			errors.Params{"url": uri, "platform": "aeternity", "status_code": res.StatusCode})
+			errors.Params{"url": uri, "status_code": res.StatusCode})
 	}
 
 	body, err := ioutil.ReadAll(res.Body)
@@ -36,7 +36,7 @@ func (c *Client) GetTxs(address string, limit int) ([]Transaction, error) {
 	decodeError := json.Unmarshal(body[:], &transactions)
 	if decodeError != nil {
 		return nil, errors.E(decodeError, errors.TypePlatformUnmarshal,
-			errors.Params{"url": uri, "platform": "aeternity", "body": string(body)})
+			errors.Params{"url": uri, "body": string(body)})
 	}
 	if len(transactions) == 0 {
 		return make([]Transaction, 0), nil

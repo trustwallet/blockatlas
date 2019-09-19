@@ -23,18 +23,18 @@ func (c *Client) FetchAddressTransactions(address string) (txs []Tx, err error) 
 
 	resp, err := c.HTTPClient.Get(uri)
 	if err != nil {
-		return nil, errors.E(err, errors.TypePlatformRequest, errors.Params{"url": uri, "platform": "theta"})
+		return nil, errors.E(err, errors.TypePlatformRequest, errors.Params{"url": uri})
 	}
 	defer resp.Body.Close()
 
 	body, errBody := ioutil.ReadAll(resp.Body)
 	if errBody != nil {
-		return nil, errors.E(errBody, errors.TypePlatformUnmarshal, errors.Params{"url": uri, "platform": "theta"})
+		return nil, errors.E(errBody, errors.TypePlatformUnmarshal, errors.Params{"url": uri})
 	}
 
 	errUnm := json.Unmarshal(body, &transfers)
 	if errUnm != nil {
-		return nil, errors.E(errUnm, errors.TypePlatformRequest, errors.Params{"url": uri, "platform": "theta"})
+		return nil, errors.E(errUnm, errors.TypePlatformRequest, errors.Params{"url": uri})
 	}
 
 	return transfers.Body, nil

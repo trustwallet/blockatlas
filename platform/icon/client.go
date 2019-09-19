@@ -25,14 +25,14 @@ func (c *Client) GetAddressTransactions(address string) ([]Tx, error) {
 
 	httpRes, err := c.HTTPClient.Get(uri)
 	if err != nil {
-		return nil, errors.E(err, errors.TypePlatformUnmarshal, errors.Params{"uri": uri, "platform": "icon"})
+		return nil, errors.E(err, errors.TypePlatformUnmarshal, errors.Params{"uri": uri})
 	}
 	defer httpRes.Body.Close()
 
 	var res Response
 	derr := json.NewDecoder(httpRes.Body).Decode(&res)
 	if res.Description != "success" {
-		return nil, errors.E(derr, errors.TypePlatformUnmarshal, errors.Params{"uri": uri, "platform": "icon"})
+		return nil, errors.E(derr, errors.TypePlatformUnmarshal, errors.Params{"uri": uri})
 	}
 
 	return res.Data, nil
