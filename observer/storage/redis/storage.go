@@ -38,7 +38,7 @@ func (s *Storage) SetBlockNumber(coin uint, num int64) error {
 	key := fmt.Sprintf(keyBlockNumber, coin)
 	err := s.client.Set(key, num, 0).Err()
 	if err != nil {
-		return errors.E(err, errors.TypeStorage, errors.Params{"block": num, "coin": coin})
+		return errors.E(err, errors.Params{"block": num, "coin": coin})
 	}
 	return nil
 }
@@ -60,7 +60,7 @@ func (s *Storage) SaveXpubAddresses(coin uint, addresses []string, xpub string) 
 	}
 	j, err := json.Marshal(addresses)
 	if err != nil {
-		return errors.E(err, errors.TypeStorage, errors.Params{"addresses": addresses, "coin": coin, "xpub": xpub})
+		return errors.E(err, errors.Params{"addresses": addresses, "coin": coin, "xpub": xpub})
 	}
 	err = s.saveHashMap(key, map[string]interface{}{xpub: j})
 	if err != nil {
@@ -76,18 +76,16 @@ func (s *Storage) GetAddressFromXpub(coin uint, xpub string) ([]string, error) {
 		return nil, err
 	}
 	if len(hm) == 0 {
-		return nil, errors.E("xpub not found", errors.TypeStorage, errors.Params{"coin": coin, "xpub": xpub})
+		return nil, errors.E("xpub not found", errors.Params{"coin": coin, "xpub": xpub})
 	}
 	r, ok := hm[0].(string)
 	if !ok {
-		return nil, errors.E("failed to cast address list from xpub", errors.TypeStorage,
-			errors.Params{"coin": coin, "xpub": xpub, "hm": hm})
+		return nil, errors.E("failed to cast address list from xpub", errors.Params{"coin": coin, "xpub": xpub, "hm": hm})
 	}
 	var list []string
 	err = json.Unmarshal([]byte(r), &list)
 	if err != nil {
-		return nil, errors.E(err, errors.TypeStorage,
-			errors.Params{"coin": coin, "xpub": xpub, "hm": hm, "r": r})
+		return nil, errors.E(err, errors.Params{"coin": coin, "xpub": xpub, "hm": hm, "r": r})
 	}
 	return list, nil
 }
@@ -99,13 +97,11 @@ func (s *Storage) GetXpubFromAddress(coin uint, address string) (string, error) 
 		return "", err
 	}
 	if len(r) == 0 {
-		return "", errors.E("xpub not found for the address", errors.TypeStorage,
-			errors.Params{"coin": coin, "address": address})
+		return "", errors.E("xpub not found for the address", errors.Params{"coin": coin, "address": address})
 	}
 	xpub, ok := r[0].(string)
 	if !ok || len(xpub) == 0 {
-		return "", errors.E("invalid type for xpub", errors.TypeStorage,
-			errors.Params{"coin": coin, "address": address, "xpub": xpub})
+		return "", errors.E("invalid type for xpub", errors.Params{"coin": coin, "address": address, "xpub": xpub})
 	}
 	return xpub, nil
 }
@@ -204,7 +200,7 @@ func (s *Storage) updateWebHooks(subs []observer.Subscription, operation webHook
 func (s *Storage) deleteHashMapKey(db string, fields []string) error {
 	err := s.client.HDel(db, fields...).Err()
 	if err != nil {
-		return errors.E(err, errors.TypeStorage, errors.Params{"db": db, "fields": fields})
+		return errors.E(err, errors.Params{"db": db, "fields": fields})
 	}
 	return nil
 }
@@ -212,7 +208,7 @@ func (s *Storage) deleteHashMapKey(db string, fields []string) error {
 func (s *Storage) saveHashMap(db string, field map[string]interface{}) error {
 	err := s.client.HMSet(db, field).Err()
 	if err != nil {
-		return errors.E(err, errors.TypeStorage, errors.Params{"db": db, "field": field})
+		return errors.E(err, errors.Params{"db": db, "field": field})
 	}
 	return nil
 }
@@ -220,7 +216,7 @@ func (s *Storage) saveHashMap(db string, field map[string]interface{}) error {
 func (s *Storage) getHashMap(db string, keys ...string) ([]interface{}, error) {
 	cmd := s.client.HMGet(db, keys...)
 	if err := cmd.Err(); err != nil {
-		return nil, errors.E(err, errors.TypeStorage, errors.Params{"db": db, "keys": keys})
+		return nil, errors.E(err, errors.Params{"db": db, "keys": keys})
 	}
 	return cmd.Val(), nil
 }

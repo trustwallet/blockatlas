@@ -14,17 +14,14 @@ var App observer.Storage
 func Load() {
 	options, err := redis.ParseURL(viper.GetString("observer.redis"))
 	if err != nil {
-		err = errors.E(err, errors.TypeObserver)
-		logger.Fatal(err, "Cannot connect to Redis")
+		logger.Fatal(errors.E(err), "Cannot connect to Redis")
 	}
 	client := redis.NewClient(options)
 	if err := client.Ping().Err(); err != nil {
-		err = errors.E(err, errors.TypeObserver)
-		logger.Fatal(err, "Redis connection test failed")
+		logger.Fatal(errors.E(err), "Redis connection test failed")
 	}
 	if viper.GetString("observer.auth") == "" {
-		err = errors.E("Refusing to run observer API without a password", errors.TypeObserver)
-		logger.Fatal(err)
+		logger.Fatal(errors.E("Refusing to run observer API without a password"))
 	}
 	App = sredis.New(client)
 }

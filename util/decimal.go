@@ -15,7 +15,7 @@ func DecimalToSatoshis(dec string) (string, error) {
 	out = strings.TrimLeft(out, "0")
 	for _, c := range out {
 		if !unicode.IsNumber(c) {
-			return "", errors.E("not a number", errors.TypeUtil, errors.Params{"dec": dec, "c": c})
+			return "", errors.E("not a number", errors.Params{"dec": dec, "c": c})
 		}
 	}
 	return out, nil
@@ -63,7 +63,7 @@ func DecimalExp(dec string, exp int) string {
 func HexToDecimal(hex string) (string, error) {
 	var i big.Int
 	if _, ok := i.SetString(hex, 0); !ok {
-		return "", errors.E("invalid hex", errors.TypeUtil, errors.Params{"hex": hex})
+		return "", errors.E("invalid hex", errors.Params{"hex": hex})
 	}
 	return i.String(), nil
 }
