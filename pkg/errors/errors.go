@@ -68,13 +68,13 @@ func (e *Error) JSON() interface{} {
 	if e.meta != nil {
 		p["meta"] = e.Meta()
 	}
-	if _, ok := p["error"]; !ok {
+	if e.Err != nil {
 		p["error"] = e.Err.Error()
 	}
-	if _, ok := p["type"]; !ok && e.Type != TypeNone {
+	if e.Type != TypeNone {
 		p["type"] = e.Type.String()
 	}
-	if _, ok := p["stack"]; !ok && len(e.stack) > 0 {
+	if len(e.stack) > 0 {
 		p["stack"] = e.stack
 	}
 	return p

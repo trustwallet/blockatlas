@@ -56,7 +56,7 @@ func Warn(args ...interface{}) {
 }
 
 func getMessage(args ...interface{}) *message {
-	msg := &message{params: make(Params)}
+	msg := &message{params: make(Params), message: ""}
 	var generic []string
 	var message []string
 	for _, arg := range args {
