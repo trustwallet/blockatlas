@@ -61,7 +61,9 @@ var transferDst = blockatlas.Tx{
 	Block:  0, // TODO
 	Status: blockatlas.StatusCompleted,
 	Meta: blockatlas.Transfer{
-		Value: "100666888000000",
+		Value:    "100666888000000",
+		Symbol:   "TRX",
+		Decimals: 6,
 	},
 }
 
@@ -75,17 +77,17 @@ var tokenTransferDst = blockatlas.Tx{
 	Block:  0, // TODO
 	Status: blockatlas.StatusCompleted,
 	Meta: blockatlas.TokenTransfer{
-		Name: "BitTorrent",
-		Symbol: "BTT",
-		TokenID: "1002000",
+		Name:     "BitTorrent",
+		Symbol:   "BTT",
+		TokenID:  "1002000",
 		Decimals: 6,
-		Value: "2776267",
-		From: "TMuA6YqfCeX8EhbfYEg5y7S4DqzSJireY9",
-		To: "TAUN6FwrnwwmaEqYcckffC7wYmbaS6cBiX",
+		Value:    "2776267",
+		From:     "TMuA6YqfCeX8EhbfYEg5y7S4DqzSJireY9",
+		To:       "TAUN6FwrnwwmaEqYcckffC7wYmbaS6cBiX",
 	},
 }
 
-var assetInfo = AssetInfo{ Name: "BitTorrent", Symbol: "BTT", Decimals: 6, ID: "1002000" }
+var assetInfo = AssetInfo{Name: "BitTorrent", Symbol: "BTT", Decimals: 6, ID: "1002000"}
 
 type test struct {
 	name        string

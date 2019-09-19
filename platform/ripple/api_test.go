@@ -53,7 +53,9 @@ var paymentDst = blockatlas.Tx{
 	Block: 34698103,
 	Memo:  "2500",
 	Meta: blockatlas.Transfer{
-		Value: "100000000",
+		Value:    "100000000",
+		Symbol:   "XRP",
+		Decimals: 6,
 	},
 }
 
@@ -107,7 +109,9 @@ var paymentDst2 = blockatlas.Tx{
 	Block: 49163909,
 	Memo:  "",
 	Meta: blockatlas.Transfer{
-		Value: "3100",
+		Value:    "3100",
+		Symbol:   "XRP",
+		Decimals: 6,
 	},
 }
 

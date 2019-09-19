@@ -34,7 +34,9 @@ var basicDst = blockatlas.Tx{
 	Date:  1555396594,
 	Block: 357832,
 	Meta: blockatlas.Transfer{
-		Value: "3470000000000000",
+		Value:    "3470000000000000",
+		Symbol:   "ICX",
+		Decimals: 18,
 	},
 }
 

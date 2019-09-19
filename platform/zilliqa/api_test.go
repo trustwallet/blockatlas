@@ -36,7 +36,9 @@ var transferDst = blockatlas.Tx{
 	Sequence: 3,
 	Memo:     "",
 	Meta: blockatlas.Transfer{
-		Value: "7997000000000",
+		Value:    "7997000000000",
+		Symbol:   "ZIL",
+		Decimals: 12,
 	},
 }
 

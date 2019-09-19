@@ -11,7 +11,6 @@ GOPKG := $(cmd)
 
 # Environment variables
 TEST_CONFIG=$(GOBASE)/config.yml
-TEST_COINS=$(GOBASE)/coins.yml
 
 # Go files
 GOFMT_FILES?=$$(find . -name '*.go' | grep -v vendor)
@@ -113,7 +112,7 @@ go-test:
 
 go-integration:
 	@echo "  >  Runing integration tests"
-	GOBIN=$(GOBIN) TEST_CONFIG=$(TEST_CONFIG) TEST_COINS=$(TEST_COINS) go test -tags=integration -v ./pkg/integration
+	GOBIN=$(GOBIN) TEST_CONFIG=$(TEST_CONFIG) go test -tags=integration -v ./pkg/integration
 
 go-fmt:
 	@echo "  >  Format all go files"

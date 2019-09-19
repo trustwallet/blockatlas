@@ -55,10 +55,6 @@ type test struct {
 	token       string
 }
 
-func initCoins() {
-	coin.Load("../../coins.yml")
-}
-
 func testNormalize(t *testing.T, _test *test) {
 	var srcTx Transaction
 	err := json.Unmarshal([]byte(_test.apiResponse), &srcTx)
@@ -76,13 +72,14 @@ func testNormalize(t *testing.T, _test *test) {
 
 	dstJSON, err := json.Marshal(_test.expected)
 	if err != nil {
+		println(string(resJSON))
+		println(string(dstJSON))
 		t.Fatal(err)
 	}
 	assert.Equal(t, resJSON, dstJSON)
 }
 
 func TestNormalize(t *testing.T) {
-	initCoins()
 	testNormalize(t, &test{
 		name:        "transfer",
 		apiResponse: transferTransaction,

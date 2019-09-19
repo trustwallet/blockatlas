@@ -48,8 +48,6 @@ func main() {
 }
 
 func run(_ *cobra.Command, args []string) {
-	coin.Load(coinFile)
-
 	baseURL = args[0]
 
 	logrus.SetOutput(os.Stdout)

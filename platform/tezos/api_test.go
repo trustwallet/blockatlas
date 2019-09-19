@@ -58,7 +58,9 @@ var transferDst = blockatlas.Tx{
 	Date:  1555102504,
 	Block: 393070,
 	Meta: blockatlas.Transfer{
-		Value: "2597000000",
+		Value:    "2597000000",
+		Decimals: 6,
+		Symbol:   "XTZ",
 	},
 }
 

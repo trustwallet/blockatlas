@@ -132,6 +132,7 @@ var expectedTransferTrx = blockatlas.Tx{
 	Meta: blockatlas.Transfer{
 		Value:    "770000000000000000000",
 		Decimals: 18,
+		Symbol:   "VET",
 	},
 }
 
