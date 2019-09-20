@@ -3,6 +3,7 @@ package api
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/platform"
 )
@@ -42,6 +43,8 @@ func LoadPlatforms(root gin.IRouter) {
 	}
 
 	logger.Info("Routes set up", logger.Params{"routes": len(routers)})
+
+	root.GET("/metrics", gin.WrapH(promhttp.Handler()))
 
 	v1.GET("/", getEnabledEndpoints)
 }
