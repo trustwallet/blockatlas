@@ -1,8 +1,12 @@
+# Project variables.
 VERSION := $(shell git describe --tags)
 BUILD := $(shell git rev-parse --short HEAD)
 PROJECT_NAME := $(shell basename "$(PWD)")
 API_COMMAND := api
 OBSERVER_COMMAND := observer
+COIN_FILE := coin/coins.yml
+COIN_GO_FILE := coin/coins.go
+GEN_COIN_FILE := coin/gen.go
 
 # Go related variables.
 GOBASE := $(shell pwd)
@@ -85,6 +89,14 @@ integration: go-integration
 ## fmt: Run `go fmt` for all go files.
 fmt: go-fmt
 
+## gen-coins: Generate a new coin file.
+gen-coins: remove-coin-file go-gen-coins
+
+## remove-coin-file: Remove auto generated coin file.
+remove-coin-file:
+	@echo "  >  Removing "$(PROJECT_NAME)""
+	@-rm $(GOBASE)/$(COIN_GO_FILE)
+
 go-compile: go-get go-build
 
 go-build:
@@ -117,6 +129,10 @@ go-integration:
 go-fmt:
 	@echo "  >  Format all go files"
 	GOBIN=$(GOBIN) gofmt -w ${GOFMT_FILES}
+
+go-gen-coins:
+	@echo "  >  Generating coin file"
+	COIN_FILE=$(COIN_FILE) COIN_GO_FILE=$(COIN_GO_FILE) GOBIN=$(GOBIN) go run -tags=coins $(GEN_COIN_FILE)
 
 .PHONY: help
 all: help

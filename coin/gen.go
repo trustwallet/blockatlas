@@ -1,4 +1,4 @@
-// +build ignore
+// +build coins
 
 //go:generate rm -f coins.go
 //go:generate go run gen.go
@@ -92,6 +92,7 @@ type Coin struct {
 }
 
 func main() {
+	coinFile := getValidParameter("COIN_FILE", coinFile)
 	var coinList []Coin
 	coin, err := os.Open(coinFile)
 	dec := yaml.NewDecoder(coin)
@@ -100,7 +101,8 @@ func main() {
 		log.Panic(err)
 	}
 
-	f, err := os.Create(filename)
+	goFile := getValidParameter("COIN_GO_FILE", filename)
+	f, err := os.Create(goFile)
 	if err != nil {
 		log.Panic(err)
 	}
@@ -114,4 +116,12 @@ func main() {
 	if err != nil {
 		log.Panic(err)
 	}
+}
+
+func getValidParameter(env, variable string) string {
+	e, ok := os.LookupEnv(env)
+	if ok {
+		return e
+	}
+	return variable
 }
