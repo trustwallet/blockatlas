@@ -2,9 +2,7 @@ package api
 
 import (
 	"fmt"
-	"github.com/chenjiandongx/ginprom"
 	"github.com/gin-gonic/gin"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/platform"
 )
@@ -47,13 +45,7 @@ func LoadPlatforms(root gin.IRouter) {
 
 	v1.GET("/", getEnabledEndpoints)
 
-	metrics(root)
-}
-
-func metrics(root gin.IRouter) {
-	root.Use(ginprom.PromMiddleware(nil))
-	root.GET("/g/metrics", ginprom.PromHandler(promhttp.Handler()))
-	root.GET("/p/metrics", gin.WrapH(promhttp.Handler()))
+	makeMetricsRoute(root)
 }
 
 // getRouter lazy loads routers
