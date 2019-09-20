@@ -21,7 +21,6 @@ var (
 			Help:      "Total number of HTTP requests made.",
 		}, labels,
 	)
-
 	reqDuration = prometheus.NewHistogramVec(
 		prometheus.HistogramOpts{
 			Namespace: namespace,
@@ -36,7 +35,6 @@ var (
 			Help:      "HTTP request sizes in bytes.",
 		}, labels,
 	)
-
 	respSizeBytes = prometheus.NewSummaryVec(
 		prometheus.SummaryOpts{
 			Namespace: namespace,
