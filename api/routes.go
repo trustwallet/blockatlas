@@ -44,8 +44,6 @@ func LoadPlatforms(root gin.IRouter) {
 	logger.Info("Routes set up", logger.Params{"routes": len(routers)})
 
 	v1.GET("/", getEnabledEndpoints)
-
-	makeMetricsRoute(root)
 }
 
 // getRouter lazy loads routers

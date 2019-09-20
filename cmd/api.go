@@ -36,6 +36,8 @@ func RunApi(bind string, c chan *gin.Engine) {
 	sg := sentrygin.New(sentrygin.Options{})
 	engine.Use(util.CheckReverseProxy, sg)
 
+	api.MakeMetricsRoute(engine)
+
 	engine.GET("/", api.GetRoot)
 	engine.GET("/status", func(c *gin.Context) {
 		c.JSON(http.StatusOK, map[string]interface{}{
