@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	coinFile = "../coins.yml"
+	coinFile = "coins.yml"
 	filename = "coins.go"
 )
 
@@ -19,7 +19,7 @@ type TestCoin struct {
 	ID               uint   `yaml:"id"`
 	Handle           string `yaml:"handle"`
 	Symbol           string `yaml:"symbol"`
-	Title            string `yaml:"name"`
+	Name             string `yaml:"name"`
 	Decimals         uint   `yaml:"decimals"`
 	BlockTime        int    `yaml:"blockTime"`
 	MinConfirmations int64  `yaml:"minConfirmations"`
@@ -54,7 +54,7 @@ func TestCoinFile(t *testing.T) {
 		assert.Equal(t, got.ID, want.ID)
 		assert.Equal(t, got.Handle, want.Handle)
 		assert.Equal(t, got.Symbol, want.Symbol)
-		assert.Equal(t, got.Title, want.Title)
+		assert.Equal(t, got.Name, want.Name)
 		assert.Equal(t, got.Decimals, want.Decimals)
 		assert.Equal(t, got.BlockTime, want.BlockTime)
 		assert.Equal(t, got.MinConfirmations, want.MinConfirmations)
