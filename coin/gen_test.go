@@ -67,3 +67,16 @@ func TestCoinFile(t *testing.T) {
 		assert.True(t, strings.Contains(code, enum), "Coin enum not found")
 	}
 }
+
+func TestEthereum(t *testing.T) {
+
+	c := Ethereum()
+
+	assert.Equal(t, uint(60), c.ID)
+	assert.Equal(t, "ethereum", c.Handle)
+	assert.Equal(t, "ETH", c.Symbol)
+	assert.Equal(t, "Ethereum", c.Name)
+	assert.Equal(t, uint(18), c.Decimals)
+	assert.Equal(t, 10000, c.BlockTime)
+	assert.Equal(t, int64(0), c.MinConfirmations)
+}

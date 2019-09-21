@@ -1,7 +1,7 @@
 - id: 60
   symbol: ETH
   handle: ethereum
-  name: Ether
+  name: Ethereum
   decimals: 18
   blockTime: 10000
   sampleAddress: '0xfc10cab6a50a1ab10c56983c80cc82afc6559cf1'
@@ -9,7 +9,7 @@
 - id: 61
   symbol: ETC
   handle: classic
-  name: Ether Classic
+  name: Ethereum Classic
   decimals: 18
   blockTime: 30000
   sampleAddress: '0xf3524415b6D873205B4c3Cda783527b2aC4daAA9'
