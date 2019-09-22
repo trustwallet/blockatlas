@@ -33,7 +33,7 @@ func (c *Client) GetLatestBlock() (int64, error) {
 }
 
 func (c *Client) GetTxsInBlock(number int64) ([]Transaction, error) {
-	path := fmt.Sprintf("v1/transfers/block/%d", number)
+	path := fmt.Sprintf("v1/block/%d", number)
 	var resp BlockResponse
 	err := c.Request.Get(&resp, c.URL, path, nil)
 	if err != nil {

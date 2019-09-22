@@ -327,5 +327,5 @@
   handle: algorand
   name: Algorand
   decimals: 6
-  blockTime: 10000
+  blockTime: 20000
   sampleAddress: '4EZFQABCVQTHQCK3HQBIYGC4NV2VM42FZHEFTVH77ROG4ZGREC6Y7V5T2U'
