@@ -1,5 +1,11 @@
 package algorand
 
+type TransactionType string
+
+const (
+	TransactionTypePay TransactionType = "pay"
+)
+
 type TransactionsResponse struct {
 	Transactions []Transaction `json:"transactions"`
 }
@@ -13,7 +19,7 @@ type BlockTransactions struct {
 }
 
 type Transaction struct {
-	Type    string             `json:"type"`
+	Type    TransactionType    `json:"type"`
 	Hash    string             `json:"tx"`
 	From    string             `json:"from"`
 	Fee     uint64             `json:"fee"`
@@ -27,5 +33,5 @@ type TransactionPayment struct {
 }
 
 type Status struct {
-	LastRound string `json:"lastRound"`
+	LastRound int64 `json:"lastRound"`
 }

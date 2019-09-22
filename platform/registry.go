@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
+	"github.com/trustwallet/blockatlas/platform/algorand"
 
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/coin"
@@ -70,6 +71,7 @@ var platformList = []blockatlas.Platform{
 	&bitcoin.Platform{CoinIndex: coin.DCR},
 	&nebulas.Platform{},
 	&fio.Platform{},
+	&algorand.Platform{},
 }
 
 // Platforms contains all registered platforms by handle
