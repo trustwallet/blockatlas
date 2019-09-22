@@ -26,25 +26,11 @@ var (
 			Help:      "HTTP request latencies in seconds.",
 		}, labels,
 	)
-	reqSizeBytes = prometheus.NewSummaryVec(
-		prometheus.SummaryOpts{
-			Namespace: namespace,
-			Name:      "http_request_size_bytes",
-			Help:      "HTTP request sizes in bytes.",
-		}, labels,
-	)
-	respSizeBytes = prometheus.NewSummaryVec(
-		prometheus.SummaryOpts{
-			Namespace: namespace,
-			Name:      "http_response_size_bytes",
-			Help:      "HTTP request sizes in bytes.",
-		}, labels,
-	)
 )
 
 // init registers the prometheus metrics
 func init() {
-	prometheus.MustRegister(reqCount, reqDuration, reqSizeBytes, respSizeBytes)
+	prometheus.MustRegister(reqCount, reqDuration)
 }
 
 func getMetrics(status, url, method string, start time.Time) {
