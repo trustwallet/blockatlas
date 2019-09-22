@@ -321,3 +321,11 @@
   decimals: 8
   blockTime: 300000
   sampleAddress: 'DsTxPUVFxXeNgu5fzozr4mTR4tqqMaKcvpY'
+
+- id: 283
+  symbol: ALGO
+  handle: algorand
+  name: Algorand
+  decimals: 6
+  blockTime: 10000
+  sampleAddress: '4EZFQABCVQTHQCK3HQBIYGC4NV2VM42FZHEFTVH77ROG4ZGREC6Y7V5T2U'
