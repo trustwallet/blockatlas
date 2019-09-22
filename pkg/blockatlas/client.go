@@ -54,7 +54,7 @@ func (r *Request) Execute(method string, url string, body io.Reader, result inte
 	if err != nil {
 		return err
 	}
-	go getMetrics(res, start)
+	go getMetrics(res.Status, url, method, start)
 
 	err = r.ErrorHandler(res, url)
 	if err != nil {
