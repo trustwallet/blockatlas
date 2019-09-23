@@ -16,7 +16,7 @@ type Request struct {
 }
 
 var DefaultClient = &http.Client{
-	Timeout: time.Second * 10,
+	Timeout: time.Second * 15,
 }
 
 var DefaultErrorHandler = func(res *http.Response, uri string) error {
