@@ -7,11 +7,16 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 )
 
 type Request struct {
 	HttpClient   *http.Client
 	ErrorHandler func(res *http.Response, uri string) error
+}
+
+var DefaultClient = &http.Client{
+	Timeout: time.Second * 15,
 }
 
 func (r *Request) Get(result interface{}, base string, path string, query url.Values) error {

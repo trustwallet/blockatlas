@@ -26,10 +26,10 @@ type Platform struct {
 func (p *Platform) Init() error {
 	handle := coin.Coins[p.CoinIndex].Handle
 
-	p.client.HTTPClient = http.DefaultClient
+	p.client.HTTPClient = blockatlas.DefaultClient
 	p.client.BaseURL = viper.GetString(fmt.Sprintf("%s.api", handle))
 
-	p.collectionsClient.HTTPClient = http.DefaultClient
+	p.collectionsClient.HTTPClient = blockatlas.DefaultClient
 	p.collectionsClient.CollectionsURL = viper.GetString(fmt.Sprintf("%s.collections_api", handle))
 	p.collectionsClient.CollectionsApiKey = viper.GetString(fmt.Sprintf("%s.collections_api_key", handle))
 	return nil

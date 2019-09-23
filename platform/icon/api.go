@@ -16,7 +16,7 @@ type Platform struct {
 
 func (p *Platform) Init() error {
 	p.client.RPCURL = viper.GetString("icon.api")
-	p.client.HTTPClient = http.DefaultClient
+	p.client.HTTPClient = blockatlas.DefaultClient
 	return nil
 }
 

@@ -22,7 +22,7 @@ const (
 
 func (p *Platform) Init() error {
 	p.client.BaseURL = viper.GetString("ontology.api")
-	p.client.HTTPClient = http.DefaultClient
+	p.client.HTTPClient = blockatlas.DefaultClient
 	return nil
 }
 

@@ -17,7 +17,7 @@ func InitClient(BaseURL string) Client {
 	return Client{
 		BaseURL: BaseURL,
 		Request: blockatlas.Request{
-			HttpClient: http.DefaultClient,
+			HttpClient: blockatlas.DefaultClient,
 			ErrorHandler: func(res *http.Response, uri string) error {
 				return nil
 			},
