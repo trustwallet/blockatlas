@@ -10,23 +10,22 @@ import (
 )
 
 type Client struct {
-	Request blockatlas.Request
-	URL     string
+	blockatlas.Request
 }
 
-func InitClient(URL string) Client {
+func InitClient(baseUrl string) Client {
 	return Client{
 		Request: blockatlas.Request{
 			HttpClient:   blockatlas.DefaultClient,
 			ErrorHandler: blockatlas.DefaultErrorHandler,
+			BaseUrl:      baseUrl,
 		},
-		URL: URL,
 	}
 }
 
 func (c *Client) GetTransactions(address string) (transactions TransactionsList, err error) {
 	path := fmt.Sprintf("address/%s", address)
-	err = c.Request.Get(&transactions, c.URL, path, url.Values{
+	err = c.Get(&transactions, path, url.Values{
 		"details":  {"txs"},
 		"pageSize": {strconv.FormatInt(blockatlas.TxPerPage*4, 10)},
 	})
@@ -40,7 +39,7 @@ func (c *Client) GetTransactionsByXpub(xpub string) (transactions TransactionsLi
 		"details":  {"txs"},
 		"tokens":   {"derived"},
 	}
-	err = c.Request.Get(&transactions, c.URL, path, args)
+	err = c.Get(&transactions, path, args)
 	return transactions, err
 }
 
@@ -52,7 +51,7 @@ func (c *Client) GetAddressesFromXpub(xpub string) (tokens []Token, err error) {
 		"tokens":   {"derived"},
 	}
 	var transactions TransactionsList
-	err = c.Request.Get(&transactions, c.URL, path, args)
+	err = c.Get(&transactions, path, args)
 	return transactions.Tokens, err
 }
 
@@ -61,7 +60,7 @@ func (c *Client) GetTransactionsByBlock(number int64, page int64) (block Block, 
 	args := url.Values{
 		"page": {strconv.FormatInt(page, 10)},
 	}
-	err = c.Request.Get(&block, c.URL, path, args)
+	err = c.Get(&block, path, args)
 	return block, err
 }
 
@@ -80,6 +79,6 @@ func (c *Client) GetTransactionsByBlockChan(number int64, page int64, out chan B
 }
 
 func (c *Client) GetBlockNumber() (status BlockchainStatus, err error) {
-	err = c.Request.Get(&status, c.URL, "v2", nil)
+	err = c.Get(&status, "v2", nil)
 	return status, err
 }

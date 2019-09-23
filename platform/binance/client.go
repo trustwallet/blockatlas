@@ -13,26 +13,23 @@ import (
 // TODO Headers + rate limiting
 
 type Client struct {
-	Request    blockatlas.Request
-	BaseURL    string
-	BaseDexURL string
+	Request blockatlas.Request
 }
 
-func ClientInit(baseUrl string, baseDexURL string) Client {
+func ClientInit(baseUrl string) Client {
 	return Client{
 		Request: blockatlas.Request{
 			HttpClient:   blockatlas.DefaultClient,
 			ErrorHandler: getHTTPError,
+			BaseUrl:      baseUrl,
 		},
-		BaseURL:    baseUrl,
-		BaseDexURL: baseDexURL,
 	}
 }
 
 func (c *Client) GetBlockList(count int) (*BlockList, error) {
 	result := new(BlockList)
 	query := url.Values{"rows": {strconv.Itoa(count)}, "page": {"1"}}
-	err := c.Request.Get(result, c.BaseURL, "blocks", query)
+	err := c.Request.Get(result, "blocks", query)
 	return result, err
 }
 
@@ -45,28 +42,15 @@ func (c *Client) GetBlockByNumber(num int64) (*TxPage, error) {
 		"rows": {"100"},
 		"page": {"1"},
 	}
-	err := c.Request.Get(stx, c.BaseURL, "txs", query)
+	err := c.Request.Get(stx, "txs", query)
 	return stx, err
 }
 
 func (c *Client) GetTxsOfAddress(address string, token string) (*TxPage, error) {
 	stx := new(TxPage)
 	query := url.Values{"address": {address}, "rows": {"100"}, "page": {"1"}}
-	err := c.Request.Get(stx, c.BaseURL, "txs", query)
+	err := c.Request.Get(stx, "txs", query)
 	return stx, err
-}
-
-func (c *Client) GetAccountMetadata(address string) (account *Account, err error) {
-	path := fmt.Sprintf("v1/account/%s", address)
-	err = c.Request.Get(&account, c.BaseDexURL, path, nil)
-	return account, err
-}
-
-func (c *Client) GetTokens() (*TokenPage, error) {
-	stp := new(TokenPage)
-	query := url.Values{"limit": {"1000"}, "offset": {"0"}}
-	err := c.Request.Get(stp, c.BaseDexURL, "v1/tokens", query)
-	return stp, err
 }
 
 func getHTTPError(res *http.Response, desc string) error {

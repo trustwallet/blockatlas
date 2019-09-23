@@ -6,7 +6,7 @@ import (
 )
 
 type Client struct {
-	Request blockatlas.Request
+	blockatlas.Request
 	URL     string
 }
 
@@ -23,7 +23,7 @@ func InitClient(baseUrl string) Client {
 func (c *Client) GetTxs(address string, limit int) ([]Transaction, error) {
 	path := fmt.Sprintf("transactions/address/%s/limit/%d", address, limit)
 	txs := make([][]Transaction, 0)
-	err := c.Request.Get(&txs, c.URL, path, nil)
+	err := c.Get(&txs, path, nil)
 
 	if len(txs) > 0 {
 		return txs[0], err
@@ -34,14 +34,14 @@ func (c *Client) GetTxs(address string, limit int) ([]Transaction, error) {
 
 func (c *Client) GetBlockByNumber(num int64) (block *Block, err error) {
 	path := fmt.Sprintf("blocks/at/%d", num)
-	err = c.Request.Get(&block, c.URL, path, nil)
+	err = c.Get(&block, path, nil)
 
 	return block, err
 }
 
 func (c *Client) GetCurrentBlock() (block *CurrentBlock, err error) {
 	path := "blocks/height"
-	err = c.Request.Get(&block, c.URL, path, nil)
+	err = c.Get(&block, path, nil)
 
 	return block, err
 }

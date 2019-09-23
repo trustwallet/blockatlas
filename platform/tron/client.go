@@ -8,7 +8,7 @@ import (
 )
 
 type Client struct {
-	Request blockatlas.Request
+	blockatlas.Request
 	BaseURL string
 }
 
@@ -26,7 +26,7 @@ func (c *Client) GetTxsOfAddress(address, token string) ([]Tx, error) {
 	path := fmt.Sprintf("v1/accounts/%s/transactions", url.PathEscape(address))
 
 	var txs Page
-	err := c.Request.Get(&txs, c.BaseURL, path, url.Values{
+	err := c.Get(&txs, path, url.Values{
 		"only_confirmed": {"true"},
 		"limit":          {"200"},
 		"token_id":       {token},
@@ -39,7 +39,7 @@ func (c *Client) GetAccountMetadata(address string) (*Accounts, error) {
 	path := fmt.Sprintf("v1/accounts/%s", address)
 
 	var accounts Accounts
-	err := c.Request.Get(&accounts, c.BaseURL, path, nil)
+	err := c.Get(&accounts, path, nil)
 
 	return &accounts, err
 }
@@ -48,13 +48,13 @@ func (c *Client) GetTokenInfo(id string) (*Asset, error) {
 	path := fmt.Sprintf("v1/assets/%s", id)
 
 	var asset Asset
-	err := c.Request.Get(&asset, c.BaseURL, path, nil)
+	err := c.Get(&asset, path, nil)
 
 	return &asset, err
 }
 
 func (c *Client) GetValidators() (validators Validators, err error) {
-	err = c.Request.Get(&validators, c.BaseURL, "wallet/listwitnesses", nil)
+	err = c.Get(&validators, "wallet/listwitnesses", nil)
 	if err != nil {
 		logger.Error(err, "Tron: Failed to get validators for address")
 		return validators, err

@@ -9,17 +9,16 @@ import (
 
 // Client - the HTTP client
 type Client struct {
-	Request blockatlas.Request
-	URL     string
+	blockatlas.Request
 }
 
-func InitClient(URL string) Client {
+func InitClient(baseUrl string) Client {
 	return Client{
 		Request: blockatlas.Request{
 			HttpClient:   blockatlas.DefaultClient,
 			ErrorHandler: blockatlas.DefaultErrorHandler,
+			BaseUrl:      baseUrl,
 		},
-		URL: URL,
 	}
 }
 
@@ -31,7 +30,7 @@ func (c *Client) GetAddrTxes(address string, tag string) (txs []Tx, err error) {
 		"limit": {strconv.FormatInt(1000, 10)},
 	}
 
-	err = c.Request.Get(&txs, c.URL, "txs", query)
+	err = c.Get(&txs, "txs", query)
 	if err != nil {
 		logger.Error(err, "Cosmos: Failed to get transactions for address", logger.Params{"address": address})
 		return nil, err
@@ -45,7 +44,7 @@ func (c *Client) GetValidators() (validators []Validator, err error) {
 		"page":   {strconv.FormatInt(1, 10)},
 		"limit":  {strconv.FormatInt(blockatlas.ValidatorsPerPage, 10)},
 	}
-	err = c.Request.Get(&validators, c.URL, "staking/validators", query)
+	err = c.Get(&validators, "staking/validators", query)
 	if err != nil {
 		logger.Error(err, "Cosmos: Failed to get validators for address")
 		return validators, err
@@ -54,13 +53,13 @@ func (c *Client) GetValidators() (validators []Validator, err error) {
 }
 
 func (c *Client) GetBlockByNumber(num int64) (txs []Tx, err error) {
-	err = c.Request.Get(&txs, c.URL, "txs", url.Values{"tx.height": {strconv.FormatInt(num, 10)}})
+	err = c.Get(&txs, "txs", url.Values{"tx.height": {strconv.FormatInt(num, 10)}})
 	return txs, err
 }
 
 func (c *Client) CurrentBlockNumber() (num int64, err error) {
 	var block Block
-	err = c.Request.Get(&block, c.URL, "blocks/latest", nil)
+	err = c.Get(&block, "blocks/latest", nil)
 
 	if err != nil {
 		return num, err
@@ -76,13 +75,13 @@ func (c *Client) CurrentBlockNumber() (num int64, err error) {
 }
 
 func (c *Client) GetPool() (result StakingPool, err error) {
-	return result, c.Request.Get(&result, c.URL, "staking/pool", nil)
+	return result, c.Get(&result, "staking/pool", nil)
 }
 
 func (c *Client) GetInflation() (float64, error) {
 	var result string
 
-	err := c.Request.Get(&result, c.URL, "minting/inflation", nil)
+	err := c.Get(&result, "minting/inflation", nil)
 	if err != nil {
 		return 0, err
 	}
