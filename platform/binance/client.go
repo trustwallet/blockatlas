@@ -13,7 +13,7 @@ import (
 // TODO Headers + rate limiting
 
 type Client struct {
-	Request blockatlas.Request
+	blockatlas.Request
 }
 
 func ClientInit(baseUrl string) Client {
@@ -29,7 +29,7 @@ func ClientInit(baseUrl string) Client {
 func (c *Client) GetBlockList(count int) (*BlockList, error) {
 	result := new(BlockList)
 	query := url.Values{"rows": {strconv.Itoa(count)}, "page": {"1"}}
-	err := c.Request.Get(result, "blocks", query)
+	err := c.Get(result, "blocks", query)
 	return result, err
 }
 
@@ -42,14 +42,14 @@ func (c *Client) GetBlockByNumber(num int64) (*TxPage, error) {
 		"rows": {"100"},
 		"page": {"1"},
 	}
-	err := c.Request.Get(stx, "txs", query)
+	err := c.Get(stx, "txs", query)
 	return stx, err
 }
 
 func (c *Client) GetTxsOfAddress(address string, token string) (*TxPage, error) {
 	stx := new(TxPage)
 	query := url.Values{"address": {address}, "rows": {"100"}, "page": {"1"}}
-	err := c.Request.Get(stx, "txs", query)
+	err := c.Get(stx, "txs", query)
 	return stx, err
 }
 
