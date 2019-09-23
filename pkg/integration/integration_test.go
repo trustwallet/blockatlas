@@ -4,7 +4,7 @@ package integration
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/trustwallet/blockatlas/cmd/api"
+	"github.com/trustwallet/blockatlas/cmd"
 	"github.com/trustwallet/blockatlas/config"
 	"github.com/trustwallet/blockatlas/platform"
 	"os"
@@ -20,7 +20,7 @@ func TestApis(t *testing.T) {
 	p := ":8080"
 	c := make(chan *gin.Engine)
 	go func() {
-		api.Run(p, c)
+		cmd.RunApi(p, c)
 	}()
 	e := <-c
 	time.Sleep(time.Second * 2)

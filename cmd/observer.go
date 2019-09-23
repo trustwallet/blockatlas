@@ -1,4 +1,4 @@
-package observer
+package cmd
 
 import (
 	"context"
@@ -12,14 +12,14 @@ import (
 	"time"
 )
 
-var Cmd = cobra.Command{
+var observerCmd = cobra.Command{
 	Use:   "observer",
 	Short: "Observer worker",
 	Args:  cobra.NoArgs,
-	Run:   run,
+	Run:   runObserver,
 }
 
-func run(_ *cobra.Command, _ []string) {
+func runObserver(_ *cobra.Command, _ []string) {
 	if observerStorage.App == nil {
 		logger.Fatal("Observer is not enabled")
 	}
@@ -81,4 +81,8 @@ func run(_ *cobra.Command, _ []string) {
 	wg.Wait()
 
 	logger.Info("Exiting cleanly")
+}
+
+func init() {
+	rootCmd.AddCommand(&observerCmd)
 }

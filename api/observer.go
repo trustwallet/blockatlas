@@ -13,7 +13,7 @@ import (
 	"strconv"
 )
 
-func setupObserverAPI(router gin.IRouter) {
+func SetupObserverAPI(router gin.IRouter) {
 	router.Use(requireAuth)
 	router.POST("/webhook/register", addCall)
 	router.DELETE("/webhook/register", deleteCall)

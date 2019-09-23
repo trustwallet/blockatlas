@@ -9,7 +9,7 @@ import (
 
 var routers = make(map[string]gin.IRouter)
 
-func loadPlatforms(root gin.IRouter) {
+func LoadPlatforms(root gin.IRouter) {
 	v1 := root.Group("/v1")
 	v2 := root.Group("/v2")
 

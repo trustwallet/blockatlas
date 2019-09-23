@@ -11,7 +11,7 @@ GEN_COIN_FILE := coin/gen.go
 # Go related variables.
 GOBASE := $(shell pwd)
 GOBIN := $(GOBASE)/bin
-GOPKG := $(cmd)
+GOPKG := $(.)
 
 # Environment variables
 TEST_CONFIG=$(GOBASE)/config.yml
@@ -101,7 +101,7 @@ go-compile: go-get go-build
 
 go-build:
 	@echo "  >  Building binary..."
-	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(PROJECT_NAME) -v ./cmd/
+	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(PROJECT_NAME) -v .
 
 go-generate:
 	@echo "  >  Generating dependency files..."
