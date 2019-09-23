@@ -4,7 +4,6 @@ import (
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
-	"net/http"
 	"strconv"
 )
 

@@ -6,8 +6,6 @@ import (
 	"github.com/ybbus/jsonrpc"
 	"strconv"
 
-	"net/http"
-
 	"github.com/spf13/viper"
 )
 

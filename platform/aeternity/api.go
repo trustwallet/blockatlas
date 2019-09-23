@@ -3,7 +3,6 @@ package aeternity
 import (
 	"encoding/base64"
 	"github.com/trustwallet/blockatlas/coin"
-	"net/http"
 	"strings"
 
 	"github.com/spf13/viper"
