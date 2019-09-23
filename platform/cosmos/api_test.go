@@ -3,10 +3,10 @@ package cosmos
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
 )
 

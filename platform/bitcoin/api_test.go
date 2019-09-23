@@ -3,10 +3,10 @@ package bitcoin
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"testing"
 
 	mapset "github.com/deckarep/golang-set"
-	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
 )
 

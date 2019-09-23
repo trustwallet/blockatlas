@@ -1,6 +1,8 @@
 package vechain
 
-import "github.com/trustwallet/blockatlas"
+import (
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+)
 
 type TransferTx struct {
 	Transactions []Tx `json:"transactions"`

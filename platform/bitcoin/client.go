@@ -2,12 +2,11 @@ package bitcoin
 
 import (
 	"fmt"
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"net/url"
 	"strconv"
 	"sync"
-
-	"github.com/trustwallet/blockatlas"
 )
 
 type Client struct {

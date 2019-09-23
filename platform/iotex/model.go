@@ -1,6 +1,8 @@
 package iotex
 
-import "github.com/trustwallet/blockatlas"
+import (
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+)
 
 type Response struct {
 	ActionInfo []*ActionInfo `json:"actionInfo"`

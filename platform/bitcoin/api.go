@@ -2,6 +2,7 @@ package bitcoin
 
 import (
 	"fmt"
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"net/http"
 	"strconv"
@@ -10,7 +11,6 @@ import (
 	mapset "github.com/deckarep/golang-set"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
-	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
 	//"sync"
 )

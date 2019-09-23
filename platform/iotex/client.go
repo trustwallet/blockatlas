@@ -2,11 +2,10 @@ package iotex
 
 import (
 	"fmt"
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"net/url"
 	"strconv"
-
-	"github.com/trustwallet/blockatlas"
 )
 
 type Client struct {

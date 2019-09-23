@@ -1,6 +1,8 @@
 package nimiq
 
-import "github.com/trustwallet/blockatlas"
+import (
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+)
 
 type Tx struct {
 	Hash          string            `json:"hash"`
