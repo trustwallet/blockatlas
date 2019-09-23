@@ -6,8 +6,6 @@ import (
 	"github.com/ybbus/jsonrpc"
 	"strconv"
 
-	"net/http"
-
 	"github.com/spf13/viper"
 )
 
@@ -18,7 +16,7 @@ type Platform struct {
 func (p *Platform) Init() error {
 	p.client.BaseURL = viper.GetString("zilliqa.api")
 	p.client.APIKey = viper.GetString("zilliqa.key")
-	p.client.HTTPClient = http.DefaultClient
+	p.client.HTTPClient = blockatlas.DefaultClient
 	p.client.RPCClient = jsonrpc.NewClient(viper.GetString("zilliqa.rpc"))
 	return nil
 }

@@ -3,7 +3,6 @@ package aeternity
 import (
 	"encoding/base64"
 	"github.com/trustwallet/blockatlas/coin"
-	"net/http"
 	"strings"
 
 	"github.com/spf13/viper"
@@ -16,7 +15,7 @@ type Platform struct {
 
 func (p *Platform) Init() error {
 	p.client.URL = viper.GetString("aeternity.api")
-	p.client.HTTPClient = http.DefaultClient
+	p.client.HTTPClient = blockatlas.DefaultClient
 	return nil
 }
 
