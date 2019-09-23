@@ -3,7 +3,6 @@ package bitcoin
 import (
 	"fmt"
 	"github.com/trustwallet/blockatlas/pkg/logger"
-	"net/http"
 	"net/url"
 	"strconv"
 	"sync"
@@ -19,10 +18,8 @@ type Client struct {
 func InitClient(URL string) Client {
 	return Client{
 		Request: blockatlas.Request{
-			HttpClient: blockatlas.DefaultClient,
-			ErrorHandler: func(res *http.Response, uri string) error {
-				return nil
-			},
+			HttpClient:   blockatlas.DefaultClient,
+			ErrorHandler: blockatlas.DefaultErrorHandler,
 		},
 		URL: URL,
 	}

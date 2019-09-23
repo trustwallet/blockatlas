@@ -21,10 +21,8 @@ type Client struct {
 func InitClient(BaseURL string) Client {
 	return Client{
 		Request: blockatlas.Request{
-			HttpClient: blockatlas.DefaultClient,
-			ErrorHandler: func(res *http.Response, uri string) error {
-				return nil
-			},
+			HttpClient:   blockatlas.DefaultClient,
+			ErrorHandler: blockatlas.DefaultErrorHandler,
 		},
 		BaseURL: BaseURL,
 	}

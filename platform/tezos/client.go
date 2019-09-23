@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
-	"net/http"
 	"net/url"
 )
 
@@ -19,10 +18,8 @@ func InitClient(baseUrl string, RpcURL string) Client {
 		URL:    baseUrl,
 		RpcURL: RpcURL,
 		Request: blockatlas.Request{
-			HttpClient: blockatlas.DefaultClient,
-			ErrorHandler: func(res *http.Response, uri string) error {
-				return nil
-			},
+			HttpClient:   blockatlas.DefaultClient,
+			ErrorHandler: blockatlas.DefaultErrorHandler,
 		},
 	}
 }
