@@ -3,7 +3,6 @@ package assets
 import (
 	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
-	"net/http"
 	"strings"
 )
 
@@ -14,10 +13,8 @@ const (
 func GetValidators(coin coin.Coin) ([]AssetValidator, error) {
 	var results []AssetValidator
 	request := blockatlas.Request{
-		HttpClient: blockatlas.DefaultClient,
-		ErrorHandler: func(res *http.Response, uri string) error {
-			return nil
-		},
+		HttpClient:   blockatlas.DefaultClient,
+		ErrorHandler: blockatlas.DefaultErrorHandler,
 	}
 	err := request.Get(&results, AssetsURL+coin.Handle, "/validators/list.json", nil)
 	return results, err

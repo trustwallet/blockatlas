@@ -3,7 +3,6 @@ package waves
 import (
 	"fmt"
 	"github.com/trustwallet/blockatlas"
-	"net/http"
 )
 
 type Client struct {
@@ -15,10 +14,8 @@ func InitClient(baseUrl string) Client {
 	return Client{
 		URL: baseUrl,
 		Request: blockatlas.Request{
-			HttpClient: blockatlas.DefaultClient,
-			ErrorHandler: func(res *http.Response, uri string) error {
-				return nil
-			},
+			HttpClient:   blockatlas.DefaultClient,
+			ErrorHandler: blockatlas.DefaultErrorHandler,
 		},
 	}
 }

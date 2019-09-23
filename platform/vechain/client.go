@@ -3,7 +3,6 @@ package vechain
 import (
 	"fmt"
 	"github.com/trustwallet/blockatlas"
-	"net/http"
 	"net/url"
 )
 
@@ -16,10 +15,8 @@ type Client struct {
 func InitClient(URL string) Client {
 	return Client{
 		Request: blockatlas.Request{
-			HttpClient: blockatlas.DefaultClient,
-			ErrorHandler: func(res *http.Response, uri string) error {
-				return nil
-			},
+			HttpClient:   blockatlas.DefaultClient,
+			ErrorHandler: blockatlas.DefaultErrorHandler,
 		},
 		URL: URL,
 	}
