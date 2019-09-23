@@ -284,6 +284,11 @@ if err != nil {
 `logger.Warn("Warning", err, logger.Params{"bind": bind})`
 
 
+## Metrics
+
+The Blockatlas can collect and expose by `expvar's`, metrics about the application healthy and clients and server requests.
+Prometheus or another service can collect metrics provided from the  `/metrics` endpoint.
+
 ## Authors
 
 -   [Richard Patel](https://github.com/terorie)
