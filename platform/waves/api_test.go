@@ -3,7 +3,7 @@ package waves
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/trustwallet/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"testing"
 )
 
@@ -85,7 +85,7 @@ var transferV1Obj = blockatlas.Tx{
 	Status: blockatlas.StatusCompleted,
 	Memo:   "",
 	Meta: blockatlas.Transfer{
-		Value: blockatlas.Amount("9481600000"),
+		Value:    blockatlas.Amount("9481600000"),
 		Symbol:   "WAVES",
 		Decimals: 8,
 	},

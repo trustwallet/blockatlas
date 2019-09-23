@@ -2,7 +2,7 @@ package tron
 
 import (
 	"encoding/json"
-	"github.com/trustwallet/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 )
 
 type Page struct {

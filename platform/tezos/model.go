@@ -1,6 +1,8 @@
 package tezos
 
-import "github.com/trustwallet/blockatlas"
+import (
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+)
 
 // Tx is a Tezos blockchain transaction
 type Tx struct {

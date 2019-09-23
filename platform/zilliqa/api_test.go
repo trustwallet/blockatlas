@@ -3,7 +3,7 @@ package zilliqa
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/trustwallet/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"testing"
 
 	"github.com/trustwallet/blockatlas/coin"

@@ -54,6 +54,6 @@ steps:
   workingDirectory: '$(modulePath)'
   displayName: 'Run integration tests'
 
-- script: go build -v .
+- script: go build -v cmd
   workingDirectory: '$(modulePath)'
   displayName: 'Build'

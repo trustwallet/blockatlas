@@ -3,8 +3,8 @@ package nimiq
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"testing"
 )
 

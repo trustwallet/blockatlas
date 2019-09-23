@@ -2,7 +2,7 @@ package observer
 
 import (
 	"github.com/sirupsen/logrus"
-	"github.com/trustwallet/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"math/rand"
 	"time"

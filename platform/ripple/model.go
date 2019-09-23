@@ -1,7 +1,7 @@
 package ripple
 
 import (
-	"github.com/trustwallet/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 )
 
 type Response struct {

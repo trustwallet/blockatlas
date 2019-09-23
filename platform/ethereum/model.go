@@ -1,7 +1,7 @@
 package ethereum
 
 import (
-	"github.com/trustwallet/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"math/big"
 )
 

@@ -1,7 +1,7 @@
 package cosmos
 
 import (
-	"github.com/trustwallet/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"sort"
 	"strconv"
 	"time"

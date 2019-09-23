@@ -3,7 +3,7 @@ package observer
 import (
 	"errors"
 	"github.com/sirupsen/logrus"
-	"github.com/trustwallet/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"testing"
 	"time"
 )
