@@ -1,2 +1,2 @@
-web: bin/cmd api :$PORT
-observer: bin/cmd observer
+web: bin/blockatlas api :$PORT
+observer: bin/blockatlas observer

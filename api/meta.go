@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-func getRoot(c *gin.Context) {
+func GetRoot(c *gin.Context) {
 	c.String(http.StatusOK,
 		`Welcome to the Block Atlas API!
 

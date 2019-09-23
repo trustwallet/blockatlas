@@ -1,11 +1,9 @@
-package main
+package cmd
 
 import (
 	"fmt"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"github.com/trustwallet/blockatlas/cmd/api"
-	"github.com/trustwallet/blockatlas/cmd/observer"
 	"github.com/trustwallet/blockatlas/config"
 	observerStorage "github.com/trustwallet/blockatlas/observer/storage"
 	"github.com/trustwallet/blockatlas/pkg/logger"
@@ -13,7 +11,7 @@ import (
 	"os"
 )
 
-var app = cobra.Command{
+var rootCmd = cobra.Command{
 	Use:   "blockatlas",
 	Short: "BlockAtlas by Trust Wallet",
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
@@ -34,14 +32,14 @@ var app = cobra.Command{
 }
 
 func init() {
-	app.PersistentFlags().StringP("config", "c", "", "Config file (optional)")
-	app.AddCommand(&api.Cmd)
-	app.AddCommand(&observer.Cmd)
+	rootCmd.PersistentFlags().StringP("config", "c", "", "Config file (optional)")
 }
 
-func main() {
-	if err := app.Execute(); err != nil {
-		fmt.Fprintln(os.Stderr, err)
+// Execute adds all child commands to the root command and sets flags appropriately.
+// This is called by main.main(). It only needs to happen once to the rootCmd.
+func Execute() {
+	if err := rootCmd.Execute(); err != nil {
+		fmt.Println(err)
 		os.Exit(1)
 	}
 }
