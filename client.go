@@ -16,7 +16,7 @@ type Request struct {
 }
 
 var DefaultClient = &http.Client{
-	Timeout: time.Second * 15,
+	Timeout: time.Second * 10,
 }
 
 func (r *Request) Get(result interface{}, base string, path string, query url.Values) error {
