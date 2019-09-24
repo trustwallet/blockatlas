@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 	"net/http"
+	"strings"
 )
 
 var DefaultMiddleware = func(c *gin.Context) {
@@ -17,7 +18,8 @@ func TokenAuthMiddleware() gin.HandlerFunc {
 	}
 
 	return func(c *gin.Context) {
-		token := c.Request.Header.Get("API_TOKEN")
+		token := c.Request.Header.Get("Authorization")
+		token = strings.Replace(token, "Bearer ", "", 1)
 		if token == "" {
 			c.AbortWithStatusJSON(http.StatusServiceUnavailable, "API token required")
 			return
