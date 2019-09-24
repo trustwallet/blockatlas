@@ -12,7 +12,7 @@ type DexClient struct {
 	blockatlas.Request
 }
 
-func ClientDexInit(baseUrl string) DexClient {
+func DexClientInit(baseUrl string) DexClient {
 	return DexClient{
 		Request: blockatlas.Request{
 			HttpClient:   blockatlas.DefaultClient,

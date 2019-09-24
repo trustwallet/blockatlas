@@ -22,7 +22,7 @@ type Platform struct {
 
 func (p *Platform) Init() error {
 	p.client = ClientInit(viper.GetString("binance.api"))
-	p.dexClient = ClientDexInit(viper.GetString("binance.dex"))
+	p.dexClient = DexClientInit(viper.GetString("binance.dex"))
 	return nil
 }
 
