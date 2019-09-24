@@ -289,6 +289,8 @@ if err != nil {
 The Blockatlas can collect and expose by `expvar's`, metrics about the application healthy and clients and server requests.
 Prometheus or another service can collect metrics provided from the `/metrics` endpoint.
 
+To protect the route, you can set the environment variables `API_TOKEN`, and this route starts to require the auth token. 
+
 ## Authors
 
 -   [Richard Patel](https://github.com/terorie)

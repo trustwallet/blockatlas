@@ -152,7 +152,9 @@ func makeTokenRoute(router gin.IRouter, api blockatlas.Platform) {
 
 func MakeMetricsRoute(router gin.IRouter) {
 	router.Use(ginprom.PromMiddleware(nil))
-	router.GET("/metrics", ginprom.PromHandler(promhttp.Handler()))
+	metrics := router.Group("/metrics")
+	metrics.Use(TokenAuthMiddleware())
+	metrics.GET("/", ginprom.PromHandler(promhttp.Handler()))
 }
 
 func emptyPage(c *gin.Context) {

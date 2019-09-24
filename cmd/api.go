@@ -36,8 +36,6 @@ func RunApi(bind string, c chan *gin.Engine) {
 	sg := sentrygin.New(sentrygin.Options{})
 	engine.Use(util.CheckReverseProxy, sg)
 
-	api.MakeMetricsRoute(engine)
-
 	engine.GET("/", api.GetRoot)
 	engine.GET("/status", func(c *gin.Context) {
 		c.JSON(http.StatusOK, map[string]interface{}{
@@ -45,6 +43,7 @@ func RunApi(bind string, c chan *gin.Engine) {
 		})
 	})
 
+	api.MakeMetricsRoute(engine)
 	api.LoadPlatforms(engine)
 	if observerStorage.App != nil {
 		observerAPI := engine.Group("/observer/v1")
