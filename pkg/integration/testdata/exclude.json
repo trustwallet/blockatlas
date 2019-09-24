@@ -10,7 +10,5 @@
   "/v2/poa/collections/:owner/collection/:collection_id",
   "/v2/thundertoken/collections/:owner/collection/:collection_id",
   "/v2/tomochain/collections/:owner/collection/:collection_id",
-  "/v2/gochain/collections/:owner/collection/:collection_id",
-  "/v1/nebulas/:address",
-  "/v2/nebulas/transactions/:address"
+  "/v2/gochain/collections/:owner/collection/:collection_id"
 ]
