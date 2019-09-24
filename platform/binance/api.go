@@ -16,11 +16,13 @@ const (
 )
 
 type Platform struct {
-	client Client
+	client    Client
+	dexClient DexClient
 }
 
 func (p *Platform) Init() error {
-	p.client = ClientInit(viper.GetString("binance.api"), viper.GetString("binance.dex"))
+	p.client = ClientInit(viper.GetString("binance.api"))
+	p.dexClient = DexClientInit(viper.GetString("binance.dex"))
 	return nil
 }
 
@@ -137,11 +139,11 @@ func NormalizeTxs(srcTxs []Tx, txType string, pageSize int) (txs []blockatlas.Tx
 }
 
 func (p *Platform) GetTokenListByAddress(address string) (blockatlas.TokenPage, error) {
-	account, err := p.client.GetAccountMetadata(address)
+	account, err := p.dexClient.GetAccountMetadata(address)
 	if err != nil || len(account.Balances) == 0 {
 		return []blockatlas.Token{}, nil
 	}
-	tokens, err := p.client.GetTokens()
+	tokens, err := p.dexClient.GetTokens()
 	if err != nil {
 		return nil, err
 	}

@@ -8,23 +8,22 @@ import (
 
 //Client model contains client instance and base url
 type Client struct {
-	Request blockatlas.Request
-	URL     string
+	blockatlas.Request
 }
 
-func InitClient(URL string) Client {
+func InitClient(baseUrl string) Client {
 	return Client{
 		Request: blockatlas.Request{
 			HttpClient:   blockatlas.DefaultClient,
 			ErrorHandler: blockatlas.DefaultErrorHandler,
+			BaseUrl:      baseUrl,
 		},
-		URL: URL,
 	}
 }
 
 // GetCurrentBlockInfo get request function which returns current  blockchain status model
 func (c *Client) GetCurrentBlockInfo() (cbi *CurrentBlockInfo, err error) {
-	err = c.Request.Get(&cbi, c.URL, "clientInit", nil)
+	err = c.Get(&cbi, "clientInit", nil)
 
 	return cbi, err
 }
@@ -32,7 +31,7 @@ func (c *Client) GetCurrentBlockInfo() (cbi *CurrentBlockInfo, err error) {
 // GetBlockByNumber get request function which returns block model requested by number
 func (c *Client) GetBlockByNumber(num int64) (block *Block, err error) {
 	path := fmt.Sprintf("blocks/%d", num)
-	err = c.Request.Get(&block, c.URL, path, nil)
+	err = c.Get(&block, path, nil)
 
 	return block, err
 }
@@ -40,7 +39,7 @@ func (c *Client) GetBlockByNumber(num int64) (block *Block, err error) {
 // GetTransactions get request function which returns a VET transfer transactions for given address
 func (c *Client) GetTransactions(address string) (TransferTx, error) {
 	var transfers TransferTx
-	err := c.Request.Get(&transfers, c.URL, "transactions", url.Values{
+	err := c.Get(&transfers, "transactions", url.Values{
 		"address": {address},
 		"count":   {"25"},
 		"offset":  {"0"},
@@ -51,7 +50,7 @@ func (c *Client) GetTransactions(address string) (TransferTx, error) {
 // GetTokenTransfers get request function which returns a token transfer transactions for given address
 func (c *Client) GetTokenTransfers(address string) (TokenTransferTxs, error) {
 	var transfers TokenTransferTxs
-	err := c.Request.Get(&transfers, c.URL, "tokenTransfers", url.Values{
+	err := c.Get(&transfers, "tokenTransfers", url.Values{
 		"address": {address},
 		"count":   {"25"},
 		"offset":  {"0"},
@@ -62,7 +61,7 @@ func (c *Client) GetTokenTransfers(address string) (TokenTransferTxs, error) {
 // GetTransactionReceipt get request function which returns a transaction for given id and parses it to TransferReceipt
 func (c *Client) GetTransactionReceipt(id string) (receipt *TransferReceipt, err error) {
 	path := fmt.Sprintf("transactions/%s", id)
-	err = c.Request.Get(&receipt, c.URL, path, nil)
+	err = c.Get(&receipt, path, nil)
 
 	return receipt, err
 }
@@ -70,7 +69,7 @@ func (c *Client) GetTransactionReceipt(id string) (receipt *TransferReceipt, err
 // GetTransactionByID get request function which returns a transaction for given id and parses it to NativeTransaction
 func (c *Client) GetTransactionByID(id string) (transaction *NativeTransaction, err error) {
 	path := fmt.Sprintf("transactions/%s", id)
-	err = c.Request.Get(&transaction, c.URL, path, nil)
+	err = c.Get(&transaction, path, nil)
 
 	return transaction, err
 }

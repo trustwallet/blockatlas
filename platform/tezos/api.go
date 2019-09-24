@@ -8,13 +8,15 @@ import (
 )
 
 type Platform struct {
-	client Client
+	client    Client
+	rpcClient RpcClient
 }
 
 const Annual = 7.0
 
 func (p *Platform) Init() error {
-	p.client = InitClient(viper.GetString("tezos.api"), viper.GetString("tezos.rpc"))
+	p.client = InitClient(viper.GetString("tezos.api"))
+	p.rpcClient = InitRpcClient(viper.GetString("tezos.rpc"))
 	return nil
 }
 
@@ -62,7 +64,7 @@ func NormalizeTxs(srcTxs []Tx) (txs []blockatlas.Tx) {
 
 func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
 	results := make(blockatlas.ValidatorPage, 0)
-	validators, err := p.client.GetValidators()
+	validators, err := p.rpcClient.GetValidators()
 
 	if err != nil {
 		return results, err

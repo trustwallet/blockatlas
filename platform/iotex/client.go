@@ -9,23 +9,22 @@ import (
 )
 
 type Client struct {
-	Request blockatlas.Request
-	URL     string
+	blockatlas.Request
 }
 
-func InitClient(URL string) Client {
+func InitClient(baseUrl string) Client {
 	return Client{
 		Request: blockatlas.Request{
 			HttpClient:   blockatlas.DefaultClient,
 			ErrorHandler: blockatlas.DefaultErrorHandler,
+			BaseUrl:      baseUrl,
 		},
-		URL: URL,
 	}
 }
 
 func (c *Client) GetLatestBlock() (int64, error) {
 	var chainMeta ChainMeta
-	err := c.Request.Get(&chainMeta, c.URL, "chainmeta", nil)
+	err := c.Get(&chainMeta, "chainmeta", nil)
 	if err != nil {
 		return 0, err
 	}
@@ -35,7 +34,7 @@ func (c *Client) GetLatestBlock() (int64, error) {
 func (c *Client) GetTxsInBlock(number int64) ([]*ActionInfo, error) {
 	path := fmt.Sprintf("transfers/block/%d", number)
 	var resp Response
-	err := c.Request.Get(&resp, c.URL, path, nil)
+	err := c.Get(&resp, path, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -44,7 +43,7 @@ func (c *Client) GetTxsInBlock(number int64) ([]*ActionInfo, error) {
 
 func (c *Client) GetTxsOfAddress(address string, start int64) (*Response, error) {
 	var response Response
-	err := c.Request.Get(&response, c.URL, "actions/addr/"+address, url.Values{
+	err := c.Get(&response, "actions/addr/"+address, url.Values{
 		"start": {strconv.FormatInt(start, 10)},
 		"count": {strconv.FormatInt(blockatlas.TxPerPage, 10)},
 	})
@@ -58,7 +57,7 @@ func (c *Client) GetTxsOfAddress(address string, start int64) (*Response, error)
 
 func (c *Client) GetAddressTotalTransactions(address string) (int64, error) {
 	var account AccountInfo
-	err := c.Request.Get(&account, c.URL, "accounts/"+address, nil)
+	err := c.Get(&account, "accounts/"+address, nil)
 	if err != nil {
 		return 0, nil
 	}

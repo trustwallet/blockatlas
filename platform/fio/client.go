@@ -5,8 +5,7 @@ import (
 )
 
 type Client struct {
-	Request blockatlas.Request
-	URL     string
+	blockatlas.Request
 }
 
 func InitClient(baseUrl string) Client {
@@ -14,7 +13,7 @@ func InitClient(baseUrl string) Client {
 		Request: blockatlas.Request{
 			HttpClient:   blockatlas.DefaultClient,
 			ErrorHandler: blockatlas.DefaultErrorHandler,
+			BaseUrl:      baseUrl,
 		},
-		URL: baseUrl,
 	}
 }
