@@ -1,10 +1,18 @@
 package blockatlas
 
 type ValidatorPage []Validator
+type DelegationsPage []Validator
 
 type DocsResponse struct {
 	Docs interface{} `json:"docs"`
 }
+
+type DelegationStatus string
+
+const (
+	DelegationStatusActive  DelegationStatus = "active"
+	DelegationStatusPending DelegationStatus = "pending"
+)
 
 const ValidatorsPerPage = 100
 
@@ -16,6 +24,15 @@ type Validator struct {
 	ID     string        `json:"id"`
 	Status bool          `json:"status"`
 	Reward StakingReward `json:"reward"`
+}
+
+type Delegation struct {
+	Delegator string           `json:"delegator"`
+	Value     string           `json:"value"`
+	Symbol    string           `json:"symbol"`
+	Decimals  uint64           `json:"decimals"`
+	Status    DelegationStatus `json:"status"`
+	Metadata  interface{}      `json:"metadata"`
 }
 
 type StakeValidatorInfo struct {
