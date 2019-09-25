@@ -1,16 +1,17 @@
 package algorand
 
 import (
-	"github.com/spf13/viper"
+	//"github.com/spf13/viper"
+	"github.com/trustwallet/blockatlas"
 	"github.com/trustwallet/blockatlas/coin"
 )
 
 type Platform struct {
-	client Client
+	//client Client
 }
 
 func (p *Platform) Init() error {
-	p.client = InitClient(viper.GetString("algorand.api"))
+	//p.client = InitClient(viper.GetString("algorand.api"))
 	return nil
 }
 
@@ -35,15 +36,16 @@ func (p *Platform) Coin() coin.Coin {
 //	}, nil
 //}
 
-//func (p *Platform) GetTxsByAddress(address string) (page blockatlas.TxPage, err error) {
-//	return page, err
-//
-//	//txs, err := p.client.GetTxsOfAddress(address)
-//	//if err != nil {
-//	//	return nil, err
-//	//}
-//	//return NormalizeTxs(txs), nil
-//}
+func (p *Platform) GetTxsByAddress(address string) (page blockatlas.TxPage, err error) {
+	return page, err
+
+	//txs, err := p.client.GetTxsOfAddress(address)
+	//if err != nil {
+	//	return nil, err
+	//}
+	//return NormalizeTxs(txs), nil
+}
+
 //
 //func NormalizeTxs(txs []Transaction) []blockatlas.Tx {
 //	result := make([]blockatlas.Tx, 0)

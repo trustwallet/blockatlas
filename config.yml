@@ -184,5 +184,5 @@ ravencoin:
 decred:
   api: https://blockbook.decred.org:9161/api
 
-#algorand:
-#  api: https://algorand.node
+algorand:
+  api: https://algorand.node
