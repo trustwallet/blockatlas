@@ -94,6 +94,17 @@ func makeStakingRoute(router gin.IRouter, api blockatlas.Platform) {
 
 		c.JSON(http.StatusOK, blockatlas.DocsResponse{Docs: results})
 	})
+
+	router.GET("/staking/delegations/:address", func(c *gin.Context) {
+
+		delegations, err := stakingAPI.GetDelegations(c.Param("address"))
+		if err != nil {
+			log.Print("Unable to fetch delegations list from the registry")
+			c.JSON(http.StatusServiceUnavailable, err)
+			return
+		}
+		c.JSON(http.StatusOK, blockatlas.DocsResponse{Docs: delegations})
+	})
 }
 
 func makeCollectionRoute(router gin.IRouter, api blockatlas.Platform) {

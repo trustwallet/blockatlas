@@ -1,7 +1,7 @@
 package blockatlas
 
 type ValidatorPage []Validator
-type DelegationsPage []Validator
+type DelegationsPage []Delegation
 
 type DocsResponse struct {
 	Docs interface{} `json:"docs"`
@@ -30,9 +30,13 @@ type Delegation struct {
 	Delegator string           `json:"delegator"`
 	Value     string           `json:"value"`
 	Symbol    string           `json:"symbol"`
-	Decimals  uint64           `json:"decimals"`
+	Decimals  uint             `json:"decimals"`
 	Status    DelegationStatus `json:"status"`
-	Metadata  interface{}      `json:"metadata"`
+	Metadata  interface{}      `json:"metadata,omitempty"`
+}
+
+type DelegationMetaDataPending struct {
+	AvailableDate uint `json:"available_date"`
 }
 
 type StakeValidatorInfo struct {

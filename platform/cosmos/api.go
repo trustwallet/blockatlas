@@ -90,14 +90,62 @@ func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
 	return results, nil
 }
 
-func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, error) {
+func (p *Platform) GetDelegations(address string) (page blockatlas.DelegationsPage, err error) {
 	results := make(blockatlas.DelegationsPage, 0)
 
-	// delegations, err := p.client.GetDelegations(address)
-	// UnbondingDelegations, err := p.client.GetUnbondingDelegations(address)
+	delegations, err := p.client.GetDelegations(address)
+	if err != nil {
+		return page, err
+	}
+	unbondingDelegations, err := p.client.GetUnbondingDelegations(address)
+	if err != nil {
+		return page, err
+	}
 	//TODO: Normalize into blockatlas.DelegationsPage
 
+	results = append(results, NormalizeDelegations(delegations)...)
+	results = append(results, NormalizeUnbondingDelegations(unbondingDelegations)...)
+
 	return results, nil
+}
+
+func NormalizeDelegations(delegations []Delegation) []blockatlas.Delegation {
+	results := make([]blockatlas.Delegation, 0)
+	for _, v := range delegations {
+
+		delegation := blockatlas.Delegation{
+			Delegator: v.ValidatorAddress,
+			Value:     v.Value(),
+			Symbol:    coin.Cosmos().Symbol,
+			Decimals:  coin.Cosmos().Decimals,
+			Status:    blockatlas.DelegationStatusActive,
+		}
+		results = append(results, delegation)
+	}
+	return results
+}
+
+func NormalizeUnbondingDelegations(delegations []UnbondingDelegation) []blockatlas.Delegation {
+	results := make([]blockatlas.Delegation, 0)
+	for _, v := range delegations {
+		for _, entry := range v.Entries {
+			t, _ := time.Parse(time.RFC3339, entry.CompletionTime)
+
+			delegation := blockatlas.Delegation{
+				Delegator: v.ValidatorAddress,
+				Value:     entry.Balance,
+				Symbol:    coin.Cosmos().Symbol,
+				Decimals:  coin.Cosmos().Decimals,
+				Status:    blockatlas.DelegationStatusPending,
+				Metadata: blockatlas.DelegationMetaDataPending{
+					AvailableDate: uint(t.Unix()),
+				},
+			}
+			results = append(results, delegation)
+		}
+
+	}
+	return results
 }
 
 // NormalizeTxs converts multiple Cosmos transactions

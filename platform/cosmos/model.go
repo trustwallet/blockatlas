@@ -2,6 +2,7 @@ package cosmos
 
 import (
 	"encoding/json"
+	"strings"
 )
 
 // Types of messages
@@ -93,6 +94,14 @@ type Delegation struct {
 	Shares           string `json:"shares"`
 }
 
+func (d *Delegation) Value() string {
+	shares := strings.Split(d.Shares, ".")
+	if len(shares) > 0 {
+		return shares[0]
+	}
+	return d.Shares
+}
+
 type UnbondingDelegation struct {
 	DelegatorAddress string                     `json:"delegator_address"`
 	ValidatorAddress string                     `json:"validator_address"`
@@ -101,8 +110,7 @@ type UnbondingDelegation struct {
 
 type UnbondingDelegationEntry struct {
 	DelegatorAddress string `json:"creation_height"`
-	ValidatorAddress string `json:"completion_time"`
-	InitialBalance   string `json:"initial_balance"`
+	CompletionTime   string `json:"completion_time"`
 	Balance          string `json:"balance"`
 }
 
