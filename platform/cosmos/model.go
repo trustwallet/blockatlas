@@ -87,6 +87,25 @@ type Validator struct {
 	Commission CosmosCommission `json:"commission"`
 }
 
+type Delegation struct {
+	DelegatorAddress string `json:"delegator_address"`
+	ValidatorAddress string `json:"validator_address"`
+	Shares           string `json:"shares"`
+}
+
+type UnbondingDelegation struct {
+	DelegatorAddress string                     `json:"delegator_address"`
+	ValidatorAddress string                     `json:"validator_address"`
+	Entries          []UnbondingDelegationEntry `json:"entries"`
+}
+
+type UnbondingDelegationEntry struct {
+	DelegatorAddress string `json:"creation_height"`
+	ValidatorAddress string `json:"completion_time"`
+	InitialBalance   string `json:"initial_balance"`
+	Balance          string `json:"balance"`
+}
+
 type StakingPool struct {
 	NotBondedTokens string `json:"not_bonded_tokens"`
 	BondedTokens    string `json:"bonded_tokens"`

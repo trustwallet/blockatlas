@@ -51,20 +51,20 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 		srcTxes = append(srcTxes, responseTxes...)
 	}
 
-	normalisedTxes := make([]blockatlas.Tx, 0)
+	normalisedTxs := make([]blockatlas.Tx, 0)
 
 	for _, srcTx := range srcTxes {
 		normalisedInputTx, ok := Normalize(&srcTx)
 		if ok {
-			normalisedTxes = append(normalisedTxes, normalisedInputTx)
+			normalisedTxs = append(normalisedTxs, normalisedInputTx)
 		}
 	}
 
-	sort.Slice(normalisedTxes, func(i, j int) bool {
-		return normalisedTxes[i].Date > normalisedTxes[j].Date
+	sort.Slice(normalisedTxs, func(i, j int) bool {
+		return normalisedTxs[i].Date > normalisedTxs[j].Date
 	})
 
-	return normalisedTxes, nil
+	return normalisedTxs, nil
 }
 
 func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
@@ -86,6 +86,16 @@ func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
 	for _, validator := range validators {
 		results = append(results, normalizeValidator(validator, pool, inflation, p.Coin()))
 	}
+
+	return results, nil
+}
+
+func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, error) {
+	results := make(blockatlas.DelegationsPage, 0)
+
+	// delegations, err := p.client.GetDelegations(address)
+	// UnbondingDelegations, err := p.client.GetUnbondingDelegations(address)
+	//TODO: Normalize into blockatlas.DelegationsPage
 
 	return results, nil
 }

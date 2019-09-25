@@ -51,7 +51,7 @@ type AddressAPI interface {
 type StakeAPI interface {
 	Platform
 	GetValidators() (ValidatorPage, error)
-	GetDelegator() (DelegationsPage, error)
+	GetDelegator(address string) (DelegationsPage, error)
 }
 
 type CollectionAPI interface {
