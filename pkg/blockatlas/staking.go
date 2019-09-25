@@ -1,5 +1,7 @@
 package blockatlas
 
+import "github.com/trustwallet/blockatlas/coin"
+
 type ValidatorPage []Validator
 type DelegationsPage []Delegation
 
@@ -27,12 +29,11 @@ type Validator struct {
 }
 
 type Delegation struct {
-	Delegator string           `json:"delegator"`
-	Value     string           `json:"value"`
-	Symbol    string           `json:"symbol"`
-	Decimals  uint             `json:"decimals"`
-	Status    DelegationStatus `json:"status"`
-	Metadata  interface{}      `json:"metadata,omitempty"`
+	Delegator string             `json:"delegator"`
+	Coin      *coin.ExternalCoin `json:"coin"`
+	Value     string             `json:"value"`
+	Status    DelegationStatus   `json:"status"`
+	Metadata  interface{}        `json:"metadata,omitempty"`
 }
 
 type DelegationMetaDataPending struct {
