@@ -20,28 +20,31 @@ func (p *Platform) Coin() coin.Coin {
 	return coin.Coins[coin.ALGO]
 }
 
-func (p *Platform) CurrentBlockNumber() (int64, error) {
-	return p.client.GetLatestBlock()
-}
+//TODO: https://github.com/trustwallet/blockatlas/issues/373
+//func (p *Platform) CurrentBlockNumber() (int64, error) {
+//	return p.client.GetLatestBlock()
+//}
+//
+//func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
+//	txs, err := p.client.GetTxsInBlock(num)
+//	if err != nil {
+//		return nil, err
+//	}
+//
+//	return &blockatlas.Block{
+//		Number: num,
+//		Txs:    NormalizeTxs(txs),
+//	}, nil
+//}
 
-func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
-	txs, err := p.client.GetTxsInBlock(num)
-	if err != nil {
-		return nil, err
-	}
+func (p *Platform) GetTxsByAddress(address string) (page blockatlas.TxPage, err error) {
+	return page, err
 
-	return &blockatlas.Block{
-		Number: num,
-		Txs:    NormalizeTxs(txs),
-	}, nil
-}
-
-func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
-	txs, err := p.client.GetTxsOfAddress(address)
-	if err != nil {
-		return nil, err
-	}
-	return NormalizeTxs(txs), nil
+	//txs, err := p.client.GetTxsOfAddress(address)
+	//if err != nil {
+	//	return nil, err
+	//}
+	//return NormalizeTxs(txs), nil
 }
 
 func NormalizeTxs(txs []Transaction) []blockatlas.Tx {
