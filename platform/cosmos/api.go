@@ -101,7 +101,6 @@ func (p *Platform) GetDelegations(address string) (page blockatlas.DelegationsPa
 	if err != nil {
 		return page, err
 	}
-	//TODO: Normalize into blockatlas.DelegationsPage
 
 	results = append(results, NormalizeDelegations(delegations)...)
 	results = append(results, NormalizeUnbondingDelegations(unbondingDelegations)...)

@@ -422,7 +422,7 @@ func TestNormalizeUnbondingDelegations(t *testing.T) {
 			Status:    blockatlas.DelegationStatusPending,
 			Coin:      cosmosCoin.External(),
 			Metadata: blockatlas.DelegationMetaDataPending{
-				AvailableDate: 1570081046, //TODO
+				AvailableDate: 1570081046,
 			},
 		},
 	}
