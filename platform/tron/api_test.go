@@ -199,6 +199,12 @@ const delegationsSrc = `
   {
     "address": "419241920da7d6bb487a33a6df3838e3d208f0b251",
     "balance": 27075639,
+	"frozen": [
+	  {
+		"expire_time": 1569728532000,
+		"frozen_balance": 35000000
+	  }
+	],
     "trc20": [
       {
         "TKTcfBEKpp5ZRPwmiZ8SfLx8W7CDZ7PHCY": "990000800"
@@ -234,6 +240,7 @@ func TestNormalizeDelegations(t *testing.T) {
 	assert.NotNil(t, accountData)
 	assert.Len(t, accountData, 1)
 	assert.Len(t, accountData[0].Votes, 3)
+	assert.Len(t, accountData[0].Frozen, 1)
 
 	var tronCoin = coin.Tron()
 	expected := []blockatlas.Delegation{
@@ -241,19 +248,19 @@ func TestNormalizeDelegations(t *testing.T) {
 			Delegator: accountData[0].Votes[0].VoteAddress,
 			Value:     "21000000",
 			Coin:      tronCoin.External(),
-			Status:    blockatlas.DelegationStatusActive,
+			Status:    blockatlas.DelegationStatusPending,
 		},
 		{
 			Delegator: accountData[0].Votes[1].VoteAddress,
 			Value:     "5000000",
 			Coin:      tronCoin.External(),
-			Status:    blockatlas.DelegationStatusActive,
+			Status:    blockatlas.DelegationStatusPending,
 		},
 		{
 			Delegator: accountData[0].Votes[2].VoteAddress,
 			Value:     "5000000",
 			Coin:      tronCoin.External(),
-			Status:    blockatlas.DelegationStatusActive,
+			Status:    blockatlas.DelegationStatusPending,
 		},
 	}
 	result := NormalizeDelegations(accountData)

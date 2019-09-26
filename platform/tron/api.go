@@ -8,6 +8,7 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"strconv"
 	"sync"
+	"time"
 )
 
 type Platform struct {
@@ -263,6 +264,11 @@ func NormalizeDelegations(data []AccountsData) []blockatlas.Delegation {
 				Value:     strconv.Itoa(v.VoteCount * 1000000),
 				Coin:      c.External(),
 				Status:    blockatlas.DelegationStatusActive,
+			}
+			for _, f := range d.Frozen {
+				if f.Expires().After(time.Now()) {
+					delegation.Status = blockatlas.DelegationStatusPending
+				}
 			}
 			results = append(results, delegation)
 		}
