@@ -109,9 +109,9 @@ func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, e
 }
 
 func NormalizeDelegations(delegations []Delegation) []blockatlas.Delegation {
+	c := coin.Cosmos()
 	results := make([]blockatlas.Delegation, 0)
 	for _, v := range delegations {
-		c := coin.Cosmos()
 		delegation := blockatlas.Delegation{
 			Delegator: v.ValidatorAddress,
 			Value:     v.Value(),
@@ -124,11 +124,11 @@ func NormalizeDelegations(delegations []Delegation) []blockatlas.Delegation {
 }
 
 func NormalizeUnbondingDelegations(delegations []UnbondingDelegation) []blockatlas.Delegation {
+	c := coin.Cosmos()
 	results := make([]blockatlas.Delegation, 0)
 	for _, v := range delegations {
 		for _, entry := range v.Entries {
 			t, _ := time.Parse(time.RFC3339, entry.CompletionTime)
-			c := coin.Cosmos()
 			delegation := blockatlas.Delegation{
 				Delegator: v.ValidatorAddress,
 				Value:     entry.Balance,
