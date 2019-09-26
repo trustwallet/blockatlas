@@ -118,7 +118,7 @@
 - id: 714
   symbol: BNB
   handle: binance
-  name: Binance
+  name: BNB
   decimals: 8
   blockTime: 4000
   sampleAddress: 'tbnb1fhr04azuhcj0dulm7ka40y0cqjlafwae9k9gk2'
