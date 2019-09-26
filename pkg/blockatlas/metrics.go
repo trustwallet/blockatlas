@@ -2,6 +2,7 @@ package blockatlas
 
 import (
 	"github.com/prometheus/client_golang/prometheus"
+	"regexp"
 	"time"
 )
 
@@ -34,7 +35,10 @@ func init() {
 }
 
 func getMetrics(status, url, method string, start time.Time) {
-	lvs := []string{status, url, method}
+	reg := regexp.MustCompile(`([a-zA-Z0-9]{30,})`)
+	endpoint := reg.ReplaceAllString(url, "")
+
+	lvs := []string{status, endpoint, method}
 	reqCount.WithLabelValues(lvs...).Inc()
 	reqDuration.WithLabelValues(lvs...).Observe(time.Since(start).Seconds())
 }
