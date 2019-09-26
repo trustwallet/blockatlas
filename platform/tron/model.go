@@ -3,7 +3,6 @@ package tron
 import (
 	"encoding/json"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"time"
 )
 
 type Page struct {
@@ -69,10 +68,6 @@ type Votes struct {
 type Frozen struct {
 	ExpireTime    int64 `json:"expire_time"`
 	FrozenBalance int64 `json:"frozen_balance"`
-}
-
-func (f *Frozen) Expires() time.Time {
-	return time.Unix(f.ExpireTime, 0)
 }
 
 type Asset struct {

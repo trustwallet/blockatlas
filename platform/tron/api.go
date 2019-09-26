@@ -266,7 +266,8 @@ func NormalizeDelegations(data []AccountsData) []blockatlas.Delegation {
 				Status:    blockatlas.DelegationStatusActive,
 			}
 			for _, f := range d.Frozen {
-				if f.Expires().After(time.Now()) {
+				t2 := time.Now().UnixNano() / int64(time.Millisecond)
+				if f.ExpireTime > t2 {
 					delegation.Status = blockatlas.DelegationStatusPending
 				}
 			}

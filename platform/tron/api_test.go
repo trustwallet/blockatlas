@@ -194,7 +194,7 @@ func TestNormalizeValidator(t *testing.T) {
 	assert.Equal(t, expected, actual)
 }
 
-const delegationsSrc = `
+const delegationsSrc1 = `
 [
   {
     "address": "419241920da7d6bb487a33a6df3838e3d208f0b251",
@@ -205,17 +205,6 @@ const delegationsSrc = `
 		"frozen_balance": 35000000
 	  }
 	],
-    "trc20": [
-      {
-        "TKTcfBEKpp5ZRPwmiZ8SfLx8W7CDZ7PHCY": "990000800"
-      },
-      {
-        "TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7": "11000000"
-      },
-      {
-        "TGbhcodQ1jRWB3ZywmfwsRTh4rwbiL2mzh": "7492500"
-      }
-    ],
     "votes": [
       {
         "vote_address": "414d1ef8673f916debb7e2515a8f3ecaf2611034aa",
@@ -233,36 +222,74 @@ const delegationsSrc = `
   }
 ]`
 
+const delegationsSrc2 = `
+[
+  {
+    "address": "419241920da7d6bb487a33a6df3838e3d208f0b251",
+    "balance": 27075639,
+	"frozen": [
+	  {
+		"expire_time": 1569465251000,
+		"frozen_balance": 5000000
+	  }
+	],
+    "votes": [
+      {
+        "vote_address": "4192c5d96c3b847268f4cb3e33b87ecfc67b5ce3de",
+        "vote_count": 5
+      }
+    ]
+  }
+]`
+
+var tronCoin = coin.Tron()
+
+var delegation1 = blockatlas.Delegation{
+	Delegator: "414d1ef8673f916debb7e2515a8f3ecaf2611034aa",
+	Value:     "21000000",
+	Coin:      tronCoin.External(),
+	Status:    blockatlas.DelegationStatusPending,
+}
+var delegation2 = blockatlas.Delegation{
+	Delegator: "4192c5d96c3b847268f4cb3e33b87ecfc67b5ce3de",
+	Value:     "5000000",
+	Coin:      tronCoin.External(),
+	Status:    blockatlas.DelegationStatusPending,
+}
+var delegation3 = blockatlas.Delegation{
+	Delegator: "4192c5d96c3b847268f4cb3e33b87ecfc67b5ce3de",
+	Value:     "5000000",
+	Coin:      tronCoin.External(),
+	Status:    blockatlas.DelegationStatusPending,
+}
+var delegation4 = blockatlas.Delegation{
+	Delegator: "4192c5d96c3b847268f4cb3e33b87ecfc67b5ce3de",
+	Value:     "5000000",
+	Coin:      tronCoin.External(),
+	Status:    blockatlas.DelegationStatusActive,
+}
+
 func TestNormalizeDelegations(t *testing.T) {
+	tests := []struct {
+		name  string
+		value string
+		want  []blockatlas.Delegation
+	}{
+		{"Status Pending", delegationsSrc1, []blockatlas.Delegation{delegation1, delegation2, delegation3}},
+		{"Status Active", delegationsSrc2, []blockatlas.Delegation{delegation4}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			testNormalizeDelegations(t, tt.value, tt.want)
+		})
+	}
+}
+
+func testNormalizeDelegations(t *testing.T, value string, want []blockatlas.Delegation) {
 	var accountData []AccountsData
-	err := json.Unmarshal([]byte(delegationsSrc), &accountData)
+	err := json.Unmarshal([]byte(value), &accountData)
 	assert.NoError(t, err)
 	assert.NotNil(t, accountData)
-	assert.Len(t, accountData, 1)
-	assert.Len(t, accountData[0].Votes, 3)
-	assert.Len(t, accountData[0].Frozen, 1)
-
-	var tronCoin = coin.Tron()
-	expected := []blockatlas.Delegation{
-		{
-			Delegator: accountData[0].Votes[0].VoteAddress,
-			Value:     "21000000",
-			Coin:      tronCoin.External(),
-			Status:    blockatlas.DelegationStatusPending,
-		},
-		{
-			Delegator: accountData[0].Votes[1].VoteAddress,
-			Value:     "5000000",
-			Coin:      tronCoin.External(),
-			Status:    blockatlas.DelegationStatusPending,
-		},
-		{
-			Delegator: accountData[0].Votes[2].VoteAddress,
-			Value:     "5000000",
-			Coin:      tronCoin.External(),
-			Status:    blockatlas.DelegationStatusPending,
-		},
-	}
 	result := NormalizeDelegations(accountData)
-	assert.Equal(t, result, expected)
+	assert.Equal(t, result, want)
 }
