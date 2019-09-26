@@ -91,7 +91,7 @@ type Validator struct {
 type Delegation struct {
 	DelegatorAddress string `json:"delegator_address"`
 	ValidatorAddress string `json:"validator_address"`
-	Shares           string `json:"shares"`
+	Shares           string `json:"shares,omitempty"`
 }
 
 func (d *Delegation) Value() string {
@@ -103,8 +103,7 @@ func (d *Delegation) Value() string {
 }
 
 type UnbondingDelegation struct {
-	DelegatorAddress string                     `json:"delegator_address"`
-	ValidatorAddress string                     `json:"validator_address"`
+	Delegation
 	Entries          []UnbondingDelegationEntry `json:"entries"`
 }
 

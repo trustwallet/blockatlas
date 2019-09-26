@@ -397,7 +397,9 @@ func TestCalculateAnnualReward(t *testing.T) {
 
 func TestNormalizeDelegations(t *testing.T) {
 	var delegations []Delegation
-	_ = json.Unmarshal([]byte(delegationsSrc), &delegations)
+	err := json.Unmarshal([]byte(delegationsSrc), &delegations)
+	assert.NoError(t, err)
+	assert.NotNil(t, delegations)
 
 	expected := []blockatlas.Delegation{
 		{
@@ -407,15 +409,15 @@ func TestNormalizeDelegations(t *testing.T) {
 			Status:    blockatlas.DelegationStatusActive,
 		},
 	}
-
 	result := NormalizeDelegations(delegations)
-
 	assert.Equal(t, result, expected)
 }
 
 func TestNormalizeUnbondingDelegations(t *testing.T) {
 	var delegations []UnbondingDelegation
-	_ = json.Unmarshal([]byte(unbondingDelegationsSrc), &delegations)
+	err := json.Unmarshal([]byte(unbondingDelegationsSrc), &delegations)
+	assert.NoError(t, err)
+	assert.NotNil(t, delegations)
 
 	expected := []blockatlas.Delegation{
 		{
@@ -428,8 +430,6 @@ func TestNormalizeUnbondingDelegations(t *testing.T) {
 			},
 		},
 	}
-
 	result := NormalizeUnbondingDelegations(delegations)
-
 	assert.Equal(t, result, expected)
 }

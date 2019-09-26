@@ -98,9 +98,8 @@ func (c *Client) GetDelegations(address string) (delegations []Delegation, err e
 	err = c.Get(&delegations, path, nil)
 	if err != nil {
 		logger.Error(err, "Cosmos: Failed to get delegations for address")
-		return delegations, err
 	}
-	return delegations, err
+	return
 }
 
 func (c *Client) GetUnbondingDelegations(address string) (delegations []UnbondingDelegation, err error) {
@@ -109,7 +108,6 @@ func (c *Client) GetUnbondingDelegations(address string) (delegations []Unbondin
 	err = c.Get(&delegations, path, nil)
 	if err != nil {
 		logger.Error(err, "Cosmos: Failed to get unbonding delegations for address")
-		return delegations, err
 	}
-	return delegations, err
+	return
 }

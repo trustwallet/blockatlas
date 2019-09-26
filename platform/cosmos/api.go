@@ -90,16 +90,16 @@ func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
 	return results, nil
 }
 
-func (p *Platform) GetDelegations(address string) (page blockatlas.DelegationsPage, err error) {
+func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, error) {
 	results := make(blockatlas.DelegationsPage, 0)
 
 	delegations, err := p.client.GetDelegations(address)
 	if err != nil {
-		return page, err
+		return nil, err
 	}
 	unbondingDelegations, err := p.client.GetUnbondingDelegations(address)
 	if err != nil {
-		return page, err
+		return nil, err
 	}
 
 	results = append(results, NormalizeDelegations(delegations)...)
@@ -233,37 +233,31 @@ func fillDelegate(tx *blockatlas.Tx, delegate MessageValueDelegate, msgType stri
 }
 
 func normalizeValidator(v Validator, p StakingPool, inflation float64, c coin.Coin) (validator blockatlas.Validator) {
-
 	reward := CalculateAnnualReward(p, inflation, v)
-
 	return blockatlas.Validator{
-		Status:        bool(v.Status == 2),
+		Status:        v.Status == 2,
 		ID:            v.Address,
 		Reward:        blockatlas.StakingReward{Annual: reward},
-		MinimumAmount: blockatlas.Amount("0"),
+		MinimumAmount: "0",
 		LockTime:      1814400,
 	}
 }
 
 func CalculateAnnualReward(p StakingPool, inflation float64, validator Validator) float64 {
-
-	notBondedTokens, err := strconv.ParseFloat(string(p.NotBondedTokens), 32)
-
+	notBondedTokens, err := strconv.ParseFloat(p.NotBondedTokens, 32)
 	if err != nil {
 		return 0
 	}
 
-	bondedTokens, err := strconv.ParseFloat(string(p.BondedTokens), 32)
+	bondedTokens, err := strconv.ParseFloat(p.BondedTokens, 32)
 	if err != nil {
 		return 0
 	}
 
-	commission, err := strconv.ParseFloat(string(validator.Commission.Rate), 32)
+	commission, err := strconv.ParseFloat(validator.Commission.Rate, 32)
 	if err != nil {
 		return 0
 	}
-
 	result := (notBondedTokens + bondedTokens) / bondedTokens * inflation
-
 	return (result - (result * commission)) * 100
 }
