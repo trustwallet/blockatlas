@@ -12,7 +12,7 @@ var DefaultMiddleware = func(c *gin.Context) {
 }
 
 func TokenAuthMiddleware() gin.HandlerFunc {
-	requiredToken := viper.GetString("api.token")
+	requiredToken := viper.GetString("metrics.api_token")
 	if requiredToken == "" {
 		return DefaultMiddleware
 	}
