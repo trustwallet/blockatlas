@@ -2,7 +2,6 @@ package metrics
 
 import (
 	"github.com/prometheus/client_golang/prometheus"
-	"regexp"
 	"time"
 )
 
@@ -29,9 +28,7 @@ var (
 )
 
 func GetMetrics(status, url, method string, start time.Time) {
-	reg := regexp.MustCompile(`([a-zA-Z0-9]{30,})`)
-	endpoint := reg.ReplaceAllString(url, "")
-
+	endpoint := removeSensitiveInfo(url)
 	lvs := []string{status, endpoint, method}
 	clientReqCount.WithLabelValues(lvs...).Inc()
 	clientReqDuration.WithLabelValues(lvs...).Observe(time.Since(start).Seconds())

@@ -5,7 +5,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/prometheus/client_golang/prometheus"
 	"net/http"
-	"regexp"
 	"time"
 )
 
@@ -55,9 +54,7 @@ func PromMiddleware() gin.HandlerFunc {
 		url := c.Request.URL.Path
 		method := c.Request.Method
 
-		reg := regexp.MustCompile(`([a-zA-Z0-9]{30,})`)
-		endpoint := reg.ReplaceAllString(url, "")
-
+		endpoint := removeSensitiveInfo(url)
 		lvs := []string{status, endpoint, method}
 
 		serverReqCount.WithLabelValues(lvs...).Inc()
