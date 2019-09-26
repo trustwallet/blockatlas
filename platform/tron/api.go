@@ -6,6 +6,7 @@ import (
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
+	"strconv"
 	"sync"
 )
 
@@ -238,4 +239,33 @@ func NormalizeToken(info AssetInfo) blockatlas.Token {
 		Decimals: info.Decimals,
 		Type:     blockatlas.TokenTypeTRC10,
 	}
+}
+
+func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, error) {
+	results := make(blockatlas.DelegationsPage, 0)
+
+	metadata, err := p.client.GetAccountMetadata(address)
+	if err != nil {
+		return nil, err
+	}
+
+	results = append(results, NormalizeDelegations(metadata.Data)...)
+	return results, nil
+}
+
+func NormalizeDelegations(data []AccountsData) []blockatlas.Delegation {
+	results := make([]blockatlas.Delegation, 0)
+	c := coin.Tron()
+	for _, d := range data {
+		for _, v := range d.Votes {
+			delegation := blockatlas.Delegation{
+				Delegator: v.VoteAddress,
+				Value:     strconv.Itoa(v.VoteCount * 1000000),
+				Coin:      c.External(),
+				Status:    blockatlas.DelegationStatusActive,
+			}
+			results = append(results, delegation)
+		}
+	}
+	return results
 }

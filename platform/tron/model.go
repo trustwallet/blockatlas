@@ -52,10 +52,16 @@ type Accounts struct {
 
 type AccountsData struct {
 	AssetsV2 []AssetV2 `json:"assetV2"`
+	Votes    []Votes   `json:"votes"`
 }
 
 type AssetV2 struct {
 	Key string `json:"key"`
+}
+
+type Votes struct {
+	VoteAddress string            `json:"vote_address"`
+	VoteCount   int               `json:"vote_count"`
 }
 
 type Asset struct {
