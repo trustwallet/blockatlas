@@ -5,8 +5,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/logger"
 	services "github.com/trustwallet/blockatlas/services/assets"
-	"log"
 	"net/http"
 )
 
@@ -80,14 +80,17 @@ func makeStakingRoute(router gin.IRouter, api blockatlas.Platform) {
 
 		assetsValidators, err := services.GetValidators(api.Coin())
 		if err != nil {
-			log.Print("Unable to fetch validators list from the registry")
-			c.JSON(http.StatusServiceUnavailable, err)
+			errMsg := "Unable to fetch validators list from the registry"
+			logger.Error(err, errMsg)
+			c.JSON(http.StatusServiceUnavailable, errMsg)
 			return
 		}
 
 		validators, err := stakingAPI.GetValidators()
 		if err != nil {
-			c.JSON(http.StatusServiceUnavailable, err)
+			errMsg := "Unable to fetch validators for staking"
+			logger.Error(err, errMsg)
+			c.JSON(http.StatusServiceUnavailable, errMsg)
 			return
 		}
 		results := services.NormalizeValidators(validators, assetsValidators, api.Coin())
@@ -99,8 +102,9 @@ func makeStakingRoute(router gin.IRouter, api blockatlas.Platform) {
 
 		delegations, err := stakingAPI.GetDelegations(c.Param("address"))
 		if err != nil {
-			log.Print("Unable to fetch delegations list from the registry")
-			c.JSON(http.StatusServiceUnavailable, err)
+			errMsg := "Unable to fetch delegations list from the registry"
+			logger.Error(err, errMsg)
+			c.JSON(http.StatusServiceUnavailable, errMsg)
 			return
 		}
 		c.JSON(http.StatusOK, blockatlas.DocsResponse{Docs: delegations})

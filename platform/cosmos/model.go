@@ -104,7 +104,7 @@ func (d *Delegation) Value() string {
 
 type UnbondingDelegation struct {
 	Delegation
-	Entries          []UnbondingDelegationEntry `json:"entries"`
+	Entries []UnbondingDelegationEntry `json:"entries"`
 }
 
 type UnbondingDelegationEntry struct {
