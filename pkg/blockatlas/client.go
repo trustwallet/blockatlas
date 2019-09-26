@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/trustwallet/blockatlas/pkg/metrics"
 	"io"
 	"net/http"
 	"net/url"
@@ -54,7 +55,7 @@ func (r *Request) Execute(method string, url string, body io.Reader, result inte
 	if err != nil {
 		return err
 	}
-	go getMetrics(res.Status, url, method, start)
+	go metrics.GetMetrics(res.Status, url, method, start)
 
 	err = r.ErrorHandler(res, url)
 	if err != nil {

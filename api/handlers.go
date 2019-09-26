@@ -6,6 +6,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
+	"github.com/trustwallet/blockatlas/pkg/metrics"
 	services "github.com/trustwallet/blockatlas/services/assets"
 	"net/http"
 )
@@ -166,10 +167,10 @@ func makeTokenRoute(router gin.IRouter, api blockatlas.Platform) {
 }
 
 func MakeMetricsRoute(router gin.IRouter) {
-	router.Use(PromMiddleware())
-	metrics := router.Group("/metrics")
-	metrics.Use(TokenAuthMiddleware())
-	metrics.GET("/", ginprom.PromHandler(promhttp.Handler()))
+	router.Use(metrics.PromMiddleware())
+	m := router.Group("/metrics")
+	m.Use(TokenAuthMiddleware())
+	m.GET("/", ginprom.PromHandler(promhttp.Handler()))
 }
 
 func emptyPage(c *gin.Context) {

@@ -1,4 +1,4 @@
-package api
+package metrics
 
 import (
 	"fmt"
@@ -10,49 +10,41 @@ import (
 )
 
 const (
-	namespace = "server"
+	serverNamespace = "server"
 )
 
 var (
-	labels = []string{"status", "endpoint", "method"}
-
-	reqCount = prometheus.NewCounterVec(
+	serverLabels   = []string{"status", "endpoint", "method"}
+	serverReqCount = prometheus.NewCounterVec(
 		prometheus.CounterOpts{
-			Namespace: "",
+			Namespace: serverNamespace,
 			Name:      "http_request_count_total",
 			Help:      "Total number of HTTP requests made.",
-		}, labels,
+		}, serverLabels,
 	)
-
-	reqDuration = prometheus.NewHistogramVec(
+	serverReqDuration = prometheus.NewHistogramVec(
 		prometheus.HistogramOpts{
-			Namespace: namespace,
+			Namespace: serverNamespace,
 			Name:      "http_request_duration_seconds",
 			Help:      "HTTP request latencies in seconds.",
-		}, labels,
+		}, serverLabels,
 	)
 
-	reqSizeBytes = prometheus.NewSummaryVec(
+	serverReqSizeBytes = prometheus.NewSummaryVec(
 		prometheus.SummaryOpts{
-			Namespace: namespace,
+			Namespace: serverNamespace,
 			Name:      "http_request_size_bytes",
 			Help:      "HTTP request sizes in bytes.",
-		}, labels,
+		}, serverLabels,
 	)
-
-	respSizeBytes = prometheus.NewSummaryVec(
+	serverRespSizeBytes = prometheus.NewSummaryVec(
 		prometheus.SummaryOpts{
-			Namespace: namespace,
+			Namespace: serverNamespace,
 			Name:      "http_response_size_bytes",
 			Help:      "HTTP request sizes in bytes.",
-		}, labels,
+		}, serverLabels,
 	)
 )
-
-// init registers the prometheus metrics
-func init() {
-	prometheus.MustRegister(reqCount, reqDuration, reqSizeBytes, respSizeBytes)
-}
 
 func PromMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -68,10 +60,10 @@ func PromMiddleware() gin.HandlerFunc {
 
 		lvs := []string{status, endpoint, method}
 
-		reqCount.WithLabelValues(lvs...).Inc()
-		reqDuration.WithLabelValues(lvs...).Observe(time.Since(start).Seconds())
-		reqSizeBytes.WithLabelValues(lvs...).Observe(calcRequestSize(c.Request))
-		respSizeBytes.WithLabelValues(lvs...).Observe(float64(c.Writer.Size()))
+		serverReqCount.WithLabelValues(lvs...).Inc()
+		serverReqDuration.WithLabelValues(lvs...).Observe(time.Since(start).Seconds())
+		serverReqSizeBytes.WithLabelValues(lvs...).Observe(calcRequestSize(c.Request))
+		serverRespSizeBytes.WithLabelValues(lvs...).Observe(float64(c.Writer.Size()))
 	}
 }
 
