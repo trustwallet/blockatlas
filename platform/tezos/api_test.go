@@ -30,7 +30,7 @@ const transferSrc = `
 				},
 				"failed": false,
 				"internal": false,
-				"burn": 0,
+				"burn": "0",
 				"counter": 11080,
 				"fee": 1420,
 				"gas_limit": "10300",
