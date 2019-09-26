@@ -51,6 +51,11 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 	}
 }
 
+func (p *Platform) GetDelegations(address string) (page blockatlas.DelegationsPage, err error) {
+	//TODO https://github.com/trustwallet/blockatlas/issues/386
+	return page, err
+}
+
 func NormalizeTxs(srcTxs []Tx) (txs []blockatlas.Tx) {
 	for _, srcTx := range srcTxs {
 		tx, ok := Normalize(&srcTx)
@@ -82,9 +87,11 @@ func normalizeValidator(v Validator) (validator blockatlas.Validator) {
 	// Delegation rewards distributed by the validators manually, it's up to them to do it.
 
 	return blockatlas.Validator{
-		Status: true,
-		ID:     v.Address,
-		Reward: blockatlas.StakingReward{Annual: Annual},
+		Status:        true,
+		ID:            v.Address,
+		Reward:        blockatlas.StakingReward{Annual: Annual},
+		MinimumAmount: blockatlas.Amount("0"),
+		LockTime:      0,
 	}
 }
 

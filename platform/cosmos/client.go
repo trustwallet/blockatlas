@@ -1,6 +1,7 @@
 package cosmos
 
 import (
+	"fmt"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"net/url"
@@ -89,4 +90,24 @@ func (c *Client) GetInflation() (float64, error) {
 	s, err := strconv.ParseFloat(result, 32)
 
 	return s, err
+}
+
+func (c *Client) GetDelegations(address string) (delegations []Delegation, err error) {
+	path := fmt.Sprintf("staking/delegators/%s/delegations", address)
+
+	err = c.Get(&delegations, path, nil)
+	if err != nil {
+		logger.Error(err, "Cosmos: Failed to get delegations for address")
+	}
+	return
+}
+
+func (c *Client) GetUnbondingDelegations(address string) (delegations []UnbondingDelegation, err error) {
+	path := fmt.Sprintf("staking/delegators/%s/unbonding_delegations", address)
+
+	err = c.Get(&delegations, path, nil)
+	if err != nil {
+		logger.Error(err, "Cosmos: Failed to get unbonding delegations for address")
+	}
+	return
 }

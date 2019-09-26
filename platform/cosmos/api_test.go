@@ -250,6 +250,31 @@ const validatorSrc = `
   }
 `
 
+const delegationsSrc = `
+[
+  {
+    "delegator_address": "cosmos1cxehfdhfm96ljpktdxsj0k6xp9gtuheghwgqug",
+    "validator_address": "cosmosvaloper1ey69r37gfxvxg62sh4r0ktpuc46pzjrm873ae8",
+    "shares": "1999999.999931853807876751"
+  }
+]`
+
+const unbondingDelegationsSrc = `
+[
+  {
+    "delegator_address": "cosmos1cxehfdhfm96ljpktdxsj0k6xp9gtuheghwgqug",
+    "validator_address": "cosmosvaloper1qwl879nx9t6kef4supyazayf7vjhennyh568ys",
+    "entries": [
+      {
+        "creation_height": "1780365",
+        "completion_time": "2019-10-03T05:37:26.350018207Z",
+        "initial_balance": "5000000",
+        "balance": "5000000"
+      }
+    ]
+  }
+]`
+
 var transferDst = blockatlas.Tx{
 	ID:     "E19B011D20D862DA0BEA7F24E3BC6DFF666EE6E044FCD9BD95B073478086DBB6",
 	Coin:   coin.ATOM,
@@ -312,6 +337,8 @@ var cosmosValidator = Validator{Commission: CosmosCommission{Rate: "0.4"}}
 
 var inflation = 0.7
 
+var cosmosCoin = coin.Cosmos()
+
 func TestNormalize(t *testing.T) {
 	testNormalize(t, transferSrc, &transferDst)
 	testNormalize(t, delegateSrc, &delegateDst)
@@ -349,9 +376,11 @@ func TestNormalizeValidator(t *testing.T) {
 	_ = json.Unmarshal([]byte(validatorSrc), &v)
 	coin := coin.Coin{}
 	expected := blockatlas.Validator{
-		Status: true,
-		ID:     v.Address,
-		Reward: blockatlas.StakingReward{Annual: 435.48749999999995},
+		Status:        true,
+		ID:            v.Address,
+		Reward:        blockatlas.StakingReward{Annual: 435.48749999999995},
+		LockTime:      1814400,
+		MinimumAmount: "0",
 	}
 
 	result := normalizeValidator(v, stakingPool, inflation, coin)
@@ -364,4 +393,43 @@ func TestCalculateAnnualReward(t *testing.T) {
 	result := CalculateAnnualReward(StakingPool{"1222", "200"}, inflation, cosmosValidator)
 
 	assert.Equal(t, result, 298.61999703347686)
+}
+
+func TestNormalizeDelegations(t *testing.T) {
+	var delegations []Delegation
+	err := json.Unmarshal([]byte(delegationsSrc), &delegations)
+	assert.NoError(t, err)
+	assert.NotNil(t, delegations)
+
+	expected := []blockatlas.Delegation{
+		{
+			Delegator: delegations[0].ValidatorAddress,
+			Value:     "1999999",
+			Coin:      cosmosCoin.External(),
+			Status:    blockatlas.DelegationStatusActive,
+		},
+	}
+	result := NormalizeDelegations(delegations)
+	assert.Equal(t, result, expected)
+}
+
+func TestNormalizeUnbondingDelegations(t *testing.T) {
+	var delegations []UnbondingDelegation
+	err := json.Unmarshal([]byte(unbondingDelegationsSrc), &delegations)
+	assert.NoError(t, err)
+	assert.NotNil(t, delegations)
+
+	expected := []blockatlas.Delegation{
+		{
+			Delegator: delegations[0].ValidatorAddress,
+			Value:     "5000000",
+			Status:    blockatlas.DelegationStatusPending,
+			Coin:      cosmosCoin.External(),
+			Metadata: blockatlas.DelegationMetaDataPending{
+				AvailableDate: 1570081046,
+			},
+		},
+	}
+	result := NormalizeUnbondingDelegations(delegations)
+	assert.Equal(t, result, expected)
 }
