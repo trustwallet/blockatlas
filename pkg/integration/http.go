@@ -4,7 +4,7 @@ package integration
 
 import (
 	"fmt"
-	"github.com/gavv/httpexpect"
+	"github.com/Pantani/httpexpect"
 	"net/http"
 	"sync"
 	"testing"

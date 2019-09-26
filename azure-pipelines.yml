@@ -3,7 +3,7 @@ pool:
 
 variables:
   GOBIN:  '$(GOPATH)/bin' # Go binaries path
-  GOROOT: '/usr/local/go1.11' # Go installation path
+  GOROOT: '/usr/local/go1.12' # Go installation path
   GOPATH: '$(system.defaultWorkingDirectory)/gopath' # Go workspace path
   modulePath: '$(GOPATH)/src/github.com/trustwallet/blockatlas' # Path to the module's code
 
@@ -27,13 +27,17 @@ steps:
         curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
         dep ensure
     fi
+  workingDirectory: '$(modulePath)'
+  displayName: 'Get dependencies'
+
+- script: |
     go get github.com/jstemmer/go-junit-report
     go get github.com/axw/gocov/gocov
     go get github.com/AlekSi/gocov-xml
     go get -u gopkg.in/matm/v1/gocov-html
-    go get github.com/gavv/httpexpect
+    go get github.com/Pantani/httpexpect
   workingDirectory: '$(modulePath)'
-  displayName: 'Get dependencies'
+  displayName: 'Get test dependencies'
 
 - powershell: |
   env:
