@@ -376,9 +376,11 @@ func TestNormalizeValidator(t *testing.T) {
 	_ = json.Unmarshal([]byte(validatorSrc), &v)
 	coin := coin.Coin{}
 	expected := blockatlas.Validator{
-		Status: true,
-		ID:     v.Address,
-		Reward: blockatlas.StakingReward{Annual: 435.48749999999995},
+		Status:        true,
+		ID:            v.Address,
+		Reward:        blockatlas.StakingReward{Annual: 435.48749999999995},
+		LockTime:      1814400,
+		MinimumAmount: "0",
 	}
 
 	result := normalizeValidator(v, stakingPool, inflation, coin)

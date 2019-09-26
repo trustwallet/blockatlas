@@ -87,9 +87,11 @@ func normalizeValidator(v Validator) (validator blockatlas.Validator) {
 	// Delegation rewards distributed by the validators manually, it's up to them to do it.
 
 	return blockatlas.Validator{
-		Status: true,
-		ID:     v.Address,
-		Reward: blockatlas.StakingReward{Annual: Annual},
+		Status:        true,
+		ID:            v.Address,
+		Reward:        blockatlas.StakingReward{Annual: Annual},
+		MinimumAmount: blockatlas.Amount("0"),
+		LockTime:      0,
 	}
 }
 

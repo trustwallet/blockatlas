@@ -23,9 +23,11 @@ type StakingReward struct {
 }
 
 type Validator struct {
-	ID     string        `json:"id"`
-	Status bool          `json:"status"`
-	Reward StakingReward `json:"reward"`
+	ID            string        `json:"id"`
+	Status        bool          `json:"status"`
+	Reward        StakingReward `json:"reward"`
+	LockTime      int           `json:"locktime"`
+	MinimumAmount Amount        `json:"minimum_amount"`
 }
 
 type Delegation struct {
@@ -48,8 +50,10 @@ type StakeValidatorInfo struct {
 }
 
 type StakeValidator struct {
-	ID     string             `json:"id"`
-	Status bool               `json:"status"`
-	Info   StakeValidatorInfo `json:"info"`
-	Reward StakingReward      `json:"reward"`
+	ID            string             `json:"id"`
+	Status        bool               `json:"status"`
+	Info          StakeValidatorInfo `json:"info"`
+	Reward        StakingReward      `json:"reward"`
+	LockTime      int                `json:"locktime"`
+	MinimumAmount Amount             `json:"minimum_amount"`
 }

@@ -237,9 +237,11 @@ func normalizeValidator(v Validator, p StakingPool, inflation float64, c coin.Co
 	reward := CalculateAnnualReward(p, inflation, v)
 
 	return blockatlas.Validator{
-		Status: bool(v.Status == 2),
-		ID:     v.Address,
-		Reward: blockatlas.StakingReward{Annual: reward},
+		Status:        bool(v.Status == 2),
+		ID:            v.Address,
+		Reward:        blockatlas.StakingReward{Annual: reward},
+		MinimumAmount: blockatlas.Amount("0"),
+		LockTime:      1814400,
 	}
 }
 

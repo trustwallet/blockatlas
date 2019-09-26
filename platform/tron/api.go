@@ -136,9 +136,11 @@ func normalizeValidator(v Validator) (validator blockatlas.Validator, ok bool) {
 	}
 
 	return blockatlas.Validator{
-		Status: true,
-		ID:     address,
-		Reward: blockatlas.StakingReward{Annual: Annual},
+		Status:        true,
+		ID:            address,
+		Reward:        blockatlas.StakingReward{Annual: Annual},
+		MinimumAmount: blockatlas.Amount("1000000"),
+		LockTime:      259200,
 	}, true
 }
 
