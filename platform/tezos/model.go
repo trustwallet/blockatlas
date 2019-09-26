@@ -27,7 +27,7 @@ type Operation struct {
 	Amount       blockatlas.Amount `json:"amount"`
 	Failed       bool              `json:"failed"`
 	Internal     bool              `json:"internal"`
-	Burn         int               `json:"burn"`
+	Burn         string            `json:"burn"`
 	Counter      int               `json:"counter"`
 	Fee          blockatlas.Amount `json:"fee"`
 	GasLimit     string            `json:"gas_limit"`

@@ -1,8 +1,9 @@
 package api
 
 import (
+	"github.com/chenjiandongx/ginprom"
 	"github.com/gin-gonic/gin"
-	"github.com/trustwallet/blockatlas/coin"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	services "github.com/trustwallet/blockatlas/services/assets"
 	"log"
@@ -149,14 +150,11 @@ func makeTokenRoute(router gin.IRouter, api blockatlas.Platform) {
 	})
 }
 
-func makeCoinRoute(router gin.IRouter) {
-	router.GET("/coins", func(c *gin.Context) {
-		coins := make([]coin.Coin, 0)
-		for _, coin := range coin.Coins {
-			coins = append(coins, coin)
-		}
-		c.JSON(http.StatusOK, coins)
-	})
+func MakeMetricsRoute(router gin.IRouter) {
+	router.Use(ginprom.PromMiddleware(nil))
+	metrics := router.Group("/metrics")
+	metrics.Use(TokenAuthMiddleware())
+	metrics.GET("/", ginprom.PromHandler(promhttp.Handler()))
 }
 
 func emptyPage(c *gin.Context) {

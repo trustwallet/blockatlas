@@ -44,6 +44,8 @@ func (r *Request) Post(result interface{}, path string, body interface{}) error 
 }
 
 func (r *Request) Execute(method string, url string, body io.Reader, result interface{}) error {
+	start := time.Now()
+
 	req, err := http.NewRequest(method, url, body)
 	if err != nil {
 		return err
@@ -52,6 +54,7 @@ func (r *Request) Execute(method string, url string, body io.Reader, result inte
 	if err != nil {
 		return err
 	}
+	go getMetrics(res.Status, url, method, start)
 
 	err = r.ErrorHandler(res, url)
 	if err != nil {

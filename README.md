@@ -284,6 +284,13 @@ if err != nil {
 `logger.Warn("Warning", err, logger.Params{"bind": bind})`
 
 
+## Metrics
+
+The Blockatlas can collect and expose by `expvar's`, metrics about the application healthy and clients and server requests.
+Prometheus or another service can collect metrics provided from the `/metrics` endpoint.
+
+To protect the route, you can set the environment variables `METRICS_API_TOKEN`, and this route starts to require the auth bearer token. 
+
 ## Authors
 
 -   [Richard Patel](https://github.com/terorie)
