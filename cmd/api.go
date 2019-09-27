@@ -9,7 +9,6 @@ import (
 	observerStorage "github.com/trustwallet/blockatlas/observer/storage"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/util"
-	"net/http"
 )
 
 var apiCmd = cobra.Command{
@@ -38,7 +37,7 @@ func RunApi(bind string, c chan *gin.Engine) {
 
 	engine.GET("/", api.GetRoot)
 	engine.GET("/status", func(c *gin.Context) {
-		c.JSON(http.StatusOK, map[string]interface{}{
+		api.RenderSuccess(c, map[string]interface{}{
 			"status": true,
 		})
 	})

@@ -48,23 +48,22 @@ func makeTxRoute(router gin.IRouter, api blockatlas.Platform, path string) {
 			return
 		}
 
-		switch {
-		case err == blockatlas.ErrInvalidAddr:
-			c.String(http.StatusBadRequest, "Invalid address")
-			return
-		case err == blockatlas.ErrNotFound:
-			c.String(http.StatusNotFound, "No such address")
-			return
-		case err == blockatlas.ErrSourceConn:
-			c.String(http.StatusServiceUnavailable, "Lost connection to blockchain")
-			return
-		case err != nil:
-			_ = c.AbortWithError(http.StatusInternalServerError, err)
+		if err != nil {
+			errResp := ErrorResponse(c)
+			switch {
+			case err == blockatlas.ErrInvalidAddr:
+				errResp.Params(http.StatusBadRequest, "Invalid address")
+			case err == blockatlas.ErrNotFound:
+				errResp.Params(http.StatusNotFound, "No such address")
+			case err == blockatlas.ErrSourceConn:
+				errResp.Params(http.StatusServiceUnavailable, "Lost connection to blockchain")
+			}
+			errResp.Render()
 			return
 		}
 
 		page.Sort()
-		c.JSON(http.StatusOK, &page)
+		RenderSuccess(c, &page)
 	})
 }
 
@@ -80,22 +79,21 @@ func makeStakingRoute(router gin.IRouter, api blockatlas.Platform) {
 		results, err := services.GetValidators(stakingAPI, api.Coin())
 		if err != nil {
 			logger.Error(err)
-			c.JSON(http.StatusServiceUnavailable, err.Error())
+			ErrorResponse(c).Message(err.Error()).Render()
 			return
 		}
-		c.JSON(http.StatusOK, blockatlas.DocsResponse{Docs: results})
+		RenderSuccess(c, blockatlas.DocsResponse{Docs: results})
 	})
 
 	router.GET("/staking/delegations/:address", func(c *gin.Context) {
-
 		delegations, err := stakingAPI.GetDelegations(c.Param("address"))
 		if err != nil {
 			errMsg := "Unable to fetch delegations list from the registry"
 			logger.Error(err, errMsg)
-			c.JSON(http.StatusServiceUnavailable, errMsg)
+			ErrorResponse(c).Message(err.Error()).Render()
 			return
 		}
-		c.JSON(http.StatusOK, blockatlas.DocsResponse{Docs: delegations})
+		RenderSuccess(c, blockatlas.DocsResponse{Docs: delegations})
 	})
 }
 
@@ -109,22 +107,22 @@ func makeCollectionRoute(router gin.IRouter, api blockatlas.Platform) {
 
 	router.GET("/collections/:owner", func(c *gin.Context) {
 		collections, err := collectionAPI.GetCollections(c.Param("owner"))
-
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusServiceUnavailable, err)
+			ErrorResponse(c).Message(err.Error()).Render()
+			return
 		}
 
-		c.JSON(http.StatusOK, collections)
+		RenderSuccess(c, collections)
 	})
 
 	router.GET("/collections/:owner/collection/:collection_id", func(c *gin.Context) {
 		collectibles, err := collectionAPI.GetCollectibles(c.Param("owner"), c.Param("collection_id"))
-
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusServiceUnavailable, err)
+			ErrorResponse(c).Message(err.Error()).Render()
+			return
 		}
 
-		c.JSON(http.StatusOK, collectibles)
+		RenderSuccess(c, collectibles)
 	})
 }
 
@@ -145,11 +143,11 @@ func makeTokenRoute(router gin.IRouter, api blockatlas.Platform) {
 
 		tl, err := tokenAPI.GetTokenListByAddress(address)
 		if err != nil {
-			c.JSON(http.StatusServiceUnavailable, err)
+			ErrorResponse(c).Message(err.Error()).Render()
 			return
 		}
 
-		c.JSON(http.StatusOK, blockatlas.DocsResponse{Docs: tl})
+		RenderSuccess(c, blockatlas.DocsResponse{Docs: tl})
 	})
 }
 
@@ -162,5 +160,5 @@ func MakeMetricsRoute(router gin.IRouter) {
 
 func emptyPage(c *gin.Context) {
 	var page blockatlas.TxPage
-	c.JSON(http.StatusOK, &page)
+	RenderSuccess(c, &page)
 }
