@@ -11,6 +11,8 @@ type DocsResponse struct {
 
 type DelegationStatus string
 
+type ValidatorMap map[string]StakeValidator
+
 const (
 	DelegationStatusActive  DelegationStatus = "active"
 	DelegationStatusPending DelegationStatus = "pending"
@@ -31,7 +33,7 @@ type Validator struct {
 }
 
 type Delegation struct {
-	Delegator string             `json:"delegator"`
+	Delegator StakeValidator     `json:"delegator,omitempty"`
 	Coin      *coin.ExternalCoin `json:"coin"`
 	Value     string             `json:"value"`
 	Status    DelegationStatus   `json:"status"`

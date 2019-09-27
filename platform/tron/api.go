@@ -6,6 +6,7 @@ import (
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
+	services "github.com/trustwallet/blockatlas/services/assets"
 	"strconv"
 	"sync"
 	"time"
@@ -244,35 +245,43 @@ func NormalizeToken(info AssetInfo) blockatlas.Token {
 
 func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, error) {
 	results := make(blockatlas.DelegationsPage, 0)
-
-	metadata, err := p.client.GetAccountMetadata(address)
+	votes, err := p.client.GetAccountVotes(address)
 	if err != nil {
 		return nil, err
 	}
-
-	results = append(results, NormalizeDelegations(metadata.Data)...)
+	validatorList, err := services.GetValidators(p)
+	if err != nil {
+		return nil, err
+	}
+	validators := make(blockatlas.ValidatorMap)
+	for _, v := range validatorList {
+		validators[v.ID] = v
+	}
+	results = append(results, NormalizeDelegations(votes, validators)...)
 	return results, nil
 }
 
-func NormalizeDelegations(data []AccountsData) []blockatlas.Delegation {
+func NormalizeDelegations(data *AccountsData, validators blockatlas.ValidatorMap) []blockatlas.Delegation {
 	results := make([]blockatlas.Delegation, 0)
 	c := coin.Tron()
-	for _, d := range data {
-		for _, v := range d.Votes {
-			delegation := blockatlas.Delegation{
-				Delegator: v.VoteAddress,
-				Value:     strconv.Itoa(v.VoteCount * 1000000),
-				Coin:      c.External(),
-				Status:    blockatlas.DelegationStatusActive,
-			}
-			for _, f := range d.Frozen {
-				t2 := time.Now().UnixNano() / int64(time.Millisecond)
-				if f.ExpireTime > t2 {
-					delegation.Status = blockatlas.DelegationStatusPending
-				}
-			}
-			results = append(results, delegation)
+	for _, v := range data.Votes {
+		validator, ok := validators[v.VoteAddress]
+		if !ok {
+			logger.Error("Validator not found", validator)
 		}
+		delegation := blockatlas.Delegation{
+			Delegator: validator,
+			Value:     strconv.Itoa(v.VoteCount * 1000000),
+			Coin:      c.External(),
+			Status:    blockatlas.DelegationStatusActive,
+		}
+		for _, f := range data.Frozen {
+			t2 := time.Now().UnixNano() / int64(time.Millisecond)
+			if f.ExpireTime > t2 {
+				delegation.Status = blockatlas.DelegationStatusPending
+			}
+		}
+		results = append(results, delegation)
 	}
 	return results
 }

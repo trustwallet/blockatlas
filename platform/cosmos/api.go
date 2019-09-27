@@ -2,6 +2,7 @@ package cosmos
 
 import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/logger"
 	"sort"
 	"strconv"
 	"time"
@@ -9,6 +10,8 @@ import (
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/util"
+
+	services "github.com/trustwallet/blockatlas/services/assets"
 )
 
 type Platform struct {
@@ -101,19 +104,30 @@ func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, e
 	if err != nil {
 		return nil, err
 	}
-
-	results = append(results, NormalizeDelegations(delegations)...)
-	results = append(results, NormalizeUnbondingDelegations(unbondingDelegations)...)
+	validatorList, err := services.GetValidators(p)
+	if err != nil {
+		return nil, err
+	}
+	validators := make(blockatlas.ValidatorMap)
+	for _, v := range validatorList {
+		validators[v.ID] = v
+	}
+	results = append(results, NormalizeDelegations(delegations, validators)...)
+	results = append(results, NormalizeUnbondingDelegations(unbondingDelegations, validators)...)
 
 	return results, nil
 }
 
-func NormalizeDelegations(delegations []Delegation) []blockatlas.Delegation {
+func NormalizeDelegations(delegations []Delegation, validators blockatlas.ValidatorMap) []blockatlas.Delegation {
 	c := coin.Cosmos()
 	results := make([]blockatlas.Delegation, 0)
 	for _, v := range delegations {
+		validator, ok := validators[v.ValidatorAddress]
+		if !ok {
+			logger.Error("Validator not found", validator)
+		}
 		delegation := blockatlas.Delegation{
-			Delegator: v.ValidatorAddress,
+			Delegator: validator,
 			Value:     v.Value(),
 			Coin:      c.External(),
 			Status:    blockatlas.DelegationStatusActive,
@@ -123,14 +137,18 @@ func NormalizeDelegations(delegations []Delegation) []blockatlas.Delegation {
 	return results
 }
 
-func NormalizeUnbondingDelegations(delegations []UnbondingDelegation) []blockatlas.Delegation {
+func NormalizeUnbondingDelegations(delegations []UnbondingDelegation, validators blockatlas.ValidatorMap) []blockatlas.Delegation {
 	c := coin.Cosmos()
 	results := make([]blockatlas.Delegation, 0)
 	for _, v := range delegations {
 		for _, entry := range v.Entries {
+			validator, ok := validators[v.ValidatorAddress]
+			if !ok {
+				logger.Error("Validator not found", validator)
+			}
 			t, _ := time.Parse(time.RFC3339, entry.CompletionTime)
 			delegation := blockatlas.Delegation{
-				Delegator: v.ValidatorAddress,
+				Delegator: validator,
 				Value:     entry.Balance,
 				Coin:      c.External(),
 				Status:    blockatlas.DelegationStatusPending,
@@ -140,7 +158,6 @@ func NormalizeUnbondingDelegations(delegations []UnbondingDelegation) []blockatl
 			}
 			results = append(results, delegation)
 		}
-
 	}
 	return results
 }
