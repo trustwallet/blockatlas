@@ -9,6 +9,10 @@ import (
 	observerStorage "github.com/trustwallet/blockatlas/observer/storage"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/util"
+
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
+	_ "github.com/trustwallet/blockatlas/docs"
 )
 
 var apiCmd = cobra.Command{
@@ -34,6 +38,8 @@ func RunApi(bind string, c chan *gin.Engine) {
 
 	sg := sentrygin.New(sentrygin.Options{})
 	engine.Use(util.CheckReverseProxy, sg)
+
+	engine.GET("swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	engine.GET("/", api.GetRoot)
 	engine.GET("/status", func(c *gin.Context) {

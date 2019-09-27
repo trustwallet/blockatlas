@@ -11,6 +11,15 @@ import (
 	"net/http"
 )
 
+// @Description Get Transactions
+// @ID tx_v1
+// @Summary Get transactions from address
+// @Accept json
+// @Produce json
+// @Tags Tx
+// @Param networks query string true "List of networks" default(60,714)
+// @Success 200 {object} common.ResultsResponse
+// @Router /v1/ [get]
 func makeTxRouteV1(router gin.IRouter, api blockatlas.Platform) {
 	makeTxRoute(router, api, "/:address")
 }
@@ -68,7 +77,7 @@ func makeTxRoute(router gin.IRouter, api blockatlas.Platform, path string) {
 	})
 }
 
-func makeStakingRoute(router gin.IRouter, api blockatlas.Platform) {
+func makeStakingValidatorsRoute(router gin.IRouter, api blockatlas.Platform) {
 	var stakingAPI blockatlas.StakeAPI
 	stakingAPI, _ = api.(blockatlas.StakeAPI)
 
@@ -85,6 +94,15 @@ func makeStakingRoute(router gin.IRouter, api blockatlas.Platform) {
 		}
 		RenderSuccess(c, blockatlas.DocsResponse{Docs: results})
 	})
+}
+
+func makeStakingDelegationsRoute(router gin.IRouter, api blockatlas.Platform) {
+	var stakingAPI blockatlas.StakeAPI
+	stakingAPI, _ = api.(blockatlas.StakeAPI)
+
+	if stakingAPI == nil {
+		return
+	}
 
 	router.GET("/staking/delegations/:address", func(c *gin.Context) {
 		delegations, err := stakingAPI.GetDelegations(c.Param("address"))
@@ -98,7 +116,7 @@ func makeStakingRoute(router gin.IRouter, api blockatlas.Platform) {
 	})
 }
 
-func makeCollectionRoute(router gin.IRouter, api blockatlas.Platform) {
+func makeCollectionsRoute(router gin.IRouter, api blockatlas.Platform) {
 	var collectionAPI blockatlas.CollectionAPI
 	collectionAPI, _ = api.(blockatlas.CollectionAPI)
 
@@ -115,6 +133,15 @@ func makeCollectionRoute(router gin.IRouter, api blockatlas.Platform) {
 
 		RenderSuccess(c, collections)
 	})
+}
+
+func makeCollectionRoute(router gin.IRouter, api blockatlas.Platform) {
+	var collectionAPI blockatlas.CollectionAPI
+	collectionAPI, _ = api.(blockatlas.CollectionAPI)
+
+	if collectionAPI == nil {
+		return
+	}
 
 	router.GET("/collections/:owner/collection/:collection_id", func(c *gin.Context) {
 		collectibles, err := collectionAPI.GetCollectibles(c.Param("owner"), c.Param("collection_id"))
