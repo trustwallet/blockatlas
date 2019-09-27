@@ -77,24 +77,12 @@ func makeStakingRoute(router gin.IRouter, api blockatlas.Platform) {
 	}
 
 	router.GET("/staking/validators", func(c *gin.Context) {
-
-		assetsValidators, err := services.GetValidators(api.Coin())
+		results, err := services.GetValidators(stakingAPI, api.Coin())
 		if err != nil {
-			errMsg := "Unable to fetch validators list from the registry"
-			logger.Error(err, errMsg)
-			c.JSON(http.StatusServiceUnavailable, errMsg)
+			logger.Error(err)
+			c.JSON(http.StatusServiceUnavailable, err.Error())
 			return
 		}
-
-		validators, err := stakingAPI.GetValidators()
-		if err != nil {
-			errMsg := "Unable to fetch validators for staking"
-			logger.Error(err, errMsg)
-			c.JSON(http.StatusServiceUnavailable, errMsg)
-			return
-		}
-		results := services.NormalizeValidators(validators, assetsValidators, api.Coin())
-
 		c.JSON(http.StatusOK, blockatlas.DocsResponse{Docs: results})
 	})
 
