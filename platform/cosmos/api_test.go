@@ -254,7 +254,7 @@ const delegationsSrc = `
 [
   {
     "delegator_address": "cosmos1cxehfdhfm96ljpktdxsj0k6xp9gtuheghwgqug",
-    "validator_address": "cosmosvaloper1ey69r37gfxvxg62sh4r0ktpuc46pzjrm873ae8",
+    "validator_address": "cosmosvaloper1qwl879nx9t6kef4supyazayf7vjhennyh568ys",
     "shares": "1999999.999931853807876751"
   }
 ]`
@@ -389,10 +389,28 @@ func TestNormalizeValidator(t *testing.T) {
 }
 
 func TestCalculateAnnualReward(t *testing.T) {
-
 	result := CalculateAnnualReward(StakingPool{"1222", "200"}, inflation, cosmosValidator)
-
 	assert.Equal(t, result, 298.61999703347686)
+}
+
+var validator1 = blockatlas.StakeValidator{
+	ID:     "cosmosvaloper1qwl879nx9t6kef4supyazayf7vjhennyh568ys",
+	Status: true,
+	Info: blockatlas.StakeValidatorInfo{
+		Name:        "Certus One",
+		Description: "Stake and earn rewards with the most secure and stable validator. Winner of the Game of Stakes. Operated by Certus One Inc. By delegating, you confirm that you are aware of the risk of slashing and that Certus One Inc is not liable for any potential damages to your investment.",
+		Image:       "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/cosmos/validators/assets/cosmosvaloper1qwl879nx9t6kef4supyazayf7vjhennyh568ys/logo.png",
+		Website:     "https://certus.one",
+	},
+	Reward: blockatlas.StakingReward{
+		Annual: 9.259735525366604,
+	},
+	LockTime:      1814400,
+	MinimumAmount: "0",
+}
+
+var validatorMap = blockatlas.ValidatorMap{
+	"cosmosvaloper1qwl879nx9t6kef4supyazayf7vjhennyh568ys": validator1,
 }
 
 func TestNormalizeDelegations(t *testing.T) {
@@ -403,13 +421,13 @@ func TestNormalizeDelegations(t *testing.T) {
 
 	expected := []blockatlas.Delegation{
 		{
-			Delegator: delegations[0].ValidatorAddress,
+			Delegator: validator1,
 			Value:     "1999999",
 			Coin:      cosmosCoin.External(),
 			Status:    blockatlas.DelegationStatusActive,
 		},
 	}
-	result := NormalizeDelegations(delegations)
+	result := NormalizeDelegations(delegations, validatorMap)
 	assert.Equal(t, result, expected)
 }
 
@@ -421,7 +439,7 @@ func TestNormalizeUnbondingDelegations(t *testing.T) {
 
 	expected := []blockatlas.Delegation{
 		{
-			Delegator: delegations[0].ValidatorAddress,
+			Delegator: validator1,
 			Value:     "5000000",
 			Status:    blockatlas.DelegationStatusPending,
 			Coin:      cosmosCoin.External(),
@@ -430,6 +448,6 @@ func TestNormalizeUnbondingDelegations(t *testing.T) {
 			},
 		},
 	}
-	result := NormalizeUnbondingDelegations(delegations)
+	result := NormalizeUnbondingDelegations(delegations, validatorMap)
 	assert.Equal(t, result, expected)
 }
