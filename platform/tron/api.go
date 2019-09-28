@@ -268,6 +268,7 @@ func NormalizeDelegations(data *AccountsData, validators blockatlas.ValidatorMap
 		validator, ok := validators[v.VoteAddress]
 		if !ok {
 			logger.Error("Validator not found", validator)
+			continue
 		}
 		delegation := blockatlas.Delegation{
 			Delegator: validator,
