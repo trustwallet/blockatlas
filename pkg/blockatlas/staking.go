@@ -40,15 +40,6 @@ type Delegation struct {
 	Metadata  interface{}        `json:"metadata,omitempty"`
 }
 
-// TODO remove this after implement for all platforms
-type DelegationTemp struct {
-	Delegator StakeValidator     `json:"delegator"`
-	Coin      *coin.ExternalCoin `json:"coin"`
-	Value     string             `json:"value"`
-	Status    DelegationStatus   `json:"status"`
-	Metadata  interface{}        `json:"metadata,omitempty"`
-}
-
 type DelegationMetaDataPending struct {
 	AvailableDate uint `json:"available_date"`
 }
