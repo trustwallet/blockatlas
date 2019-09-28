@@ -64,9 +64,9 @@ func (c *Client) GetTxsOfAddress(address string) ([]Transaction, error) {
 	}
 	results := make([]Transaction, 0)
 
-	//FIXME. Currently fetching the last 8 transactions and get 6 blocks for each to retrieve timestamp.
+	//FIXME. Currently fetching the last 6 transactions and get 6 blocks for each to retrieve timestamp.
 	//Algorand team promised to provide endpoint soon that will contain timestamp value inside TransactionsResponse response
-	//Get latest 8 transactions, which is enough until new endpoint fixes it.
+	//Get latest 6 transactions, which is enough until new endpoint fixes it.
 	txs := response.Transactions[:util.Min(6, len(response.Transactions))]
 
 	for _, t := range txs {
