@@ -2,11 +2,10 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 func GetRoot(c *gin.Context) {
-	c.String(http.StatusOK,
+	RenderSuccess(c,
 		`Welcome to the Block Atlas API!
 
 Don't know how you landed here?
@@ -26,5 +25,5 @@ func getEnabledEndpoints(c *gin.Context) {
 	for handle := range routers {
 		resp.Endpoints = append(resp.Endpoints, handle)
 	}
-	c.JSON(http.StatusOK, &resp)
+	RenderSuccess(c, &resp)
 }

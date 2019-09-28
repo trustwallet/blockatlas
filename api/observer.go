@@ -25,7 +25,7 @@ func requireAuth(c *gin.Context) {
 	if c.GetHeader("Authorization") == auth {
 		c.Next()
 	} else {
-		c.AbortWithStatus(http.StatusUnauthorized)
+		ErrorResponse(c).Code(http.StatusUnauthorized).Render()
 	}
 }
 
@@ -40,7 +40,9 @@ func addCall(c *gin.Context) {
 	}
 
 	if len(req.Subscriptions) == 0 && len(req.XpubSubscriptions) == 0 {
-		c.String(http.StatusOK, "Added")
+		RenderSuccess(c, map[string]interface{}{
+			"status": "Added",
+		})
 		return
 	}
 
@@ -78,11 +80,13 @@ func addCall(c *gin.Context) {
 	subs = append(subs, xpubSubs...)
 	err := observerStorage.App.Add(subs)
 	if err != nil {
-		_ = c.Error(err)
+		ErrorResponse(c).Message(err.Error()).Render()
 		return
 	}
 
-	c.String(http.StatusOK, "Added")
+	RenderSuccess(c, map[string]interface{}{
+		"status": "Added",
+	})
 }
 
 func cacheXPubAddress(xpub string, coin uint) {
@@ -116,7 +120,9 @@ func deleteCall(c *gin.Context) {
 	}
 
 	if len(req.Subscriptions) == 0 && len(req.XpubSubscriptions) == 0 {
-		c.String(http.StatusOK, "Deleted")
+		RenderSuccess(c, map[string]interface{}{
+			"status": "Deleted",
+		})
 		return
 	}
 
@@ -153,11 +159,13 @@ func deleteCall(c *gin.Context) {
 	subs = append(subs, xpubSubs...)
 	err := observerStorage.App.Delete(subs)
 	if err != nil {
-		_ = c.Error(err)
+		ErrorResponse(c).Message(err.Error()).Render()
 		return
 	}
 
-	c.String(http.StatusOK, "Deleted")
+	RenderSuccess(c, map[string]interface{}{
+		"status": "Deleted",
+	})
 }
 
 func statusCall(c *gin.Context) {
@@ -181,6 +189,5 @@ func statusCall(c *gin.Context) {
 		}
 		result[coin.Handle] = status
 	}
-
-	c.JSON(http.StatusOK, result)
+	RenderSuccess(c, result)
 }

@@ -21,12 +21,12 @@ func TokenAuthMiddleware() gin.HandlerFunc {
 		token := c.Request.Header.Get("Authorization")
 		token = strings.Replace(token, "Bearer ", "", 1)
 		if token == "" {
-			c.AbortWithStatusJSON(http.StatusServiceUnavailable, "API token required")
+			RenderError(c, http.StatusUnauthorized, "API token required")
 			return
 		}
 
 		if token != requiredToken {
-			c.AbortWithStatusJSON(http.StatusServiceUnavailable, "Invalid API token")
+			RenderError(c, http.StatusUnauthorized, "Invalid API token")
 			return
 		}
 		c.Next()
