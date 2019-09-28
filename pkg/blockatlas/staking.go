@@ -11,6 +11,8 @@ type DocsResponse struct {
 
 type DelegationStatus string
 
+type ValidatorMap map[string]StakeValidator
+
 const (
 	DelegationStatusActive  DelegationStatus = "active"
 	DelegationStatusPending DelegationStatus = "pending"
@@ -32,6 +34,15 @@ type Validator struct {
 
 type Delegation struct {
 	Delegator string             `json:"delegator"`
+	Coin      *coin.ExternalCoin `json:"coin"`
+	Value     string             `json:"value"`
+	Status    DelegationStatus   `json:"status"`
+	Metadata  interface{}        `json:"metadata,omitempty"`
+}
+
+// TODO remove this after implement for all platforms
+type DelegationTemp struct {
+	Delegator StakeValidator     `json:"delegator"`
 	Coin      *coin.ExternalCoin `json:"coin"`
 	Value     string             `json:"value"`
 	Status    DelegationStatus   `json:"status"`
