@@ -11,6 +11,7 @@ type TransactionsResponse struct {
 }
 
 type BlockResponse struct {
+	Timestamp    uint64            `json:"timestamp"`
 	Transactions BlockTransactions `json:"txns"`
 }
 
@@ -19,12 +20,13 @@ type BlockTransactions struct {
 }
 
 type Transaction struct {
-	Type    TransactionType    `json:"type"`
-	Hash    string             `json:"tx"`
-	From    string             `json:"from"`
-	Fee     uint64             `json:"fee"`
-	Round   uint64             `json:"round"`
-	Payment TransactionPayment `json:"payment"`
+	Type      TransactionType    `json:"type"`
+	Hash      string             `json:"tx"`
+	From      string             `json:"from"`
+	Fee       uint64             `json:"fee"`
+	Round     uint64             `json:"round"`
+	Payment   TransactionPayment `json:"payment"`
+	Timestamp uint64             `json:"timestamp,omitempty"`
 }
 
 type TransactionPayment struct {
