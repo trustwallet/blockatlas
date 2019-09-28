@@ -16,14 +16,25 @@ import (
 // @Summary Get transactions from address
 // @Accept json
 // @Produce json
-// @Tags Tx
-// @Param networks query string true "List of networks" default(60,714)
-// @Success 200 {object} common.ResultsResponse
-// @Router /v1/ [get]
+// @Tags platform,tx
+// @Param coin path string true "the coin name" default(tezos)
+// @Param address path string true "the address to get transactions" default(tz1WCd2jm4uSt4vntk4vSuUWoZQGhLcDuR9q)
+// @Success 200 {object} blockatlas.TxPage
+// @Router /v1/{coin}/{address} [get]
 func makeTxRouteV1(router gin.IRouter, api blockatlas.Platform) {
 	makeTxRoute(router, api, "/:address")
 }
 
+// @Description Get Transactions
+// @ID tx_v2
+// @Summary Get transactions from address
+// @Accept json
+// @Produce json
+// @Tags platform,tx
+// @Param coin path string true "the coin name" default(tezos)
+// @Param address path string true "the address to get transactions" default(tz1WCd2jm4uSt4vntk4vSuUWoZQGhLcDuR9q)
+// @Success 200 {object} blockatlas.TxPage
+// @Router /v2/{coin}/transactions/{address} [get]
 func makeTxRouteV2(router gin.IRouter, api blockatlas.Platform) {
 	makeTxRoute(router, api, "/transactions/:address")
 }
@@ -77,6 +88,15 @@ func makeTxRoute(router gin.IRouter, api blockatlas.Platform, path string) {
 	})
 }
 
+// @Description Get Validators
+// @ID validators
+// @Summary Get validators from address
+// @Accept json
+// @Produce json
+// @Tags platform,staking
+// @Param coin path string true "the coin name" default(tezos)
+// @Success 200 {object} blockatlas.DocsResponse
+// @Router /v2/{coin}/staking/validators [get]
 func makeStakingValidatorsRoute(router gin.IRouter, api blockatlas.Platform) {
 	var stakingAPI blockatlas.StakeAPI
 	stakingAPI, _ = api.(blockatlas.StakeAPI)
@@ -96,6 +116,16 @@ func makeStakingValidatorsRoute(router gin.IRouter, api blockatlas.Platform) {
 	})
 }
 
+// @Description Get Transactions
+// @ID tx_v2
+// @Summary Get transactions from address
+// @Accept json
+// @Produce json
+// @Tags Tx
+// @Param coin path string true "the coin name" default(tron)
+// @Param address path string true "the address to get transactions" default(TPJYCz8ppZNyvw7pTwmjajcx4Kk1MmEUhD)
+// @Success 200 {object} blockatlas.DocsResponse
+// @Router /v2/{coin}/staking/delegations/{address} [get]
 func makeStakingDelegationsRoute(router gin.IRouter, api blockatlas.Platform) {
 	var stakingAPI blockatlas.StakeAPI
 	stakingAPI, _ = api.(blockatlas.StakeAPI)

@@ -1,4 +1,126 @@
 basePath: '{{.BasePath}}'
+definitions:
+  blockatlas.Tx:
+    properties:
+      block:
+        description: Height of the block the transaction was included in
+        type: integer
+      coin:
+        description: SLIP-44 coin index of the platform
+        type: integer
+      date:
+        description: Unix timestamp of the block the transaction was included in
+        type: integer
+      direction:
+        description: Transaction Direction
+        type: string
+      error:
+        description: |-
+          Empty if the transaction was successful,
+          else error explaining why the transaction failed (optional)
+        type: string
+      fee:
+        description: Transaction fee (native currency)
+        type: string
+      from:
+        description: Address of the transaction sender
+        type: string
+      id:
+        description: Unique identifier
+        type: string
+      inputs:
+        description: Input addresses
+        items:
+          $ref: '#/definitions/blockatlas.TxOutput'
+        type: array
+      memo:
+        description: Meta data object
+        type: string
+      metadata:
+        type: object
+      outputs:
+        description: Output addresses
+        items:
+          $ref: '#/definitions/blockatlas.TxOutput'
+        type: array
+      sequence:
+        description: Transaction nonce or sequence
+        type: integer
+      status:
+        description: Status of the transaction
+        type: string
+      to:
+        description: Address of the transaction recipient
+        type: string
+      type:
+        description: Type of metadata
+        type: string
+    type: object
+  blockatlas.TxOutput:
+    properties:
+      address:
+        type: string
+      value:
+        type: string
+    type: object
+  blockatlas.TxPage:
+    items:
+      properties:
+        block:
+          description: Height of the block the transaction was included in
+          type: integer
+        coin:
+          description: SLIP-44 coin index of the platform
+          type: integer
+        date:
+          description: Unix timestamp of the block the transaction was included in
+          type: integer
+        direction:
+          description: Transaction Direction
+          type: string
+        error:
+          description: |-
+            Empty if the transaction was successful,
+            else error explaining why the transaction failed (optional)
+          type: string
+        fee:
+          description: Transaction fee (native currency)
+          type: string
+        from:
+          description: Address of the transaction sender
+          type: string
+        id:
+          description: Unique identifier
+          type: string
+        inputs:
+          description: Input addresses
+          items:
+            $ref: '#/definitions/blockatlas.TxOutput'
+          type: array
+        memo:
+          description: Meta data object
+          type: string
+        metadata:
+          type: object
+        outputs:
+          description: Output addresses
+          items:
+            $ref: '#/definitions/blockatlas.TxOutput'
+          type: array
+        sequence:
+          description: Transaction nonce or sequence
+          type: integer
+        status:
+          description: Status of the transaction
+          type: string
+        to:
+          description: Address of the transaction recipient
+          type: string
+        type:
+          description: Type of metadata
+          type: string
+      type: object
+    type: array
 host: '{{.Host}}'
 info:
   contact: {}
@@ -6,5 +128,65 @@ info:
   license: {}
   title: '{{.Title}}'
   version: '{{.Version}}'
-paths: {}
+paths:
+  /v1/{coin}/{address}:
+    get:
+      consumes:
+      - application/json
+      description: Get Transactions
+      operationId: tx_v1
+      parameters:
+      - default: tezos
+        description: the coin name
+        in: path
+        name: coin
+        required: true
+        type: string
+      - default: tz1WCd2jm4uSt4vntk4vSuUWoZQGhLcDuR9q
+        description: the address to get transactions
+        in: path
+        name: address
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/blockatlas.TxPage'
+            type: object
+      summary: Get transactions from address
+      tags:
+      - Tx
+  /v1/{coin}/transactions/{address}:
+    get:
+      consumes:
+      - application/json
+      description: Get Transactions
+      operationId: tx_v2
+      parameters:
+      - default: tezos
+        description: the coin name
+        in: path
+        name: coin
+        required: true
+        type: string
+      - default: tz1WCd2jm4uSt4vntk4vSuUWoZQGhLcDuR9q
+        description: the address to get transactions
+        in: path
+        name: address
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/blockatlas.TxPage'
+            type: object
+      summary: Get transactions from address
+      tags:
+      - Tx
 swagger: "2.0"
