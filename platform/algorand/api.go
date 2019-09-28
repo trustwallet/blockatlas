@@ -37,7 +37,7 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 	}, nil
 }
 
-func (p *Platform) GetTxsByAddress(address string) (page blockatlas.TxPage, err error) {
+func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 	txs, err := p.client.GetTxsOfAddress(address)
 	if err != nil {
 		return nil, err
@@ -70,7 +70,7 @@ func Normalize(tx Transaction) (result blockatlas.Tx, ok bool) {
 		To:     tx.Payment.To,
 		Fee:    blockatlas.Amount(strconv.Itoa(int(tx.Fee))),
 		Date:   int64(tx.Timestamp),
-		Block:  uint64(tx.Round),
+		Block:  tx.Round,
 		Status: blockatlas.StatusCompleted,
 		Type:   blockatlas.TxTransfer,
 		Meta: blockatlas.Transfer{

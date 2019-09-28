@@ -47,7 +47,7 @@ var expected = []*blockatlas.Tx{
 		From:   "5TSQNIL54GB545B3WLC6OVH653SHAELMHU6MSVNGTUNMOEHAMWG7EC3AA4",
 		To:     "4EZFQABCVQTHQCK3HQBIYGC4NV2VM42FZHEFTVH77ROG4ZGREC6Y7V5T2U",
 		Fee:    blockatlas.Amount("1000"),
-		Date:   int64(0),
+		Date:   0,
 		Block:  2031351,
 		Status: blockatlas.StatusCompleted,
 		Type:   blockatlas.TxTransfer,
@@ -62,11 +62,9 @@ var expected = []*blockatlas.Tx{
 }
 
 func TestNormalize(t *testing.T) {
-	a := assert.New(t)
-
 	var act TransactionsResponse
-	a.NoError(json.Unmarshal([]byte(transfer), &act))
-	a.Equal(1, len(act.Transactions))
+	assert.NoError(t, json.Unmarshal([]byte(transfer), &act))
+	assert.Equal(t, 1, len(act.Transactions))
 
 	for i, v := range act.Transactions {
 		tx, ok := Normalize(v)

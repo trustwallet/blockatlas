@@ -7,8 +7,8 @@ import (
 )
 
 type Client struct {
-	Request blockatlas.Request
-	URL     string
+	blockatlas.Request
+	URL string
 }
 
 func InitClient(URL string) Client {
@@ -23,17 +23,17 @@ func InitClient(URL string) Client {
 
 func (c *Client) GetLatestBlock() (int64, error) {
 	var status Status
-	err := c.Request.Get(&status, "v1/status", nil)
+	err := c.Get(&status, "v1/status", nil)
 	if err != nil {
 		return 0, err
 	}
-	return int64(status.LastRound), nil
+	return status.LastRound, nil
 }
 
 func (c *Client) GetBlock(number int64) (BlockResponse, error) {
 	path := fmt.Sprintf("v1/block/%d", number)
 	var resp BlockResponse
-	err := c.Request.Get(&resp, path, nil)
+	err := c.Get(&resp, path, nil)
 	if err != nil {
 		return resp, err
 	}
@@ -58,7 +58,7 @@ func (c *Client) GetTxsOfAddress(address string) ([]Transaction, error) {
 	var response TransactionsResponse
 	path := fmt.Sprintf("v1/account/%s/transactions", address)
 
-	err := c.Request.Get(&response, path, nil)
+	err := c.Get(&response, path, nil)
 	if err != nil {
 		return nil, blockatlas.ErrSourceConn
 	}
@@ -71,9 +71,7 @@ func (c *Client) GetTxsOfAddress(address string) ([]Transaction, error) {
 
 	for _, t := range txs {
 		block, err := c.GetBlock(int64(t.Round))
-		if err != nil {
-			continue
-		} else {
+		if err == nil {
 			normalizeTx(&t, block)
 			results = append(results, t)
 		}
