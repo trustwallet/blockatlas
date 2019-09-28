@@ -10,47 +10,14 @@
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/v1/{coin}/transactions/{address}": {
+        "/metrics": {
             "get": {
-                "description": "Get Transactions",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
+                "description": "Get Metrics",
                 "tags": [
-                    "Tx"
+                    "metrics"
                 ],
-                "summary": "Get transactions from address",
-                "operationId": "tx_v2",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "default": "tezos",
-                        "description": "the coin name",
-                        "name": "coin",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "default": "tz1WCd2jm4uSt4vntk4vSuUWoZQGhLcDuR9q",
-                        "description": "the address to get transactions",
-                        "name": "address",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "object",
-                            "$ref": "#/definitions/blockatlas.TxPage"
-                        }
-                    }
-                }
+                "summary": "Get application metrics",
+                "operationId": "metrics"
             }
         },
         "/v1/{coin}/{address}": {
@@ -63,7 +30,8 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Tx"
+                    "platform",
+                    "tx"
                 ],
                 "summary": "Get transactions from address",
                 "operationId": "tx_v1",
@@ -79,7 +47,7 @@
                     {
                         "type": "string",
                         "default": "tz1WCd2jm4uSt4vntk4vSuUWoZQGhLcDuR9q",
-                        "description": "the address to get transactions",
+                        "description": "the query address",
                         "name": "address",
                         "in": "path",
                         "required": true
@@ -92,12 +60,435 @@
                             "type": "object",
                             "$ref": "#/definitions/blockatlas.TxPage"
                         }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/api.ApiError"
+                        }
+                    }
+                }
+            }
+        },
+        "/v2/{coin}/collections/{address}": {
+            "get": {
+                "description": "Get Collections",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "platform",
+                    "collection"
+                ],
+                "summary": "Get all collections from address",
+                "operationId": "collections",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "ethereum",
+                        "description": "the coin name",
+                        "name": "coin",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "default": "0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB",
+                        "description": "the query address",
+                        "name": "address",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/blockatlas.CollectionPage"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/api.ApiError"
+                        }
+                    }
+                }
+            }
+        },
+        "/v2/{coin}/collections/{address}/collection/": {
+            "get": {
+                "description": "Get Collection",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "platform",
+                    "collection"
+                ],
+                "summary": "Get a collection from address",
+                "operationId": "collection",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "ethereum",
+                        "description": "the coin name",
+                        "name": "coin",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "default": "0x0875BCab22dE3d02402bc38aEe4104e1239374a7",
+                        "description": "the query address",
+                        "name": "address",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "default": "0x06012c8cf97bead5deae237070f9587f8e7a266d",
+                        "description": "the query collection",
+                        "name": "collection_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/blockatlas.CollectionPage"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/api.ApiError"
+                        }
+                    }
+                }
+            }
+        },
+        "/v2/{coin}/staking/delegations/{address}": {
+            "get": {
+                "description": "Get Stake Delegations",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "platform",
+                    "staking"
+                ],
+                "summary": "Get stake delegations from address",
+                "operationId": "delegations",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "tron",
+                        "description": "the coin name",
+                        "name": "coin",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "default": "TPJYCz8ppZNyvw7pTwmjajcx4Kk1MmEUhD",
+                        "description": "the query address",
+                        "name": "address",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/blockatlas.DocsResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/api.ApiError"
+                        }
+                    }
+                }
+            }
+        },
+        "/v2/{coin}/staking/validators": {
+            "get": {
+                "description": "Get Validators",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "platform",
+                    "staking"
+                ],
+                "summary": "Get validators from address",
+                "operationId": "validators",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "cosmos",
+                        "description": "the coin name",
+                        "name": "coin",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/blockatlas.DocsResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/api.ApiError"
+                        }
+                    }
+                }
+            }
+        },
+        "/v2/{coin}/tokens/{address}": {
+            "get": {
+                "description": "Get Tokens",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "platform",
+                    "token"
+                ],
+                "summary": "Get tokens from address",
+                "operationId": "tokens",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "ethereum",
+                        "description": "the coin name",
+                        "name": "coin",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "default": "0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB",
+                        "description": "the query address",
+                        "name": "address",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/blockatlas.CollectionPage"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/api.ApiError"
+                        }
+                    }
+                }
+            }
+        },
+        "/v2/{coin}/transactions/{address}": {
+            "get": {
+                "description": "Get Transactions",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "platform",
+                    "tx"
+                ],
+                "summary": "Get transactions from address",
+                "operationId": "tx_v2",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "tezos",
+                        "description": "the coin name",
+                        "name": "coin",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "default": "tz1WCd2jm4uSt4vntk4vSuUWoZQGhLcDuR9q",
+                        "description": "the query address",
+                        "name": "address",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/blockatlas.TxPage"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/api.ApiError"
+                        }
                     }
                 }
             }
         }
     },
     "definitions": {
+        "api.ApiError": {
+            "type": "object",
+            "properties": {
+                "status_code": {
+                    "type": "integer"
+                },
+                "status_message": {
+                    "type": "string"
+                }
+            }
+        },
+        "blockatlas.Collection": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "category_address": {
+                    "type": "string"
+                },
+                "coin": {
+                    "type": "integer"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "external_link": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "image_url": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "nft_version": {
+                    "type": "string"
+                },
+                "slug": {
+                    "type": "string"
+                },
+                "symbol": {
+                    "type": "string"
+                },
+                "total": {
+                    "type": "integer"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "blockatlas.CollectionPage": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "address": {
+                        "type": "string"
+                    },
+                    "category_address": {
+                        "type": "string"
+                    },
+                    "coin": {
+                        "type": "integer"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "external_link": {
+                        "type": "string"
+                    },
+                    "id": {
+                        "type": "string"
+                    },
+                    "image_url": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "nft_version": {
+                        "type": "string"
+                    },
+                    "slug": {
+                        "type": "string"
+                    },
+                    "symbol": {
+                        "type": "string"
+                    },
+                    "total": {
+                        "type": "integer"
+                    },
+                    "type": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "blockatlas.DocsResponse": {
+            "type": "object",
+            "properties": {
+                "docs": {
+                    "type": "object"
+                }
+            }
+        },
         "blockatlas.Tx": {
             "type": "object",
             "properties": {

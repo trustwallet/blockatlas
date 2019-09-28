@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-type apiError struct {
+type ApiError struct {
 	*gin.Context  `json:"-"`
 	StatusCode    int    `json:"status_code"`
 	StatusMessage string `json:"status_message"`
@@ -16,7 +16,7 @@ func RenderSuccess(c *gin.Context, result interface{}) {
 }
 
 func RenderError(c *gin.Context, code int, msg string) {
-	err := &apiError{
+	err := &ApiError{
 		StatusCode:    code,
 		StatusMessage: msg,
 		Context:       c,
@@ -24,30 +24,30 @@ func RenderError(c *gin.Context, code int, msg string) {
 	err.Render()
 }
 
-func ErrorResponse(c *gin.Context) *apiError {
-	return &apiError{
+func ErrorResponse(c *gin.Context) *ApiError {
+	return &ApiError{
 		StatusCode:    http.StatusInternalServerError,
 		StatusMessage: "Internal server error",
 		Context:       c,
 	}
 }
 
-func (e *apiError) Code(code int) *apiError {
+func (e *ApiError) Code(code int) *ApiError {
 	e.StatusCode = code
 	return e
 }
 
-func (e *apiError) Message(msg string) *apiError {
+func (e *ApiError) Message(msg string) *ApiError {
 	e.StatusMessage = msg
 	return e
 }
 
-func (e *apiError) Params(code int, msg string) *apiError {
+func (e *ApiError) Params(code int, msg string) *ApiError {
 	e.StatusCode = code
 	e.StatusMessage = msg
 	return e
 }
 
-func (e *apiError) Render() {
+func (e *ApiError) Render() {
 	e.AbortWithStatusJSON(e.StatusCode, e.StatusMessage)
 }
