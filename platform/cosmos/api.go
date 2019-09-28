@@ -113,7 +113,7 @@ func NormalizeDelegations(delegations []Delegation) []blockatlas.Delegation {
 	results := make([]blockatlas.Delegation, 0)
 	for _, v := range delegations {
 		delegation := blockatlas.Delegation{
-			Delegator: v.ValidatorAddress,
+			Delegator: blockatlas.StakeValidator{ID: v.ValidatorAddress},
 			Value:     v.Value(),
 			Coin:      c.External(),
 			Status:    blockatlas.DelegationStatusActive,
@@ -130,7 +130,7 @@ func NormalizeUnbondingDelegations(delegations []UnbondingDelegation) []blockatl
 		for _, entry := range v.Entries {
 			t, _ := time.Parse(time.RFC3339, entry.CompletionTime)
 			delegation := blockatlas.Delegation{
-				Delegator: v.ValidatorAddress,
+				Delegator: blockatlas.StakeValidator{ID: v.ValidatorAddress},
 				Value:     entry.Balance,
 				Coin:      c.External(),
 				Status:    blockatlas.DelegationStatusPending,
