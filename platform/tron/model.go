@@ -89,6 +89,11 @@ type Validator struct {
 	Address string `json:"address"`
 }
 
+type VotesRequest struct {
+	Address string `json:"address"`
+	Visible bool   `json:"visible"`
+}
+
 func (c *Contract) UnmarshalJSON(buf []byte) error {
 	var contractInternal struct {
 		Type      string          `json:"type"`

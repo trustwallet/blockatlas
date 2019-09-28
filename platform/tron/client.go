@@ -43,6 +43,12 @@ func (c *Client) GetAccountMetadata(address string) (*Accounts, error) {
 	return &accounts, err
 }
 
+func (c *Client) GetAccountVotes(address string) (*AccountsData, error) {
+	var account AccountsData
+	err := c.Post(&account, "wallet/getaccount", VotesRequest{Address: address, Visible: true})
+	return &account, err
+}
+
 func (c *Client) GetTokenInfo(id string) (*Asset, error) {
 	path := fmt.Sprintf("v1/assets/%s", id)
 
