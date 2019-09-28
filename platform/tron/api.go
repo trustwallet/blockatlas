@@ -260,7 +260,7 @@ func NormalizeDelegations(data []AccountsData) []blockatlas.Delegation {
 	for _, d := range data {
 		for _, v := range d.Votes {
 			delegation := blockatlas.Delegation{
-				Delegator: v.VoteAddress,
+				Delegator: blockatlas.StakeValidator{ID: v.VoteAddress},
 				Value:     strconv.Itoa(v.VoteCount * 1000000),
 				Coin:      c.External(),
 				Status:    blockatlas.DelegationStatusActive,

@@ -77,7 +77,7 @@ func makeStakingRoute(router gin.IRouter, api blockatlas.Platform) {
 	}
 
 	router.GET("/staking/validators", func(c *gin.Context) {
-		results, err := services.GetValidators(stakingAPI, api.Coin())
+		results, err := services.GetValidators(stakingAPI)
 		if err != nil {
 			logger.Error(err)
 			ErrorResponse(c).Message(err.Error()).Render()

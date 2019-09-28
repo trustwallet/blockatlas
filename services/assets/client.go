@@ -11,21 +11,8 @@ const (
 	AssetsURL = "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/"
 )
 
-func GetValidator(api blockatlas.StakeAPI, coin coin.Coin, id string) (*blockatlas.StakeValidator, error) {
-	validators, err := GetValidators(api, coin)
-	if err != nil {
-		return nil, fmt.Errorf("unable to fetch validators list from the registry: %s", err)
-	}
-	for _, v := range validators {
-		if v.ID == id {
-			return &v, nil
-		}
-	}
-	return nil, fmt.Errorf("validator for  %s not found: %s", coin.Symbol, id)
-}
-
-func GetValidators(api blockatlas.StakeAPI, coin coin.Coin) ([]blockatlas.StakeValidator, error) {
-	assetsValidators, err := GetValidatorsInfo(coin)
+func GetValidators(api blockatlas.StakeAPI) ([]blockatlas.StakeValidator, error) {
+	assetsValidators, err := GetValidatorsInfo(api.Coin())
 	if err != nil {
 		return nil, fmt.Errorf("unable to fetch validators list from the registry: %s", err)
 	}
@@ -34,7 +21,7 @@ func GetValidators(api blockatlas.StakeAPI, coin coin.Coin) ([]blockatlas.StakeV
 	if err != nil {
 		return nil, fmt.Errorf("unable to fetch validators for staking: %s", err)
 	}
-	results := NormalizeValidators(validators, assetsValidators, coin)
+	results := NormalizeValidators(validators, assetsValidators, api.Coin())
 	return results, nil
 }
 
