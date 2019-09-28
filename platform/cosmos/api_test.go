@@ -403,7 +403,7 @@ func TestNormalizeDelegations(t *testing.T) {
 
 	expected := []blockatlas.Delegation{
 		{
-			Delegator: delegations[0].ValidatorAddress,
+			Delegator: blockatlas.StakeValidator{ID: delegations[0].ValidatorAddress},
 			Value:     "1999999",
 			Coin:      cosmosCoin.External(),
 			Status:    blockatlas.DelegationStatusActive,
@@ -421,7 +421,7 @@ func TestNormalizeUnbondingDelegations(t *testing.T) {
 
 	expected := []blockatlas.Delegation{
 		{
-			Delegator: delegations[0].ValidatorAddress,
+			Delegator: blockatlas.StakeValidator{ID: delegations[0].ValidatorAddress},
 			Value:     "5000000",
 			Status:    blockatlas.DelegationStatusPending,
 			Coin:      cosmosCoin.External(),
