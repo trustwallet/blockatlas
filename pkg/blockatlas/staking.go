@@ -53,9 +53,9 @@ type StakeValidatorInfo struct {
 
 type StakeValidator struct {
 	ID            string             `json:"id"`
-	Status        bool               `json:"status"`
-	Info          StakeValidatorInfo `json:"info"`
-	Reward        StakingReward      `json:"reward"`
-	LockTime      int                `json:"locktime"`
-	MinimumAmount Amount             `json:"minimum_amount"`
+	Status        bool               `json:"status,omitempty"`
+	Info          StakeValidatorInfo `json:"info,omitempty"`
+	Reward        StakingReward      `json:"reward,omitempty"`
+	LockTime      int                `json:"locktime,omitempty"`
+	MinimumAmount Amount             `json:"minimum_amount,omitempty"`
 }
