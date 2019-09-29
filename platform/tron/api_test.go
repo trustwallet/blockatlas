@@ -199,7 +199,7 @@ const delegationsSrc1 = `
   "address": "419241920da7d6bb487a33a6df3838e3d208f0b251",
   "frozen": [
 	{
-	  "expire_time": 1569728532000,
+	  "expire_time": 10437262001000,
 	  "frozen_balance": 35000000
 	}
   ],
