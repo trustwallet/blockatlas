@@ -11,8 +11,6 @@ type apiError struct {
 	StatusMessage string `json:"status_message"`
 }
 
-var EmptyResponse = map[string]interface{}{}
-
 func RenderSuccess(c *gin.Context, result interface{}) {
 	c.JSON(http.StatusOK, result)
 }

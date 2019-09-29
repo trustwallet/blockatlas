@@ -20,12 +20,7 @@ func makeStakingDelegationsBatchRoute(router gin.IRouter) {
 		if c.BindJSON(&reqs) != nil {
 			return
 		}
-
-		if len(reqs) == 0 {
-			RenderSuccess(c, EmptyResponse)
-			return
-		}
-
+		
 		batch := make(blockatlas.DelegationsBatchPage, 0)
 		for _, r := range reqs {
 			d := blockatlas.DelegationsBatch{
