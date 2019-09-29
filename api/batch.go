@@ -17,7 +17,8 @@ type AddressesRequest []AddressBatchRequest
 func makeStakingDelegationsBatchRoute(router gin.IRouter) {
 	router.POST("/staking/delegations/", func(c *gin.Context) {
 		var reqs AddressesRequest
-		if c.BindJSON(&reqs) != nil {
+		if err := c.BindJSON(&reqs); err != nil {
+			ErrorResponse(c).Message(err.Error()).Render()
 			return
 		}
 		
