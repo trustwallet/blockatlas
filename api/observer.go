@@ -13,6 +13,21 @@ import (
 	"strconv"
 )
 
+type ObserverResponse struct {
+	Status string `json:"status"`
+}
+
+type Webhook struct {
+	Subscriptions     map[string][]string `json:"subscriptions"`
+	XpubSubscriptions map[string][]string `json:"xpub_subscriptions"`
+	Webhook           string              `json:"webhook"`
+}
+
+type CoinStatus struct {
+	Height int64  `json:"height"`
+	Error  string `json:"error,omitempty"`
+}
+
 func SetupObserverAPI(router gin.IRouter) {
 	router.Use(requireAuth)
 	router.POST("/webhook/register", addCall)
@@ -29,20 +44,25 @@ func requireAuth(c *gin.Context) {
 	}
 }
 
+// @Summary Create a webhook
+// @ID create_webhook
+// @Description Create a webhook for addresses transactions
+// @Accept json
+// @Produce json
+// @Tags observer,subscriptions
+// @Param subscriptions body api.Webhook true "Accounts subscriptions"
+// @Param Authorization header string true "Bearer authorization header" default(Bearer test)
+// @Header 200 {string} Authorization {token}
+// @Success 200 {object} api.ObserverResponse
+// @Router /observer/v1/webhook/register [post]
 func addCall(c *gin.Context) {
-	var req struct {
-		Subscriptions     map[string][]string `json:"subscriptions"`
-		XpubSubscriptions map[string][]string `json:"xpub_subscriptions"`
-		Webhook           string              `json:"webhook"`
-	}
+	var req Webhook
 	if c.BindJSON(&req) != nil {
 		return
 	}
 
 	if len(req.Subscriptions) == 0 && len(req.XpubSubscriptions) == 0 {
-		RenderSuccess(c, map[string]interface{}{
-			"status": "Added",
-		})
+		RenderSuccess(c, ObserverResponse{Status: "Added"})
 		return
 	}
 
@@ -84,9 +104,7 @@ func addCall(c *gin.Context) {
 		return
 	}
 
-	RenderSuccess(c, map[string]interface{}{
-		"status": "Added",
-	})
+	RenderSuccess(c, ObserverResponse{Status: "Added"})
 }
 
 func cacheXPubAddress(xpub string, coin uint) {
@@ -109,20 +127,25 @@ func cacheXPubAddress(xpub string, coin uint) {
 	}
 }
 
+// @Summary Delete a webhook
+// @ID delete_webhook
+// @Description Delete a webhook for addresses transactions
+// @Accept json
+// @Produce json
+// @Tags observer,subscriptions
+// @Param subscriptions body api.Webhook true "Accounts subscriptions"
+// @Param Authorization header string true "Bearer authorization header" default(Bearer test)
+// @Header 200 {string} Authorization {token}
+// @Success 200 {object} api.ObserverResponse
+// @Router /observer/v1/webhook/register [delete]
 func deleteCall(c *gin.Context) {
-	var req struct {
-		Subscriptions     map[string][]string `json:"subscriptions"`
-		XpubSubscriptions map[string][]string `json:"xpub_subscriptions"`
-		Webhook           string              `json:"webhook"`
-	}
+	var req Webhook
 	if c.BindJSON(&req) != nil {
 		return
 	}
 
 	if len(req.Subscriptions) == 0 && len(req.XpubSubscriptions) == 0 {
-		RenderSuccess(c, map[string]interface{}{
-			"status": "Deleted",
-		})
+		RenderSuccess(c, ObserverResponse{Status: "Deleted"})
 		return
 	}
 
@@ -163,29 +186,31 @@ func deleteCall(c *gin.Context) {
 		return
 	}
 
-	RenderSuccess(c, map[string]interface{}{
-		"status": "Deleted",
-	})
+	RenderSuccess(c, ObserverResponse{Status: "Deleted"})
 }
 
+// @Summary Get coin status
+// @ID coin_status
+// @Description Get coin status
+// @Accept json
+// @Produce json
+// @Tags observer,subscriptions
+// @Param Authorization header string true "Bearer authorization header" default(Bearer test)
+// @Header 200 {string} Authorization {token}
+// @Success 200 {object} api.CoinStatus
+// @Router /observer/v1/status [get]
 func statusCall(c *gin.Context) {
-	type coinStatus struct {
-		Height int64  `json:"height"`
-		Error  string `json:"error,omitempty"`
-	}
-
-	result := make(map[string]coinStatus)
-
+	result := make(map[string]CoinStatus)
 	for _, api := range platform.BlockAPIs {
 		coin := api.Coin()
 		num, err := observerStorage.App.GetBlockNumber(coin.ID)
-		var status coinStatus
+		var status CoinStatus
 		if err != nil {
-			status = coinStatus{Error: err.Error()}
+			status = CoinStatus{Error: err.Error()}
 		} else if num == 0 {
-			status = coinStatus{Error: "no blocks"}
+			status = CoinStatus{Error: "no blocks"}
 		} else {
-			status = coinStatus{Height: num}
+			status = CoinStatus{Height: num}
 		}
 		result[coin.Handle] = status
 	}

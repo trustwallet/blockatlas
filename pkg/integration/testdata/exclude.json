@@ -1,4 +1,5 @@
 [
+  "/swagger/*any",
   "/v2/classic/collections/:owner",
   "/v2/callisto/collections/:owner",
   "/v2/poa/collections/:owner",
