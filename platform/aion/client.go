@@ -1,37 +1,33 @@
 package aion
 
 import (
-	"encoding/json"
-	"fmt"
-	"github.com/trustwallet/blockatlas/pkg/errors"
-	"net/http"
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"net/url"
 	"strconv"
 )
 
 type Client struct {
-	HTTPClient *http.Client
-	BaseURL    string
+	blockatlas.Request
 }
 
-func (c *Client) GetTxsOfAddress(address string, num int) (*TxPage, error) {
-	uri := fmt.Sprintf("%s/getTransactionsByAddress?%s",
-		c.BaseURL,
-		url.Values{
-			"accountAddress": {address},
-			"size":           {strconv.Itoa(num)},
-		}.Encode())
-
-	res, err := c.HTTPClient.Get(uri)
-	if err != nil {
-		return nil, errors.E(err, errors.TypePlatformRequest, errors.Params{"url": uri})
+func InitClient(baseUrl string) Client {
+	return Client{
+		Request: blockatlas.Request{
+			HttpClient:   blockatlas.DefaultClient,
+			ErrorHandler: blockatlas.DefaultErrorHandler,
+			BaseUrl:      baseUrl,
+		},
 	}
-	defer res.Body.Close()
+}
 
-	txPage := new(TxPage)
-	err = json.NewDecoder(res.Body).Decode(txPage)
-	if err != nil {
-		return nil, errors.E(err, errors.TypePlatformUnmarshal, errors.Params{"url": uri})
+func (c *Client) GetTxsOfAddress(address string, num int) (txPage *TxPage, err error) {
+	query := url.Values{
+		"accountAddress": {address},
+		"size":           {strconv.Itoa(num)},
 	}
-	return txPage, nil
+	err = c.Get(txPage, "/getTransactionsByAddress", query)
+	if err != nil {
+		return
+	}
+	return
 }
