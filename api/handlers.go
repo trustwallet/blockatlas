@@ -19,7 +19,6 @@ import (
 // @Tags platform,tx
 // @Param coin path string true "the coin name" default(tezos)
 // @Param address path string true "the query address" default(tz1WCd2jm4uSt4vntk4vSuUWoZQGhLcDuR9q)
-// @Success 200 {object} blockatlas.TxPage
 // @Failure 500 {object} api.ApiError
 // @Router /v1/{coin}/{address} [get]
 func makeTxRouteV1(router gin.IRouter, api blockatlas.Platform) {

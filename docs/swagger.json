@@ -120,6 +120,50 @@
                 }
             }
         },
+        "/v1/{coin}/xpub/{xpub}": {
+            "get": {
+                "description": "Get transactions from xpub address",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "platform",
+                    "tx"
+                ],
+                "summary": "Get xpub transactions",
+                "operationId": "xpub",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "bitcoin",
+                        "description": "the coin name",
+                        "name": "coin",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "default": "zpub6ruK9k6YGm8BRHWvTiQcrEPnFkuRDJhR7mPYzV2LDvjpLa5CuGgrhCYVZjMGcLcFqv9b2WvsFtY2Gb3xq8NVq8qhk9veozrA2W9QaWtihrC",
+                        "description": "the xpub address",
+                        "name": "xpub",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/blockatlas.TxPage"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/{coin}/{address}": {
             "get": {
                 "description": "Get transactions from the address",
@@ -154,54 +198,11 @@
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "object",
-                            "$ref": "#/definitions/blockatlas.TxPage"
-                        }
-                    },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
                             "type": "object",
                             "$ref": "#/definitions/api.ApiError"
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/{coin}/{xpub}": {
-            "get": {
-                "description": "Get addresses from xpub",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "platform",
-                    "address"
-                ],
-                "summary": "Xpub addresses",
-                "operationId": "xpub",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "default": "xpub6CxmJ8TvgV4cdWEQxEwNKSZv9WfVXCLdSRbXa6qTsoR33R5XPDSrsX8YAh2CqV92Q1gC4T9Pa3QBRDpaWXpeKo7zFUcuXQa6979j6m1DCkA",
-                        "description": "the xpub address",
-                        "name": "xpub",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "object",
-                            "$ref": "#/definitions/blockatlas.TxPage"
                         }
                     }
                 }
