@@ -34,8 +34,7 @@ func newClient(t *testing.T, port string) *Client {
 		// use fatal failures
 		Reporter: httpexpect.NewAssertReporter(t),
 		// use verbose logging
-		Printers: []httpexpect.Printer{
-		},
+		Printers: []httpexpect.Printer{},
 	})
 	return &Client{
 		baseUrl: getBaseUrl(port),

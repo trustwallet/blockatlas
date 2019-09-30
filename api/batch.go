@@ -21,7 +21,7 @@ func makeStakingDelegationsBatchRoute(router gin.IRouter) {
 			ErrorResponse(c).Message(err.Error()).Render()
 			return
 		}
-		
+
 		batch := make(blockatlas.DelegationsBatchPage, 0)
 		for _, r := range reqs {
 			d := blockatlas.DelegationsBatch{
