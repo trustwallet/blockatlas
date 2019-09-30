@@ -13,8 +13,7 @@ type Platform struct {
 }
 
 func (p *Platform) Init() error {
-	p.client.BaseURL = viper.GetString("aion.api")
-	p.client.HTTPClient = blockatlas.DefaultClient
+	p.client = InitClient(viper.GetString("aion.api"))
 	return nil
 }
 
