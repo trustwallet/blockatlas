@@ -200,7 +200,7 @@ const delegationsSrc1 = `
   "frozen": [
 	{
 	  "expire_time": 10437262001000,
-	  "frozen_balance": 35000000
+	  "frozen_balance": "35000000"
 	}
   ],
   "votes": [
@@ -225,7 +225,7 @@ const delegationsSrc2 = `
   "frozen": [
 	{
 	  "expire_time": 1569465251000,
-	  "frozen_balance": 5000000
+	  "frozen_balance": "5000000"
 	}
   ],
   "votes": [
