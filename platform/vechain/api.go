@@ -103,7 +103,7 @@ func (p *Platform) getThorTxsByAddress(address string) ([]blockatlas.Tx, error) 
 		tx, err := NormalizeTokenTransfer(&t, receipt)
 		if err != nil {
 			p := logger.Params{"receipt": receipt, "transfer": t}
-			err = errors.E(err,"invalid token", errors.TypePlatformUnmarshal, p)
+			err = errors.E(err, "invalid token", errors.TypePlatformUnmarshal, p)
 			logger.Error(err, "getTxsByAddress clause error", p)
 			continue
 		}
@@ -207,7 +207,7 @@ func (p *Platform) getTxsByAddress(address string) ([]blockatlas.Tx, error) {
 
 func NormalizeTransfer(receipt *TransferReceipt, clause *Clause) (blockatlas.Tx, error) {
 	if receipt.Receipt == nil || clause == nil {
-		return blockatlas.Tx{}, errors.E("invalid parameters", errors.Params{"receipt": receipt,"clause": clause})
+		return blockatlas.Tx{}, errors.E("invalid parameters", errors.Params{"receipt": receipt, "clause": clause})
 	}
 	feeBase10, err := util.HexToDecimal(receipt.Receipt.Paid)
 	if err != nil {
