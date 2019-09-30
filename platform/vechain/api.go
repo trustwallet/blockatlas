@@ -1,7 +1,6 @@
 package vechain
 
 import (
-	"fmt"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
@@ -208,7 +207,7 @@ func (p *Platform) getTxsByAddress(address string) ([]blockatlas.Tx, error) {
 
 func NormalizeTransfer(receipt *TransferReceipt, clause *Clause) (blockatlas.Tx, error) {
 	if receipt.Receipt == nil || clause == nil {
-		return blockatlas.Tx{}, fmt.Errorf("vechain: invalid parameters: %v - %s", receipt, clause)
+		return blockatlas.Tx{}, errors.E("invalid parameters", errors.Params{"receipt": receipt,"clause": clause})
 	}
 	feeBase10, err := util.HexToDecimal(receipt.Receipt.Paid)
 	if err != nil {

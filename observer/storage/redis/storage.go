@@ -45,7 +45,7 @@ func (s *Storage) SetBlockNumber(coin uint, num int64) error {
 
 func (s *Storage) SaveXpubAddresses(coin uint, addresses []string, xpub string) error {
 	if len(addresses) == 0 {
-		return fmt.Errorf("no addresses for xpub: %s", xpub)
+		return errors.E("no addresses for xpub", errors.Params{"xpub": xpub})
 	}
 
 	a := make(map[string]interface{})
@@ -108,7 +108,7 @@ func (s *Storage) GetXpubFromAddress(coin uint, address string) (string, error) 
 
 func (s *Storage) Lookup(coin uint, addresses ...string) (observers []observer.Subscription, err error) {
 	if len(addresses) == 0 {
-		return nil, fmt.Errorf("cannot look up an empty list")
+		return nil, errors.E("cannot look up an empty list", errors.Params{"coin": coin})
 	}
 
 	keys := make([]string, len(addresses))

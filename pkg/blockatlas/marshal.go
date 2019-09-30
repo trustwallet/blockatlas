@@ -2,8 +2,8 @@ package blockatlas
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/spf13/cast"
+	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/util"
 	"regexp"
 	"sort"
@@ -45,7 +45,7 @@ func (t *Tx) UnmarshalJSON(data []byte) error {
 	case TxAnyAction:
 		t.Meta = new(AnyAction)
 	default:
-		return fmt.Errorf(`unsupported tx type "%s"`, t.Type)
+		return errors.E("unsupported tx type", errors.Params{"type": t.Type})
 	}
 	if err := json.Unmarshal(raw, t.Meta); err != nil {
 		return err
@@ -73,7 +73,7 @@ func (t *Tx) MarshalJSON() ([]byte, error) {
 	case AnyAction, *AnyAction:
 		t.Type = TxAnyAction
 	default:
-		return nil, fmt.Errorf("unsupported tx metadata")
+		return nil, errors.E("unsupported tx metadata", errors.Params{"meta": t.Meta})
 	}
 
 	// Set status to completed by default
@@ -95,7 +95,7 @@ func (a *Amount) UnmarshalJSON(data []byte) error {
 	}
 	str := string(n)
 	if !matchNumber.MatchString(str) {
-		return fmt.Errorf("not a regular decimal number: %s", str)
+		return errors.E("not a regular decimal number", errors.Params{"str": str})
 	}
 	if strings.ContainsRune(str, '.') {
 		str, _ = util.DecimalToSatoshis(str)

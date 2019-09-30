@@ -2,7 +2,6 @@ package binance
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
@@ -63,7 +62,7 @@ func getHTTPError(res *http.Response, desc string) error {
 	case http.StatusOK:
 		return nil
 	default:
-		return fmt.Errorf("%s", res.Status)
+		return errors.E("getHTTPError error", errors.Params{"status": res.Status})
 	}
 }
 
