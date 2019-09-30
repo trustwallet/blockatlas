@@ -122,6 +122,21 @@ blockatlas
 ```
 
 
+## Docs
+
+Swagger API docs provided at path `/swagger/index.html`
+
+#### Updating Docs
+
+- After creating a new route, add comments to your API source code, [See Declarative Comments Format](https://swaggo.github.io/swaggo.io/declarative_comments_format/).
+- Download Swag for Go by using:
+
+    `$ go get -u github.com/swaggo/swag/cmd/swag`
+
+- Run the Swag in your Go project root folder.
+
+    `$ swag init`
+
 ## Tests
 
 ### Unit

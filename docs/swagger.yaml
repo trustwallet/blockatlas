@@ -1,5 +1,21 @@
 basePath: '{{.BasePath}}'
 definitions:
+  api.AddressBatchRequest:
+    properties:
+      address:
+        type: string
+      coin:
+        type: integer
+    type: object
+  api.AddressesRequest:
+    items:
+      properties:
+        address:
+          type: string
+        coin:
+          type: integer
+      type: object
+    type: array
   api.ApiError:
     properties:
       status_code:
@@ -88,10 +104,101 @@ definitions:
           type: string
       type: object
     type: array
+  blockatlas.Delegation:
+    properties:
+      coin:
+        $ref: '#/definitions/coin.ExternalCoin'
+        type: object
+      delegator:
+        $ref: '#/definitions/blockatlas.StakeValidator'
+        type: object
+      metadata:
+        type: object
+      status:
+        type: string
+      value:
+        type: string
+    type: object
+  blockatlas.DelegationsBatch:
+    properties:
+      address:
+        type: string
+      coin:
+        type: integer
+      delegations:
+        $ref: '#/definitions/blockatlas.DelegationsPage'
+        type: object
+      error:
+        type: string
+    type: object
+  blockatlas.DelegationsBatchPage:
+    items:
+      properties:
+        address:
+          type: string
+        coin:
+          type: integer
+        delegations:
+          $ref: '#/definitions/blockatlas.DelegationsPage'
+          type: object
+        error:
+          type: string
+      type: object
+    type: array
+  blockatlas.DelegationsPage:
+    items:
+      properties:
+        coin:
+          $ref: '#/definitions/coin.ExternalCoin'
+          type: object
+        delegator:
+          $ref: '#/definitions/blockatlas.StakeValidator'
+          type: object
+        metadata:
+          type: object
+        status:
+          type: string
+        value:
+          type: string
+      type: object
+    type: array
   blockatlas.DocsResponse:
     properties:
       docs:
         type: object
+    type: object
+  blockatlas.StakeValidator:
+    properties:
+      id:
+        type: string
+      info:
+        $ref: '#/definitions/blockatlas.StakeValidatorInfo'
+        type: object
+      locktime:
+        type: integer
+      minimum_amount:
+        type: string
+      reward:
+        $ref: '#/definitions/blockatlas.StakingReward'
+        type: object
+      status:
+        type: boolean
+    type: object
+  blockatlas.StakeValidatorInfo:
+    properties:
+      description:
+        type: string
+      image:
+        type: string
+      name:
+        type: string
+      website:
+        type: string
+    type: object
+  blockatlas.StakingReward:
+    properties:
+      annual:
+        type: number
     type: object
   blockatlas.Tx:
     properties:
@@ -214,6 +321,17 @@ definitions:
           type: string
       type: object
     type: array
+  coin.ExternalCoin:
+    properties:
+      coin:
+        type: integer
+      decimals:
+        type: integer
+      name:
+        type: string
+      symbol:
+        type: string
+    type: object
 host: '{{.Host}}'
 info:
   contact: {}
@@ -595,4 +713,30 @@ paths:
       tags:
       - platform
       - tx
+  /v2/staking/delegations:
+    post:
+      consumes:
+      - application/json
+      description: Get Stake Delegations for multiple coins
+      operationId: batch_delegations
+      parameters:
+      - description: Validators addresses and coins
+        in: body
+        name: delegations
+        required: true
+        schema:
+          $ref: '#/definitions/api.AddressesRequest'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/blockatlas.DelegationsBatchPage'
+            type: object
+      summary: Get Multiple Stake Delegations
+      tags:
+      - platform
+      - staking
 swagger: "2.0"
