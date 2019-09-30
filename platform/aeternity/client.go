@@ -1,45 +1,35 @@
 package aeternity
 
 import (
-	"encoding/json"
 	"fmt"
-	"github.com/trustwallet/blockatlas/pkg/errors"
-	"io/ioutil"
-	"net/http"
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"net/url"
+	"strconv"
 )
 
 type Client struct {
-	HTTPClient *http.Client
-	URL        string
+	blockatlas.Request
 }
 
-func (c *Client) GetTxs(address string, limit int) ([]Transaction, error) {
-	uri := fmt.Sprintf("%s/middleware/transactions/account/%s?limit=%d",
-		c.URL,
-		address,
-		limit)
-	res, err := http.Get(uri)
+func InitClient(baseUrl string) Client {
+	return Client{
+		Request: blockatlas.Request{
+			HttpClient:   blockatlas.DefaultClient,
+			ErrorHandler: blockatlas.DefaultErrorHandler,
+			BaseUrl:      baseUrl,
+		},
+	}
+}
+
+func (c *Client) GetTxs(address string, limit int) (transactions []Transaction, err error) {
+	query := url.Values{
+		"limit": {strconv.Itoa(limit)},
+	}
+	uri := fmt.Sprintf("/middleware/transactions/account/%s", address)
+
+	err = c.Get(&transactions, uri, query)
 	if err != nil {
-		return nil, errors.E(err, errors.TypePlatformRequest, errors.Params{"url": uri})
-	}
-
-	defer res.Body.Close()
-
-	if res.StatusCode != 200 {
-		return nil, errors.E("http invalid statuc code", errors.TypePlatformRequest,
-			errors.Params{"url": uri, "status_code": res.StatusCode})
-	}
-
-	body, err := ioutil.ReadAll(res.Body)
-
-	var transactions []Transaction
-	decodeError := json.Unmarshal(body[:], &transactions)
-	if decodeError != nil {
-		return nil, errors.E(decodeError, errors.TypePlatformUnmarshal,
-			errors.Params{"url": uri, "body": string(body)})
-	}
-	if len(transactions) == 0 {
-		return make([]Transaction, 0), nil
+		return
 	}
 
 	var result []Transaction
@@ -48,6 +38,5 @@ func (c *Client) GetTxs(address string, limit int) ([]Transaction, error) {
 			result = append(result, tx)
 		}
 	}
-
-	return result, nil
+	return
 }
