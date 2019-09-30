@@ -14,6 +14,15 @@ type AddressBatchRequest struct {
 
 type AddressesRequest []AddressBatchRequest
 
+// @Summary Get Multiple Stake Delegations
+// @ID batch_delegations
+// @Description Get Stake Delegations for multiple coins
+// @Accept json
+// @Produce json
+// @Tags platform,staking
+// @Param delegations body api.AddressesRequest true "Validators addresses and coins"
+// @Success 200 {object} blockatlas.DelegationsBatchPage
+// @Router /v2/staking/delegations [post]
 func makeStakingDelegationsBatchRoute(router gin.IRouter) {
 	router.POST("/staking/delegations/", func(c *gin.Context) {
 		var reqs AddressesRequest
