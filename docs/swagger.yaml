@@ -7,6 +7,27 @@ definitions:
       status_message:
         type: string
     type: object
+  api.CoinStatus:
+    properties:
+      error:
+        type: string
+      height:
+        type: integer
+    type: object
+  api.ObserverResponse:
+    properties:
+      status:
+        type: string
+    type: object
+  api.Webhook:
+    properties:
+      subscriptions:
+        type: object
+      webhook:
+        type: string
+      xpub_subscriptions:
+        type: object
+    type: object
   blockatlas.Collection:
     properties:
       address:
@@ -203,16 +224,85 @@ info:
 paths:
   /metrics:
     get:
-      description: Get Metrics
+      description: Get application metrics
       operationId: metrics
-      summary: Get application metrics
+      summary: Get Metrics
       tags:
       - metrics
+  /observer/v1/status:
+    get:
+      consumes:
+      - application/json
+      description: Get coin status
+      operationId: coin_status
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.CoinStatus'
+            type: object
+      summary: Get coin status
+      tags:
+      - observer
+      - subscriptions
+  /observer/v1/webhook/register:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a webhook for addresses transactions
+      operationId: delete_webhook
+      parameters:
+      - description: Accounts subscriptions
+        in: body
+        name: subscriptions
+        required: true
+        schema:
+          $ref: '#/definitions/api.Webhook'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ObserverResponse'
+            type: object
+      summary: Delete a webhook
+      tags:
+      - observer
+      - subscriptions
+    post:
+      consumes:
+      - application/json
+      description: Create a webhook for addresses transactions
+      operationId: create_webhook
+      parameters:
+      - description: Accounts subscriptions
+        in: body
+        name: subscriptions
+        required: true
+        schema:
+          $ref: '#/definitions/api.Webhook'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ObserverResponse'
+            type: object
+      summary: Create a webhook
+      tags:
+      - observer
+      - subscriptions
   /v1/{coin}/{address}:
     get:
       consumes:
       - application/json
-      description: Get Transactions
+      description: Get transactions from the address
       operationId: tx_v1
       parameters:
       - default: tezos
@@ -240,15 +330,40 @@ paths:
           schema:
             $ref: '#/definitions/api.ApiError'
             type: object
-      summary: Get transactions from address
+      summary: Get Transactions
       tags:
       - platform
       - tx
+  /v1/{coin}/{xpub}:
+    get:
+      consumes:
+      - application/json
+      description: Get addresses from xpub
+      operationId: xpub
+      parameters:
+      - default: xpub6CxmJ8TvgV4cdWEQxEwNKSZv9WfVXCLdSRbXa6qTsoR33R5XPDSrsX8YAh2CqV92Q1gC4T9Pa3QBRDpaWXpeKo7zFUcuXQa6979j6m1DCkA
+        description: the xpub address
+        in: path
+        name: xpub
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/blockatlas.TxPage'
+            type: object
+      summary: Xpub addresses
+      tags:
+      - platform
+      - address
   /v2/{coin}/collections/{address}:
     get:
       consumes:
       - application/json
-      description: Get Collections
+      description: Get all collections from the address
       operationId: collections
       parameters:
       - default: ethereum
@@ -276,7 +391,7 @@ paths:
           schema:
             $ref: '#/definitions/api.ApiError'
             type: object
-      summary: Get all collections from address
+      summary: Get Collections
       tags:
       - platform
       - collection
@@ -284,7 +399,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: Get Collection
+      description: Get a collection from the address
       operationId: collection
       parameters:
       - default: ethereum
@@ -318,7 +433,7 @@ paths:
           schema:
             $ref: '#/definitions/api.ApiError'
             type: object
-      summary: Get a collection from address
+      summary: Get Collection
       tags:
       - platform
       - collection
@@ -326,7 +441,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: Get Stake Delegations
+      description: Get stake delegations from the address
       operationId: delegations
       parameters:
       - default: tron
@@ -354,7 +469,7 @@ paths:
           schema:
             $ref: '#/definitions/api.ApiError'
             type: object
-      summary: Get stake delegations from address
+      summary: Get Stake Delegations
       tags:
       - platform
       - staking
@@ -362,7 +477,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: Get Validators
+      description: Get validators from the address
       operationId: validators
       parameters:
       - default: cosmos
@@ -384,7 +499,7 @@ paths:
           schema:
             $ref: '#/definitions/api.ApiError'
             type: object
-      summary: Get validators from address
+      summary: Get Validators
       tags:
       - platform
       - staking
@@ -392,7 +507,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: Get Tokens
+      description: Get tokens from the address
       operationId: tokens
       parameters:
       - default: ethereum
@@ -420,7 +535,7 @@ paths:
           schema:
             $ref: '#/definitions/api.ApiError'
             type: object
-      summary: Get tokens from address
+      summary: Get Tokens
       tags:
       - platform
       - token
@@ -428,7 +543,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: Get Transactions
+      description: Get transactions from the address
       operationId: tx_v2
       parameters:
       - default: tezos
@@ -456,7 +571,7 @@ paths:
           schema:
             $ref: '#/definitions/api.ApiError'
             type: object
-      summary: Get transactions from address
+      summary: Get Transactions
       tags:
       - platform
       - tx
