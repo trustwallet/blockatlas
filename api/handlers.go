@@ -11,9 +11,9 @@ import (
 	"net/http"
 )
 
-// @Description Get Transactions
+// @Summary Get Transactions
 // @ID tx_v1
-// @Summary Get transactions from address
+// @Description Get transactions from the address
 // @Accept json
 // @Produce json
 // @Tags platform,tx
@@ -26,9 +26,9 @@ func makeTxRouteV1(router gin.IRouter, api blockatlas.Platform) {
 	makeTxRoute(router, api, "/:address")
 }
 
-// @Description Get Transactions
+// @Summary Get Transactions
 // @ID tx_v2
-// @Summary Get transactions from address
+// @Description Get transactions from the address
 // @Accept json
 // @Produce json
 // @Tags platform,tx
@@ -90,9 +90,9 @@ func makeTxRoute(router gin.IRouter, api blockatlas.Platform, path string) {
 	})
 }
 
-// @Description Get Validators
+// @Summary Get Validators
 // @ID validators
-// @Summary Get validators from address
+// @Description Get validators from the address
 // @Accept json
 // @Produce json
 // @Tags platform,staking
@@ -119,9 +119,9 @@ func makeStakingValidatorsRoute(router gin.IRouter, api blockatlas.Platform) {
 	})
 }
 
-// @Description Get Stake Delegations
+// @Summary Get Stake Delegations
 // @ID delegations
-// @Summary Get stake delegations from address
+// @Description Get stake delegations from the address
 // @Accept json
 // @Produce json
 // @Tags platform,staking
@@ -150,9 +150,9 @@ func makeStakingDelegationsRoute(router gin.IRouter, api blockatlas.Platform) {
 	})
 }
 
-// @Description Get Collections
+// @Summary Get Collections
 // @ID collections
-// @Summary Get all collections from address
+// @Description Get all collections from the address
 // @Accept json
 // @Produce json
 // @Tags platform,collection
@@ -180,9 +180,9 @@ func makeCollectionsRoute(router gin.IRouter, api blockatlas.Platform) {
 	})
 }
 
-// @Description Get Collection
+// @Summary Get Collection
 // @ID collection
-// @Summary Get a collection from address
+// @Description Get a collection from the address
 // @Accept json
 // @Produce json
 // @Tags platform,collection
@@ -211,9 +211,9 @@ func makeCollectionRoute(router gin.IRouter, api blockatlas.Platform) {
 	})
 }
 
-// @Description Get Tokens
+// @Summary Get Tokens
 // @ID tokens
-// @Summary Get tokens from address
+// @Description Get tokens from the address
 // @Accept json
 // @Produce json
 // @Tags platform,token
@@ -247,9 +247,9 @@ func makeTokenRoute(router gin.IRouter, api blockatlas.Platform) {
 	})
 }
 
-// @Description Get Metrics
+// @Summary Get Metrics
 // @ID metrics
-// @Summary Get application metrics
+// @Description Get application metrics
 // @Tags metrics
 // @Router /metrics [get]
 func MakeMetricsRoute(router gin.IRouter) {

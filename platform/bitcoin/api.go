@@ -42,6 +42,15 @@ func (p *Platform) ConfigKey() string {
 	return fmt.Sprintf("%s.api", p.Coin().Handle)
 }
 
+// @Summary Xpub addresses
+// @ID xpub
+// @Description Get addresses from xpub
+// @Accept json
+// @Produce json
+// @Tags platform,address
+// @Param xpub path string true "the xpub address" default(xpub6CxmJ8TvgV4cdWEQxEwNKSZv9WfVXCLdSRbXa6qTsoR33R5XPDSrsX8YAh2CqV92Q1gC4T9Pa3QBRDpaWXpeKo7zFUcuXQa6979j6m1DCkA)
+// @Success 200 {object} blockatlas.TxPage
+// @Router /v1/{coin}/{xpub} [get]
 func (p *Platform) RegisterRoutes(router gin.IRouter) {
 	router.GET("/xpub/:key", func(c *gin.Context) {
 		p.handleXpubRoute(c)
