@@ -3,6 +3,7 @@ package cosmos
 import (
 	"fmt"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"net/url"
 	"strconv"
@@ -10,6 +11,11 @@ import (
 
 // Client - the HTTP client
 type Client struct {
+	blockatlas.Request
+}
+
+// RpcClient - the RPC client
+type RpcClient struct {
 	blockatlas.Request
 }
 
@@ -33,7 +39,6 @@ func (c *Client) GetAddrTxes(address string, tag string) (txs []Tx, err error) {
 
 	err = c.Get(&txs, "txs", query)
 	if err != nil {
-		logger.Error(err, "Cosmos: Failed to get transactions for address", logger.Params{"address": address})
 		return nil, err
 	}
 	return txs, err
@@ -47,7 +52,6 @@ func (c *Client) GetValidators() (validators []Validator, err error) {
 	}
 	err = c.Get(&validators, "staking/validators", query)
 	if err != nil {
-		logger.Error(err, "Cosmos: Failed to get validators for address")
 		return validators, err
 	}
 	return validators, err
@@ -67,9 +71,8 @@ func (c *Client) CurrentBlockNumber() (num int64, err error) {
 	}
 
 	num, err = strconv.ParseInt(block.Meta.Header.Height, 10, 64)
-
 	if err != nil {
-		return num, err
+		return num, errors.E("error to ParseInt", errors.TypePlatformUnmarshal)
 	}
 
 	return num, nil
@@ -88,8 +91,10 @@ func (c *Client) GetInflation() (float64, error) {
 	}
 
 	s, err := strconv.ParseFloat(result, 32)
-
-	return s, err
+	if err != nil {
+		return 0, errors.E("error to ParseFloat", errors.TypePlatformUnmarshal)
+	}
+	return s, nil
 }
 
 func (c *Client) GetDelegations(address string) (delegations []Delegation, err error) {

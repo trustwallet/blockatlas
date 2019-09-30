@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"net/http"
 	"net/url"
@@ -21,7 +22,8 @@ func (c *Client) GetTxsOfAddress(address string) ([]Tx, error) {
 		200)
 	httpRes, err := c.HTTPClient.Get(uri)
 	if err != nil {
-		logger.Error(err, "Ripple: Failed to get transactions")
+		err = errors.E(err, errors.TypePlatformRequest, errors.Params{"url": uri})
+		logger.Error(err, "Failed to get transactions")
 		return nil, blockatlas.ErrSourceConn
 	}
 
@@ -29,6 +31,8 @@ func (c *Client) GetTxsOfAddress(address string) ([]Tx, error) {
 	err = json.NewDecoder(httpRes.Body).Decode(&res)
 
 	if res.Result != "success" {
+		err = errors.E("Failed to get tx", errors.TypePlatformRequest, errors.Params{"url": uri})
+		logger.Error(err)
 		return nil, blockatlas.ErrSourceConn
 	}
 
@@ -40,14 +44,14 @@ func (c *Client) GetCurrentBlock() (int64, error) {
 
 	res, err := c.HTTPClient.Get(uri)
 	if err != nil {
-		return 0, err
+		return 0, errors.E(err, errors.TypePlatformRequest, errors.Params{"url": uri})
 	}
 	defer res.Body.Close()
 
 	var ledgers LedgerResponse
 	err = json.NewDecoder(res.Body).Decode(&ledgers)
 	if err != nil {
-		return 0, err
+		return 0, errors.E(err, errors.TypePlatformUnmarshal, errors.Params{"url": uri})
 	} else {
 		return ledgers.Ledger.LedgerIndex, nil
 	}
@@ -58,14 +62,14 @@ func (c *Client) GetBlockByNumber(num int64) ([]Tx, error) {
 
 	res, err := c.HTTPClient.Get(uri)
 	if err != nil {
-		return nil, err
+		return nil, errors.E(err, errors.TypePlatformRequest, errors.Params{"url": uri})
 	}
 	defer res.Body.Close()
 
 	response := new(LedgerResponse)
 	err = json.NewDecoder(res.Body).Decode(response)
 	if err != nil {
-		return nil, err
+		return nil, errors.E(err, errors.TypePlatformUnmarshal, errors.Params{"url": uri})
 	}
 
 	return response.Ledger.Transactions, nil

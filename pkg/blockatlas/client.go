@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/metrics"
 	"io"
 	"net/http"
@@ -49,20 +50,23 @@ func (r *Request) Execute(method string, url string, body io.Reader, result inte
 
 	req, err := http.NewRequest(method, url, body)
 	if err != nil {
-		return err
+		return errors.E(err, errors.TypePlatformRequest, errors.Params{"url": url, "method": method})
 	}
 	res, err := r.HttpClient.Do(req)
 	if err != nil {
-		return err
+		return errors.E(err, errors.TypePlatformRequest, errors.Params{"url": url, "method": method})
 	}
 	go metrics.GetMetrics(res.Status, url, method, start)
 
 	err = r.ErrorHandler(res, url)
 	if err != nil {
-		return err
+		return errors.E(err, errors.TypePlatformError, errors.Params{"url": url, "method": method})
 	}
 	defer res.Body.Close()
 	err = json.NewDecoder(res.Body).Decode(result)
+	if err != nil {
+		return errors.E(err, errors.TypePlatformUnmarshal, errors.Params{"url": url, "method": method})
+	}
 	return err
 }
 

@@ -1,9 +1,9 @@
 package assets
 
 import (
-	"fmt"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/errors"
 	"strings"
 )
 
@@ -14,12 +14,12 @@ const (
 func GetValidators(api blockatlas.StakeAPI) ([]blockatlas.StakeValidator, error) {
 	assetsValidators, err := GetValidatorsInfo(api.Coin())
 	if err != nil {
-		return nil, fmt.Errorf("unable to fetch validators list from the registry: %s", err)
+		return nil, errors.E(err, "unable to fetch validators list from the registry")
 	}
 
 	validators, err := api.GetValidators()
 	if err != nil {
-		return nil, fmt.Errorf("unable to fetch validators for staking: %s", err)
+		return nil, errors.E(err, "unable to fetch validators for staking")
 	}
 	results := NormalizeValidators(validators, assetsValidators, api.Coin())
 	return results, nil
@@ -33,7 +33,10 @@ func GetValidatorsInfo(coin coin.Coin) ([]AssetValidator, error) {
 		ErrorHandler: blockatlas.DefaultErrorHandler,
 	}
 	err := request.Get(&results, "/validators/list.json", nil)
-	return results, err
+	if err != nil {
+		return nil, errors.E(err, errors.Params{"coin": coin.Handle})
+	}
+	return results, nil
 }
 
 func NormalizeValidators(validators []blockatlas.Validator, assets []AssetValidator, coin coin.Coin) []blockatlas.StakeValidator {

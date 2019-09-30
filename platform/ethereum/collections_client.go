@@ -2,8 +2,8 @@ package ethereum
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
+	"github.com/trustwallet/blockatlas/pkg/errors"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -27,12 +27,15 @@ func (c CollectionsClient) GetCollections(owner string) ([]Collection, error) {
 	req.Header.Set("X-API-KEY", c.CollectionsApiKey)
 	res, err := c.HTTPClient.Do(req)
 	if err != nil {
-		return nil, err
+		return nil, errors.E(err, errors.TypePlatformRequest, errors.Params{"url": uri})
 	}
 	defer res.Body.Close()
 
 	var page []Collection
 	err = json.NewDecoder(res.Body).Decode(&page)
+	if err != nil {
+		return nil, errors.E(err, errors.TypePlatformUnmarshal, errors.Params{"url": uri})
+	}
 	return page, err
 }
 
@@ -44,7 +47,8 @@ func (c CollectionsClient) GetCollectibles(owner string, collectibleID string) (
 	id := getCollectionId(collectibleID)
 	collection := searchCollection(collections, id)
 	if collection == nil {
-		return nil, nil, errors.New(fmt.Sprintf("%s not found", collectibleID))
+		return nil, nil, errors.E("collectible not found", errors.TypePlatformClient,
+			errors.Params{"collectibleID": collectibleID})
 	}
 
 	uriValues := url.Values{
@@ -68,11 +72,14 @@ func (c CollectionsClient) GetCollectibles(owner string, collectibleID string) (
 	req.Header.Set("X-API-KEY", c.CollectionsApiKey)
 	res, err := c.HTTPClient.Do(req)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, errors.E(err, errors.TypePlatformRequest, errors.Params{"uri": uri})
 	}
 	defer res.Body.Close()
 
 	var page CollectiblePage
 	err = json.NewDecoder(res.Body).Decode(&page)
+	if err != nil {
+		return nil, nil, errors.E(err, errors.TypePlatformUnmarshal, errors.Params{"uri": uri})
+	}
 	return collection, page.Collectibles, err
 }

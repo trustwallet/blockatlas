@@ -2,8 +2,8 @@ package binance
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"net/http"
 	"net/url"
@@ -62,7 +62,7 @@ func getHTTPError(res *http.Response, desc string) error {
 	case http.StatusOK:
 		return nil
 	default:
-		return fmt.Errorf("%s", res.Status)
+		return errors.E("getHTTPError error", errors.Params{"status": res.Status})
 	}
 }
 
@@ -70,6 +70,7 @@ func getAPIError(res *http.Response, desc string) error {
 	var sErr Error
 	err := json.NewDecoder(res.Body).Decode(&sErr)
 	if err != nil {
+		err = errors.E(err, errors.TypePlatformUnmarshal, errors.Params{"desc": desc})
 		logger.Error(err, "Binance: Failed to decode error response")
 		return blockatlas.ErrSourceConn
 	}

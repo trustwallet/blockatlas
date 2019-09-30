@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/mitchellh/mapstructure"
-	"github.com/trustwallet/blockatlas/pkg/logger"
+	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/ybbus/jsonrpc"
 	"io/ioutil"
 	"net/http"
@@ -23,7 +23,7 @@ func (c *Client) newRequest(method, path string) (*http.Request, error) {
 	url := fmt.Sprintf("%s%s", c.BaseURL, path)
 	req, err := http.NewRequest(method, url, nil)
 	if err != nil {
-		return nil, err
+		return nil, errors.E(err, errors.TypePlatformRequest, errors.Params{"path": path})
 	}
 	req.Header.Set("X-APIKEY", c.APIKey)
 	return req, nil
@@ -33,8 +33,7 @@ func (c *Client) GetBlockchainInfo() (*ChainInfo, error) {
 	var info *ChainInfo
 	err := c.RPCClient.CallFor(&info, "GetBlockchainInfo")
 	if err != nil {
-		logger.Error(err, "Zilliqa: Error read response body")
-		return nil, err
+		return nil, errors.E(err, errors.TypePlatformRequest)
 	}
 	return info, nil
 }
@@ -48,7 +47,7 @@ func (c *Client) GetTxInBlock(number int64) ([]Tx, error) {
 	var results [][]string
 	err = res.GetObject(&results)
 	if err != nil {
-		return nil, err
+		return nil, errors.E(err, errors.TypePlatformRequest, errors.Params{"block": number})
 	}
 
 	var requests jsonrpc.RPCRequests
@@ -67,7 +66,7 @@ func (c *Client) GetTxInBlock(number int64) ([]Tx, error) {
 
 	responses, err := c.RPCClient.CallBatch(requests)
 	if err != nil {
-		return nil, err
+		return nil, errors.E(err, errors.TypePlatformRequest, errors.Params{"block": number})
 	}
 
 	for _, result := range responses {
@@ -82,29 +81,31 @@ func (c *Client) GetTxInBlock(number int64) ([]Tx, error) {
 
 func (c *Client) GetTxsOfAddress(address string) ([]Tx, error) {
 	path := fmt.Sprintf("/addresses/%s/txs", address)
-	req, _ := c.newRequest("GET", path)
+	req, err := c.newRequest("GET", path)
+	if err != nil {
+		return nil, err
+	}
 	res, err := c.HTTPClient.Do(req)
 	if err != nil {
-		logger.Error(err, "Zilliqa: Failed to get transactions", logger.Params{"address": address})
-		return nil, err
+		return nil, errors.E(err, errors.TypePlatformRequest, errors.Params{"url": path})
 	}
 	defer res.Body.Close()
 
 	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		logger.Error(err, "Zilliqa: Error read response body")
-		return nil, err
+		return nil, errors.E(err, errors.TypePlatformUnmarshal, errors.Params{"url": path})
 	}
 
 	if bytes.HasPrefix(body, []byte(`{"message":"Invalid API key specified"`)) {
-		return nil, fmt.Errorf("invalid Zilliqa API key")
+		return nil, errors.E("invalid Zilliqa API key", errors.TypePlatformUnmarshal,
+			errors.Params{"url": path, "body": string(body)})
 	}
 
 	txs := make([]Tx, 0)
 	err = json.Unmarshal(body, &txs)
 	if err != nil {
-		logger.Error(err, "Zilliqa: Error decode json transaction response")
-		return nil, err
+		return nil, errors.E(err, errors.TypePlatformUnmarshal,
+			errors.Params{"url": path, "body": string(body)})
 	}
 
 	return txs, nil

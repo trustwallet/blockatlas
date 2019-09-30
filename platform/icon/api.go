@@ -1,10 +1,11 @@
 package icon
 
 import (
-	"fmt"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/errors"
+	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/util"
 	"time"
 )
@@ -45,7 +46,8 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 func Normalize(trx *Tx) (tx blockatlas.Tx, b bool) {
 	date, err := time.Parse("2006-01-02T15:04:05.999Z0700", trx.CreateDate)
 	if err != nil {
-		fmt.Printf("%v\n", err)
+		err = errors.E(err, errors.TypePlatformUnmarshal)
+		logger.Error(err)
 		return tx, false
 	}
 	fee := util.DecimalExp(string(trx.Fee), 18)

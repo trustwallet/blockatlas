@@ -123,6 +123,6 @@ func E(args ...interface{}) *Error {
 		msg := strings.Join(message[:], ": ")
 		e.Err = errors.New(msg)
 	}
-
+	SendError(e)
 	return e
 }

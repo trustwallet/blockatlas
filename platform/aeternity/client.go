@@ -3,6 +3,7 @@ package aeternity
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/trustwallet/blockatlas/pkg/errors"
 	"io/ioutil"
 	"net/http"
 )
@@ -19,21 +20,23 @@ func (c *Client) GetTxs(address string, limit int) ([]Transaction, error) {
 		limit)
 	res, err := http.Get(uri)
 	if err != nil {
-		return nil, err
+		return nil, errors.E(err, errors.TypePlatformRequest, errors.Params{"url": uri})
 	}
 
 	defer res.Body.Close()
 
 	if res.StatusCode != 200 {
-		return nil, fmt.Errorf("http %s", res.Status)
+		return nil, errors.E("http invalid statuc code", errors.TypePlatformRequest,
+			errors.Params{"url": uri, "status_code": res.StatusCode})
 	}
 
 	body, err := ioutil.ReadAll(res.Body)
 
 	var transactions []Transaction
-	decodeError := json.Unmarshal([]byte(string(body)), &transactions)
+	decodeError := json.Unmarshal(body[:], &transactions)
 	if decodeError != nil {
-		return nil, decodeError
+		return nil, errors.E(decodeError, errors.TypePlatformUnmarshal,
+			errors.Params{"url": uri, "body": string(body)})
 	}
 	if len(transactions) == 0 {
 		return make([]Transaction, 0), nil

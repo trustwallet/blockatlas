@@ -3,6 +3,7 @@ package stellar
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/trustwallet/blockatlas/pkg/errors"
 	"net/http"
 	"net/url"
 )
@@ -21,7 +22,7 @@ func (c *Client) GetTxsOfAddress(address string) (txs []Payment, err error) {
 func (c *Client) getTxs(path string) (txs []Payment, err error) {
 	res, err := http.Get(path)
 	if err != nil {
-		return nil, err
+		return nil, errors.E(err, errors.TypePlatformRequest, errors.Params{"url": path})
 	}
 	defer res.Body.Close()
 
@@ -29,7 +30,7 @@ func (c *Client) getTxs(path string) (txs []Payment, err error) {
 	dec := json.NewDecoder(res.Body)
 	err = dec.Decode(&payments)
 	if err != nil {
-		return nil, err
+		return nil, errors.E(err, errors.TypePlatformUnmarshal, errors.Params{"url": path})
 	}
 
 	return payments.Embedded.Records, nil
@@ -39,14 +40,14 @@ func (c *Client) CurrentBlockNumber() (num int64, err error) {
 	path := fmt.Sprintf("%s/ledgers?order=desc&limit=1", c.API)
 	res, err := http.Get(path)
 	if err != nil {
-		return num, err
+		return num, errors.E(err, errors.TypePlatformRequest, errors.Params{"url": path})
 	}
 	defer res.Body.Close()
 	var ledgers LedgersPage
 	dec := json.NewDecoder(res.Body)
 	err = dec.Decode(&ledgers)
 	if err != nil {
-		return num, err
+		return num, errors.E(err, errors.TypePlatformUnmarshal, errors.Params{"url": path})
 	}
 
 	return ledgers.Embedded.Records[0].Sequence, nil
@@ -70,13 +71,13 @@ func (c *Client) getLedger(num int64) (ledger *Ledger, err error) {
 	path := fmt.Sprintf("%s/ledgers/%d", c.API, num)
 	res, err := http.Get(path)
 	if err != nil {
-		return nil, err
+		return nil, errors.E(err, errors.TypePlatformRequest, errors.Params{"url": path})
 	}
 	defer res.Body.Close()
 	dec := json.NewDecoder(res.Body)
 	err = dec.Decode(&ledger)
 	if err != nil {
-		return nil, err
+		return nil, errors.E(err, errors.TypePlatformUnmarshal, errors.Params{"url": path})
 	}
 	return ledger, nil
 }

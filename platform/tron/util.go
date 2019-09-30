@@ -4,6 +4,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"github.com/mr-tron/base58"
+	"github.com/trustwallet/blockatlas/pkg/errors"
 )
 
 // HexToAddress converts a hex representation of a Tron address
@@ -11,7 +12,8 @@ import (
 func HexToAddress(hexAddr string) (b58 string, err error) {
 	bytes, err := hex.DecodeString(hexAddr)
 	if err != nil {
-		return "", err
+		return "", errors.E(err, errors.TypePlatformUnmarshal,
+			errors.Params{"hexAddr": hexAddr})
 	}
 	var checksum [32]byte
 	checksum = sha256.Sum256(bytes)
