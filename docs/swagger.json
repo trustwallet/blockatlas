@@ -35,6 +35,16 @@
                 ],
                 "summary": "Get coin status",
                 "operationId": "coin_status",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer test",
+                        "description": "Bearer authorization header",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -71,6 +81,14 @@
                             "type": "object",
                             "$ref": "#/definitions/api.Webhook"
                         }
+                    },
+                    {
+                        "type": "string",
+                        "default": "Bearer test",
+                        "description": "Bearer authorization header",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -107,6 +125,14 @@
                             "type": "object",
                             "$ref": "#/definitions/api.Webhook"
                         }
+                    },
+                    {
+                        "type": "string",
+                        "default": "Bearer test",
+                        "description": "Bearer authorization header",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
                     }
                 ],
                 "responses": {

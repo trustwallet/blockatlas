@@ -51,6 +51,8 @@ func requireAuth(c *gin.Context) {
 // @Produce json
 // @Tags observer,subscriptions
 // @Param subscriptions body api.Webhook true "Accounts subscriptions"
+// @Param Authorization header string true "Bearer authorization header" default(Bearer test)
+// @Header 200 {string} Authorization {token}
 // @Success 200 {object} api.ObserverResponse
 // @Router /observer/v1/webhook/register [post]
 func addCall(c *gin.Context) {
@@ -132,6 +134,8 @@ func cacheXPubAddress(xpub string, coin uint) {
 // @Produce json
 // @Tags observer,subscriptions
 // @Param subscriptions body api.Webhook true "Accounts subscriptions"
+// @Param Authorization header string true "Bearer authorization header" default(Bearer test)
+// @Header 200 {string} Authorization {token}
 // @Success 200 {object} api.ObserverResponse
 // @Router /observer/v1/webhook/register [delete]
 func deleteCall(c *gin.Context) {
@@ -191,6 +195,8 @@ func deleteCall(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Tags observer,subscriptions
+// @Param Authorization header string true "Bearer authorization header" default(Bearer test)
+// @Header 200 {string} Authorization {token}
 // @Success 200 {object} api.CoinStatus
 // @Router /observer/v1/status [get]
 func statusCall(c *gin.Context) {

@@ -235,6 +235,13 @@ paths:
       - application/json
       description: Get coin status
       operationId: coin_status
+      parameters:
+      - default: Bearer test
+        description: Bearer authorization header
+        in: header
+        name: Authorization
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -261,6 +268,12 @@ paths:
         schema:
           $ref: '#/definitions/api.Webhook'
           type: object
+      - default: Bearer test
+        description: Bearer authorization header
+        in: header
+        name: Authorization
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -286,6 +299,12 @@ paths:
         schema:
           $ref: '#/definitions/api.Webhook'
           type: object
+      - default: Bearer test
+        description: Bearer authorization header
+        in: header
+        name: Authorization
+        required: true
+        type: string
       produces:
       - application/json
       responses:
