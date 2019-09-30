@@ -49,19 +49,34 @@ func (c *Client) testGet(url string) {
 	response := request.Expect()
 	//TODO create a logic to validate schemas
 	//response.JSON().Schema(schema)
-	if response.Raw().StatusCode != 200 {
+	if response.Raw().StatusCode != http.StatusOK {
 		fmt.Printf("\n%s - %s\n", response.Raw().Status, url)
 	}
 	response.Status(http.StatusOK)
 }
 
-func (c *Client) doTests(path string, wg *sync.WaitGroup) {
+func (c *Client) testPost(url string) {
+	request := c.e.POST(url).WithURL(c.baseUrl)
+	request.WithText("[]")
+	response := request.Expect()
+	if response.Raw().StatusCode != http.StatusOK {
+		fmt.Printf("\n%s - %s\n", response.Raw().Status, url)
+	}
+	response.Status(http.StatusOK)
+}
+
+func (c *Client) doTests(method, path string, wg *sync.WaitGroup) {
 	defer wg.Done()
 	if isExcluded(path) {
 		return
 	}
 	url := addFixtures(path)
-	c.testGet(url)
+	switch method {
+	case "GET":
+		c.testGet(url)
+	case "POST":
+		c.testPost(url)
+	}
 }
 
 func getBaseUrl(port string) string {

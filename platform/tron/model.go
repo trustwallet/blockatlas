@@ -66,8 +66,8 @@ type Votes struct {
 }
 
 type Frozen struct {
-	ExpireTime    int64 `json:"expire_time"`
-	FrozenBalance int64 `json:"frozen_balance"`
+	ExpireTime    int64       `json:"expire_time"`
+	FrozenBalance interface{} `json:"frozen_balance,string"`
 }
 
 type Asset struct {

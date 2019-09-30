@@ -4,6 +4,7 @@ import "github.com/trustwallet/blockatlas/coin"
 
 type ValidatorPage []Validator
 type DelegationsPage []Delegation
+type DelegationsBatchPage []DelegationsBatch
 
 type DocsResponse struct {
 	Docs interface{} `json:"docs"`
@@ -58,4 +59,11 @@ type StakeValidator struct {
 	Reward        StakingReward      `json:"reward,omitempty"`
 	LockTime      int                `json:"locktime,omitempty"`
 	MinimumAmount Amount             `json:"minimum_amount,omitempty"`
+}
+
+type DelegationsBatch struct {
+	Coin        uint            `json:"coin"`
+	Address     string          `json:"address"`
+	Delegations DelegationsPage `json:"delegations,omitempty"`
+	Error       string          `json:"error,omitempty"`
 }
