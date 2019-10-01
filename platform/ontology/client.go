@@ -1,40 +1,29 @@
 package ontology
 
 import (
-	"encoding/json"
 	"fmt"
-	"github.com/trustwallet/blockatlas/pkg/errors"
-	"net/http"
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 )
 
-// Client - the HTTP client
 type Client struct {
-	HTTPClient *http.Client
-	BaseURL    string
+	blockatlas.Request
+}
+
+func InitClient(baseUrl string) Client {
+	return Client{
+		Request: blockatlas.Request{
+			HttpClient:   blockatlas.DefaultClient,
+			ErrorHandler: blockatlas.DefaultErrorHandler,
+			BaseUrl:      baseUrl,
+		},
+	}
 }
 
 // Explorer API max returned transactions per page
 const TxPerPage = 20
 
-func (c *Client) GetTxsOfAddress(address, assetName string) (*TxPage, error) {
-	uri := fmt.Sprintf("%s/address/%s/%s/%d/1",
-		c.BaseURL,
-		address,
-		assetName,
-		TxPerPage,
-	)
-
-	res, err := c.HTTPClient.Get(uri)
-	if err != nil {
-		return nil, errors.E(err, errors.TypePlatformRequest, errors.Params{"url": uri})
-	}
-	defer res.Body.Close()
-
-	txPage := new(TxPage)
-	err = json.NewDecoder(res.Body).Decode(txPage)
-	if err != nil {
-		return nil, errors.E(err, errors.TypePlatformUnmarshal, errors.Params{"url": uri})
-	}
-
-	return txPage, nil
+func (c *Client) GetTxsOfAddress(address, assetName string) (txPage *TxPage, err error) {
+	url := fmt.Sprintf("/address/%s/%s/%d/1", address, assetName, TxPerPage)
+	err = c.Get(&txPage, url, nil)
+	return
 }
