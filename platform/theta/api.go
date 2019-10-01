@@ -12,8 +12,7 @@ type Platform struct {
 }
 
 func (p *Platform) Init() error {
-	p.client.BaseURL = viper.GetString("theta.api")
-	p.client.HTTPClient = blockatlas.DefaultClient
+	p.client = Client{blockatlas.InitClient(viper.GetString("theta.api"))}
 	return nil
 }
 
