@@ -9,16 +9,6 @@ type Client struct {
 	blockatlas.Request
 }
 
-func InitClient(baseUrl string) Client {
-	return Client{
-		Request: blockatlas.Request{
-			BaseUrl:      baseUrl,
-			HttpClient:   blockatlas.DefaultClient,
-			ErrorHandler: blockatlas.DefaultErrorHandler,
-		},
-	}
-}
-
 func (c *Client) GetTxs(address string, limit int) ([]Transaction, error) {
 	path := fmt.Sprintf("transactions/address/%s/limit/%d", address, limit)
 	txs := make([][]Transaction, 0)

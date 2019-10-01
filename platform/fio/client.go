@@ -7,13 +7,3 @@ import (
 type Client struct {
 	blockatlas.Request
 }
-
-func InitClient(baseUrl string) Client {
-	return Client{
-		Request: blockatlas.Request{
-			HttpClient:   blockatlas.DefaultClient,
-			ErrorHandler: blockatlas.DefaultErrorHandler,
-			BaseUrl:      baseUrl,
-		},
-	}
-}

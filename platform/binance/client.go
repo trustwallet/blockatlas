@@ -16,16 +16,6 @@ type Client struct {
 	blockatlas.Request
 }
 
-func ClientInit(baseUrl string) Client {
-	return Client{
-		Request: blockatlas.Request{
-			HttpClient:   blockatlas.DefaultClient,
-			ErrorHandler: getHTTPError,
-			BaseUrl:      baseUrl,
-		},
-	}
-}
-
 func (c *Client) GetBlockList(count int) (*BlockList, error) {
 	result := new(BlockList)
 	query := url.Values{"rows": {strconv.Itoa(count)}, "page": {"1"}}

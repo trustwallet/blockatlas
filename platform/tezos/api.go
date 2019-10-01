@@ -15,8 +15,8 @@ type Platform struct {
 const Annual = 7.0
 
 func (p *Platform) Init() error {
-	p.client = InitClient(viper.GetString("tezos.api"))
-	p.rpcClient = InitRpcClient(viper.GetString("tezos.rpc"))
+	p.client = Client{blockatlas.InitClient(viper.GetString("tezos.api"))}
+	p.rpcClient = RpcClient{blockatlas.InitClient(viper.GetString("tezos.rpc"))}
 	return nil
 }
 

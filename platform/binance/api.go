@@ -21,8 +21,11 @@ type Platform struct {
 }
 
 func (p *Platform) Init() error {
-	p.client = ClientInit(viper.GetString("binance.api"))
-	p.dexClient = DexClientInit(viper.GetString("binance.dex"))
+	p.client = Client{blockatlas.InitClient(viper.GetString("binance.api"))}
+	p.client.ErrorHandler = getHTTPError
+
+	p.dexClient = DexClient{blockatlas.InitClient(viper.GetString("binance.dex"))}
+	p.dexClient.ErrorHandler = getHTTPError
 	return nil
 }
 

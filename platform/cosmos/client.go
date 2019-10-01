@@ -14,21 +14,6 @@ type Client struct {
 	blockatlas.Request
 }
 
-// RpcClient - the RPC client
-type RpcClient struct {
-	blockatlas.Request
-}
-
-func InitClient(baseUrl string) Client {
-	return Client{
-		Request: blockatlas.Request{
-			HttpClient:   blockatlas.DefaultClient,
-			ErrorHandler: blockatlas.DefaultErrorHandler,
-			BaseUrl:      baseUrl,
-		},
-	}
-}
-
 // GetAddrTxes - get all ATOM transactions for a given address
 func (c *Client) GetAddrTxes(address string, tag string) (txs []Tx, err error) {
 	query := url.Values{

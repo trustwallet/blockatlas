@@ -10,16 +10,6 @@ type Client struct {
 	blockatlas.Request
 }
 
-func InitClient(baseUrl string) Client {
-	return Client{
-		Request: blockatlas.Request{
-			BaseUrl:      baseUrl,
-			HttpClient:   blockatlas.DefaultClient,
-			ErrorHandler: blockatlas.DefaultErrorHandler,
-		},
-	}
-}
-
 func (c *Client) GetTxsOfAddress(address, token string) ([]Tx, error) {
 	path := fmt.Sprintf("v1/accounts/%s/transactions", url.PathEscape(address))
 

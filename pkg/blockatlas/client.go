@@ -19,6 +19,14 @@ type Request struct {
 	ErrorHandler func(res *http.Response, uri string) error
 }
 
+func InitClient(baseUrl string) Request {
+	return Request{
+		HttpClient:   DefaultClient,
+		ErrorHandler: DefaultErrorHandler,
+		BaseUrl:      baseUrl,
+	}
+}
+
 var DefaultClient = &http.Client{
 	Timeout: time.Second * 15,
 }

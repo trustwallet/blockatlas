@@ -14,7 +14,7 @@ type Platform struct {
 }
 
 func (p *Platform) Init() error {
-	p.client = InitClient(viper.GetString("iotex.api"))
+	p.client = Client{blockatlas.InitClient(viper.GetString("iotex.api"))}
 	return nil
 }
 

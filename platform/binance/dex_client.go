@@ -12,16 +12,6 @@ type DexClient struct {
 	blockatlas.Request
 }
 
-func DexClientInit(baseUrl string) DexClient {
-	return DexClient{
-		Request: blockatlas.Request{
-			HttpClient:   blockatlas.DefaultClient,
-			ErrorHandler: getHTTPError,
-			BaseUrl:      baseUrl,
-		},
-	}
-}
-
 func (c *DexClient) GetAccountMetadata(address string) (account *Account, err error) {
 	path := fmt.Sprintf("v1/account/%s", address)
 	err = c.Get(&account, path, nil)
