@@ -1,76 +1,54 @@
 package ripple
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/pkg/errors"
-	"github.com/trustwallet/blockatlas/pkg/logger"
-	"net/http"
 	"net/url"
+	"strconv"
 )
 
 type Client struct {
-	HTTPClient *http.Client
-	BaseURL    string
+	blockatlas.Request
 }
 
 func (c *Client) GetTxsOfAddress(address string) ([]Tx, error) {
-	uri := fmt.Sprintf("%s/accounts/%s/transactions?type=Payment&result=tesSUCCESS&limit=%d",
-		c.BaseURL,
-		url.PathEscape(address),
-		200)
-	httpRes, err := c.HTTPClient.Get(uri)
-	if err != nil {
-		err = errors.E(err, errors.TypePlatformRequest, errors.Params{"url": uri})
-		logger.Error(err, "Failed to get transactions")
-		return nil, blockatlas.ErrSourceConn
+	query := url.Values{
+		"type":   {"Payment"},
+		"result": {"tesSUCCESS"},
+		"limit":  {strconv.Itoa(200)},
 	}
+	uri := fmt.Sprintf("/accounts/%s/transactions", url.PathEscape(address))
 
 	var res Response
-	err = json.NewDecoder(httpRes.Body).Decode(&res)
-
-	if res.Result != "success" {
-		err = errors.E("Failed to get tx", errors.TypePlatformRequest, errors.Params{"url": uri})
-		logger.Error(err)
-		return nil, blockatlas.ErrSourceConn
+	err := c.Get(&res, uri, query)
+	if err != nil {
+		return nil, err
 	}
-
 	return res.Transactions, nil
 }
 
 func (c *Client) GetCurrentBlock() (int64, error) {
-	uri := fmt.Sprintf("%s/ledgers", c.BaseURL)
-
-	res, err := c.HTTPClient.Get(uri)
-	if err != nil {
-		return 0, errors.E(err, errors.TypePlatformRequest, errors.Params{"url": uri})
-	}
-	defer res.Body.Close()
-
 	var ledgers LedgerResponse
-	err = json.NewDecoder(res.Body).Decode(&ledgers)
+	err := c.Get(&ledgers, "/ledgers", nil)
 	if err != nil {
-		return 0, errors.E(err, errors.TypePlatformUnmarshal, errors.Params{"url": uri})
-	} else {
-		return ledgers.Ledger.LedgerIndex, nil
+		return 0, err
 	}
+	return ledgers.Ledger.LedgerIndex, nil
 }
 
 func (c *Client) GetBlockByNumber(num int64) ([]Tx, error) {
-	uri := fmt.Sprintf("%s/ledgers/%d?transactions=true&binary=false&expand=true&limit=1000", c.BaseURL, num)
-
-	res, err := c.HTTPClient.Get(uri)
-	if err != nil {
-		return nil, errors.E(err, errors.TypePlatformRequest, errors.Params{"url": uri})
+	query := url.Values{
+		"transactions": {"true"},
+		"binary":       {"false"},
+		"expand":       {"true"},
+		"limit":        {strconv.Itoa(100)},
 	}
-	defer res.Body.Close()
+	uri := fmt.Sprintf("/ledgers/%d", num)
 
-	response := new(LedgerResponse)
-	err = json.NewDecoder(res.Body).Decode(response)
+	var res LedgerResponse
+	err := c.Get(&res, uri, query)
 	if err != nil {
-		return nil, errors.E(err, errors.TypePlatformUnmarshal, errors.Params{"url": uri})
+		return nil, err
 	}
-
-	return response.Ledger.Transactions, nil
+	return res.Ledger.Transactions, nil
 }
