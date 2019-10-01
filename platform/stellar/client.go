@@ -16,7 +16,7 @@ func (c *Client) GetTxsOfAddress(address string) ([]Payment, error) {
 		"order": {"desc"},
 		"limit": {"25"},
 	}
-	path := fmt.Sprintf("/accounts/%s/payments", url.PathEscape(address))
+	path := fmt.Sprintf("accounts/%s/payments", url.PathEscape(address))
 
 	var payments PaymentsPage
 	err := c.Get(&payments, path, query)
@@ -32,7 +32,7 @@ func (c *Client) CurrentBlockNumber() (int64, error) {
 		"limit": {"1"},
 	}
 	var ledgers LedgersPage
-	err := c.Get(&ledgers, "/ledgers", query)
+	err := c.Get(&ledgers, "ledgers", query)
 	if err != nil {
 		return 0, nil
 	}
@@ -53,7 +53,7 @@ func (c *Client) GetBlockByNumber(num int64) (*Block, error) {
 		"order": {"desc"},
 		"limit": {"100"},
 	}
-	path := fmt.Sprintf("/ledgers/%d/payments", num)
+	path := fmt.Sprintf("ledgers/%d/payments", num)
 
 	var payments PaymentsPage
 	err = c.Get(&payments, path, query)
@@ -64,7 +64,7 @@ func (c *Client) GetBlockByNumber(num int64) (*Block, error) {
 }
 
 func (c *Client) getLedger(num int64) (ledger *Ledger, err error) {
-	path := fmt.Sprintf("/ledgers/%d", num)
+	path := fmt.Sprintf("ledgers/%d", num)
 	err = c.Get(&ledger, path, nil)
 	return
 }
