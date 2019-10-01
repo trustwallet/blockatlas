@@ -6,7 +6,6 @@ import (
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/util"
-	"net/http"
 	"strconv"
 	"time"
 )
@@ -18,10 +17,8 @@ type Platform struct {
 
 func (p *Platform) Init() error {
 	handle := coin.Coins[p.CoinIndex].Handle
-	p.client.API = viper.GetString(fmt.Sprintf("%s.api", handle))
-	p.client.HTTP = &http.Client{
-		Timeout: 2 * time.Second,
-	}
+	api := fmt.Sprintf("%s.api", handle)
+	p.client = Client{blockatlas.InitClient(viper.GetString(api))}
 	return nil
 }
 

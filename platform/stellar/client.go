@@ -1,83 +1,70 @@
 package stellar
 
 import (
-	"encoding/json"
 	"fmt"
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
-	"net/http"
 	"net/url"
 )
 
 type Client struct {
-	HTTP *http.Client
-	API  string
+	blockatlas.Request
 }
 
-func (c *Client) GetTxsOfAddress(address string) (txs []Payment, err error) {
-	path := fmt.Sprintf("%s/accounts/%s/payments?order=desc&limit=25",
-		c.API, url.PathEscape(address))
-	return c.getTxs(path)
-}
-
-func (c *Client) getTxs(path string) (txs []Payment, err error) {
-	res, err := http.Get(path)
-	if err != nil {
-		return nil, errors.E(err, errors.TypePlatformRequest, errors.Params{"url": path})
+func (c *Client) GetTxsOfAddress(address string) ([]Payment, error) {
+	query := url.Values{
+		"order": {"desc"},
+		"limit": {"25"},
 	}
-	defer res.Body.Close()
+	path := fmt.Sprintf("/accounts/%s/payments", url.PathEscape(address))
 
 	var payments PaymentsPage
-	dec := json.NewDecoder(res.Body)
-	err = dec.Decode(&payments)
+	err := c.Get(&payments, path, query)
 	if err != nil {
-		return nil, errors.E(err, errors.TypePlatformUnmarshal, errors.Params{"url": path})
+		return nil, err
 	}
-
 	return payments.Embedded.Records, nil
 }
 
-func (c *Client) CurrentBlockNumber() (num int64, err error) {
-	path := fmt.Sprintf("%s/ledgers?order=desc&limit=1", c.API)
-	res, err := http.Get(path)
-	if err != nil {
-		return num, errors.E(err, errors.TypePlatformRequest, errors.Params{"url": path})
+func (c *Client) CurrentBlockNumber() (int64, error) {
+	query := url.Values{
+		"order": {"desc"},
+		"limit": {"1"},
 	}
-	defer res.Body.Close()
 	var ledgers LedgersPage
-	dec := json.NewDecoder(res.Body)
-	err = dec.Decode(&ledgers)
+	err := c.Get(&ledgers, "/ledgers", query)
 	if err != nil {
-		return num, errors.E(err, errors.TypePlatformUnmarshal, errors.Params{"url": path})
+		return 0, nil
 	}
 
+	if len(ledgers.Embedded.Records) == 0 {
+		return 0, errors.E("CurrentBlockNumber: Records is empty", errors.TypePlatformUnmarshal)
+	}
 	return ledgers.Embedded.Records[0].Sequence, nil
 }
 
-func (c *Client) GetBlockByNumber(num int64) (block *Block, err error) {
+func (c *Client) GetBlockByNumber(num int64) (*Block, error) {
 	ledger, err := c.getLedger(num)
 	if err != nil {
 		return nil, err
 	}
-	path := fmt.Sprintf("%s/ledgers/%d/payments?limit=100&order=desc", c.API, num)
-	payments, err := c.getTxs(path)
+
+	query := url.Values{
+		"order": {"desc"},
+		"limit": {"100"},
+	}
+	path := fmt.Sprintf("/ledgers/%d/payments", num)
+
+	var payments PaymentsPage
+	err = c.Get(&payments, path, query)
 	if err != nil {
 		return nil, err
 	}
-
-	return &Block{Ledger: *ledger, Payments: payments}, nil
+	return &Block{Ledger: *ledger, Payments: payments.Embedded.Records}, nil
 }
 
 func (c *Client) getLedger(num int64) (ledger *Ledger, err error) {
-	path := fmt.Sprintf("%s/ledgers/%d", c.API, num)
-	res, err := http.Get(path)
-	if err != nil {
-		return nil, errors.E(err, errors.TypePlatformRequest, errors.Params{"url": path})
-	}
-	defer res.Body.Close()
-	dec := json.NewDecoder(res.Body)
-	err = dec.Decode(&ledger)
-	if err != nil {
-		return nil, errors.E(err, errors.TypePlatformUnmarshal, errors.Params{"url": path})
-	}
-	return ledger, nil
+	path := fmt.Sprintf("/ledgers/%d", num)
+	err = c.Get(&ledger, path, nil)
+	return
 }
