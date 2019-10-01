@@ -11,16 +11,6 @@ type Client struct {
 	blockatlas.Request
 }
 
-func InitClient(baseUrl string) Client {
-	return Client{
-		Request: blockatlas.Request{
-			HttpClient:   blockatlas.DefaultClient,
-			ErrorHandler: blockatlas.DefaultErrorHandler,
-			BaseUrl:      baseUrl,
-		},
-	}
-}
-
 // GetCurrentBlockInfo get request function which returns current  blockchain status model
 func (c *Client) GetCurrentBlockInfo() (cbi *CurrentBlockInfo, err error) {
 	err = c.Get(&cbi, "clientInit", nil)

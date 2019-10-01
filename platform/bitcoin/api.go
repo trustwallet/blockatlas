@@ -30,7 +30,7 @@ func UtxoPlatform(index uint) *Platform {
 }
 
 func (p *Platform) Init() error {
-	p.client = InitClient(viper.GetString(p.ConfigKey()))
+	p.client = Client{blockatlas.InitClient(viper.GetString(p.ConfigKey()))}
 	return nil
 }
 

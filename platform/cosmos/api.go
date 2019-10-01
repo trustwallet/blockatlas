@@ -17,7 +17,7 @@ type Platform struct {
 }
 
 func (p *Platform) Init() error {
-	p.client = InitClient(viper.GetString("cosmos.api"))
+	p.client = Client{blockatlas.InitClient(viper.GetString("cosmos.api"))}
 	return nil
 }
 

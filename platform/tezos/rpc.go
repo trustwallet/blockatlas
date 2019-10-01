@@ -9,16 +9,6 @@ type RpcClient struct {
 	blockatlas.Request
 }
 
-func InitRpcClient(baseUrl string) RpcClient {
-	return RpcClient{
-		Request: blockatlas.Request{
-			HttpClient:   blockatlas.DefaultClient,
-			ErrorHandler: blockatlas.DefaultErrorHandler,
-			BaseUrl:      baseUrl,
-		},
-	}
-}
-
 func (c *RpcClient) GetValidators() (validators []Validator, err error) {
 	err = c.Get(&validators, "chains/main/blocks/head~32768/votes/listings", nil)
 	if err != nil {
