@@ -15,7 +15,7 @@ func (c *Client) GetTxs(address string, limit int) (transactions []Transaction, 
 	query := url.Values{
 		"limit": {strconv.Itoa(limit)},
 	}
-	uri := fmt.Sprintf("/middleware/transactions/account/%s", address)
+	uri := fmt.Sprintf("middleware/transactions/account/%s", address)
 
 	err = c.Get(&transactions, uri, query)
 	if err != nil {

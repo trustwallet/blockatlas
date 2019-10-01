@@ -16,7 +16,7 @@ func (c *Client) GetAddressTransactions(address string) ([]Tx, error) {
 		"count":   {strconv.FormatInt(blockatlas.TxPerPage, 10)},
 	}
 	var res Response
-	err := c.Get(&res, "/address/txList", query)
+	err := c.Get(&res, "address/txList", query)
 	if err != nil {
 		return nil, err
 	}
