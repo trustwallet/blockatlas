@@ -32,7 +32,7 @@ func GetValidatorsInfo(coin coin.Coin) ([]AssetValidator, error) {
 		HttpClient:   blockatlas.DefaultClient,
 		ErrorHandler: blockatlas.DefaultErrorHandler,
 	}
-	err := request.Get(&results, "/validators/list.json", nil)
+	err := request.Get(&results, "validators/list.json", nil)
 	if err != nil {
 		return nil, errors.E(err, errors.Params{"coin": coin.Handle})
 	}
