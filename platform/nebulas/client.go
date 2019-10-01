@@ -1,7 +1,6 @@
 package nebulas
 
 import (
-	"fmt"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"net/url"
 	"strconv"
@@ -23,13 +22,12 @@ func (c *Client) GetTxs(address string, page int) ([]Transaction, error) {
 }
 
 func (c *Client) GetLatestBlock() (int64, error) {
-	path := fmt.Sprintf("/block")
 	values := url.Values{
 		"type": {"newblock"},
 	}
 	var response NewBlockResponse
 
-	err := c.Get(&response, path, values)
+	err := c.Get(&response, "block", values)
 	if err != nil || len(response.Data) == 0 {
 		return 0, err
 	}
