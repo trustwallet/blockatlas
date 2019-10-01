@@ -26,8 +26,8 @@ type Platform struct {
 func (p *Platform) Init() error {
 	handle := coin.Coins[p.CoinIndex].Handle
 
-	p.client.HTTPClient = blockatlas.DefaultClient
-	p.client.BaseURL = viper.GetString(fmt.Sprintf("%s.api", handle))
+	coinVar := fmt.Sprintf("%s.api", handle)
+	p.client = Client{blockatlas.InitClient(viper.GetString(coinVar))}
 
 	collectionsApiVar := fmt.Sprintf("%s.collections_api", handle)
 	p.collectionsClient = CollectionsClient{blockatlas.InitClient(viper.GetString(collectionsApiVar))}
