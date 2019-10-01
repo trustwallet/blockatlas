@@ -14,8 +14,7 @@ type Platform struct {
 }
 
 func (p *Platform) Init() error {
-	p.client.URL = viper.GetString("aeternity.api")
-	p.client.HTTPClient = blockatlas.DefaultClient
+	p.client = InitClient(viper.GetString("aeternity.api"))
 	return nil
 }
 
