@@ -16,8 +16,5 @@ func (c *Client) GetTxsOfAddress(address string, num int) (txPage *TxPage, err e
 		"size":           {strconv.Itoa(num)},
 	}
 	err = c.Get(&txPage, "/getTransactionsByAddress", query)
-	if err != nil {
-		return
-	}
 	return
 }
