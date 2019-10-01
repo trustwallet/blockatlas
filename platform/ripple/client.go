@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"net/url"
-	"strconv"
 )
 
 type Client struct {
@@ -15,7 +14,7 @@ func (c *Client) GetTxsOfAddress(address string) ([]Tx, error) {
 	query := url.Values{
 		"type":   {"Payment"},
 		"result": {"tesSUCCESS"},
-		"limit":  {strconv.Itoa(200)},
+		"limit":  {"200"},
 	}
 	uri := fmt.Sprintf("/accounts/%s/transactions", url.PathEscape(address))
 
@@ -41,7 +40,7 @@ func (c *Client) GetBlockByNumber(num int64) ([]Tx, error) {
 		"transactions": {"true"},
 		"binary":       {"false"},
 		"expand":       {"true"},
-		"limit":        {strconv.Itoa(100)},
+		"limit":        {"100"},
 	}
 	uri := fmt.Sprintf("/ledgers/%d", num)
 
