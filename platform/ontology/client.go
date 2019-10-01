@@ -9,16 +9,6 @@ type Client struct {
 	blockatlas.Request
 }
 
-func InitClient(baseUrl string) Client {
-	return Client{
-		Request: blockatlas.Request{
-			HttpClient:   blockatlas.DefaultClient,
-			ErrorHandler: blockatlas.DefaultErrorHandler,
-			BaseUrl:      baseUrl,
-		},
-	}
-}
-
 // Explorer API max returned transactions per page
 const TxPerPage = 20
 
