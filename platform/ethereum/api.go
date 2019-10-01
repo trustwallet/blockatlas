@@ -29,9 +29,12 @@ func (p *Platform) Init() error {
 	p.client.HTTPClient = blockatlas.DefaultClient
 	p.client.BaseURL = viper.GetString(fmt.Sprintf("%s.api", handle))
 
-	p.collectionsClient.HTTPClient = blockatlas.DefaultClient
-	p.collectionsClient.CollectionsURL = viper.GetString(fmt.Sprintf("%s.collections_api", handle))
-	p.collectionsClient.CollectionsApiKey = viper.GetString(fmt.Sprintf("%s.collections_api_key", handle))
+	collectionsApiVar := fmt.Sprintf("%s.collections_api", handle)
+	p.collectionsClient = CollectionsClient{blockatlas.InitClient(viper.GetString(collectionsApiVar))}
+
+	collectionsApiKeyVar := fmt.Sprintf("%s.collections_api_key", handle)
+	p.collectionsClient.Headers["X-API-KEY"] = viper.GetString(collectionsApiKeyVar)
+
 	return nil
 }
 
