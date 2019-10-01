@@ -15,12 +15,14 @@ import (
 
 type Request struct {
 	BaseUrl      string
+	Headers      map[string]string
 	HttpClient   *http.Client
 	ErrorHandler func(res *http.Response, uri string) error
 }
 
 func InitClient(baseUrl string) Request {
 	return Request{
+		Headers:      make(map[string]string),
 		HttpClient:   DefaultClient,
 		ErrorHandler: DefaultErrorHandler,
 		BaseUrl:      baseUrl,
@@ -55,11 +57,15 @@ func (r *Request) Post(result interface{}, path string, body interface{}) error 
 
 func (r *Request) Execute(method string, url string, body io.Reader, result interface{}) error {
 	start := time.Now()
-
 	req, err := http.NewRequest(method, url, body)
 	if err != nil {
 		return errors.E(err, errors.TypePlatformRequest, errors.Params{"url": url, "method": method})
 	}
+
+	for key, value := range r.Headers {
+		req.Header.Set(key, value)
+	}
+
 	res, err := r.HttpClient.Do(req)
 	if err != nil {
 		return errors.E(err, errors.TypePlatformRequest, errors.Params{"url": url, "method": method})
