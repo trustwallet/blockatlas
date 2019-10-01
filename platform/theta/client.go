@@ -17,7 +17,7 @@ func (c *Client) FetchAddressTransactions(address string) ([]Tx, error) {
 		"limitNumber": {"100"},
 		"isEqualType": {"true"},
 	}
-	uri := fmt.Sprintf("/accounttx/%s", url.PathEscape(address))
+	uri := fmt.Sprintf("accounttx/%s", url.PathEscape(address))
 	var transfers AccountTxList
 	err := c.Get(&transfers, uri, query)
 	if err != nil {
