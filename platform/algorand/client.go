@@ -8,15 +8,14 @@ import (
 
 type Client struct {
 	blockatlas.Request
-	URL string
 }
 
-func InitClient(URL string) Client {
+func InitClient(baseUrl string) Client {
 	return Client{
 		Request: blockatlas.Request{
 			HttpClient:   blockatlas.DefaultClient,
 			ErrorHandler: blockatlas.DefaultErrorHandler,
-			BaseUrl:      URL,
+			BaseUrl:      baseUrl,
 		},
 	}
 }
