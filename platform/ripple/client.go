@@ -16,7 +16,7 @@ func (c *Client) GetTxsOfAddress(address string) ([]Tx, error) {
 		"result": {"tesSUCCESS"},
 		"limit":  {"200"},
 	}
-	uri := fmt.Sprintf("/accounts/%s/transactions", url.PathEscape(address))
+	uri := fmt.Sprintf("accounts/%s/transactions", url.PathEscape(address))
 
 	var res Response
 	err := c.Get(&res, uri, query)
@@ -28,7 +28,7 @@ func (c *Client) GetTxsOfAddress(address string) ([]Tx, error) {
 
 func (c *Client) GetCurrentBlock() (int64, error) {
 	var ledgers LedgerResponse
-	err := c.Get(&ledgers, "/ledgers", nil)
+	err := c.Get(&ledgers, "ledgers", nil)
 	if err != nil {
 		return 0, err
 	}
@@ -42,7 +42,7 @@ func (c *Client) GetBlockByNumber(num int64) ([]Tx, error) {
 		"expand":       {"true"},
 		"limit":        {"100"},
 	}
-	uri := fmt.Sprintf("/ledgers/%d", num)
+	uri := fmt.Sprintf("ledgers/%d", num)
 
 	var res LedgerResponse
 	err := c.Get(&res, uri, query)
