@@ -2,43 +2,25 @@ package nimiq
 
 import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/pkg/errors"
-	"github.com/trustwallet/blockatlas/pkg/logger"
-	"github.com/ybbus/jsonrpc"
+	"strconv"
 )
 
 type Client struct {
-	BaseURL   string
-	rpcClient jsonrpc.RPCClient
+	blockatlas.Request
 }
 
-func (c *Client) Init() {
-	c.rpcClient = jsonrpc.NewClient(c.BaseURL)
-}
-
-func (c *Client) GetTxsOfAddress(address string, count int) (txs []Tx, err error) {
-	err = c.rpcClient.CallFor(&txs, "getTransactionsByAddress", address, count)
-	if jErr, ok := err.(*jsonrpc.RPCError); ok {
-		if jErr.Code == 1 {
-			return nil, blockatlas.ErrInvalidAddr
-		} else {
-			err = errors.E(err, errors.TypePlatformRequest)
-			logger.Error(err, "Nimiq: Failed to get transactions")
-			return nil, blockatlas.ErrSourceConn
-		}
-	} else if err != nil {
-		return nil, err
-	}
+func (c *Client) GetTxsOfAddress(address string, count int) (tx []Tx, err error) {
+	err = c.RpcCall(&tx, "getTransactionsByAddress", []string{address, strconv.Itoa(count)})
 	return
 }
 
 func (c *Client) CurrentBlockNumber() (num int64, err error) {
-	err = c.rpcClient.CallFor(&num, "blockNumber")
+	err = c.RpcCall(&num, "blockNumber", []string{})
 	return
 }
 
-func (c *Client) GetBlockByNumber(num int64) (block *Block, err error) {
-	block = new(Block)
-	err = c.rpcClient.CallFor(block, "getBlockByNumber", num, true)
+func (c *Client) GetBlockByNumber(num int64) (b *Block, err error) {
+	n := strconv.Itoa(int(num))
+	err = c.RpcCall(&b, "getBlockByNumber", []string{n, "true"})
 	return
 }
