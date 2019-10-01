@@ -3,42 +3,69 @@ package nimiq
 import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
-	"github.com/trustwallet/blockatlas/pkg/logger"
-	"github.com/ybbus/jsonrpc"
+	"strconv"
 )
 
 type Client struct {
-	BaseURL   string
-	rpcClient jsonrpc.RPCClient
+	blockatlas.Request
 }
 
-func (c *Client) Init() {
-	c.rpcClient = jsonrpc.NewClient(c.BaseURL)
-}
+const (
+	JsonRpcVersion = "2.0"
+)
 
-func (c *Client) GetTxsOfAddress(address string, count int) (txs []Tx, err error) {
-	err = c.rpcClient.CallFor(&txs, "getTransactionsByAddress", address, count)
-	if jErr, ok := err.(*jsonrpc.RPCError); ok {
-		if jErr.Code == 1 {
-			return nil, blockatlas.ErrInvalidAddr
-		} else {
-			err = errors.E(err, errors.TypePlatformRequest)
-			logger.Error(err, "Nimiq: Failed to get transactions")
-			return nil, blockatlas.ErrSourceConn
-		}
-	} else if err != nil {
+func (c *Client) GetTxsOfAddress(address string, count int) ([]Tx, error) {
+	req := &Request{
+		JsonRpc: JsonRpcVersion,
+		Method:  "getTransactionsByAddress",
+		Params:  []string{address, strconv.Itoa(count)},
+		Id:      address,
+	}
+	var resp *TxResponse
+	err := c.Post(&resp, "", req)
+	if err != nil {
 		return nil, err
 	}
-	return
+	return resp.Result, err
 }
 
-func (c *Client) CurrentBlockNumber() (num int64, err error) {
-	err = c.rpcClient.CallFor(&num, "blockNumber")
-	return
+func (c *Client) CurrentBlockNumber() (int64, error) {
+	r, err := c.rpcRequest("blockNumber", "block", []string{})
+	if err != nil {
+		return 0, err
+	}
+	i, ok := r.(float64)
+	if !ok {
+		return 0, errors.E("CurrentBlockNumber: invalid result")
+	}
+	return int64(i), nil
 }
 
-func (c *Client) GetBlockByNumber(num int64) (block *Block, err error) {
-	block = new(Block)
-	err = c.rpcClient.CallFor(block, "getBlockByNumber", num, true)
-	return
+func (c *Client) GetBlockByNumber(num int64) (*Block, error) {
+	n := strconv.Itoa(int(num))
+	req := &Request{
+		JsonRpc: JsonRpcVersion,
+		Method:  "getBlockByNumber",
+		Params:  []string{n, "true"},
+		Id:      n,
+	}
+	var resp *BlockResponse
+	err := c.Post(&resp, "", req)
+	if err != nil {
+		return nil, err
+	}
+	return resp.Result, err
+}
+
+func (c *Client) rpcRequest(method, id string, params []string) (interface{}, error) {
+	req := &Request{JsonRpc: JsonRpcVersion, Method: method, Params: params, Id: id}
+	var resp *Response
+	err := c.Post(&resp, "", req)
+	if err != nil {
+		return nil, err
+	}
+	if resp.Result == nil {
+		return nil, errors.E("Invalid JSON-RPC response", errors.Params{"method": method, "params": params, "id": id})
+	}
+	return resp.Result, err
 }

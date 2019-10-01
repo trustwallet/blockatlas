@@ -4,6 +4,39 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 )
 
+type Request struct {
+	JsonRpc string   `json:"jsonrpc"`
+	Method  string   `json:"method"`
+	Params  []string `json:"params"`
+	Id      string   `json:"id"`
+}
+
+type Response struct {
+	JsonRpc string      `json:"jsonrpc"`
+	Error   Error       `json:"error,omitempty"`
+	Result  interface{} `json:"result,omitempty"`
+	Id      string      `json:"id"`
+}
+
+type Error struct {
+	Code    int    `json:"code"`
+	Message string `json:"message"`
+}
+
+type TxResponse struct {
+	JsonRpc string `json:"jsonrpc"`
+	Error   Error  `json:"error,omitempty"`
+	Result  []Tx   `json:"result,omitempty"`
+	Id      string `json:"id"`
+}
+
+type BlockResponse struct {
+	JsonRpc string `json:"jsonrpc"`
+	Error   Error  `json:"error,omitempty"`
+	Result  *Block `json:"result,omitempty"`
+	Id      string `json:"id"`
+}
+
 type Tx struct {
 	Hash          string            `json:"hash"`
 	BlockHash     string            `json:"blockHash"`
