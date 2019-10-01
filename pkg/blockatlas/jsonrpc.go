@@ -18,7 +18,7 @@ type RpcRequest struct {
 
 type RpcResponse struct {
 	JsonRpc string      `json:"jsonrpc"`
-	Error   RpcError    `json:"error,omitempty"`
+	Error   *RpcError   `json:"error,omitempty"`
 	Result  interface{} `json:"result,omitempty"`
 	Id      string      `json:"id"`
 }
@@ -41,12 +41,15 @@ func (r *RpcResponse) GetObject(toType interface{}) error {
 	return nil
 }
 
-func (c *Request) RpcCall(result interface{}, method string, params []string) error {
+func (r *Request) RpcCall(result interface{}, method string, params []string) error {
 	req := &RpcRequest{JsonRpc: JsonRpcVersion, Method: method, Params: params, Id: method}
 	var resp *RpcResponse
-	err := c.Post(&resp, "", req)
+	err := r.Post(&resp, "", req)
 	if err != nil {
 		return err
+	}
+	if resp.Error != nil {
+		return errors.E("RPC Call error", errors.Params{"method": method, "error_code": resp.Error.Code, "error_message": resp.Error.Message})
 	}
 	return resp.GetObject(result)
 }
