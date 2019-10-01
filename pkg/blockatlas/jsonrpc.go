@@ -12,15 +12,15 @@ const (
 type RpcRequest struct {
 	JsonRpc string   `json:"jsonrpc"`
 	Method  string   `json:"method"`
-	Params  []string `json:"params"`
-	Id      string   `json:"id"`
+	Params  []string `json:"params,omitempty"`
+	Id      string   `json:"id,omitempty"`
 }
 
 type RpcResponse struct {
 	JsonRpc string      `json:"jsonrpc"`
 	Error   *RpcError   `json:"error,omitempty"`
 	Result  interface{} `json:"result,omitempty"`
-	Id      string      `json:"id"`
+	Id      string      `json:"id,omitempty"`
 }
 
 type RpcError struct {

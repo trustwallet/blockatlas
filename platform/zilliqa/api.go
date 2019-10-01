@@ -3,21 +3,21 @@ package zilliqa
 import (
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/ybbus/jsonrpc"
 	"strconv"
 
 	"github.com/spf13/viper"
 )
 
 type Platform struct {
-	client Client
+	client    Client
+	rpcClient RpcClient
 }
 
 func (p *Platform) Init() error {
-	p.client.BaseURL = viper.GetString("zilliqa.api")
-	p.client.APIKey = viper.GetString("zilliqa.key")
-	p.client.HTTPClient = blockatlas.DefaultClient
-	p.client.RPCClient = jsonrpc.NewClient(viper.GetString("zilliqa.rpc"))
+	p.client = Client{blockatlas.InitClient(viper.GetString("zilliqa.api"))}
+	p.client.Headers["X-APIKEY"] = viper.GetString("zilliqa.key")
+
+	p.rpcClient = RpcClient{blockatlas.InitClient(viper.GetString("zilliqa.rpc"))}
 	return nil
 }
 
@@ -26,7 +26,7 @@ func (p *Platform) Coin() coin.Coin {
 }
 
 func (p *Platform) CurrentBlockNumber() (int64, error) {
-	info, err := p.client.GetBlockchainInfo()
+	info, err := p.rpcClient.GetBlockchainInfo()
 	if err != nil {
 		return 0, err
 	}
@@ -40,7 +40,7 @@ func (p *Platform) CurrentBlockNumber() (int64, error) {
 
 func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 	var normalized []blockatlas.Tx
-	txs, err := p.client.GetTxInBlock(num)
+	txs, err := p.rpcClient.GetTxInBlock(num)
 	if err != nil {
 		return nil, err
 	}
