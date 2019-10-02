@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/gincache"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/pkg/metrics"
 	services "github.com/trustwallet/blockatlas/services/assets"
@@ -108,7 +109,7 @@ func makeStakingValidatorsRoute(router gin.IRouter, api blockatlas.Platform) {
 		return
 	}
 
-	router.GET("/staking/validators", CacheMiddleware(15, time.Hour, func(c *gin.Context) {
+	router.GET("/staking/validators", gincache.CacheMiddleware(15, time.Hour, func(c *gin.Context) {
 		results, err := services.GetValidators(stakingAPI)
 		if err != nil {
 			logger.Error(err)

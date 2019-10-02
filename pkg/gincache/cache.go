@@ -1,4 +1,4 @@
-package api
+package gincache
 
 import (
 	"fmt"
