@@ -2,6 +2,8 @@ package api
 
 import (
 	"github.com/chenjiandongx/ginprom"
+	"github.com/gin-contrib/cache"
+	"github.com/gin-contrib/cache/persistence"
 	"github.com/gin-gonic/gin"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
@@ -9,7 +11,10 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/metrics"
 	services "github.com/trustwallet/blockatlas/services/assets"
 	"net/http"
+	"time"
 )
+
+var store = persistence.NewInMemoryStore(time.Second)
 
 // @Summary Get Transactions
 // @ID tx_v1
@@ -107,7 +112,8 @@ func makeStakingValidatorsRoute(router gin.IRouter, api blockatlas.Platform) {
 		return
 	}
 
-	router.GET("/staking/validators", func(c *gin.Context) {
+	// Cached Page
+	router.GET("/staking/validators", cache.CachePage(store, time.Hour, func(c *gin.Context) {
 		results, err := services.GetValidators(stakingAPI)
 		if err != nil {
 			logger.Error(err)
@@ -115,7 +121,7 @@ func makeStakingValidatorsRoute(router gin.IRouter, api blockatlas.Platform) {
 			return
 		}
 		RenderSuccess(c, blockatlas.DocsResponse{Docs: results})
-	})
+	}))
 }
 
 // @Summary Get Stake Delegations
