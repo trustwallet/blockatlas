@@ -9,6 +9,7 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/metrics"
 	services "github.com/trustwallet/blockatlas/services/assets"
 	"net/http"
+	"time"
 )
 
 // @Summary Get Transactions
@@ -107,7 +108,7 @@ func makeStakingValidatorsRoute(router gin.IRouter, api blockatlas.Platform) {
 		return
 	}
 
-	router.GET("/staking/validators", func(c *gin.Context) {
+	router.GET("/staking/validators", CacheMiddleware(15, time.Hour, func(c *gin.Context) {
 		results, err := services.GetValidators(stakingAPI)
 		if err != nil {
 			logger.Error(err)
@@ -115,7 +116,7 @@ func makeStakingValidatorsRoute(router gin.IRouter, api blockatlas.Platform) {
 			return
 		}
 		RenderSuccess(c, blockatlas.DocsResponse{Docs: results})
-	})
+	}))
 }
 
 // @Summary Get Stake Delegations
