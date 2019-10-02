@@ -14,8 +14,6 @@ import (
 	"time"
 )
 
-var store = persistence.NewInMemoryStore(time.Second)
-
 // @Summary Get Transactions
 // @ID tx_v1
 // @Description Get transactions from the address
@@ -113,6 +111,7 @@ func makeStakingValidatorsRoute(router gin.IRouter, api blockatlas.Platform) {
 	}
 
 	// Cached Page
+	var store = persistence.NewInMemoryStore(60 * time.Second)
 	router.GET("/staking/validators", cache.CachePage(store, time.Hour, func(c *gin.Context) {
 		results, err := services.GetValidators(stakingAPI)
 		if err != nil {
