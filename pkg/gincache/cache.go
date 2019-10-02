@@ -100,7 +100,7 @@ func CacheMiddleware(expiration time.Duration, handle gin.HandlerFunc) gin.Handl
 		url := c.Request.URL
 		key := url.Path
 		mc, err := getCacheResponse(key)
-		if err != nil || mc.Data == nil || mc.Status > 300{
+		if err != nil || mc.Data == nil {
 			writer := newCachedWriter(expiration, c.Writer, key)
 			c.Writer = writer
 			handle(c)
