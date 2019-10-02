@@ -93,8 +93,7 @@ func (w *cachedWriter) WriteString(data string) (n int, err error) {
 	return ret, err
 }
 
-// CacheMiddleware encapsulates a gin handler function and caches the response with an expiration time and
-// the minimal length of response to start to cache that.
+// CacheMiddleware encapsulates a gin handler function and caches the response with an expiration time.
 func CacheMiddleware(expiration time.Duration, handle gin.HandlerFunc) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		url := c.Request.URL
