@@ -1,6 +1,7 @@
 package api
 
 import (
+	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -49,5 +50,11 @@ func (e *ApiError) Params(code int, msg string) *ApiError {
 }
 
 func (e *ApiError) Render() {
+	var msg map[string]string
+	err := json.Unmarshal([]byte(e.StatusMessage), &msg)
+	if err == nil {
+		e.AbortWithStatusJSON(e.StatusCode, msg)
+		return
+	}
 	e.AbortWithStatusJSON(e.StatusCode, e.StatusMessage)
 }

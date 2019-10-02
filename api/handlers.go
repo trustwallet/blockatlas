@@ -109,7 +109,7 @@ func makeStakingValidatorsRoute(router gin.IRouter, api blockatlas.Platform) {
 		return
 	}
 
-	router.GET("/staking/validators", gincache.CacheMiddleware(15, time.Hour, func(c *gin.Context) {
+	router.GET("/staking/validators", gincache.CacheMiddleware(time.Hour, func(c *gin.Context) {
 		results, err := services.GetValidators(stakingAPI)
 		if err != nil {
 			logger.Error(err)

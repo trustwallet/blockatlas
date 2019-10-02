@@ -95,12 +95,12 @@ func (w *cachedWriter) WriteString(data string) (n int, err error) {
 
 // CacheMiddleware encapsulates a gin handler function and caches the response with an expiration time and
 // the minimal length of response to start to cache that.
-func CacheMiddleware(minLength int, expiration time.Duration, handle gin.HandlerFunc) gin.HandlerFunc {
+func CacheMiddleware(expiration time.Duration, handle gin.HandlerFunc) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		url := c.Request.URL
 		key := url.Path
 		mc, err := getCacheResponse(key)
-		if err != nil || mc.Data == nil || len(mc.Data) < minLength {
+		if err != nil || mc.Data == nil || mc.Status > 300{
 			writer := newCachedWriter(expiration, c.Writer, key)
 			c.Writer = writer
 			handle(c)
