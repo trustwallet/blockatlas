@@ -194,7 +194,10 @@ func (s *Storage) updateWebHooks(subs []observer.Subscription, operation webHook
 			return err
 		}
 	}
-	return s.saveHashMap(keyObservers, fields)
+	if len(fields) > 0 {
+		return s.saveHashMap(keyObservers, fields)
+	}
+	return nil
 }
 
 func (s *Storage) deleteHashMapKey(db string, fields []string) error {
