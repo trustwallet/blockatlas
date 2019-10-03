@@ -37,7 +37,7 @@ func TestWrite(t *testing.T) {
 
 func TestCachePage(t *testing.T) {
 	router := gin.New()
-	router.GET("/cache_ping", CacheMiddleware(0, time.Second*3, func(c *gin.Context) {
+	router.GET("/cache_ping", CacheMiddleware(time.Second*3, func(c *gin.Context) {
 		c.String(200, "pong "+fmt.Sprint(time.Now().UnixNano()))
 	}))
 
@@ -51,7 +51,7 @@ func TestCachePage(t *testing.T) {
 
 func TestCachePageExpire(t *testing.T) {
 	router := gin.New()
-	router.GET("/cache_ping", CacheMiddleware(0, time.Second, func(c *gin.Context) {
+	router.GET("/cache_ping", CacheMiddleware(time.Second, func(c *gin.Context) {
 		c.String(200, "pong "+fmt.Sprint(time.Now().UnixNano()))
 	}))
 
