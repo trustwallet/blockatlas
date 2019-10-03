@@ -50,7 +50,7 @@ func (e *ApiError) Params(code int, msg string) *ApiError {
 }
 
 func (e *ApiError) Render() {
-	var msg map[string]string
+	var msg map[string]interface{}
 	err := json.Unmarshal([]byte(e.StatusMessage), &msg)
 	if err == nil {
 		e.AbortWithStatusJSON(e.StatusCode, msg)
