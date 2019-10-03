@@ -19,7 +19,7 @@ func GetValidators(api blockatlas.StakeAPI) ([]blockatlas.StakeValidator, error)
 
 	validators, err := api.GetValidators()
 	if err != nil {
-		return nil, errors.E(err, "unable to fetch validators for staking")
+		return nil, err
 	}
 	results := NormalizeValidators(validators, assetsValidators, api.Coin())
 	return results, nil
