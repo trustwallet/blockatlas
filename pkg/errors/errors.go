@@ -66,7 +66,7 @@ func (e *Error) Meta() string {
 func (e *Error) JSON() interface{} {
 	p := Params{}
 	if e.meta != nil {
-		p["meta"] = e.Meta()
+		p["meta"] = e.meta
 	}
 	if e.Err != nil {
 		p["error"] = e.Err.Error()
