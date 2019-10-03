@@ -31,6 +31,10 @@ func (o *Observer) run(events chan<- Event, blocks <-chan *blockatlas.Block) {
 
 func (o *Observer) processBlock(events chan<- Event, block *blockatlas.Block) {
 	txMap := GetTxs(block)
+	if len(txMap) == 0 {
+		return
+	}
+
 	// Build list of unique addresses
 	var addresses []string
 	for address := range txMap {
