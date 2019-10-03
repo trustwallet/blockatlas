@@ -31,12 +31,12 @@ type RpcError struct {
 func (r *RpcResponse) GetObject(toType interface{}) error {
 	js, err := json.Marshal(r.Result)
 	if err != nil {
-		return errors.E(err, "json-rpc GetObject Marshal error")
+		return errors.E(err, "json-rpc GetObject Marshal error", errors.Params{"obj": toType})
 	}
 
 	err = json.Unmarshal(js, toType)
 	if err != nil {
-		return errors.E(err, "json-rpc GetObject Unmarshal error")
+		return errors.E(err, "json-rpc GetObject Unmarshal error", errors.Params{"obj": toType, "string": string(js)})
 	}
 	return nil
 }
