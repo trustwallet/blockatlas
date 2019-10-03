@@ -72,16 +72,16 @@ func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
 	results := make(blockatlas.ValidatorPage, 0)
 	validators, err := p.client.GetValidators()
 	if err != nil {
-		return results, nil
+		return nil, err
 	}
 	pool, err := p.client.GetPool()
 	if err != nil {
-		return results, nil
+		return nil, err
 	}
 
 	inflation, err := p.client.GetInflation()
 	if err != nil {
-		return results, nil
+		return nil, err
 	}
 
 	for _, validator := range validators {
