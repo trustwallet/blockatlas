@@ -54,8 +54,8 @@ func (o *Observer) processBlock(events chan<- Event, block *blockatlas.Block) {
 		txs := txMap[sub.Address].Txs()
 		for _, tx := range txs {
 
-			xpub, _ := o.Storage.GetXpubFromAddress(o.Coin, sub.Address)
-			if len(xpub) > 0 {
+			xpub, err := o.Storage.GetXpubFromAddress(o.Coin, sub.Address)
+			if err != nil && len(xpub) > 0 {
 				xpubAddresses, err := o.Storage.GetAddressFromXpub(o.Coin, xpub)
 				if err != nil {
 					continue
