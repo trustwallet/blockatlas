@@ -264,7 +264,6 @@ func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, e
 
 func NormalizeDelegations(data *AccountsData, validators blockatlas.ValidatorMap) []blockatlas.Delegation {
 	results := make([]blockatlas.Delegation, 0)
-	c := coin.Tron()
 	for _, v := range data.Votes {
 		validator, ok := validators[v.VoteAddress]
 		if !ok {
@@ -274,7 +273,6 @@ func NormalizeDelegations(data *AccountsData, validators blockatlas.ValidatorMap
 		delegation := blockatlas.Delegation{
 			Delegator: validator,
 			Value:     strconv.Itoa(v.VoteCount * 1000000),
-			Coin:      c.External(),
 			Status:    blockatlas.DelegationStatusActive,
 		}
 		for _, f := range data.Frozen {

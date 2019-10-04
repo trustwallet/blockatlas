@@ -236,8 +236,6 @@ const delegationsSrc2 = `
   ]
 }`
 
-var tronCoin = coin.Tron()
-
 var validator1 = blockatlas.StakeValidator{
 	ID:     "TGzz8gjYiYRqpfmDwnLxfgPuLVNmpCswVp",
 	Status: true,
@@ -273,25 +271,21 @@ var validator2 = blockatlas.StakeValidator{
 var delegation1 = blockatlas.Delegation{
 	Delegator: validator1,
 	Value:     "21000000",
-	Coin:      tronCoin.External(),
 	Status:    blockatlas.DelegationStatusPending,
 }
 var delegation2 = blockatlas.Delegation{
 	Delegator: validator2,
 	Value:     "5000000",
-	Coin:      tronCoin.External(),
 	Status:    blockatlas.DelegationStatusPending,
 }
 var delegation3 = blockatlas.Delegation{
 	Delegator: validator2,
 	Value:     "5000000",
-	Coin:      tronCoin.External(),
 	Status:    blockatlas.DelegationStatusPending,
 }
 var delegation4 = blockatlas.Delegation{
 	Delegator: validator2,
 	Value:     "5000000",
-	Coin:      tronCoin.External(),
 	Status:    blockatlas.DelegationStatusActive,
 }
 

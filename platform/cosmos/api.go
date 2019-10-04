@@ -116,7 +116,6 @@ func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, e
 }
 
 func NormalizeDelegations(delegations []Delegation, validators blockatlas.ValidatorMap) []blockatlas.Delegation {
-	c := coin.Cosmos()
 	results := make([]blockatlas.Delegation, 0)
 	for _, v := range delegations {
 		validator, ok := validators[v.ValidatorAddress]
@@ -127,7 +126,6 @@ func NormalizeDelegations(delegations []Delegation, validators blockatlas.Valida
 		delegation := blockatlas.Delegation{
 			Delegator: validator,
 			Value:     v.Value(),
-			Coin:      c.External(),
 			Status:    blockatlas.DelegationStatusActive,
 		}
 		results = append(results, delegation)
@@ -136,7 +134,6 @@ func NormalizeDelegations(delegations []Delegation, validators blockatlas.Valida
 }
 
 func NormalizeUnbondingDelegations(delegations []UnbondingDelegation, validators blockatlas.ValidatorMap) []blockatlas.Delegation {
-	c := coin.Cosmos()
 	results := make([]blockatlas.Delegation, 0)
 	for _, v := range delegations {
 		for _, entry := range v.Entries {
@@ -149,7 +146,6 @@ func NormalizeUnbondingDelegations(delegations []UnbondingDelegation, validators
 			delegation := blockatlas.Delegation{
 				Delegator: validator,
 				Value:     entry.Balance,
-				Coin:      c.External(),
 				Status:    blockatlas.DelegationStatusPending,
 				Metadata: blockatlas.DelegationMetaDataPending{
 					AvailableDate: uint(t.Unix()),

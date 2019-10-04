@@ -34,11 +34,11 @@ type Validator struct {
 }
 
 type Delegation struct {
-	Delegator StakeValidator     `json:"delegator"`
-	Coin      *coin.ExternalCoin `json:"coin"`
-	Value     string             `json:"value"`
-	Status    DelegationStatus   `json:"status"`
-	Metadata  interface{}        `json:"metadata,omitempty"`
+	Delegator StakeValidator `json:"delegator"`
+
+	Value    string           `json:"value"`
+	Status   DelegationStatus `json:"status"`
+	Metadata interface{}      `json:"metadata,omitempty"`
 }
 
 type DelegationMetaDataPending struct {
@@ -62,8 +62,8 @@ type StakeValidator struct {
 }
 
 type DelegationsBatch struct {
-	Coin        uint            `json:"coin"`
-	Address     string          `json:"address"`
-	Delegations DelegationsPage `json:"delegations,omitempty"`
-	Error       string          `json:"error,omitempty"`
+	Address     string             `json:"address"`
+	Coin        *coin.ExternalCoin `json:"coin"`
+	Delegations DelegationsPage    `json:"delegations,omitempty"`
+	Error       string             `json:"error,omitempty"`
 }
