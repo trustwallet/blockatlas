@@ -337,8 +337,6 @@ var cosmosValidator = Validator{Commission: CosmosCommission{Rate: "0.4"}}
 
 var inflation = 0.7
 
-var cosmosCoin = coin.Cosmos()
-
 func TestNormalize(t *testing.T) {
 	testNormalize(t, transferSrc, &transferDst)
 	testNormalize(t, delegateSrc, &delegateDst)
@@ -423,7 +421,6 @@ func TestNormalizeDelegations(t *testing.T) {
 		{
 			Delegator: validator1,
 			Value:     "1999999",
-			Coin:      cosmosCoin.External(),
 			Status:    blockatlas.DelegationStatusActive,
 		},
 	}
@@ -442,7 +439,6 @@ func TestNormalizeUnbondingDelegations(t *testing.T) {
 			Delegator: validator1,
 			Value:     "5000000",
 			Status:    blockatlas.DelegationStatusPending,
-			Coin:      cosmosCoin.External(),
 			Metadata: blockatlas.DelegationMetaDataPending{
 				AvailableDate: 1570081046,
 			},

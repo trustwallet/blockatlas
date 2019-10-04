@@ -38,7 +38,7 @@ type TransferValue struct {
 
 // Type for token transfer
 type TransferAssetContract struct {
-	Value TransferAssetValue `json:value`
+	Value TransferAssetValue `json:"value"`
 }
 
 type TransferAssetValue struct {
@@ -47,7 +47,7 @@ type TransferAssetValue struct {
 }
 
 type Accounts struct {
-	Data []AccountsData `json:data`
+	Data []AccountsData `json:"data"`
 }
 
 type AccountsData struct {
