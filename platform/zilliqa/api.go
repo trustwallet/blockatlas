@@ -3,6 +3,7 @@ package zilliqa
 import (
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"math/big"
 	"strconv"
 
 	"github.com/spf13/viper"
@@ -77,6 +78,7 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 }
 
 func Normalize(srcTx *Tx) (tx blockatlas.Tx) {
+	nonce, _ := new(big.Int).SetString(srcTx.Nonce, 10)
 	tx = blockatlas.Tx{
 		ID:       srcTx.Hash,
 		Coin:     coin.ZIL,
@@ -85,7 +87,7 @@ func Normalize(srcTx *Tx) (tx blockatlas.Tx) {
 		To:       srcTx.To,
 		Fee:      blockatlas.Amount(srcTx.Fee),
 		Block:    srcTx.BlockHeight,
-		Sequence: srcTx.Nonce,
+		Sequence: nonce.Uint64(),
 		Meta: blockatlas.Transfer{
 			Value:    blockatlas.Amount(srcTx.Value),
 			Symbol:   coin.Coins[coin.ZIL].Symbol,
