@@ -7,6 +7,7 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/metrics"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
@@ -77,7 +78,11 @@ func (r *Request) Execute(method string, url string, body io.Reader, result inte
 		return errors.E(err, errors.TypePlatformError, errors.Params{"url": url, "method": method})
 	}
 	defer res.Body.Close()
-	err = json.NewDecoder(res.Body).Decode(result)
+	b, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return errors.E(err, errors.TypePlatformUnmarshal, errors.Params{"url": url, "method": method})
+	}
+	err = json.Unmarshal(b, result)
 	if err != nil {
 		return errors.E(err, errors.TypePlatformUnmarshal, errors.Params{"url": url, "method": method})
 	}

@@ -19,7 +19,7 @@ const transferTransaction = `
     "fee": "1000000000",
     "timestamp": 1557889788637,
     "signature": "0xF0F159C5B47079E36AABC7693E61FEE9D104BDE34F4FEADA62A5066F6363E05B382E65B9381CE8138CC6824A5B62CC60EDA8B7CF13A65264F8482279DF6F768B",
-    "nonce": 3,
+    "nonce": "3",
     "receiptSuccess": true,
     "events": []
 }`
