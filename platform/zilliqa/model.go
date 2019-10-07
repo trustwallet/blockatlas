@@ -7,16 +7,29 @@ import (
 )
 
 type Tx struct {
-	Hash           string `json:"hash"`
-	BlockHeight    uint64 `json:"blockHeight"`
-	From           string `json:"from"`
-	To             string `json:"to"`
-	Value          string `json:"value"`
-	Fee            string `json:"fee"`
-	Timestamp      int64  `json:"timestamp"`
-	Signature      string `json:"signature"`
-	Nonce          string `json:"nonce"`
-	ReceiptSuccess bool   `json:"receiptSuccess"`
+	Hash           string      `json:"hash"`
+	BlockHeight    uint64      `json:"blockHeight"`
+	From           string      `json:"from"`
+	To             string      `json:"to"`
+	Value          string      `json:"value"`
+	Fee            string      `json:"fee"`
+	Timestamp      int64       `json:"timestamp"`
+	Signature      string      `json:"signature"`
+	Nonce          interface{} `json:"nonce"`
+	ReceiptSuccess bool        `json:"receiptSuccess"`
+}
+
+func (tx Tx) NonceValue() uint64 {
+	n, ok := tx.Nonce.(string)
+	if ok {
+		r, _ := strconv.Atoi(n)
+		return uint64(r)
+	}
+	nu, ok := tx.Nonce.(int)
+	if ok {
+		return uint64(nu)
+	}
+	return 0
 }
 
 type ChainInfo struct {
