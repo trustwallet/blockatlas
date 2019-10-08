@@ -2,38 +2,12 @@ package redis
 
 import (
 	"encoding/json"
-	"github.com/go-redis/redis"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/storage"
 )
 
-type HMap struct {
-	storage.Db
-	client *redis.Client
-}
-
-func (db *HMap) Init(host string) error {
-	options, err := redis.ParseURL(host)
-	if err != nil {
-		return errors.E(err, "Cannot connect to Redis")
-	}
-	client := redis.NewClient(options)
-	if err := client.Ping().Err(); err != nil {
-		return errors.E(err, "Redis connection test failed")
-	}
-	db.client = client
-	return nil
-}
-
-func (db *HMap) Into(value interface{}) error {
-	if len(db.EntityName) == 0 {
-		return errors.E(storage.ErrEmptyEntity)
-	}
-	q, ok := db.QueryValue.(string)
-	if !ok {
-		return errors.E(storage.ErrEmptyQuery)
-	}
-	cmd := db.client.HMGet(db.EntityName, q)
+func (db *Redis) GetHMValue(entity, key string, value interface{}) error {
+	cmd := db.client.HMGet(entity, key)
 	if cmd.Err() != nil {
 		return errors.E(cmd.Err(), storage.ErrNotFound)
 	}
@@ -48,40 +22,22 @@ func (db *HMap) Into(value interface{}) error {
 	return nil
 }
 
-func (db *HMap) Add(value interface{}) error {
-	if len(db.EntityName) == 0 {
-		return errors.E(storage.ErrEmptyEntity)
-	}
-	q, ok := db.QueryValue.(string)
-	if !ok {
-		return errors.E(storage.ErrEmptyQuery)
-	}
+func (db *Redis) AddHM(entity, key string, value interface{}) error {
 	j, err := json.Marshal(value)
 	if err != nil {
 		return errors.E(err, errors.Params{"value": value})
 	}
-	cmd := db.client.HMSet(db.EntityName, map[string]interface{}{q: j})
+	cmd := db.client.HMSet(entity, map[string]interface{}{key: j})
 	if cmd.Err() != nil {
 		return errors.E(cmd.Err(), storage.ErrNotStored)
 	}
 	return nil
 }
 
-func (db *HMap) Delete() error {
-	if len(db.EntityName) == 0 {
-		return errors.E(storage.ErrEmptyEntity)
-	}
-	q, ok := db.QueryValue.(string)
-	if !ok {
-		return errors.E(storage.ErrEmptyQuery)
-	}
-	cmd := db.client.HDel(db.EntityName, q)
+func (db *Redis) DeleteHM(entity, key string) error {
+	cmd := db.client.HDel(entity, key)
 	if cmd.Err() != nil {
 		return errors.E(cmd.Err(), storage.ErrNotDeleted)
 	}
 	return nil
-}
-
-func (db *HMap) Update(value interface{}) error {
-	return db.Add(value)
 }

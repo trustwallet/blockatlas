@@ -20,6 +20,8 @@ observer:
   auth: test
   # Redis Subscription Database
   redis: redis://localhost:6379
+  # Postgres Database
+  postgres: "host=localhost port=5432 user=postgres dbname=blockatlas sslmode=disable"
   # Smallest possible block polling interval
   min_poll: 250ms
   # Don't request blocks older than this
