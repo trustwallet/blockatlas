@@ -15,15 +15,12 @@ var (
 )
 
 type Db struct {
-	EntityName   string
-	DatabaseName string
-	QueryValue   interface{}
+	EntityName string
+	QueryValue interface{}
 }
 
 type Storage interface {
 	Init() error
-
-	Database(name string) *Db
 
 	Entity(name string) *Db
 
@@ -31,14 +28,11 @@ type Storage interface {
 
 	Into(value interface{}) error
 
-	Set(value interface{}) error
+	Add(value interface{}) error
+
+	Update(value interface{}) error
 
 	Delete(key string) error
-}
-
-func (r *Db) Database(name string) *Db {
-	r.DatabaseName = name
-	return r
 }
 
 func (r *Db) Entity(name string) *Db {

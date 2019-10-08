@@ -12,7 +12,7 @@ type Redis struct {
 	client *redis.Client
 }
 
-func (r *Redis) Init(host string) error {
+func (db *Redis) Init(host string) error {
 	options, err := redis.ParseURL(host)
 	if err != nil {
 		return errors.E(err, "Cannot connect to Redis")
@@ -21,16 +21,16 @@ func (r *Redis) Init(host string) error {
 	if err := client.Ping().Err(); err != nil {
 		return errors.E(err, "Redis connection test failed")
 	}
-	r.client = client
+	db.client = client
 	return nil
 }
 
-func (r *Redis) Into(value interface{}) error {
-	q, ok := r.QueryValue.(string)
+func (db *Redis) Into(value interface{}) error {
+	q, ok := db.QueryValue.(string)
 	if !ok {
 		return errors.E(storage.ErrEmptyQuery)
 	}
-	cmd := r.client.Get(q)
+	cmd := db.client.Get(q)
 	if cmd.Err() != nil {
 		return errors.E(cmd.Err(), storage.ErrNotFound)
 	}
@@ -41,8 +41,8 @@ func (r *Redis) Into(value interface{}) error {
 	return nil
 }
 
-func (r *Redis) Set(value interface{}) error {
-	q, ok := r.QueryValue.(string)
+func (db *Redis) Add(value interface{}) error {
+	q, ok := db.QueryValue.(string)
 	if !ok {
 		return errors.E(storage.ErrEmptyQuery)
 	}
@@ -50,21 +50,25 @@ func (r *Redis) Set(value interface{}) error {
 	if err != nil {
 		return errors.E(err, errors.Params{"value": value})
 	}
-	cmd := r.client.Set(q, j, 0)
+	cmd := db.client.Set(q, j, 0)
 	if cmd.Err() != nil {
 		return errors.E(cmd.Err(), storage.ErrNotStored)
 	}
 	return nil
 }
 
-func (r *Redis) Delete() error {
-	q, ok := r.QueryValue.(string)
+func (db *Redis) Delete() error {
+	q, ok := db.QueryValue.(string)
 	if !ok {
 		return errors.E(storage.ErrEmptyQuery)
 	}
-	cmd := r.client.Del(q)
+	cmd := db.client.Del(q)
 	if cmd.Err() != nil {
 		return errors.E(cmd.Err(), storage.ErrNotDeleted)
 	}
 	return nil
+}
+
+func (db *Redis) Update(value interface{}) error {
+	return db.Add(value)
 }

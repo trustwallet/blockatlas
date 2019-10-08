@@ -12,7 +12,7 @@ type HMap struct {
 	client *redis.Client
 }
 
-func (r *HMap) Init(host string) error {
+func (db *HMap) Init(host string) error {
 	options, err := redis.ParseURL(host)
 	if err != nil {
 		return errors.E(err, "Cannot connect to Redis")
@@ -21,19 +21,19 @@ func (r *HMap) Init(host string) error {
 	if err := client.Ping().Err(); err != nil {
 		return errors.E(err, "Redis connection test failed")
 	}
-	r.client = client
+	db.client = client
 	return nil
 }
 
-func (r *HMap) Into(value interface{}) error {
-	q, ok := r.QueryValue.(string)
+func (db *HMap) Into(value interface{}) error {
+	if len(db.EntityName) == 0 {
+		return errors.E(storage.ErrEmptyEntity)
+	}
+	q, ok := db.QueryValue.(string)
 	if !ok {
 		return errors.E(storage.ErrEmptyQuery)
 	}
-	if len(r.EntityName) == 0 {
-		return errors.E(storage.ErrEmptyEntity)
-	}
-	cmd := r.client.HMGet(r.EntityName, q)
+	cmd := db.client.HMGet(db.EntityName, q)
 	if cmd.Err() != nil {
 		return errors.E(cmd.Err(), storage.ErrNotFound)
 	}
@@ -48,36 +48,40 @@ func (r *HMap) Into(value interface{}) error {
 	return nil
 }
 
-func (r *HMap) Set(value interface{}) error {
-	q, ok := r.QueryValue.(string)
+func (db *HMap) Add(value interface{}) error {
+	if len(db.EntityName) == 0 {
+		return errors.E(storage.ErrEmptyEntity)
+	}
+	q, ok := db.QueryValue.(string)
 	if !ok {
 		return errors.E(storage.ErrEmptyQuery)
-	}
-	if len(r.EntityName) == 0 {
-		return errors.E(storage.ErrEmptyEntity)
 	}
 	j, err := json.Marshal(value)
 	if err != nil {
 		return errors.E(err, errors.Params{"value": value})
 	}
-	cmd := r.client.HMSet(r.EntityName, map[string]interface{}{q: j})
+	cmd := db.client.HMSet(db.EntityName, map[string]interface{}{q: j})
 	if cmd.Err() != nil {
 		return errors.E(cmd.Err(), storage.ErrNotStored)
 	}
 	return nil
 }
 
-func (r *HMap) Delete() error {
-	q, ok := r.QueryValue.(string)
+func (db *HMap) Delete() error {
+	if len(db.EntityName) == 0 {
+		return errors.E(storage.ErrEmptyEntity)
+	}
+	q, ok := db.QueryValue.(string)
 	if !ok {
 		return errors.E(storage.ErrEmptyQuery)
 	}
-	if len(r.EntityName) == 0 {
-		return errors.E(storage.ErrEmptyEntity)
-	}
-	cmd := r.client.HDel(r.EntityName, q)
+	cmd := db.client.HDel(db.EntityName, q)
 	if cmd.Err() != nil {
 		return errors.E(cmd.Err(), storage.ErrNotDeleted)
 	}
 	return nil
+}
+
+func (db *HMap) Update(value interface{}) error {
+	return db.Add(value)
 }
