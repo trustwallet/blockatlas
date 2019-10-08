@@ -84,11 +84,6 @@ func extractBase(srcTx *Doc, coinIndex uint) (base blockatlas.Tx, ok bool) {
 		errReason = srcTx.Error
 	}
 
-	unix, err := strconv.ParseInt(srcTx.TimeStamp, 10, 64)
-	if err != nil {
-		return base, false
-	}
-
 	fee := calcFee(srcTx.GasPrice, srcTx.GasUsed)
 
 	base = blockatlas.Tx{
@@ -97,7 +92,7 @@ func extractBase(srcTx *Doc, coinIndex uint) (base blockatlas.Tx, ok bool) {
 		From:     srcTx.From,
 		To:       srcTx.To,
 		Fee:      blockatlas.Amount(fee),
-		Date:     unix,
+		Date:     srcTx.Timestamp,
 		Block:    srcTx.BlockNumber,
 		Status:   status,
 		Error:    errReason,
