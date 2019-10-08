@@ -198,68 +198,67 @@ func TestNormalizeTransfer(t *testing.T) {
 	}
 }
 
-func TestInferDirection(t *testing.T) {
-	// zpub: zpub6r9CEhEkruYbEcu2yQCaRKQ1qufTa4zLrx6ezs31P627UpAepVNBE2td3d3mHnSaXyRbwksRwDJGzLBWQeZPFMut8N3BvXpcwRwEWGEwAnq
-	set := mapset.NewSet()
-	set.Add("bc1qfrrncxmf7skye2glyef95xlpmrlmf2e8qlav2l")
-	set.Add("bc1qxm90n0rxkadhdkvglev56k60qths73luzlnn7a")
-	set.Add("bc1q2sykr9c342mjpm9mwnps8ksk6e35lz75rpdlfe")
-	set.Add("bc1qs86ucvr3unce2grvfp77433npy66nzha9w0e3c")
+// zpub: zpub6r9CEhEkruYbEcu2yQCaRKQ1qufTa4zLrx6ezs31P627UpAepVNBE2td3d3mHnSaXyRbwksRwDJGzLBWQeZPFMut8N3BvXpcwRwEWGEwAnq
+var btcSet = mapset.NewSet("bc1qfrrncxmf7skye2glyef95xlpmrlmf2e8qlav2l", "bc1qxm90n0rxkadhdkvglev56k60qths73luzlnn7a",
+	"bc1q2sykr9c342mjpm9mwnps8ksk6e35lz75rpdlfe", "bc1qs86ucvr3unce2grvfp77433npy66nzha9w0e3c")
+var btcInputs1 = []blockatlas.TxOutput{{Address: "bc1q2sykr9c342mjpm9mwnps8ksk6e35lz75rpdlfe"}}
+var btcOutputs1 = []blockatlas.TxOutput{{Address: "bc1q6wf7tj62f0uwr6almah3666th2ejefdg72ek6t"}}
+var btcInputs2 = []blockatlas.TxOutput{{
+	Address: "3CgvDkzcJ7yMZe75jNBem6Bj6nkMAWwMEf"},
+	{Address: "3LyzYcB54pm9EAMmzXpFfb1kzEDAFvqBgT"},
+	{Address: "3Q6DYour5q5WdMhyXsyPgBeAqPCXchzCsF"},
+	{Address: "3JZZM1rwst7G5izxbFL7KNvy7ZiZ47SVqG"}}
+var btcOutputs2 = []blockatlas.TxOutput{
+	{Address: "139f1CrnLWvVajGzs3ZtpQhbGWxM599sho"},
+	{Address: "3LyzYcB54pm9EAMmzXpFfb1kzEDAFvqBgT"},
+	{Address: "bc1q9mx5tm66zs7epa4skvyuf2vfuwmtnlttj74cnl"},
+	{Address: "3JZZM1rwst7G5izxbFL7KNvy7ZiZ47SVqG"}}
 
+var dogeSet = mapset.NewSet("DB49sNjVdxyREXEBEzUV54TrQYYpvi3Be7")
+var dogeInputs = []blockatlas.TxOutput{{Address: "DAukM5pPtGdbPxMX1u2LYHoyhbDhEFHbnH"}}
+var dogeOutputs = []blockatlas.TxOutput{{Address: "DB49sNjVdxyREXEBEzUV54TrQYYpvi3Be7"}, {Address: "DAukM5pPtGdbPxMX1u2LYHoyhbDhEFHbnH"}}
+
+func TestInferDirection(t *testing.T) {
 	var tests = []struct {
-		Inputs   []blockatlas.TxOutput
-		Outputs  []blockatlas.TxOutput
-		Expected blockatlas.Direction
+		AddressSet mapset.Set
+		Inputs     []blockatlas.TxOutput
+		Outputs    []blockatlas.TxOutput
+		Expected   blockatlas.Direction
+		Coin       uint
 	}{
 		{
-			[]blockatlas.TxOutput{{
-				Address: "bc1q2sykr9c342mjpm9mwnps8ksk6e35lz75rpdlfe",
-			}},
-			[]blockatlas.TxOutput{{
-				Address: "bc1q6wf7tj62f0uwr6almah3666th2ejefdg72ek6t",
-			}},
+			btcSet,
+			btcInputs1,
+			btcOutputs1,
 			blockatlas.DirectionOutgoing,
+			coin.BTC,
 		},
 		{
-			[]blockatlas.TxOutput{
-				{
-					Address: "3CgvDkzcJ7yMZe75jNBem6Bj6nkMAWwMEf",
-				}, {
-					Address: "3LyzYcB54pm9EAMmzXpFfb1kzEDAFvqBgT",
-				}, {
-					Address: "3Q6DYour5q5WdMhyXsyPgBeAqPCXchzCsF",
-				}, {
-					Address: "3JZZM1rwst7G5izxbFL7KNvy7ZiZ47SVqG",
-				},
-			},
-			[]blockatlas.TxOutput{
-				{
-					Address: "139f1CrnLWvVajGzs3ZtpQhbGWxM599sho",
-				},
-				{
-					Address: "3LyzYcB54pm9EAMmzXpFfb1kzEDAFvqBgT",
-				},
-				{
-					Address: "bc1q9mx5tm66zs7epa4skvyuf2vfuwmtnlttj74cnl",
-				},
-				{
-					Address: "3JZZM1rwst7G5izxbFL7KNvy7ZiZ47SVqG",
-				},
-			},
+			btcSet,
+			btcInputs2,
+			btcOutputs2,
 			blockatlas.DirectionIncoming,
+			coin.BTC,
+		},
+		{
+			dogeSet,
+			dogeInputs,
+			dogeOutputs,
+			blockatlas.DirectionIncoming,
+			coin.DOGE,
 		},
 	}
 
-	p := &Platform{CoinIndex: coin.BTC}
 	for _, test := range tests {
+		p := &Platform{CoinIndex: test.Coin}
 		tx := blockatlas.Tx{
 			Inputs:  test.Inputs,
 			Outputs: test.Outputs,
 		}
 
-		direction := p.InferDirection(&tx, set)
+		direction := p.InferDirection(&tx, test.AddressSet)
 		if direction != test.Expected {
-			t.Error("direction is not ", test.Expected)
+			t.Errorf("direction is not %s", test.Expected)
 		}
 	}
 }
