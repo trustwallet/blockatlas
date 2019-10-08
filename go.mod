@@ -3,7 +3,6 @@ module github.com/trustwallet/blockatlas
 go 1.12.6
 
 require (
-	github.com/Pantani/httpexpect v2.0.0+incompatible
 	github.com/alecthomas/template v0.0.0-20160405071501-a0175ee3bccc
 	github.com/btcsuite/btcutil v0.0.0-20190425235716-9e5f4b9a998d
 	github.com/chenjiandongx/ginprom v0.0.0-20190821062536-3a28e619013b
@@ -31,10 +30,9 @@ require (
 	github.com/swaggo/gin-swagger v1.2.0
 	github.com/swaggo/swag v1.6.2
 	github.com/thoas/go-funk v0.4.0
-	github.com/ugorji/go/codec v1.1.7 // indirect
+	github.com/ugorji/go v1.1.7 // indirect
 	golang.org/x/crypto v0.0.0-20190701094942-4def268fd1a4
 	golang.org/x/net v0.0.0-20190926025831-c00fd9afed17 // indirect
 	golang.org/x/sys v0.0.0-20190927073244-c990c680b611 // indirect
 	golang.org/x/tools v0.0.0-20190927052746-69890759d905 // indirect
-	gopkg.in/yaml.v2 v2.2.2
 )
