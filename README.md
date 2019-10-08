@@ -60,8 +60,11 @@ Using Docker Hub:
 `docker run -it -p 8420:8420 trustwallet/blockatlas`
 
 Build and run from local Dockerfile:
-`docker build -t blockatlas .`
-`docker run -p 8420:8420 blockatlas`
+
+```shell
+docker build -t blockatlas .
+docker run -p 8420:8420 blockatlas
+```
 
 
 #### Tools
