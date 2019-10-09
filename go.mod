@@ -14,7 +14,9 @@ require (
 	github.com/go-openapi/spec v0.19.3 // indirect
 	github.com/go-redis/redis v6.15.2+incompatible
 	github.com/golang/protobuf v1.3.2 // indirect
+	github.com/jinzhu/gorm v1.9.11
 	github.com/json-iterator/go v1.1.7 // indirect
+	github.com/lib/pq v1.2.0 // indirect
 	github.com/mailru/easyjson v0.7.0 // indirect
 	github.com/mr-tron/base58 v1.1.2
 	github.com/patrickmn/go-cache v2.1.0+incompatible
