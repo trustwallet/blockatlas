@@ -5,34 +5,36 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/config"
-	observerStorage "github.com/trustwallet/blockatlas/observer/storage"
+	"github.com/trustwallet/blockatlas/observer"
+	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/platform"
 	"os"
 )
 
-var rootCmd = cobra.Command{
-	Use:   "blockatlas",
-	Short: "BlockAtlas by Trust Wallet",
-	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		// Load config
-		confPath, _ := cmd.Flags().GetString("config")
-		config.LoadConfig(confPath)
+var (
+	Storage observer.Storage
+	rootCmd  = cobra.Command{
+		Use:   "blockatlas",
+		Short: "BlockAtlas by Trust Wallet",
+		PersistentPreRun: func(cmd *cobra.Command, args []string) {
+			// Load config
+			confPath, _ := cmd.Flags().GetString("config")
+			config.LoadConfig(confPath)
 
-		// Init Logger
-		logger.InitLogger()
+			// Init Logger
+			logger.InitLogger()
 
-		// Init Storage
-		//storage.InitDatabases()
+			// Load app components
+			platform.Init()
 
-		// Load app components
-		platform.Init()
-		if viper.GetBool("observer.enabled") {
-			logger.Info("Loading Observer API")
-			observerStorage.Load()
-		}
-	},
-}
+			err := Storage.Init(viper.GetString("observer.postgres"))
+			if err != nil {
+				logger.Fatal(errors.E(err), "Cannot connect to Postgres")
+			}
+		},
+	}
+)
 
 func init() {
 	rootCmd.PersistentFlags().StringP("config", "c", "", "Config file (optional)")

@@ -13,7 +13,7 @@ import (
 
 type Stream struct {
 	BlockAPI     blockatlas.BlockAPI
-	Tracker      Tracker
+	Tracker      StorageTracker
 	PollInterval time.Duration
 	BacklogCount int
 	coin         uint

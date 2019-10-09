@@ -13,7 +13,7 @@ type Event struct {
 }
 
 type Observer struct {
-	Storage Storage
+	Storage StorageAddresses
 	Coin    uint
 }
 
