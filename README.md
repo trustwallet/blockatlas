@@ -47,10 +47,10 @@ go get -u github.com/trustwallet/blockatlas
 cd blockatlas
 
 // Start API server
-go build -o blockatlas ./cmd && ./blockatlas api
+go build -o blockatlas . && ./blockatlas api
 
 //Start Observer
-go build -o blockatlas ./cmd && ./blockatlas observer
+go build -o blockatlas . && ./blockatlas observer
 ```
 
 #### Docker
