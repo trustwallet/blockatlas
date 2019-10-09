@@ -47,10 +47,10 @@ go get -u github.com/trustwallet/blockatlas
 cd blockatlas
 
 // Start API server
-go build -o blockatlas ./cmd && ./blockatlas api
+go build -o blockatlas . && ./blockatlas api
 
 //Start Observer
-go build -o blockatlas ./cmd && ./blockatlas observer
+go build -o blockatlas . && ./blockatlas observer
 ```
 
 #### Docker
@@ -60,8 +60,11 @@ Using Docker Hub:
 `docker run -it -p 8420:8420 trustwallet/blockatlas`
 
 Build and run from local Dockerfile:
-`docker build -t blockatlas .`
-`docker run -p 8420:8420 blockatlas`
+
+```shell
+docker build -t blockatlas .
+docker run -p 8420:8420 blockatlas
+```
 
 
 #### Tools
