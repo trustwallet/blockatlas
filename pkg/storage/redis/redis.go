@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"github.com/go-redis/redis"
 	"github.com/trustwallet/blockatlas/pkg/errors"
-	"github.com/trustwallet/blockatlas/pkg/storage"
+	"github.com/trustwallet/blockatlas/pkg/storage/util"
 )
 
 type Redis struct {
@@ -27,11 +27,11 @@ func (db *Redis) Init(host string) error {
 func (db *Redis) GetValue(key string, value interface{}) error {
 	cmd := db.client.Get(key)
 	if cmd.Err() != nil {
-		return errors.E(cmd.Err(), storage.ErrNotFound)
+		return errors.E(cmd.Err(), util.ErrNotFound)
 	}
 	err := json.Unmarshal([]byte(cmd.Val()), value)
 	if err != nil {
-		return errors.E(err, storage.ErrNotFound)
+		return errors.E(err, util.ErrNotFound)
 	}
 	return nil
 }
@@ -43,7 +43,7 @@ func (db *Redis) Add(key string, value interface{}) error {
 	}
 	cmd := db.client.Set(key, j, 0)
 	if cmd.Err() != nil {
-		return errors.E(cmd.Err(), storage.ErrNotStored)
+		return errors.E(cmd.Err(), util.ErrNotStored)
 	}
 	return nil
 }
@@ -51,7 +51,7 @@ func (db *Redis) Add(key string, value interface{}) error {
 func (db *Redis) Delete(key string) error {
 	cmd := db.client.Del(key)
 	if cmd.Err() != nil {
-		return errors.E(cmd.Err(), storage.ErrNotDeleted)
+		return errors.E(cmd.Err(), util.ErrNotDeleted)
 	}
 	return nil
 }

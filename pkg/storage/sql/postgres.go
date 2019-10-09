@@ -4,7 +4,7 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/trustwallet/blockatlas/pkg/errors"
-	"github.com/trustwallet/blockatlas/pkg/storage"
+	"github.com/trustwallet/blockatlas/pkg/storage/util"
 )
 
 type PgSql struct {
@@ -23,41 +23,41 @@ func (db *PgSql) Init(host string) error {
 func (db *PgSql) Get(value interface{}) error {
 	err := db.client.Last(value).Error
 	if err != nil {
-		return errors.E(err, storage.ErrNotFound)
+		return errors.E(err, util.ErrNotFound)
 	}
 	return nil
 }
 
 func (db *PgSql) Update(value interface{}) error {
 	if db.client.NewRecord(value) {
-		return storage.ErrNotFound
+		return util.ErrNotFound
 	}
 	err := db.client.Save(value).Error
 	if err != nil {
-		return errors.E(err, storage.ErrNotUpdated)
+		return errors.E(err, util.ErrNotUpdated)
 	}
 	return nil
 }
 
 func (db *PgSql) Add(value interface{}) error {
 	if !db.client.NewRecord(value) {
-		return storage.ErrAlreadyExist
+		return util.ErrAlreadyExist
 	}
 	db.client.AutoMigrate(value)
 	err := db.client.Create(value).Error
 	if err != nil {
-		return errors.E(err, storage.ErrNotStored)
+		return errors.E(err, util.ErrNotStored)
 	}
 	return nil
 }
 
 func (db *PgSql) Delete(value interface{}) error {
 	if db.client.NewRecord(value) {
-		return storage.ErrNotFound
+		return util.ErrNotFound
 	}
 	err := db.client.Delete(value).Error
 	if err != nil {
-		return errors.E(err, storage.ErrNotDeleted)
+		return errors.E(err, util.ErrNotDeleted)
 	}
 	return nil
 }
