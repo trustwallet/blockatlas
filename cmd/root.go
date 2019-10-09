@@ -7,7 +7,6 @@ import (
 	"github.com/trustwallet/blockatlas/config"
 	observerStorage "github.com/trustwallet/blockatlas/observer/storage"
 	"github.com/trustwallet/blockatlas/pkg/logger"
-	"github.com/trustwallet/blockatlas/pkg/storage"
 	"github.com/trustwallet/blockatlas/platform"
 	"os"
 )
@@ -24,7 +23,7 @@ var rootCmd = cobra.Command{
 		logger.InitLogger()
 
 		// Init Storage
-		storage.InitDatabases()
+		//storage.InitDatabases()
 
 		// Load app components
 		platform.Init()
