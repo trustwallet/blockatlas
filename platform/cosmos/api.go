@@ -91,6 +91,15 @@ func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
 	return results, nil
 }
 
+func (p *Platform) GetDetails() blockatlas.StakingDetails {
+	//TODO: Find a way to have a dynamic
+	return blockatlas.StakingDetails{
+		Reward:        blockatlas.StakingReward{Annual: 11},
+		MinimumAmount: blockatlas.Amount("0"),
+		LockTime:      1814400,
+	}
+}
+
 func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, error) {
 	results := make(blockatlas.DelegationsPage, 0)
 	delegations, err := p.client.GetDelegations(address)
@@ -247,11 +256,13 @@ func fillDelegate(tx *blockatlas.Tx, delegate MessageValueDelegate, msgType stri
 func normalizeValidator(v Validator, p StakingPool, inflation float64, c coin.Coin) (validator blockatlas.Validator) {
 	reward := CalculateAnnualReward(p, inflation, v)
 	return blockatlas.Validator{
-		Status:        v.Status == 2,
-		ID:            v.Address,
-		Reward:        blockatlas.StakingReward{Annual: reward},
-		MinimumAmount: "0",
-		LockTime:      1814400,
+		Status: v.Status == 2,
+		ID:     v.Address,
+		Details: blockatlas.StakingDetails{
+			Reward:        blockatlas.StakingReward{Annual: reward},
+			MinimumAmount: blockatlas.Amount("0"),
+			LockTime:      1814400,
+		},
 	}
 }
 

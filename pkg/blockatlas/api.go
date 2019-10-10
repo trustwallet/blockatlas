@@ -50,6 +50,7 @@ type AddressAPI interface {
 // StakingAPI provides staking information
 type StakeAPI interface {
 	Platform
+	GetDetails() StakingDetails
 	GetValidators() (ValidatorPage, error)
 	GetDelegations(address string) (DelegationsPage, error)
 }

@@ -46,6 +46,7 @@ func makeStakingDelegationsBatchRoute(router gin.IRouter) {
 				d.Error = err.Error()
 			} else {
 				d.Delegations = delegations
+				d.Details = p.GetDetails()
 			}
 			batch = append(batch, d)
 		}

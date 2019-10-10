@@ -82,16 +82,26 @@ func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
 	return results, nil
 }
 
+func (p *Platform) GetDetails() blockatlas.StakingDetails {
+	return blockatlas.StakingDetails{
+		Reward:        blockatlas.StakingReward{Annual: Annual},
+		MinimumAmount: blockatlas.Amount("0"),
+		LockTime:      0,
+	}
+}
+
 func normalizeValidator(v Validator) (validator blockatlas.Validator) {
 	// How to calculate Tezos APR? I have no idea. Tezos team does not know either. let's assume it's around 7% - no way to calculate in decentralized manner
 	// Delegation rewards distributed by the validators manually, it's up to them to do it.
 
 	return blockatlas.Validator{
-		Status:        true,
-		ID:            v.Address,
-		Reward:        blockatlas.StakingReward{Annual: Annual},
-		MinimumAmount: blockatlas.Amount("0"),
-		LockTime:      0,
+		Status: true,
+		ID:     v.Address,
+		Details: blockatlas.StakingDetails{
+			Reward:        blockatlas.StakingReward{Annual: Annual},
+			MinimumAmount: blockatlas.Amount("0"),
+			LockTime:      0,
+		},
 	}
 }
 

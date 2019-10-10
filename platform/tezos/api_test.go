@@ -91,10 +91,12 @@ func TestNormalizeValidator(t *testing.T) {
 	var v Validator
 	_ = json.Unmarshal([]byte(validatorSrc), &v)
 	expected := blockatlas.Validator{
-		Status:        true,
-		ID:            v.Address,
-		Reward:        blockatlas.StakingReward{Annual: Annual},
-		MinimumAmount: blockatlas.Amount("0"),
+		Status: true,
+		ID:     v.Address,
+		Details: blockatlas.StakingDetails{
+			Reward:        blockatlas.StakingReward{Annual: Annual},
+			MinimumAmount: blockatlas.Amount("0"),
+		},
 	}
 
 	result := normalizeValidator(v)

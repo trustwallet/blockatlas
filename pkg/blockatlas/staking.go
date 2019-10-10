@@ -25,20 +25,23 @@ type StakingReward struct {
 	Annual float64 `json:"annual"`
 }
 
-type Validator struct {
-	ID            string        `json:"id"`
-	Status        bool          `json:"status"`
+type StakingDetails struct {
 	Reward        StakingReward `json:"reward"`
 	LockTime      int           `json:"locktime"`
 	MinimumAmount Amount        `json:"minimum_amount"`
 }
 
-type Delegation struct {
-	Delegator StakeValidator `json:"delegator"`
+type Validator struct {
+	ID      string         `json:"id"`
+	Status  bool           `json:"status"`
+	Details StakingDetails `json:"details"`
+}
 
-	Value    string           `json:"value"`
-	Status   DelegationStatus `json:"status"`
-	Metadata interface{}      `json:"metadata,omitempty"`
+type Delegation struct {
+	Delegator StakeValidator   `json:"delegator"`
+	Value     string           `json:"value"`
+	Status    DelegationStatus `json:"status"`
+	Metadata  interface{}      `json:"metadata,omitempty"`
 }
 
 type DelegationMetaDataPending struct {
@@ -53,17 +56,16 @@ type StakeValidatorInfo struct {
 }
 
 type StakeValidator struct {
-	ID            string             `json:"id"`
-	Status        bool               `json:"status,omitempty"`
-	Info          StakeValidatorInfo `json:"info,omitempty"`
-	Reward        StakingReward      `json:"reward,omitempty"`
-	LockTime      int                `json:"locktime,omitempty"`
-	MinimumAmount Amount             `json:"minimum_amount,omitempty"`
+	ID      string             `json:"id"`
+	Status  bool               `json:"status,omitempty"`
+	Info    StakeValidatorInfo `json:"info,omitempty"`
+	Details StakingDetails     `json:"details,omitempty"`
 }
 
 type DelegationsBatch struct {
 	Address     string             `json:"address"`
 	Coin        *coin.ExternalCoin `json:"coin"`
+	Details     StakingDetails     `json:"details"`
 	Delegations DelegationsPage    `json:"delegations,omitempty"`
 	Error       string             `json:"error,omitempty"`
 }

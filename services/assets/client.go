@@ -61,9 +61,7 @@ func NormalizeValidator(plainValidator blockatlas.Validator, validator AssetVali
 			Image:       GetImage(coin, plainValidator.ID),
 			Website:     validator.Website,
 		},
-		Reward:        plainValidator.Reward,
-		LockTime:      plainValidator.LockTime,
-		MinimumAmount: plainValidator.MinimumAmount,
+		Details: plainValidator.Details,
 	}
 }
 
