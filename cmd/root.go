@@ -35,7 +35,6 @@ var (
 			Storage.Client.AutoMigrate(
 				&observer.Block{},
 				&observer.Xpub{},
-				&observer.Address{},
 				&observer.Subscription{},
 			)
 		},

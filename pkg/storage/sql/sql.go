@@ -28,6 +28,14 @@ func (db *sql) Find(out interface{}, where ...interface{}) error {
 	return nil
 }
 
+func (db *sql) Find(out interface{}, where ...interface{}) error {
+	err := db.Client.Find(out, where...).Error
+	if err != nil {
+		return errors.E(err, util.ErrNotFound)
+	}
+	return nil
+}
+
 func (db *sql) CreateOrUpdate(value interface{}) error {
 	if db.Client.NewRecord(value) {
 		return db.Add(value)
