@@ -34,15 +34,13 @@ func (d *Dispatcher) dispatch(event Event) {
 		logger.Panic(err)
 	}
 
-	webhooks := event.Subscription.Webhooks
+	webhook := event.Subscription.Webhook
 	logParams := logger.Params{
-		"webhook": webhooks,
+		"webhook": webhook,
 		"coin":    event.Subscription.Coin,
 		"txID":    event.Tx.ID,
 	}
-	for _, hook := range webhooks {
-		go d.postWebhook(hook, txJson, logParams)
-	}
+	go d.postWebhook(webhook, txJson, logParams)
 	logger.Info("Dispatching webhooks...", logger.Params{"webhooks": len(webhooks)}, logParams)
 }
 

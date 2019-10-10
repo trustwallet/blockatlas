@@ -14,7 +14,7 @@ import (
 
 var (
 	Storage observer.Storage
-	rootCmd  = cobra.Command{
+	rootCmd = cobra.Command{
 		Use:   "blockatlas",
 		Short: "BlockAtlas by Trust Wallet",
 		PersistentPreRun: func(cmd *cobra.Command, args []string) {
@@ -32,6 +32,12 @@ var (
 			if err != nil {
 				logger.Fatal(errors.E(err), "Cannot connect to Postgres")
 			}
+			Storage.Client.AutoMigrate(
+				&observer.Block{},
+				&observer.Xpub{},
+				&observer.Address{},
+				&observer.Subscription{},
+			)
 		},
 	}
 )

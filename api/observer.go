@@ -67,37 +67,9 @@ func addCall(storage *observer.Storage) func(c *gin.Context) {
 			return
 		}
 
-		var subs []observer.Subscription
-		for coinStr, perCoin := range req.Subscriptions {
-			coin, err := strconv.Atoi(coinStr)
-			if err != nil {
-				continue
-			}
-			for _, addr := range perCoin {
-				subs = append(subs, observer.Subscription{
-					Coin:     uint(coin),
-					Address:  addr,
-					Webhooks: []string{req.Webhook},
-				})
-			}
-		}
+		subs := parseSubscriptions(req.Subscriptions, req.Webhook)
+		xpubSubs := parseSubscriptions(req.XpubSubscriptions, req.Webhook)
 
-		var xpubSubs []observer.Subscription
-		for coinStr, perCoin := range req.XpubSubscriptions {
-			coin, err := strconv.Atoi(coinStr)
-			if err != nil {
-				continue
-			}
-
-			for _, xpub := range perCoin {
-				xpubSubs = append(xpubSubs, observer.Subscription{
-					Coin:     uint(coin),
-					Address:  xpub,
-					Webhooks: []string{req.Webhook},
-				})
-				go storage.CacheXPubAddress(xpub, uint(coin))
-			}
-		}
 		subs = append(subs, xpubSubs...)
 		err := storage.AddSubscriptions(subs)
 		if err != nil {
@@ -105,6 +77,7 @@ func addCall(storage *observer.Storage) func(c *gin.Context) {
 			return
 		}
 
+		go cacheXpub(req.XpubSubscriptions, storage)
 		RenderSuccess(c, ObserverResponse{Status: "Added"})
 	}
 }
@@ -135,43 +108,14 @@ func deleteCall(storage *observer.Storage) func(c *gin.Context) {
 			return
 		}
 
-		var subs []observer.Subscription
-		for coinStr, perCoin := range req.Subscriptions {
-			coin, err := strconv.Atoi(coinStr)
-			if err != nil {
-				continue
-			}
-			for _, addr := range perCoin {
-				subs = append(subs, observer.Subscription{
-					Coin:     uint(coin),
-					Address:  addr,
-					Webhooks: []string{req.Webhook},
-				})
-			}
-		}
-
-		var xpubSubs []observer.Subscription
-		for coinStr, perCoin := range req.XpubSubscriptions {
-			coin, err := strconv.Atoi(coinStr)
-			if err != nil {
-				continue
-			}
-			for _, addr := range perCoin {
-				xpubSubs = append(xpubSubs, observer.Subscription{
-					Coin:     uint(coin),
-					Address:  addr,
-					Webhooks: []string{req.Webhook},
-				})
-			}
-		}
-
+		subs := parseSubscriptions(req.Subscriptions, req.Webhook)
+		xpubSubs := parseSubscriptions(req.XpubSubscriptions, req.Webhook)
 		subs = append(subs, xpubSubs...)
 		err := storage.DeleteSubscriptions(subs)
 		if err != nil {
 			ErrorResponse(c).Message(err.Error()).Render()
 			return
 		}
-
 		RenderSuccess(c, ObserverResponse{Status: "Deleted"})
 	}
 }
@@ -207,4 +151,33 @@ func statusCall(storage *observer.Storage) func(c *gin.Context) {
 		}
 		RenderSuccess(c, result)
 	}
+}
+
+func cacheXpub(subscriptions map[string][]string, storage *observer.Storage) {
+	for coinStr, perCoin := range subscriptions {
+		coin, err := strconv.Atoi(coinStr)
+		if err != nil {
+			continue
+		}
+		for _, xpub := range perCoin {
+			go storage.CacheXPubAddress(xpub, uint(coin))
+		}
+	}
+}
+
+func parseSubscriptions(subscriptions map[string][]string, webhook string) (subs []interface{}) {
+	for coinStr, perCoin := range subscriptions {
+		coin, err := strconv.Atoi(coinStr)
+		if err != nil {
+			continue
+		}
+		for _, addr := range perCoin {
+			subs = append(subs, &observer.Subscription{
+				Coin:    uint(coin),
+				Address: addr,
+				Webhook: webhook,
+			})
+		}
+	}
+	return
 }
