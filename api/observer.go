@@ -66,44 +66,15 @@ func addCall(c *gin.Context) {
 		return
 	}
 
-	var subs []observer.Subscription
-	for coinStr, perCoin := range req.Subscriptions {
-		coin, err := strconv.Atoi(coinStr)
-		if err != nil {
-			continue
-		}
-		for _, addr := range perCoin {
-			subs = append(subs, observer.Subscription{
-				Coin:     uint(coin),
-				Address:  addr,
-				Webhooks: []string{req.Webhook},
-			})
-		}
-	}
-
-	var xpubSubs []observer.Subscription
-	for coinStr, perCoin := range req.XpubSubscriptions {
-		coin, err := strconv.Atoi(coinStr)
-		if err != nil {
-			continue
-		}
-
-		for _, xpub := range perCoin {
-			xpubSubs = append(xpubSubs, observer.Subscription{
-				Coin:     uint(coin),
-				Address:  xpub,
-				Webhooks: []string{req.Webhook},
-			})
-			go cacheXPubAddress(xpub, uint(coin))
-		}
-	}
+	subs := parseSubscriptions(req.Subscriptions, req.Webhook)
+	xpubSubs := parseSubscriptions(req.XpubSubscriptions, req.Webhook)
 	subs = append(subs, xpubSubs...)
 	err := observerStorage.App.Add(subs)
 	if err != nil {
 		ErrorResponse(c).Message(err.Error()).Render()
 		return
 	}
-
+	go cacheXpub(req.XpubSubscriptions)
 	RenderSuccess(c, ObserverResponse{Status: "Added"})
 }
 
@@ -149,37 +120,10 @@ func deleteCall(c *gin.Context) {
 		return
 	}
 
-	var subs []observer.Subscription
-	for coinStr, perCoin := range req.Subscriptions {
-		coin, err := strconv.Atoi(coinStr)
-		if err != nil {
-			continue
-		}
-		for _, addr := range perCoin {
-			subs = append(subs, observer.Subscription{
-				Coin:     uint(coin),
-				Address:  addr,
-				Webhooks: []string{req.Webhook},
-			})
-		}
-	}
-
-	var xpubSubs []observer.Subscription
-	for coinStr, perCoin := range req.XpubSubscriptions {
-		coin, err := strconv.Atoi(coinStr)
-		if err != nil {
-			continue
-		}
-		for _, addr := range perCoin {
-			xpubSubs = append(xpubSubs, observer.Subscription{
-				Coin:     uint(coin),
-				Address:  addr,
-				Webhooks: []string{req.Webhook},
-			})
-		}
-	}
-
+	subs := parseSubscriptions(req.Subscriptions, req.Webhook)
+	xpubSubs := parseSubscriptions(req.XpubSubscriptions, req.Webhook)
 	subs = append(subs, xpubSubs...)
+
 	err := observerStorage.App.Delete(subs)
 	if err != nil {
 		ErrorResponse(c).Message(err.Error()).Render()
@@ -215,4 +159,33 @@ func statusCall(c *gin.Context) {
 		result[coin.Handle] = status
 	}
 	RenderSuccess(c, result)
+}
+
+func cacheXpub(subscriptions map[string][]string) {
+	for coinStr, perCoin := range subscriptions {
+		coin, err := strconv.Atoi(coinStr)
+		if err != nil {
+			continue
+		}
+		for _, xpub := range perCoin {
+			go cacheXPubAddress(xpub, uint(coin))
+		}
+	}
+}
+
+func parseSubscriptions(subscriptions map[string][]string, webhook string) (subs []observer.Subscription) {
+	for coinStr, perCoin := range subscriptions {
+		coin, err := strconv.Atoi(coinStr)
+		if err != nil {
+			continue
+		}
+		for _, addr := range perCoin {
+			subs = append(subs, observer.Subscription{
+				Coin:     uint(coin),
+				Address:  addr,
+				Webhooks: []string{webhook},
+			})
+		}
+	}
+	return
 }
