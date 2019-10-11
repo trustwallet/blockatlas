@@ -47,7 +47,7 @@ func (db *sql) Update(value interface{}) error {
 }
 
 func (db *sql) UpdateMany(values ...interface{}) error {
-	return db.ToMany(db.Update, values...)
+	return db.Batch(db.Update, values...)
 }
 
 func (db *sql) Add(value interface{}) error {
@@ -59,7 +59,7 @@ func (db *sql) Add(value interface{}) error {
 }
 
 func (db *sql) AddMany(values ...interface{}) error {
-	return db.ToMany(db.Add, values...)
+	return db.Batch(db.Add, values...)
 }
 
 func (db *sql) Delete(value interface{}) error {
@@ -71,10 +71,10 @@ func (db *sql) Delete(value interface{}) error {
 }
 
 func (db *sql) DeleteMany(values ...interface{}) error {
-	return db.ToMany(db.Delete, values...)
+	return db.Batch(db.Delete, values...)
 }
 
-func (db *sql) ToMany(handler Handler, values ...interface{}) error {
+func (db *sql) Batch(handler Handler, values ...interface{}) error {
 	tx := db.Client.Begin()
 	for _, value := range values {
 		err := handler(value)
