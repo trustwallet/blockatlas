@@ -3,6 +3,7 @@ package observer
 import (
 	"context"
 	"github.com/spf13/viper"
+	"github.com/trustwallet/blockatlas/observer/storage"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/util"
@@ -13,7 +14,7 @@ import (
 
 type Stream struct {
 	BlockAPI     blockatlas.BlockAPI
-	Tracker      StorageTracker
+	Tracker      storage.Tracker
 	PollInterval time.Duration
 	BacklogCount int
 	coin         uint

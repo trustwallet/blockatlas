@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
-	"github.com/trustwallet/blockatlas/observer"
+	"github.com/trustwallet/blockatlas/observer/storage"
 	"github.com/trustwallet/blockatlas/platform"
 	"net/http"
 	"strconv"
@@ -25,7 +25,7 @@ type CoinStatus struct {
 	Error  string `json:"error,omitempty"`
 }
 
-func SetupObserverAPI(router gin.IRouter, db observer.Storage) {
+func SetupObserverAPI(router gin.IRouter, db storage.Storage) {
 	router.Use(requireAuth)
 	router.POST("/webhook/register", addCall(&db))
 	router.DELETE("/webhook/register", deleteCall(&db))
@@ -52,7 +52,7 @@ func requireAuth(c *gin.Context) {
 // @Header 200 {string} Authorization {token}
 // @Success 200 {object} api.ObserverResponse
 // @Router /observer/v1/webhook/register [post]
-func addCall(storage *observer.Storage) func(c *gin.Context) {
+func addCall(storage *storage.Storage) func(c *gin.Context) {
 	if storage == nil {
 		return nil
 	}
@@ -93,7 +93,7 @@ func addCall(storage *observer.Storage) func(c *gin.Context) {
 // @Header 200 {string} Authorization {token}
 // @Success 200 {object} api.ObserverResponse
 // @Router /observer/v1/webhook/register [delete]
-func deleteCall(storage *observer.Storage) func(c *gin.Context) {
+func deleteCall(storage *storage.Storage) func(c *gin.Context) {
 	if storage == nil {
 		return nil
 	}
@@ -130,7 +130,7 @@ func deleteCall(storage *observer.Storage) func(c *gin.Context) {
 // @Header 200 {string} Authorization {token}
 // @Success 200 {object} api.CoinStatus
 // @Router /observer/v1/status [get]
-func statusCall(storage *observer.Storage) func(c *gin.Context) {
+func statusCall(storage *storage.Storage) func(c *gin.Context) {
 	if storage == nil {
 		return nil
 	}
@@ -153,7 +153,7 @@ func statusCall(storage *observer.Storage) func(c *gin.Context) {
 	}
 }
 
-func cacheXpub(subscriptions map[string][]string, storage *observer.Storage) {
+func cacheXpub(subscriptions map[string][]string, storage *storage.Storage) {
 	for coinStr, perCoin := range subscriptions {
 		coin, err := strconv.Atoi(coinStr)
 		if err != nil {
@@ -172,7 +172,7 @@ func parseSubscriptions(subscriptions map[string][]string, webhook string) (subs
 			continue
 		}
 		for _, addr := range perCoin {
-			subs = append(subs, &observer.Subscription{
+			subs = append(subs, &storage.Subscription{
 				Coin:    uint(coin),
 				Address: addr,
 				Webhook: webhook,

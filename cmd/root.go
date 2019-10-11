@@ -5,7 +5,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/config"
-	"github.com/trustwallet/blockatlas/observer"
+	"github.com/trustwallet/blockatlas/observer/storage"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/platform"
@@ -13,7 +13,7 @@ import (
 )
 
 var (
-	Storage observer.Storage
+	Storage storage.Storage
 	rootCmd = cobra.Command{
 		Use:   "blockatlas",
 		Short: "BlockAtlas by Trust Wallet",
@@ -33,9 +33,9 @@ var (
 				logger.Fatal(errors.E(err), "Cannot connect to Postgres")
 			}
 			Storage.Client.AutoMigrate(
-				&observer.Block{},
-				&observer.Xpub{},
-				&observer.Subscription{},
+				&storage.Block{},
+				&storage.Xpub{},
+				&storage.Subscription{},
 			)
 		},
 	}

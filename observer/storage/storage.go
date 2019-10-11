@@ -1,4 +1,4 @@
-package observer
+package storage
 
 import (
 	"github.com/trustwallet/blockatlas/pkg/errors"
@@ -7,28 +7,8 @@ import (
 	"github.com/trustwallet/blockatlas/platform/bitcoin"
 )
 
-type StorageTracker interface {
-	GetBlockNumber(coin uint) (int64, error)
-	SetBlockNumber(coin uint, num int64) error
-}
-
-type StorageAddresses interface {
-	Lookup(coin uint, addresses ...string) ([]Subscription, error)
-	AddSubscriptions([]interface{}) error
-	DeleteSubscriptions([]interface{}) error
-	GetAddressFromXpub(coin uint, xpub string) ([]Xpub, error)
-	GetXpubFromAddress(coin uint, address string) (string, error)
-	SaveXpubAddresses(coin uint, addresses []string, xpub string) error
-}
-
 type Storage struct {
 	sql.PgSql
-}
-
-type Block struct {
-	ID          uint `gorm:"primary_key"`
-	Coin        uint `gorm:"primary_key"`
-	BlockHeight int64
 }
 
 func (s *Storage) GetBlockNumber(coin uint) (int64, error) {
@@ -47,13 +27,6 @@ func (s *Storage) SetBlockNumber(coin uint, num int64) error {
 		return errors.E(err, errors.Params{"block": num, "coin": coin}).PushToSentry()
 	}
 	return nil
-}
-
-type Xpub struct {
-	ID      uint `gorm:"auto_increment;not null"`
-	Coin    uint
-	Address string `gorm:"primary_key;type:varchar(150)"`
-	Xpub    string `gorm:"primary_key;type:varchar(150)"`
 }
 
 func (s *Storage) SaveXpubAddresses(coin uint, addresses []string, xpub string) error {
@@ -97,14 +70,6 @@ func (s *Storage) GetXpubFromAddress(coin uint, address string) (string, error) 
 		return "", err
 	}
 	return a.Xpub, nil
-}
-
-type Subscription struct {
-	ID      uint   `json:"-" gorm:"auto_increment;not null"`
-	Coin    uint   `json:"coin"`
-	Address string `json:"address" gorm:"primary_key;type:varchar(150)"`
-	Webhook string `json:"webhook" gorm:"primary_key;type:varchar(150)"`
-	Origin  string `json:"-"`
 }
 
 func (s *Storage) Lookup(coin uint, addresses ...string) (observers []Subscription, err error) {

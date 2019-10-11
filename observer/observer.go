@@ -3,17 +3,18 @@ package observer
 import (
 	mapset "github.com/deckarep/golang-set"
 	"github.com/trustwallet/blockatlas/coin"
+	"github.com/trustwallet/blockatlas/observer/storage"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/platform/bitcoin"
 )
 
 type Event struct {
-	Subscription Subscription
+	Subscription storage.Subscription
 	Tx           *blockatlas.Tx
 }
 
 type Observer struct {
-	Storage StorageAddresses
+	Storage storage.Addresses
 	Coin    uint
 }
 
