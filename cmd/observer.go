@@ -46,7 +46,7 @@ func runObserver(_ *cobra.Command, _ []string) {
 		}
 		stream := observer.Stream{
 			BlockAPI:     api,
-			Tracker:      &Storage,
+			Tracker:      Storage,
 			PollInterval: pollInterval,
 			BacklogCount: backlogCount,
 		}
@@ -54,7 +54,7 @@ func runObserver(_ *cobra.Command, _ []string) {
 
 		// Check for transaction events
 		obs := observer.Observer{
-			Storage: &Storage,
+			Storage: Storage,
 			Coin:    coin.ID,
 		}
 		events := obs.Execute(blocks)

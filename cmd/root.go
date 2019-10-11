@@ -13,7 +13,7 @@ import (
 )
 
 var (
-	Storage storage.Storage
+	Storage *storage.Storage
 	rootCmd = cobra.Command{
 		Use:   "blockatlas",
 		Short: "BlockAtlas by Trust Wallet",
@@ -28,15 +28,18 @@ var (
 			// Load app components
 			platform.Init()
 
-			err := Storage.Init(viper.GetString("observer.postgres"), len(platform.Platforms)+5)
-			if err != nil {
-				logger.Fatal(errors.E(err), "Cannot connect to Postgres")
+			if viper.GetBool("observer.enabled") {
+				logger.Info("Loading Observer API")
+				err := Storage.Init(viper.GetString("observer.postgres"), len(platform.Platforms)+5)
+				if err != nil {
+					logger.Fatal(errors.E(err), "Cannot connect to Postgres")
+				}
+				Storage.Client.AutoMigrate(
+					&storage.Block{},
+					&storage.Xpub{},
+					&storage.Subscription{},
+				)
 			}
-			Storage.Client.AutoMigrate(
-				&storage.Block{},
-				&storage.Xpub{},
-				&storage.Subscription{},
-			)
 		},
 	}
 )

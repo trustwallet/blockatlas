@@ -25,11 +25,11 @@ type CoinStatus struct {
 	Error  string `json:"error,omitempty"`
 }
 
-func SetupObserverAPI(router gin.IRouter, db storage.Storage) {
+func SetupObserverAPI(router gin.IRouter, db *storage.Storage) {
 	router.Use(requireAuth)
-	router.POST("/webhook/register", addCall(&db))
-	router.DELETE("/webhook/register", deleteCall(&db))
-	router.GET("/status", statusCall(&db))
+	router.POST("/webhook/register", addCall(db))
+	router.DELETE("/webhook/register", deleteCall(db))
+	router.GET("/status", statusCall(db))
 }
 
 func requireAuth(c *gin.Context) {
