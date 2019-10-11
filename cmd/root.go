@@ -28,7 +28,7 @@ var (
 			// Load app components
 			platform.Init()
 
-			err := Storage.Init(viper.GetString("observer.postgres"))
+			err := Storage.Init(viper.GetString("observer.postgres"), len(platform.Platforms)+5)
 			if err != nil {
 				logger.Fatal(errors.E(err), "Cannot connect to Postgres")
 			}
