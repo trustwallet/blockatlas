@@ -1,6 +1,3 @@
-// TODO remove build flag after all merges
-// +build WIP
-
 package observer
 
 import (
