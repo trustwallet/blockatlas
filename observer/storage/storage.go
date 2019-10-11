@@ -78,7 +78,7 @@ func (s *Storage) Lookup(coin uint, addresses ...string) (observers []Subscripti
 	}
 	s.Client.
 		Table("subscriptions").
-		Select("subscriptions.coin, subscriptions.address, subscriptions.webhook, xpubs.address AS origin").
+		Select("subscriptions.coin, COALESCE(xpubs.address, subscriptions.address) AS address, subscriptions.webhook, xpubs.xpub AS xpub").
 		Joins("LEFT JOIN xpubs ON subscriptions.address = xpubs.xpub").
 		Where("subscriptions.address IN (?)", addresses).
 		Or("xpubs.address IN (?)", addresses).

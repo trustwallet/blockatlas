@@ -18,5 +18,5 @@ type Subscription struct {
 	Coin    uint   `json:"coin"`
 	Address string `json:"address" gorm:"primary_key;type:varchar(150)"`
 	Webhook string `json:"webhook" gorm:"primary_key;type:varchar(150)"`
-	Origin  string `json:"-"`
+	Xpub    string `json:"-" sql:"-" gorm:"-"`
 }

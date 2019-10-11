@@ -51,19 +51,10 @@ func (o *Observer) processBlock(events chan<- Event, block *blockatlas.Block) {
 	emittedUtxo := make(map[string]blockatlas.Direction)
 	platform := bitcoin.UtxoPlatform(o.Coin)
 	for _, sub := range subs {
-		key := sub.Address
-		if len(sub.Origin) > 0 {
-			key = sub.Origin
-		}
-		amap, ok := txMap[key]
-		if !ok {
-			continue
-		}
-		txs := amap.Txs()
+		txs := txMap[sub.Address].Txs()
 		for _, tx := range txs {
-			xpub, err := o.Storage.GetXpubFromAddress(o.Coin, sub.Address)
-			if err == nil && len(xpub) > 0 {
-				xpubAddresses, err := o.Storage.GetAddressFromXpub(o.Coin, xpub)
+			if len(sub.Xpub) > 0 {
+				xpubAddresses, err := o.Storage.GetAddressFromXpub(o.Coin, sub.Xpub)
 				if err != nil {
 					continue
 				}
