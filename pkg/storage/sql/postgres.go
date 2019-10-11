@@ -15,6 +15,6 @@ func (db *PgSql) Init(host string) error {
 	if err != nil {
 		return errors.E(err, "postgress connection failed")
 	}
-	db.client = client
+	db.Client = client
 	return nil
 }
