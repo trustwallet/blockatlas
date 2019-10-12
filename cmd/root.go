@@ -13,7 +13,7 @@ import (
 )
 
 var (
-	Storage *storage.Storage
+	Storage = new(storage.Storage)
 	rootCmd = cobra.Command{
 		Use:   "blockatlas",
 		Short: "BlockAtlas by Trust Wallet",

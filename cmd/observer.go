@@ -19,6 +19,10 @@ var observerCmd = cobra.Command{
 }
 
 func runObserver(_ *cobra.Command, _ []string) {
+	if Storage == nil {
+		logger.Fatal("Observer is not enabled")
+	}
+
 	if len(platform.BlockAPIs) == 0 {
 		logger.Fatal("No APIs to observe")
 	}
