@@ -185,11 +185,13 @@ func TestNormalizeValidator(t *testing.T) {
 	expected := blockatlas.Validator{
 		ID:     "TGzz8gjYiYRqpfmDwnLxfgPuLVNmpCswVp",
 		Status: true,
-		Reward: blockatlas.StakingReward{
-			Annual: Annual,
+		Details: blockatlas.StakingDetails{
+			Reward: blockatlas.StakingReward{
+				Annual: Annual,
+			},
+			LockTime:      259200,
+			MinimumAmount: "1000000",
 		},
-		LockTime:      259200,
-		MinimumAmount: "1000000",
 	}
 	assert.Equal(t, expected, actual)
 }
@@ -245,11 +247,13 @@ var validator1 = blockatlas.StakeValidator{
 		Image:       "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/tron/validators/assets/tgzz8gjyiyrqpfmdwnlxfgpulvnmpcswvp/logo.png",
 		Website:     "https://www.sesameseed.org",
 	},
-	Reward: blockatlas.StakingReward{
-		Annual: 4.32,
+	Details: blockatlas.StakingDetails{
+		Reward: blockatlas.StakingReward{
+			Annual: 4.32,
+		},
+		LockTime:      259200,
+		MinimumAmount: "1000000",
 	},
-	LockTime:      259200,
-	MinimumAmount: "1000000",
 }
 
 var validator2 = blockatlas.StakeValidator{
@@ -261,11 +265,13 @@ var validator2 = blockatlas.StakeValidator{
 		Image:       "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/tron/validators/assets/tpmgfspxlqgom8skutrbhcdkthjrhfbgkw/logo.png",
 		Website:     "https://infstones.io/",
 	},
-	Reward: blockatlas.StakingReward{
-		Annual: 4.32,
+	Details: blockatlas.StakingDetails{
+		Reward: blockatlas.StakingReward{
+			Annual: 4.32,
+		},
+		LockTime:      259200,
+		MinimumAmount: "1000000",
 	},
-	LockTime:      259200,
-	MinimumAmount: "1000000",
 }
 
 var delegation1 = blockatlas.Delegation{
