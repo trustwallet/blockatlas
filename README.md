@@ -309,10 +309,6 @@ Prometheus or another service can collect metrics provided from the `/metrics` e
 
 To protect the route, you can set the environment variables `METRICS_API_TOKEN`, and this route starts to require the auth bearer token. 
 
-## Authors
-
--   [Richard Patel](https://github.com/terorie)
-
 ## Contributing
 
 If you'd like to add support for a new blockchain, feel free to file a pull request.
