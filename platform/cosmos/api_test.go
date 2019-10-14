@@ -374,11 +374,13 @@ func TestNormalizeValidator(t *testing.T) {
 	_ = json.Unmarshal([]byte(validatorSrc), &v)
 	coin := coin.Coin{}
 	expected := blockatlas.Validator{
-		Status:        true,
-		ID:            v.Address,
-		Reward:        blockatlas.StakingReward{Annual: 435.48749999999995},
-		LockTime:      1814400,
-		MinimumAmount: "0",
+		Status: true,
+		ID:     v.Address,
+		Details: blockatlas.StakingDetails{
+			Reward:        blockatlas.StakingReward{Annual: 435.48749999999995},
+			LockTime:      1814400,
+			MinimumAmount: "0",
+		},
 	}
 
 	result := normalizeValidator(v, stakingPool, inflation, coin)
@@ -400,11 +402,13 @@ var validator1 = blockatlas.StakeValidator{
 		Image:       "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/cosmos/validators/assets/cosmosvaloper1qwl879nx9t6kef4supyazayf7vjhennyh568ys/logo.png",
 		Website:     "https://certus.one",
 	},
-	Reward: blockatlas.StakingReward{
-		Annual: 9.259735525366604,
+	Details: blockatlas.StakingDetails{
+		Reward: blockatlas.StakingReward{
+			Annual: 9.259735525366604,
+		},
+		LockTime:      1814400,
+		MinimumAmount: "0",
 	},
-	LockTime:      1814400,
-	MinimumAmount: "0",
 }
 
 var validatorMap = blockatlas.ValidatorMap{

@@ -133,6 +133,14 @@ func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
 	return results, nil
 }
 
+func (p *Platform) GetDetails() blockatlas.StakingDetails {
+	return blockatlas.StakingDetails{
+		Reward:        blockatlas.StakingReward{Annual: Annual},
+		MinimumAmount: blockatlas.Amount("1000000"),
+		LockTime:      259200,
+	}
+}
+
 func normalizeValidator(v Validator) (validator blockatlas.Validator, ok bool) {
 	address, err := HexToAddress(v.Address)
 	if err != nil {
@@ -140,11 +148,13 @@ func normalizeValidator(v Validator) (validator blockatlas.Validator, ok bool) {
 	}
 
 	return blockatlas.Validator{
-		Status:        true,
-		ID:            address,
-		Reward:        blockatlas.StakingReward{Annual: Annual},
-		MinimumAmount: blockatlas.Amount("1000000"),
-		LockTime:      259200,
+		Status: true,
+		ID:     address,
+		Details: blockatlas.StakingDetails{
+			Reward:        blockatlas.StakingReward{Annual: Annual},
+			MinimumAmount: blockatlas.Amount("1000000"),
+			LockTime:      259200,
+		},
 	}, true
 }
 
