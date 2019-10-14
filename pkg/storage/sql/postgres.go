@@ -21,3 +21,7 @@ func (db *PgSql) Init(host string, conns int) error {
 	db.Client = client
 	return nil
 }
+
+func (db *PgSql) IsReady() bool {
+	return db.Client != nil
+}

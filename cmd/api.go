@@ -51,7 +51,7 @@ func RunApi(bind string, c chan *gin.Engine) {
 	api.LoadPlatforms(engine)
 	api.MakeLookupRoute(engine)
 
-	if Storage != nil {
+	if Storage.IsReady() {
 		observerAPI := engine.Group("/observer/v1")
 		api.SetupObserverAPI(observerAPI, Storage)
 	}

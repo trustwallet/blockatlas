@@ -19,7 +19,7 @@ var observerCmd = cobra.Command{
 }
 
 func runObserver(_ *cobra.Command, _ []string) {
-	if Storage == nil {
+	if !Storage.IsReady() {
 		logger.Fatal("Observer is not enabled")
 	}
 
