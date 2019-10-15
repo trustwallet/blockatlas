@@ -2,7 +2,6 @@ package observer
 
 import (
 	"context"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
@@ -18,7 +17,7 @@ type Stream struct {
 	PollInterval time.Duration
 	BacklogCount int
 	coin         uint
-	log          *logrus.Entry
+	logParams    logger.Params
 
 	// Concurrency
 	blockNumber int64
@@ -29,7 +28,7 @@ type Stream struct {
 func (s *Stream) Execute(ctx context.Context) <-chan *blockatlas.Block {
 	cn := s.BlockAPI.Coin()
 	s.coin = cn.ID
-	s.log = logrus.WithField("platform", cn.Handle)
+	s.logParams = logger.Params{"platform": cn.Handle}
 	conns := viper.GetInt("observer.stream_conns")
 	if conns == 0 {
 		logger.Fatal("observer.stream_conns is 0")
@@ -57,14 +56,14 @@ func (s *Stream) run(ctx context.Context, c chan<- *blockatlas.Block) {
 func (s *Stream) load(c chan<- *blockatlas.Block) {
 	lastHeight, err := s.Tracker.GetBlockNumber(s.coin)
 	if err != nil {
-		s.log.WithError(err).Error("Polling failed: tracker didn't return last known block number")
+		logger.Error(err, "Polling failed: tracker didn't return last known block number", s.logParams)
 		return
 	}
 
 	height, err := s.BlockAPI.CurrentBlockNumber()
 	height -= s.BlockAPI.Coin().MinConfirmations
 	if err != nil {
-		s.log.WithError(err).Error("Polling failed: source didn't return chain head number")
+		logger.Error(err, "Polling failed: source didn't return chain head number", s.logParams)
 		return
 	}
 
@@ -89,20 +88,20 @@ func (s *Stream) loadBlock(c chan<- *blockatlas.Block, num int64) {
 	s.semaphore.Acquire()
 	defer s.semaphore.Release()
 
-	block, err := retry(5, time.Second*5, s.BlockAPI.GetBlockByNumber, num, s.log)
+	block, err := retry(5, time.Second*5, s.BlockAPI.GetBlockByNumber, num)
 	if err != nil {
-		s.log.WithError(err).Errorf("Polling failed: could not get block %d", num)
+		logger.Error(err, "Polling failed: could not get block", s.logParams, logger.Params{"block": num})
 		return
 	}
 	c <- block
-	s.log.WithField("num", num).WithField("txs", len(block.Txs)).Info("Got new block")
+	logger.Info(err, "Got new block", s.logParams, logger.Params{"block": num, "txs": len(block.Txs)})
 
 	// Not strictly correct nor avoids race conditions
 	// But good enough
 	newNum := atomic.AddInt64(&s.blockNumber, 1)
 	err = s.Tracker.SetBlockNumber(s.coin, newNum)
 	if err != nil {
-		s.log.WithError(err).Error("Polling failed: could not update block number at tracker")
+		logger.Error(err, "Polling failed: could not update block number at tracker", s.logParams)
 		return
 	}
 }

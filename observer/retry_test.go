@@ -2,7 +2,6 @@ package observer
 
 import (
 	"errors"
-	"github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"testing"
 	"time"
@@ -16,8 +15,7 @@ func getBlock(num int64) (*blockatlas.Block, error) {
 }
 
 func TestRetry(t *testing.T) {
-	l := logrus.WithField("test", "retry")
-	block, err := retry(3, time.Second*1, getBlock, 1, l)
+	block, err := retry(3, time.Second*1, getBlock, 1)
 	if err != nil {
 		t.Error(err)
 	}
@@ -28,9 +26,8 @@ func TestRetry(t *testing.T) {
 }
 
 func TestRetryError(t *testing.T) {
-	l := logrus.WithField("test", "retry_error")
 	now := time.Now()
-	block, err := retry(3, time.Second*1, getBlock, 0, l)
+	block, err := retry(3, time.Second*1, getBlock, 0)
 	elapsed := time.Since(now)
 	if err == nil {
 		t.Error("retry method need fail")

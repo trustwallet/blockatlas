@@ -3,8 +3,6 @@ package observer
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
-	"github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
@@ -37,22 +35,22 @@ func (d *Dispatcher) dispatch(event Event) {
 	}
 
 	webhooks := event.Subscription.Webhooks
-	log := logrus.WithFields(logrus.Fields{
+	logParams := logger.Params{
 		"webhook": webhooks,
 		"coin":    event.Subscription.Coin,
 		"txID":    event.Tx.ID,
-	})
-	for _, hook := range webhooks {
-		go d.postWebhook(hook, txJson, log)
 	}
-	log.Infoln(fmt.Sprintf("Dispatch: hook count = %d", len(webhooks)))
+	for _, hook := range webhooks {
+		go d.postWebhook(hook, txJson, logParams)
+	}
+	logger.Info("Dispatching webhooks...", logger.Params{"webhooks": len(webhooks)}, logParams)
 }
 
-func (d *Dispatcher) postWebhook(hook string, data []byte, log *logrus.Entry) {
+func (d *Dispatcher) postWebhook(hook string, data []byte, logParams logger.Params) {
 	_, err := d.Client.Post(hook, "application/json", bytes.NewReader(data))
 	if err != nil {
 		err = errors.E(err, errors.Params{"hook": hook})
-		log.WithError(err).Errorf("Failed to dispatch event %s", hook)
+		logger.Error(err, "Failed to dispatch event", logger.Params{"webhook": hook}, logParams)
 	}
-	log.Info("Dispatch: hook: ", hook)
+	logger.Info("Webhook dispatched", logger.Params{"webhook": hook}, logParams)
 }
