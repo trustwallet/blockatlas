@@ -8,7 +8,7 @@ import (
 
 func (s *Storage) SaveXpubAddresses(coin uint, addresses []string, xpub string) error {
 	if len(addresses) == 0 {
-		return errors.E("no addresses for xpub", errors.Params{"xpub": xpub})
+		return errors.E("no addresses for xpub", errors.Params{"xpub": xpub}).PushToSentry()
 	}
 	a := make([]interface{}, 0)
 	for _, address := range addresses {
@@ -49,7 +49,7 @@ func (s *Storage) GetXpubFromAddress(coin uint, address string) (string, error) 
 
 func (s *Storage) Lookup(coin uint, addresses ...string) (observers []Subscription, err error) {
 	if len(addresses) == 0 {
-		return nil, errors.E("cannot look up an empty list", errors.Params{"coin": coin})
+		return nil, errors.E("cannot look up an empty list", errors.Params{"coin": coin}).PushToSentry()
 	}
 	s.Client.
 		Table("subscriptions").

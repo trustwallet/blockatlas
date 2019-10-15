@@ -51,7 +51,7 @@ func (s *Storage) SaveBlock(coin uint, num int64) error {
 	b := Block{Coin: coin, BlockHeight: num}
 	err := s.CreateOrUpdate(&b)
 	if err != nil {
-		return errors.E(err, errors.Params{"block": num, "coin": coin})
+		return errors.E(err, errors.Params{"block": num, "coin": coin}).PushToSentry()
 	}
 	return nil
 }
@@ -65,7 +65,7 @@ func (s *Storage) SaveAllBlocks() error {
 	}
 	err := s.CreateOrUpdateMany(values)
 	if err != nil {
-		return errors.E(err)
+		return errors.E(err).PushToSentry()
 	}
 	return nil
 }
