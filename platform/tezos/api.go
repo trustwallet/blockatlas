@@ -83,10 +83,15 @@ func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
 }
 
 func (p *Platform) GetDetails() blockatlas.StakingDetails {
+	return getDetails()
+}
+
+func getDetails() blockatlas.StakingDetails {
 	return blockatlas.StakingDetails{
 		Reward:        blockatlas.StakingReward{Annual: Annual},
 		MinimumAmount: blockatlas.Amount("0"),
 		LockTime:      0,
+		Type:          blockatlas.DelegationTypeDelegate,
 	}
 }
 
@@ -95,13 +100,9 @@ func normalizeValidator(v Validator) (validator blockatlas.Validator) {
 	// Delegation rewards distributed by the validators manually, it's up to them to do it.
 
 	return blockatlas.Validator{
-		Status: true,
-		ID:     v.Address,
-		Details: blockatlas.StakingDetails{
-			Reward:        blockatlas.StakingReward{Annual: Annual},
-			MinimumAmount: blockatlas.Amount("0"),
-			LockTime:      0,
-		},
+		Status:  true,
+		ID:      v.Address,
+		Details: getDetails(),
 	}
 }
 
