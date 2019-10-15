@@ -159,3 +159,16 @@ func (m *Message) UnmarshalJSON(buf []byte) error {
 	}
 	return err
 }
+
+type Account struct {
+	Value AccountValue `json:"value"`
+}
+
+type AccountValue struct {
+	Coins []Balance `json:"coins"`
+}
+
+type Balance struct {
+	Denom  string `json:"denom"`
+	Amount string `json:"amount"`
+}
