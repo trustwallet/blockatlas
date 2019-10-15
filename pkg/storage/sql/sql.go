@@ -35,6 +35,10 @@ func (db *sql) CreateOrUpdate(value interface{}) error {
 	return db.Update(value)
 }
 
+func (db *sql) CreateOrUpdateMany(values ...interface{}) error {
+	return db.Batch(db.CreateOrUpdate, values...)
+}
+
 func (db *sql) Update(value interface{}) error {
 	if db.Client.NewRecord(value) {
 		return util.ErrNotFound

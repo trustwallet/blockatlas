@@ -13,7 +13,7 @@ import (
 )
 
 var (
-	Storage = new(storage.Storage)
+	Storage = storage.New()
 	rootCmd = cobra.Command{
 		Use:   "blockatlas",
 		Short: "BlockAtlas by Trust Wallet",
@@ -51,8 +51,14 @@ func init() {
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
+	defer func() {
+		err := Storage.SaveAllBlocks()
+		if err != nil {
+			fmt.Errorf("%s", err)
+		}
+	}()
 	if err := rootCmd.Execute(); err != nil {
-		fmt.Println(err)
+		fmt.Errorf("%s", err)
 		os.Exit(1)
 	}
 }
