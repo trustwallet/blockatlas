@@ -1,7 +1,6 @@
 package observer
 
 import (
-	"github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"math/rand"
@@ -14,7 +13,7 @@ type stop struct {
 	error
 }
 
-func retry(attempts int, sleep time.Duration, f GetBlockByNumber, n int64, log *logrus.Entry) (*blockatlas.Block, error) {
+func retry(attempts int, sleep time.Duration, f GetBlockByNumber, n int64) (*blockatlas.Block, error) {
 	r, err := f(n)
 	if err != nil {
 		if s, ok := err.(stop); ok {
@@ -34,7 +33,7 @@ func retry(attempts int, sleep time.Duration, f GetBlockByNumber, n int64, log *
 			)
 
 			time.Sleep(sleep)
-			return retry(attempts, sleep*2, f, n, log)
+			return retry(attempts, sleep*2, f, n)
 		}
 	}
 	return r, err
