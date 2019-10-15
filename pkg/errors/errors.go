@@ -85,6 +85,11 @@ func (e *Error) MarshalJSON() ([]byte, error) {
 	return json.Marshal(e.JSON())
 }
 
+func (e *Error) PushToSentry() *Error {
+	SendError(e)
+	return e
+}
+
 // T create a new error with runtime stack trace.
 func T(args ...interface{}) *Error {
 	e := E(args...)
@@ -123,6 +128,5 @@ func E(args ...interface{}) *Error {
 		msg := strings.Join(message[:], ": ")
 		e.Err = errors.New(msg)
 	}
-	SendError(e)
 	return e
 }

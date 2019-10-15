@@ -84,7 +84,7 @@ func (s *Storage) GetXpubFromAddress(coin uint, address string) (string, error) 
 	if ad, ok := s.addresses[address]; ok {
 		return ad, nil
 	}
-	return "", errors.E("xpub not found for the address", errors.Params{"address": address, "coin": coin})
+	return "", errors.E("xpub not found for the address", errors.Params{"address": address, "coin": coin}).PushToSentry()
 }
 
 func key(coin uint, address string) string {

@@ -21,7 +21,7 @@ func (c *Client) GetLatestBlock() (int64, error) {
 	}
 	b, err := strconv.ParseInt(chainMeta.Height, 10, 64)
 	if err != nil {
-		return 0, errors.E(err, "ParseInt failed", errors.TypePlatformUnmarshal)
+		return 0, errors.E(err, "ParseInt failed", errors.TypePlatformUnmarshal).PushToSentry()
 	}
 	return b, nil
 }

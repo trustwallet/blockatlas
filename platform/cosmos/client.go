@@ -57,7 +57,7 @@ func (c *Client) CurrentBlockNumber() (num int64, err error) {
 
 	num, err = strconv.ParseInt(block.Meta.Header.Height, 10, 64)
 	if err != nil {
-		return num, errors.E("error to ParseInt", errors.TypePlatformUnmarshal)
+		return num, errors.E("error to ParseInt", errors.TypePlatformUnmarshal).PushToSentry()
 	}
 
 	return num, nil
@@ -77,7 +77,7 @@ func (c *Client) GetInflation() (float64, error) {
 
 	s, err := strconv.ParseFloat(result, 32)
 	if err != nil {
-		return 0, errors.E("error to ParseFloat", errors.TypePlatformUnmarshal)
+		return 0, errors.E("error to ParseFloat", errors.TypePlatformUnmarshal).PushToSentry()
 	}
 	return s, nil
 }
