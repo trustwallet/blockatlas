@@ -87,7 +87,7 @@ func (p *Platform) GetDetails() blockatlas.StakingDetails {
 }
 
 func (p *Platform) GetBalance(address string) (string, error) {
-	//TODO: Implement
+	//TODO: Implement fetching balance for Tezos
 	return "0", nil
 }
 

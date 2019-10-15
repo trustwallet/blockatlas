@@ -274,7 +274,7 @@ func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, e
 }
 
 func (p *Platform) GetBalance(address string) (string, error) {
-	//TODO: Implement
+	//TODO: Implement fetching balance for Tron
 	return "0", nil
 }
 
