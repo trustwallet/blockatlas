@@ -17,7 +17,7 @@ func New() *Storage {
 
 type Tracker interface {
 	GetBlockNumber(coin uint) (int64, error)
-	SetBlockNumber(coin uint, num int64) error
+	SetBlockNumber(coin uint, num int64)
 	GetBlock(coin uint) (*Block, bool)
 }
 

@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/config"
@@ -10,6 +9,7 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/platform"
 	"os"
+	"os/signal"
 )
 
 var (
@@ -51,14 +51,22 @@ func init() {
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
-	defer func() {
-		err := Storage.SaveAllBlocks()
-		if err != nil {
-			fmt.Errorf("%s", err)
+	c := make(chan os.Signal)
+	signal.Notify(c, os.Interrupt)
+	go func() {
+		select {
+		case sig := <-c:
+			logger.Info("Got a signal. Aborting...", logger.Params{"code": sig})
+			err := Storage.SaveAllBlocks()
+			if err != nil {
+				logger.Error(err)
+			}
+			os.Exit(1)
 		}
 	}()
+
 	if err := rootCmd.Execute(); err != nil {
-		fmt.Errorf("%s", err)
+		logger.Error(err)
 		os.Exit(1)
 	}
 }

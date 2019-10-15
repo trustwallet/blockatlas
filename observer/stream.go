@@ -100,9 +100,5 @@ func (s *Stream) loadBlock(c chan<- *blockatlas.Block, num int64) {
 	// Not strictly correct nor avoids race conditions
 	// But good enough
 	newNum := atomic.AddInt64(&s.blockNumber, 1)
-	err = s.Tracker.SetBlockNumber(s.coin, newNum)
-	if err != nil {
-		logger.Error(err, "Polling failed: could not update block number at tracker", s.logParams)
-		return
-	}
+	s.Tracker.SetBlockNumber(s.coin, newNum)
 }
