@@ -10,6 +10,7 @@ import (
 	"github.com/trustwallet/blockatlas/platform"
 	"os"
 	"os/signal"
+	"syscall"
 )
 
 var (
@@ -51,8 +52,8 @@ func init() {
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
-	c := make(chan os.Signal)
-	signal.Notify(c, os.Interrupt)
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
 	go func() {
 		select {
 		case sig := <-c:
