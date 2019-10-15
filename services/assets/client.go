@@ -14,7 +14,7 @@ const (
 func GetValidators(api blockatlas.StakeAPI) ([]blockatlas.StakeValidator, error) {
 	assetsValidators, err := GetValidatorsInfo(api.Coin())
 	if err != nil {
-		return nil, errors.E(err, "unable to fetch validators list from the registry")
+		return nil, errors.E(err, "unable to fetch validators list from the registry").PushToSentry()
 	}
 
 	validators, err := api.GetValidators()
@@ -34,7 +34,7 @@ func GetValidatorsInfo(coin coin.Coin) ([]AssetValidator, error) {
 	}
 	err := request.Get(&results, "validators/list.json", nil)
 	if err != nil {
-		return nil, errors.E(err, errors.Params{"coin": coin.Handle})
+		return nil, errors.E(err, errors.Params{"coin": coin.Handle}).PushToSentry()
 	}
 	return results, nil
 }

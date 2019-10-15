@@ -47,7 +47,7 @@ func (s *Storage) SetBlockNumber(coin uint, num int64) error {
 	b := Block{Coin: coin, BlockHeight: num}
 	err := s.CreateOrUpdate(&b)
 	if err != nil {
-		return errors.E(err, errors.Params{"block": num, "coin": coin})
+		return errors.E(err, errors.Params{"block": num, "coin": coin}).PushToSentry()
 	}
 	return nil
 }
@@ -61,7 +61,7 @@ type Xpub struct {
 
 func (s *Storage) SaveXpubAddresses(coin uint, addresses []string, xpub string) error {
 	if len(addresses) == 0 {
-		return errors.E("no addresses for xpub", errors.Params{"xpub": xpub})
+		return errors.E("no addresses for xpub", errors.Params{"xpub": xpub}).PushToSentry()
 	}
 
 	a := make([]interface{}, 0)
@@ -112,7 +112,7 @@ type Subscription struct {
 
 func (s *Storage) Lookup(coin uint, addresses ...string) (observers []Subscription, err error) {
 	if len(addresses) == 0 {
-		return nil, errors.E("cannot look up an empty list", errors.Params{"coin": coin})
+		return nil, errors.E("cannot look up an empty list", errors.Params{"coin": coin}).PushToSentry()
 	}
 	s.Client.
 		Table("subscriptions").

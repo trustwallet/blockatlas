@@ -14,11 +14,11 @@ type Redis struct {
 func (db *Redis) Init(host string) error {
 	options, err := redis.ParseURL(host)
 	if err != nil {
-		return errors.E(err, "Cannot connect to Redis")
+		return errors.E(err, "Cannot connect to Redis").PushToSentry()
 	}
 	client := redis.NewClient(options)
 	if err := client.Ping().Err(); err != nil {
-		return errors.E(err, "Redis connection test failed")
+		return errors.E(err, "Redis connection test failed").PushToSentry()
 	}
 	db.client = client
 	return nil
@@ -27,11 +27,11 @@ func (db *Redis) Init(host string) error {
 func (db *Redis) GetValue(key string, value interface{}) error {
 	cmd := db.client.Get(key)
 	if cmd.Err() != nil {
-		return errors.E(cmd.Err(), util.ErrNotFound)
+		return errors.E(cmd.Err(), util.ErrNotFound).PushToSentry()
 	}
 	err := json.Unmarshal([]byte(cmd.Val()), value)
 	if err != nil {
-		return errors.E(err, util.ErrNotFound)
+		return errors.E(err, util.ErrNotFound).PushToSentry()
 	}
 	return nil
 }
@@ -39,11 +39,11 @@ func (db *Redis) GetValue(key string, value interface{}) error {
 func (db *Redis) Add(key string, value interface{}) error {
 	j, err := json.Marshal(value)
 	if err != nil {
-		return errors.E(err, errors.Params{"value": value})
+		return errors.E(err, errors.Params{"value": value}).PushToSentry()
 	}
 	cmd := db.client.Set(key, j, 0)
 	if cmd.Err() != nil {
-		return errors.E(cmd.Err(), util.ErrNotStored)
+		return errors.E(cmd.Err(), util.ErrNotStored).PushToSentry()
 	}
 	return nil
 }
@@ -51,7 +51,7 @@ func (db *Redis) Add(key string, value interface{}) error {
 func (db *Redis) Delete(key string) error {
 	cmd := db.client.Del(key)
 	if cmd.Err() != nil {
-		return errors.E(cmd.Err(), util.ErrNotDeleted)
+		return errors.E(cmd.Err(), util.ErrNotDeleted).PushToSentry()
 	}
 	return nil
 }
