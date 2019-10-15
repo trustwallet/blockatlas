@@ -191,6 +191,7 @@ func TestNormalizeValidator(t *testing.T) {
 			},
 			LockTime:      259200,
 			MinimumAmount: "1000000",
+			Type:          blockatlas.DelegationTypeDelegate,
 		},
 	}
 	assert.Equal(t, expected, actual)

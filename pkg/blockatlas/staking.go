@@ -11,12 +11,16 @@ type DocsResponse struct {
 }
 
 type DelegationStatus string
+type DelegationType string
 
 type ValidatorMap map[string]StakeValidator
 
 const (
 	DelegationStatusActive  DelegationStatus = "active"
 	DelegationStatusPending DelegationStatus = "pending"
+
+	DelegationTypeAuto     DelegationType = "auto"
+	DelegationTypeDelegate DelegationType = "delegate"
 )
 
 const ValidatorsPerPage = 100
@@ -26,9 +30,10 @@ type StakingReward struct {
 }
 
 type StakingDetails struct {
-	Reward        StakingReward `json:"reward"`
-	LockTime      int           `json:"locktime"`
-	MinimumAmount Amount        `json:"minimum_amount"`
+	Reward        StakingReward  `json:"reward"`
+	LockTime      int            `json:"locktime"`
+	MinimumAmount Amount         `json:"minimum_amount"`
+	Type          DelegationType `json:"type"`
 }
 
 type Validator struct {
