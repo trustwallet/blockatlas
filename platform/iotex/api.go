@@ -1,12 +1,12 @@
 package iotex
 
 import (
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"strconv"
 	"time"
 
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/coin"
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 )
 
 type Platform struct {
@@ -120,4 +120,12 @@ func Normalize(trx *ActionInfo) *blockatlas.Tx {
 			Decimals: coin.Coins[coin.IOTX].Decimals,
 		},
 	}
+}
+
+func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
+	return p.client.GetValidators()
+}
+
+func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, error) {
+	return p.client.GetDelegations(address)
 }

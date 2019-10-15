@@ -62,3 +62,21 @@ func (c *Client) GetAddressTotalTransactions(address string) (int64, error) {
 	}
 	return numActions, nil
 }
+
+func (c *Client) GetValidators() (blockatlas.ValidatorPage, error) {
+	var validators blockatlas.ValidatorPage
+	err := c.Get(&validators, "staking/validators", nil)
+	if err != nil {
+		return nil, err
+	}
+	return validators, nil
+}
+
+func (c *Client) GetDelegations(address string) (blockatlas.DelegationsPage, error) {
+	var delegations blockatlas.DelegationsPage
+	err := c.Get(&delegations, "staking/delegations/"+address, nil)
+	if err != nil {
+		return nil, err
+	}
+	return delegations, nil
+}
