@@ -97,6 +97,7 @@ func (p *Platform) GetDetails() blockatlas.StakingDetails {
 		Reward:        blockatlas.StakingReward{Annual: 11},
 		MinimumAmount: blockatlas.Amount("0"),
 		LockTime:      1814400,
+		Type:          blockatlas.DelegationTypeDelegate,
 	}
 }
 
@@ -262,6 +263,7 @@ func normalizeValidator(v Validator, p StakingPool, inflation float64, c coin.Co
 			Reward:        blockatlas.StakingReward{Annual: reward},
 			MinimumAmount: blockatlas.Amount("0"),
 			LockTime:      1814400,
+			Type:          blockatlas.DelegationTypeDelegate,
 		},
 	}
 }
