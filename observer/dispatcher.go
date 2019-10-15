@@ -41,7 +41,7 @@ func (d *Dispatcher) dispatch(event Event) {
 		"txID":    event.Tx.ID,
 	}
 	go d.postWebhook(webhook, txJson, logParams)
-	logger.Info("Dispatching webhooks...", logger.Params{"webhooks": len(webhooks)}, logParams)
+	logger.Info("Dispatching webhooks...", logger.Params{"webhook": webhook}, logParams)
 }
 
 func (d *Dispatcher) postWebhook(hook string, data []byte, logParams logger.Params) {
