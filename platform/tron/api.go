@@ -273,6 +273,11 @@ func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, e
 	return results, nil
 }
 
+func (p *Platform) GetBalance(address string) (string, error) {
+	//TODO: Implement
+	return "0", nil
+}
+
 func NormalizeDelegations(data *AccountsData, validators blockatlas.ValidatorMap) []blockatlas.Delegation {
 	results := make([]blockatlas.Delegation, 0)
 	for _, v := range data.Votes {

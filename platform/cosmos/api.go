@@ -125,6 +125,19 @@ func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, e
 	return results, nil
 }
 
+func (p *Platform) GetBalance(address string) (string, error) {
+	account, err := p.client.GetAccount(address)
+	if err != nil {
+		return "0", err
+	}
+	for _, coin := range account.Value.Coins {
+		if coin.Denom == "uatom" {
+			return coin.Amount, nil
+		}
+	}
+	return "0", nil
+}
+
 func NormalizeDelegations(delegations []Delegation, validators blockatlas.ValidatorMap) []blockatlas.Delegation {
 	results := make([]blockatlas.Delegation, 0)
 	for _, v := range delegations {

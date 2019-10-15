@@ -101,3 +101,8 @@ func (c *Client) GetUnbondingDelegations(address string) (delegations []Unbondin
 	}
 	return
 }
+
+func (c *Client) GetAccount(address string) (result Account, err error) {
+	path := fmt.Sprintf("auth/accounts/%s", address)
+	return result, c.Get(&result, path, nil)
+}

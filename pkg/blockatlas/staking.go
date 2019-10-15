@@ -72,5 +72,6 @@ type DelegationsBatch struct {
 	Coin        *coin.ExternalCoin `json:"coin"`
 	Details     StakingDetails     `json:"details"`
 	Delegations DelegationsPage    `json:"delegations,omitempty"`
+	Balance     string             `json:"balance"`
 	Error       string             `json:"error,omitempty"`
 }
