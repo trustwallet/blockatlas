@@ -230,6 +230,13 @@ errors.E(err, errors.TypePlatformRequest, "new message to append", errors.Params
 		})
 ```
 
+
+- You can send the errors to sentry using `.PushToSentry()`
+`errors.E(err, errors.TypePlatformReques).PushToSentry()`
+
+
+*All fatal errors emitted by logger package already send the error to Sentry*
+
 ### Types
 
 ```

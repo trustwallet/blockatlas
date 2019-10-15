@@ -45,7 +45,7 @@ func (t *Tx) UnmarshalJSON(data []byte) error {
 	case TxAnyAction:
 		t.Meta = new(AnyAction)
 	default:
-		return errors.E("unsupported tx type", errors.Params{"type": t.Type})
+		return errors.E("unsupported tx type", errors.Params{"type": t.Type}).PushToSentry()
 	}
 	if err := json.Unmarshal(raw, t.Meta); err != nil {
 		return err
@@ -73,7 +73,7 @@ func (t *Tx) MarshalJSON() ([]byte, error) {
 	case AnyAction, *AnyAction:
 		t.Type = TxAnyAction
 	default:
-		return nil, errors.E("unsupported tx metadata", errors.Params{"meta": t.Meta})
+		return nil, errors.E("unsupported tx metadata", errors.Params{"meta": t.Meta}).PushToSentry()
 	}
 
 	// Set status to completed by default
@@ -95,7 +95,7 @@ func (a *Amount) UnmarshalJSON(data []byte) error {
 	}
 	str := string(n)
 	if !matchNumber.MatchString(str) {
-		return errors.E("not a regular decimal number", errors.Params{"str": str})
+		return errors.E("not a regular decimal number", errors.Params{"str": str}).PushToSentry()
 	}
 	if strings.ContainsRune(str, '.') {
 		str, _ = util.DecimalToSatoshis(str)

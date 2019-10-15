@@ -78,7 +78,7 @@ func (p *Platform) GetTokenTxsByAddress(address, token string) (blockatlas.TxPag
 func NormalizeTokenTransfer(srcTx *Tx, tokenInfo AssetInfo) (tx blockatlas.Tx, e error) {
 	if len(srcTx.Data.Contracts) == 0 {
 		return tx, errors.E("token transfer without contract", errors.TypePlatformApi,
-			errors.Params{"tokenInfo": tokenInfo, "tx": tx})
+			errors.Params{"tokenInfo": tokenInfo, "tx": tx}).PushToSentry()
 	}
 	contract := &srcTx.Data.Contracts[0]
 

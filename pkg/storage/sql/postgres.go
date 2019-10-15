@@ -13,7 +13,7 @@ type PgSql struct {
 func (db *PgSql) Init(host string) error {
 	client, err := gorm.Open("postgres", host)
 	if err != nil {
-		return errors.E(err, "postgress connection failed")
+		return errors.E(err, "postgress connection failed").PushToSentry()
 	}
 	db.Client = client
 	return nil
