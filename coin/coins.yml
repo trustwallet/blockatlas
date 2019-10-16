@@ -24,7 +24,7 @@
 - id: 118
   symbol: ATOM
   handle: cosmos
-  name: Cosmos ATOM
+  name: Cosmos
   decimals: 6
   blockTime: 5000
   sampleAddress: 'cosmos1rw62phusuv9vzraezr55k0vsqssvz6ed52zyrl'
@@ -40,7 +40,7 @@
 - id: 148
   symbol: XLM
   handle: stellar
-  name: Stellar Lumens
+  name: Stellar
   decimals: 7
   blockTime: 5000
   sampleAddress: 'GDKIJJIKXLOM2NRMPNQZUUYK24ZPVFC6426GZAEP3KUK6KEJLACCWNMX'
