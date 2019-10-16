@@ -32,7 +32,7 @@ func (c *Client) GetBlockByNumber(num int64) ([]Tx, error) {
 
 func (c *Client) GetAccount(address string) (result Account, err error) {
 	path := fmt.Sprintf("node_account/%s", address)
-	referer := fmt.Sprint("https://tzscan.io/%s", address)
+	referer := fmt.Sprintf("https://tzscan.io/%s", address)
 	c.Headers["Referer"] = referer
 
 	return result, c.Get(&result, path, nil)
