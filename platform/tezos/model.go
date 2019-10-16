@@ -26,3 +26,17 @@ type Validator struct {
 type Head struct {
 	Height int64 `json:"height"`
 }
+
+type DelegateOptions struct {
+	Setable bool `json:"setable"`
+}
+
+type Account struct {
+	Name          Address         `json:"name"`
+	Manager       Address         `json:"address"`
+	Delegate      DelegateOptions `json:"delegate"`
+	Balance       string          `json:"balance"`
+	Spendable     bool            `json:"spendable"`
+	Counter       string          `json:"counter"`
+	NodeTimestamp string          `json:"node_timestamp"`
+}

@@ -29,3 +29,11 @@ func (c *Client) GetBlockByNumber(num int64) ([]Tx, error) {
 	err := c.Get(&block, path, url.Values{"limit": {"1000"}, "offset": {"0"}})
 	return block.Txs, err
 }
+
+func (c *Client) GetAccount(address string) (result Account, err error) {
+	path := fmt.Sprintf("node_account/%s", address)
+	referer := fmt.Sprint("https://tzscan.io/%s", address)
+	c.Headers["Referer"] = referer
+
+	return result, c.Get(&result, path, nil)
+}
