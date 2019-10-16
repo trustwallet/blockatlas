@@ -280,7 +280,7 @@ func (p *Platform) GetBalance(address string) (string, error) {
 	}
 
 	for _, data := range account.Data {
-		return string(data.Balance), nil
+		return strconv.FormatUint(uint64(data.Balance), 10), nil
 	}
 	return "0", nil
 }
