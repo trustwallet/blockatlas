@@ -190,4 +190,5 @@ decred:
   api: https://blockbook.decred.org:9161/api
 
 algorand:
-  api: https://algorand.node
+  api: https://mainnet-algorand.api.purestake.io/ps1
+#  key: YOUR_API_KEY
