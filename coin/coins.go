@@ -25,48 +25,48 @@ func (c *Coin) String() string {
 }
 
 const (
-	ETH = 60
-	ETC = 61
-	ICX = 74
-	ATOM = 118
-	XRP = 144
-	XLM = 148
-	POA = 178
-	TRX = 195
-	FIO = 235
-	NIM = 242
-	IOTX = 304
-	ZIL = 313
-	AION = 425
-	AE = 457
+	ETH   = 60
+	ETC   = 61
+	ICX   = 74
+	ATOM  = 118
+	XRP   = 144
+	XLM   = 148
+	POA   = 178
+	TRX   = 195
+	FIO   = 235
+	NIM   = 242
+	IOTX  = 304
+	ZIL   = 313
+	AION  = 425
+	AE    = 457
 	THETA = 500
-	BNB = 714
-	VET = 818
-	CLO = 820
-	TOMO = 889
-	TT = 1001
-	ONT = 1024
-	XTZ = 1729
-	KIN = 2017
-	NAS = 2718
-	GO = 6060
-	WAN = 5718350
+	BNB   = 714
+	VET   = 818
+	CLO   = 820
+	TOMO  = 889
+	TT    = 1001
+	ONT   = 1024
+	XTZ   = 1729
+	KIN   = 2017
+	NAS   = 2718
+	GO    = 6060
+	WAN   = 5718350
 	WAVES = 5741564
-	SEM = 7562605
-	BTC = 0
-	LTC = 2
-	DOGE = 3
-	DASH = 5
-	VIA = 14
-	GRS = 17
-	ZEC = 133
-	XZC = 136
-	BCH = 145
-	RVN = 175
-	QTUM = 2301
-	ZEL = 19167
-	DCR = 42
-	ALGO = 283
+	SEM   = 7562605
+	BTC   = 0
+	LTC   = 2
+	DOGE  = 3
+	DASH  = 5
+	VIA   = 14
+	GRS   = 17
+	ZEC   = 133
+	XZC   = 136
+	BCH   = 145
+	RVN   = 175
+	QTUM  = 2301
+	ZEL   = 19167
+	DCR   = 42
+	ALGO  = 283
 )
 
 var Coins = map[uint]Coin{
@@ -491,6 +491,7 @@ var Coins = map[uint]Coin{
 		SampleAddr:       "4EZFQABCVQTHQCK3HQBIYGC4NV2VM42FZHEFTVH77ROG4ZGREC6Y7V5T2U",
 	},
 }
+
 func Ethereum() Coin {
 	return Coins[ETH]
 }
@@ -617,4 +618,3 @@ func Decred() Coin {
 func Algorand() Coin {
 	return Coins[ALGO]
 }
-

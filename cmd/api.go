@@ -54,6 +54,7 @@ func RunApi(bind string, c chan *gin.Engine) {
 		observerAPI := engine.Group("/observer/v1")
 		api.SetupObserverAPI(observerAPI)
 	}
+	api.MakeLookupRoute(engine)
 
 	if c != nil {
 		c <- engine
