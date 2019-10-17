@@ -3,7 +3,6 @@ package storage
 import "time"
 
 type Block struct {
-	ID          uint `gorm:"primary_key"`
 	Coin        uint `gorm:"primary_key"`
 	BlockHeight int64
 }

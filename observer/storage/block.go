@@ -53,7 +53,7 @@ func (s *Storage) SetBlockNumber(coin uint, num int64) {
 
 func (s *Storage) SaveBlock(coin uint, num int64) error {
 	b := Block{Coin: coin, BlockHeight: num}
-	err := s.CreateOrUpdate(&b)
+	err := s.Save(&b)
 	if err != nil {
 		return errors.E(err, errors.Params{"block": num, "coin": coin}).PushToSentry()
 	}
@@ -62,16 +62,13 @@ func (s *Storage) SaveBlock(coin uint, num int64) error {
 
 func (s *Storage) SaveAllBlocks() error {
 	logger.Info("Saving cache blocks in database")
-
-	values := make([]interface{}, 0)
 	h := s.GetHeights()
 	for _, v := range h {
 		logger.Info("Saving block", logger.Params{"Coin": v.Coin, "Height": v.BlockHeight})
-		values = append(values, &v)
-	}
-	err := s.CreateOrUpdateMany(values...)
-	if err != nil {
-		return errors.E(err).PushToSentry()
+		err := s.Save(&v)
+		if err != nil {
+			logger.Error(err)
+		}
 	}
 	return nil
 }

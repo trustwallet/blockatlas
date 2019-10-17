@@ -28,30 +28,12 @@ func (db *sql) Find(out interface{}, where ...interface{}) error {
 	return nil
 }
 
-func (db *sql) CreateOrUpdate(value interface{}) error {
-	if db.Client.NewRecord(value) {
-		return db.Add(value)
-	}
-	return db.Update(value)
-}
-
-func (db *sql) CreateOrUpdateMany(values ...interface{}) error {
-	return db.Batch(db.CreateOrUpdate, values...)
-}
-
-func (db *sql) Update(value interface{}) error {
-	if db.Client.NewRecord(value) {
-		return util.ErrNotFound
-	}
+func (db *sql) Save(value interface{}) error {
 	err := db.Client.Save(value).Error
 	if err != nil {
 		return errors.E(err, util.ErrNotUpdated).PushToSentry()
 	}
 	return nil
-}
-
-func (db *sql) UpdateMany(values ...interface{}) error {
-	return db.Batch(db.Update, values...)
 }
 
 func (db *sql) Add(value interface{}) error {
