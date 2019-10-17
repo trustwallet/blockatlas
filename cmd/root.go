@@ -62,7 +62,6 @@ func Execute() {
 			if err != nil {
 				logger.Error(err)
 			}
-			os.Exit(1)
 		}
 	}()
 
