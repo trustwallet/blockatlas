@@ -7,23 +7,27 @@ import (
 )
 
 type BlockMap struct {
-	heights map[uint]*Block
+	heights map[uint]Block
 	lock    sync.RWMutex
 }
 
-func (s *Storage) GetBlock(coin uint) (b *Block, ok bool) {
+func (s *Storage) GetHeights() map[uint]Block {
 	s.blockHeights.lock.RLock()
+	defer s.blockHeights.lock.RUnlock()
+	return s.blockHeights.heights
+}
+
+func (s *Storage) GetBlock(coin uint) (b Block, ok bool) {
+	s.blockHeights.lock.Lock()
+	defer s.blockHeights.lock.Unlock()
+
 	b, ok = s.blockHeights.heights[coin]
-	s.blockHeights.lock.RUnlock()
 	if ok {
 		return
 	}
 
-	s.blockHeights.lock.Lock()
-	b = &Block{Coin: coin}
-	s.blockHeights.heights[coin] = b
-	s.blockHeights.lock.Unlock()
-
+	b = Block{Coin: coin}
+	s.blockHeights.heights[b.Coin] = b
 	return
 }
 
@@ -32,7 +36,7 @@ func (s *Storage) GetBlockNumber(coin uint) (int64, error) {
 	if ok {
 		return b.BlockHeight, nil
 	}
-	err := s.Get(b)
+	err := s.Get(&b)
 	if err != nil {
 		return 0, nil
 	}
@@ -42,8 +46,9 @@ func (s *Storage) GetBlockNumber(coin uint) (int64, error) {
 func (s *Storage) SetBlockNumber(coin uint, num int64) {
 	b, _ := s.GetBlock(coin)
 	s.blockHeights.lock.Lock()
+	defer s.blockHeights.lock.Unlock()
 	b.BlockHeight = num
-	s.blockHeights.lock.Unlock()
+	s.blockHeights.heights[b.Coin] = b
 }
 
 func (s *Storage) SaveBlock(coin uint, num int64) error {
@@ -59,8 +64,9 @@ func (s *Storage) SaveAllBlocks() error {
 	logger.Info("Saving cache blocks in database")
 
 	values := make([]interface{}, 0)
-	for _, v := range s.blockHeights.heights {
-		values = append(values, v)
+	h := s.GetHeights()
+	for _, v := range h {
+		values = append(values, &v)
 	}
 	err := s.CreateOrUpdateMany(values...)
 	if err != nil {
