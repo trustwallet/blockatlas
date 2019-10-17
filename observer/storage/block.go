@@ -66,6 +66,7 @@ func (s *Storage) SaveAllBlocks() error {
 	values := make([]interface{}, 0)
 	h := s.GetHeights()
 	for _, v := range h {
+		logger.Info("Saving block", logger.Params{"Coin": v.Coin, "Height": v.BlockHeight})
 		values = append(values, &v)
 	}
 	err := s.CreateOrUpdateMany(values...)
