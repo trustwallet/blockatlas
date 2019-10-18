@@ -5,20 +5,12 @@ import (
 	"strconv"
 	"strings"
 
-	"encoding/hex"
-
 	"github.com/gin-gonic/gin"
-	"github.com/spf13/viper"
 	CoinType "github.com/trustwallet/blockatlas/coin"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-
-	"github.com/ethereum/go-ethereum/ethclient"
-	ens "github.com/wealdtech/go-ens/v3"
+	"github.com/trustwallet/blockatlas/platform"
 )
 
-type ZNSResponse struct {
-	Addresses map[string]string
-}
+var TLDMapping = map[string]uint64{}
 
 // @Summary Lookup .eth / .zil addresses
 // @ID lookup
@@ -33,6 +25,9 @@ type ZNSResponse struct {
 func MakeLookupRoute(router gin.IRouter) {
 	ns := router.Group("/ns")
 	ns.GET("/lookup", handleLookup)
+
+	TLDMapping[".eth"] = CoinType.ETH
+	TLDMapping[".zil"] = CoinType.ZIL
 }
 
 func handleLookup(c *gin.Context) {
@@ -49,59 +44,20 @@ func handleLookup(c *gin.Context) {
 		return
 	}
 	name = strings.ToLower(name)
-	if strings.HasSuffix(name, ".eth") {
-		handleENSLookup(c, name, coin)
-	} else if strings.HasSuffix(name, ".zil") {
-		handleZNSLookup(c, name, coin)
-	} else {
-		RenderError(c, http.StatusBadRequest, "not supported domain")
-	}
-}
 
-func handleENSLookup(c *gin.Context, name string, coin uint64) {
-	client, err := ethclient.Dial(viper.GetString("ethereum.rpc"))
-	if err != nil {
-		RenderError(c, http.StatusInternalServerError, "can't dial to ethereum rpc")
-		return
-	}
-	defer client.Close()
-	result := blockatlas.Resolved{
-		Coin: coin,
+	for tld, id := range TLDMapping {
+		if strings.HasSuffix(name, tld) {
+			api := platform.NamingAPIs[id]
+			result, err := api.Lookup(coin, name)
+			if err != nil {
+				RenderError(c, http.StatusInternalServerError, err.Error())
+				return
+			} else {
+				RenderSuccess(c, result)
+				return
+			}
+		}
 	}
 
-	ensName, err := ens.NewName(client, name)
-	if err != nil {
-		RenderError(c, http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	address, err := ensName.Address(coin)
-	if err != nil {
-		RenderError(c, http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	result.Result = mapAddress(coin, address)
-	RenderSuccess(c, &result)
-}
-
-func mapAddress(coin uint64, bytes []byte) string {
-	// FIXME: convert bytes to string according to coin
-	address := hex.EncodeToString(bytes)
-	if address != "" {
-		address = "0x" + address
-	}
-	return address
-}
-
-func handleZNSLookup(c *gin.Context, name string, coin uint64) {
-	client := blockatlas.InitClient(viper.GetString("zilliqa.lookup"))
-	var resp ZNSResponse
-	client.Get(&resp, "/"+name, nil)
-	result := blockatlas.Resolved{
-		Coin: coin,
-	}
-	symbol := CoinType.Coins[uint(coin)].Symbol
-	result.Result = resp.Addresses[symbol]
-	RenderSuccess(c, &result)
+	RenderError(c, http.StatusBadRequest, "not supported domain")
 }
