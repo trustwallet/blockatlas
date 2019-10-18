@@ -4,9 +4,10 @@ go 1.12.6
 
 require (
 	github.com/Pantani/httpexpect v2.0.0+incompatible
-	github.com/alecthomas/template v0.0.0-20160405071501-a0175ee3bccc
+	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751
 	github.com/btcsuite/btcutil v0.0.0-20190425235716-9e5f4b9a998d
 	github.com/chenjiandongx/ginprom v0.0.0-20190821062536-3a28e619013b
+	github.com/cpuguy83/go-md2man/v2 v2.0.0 // indirect
 	github.com/deckarep/golang-set v1.7.1
 	github.com/ethereum/go-ethereum v1.9.2
 	github.com/fasthttp-contrib/websocket v0.0.0-20160511215533-1f3b11f56072 // indirect
@@ -30,12 +31,13 @@ require (
 	github.com/stretchr/testify v1.4.0
 	github.com/swaggo/files v0.0.0-20190704085106-630677cd5c14
 	github.com/swaggo/gin-swagger v1.2.0
-	github.com/swaggo/swag v1.6.2
+	github.com/swaggo/swag v1.6.3
 	github.com/thoas/go-funk v0.4.0
+	github.com/urfave/cli v1.22.1 // indirect
 	github.com/wealdtech/go-ens/v3 v3.0.9
 	golang.org/x/crypto v0.0.0-20190701094942-4def268fd1a4
-	golang.org/x/net v0.0.0-20190926025831-c00fd9afed17 // indirect
+	golang.org/x/net v0.0.0-20191014212845-da9a3fd4c582 // indirect
 	golang.org/x/sys v0.0.0-20190927073244-c990c680b611 // indirect
-	golang.org/x/tools v0.0.0-20190927052746-69890759d905 // indirect
-	gopkg.in/yaml.v2 v2.2.2
+	golang.org/x/tools v0.0.0-20191017205301-920acffc3e65 // indirect
+	gopkg.in/yaml.v2 v2.2.4
 )

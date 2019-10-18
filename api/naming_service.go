@@ -16,11 +16,7 @@ import (
 	ens "github.com/wealdtech/go-ens/v3"
 )
 
-type Resolved struct {
-	Result string `json:"result"`
-}
-
-type ZILResponse struct {
+type ZNSResponse struct {
 	Addresses map[string]string
 	Meta      struct {
 		Owner string `json:"owner"`
@@ -28,6 +24,16 @@ type ZILResponse struct {
 	} `json:"meta"`
 }
 
+// @Summary Lookup .eth / .zil addresses
+// @ID lookup
+// @Description Lookup ENS/ZNS to find registered addresses
+// @Produce json
+// @Tags ns
+// @Param name query string empty "string name"
+// @Param coin query string 60 "string coin"
+// @Success 200 {object} blockatlas.Resolved
+// @Failure 500 {object} api.ApiError
+// @Router /ns/lookup [get]
 func MakeLookupRoute(router gin.IRouter) {
 	ns := router.Group("/ns")
 	ns.GET("/lookup", handleLookup)
@@ -62,7 +68,9 @@ func handleENSLookup(c *gin.Context, name string, coin uint64) {
 		return
 	}
 	defer client.Close()
-	var resp Resolved
+	result := blockatlas.Resolved{
+		Coin: coin,
+	}
 
 	ensName, err := ens.NewName(client, name)
 	if err != nil {
@@ -75,16 +83,27 @@ func handleENSLookup(c *gin.Context, name string, coin uint64) {
 		RenderError(c, http.StatusInternalServerError, err.Error())
 		return
 	}
+
+	result.Result = mapAddress(coin, address)
+	RenderSuccess(c, &result)
+}
+
+func mapAddress(coin uint64, bytes []byte) string {
 	// FIXME: convert bytes to string according to coin
-	resp.Result = "0x" + hex.EncodeToString(address)
-	RenderSuccess(c, &resp)
+	address := hex.EncodeToString(bytes)
+	if address != "" {
+		address = "0x" + address
+	}
+	return address
 }
 
 func handleZILLookup(c *gin.Context, name string, coin uint64) {
 	client := blockatlas.InitClient(viper.GetString("zilliqa.lookup"))
-	var resp ZILResponse
+	var resp ZNSResponse
 	client.Get(&resp, "/"+name, nil)
-	var result Resolved
+	result := blockatlas.Resolved{
+		Coin: coin,
+	}
 	symbol := CoinType.Coins[uint(coin)].Symbol
 	result.Result = resp.Addresses[symbol]
 	RenderSuccess(c, &result)
