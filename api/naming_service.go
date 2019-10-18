@@ -18,10 +18,6 @@ import (
 
 type ZNSResponse struct {
 	Addresses map[string]string
-	Meta      struct {
-		Owner string `json:"owner"`
-		Type  string `json:"type"`
-	} `json:"meta"`
 }
 
 // @Summary Lookup .eth / .zil addresses
@@ -41,7 +37,7 @@ func MakeLookupRoute(router gin.IRouter) {
 
 func handleLookup(c *gin.Context) {
 	name := c.Query("name")
-	coinQuery := c.DefaultQuery("coin", strconv.Itoa(CoinType.ETH))
+	coinQuery := c.Query("coin")
 
 	if name == "" {
 		RenderError(c, http.StatusBadRequest, "name query is missing")
@@ -52,10 +48,11 @@ func handleLookup(c *gin.Context) {
 		RenderError(c, http.StatusBadRequest, "coin query is invalid")
 		return
 	}
-	if strings.Contains(name, ".eth") {
+	name = strings.ToLower(name)
+	if strings.HasSuffix(name, ".eth") {
 		handleENSLookup(c, name, coin)
-	} else if strings.Contains(name, ".zil") {
-		handleZILLookup(c, name, coin)
+	} else if strings.HasSuffix(name, ".zil") {
+		handleZNSLookup(c, name, coin)
 	} else {
 		RenderError(c, http.StatusBadRequest, "not supported domain")
 	}
@@ -97,7 +94,7 @@ func mapAddress(coin uint64, bytes []byte) string {
 	return address
 }
 
-func handleZILLookup(c *gin.Context, name string, coin uint64) {
+func handleZNSLookup(c *gin.Context, name string, coin uint64) {
 	client := blockatlas.InitClient(viper.GetString("zilliqa.lookup"))
 	var resp ZNSResponse
 	client.Get(&resp, "/"+name, nil)
