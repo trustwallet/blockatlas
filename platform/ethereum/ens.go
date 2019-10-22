@@ -4,11 +4,12 @@ import (
 	"encoding/hex"
 	"net/http"
 
+	"github.com/ethereum/go-ethereum/ethclient"
+	cc "github.com/hewigovens/go-coincodec"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
-
-	"github.com/ethereum/go-ethereum/ethclient"
+	"github.com/trustwallet/blockatlas/pkg/logger"
 	ens "github.com/wealdtech/go-ens/v3"
 )
 
@@ -33,15 +34,13 @@ func (p *Platform) Lookup(coin uint64, name string) (*blockatlas.Resolved, error
 		return &result, nil
 	}
 
-	result.Result = mapAddress(coin, address)
-	return &result, nil
-}
-
-func mapAddress(coin uint64, bytes []byte) string {
-	// FIXME: convert bytes to string according to coin
-	address := hex.EncodeToString(bytes)
-	if address != "" {
-		address = "0x" + address
+	encoded, err := cc.ToString(address, uint32(coin))
+	result.Result = encoded
+	if err != nil {
+		logger.Error("Encode to address failed", err, logger.Params{
+			"address": hex.EncodeToString(address),
+			"coin":    coin,
+		})
 	}
-	return address
+	return &result, nil
 }
