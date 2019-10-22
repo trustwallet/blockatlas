@@ -60,7 +60,7 @@ func (p *Platform) GetDelegations(address string) (page blockatlas.DelegationsPa
 
 func NormalizeTxs(srcTxs []Tx) (txs []blockatlas.Tx) {
 	for _, srcTx := range srcTxs {
-		tx, ok := Normalize(&srcTx)
+		tx, ok := NormalizeTx(&srcTx)
 		if !ok || len(txs) >= blockatlas.TxPerPage {
 			continue
 		}
@@ -113,8 +113,8 @@ func normalizeValidator(v Validator) (validator blockatlas.Validator) {
 	}
 }
 
-// Normalize converts a Tezos transaction into the generic model
-func Normalize(srcTx *Tx) (tx blockatlas.Tx, ok bool) {
+// NormalizeTx converts a Tezos transaction into the generic model
+func NormalizeTx(srcTx *Tx) (tx blockatlas.Tx, ok bool) {
 	unix := int64(0)
 	date, err := time.Parse("2006-01-02T15:04:05Z", srcTx.Time)
 	if err == nil {
