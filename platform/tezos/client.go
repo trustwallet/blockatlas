@@ -12,22 +12,20 @@ type Client struct {
 
 func (c *Client) GetTxsOfAddress(address string) ([]Tx, error) {
 	var txs []Tx
-	path := fmt.Sprintf("operations/%s", address)
+	path := fmt.Sprintf("v3/operations/%s", address)
 	err := c.Get(&txs, path, url.Values{"type": {"Transaction"}})
-
 	return txs, err
 }
 
 func (c *Client) GetCurrentBlock() (int64, error) {
 	var head Head
-	err := c.Get(&head, "head", nil)
-
+	err := c.Get(&head, "v3/head", nil)
 	return head.Level, err
 }
 
 func (c *Client) GetBlockHashByNumber(num int64) (string, error) {
 	var list []string
-	path := fmt.Sprintf("block_hash_level/%d", num)
+	path := fmt.Sprintf("v3/block_hash_level/%d", num)
 	err := c.Get(&list, path, nil)
 
 	if err != nil && len(list) != 0 {
@@ -43,9 +41,7 @@ func (c *Client) GetBlockByNumber(num int64) ([]Tx, error) {
 	if err != nil {
 		return list, err
 	}
-
-	path := fmt.Sprintf("operations/%s", hash)
+	path := fmt.Sprintf("v3/operations/%s", hash)
 	err = c.Get(&list, path, url.Values{"type": {"Transaction"}})
-
 	return list, err
 }
