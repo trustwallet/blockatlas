@@ -67,3 +67,8 @@ type CustomAPI interface {
 	Platform
 	RegisterRoutes(router gin.IRouter)
 }
+
+type NamingServiceAPI interface {
+	Platform
+	Lookup(coin uint64, name string) (*Resolved, error)
+}

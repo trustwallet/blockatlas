@@ -63,6 +63,7 @@ tezos:
 #  api: https://localhost:4567
 #  collections_api: https://api.opensea.io
 #  collections_api_key: [opensea_api_key]
+#  rpc: [ethereum rpc]
 
 # [ETC] Ethereum Classic: https://ethereumclassic.org (Trust-Ray API)
 # classic:
@@ -129,6 +130,7 @@ zilliqa:
 #  api: https://api.viewblock.io/v1/zilliqa
 #  key: YOUR_API_KEY
   rpc: https://api.zilliqa.com/
+  lookup: https://unstoppabledomains.com/api/v1
 
 #[IoTeX] IoTeX: https://iotex.io/
 iotex:

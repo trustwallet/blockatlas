@@ -2,6 +2,7 @@ package platform
 
 import (
 	"fmt"
+
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/platform/algorand"
@@ -77,20 +78,24 @@ var platformList = []blockatlas.Platform{
 // Platforms contains all registered platforms by handle
 var Platforms map[string]blockatlas.Platform
 
-// BlockAPIs contains platforms with block services
+// BlockAPIs contain platforms with block services
 var BlockAPIs map[string]blockatlas.BlockAPI
 
-// StakeAPIs contains platforms with staking services
+// StakeAPIs contain platforms with staking services
 var StakeAPIs map[string]blockatlas.StakeAPI
 
-// CustomAPIs contains platforms with custom HTTP services
+// CustomAPIs contain platforms with custom HTTP services
 var CustomAPIs map[string]blockatlas.CustomAPI
+
+// NamingAPIs contain platforms which support naming services
+var NamingAPIs map[uint64]blockatlas.NamingServiceAPI
 
 func Init() {
 	Platforms = make(map[string]blockatlas.Platform)
 	BlockAPIs = make(map[string]blockatlas.BlockAPI)
 	StakeAPIs = make(map[string]blockatlas.StakeAPI)
 	CustomAPIs = make(map[string]blockatlas.CustomAPI)
+	NamingAPIs = make(map[uint64]blockatlas.NamingServiceAPI)
 
 	for _, platform := range platformList {
 		handle := platform.Coin().Handle
@@ -127,6 +132,9 @@ func Init() {
 		}
 		if customAPI, ok := platform.(blockatlas.CustomAPI); ok {
 			CustomAPIs[handle] = customAPI
+		}
+		if namingAPI, ok := platform.(blockatlas.NamingServiceAPI); ok {
+			NamingAPIs[uint64(platform.Coin().ID)] = namingAPI
 		}
 	}
 }
