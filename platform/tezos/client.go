@@ -30,3 +30,9 @@ func (c *Client) GetBlockByNumber(num int64) ([]Tx, error) {
 	err := c.Get(&block, path, url.Values{"limit": {"1000"}, "offset": {"0"}})
 	return block.Txs, err
 }
+
+func (c *Client) GetAccount(address string) (result Account, err error) {
+	path := fmt.Sprintf("account/%s", address)
+
+	return result, c.Get(&result, path, nil)
+}
