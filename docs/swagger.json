@@ -1,14 +1,9 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "{{.Description}}",
-        "title": "{{.Title}}",
         "contact": {},
-        "license": {},
-        "version": "{{.Version}}"
+        "license": {}
     },
-    "host": "{{.Host}}",
-    "basePath": "{{.BasePath}}",
     "paths": {
         "/metrics": {
             "get": {
@@ -18,6 +13,47 @@
                 ],
                 "summary": "Get Metrics",
                 "operationId": "metrics"
+            }
+        },
+        "/ns/lookup": {
+            "get": {
+                "description": "Lookup ENS/ZNS to find registered addresses",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ns"
+                ],
+                "summary": "Lookup .eth / .zil addresses",
+                "operationId": "lookup",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "string name",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "string coin",
+                        "name": "coin",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/blockatlas.Resolved"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/api.ApiError"
+                        }
+                    }
+                }
             }
         },
         "/observer/v1/status": {
@@ -49,7 +85,6 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/api.CoinStatus"
                         }
                     }
@@ -95,7 +130,6 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/api.ObserverResponse"
                         }
                     }
@@ -139,7 +173,6 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/api.ObserverResponse"
                         }
                     }
@@ -183,7 +216,6 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/blockatlas.TxPage"
                         }
                     }
@@ -227,7 +259,6 @@
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/api.ApiError"
                         }
                     }
@@ -265,7 +296,6 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/blockatlas.DelegationsBatchPage"
                         }
                     }
@@ -309,14 +339,12 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/blockatlas.CollectionPage"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/api.ApiError"
                         }
                     }
@@ -368,14 +396,12 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/blockatlas.CollectionPage"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/api.ApiError"
                         }
                     }
@@ -419,14 +445,12 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/blockatlas.DocsResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/api.ApiError"
                         }
                     }
@@ -462,14 +486,12 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/blockatlas.DocsResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/api.ApiError"
                         }
                     }
@@ -513,14 +535,12 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/blockatlas.CollectionPage"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/api.ApiError"
                         }
                     }
@@ -564,14 +584,12 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/blockatlas.TxPage"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/api.ApiError"
                         }
                     }
@@ -743,10 +761,6 @@
         "blockatlas.Delegation": {
             "type": "object",
             "properties": {
-                "coin": {
-                    "type": "object",
-                    "$ref": "#/definitions/coin.ExternalCoin"
-                },
                 "delegator": {
                     "type": "object",
                     "$ref": "#/definitions/blockatlas.StakeValidator"
@@ -768,12 +782,20 @@
                 "address": {
                     "type": "string"
                 },
+                "balance": {
+                    "type": "string"
+                },
                 "coin": {
-                    "type": "integer"
+                    "type": "object",
+                    "$ref": "#/definitions/coin.ExternalCoin"
                 },
                 "delegations": {
                     "type": "object",
                     "$ref": "#/definitions/blockatlas.DelegationsPage"
+                },
+                "details": {
+                    "type": "object",
+                    "$ref": "#/definitions/blockatlas.StakingDetails"
                 },
                 "error": {
                     "type": "string"
@@ -788,12 +810,20 @@
                     "address": {
                         "type": "string"
                     },
+                    "balance": {
+                        "type": "string"
+                    },
                     "coin": {
-                        "type": "integer"
+                        "type": "object",
+                        "$ref": "#/definitions/coin.ExternalCoin"
                     },
                     "delegations": {
                         "type": "object",
                         "$ref": "#/definitions/blockatlas.DelegationsPage"
+                    },
+                    "details": {
+                        "type": "object",
+                        "$ref": "#/definitions/blockatlas.StakingDetails"
                     },
                     "error": {
                         "type": "string"
@@ -806,10 +836,6 @@
             "items": {
                 "type": "object",
                 "properties": {
-                    "coin": {
-                        "type": "object",
-                        "$ref": "#/definitions/coin.ExternalCoin"
-                    },
                     "delegator": {
                         "type": "object",
                         "$ref": "#/definitions/blockatlas.StakeValidator"
@@ -834,25 +860,30 @@
                 }
             }
         },
+        "blockatlas.Resolved": {
+            "type": "object",
+            "properties": {
+                "coin": {
+                    "type": "integer"
+                },
+                "result": {
+                    "type": "string"
+                }
+            }
+        },
         "blockatlas.StakeValidator": {
             "type": "object",
             "properties": {
+                "details": {
+                    "type": "object",
+                    "$ref": "#/definitions/blockatlas.StakingDetails"
+                },
                 "id": {
                     "type": "string"
                 },
                 "info": {
                     "type": "object",
                     "$ref": "#/definitions/blockatlas.StakeValidatorInfo"
-                },
-                "locktime": {
-                    "type": "integer"
-                },
-                "minimum_amount": {
-                    "type": "string"
-                },
-                "reward": {
-                    "type": "object",
-                    "$ref": "#/definitions/blockatlas.StakingReward"
                 },
                 "status": {
                     "type": "boolean"
@@ -872,6 +903,24 @@
                     "type": "string"
                 },
                 "website": {
+                    "type": "string"
+                }
+            }
+        },
+        "blockatlas.StakingDetails": {
+            "type": "object",
+            "properties": {
+                "locktime": {
+                    "type": "integer"
+                },
+                "minimum_amount": {
+                    "type": "string"
+                },
+                "reward": {
+                    "type": "object",
+                    "$ref": "#/definitions/blockatlas.StakingReward"
+                },
+                "type": {
                     "type": "string"
                 }
             }
