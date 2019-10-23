@@ -7,35 +7,36 @@ import (
 )
 
 type BlockMap struct {
-	heights map[uint]Block
+	heights map[int]*Block
 	lock    sync.RWMutex
 }
 
-func (s *Storage) GetHeights() map[uint]Block {
-	s.blockHeights.lock.RLock()
-	defer s.blockHeights.lock.RUnlock()
-	return s.blockHeights.heights
+func (s *BlockMap) SetBlock(b *Block) {
+	s.lock.Lock()
+	defer s.lock.Unlock()
+	s.heights[b.Coin] = b
 }
 
-func (s *Storage) GetBlock(coin uint) (b Block, ok bool) {
-	s.blockHeights.lock.Lock()
-	defer s.blockHeights.lock.Unlock()
+func (s *BlockMap) GetBlock(coin int) (*Block, bool) {
+	s.lock.RLock()
+	defer s.lock.RUnlock()
+	b, ok := s.heights[coin]
+	return b, ok
+}
 
-	b, ok = s.blockHeights.heights[coin]
-	if ok {
-		return
-	}
-
-	b = Block{Coin: coin}
-	s.blockHeights.heights[b.Coin] = b
-	return
+func (s *BlockMap) GetHeights() map[int]*Block {
+	s.lock.RLock()
+	defer s.lock.RUnlock()
+	return s.heights
 }
 
 func (s *Storage) GetBlockNumber(coin uint) (int64, error) {
-	b, ok := s.GetBlock(coin)
+	b, ok := s.blockHeights.GetBlock(int(coin))
 	if ok {
 		return b.BlockHeight, nil
 	}
+
+	b = &Block{Coin: int(coin)}
 	err := s.Get(&b)
 	if err != nil {
 		return 0, nil
@@ -44,28 +45,25 @@ func (s *Storage) GetBlockNumber(coin uint) (int64, error) {
 }
 
 func (s *Storage) SetBlockNumber(coin uint, num int64) {
-	b, _ := s.GetBlock(coin)
-	s.blockHeights.lock.Lock()
-	defer s.blockHeights.lock.Unlock()
-	b.BlockHeight = num
-	s.blockHeights.heights[b.Coin] = b
+	s.blockHeights.SetBlock(&Block{Coin: int(coin), BlockHeight: num})
 }
 
 func (s *Storage) SaveBlock(coin uint, num int64) error {
-	b := Block{Coin: coin, BlockHeight: num}
-	err := s.Save(&b)
+	b := &Block{Coin: int(coin), BlockHeight: num}
+	logger.Info("Saving block", logger.Params{"Coin": b.Coin, "Height": b.BlockHeight})
+	err := s.Save(b)
 	if err != nil {
-		return errors.E(err, errors.Params{"block": num, "coin": coin}).PushToSentry()
+		return errors.E(err, errors.Params{"block": num, "coin": coin})
 	}
 	return nil
 }
 
 func (s *Storage) SaveAllBlocks() error {
 	logger.Info("Saving cache blocks in database")
-	h := s.GetHeights()
-	for _, v := range h {
-		logger.Info("Saving block", logger.Params{"Coin": v.Coin, "Height": v.BlockHeight})
-		err := s.Save(&v)
+	h := s.blockHeights.GetHeights()
+	for _, b := range h {
+		logger.Info("Saving block", logger.Params{"Coin": b.Coin, "Height": b.BlockHeight})
+		err := s.Save(b)
 		if err != nil {
 			logger.Error(err)
 		}

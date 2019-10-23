@@ -15,7 +15,7 @@ func (s *Storage) SaveXpubAddresses(coin uint, addresses []string, xpub string) 
 		x := &Xpub{
 			Xpub:    xpub,
 			Address: address,
-			Coin:    coin,
+			Coin:    int(coin),
 		}
 		a = append(a, x)
 	}
@@ -25,7 +25,7 @@ func (s *Storage) SaveXpubAddresses(coin uint, addresses []string, xpub string) 
 func (s *Storage) GetAddressFromXpub(coin uint, xpub string) ([]Xpub, error) {
 	x := &Xpub{
 		Xpub: xpub,
-		Coin: coin,
+		Coin: int(coin),
 	}
 	var addresses []Xpub
 	err := s.Find(&addresses, &x)

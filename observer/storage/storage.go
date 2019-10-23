@@ -11,14 +11,13 @@ type Storage struct {
 
 func New() *Storage {
 	s := new(Storage)
-	s.blockHeights.heights = make(map[uint]Block)
+	s.blockHeights.heights = make(map[int]*Block)
 	return s
 }
 
 type Tracker interface {
 	GetBlockNumber(coin uint) (int64, error)
 	SetBlockNumber(coin uint, num int64)
-	GetBlock(coin uint) (Block, bool)
 }
 
 type Addresses interface {

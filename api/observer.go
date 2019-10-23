@@ -173,7 +173,7 @@ func parseSubscriptions(subscriptions map[string][]string, webhook string) (subs
 		}
 		for _, addr := range perCoin {
 			subs = append(subs, &storage.Subscription{
-				Coin:    uint(coin),
+				Coin:    coin,
 				Address: addr,
 				Webhook: webhook,
 			})
