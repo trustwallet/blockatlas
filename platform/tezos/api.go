@@ -4,6 +4,8 @@ import (
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"math"
+	"strconv"
 	"time"
 )
 
@@ -40,15 +42,15 @@ func (p *Platform) CurrentBlockNumber() (int64, error) {
 }
 
 func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
-	if srcBlock, err := p.client.GetBlockByNumber(num); err == nil {
-		txs := NormalizeTxs(srcBlock)
-		return &blockatlas.Block{
-			Number: num,
-			Txs:    txs,
-		}, nil
-	} else {
+	srcBlock, err := p.client.GetBlockByNumber(num)
+	if err != nil {
 		return nil, err
 	}
+	txs := NormalizeTxs(srcBlock)
+	return &blockatlas.Block{
+		Number: num,
+		Txs:    txs,
+	}, nil
 }
 
 func (p *Platform) GetDelegations(address string) (page blockatlas.DelegationsPage, err error) {
@@ -58,7 +60,7 @@ func (p *Platform) GetDelegations(address string) (page blockatlas.DelegationsPa
 
 func NormalizeTxs(srcTxs []Tx) (txs []blockatlas.Tx) {
 	for _, srcTx := range srcTxs {
-		tx, ok := Normalize(&srcTx)
+		tx, ok := NormalizeTx(&srcTx)
 		if !ok || len(txs) >= blockatlas.TxPerPage {
 			continue
 		}
@@ -111,46 +113,41 @@ func normalizeValidator(v Validator) (validator blockatlas.Validator) {
 	}
 }
 
-// Normalize converts a Tezos transaction into the generic model
-func Normalize(srcTx *Tx) (tx blockatlas.Tx, ok bool) {
-	if srcTx.Type.Kind != "manager" {
-		return tx, false
-	}
-	if len(srcTx.Type.Operations) < 1 {
-		return tx, false
-	}
-
-	op := srcTx.Type.Operations[0]
-
-	date, err := time.Parse("2006-01-02T15:04:05Z", op.Timestamp)
-	var unix int64
-	if err != nil {
-		unix = 0
-	} else {
+// NormalizeTx converts a Tezos transaction into the generic model
+func NormalizeTx(srcTx *Tx) (tx blockatlas.Tx, ok bool) {
+	unix := int64(0)
+	date, err := time.Parse("2006-01-02T15:04:05Z", srcTx.Time)
+	if err == nil {
 		unix = date.Unix()
 	}
 
-	if op.Kind != "transaction" {
+	if srcTx.Type != "transaction" {
 		return tx, false
 	}
+
 	var status blockatlas.Status
 	var errMsg string
-	if !op.Failed {
+	if srcTx.Success && srcTx.Status == "applied" {
 		status = blockatlas.StatusCompleted
 	} else {
 		status = blockatlas.StatusFailed
 		errMsg = "transaction failed"
 	}
+
+	decimals := coin.Coins[coin.XTZ].Decimals
+	d := math.Pow10(int(decimals))
+	v := srcTx.Volume * d
+	volume := strconv.Itoa(int(v))
 	return blockatlas.Tx{
 		ID:    srcTx.Hash,
 		Coin:  coin.XTZ,
 		Date:  unix,
-		From:  op.Src.Tz,
-		To:    op.Dest.Tz,
-		Fee:   op.Fee,
-		Block: op.OpLevel,
+		From:  srcTx.Sender,
+		To:    srcTx.Receiver,
+		Fee:   blockatlas.Amount(strconv.Itoa(srcTx.Fee)),
+		Block: srcTx.Height,
 		Meta: blockatlas.Transfer{
-			Value:    op.Amount,
+			Value:    blockatlas.Amount(volume),
 			Symbol:   coin.Coins[coin.XTZ].Symbol,
 			Decimals: coin.Coins[coin.XTZ].Decimals,
 		},
