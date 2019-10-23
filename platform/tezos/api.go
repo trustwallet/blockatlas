@@ -1,6 +1,7 @@
 package tezos
 
 import (
+	"fmt"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
@@ -89,8 +90,12 @@ func (p *Platform) GetDetails() blockatlas.StakingDetails {
 }
 
 func (p *Platform) GetBalance(address string) (string, error) {
-	//TODO: Implement fetching balance for Tezos
-	return "0", nil
+	account, err := p.client.GetAccount(address)
+	if err != nil {
+		return "0", err
+	}
+
+	return fmt.Sprintf("%f", account.Balance), nil
 }
 
 func getDetails() blockatlas.StakingDetails {

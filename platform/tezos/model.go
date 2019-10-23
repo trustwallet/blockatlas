@@ -26,3 +26,8 @@ type Validator struct {
 type Head struct {
 	Height int64 `json:"height"`
 }
+
+type Account struct {
+	Address string  `json:"address"`
+	Balance float64 `json:"total_balance"`
+}
