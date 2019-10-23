@@ -318,7 +318,7 @@ func TestNormalizeDelegations(t *testing.T) {
 }
 
 func testNormalizeDelegations(t *testing.T, value string, want []blockatlas.Delegation) {
-	var accountData *AccountsData
+	var accountData *AccountData
 	err := json.Unmarshal([]byte(value), &accountData)
 	assert.NoError(t, err)
 	assert.NotNil(t, accountData)

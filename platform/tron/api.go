@@ -198,7 +198,7 @@ func Normalize(srcTx *Tx) (tx blockatlas.Tx, ok bool) {
 }
 
 func (p *Platform) GetTokenListByAddress(address string) (blockatlas.TokenPage, error) {
-	tokens, err := p.client.GetAccountMetadata(address)
+	tokens, err := p.client.GetAccount(address)
 	if err != nil {
 		return nil, err
 	}
@@ -274,11 +274,18 @@ func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, e
 }
 
 func (p *Platform) GetBalance(address string) (string, error) {
-	//TODO: Implement fetching balance for Tron
+	account, err := p.client.GetAccount(address)
+	if err != nil {
+		return "0", err
+	}
+
+	for _, data := range account.Data {
+		return strconv.FormatUint(uint64(data.Balance), 10), nil
+	}
 	return "0", nil
 }
 
-func NormalizeDelegations(data *AccountsData, validators blockatlas.ValidatorMap) []blockatlas.Delegation {
+func NormalizeDelegations(data *AccountData, validators blockatlas.ValidatorMap) []blockatlas.Delegation {
 	results := make([]blockatlas.Delegation, 0)
 	for _, v := range data.Votes {
 		validator, ok := validators[v.VoteAddress]

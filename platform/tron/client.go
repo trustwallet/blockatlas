@@ -23,17 +23,17 @@ func (c *Client) GetTxsOfAddress(address, token string) ([]Tx, error) {
 	return txs.Txs, err
 }
 
-func (c *Client) GetAccountMetadata(address string) (*Accounts, error) {
+func (c *Client) GetAccount(address string) (*Account, error) {
 	path := fmt.Sprintf("v1/accounts/%s", address)
 
-	var accounts Accounts
+	var accounts Account
 	err := c.Get(&accounts, path, nil)
 
 	return &accounts, err
 }
 
-func (c *Client) GetAccountVotes(address string) (*AccountsData, error) {
-	var account AccountsData
+func (c *Client) GetAccountVotes(address string) (*AccountData, error) {
+	var account AccountData
 	err := c.Post(&account, "wallet/getaccount", VotesRequest{Address: address, Visible: true})
 	return &account, err
 }
