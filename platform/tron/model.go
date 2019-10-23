@@ -46,11 +46,12 @@ type TransferAssetValue struct {
 	AssetName string `json:"asset_name"`
 }
 
-type Accounts struct {
-	Data []AccountsData `json:"data"`
+type Account struct {
+	Data []AccountData `json:"data"`
 }
 
-type AccountsData struct {
+type AccountData struct {
+	Balance  uint      `json:"balance"`
 	AssetsV2 []AssetV2 `json:"assetV2"`
 	Votes    []Votes   `json:"votes"`
 	Frozen   []Frozen  `json:"frozen"`
