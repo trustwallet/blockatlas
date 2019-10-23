@@ -55,8 +55,8 @@ kin:
 
 # [XTZ] Tezos: https://tezos.com
 tezos:
-  api: https://api1.tzscan.io/v3
-  rpc: https://mainnet-node.tzscan.io
+  api: https://api.tzstats.com/explorer
+  rpc: https://rpc.tzbeta.net
 
 # [ETH] Ethereum: https://ethereum.org (Trust-Ray API)
 # ethereum:
