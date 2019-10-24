@@ -11,7 +11,7 @@ type Storage struct {
 
 func New() *Storage {
 	s := new(Storage)
-	s.blockHeights.heights = make(map[int]*Block)
+	s.blockHeights.heights = make(map[interface{}]*Block)
 	return s
 }
 

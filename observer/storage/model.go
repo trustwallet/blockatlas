@@ -3,7 +3,7 @@ package storage
 import "time"
 
 type Block struct {
-	Coin        int `gorm:"primary_key" sql:"TYPE:int not null"`
+	Coin        interface{} `gorm:"type:varchar(20);unique_index;primary_key"`
 	BlockHeight int64
 }
 

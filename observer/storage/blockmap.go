@@ -5,7 +5,7 @@ import (
 )
 
 type BlockMap struct {
-	heights map[int]*Block
+	heights map[interface{}]*Block
 	lock    sync.RWMutex
 }
 
@@ -22,7 +22,7 @@ func (s *BlockMap) GetBlock(coin int) (*Block, bool) {
 	return b, ok
 }
 
-func (s *BlockMap) GetHeights() map[int]*Block {
+func (s *BlockMap) GetHeights() map[interface{}]*Block {
 	s.lock.RLock()
 	defer s.lock.RUnlock()
 	return s.heights
