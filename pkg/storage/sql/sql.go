@@ -54,7 +54,11 @@ func (db *sql) MustAddMany(values ...interface{}) error {
 }
 
 func (db *sql) Delete(value interface{}) error {
-	err := db.Client.Delete(value).Error
+	err := db.Get(value)
+	if err != nil {
+		return errors.E(err, util.ErrNotFound).PushToSentry()
+	}
+	err = db.Client.Delete(value).Error
 	if err != nil {
 		return errors.E(err, util.ErrNotDeleted).PushToSentry()
 	}
