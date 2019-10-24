@@ -36,17 +36,6 @@ func (s *Storage) GetAddressFromXpub(coin uint, xpub string) ([]Xpub, error) {
 	return addresses, nil
 }
 
-func (s *Storage) GetXpubFromAddress(coin uint, address string) (string, error) {
-	a := &Xpub{
-		Address: address,
-	}
-	err := s.Get(&a)
-	if err != nil {
-		return "", err
-	}
-	return a.Xpub, nil
-}
-
 func (s *Storage) Lookup(coin uint, addresses ...string) (observers []Subscription, err error) {
 	if len(addresses) == 0 {
 		return nil, errors.E("cannot look up an empty list", errors.Params{"coin": coin}).PushToSentry()

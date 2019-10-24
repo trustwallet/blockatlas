@@ -16,7 +16,7 @@ type Handler func(value interface{}) error
 func (db *sql) Get(value interface{}) error {
 	err := db.Client.Where(value).Take(value).Error
 	if err != nil {
-		return errors.E(err, util.ErrNotFound).PushToSentry()
+		return errors.E(err, util.ErrNotFound, errors.Params{"value": value})
 	}
 	return nil
 }
@@ -24,7 +24,7 @@ func (db *sql) Get(value interface{}) error {
 func (db *sql) Find(out interface{}, where ...interface{}) error {
 	err := db.Client.Find(out, where...).Error
 	if err != nil {
-		return errors.E(err, util.ErrNotFound).PushToSentry()
+		return errors.E(err, util.ErrNotFound, errors.Params{"value": out, "where": where})
 	}
 	return nil
 }
@@ -32,7 +32,7 @@ func (db *sql) Find(out interface{}, where ...interface{}) error {
 func (db *sql) Save(value interface{}) error {
 	err := db.Client.Save(value).Error
 	if err != nil {
-		return errors.E(err, util.ErrNotUpdated).PushToSentry()
+		return errors.E(err, util.ErrNotUpdated, errors.Params{"value": value})
 	}
 	return nil
 }
@@ -40,7 +40,7 @@ func (db *sql) Save(value interface{}) error {
 func (db *sql) Add(value interface{}) error {
 	err := db.Client.Create(value).Error
 	if err != nil {
-		return errors.E(err, util.ErrNotStored).PushToSentry()
+		return errors.E(err, util.ErrNotStored, errors.Params{"value": value})
 	}
 	return nil
 }
@@ -56,11 +56,11 @@ func (db *sql) MustAddMany(values ...interface{}) error {
 func (db *sql) Delete(value interface{}) error {
 	err := db.Get(value)
 	if err != nil {
-		return errors.E(err, util.ErrNotFound).PushToSentry()
+		return errors.E(err, util.ErrNotFound)
 	}
 	err = db.Client.Delete(value).Error
 	if err != nil {
-		return errors.E(err, util.ErrNotDeleted).PushToSentry()
+		return errors.E(err, util.ErrNotDeleted)
 	}
 	return nil
 }
