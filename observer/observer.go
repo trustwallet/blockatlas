@@ -3,17 +3,18 @@ package observer
 import (
 	mapset "github.com/deckarep/golang-set"
 	"github.com/trustwallet/blockatlas/coin"
+	"github.com/trustwallet/blockatlas/observer/storage"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/platform/bitcoin"
 )
 
 type Event struct {
-	Subscription Subscription
+	Subscription storage.Subscription
 	Tx           *blockatlas.Tx
 }
 
 type Observer struct {
-	Storage Storage
+	Storage storage.Addresses
 	Coin    uint
 }
 
@@ -50,19 +51,16 @@ func (o *Observer) processBlock(events chan<- Event, block *blockatlas.Block) {
 	emittedUtxo := make(map[string]blockatlas.Direction)
 	platform := bitcoin.UtxoPlatform(o.Coin)
 	for _, sub := range subs {
-
 		txs := txMap[sub.Address].Txs()
 		for _, tx := range txs {
-
-			xpub, err := o.Storage.GetXpubFromAddress(o.Coin, sub.Address)
-			if err == nil && len(xpub) > 0 {
-				xpubAddresses, err := o.Storage.GetAddressFromXpub(o.Coin, xpub)
+			if len(sub.Xpub) > 0 {
+				xpubAddresses, err := o.Storage.GetAddressFromXpub(o.Coin, sub.Xpub)
 				if err != nil {
 					continue
 				}
 				addressSet := mapset.NewSet()
 				for _, addr := range xpubAddresses {
-					addressSet.Add(addr)
+					addressSet.Add(addr.Address)
 				}
 				direction := platform.InferDirection(&tx, addressSet)
 				value := platform.InferValue(&tx, direction, addressSet)
