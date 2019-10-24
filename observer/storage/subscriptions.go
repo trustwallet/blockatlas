@@ -19,7 +19,7 @@ func (s *Storage) SaveXpubAddresses(coin uint, addresses []string, xpub string) 
 		}
 		a = append(a, x)
 	}
-	return s.AddMany(a...)
+	return s.MustAddMany(a...)
 }
 
 func (s *Storage) GetAddressFromXpub(coin uint, xpub string) ([]Xpub, error) {
@@ -62,11 +62,11 @@ func (s *Storage) Lookup(coin uint, addresses ...string) (observers []Subscripti
 }
 
 func (s *Storage) AddSubscriptions(subscriptions []interface{}) error {
-	return s.AddMany(subscriptions...)
+	return s.MustAddMany(subscriptions...)
 }
 
 func (s *Storage) DeleteSubscriptions(subscriptions []interface{}) error {
-	return s.DeleteMany(subscriptions...)
+	return s.MustDeleteMany(subscriptions...)
 }
 
 func (s *Storage) CacheXPubAddress(xpub string, coin uint) {

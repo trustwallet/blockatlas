@@ -3,6 +3,7 @@ package sql
 import (
 	"github.com/jinzhu/gorm"
 	"github.com/trustwallet/blockatlas/pkg/errors"
+	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/pkg/storage/util"
 )
 
@@ -45,7 +46,11 @@ func (db *sql) Add(value interface{}) error {
 }
 
 func (db *sql) AddMany(values ...interface{}) error {
-	return db.Batch(db.Add, values...)
+	return db.Batch(true, db.Add, values...)
+}
+
+func (db *sql) MustAddMany(values ...interface{}) error {
+	return db.Batch(false, db.Add, values...)
 }
 
 func (db *sql) Delete(value interface{}) error {
@@ -57,16 +62,23 @@ func (db *sql) Delete(value interface{}) error {
 }
 
 func (db *sql) DeleteMany(values ...interface{}) error {
-	return db.Batch(db.Delete, values...)
+	return db.Batch(true, db.Delete, values...)
 }
 
-func (db *sql) Batch(handler Handler, values ...interface{}) error {
+func (db *sql) MustDeleteMany(values ...interface{}) error {
+	return db.Batch(false, db.Delete, values...)
+}
+
+func (db *sql) Batch(rollback bool, handler Handler, values ...interface{}) error {
 	tx := db.Client.Begin()
 	for _, value := range values {
 		err := handler(value)
 		if err != nil {
-			tx.Rollback()
-			return err
+			if rollback {
+				tx.Rollback()
+				return err
+			}
+			logger.Error(err)
 		}
 	}
 	return tx.Commit().Error
