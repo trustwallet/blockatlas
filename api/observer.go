@@ -69,8 +69,8 @@ func addCall(storage *storage.Storage) func(c *gin.Context) {
 
 		subs := parseSubscriptions(req.Subscriptions, req.Webhook)
 		xpubSubs := parseSubscriptions(req.XpubSubscriptions, req.Webhook)
-
 		subs = append(subs, xpubSubs...)
+
 		err := storage.AddSubscriptions(subs)
 		if err != nil {
 			ErrorResponse(c).Message(err.Error()).Render()
@@ -111,6 +111,7 @@ func deleteCall(storage *storage.Storage) func(c *gin.Context) {
 		subs := parseSubscriptions(req.Subscriptions, req.Webhook)
 		xpubSubs := parseSubscriptions(req.XpubSubscriptions, req.Webhook)
 		subs = append(subs, xpubSubs...)
+
 		err := storage.DeleteSubscriptions(subs)
 		if err != nil {
 			ErrorResponse(c).Message(err.Error()).Render()

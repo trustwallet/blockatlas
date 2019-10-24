@@ -14,7 +14,7 @@ type sql struct {
 type Handler func(value interface{}) error
 
 func (db *sql) Get(value interface{}) error {
-	err := db.Client.Last(value).Error
+	err := db.Client.Where(value).Take(value).Error
 	if err != nil {
 		return errors.E(err, util.ErrNotFound).PushToSentry()
 	}
