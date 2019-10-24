@@ -1,27 +1,30 @@
 package storage
 
 import (
-	"github.com/go-redis/redis"
-	"github.com/spf13/viper"
-	"github.com/trustwallet/blockatlas/observer"
-	sredis "github.com/trustwallet/blockatlas/observer/storage/redis"
-	"github.com/trustwallet/blockatlas/pkg/errors"
-	"github.com/trustwallet/blockatlas/pkg/logger"
+	"github.com/trustwallet/blockatlas/pkg/storage/sql"
 )
 
-var App observer.Storage
+type Storage struct {
+	sql.PgSql
+	blockHeights BlockMap
+}
 
-func Load() {
-	options, err := redis.ParseURL(viper.GetString("observer.redis"))
-	if err != nil {
-		logger.Fatal(errors.E(err), "Cannot connect to Redis")
-	}
-	client := redis.NewClient(options)
-	if err := client.Ping().Err(); err != nil {
-		logger.Fatal(errors.E(err), "Redis connection test failed")
-	}
-	if viper.GetString("observer.auth") == "" {
-		logger.Fatal(errors.E("Refusing to run observer API without a password"))
-	}
-	App = sredis.New(client)
+func New() *Storage {
+	s := new(Storage)
+	s.blockHeights.heights = make(map[interface{}]*Block)
+	return s
+}
+
+type Tracker interface {
+	GetBlockNumber(coin uint) (int64, error)
+	SetBlockNumber(coin uint, num int64)
+}
+
+type Addresses interface {
+	Lookup(coin uint, addresses ...string) ([]Subscription, error)
+	AddSubscriptions([]interface{}) error
+	DeleteSubscriptions([]interface{}) error
+	GetAddressFromXpub(coin uint, xpub string) ([]Xpub, error)
+	GetXpubFromAddress(coin uint, address string) (string, error)
+	SaveXpubAddresses(coin uint, addresses []string, xpub string) error
 }

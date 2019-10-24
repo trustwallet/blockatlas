@@ -3,6 +3,7 @@ package sql
 import (
 	"github.com/jinzhu/gorm"
 	"github.com/trustwallet/blockatlas/pkg/errors"
+	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/pkg/storage/util"
 )
 
@@ -13,7 +14,7 @@ type sql struct {
 type Handler func(value interface{}) error
 
 func (db *sql) Get(value interface{}) error {
-	err := db.Client.Last(value).Error
+	err := db.Client.Where(value).Take(value).Error
 	if err != nil {
 		return errors.E(err, util.ErrNotFound).PushToSentry()
 	}
@@ -28,26 +29,12 @@ func (db *sql) Find(out interface{}, where ...interface{}) error {
 	return nil
 }
 
-func (db *sql) CreateOrUpdate(value interface{}) error {
-	if db.Client.NewRecord(value) {
-		return db.Add(value)
-	}
-	return db.Update(value)
-}
-
-func (db *sql) Update(value interface{}) error {
-	if db.Client.NewRecord(value) {
-		return util.ErrNotFound
-	}
+func (db *sql) Save(value interface{}) error {
 	err := db.Client.Save(value).Error
 	if err != nil {
 		return errors.E(err, util.ErrNotUpdated).PushToSentry()
 	}
 	return nil
-}
-
-func (db *sql) UpdateMany(values ...interface{}) error {
-	return db.Batch(db.Update, values...)
 }
 
 func (db *sql) Add(value interface{}) error {
@@ -59,11 +46,19 @@ func (db *sql) Add(value interface{}) error {
 }
 
 func (db *sql) AddMany(values ...interface{}) error {
-	return db.Batch(db.Add, values...)
+	return db.Batch(true, db.Add, values...)
+}
+
+func (db *sql) MustAddMany(values ...interface{}) error {
+	return db.Batch(false, db.Add, values...)
 }
 
 func (db *sql) Delete(value interface{}) error {
-	err := db.Client.Delete(value).Error
+	err := db.Get(value)
+	if err != nil {
+		return errors.E(err, util.ErrNotFound).PushToSentry()
+	}
+	err = db.Client.Delete(value).Error
 	if err != nil {
 		return errors.E(err, util.ErrNotDeleted).PushToSentry()
 	}
@@ -71,16 +66,23 @@ func (db *sql) Delete(value interface{}) error {
 }
 
 func (db *sql) DeleteMany(values ...interface{}) error {
-	return db.Batch(db.Delete, values...)
+	return db.Batch(true, db.Delete, values...)
 }
 
-func (db *sql) Batch(handler Handler, values ...interface{}) error {
+func (db *sql) MustDeleteMany(values ...interface{}) error {
+	return db.Batch(false, db.Delete, values...)
+}
+
+func (db *sql) Batch(rollback bool, handler Handler, values ...interface{}) error {
 	tx := db.Client.Begin()
 	for _, value := range values {
 		err := handler(value)
 		if err != nil {
-			tx.Rollback()
-			return err
+			if rollback {
+				tx.Rollback()
+				return err
+			}
+			logger.Error(err)
 		}
 	}
 	return tx.Commit().Error
