@@ -25,6 +25,5 @@ type Addresses interface {
 	AddSubscriptions([]interface{}) error
 	DeleteSubscriptions([]interface{}) error
 	GetAddressFromXpub(coin uint, xpub string) ([]Xpub, error)
-	GetXpubFromAddress(coin uint, address string) (string, error)
 	SaveXpubAddresses(coin uint, addresses []string, xpub string) error
 }
