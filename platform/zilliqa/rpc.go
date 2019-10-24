@@ -26,6 +26,7 @@ func (c *RpcClient) GetTxInBlock(number int64) (txs []Tx, err error) {
 	err = c.RpcCall(&results, "GetTransactionsForTxBlock", []string{strNumber})
 
 	var wg sync.WaitGroup
+	out := make(chan Tx)
 	for _, ids := range results {
 		for _, id := range ids {
 			wg.Add(1)
@@ -35,10 +36,16 @@ func (c *RpcClient) GetTxInBlock(number int64) (txs []Tx, err error) {
 				if errTx != nil {
 					return
 				}
-				txs = append(txs, tx)
+				out <- tx
 			}(id)
 		}
 	}
+	go func() {
+		for tx := range out {
+			txs = append(txs, tx)
+		}
+	}()
 	wg.Wait()
+	close(out)
 	return
 }
