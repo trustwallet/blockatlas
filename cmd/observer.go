@@ -19,7 +19,7 @@ var observerCmd = cobra.Command{
 }
 
 func runObserver(_ *cobra.Command, _ []string) {
-	if !Storage.IsReady() {
+	if !StorageObserver.IsReady() {
 		logger.Fatal("Observer is not enabled")
 	}
 
@@ -50,7 +50,7 @@ func runObserver(_ *cobra.Command, _ []string) {
 		}
 		stream := observer.Stream{
 			BlockAPI:     api,
-			Tracker:      Storage,
+			Tracker:      StorageObserver,
 			PollInterval: pollInterval,
 			BacklogCount: backlogCount,
 		}
@@ -58,7 +58,7 @@ func runObserver(_ *cobra.Command, _ []string) {
 
 		// Check for transaction events
 		obs := observer.Observer{
-			Storage: Storage,
+			Storage: StorageObserver,
 			Coin:    coin.ID,
 		}
 		events := obs.Execute(blocks)
