@@ -71,12 +71,7 @@ func addCall(storage *storage.Storage) func(c *gin.Context) {
 		xpubSubs := parseSubscriptions(req.XpubSubscriptions, req.Webhook)
 		subs = append(subs, xpubSubs...)
 
-		err := storage.AddSubscriptions(subs)
-		if err != nil {
-			ErrorResponse(c).Message(err.Error()).Render()
-			return
-		}
-
+		go storage.AddSubscriptions(subs)
 		go cacheXpub(req.XpubSubscriptions, storage)
 		RenderSuccess(c, ObserverResponse{Status: "Added"})
 	}
@@ -112,11 +107,7 @@ func deleteCall(storage *storage.Storage) func(c *gin.Context) {
 		xpubSubs := parseSubscriptions(req.XpubSubscriptions, req.Webhook)
 		subs = append(subs, xpubSubs...)
 
-		err := storage.DeleteSubscriptions(subs)
-		if err != nil {
-			ErrorResponse(c).Message(err.Error()).Render()
-			return
-		}
+		go storage.DeleteSubscriptions(subs)
 		RenderSuccess(c, ObserverResponse{Status: "Deleted"})
 	}
 }
