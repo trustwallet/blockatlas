@@ -261,13 +261,9 @@ func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, e
 	if err != nil {
 		return nil, err
 	}
-	validatorList, err := services.GetValidators(p)
+	validators, err := services.GetValidatorsMap(p)
 	if err != nil {
 		return nil, err
-	}
-	validators := make(blockatlas.ValidatorMap)
-	for _, v := range validatorList {
-		validators[v.ID] = v
 	}
 	results = append(results, NormalizeDelegations(votes, validators)...)
 	return results, nil

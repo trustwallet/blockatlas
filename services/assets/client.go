@@ -11,6 +11,18 @@ const (
 	AssetsURL = "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/"
 )
 
+func GetValidatorsMap(api blockatlas.StakeAPI) (blockatlas.ValidatorMap, error) {
+	validatorList, err := GetValidators(api)
+	if err != nil {
+		return nil, err
+	}
+	validators := make(blockatlas.ValidatorMap)
+	for _, v := range validatorList {
+		validators[v.ID] = v
+	}
+	return validators, nil
+}
+
 func GetValidators(api blockatlas.StakeAPI) ([]blockatlas.StakeValidator, error) {
 	assetsValidators, err := GetValidatorsInfo(api.Coin())
 	if err != nil {
