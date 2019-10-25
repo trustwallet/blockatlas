@@ -63,7 +63,7 @@ func (s *Storage) DeleteSubscriptions(subscriptions []interface{}) {
 	for _, sub := range subscriptions {
 		err := s.Delete(sub)
 		if err != nil {
-			logger.Error("AddSubscriptions", err, logger.Params{"sub": sub})
+			logger.Error("DeleteSubscriptions", err, logger.Params{"sub": sub})
 		}
 	}
 }
