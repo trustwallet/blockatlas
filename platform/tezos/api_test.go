@@ -129,3 +129,78 @@ func TestNormalizeValidator(t *testing.T) {
 	result := normalizeValidator(v)
 	assert.Equal(t, result, expected)
 }
+
+func Test_removeDecimals(t *testing.T) {
+	tests := []struct {
+		name   string
+		volume float64
+		want   string
+	}{
+		{"one float precision", 9.5, "9500000"},
+		{"zero float precision", 9, "9000000"},
+		{"five float precision", 9.00005, "9000050"},
+		{"six float precision", 9.000005, "9000005"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := removeDecimals(tt.volume); got != tt.want {
+				t.Errorf("removeDecimals() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+const accountSrc = `
+{
+  "address": "tz1Z3KCf8CLGAYfvVWPEr562jDDyWkwNF7sT",
+  "delegate": "tz1RCFbB9GpALpsZtu6J58sb74dm8qe6XBzv",
+  "manager": "",
+  "pubkey": "edpkuJdSkMoJK6EZMyYPGTzT5jBHtiqcLy6dYPitCDuurdddCFE6je",
+  "delegated_since": 0,
+  "delegate_since": 75516,
+  "delegated_since_time": "0001-01-01T00:00:00Z",
+  "delegate_since_time": "2018-08-25T12:20:39Z",
+  "total_rewards_earned": 17399.566664,
+  "total_balance": 68995.611927,
+  "delegated_balance": 404162.079872,
+  "total_delegations": 153,
+  "active_delegations": 93,
+  "is_delegatable": false,
+  "is_delegated": false,
+  "is_delegate": true,
+  "is_active_delegate": true
+}`
+
+var validator1 = blockatlas.StakeValidator{
+	ID:     "tz1RCFbB9GpALpsZtu6J58sb74dm8qe6XBzv",
+	Status: true,
+	Info: blockatlas.StakeValidatorInfo{
+		Name:        "Staked",
+		Description: "Staked is the leading staking partner for the smartest investors in crypto, delivering staking rewards securely and reliably. Staked supports the largest number of chains and offers comprehensive reporting for tax & accounting.",
+		Image:       "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/tezos/info/logo.png",
+		Website:     "https://staked.us/",
+	},
+	Details: getDetails(),
+}
+
+var validatorMap = blockatlas.ValidatorMap{
+	"tz1RCFbB9GpALpsZtu6J58sb74dm8qe6XBzv": validator1,
+}
+
+func TestNormalizeDelegations(t *testing.T) {
+	var account Account
+	err := json.Unmarshal([]byte(accountSrc), &account)
+	assert.NoError(t, err)
+	assert.NotNil(t, account)
+
+	expected := []blockatlas.Delegation{
+		{
+			Delegator: validator1,
+			Value:     "68995611927",
+			Status:    blockatlas.DelegationStatusActive,
+		},
+	}
+	result, err := NormalizeDelegation(account, validatorMap)
+	assert.NoError(t, err)
+	assert.Equal(t, result, expected)
+}

@@ -5,6 +5,8 @@ import (
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/errors"
+	services "github.com/trustwallet/blockatlas/services/assets"
 	"math"
 	"strconv"
 	"time"
@@ -54,9 +56,37 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 	}, nil
 }
 
-func (p *Platform) GetDelegations(address string) (page blockatlas.DelegationsPage, err error) {
-	//TODO https://github.com/trustwallet/blockatlas/issues/386
-	return page, err
+func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, error) {
+	account, err := p.client.GetAccount(address)
+	if err != nil {
+		return nil, err
+	}
+
+	validators, err := services.GetValidatorsMap(p)
+	if err != nil {
+		return nil, err
+	}
+	return NormalizeDelegation(account, validators)
+}
+
+func NormalizeDelegation(account Account, validators blockatlas.ValidatorMap) ([]blockatlas.Delegation, error) {
+	results := make([]blockatlas.Delegation, 0)
+	if account.Address == account.Delegate {
+		return results, nil
+	}
+	validator, ok := validators[account.Delegate]
+	if !ok {
+		return nil, errors.E("Validator not found",
+			errors.Params{"Address": account.Address, "Delegate": account.Delegate, "Balance": account.Balance})
+	}
+	balance := removeDecimals(account.Balance)
+	return []blockatlas.Delegation{
+		{
+			Delegator: validator,
+			Value:     balance,
+			Status:    blockatlas.DelegationStatusActive,
+		},
+	}, nil
 }
 
 func NormalizeTxs(srcTxs []Tx) (txs []blockatlas.Tx) {
@@ -101,7 +131,7 @@ func (p *Platform) GetBalance(address string) (string, error) {
 func getDetails() blockatlas.StakingDetails {
 	return blockatlas.StakingDetails{
 		Reward:        blockatlas.StakingReward{Annual: Annual},
-		MinimumAmount: blockatlas.Amount("0"),
+		MinimumAmount: "0",
 		LockTime:      0,
 		Type:          blockatlas.DelegationTypeDelegate,
 	}
@@ -139,10 +169,7 @@ func NormalizeTx(srcTx *Tx) (tx blockatlas.Tx, ok bool) {
 		errMsg = "transaction failed"
 	}
 
-	decimals := coin.Coins[coin.XTZ].Decimals
-	d := math.Pow10(int(decimals))
-	v := srcTx.Volume * d
-	volume := strconv.Itoa(int(v))
+	volume := removeDecimals(srcTx.Volume)
 	return blockatlas.Tx{
 		ID:    srcTx.Hash,
 		Coin:  coin.XTZ,
@@ -159,4 +186,11 @@ func NormalizeTx(srcTx *Tx) (tx blockatlas.Tx, ok bool) {
 		Status: status,
 		Error:  errMsg,
 	}, true
+}
+
+func removeDecimals(volume float64) string {
+	decimals := coin.Coins[coin.XTZ].Decimals
+	d := math.Pow10(int(decimals))
+	v := volume * d
+	return strconv.Itoa(int(v))
 }
