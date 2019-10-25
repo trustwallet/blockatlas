@@ -36,7 +36,6 @@ var (
 				StorageApi.Init(host)
 				StorageObserver.Client.AutoMigrate(
 					&storage.Block{},
-					&storage.Xpub{},
 					&storage.Subscription{},
 				)
 			}

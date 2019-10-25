@@ -1,23 +1,19 @@
 package storage
 
-import "time"
+import (
+	"database/sql"
+	"time"
+)
 
 type Block struct {
 	Coin        interface{} `gorm:"type:varchar(20);primary_key"`
 	BlockHeight int64
 }
 
-type Xpub struct {
-	Coin      interface{} `gorm:"primary_key;type:varchar(20)"`
-	Address   string      `gorm:"primary_key;type:varchar(150)"`
-	Xpub      string      `gorm:"primary_key;type:varchar(150)"`
-	CreatedAt time.Time
-}
-
 type Subscription struct {
-	Coin      interface{} `json:"coin" gorm:"primary_key;type:varchar(20)"`
-	Address   string      `json:"address" gorm:"primary_key;type:varchar(150)"`
-	Webhook   string      `json:"webhook" gorm:"primary_key;type:varchar(150)"`
-	Xpub      string      `json:"-" sql:"-" gorm:"-"`
+	Coin      interface{}    `json:"coin" gorm:"type:varchar(20);primary_key"`
+	Address   string         `json:"address" gorm:"type:varchar(150);primary_key"`
+	Webhook   string         `json:"webhook" gorm:"type:varchar(150);primary_key"`
+	Xpub      sql.NullString `json:"-" gorm:"type:varchar(150)"`
 	CreatedAt time.Time
 }
