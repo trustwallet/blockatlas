@@ -25,7 +25,11 @@ func (p *Platform) Lookup(coin uint64, name string) (*blockatlas.Resolved, error
 
 	ensName, err := ens.NewName(client, name)
 	if err != nil {
-		return nil, errors.E(http.StatusInternalServerError, err.Error())
+		logger.Error("Query ens failed", err, logger.Params{
+			"name": name,
+			"coin": coin,
+		})
+		return &result, nil
 	}
 
 	address, err := ensName.Address(coin)

@@ -7,6 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	CoinType "github.com/trustwallet/blockatlas/coin"
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/platform"
 )
 
@@ -58,6 +59,5 @@ func handleLookup(c *gin.Context) {
 			}
 		}
 	}
-
-	RenderError(c, http.StatusBadRequest, "not supported domain")
+	RenderSuccess(c, blockatlas.Resolved{Result: "", Coin: coin})
 }
