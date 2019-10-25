@@ -3,7 +3,7 @@ package sql
 import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
-	"github.com/trustwallet/blockatlas/pkg/errors"
+	"github.com/trustwallet/blockatlas/pkg/logger"
 	"time"
 )
 
@@ -11,16 +11,15 @@ type PgSql struct {
 	sql
 }
 
-func (db *PgSql) Init(host string, conns int) error {
+func (db *PgSql) Init(host string) {
 	client, err := gorm.Open("postgres", host)
 	if err != nil {
-		return errors.E(err, "postgress connection failed")
+		logger.Fatal(err, "postgress connection failed")
 	}
-	client.DB().SetConnMaxLifetime(time.Minute * 2)
-	client.DB().SetMaxIdleConns(0)
-	client.DB().SetMaxOpenConns(conns)
+	client.DB().SetMaxIdleConns(5)
+	client.DB().SetMaxOpenConns(50)
+	client.DB().SetConnMaxLifetime(time.Second * 20)
 	db.Client = client
-	return nil
 }
 
 func (db *PgSql) IsReady() bool {

@@ -5,7 +5,6 @@ import (
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/config"
 	"github.com/trustwallet/blockatlas/observer/storage"
-	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/platform"
 	"os"
@@ -33,14 +32,8 @@ var (
 			if viper.GetBool("observer.enabled") {
 				logger.Info("Loading Observer API")
 				host := viper.GetString("observer.postgres")
-				err := StorageObserver.Init(host, len(platform.Platforms)+5)
-				if err != nil {
-					logger.Fatal(errors.E(err), "StorageObserver: cannot connect to Postgres")
-				}
-				err = StorageApi.Init(host, 10)
-				if err != nil {
-					logger.Fatal(errors.E(err), "StorageApi: cannot connect to Postgres")
-				}
+				StorageObserver.Init(host)
+				StorageApi.Init(host)
 				StorageObserver.Client.AutoMigrate(
 					&storage.Block{},
 					&storage.Xpub{},
