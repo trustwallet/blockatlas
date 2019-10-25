@@ -28,6 +28,7 @@ type Head struct {
 }
 
 type Account struct {
-	Address string  `json:"address"`
-	Balance float64 `json:"total_balance"`
+	Address  string  `json:"address"`
+	Delegate string  `json:"delegate"`
+	Balance  float64 `json:"total_balance"`
 }
