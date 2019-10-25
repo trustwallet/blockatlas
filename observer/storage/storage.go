@@ -22,8 +22,8 @@ type Tracker interface {
 
 type Addresses interface {
 	Lookup(coin uint, addresses ...string) ([]Subscription, error)
-	AddSubscriptions([]interface{}) error
-	DeleteSubscriptions([]interface{}) error
+	AddSubscriptions([]interface{})
+	DeleteSubscriptions([]interface{})
 	GetAddressFromXpub(coin uint, xpub string) ([]Xpub, error)
 	SaveXpubAddresses(coin uint, addresses []string, xpub string) error
 }

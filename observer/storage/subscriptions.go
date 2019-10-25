@@ -50,12 +50,22 @@ func (s *Storage) Lookup(coin uint, addresses ...string) (observers []Subscripti
 	return
 }
 
-func (s *Storage) AddSubscriptions(subscriptions []interface{}) error {
-	return s.MustAddMany(subscriptions...)
+func (s *Storage) AddSubscriptions(subscriptions []interface{}) {
+	for _, sub := range subscriptions {
+		err := s.Add(sub)
+		if err != nil {
+			logger.Error("AddSubscriptions", err, logger.Params{"sub": sub})
+		}
+	}
 }
 
-func (s *Storage) DeleteSubscriptions(subscriptions []interface{}) error {
-	return s.MustDeleteMany(subscriptions...)
+func (s *Storage) DeleteSubscriptions(subscriptions []interface{}) {
+	for _, sub := range subscriptions {
+		err := s.Delete(sub)
+		if err != nil {
+			logger.Error("DeleteSubscriptions", err, logger.Params{"sub": sub})
+		}
+	}
 }
 
 func (s *Storage) CacheXPubAddress(xpub string, coin uint) {
