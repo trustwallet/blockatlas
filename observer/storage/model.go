@@ -17,3 +17,19 @@ type Subscription struct {
 	Xpub      sql.NullString `json:"-" gorm:"type:varchar(150)"`
 	CreatedAt time.Time
 }
+
+func (s *Subscription) Equal(sub Subscription) bool {
+	if s.Coin != sub.Coin {
+		return false
+	}
+	if s.Address != sub.Address {
+		return false
+	}
+	if s.Xpub.String != sub.Xpub.String {
+		return false
+	}
+	if s.Webhook != sub.Webhook {
+		return false
+	}
+	return true
+}

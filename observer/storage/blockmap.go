@@ -9,21 +9,21 @@ type BlockMap struct {
 	lock    sync.RWMutex
 }
 
-func (s *BlockMap) SetBlock(b *Block) {
-	s.lock.Lock()
-	defer s.lock.Unlock()
-	s.heights[b.Coin] = b
+func (bm *BlockMap) SetBlock(b *Block) {
+	bm.lock.Lock()
+	defer bm.lock.Unlock()
+	bm.heights[b.Coin] = b
 }
 
-func (s *BlockMap) GetBlock(coin int) (*Block, bool) {
-	s.lock.RLock()
-	defer s.lock.RUnlock()
-	b, ok := s.heights[coin]
+func (bm *BlockMap) GetBlock(coin int) (*Block, bool) {
+	bm.lock.RLock()
+	defer bm.lock.RUnlock()
+	b, ok := bm.heights[coin]
 	return b, ok
 }
 
-func (s *BlockMap) GetHeights() map[interface{}]*Block {
-	s.lock.RLock()
-	defer s.lock.RUnlock()
-	return s.heights
+func (bm *BlockMap) GetHeights() map[interface{}]*Block {
+	bm.lock.RLock()
+	defer bm.lock.RUnlock()
+	return bm.heights
 }

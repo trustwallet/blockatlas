@@ -7,11 +7,14 @@ import (
 type Storage struct {
 	sql.PgSql
 	blockHeights BlockMap
+	subsMap      SubsMap
 }
 
 func New() *Storage {
 	s := new(Storage)
 	s.blockHeights.heights = make(map[interface{}]*Block)
+	s.subsMap.subs = make(map[string][]Subscription)
+	s.subsMap.xpubSubs = make(map[string][]Subscription)
 	return s
 }
 
