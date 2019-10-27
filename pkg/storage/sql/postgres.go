@@ -16,9 +16,10 @@ func (db *PgSql) Init(host string) {
 	if err != nil {
 		logger.Fatal(err, "postgress connection failed")
 	}
-	client.DB().SetMaxIdleConns(20)
-	client.DB().SetMaxOpenConns(50)
-	client.DB().SetConnMaxLifetime(time.Hour * 2)
+	client.DB().SetMaxIdleConns(10)
+	client.DB().SetMaxOpenConns(100)
+	client.DB().SetConnMaxLifetime(time.Hour)
+	client.LogMode(true)
 	db.Client = client
 }
 
