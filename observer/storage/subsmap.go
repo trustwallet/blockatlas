@@ -78,8 +78,12 @@ func (sm *SubsMap) GetSubscription(address string) ([]Subscription, bool) {
 	return s, true
 }
 
-func (sm *SubsMap) GetSubscriptions() map[string][]Subscription {
-	sm.lock.RLock()
-	defer sm.lock.RUnlock()
-	return sm.subs
+func (sm *SubsMap) GetSubscriptions(addresses ...string) (subs []Subscription) {
+	for _, addr := range addresses {
+		ns, ok := sm.GetSubscription(addr)
+		if !ok {
+			subs = append(subs, ns...)
+		}
+	}
+	return
 }

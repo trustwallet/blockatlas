@@ -18,7 +18,7 @@ func (db *PgSql) Init(host string) {
 	}
 	client.DB().SetMaxIdleConns(10)
 	client.DB().SetMaxOpenConns(100)
-	client.DB().SetConnMaxLifetime(time.Hour)
+	client.DB().SetConnMaxLifetime(time.Minute)
 	client.LogMode(true)
 	db.Client = client
 }
