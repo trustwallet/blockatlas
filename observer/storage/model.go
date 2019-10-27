@@ -11,9 +11,10 @@ type Block struct {
 }
 
 type Subscription struct {
-	Coin      interface{}    `json:"coin" gorm:"type:varchar(20);primary_key"`
-	Address   string         `json:"address" gorm:"type:varchar(150);primary_key"`
-	Webhook   string         `json:"webhook" gorm:"type:varchar(150);primary_key"`
+	ID        uint           `json:"-" gorm:"primary_key"`
+	Coin      interface{}    `json:"coin" gorm:"type:varchar(20)"`
+	Address   string         `json:"address" gorm:"type:varchar(150)"`
+	Webhook   string         `json:"webhook" gorm:"type:varchar(150)"`
 	Xpub      sql.NullString `json:"-" gorm:"type:varchar(150)"`
 	CreatedAt time.Time
 }

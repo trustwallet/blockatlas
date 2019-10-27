@@ -37,7 +37,7 @@ func (db *sql) Save(value interface{}) error {
 }
 
 func (db *sql) Add(value interface{}) error {
-	err := db.Client.FirstOrCreate(value, value).Error
+	err := db.Client.Where(value).FirstOrCreate(value).Error
 	if err != nil {
 		return errors.E(err, util.ErrNotStored, errors.Params{"method": "Add", "value": value})
 	}
