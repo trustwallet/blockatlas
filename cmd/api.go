@@ -38,6 +38,7 @@ func RunApi(bind string, c chan *gin.Engine) {
 
 	sg := sentrygin.New(sentrygin.Options{})
 	engine.Use(util.CheckReverseProxy, sg)
+	engine.Use(api.CORSMiddleware())
 
 	engine.GET("swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
