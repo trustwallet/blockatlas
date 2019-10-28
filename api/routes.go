@@ -12,8 +12,6 @@ var routers = make(map[string]gin.IRouter)
 func LoadPlatforms(root gin.IRouter) {
 	v1 := root.Group("/v1")
 	v2 := root.Group("/v2")
-	v1.Use(CORSMiddleware())
-	v2.Use(CORSMiddleware())
 
 	for _, txAPI := range platform.Platforms {
 		router := getRouter(v1, txAPI.Coin().Handle)
