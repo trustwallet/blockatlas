@@ -7,6 +7,7 @@ import (
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
+	"github.com/trustwallet/blockatlas/util"
 	"math/big"
 	"net/http"
 	"strconv"
@@ -140,7 +141,7 @@ func AppendTxs(in []blockatlas.Tx, srcTx *Doc, coinIndex uint) (out []blockatlas
 		tokenTx.Meta = blockatlas.TokenTransfer{
 			Name:     op.Contract.Name,
 			Symbol:   op.Contract.Symbol,
-			TokenID:  op.Contract.Address,
+			TokenID:  util.Checksum(op.Contract.Address),
 			Decimals: op.Contract.Decimals,
 			Value:    blockatlas.Amount(op.Value),
 			From:     op.From,
