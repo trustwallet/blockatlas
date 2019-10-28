@@ -24,7 +24,7 @@ type AddressesRequest []AddressBatchRequest
 // @Success 200 {object} blockatlas.DelegationsBatchPage
 // @Router /v2/staking/delegations [post]
 func makeStakingDelegationsBatchRoute(router gin.IRouter) {
-	router.POST("/staking/delegations/", func(c *gin.Context) {
+	router.POST("/staking/delegations", func(c *gin.Context) {
 		var reqs AddressesRequest
 		if err := c.BindJSON(&reqs); err != nil {
 			ErrorResponse(c).Message(err.Error()).Render()
