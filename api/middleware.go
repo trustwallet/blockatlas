@@ -2,7 +2,6 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/spf13/viper"
 	"net/http"
 	"strings"
 )
@@ -11,8 +10,7 @@ var DefaultMiddleware = func(c *gin.Context) {
 	c.Next()
 }
 
-func TokenAuthMiddleware() gin.HandlerFunc {
-	requiredToken := viper.GetString("metrics.api_token")
+func TokenAuthMiddleware(requiredToken string) gin.HandlerFunc {
 	if requiredToken == "" {
 		return DefaultMiddleware
 	}
