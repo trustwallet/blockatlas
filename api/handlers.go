@@ -4,6 +4,7 @@ import (
 	"github.com/chenjiandongx/ginprom"
 	"github.com/gin-gonic/gin"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/gincache"
 	"github.com/trustwallet/blockatlas/pkg/logger"
@@ -256,7 +257,7 @@ func makeTokenRoute(router gin.IRouter, api blockatlas.Platform) {
 func MakeMetricsRoute(router gin.IRouter) {
 	router.Use(metrics.PromMiddleware())
 	m := router.Group("/metrics")
-	m.Use(TokenAuthMiddleware())
+	m.Use(TokenAuthMiddleware(viper.GetString("metrics.api_token")))
 	m.GET("/", ginprom.PromHandler(promhttp.Handler()))
 }
 

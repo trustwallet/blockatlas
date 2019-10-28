@@ -1,7 +1,6 @@
 package api
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/observer"
@@ -9,7 +8,6 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/platform"
 	"github.com/trustwallet/blockatlas/platform/bitcoin"
-	"net/http"
 	"strconv"
 )
 
@@ -29,19 +27,10 @@ type CoinStatus struct {
 }
 
 func SetupObserverAPI(router gin.IRouter) {
-	router.Use(requireAuth)
+	router.Use(TokenAuthMiddleware(viper.GetString("observer.auth")))
 	router.POST("/webhook/register", addCall)
 	router.DELETE("/webhook/register", deleteCall)
 	router.GET("/status", statusCall)
-}
-
-func requireAuth(c *gin.Context) {
-	auth := fmt.Sprintf("Bearer %s", viper.GetString("observer.auth"))
-	if c.GetHeader("Authorization") == auth {
-		c.Next()
-	} else {
-		ErrorResponse(c).Code(http.StatusUnauthorized).Render()
-	}
 }
 
 // @Summary Create a webhook
