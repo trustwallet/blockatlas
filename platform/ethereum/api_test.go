@@ -124,7 +124,7 @@ var tokenTransferDst = blockatlas.Tx{
 	Meta: blockatlas.TokenTransfer{
 		Name:     "KaratBank Coin",
 		Symbol:   "KBC",
-		TokenID:  "0xf3586684107ce0859c44aa2b2e0fb8cd8731a15a",
+		TokenID:  "0xf3586684107CE0859c44aa2b2E0fB8cd8731a15a",
 		Decimals: 7,
 		Value:    "4291000000",
 		From:     "0xd35f30d194684a391c63a6deced7d3dd5207c265",
