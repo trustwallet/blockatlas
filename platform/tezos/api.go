@@ -1,7 +1,6 @@
 package tezos
 
 import (
-	"fmt"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
@@ -71,7 +70,7 @@ func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, e
 
 func NormalizeDelegation(account Account, validators blockatlas.ValidatorMap) ([]blockatlas.Delegation, error) {
 	results := make([]blockatlas.Delegation, 0)
-	if account.Address == account.Delegate {
+	if !account.IsDelegated {
 		return results, nil
 	}
 	validator, ok := validators[account.Delegate]
@@ -124,8 +123,7 @@ func (p *Platform) GetBalance(address string) (string, error) {
 	if err != nil {
 		return "0", err
 	}
-
-	return fmt.Sprintf("%f", account.Balance), nil
+	return removeDecimals(account.Balance), nil
 }
 
 func getDetails() blockatlas.StakingDetails {
