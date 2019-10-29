@@ -39,6 +39,9 @@ func (o *Observer) processBlock(events chan<- Event, block *blockatlas.Block) {
 	// Build list of unique addresses
 	var addresses []string
 	for address := range txMap {
+		if len(address) == 0 {
+			continue
+		}
 		xpub, ok := o.Storage.GetXpubFromAddress(address)
 		if ok {
 			address = xpub
@@ -47,7 +50,7 @@ func (o *Observer) processBlock(events chan<- Event, block *blockatlas.Block) {
 	}
 
 	// Lookup subscriptions
-	subs, err := o.Storage.Lookup(addresses...)
+	subs, err := o.Storage.Lookup(addresses)
 	if err != nil {
 		return
 	}

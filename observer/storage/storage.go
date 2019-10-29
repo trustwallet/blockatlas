@@ -24,7 +24,7 @@ type Tracker interface {
 }
 
 type Addresses interface {
-	Lookup(addresses ...string) (observers []Subscription, err error)
+	Lookup(addresses []string) (observers []Subscription, err error)
 	AddSubscriptions(subscriptions []interface{}) error
 	DeleteSubscriptions(subscriptions []interface{}) error
 	GetXpubFromAddress(address string) (string, bool)

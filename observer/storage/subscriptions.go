@@ -5,7 +5,7 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/storage/sql"
 )
 
-func (s *Storage) Lookup(addresses ...string) (observers []Subscription, err error) {
+func (s *Storage) Lookup(addresses []string) (observers []Subscription, err error) {
 	if len(addresses) == 0 {
 		err = errors.E("cannot look up an empty list")
 		return

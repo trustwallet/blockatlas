@@ -14,7 +14,7 @@ func (xm *XpubMap) GetXpubAddresses(xpub string) ([]string, bool) {
 	defer xm.lock.RUnlock()
 	s, ok := xm.xpub[xpub]
 	if !ok || s == nil || len(s) == 0 {
-		return s, ok
+		return s, false
 	}
 	return s, true
 }
@@ -36,7 +36,7 @@ func (xm *XpubMap) GetXpubFromAddress(address string) (string, bool) {
 			}
 		}
 	}
-	return "", true
+	return "", false
 }
 
 func (xm *XpubMap) SetXpub(xpub string, addresses []string) {

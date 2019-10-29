@@ -10,10 +10,9 @@ type Block struct {
 }
 
 type Xpub struct {
-	ID        uint        `json:"-" gorm:"primary_key"`
-	Xpub      string      `json:"xpub" gorm:"type:varchar(150)"`
-	Address   string      `json:"address" gorm:"type:varchar(150)"`
-	Coin      interface{} `json:"coin" gorm:"type:varchar(20)"`
+	ID        uint   `json:"-" gorm:"primary_key"`
+	Xpub      string `json:"xpub" gorm:"type:varchar(150)"`
+	Address   string `json:"address" gorm:"type:varchar(150)"`
 	CreatedAt time.Time
 }
 
