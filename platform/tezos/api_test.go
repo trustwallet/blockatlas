@@ -152,39 +152,26 @@ func Test_removeDecimals(t *testing.T) {
 
 const accountSrc = `
 {
-  "address": "tz1Z3KCf8CLGAYfvVWPEr562jDDyWkwNF7sT",
-  "delegate": "tz1RCFbB9GpALpsZtu6J58sb74dm8qe6XBzv",
-  "manager": "",
-  "pubkey": "edpkuJdSkMoJK6EZMyYPGTzT5jBHtiqcLy6dYPitCDuurdddCFE6je",
-  "delegated_since": 0,
-  "delegate_since": 75516,
-  "delegated_since_time": "0001-01-01T00:00:00Z",
-  "delegate_since_time": "2018-08-25T12:20:39Z",
-  "total_rewards_earned": 17399.566664,
+  "address": "tz1WDujRWCYjLBDfZieXW6insg5EUbg1rCRK",
+  "delegate": "tz2FCNBrERXtaTtNX6iimR1UJ5JSDxvdHM93",
   "total_balance": 68995.611927,
-  "delegated_balance": 404162.079872,
-  "total_delegations": 153,
-  "active_delegations": 93,
-  "is_delegatable": false,
-  "is_delegated": false,
-  "is_delegate": true,
-  "is_active_delegate": true
+  "is_delegated": true
 }`
 
 var validator1 = blockatlas.StakeValidator{
-	ID:     "tz1RCFbB9GpALpsZtu6J58sb74dm8qe6XBzv",
+	ID:     "tz2FCNBrERXtaTtNX6iimR1UJ5JSDxvdHM93",
 	Status: true,
 	Info: blockatlas.StakeValidatorInfo{
-		Name:        "Staked",
-		Description: "Staked is the leading staking partner for the smartest investors in crypto, delivering staking rewards securely and reliably. Staked supports the largest number of chains and offers comprehensive reporting for tax & accounting.",
-		Image:       "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/tezos/info/logo.png",
-		Website:     "https://staked.us/",
+		Name:        "stake.fish",
+		Description: "Leading validator for Proof of Stake blockchains. Stake your cryptocurrencies with us. We know validating.",
+		Image:       "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/tezos/validators/assets/tz2fcnbrerxtattnx6iimr1uj5jsdxvdhm93/logo.png",
+		Website:     "https://stake.fish/",
 	},
 	Details: getDetails(),
 }
 
 var validatorMap = blockatlas.ValidatorMap{
-	"tz1RCFbB9GpALpsZtu6J58sb74dm8qe6XBzv": validator1,
+	"tz2FCNBrERXtaTtNX6iimR1UJ5JSDxvdHM93": validator1,
 }
 
 func TestNormalizeDelegations(t *testing.T) {
