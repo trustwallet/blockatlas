@@ -71,7 +71,7 @@ func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, e
 
 func NormalizeDelegation(account Account, validators blockatlas.ValidatorMap) ([]blockatlas.Delegation, error) {
 	results := make([]blockatlas.Delegation, 0)
-	if account.Address == account.Delegate {
+	if !account.IsDelegated {
 		return results, nil
 	}
 	validator, ok := validators[account.Delegate]
