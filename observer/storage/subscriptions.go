@@ -10,7 +10,7 @@ func (s *Storage) Lookup(addresses []string) (observers []Subscription, err erro
 		err = errors.E("cannot look up an empty list")
 		return
 	}
-	err = sql.Find(s.Client, &observers, "address = ?", addresses)
+	err = sql.Find(s.Client, &observers, "address IN (?)", addresses)
 	return
 }
 
