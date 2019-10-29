@@ -2,20 +2,15 @@ package storage
 
 import (
 	"github.com/trustwallet/blockatlas/pkg/errors"
+	"github.com/trustwallet/blockatlas/pkg/storage/sql"
 )
 
-func (s *Storage) Lookup(coin uint, addresses ...string) (observers []Subscription, err error) {
+func (s *Storage) Lookup(addresses ...string) (observers []Subscription, err error) {
 	if len(addresses) == 0 {
-		err = errors.E("cannot look up an empty list", errors.Params{"coin": coin}).PushToSentry()
+		err = errors.E("cannot look up an empty list")
 		return
 	}
-	s.Client.
-		Table("subscriptions s1").
-		Select("DISTINCT s1.coin, s1.address, s1.webhook, s1.xpub, s1.created_at").
-		Joins("LEFT JOIN subscriptions s2 ON s2.xpub = s1.xpub").
-		Where("s1.address IN (?)", addresses).
-		Or("s2.address IN (?)", addresses).
-		Find(&observers)
+	err = sql.Find(s.Client, &observers, "address = ?", addresses)
 	return
 }
 

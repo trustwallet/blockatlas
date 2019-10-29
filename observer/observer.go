@@ -39,10 +39,15 @@ func (o *Observer) processBlock(events chan<- Event, block *blockatlas.Block) {
 	// Build list of unique addresses
 	var addresses []string
 	for address := range txMap {
+		xpub, ok := o.Storage.GetXpubFromAddress(address)
+		if ok {
+			address = xpub
+		}
 		addresses = append(addresses, address)
 	}
+
 	// Lookup subscriptions
-	subs, err := o.Storage.Lookup(o.Coin, addresses...)
+	subs, err := o.Storage.Lookup(addresses...)
 	if err != nil {
 		return
 	}
@@ -56,8 +61,11 @@ func (o *Observer) processBlock(events chan<- Event, block *blockatlas.Block) {
 			continue
 		}
 		for _, tx := range tx.Txs() {
-			if len(sub.Xpub.String) > 0 {
-				xpubAddresses := GetXpubAddresses(subs, sub.Xpub.String)
+			if sub.IsXpub {
+				xpubAddresses, ok := o.Storage.GetXpub(sub.Address)
+				if !ok {
+					continue
+				}
 				addressSet := mapset.NewSet()
 				for _, addr := range xpubAddresses {
 					addressSet.Add(addr)
@@ -87,18 +95,6 @@ func (o *Observer) processBlock(events chan<- Event, block *blockatlas.Block) {
 			}
 		}
 	}
-}
-
-func GetXpubAddresses(subs []storage.Subscription, xpub string) (addresses []string) {
-	if len(xpub) == 0 {
-		return
-	}
-	for _, sub := range subs {
-		if sub.Xpub.String == xpub {
-			addresses = append(addresses, sub.Address)
-		}
-	}
-	return
 }
 
 func GetTxs(block *blockatlas.Block) map[string]*blockatlas.TxSet {

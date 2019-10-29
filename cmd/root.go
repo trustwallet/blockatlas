@@ -13,9 +13,8 @@ import (
 )
 
 var (
-	StorageObserver = storage.New()
-	StorageApi      = storage.New()
-	rootCmd         = cobra.Command{
+	Storage = storage.New()
+	rootCmd = cobra.Command{
 		Use:   "blockatlas",
 		Short: "BlockAtlas by Trust Wallet",
 		PersistentPreRun: func(cmd *cobra.Command, args []string) {
@@ -32,12 +31,13 @@ var (
 			if viper.GetBool("observer.enabled") {
 				logger.Info("Loading Observer API")
 				host := viper.GetString("observer.postgres")
-				StorageObserver.Init(host)
-				StorageApi.Init(host)
-				StorageObserver.Client.AutoMigrate(
+				Storage.Init(host)
+				Storage.Client.AutoMigrate(
 					&storage.Block{},
 					&storage.Subscription{},
+					&storage.Xpub{},
 				)
+				Storage.LoadCacheData()
 			}
 		},
 	}
@@ -56,40 +56,14 @@ func Execute() {
 		select {
 		case sig := <-c:
 			logger.Info("Got a signal. Aborting...", logger.Params{"code": sig})
-			err := StorageObserver.SaveAllBlocks()
-			if err != nil {
-				logger.Error(err)
-			}
-			err = StorageObserver.Client.Close()
-			if err != nil {
-				logger.Error(err)
-			}
-			err = StorageApi.Client.Close()
-			if err != nil {
-				logger.Error(err)
-			}
-			err = StorageObserver.Close()
-			if err != nil {
-				logger.Error(err)
-			}
-			err = StorageApi.Close()
-			if err != nil {
-				logger.Error(err)
-			}
+			Storage.CloseStorageSafety()
 			os.Exit(1)
 		}
 	}()
 
 	if err := rootCmd.Execute(); err != nil {
 		logger.Error(err)
-		err = StorageObserver.Close()
-		if err != nil {
-			logger.Error(err)
-		}
-		err = StorageApi.Close()
-		if err != nil {
-			logger.Error(err)
-		}
+		Storage.CloseStorageSafety()
 		os.Exit(1)
 	}
 }
