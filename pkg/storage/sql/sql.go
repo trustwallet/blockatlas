@@ -8,12 +8,22 @@ import (
 
 type sql struct {
 	Client *gorm.DB
+	Tx     *gorm.DB
 }
 
 type Handler func(value interface{}) error
 
+func (db *sql) GeTx() *gorm.DB {
+	tx := db.Client
+	if db.Tx != nil {
+		tx = db.Tx
+	}
+	return tx
+}
+
 func (db *sql) Get(value interface{}) error {
-	err := db.Client.Where(value).Take(value).Error
+	tx := db.GeTx()
+	err := tx.Where(value).Take(value).Error
 	if err != nil {
 		return errors.E(err, util.ErrNotFound, errors.Params{"method": "Get", "value": value})
 	}
@@ -21,7 +31,8 @@ func (db *sql) Get(value interface{}) error {
 }
 
 func (db *sql) Find(out interface{}, where ...interface{}) error {
-	err := db.Client.Find(out, where...).Error
+	tx := db.GeTx()
+	err := tx.Find(out, where...).Error
 	if err != nil {
 		return errors.E(err, util.ErrNotFound, errors.Params{"method": "Find", "out": out, "where": where})
 	}
@@ -29,7 +40,8 @@ func (db *sql) Find(out interface{}, where ...interface{}) error {
 }
 
 func (db *sql) Save(value interface{}) error {
-	err := db.Client.Save(value).Error
+	tx := db.GeTx()
+	err := tx.Save(value).Error
 	if err != nil {
 		return errors.E(err, util.ErrNotUpdated, errors.Params{"method": "Save", "value": value})
 	}
@@ -37,7 +49,8 @@ func (db *sql) Save(value interface{}) error {
 }
 
 func (db *sql) Add(value interface{}) error {
-	err := db.Client.Where(value).FirstOrCreate(value).Error
+	tx := db.GeTx()
+	err := tx.Where(value).FirstOrCreate(value).Error
 	if err != nil {
 		return errors.E(err, util.ErrNotStored, errors.Params{"method": "Add", "value": value})
 	}
@@ -57,7 +70,8 @@ func (db *sql) Delete(value interface{}) error {
 	if err != nil {
 		return err
 	}
-	err = db.Client.Delete(value).Error
+	tx := db.GeTx()
+	err = tx.Delete(value).Error
 	if err != nil {
 		return errors.E(err, util.ErrNotDeleted)
 	}
@@ -73,15 +87,18 @@ func (db *sql) MustDeleteMany(values ...interface{}) error {
 }
 
 func (db *sql) Batch(rollback bool, handler Handler, values ...interface{}) error {
-	tx := db.Client.Begin()
+	db.Tx = db.Client.Begin()
+	defer func(db *sql) {
+		db.Tx = nil
+	}(db)
 	for _, value := range values {
 		err := handler(value)
 		if err != nil {
 			if rollback {
-				tx.Rollback()
+				db.Tx.Rollback()
 				return err
 			}
 		}
 	}
-	return tx.Commit().Error
+	return db.Tx.Commit().Error
 }

@@ -68,12 +68,28 @@ func Execute() {
 			if err != nil {
 				logger.Error(err)
 			}
+			err = StorageObserver.Close()
+			if err != nil {
+				logger.Error(err)
+			}
+			err = StorageApi.Close()
+			if err != nil {
+				logger.Error(err)
+			}
 			os.Exit(1)
 		}
 	}()
 
 	if err := rootCmd.Execute(); err != nil {
 		logger.Error(err)
+		err = StorageObserver.Close()
+		if err != nil {
+			logger.Error(err)
+		}
+		err = StorageApi.Close()
+		if err != nil {
+			logger.Error(err)
+		}
 		os.Exit(1)
 	}
 }
