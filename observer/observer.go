@@ -5,7 +5,6 @@ import (
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/observer/storage"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/platform/bitcoin"
 )
 
@@ -39,8 +38,16 @@ func (o *Observer) processBlock(events chan<- Event, block *blockatlas.Block) {
 
 	// Build list of unique addresses
 	var addresses []string
+	xpubs := make(map[string][]string)
 	for address := range txMap {
 		if len(address) == 0 {
+			continue
+		}
+		xpub, xpubAddresses, err := o.Storage.GetXpubFromAddress(o.Coin, address)
+		if err == nil && len(xpub) > 0 {
+			addresses = append(addresses, xpub)
+			xpubs[xpub] = xpubAddresses
+			txMap[xpub] = txMap[address]
 			continue
 		}
 		addresses = append(addresses, address)
@@ -48,7 +55,7 @@ func (o *Observer) processBlock(events chan<- Event, block *blockatlas.Block) {
 
 	// Lookup subscriptions
 	subs, err := o.Storage.Lookup(o.Coin, addresses)
-	if err != nil {
+	if err != nil || len(subs) == 0 {
 		return
 	}
 
@@ -60,14 +67,9 @@ func (o *Observer) processBlock(events chan<- Event, block *blockatlas.Block) {
 		if !ok {
 			continue
 		}
-		xpub, err := o.Storage.GetXpubFromAddress(o.Coin, sub.Address)
+		xpubAddresses, ok := xpubs[sub.Address]
 		for _, tx := range tx.Txs() {
-			if err == nil && len(xpub) > 0 {
-				xpubAddresses, err := o.Storage.GetXpub(o.Coin, sub.Address)
-				if err != nil {
-					logger.Error(err)
-					continue
-				}
+			if ok {
 				addressSet := mapset.NewSet()
 				for _, addr := range xpubAddresses {
 					addressSet.Add(addr)

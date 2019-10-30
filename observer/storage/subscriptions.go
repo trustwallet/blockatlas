@@ -24,7 +24,7 @@ func (s *Storage) Lookup(coin uint, addresses []string) (observers []Subscriptio
 	for _, addr := range addresses {
 		key := getSubscriptionKey(coin, addr)
 		var webhooks []string
-		err = s.GetHMValue(ATLAS_OBSERVER, key, &webhooks)
+		_ = s.GetHMValue(ATLAS_OBSERVER, key, &webhooks)
 		for _, webhook := range webhooks {
 			observers = append(observers, Subscription{Coin: coin, Address: addr, Webhook: webhook})
 		}

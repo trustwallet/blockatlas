@@ -10,7 +10,7 @@ const (
 )
 
 type BlockMap struct {
-	heights map[interface{}]int64
+	heights map[uint]int64
 	lock    sync.RWMutex
 }
 
@@ -20,21 +20,21 @@ func (bm *BlockMap) SetBlock(coin uint, b int64) {
 	bm.heights[coin] = b
 }
 
-func (bm *BlockMap) GetBlock(coin int) (int64, bool) {
+func (bm *BlockMap) GetBlock(coin uint) (int64, bool) {
 	bm.lock.RLock()
 	defer bm.lock.RUnlock()
 	b, ok := bm.heights[coin]
 	return b, ok
 }
 
-func (bm *BlockMap) GetHeights() map[interface{}]int64 {
+func (bm *BlockMap) GetHeights() map[uint]int64 {
 	bm.lock.RLock()
 	defer bm.lock.RUnlock()
 	return bm.heights
 }
 
 func (s *Storage) GetBlockNumber(coin uint) (int64, error) {
-	b, ok := s.blockHeights.GetBlock(int(coin))
+	b, ok := s.blockHeights.GetBlock(coin)
 	if ok {
 		return b, nil
 	}

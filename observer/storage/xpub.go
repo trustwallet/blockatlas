@@ -11,9 +11,13 @@ const (
 	ATLAS_XPUB = "ATLAS_XPUB_%d"
 )
 
-func (s *Storage) GetXpubFromAddress(coin uint, address string) (xpub string, err error) {
+func (s *Storage) GetXpubFromAddress(coin uint, address string) (xpub string, addresses []string, err error) {
 	entity := getXpubEntity(coin)
 	err = s.GetHMValue(entity, address, &xpub)
+	if err != nil {
+		return
+	}
+ 	addresses, err = s.GetXpub(coin, xpub)
 	return
 }
 
