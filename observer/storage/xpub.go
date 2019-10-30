@@ -49,6 +49,7 @@ func (s *Storage) CacheAddressFromXpub(coin uint, xpub string) {
 				"coin":      coin,
 				"addresses": addresses,
 			})
+		return
 	}
 	key := getXpubEntity(coin)
 	err = s.AddHM(key, xpub, addresses)
@@ -59,6 +60,7 @@ func (s *Storage) CacheAddressFromXpub(coin uint, xpub string) {
 				"coin":      coin,
 				"addresses": addresses,
 			})
+		return
 	}
 	for _, addr := range addresses {
 		err = s.AddHM(key, addr, xpub)
