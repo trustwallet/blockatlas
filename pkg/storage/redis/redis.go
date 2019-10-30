@@ -55,3 +55,10 @@ func (db *Redis) Delete(key string) error {
 	}
 	return nil
 }
+
+func (db *Redis) IsReady() bool {
+	if db.client == nil {
+		return false
+	}
+	return db.client.Ping().Err() == nil
+}

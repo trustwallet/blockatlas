@@ -1,19 +1,26 @@
 package storage
 
 import (
-	"github.com/trustwallet/blockatlas/pkg/errors"
+	"fmt"
 	"github.com/trustwallet/blockatlas/pkg/logger"
-	"github.com/trustwallet/blockatlas/pkg/storage/sql"
 	"github.com/trustwallet/blockatlas/platform/bitcoin"
 	"strconv"
 )
 
-func (s *Storage) GetXpubFromAddress(address string) (string, bool) {
-	return s.xpubMap.GetXpubFromAddress(address)
+const (
+	ATLAS_XPUB = "ATLAS_XPUB_%d"
+)
+
+func (s *Storage) GetXpubFromAddress(coin uint, address string) (xpub string, err error) {
+	entity := getXpubEntity(coin)
+	err = s.GetHMValue(entity, address, &xpub)
+	return
 }
 
-func (s *Storage) GetXpub(xpub string) ([]string, bool) {
-	return s.xpubMap.GetXpub(xpub)
+func (s *Storage) GetXpub(coin uint, xpub string) (addresses []string, err error) {
+	entity := getXpubEntity(coin)
+	err = s.GetHMValue(entity, xpub, &addresses)
+	return
 }
 
 func (s *Storage) CacheXpubs(subscriptions map[string][]string) {
@@ -23,13 +30,13 @@ func (s *Storage) CacheXpubs(subscriptions map[string][]string) {
 			continue
 		}
 		for _, xpub := range xpubs {
-			go s.getAddressFromXpub(coin, xpub)
+			go s.CacheAddressFromXpub(uint(coin), xpub)
 		}
 	}
 }
 
-func (s *Storage) getAddressFromXpub(coin int, xpub string) {
-	platform := bitcoin.UtxoPlatform(uint(coin))
+func (s *Storage) CacheAddressFromXpub(coin uint, xpub string) {
+	platform := bitcoin.UtxoPlatform(coin)
 	addresses, err := platform.GetAddressesFromXpub(xpub)
 	if err != nil || len(addresses) == 0 {
 		logger.Error(err, "GetAddressesFromXpub",
@@ -39,43 +46,30 @@ func (s *Storage) getAddressFromXpub(coin int, xpub string) {
 				"addresses": addresses,
 			})
 	}
-	s.xpubMap.SetXpub(xpub, addresses)
-}
-
-func (s *Storage) LoadXpubs() error {
-	var xpubs []Xpub
-	err := sql.Find(s.Client, &xpubs)
+	key := getXpubEntity(coin)
+	err = s.AddHM(key, xpub, addresses)
 	if err != nil {
-		return errors.E("Failed to load xpubs", err)
+		logger.Error(err, "GetAddressesFromXpub add xpub to addresses to db",
+			logger.Params{
+				"xpub":      xpub,
+				"coin":      coin,
+				"addresses": addresses,
+			})
 	}
-	for _, x := range xpubs {
-		addresses, ok := s.xpubMap.GetXpub(x.Xpub)
-		if !ok {
-			addresses = make([]string, 0)
-		}
-		addresses = append(addresses, x.Address)
-		s.xpubMap.SetXpub(x.Xpub, addresses)
-	}
-	return nil
-}
-
-func (s *Storage) SaveXpub(xpub string, addresses []string) {
-	for _, address := range addresses {
-		x := &Xpub{Xpub: xpub, Address: address}
-		logger.Info("Saving XPub", logger.Params{"XPub": xpub, "Addresses": len(addresses)})
-		err := sql.Save(s.Client, x)
+	for _, addr := range addresses {
+		err = s.AddHM(key, addr, xpub)
 		if err != nil {
-			logger.Error(err)
+			logger.Error(err, "GetAddressesFromXpub add addresses to xpub to db",
+				logger.Params{
+					"xpub":      xpub,
+					"addr":      addr,
+					"coin":      coin,
+					"addresses": addresses,
+				})
 		}
 	}
 }
 
-func (s *Storage) SaveAllXpubs() error {
-	logger.Info("Saving cache xpubs in database")
-	xpubs := s.xpubMap.GetXpubs()
-	for xpub, addresses := range xpubs {
-		logger.Info("Saving XPub", logger.Params{"XPub": xpub, "Addresses": len(addresses)})
-		s.SaveXpub(xpub, addresses)
-	}
-	return nil
+func getXpubEntity(coin uint) string {
+	return fmt.Sprintf(ATLAS_XPUB, coin)
 }

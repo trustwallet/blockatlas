@@ -30,14 +30,11 @@ var (
 
 			if viper.GetBool("observer.enabled") {
 				logger.Info("Loading Observer API")
-				host := viper.GetString("observer.postgres")
-				Storage.Init(host)
-				Storage.Client.AutoMigrate(
-					&storage.Block{},
-					&storage.Subscription{},
-					&storage.Xpub{},
-				)
-				Storage.LoadCacheData()
+				host := viper.GetString("observer.redis")
+				err := Storage.Init(host)
+				if err != nil {
+					logger.Fatal(err)
+				}
 			}
 		},
 	}
@@ -56,14 +53,12 @@ func Execute() {
 		select {
 		case sig := <-c:
 			logger.Info("Got a signal. Aborting...", logger.Params{"code": sig})
-			Storage.CloseStorageSafety()
 			os.Exit(1)
 		}
 	}()
 
 	if err := rootCmd.Execute(); err != nil {
 		logger.Error(err)
-		Storage.CloseStorageSafety()
 		os.Exit(1)
 	}
 }

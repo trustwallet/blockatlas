@@ -1,48 +1,56 @@
 package storage
 
 import (
-	"github.com/trustwallet/blockatlas/pkg/errors"
-	"github.com/trustwallet/blockatlas/pkg/logger"
-	"github.com/trustwallet/blockatlas/pkg/storage/sql"
+	"fmt"
+	"sync"
 )
+
+const (
+	ATLAS_BLOCK_NUMBER = "ATLAS_BLOCK_NUMBER_%d"
+)
+
+type BlockMap struct {
+	heights map[interface{}]int64
+	lock    sync.RWMutex
+}
+
+func (bm *BlockMap) SetBlock(coin uint, b int64) {
+	bm.lock.Lock()
+	defer bm.lock.Unlock()
+	bm.heights[coin] = b
+}
+
+func (bm *BlockMap) GetBlock(coin int) (int64, bool) {
+	bm.lock.RLock()
+	defer bm.lock.RUnlock()
+	b, ok := bm.heights[coin]
+	return b, ok
+}
+
+func (bm *BlockMap) GetHeights() map[interface{}]int64 {
+	bm.lock.RLock()
+	defer bm.lock.RUnlock()
+	return bm.heights
+}
 
 func (s *Storage) GetBlockNumber(coin uint) (int64, error) {
 	b, ok := s.blockHeights.GetBlock(int(coin))
 	if ok {
-		return b.BlockHeight, nil
+		return b, nil
 	}
 
-	b = &Block{Coin: int(coin)}
-	err := sql.Get(s.Client, &b)
+	err := s.GetValue(getBlockKey(coin), &b)
 	if err != nil {
 		return 0, nil
 	}
-	return b.BlockHeight, nil
+	return b, nil
 }
 
-func (s *Storage) SetBlockNumber(coin uint, num int64) {
-	s.blockHeights.SetBlock(&Block{Coin: int(coin), BlockHeight: num})
+func (s *Storage) SetBlockNumber(coin uint, num int64) error {
+	s.blockHeights.SetBlock(coin, num)
+	return s.Add(getBlockKey(coin), num)
 }
 
-func (s *Storage) SaveBlock(coin uint, num int64) error {
-	b := &Block{Coin: int(coin), BlockHeight: num}
-	logger.Info("Saving block", logger.Params{"Coin": b.Coin, "Height": b.BlockHeight})
-	err := sql.Save(s.Client, b)
-	if err != nil {
-		return errors.E(err, errors.Params{"block": num, "coin": coin})
-	}
-	return nil
-}
-
-func (s *Storage) SaveAllBlocks() error {
-	logger.Info("Saving cache blocks in database")
-	h := s.blockHeights.GetHeights()
-	for _, b := range h {
-		logger.Info("Saving block", logger.Params{"Coin": b.Coin, "Height": b.BlockHeight})
-		err := sql.Save(s.Client, b)
-		if err != nil {
-			logger.Error(err)
-		}
-	}
-	return nil
+func getBlockKey(coin uint) string {
+	return fmt.Sprintf(ATLAS_BLOCK_NUMBER, coin)
 }
