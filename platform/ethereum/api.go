@@ -2,15 +2,16 @@ package ethereum
 
 import (
 	"fmt"
+	"math/big"
+	"net/http"
+	"strconv"
+
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/util"
-	"math/big"
-	"net/http"
-	"strconv"
 )
 
 var (
@@ -22,6 +23,7 @@ type Platform struct {
 	client            Client
 	collectionsClient CollectionsClient
 	CoinIndex         uint
+	RpcURL            string
 }
 
 func (p *Platform) Init() error {
@@ -36,6 +38,7 @@ func (p *Platform) Init() error {
 	collectionsApiKeyVar := fmt.Sprintf("%s.collections_api_key", handle)
 	p.collectionsClient.Headers["X-API-KEY"] = viper.GetString(collectionsApiKeyVar)
 
+	p.RpcURL = viper.GetString("ethereum.rpc")
 	return nil
 }
 

@@ -70,5 +70,5 @@ type CustomAPI interface {
 
 type NamingServiceAPI interface {
 	Platform
-	Lookup(coin uint64, name string) (*Resolved, error)
+	Lookup(coin uint64, name string) Resolved
 }

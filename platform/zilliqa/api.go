@@ -1,9 +1,10 @@
 package zilliqa
 
 import (
+	"strconv"
+
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"strconv"
 
 	"github.com/spf13/viper"
 )
@@ -11,6 +12,7 @@ import (
 type Platform struct {
 	client    Client
 	rpcClient RpcClient
+	udClient  blockatlas.Request
 }
 
 func (p *Platform) Init() error {
@@ -18,6 +20,7 @@ func (p *Platform) Init() error {
 	p.client.Headers["X-APIKEY"] = viper.GetString("zilliqa.key")
 
 	p.rpcClient = RpcClient{blockatlas.InitClient(viper.GetString("zilliqa.rpc"))}
+	p.udClient = blockatlas.InitClient(viper.GetString("zilliqa.lookup"))
 	return nil
 }
 
