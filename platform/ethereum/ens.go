@@ -7,6 +7,7 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 	cc "github.com/hewigovens/go-coincodec"
 	"github.com/spf13/viper"
+	CoinType "github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
@@ -34,6 +35,19 @@ func (p *Platform) Lookup(coin uint64, name string) (*blockatlas.Resolved, error
 
 	address, err := ensName.Address(coin)
 	if err != nil {
+		if coin == CoinType.ETH {
+			// try old address
+			resolver, err := ens.NewResolver(client, ensName.Name)
+			if err != nil {
+				return &result, nil
+			}
+			address, err := resolver.Address()
+			if err != nil {
+				return &result, nil
+			}
+			result.Result = address.Hex()
+			return &result, nil
+		}
 		// return empty result for errors like: no unregistered
 		return &result, nil
 	}
