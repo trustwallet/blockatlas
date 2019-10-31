@@ -49,7 +49,10 @@ func handleLookup(c *gin.Context) {
 	for tld, id := range TLDMapping {
 		if strings.HasSuffix(name, tld) {
 			api := platform.NamingAPIs[id]
-			resolved := api.Lookup(coin, name)
+			resolved, err := api.Lookup(coin, name)
+			if err != nil {
+				resolved.Error = err.Error()
+			}
 			RenderSuccess(c, resolved)
 			return
 		}

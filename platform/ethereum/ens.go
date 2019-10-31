@@ -3,26 +3,24 @@ package ethereum
 import (
 	"github.com/ethereum/go-ethereum/ethclient"
 	cc "github.com/hewigovens/go-coincodec"
-	"github.com/pkg/errors"
 	CoinType "github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/errors"
 	ens "github.com/wealdtech/go-ens/v3"
 )
 
-func (p *Platform) Lookup(coin uint64, name string) blockatlas.Resolved {
+func (p *Platform) Lookup(coin uint64, name string) (blockatlas.Resolved, error) {
 	client, err := ethclient.Dial(p.RpcURL)
 	result := blockatlas.Resolved{
 		Coin: coin,
 	}
 	if err != nil {
-		result.Error = errors.Wrap(err, "can't dial to ethereum rpc").Error()
-		return result
+		return result, errors.E(err, "can't dial to ethereum rpc")
 	}
 	defer client.Close()
 	ensName, err := ens.NewName(client, name)
 	if err != nil {
-		result.Error = errors.Wrap(err, "query ens failed").Error()
-		return result
+		return result, errors.E(err, "query ens failed")
 	}
 
 	address, err := ensName.Address(coin)
@@ -31,32 +29,29 @@ func (p *Platform) Lookup(coin uint64, name string) blockatlas.Resolved {
 			// will remove this later
 			return lookupLegacyETH(client, ensName.Name)
 		}
-		result.Error = err.Error()
-		return result
+		return result, err
 	}
 
 	encoded, err := cc.ToString(address, uint32(coin))
 	result.Result = encoded
 	if err != nil {
-		result.Error = errors.Wrap(err, "encode to address failed").Error()
+		return result, errors.E(err, "encode to address failed")
 	}
-	return result
+	return result, nil
 }
 
-func lookupLegacyETH(client *ethclient.Client, name string) blockatlas.Resolved {
+func lookupLegacyETH(client *ethclient.Client, name string) (blockatlas.Resolved, error) {
 	result := blockatlas.Resolved{
 		Coin: CoinType.ETH,
 	}
 	resolver, err := ens.NewResolver(client, name)
 	if err != nil {
-		result.Error = errors.Wrap(err, "new ens resolver failed").Error()
-		return result
+		return result, errors.E(err, "new ens resolver failed")
 	}
 	address, err := resolver.Address()
 	if err != nil {
-		result.Error = errors.Wrap(err, "query address failed").Error()
-		return result
+		return result, errors.E(err, "query address failed")
 	}
 	result.Result = address.Hex()
-	return result
+	return result, nil
 }

@@ -9,17 +9,16 @@ type ZNSResponse struct {
 	Addresses map[string]string
 }
 
-func (p *Platform) Lookup(coin uint64, name string) blockatlas.Resolved {
+func (p *Platform) Lookup(coin uint64, name string) (blockatlas.Resolved, error) {
 	var resp ZNSResponse
 	result := blockatlas.Resolved{
 		Coin: coin,
 	}
 	err := p.udClient.Get(&resp, "/"+name, nil)
 	if err != nil {
-		result.Error = err.Error()
-		return result
+		return result, err
 	}
 	symbol := CoinType.Coins[uint(coin)].Symbol
 	result.Result = resp.Addresses[symbol]
-	return result
+	return result, nil
 }
