@@ -23,7 +23,6 @@ func (p *Platform) Lookup(coin uint64, name string) (*blockatlas.Resolved, error
 		return nil, errors.E(http.StatusInternalServerError, "can't dial to ethereum rpc")
 	}
 	defer client.Close()
-
 	ensName, err := ens.NewName(client, name)
 	if err != nil {
 		logger.Error("Query ens failed", err, logger.Params{
@@ -36,17 +35,8 @@ func (p *Platform) Lookup(coin uint64, name string) (*blockatlas.Resolved, error
 	address, err := ensName.Address(coin)
 	if err != nil {
 		if coin == CoinType.ETH {
-			// try old address
-			resolver, err := ens.NewResolver(client, ensName.Name)
-			if err != nil {
-				return &result, nil
-			}
-			address, err := resolver.Address()
-			if err != nil {
-				return &result, nil
-			}
-			result.Result = address.Hex()
-			return &result, nil
+			// will remove this later
+			return lookupLegacyETH(client, ensName.Name)
 		}
 		// return empty result for errors like: no unregistered
 		return &result, nil
@@ -60,5 +50,21 @@ func (p *Platform) Lookup(coin uint64, name string) (*blockatlas.Resolved, error
 			"coin":    coin,
 		})
 	}
+	return &result, nil
+}
+
+func lookupLegacyETH(client *ethclient.Client, name string) (*blockatlas.Resolved, error) {
+	result := blockatlas.Resolved{
+		Coin: CoinType.ETH,
+	}
+	resolver, err := ens.NewResolver(client, name)
+	if err != nil {
+		return &result, nil
+	}
+	address, err := resolver.Address()
+	if err != nil {
+		return &result, nil
+	}
+	result.Result = address.Hex()
 	return &result, nil
 }
