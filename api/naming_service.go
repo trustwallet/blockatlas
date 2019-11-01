@@ -51,9 +51,10 @@ func handleLookup(c *gin.Context) {
 			api := platform.NamingAPIs[id]
 			resolved, err := api.Lookup(coin, name)
 			if err != nil {
-				resolved.Error = err.Error()
+				RenderError(c, http.StatusBadRequest, err.Error())
+			} else {
+				RenderSuccess(c, resolved)
 			}
-			RenderSuccess(c, resolved)
 			return
 		}
 	}
