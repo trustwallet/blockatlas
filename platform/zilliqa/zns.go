@@ -10,11 +10,10 @@ type ZNSResponse struct {
 }
 
 func (p *Platform) Lookup(coin uint64, name string) (blockatlas.Resolved, error) {
-	var resp ZNSResponse
 	result := blockatlas.Resolved{
 		Coin: coin,
 	}
-	err := p.udClient.Get(&resp, "/"+name, nil)
+	resp, err := p.udClient.LookupName(name)
 	if err != nil {
 		return result, err
 	}

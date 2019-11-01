@@ -12,7 +12,7 @@ import (
 type Platform struct {
 	client    Client
 	rpcClient RpcClient
-	udClient  blockatlas.Request
+	udClient  Client
 }
 
 func (p *Platform) Init() error {
@@ -20,7 +20,7 @@ func (p *Platform) Init() error {
 	p.client.Headers["X-APIKEY"] = viper.GetString("zilliqa.key")
 
 	p.rpcClient = RpcClient{blockatlas.InitClient(viper.GetString("zilliqa.rpc"))}
-	p.udClient = blockatlas.InitClient(viper.GetString("zilliqa.lookup"))
+	p.udClient = Client{blockatlas.InitClient(viper.GetString("zilliqa.lookup"))}
 	return nil
 }
 
