@@ -6,7 +6,8 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/pkg/gincache"
+	"github.com/trustwallet/blockatlas/pkg/ginutils"
+	"github.com/trustwallet/blockatlas/pkg/ginutils/gincache"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/pkg/metrics"
 	services "github.com/trustwallet/blockatlas/services/assets"
@@ -74,7 +75,7 @@ func makeTxRoute(router gin.IRouter, api blockatlas.Platform, path string) {
 		}
 
 		if err != nil {
-			errResp := ErrorResponse(c)
+			errResp := ginutils.ErrorResponse(c)
 			switch {
 			case err == blockatlas.ErrInvalidAddr:
 				errResp.Params(http.StatusBadRequest, "Invalid address")
@@ -88,7 +89,7 @@ func makeTxRoute(router gin.IRouter, api blockatlas.Platform, path string) {
 		}
 
 		page.Sort()
-		RenderSuccess(c, &page)
+		ginutils.RenderSuccess(c, &page)
 	})
 }
 
@@ -114,10 +115,10 @@ func makeStakingValidatorsRoute(router gin.IRouter, api blockatlas.Platform) {
 		results, err := services.GetValidators(stakingAPI)
 		if err != nil {
 			logger.Error(err)
-			ErrorResponse(c).Message(err.Error()).Render()
+			ginutils.ErrorResponse(c).Message(err.Error()).Render()
 			return
 		}
-		RenderSuccess(c, blockatlas.DocsResponse{Docs: results})
+		ginutils.RenderSuccess(c, blockatlas.DocsResponse{Docs: results})
 	}))
 }
 
@@ -145,10 +146,10 @@ func makeStakingDelegationsRoute(router gin.IRouter, api blockatlas.Platform) {
 		if err != nil {
 			errMsg := "Unable to fetch delegations list from the registry"
 			logger.Error(err, errMsg)
-			ErrorResponse(c).Message(err.Error()).Render()
+			ginutils.ErrorResponse(c).Message(err.Error()).Render()
 			return
 		}
-		RenderSuccess(c, blockatlas.DocsResponse{Docs: delegations})
+		ginutils.RenderSuccess(c, blockatlas.DocsResponse{Docs: delegations})
 	})
 }
 
@@ -174,11 +175,11 @@ func makeCollectionsRoute(router gin.IRouter, api blockatlas.Platform) {
 	router.GET("/collections/:owner", func(c *gin.Context) {
 		collections, err := collectionAPI.GetCollections(c.Param("owner"))
 		if err != nil {
-			ErrorResponse(c).Message(err.Error()).Render()
+			ginutils.ErrorResponse(c).Message(err.Error()).Render()
 			return
 		}
 
-		RenderSuccess(c, collections)
+		ginutils.RenderSuccess(c, collections)
 	})
 }
 
@@ -205,11 +206,11 @@ func makeCollectionRoute(router gin.IRouter, api blockatlas.Platform) {
 	router.GET("/collections/:owner/collection/:collection_id", func(c *gin.Context) {
 		collectibles, err := collectionAPI.GetCollectibles(c.Param("owner"), c.Param("collection_id"))
 		if err != nil {
-			ErrorResponse(c).Message(err.Error()).Render()
+			ginutils.ErrorResponse(c).Message(err.Error()).Render()
 			return
 		}
 
-		RenderSuccess(c, collectibles)
+		ginutils.RenderSuccess(c, collectibles)
 	})
 }
 
@@ -241,11 +242,11 @@ func makeTokenRoute(router gin.IRouter, api blockatlas.Platform) {
 
 		tl, err := tokenAPI.GetTokenListByAddress(address)
 		if err != nil {
-			ErrorResponse(c).Message(err.Error()).Render()
+			ginutils.ErrorResponse(c).Message(err.Error()).Render()
 			return
 		}
 
-		RenderSuccess(c, blockatlas.DocsResponse{Docs: tl})
+		ginutils.RenderSuccess(c, blockatlas.DocsResponse{Docs: tl})
 	})
 }
 
@@ -257,11 +258,11 @@ func makeTokenRoute(router gin.IRouter, api blockatlas.Platform) {
 func MakeMetricsRoute(router gin.IRouter) {
 	router.Use(metrics.PromMiddleware())
 	m := router.Group("/metrics")
-	m.Use(TokenAuthMiddleware(viper.GetString("metrics.api_token")))
+	m.Use(ginutils.TokenAuthMiddleware(viper.GetString("metrics.api_token")))
 	m.GET("/", ginprom.PromHandler(promhttp.Handler()))
 }
 
 func emptyPage(c *gin.Context) {
 	var page blockatlas.TxPage
-	RenderSuccess(c, &page)
+	ginutils.RenderSuccess(c, &page)
 }

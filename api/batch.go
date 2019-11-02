@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/ginutils"
 	"github.com/trustwallet/blockatlas/platform"
 )
 
@@ -27,7 +28,7 @@ func makeStakingDelegationsBatchRoute(router gin.IRouter) {
 	router.POST("/staking/delegations", func(c *gin.Context) {
 		var reqs AddressesRequest
 		if err := c.BindJSON(&reqs); err != nil {
-			ErrorResponse(c).Message(err.Error()).Render()
+			ginutils.ErrorResponse(c).Message(err.Error()).Render()
 			return
 		}
 
@@ -53,6 +54,6 @@ func makeStakingDelegationsBatchRoute(router gin.IRouter) {
 			}
 			batch = append(batch, d)
 		}
-		RenderSuccess(c, blockatlas.DocsResponse{Docs: batch})
+		ginutils.RenderSuccess(c, blockatlas.DocsResponse{Docs: batch})
 	})
 }
