@@ -1,4 +1,4 @@
-package api
+package ginutils
 
 import (
 	"github.com/gin-gonic/gin"

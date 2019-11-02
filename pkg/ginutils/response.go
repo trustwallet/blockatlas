@@ -1,4 +1,4 @@
-package api
+package ginutils
 
 import (
 	"encoding/json"

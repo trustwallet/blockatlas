@@ -7,6 +7,7 @@ import (
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/api"
 	observerStorage "github.com/trustwallet/blockatlas/observer/storage"
+	"github.com/trustwallet/blockatlas/pkg/ginutils"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/util"
 
@@ -39,14 +40,14 @@ func RunApi(bind string, c chan *gin.Engine) {
 	sg := sentrygin.New(sentrygin.Options{})
 	engine.Use(util.CheckReverseProxy, sg)
 
-	engine.Use(api.CORSMiddleware())
-	engine.OPTIONS("/*path", api.CORSMiddleware())
+	engine.Use(ginutils.CORSMiddleware())
+	engine.OPTIONS("/*path", ginutils.CORSMiddleware())
 
 	engine.GET("swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	engine.GET("/", api.GetRoot)
 	engine.GET("/status", func(c *gin.Context) {
-		api.RenderSuccess(c, map[string]interface{}{
+		ginutils.RenderSuccess(c, map[string]interface{}{
 			"status": true,
 		})
 	})
