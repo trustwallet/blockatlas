@@ -49,14 +49,13 @@ func handleLookup(c *gin.Context) {
 	for tld, id := range TLDMapping {
 		if strings.HasSuffix(name, tld) {
 			api := platform.NamingAPIs[id]
-			result, err := api.Lookup(coin, name)
+			resolved, err := api.Lookup(coin, name)
 			if err != nil {
-				RenderError(c, http.StatusInternalServerError, err.Error())
-				return
+				RenderError(c, http.StatusBadRequest, err.Error())
 			} else {
-				RenderSuccess(c, result)
-				return
+				RenderSuccess(c, resolved)
 			}
+			return
 		}
 	}
 	RenderSuccess(c, blockatlas.Resolved{Result: "", Coin: coin})
