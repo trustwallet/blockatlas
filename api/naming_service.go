@@ -1,6 +1,7 @@
 package api
 
 import (
+	"github.com/trustwallet/blockatlas/pkg/ginutils"
 	"net/http"
 	"strconv"
 	"strings"
@@ -36,12 +37,12 @@ func handleLookup(c *gin.Context) {
 	coinQuery := c.Query("coin")
 
 	if name == "" {
-		RenderError(c, http.StatusBadRequest, "name query is missing")
+		ginutils.RenderError(c, http.StatusBadRequest, "name query is missing")
 		return
 	}
 	coin, err := strconv.ParseUint(coinQuery, 10, 64)
 	if err != nil {
-		RenderError(c, http.StatusBadRequest, "coin query is invalid")
+		ginutils.RenderError(c, http.StatusBadRequest, "coin query is invalid")
 		return
 	}
 	name = strings.ToLower(name)
@@ -51,12 +52,12 @@ func handleLookup(c *gin.Context) {
 			api := platform.NamingAPIs[id]
 			resolved, err := api.Lookup(coin, name)
 			if err != nil {
-				RenderError(c, http.StatusBadRequest, err.Error())
+				ginutils.RenderError(c, http.StatusBadRequest, err.Error())
 			} else {
-				RenderSuccess(c, resolved)
+				ginutils.RenderSuccess(c, resolved)
 			}
 			return
 		}
 	}
-	RenderSuccess(c, blockatlas.Resolved{Result: "", Coin: coin})
+	ginutils.RenderSuccess(c, blockatlas.Resolved{Result: "", Coin: coin})
 }

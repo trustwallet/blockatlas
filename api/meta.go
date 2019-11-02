@@ -2,10 +2,11 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/trustwallet/blockatlas/pkg/ginutils"
 )
 
 func GetRoot(c *gin.Context) {
-	RenderSuccess(c,
+	ginutils.RenderSuccess(c,
 		`Welcome to the Block Atlas API!
 
 Don't know how you landed here?
@@ -25,5 +26,5 @@ func getEnabledEndpoints(c *gin.Context) {
 	for handle := range routers {
 		resp.Endpoints = append(resp.Endpoints, handle)
 	}
-	RenderSuccess(c, &resp)
+	ginutils.RenderSuccess(c, &resp)
 }

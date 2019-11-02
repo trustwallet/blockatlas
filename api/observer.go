@@ -5,6 +5,7 @@ import (
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/observer"
 	observerStorage "github.com/trustwallet/blockatlas/observer/storage"
+	"github.com/trustwallet/blockatlas/pkg/ginutils"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/platform"
 	"github.com/trustwallet/blockatlas/platform/bitcoin"
@@ -27,7 +28,7 @@ type CoinStatus struct {
 }
 
 func SetupObserverAPI(router gin.IRouter) {
-	router.Use(TokenAuthMiddleware(viper.GetString("observer.auth")))
+	router.Use(ginutils.TokenAuthMiddleware(viper.GetString("observer.auth")))
 	router.POST("/webhook/register", addCall)
 	router.DELETE("/webhook/register", deleteCall)
 	router.GET("/status", statusCall)
@@ -51,7 +52,7 @@ func addCall(c *gin.Context) {
 	}
 
 	if len(req.Subscriptions) == 0 && len(req.XpubSubscriptions) == 0 {
-		RenderSuccess(c, ObserverResponse{Status: "Added"})
+		ginutils.RenderSuccess(c, ObserverResponse{Status: "Added"})
 		return
 	}
 
@@ -60,11 +61,11 @@ func addCall(c *gin.Context) {
 	subs = append(subs, xpubSubs...)
 	err := observerStorage.App.Add(subs)
 	if err != nil {
-		ErrorResponse(c).Message(err.Error()).Render()
+		ginutils.ErrorResponse(c).Message(err.Error()).Render()
 		return
 	}
 	go cacheXpub(req.XpubSubscriptions)
-	RenderSuccess(c, ObserverResponse{Status: "Added"})
+	ginutils.RenderSuccess(c, ObserverResponse{Status: "Added"})
 }
 
 func cacheXPubAddress(xpub string, coin uint) {
@@ -105,7 +106,7 @@ func deleteCall(c *gin.Context) {
 	}
 
 	if len(req.Subscriptions) == 0 && len(req.XpubSubscriptions) == 0 {
-		RenderSuccess(c, ObserverResponse{Status: "Deleted"})
+		ginutils.RenderSuccess(c, ObserverResponse{Status: "Deleted"})
 		return
 	}
 
@@ -115,11 +116,11 @@ func deleteCall(c *gin.Context) {
 
 	err := observerStorage.App.Delete(subs)
 	if err != nil {
-		ErrorResponse(c).Message(err.Error()).Render()
+		ginutils.ErrorResponse(c).Message(err.Error()).Render()
 		return
 	}
 
-	RenderSuccess(c, ObserverResponse{Status: "Deleted"})
+	ginutils.RenderSuccess(c, ObserverResponse{Status: "Deleted"})
 }
 
 // @Summary Get coin status
@@ -147,7 +148,7 @@ func statusCall(c *gin.Context) {
 		}
 		result[coin.Handle] = status
 	}
-	RenderSuccess(c, result)
+	ginutils.RenderSuccess(c, result)
 }
 
 func cacheXpub(subscriptions map[string][]string) {
