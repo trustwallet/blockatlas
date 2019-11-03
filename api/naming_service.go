@@ -1,10 +1,11 @@
 package api
 
 import (
-	"github.com/trustwallet/blockatlas/pkg/ginutils"
 	"net/http"
 	"strconv"
 	"strings"
+
+	"github.com/trustwallet/blockatlas/pkg/ginutils"
 
 	"github.com/gin-gonic/gin"
 	CoinType "github.com/trustwallet/blockatlas/coin"
@@ -29,6 +30,8 @@ func MakeLookupRoute(router gin.IRouter) {
 	ns.GET("/lookup", handleLookup)
 
 	TLDMapping[".eth"] = CoinType.ETH
+	TLDMapping[".xyz"] = CoinType.ETH
+	TLDMapping[".luxe"] = CoinType.ETH
 	TLDMapping[".zil"] = CoinType.ZIL
 }
 
