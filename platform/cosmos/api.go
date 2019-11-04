@@ -121,7 +121,7 @@ func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, e
 	return results, nil
 }
 
-func (p *Platform) GetBalance(address string) (string, error) {
+func (p *Platform) UndelegatedBalance(address string) (string, error) {
 	account, err := p.client.GetAccount(address)
 	if err != nil {
 		return "0", err

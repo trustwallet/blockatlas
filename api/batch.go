@@ -43,7 +43,7 @@ func makeStakingDelegationsBatchRoute(router gin.IRouter) {
 
 			p := platform.StakeAPIs[c.Handle]
 			delegations, err := p.GetDelegations(r.Address)
-			balance, err := p.GetBalance(r.Address)
+			balance, err := p.UndelegatedBalance(r.Address)
 
 			if err != nil {
 				d.Error = err.Error()
