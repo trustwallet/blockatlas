@@ -118,9 +118,9 @@ func (p *Platform) GetDetails() blockatlas.StakingDetails {
 	return getDetails()
 }
 
-func (p *Platform) GetBalance(address string) (string, error) {
+func (p *Platform) UndelegatedBalance(address string) (string, error) {
 	account, err := p.client.GetAccount(address)
-	if err != nil {
+	if err != nil || account.IsDelegated {
 		return "0", err
 	}
 	return removeDecimals(account.Balance), nil
