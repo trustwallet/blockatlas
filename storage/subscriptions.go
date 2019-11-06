@@ -40,6 +40,9 @@ func (s *Storage) AddSubscriptions(subscriptions []Subscription) {
 		if webhooks == nil {
 			webhooks = make([]string, 0)
 		}
+		if hasObject(webhooks, sub.Webhook) {
+			continue
+		}
 		webhooks = append(webhooks, sub.Webhook)
 		err := s.AddHM(ATLAS_OBSERVER, key, webhooks)
 		if err != nil {
@@ -80,4 +83,13 @@ func (s *Storage) DeleteSubscriptions(subscriptions []Subscription) {
 
 func getSubscriptionKey(coin uint, address string) string {
 	return fmt.Sprintf("%d-%s", coin, address)
+}
+
+func hasObject(array []string, obj string) bool {
+	for _, temp := range array {
+		if temp == obj {
+			return true
+		}
+	}
+	return false
 }
