@@ -80,3 +80,12 @@ func (c *Client) GetDelegations(address string) (blockatlas.DelegationsPage, err
 	}
 	return delegations, nil
 }
+
+func (c *Client) GetAccount(address string) (*AccountInfo, error) {
+	var account AccountInfo
+	err := c.Get(&account, "accounts/"+address, nil)
+	if err != nil {
+		return nil, err
+	}
+	return &account, nil
+}
