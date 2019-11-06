@@ -6,6 +6,14 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/storage/util"
 )
 
+func (db *Redis) GetAllHM(entity string) (map[string]string, error) {
+	cmd := db.client.HGetAll(entity)
+	if cmd.Err() != nil {
+		return nil, errors.E(cmd.Err(), util.ErrNotFound).PushToSentry()
+	}
+	return cmd.Val(), nil
+}
+
 func (db *Redis) GetHMValue(entity, key string, value interface{}) error {
 	cmd := db.client.HMGet(entity, key)
 	if cmd.Err() != nil {
