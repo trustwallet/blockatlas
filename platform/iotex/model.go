@@ -13,7 +13,11 @@ type AccountInfo struct {
 }
 
 type AccountMeta struct {
-	NumActions string `json:"numActions"`
+	Address      string `json:"address"`
+	Balance      string `json:"balance"`
+	Nonce        string `json:"nonce"`
+	PendingNonce string `json:"pendingNonce"`
+	NumActions   string `json:"numActions"`
 }
 
 type ActionInfo struct {
