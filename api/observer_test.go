@@ -2,7 +2,7 @@ package api
 
 import (
 	"github.com/stretchr/testify/assert"
-	"github.com/trustwallet/blockatlas/observer/storage"
+	"github.com/trustwallet/blockatlas/storage"
 	"testing"
 )
 

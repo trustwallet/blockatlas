@@ -3,9 +3,9 @@ package observer
 import (
 	"context"
 	"github.com/spf13/viper"
-	"github.com/trustwallet/blockatlas/observer/storage"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
+	"github.com/trustwallet/blockatlas/storage"
 	"github.com/trustwallet/blockatlas/util"
 	"sync"
 	"sync/atomic"
@@ -100,5 +100,8 @@ func (s *Stream) loadBlock(c chan<- *blockatlas.Block, num int64) {
 	// Not strictly correct nor avoids race conditions
 	// But good enough
 	newNum := atomic.AddInt64(&s.blockNumber, 1)
-	s.Tracker.SetBlockNumber(s.coin, newNum)
+	err = s.Tracker.SetBlockNumber(s.coin, newNum)
+	if err != nil {
+		logger.Error(err, "SetBlockNumber failed", s.logParams, logger.Params{"block": num, "coin": s.coin})
+	}
 }

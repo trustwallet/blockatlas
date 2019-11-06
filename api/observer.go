@@ -3,9 +3,9 @@ package api
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
-	"github.com/trustwallet/blockatlas/observer/storage"
 	"github.com/trustwallet/blockatlas/pkg/ginutils"
 	"github.com/trustwallet/blockatlas/platform"
+	"github.com/trustwallet/blockatlas/storage"
 	"strconv"
 )
 
