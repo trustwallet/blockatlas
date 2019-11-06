@@ -95,7 +95,7 @@ tezos:
 
 # [AION] Aion: https://aion.network
 aion:
-  api: https://mainnet-api.aion.network/aion/dashboard
+  api: https://mainnet-api.theoan.com/aion/dashboard
 
 # [ICX] ICON: https://icon.foundation
 icon:
