@@ -1,6 +1,8 @@
 package ethereum
 
 import (
+	"crypto/sha1"
+	"encoding/base64"
 	"fmt"
 	"math/big"
 	"net/http"
@@ -280,11 +282,12 @@ func NormalizeCollectible(c *Collection, a Collectible, coinIndex uint) blockatl
 	if _, ok := slugTokens[collectionType]; ok {
 		collectionID = createCollectionId(address, c.Slug)
 	}
+	tokenId := generateTokenId(a.TokenId, collectionID)
 	externalLink := getValidParameter(a.ExternalLink, a.AssetContract.ExternalLink)
 	return blockatlas.Collectible{
 		CollectionID:     collectionID,
 		ContractAddress:  contractAddress,
-		TokenID:          a.TokenId,
+		TokenID:          tokenId,
 		CategoryContract: address,
 		Name:             a.Name,
 		Category:         c.Name,
@@ -330,4 +333,11 @@ func NormalizeTokens(srcTokens []Token, p Platform) []blockatlas.Token {
 		tokenPage = append(tokenPage, token)
 	}
 	return tokenPage
+}
+
+func generateTokenId(tid, cid string) string {
+	hasher := sha1.New()
+	hasher.Write([]byte(tid + cid))
+	bs := hasher.Sum(nil)
+	return base64.URLEncoding.EncodeToString(bs)
 }
