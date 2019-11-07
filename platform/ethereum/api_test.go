@@ -492,10 +492,10 @@ var collectibleCollectionDst = Collection{
 }
 
 var collectibleDst = blockatlas.Collectible{
-	CollectionID:     "0xfaafdc07907ff5120a76b34b731b278c38d6043c---age-of-rust",
+	CollectionID:     "0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB---age-of-rust",
 	TokenID:          "54277541829991970107421667568590323026590803461896874578610080514640537714688",
-	CategoryContract: "0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB",
-	ContractAddress:  "0xfaafdc07907ff5120a76b34b731b278c38d6043c",
+	CategoryContract: "0xfaafdc07907ff5120a76b34b731b278c38d6043c",
+	ContractAddress:  "0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB",
 	Category:         "Age of Rust",
 	ImageUrl:         "https://storage.opensea.io/0xfaafdc07907ff5120a76b34b731b278c38d6043c-preview/54277541829991970107421667568590323026590803461896874578610080514640537714688-1564858807.png",
 	ExternalLink:     "",
