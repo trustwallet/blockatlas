@@ -5,6 +5,7 @@ import (
 	"math/big"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
@@ -280,10 +281,11 @@ func NormalizeCollectible(c *Collection, a Collectible, coinIndex uint) blockatl
 		collectionID = createCollectionId(address, c.Slug)
 	}
 	externalLink := getValidParameter(a.ExternalLink, a.AssetContract.ExternalLink)
+	tokenId := strings.Join([]string{a.AssetContract.Address, a.TokenId}, "-")
 	return blockatlas.Collectible{
 		CollectionID:     collectionID,
 		ContractAddress:  address,
-		TokenID:          a.TokenId,
+		TokenID:          tokenId,
 		CategoryContract: a.AssetContract.Address,
 		Name:             a.Name,
 		Category:         c.Name,
