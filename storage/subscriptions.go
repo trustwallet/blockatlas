@@ -57,7 +57,6 @@ func (s *Storage) DeleteSubscriptions(subscriptions []Subscription) {
 		var webhooks []string
 		err := s.GetHMValue(ATLAS_OBSERVER, key, &webhooks)
 		if err != nil {
-			logger.Error(err, "DeleteSubscriptions error", errors.Params{"webhooks": webhooks, "address": sub.Address, "coin": sub.Coin})
 			continue
 		}
 		newHooks := make([]string, 0)
@@ -68,15 +67,12 @@ func (s *Storage) DeleteSubscriptions(subscriptions []Subscription) {
 			newHooks = append(newHooks, webhook)
 		}
 		if len(newHooks) == 0 {
-			err := s.DeleteHM(ATLAS_OBSERVER, key)
-			if err != nil {
-				logger.Error(err, errors.Params{"webhook": newHooks, "address": sub.Address, "coin": sub.Coin})
-			}
+			_ = s.DeleteHM(ATLAS_OBSERVER, key)
 			continue
 		}
 		err = s.AddHM(ATLAS_OBSERVER, key, newHooks)
 		if err != nil {
-			logger.Error(err, errors.Params{"webhook": newHooks, "address": sub.Address, "coin": sub.Coin})
+			logger.Error(err, "DeleteSubscriptions - AddHM", errors.Params{"webhook": newHooks, "address": sub.Address, "coin": sub.Coin})
 		}
 	}
 }
