@@ -1,10 +1,14 @@
 package gincache
 
 import (
+	"bytes"
+	"crypto/sha1"
+	"encoding/base64"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/patrickmn/go-cache"
 	"github.com/trustwallet/blockatlas/pkg/logger"
+	"io/ioutil"
 	"net/http"
 	"time"
 )
@@ -93,11 +97,22 @@ func (w *cachedWriter) WriteString(data string) (n int, err error) {
 	return ret, err
 }
 
+func generateKey(path string, c *gin.Context) string {
+	var b []byte
+	if c.Request.Body != nil {
+		b, _ = ioutil.ReadAll(c.Request.Body)
+	}
+	// Restore the io.ReadCloser to its original state
+	c.Request.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+	hash := sha1.Sum(append([]byte(path), b...))
+	return base64.URLEncoding.EncodeToString(hash[:])
+}
+
 // CacheMiddleware encapsulates a gin handler function and caches the response with an expiration time.
 func CacheMiddleware(expiration time.Duration, handle gin.HandlerFunc) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		url := c.Request.URL
-		key := url.Path
+		key := generateKey(url.Path, c)
 		mc, err := getCacheResponse(key)
 		if err != nil || mc.Data == nil {
 			writer := newCachedWriter(expiration, c.Writer, key)
