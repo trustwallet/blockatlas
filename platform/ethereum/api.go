@@ -273,8 +273,9 @@ func NormalizeCollectiblePage(c *Collection, srcPage []Collectible, coinIndex ui
 }
 
 func NormalizeCollectible(c *Collection, a Collectible, coinIndex uint) blockatlas.Collectible {
-	address := getValidParameter(c.Contracts[0].Address, "")
+	address := getValidParameter(a.AssetContract.Address, "")
 	collectionType := getValidParameter(c.Contracts[0].Type, "")
+	contractAddress := getValidParameter(c.Contracts[0].Address, "")
 	collectionID := address
 	if _, ok := slugTokens[collectionType]; ok {
 		collectionID = createCollectionId(address, c.Slug)
@@ -282,9 +283,9 @@ func NormalizeCollectible(c *Collection, a Collectible, coinIndex uint) blockatl
 	externalLink := getValidParameter(a.ExternalLink, a.AssetContract.ExternalLink)
 	return blockatlas.Collectible{
 		CollectionID:     collectionID,
-		ContractAddress:  address,
+		ContractAddress:  contractAddress,
 		TokenID:          a.TokenId,
-		CategoryContract: a.AssetContract.Address,
+		CategoryContract: address,
 		Name:             a.Name,
 		Category:         c.Name,
 		ImageUrl:         a.ImagePreviewUrl,
