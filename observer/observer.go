@@ -75,6 +75,11 @@ func (o *Observer) processBlock(events chan<- Event, block *blockatlas.Block) {
 		// Verify the tx is for xpub
 		xpubAddresses, ok := xpubs[sub.Address]
 		for _, tx := range tx.Txs() {
+			if sub.Address == tx.To {
+				tx.Direction = blockatlas.DirectionIncoming
+			} else if sub.Address == tx.From {
+				tx.Direction = blockatlas.DirectionOutgoing
+			}
 			if ok {
 				// Create a mapset for xpub addresses
 				addressSet := mapset.NewSet()
