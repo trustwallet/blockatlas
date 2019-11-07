@@ -5,7 +5,6 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/observer"
-	observerStorage "github.com/trustwallet/blockatlas/observer/storage"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/platform"
 	"sync"
@@ -20,7 +19,7 @@ var observerCmd = cobra.Command{
 }
 
 func runObserver(_ *cobra.Command, _ []string) {
-	if observerStorage.App == nil {
+	if !Storage.IsReady() {
 		logger.Fatal("Observer is not enabled")
 	}
 
@@ -51,7 +50,7 @@ func runObserver(_ *cobra.Command, _ []string) {
 		}
 		stream := observer.Stream{
 			BlockAPI:     api,
-			Tracker:      observerStorage.App,
+			Tracker:      Storage,
 			PollInterval: pollInterval,
 			BacklogCount: backlogCount,
 		}
@@ -59,7 +58,7 @@ func runObserver(_ *cobra.Command, _ []string) {
 
 		// Check for transaction events
 		obs := observer.Observer{
-			Storage: observerStorage.App,
+			Storage: Storage,
 			Coin:    coin.ID,
 		}
 		events := obs.Execute(blocks)

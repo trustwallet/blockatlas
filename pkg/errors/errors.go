@@ -112,6 +112,9 @@ func E(args ...interface{}) *Error {
 			continue
 		case string:
 			message = append(message, arg)
+		case *Error:
+			message = append([]string{arg.Err.Error()}, message...)
+			appendMap(e.meta, arg.meta)
 		case error:
 			message = append([]string{arg.Error()}, message...)
 		case Type:

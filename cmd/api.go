@@ -6,7 +6,6 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/api"
-	observerStorage "github.com/trustwallet/blockatlas/observer/storage"
 	"github.com/trustwallet/blockatlas/pkg/ginutils"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/util"
@@ -54,11 +53,12 @@ func RunApi(bind string, c chan *gin.Engine) {
 
 	api.MakeMetricsRoute(engine)
 	api.LoadPlatforms(engine)
-	if observerStorage.App != nil {
-		observerAPI := engine.Group("/observer/v1")
-		api.SetupObserverAPI(observerAPI)
-	}
 	api.MakeLookupRoute(engine)
+
+	if Storage.IsReady() {
+		observerAPI := engine.Group("/observer/v1")
+		api.SetupObserverAPI(observerAPI, Storage)
+	}
 
 	if c != nil {
 		c <- engine

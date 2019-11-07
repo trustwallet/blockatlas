@@ -5,6 +5,7 @@ import (
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
+	"github.com/trustwallet/blockatlas/storage"
 	"github.com/trustwallet/blockatlas/util"
 	"sync"
 	"sync/atomic"
@@ -13,7 +14,7 @@ import (
 
 type Stream struct {
 	BlockAPI     blockatlas.BlockAPI
-	Tracker      Tracker
+	Tracker      storage.Tracker
 	PollInterval time.Duration
 	BacklogCount int
 	coin         uint
@@ -101,7 +102,6 @@ func (s *Stream) loadBlock(c chan<- *blockatlas.Block, num int64) {
 	newNum := atomic.AddInt64(&s.blockNumber, 1)
 	err = s.Tracker.SetBlockNumber(s.coin, newNum)
 	if err != nil {
-		logger.Error(err, "Polling failed: could not update block number at tracker", s.logParams)
-		return
+		logger.Error(err, "SetBlockNumber failed", s.logParams, logger.Params{"block": num, "coin": s.coin})
 	}
 }
