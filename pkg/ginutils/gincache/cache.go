@@ -111,9 +111,8 @@ func generateKey(path string, c *gin.Context) string {
 // CacheMiddleware encapsulates a gin handler function and caches the response with an expiration time.
 func CacheMiddleware(expiration time.Duration, handle gin.HandlerFunc) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		url := c.Request.URL
-		urlPath := url.Path + "?" + url.RawQuery
-		key := generateKey(urlPath, c)
+		url := fmt.Sprintf("%s", c.Request.URL)
+		key := generateKey(url, c)
 		mc, err := getCacheResponse(key)
 		if err != nil || mc.Data == nil {
 			writer := newCachedWriter(expiration, c.Writer, key)
