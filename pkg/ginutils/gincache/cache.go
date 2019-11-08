@@ -97,22 +97,22 @@ func (w *cachedWriter) WriteString(data string) (n int, err error) {
 	return ret, err
 }
 
-func generateKey(path string, c *gin.Context) string {
+func generateKey(c *gin.Context) string {
+	url := c.Request.URL.String()
 	var b []byte
 	if c.Request.Body != nil {
 		b, _ = ioutil.ReadAll(c.Request.Body)
 		// Restore the io.ReadCloser to its original state
 		c.Request.Body = ioutil.NopCloser(bytes.NewBuffer(b))
 	}
-	hash := sha1.Sum(append([]byte(path), b...))
+	hash := sha1.Sum(append([]byte(url), b...))
 	return base64.URLEncoding.EncodeToString(hash[:])
 }
 
 // CacheMiddleware encapsulates a gin handler function and caches the response with an expiration time.
 func CacheMiddleware(expiration time.Duration, handle gin.HandlerFunc) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		url := c.Request.URL.String()
-		key := generateKey(url, c)c.Request.URL.String()
+		key := generateKey(c)
 		mc, err := getCacheResponse(key)
 		if err != nil || mc.Data == nil {
 			writer := newCachedWriter(expiration, c.Writer, key)
