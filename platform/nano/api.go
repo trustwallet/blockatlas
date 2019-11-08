@@ -23,7 +23,7 @@ func (p *Platform) Coin() coin.Coin {
 }
 
 func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
-	var normalized []blockatlas.Tx
+	normalized := make([]blockatlas.Tx, 0)
 	history, err := p.client.GetAccountHistory(address)
 
 	if err != nil {
@@ -41,14 +41,11 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 func (p *Platform) Normalize(srcTx *Transaction, account string) (tx blockatlas.Tx) {
 	var from string
 	var to string
-	var direction blockatlas.Direction
 
-	if srcTx.Type == "send" {
-		direction = blockatlas.DirectionOutgoing
+	if srcTx.Type == BlockTypeSend {
 		from = account
 		to = srcTx.Account
-	} else if srcTx.Type == "receive" {
-		direction = blockatlas.DirectionIncoming
+	} else if srcTx.Type == BlockTypeReceive {
 		from = srcTx.Account
 		to = account
 	}
@@ -61,14 +58,13 @@ func (p *Platform) Normalize(srcTx *Transaction, account string) (tx blockatlas.
 	timestamp, _ := strconv.ParseInt(srcTx.LocalTimestamp, 10, 64)
 
 	tx = blockatlas.Tx{
-		ID:        srcTx.Hash,
-		Coin:      coin.NANO,
-		Date:      timestamp,
-		From:      from,
-		To:        to,
-		Block:     height,
-		Status:    status,
-		Direction: direction,
+		ID:     srcTx.Hash,
+		Coin:   p.Coin().ID,
+		Date:   timestamp,
+		From:   from,
+		To:     to,
+		Block:  height,
+		Status: status,
 		Meta: blockatlas.Transfer{
 			Value:    blockatlas.Amount(srcTx.Amount),
 			Symbol:   p.Coin().Symbol,
