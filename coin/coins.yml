@@ -329,3 +329,10 @@
   decimals: 6
   blockTime: 20000
   sampleAddress: '4EZFQABCVQTHQCK3HQBIYGC4NV2VM42FZHEFTVH77ROG4ZGREC6Y7V5T2U'
+
+- id: 165
+  symbol: NANO
+  handle: nano
+  name: Nano
+  decimals: 30
+  sampleAddress: 'nano_1trqphog5noig7z888asnjejcie8z1iopxyepcjdo1atps8whxiuwd51ehbw'

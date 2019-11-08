@@ -2,10 +2,11 @@ package algorand
 
 import (
 	"github.com/spf13/viper"
-	//"github.com/spf13/viper"
+
+	"strconv"
+
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"strconv"
 )
 
 type Platform struct {

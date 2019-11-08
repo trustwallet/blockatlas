@@ -18,6 +18,7 @@ import (
 	"github.com/trustwallet/blockatlas/platform/fio"
 	"github.com/trustwallet/blockatlas/platform/icon"
 	"github.com/trustwallet/blockatlas/platform/iotex"
+	"github.com/trustwallet/blockatlas/platform/nano"
 	"github.com/trustwallet/blockatlas/platform/nebulas"
 	"github.com/trustwallet/blockatlas/platform/nimiq"
 	"github.com/trustwallet/blockatlas/platform/ontology"
@@ -73,6 +74,7 @@ var platformList = []blockatlas.Platform{
 	&nebulas.Platform{},
 	&fio.Platform{},
 	&algorand.Platform{},
+	&nano.Platform{},
 }
 
 // Platforms contains all registered platforms by handle

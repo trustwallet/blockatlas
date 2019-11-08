@@ -192,3 +192,6 @@ decred:
 algorand:
   api: https://mainnet-algorand.api.purestake.io/ps1
 #  key: YOUR_API_KEY
+
+nano:
+  # api: https://mynano.ninja/api/
