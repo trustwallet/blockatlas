@@ -101,9 +101,9 @@ func generateKey(path string, c *gin.Context) string {
 	var b []byte
 	if c.Request.Body != nil {
 		b, _ = ioutil.ReadAll(c.Request.Body)
+		// Restore the io.ReadCloser to its original state
+		c.Request.Body = ioutil.NopCloser(bytes.NewBuffer(b))
 	}
-	// Restore the io.ReadCloser to its original state
-	c.Request.Body = ioutil.NopCloser(bytes.NewBuffer(b))
 	hash := sha1.Sum(append([]byte(path), b...))
 	return base64.URLEncoding.EncodeToString(hash[:])
 }
