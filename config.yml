@@ -194,4 +194,4 @@ algorand:
 #  key: YOUR_API_KEY
 
 nano:
-  api: https://mynano.ninja/api/
+  # api: https://mynano.ninja/api/
