@@ -112,7 +112,8 @@ func generateKey(path string, c *gin.Context) string {
 func CacheMiddleware(expiration time.Duration, handle gin.HandlerFunc) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		url := c.Request.URL
-		key := generateKey(url.RawQuery, c)
+		urlPath := url.Path + "?" + url.RawQuery
+		key := generateKey(urlPath, c)
 		mc, err := getCacheResponse(key)
 		if err != nil || mc.Data == nil {
 			writer := newCachedWriter(expiration, c.Writer, key)
