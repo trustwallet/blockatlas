@@ -40,7 +40,7 @@ var expectedStakeValidator = blockatlas.StakeValidator{
 func TestGetImage(t *testing.T) {
 	image := GetImage(c, "TGzz8gjYiYRqpfmDwnLxfgPuLVNmpCswVp")
 
-	expected := "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/cosmos/validators/assets/tgzz8gjyiyrqpfmdwnlxfgpulvnmpcswvp/logo.png"
+	expected := "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/cosmos/validators/assets/TGzz8gjYiYRqpfmDwnLxfgPuLVNmpCswVp/logo.png"
 
 	assert.Equal(t, expected, image)
 }
