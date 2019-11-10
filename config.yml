@@ -196,5 +196,5 @@ algorand:
 nano:
   # api: https://mynano.ninja/api/
 
-bigibyte:
+digibyte:
   api: https://dgb1.trezor.io/api
