@@ -336,3 +336,11 @@
   name: Nano
   decimals: 30
   sampleAddress: 'nano_1trqphog5noig7z888asnjejcie8z1iopxyepcjdo1atps8whxiuwd51ehbw'
+
+- id: 20
+  symbol: DGB
+  handle: digibyte
+  name: DigiByte
+  decimals: 8
+  blockTime: 15000
+  sampleAddress: 'D8NBg12kfW8uLjzCv7LYnPYCNhqvVtHaMQ'

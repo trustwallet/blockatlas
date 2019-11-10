@@ -71,6 +71,7 @@ var platformList = []blockatlas.Platform{
 	&bitcoin.Platform{CoinIndex: coin.GRS},
 	&bitcoin.Platform{CoinIndex: coin.ZEL},
 	&bitcoin.Platform{CoinIndex: coin.DCR},
+	&bitcoin.Platform{CoinIndex: coin.DGB},
 	&nebulas.Platform{},
 	&fio.Platform{},
 	&algorand.Platform{},
