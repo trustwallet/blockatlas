@@ -19,6 +19,7 @@ type Collection struct {
 type CollectionPage []Collection
 
 type Collectible struct {
+	ID               string `json:"id"`
 	CollectionID     string `json:"collection_id"`
 	TokenID          string `json:"token_id"`
 	CategoryContract string `json:"category_contract"`
