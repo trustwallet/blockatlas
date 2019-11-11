@@ -281,11 +281,12 @@ func NormalizeCollectible(c *Collection, a Collectible, coinIndex uint) blockatl
 		collectionID = createCollectionId(address, c.Slug)
 	}
 	externalLink := getValidParameter(a.ExternalLink, a.AssetContract.ExternalLink)
-	tokenId := strings.Join([]string{a.AssetContract.Address, a.TokenId}, "-")
+	id := strings.Join([]string{a.AssetContract.Address, a.TokenId}, "-")
 	return blockatlas.Collectible{
+		ID:               id,
 		CollectionID:     collectionID,
 		ContractAddress:  address,
-		TokenID:          tokenId,
+		TokenID:          a.TokenId,
 		CategoryContract: a.AssetContract.Address,
 		Name:             a.Name,
 		Category:         c.Name,
