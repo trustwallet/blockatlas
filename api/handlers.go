@@ -1,6 +1,9 @@
 package api
 
 import (
+	"net/http"
+	"time"
+
 	"github.com/chenjiandongx/ginprom"
 	"github.com/gin-gonic/gin"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -11,8 +14,6 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/pkg/metrics"
 	services "github.com/trustwallet/blockatlas/services/assets"
-	"net/http"
-	"time"
 )
 
 // @Summary Get Transactions
@@ -23,7 +24,7 @@ import (
 // @Tags platform,tx
 // @Param coin path string true "the coin name" default(tezos)
 // @Param address path string true "the query address" default(tz1WCd2jm4uSt4vntk4vSuUWoZQGhLcDuR9q)
-// @Failure 500 {object} api.ApiError
+// @Failure 500 {object} ginutils.ApiError
 // @Router /v1/{coin}/{address} [get]
 func makeTxRouteV1(router gin.IRouter, api blockatlas.Platform) {
 	makeTxRoute(router, api, "/:address")
@@ -38,7 +39,7 @@ func makeTxRouteV1(router gin.IRouter, api blockatlas.Platform) {
 // @Param coin path string true "the coin name" default(tezos)
 // @Param address path string true "the query address" default(tz1WCd2jm4uSt4vntk4vSuUWoZQGhLcDuR9q)
 // @Success 200 {object} blockatlas.TxPage
-// @Failure 500 {object} api.ApiError
+// @Failure 500 {object} ginutils.ApiError
 // @Router /v2/{coin}/transactions/{address} [get]
 func makeTxRouteV2(router gin.IRouter, api blockatlas.Platform) {
 	makeTxRoute(router, api, "/transactions/:address")
@@ -101,7 +102,7 @@ func makeTxRoute(router gin.IRouter, api blockatlas.Platform, path string) {
 // @Tags platform,staking
 // @Param coin path string true "the coin name" default(cosmos)
 // @Success 200 {object} blockatlas.DocsResponse
-// @Failure 500 {object} api.ApiError
+// @Failure 500 {object} ginutils.ApiError
 // @Router /v2/{coin}/staking/validators [get]
 func makeStakingValidatorsRoute(router gin.IRouter, api blockatlas.Platform) {
 	var stakingAPI blockatlas.StakeAPI
@@ -131,7 +132,7 @@ func makeStakingValidatorsRoute(router gin.IRouter, api blockatlas.Platform) {
 // @Param coin path string true "the coin name" default(tron)
 // @Param address path string true "the query address" default(TPJYCz8ppZNyvw7pTwmjajcx4Kk1MmEUhD)
 // @Success 200 {object} blockatlas.DocsResponse
-// @Failure 500 {object} api.ApiError
+// @Failure 500 {object} ginutils.ApiError
 // @Router /v2/{coin}/staking/delegations/{address} [get]
 func makeStakingDelegationsRoute(router gin.IRouter, api blockatlas.Platform) {
 	var stakingAPI blockatlas.StakeAPI
@@ -162,7 +163,7 @@ func makeStakingDelegationsRoute(router gin.IRouter, api blockatlas.Platform) {
 // @Param coin path string true "the coin name" default(ethereum)
 // @Param address path string true "the query address" default(0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB)
 // @Success 200 {object} blockatlas.CollectionPage
-// @Failure 500 {object} api.ApiError
+// @Failure 500 {object} ginutils.ApiError
 // @Router /v2/{coin}/collections/{address} [get]
 func makeCollectionsRoute(router gin.IRouter, api blockatlas.Platform) {
 	var collectionAPI blockatlas.CollectionAPI
@@ -193,7 +194,7 @@ func makeCollectionsRoute(router gin.IRouter, api blockatlas.Platform) {
 // @Param owner path string true "the query address" default(0x0875BCab22dE3d02402bc38aEe4104e1239374a7)
 // @Param collection_id path string true "the query collection" default(0x06012c8cf97bead5deae237070f9587f8e7a266d)
 // @Success 200 {object} blockatlas.CollectionPage
-// @Failure 500 {object} api.ApiError
+// @Failure 500 {object} ginutils.ApiError
 // @Router /v2/{coin}/collections/{owner}/collection/{collection_id} [get]
 func makeCollectionRoute(router gin.IRouter, api blockatlas.Platform) {
 	var collectionAPI blockatlas.CollectionAPI
@@ -223,7 +224,7 @@ func makeCollectionRoute(router gin.IRouter, api blockatlas.Platform) {
 // @Param coin path string true "the coin name" default(ethereum)
 // @Param address path string true "the query address" default(0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB)
 // @Success 200 {object} blockatlas.CollectionPage
-// @Failure 500 {object} api.ApiError
+// @Failure 500 {object} ginutils.ApiError
 // @Router /v2/{coin}/tokens/{address} [get]
 func makeTokenRoute(router gin.IRouter, api blockatlas.Platform) {
 	var tokenAPI blockatlas.TokenAPI
