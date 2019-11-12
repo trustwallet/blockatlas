@@ -50,7 +50,7 @@
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/api.ApiError"
+                            "$ref": "#/definitions/ginutils.ApiError"
                         }
                     }
                 }
@@ -259,7 +259,7 @@
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/api.ApiError"
+                            "$ref": "#/definitions/ginutils.ApiError"
                         }
                     }
                 }
@@ -345,13 +345,13 @@
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/api.ApiError"
+                            "$ref": "#/definitions/ginutils.ApiError"
                         }
                     }
                 }
             }
         },
-        "/v2/{coin}/collections/{address}/collection/": {
+        "/v2/{coin}/collections/{owner}/collection/{collection_id}": {
             "get": {
                 "description": "Get a collection from the address",
                 "consumes": [
@@ -379,7 +379,7 @@
                         "type": "string",
                         "default": "0x0875BCab22dE3d02402bc38aEe4104e1239374a7",
                         "description": "the query address",
-                        "name": "address",
+                        "name": "owner",
                         "in": "path",
                         "required": true
                     },
@@ -402,7 +402,7 @@
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/api.ApiError"
+                            "$ref": "#/definitions/ginutils.ApiError"
                         }
                     }
                 }
@@ -451,7 +451,7 @@
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/api.ApiError"
+                            "$ref": "#/definitions/ginutils.ApiError"
                         }
                     }
                 }
@@ -492,7 +492,7 @@
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/api.ApiError"
+                            "$ref": "#/definitions/ginutils.ApiError"
                         }
                     }
                 }
@@ -541,7 +541,7 @@
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/api.ApiError"
+                            "$ref": "#/definitions/ginutils.ApiError"
                         }
                     }
                 }
@@ -590,7 +590,7 @@
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/api.ApiError"
+                            "$ref": "#/definitions/ginutils.ApiError"
                         }
                     }
                 }
@@ -620,17 +620,6 @@
                     "coin": {
                         "type": "integer"
                     }
-                }
-            }
-        },
-        "api.ApiError": {
-            "type": "object",
-            "properties": {
-                "status_code": {
-                    "type": "integer"
-                },
-                "status_message": {
-                    "type": "string"
                 }
             }
         },
@@ -1108,6 +1097,17 @@
                     "type": "string"
                 },
                 "symbol": {
+                    "type": "string"
+                }
+            }
+        },
+        "ginutils.ApiError": {
+            "type": "object",
+            "properties": {
+                "status_code": {
+                    "type": "integer"
+                },
+                "status_message": {
                     "type": "string"
                 }
             }

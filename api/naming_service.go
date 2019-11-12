@@ -23,7 +23,7 @@ var TLDMapping = map[string]uint64{}
 // @Param name query string empty "string name"
 // @Param coin query string 60 "string coin"
 // @Success 200 {object} blockatlas.Resolved
-// @Failure 500 {object} api.ApiError
+// @Failure 500 {object} ginutils.ApiError
 // @Router /ns/lookup [get]
 func MakeLookupRoute(router gin.IRouter) {
 	ns := router.Group("/ns")
