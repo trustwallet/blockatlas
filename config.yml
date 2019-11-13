@@ -31,7 +31,7 @@ observer:
 
 # The market watcher
 market:
-  enabled: true
+  enabled: false
   auth: test
   dex_api: https://dex.binance.org/api
   cmc_api: https://pro-api.coinmarketcap.com
