@@ -15,7 +15,7 @@ import (
 	_ "github.com/trustwallet/blockatlas/docs"
 )
 
-var apiCmd = cobra.Command{
+var apiCmd = &cobra.Command{
 	Use:   "api <bind>",
 	Short: "API server",
 	Args:  cobra.MaximumNArgs(1),
@@ -71,5 +71,5 @@ func RunApi(bind string, c chan *gin.Engine) {
 }
 
 func init() {
-	rootCmd.AddCommand(&apiCmd)
+	rootCmd.AddCommand(apiCmd)
 }

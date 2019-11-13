@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-var observerCmd = cobra.Command{
+var observerCmd = &cobra.Command{
 	Use:   "observer",
 	Short: "Observer worker",
 	Args:  cobra.NoArgs,
@@ -83,5 +83,5 @@ func runObserver(_ *cobra.Command, _ []string) {
 }
 
 func init() {
-	rootCmd.AddCommand(&observerCmd)
+	rootCmd.AddCommand(observerCmd)
 }

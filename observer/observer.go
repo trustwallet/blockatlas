@@ -9,7 +9,7 @@ import (
 )
 
 type Event struct {
-	Subscription storage.Subscription
+	Subscription blockatlas.Subscription
 	Tx           *blockatlas.Tx
 }
 

@@ -3,6 +3,7 @@ package api
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/ginutils"
 	"github.com/trustwallet/blockatlas/platform"
 	"github.com/trustwallet/blockatlas/storage"
@@ -42,7 +43,7 @@ func SetupObserverAPI(router gin.IRouter, db *storage.Storage) {
 // @Header 200 {string} Authorization {token}
 // @Success 200 {object} api.ObserverResponse
 // @Router /observer/v1/webhook/register [post]
-func addCall(storage *storage.Storage) func(c *gin.Context) {
+func addCall(storage storage.Addresses) func(c *gin.Context) {
 	if storage == nil {
 		return nil
 	}
@@ -79,7 +80,7 @@ func addCall(storage *storage.Storage) func(c *gin.Context) {
 // @Header 200 {string} Authorization {token}
 // @Success 200 {object} api.ObserverResponse
 // @Router /observer/v1/webhook/register [delete]
-func deleteCall(storage *storage.Storage) func(c *gin.Context) {
+func deleteCall(storage storage.Addresses) func(c *gin.Context) {
 	if storage == nil {
 		return nil
 	}
@@ -113,7 +114,7 @@ func deleteCall(storage *storage.Storage) func(c *gin.Context) {
 // @Header 200 {string} Authorization {token}
 // @Success 200 {object} api.CoinStatus
 // @Router /observer/v1/status [get]
-func statusCall(storage *storage.Storage) func(c *gin.Context) {
+func statusCall(storage storage.Tracker) func(c *gin.Context) {
 	if storage == nil {
 		return nil
 	}
@@ -136,14 +137,14 @@ func statusCall(storage *storage.Storage) func(c *gin.Context) {
 	}
 }
 
-func parseSubscriptions(subscriptions map[string][]string, webhook string) (subs []storage.Subscription) {
+func parseSubscriptions(subscriptions map[string][]string, webhook string) (subs []blockatlas.Subscription) {
 	for coinStr, perCoin := range subscriptions {
 		coin, err := strconv.Atoi(coinStr)
 		if err != nil {
 			continue
 		}
 		for _, addr := range perCoin {
-			subs = append(subs, storage.Subscription{
+			subs = append(subs, blockatlas.Subscription{
 				Coin:    uint(coin),
 				Address: addr,
 				Webhook: webhook,
