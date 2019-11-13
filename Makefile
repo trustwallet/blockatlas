@@ -58,8 +58,8 @@ start-observer: stop-server
 	@cat $(PID_OBSERVER) | sed "/^/s/^/  \>  Observer PID: /"
 	@echo "  >  Error log: $(STDERR)"
 
-## start-sync: Start Sync markets in development mode.
-start-sync: stop-server
+## start-sync-markets: Start Sync markets in development mode.
+start-sync-markets: stop-server
 	@echo "  >  Starting $(PROJECT_NAME) Sync"
 	@-$(GOBIN)/$(PROJECT_NAME) $(SYNC_COMMAND) 2>&1 & echo $$! > $(PID_SYNC)
 	@cat $(PID_SYNC) | sed "/^/s/^/  \>  Sync PID: /"
