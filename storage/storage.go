@@ -29,3 +29,10 @@ type Addresses interface {
 	GetXpub(coin uint, xpub string) ([]string, error)
 	CacheXpubs(subscriptions map[string][]string)
 }
+
+type Market interface {
+	SaveTicker(coin blockatlas.Ticker, pl MarketProviderList) error
+	GetTicker(coin, token string) (blockatlas.Ticker, error)
+	SaveRates(rates blockatlas.Rates)
+	GetRate(currency string) (*blockatlas.Rate, error)
+}
