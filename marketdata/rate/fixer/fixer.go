@@ -4,6 +4,7 @@ import (
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/marketdata/rate"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"math/big"
 	"net/url"
 	"time"
 )
@@ -40,7 +41,7 @@ func (f *Fixer) FetchLatestRates() (rates blockatlas.Rates, err error) {
 
 func normalizeRates(latest Latest) (rates blockatlas.Rates) {
 	for currency, rate := range latest.Rates {
-		rates = append(rates, blockatlas.Rate{Currency: currency, Rate: rate, Timestamp: latest.Timestamp})
+		rates = append(rates, blockatlas.Rate{Currency: currency, Rate: big.NewFloat(rate), Timestamp: latest.Timestamp})
 	}
 	return
 }

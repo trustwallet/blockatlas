@@ -14,7 +14,7 @@ func Test_normalizeRates(t *testing.T) {
 		wantRates blockatlas.Rates
 	}{
 		{
-			"test normalize 1",
+			"test normalize fixer rate 1",
 			Latest{
 				Timestamp: 123,
 				Rates:     map[string]float64{"USD": 22.111, "BRL": 33.2, "BTC": 44.99},
@@ -27,7 +27,7 @@ func Test_normalizeRates(t *testing.T) {
 			},
 		},
 		{
-			"test normalize 2",
+			"test normalize fixer rate 2",
 			Latest{
 				Timestamp: 333,
 				Rates:     map[string]float64{"LSK": 123.321, "IFC": 34.973, "DUO": 998.3},
