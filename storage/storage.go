@@ -36,10 +36,3 @@ type Market interface {
 	SaveRates(rates blockatlas.Rates)
 	GetRate(currency string) (*blockatlas.Rate, error)
 }
-
-type Market interface {
-	SaveTicker(coin blockatlas.Ticker, pl ProviderList) error
-	GetTicker(coin, token string) (blockatlas.Ticker, error)
-	SaveRates(rates blockatlas.Rates)
-	GetRate(currency string) (*blockatlas.Rate, error)
-}
