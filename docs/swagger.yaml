@@ -1,3 +1,4 @@
+basePath: '{{.BasePath}}'
 definitions:
   api.AddressBatchRequest:
     properties:
@@ -15,6 +16,15 @@ definitions:
           type: integer
       type: object
     type: array
+  api.Coin:
+    properties:
+      coin:
+        type: integer
+      token_id:
+        type: string
+      type:
+        type: string
+    type: object
   api.CoinStatus:
     properties:
       error:
@@ -25,6 +35,15 @@ definitions:
   api.ObserverResponse:
     properties:
       status:
+        type: string
+    type: object
+  api.TickerRequest:
+    properties:
+      assets:
+        items:
+          $ref: '#/definitions/api.Coin'
+        type: array
+      currency:
         type: string
     type: object
   api.Webhook:
@@ -213,6 +232,55 @@ definitions:
       annual:
         type: number
     type: object
+  blockatlas.Ticker:
+    properties:
+      coin:
+        type: integer
+      coin_name:
+        type: string
+      error:
+        type: string
+      last_update:
+        type: string
+      price:
+        $ref: '#/definitions/blockatlas.TickerPrice'
+        type: object
+      token_id:
+        type: string
+      type:
+        type: string
+    type: object
+  blockatlas.TickerPrice:
+    properties:
+      change_24h:
+        type: string
+      currency:
+        type: string
+      provider:
+        type: string
+      value:
+        type: string
+    type: object
+  blockatlas.Tickers:
+    items:
+      properties:
+        coin:
+          type: integer
+        coin_name:
+          type: string
+        error:
+          type: string
+        last_update:
+          type: string
+        price:
+          $ref: '#/definitions/blockatlas.TickerPrice'
+          type: object
+        token_id:
+          type: string
+        type:
+          type: string
+      type: object
+    type: array
   blockatlas.Tx:
     properties:
       block:
@@ -352,10 +420,71 @@ definitions:
       status_message:
         type: string
     type: object
+host: '{{.Host}}'
 info:
   contact: {}
+  description: '{{.Description}}'
   license: {}
+  title: '{{.Title}}'
+  version: '{{.Version}}'
 paths:
+  /market/v1/ticker:
+    get:
+      consumes:
+      - application/json
+      description: Get the ticker value from an market and coin/token
+      operationId: get_ticker
+      parameters:
+      - description: coin id
+        in: query
+        name: coin
+        required: true
+        type: integer
+      - description: token id
+        in: query
+        name: token
+        type: string
+      - default: USD
+        description: the currency to show the quote
+        in: query
+        name: currency
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/blockatlas.Ticker'
+            type: object
+      summary: Get ticker value for a specific market
+      tags:
+      - ticker
+  /market/v1/tickers:
+    post:
+      consumes:
+      - application/json
+      description: Get the ticker values from many markets and coin/token
+      operationId: get_tickers
+      parameters:
+      - description: Ticker
+        in: body
+        name: tickers
+        required: true
+        schema:
+          $ref: '#/definitions/api.TickerRequest'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/blockatlas.Tickers'
+            type: object
+      summary: Get ticker values for a specific markets
+      tags:
+      - ticker
   /metrics:
     get:
       description: Get application metrics
@@ -383,10 +512,12 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/blockatlas.Resolved'
+            type: object
         "500":
           description: Internal Server Error
           schema:
             $ref: '#/definitions/ginutils.ApiError'
+            type: object
       summary: Lookup .eth / .zil addresses
       tags:
       - ns
@@ -410,6 +541,7 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/api.CoinStatus'
+            type: object
       summary: Get coin status
       tags:
       - observer
@@ -441,6 +573,7 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/api.ObserverResponse'
+            type: object
       summary: Delete a webhook
       tags:
       - observer
@@ -471,6 +604,7 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/api.ObserverResponse'
+            type: object
       summary: Create a webhook
       tags:
       - observer
@@ -501,6 +635,7 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/ginutils.ApiError'
+            type: object
       summary: Get Transactions
       tags:
       - platform
@@ -531,6 +666,7 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/blockatlas.TxPage'
+            type: object
       summary: Get xpub transactions
       tags:
       - platform
@@ -561,10 +697,12 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/blockatlas.CollectionPage'
+            type: object
         "500":
           description: Internal Server Error
           schema:
             $ref: '#/definitions/ginutils.ApiError'
+            type: object
       summary: Get Collections
       tags:
       - platform
@@ -601,10 +739,12 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/blockatlas.CollectionPage'
+            type: object
         "500":
           description: Internal Server Error
           schema:
             $ref: '#/definitions/ginutils.ApiError'
+            type: object
       summary: Get Collection
       tags:
       - platform
@@ -635,10 +775,12 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/blockatlas.DocsResponse'
+            type: object
         "500":
           description: Internal Server Error
           schema:
             $ref: '#/definitions/ginutils.ApiError'
+            type: object
       summary: Get Stake Delegations
       tags:
       - platform
@@ -663,10 +805,12 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/blockatlas.DocsResponse'
+            type: object
         "500":
           description: Internal Server Error
           schema:
             $ref: '#/definitions/ginutils.ApiError'
+            type: object
       summary: Get Validators
       tags:
       - platform
@@ -697,10 +841,12 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/blockatlas.CollectionPage'
+            type: object
         "500":
           description: Internal Server Error
           schema:
             $ref: '#/definitions/ginutils.ApiError'
+            type: object
       summary: Get Tokens
       tags:
       - platform
@@ -731,10 +877,12 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/blockatlas.TxPage'
+            type: object
         "500":
           description: Internal Server Error
           schema:
             $ref: '#/definitions/ginutils.ApiError'
+            type: object
       summary: Get Transactions
       tags:
       - platform
@@ -760,6 +908,7 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/blockatlas.DelegationsBatchPage'
+            type: object
       summary: Get Multiple Stake Delegations
       tags:
       - platform

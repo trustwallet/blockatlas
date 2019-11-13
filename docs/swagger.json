@@ -1,10 +1,99 @@
 {
     "swagger": "2.0",
     "info": {
+        "description": "{{.Description}}",
+        "title": "{{.Title}}",
         "contact": {},
-        "license": {}
+        "license": {},
+        "version": "{{.Version}}"
     },
+    "host": "{{.Host}}",
+    "basePath": "{{.BasePath}}",
     "paths": {
+        "/market/v1/ticker": {
+            "get": {
+                "description": "Get the ticker value from an market and coin/token",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ticker"
+                ],
+                "summary": "Get ticker value for a specific market",
+                "operationId": "get_ticker",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "coin id",
+                        "name": "coin",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "token id",
+                        "name": "token",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "default": "USD",
+                        "description": "the currency to show the quote",
+                        "name": "currency",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/blockatlas.Ticker"
+                        }
+                    }
+                }
+            }
+        },
+        "/market/v1/tickers": {
+            "post": {
+                "description": "Get the ticker values from many markets and coin/token",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ticker"
+                ],
+                "summary": "Get ticker values for a specific markets",
+                "operationId": "get_tickers",
+                "parameters": [
+                    {
+                        "description": "Ticker",
+                        "name": "tickers",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/api.TickerRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/blockatlas.Tickers"
+                        }
+                    }
+                }
+            }
+        },
         "/metrics": {
             "get": {
                 "description": "Get application metrics",
@@ -44,12 +133,14 @@
                     "200": {
                         "description": "OK",
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/blockatlas.Resolved"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/ginutils.ApiError"
                         }
                     }
@@ -85,6 +176,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/api.CoinStatus"
                         }
                     }
@@ -130,6 +222,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/api.ObserverResponse"
                         }
                     }
@@ -173,6 +266,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/api.ObserverResponse"
                         }
                     }
@@ -216,6 +310,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/blockatlas.TxPage"
                         }
                     }
@@ -259,6 +354,7 @@
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/ginutils.ApiError"
                         }
                     }
@@ -296,6 +392,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/blockatlas.DelegationsBatchPage"
                         }
                     }
@@ -339,12 +436,14 @@
                     "200": {
                         "description": "OK",
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/blockatlas.CollectionPage"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/ginutils.ApiError"
                         }
                     }
@@ -396,12 +495,14 @@
                     "200": {
                         "description": "OK",
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/blockatlas.CollectionPage"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/ginutils.ApiError"
                         }
                     }
@@ -445,12 +546,14 @@
                     "200": {
                         "description": "OK",
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/blockatlas.DocsResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/ginutils.ApiError"
                         }
                     }
@@ -486,12 +589,14 @@
                     "200": {
                         "description": "OK",
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/blockatlas.DocsResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/ginutils.ApiError"
                         }
                     }
@@ -535,12 +640,14 @@
                     "200": {
                         "description": "OK",
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/blockatlas.CollectionPage"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/ginutils.ApiError"
                         }
                     }
@@ -584,12 +691,14 @@
                     "200": {
                         "description": "OK",
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/blockatlas.TxPage"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/ginutils.ApiError"
                         }
                     }
@@ -623,6 +732,20 @@
                 }
             }
         },
+        "api.Coin": {
+            "type": "object",
+            "properties": {
+                "coin": {
+                    "type": "integer"
+                },
+                "token_id": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
         "api.CoinStatus": {
             "type": "object",
             "properties": {
@@ -638,6 +761,20 @@
             "type": "object",
             "properties": {
                 "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "api.TickerRequest": {
+            "type": "object",
+            "properties": {
+                "assets": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/api.Coin"
+                    }
+                },
+                "currency": {
                     "type": "string"
                 }
             }
@@ -919,6 +1056,80 @@
             "properties": {
                 "annual": {
                     "type": "number"
+                }
+            }
+        },
+        "blockatlas.Ticker": {
+            "type": "object",
+            "properties": {
+                "coin": {
+                    "type": "integer"
+                },
+                "coin_name": {
+                    "type": "string"
+                },
+                "error": {
+                    "type": "string"
+                },
+                "last_update": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "object",
+                    "$ref": "#/definitions/blockatlas.TickerPrice"
+                },
+                "token_id": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "blockatlas.TickerPrice": {
+            "type": "object",
+            "properties": {
+                "change_24h": {
+                    "type": "string"
+                },
+                "currency": {
+                    "type": "string"
+                },
+                "provider": {
+                    "type": "string"
+                },
+                "value": {
+                    "type": "string"
+                }
+            }
+        },
+        "blockatlas.Tickers": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "coin": {
+                        "type": "integer"
+                    },
+                    "coin_name": {
+                        "type": "string"
+                    },
+                    "error": {
+                        "type": "string"
+                    },
+                    "last_update": {
+                        "type": "string"
+                    },
+                    "price": {
+                        "type": "object",
+                        "$ref": "#/definitions/blockatlas.TickerPrice"
+                    },
+                    "token_id": {
+                        "type": "string"
+                    },
+                    "type": {
+                        "type": "string"
+                    }
                 }
             }
         },
