@@ -38,17 +38,17 @@ func (m *Market) GetUpdateTime() time.Duration {
 }
 
 func (m *Market) Init(storage storage.Market) error {
-	logger.Info("Init Provider", logger.Params{"market": m.GetId()})
+	logger.Info("Init Market Quote Provider", logger.Params{"market": m.GetId()})
 	if len(m.Id) == 0 {
-		return errors.E("Provider: Id cannot be empty")
+		return errors.E("Market Quote: Id cannot be empty")
 	}
 
 	if len(m.Name) == 0 {
-		return errors.E("Provider: Name cannot be empty")
+		return errors.E("Market Quote: Name cannot be empty")
 	}
 
 	if storage == nil {
-		return errors.E("Provider: Storage cannot be nil")
+		return errors.E("Market Quote: Storage cannot be nil")
 	}
 	m.Storage = storage
 

@@ -32,13 +32,13 @@ func (r *Rate) GetLogType() string {
 }
 
 func (r *Rate) Init(storage storage.Market) error {
-	logger.Info("Init Provider", logger.Params{"rate": r.GetId()})
+	logger.Info("Init Market Rate Provider", logger.Params{"rate": r.GetId()})
 	if len(r.Id) == 0 {
-		return errors.E("Provider: Id cannot be empty")
+		return errors.E("Market Rate: Id cannot be empty")
 	}
 
 	if storage == nil {
-		return errors.E("Provider: Storage cannot be nil")
+		return errors.E("Market Rate: Storage cannot be nil")
 	}
 	r.Storage = storage
 
