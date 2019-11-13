@@ -3,6 +3,7 @@ package marketdata
 import (
 	"github.com/robfig/cron/v3"
 	"github.com/trustwallet/blockatlas/marketdata/rate"
+	cmc "github.com/trustwallet/blockatlas/marketdata/rate/coinmarketcap"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/storage"
@@ -12,7 +13,7 @@ func InitRates(storage storage.Market) {
 	addRates(storage, []rate.Provider{
 		// Add Rate Providers
 		//fixer.InitRate(),
-		//cmc.InitRate(),
+		cmc.InitRate(),
 	})
 }
 
