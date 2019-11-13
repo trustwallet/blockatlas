@@ -3,7 +3,7 @@ package marketdata
 import (
 	"fmt"
 	"github.com/cenkalti/backoff"
-	"github.com/robfig/cron"
+	"github.com/robfig/cron/v3"
 	"github.com/trustwallet/blockatlas/marketdata/market"
 	"github.com/trustwallet/blockatlas/marketdata/rate"
 	"github.com/trustwallet/blockatlas/pkg/errors"
@@ -49,7 +49,7 @@ func scheduleTasks(storage storage.Market, md Provider, c *cron.Cron) {
 	}
 	t := md.GetUpdateTime().Seconds()
 	spec := fmt.Sprintf("@every %ds", uint64(t))
-	err = c.AddFunc(spec, func() {
+	_, err = c.AddFunc(spec, func() {
 		processBackoff(storage, md)
 	})
 	processBackoff(storage, md)
