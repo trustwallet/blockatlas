@@ -2,6 +2,7 @@ package storage
 
 import (
 	"fmt"
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 )
@@ -10,13 +11,7 @@ const (
 	ATLAS_OBSERVER = "ATLAS_OBSERVER"
 )
 
-type Subscription struct {
-	Coin    uint   `json:"coin"`
-	Address string `json:"address"`
-	Webhook string `json:"webhook"`
-}
-
-func (s *Storage) Lookup(coin uint, addresses []string) (observers []Subscription, err error) {
+func (s *Storage) Lookup(coin uint, addresses []string) (observers []blockatlas.Subscription, err error) {
 	if len(addresses) == 0 {
 		err = errors.E("cannot look up an empty list")
 		return
@@ -26,13 +21,13 @@ func (s *Storage) Lookup(coin uint, addresses []string) (observers []Subscriptio
 		var webhooks []string
 		_ = s.GetHMValue(ATLAS_OBSERVER, key, &webhooks)
 		for _, webhook := range webhooks {
-			observers = append(observers, Subscription{Coin: coin, Address: addr, Webhook: webhook})
+			observers = append(observers, blockatlas.Subscription{Coin: coin, Address: addr, Webhook: webhook})
 		}
 	}
 	return
 }
 
-func (s *Storage) AddSubscriptions(subscriptions []Subscription) {
+func (s *Storage) AddSubscriptions(subscriptions []blockatlas.Subscription) {
 	for _, sub := range subscriptions {
 		key := getSubscriptionKey(sub.Coin, sub.Address)
 		var webhooks []string
@@ -51,7 +46,7 @@ func (s *Storage) AddSubscriptions(subscriptions []Subscription) {
 	}
 }
 
-func (s *Storage) DeleteSubscriptions(subscriptions []Subscription) {
+func (s *Storage) DeleteSubscriptions(subscriptions []blockatlas.Subscription) {
 	for _, sub := range subscriptions {
 		key := getSubscriptionKey(sub.Coin, sub.Address)
 		var webhooks []string

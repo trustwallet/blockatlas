@@ -1,6 +1,7 @@
 package storage
 
 import (
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/storage/redis"
 )
 
@@ -21,9 +22,10 @@ type Tracker interface {
 }
 
 type Addresses interface {
-	Lookup(coin uint, addresses []string) ([]Subscription, error)
-	AddSubscriptions(subscriptions []Subscription)
-	DeleteSubscriptions(subscriptions []Subscription)
+	Lookup(coin uint, addresses []string) ([]blockatlas.Subscription, error)
+	AddSubscriptions(subscriptions []blockatlas.Subscription)
+	DeleteSubscriptions(subscriptions []blockatlas.Subscription)
 	GetXpubFromAddress(coin uint, address string) (xpub string, addresses []string, err error)
 	GetXpub(coin uint, xpub string) ([]string, error)
+	CacheXpubs(subscriptions map[string][]string)
 }
