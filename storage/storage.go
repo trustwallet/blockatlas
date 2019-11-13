@@ -1,6 +1,7 @@
 package storage
 
 import (
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/storage/redis"
 )
 
@@ -26,4 +27,11 @@ type Addresses interface {
 	DeleteSubscriptions(subscriptions []Subscription)
 	GetXpubFromAddress(coin uint, address string) (xpub string, addresses []string, err error)
 	GetXpub(coin uint, xpub string) ([]string, error)
+}
+
+type Market interface {
+	SaveTicker(coin blockatlas.Ticker, pl ProviderList) error
+	GetTicker(coin, token string) (blockatlas.Ticker, error)
+	SaveRates(rates blockatlas.Rates)
+	GetRate(currency string) (*blockatlas.Rate, error)
 }
