@@ -21,10 +21,8 @@ func InitMarkets(storage storage.Market) {
 
 func addMarkets(storage storage.Market, ps market.Providers) {
 	c := cron.New()
-	priorityList := make(map[int]string)
-	for priority, p := range ps {
+	for _, p := range ps {
 		scheduleTasks(storage, p, c)
-		priorityList[priority] = p.GetId()
 	}
 	c.Start()
 }
