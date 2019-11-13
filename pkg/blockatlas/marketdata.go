@@ -35,24 +35,24 @@ type TickerPrice struct {
 }
 
 type Rate struct {
-	Currency  string  `json:"currency"`
-	Rate      float64 `json:"rate"`
-	Timestamp int64   `json:"timestamp"`
+	Currency  string     `json:"currency"`
+	Rate      *big.Float `json:"rate"`
+	Timestamp int64      `json:"timestamp"`
 }
 
 type Rates []Rate
 type Tickers []Ticker
 
-func (ts Tickers) ApplyRate(rate float64, currency string) {
+func (ts Tickers) ApplyRate(rate *big.Float, currency string) {
 	for _, t := range ts {
 		t.ApplyRate(rate, currency)
 	}
 }
 
-func (t *Ticker) ApplyRate(rate float64, currency string) {
+func (t *Ticker) ApplyRate(rate *big.Float, currency string) {
 	if t.Price.Currency == currency {
 		return
 	}
-	t.Price.Value.Mul(t.Price.Value, big.NewFloat(rate))
+	t.Price.Value.Mul(t.Price.Value, rate)
 	t.Price.Currency = currency
 }
