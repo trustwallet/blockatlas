@@ -12,11 +12,11 @@ const (
 	EntityMarket = "market"
 )
 
-type ProviderList interface {
+type MarketProviderList interface {
 	GetPriority(providerId string) int
 }
 
-func (s *Storage) SaveTicker(coin blockatlas.Ticker, pl ProviderList) error {
+func (s *Storage) SaveTicker(coin blockatlas.Ticker, pl MarketProviderList) error {
 	cd, err := s.GetTicker(coin.CoinName, coin.TokenId)
 	if err == nil {
 		if cd.LastUpdate.After(coin.LastUpdate) {
