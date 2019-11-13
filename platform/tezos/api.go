@@ -91,7 +91,7 @@ func NormalizeDelegation(account Account, validators blockatlas.ValidatorMap) ([
 func NormalizeTxs(srcTxs []Tx) (txs []blockatlas.Tx) {
 	for _, srcTx := range srcTxs {
 		tx, ok := NormalizeTx(&srcTx)
-		if !ok || len(txs) >= blockatlas.TxPerPage {
+		if !ok {
 			continue
 		}
 		txs = append(txs, tx)
