@@ -6,8 +6,8 @@ import (
 )
 
 var syncCmd = &cobra.Command{
-	Use:   "sync",
-	Short: "Sync all markets and rates",
+	Use:   "sync-markets",
+	Short: "Sync all markets prices and rates",
 	Args:  cobra.NoArgs,
 	Run:   syncMarketData,
 }
