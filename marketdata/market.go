@@ -1,7 +1,7 @@
 package marketdata
 
 import (
-	"github.com/robfig/cron"
+	"github.com/robfig/cron/v3"
 	"github.com/trustwallet/blockatlas/marketdata/market"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"

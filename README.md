@@ -47,10 +47,13 @@ go get -u github.com/trustwallet/blockatlas
 cd blockatlas
 
 // Start API server
-go build -o blockatlas . && ./blockatlas api
+go build -o blockatlas . && ./blockatlas api <PORT>
 
 //Start Observer
 go build -o blockatlas . && ./blockatlas observer
+
+//Start Sync Market Prices and Rates
+go build -o blockatlas . && ./blockatlas sync-markets
 ```
 
 #### Docker

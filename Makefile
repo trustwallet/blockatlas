@@ -4,6 +4,7 @@ BUILD := $(shell git rev-parse --short HEAD)
 PROJECT_NAME := $(shell basename "$(PWD)")
 API_COMMAND := api
 OBSERVER_COMMAND := observer
+SYNC_COMMAND := sync-markets
 COIN_FILE := coin/coins.yml
 COIN_GO_FILE := coin/coins.go
 GEN_COIN_FILE := coin/gen.go
@@ -28,6 +29,7 @@ STDERR := /tmp/.$(PROJECT_NAME)-stderr.txt
 # PID file will keep the process id of the server
 PID_API := /tmp/.$(PROJECT_NAME).$(API_COMMAND).pid
 PID_OBSERVER := /tmp/.$(PROJECT_NAME).$(OBSERVER_COMMAND).pid
+PID_SYNC := /tmp/.$(PROJECT_NAME).$(SYNC_COMMAND).pid
 
 # Make is verbose in Linux. Make it silent.
 MAKEFLAGS += --silent
@@ -35,9 +37,9 @@ MAKEFLAGS += --silent
 ## install: Install missing dependencies. Runs `go get` internally. e.g; make install get=github.com/foo/bar
 install: go-get
 
-## start: Start API and Observer in development mode.
+## start: Start API, Observer and Sync in development mode.
 start:
-	@bash -c "$(MAKE) clean compile start-api start-observer"
+	@bash -c "$(MAKE) clean compile start-api start-observer start-sync"
 
 ## stop: Stop development mode.
 stop: stop-server
@@ -54,6 +56,13 @@ start-observer: stop-server
 	@echo "  >  Starting $(PROJECT_NAME) Observer"
 	@-$(GOBIN)/$(PROJECT_NAME) $(OBSERVER_COMMAND) 2>&1 & echo $$! > $(PID_OBSERVER)
 	@cat $(PID_OBSERVER) | sed "/^/s/^/  \>  Observer PID: /"
+	@echo "  >  Error log: $(STDERR)"
+
+## start-sync-markets: Start Sync markets in development mode.
+start-sync-markets: stop-server
+	@echo "  >  Starting $(PROJECT_NAME) Sync"
+	@-$(GOBIN)/$(PROJECT_NAME) $(SYNC_COMMAND) 2>&1 & echo $$! > $(PID_SYNC)
+	@cat $(PID_SYNC) | sed "/^/s/^/  \>  Sync PID: /"
 	@echo "  >  Error log: $(STDERR)"
 
 stop-server:

@@ -28,13 +28,11 @@ var (
 			// Load app components
 			platform.Init()
 
-			if viper.GetBool("observer.enabled") {
-				logger.Info("Loading Observer API")
-				host := viper.GetString("observer.redis")
-				err := Storage.Init(host)
-				if err != nil {
-					logger.Fatal(err)
-				}
+			// Init Storage
+			host := viper.GetString("storage.redis")
+			err := Storage.Init(host)
+			if err != nil {
+				logger.Fatal(err)
 			}
 		},
 	}

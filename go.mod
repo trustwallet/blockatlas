@@ -23,7 +23,6 @@ require (
 	github.com/mr-tron/base58 v1.1.2
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/prometheus/client_golang v1.0.0
-	github.com/robfig/cron v1.2.0
 	github.com/robfig/cron/v3 v3.0.0
 	github.com/sirupsen/logrus v1.4.2
 	github.com/spf13/cast v1.3.0
