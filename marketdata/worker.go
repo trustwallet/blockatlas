@@ -19,7 +19,7 @@ const (
 type Provider interface {
 	Init(storage.Market) error
 	GetId() string
-	GetType() string
+	GetLogType() string
 	GetUpdateTime() time.Duration
 }
 
@@ -44,7 +44,7 @@ func processBackoff(storage storage.Market, md Provider) {
 func scheduleTasks(storage storage.Market, md Provider, c *cron.Cron) {
 	err := md.Init(storage)
 	if err != nil {
-		logger.Error(err, "Init Market Error", logger.Params{"Type": md.GetType(), "Market": md.GetId()})
+		logger.Error(err, "Init Market Error", logger.Params{"Type": md.GetLogType(), "Market": md.GetId()})
 		return
 	}
 	t := md.GetUpdateTime().Seconds()
@@ -59,7 +59,7 @@ func scheduleTasks(storage storage.Market, md Provider, c *cron.Cron) {
 }
 
 func run(storage storage.Market, md Provider) error {
-	logger.Info("Starting market data task...", logger.Params{"Type": md.GetType(), "Market": md.GetId()})
+	logger.Info("Starting market data task...", logger.Params{"Type": md.GetLogType(), "Market": md.GetId()})
 	switch m := md.(type) {
 	case market.Provider:
 		return runMarket(storage, m)

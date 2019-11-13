@@ -11,5 +11,5 @@ type Provider interface {
 	FetchLatestRates() (blockatlas.Rates, error)
 	GetUpdateTime() time.Duration
 	GetId() string
-	GetType() string
+	GetLogType() string
 }

@@ -29,7 +29,7 @@ func (m *Market) GetId() string {
 	return m.Id
 }
 
-func (m *Market) GetType() string {
+func (m *Market) GetLogType() string {
 	return "market-data"
 }
 

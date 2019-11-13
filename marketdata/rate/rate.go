@@ -27,7 +27,7 @@ func (r *Rate) GetId() string {
 	return r.Id
 }
 
-func (r *Rate) GetType() string {
+func (r *Rate) GetLogType() string {
 	return "market-rate"
 }
 

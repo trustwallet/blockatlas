@@ -12,7 +12,7 @@ type Provider interface {
 	GetId() string
 	GetUpdateTime() time.Duration
 	GetData() (blockatlas.Tickers, error)
-	GetType() string
+	GetLogType() string
 }
 
 type Providers map[int]Provider
