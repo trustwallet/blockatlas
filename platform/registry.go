@@ -93,12 +93,16 @@ var CustomAPIs map[string]blockatlas.CustomAPI
 // NamingAPIs contain platforms which support naming services
 var NamingAPIs map[uint64]blockatlas.NamingServiceAPI
 
+// CollectionAPIs contain platforms which collections services
+var CollectionAPIs map[uint]blockatlas.CollectionAPI
+
 func Init() {
 	Platforms = make(map[string]blockatlas.Platform)
 	BlockAPIs = make(map[string]blockatlas.BlockAPI)
 	StakeAPIs = make(map[string]blockatlas.StakeAPI)
 	CustomAPIs = make(map[string]blockatlas.CustomAPI)
 	NamingAPIs = make(map[uint64]blockatlas.NamingServiceAPI)
+	CollectionAPIs = make(map[uint]blockatlas.CollectionAPI)
 
 	for _, platform := range platformList {
 		handle := platform.Coin().Handle
@@ -138,6 +142,9 @@ func Init() {
 		}
 		if namingAPI, ok := platform.(blockatlas.NamingServiceAPI); ok {
 			NamingAPIs[uint64(platform.Coin().ID)] = namingAPI
+		}
+		if collectionAPI, ok := platform.(blockatlas.CollectionAPI); ok {
+			CollectionAPIs[platform.Coin().ID] = collectionAPI
 		}
 	}
 }
