@@ -4,6 +4,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"math/big"
+	"sort"
 	"testing"
 	"time"
 )
@@ -84,6 +85,10 @@ func Test_normalizeRates(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			gotRates := normalizeRates(tt.prices)
+			sort.SliceStable(gotRates, func(i, j int) bool {
+				y := gotRates[i].Rate.Cmp(gotRates[j].Rate)
+				return y <= 0
+			})
 			if !assert.ObjectsAreEqualValues(gotRates, tt.wantRates) {
 				t.Errorf("normalizeRates() = %v, want %v", gotRates, tt.wantRates)
 			}

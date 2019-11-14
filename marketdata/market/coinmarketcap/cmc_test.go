@@ -4,6 +4,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"math/big"
+	"sort"
 	"testing"
 	"time"
 )
@@ -21,13 +22,13 @@ func Test_normalizeTickers(t *testing.T) {
 		{
 			"test normalize cmc quote",
 			args{prices: CoinPrices{Data: []Data{
-				{Coin: Coin{Symbol: "BTC"}, LastUpdated: time.Unix(333, 0), Quote: Quote{
+				{Coin: Coin{Symbol: "BTC"}, LastUpdated: time.Unix(111, 0), Quote: Quote{
 					USD: USD{Price: 223.55, PercentChange24h: 10}}},
 				{Coin: Coin{Symbol: "ETH"}, LastUpdated: time.Unix(333, 0), Quote: Quote{
 					USD: USD{Price: 11.11, PercentChange24h: 20}}}}},
 				provider: "cmc"},
 			blockatlas.Tickers{
-				blockatlas.Ticker{CoinName: "BTC", CoinType: blockatlas.TypeCoin, LastUpdate: time.Unix(333, 0),
+				blockatlas.Ticker{CoinName: "BTC", CoinType: blockatlas.TypeCoin, LastUpdate: time.Unix(111, 0),
 					Price: blockatlas.TickerPrice{
 						Value:     big.NewFloat(223.55),
 						Change24h: big.NewFloat(10),
@@ -49,6 +50,9 @@ func Test_normalizeTickers(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			gotTickers := normalizeTickers(tt.args.prices, tt.args.provider)
+			sort.SliceStable(gotTickers, func(i, j int) bool {
+				return gotTickers[i].LastUpdate.Unix() < gotTickers[j].LastUpdate.Unix()
+			})
 			if !assert.ObjectsAreEqualValues(gotTickers, tt.wantTickers) {
 				t.Errorf("normalizeTickers() = %v, want %v", gotTickers, tt.wantTickers)
 			}
