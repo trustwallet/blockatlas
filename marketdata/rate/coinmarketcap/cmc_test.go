@@ -1,9 +1,9 @@
 package cmc
 
 import (
+	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"math/big"
-	"reflect"
 	"testing"
 	"time"
 )
@@ -83,7 +83,8 @@ func Test_normalizeRates(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if gotRates := normalizeRates(tt.prices); !reflect.DeepEqual(gotRates, tt.wantRates) {
+			gotRates := normalizeRates(tt.prices)
+			if !assert.ObjectsAreEqualValues(gotRates, tt.wantRates) {
 				t.Errorf("normalizeRates() = %v, want %v", gotRates, tt.wantRates)
 			}
 		})
