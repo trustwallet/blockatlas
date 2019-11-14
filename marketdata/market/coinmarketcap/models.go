@@ -13,19 +13,17 @@ type CoinPrices struct {
 
 type Coin struct {
 	Id     int    `json:"id"`
-	Name   string `json:"name"`
 	Symbol string `json:"symbol"`
-	Slug   string `json:"slug"`
 }
 
 type Data struct {
 	Coin
 	LastUpdated time.Time `json:"last_updated"`
-	Platform    Platform  `json:"platform"`
+	Platform    *Platform `json:"platform"`
 	Quote       Quote     `json:"quote"`
 }
 
-type Platform *struct {
+type Platform struct {
 	Coin
 	TokenAddress string `json:"token_address"`
 }
