@@ -56,7 +56,9 @@ func Test_parseSubscriptions(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			gotSubs := parseSubscriptions(tt.subscriptions, tt.webhook)
-			assert.EqualValues(t, tt.wantSubs, gotSubs)
+			if !assert.ObjectsAreEqualValues(tt.wantSubs, gotSubs) {
+				t.Errorf("parseSubscriptions() = %v, want %v", gotSubs, tt.wantSubs)
+			}
 		})
 	}
 }
