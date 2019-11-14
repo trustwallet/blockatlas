@@ -60,14 +60,14 @@ func makeStakingDelegationsBatchRoute(router gin.IRouter) {
 }
 
 // @Description Get collection categories
-// @ID get_collection_categories
-// @Summary Get list of collections for a specific address
+// @ID collection_categories
+// @Summary Get list of collections from a specific coin and addresses
 // @Accept json
 // @Produce json
 // @Tags Collectibles
 // @Param data body string true "Payload" default({"60": ["0xb3624367b1ab37daef42e1a3a2ced012359659b0"]})
 // @Success 200 {object} blockatlas.DocsResponse
-// @Router /collectibles/categories [post]
+// @Router /v2/collectibles/categories [post]
 func makeCategoriesBatchRoute(router gin.IRouter) {
 	router.POST("/collectibles/categories", func(c *gin.Context) {
 		var reqs map[string][]string
@@ -82,9 +82,16 @@ func makeCategoriesBatchRoute(router gin.IRouter) {
 			if err != nil {
 				continue
 			}
-			p := platform.CollectionAPIs[uint(coinId)]
+			p, ok := platform.CollectionAPIs[uint(coinId)]
+			if !ok {
+				continue
+			}
+			b, ok := p.(blockatlas.CollectionAPI)
+			if !ok {
+				continue
+			}
 			for _, address := range addresses {
-				collections, err := p.GetCollections(address)
+				collections, err := b.GetCollections(address)
 				if err != nil {
 					continue
 				}

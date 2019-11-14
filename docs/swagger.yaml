@@ -887,6 +887,32 @@ paths:
       tags:
       - platform
       - tx
+  /v2/collectibles/categories:
+    post:
+      consumes:
+      - application/json
+      description: Get collection categories
+      operationId: collection_categories
+      parameters:
+      - default: '{"60": ["0xb3624367b1ab37daef42e1a3a2ced012359659b0"]}'
+        description: Payload
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/string'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/blockatlas.DocsResponse'
+            type: object
+      summary: Get list of collections from a specific coin and addresses
+      tags:
+      - Collectibles
   /v2/staking/delegations:
     post:
       consumes:
