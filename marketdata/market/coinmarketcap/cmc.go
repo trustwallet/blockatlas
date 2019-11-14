@@ -44,7 +44,7 @@ func normalizeTicker(price Data, provider string) (blockatlas.Ticker, error) {
 	if price.Platform != nil {
 		coinType = blockatlas.TypeToken
 		symbol = price.Platform.Symbol
-		tokenId = price.Symbol
+		tokenId = price.Platform.TokenAddress
 	}
 	return blockatlas.Ticker{
 		CoinName: symbol,
