@@ -1,9 +1,9 @@
 package cmc
 
 import (
+	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"math/big"
-	"reflect"
 	"testing"
 	"time"
 )
@@ -48,7 +48,8 @@ func Test_normalizeTickers(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if gotTickers := normalizeTickers(tt.args.prices, tt.args.provider); !reflect.DeepEqual(gotTickers, tt.wantTickers) {
+			gotTickers := normalizeTickers(tt.args.prices, tt.args.provider)
+			if !assert.ObjectsAreEqualValues(gotTickers, tt.wantTickers) {
 				t.Errorf("normalizeTickers() = %v, want %v", gotTickers, tt.wantTickers)
 			}
 		})
