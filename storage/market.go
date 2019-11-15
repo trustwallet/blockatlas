@@ -19,14 +19,14 @@ type MarketProviderList interface {
 func (s *Storage) SaveTicker(coin blockatlas.Ticker, pl MarketProviderList) error {
 	cd, err := s.GetTicker(coin.CoinName, coin.TokenId)
 	if err == nil {
-		if cd.LastUpdate.After(coin.LastUpdate) {
-			return errors.E("ticker is outdated")
-		}
-
 		op := pl.GetPriority(cd.Price.Provider)
 		np := pl.GetPriority(coin.Price.Provider)
 		if np > op {
 			return errors.E("ticker provider with less priority")
+		}
+
+		if cd.LastUpdate.After(coin.LastUpdate) && op >= np{
+			return errors.E("ticker is outdated")
 		}
 	}
 	hm := createHashMap(coin.CoinName, coin.TokenId)

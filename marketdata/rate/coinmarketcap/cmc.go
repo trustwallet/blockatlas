@@ -14,11 +14,12 @@ type Cmc struct {
 }
 
 func InitRate() rate.Provider {
+	update := viper.GetDuration("market.cmc_rate_update_seconds")
 	cmc := &Cmc{
 		Rate: rate.Rate{
 			Id:         "cmc",
 			Request:    blockatlas.InitClient(viper.GetString("market.cmc_api")),
-			UpdateTime: time.Second * 30,
+			UpdateTime: time.Second * update,
 		},
 	}
 	cmc.Headers["X-CMC_PRO_API_KEY"] = viper.GetString("market.cmc_api_key")

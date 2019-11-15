@@ -50,7 +50,7 @@ func scheduleTasks(storage storage.Market, md Provider, c *cron.Cron) {
 	t := md.GetUpdateTime().Seconds()
 	spec := fmt.Sprintf("@every %ds", uint64(t))
 	_, err = c.AddFunc(spec, func() {
-		processBackoff(storage, md)
+		go processBackoff(storage, md)
 	})
 	processBackoff(storage, md)
 	if err != nil {

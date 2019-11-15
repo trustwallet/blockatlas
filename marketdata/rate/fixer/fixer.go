@@ -15,11 +15,12 @@ type Fixer struct {
 }
 
 func InitRate() rate.Provider {
+	update := viper.GetDuration("market.fixes_rate_update_seconds")
 	return &Fixer{
 		Rate: rate.Rate{
 			Id:         "Fixer",
 			Request:    blockatlas.InitClient(viper.GetString("market.fixer_api")),
-			UpdateTime: time.Second * 30,
+			UpdateTime: time.Second * update,
 		},
 		APIKey: viper.GetString("market.fixer_key"),
 	}

@@ -15,13 +15,14 @@ type Market struct {
 }
 
 func InitMarket() market.Provider {
+	update := viper.GetDuration("market.cmc_quote_update_seconds")
 	m := &Market{
 		Market: market.Market{
 			Id:         "cmc",
 			Name:       "CoinMarketCap",
 			URL:        "https://coinmarketcap.com/",
 			Request:    blockatlas.InitClient(viper.GetString("market.cmc_api")),
-			UpdateTime: time.Second * 30,
+			UpdateTime: time.Second * update,
 		},
 	}
 	m.Headers["X-CMC_PRO_API_KEY"] = viper.GetString("market.cmc_api_key")
@@ -39,15 +40,18 @@ func (m *Market) GetData() (blockatlas.Tickers, error) {
 
 func normalizeTicker(price Data, provider string) (blockatlas.Ticker, error) {
 	tokenId := ""
-	symbol := price.Symbol
+	coinName := price.Symbol
 	coinType := blockatlas.TypeCoin
 	if price.Platform != nil {
 		coinType = blockatlas.TypeToken
-		symbol = price.Platform.Symbol
+		coinName = price.Platform.Symbol
 		tokenId = price.Platform.TokenAddress
+		if len(tokenId) == 0 {
+			tokenId = price.Symbol
+		}
 	}
 	return blockatlas.Ticker{
-		CoinName: symbol,
+		CoinName: coinName,
 		CoinType: coinType,
 		TokenId:  tokenId,
 		Price: blockatlas.TickerPrice{
