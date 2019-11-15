@@ -25,7 +25,10 @@ func Test_normalizeTickers(t *testing.T) {
 				{Coin: Coin{Symbol: "BTC"}, LastUpdated: time.Unix(111, 0), Quote: Quote{
 					USD: USD{Price: 223.55, PercentChange24h: 10}}},
 				{Coin: Coin{Symbol: "ETH"}, LastUpdated: time.Unix(333, 0), Quote: Quote{
-					USD: USD{Price: 11.11, PercentChange24h: 20}}}}},
+					USD: USD{Price: 11.11, PercentChange24h: 20}}},
+				{Coin: Coin{Symbol: "SWP"}, LastUpdated: time.Unix(444, 0), Quote: Quote{
+					USD: USD{Price: 463.22, PercentChange24h: -3}},
+					Platform: &Platform{Coin: Coin{Symbol: "ETH"}, TokenAddress: "0x8ce9137d39326ad0cd6491fb5cc0cba0e089b6a9"}}}},
 				provider: "cmc"},
 			blockatlas.Tickers{
 				blockatlas.Ticker{CoinName: "BTC", CoinType: blockatlas.TypeCoin, LastUpdate: time.Unix(111, 0),
@@ -40,6 +43,14 @@ func Test_normalizeTickers(t *testing.T) {
 					Price: blockatlas.TickerPrice{
 						Value:     big.NewFloat(11.11),
 						Change24h: big.NewFloat(20),
+						Currency:  "USD",
+						Provider:  "cmc",
+					},
+				},
+				blockatlas.Ticker{CoinName: "ETH", TokenId: "0x8ce9137d39326ad0cd6491fb5cc0cba0e089b6a9", CoinType: blockatlas.TypeToken, LastUpdate: time.Unix(444, 0),
+					Price: blockatlas.TickerPrice{
+						Value:     big.NewFloat(463.22),
+						Change24h: big.NewFloat(-3),
 						Currency:  "USD",
 						Provider:  "cmc",
 					},
