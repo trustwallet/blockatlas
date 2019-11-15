@@ -86,12 +86,8 @@ func makeCategoriesBatchRoute(router gin.IRouter) {
 			if !ok {
 				continue
 			}
-			b, ok := p.(blockatlas.CollectionAPI)
-			if !ok {
-				continue
-			}
 			for _, address := range addresses {
-				collections, err := b.GetCollections(address)
+				collections, err := p.GetCollections(address)
 				if err != nil {
 					continue
 				}
