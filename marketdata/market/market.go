@@ -15,14 +15,8 @@ const (
 type Market struct {
 	blockatlas.Request
 	Id         string
-	Name       string
-	URL        string
 	UpdateTime time.Duration
 	Storage    storage.Market
-}
-
-func (m *Market) GetName() string {
-	return m.Name
 }
 
 func (m *Market) GetId() string {
@@ -41,10 +35,6 @@ func (m *Market) Init(storage storage.Market) error {
 	logger.Info("Init Market Quote Provider", logger.Params{"market": m.GetId()})
 	if len(m.Id) == 0 {
 		return errors.E("Market Quote: Id cannot be empty")
-	}
-
-	if len(m.Name) == 0 {
-		return errors.E("Market Quote: Name cannot be empty")
 	}
 
 	if storage == nil {

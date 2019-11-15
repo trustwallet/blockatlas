@@ -19,8 +19,6 @@ func InitMarket() market.Provider {
 	m := &Market{
 		Market: market.Market{
 			Id:         "cmc",
-			Name:       "CoinMarketCap",
-			URL:        "https://coinmarketcap.com/",
 			Request:    blockatlas.InitClient(viper.GetString("market.cmc_api")),
 			UpdateTime: time.Second * update,
 		},

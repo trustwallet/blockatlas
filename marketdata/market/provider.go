@@ -8,7 +8,6 @@ import (
 
 type Provider interface {
 	Init(storage.Market) error
-	GetName() string
 	GetId() string
 	GetUpdateTime() time.Duration
 	GetData() (blockatlas.Tickers, error)
