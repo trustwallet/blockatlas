@@ -7,7 +7,6 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"math/big"
 	"net/url"
-	"time"
 )
 
 type Market struct {
@@ -15,12 +14,11 @@ type Market struct {
 }
 
 func InitMarket() market.Provider {
-	update := viper.GetDuration("market.cmc_quote_update_seconds")
 	m := &Market{
 		Market: market.Market{
 			Id:         "cmc",
 			Request:    blockatlas.InitClient(viper.GetString("market.cmc_api")),
-			UpdateTime: time.Second * update,
+			UpdateTime: viper.GetString("market.cmc_quote_update_time"),
 		},
 	}
 	m.Headers["X-CMC_PRO_API_KEY"] = viper.GetString("market.cmc_api_key")

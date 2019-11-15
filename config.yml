@@ -34,14 +34,14 @@ market:
   enabled: false
   auth: test
   dex_api: https://dex.binance.org/api
-  dex_quote_update_seconds: 240
+  dex_quote_update_time: 2m
   cmc_api: https://pro-api.coinmarketcap.com
   cmc_api_key:
-  cmc_quote_update_seconds: 360
-  cmc_rate_update_seconds: 360
+  cmc_quote_update_time: 5m
+  cmc_rate_update_time: 5m
   fixer_api: https://data.fixer.io/api
   fixer_key:
-  fixes_rate_update_seconds: 240
+  fixer_rate_update_time: 1h
 
 storage:
   redis: redis://localhost:6379

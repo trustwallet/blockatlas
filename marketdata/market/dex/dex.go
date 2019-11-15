@@ -20,12 +20,11 @@ type Market struct {
 }
 
 func InitMarket() market.Provider {
-	update := viper.GetDuration("market.dex_quote_update_seconds")
 	m := &Market{
 		Market: market.Market{
 			Id:         "dex",
 			Request:    blockatlas.InitClient(viper.GetString("market.dex_api")),
-			UpdateTime: time.Second * update,
+			UpdateTime: viper.GetString("market.dex_quote_update_time"),
 		},
 	}
 	return m
