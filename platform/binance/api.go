@@ -11,10 +11,6 @@ import (
 	"github.com/trustwallet/blockatlas/util"
 )
 
-const (
-	txTypeTransfer = "TRANSFER"
-)
-
 type Platform struct {
 	client    Client
 	dexClient DexClient
@@ -52,7 +48,7 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 	if err != nil {
 		return nil, err
 	}
-	txs := NormalizeTxs(srcTxs.Txs, txTypeTransfer, len(srcTxs.Txs))
+	txs := NormalizeTxs(srcTxs.Txs)
 	return &blockatlas.Block{
 		Number: num,
 		Txs:    txs,
@@ -69,11 +65,11 @@ func (p *Platform) GetTokenTxsByAddress(address string, token string) (blockatla
 	if err != nil {
 		return nil, err
 	}
-	return NormalizeTxs(filterTx(srcTxs.Txs, token, txTypeTransfer), txTypeTransfer, blockatlas.TxPerPage), nil
+	return NormalizeTxs(filterTx(srcTxs.Txs, token)), nil
 }
 
 // NormalizeTx converts a Binance transaction into the generic model
-func NormalizeTx(srcTx *Tx, txType string) (tx blockatlas.Tx, ok bool) {
+func NormalizeTx(srcTx *Tx) (tx blockatlas.Tx, ok bool) {
 	value := util.DecimalExp(string(srcTx.Value), 8)
 	fee := util.DecimalExp(string(srcTx.Fee), 8)
 
@@ -99,7 +95,7 @@ func NormalizeTx(srcTx *Tx, txType string) (tx blockatlas.Tx, ok bool) {
 	}
 
 	// Condition for native token transfer
-	if srcTx.Type == txType && srcTx.FromAddr != "" && srcTx.ToAddr != "" {
+	if srcTx.Type == TxTransfer && len(srcTx.FromAddr) > 0 && len(srcTx.ToAddr) > 0 {
 		tx.Meta = blockatlas.NativeTokenTransfer{
 			TokenID:  srcTx.Asset,
 			Symbol:   TokenSymbol(srcTx.Asset),
@@ -108,16 +104,39 @@ func NormalizeTx(srcTx *Tx, txType string) (tx blockatlas.Tx, ok bool) {
 			From:     srcTx.FromAddr,
 			To:       srcTx.ToAddr,
 		}
-
 		return tx, true
 	}
 
+	// Condition for create and cancel orders
+	var txType blockatlas.KeyType = ""
+	title := ""
+	if srcTx.Type == TxNewOrder {
+		txType = blockatlas.KeyPlaceOrder
+		title = "Place Order"
+	}
+	if srcTx.Type == TxCancelOrder {
+		txType = blockatlas.KeyCancelOrder
+		title = "Cancel Order"
+	}
+	if len(txType) > 0 && len(srcTx.FromAddr) > 0 {
+		tx.Meta = blockatlas.AnyAction{
+			Coin:     coin.BNB,
+			TokenID:  srcTx.Asset,
+			Symbol:   TokenSymbol(srcTx.Asset),
+			Value:    blockatlas.Amount(value),
+			Decimals: coin.Coins[coin.BNB].Decimals,
+			Title:    title,
+			Key:      txType,
+			Data:     srcTx.Data,
+		}
+		return tx, true
+	}
 	return tx, false
 }
 
-func filterTx(src []Tx, token string, txType string) []Tx {
+func filterTx(src []Tx, token string) []Tx {
 	return funk.Filter(src, func(tx Tx) bool {
-		return tx.Asset == token && tx.Type == txType
+		return tx.Asset == token && tx.Type == TxTransfer
 	}).([]Tx)
 }
 
@@ -130,10 +149,10 @@ func TokenSymbol(asset string) string {
 }
 
 // NormalizeTxs converts multiple Binance transactions
-func NormalizeTxs(srcTxs []Tx, txType string, pageSize int) (txs []blockatlas.Tx) {
+func NormalizeTxs(srcTxs []Tx) (txs []blockatlas.Tx) {
 	for _, srcTx := range srcTxs {
-		tx, ok := NormalizeTx(&srcTx, txType)
-		if !ok || len(txs) >= pageSize {
+		tx, ok := NormalizeTx(&srcTx)
+		if !ok {
 			continue
 		}
 		txs = append(txs, tx)

@@ -4,6 +4,7 @@ type Direction string
 type Status string
 type TokenType string
 type TransactionType string
+type KeyType string
 
 // Types of transaction statuses
 const (
@@ -26,23 +27,20 @@ const (
 	TxTokenSwap           TransactionType = "token_swap"
 	TxContractCall        TransactionType = "contract_call"
 	TxAnyAction           TransactionType = "any_action"
+
+	KeyPlaceOrder    KeyType = "place_order"
+	KeyCancelOrder   KeyType = "cancel_order"
+	KeyIssueToken    KeyType = "issue_token"
+	KeyBurnToken     KeyType = "burn_token"
+	KeyMintToken     KeyType = "mint_token"
+	KeyApproveToken  KeyType = "approve_token"
+	KeyStakeDelegate KeyType = "stake_delegate"
 )
 
 // Titles of AnyAction meta
 const (
 	AnyActionDelegation   = "Delegation"
 	AnyActionUndelegation = "Undelegation"
-)
-
-// Keys of AnyAction meta
-const (
-	KeyPlaceOrder    = "place_order"
-	KeyCancelOrder   = "cancel_order"
-	KeyIssueToken    = "issue_token"
-	KeyBurnToken     = "burn_token"
-	KeyMintToken     = "mint_token"
-	KeyApproveToken  = "approve_token"
-	KeyStakeDelegate = "stake_delegate"
 )
 
 // TxPerPage says how many transactions to return per page
@@ -149,14 +147,15 @@ type ContractCall struct {
 
 // AnyAction describes all other types
 type AnyAction struct {
-	Coin     uint   `json:"coin"`
-	Title    string `json:"title"`
-	Key      string `json:"key"`
-	TokenID  string `json:"token_id"`
-	Name     string `json:"name"`
-	Symbol   string `json:"symbol"`
-	Decimals uint   `json:"decimals"`
-	Value    Amount `json:"value"`
+	Coin     uint        `json:"coin"`
+	Title    string      `json:"title"`
+	Key      KeyType     `json:"key"`
+	TokenID  string      `json:"token_id,omitempty"`
+	Name     string      `json:"name,omitempty"`
+	Symbol   string      `json:"symbol,omitempty"`
+	Decimals uint        `json:"decimals"`
+	Value    Amount      `json:"value"`
+	Data     interface{} `json:"data,omitempty"`
 }
 
 // TokenPage is a page of transactions.

@@ -115,7 +115,7 @@ func testNormalizeTx(t *testing.T, _test *test) {
 		return
 	}
 
-	tx, ok := NormalizeTx(&srcTx, txTypeTransfer)
+	tx, ok := NormalizeTx(&srcTx)
 	if !ok {
 		t.Errorf("transfer: tx could not be normalized")
 	}
