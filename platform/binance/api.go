@@ -84,29 +84,6 @@ func NormalizeTx(srcTx *Tx) (tx blockatlas.Tx, ok bool) {
 		Memo:  srcTx.Memo,
 	}
 
-	// Condition for native transfer (BNB)
-	if srcTx.Asset == coin.Coins[coin.BNB].Symbol {
-		tx.Meta = blockatlas.Transfer{
-			Value:    blockatlas.Amount(value),
-			Symbol:   coin.Coins[coin.BNB].Symbol,
-			Decimals: coin.Coins[coin.BNB].Decimals,
-		}
-		return tx, true
-	}
-
-	// Condition for native token transfer
-	if srcTx.Type == TxTransfer && len(srcTx.FromAddr) > 0 && len(srcTx.ToAddr) > 0 {
-		tx.Meta = blockatlas.NativeTokenTransfer{
-			TokenID:  srcTx.Asset,
-			Symbol:   TokenSymbol(srcTx.Asset),
-			Value:    blockatlas.Amount(value),
-			Decimals: coin.Coins[coin.BNB].Decimals,
-			From:     srcTx.FromAddr,
-			To:       srcTx.ToAddr,
-		}
-		return tx, true
-	}
-
 	// Condition for create and cancel orders
 	var txType blockatlas.KeyType = ""
 	title := ""
@@ -128,6 +105,29 @@ func NormalizeTx(srcTx *Tx) (tx blockatlas.Tx, ok bool) {
 			Title:    title,
 			Key:      txType,
 			Data:     srcTx.Data,
+		}
+		return tx, true
+	}
+
+	// Condition for native transfer (BNB)
+	if srcTx.Asset == coin.Coins[coin.BNB].Symbol {
+		tx.Meta = blockatlas.Transfer{
+			Value:    blockatlas.Amount(value),
+			Symbol:   coin.Coins[coin.BNB].Symbol,
+			Decimals: coin.Coins[coin.BNB].Decimals,
+		}
+		return tx, true
+	}
+
+	// Condition for native token transfer
+	if srcTx.Type == TxTransfer && len(srcTx.FromAddr) > 0 && len(srcTx.ToAddr) > 0 {
+		tx.Meta = blockatlas.NativeTokenTransfer{
+			TokenID:  srcTx.Asset,
+			Symbol:   TokenSymbol(srcTx.Asset),
+			Value:    blockatlas.Amount(value),
+			Decimals: coin.Coins[coin.BNB].Decimals,
+			From:     srcTx.FromAddr,
+			To:       srcTx.ToAddr,
 		}
 		return tx, true
 	}
