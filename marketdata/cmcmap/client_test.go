@@ -8,17 +8,17 @@ import (
 func TestCmcMapping_getMap(t *testing.T) {
 	tests := []struct {
 		name  string
-		c     CmcMapping
-		wantM map[int]CoinMap
+		c     CmcSlice
+		wantM CmcMapping
 	}{
 		{
 			"parse mapping 1",
-			CmcMapping{{Coin: 3}, {Coin: 10}, {Coin: 44}},
-			map[int]CoinMap{3: {Coin: 3}, 10: {Coin: 10}, 44: {Coin: 44}}},
+			CmcSlice{{Coin: 3}, {Coin: 10}, {Coin: 44}},
+			map[uint]CoinMap{3: {Coin: 3}, 10: {Coin: 10}, 44: {Coin: 44}}},
 		{
 			"parse mapping 2",
-			CmcMapping{{Coin: 3}, {Coin: 10}},
-			map[int]CoinMap{3: {Coin: 3}, 10: {Coin: 10}}},
+			CmcSlice{{Coin: 3}, {Coin: 10}},
+			map[uint]CoinMap{3: {Coin: 3}, 10: {Coin: 10}}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

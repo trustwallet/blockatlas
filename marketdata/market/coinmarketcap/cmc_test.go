@@ -2,6 +2,7 @@ package cmc
 
 import (
 	"github.com/stretchr/testify/assert"
+	"github.com/trustwallet/blockatlas/marketdata/cmcmap"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"math/big"
 	"sort"
@@ -60,7 +61,7 @@ func Test_normalizeTickers(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotTickers := normalizeTickers(tt.args.prices, tt.args.provider)
+			gotTickers := normalizeTickers(tt.args.prices, tt.args.provider, cmcmap.CmcMapping{})
 			sort.SliceStable(gotTickers, func(i, j int) bool {
 				return gotTickers[i].LastUpdate.Unix() < gotTickers[j].LastUpdate.Unix()
 			})

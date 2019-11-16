@@ -7,17 +7,17 @@ import (
 )
 
 type CoinMap struct {
-	Coin    int    `json:"coin"`
+	Coin    uint   `json:"coin"`
 	Type    string `json:"type"`
 	TokenId string `json:"token_id"`
-	Id      int    `json:"id"`
+	Id      uint   `json:"id"`
 }
 
 type CmcSlice []CoinMap
-type CmcMapping map[int]CoinMap
+type CmcMapping map[uint]CoinMap
 
 func (c *CmcSlice) getMap() (m CmcMapping) {
-	m = make(map[int]CoinMap)
+	m = make(map[uint]CoinMap)
 	for _, cm := range *c {
 		m[cm.Coin] = cm
 	}
