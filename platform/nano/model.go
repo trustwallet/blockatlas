@@ -1,11 +1,11 @@
 package nano
 
 const (
-	BlockTypeSend    = "send"
-	BlockTypeReceive = "receive"
+	BlockTypeSend    BlockType = "send"
+	BlockTypeReceive BlockType = "receive"
 )
 
-type BLockType string
+type BlockType string
 
 type AccountHistoryRequest struct {
 	Action  string `json:"action"`
@@ -15,12 +15,12 @@ type AccountHistoryRequest struct {
 }
 
 type AccountHistory struct {
-	Account string        `json:"account"`
-	History []Transaction `json:"history"`
+	Account string      `json:"account"`
+	History interface{} `json:"history"`
 }
 
 type Transaction struct {
-	Type           BLockType `json:"type"`
+	Type           BlockType `json:"type"`
 	Account        string    `json:"account"`
 	Amount         string    `json:"amount"`
 	LocalTimestamp string    `json:"local_timestamp"`
