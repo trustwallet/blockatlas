@@ -5,21 +5,20 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/storage"
-	"time"
 )
 
 const (
-	defaultUpdateTime = time.Second * 20
+	defaultUpdateTime = "5m"
 )
 
 type Rate struct {
 	blockatlas.Request
 	Id         string
-	UpdateTime time.Duration
+	UpdateTime string
 	Storage    storage.Market
 }
 
-func (r *Rate) GetUpdateTime() time.Duration {
+func (r *Rate) GetUpdateTime() string {
 	return r.UpdateTime
 }
 
@@ -42,7 +41,7 @@ func (r *Rate) Init(storage storage.Market) error {
 	}
 	r.Storage = storage
 
-	if r.UpdateTime == 0 {
+	if len(r.UpdateTime) == 0 {
 		r.UpdateTime = defaultUpdateTime
 	}
 	return nil

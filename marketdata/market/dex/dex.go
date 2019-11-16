@@ -23,10 +23,8 @@ func InitMarket() market.Provider {
 	m := &Market{
 		Market: market.Market{
 			Id:         "dex",
-			Name:       "Binance Dex",
-			URL:        "https://www.binance.org/",
 			Request:    blockatlas.InitClient(viper.GetString("market.dex_api")),
-			UpdateTime: time.Second * 30,
+			UpdateTime: viper.GetString("market.dex_quote_update_time"),
 		},
 	}
 	return m

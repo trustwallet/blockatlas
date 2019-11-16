@@ -5,24 +5,17 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/storage"
-	"time"
 )
 
 const (
-	defaultUpdateTime = time.Second * 20
+	defaultUpdateTime = "5m"
 )
 
 type Market struct {
 	blockatlas.Request
 	Id         string
-	Name       string
-	URL        string
-	UpdateTime time.Duration
+	UpdateTime string
 	Storage    storage.Market
-}
-
-func (m *Market) GetName() string {
-	return m.Name
 }
 
 func (m *Market) GetId() string {
@@ -33,7 +26,7 @@ func (m *Market) GetLogType() string {
 	return "market-data"
 }
 
-func (m *Market) GetUpdateTime() time.Duration {
+func (m *Market) GetUpdateTime() string {
 	return m.UpdateTime
 }
 
@@ -43,16 +36,12 @@ func (m *Market) Init(storage storage.Market) error {
 		return errors.E("Market Quote: Id cannot be empty")
 	}
 
-	if len(m.Name) == 0 {
-		return errors.E("Market Quote: Name cannot be empty")
-	}
-
 	if storage == nil {
 		return errors.E("Market Quote: Storage cannot be nil")
 	}
 	m.Storage = storage
 
-	if m.UpdateTime == 0 {
+	if len(m.UpdateTime) == 0 {
 		m.UpdateTime = defaultUpdateTime
 	}
 	return nil

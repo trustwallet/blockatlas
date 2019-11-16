@@ -6,7 +6,6 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"math/big"
 	"net/url"
-	"time"
 )
 
 type Cmc struct {
@@ -18,7 +17,7 @@ func InitRate() rate.Provider {
 		Rate: rate.Rate{
 			Id:         "cmc",
 			Request:    blockatlas.InitClient(viper.GetString("market.cmc_api")),
-			UpdateTime: time.Second * 30,
+			UpdateTime: viper.GetString("market.cmc_rate_update_time"),
 		},
 	}
 	cmc.Headers["X-CMC_PRO_API_KEY"] = viper.GetString("market.cmc_api_key")

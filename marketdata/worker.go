@@ -20,7 +20,7 @@ type Provider interface {
 	Init(storage.Market) error
 	GetId() string
 	GetLogType() string
-	GetUpdateTime() time.Duration
+	GetUpdateTime() string
 }
 
 // processBackoff make a exponential backoff for market run
@@ -47,10 +47,10 @@ func scheduleTasks(storage storage.Market, md Provider, c *cron.Cron) {
 		logger.Error(err, "Init Market Error", logger.Params{"Type": md.GetLogType(), "Market": md.GetId()})
 		return
 	}
-	t := md.GetUpdateTime().Seconds()
-	spec := fmt.Sprintf("@every %ds", uint64(t))
+	t := md.GetUpdateTime()
+	spec := fmt.Sprintf("@every %s", t)
 	_, err = c.AddFunc(spec, func() {
-		processBackoff(storage, md)
+		go processBackoff(storage, md)
 	})
 	processBackoff(storage, md)
 	if err != nil {

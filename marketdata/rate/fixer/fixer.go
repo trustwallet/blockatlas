@@ -6,7 +6,6 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"math/big"
 	"net/url"
-	"time"
 )
 
 type Fixer struct {
@@ -19,7 +18,7 @@ func InitRate() rate.Provider {
 		Rate: rate.Rate{
 			Id:         "Fixer",
 			Request:    blockatlas.InitClient(viper.GetString("market.fixer_api")),
-			UpdateTime: time.Second * 30,
+			UpdateTime: viper.GetString("market.fixer_rate_update_time"),
 		},
 		APIKey: viper.GetString("market.fixer_key"),
 	}
