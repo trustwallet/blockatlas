@@ -6,10 +6,6 @@ type ValidatorPage []Validator
 type DelegationsPage []Delegation
 type DelegationsBatchPage []DelegationsBatch
 
-type DocsResponse struct {
-	Docs interface{} `json:"docs"`
-}
-
 type DelegationStatus string
 type DelegationType string
 
