@@ -2,6 +2,7 @@ package api
 
 import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/errors"
 )
 
 func getDelegationResponse(p blockatlas.StakeAPI, address string) (response blockatlas.DelegationResponse) {
@@ -13,7 +14,7 @@ func getDelegationResponse(p blockatlas.StakeAPI, address string) (response bloc
 	balance, err := p.UndelegatedBalance(address)
 
 	if err != nil {
-		response.Error = err.Error()
+		response.Error = errors.E(err, "Unable to fetch delegations list from the registry").Error()
 	} else {
 		response.Delegations = delegations
 		response.Details = p.GetDetails()
