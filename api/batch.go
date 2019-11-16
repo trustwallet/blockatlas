@@ -94,6 +94,6 @@ func makeCategoriesBatchRoute(router gin.IRouter) {
 				batch = append(batch, collections...)
 			}
 		}
-		ginutils.RenderSuccess(c, blockatlas.DocsResponse{Docs: batch})
+		ginutils.RenderSuccess(c, batch)
 	})
 }
