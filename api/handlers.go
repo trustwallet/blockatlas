@@ -143,14 +143,8 @@ func makeStakingDelegationsRoute(router gin.IRouter, api blockatlas.Platform) {
 	}
 
 	router.GET("/staking/delegations/:address", func(c *gin.Context) {
-		delegations, err := stakingAPI.GetDelegations(c.Param("address"))
-		if err != nil {
-			errMsg := "Unable to fetch delegations list from the registry"
-			logger.Error(err, errMsg)
-			ginutils.ErrorResponse(c).Message(err.Error()).Render()
-			return
-		}
-		ginutils.RenderSuccess(c, blockatlas.DocsResponse{Docs: delegations})
+		response := getDelegationResponse(stakingAPI, c.Param("address"))
+		ginutils.RenderSuccess(c, response)
 	})
 }
 
