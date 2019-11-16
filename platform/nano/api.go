@@ -27,7 +27,7 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 	history, err := p.client.GetAccountHistory(address)
 
 	if err != nil {
-		return nil, err
+		return normalized, nil
 	}
 
 	for _, srcTx := range history.History {
