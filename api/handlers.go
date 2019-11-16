@@ -131,7 +131,7 @@ func makeStakingValidatorsRoute(router gin.IRouter, api blockatlas.Platform) {
 // @Tags platform,staking
 // @Param coin path string true "the coin name" default(tron)
 // @Param address path string true "the query address" default(TPJYCz8ppZNyvw7pTwmjajcx4Kk1MmEUhD)
-// @Success 200 {object} blockatlas.DocsResponse
+// @Success 200 {object} blockatlas.DelegationResponse
 // @Failure 500 {object} ginutils.ApiError
 // @Router /v2/{coin}/staking/delegations/{address} [get]
 func makeStakingDelegationsRoute(router gin.IRouter, api blockatlas.Platform) {

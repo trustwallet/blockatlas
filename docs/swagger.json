@@ -1,14 +1,9 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "{{.Description}}",
-        "title": "{{.Title}}",
         "contact": {},
-        "license": {},
-        "version": "{{.Version}}"
+        "license": {}
     },
-    "host": "{{.Host}}",
-    "basePath": "{{.BasePath}}",
     "paths": {
         "/market/v1/ticker": {
             "get": {
@@ -50,7 +45,6 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/blockatlas.Ticker"
                         }
                     }
@@ -87,7 +81,6 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/blockatlas.Tickers"
                         }
                     }
@@ -133,14 +126,12 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/blockatlas.Resolved"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/ginutils.ApiError"
                         }
                     }
@@ -176,7 +167,6 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/api.CoinStatus"
                         }
                     }
@@ -222,7 +212,6 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/api.ObserverResponse"
                         }
                     }
@@ -266,7 +255,6 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/api.ObserverResponse"
                         }
                     }
@@ -310,7 +298,6 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/blockatlas.TxPage"
                         }
                     }
@@ -354,7 +341,6 @@
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/ginutils.ApiError"
                         }
                     }
@@ -383,8 +369,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "object",
-                            "$ref": "#/definitions/string"
+                            "type": "string"
                         }
                     }
                 ],
@@ -392,7 +377,6 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/blockatlas.DocsResponse"
                         }
                     }
@@ -430,7 +414,6 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/blockatlas.DelegationsBatchPage"
                         }
                     }
@@ -474,14 +457,12 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/blockatlas.CollectionPage"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/ginutils.ApiError"
                         }
                     }
@@ -533,14 +514,12 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/blockatlas.CollectionPage"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/ginutils.ApiError"
                         }
                     }
@@ -584,14 +563,12 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
-                            "$ref": "#/definitions/blockatlas.DocsResponse"
+                            "$ref": "#/definitions/blockatlas.DelegationResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/ginutils.ApiError"
                         }
                     }
@@ -627,14 +604,12 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/blockatlas.DocsResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/ginutils.ApiError"
                         }
                     }
@@ -678,14 +653,12 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/blockatlas.CollectionPage"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/ginutils.ApiError"
                         }
                     }
@@ -729,14 +702,12 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/blockatlas.TxPage"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/ginutils.ApiError"
                         }
                     }
@@ -940,7 +911,7 @@
                 }
             }
         },
-        "blockatlas.DelegationsBatch": {
+        "blockatlas.DelegationResponse": {
             "type": "object",
             "properties": {
                 "address": {
