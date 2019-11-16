@@ -2,6 +2,7 @@ package cmc
 
 import (
 	"github.com/spf13/viper"
+	"github.com/trustwallet/blockatlas/marketdata/cmcmap"
 	"github.com/trustwallet/blockatlas/marketdata/market"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
@@ -26,15 +27,19 @@ func InitMarket() market.Provider {
 }
 
 func (m *Market) GetData() (blockatlas.Tickers, error) {
-	var prices CoinPrices
-	err := m.Get(&prices, "v1/cryptocurrency/listings/latest", url.Values{"limit": {"5000"}, "convert": {"USD"}})
+	cmap, err := cmcmap.GetCmcMap()
 	if err != nil {
 		return nil, err
 	}
-	return normalizeTickers(prices, m.GetId()), nil
+	var prices CoinPrices
+	err = m.Get(&prices, "v1/cryptocurrency/listings/latest", url.Values{"limit": {"5000"}, "convert": {"USD"}})
+	if err != nil {
+		return nil, err
+	}
+	return normalizeTickers(prices, m.GetId(), cmap), nil
 }
 
-func normalizeTicker(price Data, provider string) (blockatlas.Ticker, error) {
+func normalizeTicker(price Data, provider string, cmap cmcmap.CmcMapping) (blockatlas.Ticker, error) {
 	tokenId := ""
 	coinName := price.Symbol
 	coinType := blockatlas.TypeCoin
@@ -45,6 +50,10 @@ func normalizeTicker(price Data, provider string) (blockatlas.Ticker, error) {
 		if len(tokenId) == 0 {
 			tokenId = price.Symbol
 		}
+	}
+	cmcCoin, ok := cmap[price.Id]
+	if ok {
+		//symbol
 	}
 	return blockatlas.Ticker{
 		CoinName: coinName,
@@ -60,9 +69,9 @@ func normalizeTicker(price Data, provider string) (blockatlas.Ticker, error) {
 	}, nil
 }
 
-func normalizeTickers(prices CoinPrices, provider string) (tickers blockatlas.Tickers) {
+func normalizeTickers(prices CoinPrices, provider string, cmap cmcmap.CmcMapping) (tickers blockatlas.Tickers) {
 	for _, price := range prices.Data {
-		t, err := normalizeTicker(price, provider)
+		t, err := normalizeTicker(price, provider, cmap)
 		if err != nil {
 			logger.Error(err)
 			continue
