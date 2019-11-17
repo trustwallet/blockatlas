@@ -2,7 +2,6 @@ package cmc
 
 import (
 	"github.com/spf13/viper"
-	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/marketdata/cmcmap"
 	"github.com/trustwallet/blockatlas/marketdata/market"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
@@ -52,13 +51,10 @@ func normalizeTicker(price Data, provider string, cmap cmcmap.CmcMapping) (block
 			tokenId = price.Symbol
 		}
 	}
-	cmcCoin, ok := cmap[price.Id]
-	if ok {
-		cCoin, ok := coin.Coins[cmcCoin.Coin]
-		if ok {
-			tokenId = cmcCoin.TokenId
-			coinName = cCoin.Symbol
-		}
+	cmcCoin, cmcTokenId, err := cmap.GetCoin(price.Id)
+	if err == nil {
+		coinName = cmcCoin.Symbol
+		tokenId = cmcTokenId
 	}
 	return blockatlas.Ticker{
 		CoinName: coinName,

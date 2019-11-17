@@ -2,7 +2,6 @@ package cmc
 
 import (
 	"github.com/spf13/viper"
-	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/marketdata/cmcmap"
 	"github.com/trustwallet/blockatlas/marketdata/rate"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
@@ -46,12 +45,9 @@ func normalizeRates(prices CoinPrices, cmap cmcmap.CmcMapping) (rates blockatlas
 			continue
 		}
 		currency := price.Symbol
-		cmcCoin, ok := cmap[price.Id]
-		if ok {
-			cCoin, ok := coin.Coins[cmcCoin.Coin]
-			if ok && len(cCoin.Symbol) > 0 {
-				currency = cCoin.Symbol
-			}
+		cmcCoin, _, err := cmap.GetCoin(price.Id)
+		if err == nil {
+			currency = cmcCoin.Symbol
 		}
 		rate := new(big.Float).Quo(big.NewFloat(1), big.NewFloat(price.Quote.USD.Price))
 		rates = append(rates, blockatlas.Rate{

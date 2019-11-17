@@ -35,7 +35,7 @@ market:
   auth: test
   dex_api: https://dex.binance.org/api
   dex_quote_update_time: 2m
-  cmc_map_url: https://github.com/trustwallet/assets/blob/master/pricing/coinmarketcap/mapping.json
+  cmc_map_url: https://raw.githubusercontent.com/trustwallet/assets/master/pricing/coinmarketcap
   cmc_api: https://pro-api.coinmarketcap.com
   cmc_api_key:
   cmc_quote_update_time: 5m
