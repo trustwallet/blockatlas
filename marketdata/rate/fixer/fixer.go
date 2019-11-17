@@ -16,7 +16,7 @@ type Fixer struct {
 func InitRate() rate.Provider {
 	return &Fixer{
 		Rate: rate.Rate{
-			Id:         "Fixer",
+			Id:         "fixer",
 			Request:    blockatlas.InitClient(viper.GetString("market.fixer_api")),
 			UpdateTime: viper.GetString("market.fixer_rate_update_time"),
 		},

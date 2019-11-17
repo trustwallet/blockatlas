@@ -26,14 +26,14 @@ func addRates(storage storage.Market, rates []rate.Provider) {
 	c.Start()
 }
 
-func runRate(storage storage.Market, r rate.Provider) error {
-	rates, err := r.FetchLatestRates()
+func runRate(storage storage.Market, p rate.Provider) error {
+	rates, err := p.FetchLatestRates()
 	if err != nil {
 		return errors.E(err, "FetchLatestRates")
 	}
 	if len(rates) > 0 {
 		storage.SaveRates(rates)
-		logger.Info("Market rates", logger.Params{"rates": len(rates)})
+		logger.Info("Market rates", logger.Params{"rates": len(rates), "provider": p.GetId()})
 	}
 	return nil
 }
