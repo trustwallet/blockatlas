@@ -32,7 +32,6 @@ observer:
 # The market watcher
 market:
   enabled: false
-  auth: test
   dex:
     quote_update_time: 2m
     api: https://dex.binance.org/api
