@@ -33,16 +33,19 @@ observer:
 market:
   enabled: false
   auth: test
-  dex_api: https://dex.binance.org/api
-  dex_quote_update_time: 2m
-  cmc_map_url: https://raw.githubusercontent.com/trustwallet/assets/master/pricing/coinmarketcap
-  cmc_api: https://pro-api.coinmarketcap.com
-  cmc_api_key:
-  cmc_quote_update_time: 5m
-  cmc_rate_update_time: 5m
-  fixer_api: https://data.fixer.io/api
-  fixer_key:
-  fixer_rate_update_time: 1h
+  dex:
+    quote_update_time: 2m
+    api: https://dex.binance.org/api
+  cmc:
+    rate_update_time: 5m
+    quote_update_time: 5m
+    api: https://pro-api.coinmarketcap.com
+    api_key: 
+    map_url: https://raw.githubusercontent.com/trustwallet/assets/master/pricing/coinmarketcap
+  fixer:
+    rate_update_time: 1h
+    api: https://data.fixer.io/api
+    api_key:
 
 storage:
   redis: redis://localhost:6379

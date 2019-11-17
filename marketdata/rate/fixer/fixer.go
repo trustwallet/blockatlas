@@ -17,10 +17,10 @@ func InitRate() rate.Provider {
 	return &Fixer{
 		Rate: rate.Rate{
 			Id:         "fixer",
-			Request:    blockatlas.InitClient(viper.GetString("market.fixer_api")),
-			UpdateTime: viper.GetString("market.fixer_rate_update_time"),
+			Request:    blockatlas.InitClient(viper.GetString("market.fixer.api")),
+			UpdateTime: viper.GetString("market.fixer.rate_update_time"),
 		},
-		APIKey: viper.GetString("market.fixer_key"),
+		APIKey: viper.GetString("market.fixer.api_key"),
 	}
 }
 

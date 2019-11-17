@@ -40,7 +40,7 @@ func (cm CmcMapping) GetCoin(coinId uint) (coin.Coin, string, error) {
 func GetCmcMap() (CmcMapping, error) {
 	var results CmcSlice
 	request := blockatlas.Request{
-		BaseUrl:      viper.GetString("market.cmc_map_url"),
+		BaseUrl:      viper.GetString("market.cmc.map_url"),
 		HttpClient:   blockatlas.DefaultClient,
 		ErrorHandler: blockatlas.DefaultErrorHandler,
 	}

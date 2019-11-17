@@ -23,8 +23,8 @@ func InitMarket() market.Provider {
 	m := &Market{
 		Market: market.Market{
 			Id:         "dex",
-			Request:    blockatlas.InitClient(viper.GetString("market.dex_api")),
-			UpdateTime: viper.GetString("market.dex_quote_update_time"),
+			Request:    blockatlas.InitClient(viper.GetString("market.dex.api")),
+			UpdateTime: viper.GetString("market.dex.quote_update_time"),
 		},
 	}
 	return m
