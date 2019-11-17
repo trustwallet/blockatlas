@@ -18,41 +18,30 @@ func (p *Platform) Lookup(coin uint64, name string) (blockatlas.Resolved, error)
 		return result, errors.E(err, "can't dial to ethereum rpc")
 	}
 	defer client.Close()
-	// try to get multi coin address
-	ensName, err := ens.NewName(client, name)
-	if err != nil {
-		if coin == CoinType.ETH {
-			// https://github.com/wealdtech/go-ens#management-of-subdomains
-			// subdomains have their own registrars they do not work with the Name interface.
-			return lookupLegacyETH(client, name)
-		}
-		return result, errors.E(err, "query ens failed")
-	}
-
-	address, err := ensName.Address(coin)
-	if err != nil {
-		if coin == CoinType.ETH {
-			// user may not set multi coin address
-			return lookupLegacyETH(client, ensName.Name)
-		}
-		return result, err
-	}
-
-	encoded, err := cc.ToString(address, uint32(coin))
-	result.Result = encoded
-	if err != nil {
-		return result, errors.E(err, "encode to address failed")
-	}
-	return result, nil
-}
-
-func lookupLegacyETH(client *ethclient.Client, name string) (blockatlas.Resolved, error) {
-	result := blockatlas.Resolved{
-		Coin: CoinType.ETH,
-	}
 	resolver, err := ens.NewResolver(client, name)
 	if err != nil {
 		return result, errors.E(err, "new ens resolver failed")
+	}
+	// try to get multi coin address
+	address, err := resolver.MultiAddress(coin)
+	if err != nil {
+		if coin == CoinType.ETH {
+			// user may not set multi coin address
+			return lookupLegacyETH(resolver, name)
+		}
+		return result, errors.E(err, "query multi coin address failed")
+	}
+	encoded, err := cc.ToString(address, uint32(coin))
+	if err != nil {
+		return result, errors.E(err, "encode to address failed")
+	}
+	result.Result = encoded
+	return result, nil
+}
+
+func lookupLegacyETH(resolver *ens.Resolver, name string) (blockatlas.Resolved, error) {
+	result := blockatlas.Resolved{
+		Coin: CoinType.ETH,
 	}
 	address, err := resolver.Address()
 	if err != nil {
