@@ -27,6 +27,13 @@ type Ticker struct {
 	Error      string      `json:"error,omitempty"`
 }
 
+func (t *Ticker) SetCoinId(coinId uint) {
+	t.Coin = coinId
+	t.CoinName = ""
+	t.Price.Provider = ""
+	t.Price.Currency = ""
+}
+
 type TickerPrice struct {
 	Value     *big.Float `json:"value,omitempty"`
 	Change24h *big.Float `json:"change_24h,omitempty"`

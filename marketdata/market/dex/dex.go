@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	quoteAsset = "BNB"
+	BNBAsset = "BNB"
 )
 
 type Market struct {
@@ -36,9 +36,9 @@ func (m *Market) GetData() (blockatlas.Tickers, error) {
 	if err != nil {
 		return nil, err
 	}
-	rate, err := m.Storage.GetRate(quoteAsset)
+	rate, err := m.Storage.GetRate(BNBAsset)
 	if err != nil {
-		return nil, errors.E(err, "rate not found", errors.Params{"asset": quoteAsset})
+		return nil, errors.E(err, "rate not found", errors.Params{"asset": BNBAsset})
 	}
 	result := normalizeTickers(prices, m.GetId())
 	result.ApplyRate(rate.Rate.Quo(big.NewFloat(1), rate.Rate), "USD")
@@ -46,8 +46,8 @@ func (m *Market) GetData() (blockatlas.Tickers, error) {
 }
 
 func normalizeTicker(price CoinPrice, provider string) (blockatlas.Ticker, error) {
-	if price.QuoteAssetName != quoteAsset {
-		return blockatlas.Ticker{}, errors.E("invalid quote asset",
+	if price.QuoteAssetName != BNBAsset && price.BaseAssetName != BNBAsset {
+		return blockatlas.Ticker{}, errors.E("invalid quote/base asset",
 			errors.Params{"Symbol": price.BaseAssetName, "QuoteAsset": price.QuoteAssetName})
 	}
 	value, err := strconv.ParseFloat(price.LastPrice, 64)
@@ -60,10 +60,15 @@ func normalizeTicker(price CoinPrice, provider string) (blockatlas.Ticker, error
 		return blockatlas.Ticker{}, errors.E(err, "normalizeTicker parse value24h error",
 			errors.Params{"PriceChange": price.PriceChangePercent, "Symbol": price.BaseAssetName})
 	}
+	tokenId := price.BaseAssetName
+	if tokenId == BNBAsset {
+		tokenId = price.QuoteAssetName
+		value = 1.0 / value
+	}
 	return blockatlas.Ticker{
-		CoinName: price.QuoteAssetName,
+		CoinName: BNBAsset,
 		CoinType: blockatlas.TypeToken,
-		TokenId:  price.BaseAssetName,
+		TokenId:  tokenId,
 		Price: blockatlas.TickerPrice{
 			Value:     big.NewFloat(value),
 			Change24h: big.NewFloat(value24h),
