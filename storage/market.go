@@ -8,8 +8,8 @@ import (
 )
 
 const (
-	EntityRates  = "currencies_rates"
-	EntityMarket = "market"
+	EntityRates  = "ATLAS_MARKET_RATES"
+	EntityQuotes = "ATLAS_MARKET_QUOTES"
 )
 
 type MarketProviderList interface {
@@ -30,13 +30,13 @@ func (s *Storage) SaveTicker(coin blockatlas.Ticker, pl MarketProviderList) erro
 		}
 	}
 	hm := createHashMap(coin.CoinName, coin.TokenId)
-	return s.AddHM(EntityMarket, hm, coin)
+	return s.AddHM(EntityQuotes, hm, coin)
 }
 
 func (s *Storage) GetTicker(coin, token string) (blockatlas.Ticker, error) {
 	hm := createHashMap(coin, token)
 	var cd *blockatlas.Ticker
-	err := s.GetHMValue(EntityMarket, hm, &cd)
+	err := s.GetHMValue(EntityQuotes, hm, &cd)
 	if err != nil {
 		return blockatlas.Ticker{}, err
 	}

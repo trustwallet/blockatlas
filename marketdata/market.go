@@ -41,6 +41,6 @@ func runMarket(storage storage.Market, p market.Provider) error {
 				errors.Params{"result": result}))
 		}
 	}
-	logger.Info("Market data result", logger.Params{"markets": len(data)})
+	logger.Info("Market data result", logger.Params{"markets": len(data), "provider": p.GetId()})
 	return nil
 }

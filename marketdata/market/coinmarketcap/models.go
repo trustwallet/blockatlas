@@ -12,7 +12,7 @@ type CoinPrices struct {
 }
 
 type Coin struct {
-	Id     int    `json:"id"`
+	Id     uint   `json:"id"`
 	Symbol string `json:"symbol"`
 }
 
