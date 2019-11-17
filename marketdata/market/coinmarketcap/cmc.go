@@ -81,7 +81,3 @@ func normalizeTickers(prices CoinPrices, provider string, cmap cmcmap.CmcMapping
 	}
 	return
 }
-
-func percentageChange(value, percent float64) float64 {
-	return value * (percent / 100)
-}

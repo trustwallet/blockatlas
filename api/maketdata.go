@@ -98,31 +98,19 @@ func getTickersHandler(storage storage.Market) func(c *gin.Context) {
 
 		tickers := make(blockatlas.Tickers, 0)
 		for _, coinRequest := range md.Assets {
-			r := emptyTicker(coinRequest)
 			coinObj, ok := coin.Coins[coinRequest.Coin]
 			if !ok {
-				r.Error = "invalid coin"
-				tickers = append(tickers, r)
 				continue
 			}
 			r, err := storage.GetTicker(coinObj.Symbol, strings.ToUpper(coinRequest.TokenId))
 			if err != nil {
-				r = emptyTicker(coinRequest)
-				r.Error = err.Error()
-			} else {
-				r.Coin = coinRequest.Coin
-				r.ApplyRate(rate.Rate, md.Currency)
+				continue
 			}
+			r.ApplyRate(rate.Rate, md.Currency)
+			r.SetCoinId(coinRequest.Coin)
 			tickers = append(tickers, r)
 		}
 
 		ginutils.RenderSuccess(c, blockatlas.TickerResponse{Currency: md.Currency, Result: tickers})
-	}
-}
-
-func emptyTicker(coinRequest Coin) blockatlas.Ticker {
-	return blockatlas.Ticker{
-		Coin:    coinRequest.Coin,
-		TokenId: coinRequest.TokenId,
 	}
 }

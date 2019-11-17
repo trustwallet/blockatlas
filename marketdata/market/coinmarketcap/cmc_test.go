@@ -71,28 +71,3 @@ func Test_normalizeTickers(t *testing.T) {
 		})
 	}
 }
-
-func Test_percentageChange(t *testing.T) {
-	type args struct {
-		value   float64
-		percent float64
-	}
-	tests := []struct {
-		name string
-		args args
-		want float64
-	}{
-		{"test 10% for value 10", args{100, 10}, 10},
-		{"test 100% for value 30", args{100, 30}, 30},
-		{"test 300% for value 100", args{300, 100}, 300},
-		{"test 55% for value 4", args{55, 4}, 2.2},
-		{"test 10% for value 15", args{10, 15}, 1.5},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := percentageChange(tt.args.value, tt.args.percent); got != tt.want {
-				t.Errorf("percentageChange() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
