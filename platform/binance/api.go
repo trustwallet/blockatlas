@@ -139,6 +139,7 @@ func NormalizeTx(srcTx *Tx, token string) (tx blockatlas.Tx, ok bool) {
 			Coin:     coin.BNB,
 			TokenID:  dt.OrderData.Symbol,
 			Symbol:   TokenSymbol(symbol),
+			Name:     symbol,
 			Value:    blockatlas.Amount(value),
 			Decimals: coin.Coins[coin.BNB].Decimals,
 			Title:    title,

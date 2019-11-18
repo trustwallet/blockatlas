@@ -63,17 +63,17 @@ type Tx struct {
 	Memo          string      `json:"memo"`
 }
 
-func (tx *Tx) getData() (*Data, error) {
+func (tx *Tx) getData() (Data, error) {
 	rawIn := json.RawMessage(tx.Data)
 	b, err := rawIn.MarshalJSON()
 	if err != nil {
-		return nil, errors.E(err, "getData MarshalJSON", errors.Params{"data": tx.Data})
+		return Data{}, errors.E(err, "getData MarshalJSON", errors.Params{"data": tx.Data})
 	}
 
-	var data *Data
+	var data Data
 	err = json.Unmarshal(b, &data)
 	if err != nil {
-		return nil, errors.E(err, "getData Unmarshal", errors.Params{"data": string(b)})
+		return Data{}, errors.E(err, "getData Unmarshal", errors.Params{"data": string(b)})
 	}
 
 	symbols := strings.Split(data.OrderData.Symbol, "_")
@@ -91,15 +91,10 @@ type Data struct {
 }
 
 type OrderData struct {
-	Symbol      string      `json:"symbol"`
-	Base        string      `json:"-"`
-	Quote       string      `json:"-"`
-	OrderType   string      `json:"orderType"`
-	Side        string      `json:"side"`
-	Price       interface{} `json:"price"`
-	Quantity    interface{} `json:"quantity"`
-	TimeInForce string      `json:"timeInForce"`
-	OrderId     string      `json:"orderId"`
+	Symbol string      `json:"symbol"`
+	Base   string      `json:"-"`
+	Quote  string      `json:"-"`
+	Price  interface{} `json:"price"`
 }
 
 type TxPage struct {
