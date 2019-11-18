@@ -118,10 +118,10 @@ func NormalizeTx(srcTx *Tx, token string) (tx blockatlas.Tx, ok bool) {
 		}
 
 		key := blockatlas.KeyPlaceOrder
-		title := "Place Order"
+		title := blockatlas.KeyTitlePlaceOrder
 		if srcTx.Type == TxCancelOrder {
 			key = blockatlas.KeyCancelOrder
-			title = "Cancel Order"
+			title = blockatlas.KeyTitleCancelOrder
 			price, ok := dt.OrderData.Price.(float64)
 			if ok {
 				pow := math.Pow(10, float64(bnbCoin.Decimals))

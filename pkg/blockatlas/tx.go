@@ -5,6 +5,7 @@ type Status string
 type TokenType string
 type TransactionType string
 type KeyType string
+type KeyTitle string
 
 // Types of transaction statuses
 const (
@@ -35,6 +36,9 @@ const (
 	KeyMintToken     KeyType = "mint_token"
 	KeyApproveToken  KeyType = "approve_token"
 	KeyStakeDelegate KeyType = "stake_delegate"
+
+	KeyTitlePlaceOrder  KeyTitle = "Place Order"
+	KeyTitleCancelOrder KeyTitle = "Cancel Order"
 )
 
 // Titles of AnyAction meta
@@ -62,7 +66,7 @@ type Tx struct {
 	// Address of the transaction sender
 	From string `json:"from"`
 	// Address of the transaction recipient
-	To string `json:"to,omitempty"`
+	To string `json:"to"`
 	// Transaction fee (native currency)
 	Fee Amount `json:"fee"`
 	// Unix timestamp of the block the transaction was included in
@@ -85,7 +89,7 @@ type Tx struct {
 	// Transaction Direction
 	Direction Direction `json:"direction,omitempty"`
 	// Meta data object
-	Memo string      `json:"memo,omitempty"`
+	Memo string      `json:"memo"`
 	Meta interface{} `json:"metadata"`
 }
 
@@ -147,14 +151,14 @@ type ContractCall struct {
 
 // AnyAction describes all other types
 type AnyAction struct {
-	Coin     uint        `json:"coin"`
-	Title    string      `json:"title"`
-	Key      KeyType     `json:"key"`
-	TokenID  string      `json:"token_id,omitempty"`
-	Name     string      `json:"name,omitempty"`
-	Symbol   string      `json:"symbol,omitempty"`
-	Decimals uint        `json:"decimals"`
-	Value    Amount      `json:"value"`
+	Coin     uint     `json:"coin"`
+	Title    KeyTitle `json:"title"`
+	Key      KeyType  `json:"key"`
+	TokenID  string   `json:"token_id"`
+	Name     string   `json:"name"`
+	Symbol   string   `json:"symbol"`
+	Decimals uint     `json:"decimals"`
+	Value    Amount   `json:"value"`
 }
 
 // TokenPage is a page of transactions.

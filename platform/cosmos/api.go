@@ -245,7 +245,7 @@ func fillDelegate(tx *blockatlas.Tx, delegate MessageValueDelegate, msgType stri
 	tx.From = delegate.DelegatorAddr
 	tx.To = delegate.ValidatorAddr
 
-	title := ""
+	title := blockatlas.KeyTitle("")
 	switch msgType {
 	case MsgDelegate:
 		title = blockatlas.AnyActionDelegation

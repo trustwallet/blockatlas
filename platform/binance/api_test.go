@@ -134,8 +134,8 @@ var newOrderTransferDst = blockatlas.Tx{
 	Status: blockatlas.StatusCompleted,
 	Meta: blockatlas.AnyAction{
 		Coin:     coin.BNB,
-		Title:    "Place Order",
-		Key:      "place_order",
+		Title:    blockatlas.KeyTitlePlaceOrder,
+		Key:      blockatlas.KeyPlaceOrder,
 		TokenID:  "AWC-986_BNB",
 		Symbol:   "AWC",
 		Value:    "649878",
@@ -153,8 +153,8 @@ var cancelOrdeTransferDst = blockatlas.Tx{
 	Status: blockatlas.StatusCompleted,
 	Meta: blockatlas.AnyAction{
 		Coin:     coin.BNB,
-		Title:    "Cancel Order",
-		Key:      "cancel_order",
+		Title:    blockatlas.KeyTitleCancelOrder,
+		Key:      blockatlas.KeyCancelOrder,
 		TokenID:  "GTO-908_BNB",
 		Symbol:   "GTO",
 		Value:    "104716",
