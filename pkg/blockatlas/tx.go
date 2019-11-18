@@ -62,7 +62,7 @@ type Tx struct {
 	// Address of the transaction sender
 	From string `json:"from"`
 	// Address of the transaction recipient
-	To string `json:"to"`
+	To string `json:"to,omitempty"`
 	// Transaction fee (native currency)
 	Fee Amount `json:"fee"`
 	// Unix timestamp of the block the transaction was included in
@@ -85,7 +85,7 @@ type Tx struct {
 	// Transaction Direction
 	Direction Direction `json:"direction,omitempty"`
 	// Meta data object
-	Memo string      `json:"memo"`
+	Memo string      `json:"memo,omitempty"`
 	Meta interface{} `json:"metadata"`
 }
 

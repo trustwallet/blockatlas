@@ -48,6 +48,46 @@ const nativeTokenTransferTransaction = `
 	"memo": "test"
 }`
 
+const newOrderTransaction = `
+{
+      "txHash": "B0677F3436C1B1661E94D192B84B98AA42AC2485D9808357796EE501CBF794F7",
+      "blockHeight": 10815565,
+      "txType": "NEW_ORDER",
+      "timeStamp": 1559689901929,
+      "fromAddr": "bnb16ya67j7kvw8682kka09qujlw5u7lf4geqef0ku",
+      "value": 0.00649878,
+      "txAsset": "AWC-986",
+      "txQuoteAsset": "BNB",
+      "txFee": 0,
+      "txAge": 14346340,
+      "orderId": "D13BAF4BD6638FA3AAD6EBCA0E4BEEA73DF4D519-30",
+      "data": "{\"orderData\":{\"symbol\":\"AWC-986_BNB\",\"orderType\":\"limit\",\"side\":\"buy\",\"price\":0.00324939,\"quantity\":2.00000000,\"timeInForce\":\"GTE\",\"orderId\":\"D13BAF4BD6638FA3AAD6EBCA0E4BEEA73DF4D519-30\"}}",
+      "code": 0,
+      "log": "Msg 0: ",
+      "confirmBlocks": 0,
+      "memo": "",
+      "source": 0,
+      "hasChildren": 0
+}`
+
+const cancelOrderTransaction = `
+{
+      "txHash": "F48DE755170C10F4A4C0E6836A708C33EEF9A7144800F25187D5F2349FD15A34",
+      "blockHeight": 10815539,
+      "txType": "CANCEL_ORDER",
+      "timeStamp": 1559689892180,
+      "fromAddr": "bnb16ya67j7kvw8682kka09qujlw5u7lf4geqef0ku",
+      "txFee": 0,
+      "txAge": 14346349,
+      "data": "{\"orderData\":{\"symbol\":\"GTO-908_BNB\",\"orderType\":\"limit\",\"side\":\"buy\",\"price\":0.00104716,\"quantity\":1.00000000,\"timeInForce\":\"GTE\",\"orderId\":\"D13BAF4BD6638FA3AAD6EBCA0E4BEEA73DF4D519-28\"}}",
+      "code": 0,
+      "log": "Msg 0: ",
+      "confirmBlocks": 0,
+      "memo": "",
+      "source": 0,
+      "hasChildren": 0
+}`
+
 var transferDst = blockatlas.Tx{
 	ID:     "1681EE543FB4B5A628EF21D746E031F018E226D127044A4F9BA5EE2542A44555",
 	Coin:   coin.BNB,
@@ -85,6 +125,46 @@ var nativeTransferDst = blockatlas.Tx{
 	},
 }
 
+var newOrderTransferDst = blockatlas.Tx{
+	ID:     "B0677F3436C1B1661E94D192B84B98AA42AC2485D9808357796EE501CBF794F7",
+	Coin:   coin.BNB,
+	From:   "bnb16ya67j7kvw8682kka09qujlw5u7lf4geqef0ku",
+	Fee:    "0",
+	Date:   1559689901,
+	Block:  10815565,
+	Status: blockatlas.StatusCompleted,
+	Meta: blockatlas.AnyAction{
+		Coin:   coin.BNB,
+		Title:  "Place Order",
+		Key:  "place_order",
+		TokenID:  "AWC-986_BNB",
+		Symbol:   "AWC",
+		Value:    "649878",
+		Decimals: 8,
+		Data:     "{\"orderData\":{\"symbol\":\"AWC-986_BNB\",\"orderType\":\"limit\",\"side\":\"buy\",\"price\":0.00324939,\"quantity\":2.00000000,\"timeInForce\":\"GTE\",\"orderId\":\"D13BAF4BD6638FA3AAD6EBCA0E4BEEA73DF4D519-30\"}}",
+	},
+}
+
+var cancelOrdeTransferDst = blockatlas.Tx{
+	ID:     "F48DE755170C10F4A4C0E6836A708C33EEF9A7144800F25187D5F2349FD15A34",
+	Coin:   coin.BNB,
+	From:   "bnb16ya67j7kvw8682kka09qujlw5u7lf4geqef0ku",
+	Fee:    "0",
+	Date:   1559689892,
+	Block:  10815539,
+	Status: blockatlas.StatusCompleted,
+	Meta: blockatlas.AnyAction{
+		Coin:   coin.BNB,
+		Title:  "Cancel Order",
+		Key:  "cancel_order",
+		TokenID:  "GTO-908_BNB",
+		Symbol:   "GTO",
+		Value:    "00000000",
+		Decimals: 8,
+		Data:     "{\"orderData\":{\"symbol\":\"GTO-908_BNB\",\"orderType\":\"limit\",\"side\":\"buy\",\"price\":0.00104716,\"quantity\":1.00000000,\"timeInForce\":\"GTE\",\"orderId\":\"D13BAF4BD6638FA3AAD6EBCA0E4BEEA73DF4D519-28\"}}",
+	},
+}
+
 type test struct {
 	name        string
 	apiResponse string
@@ -105,6 +185,18 @@ func TestNormalizeTx(t *testing.T) {
 		expected:    &nativeTransferDst,
 		token:       "YLC-D8B",
 	})
+	testNormalizeTx(t, &test{
+		name:        "new order transfer",
+		apiResponse: newOrderTransaction,
+		expected:    &newOrderTransferDst,
+		token:       "AWC-986",
+	})
+	testNormalizeTx(t, &test{
+		name:        "cancel order transfer",
+		apiResponse: cancelOrderTransaction,
+		expected:    &cancelOrdeTransferDst,
+		token:       "GTO-908",
+	})
 }
 
 func testNormalizeTx(t *testing.T, _test *test) {
@@ -115,7 +207,7 @@ func testNormalizeTx(t *testing.T, _test *test) {
 		return
 	}
 
-	tx, ok := NormalizeTx(&srcTx)
+	tx, ok := NormalizeTx(&srcTx, _test.token)
 	if !ok {
 		t.Errorf("transfer: tx could not be normalized")
 	}

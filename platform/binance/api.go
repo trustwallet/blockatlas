@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/spf13/viper"
-	"github.com/thoas/go-funk"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/util"
 )
@@ -48,7 +47,7 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 	if err != nil {
 		return nil, err
 	}
-	txs := NormalizeTxs(srcTxs.Txs)
+	txs := NormalizeTxs(srcTxs.Txs, "")
 	return &blockatlas.Block{
 		Number: num,
 		Txs:    txs,
@@ -65,11 +64,11 @@ func (p *Platform) GetTokenTxsByAddress(address string, token string) (blockatla
 	if err != nil {
 		return nil, err
 	}
-	return NormalizeTxs(filterTx(srcTxs.Txs, token)), nil
+	return NormalizeTxs(srcTxs.Txs, token), nil
 }
 
 // NormalizeTx converts a Binance transaction into the generic model
-func NormalizeTx(srcTx *Tx) (tx blockatlas.Tx, ok bool) {
+func NormalizeTx(srcTx *Tx, token string) (tx blockatlas.Tx, ok bool) {
 	value := util.DecimalExp(string(srcTx.Value), 8)
 	fee := util.DecimalExp(string(srcTx.Fee), 8)
 
@@ -84,60 +83,63 @@ func NormalizeTx(srcTx *Tx) (tx blockatlas.Tx, ok bool) {
 		Memo:  srcTx.Memo,
 	}
 
-	// Condition for create and cancel orders
-	var txType blockatlas.KeyType = ""
-	title := ""
-	if srcTx.Type == TxNewOrder {
-		txType = blockatlas.KeyPlaceOrder
-		title = "Place Order"
-	}
-	if srcTx.Type == TxCancelOrder {
-		txType = blockatlas.KeyCancelOrder
-		title = "Cancel Order"
-	}
-	if len(txType) > 0 && len(srcTx.FromAddr) > 0 {
+	switch srcTx.Type {
+	case TxTransfer:
+		if len(token) > 0 && srcTx.Asset != token {
+			return tx, false
+		}
+		if srcTx.Asset == coin.Coins[coin.BNB].Symbol {
+			// Condition for native transfer (BNB)
+			tx.Meta = blockatlas.Transfer{
+				Value:    blockatlas.Amount(value),
+				Symbol:   coin.Coins[coin.BNB].Symbol,
+				Decimals: coin.Coins[coin.BNB].Decimals,
+			}
+		} else if len(srcTx.FromAddr) > 0 && len(srcTx.ToAddr) > 0 {
+			// Condition for native token transfer
+			tx.Meta = blockatlas.NativeTokenTransfer{
+				TokenID:  srcTx.Asset,
+				Symbol:   TokenSymbol(srcTx.Asset),
+				Value:    blockatlas.Amount(value),
+				Decimals: coin.Coins[coin.BNB].Decimals,
+				From:     srcTx.FromAddr,
+				To:       srcTx.ToAddr,
+			}
+		}
+
+	case TxCancelOrder, TxNewOrder:
+		key := blockatlas.KeyPlaceOrder
+		title := "Place Order"
+		if srcTx.Type == TxCancelOrder {
+			key = blockatlas.KeyCancelOrder
+			title = "Cancel Order"
+		}
+
+		dt, err := srcTx.getData()
+		if err != nil {
+			return tx, false
+		}
+
+		if len(token) > 0 && dt.OrderData.Base != token && dt.OrderData.Quote != token {
+			return tx, false
+		}
+
 		tx.Meta = blockatlas.AnyAction{
 			Coin:     coin.BNB,
-			TokenID:  srcTx.Asset,
+			TokenID:  dt.OrderData.Symbol,
 			Symbol:   TokenSymbol(srcTx.Asset),
 			Value:    blockatlas.Amount(value),
 			Decimals: coin.Coins[coin.BNB].Decimals,
 			Title:    title,
-			Key:      txType,
+			Key:      key,
 			Data:     srcTx.Data,
 		}
-		return tx, true
+
+	default:
+		return tx, false
 	}
 
-	// Condition for native transfer (BNB)
-	if srcTx.Asset == coin.Coins[coin.BNB].Symbol {
-		tx.Meta = blockatlas.Transfer{
-			Value:    blockatlas.Amount(value),
-			Symbol:   coin.Coins[coin.BNB].Symbol,
-			Decimals: coin.Coins[coin.BNB].Decimals,
-		}
-		return tx, true
-	}
-
-	// Condition for native token transfer
-	if srcTx.Type == TxTransfer && len(srcTx.FromAddr) > 0 && len(srcTx.ToAddr) > 0 {
-		tx.Meta = blockatlas.NativeTokenTransfer{
-			TokenID:  srcTx.Asset,
-			Symbol:   TokenSymbol(srcTx.Asset),
-			Value:    blockatlas.Amount(value),
-			Decimals: coin.Coins[coin.BNB].Decimals,
-			From:     srcTx.FromAddr,
-			To:       srcTx.ToAddr,
-		}
-		return tx, true
-	}
-	return tx, false
-}
-
-func filterTx(src []Tx, token string) []Tx {
-	return funk.Filter(src, func(tx Tx) bool {
-		return tx.Asset == token && tx.Type == TxTransfer
-	}).([]Tx)
+	return tx, true
 }
 
 func TokenSymbol(asset string) string {
@@ -149,9 +151,9 @@ func TokenSymbol(asset string) string {
 }
 
 // NormalizeTxs converts multiple Binance transactions
-func NormalizeTxs(srcTxs []Tx) (txs []blockatlas.Tx) {
+func NormalizeTxs(srcTxs []Tx, token string) (txs []blockatlas.Tx) {
 	for _, srcTx := range srcTxs {
-		tx, ok := NormalizeTx(&srcTx)
+		tx, ok := NormalizeTx(&srcTx, token)
 		if !ok {
 			continue
 		}
