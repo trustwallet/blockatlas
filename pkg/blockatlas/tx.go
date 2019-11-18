@@ -155,7 +155,6 @@ type AnyAction struct {
 	Symbol   string      `json:"symbol,omitempty"`
 	Decimals uint        `json:"decimals"`
 	Value    Amount      `json:"value"`
-	Data     interface{} `json:"data,omitempty"`
 }
 
 // TokenPage is a page of transactions.

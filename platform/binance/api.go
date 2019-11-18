@@ -3,6 +3,8 @@ package binance
 import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
+	"math"
+	"strconv"
 	"strings"
 
 	"github.com/spf13/viper"
@@ -71,16 +73,18 @@ func (p *Platform) GetTokenTxsByAddress(address string, token string) (blockatla
 func NormalizeTx(srcTx *Tx, token string) (tx blockatlas.Tx, ok bool) {
 	value := util.DecimalExp(string(srcTx.Value), 8)
 	fee := util.DecimalExp(string(srcTx.Fee), 8)
+	bnbCoin := coin.Coins[coin.BNB]
 
 	tx = blockatlas.Tx{
-		ID:    srcTx.Hash,
-		Coin:  coin.BNB,
-		Date:  srcTx.Timestamp / 1000,
-		From:  srcTx.FromAddr,
-		To:    srcTx.ToAddr,
-		Fee:   blockatlas.Amount(fee),
-		Block: srcTx.BlockHeight,
-		Memo:  srcTx.Memo,
+		ID:     srcTx.Hash,
+		Coin:   coin.BNB,
+		Date:   srcTx.Timestamp / 1000,
+		From:   srcTx.FromAddr,
+		Status: blockatlas.StatusCompleted,
+		To:     srcTx.ToAddr,
+		Fee:    blockatlas.Amount(fee),
+		Block:  srcTx.BlockHeight,
+		Memo:   srcTx.Memo,
 	}
 
 	switch srcTx.Type {
@@ -88,12 +92,12 @@ func NormalizeTx(srcTx *Tx, token string) (tx blockatlas.Tx, ok bool) {
 		if len(token) > 0 && srcTx.Asset != token {
 			return tx, false
 		}
-		if srcTx.Asset == coin.Coins[coin.BNB].Symbol {
+		if srcTx.Asset == bnbCoin.Symbol {
 			// Condition for native transfer (BNB)
 			tx.Meta = blockatlas.Transfer{
 				Value:    blockatlas.Amount(value),
-				Symbol:   coin.Coins[coin.BNB].Symbol,
-				Decimals: coin.Coins[coin.BNB].Decimals,
+				Symbol:   bnbCoin.Symbol,
+				Decimals: bnbCoin.Decimals,
 			}
 		} else if len(srcTx.FromAddr) > 0 && len(srcTx.ToAddr) > 0 {
 			// Condition for native token transfer
@@ -101,38 +105,44 @@ func NormalizeTx(srcTx *Tx, token string) (tx blockatlas.Tx, ok bool) {
 				TokenID:  srcTx.Asset,
 				Symbol:   TokenSymbol(srcTx.Asset),
 				Value:    blockatlas.Amount(value),
-				Decimals: coin.Coins[coin.BNB].Decimals,
+				Decimals: bnbCoin.Decimals,
 				From:     srcTx.FromAddr,
 				To:       srcTx.ToAddr,
 			}
 		}
 
 	case TxCancelOrder, TxNewOrder:
-		key := blockatlas.KeyPlaceOrder
-		title := "Place Order"
-		if srcTx.Type == TxCancelOrder {
-			key = blockatlas.KeyCancelOrder
-			title = "Cancel Order"
-		}
-
 		dt, err := srcTx.getData()
 		if err != nil {
 			return tx, false
 		}
 
-		if len(token) > 0 && dt.OrderData.Base != token && dt.OrderData.Quote != token {
+		key := blockatlas.KeyPlaceOrder
+		title := "Place Order"
+		if srcTx.Type == TxCancelOrder {
+			key = blockatlas.KeyCancelOrder
+			title = "Cancel Order"
+			price, ok := dt.OrderData.Price.(float64)
+			if ok {
+				pow := math.Pow(10, float64(bnbCoin.Decimals))
+				p := price * pow
+				value = strconv.Itoa(int(p))
+			}
+		}
+
+		symbol := dt.OrderData.Base
+		if len(token) > 0 && symbol != token && dt.OrderData.Quote != token {
 			return tx, false
 		}
 
 		tx.Meta = blockatlas.AnyAction{
 			Coin:     coin.BNB,
 			TokenID:  dt.OrderData.Symbol,
-			Symbol:   TokenSymbol(srcTx.Asset),
+			Symbol:   TokenSymbol(symbol),
 			Value:    blockatlas.Amount(value),
 			Decimals: coin.Coins[coin.BNB].Decimals,
 			Title:    title,
 			Key:      key,
-			Data:     srcTx.Data,
 		}
 
 	default:
