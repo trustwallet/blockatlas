@@ -4,7 +4,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas/marketdata/cmcmap"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"math/big"
 	"sort"
 	"testing"
 	"time"
@@ -34,24 +33,24 @@ func Test_normalizeTickers(t *testing.T) {
 			blockatlas.Tickers{
 				blockatlas.Ticker{CoinName: "BTC", CoinType: blockatlas.TypeCoin, LastUpdate: time.Unix(111, 0),
 					Price: blockatlas.TickerPrice{
-						Value:     big.NewFloat(223.55),
-						Change24h: big.NewFloat(10),
+						Value:     223.55,
+						Change24h: 10,
 						Currency:  "USD",
 						Provider:  "cmc",
 					},
 				},
 				blockatlas.Ticker{CoinName: "ETH", CoinType: blockatlas.TypeCoin, LastUpdate: time.Unix(333, 0),
 					Price: blockatlas.TickerPrice{
-						Value:     big.NewFloat(11.11),
-						Change24h: big.NewFloat(20),
+						Value:     11.11,
+						Change24h: 20,
 						Currency:  "USD",
 						Provider:  "cmc",
 					},
 				},
 				blockatlas.Ticker{CoinName: "ETH", TokenId: "0x8ce9137d39326ad0cd6491fb5cc0cba0e089b6a9", CoinType: blockatlas.TypeToken, LastUpdate: time.Unix(444, 0),
 					Price: blockatlas.TickerPrice{
-						Value:     big.NewFloat(463.22),
-						Change24h: big.NewFloat(-3),
+						Value:     463.22,
+						Change24h: -3,
 						Currency:  "USD",
 						Provider:  "cmc",
 					},
