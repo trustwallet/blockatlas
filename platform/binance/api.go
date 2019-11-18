@@ -3,16 +3,13 @@ package binance
 import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
+	"math"
+	"strconv"
 	"strings"
 
 	"github.com/spf13/viper"
-	"github.com/thoas/go-funk"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/util"
-)
-
-const (
-	txTypeTransfer = "TRANSFER"
 )
 
 type Platform struct {
@@ -52,7 +49,7 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 	if err != nil {
 		return nil, err
 	}
-	txs := NormalizeTxs(srcTxs.Txs, txTypeTransfer, len(srcTxs.Txs))
+	txs := NormalizeTxs(srcTxs.Txs, "")
 	return &blockatlas.Block{
 		Number: num,
 		Txs:    txs,
@@ -69,56 +66,91 @@ func (p *Platform) GetTokenTxsByAddress(address string, token string) (blockatla
 	if err != nil {
 		return nil, err
 	}
-	return NormalizeTxs(filterTx(srcTxs.Txs, token, txTypeTransfer), txTypeTransfer, blockatlas.TxPerPage), nil
+	return NormalizeTxs(srcTxs.Txs, token), nil
 }
 
 // NormalizeTx converts a Binance transaction into the generic model
-func NormalizeTx(srcTx *Tx, txType string) (tx blockatlas.Tx, ok bool) {
+func NormalizeTx(srcTx *Tx, token string) (tx blockatlas.Tx, ok bool) {
 	value := util.DecimalExp(string(srcTx.Value), 8)
 	fee := util.DecimalExp(string(srcTx.Fee), 8)
+	bnbCoin := coin.Coins[coin.BNB]
 
 	tx = blockatlas.Tx{
-		ID:    srcTx.Hash,
-		Coin:  coin.BNB,
-		Date:  srcTx.Timestamp / 1000,
-		From:  srcTx.FromAddr,
-		To:    srcTx.ToAddr,
-		Fee:   blockatlas.Amount(fee),
-		Block: srcTx.BlockHeight,
-		Memo:  srcTx.Memo,
+		ID:     srcTx.Hash,
+		Coin:   coin.BNB,
+		Date:   srcTx.Timestamp / 1000,
+		From:   srcTx.FromAddr,
+		Status: blockatlas.StatusCompleted,
+		To:     srcTx.ToAddr,
+		Fee:    blockatlas.Amount(fee),
+		Block:  srcTx.BlockHeight,
+		Memo:   srcTx.Memo,
 	}
 
-	// Condition for native transfer (BNB)
-	if srcTx.Asset == coin.Coins[coin.BNB].Symbol {
-		tx.Meta = blockatlas.Transfer{
-			Value:    blockatlas.Amount(value),
-			Symbol:   coin.Coins[coin.BNB].Symbol,
-			Decimals: coin.Coins[coin.BNB].Decimals,
+	switch srcTx.Type {
+	case TxTransfer:
+		if len(token) > 0 && srcTx.Asset != token {
+			return tx, false
 		}
-		return tx, true
-	}
-
-	// Condition for native token transfer
-	if srcTx.Type == txType && srcTx.FromAddr != "" && srcTx.ToAddr != "" {
-		tx.Meta = blockatlas.NativeTokenTransfer{
-			TokenID:  srcTx.Asset,
-			Symbol:   TokenSymbol(srcTx.Asset),
-			Value:    blockatlas.Amount(value),
-			Decimals: coin.Coins[coin.BNB].Decimals,
-			From:     srcTx.FromAddr,
-			To:       srcTx.ToAddr,
+		if srcTx.Asset == bnbCoin.Symbol {
+			// Condition for native transfer (BNB)
+			tx.Meta = blockatlas.Transfer{
+				Value:    blockatlas.Amount(value),
+				Symbol:   bnbCoin.Symbol,
+				Decimals: bnbCoin.Decimals,
+			}
+		} else if len(srcTx.FromAddr) > 0 && len(srcTx.ToAddr) > 0 {
+			// Condition for native token transfer
+			tx.Meta = blockatlas.NativeTokenTransfer{
+				TokenID:  srcTx.Asset,
+				Symbol:   TokenSymbol(srcTx.Asset),
+				Value:    blockatlas.Amount(value),
+				Decimals: bnbCoin.Decimals,
+				From:     srcTx.FromAddr,
+				To:       srcTx.ToAddr,
+			}
 		}
 
-		return tx, true
+	case TxCancelOrder, TxNewOrder:
+		dt, err := srcTx.getData()
+		if err != nil {
+			return tx, false
+		}
+
+		key := blockatlas.KeyPlaceOrder
+		title := blockatlas.KeyTitlePlaceOrder
+		if srcTx.Type == TxCancelOrder {
+			key = blockatlas.KeyCancelOrder
+			title = blockatlas.KeyTitleCancelOrder
+			price, ok := dt.OrderData.Price.(float64)
+			if ok {
+				pow := math.Pow(10, float64(bnbCoin.Decimals))
+				p := price * pow
+				value = strconv.Itoa(int(p))
+			}
+		}
+
+		symbol := dt.OrderData.Base
+		if len(token) > 0 && symbol != token && dt.OrderData.Quote != token {
+			return tx, false
+		}
+
+		tx.Meta = blockatlas.AnyAction{
+			Coin:     coin.BNB,
+			TokenID:  dt.OrderData.Symbol,
+			Symbol:   TokenSymbol(symbol),
+			Name:     symbol,
+			Value:    blockatlas.Amount(value),
+			Decimals: coin.Coins[coin.BNB].Decimals,
+			Title:    title,
+			Key:      key,
+		}
+
+	default:
+		return tx, false
 	}
 
-	return tx, false
-}
-
-func filterTx(src []Tx, token string, txType string) []Tx {
-	return funk.Filter(src, func(tx Tx) bool {
-		return tx.Asset == token && tx.Type == txType
-	}).([]Tx)
+	return tx, true
 }
 
 func TokenSymbol(asset string) string {
@@ -130,10 +162,10 @@ func TokenSymbol(asset string) string {
 }
 
 // NormalizeTxs converts multiple Binance transactions
-func NormalizeTxs(srcTxs []Tx, txType string, pageSize int) (txs []blockatlas.Tx) {
+func NormalizeTxs(srcTxs []Tx, token string) (txs []blockatlas.Tx) {
 	for _, srcTx := range srcTxs {
-		tx, ok := NormalizeTx(&srcTx, txType)
-		if !ok || len(txs) >= pageSize {
+		tx, ok := NormalizeTx(&srcTx, token)
+		if !ok {
 			continue
 		}
 		txs = append(txs, tx)
