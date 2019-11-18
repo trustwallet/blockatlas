@@ -17,7 +17,7 @@ require (
 	github.com/go-openapi/spec v0.19.3 // indirect
 	github.com/go-redis/redis v6.15.2+incompatible
 	github.com/golang/protobuf v1.3.2 // indirect
-	github.com/hewigovens/go-coincodec v1.0.2
+	github.com/hewigovens/go-coincodec v1.0.3
 	github.com/json-iterator/go v1.1.7 // indirect
 	github.com/mailru/easyjson v0.7.0 // indirect
 	github.com/mr-tron/base58 v1.1.2
