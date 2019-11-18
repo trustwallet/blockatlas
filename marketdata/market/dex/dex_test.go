@@ -2,7 +2,6 @@ package dex
 
 import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"math/big"
 	"reflect"
 	"testing"
 	"time"
@@ -44,16 +43,16 @@ func Test_normalizeTickers(t *testing.T) {
 			blockatlas.Tickers{
 				blockatlas.Ticker{CoinName: "BNB", TokenId: "RAVEN-F66", CoinType: blockatlas.TypeToken, LastUpdate: time.Now(),
 					Price: blockatlas.TickerPrice{
-						Value:     big.NewFloat(0.00001082),
-						Change24h: big.NewFloat(-2.2500),
+						Value:     0.00001082,
+						Change24h: -2.2500,
 						Currency:  "BNB",
 						Provider:  "dex",
 					},
 				},
 				blockatlas.Ticker{CoinName: "BNB", TokenId: "SLV-986", CoinType: blockatlas.TypeToken, LastUpdate: time.Now(),
 					Price: blockatlas.TickerPrice{
-						Value:     big.NewFloat(0.0449451),
-						Change24h: big.NewFloat(-5.3700),
+						Value:     0.0449451,
+						Change24h: -5.3700,
 						Currency:  "BNB",
 						Provider:  "dex",
 					},

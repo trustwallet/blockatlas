@@ -6,7 +6,6 @@ import (
 	"github.com/trustwallet/blockatlas/marketdata/market"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
-	"math/big"
 	"net/url"
 )
 
@@ -32,7 +31,7 @@ func (m *Market) GetData() (blockatlas.Tickers, error) {
 		return nil, err
 	}
 	var prices CoinPrices
-	err = m.Get(&prices, "v1/cryptocurrency/listings/latest", url.Values{"limit": {"5000"}, "convert": {"USD"}})
+	err = m.Get(&prices, "v1/cryptocurrency/listings/latest", url.Values{"limit": {"5000"}, "convert": {blockatlas.DefaultCurrency}})
 	if err != nil {
 		return nil, err
 	}
@@ -61,9 +60,9 @@ func normalizeTicker(price Data, provider string, cmap cmcmap.CmcMapping) (block
 		CoinType: coinType,
 		TokenId:  tokenId,
 		Price: blockatlas.TickerPrice{
-			Value:     big.NewFloat(price.Quote.USD.Price),
-			Change24h: big.NewFloat(price.Quote.USD.PercentChange24h),
-			Currency:  "USD",
+			Value:     price.Quote.USD.Price,
+			Change24h: price.Quote.USD.PercentChange24h,
+			Currency:  blockatlas.DefaultCurrency,
 			Provider:  provider,
 		},
 		LastUpdate: price.LastUpdated,
