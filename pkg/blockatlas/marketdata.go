@@ -7,6 +7,8 @@ import (
 const (
 	TypeCoin  CoinType = "coin"
 	TypeToken CoinType = "token"
+
+	DefaultCurrency = "USD"
 )
 
 type CoinType string

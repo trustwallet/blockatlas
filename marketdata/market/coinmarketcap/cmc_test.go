@@ -35,7 +35,7 @@ func Test_normalizeTickers(t *testing.T) {
 					Price: blockatlas.TickerPrice{
 						Value:     223.55,
 						Change24h: 10,
-						Currency:  "USD",
+						Currency:  blockatlas.DefaultCurrency,
 						Provider:  "cmc",
 					},
 				},
@@ -43,7 +43,7 @@ func Test_normalizeTickers(t *testing.T) {
 					Price: blockatlas.TickerPrice{
 						Value:     11.11,
 						Change24h: 20,
-						Currency:  "USD",
+						Currency:  blockatlas.DefaultCurrency,
 						Provider:  "cmc",
 					},
 				},
@@ -51,7 +51,7 @@ func Test_normalizeTickers(t *testing.T) {
 					Price: blockatlas.TickerPrice{
 						Value:     463.22,
 						Change24h: -3,
-						Currency:  "USD",
+						Currency:  blockatlas.DefaultCurrency,
 						Provider:  "cmc",
 					},
 				},

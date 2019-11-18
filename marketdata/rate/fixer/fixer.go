@@ -26,7 +26,7 @@ func InitRate() rate.Provider {
 func (f *Fixer) FetchLatestRates() (rates blockatlas.Rates, err error) {
 	values := url.Values{
 		"access_key": {f.APIKey},
-		"base":       {"USD"}, // Base USD supported only in paid api
+		"base":       {blockatlas.DefaultCurrency}, // Base USD supported only in paid api
 	}
 	var latest Latest
 	err = f.Get(&latest, "latest", values)
