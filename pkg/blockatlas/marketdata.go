@@ -1,7 +1,6 @@
 package blockatlas
 
 import (
-	"math/big"
 	"time"
 )
 
@@ -35,31 +34,31 @@ func (t *Ticker) SetCoinId(coinId uint) {
 }
 
 type TickerPrice struct {
-	Value     *big.Float `json:"value,omitempty"`
-	Change24h *big.Float `json:"change_24h,omitempty"`
-	Currency  string     `json:"currency,omitempty"`
-	Provider  string     `json:"provider,omitempty"`
+	Value     float64 `json:"value,omitempty"`
+	Change24h float64 `json:"change_24h,omitempty"`
+	Currency  string  `json:"currency,omitempty"`
+	Provider  string  `json:"provider,omitempty"`
 }
 
 type Rate struct {
-	Currency  string     `json:"currency"`
-	Rate      *big.Float `json:"rate"`
-	Timestamp int64      `json:"timestamp"`
+	Currency  string  `json:"currency"`
+	Rate      float64 `json:"rate"`
+	Timestamp int64   `json:"timestamp"`
 }
 
 type Rates []Rate
 type Tickers []Ticker
 
-func (ts Tickers) ApplyRate(rate *big.Float, currency string) {
+func (ts Tickers) ApplyRate(rate float64, currency string) {
 	for _, t := range ts {
 		t.ApplyRate(rate, currency)
 	}
 }
 
-func (t *Ticker) ApplyRate(rate *big.Float, currency string) {
+func (t *Ticker) ApplyRate(rate float64, currency string) {
 	if t.Price.Currency == currency {
 		return
 	}
-	t.Price.Value.Mul(t.Price.Value, rate)
+	t.Price.Value *= rate
 	t.Price.Currency = currency
 }

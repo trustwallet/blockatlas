@@ -6,7 +6,6 @@ import (
 	"github.com/trustwallet/blockatlas/marketdata/market"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
-	"math/big"
 	"net/url"
 )
 
@@ -61,8 +60,8 @@ func normalizeTicker(price Data, provider string, cmap cmcmap.CmcMapping) (block
 		CoinType: coinType,
 		TokenId:  tokenId,
 		Price: blockatlas.TickerPrice{
-			Value:     big.NewFloat(price.Quote.USD.Price),
-			Change24h: big.NewFloat(price.Quote.USD.PercentChange24h),
+			Value:     price.Quote.USD.Price,
+			Change24h: price.Quote.USD.PercentChange24h,
 			Currency:  "USD",
 			Provider:  provider,
 		},
