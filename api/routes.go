@@ -45,6 +45,7 @@ func LoadPlatforms(root gin.IRouter) {
 
 	makeCategoriesBatchRoute(v2)
 	makeStakingDelegationsBatchRoute(v2)
+	makeNsLookupRoute(v2)
 	logger.Info("Routes set up", logger.Params{"routes": len(routers)})
 
 	v1.GET("/", getEnabledEndpoints)

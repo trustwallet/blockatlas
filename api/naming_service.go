@@ -1,6 +1,7 @@
 package api
 
 import (
+	"github.com/trustwallet/blockatlas/pkg/errors"
 	"net/http"
 	"strconv"
 	"strings"
@@ -15,6 +16,8 @@ import (
 
 var TLDMapping = map[string]uint64{}
 
+type LookupBatchPage []blockatlas.Resolved
+
 // @Summary Lookup .eth / .zil addresses
 // @ID lookup
 // @Description Lookup ENS/ZNS to find registered addresses
@@ -27,7 +30,21 @@ var TLDMapping = map[string]uint64{}
 // @Router /ns/lookup [get]
 func MakeLookupRoute(router gin.IRouter) {
 	ns := router.Group("/ns")
-	ns.GET("/lookup", handleLookup)
+	ns.GET("/lookup", func(c *gin.Context) {
+		name := c.Query("name")
+		coinQuery := c.Query("coin")
+		coin, err := strconv.ParseUint(coinQuery, 10, 64)
+		if err != nil {
+			ginutils.RenderError(c, http.StatusBadRequest, "coin query is invalid")
+			return
+		}
+
+		result, err := handleLookup(name, coin)
+		if err != nil {
+			ginutils.RenderError(c, http.StatusBadRequest, err.Error())
+		}
+		ginutils.RenderSuccess(c, result)
+	})
 
 	TLDMapping[".eth"] = CoinType.ETH
 	TLDMapping[".xyz"] = CoinType.ETH
@@ -35,32 +52,23 @@ func MakeLookupRoute(router gin.IRouter) {
 	TLDMapping[".zil"] = CoinType.ZIL
 }
 
-func handleLookup(c *gin.Context) {
-	name := c.Query("name")
-	coinQuery := c.Query("coin")
-
+func handleLookup(name string, coin uint64) (blockatlas.Resolved, error) {
+	result := blockatlas.Resolved{Result: "", Coin: coin}
 	if name == "" {
-		ginutils.RenderError(c, http.StatusBadRequest, "name query is missing")
-		return
+		return result, errors.E("name query is missing")
 	}
-	coin, err := strconv.ParseUint(coinQuery, 10, 64)
-	if err != nil {
-		ginutils.RenderError(c, http.StatusBadRequest, "coin query is invalid")
-		return
-	}
-	name = strings.ToLower(name)
 
+	name = strings.ToLower(name)
 	for tld, id := range TLDMapping {
 		if strings.HasSuffix(name, tld) {
 			api := platform.NamingAPIs[id]
 			resolved, err := api.Lookup(coin, name)
 			if err != nil {
-				ginutils.RenderError(c, http.StatusBadRequest, err.Error())
+				return result, err
 			} else {
-				ginutils.RenderSuccess(c, resolved)
+				return resolved, nil
 			}
-			return
 		}
 	}
-	ginutils.RenderSuccess(c, blockatlas.Resolved{Result: "", Coin: coin})
+	return result, nil
 }

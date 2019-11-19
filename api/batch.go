@@ -5,13 +5,20 @@ import (
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/ginutils"
+	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/platform"
 	"strconv"
+	"sync"
 )
 
 type AddressBatchRequest struct {
 	Coin    uint   `json:"coin"`
 	Address string `json:"address"`
+}
+
+type ENSBatchRequest struct {
+	Coins []uint64 `json:"coins"`
+	Name  string   `json:"name"`
 }
 
 type AddressesRequest []AddressBatchRequest
@@ -78,6 +85,54 @@ func makeCategoriesBatchRoute(router gin.IRouter) {
 				batch = append(batch, collections...)
 			}
 		}
+		ginutils.RenderSuccess(c, batch)
+	})
+}
+
+// @Description Get multiple addresses from naming service
+// @ID naming_service
+// @Summary Get list of addresses for passed coins
+// @Accept json
+// @Produce json
+// @Tags ns
+// @Param coins body api.ENSBatchRequest true "ns name and coins"
+// @Success 200 {object} api.LookupBatchPage
+// @Router /v2/ns/lookup [post]
+func makeNsLookupRoute(router gin.IRouter) {
+	router.POST("/ns/lookup", func(c *gin.Context) {
+		var req ENSBatchRequest
+		if err := c.BindJSON(&req); err != nil {
+			ginutils.ErrorResponse(c).Message(err.Error()).Render()
+			return
+		}
+
+		lookupsChan := make(chan blockatlas.Resolved)
+		var wg sync.WaitGroup
+		wg.Add(len(req.Coins))
+
+		for _, coin := range req.Coins {
+			go func(coin uint64) {
+				defer wg.Done()
+				lookup, err := handleLookup(req.Name, coin)
+				if err != nil {
+					logger.Error(err)
+					return
+				}
+				lookupsChan <- lookup
+			}(coin)
+		}
+
+		// extract data from the channel
+		batch := make(LookupBatchPage, 0)
+		go func() {
+			for lookup := range lookupsChan {
+				batch = append(batch, lookup)
+			}
+		}()
+
+		wg.Wait()
+		close(lookupsChan)
+
 		ginutils.RenderSuccess(c, batch)
 	})
 }
