@@ -75,3 +75,25 @@ func TestTx_MarshalJSON(t *testing.T) {
 	// Compare expected and output JSON
 	bytes.Equal(got, txJSON)
 }
+
+func TestTxPage_Sort(t *testing.T) {
+	tests := []struct {
+		name string
+		txs  TxPage
+		want TxPage
+	}{
+		{
+			"sort 1",
+			TxPage{{Date: 9999}, {Date: 46}, {Date: 100}, {Date: 1}, {Date: 777}},
+			TxPage{{Date: 1}, {Date: 46}, {Date: 100}, {Date: 777}, {Date: 9999}},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tt.txs.Sort()
+			if !reflect.DeepEqual(tt.txs, tt.want) {
+				t.Errorf("Sort() = %v, want %v", tt.txs, tt.want)
+			}
+		})
+	}
+}

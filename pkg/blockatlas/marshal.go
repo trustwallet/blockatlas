@@ -3,6 +3,7 @@ package blockatlas
 import (
 	"encoding/json"
 	"github.com/trustwallet/blockatlas/pkg/errors"
+	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/util"
 	"regexp"
 	"sort"
@@ -110,7 +111,9 @@ func (a *Amount) MarshalJSON() ([]byte, error) {
 
 // Sort sorts the response by date, descending
 func (txs *TxPage) Sort() {
+	logger.Info(txs)
 	sort.Sort(txs)
+	logger.Info(txs)
 }
 
 // MarshalJSON returns a wrapped list of transactions in JSON
