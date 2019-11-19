@@ -1,59 +1,69 @@
 pool:
- vmImage: 'Ubuntu 16.04'
+  vmImage: 'Ubuntu 16.04'
 
 variables:
   GOBIN:  '$(GOPATH)/bin' # Go binaries path
-  GOROOT: '/usr/local/go1.12' # Go installation path
+  GOROOT: '/usr/local/go1.13' # Go installation path
   GOPATH: '$(system.defaultWorkingDirectory)/gopath' # Go workspace path
   modulePath: '$(GOPATH)/src/github.com/trustwallet/blockatlas' # Path to the module's code
 
 steps:
-- script: |
-    mkdir -p '$(GOBIN)'
-    mkdir -p '$(GOPATH)/pkg'
-    mkdir -p '$(modulePath)'
-    shopt -s extglob
-    shopt -s dotglob
-    mv !(gopath) '$(modulePath)'
-    echo '##vso[task.prependpath]$(GOBIN)'
-    echo '##vso[task.prependpath]$(GOROOT)/bin'
-    echo '$(go env)'
-  displayName: 'Set up the Go workspace'
+  - script: |
+      mkdir -p '$(GOBIN)'
+      mkdir -p '$(GOPATH)/pkg'
+      mkdir -p '$(modulePath)'
+      shopt -s extglob
+      shopt -s dotglob
+      mv !(gopath) '$(modulePath)'
+      echo '##vso[task.prependpath]$(GOBIN)'
+      echo '##vso[task.prependpath]$(GOROOT)/bin'
+      echo '$(go env)'
+    displayName: 'Set up the Go workspace'
 
-- script: |
-    go version
-    go get -v -t -d ./...
-  workingDirectory: '$(modulePath)'
-  displayName: 'Get dependencies'
+  - task: CacheBeta@1
+    inputs:
+      key: 'go | "$(Agent.OS)" | **/go.mod'
+      restoreKeys: |
+        go | "$(Agent.OS)"
+        go
+      path: $(GOPATH)
+    displayName: 'Cache go packages'
 
-- script: |
-    go get github.com/jstemmer/go-junit-report
-    go get github.com/axw/gocov/gocov
-    go get github.com/AlekSi/gocov-xml
-    go get -u gopkg.in/matm/v1/gocov-html
-    go get github.com/Pantani/httpexpect
-  workingDirectory: '$(modulePath)'
-  displayName: 'Get test dependencies'
+  - script: |
+      go version
+      go get -v -t -d ./...
+    workingDirectory: '$(modulePath)'
+    displayName: 'Get dependencies'
 
-- powershell: |
-  env:
-    ATLAS_BINANCE_API: $(ATLAS_BINANCE_API)
-    ATLAS_ETHEREUM_API: $(ATLAS_ETHEREUM_API)
-    ATLAS_KIN_API: $(ATLAS_KIN_API)
-    ATLAS_NIMIQ_API: $(ATLAS_NIMIQ_API)
-    ATLAS_RIPPLE_API: $(ATLAS_RIPPLE_API)
-    ATLAS_STELLAR_API: $(ATLAS_STELLAR_API)
-    ATLAS_COSMOS_API: $(ATLAS_COSMOS_API)
-  displayName: "Set environment variables"
+  - script: |
+      go get github.com/jstemmer/go-junit-report
+      go get github.com/axw/gocov/gocov
+      go get github.com/AlekSi/gocov-xml
+      go get -u gopkg.in/matm/v1/gocov-html
+    workingDirectory: '$(modulePath)'
+    displayName: 'Get test dependencies'
 
-- script: go test -v ./...
-  workingDirectory: '$(modulePath)'
-  displayName: 'Run unit tests'
+  - powershell: |
+    env:
+      ATLAS_BINANCE_API: $(ATLAS_BINANCE_API)
+      ATLAS_ETHEREUM_API: $(ATLAS_ETHEREUM_API)
+      ATLAS_KIN_API: $(ATLAS_KIN_API)
+      ATLAS_NIMIQ_API: $(ATLAS_NIMIQ_API)
+      ATLAS_RIPPLE_API: $(ATLAS_RIPPLE_API)
+      ATLAS_STELLAR_API: $(ATLAS_STELLAR_API)
+      ATLAS_COSMOS_API: $(ATLAS_COSMOS_API)
+    displayName: "Set environment variables"
 
-- script: make integration
-  workingDirectory: '$(modulePath)'
-  displayName: 'Run integration tests'
+  - script: go test -v ./...
+    workingDirectory: '$(modulePath)'
+    displayName: 'Run unit tests'
 
-- script: go build -v .
-  workingDirectory: '$(modulePath)'
-  displayName: 'Build'
+  - script: |
+      go get github.com/Pantani/httpexpect
+      make integration
+    workingDirectory: '$(modulePath)'
+    displayName: 'Run integration tests'
+
+  - script: go build -v .
+    workingDirectory: '$(modulePath)'
+    displayName: 'Build'
