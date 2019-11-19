@@ -40,27 +40,15 @@ steps:
       go get github.com/axw/gocov/gocov
       go get github.com/AlekSi/gocov-xml
       go get -u gopkg.in/matm/v1/gocov-html
+      go get github.com/Pantani/httpexpect
     workingDirectory: '$(modulePath)'
     displayName: 'Get test dependencies'
-
-  - powershell: |
-    env:
-      ATLAS_BINANCE_API: $(ATLAS_BINANCE_API)
-      ATLAS_ETHEREUM_API: $(ATLAS_ETHEREUM_API)
-      ATLAS_KIN_API: $(ATLAS_KIN_API)
-      ATLAS_NIMIQ_API: $(ATLAS_NIMIQ_API)
-      ATLAS_RIPPLE_API: $(ATLAS_RIPPLE_API)
-      ATLAS_STELLAR_API: $(ATLAS_STELLAR_API)
-      ATLAS_COSMOS_API: $(ATLAS_COSMOS_API)
-    displayName: "Set environment variables"
 
   - script: go test -v ./...
     workingDirectory: '$(modulePath)'
     displayName: 'Run unit tests'
 
-  - script: |
-      go get github.com/Pantani/httpexpect
-      make integration
+  - script: make integration
     workingDirectory: '$(modulePath)'
     displayName: 'Run integration tests'
 
