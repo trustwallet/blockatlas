@@ -65,9 +65,8 @@ func handleLookup(name string, coin uint64) (blockatlas.Resolved, error) {
 			resolved, err := api.Lookup(coin, name)
 			if err != nil {
 				return result, err
-			} else {
-				return resolved, nil
 			}
+			return resolved, nil
 		}
 	}
 	return result, nil
