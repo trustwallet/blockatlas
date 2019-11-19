@@ -14,7 +14,7 @@ require (
 	github.com/chenjiandongx/ginprom v0.0.0-20191022035802-6f3da3c84986
 	github.com/deckarep/golang-set v1.7.1
 	github.com/elastic/gosigar v0.10.5 // indirect
-	github.com/ethereum/go-ethereum v1.9.7
+	github.com/ethereum/go-ethereum v1.9.2
 	github.com/gballet/go-libpcsclite v0.0.0-20191108122812-4678299bea08 // indirect
 	github.com/getsentry/sentry-go v0.3.1
 	github.com/gin-gonic/gin v1.4.0
