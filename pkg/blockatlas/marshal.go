@@ -2,7 +2,6 @@ package blockatlas
 
 import (
 	"encoding/json"
-	"github.com/spf13/cast"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/util"
 	"regexp"
@@ -110,12 +109,8 @@ func (a *Amount) MarshalJSON() ([]byte, error) {
 }
 
 // Sort sorts the response by date, descending
-func (r *TxPage) Sort() {
-	sort.Slice(*r, func(i, j int) bool {
-		ti := cast.ToUint64((*r)[i].Date)
-		tj := cast.ToUint64((*r)[j].Date)
-		return ti >= tj
-	})
+func (txs *TxPage) Sort() {
+	sort.Sort(txs)
 }
 
 // MarshalJSON returns a wrapped list of transactions in JSON

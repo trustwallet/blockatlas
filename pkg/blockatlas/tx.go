@@ -53,6 +53,10 @@ const TxPerPage = 25
 // TxPage is a page of transactions
 type TxPage []Tx
 
+func (txs TxPage) Len() int           { return len(txs) }
+func (txs TxPage) Swap(i, j int)      { txs[i], txs[j] = txs[j], txs[i] }
+func (txs TxPage) Less(i, j int) bool { return txs[i].Date > txs[j].Date }
+
 // Amount is a positive decimal integer string.
 // It is written in the smallest possible unit (e.g. Wei, Satoshis)
 type Amount string
