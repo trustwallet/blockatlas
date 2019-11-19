@@ -37,7 +37,7 @@ Clean explorer API and events observer for crypto currencies.
 Deploy it in less than 30 seconds!
 
 ### Prerequisite
-* [GO](https://golang.org/doc/install) `1.12+`
+* [GO](https://golang.org/doc/install) `1.13+`
 * Locally running [Redis](https://redis.io/topics/quickstart) or url to remote instance (required for Observer only)
 
 #### From Source (Go Toolchain required)
