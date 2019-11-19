@@ -71,9 +71,14 @@ func (p *Platform) GetTokenTxsByAddress(address string, token string) (blockatla
 
 // NormalizeTx converts a Binance transaction into the generic model
 func NormalizeTx(srcTx *Tx, token string) (tx blockatlas.Tx, ok bool) {
-	value := util.DecimalExp(string(srcTx.Value), 8)
-	fee := util.DecimalExp(string(srcTx.Fee), 8)
 	bnbCoin := coin.Coins[coin.BNB]
+	value := util.DecimalExp(string(srcTx.Value), 8)
+
+	fee := "0"
+	feeNumber, err := srcTx.Fee.Float64()
+	if err == nil && feeNumber > 0 {
+		fee = util.DecimalExp(string(srcTx.Fee), 8)
+	}
 
 	tx = blockatlas.Tx{
 		ID:     srcTx.Hash,
