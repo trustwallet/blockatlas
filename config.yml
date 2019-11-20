@@ -125,7 +125,7 @@ tron:
 
 # [VET] VeChain: https://www.vechain.org
 vechain:
-  api: https://vethor-pubnode.digonchain.com
+  api: https://vethor-node.vechain.com
 
 # [THETA] THETA: https://www.thetatoken.org/
 theta:
