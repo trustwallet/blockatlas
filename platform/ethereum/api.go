@@ -233,11 +233,11 @@ func NormalizeCollection(c Collection, coinIndex uint, owner string) blockatlas.
 		return blockatlas.Collection{}
 	}
 
-	description := getValidParameter(c.Contracts[0].Description, c.Description)
-	symbol := getValidParameter(c.Contracts[0].Symbol, "")
-	collectionId := getValidParameter(c.Contracts[0].Address, "")
-	version := getValidParameter(c.Contracts[0].NftVersion, "")
-	collectionType := getValidParameter(c.Contracts[0].Type, "")
+	description := util.GetValidParameter(c.Contracts[0].Description, c.Description)
+	symbol := util.GetValidParameter(c.Contracts[0].Symbol, "")
+	collectionId := util.GetValidParameter(c.Contracts[0].Address, "")
+	version := util.GetValidParameter(c.Contracts[0].NftVersion, "")
+	collectionType := util.GetValidParameter(c.Contracts[0].Type, "")
 	if _, ok := slugTokens[collectionType]; ok {
 		collectionId = createCollectionId(collectionId, c.Slug)
 	}
@@ -274,13 +274,13 @@ func NormalizeCollectiblePage(c *Collection, srcPage []Collectible, coinIndex ui
 }
 
 func NormalizeCollectible(c *Collection, a Collectible, coinIndex uint) blockatlas.Collectible {
-	address := getValidParameter(c.Contracts[0].Address, "")
-	collectionType := getValidParameter(c.Contracts[0].Type, "")
+	address := util.GetValidParameter(c.Contracts[0].Address, "")
+	collectionType := util.GetValidParameter(c.Contracts[0].Type, "")
 	collectionID := address
 	if _, ok := slugTokens[collectionType]; ok {
 		collectionID = createCollectionId(address, c.Slug)
 	}
-	externalLink := getValidParameter(a.ExternalLink, a.AssetContract.ExternalLink)
+	externalLink := util.GetValidParameter(a.ExternalLink, a.AssetContract.ExternalLink)
 	id := strings.Join([]string{a.AssetContract.Address, a.TokenId}, "-")
 	return blockatlas.Collectible{
 		ID:               id,
