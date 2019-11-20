@@ -115,7 +115,7 @@ func makeNsLookupRoute(router gin.IRouter) {
 				defer wg.Done()
 				lookup, err := handleLookup(req.Name, coin)
 				if err != nil {
-					logger.Error(err)
+					logger.Error(err, logger.Params{"name": req.Name, "coin": coin, })
 					return
 				}
 				lookupsChan <- lookup
