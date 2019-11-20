@@ -10,6 +10,18 @@ type Client struct {
 	blockatlas.Request
 }
 
+func (c *Client) CurrentBlockNumber() (int64, error) {
+	var block Block
+	err := c.Post(&block, "wallet/getnowblock", nil)
+	return block.BlockHeader.RawData.Number, err
+}
+
+func (c *Client) GetBlockByNumber(num int64) (b *Block, err error) {
+	err = c.Post(&b, "wallet/getblockbylatestnum", BlockRequest{Number: num})
+	//err = c.Post(&b, "wallet/getblockbylatestnum", blockatlas.Body{"num": num})
+	return
+}
+
 func (c *Client) GetTxsOfAddress(address, token string) ([]Tx, error) {
 	path := fmt.Sprintf("v1/accounts/%s/transactions", url.PathEscape(address))
 

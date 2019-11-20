@@ -27,6 +27,30 @@ func (p *Platform) Coin() coin.Coin {
 	return coin.Coins[coin.TRX]
 }
 
+func (p *Platform) CurrentBlockNumber() (int64, error) {
+	return p.client.CurrentBlockNumber()
+}
+
+func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
+	block, err := p.client.GetBlockByNumber(num)
+	if err != nil {
+		return nil, err
+	}
+
+	var txs []blockatlas.Tx
+	for _, srcTx := range block.Txs {
+		tx, ok := Normalize(&srcTx)
+		if ok {
+			txs = append(txs, tx)
+		}
+	}
+
+	return &blockatlas.Block{
+		Number: num,
+		Txs:    txs,
+	}, nil
+}
+
 func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 	Txs, err := p.client.GetTxsOfAddress(address, "")
 	if err != nil && len(Txs) == 0 {

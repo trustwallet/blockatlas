@@ -5,6 +5,25 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 )
 
+type BlockRequest struct {
+	Number int64 `json:"num"`
+}
+
+type Block struct {
+	BlockId     string      `json:"blockID"`
+	BlockHeader BlockHeader `json:"block_header"`
+	Txs         []Tx        `json:"transactions"`
+}
+
+type BlockHeader struct {
+	RawData RawData `json:"raw_data"`
+}
+
+type RawData struct {
+	Number    int64  `json:"number"`
+	Timestamp uint64 `json:"timestamp"`
+}
+
 type Page struct {
 	Success bool   `json:"success"`
 	Error   string `json:"error,omitempty"`
