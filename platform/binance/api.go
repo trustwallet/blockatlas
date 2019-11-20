@@ -117,6 +117,9 @@ func NormalizeTx(srcTx *Tx, token string) (tx blockatlas.Tx, ok bool) {
 		}
 
 	case TxCancelOrder, TxNewOrder:
+		// Remove that to support order transfers
+		return tx, false
+
 		dt, err := srcTx.getData()
 		if err != nil {
 			return tx, false
