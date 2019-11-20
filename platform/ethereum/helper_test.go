@@ -6,26 +6,6 @@ import (
 	"testing"
 )
 
-func TestGetValidParameter(t *testing.T) {
-	var tests = []struct {
-		first  string
-		second string
-		result string
-	}{
-		{"trust", "wallet", "trust"},
-		{"", "wallet", "wallet"},
-		{"trust", "", "trust"},
-	}
-	for i, tt := range tests {
-		t.Run(fmt.Sprintf("getValidParameter %d", i), func(t *testing.T) {
-			s := getValidParameter(tt.first, tt.second)
-			if s != tt.result {
-				t.Errorf("got %q, want %q", s, tt.result)
-			}
-		})
-	}
-}
-
 func TestCreateCollectionId(t *testing.T) {
 	var tests = []struct {
 		address string
