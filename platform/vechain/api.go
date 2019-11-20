@@ -45,6 +45,28 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 	}, nil
 }
 
+func (p *Platform) GetTokenTxsByAddress(address string, token string) (blockatlas.TxPage, error) {
+	num, err := p.CurrentBlockNumber()
+	if err != nil {
+		return nil, err
+	}
+	tks, err := p.client.GetTokens(address, token, num)
+	if err != nil {
+		return nil, err
+	}
+	logTxs := make([]string, 0)
+	for _, t := range tks {
+		logTxs = append(logTxs, t.Meta.TxId)
+	}
+
+	cTxs := p.getTransactions(logTxs)
+	txs := make(blockatlas.TxPage, 0)
+	for t := range cTxs {
+		txs = append(txs, t...)
+	}
+	return txs, nil
+}
+
 func (p *Platform) getTransactions(ids []string) chan blockatlas.TxPage {
 	txChan := make(chan blockatlas.TxPage, len(ids))
 	var wg sync.WaitGroup
@@ -76,14 +98,6 @@ func (p *Platform) getTransactionChannel(id string, txChan chan blockatlas.TxPag
 	}
 	txChan <- txs
 	return nil
-}
-
-func hexToInt(hex string) (int, error) {
-	nonceStr, err := util.HexToDecimal(hex)
-	if err != nil {
-		return 0, err
-	}
-	return strconv.Atoi(nonceStr)
 }
 
 func NormalizeTransaction(srcTx Tx) (blockatlas.TxPage, error) {
@@ -129,7 +143,11 @@ func NormalizeTransaction(srcTx Tx) (blockatlas.TxPage, error) {
 }
 
 func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
-	srcTxs, err := p.client.GetTransactions(address)
+	num, err := p.CurrentBlockNumber()
+	if err != nil {
+		return nil, err
+	}
+	srcTxs, err := p.client.GetTransactions(address, num)
 	if err != nil {
 		return nil, err
 	}
@@ -169,4 +187,12 @@ func NormalizeLogTransaction(srcTx LogTx) (blockatlas.Tx, error) {
 		},
 	}
 	return tx, nil
+}
+
+func hexToInt(hex string) (int64, error) {
+	nonceStr, err := util.HexToDecimal(hex)
+	if err != nil {
+		return 0, err
+	}
+	return strconv.ParseInt(nonceStr, 10, 64)
 }

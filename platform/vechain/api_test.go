@@ -123,3 +123,27 @@ func TestNormalizeLogTransaction(t *testing.T) {
 		})
 	}
 }
+
+func Test_hexToInt(t *testing.T) {
+	tests := []struct {
+		name    string
+		hex     string
+		want    int64
+		wantErr bool
+	}{
+		{"value 1", "0x603ca6b1879375dc", 6934600807657731548, false},
+		{"value 2", "0x38d7ea4c68000", 1000000000000000, false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := hexToInt(tt.hex)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("hexToInt() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if got != tt.want {
+				t.Errorf("hexToInt() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
