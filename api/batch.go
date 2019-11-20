@@ -5,10 +5,8 @@ import (
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/ginutils"
-	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/platform"
 	"strconv"
-	"sync"
 )
 
 type AddressBatchRequest struct {
@@ -106,33 +104,12 @@ func makeNsLookupRoute(router gin.IRouter) {
 			return
 		}
 
-		lookupsChan := make(chan blockatlas.Resolved)
-		var wg sync.WaitGroup
-		wg.Add(len(req.Coins))
-
-		for _, coin := range req.Coins {
-			go func(coin uint64) {
-				defer wg.Done()
-				lookup, err := handleLookup(req.Name, coin)
-				if err != nil {
-					logger.Error(err, logger.Params{"name": req.Name, "coin": coin, })
-					return
-				}
-				lookupsChan <- lookup
-			}(coin)
+		result, err := HandleLookup(req.Name, req.Coins)
+		if err != nil {
+			ginutils.ErrorResponse(c).Message(err.Error()).Render()
+			return
 		}
 
-		// extract data from the channel
-		batch := make(LookupBatchPage, 0)
-		go func() {
-			for lookup := range lookupsChan {
-				batch = append(batch, lookup)
-			}
-		}()
-
-		wg.Wait()
-		close(lookupsChan)
-
-		ginutils.RenderSuccess(c, batch)
+		ginutils.RenderSuccess(c, result)
 	})
 }

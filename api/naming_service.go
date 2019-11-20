@@ -39,11 +39,16 @@ func MakeLookupRoute(router gin.IRouter) {
 			return
 		}
 
-		result, err := handleLookup(name, coin)
+		result, err := HandleLookup(name, []uint64{coin})
 		if err != nil {
 			ginutils.RenderError(c, http.StatusBadRequest, err.Error())
+			return
 		}
-		ginutils.RenderSuccess(c, result)
+		if len(result) == 0 {
+			ginutils.RenderError(c, http.StatusBadRequest, errors.E("name not found", errors.Params{"coin": coin, "name": name}).Error())
+			return
+		}
+		ginutils.RenderSuccess(c, result[0])
 	})
 
 	TLDMapping[".eth"] = CoinType.ETH
@@ -52,22 +57,24 @@ func MakeLookupRoute(router gin.IRouter) {
 	TLDMapping[".zil"] = CoinType.ZIL
 }
 
-func handleLookup(name string, coin uint64) (blockatlas.Resolved, error) {
-	result := blockatlas.Resolved{Result: "", Coin: coin}
+func HandleLookup(name string, coins []uint64) (result []blockatlas.Resolved, err error) {
 	if name == "" {
-		return result, errors.E("name query is missing")
+		return nil, errors.E("name is missing")
+	}
+	if len(coins) == 0 {
+		return nil, errors.E("coins are missing")
 	}
 
 	name = strings.ToLower(name)
 	for tld, id := range TLDMapping {
 		if strings.HasSuffix(name, tld) {
 			api := platform.NamingAPIs[id]
-			resolved, err := api.Lookup(coin, name)
+			result, err = api.Lookup(coins, name)
 			if err != nil {
-				return result, err
+				return
 			}
-			return resolved, nil
+			return
 		}
 	}
-	return result, nil
+	return nil, errors.E("name not found", errors.Params{"name": name})
 }
