@@ -95,12 +95,13 @@ func NormalizeTokenTransfer(srcTx *Tx, tokenInfo AssetInfo) (tx blockatlas.Tx, e
 		}
 
 		return blockatlas.Tx{
-			ID:   srcTx.ID,
-			Coin: coin.TRX,
-			Date: srcTx.BlockTime / 1000,
-			Fee:  "0",
-			From: from,
-			To:   to,
+			ID:    srcTx.ID,
+			Coin:  coin.TRX,
+			Date:  srcTx.BlockTime / 1000,
+			Fee:   "0",
+			Block: 0,
+			From:  from,
+			To:    to,
 			Meta: blockatlas.TokenTransfer{
 				Name:     tokenInfo.Name,
 				Symbol:   tokenInfo.Symbol,
