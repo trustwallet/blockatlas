@@ -1,7 +1,6 @@
 package binance
 
 import (
-	"bytes"
 	"encoding/json"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"testing"
@@ -48,6 +47,46 @@ const nativeTokenTransferTransaction = `
 	"memo": "test"
 }`
 
+const newOrderTransaction = `
+{
+      "txHash": "B0677F3436C1B1661E94D192B84B98AA42AC2485D9808357796EE501CBF794F7",
+      "blockHeight": 10815565,
+      "txType": "NEW_ORDER",
+      "timeStamp": 1559689901929,
+      "fromAddr": "bnb16ya67j7kvw8682kka09qujlw5u7lf4geqef0ku",
+      "value": 0.00649878,
+      "txAsset": "AWC-986",
+      "txQuoteAsset": "BNB",
+      "txFee": 0,
+      "txAge": 14346340,
+      "orderId": "D13BAF4BD6638FA3AAD6EBCA0E4BEEA73DF4D519-30",
+      "data": "{\"orderData\":{\"symbol\":\"AWC-986_BNB\",\"orderType\":\"limit\",\"side\":\"buy\",\"price\":0.00324939,\"quantity\":2.00000000,\"timeInForce\":\"GTE\",\"orderId\":\"D13BAF4BD6638FA3AAD6EBCA0E4BEEA73DF4D519-30\"}}",
+      "code": 0,
+      "log": "Msg 0: ",
+      "confirmBlocks": 0,
+      "memo": "",
+      "source": 0,
+      "hasChildren": 0
+}`
+
+const cancelOrderTransaction = `
+{
+      "txHash": "F48DE755170C10F4A4C0E6836A708C33EEF9A7144800F25187D5F2349FD15A34",
+      "blockHeight": 10815539,
+      "txType": "CANCEL_ORDER",
+      "timeStamp": 1559689892180,
+      "fromAddr": "bnb16ya67j7kvw8682kka09qujlw5u7lf4geqef0ku",
+      "txFee": 0,
+      "txAge": 14346349,
+      "data": "{\"orderData\":{\"symbol\":\"GTO-908_BNB\",\"orderType\":\"limit\",\"side\":\"buy\",\"price\":0.00104716,\"quantity\":1.00000000,\"timeInForce\":\"GTE\",\"orderId\":\"D13BAF4BD6638FA3AAD6EBCA0E4BEEA73DF4D519-28\"}}",
+      "code": 0,
+      "log": "Msg 0: ",
+      "confirmBlocks": 0,
+      "memo": "",
+      "source": 0,
+      "hasChildren": 0
+}`
+
 var transferDst = blockatlas.Tx{
 	ID:     "1681EE543FB4B5A628EF21D746E031F018E226D127044A4F9BA5EE2542A44555",
 	Coin:   coin.BNB,
@@ -85,10 +124,50 @@ var nativeTransferDst = blockatlas.Tx{
 	},
 }
 
+var newOrderTransferDst = blockatlas.Tx{
+	ID:     "B0677F3436C1B1661E94D192B84B98AA42AC2485D9808357796EE501CBF794F7",
+	Coin:   coin.BNB,
+	From:   "bnb16ya67j7kvw8682kka09qujlw5u7lf4geqef0ku",
+	Fee:    "0",
+	Date:   1559689901,
+	Block:  10815565,
+	Status: blockatlas.StatusCompleted,
+	Meta: blockatlas.AnyAction{
+		Coin:     coin.BNB,
+		Title:    blockatlas.KeyTitlePlaceOrder,
+		Key:      blockatlas.KeyPlaceOrder,
+		TokenID:  "AWC-986_BNB",
+		Name:     "AWC-986",
+		Symbol:   "AWC",
+		Value:    "649878",
+		Decimals: 8,
+	},
+}
+
+var cancelOrdeTransferDst = blockatlas.Tx{
+	ID:     "F48DE755170C10F4A4C0E6836A708C33EEF9A7144800F25187D5F2349FD15A34",
+	Coin:   coin.BNB,
+	From:   "bnb16ya67j7kvw8682kka09qujlw5u7lf4geqef0ku",
+	Fee:    "0",
+	Date:   1559689892,
+	Block:  10815539,
+	Status: blockatlas.StatusCompleted,
+	Meta: blockatlas.AnyAction{
+		Coin:     coin.BNB,
+		Title:    blockatlas.KeyTitleCancelOrder,
+		Key:      blockatlas.KeyCancelOrder,
+		TokenID:  "GTO-908_BNB",
+		Name:     "GTO-908",
+		Symbol:   "GTO",
+		Value:    "104716",
+		Decimals: 8,
+	},
+}
+
 type test struct {
 	name        string
 	apiResponse string
-	expected    *blockatlas.Tx
+	expected    blockatlas.Tx
 	token       string
 }
 
@@ -96,45 +175,38 @@ func TestNormalizeTx(t *testing.T) {
 	testNormalizeTx(t, &test{
 		name:        "transfer",
 		apiResponse: nativeTransferTransaction,
-		expected:    &transferDst,
+		expected:    transferDst,
 		token:       "",
 	})
 	testNormalizeTx(t, &test{
 		name:        "native token transfer",
 		apiResponse: nativeTokenTransferTransaction,
-		expected:    &nativeTransferDst,
+		expected:    nativeTransferDst,
 		token:       "YLC-D8B",
+	})
+	testNormalizeTx(t, &test{
+		name:        "new order transfer",
+		apiResponse: newOrderTransaction,
+		expected:    newOrderTransferDst,
+		token:       "AWC-986",
+	})
+	testNormalizeTx(t, &test{
+		name:        "cancel order transfer",
+		apiResponse: cancelOrderTransaction,
+		expected:    cancelOrdeTransferDst,
+		token:       "GTO-908",
 	})
 }
 
 func testNormalizeTx(t *testing.T, _test *test) {
-	var srcTx Tx
-	err := json.Unmarshal([]byte(_test.apiResponse), &srcTx)
-	if err != nil {
-		t.Error(err)
-		return
-	}
-
-	tx, ok := NormalizeTx(&srcTx, txTypeTransfer)
-	if !ok {
-		t.Errorf("transfer: tx could not be normalized")
-	}
-
-	resJSON, err := json.Marshal(&tx)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	dstJSON, err := json.Marshal(_test.expected)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if !bytes.Equal(resJSON, dstJSON) {
-		println(string(resJSON))
-		println(string(dstJSON))
-		t.Error("transfer: tx don't equal")
-	}
+	t.Run(_test.name, func(t *testing.T) {
+		var srcTx Tx
+		err := json.Unmarshal([]byte(_test.apiResponse), &srcTx)
+		assert.Nil(t, err)
+		tx, ok := NormalizeTx(&srcTx, _test.token)
+		assert.True(t, ok, "transfer: tx could not be normalized")
+		assert.Equal(t, _test.expected, tx, "transfer: tx don't equal")
+	})
 }
 
 const myToken = `
@@ -179,7 +251,7 @@ var tokenDst = blockatlas.Token{
 type testToken struct {
 	name        string
 	apiResponse string
-	expected    *blockatlas.Token
+	expected    blockatlas.Token
 	tokens      string
 }
 
@@ -188,45 +260,24 @@ func TestNormalizeToken(t *testing.T) {
 		name:        "token",
 		apiResponse: myToken,
 		tokens:      tokenList,
-		expected:    &tokenDst,
+		expected:    tokenDst,
 	})
 }
 
 func testNormalizeToken(t *testing.T, _test *testToken) {
-	var srcToken Balance
-	err := json.Unmarshal([]byte(_test.apiResponse), &srcToken)
-	if err != nil {
-		t.Error(err)
-		return
-	}
+	t.Run(_test.name, func(t *testing.T) {
+		var srcToken Balance
+		err := json.Unmarshal([]byte(_test.apiResponse), &srcToken)
+		assert.Nil(t, err)
 
-	var srcTokens TokenPage
-	err = json.Unmarshal([]byte(_test.tokens), &srcTokens)
-	if err != nil {
-		t.Error(err)
-		return
-	}
+		var srcTokens TokenPage
+		err = json.Unmarshal([]byte(_test.tokens), &srcTokens)
+		assert.Nil(t, err)
 
-	tk, ok := NormalizeToken(&srcToken, &srcTokens)
-	if !ok {
-		t.Errorf("token: token could not be normalized")
-	}
-
-	resJSON, err := json.Marshal(&tk)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	dstJSON, err := json.Marshal(_test.expected)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if !bytes.Equal(resJSON, dstJSON) {
-		println(string(resJSON))
-		println(string(dstJSON))
-		t.Error("token: token don't equal")
-	}
+		tk, ok := NormalizeToken(&srcToken, &srcTokens)
+		assert.True(t, ok, "token: token could not be normalized")
+		assert.Equal(t, _test.expected, tk, "token: token don't equal")
+	})
 }
 
 func TestDecimalPlaces(t *testing.T) {

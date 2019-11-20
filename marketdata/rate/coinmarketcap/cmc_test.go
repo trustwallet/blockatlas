@@ -4,7 +4,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas/marketdata/cmcmap"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"math/big"
 	"sort"
 	"testing"
 	"time"
@@ -26,7 +25,7 @@ func Test_normalizeRates(t *testing.T) {
 						},
 						Quote: Quote{
 							USD: USD{
-								Price: 223.55,
+								Price: 223.5,
 							},
 						},
 						LastUpdated: time.Unix(333, 0),
@@ -45,8 +44,8 @@ func Test_normalizeRates(t *testing.T) {
 				},
 			},
 			blockatlas.Rates{
-				blockatlas.Rate{Currency: "BTC", Rate: new(big.Float).Quo(big.NewFloat(1), big.NewFloat(223.55)), Timestamp: 333},
-				blockatlas.Rate{Currency: "ETH", Rate: new(big.Float).Quo(big.NewFloat(1), big.NewFloat(11.11)), Timestamp: 333},
+				blockatlas.Rate{Currency: "BTC", Rate: 1 / 223.5, Timestamp: 333},
+				blockatlas.Rate{Currency: "ETH", Rate: 1 / 11.11, Timestamp: 333},
 			},
 		},
 		{
@@ -78,8 +77,8 @@ func Test_normalizeRates(t *testing.T) {
 				},
 			},
 			blockatlas.Rates{
-				blockatlas.Rate{Currency: "BNB", Rate: new(big.Float).Quo(big.NewFloat(1), big.NewFloat(30.333)), Timestamp: 123},
-				blockatlas.Rate{Currency: "XRP", Rate: new(big.Float).Quo(big.NewFloat(1), big.NewFloat(0.4687)), Timestamp: 123},
+				blockatlas.Rate{Currency: "BNB", Rate: 1 / 30.333, Timestamp: 123},
+				blockatlas.Rate{Currency: "XRP", Rate: 1 / 0.4687, Timestamp: 123},
 			},
 		},
 	}
@@ -87,8 +86,7 @@ func Test_normalizeRates(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			gotRates := normalizeRates(tt.prices, cmcmap.CmcMapping{})
 			sort.SliceStable(gotRates, func(i, j int) bool {
-				y := gotRates[i].Rate.Cmp(gotRates[j].Rate)
-				return y <= 0
+				return gotRates[i].Rate < gotRates[j].Rate
 			})
 			if !assert.ObjectsAreEqualValues(gotRates, tt.wantRates) {
 				t.Errorf("normalizeRates() = %v, want %v", gotRates, tt.wantRates)

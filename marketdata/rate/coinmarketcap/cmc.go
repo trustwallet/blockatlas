@@ -5,7 +5,6 @@ import (
 	"github.com/trustwallet/blockatlas/marketdata/cmcmap"
 	"github.com/trustwallet/blockatlas/marketdata/rate"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"math/big"
 	"net/url"
 )
 
@@ -49,10 +48,9 @@ func normalizeRates(prices CoinPrices, cmap cmcmap.CmcMapping) (rates blockatlas
 		if err == nil {
 			currency = cmcCoin.Symbol
 		}
-		rate := new(big.Float).Quo(big.NewFloat(1), big.NewFloat(price.Quote.USD.Price))
 		rates = append(rates, blockatlas.Rate{
 			Currency:  currency,
-			Rate:      rate,
+			Rate:      1.0 / price.Quote.USD.Price,
 			Timestamp: price.LastUpdated.Unix(),
 		})
 	}

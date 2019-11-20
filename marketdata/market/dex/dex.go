@@ -5,7 +5,6 @@ import (
 	"github.com/trustwallet/blockatlas/marketdata/market"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
-	"math/big"
 	"net/url"
 	"strconv"
 	"time"
@@ -41,7 +40,7 @@ func (m *Market) GetData() (blockatlas.Tickers, error) {
 		return nil, errors.E(err, "rate not found", errors.Params{"asset": BNBAsset})
 	}
 	result := normalizeTickers(prices, m.GetId())
-	result.ApplyRate(rate.Rate.Quo(big.NewFloat(1), rate.Rate), "USD")
+	result.ApplyRate(1/rate.Rate, blockatlas.DefaultCurrency)
 	return result, nil
 }
 
@@ -70,8 +69,8 @@ func normalizeTicker(price CoinPrice, provider string) (blockatlas.Ticker, error
 		CoinType: blockatlas.TypeToken,
 		TokenId:  tokenId,
 		Price: blockatlas.TickerPrice{
-			Value:     big.NewFloat(value),
-			Change24h: big.NewFloat(value24h),
+			Value:     value,
+			Change24h: value24h,
 			Currency:  "BNB",
 			Provider:  provider,
 		},
