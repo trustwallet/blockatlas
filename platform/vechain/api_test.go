@@ -88,15 +88,15 @@ const transferLogSrc = `{
 }`
 
 var expectedTransferLog = blockatlas.Tx{
-	ID:       "0xc89b224842f3b5edcf4e6950194148be7e83cc951ff4fdfa2490e4c0cf12c80b",
-	Coin:     coin.VET,
-	From:     "0x15f4d9bed894e2e426d65e3df1480c61fb131a57",
-	To:       "0x15f4d9bed894e2e426d65e3df1480c61fb131a57",
-	Date:     1537342090,
-	Type:     "transfer",
-	Fee:      blockatlas.Amount("0"),
-	Status:   blockatlas.StatusCompleted,
-	Block:    701968,
+	ID:     "0xc89b224842f3b5edcf4e6950194148be7e83cc951ff4fdfa2490e4c0cf12c80b",
+	Coin:   coin.VET,
+	From:   "0x15f4d9bed894e2e426d65e3df1480c61fb131a57",
+	To:     "0x15f4d9bed894e2e426d65e3df1480c61fb131a57",
+	Date:   1537342090,
+	Type:   "transfer",
+	Fee:    blockatlas.Amount("0"),
+	Status: blockatlas.StatusCompleted,
+	Block:  701968,
 	Meta: blockatlas.Transfer{
 		Value:    blockatlas.Amount("1000000000000000"),
 		Decimals: 18,
