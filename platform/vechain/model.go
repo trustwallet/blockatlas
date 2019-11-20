@@ -1,9 +1,22 @@
 package vechain
 
+const (
+	filterPrefix = "0x000000000000000000000000%s"
+	rangeUnit    = "block"
+	blockRange   = 1000000
+)
+
 type LogRequest struct {
-	Options     Options       `json:"options"`
-	CriteriaSet []CriteriaSet `json:"criteriaSet"`
-	Order       string        `json:"order"`
+	Options     Options       `json:"options,omitempty"`
+	CriteriaSet []CriteriaSet `json:"criteriaSet,omitempty"`
+	Range       Range         `json:"range,omitempty"`
+	Order       string        `json:"order,omitempty"`
+}
+
+type Range struct {
+	Unit string `json:"unit"`
+	From int64  `json:"from"`
+	To   int64  `json:"to"`
 }
 
 type Options struct {
@@ -12,7 +25,10 @@ type Options struct {
 }
 
 type CriteriaSet struct {
-	TxOrigin string `json:"txOrigin"`
+	TxOrigin string `json:"txOrigin,omitempty"`
+	Address  string `json:"address,omitempty"`
+	Topic0   string `json:"topic0,omitempty"`
+	Topic1   string `json:"topic1,omitempty"`
 }
 
 type Block struct {
@@ -37,6 +53,7 @@ type Clause struct {
 
 type LogTx struct {
 	Id        string `json:"id"`
+	Address        string `json:"address"`
 	Sender    string `json:"sender"`
 	Recipient string `json:"recipient"`
 	Amount    string `json:"amount"`
