@@ -10,6 +10,7 @@ type Options struct {
 	Offset int64 `json:"offset"`
 	Limit  int64 `json:"limit"`
 }
+
 type CriteriaSet struct {
 	TxOrigin string `json:"txOrigin"`
 }
