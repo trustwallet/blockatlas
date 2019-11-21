@@ -39,34 +39,24 @@ func (c *Client) GetTxsOfAddress(address, token string) ([]Tx, error) {
 	return txs.Txs, err
 }
 
-func (c *Client) GetAccount(address string) (*Account, error) {
+func (c *Client) GetAccount(address string) (accounts *Account, err error) {
 	path := fmt.Sprintf("v1/accounts/%s", address)
-
-	var accounts Account
-	err := c.Get(&accounts, path, nil)
-
-	return &accounts, err
+	err = c.Get(&accounts, path, nil)
+	return
 }
 
-func (c *Client) GetAccountVotes(address string) (*AccountData, error) {
-	var account AccountData
-	err := c.Post(&account, "wallet/getaccount", VotesRequest{Address: address, Visible: true})
-	return &account, err
+func (c *Client) GetAccountVotes(address string) (account *AccountData, err error) {
+	err = c.Post(&account, "wallet/getaccount", VotesRequest{Address: address, Visible: true})
+	return
 }
 
-func (c *Client) GetTokenInfo(id string) (*Asset, error) {
+func (c *Client) GetTokenInfo(id string) (asset *Asset, err error) {
 	path := fmt.Sprintf("v1/assets/%s", id)
-
-	var asset Asset
-	err := c.Get(&asset, path, nil)
-
-	return &asset, err
+	err = c.Get(&asset, path, nil)
+	return
 }
 
 func (c *Client) GetValidators() (validators Validators, err error) {
 	err = c.Get(&validators, "wallet/listwitnesses", nil)
-	if err != nil {
-		return validators, err
-	}
-	return validators, err
+	return
 }

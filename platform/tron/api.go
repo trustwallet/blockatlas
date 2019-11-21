@@ -82,10 +82,9 @@ func (p *Platform) GetTokenTxsByAddress(address, token string) (blockatlas.TxPag
 
 	var tokenInfo AssetInfo
 	info, err := p.client.GetTokenInfo(token)
-	if err != nil && len(info.Data) == 0 {
+	if err != nil || len(info.Data) == 0 {
 		return nil, err
 	}
-
 	tokenInfo = info.Data[0]
 
 	var txs []blockatlas.Tx
