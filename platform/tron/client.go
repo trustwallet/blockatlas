@@ -50,7 +50,7 @@ func (c *Client) GetAccountVotes(address string) (account *AccountData, err erro
 	return
 }
 
-func (c *Client) GetTokenInfo(id string) (asset *Asset, err error) {
+func (c *Client) GetTokenInfo(id string) (asset Asset, err error) {
 	path := fmt.Sprintf("v1/assets/%s", id)
 	err = c.Get(&asset, path, nil)
 	return

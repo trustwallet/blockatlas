@@ -6,10 +6,7 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
-	services "github.com/trustwallet/blockatlas/services/assets"
-	"strconv"
 	"sync"
-	"time"
 )
 
 type Platform struct {
@@ -39,12 +36,30 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 
 	var txs []blockatlas.Tx
 	for _, srcTx := range block.Txs {
-		tx, ok := Normalize(&srcTx)
-		if ok {
-			tx.Block = uint64(num)
-			tx.Date = block.BlockHeader.Data.Timestamp / 1000
-			txs = append(txs, tx)
+		if len(srcTx.Data.Contracts) == 0 {
+			return &blockatlas.Block{}, errors.E("TRON: transfer without contract",
+				errors.TypePlatformApi, errors.Params{"tx": srcTx}).PushToSentry()
 		}
+
+		tx, err := Normalize(srcTx)
+		if err != nil {
+			logger.Error(err)
+			continue
+		}
+		contract := srcTx.Data.Contracts[0]
+		transfer, ok := contract.Parameter.(TransferAssetContract)
+		if ok {
+			assetName, err := HexToAddress(transfer.Value.AssetName)
+			if err == nil {
+				info, err := p.client.GetTokenInfo(assetName)
+				if err == nil && len(info.Data) > 0 {
+					setTokenMeta(&tx, srcTx, info.Data[0])
+				}
+			}
+		}
+		tx.Block = uint64(num)
+		tx.Date = block.BlockHeader.Data.Timestamp / 1000
+		txs = append(txs, tx)
 	}
 
 	return &blockatlas.Block{
@@ -61,35 +76,7 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 
 	var txs []blockatlas.Tx
 	for _, srcTx := range Txs {
-		tx, ok := Normalize(&srcTx)
-		if ok {
-			txs = append(txs, tx)
-		}
-	}
-
-	return txs, nil
-}
-
-func (p *Platform) GetTokenTxsByAddress(address, token string) (blockatlas.TxPage, error) {
-	tokenTxs, err := p.client.GetTxsOfAddress(address, token)
-	if err != nil {
-		return nil, err
-	}
-
-	if len(tokenTxs) == 0 {
-		return nil, err
-	}
-
-	var tokenInfo AssetInfo
-	info, err := p.client.GetTokenInfo(token)
-	if err != nil || len(info.Data) == 0 {
-		return nil, err
-	}
-	tokenInfo = info.Data[0]
-
-	var txs []blockatlas.Tx
-	for _, trx := range tokenTxs {
-		tx, err := NormalizeTokenTransfer(&trx, tokenInfo)
+		tx, err := Normalize(srcTx)
 		if err != nil {
 			logger.Error(err)
 			continue
@@ -100,127 +87,32 @@ func (p *Platform) GetTokenTxsByAddress(address, token string) (blockatlas.TxPag
 	return txs, nil
 }
 
-func NormalizeTokenTransfer(srcTx *Tx, tokenInfo AssetInfo) (tx blockatlas.Tx, e error) {
-	if len(srcTx.Data.Contracts) == 0 {
-		return tx, errors.E("token transfer without contract", errors.TypePlatformApi,
-			errors.Params{"tokenInfo": tokenInfo, "tx": tx}).PushToSentry()
+func (p *Platform) GetTokenTxsByAddress(address, token string) (blockatlas.TxPage, error) {
+	tokenTxs, err := p.client.GetTxsOfAddress(address, token)
+	if err != nil || len(tokenTxs) == 0 {
+		return nil, errors.E(err, "TRON: failed to get token from address", errors.TypePlatformApi,
+			errors.Params{"address": address, "token": token}).PushToSentry()
 	}
-	contract := &srcTx.Data.Contracts[0]
 
-	switch contract.Parameter.(type) {
-	case TransferAssetContract:
-		transfer := contract.Parameter.(TransferAssetContract)
-		from, err := HexToAddress(transfer.Value.OwnerAddress)
+	info, err := p.client.GetTokenInfo(token)
+	if err != nil || len(info.Data) == 0 {
+		return nil, errors.E(err, "TRON: failed to get token info", errors.TypePlatformApi,
+			errors.Params{"address": address, "token": token}).PushToSentry()
+	}
+	tokenInfo := info.Data[0]
+
+	var txs []blockatlas.Tx
+	for _, srcTx := range tokenTxs {
+		tx, err := Normalize(srcTx)
 		if err != nil {
-			return tx, err
+			logger.Error(err)
+			continue
 		}
-		to, err := HexToAddress(transfer.Value.ToAddress)
-		if err != nil {
-			return tx, err
-		}
-
-		return blockatlas.Tx{
-			ID:    srcTx.ID,
-			Coin:  coin.TRX,
-			Date:  srcTx.BlockTime / 1000,
-			Fee:   "0",
-			Block: 0,
-			From:  from,
-			To:    to,
-			Meta: blockatlas.TokenTransfer{
-				Name:     tokenInfo.Name,
-				Symbol:   tokenInfo.Symbol,
-				TokenID:  tokenInfo.ID,
-				Decimals: tokenInfo.Decimals,
-				Value:    transfer.Value.Amount,
-				From:     from,
-				To:       to,
-			},
-		}, nil
-	default:
-		return tx, nil
-	}
-}
-
-func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
-	results := make(blockatlas.ValidatorPage, 0)
-	validators, err := p.client.GetValidators()
-
-	if err != nil {
-		return results, err
+		setTokenMeta(&tx, srcTx, tokenInfo)
+		txs = append(txs, tx)
 	}
 
-	for _, v := range validators.Witnesses {
-		if val, ok := normalizeValidator(v); ok {
-			results = append(results, val)
-		}
-	}
-
-	return results, nil
-}
-
-func (p *Platform) GetDetails() blockatlas.StakingDetails {
-	return getDetails()
-}
-
-func getDetails() blockatlas.StakingDetails {
-	return blockatlas.StakingDetails{
-		Reward:        blockatlas.StakingReward{Annual: Annual},
-		MinimumAmount: blockatlas.Amount("1000000"),
-		LockTime:      259200,
-		Type:          blockatlas.DelegationTypeDelegate,
-	}
-}
-
-func normalizeValidator(v Validator) (validator blockatlas.Validator, ok bool) {
-	address, err := HexToAddress(v.Address)
-	if err != nil {
-		return validator, false
-	}
-
-	return blockatlas.Validator{
-		Status:  true,
-		ID:      address,
-		Details: getDetails(),
-	}, true
-}
-
-/// Normalize converts a Tron transaction into the generic model
-func Normalize(srcTx *Tx) (tx blockatlas.Tx, ok bool) {
-	if len(srcTx.Data.Contracts) < 1 {
-		return tx, false
-	}
-
-	// TODO Support multiple transfers in a single transaction
-	contract := &srcTx.Data.Contracts[0]
-	switch contract.Parameter.(type) {
-	case TransferContract:
-		transfer := contract.Parameter.(TransferContract)
-		from, err := HexToAddress(transfer.Value.OwnerAddress)
-		if err != nil {
-			return tx, false
-		}
-		to, err := HexToAddress(transfer.Value.ToAddress)
-		if err != nil {
-			return tx, false
-		}
-
-		return blockatlas.Tx{
-			ID:   srcTx.ID,
-			Coin: coin.TRX,
-			Date: srcTx.BlockTime / 1000,
-			From: from,
-			To:   to,
-			Fee:  "0",
-			Meta: blockatlas.Transfer{
-				Value:    transfer.Value.Amount,
-				Symbol:   coin.Coins[coin.TRX].Symbol,
-				Decimals: coin.Coins[coin.TRX].Decimals,
-			},
-		}, true
-	default:
-		return tx, false
-	}
+	return txs, nil
 }
 
 func (p *Platform) GetTokenListByAddress(address string) (blockatlas.TokenPage, error) {
@@ -228,46 +120,50 @@ func (p *Platform) GetTokenListByAddress(address string) (blockatlas.TokenPage, 
 	if err != nil {
 		return nil, err
 	}
-
-	tokenPage := make([]blockatlas.Token, 0)
-	var tokenIDs []string
+	tokenPage := make(blockatlas.TokenPage, 0)
 	if len(tokens.Data) == 0 {
 		return tokenPage, nil
 	}
 
+	var tokenIds []string
 	for _, v := range tokens.Data[0].AssetsV2 {
-		tokenIDs = append(tokenIDs, v.Key)
-	}
-	tokensInfoChan := make(chan *Asset, len(tokenIDs))
-
-	var wg sync.WaitGroup
-	wg.Add(len(tokenIDs))
-	for _, id := range tokenIDs {
-		go func(id string) {
-			defer wg.Done()
-			info, err := p.client.GetTokenInfo(id)
-			if err != nil {
-				logger.Error("GetTokenInfo", err)
-			}
-			tokensInfoChan <- info
-		}(id)
-	}
-	wg.Wait()
-	close(tokensInfoChan)
-
-	tokensInfoMap := make(map[string]AssetInfo)
-	for info := range tokensInfoChan {
-		if len(info.Data) == 0 {
-			continue
-		}
-		tokensInfoMap[info.Data[0].ID] = info.Data[0]
+		tokenIds = append(tokenIds, v.Key)
 	}
 
-	for _, v := range tokens.Data[0].AssetsV2 {
-		tokenPage = append(tokenPage, NormalizeToken(tokensInfoMap[v.Key]))
+	tokensChan := p.getTokens(tokenIds)
+	for info := range tokensChan {
+		tokenPage = append(tokenPage, info)
 	}
 
 	return tokenPage, nil
+}
+
+func (p *Platform) getTokens(ids []string) chan blockatlas.Token {
+	tkChan := make(chan blockatlas.Token, len(ids))
+	var wg sync.WaitGroup
+	for _, id := range ids {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			err := p.getTokensChannel(id, tkChan)
+			if err != nil {
+				logger.Error(err)
+			}
+		}()
+	}
+	wg.Wait()
+	close(tkChan)
+	return tkChan
+}
+
+func (p *Platform) getTokensChannel(id string, tkChan chan blockatlas.Token) error {
+	info, err := p.client.GetTokenInfo(id)
+	if err != nil || len(info.Data) == 0 {
+		logger.Error(err, "GetTokenInfo: invalid token")
+	}
+	asset := NormalizeToken(info.Data[0])
+	tkChan <- asset
+	return nil
 }
 
 func NormalizeToken(info AssetInfo) blockatlas.Token {
@@ -281,55 +177,55 @@ func NormalizeToken(info AssetInfo) blockatlas.Token {
 	}
 }
 
-func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, error) {
-	results := make(blockatlas.DelegationsPage, 0)
-	votes, err := p.client.GetAccountVotes(address)
-	if err != nil {
-		return nil, err
+func setTokenMeta(tx *blockatlas.Tx, srcTx Tx, tokenInfo AssetInfo) {
+	contract := srcTx.Data.Contracts[0]
+	transfer := contract.Parameter.(TransferAssetContract)
+	tx.Meta = blockatlas.TokenTransfer{
+		Name:     tokenInfo.Name,
+		Symbol:   tokenInfo.Symbol,
+		TokenID:  tokenInfo.ID,
+		Decimals: tokenInfo.Decimals,
+		Value:    transfer.Value.Amount,
+		From:     tx.From,
+		To:       tx.To,
 	}
-	if len(votes.Votes) == 0 {
-		return nil, errors.E("account without delegations")
-	}
-	validators, err := services.GetValidatorsMap(p)
-	if err != nil {
-		return nil, err
-	}
-	results = append(results, NormalizeDelegations(votes, validators)...)
-	return results, nil
 }
 
-func (p *Platform) UndelegatedBalance(address string) (string, error) {
-	account, err := p.client.GetAccount(address)
+/// Normalize converts a Tron transaction into the generic model
+func Normalize(srcTx Tx) (blockatlas.Tx, error) {
+	if len(srcTx.Data.Contracts) == 0 {
+		return blockatlas.Tx{}, errors.E("TRON: transfer without contract", errors.TypePlatformApi,
+			errors.Params{"tx": srcTx}).PushToSentry()
+	}
+	contract := srcTx.Data.Contracts[0]
+	transfer, ok := contract.Parameter.(TransferContract)
+	if !ok {
+		return blockatlas.Tx{}, errors.E("TRON: failed to cast to TransferContract type", errors.TypePlatformApi,
+			errors.Params{"tx": srcTx}).PushToSentry()
+	}
+	from, err := HexToAddress(transfer.Value.OwnerAddress)
 	if err != nil {
-		return "0", err
+		return blockatlas.Tx{}, errors.E(err, "TRON: failed to get from address", errors.TypePlatformApi,
+			errors.Params{"tx": srcTx}).PushToSentry()
+	}
+	to, err := HexToAddress(transfer.Value.ToAddress)
+	if err != nil {
+		return blockatlas.Tx{}, errors.E(err, "TRON: failed to get to address", errors.TypePlatformApi,
+			errors.Params{"tx": srcTx}).PushToSentry()
 	}
 
-	for _, data := range account.Data {
-		return strconv.FormatUint(uint64(data.Balance), 10), nil
-	}
-	return "0", nil
-}
-
-func NormalizeDelegations(data *AccountData, validators blockatlas.ValidatorMap) []blockatlas.Delegation {
-	results := make([]blockatlas.Delegation, 0)
-	for _, v := range data.Votes {
-		validator, ok := validators[v.VoteAddress]
-		if !ok {
-			logger.Error("Validator not found", validator)
-			continue
-		}
-		delegation := blockatlas.Delegation{
-			Delegator: validator,
-			Value:     strconv.Itoa(v.VoteCount * 1000000),
-			Status:    blockatlas.DelegationStatusActive,
-		}
-		for _, f := range data.Frozen {
-			t2 := time.Now().UnixNano() / int64(time.Millisecond)
-			if f.ExpireTime > t2 {
-				delegation.Status = blockatlas.DelegationStatusPending
-			}
-		}
-		results = append(results, delegation)
-	}
-	return results
+	return blockatlas.Tx{
+		ID:    srcTx.ID,
+		Coin:  coin.TRX,
+		Date:  srcTx.BlockTime / 1000,
+		From:  from,
+		To:    to,
+		Fee:   "0",
+		Block: 0,
+		Meta: blockatlas.Transfer{
+			Value:    transfer.Value.Amount,
+			Symbol:   coin.Coins[coin.TRX].Symbol,
+			Decimals: coin.Coins[coin.TRX].Decimals,
+		},
+	}, nil
 }

@@ -118,7 +118,8 @@ func testNormalizeTokenTransfer(t *testing.T, _test *test) {
 		t.Error(err)
 		return
 	}
-	res, err := NormalizeTokenTransfer(&srcTx, assetInfo)
+	res, err := Normalize(srcTx)
+	setTokenMeta(&res, srcTx, assetInfo)
 	if err != nil {
 		t.Errorf("%s: tx could not be normalized", _test.name)
 		return
@@ -144,8 +145,8 @@ func testNormalize(t *testing.T, _test *test) {
 		t.Error(err)
 		return
 	}
-	res, ok := Normalize(&srcTx)
-	if !ok {
+	res, err := Normalize(srcTx)
+	if err != nil {
 		t.Errorf("%s: tx could not be normalized", _test.name)
 		return
 	}
