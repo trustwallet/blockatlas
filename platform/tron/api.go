@@ -42,6 +42,7 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 		tx, ok := Normalize(&srcTx)
 		if ok {
 			tx.Block = uint64(num)
+			tx.Date = block.BlockHeader.Data.Timestamp / 1000
 			txs = append(txs, tx)
 		}
 	}

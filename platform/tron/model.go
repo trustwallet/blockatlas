@@ -25,8 +25,8 @@ type BlockHeader struct {
 }
 
 type BlockData struct {
-	Number    int64  `json:"number"`
-	Timestamp uint64 `json:"timestamp"`
+	Number    int64 `json:"number"`
+	Timestamp int64 `json:"timestamp"`
 }
 
 type Page struct {
