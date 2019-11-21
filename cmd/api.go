@@ -58,10 +58,10 @@ func RunApi(bind string, c chan *gin.Engine) {
 	api.LoadPlatforms(engine)
 
 	{
-		lookup := engine.Group("/ns/lookup")
-		batchLookup := v2.Group("/ns/lookup")
-		api.MakeLookupRoute(lookup)
-		api.MakeLookupBatchRoute(batchLookup)
+		ns := engine.Group("/ns")
+		batchNs := v2.Group("/ns")
+		api.MakeLookupRoute(ns)
+		api.MakeLookupBatchRoute(batchNs)
 	}
 
 	if viper.GetBool("observer.enabled") {
