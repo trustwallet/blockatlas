@@ -29,8 +29,7 @@ type LookupBatchPage []blockatlas.Resolved
 // @Failure 500 {object} ginutils.ApiError
 // @Router /ns/lookup [get]
 func MakeLookupRoute(router gin.IRouter) {
-	ns := router.Group("/ns")
-	ns.GET("/lookup", func(c *gin.Context) {
+	router.GET("/lookup", func(c *gin.Context) {
 		name := c.Query("name")
 		coinQuery := c.Query("coin")
 		coin, err := strconv.Atoi(coinQuery)
@@ -51,8 +50,24 @@ func MakeLookupRoute(router gin.IRouter) {
 		ginutils.RenderSuccess(c, result[0])
 	})
 
-	v2ns := router.Group("/v2/ns")
-	v2ns.GET("/lookup", func(c *gin.Context) {
+	TLDMapping[".eth"] = CoinType.ETH
+	TLDMapping[".xyz"] = CoinType.ETH
+	TLDMapping[".luxe"] = CoinType.ETH
+	TLDMapping[".zil"] = CoinType.ZIL
+}
+
+// @Summary Lookup .eth / .zil addresses
+// @ID lookup
+// @Description Lookup ENS/ZNS to find registered addresses for multiple coins
+// @Produce json
+// @Tags ns
+// @Param name query string empty "string name"
+// @Param coins query string true "List of coins"
+// @Success 200 {array} blockatlas.Resolved
+// @Failure 500 {object} ginutils.ApiError
+// @Router v2/ns/lookup [get]
+func MakeLookupBatchRoute(router gin.IRouter) {
+	router.GET("/lookup", func(c *gin.Context) {
 		name := c.Query("name")
 		coinsRaw := strings.Split(c.Query("coins"), ",")
 		coins, err := sliceAtoi(coinsRaw)
@@ -73,11 +88,6 @@ func MakeLookupRoute(router gin.IRouter) {
 		}
 		ginutils.RenderSuccess(c, result)
 	})
-
-	TLDMapping[".eth"] = CoinType.ETH
-	TLDMapping[".xyz"] = CoinType.ETH
-	TLDMapping[".luxe"] = CoinType.ETH
-	TLDMapping[".zil"] = CoinType.ZIL
 }
 
 func sliceAtoi(sa []string) ([]int, error) {
