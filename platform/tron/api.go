@@ -41,6 +41,7 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 	for _, srcTx := range block.Txs {
 		tx, ok := Normalize(&srcTx)
 		if ok {
+			tx.Block = uint64(num)
 			txs = append(txs, tx)
 		}
 	}
