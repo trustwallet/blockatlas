@@ -31,24 +31,6 @@ definitions:
       height:
         type: integer
     type: object
-  api.ENSBatchRequest:
-    properties:
-      coins:
-        items:
-          type: integer
-        type: array
-      name:
-        type: string
-    type: object
-  api.LookupBatchPage:
-    items:
-      properties:
-        coin:
-          type: integer
-        result:
-          type: string
-      type: object
-    type: array
   api.ObserverResponse:
     properties:
       status:
@@ -270,13 +252,13 @@ definitions:
   blockatlas.TickerPrice:
     properties:
       change_24h:
-        type: string
+        type: number
       currency:
         type: string
       provider:
         type: string
       value:
-        type: string
+        type: number
     type: object
   blockatlas.Tickers:
     items:
@@ -903,30 +885,6 @@ paths:
       summary: Get list of collections from a specific coin and addresses
       tags:
       - Collectibles
-  /v2/ns/lookup:
-    post:
-      consumes:
-      - application/json
-      description: Get multiple addresses from naming service
-      operationId: naming_service
-      parameters:
-      - description: ns name and coins
-        in: body
-        name: coins
-        required: true
-        schema:
-          $ref: '#/definitions/api.ENSBatchRequest'
-          type: object
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/api.LookupBatchPage'
-      summary: Get list of addresses for passed coins
-      tags:
-      - ns
   /v2/staking/delegations:
     post:
       consumes:

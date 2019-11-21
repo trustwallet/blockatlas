@@ -383,42 +383,6 @@
                 }
             }
         },
-        "/v2/ns/lookup": {
-            "post": {
-                "description": "Get multiple addresses from naming service",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "ns"
-                ],
-                "summary": "Get list of addresses for passed coins",
-                "operationId": "naming_service",
-                "parameters": [
-                    {
-                        "description": "ns name and coins",
-                        "name": "coins",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "object",
-                            "$ref": "#/definitions/api.ENSBatchRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/api.LookupBatchPage"
-                        }
-                    }
-                }
-            }
-        },
         "/v2/staking/delegations": {
             "post": {
                 "description": "Get Stake Delegations for multiple coins",
@@ -802,34 +766,6 @@
                 }
             }
         },
-        "api.ENSBatchRequest": {
-            "type": "object",
-            "properties": {
-                "coins": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                },
-                "name": {
-                    "type": "string"
-                }
-            }
-        },
-        "api.LookupBatchPage": {
-            "type": "array",
-            "items": {
-                "type": "object",
-                "properties": {
-                    "coin": {
-                        "type": "integer"
-                    },
-                    "result": {
-                        "type": "string"
-                    }
-                }
-            }
-        },
         "api.ObserverResponse": {
             "type": "object",
             "properties": {
@@ -1163,7 +1099,7 @@
             "type": "object",
             "properties": {
                 "change_24h": {
-                    "type": "string"
+                    "type": "number"
                 },
                 "currency": {
                     "type": "string"
@@ -1172,7 +1108,7 @@
                     "type": "string"
                 },
                 "value": {
-                    "type": "string"
+                    "type": "number"
                 }
             }
         },
