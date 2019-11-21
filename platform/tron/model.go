@@ -6,7 +6,12 @@ import (
 )
 
 type BlockRequest struct {
-	Number int64 `json:"num"`
+	StartNum int64 `json:"startNum,omitempty"`
+	EndNum   int64 `json:"endNum,omitempty"`
+}
+
+type Blocks struct {
+	Blocks []Block `json:"block"`
 }
 
 type Block struct {
@@ -16,10 +21,10 @@ type Block struct {
 }
 
 type BlockHeader struct {
-	RawData RawData `json:"raw_data"`
+	Data BlockData `json:"raw_data"`
 }
 
-type RawData struct {
+type BlockData struct {
 	Number    int64  `json:"number"`
 	Timestamp uint64 `json:"timestamp"`
 }
@@ -37,6 +42,7 @@ type Tx struct {
 }
 
 type TxData struct {
+	Timestamp int64      `json:"timestamp"`
 	Contracts []Contract `json:"contract"`
 }
 
