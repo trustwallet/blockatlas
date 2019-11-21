@@ -33,13 +33,13 @@ func MakeLookupRoute(router gin.IRouter) {
 	ns.GET("/lookup", func(c *gin.Context) {
 		name := c.Query("name")
 		coinQuery := c.Query("coin")
-		coin, err := strconv.ParseUint(coinQuery, 10, 64)
+		coin, err := strconv.Atoi(coinQuery)
 		if err != nil {
 			ginutils.RenderError(c, http.StatusBadRequest, "coin query is invalid")
 			return
 		}
 
-		result, err := HandleLookup(name, []uint64{coin})
+		result, err := handleLookup(name, []int{coin})
 		if err != nil {
 			ginutils.RenderError(c, http.StatusBadRequest, err.Error())
 			return
@@ -51,20 +51,48 @@ func MakeLookupRoute(router gin.IRouter) {
 		ginutils.RenderSuccess(c, result[0])
 	})
 
+	v2ns := router.Group("/v2/ns")
+	v2ns.GET("/lookup", func(c *gin.Context) {
+		name := c.Query("name")
+		coinsRaw := strings.Split(c.Query("coins"), ",")
+		coins, err := sliceAtoi(coinsRaw)
+
+		if err != nil {
+			ginutils.RenderError(c, http.StatusBadRequest, "coin query is invalid")
+			return
+		}
+
+		result, err := handleLookup(name, coins)
+		if err != nil {
+			ginutils.RenderError(c, http.StatusBadRequest, err.Error())
+			return
+		}
+		if len(result) == 0 {
+			ginutils.RenderError(c, http.StatusBadRequest, errors.E("name not found", errors.Params{"name": name}).Error())
+			return
+		}
+		ginutils.RenderSuccess(c, result)
+	})
+
 	TLDMapping[".eth"] = CoinType.ETH
 	TLDMapping[".xyz"] = CoinType.ETH
 	TLDMapping[".luxe"] = CoinType.ETH
 	TLDMapping[".zil"] = CoinType.ZIL
 }
 
-func HandleLookup(name string, coins []uint64) (result []blockatlas.Resolved, err error) {
-	if name == "" {
-		return nil, errors.E("name is missing")
+func sliceAtoi(sa []string) ([]int, error) {
+	si := make([]int, 0, len(sa))
+	for _, a := range sa {
+		i, err := strconv.Atoi(a)
+		if err != nil {
+			return si, err
+		}
+		si = append(si, i)
 	}
-	if len(coins) == 0 {
-		return nil, errors.E("coins are missing")
-	}
+	return si, nil
+}
 
+func handleLookup(name string, coins []int) (result []blockatlas.Resolved, err error) {
 	name = strings.ToLower(name)
 	for tld, id := range TLDMapping {
 		if strings.HasSuffix(name, tld) {

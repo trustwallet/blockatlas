@@ -86,30 +86,3 @@ func makeCategoriesBatchRoute(router gin.IRouter) {
 		ginutils.RenderSuccess(c, batch)
 	})
 }
-
-// @Description Get multiple addresses from naming service
-// @ID naming_service
-// @Summary Get list of addresses for passed coins
-// @Accept json
-// @Produce json
-// @Tags ns
-// @Param coins body api.ENSBatchRequest true "ns name and coins"
-// @Success 200 {object} api.LookupBatchPage
-// @Router /v2/ns/lookup [post]
-func makeNsLookupRoute(router gin.IRouter) {
-	router.POST("/ns/lookup", func(c *gin.Context) {
-		var req ENSBatchRequest
-		if err := c.BindJSON(&req); err != nil {
-			ginutils.ErrorResponse(c).Message(err.Error()).Render()
-			return
-		}
-
-		result, err := HandleLookup(req.Name, req.Coins)
-		if err != nil {
-			ginutils.ErrorResponse(c).Message(err.Error()).Render()
-			return
-		}
-
-		ginutils.RenderSuccess(c, result)
-	})
-}

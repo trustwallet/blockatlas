@@ -10,7 +10,7 @@ import (
 	ens "github.com/wealdtech/go-ens/v3"
 )
 
-func (p *Platform) Lookup(coins []uint64, name string) ([]blockatlas.Resolved, error) {
+func (p *Platform) Lookup(coins []int, name string) ([]blockatlas.Resolved, error) {
 	var result []blockatlas.Resolved
 	client, err := ethclient.Dial(p.RpcURL)
 	if err != nil {
@@ -28,14 +28,14 @@ func (p *Platform) Lookup(coins []uint64, name string) ([]blockatlas.Resolved, e
 			logger.Error(errors.E(err, errors.Params{"coin": coin, "name": name}))
 			continue
 		}
-		result = append(result, blockatlas.Resolved{Coin: coin, Result: address})
+		result = append(result, blockatlas.Resolved{Coin: uint64(coin), Result: address})
 	}
 
 	return result, nil
 }
 
-func addressForCoin(resolver *ens.Resolver, coin uint64, name string) (string, error) {
-	address, err := resolver.MultiAddress(coin)
+func addressForCoin(resolver *ens.Resolver, coin int, name string) (string, error) {
+	address, err := resolver.MultiAddress(uint64(coin))
 	if err != nil {
 		if coin == CoinType.ETH {
 			// user may not set multi coin address
