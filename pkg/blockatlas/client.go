@@ -14,8 +14,6 @@ import (
 	"time"
 )
 
-type Body map[string]interface{}
-
 type Request struct {
 	BaseUrl      string
 	Headers      map[string]string
