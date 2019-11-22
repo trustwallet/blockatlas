@@ -32,13 +32,13 @@ func MakeLookupRoute(router gin.IRouter) {
 	router.GET("/lookup", func(c *gin.Context) {
 		name := c.Query("name")
 		coinQuery := c.Query("coin")
-		coin, err := strconv.Atoi(coinQuery)
+		coin, err := strconv.ParseUint(coinQuery, 10, 64)
 		if err != nil {
 			ginutils.RenderError(c, http.StatusBadRequest, "coin query is invalid")
 			return
 		}
 
-		result, err := handleLookup(name, []int{coin})
+		result, err := handleLookup(name, []uint64{coin})
 		if err != nil {
 			ginutils.RenderError(c, http.StatusBadRequest, err.Error())
 			return
@@ -90,10 +90,10 @@ func MakeLookupBatchRoute(router gin.IRouter) {
 	})
 }
 
-func sliceAtoi(sa []string) ([]int, error) {
-	si := make([]int, 0, len(sa))
+func sliceAtoi(sa []string) ([]uint64, error) {
+	si := make([]uint64, 0, len(sa))
 	for _, a := range sa {
-		i, err := strconv.Atoi(a)
+		i, err := strconv.ParseUint(a, 10, 64)
 		if err != nil {
 			return si, err
 		}
@@ -102,7 +102,7 @@ func sliceAtoi(sa []string) ([]int, error) {
 	return si, nil
 }
 
-func handleLookup(name string, coins []int) (result []blockatlas.Resolved, err error) {
+func handleLookup(name string, coins []uint64) (result []blockatlas.Resolved, err error) {
 	name = strings.ToLower(name)
 	for tld, id := range TLDMapping {
 		if strings.HasSuffix(name, tld) {
