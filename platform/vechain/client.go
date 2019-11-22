@@ -22,23 +22,29 @@ func (c *Client) GetBlockByNumber(num int64) (block Block, err error) {
 	return
 }
 
-func (c *Client) GetTransactions(address string, block int64) (txs []LogTx, err error) {
+func (c *Client) GetTransactions(address string, block int64) (txs []LogTransfer, err error) {
 	err = c.Post(&txs, "logs/transfer", LogRequest{
-		Options:     Options{Offset: 0, Limit: 1000},
-		CriteriaSet: []CriteriaSet{{TxOrigin: address}},
-		Range:       Range{Unit: rangeUnit, From: block - blockRange, To: block},
-		Order:       "desc",
+		Options: Options{Offset: 0, Limit: 25},
+		CriteriaSet: []CriteriaSet{
+			{Sender: address},
+			{Recipient: address},
+		},
+		Range: Range{Unit: rangeUnit, From: 0, To: block},
+		Order: "desc",
 	})
 	return
 }
 
-func (c *Client) GetTokens(address, token string, block int64) (txs []LogTx, err error) {
-	tokenHex := getFilter(token)
+func (c *Client) GetTokens(address, token string, block int64) (txs []LogEvent, err error) {
+	tokenHex := getFilter(address)
 	err = c.Post(&txs, "logs/event", LogRequest{
-		Options:     Options{Offset: 0, Limit: 1000},
-		CriteriaSet: []CriteriaSet{{Address: address, Topic1: tokenHex}},
-		Range:       Range{Unit: rangeUnit, From: block - blockRange, To: block},
-		Order:       "desc",
+		Options: Options{Offset: 0, Limit: 10},
+		CriteriaSet: []CriteriaSet{
+			{Address: token, Topic1: tokenHex},
+			{Address: token, Topic2: tokenHex},
+		},
+		Range: Range{Unit: rangeUnit, From: 0, To: block},
+		Order: "desc",
 	})
 	return
 }
