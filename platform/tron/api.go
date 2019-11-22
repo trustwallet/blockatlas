@@ -1,6 +1,7 @@
 package tron
 
 import (
+	"encoding/hex"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
@@ -72,9 +73,9 @@ func (p *Platform) NormalizeBlockChannel(srcTx Tx, txChan chan blockatlas.Tx) {
 	}
 	transfer := srcTx.Data.Contracts[0].Parameter.Value
 	if len(transfer.AssetName) > 0 {
-		assetName, err := HexToAddress(transfer.AssetName)
+		assetName, err := hex.DecodeString(transfer.AssetName[:])
 		if err == nil {
-			info, err := p.client.GetTokenInfo(assetName)
+			info, err := p.client.GetTokenInfo(string(assetName))
 			if err == nil && len(info.Data) > 0 {
 				setTokenMeta(tx, srcTx, info.Data[0])
 			}
@@ -214,7 +215,7 @@ func Normalize(srcTx Tx) (*blockatlas.Tx, error) {
 	contract := srcTx.Data.Contracts[0]
 	if contract.Type != TransferContract && contract.Type != TransferAssetContract {
 		return nil, errors.E("TRON: invalid contract transfer", errors.TypePlatformApi,
-			errors.Params{"tx": srcTx, "type": contract.Type}).PushToSentry()
+			errors.Params{"tx": srcTx, "type": contract.Type})
 	}
 
 	transfer := contract.Parameter.Value
