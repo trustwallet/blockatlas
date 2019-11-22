@@ -95,14 +95,6 @@ type test struct {
 	expected    *blockatlas.Tx
 }
 
-func TestNormalize(t *testing.T) {
-	testNormalize(t, &test{
-		name:        "transfer",
-		apiResponse: transferSrc,
-		expected:    &transferDst,
-	})
-}
-
 func TestNormalizeTokenTransfer(t *testing.T) {
 	testNormalizeTokenTransfer(t, &test{
 		name:        "token transfer",
@@ -114,54 +106,32 @@ func TestNormalizeTokenTransfer(t *testing.T) {
 func testNormalizeTokenTransfer(t *testing.T, _test *test) {
 	var srcTx Tx
 	err := json.Unmarshal([]byte(_test.apiResponse), &srcTx)
-	if err != nil {
-		t.Error(err)
-		return
-	}
+	assert.NoError(t, err)
+	assert.NotNil(t, srcTx)
 	res, err := Normalize(srcTx)
-	setTokenMeta(&res, srcTx, assetInfo)
-	if err != nil {
-		t.Errorf("%s: tx could not be normalized", _test.name)
-		return
-	}
+	assert.NoError(t, err)
+	assert.NotNil(t, res)
+	setTokenMeta(res, srcTx, assetInfo)
+	assert.Equal(t, _test.expected, res)
+}
 
-	actual, err := json.Marshal(&res)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	expected, err := json.Marshal(_test.expected)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	assert.Equal(t, expected, actual)
+func TestNormalize(t *testing.T) {
+	testNormalize(t, &test{
+		name:        "transfer",
+		apiResponse: transferSrc,
+		expected:    &transferDst,
+	})
 }
 
 func testNormalize(t *testing.T, _test *test) {
 	var srcTx Tx
 	err := json.Unmarshal([]byte(_test.apiResponse), &srcTx)
-	if err != nil {
-		t.Error(err)
-		return
-	}
+	assert.NoError(t, err)
+	assert.NotNil(t, srcTx)
 	res, err := Normalize(srcTx)
-	if err != nil {
-		t.Errorf("%s: tx could not be normalized", _test.name)
-		return
-	}
-
-	actual, err := json.Marshal(&res)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	expected, err := json.Marshal(&transferDst)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	assert.Equal(t, expected, actual)
+	assert.NoError(t, err)
+	assert.NotNil(t, res)
+	assert.Equal(t, _test.expected, res)
 }
 
 var tokenDst = blockatlas.Token{

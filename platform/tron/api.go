@@ -34,32 +34,10 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 		return nil, err
 	}
 
-	var txs []blockatlas.Tx
-	for _, srcTx := range block.Txs {
-		if len(srcTx.Data.Contracts) == 0 {
-			return &blockatlas.Block{}, errors.E("TRON: transfer without contract",
-				errors.TypePlatformApi, errors.Params{"tx": srcTx}).PushToSentry()
-		}
-
-		tx, err := Normalize(srcTx)
-		if err != nil {
-			logger.Error(err)
-			continue
-		}
-		contract := srcTx.Data.Contracts[0]
-		transfer, ok := contract.Parameter.(TransferAssetContract)
-		if ok {
-			assetName, err := HexToAddress(transfer.Value.AssetName)
-			if err == nil {
-				info, err := p.client.GetTokenInfo(assetName)
-				if err == nil && len(info.Data) > 0 {
-					setTokenMeta(&tx, srcTx, info.Data[0])
-				}
-			}
-		}
-		tx.Block = uint64(num)
-		tx.Date = block.BlockHeader.Data.Timestamp / 1000
-		txs = append(txs, tx)
+	txsChan := p.NormalizeBlockTxs(block.Txs)
+	txs := make(blockatlas.TxPage, 0)
+	for cTxs := range txsChan {
+		txs = append(txs, cTxs)
 	}
 
 	return &blockatlas.Block{
@@ -68,20 +46,56 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 	}, nil
 }
 
+func (p *Platform) NormalizeBlockTxs(srcTxs []Tx) chan blockatlas.Tx {
+	txChan := make(chan blockatlas.Tx, len(srcTxs))
+	var wg sync.WaitGroup
+	for _, srcTx := range srcTxs {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			p.NormalizeBlockChannel(srcTx, txChan)
+		}()
+	}
+	wg.Wait()
+	close(txChan)
+	return txChan
+}
+
+func (p *Platform) NormalizeBlockChannel(srcTx Tx, txChan chan blockatlas.Tx) {
+	if len(srcTx.Data.Contracts) == 0 {
+		return
+	}
+
+	tx, err := Normalize(srcTx)
+	if err != nil {
+		return
+	}
+	transfer := srcTx.Data.Contracts[0].Parameter.Value
+	if len(transfer.AssetName) > 0 {
+		assetName, err := HexToAddress(transfer.AssetName)
+		if err == nil {
+			info, err := p.client.GetTokenInfo(assetName)
+			if err == nil && len(info.Data) > 0 {
+				setTokenMeta(tx, srcTx, info.Data[0])
+			}
+		}
+	}
+	txChan <- *tx
+}
+
 func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 	Txs, err := p.client.GetTxsOfAddress(address, "")
 	if err != nil && len(Txs) == 0 {
 		return nil, err
 	}
 
-	var txs []blockatlas.Tx
+	txs := make(blockatlas.TxPage, 0)
 	for _, srcTx := range Txs {
 		tx, err := Normalize(srcTx)
 		if err != nil {
-			logger.Error(err)
 			continue
 		}
-		txs = append(txs, tx)
+		txs = append(txs, *tx)
 	}
 
 	return txs, nil
@@ -101,15 +115,15 @@ func (p *Platform) GetTokenTxsByAddress(address, token string) (blockatlas.TxPag
 	}
 	tokenInfo := info.Data[0]
 
-	var txs []blockatlas.Tx
+	txs := make(blockatlas.TxPage, 0)
 	for _, srcTx := range tokenTxs {
 		tx, err := Normalize(srcTx)
 		if err != nil {
 			logger.Error(err)
 			continue
 		}
-		setTokenMeta(&tx, srcTx, tokenInfo)
-		txs = append(txs, tx)
+		setTokenMeta(tx, srcTx, tokenInfo)
+		txs = append(txs, *tx)
 	}
 
 	return txs, nil
@@ -134,7 +148,6 @@ func (p *Platform) GetTokenListByAddress(address string) (blockatlas.TokenPage, 
 	for info := range tokensChan {
 		tokenPage = append(tokenPage, info)
 	}
-
 	return tokenPage, nil
 }
 
@@ -160,6 +173,7 @@ func (p *Platform) getTokensChannel(id string, tkChan chan blockatlas.Token) err
 	info, err := p.client.GetTokenInfo(id)
 	if err != nil || len(info.Data) == 0 {
 		logger.Error(err, "GetTokenInfo: invalid token")
+		return err
 	}
 	asset := NormalizeToken(info.Data[0])
 	tkChan <- asset
@@ -178,52 +192,53 @@ func NormalizeToken(info AssetInfo) blockatlas.Token {
 }
 
 func setTokenMeta(tx *blockatlas.Tx, srcTx Tx, tokenInfo AssetInfo) {
-	contract := srcTx.Data.Contracts[0]
-	transfer := contract.Parameter.(TransferAssetContract)
+	transfer := srcTx.Data.Contracts[0].Parameter.Value
 	tx.Meta = blockatlas.TokenTransfer{
 		Name:     tokenInfo.Name,
 		Symbol:   tokenInfo.Symbol,
 		TokenID:  tokenInfo.ID,
 		Decimals: tokenInfo.Decimals,
-		Value:    transfer.Value.Amount,
+		Value:    transfer.Amount,
 		From:     tx.From,
 		To:       tx.To,
 	}
 }
 
 /// Normalize converts a Tron transaction into the generic model
-func Normalize(srcTx Tx) (blockatlas.Tx, error) {
+func Normalize(srcTx Tx) (*blockatlas.Tx, error) {
 	if len(srcTx.Data.Contracts) == 0 {
-		return blockatlas.Tx{}, errors.E("TRON: transfer without contract", errors.TypePlatformApi,
-			errors.Params{"tx": srcTx}).PushToSentry()
-	}
-	contract := srcTx.Data.Contracts[0]
-	transfer, ok := contract.Parameter.(TransferContract)
-	if !ok {
-		return blockatlas.Tx{}, errors.E("TRON: failed to cast to TransferContract type", errors.TypePlatformApi,
-			errors.Params{"tx": srcTx}).PushToSentry()
-	}
-	from, err := HexToAddress(transfer.Value.OwnerAddress)
-	if err != nil {
-		return blockatlas.Tx{}, errors.E(err, "TRON: failed to get from address", errors.TypePlatformApi,
-			errors.Params{"tx": srcTx}).PushToSentry()
-	}
-	to, err := HexToAddress(transfer.Value.ToAddress)
-	if err != nil {
-		return blockatlas.Tx{}, errors.E(err, "TRON: failed to get to address", errors.TypePlatformApi,
+		return nil, errors.E("TRON: transfer without contract", errors.TypePlatformApi,
 			errors.Params{"tx": srcTx}).PushToSentry()
 	}
 
-	return blockatlas.Tx{
-		ID:    srcTx.ID,
-		Coin:  coin.TRX,
-		Date:  srcTx.BlockTime / 1000,
-		From:  from,
-		To:    to,
-		Fee:   "0",
-		Block: 0,
+	contract := srcTx.Data.Contracts[0]
+	if contract.Type != TransferContract && contract.Type != TransferAssetContract {
+		return nil, errors.E("TRON: invalid contract transfer", errors.TypePlatformApi,
+			errors.Params{"tx": srcTx, "type": contract.Type}).PushToSentry()
+	}
+
+	transfer := contract.Parameter.Value
+	from, err := HexToAddress(transfer.OwnerAddress)
+	if err != nil {
+		return nil, errors.E(err, "TRON: failed to get from address", errors.TypePlatformApi,
+			errors.Params{"tx": srcTx}).PushToSentry()
+	}
+	to, err := HexToAddress(transfer.ToAddress)
+	if err != nil {
+		return nil, errors.E(err, "TRON: failed to get to address", errors.TypePlatformApi,
+			errors.Params{"tx": srcTx}).PushToSentry()
+	}
+
+	return &blockatlas.Tx{
+		ID:     srcTx.ID,
+		Coin:   coin.TRX,
+		Date:   srcTx.BlockTime / 1000,
+		From:   from,
+		To:     to,
+		Fee:    "0",
+		Status: blockatlas.StatusCompleted,
 		Meta: blockatlas.Transfer{
-			Value:    transfer.Value.Amount,
+			Value:    transfer.Amount,
 			Symbol:   coin.Coins[coin.TRX].Symbol,
 			Decimals: coin.Coins[coin.TRX].Decimals,
 		},
