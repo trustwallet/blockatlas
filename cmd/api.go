@@ -36,9 +36,6 @@ func RunApi(bind string, c chan *gin.Engine) {
 	gin.SetMode(viper.GetString("gin.mode"))
 	engine := gin.Default()
 
-	v1 := engine.Group("/v1")
-	v2 := engine.Group("/v2")
-
 	sg := sentrygin.New(sentrygin.Options{})
 	engine.Use(util.CheckReverseProxy, sg)
 
@@ -57,13 +54,6 @@ func RunApi(bind string, c chan *gin.Engine) {
 	api.MakeMetricsRoute(engine)
 	api.LoadPlatforms(engine)
 
-	{
-		ns := engine.Group("/ns")
-		batchNs := v2.Group("/ns")
-		api.MakeLookupRoute(ns)
-		api.MakeLookupBatchRoute(batchNs)
-	}
-
 	if viper.GetBool("observer.enabled") {
 		logger.Info("Loading observer API")
 		observerAPI := engine.Group("/observer/v1")
@@ -72,7 +62,7 @@ func RunApi(bind string, c chan *gin.Engine) {
 
 	if viper.GetBool("market.enabled") {
 		logger.Info("Loading market API")
-		marketAPI := v1.Group("/market")
+		marketAPI := engine.Group("/v2/market")
 		api.SetupMarketAPI(marketAPI, Storage)
 	}
 

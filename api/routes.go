@@ -43,6 +43,13 @@ func LoadPlatforms(root gin.IRouter) {
 		customAPI.RegisterRoutes(router)
 	}
 
+	{
+		ns := root.Group("/ns")
+		batchNs := v2.Group("/ns")
+		MakeLookupRoute(ns)
+		MakeLookupBatchRoute(batchNs)
+	}
+
 	makeCategoriesBatchRoute(v2)
 	makeStakingDelegationsBatchRoute(v2)
 	logger.Info("Routes set up", logger.Params{"routes": len(routers)})
