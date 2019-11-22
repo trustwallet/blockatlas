@@ -72,16 +72,16 @@ func (p *Platform) getTransactions(ids []string) chan blockatlas.TxPage {
 	var wg sync.WaitGroup
 	for _, id := range ids {
 		wg.Add(1)
-		go func(id string, c chan blockatlas.TxPage) {
+		go func() {
 			defer wg.Done()
-			err := p.getTransactionChannel(id, c)
+			err := p.getTransactionChannel(id, txChan)
 			if err != nil {
 				logger.Error(err)
 			}
-		}(id, txChan)
+		}()
 	}
 	wg.Wait()
-	defer close(txChan)
+	close(txChan)
 	return txChan
 }
 
@@ -168,6 +168,7 @@ func NormalizeLogTransaction(srcTx LogTransfer) (blockatlas.Tx, error) {
 		return blockatlas.Tx{}, err
 	}
 
+	id := util.GetValidParameter(srcTx.Id, srcTx.Meta.TxId)
 	tx := blockatlas.Tx{
 		ID:     srcTx.Meta.TxId,
 		Coin:   coin.VET,
