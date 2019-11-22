@@ -3,6 +3,7 @@ package vechain
 import (
 	"fmt"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"net/url"
 	"strings"
 )
 
