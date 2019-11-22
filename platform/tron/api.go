@@ -237,6 +237,7 @@ func Normalize(srcTx Tx) (*blockatlas.Tx, error) {
 		From:   from,
 		To:     to,
 		Fee:    "0",
+		Block:  0,
 		Status: blockatlas.StatusCompleted,
 		Meta: blockatlas.Transfer{
 			Value:    transfer.Amount,
