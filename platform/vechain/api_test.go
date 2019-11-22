@@ -114,7 +114,7 @@ func TestNormalizeLogTransaction(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			var tx LogTx
+			var tx LogEvent
 			err := json.Unmarshal([]byte(tt.txData), &tx)
 			assert.Nil(t, err)
 			got, err := NormalizeLogTransaction(tx)

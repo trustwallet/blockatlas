@@ -45,12 +45,12 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 	}, nil
 }
 
-func (p *Platform) GetTokenTxsByAddress(address string, token string) (blockatlas.TxPage, error) {
-	num, err := p.CurrentBlockNumber()
+func (p *Platform) GetTokenTxsByAddress(address, token string) (blockatlas.TxPage, error) {
+	curBlock, err := p.CurrentBlockNumber()
 	if err != nil {
 		return nil, err
 	}
-	tks, err := p.client.GetTokens(address, token, num)
+	tks, err := p.client.GetTokens(address, token, curBlock)
 	if err != nil {
 		return nil, err
 	}
@@ -72,16 +72,16 @@ func (p *Platform) getTransactions(ids []string) chan blockatlas.TxPage {
 	var wg sync.WaitGroup
 	for _, id := range ids {
 		wg.Add(1)
-		go func() {
+		go func(id string, c chan blockatlas.TxPage) {
 			defer wg.Done()
-			err := p.getTransactionChannel(id, txChan)
+			err := p.getTransactionChannel(id, c)
 			if err != nil {
 				logger.Error(err)
 			}
-		}()
+		}(id, txChan)
 	}
 	wg.Wait()
-	close(txChan)
+	defer close(txChan)
 	return txChan
 }
 
@@ -109,14 +109,13 @@ func NormalizeTransaction(srcTx Tx) (blockatlas.TxPage, error) {
 	if err != nil {
 		return blockatlas.TxPage{}, err
 	}
-
 	id := util.GetValidParameter(srcTx.Id, srcTx.Meta.TxId)
 	origin := util.GetValidParameter(srcTx.Origin, srcTx.Meta.TxOrigin)
 	fee := strconv.Itoa(srcTx.Gas)
 
 	txs := make(blockatlas.TxPage, 0)
 	for _, clause := range srcTx.Clauses {
-		value, err := util.HexToDecimal(clause.Value)
+		value, err := formatAmount(clause.Data)
 		if err != nil {
 			return blockatlas.TxPage{}, err
 		}
@@ -130,12 +129,12 @@ func NormalizeTransaction(srcTx Tx) (blockatlas.TxPage, error) {
 			Date:     srcTx.Meta.BlockTimestamp,
 			Type:     blockatlas.TxTransfer,
 			Block:    srcTx.Meta.BlockNumber,
-			Sequence: uint64(nonce),
+			Sequence: nonce,
 			Status:   blockatlas.StatusCompleted,
 			Meta: blockatlas.Transfer{
 				Value:    blockatlas.Amount(value),
 				Symbol:   coin.Coins[coin.VET].Symbol,
-				Decimals: 18,
+				Decimals: 18, // TODO Not all tokens have decimal 18 https://github.com/vechain/token-registry/tree/master/tokens/main
 			},
 		})
 	}
@@ -163,19 +162,18 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 	return txs, nil
 }
 
-func NormalizeLogTransaction(srcTx LogTx) (blockatlas.Tx, error) {
+func NormalizeLogTransaction(srcTx LogTransfer) (blockatlas.Tx, error) {
 	value, err := util.HexToDecimal(srcTx.Amount)
 	if err != nil {
 		return blockatlas.Tx{}, err
 	}
 
-	id := util.GetValidParameter(srcTx.Id, srcTx.Meta.TxId)
 	tx := blockatlas.Tx{
-		ID:     id,
+		ID:     srcTx.Meta.TxId,
 		Coin:   coin.VET,
 		From:   srcTx.Sender,
 		To:     srcTx.Recipient,
-		Fee:    blockatlas.Amount("0"),
+		Fee:    blockatlas.Amount("0"), // TODO get actual fee
 		Date:   srcTx.Meta.BlockTimestamp,
 		Type:   blockatlas.TxTransfer,
 		Block:  srcTx.Meta.BlockNumber,
@@ -189,10 +187,20 @@ func NormalizeLogTransaction(srcTx LogTx) (blockatlas.Tx, error) {
 	return tx, nil
 }
 
-func hexToInt(hex string) (int64, error) {
+func hexToInt(hex string) (uint64, error) {
 	nonceStr, err := util.HexToDecimal(hex)
 	if err != nil {
 		return 0, err
 	}
-	return strconv.ParseInt(nonceStr, 10, 64)
+	return strconv.ParseUint(nonceStr, 10, 64)
+}
+
+
+func formatAmount(hex string) (string, error) {
+	substr := "0x" + hex[len(hex)-64:]
+	nonceStr, err := util.HexToDecimal(substr)
+	if err != nil {
+		return "0", err
+	}
+	return nonceStr, nil
 }

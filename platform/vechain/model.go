@@ -3,7 +3,6 @@ package vechain
 const (
 	filterPrefix = "0x000000000000000000000000%s"
 	rangeUnit    = "block"
-	blockRange   = 1000000
 )
 
 type LogRequest struct {
@@ -25,10 +24,12 @@ type Options struct {
 }
 
 type CriteriaSet struct {
-	TxOrigin string `json:"txOrigin,omitempty"`
-	Address  string `json:"address,omitempty"`
-	Topic0   string `json:"topic0,omitempty"`
-	Topic1   string `json:"topic1,omitempty"`
+	Sender    string `json:"sender,omitempty"`
+	Recipient string `json:"recipient,omitempty"`
+	Address   string `json:"address,omitempty"`
+	Topic0    string `json:"topic0,omitempty"` // Raw transaction hash
+	Topic1    string `json:"topic1,omitempty"` // Sender
+	Topic2    string `json:"topic2,omitempty"` // Receiver
 }
 
 type Block struct {
@@ -43,24 +44,26 @@ type Tx struct {
 	Clauses []Clause `json:"clauses"`
 	Gas     int      `json:"gas"`
 	Nonce   string   `json:"nonce"`
-	Meta    TxMeta   `json:"meta"`
+	Meta    LogMeta  `json:"meta"`
 }
 
 type Clause struct {
 	To    string `json:"to"`
-	Value string `json:"value"`
+	Data  string `json:"data"`
 }
 
-type LogTx struct {
-	Id        string `json:"id"`
-	Address        string `json:"address"`
-	Sender    string `json:"sender"`
-	Recipient string `json:"recipient"`
-	Amount    string `json:"amount"`
-	Meta      TxMeta `json:"meta"`
+type LogTransfer struct {
+	Sender    string  `json:"sender"`
+	Recipient string  `json:"recipient"`
+	Amount    string  `json:"amount"`
+	Meta      LogMeta `json:"meta"`
 }
 
-type TxMeta struct {
+type LogEvent struct {
+	Meta LogMeta `json:"meta"`
+}
+
+type LogMeta struct {
 	TxId           string `json:"txID,omitempty"`
 	TxOrigin       string `json:"txOrigin,omitempty"`
 	BlockId        string `json:"blockID,omitempty"`
