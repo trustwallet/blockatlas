@@ -16,7 +16,7 @@ type Platform struct {
 }
 
 func (p *Platform) Init() error {
-	p.client = Client{blockatlas.InitClient(viper.GetString("vechain.api"))}
+	p.client = Client{blockatlas.InitClient(viper.GetString("vechain.rpc"))}
 	return nil
 }
 
