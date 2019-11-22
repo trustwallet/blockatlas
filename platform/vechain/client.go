@@ -3,7 +3,6 @@ package vechain
 import (
 	"fmt"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"net/url"
 	"strings"
 )
 
@@ -46,7 +45,7 @@ func (c *Client) GetTokens(address, token string, block int64) (txs []LogTx, err
 
 func (c *Client) GetTransactionByID(id string) (transaction Tx, err error) {
 	path := fmt.Sprintf("transactions/%s", id)
-	err = c.Get(&transaction, path, url.Values{"raw": {"false"}})
+	err = c.Get(&transaction, path, nil)
 	return
 }
 
