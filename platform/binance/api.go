@@ -94,9 +94,10 @@ func NormalizeTx(srcTx *Tx, token string) (tx blockatlas.Tx, ok bool) {
 
 	switch srcTx.Type {
 	case TxTransfer:
-		if len(token) > 0 && srcTx.Asset != token {
+		if srcTx.Asset != token {
 			return tx, false
 		}
+
 		if srcTx.Asset == bnbCoin.Symbol {
 			// Condition for native transfer (BNB)
 			tx.Meta = blockatlas.Transfer{
@@ -117,11 +118,13 @@ func NormalizeTx(srcTx *Tx, token string) (tx blockatlas.Tx, ok bool) {
 		}
 
 	case TxCancelOrder, TxNewOrder:
-		// Remove that to support order transfers
-		return tx, false
-
 		dt, err := srcTx.getData()
 		if err != nil {
+			return tx, false
+		}
+
+		symbol := dt.OrderData.Base
+		if symbol != token {
 			return tx, false
 		}
 
@@ -136,11 +139,6 @@ func NormalizeTx(srcTx *Tx, token string) (tx blockatlas.Tx, ok bool) {
 				p := price * pow
 				value = strconv.Itoa(int(p))
 			}
-		}
-
-		symbol := dt.OrderData.Base
-		if len(token) > 0 && symbol != token && dt.OrderData.Quote != token {
-			return tx, false
 		}
 
 		tx.Meta = blockatlas.AnyAction{

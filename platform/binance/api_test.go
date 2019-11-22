@@ -9,7 +9,7 @@ import (
 	"github.com/trustwallet/blockatlas/coin"
 )
 
-const nativeTransferTransaction = `
+const transferTransaction = `
 {
 	"blockHeight": 7761368,
 	"code": 0,
@@ -28,7 +28,7 @@ const nativeTransferTransaction = `
 	"memo": "test"
 }`
 
-const nativeTokenTransferTransaction = `
+const tokenTransferTransaction = `
 {
 	"blockHeight": 7928667,
 	"code": 0,
@@ -104,7 +104,7 @@ var transferDst = blockatlas.Tx{
 	},
 }
 
-var nativeTransferDst = blockatlas.Tx{
+var tokenTransferDst = blockatlas.Tx{
 	ID:     "95CF63FAA27579A9B6AF84EF8B2DFEAC29627479E9C98E7F5AE4535E213FA4C9",
 	Coin:   coin.BNB,
 	From:   "tbnb1ttyn4csghfgyxreu7lmdu3lcplhqhxtzced45a",
@@ -169,32 +169,43 @@ type test struct {
 	apiResponse string
 	expected    blockatlas.Tx
 	token       string
+	wantError   bool
 }
 
 func TestNormalizeTx(t *testing.T) {
 	testNormalizeTx(t, &test{
 		name:        "transfer",
-		apiResponse: nativeTransferTransaction,
+		apiResponse: transferTransaction,
 		expected:    transferDst,
-		token:       "",
+		token:       "BNB",
+		wantError:   false,
 	})
 	testNormalizeTx(t, &test{
 		name:        "native token transfer",
-		apiResponse: nativeTokenTransferTransaction,
-		expected:    nativeTransferDst,
+		apiResponse: tokenTransferTransaction,
+		expected:    tokenTransferDst,
 		token:       "YLC-D8B",
+		wantError:   false,
 	})
 	testNormalizeTx(t, &test{
 		name:        "new order transfer",
 		apiResponse: newOrderTransaction,
 		expected:    newOrderTransferDst,
 		token:       "AWC-986",
+		wantError:   false,
 	})
 	testNormalizeTx(t, &test{
 		name:        "cancel order transfer",
 		apiResponse: cancelOrderTransaction,
 		expected:    cancelOrdeTransferDst,
 		token:       "GTO-908",
+		wantError:   false,
+	})
+	testNormalizeTx(t, &test{
+		name:        "normalize error transfer",
+		apiResponse: tokenTransferTransaction,
+		token:       "GTO-908",
+		wantError:   true,
 	})
 }
 
@@ -204,6 +215,10 @@ func testNormalizeTx(t *testing.T, _test *test) {
 		err := json.Unmarshal([]byte(_test.apiResponse), &srcTx)
 		assert.Nil(t, err)
 		tx, ok := NormalizeTx(&srcTx, _test.token)
+		if _test.wantError {
+			assert.False(t, ok, "transfer: tx could be normalized")
+			return
+		}
 		assert.True(t, ok, "transfer: tx could not be normalized")
 		assert.Equal(t, _test.expected, tx, "transfer: tx don't equal")
 	})
