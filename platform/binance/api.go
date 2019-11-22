@@ -71,6 +71,10 @@ func (p *Platform) GetTokenTxsByAddress(address string, token string) (blockatla
 
 // NormalizeTx converts a Binance transaction into the generic model
 func NormalizeTx(srcTx *Tx, token string) (tx blockatlas.Tx, ok bool) {
+	if srcTx.Asset != token {
+		return tx, false
+	}
+
 	bnbCoin := coin.Coins[coin.BNB]
 	value := util.DecimalExp(string(srcTx.Value), 8)
 
@@ -94,9 +98,6 @@ func NormalizeTx(srcTx *Tx, token string) (tx blockatlas.Tx, ok bool) {
 
 	switch srcTx.Type {
 	case TxTransfer:
-		if len(token) > 0 && srcTx.Asset != token {
-			return tx, false
-		}
 		if srcTx.Asset == bnbCoin.Symbol {
 			// Condition for native transfer (BNB)
 			tx.Meta = blockatlas.Transfer{
@@ -117,9 +118,6 @@ func NormalizeTx(srcTx *Tx, token string) (tx blockatlas.Tx, ok bool) {
 		}
 
 	case TxCancelOrder, TxNewOrder:
-		// Remove that to support order transfers
-		return tx, false
-
 		dt, err := srcTx.getData()
 		if err != nil {
 			return tx, false
