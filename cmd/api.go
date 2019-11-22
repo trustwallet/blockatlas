@@ -62,7 +62,7 @@ func RunApi(bind string, c chan *gin.Engine) {
 
 	if viper.GetBool("market.enabled") {
 		logger.Info("Loading market API")
-		marketAPI := engine.Group("/v2/market")
+		marketAPI := engine.Group("/v1/market")
 		api.SetupMarketAPI(marketAPI, Storage)
 	}
 
