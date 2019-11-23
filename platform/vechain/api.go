@@ -91,6 +91,7 @@ func (p *Platform) getTransactionChannel(id string, txChan chan blockatlas.TxPag
 		return errors.E(err, "Failed to get tx", errors.TypePlatformUnmarshal,
 			errors.Params{"id": id}).PushToSentry()
 	}
+
 	txs, err := NormalizeTransaction(srcTx)
 	if err != nil {
 		return errors.E(err, "Failed to NormalizeBlockTransactions tx", errors.TypePlatformUnmarshal,
@@ -109,22 +110,21 @@ func NormalizeTransaction(srcTx Tx) (blockatlas.TxPage, error) {
 	if err != nil {
 		return blockatlas.TxPage{}, err
 	}
-	id := util.GetValidParameter(srcTx.Id, srcTx.Meta.TxId)
 	origin := util.GetValidParameter(srcTx.Origin, srcTx.Meta.TxOrigin)
 	fee := strconv.Itoa(srcTx.Gas)
 
 	txs := make(blockatlas.TxPage, 0)
 	for _, clause := range srcTx.Clauses {
-		value, err := formatAmount(clause.Data)
+		value, err := getAmount(clause.Data)
 		if err != nil {
 			return blockatlas.TxPage{}, err
 		}
 
 		txs = append(txs, blockatlas.Tx{
-			ID:       id,
+			ID:       srcTx.Id,
 			Coin:     coin.VET,
 			From:     origin,
-			To:       clause.To,
+			To:       getRecipientAddress(clause.Data),
 			Fee:      blockatlas.Amount(fee),
 			Date:     srcTx.Meta.BlockTimestamp,
 			Type:     blockatlas.TxTransfer,
@@ -168,7 +168,6 @@ func NormalizeLogTransaction(srcTx LogTransfer) (blockatlas.Tx, error) {
 		return blockatlas.Tx{}, err
 	}
 
-	id := util.GetValidParameter(srcTx.Id, srcTx.Meta.TxId)
 	tx := blockatlas.Tx{
 		ID:     srcTx.Meta.TxId,
 		Coin:   coin.VET,
@@ -197,11 +196,16 @@ func hexToInt(hex string) (uint64, error) {
 }
 
 
-func formatAmount(hex string) (string, error) {
+func getAmount(hex string) (string, error) {
 	substr := "0x" + hex[len(hex)-64:]
 	nonceStr, err := util.HexToDecimal(substr)
 	if err != nil {
 		return "0", err
 	}
 	return nonceStr, nil
+}
+
+// Substring recipient address from clause data and appends 0x
+func getRecipientAddress(hex string) string {
+	return "0x" + hex[len(hex)-104:len(hex)-104+40]
 }
