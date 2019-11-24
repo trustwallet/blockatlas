@@ -61,7 +61,7 @@ func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, e
 		return nil, err
 	}
 	if !account.IsDelegated {
-		return nil, errors.E("account without delegations")
+		return make(blockatlas.DelegationsPage, 0), nil
 	}
 	validators, err := services.GetValidatorsMap(p)
 	if err != nil {
@@ -70,14 +70,14 @@ func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, e
 	return NormalizeDelegation(account, validators)
 }
 
-func NormalizeDelegation(account Account, validators blockatlas.ValidatorMap) ([]blockatlas.Delegation, error) {
+func NormalizeDelegation(account Account, validators blockatlas.ValidatorMap) (blockatlas.DelegationsPage, error) {
 	validator, ok := validators[account.Delegate]
 	if !ok {
 		return nil, errors.E("Validator not found",
 			errors.Params{"Address": account.Address, "Delegate": account.Delegate, "Balance": account.Balance})
 	}
 	balance := removeDecimals(account.Balance)
-	return []blockatlas.Delegation{
+	return blockatlas.DelegationsPage{
 		{
 			Delegator: validator,
 			Value:     balance,

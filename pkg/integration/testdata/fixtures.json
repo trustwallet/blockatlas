@@ -108,10 +108,10 @@
     "address": "bnb1jxfh2g85q3v0tdq56fnevx6xcxtcnhtsmcu64m"
   },
   "tezos": {
-    "address": "tz1gSXuYjWPytCRLKKubmPwHXz5aGHdQNhFH"
+    "address": "tz1WCd2jm4uSt4vntk4vSuUWoZQGhLcDuR9q"
   },
   "tron": {
-    "address": "TMuA6YqfCeX8EhbfYEg5y7S4DqzSJireY9"
+    "address": "TQZskDJJRGAHifeKoQ7wLC4QDyB2iGvwp2"
   },
   "vechain": {
     "address": "0xB5e883349e68aB59307d1604555AC890fAC47128"
@@ -120,7 +120,7 @@
     "address": "rMQ98K56yXJbDGv49ZSmW51sLn94Xe1mu1"
   },
   "cosmos": {
-    "address": "cosmos1cxehfdhfm96ljpktdxsj0k6xp9gtuheghwgqug"
+    "address": "cosmos1rw62phusuv9vzraezr55k0vsqssvz6ed52zyrl"
   },
   "iotex": {
     "address": "io154mvzs09vkgn0hw6gg3ayzw5w39jzp47f8py9v"

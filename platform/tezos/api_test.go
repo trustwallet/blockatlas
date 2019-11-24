@@ -180,7 +180,7 @@ func TestNormalizeDelegations(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, account)
 
-	expected := []blockatlas.Delegation{
+	expected := blockatlas.DelegationsPage{
 		{
 			Delegator: validator1,
 			Value:     "68995611927",

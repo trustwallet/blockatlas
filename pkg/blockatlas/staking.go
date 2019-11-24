@@ -22,14 +22,14 @@ const (
 const ValidatorsPerPage = 100
 
 type StakingReward struct {
-	Annual float64 `json:"annual,omitempty"`
+	Annual float64 `json:"annual"`
 }
 
 type StakingDetails struct {
-	Reward        StakingReward  `json:"reward,omitempty"`
-	LockTime      int            `json:"locktime,omitempty"`
-	MinimumAmount Amount         `json:"minimum_amount,omitempty"`
-	Type          DelegationType `json:"type,omitempty"`
+	Reward        StakingReward  `json:"reward"`
+	LockTime      int            `json:"locktime"`
+	MinimumAmount Amount         `json:"minimum_amount"`
+	Type          DelegationType `json:"type"`
 }
 
 type Validator struct {
@@ -66,8 +66,8 @@ type StakeValidator struct {
 type DelegationResponse struct {
 	Address     string             `json:"address"`
 	Coin        *coin.ExternalCoin `json:"coin"`
-	Details     StakingDetails     `json:"details,omitempty"`
-	Delegations DelegationsPage    `json:"delegations,omitempty"`
-	Balance     string             `json:"balance,omitempty"`
+	Details     StakingDetails     `json:"details"`
+	Delegations DelegationsPage    `json:"delegations"`
+	Balance     string             `json:"balance"`
 	Error       interface{}        `json:"error,omitempty"`
 }
