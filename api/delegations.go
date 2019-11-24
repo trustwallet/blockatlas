@@ -8,11 +8,11 @@ import (
 func getDelegationResponse(p blockatlas.StakeAPI, address string) (blockatlas.DelegationResponse, error) {
 	delegations, err := p.GetDelegations(address)
 	if err != nil {
-		return blockatlas.DelegationResponse{}, errors.E(err, "Unable to fetch delegations list from the registry")
+		return blockatlas.DelegationResponse{}, errors.E("Unable to fetch delegations list", err)
 	}
 	balance, err := p.UndelegatedBalance(address)
 	if err != nil {
-		return blockatlas.DelegationResponse{}, errors.E(err, "Unable to fetch delegations list from the registry")
+		return blockatlas.DelegationResponse{}, errors.E("Unable to fetch undelegated balance", err)
 	}
 	c := p.Coin()
 	return blockatlas.DelegationResponse{
