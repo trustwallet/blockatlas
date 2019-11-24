@@ -2,6 +2,7 @@ package tron
 
 import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	services "github.com/trustwallet/blockatlas/services/assets"
 	"strconv"
@@ -11,7 +12,6 @@ import (
 func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
 	results := make(blockatlas.ValidatorPage, 0)
 	validators, err := p.client.GetValidators()
-
 	if err != nil {
 		return results, err
 	}
@@ -21,7 +21,6 @@ func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
 			results = append(results, val)
 		}
 	}
-
 	return results, nil
 }
 
@@ -43,6 +42,9 @@ func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, e
 	votes, err := p.client.GetAccountVotes(address)
 	if err != nil {
 		return nil, err
+	}
+	if len(votes.Votes) == 0 {
+		return nil, errors.E("account without delegations")
 	}
 	validators, err := services.GetValidatorsMap(p)
 	if err != nil {
