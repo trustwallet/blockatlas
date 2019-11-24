@@ -1099,7 +1099,7 @@
             "type": "object",
             "properties": {
                 "change_24h": {
-                    "type": "string"
+                    "type": "number"
                 },
                 "currency": {
                     "type": "string"
@@ -1108,7 +1108,7 @@
                     "type": "string"
                 },
                 "value": {
-                    "type": "string"
+                    "type": "number"
                 }
             }
         },

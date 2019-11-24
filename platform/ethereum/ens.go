@@ -6,14 +6,13 @@ import (
 	CoinType "github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
+	"github.com/trustwallet/blockatlas/pkg/logger"
 	ens "github.com/wealdtech/go-ens/v3"
 )
 
-func (p *Platform) Lookup(coin uint64, name string) (blockatlas.Resolved, error) {
+func (p *Platform) Lookup(coins []uint64, name string) ([]blockatlas.Resolved, error) {
+	var result []blockatlas.Resolved
 	client, err := ethclient.Dial(p.RpcURL)
-	result := blockatlas.Resolved{
-		Coin: coin,
-	}
 	if err != nil {
 		return result, errors.E(err, "can't dial to ethereum rpc")
 	}
@@ -22,31 +21,43 @@ func (p *Platform) Lookup(coin uint64, name string) (blockatlas.Resolved, error)
 	if err != nil {
 		return result, errors.E(err, "new ens resolver failed")
 	}
-	// try to get multi coin address
+	for _, coin := range coins {
+		// try to get multi coin address
+		address, err := addressForCoin(resolver, coin, name)
+		if err != nil {
+			logger.Error(errors.E(err, errors.Params{"coin": coin, "name": name}))
+			continue
+		}
+		result = append(result, blockatlas.Resolved{Coin: coin, Result: address})
+	}
+
+	return result, nil
+}
+
+func addressForCoin(resolver *ens.Resolver, coin uint64, name string) (string, error) {
 	address, err := resolver.MultiAddress(coin)
 	if err != nil {
 		if coin == CoinType.ETH {
 			// user may not set multi coin address
-			return lookupLegacyETH(resolver, name)
+			result, err := lookupLegacyETH(resolver, name)
+			if err != nil {
+				return "", errors.E(err, "query legacy address failed")
+			}
+			return result, nil
 		}
-		return result, errors.E(err, "query multi coin address failed")
+		return "", errors.E(err, "query multi coin address failed")
 	}
 	encoded, err := cc.ToString(address, uint32(coin))
 	if err != nil {
-		return result, errors.E(err, "encode to address failed")
+		return "", errors.E(err, "encode to address failed")
 	}
-	result.Result = encoded
-	return result, nil
+	return encoded, nil
 }
 
-func lookupLegacyETH(resolver *ens.Resolver, name string) (blockatlas.Resolved, error) {
-	result := blockatlas.Resolved{
-		Coin: CoinType.ETH,
-	}
+func lookupLegacyETH(resolver *ens.Resolver, name string) (string, error) {
 	address, err := resolver.Address()
 	if err != nil {
-		return result, errors.E(err, "query address failed")
+		return "", errors.E(err, "query address failed")
 	}
-	result.Result = address.Hex()
-	return result, nil
+	return address.Hex(), nil
 }

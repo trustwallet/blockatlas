@@ -14,6 +14,11 @@ type AddressBatchRequest struct {
 	Address string `json:"address"`
 }
 
+type ENSBatchRequest struct {
+	Coins []uint64 `json:"coins"`
+	Name  string   `json:"name"`
+}
+
 type AddressesRequest []AddressBatchRequest
 
 // @Summary Get Multiple Stake Delegations

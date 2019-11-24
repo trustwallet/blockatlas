@@ -252,13 +252,13 @@ definitions:
   blockatlas.TickerPrice:
     properties:
       change_24h:
-        type: string
+        type: number
       currency:
         type: string
       provider:
         type: string
       value:
-        type: string
+        type: number
     type: object
   blockatlas.Tickers:
     items:

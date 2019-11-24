@@ -53,7 +53,6 @@ func RunApi(bind string, c chan *gin.Engine) {
 
 	api.MakeMetricsRoute(engine)
 	api.LoadPlatforms(engine)
-	api.MakeLookupRoute(engine)
 
 	if viper.GetBool("observer.enabled") {
 		logger.Info("Loading observer API")
