@@ -262,6 +262,9 @@ func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, e
 	if err != nil {
 		return nil, err
 	}
+	if len(votes.Votes) == 0 {
+		return nil, errors.E("account without delegations")
+	}
 	validators, err := services.GetValidatorsMap(p)
 	if err != nil {
 		return nil, err

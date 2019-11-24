@@ -42,7 +42,15 @@ func makeStakingDelegationsBatchRoute(router gin.IRouter) {
 		for _, r := range reqs {
 			c := coin.Coins[r.Coin]
 			p := platform.StakeAPIs[c.Handle]
-			batch = append(batch, getDelegationResponse(p, r.Address))
+			delegation, err := getDelegationResponse(p, r.Address)
+			if err != nil {
+				delegation = blockatlas.DelegationResponse{
+					Address: r.Address,
+					Coin:    c.External(),
+					Error:   err,
+				}
+			}
+			batch = append(batch, delegation)
 		}
 		ginutils.RenderSuccess(c, blockatlas.DocsResponse{Docs: batch})
 	})

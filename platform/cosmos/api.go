@@ -4,6 +4,7 @@ import (
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	services "github.com/trustwallet/blockatlas/services/assets"
 	"github.com/trustwallet/blockatlas/util"
@@ -110,6 +111,9 @@ func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, e
 	unbondingDelegations, err := p.client.GetUnbondingDelegations(address)
 	if err != nil {
 		return nil, err
+	}
+	if delegations == nil && unbondingDelegations == nil {
+		return nil, errors.E("account without delegations")
 	}
 	validators, err := services.GetValidatorsMap(p)
 	if err != nil {
