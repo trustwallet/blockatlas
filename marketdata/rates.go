@@ -10,15 +10,18 @@ import (
 	"github.com/trustwallet/blockatlas/storage"
 )
 
+var rateProviders rate.Providers
+
 func InitRates(storage storage.Market) {
-	addRates(storage, []rate.Provider{
-		// Add Market Rate Providers
-		fixer.InitRate(),
-		cmc.InitRate(),
-	})
+	rateProviders = rate.Providers{
+		// Add Market Quote Providers:
+		0: fixer.InitRate(),
+		1: cmc.InitRate(),
+	}
+	addRates(storage, rateProviders)
 }
 
-func addRates(storage storage.Market, rates []rate.Provider) {
+func addRates(storage storage.Market, rates rate.Providers) {
 	c := cron.New()
 	for _, r := range rates {
 		scheduleTasks(storage, r, c)
@@ -32,7 +35,7 @@ func runRate(storage storage.Market, p rate.Provider) error {
 		return errors.E(err, "FetchLatestRates")
 	}
 	if len(rates) > 0 {
-		storage.SaveRates(rates)
+		storage.SaveRates(rates, rateProviders)
 		logger.Info("Market rates", logger.Params{"rates": len(rates), "provider": p.GetId()})
 	}
 	return nil

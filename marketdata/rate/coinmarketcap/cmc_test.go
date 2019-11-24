@@ -10,6 +10,7 @@ import (
 )
 
 func Test_normalizeRates(t *testing.T) {
+	provider := "cmc"
 	tests := []struct {
 		name      string
 		prices    CoinPrices
@@ -44,8 +45,8 @@ func Test_normalizeRates(t *testing.T) {
 				},
 			},
 			blockatlas.Rates{
-				blockatlas.Rate{Currency: "BTC", Rate: 1 / 223.5, Timestamp: 333},
-				blockatlas.Rate{Currency: "ETH", Rate: 1 / 11.11, Timestamp: 333},
+				blockatlas.Rate{Currency: "BTC", Rate: 1 / 223.5, Timestamp: 333, Provider: provider},
+				blockatlas.Rate{Currency: "ETH", Rate: 1 / 11.11, Timestamp: 333, Provider: provider},
 			},
 		},
 		{
@@ -77,14 +78,14 @@ func Test_normalizeRates(t *testing.T) {
 				},
 			},
 			blockatlas.Rates{
-				blockatlas.Rate{Currency: "BNB", Rate: 1 / 30.333, Timestamp: 123},
-				blockatlas.Rate{Currency: "XRP", Rate: 1 / 0.4687, Timestamp: 123},
+				blockatlas.Rate{Currency: "BNB", Rate: 1 / 30.333, Timestamp: 123, Provider: provider},
+				blockatlas.Rate{Currency: "XRP", Rate: 1 / 0.4687, Timestamp: 123, Provider: provider},
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotRates := normalizeRates(tt.prices, cmcmap.CmcMapping{})
+			gotRates := normalizeRates(tt.prices, cmcmap.CmcMapping{}, provider)
 			sort.SliceStable(gotRates, func(i, j int) bool {
 				return gotRates[i].Rate < gotRates[j].Rate
 			})

@@ -25,7 +25,7 @@ func (s *Storage) SaveTicker(coin blockatlas.Ticker, pl MarketProviderList) erro
 			return errors.E("ticker provider with less priority")
 		}
 
-		if cd.LastUpdate.After(coin.LastUpdate) && op >= np{
+		if cd.LastUpdate.After(coin.LastUpdate) && op >= np {
 			return errors.E("ticker is outdated")
 		}
 	}
@@ -43,11 +43,23 @@ func (s *Storage) GetTicker(coin, token string) (blockatlas.Ticker, error) {
 	return *cd, nil
 }
 
-func (s *Storage) SaveRates(rates blockatlas.Rates) {
+type RateProviderList interface {
+	GetPriority(providerId string) int
+}
+
+func (s *Storage) SaveRates(rates blockatlas.Rates, pl RateProviderList) {
 	for _, rate := range rates {
 		r, err := s.GetRate(rate.Currency)
-		if err == nil && rate.Timestamp < r.Timestamp {
-			return
+		if err == nil {
+			op := pl.GetPriority(r.Provider)
+			np := pl.GetPriority(rate.Provider)
+			if np > op {
+				logger.Error("rate provider with less priority")
+			}
+
+			if rate.Timestamp < r.Timestamp && op >= np {
+				logger.Error("rate is outdated")
+			}
 		}
 		err = s.AddHM(EntityRates, rate.Currency, &rate)
 		if err != nil {

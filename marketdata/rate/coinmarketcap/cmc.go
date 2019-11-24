@@ -34,11 +34,11 @@ func (c *Cmc) FetchLatestRates() (rates blockatlas.Rates, err error) {
 	if err != nil {
 		return
 	}
-	rates = normalizeRates(prices, cmap)
+	rates = normalizeRates(prices, cmap, c.GetId())
 	return
 }
 
-func normalizeRates(prices CoinPrices, cmap cmcmap.CmcMapping) (rates blockatlas.Rates) {
+func normalizeRates(prices CoinPrices, cmap cmcmap.CmcMapping, provider string) (rates blockatlas.Rates) {
 	for _, price := range prices.Data {
 		if price.Platform != nil {
 			continue
@@ -52,6 +52,7 @@ func normalizeRates(prices CoinPrices, cmap cmcmap.CmcMapping) (rates blockatlas
 			Currency:  currency,
 			Rate:      1.0 / price.Quote.USD.Price,
 			Timestamp: price.LastUpdated.Unix(),
+			Provider:  provider,
 		})
 	}
 	return

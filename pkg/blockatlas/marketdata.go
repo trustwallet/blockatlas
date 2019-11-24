@@ -46,6 +46,7 @@ type Rate struct {
 	Currency  string  `json:"currency"`
 	Rate      float64 `json:"rate"`
 	Timestamp int64   `json:"timestamp"`
+	Provider  string  `json:"provider,omitempty"`
 }
 
 type Rates []Rate
