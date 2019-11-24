@@ -15,12 +15,10 @@ import (
 )
 
 type Request struct {
-	BaseUrl            string
-	Headers            map[string]string
-	HttpClient         *http.Client
-	ErrorHandler       func(res *http.Response, uri string) error
-	CacheHandler       func(method string, url string, body io.Reader, result interface{}) error
-	PostRequestHandler func(method string, url string, body io.Reader, result []byte)
+	BaseUrl      string
+	Headers      map[string]string
+	HttpClient   *http.Client
+	ErrorHandler func(res *http.Response, uri string) error
 }
 
 func InitClient(baseUrl string) Request {
@@ -59,12 +57,6 @@ func (r *Request) Post(result interface{}, path string, body interface{}) error 
 }
 
 func (r *Request) Execute(method string, url string, body io.Reader, result interface{}) error {
-	if r.CacheHandler != nil {
-		err := r.CacheHandler(method, url, body, result)
-		if err == nil {
-			return nil
-		}
-	}
 	start := time.Now()
 	req, err := http.NewRequest(method, url, body)
 	if err != nil {
@@ -89,9 +81,6 @@ func (r *Request) Execute(method string, url string, body io.Reader, result inte
 	b, err := ioutil.ReadAll(res.Body)
 	if err != nil {
 		return errors.E(err, errors.TypePlatformUnmarshal, errors.Params{"url": url, "method": method}).PushToSentry()
-	}
-	if r.PostRequestHandler != nil {
-		r.PostRequestHandler(method, url, body, b)
 	}
 	err = json.Unmarshal(b, result)
 	if err != nil {
