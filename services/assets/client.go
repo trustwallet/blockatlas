@@ -1,14 +1,25 @@
 package assets
 
 import (
+	"github.com/patrickmn/go-cache"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
+	"io"
+	"time"
 )
 
 const (
 	AssetsURL = "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/"
 )
+
+var (
+	memoryCache *cache.Cache
+)
+
+func init() {
+	memoryCache = cache.New(5*time.Minute, 5*time.Minute)
+}
 
 func GetValidatorsMap(api blockatlas.StakeAPI) (blockatlas.ValidatorMap, error) {
 	validatorList, err := GetValidators(api)
@@ -42,12 +53,17 @@ func GetValidatorsInfo(coin coin.Coin) ([]AssetValidator, error) {
 		BaseUrl:      AssetsURL + coin.Handle,
 		HttpClient:   blockatlas.DefaultClient,
 		ErrorHandler: blockatlas.DefaultErrorHandler,
+		CacheHandler: cacheValidatorList,
 	}
 	err := request.Get(&results, "validators/list.json", nil)
 	if err != nil {
 		return nil, errors.E(err, errors.Params{"coin": coin.Handle}).PushToSentry()
 	}
 	return results, nil
+}
+
+func cacheValidatorList(method string, url string, body io.Reader, result interface{}) error {
+	return nil
 }
 
 func NormalizeValidators(validators []blockatlas.Validator, assets []AssetValidator, coin coin.Coin) []blockatlas.StakeValidator {

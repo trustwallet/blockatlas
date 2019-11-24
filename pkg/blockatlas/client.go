@@ -19,6 +19,7 @@ type Request struct {
 	Headers      map[string]string
 	HttpClient   *http.Client
 	ErrorHandler func(res *http.Response, uri string) error
+	CacheHandler func(method string, url string, body io.Reader, result interface{}) error
 }
 
 func InitClient(baseUrl string) Request {
@@ -57,6 +58,12 @@ func (r *Request) Post(result interface{}, path string, body interface{}) error 
 }
 
 func (r *Request) Execute(method string, url string, body io.Reader, result interface{}) error {
+	if r.CacheHandler != nil {
+		err := r.CacheHandler(method, url, body, result)
+		if err != nil {
+			return nil
+		}
+	}
 	start := time.Now()
 	req, err := http.NewRequest(method, url, body)
 	if err != nil {
