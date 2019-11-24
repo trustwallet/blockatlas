@@ -143,7 +143,12 @@ func makeStakingDelegationsRoute(router gin.IRouter, api blockatlas.Platform) {
 	}
 
 	router.GET("/staking/delegations/:address", func(c *gin.Context) {
-		response := getDelegationResponse(stakingAPI, c.Param("address"))
+		response, err := getDelegationResponse(stakingAPI, c.Param("address"))
+		if err != nil {
+			ginutils.ErrorResponse(c).Message(err.Error()).Render()
+			return
+		}
+		
 		ginutils.RenderSuccess(c, response)
 	})
 }

@@ -66,8 +66,8 @@ type StakeValidator struct {
 type DelegationResponse struct {
 	Address     string             `json:"address"`
 	Coin        *coin.ExternalCoin `json:"coin"`
-	Details     StakingDetails     `json:"details"`
+	Details     StakingDetails     `json:"details,omitempty"`
 	Delegations DelegationsPage    `json:"delegations,omitempty"`
-	Balance     string             `json:"balance"`
+	Balance     string             `json:"balance,omitempty"`
 	Error       string             `json:"error,omitempty"`
 }
