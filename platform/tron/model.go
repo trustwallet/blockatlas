@@ -1,9 +1,30 @@
 package tron
 
 import (
-	"encoding/json"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 )
+
+type BlockRequest struct {
+	StartNum int64 `json:"startNum"`
+	EndNum   int64 `json:"endNum"`
+}
+
+type Blocks struct {
+	Blocks []Block `json:"block"`
+}
+
+type Block struct {
+	BlockId     string `json:"blockID"`
+	Txs         []Tx   `json:"transactions"`
+	BlockHeader struct {
+		Data BlockData `json:"raw_data"`
+	} `json:"block_header"`
+}
+
+type BlockData struct {
+	Number    int64 `json:"number"`
+	Timestamp int64 `json:"timestamp"`
+}
 
 type Page struct {
 	Success bool   `json:"success"`
@@ -18,32 +39,31 @@ type Tx struct {
 }
 
 type TxData struct {
+	Timestamp int64      `json:"timestamp"`
 	Contracts []Contract `json:"contract"`
 }
 
-type Contract struct {
-	Type      string      `json:"type"`
-	Parameter interface{} `json:"parameter"`
-}
+type ContractType string
 
-type TransferContract struct {
-	Value TransferValue `json:"value"`
+const (
+	TransferContract      ContractType = "TransferContract"
+	TransferAssetContract ContractType = "TransferAssetContract"
+	CreateSmartContract   ContractType = "CreateSmartContract"
+	TriggerSmartContract  ContractType = "TriggerSmartContract"
+)
+
+type Contract struct {
+	Type      ContractType `json:"type"`
+	Parameter struct {
+		Value TransferValue `json:"value"`
+	} `json:"parameter"`
 }
 
 type TransferValue struct {
 	Amount       blockatlas.Amount `json:"amount"`
 	OwnerAddress string            `json:"owner_address"`
 	ToAddress    string            `json:"to_address"`
-}
-
-// Type for token transfer
-type TransferAssetContract struct {
-	Value TransferAssetValue `json:"value"`
-}
-
-type TransferAssetValue struct {
-	TransferValue
-	AssetName string `json:"asset_name"`
+	AssetName    string            `json:"asset_name,omitempty"`
 }
 
 type Account struct {
@@ -93,26 +113,4 @@ type Validator struct {
 type VotesRequest struct {
 	Address string `json:"address"`
 	Visible bool   `json:"visible"`
-}
-
-func (c *Contract) UnmarshalJSON(buf []byte) error {
-	var contractInternal struct {
-		Type      string          `json:"type"`
-		Parameter json.RawMessage `json:"parameter"`
-	}
-	err := json.Unmarshal(buf, &contractInternal)
-	if err != nil {
-		return err
-	}
-	switch contractInternal.Type {
-	case "TransferContract":
-		var transfer TransferContract
-		err = json.Unmarshal(contractInternal.Parameter, &transfer)
-		c.Parameter = transfer
-	case "TransferAssetContract":
-		var tokenTransfer TransferAssetContract
-		err = json.Unmarshal(contractInternal.Parameter, &tokenTransfer)
-		c.Parameter = tokenTransfer
-	}
-	return err
 }

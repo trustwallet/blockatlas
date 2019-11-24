@@ -26,7 +26,9 @@ steps:
       restoreKeys: |
         go | "$(Agent.OS)"
         go
-      path: $(GOPATH)
+      path: |
+        $(GOPATH)
+        !$(modulePath)
     displayName: 'Cache go packages'
 
   - script: |

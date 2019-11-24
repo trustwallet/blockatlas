@@ -1,6 +1,7 @@
 [
   "/swagger/*any",
   "/ns/lookup",
+  "/v2/ns/lookup",
   "/v2/collectibles/categories",
   "/v2/classic/collections/:owner",
   "/v2/callisto/collections/:owner",
@@ -13,5 +14,7 @@
   "/v2/poa/collections/:owner/collection/:collection_id",
   "/v2/thundertoken/collections/:owner/collection/:collection_id",
   "/v2/tomochain/collections/:owner/collection/:collection_id",
-  "/v2/gochain/collections/:owner/collection/:collection_id"
+  "/v2/gochain/collections/:owner/collection/:collection_id",
+  "/v1/viacoin/xpub/:key",
+  "/v1/viacoin/address/:address"
 ]

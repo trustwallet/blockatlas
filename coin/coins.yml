@@ -58,6 +58,7 @@
   handle: tron
   name: Tron
   decimals: 6
+  blockTime: 10000
   sampleAddress: 'TMuA6YqfCeX8EhbfYEg5y7S4DqzSJireY9'
 
 - id: 235
