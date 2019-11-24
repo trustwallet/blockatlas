@@ -1,10 +1,12 @@
 package assets
 
 import (
+	"encoding/json"
 	"github.com/patrickmn/go-cache"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
+	"github.com/trustwallet/blockatlas/pkg/storage/util"
 	"io"
 	"time"
 )
@@ -50,20 +52,17 @@ func GetValidators(api blockatlas.StakeAPI) ([]blockatlas.StakeValidator, error)
 func GetValidatorsInfo(coin coin.Coin) ([]AssetValidator, error) {
 	var results []AssetValidator
 	request := blockatlas.Request{
-		BaseUrl:      AssetsURL + coin.Handle,
-		HttpClient:   blockatlas.DefaultClient,
-		ErrorHandler: blockatlas.DefaultErrorHandler,
-		CacheHandler: cacheValidatorList,
+		BaseUrl:            AssetsURL + coin.Handle,
+		HttpClient:         blockatlas.DefaultClient,
+		ErrorHandler:       blockatlas.DefaultErrorHandler,
+		CacheHandler:       cacheValidatorList,
+		PostRequestHandler: postRequestHandler,
 	}
 	err := request.Get(&results, "validators/list.json", nil)
 	if err != nil {
 		return nil, errors.E(err, errors.Params{"coin": coin.Handle}).PushToSentry()
 	}
 	return results, nil
-}
-
-func cacheValidatorList(method string, url string, body io.Reader, result interface{}) error {
-	return nil
 }
 
 func NormalizeValidators(validators []blockatlas.Validator, assets []AssetValidator, coin coin.Coin) []blockatlas.StakeValidator {
@@ -94,4 +93,24 @@ func NormalizeValidator(plainValidator blockatlas.Validator, validator AssetVali
 
 func GetImage(c coin.Coin, ID string) string {
 	return AssetsURL + c.Handle + "/validators/assets/" + ID + "/logo.png"
+}
+
+func cacheValidatorList(method string, url string, body io.Reader, result interface{}) error {
+	cache, ok := memoryCache.Get(url)
+	if !ok {
+		return errors.E("validator cache: invalid cache key")
+	}
+	r, ok := cache.([]byte)
+	if !ok {
+		return errors.E("validator cache: failed to cast cache to bytes")
+	}
+	err := json.Unmarshal(r, result)
+	if err != nil {
+		return errors.E(err, util.ErrNotFound).PushToSentry()
+	}
+	return nil
+}
+
+func postRequestHandler(method string, url string, body io.Reader, result []byte) {
+	memoryCache.Set(url, result, 0)
 }
