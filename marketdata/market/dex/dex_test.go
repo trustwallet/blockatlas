@@ -44,7 +44,7 @@ func Test_normalizeTickers(t *testing.T) {
 			blockatlas.Tickers{
 				blockatlas.Ticker{CoinName: "BNB", TokenId: "RAVEN-F66", CoinType: blockatlas.TypeToken, LastUpdate: time.Now(),
 					Price: blockatlas.TickerPrice{
-						Value:     0.00001082,
+						Value:     92421.44177449169,
 						Change24h: -2.2500,
 						Currency:  "BNB",
 						Provider:  "dex",
@@ -52,7 +52,7 @@ func Test_normalizeTickers(t *testing.T) {
 				},
 				blockatlas.Ticker{CoinName: "BNB", TokenId: "SLV-986", CoinType: blockatlas.TypeToken, LastUpdate: time.Now(),
 					Price: blockatlas.TickerPrice{
-						Value:     0.0449451,
+						Value:     22.249366449290356,
 						Change24h: -5.3700,
 						Currency:  "BNB",
 						Provider:  "dex",
