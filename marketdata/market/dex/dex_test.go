@@ -1,8 +1,9 @@
 package dex
 
 import (
+	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"reflect"
+	"sort"
 	"testing"
 	"time"
 )
@@ -63,13 +64,18 @@ func Test_normalizeTickers(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			gotTickers := normalizeTickers(tt.args.prices, tt.args.provider)
-			for i, got := range gotTickers {
-				want := tt.wantTickers[i]
-				want.LastUpdate = got.LastUpdate
-				if !reflect.DeepEqual(got, want) {
-					t.Errorf("normalizeTickers() = %v, want %v", got, want)
-				}
-			}
+			now := time.Now()
+			sort.Slice(gotTickers, func(i, j int) bool {
+				gotTickers[i].LastUpdate = now
+				gotTickers[j].LastUpdate = now
+				return gotTickers[i].Coin > gotTickers[j].Coin
+			})
+			sort.Slice(tt.wantTickers, func(i, j int) bool {
+				tt.wantTickers[i].LastUpdate = now
+				tt.wantTickers[j].LastUpdate = now
+				return tt.wantTickers[i].Coin > tt.wantTickers[j].Coin
+			})
+			assert.Equal(t, tt.wantTickers, gotTickers)
 		})
 	}
 }
