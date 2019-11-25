@@ -3,6 +3,7 @@ package api
 import (
 	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"sort"
 	"testing"
 )
 
@@ -56,6 +57,12 @@ func Test_parseSubscriptions(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			gotSubs := parseSubscriptions(tt.subscriptions, tt.webhook)
+			sort.Slice(gotSubs, func(i, j int) bool {
+				return gotSubs[i].Coin > gotSubs[j].Coin
+			})
+			sort.Slice(tt.wantSubs, func(i, j int) bool {
+				return tt.wantSubs[i].Coin > tt.wantSubs[j].Coin
+			})
 			if !assert.ObjectsAreEqualValues(tt.wantSubs, gotSubs) {
 				t.Errorf("parseSubscriptions() = %v, want %v", gotSubs, tt.wantSubs)
 			}
