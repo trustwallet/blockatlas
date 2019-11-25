@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"github.com/patrickmn/go-cache"
 	"github.com/trustwallet/blockatlas/pkg/errors"
+	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/pkg/storage/util"
 	"net/url"
 	"strings"
@@ -23,7 +24,7 @@ func init() {
 func (r *Request) PostWithCache(result interface{}, path string, body interface{}, cache time.Duration) error {
 	key := r.generateKey(path, nil, body)
 	err := getCache(key, result)
-	if err != nil {
+	if err == nil {
 		return nil
 	}
 
@@ -38,7 +39,7 @@ func (r *Request) PostWithCache(result interface{}, path string, body interface{
 func (r *Request) GetWithCache(result interface{}, path string, query url.Values, cache time.Duration) error {
 	key := r.generateKey(path, query, nil)
 	err := getCache(key, result)
-	if err != nil {
+	if err == nil {
 		return nil
 	}
 
@@ -67,7 +68,11 @@ func getCache(key string, value interface{}) error {
 }
 
 func setCache(key string, value interface{}, duration time.Duration) {
-	memoryCache.Set(key, value, duration)
+	b, err := json.Marshal(value)
+	if err != nil {
+		logger.Error(errors.E(err, "client cache cannot marshal cache object").PushToSentry())
+	}
+	memoryCache.Set(key, b, duration)
 }
 
 func (r *Request) generateKey(path string, query url.Values, body interface{}) string {
