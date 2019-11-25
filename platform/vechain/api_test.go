@@ -10,9 +10,6 @@ import (
 
 const transferSrc = `{
   "id": "0xe75d6f28297d910faf31d7aaff9bc57faf14895ffc65da056a90b5a258c17784",
-  "chainTag": 74,
-  "blockRef": "0x000bae2bae707d76",
-  "expiration": 720,
   "clauses": [
     {
       "to": "0x15f4d9bed894e2e426d65e3df1480c61fb131a57",
@@ -23,10 +20,7 @@ const transferSrc = `{
   "gasPriceCoef": 0,
   "gas": 21000,
   "origin": "0x15f4d9bed894e2e426d65e3df1480c61fb131a57",
-  "delegator": null,
   "nonce": "0x603ca6b1879375dc",
-  "dependsOn": null,
-  "size": 130,
   "meta": {
     "blockID": "0x000bae2cd3cdea4c79d0d7df3c16f2012b93877eba111803e50d3e0c5f17ed0d",
     "blockNumber": 765484,
@@ -54,9 +48,9 @@ var expectedTransfer = blockatlas.Tx{
 
 func TestNormalizeTransaction(t *testing.T) {
 	tests := []struct {
-		name   string
-		txData string
-		want   blockatlas.TxPage
+		name     string
+		txData   string
+		expected blockatlas.TxPage
 	}{
 		{"test normalize tx", transferSrc, blockatlas.TxPage{expectedTransfer}},
 	}
@@ -65,10 +59,10 @@ func TestNormalizeTransaction(t *testing.T) {
 			var tx Tx
 			err := json.Unmarshal([]byte(tt.txData), &tx)
 			assert.Nil(t, err)
-			got, err := NormalizeTransaction(tx)
+			actual, err := NormalizeTransaction(tx)
 			assert.Nil(t, err)
-			assert.Equal(t, len(got), 1, "tx could not be normalized")
-			assert.Equal(t, tt.want, got, "tx don't equal")
+			assert.Equal(t, len(actual), 1, "tx could not be normalized")
+			assert.Equal(t, tt.expected, actual, "tx don't equal")
 		})
 	}
 }
