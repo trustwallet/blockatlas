@@ -4,6 +4,7 @@ import (
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
+	"time"
 )
 
 const (
@@ -43,7 +44,7 @@ func GetValidatorsInfo(coin coin.Coin) ([]AssetValidator, error) {
 		HttpClient:   blockatlas.DefaultClient,
 		ErrorHandler: blockatlas.DefaultErrorHandler,
 	}
-	err := request.Get(&results, "validators/list.json", nil)
+	err := request.GetWithCache(&results, "validators/list.json", nil, time.Hour*1)
 	if err != nil {
 		return nil, errors.E(err, errors.Params{"coin": coin.Handle}).PushToSentry()
 	}
