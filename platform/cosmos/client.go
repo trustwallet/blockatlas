@@ -39,6 +39,7 @@ func (c *Client) GetValidators() (validators []Validator, err error) {
 	if err != nil {
 		return validators, err
 	}
+	validators = append(validators, everstakeValidator) // Adding due to unbound status
 	return validators, err
 }
 
@@ -105,4 +106,12 @@ func (c *Client) GetUnbondingDelegations(address string) (delegations []Unbondin
 func (c *Client) GetAccount(address string) (result Account, err error) {
 	path := fmt.Sprintf("auth/accounts/%s", address)
 	return result, c.Get(&result, path, nil)
+}
+
+var everstakeValidator = Validator{
+	Status: 1,
+	Address: "cosmosvaloper1tflk30mq5vgqjdly92kkhhq3raev2hnz6eete3",
+	Commission: CosmosCommission{
+		Rate: "0.030000000000000000",
+	},
 }
