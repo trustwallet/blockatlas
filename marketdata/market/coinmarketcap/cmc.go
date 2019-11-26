@@ -38,7 +38,7 @@ func (m *Market) GetData() (blockatlas.Tickers, error) {
 	return normalizeTickers(prices, m.GetId(), cmap), nil
 }
 
-func normalizeTicker(price Data, provider string, cmap cmcmap.CmcMapping) (blockatlas.Ticker, error) {
+func normalizeTicker(price Data, provider string, cmap cmcmap.CmcMapping) (*blockatlas.Ticker, error) {
 	tokenId := ""
 	coinName := price.Symbol
 	coinType := blockatlas.TypeCoin
@@ -55,7 +55,7 @@ func normalizeTicker(price Data, provider string, cmap cmcmap.CmcMapping) (block
 		coinName = cmcCoin.Symbol
 		tokenId = cmcTokenId
 	}
-	return blockatlas.Ticker{
+	return &blockatlas.Ticker{
 		CoinName: coinName,
 		CoinType: coinType,
 		TokenId:  tokenId,
