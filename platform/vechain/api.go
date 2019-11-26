@@ -125,10 +125,13 @@ func NormalizeTokenTransaction(srcTx Tx, receipt TxReceipt) (blockatlas.TxPage, 
 
 	txs := make(blockatlas.TxPage, 0)
 	for _, output := range receipt.Outputs {
+		if len(output.Events) == 0 || len(output.Events[0].Topics) < 3 {
+			continue
+		}
 		event := output.Events[0] // TODO add support for multisend
 		value, err := util.HexToDecimal(event.Data)
 		if err != nil {
-			return blockatlas.TxPage{}, err
+			continue
 		}
 
 		txs = append(txs, blockatlas.Tx{
@@ -143,13 +146,13 @@ func NormalizeTokenTransaction(srcTx Tx, receipt TxReceipt) (blockatlas.TxPage, 
 			Sequence: nonce,
 			Status:   blockatlas.StatusCompleted,
 			Meta: blockatlas.TokenTransfer{
-				Name: "",
-				TokenID: "",
+				Name:     "",
+				TokenID:  "",
 				Value:    blockatlas.Amount(value),
 				Symbol:   "VTHO", // TODO replace with real name for other coins
-				Decimals: 18, // TODO Not all tokens have decimal 18 https://github.com/vechain/token-registry/tree/master/tokens/main
-				From: origin,
-				To: getRecipientAddress(event.Topics[2]),
+				Decimals: 18,     // TODO Not all tokens have decimal 18 https://github.com/vechain/token-registry/tree/master/tokens/main
+				From:     origin,
+				To:       getRecipientAddress(event.Topics[2]),
 			},
 		})
 	}
@@ -191,15 +194,15 @@ func NormalizeTransaction(srcTx LogTransfer, trxId Tx) (blockatlas.Tx, error) {
 	fee := strconv.Itoa(trxId.Gas)
 
 	return blockatlas.Tx{
-		ID:     srcTx.Meta.TxId,
-		Coin:   coin.VET,
-		From:   srcTx.Sender,
-		To:     srcTx.Recipient,
-		Fee:    blockatlas.Amount(fee),
-		Date:   srcTx.Meta.BlockTimestamp,
-		Type:   blockatlas.TxTransfer,
-		Block:  srcTx.Meta.BlockNumber,
-		Status: blockatlas.StatusCompleted,
+		ID:       srcTx.Meta.TxId,
+		Coin:     coin.VET,
+		From:     srcTx.Sender,
+		To:       srcTx.Recipient,
+		Fee:      blockatlas.Amount(fee),
+		Date:     srcTx.Meta.BlockTimestamp,
+		Type:     blockatlas.TxTransfer,
+		Block:    srcTx.Meta.BlockNumber,
+		Status:   blockatlas.StatusCompleted,
 		Sequence: nonce,
 		Meta: blockatlas.Transfer{
 			Value:    blockatlas.Amount(value),

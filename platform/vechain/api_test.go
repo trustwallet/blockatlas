@@ -129,16 +129,16 @@ const trxReceipt = `{
 
 var expectedTransferLog = blockatlas.TxPage{
 	{
-		ID:     "0x42f5eba46ddcc458243c753545a3faa849502d078efbc5b74baddea9e6ea5b04",
-		Coin:   coin.VET,
-		From:   "0x2c7a8d5cce0d5e6a8a31233b7dc3dae9aae4b405",
-		To:     "0x0000000000000000000000000000456e65726779",
-		Date:   1574278180,
-		Type:   blockatlas.TxTokenTransfer,
-		Fee:    blockatlas.Amount("36582000000000000000"),
-		Status: blockatlas.StatusCompleted,
+		ID:       "0x42f5eba46ddcc458243c753545a3faa849502d078efbc5b74baddea9e6ea5b04",
+		Coin:     coin.VET,
+		From:     "0x2c7a8d5cce0d5e6a8a31233b7dc3dae9aae4b405",
+		To:       "0x0000000000000000000000000000456e65726779",
+		Date:     1574278180,
+		Type:     blockatlas.TxTokenTransfer,
+		Fee:      blockatlas.Amount("36582000000000000000"),
+		Status:   blockatlas.StatusCompleted,
 		Sequence: 78141085,
-		Block:  4382764,
+		Block:    4382764,
 		Meta: blockatlas.TokenTransfer{
 			Name:     "",
 			Symbol:   "VTHO",
@@ -196,6 +196,27 @@ func Test_hexToInt(t *testing.T) {
 			}
 			if got != tt.expected {
 				t.Errorf("hexToInt() got = %v, want %v", got, tt.expected)
+			}
+		})
+	}
+}
+
+func Test_getRecipientAddress(t *testing.T) {
+	type args struct {
+		hex string
+	}
+	tests := []struct {
+		name string
+		hex  string
+		want string
+	}{
+		{"hex 1", "0x000000000000000000000000b5e883349e68ab59307d1604555ac890fac47128", "0xb5e883349e68ab59307d1604555ac890fac47128"},
+		{"hex 2", "0x000000000000000000000000f3586684107ce0859c44aa2b2e0fb8cd8731a15a", "0xf3586684107ce0859c44aa2b2e0fb8cd8731a15a"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := getRecipientAddress(tt.hex); got != tt.want {
+				t.Errorf("getRecipientAddress() = %v, want %v", got, tt.want)
 			}
 		})
 	}
