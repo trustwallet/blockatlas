@@ -9,38 +9,36 @@ import (
 )
 
 const transferSrc = `{
-  "id": "0xe75d6f28297d910faf31d7aaff9bc57faf14895ffc65da056a90b5a258c17784",
-  "clauses": [
-    {
-      "to": "0x15f4d9bed894e2e426d65e3df1480c61fb131a57",
-      "value": "0x2b5e3af16b1880000",
-      "data": "0x"
-    }
-  ],
-  "gasPriceCoef": 0,
-  "gas": 21000,
-  "origin": "0x15f4d9bed894e2e426d65e3df1480c61fb131a57",
-  "nonce": "0x603ca6b1879375dc",
-  "meta": {
-    "blockID": "0x000bae2cd3cdea4c79d0d7df3c16f2012b93877eba111803e50d3e0c5f17ed0d",
-    "blockNumber": 765484,
-    "blockTimestamp": 1537983090
-  }
+        "sender": "0xb5e883349e68ab59307d1604555ac890fac47128",
+        "recipient": "0x2c7a8d5cce0d5e6a8a31233b7dc3dae9aae4b405",
+        "amount": "0x12b1815d00738000",
+        "meta": {
+            "blockID": "0x004313a4bd4286e821b684cc1749deb3df12fa2a8114435fbd35baa155e82016",
+            "blockNumber": 4395940,
+            "blockTimestamp": 1574410670,
+            "txID": "0x702edd54bd4e13e0012798cc8b2dfa52f7150173945103d203fae26b8e3d2ed7",
+            "txOrigin": "0xb5e883349e68ab59307d1604555ac890fac47128",
+            "clauseIndex": 0
+        }
+    }`
+const trxId = `{
+	"gas": 21000,
+	"nonce": "0x8cff29df64a414f8"
 }`
 
 var expectedTransfer = blockatlas.Tx{
-	ID:       "0xe75d6f28297d910faf31d7aaff9bc57faf14895ffc65da056a90b5a258c17784",
+	ID:       "0x702edd54bd4e13e0012798cc8b2dfa52f7150173945103d203fae26b8e3d2ed7",
 	Coin:     coin.VET,
-	From:     "0x15f4d9bed894e2e426d65e3df1480c61fb131a57",
-	To:       "0x15f4d9bed894e2e426d65e3df1480c61fb131a57",
-	Date:     1537983090,
+	From:     "0xb5e883349e68ab59307d1604555ac890fac47128",
+	To:       "0x2c7a8d5cce0d5e6a8a31233b7dc3dae9aae4b405",
+	Date:     1574410670,
 	Type:     blockatlas.TxTransfer,
 	Fee:      blockatlas.Amount("21000"),
 	Status:   blockatlas.StatusCompleted,
-	Block:    765484,
-	Sequence: 6934600807657731548,
+	Block:    4395940,
+	Sequence: 10159885323814049016,
 	Meta: blockatlas.Transfer{
-		Value:    blockatlas.Amount("50000000000000000000"),
+		Value:    blockatlas.Amount("1347000000000000000"),
 		Decimals: 18,
 		Symbol:   "VET",
 	},
@@ -50,80 +48,141 @@ func TestNormalizeTransaction(t *testing.T) {
 	tests := []struct {
 		name     string
 		txData   string
-		expected blockatlas.TxPage
+		txId     string
+		expected blockatlas.Tx
 	}{
-		{"test normalize tx", transferSrc, blockatlas.TxPage{expectedTransfer}},
+		{"Test normalize VET transfer transaction", transferSrc, trxId, expectedTransfer},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			var tx Tx
+			var tx LogTransfer
 			err := json.Unmarshal([]byte(tt.txData), &tx)
 			assert.Nil(t, err)
-			actual, err := NormalizeTransaction(tx)
-			assert.Nil(t, err)
-			assert.Equal(t, len(actual), 1, "tx could not be normalized")
+
+			var tId Tx
+			errTrxID := json.Unmarshal([]byte(tt.txId), &tId)
+			assert.Nil(t, errTrxID)
+
+			actual, err := NormalizeTransaction(tx, tId)
 			assert.Equal(t, tt.expected, actual, "tx don't equal")
 		})
 	}
 }
 
 const transferLogSrc = `{
-  "sender": "0x15f4d9bed894e2e426d65e3df1480c61fb131a57",
-  "recipient": "0x15f4d9bed894e2e426d65e3df1480c61fb131a57",
-  "amount": "0x38d7ea4c68000",
-  "meta": {
-    "blockID": "0x000ab61020bcd82739b9956541ccfff3e8aa4f3891e0cbe7d073a0491fc1f87d",
-    "blockNumber": 701968,
-    "blockTimestamp": 1537342090,
-    "txID": "0xc89b224842f3b5edcf4e6950194148be7e83cc951ff4fdfa2490e4c0cf12c80b",
-    "txOrigin": "0x15f4d9bed894e2e426d65e3df1480c61fb131a57",
-    "clauseIndex": 0
-  }
+    "id": "0x42f5eba46ddcc458243c753545a3faa849502d078efbc5b74baddea9e6ea5b04",
+    "chainTag": 74,
+    "blockRef": "0x0042e02a2ae04200",
+    "expiration": 720,
+    "clauses": [
+        {
+            "to": "0x0000000000000000000000000000456e65726779",
+            "value": "0x0",
+            "data": "0xa9059cbb000000000000000000000000b5e883349e68ab59307d1604555ac890fac47128000000000000000000000000000000000000000000000003afb087b876900000"
+        }
+    ],
+    "gasPriceCoef": 0,
+    "gas": 80000,
+    "origin": "0x2c7a8d5cce0d5e6a8a31233b7dc3dae9aae4b405",
+    "delegator": null,
+    "nonce": "0x4a8569d",
+    "dependsOn": null,
+    "size": 189,
+    "meta": {
+        "blockID": "0x0042e02cebd1bec003d31526dba338c1b9eeeefdef722fb147e9d31690fbff1e",
+        "blockNumber": 4382764,
+        "blockTimestamp": 1574278180
+    }
 }`
 
-var expectedTransferLog = blockatlas.Tx{
-	ID:     "0xc89b224842f3b5edcf4e6950194148be7e83cc951ff4fdfa2490e4c0cf12c80b",
-	Coin:   coin.VET,
-	From:   "0x15f4d9bed894e2e426d65e3df1480c61fb131a57",
-	To:     "0x15f4d9bed894e2e426d65e3df1480c61fb131a57",
-	Date:   1537342090,
-	Type:   blockatlas.TxTransfer,
-	Fee:    blockatlas.Amount("0"),
-	Status: blockatlas.StatusCompleted,
-	Block:  701968,
-	Meta: blockatlas.Transfer{
-		Value:    blockatlas.Amount("1000000000000000"),
-		Decimals: 18,
-		Symbol:   "VET",
+const trxReceipt = `{
+    "gasUsed": 36582,
+    "gasPayer": "0x2c7a8d5cce0d5e6a8a31233b7dc3dae9aae4b405",
+    "paid": "0x1fbad5f2e25570000",
+    "reward": "0x984d9c8dd8008000",
+    "reverted": false,
+    "meta": {
+        "blockID": "0x0042e02cebd1bec003d31526dba338c1b9eeeefdef722fb147e9d31690fbff1e",
+        "blockNumber": 4382764,
+        "blockTimestamp": 1574278180,
+        "txID": "0x42f5eba46ddcc458243c753545a3faa849502d078efbc5b74baddea9e6ea5b04",
+        "txOrigin": "0x2c7a8d5cce0d5e6a8a31233b7dc3dae9aae4b405"
+    },
+    "outputs": [
+        {
+            "contractAddress": null,
+            "events": [
+                {
+                    "address": "0x0000000000000000000000000000456e65726779",
+                    "topics": [
+                        "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+                        "0x0000000000000000000000002c7a8d5cce0d5e6a8a31233b7dc3dae9aae4b405",
+                        "0x000000000000000000000000b5e883349e68ab59307d1604555ac890fac47128"
+                    ],
+                    "data": "0x000000000000000000000000000000000000000000000003afb087b876900000"
+                }
+            ],
+            "transfers": []
+        }
+    ]
+}`
+
+var expectedTransferLog = blockatlas.TxPage{
+	{
+		ID:     "0x42f5eba46ddcc458243c753545a3faa849502d078efbc5b74baddea9e6ea5b04",
+		Coin:   coin.VET,
+		From:   "0x2c7a8d5cce0d5e6a8a31233b7dc3dae9aae4b405",
+		To:     "0x0000000000000000000000000000456e65726779",
+		Date:   1574278180,
+		Type:   blockatlas.TxTokenTransfer,
+		Fee:    blockatlas.Amount("36582000000000000000"),
+		Status: blockatlas.StatusCompleted,
+		Sequence: 78141085,
+		Block:  4382764,
+		Meta: blockatlas.TokenTransfer{
+			Name:     "",
+			Symbol:   "VTHO",
+			TokenID:  "",
+			From:     "0x2c7a8d5cce0d5e6a8a31233b7dc3dae9aae4b405",
+			To:       "0xb5e883349e68ab59307d1604555ac890fac47128",
+			Value:    blockatlas.Amount("68000000000000000000"),
+			Decimals: 18,
+		},
 	},
 }
 
-func TestNormalizeLogTransaction(t *testing.T) {
+func TestNormalizeTokenTransaction(t *testing.T) {
 	tests := []struct {
-		name   string
-		txData string
-		want   blockatlas.Tx
+		name      string
+		txData    string
+		txReceipt string
+		expected  blockatlas.TxPage
 	}{
-		{"test normalize log tx", transferLogSrc, expectedTransferLog},
+		{"Normalize VIP180 token transfer", transferLogSrc, trxReceipt, expectedTransferLog},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			var tx LogEvent
+			var tx Tx
 			err := json.Unmarshal([]byte(tt.txData), &tx)
 			assert.Nil(t, err)
-			got, err := NormalizeLogTransaction(tx)
-			assert.Nil(t, err)
-			assert.Equal(t, tt.want, got, "tx don't equal")
+
+			var receipt TxReceipt
+			errR := json.Unmarshal([]byte(tt.txReceipt), &receipt)
+			assert.Nil(t, errR)
+
+			actual, err := NormalizeTokenTransaction(tx, receipt)
+			assert.Equal(t, len(actual), 1, "tx could not be normalized")
+			assert.Equal(t, tt.expected, actual, "tx don't equal")
 		})
 	}
 }
 
 func Test_hexToInt(t *testing.T) {
 	tests := []struct {
-		name    string
-		hex     string
-		want    int64
-		wantErr bool
+		name     string
+		hex      string
+		expected uint64
+		wantErr  bool
 	}{
 		{"value 1", "0x603ca6b1879375dc", 6934600807657731548, false},
 		{"value 2", "0x38d7ea4c68000", 1000000000000000, false},
@@ -135,8 +194,8 @@ func Test_hexToInt(t *testing.T) {
 				t.Errorf("hexToInt() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if got != tt.want {
-				t.Errorf("hexToInt() got = %v, want %v", got, tt.want)
+			if got != tt.expected {
+				t.Errorf("hexToInt() got = %v, want %v", got, tt.expected)
 			}
 		})
 	}

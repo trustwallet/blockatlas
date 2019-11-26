@@ -47,9 +47,24 @@ type Tx struct {
 	Meta    LogMeta  `json:"meta"`
 }
 
+type TxReceipt struct {
+	Paid    string   `json:paid`
+	Outputs []Output `json:outputs`
+}
+
+type Output struct {
+	Events []Event `json:"events"`
+}
+
+type Event struct {
+	Address string   `json:address`
+	Topics  []string `json:topics`
+	Data    string   `json:"data"`
+}
+
 type Clause struct {
-	To    string `json:"to"`
-	Data  string `json:"data"`
+	To   string `json:"to"`
+	Data string `json:"data"`
 }
 
 type LogTransfer struct {
