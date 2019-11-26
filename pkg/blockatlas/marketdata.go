@@ -36,8 +36,8 @@ func (t *Ticker) SetCoinId(coinId uint) {
 }
 
 type TickerPrice struct {
-	Value     float64 `json:"value,omitempty"`
-	Change24h float64 `json:"change_24h,omitempty"`
+	Value     float64 `json:"value"`
+	Change24h float64 `json:"change_24h"`
 	Currency  string  `json:"currency,omitempty"`
 	Provider  string  `json:"provider,omitempty"`
 }
