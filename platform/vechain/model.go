@@ -1,118 +1,87 @@
 package vechain
 
-import (
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+const (
+	filterPrefix = "0x000000000000000000000000%s"
+	rangeUnit    = "block"
 )
 
-type TransferTx struct {
-	Transactions []Tx `json:"transactions"`
+type LogRequest struct {
+	Options     Options       `json:"options,omitempty"`
+	CriteriaSet []CriteriaSet `json:"criteriaSet,omitempty"`
+	Range       Range         `json:"range,omitempty"`
+	Order       string        `json:"order,omitempty"`
 }
 
-type Tx struct {
-	ID string `json:"id"`
+type Range struct {
+	Unit string `json:"unit"`
+	From int64  `json:"from"`
+	To   int64  `json:"to"`
 }
 
-type TransferReceipt struct {
-	Block     uint64   `json:"block"`
-	Clauses   []Clause `json:"clauses"`
-	ID        string   `json:"id"`
-	Nonce     string   `json:"nonce"`
-	Origin    string   `json:"origin"`
-	Receipt   *Receipt `json:"receipt"`
-	Timestamp uint64   `json:"timestamp"`
+type Options struct {
+	Offset int64 `json:"offset"`
+	Limit  int64 `json:"limit"`
 }
 
-type Clause struct {
-	To    string `json:"to"`
-	Value string `json:"value"`
+type CriteriaSet struct {
+	Sender    string `json:"sender,omitempty"`
+	Recipient string `json:"recipient,omitempty"`
+	Address   string `json:"address,omitempty"`
+	Topic0    string `json:"topic0,omitempty"` // Raw transaction hash
+	Topic1    string `json:"topic1,omitempty"` // Sender
+	Topic2    string `json:"topic2,omitempty"` // Receiver
 }
 
-type Meta struct {
-	BlockID        string `json:"blockID"`
-	BlockNumber    int    `json:"blockNumber"`
-	BlockTimestamp int    `json:"blockTimestamp"`
-	TxID           string `json:"txID"`
-	TxOrigin       string `json:"txOrigin"`
-}
-
-type Receipt struct {
-	Paid     string `json:"paid"`
-	Reverted bool   `json:"reverted"`
-}
-
-// ReceiptStatus function that describes transaction status
-func ReceiptStatus(r bool) blockatlas.Status {
-	if r {
-		return blockatlas.StatusFailed
-	}
-	return blockatlas.StatusCompleted
-}
-
-type TokenTransferTxs struct {
-	TokenTransfers []TokenTransfer `json:"tokenTransfers"`
-}
-
-type TokenTransfer struct {
-	Amount          string `json:"amount"`
-	Block           uint64 `json:"block"`
-	ContractAddress string `json:"contractAddress"`
-	Origin          string `json:"origin"`
-	Receiver        string `json:"receiver"`
-	Timestamp       int64  `json:"timestamp"`
-	TxID            string `json:"txId"`
-}
-
-// CurrentBlockInfo type is a model with current blockchain height
-type CurrentBlockInfo struct {
-	BestBlockNum int64 `json:"bestBlockNum"`
-}
-
-// Block type is a VeChain block model
 type Block struct {
-	ID           string   `json:"Id"`
+	Id           string   `json:"id"`
+	Number       int64    `json:"number"`
 	Transactions []string `json:"transactions"`
 }
 
-// Event type is a field in native transaction with contract call info
+type Tx struct {
+	Id      string   `json:"id"`
+	Origin  string   `json:"origin"`
+	Clauses []Clause `json:"clauses"`
+	Gas     int      `json:"gas"`
+	Nonce   string   `json:"nonce"`
+	Meta    LogMeta  `json:"meta"`
+}
+
+type TxReceipt struct {
+	Paid    string   `json:paid`
+	Outputs []Output `json:outputs`
+}
+
+type Output struct {
+	Events []Event `json:"events"`
+}
+
 type Event struct {
-	Address string   `json:"address"`
-	Topics  []string `json:"topics"`
+	Address string   `json:address`
+	Topics  []string `json:topics`
 	Data    string   `json:"data"`
 }
 
-// Transfer type is a field in native transaction with VET transfer data
-type Transfer struct {
-	Sender    string `json:"sender"`
-	Recipient string `json:"recipient"`
-	Amount    string `json:"amount"`
+type Clause struct {
+	To   string `json:"to"`
+	Data string `json:"data"`
 }
 
-// Output type is a field in native transaction
-type Output struct {
-	Events    []Event    `json:"events"`
-	Transfers []Transfer `json:"transfers"`
+type LogTransfer struct {
+	Sender    string  `json:"sender"`
+	Recipient string  `json:"recipient"`
+	Amount    string  `json:"amount"`
+	Meta      LogMeta `json:"meta"`
 }
 
-// TransactionReceipt type for parsing receipt info
-type TransactionReceipt struct {
-	Outputs  []Output `json:"outputs"`
-	Paid     string   `json:"paid"`
-	Reverted bool     `json:"reverted"`
+type LogEvent struct {
+	Meta LogMeta `json:"meta"`
 }
 
-// NativeTransaction type for Native VeChain transaction with full transfer info
-type NativeTransaction struct {
-	Block     uint64             `json:"block"`
-	Clauses   []Clause           `json:"clauses"`
-	ID        string             `json:"id"`
-	Origin    string             `json:"origin"`
-	Receipt   TransactionReceipt `json:"receipt"`
-	Reverted  int64              `json:"reverted"`
-	Timestamp int64              `json:"timestamp"`
-}
-
-// Error model for request error
-type Error struct {
-	Code    int64  `json:"code"`
-	Message string `json:"message"`
+type LogMeta struct {
+	TxId           string `json:"txID,omitempty"`
+	TxOrigin       string `json:"txOrigin,omitempty"`
+	BlockId        string `json:"blockID,omitempty"`
+	BlockNumber    uint64 `json:"blockNumber,omitempty"`
+	BlockTimestamp int64  `json:"blockTimestamp,omitempty"`
 }

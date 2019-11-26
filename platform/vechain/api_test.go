@@ -1,297 +1,202 @@
 package vechain
 
 import (
-	"bytes"
 	"encoding/json"
+	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"testing"
 )
 
-const transferReceipt = `{
-    "block": 2620166,
-    "id": "0x2b8776bd4679fa2afa28b55d66d4f6c7c77522fc878ce294d25e32475b704517",
-    "nonce": "0x3657a2025b11f27f",
-    "origin": "0xB853D6a965fBC047aaA9f04d774d53861d7eD653",
-	"timestamp": 1556569300,
-	"receipt": {
-		"paid": "0x1236efcbcbb340000",
-		"reverted": false
-	}
+const transferSrc = `{
+        "sender": "0xb5e883349e68ab59307d1604555ac890fac47128",
+        "recipient": "0x2c7a8d5cce0d5e6a8a31233b7dc3dae9aae4b405",
+        "amount": "0x12b1815d00738000",
+        "meta": {
+            "blockID": "0x004313a4bd4286e821b684cc1749deb3df12fa2a8114435fbd35baa155e82016",
+            "blockNumber": 4395940,
+            "blockTimestamp": 1574410670,
+            "txID": "0x702edd54bd4e13e0012798cc8b2dfa52f7150173945103d203fae26b8e3d2ed7",
+            "txOrigin": "0xb5e883349e68ab59307d1604555ac890fac47128",
+            "clauseIndex": 0
+        }
+    }`
+const trxId = `{
+	"gas": 21000,
+	"nonce": "0x8cff29df64a414f8"
 }`
 
-const transferFailedReceipt = `{
-    "block": 2620166,
-    "id": "0x2b8776bd4679fa2afa28b55d66d4f6c7c77522fc878ce294d25e32475b704517",
-    "nonce": "0x3657a2025b11f27f",
-    "origin": "0xB853D6a965fBC047aaA9f04d774d53861d7eD653",
-	"timestamp": 1556569300,
-	"receipt": {
-		"paid": "0x1236efcbcbb340000",
-		"reverted": false
-	}
-}`
-
-const transferClause = `{
-	"to": "0xdA623049A13df5c8a24f0d7713F4adD4ab136B1f",
-	"value": "0x29bde5885d7ac80000"
-}`
-
-const tokenTransfer = `
-{
-	"amount": "0x00000000000000000000000000000000000000000000000d8d726b7177a80000",
-	"block": 2620166,
-	"origin": "0xB853D6a965fBC047aaA9f04d774d53861d7eD653",
-	"receiver": "0x9f3742C2c2fE66c7FCa08d77d2262C22e3D56ac8",
-	"timestamp": 1556569300,
-	"txId": "0x2b8776bd4679fa2afa28b55d66d4f6c7c77522fc878ce294d25e32475b704517"
-}
-`
-
-const transaction = `
-{  
-   "block":2620166,
-   "blockRef":"0x003578d93e73a9ca",
-   "chainTag":74,
-   "clauses":[  
-      {  
-         "data":"0xa9059cbb0000000000000000000000009f3742c2c2fe66c7fca08d77d2262c22e3d56ac8000000000000000000000000000000000000000000000008ac7230489e800000",
-         "numValue":0,
-         "to":"0x0000000000000000000000000000456e65726779",
-         "txClauseIndex":0,
-         "txId":"0x2b8776bd4679fa2afa28b55d66d4f6c7c77522fc878ce294d25e32475b704517",
-         "value":"0x0"
-      }
-   ],
-   "expiration":720,
-   "gas":160000,
-   "gasPriceCoef":0,
-   "id":"0x2b8776bd4679fa2afa28b55d66d4f6c7c77522fc878ce294d25e32475b704517",
-   "meta":{  
-      "blockID":"0x003578db7b662faecc743f3a401515eef5baebe16c27e635f79bcfca3b8a39dc",
-      "blockNumber":3504347,
-      "blockTimestamp":1565458520
-   },
-   "nonce":"0x8e60abce86ae",
-   "numClauses":1,
-   "origin":"0xb853d6a965fbc047aaa9f04d774d53861d7ed653",
-   "receipt":{  
-      "gasPayer":"0xa760bdcbf6c2935d2f1591a38f23251619f802ad",
-      "gasUsed":36582,
-      "meta":{  
-         "blockID":"0x003578db7b662faecc743f3a401515eef5baebe16c27e635f79bcfca3b8a39dc",
-         "blockNumber":3504347,
-         "blockTimestamp":1565458520,
-         "txID":"0x2b8776bd4679fa2afa28b55d66d4f6c7c77522fc878ce294d25e32475b704517",
-         "txOrigin":"0xb853d6a965fbc047aaa9f04d774d53861d7ed653"
-      },
-      "outputs":[  
-         {  
-            "events":[  
-               {  
-                  "address":"0x0000000000000000000000000000456e65726779",
-                  "topics":[  
-                     "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
-                     "0x000000000000000000000000b853d6a965fbc047aaa9f04d774d53861d7ed653",
-                     "0x0000000000000000000000009f3742c2c2fe66c7fca08d77d2262c22e3d56ac8"
-                  ],
-                  "data":"0x00000000000000000000000000000000000000000000000d8d726b7177a80000"
-               }
-            ],
-            "transfers":[  
-               {  
-                  "sender":"0xb853d6a965fbc047aaa9f04d774d53861d7ed653",
-                  "recipient":"0xda623049a13df5c8a24f0d7713f4add4ab136b1f",
-                  "amount":"0x29bde5885d7ac80000"
-               }
-            ]
-         }
-      ],
-      "paid":"0x1236efcbcbb340000",
-      "reverted":false,
-      "reward":"0x984d9c8dd8008000"
-   },
-   "reverted":0,
-   "size":191,
-   "timestamp":1556569300,
-   "totalValue":0
-}
-`
-
-var expectedTransferTrx = blockatlas.Tx{
-	ID:       "0x2b8776bd4679fa2afa28b55d66d4f6c7c77522fc878ce294d25e32475b704517",
+var expectedTransfer = blockatlas.Tx{
+	ID:       "0x702edd54bd4e13e0012798cc8b2dfa52f7150173945103d203fae26b8e3d2ed7",
 	Coin:     coin.VET,
-	From:     "0xB853D6a965fBC047aaA9f04d774d53861d7eD653",
-	To:       "0xdA623049A13df5c8a24f0d7713F4adD4ab136B1f",
-	Fee:      "21000000000000000000",
-	Date:     1556569300,
-	Type:     "transfer",
+	From:     "0xb5e883349e68ab59307d1604555ac890fac47128",
+	To:       "0x2c7a8d5cce0d5e6a8a31233b7dc3dae9aae4b405",
+	Date:     1574410670,
+	Type:     blockatlas.TxTransfer,
+	Fee:      blockatlas.Amount("21000"),
 	Status:   blockatlas.StatusCompleted,
-	Block:    2620166,
-	Sequence: 2620166,
+	Block:    4395940,
+	Sequence: 10159885323814049016,
 	Meta: blockatlas.Transfer{
-		Value:    "770000000000000000000",
+		Value:    blockatlas.Amount("1347000000000000000"),
 		Decimals: 18,
 		Symbol:   "VET",
 	},
 }
 
-var expectedVeThorTrx = blockatlas.Tx{
-	ID:       "0x2b8776bd4679fa2afa28b55d66d4f6c7c77522fc878ce294d25e32475b704517",
-	Coin:     coin.VET,
-	From:     "0xB853D6a965fBC047aaA9f04d774d53861d7eD653",
-	To:       "0x9f3742C2c2fE66c7FCa08d77d2262C22e3D56ac8",
-	Fee:      "21000000000000000000",
-	Date:     1556569300,
-	Type:     blockatlas.TxNativeTokenTransfer,
-	Status:   blockatlas.StatusCompleted,
-	Sequence: 2620166,
-	Block:    2620166,
-	Meta: blockatlas.NativeTokenTransfer{
-		Name:     GasName,
-		Symbol:   GasSymbol,
-		TokenID:  GasContract,
-		Decimals: 18,
-		Value:    "250000000000000000000",
-		From:     "0xB853D6a965fBC047aaA9f04d774d53861d7eD653",
-		To:       "0x9f3742C2c2fE66c7FCa08d77d2262C22e3D56ac8",
+func TestNormalizeTransaction(t *testing.T) {
+	tests := []struct {
+		name     string
+		txData   string
+		txId     string
+		expected blockatlas.Tx
+	}{
+		{"Test normalize VET transfer transaction", transferSrc, trxId, expectedTransfer},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var tx LogTransfer
+			err := json.Unmarshal([]byte(tt.txData), &tx)
+			assert.Nil(t, err)
+
+			var tId Tx
+			errTrxID := json.Unmarshal([]byte(tt.txId), &tId)
+			assert.Nil(t, errTrxID)
+
+			actual, err := NormalizeTransaction(tx, tId)
+			assert.Equal(t, tt.expected, actual, "tx don't equal")
+		})
+	}
+}
+
+const transferLogSrc = `{
+    "id": "0x42f5eba46ddcc458243c753545a3faa849502d078efbc5b74baddea9e6ea5b04",
+    "chainTag": 74,
+    "blockRef": "0x0042e02a2ae04200",
+    "expiration": 720,
+    "clauses": [
+        {
+            "to": "0x0000000000000000000000000000456e65726779",
+            "value": "0x0",
+            "data": "0xa9059cbb000000000000000000000000b5e883349e68ab59307d1604555ac890fac47128000000000000000000000000000000000000000000000003afb087b876900000"
+        }
+    ],
+    "gasPriceCoef": 0,
+    "gas": 80000,
+    "origin": "0x2c7a8d5cce0d5e6a8a31233b7dc3dae9aae4b405",
+    "delegator": null,
+    "nonce": "0x4a8569d",
+    "dependsOn": null,
+    "size": 189,
+    "meta": {
+        "blockID": "0x0042e02cebd1bec003d31526dba338c1b9eeeefdef722fb147e9d31690fbff1e",
+        "blockNumber": 4382764,
+        "blockTimestamp": 1574278180
+    }
+}`
+
+const trxReceipt = `{
+    "gasUsed": 36582,
+    "gasPayer": "0x2c7a8d5cce0d5e6a8a31233b7dc3dae9aae4b405",
+    "paid": "0x1fbad5f2e25570000",
+    "reward": "0x984d9c8dd8008000",
+    "reverted": false,
+    "meta": {
+        "blockID": "0x0042e02cebd1bec003d31526dba338c1b9eeeefdef722fb147e9d31690fbff1e",
+        "blockNumber": 4382764,
+        "blockTimestamp": 1574278180,
+        "txID": "0x42f5eba46ddcc458243c753545a3faa849502d078efbc5b74baddea9e6ea5b04",
+        "txOrigin": "0x2c7a8d5cce0d5e6a8a31233b7dc3dae9aae4b405"
+    },
+    "outputs": [
+        {
+            "contractAddress": null,
+            "events": [
+                {
+                    "address": "0x0000000000000000000000000000456e65726779",
+                    "topics": [
+                        "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+                        "0x0000000000000000000000002c7a8d5cce0d5e6a8a31233b7dc3dae9aae4b405",
+                        "0x000000000000000000000000b5e883349e68ab59307d1604555ac890fac47128"
+                    ],
+                    "data": "0x000000000000000000000000000000000000000000000003afb087b876900000"
+                }
+            ],
+            "transfers": []
+        }
+    ]
+}`
+
+var expectedTransferLog = blockatlas.TxPage{
+	{
+		ID:     "0x42f5eba46ddcc458243c753545a3faa849502d078efbc5b74baddea9e6ea5b04",
+		Coin:   coin.VET,
+		From:   "0x2c7a8d5cce0d5e6a8a31233b7dc3dae9aae4b405",
+		To:     "0x0000000000000000000000000000456e65726779",
+		Date:   1574278180,
+		Type:   blockatlas.TxTokenTransfer,
+		Fee:    blockatlas.Amount("36582000000000000000"),
+		Status: blockatlas.StatusCompleted,
+		Sequence: 78141085,
+		Block:  4382764,
+		Meta: blockatlas.TokenTransfer{
+			Name:     "",
+			Symbol:   "VTHO",
+			TokenID:  "",
+			From:     "0x2c7a8d5cce0d5e6a8a31233b7dc3dae9aae4b405",
+			To:       "0xb5e883349e68ab59307d1604555ac890fac47128",
+			Value:    blockatlas.Amount("68000000000000000000"),
+			Decimals: 18,
+		},
 	},
 }
 
-func TestNormalizeTransfer(t *testing.T) {
-	var tests = []struct {
-		Receipt  string
-		Clause   string
-		Expected blockatlas.Tx
+func TestNormalizeTokenTransaction(t *testing.T) {
+	tests := []struct {
+		name      string
+		txData    string
+		txReceipt string
+		expected  blockatlas.TxPage
 	}{
-		{transferReceipt, transferClause, expectedTransferTrx},
-		// {transferTrx, transferReceipt, transferOutput, address, VeThorContract, expectedVeThorTrx},
+		{"Normalize VIP180 token transfer", transferLogSrc, trxReceipt, expectedTransferLog},
 	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var tx Tx
+			err := json.Unmarshal([]byte(tt.txData), &tx)
+			assert.Nil(t, err)
 
-	for _, test := range tests {
-		var receipt TransferReceipt
-		var clause Clause
+			var receipt TxReceipt
+			errR := json.Unmarshal([]byte(tt.txReceipt), &receipt)
+			assert.Nil(t, errR)
 
-		// Unmarshal(*t, test.Receipt, &receipt)
-		rErr := json.Unmarshal([]byte(test.Receipt), &receipt)
-		if rErr != nil {
-			t.Fatal(rErr)
-		}
-
-		cErr := json.Unmarshal([]byte(test.Clause), &clause)
-		if cErr != nil {
-			t.Fatal(cErr)
-		}
-
-		var readyTx blockatlas.Tx
-		normTx, err := NormalizeTransfer(&receipt, &clause)
-		if err != nil {
-			t.Fatal("VeChain: Can't normalize transfer", readyTx)
-		}
-		readyTx = normTx
-
-		actual, err := json.Marshal(&readyTx)
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		expected, err := json.Marshal(&test.Expected)
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		if !bytes.Equal(actual, expected) {
-			println(string(actual))
-			println(string(expected))
-			t.Error("Transactions not equal")
-		}
+			actual, err := NormalizeTokenTransaction(tx, receipt)
+			assert.Equal(t, len(actual), 1, "tx could not be normalized")
+			assert.Equal(t, tt.expected, actual, "tx don't equal")
+		})
 	}
 }
 
-func TestNormalizeTokenTransfer(t *testing.T) {
-	var tests = []struct {
-		Receipt  string
-		Transfer string
-		Expected blockatlas.Tx
+func Test_hexToInt(t *testing.T) {
+	tests := []struct {
+		name     string
+		hex      string
+		expected uint64
+		wantErr  bool
 	}{
-		{transferFailedReceipt, tokenTransfer, expectedVeThorTrx},
+		{"value 1", "0x603ca6b1879375dc", 6934600807657731548, false},
+		{"value 2", "0x38d7ea4c68000", 1000000000000000, false},
 	}
-
-	for _, test := range tests {
-		var receipt TransferReceipt
-		var tt TokenTransfer
-
-		// Unmarshal(*t, test.Receipt, &receipt)
-		rErr := json.Unmarshal([]byte(test.Receipt), &receipt)
-		if rErr != nil {
-			t.Fatal(rErr)
-		}
-
-		ttErr := json.Unmarshal([]byte(test.Transfer), &tt)
-		if ttErr != nil {
-			t.Fatal(ttErr)
-		}
-
-		var readyTx blockatlas.Tx
-		normTx, err := NormalizeTokenTransfer(&tt, &receipt)
-		if err != nil {
-			t.Fatal("VeChain: Can't normalize token transfer", readyTx)
-		}
-		readyTx = normTx
-
-		actual, err := json.Marshal(&readyTx)
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		expected, err := json.Marshal(&test.Expected)
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		if !bytes.Equal(actual, expected) {
-			println(string(actual))
-			println(string(expected))
-			t.Error("Transactions not equal")
-		}
-	}
-}
-
-func TestNormalizeTransaction(t *testing.T) {
-	var tests = []struct {
-		Transaction         string
-		ExpectedTransaction []blockatlas.Tx
-	}{
-		{transaction, []blockatlas.Tx{expectedVeThorTrx, expectedTransferTrx}},
-	}
-
-	for _, test := range tests {
-		var transaction NativeTransaction
-
-		tErr := json.Unmarshal([]byte(test.Transaction), &transaction)
-		if tErr != nil {
-			t.Fatal(tErr)
-		}
-
-		var readyTxs []blockatlas.Tx
-
-		ntxs := NormalizeBlockTransactions(&transaction)
-		readyTxs = append(readyTxs, ntxs...)
-
-		actual, err := json.Marshal(&readyTxs)
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		expectedTransactions, err := json.Marshal(&test.ExpectedTransaction)
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		if !bytes.Equal(actual, expectedTransactions) {
-			println(string(actual))
-			println(string(expectedTransactions))
-			t.Error("Transactions not equal")
-		}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := hexToInt(tt.hex)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("hexToInt() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if got != tt.expected {
+				t.Errorf("hexToInt() got = %v, want %v", got, tt.expected)
+			}
+		})
 	}
 }
