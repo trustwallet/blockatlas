@@ -12,11 +12,11 @@ const (
 	EntityQuotes = "ATLAS_MARKET_QUOTES"
 )
 
-type MarketProviderList interface {
+type ProviderList interface {
 	GetPriority(providerId string) int
 }
 
-func (s *Storage) SaveTicker(coin blockatlas.Ticker, pl MarketProviderList) error {
+func (s *Storage) SaveTicker(coin blockatlas.Ticker, pl ProviderList) error {
 	cd, err := s.GetTicker(coin.CoinName, coin.TokenId)
 	if err == nil {
 		op := pl.GetPriority(cd.Price.Provider)
@@ -43,11 +43,7 @@ func (s *Storage) GetTicker(coin, token string) (blockatlas.Ticker, error) {
 	return *cd, nil
 }
 
-type RateProviderList interface {
-	GetPriority(providerId string) int
-}
-
-func (s *Storage) SaveRates(rates blockatlas.Rates, pl RateProviderList) {
+func (s *Storage) SaveRates(rates blockatlas.Rates, pl ProviderList) {
 	for _, rate := range rates {
 		r, err := s.GetRate(rate.Currency)
 		if err == nil {
