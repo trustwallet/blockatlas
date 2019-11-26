@@ -111,6 +111,6 @@ func getTickersHandler(storage storage.Market) func(c *gin.Context) {
 			tickers = append(tickers, r)
 		}
 
-		ginutils.RenderSuccess(c, blockatlas.TickerResponse{Currency: md.Currency, Result: tickers})
+		ginutils.RenderSuccess(c, blockatlas.TickerResponse{Currency: md.Currency, Docs: tickers})
 	}
 }

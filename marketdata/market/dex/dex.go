@@ -59,9 +59,9 @@ func normalizeTicker(price CoinPrice, provider string) (blockatlas.Ticker, error
 		return blockatlas.Ticker{}, errors.E(err, "normalizeTicker parse value24h error",
 			errors.Params{"PriceChange": price.PriceChangePercent, "Symbol": price.BaseAssetName})
 	}
-	tokenId := price.BaseAssetName
+	tokenId := price.QuoteAssetName
 	if tokenId == BNBAsset {
-		tokenId = price.QuoteAssetName
+		tokenId = price.BaseAssetName
 		value = 1.0 / value
 	}
 	return blockatlas.Ticker{
