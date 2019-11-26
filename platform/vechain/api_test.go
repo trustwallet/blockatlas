@@ -36,7 +36,6 @@ var expectedTransfer = blockatlas.Tx{
 	Fee:      blockatlas.Amount("21000"),
 	Status:   blockatlas.StatusCompleted,
 	Block:    4395940,
-	Sequence: 10159885323814049016,
 	Meta: blockatlas.Transfer{
 		Value:    blockatlas.Amount("1347000000000000000"),
 		Decimals: 18,
@@ -137,7 +136,6 @@ var expectedTransferLog = blockatlas.TxPage{
 		Type:     blockatlas.TxTokenTransfer,
 		Fee:      blockatlas.Amount("36582000000000000000"),
 		Status:   blockatlas.StatusCompleted,
-		Sequence: 78141085,
 		Block:    4382764,
 		Meta: blockatlas.TokenTransfer{
 			Name:     "",
