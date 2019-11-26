@@ -112,10 +112,6 @@ func NormalizeTokenTransaction(srcTx Tx, receipt TxReceipt) (blockatlas.TxPage, 
 		return blockatlas.TxPage{}, errors.E("NormalizeBlockTransaction: Clauses not found", errors.Params{"tx": srcTx}).PushToSentry()
 	}
 
-	nonce, err := hexToInt(srcTx.Nonce)
-	if err != nil {
-		return blockatlas.TxPage{}, err
-	}
 	origin := util.GetValidParameter(srcTx.Origin, srcTx.Meta.TxOrigin)
 
 	fee, err := util.HexToDecimal(receipt.Paid)
@@ -143,7 +139,6 @@ func NormalizeTokenTransaction(srcTx Tx, receipt TxReceipt) (blockatlas.TxPage, 
 			Date:     srcTx.Meta.BlockTimestamp,
 			Type:     blockatlas.TxTokenTransfer,
 			Block:    srcTx.Meta.BlockNumber,
-			Sequence: nonce,
 			Status:   blockatlas.StatusCompleted,
 			Meta: blockatlas.TokenTransfer{
 				Name:     "",
@@ -187,10 +182,6 @@ func NormalizeTransaction(srcTx LogTransfer, trxId Tx) (blockatlas.Tx, error) {
 		return blockatlas.Tx{}, err
 	}
 
-	nonce, err := hexToInt(trxId.Nonce)
-	if err != nil {
-		return blockatlas.Tx{}, err
-	}
 	fee := strconv.Itoa(trxId.Gas)
 
 	return blockatlas.Tx{
@@ -203,7 +194,6 @@ func NormalizeTransaction(srcTx LogTransfer, trxId Tx) (blockatlas.Tx, error) {
 		Type:     blockatlas.TxTransfer,
 		Block:    srcTx.Meta.BlockNumber,
 		Status:   blockatlas.StatusCompleted,
-		Sequence: nonce,
 		Meta: blockatlas.Transfer{
 			Value:    blockatlas.Amount(value),
 			Symbol:   coin.Coins[coin.VET].Symbol,
