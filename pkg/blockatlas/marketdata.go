@@ -36,8 +36,8 @@ func (t *Ticker) SetCoinId(coinId uint) {
 }
 
 type TickerPrice struct {
-	Value     float64 `json:"value,omitempty"`
-	Change24h float64 `json:"change_24h,omitempty"`
+	Value     float64 `json:"value"`
+	Change24h float64 `json:"change_24h"`
 	Currency  string  `json:"currency,omitempty"`
 	Provider  string  `json:"provider,omitempty"`
 }
@@ -46,10 +46,11 @@ type Rate struct {
 	Currency  string  `json:"currency"`
 	Rate      float64 `json:"rate"`
 	Timestamp int64   `json:"timestamp"`
+	Provider  string  `json:"provider,omitempty"`
 }
 
 type Rates []Rate
-type Tickers []Ticker
+type Tickers []*Ticker
 
 func (ts Tickers) ApplyRate(rate float64, currency string) {
 	for _, t := range ts {

@@ -10,15 +10,15 @@ import (
 	"github.com/trustwallet/blockatlas/storage"
 )
 
-var providers market.Providers
+var marketProviders market.Providers
 
 func InitMarkets(storage storage.Market) {
-	providers = market.Providers{
+	marketProviders = market.Providers{
 		// Add Market Quote Providers:
 		0: dex.InitMarket(),
 		1: cmc.InitMarket(),
 	}
-	addMarkets(storage, providers)
+	addMarkets(storage, marketProviders)
 }
 
 func addMarkets(storage storage.Market, ps market.Providers) {
@@ -35,7 +35,7 @@ func runMarket(storage storage.Market, p market.Provider) error {
 		return errors.E(err, "GetData")
 	}
 	for _, result := range data {
-		err = storage.SaveTicker(result, providers)
+		err = storage.SaveTicker(result, marketProviders)
 		if err != nil {
 			logger.Error(errors.E(err, "SaveTicker",
 				errors.Params{"result": result}))

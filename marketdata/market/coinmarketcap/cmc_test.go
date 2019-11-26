@@ -31,7 +31,7 @@ func Test_normalizeTickers(t *testing.T) {
 					Platform: &Platform{Coin: Coin{Symbol: "ETH"}, TokenAddress: "0x8ce9137d39326ad0cd6491fb5cc0cba0e089b6a9"}}}},
 				provider: "cmc"},
 			blockatlas.Tickers{
-				blockatlas.Ticker{CoinName: "BTC", CoinType: blockatlas.TypeCoin, LastUpdate: time.Unix(111, 0),
+				&blockatlas.Ticker{CoinName: "BTC", CoinType: blockatlas.TypeCoin, LastUpdate: time.Unix(111, 0),
 					Price: blockatlas.TickerPrice{
 						Value:     223.55,
 						Change24h: 10,
@@ -39,7 +39,7 @@ func Test_normalizeTickers(t *testing.T) {
 						Provider:  "cmc",
 					},
 				},
-				blockatlas.Ticker{CoinName: "ETH", CoinType: blockatlas.TypeCoin, LastUpdate: time.Unix(333, 0),
+				&blockatlas.Ticker{CoinName: "ETH", CoinType: blockatlas.TypeCoin, LastUpdate: time.Unix(333, 0),
 					Price: blockatlas.TickerPrice{
 						Value:     11.11,
 						Change24h: 20,
@@ -47,7 +47,7 @@ func Test_normalizeTickers(t *testing.T) {
 						Provider:  "cmc",
 					},
 				},
-				blockatlas.Ticker{CoinName: "ETH", TokenId: "0x8ce9137d39326ad0cd6491fb5cc0cba0e089b6a9", CoinType: blockatlas.TypeToken, LastUpdate: time.Unix(444, 0),
+				&blockatlas.Ticker{CoinName: "ETH", TokenId: "0x8ce9137d39326ad0cd6491fb5cc0cba0e089b6a9", CoinType: blockatlas.TypeToken, LastUpdate: time.Unix(444, 0),
 					Price: blockatlas.TickerPrice{
 						Value:     463.22,
 						Change24h: -3,

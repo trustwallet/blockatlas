@@ -12,20 +12,20 @@ const (
 	EntityQuotes = "ATLAS_MARKET_QUOTES"
 )
 
-type MarketProviderList interface {
+type ProviderList interface {
 	GetPriority(providerId string) int
 }
 
-func (s *Storage) SaveTicker(coin blockatlas.Ticker, pl MarketProviderList) error {
+func (s *Storage) SaveTicker(coin *blockatlas.Ticker, pl ProviderList) error {
 	cd, err := s.GetTicker(coin.CoinName, coin.TokenId)
 	if err == nil {
 		op := pl.GetPriority(cd.Price.Provider)
 		np := pl.GetPriority(coin.Price.Provider)
-		if np > op {
+		if op != -1 && np > op {
 			return errors.E("ticker provider with less priority")
 		}
 
-		if cd.LastUpdate.After(coin.LastUpdate) && op >= np{
+		if cd.LastUpdate.After(coin.LastUpdate) && op >= np {
 			return errors.E("ticker is outdated")
 		}
 	}
@@ -33,25 +33,34 @@ func (s *Storage) SaveTicker(coin blockatlas.Ticker, pl MarketProviderList) erro
 	return s.AddHM(EntityQuotes, hm, coin)
 }
 
-func (s *Storage) GetTicker(coin, token string) (blockatlas.Ticker, error) {
+func (s *Storage) GetTicker(coin, token string) (*blockatlas.Ticker, error) {
 	hm := createHashMap(coin, token)
 	var cd *blockatlas.Ticker
 	err := s.GetHMValue(EntityQuotes, hm, &cd)
 	if err != nil {
-		return blockatlas.Ticker{}, err
+		return nil, err
 	}
-	return *cd, nil
+	return cd, nil
 }
 
-func (s *Storage) SaveRates(rates blockatlas.Rates) {
+func (s *Storage) SaveRates(rates blockatlas.Rates, pl ProviderList) {
 	for _, rate := range rates {
 		r, err := s.GetRate(rate.Currency)
-		if err == nil && rate.Timestamp < r.Timestamp {
-			return
+		if err == nil {
+			op := pl.GetPriority(r.Provider)
+			np := pl.GetPriority(rate.Provider)
+			if op != -1 && np > op {
+				continue
+			}
+
+			if rate.Timestamp < r.Timestamp && op >= np {
+				continue
+			}
 		}
 		err = s.AddHM(EntityRates, rate.Currency, &rate)
 		if err != nil {
 			logger.Error(err, "SaveRates", logger.Params{"rate": rate})
+			continue
 		}
 	}
 }

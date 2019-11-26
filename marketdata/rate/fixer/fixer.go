@@ -33,13 +33,13 @@ func (f *Fixer) FetchLatestRates() (rates blockatlas.Rates, err error) {
 	if err != nil {
 		return
 	}
-	rates = normalizeRates(latest)
+	rates = normalizeRates(latest, f.GetId())
 	return
 }
 
-func normalizeRates(latest Latest) (rates blockatlas.Rates) {
+func normalizeRates(latest Latest, provider string) (rates blockatlas.Rates) {
 	for currency, rate := range latest.Rates {
-		rates = append(rates, blockatlas.Rate{Currency: currency, Rate: rate, Timestamp: latest.Timestamp})
+		rates = append(rates, blockatlas.Rate{Currency: currency, Rate: rate, Timestamp: latest.Timestamp, Provider: provider})
 	}
 	return
 }

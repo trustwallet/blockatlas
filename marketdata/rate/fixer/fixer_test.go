@@ -9,6 +9,7 @@ import (
 )
 
 func Test_normalizeRates(t *testing.T) {
+	provider := "dex"
 	tests := []struct {
 		name      string
 		latest    Latest
@@ -22,9 +23,9 @@ func Test_normalizeRates(t *testing.T) {
 				UpdatedAt: time.Now(),
 			},
 			blockatlas.Rates{
-				blockatlas.Rate{Currency: "USD", Rate: 22.111, Timestamp: 123},
-				blockatlas.Rate{Currency: "BRL", Rate: 33.2, Timestamp: 123},
-				blockatlas.Rate{Currency: "BTC", Rate: 44.99, Timestamp: 123},
+				blockatlas.Rate{Currency: "USD", Rate: 22.111, Timestamp: 123, Provider: provider},
+				blockatlas.Rate{Currency: "BRL", Rate: 33.2, Timestamp: 123, Provider: provider},
+				blockatlas.Rate{Currency: "BTC", Rate: 44.99, Timestamp: 123, Provider: provider},
 			},
 		},
 		{
@@ -35,15 +36,15 @@ func Test_normalizeRates(t *testing.T) {
 				UpdatedAt: time.Now(),
 			},
 			blockatlas.Rates{
-				blockatlas.Rate{Currency: "IFC", Rate: 34.973, Timestamp: 333},
-				blockatlas.Rate{Currency: "LSK", Rate: 123.321, Timestamp: 333},
-				blockatlas.Rate{Currency: "DUO", Rate: 998.3, Timestamp: 333},
+				blockatlas.Rate{Currency: "IFC", Rate: 34.973, Timestamp: 333, Provider: provider},
+				blockatlas.Rate{Currency: "LSK", Rate: 123.321, Timestamp: 333, Provider: provider},
+				blockatlas.Rate{Currency: "DUO", Rate: 998.3, Timestamp: 333, Provider: provider},
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotRates := normalizeRates(tt.latest)
+			gotRates := normalizeRates(tt.latest, provider)
 			sort.SliceStable(gotRates, func(i, j int) bool {
 				return gotRates[i].Rate < gotRates[j].Rate
 			})

@@ -10,7 +10,7 @@ import (
 
 func Test_normalizeTickers(t *testing.T) {
 	type args struct {
-		prices   []CoinPrice
+		prices   []*CoinPrice
 		provider string
 	}
 	tests := []struct {
@@ -20,7 +20,7 @@ func Test_normalizeTickers(t *testing.T) {
 	}{
 		{
 			"test normalize dex quote",
-			args{prices: []CoinPrice{
+			args{prices: []*CoinPrice{
 				{
 					BaseAssetName:      "RAVEN-F66",
 					QuoteAssetName:     "BNB",
@@ -42,7 +42,7 @@ func Test_normalizeTickers(t *testing.T) {
 			},
 				provider: "dex"},
 			blockatlas.Tickers{
-				blockatlas.Ticker{CoinName: "BNB", TokenId: "RAVEN-F66", CoinType: blockatlas.TypeToken, LastUpdate: time.Now(),
+				&blockatlas.Ticker{CoinName: "BNB", TokenId: "RAVEN-F66", CoinType: blockatlas.TypeToken, LastUpdate: time.Now(),
 					Price: blockatlas.TickerPrice{
 						Value:     92421.44177449169,
 						Change24h: -2.2500,
@@ -50,7 +50,7 @@ func Test_normalizeTickers(t *testing.T) {
 						Provider:  "dex",
 					},
 				},
-				blockatlas.Ticker{CoinName: "BNB", TokenId: "SLV-986", CoinType: blockatlas.TypeToken, LastUpdate: time.Now(),
+				&blockatlas.Ticker{CoinName: "BNB", TokenId: "SLV-986", CoinType: blockatlas.TypeToken, LastUpdate: time.Now(),
 					Price: blockatlas.TickerPrice{
 						Value:     22.249366449290356,
 						Change24h: -5.3700,
