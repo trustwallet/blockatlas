@@ -15,7 +15,7 @@ type CoinType string
 
 type TickerResponse struct {
 	Currency string  `json:"currency"`
-	Prices   Tickers `json:"prices"`
+	Docs     Tickers `json:"docs"`
 }
 
 type Ticker struct {
