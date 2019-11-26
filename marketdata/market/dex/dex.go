@@ -30,7 +30,7 @@ func InitMarket() market.Provider {
 }
 
 func (m *Market) GetData() (blockatlas.Tickers, error) {
-	var prices []CoinPrice
+	var prices []*CoinPrice
 	err := m.Get(&prices, "v1/ticker/24hr", url.Values{"limit": {"1000"}})
 	if err != nil {
 		return nil, err
@@ -40,23 +40,23 @@ func (m *Market) GetData() (blockatlas.Tickers, error) {
 		return nil, errors.E(err, "rate not found", errors.Params{"asset": BNBAsset})
 	}
 	result := normalizeTickers(prices, m.GetId())
-	result.ApplyRate(1/rate.Rate, blockatlas.DefaultCurrency)
+	result.ApplyRate(rate.Rate, blockatlas.DefaultCurrency)
 	return result, nil
 }
 
-func normalizeTicker(price CoinPrice, provider string) (blockatlas.Ticker, error) {
+func normalizeTicker(price *CoinPrice, provider string) (*blockatlas.Ticker, error) {
 	if price.QuoteAssetName != BNBAsset && price.BaseAssetName != BNBAsset {
-		return blockatlas.Ticker{}, errors.E("invalid quote/base asset",
+		return nil, errors.E("invalid quote/base asset",
 			errors.Params{"Symbol": price.BaseAssetName, "QuoteAsset": price.QuoteAssetName})
 	}
 	value, err := strconv.ParseFloat(price.LastPrice, 64)
 	if err != nil {
-		return blockatlas.Ticker{}, errors.E(err, "normalizeTicker parse value error",
+		return nil, errors.E(err, "normalizeTicker parse value error",
 			errors.Params{"LastPrice": price.LastPrice, "Symbol": price.BaseAssetName})
 	}
 	value24h, err := strconv.ParseFloat(price.PriceChangePercent, 64)
 	if err != nil {
-		return blockatlas.Ticker{}, errors.E(err, "normalizeTicker parse value24h error",
+		return nil, errors.E(err, "normalizeTicker parse value24h error",
 			errors.Params{"PriceChange": price.PriceChangePercent, "Symbol": price.BaseAssetName})
 	}
 	tokenId := price.QuoteAssetName
@@ -64,7 +64,7 @@ func normalizeTicker(price CoinPrice, provider string) (blockatlas.Ticker, error
 		tokenId = price.BaseAssetName
 		value = 1.0 / value
 	}
-	return blockatlas.Ticker{
+	return &blockatlas.Ticker{
 		CoinName: BNBAsset,
 		CoinType: blockatlas.TypeToken,
 		TokenId:  tokenId,
@@ -78,7 +78,7 @@ func normalizeTicker(price CoinPrice, provider string) (blockatlas.Ticker, error
 	}, nil
 }
 
-func normalizeTickers(prices []CoinPrice, provider string) (tickers blockatlas.Tickers) {
+func normalizeTickers(prices []*CoinPrice, provider string) (tickers blockatlas.Tickers) {
 	for _, price := range prices {
 		t, err := normalizeTicker(price, provider)
 		if err != nil {

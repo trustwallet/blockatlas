@@ -50,7 +50,7 @@ type Rate struct {
 }
 
 type Rates []Rate
-type Tickers []Ticker
+type Tickers []*Ticker
 
 func (ts Tickers) ApplyRate(rate float64, currency string) {
 	for _, t := range ts {

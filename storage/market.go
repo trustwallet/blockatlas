@@ -16,7 +16,7 @@ type ProviderList interface {
 	GetPriority(providerId string) int
 }
 
-func (s *Storage) SaveTicker(coin blockatlas.Ticker, pl ProviderList) error {
+func (s *Storage) SaveTicker(coin *blockatlas.Ticker, pl ProviderList) error {
 	cd, err := s.GetTicker(coin.CoinName, coin.TokenId)
 	if err == nil {
 		op := pl.GetPriority(cd.Price.Provider)
@@ -33,14 +33,14 @@ func (s *Storage) SaveTicker(coin blockatlas.Ticker, pl ProviderList) error {
 	return s.AddHM(EntityQuotes, hm, coin)
 }
 
-func (s *Storage) GetTicker(coin, token string) (blockatlas.Ticker, error) {
+func (s *Storage) GetTicker(coin, token string) (*blockatlas.Ticker, error) {
 	hm := createHashMap(coin, token)
 	var cd *blockatlas.Ticker
 	err := s.GetHMValue(EntityQuotes, hm, &cd)
 	if err != nil {
-		return blockatlas.Ticker{}, err
+		return nil, err
 	}
-	return *cd, nil
+	return cd, nil
 }
 
 func (s *Storage) SaveRates(rates blockatlas.Rates, pl ProviderList) {
