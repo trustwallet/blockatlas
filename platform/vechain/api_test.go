@@ -140,7 +140,7 @@ var expectedTransferLog = blockatlas.TxPage{
 		Meta: blockatlas.TokenTransfer{
 			Name:     "",
 			Symbol:   "VTHO",
-			TokenID:  "",
+			TokenID:  "0x0000000000000000000000000000456e65726779",
 			From:     "0x2c7a8d5cce0d5e6a8a31233b7dc3dae9aae4b405",
 			To:       "0xb5e883349e68ab59307d1604555ac890fac47128",
 			Value:    blockatlas.Amount("68000000000000000000"),

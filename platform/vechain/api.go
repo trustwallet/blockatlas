@@ -125,6 +125,7 @@ func NormalizeTokenTransaction(srcTx Tx, receipt TxReceipt) (blockatlas.TxPage, 
 			continue
 		}
 		event := output.Events[0] // TODO add support for multisend
+		to := event.Address
 		value, err := util.HexToDecimal(event.Data)
 		if err != nil {
 			continue
@@ -134,17 +135,17 @@ func NormalizeTokenTransaction(srcTx Tx, receipt TxReceipt) (blockatlas.TxPage, 
 			ID:       srcTx.Id,
 			Coin:     coin.VET,
 			From:     origin,
-			To:       event.Address,
+			To:       to,
 			Fee:      blockatlas.Amount(fee),
 			Date:     srcTx.Meta.BlockTimestamp,
 			Type:     blockatlas.TxTokenTransfer,
 			Block:    srcTx.Meta.BlockNumber,
 			Status:   blockatlas.StatusCompleted,
 			Meta: blockatlas.TokenTransfer{
-				Name:     "",
-				TokenID:  "",
+				Name:     "", // TODO replace with real name for other coins
+				TokenID:  to,
 				Value:    blockatlas.Amount(value),
-				Symbol:   "VTHO", // TODO replace with real name for other coins
+				Symbol:   "VTHO", // TODO replace with real symbol for other coins
 				Decimals: 18,     // TODO Not all tokens have decimal 18 https://github.com/vechain/token-registry/tree/master/tokens/main
 				From:     origin,
 				To:       getRecipientAddress(event.Topics[2]),
