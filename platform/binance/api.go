@@ -3,7 +3,6 @@ package binance
 import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
-	"math"
 	"strconv"
 	"strings"
 
@@ -135,11 +134,9 @@ func NormalizeTx(srcTx *Tx, token string) (blockatlas.Tx, bool) {
 			key = blockatlas.KeyCancelOrder
 			title = blockatlas.KeyTitleCancelOrder
 		}
-		price, ok := dt.OrderData.Price.(float64)
+		volume, ok := dt.OrderData.GetVolume()
 		if ok {
-			pow := math.Pow(10, float64(bnbCoin.Decimals))
-			p := price * pow
-			value = strconv.Itoa(int(p))
+			value = strconv.Itoa(int(volume))
 		}
 
 		tx.Meta = blockatlas.AnyAction{
