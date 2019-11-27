@@ -70,7 +70,8 @@ func (p *Platform) GetTokenTxsByAddress(address string, token string) (blockatla
 }
 
 // NormalizeTx converts a Binance transaction into the generic model
-func NormalizeTx(srcTx *Tx, token string) (tx blockatlas.Tx, ok bool) {
+func NormalizeTx(srcTx *Tx, token string) (blockatlas.Tx, bool) {
+	var tx blockatlas.Tx
 	bnbCoin := coin.Coins[coin.BNB]
 	value := util.DecimalExp(string(srcTx.Value), 8)
 
@@ -123,7 +124,7 @@ func NormalizeTx(srcTx *Tx, token string) (tx blockatlas.Tx, ok bool) {
 			return tx, false
 		}
 
-		symbol := dt.OrderData.Base
+		symbol := dt.OrderData.Quote
 		if symbol != token {
 			return tx, false
 		}
@@ -137,7 +138,7 @@ func NormalizeTx(srcTx *Tx, token string) (tx blockatlas.Tx, ok bool) {
 		price, ok := dt.OrderData.Price.(float64)
 		if ok {
 			pow := math.Pow(10, float64(bnbCoin.Decimals))
-			p := 1 / (price * pow)
+			p := price * pow
 			value = strconv.Itoa(int(p))
 		}
 
