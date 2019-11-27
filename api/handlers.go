@@ -63,13 +63,13 @@ func makeTxRoute(router gin.IRouter, api blockatlas.Platform, path string) {
 		}
 		token := c.Query("token")
 
-		var page blockatlas.TxPage
+		var txs []blockatlas.Tx
 		var err error
 		switch {
 		case token == "" && txAPI != nil:
-			page, err = txAPI.GetTxsByAddress(address)
+			txs, err = txAPI.GetTxsByAddress(address)
 		case token != "" && tokenTxAPI != nil:
-			page, err = tokenTxAPI.GetTokenTxsByAddress(address, token)
+			txs, err = tokenTxAPI.GetTokenTxsByAddress(address, token)
 		default:
 			emptyPage(c)
 			return
@@ -89,6 +89,17 @@ func makeTxRoute(router gin.IRouter, api blockatlas.Platform, path string) {
 			return
 		}
 
+		page := make(blockatlas.TxPage, 0)
+		for _, tx := range txs {
+			tx.Direction = blockatlas.DirectionOutgoing
+			if tx.To == address {
+				tx.Direction = blockatlas.DirectionIncoming
+				if tx.From == address {
+					tx.Direction = blockatlas.DirectionSelf
+				}
+			}
+			page = append(page, tx)
+		}
 		page.Sort()
 		ginutils.RenderSuccess(c, &page)
 	})
@@ -148,7 +159,7 @@ func makeStakingDelegationsRoute(router gin.IRouter, api blockatlas.Platform) {
 			ginutils.ErrorResponse(c).Message(err.Error()).Render()
 			return
 		}
-		
+
 		ginutils.RenderSuccess(c, response)
 	})
 }
