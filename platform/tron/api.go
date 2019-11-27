@@ -104,9 +104,15 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 
 func (p *Platform) GetTokenTxsByAddress(address, token string) (blockatlas.TxPage, error) {
 	tokenTxs, err := p.client.GetTxsOfAddress(address, token)
-	if err != nil || len(tokenTxs) == 0 {
+	if err != nil {
 		return nil, errors.E(err, "TRON: failed to get token from address", errors.TypePlatformApi,
 			errors.Params{"address": address, "token": token}).PushToSentry()
+	}
+
+	txs := make(blockatlas.TxPage, 0)
+
+	if len(tokenTxs) == 0 {
+		return txs, nil
 	}
 
 	info, err := p.client.GetTokenInfo(token)
@@ -114,16 +120,14 @@ func (p *Platform) GetTokenTxsByAddress(address, token string) (blockatlas.TxPag
 		return nil, errors.E(err, "TRON: failed to get token info", errors.TypePlatformApi,
 			errors.Params{"address": address, "token": token}).PushToSentry()
 	}
-	tokenInfo := info.Data[0]
 
-	txs := make(blockatlas.TxPage, 0)
 	for _, srcTx := range tokenTxs {
 		tx, err := Normalize(srcTx)
 		if err != nil {
 			logger.Error(err)
 			continue
 		}
-		setTokenMeta(tx, srcTx, tokenInfo)
+		setTokenMeta(tx, srcTx, info.Data[0])
 		txs = append(txs, *tx)
 	}
 
