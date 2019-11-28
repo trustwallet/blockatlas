@@ -112,7 +112,7 @@ func NormalizeTokenTransaction(srcTx Tx, receipt TxReceipt) (blockatlas.TxPage, 
 		return blockatlas.TxPage{}, errors.E("NormalizeBlockTransaction: Clauses not found", errors.Params{"tx": srcTx}).PushToSentry()
 	}
 
-	origin := util.GetValidParameter(srcTx.Origin, srcTx.Meta.TxOrigin)
+	origin := util.Checksum(util.GetValidParameter(srcTx.Origin, srcTx.Meta.TxOrigin))
 
 	fee, err := util.HexToDecimal(receipt.Paid)
 	if err != nil {
@@ -125,7 +125,7 @@ func NormalizeTokenTransaction(srcTx Tx, receipt TxReceipt) (blockatlas.TxPage, 
 			continue
 		}
 		event := output.Events[0] // TODO add support for multisend
-		to := event.Address
+		to := util.Checksum(event.Address)
 		value, err := util.HexToDecimal(event.Data)
 		if err != nil {
 			continue
@@ -148,7 +148,7 @@ func NormalizeTokenTransaction(srcTx Tx, receipt TxReceipt) (blockatlas.TxPage, 
 				Symbol:   "VTHO", // TODO replace with real symbol for other coins
 				Decimals: 18,     // TODO Not all tokens have decimal 18 https://github.com/vechain/token-registry/tree/master/tokens/main
 				From:     origin,
-				To:       getRecipientAddress(event.Topics[2]),
+				To:       util.Checksum(getRecipientAddress(event.Topics[2])),
 			},
 		})
 	}
@@ -188,8 +188,8 @@ func NormalizeTransaction(srcTx LogTransfer, trxId Tx) (blockatlas.Tx, error) {
 	return blockatlas.Tx{
 		ID:       srcTx.Meta.TxId,
 		Coin:     coin.VET,
-		From:     srcTx.Sender,
-		To:       srcTx.Recipient,
+		From:     util.Checksum(srcTx.Sender),
+		To:       util.Checksum(srcTx.Recipient),
 		Fee:      blockatlas.Amount(fee),
 		Date:     srcTx.Meta.BlockTimestamp,
 		Type:     blockatlas.TxTransfer,
