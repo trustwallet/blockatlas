@@ -126,6 +126,8 @@ func (p *Platform) GetTokenTxsByAddress(address, token string) (blockatlas.TxPag
 		if err != nil {
 			logger.Error(err)
 			continue
+		} else if srcTx.Data.Contracts[0].Type == TransferContract {
+			continue
 		}
 		setTokenMeta(tx, srcTx, info.Data[0])
 		txs = append(txs, *tx)
