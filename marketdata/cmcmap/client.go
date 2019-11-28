@@ -5,6 +5,7 @@ import (
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
+	"time"
 )
 
 type CoinMap struct {
@@ -44,7 +45,7 @@ func GetCmcMap() (CmcMapping, error) {
 		HttpClient:   blockatlas.DefaultClient,
 		ErrorHandler: blockatlas.DefaultErrorHandler,
 	}
-	err := request.Get(&results, "mapping.json", nil)
+	err := request.GetWithCache(&results, "mapping.json", nil, time.Hour*1)
 	if err != nil {
 		return nil, errors.E(err).PushToSentry()
 	}
