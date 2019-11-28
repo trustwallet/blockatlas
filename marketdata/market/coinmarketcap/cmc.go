@@ -5,7 +5,6 @@ import (
 	"github.com/trustwallet/blockatlas/marketdata/cmcmap"
 	"github.com/trustwallet/blockatlas/marketdata/market"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/pkg/logger"
 	"net/url"
 )
 
@@ -39,7 +38,7 @@ func (m *Market) GetData() (blockatlas.Tickers, error) {
 	return normalizeTickers(prices, m.GetId(), cmap), nil
 }
 
-func normalizeTicker(price Data, provider string, cmap cmcmap.CmcMapping) (*blockatlas.Ticker, error) {
+func normalizeTicker(price Data, provider string, cmap cmcmap.CmcMapping) (tickers blockatlas.Tickers) {
 	tokenId := ""
 	coinName := price.Symbol
 	coinType := blockatlas.TypeCoin
@@ -51,35 +50,49 @@ func normalizeTicker(price Data, provider string, cmap cmcmap.CmcMapping) (*bloc
 			tokenId = price.Symbol
 		}
 	}
-	cmcCoin, cmcTokenId, err := cmap.GetCoin(price.Id)
-	if err == nil {
-		coinName = cmcCoin.Symbol
-		if len(cmcTokenId) > 0 {
-			tokenId = cmcTokenId
-		}
+
+	cmcCoin, err := cmap.GetCoins(price.Id)
+	if err != nil {
+		tickers = append(tickers, &blockatlas.Ticker{
+			CoinName: coinName,
+			CoinType: coinType,
+			TokenId:  tokenId,
+			Price: blockatlas.TickerPrice{
+				Value:     price.Quote.USD.Price,
+				Change24h: price.Quote.USD.PercentChange24h,
+				Currency:  blockatlas.DefaultCurrency,
+				Provider:  provider,
+			},
+			LastUpdate: price.LastUpdated,
+		})
+		return
 	}
-	return &blockatlas.Ticker{
-		CoinName: coinName,
-		CoinType: coinType,
-		TokenId:  tokenId,
-		Price: blockatlas.TickerPrice{
-			Value:     price.Quote.USD.Price,
-			Change24h: price.Quote.USD.PercentChange24h,
-			Currency:  blockatlas.DefaultCurrency,
-			Provider:  provider,
-		},
-		LastUpdate: price.LastUpdated,
-	}, nil
+
+	for _, cmc := range cmcCoin {
+		coinName = cmc.Coin.Symbol
+		if len(cmc.TokenId) > 0 {
+			tokenId = cmc.TokenId
+		}
+		tickers = append(tickers, &blockatlas.Ticker{
+			CoinName: coinName,
+			CoinType: coinType,
+			TokenId:  tokenId,
+			Price: blockatlas.TickerPrice{
+				Value:     price.Quote.USD.Price,
+				Change24h: price.Quote.USD.PercentChange24h,
+				Currency:  blockatlas.DefaultCurrency,
+				Provider:  provider,
+			},
+			LastUpdate: price.LastUpdated,
+		})
+	}
+	return
 }
 
 func normalizeTickers(prices CoinPrices, provider string, cmap cmcmap.CmcMapping) (tickers blockatlas.Tickers) {
 	for _, price := range prices.Data {
-		t, err := normalizeTicker(price, provider, cmap)
-		if err != nil {
-			logger.Error(err)
-			continue
-		}
-		tickers = append(tickers, t)
+		t := normalizeTicker(price, provider, cmap)
+		tickers = append(tickers, t...)
 	}
 	return
 }
