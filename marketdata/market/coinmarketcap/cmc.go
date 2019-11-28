@@ -31,7 +31,8 @@ func (m *Market) GetData() (blockatlas.Tickers, error) {
 		return nil, err
 	}
 	var prices CoinPrices
-	err = m.Get(&prices, "v1/cryptocurrency/listings/latest", url.Values{"limit": {"5000"}, "convert": {blockatlas.DefaultCurrency}})
+	err = m.Get(&prices, "v1/cryptocurrency/listings/latest",
+		url.Values{"limit": {"5000"}, "convert": {blockatlas.DefaultCurrency}})
 	if err != nil {
 		return nil, err
 	}
@@ -53,7 +54,9 @@ func normalizeTicker(price Data, provider string, cmap cmcmap.CmcMapping) (*bloc
 	cmcCoin, cmcTokenId, err := cmap.GetCoin(price.Id)
 	if err == nil {
 		coinName = cmcCoin.Symbol
-		tokenId = cmcTokenId
+		if len(cmcTokenId) > 0 {
+			tokenId = cmcTokenId
+		}
 	}
 	return &blockatlas.Ticker{
 		CoinName: coinName,

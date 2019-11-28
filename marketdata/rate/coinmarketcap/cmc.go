@@ -30,7 +30,8 @@ func (c *Cmc) FetchLatestRates() (rates blockatlas.Rates, err error) {
 		return nil, err
 	}
 	var prices CoinPrices
-	err = c.Get(&prices, "v1/cryptocurrency/listings/latest", url.Values{"limit": {"5000"}, "convert": {"USD"}})
+	err = c.Get(&prices, "v1/cryptocurrency/listings/latest",
+		url.Values{"limit": {"5000"}, "convert": {blockatlas.DefaultCurrency}})
 	if err != nil {
 		return
 	}
