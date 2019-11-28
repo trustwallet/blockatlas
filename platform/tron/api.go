@@ -96,7 +96,12 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 		if err != nil {
 			continue
 		}
-		txs = append(txs, *tx)
+
+		if len(srcTx.Data.Contracts) > 0 && srcTx.Data.Contracts[0].Type == TransferContract {
+			txs = append(txs, *tx)
+		} else {
+			continue
+		}
 	}
 
 	return txs, nil
