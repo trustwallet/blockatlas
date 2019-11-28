@@ -16,8 +16,9 @@ type CoinMap struct {
 }
 
 type CoinResult struct {
-	Coin    coin.Coin
-	TokenId string
+	Coin     coin.Coin
+	TokenId  string
+	CoinType blockatlas.CoinType
 }
 
 type CmcSlice []CoinMap
@@ -46,7 +47,7 @@ func (cm CmcMapping) GetCoins(coinId uint) ([]CoinResult, error) {
 		if !ok {
 			continue
 		}
-		tokens = append(tokens, CoinResult{Coin: c, TokenId: cc.TokenId})
+		tokens = append(tokens, CoinResult{Coin: c, TokenId: cc.TokenId, CoinType: blockatlas.CoinType(cc.Type)})
 	}
 	return tokens, nil
 }

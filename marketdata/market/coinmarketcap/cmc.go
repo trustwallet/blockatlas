@@ -75,7 +75,7 @@ func normalizeTicker(price Data, provider string, cmap cmcmap.CmcMapping) (ticke
 		}
 		tickers = append(tickers, &blockatlas.Ticker{
 			CoinName: coinName,
-			CoinType: coinType,
+			CoinType: cmc.CoinType,
 			TokenId:  tokenId,
 			Price: blockatlas.TickerPrice{
 				Value:     price.Quote.USD.Price,
