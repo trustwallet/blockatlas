@@ -15,27 +15,40 @@ type CoinMap struct {
 	TokenId string `json:"token_id"`
 }
 
+type CoinResult struct {
+	Coin    coin.Coin
+	TokenId string
+}
+
 type CmcSlice []CoinMap
-type CmcMapping map[uint]CoinMap
+type CmcMapping map[uint][]CoinMap
 
 func (c *CmcSlice) getMap() (m CmcMapping) {
-	m = make(map[uint]CoinMap)
+	m = make(map[uint][]CoinMap)
 	for _, cm := range *c {
-		m[cm.Id] = cm
+		_, ok := m[cm.Id]
+		if !ok {
+			m[cm.Id] = make([]CoinMap, 0)
+		}
+		m[cm.Id] = append(m[cm.Id], cm)
 	}
 	return
 }
 
-func (cm CmcMapping) GetCoin(coinId uint) (coin.Coin, string, error) {
+func (cm CmcMapping) GetCoins(coinId uint) ([]CoinResult, error) {
 	cmcCoin, ok := cm[coinId]
 	if !ok {
-		return coin.Coin{}, "", errors.E("CmcMapping.getCoin: coinId notFound")
+		return nil, errors.E("CmcMapping.getCoin: coinId notFound")
 	}
-	c, ok := coin.Coins[cmcCoin.Coin]
-	if !ok {
-		return coin.Coin{}, "", errors.E("CmcMapping.getCoin: Invalid cmcCoin.CoinId")
+	tokens := make([]CoinResult, 0)
+	for _, cc := range cmcCoin {
+		c, ok := coin.Coins[cc.Coin]
+		if !ok {
+			continue
+		}
+		tokens = append(tokens, CoinResult{Coin: c, TokenId: cc.TokenId})
 	}
-	return c, cmcCoin.TokenId, nil
+	return tokens, nil
 }
 
 func GetCmcMap() (CmcMapping, error) {

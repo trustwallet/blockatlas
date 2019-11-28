@@ -44,13 +44,8 @@ func normalizeRates(prices CoinPrices, cmap cmcmap.CmcMapping, provider string) 
 		if price.Platform != nil {
 			continue
 		}
-		currency := price.Symbol
-		cmcCoin, _, err := cmap.GetCoin(price.Id)
-		if err == nil {
-			currency = cmcCoin.Symbol
-		}
 		rates = append(rates, blockatlas.Rate{
-			Currency:  currency,
+			Currency:  price.Symbol,
 			Rate:      1.0 / price.Quote.USD.Price,
 			Timestamp: price.LastUpdated.Unix(),
 			Provider:  provider,
