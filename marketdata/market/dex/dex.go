@@ -40,7 +40,7 @@ func (m *Market) GetData() (blockatlas.Tickers, error) {
 		return nil, errors.E(err, "rate not found", errors.Params{"asset": BNBAsset})
 	}
 	result := normalizeTickers(prices, m.GetId())
-	result.ApplyRate(rate.Rate, blockatlas.DefaultCurrency)
+	result.ApplyRate(1/rate.Rate, blockatlas.DefaultCurrency)
 	return result, nil
 }
 
@@ -59,9 +59,9 @@ func normalizeTicker(price *CoinPrice, provider string) (*blockatlas.Ticker, err
 		return nil, errors.E(err, "normalizeTicker parse value24h error",
 			errors.Params{"PriceChange": price.PriceChangePercent, "Symbol": price.BaseAssetName})
 	}
-	tokenId := price.QuoteAssetName
+	tokenId := price.BaseAssetName
 	if tokenId == BNBAsset {
-		tokenId = price.BaseAssetName
+		tokenId = price.QuoteAssetName
 		value = 1.0 / value
 	}
 	return &blockatlas.Ticker{

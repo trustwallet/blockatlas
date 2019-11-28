@@ -7,6 +7,7 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"net/url"
+	"time"
 )
 
 type Market struct {
@@ -31,7 +32,8 @@ func (m *Market) GetData() (blockatlas.Tickers, error) {
 		return nil, err
 	}
 	var prices CoinPrices
-	err = m.Get(&prices, "v1/cryptocurrency/listings/latest", url.Values{"limit": {"5000"}, "convert": {blockatlas.DefaultCurrency}})
+	err = m.GetWithCache(&prices, "v1/cryptocurrency/listings/latest",
+		url.Values{"limit": {"5000"}, "convert": {blockatlas.DefaultCurrency}}, time.Hour*1)
 	if err != nil {
 		return nil, err
 	}
