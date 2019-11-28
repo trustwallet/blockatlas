@@ -4,6 +4,7 @@ import (
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	services "github.com/trustwallet/blockatlas/services/assets"
 	"github.com/trustwallet/blockatlas/util"
@@ -142,7 +143,7 @@ func NormalizeDelegations(delegations []Delegation, validators blockatlas.Valida
 	for _, v := range delegations {
 		validator, ok := validators[v.ValidatorAddress]
 		if !ok {
-			logger.Error("Validator not found", validator)
+			logger.Error(errors.E("Validator not found", errors.Params{"address": v.ValidatorAddress, "platform": "cosmos", "delegation": v.DelegatorAddress}))
 			continue
 		}
 		delegation := blockatlas.Delegation{
@@ -161,7 +162,7 @@ func NormalizeUnbondingDelegations(delegations []UnbondingDelegation, validators
 		for _, entry := range v.Entries {
 			validator, ok := validators[v.ValidatorAddress]
 			if !ok {
-				logger.Error("Validator not found", validator)
+				logger.Error(errors.E("Validator not found", errors.Params{"address": v.ValidatorAddress, "platform": "cosmos", "delegation": v.DelegatorAddress}))
 				continue
 			}
 			t, _ := time.Parse(time.RFC3339, entry.CompletionTime)
