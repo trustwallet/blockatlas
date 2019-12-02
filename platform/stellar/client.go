@@ -26,6 +26,16 @@ func (c *Client) GetTxsOfAddress(address string) ([]Payment, error) {
 	return payments.Embedded.Records, nil
 }
 
+func (c *Client) GetTrxHash(id string) (TrxHash, error) {
+	path := fmt.Sprintf("transactions/%s", id)
+
+	var hash TrxHash
+	err := c.Get(&hash, path, nil)
+	if err != nil {
+		return hash, err
+	}
+	return hash, nil
+}
 func (c *Client) CurrentBlockNumber() (int64, error) {
 	query := url.Values{
 		"order": {"desc"},
