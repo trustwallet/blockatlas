@@ -52,10 +52,10 @@ func (p *Platform) NormalizeBlockTxs(srcTxs []Tx) chan blockatlas.Tx {
 	var wg sync.WaitGroup
 	for _, srcTx := range srcTxs {
 		wg.Add(1)
-		go func() {
+		go func(s Tx, c chan blockatlas.Tx) {
 			defer wg.Done()
-			p.NormalizeBlockChannel(srcTx, txChan)
-		}()
+			p.NormalizeBlockChannel(s, c)
+		}(srcTx, txChan)
 	}
 	wg.Wait()
 	close(txChan)
@@ -166,13 +166,13 @@ func (p *Platform) getTokens(ids []string) chan blockatlas.Token {
 	var wg sync.WaitGroup
 	for _, id := range ids {
 		wg.Add(1)
-		go func() {
+		go func(i string, c chan blockatlas.Token) {
 			defer wg.Done()
-			err := p.getTokensChannel(id, tkChan)
+			err := p.getTokensChannel(i, c)
 			if err != nil {
 				logger.Error(err)
 			}
-		}()
+		}(id, tkChan)
 	}
 	wg.Wait()
 	close(tkChan)
