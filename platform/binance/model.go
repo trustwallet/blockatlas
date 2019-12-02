@@ -3,7 +3,9 @@ package binance
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/errors"
+	"math"
 	"strings"
 )
 
@@ -91,10 +93,43 @@ type Data struct {
 }
 
 type OrderData struct {
-	Symbol string      `json:"symbol"`
-	Base   string      `json:"-"`
-	Quote  string      `json:"-"`
-	Price  interface{} `json:"price"`
+	Symbol   string      `json:"symbol"`
+	Base     string      `json:"-"`
+	Quote    string      `json:"-"`
+	Quantity interface{} `json:"quantity"`
+	Price    interface{} `json:"price"`
+}
+
+func (od OrderData) GetVolume() (int64, bool) {
+	price, ok := od.GetPrice()
+	if !ok {
+		return 0, false
+	}
+	quantity, ok := od.GetQuantity()
+	if !ok {
+		return 0, false
+	}
+	return price * quantity, true
+}
+
+func (od OrderData) GetPrice() (int64, bool) {
+	price, ok := od.Price.(float64)
+	if ok {
+		bnbCoin := coin.Coins[coin.BNB]
+		pow := math.Pow(10, float64(bnbCoin.Decimals))
+		return int64(price * pow), true
+	}
+	return 0, false
+}
+
+func (od OrderData) GetQuantity() (int64, bool) {
+	quantity, ok := od.Quantity.(float64)
+	if ok {
+		bnbCoin := coin.Coins[coin.BNB]
+		pow := math.Pow(10, float64(bnbCoin.Decimals))
+		return int64(quantity * pow), true
+	}
+	return 0, false
 }
 
 type TxPage struct {

@@ -3,6 +3,7 @@ package binance
 import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
+	"strconv"
 	"strings"
 
 	"github.com/spf13/viper"
@@ -68,7 +69,8 @@ func (p *Platform) GetTokenTxsByAddress(address string, token string) (blockatla
 }
 
 // NormalizeTx converts a Binance transaction into the generic model
-func NormalizeTx(srcTx *Tx, token string) (tx blockatlas.Tx, ok bool) {
+func NormalizeTx(srcTx *Tx, token string) (blockatlas.Tx, bool) {
+	var tx blockatlas.Tx
 	bnbCoin := coin.Coins[coin.BNB]
 	value := util.DecimalExp(string(srcTx.Value), 8)
 
@@ -115,40 +117,38 @@ func NormalizeTx(srcTx *Tx, token string) (tx blockatlas.Tx, ok bool) {
 			}
 		}
 
-	//case TxCancelOrder, TxNewOrder:
-	//	dt, err := srcTx.getData()
-	//	if err != nil {
-	//		return tx, false
-	//	}
-	//
-	//	symbol := dt.OrderData.Base
-	//	if symbol != token {
-	//		return tx, false
-	//	}
-	//
-	//	key := blockatlas.KeyPlaceOrder
-	//	title := blockatlas.KeyTitlePlaceOrder
-	//	if srcTx.Type == TxCancelOrder {
-	//		key = blockatlas.KeyCancelOrder
-	//		title = blockatlas.KeyTitleCancelOrder
-	//		price, ok := dt.OrderData.Price.(float64)
-	//		if ok {
-	//			pow := math.Pow(10, float64(bnbCoin.Decimals))
-	//			p := price * pow
-	//			value = strconv.Itoa(int(p))
-	//		}
-	//	}
-	//
-	//	tx.Meta = blockatlas.AnyAction{
-	//		Coin:     coin.BNB,
-	//		TokenID:  dt.OrderData.Symbol,
-	//		Symbol:   TokenSymbol(symbol),
-	//		Name:     symbol,
-	//		Value:    blockatlas.Amount(value),
-	//		Decimals: coin.Coins[coin.BNB].Decimals,
-	//		Title:    title,
-	//		Key:      key,
-	//	}
+	case TxCancelOrder, TxNewOrder:
+		dt, err := srcTx.getData()
+		if err != nil {
+			return tx, false
+		}
+
+		symbol := dt.OrderData.Quote
+		if symbol != token {
+			return tx, false
+		}
+
+		key := blockatlas.KeyPlaceOrder
+		title := blockatlas.KeyTitlePlaceOrder
+		if srcTx.Type == TxCancelOrder {
+			key = blockatlas.KeyCancelOrder
+			title = blockatlas.KeyTitleCancelOrder
+		}
+		volume, ok := dt.OrderData.GetVolume()
+		if ok {
+			value = strconv.Itoa(int(volume))
+		}
+
+		tx.Meta = blockatlas.AnyAction{
+			Coin:     coin.BNB,
+			TokenID:  dt.OrderData.Symbol,
+			Symbol:   TokenSymbol(symbol),
+			Name:     symbol,
+			Value:    blockatlas.Amount(value),
+			Decimals: coin.Coins[coin.BNB].Decimals,
+			Title:    title,
+			Key:      key,
+		}
 
 	default:
 		return tx, false

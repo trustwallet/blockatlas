@@ -2,11 +2,10 @@ package binance
 
 import (
 	"encoding/json"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"testing"
-
 	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas/coin"
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"testing"
 )
 
 const transferTransaction = `
@@ -55,12 +54,12 @@ const newOrderTransaction = `
       "timeStamp": 1559689901929,
       "fromAddr": "bnb16ya67j7kvw8682kka09qujlw5u7lf4geqef0ku",
       "value": 0.00649878,
-      "txAsset": "AWC-986",
-      "txQuoteAsset": "BNB",
+      "txAsset": "BNB",
+      "txQuoteAsset": "AWC-986",
       "txFee": 0,
       "txAge": 14346340,
       "orderId": "D13BAF4BD6638FA3AAD6EBCA0E4BEEA73DF4D519-30",
-      "data": "{\"orderData\":{\"symbol\":\"AWC-986_BNB\",\"orderType\":\"limit\",\"side\":\"buy\",\"price\":0.00324939,\"quantity\":2.00000000,\"timeInForce\":\"GTE\",\"orderId\":\"D13BAF4BD6638FA3AAD6EBCA0E4BEEA73DF4D519-30\"}}",
+      "data": "{\"orderData\":{\"symbol\":\"BNB_AWC-986\",\"orderType\":\"limit\",\"side\":\"buy\",\"price\":0.00324939,\"quantity\":2.00000000,\"timeInForce\":\"GTE\",\"orderId\":\"D13BAF4BD6638FA3AAD6EBCA0E4BEEA73DF4D519-30\"}}",
       "code": 0,
       "log": "Msg 0: ",
       "confirmBlocks": 0,
@@ -78,7 +77,7 @@ const cancelOrderTransaction = `
       "fromAddr": "bnb16ya67j7kvw8682kka09qujlw5u7lf4geqef0ku",
       "txFee": 0,
       "txAge": 14346349,
-      "data": "{\"orderData\":{\"symbol\":\"GTO-908_BNB\",\"orderType\":\"limit\",\"side\":\"buy\",\"price\":0.00104716,\"quantity\":1.00000000,\"timeInForce\":\"GTE\",\"orderId\":\"D13BAF4BD6638FA3AAD6EBCA0E4BEEA73DF4D519-28\"}}",
+      "data": "{\"orderData\":{\"symbol\":\"BNB_GTO-908\",\"orderType\":\"limit\",\"side\":\"buy\",\"price\":0.00104716,\"quantity\":1.00000000,\"timeInForce\":\"GTE\",\"orderId\":\"D13BAF4BD6638FA3AAD6EBCA0E4BEEA73DF4D519-28\"}}",
       "code": 0,
       "log": "Msg 0: ",
       "confirmBlocks": 0,
@@ -136,10 +135,10 @@ var newOrderTransferDst = blockatlas.Tx{
 		Coin:     coin.BNB,
 		Title:    blockatlas.KeyTitlePlaceOrder,
 		Key:      blockatlas.KeyPlaceOrder,
-		TokenID:  "AWC-986_BNB",
+		TokenID:  "BNB_AWC-986",
 		Name:     "AWC-986",
 		Symbol:   "AWC",
-		Value:    "649878",
+		Value:    "64987800000000",
 		Decimals: 8,
 	},
 }
@@ -156,10 +155,10 @@ var cancelOrdeTransferDst = blockatlas.Tx{
 		Coin:     coin.BNB,
 		Title:    blockatlas.KeyTitleCancelOrder,
 		Key:      blockatlas.KeyCancelOrder,
-		TokenID:  "GTO-908_BNB",
+		TokenID:  "BNB_GTO-908",
 		Name:     "GTO-908",
 		Symbol:   "GTO",
-		Value:    "104716",
+		Value:    "10471600000000",
 		Decimals: 8,
 	},
 }
@@ -187,20 +186,20 @@ func TestNormalizeTx(t *testing.T) {
 		token:       "YLC-D8B",
 		wantError:   false,
 	})
-	//testNormalizeTx(t, &test{
-	//	name:        "new order transfer",
-	//	apiResponse: newOrderTransaction,
-	//	expected:    newOrderTransferDst,
-	//	token:       "AWC-986",
-	//	wantError:   false,
-	//})
-	//testNormalizeTx(t, &test{
-	//	name:        "cancel order transfer",
-	//	apiResponse: cancelOrderTransaction,
-	//	expected:    cancelOrdeTransferDst,
-	//	token:       "GTO-908",
-	//	wantError:   false,
-	//})
+	testNormalizeTx(t, &test{
+		name:        "new order transfer",
+		apiResponse: newOrderTransaction,
+		expected:    newOrderTransferDst,
+		token:       "AWC-986",
+		wantError:   false,
+	})
+	testNormalizeTx(t, &test{
+		name:        "cancel order transfer",
+		apiResponse: cancelOrderTransaction,
+		expected:    cancelOrdeTransferDst,
+		token:       "GTO-908",
+		wantError:   false,
+	})
 	testNormalizeTx(t, &test{
 		name:        "normalize error transfer",
 		apiResponse: tokenTransferTransaction,
