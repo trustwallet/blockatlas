@@ -2,6 +2,17 @@ package stellar
 
 const FixedFee = "100" // Fixed at 100 stroops https://stellar.org/developers/guides/concepts/fees.html
 
+// Payment types https://www.stellar.org/developers/horizon/reference/endpoints/payments-for-account.html
+const (
+	PaymentType   = "payment"
+	CreateAccount = "create_account"
+)
+
+// Assets types
+const (
+	Native = "native"
+)
+
 // PaymentsPage of payments returned by Horizon
 type PaymentsPage struct {
 	Embedded struct {
@@ -42,6 +53,11 @@ type Payment struct {
 	TransactionHash string `json:"transaction_hash"`
 }
 
-type TrxHash struct {
+type TxHash struct {
 	Memo string `json:"memo"`
+}
+
+type Tuple struct {
+	Payment
+	TxHash
 }

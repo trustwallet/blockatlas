@@ -42,47 +42,41 @@ func (p *Platform) CurrentBlockNumber() (int64, error) {
 
 func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 	if srcBlock, err := p.client.GetBlockByNumber(num); err == nil {
-		block := NormalizeBlock(srcBlock, *p)
+		block := p.NormalizeBlock(srcBlock)
 		return &block, nil
 	} else {
 		return nil, err
 	}
 }
 
-func NormalizeBlock(block *Block, p Platform) blockatlas.Block {
+func (p *Platform) NormalizeBlock(block *Block) blockatlas.Block {
 	return blockatlas.Block{
 		ID:     block.Ledger.Id,
 		Number: block.Ledger.Sequence,
-		Txs:    NormalizePayments(block.Payments, p),
+		Txs:    NormalizePayments(block.Payments, *p),
 	}
 }
 
 func NormalizePayments(payments []Payment, p Platform) (txs []blockatlas.Tx) {
 	var wg sync.WaitGroup
-	tupleChan := make(chan struct {
-		Payment;
-		TrxHash
-	})
+	tupleChan := make(chan Tuple)
 
 	for _, payment := range payments {
 		wg.Add(1)
 		go func(id string) {
 			defer wg.Done()
-			hash, err := p.client.GetTrxHash(id)
+			hash, err := p.client.GetTxHash(id)
 			if err != nil {
 				return
 			}
-			tupleChan <- struct {
-				Payment;
-				TrxHash
-			}{payment, hash}
+			tupleChan <- Tuple{payment, hash}
 
 		}(payment.TransactionHash)
 	}
 
 	go func() {
 		for val := range tupleChan {
-			tx, ok := Normalize(&val.Payment, p.CoinIndex, val.TrxHash)
+			tx, ok := Normalize(&val.Payment, p.CoinIndex, val.TxHash)
 			if !ok {
 				continue
 			}
@@ -96,13 +90,13 @@ func NormalizePayments(payments []Payment, p Platform) (txs []blockatlas.Tx) {
 }
 
 // Normalize converts a Stellar-based transaction into the generic model
-func Normalize(payment *Payment, nativeCoinIndex uint, hash TrxHash) (tx blockatlas.Tx, ok bool) {
+func Normalize(payment *Payment, nativeCoinIndex uint, hash TxHash) (tx blockatlas.Tx, ok bool) {
 	switch payment.Type {
-	case "payment":
-		if payment.AssetType != "native" {
+	case PaymentType:
+		if payment.AssetType != Native {
 			return tx, false
 		}
-	case "create_account":
+	case CreateAccount:
 		break
 	default:
 		return tx, false

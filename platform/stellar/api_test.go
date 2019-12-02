@@ -73,14 +73,14 @@ var transferDst = blockatlas.Tx{
 	},
 }
 
-var hash = TrxHash{
+var hash = TxHash{
 	Memo: "testing",
 }
 
 type test struct {
 	name        string
 	apiResponse string
-	hash        TrxHash
+	hash        TxHash
 	expected    *blockatlas.Tx
 }
 
