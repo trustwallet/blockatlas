@@ -7,6 +7,7 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/util"
 	"strconv"
+	"sync"
 	"time"
 )
 
@@ -31,7 +32,8 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 	if err != nil {
 		return nil, err
 	}
-	return NormalizePayments(payments, p.CoinIndex), nil
+
+	return p.NormalizePayments(payments), nil
 }
 
 func (p *Platform) CurrentBlockNumber() (int64, error) {
@@ -40,40 +42,61 @@ func (p *Platform) CurrentBlockNumber() (int64, error) {
 
 func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 	if srcBlock, err := p.client.GetBlockByNumber(num); err == nil {
-		block := NormalizeBlock(srcBlock, p.CoinIndex)
+		block := p.NormalizeBlock(srcBlock)
 		return &block, nil
 	} else {
 		return nil, err
 	}
 }
 
-func NormalizeBlock(block *Block, nativeCoinIndex uint) blockatlas.Block {
+func (p *Platform) NormalizeBlock(block *Block) blockatlas.Block {
 	return blockatlas.Block{
 		ID:     block.Ledger.Id,
 		Number: block.Ledger.Sequence,
-		Txs:    NormalizePayments(block.Payments, nativeCoinIndex),
+		Txs:    p.NormalizePayments(block.Payments),
 	}
 }
 
-func NormalizePayments(payments []Payment, nativeCoinIndex uint) (txs []blockatlas.Tx) {
+func (p *Platform) NormalizePayments(payments []Payment) (txs []blockatlas.Tx) {
+	var wg sync.WaitGroup
+	tupleChan := make(chan Tuple)
+
 	for _, payment := range payments {
-		tx, ok := Normalize(&payment, nativeCoinIndex)
-		if !ok {
-			continue
-		}
-		txs = append(txs, tx)
+		wg.Add(1)
+		go func(pay Payment) {
+			defer wg.Done()
+			tx, err := p.client.GetTxHash(pay.TransactionHash)
+			if err != nil {
+				return
+			}
+			tupleChan <- Tuple{pay, tx}
+
+		}(payment)
 	}
-	return txs
+
+	go func() {
+		for val := range tupleChan {
+			tx, ok := Normalize(&val.Payment, p.CoinIndex, val.TxHash)
+			if !ok {
+				continue
+			}
+			txs = append(txs, tx)
+		}
+	}()
+
+	wg.Wait()
+	close(tupleChan)
+	return
 }
 
 // Normalize converts a Stellar-based transaction into the generic model
-func Normalize(payment *Payment, nativeCoinIndex uint) (tx blockatlas.Tx, ok bool) {
+func Normalize(payment *Payment, nativeCoinIndex uint, hash TxHash) (tx blockatlas.Tx, ok bool) {
 	switch payment.Type {
-	case "payment":
-		if payment.AssetType != "native" {
+	case PaymentType:
+		if payment.AssetType != Native {
 			return tx, false
 		}
-	case "create_account":
+	case CreateAccount:
 		break
 	default:
 		return tx, false
@@ -91,7 +114,7 @@ func Normalize(payment *Payment, nativeCoinIndex uint) (tx blockatlas.Tx, ok boo
 		value, err = util.DecimalToSatoshis(payment.Amount)
 		from = payment.From
 		to = payment.To
-	} else if payment.StartingBalance != "" {
+	} else if payment.StartingBalance != "" { // When transfer to new account
 		value, err = util.DecimalToSatoshis(payment.StartingBalance)
 		from = payment.Funder
 		to = payment.Account
@@ -102,14 +125,13 @@ func Normalize(payment *Payment, nativeCoinIndex uint) (tx blockatlas.Tx, ok boo
 		return tx, false
 	}
 	return blockatlas.Tx{
-		ID:   payment.TransactionHash,
-		Coin: nativeCoinIndex,
-		From: from,
-		To:   to,
-		// https://www.stellar.org/developers/guides/concepts/fees.html
-		// Fee fixed at 100 stroops
-		Fee:   "100",
+		ID:    payment.TransactionHash,
+		Coin:  nativeCoinIndex,
+		From:  from,
+		To:    to,
+		Fee:   FixedFee,
 		Date:  date.Unix(),
+		Memo:  hash.Memo,
 		Block: id,
 		Meta: blockatlas.Transfer{
 			Value:    blockatlas.Amount(value),

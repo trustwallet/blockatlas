@@ -31,6 +31,7 @@ var createDst = blockatlas.Tx{
 	To:    "GDKIJJIKXLOM2NRMPNQZUUYK24ZPVFC6426GZAEP3KUK6KEJLACCWNMX",
 	Fee:   "100",
 	Date:  1470850220,
+	Memo:  "testing",
 	Block: 25002129911451649,
 	Meta: blockatlas.Transfer{
 		Value:    "473269393700000000",
@@ -63,6 +64,7 @@ var transferDst = blockatlas.Tx{
 	To:    "GAX3BRBNB5WTJ2GNEFFH7A4CZKT2FORYABDDBZR5FIIT3P7FLS2EFOZZ",
 	Fee:   "100",
 	Date:  1470857941,
+	Memo:  "testing",
 	Block: 25008572362395649,
 	Meta: blockatlas.Transfer{
 		Value:    blockatlas.Amount("1000000000000000"),
@@ -71,9 +73,14 @@ var transferDst = blockatlas.Tx{
 	},
 }
 
+var hash = TxHash{
+	Memo: "testing",
+}
+
 type test struct {
 	name        string
 	apiResponse string
+	hash        TxHash
 	expected    *blockatlas.Tx
 }
 
@@ -81,11 +88,13 @@ func TestNormalize(t *testing.T) {
 	testNormalize(t, &test{
 		name:        "create account",
 		apiResponse: createSrc,
+		hash:        hash,
 		expected:    &createDst,
 	})
 	testNormalize(t, &test{
 		name:        "transfer",
 		apiResponse: transferSrc,
+		hash:        hash,
 		expected:    &transferDst,
 	})
 }
@@ -97,7 +106,7 @@ func testNormalize(t *testing.T, _test *test) {
 		t.Error(err)
 		return
 	}
-	tx, ok := Normalize(&payment, coin.XLM)
+	tx, ok := Normalize(&payment, coin.XLM, _test.hash)
 	if !ok {
 		t.Errorf("%s: tx could not be normalized", _test.name)
 	}
