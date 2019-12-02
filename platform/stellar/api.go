@@ -33,7 +33,7 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 		return nil, err
 	}
 
-	return NormalizePayments(payments, *p), nil
+	return p.NormalizePayments(payments), nil
 }
 
 func (p *Platform) CurrentBlockNumber() (int64, error) {
@@ -53,25 +53,25 @@ func (p *Platform) NormalizeBlock(block *Block) blockatlas.Block {
 	return blockatlas.Block{
 		ID:     block.Ledger.Id,
 		Number: block.Ledger.Sequence,
-		Txs:    NormalizePayments(block.Payments, *p),
+		Txs:    p.NormalizePayments(block.Payments),
 	}
 }
 
-func NormalizePayments(payments []Payment, p Platform) (txs []blockatlas.Tx) {
+func (p *Platform) NormalizePayments(payments []Payment) (txs []blockatlas.Tx) {
 	var wg sync.WaitGroup
 	tupleChan := make(chan Tuple)
 
 	for _, payment := range payments {
 		wg.Add(1)
-		go func(id string) {
+		go func(pay Payment) {
 			defer wg.Done()
-			hash, err := p.client.GetTxHash(id)
+			tx, err := p.client.GetTxHash(pay.TransactionHash)
 			if err != nil {
 				return
 			}
-			tupleChan <- Tuple{payment, hash}
+			tupleChan <- Tuple{pay, tx}
 
-		}(payment.TransactionHash)
+		}(payment)
 	}
 
 	go func() {
