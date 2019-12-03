@@ -45,6 +45,10 @@ market:
     rate_update_time: 1h
     api: https://data.fixer.io/api
     api_key:
+  compound:
+    rate_update_time: 15m
+    quote_update_time: 15m
+    api: https://api.compound.finance/api
 
 storage:
   redis: redis://localhost:6379
