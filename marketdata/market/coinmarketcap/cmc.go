@@ -70,7 +70,9 @@ func normalizeTicker(price Data, provider string, cmap cmcmap.CmcMapping) (ticke
 
 	for _, cmc := range cmcCoin {
 		coinName = cmc.Coin.Symbol
-		if len(cmc.TokenId) > 0 {
+		if cmc.CoinType == blockatlas.TypeCoin {
+			tokenId = ""
+		} else if len(cmc.TokenId) > 0 {
 			tokenId = cmc.TokenId
 		}
 		tickers = append(tickers, &blockatlas.Ticker{
