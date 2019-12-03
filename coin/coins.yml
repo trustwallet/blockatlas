@@ -345,3 +345,11 @@
   decimals: 8
   blockTime: 15000
   sampleAddress: 'D8NBg12kfW8uLjzCv7LYnPYCNhqvVtHaMQ'
+
+- id: 1023
+  symbol: ONE
+  handle: harmony
+  name: Harmony
+  decimals: 18
+  blockTime: 5000
+  sampleAddress: 'one1syjs6cnfwd9fgrhng03dyzs07suwtywwreczmk'
