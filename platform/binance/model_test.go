@@ -46,3 +46,29 @@ func TestTx_getData(t *testing.T) {
 		})
 	}
 }
+
+func TestConvertValue(t *testing.T) {
+	tests := []struct {
+		name       string
+		value      interface{}
+		wantResult int64
+	}{
+		{"test string 1", "9", 900000000},
+		{"test string 2", "9380938973", 938093897300000000},
+		{"test string 3", "0.00000000003", 0},
+		{"test string 4", "0.0000003", 30},
+		{"test int 1", 32424234, 3242423400000000},
+		{"test int 2", 34, 3400000000},
+		{"test float 1", 2233.222, 223322200000},
+		{"test float 2", 0.00000000003, 0},
+		{"test float 3", 0.0000003, 30},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, _ := ConvertValue(tt.value)
+			if got != tt.wantResult {
+				t.Errorf("ConvertValue() got = %v, want %v", got, tt.wantResult)
+			}
+		})
+	}
+}

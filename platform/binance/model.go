@@ -6,6 +6,7 @@ import (
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"math"
+	"strconv"
 	"strings"
 )
 
@@ -113,23 +114,11 @@ func (od OrderData) GetVolume() (int64, bool) {
 }
 
 func (od OrderData) GetPrice() (int64, bool) {
-	price, ok := od.Price.(float64)
-	if ok {
-		bnbCoin := coin.Coins[coin.BNB]
-		pow := math.Pow(10, float64(bnbCoin.Decimals))
-		return int64(price * pow), true
-	}
-	return 0, false
+	return ConvertValue(od.Price)
 }
 
 func (od OrderData) GetQuantity() (int64, bool) {
-	quantity, ok := od.Quantity.(float64)
-	if ok {
-		bnbCoin := coin.Coins[coin.BNB]
-		pow := math.Pow(10, float64(bnbCoin.Decimals))
-		return int64(quantity * pow), true
-	}
-	return 0, false
+	return ConvertValue(od.Quantity)
 }
 
 type TxPage struct {
@@ -160,4 +149,22 @@ func (a TokenPage) findToken(symbol string) *Token {
 
 func (e *Error) Error() string {
 	return fmt.Sprintf("%d: %s", e.Code, e.Message)
+}
+
+func ConvertValue(value interface{}) (int64, bool) {
+	result := 0.0
+	switch v := value.(type) {
+	case float64:
+		result = v
+	case int:
+		result = float64(v)
+	case string:
+		f, err := strconv.ParseFloat(v, 64)
+		if err == nil {
+			result = f
+		}
+	}
+	bnbCoin := coin.Coins[coin.BNB]
+	pow := math.Pow(10, float64(bnbCoin.Decimals))
+	return int64(result * pow), true
 }
