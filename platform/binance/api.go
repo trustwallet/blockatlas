@@ -94,7 +94,7 @@ func NormalizeTx(srcTx *Tx, token string) (blockatlas.Tx, bool) {
 
 	switch srcTx.Type {
 	case TxTransfer:
-		if srcTx.Asset != token {
+		if len(token) > 0 && srcTx.Asset != token {
 			return tx, false
 		}
 
@@ -124,7 +124,7 @@ func NormalizeTx(srcTx *Tx, token string) (blockatlas.Tx, bool) {
 		}
 
 		symbol := dt.OrderData.Quote
-		if symbol != token {
+		if len(token) > 0 && symbol != token {
 			return tx, false
 		}
 

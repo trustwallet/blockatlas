@@ -163,7 +163,7 @@ var cancelOrdeTransferDst = blockatlas.Tx{
 	},
 }
 
-type test struct {
+type testTx struct {
 	name        string
 	apiResponse string
 	expected    blockatlas.Tx
@@ -172,35 +172,35 @@ type test struct {
 }
 
 func TestNormalizeTx(t *testing.T) {
-	testNormalizeTx(t, &test{
-		name:        "transfer",
+	testNormalizeTx(t, &testTx{
+		name:        "bnb transfer",
 		apiResponse: transferTransaction,
 		expected:    transferDst,
 		token:       "BNB",
 		wantError:   false,
 	})
-	testNormalizeTx(t, &test{
+	testNormalizeTx(t, &testTx{
 		name:        "native token transfer",
 		apiResponse: tokenTransferTransaction,
 		expected:    tokenTransferDst,
 		token:       "YLC-D8B",
 		wantError:   false,
 	})
-	testNormalizeTx(t, &test{
+	testNormalizeTx(t, &testTx{
 		name:        "new order transfer",
 		apiResponse: newOrderTransaction,
 		expected:    newOrderTransferDst,
 		token:       "AWC-986",
 		wantError:   false,
 	})
-	testNormalizeTx(t, &test{
+	testNormalizeTx(t, &testTx{
 		name:        "cancel order transfer",
 		apiResponse: cancelOrderTransaction,
 		expected:    cancelOrdeTransferDst,
 		token:       "GTO-908",
 		wantError:   false,
 	})
-	testNormalizeTx(t, &test{
+	testNormalizeTx(t, &testTx{
 		name:        "normalize error transfer",
 		apiResponse: tokenTransferTransaction,
 		token:       "GTO-908",
@@ -208,7 +208,7 @@ func TestNormalizeTx(t *testing.T) {
 	})
 }
 
-func testNormalizeTx(t *testing.T, _test *test) {
+func testNormalizeTx(t *testing.T, _test *testTx) {
 	t.Run(_test.name, func(t *testing.T) {
 		var srcTx Tx
 		err := json.Unmarshal([]byte(_test.apiResponse), &srcTx)
@@ -220,6 +220,133 @@ func testNormalizeTx(t *testing.T, _test *test) {
 		}
 		assert.True(t, ok, "transfer: tx could not be normalized")
 		assert.Equal(t, _test.expected, tx, "transfer: tx don't equal")
+	})
+}
+
+const AllTransfersType = `[
+  {
+    "blockHeight": 7761368,
+    "code": 0,
+    "confirmBlocks": 2089441,
+    "fromAddr": "tbnb1fhr04azuhcj0dulm7ka40y0cqjlafwae9k9gk2",
+    "hasChildren": 0,
+    "log": "Msg 0: ",
+    "timeStamp": 1555049867552,
+    "toAddr": "tbnb1sylyjw032eajr9cyllp26n04300qzzre38qyv5",
+    "txAge": 836729,
+    "txAsset": "BNB",
+    "txFee": 0.00125,
+    "txHash": "1681EE543FB4B5A628EF21D746E031F018E226D127044A4F9BA5EE2542A44555",
+    "txType": "TRANSFER",
+    "value": 100000,
+    "memo": "test"
+  },
+  {
+    "blockHeight": 7928667,
+    "code": 0,
+    "confirmBlocks": 1922024,
+    "fromAddr": "tbnb1ttyn4csghfgyxreu7lmdu3lcplhqhxtzced45a",
+    "hasChildren": 0,
+    "log": "Msg 0: ",
+    "timeStamp": 1555117625829,
+    "toAddr": "tbnb12hlquylu78cjylk5zshxpdj6hf3t0tahwjt3ex",
+    "txAge": 768924,
+    "txAsset": "YLC-D8B",
+    "txFee": 0.00125,
+    "txHash": "95CF63FAA27579A9B6AF84EF8B2DFEAC29627479E9C98E7F5AE4535E213FA4C9",
+    "txType": "TRANSFER",
+    "value": 2.10572645,
+    "memo": "test"
+  },
+  {
+    "txHash": "B0677F3436C1B1661E94D192B84B98AA42AC2485D9808357796EE501CBF794F7",
+    "blockHeight": 10815565,
+    "txType": "NEW_ORDER",
+    "timeStamp": 1559689901929,
+    "fromAddr": "bnb16ya67j7kvw8682kka09qujlw5u7lf4geqef0ku",
+    "value": 0.00649878,
+    "txAsset": "BNB",
+    "txQuoteAsset": "AWC-986",
+    "txFee": 0,
+    "txAge": 14346340,
+    "orderId": "D13BAF4BD6638FA3AAD6EBCA0E4BEEA73DF4D519-30",
+    "data": "{\"orderData\":{\"symbol\":\"BNB_AWC-986\",\"orderType\":\"limit\",\"side\":\"buy\",\"price\":0.00324939,\"quantity\":2.00000000,\"timeInForce\":\"GTE\",\"orderId\":\"D13BAF4BD6638FA3AAD6EBCA0E4BEEA73DF4D519-30\"}}",
+    "code": 0,
+    "log": "Msg 0: ",
+    "confirmBlocks": 0,
+    "memo": "",
+    "source": 0,
+    "hasChildren": 0
+  },
+  {
+    "txHash": "F48DE755170C10F4A4C0E6836A708C33EEF9A7144800F25187D5F2349FD15A34",
+    "blockHeight": 10815539,
+    "txType": "CANCEL_ORDER",
+    "timeStamp": 1559689892180,
+    "fromAddr": "bnb16ya67j7kvw8682kka09qujlw5u7lf4geqef0ku",
+    "txFee": 0,
+    "txAge": 14346349,
+    "data": "{\"orderData\":{\"symbol\":\"BNB_GTO-908\",\"orderType\":\"limit\",\"side\":\"buy\",\"price\":0.00104716,\"quantity\":1.00000000,\"timeInForce\":\"GTE\",\"orderId\":\"D13BAF4BD6638FA3AAD6EBCA0E4BEEA73DF4D519-28\"}}",
+    "code": 0,
+    "log": "Msg 0: ",
+    "confirmBlocks": 0,
+    "memo": "",
+    "source": 0,
+    "hasChildren": 0
+  }
+]`
+
+type testTxs struct {
+	name        string
+	apiResponse string
+	expected    []blockatlas.Tx
+	token       string
+}
+
+func TestNormalizeTxs(t *testing.T) {
+	testNormalizeTxs(t, &testTxs{
+		name:        "all transfers",
+		apiResponse: AllTransfersType,
+		expected:    []blockatlas.Tx{transferDst, tokenTransferDst, newOrderTransferDst, cancelOrdeTransferDst},
+		token:       "",
+	})
+	testNormalizeTxs(t, &testTxs{
+		name:        "bnb transfer",
+		apiResponse: convertJsonToArray(transferTransaction),
+		expected:    []blockatlas.Tx{transferDst},
+		token:       "BNB",
+	})
+	testNormalizeTxs(t, &testTxs{
+		name:        "native token transfer",
+		apiResponse: convertJsonToArray(tokenTransferTransaction),
+		expected:    []blockatlas.Tx{tokenTransferDst},
+		token:       "YLC-D8B",
+	})
+	testNormalizeTxs(t, &testTxs{
+		name:        "new order transfer",
+		apiResponse: convertJsonToArray(newOrderTransaction),
+		expected:    []blockatlas.Tx{newOrderTransferDst},
+		token:       "AWC-986",
+	})
+	testNormalizeTxs(t, &testTxs{
+		name:        "cancel order transfer",
+		apiResponse: convertJsonToArray(cancelOrderTransaction),
+		expected:    []blockatlas.Tx{cancelOrdeTransferDst},
+		token:       "GTO-908",
+	})
+}
+
+func convertJsonToArray(jsonString string) string {
+	return "[" + jsonString + "]"
+}
+
+func testNormalizeTxs(t *testing.T, _test *testTxs) {
+	t.Run(_test.name, func(t *testing.T) {
+		var srcTxs []Tx
+		err := json.Unmarshal([]byte(_test.apiResponse), &srcTxs)
+		assert.Nil(t, err)
+		txs := NormalizeTxs(srcTxs, _test.token)
+		assert.Equal(t, _test.expected, txs, "transfer: tx don't equal")
 	})
 }
 
