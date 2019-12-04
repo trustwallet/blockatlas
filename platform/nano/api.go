@@ -16,6 +16,7 @@ type Platform struct {
 
 func (p *Platform) Init() error {
 	p.client = Client{blockatlas.InitClient(viper.GetString("nano.api"))}
+	p.client.Headers["Content-Type"] = "application/json"
 	return nil
 }
 
