@@ -17,7 +17,7 @@ func InitRate() rate.Provider {
 		Rate: rate.Rate{
 			Id:         "fixer",
 			Request:    blockatlas.InitClient(viper.GetString("market.fixer.api")),
-			UpdateTime: viper.GetString("market.fixer.rate_update_time"),
+			UpdateTime: getUpdateTime(),
 		},
 		APIKey: viper.GetString("market.fixer.api_key"),
 	}
@@ -35,6 +35,14 @@ func (f *Fixer) FetchLatestRates() (rates blockatlas.Rates, err error) {
 	}
 	rates = normalizeRates(latest, f.GetId())
 	return
+}
+
+func getUpdateTime() string {
+	updateTime := viper.GetString("market.fixer.rate_update_time")
+	if len(updateTime) == 0 {
+		return viper.GetString("market.rate_update_time")
+	}
+	return updateTime
 }
 
 func normalizeRates(latest Latest, provider string) (rates blockatlas.Rates) {

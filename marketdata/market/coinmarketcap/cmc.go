@@ -17,7 +17,7 @@ func InitMarket() market.Provider {
 		Market: market.Market{
 			Id:         "cmc",
 			Request:    blockatlas.InitClient(viper.GetString("market.cmc.api")),
-			UpdateTime: viper.GetString("market.cmc.quote_update_time"),
+			UpdateTime: getUpdateTime(),
 		},
 	}
 	m.Headers["X-CMC_PRO_API_KEY"] = viper.GetString("market.cmc.api_key")
@@ -36,6 +36,14 @@ func (m *Market) GetData() (blockatlas.Tickers, error) {
 		return nil, err
 	}
 	return normalizeTickers(prices, m.GetId(), cmap), nil
+}
+
+func getUpdateTime() string {
+	updateTime := viper.GetString("market.cmc.quote_update_time")
+	if len(updateTime) == 0 {
+		return viper.GetString("market.quote_update_time")
+	}
+	return updateTime
 }
 
 func normalizeTicker(price Data, provider string, cmap cmcmap.CmcMapping) (tickers blockatlas.Tickers) {

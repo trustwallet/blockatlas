@@ -2,13 +2,10 @@ package compound
 
 import (
 	"github.com/spf13/viper"
+	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/marketdata/market"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"time"
-)
-
-const (
-	ETHAsset = "ETH"
 )
 
 type Market struct {
@@ -20,7 +17,7 @@ func InitMarket() market.Provider {
 		Market: market.Market{
 			Id:         "compound",
 			Request:    blockatlas.InitClient(viper.GetString("market.compound.api")),
-			UpdateTime: viper.GetString("market.compound.quote_update_time"),
+			UpdateTime: getUpdateTime(),
 		},
 	}
 	return m
@@ -36,10 +33,18 @@ func (m *Market) GetData() (result blockatlas.Tickers, err error) {
 	return result, nil
 }
 
+func getUpdateTime() string {
+	updateTime := viper.GetString("market.compound.quote_update_time")
+	if len(updateTime) == 0 {
+		return viper.GetString("market.quote_update_time")
+	}
+	return updateTime
+}
+
 func normalizeTicker(ctoken CToken, provider string) (*blockatlas.Ticker, error) {
 	// TODO: add value24 calculation
 	return &blockatlas.Ticker{
-		CoinName: ETHAsset,
+		CoinName: coin.Ethereum().Symbol,
 		CoinType: blockatlas.TypeToken,
 		TokenId:  ctoken.TokenAddress,
 		Price: blockatlas.TickerPrice{
