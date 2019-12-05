@@ -138,7 +138,7 @@ var newOrderTransferDst = blockatlas.Tx{
 		TokenID:  "BNB_AWC-986",
 		Name:     "AWC-986",
 		Symbol:   "AWC",
-		Value:    "64987800000000",
+		Value:    "649878",
 		Decimals: 8,
 	},
 }
@@ -158,7 +158,7 @@ var cancelOrdeTransferDst = blockatlas.Tx{
 		TokenID:  "BNB_GTO-908",
 		Name:     "GTO-908",
 		Symbol:   "GTO",
-		Value:    "10471600000000",
+		Value:    "104716",
 		Decimals: 8,
 	},
 }
