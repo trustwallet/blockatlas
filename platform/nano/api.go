@@ -64,6 +64,7 @@ func (p *Platform) Normalize(srcTx *Transaction, account string) (tx blockatlas.
 		To:     to,
 		Block:  height,
 		Status: status,
+		Fee:    "0",
 		Meta: blockatlas.Transfer{
 			Value:    blockatlas.Amount(srcTx.Amount),
 			Symbol:   p.Coin().Symbol,
