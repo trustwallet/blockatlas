@@ -1,7 +1,6 @@
 package nano
 
 import (
-	"encoding/json"
 	"strconv"
 
 	"github.com/trustwallet/blockatlas/coin"
@@ -16,7 +15,6 @@ type Platform struct {
 
 func (p *Platform) Init() error {
 	p.client = Client{blockatlas.InitClient(viper.GetString("nano.api"))}
-	p.client.Headers["Content-Type"] = "application/json"
 	return nil
 }
 
@@ -31,17 +29,7 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 		return nil, err
 	}
 
-	b, err := json.Marshal(history.History)
-	if err != nil {
-		return normalized, nil
-	}
-
-	var txs []Transaction
-	err = json.Unmarshal(b, &txs)
-	if err != nil {
-		return normalized, nil
-	}
-	for _, srcTx := range txs {
+	for _, srcTx := range history.History {
 		tx := p.Normalize(&srcTx, history.Account)
 		normalized = append(normalized, tx)
 	}
