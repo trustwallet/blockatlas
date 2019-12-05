@@ -1,6 +1,7 @@
 package nano
 
 import (
+	"encoding/json"
 	"strconv"
 
 	"github.com/trustwallet/blockatlas/coin"
@@ -26,10 +27,19 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 	normalized := make([]blockatlas.Tx, 0)
 	history, err := p.client.GetAccountHistory(address)
 	if err != nil {
-		return nil, err
+		return normalized, err
+	}
+	b, err := json.Marshal(history.History)
+	if err != nil {
+		return normalized, nil
+	}
+	var txs []Transaction
+	err = json.Unmarshal(b, &txs)
+	if err != nil {
+		return normalized, nil
 	}
 
-	for _, srcTx := range history.History {
+	for _, srcTx := range txs {
 		tx := p.Normalize(&srcTx, history.Account)
 		normalized = append(normalized, tx)
 	}
