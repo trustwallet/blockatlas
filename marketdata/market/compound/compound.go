@@ -21,7 +21,7 @@ func InitMarket() market.Provider {
 		Market: market.Market{
 			Id:         compound,
 			Request:    blockatlas.InitClient(viper.GetString("market.compound.api")),
-			UpdateTime: getUpdateTime(),
+			UpdateTime: viper.GetString("market.quote_update_time"),
 		},
 	}
 	return m
@@ -35,14 +35,6 @@ func (m *Market) GetData() (result blockatlas.Tickers, err error) {
 	}
 	result = normalizeTickers(coinPrices, m.GetId())
 	return result, nil
-}
-
-func getUpdateTime() string {
-	updateTime := viper.GetString("market.compound.quote_update_time")
-	if len(updateTime) == 0 {
-		return viper.GetString("market.quote_update_time")
-	}
-	return updateTime
 }
 
 func normalizeTicker(ctoken CToken, provider string) (*blockatlas.Ticker, error) {

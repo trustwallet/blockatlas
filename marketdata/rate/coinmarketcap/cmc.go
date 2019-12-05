@@ -17,7 +17,7 @@ func InitRate() rate.Provider {
 		Rate: rate.Rate{
 			Id:         "cmc",
 			Request:    blockatlas.InitClient(viper.GetString("market.cmc.api")),
-			UpdateTime: getUpdateTime(),
+			UpdateTime: viper.GetString("market.rate_update_time"),
 		},
 	}
 	cmc.Headers["X-CMC_PRO_API_KEY"] = viper.GetString("market.cmc.api_key")
@@ -37,14 +37,6 @@ func (c *Cmc) FetchLatestRates() (rates blockatlas.Rates, err error) {
 	}
 	rates = normalizeRates(prices, cmap, c.GetId())
 	return
-}
-
-func getUpdateTime() string {
-	updateTime := viper.GetString("market.cmc.rate_update_time")
-	if len(updateTime) == 0 {
-		return viper.GetString("market.rate_update_time")
-	}
-	return updateTime
 }
 
 func normalizeRates(prices CoinPrices, cmap cmcmap.CmcMapping, provider string) (rates blockatlas.Rates) {

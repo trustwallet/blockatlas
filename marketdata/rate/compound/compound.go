@@ -21,7 +21,7 @@ func InitRate() rate.Provider {
 		Rate: rate.Rate{
 			Id:         compound,
 			Request:    blockatlas.InitClient(viper.GetString("market.compound.api")),
-			UpdateTime: getUpdateTime(),
+			UpdateTime: viper.GetString("market.rate_update_time"),
 		},
 	}
 }
@@ -34,14 +34,6 @@ func (c *Compound) FetchLatestRates() (rates blockatlas.Rates, err error) {
 	}
 	rates = normalizeRates(coinPrices, c.GetId())
 	return
-}
-
-func getUpdateTime() string {
-	updateTime := viper.GetString("market.compound.rate_update_time")
-	if len(updateTime) == 0 {
-		return viper.GetString("market.rate_update_time")
-	}
-	return updateTime
 }
 
 func normalizeRates(coinPrices CoinPrices, provider string) (rates blockatlas.Rates) {
