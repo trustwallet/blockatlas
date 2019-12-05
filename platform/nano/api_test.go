@@ -39,6 +39,7 @@ func TestNormalize(t *testing.T) {
 				To:     "nano_1trqphog5noig7z888asnjejcie8z1iopxyepcjdo1atps8whxiuwd51ehbw",
 				Block:  4,
 				Status: "completed",
+				Fee:    "0",
 				Meta: blockatlas.Transfer{
 					Value:    blockatlas.Amount("45000000000000000000000000000"),
 					Symbol:   "NANO",
@@ -67,6 +68,7 @@ func TestNormalize(t *testing.T) {
 				To:     "nano_3ifzdoxn7keh7tn8zuwty1yr8k5pmaxoq6jpp3jidbjbfnz6hyanh89x6rwj",
 				Block:  1,
 				Status: "completed",
+				Fee:    "0",
 				Meta: blockatlas.Transfer{
 					Value:    blockatlas.Amount("90000000000000000000000000000"),
 					Symbol:   "NANO",

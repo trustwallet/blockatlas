@@ -28,19 +28,18 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 	normalized := make([]blockatlas.Tx, 0)
 	history, err := p.client.GetAccountHistory(address)
 	if err != nil {
-		return nil, err
+		return normalized, err
 	}
-
 	b, err := json.Marshal(history.History)
 	if err != nil {
 		return normalized, nil
 	}
-
 	var txs []Transaction
 	err = json.Unmarshal(b, &txs)
 	if err != nil {
 		return normalized, nil
 	}
+
 	for _, srcTx := range txs {
 		tx := p.Normalize(&srcTx, history.Account)
 		normalized = append(normalized, tx)
@@ -76,6 +75,7 @@ func (p *Platform) Normalize(srcTx *Transaction, account string) (tx blockatlas.
 		To:     to,
 		Block:  height,
 		Status: status,
+		Fee:    "0",
 		Meta: blockatlas.Transfer{
 			Value:    blockatlas.Amount(srcTx.Amount),
 			Symbol:   p.Coin().Symbol,
