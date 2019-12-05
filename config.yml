@@ -214,7 +214,7 @@ algorand:
 #  key: YOUR_API_KEY
 
 nano:
-  # api: https://mynano.ninja/api
+  api: https://nanoverse.io/api/node
 
 digibyte:
   api: https://dgb1.trezor.io/api
