@@ -32,12 +32,12 @@ observer:
 # The market watcher
 market:
   enabled: false
+  quote_update_time: 20m
+  rate_update_time: 20m
   dex:
-    quote_update_time: 20m
+    quote_update_time: 5m
     api: https://dex.binance.org/api
   cmc:
-    rate_update_time: 15m
-    quote_update_time: 15m
     api: https://pro-api.coinmarketcap.com
     api_key:
     map_url: https://raw.githubusercontent.com/trustwallet/assets/master/pricing/coinmarketcap
@@ -45,6 +45,8 @@ market:
     rate_update_time: 1h
     api: https://data.fixer.io/api
     api_key:
+  compound:
+    api: https://api.compound.finance/api
 
 storage:
   redis: redis://localhost:6379

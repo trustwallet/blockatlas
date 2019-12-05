@@ -4,6 +4,7 @@ import (
 	"github.com/robfig/cron/v3"
 	"github.com/trustwallet/blockatlas/marketdata/market"
 	cmc "github.com/trustwallet/blockatlas/marketdata/market/coinmarketcap"
+	"github.com/trustwallet/blockatlas/marketdata/market/compound"
 	"github.com/trustwallet/blockatlas/marketdata/market/dex"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
@@ -17,6 +18,7 @@ func InitMarkets(storage storage.Market) {
 		// Add Market Quote Providers:
 		0: dex.InitMarket(),
 		1: cmc.InitMarket(),
+		2: compound.InitMarket(),
 	}
 	addMarkets(storage, marketProviders)
 }

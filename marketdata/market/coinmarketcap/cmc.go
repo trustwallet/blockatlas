@@ -17,7 +17,7 @@ func InitMarket() market.Provider {
 		Market: market.Market{
 			Id:         "cmc",
 			Request:    blockatlas.InitClient(viper.GetString("market.cmc.api")),
-			UpdateTime: viper.GetString("market.cmc.quote_update_time"),
+			UpdateTime: viper.GetString("market.quote_update_time"),
 		},
 	}
 	m.Headers["X-CMC_PRO_API_KEY"] = viper.GetString("market.cmc.api_key")

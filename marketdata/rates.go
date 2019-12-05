@@ -4,6 +4,7 @@ import (
 	"github.com/robfig/cron/v3"
 	"github.com/trustwallet/blockatlas/marketdata/rate"
 	cmc "github.com/trustwallet/blockatlas/marketdata/rate/coinmarketcap"
+	"github.com/trustwallet/blockatlas/marketdata/rate/compound"
 	"github.com/trustwallet/blockatlas/marketdata/rate/fixer"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
@@ -17,6 +18,7 @@ func InitRates(storage storage.Market) {
 		// Add Market Quote Providers:
 		0: fixer.InitRate(),
 		1: cmc.InitRate(),
+		2: compound.InitRate(),
 	}
 	addRates(storage, rateProviders)
 }
