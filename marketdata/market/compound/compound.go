@@ -8,6 +8,10 @@ import (
 	"time"
 )
 
+const (
+	compound = "compound"
+)
+
 type Market struct {
 	market.Market
 }
@@ -15,7 +19,7 @@ type Market struct {
 func InitMarket() market.Provider {
 	m := &Market{
 		Market: market.Market{
-			Id:         "compound",
+			Id:         compound,
 			Request:    blockatlas.InitClient(viper.GetString("market.compound.api")),
 			UpdateTime: getUpdateTime(),
 		},

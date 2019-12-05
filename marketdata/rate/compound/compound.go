@@ -8,6 +8,10 @@ import (
 	"time"
 )
 
+const (
+	compound = "compound"
+)
+
 type Compound struct {
 	rate.Rate
 }
@@ -15,7 +19,7 @@ type Compound struct {
 func InitRate() rate.Provider {
 	return &Compound{
 		Rate: rate.Rate{
-			Id:         "compound",
+			Id:         compound,
 			Request:    blockatlas.InitClient(viper.GetString("market.compound.api")),
 			UpdateTime: getUpdateTime(),
 		},
