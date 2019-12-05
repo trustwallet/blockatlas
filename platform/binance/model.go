@@ -110,15 +110,15 @@ func (od OrderData) GetVolume() (int64, bool) {
 	if !ok {
 		return 0, false
 	}
-	return price * quantity, true
+	return removeFloatPoint(price * quantity), true
 }
 
-func (od OrderData) GetPrice() (int64, bool) {
-	return ConvertValue(od.Price)
+func (od OrderData) GetPrice() (float64, bool) {
+	return convertValue(od.Price)
 }
 
-func (od OrderData) GetQuantity() (int64, bool) {
-	return ConvertValue(od.Quantity)
+func (od OrderData) GetQuantity() (float64, bool) {
+	return convertValue(od.Quantity)
 }
 
 type TxPage struct {
@@ -151,7 +151,13 @@ func (e *Error) Error() string {
 	return fmt.Sprintf("%d: %s", e.Code, e.Message)
 }
 
-func ConvertValue(value interface{}) (int64, bool) {
+func removeFloatPoint(value float64) int64 {
+	bnbCoin := coin.Coins[coin.BNB]
+	pow := math.Pow(10, float64(bnbCoin.Decimals))
+	return int64(value * pow)
+}
+
+func convertValue(value interface{}) (float64, bool) {
 	result := 0.0
 	switch v := value.(type) {
 	case float64:
@@ -163,8 +169,8 @@ func ConvertValue(value interface{}) (int64, bool) {
 		if err == nil {
 			result = f
 		}
+	default:
+		return result, false
 	}
-	bnbCoin := coin.Coins[coin.BNB]
-	pow := math.Pow(10, float64(bnbCoin.Decimals))
-	return int64(result * pow), true
+	return result, true
 }
