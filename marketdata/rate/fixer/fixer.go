@@ -1,10 +1,13 @@
 package fixer
 
 import (
-	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/marketdata/rate"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"net/url"
+)
+
+const (
+	id = "fixer"
 )
 
 type Fixer struct {
@@ -12,14 +15,14 @@ type Fixer struct {
 	APIKey string
 }
 
-func InitRate() rate.Provider {
+func InitRate(api string, apiKey string, updateTime string) rate.Provider {
 	return &Fixer{
 		Rate: rate.Rate{
-			Id:         "fixer",
-			Request:    blockatlas.InitClient(viper.GetString("market.fixer.api")),
-			UpdateTime: viper.GetString("market.fixer.rate_update_time"),
+			Id:         id,
+			Request:    blockatlas.InitClient(api),
+			UpdateTime: updateTime,
 		},
-		APIKey: viper.GetString("market.fixer.api_key"),
+		APIKey: apiKey,
 	}
 }
 

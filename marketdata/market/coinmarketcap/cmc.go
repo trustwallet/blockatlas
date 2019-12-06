@@ -1,26 +1,29 @@
 package cmc
 
 import (
-	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/marketdata/cmcmap"
 	"github.com/trustwallet/blockatlas/marketdata/market"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"net/url"
 )
 
+const (
+	id = "cmc"
+)
+
 type Market struct {
 	market.Market
 }
 
-func InitMarket() market.Provider {
+func InitMarket(api string, apiKey string, updateTime string) market.Provider {
 	m := &Market{
 		Market: market.Market{
-			Id:         "cmc",
-			Request:    blockatlas.InitClient(viper.GetString("market.cmc.api")),
-			UpdateTime: viper.GetString("market.quote_update_time"),
+			Id:         id,
+			Request:    blockatlas.InitClient(api),
+			UpdateTime: updateTime,
 		},
 	}
-	m.Headers["X-CMC_PRO_API_KEY"] = viper.GetString("market.cmc.api_key")
+	m.Headers["X-CMC_PRO_API_KEY"] = apiKey
 	return m
 }
 
