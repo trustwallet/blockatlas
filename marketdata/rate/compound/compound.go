@@ -1,7 +1,6 @@
 package compound
 
 import (
-	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/marketdata/rate"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"strings"
@@ -16,12 +15,12 @@ type Compound struct {
 	rate.Rate
 }
 
-func InitRate() rate.Provider {
+func InitRate(api string, updateTime string) rate.Provider {
 	return &Compound{
 		Rate: rate.Rate{
 			Id:         compound,
-			Request:    blockatlas.InitClient(viper.GetString("market.compound.api")),
-			UpdateTime: viper.GetString("market.rate_update_time"),
+			Request:    blockatlas.InitClient(api),
+			UpdateTime: updateTime,
 		},
 	}
 }

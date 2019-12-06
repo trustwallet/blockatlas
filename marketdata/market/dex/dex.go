@@ -1,7 +1,6 @@
 package dex
 
 import (
-	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/marketdata/market"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
@@ -12,6 +11,7 @@ import (
 )
 
 var (
+	id       = "dex"
 	BNBAsset = coin.Binance().Symbol
 )
 
@@ -19,12 +19,12 @@ type Market struct {
 	market.Market
 }
 
-func InitMarket() market.Provider {
+func InitMarket(api string, updateTime string) market.Provider {
 	m := &Market{
 		Market: market.Market{
-			Id:         "dex",
-			Request:    blockatlas.InitClient(viper.GetString("market.dex.api")),
-			UpdateTime: viper.GetString("market.dex.quote_update_time"),
+			Id:         id,
+			Request:    blockatlas.InitClient(api),
+			UpdateTime: updateTime,
 		},
 	}
 	return m

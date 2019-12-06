@@ -2,6 +2,7 @@ package marketdata
 
 import (
 	"github.com/robfig/cron/v3"
+	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/marketdata/market"
 	cmc "github.com/trustwallet/blockatlas/marketdata/market/coinmarketcap"
 	"github.com/trustwallet/blockatlas/marketdata/market/compound"
@@ -16,9 +17,19 @@ var marketProviders market.Providers
 func InitMarkets(storage storage.Market) {
 	marketProviders = market.Providers{
 		// Add Market Quote Providers:
-		0: dex.InitMarket(),
-		1: cmc.InitMarket(),
-		2: compound.InitMarket(),
+		0: dex.InitMarket(
+			viper.GetString("market.dex.api"),
+			viper.GetString("market.dex.quote_update_time"),
+		),
+		1: cmc.InitMarket(
+			viper.GetString("market.cmc.api"),
+			viper.GetString("market.cmc.api_key"),
+			viper.GetString("market.quote_update_time"),
+		),
+		2: compound.InitMarket(
+			viper.GetString("market.compound.api"),
+			viper.GetString("market.quote_update_time"),
+		),
 	}
 	addMarkets(storage, marketProviders)
 }
