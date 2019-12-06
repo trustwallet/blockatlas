@@ -186,20 +186,20 @@ func TestNormalizeTx(t *testing.T) {
 		token:       "YLC-D8B",
 		wantError:   false,
 	})
-	testNormalizeTx(t, &testTx{
-		name:        "new order transfer",
-		apiResponse: newOrderTransaction,
-		expected:    newOrderTransferDst,
-		token:       "AWC-986",
-		wantError:   false,
-	})
-	testNormalizeTx(t, &testTx{
-		name:        "cancel order transfer",
-		apiResponse: cancelOrderTransaction,
-		expected:    cancelOrdeTransferDst,
-		token:       "GTO-908",
-		wantError:   false,
-	})
+	//testNormalizeTx(t, &testTx{
+	//	name:        "new order transfer",
+	//	apiResponse: newOrderTransaction,
+	//	expected:    newOrderTransferDst,
+	//	token:       "AWC-986",
+	//	wantError:   false,
+	//})
+	//testNormalizeTx(t, &testTx{
+	//	name:        "cancel order transfer",
+	//	apiResponse: cancelOrderTransaction,
+	//	expected:    cancelOrdeTransferDst,
+	//	token:       "GTO-908",
+	//	wantError:   false,
+	//})
 	testNormalizeTx(t, &testTx{
 		name:        "normalize error transfer",
 		apiResponse: tokenTransferTransaction,
@@ -304,12 +304,12 @@ type testTxs struct {
 }
 
 func TestNormalizeTxs(t *testing.T) {
-	testNormalizeTxs(t, &testTxs{
-		name:        "all transfers",
-		apiResponse: AllTransfersType,
-		expected:    []blockatlas.Tx{transferDst, tokenTransferDst, newOrderTransferDst, cancelOrdeTransferDst},
-		token:       "",
-	})
+	//testNormalizeTxs(t, &testTxs{
+	//	name:        "all transfers",
+	//	apiResponse: AllTransfersType,
+	//	expected:    []blockatlas.Tx{transferDst, tokenTransferDst, newOrderTransferDst, cancelOrdeTransferDst},
+	//	token:       "",
+	//})
 	testNormalizeTxs(t, &testTxs{
 		name:        "bnb transfer",
 		apiResponse: convertJsonToArray(transferTransaction),
@@ -322,18 +322,18 @@ func TestNormalizeTxs(t *testing.T) {
 		expected:    []blockatlas.Tx{tokenTransferDst},
 		token:       "YLC-D8B",
 	})
-	testNormalizeTxs(t, &testTxs{
-		name:        "new order transfer",
-		apiResponse: convertJsonToArray(newOrderTransaction),
-		expected:    []blockatlas.Tx{newOrderTransferDst},
-		token:       "AWC-986",
-	})
-	testNormalizeTxs(t, &testTxs{
-		name:        "cancel order transfer",
-		apiResponse: convertJsonToArray(cancelOrderTransaction),
-		expected:    []blockatlas.Tx{cancelOrdeTransferDst},
-		token:       "GTO-908",
-	})
+	//testNormalizeTxs(t, &testTxs{
+	//	name:        "new order transfer",
+	//	apiResponse: convertJsonToArray(newOrderTransaction),
+	//	expected:    []blockatlas.Tx{newOrderTransferDst},
+	//	token:       "AWC-986",
+	//})
+	//testNormalizeTxs(t, &testTxs{
+	//	name:        "cancel order transfer",
+	//	apiResponse: convertJsonToArray(cancelOrderTransaction),
+	//	expected:    []blockatlas.Tx{cancelOrdeTransferDst},
+	//	token:       "GTO-908",
+	//})
 }
 
 func convertJsonToArray(jsonString string) string {
