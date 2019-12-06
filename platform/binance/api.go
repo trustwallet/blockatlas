@@ -93,7 +93,7 @@ func NormalizeTx(srcTx *Tx, token string) (blockatlas.Tx, bool) {
 	}
 
 	switch srcTx.Type {
-	case TxTransfer:
+	case TxTransfer, TxCancelOrder, TxNewOrder:
 		if len(token) > 0 && srcTx.Asset != token {
 			return tx, false
 		}
@@ -117,7 +117,7 @@ func NormalizeTx(srcTx *Tx, token string) (blockatlas.Tx, bool) {
 			}
 		}
 
-	case TxCancelOrder, TxNewOrder:
+	case "invalid":
 		dt, err := srcTx.getData()
 		if err != nil {
 			return tx, false
