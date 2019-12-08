@@ -105,17 +105,18 @@ func NormalizeTx(srcTx *Tx, token string) (blockatlas.Tx, bool) {
 				Symbol:   bnbCoin.Symbol,
 				Decimals: bnbCoin.Decimals,
 			}
-		} else if len(srcTx.FromAddr) > 0 && len(srcTx.ToAddr) > 0 {
-			// Condition for native token transfer
-			tx.Meta = blockatlas.NativeTokenTransfer{
-				TokenID:  srcTx.Asset,
-				Symbol:   TokenSymbol(srcTx.Asset),
-				Value:    blockatlas.Amount(value),
-				Decimals: bnbCoin.Decimals,
-				From:     srcTx.FromAddr,
-				To:       srcTx.ToAddr,
-			}
+			return tx, true
+		} //else if len(srcTx.FromAddr) > 0 && len(srcTx.ToAddr) > 0 {
+		// Condition for native token transfer
+		tx.Meta = blockatlas.NativeTokenTransfer{
+			TokenID:  srcTx.Asset,
+			Symbol:   TokenSymbol(srcTx.Asset),
+			Value:    blockatlas.Amount(value),
+			Decimals: bnbCoin.Decimals,
+			From:     srcTx.FromAddr,
+			To:       srcTx.ToAddr,
 		}
+		//}
 
 	case "invalid":
 		dt, err := srcTx.getData()
