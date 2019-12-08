@@ -143,6 +143,18 @@ var newOrderTransferDst = blockatlas.Tx{
 	},
 }
 
+//TODO: temp test dst
+var metaFreeNewOrderTransferDst = blockatlas.Tx{
+	ID:     "B0677F3436C1B1661E94D192B84B98AA42AC2485D9808357796EE501CBF794F7",
+	Coin:   coin.BNB,
+	From:   "bnb16ya67j7kvw8682kka09qujlw5u7lf4geqef0ku",
+	Fee:    "0",
+	Date:   1559689901,
+	Block:  10815565,
+	Status: blockatlas.StatusCompleted,
+	Meta:   nil,
+}
+
 var cancelOrdeTransferDst = blockatlas.Tx{
 	ID:     "F48DE755170C10F4A4C0E6836A708C33EEF9A7144800F25187D5F2349FD15A34",
 	Coin:   coin.BNB,
@@ -161,6 +173,18 @@ var cancelOrdeTransferDst = blockatlas.Tx{
 		Value:    "104716",
 		Decimals: 8,
 	},
+}
+
+//TODO: temp test dst
+var metaFreeCancelOrdeTransferDst = blockatlas.Tx{
+	ID:     "F48DE755170C10F4A4C0E6836A708C33EEF9A7144800F25187D5F2349FD15A34",
+	Coin:   coin.BNB,
+	From:   "bnb16ya67j7kvw8682kka09qujlw5u7lf4geqef0ku",
+	Fee:    "0",
+	Date:   1559689892,
+	Block:  10815539,
+	Status: blockatlas.StatusCompleted,
+	Meta:   nil,
 }
 
 type testTx struct {
@@ -200,6 +224,22 @@ func TestNormalizeTx(t *testing.T) {
 	//	token:       "GTO-908",
 	//	wantError:   false,
 	//})
+	//TODO: temp test
+	testNormalizeTx(t, &testTx{
+		name:        "new order transfer",
+		apiResponse: newOrderTransaction,
+		expected:    metaFreeNewOrderTransferDst,
+		token:       "AWC-986",
+		wantError:   true,
+	})
+	//TODO: temp test
+	testNormalizeTx(t, &testTx{
+		name:        "cancel order transfer",
+		apiResponse: cancelOrderTransaction,
+		expected:    metaFreeCancelOrdeTransferDst,
+		token:       "GTO-908",
+		wantError:   true,
+	})
 	testNormalizeTx(t, &testTx{
 		name:        "normalize error transfer",
 		apiResponse: tokenTransferTransaction,
