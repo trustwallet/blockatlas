@@ -32,6 +32,27 @@ func (p *Platform) CurrentBlockNumber() (int64, error) {
 	return p.client.CurrentBlockNumber()
 }
 
+func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
+	if srcBlock, err := p.client.GetBlockByNumber(num); err == nil {
+		block := p.NormalizeBlock(&srcBlock)
+		return &block, nil
+	} else {
+		return nil, err
+	}
+}
+
+func (p *Platform) NormalizeBlock(block *BlockInfo) blockatlas.Block {
+	blockNumber, err := hexToInt(block.Number)
+	if err != nil {
+		return blockatlas.Block{}
+	}
+	return blockatlas.Block{
+		ID:     block.Hash,
+		Number: int64(blockNumber),
+		Txs:    NormalizeTxs(block.Transactions),
+	}
+}
+
 func NormalizeTxs(txs []Transaction) []blockatlas.Tx {
 	normalizeTxs := make([]blockatlas.Tx, 0)
 	for _, srcTx := range txs {
