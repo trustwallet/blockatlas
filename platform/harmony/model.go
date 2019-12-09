@@ -28,10 +28,6 @@ type Transaction struct {
 }
 
 type BlockInfo struct {
-	Result BlockResult `json:"result"`
-}
-
-type BlockResult struct {
 	Difficulty       int           `json:"difficulty"`
 	ExtraData        string        `json:"extraData"`
 	GasLimit         string        `json:"gasLimit"`

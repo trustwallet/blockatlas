@@ -1,6 +1,7 @@
 package harmony
 
 import (
+	"fmt"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/util"
 	"strconv"
@@ -26,6 +27,12 @@ func (c *Client) CurrentBlockNumber() (int64, error) {
 	}
 	decimalBlock, _ := hexToInt(nodeInfo)
 	return int64(decimalBlock), nil
+}
+
+func (c *Client) GetBlockByNumber(num int64) (info BlockInfo, err error) {
+	n := fmt.Sprintf("0x%x", num)
+	err = c.RpcCall(&info, "hmy_getBlockByNumber", []interface{}{n, true})
+	return
 }
 
 func hexToInt(hex string) (uint64, error) {
