@@ -42,8 +42,6 @@ func (r *RpcResponse) GetObject(toType interface{}) error {
 }
 
 func (r *Request) RpcCall(result interface{}, method string, params interface{}) error {
-	r.Headers["Content-Type"] = "application/json"
-
 	req := &RpcRequest{JsonRpc: JsonRpcVersion, Method: method, Params: params, Id: method}
 	var resp *RpcResponse
 	err := r.Post(&resp, "", req)

@@ -12,7 +12,8 @@ type Platform struct {
 }
 
 func (p *Platform) Init() error {
-	p.client = Client{blockatlas.InitClient(viper.GetString("harmony.rpc"))}
+	p.client = Client{blockatlas.InitClient(viper.GetString("harmony.api"))}
+	p.client.Headers["Content-Type"] = "application/json"
 	return nil
 }
 
@@ -23,7 +24,7 @@ func (p *Platform) Coin() coin.Coin {
 func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 	result, err := p.client.GetTxsOfAddress(address)
 	if err != nil {
-		return []blockatlas.Tx{}, err
+		return blockatlas.TxPage{}, err
 	}
 	return NormalizeTxs(result.Transactions), err
 }
@@ -33,12 +34,13 @@ func (p *Platform) CurrentBlockNumber() (int64, error) {
 }
 
 func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
+	var err error
 	if srcBlock, err := p.client.GetBlockByNumber(num); err == nil {
 		block := p.NormalizeBlock(&srcBlock)
 		return &block, nil
-	} else {
-		return nil, err
 	}
+
+	return nil, err
 }
 
 func (p *Platform) NormalizeBlock(block *BlockInfo) blockatlas.Block {
@@ -53,7 +55,7 @@ func (p *Platform) NormalizeBlock(block *BlockInfo) blockatlas.Block {
 	}
 }
 
-func NormalizeTxs(txs []Transaction) []blockatlas.Tx {
+func NormalizeTxs(txs []Transaction) blockatlas.TxPage {
 	normalizeTxs := make([]blockatlas.Tx, 0)
 	for _, srcTx := range txs {
 		normalized, isCorrect := NormalizeTx(&srcTx)

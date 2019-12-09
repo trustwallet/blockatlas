@@ -12,20 +12,21 @@ type Client struct {
 }
 
 func (c *Client) GetTxsOfAddress(address string) (txPage *TxResult, err error) {
-	params := []interface{}{
-		map[string] interface{}{"address": address, "fullTx": true},
+	type params struct {
+		address string `json:"address"`
+		fullTx  bool   `json:"fullTx"`
 	}
-	err = c.RpcCall(&txPage, "hmy_getTransactionsHistory", params)
+	err = c.RpcCall(&txPage, "hmy_getTransactionsHistory", []params{{address: address, fullTx: true}})
 	return
 }
 
 func (c *Client) CurrentBlockNumber() (int64, error) {
 	var nodeInfo string
 	err := c.RpcCall(&nodeInfo, "hmy_blockNumber", nil)
+	decimalBlock, err := hexToInt(nodeInfo)
 	if err != nil {
 		return 0, err
 	}
-	decimalBlock, _ := hexToInt(nodeInfo)
 	return int64(decimalBlock), nil
 }
 

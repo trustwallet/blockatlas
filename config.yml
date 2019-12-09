@@ -222,5 +222,4 @@ digibyte:
   api: https://dgb1.trezor.io/api
 
 harmony:
-  rpc: https://harmony-rpc.trustwalletapp.com
-  api: https://harmony-rpc.trustwalletapp.com
+  api: https://api.s0.t.hmny.io
