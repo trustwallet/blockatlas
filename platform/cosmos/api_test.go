@@ -304,9 +304,9 @@ var delegateDst = blockatlas.Tx{
 		Coin:     coin.ATOM,
 		Title:    blockatlas.AnyActionDelegation,
 		Key:      blockatlas.KeyStakeDelegate,
-		Name:     "ATOM",
-		Symbol:   coin.Coins[coin.ATOM].Symbol,
-		Decimals: coin.Coins[coin.ATOM].Decimals,
+		Name:     coin.Cosmos().Name,
+		Symbol:   coin.Cosmos().Symbol,
+		Decimals: coin.Cosmos().Decimals,
 		Value:    "49920",
 	},
 }
