@@ -250,19 +250,23 @@ func fillDelegate(tx *blockatlas.Tx, delegate MessageValueDelegate, msgType stri
 	tx.To = delegate.ValidatorAddr
 
 	title := blockatlas.KeyTitle("")
+	keyType := blockatlas.KeyType("")
 	switch msgType {
 	case MsgDelegate:
 		title = blockatlas.AnyActionDelegation
+		keyType = blockatlas.KeyStakeDelegate
 	case MsgUndelegate:
 		title = blockatlas.AnyActionUndelegation
+		keyType = blockatlas.KeyStakeUndelegate
 	}
+	coin := coin.Cosmos()
 	tx.Meta = blockatlas.AnyAction{
-		Coin:     coin.ATOM,
+		Coin:     coin.ID,
 		Title:    title,
-		Key:      blockatlas.KeyStakeDelegate,
-		Name:     "ATOM",
-		Symbol:   coin.Coins[coin.ATOM].Symbol,
-		Decimals: coin.Coins[coin.ATOM].Decimals,
+		Key:      keyType,
+		Name:     coin.Name,
+		Symbol:   coin.Symbol,
+		Decimals: coin.Decimals,
 		Value:    blockatlas.Amount(value),
 	}
 }

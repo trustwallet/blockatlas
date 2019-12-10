@@ -321,12 +321,12 @@ var unDelegateDst = blockatlas.Tx{
 	Block:  1257037,
 	Status: blockatlas.StatusCompleted,
 	Meta: blockatlas.AnyAction{
-		Coin:     coin.ATOM,
+		Coin:     coin.Cosmos().ID,
 		Title:    blockatlas.AnyActionUndelegation,
-		Key:      blockatlas.KeyStakeDelegate,
-		Name:     "ATOM",
-		Symbol:   coin.Coins[coin.ATOM].Symbol,
-		Decimals: coin.Coins[coin.ATOM].Decimals,
+		Key:      blockatlas.KeyStakeUndelegate,
+		Name:     coin.Cosmos().Name,
+		Symbol:   coin.Cosmos().Symbol,
+		Decimals: coin.Cosmos().Decimals,
 		Value:    "5100000000",
 	},
 }

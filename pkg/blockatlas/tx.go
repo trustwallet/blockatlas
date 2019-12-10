@@ -29,22 +29,19 @@ const (
 	TxContractCall        TransactionType = "contract_call"
 	TxAnyAction           TransactionType = "any_action"
 
-	KeyPlaceOrder    KeyType = "place_order"
-	KeyCancelOrder   KeyType = "cancel_order"
-	KeyIssueToken    KeyType = "issue_token"
-	KeyBurnToken     KeyType = "burn_token"
-	KeyMintToken     KeyType = "mint_token"
-	KeyApproveToken  KeyType = "approve_token"
-	KeyStakeDelegate KeyType = "stake_delegate"
+	KeyPlaceOrder      KeyType = "place_order"
+	KeyCancelOrder     KeyType = "cancel_order"
+	KeyIssueToken      KeyType = "issue_token"
+	KeyBurnToken       KeyType = "burn_token"
+	KeyMintToken       KeyType = "mint_token"
+	KeyApproveToken    KeyType = "approve_token"
+	KeyStakeDelegate   KeyType = "stake_delegate"
+	KeyStakeUndelegate KeyType = "stake_undelegate"
 
-	KeyTitlePlaceOrder  KeyTitle = "Place Order"
-	KeyTitleCancelOrder KeyTitle = "Cancel Order"
-)
-
-// Titles of AnyAction meta
-const (
-	AnyActionDelegation   = "Delegation"
-	AnyActionUndelegation = "Undelegation"
+	KeyTitlePlaceOrder    KeyTitle = "Place Order"
+	KeyTitleCancelOrder   KeyTitle = "Cancel Order"
+	AnyActionDelegation   KeyTitle = "Delegation"
+	AnyActionUndelegation KeyTitle = "Undelegation"
 )
 
 // TxPerPage says how many transactions to return per page
