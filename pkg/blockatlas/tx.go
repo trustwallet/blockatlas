@@ -40,8 +40,8 @@ const (
 
 	KeyTitlePlaceOrder    KeyTitle = "Place Order"
 	KeyTitleCancelOrder   KeyTitle = "Cancel Order"
-	AnyActionDelegation   KeyTitle = "Delegation"
-	AnyActionUndelegation KeyTitle = "Undelegation"
+	AnyActionDelegation   KeyTitle = "Stake"
+	AnyActionUndelegation KeyTitle = "Unstake"
 )
 
 // TxPerPage says how many transactions to return per page
