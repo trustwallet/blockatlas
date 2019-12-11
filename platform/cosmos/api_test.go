@@ -226,29 +226,30 @@ const unDelegateSrc = `
 
 const validatorSrc = `
 {
-    "operator_address": "cosmosvaloper1qwl879nx9t6kef4supyazayf7vjhennyh568ys",
-    "consensus_pubkey": "cosmosvalconspub1zcjduepqwrjpn0slu86e32zfu5xxg8l42uk40guuw6er44vw2yl6s7wc38est6l0ux",
-    "jailed": false,
-    "status": 2,
-    "tokens": "9538882295763",
-    "delegator_shares": "9538882295763.000000000000000000",
-    "description": {
-      "moniker": "Certus One",
-      "identity": "ABD51DF68C0D1ECF",
-      "website": "https://certus.one",
-      "details": "Stake and earn rewards with the most secure and stable validator."
+  "operator_address": "cosmosvaloper1qwl879nx9t6kef4supyazayf7vjhennyh568ys",
+  "consensus_pubkey": "cosmosvalconspub1zcjduepqwrjpn0slu86e32zfu5xxg8l42uk40guuw6er44vw2yl6s7wc38est6l0ux",
+  "jailed": false,
+  "status": 2,
+  "tokens": "9538882295763",
+  "delegator_shares": "9538882295763.000000000000000000",
+  "description": {
+    "moniker": "Certus One",
+    "identity": "ABD51DF68C0D1ECF",
+    "website": "https://certus.one",
+    "details": "Stake and earn rewards with the most secure and stable validator."
+  },
+  "unbonding_height": "0",
+  "unbonding_time": "1970-01-01T00:00:00Z",
+  "commission": {
+    "commission_rates": {
+      "rate": "0.100000000000000000",
+      "max_rate": "1.000000000000000000",
+      "max_change_rate": "1.000000000000000000"
     },
-    "unbonding_height": "0",
-    "unbonding_time": "1970-01-01T00:00:00Z",
-    "commission": {
-      "rate": "0.125000000000000000",
-      "max_rate": "0.300000000000000000",
-      "max_change_rate": "0.010000000000000000",
-      "update_time": "2019-03-13T23:00:00Z"
-    },
-    "min_self_delegation": "1"
-  }
-`
+    "update_time": "2019-08-05T07:24:32.572614545Z"
+  },
+  "min_self_delegation": "1"
+}`
 
 const delegationsSrc = `
 [
