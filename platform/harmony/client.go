@@ -12,11 +12,13 @@ type Client struct {
 }
 
 func (c *Client) GetTxsOfAddress(address string) (txPage *TxResult, err error) {
-	type params struct {
-		address string `json:"address"`
-		fullTx  bool   `json:"fullTx"`
+	params := []interface{}{
+		map[string] interface{}{
+			"address": address,
+			"fullTx": true,
+		},
 	}
-	err = c.RpcCall(&txPage, "hmy_getTransactionsHistory", []params{{address: address, fullTx: true}})
+	err = c.RpcCall(&txPage, "hmy_getTransactionsHistory", params)
 	return
 }
 
