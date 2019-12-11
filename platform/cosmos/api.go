@@ -86,7 +86,7 @@ func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
 	}
 
 	for _, validator := range validators {
-		results = append(results, normalizeValidator(validator, pool, inflation, p.Coin()))
+		results = append(results, normalizeValidator(validator, pool, inflation))
 	}
 
 	return results, nil
@@ -267,7 +267,7 @@ func fillDelegate(tx *blockatlas.Tx, delegate MessageValueDelegate, msgType stri
 	}
 }
 
-func normalizeValidator(v Validator, p StakingPool, inflation float64, c coin.Coin) (validator blockatlas.Validator) {
+func normalizeValidator(v Validator, p StakingPool, inflation float64) (validator blockatlas.Validator) {
 	reward := CalculateAnnualReward(p, inflation, v)
 	return blockatlas.Validator{
 		Status: v.Status == 2,
@@ -292,7 +292,7 @@ func CalculateAnnualReward(p StakingPool, inflation float64, validator Validator
 		return 0
 	}
 
-	commission, err := strconv.ParseFloat(validator.Commission.Rate, 32)
+	commission, err := strconv.ParseFloat(validator.Commission.CommissionRates.Rate, 32)
 	if err != nil {
 		return 0
 	}

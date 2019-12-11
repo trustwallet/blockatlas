@@ -77,15 +77,18 @@ type Amount struct {
 }
 
 // # Staking
+type Commission struct {
+	CommissionRates CommissionRates `json:"commission_rates"`
+}
 
-type CosmosCommission struct {
+type CommissionRates struct {
 	Rate string `json:"rate"`
 }
 
 type Validator struct {
-	Status     int              `json:"status"`
-	Address    string           `json:"operator_address"`
-	Commission CosmosCommission `json:"commission"`
+	Status     int        `json:"status"`
+	Address    string     `json:"operator_address"`
+	Commission Commission `json:"commission"`
 }
 
 type Delegation struct {
