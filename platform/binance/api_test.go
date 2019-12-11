@@ -210,21 +210,20 @@ func TestNormalizeTx(t *testing.T) {
 		token:       "YLC-D8B",
 		wantError:   false,
 	})
-	//testNormalizeTx(t, &testTx{
-	//	name:        "new order transfer",
-	//	apiResponse: newOrderTransaction,
-	//	expected:    newOrderTransferDst,
-	//	token:       "AWC-986",
-	//	wantError:   false,
-	//})
-	//testNormalizeTx(t, &testTx{
-	//	name:        "cancel order transfer",
-	//	apiResponse: cancelOrderTransaction,
-	//	expected:    cancelOrdeTransferDst,
-	//	token:       "GTO-908",
-	//	wantError:   false,
-	//})
-	//TODO: temp test
+	testNormalizeTx(t, &testTx{
+		name:        "new order transfer",
+		apiResponse: newOrderTransaction,
+		expected:    newOrderTransferDst,
+		token:       "AWC-986",
+		wantError:   true,
+	})
+	testNormalizeTx(t, &testTx{
+		name:        "cancel order transfer",
+		apiResponse: cancelOrderTransaction,
+		expected:    cancelOrdeTransferDst,
+		token:       "GTO-908",
+		wantError:   true,
+	})
 	testNormalizeTx(t, &testTx{
 		name:        "new order transfer",
 		apiResponse: newOrderTransaction,
@@ -232,7 +231,6 @@ func TestNormalizeTx(t *testing.T) {
 		token:       "AWC-986",
 		wantError:   true,
 	})
-	//TODO: temp test
 	testNormalizeTx(t, &testTx{
 		name:        "cancel order transfer",
 		apiResponse: cancelOrderTransaction,

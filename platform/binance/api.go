@@ -3,7 +3,7 @@ package binance
 import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
-	"strconv"
+	"log"
 	"strings"
 
 	"github.com/spf13/viper"
@@ -93,7 +93,8 @@ func NormalizeTx(srcTx *Tx, token string) (blockatlas.Tx, bool) {
 	}
 
 	switch srcTx.Type {
-	case TxTransfer, TxCancelOrder, TxNewOrder:
+	case TxTransfer:
+		log.Print("srcTx.Asset: ", srcTx.Asset)
 		if len(token) > 0 && srcTx.Asset != token {
 			return tx, false
 		}
@@ -117,39 +118,41 @@ func NormalizeTx(srcTx *Tx, token string) (blockatlas.Tx, bool) {
 			To:       srcTx.ToAddr,
 		}
 		//}
-
-	case "invalid":
-		dt, err := srcTx.getData()
-		if err != nil {
-			return tx, false
-		}
-
-		symbol := dt.OrderData.Quote
-		if len(token) > 0 && symbol != token {
-			return tx, false
-		}
-
-		key := blockatlas.KeyPlaceOrder
-		title := blockatlas.KeyTitlePlaceOrder
-		if srcTx.Type == TxCancelOrder {
-			key = blockatlas.KeyCancelOrder
-			title = blockatlas.KeyTitleCancelOrder
-		}
-		volume, ok := dt.OrderData.GetVolume()
-		if ok {
-			value = strconv.Itoa(int(volume))
-		}
-
-		tx.Meta = blockatlas.AnyAction{
-			Coin:     coin.BNB,
-			TokenID:  dt.OrderData.Symbol,
-			Symbol:   TokenSymbol(symbol),
-			Name:     symbol,
-			Value:    blockatlas.Amount(value),
-			Decimals: coin.Coins[coin.BNB].Decimals,
-			Title:    title,
-			Key:      key,
-		}
+	//case TxCancelOrder, TxNewOrder:
+	//	return tx, false
+	//case "invalid":
+	//	return tx, false
+	//	dt, err := srcTx.getData()
+	//	if err != nil {
+	//		return tx, false
+	//	}
+	//
+	//	symbol := dt.OrderData.Quote
+	//	if len(token) > 0 && symbol != token {
+	//		return tx, false
+	//	}
+	//
+	//	key := blockatlas.KeyPlaceOrder
+	//	title := blockatlas.KeyTitlePlaceOrder
+	//	if srcTx.Type == TxCancelOrder {
+	//		key = blockatlas.KeyCancelOrder
+	//		title = blockatlas.KeyTitleCancelOrder
+	//	}
+	//	volume, ok := dt.OrderData.GetVolume()
+	//	if ok {
+	//		value = strconv.Itoa(int(volume))
+	//	}
+	//
+	//	tx.Meta = blockatlas.AnyAction{
+	//		Coin:     coin.BNB,
+	//		TokenID:  dt.OrderData.Symbol,
+	//		Symbol:   TokenSymbol(symbol),
+	//		Name:     symbol,
+	//		Value:    blockatlas.Amount(value),
+	//		Decimals: coin.Coins[coin.BNB].Decimals,
+	//		Title:    title,
+	//		Key:      key,
+	//	}
 
 	default:
 		return tx, false

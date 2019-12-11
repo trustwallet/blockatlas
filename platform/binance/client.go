@@ -38,7 +38,7 @@ func (c *Client) GetBlockByNumber(num int64) (*TxPage, error) {
 
 func (c *Client) GetTxsOfAddress(address string, token string) (*TxPage, error) {
 	stx := new(TxPage)
-	query := url.Values{"address": {address}, "rows": {"100"}, "page": {"1"}}
+	query := url.Values{"address": {address}, "rows": {"20"}, "page": {"1"}, "txAsset": {token}, "txType": {"TRANSFER"}}
 	err := c.Get(stx, "txs", query)
 	return stx, err
 }
