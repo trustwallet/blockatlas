@@ -3,7 +3,6 @@ package binance
 import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
-	"log"
 	"strings"
 
 	"github.com/spf13/viper"
@@ -94,7 +93,6 @@ func NormalizeTx(srcTx *Tx, token string) (blockatlas.Tx, bool) {
 
 	switch srcTx.Type {
 	case TxTransfer:
-		log.Print("srcTx.Asset: ", srcTx.Asset)
 		if len(token) > 0 && srcTx.Asset != token {
 			return tx, false
 		}
