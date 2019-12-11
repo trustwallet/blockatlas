@@ -42,7 +42,7 @@ func (m *Market) GetData() (blockatlas.Tickers, error) {
 		return nil, errors.E(err, "rate not found", errors.Params{"asset": BNBAsset})
 	}
 	result := normalizeTickers(prices, m.GetId())
-	result.ApplyRate(1/rate.Rate, blockatlas.DefaultCurrency)
+	result.ApplyRate(blockatlas.DefaultCurrency, 1/rate.Rate, nil)
 	return result, nil
 }
 
