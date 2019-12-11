@@ -79,6 +79,10 @@ type Amount struct {
 // # Staking
 
 type CosmosCommission struct {
+	Commision CosmosCommissionRates `json:"commission_rates"`
+}
+
+type CosmosCommissionRates struct {
 	Rate string `json:"rate"`
 }
 

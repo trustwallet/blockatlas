@@ -109,9 +109,11 @@ func (c *Client) GetAccount(address string) (result Account, err error) {
 }
 
 var everstakeValidator = Validator{
-	Status: 1,
+	Status:  1,
 	Address: "cosmosvaloper1tflk30mq5vgqjdly92kkhhq3raev2hnz6eete3",
 	Commission: CosmosCommission{
-		Rate: "0.030000000000000000",
+		CosmosCommissionRates{
+			Rate: "0.030000000000000000",
+		},
 	},
 }
