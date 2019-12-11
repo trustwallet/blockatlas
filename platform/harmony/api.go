@@ -34,13 +34,12 @@ func (p *Platform) CurrentBlockNumber() (int64, error) {
 }
 
 func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
-	var err error
-	if srcBlock, err := p.client.GetBlockByNumber(num); err == nil {
-		block := p.NormalizeBlock(&srcBlock)
-		return &block, nil
+	srcBlock, err := p.client.GetBlockByNumber(num)
+	if err != nil {
+		return nil, err
 	}
-
-	return nil, err
+	block := p.NormalizeBlock(&srcBlock)
+	return &block, nil
 }
 
 func (p *Platform) NormalizeBlock(block *BlockInfo) blockatlas.Block {
