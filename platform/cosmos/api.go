@@ -84,9 +84,13 @@ func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
 	if err != nil {
 		return nil, err
 	}
+	inflationValue, err := strconv.ParseFloat(inflation.Result, 32)
+	if err != nil {
+		return nil, errors.E("error to parse inflationValue to float", errors.TypePlatformUnmarshal).PushToSentry()
+	}
 
-	for _, validator := range validators {
-		results = append(results, normalizeValidator(validator, pool, inflation, p.Coin()))
+	for _, validator := range validators.Result {
+		results = append(results, normalizeValidator(validator, pool, inflationValue))
 	}
 
 	return results, nil
@@ -267,7 +271,7 @@ func fillDelegate(tx *blockatlas.Tx, delegate MessageValueDelegate, msgType stri
 	}
 }
 
-func normalizeValidator(v Validator, p StakingPool, inflation float64, c coin.Coin) (validator blockatlas.Validator) {
+func normalizeValidator(v Validator, p StakingPool, inflation float64) (validator blockatlas.Validator) {
 	reward := CalculateAnnualReward(p, inflation, v)
 	return blockatlas.Validator{
 		Status: v.Status == 2,

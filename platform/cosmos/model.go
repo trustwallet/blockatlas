@@ -86,10 +86,18 @@ type CosmosCommissionRates struct {
 	Rate string `json:"rate"`
 }
 
+type Validators struct {
+	Result []Validator `json:"result"`
+}
+
 type Validator struct {
 	Status     int              `json:"status"`
 	Address    string           `json:"operator_address"`
 	Commission CosmosCommission `json:"commission"`
+}
+
+type Inflation struct {
+	Result string `json:"result"`
 }
 
 type Delegation struct {
