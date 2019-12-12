@@ -53,9 +53,9 @@ func TestNormalize(t *testing.T) {
 		return
 	}
 
-	resTx, isGood := NormalizeTx(&srcTx)
+	resTx, isGood, err := NormalizeTx(&srcTx)
 
-	if !isGood {
+	if !isGood || err != nil {
 		t.Fatal()
 	}
 
