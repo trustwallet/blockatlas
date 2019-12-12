@@ -128,8 +128,6 @@ definitions:
     type: object
   blockatlas.DelegationResponse:
     properties:
-      address:
-        type: string
       balance:
         type: string
       coin:
@@ -141,14 +139,10 @@ definitions:
       details:
         $ref: '#/definitions/blockatlas.StakingDetails'
         type: object
-      error:
-        type: string
     type: object
   blockatlas.DelegationsBatchPage:
     items:
       properties:
-        address:
-          type: string
         balance:
           type: string
         coin:
@@ -160,8 +154,6 @@ definitions:
         details:
           $ref: '#/definitions/blockatlas.StakingDetails'
           type: object
-        error:
-          type: string
       type: object
     type: array
   blockatlas.DelegationsPage:
@@ -886,6 +878,31 @@ paths:
       tags:
       - Collectibles
   /v2/staking/delegations:
+    post:
+      consumes:
+      - application/json
+      description: Get Stake Delegations for multiple coins
+      operationId: batch_delegations
+      parameters:
+      - description: Validators addresses and coins
+        in: body
+        name: delegations
+        required: true
+        schema:
+          $ref: '#/definitions/api.AddressesRequest'
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/blockatlas.DelegationsBatchPage'
+      summary: Get Multiple Stake Delegations
+      tags:
+      - platform
+      - staking
+  /v2/staking/list:
     post:
       consumes:
       - application/json

@@ -10,8 +10,12 @@ import (
 )
 
 type AddressBatchRequest struct {
-	Coin    uint   `json:"coin"`
 	Address string `json:"address"`
+	CoinBatchRequest
+}
+
+type CoinBatchRequest struct {
+	Coin uint `json:"coin"`
 }
 
 type ENSBatchRequest struct {
@@ -20,6 +24,7 @@ type ENSBatchRequest struct {
 }
 
 type AddressesRequest []AddressBatchRequest
+type CoinsRequest []CoinBatchRequest
 
 // @Summary Get Multiple Stake Delegations
 // @ID batch_delegations
@@ -60,10 +65,10 @@ func makeStakingDelegationsBatchRoute(router gin.IRouter) {
 // @Tags platform,staking
 // @Param delegations body api.AddressesRequest true "Validators addresses and coins"
 // @Success 200 {object} blockatlas.DelegationsBatchPage
-// @Router /v3/staking/delegations [post]
+// @Router /v2/staking/list [post]
 func makeStakingDelegationsSimpleBatchRoute(router gin.IRouter) {
 	router.POST("/staking/list", func(c *gin.Context) {
-		var reqs AddressesRequest
+		var reqs CoinsRequest
 		if err := c.BindJSON(&reqs); err != nil {
 			ginutils.ErrorResponse(c).Message(err.Error()).Render()
 			return
