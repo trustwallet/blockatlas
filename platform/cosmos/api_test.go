@@ -241,9 +241,11 @@ const validatorSrc = `
     "unbonding_height": "0",
     "unbonding_time": "1970-01-01T00:00:00Z",
     "commission": {
-      "rate": "0.125000000000000000",
-      "max_rate": "0.300000000000000000",
-      "max_change_rate": "0.010000000000000000",
+      "commission_rates": {
+        "rate": "0.125000000000000000",
+        "max_rate": "0.300000000000000000",
+        "max_change_rate": "0.010000000000000000"
+      },
       "update_time": "2019-03-13T23:00:00Z"
     },
     "min_self_delegation": "1"
@@ -333,7 +335,7 @@ var unDelegateDst = blockatlas.Tx{
 
 var stakingPool = StakingPool{"1222", "200"}
 
-var cosmosValidator = Validator{Commission: CosmosCommission{Rate: "0.4"}}
+var cosmosValidator = Validator{Commission: CosmosCommission{CosmosCommissionRates{Rate: "0.4"}}}
 
 var inflation = 0.7
 

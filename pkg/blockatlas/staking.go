@@ -5,6 +5,7 @@ import "github.com/trustwallet/blockatlas/coin"
 type ValidatorPage []Validator
 type DelegationsPage []Delegation
 type DelegationsBatchPage []DelegationResponse
+type StakingBatchPage []StakingResponse
 
 type DelegationStatus string
 type DelegationType string
@@ -64,10 +65,12 @@ type StakeValidator struct {
 }
 
 type DelegationResponse struct {
-	Address     string             `json:"address"`
-	Coin        *coin.ExternalCoin `json:"coin"`
-	Details     StakingDetails     `json:"details"`
-	Delegations DelegationsPage    `json:"delegations"`
-	Balance     string             `json:"balance"`
-	Error       interface{}        `json:"error,omitempty"`
+	Delegations DelegationsPage `json:"delegations"`
+	Balance     string          `json:"balance"`
+	StakingResponse
+}
+
+type StakingResponse struct {
+	Coin    *coin.ExternalCoin `json:"coin"`
+	Details StakingDetails     `json:"details"`
 }

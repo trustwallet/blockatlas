@@ -292,7 +292,7 @@ func CalculateAnnualReward(p StakingPool, inflation float64, validator Validator
 		return 0
 	}
 
-	commission, err := strconv.ParseFloat(validator.Commission.Rate, 32)
+	commission, err := strconv.ParseFloat(validator.Commission.Commision.Rate, 32)
 	if err != nil {
 		return 0
 	}

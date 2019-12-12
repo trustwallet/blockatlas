@@ -8,18 +8,27 @@ import (
 func getDelegationResponse(p blockatlas.StakeAPI, address string) (blockatlas.DelegationResponse, error) {
 	delegations, err := p.GetDelegations(address)
 	if err != nil {
-		return blockatlas.DelegationResponse{}, errors.E("Unable to fetch delegations list", err)
+		return blockatlas.DelegationResponse{
+			StakingResponse: getStakingResponse(p),
+		}, errors.E("Unable to fetch delegations list", err)
 	}
 	balance, err := p.UndelegatedBalance(address)
 	if err != nil {
-		return blockatlas.DelegationResponse{}, errors.E("Unable to fetch undelegated balance", err)
+		return blockatlas.DelegationResponse{
+			StakingResponse: getStakingResponse(p),
+		}, errors.E("Unable to fetch undelegated balance", err)
 	}
-	c := p.Coin()
 	return blockatlas.DelegationResponse{
-		Coin:        c.External(),
-		Details:     p.GetDetails(),
-		Address:     address,
-		Balance:     balance,
-		Delegations: delegations,
+		Balance:         balance,
+		Delegations:     delegations,
+		StakingResponse: getStakingResponse(p),
 	}, nil
+}
+
+func getStakingResponse(p blockatlas.StakeAPI) blockatlas.StakingResponse {
+	c := p.Coin()
+	return blockatlas.StakingResponse{
+		Coin:    c.External(),
+		Details: p.GetDetails(),
+	}
 }
