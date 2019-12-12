@@ -15,6 +15,7 @@ type Transaction struct {
 	Gas              string `json:"gas"`
 	GasPrice         string `json:"gasPrice"`
 	Hash             string `json:"hash"`
+	Nonce            string `json:"nonce"`
 	To               string `json:"to"`
 	Value            string `json:"value"`
 }
