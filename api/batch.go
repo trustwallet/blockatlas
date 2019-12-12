@@ -64,7 +64,7 @@ func makeStakingDelegationsBatchRoute(router gin.IRouter) {
 // @Success 200 {object} blockatlas.DelegationsBatchPage
 // @Router /v3/staking/delegations [post]
 func makeStakingDelegationsSimpleBatchRoute(router gin.IRouter) {
-	router.POST("/staking/delegations", func(c *gin.Context) {
+	router.POST("/staking/list", func(c *gin.Context) {
 		var reqs AddressesRequest
 		if err := c.BindJSON(&reqs); err != nil {
 			ginutils.ErrorResponse(c).Message(err.Error()).Render()
