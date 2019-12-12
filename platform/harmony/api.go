@@ -4,6 +4,7 @@ import (
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/errors"
 	"strconv"
 )
 
@@ -57,8 +58,8 @@ func (p *Platform) NormalizeBlock(block *BlockInfo) blockatlas.Block {
 func NormalizeTxs(txs []Transaction) blockatlas.TxPage {
 	normalizeTxs := make([]blockatlas.Tx, 0)
 	for _, srcTx := range txs {
-		normalized, isCorrect := NormalizeTx(&srcTx)
-		if !isCorrect {
+		normalized, isCorrect, err := NormalizeTx(&srcTx)
+		if !isCorrect || err != nil {
 			return []blockatlas.Tx{}
 		}
 		normalizeTxs = append(normalizeTxs, normalized)
@@ -66,19 +67,31 @@ func NormalizeTxs(txs []Transaction) blockatlas.TxPage {
 	return normalizeTxs
 }
 
-func NormalizeTx(trx *Transaction) (tx blockatlas.Tx, b bool) {
+func GetNormalizationError(err error) error {
+	return errors.E(err, errors.TypePlatformNormalize, errors.Params{"method": "Harmony_NormalizeTx"}).PushToSentry()
+}
+
+func NormalizeTx(trx *Transaction) (tx blockatlas.Tx, b bool, err error) {
 	gasPrice, err := hexToInt(trx.GasPrice)
+	if err != nil {
+		return blockatlas.Tx{}, false, GetNormalizationError(err)
+	}
 	gas, err := hexToInt(trx.Gas)
+	if err != nil {
+		return blockatlas.Tx{}, false, GetNormalizationError(err)
+	}
 	fee := gas * gasPrice
 	literalFee := strconv.Itoa(int(fee))
 
 	value, err := hexToInt(trx.Value)
 	literalValue := strconv.Itoa(int(value))
+	if err != nil {
+		return blockatlas.Tx{}, false, GetNormalizationError(err)
+	}
 
 	block, err := hexToInt(trx.BlockNumber)
-
 	if err != nil {
-		return blockatlas.Tx{}, false
+		return blockatlas.Tx{}, false, GetNormalizationError(err)
 	}
 
 	return blockatlas.Tx{
@@ -96,5 +109,5 @@ func NormalizeTx(trx *Transaction) (tx blockatlas.Tx, b bool) {
 			Symbol:   coin.Coins[coin.ONE].Symbol,
 			Decimals: coin.Coins[coin.ONE].Decimals,
 		},
-	}, true
+	}, true, nil
 }
