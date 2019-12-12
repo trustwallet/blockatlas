@@ -12,6 +12,7 @@ var routers = make(map[string]gin.IRouter)
 func LoadPlatforms(root gin.IRouter) {
 	v1 := root.Group("/v1")
 	v2 := root.Group("/v2")
+	v3 := root.Group("/v3")
 
 	for _, txAPI := range platform.Platforms {
 		router := getRouter(v1, txAPI.Coin().Handle)
@@ -52,6 +53,7 @@ func LoadPlatforms(root gin.IRouter) {
 
 	makeCategoriesBatchRoute(v2)
 	makeStakingDelegationsBatchRoute(v2)
+	makeStakingDelegationsSimpleBatchRoute(v3)
 	logger.Info("Routes set up", logger.Params{"routes": len(routers)})
 
 	v1.GET("/", getEnabledEndpoints)
