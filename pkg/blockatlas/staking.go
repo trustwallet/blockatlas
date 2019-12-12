@@ -71,7 +71,6 @@ type DelegationResponse struct {
 }
 
 type StakingResponse struct {
-	Address string             `json:"address"`
 	Coin    *coin.ExternalCoin `json:"coin"`
 	Details StakingDetails     `json:"details"`
 }
