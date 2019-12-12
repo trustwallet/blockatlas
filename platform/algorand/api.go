@@ -56,6 +56,22 @@ func (p *Platform) GetDetails() blockatlas.StakingDetails {
 	}
 }
 
+func (p *Platform) UndelegatedBalance(address string) (string, error) {
+	acc, err := p.client.GetAccount(address)
+	if err != nil {
+		return "0", err
+	}
+	return strconv.FormatUint(acc.Amount, 10), nil
+}
+
+func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
+	return make(blockatlas.ValidatorPage, 0), nil
+}
+
+func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, error) {
+	return make(blockatlas.DelegationsPage, 0), nil
+}
+
 func NormalizeTxs(txs []Transaction) []blockatlas.Tx {
 	result := make([]blockatlas.Tx, 0)
 

@@ -48,16 +48,12 @@ type AddressAPI interface {
 }
 
 // StakingAPI provides staking information
-type StakeValidatorsAPI interface {
-	StakeAPI
-	GetValidators() (ValidatorPage, error)
-	UndelegatedBalance(address string) (string, error)
-	GetDelegations(address string) (DelegationsPage, error)
-}
-
 type StakeAPI interface {
 	Platform
+	UndelegatedBalance(address string) (string, error)
 	GetDetails() StakingDetails
+	GetValidators() (ValidatorPage, error)
+	GetDelegations(address string) (DelegationsPage, error)
 }
 
 type CollectionAPI interface {

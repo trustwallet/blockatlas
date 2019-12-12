@@ -10,7 +10,7 @@ type Account struct {
 	Amount                      uint64 `json:"amount"`
 	Pendingrewards              uint64 `json:"pendingrewards"`
 	Address                     string `json:"address"`
-	Round                       uint8  `json:"round"`
+	Round                       uint64 `json:"round"`
 	Amountwithoutpendingrewards uint64 `json:"amountwithoutpendingrewards"`
 	Rewards                     uint64 `json:"rewards"`
 	Status                      string `json:"status"`
