@@ -44,13 +44,37 @@ func makeStakingDelegationsBatchRoute(router gin.IRouter) {
 			p := platform.StakeAPIs[c.Handle]
 			delegation, err := getDelegationResponse(p, r.Address)
 			if err != nil {
-				delegation = blockatlas.DelegationResponse{
-					Address: r.Address,
-					Coin:    c.External(),
-					Error:   err,
-				}
+				continue
 			}
 			batch = append(batch, delegation)
+		}
+		ginutils.RenderSuccess(c, blockatlas.DocsResponse{Docs: batch})
+	})
+}
+
+// @Summary Get Multiple Stake Delegations
+// @ID batch_delegations
+// @Description Get Stake Delegations for multiple coins
+// @Accept json
+// @Produce json
+// @Tags platform,staking
+// @Param delegations body api.AddressesRequest true "Validators addresses and coins"
+// @Success 200 {object} blockatlas.DelegationsBatchPage
+// @Router /v3/staking/delegations [post]
+func makeStakingDelegationsSimpleBatchRoute(router gin.IRouter) {
+	router.POST("/staking/list", func(c *gin.Context) {
+		var reqs AddressesRequest
+		if err := c.BindJSON(&reqs); err != nil {
+			ginutils.ErrorResponse(c).Message(err.Error()).Render()
+			return
+		}
+
+		batch := make(blockatlas.StakingBatchPage, 0)
+		for _, r := range reqs {
+			c := coin.Coins[r.Coin]
+			p := platform.StakeAPIs[c.Handle]
+			staking := getStakingResponse(p)
+			batch = append(batch, staking)
 		}
 		ginutils.RenderSuccess(c, blockatlas.DocsResponse{Docs: batch})
 	})
