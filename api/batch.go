@@ -44,9 +44,7 @@ func makeStakingDelegationsBatchRoute(router gin.IRouter) {
 			p := platform.StakeAPIs[c.Handle]
 			delegation, err := getDelegationResponse(p, r.Address)
 			if err != nil {
-				delegation = blockatlas.DelegationResponse{
-					Error: err,
-				}
+				continue
 			}
 			batch = append(batch, delegation)
 		}
