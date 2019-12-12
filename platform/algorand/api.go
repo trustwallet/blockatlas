@@ -47,6 +47,15 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 	return NormalizeTxs(txs), nil
 }
 
+func (p *Platform) GetDetails() blockatlas.StakingDetails {
+	//TODO: Find a way to have a dynamic
+	return blockatlas.StakingDetails{
+		Reward:        blockatlas.StakingReward{Annual: 7},
+		MinimumAmount: blockatlas.Amount("0"),
+		LockTime:      0,
+	}
+}
+
 func NormalizeTxs(txs []Transaction) []blockatlas.Tx {
 	result := make([]blockatlas.Tx, 0)
 
