@@ -188,6 +188,10 @@ func (m *Message) UnmarshalJSON(buf []byte) error {
 	return err
 }
 
+type AuthAccount struct {
+	Account Account `json:"result"`
+}
+
 type Account struct {
 	Value AccountValue `json:"value"`
 }
