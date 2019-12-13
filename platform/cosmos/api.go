@@ -88,7 +88,10 @@ func Normalize(srcTx *Tx) (tx blockatlas.Tx, ok bool) {
 	// Sometimes fees can be null objects (in the case of no fees e.g. F044F91441C460EDCD90E0063A65356676B7B20684D94C731CF4FAB204035B41)
 	fee := "0"
 	if len(srcTx.Data.Contents.Fee.FeeAmount) > 0 {
-		fee, _ = util.DecimalToSatoshis(srcTx.Data.Contents.Fee.FeeAmount[0].Quantity)
+		fee, err = util.DecimalToSatoshis(srcTx.Data.Contents.Fee.FeeAmount[0].Quantity)
+		if err != nil {
+			return blockatlas.Tx{}, false
+		}
 	}
 
 	tx = blockatlas.Tx{
