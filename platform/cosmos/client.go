@@ -19,7 +19,7 @@ func (c *Client) GetAddrTxs(address string, tag string) (txs TxPage, err error) 
 	query := url.Values{
 		tag:     {address},
 		"page":  {"1"},
-		"limit": {"100"},
+		"limit": {"25"},
 	}
 	err = c.Get(&txs, "txs", query)
 	if err != nil {
