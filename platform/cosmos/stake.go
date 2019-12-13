@@ -75,7 +75,7 @@ func (p *Platform) UndelegatedBalance(address string) (string, error) {
 		return "0", err
 	}
 	for _, coin := range account.Value.Coins {
-		if coin.Denom == "uatom" {
+		if coin.Denom == UndelegateDenom {
 			return coin.Amount, nil
 		}
 	}

@@ -20,6 +20,8 @@ const (
 	MsgVote                        = "cosmos-sdk/MsgVote"
 	TextProposal                   = "cosmos-sdk/TextProposal"
 	MsgUnjail                      = "cosmos-sdk/MsgUnjail"
+
+	UndelegateDenom = "uatom"
 )
 
 // Tx - Base transaction object. Always returned as part of an array
