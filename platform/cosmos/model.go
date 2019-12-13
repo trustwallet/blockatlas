@@ -20,6 +20,8 @@ const (
 	MsgVote                        = "cosmos-sdk/MsgVote"
 	TextProposal                   = "cosmos-sdk/TextProposal"
 	MsgUnjail                      = "cosmos-sdk/MsgUnjail"
+
+	UndelegateDenom = "uatom"
 )
 
 // Tx - Base transaction object. Always returned as part of an array
@@ -86,10 +88,22 @@ type CosmosCommissionRates struct {
 	Rate string `json:"rate"`
 }
 
+type Validators struct {
+	Result []Validator `json:"result"`
+}
+
 type Validator struct {
 	Status     int              `json:"status"`
 	Address    string           `json:"operator_address"`
 	Commission CosmosCommission `json:"commission"`
+}
+
+type Inflation struct {
+	Result string `json:"result"`
+}
+
+type Delegations struct {
+	List []Delegation `json:"result"`
 }
 
 type Delegation struct {
@@ -106,6 +120,10 @@ func (d *Delegation) Value() string {
 	return d.Shares
 }
 
+type UnbondingDelegations struct {
+	List []UnbondingDelegation `json:"result"`
+}
+
 type UnbondingDelegation struct {
 	Delegation
 	Entries []UnbondingDelegationEntry `json:"entries"`
@@ -118,6 +136,10 @@ type UnbondingDelegationEntry struct {
 }
 
 type StakingPool struct {
+	Pool Pool `json:"result"`
+}
+
+type Pool struct {
 	NotBondedTokens string `json:"not_bonded_tokens"`
 	BondedTokens    string `json:"bonded_tokens"`
 }
