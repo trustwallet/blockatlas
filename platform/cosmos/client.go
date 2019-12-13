@@ -33,7 +33,6 @@ func (c *Client) GetValidators() (validators Validators, err error) {
 	query := url.Values{
 		"status": {"bonded"},
 		"page":   {strconv.FormatInt(1, 10)},
-		"limit":  {strconv.FormatInt(blockatlas.ValidatorsPerPage, 10)},
 	}
 	err = c.Get(&validators, "staking/validators", query)
 	return
