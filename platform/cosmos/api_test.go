@@ -1,8 +1,8 @@
 package cosmos
 
 import (
-	"bytes"
 	"encoding/json"
+	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"testing"
 
@@ -79,6 +79,56 @@ const transferSrc = `
 	"timestamp": "2019-05-04T17:57:57Z"
   }
 `
+
+const failedTransferSrc = `
+{
+  "height": "5552",
+  "txhash": "5E78C65A8C1A6C8239EBBBBF2E42020E6ADBA8037EDEA83BF88E1A9159CF13B8",
+  "code": 12,
+  "raw_log": "{\"codespace\":\"sdk\",\"code\":12,\"message\":\"out of gas in location: WritePerByte; gasWanted: 40000, gasUsed: 40480\"}",
+  "gas_wanted": "40000",
+  "gas_used": "40480",
+  "tx": {
+    "type": "cosmos-sdk/StdTx",
+    "value": {
+      "msg": [
+        {
+          "type": "cosmos-sdk/MsgSend",
+          "value": {
+            "from_address": "cosmos1shpfyt7psrff2ux7nznxvj6f7gq59fcqng5mku",
+            "to_address": "cosmos1za4pu5gxm80fg6sx0956f88l2sx7jfg2vf7nlc",
+            "amount": [
+              {
+                "denom": "uatom",
+                "amount": "100000"
+              }
+            ]
+          }
+        }
+      ],
+      "fee": {
+        "amount": [
+          {
+            "denom": "uatom",
+            "amount": "2000"
+          }
+        ],
+        "gas": "40000"
+      },
+      "signatures": [
+        {
+          "pub_key": {
+            "type": "tendermint/PubKeySecp256k1",
+            "value": "A0IDIokqw01U2YcdylvqD/sJHW5w9puS5vZWSf2GUaqL"
+          },
+          "signature": "1Kwp4dBZUbVV6Fk8AFcmNfSqi7MXFfqyLvHexFZXoqcKh+sNuezry89RhDAWgSMNLyaK20hI2XcUyks+Vo4QEQ=="
+        }
+      ],
+      "memo": "UniCoins registration rewards"
+    }
+  },
+  "timestamp": "2019-12-12T03:21:42Z"
+}`
 
 const delegateSrc = `
 {  
@@ -232,6 +282,7 @@ var transferDst = blockatlas.Tx{
 	Date:   1556992677,
 	Block:  151980,
 	Status: blockatlas.StatusCompleted,
+	Type:   blockatlas.TxTransfer,
 	Meta: blockatlas.Transfer{
 		Value:    "2271999999",
 		Symbol:   "ATOM",
@@ -239,34 +290,79 @@ var transferDst = blockatlas.Tx{
 	},
 }
 
-func TestNormalize(t *testing.T) {
-	testNormalize(t, transferSrc, &transferDst)
-	testNormalize(t, delegateSrc, &delegateDst)
-	testNormalize(t, unDelegateSrc, &unDelegateDst)
+var delegateDst = blockatlas.Tx{
+	ID:     "11078091D1D5BD84F4275B6CEE02170428944DB0E8EEC37E980551435F6D04C7",
+	Coin:   coin.ATOM,
+	From:   "cosmos1237l0vauhw78qtwq045jd24ay4urpec6r3xfn3",
+	To:     "cosmosvaloper12w6tynmjzq4l8zdla3v4x0jt8lt4rcz5gk7zg2",
+	Fee:    "5000",
+	Date:   1564632616,
+	Block:  1258202,
+	Status: blockatlas.StatusCompleted,
+	Type:   blockatlas.TxAnyAction,
+	Meta: blockatlas.AnyAction{
+		Coin:     coin.ATOM,
+		Title:    blockatlas.AnyActionDelegation,
+		Key:      blockatlas.KeyStakeDelegate,
+		Name:     "ATOM",
+		Symbol:   coin.Coins[coin.ATOM].Symbol,
+		Decimals: coin.Coins[coin.ATOM].Decimals,
+		Value:    "49920",
+	},
 }
 
-func testNormalize(t *testing.T, src string, dst *blockatlas.Tx) {
-	var srcTx Tx
-	err := json.Unmarshal([]byte(src), &srcTx)
-	if err != nil {
-		t.Error(err)
-		return
-	}
+var unDelegateDst = blockatlas.Tx{
+	ID:     "A1EC36741FEF681F4A77B8F6032AD081100EE5ECB4CC76AEAC2174BC6B871CFE",
+	Coin:   coin.ATOM,
+	From:   "cosmos137rrp4p8n0nqcft0mwc62tdnyhhzf80knv5t94",
+	To:     "cosmosvaloper1te8nxpc2myjfrhaty0dnzdhs5ahdh5agzuym9v",
+	Fee:    "5000",
+	Date:   1564624521,
+	Block:  1257037,
+	Status: blockatlas.StatusCompleted,
+	Type:   blockatlas.TxAnyAction,
+	Meta: blockatlas.AnyAction{
+		Coin:     coin.ATOM,
+		Title:    blockatlas.AnyActionUndelegation,
+		Key:      blockatlas.KeyStakeDelegate,
+		Name:     "ATOM",
+		Symbol:   coin.Coins[coin.ATOM].Symbol,
+		Decimals: coin.Coins[coin.ATOM].Decimals,
+		Value:    "5100000000",
+	},
+}
+var failedTransferDst = blockatlas.Tx{
+	ID:     "5E78C65A8C1A6C8239EBBBBF2E42020E6ADBA8037EDEA83BF88E1A9159CF13B8",
+	Coin:   coin.ATOM,
+	From:   "cosmos1shpfyt7psrff2ux7nznxvj6f7gq59fcqng5mku",
+	To:     "cosmos1za4pu5gxm80fg6sx0956f88l2sx7jfg2vf7nlc",
+	Fee:    "2000",
+	Date:   1576120902,
+	Block:  5552,
+	Status: blockatlas.StatusFailed,
+	Type:   blockatlas.TxTransfer,
+	Memo:   "UniCoins registration rewards",
+	Meta: blockatlas.Transfer{
+		Value:    "100000",
+		Symbol:   "ATOM",
+		Decimals: 6,
+	},
+}
 
-	tx, _ := Normalize(&srcTx)
-	resJSON, err := json.Marshal(&tx)
-	if err != nil {
-		t.Fatal(err)
-	}
+func TestNormalize(t *testing.T) {
+	testNormalize(t, "test transfer tx", transferSrc, transferDst)
+	testNormalize(t, "test delegate tx", delegateSrc, delegateDst)
+	testNormalize(t, "test undelegate tx", unDelegateSrc, unDelegateDst)
+	testNormalize(t, "test failed tx", failedTransferSrc, failedTransferDst)
+}
 
-	dstJSON, err := json.Marshal(&dst)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if !bytes.Equal(resJSON, dstJSON) {
-		println(string(resJSON))
-		println(string(dstJSON))
-		t.Error("basic: tx don't equal")
-	}
+func testNormalize(t *testing.T, name, src string, dst blockatlas.Tx) {
+	t.Run(name, func(t *testing.T) {
+		var srcTx Tx
+		err := json.Unmarshal([]byte(src), &srcTx)
+		assert.Nil(t, err)
+		tx, ok := Normalize(&srcTx)
+		assert.True(t, ok)
+		assert.Equal(t, dst, tx, "transfer: tx don't equal")
+	})
 }

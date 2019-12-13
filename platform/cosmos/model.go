@@ -27,6 +27,7 @@ const (
 // Tx - Base transaction object. Always returned as part of an array
 type Tx struct {
 	Block string `json:"height"`
+	Code  int    `json:"code"`
 	Date  string `json:"timestamp"`
 	ID    string `json:"txhash"`
 	Data  Data   `json:"tx"`
