@@ -32,7 +32,9 @@ type Tx struct {
 	Data  Data   `json:"tx"`
 }
 
-type TxPage []Tx
+type TxPage struct {
+	Txs []Tx `json:"txs"`
+}
 
 // Data - "tx" sub object
 type Data struct {

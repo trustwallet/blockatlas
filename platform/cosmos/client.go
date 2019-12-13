@@ -14,17 +14,16 @@ type Client struct {
 	blockatlas.Request
 }
 
-// GetAddrTxes - get all ATOM transactions for a given address
-func (c *Client) GetAddrTxes(address string, tag string) (txs []Tx, err error) {
+// GetAddrTxs - get all ATOM transactions for a given address
+func (c *Client) GetAddrTxs(address string, tag string) (txs TxPage, err error) {
 	query := url.Values{
 		tag:     {address},
-		"page":  {strconv.FormatInt(1, 10)},
-		"limit": {strconv.FormatInt(1000, 10)},
+		"page":  {"1"},
+		"limit": {"25"},
 	}
-
 	err = c.Get(&txs, "txs", query)
 	if err != nil {
-		return nil, err
+		return TxPage{}, err
 	}
 	return
 }
@@ -32,13 +31,13 @@ func (c *Client) GetAddrTxes(address string, tag string) (txs []Tx, err error) {
 func (c *Client) GetValidators() (validators Validators, err error) {
 	query := url.Values{
 		"status": {"bonded"},
-		"page":   {strconv.FormatInt(1, 10)},
+		"page":   {"1"},
 	}
 	err = c.Get(&validators, "staking/validators", query)
 	return
 }
 
-func (c *Client) GetBlockByNumber(num int64) (txs []Tx, err error) {
+func (c *Client) GetBlockByNumber(num int64) (txs TxPage, err error) {
 	err = c.Get(&txs, "txs", url.Values{"tx.height": {strconv.FormatInt(num, 10)}})
 	return
 }
