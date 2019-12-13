@@ -123,6 +123,9 @@ func Normalize(srcTx *Tx) (tx blockatlas.Tx, ok bool) {
 }
 
 func fillTransfer(tx *blockatlas.Tx, transfer MessageValueTransfer) {
+	if len(transfer.Amount) == 0 {
+		return
+	}
 	value, err := util.DecimalToSatoshis(transfer.Amount[0].Quantity)
 	if err != nil {
 		return
