@@ -29,7 +29,7 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 		return nil, err
 	}
 
-	txs := NormalizeTxs(srcTxs, len(srcTxs))
+	txs := NormalizeTxs(srcTxs.Txs)
 	return &blockatlas.Block{
 		Number: num,
 		Txs:    txs,
@@ -54,33 +54,25 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 		}(t, address)
 	}
 	wg.Wait()
+	return NormalizeTxs(srcTxs), nil
+}
 
-	normalisedTxs := make(blockatlas.TxPage, 0)
-	tx := make(map[string]bool)
+// NormalizeTxs converts multiple Cosmos transactions
+func NormalizeTxs(srcTxs []Tx) blockatlas.TxPage {
+	txMap := make(map[string]bool)
+	txs := make(blockatlas.TxPage, 0)
 	for _, srcTx := range srcTxs {
-		_, ok := tx[srcTx.ID]
+		_, ok := txMap[srcTx.ID]
 		if ok {
 			continue
 		}
 		normalisedInputTx, ok := Normalize(&srcTx)
 		if ok {
-			tx[srcTx.ID] = true
-			normalisedTxs = append(normalisedTxs, normalisedInputTx)
+			txMap[srcTx.ID] = true
+			txs = append(txs, normalisedInputTx)
 		}
 	}
-	return normalisedTxs, nil
-}
-
-// NormalizeTxs converts multiple Cosmos transactions
-func NormalizeTxs(srcTxs []Tx, pageSize int) (txs blockatlas.TxPage) {
-	for _, srcTx := range srcTxs {
-		tx, ok := Normalize(&srcTx)
-		if !ok || len(txs) >= pageSize {
-			continue
-		}
-		txs = append(txs, tx)
-	}
-	return
+	return txs
 }
 
 // Normalize converts an Cosmos transaction into the generic model
@@ -100,12 +92,13 @@ func Normalize(srcTx *Tx) (tx blockatlas.Tx, ok bool) {
 	}
 
 	tx = blockatlas.Tx{
-		ID:    srcTx.ID,
-		Coin:  coin.ATOM,
-		Date:  date.Unix(),
-		Fee:   blockatlas.Amount(fee),
-		Block: block,
-		Memo:  srcTx.Data.Contents.Memo,
+		ID:     srcTx.ID,
+		Coin:   coin.ATOM,
+		Date:   date.Unix(),
+		Status: blockatlas.StatusCompleted,
+		Fee:    blockatlas.Amount(fee),
+		Block:  block,
+		Memo:   srcTx.Data.Contents.Memo,
 	}
 
 	if len(srcTx.Data.Contents.Message) == 0 {
@@ -133,6 +126,7 @@ func fillTransfer(tx *blockatlas.Tx, transfer MessageValueTransfer) {
 	}
 	tx.From = transfer.FromAddr
 	tx.To = transfer.ToAddr
+	tx.Type = blockatlas.TxNativeTokenTransfer
 
 	tx.Meta = blockatlas.Transfer{
 		Value:    blockatlas.Amount(value),
@@ -148,6 +142,7 @@ func fillDelegate(tx *blockatlas.Tx, delegate MessageValueDelegate, msgType stri
 	}
 	tx.From = delegate.DelegatorAddr
 	tx.To = delegate.ValidatorAddr
+	tx.Type = blockatlas.TxAnyAction
 
 	title := blockatlas.KeyTitle("")
 	switch msgType {

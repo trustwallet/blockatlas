@@ -37,7 +37,7 @@ func (c *Client) GetValidators() (validators Validators, err error) {
 	return
 }
 
-func (c *Client) GetBlockByNumber(num int64) (txs []Tx, err error) {
+func (c *Client) GetBlockByNumber(num int64) (txs TxPage, err error) {
 	err = c.Get(&txs, "txs", url.Values{"tx.height": {strconv.FormatInt(num, 10)}})
 	return
 }
