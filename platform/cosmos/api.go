@@ -5,8 +5,8 @@ import (
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/util"
-	"sort"
 	"strconv"
+	"sync"
 	"time"
 )
 
@@ -41,33 +41,38 @@ func (p *Platform) CurrentBlockNumber() (int64, error) {
 }
 
 func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
-	srcTxes := make([]Tx, 0)
+	srcTxs := make([]Tx, 0)
+	tagsList := []string{"transfer.recipient", "message.sender"}
 
-	tagsList := []string{"recipient", "sender", "delegator", "destination-validator"}
-
-	for _, tag := range tagsList {
-		responseTxes, _ := p.client.GetAddrTxes(address, tag)
-		srcTxes = append(srcTxes, responseTxes...)
+	var wg sync.WaitGroup
+	for _, t := range tagsList {
+		wg.Add(1)
+		go func(tag, addr string) {
+			defer wg.Done()
+			txs, _ := p.client.GetAddrTxs(addr, tag)
+			srcTxs = append(srcTxs, txs.Txs...)
+		}(t, address)
 	}
+	wg.Wait()
 
-	normalisedTxs := make([]blockatlas.Tx, 0)
-
-	for _, srcTx := range srcTxes {
+	normalisedTxs := make(blockatlas.TxPage, 0)
+	tx := make(map[string]bool)
+	for _, srcTx := range srcTxs {
+		_, ok := tx[srcTx.ID]
+		if ok {
+			continue
+		}
 		normalisedInputTx, ok := Normalize(&srcTx)
 		if ok {
+			tx[srcTx.ID] = true
 			normalisedTxs = append(normalisedTxs, normalisedInputTx)
 		}
 	}
-
-	sort.Slice(normalisedTxs, func(i, j int) bool {
-		return normalisedTxs[i].Date > normalisedTxs[j].Date
-	})
-
 	return normalisedTxs, nil
 }
 
 // NormalizeTxs converts multiple Cosmos transactions
-func NormalizeTxs(srcTxs []Tx, pageSize int) (txs []blockatlas.Tx) {
+func NormalizeTxs(srcTxs []Tx, pageSize int) (txs blockatlas.TxPage) {
 	for _, srcTx := range srcTxs {
 		tx, ok := Normalize(&srcTx)
 		if !ok || len(txs) >= pageSize {
@@ -80,13 +85,17 @@ func NormalizeTxs(srcTxs []Tx, pageSize int) (txs []blockatlas.Tx) {
 
 // Normalize converts an Cosmos transaction into the generic model
 func Normalize(srcTx *Tx) (tx blockatlas.Tx, ok bool) {
-	date, _ := time.Parse("2006-01-02T15:04:05Z", srcTx.Date)
-	block, _ := strconv.ParseUint(srcTx.Block, 10, 64)
+	date, err := time.Parse("2006-01-02T15:04:05Z", srcTx.Date)
+	if err != nil {
+		return blockatlas.Tx{}, false
+	}
+	block, err := strconv.ParseUint(srcTx.Block, 10, 64)
+	if err != nil {
+		return blockatlas.Tx{}, false
+	}
 	// Sometimes fees can be null objects (in the case of no fees e.g. F044F91441C460EDCD90E0063A65356676B7B20684D94C731CF4FAB204035B41)
-	var fee string
-	if len(srcTx.Data.Contents.Fee.FeeAmount) == 0 {
-		fee = "0"
-	} else {
+	fee := "0"
+	if len(srcTx.Data.Contents.Fee.FeeAmount) > 0 {
 		fee, _ = util.DecimalToSatoshis(srcTx.Data.Contents.Fee.FeeAmount[0].Quantity)
 	}
 
@@ -99,26 +108,29 @@ func Normalize(srcTx *Tx) (tx blockatlas.Tx, ok bool) {
 		Memo:  srcTx.Data.Contents.Memo,
 	}
 
-	if len(srcTx.Data.Contents.Message) > 0 {
-		msg := srcTx.Data.Contents.Message[0]
-		switch msg.Value.(type) {
-		case MessageValueTransfer:
-			transfer := msg.Value.(MessageValueTransfer)
-			fillTransfer(&tx, transfer)
-			return tx, true
-		case MessageValueDelegate:
-			delegate := msg.Value.(MessageValueDelegate)
-			fillDelegate(&tx, delegate, msg.Type)
-			return tx, true
-		}
+	if len(srcTx.Data.Contents.Message) == 0 {
+		return tx, false
 	}
 
+	msg := srcTx.Data.Contents.Message[0]
+	switch msg.Value.(type) {
+	case MessageValueTransfer:
+		transfer := msg.Value.(MessageValueTransfer)
+		fillTransfer(&tx, transfer)
+		return tx, true
+	case MessageValueDelegate:
+		delegate := msg.Value.(MessageValueDelegate)
+		fillDelegate(&tx, delegate, msg.Type)
+		return tx, true
+	}
 	return tx, false
 }
 
 func fillTransfer(tx *blockatlas.Tx, transfer MessageValueTransfer) {
-	value, _ := util.DecimalToSatoshis(transfer.Amount[0].Quantity)
-
+	value, err := util.DecimalToSatoshis(transfer.Amount[0].Quantity)
+	if err != nil {
+		return
+	}
 	tx.From = transfer.FromAddr
 	tx.To = transfer.ToAddr
 
@@ -130,8 +142,10 @@ func fillTransfer(tx *blockatlas.Tx, transfer MessageValueTransfer) {
 }
 
 func fillDelegate(tx *blockatlas.Tx, delegate MessageValueDelegate, msgType string) {
-	value, _ := util.DecimalToSatoshis(delegate.Amount.Quantity)
-
+	value, err := util.DecimalToSatoshis(delegate.Amount.Quantity)
+	if err != nil {
+		return
+	}
 	tx.From = delegate.DelegatorAddr
 	tx.To = delegate.ValidatorAddr
 
