@@ -29,17 +29,13 @@ func (c *Client) GetAddrTxes(address string, tag string) (txs []Tx, err error) {
 	return
 }
 
-func (c *Client) GetValidators() (validators *Validators, err error) {
+func (c *Client) GetValidators() (validators Validators, err error) {
 	query := url.Values{
 		"status": {"bonded"},
 		"page":   {strconv.FormatInt(1, 10)},
 		"limit":  {strconv.FormatInt(blockatlas.ValidatorsPerPage, 10)},
 	}
 	err = c.Get(&validators, "staking/validators", query)
-	if err != nil {
-		return validators, err
-	}
-	validators.Result = append(validators.Result, everstakeValidator) // Adding due to unbound status
 	return
 }
 
@@ -73,9 +69,8 @@ func (c *Client) GetInflation() (inflation Inflation, err error) {
 	return
 }
 
-func (c *Client) GetDelegations(address string) (delegations []Delegation, err error) {
+func (c *Client) GetDelegations(address string) (delegations Delegations, err error) {
 	path := fmt.Sprintf("staking/delegators/%s/delegations", address)
-
 	err = c.Get(&delegations, path, nil)
 	if err != nil {
 		logger.Error(err, "Cosmos: Failed to get delegations for address")
@@ -83,9 +78,8 @@ func (c *Client) GetDelegations(address string) (delegations []Delegation, err e
 	return
 }
 
-func (c *Client) GetUnbondingDelegations(address string) (delegations []UnbondingDelegation, err error) {
+func (c *Client) GetUnbondingDelegations(address string) (delegations UnbondingDelegations, err error) {
 	path := fmt.Sprintf("staking/delegators/%s/unbonding_delegations", address)
-
 	err = c.Get(&delegations, path, nil)
 	if err != nil {
 		logger.Error(err, "Cosmos: Failed to get unbonding delegations for address")
@@ -97,14 +91,4 @@ func (c *Client) GetAccount(address string) (result Account, err error) {
 	path := fmt.Sprintf("auth/accounts/%s", address)
 	err = c.Get(&result, path, nil)
 	return
-}
-
-var everstakeValidator = Validator{
-	Status:  1,
-	Address: "cosmosvaloper1tflk30mq5vgqjdly92kkhhq3raev2hnz6eete3",
-	Commission: CosmosCommission{
-		CosmosCommissionRates{
-			Rate: "0.030000000000000000",
-		},
-	},
 }
