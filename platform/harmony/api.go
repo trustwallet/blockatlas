@@ -99,6 +99,11 @@ func NormalizeTx(trx *Transaction) (tx blockatlas.Tx, b bool, err error) {
 		return blockatlas.Tx{}, false, GetNormalizationError(err)
 	}
 
+	timestamp, err := hexToInt(trx.Timestamp)
+	if err != nil {
+		return blockatlas.Tx{}, false, GetNormalizationError(err)
+	}
+
 	return blockatlas.Tx{
 		ID:     trx.Hash,
 		Coin:   coin.ONE,
@@ -107,7 +112,7 @@ func NormalizeTx(trx *Transaction) (tx blockatlas.Tx, b bool, err error) {
 		Fee:    blockatlas.Amount(literalFee),
 		Status: blockatlas.StatusCompleted,
 		Sequence: nonce,
-		Date:   0,
+		Date:   int64(timestamp),
 		Type:   blockatlas.TxTransfer,
 		Block:  block,
 		Meta: blockatlas.Transfer{

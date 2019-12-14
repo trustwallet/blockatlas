@@ -18,6 +18,7 @@ type Transaction struct {
 	Nonce            string `json:"nonce"`
 	To               string `json:"to"`
 	Value            string `json:"value"`
+	Timestamp        string `json:"timestamp"`
 }
 
 type BlockInfo struct {
