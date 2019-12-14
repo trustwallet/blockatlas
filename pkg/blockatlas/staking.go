@@ -67,6 +67,7 @@ type StakeValidator struct {
 type DelegationResponse struct {
 	Delegations DelegationsPage `json:"delegations"`
 	Balance     string          `json:"balance"`
+	Address     string          `json:"address"`
 	StakingResponse
 }
 

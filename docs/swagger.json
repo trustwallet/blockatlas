@@ -420,6 +420,43 @@
                 }
             }
         },
+        "/v2/staking/list": {
+            "post": {
+                "description": "Get Stake Delegations for multiple coins",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "platform",
+                    "staking"
+                ],
+                "summary": "Get Multiple Stake Delegations",
+                "operationId": "batch_delegations",
+                "parameters": [
+                    {
+                        "description": "Validators addresses and coins",
+                        "name": "delegations",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/api.AddressesRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/blockatlas.DelegationsBatchPage"
+                        }
+                    }
+                }
+            }
+        },
         "/v2/{coin}/collections/{address}": {
             "get": {
                 "description": "Get all collections from the address",
@@ -914,9 +951,6 @@
         "blockatlas.DelegationResponse": {
             "type": "object",
             "properties": {
-                "address": {
-                    "type": "string"
-                },
                 "balance": {
                     "type": "string"
                 },
@@ -931,9 +965,6 @@
                 "details": {
                     "type": "object",
                     "$ref": "#/definitions/blockatlas.StakingDetails"
-                },
-                "error": {
-                    "type": "string"
                 }
             }
         },
@@ -942,9 +973,6 @@
             "items": {
                 "type": "object",
                 "properties": {
-                    "address": {
-                        "type": "string"
-                    },
                     "balance": {
                         "type": "string"
                     },
@@ -959,9 +987,6 @@
                     "details": {
                         "type": "object",
                         "$ref": "#/definitions/blockatlas.StakingDetails"
-                    },
-                    "error": {
-                        "type": "string"
                     }
                 }
             }

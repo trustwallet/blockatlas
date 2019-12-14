@@ -37,20 +37,13 @@ steps:
     workingDirectory: '$(modulePath)'
     displayName: 'Get dependencies'
 
-  - script: |
-      go get github.com/jstemmer/go-junit-report
-      go get github.com/axw/gocov/gocov
-      go get github.com/AlekSi/gocov-xml
-      go get -u gopkg.in/matm/v1/gocov-html
-      go get github.com/Pantani/httpexpect
-    workingDirectory: '$(modulePath)'
-    displayName: 'Get test dependencies'
-
   - script: go test -v ./...
     workingDirectory: '$(modulePath)'
     displayName: 'Run unit tests'
 
-  - script: make integration
+  - script: |
+      go get github.com/gavv/httpexpect
+      make integration
     workingDirectory: '$(modulePath)'
     displayName: 'Run integration tests'
 

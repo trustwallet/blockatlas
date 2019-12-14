@@ -53,6 +53,12 @@ func (c *Client) GetTxsInBlock(number int64) ([]Transaction, error) {
 	return block.Transactions.Transactions, err
 }
 
+func (c *Client) GetAccount(address string) (account *Account, err error) {
+	path := fmt.Sprintf("v1/account/%s", address)
+	err = c.Get(&account, path, nil)
+	return
+}
+
 func (c *Client) GetTxsOfAddress(address string) ([]Transaction, error) {
 	var response TransactionsResponse
 	path := fmt.Sprintf("v1/account/%s/transactions", address)

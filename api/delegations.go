@@ -21,6 +21,7 @@ func getDelegationResponse(p blockatlas.StakeAPI, address string) (blockatlas.De
 	return blockatlas.DelegationResponse{
 		Balance:         balance,
 		Delegations:     delegations,
+		Address:         address,
 		StakingResponse: getStakingResponse(p),
 	}, nil
 }

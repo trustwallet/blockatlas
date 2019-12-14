@@ -14,38 +14,32 @@ type Client struct {
 	blockatlas.Request
 }
 
-// GetAddrTxes - get all ATOM transactions for a given address
-func (c *Client) GetAddrTxes(address string, tag string) (txs []Tx, err error) {
+// GetAddrTxs - get all ATOM transactions for a given address
+func (c *Client) GetAddrTxs(address string, tag string) (txs TxPage, err error) {
 	query := url.Values{
 		tag:     {address},
-		"page":  {strconv.FormatInt(1, 10)},
-		"limit": {strconv.FormatInt(1000, 10)},
+		"page":  {"1"},
+		"limit": {"25"},
 	}
-
 	err = c.Get(&txs, "txs", query)
 	if err != nil {
-		return nil, err
+		return TxPage{}, err
 	}
-	return txs, err
+	return
 }
 
-func (c *Client) GetValidators() (validators []Validator, err error) {
+func (c *Client) GetValidators() (validators Validators, err error) {
 	query := url.Values{
 		"status": {"bonded"},
-		"page":   {strconv.FormatInt(1, 10)},
-		"limit":  {strconv.FormatInt(blockatlas.ValidatorsPerPage, 10)},
+		"page":   {"1"},
 	}
 	err = c.Get(&validators, "staking/validators", query)
-	if err != nil {
-		return validators, err
-	}
-	validators = append(validators, everstakeValidator) // Adding due to unbound status
-	return validators, err
+	return
 }
 
-func (c *Client) GetBlockByNumber(num int64) (txs []Tx, err error) {
+func (c *Client) GetBlockByNumber(num int64) (txs TxPage, err error) {
 	err = c.Get(&txs, "txs", url.Values{"tx.height": {strconv.FormatInt(num, 10)}})
-	return txs, err
+	return
 }
 
 func (c *Client) CurrentBlockNumber() (num int64, err error) {
@@ -61,31 +55,20 @@ func (c *Client) CurrentBlockNumber() (num int64, err error) {
 		return num, errors.E("error to ParseInt", errors.TypePlatformUnmarshal).PushToSentry()
 	}
 
-	return num, nil
+	return
 }
 
 func (c *Client) GetPool() (result StakingPool, err error) {
 	return result, c.Get(&result, "staking/pool", nil)
 }
 
-func (c *Client) GetInflation() (float64, error) {
-	var result string
-
-	err := c.Get(&result, "minting/inflation", nil)
-	if err != nil {
-		return 0, err
-	}
-
-	s, err := strconv.ParseFloat(result, 32)
-	if err != nil {
-		return 0, errors.E("error to ParseFloat", errors.TypePlatformUnmarshal).PushToSentry()
-	}
-	return s, nil
+func (c *Client) GetInflation() (inflation Inflation, err error) {
+	err = c.Get(&inflation, "minting/inflation", nil)
+	return
 }
 
-func (c *Client) GetDelegations(address string) (delegations []Delegation, err error) {
+func (c *Client) GetDelegations(address string) (delegations Delegations, err error) {
 	path := fmt.Sprintf("staking/delegators/%s/delegations", address)
-
 	err = c.Get(&delegations, path, nil)
 	if err != nil {
 		logger.Error(err, "Cosmos: Failed to get delegations for address")
@@ -93,9 +76,8 @@ func (c *Client) GetDelegations(address string) (delegations []Delegation, err e
 	return
 }
 
-func (c *Client) GetUnbondingDelegations(address string) (delegations []UnbondingDelegation, err error) {
+func (c *Client) GetUnbondingDelegations(address string) (delegations UnbondingDelegations, err error) {
 	path := fmt.Sprintf("staking/delegators/%s/unbonding_delegations", address)
-
 	err = c.Get(&delegations, path, nil)
 	if err != nil {
 		logger.Error(err, "Cosmos: Failed to get unbonding delegations for address")
@@ -103,17 +85,8 @@ func (c *Client) GetUnbondingDelegations(address string) (delegations []Unbondin
 	return
 }
 
-func (c *Client) GetAccount(address string) (result Account, err error) {
+func (c *Client) GetAccount(address string) (result AuthAccount, err error) {
 	path := fmt.Sprintf("auth/accounts/%s", address)
-	return result, c.Get(&result, path, nil)
-}
-
-var everstakeValidator = Validator{
-	Status:  1,
-	Address: "cosmosvaloper1tflk30mq5vgqjdly92kkhhq3raev2hnz6eete3",
-	Commission: CosmosCommission{
-		CosmosCommissionRates{
-			Rate: "0.030000000000000000",
-		},
-	},
+	err = c.Get(&result, path, nil)
+	return
 }

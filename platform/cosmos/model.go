@@ -20,6 +20,8 @@ const (
 	MsgVote                        = "cosmos-sdk/MsgVote"
 	TextProposal                   = "cosmos-sdk/TextProposal"
 	MsgUnjail                      = "cosmos-sdk/MsgUnjail"
+
+	UndelegateDenom = "uatom"
 )
 
 // Tx - Base transaction object. Always returned as part of an array
@@ -30,7 +32,9 @@ type Tx struct {
 	Data  Data   `json:"tx"`
 }
 
-type TxPage []Tx
+type TxPage struct {
+	Txs []Tx `json:"txs"`
+}
 
 // Data - "tx" sub object
 type Data struct {
@@ -86,10 +90,22 @@ type CosmosCommissionRates struct {
 	Rate string `json:"rate"`
 }
 
+type Validators struct {
+	Result []Validator `json:"result"`
+}
+
 type Validator struct {
 	Status     int              `json:"status"`
 	Address    string           `json:"operator_address"`
 	Commission CosmosCommission `json:"commission"`
+}
+
+type Inflation struct {
+	Result string `json:"result"`
+}
+
+type Delegations struct {
+	List []Delegation `json:"result"`
 }
 
 type Delegation struct {
@@ -106,6 +122,10 @@ func (d *Delegation) Value() string {
 	return d.Shares
 }
 
+type UnbondingDelegations struct {
+	List []UnbondingDelegation `json:"result"`
+}
+
 type UnbondingDelegation struct {
 	Delegation
 	Entries []UnbondingDelegationEntry `json:"entries"`
@@ -118,6 +138,10 @@ type UnbondingDelegationEntry struct {
 }
 
 type StakingPool struct {
+	Pool Pool `json:"result"`
+}
+
+type Pool struct {
 	NotBondedTokens string `json:"not_bonded_tokens"`
 	BondedTokens    string `json:"bonded_tokens"`
 }
@@ -162,6 +186,10 @@ func (m *Message) UnmarshalJSON(buf []byte) error {
 		m.Value = msgTransfer
 	}
 	return err
+}
+
+type AuthAccount struct {
+	Account Account `json:"result"`
 }
 
 type Account struct {
