@@ -4,6 +4,7 @@ import (
 	"github.com/trustwallet/blockatlas/marketdata/coingecko"
 	"github.com/trustwallet/blockatlas/marketdata/market"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"strings"
 )
 
 const (
@@ -35,44 +36,55 @@ func (m *Market) GetData() (result blockatlas.Tickers, err error) {
 	return result, nil
 }
 
-func (m *Market) normalizeTicker(price coingecko.CoinPrice, provider string) (*blockatlas.Ticker, error) {
+func (m *Market) normalizeTicker(price coingecko.CoinPrice, provider string) (tickers blockatlas.Tickers) {
 	tokenId := ""
-	coinName := price.Symbol
+	coinName := strings.ToUpper(price.Symbol)
 	coinType := blockatlas.TypeCoin
-	if len(price.CoinDetails.AssetPlatformId) > 0 {
-		coinType = blockatlas.TypeToken
-		coin, err := m.client.GetCoinById(price.CoinDetails.AssetPlatformId)
-		if err != nil {
-			return nil, err
-		}
-		coinName = coin.Symbol
-		tokenId = price.CoinDetails.ContractAddress
-		if len(tokenId) == 0 {
-			tokenId = price.Symbol
-		}
+
+	cgCoin, err := m.client.GetCoinsBySymbol(price.Id)
+	if err != nil {
+		tickers = append(tickers, &blockatlas.Ticker{
+			CoinName: coinName,
+			CoinType: coinType,
+			TokenId:  tokenId,
+			Price: blockatlas.TickerPrice{
+				Value:     price.CurrentPrice,
+				Change24h: price.PriceChangePercentage24h,
+				Currency:  blockatlas.DefaultCurrency,
+				Provider:  provider,
+			},
+			LastUpdate: price.LastUpdated,
+		})
+		return
 	}
 
-	return &blockatlas.Ticker{
-		CoinName: coinName,
-		CoinType: coinType,
-		TokenId:  tokenId,
-		Price: blockatlas.TickerPrice{
-			Value:     price.CurrentPrice,
-			Currency:  blockatlas.DefaultCurrency,
-			Change24h: price.PriceChange24h,
-			Provider:  provider,
-		},
-		LastUpdate: price.LastUpdated,
-	}, nil
+	for _, cg := range cgCoin {
+		coinName = strings.ToUpper(cg.Symbol)
+		if cg.CoinType == blockatlas.TypeCoin {
+			tokenId = ""
+		} else if len(cg.TokenId) > 0 {
+			tokenId = cg.TokenId
+		}
+		tickers = append(tickers, &blockatlas.Ticker{
+			CoinName: coinName,
+			CoinType: cg.CoinType,
+			TokenId:  tokenId,
+			Price: blockatlas.TickerPrice{
+				Value:     price.CurrentPrice,
+				Change24h: price.PriceChange24h,
+				Currency:  blockatlas.DefaultCurrency,
+				Provider:  provider,
+			},
+			LastUpdate: price.LastUpdated,
+		})
+	}
+	return
 }
 
 func (m *Market) normalizeTickers(prices coingecko.CoinPrices, provider string) (tickers blockatlas.Tickers) {
 	for _, price := range prices {
-		t, err := m.normalizeTicker(price, provider)
-		if err != nil {
-			continue
-		}
-		tickers = append(tickers, t)
+		t := m.normalizeTicker(price, provider)
+		tickers = append(tickers, t...)
 	}
 	return
 }

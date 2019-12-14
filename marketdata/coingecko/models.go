@@ -1,17 +1,26 @@
 package coingecko
 
-import "time"
+import (
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"time"
+)
+
+type CoinMap struct {
+	Coin    uint   `json:"coin"`
+	Id      uint   `json:"id"`
+	Type    string `json:"type"`
+	TokenId string `json:"token_id"`
+}
+
+type CoinResult struct {
+	Symbol   string
+	TokenId  string
+	CoinType blockatlas.CoinType
+}
 
 type CoinPrices []CoinPrice
 
 type CoinPrice struct {
-	CoinDetails
-	CoingeckoPrice
-}
-
-type CoingeckoPrices []CoingeckoPrice
-
-type CoingeckoPrice struct {
 	Id                           string    `json:"id"`
 	Symbol                       string    `json:"symbol"`
 	Name                         string    `json:"name"`
@@ -23,22 +32,13 @@ type CoingeckoPrice struct {
 	LastUpdated                  time.Time `json:"last_updated"`
 }
 
-type Coins []Coin
+type GeckoCoins []GeckoCoin
 
-type Coin struct {
-	CoinDetails
-	CoingeckoCoin
+type GeckoCoin struct {
+	Id        string    `json:"id"`
+	Symbol    string    `json:"symbol"`
+	Name      string    `json:"name"`
+	Platforms Platforms `json:"platforms"`
 }
 
-type CoingeckoCoins []CoingeckoCoin
-
-type CoingeckoCoin struct {
-	Id     string `json:"id"`
-	Symbol string `json:"symbol"`
-	Name   string `json:"name"`
-}
-
-type CoinDetails struct {
-	AssetPlatformId string `json:"asset_platform_id"`
-	ContractAddress string `json:"contract_address"`
-}
+type Platforms map[string]string
