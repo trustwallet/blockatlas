@@ -220,3 +220,6 @@ nano:
 
 digibyte:
   api: https://dgb1.trezor.io/api
+
+harmony:
+  api: http://e0.t.hmny.io:9500

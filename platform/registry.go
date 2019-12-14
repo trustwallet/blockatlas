@@ -2,6 +2,7 @@ package platform
 
 import (
 	"fmt"
+	"github.com/trustwallet/blockatlas/platform/harmony"
 
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
@@ -76,6 +77,7 @@ var platformList = []blockatlas.Platform{
 	&fio.Platform{},
 	&algorand.Platform{},
 	&nano.Platform{},
+	&harmony.Platform{},
 }
 
 // Platforms contains all registered platforms by handle
