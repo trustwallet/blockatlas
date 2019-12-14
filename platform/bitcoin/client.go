@@ -3,10 +3,8 @@ package bitcoin
 import (
 	"fmt"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/pkg/logger"
 	"net/url"
 	"strconv"
-	"sync"
 )
 
 type Client struct {
@@ -52,20 +50,6 @@ func (c *Client) GetTransactionsByBlock(number int64, page int64) (block Block, 
 	}
 	err = c.Get(&block, path, args)
 	return block, err
-}
-
-func (c *Client) GetTransactionsByBlockChan(number int64, page int64, out chan Block, wg *sync.WaitGroup) {
-	wg.Add(1)
-	defer wg.Done()
-	block, err := c.GetTransactionsByBlock(number, page)
-	if err != nil {
-		logger.Error("GetTransactionsByBlockChan", err, logger.Params{
-			"number": number,
-			"page":   page,
-		})
-		return
-	}
-	out <- block
 }
 
 func (c *Client) GetBlockNumber() (status BlockchainStatus, err error) {

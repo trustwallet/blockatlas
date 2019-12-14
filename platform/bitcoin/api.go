@@ -126,26 +126,44 @@ func (p *Platform) CurrentBlockNumber() (int64, error) {
 	return status.Backend.Blocks, err
 }
 
+func (p *Platform) GetAllBlockPages(total, num int64) []Transaction {
+	start := int64(1)
+	var wg sync.WaitGroup
+	out := make(chan Block)
+	for start < total {
+		wg.Add(1)
+		start++
+		go func(page, num int64, out chan Block) {
+			defer wg.Done()
+			block, err := p.client.GetTransactionsByBlock(num, page)
+			if err != nil {
+				logger.Error("GetTransactionsByBlockChan", err, logger.Params{"number": num, "page": page})
+				return
+			}
+			out <- block
+		}(start, num, out)
+	}
+	go func() {
+		wg.Wait()
+		close(out)
+	}()
+	txs := make([]Transaction, 0)
+	for r := range out {
+		txs = append(txs, r.Transactions...)
+	}
+	return txs
+}
+
 func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
-	block, err := p.client.GetTransactionsByBlock(num, 1)
+	page := int64(1)
+	block, err := p.client.GetTransactionsByBlock(num, page)
 	if err != nil {
 		return nil, err
 	}
-	if block.Page < block.TotalPages {
-		var wg sync.WaitGroup
-		out := make(chan Block)
-		for i := int64(2); i <= block.TotalPages; i++ {
-			go p.client.GetTransactionsByBlockChan(num, i, out, &wg)
-		}
-
-		wg.Wait()
-		defer close(out)
-		for r := range out {
-			block.Transactions = append(block.Transactions, r.Transactions...)
-		}
-	}
+	txPages := p.GetAllBlockPages(block.TotalPages, num)
+	txs := append(txPages, block.Transactions...)
 	var normalized []blockatlas.Tx
-	for _, tx := range block.Transactions {
+	for _, tx := range txs {
 		normalized = append(normalized, NormalizeTransaction(&tx, p.CoinIndex))
 	}
 	return &blockatlas.Block{
