@@ -27,15 +27,15 @@ const trxId = `{
 }`
 
 var expectedTransfer = blockatlas.Tx{
-	ID:       "0x702edd54bd4e13e0012798cc8b2dfa52f7150173945103d203fae26b8e3d2ed7",
-	Coin:     coin.VET,
-	From:     "0xB5e883349e68aB59307d1604555AC890fAC47128",
-	To:       "0x2c7A8d5ccE0d5E6a8a31233B7Dc3DAE9AaE4b405",
-	Date:     1574410670,
-	Type:     blockatlas.TxTransfer,
-	Fee:      blockatlas.Amount("21000"),
-	Status:   blockatlas.StatusCompleted,
-	Block:    4395940,
+	ID:     "0x702edd54bd4e13e0012798cc8b2dfa52f7150173945103d203fae26b8e3d2ed7",
+	Coin:   coin.VET,
+	From:   "0xB5e883349e68aB59307d1604555AC890fAC47128",
+	To:     "0x2c7A8d5ccE0d5E6a8a31233B7Dc3DAE9AaE4b405",
+	Date:   1574410670,
+	Type:   blockatlas.TxTransfer,
+	Fee:    blockatlas.Amount("21000"),
+	Status: blockatlas.StatusCompleted,
+	Block:  4395940,
 	Meta: blockatlas.Transfer{
 		Value:    blockatlas.Amount("1347000000000000000"),
 		Decimals: 18,
@@ -128,15 +128,15 @@ const trxReceipt = `{
 
 var expectedTransferLog = blockatlas.TxPage{
 	{
-		ID:       "0x42f5eba46ddcc458243c753545a3faa849502d078efbc5b74baddea9e6ea5b04",
-		Coin:     coin.VET,
-		From:     "0x2c7A8d5ccE0d5E6a8a31233B7Dc3DAE9AaE4b405",
-		To:       "0x0000000000000000000000000000456E65726779",
-		Date:     1574278180,
-		Type:     blockatlas.TxTokenTransfer,
-		Fee:      blockatlas.Amount("36582000000000000000"),
-		Status:   blockatlas.StatusCompleted,
-		Block:    4382764,
+		ID:     "0x42f5eba46ddcc458243c753545a3faa849502d078efbc5b74baddea9e6ea5b04",
+		Coin:   coin.VET,
+		From:   "0x2c7A8d5ccE0d5E6a8a31233B7Dc3DAE9AaE4b405",
+		To:     "0x0000000000000000000000000000456E65726779",
+		Date:   1574278180,
+		Type:   blockatlas.TxTokenTransfer,
+		Fee:    blockatlas.Amount("36582000000000000000"),
+		Status: blockatlas.StatusCompleted,
+		Block:  4382764,
 		Meta: blockatlas.TokenTransfer{
 			Name:     "",
 			Symbol:   "VTHO",
