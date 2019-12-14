@@ -25,7 +25,8 @@ const transferSrc = `
 	"toShardID": 0,
 	"v": "0x27",
 	"r": "0x57766aa1304e97f8b71a9fa54a61b61ce8ef9ad177fcb337dd81827aad184327",
-	"s": "0x3b3e5767899e8af5e75d62243a725371f08705b91e2305459e6fd8e8d2646651"
+	"s": "0x3b3e5767899e8af5e75d62243a725371f08705b91e2305459e6fd8e8d2646651",
+	"timestamp": "0x5DF5234E"
 }
 `
 
@@ -35,7 +36,7 @@ var transferDst = blockatlas.Tx{
 	From:     "one103q7qe5t2505lypvltkqtddaef5tzfxwsse4z7",
 	To:       "one129r9pj3sk0re76f7zs3qz92rggmdgjhtwge62k",
 	Fee:      "21000000000000",
-	Date:     0,
+	Date:     1576346446,
 	Block:    18,
 	Status:   blockatlas.StatusCompleted,
 	Meta: blockatlas.Transfer{
