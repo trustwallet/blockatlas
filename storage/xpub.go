@@ -17,7 +17,7 @@ func (s *Storage) GetXpubFromAddress(coin uint, address string) (xpub string, ad
 	if err != nil {
 		return
 	}
- 	addresses, err = s.GetXpub(coin, xpub)
+	addresses, err = s.GetXpub(coin, xpub)
 	return
 }
 

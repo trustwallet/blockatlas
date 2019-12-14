@@ -132,15 +132,15 @@ func NormalizeTokenTransaction(srcTx Tx, receipt TxReceipt) (blockatlas.TxPage, 
 		}
 
 		txs = append(txs, blockatlas.Tx{
-			ID:       srcTx.Id,
-			Coin:     coin.VET,
-			From:     origin,
-			To:       to,
-			Fee:      blockatlas.Amount(fee),
-			Date:     srcTx.Meta.BlockTimestamp,
-			Type:     blockatlas.TxTokenTransfer,
-			Block:    srcTx.Meta.BlockNumber,
-			Status:   blockatlas.StatusCompleted,
+			ID:     srcTx.Id,
+			Coin:   coin.VET,
+			From:   origin,
+			To:     to,
+			Fee:    blockatlas.Amount(fee),
+			Date:   srcTx.Meta.BlockTimestamp,
+			Type:   blockatlas.TxTokenTransfer,
+			Block:  srcTx.Meta.BlockNumber,
+			Status: blockatlas.StatusCompleted,
 			Meta: blockatlas.TokenTransfer{
 				Name:     "", // TODO replace with real name for other coins
 				TokenID:  to,
@@ -186,15 +186,15 @@ func NormalizeTransaction(srcTx LogTransfer, trxId Tx) (blockatlas.Tx, error) {
 	fee := strconv.Itoa(trxId.Gas)
 
 	return blockatlas.Tx{
-		ID:       srcTx.Meta.TxId,
-		Coin:     coin.VET,
-		From:     util.Checksum(srcTx.Sender),
-		To:       util.Checksum(srcTx.Recipient),
-		Fee:      blockatlas.Amount(fee),
-		Date:     srcTx.Meta.BlockTimestamp,
-		Type:     blockatlas.TxTransfer,
-		Block:    srcTx.Meta.BlockNumber,
-		Status:   blockatlas.StatusCompleted,
+		ID:     srcTx.Meta.TxId,
+		Coin:   coin.VET,
+		From:   util.Checksum(srcTx.Sender),
+		To:     util.Checksum(srcTx.Recipient),
+		Fee:    blockatlas.Amount(fee),
+		Date:   srcTx.Meta.BlockTimestamp,
+		Type:   blockatlas.TxTransfer,
+		Block:  srcTx.Meta.BlockNumber,
+		Status: blockatlas.StatusCompleted,
 		Meta: blockatlas.Transfer{
 			Value:    blockatlas.Amount(value),
 			Symbol:   coin.Coins[coin.VET].Symbol,

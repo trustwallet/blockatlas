@@ -14,7 +14,7 @@ type AccountHistoryRequest struct {
 }
 
 type AccountHistory struct {
-	Account string `json:"account"`
+	Account string      `json:"account"`
 	History interface{} // NANO RPC returns string for address with 0 transactions
 }
 
