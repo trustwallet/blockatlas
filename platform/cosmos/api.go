@@ -94,11 +94,17 @@ func Normalize(srcTx *Tx) (tx blockatlas.Tx, ok bool) {
 		}
 	}
 
+	status := blockatlas.StatusCompleted
+	// https://github.com/cosmos/cosmos-sdk/blob/95ddc242ad024ca78a359a13122dade6f14fd676/types/errors/errors.go#L19
+	if srcTx.Code > 0 {
+		status = blockatlas.StatusFailed
+	}
+
 	tx = blockatlas.Tx{
 		ID:     srcTx.ID,
 		Coin:   coin.ATOM,
 		Date:   date.Unix(),
-		Status: blockatlas.StatusCompleted,
+		Status: status,
 		Fee:    blockatlas.Amount(fee),
 		Block:  block,
 		Memo:   srcTx.Data.Contents.Memo,
@@ -133,7 +139,6 @@ func fillTransfer(tx *blockatlas.Tx, transfer MessageValueTransfer) {
 	tx.From = transfer.FromAddr
 	tx.To = transfer.ToAddr
 	tx.Type = blockatlas.TxTransfer
-
 	tx.Meta = blockatlas.Transfer{
 		Value:    blockatlas.Amount(value),
 		Symbol:   coin.Coins[coin.ATOM].Symbol,
