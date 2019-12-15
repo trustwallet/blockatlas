@@ -5,6 +5,7 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"net/url"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -17,7 +18,6 @@ func NewClient(api string) *Client {
 	c := Client{
 		Request: blockatlas.InitClient(api),
 	}
-	c.m = make(map[string][]CoinResult)
 	return &c
 }
 
@@ -26,61 +26,46 @@ func (c *Client) FetchLatestRates() (prices CoinPrices, err error) {
 	if err != nil {
 		return
 	}
-
-	coinsMap := make(map[string]GeckoCoin)
-	for _, coin := range coins {
-		coinsMap[coin.Id] = coin
-	}
-
-	for _, coin := range coins {
-		for platform, address := range coin.Platforms {
-			if len(platform) == 0 || len(address) == 0 {
-				continue
-			}
-			platformCoin, ok := coinsMap[platform]
-			if !ok {
-				continue
-			}
-
-			_, ok = c.m[coin.Id]
-			if !ok {
-				c.m[coin.Id] = make([]CoinResult, 0)
-			}
-			c.m[coin.Id] = append(c.m[coin.Id], CoinResult{
-				Symbol:   platformCoin.Symbol,
-				TokenId:  address,
-				CoinType: blockatlas.TypeToken,
-			})
-		}
-	}
-
-	coinIds := make([]string, 0)
-	for _, coin := range coins {
-		coinIds = append(coinIds, coin.Id)
-	}
+	c.m = prepareCache(coins)
+	ci := coinIds(coins)
 
 	bucketSize := 500
 	i := 0
-	for i < len(coinIds) {
-		var end = len(coinIds)
-		if len(coinIds) > i+bucketSize {
-			end = i + bucketSize
-		}
-		bucket := coinIds[i:end]
-		values := url.Values{
-			"vs_currency": {blockatlas.DefaultCurrency},
-			"sparkline":   {"false"},
-			"ids":         {strings.Join(bucket[:], ",")},
-		}
+	prChan := make(chan CoinPrices)
+	var wg sync.WaitGroup
+	for i < len(ci) {
+		wg.Add(1)
+		go func(i int) {
+			defer wg.Done()
+			var end = len(ci)
+			if len(ci) > i+bucketSize {
+				end = i + bucketSize
+			}
+			bucket := ci[i:end]
+			values := url.Values{
+				"vs_currency": {blockatlas.DefaultCurrency},
+				"sparkline":   {"false"},
+				"ids":         {strings.Join(bucket[:], ",")},
+			}
 
-		var cp CoinPrices
-		err = c.Get(&cp, "v3/coins/markets", values)
-		if err != nil {
-			return
-		}
-		prices = append(prices, cp...)
+			var cp CoinPrices
+			err = c.Get(&cp, "v3/coins/markets", values)
+			if err != nil {
+				return
+			}
+			prChan <- cp
+		}(i)
+
 		i += bucketSize
 	}
+
+	go func() {
+		for bucket := range prChan {
+			prices = append(prices, bucket...)
+		}
+	}()
+	wg.Wait()
+	close(prChan)
 
 	return
 }
@@ -99,4 +84,43 @@ func (c *Client) fetchCoinsList() (coins GeckoCoins, err error) {
 	}
 	err = c.GetWithCache(&coins, "v3/coins/list", values, time.Hour)
 	return
+}
+
+func prepareCache(coins GeckoCoins) map[string][]CoinResult {
+	m := make(map[string][]CoinResult)
+	coinsMap := make(map[string]GeckoCoin)
+	for _, coin := range coins {
+		coinsMap[coin.Id] = coin
+	}
+
+	for _, coin := range coins {
+		_, ok := m[coin.Id]
+		if !ok {
+			m[coin.Id] = make([]CoinResult, 0)
+		}
+		for platform, address := range coin.Platforms {
+			if len(platform) == 0 || len(address) == 0 {
+				continue
+			}
+			platformCoin, ok := coinsMap[platform]
+			if !ok {
+				continue
+			}
+
+			m[coin.Id] = append(m[coin.Id], CoinResult{
+				Symbol:   platformCoin.Symbol,
+				TokenId:  address,
+				CoinType: blockatlas.TypeToken,
+			})
+		}
+	}
+	return m
+}
+
+func coinIds(coins GeckoCoins) []string {
+	coinIds := make([]string, 0)
+	for _, coin := range coins {
+		coinIds = append(coinIds, coin.Id)
+	}
+	return coinIds
 }
