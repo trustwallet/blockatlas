@@ -5,6 +5,8 @@ import (
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/marketdata/rate"
 	"github.com/trustwallet/blockatlas/marketdata/rate/coingecko"
+	cmc "github.com/trustwallet/blockatlas/marketdata/rate/coinmarketcap"
+	"github.com/trustwallet/blockatlas/marketdata/rate/compound"
 	"github.com/trustwallet/blockatlas/marketdata/rate/fixer"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
@@ -21,15 +23,15 @@ func InitRates(storage storage.Market) {
 			viper.GetString("market.fixer.api_key"),
 			viper.GetString("market.fixer.rate_update_time"),
 		),
-		//1: cmc.InitRate(
-		//	viper.GetString("market.cmc.api"),
-		//	viper.GetString("market.cmc.api_key"),
-		//	viper.GetString("market.rate_update_time"),
-		//),
-		//2: compound.InitRate(
-		//	viper.GetString("market.compound.api"),
-		//	viper.GetString("market.rate_update_time"),
-		//),
+		1: cmc.InitRate(
+			viper.GetString("market.cmc.api"),
+			viper.GetString("market.cmc.api_key"),
+			viper.GetString("market.rate_update_time"),
+		),
+		2: compound.InitRate(
+			viper.GetString("market.compound.api"),
+			viper.GetString("market.rate_update_time"),
+		),
 		3: coingecko.InitRate(
 			viper.GetString("market.coingecko.api"),
 			viper.GetString("market.rate_update_time"),

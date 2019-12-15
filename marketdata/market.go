@@ -5,6 +5,9 @@ import (
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/marketdata/market"
 	"github.com/trustwallet/blockatlas/marketdata/market/coingecko"
+	cmc "github.com/trustwallet/blockatlas/marketdata/market/coinmarketcap"
+	"github.com/trustwallet/blockatlas/marketdata/market/compound"
+	"github.com/trustwallet/blockatlas/marketdata/market/dex"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/storage"
@@ -15,19 +18,19 @@ var marketProviders market.Providers
 func InitMarkets(storage storage.Market) {
 	marketProviders = market.Providers{
 		// Add Market Quote Providers:
-		//0: dex.InitMarket(
-		//	viper.GetString("market.dex.api"),
-		//	viper.GetString("market.dex.quote_update_time"),
-		//),
-		//1: cmc.InitMarket(
-		//	viper.GetString("market.cmc.api"),
-		//	viper.GetString("market.cmc.api_key"),
-		//	viper.GetString("market.quote_update_time"),
-		//),
-		//2: compound.InitMarket(
-		//	viper.GetString("market.compound.api"),
-		//	viper.GetString("market.quote_update_time"),
-		//),
+		0: dex.InitMarket(
+			viper.GetString("market.dex.api"),
+			viper.GetString("market.dex.quote_update_time"),
+		),
+		1: cmc.InitMarket(
+			viper.GetString("market.cmc.api"),
+			viper.GetString("market.cmc.api_key"),
+			viper.GetString("market.quote_update_time"),
+		),
+		2: compound.InitMarket(
+			viper.GetString("market.compound.api"),
+			viper.GetString("market.quote_update_time"),
+		),
 		3: coingecko.InitMarket(
 			viper.GetString("market.coingecko.api"),
 			viper.GetString("market.quote_update_time"),
