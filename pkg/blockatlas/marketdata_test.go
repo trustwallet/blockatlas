@@ -47,6 +47,10 @@ func TestTicker_ApplyRate(t *testing.T) {
 			"apply rate 6",
 			args{0.00000001, -0.0003, 10, -0.0003, "BTC"},
 			want{0.0000001, 0},
+		}, {
+			"apply for same currency",
+			args{0.33333, -0.0003, 10, -0.0003, "USD"},
+			want{0.33333, -0.0003},
 		},
 	}
 	for _, tt := range tests {
