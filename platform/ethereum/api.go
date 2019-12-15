@@ -233,7 +233,7 @@ func NormalizeCollection(c Collection, coinIndex uint, owner string) blockatlas.
 		return blockatlas.Collection{}
 	}
 
-	description := util.GetValidParameter(c.Contracts[0].Description, c.Description)
+	description := util.GetValidParameter(c.Description, c.Contracts[0].Description)
 	symbol := util.GetValidParameter(c.Contracts[0].Symbol, "")
 	collectionId := util.GetValidParameter(c.Contracts[0].Address, "")
 	version := util.GetValidParameter(c.Contracts[0].NftVersion, "")
@@ -274,6 +274,7 @@ func NormalizeCollectiblePage(c *Collection, srcPage []Collectible, coinIndex ui
 }
 
 func NormalizeCollectible(c *Collection, a Collectible, coinIndex uint) blockatlas.Collectible {
+	// TODO: fix unprotected code
 	address := util.GetValidParameter(c.Contracts[0].Address, "")
 	collectionType := util.GetValidParameter(c.Contracts[0].Type, "")
 	collectionID := address
