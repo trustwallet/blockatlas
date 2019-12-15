@@ -139,7 +139,6 @@ func fillTransfer(tx *blockatlas.Tx, transfer MessageValueTransfer) {
 	tx.From = transfer.FromAddr
 	tx.To = transfer.ToAddr
 	tx.Type = blockatlas.TxTransfer
-
 	tx.Meta = blockatlas.Transfer{
 		Value:    blockatlas.Amount(value),
 		Symbol:   coin.Coins[coin.ATOM].Symbol,

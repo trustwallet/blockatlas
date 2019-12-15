@@ -349,20 +349,47 @@ var failedTransferDst = blockatlas.Tx{
 	},
 }
 
-func TestNormalize(t *testing.T) {
-	testNormalize(t, "test transfer tx", transferSrc, transferDst)
-	testNormalize(t, "test delegate tx", delegateSrc, delegateDst)
-	testNormalize(t, "test undelegate tx", unDelegateSrc, unDelegateDst)
-	testNormalize(t, "test failed tx", failedTransferSrc, failedTransferDst)
+type test struct {
+	name string
+	Data string
+	want blockatlas.Tx
 }
 
-func testNormalize(t *testing.T, name, src string, dst blockatlas.Tx) {
-	t.Run(name, func(t *testing.T) {
+func TestNormalize(t *testing.T) {
+	tests := []test{
+		{
+			"test transfer tx",
+			transferSrc,
+			transferDst,
+		},
+		{
+			"test delegate tx",
+			delegateSrc,
+			delegateDst,
+		},
+		{
+			"test undelegate tx",
+			unDelegateSrc,
+			unDelegateDst,
+		},
+		{
+			"test failed tx",
+			failedTransferSrc,
+			failedTransferDst,
+		},
+	}
+	for _, tt := range tests {
+		testNormalize(t, tt)
+	}
+}
+
+func testNormalize(t *testing.T, tt test) {
+	t.Run(tt.name, func(t *testing.T) {
 		var srcTx Tx
-		err := json.Unmarshal([]byte(src), &srcTx)
+		err := json.Unmarshal([]byte(tt.Data), &srcTx)
 		assert.Nil(t, err)
 		tx, ok := Normalize(&srcTx)
 		assert.True(t, ok)
-		assert.Equal(t, dst, tx, "transfer: tx don't equal")
+		assert.Equal(t, tt.want, tx, "transfer: tx don't equal")
 	})
 }
