@@ -2,17 +2,15 @@ package ethereum
 
 import (
 	"fmt"
-	"math/big"
-	"net/http"
-	"strconv"
-	"strings"
-
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/util"
+	"math/big"
+	"net/http"
+	"strconv"
 )
 
 var (
@@ -238,9 +236,6 @@ func NormalizeCollection(c Collection, coinIndex uint, owner string) blockatlas.
 	collectionId := util.GetValidParameter(c.Contracts[0].Address, "")
 	version := util.GetValidParameter(c.Contracts[0].NftVersion, "")
 	collectionType := util.GetValidParameter(c.Contracts[0].Type, "")
-	if _, ok := slugTokens[collectionType]; ok {
-		collectionId = createCollectionId(collectionId, c.Slug)
-	}
 
 	return blockatlas.Collection{
 		Name:            c.Name,
@@ -250,7 +245,7 @@ func NormalizeCollection(c Collection, coinIndex uint, owner string) blockatlas.
 		Description:     description,
 		ExternalLink:    c.ExternalUrl,
 		Total:           int(c.Total.Int64()),
-		Id:              collectionId,
+		Id:              c.Slug,
 		CategoryAddress: collectionId,
 		Address:         owner,
 		Version:         version,
@@ -278,13 +273,9 @@ func NormalizeCollectible(c *Collection, a Collectible, coinIndex uint) blockatl
 	address := util.GetValidParameter(c.Contracts[0].Address, "")
 	collectionType := util.GetValidParameter(c.Contracts[0].Type, "")
 	collectionID := address
-	if _, ok := slugTokens[collectionType]; ok {
-		collectionID = createCollectionId(address, c.Slug)
-	}
 	externalLink := util.GetValidParameter(a.ExternalLink, a.AssetContract.ExternalLink)
-	id := strings.Join([]string{a.AssetContract.Address, a.TokenId}, "-")
 	return blockatlas.Collectible{
-		ID:               id,
+		ID:               c.Slug,
 		CollectionID:     collectionID,
 		ContractAddress:  address,
 		TokenID:          a.TokenId,
