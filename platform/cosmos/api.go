@@ -158,8 +158,10 @@ func fillDelegate(tx *blockatlas.Tx, delegate MessageValueDelegate, msgType stri
 	title := blockatlas.KeyTitle("")
 	switch msgType {
 	case MsgDelegate:
+		tx.Direction = blockatlas.DirectionOutgoing
 		title = blockatlas.AnyActionDelegation
 	case MsgUndelegate:
+		tx.Direction = blockatlas.DirectionIncoming
 		title = blockatlas.AnyActionUndelegation
 	}
 	tx.Meta = blockatlas.AnyAction{
