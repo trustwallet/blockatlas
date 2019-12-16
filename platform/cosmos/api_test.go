@@ -274,100 +274,6 @@ const getRewardSrc = `
 {
   "height": "54561",
   "txhash": "082BA88EC055A7C343A353297EAC104CE87C659E0DDD84621C9AC3C284232800",
-  "raw_log": "[{\"msg_index\":0,\"success\":true,\"log\":\"\",\"events\":[{\"type\":\"message\",\"attributes\":[{\"key\":\"sender\",\"value\":\"cosmos1jv65s3grqf6v6jl3dp4t6c9t9rk99cd88lyufl\"},{\"key\":\"module\",\"value\":\"distribution\"},{\"key\":\"sender\",\"value\":\"cosmos1y6yvdel7zys8x60gz9067fjpcpygsn62ae9x46\"},{\"key\":\"action\",\"value\":\"withdraw_delegator_reward\"}]},{\"type\":\"transfer\",\"attributes\":[{\"key\":\"recipient\",\"value\":\"cosmos1y6yvdel7zys8x60gz9067fjpcpygsn62ae9x46\"},{\"key\":\"amount\",\"value\":\"2692701uatom\"}]},{\"type\":\"withdraw_rewards\",\"attributes\":[{\"key\":\"amount\",\"value\":\"2692701uatom\"},{\"key\":\"validator\",\"value\":\"cosmosvaloper12w6tynmjzq4l8zdla3v4x0jt8lt4rcz5gk7zg2\"}]}]},{\"msg_index\":1,\"success\":true,\"log\":\"\",\"events\":[{\"type\":\"delegate\",\"attributes\":[{\"key\":\"validator\",\"value\":\"cosmosvaloper12w6tynmjzq4l8zdla3v4x0jt8lt4rcz5gk7zg2\"},{\"key\":\"amount\",\"value\":\"2692326\"}]},{\"type\":\"message\",\"attributes\":[{\"key\":\"module\",\"value\":\"staking\"},{\"key\":\"sender\",\"value\":\"cosmos1y6yvdel7zys8x60gz9067fjpcpygsn62ae9x46\"},{\"key\":\"action\",\"value\":\"delegate\"}]}]}]",
-  "logs": [
-    {
-      "msg_index": 0,
-      "success": true,
-      "log": "",
-      "events": [
-        {
-          "type": "message",
-          "attributes": [
-            {
-              "key": "sender",
-              "value": "cosmos1jv65s3grqf6v6jl3dp4t6c9t9rk99cd88lyufl"
-            },
-            {
-              "key": "module",
-              "value": "distribution"
-            },
-            {
-              "key": "sender",
-              "value": "cosmos1y6yvdel7zys8x60gz9067fjpcpygsn62ae9x46"
-            },
-            {
-              "key": "action",
-              "value": "withdraw_delegator_reward"
-            }
-          ]
-        },
-        {
-          "type": "transfer",
-          "attributes": [
-            {
-              "key": "recipient",
-              "value": "cosmos1y6yvdel7zys8x60gz9067fjpcpygsn62ae9x46"
-            },
-            {
-              "key": "amount",
-              "value": "2692701uatom"
-            }
-          ]
-        },
-        {
-          "type": "withdraw_rewards",
-          "attributes": [
-            {
-              "key": "amount",
-              "value": "2692701uatom"
-            },
-            {
-              "key": "validator",
-              "value": "cosmosvaloper12w6tynmjzq4l8zdla3v4x0jt8lt4rcz5gk7zg2"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "msg_index": 1,
-      "success": true,
-      "log": "",
-      "events": [
-        {
-          "type": "delegate",
-          "attributes": [
-            {
-              "key": "validator",
-              "value": "cosmosvaloper12w6tynmjzq4l8zdla3v4x0jt8lt4rcz5gk7zg2"
-            },
-            {
-              "key": "amount",
-              "value": "2692326"
-            }
-          ]
-        },
-        {
-          "type": "message",
-          "attributes": [
-            {
-              "key": "module",
-              "value": "staking"
-            },
-            {
-              "key": "sender",
-              "value": "cosmos1y6yvdel7zys8x60gz9067fjpcpygsn62ae9x46"
-            },
-            {
-              "key": "action",
-              "value": "delegate"
-            }
-          ]
-        }
-      ]
-    }
-  ],
   "gas_wanted": "300000",
   "gas_used": "156772",
   "tx": {
@@ -402,15 +308,6 @@ const getRewardSrc = `
         ],
         "gas": "300000"
       },
-      "signatures": [
-        {
-          "pub_key": {
-            "type": "tendermint/PubKeySecp256k1",
-            "value": "A9E/2C2Tibu+oguuOS2AwO9sGwy1ejes+u8hBdGJ2gui"
-          },
-          "signature": "V2jPEHk06YcRuC/wIbLwUOPUX+ITNVxNzAizshgdSLNuiAfgYtJ4iJsi7lNveMzCWekf4tfIz6QNnyKYra/Kcw=="
-        }
-      ],
       "memo": "复投"
     }
   },
