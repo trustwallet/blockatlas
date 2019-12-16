@@ -94,10 +94,6 @@ func prepareCache(coins GeckoCoins) map[string][]CoinResult {
 	}
 
 	for _, coin := range coins {
-		_, ok := m[coin.Id]
-		if !ok {
-			m[coin.Id] = make([]CoinResult, 0)
-		}
 		for platform, address := range coin.Platforms {
 			if len(platform) == 0 || len(address) == 0 {
 				continue
@@ -107,6 +103,10 @@ func prepareCache(coins GeckoCoins) map[string][]CoinResult {
 				continue
 			}
 
+			_, ok = m[coin.Id]
+			if !ok {
+				m[coin.Id] = make([]CoinResult, 0)
+			}
 			m[coin.Id] = append(m[coin.Id], CoinResult{
 				Symbol:   platformCoin.Symbol,
 				TokenId:  address,
