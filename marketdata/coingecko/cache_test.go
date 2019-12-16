@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func Test_prepareCache(t *testing.T) {
+func Test_NewCache(t *testing.T) {
 	tests := []struct {
 		name     string
 		coins    GeckoCoins
