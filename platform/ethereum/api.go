@@ -233,7 +233,6 @@ func NormalizeCollection(c Collection, coinIndex uint, owner string) blockatlas.
 
 	description := util.GetValidParameter(c.Description, c.Contracts[0].Description)
 	symbol := util.GetValidParameter(c.Contracts[0].Symbol, "")
-	collectionId := util.GetValidParameter(c.Contracts[0].Address, "")
 	version := util.GetValidParameter(c.Contracts[0].NftVersion, "")
 	collectionType := util.GetValidParameter(c.Contracts[0].Type, "")
 
@@ -246,7 +245,7 @@ func NormalizeCollection(c Collection, coinIndex uint, owner string) blockatlas.
 		ExternalLink:    c.ExternalUrl,
 		Total:           int(c.Total.Int64()),
 		Id:              c.Slug,
-		CategoryAddress: collectionId,
+		CategoryAddress: c.Slug,
 		Address:         owner,
 		Version:         version,
 		Coin:            coinIndex,
