@@ -10,7 +10,6 @@ import (
 )
 
 func Test_normalizeRates(t *testing.T) {
-	provider := "coingecko"
 	tests := []struct {
 		name      string
 		prices    coingecko.CoinPrices
@@ -29,8 +28,8 @@ func Test_normalizeRates(t *testing.T) {
 				},
 			},
 			blockatlas.Rates{
-				blockatlas.Rate{Currency: "CUSDC", Rate: 1 / 0.0021, Timestamp: 333, Provider: provider},
-				blockatlas.Rate{Currency: "CREP", Rate: 1 / 0.02, Timestamp: 333, Provider: provider},
+				blockatlas.Rate{Currency: "CUSDC", Rate: 1 / 0.0021, Timestamp: 333, Provider: id},
+				blockatlas.Rate{Currency: "CREP", Rate: 1 / 0.02, Timestamp: 333, Provider: id},
 			},
 		},
 		{
@@ -46,14 +45,14 @@ func Test_normalizeRates(t *testing.T) {
 				},
 			},
 			blockatlas.Rates{
-				blockatlas.Rate{Currency: "CUSDC", Rate: 1 / 110.0021, Timestamp: 123, Provider: provider},
-				blockatlas.Rate{Currency: "CREP", Rate: 1 / 110.02, Timestamp: 123, Provider: provider},
+				blockatlas.Rate{Currency: "CUSDC", Rate: 1 / 110.0021, Timestamp: 123, Provider: id},
+				blockatlas.Rate{Currency: "CREP", Rate: 1 / 110.02, Timestamp: 123, Provider: id},
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotRates := normalizeRates(tt.prices, provider)
+			gotRates := normalizeRates(tt.prices, id)
 			now := time.Now().Unix()
 			sort.Slice(gotRates, func(i, j int) bool {
 				gotRates[i].Timestamp = now
