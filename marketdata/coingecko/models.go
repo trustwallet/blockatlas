@@ -5,13 +5,6 @@ import (
 	"time"
 )
 
-type CoinMap struct {
-	Coin    uint   `json:"coin"`
-	Id      uint   `json:"id"`
-	Type    string `json:"type"`
-	TokenId string `json:"token_id"`
-}
-
 type CoinResult struct {
 	Symbol   string
 	TokenId  string
