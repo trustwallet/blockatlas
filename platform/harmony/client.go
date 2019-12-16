@@ -13,9 +13,9 @@ type Client struct {
 
 func (c *Client) GetTxsOfAddress(address string) (txPage *TxResult, err error) {
 	params := []interface{}{
-		map[string] interface{}{
+		map[string]interface{}{
 			"address": address,
-			"fullTx": true,
+			"fullTx":  true,
 		},
 	}
 	err = c.RpcCall(&txPage, "hmy_getTransactionsHistory", params)

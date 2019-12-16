@@ -105,16 +105,16 @@ func NormalizeTx(trx *Transaction) (tx blockatlas.Tx, b bool, err error) {
 	}
 
 	return blockatlas.Tx{
-		ID:     trx.Hash,
-		Coin:   coin.ONE,
-		From:   trx.From,
-		To:     trx.To,
-		Fee:    blockatlas.Amount(literalFee),
-		Status: blockatlas.StatusCompleted,
+		ID:       trx.Hash,
+		Coin:     coin.ONE,
+		From:     trx.From,
+		To:       trx.To,
+		Fee:      blockatlas.Amount(literalFee),
+		Status:   blockatlas.StatusCompleted,
 		Sequence: nonce,
-		Date:   int64(timestamp),
-		Type:   blockatlas.TxTransfer,
-		Block:  block,
+		Date:     int64(timestamp),
+		Type:     blockatlas.TxTransfer,
+		Block:    block,
 		Meta: blockatlas.Transfer{
 			Value:    blockatlas.Amount(literalValue),
 			Symbol:   coin.Coins[coin.ONE].Symbol,
