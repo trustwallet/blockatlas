@@ -27,12 +27,13 @@ func InitRate(api string, updateTime string) rate.Provider {
 }
 
 func (c *Coingecko) FetchLatestRates() (rates blockatlas.Rates, err error) {
-	coins, err := c.client.FetchLatestRates()
+	coins, err := c.client.FetchCoinsList()
 	if err != nil {
 		return
 	}
+	prices := c.client.FetchLatestRates(coins)
 
-	rates = normalizeRates(coins, c.GetId())
+	rates = normalizeRates(prices, c.GetId())
 	return
 }
 

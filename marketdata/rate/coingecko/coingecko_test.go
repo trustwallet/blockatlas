@@ -1,7 +1,8 @@
-package compound
+package coingecko
 
 import (
 	"github.com/stretchr/testify/assert"
+	"github.com/trustwallet/blockatlas/marketdata/coingecko"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"sort"
 	"testing"
@@ -9,24 +10,22 @@ import (
 )
 
 func Test_normalizeRates(t *testing.T) {
-	provider := "compound"
+	provider := "coingecko"
 	tests := []struct {
 		name      string
-		prices    CoinPrices
+		prices    coingecko.CoinPrices
 		wantRates blockatlas.Rates
 	}{
 		{
-			"test normalize compound rate 1",
-			CoinPrices{
-				Data: []CToken{
-					{
-						Symbol:       "cUSDC",
-						ExchangeRate: Amount{Value: 0.0021},
-					},
-					{
-						Symbol:       "cREP",
-						ExchangeRate: Amount{Value: 0.02},
-					},
+			"test normalize coingecko rate 1",
+			coingecko.CoinPrices{
+				{
+					Symbol:       "cUSDC",
+					CurrentPrice: 0.0021,
+				},
+				{
+					Symbol:       "cREP",
+					CurrentPrice: 0.02,
 				},
 			},
 			blockatlas.Rates{
@@ -35,17 +34,15 @@ func Test_normalizeRates(t *testing.T) {
 			},
 		},
 		{
-			"test normalize compound rate 2",
-			CoinPrices{
-				Data: []CToken{
-					{
-						Symbol:       "cUSDC",
-						ExchangeRate: Amount{Value: 110.0021},
-					},
-					{
-						Symbol:       "cREP",
-						ExchangeRate: Amount{Value: 110.02},
-					},
+			"test normalize coingecko rate 2",
+			coingecko.CoinPrices{
+				{
+					Symbol:       "cUSDC",
+					CurrentPrice: 110.0021,
+				},
+				{
+					Symbol:       "cREP",
+					CurrentPrice: 110.02,
 				},
 			},
 			blockatlas.Rates{

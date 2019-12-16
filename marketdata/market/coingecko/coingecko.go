@@ -13,6 +13,7 @@ const (
 
 type Market struct {
 	client *coingecko.Client
+	cache  *coingecko.Cache
 	market.Market
 }
 
@@ -28,11 +29,14 @@ func InitMarket(api string, updateTime string) market.Provider {
 }
 
 func (m *Market) GetData() (result blockatlas.Tickers, err error) {
-	coins, err := m.client.FetchLatestRates()
+	coins, err := m.client.FetchCoinsList()
 	if err != nil {
 		return
 	}
-	result = m.normalizeTickers(coins, m.GetId())
+	m.cache = coingecko.NewCache(coins)
+
+	rates := m.client.FetchLatestRates(coins)
+	result = m.normalizeTickers(rates, m.GetId())
 	return result, nil
 }
 
@@ -41,7 +45,7 @@ func (m *Market) normalizeTicker(price coingecko.CoinPrice, provider string) (ti
 	coinName := strings.ToUpper(price.Symbol)
 	coinType := blockatlas.TypeCoin
 
-	cgCoin, err := m.client.GetCoinsBySymbol(price.Id)
+	cgCoin, err := m.cache.GetCoinsBySymbol(price.Id)
 	if err != nil {
 		tickers = append(tickers, &blockatlas.Ticker{
 			CoinName: coinName,
