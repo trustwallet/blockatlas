@@ -28,6 +28,7 @@ const (
 	TxTokenSwap           TransactionType = "token_swap"
 	TxContractCall        TransactionType = "contract_call"
 	TxAnyAction           TransactionType = "any_action"
+	TxGetReward           TransactionType = "get_reward"
 
 	KeyPlaceOrder    KeyType = "place_order"
 	KeyCancelOrder   KeyType = "cancel_order"
@@ -37,14 +38,11 @@ const (
 	KeyApproveToken  KeyType = "approve_token"
 	KeyStakeDelegate KeyType = "stake_delegate"
 
-	KeyTitlePlaceOrder  KeyTitle = "Place Order"
-	KeyTitleCancelOrder KeyTitle = "Cancel Order"
-)
-
-// Titles of AnyAction meta
-const (
-	AnyActionDelegation   = "Delegation"
-	AnyActionUndelegation = "Undelegation"
+	KeyTitlePlaceOrder    KeyTitle = "Place Order"
+	KeyTitleCancelOrder   KeyTitle = "Cancel Order"
+	AnyActionDelegation   KeyTitle = "Delegation"
+	AnyActionUndelegation KeyTitle = "Undelegation"
+	AnyActionGetReward    KeyTitle = "Get Reward"
 )
 
 // TxPerPage says how many transactions to return per page
