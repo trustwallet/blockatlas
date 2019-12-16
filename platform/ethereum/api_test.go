@@ -416,7 +416,7 @@ var collection1Dst = blockatlas.Collection{
 	ExternalLink:    "https://www.cryptokitties.co/",
 	Total:           3,
 	CategoryAddress: "0x06012c8cf97bead5deae237070f9587f8e7a266d",
-	Id:              "0x06012c8cf97bead5deae237070f9587f8e7a266d",
+	Id:              "cryptokitties",
 	Address:         "0x0875BCab22dE3d02402bc38aEe4104e1239374a7",
 	Version:         "1.0",
 	Coin:            60,
@@ -431,8 +431,8 @@ var collection2Dst = blockatlas.Collection{
 	Description:     "Year 4424: The search begins for new life on the other side of the galaxy. Explore abandoned space stations, mysterious caverns, and ruins on far away worlds in order to unlock puzzles and secrets! Beware the rogue machines!",
 	ExternalLink:    "https://www.ageofrust.games/",
 	Total:           1,
-	CategoryAddress: "0xfaafdc07907ff5120a76b34b731b278c38d6043c---age-of-rust",
-	Id:              "0xfaafdc07907ff5120a76b34b731b278c38d6043c---age-of-rust",
+	CategoryAddress: "0xfaafdc07907ff5120a76b34b731b278c38d6043c",
+	Id:              "age-of-rust",
 	Address:         "0x0875BCab22dE3d02402bc38aEe4104e1239374a7",
 	Version:         "",
 	Coin:            60,
@@ -492,8 +492,8 @@ var collectibleCollectionDst = Collection{
 }
 
 var collectibleDst = blockatlas.Collectible{
-	ID:               "0xfaafdc07907ff5120a76b34b731b278c38d6043c-54277541829991970107421667568590323026590803461896874578610080514640537714688",
-	CollectionID:     "0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB---age-of-rust",
+	ID:               "age-of-rust",
+	CollectionID:     "0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB",
 	TokenID:          "54277541829991970107421667568590323026590803461896874578610080514640537714688",
 	CategoryContract: "0xfaafdc07907ff5120a76b34b731b278c38d6043c",
 	ContractAddress:  "0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB",
