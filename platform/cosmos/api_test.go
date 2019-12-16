@@ -291,15 +291,16 @@ var transferDst = blockatlas.Tx{
 }
 
 var delegateDst = blockatlas.Tx{
-	ID:     "11078091D1D5BD84F4275B6CEE02170428944DB0E8EEC37E980551435F6D04C7",
-	Coin:   coin.ATOM,
-	From:   "cosmos1237l0vauhw78qtwq045jd24ay4urpec6r3xfn3",
-	To:     "cosmosvaloper12w6tynmjzq4l8zdla3v4x0jt8lt4rcz5gk7zg2",
-	Fee:    "5000",
-	Date:   1564632616,
-	Block:  1258202,
-	Status: blockatlas.StatusCompleted,
-	Type:   blockatlas.TxAnyAction,
+	ID:        "11078091D1D5BD84F4275B6CEE02170428944DB0E8EEC37E980551435F6D04C7",
+	Coin:      coin.ATOM,
+	From:      "cosmos1237l0vauhw78qtwq045jd24ay4urpec6r3xfn3",
+	To:        "cosmosvaloper12w6tynmjzq4l8zdla3v4x0jt8lt4rcz5gk7zg2",
+	Fee:       "5000",
+	Date:      1564632616,
+	Block:     1258202,
+	Status:    blockatlas.StatusCompleted,
+	Type:      blockatlas.TxAnyAction,
+	Direction: blockatlas.DirectionOutgoing,
 	Meta: blockatlas.AnyAction{
 		Coin:     coin.ATOM,
 		Title:    blockatlas.AnyActionDelegation,
@@ -312,15 +313,16 @@ var delegateDst = blockatlas.Tx{
 }
 
 var unDelegateDst = blockatlas.Tx{
-	ID:     "A1EC36741FEF681F4A77B8F6032AD081100EE5ECB4CC76AEAC2174BC6B871CFE",
-	Coin:   coin.ATOM,
-	From:   "cosmos137rrp4p8n0nqcft0mwc62tdnyhhzf80knv5t94",
-	To:     "cosmosvaloper1te8nxpc2myjfrhaty0dnzdhs5ahdh5agzuym9v",
-	Fee:    "5000",
-	Date:   1564624521,
-	Block:  1257037,
-	Status: blockatlas.StatusCompleted,
-	Type:   blockatlas.TxAnyAction,
+	ID:        "A1EC36741FEF681F4A77B8F6032AD081100EE5ECB4CC76AEAC2174BC6B871CFE",
+	Coin:      coin.ATOM,
+	From:      "cosmos137rrp4p8n0nqcft0mwc62tdnyhhzf80knv5t94",
+	To:        "cosmosvaloper1te8nxpc2myjfrhaty0dnzdhs5ahdh5agzuym9v",
+	Fee:       "5000",
+	Date:      1564624521,
+	Block:     1257037,
+	Status:    blockatlas.StatusCompleted,
+	Type:      blockatlas.TxAnyAction,
+	Direction: blockatlas.DirectionIncoming,
 	Meta: blockatlas.AnyAction{
 		Coin:     coin.ATOM,
 		Title:    blockatlas.AnyActionUndelegation,
