@@ -463,8 +463,8 @@ var getRewardDst = blockatlas.Tx{
 	Memo:      "复投",
 	Meta: blockatlas.AnyAction{
 		Coin:     coin.ATOM,
-		Title:    blockatlas.AnyActionGetReward,
-		Key:      blockatlas.KeyStakeDelegate,
+		Title:    blockatlas.AnyActionClaimRewards,
+		Key:      blockatlas.KeyStakeClaimRewards,
 		Name:     "ATOM",
 		Symbol:   coin.Coins[coin.ATOM].Symbol,
 		Decimals: coin.Coins[coin.ATOM].Decimals,

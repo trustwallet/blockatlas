@@ -30,19 +30,20 @@ const (
 	TxAnyAction           TransactionType = "any_action"
 	TxGetReward           TransactionType = "get_reward"
 
-	KeyPlaceOrder    KeyType = "place_order"
-	KeyCancelOrder   KeyType = "cancel_order"
-	KeyIssueToken    KeyType = "issue_token"
-	KeyBurnToken     KeyType = "burn_token"
-	KeyMintToken     KeyType = "mint_token"
-	KeyApproveToken  KeyType = "approve_token"
-	KeyStakeDelegate KeyType = "stake_delegate"
+	KeyPlaceOrder        KeyType = "place_order"
+	KeyCancelOrder       KeyType = "cancel_order"
+	KeyIssueToken        KeyType = "issue_token"
+	KeyBurnToken         KeyType = "burn_token"
+	KeyMintToken         KeyType = "mint_token"
+	KeyApproveToken      KeyType = "approve_token"
+	KeyStakeDelegate     KeyType = "stake_delegate"
+	KeyStakeClaimRewards KeyType = "stake_claim_rewards"
 
 	KeyTitlePlaceOrder    KeyTitle = "Place Order"
 	KeyTitleCancelOrder   KeyTitle = "Cancel Order"
 	AnyActionDelegation   KeyTitle = "Delegation"
 	AnyActionUndelegation KeyTitle = "Undelegation"
-	AnyActionGetReward    KeyTitle = "Get Reward"
+	AnyActionClaimRewards KeyTitle = "Get Rewards"
 )
 
 // TxPerPage says how many transactions to return per page

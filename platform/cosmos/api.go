@@ -158,6 +158,7 @@ func fillDelegate(tx *blockatlas.Tx, delegate MessageValueDelegate, events Event
 	tx.To = delegate.ValidatorAddr
 	tx.Type = blockatlas.TxAnyAction
 
+	key := blockatlas.KeyStakeDelegate
 	title := blockatlas.KeyTitle("")
 	switch msgType {
 	case MsgDelegate:
@@ -168,7 +169,8 @@ func fillDelegate(tx *blockatlas.Tx, delegate MessageValueDelegate, events Event
 		title = blockatlas.AnyActionUndelegation
 	case MsgWithdrawDelegationReward:
 		tx.Direction = blockatlas.DirectionIncoming
-		title = blockatlas.AnyActionGetReward
+		title = blockatlas.AnyActionClaimRewards
+		key = blockatlas.KeyStakeClaimRewards
 
 		events := events.GetWithdrawRewardEvent()
 		if events != nil && events.Attributes != nil {
@@ -178,7 +180,7 @@ func fillDelegate(tx *blockatlas.Tx, delegate MessageValueDelegate, events Event
 	tx.Meta = blockatlas.AnyAction{
 		Coin:     coin.ATOM,
 		Title:    title,
-		Key:      blockatlas.KeyStakeDelegate,
+		Key:      key,
 		Name:     "ATOM",
 		Symbol:   coin.Coins[coin.ATOM].Symbol,
 		Decimals: coin.Coins[coin.ATOM].Decimals,
