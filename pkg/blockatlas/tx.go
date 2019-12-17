@@ -28,7 +28,6 @@ const (
 	TxTokenSwap           TransactionType = "token_swap"
 	TxContractCall        TransactionType = "contract_call"
 	TxAnyAction           TransactionType = "any_action"
-	TxGetReward           TransactionType = "get_reward"
 
 	KeyPlaceOrder        KeyType = "place_order"
 	KeyCancelOrder       KeyType = "cancel_order"
@@ -43,7 +42,7 @@ const (
 	KeyTitleCancelOrder   KeyTitle = "Cancel Order"
 	AnyActionDelegation   KeyTitle = "Delegation"
 	AnyActionUndelegation KeyTitle = "Undelegation"
-	AnyActionClaimRewards KeyTitle = "Get Rewards"
+	AnyActionClaimRewards KeyTitle = "Claim Rewards"
 )
 
 // TxPerPage says how many transactions to return per page
