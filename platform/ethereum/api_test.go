@@ -492,8 +492,8 @@ var collectibleCollectionDst = Collection{
 }
 
 var collectibleDst = blockatlas.Collectible{
-	ID:               "age-of-rust",
-	CollectionID:     "0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB",
+	ID:               "0xfaafdc07907ff5120a76b34b731b278c38d6043c-54277541829991970107421667568590323026590803461896874578610080514640537714688",
+	CollectionID:     "age-of-rust",
 	TokenID:          "54277541829991970107421667568590323026590803461896874578610080514640537714688",
 	CategoryContract: "0xfaafdc07907ff5120a76b34b731b278c38d6043c",
 	ContractAddress:  "0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB",
