@@ -271,11 +271,10 @@ func NormalizeCollectible(c *Collection, a Collectible, coinIndex uint) blockatl
 	// TODO: fix unprotected code
 	address := util.GetValidParameter(c.Contracts[0].Address, "")
 	collectionType := util.GetValidParameter(c.Contracts[0].Type, "")
-	collectionID := address
 	externalLink := util.GetValidParameter(a.ExternalLink, a.AssetContract.ExternalLink)
 	return blockatlas.Collectible{
 		ID:               c.Slug,
-		CollectionID:     collectionID,
+		CollectionID:     c.Slug,
 		ContractAddress:  address,
 		TokenID:          a.TokenId,
 		CategoryContract: a.AssetContract.Address,
