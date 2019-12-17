@@ -25,7 +25,7 @@ func NewClient(api string) *Client {
 }
 
 func (c *Client) FetchLatestRates(coins GeckoCoins) (prices CoinPrices) {
-	ci := coinIds(coins)
+	ci := coins.coinIds()
 
 	i := 0
 	prChan := make(chan CoinPrices)
@@ -77,7 +77,7 @@ func (c *Client) FetchCoinsList() (coins GeckoCoins, err error) {
 	return
 }
 
-func (coins GeckoCoins)coinIds() []string {
+func (coins GeckoCoins) coinIds() []string {
 	coinIds := make([]string, 0)
 	for _, coin := range coins {
 		coinIds = append(coinIds, coin.Id)

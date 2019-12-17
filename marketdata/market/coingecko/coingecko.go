@@ -28,7 +28,7 @@ func InitMarket(api string, updateTime string) market.Provider {
 	return m
 }
 
-func (m *Market) GetData() (blockatlas.Tickers, error) {
+func (m *Market) GetData() (result blockatlas.Tickers, err error) {
 	coins, err := m.client.FetchCoinsList()
 	if err != nil {
 		return
