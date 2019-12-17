@@ -222,4 +222,4 @@ digibyte:
   api: https://dgb1.trezor.io/api
 
 harmony:
-  api: https://e0.t.hmny.io:9500
+  api: https://api.s0.t.hmny.io
