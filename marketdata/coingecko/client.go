@@ -74,7 +74,7 @@ func (c *Client) FetchCoinsList() (coins GeckoCoins, err error) {
 	return
 }
 
-func coinIds(coins GeckoCoins) []string {
+func (coins GeckoCoins)coinIds() []string {
 	coinIds := make([]string, 0)
 	for _, coin := range coins {
 		coinIds = append(coinIds, coin.Id)
