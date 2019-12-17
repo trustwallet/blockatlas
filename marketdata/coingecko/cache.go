@@ -10,7 +10,7 @@ type Cache map[string][]CoinResult
 func (c Cache) GetCoinsBySymbol(id string) (coins []CoinResult, err error) {
 	coins, ok := c[id]
 	if !ok {
-		err = errors.E("No coin found by id", errors.Params{"id": id}).Err
+		err = errors.E("No coin found by id", errors.Params{"id": id})
 	}
 	return
 }
