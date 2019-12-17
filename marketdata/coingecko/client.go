@@ -9,6 +9,10 @@ import (
 	"time"
 )
 
+const (
+	bucketSize = 500
+)
+
 type Client struct {
 	blockatlas.Request
 }
@@ -23,7 +27,6 @@ func NewClient(api string) *Client {
 func (c *Client) FetchLatestRates(coins GeckoCoins) (prices CoinPrices) {
 	ci := coinIds(coins)
 
-	bucketSize := 500
 	i := 0
 	prChan := make(chan CoinPrices)
 	var wg sync.WaitGroup
