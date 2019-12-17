@@ -88,9 +88,12 @@ func Normalize(srcTx *Tx) (tx blockatlas.Tx, ok bool) {
 	// Sometimes fees can be null objects (in the case of no fees e.g. F044F91441C460EDCD90E0063A65356676B7B20684D94C731CF4FAB204035B41)
 	fee := "0"
 	if len(srcTx.Data.Contents.Fee.FeeAmount) > 0 {
-		fee, err = util.DecimalToSatoshis(srcTx.Data.Contents.Fee.FeeAmount[0].Quantity)
-		if err != nil {
-			return blockatlas.Tx{}, false
+		qty := srcTx.Data.Contents.Fee.FeeAmount[0].Quantity
+		if len(qty) > 0 && qty != fee {
+			fee, err = util.DecimalToSatoshis(srcTx.Data.Contents.Fee.FeeAmount[0].Quantity)
+			if err != nil {
+				return blockatlas.Tx{}, false
+			}
 		}
 	}
 
@@ -122,7 +125,7 @@ func Normalize(srcTx *Tx) (tx blockatlas.Tx, ok bool) {
 		return tx, true
 	case MessageValueDelegate:
 		delegate := msg.Value.(MessageValueDelegate)
-		fillDelegate(&tx, delegate, msg.Type)
+		fillDelegate(&tx, delegate, srcTx.Events, msg.Type)
 		return tx, true
 	}
 	return tx, false
@@ -146,7 +149,7 @@ func fillTransfer(tx *blockatlas.Tx, transfer MessageValueTransfer) {
 	}
 }
 
-func fillDelegate(tx *blockatlas.Tx, delegate MessageValueDelegate, msgType string) {
+func fillDelegate(tx *blockatlas.Tx, delegate MessageValueDelegate, events Events, msgType TxType) {
 	value, err := util.DecimalToSatoshis(delegate.Amount.Quantity)
 	if err != nil {
 		return
@@ -155,6 +158,7 @@ func fillDelegate(tx *blockatlas.Tx, delegate MessageValueDelegate, msgType stri
 	tx.To = delegate.ValidatorAddr
 	tx.Type = blockatlas.TxAnyAction
 
+	key := blockatlas.KeyStakeDelegate
 	title := blockatlas.KeyTitle("")
 	switch msgType {
 	case MsgDelegate:
@@ -163,11 +167,20 @@ func fillDelegate(tx *blockatlas.Tx, delegate MessageValueDelegate, msgType stri
 	case MsgUndelegate:
 		tx.Direction = blockatlas.DirectionIncoming
 		title = blockatlas.AnyActionUndelegation
+	case MsgWithdrawDelegationReward:
+		tx.Direction = blockatlas.DirectionIncoming
+		title = blockatlas.AnyActionClaimRewards
+		key = blockatlas.KeyStakeClaimRewards
+
+		events := events.GetWithdrawRewardEvent()
+		if events != nil && events.Attributes != nil {
+			value = events.Attributes.GetWithdrawRewardValue()
+		}
 	}
 	tx.Meta = blockatlas.AnyAction{
 		Coin:     coin.ATOM,
 		Title:    title,
-		Key:      blockatlas.KeyStakeDelegate,
+		Key:      key,
 		Name:     "ATOM",
 		Symbol:   coin.Coins[coin.ATOM].Symbol,
 		Decimals: coin.Coins[coin.ATOM].Decimals,
