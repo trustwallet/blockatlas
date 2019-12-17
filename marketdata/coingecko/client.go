@@ -55,12 +55,13 @@ func (c *Client) FetchLatestRates(coins GeckoCoins) (prices CoinPrices) {
 	}
 
 	go func() {
-		for bucket := range prChan {
-			prices = append(prices, bucket...)
-		}
+		wg.Wait()
+		close(prChan)
 	}()
-	wg.Wait()
-	close(prChan)
+
+	for bucket := range prChan {
+		prices = append(prices, bucket...)
+	}
 
 	return
 }
