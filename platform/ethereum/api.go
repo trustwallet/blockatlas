@@ -11,6 +11,7 @@ import (
 	"math/big"
 	"net/http"
 	"strconv"
+	"strings"
 )
 
 var (
@@ -272,8 +273,9 @@ func NormalizeCollectible(c *Collection, a Collectible, coinIndex uint) blockatl
 	address := util.GetValidParameter(c.Contracts[0].Address, "")
 	collectionType := util.GetValidParameter(c.Contracts[0].Type, "")
 	externalLink := util.GetValidParameter(a.ExternalLink, a.AssetContract.ExternalLink)
+	id := strings.Join([]string{a.AssetContract.Address, a.TokenId}, "-")
 	return blockatlas.Collectible{
-		ID:               c.Slug,
+		ID:               id,
 		CollectionID:     c.Slug,
 		ContractAddress:  address,
 		TokenID:          a.TokenId,
