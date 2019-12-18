@@ -171,11 +171,7 @@ func fillDelegate(tx *blockatlas.Tx, delegate MessageValueDelegate, events Event
 		tx.Direction = blockatlas.DirectionIncoming
 		title = blockatlas.AnyActionClaimRewards
 		key = blockatlas.KeyStakeClaimRewards
-
-		events := events.GetWithdrawRewardEvent()
-		if events != nil && events.Attributes != nil {
-			value = events.Attributes.GetWithdrawRewardValue()
-		}
+		value = events.GetWithdrawRewardValue()
 	}
 	tx.Meta = blockatlas.AnyAction{
 		Coin:     coin.ATOM,
