@@ -1,0 +1,10 @@
+{
+  "/ns/lookup": {
+    "name": "ens.zil",
+    "coin": 0
+  },
+  "/v2/ns/lookup": {
+    "name": "ens.zil",
+    "coins": 0
+  }
+}

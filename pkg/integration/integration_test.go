@@ -14,6 +14,7 @@ import (
 )
 
 func TestApis(t *testing.T) {
+	os.Setenv("ATLAS_GIN_MODE", "debug")
 	config.LoadConfig(os.Getenv("TEST_CONFIG"))
 	platform.Init()
 

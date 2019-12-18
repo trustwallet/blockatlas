@@ -13,54 +13,58 @@ import (
 )
 
 const (
-	fixtures = "fixtures.json"
-	exclude  = "exclude.json"
+	fixturesFolder    = "testdata"            // Folder contains the JSON fixtures
+	bodyFixturesFile  = "body_fixtures.json"  // Body fixtures for POST requests
+	coinFixturesFile  = "coin_fixtures.json"  // Coin fixtures for path parameters
+	queryFixturesFile = "query_fixtures.json" // Query string for GET requests
+	excludeApisFile   = "exclude.json"        // API's need to be excluded from integration tests
 )
 
-type Fixture map[string]map[string]string
-type Exclude []string
+type BodyFixture map[string]interface{}
+type CoinFixture map[string]map[string]string
+type QueryFixture map[string]map[string]interface{}
+type ExcludeApis []string
 
-var f Fixture
-var e Exclude
+var bodyFixture BodyFixture
+var coinFixture CoinFixture
+var queryFixture QueryFixture
+var excludeApis ExcludeApis
 
 func init() {
-	var err error
-	f, err = getFixtures()
+	logger.InitLogger()
+	err := geFixtures(bodyFixturesFile, &bodyFixture)
 	if err != nil {
 		logger.Panic(err)
 	}
-	e, err = getExcludeApis()
+	err = geFixtures(coinFixturesFile, &coinFixture)
+	if err != nil {
+		logger.Panic(err)
+	}
+	err = geFixtures(queryFixturesFile, &queryFixture)
+	if err != nil {
+		logger.Panic(err)
+	}
+	err = geFixtures(excludeApisFile, &excludeApis)
 	if err != nil {
 		logger.Panic(err)
 	}
 }
 
-func getFixtures() (Fixture, error) {
-	b, err := getFile(fixtures)
+func geFixtures(f string, r interface{}) error {
+	b, err := getFile(f)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	var r Fixture
 	err = json.Unmarshal(b[:], &r)
-	return r, err
+	return err
 }
 
 func isExcluded(path string) bool {
-	return contains(e, path)
-}
-
-func getExcludeApis() (Exclude, error) {
-	b, err := getFile(exclude)
-	if err != nil {
-		return nil, err
-	}
-	var r Exclude
-	err = json.Unmarshal(b[:], &r)
-	return r, err
+	return contains(excludeApis, path)
 }
 
 func getFile(file string) ([]byte, error) {
-	golden := filepath.Join("testdata", file)
+	golden := filepath.Join(fixturesFolder, file)
 	return ioutil.ReadFile(golden)
 }
 
@@ -73,12 +77,28 @@ func getCoin(path string) coin.Coin {
 	return coin.Coin{}
 }
 
-func addFixtures(path string) string {
+func getBody(path string) interface{} {
+	fix, ok := bodyFixture[path]
+	if !ok {
+		return nil
+	}
+	return fix
+}
+
+func getQuery(path string) map[string]interface{} {
+	fix, ok := queryFixture[path]
+	if !ok {
+		return nil
+	}
+	return fix
+}
+
+func addCoinFixtures(path string) string {
 	c := getCoin(path)
 	if (c == coin.Coin{}) {
 		return path
 	}
-	fix, ok := f[c.Handle]
+	fix, ok := coinFixture[c.Handle]
 	if !ok {
 		return strings.Replace(path, ":address", c.SampleAddr, -1)
 	}

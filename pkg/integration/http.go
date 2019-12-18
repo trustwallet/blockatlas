@@ -3,8 +3,10 @@
 package integration
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/Pantani/httpexpect"
+	"github.com/trustwallet/blockatlas/pkg/logger"
 	"net/http"
 	"sync"
 	"testing"
@@ -43,23 +45,34 @@ func newClient(t *testing.T, port string) *Client {
 	}
 }
 
-func (c *Client) testGet(url string) {
+func (c *Client) testGet(url string, query map[string]interface{}) {
 	request := c.e.GET(url).WithURL(c.baseUrl)
+	for key, value := range query {
+		request.WithQuery(key, value)
+	}
 	response := request.Expect()
+
 	//TODO create a logic to validate schemas
 	//response.JSON().Schema(schema)
 	if response.Raw().StatusCode != http.StatusOK {
-		fmt.Printf("\n%s - %s\n", response.Raw().Status, url)
+		logger.Error("Invalid status code", logger.Params{"code": response.Raw().Status, "url": url})
 	}
 	response.Status(http.StatusOK)
 }
 
-func (c *Client) testPost(url string) {
+func (c *Client) testPost(url string, body interface{}) {
 	request := c.e.POST(url).WithURL(c.baseUrl)
-	request.WithText("[]")
+	if body == nil {
+		request.WithText("[]")
+	} else {
+		b, err := json.Marshal(body)
+		if err == nil && b != nil {
+			request.WithText(string(b))
+		}
+	}
 	response := request.Expect()
 	if response.Raw().StatusCode != http.StatusOK {
-		fmt.Printf("\n%s - %s\n", response.Raw().Status, url)
+		logger.Error("Invalid status code", logger.Params{"code": response.Raw().Status, "url": url})
 	}
 	response.Status(http.StatusOK)
 }
@@ -69,12 +82,14 @@ func (c *Client) doTests(method, path string, wg *sync.WaitGroup) {
 	if isExcluded(path) {
 		return
 	}
-	url := addFixtures(path)
+	url := addCoinFixtures(path)
 	switch method {
 	case "GET":
-		c.testGet(url)
+		query := getQuery(path)
+		c.testGet(url, query)
 	case "POST":
-		c.testPost(url)
+		body := getBody(path)
+		c.testPost(url, body)
 	}
 }
 
