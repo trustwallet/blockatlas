@@ -270,7 +270,362 @@ const unDelegateSrc = `
    "timestamp":"2019-08-01T01:55:21Z"
 }`
 
-const getRewardSrc = `
+const claimRewardSrc1 = `
+{
+  "height": "79678",
+  "txhash": "C382DCFDC30E2DA294421DAEAD5862F118592A7B000EE91F6BEF8452A1F525D7",
+  "gas_wanted": "1600000",
+  "gas_used": "492252",
+  "tx": {
+    "type": "cosmos-sdk/StdTx",
+    "value": {
+      "msg": [
+        {
+          "type": "cosmos-sdk/MsgWithdrawDelegationReward",
+          "value": {
+            "delegator_address": "cosmos1cxehfdhfm96ljpktdxsj0k6xp9gtuheghwgqug",
+            "validator_address": "cosmosvaloper1ptyzewnns2kn37ewtmv6ppsvhdnmeapvtfc9y5"
+          }
+        },
+        {
+          "type": "cosmos-sdk/MsgWithdrawDelegationReward",
+          "value": {
+            "delegator_address": "cosmos1cxehfdhfm96ljpktdxsj0k6xp9gtuheghwgqug",
+            "validator_address": "cosmosvaloper1fhr7e04ct0zslmkzqt9smakg3sxrdve6ulclj2"
+          }
+        },
+        {
+          "type": "cosmos-sdk/MsgWithdrawDelegationReward",
+          "value": {
+            "delegator_address": "cosmos1cxehfdhfm96ljpktdxsj0k6xp9gtuheghwgqug",
+            "validator_address": "cosmosvaloper1we6knm8qartmmh2r0qfpsz6pq0s7emv3e0meuw"
+          }
+        },
+        {
+          "type": "cosmos-sdk/MsgWithdrawDelegationReward",
+          "value": {
+            "delegator_address": "cosmos1cxehfdhfm96ljpktdxsj0k6xp9gtuheghwgqug",
+            "validator_address": "cosmosvaloper102ruvpv2srmunfffxavttxnhezln6fnc54at8c"
+          }
+        },
+        {
+          "type": "cosmos-sdk/MsgWithdrawDelegationReward",
+          "value": {
+            "delegator_address": "cosmos1cxehfdhfm96ljpktdxsj0k6xp9gtuheghwgqug",
+            "validator_address": "cosmosvaloper1sjllsnramtg3ewxqwwrwjxfgc4n4ef9u2lcnj0"
+          }
+        },
+        {
+          "type": "cosmos-sdk/MsgWithdrawDelegationReward",
+          "value": {
+            "delegator_address": "cosmos1cxehfdhfm96ljpktdxsj0k6xp9gtuheghwgqug",
+            "validator_address": "cosmosvaloper132juzk0gdmwuxvx4phug7m3ymyatxlh9734g4w"
+          }
+        },
+        {
+          "type": "cosmos-sdk/MsgWithdrawDelegationReward",
+          "value": {
+            "delegator_address": "cosmos1cxehfdhfm96ljpktdxsj0k6xp9gtuheghwgqug",
+            "validator_address": "cosmosvaloper1k9a0cs97vul8w2vwknlfmpez6prv8klv03lv3d"
+          }
+        },
+        {
+          "type": "cosmos-sdk/MsgWithdrawDelegationReward",
+          "value": {
+            "delegator_address": "cosmos1cxehfdhfm96ljpktdxsj0k6xp9gtuheghwgqug",
+            "validator_address": "cosmosvaloper1ey69r37gfxvxg62sh4r0ktpuc46pzjrm873ae8"
+          }
+        }
+      ],
+      "fee": {
+        "amount": [
+          {
+            "denom": "uatom",
+            "amount": "1000"
+          }
+        ],
+        "gas": "1600000"
+      },
+      "memo": ""
+    }
+  },
+  "timestamp": "2019-12-18T03:04:33Z",
+  "events": [
+    {
+      "type": "message",
+      "attributes": [
+        {
+          "key": "sender",
+          "value": "cosmos1jv65s3grqf6v6jl3dp4t6c9t9rk99cd88lyufl"
+        },
+        {
+          "key": "module",
+          "value": "distribution"
+        },
+        {
+          "key": "sender",
+          "value": "cosmos1cxehfdhfm96ljpktdxsj0k6xp9gtuheghwgqug"
+        },
+        {
+          "key": "action",
+          "value": "withdraw_delegator_reward"
+        },
+        {
+          "key": "sender",
+          "value": "cosmos1jv65s3grqf6v6jl3dp4t6c9t9rk99cd88lyufl"
+        },
+        {
+          "key": "module",
+          "value": "distribution"
+        },
+        {
+          "key": "sender",
+          "value": "cosmos1cxehfdhfm96ljpktdxsj0k6xp9gtuheghwgqug"
+        },
+        {
+          "key": "action",
+          "value": "withdraw_delegator_reward"
+        },
+        {
+          "key": "sender",
+          "value": "cosmos1jv65s3grqf6v6jl3dp4t6c9t9rk99cd88lyufl"
+        },
+        {
+          "key": "module",
+          "value": "distribution"
+        },
+        {
+          "key": "sender",
+          "value": "cosmos1cxehfdhfm96ljpktdxsj0k6xp9gtuheghwgqug"
+        },
+        {
+          "key": "action",
+          "value": "withdraw_delegator_reward"
+        },
+        {
+          "key": "sender",
+          "value": "cosmos1jv65s3grqf6v6jl3dp4t6c9t9rk99cd88lyufl"
+        },
+        {
+          "key": "module",
+          "value": "distribution"
+        },
+        {
+          "key": "sender",
+          "value": "cosmos1cxehfdhfm96ljpktdxsj0k6xp9gtuheghwgqug"
+        },
+        {
+          "key": "action",
+          "value": "withdraw_delegator_reward"
+        },
+        {
+          "key": "sender",
+          "value": "cosmos1jv65s3grqf6v6jl3dp4t6c9t9rk99cd88lyufl"
+        },
+        {
+          "key": "module",
+          "value": "distribution"
+        },
+        {
+          "key": "sender",
+          "value": "cosmos1cxehfdhfm96ljpktdxsj0k6xp9gtuheghwgqug"
+        },
+        {
+          "key": "action",
+          "value": "withdraw_delegator_reward"
+        },
+        {
+          "key": "sender",
+          "value": "cosmos1jv65s3grqf6v6jl3dp4t6c9t9rk99cd88lyufl"
+        },
+        {
+          "key": "module",
+          "value": "distribution"
+        },
+        {
+          "key": "sender",
+          "value": "cosmos1cxehfdhfm96ljpktdxsj0k6xp9gtuheghwgqug"
+        },
+        {
+          "key": "action",
+          "value": "withdraw_delegator_reward"
+        },
+        {
+          "key": "sender",
+          "value": "cosmos1jv65s3grqf6v6jl3dp4t6c9t9rk99cd88lyufl"
+        },
+        {
+          "key": "module",
+          "value": "distribution"
+        },
+        {
+          "key": "sender",
+          "value": "cosmos1cxehfdhfm96ljpktdxsj0k6xp9gtuheghwgqug"
+        },
+        {
+          "key": "action",
+          "value": "withdraw_delegator_reward"
+        },
+        {
+          "key": "sender",
+          "value": "cosmos1jv65s3grqf6v6jl3dp4t6c9t9rk99cd88lyufl"
+        },
+        {
+          "key": "module",
+          "value": "distribution"
+        },
+        {
+          "key": "sender",
+          "value": "cosmos1cxehfdhfm96ljpktdxsj0k6xp9gtuheghwgqug"
+        },
+        {
+          "key": "action",
+          "value": "withdraw_delegator_reward"
+        }
+      ]
+    },
+    {
+      "type": "transfer",
+      "attributes": [
+        {
+          "key": "recipient",
+          "value": "cosmos1cxehfdhfm96ljpktdxsj0k6xp9gtuheghwgqug"
+        },
+        {
+          "key": "amount",
+          "value": "1138uatom"
+        },
+        {
+          "key": "recipient",
+          "value": "cosmos1cxehfdhfm96ljpktdxsj0k6xp9gtuheghwgqug"
+        },
+        {
+          "key": "amount",
+          "value": "40612uatom"
+        },
+        {
+          "key": "recipient",
+          "value": "cosmos1cxehfdhfm96ljpktdxsj0k6xp9gtuheghwgqug"
+        },
+        {
+          "key": "amount",
+          "value": "954uatom"
+        },
+        {
+          "key": "recipient",
+          "value": "cosmos1cxehfdhfm96ljpktdxsj0k6xp9gtuheghwgqug"
+        },
+        {
+          "key": "amount",
+          "value": "43574uatom"
+        },
+        {
+          "key": "recipient",
+          "value": "cosmos1cxehfdhfm96ljpktdxsj0k6xp9gtuheghwgqug"
+        },
+        {
+          "key": "amount",
+          "value": "40094uatom"
+        },
+        {
+          "key": "recipient",
+          "value": "cosmos1cxehfdhfm96ljpktdxsj0k6xp9gtuheghwgqug"
+        },
+        {
+          "key": "amount",
+          "value": "402uatom"
+        },
+        {
+          "key": "recipient",
+          "value": "cosmos1cxehfdhfm96ljpktdxsj0k6xp9gtuheghwgqug"
+        },
+        {
+          "key": "amount",
+          "value": "749uatom"
+        },
+        {
+          "key": "recipient",
+          "value": "cosmos1cxehfdhfm96ljpktdxsj0k6xp9gtuheghwgqug"
+        },
+        {
+          "key": "amount",
+          "value": "157uatom"
+        }
+      ]
+    },
+    {
+      "type": "withdraw_rewards",
+      "attributes": [
+        {
+          "key": "amount",
+          "value": "1138uatom"
+        },
+        {
+          "key": "validator",
+          "value": "cosmosvaloper1ptyzewnns2kn37ewtmv6ppsvhdnmeapvtfc9y5"
+        },
+        {
+          "key": "amount",
+          "value": "40612uatom"
+        },
+        {
+          "key": "validator",
+          "value": "cosmosvaloper1fhr7e04ct0zslmkzqt9smakg3sxrdve6ulclj2"
+        },
+        {
+          "key": "amount",
+          "value": "954uatom"
+        },
+        {
+          "key": "validator",
+          "value": "cosmosvaloper1we6knm8qartmmh2r0qfpsz6pq0s7emv3e0meuw"
+        },
+        {
+          "key": "amount",
+          "value": "43574uatom"
+        },
+        {
+          "key": "validator",
+          "value": "cosmosvaloper102ruvpv2srmunfffxavttxnhezln6fnc54at8c"
+        },
+        {
+          "key": "amount",
+          "value": "40094uatom"
+        },
+        {
+          "key": "validator",
+          "value": "cosmosvaloper1sjllsnramtg3ewxqwwrwjxfgc4n4ef9u2lcnj0"
+        },
+        {
+          "key": "amount",
+          "value": "402uatom"
+        },
+        {
+          "key": "validator",
+          "value": "cosmosvaloper132juzk0gdmwuxvx4phug7m3ymyatxlh9734g4w"
+        },
+        {
+          "key": "amount",
+          "value": "749uatom"
+        },
+        {
+          "key": "validator",
+          "value": "cosmosvaloper1k9a0cs97vul8w2vwknlfmpez6prv8klv03lv3d"
+        },
+        {
+          "key": "amount",
+          "value": "157uatom"
+        },
+        {
+          "key": "validator",
+          "value": "cosmosvaloper1ey69r37gfxvxg62sh4r0ktpuc46pzjrm873ae8"
+        }
+      ]
+    }
+  ]
+}`
+
+const claimRewardSrc2 = `
 {
   "height": "54561",
   "txhash": "082BA88EC055A7C343A353297EAC104CE87C659E0DDD84621C9AC3C284232800",
@@ -449,7 +804,7 @@ var unDelegateDst = blockatlas.Tx{
 	},
 }
 
-var getRewardDst = blockatlas.Tx{
+var claimRewardDst2 = blockatlas.Tx{
 	ID:        "082BA88EC055A7C343A353297EAC104CE87C659E0DDD84621C9AC3C284232800",
 	Coin:      coin.ATOM,
 	From:      "cosmos1y6yvdel7zys8x60gz9067fjpcpygsn62ae9x46",
@@ -469,6 +824,29 @@ var getRewardDst = blockatlas.Tx{
 		Symbol:   coin.Coins[coin.ATOM].Symbol,
 		Decimals: coin.Coins[coin.ATOM].Decimals,
 		Value:    "2692701",
+	},
+}
+
+var claimRewardDst1 = blockatlas.Tx{
+	ID:        "C382DCFDC30E2DA294421DAEAD5862F118592A7B000EE91F6BEF8452A1F525D7",
+	Coin:      coin.ATOM,
+	From:      "cosmos1cxehfdhfm96ljpktdxsj0k6xp9gtuheghwgqug",
+	To:        "cosmosvaloper1ptyzewnns2kn37ewtmv6ppsvhdnmeapvtfc9y5",
+	Fee:       "1000",
+	Date:      1576638273,
+	Block:     79678,
+	Status:    blockatlas.StatusCompleted,
+	Type:      blockatlas.TxAnyAction,
+	Direction: blockatlas.DirectionIncoming,
+	Memo:      "",
+	Meta: blockatlas.AnyAction{
+		Coin:     coin.ATOM,
+		Title:    blockatlas.AnyActionClaimRewards,
+		Key:      blockatlas.KeyStakeClaimRewards,
+		Name:     "ATOM",
+		Symbol:   coin.Coins[coin.ATOM].Symbol,
+		Decimals: coin.Coins[coin.ATOM].Decimals,
+		Value:    "127680",
 	},
 }
 
@@ -514,9 +892,14 @@ func TestNormalize(t *testing.T) {
 			unDelegateDst,
 		},
 		{
-			"test getReward tx",
-			getRewardSrc,
-			getRewardDst,
+			"test claimReward tx 1",
+			claimRewardSrc1,
+			claimRewardDst1,
+		},
+		{
+			"test claimReward tx 2",
+			claimRewardSrc2,
+			claimRewardDst2,
 		},
 		{
 			"test failed tx",

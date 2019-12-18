@@ -2,6 +2,7 @@ package cosmos
 
 import (
 	"encoding/json"
+	"strconv"
 	"strings"
 )
 
@@ -56,13 +57,14 @@ type Event struct {
 
 type Events []*Event
 
-func (e Events) GetWithdrawRewardEvent() *Event {
+func (e Events) GetWithdrawRewardValue() string {
+	result := int64(0)
 	for _, att := range e {
 		if att.Type == EventWithdrawRewards {
-			return att
+			result += att.Attributes.GetWithdrawRewardValue()
 		}
 	}
-	return nil
+	return strconv.FormatInt(result, 10)
 }
 
 type Attribute struct {
@@ -72,14 +74,19 @@ type Attribute struct {
 
 type Attributes []Attribute
 
-func (a Attributes) GetWithdrawRewardValue() string {
+func (a Attributes) GetWithdrawRewardValue() int64 {
+	result := int64(0)
 	for _, att := range a {
 		if att.Key == AttributeAmount {
 			value := strings.Replace(att.Value, UndelegateDenom, "", -1)
-			return value
+			v, err := strconv.ParseInt(value, 10, 64)
+			if err != nil {
+				continue
+			}
+			result += v
 		}
 	}
-	return "0"
+	return result
 }
 
 // Data - "tx" sub object
