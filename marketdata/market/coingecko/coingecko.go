@@ -75,7 +75,7 @@ func (m *Market) normalizeTicker(price coingecko.CoinPrice, provider string) (ti
 			TokenId:  tokenId,
 			Price: blockatlas.TickerPrice{
 				Value:     price.CurrentPrice,
-				Change24h: price.PriceChange24h,
+				Change24h: price.PriceChangePercentage24h,
 				Currency:  blockatlas.DefaultCurrency,
 				Provider:  provider,
 			},
