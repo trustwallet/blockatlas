@@ -77,7 +77,7 @@ func getBodyTests(path string) []interface{} {
 func getQueryTests(path string) []string {
 	fix, ok := queryFixture[path]
 	if !ok {
-		return []string{}
+		return []string{""}
 	}
 	return fix
 }
