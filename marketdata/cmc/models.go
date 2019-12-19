@@ -3,21 +3,26 @@ package cmc
 import "time"
 
 type Charts struct {
-	Data ChartData `json:"data"`
+	Data ChartQuotes `json:"data"`
 }
 
-type ChartData struct {
-	Id     uint64 `json:"id"`
-	Name   string `json:"name"`
-	Symbol string `json:"symbol"`
-	Quotes Quotes `json:"quotes"`
+type ChartQuotes map[string]ChartQuoteValues
+
+type ChartQuoteValues map[string][]float64
+
+type ChartInfo struct {
+	Data struct {
+		Rank              uint32                    `json:"rank"`
+		CirculatingSupply float64                   `json:"circulating_supply"`
+		TotalSupply       float64                   `json:"total_supply"`
+		Quotes            map[string]ChartInfoQuote `json:"quotes"`
+	} `json:"data"`
 }
 
-type Quotes []QuoteCoin
-
-type QuoteCoin struct {
-	Timestamp time.Time `json:"timestamp"`
-	Quote     Quote     `json:"quote"`
+type ChartInfoQuote struct {
+	Price     float64 `json:"price"`
+	Volume24  float64 `json:"volume_24h"`
+	MarketCap float64 `json:"market_cap"`
 }
 
 type CoinPrices struct {

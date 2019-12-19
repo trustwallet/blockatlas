@@ -54,6 +54,42 @@ definitions:
       xpub_subscriptions:
         type: object
     type: object
+  blockatlas.ChartCoinInfo:
+    properties:
+      circulating_supply:
+        type: number
+      market_cap:
+        type: number
+      total_supply:
+        type: number
+      vol24:
+        type: number
+    type: object
+  blockatlas.ChartData:
+    properties:
+      error:
+        type: string
+      info:
+        $ref: '#/definitions/blockatlas.ChartCoinInfo'
+        type: object
+      prices:
+        items:
+          $ref: '#/definitions/blockatlas.ChartPrice'
+        type: array
+    type: object
+  blockatlas.ChartPrice:
+    properties:
+      currency:
+        type: string
+      date:
+        type: string
+      market_cap:
+        type: number
+      price:
+        type: number
+      vol24:
+        type: number
+    type: object
   blockatlas.Collection:
     properties:
       address:
@@ -128,6 +164,8 @@ definitions:
     type: object
   blockatlas.DelegationResponse:
     properties:
+      address:
+        type: string
       balance:
         type: string
       coin:
@@ -143,6 +181,8 @@ definitions:
   blockatlas.DelegationsBatchPage:
     items:
       properties:
+        address:
+          type: string
         balance:
           type: string
         coin:
@@ -649,6 +689,37 @@ paths:
       tags:
       - platform
       - tx
+  /v1/market/charts:
+    get:
+      consumes:
+      - application/json
+      description: Get the charts data from an market and coin/token
+      operationId: get_charts_data
+      parameters:
+      - description: coin id
+        in: query
+        name: coin
+        required: true
+        type: integer
+      - description: token id
+        in: query
+        name: token
+        type: string
+      - default: USD
+        description: the currency to show charts
+        in: query
+        name: currency
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/blockatlas.ChartData'
+      summary: Get charts data for a specific coin
+      tags:
+      - charts
   /v2/{coin}/collections/{address}:
     get:
       consumes:

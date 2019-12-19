@@ -21,9 +21,9 @@ func NewClient(api string, key string) *Client {
 	return &c
 }
 
-func (c *Client) GetChartsData(symbol string, days int) (charts Charts, err error) {
+func (c *Client) GetChartsData(id uint, days int) (charts Charts, err error) {
 	values := url.Values{
-		"symbol":     {symbol},
+		"id":         {string(id)},
 		"time_start": {time.Now().AddDate(0, 0, -days).Format(time.RFC3339)},
 	}
 	err = c.Get(&charts, "v1/cryptocurrency/quotes/historical", values)
@@ -39,7 +39,6 @@ func (c *Client) GetData() (prices CoinPrices, err error) {
 func GetCmcMap(mapApi string) (CmcMapping, error) {
 	var results CmcSlice
 	request := blockatlas.Request{
-		//BaseUrl:      viper.GetString("market.cmc.map_url"),
 		BaseUrl:      mapApi,
 		HttpClient:   blockatlas.DefaultClient,
 		ErrorHandler: blockatlas.DefaultErrorHandler,
@@ -48,5 +47,19 @@ func GetCmcMap(mapApi string) (CmcMapping, error) {
 	if err != nil {
 		return nil, errors.E(err).PushToSentry()
 	}
-	return results.getMap(), nil
+	return results.cmcToCoinMap(), nil
+}
+
+func GetCoinMap(mapApi string) (CoinMapping, error) {
+	var results CmcSlice
+	request := blockatlas.Request{
+		BaseUrl:      mapApi,
+		HttpClient:   blockatlas.DefaultClient,
+		ErrorHandler: blockatlas.DefaultErrorHandler,
+	}
+	err := request.GetWithCache(&results, "mapping.json", nil, time.Hour*1)
+	if err != nil {
+		return nil, errors.E(err).PushToSentry()
+	}
+	return results.coinToCmcMap(), nil
 }

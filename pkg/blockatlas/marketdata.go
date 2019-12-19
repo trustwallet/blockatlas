@@ -29,12 +29,24 @@ type Ticker struct {
 }
 
 type ChartData struct {
-	Coin     uint         `json:"coin"`
-	CoinName string       `json:"coin_name,omitempty"`
-	TokenId  string       `json:"token_id,omitempty"`
-	CoinType CoinType     `json:"type,omitempty"`
-	Prices   []ChartPrice `json:"prices,omitempty"`
-	Error    string       `json:"error,omitempty"`
+	Info   ChartCoinInfo `json:"info,omitempty"`
+	Prices []ChartPrice  `json:"prices,omitempty"`
+	Error  string        `json:"error,omitempty"`
+}
+
+type ChartCoinInfo struct {
+	Vol24             float64 `json:"vol24"`
+	MarketCap         float64 `json:"market_cap"`
+	CirculatingSupply float64 `json:"circulating_supply"`
+	TotalSupply       float64 `json:"total_supply"`
+}
+
+type ChartPrice struct {
+	Price     float64   `json:"price"`
+	Vol24     float64   `json:"vol24"`
+	MarketCap float64   `json:"market_cap"`
+	Currency  string    `json:"currency"`
+	Date      time.Time `json:"date"`
 }
 
 func (t *Ticker) SetCoinId(coinId uint) {
@@ -49,13 +61,6 @@ type TickerPrice struct {
 	Change24h float64 `json:"change_24h"`
 	Currency  string  `json:"currency,omitempty"`
 	Provider  string  `json:"provider,omitempty"`
-}
-
-type ChartPrice struct {
-	Value    float64   `json:"value"`
-	Currency string    `json:"currency,omitempty"`
-	Provider string    `json:"provider,omitempty"`
-	Date     time.Time `json:"date,omitempty"`
 }
 
 type Rate struct {

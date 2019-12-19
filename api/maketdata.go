@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/coin"
+	"github.com/trustwallet/blockatlas/marketdata"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/ginutils"
 	"github.com/trustwallet/blockatlas/storage"
@@ -131,12 +132,10 @@ func getTickersHandler(storage storage.Market) func(c *gin.Context) {
 // @Param token query string false "token id"
 // @Param currency query string false "the currency to show charts" default(USD)
 // @Success 200 {object} blockatlas.ChartData
-// @Router /market/v1/charts [get]
-func getChartsHandler(storage storage.Market) func(c *gin.Context) {
-	if storage == nil {
-		return nil
-	}
-	return func(c *gin.Context) {
+// @Router /v1/market/charts [get]
+func getChartsHandler(router gin.IRouter) {
+	var charts = marketdata.InitCharts()
+	router.GET("/market/charts", func(c *gin.Context) {
 		coinQuery := c.Query("coin")
 		coinId, err := strconv.Atoi(coinQuery)
 		if err != nil {
@@ -145,7 +144,19 @@ func getChartsHandler(storage storage.Market) func(c *gin.Context) {
 		}
 		token := c.Query("token")
 
+		days, err := strconv.Atoi(c.Query("days"))
+		if err != nil {
+			ginutils.RenderError(c, http.StatusInternalServerError, "Invalid days count")
+			return
+		}
+
 		currency := c.DefaultQuery("currency", blockatlas.DefaultCurrency)
-		coinObj := coin.Coins[uint(coinId)]
-	}
+
+		chart, err := charts.GetChartData(uint(coinId), token, currency, days)
+		if err != nil {
+			ginutils.RenderError(c, http.StatusInternalServerError, err.Error())
+			return
+		}
+		ginutils.RenderSuccess(c, chart)
+	})
 }
