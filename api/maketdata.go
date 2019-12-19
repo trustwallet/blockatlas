@@ -17,6 +17,12 @@ type TickerRequest struct {
 	Assets   []Coin `json:"assets"`
 }
 
+type ChartsRequest struct {
+	Currency string `json:"currency"`
+	Assets   []Coin `json:"assets"`
+	Days     uint32 `json:"days"`
+}
+
 type Coin struct {
 	Coin     uint                `json:"coin"`
 	CoinType blockatlas.CoinType `json:"type"`
@@ -112,5 +118,34 @@ func getTickersHandler(storage storage.Market) func(c *gin.Context) {
 		}
 
 		ginutils.RenderSuccess(c, blockatlas.TickerResponse{Currency: md.Currency, Docs: tickers})
+	}
+}
+
+// @Summary Get charts data for a specific coin
+// @Id get_charts_data
+// @Description Get the charts data from an market and coin/token
+// @Accept json
+// @Produce json
+// @Tags charts
+// @Param coin query int true "coin id"
+// @Param token query string false "token id"
+// @Param currency query string false "the currency to show charts" default(USD)
+// @Success 200 {object} blockatlas.ChartData
+// @Router /market/v1/charts [get]
+func getChartsHandler(storage storage.Market) func(c *gin.Context) {
+	if storage == nil {
+		return nil
+	}
+	return func(c *gin.Context) {
+		coinQuery := c.Query("coin")
+		coinId, err := strconv.Atoi(coinQuery)
+		if err != nil {
+			ginutils.RenderError(c, http.StatusInternalServerError, "Invalid coin")
+			return
+		}
+		token := c.Query("token")
+
+		currency := c.DefaultQuery("currency", blockatlas.DefaultCurrency)
+		coinObj := coin.Coins[uint(coinId)]
 	}
 }

@@ -1,4 +1,4 @@
-package cmcmap
+package cmc
 
 import (
 	"reflect"

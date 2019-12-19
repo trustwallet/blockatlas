@@ -25,6 +25,7 @@ func InitMarkets(storage storage.Market) {
 		1: cmc.InitMarket(
 			viper.GetString("market.cmc.api"),
 			viper.GetString("market.cmc.api_key"),
+			viper.GetString("market.cmc.map_url"),
 			viper.GetString("market.quote_update_time"),
 		),
 		2: compound.InitMarket(

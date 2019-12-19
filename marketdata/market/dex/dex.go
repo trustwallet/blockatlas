@@ -17,15 +17,16 @@ var (
 
 type Market struct {
 	market.Market
+	blockatlas.Request
 }
 
 func InitMarket(api string, updateTime string) market.Provider {
 	m := &Market{
 		Market: market.Market{
 			Id:         id,
-			Request:    blockatlas.InitClient(api),
 			UpdateTime: updateTime,
 		},
+		Request: blockatlas.InitClient(api),
 	}
 	return m
 }
