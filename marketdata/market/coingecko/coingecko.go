@@ -37,7 +37,7 @@ func (m *Market) GetData() (result blockatlas.Tickers, err error) {
 
 	rates := m.client.FetchLatestRates(coins)
 	result = m.normalizeTickers(rates, m.GetId())
-	return result, nil
+	return
 }
 
 func (m *Market) normalizeTicker(price coingecko.CoinPrice, provider string) (tickers blockatlas.Tickers) {
