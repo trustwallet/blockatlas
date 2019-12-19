@@ -1,6 +1,7 @@
 package cosmos
 
 import (
+	"fmt"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
@@ -11,16 +12,21 @@ import (
 )
 
 type Platform struct {
-	client Client
+	client    Client
+	CoinIndex uint
 }
 
 func (p *Platform) Init() error {
-	p.client = Client{blockatlas.InitClient(viper.GetString("cosmos.api"))}
+	p.client = Client{blockatlas.InitClient(viper.GetString(p.ConfigKey()))}
 	return nil
 }
 
 func (p *Platform) Coin() coin.Coin {
-	return coin.Coins[coin.ATOM]
+	return coin.Coins[p.CoinIndex]
+}
+
+func (p *Platform) ConfigKey() string {
+	return fmt.Sprintf("%s.api", p.Coin().Handle)
 }
 
 func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
