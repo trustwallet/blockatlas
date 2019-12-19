@@ -35,7 +35,7 @@ func Test_normalizeRates(t *testing.T) {
 			},
 		},
 		{
-			"test normalize cmc rate 2",
+			"test normalize compound rate 2",
 			CoinPrices{
 				Data: []CToken{
 					{

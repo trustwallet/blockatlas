@@ -4,6 +4,7 @@ import (
 	"github.com/robfig/cron/v3"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/marketdata/market"
+	"github.com/trustwallet/blockatlas/marketdata/market/coingecko"
 	cmc "github.com/trustwallet/blockatlas/marketdata/market/coinmarketcap"
 	"github.com/trustwallet/blockatlas/marketdata/market/compound"
 	"github.com/trustwallet/blockatlas/marketdata/market/dex"
@@ -28,6 +29,10 @@ func InitMarkets(storage storage.Market) {
 		),
 		2: compound.InitMarket(
 			viper.GetString("market.compound.api"),
+			viper.GetString("market.quote_update_time"),
+		),
+		3: coingecko.InitMarket(
+			viper.GetString("market.coingecko.api"),
 			viper.GetString("market.quote_update_time"),
 		),
 	}

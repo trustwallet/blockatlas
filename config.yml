@@ -47,6 +47,8 @@ market:
     api_key:
   compound:
     api: https://api.compound.finance/api
+  coingecko:
+    api: https://api.coingecko.com/api
 
 storage:
   redis: redis://localhost:6379

@@ -1,7 +1,8 @@
-package compound
+package coingecko
 
 import (
 	"github.com/stretchr/testify/assert"
+	"github.com/trustwallet/blockatlas/marketdata/coingecko"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"sort"
 	"testing"
@@ -9,8 +10,41 @@ import (
 )
 
 func Test_normalizeTickers(t *testing.T) {
+	coins := coingecko.GeckoCoins{
+		coingecko.GeckoCoin{
+			Id:        "ethtereum",
+			Symbol:    "eth",
+			Name:      "eth",
+			Platforms: nil,
+		},
+		coingecko.GeckoCoin{
+			Id:        "bitcoin",
+			Symbol:    "btc",
+			Name:      "btc",
+			Platforms: nil,
+		},
+		coingecko.GeckoCoin{
+			Id:     "cREP",
+			Symbol: "cREP",
+			Name:   "cREP",
+			Platforms: coingecko.Platforms{
+				"ethtereum": "0x158079ee67fce2f58472a96584a73c7ab9ac95c1",
+			},
+		},
+		coingecko.GeckoCoin{
+			Id:     "cUSDC",
+			Symbol: "cUSDC",
+			Name:   "cUSDC",
+			Platforms: coingecko.Platforms{
+				"ethtereum": "0x39aa39c021dfbae8fac545936693ac917d5e7563",
+			},
+		},
+	}
+
+	m := Market{}
+	m.cache = coingecko.NewCache(coins)
 	type args struct {
-		prices   CoinPrices
+		prices   coingecko.CoinPrices
 		provider string
 	}
 	tests := []struct {
@@ -19,32 +53,32 @@ func Test_normalizeTickers(t *testing.T) {
 		wantTickers blockatlas.Tickers
 	}{
 		{
-			"test normalize compound quote",
-			args{prices: CoinPrices{Data: []CToken{
+			"test normalize coingecko quote",
+			args{prices: coingecko.CoinPrices{
 				{
-					TokenAddress: "0x39aa39c021dfbae8fac545936693ac917d5e7563",
+					Id:           "cUSDC",
 					Symbol:       "cUSDC",
-					ExchangeRate: Amount{Value: 0.0021},
+					CurrentPrice: 0.0021,
 				},
 				{
-					TokenAddress: "0x158079ee67fce2f58472a96584a73c7ab9ac95c1",
+					Id:           "cREP",
 					Symbol:       "cREP",
-					ExchangeRate: Amount{Value: 0.02},
+					CurrentPrice: 0.02,
 				},
-			}}, provider: compound},
+			}, provider: id},
 			blockatlas.Tickers{
 				&blockatlas.Ticker{CoinName: "ETH", TokenId: "0x39aa39c021dfbae8fac545936693ac917d5e7563", CoinType: blockatlas.TypeToken, LastUpdate: time.Unix(222, 0),
 					Price: blockatlas.TickerPrice{
 						Value:    0.0021,
 						Currency: blockatlas.DefaultCurrency,
-						Provider: compound,
+						Provider: id,
 					},
 				},
 				&blockatlas.Ticker{CoinName: "ETH", TokenId: "0x158079ee67fce2f58472a96584a73c7ab9ac95c1", CoinType: blockatlas.TypeToken, LastUpdate: time.Unix(444, 0),
 					Price: blockatlas.TickerPrice{
 						Value:    0.02,
 						Currency: blockatlas.DefaultCurrency,
-						Provider: compound,
+						Provider: id,
 					},
 				},
 			},
@@ -52,7 +86,7 @@ func Test_normalizeTickers(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotTickers := normalizeTickers(tt.args.prices, tt.args.provider)
+			gotTickers := m.normalizeTickers(tt.args.prices, tt.args.provider)
 			now := time.Now()
 			sort.Slice(gotTickers, func(i, j int) bool {
 				gotTickers[i].LastUpdate = now
