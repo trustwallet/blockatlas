@@ -27,7 +27,7 @@ type Client struct {
 }
 
 func newClient(t *testing.T, port string) *Client {
-	http := httpexpect.WithConfig(httpexpect.Config{
+	client := httpexpect.WithConfig(httpexpect.Config{
 		BaseURL: getBaseUrl(port),
 		Client: &http.Client{
 			Jar:     httpexpect.NewJar(),
@@ -40,22 +40,20 @@ func newClient(t *testing.T, port string) *Client {
 	})
 	return &Client{
 		baseUrl: getBaseUrl(port),
-		e:       http,
+		e:       client,
 		t:       t,
 	}
 }
 
-func (c *Client) testGet(url string, query map[string]interface{}) {
-	request := c.e.GET(url).WithURL(c.baseUrl)
-	for key, value := range query {
-		request.WithQuery(key, value)
-	}
+func (c *Client) testGet(url string, query string) {
+	queryUrl := url + "?" + query
+	request := c.e.GET(queryUrl).WithURL(c.baseUrl)
 	response := request.Expect()
 
 	//TODO create a logic to validate schemas
 	//response.JSON().Schema(schema)
 	if response.Raw().StatusCode != http.StatusOK {
-		logger.Error("Invalid status code", logger.Params{"code": response.Raw().Status, "url": url})
+		logger.Error("Invalid status code", logger.Params{"code": response.Raw().Status, "url": url, "query": query})
 	}
 	response.Status(http.StatusOK)
 }
@@ -72,7 +70,8 @@ func (c *Client) testPost(url string, body interface{}) {
 	}
 	response := request.Expect()
 	if response.Raw().StatusCode != http.StatusOK {
-		logger.Error("Invalid status code", logger.Params{"code": response.Raw().Status, "url": url})
+		bodyJson, _ := json.Marshal(body)
+		logger.Error("Invalid status code", logger.Params{"code": response.Raw().Status, "url": url, "body": bodyJson})
 	}
 	response.Status(http.StatusOK)
 }
@@ -85,11 +84,15 @@ func (c *Client) doTests(method, path string, wg *sync.WaitGroup) {
 	url := addCoinFixtures(path)
 	switch method {
 	case "GET":
-		query := getQuery(path)
-		c.testGet(url, query)
+		tests := getQueryTests(path)
+		for _, query := range tests {
+			c.testGet(url, query)
+		}
 	case "POST":
-		body := getBody(path)
-		c.testPost(url, body)
+		tests := getBodyTests(path)
+		for _, body := range tests {
+			c.testPost(url, body)
+		}
 	}
 }
 

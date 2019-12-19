@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/trustwallet/blockatlas/cmd"
 	"github.com/trustwallet/blockatlas/config"
+	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/platform"
 	"os"
 	"sync"
@@ -16,6 +17,8 @@ import (
 func TestApis(t *testing.T) {
 	os.Setenv("ATLAS_GIN_MODE", "debug")
 	config.LoadConfig(os.Getenv("TEST_CONFIG"))
+
+	logger.InitLogger()
 	platform.Init()
 
 	p := ":8080"

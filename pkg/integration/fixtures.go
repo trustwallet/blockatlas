@@ -20,9 +20,9 @@ const (
 	excludeApisFile   = "exclude.json"        // API's need to be excluded from integration tests
 )
 
-type BodyFixture map[string]interface{}
+type BodyFixture map[string][]interface{}
 type CoinFixture map[string]map[string]string
-type QueryFixture map[string]map[string]interface{}
+type QueryFixture map[string][]string
 type ExcludeApis []string
 
 var bodyFixture BodyFixture
@@ -31,32 +31,21 @@ var queryFixture QueryFixture
 var excludeApis ExcludeApis
 
 func init() {
-	logger.InitLogger()
-	err := geFixtures(bodyFixturesFile, &bodyFixture)
-	if err != nil {
-		logger.Panic(err)
-	}
-	err = geFixtures(coinFixturesFile, &coinFixture)
-	if err != nil {
-		logger.Panic(err)
-	}
-	err = geFixtures(queryFixturesFile, &queryFixture)
-	if err != nil {
-		logger.Panic(err)
-	}
-	err = geFixtures(excludeApisFile, &excludeApis)
-	if err != nil {
-		logger.Panic(err)
-	}
+	geFixtures(bodyFixturesFile, &bodyFixture)
+	geFixtures(coinFixturesFile, &coinFixture)
+	geFixtures(queryFixturesFile, &queryFixture)
+	geFixtures(excludeApisFile, &excludeApis)
 }
 
-func geFixtures(f string, r interface{}) error {
+func geFixtures(f string, r interface{}) {
 	b, err := getFile(f)
 	if err != nil {
-		return err
+		logger.Panic(err)
 	}
 	err = json.Unmarshal(b[:], &r)
-	return err
+	if err != nil {
+		logger.Panic(err)
+	}
 }
 
 func isExcluded(path string) bool {
@@ -77,18 +66,18 @@ func getCoin(path string) coin.Coin {
 	return coin.Coin{}
 }
 
-func getBody(path string) interface{} {
+func getBodyTests(path string) []interface{} {
 	fix, ok := bodyFixture[path]
 	if !ok {
-		return nil
+		return []interface{}{nil}
 	}
 	return fix
 }
 
-func getQuery(path string) map[string]interface{} {
+func getQueryTests(path string) []string {
 	fix, ok := queryFixture[path]
 	if !ok {
-		return nil
+		return []string{}
 	}
 	return fix
 }
