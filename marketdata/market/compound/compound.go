@@ -2,7 +2,7 @@ package compound
 
 import (
 	"github.com/trustwallet/blockatlas/coin"
-	c "github.com/trustwallet/blockatlas/marketdata/compound"
+	c "github.com/trustwallet/blockatlas/marketdata/clients/compound"
 	"github.com/trustwallet/blockatlas/marketdata/market"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"time"

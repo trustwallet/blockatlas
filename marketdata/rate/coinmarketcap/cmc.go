@@ -1,7 +1,7 @@
 package cmc
 
 import (
-	"github.com/trustwallet/blockatlas/marketdata/cmc"
+	"github.com/trustwallet/blockatlas/marketdata/clients/cmc"
 	"github.com/trustwallet/blockatlas/marketdata/rate"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 )

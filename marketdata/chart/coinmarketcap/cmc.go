@@ -2,14 +2,15 @@ package coinmarketcap
 
 import (
 	"github.com/trustwallet/blockatlas/marketdata/chart"
-	"github.com/trustwallet/blockatlas/marketdata/cmc"
+	"github.com/trustwallet/blockatlas/marketdata/clients/cmc"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"time"
 )
 
 const (
-	id = "cmc"
+	id            = "cmc"
+	chartDataSize = 3
 )
 
 type Chart struct {
@@ -66,7 +67,7 @@ func (c *Chart) GetChartData(coin uint, token string, currency string, days int)
 			continue
 		}
 
-		if len(quote) < 3 {
+		if len(quote) < chartDataSize {
 			continue
 		}
 		prices = append(prices, blockatlas.ChartPrice{

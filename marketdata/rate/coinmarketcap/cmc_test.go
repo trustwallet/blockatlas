@@ -2,7 +2,7 @@ package cmc
 
 import (
 	"github.com/stretchr/testify/assert"
-	"github.com/trustwallet/blockatlas/marketdata/cmc"
+	"github.com/trustwallet/blockatlas/marketdata/clients/cmc"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"sort"
 	"testing"
