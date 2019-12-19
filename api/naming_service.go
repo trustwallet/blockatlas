@@ -54,6 +54,8 @@ func MakeLookupRoute(router gin.IRouter) {
 	TLDMapping[".xyz"] = CoinType.ETH
 	TLDMapping[".luxe"] = CoinType.ETH
 	TLDMapping[".zil"] = CoinType.ZIL
+	// it's on ethereum but same unstoppable api
+	TLDMapping[".crypto"] = CoinType.ZIL
 }
 
 // @Summary Lookup .eth / .zil addresses
