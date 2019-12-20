@@ -55,6 +55,21 @@ func (c *Chart) GetChartData(coin uint, token string, currency string, days int)
 		return chartsData, err
 	}
 
+	return normalizeCharts(currency, charts, info), nil
+}
+
+func (c *Chart) GetCoinData(cmcCoin uint, currency string) (blockatlas.ChartCoinInfo, error) {
+	info := blockatlas.ChartCoinInfo{}
+	data, err := c.widgetClient.GetCoinData(cmcCoin, currency)
+	if err != nil {
+		return info, err
+	}
+
+	return normalizeInfo(currency, cmcCoin, data)
+}
+
+func normalizeCharts(currency string, charts cmc.Charts, info blockatlas.ChartCoinInfo) blockatlas.ChartData {
+	chartsData := blockatlas.ChartData{}
 	prices := make([]blockatlas.ChartPrice, 0)
 	for dateSrt, q := range charts.Data {
 		date, err := time.Parse(time.RFC3339, dateSrt)
@@ -82,16 +97,11 @@ func (c *Chart) GetChartData(coin uint, token string, currency string, days int)
 	chartsData.Prices = prices
 	chartsData.Info = info
 
-	return chartsData, nil
+	return chartsData
 }
 
-func (c *Chart) GetCoinData(cmcCoin uint, currency string) (blockatlas.ChartCoinInfo, error) {
+func normalizeInfo(currency string, cmcCoin uint, data cmc.ChartInfo) (blockatlas.ChartCoinInfo, error) {
 	info := blockatlas.ChartCoinInfo{}
-	data, err := c.widgetClient.GetCoinData(cmcCoin, currency)
-	if err != nil {
-		return info, err
-	}
-
 	quote, ok := data.Data.Quotes[currency]
 	if !ok {
 		return info, errors.E("Cant get coin info", errors.Params{"cmcCoin": cmcCoin, "currency": currency})
