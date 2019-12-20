@@ -4,6 +4,7 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"net/url"
 	"strconv"
+	"time"
 )
 
 type WebClient struct {
@@ -26,6 +27,6 @@ func (c *WebClient) GetChartsData(id uint, currency string, timeStart int64, tim
 		"time_end":   {strconv.FormatInt(timeEnd, 10)},
 		"interval":   {interval},
 	}
-	err = c.Get(&charts, "v1/cryptocurrency/quotes/historical", values)
+	err = c.GetWithCache(&charts, "v1/cryptocurrency/quotes/historical", values, time.Minute*5)
 	return
 }

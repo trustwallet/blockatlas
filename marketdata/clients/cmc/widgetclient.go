@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"net/url"
+	"time"
 )
 
 type WidgetClient struct {
@@ -22,6 +23,6 @@ func (c *WidgetClient) GetCoinData(id uint, currency string) (charts ChartInfo, 
 		"convert": {currency},
 		"ref":     {"widget"},
 	}
-	err = c.Get(&charts, fmt.Sprintf("v2/ticker/%d", id), values)
+	err = c.GetWithCache(&charts, fmt.Sprintf("v2/ticker/%d", id), values, time.Minute*5)
 	return
 }
