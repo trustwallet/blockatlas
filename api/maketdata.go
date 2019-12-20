@@ -18,12 +18,6 @@ type TickerRequest struct {
 	Assets   []Coin `json:"assets"`
 }
 
-type ChartsRequest struct {
-	Currency string `json:"currency"`
-	Assets   []Coin `json:"assets"`
-	Days     uint32 `json:"days"`
-}
-
 type Coin struct {
 	Coin     uint                `json:"coin"`
 	CoinType blockatlas.CoinType `json:"type"`
