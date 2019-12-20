@@ -11,12 +11,14 @@ type ChartQuotes map[string]ChartQuoteValues
 type ChartQuoteValues map[string][]float64
 
 type ChartInfo struct {
-	Data struct {
-		Rank              uint32                    `json:"rank"`
-		CirculatingSupply float64                   `json:"circulating_supply"`
-		TotalSupply       float64                   `json:"total_supply"`
-		Quotes            map[string]ChartInfoQuote `json:"quotes"`
-	} `json:"data"`
+	Data ChartInfoData `json:"data"`
+}
+
+type ChartInfoData struct {
+	Rank              uint32                    `json:"rank"`
+	CirculatingSupply float64                   `json:"circulating_supply"`
+	TotalSupply       float64                   `json:"total_supply"`
+	Quotes            map[string]ChartInfoQuote `json:"quotes"`
 }
 
 type ChartInfoQuote struct {
