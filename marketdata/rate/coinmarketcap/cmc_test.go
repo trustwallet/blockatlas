@@ -13,30 +13,30 @@ func Test_normalizeRates(t *testing.T) {
 	provider := "cmc"
 	tests := []struct {
 		name      string
-		prices    CoinPrices
+		prices    cmc.CoinPrices
 		wantRates blockatlas.Rates
 	}{
 		{
 			"test normalize cmc rate 1",
-			CoinPrices{
-				Data: []Data{
+			cmc.CoinPrices{
+				Data: []cmc.Data{
 					{
-						Coin: Coin{
+						Coin: cmc.Coin{
 							Symbol: "BTC",
 						},
-						Quote: Quote{
-							USD: USD{
+						Quote: cmc.Quote{
+							USD: cmc.USD{
 								Price: 223.5,
 							},
 						},
 						LastUpdated: time.Unix(333, 0),
 					},
 					{
-						Coin: Coin{
+						Coin: cmc.Coin{
 							Symbol: "ETH",
 						},
-						Quote: Quote{
-							USD: USD{
+						Quote: cmc.Quote{
+							USD: cmc.USD{
 								Price: 11.11,
 							},
 						},
@@ -51,25 +51,25 @@ func Test_normalizeRates(t *testing.T) {
 		},
 		{
 			"test normalize cmc rate 2",
-			CoinPrices{
-				Data: []Data{
+			cmc.CoinPrices{
+				Data: []cmc.Data{
 					{
-						Coin: Coin{
+						Coin: cmc.Coin{
 							Symbol: "BNB",
 						},
-						Quote: Quote{
-							USD: USD{
+						Quote: cmc.Quote{
+							USD: cmc.USD{
 								Price: 30.333,
 							},
 						},
 						LastUpdated: time.Unix(123, 0),
 					},
 					{
-						Coin: Coin{
+						Coin: cmc.Coin{
 							Symbol: "XRP",
 						},
-						Quote: Quote{
-							USD: USD{
+						Quote: cmc.Quote{
+							USD: cmc.USD{
 								Price: 0.4687,
 							},
 						},
