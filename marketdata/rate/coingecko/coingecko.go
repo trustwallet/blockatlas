@@ -1,7 +1,7 @@
 package coingecko
 
 import (
-	"github.com/trustwallet/blockatlas/marketdata/coingecko"
+	"github.com/trustwallet/blockatlas/marketdata/clients/coingecko"
 	"github.com/trustwallet/blockatlas/marketdata/rate"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"strings"
