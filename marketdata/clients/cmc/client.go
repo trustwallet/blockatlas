@@ -26,13 +26,13 @@ func (c *Client) GetChartsData(id uint, days int) (charts Charts, err error) {
 		"id":         {string(id)},
 		"time_start": {time.Now().AddDate(0, 0, -days).Format(time.RFC3339)},
 	}
-	err = c.Get(&charts, "v1/cryptocurrency/quotes/historical", values)
+	err = c.GetWithCache(&charts, "v1/cryptocurrency/quotes/historical", values, time.Minute*5)
 	return
 }
 
 func (c *Client) GetData() (prices CoinPrices, err error) {
-	err = c.Get(&prices, "v1/cryptocurrency/listings/latest",
-		url.Values{"limit": {"5000"}, "convert": {blockatlas.DefaultCurrency}})
+	err = c.GetWithCache(&prices, "v1/cryptocurrency/listings/latest",
+		url.Values{"limit": {"5000"}, "convert": {blockatlas.DefaultCurrency}}, time.Minute*5)
 	return
 }
 
