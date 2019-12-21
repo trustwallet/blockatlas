@@ -39,7 +39,7 @@ func NormalizeTx(srcTx *Tx) (tx blockatlas.Tx, ok bool) {
 	}
 
 	return blockatlas.Tx{
-		ID:    srcTx.TransactionHash,
+		ID:    "0x" + srcTx.TransactionHash,
 		Coin:  coin.AION,
 		Date:  srcTx.BlockTimestamp,
 		From:  "0x" + srcTx.FromAddr,
