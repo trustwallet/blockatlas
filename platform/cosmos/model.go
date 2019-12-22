@@ -9,6 +9,7 @@ import (
 type TxType string
 type EventType string
 type AttributeKey string
+type DenomType string
 
 // Types of messages
 const (
@@ -32,7 +33,8 @@ const (
 	AttributeAmount    AttributeKey = "amount"
 	AttributeValidator AttributeKey = "validator"
 
-	UndelegateDenom = "uatom"
+	DenomAtom DenomType = "uatom"
+	DenomKava DenomType = "ukava"
 )
 
 // Tx - Base transaction object. Always returned as part of an array
@@ -78,7 +80,7 @@ func (a Attributes) GetWithdrawRewardValue() int64 {
 	result := int64(0)
 	for _, att := range a {
 		if att.Key == AttributeAmount {
-			value := strings.Replace(att.Value, UndelegateDenom, "", -1)
+			value := att.Value[:strings.IndexByte(att.Value, 'u')]
 			v, err := strconv.ParseInt(value, 10, 64)
 			if err != nil {
 				continue
@@ -254,6 +256,6 @@ type AccountValue struct {
 }
 
 type Balance struct {
-	Denom  string `json:"denom"`
-	Amount string `json:"amount"`
+	Denom  DenomType `json:"denom"`
+	Amount string    `json:"amount"`
 }
