@@ -1,6 +1,7 @@
 package cosmos
 
 import (
+	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
@@ -75,7 +76,7 @@ func (p *Platform) UndelegatedBalance(address string) (string, error) {
 		return "0", err
 	}
 	for _, coin := range account.Account.Value.Coins {
-		if coin.Denom == UndelegateDenom {
+		if coin.Denom == p.Denom() {
 			return coin.Amount, nil
 		}
 	}
@@ -155,4 +156,15 @@ func CalculateAnnualReward(p Pool, inflation float64, validator Validator) float
 	}
 	result := (notBondedTokens + bondedTokens) / bondedTokens * inflation
 	return (result - (result * commission)) * 100
+}
+
+func (p *Platform) Denom() DenomType {
+	switch p.CoinIndex {
+	case coin.Cosmos().ID:
+		return DenomAtom
+	case coin.Kava().ID:
+		return DenomKava
+	default:
+		return DenomAtom
+	}
 }

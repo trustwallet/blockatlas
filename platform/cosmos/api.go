@@ -1,6 +1,7 @@
 package cosmos
 
 import (
+	"fmt"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
@@ -11,16 +12,21 @@ import (
 )
 
 type Platform struct {
-	client Client
+	client    Client
+	CoinIndex uint
 }
 
 func (p *Platform) Init() error {
-	p.client = Client{blockatlas.InitClient(viper.GetString("cosmos.api"))}
+	p.client = Client{blockatlas.InitClient(viper.GetString(p.ConfigKey()))}
 	return nil
 }
 
 func (p *Platform) Coin() coin.Coin {
-	return coin.Coins[coin.ATOM]
+	return coin.Coins[p.CoinIndex]
+}
+
+func (p *Platform) ConfigKey() string {
+	return fmt.Sprintf("%s.api", p.Coin().Handle)
 }
 
 func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
@@ -29,7 +35,7 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 		return nil, err
 	}
 
-	txs := NormalizeTxs(srcTxs.Txs)
+	txs := p.NormalizeTxs(srcTxs.Txs)
 	return &blockatlas.Block{
 		Number: num,
 		Txs:    txs,
@@ -54,11 +60,11 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 		}(t, address)
 	}
 	wg.Wait()
-	return NormalizeTxs(srcTxs), nil
+	return p.NormalizeTxs(srcTxs), nil
 }
 
 // NormalizeTxs converts multiple Cosmos transactions
-func NormalizeTxs(srcTxs []Tx) blockatlas.TxPage {
+func (p *Platform) NormalizeTxs(srcTxs []Tx) blockatlas.TxPage {
 	txMap := make(map[string]bool)
 	txs := make(blockatlas.TxPage, 0)
 	for _, srcTx := range srcTxs {
@@ -66,7 +72,7 @@ func NormalizeTxs(srcTxs []Tx) blockatlas.TxPage {
 		if ok {
 			continue
 		}
-		normalisedInputTx, ok := Normalize(&srcTx)
+		normalisedInputTx, ok := p.Normalize(&srcTx)
 		if ok {
 			txMap[srcTx.ID] = true
 			txs = append(txs, normalisedInputTx)
@@ -76,7 +82,7 @@ func NormalizeTxs(srcTxs []Tx) blockatlas.TxPage {
 }
 
 // Normalize converts an Cosmos transaction into the generic model
-func Normalize(srcTx *Tx) (tx blockatlas.Tx, ok bool) {
+func (p *Platform) Normalize(srcTx *Tx) (tx blockatlas.Tx, ok bool) {
 	date, err := time.Parse("2006-01-02T15:04:05Z", srcTx.Date)
 	if err != nil {
 		return blockatlas.Tx{}, false
@@ -105,7 +111,7 @@ func Normalize(srcTx *Tx) (tx blockatlas.Tx, ok bool) {
 
 	tx = blockatlas.Tx{
 		ID:     srcTx.ID,
-		Coin:   coin.ATOM,
+		Coin:   p.Coin().ID,
 		Date:   date.Unix(),
 		Status: status,
 		Fee:    blockatlas.Amount(fee),
@@ -121,17 +127,17 @@ func Normalize(srcTx *Tx) (tx blockatlas.Tx, ok bool) {
 	switch msg.Value.(type) {
 	case MessageValueTransfer:
 		transfer := msg.Value.(MessageValueTransfer)
-		fillTransfer(&tx, transfer)
+		p.fillTransfer(&tx, transfer)
 		return tx, true
 	case MessageValueDelegate:
 		delegate := msg.Value.(MessageValueDelegate)
-		fillDelegate(&tx, delegate, srcTx.Events, msg.Type)
+		p.fillDelegate(&tx, delegate, srcTx.Events, msg.Type)
 		return tx, true
 	}
 	return tx, false
 }
 
-func fillTransfer(tx *blockatlas.Tx, transfer MessageValueTransfer) {
+func (p *Platform) fillTransfer(tx *blockatlas.Tx, transfer MessageValueTransfer) {
 	if len(transfer.Amount) == 0 {
 		return
 	}
@@ -144,12 +150,12 @@ func fillTransfer(tx *blockatlas.Tx, transfer MessageValueTransfer) {
 	tx.Type = blockatlas.TxTransfer
 	tx.Meta = blockatlas.Transfer{
 		Value:    blockatlas.Amount(value),
-		Symbol:   coin.Coins[coin.ATOM].Symbol,
-		Decimals: coin.Coins[coin.ATOM].Decimals,
+		Symbol:   p.Coin().Symbol,
+		Decimals: p.Coin().Decimals,
 	}
 }
 
-func fillDelegate(tx *blockatlas.Tx, delegate MessageValueDelegate, events Events, msgType TxType) {
+func (p *Platform) fillDelegate(tx *blockatlas.Tx, delegate MessageValueDelegate, events Events, msgType TxType) {
 	value, err := util.DecimalToSatoshis(delegate.Amount.Quantity)
 	if err != nil {
 		return
@@ -174,12 +180,12 @@ func fillDelegate(tx *blockatlas.Tx, delegate MessageValueDelegate, events Event
 		value = events.GetWithdrawRewardValue()
 	}
 	tx.Meta = blockatlas.AnyAction{
-		Coin:     coin.ATOM,
+		Coin:     p.Coin().ID,
 		Title:    title,
 		Key:      key,
-		Name:     "ATOM",
-		Symbol:   coin.Coins[coin.ATOM].Symbol,
-		Decimals: coin.Coins[coin.ATOM].Decimals,
+		Name:     p.Coin().Name,
+		Symbol:   p.Coin().Symbol,
+		Decimals: p.Coin().Decimals,
 		Value:    blockatlas.Amount(value),
 	}
 }

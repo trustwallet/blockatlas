@@ -109,6 +109,14 @@
   blockTime: 6000
   sampleAddress: 'ak_2p5878zbFhxnrm7meL7TmqwtvBaqcBddyp5eGzZbovZ5FeVfcw'
 
+- id: 459
+  symbol: KAVA
+  handle: kava
+  name: Kava
+  decimals: 6
+  blockTime: 5000
+  sampleAddress: 'kava13fxkk4730cqglgdv7w0mdelyx07myyq7h2nd3x'
+
 - id: 500
   symbol: THETA
   handle: theta
