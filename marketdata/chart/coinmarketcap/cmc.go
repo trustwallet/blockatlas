@@ -32,7 +32,7 @@ func InitChart(webApi string, widgetApi string, mapApi string) chart.Provider {
 	return m
 }
 
-func (c *Chart) GetChartData(coin uint, token string, currency string, days int) (blockatlas.ChartData, error) {
+func (c *Chart) GetChartData(coin uint, token string, currency string, timeStart int64) (blockatlas.ChartData, error) {
 	chartsData := blockatlas.ChartData{}
 	cmap, err := cmc.GetCoinMap(c.mapApi)
 	if err != nil {
@@ -48,7 +48,8 @@ func (c *Chart) GetChartData(coin uint, token string, currency string, days int)
 		return chartsData, err
 	}
 
-	timeStart := time.Now().AddDate(0, 0, -days).Unix()
+	timeStartDate := time.Unix(timeStart, 0)
+	days := int(time.Now().Sub(timeStartDate).Hours() / 24)
 	timeEnd := time.Now().Unix()
 	charts, err := c.webClient.GetChartsData(coinObj.Id, currency, timeStart, timeEnd, getInterval(days))
 	if err != nil {
@@ -86,11 +87,8 @@ func normalizeCharts(currency string, charts cmc.Charts, info blockatlas.ChartCo
 			continue
 		}
 		prices = append(prices, blockatlas.ChartPrice{
-			Price:     quote[0],
-			Vol24:     quote[1],
-			MarketCap: quote[2],
-			Currency:  currency,
-			Date:      date,
+			Price: quote[0],
+			Date:  date.Unix(),
 		})
 	}
 

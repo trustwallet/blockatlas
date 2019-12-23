@@ -127,7 +127,7 @@ func getTickersHandler(storage storage.Market) func(c *gin.Context) {
 // @Param currency query string false "the currency to show charts" default(USD)
 // @Success 200 {object} blockatlas.ChartData
 // @Router /v1/market/charts [get]
-func getChartsHandler(router gin.IRouter) {
+func makeChartsRoute(router gin.IRouter) {
 	var charts = marketdata.InitCharts()
 	router.GET("/market/charts", func(c *gin.Context) {
 		coinQuery := c.Query("coin")
@@ -138,15 +138,15 @@ func getChartsHandler(router gin.IRouter) {
 		}
 		token := c.Query("token")
 
-		days, err := strconv.Atoi(c.Query("days"))
+		timeStart, err := strconv.ParseInt(c.Query("timeStart"), 10, 64)
 		if err != nil {
-			ginutils.RenderError(c, http.StatusInternalServerError, "Invalid days count")
+			ginutils.RenderError(c, http.StatusInternalServerError, "Invalid timeStart")
 			return
 		}
 
 		currency := c.DefaultQuery("currency", blockatlas.DefaultCurrency)
 
-		chart, err := charts.GetChartData(uint(coinId), token, currency, days)
+		chart, err := charts.GetChartData(uint(coinId), token, currency, timeStart)
 		if err != nil {
 			ginutils.RenderError(c, http.StatusInternalServerError, err.Error())
 			return

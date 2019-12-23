@@ -108,11 +108,8 @@ func Test_normalizeCharts(t *testing.T) {
 			blockatlas.ChartData{
 				Prices: []blockatlas.ChartPrice{
 					{
-						Price:     111,
-						Vol24:     222,
-						MarketCap: 333,
-						Currency:  "USD",
-						Date:      d1,
+						Price: 111,
+						Date:  d1.Unix(),
 					},
 				},
 			},
@@ -136,18 +133,12 @@ func Test_normalizeCharts(t *testing.T) {
 			blockatlas.ChartData{
 				Prices: []blockatlas.ChartPrice{
 					{
-						Price:     333,
-						Vol24:     444,
-						MarketCap: 555,
-						Currency:  "EUR",
-						Date:      d1,
+						Price: 333,
+						Date:  d1.Unix(),
 					},
 					{
-						Price:     555,
-						Vol24:     666,
-						MarketCap: 777,
-						Currency:  "EUR",
-						Date:      d2,
+						Price: 555,
+						Date:  d2.Unix(),
 					},
 				},
 			},

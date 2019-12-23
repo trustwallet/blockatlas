@@ -42,11 +42,8 @@ type ChartCoinInfo struct {
 }
 
 type ChartPrice struct {
-	Price     float64   `json:"price"`
-	Vol24     float64   `json:"vol24"`
-	MarketCap float64   `json:"market_cap"`
-	Currency  string    `json:"currency"`
-	Date      time.Time `json:"date"`
+	Price float64 `json:"price"`
+	Date  int64   `json:"date"`
 }
 
 func (t *Ticker) SetCoinId(coinId uint) {

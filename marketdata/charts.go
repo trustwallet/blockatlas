@@ -22,10 +22,10 @@ func InitCharts() *Charts {
 	}}
 }
 
-func (c *Charts) GetChartData(coin uint, token string, currency string, days int) (blockatlas.ChartData, error) {
+func (c *Charts) GetChartData(coin uint, token string, currency string, timeStart int64) (blockatlas.ChartData, error) {
 	chartsData := blockatlas.ChartData{}
 	for _, c := range c.chartProviders {
-		charts, err := c.GetChartData(coin, token, currency, days)
+		charts, err := c.GetChartData(coin, token, currency, timeStart)
 		if err != nil {
 			continue
 		}

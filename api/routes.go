@@ -54,7 +54,7 @@ func LoadPlatforms(root gin.IRouter) {
 	makeStakingDelegationsBatchRoute(v2)
 	makeStakingDelegationsSimpleBatchRoute(v2)
 
-	getChartsHandler(v1)
+	makeChartsRoute(v1)
 	logger.Info("Routes set up", logger.Params{"routes": len(routers)})
 
 	v1.GET("/", getEnabledEndpoints)
