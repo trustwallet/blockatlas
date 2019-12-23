@@ -32,7 +32,7 @@ const transferSrc = `
 }`
 
 var transferDst = blockatlas.Tx{
-	ID:     "af3c2f5087fc3332154dc9d11c27e312f30ff829dbc5436aec8cc4342c7dc384",
+	ID:     "0xaf3c2f5087fc3332154dc9d11c27e312f30ff829dbc5436aec8cc4342c7dc384",
 	Coin:   coin.AION,
 	From:   "0xa07981da70ce919e1db5f051c3c386eb526e6ce8b9e2bfd56e3f3d754b0a17f3",
 	To:     "0xa09b8c4c40bd7a81e969b8f6f291074206196a99948b03c6a469892931a3c258",

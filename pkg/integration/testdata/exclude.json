@@ -1,7 +1,5 @@
 [
   "/swagger/*any",
-  "/ns/lookup",
-  "/v2/ns/lookup",
   "/v2/collectibles/categories",
   "/v2/classic/collections/:owner",
   "/v2/callisto/collections/:owner",

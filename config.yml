@@ -227,3 +227,6 @@ digibyte:
 
 harmony:
   api: https://api.s0.t.hmny.io
+
+kava:
+  api: https://data.kava.io

@@ -79,6 +79,76 @@ const transferSrc = `
   "timestamp": "2019-05-04T17:57:57Z"
 }`
 
+const transferSrcKava = `
+{
+  "height": "151980",
+  "txhash": "E19B011D20D862DA0BEA7F24E3BC6DFF666EE6E044FCD9BD95B073478086DBB6",
+  "raw_log": "[{\"msg_index\":\"0\",\"success\":true,\"log\":\"\"}]",
+  "logs": [
+    {
+      "msg_index": "0",
+      "success": true,
+      "log": ""
+    }
+  ],
+  "gas_wanted": "100000",
+  "gas_used": "27678",
+  "tags": [
+    {
+      "key": "action",
+      "value": "send"
+    },
+    {
+      "key": "sender",
+      "value": "kava17wcggpjx007uc09s8y4hwrj8f228mlwe0n0upn"
+    },
+    {
+      "key": "recipient",
+      "value": "kava1z89utvygweg5l56fsk8ak7t6hh88fd0agl98n0"
+    }
+  ],
+  "tx": {
+    "type": "auth/StdTx",
+    "value": {
+      "msg": [
+        {
+          "type": "cosmos-sdk/MsgSend",
+          "value": {
+            "from_address": "kava17wcggpjx007uc09s8y4hwrj8f228mlwe0n0upn",
+            "to_address": "kava1z89utvygweg5l56fsk8ak7t6hh88fd0agl98n0",
+            "amount": [
+              {
+                "denom": "uatom",
+                "amount": "2271999999"
+              }
+            ]
+          }
+        }
+      ],
+      "fee": {
+        "amount": [
+          {
+            "denom": "uatom",
+            "amount": "1"
+          }
+        ],
+        "gas": "100000"
+      },
+      "signatures": [
+        {
+          "pub_key": {
+            "type": "tendermint/PubKeySecp256k1",
+            "value": "A21fdP6IbVC9hER5smiim8I4EbFeIF/bW81IKwmmsdjH"
+          },
+          "signature": "MuR85p714L94tCenogRqzLh1bsbmhKTjs1L9JJPdhSVwQKh61EGlLqYGoUeN/n9xb+OOR9ESUOh2CAzVulKoVQ=="
+        }
+      ],
+      "memo": ""
+    }
+  },
+  "timestamp": "2019-05-04T17:57:57Z"
+}`
+
 const failedTransferSrc = `
 {
   "height": "5552",
@@ -355,6 +425,9 @@ const claimRewardSrc1 = `
         {
           "key": "amount",
           "value": "43574uatom"
+        },
+        {
+          "key": "amount"
         }
       ]
     }
@@ -471,7 +544,24 @@ var transferDst = blockatlas.Tx{
 	Type:   blockatlas.TxTransfer,
 	Meta: blockatlas.Transfer{
 		Value:    "2271999999",
-		Symbol:   "ATOM",
+		Symbol:   coin.Cosmos().Symbol,
+		Decimals: 6,
+	},
+}
+
+var transferDstKava = blockatlas.Tx{
+	ID:     "E19B011D20D862DA0BEA7F24E3BC6DFF666EE6E044FCD9BD95B073478086DBB6",
+	Coin:   coin.KAVA,
+	From:   "kava17wcggpjx007uc09s8y4hwrj8f228mlwe0n0upn",
+	To:     "kava1z89utvygweg5l56fsk8ak7t6hh88fd0agl98n0",
+	Fee:    "1",
+	Date:   1556992677,
+	Block:  151980,
+	Status: blockatlas.StatusCompleted,
+	Type:   blockatlas.TxTransfer,
+	Meta: blockatlas.Transfer{
+		Value:    "2271999999",
+		Symbol:   coin.Kava().Symbol,
 		Decimals: 6,
 	},
 }
@@ -491,7 +581,7 @@ var delegateDst = blockatlas.Tx{
 		Coin:     coin.ATOM,
 		Title:    blockatlas.AnyActionDelegation,
 		Key:      blockatlas.KeyStakeDelegate,
-		Name:     "ATOM",
+		Name:     coin.Cosmos().Name,
 		Symbol:   coin.Coins[coin.ATOM].Symbol,
 		Decimals: coin.Coins[coin.ATOM].Decimals,
 		Value:    "49920",
@@ -513,7 +603,7 @@ var unDelegateDst = blockatlas.Tx{
 		Coin:     coin.ATOM,
 		Title:    blockatlas.AnyActionUndelegation,
 		Key:      blockatlas.KeyStakeDelegate,
-		Name:     "ATOM",
+		Name:     coin.Cosmos().Name,
 		Symbol:   coin.Coins[coin.ATOM].Symbol,
 		Decimals: coin.Coins[coin.ATOM].Decimals,
 		Value:    "5100000000",
@@ -536,7 +626,7 @@ var claimRewardDst2 = blockatlas.Tx{
 		Coin:     coin.ATOM,
 		Title:    blockatlas.AnyActionClaimRewards,
 		Key:      blockatlas.KeyStakeClaimRewards,
-		Name:     "ATOM",
+		Name:     coin.Cosmos().Name,
 		Symbol:   coin.Coins[coin.ATOM].Symbol,
 		Decimals: coin.Coins[coin.ATOM].Decimals,
 		Value:    "2692701",
@@ -559,7 +649,7 @@ var claimRewardDst1 = blockatlas.Tx{
 		Coin:     coin.ATOM,
 		Title:    blockatlas.AnyActionClaimRewards,
 		Key:      blockatlas.KeyStakeClaimRewards,
-		Name:     "ATOM",
+		Name:     coin.Cosmos().Name,
 		Symbol:   coin.Coins[coin.ATOM].Symbol,
 		Decimals: coin.Coins[coin.ATOM].Decimals,
 		Value:    "86278",
@@ -579,48 +669,65 @@ var failedTransferDst = blockatlas.Tx{
 	Memo:   "UniCoins registration rewards",
 	Meta: blockatlas.Transfer{
 		Value:    "100000",
-		Symbol:   "ATOM",
+		Symbol:   coin.Cosmos().Symbol,
 		Decimals: 6,
 	},
 }
 
 type test struct {
-	name string
-	Data string
-	want blockatlas.Tx
+	name     string
+	platform Platform
+	Data     string
+	want     blockatlas.Tx
 }
 
 func TestNormalize(t *testing.T) {
+
+	cosmos := Platform{CoinIndex: coin.ATOM}
+	kava := Platform{CoinIndex: coin.KAVA}
+
 	tests := []test{
 		{
 			"test transfer tx",
+			cosmos,
 			transferSrc,
 			transferDst,
 		},
 		{
 			"test delegate tx",
+			cosmos,
 			delegateSrc,
 			delegateDst,
 		},
 		{
 			"test undelegate tx",
+			cosmos,
 			unDelegateSrc,
 			unDelegateDst,
 		},
 		{
 			"test claimReward tx 1",
+			cosmos,
 			claimRewardSrc1,
 			claimRewardDst1,
 		},
 		{
 			"test claimReward tx 2",
+			cosmos,
 			claimRewardSrc2,
 			claimRewardDst2,
 		},
 		{
 			"test failed tx",
+			cosmos,
 			failedTransferSrc,
 			failedTransferDst,
+		},
+		{
+			"test kava transfer tx",
+			kava,
+			transferSrcKava,
+			transferDstKava,
 		},
 	}
 	for _, tt := range tests {
@@ -633,7 +740,7 @@ func testNormalize(t *testing.T, tt test) {
 		var srcTx Tx
 		err := json.Unmarshal([]byte(tt.Data), &srcTx)
 		assert.Nil(t, err)
-		tx, ok := Normalize(&srcTx)
+		tx, ok := tt.platform.Normalize(&srcTx)
 		assert.True(t, ok)
 		assert.Equal(t, tt.want, tx, "transfer: tx don't equal")
 	})
