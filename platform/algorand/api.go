@@ -50,9 +50,10 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 func (p *Platform) GetDetails() blockatlas.StakingDetails {
 	//TODO: Find a way to have a dynamic
 	return blockatlas.StakingDetails{
-		Reward:        blockatlas.StakingReward{Annual: 7},
+		Reward:        blockatlas.StakingReward{Annual: 6.1},
 		MinimumAmount: blockatlas.Amount("0"),
 		LockTime:      0,
+		Type:          blockatlas.DelegationTypeAuto,
 	}
 }
 
