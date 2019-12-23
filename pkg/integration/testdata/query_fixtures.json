@@ -12,5 +12,11 @@
     "name=ourxyzwallet.xyz&coins=60",
     "name=btc.zil&coins=313",
     "name=btc.crypto&coins=313"
+  ],
+  "v1/market/charts?": [
+    "currency=USD&timeStart=1574483028&coin=60&token=0xdAC17F958D2ee523a2206206994597C13D831ec7",
+    "currency=EUR&timeStart=1574483028&coin=60&token=0xdAC17F958D2ee523a2206206994597C13D831ec7",
+    "currency=USD&timeStart=1574483028&coin=0",
+    "currency=USD&timeStart=1574483028&coin=60"
   ]
 }
