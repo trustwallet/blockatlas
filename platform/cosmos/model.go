@@ -80,7 +80,11 @@ func (a Attributes) GetWithdrawRewardValue() int64 {
 	result := int64(0)
 	for _, att := range a {
 		if att.Key == AttributeAmount {
-			value := att.Value[:strings.IndexByte(att.Value, 'u')]
+			idx := strings.IndexByte(att.Value, 'u')
+			if idx < 0 {
+				continue
+			}
+			value := att.Value[:idx]
 			v, err := strconv.ParseInt(value, 10, 64)
 			if err != nil {
 				continue

@@ -425,6 +425,9 @@ const claimRewardSrc1 = `
         {
           "key": "amount",
           "value": "43574uatom"
+        },
+        {
+          "key": "amount"
         }
       ]
     }
