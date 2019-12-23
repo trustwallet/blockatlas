@@ -2,6 +2,31 @@ package cmc
 
 import "time"
 
+type Charts struct {
+	Data ChartQuotes `json:"data"`
+}
+
+type ChartQuotes map[string]ChartQuoteValues
+
+type ChartQuoteValues map[string][]float64
+
+type ChartInfo struct {
+	Data ChartInfoData `json:"data"`
+}
+
+type ChartInfoData struct {
+	Rank              uint32                    `json:"rank"`
+	CirculatingSupply float64                   `json:"circulating_supply"`
+	TotalSupply       float64                   `json:"total_supply"`
+	Quotes            map[string]ChartInfoQuote `json:"quotes"`
+}
+
+type ChartInfoQuote struct {
+	Price     float64 `json:"price"`
+	Volume24  float64 `json:"volume_24h"`
+	MarketCap float64 `json:"market_cap"`
+}
+
 type CoinPrices struct {
 	Status struct {
 		Timestamp    time.Time   `json:"timestamp"`

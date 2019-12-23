@@ -28,6 +28,24 @@ type Ticker struct {
 	Error      string      `json:"error,omitempty"`
 }
 
+type ChartData struct {
+	Info   ChartCoinInfo `json:"info,omitempty"`
+	Prices []ChartPrice  `json:"prices,omitempty"`
+	Error  string        `json:"error,omitempty"`
+}
+
+type ChartCoinInfo struct {
+	Vol24             float64 `json:"vol24"`
+	MarketCap         float64 `json:"market_cap"`
+	CirculatingSupply float64 `json:"circulating_supply"`
+	TotalSupply       float64 `json:"total_supply"`
+}
+
+type ChartPrice struct {
+	Price float64 `json:"price"`
+	Date  int64   `json:"date"`
+}
+
 func (t *Ticker) SetCoinId(coinId uint) {
 	t.Coin = coinId
 	t.CoinName = ""

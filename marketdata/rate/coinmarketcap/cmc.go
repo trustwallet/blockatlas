@@ -1,10 +1,9 @@
 package cmc
 
 import (
-	"github.com/trustwallet/blockatlas/marketdata/cmcmap"
+	"github.com/trustwallet/blockatlas/marketdata/clients/cmc"
 	"github.com/trustwallet/blockatlas/marketdata/rate"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"net/url"
 )
 
 const (
@@ -13,28 +12,28 @@ const (
 
 type Cmc struct {
 	rate.Rate
+	mapApi string
+	client *cmc.Client
 }
 
-func InitRate(api string, apiKey string, updateTime string) rate.Provider {
+func InitRate(api string, apiKey string, mapApi string, updateTime string) rate.Provider {
 	cmc := &Cmc{
 		Rate: rate.Rate{
 			Id:         id,
-			Request:    blockatlas.InitClient(api),
 			UpdateTime: updateTime,
 		},
+		mapApi: mapApi,
+		client: cmc.NewClient(api, apiKey),
 	}
-	cmc.Headers["X-CMC_PRO_API_KEY"] = apiKey
 	return cmc
 }
 
 func (c *Cmc) FetchLatestRates() (rates blockatlas.Rates, err error) {
-	cmap, err := cmcmap.GetCmcMap()
+	cmap, err := cmc.GetCmcMap(c.mapApi)
 	if err != nil {
 		return nil, err
 	}
-	var prices CoinPrices
-	err = c.Get(&prices, "v1/cryptocurrency/listings/latest",
-		url.Values{"limit": {"5000"}, "convert": {blockatlas.DefaultCurrency}})
+	prices, err := c.client.GetData()
 	if err != nil {
 		return
 	}
@@ -42,7 +41,7 @@ func (c *Cmc) FetchLatestRates() (rates blockatlas.Rates, err error) {
 	return
 }
 
-func normalizeRates(prices CoinPrices, cmap cmcmap.CmcMapping, provider string) (rates blockatlas.Rates) {
+func normalizeRates(prices cmc.CoinPrices, cmap cmc.CmcMapping, provider string) (rates blockatlas.Rates) {
 	for _, price := range prices.Data {
 		if price.Platform != nil {
 			continue

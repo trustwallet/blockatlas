@@ -2,7 +2,7 @@ package coingecko
 
 import (
 	"github.com/stretchr/testify/assert"
-	"github.com/trustwallet/blockatlas/marketdata/coingecko"
+	"github.com/trustwallet/blockatlas/marketdata/clients/coingecko"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"sort"
 	"testing"

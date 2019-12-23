@@ -26,6 +26,7 @@ func InitRates(storage storage.Market) {
 		1: cmc.InitRate(
 			viper.GetString("market.cmc.api"),
 			viper.GetString("market.cmc.api_key"),
+			viper.GetString("market.cmc.map_url"),
 			viper.GetString("market.rate_update_time"),
 		),
 		2: compound.InitRate(

@@ -2,7 +2,7 @@ package cmc
 
 import (
 	"github.com/stretchr/testify/assert"
-	"github.com/trustwallet/blockatlas/marketdata/cmcmap"
+	"github.com/trustwallet/blockatlas/marketdata/clients/cmc"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"sort"
 	"testing"
@@ -10,7 +10,7 @@ import (
 )
 
 func Test_normalizeTickers(t *testing.T) {
-	mapping := cmcmap.CmcMapping{
+	mapping := cmc.CmcMapping{
 		666: {{
 			Coin: 1023,
 			Id:   666,
@@ -18,7 +18,7 @@ func Test_normalizeTickers(t *testing.T) {
 		}},
 	}
 	type args struct {
-		prices   CoinPrices
+		prices   cmc.CoinPrices
 		provider string
 	}
 	tests := []struct {
@@ -28,17 +28,17 @@ func Test_normalizeTickers(t *testing.T) {
 	}{
 		{
 			"test normalize cmc quote",
-			args{prices: CoinPrices{Data: []Data{
-				{Coin: Coin{Symbol: "BTC", Id: 0}, LastUpdated: time.Unix(111, 0), Quote: Quote{
-					USD: USD{Price: 223.55, PercentChange24h: 10}}},
-				{Coin: Coin{Symbol: "ETH", Id: 60}, LastUpdated: time.Unix(333, 0), Quote: Quote{
-					USD: USD{Price: 11.11, PercentChange24h: 20}}},
-				{Coin: Coin{Symbol: "SWP", Id: 6969}, LastUpdated: time.Unix(444, 0), Quote: Quote{
-					USD: USD{Price: 463.22, PercentChange24h: -3}},
-					Platform: &Platform{Coin: Coin{Symbol: "ETH"}, TokenAddress: "0x8ce9137d39326ad0cd6491fb5cc0cba0e089b6a9"}},
-				{Coin: Coin{Symbol: "ONE", Id: 666}, LastUpdated: time.Unix(555, 0), Quote: Quote{
-					USD: USD{Price: 123.09, PercentChange24h: -1.4}},
-					Platform: &Platform{Coin: Coin{Symbol: "BNB"}, TokenAddress: "0x8ce9137d39326ad0cd6491fb5cc0cba0e089b6a9"}}}},
+			args{prices: cmc.CoinPrices{Data: []cmc.Data{
+				{Coin: cmc.Coin{Symbol: "BTC", Id: 0}, LastUpdated: time.Unix(111, 0), Quote: cmc.Quote{
+					USD: cmc.USD{Price: 223.55, PercentChange24h: 10}}},
+				{Coin: cmc.Coin{Symbol: "ETH", Id: 60}, LastUpdated: time.Unix(333, 0), Quote: cmc.Quote{
+					USD: cmc.USD{Price: 11.11, PercentChange24h: 20}}},
+				{Coin: cmc.Coin{Symbol: "SWP", Id: 6969}, LastUpdated: time.Unix(444, 0), Quote: cmc.Quote{
+					USD: cmc.USD{Price: 463.22, PercentChange24h: -3}},
+					Platform: &cmc.Platform{Coin: cmc.Coin{Symbol: "ETH"}, TokenAddress: "0x8ce9137d39326ad0cd6491fb5cc0cba0e089b6a9"}},
+				{Coin: cmc.Coin{Symbol: "ONE", Id: 666}, LastUpdated: time.Unix(555, 0), Quote: cmc.Quote{
+					USD: cmc.USD{Price: 123.09, PercentChange24h: -1.4}},
+					Platform: &cmc.Platform{Coin: cmc.Coin{Symbol: "BNB"}, TokenAddress: "0x8ce9137d39326ad0cd6491fb5cc0cba0e089b6a9"}}}},
 				provider: "cmc"},
 			blockatlas.Tickers{
 				&blockatlas.Ticker{CoinName: "BTC", CoinType: blockatlas.TypeCoin, LastUpdate: time.Unix(111, 0),

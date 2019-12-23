@@ -1,11 +1,10 @@
-package cmcmap
+package cmc
 
 import (
-	"github.com/spf13/viper"
+	"fmt"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
-	"time"
 )
 
 type CoinMap struct {
@@ -16,15 +15,25 @@ type CoinMap struct {
 }
 
 type CoinResult struct {
+	Id       uint
 	Coin     coin.Coin
 	TokenId  string
 	CoinType blockatlas.CoinType
 }
 
 type CmcSlice []CoinMap
+type CoinMapping map[string]CoinMap
 type CmcMapping map[uint][]CoinMap
 
-func (c *CmcSlice) getMap() (m CmcMapping) {
+func (c *CmcSlice) coinToCmcMap() (m CoinMapping) {
+	m = make(map[string]CoinMap)
+	for _, cm := range *c {
+		m[generateId(cm.Coin, cm.TokenId)] = cm
+	}
+	return
+}
+
+func (c *CmcSlice) cmcToCoinMap() (m CmcMapping) {
 	m = make(map[uint][]CoinMap)
 	for _, cm := range *c {
 		_, ok := m[cm.Id]
@@ -47,21 +56,20 @@ func (cm CmcMapping) GetCoins(coinId uint) ([]CoinResult, error) {
 		if !ok {
 			continue
 		}
-		tokens = append(tokens, CoinResult{Coin: c, TokenId: cc.TokenId, CoinType: blockatlas.CoinType(cc.Type)})
+		tokens = append(tokens, CoinResult{Coin: c, Id: cc.Id, TokenId: cc.TokenId, CoinType: blockatlas.CoinType(cc.Type)})
 	}
 	return tokens, nil
 }
 
-func GetCmcMap() (CmcMapping, error) {
-	var results CmcSlice
-	request := blockatlas.Request{
-		BaseUrl:      viper.GetString("market.cmc.map_url"),
-		HttpClient:   blockatlas.DefaultClient,
-		ErrorHandler: blockatlas.DefaultErrorHandler,
+func (cm CoinMapping) GetCoinByContract(coinId uint, contract string) (c CoinMap, err error) {
+	c, ok := cm[generateId(coinId, contract)]
+	if !ok {
+		err = errors.E("No coin found", errors.Params{"coin": coinId, "token": contract})
 	}
-	err := request.GetWithCache(&results, "mapping.json", nil, time.Hour*1)
-	if err != nil {
-		return nil, errors.E(err).PushToSentry()
-	}
-	return results.getMap(), nil
+
+	return
+}
+
+func generateId(id uint, token string) string {
+	return fmt.Sprintf("%d:%s", id, token)
 }
