@@ -35,7 +35,7 @@ func (m *Market) GetData() (result blockatlas.Tickers, err error) {
 	}
 	m.cache = coingecko.NewCache(coins)
 
-	rates := m.client.FetchLatestRates(coins)
+	rates := m.client.FetchLatestRates(coins, blockatlas.DefaultCurrency)
 	result = m.normalizeTickers(rates, m.GetId())
 	return
 }
@@ -45,7 +45,7 @@ func (m *Market) normalizeTicker(price coingecko.CoinPrice, provider string) (ti
 	coinName := strings.ToUpper(price.Symbol)
 	coinType := blockatlas.TypeCoin
 
-	cgCoin, err := m.cache.GetCoinsBySymbol(price.Id)
+	cgCoin, err := m.cache.GetCoinsById(price.Id)
 	if err != nil {
 		tickers = append(tickers, &blockatlas.Ticker{
 			CoinName: coinName,
