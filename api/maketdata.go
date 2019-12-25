@@ -138,7 +138,7 @@ func makeChartsRoute(router gin.IRouter) {
 		}
 		token := c.Query("token")
 
-		timeStart, err := strconv.ParseInt(c.Query("timeStart"), 10, 64)
+		timeStart, err := strconv.ParseInt(c.Query("time_start"), 10, 64)
 		if err != nil {
 			ginutils.RenderError(c, http.StatusInternalServerError, "Invalid timeStart")
 			return

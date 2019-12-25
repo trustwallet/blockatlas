@@ -34,7 +34,7 @@ type ChartData struct {
 }
 
 type ChartCoinInfo struct {
-	Vol24             float64 `json:"vol24"`
+	Vol24             float64 `json:"volume_24"`
 	MarketCap         float64 `json:"market_cap"`
 	CirculatingSupply float64 `json:"circulating_supply"`
 	TotalSupply       float64 `json:"total_supply"`
