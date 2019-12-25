@@ -60,3 +60,56 @@ func TestNormalizeValidators(t *testing.T) {
 
 	assert.Equal(t, expected, result)
 }
+
+func TestCalcAnnual(t *testing.T) {
+	type args struct {
+		annual     float64
+		commission float64
+	}
+
+	tests := []struct {
+		name   string
+		args   args
+		wanted float64
+	}{
+		{
+			name: "test TestCalcAnnual 1",
+			args: args{
+				annual:     10,
+				commission: 10,
+			},
+			wanted: 9,
+		},
+		{
+			name: "test TestCalcAnnual 2",
+			args: args{
+				annual:     100,
+				commission: 10,
+			},
+			wanted: 90,
+		},
+		{
+			name: "test TestCalcAnnual 3",
+			args: args{
+				annual:     20,
+				commission: 10,
+			},
+			wanted: 18,
+		},
+		{
+			name: "test TestCalcAnnual 1",
+			args: args{
+				annual:     30,
+				commission: 10,
+			},
+			wanted: 27,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			gotInfo := calcAnnual(tt.args.annual, tt.args.commission)
+			assert.Equal(t, tt.wanted, gotInfo)
+		})
+	}
+}
