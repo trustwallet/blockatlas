@@ -37,17 +37,7 @@ func (c *Chart) GetChartData(coinId uint, token string, currency string, timeSta
 	}
 	cache := coingecko.NewSymbolsCache(coins)
 
-	coinObj, ok := coin.Coins[coinId]
-	if !ok {
-		return chartsData, errors.E("Coin not found", errors.Params{"coindId": coinId})
-	}
-
-	coinResult, err := cache.GetCoinsBySymbol(coinObj.Symbol, token)
-	if err != nil {
-		return chartsData, err
-	}
-
-	info, err := c.GetCoinData(coinResult, currency)
+	coinResult, err := getCoinObj(cache, coinId, token)
 	if err != nil {
 		return chartsData, err
 	}
@@ -58,18 +48,44 @@ func (c *Chart) GetChartData(coinId uint, token string, currency string, timeSta
 		return chartsData, err
 	}
 
-	return normalizeCharts(charts, info), nil
+	return normalizeCharts(charts), nil
 }
 
-func (c *Chart) GetCoinData(coin coingecko.GeckoCoin, currency string) (blockatlas.ChartCoinInfo, error) {
-	data := c.client.FetchLatestRates(coingecko.GeckoCoins{coin}, currency)
+func (c *Chart) GetCoinData(coinId uint, token string, currency string) (blockatlas.ChartCoinInfo, error) {
+	coins, err := c.client.FetchCoinsList()
+	if err != nil {
+		return blockatlas.ChartCoinInfo{}, err
+	}
+	cache := coingecko.NewSymbolsCache(coins)
+
+	coinResult, err := getCoinObj(cache, coinId, token)
+	if err != nil {
+		return blockatlas.ChartCoinInfo{}, err
+	}
+
+	data := c.client.FetchLatestRates(coingecko.GeckoCoins{coinResult}, currency)
 	if len(data) == 0 {
-		return blockatlas.ChartCoinInfo{}, errors.E("No rates found", errors.Params{"id": coin.Id})
+		return blockatlas.ChartCoinInfo{}, errors.E("No rates found", errors.Params{"id": coinResult.Id})
 	}
 	return normalizeInfo(data[0]), nil
 }
 
-func normalizeCharts(charts coingecko.Charts, info blockatlas.ChartCoinInfo) blockatlas.ChartData {
+func getCoinObj(cache *coingecko.SymbolsCache, coinId uint, token string) (coingecko.GeckoCoin, error) {
+	c := coingecko.GeckoCoin{}
+	coinObj, ok := coin.Coins[coinId]
+	if !ok {
+		return c, errors.E("Coin not found", errors.Params{"coindId": coinId})
+	}
+
+	c, err := cache.GetCoinsBySymbol(coinObj.Symbol, token)
+	if err != nil {
+		return c, err
+	}
+
+	return c, nil
+}
+
+func normalizeCharts(charts coingecko.Charts) blockatlas.ChartData {
 	chartsData := blockatlas.ChartData{}
 	prices := make([]blockatlas.ChartPrice, 0)
 	for _, quote := range charts.Prices {
@@ -85,7 +101,6 @@ func normalizeCharts(charts coingecko.Charts, info blockatlas.ChartCoinInfo) blo
 	}
 
 	chartsData.Prices = prices
-	chartsData.Info = info
 
 	return chartsData
 }

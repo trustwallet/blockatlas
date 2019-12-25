@@ -7,6 +7,7 @@ import (
 type Provider interface {
 	GetId() string
 	GetChartData(coin uint, token string, currency string, timeStart int64) (blockatlas.ChartData, error)
+	GetCoinData(coin uint, token string, currency string) (blockatlas.ChartCoinInfo, error)
 }
 
 type Providers map[int]Provider

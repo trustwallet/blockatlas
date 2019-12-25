@@ -84,7 +84,7 @@ func Test_normalizeCharts(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotInfo := normalizeCharts(tt.args.charts, blockatlas.ChartCoinInfo{})
+			gotInfo := normalizeCharts(tt.args.charts)
 			assert.True(t, reflect.DeepEqual(tt.wantInfo, gotInfo))
 		})
 	}

@@ -29,9 +29,8 @@ type Ticker struct {
 }
 
 type ChartData struct {
-	Info   ChartCoinInfo `json:"info,omitempty"`
-	Prices []ChartPrice  `json:"prices,omitempty"`
-	Error  string        `json:"error,omitempty"`
+	Prices []ChartPrice `json:"prices,omitempty"`
+	Error  string       `json:"error,omitempty"`
 }
 
 type ChartCoinInfo struct {

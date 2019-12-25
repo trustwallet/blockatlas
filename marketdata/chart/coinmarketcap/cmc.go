@@ -43,11 +43,6 @@ func (c *Chart) GetChartData(coin uint, token string, currency string, timeStart
 		return chartsData, err
 	}
 
-	info, err := c.GetCoinData(coinObj.Id, currency)
-	if err != nil {
-		return chartsData, err
-	}
-
 	timeStartDate := time.Unix(timeStart, 0)
 	days := int(time.Now().Sub(timeStartDate).Hours() / 24)
 	timeEnd := time.Now().Unix()
@@ -56,20 +51,30 @@ func (c *Chart) GetChartData(coin uint, token string, currency string, timeStart
 		return chartsData, err
 	}
 
-	return normalizeCharts(currency, charts, info), nil
+	return normalizeCharts(currency, charts), nil
 }
 
-func (c *Chart) GetCoinData(cmcCoin uint, currency string) (blockatlas.ChartCoinInfo, error) {
+func (c *Chart) GetCoinData(coin uint, token string, currency string) (blockatlas.ChartCoinInfo, error) {
 	info := blockatlas.ChartCoinInfo{}
-	data, err := c.widgetClient.GetCoinData(cmcCoin, currency)
+
+	cmap, err := cmc.GetCoinMap(c.mapApi)
+	if err != nil {
+		return info, err
+	}
+	coinObj, err := cmap.GetCoinByContract(coin, token)
 	if err != nil {
 		return info, err
 	}
 
-	return normalizeInfo(currency, cmcCoin, data)
+	data, err := c.widgetClient.GetCoinData(coinObj.Id, currency)
+	if err != nil {
+		return info, err
+	}
+
+	return normalizeInfo(currency, coinObj.Id, data)
 }
 
-func normalizeCharts(currency string, charts cmc.Charts, info blockatlas.ChartCoinInfo) blockatlas.ChartData {
+func normalizeCharts(currency string, charts cmc.Charts) blockatlas.ChartData {
 	chartsData := blockatlas.ChartData{}
 	prices := make([]blockatlas.ChartPrice, 0)
 	for dateSrt, q := range charts.Data {
@@ -93,7 +98,6 @@ func normalizeCharts(currency string, charts cmc.Charts, info blockatlas.ChartCo
 	}
 
 	chartsData.Prices = prices
-	chartsData.Info = info
 
 	return chartsData
 }

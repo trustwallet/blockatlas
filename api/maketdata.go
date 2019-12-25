@@ -154,3 +154,36 @@ func makeChartsRoute(router gin.IRouter) {
 		ginutils.RenderSuccess(c, chart)
 	})
 }
+
+// @Summary Get charts coin info data for a specific coin
+// @Id get_charts_coin_info
+// @Description Get the charts coin info data from an market and coin/contract
+// @Accept json
+// @Produce json
+// @Tags charts
+// @Param coin query int true "coin id"
+// @Param token query string false "token id"
+// @Param currency query string false "the currency to show coin info in" default(USD)
+// @Success 200 {object} blockatlas.ChartCoinInfo
+// @Router /v1/market/info [get]
+func makeCoinInfoRoute(router gin.IRouter) {
+	var charts = marketdata.InitCharts()
+	router.GET("/market/info", func(c *gin.Context) {
+		coinQuery := c.Query("coin")
+		coinId, err := strconv.Atoi(coinQuery)
+		if err != nil {
+			ginutils.RenderError(c, http.StatusInternalServerError, "Invalid coin")
+			return
+		}
+		token := c.Query("token")
+
+		currency := c.DefaultQuery("currency", blockatlas.DefaultCurrency)
+
+		chart, err := charts.GetCoinInfo(uint(coinId), token, currency)
+		if err != nil {
+			ginutils.RenderError(c, http.StatusInternalServerError, err.Error())
+			return
+		}
+		ginutils.RenderSuccess(c, chart)
+	})
+}
