@@ -64,8 +64,8 @@ func NormalizeValidators(validators []blockatlas.Validator, assets []AssetValida
 }
 
 func NormalizeValidator(plainValidator blockatlas.Validator, validator AssetValidator, coin coin.Coin) blockatlas.StakeValidator {
-	stakingDetails := plainValidator.Details
-	stakingDetails.Reward.Annual = calculateAnnual(stakingDetails.Reward.Annual, validator.Payout.Commission)
+	details := plainValidator.Details
+	details.Reward.Annual = calculateAnnual(details.Reward.Annual, validator.Payout.Commission)
 	return blockatlas.StakeValidator{
 		ID:     validator.ID,
 		Status: plainValidator.Status,
@@ -75,12 +75,12 @@ func NormalizeValidator(plainValidator blockatlas.Validator, validator AssetVali
 			Image:       GetImage(coin, plainValidator.ID),
 			Website:     validator.Website,
 		},
-		Details: stakingDetails,
+		Details: details,
 	}
 }
 
-func calculateAnnual(coinAnnual float64, commission float64) float64 {
-	return (coinAnnual * (100 - commission)) / 100
+func calculateAnnual(фnnual float64, commission float64) float64 {
+	return (фnnual * (100 - commission)) / 100
 }
 
 func GetImage(c coin.Coin, ID string) string {
