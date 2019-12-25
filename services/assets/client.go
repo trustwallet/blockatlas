@@ -79,8 +79,8 @@ func NormalizeValidator(plainValidator blockatlas.Validator, validator AssetVali
 	}
 }
 
-func calculateAnnual(фnnual float64, commission float64) float64 {
-	return (фnnual * (100 - commission)) / 100
+func calculateAnnual(annual float64, commission float64) float64 {
+	return (annual * (100 - commission)) / 100
 }
 
 func GetImage(c coin.Coin, ID string) string {
