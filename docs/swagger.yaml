@@ -69,9 +69,6 @@ definitions:
     properties:
       error:
         type: string
-      info:
-        $ref: '#/definitions/blockatlas.ChartCoinInfo'
-        type: object
       prices:
         items:
           $ref: '#/definitions/blockatlas.ChartPrice'
@@ -79,15 +76,9 @@ definitions:
     type: object
   blockatlas.ChartPrice:
     properties:
-      currency:
-        type: string
       date:
-        type: string
-      market_cap:
-        type: number
+        type: integer
       price:
-        type: number
-      vol24:
         type: number
     type: object
   blockatlas.Collection:
@@ -718,6 +709,37 @@ paths:
           schema:
             $ref: '#/definitions/blockatlas.ChartData'
       summary: Get charts data for a specific coin
+      tags:
+      - charts
+  /v1/market/info:
+    get:
+      consumes:
+      - application/json
+      description: Get the charts coin info data from an market and coin/contract
+      operationId: get_charts_coin_info
+      parameters:
+      - description: coin id
+        in: query
+        name: coin
+        required: true
+        type: integer
+      - description: token id
+        in: query
+        name: token
+        type: string
+      - default: USD
+        description: the currency to show coin info in
+        in: query
+        name: currency
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/blockatlas.ChartCoinInfo'
+      summary: Get charts coin info data for a specific coin
       tags:
       - charts
   /v2/{coin}/collections/{address}:

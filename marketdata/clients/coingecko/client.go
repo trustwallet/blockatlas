@@ -1,9 +1,11 @@
 package coingecko
 
 import (
+	"fmt"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"net/url"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -24,7 +26,7 @@ func NewClient(api string) *Client {
 	return &c
 }
 
-func (c *Client) FetchLatestRates(coins GeckoCoins) (prices CoinPrices) {
+func (c *Client) FetchLatestRates(coins GeckoCoins, currency string) (prices CoinPrices) {
 	ci := coins.coinIds()
 
 	i := 0
@@ -40,7 +42,7 @@ func (c *Client) FetchLatestRates(coins GeckoCoins) (prices CoinPrices) {
 			}
 			bucket := ci[i:end]
 			values := url.Values{
-				"vs_currency": {blockatlas.DefaultCurrency},
+				"vs_currency": {currency},
 				"sparkline":   {"false"},
 				"ids":         {strings.Join(bucket[:], ",")},
 			}
@@ -66,6 +68,16 @@ func (c *Client) FetchLatestRates(coins GeckoCoins) (prices CoinPrices) {
 		prices = append(prices, bucket...)
 	}
 
+	return
+}
+
+func (c *Client) GetChartsData(id string, currency string, timeStart int64, timeEnd int64) (charts Charts, err error) {
+	values := url.Values{
+		"vs_currency": {currency},
+		"from":        {strconv.FormatInt(timeStart, 10)},
+		"to":          {strconv.FormatInt(timeEnd, 10)},
+	}
+	err = c.GetWithCache(&charts, fmt.Sprintf("v3/coins/%s/market_chart/range", id), values, time.Minute*5)
 	return
 }
 

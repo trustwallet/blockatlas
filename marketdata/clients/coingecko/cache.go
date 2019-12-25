@@ -1,13 +1,17 @@
 package coingecko
 
 import (
+	"fmt"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
+	"github.com/trustwallet/blockatlas/util"
+	"strings"
 )
 
 type Cache map[string][]CoinResult
+type SymbolsCache map[string]GeckoCoin
 
-func (c Cache) GetCoinsBySymbol(id string) (coins []CoinResult, err error) {
+func (c Cache) GetCoinsById(id string) (coins []CoinResult, err error) {
 	coins, ok := c[id]
 	if !ok {
 		err = errors.E("No coin found by id", errors.Params{"id": id})
@@ -15,12 +19,47 @@ func (c Cache) GetCoinsBySymbol(id string) (coins []CoinResult, err error) {
 	return
 }
 
+func (c SymbolsCache) generateId(symbol string, token string) string {
+	if len(token) > 0 {
+		return fmt.Sprintf("%s:%s", strings.ToUpper(symbol), util.Checksum(token))
+	}
+	return strings.ToUpper(symbol)
+}
+
+func (c SymbolsCache) GetCoinsBySymbol(symbol string, token string) (coin GeckoCoin, err error) {
+	coin, ok := c[c.generateId(symbol, token)]
+	if !ok {
+		err = errors.E("No coin found by symbol", errors.Params{"symbol": symbol, "token": token})
+	}
+	return
+}
+
+func NewSymbolsCache(coins GeckoCoins) *SymbolsCache {
+	m := SymbolsCache{}
+	coinsMap := getCoinsMap(coins)
+
+	for _, coin := range coins {
+		if len(coin.Platforms) == 0 {
+			m[m.generateId(coin.Symbol, "")] = coin
+		}
+		for platform, address := range coin.Platforms {
+			if len(platform) == 0 || len(address) == 0 {
+				continue
+			}
+			platformCoin, ok := coinsMap[platform]
+			if !ok {
+				continue
+			}
+			m[m.generateId(platformCoin.Symbol, address)] = coin
+		}
+	}
+
+	return &m
+}
+
 func NewCache(coins GeckoCoins) *Cache {
 	m := Cache{}
-	coinsMap := make(map[string]GeckoCoin)
-	for _, coin := range coins {
-		coinsMap[coin.Id] = coin
-	}
+	coinsMap := getCoinsMap(coins)
 
 	for _, coin := range coins {
 		for platform, address := range coin.Platforms {
@@ -44,4 +83,12 @@ func NewCache(coins GeckoCoins) *Cache {
 		}
 	}
 	return &m
+}
+
+func getCoinsMap(coins GeckoCoins) map[string]GeckoCoin {
+	coinsMap := make(map[string]GeckoCoin)
+	for _, coin := range coins {
+		coinsMap[coin.Id] = coin
+	}
+	return coinsMap
 }

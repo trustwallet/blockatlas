@@ -31,7 +31,7 @@ func (c *Coingecko) FetchLatestRates() (rates blockatlas.Rates, err error) {
 	if err != nil {
 		return
 	}
-	prices := c.client.FetchLatestRates(coins)
+	prices := c.client.FetchLatestRates(coins, blockatlas.DefaultCurrency)
 
 	rates = normalizeRates(prices, c.GetId())
 	return
