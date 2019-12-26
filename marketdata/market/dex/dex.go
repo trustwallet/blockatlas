@@ -43,7 +43,9 @@ func (m *Market) GetData() (blockatlas.Tickers, error) {
 		return nil, errors.E(err, "rate not found", errors.Params{"asset": BNBAsset})
 	}
 	result := normalizeTickers(prices, m.GetId())
-	rate.PercentChange24h.Mul(rate.PercentChange24h, big.NewFloat(-1))
+	if rate.PercentChange24h != nil {
+		rate.PercentChange24h.Mul(rate.PercentChange24h, big.NewFloat(-1))
+	}
 	result.ApplyRate(blockatlas.DefaultCurrency, 1/rate.Rate, rate.PercentChange24h)
 	return result, nil
 }
