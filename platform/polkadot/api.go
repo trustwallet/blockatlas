@@ -42,18 +42,25 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 }
 
 func (p *Platform) NormalizeTransfer(srcTx *Transfer) blockatlas.Tx {
+	decimals := p.Coin().Decimals
+	amount := ParseAmount(srcTx.Amount, decimals)
+	status := blockatlas.StatusCompleted
+	if !srcTx.Success {
+		status = blockatlas.StatusFailed
+	}
 	result := blockatlas.Tx{
-		ID:    srcTx.Hash,
-		Coin:  p.Coin().ID,
-		Date:  int64(srcTx.BlockTimestamp),
-		From:  srcTx.From,
-		To:    srcTx.To,
-		Fee:   "100000000", // API will return fee later
-		Block: srcTx.BlockNum,
+		ID:     srcTx.Hash,
+		Coin:   p.Coin().ID,
+		Date:   int64(srcTx.BlockTimestamp),
+		From:   srcTx.From,
+		To:     srcTx.To,
+		Fee:    "100000000", // API will return fee later
+		Block:  srcTx.BlockNum,
+		Status: status,
 		Meta: blockatlas.Transfer{
-			Value:    blockatlas.Amount(srcTx.Amount),
+			Value:    blockatlas.Amount(amount),
 			Symbol:   p.Coin().Symbol,
-			Decimals: p.Coin().Decimals,
+			Decimals: decimals,
 		},
 	}
 	return result

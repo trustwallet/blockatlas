@@ -4,11 +4,12 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 )
 
 func TestNormalize(t *testing.T) {
-	platform := Platform{}
+	platform := Platform{CoinIndex: coin.KSM}
 	type args struct {
 		srcTx *Transfer
 	}
@@ -33,7 +34,7 @@ func TestNormalize(t *testing.T) {
 			},
 			wantTx: blockatlas.Tx{
 				ID:     "0x20cfbba19817e4b7a61e718d269de47e7067a24860fa978c2a8ead4c96a827c4",
-				Coin:   459,
+				Coin:   434,
 				Date:   1577176992,
 				From:   "HKtMPUSoTC8Hts2uqcQVzPAuPRpecBt4XJ5Q1AT1GM3tp2r",
 				To:     "CtwdfrhECFs3FpvCGoiE4hwRC4UsSiM8WL899HjRdQbfYZY",
@@ -63,7 +64,7 @@ func TestNormalize(t *testing.T) {
 			},
 			wantTx: blockatlas.Tx{
 				ID:     "0xe0be47f6ce0e62a218f197dd68599989376ee7e951d54c3c6146e2c5c5eacd1f",
-				Coin:   90672,
+				Coin:   434,
 				Date:   1575525432,
 				From:   "DbCNECPna3k6MXFWWNZa5jGsuWycqEE6zcUxZYkxhVofrFk",
 				To:     "CtwdfrhECFs3FpvCGoiE4hwRC4UsSiM8WL899HjRdQbfYZY",
@@ -81,7 +82,7 @@ func TestNormalize(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if gotTx := platform.NormalizeTransfer(tt.args.srcTx); !reflect.DeepEqual(gotTx, tt.wantTx) {
-				t.Errorf("Normalize() = %v, want %v", gotTx, tt.wantTx)
+				t.Errorf("Normalize() = %v\n Want = %v", gotTx, tt.wantTx)
 			}
 		})
 	}
