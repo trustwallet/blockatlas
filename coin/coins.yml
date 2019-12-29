@@ -361,3 +361,11 @@
   decimals: 18
   blockTime: 5000
   sampleAddress: 'one1syjs6cnfwd9fgrhng03dyzs07suwtywwreczmk'
+
+- id: 434
+  symbol: KSM
+  handle: kusama
+  name: Kusama
+  decimals: 12
+  blockTime: 6000
+  sampleAddress: 'HewiDTQv92L2bVtkziZC8ASxrFUxr6ajQ62RXAnwQ8FDVmg'
