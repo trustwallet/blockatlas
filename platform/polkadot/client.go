@@ -1,7 +1,6 @@
 package polkadot
 
 import (
-	"encoding/json"
 	"strconv"
 
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
@@ -13,38 +12,20 @@ type Client struct {
 
 func (c *Client) GetTransfersOfAddress(address string) ([]Transfer, error) {
 	var res SubscanResponse
-	err := c.Post(&res, "/scan/transfers", TransferRequest{Address: address, Row: blockatlas.TxPerPage})
+	err := c.Post(&res, "/scan/transfers", TransfersRequest{Address: address, Row: blockatlas.TxPerPage})
 	if err != nil {
 		return nil, err
 	}
-	bytes, err := json.Marshal(res.Data)
-	if err != nil {
-		return nil, err
-	}
-	var data SubscanResponseData
-	err = json.Unmarshal(bytes, &data)
-	if err != nil {
-		return nil, err
-	}
-	return data.Transfers, nil
+	return res.Data.Transfers, nil
 }
 
 func (c *Client) GetExtrinsicsOfAddress(address string) ([]Extrinsic, error) {
 	var res SubscanResponse
-	err := c.Post(&res, "/scan/extrinsics", TransferRequest{Address: address, Row: blockatlas.TxPerPage})
+	err := c.Post(&res, "/scan/extrinsics", TransfersRequest{Address: address, Row: blockatlas.TxPerPage})
 	if err != nil {
 		return nil, err
 	}
-	bytes, err := json.Marshal(res.Data)
-	if err != nil {
-		return nil, err
-	}
-	var data SubscanResponseData
-	err = json.Unmarshal(bytes, &data)
-	if err != nil {
-		return nil, err
-	}
-	return data.Extrinsics, nil
+	return res.Data.Extrinsics, nil
 }
 
 func (c *Client) GetCurrentBlock() (int64, error) {
@@ -53,18 +34,18 @@ func (c *Client) GetCurrentBlock() (int64, error) {
 	if err != nil {
 		return 0, err
 	}
-	bytes, err := json.Marshal(res.Data)
-	if err != nil {
-		return 0, err
-	}
-	var data Metadata
-	err = json.Unmarshal(bytes, &data)
-	if err != nil {
-		return 0, err
-	}
-	block, err := strconv.ParseInt(data.BlockNum, 10, 64)
+	block, err := strconv.ParseInt(res.Data.BlockNumber, 10, 64)
 	if err != nil {
 		return 0, err
 	}
 	return block, nil
+}
+
+func (c *Client) GetBlockByNumber(number int64) ([]Extrinsic, error) {
+	var res SubscanResponse
+	err := c.Post(&res, "/scan/block", BlockRequest{BlockNumber: number})
+	if err != nil {
+		return nil, err
+	}
+	return res.Data.Extrinsics, nil
 }
