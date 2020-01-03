@@ -155,3 +155,37 @@ func TestNormalizeExtrinsic(t *testing.T) {
 		})
 	}
 }
+
+func TestNormalizeAddress(t *testing.T) {
+	platform := Platform{CoinIndex: coin.KSM}
+	type args struct {
+		valueRaw string
+	}
+	tests := []struct {
+		name        string
+		args        args
+		wantAddress string
+	}{
+		{
+			name: "KSM address 1",
+			args: args{
+				valueRaw: "ffe8e1b8de72651640e302b62dad1f643ec8b65a3647a7409b2896634db599ed60",
+			},
+			wantAddress: "HqfgRXDgCQcV8KAuTAPGuA1r91iEzinmmNBPkR9kiKhifJq",
+		},
+		{
+			name: "KSM address 2",
+			args: args{
+				valueRaw: "ffe0b3fcccfe0283cc0f8c105c68b5690aab8c5c1692a868e55eaca836c8779085",
+			},
+			wantAddress: "HewiDTQv92L2bVtkziZC8ASxrFUxr6ajQ62RXAnwQ8FDVmg",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if address := platform.NormalizeAddress(tt.args.valueRaw); address != tt.wantAddress {
+				t.Errorf("Normalize() = %v\n Want = %v", address, tt.wantAddress)
+			}
+		})
+	}
+}
