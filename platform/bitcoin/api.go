@@ -197,7 +197,7 @@ func NormalizeTransaction(transaction *Transaction, coinIndex uint) blockatlas.T
 	}
 
 	status := blockatlas.StatusCompleted
-	if transaction.Confirmations == 0 {
+	if transaction.Confirmations == 0 || transaction.BlockHeight == -1 {
 		status = blockatlas.StatusPending
 	}
 
@@ -211,7 +211,7 @@ func NormalizeTransaction(transaction *Transaction, coinIndex uint) blockatlas.T
 		Fee:      blockatlas.Amount(transaction.Fees),
 		Date:     int64(transaction.BlockTime),
 		Type:     blockatlas.TxTransfer,
-		Block:    transaction.BlockHeight,
+		Block:    uint64(transaction.BlockHeight),
 		Status:   status,
 		Sequence: 0,
 		Meta: blockatlas.Transfer{
