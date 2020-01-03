@@ -107,7 +107,7 @@ func TestNormalizeExtrinsic(t *testing.T) {
 					CallModuleFunction: "transfer",
 					CallModule:         "balances",
 					Params:             "[{\"name\":\"dest\",\"type\":\"Address\",\"value\":\"CtwdfrhECFs3FpvCGoiE4hwRC4UsSiM8WL899HjRdQbfYZY\",\"valueRaw\":\"ff0e33fdfb980e4499e5c3576e742a563b6a4fc0f6f598b1917fd7a6fe393ffc72\"},{\"name\":\"value\",\"type\":\"Compact\\u003cBalance\\u003e\",\"value\":10000000000,\"valueRaw\":\"0700e40b5402\"}]",
-					AccountId:          "HKtMPUSoTC8Hts2uqcQVzPAuPRpecBt4XJ5Q1AT1GM3tp2r", //FIXME
+					AccountId:          "HKtMPUSoTC8Hts2uqcQVzPAuPRpecBt4XJ5Q1AT1GM3tp2r",
 					Nonce:              0,
 					Hash:               "0x20cfbba19817e4b7a61e718d269de47e7067a24860fa978c2a8ead4c96a827c4",
 					Success:            true,

@@ -1,6 +1,7 @@
 package polkadot
 
 import (
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 
@@ -12,6 +13,11 @@ import (
 type Platform struct {
 	client    Client
 	CoinIndex uint
+}
+
+var NetworkByteMap = map[string]byte{
+	"DOT": 0x00,
+	"KSM": 0x02,
 }
 
 func (p *Platform) Init() error {
@@ -120,8 +126,8 @@ func (p *Platform) NormalizeExtrinsic(srcTx *Extrinsic) *blockatlas.Tx {
 	decimals := p.Coin().Decimals
 	if srcTx.CallModule == ModuleBalances &&
 		srcTx.CallModuleFunction == ModuleFunctionTransfer {
-		result.From = srcTx.AccountId // FIXME
-		result.To = datas[0].Value.(string)
+		result.From = srcTx.AccountId
+		result.To = p.NormalizeAddress(datas[0].ValueRaw)
 		result.Fee = blockatlas.Amount(FeeTransfer)
 		result.Meta = blockatlas.Transfer{
 			Value:    blockatlas.Amount(fmt.Sprintf("%.0f", datas[1].Value.(float64))),
@@ -133,4 +139,15 @@ func (p *Platform) NormalizeExtrinsic(srcTx *Extrinsic) *blockatlas.Tx {
 		return nil
 	}
 	return &result
+}
+
+func (p *Platform) NormalizeAddress(valueRaw string) string {
+	bytes, err := hex.DecodeString(valueRaw)
+	if err != nil {
+		return ""
+	}
+	if network, ok := NetworkByteMap[p.Coin().Symbol]; ok {
+		return PublicKeyToAddress(bytes[1:], network)
+	}
+	return ""
 }
