@@ -89,12 +89,12 @@ func Test_normalizeRates(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotRates := normalizeRates(tt.prices, provider)
-			sort.SliceStable(gotRates, func(i, j int) bool {
-				return gotRates[i].Rate < gotRates[j].Rate
+			rates := normalizeRates(tt.prices, provider)
+			sort.SliceStable(rates, func(i, j int) bool {
+				return rates[i].Rate < rates[j].Rate
 			})
-			if !assert.ObjectsAreEqualValues(gotRates, tt.wantRates) {
-				t.Errorf("normalizeRates() = %v, want %v", gotRates, tt.wantRates)
+			if !assert.ObjectsAreEqualValues(rates, tt.wantRates) {
+				t.Errorf("normalizeRates() = %v, want %v", rates, tt.wantRates)
 			}
 		})
 	}

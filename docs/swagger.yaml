@@ -62,7 +62,7 @@ definitions:
         type: number
       total_supply:
         type: number
-      vol24:
+      volume_24:
         type: number
     type: object
   blockatlas.ChartData:
@@ -490,7 +490,6 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/api.TickerRequest'
-          type: object
       produces:
       - application/json
       responses:
@@ -572,7 +571,6 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/api.Webhook'
-          type: object
       - default: Bearer test
         description: Bearer authorization header
         in: header
@@ -602,7 +600,6 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/api.Webhook'
-          type: object
       - default: Bearer test
         description: Bearer authorization header
         in: header
@@ -687,17 +684,23 @@ paths:
       description: Get the charts data from an market and coin/token
       operationId: get_charts_data
       parameters:
-      - description: coin id
+      - default: 60
+        description: Coin ID
         in: query
         name: coin
         required: true
         type: integer
-      - description: token id
+      - description: Token ID
         in: query
         name: token
         type: string
+      - default: 1574483028
+        description: Start timestamp
+        in: query
+        name: time_start
+        type: integer
       - default: USD
-        description: the currency to show charts
+        description: The currency to show charts
         in: query
         name: currency
         type: string
@@ -718,17 +721,23 @@ paths:
       description: Get the charts coin info data from an market and coin/contract
       operationId: get_charts_coin_info
       parameters:
-      - description: coin id
+      - default: 60
+        description: Coin ID
         in: query
         name: coin
         required: true
         type: integer
-      - description: token id
+      - description: Token ID
         in: query
         name: token
         type: string
+      - default: 1574483028
+        description: Start timestamp
+        in: query
+        name: time_start
+        type: integer
       - default: USD
-        description: the currency to show coin info in
+        description: The currency to show coin info in
         in: query
         name: currency
         type: string
@@ -970,6 +979,36 @@ paths:
       summary: Get list of collections from a specific coin and addresses
       tags:
       - Collectibles
+  /v2/ns/lookup:
+    get:
+      description: Lookup ENS/ZNS to find registered addresses for multiple coins
+      operationId: lookup
+      parameters:
+      - description: string name
+        in: query
+        name: name
+        type: string
+      - description: List of coins
+        in: query
+        name: coins
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/blockatlas.Resolved'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ginutils.ApiError'
+      summary: Lookup .eth / .zil addresses
+      tags:
+      - ns
   /v2/staking/delegations:
     post:
       consumes:
@@ -983,7 +1022,6 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/api.AddressesRequest'
-          type: object
       produces:
       - application/json
       responses:
@@ -1008,7 +1046,6 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/api.AddressesRequest'
-          type: object
       produces:
       - application/json
       responses:

@@ -67,7 +67,7 @@ func MakeLookupRoute(router gin.IRouter) {
 // @Param coins query string true "List of coins"
 // @Success 200 {array} blockatlas.Resolved
 // @Failure 500 {object} ginutils.ApiError
-// @Router v2/ns/lookup [get]
+// @Router /v2/ns/lookup [get]
 func MakeLookupBatchRoute(router gin.IRouter) {
 	router.GET("/lookup", func(c *gin.Context) {
 		name := c.Query("name")
