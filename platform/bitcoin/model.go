@@ -27,7 +27,7 @@ type Transaction struct {
 	Vin           []Output `json:"vin"`
 	Vout          []Output `json:"vout"`
 	BlockHash     string   `json:"blockHash"`
-	BlockHeight   uint64   `json:"blockHeight"`
+	BlockHeight   int64    `json:"blockHeight"`
 	Confirmations uint64   `json:"confirmations"`
 	BlockTime     uint64   `json:"blockTime"`
 	Value         string   `json:"value"`
