@@ -266,7 +266,7 @@ func TestInferDirection(t *testing.T) {
 
 func TestTransactionStatus(t *testing.T) {
 	var tests = []struct {
-		Trx      Transaction
+		Tx       Transaction
 		Expected blockatlas.Status
 	}{
 		{Transaction{Confirmations: 0}, blockatlas.StatusPending},
@@ -274,6 +274,6 @@ func TestTransactionStatus(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		assert.Equal(t, test.Expected, test.Trx.getStatus())
+		assert.Equal(t, test.Expected, test.Tx.getStatus())
 	}
 }
