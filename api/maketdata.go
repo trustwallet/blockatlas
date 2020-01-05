@@ -122,9 +122,10 @@ func getTickersHandler(storage storage.Market) func(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Tags charts
-// @Param coin query int true "coin id"
-// @Param token query string false "token id"
-// @Param currency query string false "the currency to show charts" default(USD)
+// @Param coin query int true "Coin ID" default(60)
+// @Param token query string false "Token ID"
+// @Param time_start query int false "Start timestamp" default(1574483028)
+// @Param currency query string false "The currency to show charts" default(USD)
 // @Success 200 {object} blockatlas.ChartData
 // @Router /v1/market/charts [get]
 func makeChartsRoute(router gin.IRouter) {
@@ -140,7 +141,7 @@ func makeChartsRoute(router gin.IRouter) {
 
 		timeStart, err := strconv.ParseInt(c.Query("time_start"), 10, 64)
 		if err != nil {
-			ginutils.RenderError(c, http.StatusInternalServerError, "Invalid timeStart")
+			ginutils.RenderError(c, http.StatusInternalServerError, "Invalid time_start")
 			return
 		}
 
@@ -161,9 +162,10 @@ func makeChartsRoute(router gin.IRouter) {
 // @Accept json
 // @Produce json
 // @Tags charts
-// @Param coin query int true "coin id"
-// @Param token query string false "token id"
-// @Param currency query string false "the currency to show coin info in" default(USD)
+// @Param coin query int true "Coin ID" default(60)
+// @Param token query string false "Token ID"
+// @Param time_start query int false "Start timestamp" default(1574483028)
+// @Param currency query string false "The currency to show coin info in" default(USD)
 // @Success 200 {object} blockatlas.ChartCoinInfo
 // @Router /v1/market/info [get]
 func makeCoinInfoRoute(router gin.IRouter) {
