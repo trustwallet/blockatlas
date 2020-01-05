@@ -3,6 +3,7 @@ package bitcoin
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"testing"
 
@@ -260,5 +261,29 @@ func TestInferDirection(t *testing.T) {
 		if direction != test.Expected {
 			t.Errorf("direction is not %s", test.Expected)
 		}
+	}
+}
+
+func TestTransactionStatus(t *testing.T)  {
+	var trxPending = `{"confirmations": 0}`
+	var trxCompleted = `{"confirmations":1}`
+
+	var tests = []struct{
+		RawTx string
+		Expected blockatlas.Status
+	} {
+		{trxPending, blockatlas.StatusPending},
+		{trxCompleted, blockatlas.StatusCompleted},
+	}
+
+	for _, test := range tests {
+		var transaction Transaction
+
+		rErr := json.Unmarshal([]byte(test.RawTx), &transaction)
+		if rErr != nil {
+			t.Fatal(rErr)
+		}
+
+		assert.Equal(t, test.Expected, transaction.getTransactionStatus())
 	}
 }
