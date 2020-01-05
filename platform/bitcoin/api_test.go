@@ -264,26 +264,16 @@ func TestInferDirection(t *testing.T) {
 	}
 }
 
-func TestTransactionStatus(t *testing.T)  {
-	var trxPending = `{"confirmations": 0}`
-	var trxCompleted = `{"confirmations":1}`
-
-	var tests = []struct{
-		RawTx string
+func TestTransactionStatus(t *testing.T) {
+	var tests = []struct {
+		Trx      Transaction
 		Expected blockatlas.Status
-	} {
-		{trxPending, blockatlas.StatusPending},
-		{trxCompleted, blockatlas.StatusCompleted},
+	}{
+		{Transaction{Confirmations: 0}, blockatlas.StatusPending},
+		{Transaction{Confirmations: 1}, blockatlas.StatusCompleted},
 	}
 
 	for _, test := range tests {
-		var transaction Transaction
-
-		rErr := json.Unmarshal([]byte(test.RawTx), &transaction)
-		if rErr != nil {
-			t.Fatal(rErr)
-		}
-
-		assert.Equal(t, test.Expected, transaction.getTransactionStatus())
+		assert.Equal(t, test.Expected, test.Trx.getStatus())
 	}
 }
