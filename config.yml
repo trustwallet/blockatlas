@@ -18,8 +18,6 @@ observer:
   enabled: false
   # TODO : Add description
   auth: test
-  # Redis Subscription Database
-  redis: redis://localhost:6379
   # Smallest possible block polling interval
   min_poll: 250ms
   # Don't request blocks older than this
