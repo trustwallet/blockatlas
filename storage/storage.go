@@ -2,16 +2,24 @@ package storage
 
 import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/pkg/storage/redis"
+	"github.com/trustwallet/blockatlas/pkg/storage/cache"
+	"github.com/trustwallet/blockatlas/pkg/storage/cache/mock"
+	"github.com/trustwallet/blockatlas/pkg/storage/cache/redis"
 )
 
 type Storage struct {
-	redis.Redis
+	cache.Backend
 	blockHeights BlockMap
 }
 
-func New() *Storage {
+func New(useMock bool) *Storage {
 	s := new(Storage)
+	if useMock {
+		s.Backend = &mock.Mock{}
+	} else {
+		s.Backend = &redis.Redis{}
+	}
+
 	s.blockHeights.heights = make(map[uint]int64)
 	return s
 }

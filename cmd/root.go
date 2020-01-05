@@ -1,19 +1,22 @@
 package cmd
 
 import (
+	"os"
+	"os/signal"
+	"syscall"
+
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+
 	"github.com/trustwallet/blockatlas/config"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/platform"
 	"github.com/trustwallet/blockatlas/storage"
-	"os"
-	"os/signal"
-	"syscall"
 )
 
 var (
-	Storage = storage.New()
+	Storage *storage.Storage
+	DevMode bool
 	rootCmd = cobra.Command{
 		Use:   "blockatlas",
 		Short: "BlockAtlas by Trust Wallet",
@@ -22,14 +25,20 @@ var (
 			confPath, _ := cmd.Flags().GetString("config")
 			config.LoadConfig(confPath)
 
+			// Are we in dev mode?
+			DevMode, _ = cmd.Flags().GetBool("dev")
+
 			// Init Logger
 			logger.InitLogger()
 
 			// Load app components
 			platform.Init()
 
-			// Init Storage
+			// Create the Storage Struct
+			Storage = storage.New(DevMode)
+
 			host := viper.GetString("storage.redis")
+			// Init Storage
 			err := Storage.Init(host)
 			if err != nil {
 				logger.Fatal(err)
@@ -40,6 +49,7 @@ var (
 
 func init() {
 	rootCmd.PersistentFlags().StringP("config", "c", "", "Config file (optional)")
+	rootCmd.PersistentFlags().Bool("dev", false, "Dev mode (ignore redis)")
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
