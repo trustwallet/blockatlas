@@ -25,6 +25,7 @@ import (
 	"github.com/trustwallet/blockatlas/platform/ontology"
 	"github.com/trustwallet/blockatlas/platform/ripple"
 	"github.com/trustwallet/blockatlas/platform/stellar"
+	"github.com/trustwallet/blockatlas/platform/terra"
 	"github.com/trustwallet/blockatlas/platform/tezos"
 	"github.com/trustwallet/blockatlas/platform/theta"
 	"github.com/trustwallet/blockatlas/platform/tron"
@@ -79,6 +80,7 @@ var platformList = []blockatlas.Platform{
 	&algorand.Platform{},
 	&nano.Platform{},
 	&harmony.Platform{},
+	&terra.Platform{},
 }
 
 // Platforms contains all registered platforms by handle

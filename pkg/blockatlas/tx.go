@@ -22,12 +22,14 @@ const (
 	TokenTypeTRC10 TokenType = "TRC10"
 
 	TxTransfer            TransactionType = "transfer"
+	TxMultiCoinTransfer   TransactionType = "multi_coin_transfer"
 	TxNativeTokenTransfer TransactionType = "native_token_transfer"
 	TxTokenTransfer       TransactionType = "token_transfer"
 	TxCollectibleTransfer TransactionType = "collectible_transfer"
 	TxTokenSwap           TransactionType = "token_swap"
 	TxContractCall        TransactionType = "contract_call"
 	TxAnyAction           TransactionType = "any_action"
+	TxMultiCoinAnyAction  TransactionType = "multi_coin_any_action"
 
 	KeyPlaceOrder        KeyType = "place_order"
 	KeyCancelOrder       KeyType = "cancel_order"
@@ -91,6 +93,8 @@ type Tx struct {
 	Meta interface{} `json:"metadata"`
 }
 
+// TxOutput describes input and output of tx
+// Excample: bitcoin UTXO
 type TxOutput struct {
 	Address string `json:"address"`
 	Value   Amount `json:"value"`
@@ -147,6 +151,22 @@ type ContractCall struct {
 	Value string `json:"value"`
 }
 
+// MultiCoinTransfer describes the transfer of multiple currencys native to the platform
+// Example: Cosmos, Terra
+type MultiCoinTransfer struct {
+	Coins []Transfer `json:"coins"`
+	Fees  []Transfer `json:"fees"`
+}
+
+// MultiCoinAnyAction describes any action for multiple currencys
+// Example: Cosmos, Terra
+type MultiCoinAnyAction struct {
+	Title KeyTitle   `json:"title"`
+	Key   KeyType    `json:"key"`
+	Fees  []Transfer `json:"fees"`
+	Coins []Transfer `json:"coins"`
+}
+
 // AnyAction describes all other types
 type AnyAction struct {
 	Coin     uint     `json:"coin"`
@@ -188,7 +208,7 @@ func (t *Tx) GetUtxoAddresses() (addresses []string) {
 func (t *Tx) GetAddresses() []string {
 	addresses := make([]string, 0)
 	switch t.Meta.(type) {
-	case Transfer, *Transfer, CollectibleTransfer, *CollectibleTransfer, ContractCall, *ContractCall, AnyAction, *AnyAction:
+	case Transfer, *Transfer, CollectibleTransfer, *CollectibleTransfer, ContractCall, *ContractCall, AnyAction, *AnyAction, MultiCoinTransfer, *MultiCoinTransfer, MultiCoinAnyAction, *MultiCoinAnyAction:
 		return append(addresses, t.From, t.To)
 	case NativeTokenTransfer:
 		return append(addresses, t.Meta.(NativeTokenTransfer).From, t.Meta.(NativeTokenTransfer).To)

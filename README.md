@@ -39,6 +39,7 @@ The observer API watches the chain for new transactions and generates notificati
 <a href="https://semux.org/" target="_blank"><img src="https://raw.githubusercontent.com/TrustWallet/tokens/master/coins/7562605.png" width="32" /></a>
 <a href="https://bitcoin.org/" target="_blank"><img src="https://raw.githubusercontent.com/TrustWallet/tokens/master/coins/0.png" width="32" /></a>
 <a href="https://harmony.one/" target="_blank"><img src="https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/harmony/info/logo.png" width="32" /></a>
+<a href="https://terra.money/" target="_blank"><img src="https://raw.githubusercontent.com/TrustWallet/tokens/master/coins/330.png" width="32" /></a>
 
 ## Setup
 
