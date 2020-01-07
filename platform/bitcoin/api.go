@@ -12,7 +12,6 @@ import (
 	"net/http"
 	"strconv"
 	"sync"
-	//"sync"
 )
 
 type Platform struct {
