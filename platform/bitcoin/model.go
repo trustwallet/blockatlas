@@ -1,21 +1,32 @@
 package bitcoin
 
+import "encoding/json"
+
 type TransactionsList struct {
 	Page         int64         `json:"page"`
 	TotalPages   int64         `json:"totalPages"`
 	ItemsOnPage  int64         `json:"itemsOnPage"`
-	Transactions []Transaction `json:"transactions"`
-	Txs          []Transaction `json:"txs"`
+	Transactions []Transaction `json:"transactions,omitempty"`
+	Txs          interface{}   `json:"txs,omitempty"`
 	Tokens       []Token       `json:"tokens,omitempty"`
 	TxCount      int64         `json:"txCount,omitempty"`
 	Hash         string        `json:"hash,omitempty"`
 }
 
 func (tl *TransactionsList) TransactionList() []Transaction {
-	if tl.Transactions == nil {
-		return tl.Txs
+	if tl.Transactions != nil {
+		return tl.Transactions
 	}
-	return tl.Transactions
+	b, err := json.Marshal(tl.Txs)
+	if err != nil {
+		return tl.Transactions
+	}
+	var txs []Transaction
+	err = json.Unmarshal(b, &txs)
+	if err != nil {
+		return tl.Transactions
+	}
+	return txs
 }
 
 type Tx struct {
