@@ -55,7 +55,7 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 	return p.NormalizeTxs(srcTxs.Txs), nil
 }
 
-// NormalizeTxs converts multiple Cosmos transactions
+// NormalizeTxs converts multiple Terra transactions
 func (p *Platform) NormalizeTxs(srcTxs []Tx) blockatlas.TxPage {
 	txMap := make(map[string]bool)
 	txs := make(blockatlas.TxPage, 0)
