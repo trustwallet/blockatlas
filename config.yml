@@ -80,7 +80,7 @@ kin:
 # [XTZ] Tezos: https://tezos.com
 tezos:
   api: https://api.tzstats.com/explorer
-  rpc: https://rpc.tzbeta.net
+  rpc: https://api.tezos.org.ua
 
 # [ETH] Ethereum: https://ethereum.org (Trust-Ray API)
 # ethereum:
