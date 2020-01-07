@@ -175,7 +175,7 @@ func TestNormalizeTransfer(t *testing.T) {
 
 		p := &Platform{CoinIndex: test.Expected.Coin}
 		var readyTx blockatlas.Tx
-		normTx, ok := p.NormalizeTransfer(&transaction, test.Expected.Coin, test.AddressSet)
+		normTx, ok := p.NormalizeTransfer(transaction, test.Expected.Coin, test.AddressSet)
 		if !ok {
 			t.Fatal("Bitcoin: Can't normalize transaction", readyTx)
 		}
@@ -275,5 +275,94 @@ func TestTransactionStatus(t *testing.T) {
 
 	for _, test := range tests {
 		assert.Equal(t, test.Expected, test.Tx.getStatus())
+	}
+}
+
+func Test_addAmount(t *testing.T) {
+	type args struct {
+		left  string
+		right string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		wantSum blockatlas.Amount
+	}{
+		{"test zero + float", args{left: "0", right: "0.33333"}, blockatlas.Amount("33333000")},
+		{"test zero + int", args{left: "0", right: "333"}, blockatlas.Amount("333")},
+		{"test zero + zero", args{left: "0", right: "0"}, blockatlas.Amount("0")},
+		{"test int + float", args{left: "232", right: "0.222"}, blockatlas.Amount("22200232")},
+		{"test int + int", args{left: "661", right: "12"}, blockatlas.Amount("673")},
+		{"test int + zero", args{left: "131", right: "0"}, blockatlas.Amount("131")},
+		{"test float + float", args{left: "0.4141", right: "0.11211"}, blockatlas.Amount("52621000")},
+		{"test float + int", args{left: "3.111", right: "11"}, blockatlas.Amount("311100011")},
+		{"test float + zero", args{left: "0.455", right: "0"}, blockatlas.Amount("45500000")},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if gotSum := addAmount(tt.args.left, tt.args.right); gotSum != tt.wantSum {
+				t.Errorf("addAmount() = %v, want %v", gotSum, tt.wantSum)
+			}
+		})
+	}
+}
+
+func Test_decimalToSatoshis(t *testing.T) {
+	tests := []struct {
+		name   string
+		amount string
+		want   int64
+	}{
+		{"test float", "0.33333", 33333000},
+		{"test int", "3333", 333300000000},
+		{"test zero", "0", 0},
+		{"test error", "trust", 0},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := decimalToSatoshis(tt.amount); got != tt.want {
+				t.Errorf("decimalToSatoshis() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_getValue(t *testing.T) {
+	tests := []struct {
+		name   string
+		amount string
+		want   string
+	}{
+		{"test float", "0.33333", "33333000"},
+		{"test int", "3333", "3333"},
+		{"test zero", "0", "0"},
+		{"test error", "trust", "0"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := getValue(tt.amount); got != tt.want {
+				t.Errorf("getValue() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_parseAmount(t *testing.T) {
+	tests := []struct {
+		name   string
+		amount string
+		want   int64
+	}{
+		{"test float", "0.33333", 33333000},
+		{"test int", "3333", 3333},
+		{"test zero", "0", 0},
+		{"test error", "trust", 0},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := parseAmount(tt.amount); got != tt.want {
+				t.Errorf("parseAmount() = %v, want %v", got, tt.want)
+			}
+		})
 	}
 }

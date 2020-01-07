@@ -5,16 +5,17 @@ type TransactionsList struct {
 	TotalPages   int64         `json:"totalPages"`
 	ItemsOnPage  int64         `json:"itemsOnPage"`
 	Transactions []Transaction `json:"transactions"`
+	Txs          []Transaction `json:"txs"`
 	Tokens       []Token       `json:"tokens,omitempty"`
+	TxCount      int64         `json:"txCount,omitempty"`
+	Hash         string        `json:"hash,omitempty"`
 }
 
-type Block struct {
-	Page         int64         `json:"page"`
-	TotalPages   int64         `json:"totalPages"`
-	ItemsOnPage  int64         `json:"itemsOnPage"`
-	Transactions []Transaction `json:"txs"`
-	TxCount      int64         `json:"txCount"`
-	Hash         string        `json:"hash"`
+func (tl *TransactionsList) TransactionList() []Transaction {
+	if tl.Transactions == nil {
+		return tl.Txs
+	}
+	return tl.Transactions
 }
 
 type Tx struct {
@@ -31,16 +32,33 @@ type Transaction struct {
 	Confirmations uint64   `json:"confirmations"`
 	BlockTime     uint64   `json:"blockTime"`
 	Value         string   `json:"value"`
-	ValueIn       string   `json:"valueIn"`
+	ValueOut      string   `json:"valueOut"`
 	Fees          string   `json:"fees"`
-	Hex           string   `json:"hex"`
+}
+
+func (t Transaction) Amount() string {
+	if len(t.Value) == 0 {
+		return t.ValueOut
+	}
+	return t.Value
 }
 
 type Output struct {
-	TxId      string   `json:"txid,omitempty"`
-	Value     string   `json:"value,omitempty"`
+	TxId         string       `json:"txid,omitempty"`
+	Value        string       `json:"value,omitempty"`
+	Addresses    []string     `json:"addresses,omitempty"`
+	ScriptPubKey ScriptPubKey `json:"scriptPubKey,omitempty"`
+}
+
+type ScriptPubKey struct {
 	Addresses []string `json:"addresses,omitempty"`
-	Hex       string   `json:"hex,omitempty"`
+}
+
+func (o Output) OutputAddress() []string {
+	if len(o.Addresses) == 0 {
+		return o.ScriptPubKey.Addresses
+	}
+	return o.Addresses
 }
 
 type Token struct {

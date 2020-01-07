@@ -2,16 +2,16 @@ package bitcoin
 
 import (
 	"fmt"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/pkg/logger"
-	"net/http"
-	"strconv"
-	"sync"
-
 	mapset "github.com/deckarep/golang-set"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/coin"
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/logger"
+	"math"
+	"net/http"
+	"strconv"
+	"sync"
 	//"sync"
 )
 
@@ -68,9 +68,9 @@ func (p *Platform) handleAddressRoute(c *gin.Context) {
 	txPage.Sort()
 	if ok != nil {
 		c.JSON(http.StatusInternalServerError, ok)
-	} else {
-		c.JSON(http.StatusOK, &txPage)
+		return
 	}
+	c.JSON(http.StatusOK, &txPage)
 }
 
 func (p *Platform) handleXpubRoute(c *gin.Context) {
@@ -80,9 +80,9 @@ func (p *Platform) handleXpubRoute(c *gin.Context) {
 	txPage.Sort()
 	if ok != nil {
 		c.JSON(http.StatusInternalServerError, ok)
-	} else {
-		c.JSON(http.StatusOK, &txPage)
+		return
 	}
+	c.JSON(http.StatusOK, &txPage)
 }
 
 func (p *Platform) getTxsByXPub(xpub string) ([]blockatlas.Tx, error) {
@@ -129,11 +129,11 @@ func (p *Platform) CurrentBlockNumber() (int64, error) {
 func (p *Platform) GetAllBlockPages(total, num int64) []Transaction {
 	start := int64(1)
 	var wg sync.WaitGroup
-	out := make(chan Block)
+	out := make(chan TransactionsList)
 	for start < total {
 		wg.Add(1)
 		start++
-		go func(page, num int64, out chan Block) {
+		go func(page, num int64, out chan TransactionsList) {
 			defer wg.Done()
 			block, err := p.client.GetTransactionsByBlock(num, page)
 			if err != nil {
@@ -149,7 +149,7 @@ func (p *Platform) GetAllBlockPages(total, num int64) []Transaction {
 	}()
 	txs := make([]Transaction, 0)
 	for r := range out {
-		txs = append(txs, r.Transactions...)
+		txs = append(txs, r.TransactionList()...)
 	}
 	return txs
 }
@@ -161,10 +161,10 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 		return nil, err
 	}
 	txPages := p.GetAllBlockPages(block.TotalPages, num)
-	txs := append(txPages, block.Transactions...)
+	txs := append(txPages, block.TransactionList()...)
 	var normalized []blockatlas.Tx
 	for _, tx := range txs {
-		normalized = append(normalized, NormalizeTransaction(&tx, p.CoinIndex))
+		normalized = append(normalized, NormalizeTransaction(tx, p.CoinIndex))
 	}
 	return &blockatlas.Block{
 		Number: num,
@@ -175,15 +175,15 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 
 func (p *Platform) NormalizeTxs(sourceTxs TransactionsList, coinIndex uint, addressSet mapset.Set) []blockatlas.Tx {
 	var txs []blockatlas.Tx
-	for _, transaction := range sourceTxs.Transactions {
-		if tx, ok := p.NormalizeTransfer(&transaction, coinIndex, addressSet); ok {
+	for _, transaction := range sourceTxs.TransactionList() {
+		if tx, ok := p.NormalizeTransfer(transaction, coinIndex, addressSet); ok {
 			txs = append(txs, tx)
 		}
 	}
 	return txs
 }
 
-func NormalizeTransaction(tx *Transaction, coinIndex uint) blockatlas.Tx {
+func NormalizeTransaction(tx Transaction, coinIndex uint) blockatlas.Tx {
 	inputs := parseOutputs(tx.Vin)
 	outputs := parseOutputs(tx.Vout)
 	from := ""
@@ -195,6 +195,8 @@ func NormalizeTransaction(tx *Transaction, coinIndex uint) blockatlas.Tx {
 	if len(outputs) > 0 {
 		to = outputs[0].Address
 	}
+	amount := blockatlas.Amount(tx.Amount())
+	fees := blockatlas.Amount(getValue(tx.Fees))
 
 	return blockatlas.Tx{
 		ID:       tx.ID,
@@ -203,21 +205,21 @@ func NormalizeTransaction(tx *Transaction, coinIndex uint) blockatlas.Tx {
 		To:       to,
 		Inputs:   inputs,
 		Outputs:  outputs,
-		Fee:      blockatlas.Amount(tx.Fees),
+		Fee:      fees,
 		Date:     int64(tx.BlockTime),
 		Type:     blockatlas.TxTransfer,
 		Block:    uint64(tx.BlockHeight),
 		Status:   tx.getStatus(),
 		Sequence: 0,
 		Meta: blockatlas.Transfer{
-			Value:    blockatlas.Amount(tx.Value),
+			Value:    amount,
 			Symbol:   coin.Coins[coinIndex].Symbol,
 			Decimals: coin.Coins[coinIndex].Decimals,
 		},
 	}
 }
 
-func (p *Platform) NormalizeTransfer(transaction *Transaction, coinIndex uint, addressSet mapset.Set) (tx blockatlas.Tx, ok bool) {
+func (p *Platform) NormalizeTransfer(transaction Transaction, coinIndex uint, addressSet mapset.Set) (tx blockatlas.Tx, ok bool) {
 	tx = NormalizeTransaction(transaction, coinIndex)
 	direction := p.InferDirection(&tx, addressSet)
 	value := p.InferValue(&tx, direction, addressSet)
@@ -236,13 +238,14 @@ func parseOutputs(outputs []Output) (addresses []blockatlas.TxOutput) {
 	set := make(map[string]blockatlas.TxOutput)
 	var ordered []string
 	for _, output := range outputs {
-		for _, address := range output.Addresses {
+		for _, address := range output.OutputAddress() {
 			if val, ok := set[address]; ok {
-				val.Value = AddAmount(string(val.Value), output.Value)
+				val.Value = addAmount(string(val.Value), output.Value)
 			} else {
+				amount := getValue(output.Value)
 				set[address] = blockatlas.TxOutput{
 					Address: address,
-					Value:   blockatlas.Amount(output.Value),
+					Value:   blockatlas.Amount(amount),
 				}
 				ordered = append(ordered, address)
 			}
@@ -254,10 +257,33 @@ func parseOutputs(outputs []Output) (addresses []blockatlas.TxOutput) {
 	return addresses
 }
 
-func AddAmount(left string, right string) (sum blockatlas.Amount) {
-	amount1, _ := strconv.ParseInt(left, 10, 64)
-	amount2, _ := strconv.ParseInt(right, 10, 64)
-	return blockatlas.Amount(strconv.FormatInt(amount1+amount2, 10))
+func getValue(amount string) string {
+	value := parseAmount(amount)
+	return strconv.FormatInt(value, 10)
+}
+
+func parseAmount(amount string) int64 {
+	value, err := strconv.ParseInt(amount, 10, 64)
+	if err == nil {
+		return value
+	}
+	return decimalToSatoshis(amount)
+}
+
+func decimalToSatoshis(amount string) int64 {
+	value, err := strconv.ParseFloat(amount, 64)
+	if err != nil {
+		return 0
+	}
+	total := value * math.Pow10(8)
+	return int64(total)
+}
+
+func addAmount(left string, right string) (sum blockatlas.Amount) {
+	amount1 := parseAmount(left)
+	amount2 := parseAmount(right)
+	total := strconv.FormatInt(amount1+amount2, 10)
+	return blockatlas.Amount(total)
 }
 
 func (p *Platform) InferDirection(tx *blockatlas.Tx, addressSet mapset.Set) blockatlas.Direction {
@@ -294,7 +320,7 @@ func (p *Platform) InferValue(tx *blockatlas.Tx, direction blockatlas.Direction,
 			if !addressSet.Contains(output.Address) {
 				continue
 			}
-			amount = AddAmount(string(amount), string(output.Value))
+			amount = addAmount(string(amount), string(output.Value))
 		}
 		value = amount
 	}
