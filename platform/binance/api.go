@@ -258,7 +258,6 @@ func checkNotZeroValue(value string) (bool, error) {
 	}
 	if valueFloat == 0 {
 		return false, nil
-	} else {
-		return true, nil
 	}
+	return true, nil
 }

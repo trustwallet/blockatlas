@@ -461,6 +461,7 @@ type testToken struct {
 	apiResponse string
 	expected    blockatlas.Token
 	tokens      string
+	ok          bool
 }
 
 func TestNormalizeToken(t *testing.T) {
@@ -469,24 +470,28 @@ func TestNormalizeToken(t *testing.T) {
 		apiResponse: myToken,
 		tokens:      tokenList,
 		expected:    tokenDst,
+		ok:          true,
 	})
-	testNormalizeTokenWithNotOk(t, &testToken{
+	testNormalizeToken(t, &testToken{
 		name:        "token",
 		apiResponse: myTokenAllZero,
 		tokens:      tokenList,
 		expected:    emptyTokenDst,
+		ok:          false,
 	})
 	testNormalizeToken(t, &testToken{
 		name:        "token",
 		apiResponse: myTokenFreeZero,
 		tokens:      tokenList,
 		expected:    tokenDst,
+		ok:          true,
 	})
 	testNormalizeToken(t, &testToken{
 		name:        "token",
 		apiResponse: myTokenFrozenAndFreeZero,
 		tokens:      tokenList,
 		expected:    tokenDst,
+		ok:          true,
 	})
 }
 
@@ -501,23 +506,7 @@ func testNormalizeToken(t *testing.T, _test *testToken) {
 		assert.Nil(t, err)
 
 		tk, ok := NormalizeToken(&srcToken, &srcTokens)
-		assert.True(t, ok, "token: token could not be normalized")
-		assert.Equal(t, _test.expected, tk, "token: token don't equal")
-	})
-}
-
-func testNormalizeTokenWithNotOk(t *testing.T, _test *testToken) {
-	t.Run(_test.name, func(t *testing.T) {
-		var srcToken Balance
-		err := json.Unmarshal([]byte(_test.apiResponse), &srcToken)
-		assert.Nil(t, err)
-
-		var srcTokens TokenPage
-		err = json.Unmarshal([]byte(_test.tokens), &srcTokens)
-		assert.Nil(t, err)
-
-		tk, ok := NormalizeToken(&srcToken, &srcTokens)
-		assert.True(t, !ok, "token: token could not be normalized")
+		assert.Equal(t, _test.ok, ok, "token: token could not be normalized")
 		assert.Equal(t, _test.expected, tk, "token: token don't equal")
 	})
 }
