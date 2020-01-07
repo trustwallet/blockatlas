@@ -3,6 +3,7 @@ package binance
 import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
+	"strconv"
 	"strings"
 
 	"github.com/spf13/viper"
@@ -82,12 +83,12 @@ func NormalizeTx(srcTx *Tx, token string) (blockatlas.Tx, bool) {
 	tx = blockatlas.Tx{
 		ID:     srcTx.Hash,
 		Coin:   coin.BNB,
-		Date:   srcTx.Timestamp / 1000,
 		From:   srcTx.FromAddr,
-		Status: blockatlas.StatusCompleted,
 		To:     srcTx.ToAddr,
 		Fee:    blockatlas.Amount(fee),
+		Date:   srcTx.Timestamp / 1000,
 		Block:  srcTx.BlockHeight,
+		Status: blockatlas.StatusCompleted,
 		Memo:   srcTx.Memo,
 	}
 
@@ -116,41 +117,41 @@ func NormalizeTx(srcTx *Tx, token string) (blockatlas.Tx, bool) {
 			To:       srcTx.ToAddr,
 		}
 		//}
-	//case TxCancelOrder, TxNewOrder:
-	//	return tx, false
-	//case "invalid":
-	//	return tx, false
-	//	dt, err := srcTx.getData()
-	//	if err != nil {
-	//		return tx, false
-	//	}
-	//
-	//	symbol := dt.OrderData.Quote
-	//	if len(token) > 0 && symbol != token {
-	//		return tx, false
-	//	}
-	//
-	//	key := blockatlas.KeyPlaceOrder
-	//	title := blockatlas.KeyTitlePlaceOrder
-	//	if srcTx.Type == TxCancelOrder {
-	//		key = blockatlas.KeyCancelOrder
-	//		title = blockatlas.KeyTitleCancelOrder
-	//	}
-	//	volume, ok := dt.OrderData.GetVolume()
-	//	if ok {
-	//		value = strconv.Itoa(int(volume))
-	//	}
-	//
-	//	tx.Meta = blockatlas.AnyAction{
-	//		Coin:     coin.BNB,
-	//		TokenID:  dt.OrderData.Symbol,
-	//		Symbol:   TokenSymbol(symbol),
-	//		Name:     symbol,
-	//		Value:    blockatlas.Amount(value),
-	//		Decimals: coin.Coins[coin.BNB].Decimals,
-	//		Title:    title,
-	//		Key:      key,
-	//	}
+		//case TxCancelOrder, TxNewOrder:
+		//	return tx, false
+		//case "invalid":
+		//	return tx, false
+		//	dt, err := srcTx.getData()
+		//	if err != nil {
+		//		return tx, false
+		//	}
+		//
+		//	symbol := dt.OrderData.Quote
+		//	if len(token) > 0 && symbol != token {
+		//		return tx, false
+		//	}
+		//
+		//	key := blockatlas.KeyPlaceOrder
+		//	title := blockatlas.KeyTitlePlaceOrder
+		//	if srcTx.Type == TxCancelOrder {
+		//		key = blockatlas.KeyCancelOrder
+		//		title = blockatlas.KeyTitleCancelOrder
+		//	}
+		//	volume, ok := dt.OrderData.GetVolume()
+		//	if ok {
+		//		value = strconv.Itoa(int(volume))
+		//	}
+		//
+		//	tx.Meta = blockatlas.AnyAction{
+		//		Coin:     coin.BNB,
+		//		TokenID:  dt.OrderData.Symbol,
+		//		Symbol:   TokenSymbol(symbol),
+		//		Name:     symbol,
+		//		Value:    blockatlas.Amount(value),
+		//		Decimals: coin.Coins[coin.BNB].Decimals,
+		//		Title:    title,
+		//		Key:      key,
+		//	}
 
 	default:
 		return tx, false
@@ -198,6 +199,24 @@ func NormalizeToken(srcToken *Balance, tokens *TokenPage) (t blockatlas.Token, o
 		return blockatlas.Token{}, false
 	}
 
+	isFreeTokenNotZero, err := checkNotZeroValue(srcToken.Free)
+	if err != nil {
+		return blockatlas.Token{}, false
+	}
+	isFrozenTokenNotZero, err := checkNotZeroValue(srcToken.Frozen)
+	if err != nil {
+		return blockatlas.Token{}, false
+	}
+	isLockedTokenNotZero, err := checkNotZeroValue(srcToken.Locked)
+	if err != nil {
+		return blockatlas.Token{}, false
+	}
+
+	// todo: do we need to return locked and frozen tokens if not - we need to modify this check here
+	if !isFreeTokenNotZero && !isFrozenTokenNotZero && !isLockedTokenNotZero {
+		return blockatlas.Token{}, false
+	}
+
 	t = blockatlas.Token{
 		Name:     tk.Name,
 		Symbol:   tk.OriginalSymbol,
@@ -229,4 +248,17 @@ func decimalPlaces(v string) int {
 		return 0
 	}
 	return len(s[1])
+}
+
+// checkNotZeroValue check that string value is not 0
+func checkNotZeroValue(value string) (bool, error) {
+	valueFloat, err := strconv.ParseFloat(value, 64)
+	if err != nil {
+		return false, err
+	}
+	if valueFloat == 0 {
+		return false, nil
+	} else {
+		return true, nil
+	}
 }

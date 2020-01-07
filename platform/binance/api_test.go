@@ -397,6 +397,33 @@ const myToken = `
 }
 `
 
+const myTokenAllZero = `
+{
+	"free": "0.00000000",
+	"frozen": "0.00000000",
+	"locked": "0.00000000",
+	"symbol": "ARN-71B"
+}
+`
+
+const myTokenFreeZero = `
+{
+	"free": "0.00000000",
+	"frozen": "1.00000000",
+	"locked": "0.00000000",
+	"symbol": "ARN-71B"
+}
+`
+
+const myTokenFrozenAndFreeZero = `
+{
+	"free": "0.00000000",
+	"frozen": "0.00000000",
+	"locked": "0.00000001",
+	"symbol": "ARN-71B"
+}
+`
+
 const tokenList = `
 [
   {
@@ -427,6 +454,8 @@ var tokenDst = blockatlas.Token{
 	Type:     blockatlas.TokenTypeBEP2,
 }
 
+var emptyTokenDst = blockatlas.Token{}
+
 type testToken struct {
 	name        string
 	apiResponse string
@@ -438,6 +467,24 @@ func TestNormalizeToken(t *testing.T) {
 	testNormalizeToken(t, &testToken{
 		name:        "token",
 		apiResponse: myToken,
+		tokens:      tokenList,
+		expected:    tokenDst,
+	})
+	testNormalizeTokenWithNotOk(t, &testToken{
+		name:        "token",
+		apiResponse: myTokenAllZero,
+		tokens:      tokenList,
+		expected:    emptyTokenDst,
+	})
+	testNormalizeToken(t, &testToken{
+		name:        "token",
+		apiResponse: myTokenFreeZero,
+		tokens:      tokenList,
+		expected:    tokenDst,
+	})
+	testNormalizeToken(t, &testToken{
+		name:        "token",
+		apiResponse: myTokenFrozenAndFreeZero,
 		tokens:      tokenList,
 		expected:    tokenDst,
 	})
@@ -455,6 +502,22 @@ func testNormalizeToken(t *testing.T, _test *testToken) {
 
 		tk, ok := NormalizeToken(&srcToken, &srcTokens)
 		assert.True(t, ok, "token: token could not be normalized")
+		assert.Equal(t, _test.expected, tk, "token: token don't equal")
+	})
+}
+
+func testNormalizeTokenWithNotOk(t *testing.T, _test *testToken) {
+	t.Run(_test.name, func(t *testing.T) {
+		var srcToken Balance
+		err := json.Unmarshal([]byte(_test.apiResponse), &srcToken)
+		assert.Nil(t, err)
+
+		var srcTokens TokenPage
+		err = json.Unmarshal([]byte(_test.tokens), &srcTokens)
+		assert.Nil(t, err)
+
+		tk, ok := NormalizeToken(&srcToken, &srcTokens)
+		assert.True(t, !ok, "token: token could not be normalized")
 		assert.Equal(t, _test.expected, tk, "token: token don't equal")
 	})
 }
