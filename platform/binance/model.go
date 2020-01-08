@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/errors"
+	"github.com/trustwallet/blockatlas/pkg/logger"
 	"math"
 	"strconv"
 	"strings"
@@ -148,24 +149,19 @@ func (a TokenPage) findToken(symbol string) *Token {
 }
 
 func (balance *Balance) isZero() bool {
-	isFreeTokenNotZero, err := checkNotZeroValue(balance.Free)
-	if err != nil {
-		return true
+	isFreeTokenNotZero := checkNotZeroValue(balance.Free)
+	if isFreeTokenNotZero {
+		return false
 	}
-	isFrozenTokenNotZero, err := checkNotZeroValue(balance.Frozen)
-	if err != nil {
-		return true
+	isFrozenTokenNotZero := checkNotZeroValue(balance.Frozen)
+	if isFrozenTokenNotZero {
+		return false
 	}
-	isLockedTokenNotZero, err := checkNotZeroValue(balance.Locked)
-	if err != nil {
-		return true
+	isLockedTokenNotZero := checkNotZeroValue(balance.Locked)
+	if isLockedTokenNotZero {
+		return false
 	}
-
-	// todo: do we need to return locked and frozen tokens if not - we need to modify this check here
-	if !isFreeTokenNotZero && !isFrozenTokenNotZero && !isLockedTokenNotZero {
-		return true
-	}
-	return false
+	return true
 }
 
 func (e *Error) Error() string {
@@ -197,13 +193,14 @@ func convertValue(value interface{}) (float64, bool) {
 }
 
 // checkNotZeroValue check that string value is not 0
-func checkNotZeroValue(value string) (bool, error) {
+func checkNotZeroValue(value string) bool {
 	valueFloat, err := strconv.ParseFloat(value, 64)
 	if err != nil {
-		return false, err
+		logger.Warn("Cannot parse value of Binance Balance Object during non-zero check")
+		return false
 	}
 	if valueFloat == 0 {
-		return false, nil
+		return false
 	}
-	return true, nil
+	return true
 }
