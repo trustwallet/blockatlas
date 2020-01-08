@@ -147,6 +147,27 @@ func (a TokenPage) findToken(symbol string) *Token {
 	return nil
 }
 
+func (balance *Balance) isZero() bool {
+	isFreeTokenNotZero, err := checkNotZeroValue(balance.Free)
+	if err != nil {
+		return true
+	}
+	isFrozenTokenNotZero, err := checkNotZeroValue(balance.Frozen)
+	if err != nil {
+		return true
+	}
+	isLockedTokenNotZero, err := checkNotZeroValue(balance.Locked)
+	if err != nil {
+		return true
+	}
+
+	// todo: do we need to return locked and frozen tokens if not - we need to modify this check here
+	if !isFreeTokenNotZero && !isFrozenTokenNotZero && !isLockedTokenNotZero {
+		return true
+	}
+	return false
+}
+
 func (e *Error) Error() string {
 	return fmt.Sprintf("%d: %s", e.Code, e.Message)
 }
@@ -173,4 +194,16 @@ func convertValue(value interface{}) (float64, bool) {
 		return result, false
 	}
 	return result, true
+}
+
+// checkNotZeroValue check that string value is not 0
+func checkNotZeroValue(value string) (bool, error) {
+	valueFloat, err := strconv.ParseFloat(value, 64)
+	if err != nil {
+		return false, err
+	}
+	if valueFloat == 0 {
+		return false, nil
+	}
+	return true, nil
 }

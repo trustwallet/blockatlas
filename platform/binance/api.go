@@ -3,7 +3,6 @@ package binance
 import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
-	"strconv"
 	"strings"
 
 	"github.com/spf13/viper"
@@ -194,26 +193,12 @@ func (p *Platform) GetTokenListByAddress(address string) (blockatlas.TokenPage, 
 
 // NormalizeToken converts a Binance token into the generic model
 func NormalizeToken(srcToken *Balance, tokens *TokenPage) (t blockatlas.Token, ok bool) {
+	if srcToken.isZero() {
+		return blockatlas.Token{}, false
+	}
+
 	tk := tokens.findToken(srcToken.Symbol)
 	if tk == nil {
-		return blockatlas.Token{}, false
-	}
-
-	isFreeTokenNotZero, err := checkNotZeroValue(srcToken.Free)
-	if err != nil {
-		return blockatlas.Token{}, false
-	}
-	isFrozenTokenNotZero, err := checkNotZeroValue(srcToken.Frozen)
-	if err != nil {
-		return blockatlas.Token{}, false
-	}
-	isLockedTokenNotZero, err := checkNotZeroValue(srcToken.Locked)
-	if err != nil {
-		return blockatlas.Token{}, false
-	}
-
-	// todo: do we need to return locked and frozen tokens if not - we need to modify this check here
-	if !isFreeTokenNotZero && !isFrozenTokenNotZero && !isLockedTokenNotZero {
 		return blockatlas.Token{}, false
 	}
 
@@ -248,16 +233,4 @@ func decimalPlaces(v string) int {
 		return 0
 	}
 	return len(s[1])
-}
-
-// checkNotZeroValue check that string value is not 0
-func checkNotZeroValue(value string) (bool, error) {
-	valueFloat, err := strconv.ParseFloat(value, 64)
-	if err != nil {
-		return false, err
-	}
-	if valueFloat == 0 {
-		return false, nil
-	}
-	return true, nil
 }
