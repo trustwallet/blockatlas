@@ -149,16 +149,13 @@ func (a TokenPage) findToken(symbol string) *Token {
 }
 
 func (balance *Balance) isZero() bool {
-	isFreeTokenNotZero := checkNotZeroValue(balance.Free)
-	if isFreeTokenNotZero {
+	if checkNotZeroValue(balance.Free) {
 		return false
 	}
-	isFrozenTokenNotZero := checkNotZeroValue(balance.Frozen)
-	if isFrozenTokenNotZero {
+	if checkNotZeroValue(balance.Frozen) {
 		return false
 	}
-	isLockedTokenNotZero := checkNotZeroValue(balance.Locked)
-	if isLockedTokenNotZero {
+	if checkNotZeroValue(balance.Locked) {
 		return false
 	}
 	return true
