@@ -7,6 +7,7 @@ import (
 
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
+	"github.com/trustwallet/blockatlas/pkg/logger"
 )
 
 // Client - the HTTP client
@@ -55,5 +56,61 @@ func (c *Client) CurrentBlockNumber() (num int64, err error) {
 func (c *Client) GetAccount(address string) (result AuthAccount, err error) {
 	path := fmt.Sprintf("auth/accounts/%s", address)
 	err = c.Get(&result, path, nil)
+	return
+}
+
+// Staking
+
+// GetValidators returns validators info
+func (c *Client) GetValidators() (validators ValidatorsResult, err error) {
+	err = c.Get(&validators, "v1/staking", nil)
+	return
+}
+
+// GetStakingReturns returns dynamic staking returns
+func (c *Client) GetStakingReturns() (stakingReturns StakingReturns, err error) {
+	err = c.Get(&stakingReturns, "v1/dashboard/staking_return", nil)
+	return
+}
+
+// GetLockTime load staking params and return locktime
+func (c *Client) GetLockTime() (locktime int64, err error) {
+
+	type StakingParams struct {
+		UnbondingTime string `json:"unbonding_time"`
+	}
+
+	type StakingParamsResult struct {
+		Result StakingParams `json:"result"`
+	}
+	var stakingParamResult StakingParamsResult
+	err = c.Get(&stakingParamResult, "staking/parameters", nil)
+	if err != nil {
+		return
+	}
+
+	locktimeStr := stakingParamResult.Result.UnbondingTime
+	locktimeStr = locktimeStr[0 : len(locktimeStr)-9]
+	locktime, err = strconv.ParseInt(locktimeStr, 10, 64)
+	return
+}
+
+// GetDelegations returns all delegations of a delegator
+func (c *Client) GetDelegations(address string) (delegations Delegations, err error) {
+	path := fmt.Sprintf("staking/delegators/%s/delegations", address)
+	err = c.Get(&delegations, path, nil)
+	if err != nil {
+		logger.Error(err, "Cosmos: Failed to get delegations for address")
+	}
+	return
+}
+
+// GetUnbondingDelegations returns all unbonding delegations of a delegator
+func (c *Client) GetUnbondingDelegations(address string) (delegations UnbondingDelegations, err error) {
+	path := fmt.Sprintf("staking/delegators/%s/unbonding_delegations", address)
+	err = c.Get(&delegations, path, nil)
+	if err != nil {
+		logger.Error(err, "Cosmos: Failed to get unbonding delegations for address")
+	}
 	return
 }

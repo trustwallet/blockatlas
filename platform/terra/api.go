@@ -115,6 +115,10 @@ func (p *Platform) Normalize(srcTx *Tx) (tx blockatlas.Tx, ok bool) {
 		transfer := msg.Value.(MessageValueTransfer)
 		p.fillTransfer(&tx, transfer, fees)
 		return tx, true
+	case MessageValueDelegate:
+		delegate := msg.Value.(MessageValueDelegate)
+		p.fillDelegate(&tx, delegate, srcTx.Events, msg.Type, fees)
+		return tx, true
 	}
 	return tx, false
 }
@@ -133,4 +137,46 @@ func (p *Platform) fillTransfer(tx *blockatlas.Tx, msg MessageValueTransfer, fee
 	}
 
 	return
+}
+
+func (p *Platform) fillDelegate(tx *blockatlas.Tx, delegate MessageValueDelegate, events Events, msgType TxType, feeAmounts Amounts) {
+	currencies := Amounts{delegate.Amount}.toCurrencies()
+
+	tx.From = delegate.DelegatorAddr
+	tx.To = delegate.ValidatorAddr
+	tx.Type = blockatlas.TxMultiCurrencyAnyAction
+
+	key := blockatlas.KeyStakeDelegate
+	title := blockatlas.KeyTitle("")
+	switch msgType {
+	case MsgDelegate:
+		tx.Direction = blockatlas.DirectionOutgoing
+		title = blockatlas.AnyActionDelegation
+	case MsgUndelegate:
+		tx.Direction = blockatlas.DirectionIncoming
+		title = blockatlas.AnyActionUndelegation
+	case MsgWithdrawDelegationReward:
+		tx.Direction = blockatlas.DirectionIncoming
+		title = blockatlas.AnyActionClaimRewards
+		key = blockatlas.KeyStakeClaimRewards
+		rewards := events.GetWithdrawRewardValue()
+
+		currencies = rewards.toCurrencies()
+	}
+
+	var fees []blockatlas.Transfer
+	for _, coin := range feeAmounts {
+		fees = append(fees, blockatlas.Transfer{
+			Symbol:   DenomMap[coin.Denom],
+			Decimals: p.Coin().Decimals,
+			Value:    blockatlas.Amount(coin.Quantity),
+		})
+	}
+
+	tx.Meta = blockatlas.MultiCurrencyAnyAction{
+		Title:      title,
+		Key:        key,
+		Currencies: currencies,
+		Fees:       feeAmounts.toCurrencies(),
+	}
 }

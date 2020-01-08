@@ -2,6 +2,10 @@ package terra
 
 import (
 	"encoding/json"
+	"sort"
+	"strconv"
+	"strings"
+	"time"
 
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
@@ -21,9 +25,17 @@ type DenomType string
 
 // Types of messages
 const (
-	MsgSend TxType = "bank/MsgSend"
+	MsgSend                     TxType = "bank/MsgSend"
+	MsgDelegate                 TxType = "staking/MsgDelegate"
+	MsgUndelegate               TxType = "staking/MsgUndelegate"
+	MsgBeginRedelegate          TxType = "staking/MsgBeginRedelegate"
+	MsgWithdrawDelegationReward TxType = "distribution/MsgWithdrawDelegationReward"
 
-	EventTransfer EventType = "transfer"
+	EventTransfer        EventType = "transfer"
+	EventWithdrawRewards EventType = "withdraw_rewards"
+
+	AttributeAmount    AttributeKey = "amount"
+	AttributeValidator AttributeKey = "validator"
 
 	DenomLuna DenomType = "uluna"
 )
@@ -63,6 +75,35 @@ type Event struct {
 // Events nolint
 type Events []*Event
 
+// GetWithdrawRewardValue returns withdrawn rewards as an array of blockatlas.Transfer
+func (e Events) GetWithdrawRewardValue() (rewards Amounts) {
+
+	coinMap := make(map[string]int64)
+	for _, att := range e {
+		if att.Type == EventWithdrawRewards {
+			coinMap = att.Attributes.GetWithdrawRewardValue(coinMap)
+		}
+	}
+
+	var keys []string
+	for key := range coinMap {
+		keys = append(keys, key)
+	}
+
+	// zero fee tx
+	if len(keys) == 0 {
+		return
+	}
+
+	sort.Strings(keys)
+
+	for _, key := range keys {
+		rewards = append(rewards, Amount{key, strconv.FormatInt(coinMap[key], 10)})
+	}
+
+	return
+}
+
 // Attribute nolint
 type Attribute struct {
 	Key   AttributeKey `json:"key"`
@@ -71,6 +112,36 @@ type Attribute struct {
 
 // Attributes nolint
 type Attributes []Attribute
+
+// GetWithdrawRewardValue returns the summed coin map
+func (a Attributes) GetWithdrawRewardValue(coinMap map[string]int64) map[string]int64 {
+	for _, att := range a {
+		if att.Key == AttributeAmount {
+			coins := strings.Split(att.Value, ",")
+			for _, coin := range coins {
+				idx := strings.IndexByte(coin, 'u')
+				if idx < 0 {
+					continue
+				}
+
+				denom := coin[idx:]
+				amount, err := strconv.ParseInt(coin[:idx], 10, 64)
+
+				if err != nil {
+					continue
+				}
+
+				if amt, ok := coinMap[denom]; ok {
+					coinMap[denom] = amt + amount
+				} else {
+					coinMap[denom] = amount
+				}
+			}
+		}
+	}
+
+	return coinMap
+}
 
 // Data - "tx" sub object
 type Data struct {
@@ -165,7 +236,12 @@ func (m *Message) UnmarshalJSON(buf []byte) error {
 		var msgTransfer MessageValueTransfer
 		err = json.Unmarshal(messageInternal.Value, &msgTransfer)
 		m.Value = msgTransfer
+	case MsgUndelegate, MsgDelegate, MsgWithdrawDelegationReward:
+		var msgDelegate MessageValueDelegate
+		err = json.Unmarshal(messageInternal.Value, &msgDelegate)
+		m.Value = msgDelegate
 	}
+
 	return err
 }
 
@@ -189,3 +265,83 @@ type Balance struct {
 	Denom  DenomType `json:"denom"`
 	Amount string    `json:"amount"`
 }
+
+// # Staking
+
+// TerraCommission nolint
+type TerraCommission struct {
+	Rate string `json:"rate"`
+}
+
+// ValidatorsResult nolint
+type ValidatorsResult struct {
+	Validators []Validator `json:"validators"`
+}
+
+// Validator nolint
+type Validator struct {
+	Status        string          `json:"status"`
+	Address       string          `json:"operatorAddress"`
+	Commission    TerraCommission `json:"commissionInfo"`
+	StakingReturn string          `json:"stakingReturn"`
+}
+
+// Delegations nolint
+type Delegations struct {
+	List []Delegation `json:"result"`
+}
+
+// Delegation nolint
+type Delegation struct {
+	DelegatorAddress string `json:"delegator_address"`
+	ValidatorAddress string `json:"validator_address"`
+	Shares           string `json:"shares,omitempty"`
+}
+
+// Value nolint
+func (d *Delegation) Value() string {
+	shares := strings.Split(d.Shares, ".")
+	if len(shares) > 0 {
+		return shares[0]
+	}
+	return d.Shares
+}
+
+// UnbondingDelegations nolint
+type UnbondingDelegations struct {
+	List []UnbondingDelegation `json:"result"`
+}
+
+// UnbondingDelegation nolint
+type UnbondingDelegation struct {
+	Delegation
+	Entries []UnbondingDelegationEntry `json:"entries"`
+}
+
+// UnbondingDelegationEntry nolint
+type UnbondingDelegationEntry struct {
+	DelegatorAddress string `json:"creation_height"`
+	CompletionTime   string `json:"completion_time"`
+	Balance          string `json:"balance"`
+}
+
+// StakingPool nolint
+type StakingPool struct {
+	Pool Pool `json:"result"`
+}
+
+// Pool nolint
+type Pool struct {
+	NotBondedTokens string `json:"not_bonded_tokens"`
+	BondedTokens    string `json:"bonded_tokens"`
+}
+
+// StakingReturn defines annualized staking return data
+type StakingReturn struct {
+	Datetime         time.Time `json:"datetime"`
+	DailyReturn      string    `json:"dailyReturn"`
+	AnnualizedReturn string    `json:"annualizedReturn"`
+}
+
+// StakingReturns is array of StakingReturn
+type StakingReturns []StakingReturn
