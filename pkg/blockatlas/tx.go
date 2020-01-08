@@ -21,13 +21,15 @@ const (
 	TokenTypeBEP2  TokenType = "BEP2"
 	TokenTypeTRC10 TokenType = "TRC10"
 
-	TxTransfer            TransactionType = "transfer"
-	TxNativeTokenTransfer TransactionType = "native_token_transfer"
-	TxTokenTransfer       TransactionType = "token_transfer"
-	TxCollectibleTransfer TransactionType = "collectible_transfer"
-	TxTokenSwap           TransactionType = "token_swap"
-	TxContractCall        TransactionType = "contract_call"
-	TxAnyAction           TransactionType = "any_action"
+	TxTransfer               TransactionType = "transfer"
+	TxMultiCurrencyTransfer  TransactionType = "multi_currency_transfer"
+	TxNativeTokenTransfer    TransactionType = "native_token_transfer"
+	TxTokenTransfer          TransactionType = "token_transfer"
+	TxCollectibleTransfer    TransactionType = "collectible_transfer"
+	TxTokenSwap              TransactionType = "token_swap"
+	TxContractCall           TransactionType = "contract_call"
+	TxAnyAction              TransactionType = "any_action"
+	TxMultiCurrencyAnyAction TransactionType = "multi_currency_any_action"
 
 	KeyPlaceOrder        KeyType = "place_order"
 	KeyCancelOrder       KeyType = "cancel_order"
@@ -91,6 +93,8 @@ type Tx struct {
 	Meta interface{} `json:"metadata"`
 }
 
+// TxOutput describes input and output of tx
+// Excample: bitcoin UTXO
 type TxOutput struct {
 	Address string `json:"address"`
 	Value   Amount `json:"value"`
@@ -147,6 +151,30 @@ type ContractCall struct {
 	Value string `json:"value"`
 }
 
+// Currency describes currency information on the multiple currency chain
+type Currency struct {
+	Value      Amount `json:"value"`
+	Symbol     string `json:"symbol"`
+	Decimals   uint   `json:"decimals"`
+	CurrencyID string `json:"currency_id"`
+}
+
+// MultiCurrencyTransfer describes the transfer of multiple currency native to the platform
+// Example: Cosmos, Terra
+type MultiCurrencyTransfer struct {
+	Currencies []Currency `json:"currencies"`
+	Fees       []Currency `json:"fees"`
+}
+
+// MultiCurrencyAnyAction describes any action for multiple currency
+// Example: Cosmos, Terra
+type MultiCurrencyAnyAction struct {
+	Title      KeyTitle   `json:"title"`
+	Key        KeyType    `json:"key"`
+	Fees       []Currency `json:"fees"`
+	Currencies []Currency `json:"currencies"`
+}
+
 // AnyAction describes all other types
 type AnyAction struct {
 	Coin     uint     `json:"coin"`
@@ -188,7 +216,7 @@ func (t *Tx) GetUtxoAddresses() (addresses []string) {
 func (t *Tx) GetAddresses() []string {
 	addresses := make([]string, 0)
 	switch t.Meta.(type) {
-	case Transfer, *Transfer, CollectibleTransfer, *CollectibleTransfer, ContractCall, *ContractCall, AnyAction, *AnyAction:
+	case Transfer, *Transfer, CollectibleTransfer, *CollectibleTransfer, ContractCall, *ContractCall, AnyAction, *AnyAction, MultiCurrencyTransfer, *MultiCurrencyTransfer, MultiCurrencyAnyAction, *MultiCurrencyAnyAction:
 		return append(addresses, t.From, t.To)
 	case NativeTokenTransfer:
 		return append(addresses, t.Meta.(NativeTokenTransfer).From, t.Meta.(NativeTokenTransfer).To)

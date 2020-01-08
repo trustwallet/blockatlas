@@ -32,6 +32,8 @@ func (t *Tx) UnmarshalJSON(data []byte) error {
 	switch t.Type {
 	case TxTransfer:
 		t.Meta = new(Transfer)
+	case TxMultiCurrencyTransfer:
+		t.Meta = new(MultiCurrencyTransfer)
 	case TxNativeTokenTransfer:
 		t.Meta = new(NativeTokenTransfer)
 	case TxTokenTransfer:
@@ -60,6 +62,8 @@ func (t *Tx) MarshalJSON() ([]byte, error) {
 	switch t.Meta.(type) {
 	case Transfer, *Transfer:
 		t.Type = TxTransfer
+	case MultiCurrencyTransfer, *MultiCurrencyTransfer:
+		t.Type = TxMultiCurrencyTransfer
 	case NativeTokenTransfer, *NativeTokenTransfer:
 		t.Type = TxNativeTokenTransfer
 	case TokenTransfer, *TokenTransfer:
@@ -72,6 +76,8 @@ func (t *Tx) MarshalJSON() ([]byte, error) {
 		t.Type = TxContractCall
 	case AnyAction, *AnyAction:
 		t.Type = TxAnyAction
+	case MultiCurrencyAnyAction, *MultiCurrencyAnyAction:
+		t.Type = TxMultiCurrencyAnyAction
 	default:
 		return nil, errors.E("unsupported tx metadata", errors.Params{"meta": t.Meta}).PushToSentry()
 	}
