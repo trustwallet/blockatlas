@@ -230,3 +230,7 @@ harmony:
 
 kava:
   api: https://data.kava.io
+
+# [LUNA] Terra: https://terra.money/
+terra:
+  api: https://fcd.terra.dev

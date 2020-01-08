@@ -361,3 +361,11 @@
   decimals: 18
   blockTime: 5000
   sampleAddress: 'one1syjs6cnfwd9fgrhng03dyzs07suwtywwreczmk'
+
+- id: 330
+  symbol: LUNA
+  handle: terra
+  name: Terra
+  decimals: 6
+  blockTime: 5000
+  sampleAddress: 'terra1dp0taj85ruc299rkdvzp4z5pfg6z6swaed74e6'
