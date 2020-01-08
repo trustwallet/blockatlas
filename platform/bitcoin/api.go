@@ -8,9 +8,8 @@ import (
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
-	"math"
+	"github.com/trustwallet/blockatlas/util"
 	"net/http"
-	"strconv"
 	"sync"
 )
 
@@ -195,7 +194,7 @@ func NormalizeTransaction(tx Transaction, coinIndex uint) blockatlas.Tx {
 		to = outputs[0].Address
 	}
 	amount := blockatlas.Amount(tx.Amount())
-	fees := blockatlas.Amount(getValue(tx.Fees))
+	fees := blockatlas.Amount(util.GetAmountValue(tx.Fees))
 
 	return blockatlas.Tx{
 		ID:       tx.ID,
@@ -239,9 +238,10 @@ func parseOutputs(outputs []Output) (addresses []blockatlas.TxOutput) {
 	for _, output := range outputs {
 		for _, address := range output.OutputAddress() {
 			if val, ok := set[address]; ok {
-				val.Value = addAmount(string(val.Value), output.Value)
+				value := util.AddAmount(string(val.Value), output.Value)
+				val.Value = blockatlas.Amount(value)
 			} else {
-				amount := getValue(output.Value)
+				amount := util.GetAmountValue(output.Value)
 				set[address] = blockatlas.TxOutput{
 					Address: address,
 					Value:   blockatlas.Amount(amount),
@@ -254,35 +254,6 @@ func parseOutputs(outputs []Output) (addresses []blockatlas.TxOutput) {
 		addresses = append(addresses, set[val])
 	}
 	return addresses
-}
-
-func getValue(amount string) string {
-	value := parseAmount(amount)
-	return strconv.FormatInt(value, 10)
-}
-
-func parseAmount(amount string) int64 {
-	value, err := strconv.ParseInt(amount, 10, 64)
-	if err == nil {
-		return value
-	}
-	return decimalToSatoshis(amount)
-}
-
-func decimalToSatoshis(amount string) int64 {
-	value, err := strconv.ParseFloat(amount, 64)
-	if err != nil {
-		return 0
-	}
-	total := value * math.Pow10(8)
-	return int64(total)
-}
-
-func addAmount(left string, right string) (sum blockatlas.Amount) {
-	amount1 := parseAmount(left)
-	amount2 := parseAmount(right)
-	total := strconv.FormatInt(amount1+amount2, 10)
-	return blockatlas.Amount(total)
 }
 
 func (p *Platform) InferDirection(tx *blockatlas.Tx, addressSet mapset.Set) blockatlas.Direction {
@@ -319,7 +290,8 @@ func (p *Platform) InferValue(tx *blockatlas.Tx, direction blockatlas.Direction,
 			if !addressSet.Contains(output.Address) {
 				continue
 			}
-			amount = addAmount(string(amount), string(output.Value))
+			value := util.AddAmount(string(amount), string(output.Value))
+			amount = blockatlas.Amount(value)
 		}
 		value = amount
 	}
