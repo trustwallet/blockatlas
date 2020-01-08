@@ -183,7 +183,7 @@ func convertValue(value interface{}) (float64, bool) {
 	return result, true
 }
 
-// checkNotZeroValue check that string value is not 0
+// isZeroValue check that string value is 0
 func isZeroValue(value string) bool {
 	valueFloat, err := strconv.ParseFloat(value, 64)
 	if err != nil {
