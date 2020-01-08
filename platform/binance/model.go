@@ -149,16 +149,10 @@ func (a TokenPage) findToken(symbol string) *Token {
 }
 
 func (balance *Balance) isZero() bool {
-	if checkNotZeroValue(balance.Free) {
-		return false
+	if isZeroValue(balance.Free) && isZeroValue(balance.Frozen) && isZeroValue(balance.Locked) {
+		return true
 	}
-	if checkNotZeroValue(balance.Frozen) {
-		return false
-	}
-	if checkNotZeroValue(balance.Locked) {
-		return false
-	}
-	return true
+	return false
 }
 
 func (e *Error) Error() string {
@@ -190,14 +184,14 @@ func convertValue(value interface{}) (float64, bool) {
 }
 
 // checkNotZeroValue check that string value is not 0
-func checkNotZeroValue(value string) bool {
+func isZeroValue(value string) bool {
 	valueFloat, err := strconv.ParseFloat(value, 64)
 	if err != nil {
 		logger.Warn("Cannot parse value of Binance Balance Object during non-zero check")
-		return false
+		return true
 	}
 	if valueFloat == 0 {
-		return false
+		return true
 	}
-	return true
+	return false
 }
