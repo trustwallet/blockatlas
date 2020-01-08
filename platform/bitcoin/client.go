@@ -43,7 +43,7 @@ func (c *Client) GetAddressesFromXpub(xpub string) (tokens []Token, err error) {
 	return transactions.Tokens, err
 }
 
-func (c *Client) GetTransactionsByBlock(number int64, page int64) (block Block, err error) {
+func (c *Client) GetTransactionsByBlock(number int64, page int64) (block TransactionsList, err error) {
 	path := fmt.Sprintf("v2/block/%s", strconv.FormatInt(number, 10))
 	args := url.Values{
 		"page": {strconv.FormatInt(page, 10)},

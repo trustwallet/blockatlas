@@ -175,7 +175,7 @@ func TestNormalizeTransfer(t *testing.T) {
 
 		p := &Platform{CoinIndex: test.Expected.Coin}
 		var readyTx blockatlas.Tx
-		normTx, ok := p.NormalizeTransfer(&transaction, test.Expected.Coin, test.AddressSet)
+		normTx, ok := p.NormalizeTransfer(transaction, test.Expected.Coin, test.AddressSet)
 		if !ok {
 			t.Fatal("Bitcoin: Can't normalize transaction", readyTx)
 		}
@@ -277,3 +277,4 @@ func TestTransactionStatus(t *testing.T) {
 		assert.Equal(t, test.Expected, test.Tx.getStatus())
 	}
 }
+
