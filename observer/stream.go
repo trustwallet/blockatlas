@@ -5,8 +5,8 @@ import (
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
+	"github.com/trustwallet/blockatlas/pkg/semaphore"
 	"github.com/trustwallet/blockatlas/storage"
-	"github.com/trustwallet/blockatlas/util"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -22,7 +22,7 @@ type Stream struct {
 
 	// Concurrency
 	blockNumber int64
-	semaphore   *util.Semaphore
+	semaphore   *semaphore.Semaphore
 	wg          sync.WaitGroup
 }
 
@@ -34,7 +34,7 @@ func (s *Stream) Execute(ctx context.Context) <-chan *blockatlas.Block {
 	if conns == 0 {
 		logger.Fatal("observer.stream_conns is 0")
 	}
-	s.semaphore = util.NewSemaphore(conns)
+	s.semaphore = semaphore.NewSemaphore(conns)
 	c := make(chan *blockatlas.Block)
 	go s.run(ctx, c)
 	return c

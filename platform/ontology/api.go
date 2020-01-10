@@ -5,7 +5,7 @@ import (
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
-	"github.com/trustwallet/blockatlas/util"
+	"github.com/trustwallet/blockatlas/pkg/numbers"
 	"strings"
 )
 
@@ -60,7 +60,7 @@ func Normalize(srcTx *Tx, assetName string) (tx blockatlas.Tx, ok bool) {
 		return tx, false
 	}
 	transfer := srcTx.TransferList[0]
-	fee := util.DecimalExp(srcTx.Fee, 9)
+	fee := numbers.DecimalExp(srcTx.Fee, 9)
 	var status blockatlas.Status
 	if srcTx.ConfirmFlag == 1 {
 		status = blockatlas.StatusCompleted
@@ -108,7 +108,7 @@ func normalizeONG(tx *blockatlas.Tx, transfer *Transfer) {
 	if transfer.ToAddress == GovernanceContract {
 		value = "0"
 	} else {
-		value = util.DecimalExp(transfer.Amount, 9)
+		value = numbers.DecimalExp(transfer.Amount, 9)
 	}
 
 	from := transfer.FromAddress

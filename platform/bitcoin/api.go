@@ -8,7 +8,7 @@ import (
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
-	"github.com/trustwallet/blockatlas/util"
+	"github.com/trustwallet/blockatlas/pkg/numbers"
 	"net/http"
 	"sync"
 )
@@ -194,7 +194,7 @@ func NormalizeTransaction(tx Transaction, coinIndex uint) blockatlas.Tx {
 		to = outputs[0].Address
 	}
 	amount := blockatlas.Amount(tx.Amount())
-	fees := blockatlas.Amount(util.GetAmountValue(tx.Fees))
+	fees := blockatlas.Amount(numbers.GetAmountValue(tx.Fees))
 
 	return blockatlas.Tx{
 		ID:       tx.ID,
@@ -238,10 +238,10 @@ func parseOutputs(outputs []Output) (addresses []blockatlas.TxOutput) {
 	for _, output := range outputs {
 		for _, address := range output.OutputAddress() {
 			if val, ok := set[address]; ok {
-				value := util.AddAmount(string(val.Value), output.Value)
+				value := numbers.AddAmount(string(val.Value), output.Value)
 				val.Value = blockatlas.Amount(value)
 			} else {
-				amount := util.GetAmountValue(output.Value)
+				amount := numbers.GetAmountValue(output.Value)
 				set[address] = blockatlas.TxOutput{
 					Address: address,
 					Value:   blockatlas.Amount(amount),
@@ -290,7 +290,7 @@ func (p *Platform) InferValue(tx *blockatlas.Tx, direction blockatlas.Direction,
 			if !addressSet.Contains(output.Address) {
 				continue
 			}
-			value := util.AddAmount(string(amount), string(output.Value))
+			value := numbers.AddAmount(string(amount), string(output.Value))
 			amount = blockatlas.Amount(value)
 		}
 		value = amount

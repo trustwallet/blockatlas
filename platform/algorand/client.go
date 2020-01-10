@@ -3,7 +3,7 @@ package algorand
 import (
 	"fmt"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/util"
+	"github.com/trustwallet/blockatlas/pkg/numbers"
 )
 
 type Client struct {
@@ -72,7 +72,7 @@ func (c *Client) GetTxsOfAddress(address string) ([]Transaction, error) {
 	//FIXME. Currently fetching the last 6 transactions and get 6 blocks for each to retrieve timestamp.
 	//Algorand team promised to provide endpoint soon that will contain timestamp value inside TransactionsResponse response
 	//Get latest 6 transactions, which is enough until new endpoint fixes it.
-	txs := response.Transactions[:util.Min(6, len(response.Transactions))]
+	txs := response.Transactions[:numbers.Min(6, len(response.Transactions))]
 
 	for _, t := range txs {
 		block, err := c.GetBlock(int64(t.Round))

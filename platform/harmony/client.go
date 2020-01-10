@@ -3,7 +3,7 @@ package harmony
 import (
 	"fmt"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/util"
+	"github.com/trustwallet/blockatlas/pkg/numbers"
 	"strconv"
 )
 
@@ -42,7 +42,7 @@ func (c *Client) GetBlockByNumber(num int64) (info BlockInfo, err error) {
 }
 
 func hexToInt(hex string) (uint64, error) {
-	nonceStr, err := util.HexToDecimal(hex)
+	nonceStr, err := numbers.HexToDecimal(hex)
 	if err != nil {
 		return 0, err
 	}

@@ -5,7 +5,7 @@ import (
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/util"
+	"github.com/trustwallet/blockatlas/pkg/numbers"
 	"strconv"
 	"sync"
 	"time"
@@ -96,7 +96,7 @@ func (p *Platform) Normalize(srcTx *Tx) (tx blockatlas.Tx, ok bool) {
 	if len(srcTx.Data.Contents.Fee.FeeAmount) > 0 {
 		qty := srcTx.Data.Contents.Fee.FeeAmount[0].Quantity
 		if len(qty) > 0 && qty != fee {
-			fee, err = util.DecimalToSatoshis(srcTx.Data.Contents.Fee.FeeAmount[0].Quantity)
+			fee, err = numbers.DecimalToSatoshis(srcTx.Data.Contents.Fee.FeeAmount[0].Quantity)
 			if err != nil {
 				return blockatlas.Tx{}, false
 			}
@@ -141,7 +141,7 @@ func (p *Platform) fillTransfer(tx *blockatlas.Tx, transfer MessageValueTransfer
 	if len(transfer.Amount) == 0 {
 		return
 	}
-	value, err := util.DecimalToSatoshis(transfer.Amount[0].Quantity)
+	value, err := numbers.DecimalToSatoshis(transfer.Amount[0].Quantity)
 	if err != nil {
 		return
 	}
@@ -156,7 +156,7 @@ func (p *Platform) fillTransfer(tx *blockatlas.Tx, transfer MessageValueTransfer
 }
 
 func (p *Platform) fillDelegate(tx *blockatlas.Tx, delegate MessageValueDelegate, events Events, msgType TxType) {
-	value, err := util.DecimalToSatoshis(delegate.Amount.Quantity)
+	value, err := numbers.DecimalToSatoshis(delegate.Amount.Quantity)
 	if err != nil {
 		return
 	}

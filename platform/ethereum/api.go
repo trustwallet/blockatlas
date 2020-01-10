@@ -12,7 +12,7 @@ import (
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
-	"github.com/trustwallet/blockatlas/util"
+	"github.com/trustwallet/blockatlas/pkg/address"
 )
 
 var (
@@ -145,7 +145,7 @@ func AppendTxs(in []blockatlas.Tx, srcTx *Doc, coinIndex uint) (out []blockatlas
 		tokenTx.Meta = blockatlas.TokenTransfer{
 			Name:     op.Contract.Name,
 			Symbol:   op.Contract.Symbol,
-			TokenID:  util.Checksum(op.Contract.Address),
+			TokenID:  address.Checksum(op.Contract.Address),
 			Decimals: op.Contract.Decimals,
 			Value:    blockatlas.Amount(op.Value),
 			From:     op.From,
@@ -233,11 +233,11 @@ func NormalizeCollection(c Collection, coinIndex uint, owner string) blockatlas.
 		return blockatlas.Collection{}
 	}
 
-	description := util.GetValidParameter(c.Description, c.Contracts[0].Description)
-	symbol := util.GetValidParameter(c.Contracts[0].Symbol, "")
-	collectionId := util.GetValidParameter(c.Contracts[0].Address, "")
-	version := util.GetValidParameter(c.Contracts[0].NftVersion, "")
-	collectionType := util.GetValidParameter(c.Contracts[0].Type, "")
+	description := blockatlas.GetValidParameter(c.Description, c.Contracts[0].Description)
+	symbol := blockatlas.GetValidParameter(c.Contracts[0].Symbol, "")
+	collectionId := blockatlas.GetValidParameter(c.Contracts[0].Address, "")
+	version := blockatlas.GetValidParameter(c.Contracts[0].NftVersion, "")
+	collectionType := blockatlas.GetValidParameter(c.Contracts[0].Type, "")
 	if _, ok := slugTokens[collectionType]; ok {
 		collectionId = createCollectionId(collectionId, c.Slug)
 	}
@@ -275,13 +275,13 @@ func NormalizeCollectiblePage(c *Collection, srcPage []Collectible, coinIndex ui
 
 func NormalizeCollectible(c *Collection, a Collectible, coinIndex uint) blockatlas.Collectible {
 	// TODO: fix unprotected code
-	address := util.GetValidParameter(c.Contracts[0].Address, "")
-	collectionType := util.GetValidParameter(c.Contracts[0].Type, "")
+	address := blockatlas.GetValidParameter(c.Contracts[0].Address, "")
+	collectionType := blockatlas.GetValidParameter(c.Contracts[0].Type, "")
 	collectionID := address
 	if _, ok := slugTokens[collectionType]; ok {
 		collectionID = createCollectionId(address, c.Slug)
 	}
-	externalLink := util.GetValidParameter(a.ExternalLink, a.AssetContract.ExternalLink)
+	externalLink := blockatlas.GetValidParameter(a.ExternalLink, a.AssetContract.ExternalLink)
 	id := strings.Join([]string{a.AssetContract.Address, a.TokenId}, "-")
 	return blockatlas.Collectible{
 		ID:               id,

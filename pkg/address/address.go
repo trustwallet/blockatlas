@@ -1,4 +1,4 @@
-package util
+package address
 
 import (
 	"golang.org/x/crypto/sha3"
