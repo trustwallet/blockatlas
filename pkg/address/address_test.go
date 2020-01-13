@@ -15,8 +15,8 @@ func TestChecksum(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := Checksum(tt.unchecksummed); got != tt.want {
-				t.Errorf("Checksum() = %v, want %v", got, tt.want)
+			if got := EIP55Checksum(tt.unchecksummed); got != tt.want {
+				t.Errorf("EIP55Checksum() = %v, want %v", got, tt.want)
 			}
 		})
 	}
