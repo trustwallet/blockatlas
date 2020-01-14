@@ -468,28 +468,28 @@ type testToken struct {
 func TestNormalizeToken(t *testing.T) {
 	testingTokens := []testToken{
 		{
-			name:        "Aeron",
+			name:        "Test with not zero balance",
 			apiResponse: myToken,
 			tokens:      tokenList,
 			expected:    tokenDst,
 			ok:          true,
 		},
 		{
-			name:        "Binance Chain Native Token",
+			name:        "Test with all zero balance",
 			apiResponse: myTokenAllZero,
 			tokens:      tokenList,
 			expected:    emptyTokenDst,
 			ok:          false,
 		},
 		{
-			name:        "Binance Chain Native Token",
+			name:        "Test with only free zero balance",
 			apiResponse: myTokenFreeZero,
 			tokens:      tokenList,
 			expected:    tokenDst,
 			ok:          true,
 		},
 		{
-			name:        "Binance Chain Native Token",
+			name:        "Test with free and frozen zero balances",
 			apiResponse: myTokenFrozenAndFreeZero,
 			tokens:      tokenList,
 			expected:    tokenDst,
