@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
-	"github.com/trustwallet/blockatlas/util"
+	"github.com/trustwallet/blockatlas/pkg/address"
 	"strings"
 )
 
@@ -21,7 +21,7 @@ func (c Cache) GetCoinsById(id string) (coins []CoinResult, err error) {
 
 func (c SymbolsCache) generateId(symbol string, token string) string {
 	if len(token) > 0 {
-		return fmt.Sprintf("%s:%s", strings.ToUpper(symbol), util.Checksum(token))
+		return fmt.Sprintf("%s:%s", strings.ToUpper(symbol), address.EIP55Checksum(token))
 	}
 	return strings.ToUpper(symbol)
 }

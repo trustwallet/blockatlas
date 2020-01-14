@@ -4,12 +4,12 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"github.com/trustwallet/blockatlas/pkg/numbers"
 	"strings"
 
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/util"
 )
 
 type Platform struct {
@@ -68,7 +68,7 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 
 func (p *Platform) NormalizeTransfer(srcTx *Transfer) blockatlas.Tx {
 	decimals := p.Coin().Decimals
-	amount := strings.Split(util.DecimalExp(srcTx.Amount, int(decimals)), ".")[0]
+	amount := strings.Split(numbers.DecimalExp(srcTx.Amount, int(decimals)), ".")[0]
 	status := blockatlas.StatusCompleted
 	if !srcTx.Success {
 		status = blockatlas.StatusFailed

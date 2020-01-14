@@ -6,7 +6,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
-	"github.com/trustwallet/blockatlas/util"
+	"github.com/trustwallet/blockatlas/pkg/semaphore"
 	"net/http"
 	"os"
 	"strings"
@@ -65,7 +65,7 @@ func run(_ *cobra.Command, args []string) {
 	logger.Info("Running goroutines tests", logger.Params{"goroutines": concurrency})
 
 	var wg sync.WaitGroup
-	sem := util.NewSemaphore(concurrency)
+	sem := semaphore.NewSemaphore(concurrency)
 
 	var tests []coin.Coin
 
@@ -102,7 +102,7 @@ func log(c *coin.Coin) *logrus.Entry {
 	return logrus.WithField("@platform", c.Handle)
 }
 
-func runTest(c coin.Coin, sem *util.Semaphore, wg *sync.WaitGroup) {
+func runTest(c coin.Coin, sem *semaphore.Semaphore, wg *sync.WaitGroup) {
 	defer wg.Done()
 	sem.Acquire()
 	defer sem.Release()

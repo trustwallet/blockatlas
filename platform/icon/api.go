@@ -6,7 +6,7 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
-	"github.com/trustwallet/blockatlas/util"
+	"github.com/trustwallet/blockatlas/pkg/numbers"
 	"time"
 )
 
@@ -49,8 +49,8 @@ func Normalize(trx *Tx) (tx blockatlas.Tx, b bool) {
 		logger.Error(err)
 		return tx, false
 	}
-	fee := util.DecimalExp(string(trx.Fee), 18)
-	value := util.DecimalExp(string(trx.Amount), 18)
+	fee := numbers.DecimalExp(string(trx.Fee), 18)
+	value := numbers.DecimalExp(string(trx.Amount), 18)
 
 	return blockatlas.Tx{
 		ID:     trx.TxHash,

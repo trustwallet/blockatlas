@@ -1,4 +1,4 @@
-package util
+package address
 
 import (
 	"golang.org/x/crypto/sha3"
@@ -14,7 +14,7 @@ func Remove0x(input string) string {
 }
 
 // Hex returns an EIP55-compliant hex string representation of the address.
-func Checksum(unchecksummed string) string {
+func EIP55Checksum(unchecksummed string) string {
 	v := []byte(Remove0x(strings.ToLower(unchecksummed)))
 	sha := sha3.NewLegacyKeccak256()
 	sha.Write(v)

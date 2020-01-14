@@ -1,4 +1,4 @@
-package util
+package semaphore
 
 type Semaphore struct {
 	c chan bool
