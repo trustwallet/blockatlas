@@ -48,11 +48,9 @@ func Execute() {
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
 	go func() {
-		select {
-		case sig := <-c:
-			logger.Info("Got a signal. Aborting...", logger.Params{"code": sig})
-			os.Exit(1)
-		}
+		 sig := <-c
+		 logger.Info("Got a signal. Aborting...", logger.Params{"code": sig})
+		 os.Exit(1)
 	}()
 
 	if err := rootCmd.Execute(); err != nil {

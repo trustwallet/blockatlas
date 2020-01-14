@@ -48,8 +48,8 @@ type Tx struct {
 }
 
 type TxReceipt struct {
-	Paid    string   `json:paid`
-	Outputs []Output `json:outputs`
+	Paid    string   `json:"paid"`
+	Outputs []Output `json:"outputs"`
 }
 
 type Output struct {
@@ -57,8 +57,8 @@ type Output struct {
 }
 
 type Event struct {
-	Address string   `json:address`
-	Topics  []string `json:topics`
+	Address string   `json:"address"`
+	Topics  []string `json:"topics"`
 	Data    string   `json:"data"`
 }
 
