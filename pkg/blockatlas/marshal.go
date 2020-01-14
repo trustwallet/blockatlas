@@ -76,8 +76,6 @@ func (t *Tx) MarshalJSON() ([]byte, error) {
 		t.Type = TxContractCall
 	case AnyAction, *AnyAction:
 		t.Type = TxAnyAction
-	case MultiCurrencyAnyAction, *MultiCurrencyAnyAction:
-		t.Type = TxMultiCurrencyAnyAction
 	default:
 		return nil, errors.E("unsupported tx metadata", errors.Params{"meta": t.Meta}).PushToSentry()
 	}
