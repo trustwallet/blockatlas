@@ -149,20 +149,24 @@ type ContractCall struct {
 	Value string `json:"value"`
 }
 
+// Currency describes currency information with its amount
+type Currency struct {
+	Token Token  `json:"token"`
+	Value Amount `json:"value"`
+}
+
 // MultiCurrencyTransfer describes the transfer of multiple currency native to the platform
-// Example: Cosmos, Terra
 type MultiCurrencyTransfer struct {
-	Currencies []NativeTokenTransfer `json:"currencies"`
-	Fees       []NativeTokenTransfer `json:"fees"`
+	Currencies []Currency `json:"currencies"`
+	Fees       []Currency `json:"fees"`
 }
 
 // MultiCurrencyAnyAction describes any action for multiple currency
-// Example: Cosmos, Terra
 type MultiCurrencyAnyAction struct {
-	Title      KeyTitle              `json:"title"`
-	Key        KeyType               `json:"key"`
-	Fees       []NativeTokenTransfer `json:"fees"`
-	Currencies []NativeTokenTransfer `json:"currencies"`
+	Title      KeyTitle   `json:"title"`
+	Key        KeyType    `json:"key"`
+	Fees       []Currency `json:"fees"`
+	Currencies []Currency `json:"currencies"`
 }
 
 // AnyAction describes all other types
