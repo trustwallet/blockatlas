@@ -193,13 +193,14 @@ func (p *Platform) GetTokenListByAddress(address string) (blockatlas.TokenPage, 
 
 // NormalizeToken converts a Binance token into the generic model
 func NormalizeToken(srcToken *Balance, tokens *TokenPage) (t blockatlas.Token, ok bool) {
-	if srcToken.isZeroBalance() {
-		return blockatlas.Token{}, false
+	isAllZero, err := srcToken.isAllZeroBalance()
+	if err != nil || isAllZero {
+		return t, false
 	}
 
 	tk := tokens.findToken(srcToken.Symbol)
 	if tk == nil {
-		return blockatlas.Token{}, false
+		return t, false
 	}
 
 	t = blockatlas.Token{

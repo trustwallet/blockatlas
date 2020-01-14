@@ -194,8 +194,8 @@ func Test_isZeroBalance(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.balance.isZeroBalance(); got != tt.want {
-				t.Errorf("isZeroBalance() = %v, want %v, name %v", got, tt.want, tt.name)
+			if got, err := tt.balance.isAllZeroBalance(); got != tt.want && err == nil {
+				t.Errorf("isAllZeroBalance() = %v, want %v, name %v", got, tt.want, tt.name)
 			}
 		})
 	}

@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/errors"
-	"github.com/trustwallet/blockatlas/pkg/logger"
 	"math"
 	"strconv"
 	"strings"
@@ -148,17 +147,16 @@ func (a TokenPage) findToken(symbol string) *Token {
 	return nil
 }
 
-func (balance *Balance) isZeroBalance() bool {
-	switch {
-	case isNotZeroValue(balance.Free):
-		return false
-	case isNotZeroValue(balance.Frozen):
-		return false
-	case isNotZeroValue(balance.Locked):
-		return false
-	default:
-		return true
+func (balance *Balance) isAllZeroBalance() (bool, error) {
+	values := [3]string{balance.Frozen, balance.Free, balance.Locked}
+	for _, value := range values {
+		valueFloat, err := strconv.ParseFloat(value, 64)
+		if err != nil || valueFloat > 0 {
+			return false, err
+		}
 	}
+	return true, nil
+
 }
 
 func (e *Error) Error() string {
@@ -187,17 +185,4 @@ func convertValue(value interface{}) (float64, bool) {
 		return result, false
 	}
 	return result, true
-}
-
-// isNotZeroValue check that string value is not 0
-func isNotZeroValue(value string) bool {
-	valueFloat, err := strconv.ParseFloat(value, 64)
-	if err != nil {
-		logger.Warn("Cannot parse value of Binance Balance Object during non-zero check, string value=%v", value)
-		return false
-	}
-	if valueFloat == 0 {
-		return false
-	}
-	return true
 }
