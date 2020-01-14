@@ -147,15 +147,15 @@ func (a TokenPage) findToken(symbol string) *Token {
 	return nil
 }
 
-func (balance *Balance) isAllZeroBalance() (bool, error) {
+func (balance *Balance) isAllZeroBalance() bool {
 	values := [3]string{balance.Frozen, balance.Free, balance.Locked}
 	for _, value := range values {
 		valueFloat, err := strconv.ParseFloat(value, 64)
 		if err != nil || valueFloat > 0 {
-			return false, err
+			return false
 		}
 	}
-	return true, nil
+	return true
 
 }
 

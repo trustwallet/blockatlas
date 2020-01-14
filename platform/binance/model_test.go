@@ -149,24 +149,24 @@ func Test_isZeroBalance(t *testing.T) {
 			false,
 		},
 		{"Bad others are 0",
-			Balance{"f", // "f" will be parsed as 0 by Parse Float
+			Balance{"f",
 				"0.0000000", "0.0000000", "BNB"},
-			true,
+			false,
 		},
 		{"Bad others are not 0",
-			Balance{"f", // "f" will be parsed as 0 by Parse Float
+			Balance{"f",
 				"0.0000001", "0.0000000", "BNB"},
 			false,
 		},
 		{"Empty others are not 0",
-			Balance{"", // "" will be parsed as 0 by Parse Float
+			Balance{"",
 				"0.00000001", "0.00000001", "BNB"},
 			false,
 		},
-		{"Empty  others are 0",
-			Balance{"", // "" will be parsed as 0 by Parse Float
+		{"Empty others are 0",
+			Balance{"",
 				"0.00000000", "0.00000000", "BNB"},
-			true,
+			false,
 		},
 		{"Big",
 			Balance{"9999999999999999999999999999999999999999999999999999999999999999999999999999999999" +
@@ -187,14 +187,13 @@ func Test_isZeroBalance(t *testing.T) {
 				"9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999" +
 				"9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999" +
 				"99999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
-				// free will be +Inf and converted as zero
 				"0.00000000", "0.00000000", "BNB"},
-			true,
+			false,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got, err := tt.balance.isAllZeroBalance(); got != tt.want && err == nil {
+			if got := tt.balance.isAllZeroBalance(); got != tt.want {
 				t.Errorf("isAllZeroBalance() = %v, want %v, name %v", got, tt.want, tt.name)
 			}
 		})
