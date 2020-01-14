@@ -7,6 +7,7 @@ import (
 	cmc "github.com/trustwallet/blockatlas/marketdata/chart/coinmarketcap"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
+	"sync/atomic"
 )
 
 type Charts struct {
@@ -28,14 +29,34 @@ func InitCharts() *Charts {
 
 func (c *Charts) GetChartData(coin uint, token string, currency string, timeStart int64) (blockatlas.ChartData, error) {
 	chartsData := blockatlas.ChartData{}
-	for _, c := range c.chartProviders {
-		charts, err := c.GetChartData(coin, token, currency, timeStart)
-		if err != nil {
-			continue
-		}
-		return charts, nil
+	chartsDataChan := make(chan blockatlas.ChartData, len(c.chartProviders))
+	errChan := make(chan struct{})
+
+	var errCount int32
+	for _, provider := range c.chartProviders {
+		go func(provider chart.Provider) {
+			charts, err := provider.GetChartData(coin, token, currency, timeStart)
+			if err != nil || len(charts.Prices) == 0 {
+				if int(atomic.LoadInt32(&errCount)) == len(c.chartProviders) - 1 {
+					errChan <- struct{}{}
+					return
+				}
+				atomic.AddInt32(&errCount, 1)
+				return
+			}
+			chartsDataChan <- charts
+		}(provider)
 	}
-	return chartsData, errors.E("No chart data found", errors.Params{"coin": coin, "token": token})
+
+	select {
+	case chartsData = <- chartsDataChan:
+	    close(errChan)
+		return chartsData, nil
+	case <-errChan:
+		close(errChan)
+	    close(chartsDataChan)
+		return chartsData, errors.E("No chart data found", errors.Params{"coin": coin, "token": token})
+	}
 }
 
 func (c *Charts) GetCoinInfo(coin uint, token string, currency string) (blockatlas.ChartCoinInfo, error) {
