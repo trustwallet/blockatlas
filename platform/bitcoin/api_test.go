@@ -79,6 +79,42 @@ const incomingTx = `{
     "hex": "0400008085202f89019b2294e70b52417b96498df97c9add69ecc2963257298768c0e1c48a3264365a000000006b483045022100ec29a476dac49578339a92e6c20451aaf3ff6691efaf7d4d3113d07589771ca702203c0c173bdc356300edbd64cdfaa868b97c13ebc403026b283eb5e1fca398db8b012103729cc4211cf70f87c70c3cef90e0ca9b91e99b42364b8c600d5781277647de5f000000000225110300000000001976a9146fd73e7c147d8ccc15fda31d8429e70f302b843988acf7d70200000000001976a91484f0258cb7974993e6af928921b7f699c51a309488ac00000000000000000000000000000000000000"
 }`
 
+const pendingTx = `{
+    "txid": "a2d70bee124510c476f159fa83cdb34d663fc6020c81aad19b238601d679fed7",
+    "version": 4,
+    "vin": [{
+        "txid": "5a3664328ac4e1c0688729573296c2ec69dd9a7cf98d49967b41520be794229b",
+        "n": 0,
+        "addresses": ["t1T7cLkvDVScjw95WguoAZbbT8mrdqVtpiD"],
+        "isAddress": true,
+        "value": "387582",
+        "hex": "483045022100ec29a476dac49578339a92e6c20451aaf3ff6691efaf7d4d3113d07589771ca702203c0c173bdc356300edbd64cdfaa868b97c13ebc403026b283eb5e1fca398db8b012103729cc4211cf70f87c70c3cef90e0ca9b91e99b42364b8c600d5781277647de5f"
+    }],
+    "vout": [{
+        "value": "200997",
+        "n": 0,
+        "spent": true,
+        "hex": "76a9146fd73e7c147d8ccc15fda31d8429e70f302b843988ac",
+        "addresses": ["t1U4xs3qMxc2TL8wwYufmBngA5mewLHRwhM"],
+        "isAddress": true
+    }, {
+        "value": "186359",
+        "n": 1,
+        "spent": true,
+        "hex": "76a91484f0258cb7974993e6af928921b7f699c51a309488ac",
+        "addresses": ["t1VzWtLj9CSAK3QnxA7uuiK6XhJrjGjKoy4"],
+        "isAddress": true
+    }],
+    "blockHash": "0000000000a8248c4a14a2dcb74d92855bf9440da9b7b1e6d4baa14ee7e3081c",
+    "blockHeight": -1,
+    "confirmations": 116233,
+    "blockTime": 1549793065,
+    "value": "387356",
+    "valueIn": "387582",
+    "fees": "226",
+    "hex": "0400008085202f89019b2294e70b52417b96498df97c9add69ecc2963257298768c0e1c48a3264365a000000006b483045022100ec29a476dac49578339a92e6c20451aaf3ff6691efaf7d4d3113d07589771ca702203c0c173bdc356300edbd64cdfaa868b97c13ebc403026b283eb5e1fca398db8b012103729cc4211cf70f87c70c3cef90e0ca9b91e99b42364b8c600d5781277647de5f000000000225110300000000001976a9146fd73e7c147d8ccc15fda31d8429e70f302b843988acf7d70200000000001976a91484f0258cb7974993e6af928921b7f699c51a309488ac00000000000000000000000000000000000000"
+}`
+
 var expectedOutgoingTx = blockatlas.Tx{
 	ID:   "df63ddab7d4eed2fb6cb40d4d0519e7e5ac7cf5ad556b2edbd45963ea1a2931c",
 	Coin: coin.BTC,
@@ -145,6 +181,41 @@ var expectedIncomingTx = blockatlas.Tx{
 	},
 }
 
+var expectedPendingTx = blockatlas.Tx{
+	ID:   "a2d70bee124510c476f159fa83cdb34d663fc6020c81aad19b238601d679fed7",
+	Coin: coin.ZEC,
+	From: "t1T7cLkvDVScjw95WguoAZbbT8mrdqVtpiD",
+	To:   "t1U4xs3qMxc2TL8wwYufmBngA5mewLHRwhM",
+	Inputs: []blockatlas.TxOutput{
+		{
+			Address: "t1T7cLkvDVScjw95WguoAZbbT8mrdqVtpiD",
+			Value:   "387582",
+		},
+	},
+	Outputs: []blockatlas.TxOutput{
+		{
+			Address: "t1U4xs3qMxc2TL8wwYufmBngA5mewLHRwhM",
+			Value:   "200997",
+		},
+		{
+			Address: "t1VzWtLj9CSAK3QnxA7uuiK6XhJrjGjKoy4",
+			Value:   "186359",
+		},
+	},
+	Fee:       "226",
+	Date:      1549793065,
+	Type:      "transfer",
+	Status:    blockatlas.StatusCompleted,
+	Block:     0,
+	Sequence:  0,
+	Direction: blockatlas.DirectionIncoming,
+	Meta: blockatlas.Transfer{
+		Value:    "200997",
+		Symbol:   "ZEC",
+		Decimals: 8,
+	},
+}
+
 func TestNormalizeTransfer(t *testing.T) {
 
 	outgoingTxSet := mapset.NewSet()
@@ -163,6 +234,7 @@ func TestNormalizeTransfer(t *testing.T) {
 	}{
 		{outgoingTx, expectedOutgoingTx, outgoingTxSet},
 		{incomingTx, expectedIncomingTx, incomingTxSet},
+		{pendingTx, expectedPendingTx, incomingTxSet},
 	}
 
 	for _, test := range tests {
@@ -277,4 +349,3 @@ func TestTransactionStatus(t *testing.T) {
 		assert.Equal(t, test.Expected, test.Tx.getStatus())
 	}
 }
-
