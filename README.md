@@ -11,8 +11,8 @@
 
 BlockAtlas connects to nodes or explorer APIs of the supported coins and maps transaction data,
 account transaction history and market data into a generic, easy to work with JSON format.
-It is in production use at the [Trust Wallet app](https://trustwallet.com/),
-the official cryptocurrency wallet of Binance.
+It is in production use at the [Trust Wallet app](https://trustwallet.com/), 
+the official cryptocurrency wallet of Binance. Also is in production at the [BUTTON Wallet](https://buttonwallet.com), Telegram based non-custodial wallet.
 The observer API watches the chain for new transactions and generates notifications by webhooks.
 
 #### Supported Coins

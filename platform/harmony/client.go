@@ -3,7 +3,7 @@ package harmony
 import (
 	"fmt"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/util"
+	"github.com/trustwallet/blockatlas/pkg/numbers"
 	"strconv"
 )
 
@@ -13,9 +13,9 @@ type Client struct {
 
 func (c *Client) GetTxsOfAddress(address string) (txPage *TxResult, err error) {
 	params := []interface{}{
-		map[string] interface{}{
+		map[string]interface{}{
 			"address": address,
-			"fullTx": true,
+			"fullTx":  true,
 		},
 	}
 	err = c.RpcCall(&txPage, "hmy_getTransactionsHistory", params)
@@ -25,6 +25,9 @@ func (c *Client) GetTxsOfAddress(address string) (txPage *TxResult, err error) {
 func (c *Client) CurrentBlockNumber() (int64, error) {
 	var nodeInfo string
 	err := c.RpcCall(&nodeInfo, "hmy_blockNumber", nil)
+	if err != nil{
+		return 0, err
+	}
 	decimalBlock, err := hexToInt(nodeInfo)
 	if err != nil {
 		return 0, err
@@ -39,7 +42,7 @@ func (c *Client) GetBlockByNumber(num int64) (info BlockInfo, err error) {
 }
 
 func hexToInt(hex string) (uint64, error) {
-	nonceStr, err := util.HexToDecimal(hex)
+	nonceStr, err := numbers.HexToDecimal(hex)
 	if err != nil {
 		return 0, err
 	}

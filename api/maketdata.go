@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/coin"
+	"github.com/trustwallet/blockatlas/marketdata"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/ginutils"
 	"github.com/trustwallet/blockatlas/storage"
@@ -66,7 +67,7 @@ func getTickerHandler(storage storage.Market) func(c *gin.Context) {
 			ginutils.RenderError(c, http.StatusInternalServerError, err.Error())
 			return
 		}
-		result.ApplyRate(rate.Rate, currency)
+		result.ApplyRate(currency, rate.Rate, rate.PercentChange24h)
 		ginutils.RenderSuccess(c, result)
 	}
 }
@@ -106,11 +107,85 @@ func getTickersHandler(storage storage.Market) func(c *gin.Context) {
 			if err != nil {
 				continue
 			}
-			r.ApplyRate(rate.Rate, md.Currency)
+			r.ApplyRate(md.Currency, rate.Rate, rate.PercentChange24h)
 			r.SetCoinId(coinRequest.Coin)
 			tickers = append(tickers, r)
 		}
 
 		ginutils.RenderSuccess(c, blockatlas.TickerResponse{Currency: md.Currency, Docs: tickers})
 	}
+}
+
+// @Summary Get charts data for a specific coin
+// @Id get_charts_data
+// @Description Get the charts data from an market and coin/token
+// @Accept json
+// @Produce json
+// @Tags charts
+// @Param coin query int true "Coin ID" default(60)
+// @Param token query string false "Token ID"
+// @Param time_start query int false "Start timestamp" default(1574483028)
+// @Param currency query string false "The currency to show charts" default(USD)
+// @Success 200 {object} blockatlas.ChartData
+// @Router /v1/market/charts [get]
+func makeChartsRoute(router gin.IRouter) {
+	var charts = marketdata.InitCharts()
+	router.GET("/market/charts", func(c *gin.Context) {
+		coinQuery := c.Query("coin")
+		coinId, err := strconv.Atoi(coinQuery)
+		if err != nil {
+			ginutils.RenderError(c, http.StatusInternalServerError, "Invalid coin")
+			return
+		}
+		token := c.Query("token")
+
+		timeStart, err := strconv.ParseInt(c.Query("time_start"), 10, 64)
+		if err != nil {
+			ginutils.RenderError(c, http.StatusInternalServerError, "Invalid time_start")
+			return
+		}
+
+		currency := c.DefaultQuery("currency", blockatlas.DefaultCurrency)
+
+		chart, err := charts.GetChartData(uint(coinId), token, currency, timeStart)
+		if err != nil {
+			ginutils.RenderError(c, http.StatusInternalServerError, err.Error())
+			return
+		}
+		ginutils.RenderSuccess(c, chart)
+	})
+}
+
+// @Summary Get charts coin info data for a specific coin
+// @Id get_charts_coin_info
+// @Description Get the charts coin info data from an market and coin/contract
+// @Accept json
+// @Produce json
+// @Tags charts
+// @Param coin query int true "Coin ID" default(60)
+// @Param token query string false "Token ID"
+// @Param time_start query int false "Start timestamp" default(1574483028)
+// @Param currency query string false "The currency to show coin info in" default(USD)
+// @Success 200 {object} blockatlas.ChartCoinInfo
+// @Router /v1/market/info [get]
+func makeCoinInfoRoute(router gin.IRouter) {
+	var charts = marketdata.InitCharts()
+	router.GET("/market/info", func(c *gin.Context) {
+		coinQuery := c.Query("coin")
+		coinId, err := strconv.Atoi(coinQuery)
+		if err != nil {
+			ginutils.RenderError(c, http.StatusInternalServerError, "Invalid coin")
+			return
+		}
+		token := c.Query("token")
+
+		currency := c.DefaultQuery("currency", blockatlas.DefaultCurrency)
+
+		chart, err := charts.GetCoinInfo(uint(coinId), token, currency)
+		if err != nil {
+			ginutils.RenderError(c, http.StatusInternalServerError, err.Error())
+			return
+		}
+		ginutils.RenderSuccess(c, chart)
+	})
 }

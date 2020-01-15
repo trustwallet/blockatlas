@@ -39,6 +39,8 @@ market:
     api: https://dex.binance.org/api
   cmc:
     api: https://pro-api.coinmarketcap.com
+    webapi: https://web-api.coinmarketcap.com
+    widgetapi: https://widgets.coinmarketcap.com
     api_key:
     map_url: https://raw.githubusercontent.com/trustwallet/assets/master/pricing/coinmarketcap
   fixer:
@@ -47,6 +49,8 @@ market:
     api_key:
   compound:
     api: https://api.compound.finance/api
+  coingecko:
+    api: https://api.coingecko.com/api
 
 storage:
   redis: redis://localhost:6379
@@ -76,7 +80,7 @@ kin:
 # [XTZ] Tezos: https://tezos.com
 tezos:
   api: https://api.tzstats.com/explorer
-  rpc: https://rpc.tzbeta.net
+  rpc: https://mainnet.tezos.org.ua
 
 # [ETH] Ethereum: https://ethereum.org (Trust-Ray API)
 # ethereum:
@@ -222,4 +226,10 @@ digibyte:
   api: https://dgb1.trezor.io/api
 
 harmony:
-  api: http://e0.t.hmny.io:9500
+  api: https://api.s0.t.hmny.io
+
+kava:
+  api: https://data.kava.io
+
+kusama:
+  api: https://kusama.subscan.io/api

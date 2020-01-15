@@ -1,7 +1,6 @@
 package rate
 
 import (
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/storage"
@@ -12,7 +11,6 @@ const (
 )
 
 type Rate struct {
-	blockatlas.Request
 	Id         string
 	UpdateTime string
 	Storage    storage.Market

@@ -11,6 +11,6 @@ func init() {
 }
 
 func removeSensitiveInfo(info string) string {
-	reg := regexp.MustCompile(`([a-zA-Z0-9\s]{30,})|([0-9]{4,})|(=(.*?)[^(&|$)]+)|(--[^$]+)`)
+	reg := regexp.MustCompile(`([a-zA-Z0-9\s]{30,})|([0-9]{4,})|(=(.*?)[^(&|$)]+)|(--[^$]+)|(&asset_contract_addresses)`)
 	return reg.ReplaceAllString(info, "")
 }

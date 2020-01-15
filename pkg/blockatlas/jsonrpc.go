@@ -10,10 +10,10 @@ const (
 )
 
 type RpcRequest struct {
-	JsonRpc string   `json:"jsonrpc"`
-	Method  string   `json:"method"`
+	JsonRpc string      `json:"jsonrpc"`
+	Method  string      `json:"method"`
 	Params  interface{} `json:"params,omitempty"`
-	Id      string   `json:"id,omitempty"`
+	Id      string      `json:"id,omitempty"`
 }
 
 type RpcResponse struct {

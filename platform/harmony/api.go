@@ -5,7 +5,7 @@ import (
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
-	"github.com/trustwallet/blockatlas/util"
+	"github.com/trustwallet/blockatlas/pkg/numbers"
 	"strconv"
 )
 
@@ -84,7 +84,7 @@ func NormalizeTx(trx *Transaction) (tx blockatlas.Tx, b bool, err error) {
 	fee := gas * gasPrice
 	literalFee := strconv.Itoa(int(fee))
 
-	literalValue, err := util.HexToDecimal(trx.Value)
+	literalValue, err := numbers.HexToDecimal(trx.Value)
 	if err != nil {
 		return blockatlas.Tx{}, false, GetNormalizationError(err)
 	}
@@ -105,16 +105,16 @@ func NormalizeTx(trx *Transaction) (tx blockatlas.Tx, b bool, err error) {
 	}
 
 	return blockatlas.Tx{
-		ID:     trx.Hash,
-		Coin:   coin.ONE,
-		From:   trx.From,
-		To:     trx.To,
-		Fee:    blockatlas.Amount(literalFee),
-		Status: blockatlas.StatusCompleted,
+		ID:       trx.Hash,
+		Coin:     coin.ONE,
+		From:     trx.From,
+		To:       trx.To,
+		Fee:      blockatlas.Amount(literalFee),
+		Status:   blockatlas.StatusCompleted,
 		Sequence: nonce,
-		Date:   int64(timestamp),
-		Type:   blockatlas.TxTransfer,
-		Block:  block,
+		Date:     int64(timestamp),
+		Type:     blockatlas.TxTransfer,
+		Block:    block,
 		Meta: blockatlas.Transfer{
 			Value:    blockatlas.Amount(literalValue),
 			Symbol:   coin.Coins[coin.ONE].Symbol,

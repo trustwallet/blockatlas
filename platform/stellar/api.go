@@ -5,7 +5,7 @@ import (
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/util"
+	"github.com/trustwallet/blockatlas/pkg/numbers"
 	"strconv"
 	"sync"
 	"time"
@@ -58,34 +58,37 @@ func (p *Platform) NormalizeBlock(block *Block) blockatlas.Block {
 }
 
 func (p *Platform) NormalizePayments(payments []Payment) (txs []blockatlas.Tx) {
-	var wg sync.WaitGroup
-	tupleChan := make(chan Tuple)
+	var (
+		wg      sync.WaitGroup
+		txsChan = make(chan blockatlas.Tx, len(payments))
+	)
 
 	for _, payment := range payments {
 		wg.Add(1)
 		go func(pay Payment) {
 			defer wg.Done()
-			tx, err := p.client.GetTxHash(pay.TransactionHash)
+
+			txHash, err := p.client.GetTxHash(pay.TransactionHash)
 			if err != nil {
 				return
 			}
-			tupleChan <- Tuple{pay, tx}
+
+			tx, ok := Normalize(&pay, p.CoinIndex, txHash)
+			if !ok {
+				return
+			}
+
+			txsChan <- tx
 
 		}(payment)
 	}
-
-	go func() {
-		for val := range tupleChan {
-			tx, ok := Normalize(&val.Payment, p.CoinIndex, val.TxHash)
-			if !ok {
-				continue
-			}
-			txs = append(txs, tx)
-		}
-	}()
-
 	wg.Wait()
-	close(tupleChan)
+	close(txsChan)
+
+	for tx := range txsChan {
+		txs = append(txs, tx)
+	}
+
 	return
 }
 
@@ -111,11 +114,11 @@ func Normalize(payment *Payment, nativeCoinIndex uint, hash TxHash) (tx blockatl
 	}
 	var value, from, to string
 	if payment.Amount != "" {
-		value, err = util.DecimalToSatoshis(payment.Amount)
+		value, err = numbers.DecimalToSatoshis(payment.Amount)
 		from = payment.From
 		to = payment.To
 	} else if payment.StartingBalance != "" { // When transfer to new account
-		value, err = util.DecimalToSatoshis(payment.StartingBalance)
+		value, err = numbers.DecimalToSatoshis(payment.StartingBalance)
 		from = payment.Funder
 		to = payment.Account
 	} else {

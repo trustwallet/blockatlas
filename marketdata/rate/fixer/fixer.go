@@ -13,16 +13,17 @@ const (
 type Fixer struct {
 	rate.Rate
 	APIKey string
+	blockatlas.Request
 }
 
 func InitRate(api string, apiKey string, updateTime string) rate.Provider {
 	return &Fixer{
 		Rate: rate.Rate{
 			Id:         id,
-			Request:    blockatlas.InitClient(api),
 			UpdateTime: updateTime,
 		},
-		APIKey: apiKey,
+		Request: blockatlas.InitClient(api),
+		APIKey:  apiKey,
 	}
 }
 

@@ -91,6 +91,9 @@ func makeTxRoute(router gin.IRouter, api blockatlas.Platform, path string) {
 
 		page := make(blockatlas.TxPage, 0)
 		for _, tx := range txs {
+			if tx.Direction != "" {
+				goto AddTx
+			}
 			tx.Direction = blockatlas.DirectionOutgoing
 			if tx.To == address {
 				tx.Direction = blockatlas.DirectionIncoming
@@ -98,6 +101,7 @@ func makeTxRoute(router gin.IRouter, api blockatlas.Platform, path string) {
 					tx.Direction = blockatlas.DirectionSelf
 				}
 			}
+		AddTx:
 			page = append(page, tx)
 		}
 		page.Sort()

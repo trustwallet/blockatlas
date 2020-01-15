@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"github.com/spf13/cast"
 	"github.com/trustwallet/blockatlas/pkg/errors"
-	"github.com/trustwallet/blockatlas/util"
+	"github.com/trustwallet/blockatlas/pkg/numbers"
 	"regexp"
 	"sort"
 	"strings"
@@ -86,7 +86,7 @@ func (t *Tx) MarshalJSON() ([]byte, error) {
 }
 
 // UnmarshalJSON reads an amount from a JSON string or number.
-// Comma separators get dropped with util.DecimalToSatoshis.
+// Comma separators get dropped with address.DecimalToSatoshis.
 func (a *Amount) UnmarshalJSON(data []byte) error {
 	var n json.Number
 	err := json.Unmarshal(data, &n)
@@ -98,7 +98,7 @@ func (a *Amount) UnmarshalJSON(data []byte) error {
 		return errors.E("not a regular decimal number", errors.Params{"str": str}).PushToSentry()
 	}
 	if strings.ContainsRune(str, '.') {
-		str, _ = util.DecimalToSatoshis(str)
+		str, _ = numbers.DecimalToSatoshis(str)
 	}
 	*a = Amount(str)
 	return nil

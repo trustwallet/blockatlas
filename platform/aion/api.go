@@ -4,7 +4,7 @@ import (
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/util"
+	"github.com/trustwallet/blockatlas/pkg/numbers"
 	"strconv"
 )
 
@@ -32,14 +32,14 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 // NormalizeTx converts an Aion transaction into the generic model
 func NormalizeTx(srcTx *Tx) (tx blockatlas.Tx, ok bool) {
 	fee := strconv.Itoa(srcTx.NrgConsumed)
-	value := util.DecimalExp(string(srcTx.Value), 18)
-	value, ok = util.CutZeroFractional(value)
+	value := numbers.DecimalExp(string(srcTx.Value), 18)
+	value, ok = numbers.CutZeroFractional(value)
 	if !ok {
 		return tx, false
 	}
 
 	return blockatlas.Tx{
-		ID:    srcTx.TransactionHash,
+		ID:    "0x" + srcTx.TransactionHash,
 		Coin:  coin.AION,
 		Date:  srcTx.BlockTimestamp,
 		From:  "0x" + srcTx.FromAddr,

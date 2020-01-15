@@ -2,6 +2,7 @@ package compound
 
 import (
 	"github.com/stretchr/testify/assert"
+	c "github.com/trustwallet/blockatlas/marketdata/clients/compound"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"sort"
 	"testing"
@@ -12,20 +13,20 @@ func Test_normalizeRates(t *testing.T) {
 	provider := "compound"
 	tests := []struct {
 		name      string
-		prices    CoinPrices
+		prices    c.CoinPrices
 		wantRates blockatlas.Rates
 	}{
 		{
 			"test normalize compound rate 1",
-			CoinPrices{
-				Data: []CToken{
+			c.CoinPrices{
+				Data: []c.CToken{
 					{
 						Symbol:       "cUSDC",
-						ExchangeRate: Amount{Value: 0.0021},
+						ExchangeRate: c.Amount{Value: 0.0021},
 					},
 					{
 						Symbol:       "cREP",
-						ExchangeRate: Amount{Value: 0.02},
+						ExchangeRate: c.Amount{Value: 0.02},
 					},
 				},
 			},
@@ -35,16 +36,16 @@ func Test_normalizeRates(t *testing.T) {
 			},
 		},
 		{
-			"test normalize cmc rate 2",
-			CoinPrices{
-				Data: []CToken{
+			"test normalize compound rate 2",
+			c.CoinPrices{
+				Data: []c.CToken{
 					{
 						Symbol:       "cUSDC",
-						ExchangeRate: Amount{Value: 110.0021},
+						ExchangeRate: c.Amount{Value: 110.0021},
 					},
 					{
 						Symbol:       "cREP",
-						ExchangeRate: Amount{Value: 110.02},
+						ExchangeRate: c.Amount{Value: 110.02},
 					},
 				},
 			},

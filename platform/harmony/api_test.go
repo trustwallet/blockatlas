@@ -31,14 +31,14 @@ const transferSrc = `
 `
 
 var transferDst = blockatlas.Tx{
-	ID:       "0x230798fe22abff459b004675bf827a4089326a296fa4165d0c2ad27688e03e0c",
-	Coin:     coin.ONE,
-	From:     "one103q7qe5t2505lypvltkqtddaef5tzfxwsse4z7",
-	To:       "one129r9pj3sk0re76f7zs3qz92rggmdgjhtwge62k",
-	Fee:      "21000000000000",
-	Date:     1576346446,
-	Block:    18,
-	Status:   blockatlas.StatusCompleted,
+	ID:     "0x230798fe22abff459b004675bf827a4089326a296fa4165d0c2ad27688e03e0c",
+	Coin:   coin.ONE,
+	From:   "one103q7qe5t2505lypvltkqtddaef5tzfxwsse4z7",
+	To:     "one129r9pj3sk0re76f7zs3qz92rggmdgjhtwge62k",
+	Fee:    "21000000000000",
+	Date:   1576346446,
+	Block:  18,
+	Status: blockatlas.StatusCompleted,
 	Meta: blockatlas.Transfer{
 		Value:    "100000000000000000",
 		Symbol:   "ONE",

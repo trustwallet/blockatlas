@@ -2,39 +2,97 @@ package cosmos
 
 import (
 	"encoding/json"
+	"strconv"
 	"strings"
 )
 
+type TxType string
+type EventType string
+type AttributeKey string
+type DenomType string
+
 // Types of messages
 const (
-	MsgSend                        = "cosmos-sdk/MsgSend"
-	MsgMultiSend                   = "cosmos-sdk/MsgMultiSend"
-	MsgCreateValidator             = "cosmos-sdk/MsgCreateValidator"
-	MsgDelegate                    = "cosmos-sdk/MsgDelegate"
-	MsgUndelegate                  = "cosmos-sdk/MsgUndelegate"
-	MsgBeginRedelegate             = "cosmos-sdk/MsgBeginRedelegate"
-	MsgWithdrawDelegationReward    = "cosmos-sdk/MsgWithdrawDelegationReward"
-	MsgWithdrawValidatorCommission = "cosmos-sdk/MsgWithdrawValidatorCommission"
-	MsgSubmitProposal              = "cosmos-sdk/MsgSubmitProposal"
-	MsgDeposit                     = "cosmos-sdk/MsgDeposit"
-	MsgVote                        = "cosmos-sdk/MsgVote"
-	TextProposal                   = "cosmos-sdk/TextProposal"
-	MsgUnjail                      = "cosmos-sdk/MsgUnjail"
+	MsgSend                        TxType = "cosmos-sdk/MsgSend"
+	MsgMultiSend                   TxType = "cosmos-sdk/MsgMultiSend"
+	MsgCreateValidator             TxType = "cosmos-sdk/MsgCreateValidator"
+	MsgDelegate                    TxType = "cosmos-sdk/MsgDelegate"
+	MsgUndelegate                  TxType = "cosmos-sdk/MsgUndelegate"
+	MsgBeginRedelegate             TxType = "cosmos-sdk/MsgBeginRedelegate"
+	MsgWithdrawDelegationReward    TxType = "cosmos-sdk/MsgWithdrawDelegationReward"
+	MsgWithdrawValidatorCommission TxType = "cosmos-sdk/MsgWithdrawValidatorCommission"
+	MsgSubmitProposal              TxType = "cosmos-sdk/MsgSubmitProposal"
+	MsgDeposit                     TxType = "cosmos-sdk/MsgDeposit"
+	MsgVote                        TxType = "cosmos-sdk/MsgVote"
+	TextProposal                   TxType = "cosmos-sdk/TextProposal"
+	MsgUnjail                      TxType = "cosmos-sdk/MsgUnjail"
 
-	UndelegateDenom = "uatom"
+	EventTransfer        EventType = "transfer"
+	EventWithdrawRewards EventType = "withdraw_rewards"
+
+	AttributeAmount    AttributeKey = "amount"
+	AttributeValidator AttributeKey = "validator"
+
+	DenomAtom DenomType = "uatom"
+	DenomKava DenomType = "ukava"
 )
 
 // Tx - Base transaction object. Always returned as part of an array
 type Tx struct {
-	Block string `json:"height"`
-	Code  int    `json:"code"`
-	Date  string `json:"timestamp"`
-	ID    string `json:"txhash"`
-	Data  Data   `json:"tx"`
+	Block  string `json:"height"`
+	Code   int    `json:"code"`
+	Date   string `json:"timestamp"`
+	ID     string `json:"txhash"`
+	Data   Data   `json:"tx"`
+	Events Events `json:"events"`
 }
 
 type TxPage struct {
 	Txs []Tx `json:"txs"`
+}
+
+// Events
+type Event struct {
+	Type       EventType
+	Attributes Attributes `json:"Attributes"`
+}
+
+type Events []*Event
+
+func (e Events) GetWithdrawRewardValue() string {
+	result := int64(0)
+	for _, att := range e {
+		if att.Type == EventWithdrawRewards {
+			result += att.Attributes.GetWithdrawRewardValue()
+		}
+	}
+	return strconv.FormatInt(result, 10)
+}
+
+type Attribute struct {
+	Key   AttributeKey `json:"key"`
+	Value string       `json:"value"`
+}
+
+type Attributes []Attribute
+
+func (a Attributes) GetWithdrawRewardValue() int64 {
+	result := int64(0)
+	for _, att := range a {
+		if att.Key == AttributeAmount {
+			idx := strings.IndexByte(att.Value, 'u')
+			if idx < 0 {
+				continue
+			}
+			value := att.Value[:idx]
+			v, err := strconv.ParseInt(value, 10, 64)
+			if err != nil {
+				continue
+			}
+			result += v
+		}
+	}
+	return result
 }
 
 // Data - "tx" sub object
@@ -51,7 +109,7 @@ type Contents struct {
 
 // Message - an array that holds multiple 'particulars' entries. Possibly used for multiple transfers in one transaction?
 type Message struct {
-	Type  string
+	Type  TxType
 	Value interface{}
 }
 
@@ -66,7 +124,7 @@ type MessageValueTransfer struct {
 type MessageValueDelegate struct {
 	DelegatorAddr string `json:"delegator_address"`
 	ValidatorAddr string `json:"validator_address"`
-	Amount        Amount `json:"amount"`
+	Amount        Amount `json:"amount,omitempty"`
 }
 
 // Fee - also references the "amount" struct
@@ -165,7 +223,7 @@ type BlockHeader struct {
 //UnmarshalJSON reads different message types
 func (m *Message) UnmarshalJSON(buf []byte) error {
 	var messageInternal struct {
-		Type  string          `json:"type"`
+		Type  TxType          `json:"type"`
 		Value json.RawMessage `json:"value"`
 	}
 
@@ -177,7 +235,7 @@ func (m *Message) UnmarshalJSON(buf []byte) error {
 	m.Type = messageInternal.Type
 
 	switch messageInternal.Type {
-	case MsgUndelegate, MsgDelegate:
+	case MsgUndelegate, MsgDelegate, MsgWithdrawDelegationReward:
 		var msgDelegate MessageValueDelegate
 		err = json.Unmarshal(messageInternal.Value, &msgDelegate)
 		m.Value = msgDelegate
@@ -202,6 +260,6 @@ type AccountValue struct {
 }
 
 type Balance struct {
-	Denom  string `json:"denom"`
-	Amount string `json:"amount"`
+	Denom  DenomType `json:"denom"`
+	Amount string    `json:"amount"`
 }

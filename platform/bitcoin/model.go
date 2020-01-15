@@ -1,20 +1,32 @@
 package bitcoin
 
+import "encoding/json"
+
 type TransactionsList struct {
 	Page         int64         `json:"page"`
 	TotalPages   int64         `json:"totalPages"`
 	ItemsOnPage  int64         `json:"itemsOnPage"`
-	Transactions []Transaction `json:"transactions"`
+	Transactions []Transaction `json:"transactions,omitempty"`
+	Txs          interface{}   `json:"txs,omitempty"`
 	Tokens       []Token       `json:"tokens,omitempty"`
+	TxCount      int64         `json:"txCount,omitempty"`
+	Hash         string        `json:"hash,omitempty"`
 }
 
-type Block struct {
-	Page         int64         `json:"page"`
-	TotalPages   int64         `json:"totalPages"`
-	ItemsOnPage  int64         `json:"itemsOnPage"`
-	Transactions []Transaction `json:"txs"`
-	TxCount      int64         `json:"txCount"`
-	Hash         string        `json:"hash"`
+func (tl *TransactionsList) TransactionList() []Transaction {
+	if tl.Transactions != nil {
+		return tl.Transactions
+	}
+	b, err := json.Marshal(tl.Txs)
+	if err != nil {
+		return tl.Transactions
+	}
+	var txs []Transaction
+	err = json.Unmarshal(b, &txs)
+	if err != nil {
+		return tl.Transactions
+	}
+	return txs
 }
 
 type Tx struct {
@@ -27,20 +39,37 @@ type Transaction struct {
 	Vin           []Output `json:"vin"`
 	Vout          []Output `json:"vout"`
 	BlockHash     string   `json:"blockHash"`
-	BlockHeight   uint64   `json:"blockHeight"`
+	BlockHeight   int64    `json:"blockHeight"`
 	Confirmations uint64   `json:"confirmations"`
 	BlockTime     uint64   `json:"blockTime"`
 	Value         string   `json:"value"`
-	ValueIn       string   `json:"valueIn"`
+	ValueOut      string   `json:"valueOut"`
 	Fees          string   `json:"fees"`
-	Hex           string   `json:"hex"`
+}
+
+func (transaction Transaction) Amount() string {
+	if len(transaction.Value) == 0 {
+		return transaction.ValueOut
+	}
+	return transaction.Value
 }
 
 type Output struct {
-	TxId      string   `json:"txid,omitempty"`
-	Value     string   `json:"value,omitempty"`
+	TxId         string       `json:"txid,omitempty"`
+	Value        string       `json:"value,omitempty"`
+	Addresses    []string     `json:"addresses,omitempty"`
+	ScriptPubKey ScriptPubKey `json:"scriptPubKey,omitempty"`
+}
+
+type ScriptPubKey struct {
 	Addresses []string `json:"addresses,omitempty"`
-	Hex       string   `json:"hex,omitempty"`
+}
+
+func (o Output) OutputAddress() []string {
+	if len(o.Addresses) == 0 {
+		return o.ScriptPubKey.Addresses
+	}
+	return o.Addresses
 }
 
 type Token struct {
@@ -58,4 +87,11 @@ type BlockchainStatus struct {
 type Backend struct {
 	Chain  string `json:"chain"`
 	Blocks int64  `json:"blocks"`
+}
+
+func (transaction Transaction) GetBlockHeight() uint64 {
+	if transaction.BlockHeight > 0 {
+		return uint64(transaction.BlockHeight)
+	}
+	return 0
 }

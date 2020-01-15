@@ -3,11 +3,11 @@ package binance
 import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
+	"github.com/trustwallet/blockatlas/pkg/numbers"
 	"strings"
 
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/coin"
-	"github.com/trustwallet/blockatlas/util"
 )
 
 type Platform struct {
@@ -71,12 +71,12 @@ func (p *Platform) GetTokenTxsByAddress(address string, token string) (blockatla
 func NormalizeTx(srcTx *Tx, token string) (blockatlas.Tx, bool) {
 	var tx blockatlas.Tx
 	bnbCoin := coin.Coins[coin.BNB]
-	value := util.DecimalExp(string(srcTx.Value), 8)
+	value := numbers.DecimalExp(string(srcTx.Value), 8)
 
 	fee := "0"
 	feeNumber, err := srcTx.Fee.Float64()
 	if err == nil && feeNumber > 0 {
-		fee = util.DecimalExp(string(srcTx.Fee), 8)
+		fee = numbers.DecimalExp(string(srcTx.Fee), 8)
 	}
 
 	tx = blockatlas.Tx{

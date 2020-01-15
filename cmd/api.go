@@ -5,14 +5,12 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"github.com/trustwallet/blockatlas/api"
-	"github.com/trustwallet/blockatlas/pkg/ginutils"
-	"github.com/trustwallet/blockatlas/pkg/logger"
-	"github.com/trustwallet/blockatlas/util"
-
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
+	"github.com/trustwallet/blockatlas/api"
 	_ "github.com/trustwallet/blockatlas/docs"
+	"github.com/trustwallet/blockatlas/pkg/ginutils"
+	"github.com/trustwallet/blockatlas/pkg/logger"
 )
 
 var apiCmd = &cobra.Command{
@@ -37,7 +35,7 @@ func RunApi(bind string, c chan *gin.Engine) {
 	engine := gin.Default()
 
 	sg := sentrygin.New(sentrygin.Options{})
-	engine.Use(util.CheckReverseProxy, sg)
+	engine.Use(ginutils.CheckReverseProxy, sg)
 
 	engine.Use(ginutils.CORSMiddleware())
 	engine.OPTIONS("/*path", ginutils.CORSMiddleware())

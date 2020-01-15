@@ -14,7 +14,7 @@ type Platform struct {
 	client Client
 }
 
-const Annual = 4.32
+const Annual = 0.74
 
 func (p *Platform) Init() error {
 	p.client = Client{blockatlas.InitClient(viper.GetString("tron.api"))}

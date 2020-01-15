@@ -45,8 +45,14 @@ func makeStakingDelegationsBatchRoute(router gin.IRouter) {
 
 		batch := make(blockatlas.DelegationsBatchPage, 0)
 		for _, r := range reqs {
-			c := coin.Coins[r.Coin]
-			p := platform.StakeAPIs[c.Handle]
+			c, ok := coin.Coins[r.Coin]
+			if !ok {
+				continue
+			}
+			p, ok := platform.StakeAPIs[c.Handle]
+			if !ok {
+				continue
+			}
 			delegation, err := getDelegationResponse(p, r.Address)
 			if err != nil {
 				continue
@@ -76,8 +82,14 @@ func makeStakingDelegationsSimpleBatchRoute(router gin.IRouter) {
 
 		batch := make(blockatlas.StakingBatchPage, 0)
 		for _, r := range reqs {
-			c := coin.Coins[r.Coin]
-			p := platform.StakeAPIs[c.Handle]
+			c, ok := coin.Coins[r.Coin]
+			if !ok {
+				continue
+			}
+			p, ok := platform.StakeAPIs[c.Handle]
+			if !ok {
+				continue
+			}
 			staking := getStakingResponse(p)
 			batch = append(batch, staking)
 		}

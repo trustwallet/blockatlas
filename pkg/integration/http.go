@@ -3,8 +3,10 @@
 package integration
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/Pantani/httpexpect"
+	"github.com/trustwallet/blockatlas/pkg/logger"
 	"net/http"
 	"sync"
 	"testing"
@@ -25,7 +27,7 @@ type Client struct {
 }
 
 func newClient(t *testing.T, port string) *Client {
-	http := httpexpect.WithConfig(httpexpect.Config{
+	client := httpexpect.WithConfig(httpexpect.Config{
 		BaseURL: getBaseUrl(port),
 		Client: &http.Client{
 			Jar:     httpexpect.NewJar(),
@@ -38,28 +40,38 @@ func newClient(t *testing.T, port string) *Client {
 	})
 	return &Client{
 		baseUrl: getBaseUrl(port),
-		e:       http,
+		e:       client,
 		t:       t,
 	}
 }
 
-func (c *Client) testGet(url string) {
-	request := c.e.GET(url).WithURL(c.baseUrl)
+func (c *Client) testGet(route string, query string) {
+	request := c.e.GET(route).WithURL(c.baseUrl)
+	request.WithQueryString(query)
 	response := request.Expect()
+
 	//TODO create a logic to validate schemas
 	//response.JSON().Schema(schema)
 	if response.Raw().StatusCode != http.StatusOK {
-		fmt.Printf("\n%s - %s\n", response.Raw().Status, url)
+		logger.Error("Invalid status code", logger.Params{"code": response.Raw().Status, "route": route, "query": query})
 	}
 	response.Status(http.StatusOK)
 }
 
-func (c *Client) testPost(url string) {
-	request := c.e.POST(url).WithURL(c.baseUrl)
-	request.WithText("[]")
+func (c *Client) testPost(route string, body interface{}) {
+	request := c.e.POST(route).WithURL(c.baseUrl)
+	if body == nil {
+		request.WithText("[]")
+	} else {
+		b, err := json.Marshal(body)
+		if err == nil && b != nil {
+			request.WithText(string(b))
+		}
+	}
 	response := request.Expect()
 	if response.Raw().StatusCode != http.StatusOK {
-		fmt.Printf("\n%s - %s\n", response.Raw().Status, url)
+		bodyJson, _ := json.Marshal(body)
+		logger.Error("Invalid status code", logger.Params{"code": response.Raw().Status, "route": route, "body": bodyJson})
 	}
 	response.Status(http.StatusOK)
 }
@@ -69,12 +81,18 @@ func (c *Client) doTests(method, path string, wg *sync.WaitGroup) {
 	if isExcluded(path) {
 		return
 	}
-	url := addFixtures(path)
+	url := addCoinFixtures(path)
 	switch method {
 	case "GET":
-		c.testGet(url)
+		tests := getQueryTests(path)
+		for _, query := range tests {
+			c.testGet(url, query)
+		}
 	case "POST":
-		c.testPost(url)
+		tests := getBodyTests(path)
+		for _, body := range tests {
+			c.testPost(url, body)
+		}
 	}
 }
 
