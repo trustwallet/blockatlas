@@ -206,7 +206,7 @@ func NormalizeTransaction(tx Transaction, coinIndex uint) blockatlas.Tx {
 		Fee:      fees,
 		Date:     int64(tx.BlockTime),
 		Type:     blockatlas.TxTransfer,
-		Block:    uint64(tx.BlockHeight),
+		Block:    tx.GetBlockHeight(),
 		Status:   tx.getStatus(),
 		Sequence: 0,
 		Meta: blockatlas.Transfer{
@@ -298,8 +298,8 @@ func (p *Platform) InferValue(tx *blockatlas.Tx, direction blockatlas.Direction,
 	return value
 }
 
-func (tx *Transaction) getStatus() blockatlas.Status {
-	if tx.Confirmations == 0 {
+func (transaction *Transaction) getStatus() blockatlas.Status {
+	if transaction.Confirmations == 0 {
 		return blockatlas.StatusPending
 	}
 	return blockatlas.StatusCompleted

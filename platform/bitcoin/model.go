@@ -47,11 +47,11 @@ type Transaction struct {
 	Fees          string   `json:"fees"`
 }
 
-func (t Transaction) Amount() string {
-	if len(t.Value) == 0 {
-		return t.ValueOut
+func (transaction Transaction) Amount() string {
+	if len(transaction.Value) == 0 {
+		return transaction.ValueOut
 	}
-	return t.Value
+	return transaction.Value
 }
 
 type Output struct {
@@ -87,4 +87,11 @@ type BlockchainStatus struct {
 type Backend struct {
 	Chain  string `json:"chain"`
 	Blocks int64  `json:"blocks"`
+}
+
+func (transaction Transaction) GetBlockHeight() uint64 {
+	if transaction.BlockHeight > 0 {
+		return uint64(transaction.BlockHeight)
+	}
+	return 0
 }
