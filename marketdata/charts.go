@@ -34,9 +34,7 @@ func (c *Charts) GetChartData(coin uint, token string, currency string, timeStar
 		if err != nil {
 			continue
 		}
-		sort.Slice(charts.Prices, func(p, q int) bool {
-			return charts.Prices[p].Date < charts.Prices[q].Date
-		})
+		normalizePrices(charts.Prices)
 		return charts, nil
 	}
 	return chartsData, errors.E("No chart data found", errors.Params{"coin": coin, "token": token})
@@ -52,4 +50,10 @@ func (c *Charts) GetCoinInfo(coin uint, token string, currency string) (blockatl
 		return info, nil
 	}
 	return coinInfoData, errors.E("No chart coin info data found", errors.Params{"coin": coin, "token": token})
+}
+
+func normalizePrices(prices []blockatlas.ChartPrice) {
+	sort.Slice(prices, func(p, q int) bool {
+		return prices[p].Date < prices[q].Date
+	})
 }
