@@ -7,6 +7,7 @@ import (
 	cmc "github.com/trustwallet/blockatlas/marketdata/chart/coinmarketcap"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
+	"sort"
 )
 
 type Charts struct {
@@ -33,6 +34,7 @@ func (c *Charts) GetChartData(coin uint, token string, currency string, timeStar
 		if err != nil {
 			continue
 		}
+		normalizePrices(charts.Prices)
 		return charts, nil
 	}
 	return chartsData, errors.E("No chart data found", errors.Params{"coin": coin, "token": token})
@@ -48,4 +50,10 @@ func (c *Charts) GetCoinInfo(coin uint, token string, currency string) (blockatl
 		return info, nil
 	}
 	return coinInfoData, errors.E("No chart coin info data found", errors.Params{"coin": coin, "token": token})
+}
+
+func normalizePrices(prices []blockatlas.ChartPrice) {
+	sort.Slice(prices, func(p, q int) bool {
+		return prices[p].Date < prices[q].Date
+	})
 }
