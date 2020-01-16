@@ -63,8 +63,8 @@ func Test_normalizeCharts(t *testing.T) {
 			args{
 				charts: coingecko.Charts{
 					Prices: []coingecko.ChartVolume{
-						[]float64{float64(d1.Unix()), 222},
-						[]float64{float64(d2.Unix()), 333},
+						[]float64{float64(d1.Unix() * 1000), 222},
+						[]float64{float64(d2.Unix() * 1000), 333},
 					},
 				},
 			},
