@@ -5,6 +5,7 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"net/url"
 	"strconv"
+	"strings"
 )
 
 type CollectionsClient struct {
@@ -25,8 +26,7 @@ func (c CollectionsClient) GetCollectibles(owner string, collectibleID string) (
 	if err != nil {
 		return nil, nil, err
 	}
-	id := getCollectionId(collectibleID)
-	collection := searchCollection(collections, id)
+	collection := searchCollection(collections, collectibleID)
 	if collection == nil {
 		return nil, nil, errors.E("collectible not found", errors.TypePlatformClient,
 			errors.Params{"collectibleID": collectibleID}).PushToSentry()
@@ -37,15 +37,18 @@ func (c CollectionsClient) GetCollectibles(owner string, collectibleID string) (
 		"limit": {strconv.Itoa(300)},
 	}
 
-	for _, i := range collection.Contracts {
-		if _, ok := slugTokens[i.Type]; ok {
-			query.Set("collection", collection.Slug)
-			break
-		}
-		query.Add("asset_contract_addresses", i.Address)
-	}
+	query.Set("collection", collection.Slug)
 
 	var page CollectiblePage
 	err = c.Get(&page, "api/v1/assets", query)
 	return collection, page.Collectibles, err
+}
+
+func searchCollection(collections []Collection, collectibleID string) *Collection {
+	for _, i := range collections {
+		if strings.EqualFold(i.Slug, collectibleID) {
+			return &i
+		}
+	}
+	return nil
 }
