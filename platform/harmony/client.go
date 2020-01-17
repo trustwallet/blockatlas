@@ -25,7 +25,7 @@ func (c *Client) GetTxsOfAddress(address string) (txPage *TxResult, err error) {
 func (c *Client) CurrentBlockNumber() (int64, error) {
 	var nodeInfo string
 	err := c.RpcCall(&nodeInfo, "hmy_blockNumber", nil)
-	if err != nil{
+	if err != nil {
 		return 0, err
 	}
 	decimalBlock, err := hexToInt(nodeInfo)
