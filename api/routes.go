@@ -38,9 +38,10 @@ func LoadPlatforms(root gin.IRouter) {
 		routerv3 := getRouter(v3, collectionAPI.Coin().Handle)
 
 		makeCollectionsRoute(routerv3, collectionAPI)
-		makeCollectionRoute(routerv2, collectionAPI)
+		makeCollectionRoute(routerv3, collectionAPI)
 
 		//TODO: remove once most of the clients will be updated
+		oldMakeCollectionRoute(routerv2, collectionAPI)
 		oldMakeCollectionsRoute(routerv2, collectionAPI)
 	}
 
@@ -56,7 +57,9 @@ func LoadPlatforms(root gin.IRouter) {
 		MakeLookupBatchRoute(batchNs)
 	}
 
-	makeCategoriesBatchRoute(v2)
+	//TODO: remove once most of the clients will be updated
+	oldMakeCategoriesBatchRoute(v2)
+	makeCategoriesBatchRoute(v3)
 	makeStakingDelegationsBatchRoute(v2)
 	makeStakingDelegationsSimpleBatchRoute(v2)
 

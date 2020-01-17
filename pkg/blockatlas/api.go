@@ -63,6 +63,7 @@ type CollectionAPI interface {
 
 	//TODO: remove once most of the clients will be updated
 	OldGetCollections(owner string) (CollectionPage, error)
+	OldGetCollectibles(owner, collectibleID string) (CollectiblePage, error)
 }
 
 // CustomAPI provides custom HTTP routes

@@ -238,6 +238,16 @@ func NormalizeCollectionPage(collections []Collection, coinIndex uint, owner str
 }
 
 //TODO: remove once most of the clients will be updated
+func (p *Platform) OldGetCollectibles(owner, collectibleID string) (blockatlas.CollectiblePage, error) {
+	collection, items, err := p.collectionsClient.OldGetCollectibles(owner, collectibleID)
+	if err != nil {
+		return nil, err
+	}
+	page := OldNormalizeCollectiblePage(collection, items, p.CoinIndex)
+	return page, nil
+}
+
+//TODO: remove once most of the clients will be updated
 func OldNormalizeCollectionPage(collections []Collection, coinIndex uint, owner string) (page blockatlas.CollectionPage) {
 	for _, collection := range collections {
 		if len(collection.Contracts) == 0 {
@@ -285,8 +295,51 @@ func OldNormalizeCollection(c Collection, coinIndex uint, owner string) blockatl
 }
 
 //TODO: remove once most of the clients will be updated
+func OldNormalizeCollectible(c *Collection, a Collectible, coinIndex uint) blockatlas.Collectible {
+	// TODO: fix unprotected code
+	address := blockatlas.GetValidParameter(c.Contracts[0].Address, "")
+	collectionType := blockatlas.GetValidParameter(c.Contracts[0].Type, "")
+	collectionID := address
+	if _, ok := slugTokens[collectionType]; ok {
+		collectionID = createCollectionId(address, c.Slug)
+	}
+	externalLink := blockatlas.GetValidParameter(a.ExternalLink, a.AssetContract.ExternalLink)
+	id := strings.Join([]string{a.AssetContract.Address, a.TokenId}, "-")
+	return blockatlas.Collectible{
+		ID:               id,
+		CollectionID:     collectionID,
+		ContractAddress:  address,
+		TokenID:          a.TokenId,
+		CategoryContract: a.AssetContract.Address,
+		Name:             a.Name,
+		Category:         c.Name,
+		ImageUrl:         a.ImagePreviewUrl,
+		ProviderLink:     a.Permalink,
+		ExternalLink:     externalLink,
+		Type:             collectionType,
+		Description:      a.Description,
+		Coin:             coinIndex,
+	}
+}
+
+//TODO: remove once most of the clients will be updated
 func createCollectionId(address, slug string) string {
 	return fmt.Sprintf("%s---%s", address, slug)
+}
+
+//TODO: remove once most of the clients will be updated
+func OldNormalizeCollectiblePage(c *Collection, srcPage []Collectible, coinIndex uint) (page blockatlas.CollectiblePage) {
+	if len(c.Contracts) == 0 {
+		return
+	}
+	for _, src := range srcPage {
+		item := OldNormalizeCollectible(c, src, coinIndex)
+		if _, ok := supportedTypes[item.Type]; !ok {
+			continue
+		}
+		page = append(page, item)
+	}
+	return
 }
 
 func NormalizeCollection(c Collection, coinIndex uint, owner string) blockatlas.Collection {
