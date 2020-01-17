@@ -148,10 +148,10 @@ func (a TokenPage) findToken(symbol string) *Token {
 }
 
 func (balance *Balance) isAllZeroBalance() bool {
-	values := [3]string{balance.Frozen, balance.Free, balance.Locked}
-	for _, value := range values {
-		valueFloat, err := strconv.ParseFloat(value, 64)
-		if err != nil || valueFloat > 0 {
+	balances := [3]string{balance.Frozen, balance.Free, balance.Locked}
+	for _, value := range balances {
+		value, err := strconv.ParseFloat(value, 64)
+		if err != nil || value > 0 {
 			return false
 		}
 	}

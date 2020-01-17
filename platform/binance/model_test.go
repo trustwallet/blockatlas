@@ -102,8 +102,6 @@ func Test_removeFloatPoint(t *testing.T) {
 	}
 }
 
-// currently bad string value in balance object will be parsed as 0 and if others will be not zero - we will return it
-// we can ignore object, if any value is not correct (negative, too big, empty, not a number)
 func Test_isZeroBalance(t *testing.T) {
 	type testZeroStruct struct {
 		name    string
