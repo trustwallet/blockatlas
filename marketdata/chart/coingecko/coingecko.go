@@ -93,7 +93,7 @@ func normalizeCharts(charts coingecko.Charts) blockatlas.ChartData {
 			continue
 		}
 
-		date := time.Unix(int64(quote[0]), 0)
+		date := time.Unix(int64(quote[0])/1000, 0)
 		prices = append(prices, blockatlas.ChartPrice{
 			Price: quote[1],
 			Date:  date.Unix(),
