@@ -105,7 +105,8 @@ func makeStakingDelegationsSimpleBatchRoute(router gin.IRouter) {
 // @Tags Collectibles
 // @Param data body string true "Payload" default({"60": ["0xb3624367b1ab37daef42e1a3a2ced012359659b0"]})
 // @Success 200 {object} blockatlas.DocsResponse
-// @Router /v3/collectibles/categories [post]
+// @Router /v2/collectibles/categories [post]
+//TODO: remove once most of the clients will be updated
 func oldMakeCategoriesBatchRoute(router gin.IRouter) {
 	router.POST("/collectibles/categories", func(c *gin.Context) {
 		var reqs map[string][]string
@@ -144,7 +145,7 @@ func oldMakeCategoriesBatchRoute(router gin.IRouter) {
 // @Tags Collectibles
 // @Param data body string true "Payload" default({"60": ["0xb3624367b1ab37daef42e1a3a2ced012359659b0"]})
 // @Success 200 {object} blockatlas.DocsResponse
-// @Router /v2/collectibles/categories [post]
+// @Router /v3/collectibles/categories [post]
 func makeCategoriesBatchRoute(router gin.IRouter) {
 	router.POST("/collectibles/categories", func(c *gin.Context) {
 		var reqs map[string][]string
