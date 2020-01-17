@@ -60,6 +60,10 @@ type CollectionAPI interface {
 	Platform
 	GetCollections(owner string) (CollectionPage, error)
 	GetCollectibles(owner, collectibleID string) (CollectiblePage, error)
+
+	//TODO: remove once most of the clients will be updated (deadline: March 17th)
+	OldGetCollections(owner string) (CollectionPage, error)
+	OldGetCollectibles(owner, collectibleID string) (CollectiblePage, error)
 }
 
 // CustomAPI provides custom HTTP routes

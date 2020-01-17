@@ -12,6 +12,7 @@ var routers = make(map[string]gin.IRouter)
 func LoadPlatforms(root gin.IRouter) {
 	v1 := root.Group("/v1")
 	v2 := root.Group("/v2")
+	v3 := root.Group("/v3")
 
 	for _, txAPI := range platform.Platforms {
 		router := getRouter(v1, txAPI.Coin().Handle)
@@ -33,9 +34,15 @@ func LoadPlatforms(root gin.IRouter) {
 	}
 
 	for _, collectionAPI := range platform.Platforms {
-		router := getRouter(v2, collectionAPI.Coin().Handle)
-		makeCollectionsRoute(router, collectionAPI)
-		makeCollectionRoute(router, collectionAPI)
+		routerv2 := getRouter(v2, collectionAPI.Coin().Handle)
+		routerv3 := getRouter(v3, collectionAPI.Coin().Handle)
+
+		makeCollectionsRoute(routerv3, collectionAPI)
+		makeCollectionRoute(routerv3, collectionAPI)
+
+		//TODO: remove once most of the clients will be updated (deadline: March 17th)
+		oldMakeCollectionRoute(routerv2, collectionAPI)
+		oldMakeCollectionsRoute(routerv2, collectionAPI)
 	}
 
 	for _, customAPI := range platform.CustomAPIs {
@@ -50,7 +57,9 @@ func LoadPlatforms(root gin.IRouter) {
 		MakeLookupBatchRoute(batchNs)
 	}
 
-	makeCategoriesBatchRoute(v2)
+	//TODO: remove once most of the clients will be updated (deadline: March 17th)
+	oldMakeCategoriesBatchRoute(v2)
+	makeCategoriesBatchRoute(v3)
 	makeStakingDelegationsBatchRoute(v2)
 	makeStakingDelegationsSimpleBatchRoute(v2)
 
