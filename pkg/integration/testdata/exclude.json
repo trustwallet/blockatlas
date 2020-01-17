@@ -1,6 +1,7 @@
 [
   "/swagger/*any",
   "/v2/collectibles/categories",
+  "/v3/collectibles/categories",
   "/v2/classic/collections/:owner",
   "/v2/callisto/collections/:owner",
   "/v2/poa/collections/:owner",
@@ -12,5 +13,17 @@
   "/v2/poa/collections/:owner/collection/:collection_id",
   "/v2/thundertoken/collections/:owner/collection/:collection_id",
   "/v2/tomochain/collections/:owner/collection/:collection_id",
-  "/v2/gochain/collections/:owner/collection/:collection_id"
+  "/v2/gochain/collections/:owner/collection/:collection_id",
+  "/v3/classic/collections/:owner",
+  "/v3/callisto/collections/:owner",
+  "/v3/poa/collections/:owner",
+  "/v3/thundertoken/collections/:owner",
+  "/v3/tomochain/collections/:owner",
+  "/v3/gochain/collections/:owner",
+  "/v3/classic/collections/:owner/collection/:collection_id",
+  "/v3/callisto/collections/:owner/collection/:collection_id",
+  "/v3/poa/collections/:owner/collection/:collection_id",
+  "/v3/thundertoken/collections/:owner/collection/:collection_id",
+  "/v3/tomochain/collections/:owner/collection/:collection_id",
+  "/v3/gochain/collections/:owner/collection/:collection_id"
 ]
