@@ -7,6 +7,7 @@ import (
 	cmc "github.com/trustwallet/blockatlas/marketdata/chart/coinmarketcap"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
+	"github.com/trustwallet/blockatlas/pkg/numbers"
 	"sort"
 )
 
@@ -31,12 +32,9 @@ func InitCharts() *Charts {
 	}}
 }
 
-
 func (c *Charts) GetChartData(coin uint, token string, currency string, timeStart int64) (blockatlas.ChartData, error) {
 	chartsData := blockatlas.ChartData{}
-	if timeStart < minUnixTime {
-		timeStart = minUnixTime
-	}
+	timeStart = numbers.Max(timeStart, minUnixTime)
 	for _, c := range c.chartProviders {
 		charts, err := c.GetChartData(coin, token, currency, timeStart)
 		if err != nil {

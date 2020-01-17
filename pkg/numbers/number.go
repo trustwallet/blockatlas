@@ -7,7 +7,7 @@ func Min(x, y int) int {
 	return y
 }
 
-func Max(x, y int) int {
+func Max(x, y int64) int64 {
 	if x > y {
 		return x
 	}
