@@ -82,12 +82,12 @@ func NormalizeTx(srcTx *Tx, token string) (blockatlas.Tx, bool) {
 	tx = blockatlas.Tx{
 		ID:     srcTx.Hash,
 		Coin:   coin.BNB,
-		Date:   srcTx.Timestamp / 1000,
 		From:   srcTx.FromAddr,
-		Status: blockatlas.StatusCompleted,
 		To:     srcTx.ToAddr,
 		Fee:    blockatlas.Amount(fee),
+		Date:   srcTx.Timestamp / 1000,
 		Block:  srcTx.BlockHeight,
+		Status: blockatlas.StatusCompleted,
 		Memo:   srcTx.Memo,
 	}
 
@@ -116,41 +116,41 @@ func NormalizeTx(srcTx *Tx, token string) (blockatlas.Tx, bool) {
 			To:       srcTx.ToAddr,
 		}
 		//}
-	//case TxCancelOrder, TxNewOrder:
-	//	return tx, false
-	//case "invalid":
-	//	return tx, false
-	//	dt, err := srcTx.getData()
-	//	if err != nil {
-	//		return tx, false
-	//	}
-	//
-	//	symbol := dt.OrderData.Quote
-	//	if len(token) > 0 && symbol != token {
-	//		return tx, false
-	//	}
-	//
-	//	key := blockatlas.KeyPlaceOrder
-	//	title := blockatlas.KeyTitlePlaceOrder
-	//	if srcTx.Type == TxCancelOrder {
-	//		key = blockatlas.KeyCancelOrder
-	//		title = blockatlas.KeyTitleCancelOrder
-	//	}
-	//	volume, ok := dt.OrderData.GetVolume()
-	//	if ok {
-	//		value = strconv.Itoa(int(volume))
-	//	}
-	//
-	//	tx.Meta = blockatlas.AnyAction{
-	//		Coin:     coin.BNB,
-	//		TokenID:  dt.OrderData.Symbol,
-	//		Symbol:   TokenSymbol(symbol),
-	//		Name:     symbol,
-	//		Value:    blockatlas.Amount(value),
-	//		Decimals: coin.Coins[coin.BNB].Decimals,
-	//		Title:    title,
-	//		Key:      key,
-	//	}
+		//case TxCancelOrder, TxNewOrder:
+		//	return tx, false
+		//case "invalid":
+		//	return tx, false
+		//	dt, err := srcTx.getData()
+		//	if err != nil {
+		//		return tx, false
+		//	}
+		//
+		//	symbol := dt.OrderData.Quote
+		//	if len(token) > 0 && symbol != token {
+		//		return tx, false
+		//	}
+		//
+		//	key := blockatlas.KeyPlaceOrder
+		//	title := blockatlas.KeyTitlePlaceOrder
+		//	if srcTx.Type == TxCancelOrder {
+		//		key = blockatlas.KeyCancelOrder
+		//		title = blockatlas.KeyTitleCancelOrder
+		//	}
+		//	volume, ok := dt.OrderData.GetVolume()
+		//	if ok {
+		//		value = strconv.Itoa(int(volume))
+		//	}
+		//
+		//	tx.Meta = blockatlas.AnyAction{
+		//		Coin:     coin.BNB,
+		//		TokenID:  dt.OrderData.Symbol,
+		//		Symbol:   TokenSymbol(symbol),
+		//		Name:     symbol,
+		//		Value:    blockatlas.Amount(value),
+		//		Decimals: coin.Coins[coin.BNB].Decimals,
+		//		Title:    title,
+		//		Key:      key,
+		//	}
 
 	default:
 		return tx, false
@@ -193,9 +193,13 @@ func (p *Platform) GetTokenListByAddress(address string) (blockatlas.TokenPage, 
 
 // NormalizeToken converts a Binance token into the generic model
 func NormalizeToken(srcToken *Balance, tokens *TokenPage) (t blockatlas.Token, ok bool) {
+	if srcToken.isAllZeroBalance() {
+		return t, false
+	}
+
 	tk := tokens.findToken(srcToken.Symbol)
 	if tk == nil {
-		return blockatlas.Token{}, false
+		return t, false
 	}
 
 	t = blockatlas.Token{

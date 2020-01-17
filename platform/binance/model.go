@@ -147,6 +147,18 @@ func (a TokenPage) findToken(symbol string) *Token {
 	return nil
 }
 
+func (balance *Balance) isAllZeroBalance() bool {
+	balances := [3]string{balance.Frozen, balance.Free, balance.Locked}
+	for _, value := range balances {
+		value, err := strconv.ParseFloat(value, 64)
+		if err != nil || value > 0 {
+			return false
+		}
+	}
+	return true
+
+}
+
 func (e *Error) Error() string {
 	return fmt.Sprintf("%d: %s", e.Code, e.Message)
 }
