@@ -204,6 +204,16 @@ func (p *Platform) GetCollections(owner string) (blockatlas.CollectionPage, erro
 	return page, nil
 }
 
+//TODO: remove once most of the clients will be updated
+func (p *Platform) OldGetCollections(owner string) (blockatlas.CollectionPage, error) {
+	collections, err := p.collectionsClient.GetCollections(owner)
+	if err != nil {
+		return nil, err
+	}
+	page := OldNormalizeCollectionPage(collections, p.CoinIndex, owner)
+	return page, nil
+}
+
 func (p *Platform) GetCollectibles(owner, collectibleID string) (blockatlas.CollectiblePage, error) {
 	collection, items, err := p.collectionsClient.GetCollectibles(owner, collectibleID)
 	if err != nil {
@@ -225,6 +235,58 @@ func NormalizeCollectionPage(collections []Collection, coinIndex uint, owner str
 		page = append(page, item)
 	}
 	return
+}
+
+//TODO: remove once most of the clients will be updated
+func OldNormalizeCollectionPage(collections []Collection, coinIndex uint, owner string) (page blockatlas.CollectionPage) {
+	for _, collection := range collections {
+		if len(collection.Contracts) == 0 {
+			continue
+		}
+		item := OldNormalizeCollection(collection, coinIndex, owner)
+		if _, ok := supportedTypes[item.Type]; !ok {
+			continue
+		}
+		page = append(page, item)
+	}
+	return
+}
+
+//TODO: remove once most of the clients will be updated
+func OldNormalizeCollection(c Collection, coinIndex uint, owner string) blockatlas.Collection {
+	if len(c.Contracts) == 0 {
+		return blockatlas.Collection{}
+	}
+
+	description := blockatlas.GetValidParameter(c.Description, c.Contracts[0].Description)
+	symbol := blockatlas.GetValidParameter(c.Contracts[0].Symbol, "")
+	collectionId := blockatlas.GetValidParameter(c.Contracts[0].Address, "")
+	version := blockatlas.GetValidParameter(c.Contracts[0].NftVersion, "")
+	collectionType := blockatlas.GetValidParameter(c.Contracts[0].Type, "")
+	if _, ok := slugTokens[collectionType]; ok {
+		collectionId = createCollectionId(collectionId, c.Slug)
+	}
+
+	return blockatlas.Collection{
+		Name:            c.Name,
+		Symbol:          symbol,
+		Slug:            c.Slug,
+		ImageUrl:        c.ImageUrl,
+		Description:     description,
+		ExternalLink:    c.ExternalUrl,
+		Total:           int(c.Total.Int64()),
+		Id:              collectionId,
+		CategoryAddress: collectionId,
+		Address:         owner,
+		Version:         version,
+		Coin:            coinIndex,
+		Type:            collectionType,
+	}
+}
+
+//TODO: remove once most of the clients will be updated
+func createCollectionId(address, slug string) string {
+	return fmt.Sprintf("%s---%s", address, slug)
 }
 
 func NormalizeCollection(c Collection, coinIndex uint, owner string) blockatlas.Collection {

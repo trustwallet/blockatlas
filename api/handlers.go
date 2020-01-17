@@ -179,6 +179,36 @@ func makeStakingDelegationsRoute(router gin.IRouter, api blockatlas.Platform) {
 // @Success 200 {object} blockatlas.CollectionPage
 // @Failure 500 {object} ginutils.ApiError
 // @Router /v2/{coin}/collections/{address} [get]
+func oldMakeCollectionsRoute(router gin.IRouter, api blockatlas.Platform) {
+	var collectionAPI blockatlas.CollectionAPI
+	collectionAPI, _ = api.(blockatlas.CollectionAPI)
+
+	if collectionAPI == nil {
+		return
+	}
+
+	router.GET("/collections/:owner", func(c *gin.Context) {
+		collections, err := collectionAPI.OldGetCollections(c.Param("owner"))
+		if err != nil {
+			ginutils.ErrorResponse(c).Message(err.Error()).Render()
+			return
+		}
+
+		ginutils.RenderSuccess(c, collections)
+	})
+}
+
+// @Summary Get Collections
+// @ID collections
+// @Description Get all collections from the address
+// @Accept json
+// @Produce json
+// @Tags platform,collection
+// @Param coin path string true "the coin name" default(ethereum)
+// @Param address path string true "the query address" default(0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB)
+// @Success 200 {object} blockatlas.CollectionPage
+// @Failure 500 {object} ginutils.ApiError
+// @Router /v3/{coin}/collections/{address} [get]
 func makeCollectionsRoute(router gin.IRouter, api blockatlas.Platform) {
 	var collectionAPI blockatlas.CollectionAPI
 	collectionAPI, _ = api.(blockatlas.CollectionAPI)
@@ -209,7 +239,7 @@ func makeCollectionsRoute(router gin.IRouter, api blockatlas.Platform) {
 // @Param collection_id path string true "the query collection" default(0x06012c8cf97bead5deae237070f9587f8e7a266d)
 // @Success 200 {object} blockatlas.CollectionPage
 // @Failure 500 {object} ginutils.ApiError
-// @Router /v2/{coin}/collections/{owner}/collection/{collection_id} [get]
+// @Router /v3/{coin}/collections/{owner}/collection/{collection_id} [get]
 func makeCollectionRoute(router gin.IRouter, api blockatlas.Platform) {
 	var collectionAPI blockatlas.CollectionAPI
 	collectionAPI, _ = api.(blockatlas.CollectionAPI)
