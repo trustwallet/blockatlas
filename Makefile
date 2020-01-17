@@ -129,7 +129,7 @@ go-clean:
 
 go-test:
 	@echo "  >  Runing unit tests"
-	GOBIN=$(GOBIN) go test -v ./...
+	GOBIN=$(GOBIN) go test -cover -v ./...
 
 go-integration:
 	@echo "  >  Runing integration tests"
