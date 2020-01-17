@@ -30,8 +30,12 @@ type Coin struct {
 
 func SetupMarketAPI(router gin.IRouter, db storage.Market) {
 	router.Use(ginutils.TokenAuthMiddleware(viper.GetString("market.auth")))
+	// Ticker
 	router.GET("/ticker", getTickerHandler(db))
 	router.POST("/ticker", getTickersHandler(db))
+	// Charts
+	router.GET("/charts", getChartsHandler())
+	router.GET("/info", getCoinInfoHandler())
 }
 
 // @Summary Get ticker value for a specific market
@@ -132,10 +136,13 @@ func getTickersHandler(storage storage.Market) func(c *gin.Context) {
 // @Param max_items query int false "Max number of items in result prices array" default(64)
 // @Param currency query string false "The currency to show charts" default(USD)
 // @Success 200 {object} blockatlas.ChartData
-// @Router /v1/market/charts [get]
-func makeChartsRoute(router gin.IRouter) {
+// @Router /market/v1/charts [get]
+func getChartsHandler() func(c *gin.Context) {
 	var charts = marketdata.InitCharts()
-	router.GET("/market/charts", func(c *gin.Context) {
+	if charts == nil {
+		return nil
+	}
+	return func(c *gin.Context) {
 		coinQuery := c.Query("coin")
 		coinId, err := strconv.Atoi(coinQuery)
 		if err != nil {
@@ -162,7 +169,7 @@ func makeChartsRoute(router gin.IRouter) {
 			return
 		}
 		ginutils.RenderSuccess(c, chart)
-	})
+	}
 }
 
 // @Summary Get charts coin info data for a specific coin
@@ -176,10 +183,13 @@ func makeChartsRoute(router gin.IRouter) {
 // @Param time_start query int false "Start timestamp" default(1574483028)
 // @Param currency query string false "The currency to show coin info in" default(USD)
 // @Success 200 {object} blockatlas.ChartCoinInfo
-// @Router /v1/market/info [get]
-func makeCoinInfoRoute(router gin.IRouter) {
+// @Router /market/v1/info [get]
+func getCoinInfoHandler() func(c *gin.Context) {
 	var charts = marketdata.InitCharts()
-	router.GET("/market/info", func(c *gin.Context) {
+	if charts == nil {
+		return nil
+	}
+	return func(c *gin.Context) {
 		coinQuery := c.Query("coin")
 		coinId, err := strconv.Atoi(coinQuery)
 		if err != nil {
@@ -196,5 +206,5 @@ func makeCoinInfoRoute(router gin.IRouter) {
 			return
 		}
 		ginutils.RenderSuccess(c, chart)
-	})
+	}
 }
