@@ -37,7 +37,7 @@ steps:
     workingDirectory: '$(modulePath)'
     displayName: 'Get dependencies'
 
-  - script: go test -v ./...
+  - script: make test
     workingDirectory: '$(modulePath)'
     displayName: 'Run unit tests'
 
