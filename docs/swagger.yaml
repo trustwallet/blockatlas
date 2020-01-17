@@ -8,12 +8,7 @@ definitions:
     type: object
   api.AddressesRequest:
     items:
-      properties:
-        address:
-          type: string
-        coin:
-          type: integer
-      type: object
+      $ref: '#/definitions/api.AddressBatchRequest'
     type: array
   api.Coin:
     properties:
@@ -48,10 +43,18 @@ definitions:
   api.Webhook:
     properties:
       subscriptions:
+        additionalProperties:
+          items:
+            type: string
+          type: array
         type: object
       webhook:
         type: string
       xpub_subscriptions:
+        additionalProperties:
+          items:
+            type: string
+          type: array
         type: object
     type: object
   blockatlas.ChartCoinInfo:
@@ -112,34 +115,7 @@ definitions:
     type: object
   blockatlas.CollectionPage:
     items:
-      properties:
-        address:
-          type: string
-        category_address:
-          type: string
-        coin:
-          type: integer
-        description:
-          type: string
-        external_link:
-          type: string
-        id:
-          type: string
-        image_url:
-          type: string
-        name:
-          type: string
-        nft_version:
-          type: string
-        slug:
-          type: string
-        symbol:
-          type: string
-        total:
-          type: integer
-        type:
-          type: string
-      type: object
+      $ref: '#/definitions/blockatlas.Collection'
     type: array
   blockatlas.Delegation:
     properties:
@@ -171,35 +147,11 @@ definitions:
     type: object
   blockatlas.DelegationsBatchPage:
     items:
-      properties:
-        address:
-          type: string
-        balance:
-          type: string
-        coin:
-          $ref: '#/definitions/coin.ExternalCoin'
-          type: object
-        delegations:
-          $ref: '#/definitions/blockatlas.DelegationsPage'
-          type: object
-        details:
-          $ref: '#/definitions/blockatlas.StakingDetails'
-          type: object
-      type: object
+      $ref: '#/definitions/blockatlas.DelegationResponse'
     type: array
   blockatlas.DelegationsPage:
     items:
-      properties:
-        delegator:
-          $ref: '#/definitions/blockatlas.StakeValidator'
-          type: object
-        metadata:
-          type: object
-        status:
-          type: string
-        value:
-          type: string
-      type: object
+      $ref: '#/definitions/blockatlas.Delegation'
     type: array
   blockatlas.DocsResponse:
     properties:
@@ -285,23 +237,7 @@ definitions:
     type: object
   blockatlas.Tickers:
     items:
-      properties:
-        coin:
-          type: integer
-        coin_name:
-          type: string
-        error:
-          type: string
-        last_update:
-          type: string
-        price:
-          $ref: '#/definitions/blockatlas.TickerPrice'
-          type: object
-        token_id:
-          type: string
-        type:
-          type: string
-      type: object
+      $ref: '#/definitions/blockatlas.Ticker'
     type: array
   blockatlas.Tx:
     properties:
@@ -368,61 +304,7 @@ definitions:
     type: object
   blockatlas.TxPage:
     items:
-      properties:
-        block:
-          description: Height of the block the transaction was included in
-          type: integer
-        coin:
-          description: SLIP-44 coin index of the platform
-          type: integer
-        date:
-          description: Unix timestamp of the block the transaction was included in
-          type: integer
-        direction:
-          description: Transaction Direction
-          type: string
-        error:
-          description: |-
-            Empty if the transaction was successful,
-            else error explaining why the transaction failed (optional)
-          type: string
-        fee:
-          description: Transaction fee (native currency)
-          type: string
-        from:
-          description: Address of the transaction sender
-          type: string
-        id:
-          description: Unique identifier
-          type: string
-        inputs:
-          description: Input addresses
-          items:
-            $ref: '#/definitions/blockatlas.TxOutput'
-          type: array
-        memo:
-          description: Meta data object
-          type: string
-        metadata:
-          type: object
-        outputs:
-          description: Output addresses
-          items:
-            $ref: '#/definitions/blockatlas.TxOutput'
-          type: array
-        sequence:
-          description: Transaction nonce or sequence
-          type: integer
-        status:
-          description: Status of the transaction
-          type: string
-        to:
-          description: Address of the transaction recipient
-          type: string
-        type:
-          description: Type of metadata
-          type: string
-      type: object
+      $ref: '#/definitions/blockatlas.Tx'
     type: array
   coin.ExternalCoin:
     properties:
@@ -756,7 +638,7 @@ paths:
       consumes:
       - application/json
       description: Get all collections from the address
-      operationId: collections
+      operationId: collections_v2
       parameters:
       - default: ethereum
         description: the coin name
@@ -790,7 +672,7 @@ paths:
       consumes:
       - application/json
       description: Get a collection from the address
-      operationId: collection
+      operationId: collection_v2
       parameters:
       - default: ethereum
         description: the coin name
@@ -960,7 +842,7 @@ paths:
       consumes:
       - application/json
       description: Get collection categories
-      operationId: collection_categories
+      operationId: collection_categories_v2
       parameters:
       - default: '{"60": ["0xb3624367b1ab37daef42e1a3a2ced012359659b0"]}'
         description: Payload
@@ -1057,4 +939,102 @@ paths:
       tags:
       - platform
       - staking
+  /v3/{coin}/collections/{address}:
+    get:
+      consumes:
+      - application/json
+      description: Get all collections from the address
+      operationId: collections_v3
+      parameters:
+      - default: ethereum
+        description: the coin name
+        in: path
+        name: coin
+        required: true
+        type: string
+      - default: 0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB
+        description: the query address
+        in: path
+        name: address
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/blockatlas.CollectionPage'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ginutils.ApiError'
+      summary: Get Collections
+      tags:
+      - platform
+      - collection
+  /v3/{coin}/collections/{owner}/collection/{collection_id}:
+    get:
+      consumes:
+      - application/json
+      description: Get a collection from the address
+      operationId: collection_v3
+      parameters:
+      - default: ethereum
+        description: the coin name
+        in: path
+        name: coin
+        required: true
+        type: string
+      - default: 0x0875BCab22dE3d02402bc38aEe4104e1239374a7
+        description: the query address
+        in: path
+        name: owner
+        required: true
+        type: string
+      - default: 0x06012c8cf97bead5deae237070f9587f8e7a266d
+        description: the query collection
+        in: path
+        name: collection_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/blockatlas.CollectionPage'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ginutils.ApiError'
+      summary: Get Collection
+      tags:
+      - platform
+      - collection
+  /v3/collectibles/categories:
+    post:
+      consumes:
+      - application/json
+      description: Get collection categories
+      operationId: collection_categories_v3
+      parameters:
+      - default: '{"60": ["0xb3624367b1ab37daef42e1a3a2ced012359659b0"]}'
+        description: Payload
+        in: body
+        name: data
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/blockatlas.DocsResponse'
+      summary: Get list of collections from a specific coin and addresses
+      tags:
+      - Collectibles
 swagger: "2.0"
