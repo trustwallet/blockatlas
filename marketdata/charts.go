@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	minUnixData = 1000000000
+	minUnixTime = 1000000000
 )
 
 type Charts struct {
@@ -31,10 +31,11 @@ func InitCharts() *Charts {
 	}}
 }
 
+
 func (c *Charts) GetChartData(coin uint, token string, currency string, timeStart int64) (blockatlas.ChartData, error) {
 	chartsData := blockatlas.ChartData{}
-	if timeStart < minUnixData {
-		timeStart = minUnixData
+	if timeStart < minUnixTime {
+		timeStart = minUnixTime
 	}
 	for _, c := range c.chartProviders {
 		charts, err := c.GetChartData(coin, token, currency, timeStart)
