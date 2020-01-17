@@ -98,7 +98,7 @@ func makeStakingDelegationsSimpleBatchRoute(router gin.IRouter) {
 }
 
 // @Description Get collection categories
-// @ID collection_categories
+// @ID collection_categories_v2
 // @Summary Get list of collections from a specific coin and addresses
 // @Accept json
 // @Produce json
@@ -138,7 +138,7 @@ func oldMakeCategoriesBatchRoute(router gin.IRouter) {
 }
 
 // @Description Get collection categories
-// @ID collection_categories
+// @ID collection_categories_v3
 // @Summary Get list of collections from a specific coin and addresses
 // @Accept json
 // @Produce json
