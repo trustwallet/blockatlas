@@ -61,7 +61,7 @@ type CollectionAPI interface {
 	GetCollections(owner string) (CollectionPage, error)
 	GetCollectibles(owner, collectibleID string) (CollectiblePage, error)
 
-	//TODO: remove once most of the clients will be updated
+	//TODO: remove once most of the clients will be updated (deadline: March 17th)
 	OldGetCollections(owner string) (CollectionPage, error)
 	OldGetCollectibles(owner, collectibleID string) (CollectiblePage, error)
 }

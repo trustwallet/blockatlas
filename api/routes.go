@@ -40,7 +40,7 @@ func LoadPlatforms(root gin.IRouter) {
 		makeCollectionsRoute(routerv3, collectionAPI)
 		makeCollectionRoute(routerv3, collectionAPI)
 
-		//TODO: remove once most of the clients will be updated
+		//TODO: remove once most of the clients will be updated (deadline: March 17th)
 		oldMakeCollectionRoute(routerv2, collectionAPI)
 		oldMakeCollectionsRoute(routerv2, collectionAPI)
 	}
@@ -57,7 +57,7 @@ func LoadPlatforms(root gin.IRouter) {
 		MakeLookupBatchRoute(batchNs)
 	}
 
-	//TODO: remove once most of the clients will be updated
+	//TODO: remove once most of the clients will be updated (deadline: March 17th)
 	oldMakeCategoriesBatchRoute(v2)
 	makeCategoriesBatchRoute(v3)
 	makeStakingDelegationsBatchRoute(v2)

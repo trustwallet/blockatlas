@@ -44,7 +44,7 @@ func (c CollectionsClient) GetCollectibles(owner string, collectibleID string) (
 	return collection, page.Collectibles, err
 }
 
-//TODO: remove once most of the clients will be updated
+//TODO: remove once most of the clients will be updated (deadline: March 17th)
 func (c CollectionsClient) OldGetCollectibles(owner string, collectibleID string) (*Collection, []Collectible, error) {
 	collections, err := c.GetCollections(owner)
 	if err != nil {
@@ -77,7 +77,7 @@ func searchCollection(collections []Collection, collectibleID string) *Collectio
 	return nil
 }
 
-//TODO: remove once most of the clients will be updated
+//TODO: remove once most of the clients will be updated (deadline: March 17th)
 func oldSearchCollection(collections []Collection, collectibleID string) *Collection {
 	for _, i := range collections {
 		if strings.EqualFold(i.Slug, collectibleID) {

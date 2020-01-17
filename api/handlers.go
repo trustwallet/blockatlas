@@ -179,7 +179,7 @@ func makeStakingDelegationsRoute(router gin.IRouter, api blockatlas.Platform) {
 // @Success 200 {object} blockatlas.CollectionPage
 // @Failure 500 {object} ginutils.ApiError
 // @Router /v2/{coin}/collections/{address} [get]
-//TODO: remove once most of the clients will be updated
+//TODO: remove once most of the clients will be updated (deadline: March 17th)
 func oldMakeCollectionsRoute(router gin.IRouter, api blockatlas.Platform) {
 	var collectionAPI blockatlas.CollectionAPI
 	collectionAPI, _ = api.(blockatlas.CollectionAPI)
@@ -241,7 +241,7 @@ func makeCollectionsRoute(router gin.IRouter, api blockatlas.Platform) {
 // @Success 200 {object} blockatlas.CollectionPage
 // @Failure 500 {object} ginutils.ApiError
 // @Router /v2/{coin}/collections/{owner}/collection/{collection_id} [get]
-//TODO: remove once most of the clients will be updated
+//TODO: remove once most of the clients will be updated (deadline: March 17th)
 func oldMakeCollectionRoute(router gin.IRouter, api blockatlas.Platform) {
 	var collectionAPI blockatlas.CollectionAPI
 	collectionAPI, _ = api.(blockatlas.CollectionAPI)

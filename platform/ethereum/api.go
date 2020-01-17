@@ -204,7 +204,7 @@ func (p *Platform) GetCollections(owner string) (blockatlas.CollectionPage, erro
 	return page, nil
 }
 
-//TODO: remove once most of the clients will be updated
+//TODO: remove once most of the clients will be updated (deadline: March 17th)
 func (p *Platform) OldGetCollections(owner string) (blockatlas.CollectionPage, error) {
 	collections, err := p.collectionsClient.GetCollections(owner)
 	if err != nil {
@@ -237,7 +237,7 @@ func NormalizeCollectionPage(collections []Collection, coinIndex uint, owner str
 	return
 }
 
-//TODO: remove once most of the clients will be updated
+//TODO: remove once most of the clients will be updated (deadline: March 17th)
 func (p *Platform) OldGetCollectibles(owner, collectibleID string) (blockatlas.CollectiblePage, error) {
 	collection, items, err := p.collectionsClient.OldGetCollectibles(owner, collectibleID)
 	if err != nil {
@@ -247,7 +247,7 @@ func (p *Platform) OldGetCollectibles(owner, collectibleID string) (blockatlas.C
 	return page, nil
 }
 
-//TODO: remove once most of the clients will be updated
+//TODO: remove once most of the clients will be updated (deadline: March 17th)
 func OldNormalizeCollectionPage(collections []Collection, coinIndex uint, owner string) (page blockatlas.CollectionPage) {
 	for _, collection := range collections {
 		if len(collection.Contracts) == 0 {
@@ -262,7 +262,7 @@ func OldNormalizeCollectionPage(collections []Collection, coinIndex uint, owner 
 	return
 }
 
-//TODO: remove once most of the clients will be updated
+//TODO: remove once most of the clients will be updated (deadline: March 17th)
 func OldNormalizeCollection(c Collection, coinIndex uint, owner string) blockatlas.Collection {
 	if len(c.Contracts) == 0 {
 		return blockatlas.Collection{}
@@ -294,7 +294,7 @@ func OldNormalizeCollection(c Collection, coinIndex uint, owner string) blockatl
 	}
 }
 
-//TODO: remove once most of the clients will be updated
+//TODO: remove once most of the clients will be updated (deadline: March 17th)
 func OldNormalizeCollectible(c *Collection, a Collectible, coinIndex uint) blockatlas.Collectible {
 	// TODO: fix unprotected code
 	address := blockatlas.GetValidParameter(c.Contracts[0].Address, "")
@@ -322,12 +322,12 @@ func OldNormalizeCollectible(c *Collection, a Collectible, coinIndex uint) block
 	}
 }
 
-//TODO: remove once most of the clients will be updated
+//TODO: remove once most of the clients will be updated (deadline: March 17th)
 func createCollectionId(address, slug string) string {
 	return fmt.Sprintf("%s---%s", address, slug)
 }
 
-//TODO: remove once most of the clients will be updated
+//TODO: remove once most of the clients will be updated (deadline: March 17th)
 func OldNormalizeCollectiblePage(c *Collection, srcPage []Collectible, coinIndex uint) (page blockatlas.CollectiblePage) {
 	if len(c.Contracts) == 0 {
 		return
