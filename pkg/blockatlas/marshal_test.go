@@ -3,9 +3,10 @@ package blockatlas
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/trustwallet/blockatlas/coin"
 	"reflect"
 	"testing"
+
+	"github.com/trustwallet/blockatlas/coin"
 )
 
 var txJSON = []byte(`{
