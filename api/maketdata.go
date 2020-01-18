@@ -129,6 +129,7 @@ func getTickersHandler(storage storage.Market) func(c *gin.Context) {
 // @Param coin query int true "Coin ID" default(60)
 // @Param token query string false "Token ID"
 // @Param time_start query int false "Start timestamp" default(1574483028)
+// @Param max_items query int false "Max number of items in result prices array" default(64)
 // @Param currency query string false "The currency to show charts" default(USD)
 // @Success 200 {object} blockatlas.ChartData
 // @Router /v1/market/charts [get]

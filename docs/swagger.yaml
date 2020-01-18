@@ -490,6 +490,7 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/api.TickerRequest'
+          type: object
       produces:
       - application/json
       responses:
@@ -571,6 +572,7 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/api.Webhook'
+          type: object
       - default: Bearer test
         description: Bearer authorization header
         in: header
@@ -600,6 +602,7 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/api.Webhook'
+          type: object
       - default: Bearer test
         description: Bearer authorization header
         in: header
@@ -698,6 +701,11 @@ paths:
         description: Start timestamp
         in: query
         name: time_start
+        type: integer
+      - default: 64
+        description: Max number of items in result prices array
+        in: query
+        name: max_items
         type: integer
       - default: USD
         description: The currency to show charts
@@ -1022,6 +1030,7 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/api.AddressesRequest'
+          type: object
       produces:
       - application/json
       responses:
@@ -1046,6 +1055,7 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/api.AddressesRequest'
+          type: object
       produces:
       - application/json
       responses:
@@ -1057,4 +1067,102 @@ paths:
       tags:
       - platform
       - staking
+  /v3/{coin}/collections/{address}:
+    get:
+      consumes:
+      - application/json
+      description: Get all collections from the address
+      operationId: collections
+      parameters:
+      - default: ethereum
+        description: the coin name
+        in: path
+        name: coin
+        required: true
+        type: string
+      - default: 0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB
+        description: the query address
+        in: path
+        name: address
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/blockatlas.CollectionPage'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ginutils.ApiError'
+      summary: Get Collections
+      tags:
+      - platform
+      - collection
+  /v3/{coin}/collections/{owner}/collection/{collection_id}:
+    get:
+      consumes:
+      - application/json
+      description: Get a collection from the address
+      operationId: collection
+      parameters:
+      - default: ethereum
+        description: the coin name
+        in: path
+        name: coin
+        required: true
+        type: string
+      - default: 0x0875BCab22dE3d02402bc38aEe4104e1239374a7
+        description: the query address
+        in: path
+        name: owner
+        required: true
+        type: string
+      - default: 0x06012c8cf97bead5deae237070f9587f8e7a266d
+        description: the query collection
+        in: path
+        name: collection_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/blockatlas.CollectionPage'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ginutils.ApiError'
+      summary: Get Collection
+      tags:
+      - platform
+      - collection
+  /v3/collectibles/categories:
+    post:
+      consumes:
+      - application/json
+      description: Get collection categories
+      operationId: collection_categories
+      parameters:
+      - default: '{"60": ["0xb3624367b1ab37daef42e1a3a2ced012359659b0"]}'
+        description: Payload
+        in: body
+        name: data
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/blockatlas.DocsResponse'
+      summary: Get list of collections from a specific coin and addresses
+      tags:
+      - Collectibles
 swagger: "2.0"
