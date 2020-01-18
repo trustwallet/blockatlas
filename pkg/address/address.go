@@ -1,9 +1,13 @@
 package address
 
 import (
+	"encoding/hex"
 	"golang.org/x/crypto/sha3"
+	"strconv"
 	"strings"
 )
+
+const addressLength = 40
 
 // Decode decodes a hex string with 0x prefix.
 func Remove0x(input string) string {
@@ -34,4 +38,14 @@ func EIP55Checksum(unchecksummed string) string {
 	}
 	val := string(result)
 	return "0x" + val
+}
+
+func EncodeEIP55(coin int, id string) string {
+	src := []byte(strconv.Itoa(coin) + "-" + id)
+	s := hex.EncodeToString(src)
+	count := addressLength - len(s)
+	if count >= 0 {
+		return EIP55Checksum(strings.Repeat("0", count) + s)
+	}
+	return EIP55Checksum(s[0:addressLength])
 }

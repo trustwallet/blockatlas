@@ -42,6 +42,7 @@ require (
 	github.com/prometheus/procfs v0.0.7 // indirect
 	github.com/robfig/cron/v3 v3.0.0
 	github.com/rs/cors v1.7.0 // indirect
+	github.com/shopspring/decimal v0.0.0-20200105231215-408a2507e114
 	github.com/sirupsen/logrus v1.4.2
 	github.com/spf13/afero v1.2.2 // indirect
 	github.com/spf13/cast v1.3.0
