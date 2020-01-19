@@ -23,13 +23,13 @@ func Max(x, y int64) int64 {
 	return y
 }
 
-func round(num float64) int {
+func Round(num float64) int {
 	return int(num + math.Copysign(0.5, num))
 }
 
 func Float64toPrecision(num float64, precision int) float64 {
 	output := math.Pow(10, float64(precision))
-	return float64(round(num*output)) / output
+	return float64(Round(num*output)) / output
 }
 
 func FromDecimal(dec string) string {

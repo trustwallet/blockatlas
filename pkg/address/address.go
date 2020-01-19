@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-const addressLength = 40
+const ethereumAddressLength = 40
 
 // Decode decodes a hex string with 0x prefix.
 func Remove0x(input string) string {
@@ -43,9 +43,9 @@ func EIP55Checksum(unchecksummed string) string {
 func EncodeEIP55(coin int, id string) string {
 	src := []byte(strconv.Itoa(coin) + "-" + id)
 	s := hex.EncodeToString(src)
-	count := addressLength - len(s)
+	count := ethereumAddressLength - len(s)
 	if count >= 0 {
 		return EIP55Checksum(strings.Repeat("0", count) + s)
 	}
-	return EIP55Checksum(s[0:addressLength])
+	return EIP55Checksum(s[0:ethereumAddressLength])
 }
