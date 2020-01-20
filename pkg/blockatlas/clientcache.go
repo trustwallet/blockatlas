@@ -80,7 +80,7 @@ func (r *Request) generateKey(path string, query url.Values, body interface{}) s
 	if query != nil {
 		queryStr = query.Encode()
 	}
-	url := strings.Join([]string{r.getBase(path), queryStr}, "?")
+	url := strings.Join([]string{r.GetBase(path), queryStr}, "?")
 	var b []byte
 	if body != nil {
 		b, _ = json.Marshal(body)
