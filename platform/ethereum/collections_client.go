@@ -50,7 +50,8 @@ func (c CollectionsClient) OldGetCollectibles(owner string, collectibleID string
 	if err != nil {
 		return nil, nil, err
 	}
-	collection := oldSearchCollection(collections, collectibleID)
+	id := getCollectionId(collectibleID)
+	collection := oldSearchCollection(collections, id)
 	if collection == nil {
 		return nil, nil, errors.E("collectible not found", errors.TypePlatformClient,
 			errors.Params{"collectibleID": collectibleID}).PushToSentry()
@@ -61,7 +62,13 @@ func (c CollectionsClient) OldGetCollectibles(owner string, collectibleID string
 		"limit": {strconv.Itoa(300)},
 	}
 
-	query.Set("collection", collection.Slug)
+	for _, i := range collection.Contracts {
+		if _, ok := slugTokens[i.Type]; ok {
+			query.Set("collection", collection.Slug)
+			break
+		}
+		query.Add("asset_contract_addresses", i.Address)
+	}
 
 	var page CollectiblePage
 	err = c.Get(&page, "api/v1/assets", query)

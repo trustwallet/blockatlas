@@ -328,6 +328,15 @@ func createCollectionId(address, slug string) string {
 }
 
 //TODO: remove once most of the clients will be updated (deadline: March 17th)
+func getCollectionId(collectionId string) string {
+	s := strings.Split(collectionId, "---")
+	if len(s) != 2 {
+		return collectionId
+	}
+	return s[1]
+}
+
+//TODO: remove once most of the clients will be updated (deadline: March 17th)
 func OldNormalizeCollectiblePage(c *Collection, srcPage []Collectible, coinIndex uint) (page blockatlas.CollectiblePage) {
 	if len(c.Contracts) == 0 {
 		return
