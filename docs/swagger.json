@@ -72,6 +72,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/api.TickerRequest"
                         }
                     }
@@ -194,6 +195,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/api.Webhook"
                         }
                     },
@@ -236,6 +238,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/api.Webhook"
                         }
                     },
@@ -292,6 +295,13 @@
                         "default": 1574483028,
                         "description": "Start timestamp",
                         "name": "time_start",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 64,
+                        "description": "Max number of items in result prices array",
+                        "name": "max_items",
                         "in": "query"
                     },
                     {
@@ -555,6 +565,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/api.AddressesRequest"
                         }
                     }
@@ -591,6 +602,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/api.AddressesRequest"
                         }
                     }
@@ -1057,7 +1069,15 @@
         "api.AddressesRequest": {
             "type": "array",
             "items": {
-                "$ref": "#/definitions/api.AddressBatchRequest"
+                "type": "object",
+                "properties": {
+                    "address": {
+                        "type": "string"
+                    },
+                    "coin": {
+                        "type": "integer"
+                    }
+                }
             }
         },
         "api.Coin": {
@@ -1111,25 +1131,13 @@
             "type": "object",
             "properties": {
                 "subscriptions": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        }
-                    }
+                    "type": "object"
                 },
                 "webhook": {
                     "type": "string"
                 },
                 "xpub_subscriptions": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        }
-                    }
+                    "type": "object"
                 }
             }
         },
@@ -1222,7 +1230,48 @@
         "blockatlas.CollectionPage": {
             "type": "array",
             "items": {
-                "$ref": "#/definitions/blockatlas.Collection"
+                "type": "object",
+                "properties": {
+                    "address": {
+                        "type": "string"
+                    },
+                    "category_address": {
+                        "type": "string"
+                    },
+                    "coin": {
+                        "type": "integer"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "external_link": {
+                        "type": "string"
+                    },
+                    "id": {
+                        "type": "string"
+                    },
+                    "image_url": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "nft_version": {
+                        "type": "string"
+                    },
+                    "slug": {
+                        "type": "string"
+                    },
+                    "symbol": {
+                        "type": "string"
+                    },
+                    "total": {
+                        "type": "integer"
+                    },
+                    "type": {
+                        "type": "string"
+                    }
+                }
             }
         },
         "blockatlas.Delegation": {
@@ -1269,13 +1318,48 @@
         "blockatlas.DelegationsBatchPage": {
             "type": "array",
             "items": {
-                "$ref": "#/definitions/blockatlas.DelegationResponse"
+                "type": "object",
+                "properties": {
+                    "address": {
+                        "type": "string"
+                    },
+                    "balance": {
+                        "type": "string"
+                    },
+                    "coin": {
+                        "type": "object",
+                        "$ref": "#/definitions/coin.ExternalCoin"
+                    },
+                    "delegations": {
+                        "type": "object",
+                        "$ref": "#/definitions/blockatlas.DelegationsPage"
+                    },
+                    "details": {
+                        "type": "object",
+                        "$ref": "#/definitions/blockatlas.StakingDetails"
+                    }
+                }
             }
         },
         "blockatlas.DelegationsPage": {
             "type": "array",
             "items": {
-                "$ref": "#/definitions/blockatlas.Delegation"
+                "type": "object",
+                "properties": {
+                    "delegator": {
+                        "type": "object",
+                        "$ref": "#/definitions/blockatlas.StakeValidator"
+                    },
+                    "metadata": {
+                        "type": "object"
+                    },
+                    "status": {
+                        "type": "string"
+                    },
+                    "value": {
+                        "type": "string"
+                    }
+                }
             }
         },
         "blockatlas.DocsResponse": {
@@ -1406,7 +1490,31 @@
         "blockatlas.Tickers": {
             "type": "array",
             "items": {
-                "$ref": "#/definitions/blockatlas.Ticker"
+                "type": "object",
+                "properties": {
+                    "coin": {
+                        "type": "integer"
+                    },
+                    "coin_name": {
+                        "type": "string"
+                    },
+                    "error": {
+                        "type": "string"
+                    },
+                    "last_update": {
+                        "type": "string"
+                    },
+                    "price": {
+                        "type": "object",
+                        "$ref": "#/definitions/blockatlas.TickerPrice"
+                    },
+                    "token_id": {
+                        "type": "string"
+                    },
+                    "type": {
+                        "type": "string"
+                    }
+                }
             }
         },
         "blockatlas.Tx": {
@@ -1497,7 +1605,78 @@
         "blockatlas.TxPage": {
             "type": "array",
             "items": {
-                "$ref": "#/definitions/blockatlas.Tx"
+                "type": "object",
+                "properties": {
+                    "block": {
+                        "description": "Height of the block the transaction was included in",
+                        "type": "integer"
+                    },
+                    "coin": {
+                        "description": "SLIP-44 coin index of the platform",
+                        "type": "integer"
+                    },
+                    "date": {
+                        "description": "Unix timestamp of the block the transaction was included in",
+                        "type": "integer"
+                    },
+                    "direction": {
+                        "description": "Transaction Direction",
+                        "type": "string"
+                    },
+                    "error": {
+                        "description": "Empty if the transaction was successful,\nelse error explaining why the transaction failed (optional)",
+                        "type": "string"
+                    },
+                    "fee": {
+                        "description": "Transaction fee (native currency)",
+                        "type": "string"
+                    },
+                    "from": {
+                        "description": "Address of the transaction sender",
+                        "type": "string"
+                    },
+                    "id": {
+                        "description": "Unique identifier",
+                        "type": "string"
+                    },
+                    "inputs": {
+                        "description": "Input addresses",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/definitions/blockatlas.TxOutput"
+                        }
+                    },
+                    "memo": {
+                        "description": "Meta data object",
+                        "type": "string"
+                    },
+                    "metadata": {
+                        "type": "object"
+                    },
+                    "outputs": {
+                        "description": "Output addresses",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/definitions/blockatlas.TxOutput"
+                        }
+                    },
+                    "sequence": {
+                        "description": "Transaction nonce or sequence",
+                        "type": "integer"
+                    },
+                    "status": {
+                        "description": "Status of the transaction",
+                        "type": "string"
+                    },
+                    "to": {
+                        "description": "Address of the transaction recipient",
+                        "type": "string"
+                    },
+                    "type": {
+                        "description": "Type of metadata",
+                        "type": "string"
+                    }
+                }
             }
         },
         "coin.ExternalCoin": {
