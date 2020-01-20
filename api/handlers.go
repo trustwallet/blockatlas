@@ -169,7 +169,7 @@ func makeStakingDelegationsRoute(router gin.IRouter, api blockatlas.Platform) {
 }
 
 // @Summary Get Collections
-// @ID collections
+// @ID collections_v2
 // @Description Get all collections from the address
 // @Accept json
 // @Produce json
@@ -200,7 +200,7 @@ func oldMakeCollectionsRoute(router gin.IRouter, api blockatlas.Platform) {
 }
 
 // @Summary Get Collections
-// @ID collections
+// @ID collections_v3
 // @Description Get all collections from the address
 // @Accept json
 // @Produce json
@@ -230,7 +230,7 @@ func makeCollectionsRoute(router gin.IRouter, api blockatlas.Platform) {
 }
 
 // @Summary Get Collection
-// @ID collection
+// @ID collection_v2
 // @Description Get a collection from the address
 // @Accept json
 // @Produce json
@@ -262,7 +262,7 @@ func oldMakeCollectionRoute(router gin.IRouter, api blockatlas.Platform) {
 }
 
 // @Summary Get Collection
-// @ID collection
+// @ID collection_v3
 // @Description Get a collection from the address
 // @Accept json
 // @Produce json

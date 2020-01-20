@@ -5,6 +5,8 @@ import (
 	"strings"
 )
 
+const ethereumAddressLength = 40
+
 // Decode decodes a hex string with 0x prefix.
 func Remove0x(input string) string {
 	if strings.HasPrefix(input, "0x") {

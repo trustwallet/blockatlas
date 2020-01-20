@@ -1,6 +1,8 @@
 package address
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestChecksum(t *testing.T) {
 	tests := []struct {
@@ -12,6 +14,8 @@ func TestChecksum(t *testing.T) {
 		{"test checksum 2", "trustwallet", "0xtrUstWaLlET"},
 		{"test checksum number", "16345785d8a0000", "0x16345785d8A0000"},
 		{"test checksum hex", "fffdefefed", "0xFfFDEfeFeD"},
+		{"test checksum 3", "0x0000000000000000003731342d4f4e452d354639", "0x0000000000000000003731342d4f4E452d354639"},
+		{"test checksum 4", "0000000000000000003731342d4f4e452d354639", "0x0000000000000000003731342d4f4E452d354639"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

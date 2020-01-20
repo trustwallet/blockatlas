@@ -20,6 +20,13 @@ const (
 	TokenTypeERC20 TokenType = "ERC20"
 	TokenTypeBEP2  TokenType = "BEP2"
 	TokenTypeTRC10 TokenType = "TRC10"
+	TokenTypeETC20 TokenType = "ETC20"
+	TokenTypePOA20 TokenType = "POA20"
+	TokenTypeTRC20 TokenType = "TRC20"
+	TokenTypeCLO20 TokenType = "CLO20"
+	TokenTypeGO20  TokenType = "G020"
+	TokenTypeWAN20 TokenType = "WAN20"
+	TokenTypeTT20  TokenType = "TT20"
 
 	TxTransfer              TransactionType = "transfer"
 	TxNativeTokenTransfer   TransactionType = "native_token_transfer"
