@@ -100,9 +100,6 @@ func GetBody(body interface{}) (buf io.ReadWriter, err error) {
 	if body != nil {
 		buf = new(bytes.Buffer)
 		err = json.NewEncoder(buf).Encode(body)
-		if err != nil {
-			return
-		}
 	}
 	return
 }
