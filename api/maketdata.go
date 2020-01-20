@@ -88,7 +88,7 @@ func getTickerHandler(storage storage.Market) func(c *gin.Context) {
 // @Tags ticker
 // @Param tickers body api.TickerRequest true "Ticker"
 // @Success 200 {object} blockatlas.Tickers
-// @Router /v1/market/tickers [post]
+// @Router /v1/market/ticker [post]
 func getTickersHandler(storage storage.Market) func(c *gin.Context) {
 	if storage == nil {
 		return nil
@@ -139,9 +139,6 @@ func getTickersHandler(storage storage.Market) func(c *gin.Context) {
 // @Router /v1/market/charts [get]
 func getChartsHandler() func(c *gin.Context) {
 	var charts = marketdata.InitCharts()
-	if charts == nil {
-		return nil
-	}
 	return func(c *gin.Context) {
 		coinQuery := c.Query("coin")
 		coinId, err := strconv.Atoi(coinQuery)
@@ -186,9 +183,6 @@ func getChartsHandler() func(c *gin.Context) {
 // @Router /v1/market/info [get]
 func getCoinInfoHandler() func(c *gin.Context) {
 	var charts = marketdata.InitCharts()
-	if charts == nil {
-		return nil
-	}
 	return func(c *gin.Context) {
 		coinQuery := c.Query("coin")
 		coinId, err := strconv.Atoi(coinQuery)
