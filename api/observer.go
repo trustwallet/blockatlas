@@ -10,21 +10,6 @@ import (
 	"strconv"
 )
 
-type ObserverResponse struct {
-	Status string `json:"status"`
-}
-
-type Webhook struct {
-	Subscriptions     map[string][]string `json:"subscriptions"`
-	XpubSubscriptions map[string][]string `json:"xpub_subscriptions"`
-	Webhook           string              `json:"webhook"`
-}
-
-type CoinStatus struct {
-	Height int64  `json:"height"`
-	Error  string `json:"error,omitempty"`
-}
-
 func SetupObserverAPI(router gin.IRouter, db *storage.Storage) {
 	router.Use(ginutils.TokenAuthMiddleware(viper.GetString("observer.auth")))
 	router.POST("/webhook/register", addCall(db))
@@ -48,13 +33,13 @@ func addCall(storage storage.Addresses) func(c *gin.Context) {
 		return nil
 	}
 	return func(c *gin.Context) {
-		var req Webhook
+		var req blockatlas.Webhook
 		if c.BindJSON(&req) != nil {
 			return
 		}
 
 		if len(req.Subscriptions) == 0 && len(req.XpubSubscriptions) == 0 {
-			ginutils.RenderSuccess(c, ObserverResponse{Status: "Added"})
+			ginutils.RenderSuccess(c, blockatlas.Observer{Message: "Added", Status: true})
 			return
 		}
 
@@ -65,7 +50,7 @@ func addCall(storage storage.Addresses) func(c *gin.Context) {
 		go storage.AddSubscriptions(xpubSubs)
 		go storage.CacheXpubs(req.XpubSubscriptions)
 
-		ginutils.RenderSuccess(c, ObserverResponse{Status: "Added"})
+		ginutils.RenderSuccess(c, blockatlas.Observer{Message: "Added", Status: true})
 	}
 }
 
@@ -85,13 +70,13 @@ func deleteCall(storage storage.Addresses) func(c *gin.Context) {
 		return nil
 	}
 	return func(c *gin.Context) {
-		var req Webhook
+		var req blockatlas.Webhook
 		if c.BindJSON(&req) != nil {
 			return
 		}
 
 		if len(req.Subscriptions) == 0 && len(req.XpubSubscriptions) == 0 {
-			ginutils.RenderSuccess(c, ObserverResponse{Status: "Deleted"})
+			ginutils.RenderSuccess(c, blockatlas.Observer{Message: "Deleted", Status: true})
 			return
 		}
 
@@ -100,7 +85,7 @@ func deleteCall(storage storage.Addresses) func(c *gin.Context) {
 		subs = append(subs, xpubSubs...)
 
 		go storage.DeleteSubscriptions(subs)
-		ginutils.RenderSuccess(c, ObserverResponse{Status: "Deleted"})
+		ginutils.RenderSuccess(c, blockatlas.Observer{Message: "Deleted", Status: true})
 	}
 }
 
@@ -119,17 +104,17 @@ func statusCall(storage storage.Tracker) func(c *gin.Context) {
 		return nil
 	}
 	return func(c *gin.Context) {
-		result := make(map[string]CoinStatus)
+		result := make(map[string]blockatlas.CoinStatus)
 		for _, api := range platform.BlockAPIs {
 			coin := api.Coin()
 			num, err := storage.GetBlockNumber(coin.ID)
-			var status CoinStatus
+			var status blockatlas.CoinStatus
 			if err != nil {
-				status = CoinStatus{Error: err.Error()}
+				status = blockatlas.CoinStatus{Error: err.Error()}
 			} else if num == 0 {
-				status = CoinStatus{Error: "no blocks"}
+				status = blockatlas.CoinStatus{Error: "no blocks"}
 			} else {
-				status = CoinStatus{Height: num}
+				status = blockatlas.CoinStatus{Height: num}
 			}
 			result[coin.Handle] = status
 		}
