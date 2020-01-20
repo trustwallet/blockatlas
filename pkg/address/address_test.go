@@ -1,7 +1,6 @@
 package address
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
@@ -47,12 +46,4 @@ func TestRemove0x(t *testing.T) {
 			}
 		})
 	}
-}
-
-func TestEncode(t *testing.T) {
-	assert.Equal(t, EncodeEIP55(195, "1002000"), "0x0000000000000000003139352D31303032303030")
-	assert.Equal(t, EncodeEIP55(714, "AGRI-BD2"), "0x00000000000000003731342d414752492d424432")
-	assert.Equal(t, EncodeEIP55(714, "CHZ-ECD"), "0x0000000000000000003731342D43485a2D454344")
-	assert.Equal(t, EncodeEIP55(195, "TGbhcodQ1jRWB3ZywmfwsRTh4rwbiL2mzh"), "0x3139352d54476268636f6451316a525742335A79")
-	assert.Equal(t, EncodeEIP55(195, "TKTcfBEKpp5ZRPwmiZ8SfLx8W7CDZ7PHCY"), "0x3139352d544B54636642454B7070355A5250776D")
 }
