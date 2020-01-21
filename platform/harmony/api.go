@@ -13,6 +13,8 @@ type Platform struct {
 	client Client
 }
 
+const Annual = 10
+
 func (p *Platform) Init() error {
 	p.client = Client{blockatlas.InitClient(viper.GetString("harmony.api"))}
 	p.client.Headers["Content-Type"] = "application/json"
