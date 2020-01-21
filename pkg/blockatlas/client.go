@@ -43,16 +43,16 @@ func (r *Request) Get(result interface{}, path string, query url.Values) error {
 	if query != nil {
 		queryStr = query.Encode()
 	}
-	uri := strings.Join([]string{r.getBase(path), queryStr}, "?")
+	uri := strings.Join([]string{r.GetBase(path), queryStr}, "?")
 	return r.Execute("GET", uri, nil, result)
 }
 
 func (r *Request) Post(result interface{}, path string, body interface{}) error {
-	buf, err := getBody(body)
+	buf, err := GetBody(body)
 	if err != nil {
 		return err
 	}
-	uri := r.getBase(path)
+	uri := r.GetBase(path)
 	return r.Execute("POST", uri, buf, result)
 }
 
@@ -89,20 +89,17 @@ func (r *Request) Execute(method string, url string, body io.Reader, result inte
 	return err
 }
 
-func (r *Request) getBase(path string) string {
+func (r *Request) GetBase(path string) string {
 	if path == "" {
 		return fmt.Sprintf("%s", r.BaseUrl)
 	}
 	return fmt.Sprintf("%s/%s", r.BaseUrl, path)
 }
 
-func getBody(body interface{}) (buf io.ReadWriter, err error) {
+func GetBody(body interface{}) (buf io.ReadWriter, err error) {
 	if body != nil {
 		buf = new(bytes.Buffer)
 		err = json.NewEncoder(buf).Encode(body)
-		if err != nil {
-			return
-		}
 	}
 	return
 }
