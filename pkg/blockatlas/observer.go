@@ -2,7 +2,6 @@ package blockatlas
 
 type Webhook struct {
 	Subscriptions     map[string][]string `json:"subscriptions"`
-	XpubSubscriptions map[string][]string `json:"xpub_subscriptions"`
 	Webhook           string              `json:"webhook"`
 }
 

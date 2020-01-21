@@ -43,17 +43,6 @@ func (o *Observer) processBlock(events chan<- Event, block *blockatlas.Block) {
 		if len(address) == 0 {
 			continue
 		}
-		// Verify we already have this xpub
-		xpub, xpubAddresses, err := o.Storage.GetXpubFromAddress(o.Coin, address)
-		if err == nil && len(xpub) > 0 {
-			// Add xpub in addresses list for lookup
-			addresses = append(addresses, xpub)
-			// Temp cache for xpub addresses
-			xpubs[xpub] = xpubAddresses
-			// Save txMap for this xpub
-			txMap[xpub] = txMap[address]
-			continue
-		}
 		addresses = append(addresses, address)
 	}
 
