@@ -4,6 +4,7 @@ import (
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
+	"sort"
 	"time"
 )
 
@@ -34,6 +35,9 @@ func GetValidators(api blockatlas.StakeAPI) ([]blockatlas.StakeValidator, error)
 		return nil, err
 	}
 	results := NormalizeValidators(validators, assetsValidators, api.Coin())
+	sort.Slice(results, func(i, j int) bool {
+		return results[i].Details.Reward.Annual > results[j].Details.Reward.Annual
+	})
 	return results, nil
 }
 
@@ -55,7 +59,7 @@ func NormalizeValidators(validators []blockatlas.Validator, assets []AssetValida
 	results := make([]blockatlas.StakeValidator, 0)
 	for _, v := range validators {
 		for _, v2 := range assets {
-			if v.ID == v2.ID {
+			if v.ID == v2.ID && v2.Status.Disabled != true {
 				results = append(results, NormalizeValidator(v, v2, coin))
 			}
 		}

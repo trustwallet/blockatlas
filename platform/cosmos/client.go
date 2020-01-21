@@ -31,7 +31,6 @@ func (c *Client) GetAddrTxs(address string, tag string) (txs TxPage, err error) 
 func (c *Client) GetValidators() (validators Validators, err error) {
 	query := url.Values{
 		"status": {"bonded"},
-		"page":   {"1"},
 	}
 	err = c.Get(&validators, "staking/validators", query)
 	return

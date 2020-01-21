@@ -20,8 +20,6 @@ const (
 	DelegationTypeDelegate DelegationType = "delegate"
 )
 
-const ValidatorsPerPage = 100
-
 type StakingReward struct {
 	Annual float64 `json:"annual"`
 }
