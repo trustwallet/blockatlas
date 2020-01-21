@@ -8,11 +8,44 @@ import (
 )
 
 func Test_normalizeInfo(t *testing.T) {
+	type args struct {
+		prices   []blockatlas.ChartPrice
+		maxItems int
+	}
 	tests := []struct {
-		args     []blockatlas.ChartPrice
+		args     args
 		wantInfo []blockatlas.ChartPrice
 	}{
 		{
+			args{
+				prices: []blockatlas.ChartPrice{
+					{
+						Price: 1,
+						Date:  1578741541,
+					},
+					{
+						Price: 1,
+						Date:  1578741542,
+					},
+					{
+						Price: 1,
+						Date:  1578741549,
+					},
+					{
+						Price: 1,
+						Date:  1578741545,
+					},
+					{
+						Price: 1,
+						Date:  1578741547,
+					},
+					{
+						Price: 1,
+						Date:  1578741546,
+					},
+				},
+				maxItems: 3,
+			},
 			[]blockatlas.ChartPrice{
 				{
 					Price: 1,
@@ -20,24 +53,43 @@ func Test_normalizeInfo(t *testing.T) {
 				},
 				{
 					Price: 1,
-					Date:  1578741542,
+					Date:  1578741546,
 				},
 				{
 					Price: 1,
 					Date:  1578741549,
 				},
-				{
-					Price: 1,
-					Date:  1578741545,
+			},
+		},
+		{
+			args{
+				prices: []blockatlas.ChartPrice{
+					{
+						Price: 1,
+						Date:  1578741541,
+					},
+					{
+						Price: 1,
+						Date:  1578741542,
+					},
+					{
+						Price: 1,
+						Date:  1578741549,
+					},
+					{
+						Price: 1,
+						Date:  1578741545,
+					},
+					{
+						Price: 1,
+						Date:  1578741547,
+					},
+					{
+						Price: 1,
+						Date:  1578741546,
+					},
 				},
-				{
-					Price: 1,
-					Date:  1578741547,
-				},
-				{
-					Price: 1,
-					Date:  1578741546,
-				},
+				maxItems: 20,
 			},
 			[]blockatlas.ChartPrice{
 				{
@@ -66,11 +118,51 @@ func Test_normalizeInfo(t *testing.T) {
 				},
 			},
 		},
+		{
+			args{
+				prices: []blockatlas.ChartPrice{
+					{
+						Price: 1,
+						Date:  1578741541,
+					},
+					{
+						Price: 1,
+						Date:  1578741542,
+					},
+					{
+						Price: 1,
+						Date:  1578741545,
+					},
+					{
+						Price: 1,
+						Date:  1578741547,
+					},
+					{
+						Price: 1,
+						Date:  1578741546,
+					},
+				},
+				maxItems: 3,
+			},
+			[]blockatlas.ChartPrice{
+				{
+					Price: 1,
+					Date:  1578741541,
+				},
+				{
+					Price: 1,
+					Date:  1578741545,
+				},
+				{
+					Price: 1,
+					Date:  1578741547,
+				},
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run("Test prices normalize", func(t *testing.T) {
-			normalizePrices(tt.args)
-			assert.True(t, reflect.DeepEqual(tt.args, tt.wantInfo))
+			assert.True(t, reflect.DeepEqual(normalizePrices(tt.args.prices, tt.args.maxItems), tt.wantInfo))
 		})
 	}
 }
