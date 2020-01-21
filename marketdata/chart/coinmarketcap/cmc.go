@@ -44,7 +44,7 @@ func (c *Chart) GetChartData(coin uint, token string, currency string, timeStart
 	}
 
 	timeStartDate := time.Unix(timeStart, 0)
-	days := int(time.Now().Sub(timeStartDate).Hours() / 24)
+	days := int(time.Since(timeStartDate).Hours() / 24)
 	timeEnd := time.Now().Unix()
 	charts, err := c.webClient.GetChartsData(coinObj.Id, currency, timeStart, timeEnd, getInterval(days))
 	if err != nil {

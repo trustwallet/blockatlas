@@ -46,6 +46,9 @@ func TestCoinFile(t *testing.T) {
 	}
 	defer f.Close()
 	b, err := ioutil.ReadAll(f)
+	if err != nil{
+		t.Error(err)
+	}
 	code := string(b)
 
 	for _, want := range coinList {
