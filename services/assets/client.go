@@ -59,7 +59,7 @@ func NormalizeValidators(validators []blockatlas.Validator, assets []AssetValida
 	results := make([]blockatlas.StakeValidator, 0)
 	for _, v := range validators {
 		for _, v2 := range assets {
-			if v.ID == v2.ID && v2.Status.Disabled != true {
+			if v.ID == v2.ID && !v2.Status.Disabled {
 				results = append(results, NormalizeValidator(v, v2, coin))
 			}
 		}
