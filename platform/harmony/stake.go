@@ -14,8 +14,13 @@ func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
 		return results, err
 	}
 
+	apr, err := p.client.GetAPR()
+	if err != nil {
+		apr = Annual
+	}
+
 	for _, v := range validators.Validators {
-		if val, ok := normalizeValidator(v); ok {
+		if val, ok := normalizeValidator(v, apr); ok {
 			results = append(results, val)
 		}
 	}
@@ -23,7 +28,11 @@ func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
 }
 
 func (p *Platform) GetDetails() blockatlas.StakingDetails {
-	return getDetails()
+	apr, err := p.client.GetAPR()
+	if err != nil {
+		apr = Annual
+	}
+	return getDetails(apr)
 }
 
 func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, error) {
@@ -67,19 +76,19 @@ func NormalizeDelegations(delegations []Delegation, validators blockatlas.Valida
 	return results
 }
 
-func getDetails() blockatlas.StakingDetails {
+func getDetails(apr float64) blockatlas.StakingDetails {
 	return blockatlas.StakingDetails{
-		Reward:        blockatlas.StakingReward{Annual: Annual},
+		Reward:        blockatlas.StakingReward{Annual: apr},
 		MinimumAmount: blockatlas.Amount("0"),
 		LockTime:      0,
-		Type:          blockatlas.DelegationTypeAuto,
+		Type:          blockatlas.DelegationTypeDelegate,
 	}
 }
 
-func normalizeValidator(v Validator) (validator blockatlas.Validator, ok bool) {
+func normalizeValidator(v Validator, apr float64) (validator blockatlas.Validator, ok bool) {
 	return blockatlas.Validator{
 		Status:  true,
 		ID:      v.Address,
-		Details: getDetails(),
+		Details: getDetails(apr),
 	}, true
 }

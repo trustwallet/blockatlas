@@ -62,11 +62,24 @@ func (c *Client) GetBalance(address string) (string, error) {
 	if err != nil {
 		return "0", err
 	}
-	bln, err := numbers.HexToDecimal(result)
+	balance, err := numbers.HexToDecimal(result)
 	if err != nil {
 		return "0", err
 	}
-	return bln, nil
+	return balance, nil
+}
+
+func (c *Client) GetAPR() (float64, error) {
+	var aprInfo string
+	err := c.RpcCall(&aprInfo, "hmy_getAPR", nil)
+	if err != nil {
+		return 0, err
+	}
+	decimalBlock, err := numbers.HexToDecimal(aprInfo)
+	if err != nil {
+		return 0, err
+	}
+	return strconv.ParseFloat(decimalBlock, 64)
 }
 
 func hexToInt(hex string) (uint64, error) {

@@ -53,10 +53,10 @@ func TestNormalizeValidator(t *testing.T) {
 			Reward:        blockatlas.StakingReward{Annual: 10},
 			LockTime:      0,
 			MinimumAmount: "0",
-			Type:          blockatlas.DelegationTypeAuto,
+			Type:          blockatlas.DelegationTypeDelegate,
 		},
 	}
-	result, _ := normalizeValidator(v)
+	result, _ := normalizeValidator(v, 10)
 	assert.Equal(t, expected, result)
 }
 
