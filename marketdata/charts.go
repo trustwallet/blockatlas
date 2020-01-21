@@ -8,6 +8,7 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/numbers"
+	"math"
 	"sort"
 )
 
@@ -32,7 +33,7 @@ func InitCharts() *Charts {
 	}}
 }
 
-func (c *Charts) GetChartData(coin uint, token string, currency string, timeStart int64) (blockatlas.ChartData, error) {
+func (c *Charts) GetChartData(coin uint, token string, currency string, timeStart int64, maxItems int) (blockatlas.ChartData, error) {
 	chartsData := blockatlas.ChartData{}
 	timeStart = numbers.Max(timeStart, minUnixTime)
 	for _, c := range c.chartProviders {
@@ -40,7 +41,7 @@ func (c *Charts) GetChartData(coin uint, token string, currency string, timeStar
 		if err != nil {
 			continue
 		}
-		normalizePrices(charts.Prices)
+		charts.Prices = normalizePrices(charts.Prices, maxItems)
 		return charts, nil
 	}
 	return chartsData, errors.E("No chart data found", errors.Params{"coin": coin, "token": token})
@@ -58,8 +59,23 @@ func (c *Charts) GetCoinInfo(coin uint, token string, currency string) (blockatl
 	return coinInfoData, errors.E("No chart coin info data found", errors.Params{"coin": coin, "token": token})
 }
 
-func normalizePrices(prices []blockatlas.ChartPrice) {
+func normalizePrices(prices []blockatlas.ChartPrice, maxItems int) (result []blockatlas.ChartPrice) {
 	sort.Slice(prices, func(p, q int) bool {
 		return prices[p].Date < prices[q].Date
 	})
+	if len(prices) > maxItems && maxItems > 0 {
+		skip := int(math.Ceil(float64(len(prices) / maxItems)))
+		i := 0
+		for i < len(prices) {
+			result = append(result, prices[i])
+			i += skip + 1
+		}
+		lastPrice := prices[len(prices)-1]
+		if len(result) > 0 && lastPrice.Date != result[len(result)-1].Date {
+			result = append(result, lastPrice)
+		}
+	} else {
+		result = prices
+	}
+	return
 }
