@@ -1,10 +1,7 @@
 package observer
 
 import (
-	mapset "github.com/deckarep/golang-set"
-	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/platform/bitcoin"
 	"github.com/trustwallet/blockatlas/storage"
 )
 
@@ -38,7 +35,6 @@ func (o *Observer) processBlock(events chan<- Event, block *blockatlas.Block) {
 
 	// Build list of unique addresses
 	var addresses []string
-	xpubs := make(map[string][]string)
 	for address := range txMap {
 		if len(address) == 0 {
 			continue
@@ -51,45 +47,13 @@ func (o *Observer) processBlock(events chan<- Event, block *blockatlas.Block) {
 	if err != nil || len(subs) == 0 {
 		return
 	}
-
-	// Emit events
-	emittedUtxo := make(map[string]blockatlas.Direction)
-	// Get utxo platform to infer the direction and value
-	platform := bitcoin.UtxoPlatform(o.Coin)
 	for _, sub := range subs {
 		tx, ok := txMap[sub.Address]
 		if !ok {
 			continue
 		}
-		// Verify the tx is for xpub
-		xpubAddresses, ok := xpubs[sub.Address]
 		for _, tx := range tx.Txs() {
 			tx.Direction = getDirection(tx, sub.Address)
-			if ok {
-				// Create a mapset for xpub addresses
-				addressSet := mapset.NewSet()
-				for _, addr := range xpubAddresses {
-					addressSet.Add(addr)
-				}
-				direction := platform.InferDirection(&tx, addressSet)
-				value := platform.InferValue(&tx, direction, addressSet)
-
-				tx.Direction = direction
-				tx.Meta = blockatlas.Transfer{
-					Value:    value,
-					Symbol:   coin.Coins[o.Coin].Symbol,
-					Decimals: coin.Coins[o.Coin].Decimals,
-				}
-
-				if d, ok := emittedUtxo[tx.ID]; ok {
-					if d == tx.Direction || d == blockatlas.DirectionSelf {
-						continue
-					}
-					emittedUtxo[tx.ID] = blockatlas.DirectionSelf
-				} else {
-					emittedUtxo[tx.ID] = tx.Direction
-				}
-			}
 			events <- Event{
 				Subscription: sub,
 				Tx:           &tx,
