@@ -1,7 +1,10 @@
 package observer
 
 import (
+	mapset "github.com/deckarep/golang-set"
+	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/platform/bitcoin"
 	"github.com/trustwallet/blockatlas/storage"
 )
 
@@ -54,6 +57,7 @@ func (o *Observer) processBlock(events chan<- Event, block *blockatlas.Block) {
 		}
 		for _, tx := range tx.Txs() {
 			tx.Direction = getDirection(tx, sub.Address)
+			inferUtxoValue(&tx, sub.Address, o.Coin)
 			events <- Event{
 				Subscription: sub,
 				Tx:           &tx,
@@ -78,6 +82,10 @@ func GetTxs(block *blockatlas.Block) map[string]*blockatlas.TxSet {
 }
 
 func getDirection(tx blockatlas.Tx, address string) blockatlas.Direction {
+	if len(tx.Inputs) > 0 && len(tx.Outputs) > 0 {
+		addressSet := mapset.NewSet(address)
+		return bitcoin.InferDirection(&tx, addressSet)
+	}
 	if address == tx.To {
 		if tx.From == tx.To {
 			return blockatlas.DirectionSelf
@@ -85,4 +93,16 @@ func getDirection(tx blockatlas.Tx, address string) blockatlas.Direction {
 		return blockatlas.DirectionIncoming
 	}
 	return blockatlas.DirectionOutgoing
+}
+
+func inferUtxoValue(tx *blockatlas.Tx, address string, coinIndex uint) {
+	if len(tx.Inputs) > 0 && len(tx.Outputs) > 0 {
+		addressSet := mapset.NewSet(address)
+		value := bitcoin.InferValue(tx, tx.Direction, addressSet)
+		tx.Meta = blockatlas.Transfer{
+			Value:    value,
+			Symbol:   coin.Coins[coinIndex].Symbol,
+			Decimals: coin.Coins[coinIndex].Decimals,
+		}
+	}
 }

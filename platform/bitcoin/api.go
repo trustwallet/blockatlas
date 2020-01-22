@@ -210,8 +210,8 @@ func normalizeTransaction(tx Transaction, coinIndex uint) blockatlas.Tx {
 
 func normalizeTransfer(transaction Transaction, coinIndex uint, addressSet mapset.Set) (tx blockatlas.Tx, ok bool) {
 	tx = normalizeTransaction(transaction, coinIndex)
-	direction := inferDirection(&tx, addressSet)
-	value := inferValue(&tx, direction, addressSet)
+	direction := InferDirection(&tx, addressSet)
+	value := InferValue(&tx, direction, addressSet)
 
 	tx.Direction = direction
 	tx.Meta = blockatlas.Transfer{
@@ -247,7 +247,7 @@ func parseOutputs(outputs []Output) (addresses []blockatlas.TxOutput) {
 	return addresses
 }
 
-func inferDirection(tx *blockatlas.Tx, addressSet mapset.Set) blockatlas.Direction {
+func InferDirection(tx *blockatlas.Tx, addressSet mapset.Set) blockatlas.Direction {
 	inputSet := mapset.NewSet()
 	for _, address := range tx.Inputs {
 		inputSet.Add(address.Address)
@@ -259,16 +259,14 @@ func inferDirection(tx *blockatlas.Tx, addressSet mapset.Set) blockatlas.Directi
 	intersect := addressSet.Intersect(inputSet)
 	if intersect.Cardinality() == 0 {
 		return blockatlas.DirectionIncoming
-	} else {
-		if outputSet.IsProperSubset(addressSet) {
-			return blockatlas.DirectionSelf
-		} else {
-			return blockatlas.DirectionOutgoing
-		}
 	}
+	if outputSet.IsProperSubset(addressSet) || outputSet.Equal(inputSet) {
+		return blockatlas.DirectionSelf
+	}
+	return blockatlas.DirectionOutgoing
 }
 
-func inferValue(tx *blockatlas.Tx, direction blockatlas.Direction, addressSet mapset.Set) blockatlas.Amount {
+func InferValue(tx *blockatlas.Tx, direction blockatlas.Direction, addressSet mapset.Set) blockatlas.Amount {
 	value := blockatlas.Amount("0")
 	if len(tx.Outputs) == 0 {
 		return value
