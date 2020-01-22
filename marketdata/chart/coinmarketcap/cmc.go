@@ -44,7 +44,7 @@ func (c *Chart) GetChartData(coin uint, token string, currency string, timeStart
 	}
 
 	timeStartDate := time.Unix(timeStart, 0)
-	days := int(time.Now().Sub(timeStartDate).Hours() / 24)
+	days := int(time.Since(timeStartDate).Hours() / 24)
 	timeEnd := time.Now().Unix()
 	charts, err := c.webClient.GetChartsData(coinObj.Id, currency, timeStart, timeEnd, getInterval(days))
 	if err != nil {
@@ -118,17 +118,16 @@ func normalizeInfo(currency string, cmcCoin uint, data cmc.ChartInfo) (blockatla
 }
 
 func getInterval(days int) string {
-	if days >= 360 {
+	switch d := days; {
+	case d >= 360:
 		return "1d"
-	}
-	if days >= 90 {
+	case d >= 90:
 		return "2h"
-	}
-	if days >= 30 {
+	case d >= 30:
 		return "1h"
-	}
-	if days >= 7 {
+	case d >= 7:
 		return "15m"
+	default:
+		return "5m"
 	}
-	return "5m"
 }

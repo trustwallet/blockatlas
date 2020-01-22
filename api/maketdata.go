@@ -13,6 +13,10 @@ import (
 	"strings"
 )
 
+const (
+	defaultMaxChartItems = 64
+)
+
 type TickerRequest struct {
 	Currency string `json:"currency"`
 	Assets   []Coin `json:"assets"`
@@ -125,6 +129,7 @@ func getTickersHandler(storage storage.Market) func(c *gin.Context) {
 // @Param coin query int true "Coin ID" default(60)
 // @Param token query string false "Token ID"
 // @Param time_start query int false "Start timestamp" default(1574483028)
+// @Param max_items query int false "Max number of items in result prices array" default(64)
 // @Param currency query string false "The currency to show charts" default(USD)
 // @Success 200 {object} blockatlas.ChartData
 // @Router /v1/market/charts [get]
@@ -144,10 +149,14 @@ func makeChartsRoute(router gin.IRouter) {
 			ginutils.RenderError(c, http.StatusInternalServerError, "Invalid time_start")
 			return
 		}
+		maxItems, err := strconv.Atoi(c.Query("max_items"))
+		if err != nil || maxItems <= 0 {
+			maxItems = defaultMaxChartItems
+		}
 
 		currency := c.DefaultQuery("currency", blockatlas.DefaultCurrency)
 
-		chart, err := charts.GetChartData(uint(coinId), token, currency, timeStart)
+		chart, err := charts.GetChartData(uint(coinId), token, currency, timeStart, maxItems)
 		if err != nil {
 			ginutils.RenderError(c, http.StatusInternalServerError, err.Error())
 			return

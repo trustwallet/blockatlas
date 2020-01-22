@@ -63,6 +63,8 @@ func TestNormalizeTransaction(t *testing.T) {
 			assert.Nil(t, errTrxID)
 
 			actual, err := NormalizeTransaction(tx, tId)
+			assert.Nil(t, err)
+
 			assert.Equal(t, tt.expected, actual, "tx don't equal")
 		})
 	}
@@ -169,6 +171,8 @@ func TestNormalizeTokenTransaction(t *testing.T) {
 			assert.Nil(t, errR)
 
 			actual, err := NormalizeTokenTransaction(tx, receipt)
+			assert.Nil(t, err)
+
 			assert.Equal(t, len(actual), 1, "tx could not be normalized")
 			assert.Equal(t, tt.expected, actual, "tx don't equal")
 		})
