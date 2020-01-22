@@ -13,26 +13,23 @@ type Client struct {
 
 func (c *Client) GetTxsOfAddress(address string) ([]Tx, error) {
 	var account Op
-	path := fmt.Sprintf("account/%s/op", address)
-	err := c.Get(&account, path, url.Values{"limit": {"1000"}, "offset": {"0"}})
+	err := c.Get(&account, "v1/transactions", url.Values{"n": {"1000"}, "account": {address}})
 	return account.Txs, err
 }
 
-func (c *Client) GetCurrentBlock() (int64, error) {
-	var head Head
-	err := c.Get(&head, "block/head", url.Values{"limit": {"1000"}, "offset": {"0"}})
-	return head.Height, err
+func (c *Client) GetCurrentBlock() (height int64, err error) {
+	err = c.Get(&height, "v1/blocks_num", nil)
+	return
 }
 
 func (c *Client) GetBlockByNumber(num int64) ([]Tx, error) {
 	var block Op
-	path := fmt.Sprintf("block/%d/op", num)
-	err := c.Get(&block, path, url.Values{"limit": {"1000"}, "offset": {"0"}})
+	path := fmt.Sprintf("/v1/blocks/%d", num)
+	err := c.Get(&block, path, nil)
 	return block.Txs, err
 }
 
 func (c *Client) GetAccount(address string) (result Account, err error) {
-	path := fmt.Sprintf("account/%s", address)
-
-	return result, c.Get(&result, path, nil)
+	err = c.Get(&result, "v1/delegations", url.Values{"n": {"1"}, "account": {address}})
+	return result, err
 }
