@@ -36,7 +36,6 @@ func (p *Platform) GetDetails() blockatlas.StakingDetails {
 }
 
 func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, error) {
-	results := make(blockatlas.DelegationsPage, 0)
 	delegations, err := p.client.GetDelegations(address)
 	if err != nil {
 		return nil, err
@@ -46,8 +45,7 @@ func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, e
 	if err != nil {
 		return nil, err
 	}
-	results = append(results, NormalizeDelegations(delegations.List, validators)...)
-	return results, nil
+	return NormalizeDelegations(delegations.List, validators), nil
 }
 
 func (p *Platform) UndelegatedBalance(address string) (string, error) {
