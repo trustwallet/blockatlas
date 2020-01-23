@@ -14,8 +14,22 @@ func (c *RpcClient) GetValidators() (validators []Validator, err error) {
 	return
 }
 
-func (c *RpcClient) GetBalance(address string) (balance Balance, err error) {
-	path := fmt.Sprintf("chains/main/blocks/head/context/delegates/%s", address)
-	err = c.Get(&balance, path, nil)
-	return
+func (c *RpcClient) GetBalance(address string) string {
+	var balance string
+	path := fmt.Sprintf("chains/main/blocks/head/context/delegates/%s/balance", address)
+	err := c.Get(&balance, path, nil)
+	if err != nil {
+		return "0"
+	}
+	return balance
+}
+
+func (c *RpcClient) GetDelegatedBalance(address string) string {
+	path := fmt.Sprintf("chains/main/blocks/head/context/delegates/%s/delegated_balance", address)
+	var delegatedBalance string
+	err := c.Get(&delegatedBalance, path, nil)
+	if err != nil {
+		return "0"
+	}
+	return delegatedBalance
 }

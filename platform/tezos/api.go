@@ -5,8 +5,9 @@ import (
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
+	"github.com/trustwallet/blockatlas/pkg/logger"
 	services "github.com/trustwallet/blockatlas/services/assets"
-	"time"
+	"sync"
 )
 
 type Platform struct {
@@ -18,7 +19,7 @@ const Annual = 6.09
 
 func (p *Platform) Init() error {
 	p.client = Client{blockatlas.InitClient(viper.GetString("tezos.api"))}
-	p.client.HttpClient.Timeout = 50 * time.Second
+	p.client.SetTimeout(30)
 	p.rpcClient = RpcClient{blockatlas.InitClient(viper.GetString("tezos.rpc"))}
 	return nil
 }
@@ -28,12 +29,38 @@ func (p *Platform) Coin() coin.Coin {
 }
 
 func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
-	s, err := p.client.GetTxsOfAddress(address)
-	if err != nil {
-		return nil, err
+	run := true
+	page := 1
+	var wg sync.WaitGroup
+	out := make(chan []Transaction)
+	for run {
+		wg.Add(1)
+		go func(page int, address string, out chan []Transaction) {
+			defer wg.Done()
+			txs, err := p.client.GetTxsOfAddress(address, page)
+			logger.Info("GetTransactionsByBlockChan", logger.Params{"address": address, "page": page})
+
+			if err != nil {
+				logger.Error("GetTransactionsByBlockChan", err, logger.Params{"address": address, "page": page})
+				return
+			}
+			if len(txs) < 50 {
+				run = false
+			}
+			out <- txs
+		}(page, address, out)
+		page++
 	}
-	txs := NormalizeTxs(s)
-	return txs, nil
+	go func() {
+		wg.Wait()
+		close(out)
+	}()
+	txs := make([]Transaction, 0)
+	for r := range out {
+		txs = append(txs, r...)
+	}
+	result := NormalizeTxs(txs)
+	return result, nil
 }
 
 func (p *Platform) CurrentBlockNumber() (int64, error) {
@@ -41,14 +68,40 @@ func (p *Platform) CurrentBlockNumber() (int64, error) {
 }
 
 func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
-	srcBlock, err := p.client.GetBlockByNumber(num)
-	if err != nil {
-		return nil, err
+	run := true
+	page := 1
+	var wg sync.WaitGroup
+	out := make(chan []Transaction)
+	for run {
+		wg.Add(1)
+		go func(page int, num int64, out chan []Transaction) {
+			defer wg.Done()
+			block, err := p.client.GetBlockByNumber(num, page)
+			logger.Info("GetTransactionsByBlockChan", logger.Params{"number": num, "page": page})
+
+			if err != nil {
+				logger.Error("GetTransactionsByBlockChan", err, logger.Params{"number": num, "page": page})
+				return
+			}
+			if len(block) < 50 {
+				run = false
+			}
+			out <- block
+		}(page, num, out)
+		page++
 	}
-	txs := NormalizeTxs(srcBlock)
+	go func() {
+		wg.Wait()
+		close(out)
+	}()
+	txs := make([]Transaction, 0)
+	for r := range out {
+		txs = append(txs, r...)
+	}
+	result := NormalizeTxs(txs)
 	return &blockatlas.Block{
 		Number: num,
-		Txs:    txs,
+		Txs:    result,
 	}, nil
 }
 
@@ -64,20 +117,15 @@ func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, e
 	if err != nil {
 		return nil, err
 	}
-
-	account, err := p.rpcClient.GetBalance(address)
-	if err != nil {
-		return nil, err
-	}
-
-	return NormalizeDelegation(delegations[0], account.DelegatedBalance, validators)
+	delegatedBalance := p.rpcClient.GetDelegatedBalance(address)
+	return NormalizeDelegation(delegations[0], delegatedBalance, validators)
 }
 
 func NormalizeDelegation(delegation TxDelegation, delegatedBalance string, validators blockatlas.ValidatorMap) (blockatlas.DelegationsPage, error) {
-	validator, ok := validators[delegation.Delegation.Source]
+	validator, ok := validators[delegation.Delegation.Delegate]
 	if !ok {
 		return nil, errors.E("Validator not found",
-			errors.Params{"Address": delegation.Delegation.Delegate, "Delegate": delegation.Delegation.Source})
+			errors.Params{"Address": delegation.Delegation.Source, "Delegate": delegation.Delegation.Delegate})
 	}
 	return blockatlas.DelegationsPage{
 		{
@@ -118,11 +166,7 @@ func (p *Platform) GetDetails() blockatlas.StakingDetails {
 }
 
 func (p *Platform) UndelegatedBalance(address string) (string, error) {
-	account, err := p.rpcClient.GetBalance(address)
-	if err != nil {
-		return "0", err
-	}
-	return account.Balance, nil
+	return p.rpcClient.GetBalance(address), nil
 }
 
 func getDetails() blockatlas.StakingDetails {

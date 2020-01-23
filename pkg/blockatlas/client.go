@@ -21,6 +21,10 @@ type Request struct {
 	ErrorHandler func(res *http.Response, uri string) error
 }
 
+func (r *Request) SetTimeout(seconds time.Duration) {
+	r.HttpClient.Timeout = time.Second * seconds
+}
+
 func InitClient(baseUrl string) Request {
 	return Request{
 		Headers:      make(map[string]string),
