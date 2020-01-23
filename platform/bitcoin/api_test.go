@@ -245,9 +245,8 @@ func TestNormalizeTransfer(t *testing.T) {
 			t.Fatal(rErr)
 		}
 
-		p := &Platform{CoinIndex: test.Expected.Coin}
 		var readyTx blockatlas.Tx
-		normTx, ok := p.NormalizeTransfer(transaction, test.Expected.Coin, test.AddressSet)
+		normTx, ok := normalizeTransfer(transaction, test.Expected.Coin, test.AddressSet)
 		if !ok {
 			t.Fatal("Bitcoin: Can't normalize transaction", readyTx)
 		}
@@ -323,13 +322,12 @@ func TestInferDirection(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		p := &Platform{CoinIndex: test.Coin}
 		tx := blockatlas.Tx{
 			Inputs:  test.Inputs,
 			Outputs: test.Outputs,
 		}
 
-		direction := p.InferDirection(&tx, test.AddressSet)
+		direction := InferDirection(&tx, test.AddressSet)
 		if direction != test.Expected {
 			t.Errorf("direction is not %s", test.Expected)
 		}
