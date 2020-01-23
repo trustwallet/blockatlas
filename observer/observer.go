@@ -38,20 +38,8 @@ func (o *Observer) processBlock(events chan<- Event, block *blockatlas.Block) {
 
 	// Build list of unique addresses
 	var addresses []string
-	xpubs := make(map[string][]string)
 	for address := range txMap {
 		if len(address) == 0 {
-			continue
-		}
-		// Verify we already have this xpub
-		xpub, xpubAddresses, err := o.Storage.GetXpubFromAddress(o.Coin, address)
-		if err == nil && len(xpub) > 0 {
-			// Add xpub in addresses list for lookup
-			addresses = append(addresses, xpub)
-			// Temp cache for xpub addresses
-			xpubs[xpub] = xpubAddresses
-			// Save txMap for this xpub
-			txMap[xpub] = txMap[address]
 			continue
 		}
 		addresses = append(addresses, address)
@@ -62,45 +50,14 @@ func (o *Observer) processBlock(events chan<- Event, block *blockatlas.Block) {
 	if err != nil || len(subs) == 0 {
 		return
 	}
-
-	// Emit events
-	emittedUtxo := make(map[string]blockatlas.Direction)
-	// Get utxo platform to infer the direction and value
-	platform := bitcoin.UtxoPlatform(o.Coin)
 	for _, sub := range subs {
 		tx, ok := txMap[sub.Address]
 		if !ok {
 			continue
 		}
-		// Verify the tx is for xpub
-		xpubAddresses, ok := xpubs[sub.Address]
 		for _, tx := range tx.Txs() {
 			tx.Direction = getDirection(tx, sub.Address)
-			if ok {
-				// Create a mapset for xpub addresses
-				addressSet := mapset.NewSet()
-				for _, addr := range xpubAddresses {
-					addressSet.Add(addr)
-				}
-				direction := platform.InferDirection(&tx, addressSet)
-				value := platform.InferValue(&tx, direction, addressSet)
-
-				tx.Direction = direction
-				tx.Meta = blockatlas.Transfer{
-					Value:    value,
-					Symbol:   coin.Coins[o.Coin].Symbol,
-					Decimals: coin.Coins[o.Coin].Decimals,
-				}
-
-				if d, ok := emittedUtxo[tx.ID]; ok {
-					if d == tx.Direction || d == blockatlas.DirectionSelf {
-						continue
-					}
-					emittedUtxo[tx.ID] = blockatlas.DirectionSelf
-				} else {
-					emittedUtxo[tx.ID] = tx.Direction
-				}
-			}
+			inferUtxoValue(&tx, sub.Address, o.Coin)
 			events <- Event{
 				Subscription: sub,
 				Tx:           &tx,
@@ -125,6 +82,10 @@ func GetTxs(block *blockatlas.Block) map[string]*blockatlas.TxSet {
 }
 
 func getDirection(tx blockatlas.Tx, address string) blockatlas.Direction {
+	if len(tx.Inputs) > 0 && len(tx.Outputs) > 0 {
+		addressSet := mapset.NewSet(address)
+		return bitcoin.InferDirection(&tx, addressSet)
+	}
 	if address == tx.To {
 		if tx.From == tx.To {
 			return blockatlas.DirectionSelf
@@ -132,4 +93,16 @@ func getDirection(tx blockatlas.Tx, address string) blockatlas.Direction {
 		return blockatlas.DirectionIncoming
 	}
 	return blockatlas.DirectionOutgoing
+}
+
+func inferUtxoValue(tx *blockatlas.Tx, address string, coinIndex uint) {
+	if len(tx.Inputs) > 0 && len(tx.Outputs) > 0 {
+		addressSet := mapset.NewSet(address)
+		value := bitcoin.InferValue(tx, tx.Direction, addressSet)
+		tx.Meta = blockatlas.Transfer{
+			Value:    value,
+			Symbol:   coin.Coins[coinIndex].Symbol,
+			Decimals: coin.Coins[coinIndex].Decimals,
+		}
+	}
 }

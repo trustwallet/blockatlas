@@ -18,15 +18,6 @@ type Platform struct {
 	CoinIndex uint
 }
 
-func UtxoPlatform(index uint) *Platform {
-	platform := &Platform{CoinIndex: index}
-	err := platform.Init()
-	if err != nil {
-		logger.Panic("UtxoPlatform index error", err, logger.Params{"index": index})
-	}
-	return platform
-}
-
 func (p *Platform) Init() error {
 	p.client = Client{blockatlas.InitClient(viper.GetString(p.ConfigKey()))}
 	return nil
@@ -95,7 +86,7 @@ func (p *Platform) getTxsByXPub(xpub string) ([]blockatlas.Tx, error) {
 		addressSet.Add(token.Name)
 	}
 
-	txs := p.NormalizeTxs(sourceTxs, p.CoinIndex, addressSet)
+	txs := normalizeTxs(sourceTxs, p.CoinIndex, addressSet)
 	return txs, nil
 }
 
@@ -106,7 +97,7 @@ func (p *Platform) getTxsByAddress(address string) ([]blockatlas.Tx, error) {
 	}
 	addressSet := mapset.NewSet()
 	addressSet.Add(address)
-	txs := p.NormalizeTxs(sourceTxs, p.CoinIndex, addressSet)
+	txs := normalizeTxs(sourceTxs, p.CoinIndex, addressSet)
 	return txs, nil
 }
 
@@ -162,7 +153,7 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 	txs := append(txPages, block.TransactionList()...)
 	var normalized []blockatlas.Tx
 	for _, tx := range txs {
-		normalized = append(normalized, NormalizeTransaction(tx, p.CoinIndex))
+		normalized = append(normalized, normalizeTransaction(tx, p.CoinIndex))
 	}
 	return &blockatlas.Block{
 		Number: num,
@@ -171,17 +162,17 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 	}, nil
 }
 
-func (p *Platform) NormalizeTxs(sourceTxs TransactionsList, coinIndex uint, addressSet mapset.Set) []blockatlas.Tx {
+func normalizeTxs(sourceTxs TransactionsList, coinIndex uint, addressSet mapset.Set) []blockatlas.Tx {
 	var txs []blockatlas.Tx
 	for _, transaction := range sourceTxs.TransactionList() {
-		if tx, ok := p.NormalizeTransfer(transaction, coinIndex, addressSet); ok {
+		if tx, ok := normalizeTransfer(transaction, coinIndex, addressSet); ok {
 			txs = append(txs, tx)
 		}
 	}
 	return txs
 }
 
-func NormalizeTransaction(tx Transaction, coinIndex uint) blockatlas.Tx {
+func normalizeTransaction(tx Transaction, coinIndex uint) blockatlas.Tx {
 	inputs := parseOutputs(tx.Vin)
 	outputs := parseOutputs(tx.Vout)
 	from := ""
@@ -217,10 +208,10 @@ func NormalizeTransaction(tx Transaction, coinIndex uint) blockatlas.Tx {
 	}
 }
 
-func (p *Platform) NormalizeTransfer(transaction Transaction, coinIndex uint, addressSet mapset.Set) (tx blockatlas.Tx, ok bool) {
-	tx = NormalizeTransaction(transaction, coinIndex)
-	direction := p.InferDirection(&tx, addressSet)
-	value := p.InferValue(&tx, direction, addressSet)
+func normalizeTransfer(transaction Transaction, coinIndex uint, addressSet mapset.Set) (tx blockatlas.Tx, ok bool) {
+	tx = normalizeTransaction(transaction, coinIndex)
+	direction := InferDirection(&tx, addressSet)
+	value := InferValue(&tx, direction, addressSet)
 
 	tx.Direction = direction
 	tx.Meta = blockatlas.Transfer{
@@ -256,7 +247,7 @@ func parseOutputs(outputs []Output) (addresses []blockatlas.TxOutput) {
 	return addresses
 }
 
-func (p *Platform) InferDirection(tx *blockatlas.Tx, addressSet mapset.Set) blockatlas.Direction {
+func InferDirection(tx *blockatlas.Tx, addressSet mapset.Set) blockatlas.Direction {
 	inputSet := mapset.NewSet()
 	for _, address := range tx.Inputs {
 		inputSet.Add(address.Address)
@@ -268,16 +259,14 @@ func (p *Platform) InferDirection(tx *blockatlas.Tx, addressSet mapset.Set) bloc
 	intersect := addressSet.Intersect(inputSet)
 	if intersect.Cardinality() == 0 {
 		return blockatlas.DirectionIncoming
-	} else {
-		if outputSet.IsProperSubset(addressSet) {
-			return blockatlas.DirectionSelf
-		} else {
-			return blockatlas.DirectionOutgoing
-		}
 	}
+	if outputSet.IsProperSubset(addressSet) || outputSet.Equal(inputSet) {
+		return blockatlas.DirectionSelf
+	}
+	return blockatlas.DirectionOutgoing
 }
 
-func (p *Platform) InferValue(tx *blockatlas.Tx, direction blockatlas.Direction, addressSet mapset.Set) blockatlas.Amount {
+func InferValue(tx *blockatlas.Tx, direction blockatlas.Direction, addressSet mapset.Set) blockatlas.Amount {
 	value := blockatlas.Amount("0")
 	if len(tx.Outputs) == 0 {
 		return value

@@ -25,9 +25,6 @@ type Addresses interface {
 	Lookup(coin uint, addresses []string) ([]blockatlas.Subscription, error)
 	AddSubscriptions(subscriptions []blockatlas.Subscription)
 	DeleteSubscriptions(subscriptions []blockatlas.Subscription)
-	GetXpubFromAddress(coin uint, address string) (xpub string, addresses []string, err error)
-	GetXpub(coin uint, xpub string) ([]string, error)
-	CacheXpubs(subscriptions map[string][]string)
 }
 
 type Market interface {

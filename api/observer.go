@@ -23,10 +23,10 @@ func SetupObserverAPI(router gin.IRouter, db *storage.Storage) {
 // @Accept json
 // @Produce json
 // @Tags observer,subscriptions
-// @Param subscriptions body api.Webhook true "Accounts subscriptions"
+// @Param subscriptions body blockatlas.Webhook true "Accounts subscriptions"
 // @Param Authorization header string true "Bearer authorization header" default(Bearer test)
 // @Header 200 {string} Authorization {token}
-// @Success 200 {object} api.ObserverResponse
+// @Success 200 {object} blockatlas.Observer
 // @Router /observer/v1/webhook/register [post]
 func addCall(storage storage.Addresses) func(c *gin.Context) {
 	if storage == nil {
@@ -38,17 +38,12 @@ func addCall(storage storage.Addresses) func(c *gin.Context) {
 			return
 		}
 
-		if len(req.Subscriptions) == 0 && len(req.XpubSubscriptions) == 0 {
+		if len(req.Subscriptions) == 0 {
 			ginutils.RenderSuccess(c, blockatlas.Observer{Message: "Added", Status: true})
 			return
 		}
-
 		subs := parseSubscriptions(req.Subscriptions, req.Webhook)
 		go storage.AddSubscriptions(subs)
-
-		xpubSubs := parseSubscriptions(req.XpubSubscriptions, req.Webhook)
-		go storage.AddSubscriptions(xpubSubs)
-		go storage.CacheXpubs(req.XpubSubscriptions)
 
 		ginutils.RenderSuccess(c, blockatlas.Observer{Message: "Added", Status: true})
 	}
@@ -60,10 +55,10 @@ func addCall(storage storage.Addresses) func(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Tags observer,subscriptions
-// @Param subscriptions body api.Webhook true "Accounts subscriptions"
+// @Param subscriptions body blockatlas.Webhook true "Accounts subscriptions"
 // @Param Authorization header string true "Bearer authorization header" default(Bearer test)
 // @Header 200 {string} Authorization {token}
-// @Success 200 {object} api.ObserverResponse
+// @Success 200 {object} blockatlas.Observer
 // @Router /observer/v1/webhook/register [delete]
 func deleteCall(storage storage.Addresses) func(c *gin.Context) {
 	if storage == nil {
@@ -75,15 +70,12 @@ func deleteCall(storage storage.Addresses) func(c *gin.Context) {
 			return
 		}
 
-		if len(req.Subscriptions) == 0 && len(req.XpubSubscriptions) == 0 {
+		if len(req.Subscriptions) == 0 {
 			ginutils.RenderSuccess(c, blockatlas.Observer{Message: "Deleted", Status: true})
 			return
 		}
 
 		subs := parseSubscriptions(req.Subscriptions, req.Webhook)
-		xpubSubs := parseSubscriptions(req.XpubSubscriptions, req.Webhook)
-		subs = append(subs, xpubSubs...)
-
 		go storage.DeleteSubscriptions(subs)
 		ginutils.RenderSuccess(c, blockatlas.Observer{Message: "Deleted", Status: true})
 	}
@@ -97,7 +89,7 @@ func deleteCall(storage storage.Addresses) func(c *gin.Context) {
 // @Tags observer,subscriptions
 // @Param Authorization header string true "Bearer authorization header" default(Bearer test)
 // @Header 200 {string} Authorization {token}
-// @Success 200 {object} api.CoinStatus
+// @Success 200 {object} blockatlas.CoinStatus
 // @Router /observer/v1/status [get]
 func statusCall(storage storage.Tracker) func(c *gin.Context) {
 	if storage == nil {
