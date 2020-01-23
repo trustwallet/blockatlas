@@ -1,35 +1,50 @@
 package tezos
 
+import "time"
+
 type Op struct {
-	Txs []Tx `json:"ops"`
+	OpHash         string    `json:"opHash"`
+	BlockLevel     uint64    `json:"blockLevel"`
+	BlockTimestamp time.Time `json:"blockTimestamp"`
 }
 
-// Tx is a Tezos blockchain transaction
+type Transaction struct {
+	Tx Tx `json:"tx"`
+	Op Op `json:"op"`
+}
+
 type Tx struct {
-	Hash      string  `json:"hash"`
-	BlockHash string  `json:"block"`
-	Status    string  `json:"status"`
-	Success   bool    `json:"is_success"`
-	Time      string  `json:"time"`
-	Height    uint64  `json:"height"`
-	Type      string  `json:"type"`
-	Sender    string  `json:"sender"`
-	Volume    float64 `json:"volume"`
-	Receiver  string  `json:"receiver"`
-	Fee       int     `json:"gas_used"`
+	Destination string `json:"destination"`
+	Amount      string `json:"amount"`
+	GasLimit    string `json:"gasLimit"`
+	Kind        string `json:"kind"`
+	BlockHash   string `json:"blockHash"`
+	Fee         string `json:"fee"`
+	Source      string `json:"source"`
+	Status      string `json:"operationResultStatus"`
+}
+
+type TxDelegation struct {
+	Delegation Delegation `json:"delegation"`
+	Op         Op         `json:"op"`
+}
+
+type Delegation struct {
+	Delegate string `json:"delegate"`
+	GasLimit string `json:"gasLimit"`
+	Kind     string `json:"kind"`
+	Status   string `json:"operationResultStatus"`
+	Fee      string `json:"fee"`
+	Source   string `json:"source"`
+}
+
+type Balance struct {
+	Balance          string `json:"balance"`
+	FrozenBalance    string `json:"frozen_balance"`
+	StakingBalance   string `json:"staking_balance"`
+	DelegatedBalance string `json:"delegated_balance"`
 }
 
 type Validator struct {
 	Address string `json:"pkh"`
-}
-
-type Head struct {
-	Height int64 `json:"height"`
-}
-
-type Account struct {
-	Address     string  `json:"address"`
-	Delegate    string  `json:"delegate"`
-	Balance     float64 `json:"total_balance"`
-	IsDelegated bool    `json:"is_delegated"`
 }
