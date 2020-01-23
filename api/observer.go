@@ -38,17 +38,12 @@ func addCall(storage storage.Addresses) func(c *gin.Context) {
 			return
 		}
 
-		if len(req.Subscriptions) == 0 && len(req.XpubSubscriptions) == 0 {
+		if len(req.Subscriptions) == 0 {
 			ginutils.RenderSuccess(c, blockatlas.Observer{Message: "Added", Status: true})
 			return
 		}
-
 		subs := parseSubscriptions(req.Subscriptions, req.Webhook)
 		go storage.AddSubscriptions(subs)
-
-		xpubSubs := parseSubscriptions(req.XpubSubscriptions, req.Webhook)
-		go storage.AddSubscriptions(xpubSubs)
-		go storage.CacheXpubs(req.XpubSubscriptions)
 
 		ginutils.RenderSuccess(c, blockatlas.Observer{Message: "Added", Status: true})
 	}
@@ -75,15 +70,12 @@ func deleteCall(storage storage.Addresses) func(c *gin.Context) {
 			return
 		}
 
-		if len(req.Subscriptions) == 0 && len(req.XpubSubscriptions) == 0 {
+		if len(req.Subscriptions) == 0 {
 			ginutils.RenderSuccess(c, blockatlas.Observer{Message: "Deleted", Status: true})
 			return
 		}
 
 		subs := parseSubscriptions(req.Subscriptions, req.Webhook)
-		xpubSubs := parseSubscriptions(req.XpubSubscriptions, req.Webhook)
-		subs = append(subs, xpubSubs...)
-
 		go storage.DeleteSubscriptions(subs)
 		ginutils.RenderSuccess(c, blockatlas.Observer{Message: "Deleted", Status: true})
 	}
