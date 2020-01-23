@@ -30,8 +30,12 @@ type Coin struct {
 
 func SetupMarketAPI(router gin.IRouter, db storage.Market) {
 	router.Use(ginutils.TokenAuthMiddleware(viper.GetString("market.auth")))
+	// Ticker
 	router.GET("/ticker", getTickerHandler(db))
 	router.POST("/ticker", getTickersHandler(db))
+	// Charts
+	router.GET("/charts", getChartsHandler())
+	router.GET("/info", getCoinInfoHandler())
 }
 
 // @Summary Get ticker value for a specific market
@@ -44,7 +48,7 @@ func SetupMarketAPI(router gin.IRouter, db storage.Market) {
 // @Param token query string false "token id"
 // @Param currency query string false "the currency to show the quote" default(USD)
 // @Success 200 {object} blockatlas.Ticker
-// @Router /market/v1/ticker [get]
+// @Router /v1/market/ticker [get]
 func getTickerHandler(storage storage.Market) func(c *gin.Context) {
 	if storage == nil {
 		return nil
@@ -84,7 +88,7 @@ func getTickerHandler(storage storage.Market) func(c *gin.Context) {
 // @Tags ticker
 // @Param tickers body api.TickerRequest true "Ticker"
 // @Success 200 {object} blockatlas.Tickers
-// @Router /market/v1/tickers [post]
+// @Router /v1/market/ticker [post]
 func getTickersHandler(storage storage.Market) func(c *gin.Context) {
 	if storage == nil {
 		return nil
@@ -133,9 +137,9 @@ func getTickersHandler(storage storage.Market) func(c *gin.Context) {
 // @Param currency query string false "The currency to show charts" default(USD)
 // @Success 200 {object} blockatlas.ChartData
 // @Router /v1/market/charts [get]
-func makeChartsRoute(router gin.IRouter) {
+func getChartsHandler() func(c *gin.Context) {
 	var charts = marketdata.InitCharts()
-	router.GET("/market/charts", func(c *gin.Context) {
+	return func(c *gin.Context) {
 		coinQuery := c.Query("coin")
 		coinId, err := strconv.Atoi(coinQuery)
 		if err != nil {
@@ -162,7 +166,7 @@ func makeChartsRoute(router gin.IRouter) {
 			return
 		}
 		ginutils.RenderSuccess(c, chart)
-	})
+	}
 }
 
 // @Summary Get charts coin info data for a specific coin
@@ -177,9 +181,9 @@ func makeChartsRoute(router gin.IRouter) {
 // @Param currency query string false "The currency to show coin info in" default(USD)
 // @Success 200 {object} blockatlas.ChartCoinInfo
 // @Router /v1/market/info [get]
-func makeCoinInfoRoute(router gin.IRouter) {
+func getCoinInfoHandler() func(c *gin.Context) {
 	var charts = marketdata.InitCharts()
-	router.GET("/market/info", func(c *gin.Context) {
+	return func(c *gin.Context) {
 		coinQuery := c.Query("coin")
 		coinId, err := strconv.Atoi(coinQuery)
 		if err != nil {
@@ -196,5 +200,5 @@ func makeCoinInfoRoute(router gin.IRouter) {
 			return
 		}
 		ginutils.RenderSuccess(c, chart)
-	})
+	}
 }

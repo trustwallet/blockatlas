@@ -5,88 +5,6 @@
         "license": {}
     },
     "paths": {
-        "/market/v1/ticker": {
-            "get": {
-                "description": "Get the ticker value from an market and coin/token",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "ticker"
-                ],
-                "summary": "Get ticker value for a specific market",
-                "operationId": "get_ticker",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "coin id",
-                        "name": "coin",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "token id",
-                        "name": "token",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "default": "USD",
-                        "description": "the currency to show the quote",
-                        "name": "currency",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/blockatlas.Ticker"
-                        }
-                    }
-                }
-            }
-        },
-        "/market/v1/tickers": {
-            "post": {
-                "description": "Get the ticker values from many markets and coin/token",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "ticker"
-                ],
-                "summary": "Get ticker values for a specific markets",
-                "operationId": "get_tickers",
-                "parameters": [
-                    {
-                        "description": "Ticker",
-                        "name": "tickers",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "object",
-                            "$ref": "#/definitions/api.TickerRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/blockatlas.Tickers"
-                        }
-                    }
-                }
-            }
-        },
         "/metrics": {
             "get": {
                 "description": "Get application metrics",
@@ -167,7 +85,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/api.CoinStatus"
+                            "$ref": "#/definitions/blockatlas.CoinStatus"
                         }
                     }
                 }
@@ -195,8 +113,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "object",
-                            "$ref": "#/definitions/api.Webhook"
+                            "$ref": "#/definitions/blockatlas.Webhook"
                         }
                     },
                     {
@@ -212,7 +129,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/api.ObserverResponse"
+                            "$ref": "#/definitions/blockatlas.Observer"
                         }
                     }
                 }
@@ -238,8 +155,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "object",
-                            "$ref": "#/definitions/api.Webhook"
+                            "$ref": "#/definitions/blockatlas.Webhook"
                         }
                     },
                     {
@@ -255,7 +171,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/api.ObserverResponse"
+                            "$ref": "#/definitions/blockatlas.Observer"
                         }
                     }
                 }
@@ -371,6 +287,85 @@
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/blockatlas.ChartCoinInfo"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/market/ticker": {
+            "get": {
+                "description": "Get the ticker value from an market and coin/token",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ticker"
+                ],
+                "summary": "Get ticker value for a specific market",
+                "operationId": "get_ticker",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "coin id",
+                        "name": "coin",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "token id",
+                        "name": "token",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "default": "USD",
+                        "description": "the currency to show the quote",
+                        "name": "currency",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/blockatlas.Ticker"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Get the ticker values from many markets and coin/token",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ticker"
+                ],
+                "summary": "Get ticker values for a specific markets",
+                "operationId": "get_tickers",
+                "parameters": [
+                    {
+                        "description": "Ticker",
+                        "name": "tickers",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.TickerRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/blockatlas.Tickers"
                         }
                     }
                 }
@@ -565,7 +560,6 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/api.AddressesRequest"
                         }
                     }
@@ -602,7 +596,6 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/api.AddressesRequest"
                         }
                     }
@@ -1069,15 +1062,7 @@
         "api.AddressesRequest": {
             "type": "array",
             "items": {
-                "type": "object",
-                "properties": {
-                    "address": {
-                        "type": "string"
-                    },
-                    "coin": {
-                        "type": "integer"
-                    }
-                }
+                "$ref": "#/definitions/api.AddressBatchRequest"
             }
         },
         "api.Coin": {
@@ -1094,25 +1079,6 @@
                 }
             }
         },
-        "api.CoinStatus": {
-            "type": "object",
-            "properties": {
-                "error": {
-                    "type": "string"
-                },
-                "height": {
-                    "type": "integer"
-                }
-            }
-        },
-        "api.ObserverResponse": {
-            "type": "object",
-            "properties": {
-                "status": {
-                    "type": "string"
-                }
-            }
-        },
         "api.TickerRequest": {
             "type": "object",
             "properties": {
@@ -1124,20 +1090,6 @@
                 },
                 "currency": {
                     "type": "string"
-                }
-            }
-        },
-        "api.Webhook": {
-            "type": "object",
-            "properties": {
-                "subscriptions": {
-                    "type": "object"
-                },
-                "webhook": {
-                    "type": "string"
-                },
-                "xpub_subscriptions": {
-                    "type": "object"
                 }
             }
         },
@@ -1180,6 +1132,17 @@
                 },
                 "price": {
                     "type": "number"
+                }
+            }
+        },
+        "blockatlas.CoinStatus": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "height": {
+                    "type": "integer"
                 }
             }
         },
@@ -1230,48 +1193,7 @@
         "blockatlas.CollectionPage": {
             "type": "array",
             "items": {
-                "type": "object",
-                "properties": {
-                    "address": {
-                        "type": "string"
-                    },
-                    "category_address": {
-                        "type": "string"
-                    },
-                    "coin": {
-                        "type": "integer"
-                    },
-                    "description": {
-                        "type": "string"
-                    },
-                    "external_link": {
-                        "type": "string"
-                    },
-                    "id": {
-                        "type": "string"
-                    },
-                    "image_url": {
-                        "type": "string"
-                    },
-                    "name": {
-                        "type": "string"
-                    },
-                    "nft_version": {
-                        "type": "string"
-                    },
-                    "slug": {
-                        "type": "string"
-                    },
-                    "symbol": {
-                        "type": "string"
-                    },
-                    "total": {
-                        "type": "integer"
-                    },
-                    "type": {
-                        "type": "string"
-                    }
-                }
+                "$ref": "#/definitions/blockatlas.Collection"
             }
         },
         "blockatlas.Delegation": {
@@ -1318,48 +1240,13 @@
         "blockatlas.DelegationsBatchPage": {
             "type": "array",
             "items": {
-                "type": "object",
-                "properties": {
-                    "address": {
-                        "type": "string"
-                    },
-                    "balance": {
-                        "type": "string"
-                    },
-                    "coin": {
-                        "type": "object",
-                        "$ref": "#/definitions/coin.ExternalCoin"
-                    },
-                    "delegations": {
-                        "type": "object",
-                        "$ref": "#/definitions/blockatlas.DelegationsPage"
-                    },
-                    "details": {
-                        "type": "object",
-                        "$ref": "#/definitions/blockatlas.StakingDetails"
-                    }
-                }
+                "$ref": "#/definitions/blockatlas.DelegationResponse"
             }
         },
         "blockatlas.DelegationsPage": {
             "type": "array",
             "items": {
-                "type": "object",
-                "properties": {
-                    "delegator": {
-                        "type": "object",
-                        "$ref": "#/definitions/blockatlas.StakeValidator"
-                    },
-                    "metadata": {
-                        "type": "object"
-                    },
-                    "status": {
-                        "type": "string"
-                    },
-                    "value": {
-                        "type": "string"
-                    }
-                }
+                "$ref": "#/definitions/blockatlas.Delegation"
             }
         },
         "blockatlas.DocsResponse": {
@@ -1367,6 +1254,17 @@
             "properties": {
                 "docs": {
                     "type": "object"
+                }
+            }
+        },
+        "blockatlas.Observer": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "boolean"
                 }
             }
         },
@@ -1490,31 +1388,7 @@
         "blockatlas.Tickers": {
             "type": "array",
             "items": {
-                "type": "object",
-                "properties": {
-                    "coin": {
-                        "type": "integer"
-                    },
-                    "coin_name": {
-                        "type": "string"
-                    },
-                    "error": {
-                        "type": "string"
-                    },
-                    "last_update": {
-                        "type": "string"
-                    },
-                    "price": {
-                        "type": "object",
-                        "$ref": "#/definitions/blockatlas.TickerPrice"
-                    },
-                    "token_id": {
-                        "type": "string"
-                    },
-                    "type": {
-                        "type": "string"
-                    }
-                }
+                "$ref": "#/definitions/blockatlas.Ticker"
             }
         },
         "blockatlas.Tx": {
@@ -1605,76 +1479,31 @@
         "blockatlas.TxPage": {
             "type": "array",
             "items": {
-                "type": "object",
-                "properties": {
-                    "block": {
-                        "description": "Height of the block the transaction was included in",
-                        "type": "integer"
-                    },
-                    "coin": {
-                        "description": "SLIP-44 coin index of the platform",
-                        "type": "integer"
-                    },
-                    "date": {
-                        "description": "Unix timestamp of the block the transaction was included in",
-                        "type": "integer"
-                    },
-                    "direction": {
-                        "description": "Transaction Direction",
-                        "type": "string"
-                    },
-                    "error": {
-                        "description": "Empty if the transaction was successful,\nelse error explaining why the transaction failed (optional)",
-                        "type": "string"
-                    },
-                    "fee": {
-                        "description": "Transaction fee (native currency)",
-                        "type": "string"
-                    },
-                    "from": {
-                        "description": "Address of the transaction sender",
-                        "type": "string"
-                    },
-                    "id": {
-                        "description": "Unique identifier",
-                        "type": "string"
-                    },
-                    "inputs": {
-                        "description": "Input addresses",
+                "$ref": "#/definitions/blockatlas.Tx"
+            }
+        },
+        "blockatlas.Webhook": {
+            "type": "object",
+            "properties": {
+                "subscriptions": {
+                    "type": "object",
+                    "additionalProperties": {
                         "type": "array",
                         "items": {
-                            "$ref": "#/definitions/blockatlas.TxOutput"
+                            "type": "string"
                         }
-                    },
-                    "memo": {
-                        "description": "Meta data object",
-                        "type": "string"
-                    },
-                    "metadata": {
-                        "type": "object"
-                    },
-                    "outputs": {
-                        "description": "Output addresses",
+                    }
+                },
+                "webhook": {
+                    "type": "string"
+                },
+                "xpub_subscriptions": {
+                    "type": "object",
+                    "additionalProperties": {
                         "type": "array",
                         "items": {
-                            "$ref": "#/definitions/blockatlas.TxOutput"
+                            "type": "string"
                         }
-                    },
-                    "sequence": {
-                        "description": "Transaction nonce or sequence",
-                        "type": "integer"
-                    },
-                    "status": {
-                        "description": "Status of the transaction",
-                        "type": "string"
-                    },
-                    "to": {
-                        "description": "Address of the transaction recipient",
-                        "type": "string"
-                    },
-                    "type": {
-                        "description": "Type of metadata",
-                        "type": "string"
                     }
                 }
             }

@@ -8,12 +8,7 @@ definitions:
     type: object
   api.AddressesRequest:
     items:
-      properties:
-        address:
-          type: string
-        coin:
-          type: integer
-      type: object
+      $ref: '#/definitions/api.AddressBatchRequest'
     type: array
   api.Coin:
     properties:
@@ -24,18 +19,6 @@ definitions:
       type:
         type: string
     type: object
-  api.CoinStatus:
-    properties:
-      error:
-        type: string
-      height:
-        type: integer
-    type: object
-  api.ObserverResponse:
-    properties:
-      status:
-        type: string
-    type: object
   api.TickerRequest:
     properties:
       assets:
@@ -44,15 +27,6 @@ definitions:
         type: array
       currency:
         type: string
-    type: object
-  api.Webhook:
-    properties:
-      subscriptions:
-        type: object
-      webhook:
-        type: string
-      xpub_subscriptions:
-        type: object
     type: object
   blockatlas.ChartCoinInfo:
     properties:
@@ -80,6 +54,13 @@ definitions:
         type: integer
       price:
         type: number
+    type: object
+  blockatlas.CoinStatus:
+    properties:
+      error:
+        type: string
+      height:
+        type: integer
     type: object
   blockatlas.Collection:
     properties:
@@ -112,34 +93,7 @@ definitions:
     type: object
   blockatlas.CollectionPage:
     items:
-      properties:
-        address:
-          type: string
-        category_address:
-          type: string
-        coin:
-          type: integer
-        description:
-          type: string
-        external_link:
-          type: string
-        id:
-          type: string
-        image_url:
-          type: string
-        name:
-          type: string
-        nft_version:
-          type: string
-        slug:
-          type: string
-        symbol:
-          type: string
-        total:
-          type: integer
-        type:
-          type: string
-      type: object
+      $ref: '#/definitions/blockatlas.Collection'
     type: array
   blockatlas.Delegation:
     properties:
@@ -171,40 +125,23 @@ definitions:
     type: object
   blockatlas.DelegationsBatchPage:
     items:
-      properties:
-        address:
-          type: string
-        balance:
-          type: string
-        coin:
-          $ref: '#/definitions/coin.ExternalCoin'
-          type: object
-        delegations:
-          $ref: '#/definitions/blockatlas.DelegationsPage'
-          type: object
-        details:
-          $ref: '#/definitions/blockatlas.StakingDetails'
-          type: object
-      type: object
+      $ref: '#/definitions/blockatlas.DelegationResponse'
     type: array
   blockatlas.DelegationsPage:
     items:
-      properties:
-        delegator:
-          $ref: '#/definitions/blockatlas.StakeValidator'
-          type: object
-        metadata:
-          type: object
-        status:
-          type: string
-        value:
-          type: string
-      type: object
+      $ref: '#/definitions/blockatlas.Delegation'
     type: array
   blockatlas.DocsResponse:
     properties:
       docs:
         type: object
+    type: object
+  blockatlas.Observer:
+    properties:
+      message:
+        type: string
+      status:
+        type: boolean
     type: object
   blockatlas.Resolved:
     properties:
@@ -285,23 +222,7 @@ definitions:
     type: object
   blockatlas.Tickers:
     items:
-      properties:
-        coin:
-          type: integer
-        coin_name:
-          type: string
-        error:
-          type: string
-        last_update:
-          type: string
-        price:
-          $ref: '#/definitions/blockatlas.TickerPrice'
-          type: object
-        token_id:
-          type: string
-        type:
-          type: string
-      type: object
+      $ref: '#/definitions/blockatlas.Ticker'
     type: array
   blockatlas.Tx:
     properties:
@@ -368,62 +289,25 @@ definitions:
     type: object
   blockatlas.TxPage:
     items:
-      properties:
-        block:
-          description: Height of the block the transaction was included in
-          type: integer
-        coin:
-          description: SLIP-44 coin index of the platform
-          type: integer
-        date:
-          description: Unix timestamp of the block the transaction was included in
-          type: integer
-        direction:
-          description: Transaction Direction
-          type: string
-        error:
-          description: |-
-            Empty if the transaction was successful,
-            else error explaining why the transaction failed (optional)
-          type: string
-        fee:
-          description: Transaction fee (native currency)
-          type: string
-        from:
-          description: Address of the transaction sender
-          type: string
-        id:
-          description: Unique identifier
-          type: string
-        inputs:
-          description: Input addresses
-          items:
-            $ref: '#/definitions/blockatlas.TxOutput'
-          type: array
-        memo:
-          description: Meta data object
-          type: string
-        metadata:
-          type: object
-        outputs:
-          description: Output addresses
-          items:
-            $ref: '#/definitions/blockatlas.TxOutput'
-          type: array
-        sequence:
-          description: Transaction nonce or sequence
-          type: integer
-        status:
-          description: Status of the transaction
-          type: string
-        to:
-          description: Address of the transaction recipient
-          type: string
-        type:
-          description: Type of metadata
-          type: string
-      type: object
+      $ref: '#/definitions/blockatlas.Tx'
     type: array
+  blockatlas.Webhook:
+    properties:
+      subscriptions:
+        additionalProperties:
+          items:
+            type: string
+          type: array
+        type: object
+      webhook:
+        type: string
+      xpub_subscriptions:
+        additionalProperties:
+          items:
+            type: string
+          type: array
+        type: object
+    type: object
   coin.ExternalCoin:
     properties:
       coin:
@@ -446,61 +330,6 @@ info:
   contact: {}
   license: {}
 paths:
-  /market/v1/ticker:
-    get:
-      consumes:
-      - application/json
-      description: Get the ticker value from an market and coin/token
-      operationId: get_ticker
-      parameters:
-      - description: coin id
-        in: query
-        name: coin
-        required: true
-        type: integer
-      - description: token id
-        in: query
-        name: token
-        type: string
-      - default: USD
-        description: the currency to show the quote
-        in: query
-        name: currency
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/blockatlas.Ticker'
-      summary: Get ticker value for a specific market
-      tags:
-      - ticker
-  /market/v1/tickers:
-    post:
-      consumes:
-      - application/json
-      description: Get the ticker values from many markets and coin/token
-      operationId: get_tickers
-      parameters:
-      - description: Ticker
-        in: body
-        name: tickers
-        required: true
-        schema:
-          $ref: '#/definitions/api.TickerRequest'
-          type: object
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/blockatlas.Tickers'
-      summary: Get ticker values for a specific markets
-      tags:
-      - ticker
   /metrics:
     get:
       description: Get application metrics
@@ -554,7 +383,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/api.CoinStatus'
+            $ref: '#/definitions/blockatlas.CoinStatus'
       summary: Get coin status
       tags:
       - observer
@@ -571,8 +400,7 @@ paths:
         name: subscriptions
         required: true
         schema:
-          $ref: '#/definitions/api.Webhook'
-          type: object
+          $ref: '#/definitions/blockatlas.Webhook'
       - default: Bearer test
         description: Bearer authorization header
         in: header
@@ -585,7 +413,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/api.ObserverResponse'
+            $ref: '#/definitions/blockatlas.Observer'
       summary: Delete a webhook
       tags:
       - observer
@@ -601,8 +429,7 @@ paths:
         name: subscriptions
         required: true
         schema:
-          $ref: '#/definitions/api.Webhook'
-          type: object
+          $ref: '#/definitions/blockatlas.Webhook'
       - default: Bearer test
         description: Bearer authorization header
         in: header
@@ -615,7 +442,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/api.ObserverResponse'
+            $ref: '#/definitions/blockatlas.Observer'
       summary: Create a webhook
       tags:
       - observer
@@ -759,6 +586,59 @@ paths:
       summary: Get charts coin info data for a specific coin
       tags:
       - charts
+  /v1/market/ticker:
+    get:
+      consumes:
+      - application/json
+      description: Get the ticker value from an market and coin/token
+      operationId: get_ticker
+      parameters:
+      - description: coin id
+        in: query
+        name: coin
+        required: true
+        type: integer
+      - description: token id
+        in: query
+        name: token
+        type: string
+      - default: USD
+        description: the currency to show the quote
+        in: query
+        name: currency
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/blockatlas.Ticker'
+      summary: Get ticker value for a specific market
+      tags:
+      - ticker
+    post:
+      consumes:
+      - application/json
+      description: Get the ticker values from many markets and coin/token
+      operationId: get_tickers
+      parameters:
+      - description: Ticker
+        in: body
+        name: tickers
+        required: true
+        schema:
+          $ref: '#/definitions/api.TickerRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/blockatlas.Tickers'
+      summary: Get ticker values for a specific markets
+      tags:
+      - ticker
   /v2/{coin}/collections/{address}:
     get:
       consumes:
@@ -1030,7 +910,6 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/api.AddressesRequest'
-          type: object
       produces:
       - application/json
       responses:
@@ -1055,7 +934,6 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/api.AddressesRequest'
-          type: object
       produces:
       - application/json
       responses:
