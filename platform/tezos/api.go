@@ -6,9 +6,6 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	services "github.com/trustwallet/blockatlas/services/assets"
-	"math"
-	"strconv"
-	"time"
 )
 
 type Platform struct {
@@ -20,6 +17,7 @@ const Annual = 6.09
 
 func (p *Platform) Init() error {
 	p.client = Client{blockatlas.InitClient(viper.GetString("tezos.api"))}
+	p.client.SetTimeout(25)
 	p.rpcClient = RpcClient{blockatlas.InitClient(viper.GetString("tezos.rpc"))}
 	return nil
 }
@@ -33,9 +31,7 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	txs := NormalizeTxs(s)
-
 	return txs, nil
 }
 
@@ -56,39 +52,39 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 }
 
 func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, error) {
-	account, err := p.client.GetAccount(address)
+	delegations, err := p.client.GetDelegations(address)
 	if err != nil {
 		return nil, err
 	}
-	if !account.IsDelegated {
+	if len(delegations) == 0 {
 		return make(blockatlas.DelegationsPage, 0), nil
 	}
 	validators, err := services.GetValidatorsMap(p)
 	if err != nil {
 		return nil, err
 	}
-	return NormalizeDelegation(account, validators)
+	delegatedBalance := p.rpcClient.GetDelegatedBalance(address)
+	return NormalizeDelegation(delegations[0], delegatedBalance, validators)
 }
 
-func NormalizeDelegation(account Account, validators blockatlas.ValidatorMap) (blockatlas.DelegationsPage, error) {
-	validator, ok := validators[account.Delegate]
+func NormalizeDelegation(delegation TxDelegation, delegatedBalance string, validators blockatlas.ValidatorMap) (blockatlas.DelegationsPage, error) {
+	validator, ok := validators[delegation.Delegation.Delegate]
 	if !ok {
 		return nil, errors.E("Validator not found",
-			errors.Params{"Address": account.Address, "Delegate": account.Delegate, "Balance": account.Balance})
+			errors.Params{"Address": delegation.Delegation.Source, "Delegate": delegation.Delegation.Delegate})
 	}
-	balance := removeDecimals(account.Balance)
 	return blockatlas.DelegationsPage{
 		{
 			Delegator: validator,
-			Value:     balance,
+			Value:     delegatedBalance,
 			Status:    blockatlas.DelegationStatusActive,
 		},
 	}, nil
 }
 
-func NormalizeTxs(srcTxs []Tx) (txs []blockatlas.Tx) {
+func NormalizeTxs(srcTxs []Transaction) (txs []blockatlas.Tx) {
 	for _, srcTx := range srcTxs {
-		tx, ok := NormalizeTx(&srcTx)
+		tx, ok := NormalizeTx(srcTx)
 		if !ok {
 			continue
 		}
@@ -100,7 +96,6 @@ func NormalizeTxs(srcTxs []Tx) (txs []blockatlas.Tx) {
 func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
 	results := make(blockatlas.ValidatorPage, 0)
 	validators, err := p.rpcClient.GetValidators()
-
 	if err != nil {
 		return results, err
 	}
@@ -117,11 +112,7 @@ func (p *Platform) GetDetails() blockatlas.StakingDetails {
 }
 
 func (p *Platform) UndelegatedBalance(address string) (string, error) {
-	account, err := p.client.GetAccount(address)
-	if err != nil {
-		return "0", err
-	}
-	return removeDecimals(account.Balance), nil
+	return p.rpcClient.GetBalance(address), nil
 }
 
 func getDetails() blockatlas.StakingDetails {
@@ -136,7 +127,6 @@ func getDetails() blockatlas.StakingDetails {
 func normalizeValidator(v Validator) (validator blockatlas.Validator) {
 	// How to calculate Tezos APR? I have no idea. Tezos team does not know either. let's assume it's around 7% - no way to calculate in decentralized manner
 	// Delegation rewards distributed by the validators manually, it's up to them to do it.
-
 	return blockatlas.Validator{
 		Status:  true,
 		ID:      v.Address,
@@ -145,48 +135,33 @@ func normalizeValidator(v Validator) (validator blockatlas.Validator) {
 }
 
 // NormalizeTx converts a Tezos transaction into the generic model
-func NormalizeTx(srcTx *Tx) (tx blockatlas.Tx, ok bool) {
-	unix := int64(0)
-	date, err := time.Parse("2006-01-02T15:04:05Z", srcTx.Time)
-	if err == nil {
-		unix = date.Unix()
-	}
-
-	if srcTx.Type != "transaction" {
+func NormalizeTx(srcTx Transaction) (tx blockatlas.Tx, ok bool) {
+	if srcTx.Tx.Kind != "transaction" {
 		return tx, false
 	}
 
 	var status blockatlas.Status
 	var errMsg string
-	if srcTx.Success && srcTx.Status == "applied" {
+	if srcTx.Tx.Status == "applied" {
 		status = blockatlas.StatusCompleted
 	} else {
 		status = blockatlas.StatusFailed
 		errMsg = "transaction failed"
 	}
-
-	volume := removeDecimals(srcTx.Volume)
 	return blockatlas.Tx{
-		ID:    srcTx.Hash,
+		ID:    srcTx.Op.OpHash,
 		Coin:  coin.XTZ,
-		Date:  unix,
-		From:  srcTx.Sender,
-		To:    srcTx.Receiver,
-		Fee:   blockatlas.Amount(strconv.Itoa(srcTx.Fee)),
-		Block: srcTx.Height,
+		Date:  srcTx.Op.BlockTimestamp.Unix(),
+		From:  srcTx.Tx.Source,
+		To:    srcTx.Tx.Destination,
+		Fee:   blockatlas.Amount(srcTx.Tx.Fee),
+		Block: srcTx.Op.BlockLevel,
 		Meta: blockatlas.Transfer{
-			Value:    blockatlas.Amount(volume),
+			Value:    blockatlas.Amount(srcTx.Tx.Amount),
 			Symbol:   coin.Coins[coin.XTZ].Symbol,
 			Decimals: coin.Coins[coin.XTZ].Decimals,
 		},
 		Status: status,
 		Error:  errMsg,
 	}, true
-}
-
-func removeDecimals(volume float64) string {
-	decimals := coin.Coins[coin.XTZ].Decimals
-	d := math.Pow10(int(decimals))
-	v := volume * d
-	return strconv.Itoa(int(v))
 }

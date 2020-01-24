@@ -79,7 +79,7 @@ kin:
 
 # [XTZ] Tezos: https://tezos.com
 tezos:
-  api: https://api.tzstats.com/explorer
+  api: https://api.tezos.id/mooncake/mainnet
   rpc: https://mainnet.tezos.org.ua
 
 # [ETH] Ethereum: https://ethereum.org (Trust-Ray API)
