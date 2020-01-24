@@ -12,12 +12,13 @@ const (
 	AssetsURL = "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/"
 )
 
-func GetCoinInfo(coinId int) (info blockatlas.CoinInfo, err error) {
+func GetCoinInfo(coinId int, token string) (info *blockatlas.CoinInfo, err error) {
 	c, ok := coin.Coins[uint(coinId)]
 	if !ok {
 		return info, errors.E("coin not found")
 	}
-	request := blockatlas.InitClient(AssetsURL + c.Handle)
+	url := getCoinInfoUrl(c, token)
+	request := blockatlas.InitClient(url)
 	err = request.GetWithCache(&info, "info/info.json", nil, time.Hour*1)
 	return
 }
@@ -95,4 +96,11 @@ func calculateAnnual(annual float64, commission float64) float64 {
 
 func getImage(c coin.Coin, ID string) string {
 	return AssetsURL + c.Handle + "/validators/assets/" + ID + "/logo.png"
+}
+
+func getCoinInfoUrl(c coin.Coin, token string) string {
+	if len(token) == 0 {
+		return AssetsURL + c.Handle
+	}
+	return AssetsURL + c.Handle + "/assets/" + token
 }
