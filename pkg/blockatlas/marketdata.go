@@ -40,22 +40,22 @@ type ChartPrice struct {
 }
 
 type ChartCoinInfo struct {
-	Vol24             float64  `json:"volume_24"`
-	MarketCap         float64  `json:"market_cap"`
-	CirculatingSupply float64  `json:"circulating_supply"`
-	TotalSupply       float64  `json:"total_supply"`
-	Info              CoinInfo `json:"info,omitempty"`
+	Vol24             float64   `json:"volume_24"`
+	MarketCap         float64   `json:"market_cap"`
+	CirculatingSupply float64   `json:"circulating_supply"`
+	TotalSupply       float64   `json:"total_supply"`
+	Info              *CoinInfo `json:"info,omitempty"`
 }
 
 type CoinInfo struct {
-	Name       string   `json:"name"`
-	Website    string   `json:"website"`
-	SourceCode string   `json:"source_code"`
-	Whitepaper string   `json:"whitepaper"`
-	Explorers  []Link   `json:"explorers"`
-	Socials    []Link   `json:"socials"`
-	Details    []Detail `json:"details"`
-	DataSource string   `json:"data_source"`
+	Name       string   `json:"name,omitempty"`
+	Website    string   `json:"website,omitempty"`
+	SourceCode string   `json:"source_code,omitempty"`
+	Whitepaper string   `json:"whitepaper,omitempty"`
+	Explorers  []Link   `json:"explorers,omitempty"`
+	Socials    []Link   `json:"socials,omitempty"`
+	Details    []Detail `json:"details,omitempty"`
+	DataSource string   `json:"data_source,omitempty"`
 }
 
 type Link struct {
