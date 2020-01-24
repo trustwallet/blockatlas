@@ -34,16 +34,38 @@ type ChartData struct {
 	Error  string       `json:"error,omitempty"`
 }
 
-type ChartCoinInfo struct {
-	Vol24             float64 `json:"volume_24"`
-	MarketCap         float64 `json:"market_cap"`
-	CirculatingSupply float64 `json:"circulating_supply"`
-	TotalSupply       float64 `json:"total_supply"`
-}
-
 type ChartPrice struct {
 	Price float64 `json:"price"`
 	Date  int64   `json:"date"`
+}
+
+type ChartCoinInfo struct {
+	Vol24             float64  `json:"volume_24"`
+	MarketCap         float64  `json:"market_cap"`
+	CirculatingSupply float64  `json:"circulating_supply"`
+	TotalSupply       float64  `json:"total_supply"`
+	Info              CoinInfo `json:"info,omitempty"`
+}
+
+type CoinInfo struct {
+	Name       string   `json:"name"`
+	Website    string   `json:"website"`
+	SourceCode string   `json:"source_code"`
+	Whitepaper string   `json:"whitepaper"`
+	Explorers  []Link   `json:"explorers"`
+	Socials    []Link   `json:"socials"`
+	Details    []Detail `json:"details"`
+	DataSource string   `json:"data_source"`
+}
+
+type Link struct {
+	Name string `json:"name"`
+	Url  string `json:"url"`
+}
+
+type Detail struct {
+	Language    string `json:"language"`
+	Description string `json:"description"`
 }
 
 func (t *Ticker) SetCoinId(coinId uint) {
