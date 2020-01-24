@@ -46,7 +46,7 @@ func TestCoinFile(t *testing.T) {
 	}
 	defer f.Close()
 	b, err := ioutil.ReadAll(f)
-	if err != nil{
+	if err != nil {
 		t.Error(err)
 	}
 	code := string(b)

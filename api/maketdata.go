@@ -7,6 +7,8 @@ import (
 	"github.com/trustwallet/blockatlas/marketdata"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/ginutils"
+	"github.com/trustwallet/blockatlas/pkg/logger"
+	"github.com/trustwallet/blockatlas/services/assets"
 	"github.com/trustwallet/blockatlas/storage"
 	"net/http"
 	"strconv"
@@ -190,14 +192,17 @@ func getCoinInfoHandler() func(c *gin.Context) {
 			ginutils.RenderError(c, http.StatusInternalServerError, "Invalid coin")
 			return
 		}
+
 		token := c.Query("token")
-
 		currency := c.DefaultQuery("currency", blockatlas.DefaultCurrency)
-
 		chart, err := charts.GetCoinInfo(uint(coinId), token, currency)
 		if err != nil {
 			ginutils.RenderError(c, http.StatusInternalServerError, err.Error())
 			return
+		}
+		chart.Info, err = assets.GetCoinInfo(coinId)
+		if err != nil {
+			logger.Error(err, "invalid coin info", logger.Params{"coin": coinId, "currency": currency})
 		}
 		ginutils.RenderSuccess(c, chart)
 	}
