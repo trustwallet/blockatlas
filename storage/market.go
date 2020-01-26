@@ -43,7 +43,12 @@ func (s *Storage) GetTicker(coin, token string) (*blockatlas.Ticker, error) {
 	return cd, nil
 }
 
-func (s *Storage) SaveRates(rates blockatlas.Rates, pl ProviderList) {
+func (s *Storage) SaveRates(rates blockatlas.Rates, pl ProviderList) error {
+	var (
+		errCounter  int
+		errSaveSome = errors.E("Save some rates")
+	)
+
 	for _, rate := range rates {
 		r, err := s.GetRate(rate.Currency)
 		if err == nil {
@@ -57,12 +62,20 @@ func (s *Storage) SaveRates(rates blockatlas.Rates, pl ProviderList) {
 				continue
 			}
 		}
-		err = s.AddHM(EntityRates, rate.Currency, &rate)
-		if err != nil {
+		if err = s.AddHM(EntityRates, rate.Currency, &rate); err != nil {
+			errCounter++
+			errSaveSome.SetMeta(errors.Params{"rate": rate})
 			logger.Error(err, "SaveRates", logger.Params{"rate": rate})
 			continue
 		}
 	}
+	if errCounter == len(rates) {
+		return errors.E("Save all rates")
+	}
+	if errCounter > 0 {
+		return errSaveSome
+	}
+	return nil
 }
 
 func (s *Storage) GetRate(currency string) (rate *blockatlas.Rate, err error) {

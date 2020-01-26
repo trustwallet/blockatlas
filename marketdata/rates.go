@@ -5,7 +5,7 @@ import (
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/marketdata/rate"
 	"github.com/trustwallet/blockatlas/marketdata/rate/coingecko"
-	cmc "github.com/trustwallet/blockatlas/marketdata/rate/coinmarketcap"
+	"github.com/trustwallet/blockatlas/marketdata/rate/coinmarketcap"
 	"github.com/trustwallet/blockatlas/marketdata/rate/compound"
 	"github.com/trustwallet/blockatlas/marketdata/rate/fixer"
 	"github.com/trustwallet/blockatlas/pkg/errors"
@@ -54,9 +54,13 @@ func runRate(storage storage.Market, p rate.Provider) error {
 	if err != nil {
 		return errors.E(err, "FetchLatestRates")
 	}
-	if len(rates) > 0 {
-		storage.SaveRates(rates, rateProviders)
-		logger.Info("Market rates", logger.Params{"rates": len(rates), "provider": p.GetId()})
+	if len(rates) == 0 {
+		return nil
 	}
+	err = storage.SaveRates(rates, rateProviders)
+	if err != nil {
+		return errors.E(err, "runRate", errors.Params{"rates": rates})
+	}
+	logger.Info("Market rates", logger.Params{"rates": len(rates), "provider": p.GetId()})
 	return nil
 }

@@ -30,6 +30,6 @@ type Addresses interface {
 type Market interface {
 	SaveTicker(coin *blockatlas.Ticker, pl ProviderList) error
 	GetTicker(coin, token string) (*blockatlas.Ticker, error)
-	SaveRates(rates blockatlas.Rates, pl ProviderList)
+	SaveRates(rates blockatlas.Rates, pl ProviderList) error
 	GetRate(currency string) (*blockatlas.Rate, error)
 }
