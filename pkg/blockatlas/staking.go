@@ -18,6 +18,8 @@ const (
 
 	DelegationTypeAuto     DelegationType = "auto"
 	DelegationTypeDelegate DelegationType = "delegate"
+
+	DefaultAnnualReward = 0
 )
 
 type StakingReward struct {

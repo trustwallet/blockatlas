@@ -19,8 +19,8 @@ func syncMarketData(cmd *cobra.Command, args []string) {
 		logger.Fatal("Market is not enabled")
 	}
 
-	marketdata.InitRates(Storage)
-	marketdata.InitMarkets(Storage)
+	marketdata.InitRates(cache)
+	marketdata.InitMarkets(cache)
 	<-make(chan bool)
 }
 

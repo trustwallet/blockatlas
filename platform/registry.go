@@ -2,22 +2,21 @@ package platform
 
 import (
 	"fmt"
-
-	"github.com/trustwallet/blockatlas/platform/harmony"
-
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/pkg/logger"
-	"github.com/trustwallet/blockatlas/platform/algorand"
+	"github.com/trustwallet/blockatlas/platform/cosmos"
 
 	"github.com/spf13/viper"
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/logger"
+
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/platform/aeternity"
 	"github.com/trustwallet/blockatlas/platform/aion"
+	"github.com/trustwallet/blockatlas/platform/algorand"
 	"github.com/trustwallet/blockatlas/platform/binance"
 	"github.com/trustwallet/blockatlas/platform/bitcoin"
-	"github.com/trustwallet/blockatlas/platform/cosmos"
 	"github.com/trustwallet/blockatlas/platform/ethereum"
 	"github.com/trustwallet/blockatlas/platform/fio"
+	"github.com/trustwallet/blockatlas/platform/harmony"
 	"github.com/trustwallet/blockatlas/platform/icon"
 	"github.com/trustwallet/blockatlas/platform/iotex"
 	"github.com/trustwallet/blockatlas/platform/nano"
@@ -49,10 +48,10 @@ var platformList = []blockatlas.Platform{
 	&ethereum.Platform{CoinIndex: coin.WAN},
 	&ethereum.Platform{CoinIndex: coin.TOMO},
 	&ethereum.Platform{CoinIndex: coin.TT},
-	&tezos.Platform{},
-	&aion.Platform{},
 	&cosmos.Platform{CoinIndex: coin.ATOM},
 	&cosmos.Platform{CoinIndex: coin.KAVA},
+	&tezos.Platform{},
+	&aion.Platform{},
 	&icon.Platform{},
 	&iotex.Platform{},
 	&ontology.Platform{},

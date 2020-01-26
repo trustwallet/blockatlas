@@ -10,10 +10,6 @@ import (
 	"time"
 )
 
-const (
-	defaultAnnualReward = 8.1
-)
-
 func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
 	results := make(blockatlas.ValidatorPage, 0)
 	validators, err := p.client.GetValidators()
@@ -55,7 +51,8 @@ func (p *Platform) GetDetails() blockatlas.StakingDetails {
 func (p *Platform) GetMaxAPR() float64 {
 	validators, err := p.GetValidators()
 	if err != nil {
-		return defaultAnnualReward
+		logger.Error("GetMaxAPR", logger.Params{"details": err, "platform": p.Coin().Symbol})
+		return blockatlas.DefaultAnnualReward
 	}
 
 	var max = 0.0

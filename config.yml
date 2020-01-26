@@ -139,7 +139,7 @@ theta:
 
 # [ATOM] Cosmos: https://cosmos.network/
 cosmos:
- api: https://stargate.cosmos.network
+ api: http://stargate.cosmos.network
 
 # [SEMUX] SEMUX: https://semux.org/
 semux:
