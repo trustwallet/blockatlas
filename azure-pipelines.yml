@@ -11,14 +11,6 @@ pr:
     include:
       - master
 
-schedules:
-  - cron: "0 * * * *"
-    displayName: Recurrent build
-    always: true
-    branches:
-      include:
-        - master
-
 pool:
   vmImage: 'Ubuntu 16.04'
 
