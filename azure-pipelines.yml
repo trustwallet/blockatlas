@@ -1,8 +1,15 @@
 trigger:
-  - master
+  branches:
+    include:
+      - master
+  tags:
+    include:
+      - '*'
 
 pr:
-  - master
+  branches:
+    include:
+      - master
 
 schedules:
   - cron: "0 * * * *"
@@ -69,3 +76,10 @@ jobs:
       - script: go build -v .
         workingDirectory: '$(modulePath)'
         displayName: 'Build'
+
+      - script: |
+          curl -sfL https://install.goreleaser.com/github.com/goreleaser/goreleaser.sh | sh
+          goreleaser
+        workingDirectory: '$(modulePath)'
+        displayName: 'Go Releaser'
+        condition: startsWith(variables['build.sourceBranch'], 'refs/tags/')
