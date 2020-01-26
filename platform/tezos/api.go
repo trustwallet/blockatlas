@@ -16,8 +16,8 @@ const Annual = 6.09
 
 func (p *Platform) Init() error {
 	p.client = Client{blockatlas.InitClient(viper.GetString("tezos.api"))}
-	p.client = Client{blockatlas.InitClient(viper.GetString("tezos.stake_api"))}
 	p.client.SetTimeout(30)
+	p.stakeClient = Client{blockatlas.InitClient(viper.GetString("tezos.stake_api"))}
 	p.rpcClient = RpcClient{blockatlas.InitClient(viper.GetString("tezos.rpc"))}
 	return nil
 }

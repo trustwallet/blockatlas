@@ -10,7 +10,7 @@ import (
 )
 
 func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, error) {
-	account, err := p.client.GetAccount(address)
+	account, err := p.stakeClient.GetAccount(address)
 	if err != nil {
 		return nil, err
 	}
@@ -60,7 +60,7 @@ func (p *Platform) GetDetails() blockatlas.StakingDetails {
 }
 
 func (p *Platform) UndelegatedBalance(address string) (string, error) {
-	account, err := p.client.GetAccount(address)
+	account, err := p.stakeClient.GetAccount(address)
 	if err != nil {
 		return "0", err
 	}
