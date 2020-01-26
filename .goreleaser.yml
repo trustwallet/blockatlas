@@ -2,18 +2,18 @@ before:
   hooks:
     - go generate ./...
 builds:
-- env:
-  - CGO_ENABLED=0
-- ignore:
-  - goos: darwin
-    goarch: 386
+  - main: "./main.go"
+    env:
+      - CGO_ENABLED=0
+    ignore:
+      - goos: darwin
 archives:
-- replacements:
-    darwin: Darwin
-    linux: Linux
-    windows: Windows
-    386: i386
-    amd64: x86_64
+  - replacements:
+      darwin: Darwin
+      linux: Linux
+      windows: Windows
+      386: i386
+      amd64: x86_64
 checksum:
   name_template: 'checksums.txt'
 snapshot:
@@ -22,5 +22,5 @@ changelog:
   sort: asc
   filters:
     exclude:
-    - '^docs:'
-    - '^test:'
+      - '^docs:'
+      - '^test:'
