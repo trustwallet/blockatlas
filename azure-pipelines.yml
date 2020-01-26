@@ -1,52 +1,71 @@
+trigger:
+  - master
+
+pr:
+  - master
+
+schedules:
+  - cron: "0 * * * *"
+    displayName: Recurrent build
+    always: true
+    branches:
+      include:
+        - master
+
 pool:
   vmImage: 'Ubuntu 16.04'
 
 variables:
   GOBIN:  '$(GOPATH)/bin' # Go binaries path
   GOROOT: '/usr/local/go1.13' # Go installation path
-  GOPATH: '$(system.defaultWorkingDirectory)/gopath' # Go workspace path
+  GOPATH: '$(Build.SourcesDirectory)/gopath' # Go workspace path
   modulePath: '$(GOPATH)/src/github.com/trustwallet/blockatlas' # Path to the module's code
 
-steps:
-  - script: |
-      mkdir -p '$(GOBIN)'
-      mkdir -p '$(GOPATH)/pkg'
-      mkdir -p '$(modulePath)'
-      shopt -s extglob
-      shopt -s dotglob
-      mv !(gopath) '$(modulePath)'
-      echo '##vso[task.prependpath]$(GOBIN)'
-      echo '##vso[task.prependpath]$(GOROOT)/bin'
-      echo '$(go env)'
-    displayName: 'Set up the Go workspace'
+jobs:
+  - job: Pipeline
+    steps:
+      - script: |
+          mkdir -p '$(GOBIN)'
+          mkdir -p '$(GOPATH)/pkg'
+          mkdir -p '$(modulePath)'
+          shopt -s extglob
+          shopt -s dotglob
+          mv !(gopath) '$(modulePath)'
+          echo '##vso[task.prependpath]$(GOBIN)'
+          echo '##vso[task.prependpath]$(GOROOT)/bin'
+          echo '$(go env)'
+        displayName: 'Set up the Go workspace'
 
-  - task: CacheBeta@1
-    inputs:
-      key: 'go | "$(Agent.OS)" | **/go.mod'
-      restoreKeys: |
-        go | "$(Agent.OS)"
-        go
-      path: |
-        $(GOPATH)
-        !$(modulePath)
-    displayName: 'Cache go packages'
+      - task: CacheBeta@1
+        inputs:
+          key: 'go | "$(Agent.OS)" | **/go.mod'
+          restoreKeys: |
+            go | "$(Agent.OS)"
+            go
+          path: |
+            $(GOPATH)
+            !$(modulePath)
+        displayName: 'Cache go packages'
 
-  - script: |
-      go version
-      go get -v -t -d ./...
-    workingDirectory: '$(modulePath)'
-    displayName: 'Get dependencies'
+      - script: |
+          go version
+          go get -v -t -d ./...
+        workingDirectory: '$(modulePath)'
+        displayName: 'Get dependencies'
 
-  - script: make test
-    workingDirectory: '$(modulePath)'
-    displayName: 'Run unit tests'
+      - script: make test
+        workingDirectory: '$(modulePath)'
+        displayName: 'Run unit tests'
 
-  - script: |
-      go get github.com/gavv/httpexpect
-      make integration
-    workingDirectory: '$(modulePath)'
-    displayName: 'Run integration tests'
+      - script: |
+          go get github.com/gavv/httpexpect
+          make integration
+        workingDirectory: '$(modulePath)'
+        displayName: 'Run integration tests'
+        # Use this condition when we start to use continuous CI
+        # condition: eq(variables['build.sourceBranch'], 'refs/heads/master')
+        continueOnError: true
 
-  - script: go build -v .
-    workingDirectory: '$(modulePath)'
-    displayName: 'Build'
+      - script: go build -v .
+        workingDirectory: '$(modulePath)'
+        displayName: 'Build'
