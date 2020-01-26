@@ -79,6 +79,7 @@ kin:
 
 # [XTZ] Tezos: https://tezos.com
 tezos:
+  stake_api: https://api.tzstats.com/explorer
   api: https://api.tezos.id/mooncake/mainnet
   rpc: https://mainnet.tezos.org.ua
 

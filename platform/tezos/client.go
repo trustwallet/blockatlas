@@ -26,7 +26,6 @@ func (c *Client) GetBlockByNumber(num int64) (txs []Transaction, err error) {
 	return
 }
 
-func (c *Client) GetDelegations(address string) (result []TxDelegation, err error) {
-	err = c.Get(&result, "v1/delegations", url.Values{"n": {"1"}, "p": {"0"}, "account": {address}})
-	return
+func (c *Client) GetAccount(address string) (result Account, err error) {
+	return result, c.Get(&result, "account/"+address, nil)
 }

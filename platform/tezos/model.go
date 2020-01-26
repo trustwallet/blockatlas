@@ -48,3 +48,11 @@ type Balance struct {
 type Validator struct {
 	Address string `json:"pkh"`
 }
+
+type Account struct {
+	Address     string  `json:"address"`
+	Delegate    string  `json:"delegate"`
+	Balance     float64 `json:"total_balance"`
+	IsDelegated bool    `json:"is_delegated"`
+}
+
