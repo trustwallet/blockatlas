@@ -55,4 +55,3 @@ type Account struct {
 	Balance     float64 `json:"total_balance"`
 	IsDelegated bool    `json:"is_delegated"`
 }
-

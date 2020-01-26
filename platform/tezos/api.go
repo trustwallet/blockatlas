@@ -7,9 +7,9 @@ import (
 )
 
 type Platform struct {
-	client    Client
-	stakeClient    Client
-	rpcClient RpcClient
+	client      Client
+	stakeClient Client
+	rpcClient   RpcClient
 }
 
 const Annual = 6.09
