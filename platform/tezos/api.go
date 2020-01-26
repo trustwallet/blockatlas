@@ -52,6 +52,10 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 }
 
 func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, error) {
+	delegatedBalance, err := p.rpcClient.GetDelegatedBalance(address)
+	if err != nil {
+		return make(blockatlas.DelegationsPage, 0), nil
+	}
 	delegations, err := p.client.GetDelegations(address)
 	if err != nil {
 		return nil, err
@@ -63,7 +67,6 @@ func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, e
 	if err != nil {
 		return nil, err
 	}
-	delegatedBalance := p.rpcClient.GetDelegatedBalance(address)
 	return NormalizeDelegation(delegations[0], delegatedBalance, validators)
 }
 

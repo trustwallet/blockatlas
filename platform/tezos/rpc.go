@@ -24,12 +24,12 @@ func (c *RpcClient) GetBalance(address string) string {
 	return balance
 }
 
-func (c *RpcClient) GetDelegatedBalance(address string) string {
+func (c *RpcClient) GetDelegatedBalance(address string) (string, error) {
 	path := fmt.Sprintf("chains/main/blocks/head/context/delegates/%s/delegated_balance", address)
 	var delegatedBalance string
 	err := c.Get(&delegatedBalance, path, nil)
 	if err != nil {
-		return "0"
+		return "", err
 	}
-	return delegatedBalance
+	return delegatedBalance, nil
 }
