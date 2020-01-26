@@ -79,7 +79,7 @@ jobs:
 
       - script: |
           curl -sfL https://install.goreleaser.com/github.com/goreleaser/goreleaser.sh | sh
-          goreleaser --rm-dist
+          ./bin/goreleaser --rm-dist
         workingDirectory: '$(modulePath)'
         displayName: 'Go Releaser'
         condition: startsWith(variables['build.sourceBranch'], 'refs/tags/')
