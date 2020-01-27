@@ -61,9 +61,16 @@ jobs:
           make integration
         workingDirectory: '$(modulePath)'
         displayName: 'Run integration tests'
-        # Use this condition when we start to use continuous CI
-        # condition: eq(variables['build.sourceBranch'], 'refs/heads/master')
+        condition: ne(variables['build.sourceBranch'], 'refs/heads/master')
         continueOnError: true
+
+      - script: |
+          go get github.com/gavv/httpexpect
+          make integration
+        workingDirectory: '$(modulePath)'
+        displayName: 'Run integration tests'
+        condition: eq(variables['build.sourceBranch'], 'refs/heads/master')
+        continueOnError: false
 
       - script: go build -v .
         workingDirectory: '$(modulePath)'
