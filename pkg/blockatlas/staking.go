@@ -26,6 +26,7 @@ type StakingReward struct {
 
 type StakingDetails struct {
 	Reward        StakingReward  `json:"reward"`
+	FreeSpace     float64        `json:"free_space"`
 	LockTime      int            `json:"locktime"`
 	MinimumAmount Amount         `json:"minimum_amount"`
 	Type          DelegationType `json:"type"`

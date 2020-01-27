@@ -1,16 +1,19 @@
 package tezos
 
 import (
+	"fmt"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
+	"github.com/trustwallet/blockatlas/platform/tezos/bakingbad"
 	services "github.com/trustwallet/blockatlas/services/assets"
 )
 
 type Platform struct {
 	client    Client
 	rpcClient RpcClient
+	bbAPI     bakingbad.API
 }
 
 const Annual = 6.09
@@ -19,6 +22,7 @@ func (p *Platform) Init() error {
 	p.client = Client{blockatlas.InitClient(viper.GetString("tezos.api"))}
 	p.client.SetTimeout(25)
 	p.rpcClient = RpcClient{blockatlas.InitClient(viper.GetString("tezos.rpc"))}
+	p.bbAPI = bakingbad.NewAPI()
 	return nil
 }
 
@@ -100,8 +104,15 @@ func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
 		return results, err
 	}
 
+	validatorsFreeSpace, _ := p.getValidatorsFreeSpace()
+
 	for _, v := range validators {
-		results = append(results, normalizeValidator(v))
+		nValidator := normalizeValidator(v)
+		freeSpace, ok := validatorsFreeSpace[nValidator.ID]
+		if ok {
+			nValidator.Details.FreeSpace = freeSpace
+		}
+		results = append(results, nValidator)
 	}
 
 	return results, nil
@@ -109,6 +120,18 @@ func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
 
 func (p *Platform) GetDetails() blockatlas.StakingDetails {
 	return getDetails()
+}
+
+func (p *Platform) getValidatorsFreeSpace() (map[string]float64, error) {
+	bakers, err := p.bbAPI.Bakers()
+	if err != nil {
+		return nil, fmt.Errorf("bbAPI.Bakers: %s", err.Error())
+	}
+	result := make(map[string]float64)
+	for _, baker := range bakers {
+		result[baker.Address] = baker.FreeSpace
+	}
+	return result, nil
 }
 
 func (p *Platform) UndelegatedBalance(address string) (string, error) {

@@ -46,6 +46,12 @@ func GetValidators(api blockatlas.StakeAPI) ([]blockatlas.StakeValidator, error)
 	}
 	results := normalizeValidators(validators, assetsValidators, api.Coin())
 	sort.Slice(results, func(i, j int) bool {
+		if results[i].Details.FreeSpace < 1 && results[j].Details.FreeSpace > 1 {
+			return false
+		}
+		if results[j].Details.FreeSpace < 1 && results[i].Details.FreeSpace > 1 {
+			return true
+		}
 		return results[i].Details.Reward.Annual > results[j].Details.Reward.Annual
 	})
 	return results, nil
