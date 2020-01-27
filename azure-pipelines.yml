@@ -73,7 +73,7 @@ jobs:
       - script: go build -v .
         workingDirectory: '$(modulePath)'
         displayName: 'Build'
-        condition: !startsWith(variables['build.sourceBranch'], 'refs/tags/')
+        condition: not(startsWith(variables['build.sourceBranch'], 'refs/tags/'))
 
       - script: |
           curl -sfL https://install.goreleaser.com/github.com/goreleaser/goreleaser.sh | sh
