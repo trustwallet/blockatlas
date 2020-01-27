@@ -15,6 +15,7 @@ pool:
   vmImage: 'Ubuntu 16.04'
 
 variables:
+  GITHUB_TOKEN: '$(GIT_TOKEN)'
   GOBIN:  '$(GOPATH)/bin' # Go binaries path
   GOROOT: '/usr/local/go1.13' # Go installation path
   GOPATH: '$(Build.SourcesDirectory)/gopath' # Go workspace path
@@ -82,5 +83,4 @@ jobs:
         workingDirectory: '$(modulePath)'
         displayName: 'Go Releaser'
         condition: startsWith(variables['build.sourceBranch'], 'refs/tags/')
-        variables:
-          GITHUB_TOKEN: '$(GIT_TOKEN)'
+
