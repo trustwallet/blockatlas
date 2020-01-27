@@ -8,9 +8,9 @@ assignees: ''
 ---
 
 <!-- < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < ☺ 
-v                            ✰  Thanks for opening an feature request! ✰    
-v    Don't forget to set the priority label.
-v    Before smashing the submit button please review the template.
+v            ✰  Thanks for opening an feature request! ✰               v
+v    Before smashing the submit button please review the template.     v
+v               Don't forget to set the priority label.                v
 ☺ > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > >  -->
 
 ## Summary
@@ -31,22 +31,17 @@ Are there any disadvantages of including this feature? -->
 
 <!-- Detailed description of requirements of implementation -->
 
-#### Request details (optional):
+____
+
+## More Info (for devs / optional)
+##### Request details:
 `v1/market/example`
 ```
 {}
 ```
 
-#### Response details (optional):
+##### Response details:
 ```
 {}
 ```
 
-____
-
-#### For Admin Use
-
-- [ ] Not duplicate issue
-- [ ] Appropriate labels applied
-- [ ] Appropriate contributors tagged
-- [ ] Contributor assigned/self-assigned

@@ -8,10 +8,10 @@ assignees: ''
 ---
 
 <!-- < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < ☺ 
-v                            ✰  Thanks for opening an issue! ✰    
-v    Before smashing the submit button please review the template.
-v    Don't forget to set the priority label.  
-v    Please also ensure that this is not a duplicate issue :)  
+v                 ✰  Thanks for opening an issue! ✰                    v
+v    Before smashing the submit button please review the template.     v
+v               Don't forget to set the priority label.                v
+v       Please also ensure that this is not a duplicate issue :)       v  
 ☺ > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > >  -->
 
 ## Summary of Bug
@@ -22,30 +22,22 @@ v    Please also ensure that this is not a duplicate issue :)
 
 <!-- What the expected behavior without the issue -->
 
-## Current Behavior
-
-<!-- What the current behavior with the issue -->
-
 ## Steps to Reproduce
 
 <!-- What commands in order should someone run to reproduce your problem -->
 
-## More Info
-#### Request details (optional):
-```
-{}
-```
-
-#### Response details (optional):
-```
-{}
-```
-
 ____
 
-#### For Admin Use
+## More Info (for devs / optional)
+##### Request details:
+```
+{}
+```
 
-- [ ] Not duplicate issue
-- [ ] Appropriate labels applied
-- [ ] Appropriate contributors tagged
-- [ ] Contributor assigned/self-assigned
+##### Response details:
+```
+{}
+```
+
+
+
