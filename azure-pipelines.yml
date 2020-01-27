@@ -15,7 +15,6 @@ pool:
   vmImage: 'Ubuntu 16.04'
 
 variables:
-  GITHUB_TOKEN: '$(GITHUB_TOKEN)'
   GOBIN:  '$(GOPATH)/bin' # Go binaries path
   GOROOT: '/usr/local/go1.13' # Go installation path
   GOPATH: '$(Build.SourcesDirectory)/gopath' # Go workspace path
@@ -36,16 +35,16 @@ jobs:
           echo '$(go env)'
         displayName: 'Set up the Go workspace'
 
-      - task: CacheBeta@1
-        inputs:
-          key: 'go | "$(Agent.OS)" | **/go.mod'
-          restoreKeys: |
-            go | "$(Agent.OS)"
-            go
-          path: |
-            $(GOPATH)
-            !$(modulePath)
-        displayName: 'Cache go packages'
+      #      - task: CacheBeta@1
+      #        inputs:
+      #          key: 'go | "$(Agent.OS)" | **/go.mod'
+      #          restoreKeys: |
+      #            go | "$(Agent.OS)"
+      #            go
+      #          path: |
+      #            $(GOPATH)
+      #            !$(modulePath)
+      #        displayName: 'Cache go packages'
 
       - script: |
           go version
@@ -83,3 +82,5 @@ jobs:
         workingDirectory: '$(modulePath)'
         displayName: 'Go Releaser'
         condition: startsWith(variables['build.sourceBranch'], 'refs/tags/')
+        variables:
+          GITHUB_TOKEN: '$(GIT_TOKEN)'
