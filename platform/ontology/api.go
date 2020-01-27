@@ -55,6 +55,23 @@ func (p *Platform) GetTokenTxsByAddress(address string, token string) (blockatla
 	return txs, nil
 }
 
+func (p *Platform) CurrentBlockNumber() (int64, error) {
+	block, err := p.client.CurrentBlockNumber()
+	if err != nil {
+		logger.Error("CurrentBlockNumber", logger.Params{"platform": p.Coin().Symbol, "details": err.Error()})
+		return 0, err
+	}
+	return block, nil
+}
+func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
+	block, err := p.client.GetBlockByNumber(num)
+	if err != nil {
+		logger.Error("GetBlockByNumber", logger.Params{"platform": p.Coin().Symbol, "details": err.Error()})
+		return nil, err
+	}
+	return block, nil
+}
+
 func Normalize(srcTx *Tx, assetName string) (tx blockatlas.Tx, ok bool) {
 	if len(srcTx.TransferList) < 1 {
 		return tx, false
