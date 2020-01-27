@@ -13,7 +13,7 @@ import (
 )
 
 var (
-	Storage = storage.New()
+	cache   = storage.New()
 	rootCmd = cobra.Command{
 		Use:   "blockatlas",
 		Short: "BlockAtlas by Trust Wallet",
@@ -30,7 +30,7 @@ var (
 
 			// Init Storage
 			host := viper.GetString("storage.redis")
-			err := Storage.Init(host)
+			err := cache.Init(host)
 			if err != nil {
 				logger.Fatal(err)
 			}

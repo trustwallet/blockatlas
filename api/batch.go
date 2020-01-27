@@ -5,8 +5,10 @@ import (
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/ginutils"
+	"github.com/trustwallet/blockatlas/pkg/ginutils/gincache"
 	"github.com/trustwallet/blockatlas/platform"
 	"strconv"
+	"time"
 )
 
 type AddressBatchRequest struct {
@@ -73,7 +75,7 @@ func makeStakingDelegationsBatchRoute(router gin.IRouter) {
 // @Success 200 {object} blockatlas.DelegationsBatchPage
 // @Router /v2/staking/list [post]
 func makeStakingDelegationsSimpleBatchRoute(router gin.IRouter) {
-	router.POST("/staking/list", func(c *gin.Context) {
+	router.POST("/staking/list", gincache.CacheMiddleware(time.Hour*24, func(c *gin.Context) {
 		var reqs CoinsRequest
 		if err := c.BindJSON(&reqs); err != nil {
 			ginutils.ErrorResponse(c).Message(err.Error()).Render()
@@ -94,7 +96,7 @@ func makeStakingDelegationsSimpleBatchRoute(router gin.IRouter) {
 			batch = append(batch, staking)
 		}
 		ginutils.RenderSuccess(c, blockatlas.DocsResponse{Docs: batch})
-	})
+	}))
 }
 
 // @Description Get collection categories

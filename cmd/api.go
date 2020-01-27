@@ -1,12 +1,12 @@
 package cmd
 
 import (
-	sentrygin "github.com/getsentry/sentry-go/gin"
+	"github.com/getsentry/sentry-go/gin"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	swaggerFiles "github.com/swaggo/files"
-	ginSwagger "github.com/swaggo/gin-swagger"
+	"github.com/swaggo/files"
+	"github.com/swaggo/gin-swagger"
 	"github.com/trustwallet/blockatlas/api"
 	_ "github.com/trustwallet/blockatlas/docs"
 	"github.com/trustwallet/blockatlas/pkg/ginutils"
@@ -55,13 +55,13 @@ func RunApi(bind string, c chan *gin.Engine) {
 	if viper.GetBool("observer.enabled") {
 		logger.Info("Loading observer API")
 		observerAPI := engine.Group("/observer/v1")
-		api.SetupObserverAPI(observerAPI, Storage)
+		api.SetupObserverAPI(observerAPI, cache)
 	}
 
 	if viper.GetBool("market.enabled") {
 		logger.Info("Loading market API")
 		marketAPI := engine.Group("/v1/market")
-		api.SetupMarketAPI(marketAPI, Storage)
+		api.SetupMarketAPI(marketAPI, cache)
 	}
 
 	if c != nil {

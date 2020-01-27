@@ -38,13 +38,32 @@ func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
 }
 
 func (p *Platform) GetDetails() blockatlas.StakingDetails {
-	//TODO: Find a way to have a dynamic
 	return blockatlas.StakingDetails{
-		Reward:        blockatlas.StakingReward{Annual: 11},
+		Reward: blockatlas.StakingReward{
+			Annual: p.GetMaxAPR(),
+		},
 		MinimumAmount: blockatlas.Amount("0"),
 		LockTime:      1814400,
 		Type:          blockatlas.DelegationTypeDelegate,
 	}
+}
+
+func (p *Platform) GetMaxAPR() float64 {
+	validators, err := p.GetValidators()
+	if err != nil {
+		logger.Error("GetMaxAPR", logger.Params{"details": err, "platform": p.Coin().Symbol})
+		return blockatlas.DefaultAnnualReward
+	}
+
+	var max = 0.0
+	for _, e := range validators {
+		v := e.Details.Reward.Annual
+		if v > max {
+			max = v
+		}
+	}
+
+	return max
 }
 
 func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, error) {
