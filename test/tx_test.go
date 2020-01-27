@@ -87,22 +87,22 @@ var utxoTransferDst1 = blockatlas.Tx{
 	Coin: coin.BTC,
 	Inputs: []blockatlas.TxOutput{
 		{
-			"bc1qhn03cww757mnnlpkdvvfkaydxqygm86nvkm92h",
-			"1",
+			Address: "bc1qhn03cww757mnnlpkdvvfkaydxqygm86nvkm92h",
+			Value:   "1",
 		},
 		{
-			"bc1qc7ekqf2t0elfsmtgr2mgd7da2up4vgq8uqk2nh",
-			"1",
+			Address: "bc1qc7ekqf2t0elfsmtgr2mgd7da2up4vgq8uqk2nh",
+			Value:   "1",
 		},
 		{
-			"bc1qv454wacvnenr3hzzldjqn8cgfltdlxwe96h737",
-			"1",
+			Address: "bc1qv454wacvnenr3hzzldjqn8cgfltdlxwe96h737",
+			Value:   "1",
 		},
 	},
 	Outputs: []blockatlas.TxOutput{
 		{
-			"bc1qjcslq88cht8llqmh3aqshjx9we9msv386jvxl6",
-			"3",
+			Address: "bc1qjcslq88cht8llqmh3aqshjx9we9msv386jvxl6",
+			Value:   "3",
 		},
 	},
 	Fee:    "125000",
@@ -117,26 +117,26 @@ var utxoTransferDst2 = blockatlas.Tx{
 	Coin: coin.BTC,
 	Inputs: []blockatlas.TxOutput{
 		{
-			"bc1q6e8sdxlgc7ekqkqyevtrx8wshfv7sg66z3z6ce",
-			"4",
+			Address: "bc1q6e8sdxlgc7ekqkqyevtrx8wshfv7sg66z3z6ce",
+			Value:   "4",
 		},
 		{
-			"bc1q7nn4txus4g6fc5v7d2tha35ely8mfpd8qvv6eg",
-			"2",
+			Address: "bc1q7nn4txus4g6fc5v7d2tha35ely8mfpd8qvv6eg",
+			Value:   "2",
 		},
 	},
 	Outputs: []blockatlas.TxOutput{
 		{
-			"bc1q2fpry7zwqh575huc9urwfdvjtuvz508wez56ff",
-			"3",
+			Address: "bc1q2fpry7zwqh575huc9urwfdvjtuvz508wez56ff",
+			Value:   "3",
 		},
 		{
-			"bc1qk3yj6h79qw7tnsg4durc9sd5fpd3qt0p0m8u5p",
-			"1",
+			Address: "bc1qk3yj6h79qw7tnsg4durc9sd5fpd3qt0p0m8u5p",
+			Value:   "1",
 		},
 		{
-			"bc1qm8836plkzft2rhh23z6j8s9s8fxrzd4zag95z8",
-			"2",
+			Address: "bc1qm8836plkzft2rhh23z6j8s9s8fxrzd4zag95z8",
+			Value:   "2",
 		},
 	},
 	Fee:    "125000",

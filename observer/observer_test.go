@@ -38,11 +38,11 @@ func Test_getDirection(t *testing.T) {
 			args{
 				blockatlas.Tx{
 					Outputs: []blockatlas.TxOutput{
-						{"DAzruJfMBhd1vcQ13gVVyqb2g1vSEo2d5S", "72934112534"},
-						{"DAzruJfMBhd1vcQ13gVVyqb2g1vSEo2d5S", "500000000"},
+						{Address: "DAzruJfMBhd1vcQ13gVVyqb2g1vSEo2d5S", Value: "72934112534"},
+						{Address: "DAzruJfMBhd1vcQ13gVVyqb2g1vSEo2d5S", Value: "500000000"},
 					},
 					Inputs: []blockatlas.TxOutput{
-						{"DAzruJfMBhd1vcQ13gVVyqb2g1vSEo2d5S", "73196112534"},
+						{Address: "DAzruJfMBhd1vcQ13gVVyqb2g1vSEo2d5S", Value: "73196112534"},
 					},
 				}, "DAzruJfMBhd1vcQ13gVVyqb2g1vSEo2d5S",
 			}, blockatlas.DirectionSelf,
@@ -51,12 +51,12 @@ func Test_getDirection(t *testing.T) {
 			args{
 				blockatlas.Tx{
 					Outputs: []blockatlas.TxOutput{
-						{"3BMEXVshYmWqc8qcQLyBQPgRgAPfogWdJ4", "4471835"},
-						{"324Wmkkbr9uT9xnLUqFvCA3ntqqpqEZQDp", "1600000"},
-						{"32yRH5tNnFtAXE844wNrHN7Bf3SBcb3Uhd", "1262899630"},
+						{Address: "3BMEXVshYmWqc8qcQLyBQPgRgAPfogWdJ4", Value: "4471835"},
+						{Address: "324Wmkkbr9uT9xnLUqFvCA3ntqqpqEZQDp", Value: "1600000"},
+						{Address: "32yRH5tNnFtAXE844wNrHN7Bf3SBcb3Uhd", Value: "1262899630"},
 					},
 					Inputs: []blockatlas.TxOutput{
-						{"32yRH5tNnFtAXE844wNrHN7Bf3SBcb3Uhd", "1268998877"},
+						{Address: "32yRH5tNnFtAXE844wNrHN7Bf3SBcb3Uhd", Value: "1268998877"},
 					},
 				}, "32yRH5tNnFtAXE844wNrHN7Bf3SBcb3Uhd",
 			}, blockatlas.DirectionOutgoing,
@@ -65,12 +65,12 @@ func Test_getDirection(t *testing.T) {
 			args{
 				blockatlas.Tx{
 					Outputs: []blockatlas.TxOutput{
-						{"3BMEXVshYmWqc8qcQLyBQPgRgAPfogWdJ4", "4471835"},
-						{"324Wmkkbr9uT9xnLUqFvCA3ntqqpqEZQDp", "1600000"},
-						{"32yRH5tNnFtAXE844wNrHN7Bf3SBcb3Uhd", "1262899630"},
+						{Address: "3BMEXVshYmWqc8qcQLyBQPgRgAPfogWdJ4", Value: "4471835"},
+						{Address: "324Wmkkbr9uT9xnLUqFvCA3ntqqpqEZQDp", Value: "1600000"},
+						{Address: "32yRH5tNnFtAXE844wNrHN7Bf3SBcb3Uhd", Value: "1262899630"},
 					},
 					Inputs: []blockatlas.TxOutput{
-						{"32yRH5tNnFtAXE844wNrHN7Bf3SBcb3Uhd", "1268998877"},
+						{Address: "32yRH5tNnFtAXE844wNrHN7Bf3SBcb3Uhd", Value: "1268998877"},
 					},
 				}, "3BMEXVshYmWqc8qcQLyBQPgRgAPfogWdJ4",
 			}, blockatlas.DirectionIncoming,
@@ -100,11 +100,11 @@ func Test_inferUtxoValue(t *testing.T) {
 			args{
 				blockatlas.Tx{
 					Outputs: []blockatlas.TxOutput{
-						{"DAzruJfMBhd1vcQ13gVVyqb2g1vSEo2d5S", "72934112534"},
-						{"DAzruJfMBhd1vcQ13gVVyqb2g1vSEo2d5S", "500000000"},
+						{Address: "DAzruJfMBhd1vcQ13gVVyqb2g1vSEo2d5S", Value: "72934112534"},
+						{Address: "DAzruJfMBhd1vcQ13gVVyqb2g1vSEo2d5S", Value: "500000000"},
 					},
 					Inputs: []blockatlas.TxOutput{
-						{"DAzruJfMBhd1vcQ13gVVyqb2g1vSEo2d5S", "73196112534"},
+						{Address: "DAzruJfMBhd1vcQ13gVVyqb2g1vSEo2d5S", Value: "73196112534"},
 					},
 				}, "DAzruJfMBhd1vcQ13gVVyqb2g1vSEo2d5S", 3,
 			}, blockatlas.Amount("72934112534"),
@@ -113,12 +113,12 @@ func Test_inferUtxoValue(t *testing.T) {
 			args{
 				blockatlas.Tx{
 					Outputs: []blockatlas.TxOutput{
-						{"3BMEXVshYmWqc8qcQLyBQPgRgAPfogWdJ4", "4471835"},
-						{"324Wmkkbr9uT9xnLUqFvCA3ntqqpqEZQDp", "1600000"},
-						{"32yRH5tNnFtAXE844wNrHN7Bf3SBcb3Uhd", "1262899630"},
+						{Address: "3BMEXVshYmWqc8qcQLyBQPgRgAPfogWdJ4", Value: "4471835"},
+						{Address: "324Wmkkbr9uT9xnLUqFvCA3ntqqpqEZQDp", Value: "1600000"},
+						{Address: "32yRH5tNnFtAXE844wNrHN7Bf3SBcb3Uhd", Value: "1262899630"},
 					},
 					Inputs: []blockatlas.TxOutput{
-						{"32yRH5tNnFtAXE844wNrHN7Bf3SBcb3Uhd", "1268998877"},
+						{Address: "32yRH5tNnFtAXE844wNrHN7Bf3SBcb3Uhd", Value: "1268998877"},
 					},
 				}, "32yRH5tNnFtAXE844wNrHN7Bf3SBcb3Uhd", 0,
 			}, blockatlas.Amount("4471835"),
@@ -127,12 +127,12 @@ func Test_inferUtxoValue(t *testing.T) {
 			args{
 				blockatlas.Tx{
 					Outputs: []blockatlas.TxOutput{
-						{"3BMEXVshYmWqc8qcQLyBQPgRgAPfogWdJ4", "4471835"},
-						{"324Wmkkbr9uT9xnLUqFvCA3ntqqpqEZQDp", "1600000"},
-						{"32yRH5tNnFtAXE844wNrHN7Bf3SBcb3Uhd", "1262899630"},
+						{Address: "3BMEXVshYmWqc8qcQLyBQPgRgAPfogWdJ4", Value: "4471835"},
+						{Address: "324Wmkkbr9uT9xnLUqFvCA3ntqqpqEZQDp", Value: "1600000"},
+						{Address: "32yRH5tNnFtAXE844wNrHN7Bf3SBcb3Uhd", Value: "1262899630"},
 					},
 					Inputs: []blockatlas.TxOutput{
-						{"32yRH5tNnFtAXE844wNrHN7Bf3SBcb3Uhd", "1268998877"},
+						{Address: "32yRH5tNnFtAXE844wNrHN7Bf3SBcb3Uhd", Value: "1268998877"},
 					},
 				}, "3BMEXVshYmWqc8qcQLyBQPgRgAPfogWdJ4", 0,
 			}, blockatlas.Amount("4471835"),

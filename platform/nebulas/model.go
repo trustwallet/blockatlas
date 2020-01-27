@@ -22,7 +22,7 @@ type Transaction struct {
 	Nonce     uint64      `json:"nonce"`
 	Block     Block       `json:"block"`
 	From      Address     `json:"from"`
-	To        Address     `json: "to"`
+	To        Address     `json:"to"`
 	Timestamp int64       `json:"timestamp"`
 	Status    int32       `json:"status"`
 }
