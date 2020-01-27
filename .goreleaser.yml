@@ -1,6 +1,7 @@
 before:
   hooks:
-    - go generate ./...
+    - git reset --hard
+    - git checkout .
 builds:
   - main: "./main.go"
     env:
