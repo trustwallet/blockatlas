@@ -15,7 +15,7 @@ pool:
   vmImage: 'Ubuntu 16.04'
 
 variables:
-  GITHUB_TOKEN: '$(GIT_TOKEN)'
+  GITHUB_TOKEN: '$(git.token)'
   GOBIN:  '$(GOPATH)/bin' # Go binaries path
   GOROOT: '/usr/local/go1.13' # Go installation path
   GOPATH: '$(Build.SourcesDirectory)/gopath' # Go workspace path
