@@ -1,6 +1,6 @@
-// +build integration
+// +build functional
 
-package integration
+package functional
 
 import (
 	"encoding/json"
@@ -17,7 +17,7 @@ const (
 	bodyFixturesFile  = "body_fixtures.json"  // Body fixtures for POST requests
 	coinFixturesFile  = "coin_fixtures.json"  // Coin fixtures for path parameters
 	queryFixturesFile = "query_fixtures.json" // Query string for GET requests
-	excludeApisFile   = "exclude.json"        // API's need to be excluded from integration tests
+	excludeApisFile   = "exclude.json"        // API's need to be excluded from functional tests
 )
 
 type BodyFixture map[string][]interface{}

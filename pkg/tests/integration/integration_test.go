@@ -3,46 +3,13 @@
 package integration
 
 import (
-	"os"
-	"sync"
-	"testing"
-	"time"
-
-	"github.com/gin-gonic/gin"
-	"github.com/trustwallet/blockatlas/cmd"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/config"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/pkg/logger"
-	"github.com/trustwallet/blockatlas/platform"
 	"github.com/trustwallet/blockatlas/platform/ontology"
+	"os"
+	"testing"
 )
-
-func TestApis(t *testing.T) {
-	os.Setenv("ATLAS_GIN_MODE", "debug")
-	config.LoadConfig(os.Getenv("TEST_CONFIG"))
-
-	logger.InitLogger()
-	platform.Init()
-
-	p := ":8080"
-	c := make(chan *gin.Engine)
-	go func() {
-		cmd.RunApi(p, c)
-	}()
-	e := <-c
-	time.Sleep(time.Second * 2)
-
-	var wg sync.WaitGroup
-	cl := newClient(t, p)
-	for _, r := range e.Routes() {
-		wg.Add(1)
-		t.Run(r.Path, func(t *testing.T) {
-			go cl.doTests(r.Method, r.Path, &wg)
-		})
-	}
-	wg.Wait()
-}
 
 var (
 	testBlock = blockatlas.Block{
@@ -62,10 +29,9 @@ var (
 )
 
 func TestOntology(t *testing.T) {
-	confPath := "../../config.yml"
-	config.LoadConfig(confPath)
+	config.LoadConfig(os.Getenv("TEST_CONFIG"))
 	p := &ontology.Platform{}
-	p.Init()
+	_ = p.Init()
 	testCurrentBlockNumber(p, t)
 	testGetBlockByNumber(p, t)
 }
