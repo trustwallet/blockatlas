@@ -5,6 +5,7 @@ import (
 	"github.com/trustwallet/blockatlas/marketdata/clients/cmc"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"reflect"
+	"sort"
 	"testing"
 	"time"
 )
@@ -147,6 +148,9 @@ func Test_normalizeCharts(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			gotInfo := normalizeCharts(tt.args.currency, tt.args.charts)
+			sort.SliceStable(gotInfo.Prices, func(i, j int) bool {
+				return gotInfo.Prices[i].Price < gotInfo.Prices[j].Price
+			})
 			if !assert.ObjectsAreEqualValues(tt.wantInfo, gotInfo) {
 				t.Errorf("normalizeCharts() = %v, want %v", gotInfo, tt.wantInfo)
 			}
