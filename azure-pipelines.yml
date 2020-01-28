@@ -52,19 +52,23 @@ jobs:
 
       - script: |
           go get github.com/gavv/httpexpect
-          make integration
+          make functional
         workingDirectory: '$(modulePath)'
-        displayName: "Run integration tests for new PR's"
+        displayName: "Run functional tests for new PR's"
         condition: ne(variables['build.sourceBranch'], 'refs/heads/master')
         continueOnError: true
 
       - script: |
           go get github.com/gavv/httpexpect
-          make integration
+          make functional
         workingDirectory: '$(modulePath)'
-        displayName: 'Run integration tests for new releases'
+        displayName: 'Run functional tests for new releases'
         condition: eq(variables['build.sourceBranch'], 'refs/heads/master')
         continueOnError: false
+
+      - script: make integration
+        workingDirectory: '$(modulePath)'
+        displayName: 'Run integration tests'
 
       - script: go build -v .
         workingDirectory: '$(modulePath)'

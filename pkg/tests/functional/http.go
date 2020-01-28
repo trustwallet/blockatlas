@@ -1,6 +1,6 @@
-// +build integration
+// +build functional
 
-package integration
+package functional
 
 import (
 	"encoding/json"

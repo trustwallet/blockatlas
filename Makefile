@@ -92,7 +92,10 @@ clean:
 ## test: Run all unit tests.
 test: go-test
 
-## integration: Run all integration tests.
+## functional: Run all functional tests.
+functional: go-functional
+
+## integration: Run all functional tests.
 integration: go-integration
 
 ## fmt: Run `go fmt` for all go files.
@@ -140,9 +143,13 @@ go-test:
 	@echo "  >  Runing unit tests"
 	GOBIN=$(GOBIN) go test -cover -race -v ./...
 
+go-functional:
+	@echo "  >  Runing functional tests"
+	GOBIN=$(GOBIN) TEST_CONFIG=$(TEST_CONFIG) go test -race -tags=functional -v ./pkg/tests/functional
+
 go-integration:
 	@echo "  >  Runing integration tests"
-	GOBIN=$(GOBIN) TEST_CONFIG=$(TEST_CONFIG) go test -race -tags=integration -v ./pkg/integration
+	GOBIN=$(GOBIN) TEST_CONFIG=$(TEST_CONFIG) go test -race -tags=integration -v ./pkg/tests/integration
 
 go-fmt:
 	@echo "  >  Format all go files"
