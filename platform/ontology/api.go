@@ -3,11 +3,12 @@ package ontology
 import (
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/coin"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	blockatlas "github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/pkg/numbers"
 	"strings"
+	"sync"
 )
 
 type Platform struct {
@@ -18,6 +19,7 @@ const (
 	GovernanceContract = "AFmseVrdL9f9oyCzZefL9tG6UbviEH9ugK"
 	ONTAssetName       = "ont"
 	ONGAssetName       = "ong"
+	ONGDecimals        = 9
 )
 
 func (p *Platform) Init() error {
@@ -44,15 +46,41 @@ func (p *Platform) GetTokenTxsByAddress(address string, token string) (blockatla
 		return blockatlas.TxPage{}, err
 	}
 	var txs []blockatlas.Tx
-	for _, srcTx := range txPage.Result.TxnList {
-		tx, ok := Normalize(&srcTx, token)
+	for _, txOntV1 := range txPage.Result.TxnList {
+		tx, ok := Normalize(txOntV1, token)
 		if !ok {
 			continue
 		}
-		txs = append(txs, tx)
+		txs = append(txs, *tx)
 	}
 
 	return txs, nil
+}
+
+func Normalize(txOntV1 Tx, assetName string) (tx *blockatlas.Tx, ok bool) {
+	if len(txOntV1.TransferList) < 1 {
+		return tx, false
+	}
+	transfer := txOntV1.TransferList[0]
+	fee := numbers.DecimalExp(txOntV1.Fee, ONGDecimals)
+	tx = &blockatlas.Tx{
+		ID:     txOntV1.TxnHash,
+		Coin:   coin.ONT,
+		Date:   txOntV1.TxnTime,
+		Block:  txOntV1.Height,
+		Status: getTransactionStatus(int(txOntV1.ConfirmFlag)),
+		Fee:    blockatlas.Amount(fee),
+	}
+
+	switch assetName {
+	case ONTAssetName:
+		normalizeONT(tx, transfer)
+	case ONGAssetName:
+		normalizeONG(tx, transfer)
+	default: // unsupported asset
+		return tx, false
+	}
+	return tx, true
 }
 
 func (p *Platform) CurrentBlockNumber() (int64, error) {
@@ -62,9 +90,6 @@ func (p *Platform) CurrentBlockNumber() (int64, error) {
 		return 0, err
 	}
 	var height int64
-	if block.Error != 0 {
-		err = errors.E("explorer error")
-	}
 	if len(block.Result) > 0 {
 		height = (int64)(block.Result[0].Height)
 	}
@@ -72,72 +97,118 @@ func (p *Platform) CurrentBlockNumber() (int64, error) {
 }
 
 func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
-	response, err := p.client.GetBlockByNumber(num)
+	blockOnt, err := p.client.GetBlockByNumber(num)
 	if err != nil {
-		logger.Error("GetBlockByNumber", logger.Params{"platform": p.Coin().Symbol, "details": err.Error()})
 		return nil, err
 	}
-	var (
-		block blockatlas.Block
-		txs   []blockatlas.Tx
-	)
-	if response.Error == 0 {
-		block.ID = response.Result.Hash
-		block.Number = int64(response.Result.Height)
-		for _, txn := range response.Result.TxnList {
-			tx := new(blockatlas.Tx)
-			tx.ID = txn.TxnHash
-			tx.Block = uint64(txn.Height)
-			if txn.ConfirmFlag == 1 {
-				tx.Status = blockatlas.StatusCompleted
+	txsRaw, err := p.getTxDetails(blockOnt.Result.TxnList)
+	if err != nil {
+		return nil, err
+	}
+
+	block := normalizeBlock(*blockOnt, txsRaw)
+	return block, nil
+}
+
+func (p *Platform) getTxDetails(txsOntV1 []Tx) ([]TxV2, error) {
+	var wg sync.WaitGroup
+	txsOntV2Chan := make(chan TxV2, len(txsOntV1))
+	wg.Add(len(txsOntV1))
+	for _, blockTxRaw := range txsOntV1 {
+		go func(blockTxRaw Tx, wg *sync.WaitGroup) {
+			defer wg.Done()
+			txRaw, err := p.client.GetTxDetailsByHash(blockTxRaw.TxnHash)
+			if err == nil {
+				txsOntV2Chan <- *txRaw
 			}
-			tx.Date = int64(txn.TxnTime)
-			tx.Coin = coin.Ontology().ID
-			txs = append(txs, *tx)
+		}(blockTxRaw, &wg)
+	}
+	wg.Wait()
+	close(txsOntV2Chan)
+	if len(txsOntV2Chan) != len(txsOntV1) {
+		return nil, errors.E("getTxDetails failed to call client.GetTxDetailsByHash http get or unmarshal")
+	}
+	var txsOntV2 []TxV2
+	for tx := range txsOntV2Chan {
+		if len(tx.Details.Transfers) > 0 {
+			txsOntV2 = append(txsOntV2, tx)
 		}
-		block.Txs = txs
 	}
-
-	return &block, nil
+	return txsOntV2, nil
 }
 
-func Normalize(srcTx *Tx, assetName string) (tx blockatlas.Tx, ok bool) {
-	if len(srcTx.TransferList) < 1 {
-		return tx, false
+func normalizeBlock(blockOnt BlockResult, txsOntV2 []TxV2) *blockatlas.Block {
+	block := blockatlas.Block{
+		Number: int64(blockOnt.Result.Height),
+		ID:     blockOnt.Result.Hash,
 	}
-	transfer := srcTx.TransferList[0]
-	fee := numbers.DecimalExp(srcTx.Fee, 9)
-	var status blockatlas.Status
-	if srcTx.ConfirmFlag == 1 {
-		status = blockatlas.StatusCompleted
-	} else {
-		status = blockatlas.StatusFailed
+	if len(txsOntV2) > 0 {
+		block.Txs = normalizeBlockTransactions(txsOntV2)
 	}
+	return &block
+}
 
-	tx = blockatlas.Tx{
-		ID:     srcTx.TxnHash,
+func normalizeBlockTransactions(txsOntV2 []TxV2) []blockatlas.Tx {
+	var txs []blockatlas.Tx
+	for _, txOntV2 := range txsOntV2 {
+		tx, ok := normalizeBlockTransaction(txOntV2)
+		if !ok {
+			continue
+		}
+		txs = append(txs, *tx)
+	}
+	return txs
+}
+
+func normalizeBlockTransaction(txsOntV2 TxV2) (*blockatlas.Tx, bool) {
+	fee := numbers.DecimalExp(txsOntV2.Fee, ONGDecimals)
+	tx := blockatlas.Tx{
+		ID:     txsOntV2.Hash,
 		Coin:   coin.ONT,
+		Date:   txsOntV2.Time,
+		Block:  txsOntV2.BlockHeight,
+		Status: getTransactionStatus(txsOntV2.ConfirmFlag),
 		Fee:    blockatlas.Amount(fee),
-		Date:   srcTx.TxnTime,
-		Block:  srcTx.Height,
-		Status: status,
 	}
-
-	switch assetName {
-	case ONTAssetName:
-		normalizeONT(&tx, &transfer)
-	case ONGAssetName:
-		normalizeONG(&tx, &transfer)
-	default: // unsupported asset
-		return tx, false
+	ok := false
+	if len(txsOntV2.Details.Transfers) > 0 {
+		txDetails := txsOntV2.Details.Transfers[0]
+		ok = true
+		switch txDetails.AssetName {
+		case ONTAssetName:
+			normalizeONT(&tx, Transfer{
+				Amount:      txDetails.Amount,
+				FromAddress: txDetails.FromAddress,
+				ToAddress:   txDetails.ToAddress,
+			})
+		case ONGAssetName:
+			normalizeONG(&tx, Transfer{
+				Amount:      txDetails.Amount,
+				FromAddress: txDetails.FromAddress,
+				ToAddress:   txDetails.ToAddress,
+			})
+		default: // unsupported asset
+			return &tx, false
+		}
 	}
-
-	return tx, true
+	return &tx, ok
 }
 
-func normalizeONT(tx *blockatlas.Tx, transfer *Transfer) {
+func getTransactionStatus(confirmFlag int) blockatlas.Status {
+	if confirmFlag == 1 {
+		return blockatlas.StatusCompleted
+	}
+	return blockatlas.StatusFailed
+}
+
+func normalizeONT(tx *blockatlas.Tx, transfer Transfer) {
 	i := strings.IndexRune(transfer.Amount, '.')
-	value := transfer.Amount[:i]
+	var value string
+	if i > 0 {
+		value = transfer.Amount[:i]
+	} else {
+		value = transfer.Amount
+	}
 
 	tx.From = transfer.FromAddress
 	tx.To = transfer.ToAddress
@@ -149,12 +220,12 @@ func normalizeONT(tx *blockatlas.Tx, transfer *Transfer) {
 	}
 }
 
-func normalizeONG(tx *blockatlas.Tx, transfer *Transfer) {
+func normalizeONG(tx *blockatlas.Tx, transfer Transfer) {
 	var value string
 	if transfer.ToAddress == GovernanceContract {
 		value = "0"
 	} else {
-		value = numbers.DecimalExp(transfer.Amount, 9)
+		value = numbers.DecimalExp(transfer.Amount, ONGDecimals)
 	}
 
 	from := transfer.FromAddress
@@ -166,7 +237,7 @@ func normalizeONG(tx *blockatlas.Tx, transfer *Transfer) {
 		Name:     "Ontology Gas",
 		Symbol:   "ONG",
 		TokenID:  "ong",
-		Decimals: 9,
+		Decimals: ONGDecimals,
 		Value:    blockatlas.Amount(value),
 		From:     from,
 		To:       to,

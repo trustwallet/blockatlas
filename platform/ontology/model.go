@@ -41,3 +41,33 @@ type Block struct {
 	TxnList []Tx   `json:"TxnList"`
 	Hash    string `json:"Hash"`
 }
+
+type TxResponse struct {
+	Code   int    `json:"code"`
+	Msg    string `json:"msg"`
+	Result TxV2   `json:"Result"`
+}
+
+type TxV2 struct {
+	Hash        string             `json:"tx_hash"`
+	Type        int                `json:"tx_type"`
+	Time        int64              `json:"tx_time"`
+	BlockHeight uint64             `json:"block_height"`
+	Fee         string             `json:"fee"`
+	Description string             `json:"description"`
+	BlockIndex  int                `json:"block_index"`
+	ConfirmFlag int                `json:"confirm_flag"`
+	EventType   int                `json:"event_type"`
+	Details     TransactionDetails `json:"detail"`
+}
+
+type TransactionDetails struct {
+	Transfers []TransferDetails `json:"transfers"`
+}
+
+type TransferDetails struct {
+	Amount      string `json:"amount"`
+	AssetName   string `json:"asset_name"`
+	FromAddress string `json:"from_address"`
+	ToAddress   string `json:"to_address"`
+}
