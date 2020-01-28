@@ -25,3 +25,19 @@ type Tx struct {
 
 	TransferList []Transfer `json:"TransferList"`
 }
+
+type BlockResults struct {
+	Error  int     `json:"Error"`
+	Result []Block `json:"Result"`
+}
+
+type BlockResult struct {
+	Error  int   `json:"Error"`
+	Result Block `json:"Result"`
+}
+
+type Block struct {
+	Height  int    `json:"Height"`
+	TxnList []Tx   `json:"TxnList"`
+	Hash    string `json:"Hash"`
+}
