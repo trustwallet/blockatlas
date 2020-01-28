@@ -51,10 +51,13 @@ func (c *Client) testGet(route string, query string) {
 	response := request.Expect()
 
 	//TODO create a logic to validate schemas
-	//response.JSON().Schema(schema)
+	if response == nil || response.Raw() == nil {
+		logger.Error("Invalid response", logger.Params{"response": response, "route": route, "query": query})
+	}
 	if response.Raw().StatusCode != http.StatusOK {
 		logger.Error("Invalid status code", logger.Params{"code": response.Raw().Status, "route": route, "query": query})
 	}
+	//response.JSON().Schema(schema)
 	response.Status(http.StatusOK)
 }
 
@@ -69,6 +72,9 @@ func (c *Client) testPost(route string, body interface{}) {
 		}
 	}
 	response := request.Expect()
+	if response == nil || response.Raw() == nil {
+		logger.Error("Invalid response", logger.Params{"code": response.Raw().Status, "route": route})
+	}
 	if response.Raw().StatusCode != http.StatusOK {
 		bodyJson, _ := json.Marshal(body)
 		logger.Error("Invalid status code", logger.Params{"code": response.Raw().Status, "route": route, "body": bodyJson})
