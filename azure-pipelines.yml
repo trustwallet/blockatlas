@@ -45,14 +45,6 @@ jobs:
       - script: make govet
         workingDirectory: '$(modulePath)'
         displayName: 'Run go vet'
-        continueOnError: true
-
-      - script: |
-          go get -u golang.org/x/lint/golint
-          make golint
-        workingDirectory: '$(modulePath)'
-        displayName: 'Run go lint'
-        continueOnError: true
 
       - script: make test
         workingDirectory: '$(modulePath)'
