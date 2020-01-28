@@ -8,15 +8,19 @@ assignees: ''
 ---
 
 <!-- < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < ☺ 
-v                            ✰  Thanks for opening an issue! ✰    
-v    Before smashing the submit button please review the template.
-v    Please also ensure that this is not a duplicate issue :)  
+v                 ✰  Thanks for opening an issue! ✰                    v
+v    Before smashing the submit button please review the template.     v
+v               Don't forget to set the priority label.                v
+v       Please also ensure that this is not a duplicate issue :)       v  
 ☺ > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > >  -->
 
 ## Summary of Bug
 
 <!-- Concisely describe the issue -->
 
+## Expected Behavior
+
+<!-- What the expected behavior without the issue -->
 
 ## Steps to Reproduce
 
@@ -24,9 +28,16 @@ v    Please also ensure that this is not a duplicate issue :)
 
 ____
 
-#### For Admin Use
+## More Info (for devs / optional)
+##### Request details:
+```
+{}
+```
 
-- [ ] Not duplicate issue
-- [ ] Appropriate labels applied
-- [ ] Appropriate contributors tagged
-- [ ] Contributor assigned/self-assigned
+##### Response details:
+```
+{}
+```
+
+
+

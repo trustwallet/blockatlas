@@ -4,6 +4,7 @@ import (
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/pkg/numbers"
 	"strings"
@@ -42,7 +43,6 @@ func (p *Platform) GetTokenTxsByAddress(address string, token string) (blockatla
 			})
 		return blockatlas.TxPage{}, err
 	}
-
 	var txs []blockatlas.Tx
 	for _, srcTx := range txPage.Result.TxnList {
 		tx, ok := Normalize(&srcTx, token)
@@ -53,6 +53,52 @@ func (p *Platform) GetTokenTxsByAddress(address string, token string) (blockatla
 	}
 
 	return txs, nil
+}
+
+func (p *Platform) CurrentBlockNumber() (int64, error) {
+	block, err := p.client.CurrentBlockNumber()
+	if err != nil {
+		logger.Error("CurrentBlockNumber", logger.Params{"platform": p.Coin().Symbol, "details": err.Error()})
+		return 0, err
+	}
+	var height int64
+	if block.Error != 0 {
+		err = errors.E("explorer error")
+	}
+	if len(block.Result) > 0 {
+		height = (int64)(block.Result[0].Height)
+	}
+	return height, nil
+}
+
+func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
+	response, err := p.client.GetBlockByNumber(num)
+	if err != nil {
+		logger.Error("GetBlockByNumber", logger.Params{"platform": p.Coin().Symbol, "details": err.Error()})
+		return nil, err
+	}
+	var (
+		block blockatlas.Block
+		txs   []blockatlas.Tx
+	)
+	if response.Error == 0 {
+		block.ID = response.Result.Hash
+		block.Number = int64(response.Result.Height)
+		for _, txn := range response.Result.TxnList {
+			tx := new(blockatlas.Tx)
+			tx.ID = txn.TxnHash
+			tx.Block = uint64(txn.Height)
+			if txn.ConfirmFlag == 1 {
+				tx.Status = blockatlas.StatusCompleted
+			}
+			tx.Date = int64(txn.TxnTime)
+			tx.Coin = coin.Ontology().ID
+			txs = append(txs, *tx)
+		}
+		block.Txs = txs
+	}
+
+	return &block, nil
 }
 
 func Normalize(srcTx *Tx, assetName string) (tx blockatlas.Tx, ok bool) {

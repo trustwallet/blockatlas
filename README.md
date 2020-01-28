@@ -66,15 +66,33 @@ go build -o blockatlas . && ./blockatlas sync-markets
 
 ### Docker
 
+
 From Docker Hub:
 
 `docker run -it -p 8420:8420 trustwallet/blockatlas`
 
 Build and run from local Dockerfile:
 
+You should change `config.yml`:
+```yaml
+redis: redis://redis:6379
+```
+
+Then build as `blockatlas` image:
 ```shell
 docker build -t blockatlas .
-docker run -p 8420:8420 blockatlas
+```
+
+For run api, observer and sync-markets:
+```shell
+docker-compose up
+```
+
+If you need to start one service:
+```shell
+docker-compose start api redis
+docker-compose start observer redis
+docker-compose start sync-markets redis
 ```
 
 ### Heroku

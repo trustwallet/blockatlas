@@ -1,13 +1,14 @@
-FROM golang:alpine as builder
-ADD . /go/src/github.com/trustwallet/blockatlas
-RUN apk add git \
- && go get -d -v github.com/trustwallet/blockatlas \
- && CGO_ENABLED=0 go install -a \
-    -ldflags='-s -w -extldflags "-static"' \
-    github.com/trustwallet/blockatlas
+FROM golang:latest AS builder
 
-FROM scratch
+RUN mkdir /build
+ADD . /build
+WORKDIR /build
+RUN go build -o bin/blockatlas .
+
+FROM debian:latest
+COPY --from=builder /build/bin /app
+COPY --from=builder /build/config.yml /app
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
-COPY --from=builder /go/bin/blockatlas /bin/blockatlas
-COPY --from=builder /go/src/github.com/trustwallet/blockatlas/config.yml /config.yml
-CMD ["/bin/blockatlas", "api"]
+WORKDIR /app
+
+ENTRYPOINT ["/app/blockatlas"]

@@ -147,7 +147,9 @@ func Test_normalizeCharts(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			gotInfo := normalizeCharts(tt.args.currency, tt.args.charts)
-			assert.True(t, reflect.DeepEqual(tt.wantInfo, gotInfo))
+			if !assert.ObjectsAreEqualValues(tt.wantInfo, gotInfo) {
+				t.Errorf("normalizeCharts() = %v, want %v", gotInfo, tt.wantInfo)
+			}
 		})
 	}
 }

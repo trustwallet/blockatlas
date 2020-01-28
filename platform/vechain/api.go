@@ -169,7 +169,7 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 	txs := make(blockatlas.TxPage, 0)
 	for _, t := range transfers {
 		trxId, err := p.client.GetTransactionByID(t.Meta.TxId)
-		if err != nil{
+		if err != nil {
 			continue
 		}
 		tx, err := NormalizeTransaction(t, trxId)

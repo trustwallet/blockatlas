@@ -106,6 +106,15 @@ remove-coin-file:
 	@echo "  >  Removing "$(PROJECT_NAME)""
 	@-rm $(GOBASE)/$(COIN_GO_FILE)
 
+## goreleaser: Release the last tag version with GoReleaser.
+goreleaser: go-goreleaser
+
+## govet: Run go vet.
+govet: go-vet
+
+## golint: Run golint.
+golint: go-lint
+
 go-compile: go-get go-build
 
 go-build:
@@ -142,6 +151,18 @@ go-fmt:
 go-gen-coins:
 	@echo "  >  Generating coin file"
 	COIN_FILE=$(COIN_FILE) COIN_GO_FILE=$(COIN_GO_FILE) GOBIN=$(GOBIN) go run -tags=coins $(GEN_COIN_FILE)
+
+go-goreleaser:
+	@echo "  >  Releasing a new version"
+	GOBIN=$(GOBIN) goreleaser --rm-dist
+
+go-vet:
+	@echo "  >  Running go vet"
+	GOBIN=$(GOBIN) go vet ./...
+
+go-lint:
+	@echo "  >  Running golint"
+	GOBIN=$(GOBIN) golint ./...
 
 .PHONY: help
 all: help
