@@ -59,9 +59,9 @@ type CoinInfo struct {
 }
 
 type SocialLink struct {
-	Name     string `json:"name"`
-	Url      string `json:"url"`
-	Username string `json:"username"`
+	Name   string `json:"name"`
+	Url    string `json:"url"`
+	Handle string `json:"handle"`
 }
 
 type Link struct {
