@@ -48,14 +48,20 @@ type ChartCoinInfo struct {
 }
 
 type CoinInfo struct {
-	Name       string   `json:"name,omitempty"`
-	Website    string   `json:"website,omitempty"`
-	SourceCode string   `json:"source_code,omitempty"`
-	Whitepaper string   `json:"whitepaper,omitempty"`
-	Explorers  []Link   `json:"explorers,omitempty"`
-	Socials    []Link   `json:"socials,omitempty"`
-	Details    []Detail `json:"details,omitempty"`
-	DataSource string   `json:"data_source,omitempty"`
+	Name       string       `json:"name,omitempty"`
+	Website    string       `json:"website,omitempty"`
+	SourceCode string       `json:"source_code,omitempty"`
+	Whitepaper string       `json:"whitepaper,omitempty"`
+	Explorers  []Link       `json:"explorers,omitempty"`
+	Socials    []SocialLink `json:"socials,omitempty"`
+	Details    []Detail     `json:"details,omitempty"`
+	DataSource string       `json:"data_source,omitempty"`
+}
+
+type SocialLink struct {
+	Name     string `json:"name"`
+	Url      string `json:"url"`
+	Username string `json:"username"`
 }
 
 type Link struct {
