@@ -138,11 +138,11 @@ go-clean:
 
 go-test:
 	@echo "  >  Runing unit tests"
-	GOBIN=$(GOBIN) go test -cover -v ./...
+	GOBIN=$(GOBIN) go test -cover -race -v ./...
 
 go-integration:
 	@echo "  >  Runing integration tests"
-	GOBIN=$(GOBIN) TEST_CONFIG=$(TEST_CONFIG) go test -tags=integration -v ./pkg/integration
+	GOBIN=$(GOBIN) TEST_CONFIG=$(TEST_CONFIG) go test -race -tags=integration -v ./pkg/integration
 
 go-fmt:
 	@echo "  >  Format all go files"
