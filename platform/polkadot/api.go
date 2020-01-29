@@ -125,6 +125,13 @@ func (p *Platform) NormalizeExtrinsic(srcTx *Extrinsic) *blockatlas.Tx {
 		Sequence: srcTx.Nonce,
 	}
 
+	value := "0"
+	if len(datas) > 0 {
+		vf, ok := datas[0].Value.(float64)
+		if ok {
+			value = fmt.Sprintf("%.0f", vf)
+		}
+	}
 	decimals := p.Coin().Decimals
 	if srcTx.CallModule == ModuleBalances &&
 		srcTx.CallModuleFunction == ModuleFunctionTransfer {
@@ -132,7 +139,7 @@ func (p *Platform) NormalizeExtrinsic(srcTx *Extrinsic) *blockatlas.Tx {
 		result.To = p.NormalizeAddress(datas[0].ValueRaw)
 		result.Fee = blockatlas.Amount(FeeTransfer)
 		result.Meta = blockatlas.Transfer{
-			Value:    blockatlas.Amount(fmt.Sprintf("%.0f", datas[1].Value.(float64))),
+			Value:    blockatlas.Amount(value),
 			Symbol:   p.Coin().Symbol,
 			Decimals: decimals,
 		}
