@@ -220,13 +220,6 @@
   minConfirmations: 1
   sampleAddress: '3P7wz6TXienpw3BHe8eHUEuZWb6WE58kgnQ'
 
-- id: 7562605
-  symbol: SEM
-  handle: semux
-  name: Semux
-  decimals: 9
-  sampleAddress: '0x8197987c401a3466ad678b2080b24838ebd95b41'
-
 - id: 0
   symbol: BTC
   handle: bitcoin
