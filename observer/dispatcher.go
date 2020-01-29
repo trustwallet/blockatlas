@@ -1,16 +1,12 @@
 package observer
 
 import (
-	"bytes"
-	"encoding/json"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
-	"net/http"
 )
 
 type Dispatcher struct {
-	Client http.Client
 }
 
 type DispatchEvent struct {
@@ -29,23 +25,20 @@ func (d *Dispatcher) dispatch(event Event) {
 		Action: event.Tx.Type,
 		Result: event.Tx,
 	}
-	txJson, err := json.Marshal(action)
-	if err != nil {
-		logger.Panic(err)
-	}
-
 	webhook := event.Subscription.Webhook
 	logParams := logger.Params{
 		"webhook": webhook,
 		"coin":    event.Subscription.Coin,
 		"txID":    event.Tx.ID,
 	}
-	go d.postWebhook(webhook, txJson, logParams)
+	go d.postWebhook(webhook, action, logParams)
 	logger.Info("Dispatching webhooks...", logger.Params{"webhook": webhook}, logParams)
 }
 
-func (d *Dispatcher) postWebhook(hook string, data []byte, logParams logger.Params) {
-	_, err := d.Client.Post(hook, "application/json", bytes.NewReader(data))
+func (d *Dispatcher) postWebhook(hook string, data interface{}, logParams logger.Params) {
+	client := blockatlas.InitClient(hook)
+	client.Headers["Content-Type"] = "application/json"
+	err := client.Post(nil, "", data)
 	if err != nil {
 		err = errors.E(err, errors.Params{"hook": hook}).PushToSentry()
 		logger.Error(err, "Failed to dispatch event", logger.Params{"webhook": hook}, logParams)
