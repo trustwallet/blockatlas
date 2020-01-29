@@ -136,11 +136,11 @@ vechain:
 
 # [THETA] THETA: https://www.thetatoken.org/
 theta:
- api: https://explorer.thetatoken.org:9000/api
+  api: https://explorer.thetatoken.org:9000/api
 
 # [ATOM] Cosmos: https://cosmos.network/
 cosmos:
- api: http://stargate.cosmos.network
+  api: http://stargate.cosmos.network
 
 # [ONTOLOGY] ONT: https://ont.io/
 ontology:
@@ -148,18 +148,18 @@ ontology:
 
 # [ZIL] Zilliqa: https://zilliqa.com
 zilliqa:
-#  api: https://api.viewblock.io/v1/zilliqa
-#  key: YOUR_API_KEY
+  #  api: https://api.viewblock.io/v1/zilliqa
+  #  key: YOUR_API_KEY
   rpc: https://api.zilliqa.com
   lookup: https://unstoppabledomains.com/api/v1
 
 #[IoTeX] IoTeX: https://iotex.io
 iotex:
- api: https://pharos.iotex.io/v1
+  api: https://pharos.iotex.io/v1
 
 # [WAVES] Waves: http://wavesplatform.com
 waves:
- api: https://nodes.wavesnodes.com
+  api: https://nodes.wavesnodes.com
 
 # [AE] Aeternity: https://aeternity.com
 aeternity:

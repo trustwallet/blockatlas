@@ -2,24 +2,30 @@ version: '3.7'
 services:
   api:
     container_name: api
-    image: blockatlas
-    command: api
+    build:
+      context: .
+      args:
+      - SERVICE=api
     ports:
-      - 8420:8420
+    - 8420:8420
     links:
     - redis
 
   observer:
     container_name: observer
-    image: blockatlas
-    command: observer
+    build:
+      context: .
+      args:
+       - SERVICE=observer
     links:
     - redis
 
-  sync-markets:
-    container_name: sync-markets
-    image: blockatlas
-    command: sync-markets
+  syncmarkets:
+    container_name: syncmarkets
+    build:
+      context: .
+      args:
+        - SERVICE=syncmarkets
     links:
     - redis
 

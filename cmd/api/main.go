@@ -1,40 +1,60 @@
-// +build functional
-
-package functional
+package main
 
 import (
 	"context"
+	"flag"
 	"github.com/getsentry/sentry-go/gin"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 	"github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
 	"github.com/trustwallet/blockatlas/api"
-	"github.com/trustwallet/blockatlas/pkg/ginutils"
-	"net/http"
-	"os"
-	"os/signal"
-	"sync"
-	"syscall"
-	"testing"
-	"time"
-
 	"github.com/trustwallet/blockatlas/config"
+	_ "github.com/trustwallet/blockatlas/docs"
+	"github.com/trustwallet/blockatlas/pkg/ginutils"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/platform"
 	"github.com/trustwallet/blockatlas/storage"
+	"net/http"
+	"os"
+	"os/signal"
+	"path/filepath"
+	"syscall"
+	"time"
 )
 
-func TestApis(t *testing.T) {
-	_ = os.Setenv("ATLAS_GIN_MODE", "debug")
-	config.LoadConfig(os.Getenv("TEST_CONFIG"))
+const (
+	defaultPort       = "8420"
+	defaultConfigPath = "../../config.yml"
+)
 
+var (
+	port, confPath string
+	cache          *storage.Storage
+	sg             gin.HandlerFunc
+)
+
+func init() {
+	sg = sentrygin.New(sentrygin.Options{})
+	cache = storage.New()
+
+	flag.StringVar(&port, "p", defaultPort, "port for api")
+	flag.StringVar(&confPath, "c", defaultConfigPath, "config file for api")
+
+	flag.Parse()
+
+	confPath, err := filepath.Abs(confPath)
+	if err != nil {
+		logger.Fatal(err)
+	}
+
+	config.LoadConfig(confPath)
 	logger.InitLogger()
 	platform.Init()
-	cache := storage.New()
-	sg := sentrygin.New(sentrygin.Options{})
-	p := ":8420"
+}
 
+func main() {
+	gin.SetMode(viper.GetString("gin.mode"))
 	engine := gin.New()
 
 	engine.Use(gin.Recovery())
@@ -74,13 +94,13 @@ func TestApis(t *testing.T) {
 		syscall.SIGQUIT)
 
 	srv := &http.Server{
-		Addr:    ":8420",
+		Addr:    ":" + port,
 		Handler: engine,
 	}
 
 	go func() {
 		if err := srv.ListenAndServe(); err != nil {
-			logger.Info("Application failed", err)
+			logger.Fatal("Application failed", err)
 		}
 	}()
 
@@ -89,19 +109,13 @@ func TestApis(t *testing.T) {
 
 	defer func() {
 		if err := srv.Shutdown(ctx); err != nil {
-			logger.Info("Server Shutdown: ", err)
+			logger.Fatal("Server Shutdown: ", err)
 		}
 	}()
 
-	time.Sleep(time.Second * 2)
+	logger.Info("Running application", logger.Params{"bind": port})
 
-	var wg sync.WaitGroup
-	cl := newClient(t, p)
-	for _, r := range engine.Routes() {
-		wg.Add(1)
-		t.Run(r.Path, func(t *testing.T) {
-			go cl.doTests(r.Method, r.Path, &wg)
-		})
-	}
-	wg.Wait()
+	stop := <-signalForExit
+	logger.Info("Stop signal Received", stop)
+	logger.Info("Waiting for all jobs to stop")
 }

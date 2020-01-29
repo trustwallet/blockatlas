@@ -1,3 +1,3 @@
-web: bin/blockatlas api :$PORT
-observer: bin/blockatlas observer
-market: bin/blockatlas sync-markets
+web: bin/api -p $PORT
+observer: bin/observer
+market: bin/syncmarkets

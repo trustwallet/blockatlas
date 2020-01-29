@@ -23,7 +23,6 @@ import (
 	"github.com/trustwallet/blockatlas/platform/nebulas"
 	"github.com/trustwallet/blockatlas/platform/nimiq"
 	"github.com/trustwallet/blockatlas/platform/ontology"
-	"github.com/trustwallet/blockatlas/platform/polkadot"
 	"github.com/trustwallet/blockatlas/platform/ripple"
 	"github.com/trustwallet/blockatlas/platform/stellar"
 	"github.com/trustwallet/blockatlas/platform/tezos"
@@ -80,7 +79,7 @@ var platformList = []blockatlas.Platform{
 	&algorand.Platform{},
 	&nano.Platform{},
 	&harmony.Platform{},
-	&polkadot.Platform{CoinIndex: coin.KSM},
+	//&polkadot.Platform{CoinIndex: coin.KSM},
 }
 
 // Platforms contains all registered platforms by handle
