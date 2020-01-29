@@ -142,10 +142,6 @@ theta:
 cosmos:
  api: http://stargate.cosmos.network
 
-# [SEMUX] SEMUX: https://semux.org/
-semux:
- api: https://sempy.online/api
-
 # [ONTOLOGY] ONT: https://ont.io/
 ontology:
   api: https://explorer.ont.io/api/v1/explorer
