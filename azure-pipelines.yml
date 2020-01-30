@@ -70,7 +70,7 @@ jobs:
         workingDirectory: '$(modulePath)'
         displayName: 'Run integration tests'
 
-      - script: go build -v .
+      - script: make go-build
         workingDirectory: '$(modulePath)'
         displayName: 'Build'
         condition: not(startsWith(variables['build.sourceBranch'], 'refs/tags/'))

@@ -44,7 +44,7 @@ The observer API watches the chain for new transactions and generates notificati
 ### Requirements
 
  * [Go Toolchain](https://golang.org/doc/install) versions 1.13+
- * [Redis](https://redis.io/topics/quickstart) instance (Transaction Observer only)
+ * [Redis](https://redis.io/topics/quickstart) instance (observer and syncmarkets)
 
 ### From Source
 
@@ -53,14 +53,14 @@ The observer API watches the chain for new transactions and generates notificati
 go get -u github.com/trustwallet/blockatlas
 cd $(go env GOPATH)/src/github.com/trustwallet/blockatlas
 
-# Start API server at port 8420
-go build -o blockatlas . && ./blockatlas api :8420
+# Start Observer with the path to the config.yml ./ 
+go build -o observer-bin cmd/observer/main.go && ./observer-bin -c config.yml
 
-# Start Observer
-go build -o blockatlas . && ./blockatlas observer
+# Start API server at port 8422 with the path to the config.yml ./ 
+go build -o api-bin cmd/api/main.go  && ./api-bin -p 8422 -c config.yml
 
-# Start sync worker for market prices and rates
-go build -o blockatlas . && ./blockatlas sync-markets
+# Start sync worker for market prices and rates with the path to the config.yml ./ 
+go build -o syncmarkets-bin cmd/syncmarkets/main.go && ./syncmarkets-bin -c config.yml  
 ```
 
 ### Docker
@@ -76,13 +76,12 @@ You should change `config.yml`:
 ```yaml
 redis: redis://redis:6379
 ```
-
-Then build as `blockatlas` image:
+Then build:
 ```shell
-docker build -t blockatlas .
+docker-compose build
 ```
 
-For run api, observer and sync-markets:
+For run api, observer and syncmarkets:
 ```shell
 docker-compose up
 ```
@@ -91,7 +90,7 @@ If you need to start one service:
 ```shell
 docker-compose start api redis
 docker-compose start observer redis
-docker-compose start sync-markets redis
+docker-compose start syncmarkets redis
 ```
 
 ### Heroku

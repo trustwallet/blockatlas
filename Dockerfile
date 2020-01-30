@@ -1,14 +1,16 @@
 FROM golang:latest AS builder
 
+ARG SERVICE
+
 RUN mkdir /build
 ADD . /build
 WORKDIR /build
-RUN go build -o bin/blockatlas .
+RUN go build -o bin/blockatlas ./cmd/$SERVICE
 
 FROM debian:latest
-COPY --from=builder /build/bin /app
-COPY --from=builder /build/config.yml /app
+COPY --from=builder /build/bin /app/bin/$SERVICE
+COPY --from=builder /build/config.yml /
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
-WORKDIR /app
+WORKDIR /app/bin/$SERVICE
 
-ENTRYPOINT ["/app/blockatlas"]
+ENTRYPOINT ["/app/bin/blockatlas"]

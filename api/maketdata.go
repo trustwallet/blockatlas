@@ -4,12 +4,12 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/coin"
-	"github.com/trustwallet/blockatlas/marketdata"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/ginutils"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/services/assets"
 	"github.com/trustwallet/blockatlas/storage"
+	"github.com/trustwallet/blockatlas/syncmarkets"
 	"net/http"
 	"strconv"
 	"strings"
@@ -140,7 +140,7 @@ func getTickersHandler(storage storage.Market) func(c *gin.Context) {
 // @Success 200 {object} blockatlas.ChartData
 // @Router /v1/market/charts [get]
 func getChartsHandler() func(c *gin.Context) {
-	var charts = marketdata.InitCharts()
+	var charts = syncmarkets.InitCharts()
 	return func(c *gin.Context) {
 		coinQuery := c.Query("coin")
 		coinId, err := strconv.Atoi(coinQuery)
@@ -184,7 +184,7 @@ func getChartsHandler() func(c *gin.Context) {
 // @Success 200 {object} blockatlas.ChartCoinInfo
 // @Router /v1/market/info [get]
 func getCoinInfoHandler() func(c *gin.Context) {
-	var charts = marketdata.InitCharts()
+	var charts = syncmarkets.InitCharts()
 	return func(c *gin.Context) {
 		coinQuery := c.Query("coin")
 		coinId, err := strconv.Atoi(coinQuery)
