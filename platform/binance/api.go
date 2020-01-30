@@ -3,8 +3,10 @@ package binance
 import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
+	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/pkg/numbers"
 	"strings"
+	"sync"
 
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/coin"
@@ -57,6 +59,34 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 	// Endpoint supports queries without token query parameter
 	return p.GetTokenTxsByAddress(address, p.Coin().Symbol)
+}
+
+func (p *Platform) GetTxChildChan(srcTxs []Tx) ([]Tx, error) {
+	start := int64(1)
+	var wg sync.WaitGroup
+	out := make(chan Tx)
+	for _, srcTx := range srcTxs {
+		wg.Add(1)
+		start++
+		go func(hash string, out chan Tx) {
+			defer wg.Done()
+			tx, err := p.client.GetTx(hash)
+			if err != nil {
+				logger.Error("GetTransactionsByBlockChan", err, logger.Params{"hash": hash})
+				return
+			}
+			out <- tx
+		}(srcTx.Hash, out)
+	}
+	go func() {
+		wg.Wait()
+		close(out)
+	}()
+	txs := make([]Tx, 0)
+	for r := range out {
+		txs = append(txs, r)
+	}
+	return txs, nil
 }
 
 func (p *Platform) GetTokenTxsByAddress(address string, token string) (blockatlas.TxPage, error) {

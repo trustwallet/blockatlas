@@ -64,6 +64,24 @@ type Tx struct {
 	Hash          string      `json:"txHash"`
 	Value         json.Number `json:"value"`
 	Memo          string      `json:"memo"`
+	HasChildren   bool        `json:"hasChildren"`
+	SubTxsDto     SubTxsDto   `json:"subTxsDto"`
+}
+
+type SubTxsDto struct {
+	TotalNum     uint    `json:"totalNum"`
+	SubTxDtoList []SubTx `json:"subTxDtoList"`
+}
+
+type SubTx struct {
+	Hash     string `json:"hash"`
+	Height   uint64 `json:"height"`
+	Type     string `json:"type"`
+	Value    int64  `json:"value"`
+	Asset    string `json:"asset"`
+	FromAddr string `json:"fromAddr"`
+	ToAddr   string `json:"toAddr"`
+	Fee      int64  `json:"fee"`
 }
 
 func (tx *Tx) getData() (Data, error) {
