@@ -56,6 +56,7 @@ func MakeLookupRoute(router gin.IRouter) {
 	TLDMapping[".zil"] = CoinType.ZIL
 	// it's on ethereum but same unstoppable api
 	TLDMapping[".crypto"] = CoinType.ZIL
+	TLDMapping["@fiotestnet"] = CoinType.FIO
 }
 
 // @Summary Lookup .eth / .zil addresses
@@ -105,15 +106,15 @@ func sliceAtoi(sa []string) ([]uint64, error) {
 }
 
 func handleLookup(name string, coins []uint64) (result []blockatlas.Resolved, err error) {
+	// Assumption: format of the name can be decided (top-level-domain), and at most one naming service is tried
 	name = strings.ToLower(name)
-	ss := strings.Split(name, ".")
-	if len(ss) == 0 {
-		return nil, errors.E("name not found", errors.Params{"name": name, "coins": coins})
+	tld, ok := getTLD(name)
+	if !ok {
+		return nil, errors.E("name format not recognized", errors.Params{"name": name, "coins": coins})
 	}
-	tld := "." + ss[len(ss)-1]
 	id, ok := TLDMapping[tld]
 	if !ok {
-		return nil, errors.E("name not found", errors.Params{"name": name, "coins": coins})
+		return nil, errors.E("name not found", errors.Params{"name": name, "coins": coins, "tld": tld})
 	}
 	api, ok := platform.NamingAPIs[id]
 	if !ok {
@@ -121,4 +122,22 @@ func handleLookup(name string, coins []uint64) (result []blockatlas.Resolved, er
 	}
 	result, err = api.Lookup(coins, name)
 	return
+}
+
+// Obtain tld from then name, e.g. ".ens" from "nick.ens"
+func getTLD(name string) (tld string, ok bool) {
+	if strings.Index(name, ".") >= 0 {
+		// xxx.tld format
+		ss := strings.Split(name, ".")
+		tld := "." + ss[len(ss)-1]
+		return tld, true
+	}
+	if strings.Index(name, "@") >= 0 {
+		// xxx@tld format
+		ss := strings.Split(name, "@")
+		tld := "@" + ss[len(ss)-1]
+		return tld, true
+	}
+	// none matched
+	return "", false
 }
