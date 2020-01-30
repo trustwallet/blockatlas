@@ -51,6 +51,12 @@ func init() {
 	config.LoadConfig(confPath)
 	logger.InitLogger()
 	platform.Init()
+
+	host := viper.GetString("storage.redis")
+	err = cache.Init(host)
+	if err != nil {
+		logger.Fatal(err)
+	}
 }
 
 func main() {
