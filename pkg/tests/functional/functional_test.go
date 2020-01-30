@@ -36,6 +36,8 @@ func TestApis(t *testing.T) {
 	p := ":8420"
 
 	engine := gin.New()
+
+	engine.Use(gin.Recovery())
 	engine.Use(ginutils.CheckReverseProxy, sg)
 	engine.Use(ginutils.CORSMiddleware())
 

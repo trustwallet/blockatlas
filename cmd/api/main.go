@@ -63,10 +63,8 @@ func main() {
 	gin.SetMode(viper.GetString("gin.mode"))
 	engine := gin.New()
 
-	engine.Use(gin.Recovery())
 	engine.Use(ginutils.CheckReverseProxy, sg)
 	engine.Use(ginutils.CORSMiddleware())
-
 	engine.OPTIONS("/*path", ginutils.CORSMiddleware())
 
 	engine.GET("swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
