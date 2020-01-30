@@ -52,11 +52,11 @@ func (r *Request) GetWithCache(result interface{}, path string, query url.Values
 }
 
 func getCache(key string, value interface{}) error {
-	cache, ok := memoryCache.Get(key)
+	c, ok := memoryCache.Get(key)
 	if !ok {
 		return errors.E("validator cache: invalid cache key")
 	}
-	r, ok := cache.([]byte)
+	r, ok := c.([]byte)
 	if !ok {
 		return errors.E("validator cache: failed to cast cache to bytes")
 	}
