@@ -49,7 +49,7 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 	if err != nil {
 		return nil, err
 	}
-	txs := NormalizeTxs(srcTxs.Txs, "")
+	txs := NormalizeTxs(srcTxs.Txs, "", "")
 	return &blockatlas.Block{
 		Number: num,
 		Txs:    txs,
@@ -102,27 +102,64 @@ func (p *Platform) GetTokenTxsByAddress(address string, token string) (blockatla
 	if err != nil {
 		return nil, err
 	}
-	return NormalizeTxs(txs, token), nil
+	return NormalizeTxs(txs, token, address), nil
+}
+
+func normalizeTransfer(tx blockatlas.Tx, srcTx Tx, token, address string) (blockatlas.TxPage, bool) {
+	if srcTx.HasChildren == 1 {
+		txs := make(blockatlas.TxPage, 0)
+		for _, subTx := range srcTx.SubTxsDto.SubTxDtoList.getTxs() {
+			if !subTx.containAddress(address) {
+				continue
+			}
+			newTxs, ok := normalizeTransfer(tx, subTx, token, address)
+			if !ok {
+				continue
+			}
+			txs = append(txs, newTxs...)
+		}
+		return txs, true
+	}
+
+	if len(token) > 0 && srcTx.Asset != token {
+		return blockatlas.TxPage{tx}, false
+	}
+
+	tx.From = srcTx.FromAddr
+	tx.To = srcTx.ToAddr
+
+	bnbCoin := coin.Coins[coin.BNB]
+	value := numbers.DecimalExp(string(srcTx.Value), 8)
+	if srcTx.Asset == bnbCoin.Symbol {
+		// Condition for native transfer (BNB)
+		tx.Meta = blockatlas.Transfer{
+			Value:    blockatlas.Amount(value),
+			Symbol:   bnbCoin.Symbol,
+			Decimals: bnbCoin.Decimals,
+		}
+		return blockatlas.TxPage{tx}, true
+	}
+
+	// Condition for native token transfer
+	tx.Meta = blockatlas.NativeTokenTransfer{
+		TokenID:  srcTx.Asset,
+		Symbol:   TokenSymbol(srcTx.Asset),
+		Value:    blockatlas.Amount(value),
+		Decimals: bnbCoin.Decimals,
+		From:     srcTx.FromAddr,
+		To:       srcTx.ToAddr,
+	}
+	return blockatlas.TxPage{tx}, true
 }
 
 // NormalizeTx converts a Binance transaction into the generic model
-func NormalizeTx(srcTx *Tx, token string) (blockatlas.Tx, bool) {
-	var tx blockatlas.Tx
-	bnbCoin := coin.Coins[coin.BNB]
-	value := numbers.DecimalExp(string(srcTx.Value), 8)
-
-	fee := "0"
-	feeNumber, err := srcTx.Fee.Float64()
-	if err == nil && feeNumber > 0 {
-		fee = numbers.DecimalExp(string(srcTx.Fee), 8)
-	}
-
-	tx = blockatlas.Tx{
+func NormalizeTx(srcTx Tx, token, address string) (blockatlas.TxPage, bool) {
+	tx := blockatlas.Tx{
 		ID:     srcTx.Hash,
 		Coin:   coin.BNB,
 		From:   srcTx.FromAddr,
 		To:     srcTx.ToAddr,
-		Fee:    blockatlas.Amount(fee),
+		Fee:    blockatlas.Amount(srcTx.getFee()),
 		Date:   srcTx.Timestamp / 1000,
 		Block:  srcTx.BlockHeight,
 		Status: blockatlas.StatusCompleted,
@@ -131,70 +168,43 @@ func NormalizeTx(srcTx *Tx, token string) (blockatlas.Tx, bool) {
 
 	switch srcTx.Type {
 	case TxTransfer:
-		if len(token) > 0 && srcTx.Asset != token {
-			return tx, false
-		}
-
-		if srcTx.Asset == bnbCoin.Symbol {
-			// Condition for native transfer (BNB)
-			tx.Meta = blockatlas.Transfer{
-				Value:    blockatlas.Amount(value),
-				Symbol:   bnbCoin.Symbol,
-				Decimals: bnbCoin.Decimals,
-			}
-			return tx, true
-		} //else if len(srcTx.FromAddr) > 0 && len(srcTx.ToAddr) > 0 {
-		// Condition for native token transfer
-		tx.Meta = blockatlas.NativeTokenTransfer{
-			TokenID:  srcTx.Asset,
-			Symbol:   TokenSymbol(srcTx.Asset),
-			Value:    blockatlas.Amount(value),
-			Decimals: bnbCoin.Decimals,
-			From:     srcTx.FromAddr,
-			To:       srcTx.ToAddr,
-		}
-		//}
-		//case TxCancelOrder, TxNewOrder:
-		//	return tx, false
-		//case "invalid":
-		//	return tx, false
-		//	dt, err := srcTx.getData()
-		//	if err != nil {
-		//		return tx, false
-		//	}
-		//
-		//	symbol := dt.OrderData.Quote
-		//	if len(token) > 0 && symbol != token {
-		//		return tx, false
-		//	}
-		//
-		//	key := blockatlas.KeyPlaceOrder
-		//	title := blockatlas.KeyTitlePlaceOrder
-		//	if srcTx.Type == TxCancelOrder {
-		//		key = blockatlas.KeyCancelOrder
-		//		title = blockatlas.KeyTitleCancelOrder
-		//	}
-		//	volume, ok := dt.OrderData.GetVolume()
-		//	if ok {
-		//		value = strconv.Itoa(int(volume))
-		//	}
-		//
-		//	tx.Meta = blockatlas.AnyAction{
-		//		Coin:     coin.BNB,
-		//		TokenID:  dt.OrderData.Symbol,
-		//		Symbol:   TokenSymbol(symbol),
-		//		Name:     symbol,
-		//		Value:    blockatlas.Amount(value),
-		//		Decimals: coin.Coins[coin.BNB].Decimals,
-		//		Title:    title,
-		//		Key:      key,
-		//	}
-
-	default:
-		return tx, false
+		return normalizeTransfer(tx, srcTx, token, address)
 	}
-
-	return tx, true
+	//case TxCancelOrder, TxNewOrder:
+	//	return tx, false
+	//	dt, err := srcTx.getData()
+	//	if err != nil {
+	//		return tx, false
+	//	}
+	//
+	//	symbol := dt.OrderData.Quote
+	//	if len(token) > 0 && symbol != token {
+	//		return tx, false
+	//	}
+	//
+	//	key := blockatlas.KeyPlaceOrder
+	//	title := blockatlas.KeyTitlePlaceOrder
+	//	if srcTx.Type == TxCancelOrder {
+	//		key = blockatlas.KeyCancelOrder
+	//		title = blockatlas.KeyTitleCancelOrder
+	//	}
+	//	volume, ok := dt.OrderData.GetVolume()
+	//	if ok {
+	//		value = strconv.Itoa(int(volume))
+	//	}
+	//
+	//	tx.Meta = blockatlas.AnyAction{
+	//		Coin:     coin.BNB,
+	//		TokenID:  dt.OrderData.Symbol,
+	//		Symbol:   TokenSymbol(symbol),
+	//		Name:     symbol,
+	//		Value:    blockatlas.Amount(value),
+	//		Decimals: coin.Coins[coin.BNB].Decimals,
+	//		Title:    title,
+	//		Key:      key,
+	//	}
+	//}
+	return blockatlas.TxPage{tx}, false
 }
 
 func TokenSymbol(asset string) string {
@@ -206,13 +216,13 @@ func TokenSymbol(asset string) string {
 }
 
 // NormalizeTxs converts multiple Binance transactions
-func NormalizeTxs(srcTxs []Tx, token string) (txs []blockatlas.Tx) {
+func NormalizeTxs(srcTxs []Tx, token, adress string) (txs []blockatlas.Tx) {
 	for _, srcTx := range srcTxs {
-		tx, ok := NormalizeTx(&srcTx, token)
+		tx, ok := NormalizeTx(srcTx, token, adress)
 		if !ok {
 			continue
 		}
-		txs = append(txs, tx)
+		txs = append(txs, tx...)
 	}
 	return
 }

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/errors"
+	"github.com/trustwallet/blockatlas/pkg/numbers"
 	"math"
 	"strconv"
 	"strings"
@@ -69,19 +70,82 @@ type Tx struct {
 }
 
 type SubTxsDto struct {
-	TotalNum     uint    `json:"totalNum"`
-	SubTxDtoList []SubTx `json:"subTxDtoList"`
+	TotalNum     uint   `json:"totalNum"`
+	SubTxDtoList SubTxs `json:"subTxDtoList"`
 }
 
 type SubTx struct {
-	Hash     string `json:"hash"`
-	Height   uint64 `json:"height"`
-	Type     string `json:"type"`
-	Value    int64  `json:"value"`
-	Asset    string `json:"asset"`
-	FromAddr string `json:"fromAddr"`
-	ToAddr   string `json:"toAddr"`
-	Fee      int64  `json:"fee"`
+	Hash     string      `json:"hash"`
+	Height   uint64      `json:"height"`
+	Type     TxType      `json:"type"`
+	Value    json.Number `json:"value"`
+	Asset    string      `json:"asset"`
+	FromAddr string      `json:"fromAddr"`
+	ToAddr   string      `json:"toAddr"`
+	Fee      json.Number `json:"fee"`
+}
+
+type SubTxs []SubTx
+
+func (subTxs *SubTxs) getTxs() (txs []Tx) {
+	mapTx := map[string]Tx{}
+	for _, subTx := range *subTxs {
+		key := subTx.ToAddr + subTx.Asset
+		tx, ok := mapTx[key]
+		if !ok {
+			mapTx[key] = subTx.toTx()
+			continue
+		}
+		txValue, err := tx.Value.Int64()
+		if err == nil {
+			txValue = 0
+		}
+		subTxValue, err := subTx.Value.Int64()
+		if err == nil {
+			subTxValue = 0
+		}
+		tx.Value = json.Number(strconv.Itoa(int(txValue + subTxValue)))
+		mapTx[key] = tx
+	}
+	for _, tx := range mapTx {
+		txs = append(txs, tx)
+	}
+	return
+}
+
+func (subTx *SubTx) toTx() Tx {
+	return Tx{
+		BlockHeight: subTx.Height,
+		Type:        TxTransfer,
+		FromAddr:    subTx.FromAddr,
+		ToAddr:      subTx.ToAddr,
+		Asset:       subTx.Asset,
+		Fee:         subTx.Fee,
+		Value:       subTx.Value,
+		HasChildren: 0,
+	}
+}
+
+func (tx *Tx) containAddress(address string) bool {
+	if len(address) == 0 {
+		return true
+	}
+	if tx.FromAddr == address {
+		return true
+	}
+	if tx.ToAddr == address {
+		return true
+	}
+	return false
+}
+
+func (tx *Tx) getFee() string {
+	fee := "0"
+	feeNumber, err := tx.Fee.Float64()
+	if err == nil && feeNumber > 0 {
+		fee = numbers.DecimalExp(string(tx.Fee), 8)
+	}
+	return fee
 }
 
 func (tx *Tx) getData() (Data, error) {
