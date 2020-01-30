@@ -62,27 +62,31 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 }
 
 func (p *Platform) GetTxChildChan(srcTxs []Tx) ([]Tx, error) {
-	start := int64(1)
+	txs := make([]Tx, 0)
+
 	var wg sync.WaitGroup
 	out := make(chan Tx)
 	for _, srcTx := range srcTxs {
+		if srcTx.HasChildren != 1 {
+			txs = append(txs, srcTx)
+			continue
+		}
 		wg.Add(1)
-		start++
-		go func(hash string, out chan Tx) {
+		go func(srcTx Tx, out chan Tx) {
 			defer wg.Done()
-			tx, err := p.client.GetTx(hash)
+			tx, err := p.client.GetTx(srcTx.Hash)
 			if err != nil {
-				logger.Error("GetTransactionsByBlockChan", err, logger.Params{"hash": hash})
+				out <- srcTx
+				logger.Error("GetTransactionsByBlockChan", err, logger.Params{"hash": srcTx.Hash})
 				return
 			}
 			out <- tx
-		}(srcTx.Hash, out)
+		}(srcTx, out)
 	}
 	go func() {
 		wg.Wait()
 		close(out)
 	}()
-	txs := make([]Tx, 0)
 	for r := range out {
 		txs = append(txs, r)
 	}
@@ -94,7 +98,11 @@ func (p *Platform) GetTokenTxsByAddress(address string, token string) (blockatla
 	if err != nil {
 		return nil, err
 	}
-	return NormalizeTxs(srcTxs.Txs, token), nil
+	txs, err := p.GetTxChildChan(srcTxs.Txs)
+	if err != nil {
+		return nil, err
+	}
+	return NormalizeTxs(txs, token), nil
 }
 
 // NormalizeTx converts a Binance transaction into the generic model

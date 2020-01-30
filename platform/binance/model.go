@@ -64,7 +64,7 @@ type Tx struct {
 	Hash          string      `json:"txHash"`
 	Value         json.Number `json:"value"`
 	Memo          string      `json:"memo"`
-	HasChildren   bool        `json:"hasChildren"`
+	HasChildren   int         `json:"hasChildren"`
 	SubTxsDto     SubTxsDto   `json:"subTxsDto"`
 }
 
