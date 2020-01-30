@@ -15,7 +15,7 @@ GOBIN := $(GOBASE)/bin
 GOPKG := $(.)
 
 # Environment variables
-TEST_CONFIG=$(GOBASE)/config.yml
+CONFIG_FILE=$(GOBASE)/config.yml
 
 # Go files
 GOFMT_FILES?=$$(find . -name '*.go' | grep -v vendor)
@@ -44,21 +44,21 @@ start:
 ## start-api: Start API in development mode.
 start-api: stop
 	@echo "  >  Starting $(PROJECT_NAME) API"
-	@-$(GOBIN)/$(API_SERVICE)/api -c config.yml 2>&1 & echo $$! > $(PID_API)
+	@-$(GOBIN)/$(API_SERVICE)/api -c $(CONFIG_FILE) 2>&1 & echo $$! > $(PID_API)
 	@cat $(PID_API) | sed "/^/s/^/  \>  API PID: /"
 	@echo "  >  Error log: $(STDERR)"
 
 ## start-observer: Start Observer in development mode.
 start-observer: stop
 	@echo "  >  Starting $(PROJECT_NAME) Observer"
-	@-$(GOBIN)/$(OBSERVER_SERVICE)/observer -c config.yml 2>&1 & echo $$! > $(PID_OBSERVER)
+	@-$(GOBIN)/$(OBSERVER_SERVICE)/observer -c $(CONFIG_FILE) 2>&1 & echo $$! > $(PID_OBSERVER)
 	@cat $(PID_OBSERVER) | sed "/^/s/^/  \>  Observer PID: /"
 	@echo "  >  Error log: $(STDERR)"
 
 ## start-sync-markets: Start Sync markets in development mode.
 start-syncmarkets: stop
 	@echo "  >  Starting $(PROJECT_NAME) Sync"
-	@-$(GOBIN)/$(SYNC_SERVICE)/syncmarkets -c config.yml 2>&1 & echo $$! > $(PID_SYNC)
+	@-$(GOBIN)/$(SYNC_SERVICE)/syncmarkets -c $(CONFIG_FILE) 2>&1 & echo $$! > $(PID_SYNC)
 	@cat $(PID_SYNC) | sed "/^/s/^/  \>  Sync PID: /"
 	@echo "  >  Error log: $(STDERR)"
 
@@ -147,11 +147,11 @@ go-test:
 
 go-functional:
 	@echo "  >  Runing functional tests"
-	GOBIN=$(GOBIN) TEST_CONFIG=$(TEST_CONFIG) go test -race -tags=functional -v ./pkg/tests/functional
+	GOBIN=$(GOBIN) TEST_CONFIG=$(CONFIG_FILE) go test -race -tags=functional -v ./pkg/tests/functional
 
 go-integration:
 	@echo "  >  Runing integration tests"
-	GOBIN=$(GOBIN) TEST_CONFIG=$(TEST_CONFIG) go test -race -tags=integration -v ./pkg/tests/integration
+	GOBIN=$(GOBIN) TEST_CONFIG=$(CONFIG_FILE) go test -race -tags=integration -v ./pkg/tests/integration
 
 go-fmt:
 	@echo "  >  Format all go files"
