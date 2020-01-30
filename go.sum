@@ -401,6 +401,7 @@ github.com/valyala/fasthttp v1.6.0/go.mod h1:FstJa9V+Pj9vQ7OJie2qMHdwemEDaDiSdBn
 github.com/valyala/fasttemplate v1.0.1/go.mod h1:UQGH1tvbgY+Nz5t2n7tXsz52dQxojPUpymEIMZ47gx8=
 github.com/valyala/tcplisten v0.0.0-20161114210144-ceec8f93295a/go.mod h1:v3UYOV9WzVtRmSR+PDvWpU/qWl4Wa5LApYYX4ZtKbio=
 github.com/wealdtech/go-ens/v3 v3.1.0/go.mod h1:P2OEBvgkhXLrPzPN+eR5z2/wFIGwHyijTDvpuC1xLlo=
+github.com/wealdtech/go-ens/v3 v3.2.0/go.mod h1:P2OEBvgkhXLrPzPN+eR5z2/wFIGwHyijTDvpuC1xLlo=
 github.com/wealdtech/go-multicodec v1.2.0/go.mod h1:aedGMaTeYkIqi/KCPre1ho5rTb3hGpu/snBOS3GQLw4=
 github.com/wealdtech/go-slip44 v1.0.0/go.mod h1://S3V9M6iN1cCflLXMjJYciRPakCDubG9YpWVyW1AvM=
 github.com/wealdtech/go-string2eth v1.0.0/go.mod h1:UZA/snEybGcD6n+Pl+yoDjmexlEJ6dtoS9myfM83Ol4=

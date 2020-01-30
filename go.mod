@@ -26,7 +26,7 @@ require (
 	github.com/stretchr/testify v1.4.0
 	github.com/swaggo/gin-swagger v1.2.0
 	github.com/swaggo/swag v1.6.5
-	github.com/wealdtech/go-ens/v3 v3.1.0
+	github.com/wealdtech/go-ens/v3 v3.2.0
 	golang.org/x/crypto v0.0.0-20200128174031-69ecbb4d6d5d
 	gopkg.in/yaml.v2 v2.2.8
 )
