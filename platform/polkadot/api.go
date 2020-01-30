@@ -125,18 +125,28 @@ func (p *Platform) NormalizeExtrinsic(srcTx *Extrinsic) *blockatlas.Tx {
 		Sequence: srcTx.Nonce,
 	}
 
+	if len(datas) < 2 {
+		return nil
+	}
+
 	value := "0"
-	if len(datas) > 0 {
-		vf, ok := datas[0].Value.(float64)
+	to := ""
+	for _, data := range datas {
+		vf, ok := data.Value.(float64)
 		if ok {
 			value = fmt.Sprintf("%.0f", vf)
+			continue
+		}
+		toAddr := p.NormalizeAddress(data.ValueRaw)
+		if len(toAddr) > 0 {
+			to = toAddr
 		}
 	}
 	decimals := p.Coin().Decimals
 	if srcTx.CallModule == ModuleBalances &&
 		srcTx.CallModuleFunction == ModuleFunctionTransfer {
 		result.From = srcTx.AccountId
-		result.To = p.NormalizeAddress(datas[0].ValueRaw)
+		result.To = to
 		result.Fee = blockatlas.Amount(FeeTransfer)
 		result.Meta = blockatlas.Transfer{
 			Value:    blockatlas.Amount(value),
@@ -155,7 +165,7 @@ func (p *Platform) NormalizeAddress(valueRaw string) string {
 	if err != nil {
 		return ""
 	}
-	if network, ok := NetworkByteMap[p.Coin().Symbol]; ok {
+	if network, ok := NetworkByteMap[p.Coin().Symbol]; ok && len(bytes) > 0 {
 		return PublicKeyToAddress(bytes[1:], network)
 	}
 	return ""
