@@ -49,7 +49,11 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 	if err != nil {
 		return nil, err
 	}
-	txs := NormalizeTxs(srcTxs.Txs, "", "")
+	childTxs, err := p.GetTxChildChan(srcTxs.Txs)
+	if err != nil {
+		return nil, err
+	}
+	txs := NormalizeTxs(childTxs, "", "")
 	return &blockatlas.Block{
 		Number: num,
 		Txs:    txs,
