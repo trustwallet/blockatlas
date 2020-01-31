@@ -70,7 +70,7 @@ stop:
 	@-kill `cat $(PID_SYNC)` 2> /dev/null || true
 	@-rm $(PID_API) $(PID_OBSERVER)
 
-
+## compile: Compile the project.
 compile:
 	@-touch $(STDERR)
 	@-rm $(STDERR)
@@ -135,7 +135,6 @@ go-generate:
 go-get:
 	@echo "  >  Checking if there is any missing dependencies..."
 	GOBIN=$(GOBIN) go get cmd/... $(get)
-
 
 go-install:
 	GOBIN=$(GOBIN) go install $(GOPKG)
