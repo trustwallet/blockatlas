@@ -115,6 +115,9 @@ govet: go-vet
 ## golint: Run golint.
 golint: go-lint
 
+## docs: Generate swagger docs.
+docs: go-gen-docs
+
 go-compile: go-get go-build
 
 go-build:
@@ -160,6 +163,10 @@ go-fmt:
 go-gen-coins:
 	@echo "  >  Generating coin file"
 	COIN_FILE=$(COIN_FILE) COIN_GO_FILE=$(COIN_GO_FILE) GOBIN=$(GOBIN) go run -tags=coins $(GEN_COIN_FILE)
+
+go-gen-docs:
+	@echo "  >  Generating swagger files"
+	swag init -g ./cmd/api/main.go -o ./docs
 
 go-goreleaser:
 	@echo "  >  Releasing a new version"
