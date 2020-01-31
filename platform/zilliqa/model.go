@@ -20,14 +20,14 @@ type Tx struct {
 }
 
 func (tx Tx) NonceValue() uint64 {
-	n, ok := tx.Nonce.(string)
-	if ok {
+	switch n := tx.Nonce.(type) {
+	case string:
 		r, _ := strconv.Atoi(n)
 		return uint64(r)
-	}
-	nu, ok := tx.Nonce.(int)
-	if ok {
-		return uint64(nu)
+	case int:
+		return uint64(n)
+	case float64:
+		return uint64(n)
 	}
 	return 0
 }

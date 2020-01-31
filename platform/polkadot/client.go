@@ -12,7 +12,7 @@ type Client struct {
 
 func (c *Client) GetTransfersOfAddress(address string) ([]Transfer, error) {
 	var res SubscanResponse
-	err := c.Post(&res, "/scan/transfers", TransfersRequest{Address: address, Row: blockatlas.TxPerPage})
+	err := c.Post(&res, "scan/transfers", TransfersRequest{Address: address, Row: blockatlas.TxPerPage})
 	if err != nil {
 		return nil, err
 	}
@@ -21,7 +21,7 @@ func (c *Client) GetTransfersOfAddress(address string) ([]Transfer, error) {
 
 func (c *Client) GetExtrinsicsOfAddress(address string) ([]Extrinsic, error) {
 	var res SubscanResponse
-	err := c.Post(&res, "/scan/extrinsics", TransfersRequest{Address: address, Row: blockatlas.TxPerPage})
+	err := c.Post(&res, "scan/extrinsics", TransfersRequest{Address: address, Row: blockatlas.TxPerPage})
 	if err != nil {
 		return nil, err
 	}
@@ -30,7 +30,7 @@ func (c *Client) GetExtrinsicsOfAddress(address string) ([]Extrinsic, error) {
 
 func (c *Client) GetCurrentBlock() (int64, error) {
 	var res SubscanResponse
-	err := c.Post(&res, "/scan/metadata", nil)
+	err := c.Post(&res, "scan/metadata", nil)
 	if err != nil {
 		return 0, err
 	}
@@ -43,7 +43,7 @@ func (c *Client) GetCurrentBlock() (int64, error) {
 
 func (c *Client) GetBlockByNumber(number int64) ([]Extrinsic, error) {
 	var res SubscanResponse
-	err := c.Post(&res, "/scan/block", BlockRequest{BlockNumber: number})
+	err := c.Post(&res, "scan/block", BlockRequest{BlockNumber: number})
 	if err != nil {
 		return nil, err
 	}

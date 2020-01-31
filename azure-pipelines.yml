@@ -45,14 +45,6 @@ jobs:
       - script: make govet
         workingDirectory: '$(modulePath)'
         displayName: 'Run go vet'
-        continueOnError: true
-
-      - script: |
-          go get -u golang.org/x/lint/golint
-          make golint
-        workingDirectory: '$(modulePath)'
-        displayName: 'Run go lint'
-        continueOnError: true
 
       - script: make test
         workingDirectory: '$(modulePath)'
@@ -60,21 +52,25 @@ jobs:
 
       - script: |
           go get github.com/gavv/httpexpect
-          make integration
+          make functional
         workingDirectory: '$(modulePath)'
-        displayName: "Run integration tests for new PR's"
+        displayName: "Run functional tests for new PR's"
         condition: ne(variables['build.sourceBranch'], 'refs/heads/master')
         continueOnError: true
 
       - script: |
           go get github.com/gavv/httpexpect
-          make integration
+          make functional
         workingDirectory: '$(modulePath)'
-        displayName: 'Run integration tests for new releases'
+        displayName: 'Run functional tests for new releases'
         condition: eq(variables['build.sourceBranch'], 'refs/heads/master')
         continueOnError: false
 
-      - script: go build -v .
+      - script: make integration
+        workingDirectory: '$(modulePath)'
+        displayName: 'Run integration tests'
+
+      - script: make go-build
         workingDirectory: '$(modulePath)'
         displayName: 'Build'
         condition: not(startsWith(variables['build.sourceBranch'], 'refs/tags/'))

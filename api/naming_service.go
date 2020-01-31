@@ -106,15 +106,19 @@ func sliceAtoi(sa []string) ([]uint64, error) {
 
 func handleLookup(name string, coins []uint64) (result []blockatlas.Resolved, err error) {
 	name = strings.ToLower(name)
-	for tld, id := range TLDMapping {
-		if strings.HasSuffix(name, tld) {
-			api := platform.NamingAPIs[id]
-			result, err = api.Lookup(coins, name)
-			if err != nil {
-				return
-			}
-			return
-		}
+	ss := strings.Split(name, ".")
+	if len(ss) == 0 {
+		return nil, errors.E("name not found", errors.Params{"name": name, "coins": coins})
 	}
-	return nil, errors.E("name not found", errors.Params{"name": name})
+	tld := "." + ss[len(ss)-1]
+	id, ok := TLDMapping[tld]
+	if !ok {
+		return nil, errors.E("name not found", errors.Params{"name": name, "coins": coins})
+	}
+	api, ok := platform.NamingAPIs[id]
+	if !ok {
+		return nil, errors.E("platform not found", errors.Params{"name": name, "coins": coins})
+	}
+	result, err = api.Lookup(coins, name)
+	return
 }

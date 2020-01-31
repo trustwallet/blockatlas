@@ -72,6 +72,7 @@ type CustomAPI interface {
 	RegisterRoutes(router gin.IRouter)
 }
 
+// NamingServiceAPI provides public name service domains HTTP routes
 type NamingServiceAPI interface {
 	Platform
 	Lookup(coins []uint64, name string) ([]Resolved, error)

@@ -5,6 +5,7 @@ import (
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/pkg/numbers"
 	"strconv"
 	"sync"
@@ -47,19 +48,30 @@ func (p *Platform) CurrentBlockNumber() (int64, error) {
 }
 
 func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
-	srcTxs := make([]Tx, 0)
 	tagsList := []string{"transfer.recipient", "message.sender"}
-
 	var wg sync.WaitGroup
+	out := make(chan TxPage)
 	for _, t := range tagsList {
 		wg.Add(1)
 		go func(tag, addr string) {
 			defer wg.Done()
-			txs, _ := p.client.GetAddrTxs(addr, tag)
-			srcTxs = append(srcTxs, txs.Txs...)
+			txs, err := p.client.GetAddrTxs(addr, tag)
+			if err != nil {
+				logger.Error("GetAddrTxs", err, logger.Params{"address": tag, "tag": tag})
+				return
+			}
+			out <- txs
 		}(t, address)
 	}
-	wg.Wait()
+	go func() {
+		wg.Wait()
+		close(out)
+	}()
+
+	srcTxs := make([]Tx, 0)
+	for r := range out {
+		srcTxs = append(srcTxs, r.Txs...)
+	}
 	return p.NormalizeTxs(srcTxs), nil
 }
 
