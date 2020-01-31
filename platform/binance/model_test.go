@@ -3,6 +3,7 @@ package binance
 import (
 	"encoding/json"
 	"github.com/stretchr/testify/assert"
+	"sort"
 	"testing"
 	"time"
 )
@@ -212,12 +213,12 @@ var (
 	}
 	subTxTokenDst = SubTx{
 		Hash:     "C29D822EFBC0C91656D1C5870BA55922F3A72A25BC8415B32D1D1AD0C85142F5",
-		Height:   63591484,
+		Height:   63591485,
 		Type:     "TRANSFER",
 		Value:    "0.000064",
 		Asset:    "AERGO-46B",
-		FromAddr: "tbnb1qxm48ndhmh7su0r7zgwmwkltuqgly57jdf8yf8",
-		ToAddr:   "tbnb1hnzlaxaks668ptv3r5ptvsx5f6qjtezhezatkt",
+		FromAddr: "bnb1nm4n03x00gw0x6v784jzryyp6wxnjaxswr3xm8",
+		ToAddr:   "bnb1eff4hzx4lfsun3px5walchdy4vek4n0njcdzyn",
 		Fee:      "0.0006",
 	}
 	txDst = Tx{
@@ -232,12 +233,12 @@ var (
 	}
 	txTokenDst = Tx{
 		Hash:        "C29D822EFBC0C91656D1C5870BA55922F3A72A25BC8415B32D1D1AD0C85142F5",
-		BlockHeight: 63591484,
+		BlockHeight: 63591485,
 		Type:        "TRANSFER",
 		Value:       "0.000064",
 		Asset:       "AERGO-46B",
-		FromAddr:    "tbnb1qxm48ndhmh7su0r7zgwmwkltuqgly57jdf8yf8",
-		ToAddr:      "tbnb1hnzlaxaks668ptv3r5ptvsx5f6qjtezhezatkt",
+		FromAddr:    "bnb1nm4n03x00gw0x6v784jzryyp6wxnjaxswr3xm8",
+		ToAddr:      "bnb1eff4hzx4lfsun3px5walchdy4vek4n0njcdzyn",
 		Fee:         "0.0006",
 	}
 )
@@ -251,10 +252,10 @@ func TestSubTx_toTx(t *testing.T) {
 		{"test conversion subTx to Tx", subTxTokenDst,
 			Tx{
 				Hash:        "C29D822EFBC0C91656D1C5870BA55922F3A72A25BC8415B32D1D1AD0C85142F5",
-				BlockHeight: 63591484,
+				BlockHeight: 63591485,
 				Type:        TxTransfer,
-				FromAddr:    "tbnb1qxm48ndhmh7su0r7zgwmwkltuqgly57jdf8yf8",
-				ToAddr:      "tbnb1hnzlaxaks668ptv3r5ptvsx5f6qjtezhezatkt",
+				FromAddr:    "bnb1nm4n03x00gw0x6v784jzryyp6wxnjaxswr3xm8",
+				ToAddr:      "bnb1eff4hzx4lfsun3px5walchdy4vek4n0njcdzyn",
 				Asset:       "AERGO-46B",
 				Fee:         "0.0006",
 				Value:       "0.000064",
@@ -290,6 +291,9 @@ func TestSubTxs_getTxs(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			gotTxs := tt.subTxs.getTxs()
+			sort.Slice(gotTxs, func(i, j int) bool {
+				return gotTxs[i].BlockHeight < gotTxs[j].BlockHeight
+			})
 			assert.Equal(t, tt.wantTxs, gotTxs, "get txs from subTxs failed")
 		})
 	}

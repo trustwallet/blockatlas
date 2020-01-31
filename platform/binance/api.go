@@ -124,6 +124,9 @@ func normalizeTransfer(tx blockatlas.Tx, srcTx Tx, token, address string) (block
 			}
 			txs = append(txs, newTxs...)
 		}
+		if len(txs) == 0 {
+			return txs, false
+		}
 		return txs, true
 	}
 
