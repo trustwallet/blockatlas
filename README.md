@@ -143,7 +143,7 @@ Swagger API docs provided at path `/swagger/index.html`
 
 - Run the Swag in your Go project root folder.
 
-    `$ swag init`
+    `$ swag init -g ./cmd/api/main.go -o ./docs`
 
 ## Metrics
 
