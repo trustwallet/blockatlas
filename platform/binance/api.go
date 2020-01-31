@@ -110,8 +110,10 @@ func (p *Platform) GetTokenTxsByAddress(address string, token string) (blockatla
 }
 
 func normalizeTransfer(tx blockatlas.Tx, srcTx Tx, token, address string) (blockatlas.TxPage, bool) {
+	// Verify if the tx has more them one asset
 	if srcTx.HasChildren == 1 {
 		txs := make(blockatlas.TxPage, 0)
+		// Parse all assets as a transaction
 		for _, subTx := range srcTx.SubTxsDto.SubTxDtoList.getTxs() {
 			if !subTx.containAddress(address) {
 				continue

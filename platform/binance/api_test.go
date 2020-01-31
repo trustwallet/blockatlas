@@ -5,6 +5,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"reflect"
 	"testing"
 )
 
@@ -82,6 +83,90 @@ const (
       "memo": "",
       "source": 0,
       "hasChildren": 0
+}`
+	multipleTx = `
+{
+  "txHash": "0C954A46D5AE90EBF9CB7E6F2EAC0E7C3E8DA2DA94B868962164A3AF9D54BEE8",
+  "blockHeight": 64374278,
+  "txType": "TRANSFER",
+  "timeStamp": 1580128370826,
+  "txFee": 0.0006,
+  "txAge": 222591,
+  "code": 0,
+  "log": "Msg 0: ",
+  "confirmBlocks": 553829,
+  "memo": "",
+  "source": 0,
+  "sequence": 154231,
+  "hasChildren": 1,
+  "subTxsDto": {
+    "totalNum": 2,
+    "pageSize": 15,
+    "subTxDtoList": [
+      {
+        "hash": "0C954A46D5AE90EBF9CB7E6F2EAC0E7C3E8DA2DA94B868962164A3AF9D54BEE8",
+        "height": 64374278,
+        "type": "TRANSFER",
+        "value": 3269,
+        "asset": "AERGO-46B",
+        "fromAddr": "bnb1nm4n03x00gw0x6v784jzryyp6wxnjaxswr3xm8",
+        "toAddr": "bnb1eff4hzx4lfsun3px5walchdy4vek4n0njcdzyn",
+        "fee": 0.0006
+      },
+      {
+        "hash": "0C954A46D5AE90EBF9CB7E6F2EAC0E7C3E8DA2DA94B868962164A3AF9D54BEE8",
+        "height": 64374278,
+        "type": "TRANSFER",
+        "value": 1,
+        "asset": "BNB",
+        "fromAddr": "bnb1nm4n03x00gw0x6v784jzryyp6wxnjaxswr3xm8",
+        "toAddr": "bnb1eff4hzx4lfsun3px5walchdy4vek4n0njcdzyn",
+        "fee": null
+      }
+    ]
+  }
+}`
+	multipleTwiceTx = `
+{
+  "txHash": "C29D822EFBC0C91656D1C5870BA55922F3A72A25BC8415B32D1D1AD0C85142F5",
+  "blockHeight": 63591484,
+  "txType": "TRANSFER",
+  "timeStamp": 1580421001269,
+  "txFee": 0.0006,
+  "txAge": 18773,
+  "code": 0,
+  "log": "Msg 0: ",
+  "confirmBlocks": 38965,
+  "memo": "Trust Wallet Redeem",
+  "source": 0,
+  "sequence": 33,
+  "hasChildren": 1,
+  "subTxsDto": {
+    "totalNum": 2,
+    "pageSize": 15,
+    "subTxDtoList": [
+      {
+        "hash": "C29D822EFBC0C91656D1C5870BA55922F3A72A25BC8415B32D1D1AD0C85142F5",
+        "height": 63591484,
+        "type": "TRANSFER",
+        "value": 1e-8,
+        "asset": "BNB",
+        "fromAddr": "tbnb1qxm48ndhmh7su0r7zgwmwkltuqgly57jdf8yf8",
+        "toAddr": "tbnb1hnzlaxaks668ptv3r5ptvsx5f6qjtezhezatkt",
+        "fee": 0.0006
+      },
+      {
+        "hash": "C29D822EFBC0C91656D1C5870BA55922F3A72A25BC8415B32D1D1AD0C85142F5",
+        "height": 63591484,
+        "type": "TRANSFER",
+        "value": 1e-8,
+        "asset": "BNB",
+        "fromAddr": "tbnb1qxm48ndhmh7su0r7zgwmwkltuqgly57jdf8yf8",
+        "toAddr": "tbnb1hnzlaxaks668ptv3r5ptvsx5f6qjtezhezatkt",
+        "fee": null
+      }
+    ]
+  }
 }`
 )
 
@@ -170,6 +255,40 @@ var (
 			Decimals: 8,
 		},
 	}
+	multipleTxDst = blockatlas.Tx{
+		ID:     "0C954A46D5AE90EBF9CB7E6F2EAC0E7C3E8DA2DA94B868962164A3AF9D54BEE8",
+		Coin:   coin.BNB,
+		From:   "bnb1nm4n03x00gw0x6v784jzryyp6wxnjaxswr3xm8",
+		To:     "bnb1eff4hzx4lfsun3px5walchdy4vek4n0njcdzyn",
+		Fee:    "60000",
+		Date:   1580128370,
+		Block:  64374278,
+		Status: blockatlas.StatusCompleted,
+		Meta: blockatlas.NativeTokenTransfer{
+			From:     "bnb1nm4n03x00gw0x6v784jzryyp6wxnjaxswr3xm8",
+			To:       "bnb1eff4hzx4lfsun3px5walchdy4vek4n0njcdzyn",
+			TokenID:  "AERGO-46B",
+			Symbol:   "AERGO",
+			Value:    "326900000000",
+			Decimals: 8,
+		},
+	}
+	multipleTwiceTxDst = blockatlas.Tx{
+		ID:     "C29D822EFBC0C91656D1C5870BA55922F3A72A25BC8415B32D1D1AD0C85142F5",
+		Coin:   coin.BNB,
+		From:   "tbnb1qxm48ndhmh7su0r7zgwmwkltuqgly57jdf8yf8",
+		To:     "tbnb1hnzlaxaks668ptv3r5ptvsx5f6qjtezhezatkt",
+		Fee:    "60000",
+		Date:   1580421001,
+		Block:  63591484,
+		Status: blockatlas.StatusCompleted,
+		Memo:   "Trust Wallet Redeem",
+		Meta: blockatlas.Transfer{
+			Value:    "2",
+			Decimals: 8,
+			Symbol:   "BNB",
+		},
+	}
 	//TODO: temp test dst
 	metaFreeCancelOrdeTransferDst = blockatlas.Tx{
 		ID:     "F48DE755170C10F4A4C0E6836A708C33EEF9A7144800F25187D5F2349FD15A34",
@@ -205,6 +324,20 @@ func TestNormalizeTx(t *testing.T) {
 			apiResponse: tokenTransferTransaction,
 			expected:    tokenTransferDst,
 			token:       "YLC-D8B",
+			wantError:   false,
+		},
+		{
+			name:        "multiple addresses token transfer",
+			apiResponse: multipleTx,
+			expected:    multipleTxDst,
+			token:       "AERGO-46B",
+			wantError:   false,
+		},
+		{
+			name:        "multiple addresses with two transfers",
+			apiResponse: multipleTwiceTx,
+			expected:    multipleTwiceTxDst,
+			token:       "BNB",
 			wantError:   false,
 		},
 		{
@@ -248,13 +381,13 @@ func TestNormalizeTx(t *testing.T) {
 			var srcTx Tx
 			err := json.Unmarshal([]byte(testTxInstance.apiResponse), &srcTx)
 			assert.Nil(t, err)
-			tx, ok := NormalizeTx(&srcTx, testTxInstance.token)
+			tx, ok := NormalizeTx(srcTx, testTxInstance.token, "")
 			if testTxInstance.wantError {
 				assert.False(t, ok, "transfer: tx could be normalized")
 				return
 			}
 			assert.True(t, ok, "transfer: tx could not be normalized")
-			assert.Equal(t, testTxInstance.expected, tx, "transfer: tx don't equal")
+			assert.Equal(t, blockatlas.TxPage{testTxInstance.expected}, tx, "transfer: tx don't equal")
 		})
 	}
 }
@@ -384,7 +517,7 @@ func TestNormalizeTxs(t *testing.T) {
 			var srcTxs []Tx
 			err := json.Unmarshal([]byte(testTxsInstance.apiResponse), &srcTxs)
 			assert.Nil(t, err)
-			txs := NormalizeTxs(srcTxs, testTxsInstance.token)
+			txs := NormalizeTxs(srcTxs, testTxsInstance.token, "")
 			assert.Equal(t, testTxsInstance.expected, txs, "transfer: tx don't equal")
 		})
 	}
@@ -538,4 +671,32 @@ func TestDecimalPlaces(t *testing.T) {
 func TestTokenSymbol(t *testing.T) {
 	assert.Equal(t, "UGAS", TokenSymbol("UGAS"))
 	assert.Equal(t, "UGAS", TokenSymbol("UGAS-B0C"))
+}
+
+func Test_normalizeTransfer(t *testing.T) {
+	type args struct {
+		tx      blockatlas.Tx
+		srcTx   Tx
+		token   string
+		address string
+	}
+	tests := []struct {
+		name  string
+		args  args
+		want  blockatlas.TxPage
+		want1 bool
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, got1 := normalizeTransfer(tt.args.tx, tt.args.srcTx, tt.args.token, tt.args.address)
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("normalizeTransfer() got = %v, want %v", got, tt.want)
+			}
+			if got1 != tt.want1 {
+				t.Errorf("normalizeTransfer() got1 = %v, want %v", got1, tt.want1)
+			}
+		})
+	}
 }

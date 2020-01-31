@@ -96,15 +96,16 @@ func (subTxs *SubTxs) getTxs() (txs []Tx) {
 			mapTx[key] = subTx.toTx()
 			continue
 		}
-		txValue, err := tx.Value.Int64()
-		if err == nil {
+		txValue, err := tx.Value.Float64()
+		if err != nil {
 			txValue = 0
 		}
-		subTxValue, err := subTx.Value.Int64()
-		if err == nil {
+		subTxValue, err := subTx.Value.Float64()
+		if err != nil {
 			subTxValue = 0
 		}
-		tx.Value = json.Number(strconv.Itoa(int(txValue + subTxValue)))
+		value := strconv.FormatFloat(txValue+subTxValue, 'f', -1, 64)
+		tx.Value = json.Number(value)
 		mapTx[key] = tx
 	}
 	for _, tx := range mapTx {
@@ -115,6 +116,7 @@ func (subTxs *SubTxs) getTxs() (txs []Tx) {
 
 func (subTx *SubTx) toTx() Tx {
 	return Tx{
+		Hash:        subTx.Hash,
 		BlockHeight: subTx.Height,
 		Type:        TxTransfer,
 		FromAddr:    subTx.FromAddr,

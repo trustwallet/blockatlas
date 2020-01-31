@@ -1,6 +1,7 @@
 package binance
 
 import (
+	"encoding/json"
 	"github.com/stretchr/testify/assert"
 	"testing"
 	"time"
@@ -193,6 +194,155 @@ func Test_isZeroBalance(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := tt.balance.isAllZeroBalance(); got != tt.want {
 				t.Errorf("isAllZeroBalance() = %v, want %v, name %v", got, tt.want, tt.name)
+			}
+		})
+	}
+}
+
+var (
+	subTxDst = SubTx{
+		Hash:     "C29D822EFBC0C91656D1C5870BA55922F3A72A25BC8415B32D1D1AD0C85142F5",
+		Height:   63591484,
+		Type:     "TRANSFER",
+		Value:    "0.00000001",
+		Asset:    "BNB",
+		FromAddr: "bnb1nm4n03x00gw0x6v784jzryyp6wxnjaxswr3xm8",
+		ToAddr:   "bnb1eff4hzx4lfsun3px5walchdy4vek4n0njcdzyn",
+		Fee:      "0.0006",
+	}
+	subTxTokenDst = SubTx{
+		Hash:     "C29D822EFBC0C91656D1C5870BA55922F3A72A25BC8415B32D1D1AD0C85142F5",
+		Height:   63591484,
+		Type:     "TRANSFER",
+		Value:    "0.000064",
+		Asset:    "AERGO-46B",
+		FromAddr: "tbnb1qxm48ndhmh7su0r7zgwmwkltuqgly57jdf8yf8",
+		ToAddr:   "tbnb1hnzlaxaks668ptv3r5ptvsx5f6qjtezhezatkt",
+		Fee:      "0.0006",
+	}
+	txDst = Tx{
+		Hash:        "C29D822EFBC0C91656D1C5870BA55922F3A72A25BC8415B32D1D1AD0C85142F5",
+		BlockHeight: 63591484,
+		Type:        "TRANSFER",
+		Value:       "0.00000001",
+		Asset:       "BNB",
+		FromAddr:    "bnb1nm4n03x00gw0x6v784jzryyp6wxnjaxswr3xm8",
+		ToAddr:      "bnb1eff4hzx4lfsun3px5walchdy4vek4n0njcdzyn",
+		Fee:         "0.0006",
+	}
+	txTokenDst = Tx{
+		Hash:        "C29D822EFBC0C91656D1C5870BA55922F3A72A25BC8415B32D1D1AD0C85142F5",
+		BlockHeight: 63591484,
+		Type:        "TRANSFER",
+		Value:       "0.000064",
+		Asset:       "AERGO-46B",
+		FromAddr:    "tbnb1qxm48ndhmh7su0r7zgwmwkltuqgly57jdf8yf8",
+		ToAddr:      "tbnb1hnzlaxaks668ptv3r5ptvsx5f6qjtezhezatkt",
+		Fee:         "0.0006",
+	}
+)
+
+func TestSubTx_toTx(t *testing.T) {
+	tests := []struct {
+		name  string
+		subTx SubTx
+		want  Tx
+	}{
+		{"test conversion subTx to Tx", subTxTokenDst,
+			Tx{
+				Hash:        "C29D822EFBC0C91656D1C5870BA55922F3A72A25BC8415B32D1D1AD0C85142F5",
+				BlockHeight: 63591484,
+				Type:        TxTransfer,
+				FromAddr:    "tbnb1qxm48ndhmh7su0r7zgwmwkltuqgly57jdf8yf8",
+				ToAddr:      "tbnb1hnzlaxaks668ptv3r5ptvsx5f6qjtezhezatkt",
+				Asset:       "AERGO-46B",
+				Fee:         "0.0006",
+				Value:       "0.000064",
+				SubTxsDto:   SubTxsDto{},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := tt.subTx.toTx()
+			assert.Equal(t, tt.want, got, "conversion failed")
+		})
+	}
+}
+
+func TestSubTxs_getTxs(t *testing.T) {
+	txDuplicatedTokenDst := txTokenDst
+	txDuplicatedTokenDst.Value = "0.000128"
+	txDuplicatedDst := txDst
+	txDuplicatedDst.Value = "0.00000002"
+	tests := []struct {
+		name    string
+		subTxs  SubTxs
+		wantTxs []Tx
+	}{
+		{"test empty", SubTxs{}, nil},
+		{"test subTx transfer", SubTxs{subTxDst}, []Tx{txDst}},
+		{"test subTx token transfer", SubTxs{subTxTokenDst}, []Tx{txTokenDst}},
+		{"test subTx and token transfer", SubTxs{subTxDst, subTxTokenDst}, []Tx{txDst, txTokenDst}},
+		{"test duplicate subTx token transfer", SubTxs{subTxTokenDst, subTxTokenDst}, []Tx{txDuplicatedTokenDst}},
+		{"test duplicate subTx", SubTxs{subTxDst, subTxDst}, []Tx{txDuplicatedDst}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			gotTxs := tt.subTxs.getTxs()
+			assert.Equal(t, tt.wantTxs, gotTxs, "get txs from subTxs failed")
+		})
+	}
+}
+
+func TestTx_containAddress(t *testing.T) {
+	type fields struct {
+		FromAddr string
+		ToAddr   string
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		address string
+		want    bool
+	}{
+		{"test from address valid", fields{FromAddr: "bnb1nm4n03x00gw0x6v784jzryyp6wxnjaxswr3xm8", ToAddr: "bnb1eff4hzx4lfsun3px5walchdy4vek4n0njcdzyn"}, "bnb1nm4n03x00gw0x6v784jzryyp6wxnjaxswr3xm8", true},
+		{"test to address valid", fields{FromAddr: "bnb1nm4n03x00gw0x6v784jzryyp6wxnjaxswr3xm8", ToAddr: "bnb1eff4hzx4lfsun3px5walchdy4vek4n0njcdzyn"}, "bnb1eff4hzx4lfsun3px5walchdy4vek4n0njcdzyn", true},
+		{"test no address valid", fields{FromAddr: "bnb1nm4n03x00gw0x6v784jzryyp6wxnjaxswr3xm8", ToAddr: "bnb1eff4hzx4lfsun3px5walchdy4vek4n0njcdzyn"}, "tbnb1qxm48ndhmh7su0r7zgwmwkltuqgly57jdf8yf8", false},
+		{"test empty address", fields{FromAddr: "bnb1nm4n03x00gw0x6v784jzryyp6wxnjaxswr3xm8", ToAddr: "bnb1eff4hzx4lfsun3px5walchdy4vek4n0njcdzyn"}, "", true},
+		{"test empty address without from", fields{FromAddr: "", ToAddr: "bnb1eff4hzx4lfsun3px5walchdy4vek4n0njcdzyn"}, "", true},
+		{"test empty address without to", fields{FromAddr: "bnb1nm4n03x00gw0x6v784jzryyp6wxnjaxswr3xm8", ToAddr: ""}, "", true},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tx := &Tx{
+				FromAddr: tt.fields.FromAddr,
+				ToAddr:   tt.fields.ToAddr,
+			}
+			if got := tx.containAddress(tt.address); got != tt.want {
+				t.Errorf("containAddress() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestTx_getFee(t *testing.T) {
+	tests := []struct {
+		name string
+		fee  json.Number
+		want string
+	}{
+		{"test empty", json.Number(""), "0"},
+		{"test error", json.Number("test"), "0"},
+		{"test float 1", json.Number("444.5"), "44450000000"},
+		{"test float 2", json.Number("0.00000001"), "1"},
+		{"test int", json.Number("3"), "300000000"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tx := &Tx{Fee: tt.fee}
+			if got := tx.getFee(); got != tt.want {
+				t.Errorf("getFee() = %v, want %v", got, tt.want)
 			}
 		})
 	}
