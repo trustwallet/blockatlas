@@ -49,7 +49,7 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 	if err != nil {
 		return nil, err
 	}
-	childTxs, err := p.GetTxChildChan(srcTxs.Txs)
+	childTxs, err := p.getTxChildChan(srcTxs.Txs)
 	if err != nil {
 		return nil, err
 	}
@@ -65,13 +65,14 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 	return p.GetTokenTxsByAddress(address, p.Coin().Symbol)
 }
 
-func (p *Platform) GetTxChildChan(srcTxs []Tx) ([]Tx, error) {
+// getTxChildChan get all child assets from a tx
+func (p *Platform) getTxChildChan(srcTxs []Tx) ([]Tx, error) {
 	txs := make([]Tx, 0)
-
 	var wg sync.WaitGroup
 	out := make(chan Tx)
 	for _, srcTx := range srcTxs {
 		if srcTx.HasChildren != 1 {
+			// Return the same transaction if doesn't have a child
 			txs = append(txs, srcTx)
 			continue
 		}
@@ -80,6 +81,7 @@ func (p *Platform) GetTxChildChan(srcTxs []Tx) ([]Tx, error) {
 			defer wg.Done()
 			tx, err := p.client.GetTx(srcTx.Hash)
 			if err != nil {
+				// Return the same transaction if an error occurs
 				out <- srcTx
 				logger.Error("GetTransactionsByBlockChan", err, logger.Params{"hash": srcTx.Hash})
 				return
@@ -102,7 +104,7 @@ func (p *Platform) GetTokenTxsByAddress(address string, token string) (blockatla
 	if err != nil {
 		return nil, err
 	}
-	txs, err := p.GetTxChildChan(srcTxs.Txs)
+	txs, err := p.getTxChildChan(srcTxs.Txs)
 	if err != nil {
 		return nil, err
 	}
@@ -115,9 +117,11 @@ func normalizeTransfer(tx blockatlas.Tx, srcTx Tx, token, address string) (block
 		txs := make(blockatlas.TxPage, 0)
 		// Parse all assets as a transaction
 		for _, subTx := range srcTx.SubTxsDto.SubTxDtoList.getTxs() {
+			// If this is not called from a block observer, only get the user txs/assets
 			if !subTx.containAddress(address) {
 				continue
 			}
+			// Recursive call to normalize the tx
 			newTxs, ok := normalizeTransfer(tx, subTx, token, address)
 			if !ok {
 				continue
@@ -130,6 +134,7 @@ func normalizeTransfer(tx blockatlas.Tx, srcTx Tx, token, address string) (block
 		return txs, true
 	}
 
+	// Verify if this is the same asset we are looking for
 	if len(token) > 0 && srcTx.Asset != token {
 		return blockatlas.TxPage{tx}, false
 	}
