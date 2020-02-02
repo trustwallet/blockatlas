@@ -4,11 +4,13 @@ import (
 	"bytes"
 	"crypto/sha1"
 	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/patrickmn/go-cache"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
+	"github.com/trustwallet/blockatlas/pkg/storage/util"
 	"io/ioutil"
 	"net/http"
 	"sync"
@@ -24,7 +26,7 @@ func init() {
 }
 
 type memCache struct {
-	mutex *sync.Mutex
+	sync.RWMutex
 	cache *cache.Cache
 }
 
@@ -97,15 +99,19 @@ func (w *cachedWriter) WriteString(data string) (n int, err error) {
 }
 
 func (mc *memCache) deleteCache(key string) {
-	mc.mutex.Lock()
-	defer mc.mutex.Unlock()
+	mc.RLock()
+	defer mc.RUnlock()
 	memoryCache.cache.Delete(key)
 }
 
 func (mc *memCache) setCache(k string, x interface{}, d time.Duration) {
-	mc.mutex.Lock()
-	defer mc.mutex.Unlock()
-	memoryCache.cache.Set(k, x, d)
+	b, err := json.Marshal(x)
+	if err != nil {
+		logger.Error(errors.E(err, "client cache cannot marshal cache object").PushToSentry())
+	}
+	mc.RLock()
+	defer mc.RUnlock()
+	memoryCache.cache.Set(k, b, d)
 }
 
 func (mc *memCache) getCache(key string) (*cacheResponse, error) {
@@ -113,11 +119,16 @@ func (mc *memCache) getCache(key string) (*cacheResponse, error) {
 	if !ok {
 		return nil, fmt.Errorf("gin-cache: invalid cache key %s", key)
 	}
-	tempCache, ok := c.(cacheResponse)
+	r, ok := c.([]byte)
 	if !ok {
-		return nil, fmt.Errorf("gin-cache: invalid cache object %s", key)
+		return nil, errors.E("validator cache: failed to cast cache to bytes")
 	}
-	return &tempCache, nil
+	var result *cacheResponse
+	err := json.Unmarshal(r, result)
+	if err != nil {
+		return nil, errors.E(err, util.ErrNotFound).PushToSentry()
+	}
+	return result, nil
 }
 
 func generateKey(c *gin.Context) string {
