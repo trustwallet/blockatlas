@@ -3,6 +3,7 @@ package api
 import (
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"net/http"
+	"math"
 	"strconv"
 	"strings"
 
@@ -126,18 +127,14 @@ func handleLookup(name string, coins []uint64) (result []blockatlas.Resolved, er
 
 // Obtain tld from then name, e.g. ".ens" from "nick.ens"
 func getTLD(name string) (tld string, ok bool) {
-	if strings.Index(name, ".") >= 0 {
-		// xxx.tld format
-		ss := strings.Split(name, ".")
-		tld := "." + ss[len(ss)-1]
-		return tld, true
+	// find last separator
+	lastSeparatorIdx := int(math.Max(
+		float64(strings.LastIndex(name, ".")),
+		float64(strings.LastIndex(name, "@"))))
+	if (lastSeparatorIdx <= -1 || lastSeparatorIdx >= len(name)-1) {
+		// no separator inside string
+		return "", false
 	}
-	if strings.Index(name, "@") >= 0 {
-		// xxx@tld format
-		ss := strings.Split(name, "@")
-		tld := "@" + ss[len(ss)-1]
-		return tld, true
-	}
-	// none matched
-	return "", false
+	// return tail including separator
+	return name[lastSeparatorIdx:], true
 }
