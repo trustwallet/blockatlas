@@ -43,6 +43,11 @@ func (c *Client) GetTxsOfAddress(address string, token string) (*TxPage, error) 
 	return stx, err
 }
 
+func (c *Client) GetTx(hash string) (stx Tx, err error) {
+	err = c.Get(&stx, "tx", url.Values{"txHash": {hash}})
+	return
+}
+
 func getHTTPError(res *http.Response, desc string) error {
 	switch res.StatusCode {
 	case http.StatusBadRequest:
