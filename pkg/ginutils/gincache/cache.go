@@ -108,6 +108,7 @@ func (mc *memCache) setCache(k string, x interface{}, d time.Duration) {
 	b, err := json.Marshal(x)
 	if err != nil {
 		logger.Error(errors.E(err, "client cache cannot marshal cache object").PushToSentry())
+		return
 	}
 	mc.RLock()
 	defer mc.RUnlock()
@@ -123,12 +124,12 @@ func (mc *memCache) getCache(key string) (*cacheResponse, error) {
 	if !ok {
 		return nil, errors.E("validator cache: failed to cast cache to bytes")
 	}
-	var result *cacheResponse
-	err := json.Unmarshal(r, result)
+	var result cacheResponse
+	err := json.Unmarshal(r, &result)
 	if err != nil {
 		return nil, errors.E(err, util.ErrNotFound).PushToSentry()
 	}
-	return result, nil
+	return &result, nil
 }
 
 func generateKey(c *gin.Context) string {

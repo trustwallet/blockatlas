@@ -69,6 +69,7 @@ func (mc *memCache) setCache(key string, value interface{}, duration time.Durati
 	b, err := json.Marshal(value)
 	if err != nil {
 		logger.Error(errors.E(err, "client cache cannot marshal cache object").PushToSentry())
+		return
 	}
 	memoryCache.cache.Set(key, b, duration)
 }
