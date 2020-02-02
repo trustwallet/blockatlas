@@ -10,20 +10,26 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/storage/util"
 	"net/url"
 	"strings"
+	"sync"
 	"time"
 )
 
 var (
-	memoryCache *cache.Cache
+	memoryCache *memCache
 )
 
 func init() {
-	memoryCache = cache.New(5*time.Minute, 5*time.Minute)
+	memoryCache = &memCache{cache: cache.New(5*time.Minute, 5*time.Minute)}
+}
+
+type memCache struct {
+	sync.RWMutex
+	cache *cache.Cache
 }
 
 func (r *Request) PostWithCache(result interface{}, path string, body interface{}, cache time.Duration) error {
 	key := r.generateKey(path, nil, body)
-	err := getCache(key, result)
+	err := memoryCache.getCache(key, result)
 	if err == nil {
 		return nil
 	}
@@ -32,13 +38,13 @@ func (r *Request) PostWithCache(result interface{}, path string, body interface{
 	if err != nil {
 		return err
 	}
-	setCache(key, result, cache)
+	memoryCache.setCache(key, result, cache)
 	return err
 }
 
 func (r *Request) GetWithCache(result interface{}, path string, query url.Values, cache time.Duration) error {
 	key := r.generateKey(path, query, nil)
-	err := getCache(key, result)
+	err := memoryCache.getCache(key, result)
 	if err == nil {
 		return nil
 	}
@@ -47,12 +53,29 @@ func (r *Request) GetWithCache(result interface{}, path string, query url.Values
 	if err != nil {
 		return err
 	}
-	setCache(key, result, cache)
+	memoryCache.setCache(key, result, cache)
 	return err
 }
 
-func getCache(key string, value interface{}) error {
-	c, ok := memoryCache.Get(key)
+func (mc *memCache) deleteCache(key string) {
+	mc.RLock()
+	defer mc.RUnlock()
+	memoryCache.cache.Delete(key)
+}
+
+func (mc *memCache) setCache(key string, value interface{}, duration time.Duration) {
+	mc.RLock()
+	defer mc.RUnlock()
+	b, err := json.Marshal(value)
+	if err != nil {
+		logger.Error(errors.E(err, "client cache cannot marshal cache object").PushToSentry())
+		return
+	}
+	memoryCache.cache.Set(key, b, duration)
+}
+
+func (mc *memCache) getCache(key string, value interface{}) error {
+	c, ok := mc.cache.Get(key)
 	if !ok {
 		return errors.E("validator cache: invalid cache key")
 	}
@@ -67,24 +90,16 @@ func getCache(key string, value interface{}) error {
 	return nil
 }
 
-func setCache(key string, value interface{}, duration time.Duration) {
-	b, err := json.Marshal(value)
-	if err != nil {
-		logger.Error(errors.E(err, "client cache cannot marshal cache object").PushToSentry())
-	}
-	memoryCache.Set(key, b, duration)
-}
-
 func (r *Request) generateKey(path string, query url.Values, body interface{}) string {
 	var queryStr = ""
 	if query != nil {
 		queryStr = query.Encode()
 	}
-	url := strings.Join([]string{r.GetBase(path), queryStr}, "?")
+	requestUrl := strings.Join([]string{r.GetBase(path), queryStr}, "?")
 	var b []byte
 	if body != nil {
 		b, _ = json.Marshal(body)
 	}
-	hash := sha1.Sum(append([]byte(url), b...))
+	hash := sha1.Sum(append([]byte(requestUrl), b...))
 	return base64.URLEncoding.EncodeToString(hash[:])
 }
