@@ -3,6 +3,7 @@ package ontology
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/magiconair/properties/assert"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"testing"
@@ -144,22 +145,23 @@ func TestNormalize(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		var sourceTx Tx
+		var (
+			sourceTx Tx
+			ok       bool
+		)
 
 		tErr := json.Unmarshal([]byte(test.Transaction), &sourceTx)
 		if tErr != nil {
 			t.Fatal("Ontology: Can't unmarshal transaction", tErr)
 		}
 
-		var tx blockatlas.Tx
-		var ok bool
-		tx, ok = Normalize(&sourceTx, test.AssetName)
+		tx, ok := Normalize(sourceTx, test.AssetName)
 
 		if !ok {
 			t.Fatal("Ontology: Can't normalize transaction")
 		}
 
-		actual, err := json.Marshal(&tx)
+		actual, err := json.Marshal(tx)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -175,4 +177,143 @@ func TestNormalize(t *testing.T) {
 			t.Error("Transactions not equal")
 		}
 	}
+}
+
+var (
+	ontBlockResult = BlockResult{
+		Error: 0,
+		Result: Block{
+			Height: 7707834,
+			TxnList: []Tx{
+				{
+					TxnHash:     "266d9d7282a5601bf6cb8fc5368a76a2aa54f45731a063a699a692487bcbd0cb",
+					ConfirmFlag: 1,
+					TxnTime:     1580481541,
+					Height:      7707834,
+				},
+				{
+					TxnHash:     "2935268c5715f1f2015ba828681c39399dedbe7a24ed628ef7b85d9aac8045fd",
+					ConfirmFlag: 1,
+					TxnTime:     1580481541,
+					Height:      7707834,
+				},
+				{
+					TxnHash:     "40976edc1306b0e5f55b90c8d3ca248bb544e5ebbadb02be6146ba0a0de402c3",
+					ConfirmFlag: 1,
+					TxnTime:     1580481541,
+					Height:      7707834,
+				},
+			},
+			Hash: "a5f3ee1a102df7196bb1e262a05435f260392fae6be676ae2c0a6147f8ecf94c",
+		},
+	}
+)
+
+var (
+	ontTxResp1 = TxResponse{
+		Code: 0,
+		Msg:  "SUCCESS",
+		Result: TxV2{
+			Hash:        "266d9d7282a5601bf6cb8fc5368a76a2aa54f45731a063a699a692487bcbd0cb",
+			Type:        209,
+			Time:        1580481541,
+			BlockHeight: 7707834,
+			Fee:         "0.01",
+			Description: "transfer",
+			BlockIndex:  2,
+			ConfirmFlag: 1,
+			EventType:   3,
+			Details: TransactionDetails{
+				Transfers: []TransferDetails{
+					{
+						Amount:      "51000",
+						AssetName:   "ong",
+						FromAddress: "AbEeCHUWpzQaxUN7G1a83N3P2XtVLuMLaE",
+						ToAddress:   "ASLbwuar3ZTbUbLPnCgjGUw2WHhMfvJJtx",
+					},
+					{
+						Amount:      "0.01",
+						AssetName:   "ong",
+						FromAddress: "ANKXUWXy6XrhQvqbjhKJPH9AnLa2CuEMRK",
+						ToAddress:   "AFmseVrdL9f9oyCzZefL9tG6UbviEH9ugK",
+					},
+				},
+			},
+		},
+	}
+
+	ontTxResp2 = TxResponse{
+		Code: 0,
+		Msg:  "SUCCESS",
+		Result: TxV2{
+			Hash:        "2935268c5715f1f2015ba828681c39399dedbe7a24ed628ef7b85d9aac8045fd",
+			Type:        209,
+			Time:        1580481541,
+			BlockHeight: 7707834,
+			Fee:         "0.01",
+			Description: "transfer",
+			BlockIndex:  3,
+			ConfirmFlag: 1,
+			EventType:   3,
+			Details: TransactionDetails{
+				Transfers: []TransferDetails{
+					{
+						Amount:      "113.2",
+						AssetName:   "ong",
+						FromAddress: "ANdrA47zDXUu8MCkMdD3FYPmpSNGYeAvKz",
+						ToAddress:   "ASLbwuar3ZTbUbLPnCgjGUw2WHhMfvJJtx",
+					},
+					{
+						Amount:      "0.01",
+						AssetName:   "ong",
+						FromAddress: "ANKXUWXy6XrhQvqbjhKJPH9AnLa2CuEMRK",
+						ToAddress:   "AFmseVrdL9f9oyCzZefL9tG6UbviEH9ugK",
+					},
+				},
+			},
+		},
+	}
+
+	ontTxResp3 = TxResponse{
+		Code: 0,
+		Msg:  "SUCCESS",
+		Result: TxV2{
+			Hash:        "40976edc1306b0e5f55b90c8d3ca248bb544e5ebbadb02be6146ba0a0de402c3",
+			Type:        209,
+			Time:        1580481541,
+			BlockHeight: 7707834,
+			Fee:         "0.01",
+			Description: "transfer",
+			BlockIndex:  1,
+			ConfirmFlag: 1,
+			EventType:   3,
+			Details: TransactionDetails{
+				Transfers: []TransferDetails{
+					{
+						Amount:      "10949",
+						AssetName:   "ong",
+						FromAddress: "Abg2gs6pfpQu82jXbm8EYGiipRBvf9ktVS",
+						ToAddress:   "ASLbwuar3ZTbUbLPnCgjGUw2WHhMfvJJtx",
+					}, {
+						Amount:      "0.01",
+						AssetName:   "ong",
+						FromAddress: "ANKXUWXy6XrhQvqbjhKJPH9AnLa2CuEMRK",
+						ToAddress:   "AFmseVrdL9f9oyCzZefL9tG6UbviEH9ugK",
+					},
+				},
+			},
+		},
+	}
+)
+
+func TestNormalizeBlock(t *testing.T) {
+	block := normalizeBlock(ontBlockResult, []TxV2{ontTxResp1.Result, ontTxResp2.Result, ontTxResp3.Result})
+	got, err := json.Marshal(block)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	want := `{"number":7707834,"id":"a5f3ee1a102df7196bb1e262a05435f260392fae6be676ae2c0a6147f8ecf94c","txs":[{"id":"266d9d7282a5601bf6cb8fc5368a76a2aa54f45731a063a699a692487bcbd0cb","coin":1024,"from":"AbEeCHUWpzQaxUN7G1a83N3P2XtVLuMLaE","to":"ASLbwuar3ZTbUbLPnCgjGUw2WHhMfvJJtx","fee":"10000000","date":1580481541,"block":7707834,"status":"completed","type":"native_token_transfer","memo":"","metadata":{"name":"Ontology Gas","symbol":"ONG","token_id":"ong","decimals":9,"value":"51000000000000","from":"AbEeCHUWpzQaxUN7G1a83N3P2XtVLuMLaE","to":"ASLbwuar3ZTbUbLPnCgjGUw2WHhMfvJJtx"}},{"id":"2935268c5715f1f2015ba828681c39399dedbe7a24ed628ef7b85d9aac8045fd","coin":1024,"from":"ANdrA47zDXUu8MCkMdD3FYPmpSNGYeAvKz","to":"ASLbwuar3ZTbUbLPnCgjGUw2WHhMfvJJtx","fee":"10000000","date":1580481541,"block":7707834,"status":"completed","type":"native_token_transfer","memo":"","metadata":{"name":"Ontology Gas","symbol":"ONG","token_id":"ong","decimals":9,"value":"113200000000","from":"ANdrA47zDXUu8MCkMdD3FYPmpSNGYeAvKz","to":"ASLbwuar3ZTbUbLPnCgjGUw2WHhMfvJJtx"}},{"id":"40976edc1306b0e5f55b90c8d3ca248bb544e5ebbadb02be6146ba0a0de402c3","coin":1024,"from":"Abg2gs6pfpQu82jXbm8EYGiipRBvf9ktVS","to":"ASLbwuar3ZTbUbLPnCgjGUw2WHhMfvJJtx","fee":"10000000","date":1580481541,"block":7707834,"status":"completed","type":"native_token_transfer","memo":"","metadata":{"name":"Ontology Gas","symbol":"ONG","token_id":"ong","decimals":9,"value":"10949000000000","from":"Abg2gs6pfpQu82jXbm8EYGiipRBvf9ktVS","to":"ASLbwuar3ZTbUbLPnCgjGUw2WHhMfvJJtx"}}]}`
+
+	assert.Equal(t, string(got), want)
 }
