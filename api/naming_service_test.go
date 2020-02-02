@@ -18,7 +18,7 @@ func Test_getTLD(t *testing.T) {
 	checkGetTLD(t, "btc.zil", ".zil", true)
 	checkGetTLD(t, "btc.crypto", ".crypto", true)
 	checkGetTLD(t, "nick@fiotestnet", "@fiotestnet", true)
-	checkGetTLD(t, "a", "", false) // no tld
+	checkGetTLD(t, "a", "", false)  // no tld
 	checkGetTLD(t, "a.", "", false) // empty tld
 	checkGetTLD(t, "a@b.c", ".c", true)
 	checkGetTLD(t, "a.b@c", "@c", true)

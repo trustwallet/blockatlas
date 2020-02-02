@@ -2,8 +2,8 @@ package api
 
 import (
 	"github.com/trustwallet/blockatlas/pkg/errors"
-	"net/http"
 	"math"
+	"net/http"
 	"strconv"
 	"strings"
 
@@ -131,7 +131,7 @@ func getTLD(name string) (tld string, ok bool) {
 	lastSeparatorIdx := int(math.Max(
 		float64(strings.LastIndex(name, ".")),
 		float64(strings.LastIndex(name, "@"))))
-	if (lastSeparatorIdx <= -1 || lastSeparatorIdx >= len(name)-1) {
+	if lastSeparatorIdx <= -1 || lastSeparatorIdx >= len(name)-1 {
 		// no separator inside string
 		return "", false
 	}

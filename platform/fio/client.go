@@ -16,7 +16,7 @@ func (c *Client) lookupPubAddress(name string, coinSymbol string) (address strin
 		return "", err
 	}
 	if res.Message != "" {
-		return "", errors.E("Error lokking up FIO name: " + res.Message, errors.Params{"name": name, "coinSymbol": coinSymbol})
+		return "", errors.E("Error lokking up FIO name: "+res.Message, errors.Params{"name": name, "coinSymbol": coinSymbol})
 	}
 	return res.PublicAddress, nil
 }

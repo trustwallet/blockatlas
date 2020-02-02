@@ -36,6 +36,3 @@ func (p *Platform) Lookup(coins []uint64, name string) ([]blockatlas.Resolved, e
 
 	return result, nil
 }
-
-
-
