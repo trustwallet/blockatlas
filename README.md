@@ -65,11 +65,6 @@ go build -o syncmarkets-bin cmd/syncmarkets/main.go && ./syncmarkets-bin -c conf
 
 ### Docker
 
-
-From Docker Hub:
-
-`docker run -it -p 8420:8420 trustwallet/blockatlas`
-
 Build and run from local Dockerfile:
 
 You should change `config.yml`:
