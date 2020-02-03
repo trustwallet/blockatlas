@@ -36,7 +36,8 @@ func InitCharts() *Charts {
 func (c *Charts) GetChartData(coin uint, token string, currency string, timeStart int64, maxItems int) (blockatlas.ChartData, error) {
 	chartsData := blockatlas.ChartData{}
 	timeStart = numbers.Max(timeStart, minUnixTime)
-	for _, c := range c.chartProviders {
+	for i := 0; i < len(c.chartProviders); i++ {
+		c := c.chartProviders[i]
 		charts, err := c.GetChartData(coin, token, currency, timeStart)
 		if err != nil {
 			continue
@@ -49,7 +50,8 @@ func (c *Charts) GetChartData(coin uint, token string, currency string, timeStar
 
 func (c *Charts) GetCoinInfo(coin uint, token string, currency string) (blockatlas.ChartCoinInfo, error) {
 	coinInfoData := blockatlas.ChartCoinInfo{}
-	for _, c := range c.chartProviders {
+	for i := 0; i < len(c.chartProviders); i++ {
+		c := c.chartProviders[i]
 		info, err := c.GetCoinData(coin, token, currency)
 		if err != nil {
 			continue
