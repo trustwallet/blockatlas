@@ -4,67 +4,52 @@ import (
 	"fmt"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
+	"net/url"
 )
 
 type Client struct {
 	blockatlas.Request
 }
 
-// Explorer API max returned transactions per page
-const (
-	TxPerPage                    = 20
-	requestOnlyLatestBlockAmount = 1
-)
-
-func (c *Client) GetTxsOfAddress(address, assetName string) (*TxPage, error) {
-	url := fmt.Sprintf("api/v1/explorer/address/%s/%s/%d/1", address, assetName, TxPerPage)
-	var txPage TxPage
-	err := c.Get(&txPage, url, nil)
-	if err != nil {
-		return nil, err
+func (c *Client) GetTxsOfAddress(address string) (txPage TxsResult, err error) {
+	query := url.Values{"page_size": {"20"}, "page_number": {"1"}}
+	path := fmt.Sprintf("v2/addresses/%s/transactions", address)
+	err = c.Get(&txPage, path, query)
+	if err != nil || txPage.Msg != MsgSuccess {
+		return txPage, errors.E(err, "explorer client GetTxsOfAddress", errors.Params{"platform": "ONT"})
 	}
-	return &txPage, nil
+	return
 }
 
-func (c *Client) CurrentBlockNumber() (*BlockResults, error) {
-	url := fmt.Sprintf("api/v1/explorer/blocklist/%d", requestOnlyLatestBlockAmount)
-	var response BlockResults
-	err := c.Get(&response, url, nil)
-	if err != nil {
-		return nil, err
+func (c *Client) CurrentBlockNumber() (blocks BlockResult, err error) {
+	query := url.Values{"page_size": {"1"}, "page_number": {"1"}}
+	path := fmt.Sprintf("v2/blocks")
+	err = c.Get(&blocks, path, query)
+	if err != nil || blocks.Msg != MsgSuccess {
+		return blocks, errors.E(err, "explorer client CurrentBlockNumber", errors.Params{"platform": "ONT"})
 	}
-	if response.Error != 0 {
-		return nil, errors.E("explorer client CurrentBlockNumber", errors.Params{"platform": "ONT"})
-	}
-	return &response, nil
+	return
 }
 
-func (c *Client) GetBlockByNumber(num int64) (*BlockResult, error) {
-	url := fmt.Sprintf("api/v1/explorer/block/%d", num)
-	var block BlockResult
-	err := c.Get(&block, url, nil)
-	if err != nil {
-		return nil, err
+func (c *Client) GetBlockByNumber(num int64) (block BlockResults, err error) {
+	path := fmt.Sprintf("v2/blocks/%d", num)
+	err = c.Get(&block, path, nil)
+	if err != nil || block.Msg != MsgSuccess {
+		return block, errors.E(err, "explorer client GetBlockByNumber", errors.Params{"platform": "ONT"})
 	}
-	if block.Error != 0 {
-		return nil, errors.E("explorer client GetBlockByNumber", errors.Params{"platform": "ONT"})
-	}
-	return &block, nil
+	return
 }
 
-func (c *Client) GetTxDetailsByHash(hash string) (*TxV2, error) {
-	url := fmt.Sprintf("v2/transactions/%s", hash)
-	var response TxResponse
-	err := c.Get(&response, url, nil)
-	if err != nil {
-		return nil, err
+func (c *Client) GetTxDetailsByHash(hash string) (Tx, error) {
+	path := fmt.Sprintf("v2/transactions/%s", hash)
+	var response TxResult
+	err := c.Get(&response, path, nil)
+	if err != nil || response.Msg != MsgSuccess {
+		return Tx{}, errors.E(err, "explorer client GetTxDetailsByHash", errors.Params{"platform": "ONT"})
 	}
-	if response.Msg != "SUCCESS" {
-		return nil, errors.E("explorer client GetTxDetailsByHash", errors.Params{"platform": "ONT"})
-	}
-	var ontTxV2 TxV2
+	var ontTxV2 Tx
 	if response.Result.EventType == 3 {
 		ontTxV2 = response.Result
 	}
-	return &ontTxV2, nil
+	return ontTxV2, nil
 }
