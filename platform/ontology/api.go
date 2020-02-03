@@ -93,9 +93,9 @@ func normalizeONG(tx blockatlas.Tx, transfers Transfers) (blockatlas.Tx, bool) {
 	to := transfer.ToAddress
 	tx.From = from
 	tx.To = to
-	tx.Type = blockatlas.TxNativeTokenTransfer
 	value := numbers.DecimalExp(transfer.Amount, ONGDecimals)
 	if transfers.isClaimReward() {
+		tx.Type = blockatlas.TxAnyAction
 		tx.Meta = blockatlas.AnyAction{
 			Coin:     coin.Ontology().ID,
 			Name:     "Ontology Gas",
@@ -108,6 +108,7 @@ func normalizeONG(tx blockatlas.Tx, transfers Transfers) (blockatlas.Tx, bool) {
 		}
 		return tx, true
 	}
+	tx.Type = blockatlas.TxNativeTokenTransfer
 	tx.Meta = blockatlas.NativeTokenTransfer{
 		Name:     "Ontology Gas",
 		Symbol:   "ONG",

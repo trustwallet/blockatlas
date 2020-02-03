@@ -147,7 +147,7 @@ var (
 		To:     "ARFXGXSmgFT2h9EiS4D5fen127Lzi48Eij",
 		Fee:    "10000000",
 		Date:   1579699532,
-		Type:   blockatlas.TxNativeTokenTransfer,
+		Type:   blockatlas.TxAnyAction,
 		Status: blockatlas.StatusCompleted,
 		Block:  7644328,
 		Meta: blockatlas.AnyAction{
@@ -191,36 +191,6 @@ func TestNormalize(t *testing.T) {
 		})
 	}
 }
-
-var (
-	ontBlockResult = BlockResult{
-		BaseResponse: BaseResponse{Code: 0},
-		Result: Block{
-			Height: 7707834,
-			Txs: []Tx{
-				{
-					Hash:        "266d9d7282a5601bf6cb8fc5368a76a2aa54f45731a063a699a692487bcbd0cb",
-					ConfirmFlag: 1,
-					Time:        1580481541,
-					Height:      7707834,
-				},
-				{
-					Hash:        "2935268c5715f1f2015ba828681c39399dedbe7a24ed628ef7b85d9aac8045fd",
-					ConfirmFlag: 1,
-					Time:        1580481541,
-					Height:      7707834,
-				},
-				{
-					Hash:        "40976edc1306b0e5f55b90c8d3ca248bb544e5ebbadb02be6146ba0a0de402c3",
-					ConfirmFlag: 1,
-					Time:        1580481541,
-					Height:      7707834,
-				},
-			},
-			Hash: "a5f3ee1a102df7196bb1e262a05435f260392fae6be676ae2c0a6147f8ecf94c",
-		},
-	}
-)
 
 var (
 	ontTxResp1 = TxResult{
