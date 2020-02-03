@@ -1,78 +1,74 @@
 package ontology
 
 type AssetType string
+type MsgType string
 type Transfers []Transfer
 
 const (
 	GovernanceContract = "AFmseVrdL9f9oyCzZefL9tG6UbviEH9ugK"
+	ONGDecimals        = 9
+
+	MsgSuccess MsgType = "SUCCESS"
 
 	AssetONT AssetType = "ont"
 	AssetONG AssetType = "ong"
+	AssetAll AssetType = "all"
 )
 
-type TxPage struct {
-	Result Result `json:"Result"`
-}
-
-type Result struct {
-	TxnList []Tx `json:"TxnList"`
-}
-
-type Transfer struct {
-	Amount      string    `json:"Amount"`
-	FromAddress string    `json:"FromAddress"`
-	ToAddress   string    `json:"ToAddress"`
-	AssetName   AssetType `json:"AssetName"`
-}
-
-type Tx struct {
-	TxnHash      string    `json:"TxnHash"`
-	ConfirmFlag  uint64    `json:"ConfirmFlag"`
-	TxnType      uint64    `json:"TxnType"`
-	TxnTime      int64     `json:"TxnTime"`
-	Height       uint64    `json:"Height"`
-	Fee          string    `json:"Fee"`
-	BlockIndex   uint64    `json:"BlockIndex"`
-	TransferList Transfers `json:"TransferList"`
+type BaseResponse struct {
+	Code int     `json:"code"`
+	Msg  MsgType `json:"msg"`
 }
 
 type BlockResults struct {
-	Error  int     `json:"Error"`
-	Result []Block `json:"Result"`
+	BaseResponse
+	Result []Block `json:"result"`
 }
 
 type BlockResult struct {
-	Error  int   `json:"Error"`
-	Result Block `json:"Result"`
+	BaseResponse
+	Result Block `json:"result"`
+}
+
+type TxsResult struct {
+	BaseResponse
+	Result []Tx `json:"result"`
+}
+
+type TxResult struct {
+	BaseResponse
+	Result Tx `json:"result"`
 }
 
 type Block struct {
-	Height  int64  `json:"Height"`
-	TxnList []Tx   `json:"TxnList"`
-	Hash    string `json:"Hash"`
+	Height int64  `json:"block_height"`
+	Hash   string `json:"block_hash"`
+	Txs    []Tx   `json:"txs"`
 }
 
-type TxResponse struct {
-	Code   int    `json:"code"`
-	Msg    string `json:"msg"`
-	Result TxV2   `json:"Result"`
+type Tx struct {
+	Hash        string    `json:"tx_hash"`
+	ConfirmFlag uint64    `json:"confirm_flag"`
+	Time        int64     `json:"tx_time"`
+	Height      uint64    `json:"block_height"`
+	Fee         string    `json:"fee"`
+	BlockIndex  uint64    `json:"block_index"`
+	EventType   uint64    `json:"event_type,omitempty"`
+	Description string    `json:"description,omitempty"`
+	Details     Detail    `json:"detail,omitempty"`
+	Transfers   Transfers `json:"transfers,omitempty"`
 }
 
-type TxV2 struct {
-	Hash        string             `json:"tx_hash"`
-	Type        int                `json:"tx_type"`
-	Time        int64              `json:"tx_time"`
-	BlockHeight uint64             `json:"block_height"`
-	Fee         string             `json:"fee"`
-	Description string             `json:"description"`
-	BlockIndex  int                `json:"block_index"`
-	ConfirmFlag int                `json:"confirm_flag"`
-	EventType   int                `json:"event_type"`
-	Details     TransactionDetails `json:"detail"`
-}
-
-type TransactionDetails struct {
+type Detail struct {
 	Transfers Transfers `json:"transfers"`
+}
+
+type Transfer struct {
+	Amount      string    `json:"amount"`
+	FromAddress string    `json:"from_address"`
+	ToAddress   string    `json:"to_address"`
+	AssetName   AssetType `json:"asset_name"`
+	Description string    `json:"description,omitempty"`
 }
 
 func (tf *Transfer) isFeeTransfer() bool {
@@ -94,11 +90,19 @@ func (tfs Transfers) hasFeeTransfer() bool {
 	return false
 }
 
-func (tfs Transfers) getTransfer() *Transfer {
+func (tx *Tx) getTransfers() Transfers {
+	return append(tx.Details.Transfers, tx.Transfers...)
+}
+
+func (tfs Transfers) getTransfer(assetType AssetType) *Transfer {
 	for _, tf := range tfs {
-		if !tf.isFeeTransfer() {
-			return &tf
+		if tf.isFeeTransfer() {
+			continue
 		}
+		if assetType != AssetAll && tf.AssetName != assetType {
+			continue
+		}
+		return &tf
 	}
 	return nil
 }

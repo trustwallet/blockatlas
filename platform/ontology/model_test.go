@@ -62,18 +62,27 @@ var (
 
 func TestTransfers_getTransfer(t *testing.T) {
 	tests := []struct {
-		name string
-		tfs  Transfers
-		want *Transfer
+		name  string
+		tfs   Transfers
+		asset AssetType
+		want  *Transfer
 	}{
-		{"Transfer Claims", transfersClaims, &transferOng},
-		{"Transfer Ont", transfersOnt, &transferOnt},
-		{"Transfer Ong", transfersOng, &transferOng},
-		{"Transfer Fee", transfersFee, nil},
+		{"Transfer Claims Asset Ong", transfersClaims, AssetONG, &transferOng},
+		{"Transfer Claims Asset Ont", transfersClaims, AssetONT, nil},
+		{"Transfer Claims Asset All", transfersClaims, AssetAll, &transferOng},
+		{"Transfer Ont Asset Ong", transfersOnt, AssetONG, nil},
+		{"Transfer Ont Asset Ont", transfersOnt, AssetONT, &transferOnt},
+		{"Transfer Ont Asset All", transfersOnt, AssetAll, &transferOnt},
+		{"Transfer Ong Asset Ong", transfersOng, AssetONG, &transferOng},
+		{"Transfer Ong Asset Ont", transfersOng, AssetONT, nil},
+		{"Transfer Ong Asset All", transfersOng, AssetAll, &transferOng},
+		{"Transfer Fee Asset Ong", transfersFee, AssetONG, nil},
+		{"Transfer Fee Asset Ont", transfersFee, AssetONT, nil},
+		{"Transfer Fee Asset All", transfersFee, AssetAll, nil},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.tfs.getTransfer(); !reflect.DeepEqual(got, tt.want) {
+			if got := tt.tfs.getTransfer(tt.asset); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("getTransfer() = %v, want %v", got, tt.want)
 			}
 		})
