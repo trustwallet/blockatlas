@@ -144,7 +144,7 @@ cosmos:
 
 # [ONTOLOGY] ONT: https://ont.io/
 ontology:
-  api: https://explorer.ont.io/api/v1/explorer
+  api: https://explorer.ont.io
 
 # [ZIL] Zilliqa: https://zilliqa.com
 zilliqa:
