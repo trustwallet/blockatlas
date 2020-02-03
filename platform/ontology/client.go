@@ -21,7 +21,7 @@ func (c *Client) GetTxsOfAddress(address string) (txPage TxsResult, err error) {
 	return
 }
 
-func (c *Client) CurrentBlockNumber() (blocks BlockResults, err error) {
+func (c *Client) CurrentBlockNumber() (blocks BlockResult, err error) {
 	query := url.Values{"page_size": {"1"}, "page_number": {"1"}}
 	path := fmt.Sprintf("v2/blocks")
 	err = c.Get(&blocks, path, query)
@@ -31,7 +31,7 @@ func (c *Client) CurrentBlockNumber() (blocks BlockResults, err error) {
 	return
 }
 
-func (c *Client) GetBlockByNumber(num int64) (block BlockResult, err error) {
+func (c *Client) GetBlockByNumber(num int64) (block BlockResults, err error) {
 	path := fmt.Sprintf("v2/blocks/%d", num)
 	err = c.Get(&block, path, nil)
 	if err != nil || block.Msg != MsgSuccess {

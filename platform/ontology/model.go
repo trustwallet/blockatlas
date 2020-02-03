@@ -22,12 +22,12 @@ type BaseResponse struct {
 
 type BlockResults struct {
 	BaseResponse
-	Result []Block `json:"result"`
+	Result Block `json:"result"`
 }
 
 type BlockResult struct {
 	BaseResponse
-	Result Block `json:"result"`
+	Result BlockRecords `json:"result"`
 }
 
 type TxsResult struct {
@@ -38,6 +38,11 @@ type TxsResult struct {
 type TxResult struct {
 	BaseResponse
 	Result Tx `json:"result"`
+}
+
+type BlockRecords struct {
+	Total   int64   `json:"total"`
+	Records []Block `json:"records"`
 }
 
 type Block struct {

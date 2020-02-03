@@ -125,10 +125,10 @@ func (p *Platform) CurrentBlockNumber() (int64, error) {
 	if err != nil {
 		return 0, errors.E(err, "CurrentBlockNumber")
 	}
-	if len(block.Result) == 0 {
+	if len(block.Result.Records) == 0 {
 		return 0, errors.E("invalid block height result")
 	}
-	return block.Result[0].Height, nil
+	return block.Result.Records[0].Height, nil
 }
 
 func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
