@@ -5,23 +5,35 @@ before:
 builds:
   - id: api
     main: "./cmd/api/main.go"
+    goos:
+      - linux
+    goarch:
+      - amd64
     env:
       - CGO_ENABLED=0
   - id: observer
     main: "./cmd/observer/main.go"
+    goos:
+      - linux
+    goarch:
+      - amd64
     env:
       - CGO_ENABLED=0
   - id: syncmarkets
     main: "./cmd/syncmarkets/main.go"
+    goos:
+      - linux
+    goarch:
+      - amd64
     env:
       - CGO_ENABLED=0
 archives:
   - replacements:
-      darwin: Darwin
+      amd64: 64-bit
+      386: 32-bit
+      darwin: macOS
       linux: Linux
       windows: Windows
-      386: i386
-      amd64: x86_64
 checksum:
   name_template: 'checksums.txt'
 snapshot:
