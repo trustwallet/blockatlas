@@ -3,6 +3,7 @@ package platform
 import (
 	"fmt"
 	"github.com/trustwallet/blockatlas/platform/cosmos"
+	"github.com/trustwallet/blockatlas/platform/polkadot"
 
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
@@ -79,7 +80,7 @@ var platformList = []blockatlas.Platform{
 	&algorand.Platform{},
 	&nano.Platform{},
 	&harmony.Platform{},
-	//&polkadot.Platform{CoinIndex: coin.KSM},
+	&polkadot.Platform{CoinIndex: coin.KSM},
 }
 
 // Platforms contains all registered platforms by handle
