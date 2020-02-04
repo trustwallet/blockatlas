@@ -58,11 +58,30 @@ func (p *Platform) CurrentBlockNumber() (int64, error) {
 }
 
 func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
-	srcBlock, err := p.client.GetBlockByNumber(num)
-	if err != nil {
-		return nil, err
+	txTypes := []TxType{TxTransactions, TxDelegations}
+	var wg sync.WaitGroup
+	out := make(chan []Transaction)
+	for _, t := range txTypes {
+		wg.Add(1)
+		go func(txType TxType, num int64) {
+			defer wg.Done()
+			txs, err := p.client.GetBlockByNumber(num, txType)
+			if err != nil {
+				logger.Error("GetAddrTxs", err, logger.Params{"txType": txType, "num": num})
+				return
+			}
+			out <- txs
+		}(t, num)
 	}
-	txs := NormalizeTxs(srcBlock)
+	go func() {
+		wg.Wait()
+		close(out)
+	}()
+	srcTxs := make([]Transaction, 0)
+	for r := range out {
+		srcTxs = append(srcTxs, r...)
+	}
+	txs := NormalizeTxs(srcTxs)
 	return &blockatlas.Block{
 		Number: num,
 		Txs:    txs,
