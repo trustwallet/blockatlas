@@ -64,7 +64,7 @@ func (r *Request) Execute(method string, url string, body io.Reader, result inte
 	start := time.Now()
 	req, err := http.NewRequest(method, url, body)
 	if err != nil {
-		return errors.E(err, errors.TypePlatformRequest, errors.Params{"url": url, "method": method}).PushToSentry()
+		return errors.E(err, errors.TypePlatformRequest, errors.Params{"url": url, "method": method})
 	}
 
 	for key, value := range r.Headers {
@@ -73,22 +73,22 @@ func (r *Request) Execute(method string, url string, body io.Reader, result inte
 
 	res, err := r.HttpClient.Do(req)
 	if err != nil {
-		return errors.E(err, errors.TypePlatformRequest, errors.Params{"url": url, "method": method}).PushToSentry()
+		return errors.E(err, errors.TypePlatformRequest, errors.Params{"url": url, "method": method})
 	}
 	go metrics.GetMetrics(res.Status, url, method, start)
 
 	err = r.ErrorHandler(res, url)
 	if err != nil {
-		return errors.E(err, errors.TypePlatformError, errors.Params{"url": url, "method": method}).PushToSentry()
+		return errors.E(err, errors.TypePlatformError, errors.Params{"url": url, "method": method})
 	}
 	defer res.Body.Close()
 	b, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		return errors.E(err, errors.TypePlatformUnmarshal, errors.Params{"url": url, "method": method}).PushToSentry()
+		return errors.E(err, errors.TypePlatformUnmarshal, errors.Params{"url": url, "method": method})
 	}
 	err = json.Unmarshal(b, result)
 	if err != nil {
-		return errors.E(err, errors.TypePlatformUnmarshal, errors.Params{"url": url, "method": method}).PushToSentry()
+		return errors.E(err, errors.TypePlatformUnmarshal, errors.Params{"url": url, "method": method})
 	}
 	return err
 }
