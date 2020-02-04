@@ -25,9 +25,9 @@ func (p *Platform) UndelegatedBalance(address string) (string, error) {
 }
 
 func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
-	return make(blockatlas.ValidatorPage, 0), nil
+	return blockatlas.ValidatorPage{}, nil
 }
 
 func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, error) {
-	return make(blockatlas.DelegationsPage, 0), nil
+	return blockatlas.DelegationsPage{}, nil
 }
