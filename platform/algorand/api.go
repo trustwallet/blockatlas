@@ -47,32 +47,6 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 	return NormalizeTxs(txs), nil
 }
 
-func (p *Platform) GetDetails() blockatlas.StakingDetails {
-	//TODO: Find a way to have a dynamic
-	return blockatlas.StakingDetails{
-		Reward:        blockatlas.StakingReward{Annual: 6.1},
-		MinimumAmount: blockatlas.Amount("0"),
-		LockTime:      0,
-		Type:          blockatlas.DelegationTypeAuto,
-	}
-}
-
-func (p *Platform) UndelegatedBalance(address string) (string, error) {
-	acc, err := p.client.GetAccount(address)
-	if err != nil {
-		return "0", err
-	}
-	return strconv.FormatUint(acc.Amount, 10), nil
-}
-
-func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
-	return make(blockatlas.ValidatorPage, 0), nil
-}
-
-func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, error) {
-	return make(blockatlas.DelegationsPage, 0), nil
-}
-
 func NormalizeTxs(txs []Transaction) []blockatlas.Tx {
 	result := make([]blockatlas.Tx, 0)
 
