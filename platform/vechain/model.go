@@ -85,3 +85,7 @@ type LogMeta struct {
 	BlockNumber    uint64 `json:"blockNumber,omitempty"`
 	BlockTimestamp int64  `json:"blockTimestamp,omitempty"`
 }
+
+type Account struct {
+	Balance string `json:"balance"`
+}
