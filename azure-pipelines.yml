@@ -16,7 +16,6 @@ pool:
 
 variables:
   GOVERSION: '1.13'
-  GITHUB_TOKEN: '$(git.token)'
 
 jobs:
   - job: environment
@@ -84,11 +83,3 @@ jobs:
         workingDirectory: '$(System.DefaultWorkingDirectory)'
         displayName: 'Build'
         condition: not(startsWith(variables['build.sourceBranch'], 'refs/tags/'))
-
-      - script: |
-          curl -sfL https://install.goreleaser.com/github.com/goreleaser/goreleaser.sh | sh
-          ./bin/goreleaser --rm-dist
-        workingDirectory: '$(System.DefaultWorkingDirectory)'
-        displayName: 'Go Releaser'
-        condition: startsWith(variables['build.sourceBranch'], 'refs/tags/')
-
