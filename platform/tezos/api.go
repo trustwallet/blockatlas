@@ -4,12 +4,13 @@ import (
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/logger"
+	"sync"
 )
 
 type Platform struct {
-	client      Client
-	stakeClient Client
-	rpcClient   RpcClient
+	client    Client
+	rpcClient RpcClient
 }
 
 const Annual = 6.09
@@ -17,7 +18,6 @@ const Annual = 6.09
 func (p *Platform) Init() error {
 	p.client = Client{blockatlas.InitClient(viper.GetString("tezos.api"))}
 	p.client.SetTimeout(30)
-	p.stakeClient = Client{blockatlas.InitClient(viper.GetString("tezos.stake_api"))}
 	p.rpcClient = RpcClient{blockatlas.InitClient(viper.GetString("tezos.rpc"))}
 	return nil
 }
@@ -27,12 +27,30 @@ func (p *Platform) Coin() coin.Coin {
 }
 
 func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
-	s, err := p.client.GetTxsOfAddress(address)
-	if err != nil {
-		return nil, err
+	txTypes := []TxType{TxTransactions, TxDelegations}
+	var wg sync.WaitGroup
+	out := make(chan []Transaction)
+	for _, t := range txTypes {
+		wg.Add(1)
+		go func(txType TxType, addr string) {
+			defer wg.Done()
+			txs, err := p.client.GetTxsOfAddress(address, txType)
+			if err != nil {
+				logger.Error("GetAddrTxs", err, logger.Params{"txType": txType, "addr": addr})
+				return
+			}
+			out <- txs
+		}(t, address)
 	}
-	txs := NormalizeTxs(s)
-	return txs, nil
+	go func() {
+		wg.Wait()
+		close(out)
+	}()
+	srcTxs := make([]Transaction, 0)
+	for r := range out {
+		srcTxs = append(srcTxs, r...)
+	}
+	return NormalizeTxs(srcTxs), nil
 }
 
 func (p *Platform) CurrentBlockNumber() (int64, error) {
@@ -63,33 +81,47 @@ func NormalizeTxs(srcTxs []Transaction) (txs []blockatlas.Tx) {
 }
 
 // NormalizeTx converts a Tezos transaction into the generic model
-func NormalizeTx(srcTx Transaction) (tx blockatlas.Tx, ok bool) {
-	if srcTx.Tx.Kind != "transaction" {
-		return tx, false
+func NormalizeTx(srcTx Transaction) (blockatlas.Tx, bool) {
+	errMsg := ""
+	status := blockatlas.StatusCompleted
+	if srcTx.Status() != TxStatusApplied {
+		errMsg = "transaction failed"
+		status = blockatlas.StatusFailed
+	}
+	tx := blockatlas.Tx{
+		ID:     srcTx.Op.OpHash,
+		Coin:   coin.XTZ,
+		Date:   srcTx.Op.BlockTimestamp.Unix(),
+		From:   srcTx.Source(),
+		To:     srcTx.Destination(),
+		Fee:    blockatlas.Amount(srcTx.Fee()),
+		Block:  srcTx.Op.BlockLevel,
+		Status: status,
+		Error:  errMsg,
 	}
 
-	var status blockatlas.Status
-	var errMsg string
-	if srcTx.Tx.Status == "applied" {
-		status = blockatlas.StatusCompleted
-	} else {
-		status = blockatlas.StatusFailed
-		errMsg = "transaction failed"
-	}
-	return blockatlas.Tx{
-		ID:    srcTx.Op.OpHash,
-		Coin:  coin.XTZ,
-		Date:  srcTx.Op.BlockTimestamp.Unix(),
-		From:  srcTx.Tx.Source,
-		To:    srcTx.Tx.Destination,
-		Fee:   blockatlas.Amount(srcTx.Tx.Fee),
-		Block: srcTx.Op.BlockLevel,
-		Meta: blockatlas.Transfer{
+	switch srcTx.Kind() {
+	case TxKindDelegation:
+		title := blockatlas.AnyActionDelegation
+		if len(srcTx.Delegation.Delegate) == 0 {
+			title = blockatlas.AnyActionUndelegation
+		}
+		tx.Meta = blockatlas.AnyAction{
+			Coin:     coin.Tezos().ID,
+			Title:    title,
+			Key:      blockatlas.KeyStakeDelegate,
+			Name:     coin.Tezos().Name,
+			Symbol:   coin.Tezos().Symbol,
+			Decimals: coin.Tezos().Decimals,
+		}
+	case TxKindTransaction:
+		tx.Meta = blockatlas.Transfer{
 			Value:    blockatlas.Amount(srcTx.Tx.Amount),
 			Symbol:   coin.Coins[coin.XTZ].Symbol,
 			Decimals: coin.Coins[coin.XTZ].Decimals,
-		},
-		Status: status,
-		Error:  errMsg,
-	}, true
+		}
+	default:
+		return blockatlas.Tx{}, false
+	}
+	return tx, true
 }
