@@ -25,6 +25,8 @@ func (d *Dispatcher) Run(events <-chan Event) {
 }
 
 func (d *Dispatcher) dispatch(event Event) {
+	// remove inputs in order to decrease size of sent tx
+	event.Tx.Inputs = nil
 	action := DispatchEvent{
 		Action: event.Tx.Type,
 		Result: event.Tx,
