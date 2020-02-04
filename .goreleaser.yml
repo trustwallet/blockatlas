@@ -4,6 +4,7 @@ before:
     - git checkout .
 builds:
   - id: api
+    binary: api
     main: "./cmd/api/main.go"
     goos:
       - linux
@@ -12,6 +13,7 @@ builds:
     env:
       - CGO_ENABLED=0
   - id: observer
+    binary: observer
     main: "./cmd/observer/main.go"
     goos:
       - linux
@@ -20,6 +22,7 @@ builds:
     env:
       - CGO_ENABLED=0
   - id: syncmarkets
+    binary: syncmarkets
     main: "./cmd/syncmarkets/main.go"
     goos:
       - linux
