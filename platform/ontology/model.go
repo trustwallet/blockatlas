@@ -3,6 +3,7 @@ package ontology
 type AssetType string
 type MsgType string
 type Transfers []Transfer
+type Balances []Balance
 
 const (
 	GovernanceContract = "AFmseVrdL9f9oyCzZefL9tG6UbviEH9ugK"
@@ -40,6 +41,11 @@ type TxResult struct {
 	Result Tx `json:"result"`
 }
 
+type BalancesResult struct {
+	BaseResponse
+	Result Balances `json:"result"`
+}
+
 type BlockRecords struct {
 	Total   int64   `json:"total"`
 	Records []Block `json:"records"`
@@ -74,6 +80,13 @@ type Transfer struct {
 	ToAddress   string    `json:"to_address"`
 	AssetName   AssetType `json:"asset_name"`
 	Description string    `json:"description,omitempty"`
+}
+
+type Balance struct {
+	Balance      string    `json:"balance"`
+	AssetName    AssetType `json:"asset_name"`
+	AssetType    string    `json:"asset_type"`
+	ContractHash string    `json:"contract_hash"`
 }
 
 func (tf *Transfer) isFeeTransfer() bool {
@@ -127,4 +140,13 @@ func (tfs Transfers) isClaimReward() bool {
 	}
 	return true
 
+}
+
+func (bs Balances) getBalance(assetType AssetType) *Balance {
+	for _, b := range bs {
+		if b.AssetName == assetType {
+			return &b
+		}
+	}
+	return nil
 }
