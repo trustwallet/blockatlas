@@ -12,3 +12,8 @@ func (c *RpcClient) GetValidators() (validators []Validator, err error) {
 	err = c.Get(&validators, "chains/main/blocks/head~32768/votes/listings", nil)
 	return
 }
+
+func (c *RpcClient) GetAccount(address string) (account Account, err error) {
+	err = c.Get(&account, "chains/main/blocks/head/context/contracts/"+address, nil)
+	return
+}
