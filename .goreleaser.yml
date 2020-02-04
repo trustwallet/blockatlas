@@ -3,11 +3,18 @@ before:
     - git reset --hard
     - git checkout .
 builds:
-  - main: "./main.go"
+  - id: api
+    main: "./cmd/api/main.go"
     env:
       - CGO_ENABLED=0
-    ignore:
-      - goos: darwin
+  - id: observer
+    main: "./cmd/observer/main.go"
+    env:
+      - CGO_ENABLED=0
+  - id: syncmarkets
+    main: "./cmd/syncmarkets/main.go"
+    env:
+      - CGO_ENABLED=0
 archives:
   - replacements:
       darwin: Darwin
