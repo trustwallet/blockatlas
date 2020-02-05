@@ -2,7 +2,7 @@ package api
 
 import (
 	"github.com/trustwallet/blockatlas/pkg/errors"
-	"math"
+	"github.com/trustwallet/blockatlas/services/domains"
 	"net/http"
 	"strconv"
 	"strings"
@@ -10,13 +10,8 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/ginutils"
 
 	"github.com/gin-gonic/gin"
-	CoinType "github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/platform"
 )
-
-// TLDMapping Mapping of name TLD's to coin where they are handled
-var TLDMapping = map[string]uint64{}
 
 type LookupBatchPage []blockatlas.Resolved
 
@@ -40,7 +35,7 @@ func MakeLookupRoute(router gin.IRouter) {
 			return
 		}
 
-		result, err := handleLookup(name, []uint64{coin})
+		result, err := domains.HandleLookup(name, []uint64{coin})
 		if err != nil {
 			ginutils.RenderError(c, http.StatusBadRequest, err.Error())
 			return
@@ -51,14 +46,6 @@ func MakeLookupRoute(router gin.IRouter) {
 		}
 		ginutils.RenderSuccess(c, result[0])
 	})
-
-	TLDMapping[".eth"] = CoinType.ETH
-	TLDMapping[".xyz"] = CoinType.ETH
-	TLDMapping[".luxe"] = CoinType.ETH
-	TLDMapping[".zil"] = CoinType.ZIL
-	// it's on ethereum but same unstoppable api
-	TLDMapping[".crypto"] = CoinType.ZIL
-	TLDMapping["@fiotestnet"] = CoinType.FIO
 }
 
 // @Summary Lookup .eth / .zil addresses
@@ -76,13 +63,12 @@ func MakeLookupBatchRoute(router gin.IRouter) {
 		name := c.Query("name")
 		coinsRaw := strings.Split(c.Query("coins"), ",")
 		coins, err := sliceAtoi(coinsRaw)
-
 		if err != nil {
 			ginutils.RenderError(c, http.StatusBadRequest, "coin query is invalid")
 			return
 		}
 
-		result, err := handleLookup(name, coins)
+		result, err := domains.HandleLookup(name, coins)
 		if err != nil {
 			ginutils.RenderError(c, http.StatusBadRequest, err.Error())
 			return
@@ -105,37 +91,4 @@ func sliceAtoi(sa []string) ([]uint64, error) {
 		si = append(si, i)
 	}
 	return si, nil
-}
-
-func handleLookup(name string, coins []uint64) (result []blockatlas.Resolved, err error) {
-	// Assumption: format of the name can be decided (top-level-domain), and at most one naming service is tried
-	name = strings.ToLower(name)
-	tld, err := getTLD(name)
-	if err != nil {
-		return nil, errors.E("name format not recognized", errors.Params{"name": name, "coins": coins, "inner_error": err.Error()})
-	}
-	id, ok := TLDMapping[tld]
-	if !ok {
-		return nil, errors.E("name not found", errors.Params{"name": name, "coins": coins, "tld": tld})
-	}
-	api, ok := platform.NamingAPIs[id]
-	if !ok {
-		return nil, errors.E("platform not found", errors.Params{"name": name, "coins": coins})
-	}
-	result, err = api.Lookup(coins, name)
-	return
-}
-
-// Obtain tld from then name, e.g. ".ens" from "nick.ens"
-func getTLD(name string) (tld string, error error) {
-	// find last separator
-	lastSeparatorIdx := int(math.Max(
-		float64(strings.LastIndex(name, ".")),
-		float64(strings.LastIndex(name, "@"))))
-	if lastSeparatorIdx <= -1 || lastSeparatorIdx >= len(name)-1 {
-		// no separator inside string
-		return "", errors.E("No TLD found in name", errors.Params{"name": name})
-	}
-	// return tail including separator
-	return name[lastSeparatorIdx:], nil
 }

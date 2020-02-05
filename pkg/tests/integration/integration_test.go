@@ -4,8 +4,8 @@ package integration
 
 import (
 	"github.com/trustwallet/blockatlas/config"
-	"github.com/trustwallet/blockatlas/pkg/tests/integration/bitcoin"
-	"github.com/trustwallet/blockatlas/pkg/tests/integration/ontology"
+	"github.com/trustwallet/blockatlas/pkg/tests/integration/domains"
+	"github.com/trustwallet/blockatlas/platform"
 	"os"
 	"testing"
 )
@@ -17,6 +17,9 @@ func Test(t *testing.T) {
 	} else {
 		config.LoadConfig(configPath)
 	}
-	ontology.TestOntology(t)
-	bitcoin.TestBitcoin(t)
+	platform.Init()
+
+	//ontology.TestOntology(t)
+	//bitcoin.TestBitcoin(t)
+	domains.TestDomains(t)
 }
