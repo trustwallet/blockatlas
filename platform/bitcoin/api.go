@@ -116,9 +116,14 @@ func (p *Platform) CurrentBlockNumber() (int64, error) {
 }
 
 func (p *Platform) GetAllBlockPages(total, num int64) []Transaction {
+	txs := make([]Transaction, 0)
+	if total <= 1 {
+		return txs
+	}
+	
 	start := int64(1)
 	var wg sync.WaitGroup
-	out := make(chan TransactionsList, total-start)
+	out := make(chan TransactionsList)
 	wg.Add(int(total - start))
 	for start < total {
 		start++
@@ -134,7 +139,6 @@ func (p *Platform) GetAllBlockPages(total, num int64) []Transaction {
 	}
 	wg.Wait()
 	close(out)
-	txs := make([]Transaction, 0)
 	for r := range out {
 		txs = append(txs, r.TransactionList()...)
 	}

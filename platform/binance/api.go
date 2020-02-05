@@ -49,11 +49,14 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	txs := make(blockatlas.TxPage, 0)
 	childTxs, err := p.getTxChildChan(srcTxs.Txs)
-	if err != nil {
-		return nil, err
+	if err == nil {
+		txs = NormalizeTxs(childTxs, "", "")
+	} else {
+		txs = NormalizeTxs(srcTxs.Txs, "", "")
 	}
-	txs := NormalizeTxs(childTxs, "", "")
 	return &blockatlas.Block{
 		Number: num,
 		Txs:    txs,
@@ -69,7 +72,7 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 func (p *Platform) getTxChildChan(srcTxs []Tx) ([]Tx, error) {
 	txs := make([]Tx, 0)
 	var wg sync.WaitGroup
-	out := make(chan Tx, len(srcTxs))
+	out := make(chan Tx)
 	for _, srcTx := range srcTxs {
 		if srcTx.HasChildren != 1 {
 			// Return the same transaction if doesn't have a child

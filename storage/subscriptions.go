@@ -5,7 +5,6 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
-	"sync"
 )
 
 const (
@@ -16,31 +15,17 @@ func (s *Storage) Lookup(coin uint, addresses []string) ([]blockatlas.Subscripti
 	if len(addresses) == 0 {
 		return nil, errors.E("cannot look up an empty list")
 	}
-
 	observers := make([]blockatlas.Subscription, 0)
-	var wg sync.WaitGroup
-	out := make(chan []blockatlas.Subscription, len(addresses))
-	wg.Add(len(addresses))
 	for _, address := range addresses {
-		go func(coin uint, addr string, wg *sync.WaitGroup) {
-			defer wg.Done()
-			key := getSubscriptionKey(coin, addr)
-			var webhooks []string
-			err := s.GetHMValue(ATLAS_OBSERVER, key, &webhooks)
-			if err != nil {
-				return
-			}
-			subs := make([]blockatlas.Subscription, 0)
-			for _, webhook := range webhooks {
-				subs = append(subs, blockatlas.Subscription{Coin: coin, Address: addr, Webhook: webhook})
-			}
-			out <- subs
-		}(coin, address, &wg)
-	}
-	wg.Wait()
-	close(out)
-	for r := range out {
-		observers = append(observers, r...)
+		key := getSubscriptionKey(coin, address)
+		var webhooks []string
+		err := s.GetHMValue(ATLAS_OBSERVER, key, &webhooks)
+		if err != nil {
+			continue
+		}
+		for _, webhook := range webhooks {
+			observers = append(observers, blockatlas.Subscription{Coin: coin, Address: address, Webhook: webhook})
+		}
 	}
 	return observers, nil
 }
