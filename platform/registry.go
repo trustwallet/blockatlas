@@ -2,11 +2,11 @@ package platform
 
 import (
 	"fmt"
-	"github.com/trustwallet/blockatlas/platform/cosmos"
-
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
+	"github.com/trustwallet/blockatlas/platform/cosmos"
+	"github.com/trustwallet/blockatlas/platform/polkadot"
 
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/platform/aeternity"
@@ -33,74 +33,183 @@ import (
 	"github.com/trustwallet/blockatlas/platform/zilliqa"
 )
 
-var platformList = []blockatlas.Platform{
-	&binance.Platform{},
-	&nimiq.Platform{},
-	&ripple.Platform{},
-	&stellar.Platform{CoinIndex: coin.XLM},
-	&stellar.Platform{CoinIndex: coin.KIN},
-	&ethereum.Platform{CoinIndex: coin.ETH},
-	&ethereum.Platform{CoinIndex: coin.ETC},
-	&ethereum.Platform{CoinIndex: coin.POA},
-	&ethereum.Platform{CoinIndex: coin.CLO},
-	&ethereum.Platform{CoinIndex: coin.GO},
-	&ethereum.Platform{CoinIndex: coin.WAN},
-	&ethereum.Platform{CoinIndex: coin.TOMO},
-	&ethereum.Platform{CoinIndex: coin.TT},
-	&cosmos.Platform{CoinIndex: coin.ATOM},
-	&cosmos.Platform{CoinIndex: coin.KAVA},
-	&tezos.Platform{},
-	&aion.Platform{},
-	&icon.Platform{},
-	&iotex.Platform{},
-	&ontology.Platform{},
-	&theta.Platform{},
-	&tron.Platform{},
-	&vechain.Platform{},
-	&zilliqa.Platform{},
-	&waves.Platform{},
-	&aeternity.Platform{},
-	&bitcoin.Platform{CoinIndex: coin.BTC},
-	&bitcoin.Platform{CoinIndex: coin.LTC},
-	&bitcoin.Platform{CoinIndex: coin.BCH},
-	&bitcoin.Platform{CoinIndex: coin.DASH},
-	&bitcoin.Platform{CoinIndex: coin.DOGE},
-	&bitcoin.Platform{CoinIndex: coin.ZEC},
-	&bitcoin.Platform{CoinIndex: coin.XZC},
-	&bitcoin.Platform{CoinIndex: coin.VIA},
-	&bitcoin.Platform{CoinIndex: coin.RVN},
-	&bitcoin.Platform{CoinIndex: coin.QTUM},
-	&bitcoin.Platform{CoinIndex: coin.GRS},
-	&bitcoin.Platform{CoinIndex: coin.ZEL},
-	&bitcoin.Platform{CoinIndex: coin.DCR},
-	&bitcoin.Platform{CoinIndex: coin.DGB},
-	&nebulas.Platform{},
-	&fio.Platform{},
-	&algorand.Platform{},
-	&nano.Platform{},
-	&harmony.Platform{},
-	//&polkadot.Platform{CoinIndex: coin.KSM},
+var (
+	allPlatformsList = []blockatlas.Platform{
+		&binance.Platform{},
+		&nimiq.Platform{},
+		&ripple.Platform{},
+		&stellar.Platform{CoinIndex: coin.XLM},
+		&stellar.Platform{CoinIndex: coin.KIN},
+		&ethereum.Platform{CoinIndex: coin.ETH},
+		&ethereum.Platform{CoinIndex: coin.ETC},
+		&ethereum.Platform{CoinIndex: coin.POA},
+		&ethereum.Platform{CoinIndex: coin.CLO},
+		&ethereum.Platform{CoinIndex: coin.GO},
+		&ethereum.Platform{CoinIndex: coin.WAN},
+		&ethereum.Platform{CoinIndex: coin.TOMO},
+		&ethereum.Platform{CoinIndex: coin.TT},
+		&cosmos.Platform{CoinIndex: coin.ATOM},
+		&cosmos.Platform{CoinIndex: coin.KAVA},
+		&tezos.Platform{},
+		&aion.Platform{},
+		&icon.Platform{},
+		&iotex.Platform{},
+		&ontology.Platform{},
+		&theta.Platform{},
+		&tron.Platform{},
+		&vechain.Platform{},
+		&zilliqa.Platform{},
+		&waves.Platform{},
+		&aeternity.Platform{},
+		&bitcoin.Platform{CoinIndex: coin.BTC},
+		&bitcoin.Platform{CoinIndex: coin.LTC},
+		&bitcoin.Platform{CoinIndex: coin.BCH},
+		&bitcoin.Platform{CoinIndex: coin.DASH},
+		&bitcoin.Platform{CoinIndex: coin.DOGE},
+		&bitcoin.Platform{CoinIndex: coin.ZEC},
+		&bitcoin.Platform{CoinIndex: coin.XZC},
+		&bitcoin.Platform{CoinIndex: coin.VIA},
+		&bitcoin.Platform{CoinIndex: coin.RVN},
+		&bitcoin.Platform{CoinIndex: coin.QTUM},
+		&bitcoin.Platform{CoinIndex: coin.GRS},
+		&bitcoin.Platform{CoinIndex: coin.ZEL},
+		&bitcoin.Platform{CoinIndex: coin.DCR},
+		&bitcoin.Platform{CoinIndex: coin.DGB},
+		&nebulas.Platform{},
+		&fio.Platform{},
+		&algorand.Platform{},
+		&nano.Platform{},
+		&harmony.Platform{},
+		&polkadot.Platform{CoinIndex: coin.KSM},
+	}
+
+	// Platforms contains all registered platforms by handle
+	Platforms map[string]blockatlas.Platform
+
+	// BlockAPIs contain platforms with block services
+	BlockAPIs map[string]blockatlas.BlockAPI
+
+	// StakeAPIs contain platforms with staking services
+	StakeAPIs map[string]blockatlas.StakeAPI
+
+	// CustomAPIs contain platforms with custom HTTP services
+	CustomAPIs map[string]blockatlas.CustomAPI
+
+	// NamingAPIs contain platforms which support naming services
+	NamingAPIs map[uint64]blockatlas.NamingServiceAPI
+
+	// CollectionAPIs contain platforms which collections services
+	CollectionAPIs map[uint]blockatlas.CollectionAPI
+)
+
+func getActivePlatforms(symbol string) []blockatlas.Platform {
+	var platformList []blockatlas.Platform
+
+	logger.Info("Loaded with: ", logger.Params{"symbol": symbol})
+
+	switch symbol {
+	case coin.Binance().Symbol:
+		platformList = append(platformList, &binance.Platform{})
+	case coin.Nimiq().Symbol:
+		platformList = append(platformList, &nimiq.Platform{})
+	case coin.Ripple().Symbol:
+		platformList = append(platformList, &ripple.Platform{})
+	case coin.Stellar().Symbol:
+		platformList = append(platformList, &stellar.Platform{CoinIndex: coin.XLM})
+	case coin.Kin().Symbol:
+		platformList = append(platformList, &stellar.Platform{CoinIndex: coin.KIN})
+	case coin.Ethereum().Symbol:
+		platformList = append(platformList, &ethereum.Platform{CoinIndex: coin.ETH})
+	case coin.Classic().Symbol:
+		platformList = append(platformList, &ethereum.Platform{CoinIndex: coin.ETC})
+	case coin.Poa().Symbol:
+		platformList = append(platformList, &ethereum.Platform{CoinIndex: coin.POA})
+	case coin.Callisto().Symbol:
+		platformList = append(platformList, &ethereum.Platform{CoinIndex: coin.CLO})
+	case coin.Gochain().Symbol:
+		platformList = append(platformList, &ethereum.Platform{CoinIndex: coin.GO})
+	case coin.Wanchain().Symbol:
+		platformList = append(platformList, &ethereum.Platform{CoinIndex: coin.WAN})
+	case coin.Tomochain().Symbol:
+		platformList = append(platformList, &ethereum.Platform{CoinIndex: coin.TOMO})
+	case coin.Thundertoken().Symbol:
+		platformList = append(platformList, &ethereum.Platform{CoinIndex: coin.TT})
+	case coin.Cosmos().Symbol:
+		platformList = append(platformList, &cosmos.Platform{CoinIndex: coin.ATOM})
+	case coin.Kava().Symbol:
+		platformList = append(platformList, &cosmos.Platform{CoinIndex: coin.KAVA})
+	case coin.Tezos().Symbol:
+		platformList = append(platformList, &tezos.Platform{})
+	case coin.Aion().Symbol:
+		platformList = append(platformList, &aion.Platform{})
+	case coin.Icon().Symbol:
+		platformList = append(platformList, &icon.Platform{})
+	case coin.Iotex().Symbol:
+		platformList = append(platformList, &iotex.Platform{})
+	case coin.Ontology().Symbol:
+		platformList = append(platformList, &ontology.Platform{})
+	case coin.Theta().Symbol:
+		platformList = append(platformList, &theta.Platform{})
+	case coin.Tron().Symbol:
+		platformList = append(platformList, &tron.Platform{})
+	case coin.Vechain().Symbol:
+		platformList = append(platformList, &vechain.Platform{})
+	case coin.Zilliqa().Symbol:
+		platformList = append(platformList, &zilliqa.Platform{})
+	case coin.Waves().Symbol:
+		platformList = append(platformList, &waves.Platform{})
+	case coin.Aeternity().Symbol:
+		platformList = append(platformList, &aeternity.Platform{})
+	case coin.Bitcoin().Symbol:
+		platformList = append(platformList, &bitcoin.Platform{CoinIndex: coin.BTC})
+	case coin.Litecoin().Symbol:
+		platformList = append(platformList, &bitcoin.Platform{CoinIndex: coin.LTC})
+	case coin.Bitcoincash().Symbol:
+		platformList = append(platformList, &bitcoin.Platform{CoinIndex: coin.BCH})
+	case coin.Dash().Symbol:
+		platformList = append(platformList, &bitcoin.Platform{CoinIndex: coin.DASH})
+	case coin.Doge().Symbol:
+		platformList = append(platformList, &bitcoin.Platform{CoinIndex: coin.DOGE})
+	case coin.Zcash().Symbol:
+		platformList = append(platformList, &bitcoin.Platform{CoinIndex: coin.ZEC})
+	case coin.Zcoin().Symbol:
+		platformList = append(platformList, &bitcoin.Platform{CoinIndex: coin.XZC})
+	case coin.Viacoin().Symbol:
+		platformList = append(platformList, &bitcoin.Platform{CoinIndex: coin.VIA})
+	case coin.Ravencoin().Symbol:
+		platformList = append(platformList, &bitcoin.Platform{CoinIndex: coin.RVN})
+	case coin.Qtum().Symbol:
+		platformList = append(platformList, &bitcoin.Platform{CoinIndex: coin.QTUM})
+	case coin.Groestlcoin().Symbol:
+		platformList = append(platformList, &bitcoin.Platform{CoinIndex: coin.GRS})
+	case coin.Zelcash().Symbol:
+		platformList = append(platformList, &bitcoin.Platform{CoinIndex: coin.ZEL})
+	case coin.Decred().Symbol:
+		platformList = append(platformList, &bitcoin.Platform{CoinIndex: coin.DCR})
+	case coin.Digibyte().Symbol:
+		platformList = append(platformList, &bitcoin.Platform{CoinIndex: coin.DGB})
+	case coin.Nebulas().Symbol:
+		platformList = append(platformList, &nebulas.Platform{})
+	case coin.Fio().Symbol:
+		platformList = append(platformList, &fio.Platform{})
+	case coin.Algorand().Symbol:
+		platformList = append(platformList, &algorand.Platform{})
+	case coin.Nano().Symbol:
+		platformList = append(platformList, &nano.Platform{})
+	case coin.Harmony().Symbol:
+		platformList = append(platformList, &harmony.Platform{})
+	case coin.Kusama().Symbol:
+		platformList = append(platformList, &polkadot.Platform{CoinIndex: coin.KSM})
+	default:
+		platformList = allPlatformsList
+	}
+
+	return platformList
 }
 
-// Platforms contains all registered platforms by handle
-var Platforms map[string]blockatlas.Platform
+func Init(symbol string) {
+	platformList := getActivePlatforms(symbol)
 
-// BlockAPIs contain platforms with block services
-var BlockAPIs map[string]blockatlas.BlockAPI
-
-// StakeAPIs contain platforms with staking services
-var StakeAPIs map[string]blockatlas.StakeAPI
-
-// CustomAPIs contain platforms with custom HTTP services
-var CustomAPIs map[string]blockatlas.CustomAPI
-
-// NamingAPIs contain platforms which support naming services
-var NamingAPIs map[uint64]blockatlas.NamingServiceAPI
-
-// CollectionAPIs contain platforms which collections services
-var CollectionAPIs map[uint]blockatlas.CollectionAPI
-
-func Init() {
 	Platforms = make(map[string]blockatlas.Platform)
 	BlockAPIs = make(map[string]blockatlas.BlockAPI)
 	StakeAPIs = make(map[string]blockatlas.StakeAPI)

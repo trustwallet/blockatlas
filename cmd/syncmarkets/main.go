@@ -1,13 +1,9 @@
 package main
 
 import (
-	"flag"
-	"github.com/spf13/viper"
-	"github.com/trustwallet/blockatlas/config"
-	"github.com/trustwallet/blockatlas/pkg/logger"
+	"github.com/trustwallet/blockatlas/internal"
 	"github.com/trustwallet/blockatlas/storage"
 	"github.com/trustwallet/blockatlas/syncmarkets"
-	"path/filepath"
 )
 
 const (
@@ -20,24 +16,7 @@ var (
 )
 
 func init() {
-	cache = storage.New()
-
-	flag.StringVar(&confPath, "c", defaultConfigPath, "config file for observer")
-	flag.Parse()
-
-	confPath, err := filepath.Abs(confPath)
-	if err != nil {
-		logger.Fatal(err)
-	}
-
-	config.LoadConfig(confPath)
-	logger.InitLogger()
-
-	host := viper.GetString("storage.redis")
-	err = cache.Init(host)
-	if err != nil {
-		logger.Fatal(err)
-	}
+	_, confPath, _, cache = internal.InitAPIWithRedis("", defaultConfigPath)
 }
 
 func main() {
