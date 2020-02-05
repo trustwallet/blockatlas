@@ -19,14 +19,14 @@ func (c Cache) GetCoinsById(id string) (coins []CoinResult, err error) {
 	return
 }
 
-func (c SymbolsCache) generateId(symbol string, token string) string {
+func (c SymbolsCache) generateId(symbol, token string) string {
 	if len(token) > 0 {
 		return fmt.Sprintf("%s:%s", strings.ToUpper(symbol), address.EIP55Checksum(token))
 	}
 	return strings.ToUpper(symbol)
 }
 
-func (c SymbolsCache) GetCoinsBySymbol(symbol string, token string) (coin GeckoCoin, err error) {
+func (c SymbolsCache) GetCoinsBySymbol(symbol, token string) (coin GeckoCoin, err error) {
 	coin, ok := c[c.generateId(symbol, token)]
 	if !ok {
 		err = errors.E("No coin found by symbol", errors.Params{"symbol": symbol, "token": token})
@@ -77,7 +77,7 @@ func NewCache(coins GeckoCoins) *Cache {
 			}
 			m[coin.Id] = append(m[coin.Id], CoinResult{
 				Symbol:   platformCoin.Symbol,
-				TokenId:  address,
+				TokenId:  normalizeTokenId(platform, address),
 				CoinType: blockatlas.TypeToken,
 			})
 		}
@@ -91,4 +91,13 @@ func getCoinsMap(coins GeckoCoins) map[string]GeckoCoin {
 		coinsMap[coin.Id] = coin
 	}
 	return coinsMap
+}
+
+func normalizeTokenId(platform, addr string) string {
+	switch platform {
+	case "ethereum":
+		return address.EIP55Checksum(addr)
+	default:
+		return addr
+	}
 }
