@@ -29,10 +29,10 @@ func (p *Platform) Coin() coin.Coin {
 func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 	txTypes := []TxType{TxTransactions}
 	var wg sync.WaitGroup
-	out := make(chan []Transaction)
+	out := make(chan []Transaction, len(txTypes))
+	wg.Add(len(txTypes))
 	for _, t := range txTypes {
-		wg.Add(1)
-		go func(txType TxType, addr string) {
+		go func(txType TxType, addr string, wg *sync.WaitGroup) {
 			defer wg.Done()
 			txs, err := p.client.GetTxsOfAddress(address, txType)
 			if err != nil {
@@ -40,12 +40,10 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 				return
 			}
 			out <- txs
-		}(t, address)
+		}(t, address, &wg)
 	}
-	go func() {
-		wg.Wait()
-		close(out)
-	}()
+	wg.Wait()
+	close(out)
 	srcTxs := make([]Transaction, 0)
 	for r := range out {
 		srcTxs = append(srcTxs, r...)
@@ -60,10 +58,10 @@ func (p *Platform) CurrentBlockNumber() (int64, error) {
 func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 	txTypes := []TxType{TxTransactions, TxDelegations}
 	var wg sync.WaitGroup
-	out := make(chan []Transaction)
+	out := make(chan []Transaction, len(txTypes))
+	wg.Add(len(txTypes))
 	for _, t := range txTypes {
-		wg.Add(1)
-		go func(txType TxType, num int64) {
+		go func(txType TxType, num int64, wg *sync.WaitGroup) {
 			defer wg.Done()
 			txs, err := p.client.GetBlockByNumber(num, txType)
 			if err != nil {
@@ -71,12 +69,10 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 				return
 			}
 			out <- txs
-		}(t, num)
+		}(t, num, &wg)
 	}
-	go func() {
-		wg.Wait()
-		close(out)
-	}()
+	wg.Wait()
+	close(out)
 	srcTxs := make([]Transaction, 0)
 	for r := range out {
 		srcTxs = append(srcTxs, r...)

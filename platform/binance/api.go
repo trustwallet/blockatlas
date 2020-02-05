@@ -69,7 +69,7 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 func (p *Platform) getTxChildChan(srcTxs []Tx) ([]Tx, error) {
 	txs := make([]Tx, 0)
 	var wg sync.WaitGroup
-	out := make(chan Tx)
+	out := make(chan Tx, len(srcTxs))
 	for _, srcTx := range srcTxs {
 		if srcTx.HasChildren != 1 {
 			// Return the same transaction if doesn't have a child
@@ -77,7 +77,7 @@ func (p *Platform) getTxChildChan(srcTxs []Tx) ([]Tx, error) {
 			continue
 		}
 		wg.Add(1)
-		go func(srcTx Tx, out chan Tx) {
+		go func(srcTx Tx, out chan Tx, wg *sync.WaitGroup) {
 			defer wg.Done()
 			tx, err := p.client.GetTx(srcTx.Hash)
 			if err != nil {
@@ -87,12 +87,10 @@ func (p *Platform) getTxChildChan(srcTxs []Tx) ([]Tx, error) {
 				return
 			}
 			out <- tx
-		}(srcTx, out)
+		}(srcTx, out, &wg)
 	}
-	go func() {
-		wg.Wait()
-		close(out)
-	}()
+	wg.Wait()
+	close(out)
 	for r := range out {
 		txs = append(txs, r)
 	}

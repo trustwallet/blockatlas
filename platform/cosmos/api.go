@@ -50,10 +50,10 @@ func (p *Platform) CurrentBlockNumber() (int64, error) {
 func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 	tagsList := []string{"transfer.recipient", "message.sender"}
 	var wg sync.WaitGroup
-	out := make(chan TxPage)
+	out := make(chan TxPage, len(tagsList))
+	wg.Add(len(tagsList))
 	for _, t := range tagsList {
-		wg.Add(1)
-		go func(tag, addr string) {
+		go func(tag, addr string, wg *sync.WaitGroup) {
 			defer wg.Done()
 			txs, err := p.client.GetAddrTxs(addr, tag)
 			if err != nil {
@@ -61,13 +61,10 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 				return
 			}
 			out <- txs
-		}(t, address)
+		}(t, address, &wg)
 	}
-	go func() {
-		wg.Wait()
-		close(out)
-	}()
-
+	wg.Wait()
+	close(out)
 	srcTxs := make([]Tx, 0)
 	for r := range out {
 		srcTxs = append(srcTxs, r.Txs...)

@@ -19,10 +19,10 @@ func (s *Storage) Lookup(coin uint, addresses []string) ([]blockatlas.Subscripti
 
 	observers := make([]blockatlas.Subscription, 0)
 	var wg sync.WaitGroup
-	out := make(chan []blockatlas.Subscription)
+	out := make(chan []blockatlas.Subscription, len(addresses))
 	wg.Add(len(addresses))
 	for _, address := range addresses {
-		go func(coin uint, addr string) {
+		go func(coin uint, addr string, wg *sync.WaitGroup) {
 			defer wg.Done()
 			key := getSubscriptionKey(coin, addr)
 			var webhooks []string
@@ -35,12 +35,10 @@ func (s *Storage) Lookup(coin uint, addresses []string) ([]blockatlas.Subscripti
 				subs = append(subs, blockatlas.Subscription{Coin: coin, Address: addr, Webhook: webhook})
 			}
 			out <- subs
-		}(coin, address)
+		}(coin, address, &wg)
 	}
-	go func() {
-		wg.Wait()
-		close(out)
-	}()
+	wg.Wait()
+	close(out)
 	for r := range out {
 		observers = append(observers, r...)
 	}
