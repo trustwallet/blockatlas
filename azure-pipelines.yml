@@ -30,7 +30,7 @@ jobs:
           command: 'get'
           arguments: '-v -t -d ./...'
           workingDirectory: '$(System.DefaultWorkingDirectory)'
-        displayName: 'Go Get'
+        displayName: 'Get dependencies'
 
   - job: go_vet
     dependsOn: environment
@@ -56,16 +56,15 @@ jobs:
           go get github.com/gavv/httpexpect
           make functional
         workingDirectory: '$(System.DefaultWorkingDirectory)'
-        displayName: "Run functional tests for new PR's"
         condition: ne(variables['build.sourceBranch'], 'refs/heads/master')
         continueOnError: true
+        displayName: "Run functional tests for new PR's"
 
       - script: |
           make functional
         workingDirectory: '$(System.DefaultWorkingDirectory)'
-        displayName: 'Run functional tests for new releases'
         condition: eq(variables['build.sourceBranch'], 'refs/heads/master')
-        continueOnError: false
+        displayName: 'Run functional tests for new releases'
 
   - job: integration_tests
     dependsOn: environment
@@ -82,4 +81,3 @@ jobs:
       - script: make go-build
         workingDirectory: '$(System.DefaultWorkingDirectory)'
         displayName: 'Build'
-        condition: not(startsWith(variables['build.sourceBranch'], 'refs/tags/'))
