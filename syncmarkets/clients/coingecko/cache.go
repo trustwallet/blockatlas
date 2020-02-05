@@ -94,6 +94,9 @@ func getCoinsMap(coins GeckoCoins) map[string]GeckoCoin {
 }
 
 func normalizeTokenId(platform, addr string) string {
+	if platform == "" || addr == "" {
+		return ""
+	}
 	switch platform {
 	case "ethereum":
 		return address.EIP55Checksum(addr)
