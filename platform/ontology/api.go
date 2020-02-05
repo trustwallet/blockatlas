@@ -150,7 +150,7 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 
 func (p *Platform) getTxDetails(srcTx []Tx) ([]Tx, error) {
 	var wg sync.WaitGroup
-	txsOntV2Chan := make(chan Tx)
+	txsOntV2Chan := make(chan Tx, len(srcTx))
 	wg.Add(len(srcTx))
 	for _, blockTxRaw := range srcTx {
 		go func(blockTxRaw Tx, wg *sync.WaitGroup) {

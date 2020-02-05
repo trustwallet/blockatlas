@@ -120,10 +120,10 @@ func (p *Platform) GetAllBlockPages(total, num int64) []Transaction {
 	if total <= 1 {
 		return txs
 	}
-	
+
 	start := int64(1)
 	var wg sync.WaitGroup
-	out := make(chan TransactionsList)
+	out := make(chan TransactionsList, int(total-start))
 	wg.Add(int(total - start))
 	for start < total {
 		start++
