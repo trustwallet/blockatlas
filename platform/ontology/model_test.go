@@ -1,6 +1,7 @@
 package ontology
 
 import (
+	"github.com/stretchr/testify/assert"
 	"reflect"
 	"testing"
 )
@@ -125,6 +126,46 @@ func TestTransfers_isClaimReward(t *testing.T) {
 			if got := tt.tfs.isClaimReward(); got != tt.want {
 				t.Errorf("isClaimReward() = %v, want %v", got, tt.want)
 			}
+		})
+	}
+}
+
+func TestBalances_getBalance(t *testing.T) {
+	tests := []struct {
+		name      string
+		bs        Balances
+		assetType AssetType
+		want      *Balance
+	}{
+		{
+			"test three assets",
+			Balances{{AssetName: AssetONT, Balance: "0"}, {AssetName: AssetONG, Balance: "1"}, {AssetName: AssetAll, Balance: "2"}},
+			AssetONG,
+			&Balance{AssetName: AssetONG, Balance: "1"},
+		},
+		{
+			"test two assets",
+			Balances{{AssetName: AssetONT, Balance: "0"}, {AssetName: AssetONG, Balance: "1"}},
+			AssetONT,
+			&Balance{AssetName: AssetONT, Balance: "0"},
+		},
+		{
+			"test invalid asset 1",
+			Balances{{AssetName: AssetONG, Balance: "0"}, {AssetName: AssetONG, Balance: "1"}, {AssetName: AssetAll, Balance: "2"}},
+			AssetONT,
+			nil,
+		},
+		{
+			"test invalid asset 2",
+			Balances{{AssetName: AssetONT, Balance: "0"}},
+			AssetONG,
+			nil,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := tt.bs.getBalance(tt.assetType)
+			assert.EqualValues(t, tt.want, got)
 		})
 	}
 }

@@ -11,6 +11,15 @@ type Client struct {
 	blockatlas.Request
 }
 
+func (c *Client) GetBalances(address string) (balances BalancesResult, err error) {
+	path := fmt.Sprintf("v2/addresses/%s/native/balances", address)
+	err = c.Get(&balances, path, nil)
+	if err != nil || balances.Msg != MsgSuccess {
+		return balances, errors.E(err, "explorer client GetBalances", errors.Params{"platform": "ONT"})
+	}
+	return
+}
+
 func (c *Client) GetTxsOfAddress(address string) (txPage TxsResult, err error) {
 	query := url.Values{"page_size": {"20"}, "page_number": {"1"}}
 	path := fmt.Sprintf("v2/addresses/%s/transactions", address)
