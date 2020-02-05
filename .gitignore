@@ -2,6 +2,7 @@
 /blockatlas
 /blockatlas.exe
 /bin/*
+*-bin
 
 ### APP ###
 *.csv
