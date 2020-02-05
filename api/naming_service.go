@@ -15,6 +15,7 @@ import (
 	"github.com/trustwallet/blockatlas/platform"
 )
 
+// TLDMapping Mapping of name TLD's to coin where they are handled
 var TLDMapping = map[string]uint64{}
 
 type LookupBatchPage []blockatlas.Resolved
@@ -109,9 +110,9 @@ func sliceAtoi(sa []string) ([]uint64, error) {
 func handleLookup(name string, coins []uint64) (result []blockatlas.Resolved, err error) {
 	// Assumption: format of the name can be decided (top-level-domain), and at most one naming service is tried
 	name = strings.ToLower(name)
-	tld, ok := getTLD(name)
-	if !ok {
-		return nil, errors.E("name format not recognized", errors.Params{"name": name, "coins": coins})
+	tld, err := getTLD(name)
+	if err != nil {
+		return nil, errors.E("name format not recognized", errors.Params{"name": name, "coins": coins, "inner_error": err.Error()})
 	}
 	id, ok := TLDMapping[tld]
 	if !ok {
@@ -126,15 +127,15 @@ func handleLookup(name string, coins []uint64) (result []blockatlas.Resolved, er
 }
 
 // Obtain tld from then name, e.g. ".ens" from "nick.ens"
-func getTLD(name string) (tld string, ok bool) {
+func getTLD(name string) (tld string, error error) {
 	// find last separator
 	lastSeparatorIdx := int(math.Max(
 		float64(strings.LastIndex(name, ".")),
 		float64(strings.LastIndex(name, "@"))))
 	if lastSeparatorIdx <= -1 || lastSeparatorIdx >= len(name)-1 {
 		// no separator inside string
-		return "", false
+		return "", errors.E("No TLD found in name", errors.Params{"name": name})
 	}
 	// return tail including separator
-	return name[lastSeparatorIdx:], true
+	return name[lastSeparatorIdx:], nil
 }
