@@ -62,7 +62,11 @@ func getTickerHandler(storage storage.Market) func(c *gin.Context) {
 			ginutils.RenderError(c, http.StatusInternalServerError, "Invalid coin")
 			return
 		}
-		token := c.Query("token")
+		token := strings.ToUpper(c.Query("token"))
+		if token == "" {
+			ginutils.RenderError(c, http.StatusInternalServerError, "Must provide token")
+			return
+		}
 
 		currency := c.DefaultQuery("currency", blockatlas.DefaultCurrency)
 		rate, err := storage.GetRate(strings.ToUpper(currency))
@@ -71,8 +75,8 @@ func getTickerHandler(storage storage.Market) func(c *gin.Context) {
 			return
 		}
 
-		coinObj := coin.Coins[uint(coinId)]
-		result, err := storage.GetTicker(coinObj.Symbol, strings.ToUpper(token))
+		symbol := coin.Coins[uint(coinId)].Symbol
+		result, err := storage.GetTicker(symbol, token)
 		if err != nil {
 			ginutils.RenderError(c, http.StatusInternalServerError, err.Error())
 			return
