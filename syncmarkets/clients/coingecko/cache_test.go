@@ -15,7 +15,7 @@ func Test_NewCache(t *testing.T) {
 			name: "test prepare cache map",
 			coins: GeckoCoins{
 				GeckoCoin{
-					Id:        "ethtereum",
+					Id:        "ethereum",
 					Symbol:    "eth",
 					Name:      "eth",
 					Platforms: nil,
@@ -31,7 +31,7 @@ func Test_NewCache(t *testing.T) {
 					Symbol: "0x",
 					Name:   "0x",
 					Platforms: Platforms{
-						"ethtereum": "0x812f35b66ec9eee26cd7fdf07fbc1c9c0ac3c4d6",
+						"ethereum": "0x812f35b66ec9eee26cd7fdf07fbc1c9c0ac3c4d6",
 					},
 				},
 				GeckoCoin{
@@ -39,7 +39,7 @@ func Test_NewCache(t *testing.T) {
 					Symbol: "usdt",
 					Name:   "usdt",
 					Platforms: Platforms{
-						"ethtereum": "0xdac17f958d2ee523a2206206994597c13d831ec7",
+						"ethereum": "0xdac17f958d2ee523a2206206994597c13d831ec7",
 					},
 				},
 			},
@@ -47,14 +47,14 @@ func Test_NewCache(t *testing.T) {
 				"0x": {
 					CoinResult{
 						Symbol:   "eth",
-						TokenId:  "0x812f35b66ec9eee26cd7fdf07fbc1c9c0ac3c4d6",
+						TokenId:  "0x812f35b66Ec9EEe26CD7Fdf07Fbc1c9c0ac3C4D6",
 						CoinType: "token",
 					},
 				},
 				"usdt": {
 					CoinResult{
 						Symbol:   "eth",
-						TokenId:  "0xdac17f958d2ee523a2206206994597c13d831ec7",
+						TokenId:  "0xdAC17F958D2ee523a2206206994597C13D831ec7",
 						CoinType: "token",
 					},
 				},
@@ -72,7 +72,7 @@ func Test_NewCache(t *testing.T) {
 func TestClient_GetCoinsById(t *testing.T) {
 	coins := GeckoCoins{
 		GeckoCoin{
-			Id:        "ethtereum",
+			Id:        "ethereum",
 			Symbol:    "eth",
 			Name:      "eth",
 			Platforms: nil,
@@ -88,7 +88,7 @@ func TestClient_GetCoinsById(t *testing.T) {
 			Symbol: "0x",
 			Name:   "0x",
 			Platforms: Platforms{
-				"ethtereum": "0x812f35b66ec9eee26cd7fdf07fbc1c9c0ac3c4d6",
+				"ethereum": "0x812f35b66ec9eee26cd7fdf07fbc1c9c0ac3c4d6",
 			},
 		},
 		GeckoCoin{
@@ -96,7 +96,7 @@ func TestClient_GetCoinsById(t *testing.T) {
 			Symbol: "usdt",
 			Name:   "usdt",
 			Platforms: Platforms{
-				"ethtereum": "0xdac17f958d2ee523a2206206994597c13d831ec7",
+				"ethereum": "0xdac17f958d2ee523a2206206994597c13d831ec7",
 			},
 		},
 	}
@@ -111,7 +111,7 @@ func TestClient_GetCoinsById(t *testing.T) {
 			expected: []CoinResult{
 				{
 					Symbol:   "eth",
-					TokenId:  "0x812f35b66ec9eee26cd7fdf07fbc1c9c0ac3c4d6",
+					TokenId:  "0x812f35b66Ec9EEe26CD7Fdf07Fbc1c9c0ac3C4D6",
 					CoinType: "token",
 				},
 			},
@@ -122,7 +122,7 @@ func TestClient_GetCoinsById(t *testing.T) {
 			expected: []CoinResult{
 				{
 					Symbol:   "eth",
-					TokenId:  "0xdac17f958d2ee523a2206206994597c13d831ec7",
+					TokenId:  "0xdAC17F958D2ee523a2206206994597C13D831ec7",
 					CoinType: "token",
 				},
 			},
@@ -148,7 +148,7 @@ func Test_NewSymbolsCache(t *testing.T) {
 			name: "test prepare cache map",
 			coins: GeckoCoins{
 				GeckoCoin{
-					Id:        "ethtereum",
+					Id:        "ethereum",
 					Symbol:    "eth",
 					Name:      "eth",
 					Platforms: nil,
@@ -164,7 +164,7 @@ func Test_NewSymbolsCache(t *testing.T) {
 					Symbol: "0x",
 					Name:   "0x",
 					Platforms: Platforms{
-						"ethtereum": "0x812f35b66Ec9EEe26CD7Fdf07Fbc1c9c0ac3C4D6",
+						"ethereum": "0x812f35b66Ec9EEe26CD7Fdf07Fbc1c9c0ac3C4D6",
 					},
 				},
 				GeckoCoin{
@@ -172,7 +172,7 @@ func Test_NewSymbolsCache(t *testing.T) {
 					Symbol: "usdt",
 					Name:   "usdt",
 					Platforms: Platforms{
-						"ethtereum": "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+						"ethereum": "0xdAC17F958D2ee523a2206206994597C13D831ec7",
 					},
 				},
 			},
@@ -182,7 +182,7 @@ func Test_NewSymbolsCache(t *testing.T) {
 					Symbol: "0x",
 					Name:   "0x",
 					Platforms: Platforms{
-						"ethtereum": "0x812f35b66Ec9EEe26CD7Fdf07Fbc1c9c0ac3C4D6",
+						"ethereum": "0x812f35b66Ec9EEe26CD7Fdf07Fbc1c9c0ac3C4D6",
 					},
 				},
 				"ETH:0xdAC17F958D2ee523a2206206994597C13D831ec7": GeckoCoin{
@@ -190,11 +190,11 @@ func Test_NewSymbolsCache(t *testing.T) {
 					Symbol: "usdt",
 					Name:   "usdt",
 					Platforms: Platforms{
-						"ethtereum": "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+						"ethereum": "0xdAC17F958D2ee523a2206206994597C13D831ec7",
 					},
 				},
 				"BTC": GeckoCoin{Id: "bitcoin", Symbol: "btc", Name: "btc", Platforms: nil},
-				"ETH": GeckoCoin{Id: "ethtereum", Symbol: "eth", Name: "eth", Platforms: nil},
+				"ETH": GeckoCoin{Id: "ethereum", Symbol: "eth", Name: "eth", Platforms: nil},
 			},
 		},
 	}
@@ -209,7 +209,7 @@ func Test_NewSymbolsCache(t *testing.T) {
 func TestClient_GetCoinsBySymbol(t *testing.T) {
 	coins := GeckoCoins{
 		GeckoCoin{
-			Id:        "ethtereum",
+			Id:        "ethereum",
 			Symbol:    "eth",
 			Name:      "eth",
 			Platforms: nil,
@@ -225,7 +225,7 @@ func TestClient_GetCoinsBySymbol(t *testing.T) {
 			Symbol: "0x",
 			Name:   "0x",
 			Platforms: Platforms{
-				"ethtereum": "0x812f35b66Ec9EEe26CD7Fdf07Fbc1c9c0ac3C4D6",
+				"ethereum": "0x812f35b66Ec9EEe26CD7Fdf07Fbc1c9c0ac3C4D6",
 			},
 		},
 		GeckoCoin{
@@ -233,7 +233,7 @@ func TestClient_GetCoinsBySymbol(t *testing.T) {
 			Symbol: "usdt",
 			Name:   "usdt",
 			Platforms: Platforms{
-				"ethtereum": "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+				"ethereum": "0xdAC17F958D2ee523a2206206994597C13D831ec7",
 			},
 		},
 	}
@@ -252,7 +252,7 @@ func TestClient_GetCoinsBySymbol(t *testing.T) {
 				Symbol: "0x",
 				Name:   "0x",
 				Platforms: Platforms{
-					"ethtereum": "0x812f35b66Ec9EEe26CD7Fdf07Fbc1c9c0ac3C4D6",
+					"ethereum": "0x812f35b66Ec9EEe26CD7Fdf07Fbc1c9c0ac3C4D6",
 				},
 			},
 		}, {
@@ -264,7 +264,7 @@ func TestClient_GetCoinsBySymbol(t *testing.T) {
 				Symbol: "usdt",
 				Name:   "usdt",
 				Platforms: Platforms{
-					"ethtereum": "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+					"ethereum": "0xdAC17F958D2ee523a2206206994597C13D831ec7",
 				},
 			},
 		},
@@ -282,7 +282,7 @@ func TestClient_GetCoinsBySymbol(t *testing.T) {
 			name:   "test fetching eth",
 			symbol: "eth",
 			expected: GeckoCoin{
-				Id:        "ethtereum",
+				Id:        "ethereum",
 				Symbol:    "eth",
 				Name:      "eth",
 				Platforms: nil,
@@ -295,6 +295,52 @@ func TestClient_GetCoinsBySymbol(t *testing.T) {
 			res, err := cache.GetCoinsBySymbol(tt.symbol, tt.address)
 			assert.Nil(t, err)
 			assert.Equal(t, tt.expected, res)
+		})
+	}
+}
+
+func Test_NormalizeTokenIDs(t *testing.T) {
+	tests := []struct {
+		name     string
+		platform string
+		address  string
+		expected string
+	}{
+		{
+			name:     "Should checksum Ethereum lowercase address",
+			platform: "ethereum",
+			address:  "0x812f35b66ec9eee26cd7fdf07fbc1c9c0ac3c4d6",
+			expected: "0x812f35b66Ec9EEe26CD7Fdf07Fbc1c9c0ac3C4D6",
+		},
+		{
+			name:     "",
+			platform: "ethereum",
+			address:  "",
+			expected: "",
+		},
+		{
+			name:     "Return empty string if input empty",
+			platform: "",
+			address:  "",
+			expected: "",
+		},
+		{
+			name:     "Should return same Stellar address",
+			platform: "stellar",
+			address:  "SIX-GDMS6EECOH6MBMCP3FYRYEVRBIV3TQGLOFQIPVAITBRJUMTI6V7A2X6Z",
+			expected: "SIX-GDMS6EECOH6MBMCP3FYRYEVRBIV3TQGLOFQIPVAITBRJUMTI6V7A2X6Z",
+		},
+		{
+			name:     "Should return same Neo address",
+			platform: "neo",
+			address:  "ab38352559b8b203bde5fddfa0b07d8b2525e132",
+			expected: "ab38352559b8b203bde5fddfa0b07d8b2525e132",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.expected, normalizeTokenId(tt.platform, tt.address))
 		})
 	}
 }
