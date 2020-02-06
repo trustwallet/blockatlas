@@ -53,7 +53,7 @@ func TestNormalizeTransaction(t *testing.T) {
 		{"Test normalize VET transfer transaction", transferSrc, trxId, expectedTransfer},
 	}
 
-	subject := Platform{}
+	platform := Platform{}
 
 
 	for _, tt := range tests {
