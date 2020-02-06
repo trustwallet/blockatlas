@@ -165,7 +165,7 @@ func TestNormalizeTokenTransaction(t *testing.T) {
 		{"Normalize VIP180 token transfer", transferLogSrc, trxReceipt, expectedTransferLog},
 	}
 
-	subject := Platform{}
+	platform := Platform{}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
