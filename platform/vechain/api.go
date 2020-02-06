@@ -99,7 +99,7 @@ func (p *Platform) getTransactionChannel(id string, txChan chan blockatlas.TxPag
 			errors.Params{"id": id}).PushToSentry()
 	}
 
-	txs, err := NormalizeTokenTransaction(srcTx, receipt)
+	txs, err := p.NormalizeTokenTransaction(srcTx, receipt)
 	if err != nil {
 		return errors.E(err, "Failed to NormalizeBlockTransactions tx", errors.TypePlatformUnmarshal,
 			errors.Params{"tx": srcTx}).PushToSentry()
@@ -108,7 +108,7 @@ func (p *Platform) getTransactionChannel(id string, txChan chan blockatlas.TxPag
 	return nil
 }
 
-func NormalizeTokenTransaction(srcTx Tx, receipt TxReceipt) (blockatlas.TxPage, error) {
+func (p *Platform) NormalizeTokenTransaction(srcTx Tx, receipt TxReceipt) (blockatlas.TxPage, error) {
 	if receipt.Outputs == nil || len(receipt.Outputs) == 0 {
 		return blockatlas.TxPage{}, errors.E("NormalizeBlockTransaction: Clauses not found", errors.Params{"tx": srcTx}).PushToSentry()
 	}
@@ -134,7 +134,7 @@ func NormalizeTokenTransaction(srcTx Tx, receipt TxReceipt) (blockatlas.TxPage, 
 
 		txs = append(txs, blockatlas.Tx{
 			ID:     srcTx.Id,
-			Coin:   coin.VET,
+			Coin:   p.Coin().ID,
 			From:   origin,
 			To:     to,
 			Fee:    blockatlas.Amount(fee),
@@ -143,11 +143,12 @@ func NormalizeTokenTransaction(srcTx Tx, receipt TxReceipt) (blockatlas.TxPage, 
 			Block:  srcTx.Meta.BlockNumber,
 			Status: blockatlas.StatusCompleted,
 			Meta: blockatlas.TokenTransfer{
-				Name:     "", // TODO replace with real name for other coins
+				// the only supported Token on VeChain is its Gas token
+				Name:     gasTokenName,
 				TokenID:  to,
 				Value:    blockatlas.Amount(value),
-				Symbol:   "VTHO", // TODO replace with real symbol for other coins
-				Decimals: 18,     // TODO Not all tokens have decimal 18 https://github.com/vechain/token-registry/tree/master/tokens/main
+				Symbol:   gasTokenSymbol,
+				Decimals: gasTokenDecimals,
 				From:     origin,
 				To:       address.EIP55Checksum(getRecipientAddress(event.Topics[2])),
 			},
@@ -172,7 +173,7 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 		if err != nil {
 			continue
 		}
-		tx, err := NormalizeTransaction(t, trxId)
+		tx, err := p.NormalizeTransaction(t, trxId)
 		if err != nil {
 			continue
 		}
@@ -181,7 +182,7 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 	return txs, nil
 }
 
-func NormalizeTransaction(srcTx LogTransfer, trxId Tx) (blockatlas.Tx, error) {
+func (p *Platform) NormalizeTransaction(srcTx LogTransfer, trxId Tx) (blockatlas.Tx, error) {
 	value, err := numbers.HexToDecimal(srcTx.Amount)
 	if err != nil {
 		return blockatlas.Tx{}, err
@@ -191,7 +192,7 @@ func NormalizeTransaction(srcTx LogTransfer, trxId Tx) (blockatlas.Tx, error) {
 
 	return blockatlas.Tx{
 		ID:     srcTx.Meta.TxId,
-		Coin:   coin.VET,
+		Coin:   p.Coin().ID,
 		From:   address.EIP55Checksum(srcTx.Sender),
 		To:     address.EIP55Checksum(srcTx.Recipient),
 		Fee:    blockatlas.Amount(fee),
@@ -201,8 +202,8 @@ func NormalizeTransaction(srcTx LogTransfer, trxId Tx) (blockatlas.Tx, error) {
 		Status: blockatlas.StatusCompleted,
 		Meta: blockatlas.Transfer{
 			Value:    blockatlas.Amount(value),
-			Symbol:   coin.Coins[coin.VET].Symbol,
-			Decimals: 18,
+			Symbol:   p.Coin().Symbol,
+			Decimals: p.Coin().Decimals,
 		},
 	}, nil
 }

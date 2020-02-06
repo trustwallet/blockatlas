@@ -52,6 +52,10 @@ func TestNormalizeTransaction(t *testing.T) {
 	}{
 		{"Test normalize VET transfer transaction", transferSrc, trxId, expectedTransfer},
 	}
+
+	subject := Platform{}
+
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			var tx LogTransfer
@@ -62,7 +66,7 @@ func TestNormalizeTransaction(t *testing.T) {
 			errTrxID := json.Unmarshal([]byte(tt.txId), &tId)
 			assert.Nil(t, errTrxID)
 
-			actual, err := NormalizeTransaction(tx, tId)
+			actual, err := subject.NormalizeTransaction(tx, tId)
 			assert.Nil(t, err)
 
 			assert.Equal(t, tt.expected, actual, "tx don't equal")
@@ -140,7 +144,7 @@ var expectedTransferLog = blockatlas.TxPage{
 		Status: blockatlas.StatusCompleted,
 		Block:  4382764,
 		Meta: blockatlas.TokenTransfer{
-			Name:     "",
+			Name:     "VeThor",
 			Symbol:   "VTHO",
 			TokenID:  "0x0000000000000000000000000000456E65726779",
 			From:     "0x2c7A8d5ccE0d5E6a8a31233B7Dc3DAE9AaE4b405",
@@ -160,6 +164,9 @@ func TestNormalizeTokenTransaction(t *testing.T) {
 	}{
 		{"Normalize VIP180 token transfer", transferLogSrc, trxReceipt, expectedTransferLog},
 	}
+
+	subject := Platform{}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			var tx Tx
@@ -170,7 +177,7 @@ func TestNormalizeTokenTransaction(t *testing.T) {
 			errR := json.Unmarshal([]byte(tt.txReceipt), &receipt)
 			assert.Nil(t, errR)
 
-			actual, err := NormalizeTokenTransaction(tx, receipt)
+			actual, err := subject.NormalizeTokenTransaction(tx, receipt)
 			assert.Nil(t, err)
 
 			assert.Equal(t, len(actual), 1, "tx could not be normalized")
