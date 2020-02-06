@@ -145,7 +145,7 @@ var expectedTransferLog = blockatlas.TxPage{
 		Block:  4382764,
 		Meta: blockatlas.TokenTransfer{
 			Name:     gasTokenName,
-			Symbol:   "VTHO",
+			Symbol:   gasTokenSymbol,
 			TokenID:  "0x0000000000000000000000000000456E65726779",
 			From:     "0x2c7A8d5ccE0d5E6a8a31233B7Dc3DAE9AaE4b405",
 			To:       "0xB5e883349e68aB59307d1604555AC890fAC47128",
