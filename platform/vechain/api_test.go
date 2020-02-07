@@ -66,7 +66,7 @@ func TestNormalizeTransaction(t *testing.T) {
 			errTrxID := json.Unmarshal([]byte(tt.txId), &tId)
 			assert.Nil(t, errTrxID)
 
-			actual, err := subject.NormalizeTransaction(tx, tId)
+			actual, err := platform.NormalizeTransaction(tx, tId)
 			assert.Nil(t, err)
 
 			assert.Equal(t, tt.expected, actual, "tx don't equal")
@@ -177,7 +177,7 @@ func TestNormalizeTokenTransaction(t *testing.T) {
 			errR := json.Unmarshal([]byte(tt.txReceipt), &receipt)
 			assert.Nil(t, errR)
 
-			actual, err := subject.NormalizeTokenTransaction(tx, receipt)
+			actual, err := platform.NormalizeTokenTransaction(tx, receipt)
 			assert.Nil(t, err)
 
 			assert.Equal(t, len(actual), 1, "tx could not be normalized")
