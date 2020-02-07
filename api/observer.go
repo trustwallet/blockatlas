@@ -7,7 +7,6 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/ginutils"
 	"github.com/trustwallet/blockatlas/platform"
 	"github.com/trustwallet/blockatlas/storage"
-	"strconv"
 )
 
 func SetupObserverAPI(router gin.IRouter, db *storage.Storage) {
@@ -42,7 +41,7 @@ func addCall(storage storage.Addresses) func(c *gin.Context) {
 			ginutils.RenderSuccess(c, blockatlas.Observer{Message: "Added", Status: true})
 			return
 		}
-		subs := parseSubscriptions(req.Subscriptions, req.Webhook)
+		subs := req.ParseSubscriptions()
 		go storage.AddSubscriptions(subs)
 
 		ginutils.RenderSuccess(c, blockatlas.Observer{Message: "Added", Status: true})
@@ -75,7 +74,7 @@ func deleteCall(storage storage.Addresses) func(c *gin.Context) {
 			return
 		}
 
-		subs := parseSubscriptions(req.Subscriptions, req.Webhook)
+		subs := req.ParseSubscriptions()
 		go storage.DeleteSubscriptions(subs)
 		ginutils.RenderSuccess(c, blockatlas.Observer{Message: "Deleted", Status: true})
 	}
@@ -112,21 +111,4 @@ func statusCall(storage storage.Tracker) func(c *gin.Context) {
 		}
 		ginutils.RenderSuccess(c, result)
 	}
-}
-
-func parseSubscriptions(subscriptions map[string][]string, webhook string) (subs []blockatlas.Subscription) {
-	for coinStr, perCoin := range subscriptions {
-		coin, err := strconv.Atoi(coinStr)
-		if err != nil {
-			continue
-		}
-		for _, addr := range perCoin {
-			subs = append(subs, blockatlas.Subscription{
-				Coin:    uint(coin),
-				Address: addr,
-				Webhook: webhook,
-			})
-		}
-	}
-	return
 }
