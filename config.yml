@@ -6,6 +6,7 @@ gin:
   # If set, HTTP Forwarded headers will be respected
   reverse_proxy: false
 
+platform: all
 #metrics:
 #  api_token: xxxxxx
 
