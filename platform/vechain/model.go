@@ -5,6 +5,12 @@ const (
 	rangeUnit    = "block"
 )
 
+const (
+	gasTokenName     = "VeThor"
+	gasTokenSymbol   = "VTHO"
+	gasTokenDecimals = 18
+)
+
 type LogRequest struct {
 	Options     Options       `json:"options,omitempty"`
 	CriteriaSet []CriteriaSet `json:"criteriaSet,omitempty"`
