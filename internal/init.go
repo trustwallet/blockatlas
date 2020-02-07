@@ -42,6 +42,7 @@ func InitAPIWithRedis(defaultPort, defaultConfigPath string) (string, string, *g
 	)
 
 	cache = storage.New()
+	sg = sentrygin.New(sentrygin.Options{})
 
 	flag.StringVar(&port, "p", defaultPort, "port for api")
 	flag.StringVar(&confPath, "c", defaultConfigPath, "config file for api")

@@ -24,7 +24,7 @@ var (
 func init() {
 	_, confPath, _, cache = internal.InitAPIWithRedis("", defaultConfigPath)
 
-	platform.Init(viper.GetString("platform.symbol"))
+	platform.Init(viper.GetString("platform"))
 }
 
 func main() {

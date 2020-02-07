@@ -22,7 +22,7 @@ var (
 
 func init() {
 	port, confPath, sg = internal.InitAPI(defaultPort, defaultConfigPath)
-	platform.Init(viper.GetString("platform.symbol"))
+	platform.Init(viper.GetString("platform"))
 }
 
 func main() {
