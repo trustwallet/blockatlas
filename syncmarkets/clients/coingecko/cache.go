@@ -75,9 +75,15 @@ func NewCache(coins GeckoCoins) *Cache {
 			if !ok {
 				m[coin.Id] = make([]CoinResult, 0)
 			}
+
+			tokenId := normalizeTokenId(platform, address)
+			if tokenId == "" {
+				continue
+			}
+
 			m[coin.Id] = append(m[coin.Id], CoinResult{
 				Symbol:   platformCoin.Symbol,
-				TokenId:  normalizeTokenId(platform, address),
+				TokenId:  tokenId,
 				CoinType: blockatlas.TypeToken,
 			})
 		}
@@ -99,7 +105,11 @@ func normalizeTokenId(platform, addr string) string {
 	}
 	switch platform {
 	case "ethereum":
-		return address.EIP55Checksum(addr)
+		if len(addr) == 42 && strings.HasPrefix(addr, "0x"){
+			return address.EIP55Checksum(addr)
+		}
+		return ""
+
 	default:
 		return addr
 	}

@@ -325,6 +325,12 @@ func Test_NormalizeTokenIDs(t *testing.T) {
 			expected: "",
 		},
 		{
+			name:     "Should not process if address malformed",
+			platform: "ethereum",
+			address:  "https://etherscan.io/address/0x8Ddc86DbA7ad728012eFc460b8A168Aba60B403B",
+			expected: "",
+		},
+		{
 			name:     "Return empty string if input empty",
 			platform: "",
 			address:  "",
