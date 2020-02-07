@@ -102,103 +102,103 @@ var (
 	CollectionAPIs map[uint]blockatlas.CollectionAPI
 )
 
-func getActivePlatforms(symbol string) []blockatlas.Platform {
+func getActivePlatforms(platformHandle string) []blockatlas.Platform {
 	var platformList []blockatlas.Platform
 
-	logger.Info("Loaded with: ", logger.Params{"symbol": symbol})
+	logger.Info("Loaded with: ", logger.Params{"handle": platformHandle})
 
-	switch symbol {
-	case coin.Binance().Symbol:
+	switch platformHandle {
+	case coin.Binance().Handle:
 		platformList = append(platformList, &binance.Platform{})
-	case coin.Nimiq().Symbol:
+	case coin.Nimiq().Handle:
 		platformList = append(platformList, &nimiq.Platform{})
-	case coin.Ripple().Symbol:
+	case coin.Ripple().Handle:
 		platformList = append(platformList, &ripple.Platform{})
-	case coin.Stellar().Symbol:
+	case coin.Stellar().Handle:
 		platformList = append(platformList, &stellar.Platform{CoinIndex: coin.XLM})
-	case coin.Kin().Symbol:
+	case coin.Kin().Handle:
 		platformList = append(platformList, &stellar.Platform{CoinIndex: coin.KIN})
-	case coin.Ethereum().Symbol:
+	case coin.Ethereum().Handle:
 		platformList = append(platformList, &ethereum.Platform{CoinIndex: coin.ETH})
-	case coin.Classic().Symbol:
+	case coin.Classic().Handle:
 		platformList = append(platformList, &ethereum.Platform{CoinIndex: coin.ETC})
-	case coin.Poa().Symbol:
+	case coin.Poa().Handle:
 		platformList = append(platformList, &ethereum.Platform{CoinIndex: coin.POA})
-	case coin.Callisto().Symbol:
+	case coin.Callisto().Handle:
 		platformList = append(platformList, &ethereum.Platform{CoinIndex: coin.CLO})
-	case coin.Gochain().Symbol:
+	case coin.Gochain().Handle:
 		platformList = append(platformList, &ethereum.Platform{CoinIndex: coin.GO})
-	case coin.Wanchain().Symbol:
+	case coin.Wanchain().Handle:
 		platformList = append(platformList, &ethereum.Platform{CoinIndex: coin.WAN})
-	case coin.Tomochain().Symbol:
+	case coin.Tomochain().Handle:
 		platformList = append(platformList, &ethereum.Platform{CoinIndex: coin.TOMO})
-	case coin.Thundertoken().Symbol:
+	case coin.Thundertoken().Handle:
 		platformList = append(platformList, &ethereum.Platform{CoinIndex: coin.TT})
-	case coin.Cosmos().Symbol:
+	case coin.Cosmos().Handle:
 		platformList = append(platformList, &cosmos.Platform{CoinIndex: coin.ATOM})
-	case coin.Kava().Symbol:
+	case coin.Kava().Handle:
 		platformList = append(platformList, &cosmos.Platform{CoinIndex: coin.KAVA})
-	case coin.Tezos().Symbol:
+	case coin.Tezos().Handle:
 		platformList = append(platformList, &tezos.Platform{})
-	case coin.Aion().Symbol:
+	case coin.Aion().Handle:
 		platformList = append(platformList, &aion.Platform{})
-	case coin.Icon().Symbol:
+	case coin.Icon().Handle:
 		platformList = append(platformList, &icon.Platform{})
-	case coin.Iotex().Symbol:
+	case coin.Iotex().Handle:
 		platformList = append(platformList, &iotex.Platform{})
-	case coin.Ontology().Symbol:
+	case coin.Ontology().Handle:
 		platformList = append(platformList, &ontology.Platform{})
-	case coin.Theta().Symbol:
+	case coin.Theta().Handle:
 		platformList = append(platformList, &theta.Platform{})
-	case coin.Tron().Symbol:
+	case coin.Tron().Handle:
 		platformList = append(platformList, &tron.Platform{})
-	case coin.Vechain().Symbol:
+	case coin.Vechain().Handle:
 		platformList = append(platformList, &vechain.Platform{})
-	case coin.Zilliqa().Symbol:
+	case coin.Zilliqa().Handle:
 		platformList = append(platformList, &zilliqa.Platform{})
-	case coin.Waves().Symbol:
+	case coin.Waves().Handle:
 		platformList = append(platformList, &waves.Platform{})
-	case coin.Aeternity().Symbol:
+	case coin.Aeternity().Handle:
 		platformList = append(platformList, &aeternity.Platform{})
-	case coin.Bitcoin().Symbol:
+	case coin.Bitcoin().Handle:
 		platformList = append(platformList, &bitcoin.Platform{CoinIndex: coin.BTC})
-	case coin.Litecoin().Symbol:
+	case coin.Litecoin().Handle:
 		platformList = append(platformList, &bitcoin.Platform{CoinIndex: coin.LTC})
-	case coin.Bitcoincash().Symbol:
+	case coin.Bitcoincash().Handle:
 		platformList = append(platformList, &bitcoin.Platform{CoinIndex: coin.BCH})
-	case coin.Dash().Symbol:
+	case coin.Dash().Handle:
 		platformList = append(platformList, &bitcoin.Platform{CoinIndex: coin.DASH})
-	case coin.Doge().Symbol:
+	case coin.Doge().Handle:
 		platformList = append(platformList, &bitcoin.Platform{CoinIndex: coin.DOGE})
-	case coin.Zcash().Symbol:
+	case coin.Zcash().Handle:
 		platformList = append(platformList, &bitcoin.Platform{CoinIndex: coin.ZEC})
-	case coin.Zcoin().Symbol:
+	case coin.Zcoin().Handle:
 		platformList = append(platformList, &bitcoin.Platform{CoinIndex: coin.XZC})
-	case coin.Viacoin().Symbol:
+	case coin.Viacoin().Handle:
 		platformList = append(platformList, &bitcoin.Platform{CoinIndex: coin.VIA})
-	case coin.Ravencoin().Symbol:
+	case coin.Ravencoin().Handle:
 		platformList = append(platformList, &bitcoin.Platform{CoinIndex: coin.RVN})
-	case coin.Qtum().Symbol:
+	case coin.Qtum().Handle:
 		platformList = append(platformList, &bitcoin.Platform{CoinIndex: coin.QTUM})
-	case coin.Groestlcoin().Symbol:
+	case coin.Groestlcoin().Handle:
 		platformList = append(platformList, &bitcoin.Platform{CoinIndex: coin.GRS})
-	case coin.Zelcash().Symbol:
+	case coin.Zelcash().Handle:
 		platformList = append(platformList, &bitcoin.Platform{CoinIndex: coin.ZEL})
-	case coin.Decred().Symbol:
+	case coin.Decred().Handle:
 		platformList = append(platformList, &bitcoin.Platform{CoinIndex: coin.DCR})
-	case coin.Digibyte().Symbol:
+	case coin.Digibyte().Handle:
 		platformList = append(platformList, &bitcoin.Platform{CoinIndex: coin.DGB})
-	case coin.Nebulas().Symbol:
+	case coin.Nebulas().Handle:
 		platformList = append(platformList, &nebulas.Platform{})
-	case coin.Fio().Symbol:
+	case coin.Fio().Handle:
 		platformList = append(platformList, &fio.Platform{})
-	case coin.Algorand().Symbol:
+	case coin.Algorand().Handle:
 		platformList = append(platformList, &algorand.Platform{})
-	case coin.Nano().Symbol:
+	case coin.Nano().Handle:
 		platformList = append(platformList, &nano.Platform{})
-	case coin.Harmony().Symbol:
+	case coin.Harmony().Handle:
 		platformList = append(platformList, &harmony.Platform{})
-	case coin.Kusama().Symbol:
+	case coin.Kusama().Handle:
 		platformList = append(platformList, &polkadot.Platform{CoinIndex: coin.KSM})
 	default:
 		platformList = allPlatformsList
@@ -207,8 +207,8 @@ func getActivePlatforms(symbol string) []blockatlas.Platform {
 	return platformList
 }
 
-func Init(symbol string) {
-	platformList := getActivePlatforms(symbol)
+func Init(platformHandle string) {
+	platformList := getActivePlatforms(platformHandle)
 
 	Platforms = make(map[string]blockatlas.Platform)
 	BlockAPIs = make(map[string]blockatlas.BlockAPI)
