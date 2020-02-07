@@ -1,24 +1,33 @@
 version: '3.7'
 services:
-  api:
-    container_name: api
-    build:
-      context: .
-      args:
-      - SERVICE=api
-    ports:
-    - 8420:8420
-    links:
-    - redis
-
   observer:
     container_name: observer
     build:
       context: .
       args:
-       - SERVICE=observer
+        - SERVICE=observer
+    links:
+      - redis
+
+  observer_api:
+    container_name: observer_api
+    build:
+      context: .
+      args:
+      - SERVICE=observer_api
+    ports:
+    - 8422:8422
     links:
     - redis
+
+  platform_api:
+    container_name: platform_api
+    build:
+      context: .
+      args:
+        - SERVICE=platform_api
+    ports:
+      - 8420:8420
 
   syncmarkets:
     container_name: syncmarkets
@@ -28,6 +37,17 @@ services:
         - SERVICE=syncmarkets
     links:
     - redis
+
+  syncmarkets_api:
+    container_name: syncmarkets_api
+    build:
+      context: .
+      args:
+        - SERVICE=syncmarkets_api
+    ports:
+      - 8421:8421
+    links:
+      - redis
 
   redis:
     container_name: redis
