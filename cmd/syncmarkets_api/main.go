@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	defaultPort       = "8420"
+	defaultPort       = "8421"
 	defaultConfigPath = "../../config.yml"
 )
 

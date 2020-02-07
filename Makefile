@@ -2,9 +2,11 @@
 VERSION := $(shell git describe --tags)
 BUILD := $(shell git rev-parse --short HEAD)
 PROJECT_NAME := $(shell basename "$(PWD)")
-API_SERVICE := api
+API_SERVICE := platform_api
 OBSERVER_SERVICE := observer
+OBSERVER_API := observer_api
 SYNC_SERVICE := syncmarkets
+SYNC_API := syncmarkets_api
 COIN_FILE := coin/coins.yml
 COIN_GO_FILE := coin/coins.go
 GEN_COIN_FILE := coin/gen.go
@@ -29,7 +31,9 @@ STDERR := /tmp/.$(PROJECT_NAME)-stderr.txt
 # PID file will keep the process id of the server
 PID_API := /tmp/.$(PROJECT_NAME).$(API_SERVICE).pid
 PID_OBSERVER := /tmp/.$(PROJECT_NAME).$(OBSERVER_SERVICE).pid
+PID_OBSERVER_API := /tmp/.$(PROJECT_NAME).$(OBSERVER_API).pid
 PID_SYNC := /tmp/.$(PROJECT_NAME).$(SYNC_SERVICE).pid
+PID_SYNC_API := /tmp/.$(PROJECT_NAME).$(SYNC_API).pid
 
 # Make is verbose in Linux. Make it silent.
 MAKEFLAGS += --silent
@@ -39,7 +43,7 @@ install: go-get
 
 ## start: Start API, Observer and Sync in development mode.
 start:
-	@bash -c "$(MAKE) clean compile start-api start-observer start-syncmarkets"
+	@bash -c "$(MAKE) clean compile start-api start-observer start-observer-api start-syncmarkets start-syncmarkets-api"
 
 ## start-api: Start API in development mode.
 start-api: stop
@@ -55,6 +59,13 @@ start-observer: stop
 	@cat $(PID_OBSERVER) | sed "/^/s/^/  \>  Observer PID: /"
 	@echo "  >  Error log: $(STDERR)"
 
+## start-observer: Start Observer in development mode.
+start-observer-api: stop
+	@echo "  >  Starting $(PROJECT_NAME) Observer"
+	@-$(GOBIN)/$(OBSERVER_API)/observer_api -c $(CONFIG_FILE) 2>&1 & echo $$! > $(PID_OBSERVER_API)
+	@cat $(PID_OBSERVER_API) | sed "/^/s/^/  \>  Observer PID: /"
+	@echo "  >  Error log: $(STDERR)"
+
 ## start-sync-markets: Start Sync markets in development mode.
 start-syncmarkets: stop
 	@echo "  >  Starting $(PROJECT_NAME) Sync"
@@ -62,13 +73,22 @@ start-syncmarkets: stop
 	@cat $(PID_SYNC) | sed "/^/s/^/  \>  Sync PID: /"
 	@echo "  >  Error log: $(STDERR)"
 
+## start-sync-markets-api: Start Sync markets api in development mode.
+start-syncmarkets-api: stop
+	@echo "  >  Starting $(PROJECT_NAME) Sync API"
+	@-$(GOBIN)/$(SYNC_API)/syncmarkets_api -c $(CONFIG_FILE) 2>&1 & echo $$! > $(PID_SYNC_API)
+	@cat $(PID_SYNC_API) | sed "/^/s/^/  \>  Sync PID: /"
+	@echo "  >  Error log: $(STDERR)"
+
 ## stop: Stop development mode.
 stop:
-	@-touch $(PID_API) $(PID_OBSERVER)
+	@-touch $(PID_API) $(PID_OBSERVER) $(PID_OBSERVER_API) $(PID_SYNC) $(PID_SYNC_API)
 	@-kill `cat $(PID_API)` 2> /dev/null || true
 	@-kill `cat $(PID_OBSERVER)` 2> /dev/null || true
+	@-kill `cat $(PID_OBSERVER_API)` 2> /dev/null || true
 	@-kill `cat $(PID_SYNC)` 2> /dev/null || true
-	@-rm $(PID_API) $(PID_OBSERVER)
+	@-kill `cat $(PID_SYNC_API)` 2> /dev/null || true
+	@-rm $(PID_API) $(PID_OBSERVER) $(PID_OBSERVER_API) $(PID_SYNC) $(PID_SYNC_API)
 
 ## compile: Compile the project.
 compile:
@@ -125,8 +145,12 @@ go-build:
 	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(API_SERVICE)/api ./cmd/$(API_SERVICE)
 	@echo "  >  Building syncmarkets binary..."
 	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(SYNC_SERVICE)/syncmarkets ./cmd/$(SYNC_SERVICE)
+	@echo "  >  Building syncmarkets_api binary..."
+	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(SYNC_API)/syncmarkets_api ./cmd/$(SYNC_API)
 	@echo "  >  Building observer binary..."
 	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(OBSERVER_SERVICE)/observer ./cmd/$(OBSERVER_SERVICE)
+	@echo "  >  Building observer_api binary..."
+	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(OBSERVER_API)/observer_api ./cmd/$(OBSERVER_API)
 
 go-generate:
 	@echo "  >  Generating dependency files..."
