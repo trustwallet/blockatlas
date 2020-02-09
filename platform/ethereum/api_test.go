@@ -163,23 +163,6 @@ var transferDst = blockatlas.Tx{
 	},
 }
 
-var transferContractDst = blockatlas.Tx{
-	ID:       "0x77f8a3b2203933493d103a1637de814b4853410b1fb2981c4d2cff4d7a3071ab",
-	Coin:     coin.ETH,
-	From:     "0xf5aea47e57c058881b31ee8fce1002c409188f06",
-	To:       "0x0ae933a89d9e249d0873cfc7ca022fcb3f1280ce",
-	Fee:      "105000000000000",
-	Date:     1554663642,
-	Block:    7522781,
-	Sequence: 88,
-	Status:   blockatlas.StatusCompleted,
-	Meta: blockatlas.Transfer{
-		Value:    "1999895000000000000",
-		Symbol:   "ETH",
-		Decimals: 18,
-	},
-}
-
 var failedDst = blockatlas.Tx{
 	ID:       "0x8dfe7e859f7bdcea4e6f4ada18567d96a51c3aa29e618ef09b80ae99385e191e",
 	Coin:     coin.ETH,
@@ -280,7 +263,6 @@ type testToken struct {
 	name        string
 	apiResponse string
 	expected    *blockatlas.Token
-	token       bool
 }
 
 func TestNormalizeToken(t *testing.T) {
