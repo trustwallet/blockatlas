@@ -96,7 +96,6 @@ const collectionsSrc = `
 
 var collection1Dst = blockatlas.Collection{
 	Name:            "CryptoKitties",
-	Symbol:          "CKITTY",
 	Slug:            "cryptokitties",
 	ImageUrl:        "https://storage.opensea.io/0x06012c8cf97bead5deae237070f9587f8e7a266d-featured-1556588705.png",
 	Description:     "CryptoKitties is a game centered around breedable, collectible, and oh-so-adorable creatures we call CryptoKitties! Each cat is one-of-a-kind and 100% owned by you; it cannot be replicated, taken away, or destroyed.",
@@ -112,7 +111,6 @@ var collection1Dst = blockatlas.Collection{
 
 var collection2Dst = blockatlas.Collection{
 	Name:            "Age of Rust",
-	Symbol:          "",
 	Slug:            "age-of-rust",
 	ImageUrl:        "https://storage.opensea.io/age-of-rust-1561960816.jpg",
 	Description:     "Year 4424: The search begins for new life on the other side of the galaxy. Explore abandoned space stations, mysterious caverns, and ruins on far away worlds in order to unlock puzzles and secrets! Beware the rogue machines!",
