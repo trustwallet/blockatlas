@@ -80,6 +80,7 @@ func OldNormalizeCollection(c Collection, coinIndex uint, owner string) blockatl
 	}
 
 	description := blockatlas.GetValidParameter(c.Description, c.Contracts[0].Description)
+	symbol := blockatlas.GetValidParameter(c.Contracts[0].Symbol, "")
 	collectionId := blockatlas.GetValidParameter(c.Contracts[0].Address, "")
 	version := blockatlas.GetValidParameter(c.Contracts[0].NftVersion, "")
 	collectionType := blockatlas.GetValidParameter(c.Contracts[0].Type, "")
@@ -89,6 +90,7 @@ func OldNormalizeCollection(c Collection, coinIndex uint, owner string) blockatl
 
 	return blockatlas.Collection{
 		Name:            c.Name,
+		Symbol:          symbol,
 		Slug:            c.Slug,
 		ImageUrl:        c.ImageUrl,
 		Description:     description,
@@ -166,11 +168,13 @@ func NormalizeCollection(c Collection, coinIndex uint, owner string) blockatlas.
 	}
 
 	description := blockatlas.GetValidParameter(c.Description, c.Contracts[0].Description)
+	symbol := blockatlas.GetValidParameter(c.Contracts[0].Symbol, "")
 	version := blockatlas.GetValidParameter(c.Contracts[0].NftVersion, "")
 	collectionType := blockatlas.GetValidParameter(c.Contracts[0].Type, "")
 
 	return blockatlas.Collection{
 		Name:            c.Name,
+		Symbol:          symbol,
 		Slug:            c.Slug,
 		ImageUrl:        c.ImageUrl,
 		Description:     description,
