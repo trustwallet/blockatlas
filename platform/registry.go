@@ -102,8 +102,8 @@ var (
 	CollectionAPIs map[uint]blockatlas.CollectionAPI
 )
 
-func getPlatform(platformHandle string) blockatlas.Platform {
-	switch platformHandle {
+func getPlatform(handle string) blockatlas.Platform {
+	switch handle {
 	case coin.Binance().Handle:
 		return &binance.Platform{}
 	case coin.Nimiq().Handle:
@@ -201,18 +201,14 @@ func getPlatform(platformHandle string) blockatlas.Platform {
 	}
 }
 
-func getActivePlatforms(platformHandle string) []blockatlas.Platform {
-	var platformList []blockatlas.Platform
+func getActivePlatforms(handle string) []blockatlas.Platform {
+	logger.Info("Loaded with: ", logger.Params{"handle": handle})
 
-	logger.Info("Loaded with: ", logger.Params{"handle": platformHandle})
-
-	chosenPlatform := getPlatform(platformHandle)
-	if chosenPlatform != nil {
-		platformList = append(platformList, chosenPlatform)
-	} else {
-		platformList = allPlatformsList
+	platform := getPlatform(handle)
+	if platform != nil {
+		return []blockatlas.Platform{platform}
 	}
-	return platformList
+	return allPlatformsList
 }
 
 func Init(platformHandle string) {
