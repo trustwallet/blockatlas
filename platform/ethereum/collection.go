@@ -89,6 +89,7 @@ func OldNormalizeCollection(c Collection, coinIndex uint, owner string) blockatl
 
 	return blockatlas.Collection{
 		Name:            c.Name,
+		Symbol:          "",
 		Slug:            c.Slug,
 		ImageUrl:        c.ImageUrl,
 		Description:     description,
