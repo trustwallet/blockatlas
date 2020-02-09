@@ -61,25 +61,27 @@ func getTickerHandler(storage storage.Market) func(c *gin.Context) {
 		coinQuery := c.Query("coin")
 		coinId, err := strconv.Atoi(coinQuery)
 		if err != nil {
-			ginutils.RenderError(c, http.StatusInternalServerError, "Invalid coin")
+			ginutils.RenderError(c, http.StatusBadRequest, "Invalid coin")
 			return
 		}
 		token := strings.ToUpper(c.Query("token"))
 		if token == "" {
-			ginutils.RenderError(c, http.StatusInternalServerError, "Must provide token")
+			ginutils.RenderError(c, http.StatusBadRequest, "Must provide token")
 			return
 		}
 
 		currency := c.DefaultQuery("currency", blockatlas.DefaultCurrency)
 		rate, err := storage.GetRate(strings.ToUpper(currency))
 		if err != nil {
-			ginutils.RenderError(c, http.StatusInternalServerError, "Invalid currency")
+			logger.Error(err, "Failed to retrieve currency", logger.Params{"coin": coinId, "currency": currency})
+			ginutils.RenderError(c, http.StatusInternalServerError, "Failed to retrieve currency")
 			return
 		}
 
 		symbol := coin.Coins[uint(coinId)].Symbol
 		result, err := storage.GetTicker(symbol, token)
 		if err != nil {
+			logger.Error(err, "Failed to retrieve ticker", logger.Params{"coin": coinId, "currency": currency})
 			ginutils.RenderError(c, http.StatusInternalServerError, err.Error())
 			return
 		}
@@ -109,7 +111,8 @@ func getTickersHandler(storage storage.Market) func(c *gin.Context) {
 		}
 		rate, err := storage.GetRate(strings.ToUpper(md.Currency))
 		if err != nil {
-			ginutils.RenderError(c, http.StatusInternalServerError, "Invalid currency")
+			logger.Error(err, "Failed to retrieve rate", logger.Params{"currency": md.Currency})
+			ginutils.RenderError(c, http.StatusInternalServerError, "Failed to retrieve rate")
 			return
 		}
 
@@ -121,6 +124,8 @@ func getTickersHandler(storage storage.Market) func(c *gin.Context) {
 			}
 			r, err := storage.GetTicker(coinObj.Symbol, strings.ToUpper(coinRequest.TokenId))
 			if err != nil {
+				// TODO: either fail the request or signal to requester that ticker for coin couldn't be retrieved
+				logger.Error(err, "Failed to retrieve ticker", logger.Params{"coin": coinObj.Symbol, "currency": md.Currency})
 				continue
 			}
 			r.ApplyRate(md.Currency, rate.Rate, rate.PercentChange24h)
@@ -151,14 +156,14 @@ func getChartsHandler() func(c *gin.Context) {
 		coinQuery := c.Query("coin")
 		coinId, err := strconv.Atoi(coinQuery)
 		if err != nil {
-			ginutils.RenderError(c, http.StatusInternalServerError, "Invalid coin")
+			ginutils.RenderError(c, http.StatusBadRequest, "Invalid coin")
 			return
 		}
 		token := c.Query("token")
 
 		timeStart, err := strconv.ParseInt(c.Query("time_start"), 10, 64)
 		if err != nil {
-			ginutils.RenderError(c, http.StatusInternalServerError, "Invalid time_start")
+			ginutils.RenderError(c, http.StatusBadRequest, "Invalid time_start")
 			return
 		}
 		maxItems, err := strconv.Atoi(c.Query("max_items"))
@@ -170,6 +175,7 @@ func getChartsHandler() func(c *gin.Context) {
 
 		chart, err := charts.GetChartData(uint(coinId), token, currency, timeStart, maxItems)
 		if err != nil {
+			logger.Error(err, "Failed to retrieve chart", logger.Params{"coin": coinId, "currency": currency})
 			ginutils.RenderError(c, http.StatusInternalServerError, err.Error())
 			return
 		}
@@ -195,7 +201,7 @@ func getCoinInfoHandler() func(c *gin.Context) {
 		coinQuery := c.Query("coin")
 		coinId, err := strconv.Atoi(coinQuery)
 		if err != nil {
-			ginutils.RenderError(c, http.StatusInternalServerError, "Invalid coin")
+			ginutils.RenderError(c, http.StatusBadRequest, "Invalid coin")
 			return
 		}
 
@@ -203,12 +209,15 @@ func getCoinInfoHandler() func(c *gin.Context) {
 		currency := c.DefaultQuery("currency", blockatlas.DefaultCurrency)
 		chart, err := charts.GetCoinInfo(uint(coinId), token, currency)
 		if err != nil {
+			logger.Error(err, "Failed to retrieve coin info", logger.Params{"coin": coinId, "currency": currency})
 			ginutils.RenderError(c, http.StatusInternalServerError, err.Error())
 			return
 		}
 		chart.Info, err = assets.GetCoinInfo(coinId, token)
 		if err != nil {
 			logger.Error(err, "invalid coin info", logger.Params{"coin": coinId, "currency": currency})
+			ginutils.RenderError(c, http.StatusInternalServerError, err.Error())
+			return
 		}
 		ginutils.RenderSuccess(c, chart)
 	}
