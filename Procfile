@@ -1,5 +1,5 @@
-web: bin/platform_api -p $PORT -c config.yml
-web_observer: bin/observer_api -p $PORT -c config.yml
-observer: bin/observer -c config.yml
-web_market: bin/market_api -p $PORT -c config.yml
-market: bin/syncmarkets -c config.yml
+platform_api: bin/platform_api -p $PORT -c config.yml
+platform_observer: bin/platform_observer -c config.yml
+observer_api: bin/observer_api -p $PORT -c config.yml
+market_api: bin/market_api -p $PORT -c config.yml
+market_observer: bin/market_observer -c config.yml

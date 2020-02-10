@@ -3,7 +3,7 @@ VERSION := $(shell git describe --tags)
 BUILD := $(shell git rev-parse --short HEAD)
 PROJECT_NAME := $(shell basename "$(PWD)")
 API_SERVICE := platform_api
-OBSERVER_SERVICE := observer
+OBSERVER_SERVICE := platform_observer
 OBSERVER_API := observer_api
 MARKET_SERVICE := market_observer
 MARKET_API := market_api
@@ -43,7 +43,7 @@ install: go-get
 
 ## start: Start API, Observer and Sync in development mode.
 start:
-	@bash -c "$(MAKE) clean compile start-api start-observer start-observer-api start-syncmarket start-syncmarket-api"
+	@bash -c "$(MAKE) clean compile start-api start-observer start-observer-api start-market-observer start-market-api"
 
 ## start-api: Start API in development mode.
 start-api: stop
@@ -55,7 +55,7 @@ start-api: stop
 ## start-observer: Start Observer in development mode.
 start-observer: stop
 	@echo "  >  Starting $(PROJECT_NAME) Observer"
-	@-$(GOBIN)/$(OBSERVER_SERVICE)/observer -c $(CONFIG_FILE) 2>&1 & echo $$! > $(PID_OBSERVER)
+	@-$(GOBIN)/$(OBSERVER_SERVICE)/platform_observer -c $(CONFIG_FILE) 2>&1 & echo $$! > $(PID_OBSERVER)
 	@cat $(PID_OBSERVER) | sed "/^/s/^/  \>  Observer PID: /"
 	@echo "  >  Error log: $(STDERR)"
 
@@ -141,14 +141,14 @@ docs: go-gen-docs
 go-compile: go-get go-build
 
 go-build:
-	@echo "  >  Building api binary..."
+	@echo "  >  Building platform_api binary..."
 	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(API_SERVICE)/platform_api ./cmd/$(API_SERVICE)
 	@echo "  >  Building market_observer binary..."
 	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(MARKET_SERVICE)/market_observer ./cmd/$(MARKET_SERVICE)
 	@echo "  >  Building market_api binary..."
 	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(MARKET_API)/market_api ./cmd/$(MARKET_API)
-	@echo "  >  Building observer binary..."
-	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(OBSERVER_SERVICE)/observer ./cmd/$(OBSERVER_SERVICE)
+	@echo "  >  Building platform_observer binary..."
+	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(OBSERVER_SERVICE)/platform_observer ./cmd/$(OBSERVER_SERVICE)
 	@echo "  >  Building observer_api binary..."
 	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(OBSERVER_API)/observer_api ./cmd/$(OBSERVER_API)
 
