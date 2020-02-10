@@ -10,7 +10,6 @@ import (
 	"github.com/patrickmn/go-cache"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
-	"github.com/trustwallet/blockatlas/pkg/storage/util"
 	"io/ioutil"
 	"net/http"
 	"sync"
@@ -120,16 +119,12 @@ func (mc *memCache) getCache(key string) (*cacheResponse, error) {
 	if !ok {
 		return nil, fmt.Errorf("gin-cache: invalid cache key %s", key)
 	}
-	r, ok := c.([]byte)
+	r, ok := c.(cacheResponse)
 	if !ok {
-		return nil, errors.E("validator cache: failed to cast cache to bytes")
+		return nil, errors.E("validator cache: failed to cast cacheResponse")
 	}
-	var result cacheResponse
-	err := json.Unmarshal(r, &result)
-	if err != nil {
-		return nil, errors.E(err, util.ErrNotFound).PushToSentry()
-	}
-	return &result, nil
+
+	return &r, nil
 }
 
 func generateKey(c *gin.Context) string {
