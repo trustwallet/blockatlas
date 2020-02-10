@@ -3,28 +3,27 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
+	ginSwagger "github.com/swaggo/gin-swagger"
+	"github.com/swaggo/gin-swagger/swaggerFiles"
 	"github.com/trustwallet/blockatlas/api"
 	_ "github.com/trustwallet/blockatlas/docs"
 	"github.com/trustwallet/blockatlas/internal"
 	"github.com/trustwallet/blockatlas/pkg/ginutils"
-	"github.com/trustwallet/blockatlas/platform"
 )
 
 const (
-	defaultPort       = "8420"
+	defaultPort       = "8423"
 	defaultConfigPath = "../../config.yml"
 	allPlatforms      = "all"
 )
 
 var (
-	port, confPath, chosenPlatform string
-	sg                             *gin.HandlerFunc
+	port, confPath string
+	sg             *gin.HandlerFunc
 )
 
 func init() {
 	port, confPath, sg = internal.InitAPI(defaultPort, defaultConfigPath)
-	chosenPlatform = viper.GetString("platform")
-	platform.Init(chosenPlatform)
 }
 
 func main() {
@@ -42,7 +41,7 @@ func main() {
 		})
 	})
 
-	api.LoadPlatforms(engine)
+	engine.GET("swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	internal.SetupGracefulShutdown(port, engine)
 }
