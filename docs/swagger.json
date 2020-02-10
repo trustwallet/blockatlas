@@ -5,16 +5,6 @@
         "license": {}
     },
     "paths": {
-        "/metrics": {
-            "get": {
-                "description": "Get application metrics",
-                "tags": [
-                    "metrics"
-                ],
-                "summary": "Get Metrics",
-                "operationId": "metrics"
-            }
-        },
         "/ns/lookup": {
             "get": {
                 "description": "Lookup ENS/ZNS to find registered addresses",
@@ -22,7 +12,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "ns"
+                    "platform"
                 ],
                 "summary": "Lookup .eth / .zil addresses",
                 "operationId": "lookup",
@@ -66,8 +56,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "observer",
-                    "subscriptions"
+                    "observer"
                 ],
                 "summary": "Get coin status",
                 "operationId": "coin_status",
@@ -101,8 +90,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "observer",
-                    "subscriptions"
+                    "observer"
                 ],
                 "summary": "Create a webhook",
                 "operationId": "create_webhook",
@@ -143,8 +131,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "observer",
-                    "subscriptions"
+                    "observer"
                 ],
                 "summary": "Delete a webhook",
                 "operationId": "delete_webhook",
@@ -187,7 +174,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "charts"
+                    "market"
                 ],
                 "summary": "Get charts data for a specific coin",
                 "operationId": "get_charts_data",
@@ -248,7 +235,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "charts"
+                    "market"
                 ],
                 "summary": "Get charts coin info data for a specific coin",
                 "operationId": "get_charts_coin_info",
@@ -302,7 +289,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "ticker"
+                    "market"
                 ],
                 "summary": "Get ticker value for a specific market",
                 "operationId": "get_ticker",
@@ -346,7 +333,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "ticker"
+                    "market"
                 ],
                 "summary": "Get ticker values for a specific markets",
                 "operationId": "get_tickers",
@@ -381,8 +368,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "platform",
-                    "tx"
+                    "platform"
                 ],
                 "summary": "Get xpub transactions",
                 "operationId": "xpub",
@@ -424,8 +410,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "platform",
-                    "tx"
+                    "platform"
                 ],
                 "summary": "Get Transactions",
                 "operationId": "tx_v1",
@@ -467,7 +452,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Collectibles"
+                    "platform"
                 ],
                 "summary": "Get list of collections from a specific coin and addresses",
                 "operationId": "collection_categories_v2",
@@ -500,7 +485,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "ns"
+                    "platform"
                 ],
                 "summary": "Lookup .eth / .zil addresses",
                 "operationId": "lookup",
@@ -548,8 +533,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "platform",
-                    "staking"
+                    "platform"
                 ],
                 "summary": "Get Multiple Stake Delegations",
                 "operationId": "batch_delegations",
@@ -584,8 +568,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "platform",
-                    "staking"
+                    "platform"
                 ],
                 "summary": "Get Multiple Stake Delegations",
                 "operationId": "batch_delegations",
@@ -620,8 +603,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "platform",
-                    "collection"
+                    "platform"
                 ],
                 "summary": "Get Collections",
                 "operationId": "collections_v2",
@@ -669,8 +651,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "platform",
-                    "collection"
+                    "platform"
                 ],
                 "summary": "Get Collection",
                 "operationId": "collection_v2",
@@ -726,8 +707,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "platform",
-                    "staking"
+                    "platform"
                 ],
                 "summary": "Get Stake Delegations",
                 "operationId": "delegations",
@@ -775,8 +755,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "platform",
-                    "staking"
+                    "platform"
                 ],
                 "summary": "Get Validators",
                 "operationId": "validators",
@@ -816,8 +795,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "platform",
-                    "token"
+                    "platform"
                 ],
                 "summary": "Get Tokens",
                 "operationId": "tokens",
@@ -865,8 +843,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "platform",
-                    "tx"
+                    "platform"
                 ],
                 "summary": "Get Transactions",
                 "operationId": "tx_v2",
@@ -914,7 +891,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Collectibles"
+                    "platform"
                 ],
                 "summary": "Get list of collections from a specific coin and addresses",
                 "operationId": "collection_categories_v3",
@@ -950,8 +927,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "platform",
-                    "collection"
+                    "platform"
                 ],
                 "summary": "Get Collections",
                 "operationId": "collections_v3",
@@ -999,8 +975,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "platform",
-                    "collection"
+                    "platform"
                 ],
                 "summary": "Get Collection",
                 "operationId": "collection_v3",

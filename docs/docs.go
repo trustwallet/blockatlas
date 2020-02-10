@@ -25,17 +25,7 @@ var doc = `{
     },
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
-    "paths": {
-        "/metrics": {
-            "get": {
-                "description": "Get application metrics",
-                "tags": [
-                    "metrics"
-                ],
-                "summary": "Get Metrics",
-                "operationId": "metrics"
-            }
-        },
+	"paths": {
         "/ns/lookup": {
             "get": {
                 "description": "Lookup ENS/ZNS to find registered addresses",
@@ -43,7 +33,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "ns"
+                    "platform"
                 ],
                 "summary": "Lookup .eth / .zil addresses",
                 "operationId": "lookup",
@@ -87,8 +77,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "observer",
-                    "subscriptions"
+                    "observer"
                 ],
                 "summary": "Get coin status",
                 "operationId": "coin_status",
@@ -122,8 +111,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "observer",
-                    "subscriptions"
+                    "observer"
                 ],
                 "summary": "Create a webhook",
                 "operationId": "create_webhook",
@@ -164,8 +152,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "observer",
-                    "subscriptions"
+                    "observer"
                 ],
                 "summary": "Delete a webhook",
                 "operationId": "delete_webhook",
@@ -208,7 +195,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "charts"
+                    "market"
                 ],
                 "summary": "Get charts data for a specific coin",
                 "operationId": "get_charts_data",
@@ -269,7 +256,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "charts"
+                    "market"
                 ],
                 "summary": "Get charts coin info data for a specific coin",
                 "operationId": "get_charts_coin_info",
@@ -323,7 +310,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "ticker"
+                    "market"
                 ],
                 "summary": "Get ticker value for a specific market",
                 "operationId": "get_ticker",
@@ -359,7 +346,7 @@ var doc = `{
                 }
             },
             "post": {
-                "description": "Get the ticker values from many market and coin/token",
+                "description": "Get the ticker values from many markets and coin/token",
                 "consumes": [
                     "application/json"
                 ],
@@ -367,9 +354,9 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "ticker"
+                    "market"
                 ],
-                "summary": "Get ticker values for a specific market",
+                "summary": "Get ticker values for a specific markets",
                 "operationId": "get_tickers",
                 "parameters": [
                     {
@@ -402,8 +389,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "platform",
-                    "tx"
+                    "platform"
                 ],
                 "summary": "Get xpub transactions",
                 "operationId": "xpub",
@@ -445,8 +431,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "platform",
-                    "tx"
+                    "platform"
                 ],
                 "summary": "Get Transactions",
                 "operationId": "tx_v1",
@@ -488,7 +473,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Collectibles"
+                    "platform"
                 ],
                 "summary": "Get list of collections from a specific coin and addresses",
                 "operationId": "collection_categories_v2",
@@ -521,7 +506,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "ns"
+                    "platform"
                 ],
                 "summary": "Lookup .eth / .zil addresses",
                 "operationId": "lookup",
@@ -569,8 +554,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "platform",
-                    "staking"
+                    "platform"
                 ],
                 "summary": "Get Multiple Stake Delegations",
                 "operationId": "batch_delegations",
@@ -605,8 +589,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "platform",
-                    "staking"
+                    "platform"
                 ],
                 "summary": "Get Multiple Stake Delegations",
                 "operationId": "batch_delegations",
@@ -641,8 +624,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "platform",
-                    "collection"
+                    "platform"
                 ],
                 "summary": "Get Collections",
                 "operationId": "collections_v2",
@@ -690,8 +672,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "platform",
-                    "collection"
+                    "platform"
                 ],
                 "summary": "Get Collection",
                 "operationId": "collection_v2",
@@ -747,8 +728,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "platform",
-                    "staking"
+                    "platform"
                 ],
                 "summary": "Get Stake Delegations",
                 "operationId": "delegations",
@@ -796,8 +776,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "platform",
-                    "staking"
+                    "platform"
                 ],
                 "summary": "Get Validators",
                 "operationId": "validators",
@@ -837,8 +816,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "platform",
-                    "token"
+                    "platform"
                 ],
                 "summary": "Get Tokens",
                 "operationId": "tokens",
@@ -886,8 +864,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "platform",
-                    "tx"
+                    "platform"
                 ],
                 "summary": "Get Transactions",
                 "operationId": "tx_v2",
@@ -935,7 +912,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Collectibles"
+                    "platform"
                 ],
                 "summary": "Get list of collections from a specific coin and addresses",
                 "operationId": "collection_categories_v3",
@@ -971,8 +948,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "platform",
-                    "collection"
+                    "platform"
                 ],
                 "summary": "Get Collections",
                 "operationId": "collections_v3",
@@ -1020,8 +996,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "platform",
-                    "collection"
+                    "platform"
                 ],
                 "summary": "Get Collection",
                 "operationId": "collection_v3",
