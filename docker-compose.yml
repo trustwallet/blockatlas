@@ -39,8 +39,15 @@ services:
         - SERVICE=platform_api
     ports:
     - 8420:8420
-    links:
-        - redis
+
+  swagger_api:
+    container_name: swagger_api
+    build:
+      context: .
+      args:
+        - SERVICE=swagger_api
+    ports:
+      - 8423:8423
 
   platform_observer:
     build:
