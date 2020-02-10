@@ -5,7 +5,7 @@ PROJECT_NAME := $(shell basename "$(PWD)")
 API_SERVICE := platform_api
 OBSERVER_SERVICE := observer
 OBSERVER_API := observer_api
-MARKET_SERVICE := market
+MARKET_SERVICE := market_observer
 MARKET_API := market_api
 COIN_FILE := coin/coins.yml
 COIN_GO_FILE := coin/coins.go
@@ -48,7 +48,7 @@ start:
 ## start-api: Start API in development mode.
 start-api: stop
 	@echo "  >  Starting $(PROJECT_NAME) API"
-	@-$(GOBIN)/$(API_SERVICE)/api -c $(CONFIG_FILE) 2>&1 & echo $$! > $(PID_API)
+	@-$(GOBIN)/$(API_SERVICE)/platform_api -c $(CONFIG_FILE) 2>&1 & echo $$! > $(PID_API)
 	@cat $(PID_API) | sed "/^/s/^/  \>  API PID: /"
 	@echo "  >  Error log: $(STDERR)"
 
@@ -67,9 +67,9 @@ start-observer-api: stop
 	@echo "  >  Error log: $(STDERR)"
 
 ## start-sync-market: Start Sync market in development mode.
-start-syncmarket: stop
+start-market-observer: stop
 	@echo "  >  Starting $(PROJECT_NAME) Sync"
-	@-$(GOBIN)/$(MARKET_SERVICE)/market -c $(CONFIG_FILE) 2>&1 & echo $$! > $(PID_MARKET)
+	@-$(GOBIN)/$(MARKET_SERVICE)/market_observer -c $(CONFIG_FILE) 2>&1 & echo $$! > $(PID_MARKET)
 	@cat $(PID_MARKET) | sed "/^/s/^/  \>  Sync PID: /"
 	@echo "  >  Error log: $(STDERR)"
 
@@ -142,10 +142,10 @@ go-compile: go-get go-build
 
 go-build:
 	@echo "  >  Building api binary..."
-	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(API_SERVICE)/api ./cmd/$(API_SERVICE)
-	@echo "  >  Building syncmarket binary..."
-	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(MARKET_SERVICE)/market ./cmd/$(MARKET_SERVICE)
-	@echo "  >  Building syncmarket_api binary..."
+	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(API_SERVICE)/platform_api ./cmd/$(API_SERVICE)
+	@echo "  >  Building market_observer binary..."
+	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(MARKET_SERVICE)/market_observer ./cmd/$(MARKET_SERVICE)
+	@echo "  >  Building market_api binary..."
 	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(MARKET_API)/market_api ./cmd/$(MARKET_API)
 	@echo "  >  Building observer binary..."
 	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(OBSERVER_SERVICE)/observer ./cmd/$(OBSERVER_SERVICE)
@@ -189,7 +189,7 @@ go-gen-coins:
 
 go-gen-docs:
 	@echo "  >  Generating swagger files"
-	swag init -g ./cmd/api/main.go -o ./docs
+	swag init -g ./cmd/platform_api/main.go -o ./docs
 
 go-goreleaser:
 	@echo "  >  Releasing a new version"
