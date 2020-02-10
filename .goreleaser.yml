@@ -21,9 +21,9 @@ builds:
       - amd64
     env:
       - CGO_ENABLED=0
-  - id: syncmarkets
-    binary: syncmarkets
-    main: "./cmd/syncmarkets/main.go"
+  - id: market
+    binary: market
+    main: "./cmd/market/main.go"
     goos:
       - linux
     goarch:

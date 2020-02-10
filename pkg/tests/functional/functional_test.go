@@ -30,7 +30,7 @@ func TestApis(t *testing.T) {
 	config.LoadConfig(os.Getenv("TEST_CONFIG"))
 
 	logger.InitLogger()
-	platform.Init()
+	platform.Init(viper.GetString("platform"))
 	cache := storage.New()
 	sg := sentrygin.New(sentrygin.Options{})
 	p := ":8420"
