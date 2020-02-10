@@ -45,7 +45,7 @@ func SetupMarketAPI(router gin.IRouter, db storage.Market) {
 // @Description Get the ticker value from an market and coin/token
 // @Accept json
 // @Produce json
-// @Tags ticker
+// @Tags market
 // @Param coin query int true "coin id"
 // @Param token query string false "token id"
 // @Param currency query string false "the currency to show the quote" default(USD)
@@ -91,7 +91,7 @@ func getTickerHandler(storage storage.Market) func(c *gin.Context) {
 // @Description Get the ticker values from many market and coin/token
 // @Accept json
 // @Produce json
-// @Tags ticker
+// @Tags market
 // @Param tickers body api.TickerRequest true "Ticker"
 // @Success 200 {object} blockatlas.Tickers
 // @Router /v1/market/ticker [post]
@@ -135,7 +135,7 @@ func getTickersHandler(storage storage.Market) func(c *gin.Context) {
 // @Description Get the charts data from an market and coin/token
 // @Accept json
 // @Produce json
-// @Tags charts
+// @Tags market
 // @Param coin query int true "Coin ID" default(60)
 // @Param token query string false "Token ID"
 // @Param time_start query int false "Start timestamp" default(1574483028)
@@ -180,7 +180,7 @@ func getChartsHandler() func(c *gin.Context) {
 // @Description Get the charts coin info data from an market and coin/contract
 // @Accept json
 // @Produce json
-// @Tags charts
+// @Tags market
 // @Param coin query int true "Coin ID" default(60)
 // @Param token query string false "Token ID"
 // @Param time_start query int false "Start timestamp" default(1574483028)
