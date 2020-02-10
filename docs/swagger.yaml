@@ -620,7 +620,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: Get the ticker values from many markets and coin/token
+      description: Get the ticker values from many market and coin/token
       operationId: get_tickers
       parameters:
       - description: Ticker
@@ -636,7 +636,7 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/blockatlas.Tickers'
-      summary: Get ticker values for a specific markets
+      summary: Get ticker values for a specific market
       tags:
       - ticker
   /v2/{coin}/collections/{address}:

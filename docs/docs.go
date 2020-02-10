@@ -359,7 +359,7 @@ var doc = `{
                 }
             },
             "post": {
-                "description": "Get the ticker values from many markets and coin/token",
+                "description": "Get the ticker values from many market and coin/token",
                 "consumes": [
                     "application/json"
                 ],
@@ -369,7 +369,7 @@ var doc = `{
                 "tags": [
                     "ticker"
                 ],
-                "summary": "Get ticker values for a specific markets",
+                "summary": "Get ticker values for a specific market",
                 "operationId": "get_tickers",
                 "parameters": [
                     {

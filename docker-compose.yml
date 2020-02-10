@@ -30,11 +30,11 @@ services:
       - 8420:8420
 
   syncmarkets:
-    container_name: syncmarkets
+    container_name: market
     build:
       context: .
       args:
-        - SERVICE=syncmarkets
+        - SERVICE=market
     links:
     - redis
 
