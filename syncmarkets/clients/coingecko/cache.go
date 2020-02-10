@@ -105,7 +105,7 @@ func normalizeTokenId(platform, addr string) string {
 	}
 	switch platform {
 	case "ethereum":
-		if len(addr) == 42 && strings.HasPrefix(addr, "0x"){
+		if len(addr) == 42 && strings.HasPrefix(addr, "0x") {
 			return address.EIP55Checksum(addr)
 		}
 		return ""
