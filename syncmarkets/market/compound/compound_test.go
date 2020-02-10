@@ -2,6 +2,7 @@ package compound
 
 import (
 	"github.com/stretchr/testify/assert"
+	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/syncmarkets/clients/compound"
 	"sort"
@@ -23,28 +24,28 @@ func Test_normalizeTickers(t *testing.T) {
 			"test normalize compound quote",
 			args{prices: compound.CoinPrices{Data: []compound.CToken{
 				{
-					TokenAddress: "0x39aa39c021dfbae8fac545936693ac917d5e7563",
-					Symbol:       "cUSDC",
-					ExchangeRate: compound.Amount{Value: 0.0021},
+					TokenAddress:    "0x39aa39c021dfbae8fac545936693ac917d5e7563",
+					Symbol:          "cUSDC",
+					UnderlyingPrice: compound.Amount{Value: 0.0021},
 				},
 				{
-					TokenAddress: "0x158079ee67fce2f58472a96584a73c7ab9ac95c1",
-					Symbol:       "cREP",
-					ExchangeRate: compound.Amount{Value: 0.02},
+					TokenAddress:    "0x158079ee67fce2f58472a96584a73c7ab9ac95c1",
+					Symbol:          "cREP",
+					UnderlyingPrice: compound.Amount{Value: 0.02},
 				},
 			}}, provider: id},
 			blockatlas.Tickers{
 				&blockatlas.Ticker{CoinName: "ETH", TokenId: "0x39aa39c021dfbae8fac545936693ac917d5e7563", CoinType: blockatlas.TypeToken, LastUpdate: time.Unix(222, 0),
 					Price: blockatlas.TickerPrice{
 						Value:    0.0021,
-						Currency: blockatlas.DefaultCurrency,
+						Currency: coin.Coins[coin.ETH].Symbol,
 						Provider: id,
 					},
 				},
 				&blockatlas.Ticker{CoinName: "ETH", TokenId: "0x158079ee67fce2f58472a96584a73c7ab9ac95c1", CoinType: blockatlas.TypeToken, LastUpdate: time.Unix(444, 0),
 					Price: blockatlas.TickerPrice{
 						Value:    0.02,
-						Currency: blockatlas.DefaultCurrency,
+						Currency: coin.Coins[coin.ETH].Symbol,
 						Provider: id,
 					},
 				},
