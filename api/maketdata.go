@@ -7,12 +7,14 @@ import (
 	"github.com/trustwallet/blockatlas/market"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/ginutils"
+	"github.com/trustwallet/blockatlas/pkg/ginutils/gincache"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/services/assets"
 	"github.com/trustwallet/blockatlas/storage"
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 )
 
 const (
@@ -36,7 +38,7 @@ func SetupMarketAPI(router gin.IRouter, db storage.Market) {
 	router.GET("/ticker", getTickerHandler(db))
 	router.POST("/ticker", getTickersHandler(db))
 	// Charts
-	router.GET("/charts", getChartsHandler())
+	router.GET("/charts", gincache.CacheMiddleware(time.Minute*5, getChartsHandler()))
 	router.GET("/info", getCoinInfoHandler())
 }
 
