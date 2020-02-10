@@ -10,6 +10,7 @@ import (
 	"github.com/patrickmn/go-cache"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
+	"github.com/trustwallet/blockatlas/pkg/storage/util"
 	"io/ioutil"
 	"net/http"
 	"sync"
@@ -76,7 +77,11 @@ func (w *cachedWriter) Write(data []byte) (int, error) {
 		w.Header(),
 		data,
 	}
-	memoryCache.cache.Set(w.key, val, w.expire)
+	b, err := json.Marshal(val)
+	if err != nil {
+		return 0, errors.E("validator cache: failed to marshal cache object")
+	}
+	memoryCache.cache.Set(w.key, b, w.expire)
 	return ret, nil
 }
 
@@ -93,7 +98,11 @@ func (w *cachedWriter) WriteString(data string) (n int, err error) {
 		w.Header(),
 		[]byte(data),
 	}
-	memoryCache.setCache(w.key, val, w.expire)
+	b, err := json.Marshal(val)
+	if err != nil {
+		return 0, errors.E("validator cache: failed to marshal cache object")
+	}
+	memoryCache.setCache(w.key, b, w.expire)
 	return ret, err
 }
 
@@ -114,17 +123,21 @@ func (mc *memCache) setCache(k string, x interface{}, d time.Duration) {
 	memoryCache.cache.Set(k, b, d)
 }
 
-func (mc *memCache) getCache(key string) (*cacheResponse, error) {
+func (mc *memCache) getCache(key string) (cacheResponse, error) {
+	var result cacheResponse
 	c, ok := mc.cache.Get(key)
 	if !ok {
-		return nil, fmt.Errorf("gin-cache: invalid cache key %s", key)
+		return result, fmt.Errorf("gin-cache: invalid cache key %s", key)
 	}
-	r, ok := c.(cacheResponse)
+	r, ok := c.([]byte)
 	if !ok {
-		return nil, errors.E("validator cache: failed to cast cacheResponse")
+		return result, errors.E("validator cache: failed to cast cache to bytes")
 	}
-
-	return &r, nil
+	err := json.Unmarshal(r, &result)
+	if err != nil {
+		return result, errors.E(err, util.ErrNotFound).PushToSentry()
+	}
+	return result, nil
 }
 
 func generateKey(c *gin.Context) string {
