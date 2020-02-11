@@ -40,7 +40,7 @@ func NormalizeDelegation(account Account, validators blockatlas.ValidatorMap) (b
 func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
 	results := make(blockatlas.ValidatorPage, 0)
 
-	validators, err := p.GetCurrentValidators()
+	validators, err := p.getCurrentValidators()
 	if err != nil {
 		return results, err
 	}
@@ -51,7 +51,7 @@ func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
 	return results, nil
 }
 
-func (p *Platform) GetCurrentValidators() (validators []Validator, err error) {
+func (p *Platform) getCurrentValidators() (validators []Validator, err error) {
 	periodType, err := p.rpcClient.GetPeriodType()
 	if err != nil {
 		return validators, err
