@@ -1,3 +1,5 @@
+#! /usr/bin/make -f
+
 # Project variables.
 VERSION := $(shell git describe --tags)
 BUILD := $(shell git rev-parse --short HEAD)
@@ -117,6 +119,47 @@ golint: go-lint
 
 ## docs: Generate swagger docs.
 docs: go-gen-docs
+
+## install-newman: Install Postman Newman for tests.
+install-newman:
+	@echo "  >  Running Postman Newman"
+ifeq (,$(shell which newman))
+	@echo "  >  Installing Postman Newman"
+	@-brew install newman
+endif
+
+## run-newman: Run Postman Newman tests.
+run-newman: install-newman newman-txs newman-tokens newman-staking newman-collections newman-domains newman-healthcheck
+
+## newman-txs: Run Newman tests for Transaction API's.
+newman-txs:
+	@echo " - Running Newman Test for Transaction API"
+	@newman run pkg/tests/postman/Blockatlas.postman_collection.json --folder txs -d pkg/tests/postman/tx_data.json
+
+## newman-tokens: Run Newman tests for tokens API's.
+newman-tokens:
+	@echo " - Running Newman Test for Tokens API"
+	@newman run pkg/tests/postman/Blockatlas.postman_collection.json --folder tokens -d pkg/tests/postman/token_data.json
+
+## newman-staking: Run Newman tests for staking API's.
+newman-staking:
+	@echo " - Running Newman Test for Staking API"
+	@newman run pkg/tests/postman/Blockatlas.postman_collection.json --folder collection -d pkg/tests/postman/collection_data.json
+
+## newman-collections: Run Newman tests for collections API's.
+newman-collections:
+	@echo " - Running Newman Test for Collection API"
+	@newman run pkg/tests/postman/Blockatlas.postman_collection.json --folder stake -d pkg/tests/postman/staking_data.json
+
+## newman-domains: Run Newman tests for domains API's.
+newman-domains:
+	@echo " - Running Newman Test for Domain API"
+	@newman run pkg/tests/postman/Blockatlas.postman_collection.json --folder domain -d pkg/tests/postman/domain_data.json
+
+## newman-healthcheck: Run Newman tests for healthcheck API's.
+newman-healthcheck:
+	@echo " - Running Newman Test for Healthcheck API"
+	@newman run pkg/tests/postman/Blockatlas.postman_collection.json --folder healthcheck
 
 go-compile: go-get go-build
 
