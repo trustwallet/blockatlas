@@ -40,7 +40,7 @@ func normalizeRates(coinPrices c.CoinPrices, provider string) (rates blockatlas.
 	for _, cToken := range coinPrices.Data {
 		rates = append(rates, blockatlas.Rate{
 			Currency:  strings.ToUpper(cToken.Symbol),
-			Rate:      1.0 / cToken.ExchangeRate.Value,
+			Rate:      1.0 / cToken.UnderlyingPrice.Value,
 			Timestamp: time.Now().Unix(),
 			Provider:  provider,
 		})
