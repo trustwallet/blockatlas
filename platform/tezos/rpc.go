@@ -9,7 +9,7 @@ type RpcClient struct {
 }
 
 func (c *RpcClient) GetValidators() (validators []Validator, err error) {
-	err = c.Get(&validators, "chains/main/blocks/head~32768/votes/listings", nil)
+	err = c.Get(&validators, "chains/main/blocks/head~81924/votes/listings", nil)
 	return
 }
 
