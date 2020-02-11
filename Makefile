@@ -129,7 +129,7 @@ ifeq (,$(shell which newman))
 endif
 
 ## run-newman: Run Postman Newman tests.
-run-newman: install-newman newman-txs newman-tokens newman-staking newman-collections newman-domains newman-healthcheck
+run-newman: install-newman newman-txs newman-tokens newman-staking newman-collections newman-domains newman-observer newman-healthcheck
 
 ## newman-txs: Run Newman tests for Transaction API's.
 newman-txs:
@@ -155,6 +155,11 @@ newman-collections:
 newman-domains:
 	@echo " - Running Newman Test for Domain API"
 	@newman run pkg/tests/postman/Blockatlas.postman_collection.json --folder domain -d pkg/tests/postman/domain_data.json
+
+## newman-observer: Run Newman tests for observer API's.
+newman-observer:
+	@echo " - Running Newman Test for Observer API"
+	@newman run pkg/tests/postman/Blockatlas.postman_collection.json --folder observer -d pkg/tests/postman/observer_data.json
 
 ## newman-healthcheck: Run Newman tests for healthcheck API's.
 newman-healthcheck:

@@ -116,7 +116,13 @@
 							],
 							"request": {
 								"method": "GET",
-								"header": [],
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{platform_auth}}",
+										"type": "text"
+									}
+								],
 								"url": {
 									"raw": "{{host}}/v1/{{handler}}/{{address}}",
 									"host": [
@@ -239,7 +245,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{host}}/v2/{{handler}}/tokens/{{address}}",
+									"raw": "{{host}}/v2/{{handler}}/tokens/{{address}}?Authorization=Bearer {{platform_auth}}",
 									"host": [
 										"{{host}}"
 									],
@@ -248,6 +254,12 @@
 										"{{handler}}",
 										"tokens",
 										"{{address}}"
+									],
+									"query": [
+										{
+											"key": "Authorization",
+											"value": "Bearer {{platform_auth}}"
+										}
 									]
 								}
 							},
@@ -385,7 +397,13 @@
 							],
 							"request": {
 								"method": "GET",
-								"header": [],
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{platform_auth}}",
+										"type": "text"
+									}
+								],
 								"url": {
 									"raw": "{{host}}/v2/{{handler}}/staking/validators",
 									"host": [
@@ -562,7 +580,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{host}}/v2/{{handler}}/staking/delegations/{{address}}",
+									"raw": "{{host}}/v2/{{handler}}/staking/delegations/{{address}}?Authorization=Bearer {{platform_auth}}",
 									"host": [
 										"{{host}}"
 									],
@@ -572,6 +590,12 @@
 										"staking",
 										"delegations",
 										"{{address}}"
+									],
+									"query": [
+										{
+											"key": "Authorization",
+											"value": "Bearer {{platform_auth}}"
+										}
 									]
 								}
 							},
@@ -711,7 +735,13 @@
 							],
 							"request": {
 								"method": "GET",
-								"header": [],
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{platform_auth}}",
+										"type": "text"
+									}
+								],
 								"url": {
 									"raw": "{{host}}/v2/{{handler}}/collections/{{address}}/collection/{{collection}}",
 									"host": [
@@ -831,7 +861,13 @@
 							],
 							"request": {
 								"method": "GET",
-								"header": [],
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{platform_auth}}",
+										"type": "text"
+									}
+								],
 								"url": {
 									"raw": "{{host}}/v2/{{handler}}/collections/{{address}}",
 									"host": [
@@ -920,7 +956,13 @@
 							],
 							"request": {
 								"method": "GET",
-								"header": [],
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{platform_auth}}",
+										"type": "text"
+									}
+								],
 								"url": {
 									"raw": "{{host}}/v2/ns/lookup?name={{domain}}&coins={{coins}}",
 									"host": [
@@ -1005,7 +1047,13 @@
 							],
 							"request": {
 								"method": "GET",
-								"header": [],
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{platform_auth}}",
+										"type": "text"
+									}
+								],
 								"url": {
 									"raw": "{{host}}/ns/lookup?name={{domain}}&coin={{coins}}",
 									"host": [
@@ -1109,7 +1157,188 @@
 		},
 		{
 			"name": "observer",
-			"item": [],
+			"item": [
+				{
+					"name": "add",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "7312c9e7-5330-421a-9ca8-171101050e38",
+								"exec": [
+									"",
+									"var body = {\"subscriptions\": {}, \"webhook\": \"\"}",
+									"",
+									"let subscriptions = pm.variables.get(\"subscriptions\");",
+									"let webhook = pm.variables.get(\"webhook\");",
+									"",
+									"body[\"subscriptions\"] = subscriptions",
+									"body[\"webhook\"] = webhook",
+									"",
+									"pm.environment.set(\"request_body\", JSON.stringify(body));",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "acec8baa-0ef0-4703-ab83-c555260deffa",
+								"exec": [
+									"let result = {",
+									"    \"status\": true,",
+									"    \"message\": \"Added\"",
+									"};",
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test(\"response must be valid and have a body\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.be.ok;",
+									"    pm.response.to.not.be.error;",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"pm.test(\"response is valid\", function() {",
+									"    pm.expect(jsonData).to.eql(result);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{observer_auth}}"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{{request_body}}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/observer/v1/webhook/register",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"observer",
+								"v1",
+								"webhook",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "7312c9e7-5330-421a-9ca8-171101050e38",
+								"exec": [
+									"",
+									"var body = {\"subscriptions\": {}, \"webhook\": \"\"}",
+									"",
+									"let subscriptions = pm.variables.get(\"subscriptions\");",
+									"let webhook = pm.variables.get(\"webhook\");",
+									"",
+									"body[\"subscriptions\"] = subscriptions",
+									"body[\"webhook\"] = webhook",
+									"",
+									"pm.environment.set(\"request_body\", JSON.stringify(body));",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "acec8baa-0ef0-4703-ab83-c555260deffa",
+								"exec": [
+									"let result = {",
+									"    \"status\": true,",
+									"    \"message\": \"Deleted\"",
+									"};",
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test(\"response must be valid and have a body\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.be.ok;",
+									"    pm.response.to.not.be.error;",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"pm.test(\"response is valid\", function() {",
+									"    pm.expect(jsonData).to.eql(result);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{observer_auth}}"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{{request_body}}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/observer/v1/webhook/register",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"observer",
+								"v1",
+								"webhook",
+								"register"
+							]
+						}
+					},
+					"response": []
+				}
+			],
 			"event": [
 				{
 					"listen": "prerequest",
@@ -1317,9 +1546,27 @@
 	],
 	"variable": [
 		{
-			"id": "ce2936de-fc27-4d67-a351-59b8eed53857",
+			"id": "138861e3-f484-4ac2-94bb-a2ff437837fe",
 			"key": "host",
 			"value": "http://localhost:8420",
+			"type": "string"
+		},
+		{
+			"id": "b3a7b213-a8da-4267-8827-33bdec07d5fa",
+			"key": "observer_auth",
+			"value": "test",
+			"type": "string"
+		},
+		{
+			"id": "6a0e65b0-a358-418c-984e-f13e5ffc5372",
+			"key": "market_auth",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"id": "ec94d33e-70f2-4424-b784-688eb42091d4",
+			"key": "platform_auth",
+			"value": "",
 			"type": "string"
 		}
 	],
