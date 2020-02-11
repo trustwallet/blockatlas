@@ -3,6 +3,7 @@ package nimiq
 import (
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"sort"
 	"time"
 )
 
@@ -39,6 +40,12 @@ func NormalizeTx(srcTx *Tx) blockatlas.Tx {
 
 // NormalizeTxs converts multiple Nimiq transactions
 func NormalizeTxs(srcTxs []Tx) []blockatlas.Tx {
+	sort.SliceStable(srcTxs, func(i, j int) bool {
+		return srcTxs[i].BlockNumber > srcTxs[j].BlockNumber
+	})
+	if len(srcTxs) > blockatlas.TxPerPage {
+		srcTxs = srcTxs[:blockatlas.TxPerPage]
+	}
 	txs := make([]blockatlas.Tx, len(srcTxs))
 	for i, srcTx := range srcTxs {
 		txs[i] = NormalizeTx(&srcTx)

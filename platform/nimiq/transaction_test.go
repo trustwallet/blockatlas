@@ -5,6 +5,10 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"io/ioutil"
+	"path/filepath"
+	"runtime"
+	"sort"
 	"testing"
 	"time"
 )
@@ -94,5 +98,28 @@ func TestNormalizeTx1(t *testing.T) {
 			got := NormalizeTx(&srcTx)
 			assert.Equal(t, tt.want, got)
 		})
+	}
+}
+
+func TestNormalizeTxs_Ordering(t *testing.T) {
+	_, goFile, _, _ := runtime.Caller(0)
+	testFilePath := filepath.Join(filepath.Dir(goFile), "tests", "getTransactionsByAddress_50.json")
+	testFile, err := ioutil.ReadFile(testFilePath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var srcTxs []Tx
+	if err := json.Unmarshal(testFile, &srcTxs); err != nil {
+		t.Fatal(err)
+	}
+	txs := NormalizeTxs(srcTxs)
+	if len(txs) != 4 {
+		t.Fatalf("Unexpected count: %d", len(txs))
+	}
+	sorted := sort.SliceIsSorted(txs, func(i, j int) bool {
+		return txs[i].Block > txs[j].Block
+	})
+	if !sorted {
+		t.Fatal("Transactions not sorted")
 	}
 }
