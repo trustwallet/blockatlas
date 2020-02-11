@@ -1,6 +1,7 @@
 package tezos
 
 import (
+	"fmt"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 )
 
@@ -8,8 +9,19 @@ type RpcClient struct {
 	blockatlas.Request
 }
 
-func (c *RpcClient) GetValidators() (validators []Validator, err error) {
-	err = c.Get(&validators, "chains/main/blocks/head~81924/votes/listings", nil)
+type PeriodType string
+
+const (
+	TestingPeriodType PeriodType = "testing"
+)
+
+func (c *RpcClient) GetValidators(blockID string) (validators []Validator, err error) {
+	err = c.Get(&validators, fmt.Sprintf("chains/main/blocks/%s/votes/listings", blockID), nil)
+	return
+}
+
+func (c *RpcClient) GetPeriodType() (periodType PeriodType, err error) {
+	err = c.Get(&periodType, "chains/main/blocks/head/votes/current_period_kind", nil)
 	return
 }
 
