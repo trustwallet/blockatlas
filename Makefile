@@ -122,7 +122,6 @@ docs: go-gen-docs
 
 ## install-newman: Install Postman Newman for tests.
 install-newman:
-	@echo "  >  Running Postman Newman"
 ifeq (,$(shell which newman))
 	@echo "  >  Installing Postman Newman"
 	@-npm install -g newman
@@ -139,6 +138,7 @@ ifeq (,$(test))
 	@bash -c "$(MAKE) newman test=domain"
 	@bash -c "$(MAKE) newman test=healthcheck"
 	@bash -c "$(MAKE) newman test=observer"
+	@bash -c "$(MAKE) newman test=market"
 else
 	@newman run pkg/tests/postman/Blockatlas.postman_collection.json --folder $(test) -d pkg/tests/postman/$(test)_data.json
 endif
