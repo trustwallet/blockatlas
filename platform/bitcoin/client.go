@@ -15,7 +15,7 @@ func (c *Client) GetTransactions(address string) (transactions TransactionsList,
 	path := fmt.Sprintf("address/%s", address)
 	err = c.Get(&transactions, path, url.Values{
 		"details":  {"txs"},
-		"pageSize": {strconv.FormatInt(blockatlas.TxPerPage, 10)},
+		"pageSize": {strconv.Itoa(blockatlas.TxPerPage)},
 	})
 	return transactions, err
 }
@@ -23,7 +23,7 @@ func (c *Client) GetTransactions(address string) (transactions TransactionsList,
 func (c *Client) GetTransactionsByXpub(xpub string) (transactions TransactionsList, err error) {
 	path := fmt.Sprintf("v2/xpub/%s", xpub)
 	args := url.Values{
-		"pageSize": {strconv.FormatInt(blockatlas.TxPerPage, 10)},
+		"pageSize": {strconv.Itoa(blockatlas.TxPerPage)},
 		"details":  {"txs"},
 		"tokens":   {"derived"},
 	}
@@ -34,7 +34,7 @@ func (c *Client) GetTransactionsByXpub(xpub string) (transactions TransactionsLi
 func (c *Client) GetAddressesFromXpub(xpub string) (tokens []Token, err error) {
 	path := fmt.Sprintf("v2/xpub/%s", xpub)
 	args := url.Values{
-		"pageSize": {strconv.FormatInt(blockatlas.TxPerPage*4, 10)},
+		"pageSize": {strconv.Itoa(blockatlas.TxPerPage)},
 		"details":  {"txs"},
 		"tokens":   {"derived"},
 	}
