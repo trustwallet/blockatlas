@@ -1,36 +1,64 @@
 version: '3.7'
 services:
-  api:
-    container_name: api
+  market_api:
+    container_name: market_api
     build:
       context: .
       args:
-      - SERVICE=api
+        - SERVICE=market_api
+    ports:
+    - 8421:8421
+    links:
+      - redis
+
+  market_observer:
+    container_name: market_observer
+    build:
+      context: .
+      args:
+      - SERVICE=market_observer
+    links:
+    - redis
+
+  observer_api:
+    container_name: observer_api
+    build:
+      context: .
+      args:
+        - SERVICE=observer_api
+    ports:
+      - 8422:8422
+    links:
+      - redis
+
+  platform_api:
+    container_name: platform_api
+    build:
+      context: .
+      args:
+        - SERVICE=platform_api
     ports:
     - 8420:8420
-    links:
-    - redis
 
-  observer:
-    container_name: observer
+  swagger_api:
+    container_name: swagger_api
     build:
       context: .
       args:
-       - SERVICE=observer
-    links:
-    - redis
+        - SERVICE=swagger_api
+    ports:
+      - 8423:8423
 
-  syncmarkets:
-    container_name: syncmarkets
+  platform_observer:
     build:
       context: .
       args:
-        - SERVICE=syncmarkets
+        - SERVICE=platform_observer
     links:
-    - redis
+      - redis
 
   redis:
-    container_name: redis
+    container_name: redis1
     image: neojt/mredis
     ports:
     - 6379:6379

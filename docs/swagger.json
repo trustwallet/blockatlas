@@ -5,16 +5,6 @@
         "license": {}
     },
     "paths": {
-        "/metrics": {
-            "get": {
-                "description": "Get application metrics",
-                "tags": [
-                    "metrics"
-                ],
-                "summary": "Get Metrics",
-                "operationId": "metrics"
-            }
-        },
         "/ns/lookup": {
             "get": {
                 "description": "Lookup ENS/ZNS to find registered addresses",
@@ -22,7 +12,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "ns"
+                    "Platform-Naming-Service"
                 ],
                 "summary": "Lookup .eth / .zil addresses",
                 "operationId": "lookup",
@@ -66,8 +56,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "observer",
-                    "subscriptions"
+                    "Observer"
                 ],
                 "summary": "Get coin status",
                 "operationId": "coin_status",
@@ -101,8 +90,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "observer",
-                    "subscriptions"
+                    "Observer"
                 ],
                 "summary": "Create a webhook",
                 "operationId": "create_webhook",
@@ -143,8 +131,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "observer",
-                    "subscriptions"
+                    "Observer"
                 ],
                 "summary": "Delete a webhook",
                 "operationId": "delete_webhook",
@@ -187,7 +174,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "charts"
+                    "Market"
                 ],
                 "summary": "Get charts data for a specific coin",
                 "operationId": "get_charts_data",
@@ -248,7 +235,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "charts"
+                    "Market"
                 ],
                 "summary": "Get charts coin info data for a specific coin",
                 "operationId": "get_charts_coin_info",
@@ -302,7 +289,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "ticker"
+                    "Market"
                 ],
                 "summary": "Get ticker value for a specific market",
                 "operationId": "get_ticker",
@@ -338,7 +325,7 @@
                 }
             },
             "post": {
-                "description": "Get the ticker values from many markets and coin/token",
+                "description": "Get the ticker values from many market and coin/token",
                 "consumes": [
                     "application/json"
                 ],
@@ -346,9 +333,9 @@
                     "application/json"
                 ],
                 "tags": [
-                    "ticker"
+                    "Market"
                 ],
-                "summary": "Get ticker values for a specific markets",
+                "summary": "Get ticker values for a specific market",
                 "operationId": "get_tickers",
                 "parameters": [
                     {
@@ -381,8 +368,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "platform",
-                    "tx"
+                    "Platform-Transactions"
                 ],
                 "summary": "Get xpub transactions",
                 "operationId": "xpub",
@@ -424,8 +410,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "platform",
-                    "tx"
+                    "Platform-Transactions"
                 ],
                 "summary": "Get Transactions",
                 "operationId": "tx_v1",
@@ -467,7 +452,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Collectibles"
+                    "Platform-Collections"
                 ],
                 "summary": "Get list of collections from a specific coin and addresses",
                 "operationId": "collection_categories_v2",
@@ -500,7 +485,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "ns"
+                    "Platform-Naming-Service"
                 ],
                 "summary": "Lookup .eth / .zil addresses",
                 "operationId": "lookup",
@@ -548,8 +533,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "platform",
-                    "staking"
+                    "Platform-Staking"
                 ],
                 "summary": "Get Multiple Stake Delegations",
                 "operationId": "batch_delegations",
@@ -584,8 +568,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "platform",
-                    "staking"
+                    "Platform-Staking"
                 ],
                 "summary": "Get Multiple Stake Delegations",
                 "operationId": "batch_delegations",
@@ -620,8 +603,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "platform",
-                    "collection"
+                    "Platform-Collections"
                 ],
                 "summary": "Get Collections",
                 "operationId": "collections_v2",
@@ -669,8 +651,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "platform",
-                    "collection"
+                    "Platform-Collections"
                 ],
                 "summary": "Get Collection",
                 "operationId": "collection_v2",
@@ -726,8 +707,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "platform",
-                    "staking"
+                    "Platform-Staking"
                 ],
                 "summary": "Get Stake Delegations",
                 "operationId": "delegations",
@@ -775,8 +755,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "platform",
-                    "staking"
+                    "Platform-Staking"
                 ],
                 "summary": "Get Validators",
                 "operationId": "validators",
@@ -816,8 +795,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "platform",
-                    "token"
+                    "Platform-Transactions"
                 ],
                 "summary": "Get Tokens",
                 "operationId": "tokens",
@@ -865,8 +843,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "platform",
-                    "tx"
+                    "Platform-Transactions"
                 ],
                 "summary": "Get Transactions",
                 "operationId": "tx_v2",
@@ -914,7 +891,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Collectibles"
+                    "Platform-Collections"
                 ],
                 "summary": "Get list of collections from a specific coin and addresses",
                 "operationId": "collection_categories_v3",
@@ -950,8 +927,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "platform",
-                    "collection"
+                    "Platform-Collections"
                 ],
                 "summary": "Get Collections",
                 "operationId": "collections_v3",
@@ -999,8 +975,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "platform",
-                    "collection"
+                    "Platform-Collections"
                 ],
                 "summary": "Get Collection",
                 "operationId": "collection_v3",
@@ -1099,6 +1074,10 @@
                 "circulating_supply": {
                     "type": "number"
                 },
+                "info": {
+                    "type": "object",
+                    "$ref": "#/definitions/blockatlas.CoinInfo"
+                },
                 "market_cap": {
                     "type": "number"
                 },
@@ -1132,6 +1111,44 @@
                 },
                 "price": {
                     "type": "number"
+                }
+            }
+        },
+        "blockatlas.CoinInfo": {
+            "type": "object",
+            "properties": {
+                "data_source": {
+                    "type": "string"
+                },
+                "details": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/blockatlas.Detail"
+                    }
+                },
+                "explorers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/blockatlas.Link"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                },
+                "socials": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/blockatlas.SocialLink"
+                    }
+                },
+                "source_code": {
+                    "type": "string"
+                },
+                "website": {
+                    "type": "string"
+                },
+                "whitepaper": {
+                    "type": "string"
                 }
             }
         },
@@ -1249,11 +1266,33 @@
                 "$ref": "#/definitions/blockatlas.Delegation"
             }
         },
+        "blockatlas.Detail": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "language": {
+                    "type": "string"
+                }
+            }
+        },
         "blockatlas.DocsResponse": {
             "type": "object",
             "properties": {
                 "docs": {
                     "type": "object"
+                }
+            }
+        },
+        "blockatlas.Link": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
                 }
             }
         },
@@ -1275,6 +1314,20 @@
                     "type": "integer"
                 },
                 "result": {
+                    "type": "string"
+                }
+            }
+        },
+        "blockatlas.SocialLink": {
+            "type": "object",
+            "properties": {
+                "handle": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "url": {
                     "type": "string"
                 }
             }
@@ -1338,6 +1391,15 @@
             "properties": {
                 "annual": {
                     "type": "number"
+                }
+            }
+        },
+        "blockatlas.Subscriptions": {
+            "type": "object",
+            "additionalProperties": {
+                "type": "array",
+                "items": {
+                    "type": "string"
                 }
             }
         },
@@ -1487,24 +1549,10 @@
             "properties": {
                 "subscriptions": {
                     "type": "object",
-                    "additionalProperties": {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        }
-                    }
+                    "$ref": "#/definitions/blockatlas.Subscriptions"
                 },
                 "webhook": {
                     "type": "string"
-                },
-                "xpub_subscriptions": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        }
-                    }
                 }
             }
         },
