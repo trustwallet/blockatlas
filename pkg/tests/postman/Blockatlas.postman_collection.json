@@ -1546,25 +1546,25 @@
 	],
 	"variable": [
 		{
-			"id": "138861e3-f484-4ac2-94bb-a2ff437837fe",
+			"id": "c2a01d72-bc54-4f2e-992f-30cb3d364cd1",
 			"key": "host",
 			"value": "http://localhost:8420",
 			"type": "string"
 		},
 		{
-			"id": "b3a7b213-a8da-4267-8827-33bdec07d5fa",
+			"id": "01801a9d-a028-4dac-9551-5c9392571e04",
 			"key": "observer_auth",
 			"value": "test",
 			"type": "string"
 		},
 		{
-			"id": "6a0e65b0-a358-418c-984e-f13e5ffc5372",
+			"id": "1e1443fe-1b12-4a1c-b4f8-d60a342083c0",
 			"key": "market_auth",
 			"value": "",
 			"type": "string"
 		},
 		{
-			"id": "ec94d33e-70f2-4424-b784-688eb42091d4",
+			"id": "e930d6be-46f8-432d-933f-ec5ec0155e4e",
 			"key": "platform_auth",
 			"value": "",
 			"type": "string"
