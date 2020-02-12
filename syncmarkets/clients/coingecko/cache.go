@@ -2,7 +2,6 @@ package coingecko
 
 import (
 	"fmt"
-	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/address"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
@@ -11,6 +10,11 @@ import (
 
 type Cache map[string][]CoinResult
 type SymbolsCache map[string]GeckoCoin
+
+const (
+	PlatformEthereum = "ethereum"
+	PlatformClassic  = "ethereum-classic"
+)
 
 func (c Cache) GetCoinsById(id string) (coins []CoinResult, err error) {
 	coins, ok := c[id]
@@ -105,7 +109,7 @@ func normalizeTokenId(platform, addr string) string {
 		return ""
 	}
 	switch platform {
-	case coin.Ethereum().Handle, coin.Classic().Handle:
+	case PlatformEthereum, PlatformClassic:
 		if len(addr) == 42 && strings.HasPrefix(addr, "0x") {
 			return address.EIP55Checksum(addr)
 		}

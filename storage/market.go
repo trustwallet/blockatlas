@@ -27,8 +27,8 @@ func (s *Storage) SaveTicker(coin *blockatlas.Ticker, pl ProviderList) error {
 
 		if cd.LastUpdate.After(coin.LastUpdate) && op >= np {
 			return errors.E("ticker is outdated or too low priority", errors.Params{
-				"oldTickerTime": cd.LastUpdate,
-				"newTickerTime": coin.LastUpdate,
+				"oldTickerTime":     cd.LastUpdate,
+				"newTickerTime":     coin.LastUpdate,
 				"oldTickerPriority": op,
 				"newTickerPriority": np,
 			})
@@ -64,7 +64,7 @@ func (s *Storage) SaveRates(rates blockatlas.Rates, pl ProviderList) {
 		}
 		err = s.AddHM(EntityRates, rate.Currency, &rate)
 		if err != nil {
-			logger.Error(err, "SaveRates", logger.Params{"rate": rate})
+			logger.Error(err, "SaveRates")
 			continue
 		}
 	}
