@@ -125,7 +125,7 @@ install-newman:
 	@echo "  >  Running Postman Newman"
 ifeq (,$(shell which newman))
 	@echo "  >  Installing Postman Newman"
-	@-brew install newman
+	@-npm install -g newman
 endif
 
 ## run-newman: Run Postman Newman tests.
