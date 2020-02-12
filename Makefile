@@ -127,7 +127,7 @@ ifeq (,$(shell which newman))
 	@-npm install -g newman
 endif
 
-## newman: Run Postman Newman test, the host parameter is required, and you can specify the name of the test do you wanna run (transaction, token, staking, collection, domain, healthcheck, observer). e.g: make newman test=staking ## newman: Run Postman Newman test, you can pass the name of the test do you wanna run (transaction, token, staking, collection, domain, healthcheck, observer). e.g: make newman test=staking host=http://localhost:8420
+## newman: Run Postman Newman test, the host parameter is required, and you can specify the name of the test do you wanna run (transaction, token, staking, collection, domain, healthcheck, observer). e.g $ make newman test=staking host=http//localhost
 newman: install-newman
 	@echo "  >  Runing $(test) tests"
 ifeq (,$(host))
