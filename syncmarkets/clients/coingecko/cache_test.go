@@ -313,6 +313,12 @@ func Test_NormalizeTokenIDs(t *testing.T) {
 			expected: "0x812f35b66Ec9EEe26CD7Fdf07Fbc1c9c0ac3C4D6",
 		},
 		{
+			name:     "Should checksum Classic lowercase address",
+			platform: "classic",
+			address:  "0x812f35b66ec9eee26cd7fdf07fbc1c9c0ac3c4d6",
+			expected: "0x812f35b66Ec9EEe26CD7Fdf07Fbc1c9c0ac3C4D6",
+		},
+		{
 			name:     "Check if one of the input empty - 1",
 			platform: "ethereum",
 			address:  "",
@@ -320,6 +326,12 @@ func Test_NormalizeTokenIDs(t *testing.T) {
 		},
 		{
 			name:     "Check if one of the input empty - 2",
+			platform: "classic",
+			address:  "",
+			expected: "",
+		},
+		{
+			name:     "Check if one of the input empty - 3",
 			platform: "",
 			address:  "0x812f35b66ec9eee26cd7fdf07fbc1c9c0ac3c4d6",
 			expected: "",

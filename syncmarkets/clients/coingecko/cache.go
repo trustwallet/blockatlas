@@ -2,6 +2,7 @@ package coingecko
 
 import (
 	"fmt"
+	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/address"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
@@ -104,12 +105,11 @@ func normalizeTokenId(platform, addr string) string {
 		return ""
 	}
 	switch platform {
-	case "ethereum":
+	case coin.Ethereum().Handle, coin.Classic().Handle:
 		if len(addr) == 42 && strings.HasPrefix(addr, "0x") {
 			return address.EIP55Checksum(addr)
 		}
 		return ""
-
 	default:
 		return addr
 	}
