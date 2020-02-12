@@ -104,6 +104,9 @@ func makeTxRoute(router gin.IRouter, api blockatlas.Platform, path string) {
 		AddTx:
 			page = append(page, tx)
 		}
+		if len(page) > blockatlas.TxPerPage {
+			page = page[0:blockatlas.TxPerPage]
+		}
 		page.Sort()
 		ginutils.RenderSuccess(c, &page)
 	})
