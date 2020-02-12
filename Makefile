@@ -128,43 +128,20 @@ ifeq (,$(shell which newman))
 	@-npm install -g newman
 endif
 
-## run-newman: Run Postman Newman tests.
-run-newman: install-newman newman-txs newman-tokens newman-staking newman-collections newman-domains newman-observer newman-healthcheck
-
-## newman-txs: Run Newman tests for Transaction API's.
-newman-txs:
-	@echo " - Running Newman Test for Transaction API"
-	@newman run pkg/tests/postman/Blockatlas.postman_collection.json --folder txs -d pkg/tests/postman/tx_data.json
-
-## newman-tokens: Run Newman tests for tokens API's.
-newman-tokens:
-	@echo " - Running Newman Test for Tokens API"
-	@newman run pkg/tests/postman/Blockatlas.postman_collection.json --folder tokens -d pkg/tests/postman/token_data.json
-
-## newman-staking: Run Newman tests for staking API's.
-newman-staking:
-	@echo " - Running Newman Test for Staking API"
-	@newman run pkg/tests/postman/Blockatlas.postman_collection.json --folder collection -d pkg/tests/postman/collection_data.json
-
-## newman-collections: Run Newman tests for collections API's.
-newman-collections:
-	@echo " - Running Newman Test for Collection API"
-	@newman run pkg/tests/postman/Blockatlas.postman_collection.json --folder stake -d pkg/tests/postman/staking_data.json
-
-## newman-domains: Run Newman tests for domains API's.
-newman-domains:
-	@echo " - Running Newman Test for Domain API"
-	@newman run pkg/tests/postman/Blockatlas.postman_collection.json --folder domain -d pkg/tests/postman/domain_data.json
-
-## newman-observer: Run Newman tests for observer API's.
-newman-observer:
-	@echo " - Running Newman Test for Observer API"
-	@newman run pkg/tests/postman/Blockatlas.postman_collection.json --folder observer -d pkg/tests/postman/observer_data.json
-
-## newman-healthcheck: Run Newman tests for healthcheck API's.
-newman-healthcheck:
-	@echo " - Running Newman Test for Healthcheck API"
-	@newman run pkg/tests/postman/Blockatlas.postman_collection.json --folder healthcheck
+## newman: Run Postman Newman test, you can pass the name of the test do you wanna run (transaction, token, staking, collection, domain, healthcheck, observer). e.g: make newman test=staking
+newman: install-newman
+	@echo "  >  Runing $(test) tests"
+ifeq (,$(test))
+	@bash -c "$(MAKE) newman test=transaction"
+	@bash -c "$(MAKE) newman test=token"
+	@bash -c "$(MAKE) newman test=staking"
+	@bash -c "$(MAKE) newman test=collection"
+	@bash -c "$(MAKE) newman test=domain"
+	@bash -c "$(MAKE) newman test=healthcheck"
+	@bash -c "$(MAKE) newman test=observer"
+else
+	@newman run pkg/tests/postman/Blockatlas.postman_collection.json --folder $(test) -d pkg/tests/postman/$(test)_data.json
+endif
 
 go-compile: go-get go-build
 

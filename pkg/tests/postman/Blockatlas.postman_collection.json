@@ -9,7 +9,7 @@
 			"name": "platform",
 			"item": [
 				{
-					"name": "txs",
+					"name": "transaction",
 					"item": [
 						{
 							"name": "txs",
@@ -167,7 +167,7 @@
 					"name": "tokens",
 					"item": [
 						{
-							"name": "tokens",
+							"name": "token",
 							"event": [
 								{
 									"listen": "prerequest",
@@ -1546,25 +1546,25 @@
 	],
 	"variable": [
 		{
-			"id": "c2a01d72-bc54-4f2e-992f-30cb3d364cd1",
+			"id": "11ec01be-072c-43bb-b75e-25abc75e10d4",
 			"key": "host",
 			"value": "http://localhost:8420",
 			"type": "string"
 		},
 		{
-			"id": "01801a9d-a028-4dac-9551-5c9392571e04",
+			"id": "5d44cef4-c95c-4fd3-8f62-e4884e80ef6c",
 			"key": "observer_auth",
 			"value": "test",
 			"type": "string"
 		},
 		{
-			"id": "1e1443fe-1b12-4a1c-b4f8-d60a342083c0",
+			"id": "b3d04a71-ba54-4f15-a476-b4b16ca45e2e",
 			"key": "market_auth",
 			"value": "",
 			"type": "string"
 		},
 		{
-			"id": "e930d6be-46f8-432d-933f-ec5ec0155e4e",
+			"id": "0248f830-d364-4166-aac1-b6faa1e9bdba",
 			"key": "platform_auth",
 			"value": "",
 			"type": "string"
