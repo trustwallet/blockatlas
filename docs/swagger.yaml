@@ -32,6 +32,9 @@ definitions:
     properties:
       circulating_supply:
         type: number
+      info:
+        $ref: '#/definitions/blockatlas.CoinInfo'
+        type: object
       market_cap:
         type: number
       total_supply:
@@ -54,6 +57,31 @@ definitions:
         type: integer
       price:
         type: number
+    type: object
+  blockatlas.CoinInfo:
+    properties:
+      data_source:
+        type: string
+      details:
+        items:
+          $ref: '#/definitions/blockatlas.Detail'
+        type: array
+      explorers:
+        items:
+          $ref: '#/definitions/blockatlas.Link'
+        type: array
+      name:
+        type: string
+      socials:
+        items:
+          $ref: '#/definitions/blockatlas.SocialLink'
+        type: array
+      source_code:
+        type: string
+      website:
+        type: string
+      whitepaper:
+        type: string
     type: object
   blockatlas.CoinStatus:
     properties:
@@ -131,10 +159,24 @@ definitions:
     items:
       $ref: '#/definitions/blockatlas.Delegation'
     type: array
+  blockatlas.Detail:
+    properties:
+      description:
+        type: string
+      language:
+        type: string
+    type: object
   blockatlas.DocsResponse:
     properties:
       docs:
         type: object
+    type: object
+  blockatlas.Link:
+    properties:
+      name:
+        type: string
+      url:
+        type: string
     type: object
   blockatlas.Observer:
     properties:
@@ -148,6 +190,15 @@ definitions:
       coin:
         type: integer
       result:
+        type: string
+    type: object
+  blockatlas.SocialLink:
+    properties:
+      handle:
+        type: string
+      name:
+        type: string
+      url:
         type: string
     type: object
   blockatlas.StakeValidator:
@@ -190,6 +241,12 @@ definitions:
     properties:
       annual:
         type: number
+    type: object
+  blockatlas.Subscriptions:
+    additionalProperties:
+      items:
+        type: string
+      type: array
     type: object
   blockatlas.Ticker:
     properties:
@@ -294,19 +351,10 @@ definitions:
   blockatlas.Webhook:
     properties:
       subscriptions:
-        additionalProperties:
-          items:
-            type: string
-          type: array
+        $ref: '#/definitions/blockatlas.Subscriptions'
         type: object
       webhook:
         type: string
-      xpub_subscriptions:
-        additionalProperties:
-          items:
-            type: string
-          type: array
-        type: object
     type: object
   coin.ExternalCoin:
     properties:
@@ -330,13 +378,6 @@ info:
   contact: {}
   license: {}
 paths:
-  /metrics:
-    get:
-      description: Get application metrics
-      operationId: metrics
-      summary: Get Metrics
-      tags:
-      - metrics
   /ns/lookup:
     get:
       description: Lookup ENS/ZNS to find registered addresses
@@ -363,7 +404,7 @@ paths:
             $ref: '#/definitions/ginutils.ApiError'
       summary: Lookup .eth / .zil addresses
       tags:
-      - ns
+      - platform
   /observer/v1/status:
     get:
       consumes:
@@ -387,7 +428,6 @@ paths:
       summary: Get coin status
       tags:
       - observer
-      - subscriptions
   /observer/v1/webhook/register:
     delete:
       consumes:
@@ -417,7 +457,6 @@ paths:
       summary: Delete a webhook
       tags:
       - observer
-      - subscriptions
     post:
       consumes:
       - application/json
@@ -446,7 +485,6 @@ paths:
       summary: Create a webhook
       tags:
       - observer
-      - subscriptions
   /v1/{coin}/{address}:
     get:
       consumes:
@@ -476,7 +514,6 @@ paths:
       summary: Get Transactions
       tags:
       - platform
-      - tx
   /v1/{coin}/xpub/{xpub}:
     get:
       consumes:
@@ -506,7 +543,6 @@ paths:
       summary: Get xpub transactions
       tags:
       - platform
-      - tx
   /v1/market/charts:
     get:
       consumes:
@@ -548,7 +584,7 @@ paths:
             $ref: '#/definitions/blockatlas.ChartData'
       summary: Get charts data for a specific coin
       tags:
-      - charts
+      - market
   /v1/market/info:
     get:
       consumes:
@@ -585,7 +621,7 @@ paths:
             $ref: '#/definitions/blockatlas.ChartCoinInfo'
       summary: Get charts coin info data for a specific coin
       tags:
-      - charts
+      - market
   /v1/market/ticker:
     get:
       consumes:
@@ -616,11 +652,11 @@ paths:
             $ref: '#/definitions/blockatlas.Ticker'
       summary: Get ticker value for a specific market
       tags:
-      - ticker
+      - market
     post:
       consumes:
       - application/json
-      description: Get the ticker values from many markets and coin/token
+      description: Get the ticker values from many market and coin/token
       operationId: get_tickers
       parameters:
       - description: Ticker
@@ -636,9 +672,9 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/blockatlas.Tickers'
-      summary: Get ticker values for a specific markets
+      summary: Get ticker values for a specific market
       tags:
-      - ticker
+      - market
   /v2/{coin}/collections/{address}:
     get:
       consumes:
@@ -672,7 +708,6 @@ paths:
       summary: Get Collections
       tags:
       - platform
-      - collection
   /v2/{coin}/collections/{owner}/collection/{collection_id}:
     get:
       consumes:
@@ -712,7 +747,6 @@ paths:
       summary: Get Collection
       tags:
       - platform
-      - collection
   /v2/{coin}/staking/delegations/{address}:
     get:
       consumes:
@@ -746,7 +780,6 @@ paths:
       summary: Get Stake Delegations
       tags:
       - platform
-      - staking
   /v2/{coin}/staking/validators:
     get:
       consumes:
@@ -774,7 +807,6 @@ paths:
       summary: Get Validators
       tags:
       - platform
-      - staking
   /v2/{coin}/tokens/{address}:
     get:
       consumes:
@@ -808,7 +840,6 @@ paths:
       summary: Get Tokens
       tags:
       - platform
-      - token
   /v2/{coin}/transactions/{address}:
     get:
       consumes:
@@ -842,7 +873,6 @@ paths:
       summary: Get Transactions
       tags:
       - platform
-      - tx
   /v2/collectibles/categories:
     post:
       consumes:
@@ -866,7 +896,7 @@ paths:
             $ref: '#/definitions/blockatlas.DocsResponse'
       summary: Get list of collections from a specific coin and addresses
       tags:
-      - Collectibles
+      - platform
   /v2/ns/lookup:
     get:
       description: Lookup ENS/ZNS to find registered addresses for multiple coins
@@ -896,7 +926,7 @@ paths:
             $ref: '#/definitions/ginutils.ApiError'
       summary: Lookup .eth / .zil addresses
       tags:
-      - ns
+      - platform
   /v2/staking/delegations:
     post:
       consumes:
@@ -920,7 +950,6 @@ paths:
       summary: Get Multiple Stake Delegations
       tags:
       - platform
-      - staking
   /v2/staking/list:
     post:
       consumes:
@@ -944,7 +973,6 @@ paths:
       summary: Get Multiple Stake Delegations
       tags:
       - platform
-      - staking
   /v3/{coin}/collections/{address}:
     get:
       consumes:
@@ -978,7 +1006,6 @@ paths:
       summary: Get Collections
       tags:
       - platform
-      - collection
   /v3/{coin}/collections/{owner}/collection/{collection_id}:
     get:
       consumes:
@@ -1018,7 +1045,6 @@ paths:
       summary: Get Collection
       tags:
       - platform
-      - collection
   /v3/collectibles/categories:
     post:
       consumes:
@@ -1042,5 +1068,5 @@ paths:
             $ref: '#/definitions/blockatlas.DocsResponse'
       summary: Get list of collections from a specific coin and addresses
       tags:
-      - Collectibles
+      - platform
 swagger: "2.0"
