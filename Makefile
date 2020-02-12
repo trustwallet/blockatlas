@@ -127,20 +127,24 @@ ifeq (,$(shell which newman))
 	@-npm install -g newman
 endif
 
-## newman: Run Postman Newman test, you can pass the name of the test do you wanna run (transaction, token, staking, collection, domain, healthcheck, observer). e.g: make newman test=staking
+## newman: Run Postman Newman test, the host parameter is required, and you can specify the name of the test do you wanna run (transaction, token, staking, collection, domain, healthcheck, observer). e.g: make newman test=staking ## newman: Run Postman Newman test, you can pass the name of the test do you wanna run (transaction, token, staking, collection, domain, healthcheck, observer). e.g: make newman test=staking host=http://localhost:8420
 newman: install-newman
 	@echo "  >  Runing $(test) tests"
+ifeq (,$(host))
+	@echo "  >  Host parameter is missing. e.g: make newman test=staking host=http://localhost:8420"
+	@exit 1
+endif
 ifeq (,$(test))
-	@bash -c "$(MAKE) newman test=transaction"
-	@bash -c "$(MAKE) newman test=token"
-	@bash -c "$(MAKE) newman test=staking"
-	@bash -c "$(MAKE) newman test=collection"
-	@bash -c "$(MAKE) newman test=domain"
-	@bash -c "$(MAKE) newman test=healthcheck"
-	@bash -c "$(MAKE) newman test=observer"
-	@bash -c "$(MAKE) newman test=market"
+	@bash -c "$(MAKE) newman test=transaction host=$(host)"
+	@bash -c "$(MAKE) newman test=token host=$(host)"
+	@bash -c "$(MAKE) newman test=staking host=$(host)"
+	@bash -c "$(MAKE) newman test=collection host=$(host)"
+	@bash -c "$(MAKE) newman test=domain host=$(host)"
+	@bash -c "$(MAKE) newman test=healthcheck host=$(host)"
+	@bash -c "$(MAKE) newman test=observer host=$(host)"
+	@bash -c "$(MAKE) newman test=market host=$(host)"
 else
-	@newman run pkg/tests/postman/Blockatlas.postman_collection.json --folder $(test) -d pkg/tests/postman/$(test)_data.json
+	@newman run pkg/tests/postman/Blockatlas.postman_collection.json --folder $(test) -d pkg/tests/postman/$(test)_data.json --env-var "host=$(host)"
 endif
 
 go-compile: go-get go-build
