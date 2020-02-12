@@ -1130,7 +1130,480 @@
 		},
 		{
 			"name": "market",
-			"item": [],
+			"item": [
+				{
+					"name": "ticker",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "7312c9e7-5330-421a-9ca8-171101050e38",
+								"exec": [
+									"var token_id = pm.environment.get(\"token_id\");",
+									"if(!token_id) {",
+									"    pm.environment.set(\"token_id\", \"\");",
+									"}",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "acec8baa-0ef0-4703-ab83-c555260deffa",
+								"exec": [
+									"var Ajv = require('ajv');",
+									"var ajv = new Ajv({logger: console});",
+									"let schema = {",
+									"  \"type\": \"object\",",
+									"  \"properties\": {",
+									"    \"coin\": {",
+									"      \"type\": \"integer\"",
+									"    },",
+									"    \"coin_name\": {",
+									"      \"type\": \"string\"",
+									"    },",
+									"    \"token_id\": {",
+									"      \"type\": \"string\"",
+									"    },",
+									"    \"type\": {",
+									"      \"type\": \"string\"",
+									"    },",
+									"    \"price\": {",
+									"      \"type\": \"object\",",
+									"      \"properties\": {",
+									"        \"value\": {",
+									"          \"type\": \"number\"",
+									"        },",
+									"        \"change_24h\": {",
+									"          \"type\": \"number\"",
+									"        },",
+									"        \"currency\": {",
+									"          \"type\": \"string\"",
+									"        },",
+									"        \"provider\": {",
+									"          \"type\": \"string\"",
+									"        }",
+									"      }",
+									"    },",
+									"    \"last_update\": {",
+									"      \"type\": \"string\"",
+									"    }",
+									"  }",
+									"};",
+									"",
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test(\"response must be valid and have a body\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.be.ok;",
+									"    pm.response.to.not.be.error;",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"pm.test(\"schema is valid\", function() {",
+									"    pm.expect(ajv.validate(schema, jsonData)).to.be.true;",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{market_auth}}"
+							}
+						],
+						"url": {
+							"raw": "{{host}}/v1/market/ticker?currency={{currency}}&coin={{coin}}&token={{token_id}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"v1",
+								"market",
+								"ticker"
+							],
+							"query": [
+								{
+									"key": "currency",
+									"value": "{{currency}}"
+								},
+								{
+									"key": "coin",
+									"value": "{{coin}}"
+								},
+								{
+									"key": "token",
+									"value": "{{token_id}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "charts",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "7312c9e7-5330-421a-9ca8-171101050e38",
+								"exec": [
+									"var token_id = pm.environment.get(\"token_id\");",
+									"if(!token_id) {",
+									"    pm.environment.set(\"token_id\", \"\");",
+									"}",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "acec8baa-0ef0-4703-ab83-c555260deffa",
+								"exec": [
+									"var Ajv = require('ajv');",
+									"var ajv = new Ajv({logger: console});",
+									"let schema = {",
+									"  \"type\": \"object\",",
+									"  \"properties\": {",
+									"    \"prices\": {",
+									"      \"type\": \"array\",",
+									"      \"minItems\": 10,",
+									"      \"uniqueItems\": true,",
+									"      \"items\": {",
+									"        \"type\": \"object\",",
+									"        \"properties\": {",
+									"          \"price\": {",
+									"            \"type\": \"number\"",
+									"          },",
+									"          \"date\": {",
+									"            \"type\": \"integer\"",
+									"          }",
+									"        }",
+									"      }",
+									"    }",
+									"  }",
+									"};",
+									"",
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test(\"response must be valid and have a body\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.be.ok;",
+									"    pm.response.to.not.be.error;",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"pm.test(\"schema is valid\", function() {",
+									"    pm.expect(ajv.validate(schema, jsonData)).to.be.true;",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{market_auth}}"
+							}
+						],
+						"url": {
+							"raw": "{{host}}/v1/market/charts?currency={{currency}}&coin={{coin}}&token={{token_id}}&time_start=1577871126",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"v1",
+								"market",
+								"charts"
+							],
+							"query": [
+								{
+									"key": "currency",
+									"value": "{{currency}}"
+								},
+								{
+									"key": "coin",
+									"value": "{{coin}}"
+								},
+								{
+									"key": "token",
+									"value": "{{token_id}}"
+								},
+								{
+									"key": "time_start",
+									"value": "1577871126"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "info",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "7312c9e7-5330-421a-9ca8-171101050e38",
+								"exec": [
+									"var token_id = pm.environment.get(\"token_id\");",
+									"if(!token_id) {",
+									"    pm.environment.set(\"token_id\", \"\");",
+									"}",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "acec8baa-0ef0-4703-ab83-c555260deffa",
+								"exec": [
+									"var Ajv = require('ajv');",
+									"var ajv = new Ajv({logger: console});",
+									"let schema = {",
+									"  \"type\": \"object\",",
+									"  \"properties\": {",
+									"    \"volume_24\": {",
+									"      \"type\": \"number\"",
+									"    },",
+									"    \"market_cap\": {",
+									"      \"type\": \"number\"",
+									"    },",
+									"    \"circulating_supply\": {",
+									"      \"type\": \"number\"",
+									"    },",
+									"    \"total_supply\": {",
+									"      \"type\": \"number\"",
+									"    },",
+									"    \"info\": {",
+									"      \"type\": \"object\",",
+									"      \"properties\": {",
+									"        \"name\": {",
+									"          \"type\": \"string\"",
+									"        },",
+									"        \"website\": {",
+									"          \"type\": \"string\"",
+									"        },",
+									"        \"source_code\": {",
+									"          \"type\": \"string\"",
+									"        },",
+									"        \"whitepaper\": {",
+									"          \"type\": \"string\"",
+									"        },",
+									"        \"explorers\": {",
+									"          \"type\": \"array\"",
+									"        },",
+									"        \"socials\": {",
+									"          \"type\": \"array\"",
+									"        },",
+									"        \"details\": {",
+									"          \"type\": \"array\"",
+									"        },",
+									"        \"data_source\": {",
+									"          \"type\": \"string\"",
+									"        }",
+									"      }",
+									"    }",
+									"  }",
+									"};",
+									"",
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test(\"response must be valid and have a body\", function () {",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"pm.test(\"schema is valid\", function() {",
+									"    if (pm.response.status == 200) {",
+									"        pm.expect(ajv.validate(schema, jsonData)).to.be.true;",
+									"    }",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{market_auth}}"
+							}
+						],
+						"url": {
+							"raw": "{{host}}/v1/market/info?currency={{currency}}&coin={{coin}}&token={{token_id}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"v1",
+								"market",
+								"info"
+							],
+							"query": [
+								{
+									"key": "currency",
+									"value": "{{currency}}"
+								},
+								{
+									"key": "coin",
+									"value": "{{coin}}"
+								},
+								{
+									"key": "token",
+									"value": "{{token_id}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "tickers",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "7312c9e7-5330-421a-9ca8-171101050e38",
+								"exec": [
+									"var token_id = pm.environment.get(\"token_id\");",
+									"if(!token_id) {",
+									"    pm.environment.set(\"token_id\", \"\");",
+									"}",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "acec8baa-0ef0-4703-ab83-c555260deffa",
+								"exec": [
+									"var Ajv = require('ajv');",
+									"var ajv = new Ajv({logger: console});",
+									"let schema = {",
+									"  \"type\": \"object\",",
+									"  \"properties\": {",
+									"    \"currency\": {",
+									"      \"type\": \"string\"",
+									"    },",
+									"    \"docs\": {",
+									"      \"type\": \"array\",",
+									"      \"uniqueItems\": true,",
+									"      \"items\": {",
+									"        \"type\": \"object\",",
+									"        \"properties\": {",
+									"          \"coin\": {",
+									"            \"type\": \"integer\"",
+									"          },",
+									"          \"last_update\": {",
+									"            \"type\": \"string\"",
+									"          },",
+									"          \"token_id\": {",
+									"            \"type\": \"string\"",
+									"          },",
+									"          \"type\": {",
+									"            \"type\": \"string\"",
+									"          },",
+									"          \"price\": {",
+									"            \"type\": \"object\",",
+									"            \"properties\": {",
+									"              \"value\": {",
+									"                \"type\": \"number\"",
+									"              },",
+									"              \"change_24h\": {",
+									"                \"type\": \"number\"",
+									"              }",
+									"            }",
+									"          }",
+									"        }",
+									"      }",
+									"    }",
+									"  }",
+									"};",
+									"",
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test(\"response must be valid and have a body\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.be.ok;",
+									"    pm.response.to.not.be.error;",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"pm.test(\"schema is valid\", function() {",
+									"    pm.expect(ajv.validate(schema, jsonData)).to.be.true;",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{market_auth}}"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"currency\": \"{{currency}}\",\n  \"assets\": [\n    {\n      \"coin\": {{coin}},\n      \"type\": \"{{type}}\",\n      \"token_id\": \"{{token_id}}\"\n    }\n  ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/v1/market/ticker",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"v1",
+								"market",
+								"ticker"
+							]
+						}
+					},
+					"response": []
+				}
+			],
 			"event": [
 				{
 					"listen": "prerequest",
@@ -1333,6 +1806,93 @@
 								"v1",
 								"webhook",
 								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "status",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "7312c9e7-5330-421a-9ca8-171101050e38",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "acec8baa-0ef0-4703-ab83-c555260deffa",
+								"exec": [
+									"var Ajv = require('ajv');",
+									"var ajv = new Ajv({logger: console});",
+									"let schema = {",
+									"  \"type\": \"object\",",
+									"  \"minProperties\": 5,",
+									"  \"uniqueItems\": true,",
+									"  \"items\": {\"type\": \"object\"}",
+									"};",
+									"",
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test(\"response must be valid and have a body\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.be.ok;",
+									"    pm.response.to.not.be.error;",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"pm.test(\"schema is valid\", function() {",
+									"    pm.expect(ajv.validate(schema, jsonData)).to.be.true;",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{observer_auth}}"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/observer/v1/status",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"observer",
+								"v1",
+								"status"
 							]
 						}
 					},
@@ -1546,25 +2106,25 @@
 	],
 	"variable": [
 		{
-			"id": "11ec01be-072c-43bb-b75e-25abc75e10d4",
+			"id": "62a70362-fb74-4507-9534-064a2081ee3f",
 			"key": "host",
 			"value": "http://localhost:8420",
 			"type": "string"
 		},
 		{
-			"id": "5d44cef4-c95c-4fd3-8f62-e4884e80ef6c",
+			"id": "8f07e86d-1487-4c42-84c8-9ab05a0b2b5b",
 			"key": "observer_auth",
 			"value": "test",
 			"type": "string"
 		},
 		{
-			"id": "b3d04a71-ba54-4f15-a476-b4b16ca45e2e",
+			"id": "61bdd2e0-184c-4737-b2ea-de63212b497f",
 			"key": "market_auth",
 			"value": "",
 			"type": "string"
 		},
 		{
-			"id": "0248f830-d364-4166-aac1-b6faa1e9bdba",
+			"id": "da62a69f-82a4-4791-b1f0-8b8332bbd122",
 			"key": "platform_auth",
 			"value": "",
 			"type": "string"
