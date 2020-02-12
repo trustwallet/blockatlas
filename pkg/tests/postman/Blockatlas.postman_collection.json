@@ -1901,9 +1901,7 @@
 									"});",
 									"",
 									"pm.test(\"schema is valid\", function() {",
-									"    if (pm.response.status == 200) {",
-									"        pm.expect(ajv.validate(schema, jsonData)).to.be.true;",
-									"    }",
+									"    pm.expect(ajv.validate(schema, jsonData)).to.be.true;",
 									"});",
 									""
 								],
@@ -2573,25 +2571,25 @@
 	],
 	"variable": [
 		{
-			"id": "4b90aa4f-57c6-4668-9b31-b08213789c1f",
+			"id": "7e392582-2f75-48a2-a096-ef338490e7f8",
 			"key": "host",
 			"value": "http://localhost:8420",
 			"type": "string"
 		},
 		{
-			"id": "2f57fde6-5c78-4d34-92a6-ff78c7cb5562",
+			"id": "39dad5f8-9727-4dda-9f27-b4e29dd0ff18",
 			"key": "observer_auth",
 			"value": "test",
 			"type": "string"
 		},
 		{
-			"id": "2aefe467-def3-4034-be71-bb737861881e",
+			"id": "edc48bc9-0c39-46a1-809a-c6d71874a958",
 			"key": "market_auth",
 			"value": "",
 			"type": "string"
 		},
 		{
-			"id": "53a56c0a-2672-4f9c-aab4-b0992cf5a2c8",
+			"id": "2ee77821-80ac-470a-9293-78b361ef27c7",
 			"key": "platform_auth",
 			"value": "",
 			"type": "string"
