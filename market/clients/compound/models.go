@@ -5,9 +5,9 @@ type CoinPrices struct {
 }
 
 type CToken struct {
-	ExchangeRate Amount `json:"exchange_rate"`
-	Symbol       string `json:"symbol"`
-	TokenAddress string `json:"token_address"`
+	UnderlyingPrice Amount `json:"underlying_price"`
+	Symbol          string `json:"symbol"`
+	TokenAddress    string `json:"token_address"`
 }
 
 type Amount struct {

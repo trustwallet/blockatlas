@@ -404,7 +404,7 @@ paths:
             $ref: '#/definitions/ginutils.ApiError'
       summary: Lookup .eth / .zil addresses
       tags:
-      - platform
+      - Platform-Naming-Service
   /observer/v1/status:
     get:
       consumes:
@@ -427,7 +427,7 @@ paths:
             $ref: '#/definitions/blockatlas.CoinStatus'
       summary: Get coin status
       tags:
-      - observer
+      - Observer
   /observer/v1/webhook/register:
     delete:
       consumes:
@@ -456,7 +456,7 @@ paths:
             $ref: '#/definitions/blockatlas.Observer'
       summary: Delete a webhook
       tags:
-      - observer
+      - Observer
     post:
       consumes:
       - application/json
@@ -484,7 +484,7 @@ paths:
             $ref: '#/definitions/blockatlas.Observer'
       summary: Create a webhook
       tags:
-      - observer
+      - Observer
   /v1/{coin}/{address}:
     get:
       consumes:
@@ -513,7 +513,7 @@ paths:
             $ref: '#/definitions/ginutils.ApiError'
       summary: Get Transactions
       tags:
-      - platform
+      - Platform-Transactions
   /v1/{coin}/xpub/{xpub}:
     get:
       consumes:
@@ -542,7 +542,7 @@ paths:
             $ref: '#/definitions/blockatlas.TxPage'
       summary: Get xpub transactions
       tags:
-      - platform
+      - Platform-Transactions
   /v1/market/charts:
     get:
       consumes:
@@ -584,7 +584,7 @@ paths:
             $ref: '#/definitions/blockatlas.ChartData'
       summary: Get charts data for a specific coin
       tags:
-      - market
+      - Market
   /v1/market/info:
     get:
       consumes:
@@ -621,7 +621,7 @@ paths:
             $ref: '#/definitions/blockatlas.ChartCoinInfo'
       summary: Get charts coin info data for a specific coin
       tags:
-      - market
+      - Market
   /v1/market/ticker:
     get:
       consumes:
@@ -652,7 +652,7 @@ paths:
             $ref: '#/definitions/blockatlas.Ticker'
       summary: Get ticker value for a specific market
       tags:
-      - market
+      - Market
     post:
       consumes:
       - application/json
@@ -674,7 +674,7 @@ paths:
             $ref: '#/definitions/blockatlas.Tickers'
       summary: Get ticker values for a specific market
       tags:
-      - market
+      - Market
   /v2/{coin}/collections/{address}:
     get:
       consumes:
@@ -707,7 +707,7 @@ paths:
             $ref: '#/definitions/ginutils.ApiError'
       summary: Get Collections
       tags:
-      - platform
+      - Platform-Collections
   /v2/{coin}/collections/{owner}/collection/{collection_id}:
     get:
       consumes:
@@ -746,7 +746,7 @@ paths:
             $ref: '#/definitions/ginutils.ApiError'
       summary: Get Collection
       tags:
-      - platform
+      - Platform-Collections
   /v2/{coin}/staking/delegations/{address}:
     get:
       consumes:
@@ -779,7 +779,7 @@ paths:
             $ref: '#/definitions/ginutils.ApiError'
       summary: Get Stake Delegations
       tags:
-      - platform
+      - Platform-Staking
   /v2/{coin}/staking/validators:
     get:
       consumes:
@@ -806,7 +806,7 @@ paths:
             $ref: '#/definitions/ginutils.ApiError'
       summary: Get Validators
       tags:
-      - platform
+      - Platform-Staking
   /v2/{coin}/tokens/{address}:
     get:
       consumes:
@@ -839,7 +839,7 @@ paths:
             $ref: '#/definitions/ginutils.ApiError'
       summary: Get Tokens
       tags:
-      - platform
+      - Platform-Transactions
   /v2/{coin}/transactions/{address}:
     get:
       consumes:
@@ -872,7 +872,7 @@ paths:
             $ref: '#/definitions/ginutils.ApiError'
       summary: Get Transactions
       tags:
-      - platform
+      - Platform-Transactions
   /v2/collectibles/categories:
     post:
       consumes:
@@ -896,7 +896,7 @@ paths:
             $ref: '#/definitions/blockatlas.DocsResponse'
       summary: Get list of collections from a specific coin and addresses
       tags:
-      - platform
+      - Platform-Collections
   /v2/ns/lookup:
     get:
       description: Lookup ENS/ZNS to find registered addresses for multiple coins
@@ -926,7 +926,7 @@ paths:
             $ref: '#/definitions/ginutils.ApiError'
       summary: Lookup .eth / .zil addresses
       tags:
-      - platform
+      - Platform-Naming-Service
   /v2/staking/delegations:
     post:
       consumes:
@@ -949,7 +949,7 @@ paths:
             $ref: '#/definitions/blockatlas.DelegationsBatchPage'
       summary: Get Multiple Stake Delegations
       tags:
-      - platform
+      - Platform-Staking
   /v2/staking/list:
     post:
       consumes:
@@ -972,7 +972,7 @@ paths:
             $ref: '#/definitions/blockatlas.DelegationsBatchPage'
       summary: Get Multiple Stake Delegations
       tags:
-      - platform
+      - Platform-Staking
   /v3/{coin}/collections/{address}:
     get:
       consumes:
@@ -1005,7 +1005,7 @@ paths:
             $ref: '#/definitions/ginutils.ApiError'
       summary: Get Collections
       tags:
-      - platform
+      - Platform-Collections
   /v3/{coin}/collections/{owner}/collection/{collection_id}:
     get:
       consumes:
@@ -1044,7 +1044,7 @@ paths:
             $ref: '#/definitions/ginutils.ApiError'
       summary: Get Collection
       tags:
-      - platform
+      - Platform-Collections
   /v3/collectibles/categories:
     post:
       consumes:
@@ -1068,5 +1068,5 @@ paths:
             $ref: '#/definitions/blockatlas.DocsResponse'
       summary: Get list of collections from a specific coin and addresses
       tags:
-      - platform
+      - Platform-Collections
 swagger: "2.0"

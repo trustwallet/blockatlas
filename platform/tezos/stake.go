@@ -14,6 +14,7 @@ func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, e
 	if len(account.Delegate) == 0 {
 		return make(blockatlas.DelegationsPage, 0), nil
 	}
+
 	validators, err := services.GetValidatorsMap(p)
 	if err != nil {
 		return nil, err
@@ -38,7 +39,8 @@ func NormalizeDelegation(account Account, validators blockatlas.ValidatorMap) (b
 
 func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
 	results := make(blockatlas.ValidatorPage, 0)
-	validators, err := p.rpcClient.GetValidators()
+
+	validators, err := p.getCurrentValidators()
 	if err != nil {
 		return results, err
 	}
@@ -47,6 +49,20 @@ func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
 		results = append(results, normalizeValidator(v))
 	}
 	return results, nil
+}
+
+func (p *Platform) getCurrentValidators() (validators []Validator, err error) {
+	periodType, err := p.rpcClient.GetPeriodType()
+	if err != nil {
+		return validators, err
+	}
+
+	switch periodType {
+	case TestingPeriodType:
+		return p.rpcClient.GetValidators("head~32768")
+	default:
+		return p.rpcClient.GetValidators("head")
+	}
 }
 
 func (p *Platform) GetDetails() blockatlas.StakingDetails {

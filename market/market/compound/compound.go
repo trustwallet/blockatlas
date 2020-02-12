@@ -44,8 +44,8 @@ func normalizeTicker(ctoken c.CToken, provider string) (*blockatlas.Ticker, erro
 		CoinType: blockatlas.TypeToken,
 		TokenId:  ctoken.TokenAddress,
 		Price: blockatlas.TickerPrice{
-			Value:    ctoken.ExchangeRate.Value,
-			Currency: blockatlas.DefaultCurrency,
+			Value:    ctoken.UnderlyingPrice.Value,
+			Currency: coin.Coins[coin.ETH].Symbol,
 			Provider: provider,
 		},
 		LastUpdate: time.Now(),

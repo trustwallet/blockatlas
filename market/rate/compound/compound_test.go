@@ -21,12 +21,12 @@ func Test_normalizeRates(t *testing.T) {
 			c.CoinPrices{
 				Data: []c.CToken{
 					{
-						Symbol:       "cUSDC",
-						ExchangeRate: c.Amount{Value: 0.0021},
+						Symbol:          "cUSDC",
+						UnderlyingPrice: c.Amount{Value: 0.0021},
 					},
 					{
-						Symbol:       "cREP",
-						ExchangeRate: c.Amount{Value: 0.02},
+						Symbol:          "cREP",
+						UnderlyingPrice: c.Amount{Value: 0.02},
 					},
 				},
 			},
@@ -40,12 +40,12 @@ func Test_normalizeRates(t *testing.T) {
 			c.CoinPrices{
 				Data: []c.CToken{
 					{
-						Symbol:       "cUSDC",
-						ExchangeRate: c.Amount{Value: 110.0021},
+						Symbol:          "cUSDC",
+						UnderlyingPrice: c.Amount{Value: 110.0021},
 					},
 					{
-						Symbol:       "cREP",
-						ExchangeRate: c.Amount{Value: 110.02},
+						Symbol:          "cREP",
+						UnderlyingPrice: c.Amount{Value: 110.02},
 					},
 				},
 			},

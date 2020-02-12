@@ -49,6 +49,11 @@ func scheduleTasks(storage storage.Market, md Provider, c *cron.Cron) {
 	}
 	t := md.GetUpdateTime()
 	spec := fmt.Sprintf("@every %s", t)
+	logger.Info("Scheduling market data task", logger.Params{
+		"Type":     md.GetLogType(),
+		"Market":   md.GetId(),
+		"Interval": spec,
+	})
 	_, err = c.AddFunc(spec, func() {
 		go processBackoff(storage, md)
 	})
