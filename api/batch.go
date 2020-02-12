@@ -71,7 +71,7 @@ func makeStakingDelegationsBatchRoute(router gin.IRouter) {
 // @Accept json
 // @Produce json
 // @Tags platform,staking
-// @Param delegations body api.AddressesRequest true "Validators addresses and coins"
+// @Param delegations body api.CoinsRequest true "Validators addresses and coins"
 // @Success 200 {object} blockatlas.DelegationsBatchPage
 // @Router /v2/staking/list [post]
 func makeStakingDelegationsSimpleBatchRoute(router gin.IRouter) {

@@ -19,6 +19,15 @@ definitions:
       type:
         type: string
     type: object
+  api.CoinBatchRequest:
+    properties:
+      coin:
+        type: integer
+    type: object
+  api.CoinsRequest:
+    items:
+      $ref: '#/definitions/api.CoinBatchRequest'
+    type: array
   api.TickerRequest:
     properties:
       assets:
@@ -32,6 +41,9 @@ definitions:
     properties:
       circulating_supply:
         type: number
+      info:
+        $ref: '#/definitions/blockatlas.CoinInfo'
+        type: object
       market_cap:
         type: number
       total_supply:
@@ -54,6 +66,31 @@ definitions:
         type: integer
       price:
         type: number
+    type: object
+  blockatlas.CoinInfo:
+    properties:
+      data_source:
+        type: string
+      details:
+        items:
+          $ref: '#/definitions/blockatlas.Detail'
+        type: array
+      explorers:
+        items:
+          $ref: '#/definitions/blockatlas.Link'
+        type: array
+      name:
+        type: string
+      socials:
+        items:
+          $ref: '#/definitions/blockatlas.SocialLink'
+        type: array
+      source_code:
+        type: string
+      website:
+        type: string
+      whitepaper:
+        type: string
     type: object
   blockatlas.CoinStatus:
     properties:
@@ -131,10 +168,24 @@ definitions:
     items:
       $ref: '#/definitions/blockatlas.Delegation'
     type: array
+  blockatlas.Detail:
+    properties:
+      description:
+        type: string
+      language:
+        type: string
+    type: object
   blockatlas.DocsResponse:
     properties:
       docs:
         type: object
+    type: object
+  blockatlas.Link:
+    properties:
+      name:
+        type: string
+      url:
+        type: string
     type: object
   blockatlas.Observer:
     properties:
@@ -148,6 +199,15 @@ definitions:
       coin:
         type: integer
       result:
+        type: string
+    type: object
+  blockatlas.SocialLink:
+    properties:
+      handle:
+        type: string
+      name:
+        type: string
+      url:
         type: string
     type: object
   blockatlas.StakeValidator:
@@ -190,6 +250,12 @@ definitions:
     properties:
       annual:
         type: number
+    type: object
+  blockatlas.Subscriptions:
+    additionalProperties:
+      items:
+        type: string
+      type: array
     type: object
   blockatlas.Ticker:
     properties:
@@ -294,19 +360,10 @@ definitions:
   blockatlas.Webhook:
     properties:
       subscriptions:
-        additionalProperties:
-          items:
-            type: string
-          type: array
+        $ref: '#/definitions/blockatlas.Subscriptions'
         type: object
       webhook:
         type: string
-      xpub_subscriptions:
-        additionalProperties:
-          items:
-            type: string
-          type: array
-        type: object
     type: object
   coin.ExternalCoin:
     properties:
@@ -933,7 +990,7 @@ paths:
         name: delegations
         required: true
         schema:
-          $ref: '#/definitions/api.AddressesRequest'
+          $ref: '#/definitions/api.CoinsRequest'
       produces:
       - application/json
       responses:

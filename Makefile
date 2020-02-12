@@ -1,3 +1,5 @@
+#! /usr/bin/make -f
+
 # Project variables.
 VERSION := $(shell git describe --tags)
 BUILD := $(shell git rev-parse --short HEAD)
@@ -117,6 +119,33 @@ golint: go-lint
 
 ## docs: Generate swagger docs.
 docs: go-gen-docs
+
+## install-newman: Install Postman Newman for tests.
+install-newman:
+ifeq (,$(shell which newman))
+	@echo "  >  Installing Postman Newman"
+	@-npm install -g newman
+endif
+
+## newman: Run Postman Newman test, the host parameter is required, and you can specify the name of the test do you wanna run (transaction, token, staking, collection, domain, healthcheck, observer). e.g $ make newman test=staking host=http//localhost
+newman: install-newman
+	@echo "  >  Runing $(test) tests"
+ifeq (,$(host))
+	@echo "  >  Host parameter is missing. e.g: make newman test=staking host=http://localhost:8420"
+	@exit 1
+endif
+ifeq (,$(test))
+	@bash -c "$(MAKE) newman test=transaction host=$(host)"
+	@bash -c "$(MAKE) newman test=token host=$(host)"
+	@bash -c "$(MAKE) newman test=staking host=$(host)"
+	@bash -c "$(MAKE) newman test=collection host=$(host)"
+	@bash -c "$(MAKE) newman test=domain host=$(host)"
+	@bash -c "$(MAKE) newman test=healthcheck host=$(host)"
+	@bash -c "$(MAKE) newman test=observer host=$(host)"
+	@bash -c "$(MAKE) newman test=market host=$(host)"
+else
+	@newman run pkg/tests/postman/Blockatlas.postman_collection.json --folder $(test) -d pkg/tests/postman/$(test)_data.json --env-var "host=$(host)"
+endif
 
 go-compile: go-get go-build
 
