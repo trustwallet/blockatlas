@@ -66,10 +66,6 @@ func getTickerHandler(storage storage.Market) func(c *gin.Context) {
 			return
 		}
 		token := strings.ToUpper(c.Query("token"))
-		if token == "" {
-			ginutils.RenderError(c, http.StatusBadRequest, "Must provide token")
-			return
-		}
 
 		currency := c.DefaultQuery("currency", blockatlas.DefaultCurrency)
 		rate, err := storage.GetRate(strings.ToUpper(currency))
