@@ -13,6 +13,9 @@ gin:
 #sentry:
 #  dsn: https://xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx@sentry.io/xxxxxxx
 
+assets:
+  blockchain: https://raw.githubusercontent.com/trustwallet/assets/983216efe872e6bb30241379297a1614cb7dc77e/blockchains
+
 # The transaction watcher
 observer:
   enabled: false

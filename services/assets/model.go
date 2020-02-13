@@ -16,3 +16,14 @@ type ValidatorPayout struct {
 type ValidatorStatus struct {
 	Disabled bool `json:"disabled"`
 }
+
+type AssetValidators []AssetValidator
+type AssetValidatorMap map[string]AssetValidator
+
+func (av AssetValidators) toMap() AssetValidatorMap {
+	validators := make(AssetValidatorMap)
+	for _, v := range av {
+		validators[v.ID] = v
+	}
+	return validators
+}

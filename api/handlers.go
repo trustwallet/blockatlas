@@ -1,19 +1,14 @@
 package api
 
 import (
-	"net/http"
-	"time"
-
 	"github.com/chenjiandongx/ginprom"
 	"github.com/gin-gonic/gin"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/ginutils"
-	"github.com/trustwallet/blockatlas/pkg/ginutils/gincache"
-	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/pkg/metrics"
-	services "github.com/trustwallet/blockatlas/services/assets"
+	"net/http"
 )
 
 // @Summary Get Transactions
@@ -109,65 +104,6 @@ func makeTxRoute(router gin.IRouter, api blockatlas.Platform, path string) {
 		}
 		page.Sort()
 		ginutils.RenderSuccess(c, &page)
-	})
-}
-
-// @Summary Get Validators
-// @ID validators
-// @Description Get validators from the address
-// @Accept json
-// @Produce json
-// @Tags platform,staking
-// @Param coin path string true "the coin name" default(cosmos)
-// @Success 200 {object} blockatlas.DocsResponse
-// @Failure 500 {object} ginutils.ApiError
-// @Router /v2/{coin}/staking/validators [get]
-func makeStakingValidatorsRoute(router gin.IRouter, api blockatlas.Platform) {
-	var stakingAPI blockatlas.StakeAPI
-	stakingAPI, _ = api.(blockatlas.StakeAPI)
-
-	if stakingAPI == nil {
-		return
-	}
-
-	router.GET("/staking/validators", gincache.CacheMiddleware(time.Hour, func(c *gin.Context) {
-		results, err := services.GetValidators(stakingAPI)
-		if err != nil {
-			logger.Error(err)
-			ginutils.ErrorResponse(c).Message(err.Error()).Render()
-			return
-		}
-		ginutils.RenderSuccess(c, blockatlas.DocsResponse{Docs: results})
-	}))
-}
-
-// @Summary Get Stake Delegations
-// @ID delegations
-// @Description Get stake delegations from the address
-// @Accept json
-// @Produce json
-// @Tags platform,staking
-// @Param coin path string true "the coin name" default(tron)
-// @Param address path string true "the query address" default(TPJYCz8ppZNyvw7pTwmjajcx4Kk1MmEUhD)
-// @Success 200 {object} blockatlas.DelegationResponse
-// @Failure 500 {object} ginutils.ApiError
-// @Router /v2/{coin}/staking/delegations/{address} [get]
-func makeStakingDelegationsRoute(router gin.IRouter, api blockatlas.Platform) {
-	var stakingAPI blockatlas.StakeAPI
-	stakingAPI, _ = api.(blockatlas.StakeAPI)
-
-	if stakingAPI == nil {
-		return
-	}
-
-	router.GET("/staking/delegations/:address", func(c *gin.Context) {
-		response, err := getDelegationResponse(stakingAPI, c.Param("address"))
-		if err != nil {
-			ginutils.ErrorResponse(c).Message(err.Error()).Render()
-			return
-		}
-
-		ginutils.RenderSuccess(c, response)
 	})
 }
 
