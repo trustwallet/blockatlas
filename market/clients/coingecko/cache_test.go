@@ -308,25 +308,37 @@ func Test_NormalizeTokenIDs(t *testing.T) {
 	}{
 		{
 			name:     "Should checksum Ethereum lowercase address",
-			platform: "ethereum",
+			platform: PlatformEthereum,
+			address:  "0x812f35b66ec9eee26cd7fdf07fbc1c9c0ac3c4d6",
+			expected: "0x812f35b66Ec9EEe26CD7Fdf07Fbc1c9c0ac3C4D6",
+		},
+		{
+			name:     "Should checksum Classic lowercase address",
+			platform: PlatformClassic,
 			address:  "0x812f35b66ec9eee26cd7fdf07fbc1c9c0ac3c4d6",
 			expected: "0x812f35b66Ec9EEe26CD7Fdf07Fbc1c9c0ac3C4D6",
 		},
 		{
 			name:     "Check if one of the input empty - 1",
-			platform: "ethereum",
+			platform: PlatformEthereum,
 			address:  "",
 			expected: "",
 		},
 		{
 			name:     "Check if one of the input empty - 2",
+			platform: PlatformClassic,
+			address:  "",
+			expected: "",
+		},
+		{
+			name:     "Check if one of the input empty - 3",
 			platform: "",
 			address:  "0x812f35b66ec9eee26cd7fdf07fbc1c9c0ac3c4d6",
 			expected: "",
 		},
 		{
 			name:     "Should not process if address malformed",
-			platform: "ethereum",
+			platform: PlatformEthereum,
 			address:  "https://etherscan.io/address/0x8Ddc86DbA7ad728012eFc460b8A168Aba60B403B",
 			expected: "",
 		},

@@ -1,0 +1,2599 @@
+{
+	"info": {
+		"_postman_id": "b31e9564-879c-4fb0-ad27-986070bc06a0",
+		"name": "Blockatlas",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "platform",
+			"item": [
+				{
+					"name": "transaction",
+					"item": [
+						{
+							"name": "txs",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "7312c9e7-5330-421a-9ca8-171101050e38",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"id": "acec8baa-0ef0-4703-ab83-c555260deffa",
+										"exec": [
+											"var Ajv = require('ajv');",
+											"var ajv = new Ajv({logger: console});",
+											"let schema = {",
+											"  \"type\": \"object\",",
+											"  \"properties\": {",
+											"    \"total\": {",
+											"      \"type\": \"integer\"",
+											"    },",
+											"    \"docs\": {",
+											"      \"type\": \"array\",",
+											"      \"minItems\": 1,",
+											"      \"uniqueItems\": true,",
+											"      \"items\": {",
+											"        \"type\": \"object\",",
+											"        \"properties\": {",
+											"          \"id\": {",
+											"            \"type\": \"string\"",
+											"          },",
+											"          \"coin\": {",
+											"            \"type\": \"integer\"",
+											"          },",
+											"          \"from\": {",
+											"            \"type\": \"string\"",
+											"          },",
+											"          \"to\": {",
+											"            \"type\": \"string\"",
+											"          },",
+											"          \"fee\": {",
+											"            \"type\": \"string\"",
+											"          },",
+											"          \"date\": {",
+											"            \"type\": \"integer\"",
+											"          },",
+											"          \"block\": {",
+											"            \"type\": \"integer\"",
+											"          },",
+											"          \"status\": {",
+											"            \"type\": \"string\"",
+											"          },",
+											"          \"sequence\": {",
+											"            \"type\": \"integer\"",
+											"          },",
+											"          \"type\": {",
+											"            \"type\": \"string\"",
+											"          },",
+											"          \"memo\": {",
+											"            \"type\": \"string\"",
+											"          },",
+											"          \"metadata\": {",
+											"            \"type\": \"object\"",
+											"          }",
+											"        }",
+											"      }",
+											"    },",
+											"    \"status\": {",
+											"      \"type\": \"boolean\"",
+											"    }",
+											"  }",
+											"};",
+											"",
+											"let handler = pm.variables.get(\"handler\");",
+											"let address = pm.variables.get(\"address\");",
+											"var jsonData = pm.response.json();",
+											"",
+											"pm.test(handler + \" - response must be valid and have a body: \" + address, function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.ok;",
+											"    pm.response.to.not.be.error;",
+											"    pm.response.to.be.withBody;",
+											"    pm.response.to.be.json;",
+											"});",
+											"",
+											"pm.test(handler + \" - verify has docs: \" + address, function() {",
+											"    pm.expect(jsonData.total).to.be.above(0);",
+											"});",
+											"",
+											"pm.test(handler + \" - schema is valid: \" + address, function() {",
+											"    pm.expect(ajv.validate(schema, jsonData)).to.be.true;",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{platform_auth}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{host}}/v1/{{handler}}/{{address}}",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"v1",
+										"{{handler}}",
+										"{{address}}"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "3f05cf7e-0439-4cd2-b41f-5ba71e465621",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "de5760bf-5d29-462f-af90-ccbeaa8253f9",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "tokens",
+					"item": [
+						{
+							"name": "token",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "7312c9e7-5330-421a-9ca8-171101050e38",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"id": "acec8baa-0ef0-4703-ab83-c555260deffa",
+										"exec": [
+											"var Ajv = require('ajv');",
+											"var ajv = new Ajv({logger: console});",
+											"let schema = {",
+											"  \"type\": \"object\",",
+											"  \"properties\": {",
+											"    \"docs\": {",
+											"      \"type\": \"array\",",
+											"      \"minItems\": 1,",
+											"      \"uniqueItems\": true,",
+											"      \"items\": {",
+											"        \"type\": \"object\",",
+											"        \"properties\": {",
+											"          \"name\": {",
+											"            \"type\": \"string\"",
+											"          },",
+											"          \"symbol\": {",
+											"            \"type\": \"string\"",
+											"          },",
+											"          \"decimals\": {",
+											"            \"type\": \"integer\"",
+											"          },",
+											"          \"token_id\": {",
+											"            \"type\": \"string\"",
+											"          },",
+											"          \"coin\": {",
+											"            \"type\": \"integer\"",
+											"          },",
+											"          \"type\": {",
+											"            \"type\": \"string\"",
+											"          }",
+											"        }",
+											"      }",
+											"    }",
+											"  }",
+											"};",
+											"",
+											"let handler = pm.variables.get(\"handler\");",
+											"let address = pm.variables.get(\"address\");",
+											"var jsonData = pm.response.json();",
+											"",
+											"pm.test(handler + \" - response must be valid and have a body: \" + address, function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.ok;",
+											"    pm.response.to.not.be.error;",
+											"    pm.response.to.be.withBody;",
+											"    pm.response.to.be.json;",
+											"});",
+											"",
+											"pm.test(handler + \" - schema is valid: \" + address, function() {",
+											"    pm.expect(ajv.validate(schema, jsonData)).to.be.true;",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}/v2/{{handler}}/tokens/{{address}}?Authorization=Bearer {{platform_auth}}",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"v2",
+										"{{handler}}",
+										"tokens",
+										"{{address}}"
+									],
+									"query": [
+										{
+											"key": "Authorization",
+											"value": "Bearer {{platform_auth}}"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "3f05cf7e-0439-4cd2-b41f-5ba71e465621",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "de5760bf-5d29-462f-af90-ccbeaa8253f9",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "staking",
+					"item": [
+						{
+							"name": "validators",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "7312c9e7-5330-421a-9ca8-171101050e38",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"id": "acec8baa-0ef0-4703-ab83-c555260deffa",
+										"exec": [
+											"var Ajv = require('ajv');",
+											"var ajv = new Ajv({logger: console});",
+											"let schema = {",
+											"  \"type\": \"object\",",
+											"  \"properties\": {",
+											"    \"docs\": {",
+											"      \"type\": \"array\",",
+											"      \"minItems\": 1,",
+											"      \"uniqueItems\": true,",
+											"      \"items\": {",
+											"        \"type\": \"object\",",
+											"        \"properties\": {",
+											"          \"id\": {",
+											"            \"type\": \"string\"",
+											"          },",
+											"          \"status\": {",
+											"            \"type\": \"boolean\"",
+											"          },",
+											"          \"info\": {",
+											"            \"type\": \"object\",",
+											"            \"properties\": {",
+											"              \"name\": {",
+											"                \"type\": \"string\"",
+											"              },",
+											"              \"description\": {",
+											"                \"type\": \"string\"",
+											"              },",
+											"              \"image\": {",
+											"                \"type\": \"string\"",
+											"              },",
+											"              \"website\": {",
+											"                \"type\": \"string\"",
+											"              }",
+											"            }",
+											"          },",
+											"          \"details\": {",
+											"            \"type\": \"object\",",
+											"            \"properties\": {",
+											"              \"locktime\": {",
+											"                \"type\": \"integer\"",
+											"              },",
+											"              \"minimum_amount\": {",
+											"                \"type\": \"string\"",
+											"              },",
+											"              \"type\": {",
+											"                \"type\": \"string\"",
+											"              },",
+											"              \"reward\": {",
+											"                \"type\": \"object\",",
+											"                \"properties\": {",
+											"                  \"annual\": {",
+											"                    \"type\": \"number\"",
+											"                  }",
+											"                }",
+											"              }",
+											"            }",
+											"          }",
+											"        }",
+											"      }",
+											"    }",
+											"  }",
+											"};",
+											"",
+											"let handler = pm.variables.get(\"handler\");",
+											"var jsonData = pm.response.json();",
+											"",
+											"pm.test(handler + \" - response must be valid and have a body\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.ok;",
+											"    pm.response.to.not.be.error;",
+											"    pm.response.to.be.withBody;",
+											"    pm.response.to.be.json;",
+											"});",
+											"",
+											"pm.test(handler + \" - schema is valid\", function() {",
+											"    pm.expect(ajv.validate(schema, jsonData)).to.be.true;",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{platform_auth}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{host}}/v2/{{handler}}/staking/validators",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"v2",
+										"{{handler}}",
+										"staking",
+										"validators"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "validators list",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "7312c9e7-5330-421a-9ca8-171101050e38",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"id": "acec8baa-0ef0-4703-ab83-c555260deffa",
+										"exec": [
+											"var Ajv = require('ajv');",
+											"var ajv = new Ajv({logger: console});",
+											"let schema = {",
+											"  \"type\": \"object\",",
+											"  \"properties\": {",
+											"    \"docs\": {",
+											"      \"type\": \"array\",",
+											"      \"minItems\": 1,",
+											"      \"uniqueItems\": true,",
+											"      \"items\": {",
+											"        \"type\": \"object\",",
+											"        \"properties\": {",
+											"          \"id\": {",
+											"            \"type\": \"string\"",
+											"          },",
+											"          \"status\": {",
+											"            \"type\": \"boolean\"",
+											"          },",
+											"          \"info\": {",
+											"            \"type\": \"object\",",
+											"            \"properties\": {",
+											"              \"name\": {",
+											"                \"type\": \"string\"",
+											"              },",
+											"              \"description\": {",
+											"                \"type\": \"string\"",
+											"              },",
+											"              \"image\": {",
+											"                \"type\": \"string\"",
+											"              },",
+											"              \"website\": {",
+											"                \"type\": \"string\"",
+											"              }",
+											"            }",
+											"          },",
+											"          \"details\": {",
+											"            \"type\": \"object\",",
+											"            \"properties\": {",
+											"              \"locktime\": {",
+											"                \"type\": \"integer\"",
+											"              },",
+											"              \"minimum_amount\": {",
+											"                \"type\": \"string\"",
+											"              },",
+											"              \"type\": {",
+											"                \"type\": \"string\"",
+											"              },",
+											"              \"reward\": {",
+											"                \"type\": \"object\",",
+											"                \"properties\": {",
+											"                  \"annual\": {",
+											"                    \"type\": \"number\"",
+											"                  }",
+											"                }",
+											"              }",
+											"            }",
+											"          }",
+											"        }",
+											"      }",
+											"    }",
+											"  }",
+											"};",
+											"",
+											"let handler = pm.variables.get(\"handler\");",
+											"var jsonData = pm.response.json();",
+											"",
+											"pm.test(handler + \" - response must be valid and have a body\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.ok;",
+											"    pm.response.to.not.be.error;",
+											"    pm.response.to.be.withBody;",
+											"    pm.response.to.be.json;",
+											"});",
+											"",
+											"pm.test(handler + \" - schema is valid\", function() {",
+											"    pm.expect(ajv.validate(schema, jsonData)).to.be.true;",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{platform_auth}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "[\n\t{\n\t\t\"coin\": {{coin}}\n\t}\n]",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/v2/staking/list",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"v2",
+										"staking",
+										"list"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "delegations",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "7312c9e7-5330-421a-9ca8-171101050e38",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"id": "acec8baa-0ef0-4703-ab83-c555260deffa",
+										"exec": [
+											"var Ajv = require('ajv');",
+											"var ajv = new Ajv({logger: console});",
+											"let schema = {",
+											"  \"type\": \"object\",",
+											"  \"properties\": {",
+											"    \"delegations\": {",
+											"      \"type\": \"array\",",
+											"      \"uniqueItems\": true,",
+											"      \"items\": {",
+											"        \"type\": \"object\",",
+											"        \"properties\": {",
+											"          \"delegator\": {",
+											"            \"type\": \"object\",",
+											"            \"properties\": {",
+											"              \"id\": {",
+											"                \"type\": \"string\"",
+											"              },",
+											"              \"status\": {",
+											"                \"type\": \"boolean\"",
+											"              },",
+											"              \"info\": {",
+											"                \"type\": \"object\",",
+											"                \"properties\": {",
+											"                  \"name\": {",
+											"                    \"type\": \"string\"",
+											"                  },",
+											"                  \"description\": {",
+											"                    \"type\": \"string\"",
+											"                  },",
+											"                  \"image\": {",
+											"                    \"type\": \"string\"",
+											"                  },",
+											"                  \"website\": {",
+											"                    \"type\": \"string\"",
+											"                  }",
+											"                }",
+											"              },",
+											"              \"details\": {",
+											"                \"type\": \"object\",",
+											"                \"properties\": {",
+											"                  \"locktime\": {",
+											"                    \"type\": \"integer\"",
+											"                  },",
+											"                  \"minimum_amount\": {",
+											"                    \"type\": \"string\"",
+											"                  },",
+											"                  \"type\": {",
+											"                    \"type\": \"string\"",
+											"                  },",
+											"                  \"reward\": {",
+											"                    \"type\": \"object\",",
+											"                    \"properties\": {",
+											"                      \"annual\": {",
+											"                        \"type\": \"number\"",
+											"                      }",
+											"                    }",
+											"                  }",
+											"                }",
+											"              }",
+											"            }",
+											"          },",
+											"          \"value\": {",
+											"            \"type\": \"string\"",
+											"          },",
+											"          \"status\": {",
+											"            \"type\": \"string\"",
+											"          }",
+											"        }",
+											"      }",
+											"    },",
+											"    \"balance\": {",
+											"      \"type\": \"string\"",
+											"    },",
+											"    \"address\": {",
+											"      \"type\": \"string\"",
+											"    },",
+											"    \"coin\": {",
+											"      \"type\": \"object\",",
+											"      \"properties\": {",
+											"        \"coin\": {",
+											"          \"type\": \"integer\"",
+											"        },",
+											"        \"symbol\": {",
+											"          \"type\": \"string\"",
+											"        },",
+											"        \"name\": {",
+											"          \"type\": \"string\"",
+											"        },",
+											"        \"decimals\": {",
+											"          \"type\": \"integer\"",
+											"        }",
+											"      }",
+											"    },",
+											"    \"details\": {",
+											"      \"type\": \"object\",",
+											"      \"properties\": {",
+											"        \"locktime\": {",
+											"          \"type\": \"integer\"",
+											"        },",
+											"        \"minimum_amount\": {",
+											"          \"type\": \"string\"",
+											"        },",
+											"        \"type\": {",
+											"          \"type\": \"string\"",
+											"        },",
+											"        \"reward\": {",
+											"          \"type\": \"object\",",
+											"          \"properties\": {",
+											"            \"annual\": {",
+											"              \"type\": \"number\"",
+											"            }",
+											"          }",
+											"        }",
+											"      }",
+											"    }",
+											"  }",
+											"};",
+											"",
+											"let handler = pm.variables.get(\"handler\");",
+											"let address = pm.variables.get(\"address\");",
+											"var jsonData = pm.response.json();",
+											"",
+											"pm.test(handler + \" - response must be valid and have a body: \" + address, function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.ok;",
+											"    pm.response.to.not.be.error;",
+											"    pm.response.to.be.withBody;",
+											"    pm.response.to.be.json;",
+											"});",
+											"",
+											"pm.test(handler + \" - schema is valid: \" + address, function() {",
+											"    pm.expect(ajv.validate(schema, jsonData)).to.be.true;",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}/v2/{{handler}}/staking/delegations/{{address}}?Authorization=Bearer {{platform_auth}}",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"v2",
+										"{{handler}}",
+										"staking",
+										"delegations",
+										"{{address}}"
+									],
+									"query": [
+										{
+											"key": "Authorization",
+											"value": "Bearer {{platform_auth}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "delegations batch",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "7312c9e7-5330-421a-9ca8-171101050e38",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"id": "acec8baa-0ef0-4703-ab83-c555260deffa",
+										"exec": [
+											"var Ajv = require('ajv');",
+											"var ajv = new Ajv({logger: console});",
+											"let schema = {",
+											"  \"type\": \"object\",",
+											"  \"properties\": {",
+											"    \"delegations\": {",
+											"      \"type\": \"array\",",
+											"      \"uniqueItems\": true,",
+											"      \"items\": {",
+											"        \"type\": \"object\",",
+											"        \"properties\": {",
+											"          \"delegator\": {",
+											"            \"type\": \"object\",",
+											"            \"properties\": {",
+											"              \"id\": {",
+											"                \"type\": \"string\"",
+											"              },",
+											"              \"status\": {",
+											"                \"type\": \"boolean\"",
+											"              },",
+											"              \"info\": {",
+											"                \"type\": \"object\",",
+											"                \"properties\": {",
+											"                  \"name\": {",
+											"                    \"type\": \"string\"",
+											"                  },",
+											"                  \"description\": {",
+											"                    \"type\": \"string\"",
+											"                  },",
+											"                  \"image\": {",
+											"                    \"type\": \"string\"",
+											"                  },",
+											"                  \"website\": {",
+											"                    \"type\": \"string\"",
+											"                  }",
+											"                }",
+											"              },",
+											"              \"details\": {",
+											"                \"type\": \"object\",",
+											"                \"properties\": {",
+											"                  \"locktime\": {",
+											"                    \"type\": \"integer\"",
+											"                  },",
+											"                  \"minimum_amount\": {",
+											"                    \"type\": \"string\"",
+											"                  },",
+											"                  \"type\": {",
+											"                    \"type\": \"string\"",
+											"                  },",
+											"                  \"reward\": {",
+											"                    \"type\": \"object\",",
+											"                    \"properties\": {",
+											"                      \"annual\": {",
+											"                        \"type\": \"number\"",
+											"                      }",
+											"                    }",
+											"                  }",
+											"                }",
+											"              }",
+											"            }",
+											"          },",
+											"          \"value\": {",
+											"            \"type\": \"string\"",
+											"          },",
+											"          \"status\": {",
+											"            \"type\": \"string\"",
+											"          }",
+											"        }",
+											"      }",
+											"    },",
+											"    \"balance\": {",
+											"      \"type\": \"string\"",
+											"    },",
+											"    \"address\": {",
+											"      \"type\": \"string\"",
+											"    },",
+											"    \"coin\": {",
+											"      \"type\": \"object\",",
+											"      \"properties\": {",
+											"        \"coin\": {",
+											"          \"type\": \"integer\"",
+											"        },",
+											"        \"symbol\": {",
+											"          \"type\": \"string\"",
+											"        },",
+											"        \"name\": {",
+											"          \"type\": \"string\"",
+											"        },",
+											"        \"decimals\": {",
+											"          \"type\": \"integer\"",
+											"        }",
+											"      }",
+											"    },",
+											"    \"details\": {",
+											"      \"type\": \"object\",",
+											"      \"properties\": {",
+											"        \"locktime\": {",
+											"          \"type\": \"integer\"",
+											"        },",
+											"        \"minimum_amount\": {",
+											"          \"type\": \"string\"",
+											"        },",
+											"        \"type\": {",
+											"          \"type\": \"string\"",
+											"        },",
+											"        \"reward\": {",
+											"          \"type\": \"object\",",
+											"          \"properties\": {",
+											"            \"annual\": {",
+											"              \"type\": \"number\"",
+											"            }",
+											"          }",
+											"        }",
+											"      }",
+											"    }",
+											"  }",
+											"};",
+											"",
+											"let handler = pm.variables.get(\"handler\");",
+											"let address = pm.variables.get(\"address\");",
+											"var jsonData = pm.response.json();",
+											"",
+											"pm.test(handler + \" - response must be valid and have a body: \" + address, function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.ok;",
+											"    pm.response.to.not.be.error;",
+											"    pm.response.to.be.withBody;",
+											"    pm.response.to.be.json;",
+											"});",
+											"",
+											"pm.test(handler + \" - schema is valid: \" + address, function() {",
+											"    pm.expect(ajv.validate(schema, jsonData)).to.be.true;",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "[\n\t{\n\t\t\"coin\": {{coin}},\n\t\t\"address\": \"{{address}}\"\n\t}\n]",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/v2/staking/delegations",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"v2",
+										"staking",
+										"delegations"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "3f05cf7e-0439-4cd2-b41f-5ba71e465621",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "de5760bf-5d29-462f-af90-ccbeaa8253f9",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "collection",
+					"item": [
+						{
+							"name": "collection",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "7312c9e7-5330-421a-9ca8-171101050e38",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"id": "acec8baa-0ef0-4703-ab83-c555260deffa",
+										"exec": [
+											"var Ajv = require('ajv');",
+											"var ajv = new Ajv({logger: console});",
+											"let schema = {",
+											"  \"type\": \"object\",",
+											"  \"properties\": {",
+											"    \"total\": {",
+											"      \"type\": \"integer\"",
+											"    },",
+											"    \"docs\": {",
+											"      \"type\": \"array\",",
+											"      \"minItems\": 1,",
+											"      \"uniqueItems\": true,",
+											"      \"items\": {",
+											"        \"type\": \"object\",",
+											"        \"properties\": {",
+											"          \"id\": {",
+											"            \"type\": \"string\"",
+											"          },",
+											"          \"collection_id\": {",
+											"            \"type\": \"string\"",
+											"          },",
+											"          \"token_id\": {",
+											"            \"type\": \"string\"",
+											"          },",
+											"          \"category_contract\": {",
+											"            \"type\": \"string\"",
+											"          },",
+											"          \"contract_address\": {",
+											"            \"type\": \"string\"",
+											"          },",
+											"          \"category\": {",
+											"            \"type\": \"string\"",
+											"          },",
+											"          \"image_url\": {",
+											"            \"type\": \"string\"",
+											"          },",
+											"          \"external_link\": {",
+											"            \"type\": \"string\"",
+											"          },",
+											"          \"provider_link\": {",
+											"            \"type\": \"string\"",
+											"          },",
+											"          \"type\": {",
+											"            \"type\": \"string\"",
+											"          },",
+											"          \"description\": {",
+											"            \"type\": \"string\"",
+											"          },",
+											"          \"coin\": {",
+											"            \"type\": \"integer\"",
+											"          },",
+											"          \"name\": {",
+											"            \"type\": \"string\"",
+											"          }",
+											"        }",
+											"      }",
+											"    },",
+											"    \"status\": {",
+											"      \"type\": \"boolean\"",
+											"    }",
+											"  }",
+											"};",
+											"",
+											"let handler = pm.variables.get(\"handler\");",
+											"let address = pm.variables.get(\"address\");",
+											"var jsonData = pm.response.json();",
+											"",
+											"pm.test(handler + \" - response must be valid and have a body: \" + address, function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.ok;",
+											"    pm.response.to.not.be.error;",
+											"    pm.response.to.be.withBody;",
+											"    pm.response.to.be.json;",
+											"});",
+											"",
+											"pm.test(handler + \" - schema is valid: \" + address, function() {",
+											"    pm.expect(ajv.validate(schema, jsonData)).to.be.true;",
+											"    console.log(JSON.stringify(jsonData))",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{platform_auth}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{host}}/v2/{{handler}}/collections/{{address}}/collection/{{collection}}",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"v2",
+										"{{handler}}",
+										"collections",
+										"{{address}}",
+										"collection",
+										"{{collection}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "collections",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "7312c9e7-5330-421a-9ca8-171101050e38",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"id": "acec8baa-0ef0-4703-ab83-c555260deffa",
+										"exec": [
+											"var Ajv = require('ajv');",
+											"var ajv = new Ajv({logger: console});",
+											"let schema = {",
+											"  \"type\": \"object\",",
+											"  \"properties\": {",
+											"    \"total\": {",
+											"      \"type\": \"integer\"",
+											"    },",
+											"    \"docs\": {",
+											"      \"type\": \"array\",",
+											"      \"minItems\": 1,",
+											"      \"uniqueItems\": true,",
+											"      \"items\": {",
+											"        \"type\": \"object\",",
+											"        \"properties\": {",
+											"          \"id\": {",
+											"            \"type\": \"string\"",
+											"          },",
+											"          \"name\": {",
+											"            \"type\": \"string\"",
+											"          },",
+											"          \"symbol\": {",
+											"            \"type\": \"string\"",
+											"          },",
+											"          \"slug\": {",
+											"            \"type\": \"string\"",
+											"          },",
+											"          \"image_url\": {",
+											"            \"type\": \"string\"",
+											"          },",
+											"          \"external_link\": {",
+											"            \"type\": \"string\"",
+											"          },",
+											"          \"total\": {",
+											"            \"type\": \"integer\"",
+											"          },",
+											"          \"category_address\": {",
+											"            \"type\": \"string\"",
+											"          },",
+											"          \"address\": {",
+											"            \"type\": \"string\"",
+											"          },",
+											"          \"nft_version\": {",
+											"            \"type\": \"string\"",
+											"          },",
+											"          \"coin\": {",
+											"            \"type\": \"integer\"",
+											"          },",
+											"          \"type\": {",
+											"            \"type\": \"string\"",
+											"          }",
+											"        }",
+											"      }",
+											"    },",
+											"    \"status\": {",
+											"      \"type\": \"boolean\"",
+											"    }",
+											"  }",
+											"};",
+											"",
+											"let handler = pm.variables.get(\"handler\");",
+											"let address = pm.variables.get(\"address\");",
+											"var jsonData = pm.response.json();",
+											"",
+											"pm.test(handler + \" - response must be valid and have a body: \" + address, function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.ok;",
+											"    pm.response.to.not.be.error;",
+											"    pm.response.to.be.withBody;",
+											"    pm.response.to.be.json;",
+											"});",
+											"",
+											"pm.test(handler + \" - schema is valid: \" + address, function() {",
+											"    pm.expect(ajv.validate(schema, jsonData)).to.be.true;",
+											"    console.log(JSON.stringify(jsonData))",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{platform_auth}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{host}}/v2/{{handler}}/collections/{{address}}",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"v2",
+										"{{handler}}",
+										"collections",
+										"{{address}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "collections batch",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "7312c9e7-5330-421a-9ca8-171101050e38",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"id": "acec8baa-0ef0-4703-ab83-c555260deffa",
+										"exec": [
+											"var Ajv = require('ajv');",
+											"var ajv = new Ajv({logger: console});",
+											"let schema = {",
+											"  \"type\": \"object\",",
+											"  \"properties\": {",
+											"    \"total\": {",
+											"      \"type\": \"integer\"",
+											"    },",
+											"    \"docs\": {",
+											"      \"type\": \"array\",",
+											"      \"minItems\": 1,",
+											"      \"uniqueItems\": true,",
+											"      \"items\": {",
+											"        \"type\": \"object\",",
+											"        \"properties\": {",
+											"          \"id\": {",
+											"            \"type\": \"string\"",
+											"          },",
+											"          \"name\": {",
+											"            \"type\": \"string\"",
+											"          },",
+											"          \"symbol\": {",
+											"            \"type\": \"string\"",
+											"          },",
+											"          \"slug\": {",
+											"            \"type\": \"string\"",
+											"          },",
+											"          \"image_url\": {",
+											"            \"type\": \"string\"",
+											"          },",
+											"          \"external_link\": {",
+											"            \"type\": \"string\"",
+											"          },",
+											"          \"total\": {",
+											"            \"type\": \"integer\"",
+											"          },",
+											"          \"category_address\": {",
+											"            \"type\": \"string\"",
+											"          },",
+											"          \"address\": {",
+											"            \"type\": \"string\"",
+											"          },",
+											"          \"nft_version\": {",
+											"            \"type\": \"string\"",
+											"          },",
+											"          \"coin\": {",
+											"            \"type\": \"integer\"",
+											"          },",
+											"          \"type\": {",
+											"            \"type\": \"string\"",
+											"          }",
+											"        }",
+											"      }",
+											"    },",
+											"    \"status\": {",
+											"      \"type\": \"boolean\"",
+											"    }",
+											"  }",
+											"};",
+											"",
+											"let handler = pm.variables.get(\"handler\");",
+											"let address = pm.variables.get(\"address\");",
+											"var jsonData = pm.response.json();",
+											"",
+											"pm.test(handler + \" - response must be valid and have a body: \" + address, function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.ok;",
+											"    pm.response.to.not.be.error;",
+											"    pm.response.to.be.withBody;",
+											"    pm.response.to.be.json;",
+											"});",
+											"",
+											"pm.test(handler + \" - schema is valid: \" + address, function() {",
+											"    pm.expect(ajv.validate(schema, jsonData)).to.be.true;",
+											"    console.log(JSON.stringify(jsonData))",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{platform_auth}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"{{coin}}\": [\"{{address}}\"]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/v2/collectibles/categories",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"v2",
+										"collectibles",
+										"categories"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "domain",
+					"item": [
+						{
+							"name": "v2/ns/lookup",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "7312c9e7-5330-421a-9ca8-171101050e38",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"id": "acec8baa-0ef0-4703-ab83-c555260deffa",
+										"exec": [
+											"var Ajv = require('ajv');",
+											"var ajv = new Ajv({logger: console});",
+											"let schema = {",
+											"  \"type\": \"array\",",
+											"  \"minItems\": 1,",
+											"  \"uniqueItems\": true,",
+											"  \"items\": {",
+											"    \"type\": \"object\",",
+											"    \"properties\": {",
+											"      \"result\": {",
+											"        \"type\": \"string\"",
+											"      },",
+											"      \"coin\": {",
+											"        \"type\": \"integer\"",
+											"      }",
+											"    }",
+											"  }",
+											"};",
+											"",
+											"let domain = pm.variables.get(\"domain\");",
+											"let coins = pm.variables.get(\"coins\");",
+											"let address = pm.variables.get(\"address\");",
+											"var jsonData = pm.response.json();",
+											"var result = jsonData[0];",
+											"",
+											"pm.test(domain + \" - response must be valid and have a body\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.ok;",
+											"    pm.response.to.not.be.error;",
+											"    pm.response.to.be.withBody;",
+											"    pm.response.to.be.json;",
+											"});",
+											"",
+											"pm.test(domain + \" - schema is valid\", function() {",
+											"    pm.expect(ajv.validate(schema, jsonData)).to.be.true;",
+											"});",
+											"",
+											"pm.test(domain + \" - address is valid: \" + address, function() {",
+											"    pm.expect(result.result).to.eql(address);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{platform_auth}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{host}}/v2/ns/lookup?name={{domain}}&coins={{coins}}",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"v2",
+										"ns",
+										"lookup"
+									],
+									"query": [
+										{
+											"key": "name",
+											"value": "{{domain}}"
+										},
+										{
+											"key": "coins",
+											"value": "{{coins}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "ns/lookup",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "7312c9e7-5330-421a-9ca8-171101050e38",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"id": "acec8baa-0ef0-4703-ab83-c555260deffa",
+										"exec": [
+											"var Ajv = require('ajv');",
+											"var ajv = new Ajv({logger: console});",
+											"let schema = {",
+											"  \"type\": \"object\",",
+											"  \"properties\": {",
+											"    \"result\": {",
+											"      \"type\": \"string\"",
+											"    },",
+											"    \"coin\": {",
+											"      \"type\": \"integer\"",
+											"    }",
+											"  }",
+											"};",
+											"",
+											"let domain = pm.variables.get(\"domain\");",
+											"let coins = pm.variables.get(\"coins\");",
+											"let address = pm.variables.get(\"address\");",
+											"var jsonData = pm.response.json();",
+											"",
+											"pm.test(domain + \" - response must be valid and have a body\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.ok;",
+											"    pm.response.to.not.be.error;",
+											"    pm.response.to.be.withBody;",
+											"    pm.response.to.be.json;",
+											"});",
+											"",
+											"pm.test(domain + \" - schema is valid\", function() {",
+											"    pm.expect(ajv.validate(schema, jsonData)).to.be.true;",
+											"});",
+											"",
+											"pm.test(domain + \" - address is valid: \" + address, function() {",
+											"    pm.expect(jsonData.result).to.eql(address);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{platform_auth}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{host}}/ns/lookup?name={{domain}}&coin={{coins}}",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"ns",
+										"lookup"
+									],
+									"query": [
+										{
+											"key": "name",
+											"value": "{{domain}}"
+										},
+										{
+											"key": "coin",
+											"value": "{{coins}}"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "1f5cb578-ecc3-4130-8d9b-68df6e576e63",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "7e7d99e8-d11d-4660-ad03-cff2454e9d1f",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "40c7dd18-87ff-47d8-8607-40b79ddb5dc9",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "6f376ec0-1aa2-42ad-9334-e6a4e7f5fdc7",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "market",
+			"item": [
+				{
+					"name": "ticker",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "7312c9e7-5330-421a-9ca8-171101050e38",
+								"exec": [
+									"var token_id = pm.environment.get(\"token_id\");",
+									"if(!token_id) {",
+									"    pm.environment.set(\"token_id\", \"\");",
+									"}",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "acec8baa-0ef0-4703-ab83-c555260deffa",
+								"exec": [
+									"var Ajv = require('ajv');",
+									"var ajv = new Ajv({logger: console});",
+									"let schema = {",
+									"  \"type\": \"object\",",
+									"  \"properties\": {",
+									"    \"coin\": {",
+									"      \"type\": \"integer\"",
+									"    },",
+									"    \"coin_name\": {",
+									"      \"type\": \"string\"",
+									"    },",
+									"    \"token_id\": {",
+									"      \"type\": \"string\"",
+									"    },",
+									"    \"type\": {",
+									"      \"type\": \"string\"",
+									"    },",
+									"    \"price\": {",
+									"      \"type\": \"object\",",
+									"      \"properties\": {",
+									"        \"value\": {",
+									"          \"type\": \"number\"",
+									"        },",
+									"        \"change_24h\": {",
+									"          \"type\": \"number\"",
+									"        },",
+									"        \"currency\": {",
+									"          \"type\": \"string\"",
+									"        },",
+									"        \"provider\": {",
+									"          \"type\": \"string\"",
+									"        }",
+									"      }",
+									"    },",
+									"    \"last_update\": {",
+									"      \"type\": \"string\"",
+									"    }",
+									"  }",
+									"};",
+									"",
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test(\"response must be valid and have a body\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.be.ok;",
+									"    pm.response.to.not.be.error;",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"pm.test(\"schema is valid\", function() {",
+									"    pm.expect(ajv.validate(schema, jsonData)).to.be.true;",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{market_auth}}"
+							}
+						],
+						"url": {
+							"raw": "{{host}}/v1/market/ticker?currency={{currency}}&coin={{coin}}&token={{token_id}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"v1",
+								"market",
+								"ticker"
+							],
+							"query": [
+								{
+									"key": "currency",
+									"value": "{{currency}}"
+								},
+								{
+									"key": "coin",
+									"value": "{{coin}}"
+								},
+								{
+									"key": "token",
+									"value": "{{token_id}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "charts",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "7312c9e7-5330-421a-9ca8-171101050e38",
+								"exec": [
+									"var token_id = pm.environment.get(\"token_id\");",
+									"if(!token_id) {",
+									"    pm.environment.set(\"token_id\", \"\");",
+									"}",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "acec8baa-0ef0-4703-ab83-c555260deffa",
+								"exec": [
+									"var Ajv = require('ajv');",
+									"var ajv = new Ajv({logger: console});",
+									"let schema = {",
+									"  \"type\": \"object\",",
+									"  \"properties\": {",
+									"    \"prices\": {",
+									"      \"type\": \"array\",",
+									"      \"minItems\": 10,",
+									"      \"uniqueItems\": true,",
+									"      \"items\": {",
+									"        \"type\": \"object\",",
+									"        \"properties\": {",
+									"          \"price\": {",
+									"            \"type\": \"number\"",
+									"          },",
+									"          \"date\": {",
+									"            \"type\": \"integer\"",
+									"          }",
+									"        }",
+									"      }",
+									"    }",
+									"  }",
+									"};",
+									"",
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test(\"response must be valid and have a body\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.be.ok;",
+									"    pm.response.to.not.be.error;",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"pm.test(\"schema is valid\", function() {",
+									"    pm.expect(ajv.validate(schema, jsonData)).to.be.true;",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{market_auth}}"
+							}
+						],
+						"url": {
+							"raw": "{{host}}/v1/market/charts?currency={{currency}}&coin={{coin}}&token={{token_id}}&time_start=1577871126",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"v1",
+								"market",
+								"charts"
+							],
+							"query": [
+								{
+									"key": "currency",
+									"value": "{{currency}}"
+								},
+								{
+									"key": "coin",
+									"value": "{{coin}}"
+								},
+								{
+									"key": "token",
+									"value": "{{token_id}}"
+								},
+								{
+									"key": "time_start",
+									"value": "1577871126"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "info",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "7312c9e7-5330-421a-9ca8-171101050e38",
+								"exec": [
+									"var token_id = pm.environment.get(\"token_id\");",
+									"if(!token_id) {",
+									"    pm.environment.set(\"token_id\", \"\");",
+									"}",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "acec8baa-0ef0-4703-ab83-c555260deffa",
+								"exec": [
+									"var Ajv = require('ajv');",
+									"var ajv = new Ajv({logger: console});",
+									"let schema = {",
+									"  \"type\": \"object\",",
+									"  \"properties\": {",
+									"    \"volume_24\": {",
+									"      \"type\": \"number\"",
+									"    },",
+									"    \"market_cap\": {",
+									"      \"type\": \"number\"",
+									"    },",
+									"    \"circulating_supply\": {",
+									"      \"type\": \"number\"",
+									"    },",
+									"    \"total_supply\": {",
+									"      \"type\": \"number\"",
+									"    },",
+									"    \"info\": {",
+									"      \"type\": \"object\",",
+									"      \"properties\": {",
+									"        \"name\": {",
+									"          \"type\": \"string\"",
+									"        },",
+									"        \"website\": {",
+									"          \"type\": \"string\"",
+									"        },",
+									"        \"source_code\": {",
+									"          \"type\": \"string\"",
+									"        },",
+									"        \"whitepaper\": {",
+									"          \"type\": \"string\"",
+									"        },",
+									"        \"explorers\": {",
+									"          \"type\": \"array\"",
+									"        },",
+									"        \"socials\": {",
+									"          \"type\": \"array\"",
+									"        },",
+									"        \"details\": {",
+									"          \"type\": \"array\"",
+									"        },",
+									"        \"data_source\": {",
+									"          \"type\": \"string\"",
+									"        }",
+									"      }",
+									"    }",
+									"  }",
+									"};",
+									"",
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test(\"response must be valid and have a body\", function () {",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"pm.test(\"schema is valid\", function() {",
+									"    pm.expect(ajv.validate(schema, jsonData)).to.be.true;",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{market_auth}}"
+							}
+						],
+						"url": {
+							"raw": "{{host}}/v1/market/info?currency={{currency}}&coin={{coin}}&token={{token_id}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"v1",
+								"market",
+								"info"
+							],
+							"query": [
+								{
+									"key": "currency",
+									"value": "{{currency}}"
+								},
+								{
+									"key": "coin",
+									"value": "{{coin}}"
+								},
+								{
+									"key": "token",
+									"value": "{{token_id}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "tickers",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "7312c9e7-5330-421a-9ca8-171101050e38",
+								"exec": [
+									"var token_id = pm.environment.get(\"token_id\");",
+									"if(!token_id) {",
+									"    pm.environment.set(\"token_id\", \"\");",
+									"}",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "acec8baa-0ef0-4703-ab83-c555260deffa",
+								"exec": [
+									"var Ajv = require('ajv');",
+									"var ajv = new Ajv({logger: console});",
+									"let schema = {",
+									"  \"type\": \"object\",",
+									"  \"properties\": {",
+									"    \"currency\": {",
+									"      \"type\": \"string\"",
+									"    },",
+									"    \"docs\": {",
+									"      \"type\": \"array\",",
+									"      \"uniqueItems\": true,",
+									"      \"items\": {",
+									"        \"type\": \"object\",",
+									"        \"properties\": {",
+									"          \"coin\": {",
+									"            \"type\": \"integer\"",
+									"          },",
+									"          \"last_update\": {",
+									"            \"type\": \"string\"",
+									"          },",
+									"          \"token_id\": {",
+									"            \"type\": \"string\"",
+									"          },",
+									"          \"type\": {",
+									"            \"type\": \"string\"",
+									"          },",
+									"          \"price\": {",
+									"            \"type\": \"object\",",
+									"            \"properties\": {",
+									"              \"value\": {",
+									"                \"type\": \"number\"",
+									"              },",
+									"              \"change_24h\": {",
+									"                \"type\": \"number\"",
+									"              }",
+									"            }",
+									"          }",
+									"        }",
+									"      }",
+									"    }",
+									"  }",
+									"};",
+									"",
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test(\"response must be valid and have a body\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.be.ok;",
+									"    pm.response.to.not.be.error;",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"pm.test(\"schema is valid\", function() {",
+									"    pm.expect(ajv.validate(schema, jsonData)).to.be.true;",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{market_auth}}"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"currency\": \"{{currency}}\",\n  \"assets\": [\n    {\n      \"coin\": {{coin}},\n      \"type\": \"{{type}}\",\n      \"token_id\": \"{{token_id}}\"\n    }\n  ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/v1/market/ticker",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"v1",
+								"market",
+								"ticker"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "7cffac98-4367-49be-a96c-dcb31861001c",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "4d6e8061-832a-4330-b47a-3e61cd9c93b8",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "observer",
+			"item": [
+				{
+					"name": "add",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "7312c9e7-5330-421a-9ca8-171101050e38",
+								"exec": [
+									"",
+									"var body = {\"subscriptions\": {}, \"webhook\": \"\"}",
+									"",
+									"let subscriptions = pm.variables.get(\"subscriptions\");",
+									"let webhook = pm.variables.get(\"webhook\");",
+									"",
+									"body[\"subscriptions\"] = subscriptions",
+									"body[\"webhook\"] = webhook",
+									"",
+									"pm.environment.set(\"request_body\", JSON.stringify(body));",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "acec8baa-0ef0-4703-ab83-c555260deffa",
+								"exec": [
+									"let result = {",
+									"    \"status\": true,",
+									"    \"message\": \"Added\"",
+									"};",
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test(\"response must be valid and have a body\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.be.ok;",
+									"    pm.response.to.not.be.error;",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"pm.test(\"response is valid\", function() {",
+									"    pm.expect(jsonData).to.eql(result);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{observer_auth}}"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{{request_body}}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/observer/v1/webhook/register",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"observer",
+								"v1",
+								"webhook",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "7312c9e7-5330-421a-9ca8-171101050e38",
+								"exec": [
+									"",
+									"var body = {\"subscriptions\": {}, \"webhook\": \"\"}",
+									"",
+									"let subscriptions = pm.variables.get(\"subscriptions\");",
+									"let webhook = pm.variables.get(\"webhook\");",
+									"",
+									"body[\"subscriptions\"] = subscriptions",
+									"body[\"webhook\"] = webhook",
+									"",
+									"pm.environment.set(\"request_body\", JSON.stringify(body));",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "acec8baa-0ef0-4703-ab83-c555260deffa",
+								"exec": [
+									"let result = {",
+									"    \"status\": true,",
+									"    \"message\": \"Deleted\"",
+									"};",
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test(\"response must be valid and have a body\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.be.ok;",
+									"    pm.response.to.not.be.error;",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"pm.test(\"response is valid\", function() {",
+									"    pm.expect(jsonData).to.eql(result);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{observer_auth}}"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{{request_body}}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/observer/v1/webhook/register",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"observer",
+								"v1",
+								"webhook",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "status",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "7312c9e7-5330-421a-9ca8-171101050e38",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "acec8baa-0ef0-4703-ab83-c555260deffa",
+								"exec": [
+									"var Ajv = require('ajv');",
+									"var ajv = new Ajv({logger: console});",
+									"let schema = {",
+									"  \"type\": \"object\",",
+									"  \"minProperties\": 5,",
+									"  \"uniqueItems\": true,",
+									"  \"items\": {\"type\": \"object\"}",
+									"};",
+									"",
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test(\"response must be valid and have a body\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.be.ok;",
+									"    pm.response.to.not.be.error;",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"pm.test(\"schema is valid\", function() {",
+									"    pm.expect(ajv.validate(schema, jsonData)).to.be.true;",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{observer_auth}}"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/observer/v1/status",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"observer",
+								"v1",
+								"status"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "50b8bc65-9acc-4652-8ac7-722f45767478",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "88a2b78a-643e-449b-9ec0-f7c7a62ad50a",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "healthcheck",
+			"item": [
+				{
+					"name": "status",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "7312c9e7-5330-421a-9ca8-171101050e38",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "acec8baa-0ef0-4703-ab83-c555260deffa",
+								"exec": [
+									"var Ajv = require('ajv');",
+									"var ajv = new Ajv({logger: console});",
+									"let schema = {",
+									"  \"type\": \"object\",",
+									"  \"properties\": {",
+									"    \"status\": {",
+									"      \"type\": \"boolean\"",
+									"    }",
+									"  }",
+									"};",
+									"",
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test(\"response must be valid and have a body\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.be.ok;",
+									"    pm.response.to.not.be.error;",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"pm.test(\"verify the status\", function() {",
+									"    pm.expect(jsonData.status).to.equal(true);",
+									"});",
+									"",
+									"pm.test(\"schema is valid\", function() {",
+									"    pm.expect(ajv.validate(schema, jsonData)).to.be.true;",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/status",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"status"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "v1",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "7312c9e7-5330-421a-9ca8-171101050e38",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "acec8baa-0ef0-4703-ab83-c555260deffa",
+								"exec": [
+									"var Ajv = require('ajv');",
+									"var ajv = new Ajv({logger: console});",
+									"let schema = {",
+									"  \"type\": \"object\",",
+									"  \"properties\": {",
+									"    \"endpoints\": {",
+									"      \"type\": \"array\"",
+									"    }",
+									"  }",
+									"};",
+									"",
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test(\"response must be valid and have a body\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.be.ok;",
+									"    pm.response.to.not.be.error;",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"pm.test(\"schema is valid\", function() {",
+									"    pm.expect(ajv.validate(schema, jsonData)).to.be.true;",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/v1",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"v1"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "2f430d33-58dd-4df5-b3bb-2826e76b89b2",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "727ab826-5939-45a7-96be-d8382192a69e",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "32821b71-3559-4ecb-97e5-84f87fc50731",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "1311995e-ffa0-4801-9c9d-21a7b4c83711",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "7e392582-2f75-48a2-a096-ef338490e7f8",
+			"key": "host",
+			"value": "http://localhost:8420",
+			"type": "string"
+		},
+		{
+			"id": "39dad5f8-9727-4dda-9f27-b4e29dd0ff18",
+			"key": "observer_auth",
+			"value": "test",
+			"type": "string"
+		},
+		{
+			"id": "edc48bc9-0c39-46a1-809a-c6d71874a958",
+			"key": "market_auth",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"id": "2ee77821-80ac-470a-9293-78b361ef27c7",
+			"key": "platform_auth",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"protocolProfileBehavior": {}
+}

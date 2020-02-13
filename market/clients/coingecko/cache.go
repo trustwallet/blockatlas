@@ -11,6 +11,11 @@ import (
 type Cache map[string][]CoinResult
 type SymbolsCache map[string]GeckoCoin
 
+const (
+	PlatformEthereum = "ethereum"
+	PlatformClassic  = "ethereum-classic"
+)
+
 func (c Cache) GetCoinsById(id string) (coins []CoinResult, err error) {
 	coins, ok := c[id]
 	if !ok {
@@ -104,12 +109,11 @@ func normalizeTokenId(platform, addr string) string {
 		return ""
 	}
 	switch platform {
-	case "ethereum":
+	case PlatformEthereum, PlatformClassic:
 		if len(addr) == 42 && strings.HasPrefix(addr, "0x") {
 			return address.EIP55Checksum(addr)
 		}
 		return ""
-
 	default:
 		return addr
 	}

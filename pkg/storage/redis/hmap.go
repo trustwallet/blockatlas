@@ -33,7 +33,7 @@ func (db *Redis) GetHMValue(entity, key string, value interface{}) error {
 func (db *Redis) AddHM(entity, key string, value interface{}) error {
 	j, err := json.Marshal(value)
 	if err != nil {
-		return errors.E(err, errors.Params{"value": value})
+		return errors.E(err, errors.Params{"key": key})
 	}
 	cmd := db.client.HMSet(entity, map[string]interface{}{key: j})
 	if cmd.Err() != nil {

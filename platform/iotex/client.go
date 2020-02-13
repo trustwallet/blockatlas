@@ -40,7 +40,7 @@ func (c *Client) GetTxsOfAddress(address string, start int64) (*Response, error)
 	var response Response
 	err := c.Get(&response, "actions/addr/"+address, url.Values{
 		"start": {strconv.FormatInt(start, 10)},
-		"count": {strconv.FormatInt(blockatlas.TxPerPage, 10)},
+		"count": {strconv.Itoa(blockatlas.TxPerPage)},
 	})
 
 	if err != nil {
