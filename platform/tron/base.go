@@ -4,6 +4,7 @@ import (
 	"encoding/hex"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/coin"
+	"github.com/trustwallet/blockatlas/pkg/address"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
@@ -139,68 +140,6 @@ func (p *Platform) GetTokenTxsByAddress(address, token string) (blockatlas.TxPag
 	return txs, nil
 }
 
-func (p *Platform) GetTokenListByAddress(address string) (blockatlas.TokenPage, error) {
-	tokens, err := p.client.GetAccount(address)
-	if err != nil {
-		return nil, err
-	}
-	tokenPage := make(blockatlas.TokenPage, 0)
-	if len(tokens.Data) == 0 {
-		return tokenPage, nil
-	}
-
-	var tokenIds []string
-	for _, v := range tokens.Data[0].AssetsV2 {
-		tokenIds = append(tokenIds, v.Key)
-	}
-
-	tokensChan := p.getTokens(tokenIds)
-	for info := range tokensChan {
-		tokenPage = append(tokenPage, info)
-	}
-	return tokenPage, nil
-}
-
-func (p *Platform) getTokens(ids []string) chan blockatlas.Token {
-	tkChan := make(chan blockatlas.Token, len(ids))
-	var wg sync.WaitGroup
-	for _, id := range ids {
-		wg.Add(1)
-		go func(i string, c chan blockatlas.Token) {
-			defer wg.Done()
-			err := p.getTokensChannel(i, c)
-			if err != nil {
-				logger.Error(err)
-			}
-		}(id, tkChan)
-	}
-	wg.Wait()
-	close(tkChan)
-	return tkChan
-}
-
-func (p *Platform) getTokensChannel(id string, tkChan chan blockatlas.Token) error {
-	info, err := p.client.GetTokenInfo(id)
-	if err != nil || len(info.Data) == 0 {
-		logger.Error(err, "GetTokenInfo: invalid token")
-		return err
-	}
-	asset := NormalizeToken(info.Data[0])
-	tkChan <- asset
-	return nil
-}
-
-func NormalizeToken(info AssetInfo) blockatlas.Token {
-	return blockatlas.Token{
-		Name:     info.Name,
-		Symbol:   info.Symbol,
-		TokenID:  info.ID,
-		Coin:     coin.TRX,
-		Decimals: info.Decimals,
-		Type:     blockatlas.TokenTypeTRC10,
-	}
-}
-
 func setTokenMeta(tx *blockatlas.Tx, srcTx Tx, tokenInfo AssetInfo) {
 	transfer := srcTx.Data.Contracts[0].Parameter.Value
 	tx.Meta = blockatlas.TokenTransfer{
@@ -228,12 +167,12 @@ func Normalize(srcTx Tx) (*blockatlas.Tx, error) {
 	}
 
 	transfer := contract.Parameter.Value
-	from, err := HexToAddress(transfer.OwnerAddress)
+	from, err := address.HexToAddress(transfer.OwnerAddress)
 	if err != nil {
 		return nil, errors.E(err, "TRON: failed to get from address", errors.TypePlatformApi,
 			errors.Params{"tx": srcTx}).PushToSentry()
 	}
-	to, err := HexToAddress(transfer.ToAddress)
+	to, err := address.HexToAddress(transfer.ToAddress)
 	if err != nil {
 		return nil, errors.E(err, "TRON: failed to get to address", errors.TypePlatformApi,
 			errors.Params{"tx": srcTx}).PushToSentry()

@@ -223,3 +223,27 @@ func NormalizeCollectible(c *Collection, a Collectible, coinIndex uint) blockatl
 		Coin:             coinIndex,
 	}
 }
+
+func searchCollection(collections []Collection, collectibleID string) *Collection {
+	for _, i := range collections {
+		if strings.EqualFold(i.Slug, collectibleID) {
+			return &i
+		}
+	}
+	return nil
+}
+
+//TODO: remove once most of the clients will be updated (deadline: March 17th)
+func oldSearchCollection(collections []Collection, collectibleID string) *Collection {
+	for _, i := range collections {
+		if strings.EqualFold(i.Slug, collectibleID) {
+			return &i
+		}
+		for _, contract := range i.Contracts {
+			if strings.EqualFold(contract.Address, collectibleID) {
+				return &i
+			}
+		}
+	}
+	return nil
+}
