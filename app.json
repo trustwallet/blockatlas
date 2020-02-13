@@ -9,6 +9,18 @@
   "repository": "https://github.com/trustwallet/blockatlas",
   "logo": "https://avatars0.githubusercontent.com/u/32179889",
   "success_url": "/v1/",
+  "buildpacks": [
+    {
+      "url": "heroku/go"
+    }
+  ],
+  "environments": {
+    "review": {
+      "addons": [
+        "logentries:le_tryit"
+      ]
+    }
+  },
   "formation": {
     "web": {
       "quantity": 1,
@@ -17,6 +29,9 @@
     "observer": {
       "quantity": 1,
       "size": "Free"
-    }
+    },
+    "scripts": {
+    },
+    "stack": "heroku-18"
   }
 }
