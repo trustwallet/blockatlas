@@ -4,6 +4,7 @@ package fio
 type GetPubAddressRequest struct {
 	FioAddress string `json:"fio_address"`
 	TokenCode  string `json:"token_code"`
+	ChainCode  string `json:"chain_code"`
 }
 
 // GetPubAddressResponse response struct for get_pub_address
