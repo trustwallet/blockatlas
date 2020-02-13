@@ -129,15 +129,15 @@ func getTickersHandler(storage storage.Market) func(c *gin.Context) {
 				continue
 			}
 			if r.Price.Currency != blockatlas.DefaultCurrency {
-				newRate, err := storage.GetRate(strings.ToUpper(r.Price.Currency))
+				tickerRate, err := storage.GetTicker(strings.ToUpper(r.Price.Currency), "")
 				if err == nil {
-					exchangeRate *= newRate.Rate
-					percentChange = newRate.PercentChange24h
+					exchangeRate *= tickerRate.Price.Value
+					percentChange = big.NewFloat(tickerRate.Price.Change24h)
 				} else {
-					tickerRate, err := storage.GetTicker(strings.ToUpper(r.Price.Currency), "")
+					newRate, err := storage.GetRate(strings.ToUpper(r.Price.Currency))
 					if err == nil {
-						exchangeRate *= tickerRate.Price.Value
-						percentChange = big.NewFloat(tickerRate.Price.Change24h)
+						exchangeRate *= 1.0 / newRate.Rate
+						percentChange = newRate.PercentChange24h
 					}
 				}
 			}
