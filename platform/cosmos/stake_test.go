@@ -75,8 +75,8 @@ func TestNormalizeValidator(t *testing.T) {
 		ID:     v.Address,
 		Details: blockatlas.StakingDetails{
 			Reward:        blockatlas.StakingReward{Annual: 462.6619201898575},
-			LockTime:      1814400,
-			MinimumAmount: "0",
+			LockTime:      lockTime,
+			MinimumAmount: minimumAmount,
 			Type:          blockatlas.DelegationTypeDelegate,
 		},
 	}
@@ -102,8 +102,8 @@ var validator1 = blockatlas.StakeValidator{
 		Reward: blockatlas.StakingReward{
 			Annual: 9.259735525366604,
 		},
-		LockTime:      1814400,
-		MinimumAmount: "0",
+		LockTime:      lockTime,
+		MinimumAmount: minimumAmount,
 	},
 }
 
