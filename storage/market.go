@@ -64,7 +64,7 @@ func (s *Storage) SaveRates(rates blockatlas.Rates, pl ProviderList) {
 		}
 		err = s.AddHM(EntityRates, rate.Currency, &rate)
 		if err != nil {
-			logger.Error(err, "SaveRates", logger.Params{"rate": rate})
+			logger.Error(err, "SaveRates")
 			continue
 		}
 	}

@@ -39,7 +39,7 @@ func (db *Redis) GetValue(key string, value interface{}) error {
 func (db *Redis) Add(key string, value interface{}) error {
 	j, err := json.Marshal(value)
 	if err != nil {
-		return errors.E(err, errors.Params{"value": value})
+		return errors.E(err, errors.Params{"key": key})
 	}
 	cmd := db.client.Set(key, j, 0)
 	if cmd.Err() != nil {

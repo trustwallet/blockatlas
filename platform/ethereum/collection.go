@@ -107,7 +107,6 @@ func OldNormalizeCollection(c Collection, coinIndex uint, owner string) blockatl
 
 //TODO: remove once most of the clients will be updated (deadline: March 17th)
 func OldNormalizeCollectible(c *Collection, a Collectible, coinIndex uint) blockatlas.Collectible {
-	// TODO: fix unprotected code
 	address := blockatlas.GetValidParameter(c.Contracts[0].Address, "")
 	collectionType := blockatlas.GetValidParameter(c.Contracts[0].Type, "")
 	collectionID := address
@@ -204,7 +203,6 @@ func NormalizeCollectiblePage(c *Collection, srcPage []Collectible, coinIndex ui
 }
 
 func NormalizeCollectible(c *Collection, a Collectible, coinIndex uint) blockatlas.Collectible {
-	// TODO: fix unprotected code
 	address := blockatlas.GetValidParameter(c.Contracts[0].Address, "")
 	collectionType := blockatlas.GetValidParameter(c.Contracts[0].Type, "")
 	externalLink := blockatlas.GetValidParameter(a.ExternalLink, a.AssetContract.ExternalLink)
