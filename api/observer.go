@@ -21,7 +21,7 @@ func SetupObserverAPI(router gin.IRouter, db *storage.Storage) {
 // @Description Create a webhook for addresses transactions
 // @Accept json
 // @Produce json
-// @Tags observer,subscriptions
+// @Tags Observer
 // @Param subscriptions body blockatlas.Webhook true "Accounts subscriptions"
 // @Param Authorization header string true "Bearer authorization header" default(Bearer test)
 // @Header 200 {string} Authorization {token}
@@ -53,7 +53,7 @@ func addCall(storage storage.Addresses) func(c *gin.Context) {
 // @Description Delete a webhook for addresses transactions
 // @Accept json
 // @Produce json
-// @Tags observer,subscriptions
+// @Tags Observer
 // @Param subscriptions body blockatlas.Webhook true "Accounts subscriptions"
 // @Param Authorization header string true "Bearer authorization header" default(Bearer test)
 // @Header 200 {string} Authorization {token}
@@ -85,7 +85,7 @@ func deleteCall(storage storage.Addresses) func(c *gin.Context) {
 // @Description Get coin status
 // @Accept json
 // @Produce json
-// @Tags observer,subscriptions
+// @Tags Observer
 // @Param Authorization header string true "Bearer authorization header" default(Bearer test)
 // @Header 200 {string} Authorization {token}
 // @Success 200 {object} blockatlas.CoinStatus

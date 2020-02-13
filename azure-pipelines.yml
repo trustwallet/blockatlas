@@ -2,6 +2,7 @@ trigger:
   branches:
     include:
       - master
+      - dev
   tags:
     include:
       - '*'
@@ -10,6 +11,7 @@ pr:
   branches:
     include:
       - master
+      - dev
 
 pool:
   vmImage: 'Ubuntu 16.04'

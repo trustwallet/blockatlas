@@ -4,13 +4,14 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/coin"
+	"github.com/trustwallet/blockatlas/market"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/ginutils"
 	"github.com/trustwallet/blockatlas/pkg/ginutils/gincache"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/services/assets"
 	"github.com/trustwallet/blockatlas/storage"
-	"github.com/trustwallet/blockatlas/syncmarkets"
+	"math/big"
 	"net/http"
 	"strconv"
 	"strings"
@@ -47,7 +48,7 @@ func SetupMarketAPI(router gin.IRouter, db storage.Market) {
 // @Description Get the ticker value from an market and coin/token
 // @Accept json
 // @Produce json
-// @Tags ticker
+// @Tags Market
 // @Param coin query int true "coin id"
 // @Param token query string false "token id"
 // @Param currency query string false "the currency to show the quote" default(USD)
@@ -90,12 +91,12 @@ func getTickerHandler(storage storage.Market) func(c *gin.Context) {
 	}
 }
 
-// @Summary Get ticker values for a specific markets
+// @Summary Get ticker values for a specific market
 // @Id get_tickers
-// @Description Get the ticker values from many markets and coin/token
+// @Description Get the ticker values from many market and coin/token
 // @Accept json
 // @Produce json
-// @Tags ticker
+// @Tags Market
 // @Param tickers body api.TickerRequest true "Ticker"
 // @Success 200 {object} blockatlas.Tickers
 // @Router /v1/market/ticker [post]
@@ -118,6 +119,9 @@ func getTickersHandler(storage storage.Market) func(c *gin.Context) {
 
 		tickers := make(blockatlas.Tickers, 0)
 		for _, coinRequest := range md.Assets {
+			exchangeRate := rate.Rate
+			percentChange := rate.PercentChange24h
+
 			coinObj, ok := coin.Coins[coinRequest.Coin]
 			if !ok {
 				continue
@@ -128,7 +132,21 @@ func getTickersHandler(storage storage.Market) func(c *gin.Context) {
 				logger.Error(err, "Failed to retrieve ticker", logger.Params{"coin": coinObj.Symbol, "currency": md.Currency})
 				continue
 			}
-			r.ApplyRate(md.Currency, rate.Rate, rate.PercentChange24h)
+			if r.Price.Currency != blockatlas.DefaultCurrency {
+				newRate, err := storage.GetRate(strings.ToUpper(r.Price.Currency))
+				if err == nil {
+					exchangeRate *= newRate.Rate
+					percentChange = newRate.PercentChange24h
+				} else {
+					tickerRate, err := storage.GetTicker(strings.ToUpper(r.Price.Currency), "")
+					if err == nil {
+						exchangeRate *= tickerRate.Price.Value
+						percentChange = big.NewFloat(tickerRate.Price.Change24h)
+					}
+				}
+			}
+
+			r.ApplyRate(md.Currency, exchangeRate, percentChange)
 			r.SetCoinId(coinRequest.Coin)
 			tickers = append(tickers, r)
 		}
@@ -142,7 +160,7 @@ func getTickersHandler(storage storage.Market) func(c *gin.Context) {
 // @Description Get the charts data from an market and coin/token
 // @Accept json
 // @Produce json
-// @Tags charts
+// @Tags Market
 // @Param coin query int true "Coin ID" default(60)
 // @Param token query string false "Token ID"
 // @Param time_start query int false "Start timestamp" default(1574483028)
@@ -151,7 +169,7 @@ func getTickersHandler(storage storage.Market) func(c *gin.Context) {
 // @Success 200 {object} blockatlas.ChartData
 // @Router /v1/market/charts [get]
 func getChartsHandler() func(c *gin.Context) {
-	var charts = syncmarkets.InitCharts()
+	var charts = market.InitCharts()
 	return func(c *gin.Context) {
 		coinQuery := c.Query("coin")
 		coinId, err := strconv.Atoi(coinQuery)
@@ -188,7 +206,7 @@ func getChartsHandler() func(c *gin.Context) {
 // @Description Get the charts coin info data from an market and coin/contract
 // @Accept json
 // @Produce json
-// @Tags charts
+// @Tags Market
 // @Param coin query int true "Coin ID" default(60)
 // @Param token query string false "Token ID"
 // @Param time_start query int false "Start timestamp" default(1574483028)
@@ -196,7 +214,7 @@ func getChartsHandler() func(c *gin.Context) {
 // @Success 200 {object} blockatlas.ChartCoinInfo
 // @Router /v1/market/info [get]
 func getCoinInfoHandler() func(c *gin.Context) {
-	var charts = syncmarkets.InitCharts()
+	var charts = market.InitCharts()
 	return func(c *gin.Context) {
 		coinQuery := c.Query("coin")
 		coinId, err := strconv.Atoi(coinQuery)
