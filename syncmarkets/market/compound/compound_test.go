@@ -27,24 +27,26 @@ func Test_normalizeTickers(t *testing.T) {
 					TokenAddress:    "0x39aa39c021dfbae8fac545936693ac917d5e7563",
 					Symbol:          "cUSDC",
 					UnderlyingPrice: compound.Amount{Value: 0.0021},
+					ExchangeRate:    compound.Amount{Value: 0.1},
 				},
 				{
 					TokenAddress:    "0x158079ee67fce2f58472a96584a73c7ab9ac95c1",
 					Symbol:          "cREP",
 					UnderlyingPrice: compound.Amount{Value: 0.02},
+					ExchangeRate:    compound.Amount{Value: 0.1},
 				},
 			}}, provider: id},
 			blockatlas.Tickers{
 				&blockatlas.Ticker{CoinName: "ETH", TokenId: "0x39aa39c021dfbae8fac545936693ac917d5e7563", CoinType: blockatlas.TypeToken, LastUpdate: time.Unix(222, 0),
 					Price: blockatlas.TickerPrice{
-						Value:    0.0021,
+						Value:    0.0021 * 0.1,
 						Currency: coin.Coins[coin.ETH].Symbol,
 						Provider: id,
 					},
 				},
 				&blockatlas.Ticker{CoinName: "ETH", TokenId: "0x158079ee67fce2f58472a96584a73c7ab9ac95c1", CoinType: blockatlas.TypeToken, LastUpdate: time.Unix(444, 0),
 					Price: blockatlas.TickerPrice{
-						Value:    0.02,
+						Value:    0.02 * 0.1,
 						Currency: coin.Coins[coin.ETH].Symbol,
 						Provider: id,
 					},

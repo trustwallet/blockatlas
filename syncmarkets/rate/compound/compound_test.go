@@ -23,16 +23,18 @@ func Test_normalizeRates(t *testing.T) {
 					{
 						Symbol:          "cUSDC",
 						UnderlyingPrice: c.Amount{Value: 0.0021},
+						ExchangeRate:    c.Amount{Value: 0.1},
 					},
 					{
 						Symbol:          "cREP",
 						UnderlyingPrice: c.Amount{Value: 0.02},
+						ExchangeRate:    c.Amount{Value: 0.1},
 					},
 				},
 			},
 			blockatlas.Rates{
-				blockatlas.Rate{Currency: "CUSDC", Rate: 1 / 0.0021, Timestamp: 333, Provider: provider},
-				blockatlas.Rate{Currency: "CREP", Rate: 1 / 0.02, Timestamp: 333, Provider: provider},
+				blockatlas.Rate{Currency: "CUSDC", Rate: 1 / (0.0021 * 0.1), Timestamp: 333, Provider: provider},
+				blockatlas.Rate{Currency: "CREP", Rate: 1 / (0.02 * 0.1), Timestamp: 333, Provider: provider},
 			},
 		},
 		{
@@ -41,17 +43,19 @@ func Test_normalizeRates(t *testing.T) {
 				Data: []c.CToken{
 					{
 						Symbol:          "cUSDC",
-						UnderlyingPrice: c.Amount{Value: 110.0021},
+						UnderlyingPrice: c.Amount{Value: 110.1},
+						ExchangeRate:    c.Amount{Value: 0.1},
 					},
 					{
 						Symbol:          "cREP",
-						UnderlyingPrice: c.Amount{Value: 110.02},
+						UnderlyingPrice: c.Amount{Value: 110},
+						ExchangeRate:    c.Amount{Value: 0.1},
 					},
 				},
 			},
 			blockatlas.Rates{
-				blockatlas.Rate{Currency: "CUSDC", Rate: 1 / 110.0021, Timestamp: 123, Provider: provider},
-				blockatlas.Rate{Currency: "CREP", Rate: 1 / 110.02, Timestamp: 123, Provider: provider},
+				blockatlas.Rate{Currency: "CUSDC", Rate: 1.0 / (110.1 * 0.1), Timestamp: 123, Provider: provider},
+				blockatlas.Rate{Currency: "CREP", Rate: 1.0 / (110 * 0.1), Timestamp: 123, Provider: provider},
 			},
 		},
 	}
