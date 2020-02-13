@@ -15,9 +15,6 @@ import (
 
 const (
 	baseUrl = "http://localhost%s"
-	schema  = `{
-		"docs": "array"
-	}`
 )
 
 type Client struct {
@@ -50,14 +47,12 @@ func (c *Client) testGet(route string, query string) {
 	request.WithQueryString(query)
 	response := request.Expect()
 
-	//TODO create a logic to validate schemas
 	if response == nil || response.Raw() == nil {
 		logger.Error("Invalid response", logger.Params{"response": response, "route": route, "query": query})
 	}
 	if response.Raw().StatusCode != http.StatusOK {
 		logger.Error("Invalid status code", logger.Params{"code": response.Raw().Status, "route": route, "query": query})
 	}
-	//response.JSON().Schema(schema)
 	response.Status(http.StatusOK)
 }
 
