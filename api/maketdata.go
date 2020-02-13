@@ -11,7 +11,6 @@ import (
 	"github.com/trustwallet/blockatlas/services/assets"
 	"github.com/trustwallet/blockatlas/storage"
 	"github.com/trustwallet/blockatlas/syncmarkets"
-	"math/big"
 	"net/http"
 	"strconv"
 	"strings"
@@ -128,20 +127,8 @@ func getTickersHandler(storage storage.Market) func(c *gin.Context) {
 				logger.Error(err, "Failed to retrieve ticker", logger.Params{"coin": coinObj.Symbol, "currency": md.Currency})
 				continue
 			}
-			if r.Price.Currency != blockatlas.DefaultCurrency {
-				tickerRate, err := storage.GetTicker(strings.ToUpper(r.Price.Currency), "")
-				if err == nil {
-					exchangeRate *= tickerRate.Price.Value
-					percentChange = big.NewFloat(tickerRate.Price.Change24h)
-				} else {
-					newRate, err := storage.GetRate(strings.ToUpper(r.Price.Currency))
-					if err == nil {
-						exchangeRate *= 1.0 / newRate.Rate
-						percentChange = newRate.PercentChange24h
-					}
-				}
-			}
 
+			exchangeRate, percentChange = syncmarkets.GetRate(storage, r, exchangeRate, percentChange)
 			r.ApplyRate(md.Currency, exchangeRate, percentChange)
 			r.SetCoinId(coinRequest.Coin)
 			tickers = append(tickers, r)

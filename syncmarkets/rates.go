@@ -3,6 +3,7 @@ package syncmarkets
 import (
 	"github.com/robfig/cron/v3"
 	"github.com/spf13/viper"
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/storage"
@@ -11,6 +12,8 @@ import (
 	"github.com/trustwallet/blockatlas/syncmarkets/rate/coingecko"
 	"github.com/trustwallet/blockatlas/syncmarkets/rate/compound"
 	"github.com/trustwallet/blockatlas/syncmarkets/rate/fixer"
+	"math/big"
+	"strings"
 )
 
 var rateProviders rate.Providers
@@ -59,4 +62,21 @@ func runRate(storage storage.Market, p rate.Provider) error {
 		logger.Info("Market rates", logger.Params{"rates": len(rates), "provider": p.GetId()})
 	}
 	return nil
+}
+
+func GetRate(storage storage.Market, r *blockatlas.Ticker, exchangeRate float64, percentChange *big.Float) (float64, *big.Float) {
+	if r.Price.Currency != blockatlas.DefaultCurrency {
+		tickerRate, err := storage.GetTicker(strings.ToUpper(r.Price.Currency), "")
+		if err == nil {
+			exchangeRate *= tickerRate.Price.Value
+			percentChange = big.NewFloat(tickerRate.Price.Change24h)
+		} else {
+			newRate, err := storage.GetRate(strings.ToUpper(r.Price.Currency))
+			if err == nil {
+				exchangeRate *= 1.0 / newRate.Rate
+				percentChange = newRate.PercentChange24h
+			}
+		}
+	}
+	return exchangeRate, percentChange
 }
