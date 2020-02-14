@@ -12,8 +12,8 @@ const (
 	AssetsURL = "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/"
 )
 
-func requestValidatorsInfo(coin coin.Coin) ([]AssetValidator, error) {
-	var results []AssetValidator
+func requestValidatorsInfo(coin coin.Coin) (AssetValidators, error) {
+	var results AssetValidators
 	request := blockatlas.InitClient(AssetsURL + coin.Handle)
 	err := request.GetWithCache(&results, "validators/list.json", nil, time.Hour*1)
 	if err != nil {
@@ -23,18 +23,14 @@ func requestValidatorsInfo(coin coin.Coin) ([]AssetValidator, error) {
 }
 
 func GetValidatorsMap(api blockatlas.StakeAPI) (blockatlas.ValidatorMap, error) {
-	validatorList, err := GetValidators(api)
+	validators, err := GetValidators(api)
 	if err != nil {
 		return nil, err
 	}
-	validators := make(blockatlas.ValidatorMap)
-	for _, v := range validatorList {
-		validators[v.ID] = v
-	}
-	return validators, nil
+	return validators.ToMap(), nil
 }
 
-func GetValidators(api blockatlas.StakeAPI) ([]blockatlas.StakeValidator, error) {
+func GetValidators(api blockatlas.StakeAPI) (blockatlas.StakeValidators, error) {
 	assetsValidators, err := requestValidatorsInfo(api.Coin())
 	if err != nil {
 		return nil, errors.E(err, "unable to fetch validators list from the registry").PushToSentry()
@@ -51,14 +47,15 @@ func GetValidators(api blockatlas.StakeAPI) ([]blockatlas.StakeValidator, error)
 	return results, nil
 }
 
-func normalizeValidators(validators []blockatlas.Validator, assets []AssetValidator, coin coin.Coin) []blockatlas.StakeValidator {
-	results := make([]blockatlas.StakeValidator, 0)
+func normalizeValidators(validators []blockatlas.Validator, assets AssetValidators, coin coin.Coin) blockatlas.StakeValidators {
+	results := make(blockatlas.StakeValidators, 0)
+	assetsMap := assets.toMap()
 	for _, v := range validators {
-		for _, v2 := range assets {
-			if v.ID == v2.ID && !v2.Status.Disabled {
-				results = append(results, normalizeValidator(v, v2, coin))
-			}
+		asset, ok := assetsMap[v.ID]
+		if !ok || asset.Status.Disabled {
+			continue
 		}
+		results = append(results, normalizeValidator(v, asset, coin))
 	}
 	return results
 }
