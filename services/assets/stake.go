@@ -12,31 +12,26 @@ const (
 	AssetsURL = "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/"
 )
 
-func GetCoinInfo(coinId int, token string) (info *blockatlas.CoinInfo, err error) {
-	c, ok := coin.Coins[uint(coinId)]
-	if !ok {
-		return info, errors.E("coin not found")
+func requestValidatorsInfo(coin coin.Coin) (AssetValidators, error) {
+	var results AssetValidators
+	request := blockatlas.InitClient(AssetsURL + coin.Handle)
+	err := request.GetWithCache(&results, "validators/list.json", nil, time.Hour*1)
+	if err != nil {
+		return nil, errors.E(err, errors.Params{"coin": coin.Handle}).PushToSentry()
 	}
-	url := getCoinInfoUrl(c, token)
-	request := blockatlas.InitClient(url)
-	err = request.GetWithCache(&info, "info/info.json", nil, time.Hour*1)
-	return
+	return results, nil
 }
 
 func GetValidatorsMap(api blockatlas.StakeAPI) (blockatlas.ValidatorMap, error) {
-	validatorList, err := GetValidators(api)
+	validators, err := GetValidators(api)
 	if err != nil {
 		return nil, err
 	}
-	validators := make(blockatlas.ValidatorMap)
-	for _, v := range validatorList {
-		validators[v.ID] = v
-	}
-	return validators, nil
+	return validators.ToMap(), nil
 }
 
-func GetValidators(api blockatlas.StakeAPI) ([]blockatlas.StakeValidator, error) {
-	assetsValidators, err := getValidatorsInfo(api.Coin())
+func GetValidators(api blockatlas.StakeAPI) (blockatlas.StakeValidators, error) {
+	assetsValidators, err := requestValidatorsInfo(api.Coin())
 	if err != nil {
 		return nil, errors.E(err, "unable to fetch validators list from the registry").PushToSentry()
 	}
@@ -52,24 +47,15 @@ func GetValidators(api blockatlas.StakeAPI) ([]blockatlas.StakeValidator, error)
 	return results, nil
 }
 
-func getValidatorsInfo(coin coin.Coin) ([]AssetValidator, error) {
-	var results []AssetValidator
-	request := blockatlas.InitClient(AssetsURL + coin.Handle)
-	err := request.GetWithCache(&results, "validators/list.json", nil, time.Hour*1)
-	if err != nil {
-		return nil, errors.E(err, errors.Params{"coin": coin.Handle}).PushToSentry()
-	}
-	return results, nil
-}
-
-func normalizeValidators(validators []blockatlas.Validator, assets []AssetValidator, coin coin.Coin) []blockatlas.StakeValidator {
-	results := make([]blockatlas.StakeValidator, 0)
+func normalizeValidators(validators []blockatlas.Validator, assets AssetValidators, coin coin.Coin) blockatlas.StakeValidators {
+	results := make(blockatlas.StakeValidators, 0)
+	assetsMap := assets.toMap()
 	for _, v := range validators {
-		for _, v2 := range assets {
-			if v.ID == v2.ID && !v2.Status.Disabled {
-				results = append(results, normalizeValidator(v, v2, coin))
-			}
+		asset, ok := assetsMap[v.ID]
+		if !ok || asset.Status.Disabled {
+			continue
 		}
+		results = append(results, normalizeValidator(v, asset, coin))
 	}
 	return results
 }
@@ -96,11 +82,4 @@ func calculateAnnual(annual float64, commission float64) float64 {
 
 func getImage(c coin.Coin, ID string) string {
 	return AssetsURL + c.Handle + "/validators/assets/" + ID + "/logo.png"
-}
-
-func getCoinInfoUrl(c coin.Coin, token string) string {
-	if len(token) == 0 {
-		return AssetsURL + c.Handle
-	}
-	return AssetsURL + c.Handle + "/assets/" + token
 }
