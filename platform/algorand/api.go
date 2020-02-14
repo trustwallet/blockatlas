@@ -15,7 +15,6 @@ type Platform struct {
 
 func (p *Platform) Init() error {
 	p.client = Client{blockatlas.InitClient(viper.GetString("algorand.api"))}
-	p.client.Headers["x-api-key"] = viper.GetString("algorand.key")
 	return nil
 }
 
