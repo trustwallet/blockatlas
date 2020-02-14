@@ -122,7 +122,7 @@ Then build:
 docker-compose build
 ```
 
-For run api, observer and markets:
+Run all services:
 ```shell
 docker-compose up
 ```
@@ -134,7 +134,7 @@ docker-compose start platform_api
 # Run only observer for addresses and api for it
 docker-compose start platform_observer observer_api redis
 # Run markets with it's api
-docker-compose start markets_observer markets_api redis
+docker-compose start market_observer market_api redis
 # Run swagger api
 docker-compose start swagger_api
 ```
