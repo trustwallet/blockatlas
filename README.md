@@ -44,9 +44,38 @@ The observer API watches the chain for new transactions and generates notificati
 ### Requirements
 
  * [Go Toolchain](https://golang.org/doc/install) versions 1.13+
- * [Redis](https://redis.io/topics/quickstart) instance (observer and syncmarkets)
+ * [Redis](https://redis.io/topics/quickstart) instance (observer and markets)
 
 ### From Source
+
+There are multiple services:
+
+1. Platform REST API - to get transactions, staking, tokens, domain lookup for supported coins in common format
+2. Observer REST API - to subscribe several addresses on different supported coins and receive webhook
+3. Market REST API - to get market data from different platforms in common format
+4. Swagger API - swagger for all handlers of 1-3 APIs. You need to route requests to them on you own (nginx)
+
+There are workers that are linked with Observer API and Market API:
+
+5. Market Observer - fetching latest rates from multiple external API's and cache it in Redis
+
+6. Platform Observer - fetching latest blocks, parse them to common block specification, check subscribed addresses - send webhook. We use Redis to get information about subscribed addresses per coin with webhooks and caching latest block that was processed by observer
+ 
+Market API <-> Redis A <-> Market Observer
+
+Observer API <-> Redis B <-> Platform Observer
+
+
+#### IMPORTANT
+
+You can run platform API for specific coin only!
+```shell
+cd cmd/platform_api
+ATLAS_PLATFORM=ethereum go run main.go
+```
+You will run platform API for Ethereum coin only. You can run 30 coins with 30 binaries for scalability and sustainability. Howevever, you can run all of them at once by using ```ATLAS_PLATFORM=all``` env param
+
+It works the same for platoform_observer - you can run all observer at 1 binary or 30 coins per 30 binaries
 
 ```shell
 # Download source to $GOPATH
@@ -76,16 +105,21 @@ Then build:
 docker-compose build
 ```
 
-For run api, observer and syncmarkets:
+For run api, observer and markets:
 ```shell
 docker-compose up
 ```
 
 If you need to start one service:
 ```shell
-docker-compose start api redis
-docker-compose start observer redis
-docker-compose start syncmarkets redis
+# Run only platform API 
+docker-compose start platform_api
+# Run only observer for addresses and api for it
+docker-compose start platform_observer observer_api redis
+# Run markets with it's api
+docker-compose start markets_observer markets_api redis
+# Run swagger api
+docker-compose start swagger_api
 ```
 
 ### Heroku
