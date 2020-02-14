@@ -4,6 +4,15 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 )
 
+type TransactionType string
+type TransactionResult string
+
+const (
+	tesSUCCESS TransactionResult = "tesSUCCESS"
+
+	transactionPayment TransactionType = "Payment"
+)
+
 type Response struct {
 	Result       string `json:"result"`
 	Count        uint64 `json:"count"`
@@ -21,7 +30,7 @@ type Tx struct {
 }
 
 type Payment struct {
-	TransactionType string            `json:"TransactionType"`
+	TransactionType TransactionType   `json:"TransactionType"`
 	Flags           uint64            `json:"Flags"`
 	Sequence        uint64            `json:"Sequence"`
 	Fee             blockatlas.Amount `json:"Fee"`
@@ -33,7 +42,8 @@ type Payment struct {
 }
 
 type Meta struct {
-	DeliveredAmount interface{} `json:"delivered_amount,omitempty"`
+	TransactionResult TransactionResult `json:"TransactionResult,omitempty"`
+	DeliveredAmount   interface{}       `json:"delivered_amount,omitempty"`
 }
 
 type DeliveredAmount struct {
