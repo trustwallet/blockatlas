@@ -130,9 +130,6 @@ endif
 ## newman: Run Postman Newman test, the host parameter is required, and you can specify the name of the test do you wanna run (transaction, token, staking, collection, domain, healthcheck, observer). e.g $ make newman test=staking host=http//localhost
 newman: install-newman
 	@echo "  >  Runing $(test) tests"
-ifndef observer_auth
-override observer_auth=test
-endif
 ifeq (,$(host))
 	@echo "  >  Host parameter is missing. e.g: make newman test=staking host=http://localhost:8420"
 	@exit 1
