@@ -131,13 +131,7 @@ endif
 newman: install-newman
 	@echo "  >  Runing $(test) tests"
 ifndef observer_auth
-override observer_auth = "test"
-endif
-ifndef market_auth
-override market_auth = ""
-endif
-ifndef platform_auth
-override platform_auth = ""
+override observer_auth=test
 endif
 ifeq (,$(host))
 	@echo "  >  Host parameter is missing. e.g: make newman test=staking host=http://localhost:8420"
