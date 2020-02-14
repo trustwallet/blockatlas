@@ -29,10 +29,10 @@ func init() {
 
 func main() {
 	gin.SetMode(viper.GetString("gin.mode"))
-
 	engine := gin.New()
 	engine.Use(ginutils.CheckReverseProxy, *sg)
 	engine.Use(ginutils.CORSMiddleware())
+	engine.Use(gin.Logger())
 
 	engine.OPTIONS("/*path", ginutils.CORSMiddleware())
 	engine.GET("/", api.GetRoot)
