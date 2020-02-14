@@ -33,7 +33,7 @@ type CoinsRequest []CoinBatchRequest
 // @Description Get Stake Delegations for multiple coins
 // @Accept json
 // @Produce json
-// @Tags platform,staking
+// @Tags Platform-Staking
 // @Param delegations body api.AddressesRequest true "Validators addresses and coins"
 // @Success 200 {object} blockatlas.DelegationsBatchPage
 // @Router /v2/staking/delegations [post]
@@ -70,8 +70,8 @@ func makeStakingDelegationsBatchRoute(router gin.IRouter) {
 // @Description Get Stake Delegations for multiple coins
 // @Accept json
 // @Produce json
-// @Tags platform,staking
-// @Param delegations body api.CoinsRequest true "Validators addresses and coins"
+// @Tags Platform-Staking
+// @Param delegations body api.AddressesRequest true "Validators addresses and coins"
 // @Success 200 {object} blockatlas.DelegationsBatchPage
 // @Router /v2/staking/list [post]
 func makeStakingDelegationsSimpleBatchRoute(router gin.IRouter) {
@@ -104,7 +104,7 @@ func makeStakingDelegationsSimpleBatchRoute(router gin.IRouter) {
 // @Summary Get list of collections from a specific coin and addresses
 // @Accept json
 // @Produce json
-// @Tags Collectibles
+// @Tags Platform-Collections
 // @Param data body string true "Payload" default({"60": ["0xb3624367b1ab37daef42e1a3a2ced012359659b0"]})
 // @Success 200 {object} blockatlas.DocsResponse
 // @Router /v2/collectibles/categories [post]
@@ -144,7 +144,7 @@ func oldMakeCategoriesBatchRoute(router gin.IRouter) {
 // @Summary Get list of collections from a specific coin and addresses
 // @Accept json
 // @Produce json
-// @Tags Collectibles
+// @Tags Platform-Collections
 // @Param data body string true "Payload" default({"60": ["0xb3624367b1ab37daef42e1a3a2ced012359659b0"]})
 // @Success 200 {object} blockatlas.DocsResponse
 // @Router /v3/collectibles/categories [post]

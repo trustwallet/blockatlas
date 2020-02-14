@@ -4,9 +4,12 @@
 VERSION := $(shell git describe --tags)
 BUILD := $(shell git rev-parse --short HEAD)
 PROJECT_NAME := $(shell basename "$(PWD)")
-API_SERVICE := api
-OBSERVER_SERVICE := observer
-SYNC_SERVICE := syncmarkets
+API_SERVICE := platform_api
+OBSERVER_SERVICE := platform_observer
+OBSERVER_API := observer_api
+MARKET_SERVICE := market_observer
+MARKET_API := market_api
+SWAGGER_API := swagger_api
 COIN_FILE := coin/coins.yml
 COIN_GO_FILE := coin/coins.go
 GEN_COIN_FILE := coin/gen.go
@@ -31,8 +34,10 @@ STDERR := /tmp/.$(PROJECT_NAME)-stderr.txt
 # PID file will keep the process id of the server
 PID_API := /tmp/.$(PROJECT_NAME).$(API_SERVICE).pid
 PID_OBSERVER := /tmp/.$(PROJECT_NAME).$(OBSERVER_SERVICE).pid
-PID_SYNC := /tmp/.$(PROJECT_NAME).$(SYNC_SERVICE).pid
-
+PID_OBSERVER_API := /tmp/.$(PROJECT_NAME).$(OBSERVER_API).pid
+PID_MARKET := /tmp/.$(PROJECT_NAME).$(MARKET_SERVICE).pid
+PID_MARKET_API := /tmp/.$(PROJECT_NAME).$(MARKET_API).pid
+PID_SWAGGER_API := /tmp/.$(PROJECT_NAME).$(SWAGGER_API).pid
 # Make is verbose in Linux. Make it silent.
 MAKEFLAGS += --silent
 
@@ -41,36 +46,60 @@ install: go-get
 
 ## start: Start API, Observer and Sync in development mode.
 start:
-	@bash -c "$(MAKE) clean compile start-api start-observer start-syncmarkets"
+	@bash -c "$(MAKE) clean compile start-platform-api start-platform-observer start-observer-api start-market-observer start-market-api"
 
 ## start-api: Start API in development mode.
-start-api: stop
+start-platform-api: stop
 	@echo "  >  Starting $(PROJECT_NAME) API"
-	@-$(GOBIN)/$(API_SERVICE)/api -c $(CONFIG_FILE) 2>&1 & echo $$! > $(PID_API)
+	@-$(GOBIN)/$(API_SERVICE)/platform_api -c $(CONFIG_FILE) 2>&1 & echo $$! > $(PID_API)
 	@cat $(PID_API) | sed "/^/s/^/  \>  API PID: /"
 	@echo "  >  Error log: $(STDERR)"
 
 ## start-observer: Start Observer in development mode.
-start-observer: stop
+start-platform-observer: stop
 	@echo "  >  Starting $(PROJECT_NAME) Observer"
-	@-$(GOBIN)/$(OBSERVER_SERVICE)/observer -c $(CONFIG_FILE) 2>&1 & echo $$! > $(PID_OBSERVER)
+	@-$(GOBIN)/$(OBSERVER_SERVICE)/platform_observer -c $(CONFIG_FILE) 2>&1 & echo $$! > $(PID_OBSERVER)
 	@cat $(PID_OBSERVER) | sed "/^/s/^/  \>  Observer PID: /"
 	@echo "  >  Error log: $(STDERR)"
 
-## start-sync-markets: Start Sync markets in development mode.
-start-syncmarkets: stop
+## start-observer: Start Observer in development mode.
+start-observer-api: stop
+	@echo "  >  Starting $(PROJECT_NAME) Observer"
+	@-$(GOBIN)/$(OBSERVER_API)/observer_api -c $(CONFIG_FILE) 2>&1 & echo $$! > $(PID_OBSERVER_API)
+	@cat $(PID_OBSERVER_API) | sed "/^/s/^/  \>  Observer PID: /"
+	@echo "  >  Error log: $(STDERR)"
+
+## start-sync-market: Start Sync market in development mode.
+start-market-observer: stop
 	@echo "  >  Starting $(PROJECT_NAME) Sync"
-	@-$(GOBIN)/$(SYNC_SERVICE)/syncmarkets -c $(CONFIG_FILE) 2>&1 & echo $$! > $(PID_SYNC)
-	@cat $(PID_SYNC) | sed "/^/s/^/  \>  Sync PID: /"
+	@-$(GOBIN)/$(MARKET_SERVICE)/market_observer -c $(CONFIG_FILE) 2>&1 & echo $$! > $(PID_MARKET)
+	@cat $(PID_MARKET) | sed "/^/s/^/  \>  Sync PID: /"
+	@echo "  >  Error log: $(STDERR)"
+
+## start-sync-market-api: Start Sync market api in development mode.
+start-market-api: stop
+	@echo "  >  Starting $(PROJECT_NAME) Sync API"
+	@-$(GOBIN)/$(MARKET_API)/market_api -c $(CONFIG_FILE) 2>&1 & echo $$! > $(PID_MARKET_API)
+	@cat $(PID_MARKET_API) | sed "/^/s/^/  \>  Sync PID: /"
+	@echo "  >  Error log: $(STDERR)"
+
+## start-sync-market-api: Start Sync market api in development mode.
+start-swagger-api: stop
+	@echo "  >  Starting $(PROJECT_NAME) Sync API"
+	@-$(GOBIN)/$(SWAGGER_API)/swagger_api -c $(CONFIG_FILE) 2>&1 & echo $$! > $(PID_SWAGGER_API)
+	@cat $(PID_SWAGGER_API) | sed "/^/s/^/  \>  Sync PID: /"
 	@echo "  >  Error log: $(STDERR)"
 
 ## stop: Stop development mode.
 stop:
-	@-touch $(PID_API) $(PID_OBSERVER)
+	@-touch $(PID_API) $(PID_OBSERVER) $(PID_OBSERVER_API) $(PID_MARKET) $(PID_MARKET_API) $(PID_SWAGGER_API)
 	@-kill `cat $(PID_API)` 2> /dev/null || true
 	@-kill `cat $(PID_OBSERVER)` 2> /dev/null || true
-	@-kill `cat $(PID_SYNC)` 2> /dev/null || true
-	@-rm $(PID_API) $(PID_OBSERVER)
+	@-kill `cat $(PID_OBSERVER_API)` 2> /dev/null || true
+	@-kill `cat $(PID_MARKET)` 2> /dev/null || true
+	@-kill `cat $(PID_MARKET_API)` 2> /dev/null || true
+	@-kill `cat $(PID_SWAGGER_API)` 2> /dev/null || true
+	@-rm $(PID_API) $(PID_OBSERVER) $(PID_OBSERVER_API) $(PID_MARKET) $(PID_MARKET_API) $(PID_SWAGGER_API)
 
 ## compile: Compile the project.
 compile:
@@ -150,12 +179,18 @@ endif
 go-compile: go-get go-build
 
 go-build:
-	@echo "  >  Building api binary..."
-	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(API_SERVICE)/api ./cmd/$(API_SERVICE)
-	@echo "  >  Building syncmarkets binary..."
-	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(SYNC_SERVICE)/syncmarkets ./cmd/$(SYNC_SERVICE)
-	@echo "  >  Building observer binary..."
-	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(OBSERVER_SERVICE)/observer ./cmd/$(OBSERVER_SERVICE)
+	@echo "  >  Building platform_api binary..."
+	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(API_SERVICE)/platform_api ./cmd/$(API_SERVICE)
+	@echo "  >  Building market_observer binary..."
+	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(MARKET_SERVICE)/market_observer ./cmd/$(MARKET_SERVICE)
+	@echo "  >  Building market_api binary..."
+	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(MARKET_API)/market_api ./cmd/$(MARKET_API)
+	@echo "  >  Building platform_observer binary..."
+	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(OBSERVER_SERVICE)/platform_observer ./cmd/$(OBSERVER_SERVICE)
+	@echo "  >  Building observer_api binary..."
+	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(OBSERVER_API)/observer_api ./cmd/$(OBSERVER_API)
+	@echo "  >  Building swagger_api binary..."
+	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(SWAGGER_API)/swagger_api ./cmd/$(SWAGGER_API)
 
 go-generate:
 	@echo "  >  Generating dependency files..."
@@ -194,7 +229,7 @@ go-gen-coins:
 
 go-gen-docs:
 	@echo "  >  Generating swagger files"
-	swag init -g ./cmd/api/main.go -o ./docs
+	swag init -g ./cmd/platform_api/main.go -o ./docs
 
 go-goreleaser:
 	@echo "  >  Releasing a new version"

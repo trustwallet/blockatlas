@@ -19,7 +19,7 @@ type LookupBatchPage []blockatlas.Resolved
 // @ID lookup
 // @Description Lookup ENS/ZNS to find registered addresses
 // @Produce json
-// @Tags ns
+// @Tags Platform-Naming-Service
 // @Param name query string empty "string name"
 // @Param coin query string 60 "string coin"
 // @Success 200 {object} blockatlas.Resolved
@@ -52,7 +52,7 @@ func MakeLookupRoute(router gin.IRouter) {
 // @ID lookup
 // @Description Lookup ENS/ZNS to find registered addresses for multiple coins
 // @Produce json
-// @Tags ns
+// @Tags Platform-Naming-Service
 // @Param name query string empty "string name"
 // @Param coins query string true "List of coins"
 // @Success 200 {array} blockatlas.Resolved
