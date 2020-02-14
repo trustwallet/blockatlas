@@ -44,14 +44,15 @@ const paymentSrc = `
 `
 
 var paymentDst = blockatlas.Tx{
-	ID:    "40279A3DE51148BD41409DADF29DE8DCCD50F5AEE30840827B2C4C81C4E36505",
-	Coin:  coin.XRP,
-	From:  "rGSxFjoqmWz54PycrgQBQ5dB6e7TUpMxzq",
-	To:    "rMQ98K56yXJbDGv49ZSmW51sLn94Xe1mu1",
-	Fee:   "3115",
-	Date:  1512168330,
-	Block: 34698103,
-	Memo:  "2500",
+	ID:     "40279A3DE51148BD41409DADF29DE8DCCD50F5AEE30840827B2C4C81C4E36505",
+	Coin:   coin.XRP,
+	From:   "rGSxFjoqmWz54PycrgQBQ5dB6e7TUpMxzq",
+	To:     "rMQ98K56yXJbDGv49ZSmW51sLn94Xe1mu1",
+	Fee:    "3115",
+	Date:   1512168330,
+	Block:  34698103,
+	Memo:   "2500",
+	Status: blockatlas.StatusCompleted,
 	Meta: blockatlas.Transfer{
 		Value:    "100000000",
 		Symbol:   "XRP",
@@ -100,14 +101,15 @@ const paymentSrc2 = `
 `
 
 var paymentDst2 = blockatlas.Tx{
-	ID:    "3D8512E02414EF5A6BC00281D945735E85DED9EF739B1DCA9EABE04D9EEC72C1",
-	Coin:  coin.XRP,
-	From:  "raz97dHvnyBcnYTbXGYxhV8bGyr1aPrE5w",
-	To:    "rna8qC8Y9uLd2vzYtSEa1AJcdD3896zQ9S",
-	Fee:   "120",
-	Date:  1565114281,
-	Block: 49163909,
-	Memo:  "",
+	ID:     "3D8512E02414EF5A6BC00281D945735E85DED9EF739B1DCA9EABE04D9EEC72C1",
+	Coin:   coin.XRP,
+	From:   "raz97dHvnyBcnYTbXGYxhV8bGyr1aPrE5w",
+	To:     "rna8qC8Y9uLd2vzYtSEa1AJcdD3896zQ9S",
+	Fee:    "120",
+	Date:   1565114281,
+	Block:  49163909,
+	Memo:   "",
+	Status: blockatlas.StatusCompleted,
 	Meta: blockatlas.Transfer{
 		Value:    "3100",
 		Symbol:   "XRP",
@@ -163,6 +165,48 @@ const paymentSrc4 = `
 }
 `
 
+const failedPayment = `
+{
+  "hash": "B9086F7EB895E943C4DDA9F1B582E6E7DE35F4FB91AD13C50AB74F854DC0EBE0",
+  "ledger_index": 53401154,
+  "date": "2020-02-13T10:47:52+00:00",
+  "tx": {
+    "TransactionType": "Payment",
+    "Flags": 2147483648,
+    "Sequence": 2102726,
+    "LastLedgerSequence": 53401182,
+    "Amount": "24999750000",
+    "Fee": "100000",
+    "SigningPubKey": "02C2EDA75565BA8D3CBD96FB28D53C9BE1B7A4DC1AF6FF1B2EBBD478D520BED52E",
+    "TxnSignature": "304502210081A1620F2106671FDFB9C0ABEB2976236693E6142E2B4CB7EA89338EA344BF8D02200EC9D2E2BE79C9E053F809802C426AFDC55B7BA5E01E3DF4B193F122740C39A3",
+    "Account": "rJb5KsHsDHF1YS5B5DU6QCkH5NsPaKQTcy",
+    "Destination": "rfHj5CuhajwdrzW2C8Y7EDXbx1QMiD5SXP"
+  },
+  "meta": {
+    "TransactionIndex": 30,
+    "TransactionResult": "tefBAD_LEDGER",
+    "delivered_amount": "24999750000"
+  }
+}
+`
+
+var failedPaymentDst = blockatlas.Tx{
+	ID:     "B9086F7EB895E943C4DDA9F1B582E6E7DE35F4FB91AD13C50AB74F854DC0EBE0",
+	Coin:   coin.XRP,
+	From:   "rJb5KsHsDHF1YS5B5DU6QCkH5NsPaKQTcy",
+	To:     "rfHj5CuhajwdrzW2C8Y7EDXbx1QMiD5SXP",
+	Fee:    "100000",
+	Date:   1581590872,
+	Block:  53401154,
+	Memo:   "",
+	Status: blockatlas.StatusFailed,
+	Meta: blockatlas.Transfer{
+		Value:    "24999750000",
+		Symbol:   "XRP",
+		Decimals: 6,
+	},
+}
+
 type test struct {
 	name        string
 	apiResponse string
@@ -177,26 +221,29 @@ func TestNormalize(t *testing.T) {
 		expected:    paymentDst,
 		normalize:   true,
 	})
-
 	testNormalize(t, &test{
 		name:        "payment 2",
 		apiResponse: paymentSrc2,
 		expected:    paymentDst2,
 		normalize:   true,
 	})
-
 	testNormalize(t, &test{
 		name:        "SetRegularKey transfer",
 		apiResponse: paymentSrc3,
 		expected:    blockatlas.Tx{},
 		normalize:   false,
 	})
-
 	testNormalize(t, &test{
 		name:        "token transfer",
 		apiResponse: paymentSrc4,
 		expected:    blockatlas.Tx{},
 		normalize:   false,
+	})
+	testNormalize(t, &test{
+		name:        "failed payment",
+		apiResponse: failedPayment,
+		expected:    failedPaymentDst,
+		normalize:   true,
 	})
 }
 
