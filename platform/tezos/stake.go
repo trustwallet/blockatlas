@@ -6,6 +6,8 @@ import (
 	services "github.com/trustwallet/blockatlas/services/assets"
 )
 
+const Annual = 6.09
+
 func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, error) {
 	account, err := p.rpcClient.GetAccount(address)
 	if err != nil {
