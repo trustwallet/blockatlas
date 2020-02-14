@@ -50,9 +50,9 @@ The observer API watches the chain for new transactions and generates notificati
 
 There are multiple services:
 
-1. Platform REST API - to get transactions, staking, tokens, domain lookup for supported coins in common format
-2. Observer REST API - to subscribe several addresses on different supported coins and receive webhook
-3. Market REST API - to get market data from different platforms in common format
+1. Platform API - to get transactions, staking, tokens, domain lookup for supported coins in common format
+2. Observer API - to subscribe several addresses on different supported coins and receive webhook
+3. Market API - to get market data from different platforms in common format
 4. Swagger API - swagger for all handlers of 1-3 APIs. You need to route requests to them on you own (nginx)
 
 There are workers that are linked with Observer API and Market API:
@@ -64,7 +64,6 @@ There are workers that are linked with Observer API and Market API:
 Market API <-> Redis A <-> Market Observer
 
 Observer API <-> Redis B <-> Platform Observer
-
 
 #### IMPORTANT
 
@@ -82,14 +81,33 @@ It works the same for platoform_observer - you can run all observer at 1 binary 
 go get -u github.com/trustwallet/blockatlas
 cd $(go env GOPATH)/src/github.com/trustwallet/blockatlas
 
-# Start Observer with the path to the config.yml ./ 
-go build -o observer-bin cmd/observer/main.go && ./observer-bin -c config.yml
+# Start platform_observer with the path to the config.yml ./ 
+go build -o platform-observer-bin cmd/platform_observer/main.go && ./platform-observer-bin -c config.yml
 
-# Start API server at port 8422 with the path to the config.yml ./ 
-go build -o api-bin cmd/api/main.go  && ./api-bin -p 8422 -c config.yml
+# Start markets_observer with the path to the config.yml ./ 
+go build -o markets-observer-bin cmd/markets_observer/main.go && ./markets-observer-bin -c config.yml
 
-# Start sync worker for market prices and rates with the path to the config.yml ./ 
-go build -o syncmarkets-bin cmd/syncmarkets/main.go && ./syncmarkets-bin -c config.yml  
+# Start Platform API server at port 8420 with the path to the config.yml ./ 
+go build -o platform-api-bin cmd/platform_api/main.go  && ./platform-api-bin -p 8420 -c config.yml
+
+# Start Market API server at port 8421 with the path to the config.yml ./ 
+go build -o market-api-bin cmd/market_api/main.go  && ./market-api-bin -p 8421 -c config.yml
+
+# Start Observer API server at port 8422 with the path to the config.yml ./ 
+go build -o observer-api-bin cmd/observer-api/main.go  && ./observer-api-bin -p 8422 -c config.yml
+
+# Startp Swagger API server at port 8422 with the path to the config.yml ./ 
+go build -o swagger-api-bin cmd/swagger-api/main.go  && ./swagger-api-bin -p 8423
+```
+
+OR 
+
+```shell
+make go-build
+```
+Then
+```shell
+make start
 ```
 
 ### Docker
@@ -121,10 +139,6 @@ docker-compose start markets_observer markets_api redis
 # Run swagger api
 docker-compose start swagger_api
 ```
-
-### Heroku
-
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://www.heroku.com/deploy/?template=https://github.com/TrustWallet/blockatlas)
 
 ## Configuration
 
@@ -172,14 +186,7 @@ Swagger API docs provided at path `/swagger/index.html`
 
 - Run the Swag in your Go project root folder.
 
-    `$ swag init -g ./cmd/api/main.go -o ./docs`
-
-## Metrics
-
-The Blockatlas can collect and expose by `expvar's`, metrics about the application healthy and clients and server requests.
-Prometheus or another service can collect metrics provided from the `/metrics` endpoint.
-
-To protect the route, you can set the environment variables `METRICS_API_TOKEN`, and this route starts to require the auth bearer token. 
+    `$ swag init -g ./cmd/platform_api/main.go -o ./docs`
 
 ## Contributing
 
