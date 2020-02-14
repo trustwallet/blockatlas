@@ -10,6 +10,11 @@ import (
 	"time"
 )
 
+const (
+	lockTime      = 1814400
+	minimumAmount = "1"
+)
+
 func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
 	results := make(blockatlas.ValidatorPage, 0)
 	validators, err := p.client.GetValidators()
@@ -42,8 +47,8 @@ func (p *Platform) GetDetails() blockatlas.StakingDetails {
 		Reward: blockatlas.StakingReward{
 			Annual: p.GetMaxAPR(),
 		},
-		MinimumAmount: blockatlas.Amount("0"),
-		LockTime:      1814400,
+		MinimumAmount: minimumAmount,
+		LockTime:      lockTime,
 		Type:          blockatlas.DelegationTypeDelegate,
 	}
 }
@@ -151,8 +156,8 @@ func normalizeValidator(v Validator, p Pool, inflation float64) (validator block
 		ID:     v.Address,
 		Details: blockatlas.StakingDetails{
 			Reward:        blockatlas.StakingReward{Annual: reward},
-			MinimumAmount: "0",
-			LockTime:      1814400,
+			MinimumAmount: minimumAmount,
+			LockTime:      lockTime,
 			Type:          blockatlas.DelegationTypeDelegate,
 		},
 	}
