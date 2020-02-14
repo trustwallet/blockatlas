@@ -11,6 +11,7 @@ pr:
   branches:
     include:
       - master
+      - dev
 
 pool:
   vmImage: 'Ubuntu 16.04'

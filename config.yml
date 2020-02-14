@@ -6,6 +6,7 @@ gin:
   # If set, HTTP Forwarded headers will be respected
   reverse_proxy: false
 
+platform: all
 #metrics:
 #  api_token: xxxxxx
 
@@ -19,7 +20,7 @@ observer:
   # TODO : Add description
   auth: test
   # Redis Subscription Database
-  redis: redis://localhost:6379
+  redis: redis://redis:6379
   # Smallest possible block polling interval
   min_poll: 250ms
   # Don't request blocks older than this
@@ -53,7 +54,7 @@ market:
     api: https://api.coingecko.com/api
 
 storage:
-  redis: redis://localhost:6379
+  redis: redis://redis:6379
 
 # [BNB] Binance DEX: https://wallet.binance.org
 #       Binance Chain: https://explorer.binance.org

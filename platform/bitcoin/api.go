@@ -36,7 +36,7 @@ func (p *Platform) ConfigKey() string {
 // @Description Get transactions from xpub address
 // @Accept json
 // @Produce json
-// @Tags platform,tx
+// @Tags Platform-Transactions
 // @Param coin path string true "the coin name" default(bitcoin)
 // @Param xpub path string true "the xpub address" default(zpub6ruK9k6YGm8BRHWvTiQcrEPnFkuRDJhR7mPYzV2LDvjpLa5CuGgrhCYVZjMGcLcFqv9b2WvsFtY2Gb3xq8NVq8qhk9veozrA2W9QaWtihrC)
 // @Success 200 {object} blockatlas.TxPage
