@@ -30,7 +30,7 @@ func makeStakingValidatorsRoute(router gin.IRouter, api blockatlas.Platform) {
 	}
 
 	router.GET("/staking/validators", gincache.CacheMiddleware(time.Hour, func(c *gin.Context) {
-		results, err := services.GetValidators(stakingAPI)
+		results, err := services.GetActiveValidators(stakingAPI)
 		if err != nil {
 			logger.Error(err)
 			ginutils.ErrorResponse(c).Message(err.Error()).Render()
