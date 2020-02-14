@@ -7,6 +7,7 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/numbers"
 	"net/http"
+	"sort"
 )
 
 // @Summary Get xpub transactions
@@ -32,7 +33,7 @@ func (p *Platform) handleAddressRoute(c *gin.Context) {
 	address := c.Param("address")
 	txs, ok := p.getTxsByAddress(address)
 	txPage := blockatlas.TxPage(txs)
-	txPage.Sort()
+	sort.Sort(txPage)
 	if ok != nil {
 		c.JSON(http.StatusInternalServerError, ok)
 		return
@@ -44,7 +45,7 @@ func (p *Platform) handleXpubRoute(c *gin.Context) {
 	xpub := c.Param("key")
 	txs, ok := p.getTxsByXPub(xpub)
 	txPage := blockatlas.TxPage(txs)
-	txPage.Sort()
+	sort.Sort(txPage)
 	if ok != nil {
 		c.JSON(http.StatusInternalServerError, ok)
 		return
