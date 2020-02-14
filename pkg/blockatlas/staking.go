@@ -6,6 +6,7 @@ type ValidatorPage []Validator
 type DelegationsPage []Delegation
 type DelegationsBatchPage []DelegationResponse
 type StakingBatchPage []StakingResponse
+type StakeValidators []StakeValidator
 
 type DelegationStatus string
 type DelegationType string
@@ -59,7 +60,7 @@ type StakeValidatorInfo struct {
 
 type StakeValidator struct {
 	ID      string             `json:"id"`
-	Status  bool               `json:"status,omitempty"`
+	Status  bool               `json:"status"`
 	Info    StakeValidatorInfo `json:"info,omitempty"`
 	Details StakingDetails     `json:"details,omitempty"`
 }
@@ -74,4 +75,12 @@ type DelegationResponse struct {
 type StakingResponse struct {
 	Coin    *coin.ExternalCoin `json:"coin"`
 	Details StakingDetails     `json:"details"`
+}
+
+func (sv StakeValidators) ToMap() ValidatorMap {
+	validators := make(ValidatorMap)
+	for _, v := range sv {
+		validators[v.ID] = v
+	}
+	return validators
 }

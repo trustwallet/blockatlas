@@ -39,25 +39,18 @@ var expectedStakeValidator = blockatlas.StakeValidator{
 
 func TestGetImage(t *testing.T) {
 	image := getImage(cosmosCoin, "TGzz8gjYiYRqpfmDwnLxfgPuLVNmpCswVp")
-
 	expected := "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/cosmos/validators/assets/TGzz8gjYiYRqpfmDwnLxfgPuLVNmpCswVp/logo.png"
-
 	assert.Equal(t, expected, image)
 }
 
 func TestNormalizeValidator(t *testing.T) {
-
 	result := normalizeValidator(validators[0], assets[0], cosmosCoin)
-
 	assert.Equal(t, expectedStakeValidator, result)
 }
 
 func TestNormalizeValidators(t *testing.T) {
-
 	result := normalizeValidators(validators, assets, cosmosCoin)
-
-	expected := []blockatlas.StakeValidator{expectedStakeValidator}
-
+	expected := blockatlas.StakeValidators{expectedStakeValidator}
 	assert.Equal(t, expected, result)
 }
 
