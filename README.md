@@ -58,7 +58,6 @@ There are multiple services:
 There are workers that are linked with Observer API and Market API:
 
 5. Market Observer - fetching latest rates from multiple external API's and cache it in Redis
-
 6. Platform Observer - fetching latest blocks, parse them to common block specification, check subscribed addresses - send webhook. We use Redis to get information about subscribed addresses per coin with webhooks and caching latest block that was processed by observer
  
 Market API <-> Redis A <-> Market Observer
