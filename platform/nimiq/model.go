@@ -1,6 +1,7 @@
 package nimiq
 
 import (
+	"encoding/json"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 )
 
@@ -8,7 +9,7 @@ type Tx struct {
 	Hash          string            `json:"hash"`
 	BlockHash     string            `json:"blockHash"`
 	BlockNumber   uint64            `json:"blockNumber"`
-	Timestamp     int64             `json:"timestamp"`
+	Timestamp     json.Number       `json:"timestamp"`
 	Confirmations int               `json:"confirmations"`
 	TxIndex       int               `json:"transactionIndex"`
 	FromAddress   string            `json:"fromAddress"`

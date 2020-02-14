@@ -9,8 +9,8 @@ type Client struct {
 	blockatlas.Request
 }
 
-func (c *Client) GetTxsOfAddress(address string, count int) (tx []Tx, err error) {
-	err = c.RpcCall(&tx, "getTransactionsByAddress", []string{address, strconv.Itoa(count)})
+func (c *Client) GetTxsOfAddress(address string) (tx []Tx, err error) {
+	err = c.RpcCall(&tx, "getTransactionsByAddress", []string{address, strconv.Itoa(blockatlas.TxPerPage)})
 	return
 }
 

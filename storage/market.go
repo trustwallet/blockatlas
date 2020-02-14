@@ -27,8 +27,8 @@ func (s *Storage) SaveTicker(coin *blockatlas.Ticker, pl ProviderList) error {
 
 		if cd.LastUpdate.After(coin.LastUpdate) && op >= np {
 			return errors.E("ticker is outdated or too low priority", errors.Params{
-				"oldTickerTime": cd.LastUpdate,
-				"newTickerTime": coin.LastUpdate,
+				"oldTickerTime":     cd.LastUpdate,
+				"newTickerTime":     coin.LastUpdate,
 				"oldTickerPriority": op,
 				"newTickerPriority": np,
 			})

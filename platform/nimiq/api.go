@@ -24,28 +24,29 @@ func (p *Platform) CurrentBlockNumber() (int64, error) {
 }
 
 func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
-	if srcBlock, err := p.client.GetBlockByNumber(num); err == nil {
-		block := NormalizeBlock(srcBlock)
-		return &block, nil
-	} else {
+	srcBlock, err := p.client.GetBlockByNumber(num)
+	if err != nil {
 		return nil, err
 	}
+	block := NormalizeBlock(srcBlock)
+	return &block, nil
 }
 
 func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
-	if srcTxs, err := p.client.GetTxsOfAddress(address, blockatlas.TxPerPage); err == nil {
-		return NormalizeTxs(srcTxs), err
-	} else {
+	srcTxs, err := p.client.GetTxsOfAddress(address)
+	if err != nil {
 		return nil, err
 	}
+	return NormalizeTxs(srcTxs), err
 }
 
 // NormalizeTx converts a Nimiq transaction into the generic model
 func NormalizeTx(srcTx *Tx) blockatlas.Tx {
+	date, _ := srcTx.Timestamp.Int64()
 	return blockatlas.Tx{
 		ID:    srcTx.Hash,
 		Coin:  coin.NIM,
-		Date:  srcTx.Timestamp,
+		Date:  date,
 		From:  srcTx.FromAddress,
 		To:    srcTx.ToAddress,
 		Fee:   srcTx.Fee,
