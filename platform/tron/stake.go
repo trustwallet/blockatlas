@@ -10,6 +10,8 @@ import (
 	"time"
 )
 
+const Annual = 0.74
+
 func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
 	results := make(blockatlas.ValidatorPage, 0)
 	validators, err := p.client.GetValidators()

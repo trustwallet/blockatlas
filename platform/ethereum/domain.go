@@ -23,7 +23,7 @@ func (p *Platform) Lookup(coins []uint64, name string) ([]blockatlas.Resolved, e
 	}
 	for _, coin := range coins {
 		// try to get multi coin address
-		address, err := addressForCoin(resolver, coin, name)
+		address, err := addressForCoin(resolver, coin)
 		if err != nil {
 			logger.Error(errors.E(err, errors.Params{"coin": coin, "name": name}))
 			continue
@@ -34,12 +34,12 @@ func (p *Platform) Lookup(coins []uint64, name string) ([]blockatlas.Resolved, e
 	return result, nil
 }
 
-func addressForCoin(resolver *ens.Resolver, coin uint64, name string) (string, error) {
+func addressForCoin(resolver *ens.Resolver, coin uint64) (string, error) {
 	address, err := resolver.MultiAddress(coin)
 	if err != nil {
 		if coin == CoinType.ETH {
 			// user may not set multi coin address
-			result, err := lookupLegacyETH(resolver, name)
+			result, err := lookupLegacyETH(resolver)
 			if err != nil {
 				return "", errors.E(err, "query legacy address failed")
 			}
@@ -54,7 +54,7 @@ func addressForCoin(resolver *ens.Resolver, coin uint64, name string) (string, e
 	return encoded, nil
 }
 
-func lookupLegacyETH(resolver *ens.Resolver, name string) (string, error) {
+func lookupLegacyETH(resolver *ens.Resolver) (string, error) {
 	address, err := resolver.Address()
 	if err != nil {
 		return "", errors.E(err, "query address failed")
