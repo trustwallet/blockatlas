@@ -12,6 +12,16 @@ const (
 	AssetsURL = "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/"
 )
 
+func requestValidatorsInfo(coin coin.Coin) ([]AssetValidator, error) {
+	var results []AssetValidator
+	request := blockatlas.InitClient(AssetsURL + coin.Handle)
+	err := request.GetWithCache(&results, "validators/list.json", nil, time.Hour*1)
+	if err != nil {
+		return nil, errors.E(err, errors.Params{"coin": coin.Handle}).PushToSentry()
+	}
+	return results, nil
+}
+
 func GetValidatorsMap(api blockatlas.StakeAPI) (blockatlas.ValidatorMap, error) {
 	validatorList, err := GetValidators(api)
 	if err != nil {
@@ -25,7 +35,7 @@ func GetValidatorsMap(api blockatlas.StakeAPI) (blockatlas.ValidatorMap, error) 
 }
 
 func GetValidators(api blockatlas.StakeAPI) ([]blockatlas.StakeValidator, error) {
-	assetsValidators, err := getValidatorsInfo(api.Coin())
+	assetsValidators, err := requestValidatorsInfo(api.Coin())
 	if err != nil {
 		return nil, errors.E(err, "unable to fetch validators list from the registry").PushToSentry()
 	}
@@ -38,16 +48,6 @@ func GetValidators(api blockatlas.StakeAPI) ([]blockatlas.StakeValidator, error)
 	sort.Slice(results, func(i, j int) bool {
 		return results[i].Details.Reward.Annual > results[j].Details.Reward.Annual
 	})
-	return results, nil
-}
-
-func getValidatorsInfo(coin coin.Coin) ([]AssetValidator, error) {
-	var results []AssetValidator
-	request := blockatlas.InitClient(AssetsURL + coin.Handle)
-	err := request.GetWithCache(&results, "validators/list.json", nil, time.Hour*1)
-	if err != nil {
-		return nil, errors.E(err, errors.Params{"coin": coin.Handle}).PushToSentry()
-	}
 	return results, nil
 }
 
