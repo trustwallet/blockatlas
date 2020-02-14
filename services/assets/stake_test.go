@@ -19,7 +19,7 @@ var (
 			Status: true,
 		},
 	}
-	assets = []AssetValidator{
+	assets1 = []AssetValidator{
 		{
 			ID:          "test1",
 			Name:        "Spider",
@@ -35,7 +35,7 @@ var (
 			Status:      ValidatorStatus{Disabled: true},
 		},
 	}
-	assetsDisabled = []AssetValidator{
+	assets2 = []AssetValidator{
 		{
 			ID:          "test1",
 			Name:        "Spider",
@@ -140,7 +140,7 @@ func TestCalcAnnual(t *testing.T) {
 }
 
 func TestNormalizeValidator(t *testing.T) {
-	result := normalizeValidator(validators[0], assets[0], cosmosCoin)
+	result := normalizeValidator(validators[0], assets1[0], cosmosCoin)
 	assert.Equal(t, expectedStakeValidator, result)
 }
 
@@ -149,21 +149,18 @@ func Test_normalizeValidators(t *testing.T) {
 		assets     AssetValidators
 		validators []blockatlas.Validator
 		coin       coin.Coin
-		onlyActive bool
 	}
 	tests := []struct {
 		name string
 		args args
 		want blockatlas.StakeValidators
 	}{
-		{"normalize validator", args{assets, validators, cosmosCoin, true}, blockatlas.StakeValidators{expectedStakeValidator}},
-		{"normalize active validator", args{assets, validators, cosmosCoin, false}, blockatlas.StakeValidators{expectedStakeValidator, expectedStakeValidatorDisabled2}},
-		{"normalize validator with disabled assets", args{assetsDisabled, validators, cosmosCoin, true}, blockatlas.StakeValidators{}},
-		{"normalize active validator with disabled assets", args{assetsDisabled, validators, cosmosCoin, false}, blockatlas.StakeValidators{expectedStakeValidatorDisabled1, expectedStakeValidatorDisabled2}},
+		{"normalize validator 1", args{assets1, validators, cosmosCoin}, blockatlas.StakeValidators{expectedStakeValidator, expectedStakeValidatorDisabled2}},
+		{"normalize validator 2", args{assets2, validators, cosmosCoin}, blockatlas.StakeValidators{expectedStakeValidatorDisabled1, expectedStakeValidatorDisabled2}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := normalizeValidators(tt.args.assets, tt.args.validators, tt.args.coin, tt.args.onlyActive)
+			got := normalizeValidators(tt.args.assets, tt.args.validators, tt.args.coin)
 			assert.Equal(t, tt.want, got)
 		})
 	}

@@ -27,3 +27,13 @@ func (av AssetValidators) toMap() AssetValidatorMap {
 	}
 	return validators
 }
+
+func (av AssetValidators) activeValidators() AssetValidators {
+	activeAssets := make(AssetValidators, 0)
+	for _, a := range av {
+		if !a.Status.Disabled {
+			activeAssets = append(activeAssets, a)
+		}
+	}
+	return activeAssets
+}

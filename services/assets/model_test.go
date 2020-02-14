@@ -1,7 +1,7 @@
 package assets
 
 import (
-	"reflect"
+	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
@@ -17,9 +17,38 @@ func TestAssetValidators_toMap(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.av.toMap(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("toMap() = %v, want %v", got, tt.want)
-			}
+			got := tt.av.toMap()
+			assert.Equal(t, tt.want, got)
+		})
+	}
+}
+
+func TestAssetValidators_activeValidators(t *testing.T) {
+	tests := []struct {
+		name string
+		av   AssetValidators
+		want AssetValidators
+	}{
+		{
+			"test get active validators 1",
+			AssetValidators{{ID: "test1", Status: ValidatorStatus{false}}},
+			AssetValidators{{ID: "test1", Status: ValidatorStatus{false}}},
+		},
+		{
+			"test get active validators 2",
+			AssetValidators{{ID: "test1", Status: ValidatorStatus{true}}},
+			AssetValidators{},
+		},
+		{
+			"test get active validators 3",
+			AssetValidators{{ID: "test1", Status: ValidatorStatus{true}}, {ID: "test2", Status: ValidatorStatus{false}}},
+			AssetValidators{{ID: "test2", Status: ValidatorStatus{false}}},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := tt.av.activeValidators()
+			assert.Equal(t, tt.want, got)
 		})
 	}
 }

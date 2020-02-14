@@ -27,7 +27,7 @@ func GetValidatorsMap(api blockatlas.StakeAPI) (blockatlas.ValidatorMap, error) 
 	if err != nil {
 		return nil, err
 	}
-	results := normalizeValidators(assets, validators, api.Coin(), false)
+	results := normalizeValidators(assets, validators, api.Coin())
 	return results.ToMap(), nil
 }
 
@@ -36,7 +36,7 @@ func GetActiveValidators(api blockatlas.StakeAPI) (blockatlas.StakeValidators, e
 	if err != nil {
 		return nil, err
 	}
-	results := normalizeValidators(assets, validators, api.Coin(), true)
+	results := normalizeValidators(assets.activeValidators(), validators, api.Coin())
 	return results, nil
 }
 
@@ -53,15 +53,12 @@ func GetValidators(api blockatlas.StakeAPI) (AssetValidators, blockatlas.Validat
 	return assetsValidators, validators, nil
 }
 
-func normalizeValidators(assets AssetValidators, validators []blockatlas.Validator, coin coin.Coin, onlyActive bool) blockatlas.StakeValidators {
+func normalizeValidators(assets AssetValidators, validators []blockatlas.Validator, coin coin.Coin) blockatlas.StakeValidators {
 	results := make(blockatlas.StakeValidators, 0)
 	assetsMap := assets.toMap()
 	for _, v := range validators {
 		asset, ok := assetsMap[v.ID]
 		if !ok {
-			continue
-		}
-		if onlyActive && asset.Status.Disabled {
 			continue
 		}
 		results = append(results, normalizeValidator(v, asset, coin))
