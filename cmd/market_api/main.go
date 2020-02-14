@@ -32,6 +32,7 @@ func main() {
 	engine := gin.New()
 	engine.Use(ginutils.CheckReverseProxy, *sg)
 	engine.Use(ginutils.CORSMiddleware())
+	engine.Use(gin.Logger())
 
 	engine.OPTIONS("/*path", ginutils.CORSMiddleware())
 	engine.GET("/", api.GetRoot)
