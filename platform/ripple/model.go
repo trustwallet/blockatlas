@@ -8,7 +8,7 @@ type TransactionType string
 type TransactionResult string
 
 const (
-	tesSUCCESS TransactionResult = "tesSUCCESS"
+	transactionResultSuccess TransactionResult = "tesSUCCESS"
 
 	transactionPayment TransactionType = "Payment"
 )
