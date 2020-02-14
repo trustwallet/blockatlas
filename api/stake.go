@@ -16,7 +16,7 @@ import (
 // @Description Get validators from the address
 // @Accept json
 // @Produce json
-// @Tags Platform-Staking
+// @Tags Staking
 // @Param coin path string true "the coin name" default(cosmos)
 // @Success 200 {object} blockatlas.DocsResponse
 // @Failure 500 {object} ginutils.ApiError
@@ -45,7 +45,7 @@ func makeStakingValidatorsRoute(router gin.IRouter, api blockatlas.Platform) {
 // @Description Get stake delegations from the address
 // @Accept json
 // @Produce json
-// @Tags Platform-Staking
+// @Tags Staking
 // @Param coin path string true "the coin name" default(tron)
 // @Param address path string true "the query address" default(TPJYCz8ppZNyvw7pTwmjajcx4Kk1MmEUhD)
 // @Success 200 {object} blockatlas.DelegationResponse

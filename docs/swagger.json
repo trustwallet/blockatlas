@@ -12,7 +12,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Platform-Naming-Service"
+                    "Naming"
                 ],
                 "summary": "Lookup .eth / .zil addresses",
                 "operationId": "lookup",
@@ -368,7 +368,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Platform-Transactions"
+                    "Transactions"
                 ],
                 "summary": "Get xpub transactions",
                 "operationId": "xpub",
@@ -410,7 +410,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Platform-Transactions"
+                    "Transactions"
                 ],
                 "summary": "Get Transactions",
                 "operationId": "tx_v1",
@@ -452,7 +452,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Platform-Collections"
+                    "Collections"
                 ],
                 "summary": "Get list of collections from a specific coin and addresses",
                 "operationId": "collection_categories_v2",
@@ -485,7 +485,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Platform-Naming-Service"
+                    "Naming"
                 ],
                 "summary": "Lookup .eth / .zil addresses",
                 "operationId": "lookup",
@@ -533,7 +533,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Platform-Staking"
+                    "Staking"
                 ],
                 "summary": "Get Multiple Stake Delegations",
                 "operationId": "batch_delegations",
@@ -568,7 +568,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Platform-Staking"
+                    "Staking"
                 ],
                 "summary": "Get Multiple Stake Delegations",
                 "operationId": "batch_delegations",
@@ -603,7 +603,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Platform-Collections"
+                    "Collections"
                 ],
                 "summary": "Get Collections",
                 "operationId": "collections_v2",
@@ -651,7 +651,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Platform-Collections"
+                    "Collections"
                 ],
                 "summary": "Get Collection",
                 "operationId": "collection_v2",
@@ -707,7 +707,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Platform-Staking"
+                    "Staking"
                 ],
                 "summary": "Get Stake Delegations",
                 "operationId": "delegations",
@@ -755,7 +755,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Platform-Staking"
+                    "Staking"
                 ],
                 "summary": "Get Validators",
                 "operationId": "validators",
@@ -795,7 +795,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Platform-Transactions"
+                    "Transactions"
                 ],
                 "summary": "Get Tokens",
                 "operationId": "tokens",
@@ -843,7 +843,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Platform-Transactions"
+                    "Transactions"
                 ],
                 "summary": "Get Transactions",
                 "operationId": "tx_v2",
@@ -891,7 +891,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Platform-Collections"
+                    "Collections"
                 ],
                 "summary": "Get list of collections from a specific coin and addresses",
                 "operationId": "collection_categories_v3",
@@ -927,7 +927,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Platform-Collections"
+                    "Collections"
                 ],
                 "summary": "Get Collections",
                 "operationId": "collections_v3",
@@ -975,7 +975,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Platform-Collections"
+                    "Collections"
                 ],
                 "summary": "Get Collection",
                 "operationId": "collection_v3",
