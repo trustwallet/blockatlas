@@ -159,6 +159,15 @@ endif
 ## newman: Run Postman Newman test, the host parameter is required, and you can specify the name of the test do you wanna run (transaction, token, staking, collection, domain, healthcheck, observer). e.g $ make newman test=staking host=http//localhost
 newman: install-newman
 	@echo "  >  Runing $(test) tests"
+ifndef observer_auth
+override observer_auth = "test"
+endif
+ifndef market_auth
+override market_auth = ""
+endif
+ifndef platform_auth
+override platform_auth = ""
+endif
 ifeq (,$(host))
 	@echo "  >  Host parameter is missing. e.g: make newman test=staking host=http://localhost:8420"
 	@exit 1
@@ -173,7 +182,7 @@ ifeq (,$(test))
 	@bash -c "$(MAKE) newman test=observer host=$(host)"
 	@bash -c "$(MAKE) newman test=market host=$(host)"
 else
-	@newman run pkg/tests/postman/Blockatlas.postman_collection.json --folder $(test) -d pkg/tests/postman/$(test)_data.json --env-var "host=$(host)"
+	@newman run pkg/tests/postman/Blockatlas.postman_collection.json --folder $(test) -d pkg/tests/postman/$(test)_data.json --env-var "host=$(host)" --env-var "observer_auth=$(observer_auth)" --env-var "platform_auth=$(platform_auth)" --env-var "market_auth=$(market_auth)"
 endif
 
 go-compile: go-get go-build
