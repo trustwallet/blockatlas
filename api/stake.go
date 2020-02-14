@@ -40,7 +40,6 @@ func makeStakingValidatorsRoute(router gin.IRouter, api blockatlas.Platform) {
 	}))
 }
 
-
 // @Summary Get Stake Delegations
 // @ID delegations
 // @Description Get stake delegations from the address
