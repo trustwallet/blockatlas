@@ -12,15 +12,14 @@ const (
 	AssetsURL = "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/"
 )
 
-func GetCoinInfo(coinId int, token string) (info *blockatlas.CoinInfo, err error) {
-	c, ok := coin.Coins[uint(coinId)]
-	if !ok {
-		return info, errors.E("coin not found")
+func requestValidatorsInfo(coin coin.Coin) ([]AssetValidator, error) {
+	var results []AssetValidator
+	request := blockatlas.InitClient(AssetsURL + coin.Handle)
+	err := request.GetWithCache(&results, "validators/list.json", nil, time.Hour*1)
+	if err != nil {
+		return nil, errors.E(err, errors.Params{"coin": coin.Handle}).PushToSentry()
 	}
-	url := getCoinInfoUrl(c, token)
-	request := blockatlas.InitClient(url)
-	err = request.GetWithCache(&info, "info/info.json", nil, time.Hour*1)
-	return
+	return results, nil
 }
 
 func GetValidatorsMap(api blockatlas.StakeAPI) (blockatlas.ValidatorMap, error) {
@@ -36,7 +35,7 @@ func GetValidatorsMap(api blockatlas.StakeAPI) (blockatlas.ValidatorMap, error) 
 }
 
 func GetValidators(api blockatlas.StakeAPI) ([]blockatlas.StakeValidator, error) {
-	assetsValidators, err := getValidatorsInfo(api.Coin())
+	assetsValidators, err := requestValidatorsInfo(api.Coin())
 	if err != nil {
 		return nil, errors.E(err, "unable to fetch validators list from the registry").PushToSentry()
 	}
@@ -49,16 +48,6 @@ func GetValidators(api blockatlas.StakeAPI) ([]blockatlas.StakeValidator, error)
 	sort.Slice(results, func(i, j int) bool {
 		return results[i].Details.Reward.Annual > results[j].Details.Reward.Annual
 	})
-	return results, nil
-}
-
-func getValidatorsInfo(coin coin.Coin) ([]AssetValidator, error) {
-	var results []AssetValidator
-	request := blockatlas.InitClient(AssetsURL + coin.Handle)
-	err := request.GetWithCache(&results, "validators/list.json", nil, time.Hour*1)
-	if err != nil {
-		return nil, errors.E(err, errors.Params{"coin": coin.Handle}).PushToSentry()
-	}
 	return results, nil
 }
 
@@ -96,11 +85,4 @@ func calculateAnnual(annual float64, commission float64) float64 {
 
 func getImage(c coin.Coin, ID string) string {
 	return AssetsURL + c.Handle + "/validators/assets/" + ID + "/logo.png"
-}
-
-func getCoinInfoUrl(c coin.Coin, token string) string {
-	if len(token) == 0 {
-		return AssetsURL + c.Handle
-	}
-	return AssetsURL + c.Handle + "/assets/" + token
 }
