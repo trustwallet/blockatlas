@@ -3,10 +3,11 @@ package blockatlas
 import (
 	"bytes"
 	"encoding/json"
-	"reflect"
-	"testing"
-
+	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas/coin"
+	"reflect"
+	"sort"
+	"testing"
 )
 
 var txJSON = []byte(`{
@@ -75,4 +76,22 @@ func TestTx_MarshalJSON(t *testing.T) {
 
 	// Compare expected and output JSON
 	bytes.Equal(got, txJSON)
+}
+
+func TestSortTxPage(t *testing.T) {
+	tests := []struct {
+		name string
+		page TxPage
+		want TxPage
+	}{
+		{"test sort 1", TxPage{{Date: 5}, {Date: 2}, {Date: 1}, {Date: 4}, {Date: 3}}, TxPage{{Date: 5}, {Date: 4}, {Date: 3}, {Date: 2}, {Date: 1}}},
+		{"test sort 2", TxPage{{Date: 100}, {Date: 2}, {Date: 33}, {Date: 409}}, TxPage{{Date: 409}, {Date: 100}, {Date: 33}, {Date: 2}}},
+		{"test sort 3", TxPage{{Date: 100}, {Date: 2}, {Date: 100}}, TxPage{{Date: 100}, {Date: 100}, {Date: 2}}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			sort.Sort(tt.page)
+			assert.Equal(t, tt.want, tt.page)
+		})
+	}
 }

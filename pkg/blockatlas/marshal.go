@@ -113,7 +113,7 @@ func (a *Amount) MarshalJSON() ([]byte, error) {
 
 // Sort sorts the response by date, descending
 func (txs TxPage) Len() int           { return len(txs) }
-func (txs TxPage) Less(i, j int) bool { return txs[i].Date < txs[j].Date }
+func (txs TxPage) Less(i, j int) bool { return txs[i].Date > txs[j].Date }
 func (txs TxPage) Swap(i, j int)      { txs[i], txs[j] = txs[j], txs[i] }
 
 // MarshalJSON returns a wrapped list of transactions in JSON
