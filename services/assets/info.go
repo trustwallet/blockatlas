@@ -14,13 +14,13 @@ func GetCoinInfo(coinId int, token string) (info *blockatlas.CoinInfo, err error
 	}
 	url := getCoinInfoUrl(c, token)
 	request := blockatlas.InitClient(url)
-	err = request.GetWithCache(&info, "info/info.json", nil, time.Hour*1)
+	err = request.GetWithCache(&info, "/info.json", nil, time.Hour*1)
 	return
 }
 
 func getCoinInfoUrl(c coin.Coin, token string) string {
 	if len(token) == 0 {
-		return AssetsURL + c.Handle
+		return AssetsURL + c.Handle + "/info"
 	}
 	return AssetsURL + c.Handle + "/assets/" + token
 }

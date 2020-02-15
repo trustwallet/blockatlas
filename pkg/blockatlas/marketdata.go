@@ -48,14 +48,15 @@ type ChartCoinInfo struct {
 }
 
 type CoinInfo struct {
-	Name       string       `json:"name,omitempty"`
-	Website    string       `json:"website,omitempty"`
-	SourceCode string       `json:"source_code,omitempty"`
-	Whitepaper string       `json:"whitepaper,omitempty"`
-	Explorers  []Link       `json:"explorers,omitempty"`
-	Socials    []SocialLink `json:"socials,omitempty"`
-	Details    []Detail     `json:"details,omitempty"`
-	DataSource string       `json:"data_source,omitempty"`
+	Name             string       `json:"name,omitempty"`
+	Website          string       `json:"website,omitempty"`
+	SourceCode       string       `json:"source_code,omitempty"`
+	WhitePaper       string       `json:"white_paper,omitempty"`
+	Description      string       `json:"description,omitempty"`
+	ShortDescription string       `json:"short_description,omitempty"`
+	Explorers        []Link       `json:"explorers,omitempty"`
+	Socials          []SocialLink `json:"socials,omitempty"`
+	DataSource       string       `json:"data_source,omitempty"`
 }
 
 type SocialLink struct {
@@ -67,11 +68,6 @@ type SocialLink struct {
 type Link struct {
 	Name string `json:"name"`
 	Url  string `json:"url"`
-}
-
-type Detail struct {
-	Language    string `json:"language"`
-	Description string `json:"description"`
 }
 
 func (t *Ticker) SetCoinId(coinId uint) {
