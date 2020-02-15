@@ -233,7 +233,7 @@ go-gen-docs:
 
 go-goreleaser:
 	@echo "  >  Releasing a new version"
-	GOBIN=$(GOBIN) goreleaser --rm-dist
+	GOBIN=$(GOBIN) scripts/goreleaser --rm-dist
 
 go-vet:
 	@echo "  >  Running go vet"
