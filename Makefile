@@ -158,7 +158,7 @@ endif
 
 ## newman: Run Postman Newman test, the host parameter is required, and you can specify the name of the test do you wanna run (transaction, token, staking, collection, domain, healthcheck, observer). e.g $ make newman test=staking host=http//localhost
 newman: install-newman
-	@echo "  >  Runing $(test) tests"
+	@echo "  >  Running $(test) tests"
 ifeq (,$(host))
 	@echo "  >  Host parameter is missing. e.g: make newman test=staking host=http://localhost:8420"
 	@exit 1
@@ -208,15 +208,15 @@ go-clean:
 	GOBIN=$(GOBIN) go clean
 
 go-test:
-	@echo "  >  Runing unit tests"
+	@echo "  >  Running unit tests"
 	GOBIN=$(GOBIN) go test -cover -race -v ./...
 
 go-functional:
-	@echo "  >  Runing functional tests"
+	@echo "  >  Running functional tests"
 	GOBIN=$(GOBIN) TEST_CONFIG=$(CONFIG_FILE) go test -race -tags=functional -v ./pkg/tests/functional
 
 go-integration:
-	@echo "  >  Runing integration tests"
+	@echo "  >  Running integration tests"
 	GOBIN=$(GOBIN) TEST_CONFIG=$(CONFIG_FILE) go test -race -tags=integration -v ./pkg/tests/integration
 
 go-fmt:
