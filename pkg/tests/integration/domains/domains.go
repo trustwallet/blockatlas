@@ -71,15 +71,15 @@ func TestDomains(t *testing.T) {
 			},
 			false,
 		},
-		//{
-		//	"test @fiotestnet domain",
-		//	"adam@fiotestnet",
-		//	[]uint64{coin.ETH},
-		//	[]blockatlas.Resolved{
-		//		{Result: "0xce5cB6c92Da37bbBa91Bd40D4C9D4D724A3a8F51", Coin: coin.ETH},
-		//	},
-		//	false,
-		//},
+		{
+			"test @fiotestnet domain",
+			"adam@fiotestnet",
+			[]uint64{coin.ETH},
+			[]blockatlas.Resolved{
+				{Result: "0xce5cB6c92Da37bbBa91Bd40D4C9D4D724A3a8F51", Coin: coin.ETH},
+			},
+			false,
+		},
 		{
 			"test batch .crypto domains",
 			"dpantani.crypto",
