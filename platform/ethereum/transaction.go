@@ -8,6 +8,7 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"math/big"
 	"net/http"
+	"sort"
 )
 
 func (p *Platform) RegisterRoutes(router gin.IRouter) {
@@ -38,7 +39,7 @@ func (p *Platform) getTransactions(c *gin.Context) {
 	}
 
 	page := blockatlas.TxPage(txs)
-	page.Sort()
+	sort.Sort(page)
 	c.JSON(http.StatusOK, &page)
 }
 

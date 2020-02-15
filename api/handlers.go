@@ -9,6 +9,7 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/ginutils"
 	"github.com/trustwallet/blockatlas/pkg/metrics"
 	"net/http"
+	"sort"
 )
 
 // @Summary Get Transactions
@@ -102,7 +103,7 @@ func makeTxRoute(router gin.IRouter, api blockatlas.Platform, path string) {
 		if len(page) > blockatlas.TxPerPage {
 			page = page[0:blockatlas.TxPerPage]
 		}
-		page.Sort()
+		sort.Sort(page)
 		ginutils.RenderSuccess(c, &page)
 	})
 }
