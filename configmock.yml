@@ -1,0 +1,233 @@
+# Gin is the web framework
+gin:
+  # Possible values: "debug", "release"
+  mode: release
+  # App running behind a reverse proxy?
+  # If set, HTTP Forwarded headers will be respected
+  reverse_proxy: false
+
+#metrics:
+#  api_token: xxxxxx
+
+# Sentry error tracking
+#sentry:
+#  dsn: https://xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx@sentry.io/xxxxxxx
+
+# The transaction watcher
+observer:
+  enabled: false
+  # TODO : Add description
+  auth: test
+  # Redis Subscription Database
+  redis: redis://localhost:6379
+  # Smallest possible block polling interval
+  min_poll: 250ms
+  # Don't request blocks older than this
+  backlog: 3h
+  # Don't request more than N blocks at once
+  backlog_max_blocks: 200
+  # Max connections to open to API
+  stream_conns: 16
+
+# The market watcher
+market:
+  enabled: false
+  quote_update_time: 20m
+  rate_update_time: 20m
+  dex:
+    quote_update_time: 5m
+    api: https://dex.binance.org/api
+  cmc:
+    api: https://pro-api.coinmarketcap.com
+    webapi: https://web-api.coinmarketcap.com
+    widgetapi: https://widgets.coinmarketcap.com
+    api_key:
+    map_url: https://raw.githubusercontent.com/trustwallet/assets/master/pricing/coinmarketcap
+  fixer:
+    rate_update_time: 1h
+    api: https://data.fixer.io/api
+    api_key:
+  compound:
+    api: https://api.compound.finance/api
+  coingecko:
+    api: https://api.coingecko.com/api
+
+storage:
+  redis: redis://localhost:6379
+
+# [BNB] Binance DEX: https://wallet.binance.org
+#       Binance Chain: https://explorer.binance.org
+binance:
+  api: https://explorer.binance.org/api/v1
+  dex: https://dex.binance.org/api
+
+# [NIM] Nimiq: https://nimiq.com
+#nimiq:
+#  api: http://localhost:8648
+
+# [XRP] Ripple: https://ripple.com
+ripple:
+  api: https://data.ripple.com/v2
+
+# [XLM] Stellar Lumen: https://www.stellar.org
+stellar:
+  api: https://horizon.stellar.org
+
+# [KIN] Kin: https://www.kin.org
+kin:
+  api: https://horizon-block-explorer.kininfrastructure.com
+
+# [XTZ] Tezos: https://tezos.com
+tezos:
+  api: https://api.tezos.id/mooncake/mainnet
+  rpc: https://mainnet.tezos.org.ua
+
+# [ETH] Ethereum: https://ethereum.org (Trust-Ray API)
+# ethereum:
+#  api: https://localhost:4567
+#  collections_api: https://api.opensea.io
+#  collections_api_key: [opensea_api_key]
+#  rpc: [ethereum rpc]
+
+# [ETC] Ethereum Classic: https://ethereumclassic.org (Trust-Ray API)
+# classic:
+#   api: https://localhost:4567
+
+# [POA] POA Network: https://poa.network (Trust-Ray API)
+# poa:
+#   api: https://localhost:4567
+
+# [CLO] Callisto Network: https://callisto.network (Trust-Ray API)
+# callisto:
+#   api: https://localhost:4567
+
+# [GO] GoChain: https://gochain.io (Trust-Ray API)
+# gochain:
+#   api: https://localhost:4567
+
+# [WAN] Wanchain: https://wanchain.org (Trust-Ray API)
+# wanchain:
+#   api: https://localhost:4567
+
+# [TOMO] TomoChain: https://tomochain.com (Trust-Ray API)
+# tomochain:
+#   api: https://localhost:4567
+
+# [TT] ThunderCore: https://www.thundercore.com (Trust-Ray API)
+# thundertoken:
+#   api: https://localhost:4567
+
+# [AION] Aion: https://aion.network
+aion:
+  api: https://mainnet-api.theoan.com/aion/dashboard
+
+# [ICX] ICON: https://icon.foundation
+icon:
+  api: https://tracker.icon.foundation/v3
+
+# [TRX] Tron: https://tron.network/
+tron:
+  api: https://api.trongrid.io
+
+# [VET] VeChain: https://www.vechain.org
+vechain:
+  api: https://vethor-pubnode.digonchain.com
+
+# [THETA] THETA: https://www.thetatoken.org/
+theta:
+  api: https://explorer.thetatoken.org:9000/api
+
+# [ATOM] Cosmos: https://cosmos.network/
+cosmos:
+  api: http://stargate.cosmos.network
+
+# [ONTOLOGY] ONT: https://ont.io/
+ontology:
+  api: https://explorer.ont.io
+
+# [ZIL] Zilliqa: https://zilliqa.com
+zilliqa:
+  #  api: https://api.viewblock.io/v1/zilliqa
+  #  key: YOUR_API_KEY
+  rpc: https://api.zilliqa.com
+  lookup: https://unstoppabledomains.com/api/v1
+
+#[IoTeX] IoTeX: https://iotex.io
+iotex:
+  api: https://pharos.iotex.io/v1
+
+# [WAVES] Waves: http://wavesplatform.com
+waves:
+  api: https://nodes.wavesnodes.com
+
+# [AE] Aeternity: https://aeternity.com
+aeternity:
+  api: https://mdw.aepps.com
+
+# [NAS] Nebulas: https://nebulas.io
+nebulas:
+  api: https://explorer-backend.nebulas.io/api
+
+fio:
+#  api: https://addresses.fio.foundation
+#  api: http://testnet.fioprotocol.io/v1/chain
+  api: http://localhost:3000/v1/chain
+
+# [BTC] Bitcoin: https://bitcoin.org/ (Blockbook API https://github.com/trezor/blockbook)
+bitcoin:
+  api: https://btc1.trezor.io/api
+
+litecoin:
+  api: https://ltc1.trezor.io/api
+
+bitcoincash:
+  api: https://bch1.trezor.io/api
+
+doge:
+  api: https://doge1.trezor.io/api
+
+dash:
+  api: https://dash1.trezor.io/api
+
+zcoin:
+  api: https://blockbook.zcoin.io/api
+
+zcash:
+  api: https://zec1.trezor.io/api
+
+zelcash:
+  api: https://blockbook.zel.network/api
+
+viacoin:
+  api: https://blockbook.viacoin.org/api
+
+qtum:
+  api: https://blockv3.qtum.info/api
+
+groestlcoin:
+  api: https://blockbook.groestlcoin.org/api
+
+ravencoin:
+  api: https://blockbook.ravencoin.org/api
+
+decred:
+  api: https://blockbook.decred.org:9161/api
+
+algorand:
+  api: https://mainnet-algorand.api.purestake.io/ps1
+#  key: YOUR_API_KEY
+
+nano:
+  api: https://nanoverse.io/api/node
+
+digibyte:
+  api: https://dgb1.trezor.io/api
+
+harmony:
+  api: https://api.s0.t.hmny.io
+
+kava:
+  api: https://data.kava.io
+
+kusama:
+  api: https://kusama.subscan.io/api
