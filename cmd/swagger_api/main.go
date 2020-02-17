@@ -2,10 +2,10 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/spf13/viper"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
 	"github.com/trustwallet/blockatlas/api"
+	"github.com/trustwallet/blockatlas/config"
 	_ "github.com/trustwallet/blockatlas/docs"
 	"github.com/trustwallet/blockatlas/internal"
 	"github.com/trustwallet/blockatlas/pkg/ginutils"
@@ -27,7 +27,7 @@ func init() {
 }
 
 func main() {
-	gin.SetMode(viper.GetString("gin.mode"))
+	gin.SetMode(config.Configuration.Gin.Mode)
 
 	engine := gin.New()
 	engine.Use(ginutils.CheckReverseProxy, *sg)

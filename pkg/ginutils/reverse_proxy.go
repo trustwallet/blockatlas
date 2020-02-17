@@ -2,13 +2,13 @@ package ginutils
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/spf13/viper"
+	"github.com/trustwallet/blockatlas/config"
 )
 
 // CheckReverseProxy removes untrusted forwarded HTTP headers
 // if gin.reverse_proxy is defined
 func CheckReverseProxy(c *gin.Context) {
-	if !viper.GetBool("gin.reverse_proxy") {
+	if !config.Configuration.Gin.Reverse_Proxy {
 		c.Request.Header.Del("Forwarded")
 		c.Request.Header.Del("X-Forwarded-Proto")
 		c.Request.Header.Del("X-Forwarded-Host")

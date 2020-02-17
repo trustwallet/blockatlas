@@ -2,7 +2,7 @@ package observer
 
 import (
 	"context"
-	"github.com/spf13/viper"
+	"github.com/trustwallet/blockatlas/config"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/pkg/semaphore"
@@ -30,7 +30,7 @@ func (s *Stream) Execute(ctx context.Context) <-chan *blockatlas.Block {
 	cn := s.BlockAPI.Coin()
 	s.coin = cn.ID
 	s.logParams = logger.Params{"platform": cn.Handle}
-	conns := viper.GetInt("observer.stream_conns")
+	conns := config.Configuration.Observer.Stream_Conns
 	if conns == 0 {
 		logger.Fatal("observer.stream_conns is 0")
 	}
@@ -71,7 +71,7 @@ func (s *Stream) load(c chan<- *blockatlas.Block) {
 	if height-lastHeight > int64(s.BacklogCount) {
 		lastHeight = height - int64(s.BacklogCount)
 	}
-	backLogMax := viper.GetInt64("observer.backlog_max_blocks")
+	backLogMax := config.Configuration.Observer.Backlog_Max_Blocks
 	if height-lastHeight > backLogMax {
 		lastHeight = height - backLogMax
 	}

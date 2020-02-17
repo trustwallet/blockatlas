@@ -42,8 +42,8 @@ market:
     api: https://dex.binance.org/api
   cmc:
     api: https://pro-api.coinmarketcap.com
-    webapi: https://web-api.coinmarketcap.com
-    widgetapi: https://widgets.coinmarketcap.com
+    web_api: https://web-api.coinmarketcap.com
+    widget_api: https://widgets.coinmarketcap.com
     api_key:
     map_url: https://raw.githubusercontent.com/trustwallet/assets/master/pricing/coinmarketcap
   fixer:

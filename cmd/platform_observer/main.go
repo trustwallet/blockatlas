@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"github.com/spf13/viper"
+	"github.com/trustwallet/blockatlas/config"
 	"github.com/trustwallet/blockatlas/internal"
 	"github.com/trustwallet/blockatlas/observer"
 	"github.com/trustwallet/blockatlas/pkg/logger"
@@ -23,7 +24,7 @@ var (
 func init() {
 	_, confPath, _, cache = internal.InitAPIWithRedis("", defaultConfigPath)
 
-	platform.Init(viper.GetString("platform"))
+	platform.Init(config.Configuration.Platform)
 }
 
 func main() {
@@ -31,8 +32,8 @@ func main() {
 		logger.Fatal("No APIs to observe")
 	}
 
-	backlogTime := viper.GetDuration("observer.backlog")
-	minInterval := viper.GetDuration("observer.block_poll.min")
+	minInterval := config.Configuration.Observer.Min_Poll
+	backlogTime := config.Configuration.Observer.Backlog
 	maxInterval := viper.GetDuration("observer.block_poll.max")
 	if minInterval >= maxInterval {
 		logger.Fatal("minimum block polling interval cannot be greater or equal than maximum")

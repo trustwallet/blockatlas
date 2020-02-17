@@ -2,7 +2,7 @@ package market
 
 import (
 	"github.com/robfig/cron/v3"
-	"github.com/spf13/viper"
+	"github.com/trustwallet/blockatlas/config"
 	"github.com/trustwallet/blockatlas/market/market"
 	"github.com/trustwallet/blockatlas/market/market/cmc"
 	"github.com/trustwallet/blockatlas/market/market/coingecko"
@@ -19,22 +19,22 @@ func InitMarkets(storage storage.Market) {
 	marketProviders = market.Providers{
 		// Add Market Quote Providers:
 		0: dex.InitMarket(
-			viper.GetString("market.dex.api"),
-			viper.GetString("market.dex.quote_update_time"),
+			config.Configuration.Market.Dex.Api,
+			config.Configuration.Market.Dex.Quote_Update_Time,
 		),
 		1: cmc.InitMarket(
-			viper.GetString("market.cmc.api"),
-			viper.GetString("market.cmc.api_key"),
-			viper.GetString("market.cmc.map_url"),
-			viper.GetString("market.quote_update_time"),
+			config.Configuration.Market.Cmc.Api,
+			config.Configuration.Market.Cmc.Api_Key,
+			config.Configuration.Market.Cmc.Map_Url,
+			config.Configuration.Market.Quote_Update_Time,
 		),
 		2: compound.InitMarket(
-			viper.GetString("market.compound.api"),
-			viper.GetString("market.quote_update_time"),
+			config.Configuration.Market.Compound.Api,
+			config.Configuration.Market.Quote_Update_Time,
 		),
 		3: coingecko.InitMarket(
-			viper.GetString("market.coingecko.api"),
-			viper.GetString("market.quote_update_time"),
+			config.Configuration.Market.Coingecko.Api,
+			config.Configuration.Market.Quote_Update_Time,
 		),
 	}
 	addMarkets(storage, marketProviders)

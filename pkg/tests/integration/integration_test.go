@@ -3,7 +3,6 @@
 package integration
 
 import (
-	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/config"
 	"github.com/trustwallet/blockatlas/pkg/tests/integration/bitcoin"
 	"github.com/trustwallet/blockatlas/pkg/tests/integration/domains"
@@ -20,7 +19,7 @@ func Test(t *testing.T) {
 	} else {
 		config.LoadConfig(configPath)
 	}
-	platform.Init(viper.GetString("platform"))
+	platform.Init(config.Configuration.Platform)
 
 	// Add your integration tests here
 	ontology.TestOntology(t)

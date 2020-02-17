@@ -1,7 +1,7 @@
 package market
 
 import (
-	"github.com/spf13/viper"
+	"github.com/trustwallet/blockatlas/config"
 	"github.com/trustwallet/blockatlas/market/chart"
 	"github.com/trustwallet/blockatlas/market/chart/cmc"
 	"github.com/trustwallet/blockatlas/market/chart/coingecko"
@@ -23,12 +23,12 @@ type Charts struct {
 func InitCharts() *Charts {
 	return &Charts{chart.Providers{
 		0: cmc.InitChart(
-			viper.GetString("market.cmc.webapi"),
-			viper.GetString("market.cmc.widgetapi"),
-			viper.GetString("market.cmc.map_url"),
+			config.Configuration.Market.Cmc.Web_Api,
+			config.Configuration.Market.Cmc.Widget_Api,
+			config.Configuration.Market.Cmc.Map_Url,
 		),
 		1: coingecko.InitChart(
-			viper.GetString("market.coingecko.api"),
+			config.Configuration.Market.Coingecko.Api,
 		),
 	}}
 }
