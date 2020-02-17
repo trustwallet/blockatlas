@@ -52,7 +52,7 @@ func (r *Request) RpcCall(result interface{}, method string, params interface{})
 		return errors.E("RPC Call error", errors.Params{
 			"method":        method,
 			"error_code":    resp.Error.Code,
-			"error_message": resp.Error.Message}).PushToSentry()
+			"error_message": resp.Error.Message})
 	}
 	return resp.GetObject(result)
 }
