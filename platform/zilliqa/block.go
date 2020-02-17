@@ -21,19 +21,15 @@ func (p *Platform) CurrentBlockNumber() (int64, error) {
 
 func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 	var normalized []blockatlas.Tx
-	txs, err := p.rpcClient.GetTxInBlock(num)
-	if err != nil {
-		return nil, err
-	}
-
+	txs := p.rpcClient.GetTxInBlock(num)
 	for _, srcTx := range txs {
 		tx := Normalize(&srcTx)
 		normalized = append(normalized, tx)
 	}
+
 	block := blockatlas.Block{
 		Number: num,
 		Txs:    normalized,
 	}
-
 	return &block, nil
 }

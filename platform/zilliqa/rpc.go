@@ -20,12 +20,14 @@ func (c *RpcClient) GetTx(hash string) (tx TxRPC, err error) {
 	return
 }
 
-func (c *RpcClient) GetTxInBlock(number int64) ([]Tx, error) {
+func (c *RpcClient) GetTxInBlock(number int64) []Tx {
 	strNumber := strconv.Itoa(int(number))
+	txs := make([]Tx, 0)
+
 	var results BlockTxs
 	err := c.RpcCall(&results, "GetTransactionsForTxBlock", []string{strNumber})
 	if err != nil {
-		return nil, err
+		return txs
 	}
 
 	var wg sync.WaitGroup
@@ -45,9 +47,8 @@ func (c *RpcClient) GetTxInBlock(number int64) ([]Tx, error) {
 	wg.Wait()
 	close(out)
 
-	txs := make([]Tx, 0)
 	for tx := range out {
 		txs = append(txs, tx)
 	}
-	return txs, nil
+	return txs
 }
