@@ -22,7 +22,9 @@ observer:
   # Redis Subscription Database
   redis: redis://redis:6379
   # Smallest possible block polling interval
-  min_poll: 250ms
+  min_poll: 3s
+  # Biggest possible block polling interval
+  max_poll: 30s
   # Don't request blocks older than this
   backlog: 3h
   # Don't request more than N blocks at once
