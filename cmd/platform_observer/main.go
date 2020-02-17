@@ -33,8 +33,8 @@ func main() {
 	}
 
 	backlogTime := viper.GetDuration("observer.backlog")
-	minInterval := viper.GetDuration("observer.min_poll")
-	maxInterval := viper.GetDuration("observer.max_poll")
+	minInterval := viper.GetDuration("observer.block_poll.min")
+	maxInterval := viper.GetDuration("observer.block_poll.max")
 	if minInterval >= maxInterval {
 		logger.Fatal("minimum block polling interval cannot be greater or equal than maximum")
 	}
@@ -44,11 +44,11 @@ func main() {
 
 	for _, api := range platform.BlockAPIs {
 		coin := api.Coin()
-		blockTime := time.Duration(coin.BlockTime) * time.Millisecond
-		if blockTime < minInterval {
-			blockTime = minInterval
-		} else if blockTime > maxInterval {
-			blockTime = maxInterval
+		pollInterval := time.Duration(coin.BlockTime) * time.Millisecond
+		if pollInterval < minInterval {
+			pollInterval = minInterval
+		} else if pollInterval > maxInterval {
+			pollInterval = maxInterval
 		}
 
 		// Stream incoming blocks
@@ -57,13 +57,13 @@ func main() {
 			backlogCount = 50
 			logger.Warn("Unknown block time", logger.Params{"coin": coin.ID})
 		} else {
-			backlogCount = int(backlogTime / blockTime)
+			backlogCount = int(backlogTime / pollInterval)
 		}
 
 		stream := observer.Stream{
 			BlockAPI:     api,
 			Tracker:      cache,
-			PollInterval: blockTime,
+			PollInterval: pollInterval,
 			BacklogCount: backlogCount,
 		}
 		blocks := stream.Execute(context.Background())
@@ -84,7 +84,7 @@ func main() {
 
 		logger.Info("Observing", logger.Params{
 			"coin":     coin,
-			"interval": blockTime,
+			"interval": pollInterval,
 			"backlog":  backlogCount,
 		})
 	}

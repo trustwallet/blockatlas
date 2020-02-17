@@ -21,16 +21,16 @@ observer:
   auth: test
   # Redis Subscription Database
   redis: redis://redis:6379
-  # Smallest possible block polling interval
-  min_poll: 3s
-  # Biggest possible block polling interval
-  max_poll: 30s
   # Don't request blocks older than this
   backlog: 3h
   # Don't request more than N blocks at once
   backlog_max_blocks: 200
   # Max connections to open to API
   stream_conns: 16
+  # Block polling interval
+  block_poll:
+    min: 3s
+    max: 30s
 
 # The market watcher
 market:
