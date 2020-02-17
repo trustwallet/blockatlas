@@ -3,6 +3,7 @@ package nimiq
 import (
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"time"
 )
 
 func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
@@ -15,7 +16,11 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 
 // NormalizeTx converts a Nimiq transaction into the generic model
 func NormalizeTx(srcTx *Tx) blockatlas.Tx {
-	date, _ := srcTx.Timestamp.Int64()
+	date, err := srcTx.Timestamp.Int64()
+	// Pending transaction doesn't have a timestamp, we gonna use the current time
+	if err != nil || len(srcTx.BlockHash) == 0 {
+		date = time.Now().Unix()
+	}
 	return blockatlas.Tx{
 		ID:    srcTx.Hash,
 		Coin:  coin.NIM,
