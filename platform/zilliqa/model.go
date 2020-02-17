@@ -6,6 +6,18 @@ import (
 	"strconv"
 )
 
+type BlockTxs [][]string
+
+func (b BlockTxs) txs() []string {
+	txs := make([]string, 0)
+	for _, ids := range b {
+		for _, id := range ids {
+			txs = append(txs, id)
+		}
+	}
+	return txs
+}
+
 type Tx struct {
 	Hash           string      `json:"hash"`
 	BlockHeight    uint64      `json:"blockHeight"`

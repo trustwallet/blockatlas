@@ -15,37 +15,39 @@ func (c *RpcClient) GetBlockchainInfo() (info *ChainInfo, err error) {
 	return
 }
 
-func (c *RpcClient) GetTx(hash string) (tx Tx, err error) {
+func (c *RpcClient) GetTx(hash string) (tx TxRPC, err error) {
 	err = c.RpcCall(&tx, "GetTransaction", []string{hash})
 	return
 }
 
-func (c *RpcClient) GetTxInBlock(number int64) (txs []Tx, err error) {
-	strNumber := strconv.FormatInt(number, 10)
-	var results [][]string
-	err = c.RpcCall(&results, "GetTransactionsForTxBlock", []string{strNumber})
+func (c *RpcClient) GetTxInBlock(number int64) ([]Tx, error) {
+	strNumber := strconv.Itoa(int(number))
+	var results BlockTxs
+	err := c.RpcCall(&results, "GetTransactionsForTxBlock", []string{strNumber})
+	if err != nil {
+		return nil, err
+	}
 
 	var wg sync.WaitGroup
-	out := make(chan Tx)
-	for _, ids := range results {
-		for _, id := range ids {
-			wg.Add(1)
-			go func(id string) {
-				defer wg.Done()
-				tx, errTx := c.GetTx(id)
-				if errTx != nil {
-					return
-				}
-				out <- tx
-			}(id)
-		}
+	btxs := results.txs()
+	out := make(chan Tx, len(btxs))
+	wg.Add(len(btxs))
+	for _, id := range btxs {
+		go func(hash string, txChan chan Tx, wg *sync.WaitGroup) {
+			defer wg.Done()
+			tx, errTx := c.GetTx(hash)
+			if errTx != nil {
+				return
+			}
+			txChan <- tx.toTx()
+		}(id, out, &wg)
 	}
-	go func() {
-		for tx := range out {
-			txs = append(txs, tx)
-		}
-	}()
 	wg.Wait()
 	close(out)
-	return
+
+	txs := make([]Tx, 0)
+	for tx := range out {
+		txs = append(txs, tx)
+	}
+	return txs, nil
 }
