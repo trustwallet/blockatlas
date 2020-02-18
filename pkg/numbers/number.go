@@ -7,6 +7,7 @@ import (
 	"math/big"
 	"strconv"
 	"strings"
+	"time"
 )
 
 func Min(x, y int) int {
@@ -68,4 +69,14 @@ func SliceAtoi(sa []string) ([]int, error) {
 		si = append(si, i)
 	}
 	return si, nil
+}
+
+func GetInterval(blockTime int, minInterval, maxInterval time.Duration) (pollInterval time.Duration) {
+	pollInterval = time.Duration(blockTime) * time.Millisecond
+	if pollInterval < minInterval {
+		pollInterval = minInterval
+	} else if pollInterval > maxInterval {
+		pollInterval = maxInterval
+	}
+	return
 }

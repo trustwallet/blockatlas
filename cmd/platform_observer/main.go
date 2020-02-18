@@ -6,10 +6,10 @@ import (
 	"github.com/trustwallet/blockatlas/internal"
 	"github.com/trustwallet/blockatlas/observer"
 	"github.com/trustwallet/blockatlas/pkg/logger"
+	"github.com/trustwallet/blockatlas/pkg/numbers"
 	"github.com/trustwallet/blockatlas/platform"
 	"github.com/trustwallet/blockatlas/storage"
 	"sync"
-	"time"
 )
 
 const (
@@ -44,12 +44,7 @@ func main() {
 
 	for _, api := range platform.BlockAPIs {
 		coin := api.Coin()
-		pollInterval := time.Duration(coin.BlockTime) * time.Millisecond
-		if pollInterval < minInterval {
-			pollInterval = minInterval
-		} else if pollInterval > maxInterval {
-			pollInterval = maxInterval
-		}
+		pollInterval := numbers.GetInterval(coin.BlockTime, minInterval, maxInterval)
 
 		// Stream incoming blocks
 		var backlogCount int
