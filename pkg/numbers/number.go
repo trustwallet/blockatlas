@@ -71,12 +71,12 @@ func SliceAtoi(sa []string) ([]int, error) {
 	return si, nil
 }
 
-func GetInterval(blockTime int, minInterval, maxInterval time.Duration) (pollInterval time.Duration) {
-	pollInterval = time.Duration(blockTime) * time.Millisecond
-	if pollInterval < minInterval {
-		pollInterval = minInterval
-	} else if pollInterval > maxInterval {
-		pollInterval = maxInterval
+func GetInterval(value int, minInterval, maxInterval time.Duration) (interval time.Duration) {
+	interval = time.Duration(value) * time.Millisecond
+	if interval < minInterval {
+		interval = minInterval
+	} else if interval > maxInterval {
+		interval = maxInterval
 	}
 	return
 }
