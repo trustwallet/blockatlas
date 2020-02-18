@@ -171,7 +171,7 @@ nebulas:
 fio:
 #  api: https://addresses.fio.foundation
 #  api: http://testnet.fioprotocol.io/v1/chain
-  api: http://localhost:3000/v1/chain
+  api: http://localhost:3000/fio-api/v1/chain
 
 # [BTC] Bitcoin: https://bitcoin.org/ (Blockbook API https://github.com/trezor/blockbook)
 bitcoin:
