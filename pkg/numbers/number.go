@@ -7,7 +7,6 @@ import (
 	"math/big"
 	"strconv"
 	"strings"
-	"time"
 )
 
 func Min(x, y int) int {
@@ -69,14 +68,4 @@ func SliceAtoi(sa []string) ([]int, error) {
 		si = append(si, i)
 	}
 	return si, nil
-}
-
-func GetInterval(value int, minInterval, maxInterval time.Duration) (interval time.Duration) {
-	interval = time.Duration(value) * time.Millisecond
-	if interval < minInterval {
-		interval = minInterval
-	} else if interval > maxInterval {
-		interval = maxInterval
-	}
-	return
 }
