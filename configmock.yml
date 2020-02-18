@@ -58,7 +58,8 @@ storage:
 # [BNB] Binance DEX: https://wallet.binance.org
 #       Binance Chain: https://explorer.binance.org
 binance:
-  api: https://explorer.binance.org/api/v1
+#  api: https://explorer.binance.org/api/v1
+  api: http://localhost:3000/binance-explorer-api/v1
   dex: https://dex.binance.org/api
 
 # [NIM] Nimiq: https://nimiq.com
