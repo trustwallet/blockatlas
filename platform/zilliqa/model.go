@@ -2,9 +2,22 @@ package zilliqa
 
 import (
 	"encoding/hex"
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"math/big"
 	"strconv"
 )
+
+type BlockTxs [][]string
+
+func (b BlockTxs) txs() []string {
+	txs := make([]string, 0)
+	for _, ids := range b {
+		for _, id := range ids {
+			txs = append(txs, id)
+		}
+	}
+	return txs
+}
 
 type Tx struct {
 	Hash           string      `json:"hash"`
@@ -74,4 +87,11 @@ func (t *TxRPC) toTx() Tx {
 		ReceiptSuccess: t.Receipt.Success,
 	}
 	return tx
+}
+
+type BlockTxRpc struct {
+	JsonRpc string               `json:"jsonrpc"`
+	Error   *blockatlas.RpcError `json:"error,omitempty"`
+	Result  BlockTxs             `json:"result,omitempty"`
+	Id      string               `json:"id,omitempty"`
 }

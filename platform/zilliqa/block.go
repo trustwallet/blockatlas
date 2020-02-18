@@ -30,10 +30,10 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 		tx := Normalize(&srcTx)
 		normalized = append(normalized, tx)
 	}
+
 	block := blockatlas.Block{
 		Number: num,
 		Txs:    normalized,
 	}
-
 	return &block, nil
 }
