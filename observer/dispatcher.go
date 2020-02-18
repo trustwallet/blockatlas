@@ -35,13 +35,13 @@ func (d *Dispatcher) dispatch(event Event) {
 	logger.Info("Dispatching webhooks...", logger.Params{"webhook": webhook}, logParams)
 }
 
-func (d *Dispatcher) postWebhook(hook string, data interface{}, logParams logger.Params) {
-	client := blockatlas.InitClient(hook)
+func (d *Dispatcher) postWebhook(url string, data interface{}, logParams logger.Params) {
+	client := blockatlas.InitClient(url)
 	client.Headers["Content-Type"] = "application/json"
 	err := client.Post(nil, "", data)
 	if err != nil {
-		err = errors.E(err, errors.Params{"hook": hook}).PushToSentry()
-		logger.Error(err, "Failed to dispatch event", logger.Params{"webhook": hook}, logParams)
+		err = errors.E(err, errors.Params{"url": url}).PushToSentry()
+		logger.Error(err, "Failed to dispatch webhook event", logger.Params{"url": url}, logParams)
 	}
-	logger.Info("Webhook dispatched", logger.Params{"webhook": hook}, logParams)
+	logger.Info("Webhook dispatched", logger.Params{"url": url}, logParams)
 }
