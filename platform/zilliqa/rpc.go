@@ -51,10 +51,10 @@ func (c *RpcClient) GetTxInBlock(number int64) ([]Tx, error) {
 	}
 
 	var requests blockatlas.RpcRequests
-	for _, hashe := range hashes {
+	for _, hash := range hashes {
 		requests = append(requests, &blockatlas.RpcRequest{
 			Method: "GetTransaction",
-			Params: []string{hashe},
+			Params: []string{hash},
 		})
 	}
 	responses, err := c.RpcBatchCall(requests)
