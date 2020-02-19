@@ -62,15 +62,15 @@ definitions:
     properties:
       data_source:
         type: string
-      details:
-        items:
-          $ref: '#/definitions/blockatlas.Detail'
-        type: array
+      description:
+        type: string
       explorers:
         items:
           $ref: '#/definitions/blockatlas.Link'
         type: array
       name:
+        type: string
+      short_description:
         type: string
       socials:
         items:
@@ -80,7 +80,7 @@ definitions:
         type: string
       website:
         type: string
-      whitepaper:
+      white_paper:
         type: string
     type: object
   blockatlas.CoinStatus:
@@ -159,13 +159,6 @@ definitions:
     items:
       $ref: '#/definitions/blockatlas.Delegation'
     type: array
-  blockatlas.Detail:
-    properties:
-      description:
-        type: string
-      language:
-        type: string
-    type: object
   blockatlas.DocsResponse:
     properties:
       docs:
@@ -623,36 +616,6 @@ paths:
       tags:
       - Market
   /v1/market/ticker:
-    get:
-      consumes:
-      - application/json
-      description: Get the ticker value from an market and coin/token
-      operationId: get_ticker
-      parameters:
-      - description: coin id
-        in: query
-        name: coin
-        required: true
-        type: integer
-      - description: token id
-        in: query
-        name: token
-        type: string
-      - default: USD
-        description: the currency to show the quote
-        in: query
-        name: currency
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/blockatlas.Ticker'
-      summary: Get ticker value for a specific market
-      tags:
-      - Market
     post:
       consumes:
       - application/json

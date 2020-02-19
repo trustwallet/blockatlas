@@ -36,55 +36,10 @@ type Coin struct {
 func SetupMarketAPI(router gin.IRouter, db storage.Market) {
 	router.Use(ginutils.TokenAuthMiddleware(viper.GetString("market.auth")))
 	// Ticker
-	router.GET("/ticker", getTickerHandler(db))
 	router.POST("/ticker", getTickersHandler(db))
 	// Charts
 	router.GET("/charts", gincache.CacheMiddleware(time.Minute*5, getChartsHandler()))
 	router.GET("/info", getCoinInfoHandler())
-}
-
-// @Summary Get ticker value for a specific market
-// @Id get_ticker
-// @Description Get the ticker value from an market and coin/token
-// @Accept json
-// @Produce json
-// @Tags Market
-// @Param coin query int true "coin id"
-// @Param token query string false "token id"
-// @Param currency query string false "the currency to show the quote" default(USD)
-// @Success 200 {object} blockatlas.Ticker
-// @Router /v1/market/ticker [get]
-func getTickerHandler(storage storage.Market) func(c *gin.Context) {
-	if storage == nil {
-		return nil
-	}
-	return func(c *gin.Context) {
-		coinQuery := c.Query("coin")
-		coinId, err := strconv.Atoi(coinQuery)
-		if err != nil {
-			ginutils.RenderError(c, http.StatusBadRequest, "Invalid coin")
-			return
-		}
-		token := strings.ToUpper(c.Query("token"))
-
-		currency := c.DefaultQuery("currency", blockatlas.DefaultCurrency)
-		rate, err := storage.GetRate(strings.ToUpper(currency))
-		if err != nil {
-			logger.Error(err, "Failed to retrieve currency", logger.Params{"coin": coinId, "currency": currency})
-			ginutils.RenderError(c, http.StatusInternalServerError, "Failed to retrieve currency")
-			return
-		}
-
-		symbol := coin.Coins[uint(coinId)].Symbol
-		result, err := storage.GetTicker(symbol, token)
-		if err != nil {
-			logger.Error(err, "Failed to retrieve ticker", logger.Params{"coin": coinId, "currency": currency})
-			ginutils.RenderError(c, http.StatusInternalServerError, err.Error())
-			return
-		}
-		result.ApplyRate(currency, rate.Rate, rate.PercentChange24h)
-		ginutils.RenderSuccess(c, result)
-	}
 }
 
 // @Summary Get ticker values for a specific market
