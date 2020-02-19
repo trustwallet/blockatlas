@@ -23,9 +23,12 @@ type configuration struct {
 		Enabled          bool
 		Auth             string
 		Backlog          time.Duration
-		MinPoll          time.Duration `mapstructure:"min_poll"`
-		BacklogMaxBlocks int64         `mapstructure:"backlog_max_blocks"`
-		StreamConns      int           `mapstructure:"stream_conns"`
+		BacklogMaxBlocks int64 `mapstructure:"backlog_max_blocks"`
+		StreamConns      int   `mapstructure:"stream_conns"`
+		BlockPoll        struct {
+			Min time.Duration
+			Max time.Duration
+		} `mapstructure:"block_poll"`
 	}
 	Market struct {
 		Enabled         bool
