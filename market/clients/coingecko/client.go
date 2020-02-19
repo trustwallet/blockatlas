@@ -48,7 +48,7 @@ func (c *Client) FetchLatestRates(coins GeckoCoins, currency string) (prices Coi
 			}
 
 			var cp CoinPrices
-			err := c.Get(&cp, "v3/coins/market", values)
+			err := c.Get(&cp, "v3/coins/markets", values)
 			if err != nil {
 				logger.Error(err)
 				return
