@@ -12,15 +12,16 @@ type Platform struct {
 	collectionsClient CollectionsClient
 }
 
-func Init(api, rpc string) *Platform {
+func Init(coin uint, api, rpc string) *Platform {
 	return &Platform{
-		RpcURL: rpc,
-		client: Client{blockatlas.InitClient(api)},
+		CoinIndex: coin,
+		RpcURL:    rpc,
+		client:    Client{blockatlas.InitClient(api)},
 	}
 }
 
-func InitWitCollection(api, rpc, collectionApi, collectionKey string) *Platform {
-	p := Init(api, rpc)
+func InitWitCollection(coin uint, api, rpc, collectionApi, collectionKey string) *Platform {
+	p := Init(coin, api, rpc)
 	p.collectionsClient = CollectionsClient{blockatlas.InitClient(collectionApi)}
 	p.collectionsClient.Headers["X-API-KEY"] = collectionKey
 	return p

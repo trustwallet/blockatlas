@@ -10,9 +10,10 @@ type Platform struct {
 	CoinIndex uint
 }
 
-func Init(api string) *Platform {
+func Init(coin uint, api string) *Platform {
 	return &Platform{
-		client: Client{blockatlas.InitClient(api)},
+		CoinIndex: coin,
+		client:    Client{blockatlas.InitClient(api)},
 	}
 }
 
