@@ -9,7 +9,6 @@ import (
 	"github.com/trustwallet/blockatlas/platform"
 	"github.com/trustwallet/blockatlas/storage"
 	"sync"
-	"time"
 )
 
 const (
@@ -32,20 +31,19 @@ func main() {
 		logger.Fatal("No APIs to observe")
 	}
 
-	minInterval := viper.GetDuration("observer.min_poll")
 	backlogTime := viper.GetDuration("observer.backlog")
+	minInterval := viper.GetDuration("observer.block_poll.min")
+	maxInterval := viper.GetDuration("observer.block_poll.max")
+	if minInterval >= maxInterval {
+		logger.Fatal("minimum block polling interval cannot be greater or equal than maximum")
+	}
 
 	var wg sync.WaitGroup
 	wg.Add(len(platform.BlockAPIs))
 
 	for _, api := range platform.BlockAPIs {
 		coin := api.Coin()
-		blockTime := time.Duration(coin.BlockTime) * time.Millisecond
-		pollInterval := blockTime / 4
-
-		if pollInterval < minInterval {
-			pollInterval = minInterval
-		}
+		pollInterval := observer.GetInterval(coin.BlockTime, minInterval, maxInterval)
 
 		// Stream incoming blocks
 		var backlogCount int
@@ -53,7 +51,7 @@ func main() {
 			backlogCount = 50
 			logger.Warn("Unknown block time", logger.Params{"coin": coin.ID})
 		} else {
-			backlogCount = int(backlogTime / blockTime)
+			backlogCount = int(backlogTime / pollInterval)
 		}
 
 		stream := observer.Stream{
