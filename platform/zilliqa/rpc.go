@@ -1,10 +1,10 @@
 package zilliqa
 
 import (
+	"github.com/mitchellh/mapstructure"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"strconv"
-	"sync"
 )
 
 type RpcClient struct {
@@ -46,28 +46,27 @@ func (c *RpcClient) GetBlockByNumber(number int64) ([]string, error) {
 func (c *RpcClient) GetTxInBlock(number int64) ([]Tx, error) {
 	txs := make([]Tx, 0)
 	hashes, err := c.GetBlockByNumber(number)
-	if err != nil {
+	if err != nil || len(hashes) == 0 {
 		return txs, err
 	}
 
-	var wg sync.WaitGroup
-	out := make(chan Tx, len(hashes))
-	wg.Add(len(hashes))
-	for _, id := range hashes {
-		go func(hash string, txChan chan Tx, wg *sync.WaitGroup) {
-			defer wg.Done()
-			tx, errTx := c.GetTx(hash)
-			if errTx != nil {
-				return
-			}
-			txChan <- tx.toTx()
-		}(id, out, &wg)
+	var requests blockatlas.RpcRequests
+	for _, hashe := range hashes {
+		requests = append(requests, &blockatlas.RpcRequest{
+			Method: "GetTransaction",
+			Params: []string{hashe},
+		})
 	}
-	wg.Wait()
-	close(out)
-
-	for tx := range out {
-		txs = append(txs, tx)
+	responses, err := c.RpcBatchCall(requests)
+	if err != nil {
+		return nil, err
+	}
+	for _, result := range responses {
+		var txRPC TxRPC
+		if mapstructure.Decode(result.Result, &txRPC) != nil {
+			continue
+		}
+		txs = append(txs, txRPC.toTx())
 	}
 	return txs, nil
 }
