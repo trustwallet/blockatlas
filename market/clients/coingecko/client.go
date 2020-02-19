@@ -41,14 +41,9 @@ func (c *Client) FetchLatestRates(coins GeckoCoins, currency string) (prices Coi
 				end = i + bucketSize
 			}
 			bucket := ci[i:end]
-			values := url.Values{
-				"vs_currency": {currency},
-				"sparkline":   {"false"},
-				"ids":         {strings.Join(bucket[:], ",")},
-			}
+			ids := strings.Join(bucket[:], ",")
 
-			var cp CoinPrices
-			err := c.Get(&cp, "v3/coins/markets", values)
+			cp, err := c.FetchCoinsMarkets(currency, ids)
 			if err != nil {
 				logger.Error(err)
 				return
@@ -71,7 +66,7 @@ func (c *Client) FetchLatestRates(coins GeckoCoins, currency string) (prices Coi
 	return
 }
 
-func (c *Client) GetChartsData(id string, currency string, timeStart int64, timeEnd int64) (charts Charts, err error) {
+func (c *Client) GetChartsData(id, currency string, timeStart, timeEnd int64) (charts Charts, err error) {
 	values := url.Values{
 		"vs_currency": {currency},
 		"from":        {strconv.FormatInt(timeStart, 10)},
@@ -86,6 +81,17 @@ func (c *Client) FetchCoinsList() (coins GeckoCoins, err error) {
 		"include_platform": {"true"},
 	}
 	err = c.GetWithCache(&coins, "v3/coins/list", values, time.Hour)
+	return
+}
+
+func (c *Client) FetchCoinsMarkets(currency, ids string) (cp CoinPrices, err error) {
+	values := url.Values{
+		"vs_currency": {currency},
+		"sparkline":   {"false"},
+		"ids":         {ids},
+	}
+
+	err = c.Get(&cp, "v3/coins/markets", values)
 	return
 }
 
