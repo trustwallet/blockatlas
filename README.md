@@ -84,7 +84,7 @@ cd $(go env GOPATH)/src/github.com/trustwallet/blockatlas
 go build -o platform-observer-bin cmd/platform_observer/main.go && ./platform-observer-bin -c config.yml
 
 # Start markets_observer with the path to the config.yml ./ 
-go build -o market-observer-bin cmd/markets_observer/main.go && ./market-observer-bin -c config.yml
+go build -o market-observer-bin cmd/market_observer/main.go && ./market-observer-bin -c config.yml
 
 # Start Platform API server at port 8420 with the path to the config.yml ./ 
 go build -o platform-api-bin cmd/platform_api/main.go  && ./platform-api-bin -p 8420 -c config.yml
