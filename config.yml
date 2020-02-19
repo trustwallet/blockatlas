@@ -19,8 +19,6 @@ observer:
   enabled: false
   # TODO : Add description
   auth: test
-  # Redis Subscription Database
-  redis: redis://redis:6379
   # Don't request blocks older than this
   backlog: 3h
   # Don't request more than N blocks at once

@@ -2,7 +2,7 @@ package market
 
 import (
 	"github.com/robfig/cron/v3"
-	"github.com/spf13/viper"
+	"github.com/trustwallet/blockatlas/config"
 	"github.com/trustwallet/blockatlas/market/rate"
 	"github.com/trustwallet/blockatlas/market/rate/cmc"
 	"github.com/trustwallet/blockatlas/market/rate/coingecko"
@@ -19,23 +19,23 @@ func InitRates(storage storage.Market) {
 	rateProviders = rate.Providers{
 		// Add Market Quote Providers:
 		0: cmc.InitRate(
-			viper.GetString("market.cmc.api"),
-			viper.GetString("market.cmc.api_key"),
-			viper.GetString("market.cmc.map_url"),
-			viper.GetString("market.rate_update_time"),
+			config.Configuration.Market.Cmc.API,
+			config.Configuration.Market.Cmc.APIKey,
+			config.Configuration.Market.Cmc.MapURL,
+			config.Configuration.Market.RateUpdateTime,
 		),
 		1: fixer.InitRate(
-			viper.GetString("market.fixer.api"),
-			viper.GetString("market.fixer.api_key"),
-			viper.GetString("market.fixer.rate_update_time"),
+			config.Configuration.Market.Fixer.API,
+			config.Configuration.Market.Fixer.APIKey,
+			config.Configuration.Market.Fixer.RateUpdateTime,
 		),
 		2: compound.InitRate(
-			viper.GetString("market.compound.api"),
-			viper.GetString("market.rate_update_time"),
+			config.Configuration.Market.Compound.API,
+			config.Configuration.Market.RateUpdateTime,
 		),
 		3: coingecko.InitRate(
-			viper.GetString("market.coingecko.api"),
-			viper.GetString("market.rate_update_time"),
+			config.Configuration.Market.Coingecko.API,
+			config.Configuration.Market.RateUpdateTime,
 		),
 	}
 	addRates(storage, rateProviders)

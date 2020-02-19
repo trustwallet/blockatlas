@@ -6,7 +6,6 @@ import (
 	"context"
 	"github.com/getsentry/sentry-go/gin"
 	"github.com/gin-gonic/gin"
-	"github.com/spf13/viper"
 	"github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
 	"github.com/trustwallet/blockatlas/api"
@@ -30,7 +29,7 @@ func TestApis(t *testing.T) {
 	config.LoadConfig(os.Getenv("TEST_CONFIG"))
 
 	logger.InitLogger()
-	platform.Init(viper.GetString("platform"))
+	platform.Init(config.Configuration.Platform)
 	cache := storage.New()
 	sg := sentrygin.New(sentrygin.Options{})
 	p := ":8420"
@@ -54,12 +53,12 @@ func TestApis(t *testing.T) {
 	api.MakeMetricsRoute(engine)
 	api.LoadPlatforms(engine)
 
-	if viper.GetBool("observer.enabled") {
+	if config.Configuration.Observer.Enabled {
 		logger.Info("Loading observer API")
 		observerAPI := engine.Group("/observer/v1")
 		api.SetupObserverAPI(observerAPI, cache)
 	}
-	if viper.GetBool("market.enabled") {
+	if config.Configuration.Market.Enabled {
 		logger.Info("Loading market API")
 		marketAPI := engine.Group("/v1/market")
 		api.SetupMarketAPI(marketAPI, cache)

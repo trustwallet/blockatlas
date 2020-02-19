@@ -2,8 +2,8 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/coin"
+	"github.com/trustwallet/blockatlas/config"
 	"github.com/trustwallet/blockatlas/market"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/ginutils"
@@ -34,7 +34,7 @@ type Coin struct {
 }
 
 func SetupMarketAPI(router gin.IRouter, db storage.Market) {
-	router.Use(ginutils.TokenAuthMiddleware(viper.GetString("market.auth")))
+	router.Use(ginutils.TokenAuthMiddleware(config.Configuration.Market.Auth))
 	// Ticker
 	router.POST("/ticker", getTickersHandler(db))
 	// Charts
