@@ -19,22 +19,22 @@ func InitMarkets(storage storage.Market) {
 	marketProviders = market.Providers{
 		// Add Market Quote Providers:
 		0: dex.InitMarket(
-			config.Configuration.Market.Dex.Api,
-			config.Configuration.Market.Dex.Quote_Update_Time,
+			config.Configuration.Market.Dex.API,
+			config.Configuration.Market.Dex.QuoteUpdateTime,
 		),
 		1: cmc.InitMarket(
-			config.Configuration.Market.Cmc.Api,
-			config.Configuration.Market.Cmc.Api_Key,
-			config.Configuration.Market.Cmc.Map_Url,
-			config.Configuration.Market.Quote_Update_Time,
+			config.Configuration.Market.Cmc.API,
+			config.Configuration.Market.Cmc.APIKey,
+			config.Configuration.Market.Cmc.MapURL,
+			config.Configuration.Market.QuoteUpdateTime,
 		),
 		2: compound.InitMarket(
-			config.Configuration.Market.Compound.Api,
-			config.Configuration.Market.Quote_Update_Time,
+			config.Configuration.Market.Compound.API,
+			config.Configuration.Market.QuoteUpdateTime,
 		),
 		3: coingecko.InitMarket(
-			config.Configuration.Market.Coingecko.Api,
-			config.Configuration.Market.Quote_Update_Time,
+			config.Configuration.Market.Coingecko.API,
+			config.Configuration.Market.QuoteUpdateTime,
 		),
 	}
 	addMarkets(storage, marketProviders)

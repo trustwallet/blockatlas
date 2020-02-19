@@ -32,7 +32,7 @@ func main() {
 		logger.Fatal("No APIs to observe")
 	}
 
-	minInterval := config.Configuration.Observer.Min_Poll
+	minInterval := config.Configuration.Observer.MinPoll
 	backlogTime := config.Configuration.Observer.Backlog
 	maxInterval := viper.GetDuration("observer.block_poll.max")
 	if minInterval >= maxInterval {

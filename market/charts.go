@@ -23,12 +23,12 @@ type Charts struct {
 func InitCharts() *Charts {
 	return &Charts{chart.Providers{
 		0: cmc.InitChart(
-			config.Configuration.Market.Cmc.Web_Api,
-			config.Configuration.Market.Cmc.Widget_Api,
-			config.Configuration.Market.Cmc.Map_Url,
+			config.Configuration.Market.Cmc.WebAPI,
+			config.Configuration.Market.Cmc.WidgetAPI,
+			config.Configuration.Market.Cmc.MapURL,
 		),
 		1: coingecko.InitChart(
-			config.Configuration.Market.Coingecko.Api,
+			config.Configuration.Market.Coingecko.API,
 		),
 	}}
 }

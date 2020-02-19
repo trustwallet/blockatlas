@@ -30,7 +30,7 @@ func (s *Stream) Execute(ctx context.Context) <-chan *blockatlas.Block {
 	cn := s.BlockAPI.Coin()
 	s.coin = cn.ID
 	s.logParams = logger.Params{"platform": cn.Handle}
-	conns := config.Configuration.Observer.Stream_Conns
+	conns := config.Configuration.Observer.StreamConns
 	if conns == 0 {
 		logger.Fatal("observer.stream_conns is 0")
 	}
@@ -71,7 +71,7 @@ func (s *Stream) load(c chan<- *blockatlas.Block) {
 	if height-lastHeight > int64(s.BacklogCount) {
 		lastHeight = height - int64(s.BacklogCount)
 	}
-	backLogMax := config.Configuration.Observer.Backlog_Max_Blocks
+	backLogMax := config.Configuration.Observer.BacklogMaxBlocks
 	if height-lastHeight > backLogMax {
 		lastHeight = height - backLogMax
 	}

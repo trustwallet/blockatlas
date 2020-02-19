@@ -9,50 +9,50 @@ import (
 
 type configuration struct {
 	Gin struct {
-		Mode          string
-		Reverse_Proxy bool
+		Mode         string
+		ReverseProxy bool `mapstructure:"reverse_proxy"`
 	}
 	Platform string
 	Metrics  struct {
-		Api_Token string
+		APIToken string `mapstructure:"api_token"`
 	}
 	Sentry struct {
 		Dsn string
 	}
 	Observer struct {
-		Enabled            bool
-		Auth               string
-		Min_Poll           time.Duration
-		Backlog            time.Duration
-		Backlog_Max_Blocks int64
-		Stream_Conns       int
+		Enabled          bool
+		Auth             string
+		Backlog          time.Duration
+		MinPoll          time.Duration `mapstructure:"min_poll"`
+		BacklogMaxBlocks int64         `mapstructure:"backlog_max_blocks"`
+		StreamConns      int           `mapstructure:"stream_conns"`
 	}
 	Market struct {
-		Enabled           bool
-		Auth              string
-		Quote_Update_Time string
-		Rate_Update_Time  string
-		Dex               struct {
-			Quote_Update_Time string
-			Api               string
+		Enabled         bool
+		Auth            string
+		QuoteUpdateTime string `mapstructure:"quote_update_time"`
+		RateUpdateTime  string `mapstructure:"rate_update_time"`
+		Dex             struct {
+			QuoteUpdateTime string `mapstructure:"quote_update_time"`
+			API             string
 		}
 		Cmc struct {
-			Api        string
-			Web_Api    string
-			Widget_Api string
-			Api_Key    string
-			Map_Url    string
+			API       string
+			WebAPI    string `mapstructure:"web_api"`
+			WidgetAPI string `mapstructure:"widget_api"`
+			APIKey    string `mapstructure:"api_key"`
+			MapURL    string `mapstructure:"map_url"`
 		}
 		Fixer struct {
-			Rate_Update_Time string
-			Api              string
-			Api_Key          string
+			API            string
+			APIKey         string `mapstructure:"api_key"`
+			RateUpdateTime string `mapstructure:"rate_update_time"`
 		}
 		Compound struct {
-			Api string
+			API string
 		}
 		Coingecko struct {
-			Api string
+			API string
 		}
 	}
 	Storage struct {

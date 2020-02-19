@@ -8,7 +8,7 @@ import (
 // CheckReverseProxy removes untrusted forwarded HTTP headers
 // if gin.reverse_proxy is defined
 func CheckReverseProxy(c *gin.Context) {
-	if !config.Configuration.Gin.Reverse_Proxy {
+	if !config.Configuration.Gin.ReverseProxy {
 		c.Request.Header.Del("Forwarded")
 		c.Request.Header.Del("X-Forwarded-Proto")
 		c.Request.Header.Del("X-Forwarded-Host")

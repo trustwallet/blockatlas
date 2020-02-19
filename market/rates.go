@@ -19,23 +19,23 @@ func InitRates(storage storage.Market) {
 	rateProviders = rate.Providers{
 		// Add Market Quote Providers:
 		0: cmc.InitRate(
-			config.Configuration.Market.Cmc.Api,
-			config.Configuration.Market.Cmc.Api_Key,
-			config.Configuration.Market.Cmc.Map_Url,
-			config.Configuration.Market.Rate_Update_Time,
+			config.Configuration.Market.Cmc.API,
+			config.Configuration.Market.Cmc.APIKey,
+			config.Configuration.Market.Cmc.MapURL,
+			config.Configuration.Market.RateUpdateTime,
 		),
 		1: fixer.InitRate(
-			config.Configuration.Market.Fixer.Api,
-			config.Configuration.Market.Fixer.Api_Key,
-			config.Configuration.Market.Fixer.Rate_Update_Time,
+			config.Configuration.Market.Fixer.API,
+			config.Configuration.Market.Fixer.APIKey,
+			config.Configuration.Market.Fixer.RateUpdateTime,
 		),
 		2: compound.InitRate(
-			config.Configuration.Market.Compound.Api,
-			config.Configuration.Market.Rate_Update_Time,
+			config.Configuration.Market.Compound.API,
+			config.Configuration.Market.RateUpdateTime,
 		),
 		3: coingecko.InitRate(
-			config.Configuration.Market.Coingecko.Api,
-			config.Configuration.Market.Rate_Update_Time,
+			config.Configuration.Market.Coingecko.API,
+			config.Configuration.Market.RateUpdateTime,
 		),
 	}
 	addRates(storage, rateProviders)
