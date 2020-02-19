@@ -3,18 +3,19 @@ package algorand
 import (
 	"fmt"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/client"
 	"github.com/trustwallet/blockatlas/pkg/numbers"
 )
 
 type Client struct {
-	blockatlas.Request
+	client.Request
 }
 
 func InitClient(baseUrl string) Client {
 	return Client{
-		Request: blockatlas.Request{
-			HttpClient:   blockatlas.DefaultClient,
-			ErrorHandler: blockatlas.DefaultErrorHandler,
+		Request: client.Request{
+			HttpClient:   client.DefaultClient,
+			ErrorHandler: client.DefaultErrorHandler,
 			BaseUrl:      baseUrl,
 		},
 	}

@@ -1,14 +1,13 @@
 package tezos
 
 import (
+	"github.com/trustwallet/blockatlas/pkg/client"
 	"net/url"
 	"strconv"
-
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 )
 
 type Client struct {
-	blockatlas.Request
+	client.Request
 }
 
 func (c *Client) GetTxsOfAddress(address string, txType TxType) (txs []Transaction, err error) {

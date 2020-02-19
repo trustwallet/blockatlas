@@ -3,6 +3,7 @@ package assets
 import (
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/client"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"time"
 )
@@ -13,7 +14,7 @@ func GetCoinInfo(coinId int, token string) (info *blockatlas.CoinInfo, err error
 		return info, errors.E("coin not found")
 	}
 	url := getCoinInfoUrl(c, token)
-	request := blockatlas.InitClient(url)
+	request := client.InitClient(url)
 	err = request.GetWithCache(&info, "/info.json", nil, time.Hour*1)
 	return
 }

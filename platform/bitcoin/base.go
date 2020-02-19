@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/coin"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/client"
 )
 
 type Platform struct {
@@ -13,7 +13,7 @@ type Platform struct {
 }
 
 func (p *Platform) Init() error {
-	p.client = Client{blockatlas.InitClient(viper.GetString(p.ConfigKey()))}
+	p.client = Client{client.InitClient(viper.GetString(p.ConfigKey()))}
 	return nil
 }
 

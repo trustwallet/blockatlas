@@ -2,7 +2,7 @@ package cosmos
 
 import (
 	"fmt"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/client"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"net/url"
@@ -11,7 +11,7 @@ import (
 
 // Client - the HTTP client
 type Client struct {
-	blockatlas.Request
+	client.Request
 }
 
 // GetAddrTxs - get all ATOM transactions for a given address

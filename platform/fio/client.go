@@ -1,13 +1,13 @@
 package fio
 
 import (
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/client"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 )
 
 // Client for FIO API
 type Client struct {
-	blockatlas.Request
+	client.Request
 }
 
 func (c *Client) lookupPubAddress(name string, coinSymbol string) (address string, error error) {

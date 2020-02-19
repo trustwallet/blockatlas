@@ -1,13 +1,14 @@
 package polkadot
 
 import (
+	"github.com/trustwallet/blockatlas/pkg/client"
 	"strconv"
 
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 )
 
 type Client struct {
-	blockatlas.Request
+	client.Request
 }
 
 func (c *Client) GetTransfersOfAddress(address string) ([]Transfer, error) {

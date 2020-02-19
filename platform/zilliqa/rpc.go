@@ -1,14 +1,14 @@
 package zilliqa
 
 import (
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/client"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"strconv"
 	"sync"
 )
 
 type RpcClient struct {
-	blockatlas.Request
+	client.Request
 }
 
 func (c *RpcClient) GetBlockchainInfo() (info *ChainInfo, err error) {
@@ -23,8 +23,8 @@ func (c *RpcClient) GetTx(hash string) (tx TxRPC, err error) {
 
 func (c *RpcClient) GetBlockByNumber(number int64) ([]string, error) {
 	strNumber := strconv.Itoa(int(number))
-	req := &blockatlas.RpcRequest{
-		JsonRpc: blockatlas.JsonRpcVersion,
+	req := &client.RpcRequest{
+		JsonRpc: client.JsonRpcVersion,
 		Method:  "GetTransactionsForTxBlock",
 		Params:  []string{strNumber},
 		Id:      "GetTransactionsForTxBlock_" + strNumber,

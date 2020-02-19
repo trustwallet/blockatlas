@@ -2,14 +2,14 @@ package binance
 
 import (
 	"fmt"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/client"
 	"net/url"
 )
 
 // TODO Headers + rate limiting
 
 type DexClient struct {
-	blockatlas.Request
+	client.Request
 }
 
 func (c *DexClient) GetAccountMetadata(address string) (account *Account, err error) {

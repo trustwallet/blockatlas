@@ -3,6 +3,7 @@ package binance
 import (
 	"encoding/json"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/client"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"net/http"
@@ -13,7 +14,7 @@ import (
 // TODO Headers + rate limiting
 
 type Client struct {
-	blockatlas.Request
+	client.Request
 }
 
 func (c *Client) GetBlockList(count int) (*BlockList, error) {

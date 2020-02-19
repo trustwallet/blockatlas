@@ -3,6 +3,7 @@ package fixer
 import (
 	"github.com/trustwallet/blockatlas/market/rate"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/client"
 	"net/url"
 )
 
@@ -13,7 +14,7 @@ const (
 type Fixer struct {
 	rate.Rate
 	APIKey string
-	blockatlas.Request
+	client.Request
 }
 
 func InitRate(api string, apiKey string, updateTime string) rate.Provider {
@@ -22,7 +23,7 @@ func InitRate(api string, apiKey string, updateTime string) rate.Provider {
 			Id:         id,
 			UpdateTime: updateTime,
 		},
-		Request: blockatlas.InitClient(api),
+		Request: client.InitClient(api),
 		APIKey:  apiKey,
 	}
 }

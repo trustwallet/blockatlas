@@ -2,9 +2,9 @@ package algorand
 
 import (
 	"github.com/spf13/viper"
+	"github.com/trustwallet/blockatlas/pkg/client"
 
 	"github.com/trustwallet/blockatlas/coin"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 )
 
 type Platform struct {
@@ -12,7 +12,7 @@ type Platform struct {
 }
 
 func (p *Platform) Init() error {
-	p.client = Client{blockatlas.InitClient(viper.GetString("algorand.api"))}
+	p.client = Client{client.InitClient(viper.GetString("algorand.api"))}
 	return nil
 }
 

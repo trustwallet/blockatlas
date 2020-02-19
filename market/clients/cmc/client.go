@@ -2,6 +2,7 @@ package cmc
 
 import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/client"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"net/url"
 	"time"
@@ -9,12 +10,12 @@ import (
 
 type Client struct {
 	apiKey string
-	blockatlas.Request
+	client.Request
 }
 
 func NewClient(api string, key string) *Client {
 	c := Client{
-		Request: blockatlas.InitClient(api),
+		Request: client.InitClient(api),
 		apiKey:  key,
 	}
 	c.Headers["X-CMC_PRO_API_KEY"] = key
@@ -29,10 +30,10 @@ func (c *Client) GetData() (prices CoinPrices, err error) {
 
 func GetCmcMap(mapApi string) (CmcMapping, error) {
 	var results CmcSlice
-	request := blockatlas.Request{
+	request := client.Request{
 		BaseUrl:      mapApi,
-		HttpClient:   blockatlas.DefaultClient,
-		ErrorHandler: blockatlas.DefaultErrorHandler,
+		HttpClient:   client.DefaultClient,
+		ErrorHandler: client.DefaultErrorHandler,
 	}
 	err := request.GetWithCache(&results, "mapping.json", nil, time.Hour*1)
 	if err != nil {
@@ -43,10 +44,10 @@ func GetCmcMap(mapApi string) (CmcMapping, error) {
 
 func GetCoinMap(mapApi string) (CoinMapping, error) {
 	var results CmcSlice
-	request := blockatlas.Request{
+	request := client.Request{
 		BaseUrl:      mapApi,
-		HttpClient:   blockatlas.DefaultClient,
-		ErrorHandler: blockatlas.DefaultErrorHandler,
+		HttpClient:   client.DefaultClient,
+		ErrorHandler: client.DefaultErrorHandler,
 	}
 	err := request.GetWithCache(&results, "mapping.json", nil, time.Hour*1)
 	if err != nil {

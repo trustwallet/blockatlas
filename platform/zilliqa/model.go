@@ -2,7 +2,7 @@ package zilliqa
 
 import (
 	"encoding/hex"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/client"
 	"math/big"
 	"strconv"
 )
@@ -90,8 +90,8 @@ func (t *TxRPC) toTx() Tx {
 }
 
 type BlockTxRpc struct {
-	JsonRpc string               `json:"jsonrpc"`
-	Error   *blockatlas.RpcError `json:"error,omitempty"`
-	Result  BlockTxs             `json:"result,omitempty"`
-	Id      string               `json:"id,omitempty"`
+	JsonRpc string           `json:"jsonrpc"`
+	Error   *client.RpcError `json:"error,omitempty"`
+	Result  BlockTxs         `json:"result,omitempty"`
+	Id      string           `json:"id,omitempty"`
 }

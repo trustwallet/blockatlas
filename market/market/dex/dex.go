@@ -4,6 +4,7 @@ import (
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/market/market"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/client"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"math/big"
 	"net/url"
@@ -18,7 +19,7 @@ var (
 
 type Market struct {
 	market.Market
-	blockatlas.Request
+	client.Request
 }
 
 func InitMarket(api string, updateTime string) market.Provider {
@@ -27,7 +28,7 @@ func InitMarket(api string, updateTime string) market.Provider {
 			Id:         id,
 			UpdateTime: updateTime,
 		},
-		Request: blockatlas.InitClient(api),
+		Request: client.InitClient(api),
 	}
 	return m
 }

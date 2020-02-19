@@ -2,18 +2,18 @@ package cmc
 
 import (
 	"fmt"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/client"
 	"net/url"
 	"time"
 )
 
 type WidgetClient struct {
-	blockatlas.Request
+	client.Request
 }
 
 func NewWidgetClient(api string) *WidgetClient {
 	c := WidgetClient{
-		Request: blockatlas.InitClient(api),
+		Request: client.InitClient(api),
 	}
 	return &c
 }

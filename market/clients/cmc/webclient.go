@@ -1,19 +1,19 @@
 package cmc
 
 import (
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/client"
 	"net/url"
 	"strconv"
 	"time"
 )
 
 type WebClient struct {
-	blockatlas.Request
+	client.Request
 }
 
 func NewWebClient(api string) *WebClient {
 	c := WebClient{
-		Request: blockatlas.InitClient(api),
+		Request: client.InitClient(api),
 	}
 	return &c
 }

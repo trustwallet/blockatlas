@@ -3,12 +3,13 @@ package bitcoin
 import (
 	"fmt"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/client"
 	"net/url"
 	"strconv"
 )
 
 type Client struct {
-	blockatlas.Request
+	client.Request
 }
 
 func (c *Client) GetTransactions(address string) (transactions TransactionsList, err error) {

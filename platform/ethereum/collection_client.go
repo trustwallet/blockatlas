@@ -1,14 +1,14 @@
 package ethereum
 
 import (
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/client"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"net/url"
 	"strconv"
 )
 
 type CollectionsClient struct {
-	blockatlas.Request
+	client.Request
 }
 
 func (c CollectionsClient) GetCollections(owner string) (page []Collection, err error) {

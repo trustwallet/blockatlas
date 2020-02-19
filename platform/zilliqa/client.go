@@ -2,12 +2,11 @@ package zilliqa
 
 import (
 	"fmt"
-
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/client"
 )
 
 type Client struct {
-	blockatlas.Request
+	client.Request
 }
 
 func (c *Client) GetTxsOfAddress(address string) (tx []Tx, err error) {

@@ -1,4 +1,4 @@
-package blockatlas
+package client
 
 import (
 	"encoding/json"

@@ -2,7 +2,7 @@ package coingecko
 
 import (
 	"fmt"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/client"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"net/url"
 	"strconv"
@@ -16,12 +16,12 @@ const (
 )
 
 type Client struct {
-	blockatlas.Request
+	client.Request
 }
 
 func NewClient(api string) *Client {
 	c := Client{
-		Request: blockatlas.InitClient(api),
+		Request: client.InitClient(api),
 	}
 	return &c
 }

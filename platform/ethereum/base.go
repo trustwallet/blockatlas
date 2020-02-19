@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/coin"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/client"
 )
 
 type Platform struct {
@@ -18,10 +18,10 @@ func (p *Platform) Init() error {
 	handle := coin.Coins[p.CoinIndex].Handle
 
 	coinVar := fmt.Sprintf("%s.api", handle)
-	p.client = Client{blockatlas.InitClient(viper.GetString(coinVar))}
+	p.client = Client{client.InitClient(viper.GetString(coinVar))}
 
 	collectionsApiVar := fmt.Sprintf("%s.collections_api", handle)
-	p.collectionsClient = CollectionsClient{blockatlas.InitClient(viper.GetString(collectionsApiVar))}
+	p.collectionsClient = CollectionsClient{client.InitClient(viper.GetString(collectionsApiVar))}
 
 	collectionsApiKeyVar := fmt.Sprintf("%s.collections_api_key", handle)
 	p.collectionsClient.Headers["X-API-KEY"] = viper.GetString(collectionsApiKeyVar)

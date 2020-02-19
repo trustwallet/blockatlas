@@ -2,11 +2,11 @@ package tezos
 
 import (
 	"fmt"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/client"
 )
 
 type RpcClient struct {
-	blockatlas.Request
+	client.Request
 }
 
 type PeriodType string

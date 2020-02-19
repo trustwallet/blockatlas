@@ -1,13 +1,14 @@
 package nano
 
 import (
+	"github.com/trustwallet/blockatlas/pkg/client"
 	"strconv"
 
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 )
 
 type Client struct {
-	blockatlas.Request
+	client.Request
 }
 
 func (c *Client) GetAccountHistory(address string) (history AccountHistory, err error) {
