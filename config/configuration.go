@@ -41,8 +41,8 @@ type configuration struct {
 		}
 		Cmc struct {
 			API       string
-			WebAPI    string `mapstructure:"web_api"`
-			WidgetAPI string `mapstructure:"widget_api"`
+			WebAPI    string
+			WidgetAPI string
 			APIKey    string `mapstructure:"api_key"`
 			MapURL    string `mapstructure:"map_url"`
 		}
