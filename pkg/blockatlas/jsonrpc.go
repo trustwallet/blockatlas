@@ -9,6 +9,8 @@ const (
 	JsonRpcVersion = "2.0"
 )
 
+type RpcRequests []*RpcRequest
+
 type RpcRequest struct {
 	JsonRpc string      `json:"jsonrpc"`
 	Method  string      `json:"method"`
@@ -55,4 +57,21 @@ func (r *Request) RpcCall(result interface{}, method string, params interface{})
 			"error_message": resp.Error.Message})
 	}
 	return resp.GetObject(result)
+}
+
+func (r *Request) RpcBatchCall(requests RpcRequests) ([]RpcResponse, error) {
+	var resp []RpcResponse
+	err := r.Post(&resp, "", requests.fillDefaultValues())
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (rs RpcRequests) fillDefaultValues() RpcRequests {
+	for _, r := range rs {
+		r.JsonRpc = JsonRpcVersion
+		r.Id = r.Method
+	}
+	return rs
 }
