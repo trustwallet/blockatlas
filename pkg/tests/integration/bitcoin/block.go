@@ -3,6 +3,8 @@
 package bitcoin
 
 import (
+	"github.com/trustwallet/blockatlas/coin"
+	"github.com/trustwallet/blockatlas/platform"
 	"github.com/trustwallet/blockatlas/platform/bitcoin"
 	"testing"
 )
@@ -13,8 +15,7 @@ const (
 
 func TestBitcoin(t *testing.T) {
 	t.Run("test bitcoin", func(t *testing.T) {
-		p := &bitcoin.Platform{}
-		_ = p.Init()
+		p := bitcoin.Init(coin.BTC, platform.GetApiVar(coin.BTC))
 		testCurrentBlockNumber(p, t)
 		testGetBlockByNumber(p, t)
 	})
