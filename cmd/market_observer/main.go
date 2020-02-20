@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/trustwallet/blockatlas/build"
 	"github.com/trustwallet/blockatlas/internal"
 	"github.com/trustwallet/blockatlas/market"
 	"github.com/trustwallet/blockatlas/storage"
@@ -16,6 +17,7 @@ var (
 )
 
 func init() {
+	build.LogVersionInfo()
 	_, confPath, _, cache = internal.InitAPIWithRedis("", defaultConfigPath)
 }
 

@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"github.com/trustwallet/blockatlas/build"
 	"github.com/trustwallet/blockatlas/config"
 	"github.com/trustwallet/blockatlas/internal"
 	"github.com/trustwallet/blockatlas/observer"
@@ -21,6 +22,7 @@ var (
 )
 
 func init() {
+	build.LogVersionInfo()
 	_, confPath, _, cache = internal.InitAPIWithRedis("", defaultConfigPath)
 	platform.Init(config.Configuration.Platform)
 }
