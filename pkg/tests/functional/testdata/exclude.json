@@ -1,5 +1,7 @@
 [
   "/swagger/*any",
+  "/v1/fio/:address",
+  "/v2/fio/transactions/:address",
   "/v1/aeternity/:address",
   "/v2/aeternity/transactions/:address",
   "/v2/collectibles/categories",

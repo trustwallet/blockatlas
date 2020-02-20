@@ -140,7 +140,7 @@ theta:
 
 # [ATOM] Cosmos: https://cosmos.network/
 cosmos:
-  api: http://stargate.cosmos.network
+  api: https://api.cosmos.network
 
 # [ONTOLOGY] ONT: https://ont.io/
 ontology:
@@ -148,8 +148,8 @@ ontology:
 
 # [ZIL] Zilliqa: https://zilliqa.com
 zilliqa:
-  #  api: https://api.viewblock.io/v1/zilliqa
-  #  key: YOUR_API_KEY
+  api: https://api.viewblock.io/v1/zilliqa
+  # key: YOUR_API_KEY
   rpc: https://api.zilliqa.com
   lookup: https://unstoppabledomains.com/api/v1
 
@@ -170,7 +170,7 @@ nebulas:
   api: https://explorer-backend.nebulas.io/api
 
 fio:
-#  api: https://addresses.fio.foundation
+  # api: https://addresses.fio.foundation
   api: http://testnet.fioprotocol.io/v1/chain
 
 # [BTC] Bitcoin: https://bitcoin.org/ (Blockbook API https://github.com/trezor/blockbook)
