@@ -111,7 +111,7 @@
     "address": "tz1foWxaV3VQyWqFbWTERS6YDJjPT6C7jPp8"
   },
   "tron": {
-    "address": "TQZskDJJRGAHifeKoQ7wLC4QDyB2iGvwp2"
+    "address": "TFFriedwRtWdFuzerDDtkoQTZ29smDZ1MB"
   },
   "vechain": {
     "address": "0xB5e883349e68aB59307d1604555AC890fAC47128"
@@ -154,6 +154,9 @@
   },
   "waves": {
     "address": "3P7wz6TXienpw3BHe8eHUEuZWb6WE58kgnQ"
+  },
+  "harmony": {
+    "address": "one1e4mr7tp0a76wnhv9xd0wzentdjnjnsh3fwzgfv"
   }
 }
 

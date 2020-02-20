@@ -49,6 +49,7 @@ func (c *Client) testGet(route string, query string) {
 
 	if response == nil || response.Raw() == nil {
 		logger.Error("Invalid response", logger.Params{"response": response, "route": route, "query": query})
+		return
 	}
 	if response.Raw().StatusCode != http.StatusOK {
 		logger.Error("Invalid status code", logger.Params{"code": response.Raw().Status, "route": route, "query": query})
@@ -69,6 +70,7 @@ func (c *Client) testPost(route string, body interface{}) {
 	response := request.Expect()
 	if response == nil || response.Raw() == nil {
 		logger.Error("Invalid response", logger.Params{"code": response.Raw().Status, "route": route})
+		return
 	}
 	if response.Raw().StatusCode != http.StatusOK {
 		bodyJson, _ := json.Marshal(body)
