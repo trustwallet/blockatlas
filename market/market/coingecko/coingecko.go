@@ -17,7 +17,7 @@ type Market struct {
 	market.Market
 }
 
-func InitMarket(api string, updateTime string) market.Provider {
+func InitMarket(api, updateTime string) market.Provider {
 	m := &Market{
 		client: coingecko.NewClient(api),
 		Market: market.Market{
@@ -45,7 +45,7 @@ func (m *Market) normalizeTicker(price coingecko.CoinPrice, provider string) (ti
 	coinName := strings.ToUpper(price.Symbol)
 	coinType := blockatlas.TypeCoin
 
-	cgCoin, err := m.cache.GetCoinsById(price.Id)
+	cgCoins, err := m.cache.GetCoinsById(price.Id)
 	if err != nil {
 		tickers = append(tickers, &blockatlas.Ticker{
 			CoinName: coinName,
@@ -62,7 +62,7 @@ func (m *Market) normalizeTicker(price coingecko.CoinPrice, provider string) (ti
 		return
 	}
 
-	for _, cg := range cgCoin {
+	for _, cg := range cgCoins {
 		coinName = strings.ToUpper(cg.Symbol)
 		if cg.CoinType == blockatlas.TypeCoin {
 			tokenId = ""
