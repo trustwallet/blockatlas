@@ -134,11 +134,22 @@ func (tfs Transfers) isClaimReward() bool {
 	if tfs[0].AssetName != AssetONG || tfs[1].AssetName != AssetONG {
 		return false
 	}
+	// Avoid transactions for yourself
+	if tfs[0].ToAddress == tfs[0].FromAddress || tfs[1].ToAddress == tfs[1].FromAddress {
+		return false
+	}
 	// Verify if one of the transfers is a fee transfer.
 	if !tfs.hasFeeTransfer() {
 		return false
 	}
-	return true
+	// The user need to pay a fee to get his reward
+	if tfs[1].isFeeTransfer() && tfs[0].ToAddress == tfs[1].FromAddress && tfs[1].ToAddress == GovernanceContract {
+		return true
+	}
+	if tfs[0].isFeeTransfer() && tfs[1].ToAddress == tfs[0].FromAddress && tfs[0].ToAddress == GovernanceContract {
+		return false
+	}
+	return false
 
 }
 
