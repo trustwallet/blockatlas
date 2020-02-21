@@ -9,8 +9,6 @@ PROJECT_NAME := $(shell basename "$(PWD)")
 API_SERVICE := platform_api
 OBSERVER_SERVICE := platform_observer
 OBSERVER_API := observer_api
-MARKET_SERVICE := market_observer
-MARKET_API := market_api
 SWAGGER_API := swagger_api
 COIN_FILE := coin/coins.yml
 COIN_GO_FILE := coin/coins.go
@@ -37,8 +35,6 @@ STDERR := /tmp/.$(PROJECT_NAME)-stderr.txt
 PID_API := /tmp/.$(PROJECT_NAME).$(API_SERVICE).pid
 PID_OBSERVER := /tmp/.$(PROJECT_NAME).$(OBSERVER_SERVICE).pid
 PID_OBSERVER_API := /tmp/.$(PROJECT_NAME).$(OBSERVER_API).pid
-PID_MARKET := /tmp/.$(PROJECT_NAME).$(MARKET_SERVICE).pid
-PID_MARKET_API := /tmp/.$(PROJECT_NAME).$(MARKET_API).pid
 PID_SWAGGER_API := /tmp/.$(PROJECT_NAME).$(SWAGGER_API).pid
 # Make is verbose in Linux. Make it silent.
 MAKEFLAGS += --silent
@@ -71,20 +67,6 @@ start-observer-api: stop
 	@cat $(PID_OBSERVER_API) | sed "/^/s/^/  \>  Observer PID: /"
 	@echo "  >  Error log: $(STDERR)"
 
-## start-sync-market: Start Sync market in development mode.
-start-market-observer: stop
-	@echo "  >  Starting $(PROJECT_NAME) Sync"
-	@-$(GOBIN)/$(MARKET_SERVICE)/market_observer -c $(CONFIG_FILE) 2>&1 & echo $$! > $(PID_MARKET)
-	@cat $(PID_MARKET) | sed "/^/s/^/  \>  Sync PID: /"
-	@echo "  >  Error log: $(STDERR)"
-
-## start-sync-market-api: Start Sync market api in development mode.
-start-market-api: stop
-	@echo "  >  Starting $(PROJECT_NAME) Sync API"
-	@-$(GOBIN)/$(MARKET_API)/market_api -c $(CONFIG_FILE) 2>&1 & echo $$! > $(PID_MARKET_API)
-	@cat $(PID_MARKET_API) | sed "/^/s/^/  \>  Sync PID: /"
-	@echo "  >  Error log: $(STDERR)"
-
 ## start-sync-market-api: Start Sync market api in development mode.
 start-swagger-api: stop
 	@echo "  >  Starting $(PROJECT_NAME) Sync API"
@@ -94,14 +76,12 @@ start-swagger-api: stop
 
 ## stop: Stop development mode.
 stop:
-	@-touch $(PID_API) $(PID_OBSERVER) $(PID_OBSERVER_API) $(PID_MARKET) $(PID_MARKET_API) $(PID_SWAGGER_API)
+	@-touch $(PID_API) $(PID_OBSERVER) $(PID_OBSERVER_API) $(PID_SWAGGER_API)
 	@-kill `cat $(PID_API)` 2> /dev/null || true
 	@-kill `cat $(PID_OBSERVER)` 2> /dev/null || true
 	@-kill `cat $(PID_OBSERVER_API)` 2> /dev/null || true
-	@-kill `cat $(PID_MARKET)` 2> /dev/null || true
-	@-kill `cat $(PID_MARKET_API)` 2> /dev/null || true
 	@-kill `cat $(PID_SWAGGER_API)` 2> /dev/null || true
-	@-rm $(PID_API) $(PID_OBSERVER) $(PID_OBSERVER_API) $(PID_MARKET) $(PID_MARKET_API) $(PID_SWAGGER_API)
+	@-rm $(PID_API) $(PID_OBSERVER) $(PID_OBSERVER_API) $(PID_SWAGGER_API)
 
 ## compile: Compile the project.
 compile:
@@ -173,7 +153,6 @@ ifeq (,$(test))
 	@bash -c "$(MAKE) newman test=domain host=$(host)"
 	@bash -c "$(MAKE) newman test=healthcheck host=$(host)"
 	@bash -c "$(MAKE) newman test=observer host=$(host)"
-	@bash -c "$(MAKE) newman test=market host=$(host)"
 else
 	@newman run pkg/tests/postman/Blockatlas.postman_collection.json --folder $(test) -d pkg/tests/postman/$(test)_data.json --env-var "host=$(host)"
 endif
@@ -183,10 +162,6 @@ go-compile: go-get go-build
 go-build:
 	@echo "  >  Building platform_api binary..."
 	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(API_SERVICE)/platform_api ./cmd/$(API_SERVICE)
-	@echo "  >  Building market_observer binary..."
-	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(MARKET_SERVICE)/market_observer ./cmd/$(MARKET_SERVICE)
-	@echo "  >  Building market_api binary..."
-	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(MARKET_API)/market_api ./cmd/$(MARKET_API)
 	@echo "  >  Building platform_observer binary..."
 	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(OBSERVER_SERVICE)/platform_observer ./cmd/$(OBSERVER_SERVICE)
 	@echo "  >  Building observer_api binary..."

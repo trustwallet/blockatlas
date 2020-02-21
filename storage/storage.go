@@ -26,10 +26,3 @@ type Addresses interface {
 	AddSubscriptions(subscriptions []blockatlas.Subscription)
 	DeleteSubscriptions(subscriptions []blockatlas.Subscription)
 }
-
-type Market interface {
-	SaveTicker(coin *blockatlas.Ticker, pl ProviderList) error
-	GetTicker(coin, token string) (*blockatlas.Ticker, error)
-	SaveRates(rates blockatlas.Rates, pl ProviderList)
-	GetRate(currency string) (*blockatlas.Rate, error)
-}
