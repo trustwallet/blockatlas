@@ -58,11 +58,6 @@ func TestApis(t *testing.T) {
 		observerAPI := engine.Group("/observer/v1")
 		api.SetupObserverAPI(observerAPI, cache)
 	}
-	if config.Configuration.Market.Enabled {
-		logger.Info("Loading market API")
-		marketAPI := engine.Group("/v1/market")
-		api.SetupMarketAPI(marketAPI, cache)
-	}
 
 	signalForExit := make(chan os.Signal, 1)
 
