@@ -1,5 +1,25 @@
 version: '3.7'
 services:
+  market_api:
+    container_name: market_api
+    build:
+      context: .
+      args:
+        - SERVICE=market_api
+    ports:
+    - 8421:8421
+    links:
+      - redis
+
+  market_observer:
+    container_name: market_observer
+    build:
+      context: .
+      args:
+      - SERVICE=market_observer
+    links:
+    - redis
+
   observer_api:
     container_name: observer_api
     build:
