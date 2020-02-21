@@ -10,7 +10,7 @@
 > BlockAtlas is a clean explorer API and transaction observer for cryptocurrencies.
 
 BlockAtlas connects to nodes or explorer APIs of the supported coins and maps transaction data,
-account transaction history and market data into a generic, easy to work with JSON format.
+account transaction history into a generic, easy to work with JSON format.
 It is in production use at the [Trust Wallet app](https://trustwallet.com/), 
 the official cryptocurrency wallet of Binance. Also is in production at the [BUTTON Wallet](https://buttonwallet.com), Telegram based non-custodial wallet.
 The observer API watches the chain for new transactions and generates notifications by webhooks.
@@ -52,17 +52,13 @@ There are multiple services:
 
 1. Platform API - to get transactions, staking, tokens, domain lookup for supported coins in common format
 2. Observer API - to subscribe several addresses on different supported coins and receive webhook
-3. Market API - to get market data from different platforms in common format
-4. Swagger API - swagger for all handlers of 1-3 APIs. You need to route requests to them on you own (nginx)
+3. Swagger API - swagger for all handlers of 1-3 APIs. You need to route requests to them on you own (nginx)
 
 There are workers that are linked with Observer API and Market API:
 
-5. Market Observer - fetching latest rates from multiple external API's and cache it in Redis
-6. Platform Observer - fetching latest blocks, parse them to common block specification, check subscribed addresses - send webhook. We use Redis to get information about subscribed addresses per coin with webhooks and caching latest block that was processed by observer
- 
-Market API <-> Redis A <-> Market Observer
+5. Platform Observer - fetching latest blocks, parse them to common block specification, check subscribed addresses - send webhook. We use Redis to get information about subscribed addresses per coin with webhooks and caching latest block that was processed by observer
 
-Observer API <-> Redis B <-> Platform Observer
+Observer API <-> Redis <-> Platform Observer
 
 #### IMPORTANT
 
@@ -83,14 +79,8 @@ cd $(go env GOPATH)/src/github.com/trustwallet/blockatlas
 # Start platform_observer with the path to the config.yml ./ 
 go build -o platform-observer-bin cmd/platform_observer/main.go && ./platform-observer-bin -c config.yml
 
-# Start markets_observer with the path to the config.yml ./ 
-go build -o market-observer-bin cmd/market_observer/main.go && ./market-observer-bin -c config.yml
-
 # Start Platform API server at port 8420 with the path to the config.yml ./ 
 go build -o platform-api-bin cmd/platform_api/main.go  && ./platform-api-bin -p 8420 -c config.yml
-
-# Start Market API server at port 8421 with the path to the config.yml ./ 
-go build -o market-api-bin cmd/market_api/main.go  && ./market-api-bin -p 8421 -c config.yml
 
 # Start Observer API server at port 8422 with the path to the config.yml ./ 
 go build -o observer-api-bin cmd/observer-api/main.go  && ./observer-api-bin -p 8422 -c config.yml
@@ -133,8 +123,6 @@ If you need to start one service:
 docker-compose start platform_api
 # Run only observer for addresses and api for it
 docker-compose start platform_observer observer_api redis
-# Run markets with it's api
-docker-compose start market_observer market_api redis
 # Run swagger api
 docker-compose start swagger_api
 ```
