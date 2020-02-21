@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/trustwallet/blockatlas/api"
+	"github.com/trustwallet/blockatlas/build"
 	"github.com/trustwallet/blockatlas/config"
 	_ "github.com/trustwallet/blockatlas/docs"
 	"github.com/trustwallet/blockatlas/internal"
@@ -22,6 +23,7 @@ var (
 )
 
 func init() {
+	build.LogVersionInfo()
 	port, confPath, sg = internal.InitAPI(defaultPort, defaultConfigPath)
 	platform.Init(config.Configuration.Platform)
 }
@@ -37,7 +39,10 @@ func main() {
 	engine.GET("/", api.GetRoot)
 	engine.GET("/status", func(c *gin.Context) {
 		ginutils.RenderSuccess(c, map[string]interface{}{
-			"status": true,
+			"status":  true,
+			"version": build.Version,
+			"build":   build.Build,
+			"date":    build.Date,
 		})
 	})
 

@@ -5,6 +5,7 @@ package ontology
 import (
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/platform"
 	"github.com/trustwallet/blockatlas/platform/ontology"
 	"testing"
 )
@@ -81,8 +82,7 @@ const (
 
 func TestOntology(t *testing.T) {
 	t.Run("test ontology", func(t *testing.T) {
-		p := &ontology.Platform{}
-		_ = p.Init()
+		p := ontology.Init(platform.GetVar("ontology.api"))
 		testCurrentBlockNumber(p, t)
 		testGetBlockByNumber(p, t)
 	})

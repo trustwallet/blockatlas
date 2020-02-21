@@ -3,8 +3,6 @@ package zilliqa
 import (
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-
-	"github.com/spf13/viper"
 )
 
 type Platform struct {
@@ -13,13 +11,14 @@ type Platform struct {
 	udClient  Client
 }
 
-func (p *Platform) Init() error {
-	p.client = Client{blockatlas.InitClient(viper.GetString("zilliqa.api"))}
-	p.client.Headers["X-APIKEY"] = viper.GetString("zilliqa.key")
-
-	p.rpcClient = RpcClient{blockatlas.InitClient(viper.GetString("zilliqa.rpc"))}
-	p.udClient = Client{blockatlas.InitClient(viper.GetString("zilliqa.lookup"))}
-	return nil
+func Init(api, apiKey, rpc, udClient string) *Platform {
+	p := &Platform{
+		client:    Client{blockatlas.InitClient(api)},
+		rpcClient: RpcClient{blockatlas.InitClient(rpc)},
+		udClient:  Client{blockatlas.InitClient(udClient)},
+	}
+	p.client.Headers["X-APIKEY"] = apiKey
+	return p
 }
 
 func (p *Platform) Coin() coin.Coin {

@@ -5,14 +5,8 @@ import (
 	"github.com/trustwallet/blockatlas/coin"
 )
 
-// Initer is a service that can be initialized once
-type Initer interface {
-	Init() error
-}
-
 // Platform can be used to access a crypto service
 type Platform interface {
-	Initer
 	Coin() coin.Coin
 }
 

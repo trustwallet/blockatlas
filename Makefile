@@ -1,8 +1,10 @@
 #! /usr/bin/make -f
 
 # Project variables.
+PACKAGE := github.com/trustwallet/blockatlas
 VERSION := $(shell git describe --tags)
 BUILD := $(shell git rev-parse --short HEAD)
+DATETIME := $(shell date +"%Y.%m.%d-%H:%M:%S")
 PROJECT_NAME := $(shell basename "$(PWD)")
 API_SERVICE := platform_api
 OBSERVER_SERVICE := platform_observer
@@ -26,7 +28,7 @@ CONFIG_FILE=$(GOBASE)/config.yml
 GOFMT_FILES?=$$(find . -name '*.go' | grep -v vendor)
 
 # Use linker flags to provide version/build settings
-LDFLAGS=-ldflags "-X=main.Version=$(VERSION) -X=main.Build=$(BUILD)"
+LDFLAGS=-ldflags "-X=$(PACKAGE)/build.Version=$(VERSION) -X=$(PACKAGE)/build.Build=$(BUILD) -X=$(PACKAGE)/build.Date=$(DATETIME)"
 
 # Redirect error output to a file, so we can show it in development mode.
 STDERR := /tmp/.$(PROJECT_NAME)-stderr.txt
