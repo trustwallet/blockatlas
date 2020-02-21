@@ -1,7 +1,7 @@
 {
 	"info": {
-		"_postman_id": "b31e9564-879c-4fb0-ad27-986070bc06a0",
-		"name": "Blockatlas",
+		"_postman_id": "4e4d72ba-02c4-4d87-af91-ea42b6225ee4",
+		"name": "Blockatlas вум",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -1599,124 +1599,6 @@
 			"name": "market",
 			"item": [
 				{
-					"name": "ticker",
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"id": "7312c9e7-5330-421a-9ca8-171101050e38",
-								"exec": [
-									"var token_id = pm.environment.get(\"token_id\");",
-									"if(!token_id) {",
-									"    pm.environment.set(\"token_id\", \"\");",
-									"}",
-									""
-								],
-								"type": "text/javascript"
-							}
-						},
-						{
-							"listen": "test",
-							"script": {
-								"id": "acec8baa-0ef0-4703-ab83-c555260deffa",
-								"exec": [
-									"var Ajv = require('ajv');",
-									"var ajv = new Ajv({logger: console});",
-									"let schema = {",
-									"  \"type\": \"object\",",
-									"  \"properties\": {",
-									"    \"coin\": {",
-									"      \"type\": \"integer\"",
-									"    },",
-									"    \"coin_name\": {",
-									"      \"type\": \"string\"",
-									"    },",
-									"    \"token_id\": {",
-									"      \"type\": \"string\"",
-									"    },",
-									"    \"type\": {",
-									"      \"type\": \"string\"",
-									"    },",
-									"    \"price\": {",
-									"      \"type\": \"object\",",
-									"      \"properties\": {",
-									"        \"value\": {",
-									"          \"type\": \"number\"",
-									"        },",
-									"        \"change_24h\": {",
-									"          \"type\": \"number\"",
-									"        },",
-									"        \"currency\": {",
-									"          \"type\": \"string\"",
-									"        },",
-									"        \"provider\": {",
-									"          \"type\": \"string\"",
-									"        }",
-									"      }",
-									"    },",
-									"    \"last_update\": {",
-									"      \"type\": \"string\"",
-									"    }",
-									"  }",
-									"};",
-									"",
-									"var jsonData = pm.response.json();",
-									"",
-									"pm.test(\"response must be valid and have a body\", function () {",
-									"    pm.response.to.have.status(200);",
-									"    pm.response.to.be.ok;",
-									"    pm.response.to.not.be.error;",
-									"    pm.response.to.be.withBody;",
-									"    pm.response.to.be.json;",
-									"});",
-									"",
-									"pm.test(\"schema is valid\", function() {",
-									"    pm.expect(ajv.validate(schema, jsonData)).to.be.true;",
-									"});",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"type": "text",
-								"value": "Bearer {{market_auth}}"
-							}
-						],
-						"url": {
-							"raw": "{{host}}/v1/market/ticker?currency={{currency}}&coin={{coin}}&token={{token_id}}",
-							"host": [
-								"{{host}}"
-							],
-							"path": [
-								"v1",
-								"market",
-								"ticker"
-							],
-							"query": [
-								{
-									"key": "currency",
-									"value": "{{currency}}"
-								},
-								{
-									"key": "coin",
-									"value": "{{coin}}"
-								},
-								{
-									"key": "token",
-									"value": "{{token_id}}"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "charts",
 					"event": [
 						{
@@ -2275,93 +2157,6 @@
 						}
 					},
 					"response": []
-				},
-				{
-					"name": "status",
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"id": "7312c9e7-5330-421a-9ca8-171101050e38",
-								"exec": [
-									""
-								],
-								"type": "text/javascript"
-							}
-						},
-						{
-							"listen": "test",
-							"script": {
-								"id": "acec8baa-0ef0-4703-ab83-c555260deffa",
-								"exec": [
-									"var Ajv = require('ajv');",
-									"var ajv = new Ajv({logger: console});",
-									"let schema = {",
-									"  \"type\": \"object\",",
-									"  \"minProperties\": 5,",
-									"  \"uniqueItems\": true,",
-									"  \"items\": {\"type\": \"object\"}",
-									"};",
-									"",
-									"var jsonData = pm.response.json();",
-									"",
-									"pm.test(\"response must be valid and have a body\", function () {",
-									"    pm.response.to.have.status(200);",
-									"    pm.response.to.be.ok;",
-									"    pm.response.to.not.be.error;",
-									"    pm.response.to.be.withBody;",
-									"    pm.response.to.be.json;",
-									"});",
-									"",
-									"pm.test(\"schema is valid\", function() {",
-									"    pm.expect(ajv.validate(schema, jsonData)).to.be.true;",
-									"});",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"type": "text",
-								"value": "Bearer {{observer_auth}}"
-							},
-							{
-								"key": "Content-Type",
-								"name": "Content-Type",
-								"type": "text",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{host}}/observer/v1/status",
-							"host": [
-								"{{host}}"
-							],
-							"path": [
-								"observer",
-								"v1",
-								"status"
-							]
-						}
-					},
-					"response": []
 				}
 			],
 			"event": [
@@ -2571,25 +2366,25 @@
 	],
 	"variable": [
 		{
-			"id": "7e392582-2f75-48a2-a096-ef338490e7f8",
+			"id": "ad2326b7-fb90-4b11-a1e3-dfe8ea3aae65",
 			"key": "host",
 			"value": "http://localhost:8420",
 			"type": "string"
 		},
 		{
-			"id": "39dad5f8-9727-4dda-9f27-b4e29dd0ff18",
+			"id": "7ae1014f-44e1-4c16-aacd-2be971ee15ef",
 			"key": "observer_auth",
 			"value": "test",
 			"type": "string"
 		},
 		{
-			"id": "edc48bc9-0c39-46a1-809a-c6d71874a958",
+			"id": "0d3dcacb-5b63-409a-8150-9e06d24e1eb4",
 			"key": "market_auth",
 			"value": "",
 			"type": "string"
 		},
 		{
-			"id": "2ee77821-80ac-470a-9293-78b361ef27c7",
+			"id": "c42f8723-ad35-45ea-9dd2-066ced0780bc",
 			"key": "platform_auth",
 			"value": "",
 			"type": "string"
