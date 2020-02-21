@@ -34,8 +34,12 @@ func getActivePlatforms(handle string) []blockatlas.Platform {
 	platform, ok := platforms[handle]
 	if ok {
 		return []blockatlas.Platform{platform}
+	} else if handle == "all" {
+		return platforms.GetPlatformList()
+	} else {
+		logger.Fatal("Please, use ATLAS_PLATFORM handle with non-empty value", logger.Params{"ATLAS_PLATFORM": handle})
+		return nil
 	}
-	return platforms.GetPlatformList()
 }
 
 func Init(platformHandle string) {
