@@ -37,40 +37,6 @@ func TestTransfer_isFeeTransfer(t *testing.T) {
 }
 
 var (
-	transfersClaims2 = Transfers{{
-		Amount:      "0.4",
-		FromAddress: "AFmseVrdL9f9oyCzZefL9tG6UbvhUMqNMV",
-		ToAddress:   "AUyL4TZ1zFEcSKDJrjFnD7vsq5iFZMZqT7",
-		AssetName:   "ong",
-	}, {
-		Amount:      "0.01",
-		FromAddress: "AUyL4TZ1zFEcSKDJrjFnD7vsq5iFZMZqT7",
-		ToAddress:   "AFmseVrdL9f9oyCzZefL9tG6UbviEH9ugK",
-		AssetName:   "ong",
-	}}
-	transfersOngYourself = Transfers{{
-		Amount:      "0.02",
-		FromAddress: "AUyL4TZ1zFEcSKDJrjFnD7vsq5iFZMZqT7",
-		ToAddress:   "AUyL4TZ1zFEcSKDJrjFnD7vsq5iFZMZqT7",
-		AssetName:   "ong",
-	}, {
-		Amount:      "0.01",
-		FromAddress: "AUyL4TZ1zFEcSKDJrjFnD7vsq5iFZMZqT7",
-		ToAddress:   "AFmseVrdL9f9oyCzZefL9tG6UbviEH9ugK",
-		AssetName:   "ong",
-	}}
-	transfersOng2 = Transfers{{
-		Amount:      "0.4",
-		FromAddress: "AUyL4TZ1zFEcSKDJrjFnD7vsq5iFZMZqT7",
-		ToAddress:   "Abm1FqnU4qur9bviXmrD5YnNixXGvMsi9R",
-		AssetName:   "ong",
-	}, {
-		Amount:      "0.01",
-		FromAddress: "AUyL4TZ1zFEcSKDJrjFnD7vsq5iFZMZqT7",
-		ToAddress:   "AFmseVrdL9f9oyCzZefL9tG6UbviEH9ugK",
-		AssetName:   "ong",
-	}}
-
 	transferFee = Transfer{
 		Amount:      "0.01",
 		FromAddress: "ARFXGXSmgFT2h9EiS4D5fen127Lzi48Eij",
@@ -89,10 +55,10 @@ var (
 		ToAddress:   "ARncJn1rr9hivokUWxzr915vS3usR6xdgJ",
 		AssetName:   "ont",
 	}
-	transfersClaims1 = Transfers{transferOng, transferFee}
-	transfersOnt     = Transfers{transferOnt, transferFee}
-	transfersOng1    = Transfers{transferOng}
-	transfersFee     = Transfers{transferFee}
+	transfersClaims = Transfers{transferOng, transferFee}
+	transfersOnt    = Transfers{transferOnt, transferFee}
+	transfersOng    = Transfers{transferOng}
+	transfersFee    = Transfers{transferFee}
 )
 
 func TestTransfers_getTransfer(t *testing.T) {
@@ -102,15 +68,15 @@ func TestTransfers_getTransfer(t *testing.T) {
 		asset AssetType
 		want  *Transfer
 	}{
-		{"Transfer Claims Asset Ong", transfersClaims1, AssetONG, &transferOng},
-		{"Transfer Claims Asset Ont", transfersClaims1, AssetONT, nil},
-		{"Transfer Claims Asset All", transfersClaims1, AssetAll, &transferOng},
+		{"Transfer Claims Asset Ong", transfersClaims, AssetONG, &transferOng},
+		{"Transfer Claims Asset Ont", transfersClaims, AssetONT, nil},
+		{"Transfer Claims Asset All", transfersClaims, AssetAll, &transferOng},
 		{"Transfer Ont Asset Ong", transfersOnt, AssetONG, nil},
 		{"Transfer Ont Asset Ont", transfersOnt, AssetONT, &transferOnt},
 		{"Transfer Ont Asset All", transfersOnt, AssetAll, &transferOnt},
-		{"Transfer Ong Asset Ong", transfersOng1, AssetONG, &transferOng},
-		{"Transfer Ong Asset Ont", transfersOng1, AssetONT, nil},
-		{"Transfer Ong Asset All", transfersOng1, AssetAll, &transferOng},
+		{"Transfer Ong Asset Ong", transfersOng, AssetONG, &transferOng},
+		{"Transfer Ong Asset Ont", transfersOng, AssetONT, nil},
+		{"Transfer Ong Asset All", transfersOng, AssetAll, &transferOng},
 		{"Transfer Fee Asset Ong", transfersFee, AssetONG, nil},
 		{"Transfer Fee Asset Ont", transfersFee, AssetONT, nil},
 		{"Transfer Fee Asset All", transfersFee, AssetAll, nil},
@@ -130,12 +96,9 @@ func TestTransfers_hasFeeTransfer(t *testing.T) {
 		tfs  Transfers
 		want bool
 	}{
-		{"Transfer Claims 1", transfersClaims1, true},
-		{"Transfer Calims 2", transfersClaims2, true},
+		{"Transfer Claims", transfersClaims, true},
 		{"Transfer Ont", transfersOnt, true},
-		{"Transfer Ong 1", transfersOng1, false},
-		{"Transfer Ong 2", transfersOng2, true},
-		{"Transfer Ong Yourself ", transfersOngYourself, true},
+		{"Transfer Ong", transfersOng, false},
 		{"Transfer Fee", transfersFee, true},
 	}
 	for _, tt := range tests {
@@ -153,12 +116,9 @@ func TestTransfers_isClaimReward(t *testing.T) {
 		tfs  Transfers
 		want bool
 	}{
-		{"Transfer Claims 1", transfersClaims1, true},
-		{"Transfer Claims 2", transfersClaims2, true},
+		{"Transfer Claims", transfersClaims, true},
 		{"Transfer Ont", transfersOnt, false},
-		{"Transfer Ong 1", transfersOng1, false},
-		{"Transfer Ong 2", transfersOng2, false},
-		{"Transfer Ong Yourself", transfersOngYourself, false},
+		{"Transfer Ong", transfersOng, false},
 		{"Transfer Fee", transfersFee, false},
 	}
 	for _, tt := range tests {
