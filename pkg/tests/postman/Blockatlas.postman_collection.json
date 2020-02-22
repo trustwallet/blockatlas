@@ -1351,7 +1351,7 @@
 							"response": []
 						},
 						{
-							"name": "collections batch v3",
+							"name": "collections batch v3 ",
 							"event": [
 								{
 									"listen": "prerequest",
