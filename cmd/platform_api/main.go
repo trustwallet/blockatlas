@@ -2,9 +2,9 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/api"
 	"github.com/trustwallet/blockatlas/build"
-	"github.com/trustwallet/blockatlas/config"
 	_ "github.com/trustwallet/blockatlas/docs"
 	"github.com/trustwallet/blockatlas/internal"
 	"github.com/trustwallet/blockatlas/pkg/ginutils"
@@ -24,11 +24,11 @@ var (
 func init() {
 	build.LogVersionInfo()
 	port, confPath, sg = internal.InitAPI(defaultPort, defaultConfigPath)
-	platform.Init(config.Configuration.Platform)
+	platform.Init(viper.GetString("platform"))
 }
 
 func main() {
-	gin.SetMode(config.Configuration.Gin.Mode)
+	gin.SetMode(viper.GetString("gin.mode"))
 	engine := gin.New()
 	engine.Use(ginutils.CheckReverseProxy, *sg)
 	engine.Use(ginutils.CORSMiddleware())
