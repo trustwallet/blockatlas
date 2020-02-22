@@ -40,8 +40,8 @@ binance:
   dex: https://dex.binance.org/api
 
 # [NIM] Nimiq: https://nimiq.com
-#nimiq:
-#  api: http://localhost:8648
+nimiq:
+  api: http://localhost:8648
 
 # [XRP] Ripple: https://ripple.com
 ripple:
@@ -61,39 +61,39 @@ tezos:
   rpc: https://mainnet.tezos.org.ua
 
 # [ETH] Ethereum: https://ethereum.org (Trust-Ray API)
-# ethereum:
-#  api: https://localhost:4567
-#  collections_api: https://api.opensea.io
-#  collections_api_key: [opensea_api_key]
-#  rpc: [ethereum rpc]
+ethereum:
+  api: https://localhost:4567
+  collections_api: https://api.opensea.io
+  collections_api_key: [opensea_api_key]
+  rpc: [ethereum rpc]
 
 # [ETC] Ethereum Classic: https://ethereumclassic.org (Trust-Ray API)
-# classic:
-#   api: https://localhost:4567
+classic:
+  api: https://localhost:4567
 
 # [POA] POA Network: https://poa.network (Trust-Ray API)
-# poa:
-#   api: https://localhost:4567
+poa:
+  api: https://localhost:4567
 
-# [CLO] Callisto Network: https://callisto.network (Trust-Ray API)
-# callisto:
-#   api: https://localhost:4567
+  # [CLO] Callisto Network: https://callisto.network (Trust-Ray API)
+  callisto:
+    api: https://localhost:4567
 
-# [GO] GoChain: https://gochain.io (Trust-Ray API)
-# gochain:
-#   api: https://localhost:4567
+  # [GO] GoChain: https://gochain.io (Trust-Ray API)
+  gochain:
+    api: https://localhost:4567
 
-# [WAN] Wanchain: https://wanchain.org (Trust-Ray API)
-# wanchain:
-#   api: https://localhost:4567
+  # [WAN] Wanchain: https://wanchain.org (Trust-Ray API)
+  wanchain:
+    api: https://localhost:4567
 
-# [TOMO] TomoChain: https://tomochain.com (Trust-Ray API)
-# tomochain:
-#   api: https://localhost:4567
+  # [TOMO] TomoChain: https://tomochain.com (Trust-Ray API)
+  tomochain:
+    api: https://localhost:4567
 
-# [TT] ThunderCore: https://www.thundercore.com (Trust-Ray API)
-# thundertoken:
-#   api: https://localhost:4567
+  # [TT] ThunderCore: https://www.thundercore.com (Trust-Ray API)
+  thundertoken:
+    api: https://localhost:4567
 
 # [AION] Aion: https://aion.network
 aion:
