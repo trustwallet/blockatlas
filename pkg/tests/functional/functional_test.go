@@ -29,7 +29,7 @@ func TestApis(t *testing.T) {
 	config.LoadConfig(os.Getenv("TEST_CONFIG"))
 
 	logger.InitLogger()
-	platform.Init(config.Configuration.Platform)
+	platform.Init(viper.GetString("platform"))
 	cache := storage.New()
 	sg := sentrygin.New(sentrygin.Options{})
 	p := ":8420"
@@ -53,7 +53,7 @@ func TestApis(t *testing.T) {
 	api.MakeMetricsRoute(engine)
 	api.LoadPlatforms(engine)
 
-	if config.Configuration.Observer.Enabled {
+	if viper.GetBool("observer.enabled") {
 		logger.Info("Loading observer API")
 		observerAPI := engine.Group("/observer/v1")
 		api.SetupObserverAPI(observerAPI, cache)

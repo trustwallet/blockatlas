@@ -4,6 +4,7 @@ import (
 	"flag"
 	sentrygin "github.com/getsentry/sentry-go/gin"
 	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/config"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/storage"
@@ -55,7 +56,7 @@ func InitAPIWithRedis(defaultPort, defaultConfigPath string) (string, string, *g
 	config.LoadConfig(confPath)
 	logger.InitLogger()
 
-	err = cache.Init(config.Configuration.Storage.Redis)
+	err = cache.Init(viper.GetString("storage.redis"))
 	if err != nil {
 		logger.Fatal(err)
 	}

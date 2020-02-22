@@ -19,7 +19,7 @@ func Test(t *testing.T) {
 	} else {
 		config.LoadConfig(configPath)
 	}
-	platform.Init(config.Configuration.Platform)
+	platform.Init(viper.GetString("platform"))
 
 	// Add your integration tests here
 	ontology.TestOntology(t)
