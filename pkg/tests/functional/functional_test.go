@@ -6,6 +6,7 @@ import (
 	"context"
 	"github.com/getsentry/sentry-go/gin"
 	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
 	"github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
 	"github.com/trustwallet/blockatlas/api"
