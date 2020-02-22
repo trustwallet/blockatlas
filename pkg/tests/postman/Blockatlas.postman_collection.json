@@ -1475,12 +1475,12 @@
 									}
 								},
 								"url": {
-									"raw": "{{host}}/v2/collectibles/categories",
+									"raw": "{{host}}/v3/collectibles/categories",
 									"host": [
 										"{{host}}"
 									],
 									"path": [
-										"v2",
+										"v3",
 										"collectibles",
 										"categories"
 									]
