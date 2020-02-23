@@ -37,18 +37,13 @@ func TestApis(t *testing.T) {
 	engine := gin.New()
 
 	engine.Use(gin.Recovery())
+
 	engine.Use(ginutils.CheckReverseProxy, sg)
 	engine.Use(ginutils.CORSMiddleware())
 
 	engine.OPTIONS("/*path", ginutils.CORSMiddleware())
 
 	engine.GET("swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-	engine.GET("/", api.GetRoot)
-	engine.GET("/status", func(c *gin.Context) {
-		ginutils.RenderSuccess(c, map[string]interface{}{
-			"status": true,
-		})
-	})
 
 	api.SetupPlatformAPI(engine)
 
