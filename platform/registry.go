@@ -3,7 +3,6 @@ package platform
 import (
 	"fmt"
 	"github.com/spf13/viper"
-	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 )
@@ -48,6 +47,9 @@ func getActivePlatforms(handle string) []blockatlas.Platform {
 func Init(platformHandle string) {
 	platformList := getActivePlatforms(platformHandle)
 
+	// white list of collection api coins (only ETH now)
+	InitCollectionsWhitelist()
+
 	Platforms = make(map[string]blockatlas.Platform)
 	BlockAPIs = make(map[string]blockatlas.BlockAPI)
 	StakeAPIs = make(map[string]blockatlas.StakeAPI)
@@ -87,7 +89,7 @@ func Init(platformHandle string) {
 		if namingAPI, ok := platform.(blockatlas.NamingServiceAPI); ok {
 			NamingAPIs[uint64(platform.Coin().ID)] = namingAPI
 		}
-		if collectionAPI, ok := platform.(blockatlas.CollectionAPI); ok && handle == coin.Ethereum().Handle {
+		if collectionAPI, ok := platform.(blockatlas.CollectionAPI); ok && CollectionsHandleWhiteList[handle] {
 			CollectionAPIs[platform.Coin().ID] = collectionAPI
 		}
 	}
