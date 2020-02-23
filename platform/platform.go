@@ -35,7 +35,7 @@ const (
 	allPlatformsHandle = "all"
 )
 
-var CollectionsHandleWhiteList map[string]bool
+var CollectionsWhitelist map[uint]bool
 
 func GetVar(name string) string {
 	return viper.GetString(name)
@@ -103,6 +103,6 @@ func getPlatformMap() blockatlas.Platforms {
 }
 
 func InitCollectionsWhitelist() {
-	CollectionsHandleWhiteList = make(map[string]bool)
-	CollectionsHandleWhiteList[coin.Ethereum().Handle] = true
+	CollectionsWhitelist = make(map[uint]bool)
+	CollectionsWhitelist[coin.Ethereum().ID] = true
 }

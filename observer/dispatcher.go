@@ -47,7 +47,7 @@ func (d *Dispatcher) dispatch(event Event) {
 func (d *Dispatcher) postWebhook(hook string, data []byte, logParams logger.Params) {
 	_, err := d.Client.Post(hook, "application/json", bytes.NewReader(data))
 	if err != nil {
-		err = errors.E(err, "Failed to dispatch event", errors.Params{"webhook": hook}, logParams).PushToSentry()
+		err = errors.E(err, "Failed to dispatch event", errors.Params{"webhook": hook}, logParams)
 		logger.Error(err, logger.Params{"webhook": hook}, logParams)
 	}
 	logger.Info("Webhook dispatched", logger.Params{"webhook": hook}, logParams)

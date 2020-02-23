@@ -89,7 +89,7 @@ func Init(platformHandle string) {
 		if namingAPI, ok := platform.(blockatlas.NamingServiceAPI); ok {
 			NamingAPIs[uint64(platform.Coin().ID)] = namingAPI
 		}
-		if collectionAPI, ok := platform.(blockatlas.CollectionAPI); ok && CollectionsHandleWhiteList[handle] {
+		if collectionAPI, ok := platform.(blockatlas.CollectionAPI); ok && CollectionsWhitelist[platform.Coin().ID] {
 			CollectionAPIs[platform.Coin().ID] = collectionAPI
 		}
 	}
