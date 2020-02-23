@@ -22,7 +22,6 @@ import (
 	"github.com/trustwallet/blockatlas/config"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/platform"
-	"github.com/trustwallet/blockatlas/storage"
 )
 
 func TestApis(t *testing.T) {
@@ -31,7 +30,7 @@ func TestApis(t *testing.T) {
 
 	logger.InitLogger()
 	platform.Init(viper.GetString("platform"))
-	cache := storage.New()
+
 	sg := sentrygin.New(sentrygin.Options{})
 	p := ":8420"
 
