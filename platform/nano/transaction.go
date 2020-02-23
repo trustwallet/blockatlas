@@ -24,14 +24,17 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 	}
 
 	for _, srcTx := range txs {
-		tx := p.Normalize(&srcTx, history.Account)
+		tx, err := p.Normalize(&srcTx, history.Account)
+		if err != nil {
+			continue
+		}
 		normalized = append(normalized, tx)
 	}
 
 	return normalized, nil
 }
 
-func (p *Platform) Normalize(srcTx *Transaction, account string) (tx blockatlas.Tx) {
+func (p *Platform) Normalize(srcTx *Transaction, account string) (blockatlas.Tx, error) {
 	var from string
 	var to string
 
@@ -44,13 +47,19 @@ func (p *Platform) Normalize(srcTx *Transaction, account string) (tx blockatlas.
 	}
 
 	status := blockatlas.StatusCompleted
-	height, _ := strconv.ParseUint(srcTx.Height, 10, 64)
+	height, err := strconv.ParseUint(srcTx.Height, 10, 64)
+	if err != nil {
+		return blockatlas.Tx{}, err
+	}
 	if height == 0 {
 		status = blockatlas.StatusPending
 	}
-	timestamp, _ := strconv.ParseInt(srcTx.LocalTimestamp, 10, 64)
+	timestamp, err := strconv.ParseInt(srcTx.LocalTimestamp, 10, 64)
+	if err != nil {
+		return blockatlas.Tx{}, err
+	}
 
-	tx = blockatlas.Tx{
+	tx := blockatlas.Tx{
 		ID:     srcTx.Hash,
 		Coin:   p.Coin().ID,
 		Date:   timestamp,
@@ -65,5 +74,5 @@ func (p *Platform) Normalize(srcTx *Transaction, account string) (tx blockatlas.
 			Decimals: p.Coin().Decimals,
 		},
 	}
-	return tx
+	return tx, nil
 }
