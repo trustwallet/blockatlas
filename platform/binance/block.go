@@ -14,7 +14,7 @@ func (p *Platform) CurrentBlockNumber() (int64, error) {
 		return 0, err
 	}
 	if len(list.BlockArray) == 0 {
-		return 0, errors.E("no block descriptor found", errors.TypePlatformApi).PushToSentry()
+		return 0, errors.E("no block descriptor found", errors.TypePlatformApi)
 	}
 	return list.BlockArray[0].BlockHeight, nil
 }

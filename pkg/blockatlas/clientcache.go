@@ -68,7 +68,7 @@ func (mc *memCache) setCache(key string, value interface{}, duration time.Durati
 	defer mc.RUnlock()
 	b, err := json.Marshal(value)
 	if err != nil {
-		logger.Error(errors.E(err, "client cache cannot marshal cache object").PushToSentry())
+		logger.Error(errors.E(err, "client cache cannot marshal cache object"))
 		return
 	}
 	memoryCache.cache.Set(key, b, duration)
@@ -85,7 +85,7 @@ func (mc *memCache) getCache(key string, value interface{}) error {
 	}
 	err := json.Unmarshal(r, value)
 	if err != nil {
-		return errors.E(err, util.ErrNotFound).PushToSentry()
+		return errors.E(err, util.ErrNotFound)
 	}
 	return nil
 }

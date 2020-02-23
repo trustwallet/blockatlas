@@ -54,19 +54,19 @@ func (p *Platform) getTransactionChannel(id string, txChan chan blockatlas.TxPag
 	srcTx, err := p.client.GetTransactionByID(id)
 	if err != nil {
 		return errors.E(err, "Failed to get tx", errors.TypePlatformUnmarshal,
-			errors.Params{"id": id}).PushToSentry()
+			errors.Params{"id": id})
 	}
 
 	receipt, err := p.client.GetTransactionReceiptByID(id)
 	if err != nil {
 		return errors.E(err, "Failed to get tx id receipt", errors.TypePlatformUnmarshal,
-			errors.Params{"id": id}).PushToSentry()
+			errors.Params{"id": id})
 	}
 
 	txs, err := p.NormalizeTokenTransaction(srcTx, receipt)
 	if err != nil {
 		return errors.E(err, "Failed to NormalizeBlockTransactions tx", errors.TypePlatformUnmarshal,
-			errors.Params{"tx": srcTx}).PushToSentry()
+			errors.Params{"tx": srcTx})
 	}
 	txChan <- txs
 	return nil
@@ -74,7 +74,7 @@ func (p *Platform) getTransactionChannel(id string, txChan chan blockatlas.TxPag
 
 func (p *Platform) NormalizeTokenTransaction(srcTx Tx, receipt TxReceipt) (blockatlas.TxPage, error) {
 	if receipt.Outputs == nil || len(receipt.Outputs) == 0 {
-		return blockatlas.TxPage{}, errors.E("NormalizeBlockTransaction: Clauses not found", errors.Params{"tx": srcTx}).PushToSentry()
+		return blockatlas.TxPage{}, errors.E("NormalizeBlockTransaction: Clauses not found", errors.Params{"tx": srcTx})
 	}
 
 	origin := address.EIP55Checksum(blockatlas.GetValidParameter(srcTx.Origin, srcTx.Meta.TxOrigin))

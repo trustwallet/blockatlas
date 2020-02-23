@@ -31,7 +31,11 @@ import (
 	"github.com/trustwallet/blockatlas/platform/zilliqa"
 )
 
-const emptyParam = ""
+const (
+	allPlatformsHandle = "all"
+)
+
+var CollectionsWhitelist map[uint]bool
 
 func GetVar(name string) string {
 	return viper.GetString(name)
@@ -87,13 +91,18 @@ func getPlatformMap() blockatlas.Platforms {
 		coin.Dash().Handle:         bitcoin.Init(coin.DASH, GetApiVar(coin.DASH)),
 		coin.Doge().Handle:         bitcoin.Init(coin.DOGE, GetApiVar(coin.DOGE)),
 		coin.Qtum().Handle:         bitcoin.Init(coin.QTUM, GetApiVar(coin.QTUM)),
-		coin.Gochain().Handle:      ethereum.Init(coin.GO, GetApiVar(coin.GO), GetRpcVar(coin.GO), emptyParam, emptyParam),
-		coin.Thundertoken().Handle: ethereum.Init(coin.TT, GetApiVar(coin.TT), GetRpcVar(coin.TT), emptyParam, emptyParam),
-		coin.Classic().Handle:      ethereum.Init(coin.ETC, GetApiVar(coin.ETC), GetRpcVar(coin.ETC), emptyParam, emptyParam),
-		coin.Poa().Handle:          ethereum.Init(coin.POA, GetApiVar(coin.POA), GetRpcVar(coin.POA), emptyParam, emptyParam),
-		coin.Callisto().Handle:     ethereum.Init(coin.CLO, GetApiVar(coin.CLO), GetRpcVar(coin.CLO), emptyParam, emptyParam),
-		coin.Wanchain().Handle:     ethereum.Init(coin.WAN, GetApiVar(coin.WAN), GetRpcVar(coin.WAN), emptyParam, emptyParam),
-		coin.Tomochain().Handle:    ethereum.Init(coin.TOMO, GetApiVar(coin.TOMO), GetRpcVar(coin.TOMO), emptyParam, emptyParam),
-		coin.Ethereum().Handle:     ethereum.Init(coin.ETH, GetApiVar(coin.ETH), GetRpcVar(coin.ETH), GetVar("ethereum.collections_api"), GetVar("ethereum.collections_api_key")),
+		coin.Gochain().Handle:      ethereum.Init(coin.GO, GetApiVar(coin.GO), GetRpcVar(coin.GO)),
+		coin.Thundertoken().Handle: ethereum.Init(coin.TT, GetApiVar(coin.TT), GetRpcVar(coin.TT)),
+		coin.Classic().Handle:      ethereum.Init(coin.ETC, GetApiVar(coin.ETC), GetRpcVar(coin.ETC)),
+		coin.Poa().Handle:          ethereum.Init(coin.POA, GetApiVar(coin.POA), GetRpcVar(coin.POA)),
+		coin.Callisto().Handle:     ethereum.Init(coin.CLO, GetApiVar(coin.CLO), GetRpcVar(coin.CLO)),
+		coin.Wanchain().Handle:     ethereum.Init(coin.WAN, GetApiVar(coin.WAN), GetRpcVar(coin.WAN)),
+		coin.Tomochain().Handle:    ethereum.Init(coin.TOMO, GetApiVar(coin.TOMO), GetRpcVar(coin.TOMO)),
+		coin.Ethereum().Handle:     ethereum.InitWitCollection(coin.ETH, GetApiVar(coin.ETH), GetRpcVar(coin.ETH), GetVar("ethereum.collections_api"), GetVar("ethereum.collections_api_key")),
 	}
+}
+
+func InitCollectionsWhitelist() {
+	CollectionsWhitelist = make(map[uint]bool)
+	CollectionsWhitelist[coin.Ethereum().ID] = true
 }

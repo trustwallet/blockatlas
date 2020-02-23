@@ -2,14 +2,106 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/ginutils"
 	"github.com/trustwallet/blockatlas/pkg/ginutils/gincache"
 	"github.com/trustwallet/blockatlas/pkg/logger"
+	"github.com/trustwallet/blockatlas/platform"
 	services "github.com/trustwallet/blockatlas/services/assets"
 	"time"
 )
+
+type (
+	AddressBatchRequest struct {
+		Address string `json:"address"`
+		CoinBatchRequest
+	}
+
+	CoinBatchRequest struct {
+		Coin uint `json:"coin"`
+	}
+
+	ENSBatchRequest struct {
+		Coins []uint64 `json:"coins"`
+		Name  string   `json:"name"`
+	}
+
+	AddressesRequest []AddressBatchRequest
+	CoinsRequest     []CoinBatchRequest
+)
+
+// @Summary Get Multiple Stake Delegations
+// @ID batch_delegations
+// @Description Get Stake Delegations for multiple coins
+// @Accept json
+// @Produce json
+// @Tags Staking
+// @Param delegations body api.AddressesRequest true "Validators addresses and coins"
+// @Success 200 {object} blockatlas.DelegationsBatchPage
+// @Router /v2/staking/delegations [post]
+func makeStakingDelegationsBatchRoute(router gin.IRouter) {
+	router.POST("/staking/delegations", func(c *gin.Context) {
+		var reqs AddressesRequest
+		if err := c.BindJSON(&reqs); err != nil {
+			ginutils.ErrorResponse(c).Message(err.Error()).Render()
+			return
+		}
+
+		batch := make(blockatlas.DelegationsBatchPage, 0)
+		for _, r := range reqs {
+			c, ok := coin.Coins[r.Coin]
+			if !ok {
+				continue
+			}
+			p, ok := platform.StakeAPIs[c.Handle]
+			if !ok {
+				continue
+			}
+			delegation, err := getDelegationResponse(p, r.Address)
+			if err != nil {
+				continue
+			}
+			batch = append(batch, delegation)
+		}
+		ginutils.RenderSuccess(c, blockatlas.DocsResponse{Docs: batch})
+	})
+}
+
+// @Summary Get Multiple Stake Delegations
+// @ID batch_delegations
+// @Description Get Stake Delegations for multiple coins
+// @Accept json
+// @Produce json
+// @Tags Staking
+// @Param delegations body api.AddressesRequest true "Validators addresses and coins"
+// @Success 200 {object} blockatlas.DelegationsBatchPage
+// @Router /v2/staking/list [post]
+func makeStakingDelegationsSimpleBatchRoute(router gin.IRouter) {
+	router.POST("/staking/list", gincache.CacheMiddleware(time.Hour*24, func(c *gin.Context) {
+		var reqs CoinsRequest
+		if err := c.BindJSON(&reqs); err != nil {
+			ginutils.ErrorResponse(c).Message(err.Error()).Render()
+			return
+		}
+
+		batch := make(blockatlas.StakingBatchPage, 0)
+		for _, r := range reqs {
+			c, ok := coin.Coins[r.Coin]
+			if !ok {
+				continue
+			}
+			p, ok := platform.StakeAPIs[c.Handle]
+			if !ok {
+				continue
+			}
+			staking := getStakingResponse(p)
+			batch = append(batch, staking)
+		}
+		ginutils.RenderSuccess(c, blockatlas.DocsResponse{Docs: batch})
+	}))
+}
 
 // @Summary Get Validators
 // @ID validators

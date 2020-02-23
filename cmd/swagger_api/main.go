@@ -6,7 +6,6 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
 	"github.com/trustwallet/blockatlas/api"
-	"github.com/trustwallet/blockatlas/build"
 	_ "github.com/trustwallet/blockatlas/docs"
 	"github.com/trustwallet/blockatlas/internal"
 	"github.com/trustwallet/blockatlas/pkg/ginutils"
@@ -15,7 +14,6 @@ import (
 const (
 	defaultPort       = "8423"
 	defaultConfigPath = "../../config.yml"
-	allPlatforms      = "all"
 )
 
 var (
@@ -24,28 +22,19 @@ var (
 )
 
 func init() {
-	build.LogVersionInfo()
 	port, confPath, sg = internal.InitAPI(defaultPort, defaultConfigPath)
 }
 
 func main() {
 	gin.SetMode(viper.GetString("gin.mode"))
-
 	engine := gin.New()
+
 	engine.Use(ginutils.CheckReverseProxy, *sg)
 	engine.Use(ginutils.CORSMiddleware())
 
 	engine.OPTIONS("/*path", ginutils.CORSMiddleware())
 	engine.GET("/", api.GetRoot)
-	engine.GET("/status", func(c *gin.Context) {
-		ginutils.RenderSuccess(c, map[string]interface{}{
-			"status":  true,
-			"version": build.Version,
-			"build":   build.Build,
-			"date":    build.Date,
-		})
-	})
-
+	engine.GET("/status", api.GetStatus)
 	engine.GET("swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	internal.SetupGracefulShutdown(port, engine)

@@ -51,7 +51,7 @@ func (c *Client) CurrentBlockNumber() (num int64, err error) {
 
 	num, err = strconv.ParseInt(block.Meta.Header.Height, 10, 64)
 	if err != nil {
-		return num, errors.E("error to ParseInt", errors.TypePlatformUnmarshal).PushToSentry()
+		return num, errors.E("error to ParseInt", errors.TypePlatformUnmarshal)
 	}
 
 	return

@@ -115,7 +115,7 @@ func (mc *memCache) deleteCache(key string) {
 func (mc *memCache) setCache(k string, x interface{}, d time.Duration) {
 	b, err := json.Marshal(x)
 	if err != nil {
-		logger.Error(errors.E(err, "client cache cannot marshal cache object").PushToSentry())
+		logger.Error(errors.E(err, "client cache cannot marshal cache object"))
 		return
 	}
 	mc.RLock()
@@ -135,7 +135,7 @@ func (mc *memCache) getCache(key string) (cacheResponse, error) {
 	}
 	err := json.Unmarshal(r, &result)
 	if err != nil {
-		return result, errors.E(err, util.ErrNotFound).PushToSentry()
+		return result, errors.E(err, util.ErrNotFound)
 	}
 	return result, nil
 }

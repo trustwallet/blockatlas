@@ -79,7 +79,7 @@ func TestNormalize(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if gotTx := platform.Normalize(tt.args.srcTx, tt.args.account); !reflect.DeepEqual(gotTx, tt.wantTx) {
+			if gotTx, err := platform.Normalize(tt.args.srcTx, tt.args.account); !reflect.DeepEqual(gotTx, tt.wantTx) && err == nil {
 				t.Errorf("Normalize() = %v, want %v", gotTx, tt.wantTx)
 			}
 		})

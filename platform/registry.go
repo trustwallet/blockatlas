@@ -28,22 +28,27 @@ var (
 )
 
 func getActivePlatforms(handle string) []blockatlas.Platform {
-	logger.Info("Loaded with: ", logger.Params{"handle": handle})
-
 	platforms := getPlatformMap()
+	logger.Info("Platform API setup with: ", logger.Params{"handle": handle})
+
+	if handle == allPlatformsHandle {
+		return platforms.GetPlatformList()
+	}
+
 	platform, ok := platforms[handle]
 	if ok {
 		return []blockatlas.Platform{platform}
-	} else if handle == "all" {
-		return platforms.GetPlatformList()
-	} else {
-		logger.Fatal("Please, use ATLAS_PLATFORM handle with non-empty value", logger.Params{"ATLAS_PLATFORM": handle})
-		return nil
 	}
+
+	logger.Fatal("Please, use ATLAS_PLATFORM handle with non-empty value, see more at Readme. Example: all", logger.Params{"ATLAS_PLATFORM": handle})
+	return nil
 }
 
 func Init(platformHandle string) {
 	platformList := getActivePlatforms(platformHandle)
+
+	// white list of collection api coins (only ETH now)
+	InitCollectionsWhitelist()
 
 	Platforms = make(map[string]blockatlas.Platform)
 	BlockAPIs = make(map[string]blockatlas.BlockAPI)
@@ -84,7 +89,7 @@ func Init(platformHandle string) {
 		if namingAPI, ok := platform.(blockatlas.NamingServiceAPI); ok {
 			NamingAPIs[uint64(platform.Coin().ID)] = namingAPI
 		}
-		if collectionAPI, ok := platform.(blockatlas.CollectionAPI); ok {
+		if collectionAPI, ok := platform.(blockatlas.CollectionAPI); ok && CollectionsWhitelist[platform.Coin().ID] {
 			CollectionAPIs[platform.Coin().ID] = collectionAPI
 		}
 	}
