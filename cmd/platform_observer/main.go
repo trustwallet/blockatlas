@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"github.com/spf13/viper"
-	"github.com/trustwallet/blockatlas/build"
 	"github.com/trustwallet/blockatlas/internal"
 	"github.com/trustwallet/blockatlas/observer"
 	"github.com/trustwallet/blockatlas/pkg/logger"
@@ -22,7 +21,6 @@ var (
 )
 
 func init() {
-	build.LogVersionInfo()
 	_, confPath, _, cache = internal.InitAPIWithRedis("", defaultConfigPath)
 	platform.Init(viper.GetString("platform"))
 }

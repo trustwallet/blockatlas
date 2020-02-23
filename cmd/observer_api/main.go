@@ -4,7 +4,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/api"
-	"github.com/trustwallet/blockatlas/build"
 	_ "github.com/trustwallet/blockatlas/docs"
 	"github.com/trustwallet/blockatlas/internal"
 	"github.com/trustwallet/blockatlas/pkg/ginutils"
@@ -24,28 +23,20 @@ var (
 )
 
 func init() {
-	build.LogVersionInfo()
 	port, confPath, sg, cache = internal.InitAPIWithRedis(defaultPort, defaultConfigPath)
 }
 
 func main() {
 	gin.SetMode(viper.GetString("gin.mode"))
-
 	engine := gin.New()
+
 	engine.Use(ginutils.CheckReverseProxy, *sg)
 	engine.Use(ginutils.CORSMiddleware())
 	engine.Use(gin.Logger())
 
 	engine.OPTIONS("/*path", ginutils.CORSMiddleware())
 	engine.GET("/", api.GetRoot)
-	engine.GET("/status", func(c *gin.Context) {
-		ginutils.RenderSuccess(c, map[string]interface{}{
-			"status":  true,
-			"version": build.Version,
-			"build":   build.Build,
-			"date":    build.Date,
-		})
-	})
+	engine.GET("/status", api.GetStatus)
 
 	logger.Info("Loading observer API")
 

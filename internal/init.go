@@ -2,6 +2,7 @@ package internal
 
 import (
 	"flag"
+	"fmt"
 	sentrygin "github.com/getsentry/sentry-go/gin"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
@@ -9,6 +10,13 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/storage"
 	"path/filepath"
+	"runtime"
+	"time"
+)
+
+var (
+	Build = "dev"
+	Date  = time.Now().String()
 )
 
 func InitAPI(defaultPort, defaultConfigPath string) (string, string, *gin.HandlerFunc) {
@@ -17,6 +25,7 @@ func InitAPI(defaultPort, defaultConfigPath string) (string, string, *gin.Handle
 		sg             gin.HandlerFunc
 	)
 
+	LogVersionInfo()
 	sg = sentrygin.New(sentrygin.Options{})
 
 	flag.StringVar(&port, "p", defaultPort, "port for api")
@@ -40,7 +49,7 @@ func InitAPIWithRedis(defaultPort, defaultConfigPath string) (string, string, *g
 		cache          *storage.Storage
 		sg             gin.HandlerFunc
 	)
-
+	LogVersionInfo()
 	cache = storage.New()
 	sg = sentrygin.New(sentrygin.Options{})
 
@@ -62,4 +71,17 @@ func InitAPIWithRedis(defaultPort, defaultConfigPath string) (string, string, *g
 	}
 
 	return port, confPath, &sg, cache
+}
+
+func LogVersionInfo() {
+	fmt.Printf(`
+-------------------------------------------------------------------------------
+Build: %v
+Start date: %v
+OS: %s
+Go Arch: %s
+Go Version: %s
+-------------------------------------------------------------------------------
+`,
+		Build, Date, runtime.GOOS, runtime.GOARCH, runtime.Version())
 }

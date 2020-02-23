@@ -28,18 +28,20 @@ var (
 )
 
 func getActivePlatforms(handle string) []blockatlas.Platform {
-	logger.Info("Loaded with: ", logger.Params{"handle": handle})
-
 	platforms := getPlatformMap()
+	logger.Info("Platform API setup with: ", logger.Params{"handle": handle})
+
+	if handle == allPlatformsHandle {
+		return platforms.GetPlatformList()
+	}
+
 	platform, ok := platforms[handle]
 	if ok {
 		return []blockatlas.Platform{platform}
-	} else if handle == "all" {
-		return platforms.GetPlatformList()
-	} else {
-		logger.Fatal("Please, use ATLAS_PLATFORM handle with non-empty value", logger.Params{"ATLAS_PLATFORM": handle})
-		return nil
 	}
+
+	logger.Fatal("Please, use ATLAS_PLATFORM handle with non-empty value, see more at Readme. Example: all", logger.Params{"ATLAS_PLATFORM": handle})
+	return nil
 }
 
 func Init(platformHandle string) {

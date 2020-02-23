@@ -31,7 +31,10 @@ import (
 	"github.com/trustwallet/blockatlas/platform/zilliqa"
 )
 
-const emptyParam = ""
+const (
+	emptyParam         = ""
+	allPlatformsHandle = "all"
+)
 
 func GetVar(name string) string {
 	return viper.GetString(name)

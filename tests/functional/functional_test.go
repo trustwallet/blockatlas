@@ -51,7 +51,6 @@ func TestApis(t *testing.T) {
 		})
 	})
 
-	api.MakeMetricsRoute(engine)
 	api.LoadPlatforms(engine)
 
 	if viper.GetBool("observer.enabled") {

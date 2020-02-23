@@ -5,9 +5,9 @@ package integration
 import (
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/config"
-	"github.com/trustwallet/blockatlas/pkg/tests/integration/bitcoin"
-	"github.com/trustwallet/blockatlas/pkg/tests/integration/domains"
-	"github.com/trustwallet/blockatlas/pkg/tests/integration/ontology"
+	"github.com/trustwallet/blockatlas/tests/integration/bitcoin"
+	"github.com/trustwallet/blockatlas/tests/integration/domains"
+	"github.com/trustwallet/blockatlas/tests/integration/ontology"
 
 	"github.com/trustwallet/blockatlas/platform"
 	"os"

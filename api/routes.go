@@ -3,6 +3,8 @@ package api
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/trustwallet/blockatlas/internal"
+	"github.com/trustwallet/blockatlas/pkg/ginutils"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/platform"
 )
@@ -64,7 +66,16 @@ func LoadPlatforms(root gin.IRouter) {
 	makeStakingDelegationsSimpleBatchRoute(v2)
 
 	logger.Info("Routes set up", logger.Params{"routes": len(routers)})
-	v1.GET("/", getEnabledEndpoints)
+
+	v1.GET("/", func(c *gin.Context) {
+		var resp struct {
+			Endpoints []string `json:"endpoints,omitempty"`
+		}
+		for handle := range routers {
+			resp.Endpoints = append(resp.Endpoints, handle)
+		}
+		ginutils.RenderSuccess(c, &resp)
+	})
 }
 
 // getRouter lazy loads routers
@@ -79,4 +90,14 @@ func getRouter(router *gin.RouterGroup, handle string) gin.IRouter {
 		routers[key] = group
 		return group
 	}
+}
+
+func GetRoot(c *gin.Context) { ginutils.RenderSuccess(c, `Welcome to the Block Atlas API!`) }
+
+func GetStatus(c *gin.Context) {
+	ginutils.RenderSuccess(c, map[string]interface{}{
+		"status": true,
+		"build":  internal.Build,
+		"date":   internal.Date,
+	})
 }

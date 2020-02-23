@@ -34,6 +34,9 @@ func TestFilesExists(t *testing.T) {
 func TestCoinFile(t *testing.T) {
 	var coinList []TestCoin
 	coin, err := os.Open(coinFile)
+	if err != nil {
+		t.Error(err)
+	}
 	dec := yaml.NewDecoder(coin)
 	err = dec.Decode(&coinList)
 	if err != nil {

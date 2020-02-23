@@ -1,112 +1,12 @@
 package api
 
 import (
-	"github.com/chenjiandongx/ginprom"
 	"github.com/gin-gonic/gin"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
-	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/ginutils"
-	"github.com/trustwallet/blockatlas/pkg/metrics"
-	"net/http"
-	"sort"
+	"github.com/trustwallet/blockatlas/platform"
+	"strconv"
 )
-
-// @Summary Get Transactions
-// @ID tx_v1
-// @Description Get transactions from the address
-// @Accept json
-// @Produce json
-// @Tags Transactions
-// @Param coin path string true "the coin name" default(tezos)
-// @Param address path string true "the query address" default(tz1WCd2jm4uSt4vntk4vSuUWoZQGhLcDuR9q)
-// @Failure 500 {object} ginutils.ApiError
-// @Router /v1/{coin}/{address} [get]
-func makeTxRouteV1(router gin.IRouter, api blockatlas.Platform) {
-	makeTxRoute(router, api, "/:address")
-}
-
-// @Summary Get Transactions
-// @ID tx_v2
-// @Description Get transactions from the address
-// @Accept json
-// @Produce json
-// @Tags Transactions
-// @Param coin path string true "the coin name" default(tezos)
-// @Param address path string true "the query address" default(tz1WCd2jm4uSt4vntk4vSuUWoZQGhLcDuR9q)
-// @Success 200 {object} blockatlas.TxPage
-// @Failure 500 {object} ginutils.ApiError
-// @Router /v2/{coin}/transactions/{address} [get]
-func makeTxRouteV2(router gin.IRouter, api blockatlas.Platform) {
-	makeTxRoute(router, api, "/transactions/:address")
-}
-
-func makeTxRoute(router gin.IRouter, api blockatlas.Platform, path string) {
-	var txAPI blockatlas.TxAPI
-	var tokenTxAPI blockatlas.TokenTxAPI
-	txAPI, _ = api.(blockatlas.TxAPI)
-	tokenTxAPI, _ = api.(blockatlas.TokenTxAPI)
-
-	if txAPI == nil && tokenTxAPI == nil {
-		return
-	}
-
-	router.GET(path, func(c *gin.Context) {
-		address := c.Param("address")
-		if address == "" {
-			emptyPage(c)
-			return
-		}
-		token := c.Query("token")
-
-		var txs []blockatlas.Tx
-		var err error
-		switch {
-		case token == "" && txAPI != nil:
-			txs, err = txAPI.GetTxsByAddress(address)
-		case token != "" && tokenTxAPI != nil:
-			txs, err = tokenTxAPI.GetTokenTxsByAddress(address, token)
-		default:
-			emptyPage(c)
-			return
-		}
-
-		if err != nil {
-			errResp := ginutils.ErrorResponse(c)
-			switch {
-			case err == blockatlas.ErrInvalidAddr:
-				errResp.Params(http.StatusBadRequest, "Invalid address")
-			case err == blockatlas.ErrNotFound:
-				errResp.Params(http.StatusNotFound, "No such address")
-			case err == blockatlas.ErrSourceConn:
-				errResp.Params(http.StatusServiceUnavailable, "Lost connection to blockchain")
-			}
-			errResp.Render()
-			return
-		}
-
-		page := make(blockatlas.TxPage, 0)
-		for _, tx := range txs {
-			if tx.Direction != "" {
-				goto AddTx
-			}
-			tx.Direction = blockatlas.DirectionOutgoing
-			if tx.To == address {
-				tx.Direction = blockatlas.DirectionIncoming
-				if tx.From == address {
-					tx.Direction = blockatlas.DirectionSelf
-				}
-			}
-		AddTx:
-			page = append(page, tx)
-		}
-		if len(page) > blockatlas.TxPerPage {
-			page = page[0:blockatlas.TxPerPage]
-		}
-		sort.Sort(page)
-		ginutils.RenderSuccess(c, &page)
-	})
-}
 
 // @Summary Get Collections
 // @ID collections_v2
@@ -232,47 +132,83 @@ func makeCollectionRoute(router gin.IRouter, api blockatlas.Platform) {
 	})
 }
 
-// @Summary Get Tokens
-// @ID tokens
-// @Description Get tokens from the address
+// @Description Get collection categories
+// @ID collection_categories_v2
+// @Summary Get list of collections from a specific coin and addresses
 // @Accept json
 // @Produce json
-// @Tags Transactions
-// @Param coin path string true "the coin name" default(ethereum)
-// @Param address path string true "the query address" default(0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB)
-// @Success 200 {object} blockatlas.CollectionPage
-// @Failure 500 {object} ginutils.ApiError
-// @Router /v2/{coin}/tokens/{address} [get]
-func makeTokenRoute(router gin.IRouter, api blockatlas.Platform) {
-	var tokenAPI blockatlas.TokenAPI
-	tokenAPI, _ = api.(blockatlas.TokenAPI)
-
-	if tokenAPI == nil {
-		return
-	}
-
-	router.GET("/tokens/:address", func(c *gin.Context) {
-		address := c.Param("address")
-		if address == "" {
-			emptyPage(c)
-			return
-		}
-
-		tl, err := tokenAPI.GetTokenListByAddress(address)
-		if err != nil {
+// @Tags Collections
+// @Param data body string true "Payload" default({"60": ["0xb3624367b1ab37daef42e1a3a2ced012359659b0"]})
+// @Success 200 {object} blockatlas.DocsResponse
+// @Router /v2/collectibles/categories [post]
+//TODO: remove once most of the clients will be updated (deadline: March 17th)
+func oldMakeCategoriesBatchRoute(router gin.IRouter) {
+	router.POST("/collectibles/categories", func(c *gin.Context) {
+		var reqs map[string][]string
+		if err := c.BindJSON(&reqs); err != nil {
 			ginutils.ErrorResponse(c).Message(err.Error()).Render()
 			return
 		}
 
-		ginutils.RenderSuccess(c, blockatlas.DocsResponse{Docs: tl})
+		batch := make(blockatlas.CollectionPage, 0)
+		for key, addresses := range reqs {
+			coinId, err := strconv.Atoi(key)
+			if err != nil {
+				continue
+			}
+			p, ok := platform.CollectionAPIs[uint(coinId)]
+			if !ok {
+				continue
+			}
+			for _, address := range addresses {
+				collections, err := p.OldGetCollections(address)
+				if err != nil {
+					continue
+				}
+				batch = append(batch, collections...)
+			}
+		}
+		ginutils.RenderSuccess(c, batch)
 	})
 }
 
-func MakeMetricsRoute(router gin.IRouter) {
-	router.Use(metrics.PromMiddleware())
-	m := router.Group("/metrics")
-	m.Use(ginutils.TokenAuthMiddleware(viper.GetString("metrics.api_token")))
-	m.GET("/", ginprom.PromHandler(promhttp.Handler()))
+// @Description Get collection categories
+// @ID collection_categories_v3
+// @Summary Get list of collections from a specific coin and addresses
+// @Accept json
+// @Produce json
+// @Tags Collections
+// @Param data body string true "Payload" default({"60": ["0xb3624367b1ab37daef42e1a3a2ced012359659b0"]})
+// @Success 200 {object} blockatlas.DocsResponse
+// @Router /v3/collectibles/categories [post]
+func makeCategoriesBatchRoute(router gin.IRouter) {
+	router.POST("/collectibles/categories", func(c *gin.Context) {
+		var reqs map[string][]string
+		if err := c.BindJSON(&reqs); err != nil {
+			ginutils.ErrorResponse(c).Message(err.Error()).Render()
+			return
+		}
+
+		batch := make(blockatlas.CollectionPage, 0)
+		for key, addresses := range reqs {
+			coinId, err := strconv.Atoi(key)
+			if err != nil {
+				continue
+			}
+			p, ok := platform.CollectionAPIs[uint(coinId)]
+			if !ok {
+				continue
+			}
+			for _, address := range addresses {
+				collections, err := p.GetCollections(address)
+				if err != nil {
+					continue
+				}
+				batch = append(batch, collections...)
+			}
+		}
+		ginutils.RenderSuccess(c, batch)
+	})
 }
 
 func emptyPage(c *gin.Context) {

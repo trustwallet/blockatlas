@@ -154,7 +154,7 @@ ifeq (,$(test))
 	@bash -c "$(MAKE) newman test=healthcheck host=$(host)"
 	@bash -c "$(MAKE) newman test=observer host=$(host)"
 else
-	@newman run pkg/tests/postman/Blockatlas.postman_collection.json --folder $(test) -d pkg/tests/postman/$(test)_data.json --env-var "host=$(host)"
+	@newman run tests/postman/Blockatlas.postman_collection.json --folder $(test) -d tests/postman/$(test)_data.json --env-var "host=$(host)"
 endif
 
 go-compile: go-get go-build
@@ -190,11 +190,11 @@ go-test:
 
 go-functional:
 	@echo "  >  Running functional tests"
-	GOBIN=$(GOBIN) TEST_CONFIG=$(CONFIG_FILE) go test -race -tags=functional -v ./pkg/tests/functional
+	GOBIN=$(GOBIN) TEST_CONFIG=$(CONFIG_FILE) go test -race -tags=functional -v ./tests/functional
 
 go-integration:
 	@echo "  >  Running integration tests"
-	GOBIN=$(GOBIN) TEST_CONFIG=$(CONFIG_FILE) go test -race -tags=integration -v ./pkg/tests/integration
+	GOBIN=$(GOBIN) TEST_CONFIG=$(CONFIG_FILE) go test -race -tags=integration -v ./tests/integration
 
 go-fmt:
 	@echo "  >  Format all go files"
