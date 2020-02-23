@@ -22,7 +22,6 @@ import (
 	"github.com/trustwallet/blockatlas/config"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/platform"
-	"github.com/trustwallet/blockatlas/storage"
 )
 
 func TestApis(t *testing.T) {
@@ -31,25 +30,20 @@ func TestApis(t *testing.T) {
 
 	logger.InitLogger()
 	platform.Init(viper.GetString("platform"))
-	cache := storage.New()
+
 	sg := sentrygin.New(sentrygin.Options{})
 	p := ":8420"
 
 	engine := gin.New()
 
 	engine.Use(gin.Recovery())
+
 	engine.Use(ginutils.CheckReverseProxy, sg)
 	engine.Use(ginutils.CORSMiddleware())
 
 	engine.OPTIONS("/*path", ginutils.CORSMiddleware())
 
 	engine.GET("swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-	engine.GET("/", api.GetRoot)
-	engine.GET("/status", func(c *gin.Context) {
-		ginutils.RenderSuccess(c, map[string]interface{}{
-			"status": true,
-		})
-	})
 
 	api.SetupPlatformAPI(engine)
 
