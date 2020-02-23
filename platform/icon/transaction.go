@@ -31,7 +31,7 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 func Normalize(trx *Tx) (tx blockatlas.Tx, b bool) {
 	date, err := time.Parse("2006-01-02T15:04:05.999Z0700", trx.CreateDate)
 	if err != nil {
-		err = errors.E(err, errors.TypePlatformUnmarshal).PushToSentry()
+		err = errors.E(err, errors.TypePlatformUnmarshal)
 		logger.Error(err)
 		return tx, false
 	}

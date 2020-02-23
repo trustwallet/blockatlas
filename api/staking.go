@@ -13,22 +13,24 @@ import (
 	"time"
 )
 
-type AddressBatchRequest struct {
-	Address string `json:"address"`
-	CoinBatchRequest
-}
+type (
+	AddressBatchRequest struct {
+		Address string `json:"address"`
+		CoinBatchRequest
+	}
 
-type CoinBatchRequest struct {
-	Coin uint `json:"coin"`
-}
+	CoinBatchRequest struct {
+		Coin uint `json:"coin"`
+	}
 
-type ENSBatchRequest struct {
-	Coins []uint64 `json:"coins"`
-	Name  string   `json:"name"`
-}
+	ENSBatchRequest struct {
+		Coins []uint64 `json:"coins"`
+		Name  string   `json:"name"`
+	}
 
-type AddressesRequest []AddressBatchRequest
-type CoinsRequest []CoinBatchRequest
+	AddressesRequest []AddressBatchRequest
+	CoinsRequest     []CoinBatchRequest
+)
 
 // @Summary Get Multiple Stake Delegations
 // @ID batch_delegations

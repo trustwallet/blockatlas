@@ -2,19 +2,11 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/ginutils"
 	"github.com/trustwallet/blockatlas/platform"
 	"github.com/trustwallet/blockatlas/storage"
 )
-
-func SetupObserverAPI(router gin.IRouter, db *storage.Storage) {
-	router.Use(ginutils.TokenAuthMiddleware(viper.GetString("metrics.api_token")))
-	router.POST("/webhook/register", addCall(db))
-	router.DELETE("/webhook/register", deleteCall(db))
-	router.GET("/status", statusCall(db))
-}
 
 // @Summary Create a webhook
 // @ID create_webhook

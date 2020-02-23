@@ -35,7 +35,7 @@ func (p *Platform) GetTokenTxsByAddress(address, token string) (blockatlas.TxPag
 	tokenTxs, err := p.client.GetTxsOfAddress(address, token)
 	if err != nil {
 		return nil, errors.E(err, "TRON: failed to get token from address", errors.TypePlatformApi,
-			errors.Params{"address": address, "token": token}).PushToSentry()
+			errors.Params{"address": address, "token": token})
 	}
 
 	txs := make(blockatlas.TxPage, 0)
@@ -47,7 +47,7 @@ func (p *Platform) GetTokenTxsByAddress(address, token string) (blockatlas.TxPag
 	info, err := p.client.GetTokenInfo(token)
 	if err != nil || len(info.Data) == 0 {
 		return nil, errors.E(err, "TRON: failed to get token info", errors.TypePlatformApi,
-			errors.Params{"address": address, "token": token}).PushToSentry()
+			errors.Params{"address": address, "token": token})
 	}
 
 	for _, srcTx := range tokenTxs {
@@ -80,7 +80,7 @@ func setTokenMeta(tx *blockatlas.Tx, srcTx Tx, tokenInfo AssetInfo) {
 func Normalize(srcTx Tx) (*blockatlas.Tx, error) {
 	if len(srcTx.Data.Contracts) == 0 {
 		return nil, errors.E("TRON: transfer without contract", errors.TypePlatformApi,
-			errors.Params{"tx": srcTx}).PushToSentry()
+			errors.Params{"tx": srcTx})
 	}
 
 	contract := srcTx.Data.Contracts[0]
@@ -93,12 +93,12 @@ func Normalize(srcTx Tx) (*blockatlas.Tx, error) {
 	from, err := address.HexToAddress(transfer.OwnerAddress)
 	if err != nil {
 		return nil, errors.E(err, "TRON: failed to get from address", errors.TypePlatformApi,
-			errors.Params{"tx": srcTx}).PushToSentry()
+			errors.Params{"tx": srcTx})
 	}
 	to, err := address.HexToAddress(transfer.ToAddress)
 	if err != nil {
 		return nil, errors.E(err, "TRON: failed to get to address", errors.TypePlatformApi,
-			errors.Params{"tx": srcTx}).PushToSentry()
+			errors.Params{"tx": srcTx})
 	}
 
 	return &blockatlas.Tx{

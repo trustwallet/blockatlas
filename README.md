@@ -44,7 +44,7 @@ The observer API watches the chain for new transactions and generates notificati
 ### Requirements
 
  * [Go Toolchain](https://golang.org/doc/install) versions 1.13+
- * [Redis](https://redis.io/topics/quickstart) instance (observer and markets)
+ * [Redis](https://redis.io/topics/quickstart) instance for platform_observer
 
 ### From Source
 

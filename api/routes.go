@@ -3,18 +3,39 @@ package api
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/internal"
 	"github.com/trustwallet/blockatlas/pkg/ginutils"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/platform"
+	"github.com/trustwallet/blockatlas/storage"
 )
 
 var routers = make(map[string]gin.IRouter)
 
-func LoadPlatforms(root gin.IRouter) {
+func SetupObserverAPI(router gin.IRouter, db *storage.Storage) {
+	router.GET("/", GetRoot)
+	router.GET("/status", GetStatus)
+
+	observerAPI := router.Group("/observer/v1")
+	observerAPI.Use(ginutils.TokenAuthMiddleware(viper.GetString("observer.auth")))
+	observerAPI.POST("/webhook/register", addCall(db))
+	observerAPI.DELETE("/webhook/register", deleteCall(db))
+	observerAPI.GET("/status", statusCall(db))
+
+	logger.Info("Routes set up", logger.Params{"routes": len(routers)})
+}
+
+func SetupPlatformAPI(root gin.IRouter) {
+
+	root.GET("/", GetRoot)
+	root.GET("/status", GetStatus)
+
 	v1 := root.Group("/v1")
 	v2 := root.Group("/v2")
 	v3 := root.Group("/v3")
+
+	v1.GET("/", GetSupportedEndpoints)
 
 	for _, txAPI := range platform.Platforms {
 		router := getRouter(v1, txAPI.Coin().Handle)
@@ -36,15 +57,14 @@ func LoadPlatforms(root gin.IRouter) {
 	}
 
 	for _, collectionAPI := range platform.Platforms {
-		routerv2 := getRouter(v2, collectionAPI.Coin().Handle)
-		routerv3 := getRouter(v3, collectionAPI.Coin().Handle)
+		routerV2 := getRouter(v2, collectionAPI.Coin().Handle)
+		routerV3 := getRouter(v3, collectionAPI.Coin().Handle)
 
-		makeCollectionsRoute(routerv3, collectionAPI)
-		makeCollectionRoute(routerv3, collectionAPI)
+		makeCollectionsRoute(routerV3, collectionAPI)
+		makeCollectionRoute(routerV3, collectionAPI)
 
-		//TODO: remove once most of the clients will be updated (deadline: March 17th)
-		oldMakeCollectionRoute(routerv2, collectionAPI)
-		oldMakeCollectionsRoute(routerv2, collectionAPI)
+		oldMakeCollectionRoute(routerV2, collectionAPI)
+		oldMakeCollectionsRoute(routerV2, collectionAPI)
 	}
 
 	for _, customAPI := range platform.CustomAPIs {
@@ -52,30 +72,17 @@ func LoadPlatforms(root gin.IRouter) {
 		customAPI.RegisterRoutes(router)
 	}
 
-	{
-		ns := root.Group("/ns")
-		batchNs := v2.Group("/ns")
-		MakeLookupRoute(ns)
-		MakeLookupBatchRoute(batchNs)
-	}
+	ns := root.Group("/ns")
+	batchNs := v2.Group("/ns")
+	MakeLookupRoute(ns)
+	MakeLookupBatchRoute(batchNs)
 
-	//TODO: remove once most of the clients will be updated (deadline: March 17th)
 	oldMakeCategoriesBatchRoute(v2)
 	makeCategoriesBatchRoute(v3)
 	makeStakingDelegationsBatchRoute(v2)
 	makeStakingDelegationsSimpleBatchRoute(v2)
 
 	logger.Info("Routes set up", logger.Params{"routes": len(routers)})
-
-	v1.GET("/", func(c *gin.Context) {
-		var resp struct {
-			Endpoints []string `json:"endpoints,omitempty"`
-		}
-		for handle := range routers {
-			resp.Endpoints = append(resp.Endpoints, handle)
-		}
-		ginutils.RenderSuccess(c, &resp)
-	})
 }
 
 // getRouter lazy loads routers
@@ -92,7 +99,17 @@ func getRouter(router *gin.RouterGroup, handle string) gin.IRouter {
 	}
 }
 
-func GetRoot(c *gin.Context) { ginutils.RenderSuccess(c, `Welcome to the Block Atlas API!`) }
+func GetSupportedEndpoints(c *gin.Context) {
+	var resp struct {
+		Endpoints []string `json:"endpoints,omitempty"`
+	}
+	for handle := range routers {
+		resp.Endpoints = append(resp.Endpoints, handle)
+	}
+	ginutils.RenderSuccess(c, &resp)
+}
+
+func GetRoot(c *gin.Context) { ginutils.RenderSuccess(c, "Welcome to the Block Atlas API") }
 
 func GetStatus(c *gin.Context) {
 	ginutils.RenderSuccess(c, map[string]interface{}{

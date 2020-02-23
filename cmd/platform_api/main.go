@@ -16,8 +16,8 @@ const (
 )
 
 var (
-	port, confPath, chosenPlatform string
-	sg                             *gin.HandlerFunc
+	port, confPath string
+	sg             *gin.HandlerFunc
 )
 
 func init() {
@@ -27,17 +27,13 @@ func init() {
 
 func main() {
 	gin.SetMode(viper.GetString("gin.mode"))
-	engine := gin.New()
 
+	engine := gin.New()
 	engine.Use(ginutils.CheckReverseProxy, *sg)
 	engine.Use(ginutils.CORSMiddleware())
 	engine.Use(gin.Logger())
-
 	engine.OPTIONS("/*path", ginutils.CORSMiddleware())
-	engine.GET("/", api.GetRoot)
-	engine.GET("/status", api.GetStatus)
 
-	api.LoadPlatforms(engine)
-
+	api.SetupPlatformAPI(engine)
 	internal.SetupGracefulShutdown(port, engine)
 }

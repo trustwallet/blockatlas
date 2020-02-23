@@ -7,7 +7,6 @@ import (
 	_ "github.com/trustwallet/blockatlas/docs"
 	"github.com/trustwallet/blockatlas/internal"
 	"github.com/trustwallet/blockatlas/pkg/ginutils"
-	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/storage"
 )
 
@@ -28,20 +27,13 @@ func init() {
 
 func main() {
 	gin.SetMode(viper.GetString("gin.mode"))
-	engine := gin.New()
 
+	engine := gin.New()
 	engine.Use(ginutils.CheckReverseProxy, *sg)
 	engine.Use(ginutils.CORSMiddleware())
 	engine.Use(gin.Logger())
-
 	engine.OPTIONS("/*path", ginutils.CORSMiddleware())
-	engine.GET("/", api.GetRoot)
-	engine.GET("/status", api.GetStatus)
 
-	logger.Info("Loading observer API")
-
-	observerAPI := engine.Group("/observer/v1")
-
-	api.SetupObserverAPI(observerAPI, cache)
+	api.SetupObserverAPI(engine, cache)
 	internal.SetupGracefulShutdown(port, engine)
 }

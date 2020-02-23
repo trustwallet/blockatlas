@@ -6,9 +6,10 @@ gin:
   # If set, HTTP Forwarded headers will be respected
   reverse_proxy: false
 
+# If all - run all platforms in one binary. You can pick specific coin handle to run binary only with specific coin
+# Example: ethereum
+# You can see all the coin handles at coins/coins.yml file
 platform: all
-#metrics:
-#  api_token: xxxxxx
 
 # Sentry error tracking
 #sentry:
@@ -16,7 +17,6 @@ platform: all
 
 # The transaction watcher
 observer:
-  enabled: false
   # TODO : Add description
   auth: test
   # Don't request blocks older than this
@@ -31,7 +31,7 @@ observer:
     max: 30s
 
 storage:
-  redis: redis://redis:6379
+  redis: redis://localhost:6379
 
 # [BNB] Binance DEX: https://wallet.binance.org
 #       Binance Chain: https://explorer.binance.org

@@ -32,7 +32,7 @@ func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
 	}
 	inflationValue, err := strconv.ParseFloat(inflation.Result, 32)
 	if err != nil {
-		return nil, errors.E("error to parse inflationValue to float", errors.TypePlatformUnmarshal).PushToSentry()
+		return nil, errors.E("error to parse inflationValue to float", errors.TypePlatformUnmarshal)
 	}
 
 	for _, validator := range validators.Result {

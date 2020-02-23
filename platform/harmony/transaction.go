@@ -29,7 +29,7 @@ func NormalizeTxs(txs []Transaction) blockatlas.TxPage {
 }
 
 func GetNormalizationError(err error) error {
-	return errors.E(err, errors.TypePlatformNormalize, errors.Params{"method": "Harmony_NormalizeTx"}).PushToSentry()
+	return errors.E(err, errors.TypePlatformNormalize, errors.Params{"method": "Harmony_NormalizeTx"})
 }
 
 func NormalizeTx(trx *Transaction) (tx blockatlas.Tx, b bool, err error) {

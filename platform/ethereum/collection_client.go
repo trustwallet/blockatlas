@@ -28,7 +28,7 @@ func (c CollectionsClient) GetCollectibles(owner string, collectibleID string) (
 	collection := searchCollection(collections, collectibleID)
 	if collection == nil {
 		return nil, nil, errors.E("collectible not found", errors.TypePlatformClient,
-			errors.Params{"collectibleID": collectibleID}).PushToSentry()
+			errors.Params{"collectibleID": collectibleID})
 	}
 
 	query := url.Values{
@@ -53,7 +53,7 @@ func (c CollectionsClient) OldGetCollectibles(owner string, collectibleID string
 	collection := oldSearchCollection(collections, id)
 	if collection == nil {
 		return nil, nil, errors.E("collectible not found", errors.TypePlatformClient,
-			errors.Params{"collectibleID": collectibleID}).PushToSentry()
+			errors.Params{"collectibleID": collectibleID})
 	}
 
 	query := url.Values{

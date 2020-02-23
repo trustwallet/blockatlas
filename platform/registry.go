@@ -3,6 +3,7 @@ package platform
 import (
 	"fmt"
 	"github.com/spf13/viper"
+	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 )
@@ -86,7 +87,7 @@ func Init(platformHandle string) {
 		if namingAPI, ok := platform.(blockatlas.NamingServiceAPI); ok {
 			NamingAPIs[uint64(platform.Coin().ID)] = namingAPI
 		}
-		if collectionAPI, ok := platform.(blockatlas.CollectionAPI); ok {
+		if collectionAPI, ok := platform.(blockatlas.CollectionAPI); ok && handle == coin.Ethereum().Handle {
 			CollectionAPIs[platform.Coin().ID] = collectionAPI
 		}
 	}

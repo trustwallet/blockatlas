@@ -51,13 +51,7 @@ func TestApis(t *testing.T) {
 		})
 	})
 
-	api.LoadPlatforms(engine)
-
-	if viper.GetBool("observer.enabled") {
-		logger.Info("Loading observer API")
-		observerAPI := engine.Group("/observer/v1")
-		api.SetupObserverAPI(observerAPI, cache)
-	}
+	api.SetupPlatformAPI(engine)
 
 	signalForExit := make(chan os.Signal, 1)
 

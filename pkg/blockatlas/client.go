@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/trustwallet/blockatlas/pkg/errors"
-	"github.com/trustwallet/blockatlas/pkg/metrics"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -62,7 +61,6 @@ func (r *Request) Post(result interface{}, path string, body interface{}) error 
 
 func (r *Request) Execute(method string, url string, body io.Reader, result interface{}, params errors.Params) error {
 	params["method"] = method
-	start := time.Now()
 	req, err := http.NewRequest(method, url, body)
 	if err != nil {
 		return errors.E(err, errors.TypePlatformRequest, params)
@@ -76,7 +74,6 @@ func (r *Request) Execute(method string, url string, body io.Reader, result inte
 	if err != nil {
 		return errors.E(err, errors.TypePlatformRequest, params)
 	}
-	go metrics.GetMetrics(res.Status, url, method, start)
 
 	err = r.ErrorHandler(res, url)
 	if err != nil {

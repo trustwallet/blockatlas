@@ -8,19 +8,19 @@ import (
 	"strings"
 )
 
-type Params map[string]interface{}
+type (
+	Params map[string]interface{}
 
-// Error represents a error's specification.
-type Error struct {
-	Err   error
-	Type  Type
-	meta  map[string]interface{}
-	stack []string
-}
-
-var (
-	_ error = (*Error)(nil)
+	// Error represents a error's specification.
+	Error struct {
+		Err   error
+		Type  Type
+		meta  map[string]interface{}
+		stack []string
+	}
 )
+
+var _ error = (*Error)(nil)
 
 func (e *Error) isEmpty() bool {
 	return e.meta == nil && e.Type == TypeNone && e.Err == nil
