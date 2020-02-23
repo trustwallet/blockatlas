@@ -17,7 +17,6 @@ platform: all
 
 # The transaction watcher
 observer:
-  # TODO : Add description
   auth: test
   # Don't request blocks older than this
   backlog: 3h
@@ -31,7 +30,7 @@ observer:
     max: 30s
 
 storage:
-  redis: redis://localhost:6379
+  redis: redis://redis:6379
 
 # [BNB] Binance DEX: https://wallet.binance.org
 #       Binance Chain: https://explorer.binance.org
