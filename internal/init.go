@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/config"
+	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/storage"
 	"path/filepath"
@@ -71,6 +72,24 @@ func InitAPIWithRedis(defaultPort, defaultConfigPath string) (string, string, *g
 	}
 
 	return port, confPath, &sg, cache
+}
+
+func InitRabbitMQ() string {
+	dispatchProtocol := viper.GetString("observer.dispatch_protocol")
+
+	if dispatchProtocol != "http" && dispatchProtocol != "amqp" {
+		logger.Fatal("DispatchProtocol must be amqp (MQ) or http", logger.Params{"protocol": dispatchProtocol})
+	}
+
+	url := viper.GetString("observer.rabbitmq.uri")
+
+	if dispatchProtocol == "amqp" {
+		err := mq.Init(url)
+		if err != nil {
+			logger.Fatal("Failed to init Rabbit MQ", logger.Params{"url": url})
+		}
+	}
+	return dispatchProtocol
 }
 
 func LogVersionInfo() {

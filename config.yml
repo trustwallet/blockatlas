@@ -28,6 +28,10 @@ observer:
   block_poll:
     min: 3s
     max: 30s
+  rabbitmq:
+    uri: amqp://user:bitnami@rabbit:5672
+  # http or amqp - the way to dispatch ans send events
+  dispatch_protocol: http
 
 storage:
   redis: redis://redis:6379
