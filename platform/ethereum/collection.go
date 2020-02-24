@@ -167,6 +167,7 @@ func OldNormalizeCollectiblePage(c *Collection, srcPage []Collectible, coinIndex
 }
 
 func NormalizeCollection(c Collection, coinIndex uint, owner string) blockatlas.Collection {
+	normalizeSupportedContracts(&c)
 	if len(c.Contracts) == 0 {
 		return blockatlas.Collection{}
 	}
@@ -193,7 +194,19 @@ func NormalizeCollection(c Collection, coinIndex uint, owner string) blockatlas.
 	}
 }
 
+func normalizeSupportedContracts(c *Collection) {
+	supportedContracts := make([]PrimaryAssetContract, 0)
+	for _, contract := range c.Contracts {
+		if _, ok := supportedTypes[contract.Type]; !ok {
+			continue
+		}
+		supportedContracts = append(supportedContracts, contract)
+	}
+	c.Contracts = supportedContracts
+}
+
 func NormalizeCollectiblePage(c *Collection, srcPage []Collectible, coinIndex uint) (page blockatlas.CollectiblePage) {
+	normalizeSupportedContracts(c)
 	if len(c.Contracts) == 0 {
 		return
 	}
