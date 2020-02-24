@@ -7,46 +7,10 @@ import (
 	"testing"
 )
 
-const delegationsSrc = `
-{
-  "op": {
-    "signature": "sigvHd2YBByFXU8nL4CZKSTYXNdMapMsJw1f239YRRjgz9NvrTyA6iGnpBDhi9kCB4zMHysrg9H4jxcpPH975WiQtEmkMjb5",
-    "blockUuid": "4b292c55-41ba-4383-a1d6-03fb71b88f41",
-    "opHash": "opGphHGNEZZN5rF78yxwe9BJydxYA2yqxECnZR6s6HcxXtCg8Sj",
-    "uuid": "e4ec0e07-1601-4da3-bd92-090a820ed369",
-    "chainId": "NetXdQprcVkpaWU",
-    "blockHash": "BLkscXpE63gajVzmgBS7fQx63hERKQRCZFGtMXdYY6WPThHyji7",
-    "protocol": "PsBabyM1eUXZseaJdmXFApDSBqj8YBfwELoxZHHW77EMcAbbwAS",
-    "branch": "BKqtLegZfdPR3USyYYcMpedB59W5eUBuFZAVpVMPpFgEvMcZjr1",
-    "blockLevel": 791778,
-    "blockTimestamp": "2020-01-22T22:13:38Z",
-    "insertedTimestamp": "2020-01-22 22:14:05.937406 UTC"
-  },
-  "delegation": {
-    "storageLimit": "257",
-    "delegate": "tz2FCNBrERXtaTtNX6iimR1UJ5JSDxvdHM93",
-    "opUuid": "e4ec0e07-1601-4da3-bd92-090a820ed369",
-    "uuid": "6459fcd9-5eee-4999-ac4d-92330b9eaab3",
-    "gasLimit": "10600",
-    "kind": "delegation",
-    "operationResultStatus": "applied",
-    "fee": "1500",
-    "operationResultUuid": "791f6ec7-ecec-43d5-82ca-a1497be0188c",
-    "operationResultConsumedGas": "10000",
-    "counter": "2409130",
-    "operationResultErrors": null,
-    "source": "tz1WDujRWCYjLBDfZieXW6insg5EUbg1rCRK",
-    "insertedTimestamp": "2020-01-22 22:15:12.038586 UTC",
-    "metadataUuid": "85b42f50-1a89-421c-bcb0-a06926941bc4"
-  }
-}`
-
 const accountSrc = `
 {
-  "address": "tz1WDujRWCYjLBDfZieXW6insg5EUbg1rCRK",
   "delegate": "tz2FCNBrERXtaTtNX6iimR1UJ5JSDxvdHM93",
-  "total_balance": 68995.611927,
-  "is_delegated": true
+  "balance": "91237897"
 }`
 
 const validatorSrc = `
@@ -81,7 +45,7 @@ var validatorMap = blockatlas.ValidatorMap{
 	"tz2FCNBrERXtaTtNX6iimR1UJ5JSDxvdHM93": stakeValidator,
 }
 
-var delegationsBalance = "68995611927"
+var delegationsBalance = "91237897"
 
 var delegation = blockatlas.DelegationsPage{
 	{
@@ -107,24 +71,4 @@ func TestNormalizeDelegations(t *testing.T) {
 	result, err := NormalizeDelegation(account, validatorMap)
 	assert.NoError(t, err)
 	assert.Equal(t, delegation, result)
-}
-
-func Test_removeDecimals(t *testing.T) {
-	tests := []struct {
-		name   string
-		volume float64
-		want   string
-	}{
-		{"one float precision", 9.5, "9500000"},
-		{"zero float precision", 9, "9000000"},
-		{"five float precision", 9.00005, "9000050"},
-		{"six float precision", 9.000005, "9000005"},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := removeDecimals(tt.volume); got != tt.want {
-				t.Errorf("removeDecimals() = %v, want %v", got, tt.want)
-			}
-		})
-	}
 }

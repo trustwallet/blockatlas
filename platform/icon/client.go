@@ -13,7 +13,7 @@ type Client struct {
 func (c *Client) GetAddressTransactions(address string) ([]Tx, error) {
 	query := url.Values{
 		"address": {address},
-		"count":   {strconv.FormatInt(blockatlas.TxPerPage, 10)},
+		"count":   {strconv.Itoa(blockatlas.TxPerPage)},
 	}
 	var res Response
 	err := c.Get(&res, "address/txList", query)

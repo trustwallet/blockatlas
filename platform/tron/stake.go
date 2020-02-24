@@ -1,6 +1,7 @@
 package tron
 
 import (
+	"github.com/trustwallet/blockatlas/pkg/address"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
@@ -8,6 +9,8 @@ import (
 	"strconv"
 	"time"
 )
+
+const Annual = 0.74
 
 func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
 	results := make(blockatlas.ValidatorPage, 0)
@@ -67,7 +70,7 @@ func (p *Platform) UndelegatedBalance(address string) (string, error) {
 }
 
 func normalizeValidator(v Validator) (validator blockatlas.Validator, ok bool) {
-	address, err := HexToAddress(v.Address)
+	address, err := address.HexToAddress(v.Address)
 	if err != nil {
 		return validator, false
 	}

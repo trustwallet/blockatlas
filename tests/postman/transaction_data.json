@@ -1,0 +1,234 @@
+[
+    {
+        "handler": "harmony",
+        "address": "one1e4mr7tp0a76wnhv9xd0wzentdjnjnsh3fwzgfv"
+    },
+    {
+        "handler": "nano",
+        "address": "nano_36e7qfxrpixge3xxujtpc87c77mn9ubu3bhywfjkr1trnubtd4qswwydhn9z"
+    },
+    {
+        "handler": "algorand",
+        "address": "4EZFQABCVQTHQCK3HQBIYGC4NV2VM42FZHEFTVH77ROG4ZGREC6Y7V5T2U"
+    },
+    {
+        "handler": "kusama",
+        "address": "HZaz6cUo8wJ9zjwoDtA3ZzYkrCLfDYU8b3uPmYttKFFvvRK"
+    },
+    {
+        "handler": "kava",
+        "address": "kava1l8va9zyl50cpzv447c694k3jndelc9ygtfll2m"
+    },
+    {
+        "handler": "zilliqa",
+        "address": "zil1l8ddxvejeam70qang54wnqkgtmlu5mwlgzy64z"
+    },
+    {
+        "handler": "tomochain",
+        "address": "0x17e4c16605e32adead5fa371bf6117df34ca0200"
+    },
+    {
+        "handler": "ethereum",
+        "address": "0x0875BCab22dE3d02402bc38aEe4104e1239374a7"
+    },
+    {
+        "handler": "classic",
+        "address": "0x7d2d0e153026fb428b885d86de50768d4cfeac37"
+    },
+    {
+        "handler": "poa",
+        "address": "0x59D82a4B6068188ac06605A8416b5C7D40d6Fc43"
+    },
+    {
+        "handler": "thundertoken",
+        "address": "0x0b230def08139f18a86536d9cfa150f04435414c"
+    },
+    {
+        "handler": "callisto",
+        "address": "0x3083a7ec44ca2b038d4be4b0798152f948f0f3d7"
+    },
+    {
+        "handler": "gochain",
+        "address": "0xEd7F2e81B0264177e0df8f275f97Fd74Fa51A896"
+    },
+    {
+        "handler": "theta",
+        "address": "0xac0eeb6ee3e32e2c74e14ac74155063e4f4f981f"
+    },
+    {
+        "handler": "binance",
+        "address": "bnb1jxfh2g85q3v0tdq56fnevx6xcxtcnhtsmcu64m"
+    },
+    {
+        "handler": "tezos",
+        "address": "tz1foWxaV3VQyWqFbWTERS6YDJjPT6C7jPp8"
+    },
+    {
+        "handler": "tron",
+        "address": "TFFriedwRtWdFuzerDDtkoQTZ29smDZ1MB"
+    },
+    {
+        "handler": "vechain",
+        "address": "0xB5e883349e68aB59307d1604555AC890fAC47128"
+    },
+    {
+        "handler": "ripple",
+        "address": "rMQ98K56yXJbDGv49ZSmW51sLn94Xe1mu1"
+    },
+    {
+        "handler": "cosmos",
+        "address": "cosmos1dx27g0kzhwej0ekcf2k9hsktcxnmpl7fcehcvq"
+    },
+    {
+        "handler": "iotex",
+        "address": "io1vg808avg2ydye8djl2axmkc9j0xhzu6vdaw6g5"
+    },
+    {
+        "handler": "icon",
+        "address": "hxee691e7bccc4eb11fee922896e9f51490e62b12e"
+    },
+    {
+        "handler": "stellar",
+        "address": "GDKIJJIKXLOM2NRMPNQZUUYK24ZPVFC6426GZAEP3KUK6KEJLACCWNMX"
+    },
+    {
+        "handler": "nimiq",
+        "address": "NQ94HC9AK9D83FSJM6PT8XGNNMXLR0E53Y07"
+    },
+    {
+        "handler": "nebulas",
+        "address": "n1RCYwrpLMpSpUCQ8QUDzGRg6B2PnY8R94a"
+    },
+    {
+        "handler": "aeternity",
+        "address": "ak_2WGWYMgWy1opZxgA8AVzGCTavCQyUBtbKx5SrCX6E4kmDZMtJb"
+    },
+    {
+        "handler": "aion",
+        "address": "0xa04f0117864ccf5013861a89f08c6fc790284d72356c8a362025d31b855ed6ed"
+    },
+    {
+        "handler": "kin",
+        "address": "GBHKUZ7C2SZ5N3X2S7O6TT6LNUWSEA2BXMSR5GTTSR6VZARSVAXIQNGH"
+    },
+    {
+        "handler": "ontology",
+        "address": "AUyL4TZ1zFEcSKDJrjFnD7vsq5iFZMZqT7"
+    },
+    {
+        "handler": "waves",
+        "address": "3PJ4q4sqriJs2y7Z45wmbLrbmV9MDecbPxD"
+    },
+    {
+        "handler": "digibyte",
+        "address": "address/DEs1RJKuASSjfphFJdxX9eidrjWewMZgAi"
+    },
+    {
+        "handler": "digibyte",
+        "address": "xpub/zpub6ricE56nzsDeTAVo4w68vQQ3tRvR6C18JjKVsgbiRFjEawGV9SuS2gfkpm5qFxjbTNPPuvAA3cqRsxNHxFwVnpYD2Lawjtb3wowbFdwmjow"
+    },
+    {
+        "handler": "doge",
+        "address": "address/D5dAUAx3Ezg1q4dRgzKTBsxp4VJietWkDh"
+    },
+    {
+        "handler": "doge",
+        "address": "xpub/dgub8rceyfsEvGDexmvJcBqiKBrmuxWGgYJxHjtbouHTwTfQrCQcMjxyNf6vUPY4dUp23QtReFy6WGedutBk9XUaYNupUqVAZcweqGhfsudUELN"
+    },
+    {
+        "handler": "decred",
+        "address": "address/DsTxPUVFxXeNgu5fzozr4mTR4tqqMaKcvpY"
+    },
+    {
+        "handler": "decred",
+        "address": "xpub/dpubZFf1tYMxcku9nvDRxnYdE4yrEESrkuQFRq5RwA4KoYQKpDSRszN2emePTwLgfQpd4mZHGrHbQkKPZdjH1BcopomXRnr5Gt43rjpNEfeuJLN"
+    },
+    {
+        "handler": "zelcash",
+        "address": "address/t1JKRwXGfKTGfPV1z48rvoLyabk31z3xwHa"
+    },
+    {
+        "handler": "zelcash",
+        "address": "xpub/xpub6C5soBeFd2uZLCcEvsqaoGXuh9UposMMfk2jSiBKMN8rJKs9NLqjPK51gWv9mYBpUY95GtHYsofwpPRdB6FJ56cEaTJGCba5GKv55wPNZNf"
+    },
+    {
+        "handler": "zcoin",
+        "address": "address/a8EF4cpenEgEn9hm2NL5KfFK1UmSZZaQVn"
+    },
+    {
+        "handler": "zcoin",
+        "address": "xpub/xpub6Cgu6WtTyo99pRtTabwscog2ncj4BUbTWzk7bt7habdLYwgnXLEWH3TuR1789QSTPVsPjLMa2KQzHffyZHTkLQQyRxeEBmWHaETS2btF5fK"
+    },
+    {
+        "handler": "zcash",
+        "address": "address/t1LwLWo1Mo3s4RPtUpeyUD1eYd47inL3bwX"
+    },
+    {
+        "handler": "zcash",
+        "address": "xpub/xpub6CCXGBJ13akWuKSn4iU7CqQeXzLyDC2Y1Z83Mmg2xz11PX2EeZJJKRECz29iN4eHewRh8yfb7FpnCcjYbkqn6ynHnXW3jczPcJcenThfFeS"
+    },
+    {
+        "handler": "bitcoin",
+        "address": "address/bc1qrfr44n2j4czd5c9txwlnw0yj2h82x9566fglqj"
+    },
+    {
+        "handler": "bitcoin",
+        "address": "xpub/zpub6ruK9k6YGm8BRHWvTiQcrEPnFkuRDJhR7mPYzV2LDvjpLa5CuGgrhCYVZjMGcLcFqv9b2WvsFtY2Gb3xq8NVq8qhk9veozrA2W9QaWtihrC"
+    },
+    {
+        "handler": "bitcoincash",
+        "address": "address/bitcoincash:qq07l6rr5lsdm3m80qxw80ku2ex0tj76vvsxpvmgme"
+    },
+    {
+        "handler": "bitcoincash",
+        "address": "xpub/xpub6Bq3UUphocwroXkhA9sn8ACnZpJNuwaBehgo7WbDi2DULYnvT72Uzgsv9cE5EiP8ThDYdMyZREfbpkUY4KZ88ZaUQxXciBcZ1soSi1d8xtX"
+    },
+    {
+        "handler": "ravencoin",
+        "address": "address/RHoCwPc2FCQqwToYnSiAb3SrCET4zEHsbS"
+    },
+    {
+        "handler": "ravencoin",
+        "address": "xpub/xpub6BrkWQHMnuGcvKowEn2hpvnZ41SiCsu38mgFThKU3nMzPUN9r9C26puf18rfVdHH3nDwSkeMgsjVniNDKUk5arxekekGpNyVLsWihYAfC5B"
+    },
+    {
+        "handler": "viacoin",
+        "address": "address/VdMPvn7vUTSzbYjiMDs1jku9wAh1Ri2Y1A"
+    },
+    {
+        "handler": "viacoin",
+        "address": "xpub/zpub6qVn6ubhK9tfepuABqy8wBXXn3qUZTbpqyNBqLyqakqTrZZD9rXZ3L5MZ945g8Mu7vmMSbC7vfLtLatTgxAnVJ8ECCtwmKqCo6TJm2ZsFJK"
+    },
+    {
+        "handler": "litecoin",
+        "address": "address/ltc1qpm594ntjq6ayqjngf6t9td2dxtey9d7985eept"
+    },
+    {
+        "handler": "litecoin",
+        "address": "xpub/zpub6rpF5Uxuz4KKWePLorSz2QrHMmk1iiZvGUGgtSHpor8yiGekyRuWf5ZNmf6GUKB4v3ibQDuZp5v8RnjEGq58kR3WPtGPn8Lrg677MQ8YeKu"
+    },
+    {
+        "handler": "qtum",
+        "address": "address/QZJbNrGT3cZ1J1AEHtgH3JWM7uLBNAejLZ"
+    },
+    {
+        "handler": "qtum",
+        "address": "xpub/xpub6CvFuU1yPwHjMekXqgEZjcQy22ZWiKgRUY6yAneNNyk1trZhV6ZBFSY8Vt2wygTXTVHBkfi4n823vm79yiw42w6xTL2UjKyh2W9V88sXoNd"
+    },
+    {
+        "handler": "groestlcoin",
+        "address": "address/33Ym3fecmWaHD19jymYt6fGd9TqSDQFfQj"
+    },
+    {
+        "handler": "groestlcoin",
+        "address": "xpub/zpub6rWUMiiVPxjWVHffT8x3AfcbyDu8SZJAiuKUTBmhxT7Bvqk1WitxndDStG1qHN6XzRM7JgsaRaVccRFW3AprWk4Fpaev1N6QSp1aNnP5JPf"
+    },
+    {
+        "handler": "dash",
+        "address": "address/XrcbsQdrFYEzbqA9nCJi8zDtnRZzNKkCtG"
+    },
+    {
+        "handler": "dash",
+        "address": "xpub/xpub6CKAjCUKKPW7bzYEG5mzRsmzyTRp7XzauqFWNmpGVNqMqsSQpLMCN3ygEmD6ZEGVocNDrDhE7SeGot78noEWpwPDbJjfxREHC848sxNrUkD"
+    }
+]

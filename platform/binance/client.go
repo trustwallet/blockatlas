@@ -43,6 +43,11 @@ func (c *Client) GetTxsOfAddress(address string, token string) (*TxPage, error) 
 	return stx, err
 }
 
+func (c *Client) GetTx(hash string) (stx Tx, err error) {
+	err = c.Get(&stx, "tx", url.Values{"txHash": {hash}})
+	return
+}
+
 func getHTTPError(res *http.Response, desc string) error {
 	switch res.StatusCode {
 	case http.StatusBadRequest:
@@ -52,7 +57,7 @@ func getHTTPError(res *http.Response, desc string) error {
 	case http.StatusOK:
 		return nil
 	default:
-		return errors.E("getHTTPError error", errors.Params{"status": res.Status}).PushToSentry()
+		return errors.E("getHTTPError error", errors.Params{"status": res.Status})
 	}
 }
 
@@ -60,7 +65,7 @@ func getAPIError(res *http.Response, desc string) error {
 	var sErr Error
 	err := json.NewDecoder(res.Body).Decode(&sErr)
 	if err != nil {
-		err = errors.E(err, errors.TypePlatformUnmarshal, errors.Params{"desc": desc}).PushToSentry()
+		err = errors.E(err, errors.TypePlatformUnmarshal, errors.Params{"desc": desc})
 		logger.Error(err, "Binance: Failed to decode error response")
 		return blockatlas.ErrSourceConn
 	}

@@ -1,8 +1,8 @@
 package observer
 
 import (
-	"bytes"
 	"encoding/json"
+	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
@@ -14,8 +14,9 @@ type Dispatcher struct {
 }
 
 type DispatchEvent struct {
-	Action blockatlas.TransactionType `json:"action"`
-	Result *blockatlas.Tx             `json:"result"`
+	Action  blockatlas.TransactionType `json:"action"`
+	Result  *blockatlas.Tx             `json:"result"`
+	Webhook string                     `json:"webhook"`
 }
 
 func (d *Dispatcher) Run(events <-chan Event) {
@@ -25,30 +26,35 @@ func (d *Dispatcher) Run(events <-chan Event) {
 }
 
 func (d *Dispatcher) dispatch(event Event) {
+	webhook := event.Subscription.Webhook
+
 	action := DispatchEvent{
-		Action: event.Tx.Type,
-		Result: event.Tx,
+		Action:  event.Tx.Type,
+		Result:  event.Tx,
+		Webhook: webhook,
 	}
+
 	txJson, err := json.Marshal(action)
 	if err != nil {
 		logger.Panic(err)
 	}
 
-	webhook := event.Subscription.Webhook
 	logParams := logger.Params{
 		"webhook": webhook,
 		"coin":    event.Subscription.Coin,
 		"txID":    event.Tx.ID,
 	}
-	go d.postWebhook(webhook, txJson, logParams)
-	logger.Info("Dispatching webhooks...", logger.Params{"webhook": webhook}, logParams)
+
+	go d.postMessageToQueue(webhook, txJson, logParams)
+
+	logger.Info("Dispatching messages...", logParams)
 }
 
-func (d *Dispatcher) postWebhook(hook string, data []byte, logParams logger.Params) {
-	_, err := d.Client.Post(hook, "application/json", bytes.NewReader(data))
+func (d *Dispatcher) postMessageToQueue(message string, rawMessage []byte, logParams logger.Params) {
+	err := mq.Publish(rawMessage)
 	if err != nil {
-		err = errors.E(err, errors.Params{"hook": hook}).PushToSentry()
-		logger.Error(err, "Failed to dispatch event", logger.Params{"webhook": hook}, logParams)
+		err = errors.E(err, "Failed to dispatch event", errors.Params{"message": message}, logParams)
+		logger.Error(err, logger.Params{"message": message}, logParams)
 	}
-	logger.Info("Webhook dispatched", logger.Params{"webhook": hook}, logParams)
+	logger.Info("Message dispatched", logger.Params{"message": message}, logParams)
 }

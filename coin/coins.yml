@@ -169,6 +169,7 @@
   handle: ontology
   name: Ontology
   decimals: 0
+  blockTime: 10000
   sampleAddress: 'AUyL4TZ1zFEcSKDJrjFnD7vsq5iFZMZqT7'
 
 - id: 1729

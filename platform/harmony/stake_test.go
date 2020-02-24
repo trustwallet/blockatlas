@@ -64,10 +64,10 @@ var validator1 = blockatlas.StakeValidator{
 	ID:     "one1pdv9lrdwl0rg5vglh4xtyrv3wjk3wsqket7zxy",
 	Status: true,
 	Info: blockatlas.StakeValidatorInfo{
-		Name:        "",
-		Description: "",
-		Image:       "",
-		Website:     "",
+		Name:        "Harmony One",
+		Description: "Stake and earn rewards with the most secure and stable validator. Operated by Harmony One Inc.",
+		Image:       "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/harmony/validators/assets/one1pdv9lrdwl0rg5vglh4xtyrv3wjk3wsqket7zxy/logo.png",
+		Website:     "https://harmony.one",
 	},
 	Details: blockatlas.StakingDetails{
 		Reward: blockatlas.StakingReward{

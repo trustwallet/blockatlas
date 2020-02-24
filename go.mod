@@ -15,6 +15,7 @@ require (
 	github.com/go-redis/redis v6.15.6+incompatible
 	github.com/hewigovens/go-coincodec v1.0.4
 	github.com/jinzhu/gorm v1.9.12
+	github.com/mitchellh/mapstructure v1.1.2
 	github.com/mr-tron/base58 v1.1.3
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/prometheus/client_golang v1.4.0
@@ -23,6 +24,7 @@ require (
 	github.com/sirupsen/logrus v1.4.2
 	github.com/spf13/cast v1.3.1
 	github.com/spf13/viper v1.6.2
+	github.com/streadway/amqp v0.0.0-20200108173154-1c71cc93ed71
 	github.com/stretchr/testify v1.4.0
 	github.com/swaggo/gin-swagger v1.2.0
 	github.com/swaggo/swag v1.6.5

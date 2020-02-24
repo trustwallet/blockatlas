@@ -1,0 +1,49 @@
+before:
+  hooks:
+    - git reset --hard
+    - git checkout .
+builds:
+  - id: api
+    binary: api
+    main: "./cmd/api/main.go"
+    goos:
+      - linux
+    goarch:
+      - amd64
+    env:
+      - CGO_ENABLED=0
+  - id: observer
+    binary: observer
+    main: "./cmd/observer/main.go"
+    goos:
+      - linux
+    goarch:
+      - amd64
+    env:
+      - CGO_ENABLED=0
+  - id: market
+    binary: market
+    main: "./cmd/market/main.go"
+    goos:
+      - linux
+    goarch:
+      - amd64
+    env:
+      - CGO_ENABLED=0
+archives:
+  - replacements:
+      amd64: 64-bit
+      386: 32-bit
+      darwin: macOS
+      linux: Linux
+      windows: Windows
+checksum:
+  name_template: 'checksums.txt'
+snapshot:
+  name_template: "{{ .Tag }}-next"
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'

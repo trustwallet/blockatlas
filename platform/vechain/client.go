@@ -62,6 +62,11 @@ func (c *Client) GetTransactionReceiptByID(id string) (transaction TxReceipt, er
 	return
 }
 
+func (c *Client) GetAccount(address string) (account Account, err error) {
+	err = c.Get(&account, "accounts/"+address, nil)
+	return
+}
+
 // Creates hex based on address as required for topic criteria
 // 0xB5e883349e68aB59307d1604555AC890fAC47128 => 0x000000000000000000000000B5e883349e68aB59307d1604555AC890fAC47128
 func getFilter(hex string) string {

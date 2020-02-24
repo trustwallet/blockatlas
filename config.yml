@@ -6,8 +6,10 @@ gin:
   # If set, HTTP Forwarded headers will be respected
   reverse_proxy: false
 
-#metrics:
-#  api_token: xxxxxx
+# If all - run all platforms in one binary. You can pick specific coin handle to run binary only with specific coin
+# Example: ethereum
+# You can see all the coin handles at coins/coins.yml file
+platform: all
 
 # Sentry error tracking
 #sentry:
@@ -15,45 +17,22 @@ gin:
 
 # The transaction watcher
 observer:
-  enabled: false
-  # TODO : Add description
   auth: test
-  # Redis Subscription Database
-  redis: redis://localhost:6379
-  # Smallest possible block polling interval
-  min_poll: 250ms
   # Don't request blocks older than this
   backlog: 3h
   # Don't request more than N blocks at once
   backlog_max_blocks: 200
   # Max connections to open to API
   stream_conns: 16
-
-# The market watcher
-market:
-  enabled: false
-  quote_update_time: 20m
-  rate_update_time: 20m
-  dex:
-    quote_update_time: 5m
-    api: https://dex.binance.org/api
-  cmc:
-    api: https://pro-api.coinmarketcap.com
-    webapi: https://web-api.coinmarketcap.com
-    widgetapi: https://widgets.coinmarketcap.com
-    api_key:
-    map_url: https://raw.githubusercontent.com/trustwallet/assets/master/pricing/coinmarketcap
-  fixer:
-    rate_update_time: 1h
-    api: https://data.fixer.io/api
-    api_key:
-  compound:
-    api: https://api.compound.finance/api
-  coingecko:
-    api: https://api.coingecko.com/api
+  # Block polling interval
+  block_poll:
+    min: 3s
+    max: 30s
+  rabbitmq:
+    uri: amqp://user:bitnami@rabbit:5672
 
 storage:
-  redis: redis://localhost:6379
+  redis: redis://redis:6379
 
 # [BNB] Binance DEX: https://wallet.binance.org
 #       Binance Chain: https://explorer.binance.org
@@ -79,7 +58,6 @@ kin:
 
 # [XTZ] Tezos: https://tezos.com
 tezos:
-  stake_api: https://api.tzstats.com/explorer
   api: https://api.tezos.id/mooncake/mainnet
   rpc: https://mainnet.tezos.org.ua
 
@@ -140,16 +118,16 @@ theta:
 
 # [ATOM] Cosmos: https://cosmos.network/
 cosmos:
-  api: http://stargate.cosmos.network
+  api: https://api.cosmos.network
 
 # [ONTOLOGY] ONT: https://ont.io/
 ontology:
-  api: https://explorer.ont.io/api/v1/explorer
+  api: https://explorer.ont.io
 
 # [ZIL] Zilliqa: https://zilliqa.com
 zilliqa:
-  #  api: https://api.viewblock.io/v1/zilliqa
-  #  key: YOUR_API_KEY
+  api: https://api.viewblock.io/v1/zilliqa
+  # key: YOUR_API_KEY
   rpc: https://api.zilliqa.com
   lookup: https://unstoppabledomains.com/api/v1
 
@@ -170,7 +148,8 @@ nebulas:
   api: https://explorer-backend.nebulas.io/api
 
 fio:
-  api: https://addresses.fio.foundation
+  # api: https://addresses.fio.foundation
+  api: http://testnet.fioprotocol.io/v1/chain
 
 # [BTC] Bitcoin: https://bitcoin.org/ (Blockbook API https://github.com/trezor/blockbook)
 bitcoin:
@@ -214,7 +193,6 @@ decred:
 
 algorand:
   api: https://mainnet-algorand.api.purestake.io/ps1
-#  key: YOUR_API_KEY
 
 nano:
   api: https://nanoverse.io/api/node

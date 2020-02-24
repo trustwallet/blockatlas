@@ -4,8 +4,10 @@ import (
 	mapset "github.com/deckarep/golang-set"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/numbers"
 	"github.com/trustwallet/blockatlas/platform/bitcoin"
 	"github.com/trustwallet/blockatlas/storage"
+	"time"
 )
 
 type Event struct {
@@ -105,4 +107,11 @@ func inferUtxoValue(tx *blockatlas.Tx, address string, coinIndex uint) {
 			Decimals: coin.Coins[coinIndex].Decimals,
 		}
 	}
+}
+
+func GetInterval(value int, minInterval, maxInterval time.Duration) time.Duration {
+	interval := time.Duration(value) * time.Millisecond
+	pMin := numbers.Max(minInterval.Nanoseconds(), interval.Nanoseconds())
+	pMax := numbers.Min(int(maxInterval.Nanoseconds()), int(pMin))
+	return time.Duration(pMax)
 }

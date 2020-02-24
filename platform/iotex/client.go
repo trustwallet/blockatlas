@@ -21,7 +21,7 @@ func (c *Client) GetLatestBlock() (int64, error) {
 	}
 	b, err := strconv.ParseInt(chainMeta.Height, 10, 64)
 	if err != nil {
-		return 0, errors.E(err, "ParseInt failed", errors.TypePlatformUnmarshal).PushToSentry()
+		return 0, errors.E(err, "ParseInt failed", errors.TypePlatformUnmarshal)
 	}
 	return b, nil
 }
@@ -40,7 +40,7 @@ func (c *Client) GetTxsOfAddress(address string, start int64) (*Response, error)
 	var response Response
 	err := c.Get(&response, "actions/addr/"+address, url.Values{
 		"start": {strconv.FormatInt(start, 10)},
-		"count": {strconv.FormatInt(blockatlas.TxPerPage, 10)},
+		"count": {strconv.Itoa(blockatlas.TxPerPage)},
 	})
 
 	if err != nil {

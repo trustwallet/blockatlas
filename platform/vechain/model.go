@@ -5,6 +5,12 @@ const (
 	rangeUnit    = "block"
 )
 
+const (
+	gasTokenName     = "VeThor"
+	gasTokenSymbol   = "VTHO"
+	gasTokenDecimals = 18
+)
+
 type LogRequest struct {
 	Options     Options       `json:"options,omitempty"`
 	CriteriaSet []CriteriaSet `json:"criteriaSet,omitempty"`
@@ -84,4 +90,8 @@ type LogMeta struct {
 	BlockId        string `json:"blockID,omitempty"`
 	BlockNumber    uint64 `json:"blockNumber,omitempty"`
 	BlockTimestamp int64  `json:"blockTimestamp,omitempty"`
+}
+
+type Account struct {
+	Balance string `json:"balance"`
 }
