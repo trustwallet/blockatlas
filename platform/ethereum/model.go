@@ -91,14 +91,20 @@ type CollectiblePage struct {
 }
 
 type Collectible struct {
-	TokenId         string              `json:"token_id"`
-	AssetContract   CollectibleContract `json:"asset_contract"`
-	ImageUrl        string              `json:"image_url"`
-	ImagePreviewUrl string              `json:"image_preview_url"`
-	Name            string              `json:"name"`
-	ExternalLink    string              `json:"external_link"`
-	Permalink       string              `json:"permalink"`
-	Description     string              `json:"description"`
+	TokenId         string                 `json:"token_id"`
+	AssetContract   CollectibleContract    `json:"asset_contract"`
+	ImageUrl        string                 `json:"image_url"`
+	ImagePreviewUrl string                 `json:"image_preview_url"`
+	Name            string                 `json:"name"`
+	ExternalLink    string                 `json:"external_link"`
+	Permalink       string                 `json:"permalink"`
+	Description     string                 `json:"description"`
+	Collection      CollectibleCollections `json:"collection"`
+}
+
+type CollectibleCollections struct {
+	Name string `json:"name"`
+	Slug string `json:"slug"`
 }
 
 type CollectibleContract struct {
@@ -106,4 +112,5 @@ type CollectibleContract struct {
 	Category     string `json:"name"`
 	ExternalLink string `json:"external_link"`
 	Type         string `json:"schema_name"`
+	Version      string `json:"nft_version"`
 }

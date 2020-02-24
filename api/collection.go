@@ -211,6 +211,45 @@ func makeCategoriesBatchRoute(router gin.IRouter) {
 	})
 }
 
+// @Description Get collection categories
+// @ID collection_categories_v4
+// @Summary Get list of collections from a specific coin and addresses
+// @Accept json
+// @Produce json
+// @Tags Collections
+// @Param data body string true "Payload" default({"60": ["0xb3624367b1ab37daef42e1a3a2ced012359659b0"]})
+// @Success 200 {object} blockatlas.DocsResponse
+// @Router /v4/collectibles/categories [post]
+func makeCategoriesBatchRouteV4(router gin.IRouter) {
+	router.POST("/collectibles/categories", func(c *gin.Context) {
+		var reqs map[string][]string
+		if err := c.BindJSON(&reqs); err != nil {
+			ginutils.ErrorResponse(c).Message(err.Error()).Render()
+			return
+		}
+
+		batch := make(blockatlas.CollectionPage, 0)
+		for key, addresses := range reqs {
+			coinId, err := strconv.Atoi(key)
+			if err != nil {
+				continue
+			}
+			p, ok := platform.CollectionAPIs[uint(coinId)]
+			if !ok {
+				continue
+			}
+			for _, address := range addresses {
+				collections, err := p.GetCollectionsV4(address)
+				if err != nil {
+					continue
+				}
+				batch = append(batch, collections...)
+			}
+		}
+		ginutils.RenderSuccess(c, batch)
+	})
+}
+
 func emptyPage(c *gin.Context) {
 	var page blockatlas.TxPage
 	ginutils.RenderSuccess(c, &page)

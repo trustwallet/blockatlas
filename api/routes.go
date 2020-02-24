@@ -34,6 +34,7 @@ func SetupPlatformAPI(root gin.IRouter) {
 	v1 := root.Group("/v1")
 	v2 := root.Group("/v2")
 	v3 := root.Group("/v3")
+	v4 := root.Group("/v4")
 
 	v1.GET("/", GetSupportedEndpoints)
 
@@ -79,6 +80,7 @@ func SetupPlatformAPI(root gin.IRouter) {
 
 	oldMakeCategoriesBatchRoute(v2)
 	makeCategoriesBatchRoute(v3)
+	makeCategoriesBatchRouteV4(v4)
 	makeStakingDelegationsBatchRoute(v2)
 	makeStakingDelegationsSimpleBatchRoute(v2)
 
