@@ -10,11 +10,16 @@ import (
 	"net/http"
 )
 
+type DispatchProtocol string
+
+const (
+	HTTP DispatchProtocol = "http"
+	AMQP DispatchProtocol = "amqp"
+)
+
 type Dispatcher struct {
 	Client http.Client
-
-	// amqp or http
-	DispatchProtocol string
+	DispatchProtocol DispatchProtocol
 }
 
 type DispatchEvent struct {
@@ -49,9 +54,9 @@ func (d *Dispatcher) dispatch(event Event) {
 		"txID":    event.Tx.ID,
 	}
 	switch d.DispatchProtocol {
-	case "http":
+	case HTTP:
 		go d.postWebhook(webhook, txJson, logParams)
-	case "amqp":
+	case AMQP:
 		go d.postMessageToQueue(webhook, txJson, logParams)
 	default:
 		logger.Fatal("DispatchProtocol is incorrect", logger.Params{"protocol": d.DispatchProtocol})

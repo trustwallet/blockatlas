@@ -16,7 +16,8 @@ const (
 )
 
 var (
-	confPath, dispatchProtocol string
+	confPath string
+	dispatchProtocol observer.DispatchProtocol
 	cache                      *storage.Storage
 )
 
@@ -71,7 +72,7 @@ func main() {
 		events := obs.Execute(blocks)
 
 		// Dispatch events
-		dispatcher := observer.Dispatcher{DispatchProtocol: dispatchProtocol}
+		dispatcher := observer.Dispatcher{DispatchProtocol: observer.DispatchProtocol(dispatchProtocol)}
 		go func() {
 			dispatcher.Run(events)
 			wg.Done()

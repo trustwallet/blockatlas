@@ -8,6 +8,7 @@ import (
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/config"
 	"github.com/trustwallet/blockatlas/mq"
+	"github.com/trustwallet/blockatlas/observer"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/storage"
 	"path/filepath"
@@ -74,10 +75,11 @@ func InitAPIWithRedis(defaultPort, defaultConfigPath string) (string, string, *g
 	return port, confPath, &sg, cache
 }
 
-func InitRabbitMQ() string {
-	dispatchProtocol := viper.GetString("observer.dispatch_protocol")
+func InitRabbitMQ() observer.DispatchProtocol {
+	dispatchProtocolStr := viper.GetString("observer.dispatch_protocol")
+	dispatchProtocol := observer.DispatchProtocol(dispatchProtocolStr)
 
-	if dispatchProtocol != "http" && dispatchProtocol != "amqp" {
+	if dispatchProtocol != observer.AMQP && dispatchProtocol != observer.HTTP {
 		logger.Fatal("DispatchProtocol must be amqp (MQ) or http", logger.Params{"protocol": dispatchProtocol})
 	}
 
