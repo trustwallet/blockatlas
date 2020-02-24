@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/internal"
+	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/observer"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/platform"
@@ -17,13 +18,16 @@ const (
 
 var (
 	confPath string
-	dispatchProtocol observer.DispatchProtocol
 	cache                      *storage.Storage
 )
 
 func init() {
 	_, confPath, _, cache = internal.InitAPIWithRedis("", defaultConfigPath)
-	dispatchProtocol = internal.InitRabbitMQ()
+	uri := viper.GetString("observer.rabbitmq.uri")
+	err := mq.Init(uri)
+	if err != nil {
+		logger.Fatal("Failed to init Rabbit MQ", logger.Params{"uri": uri})
+	}
 	platform.Init(viper.GetString("platform"))
 }
 
@@ -72,7 +76,7 @@ func main() {
 		events := obs.Execute(blocks)
 
 		// Dispatch events
-		dispatcher := observer.Dispatcher{DispatchProtocol: observer.DispatchProtocol(dispatchProtocol)}
+		var dispatcher observer.Dispatcher
 		go func() {
 			dispatcher.Run(events)
 			wg.Done()
