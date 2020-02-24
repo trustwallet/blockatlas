@@ -30,18 +30,21 @@ func TestApis(t *testing.T) {
 
 	logger.InitLogger()
 	platform.Init(viper.GetString("platform"))
+
 	sg := sentrygin.New(sentrygin.Options{})
 	p := ":8420"
 
 	engine := gin.New()
 
 	engine.Use(gin.Recovery())
+
 	engine.Use(ginutils.CheckReverseProxy, sg)
 	engine.Use(ginutils.CORSMiddleware())
 
 	engine.OPTIONS("/*path", ginutils.CORSMiddleware())
 
 	engine.GET("swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
 	api.SetupPlatformAPI(engine)
 
 	signalForExit := make(chan os.Signal, 1)
