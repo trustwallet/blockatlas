@@ -17,11 +17,13 @@ const (
 
 var (
 	confPath string
-	cache    *storage.Storage
+	dispatchProtocol observer.DispatchProtocol
+	cache                      *storage.Storage
 )
 
 func init() {
 	_, confPath, _, cache = internal.InitAPIWithRedis("", defaultConfigPath)
+	dispatchProtocol = internal.InitRabbitMQ()
 	platform.Init(viper.GetString("platform"))
 }
 
@@ -33,6 +35,7 @@ func main() {
 	backlogTime := viper.GetDuration("observer.backlog")
 	minInterval := viper.GetDuration("observer.block_poll.min")
 	maxInterval := viper.GetDuration("observer.block_poll.max")
+
 	if minInterval >= maxInterval {
 		logger.Fatal("minimum block polling interval cannot be greater or equal than maximum")
 	}
@@ -69,7 +72,7 @@ func main() {
 		events := obs.Execute(blocks)
 
 		// Dispatch events
-		dispatcher := observer.Dispatcher{}
+		dispatcher := observer.Dispatcher{DispatchProtocol: observer.DispatchProtocol(dispatchProtocol)}
 		go func() {
 			dispatcher.Run(events)
 			wg.Done()
