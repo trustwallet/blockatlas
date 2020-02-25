@@ -132,7 +132,7 @@ func makeTokenRoute(router gin.IRouter, api blockatlas.Platform) {
 
 		tl, err := tokenAPI.GetTokenListByAddress(address)
 		if err != nil {
-			ginutils.ErrorResponse(c).Message(err.Error()).Render()
+			ginutils.RenderError(c, http.StatusNotFound, err.Error())
 			return
 		}
 

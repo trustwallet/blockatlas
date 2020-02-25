@@ -23,7 +23,7 @@ type LookupBatchPage []blockatlas.Resolved
 // @Param name query string empty "string name"
 // @Param coin query string 60 "string coin"
 // @Success 200 {object} blockatlas.Resolved
-// @Failure 500 {object} ginutils.ApiError
+// @Failure 400 {object} ginutils.ApiError
 // @Router /ns/lookup [get]
 func MakeLookupRoute(router gin.IRouter) {
 	router.GET("/lookup", func(c *gin.Context) {
@@ -56,7 +56,7 @@ func MakeLookupRoute(router gin.IRouter) {
 // @Param name query string empty "string name"
 // @Param coins query string true "List of coins"
 // @Success 200 {array} blockatlas.Resolved
-// @Failure 500 {object} ginutils.ApiError
+// @Failure 400 {object} ginutils.ApiError
 // @Router /v2/ns/lookup [get]
 func MakeLookupBatchRoute(router gin.IRouter) {
 	router.GET("/lookup", func(c *gin.Context) {

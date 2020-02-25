@@ -7,9 +7,9 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/ginutils"
 	"github.com/trustwallet/blockatlas/pkg/ginutils/gincache"
-	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/platform"
 	services "github.com/trustwallet/blockatlas/services/assets"
+	"net/http"
 	"time"
 )
 
@@ -45,7 +45,7 @@ func makeStakingDelegationsBatchRoute(router gin.IRouter) {
 	router.POST("/staking/delegations", func(c *gin.Context) {
 		var reqs AddressesRequest
 		if err := c.BindJSON(&reqs); err != nil {
-			ginutils.ErrorResponse(c).Message(err.Error()).Render()
+			ginutils.RenderError(c, http.StatusNotFound, err.Error())
 			return
 		}
 
@@ -82,7 +82,7 @@ func makeStakingDelegationsSimpleBatchRoute(router gin.IRouter) {
 	router.POST("/staking/list", gincache.CacheMiddleware(time.Hour*24, func(c *gin.Context) {
 		var reqs CoinsRequest
 		if err := c.BindJSON(&reqs); err != nil {
-			ginutils.ErrorResponse(c).Message(err.Error()).Render()
+			ginutils.RenderError(c, http.StatusNotFound, err.Error())
 			return
 		}
 
@@ -124,8 +124,7 @@ func makeStakingValidatorsRoute(router gin.IRouter, api blockatlas.Platform) {
 	router.GET("/staking/validators", gincache.CacheMiddleware(time.Hour, func(c *gin.Context) {
 		results, err := services.GetActiveValidators(stakingAPI)
 		if err != nil {
-			logger.Error(err)
-			ginutils.ErrorResponse(c).Message(err.Error()).Render()
+			ginutils.RenderError(c, http.StatusNotFound, err.Error())
 			return
 		}
 		ginutils.RenderSuccess(c, blockatlas.DocsResponse{Docs: results})
@@ -154,7 +153,7 @@ func makeStakingDelegationsRoute(router gin.IRouter, api blockatlas.Platform) {
 	router.GET("/staking/delegations/:address", func(c *gin.Context) {
 		response, err := getDelegationResponse(stakingAPI, c.Param("address"))
 		if err != nil {
-			ginutils.ErrorResponse(c).Message(err.Error()).Render()
+			ginutils.RenderError(c, http.StatusNotFound, err.Error())
 			return
 		}
 
