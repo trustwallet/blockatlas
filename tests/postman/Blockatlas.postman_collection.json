@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "9cea8a5c-d3e5-40c1-98da-0a7a1742cf6d",
+		"_postman_id": "63af4255-85a1-4505-87cb-13f8de0453af",
 		"name": "Blockatlas",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -1089,6 +1089,135 @@
 							"response": []
 						},
 						{
+							"name": "collection v4",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "7312c9e7-5330-421a-9ca8-171101050e38",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"id": "acec8baa-0ef0-4703-ab83-c555260deffa",
+										"exec": [
+											"var Ajv = require('ajv');",
+											"var ajv = new Ajv({logger: console});",
+											"let schema = {",
+											"  \"type\": \"object\",",
+											"  \"properties\": {",
+											"    \"total\": {",
+											"      \"type\": \"integer\"",
+											"    },",
+											"    \"docs\": {",
+											"      \"type\": \"array\",",
+											"      \"minItems\": 1,",
+											"      \"uniqueItems\": true,",
+											"      \"items\": {",
+											"        \"type\": \"object\",",
+											"        \"properties\": {",
+											"          \"id\": {",
+											"            \"type\": \"string\"",
+											"          },",
+											"          \"collection_id\": {",
+											"            \"type\": \"string\"",
+											"          },",
+											"          \"token_id\": {",
+											"            \"type\": \"string\"",
+											"          },",
+											"          \"category_contract\": {",
+											"            \"type\": \"string\"",
+											"          },",
+											"          \"contract_address\": {",
+											"            \"type\": \"string\"",
+											"          },",
+											"          \"category\": {",
+											"            \"type\": \"string\"",
+											"          },",
+											"          \"image_url\": {",
+											"            \"type\": \"string\"",
+											"          },",
+											"          \"external_link\": {",
+											"            \"type\": \"string\"",
+											"          },",
+											"          \"provider_link\": {",
+											"            \"type\": \"string\"",
+											"          },",
+											"          \"type\": {",
+											"            \"type\": \"string\"",
+											"          },",
+											"          \"description\": {",
+											"            \"type\": \"string\"",
+											"          },",
+											"          \"coin\": {",
+											"            \"type\": \"integer\"",
+											"          },",
+											"          \"name\": {",
+											"            \"type\": \"string\"",
+											"          }",
+											"        }",
+											"      }",
+											"    },",
+											"    \"status\": {",
+											"      \"type\": \"boolean\"",
+											"    }",
+											"  }",
+											"};",
+											"",
+											"let handler = pm.variables.get(\"handler\");",
+											"let address = pm.variables.get(\"address\");",
+											"var jsonData = pm.response.json();",
+											"",
+											"pm.test(handler + \" - response must be valid and have a body: \" + address, function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.ok;",
+											"    pm.response.to.not.be.error;",
+											"    pm.response.to.be.withBody;",
+											"    pm.response.to.be.json;",
+											"});",
+											"",
+											"pm.test(handler + \" - schema is valid: \" + address, function() {",
+											"    pm.expect(ajv.validate(schema, jsonData)).to.be.true;",
+											"    console.log(JSON.stringify(jsonData))",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{platform_auth}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{host}}/v2/{{handler}}/collections/{{address}}/collection/{{collection}}",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"v2",
+										"{{handler}}",
+										"collections",
+										"{{address}}",
+										"collection",
+										"{{collection}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
 							"name": "collections",
 							"event": [
 								{
@@ -1352,6 +1481,144 @@
 						},
 						{
 							"name": "collections batch v3 ",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "7312c9e7-5330-421a-9ca8-171101050e38",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"id": "acec8baa-0ef0-4703-ab83-c555260deffa",
+										"exec": [
+											"var Ajv = require('ajv');",
+											"var ajv = new Ajv({logger: console});",
+											"let schema = {",
+											"  \"type\": \"object\",",
+											"  \"properties\": {",
+											"    \"total\": {",
+											"      \"type\": \"integer\"",
+											"    },",
+											"    \"docs\": {",
+											"      \"type\": \"array\",",
+											"      \"minItems\": 1,",
+											"      \"uniqueItems\": true,",
+											"      \"items\": {",
+											"        \"type\": \"object\",",
+											"        \"properties\": {",
+											"          \"id\": {",
+											"            \"type\": \"string\"",
+											"          },",
+											"          \"name\": {",
+											"            \"type\": \"string\"",
+											"          },",
+											"          \"symbol\": {",
+											"            \"type\": \"string\"",
+											"          },",
+											"          \"slug\": {",
+											"            \"type\": \"string\"",
+											"          },",
+											"          \"image_url\": {",
+											"            \"type\": \"string\"",
+											"          },",
+											"          \"external_link\": {",
+											"            \"type\": \"string\"",
+											"          },",
+											"          \"total\": {",
+											"            \"type\": \"integer\"",
+											"          },",
+											"          \"category_address\": {",
+											"            \"type\": \"string\"",
+											"          },",
+											"          \"address\": {",
+											"            \"type\": \"string\"",
+											"          },",
+											"          \"nft_version\": {",
+											"            \"type\": \"string\"",
+											"          },",
+											"          \"coin\": {",
+											"            \"type\": \"integer\"",
+											"          },",
+											"          \"type\": {",
+											"            \"type\": \"string\"",
+											"          }",
+											"        }",
+											"      }",
+											"    },",
+											"    \"status\": {",
+											"      \"type\": \"boolean\"",
+											"    }",
+											"  }",
+											"};",
+											"",
+											"let handler = pm.variables.get(\"handler\");",
+											"let address = pm.variables.get(\"address\");",
+											"var jsonData = pm.response.json();",
+											"",
+											"pm.test(handler + \" - response must be valid and have a body: \" + address, function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.ok;",
+											"    pm.response.to.not.be.error;",
+											"    pm.response.to.be.withBody;",
+											"    pm.response.to.be.json;",
+											"});",
+											"",
+											"pm.test(handler + \" - schema is valid: \" + address, function() {",
+											"    pm.expect(ajv.validate(schema, jsonData)).to.be.true;",
+											"    console.log(JSON.stringify(jsonData))",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{platform_auth}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"{{coin}}\": [\"{{address}}\"]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/v3/collectibles/categories",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"v3",
+										"collectibles",
+										"categories"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "collections batch v4",
 							"event": [
 								{
 									"listen": "prerequest",
