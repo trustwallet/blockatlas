@@ -11,9 +11,10 @@ type Collection struct {
 	Total           int    `json:"total"`
 	CategoryAddress string `json:"category_address"`
 	Address         string `json:"address"`
-	Version         string `json:"nft_version"`
 	Coin            uint   `json:"coin"`
-	Type            string `json:"type"`
+	// Delete in the future version, as it's now part of Collectible
+	Version string `json:"nft_version"`
+	Type    string `json:"type"`
 }
 
 type CollectionPage []Collection
@@ -33,6 +34,7 @@ type Collectible struct {
 	Description     string `json:"description"`
 	Coin            uint   `json:"coin"`
 	Name            string `json:"name"`
+	Version         string `json:"nft_version"`
 }
 
 type CollectiblePage []Collectible

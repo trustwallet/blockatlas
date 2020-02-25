@@ -43,6 +43,18 @@ func (c CollectionsClient) GetCollectibles(owner string, collectibleID string) (
 	return collection, page.Collectibles, err
 }
 
+func (c CollectionsClient) GetCollectiblesV4(owner string, collectibleID string) ([]Collectible, error) {
+	query := url.Values{
+		"owner":      {owner},
+		"collection": {collectibleID},
+		"limit":      {strconv.Itoa(300)},
+	}
+
+	var page CollectiblePage
+	err := c.Get(&page, "api/v1/assets", query)
+	return page.Collectibles, err
+}
+
 //TODO: remove once most of the clients will be updated (deadline: March 17th)
 func (c CollectionsClient) OldGetCollectibles(owner string, collectibleID string) (*Collection, []Collectible, error) {
 	collections, err := c.GetCollections(owner)
