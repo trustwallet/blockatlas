@@ -10,7 +10,7 @@ func (p *Platform) GetCollectionsV4(owner string) (blockatlas.CollectionPage, er
 	if err != nil {
 		return nil, err
 	}
-	return NormalizeCollectionPageV4(collections, p.CoinIndex, owner), nil
+	return NormalizeCollectionsV4(collections, p.CoinIndex, owner), nil
 }
 
 func (p *Platform) GetCollectiblesV4(owner, collectibleID string) (blockatlas.CollectiblePage, error) {
@@ -21,7 +21,7 @@ func (p *Platform) GetCollectiblesV4(owner, collectibleID string) (blockatlas.Co
 	return NormalizeCollectiblePageV4(items, p.CoinIndex), nil
 }
 
-func NormalizeCollectionPageV4(collections []Collection, coinIndex uint, owner string) (page blockatlas.CollectionPage) {
+func NormalizeCollectionsV4(collections []Collection, coinIndex uint, owner string) (page blockatlas.CollectionPage) {
 	for _, collection := range collections {
 		item := NormalizeCollectionV4(collection, coinIndex, owner)
 		page = append(page, item)
@@ -44,13 +44,12 @@ func NormalizeCollectionV4(c Collection, coinIndex uint, owner string) blockatla
 	}
 }
 
-func NormalizeCollectiblePageV4(srcPage []Collectible, coinIndex uint) (page blockatlas.CollectiblePage) {
-	for _, src := range srcPage {
-		item := NormalizeCollectibleV4(src, coinIndex)
-		if _, ok := supportedTypes[item.Type]; !ok {
-			continue
+func NormalizeCollectiblePageV4(collectibles []Collectible, coinIndex uint) (page blockatlas.CollectiblePage) {
+	for _, collectible := range collectibles {
+		item := NormalizeCollectibleV4(collectible, coinIndex)
+		if _, ok := supportedTypes[item.Type]; ok {
+			page = append(page, item)
 		}
-		page = append(page, item)
 	}
 	return page
 }
