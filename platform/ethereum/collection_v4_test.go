@@ -48,28 +48,6 @@ const collectionsSrcV4 = `
    {
       "primary_asset_contracts":[
          {
-            "address":"0xf629cbd94d3791c9250152bd8dfbdf380e2a3b9c",
-            "name":"Coin",
-            "symbol":"",
-            "description":null,
-            "external_link":null,
-            "nft_version":null,
-            "schema_name":"ERC20",
-            "display_data":{
-
-            }
-         }
-      ],
-      "name":"Enjin Token",
-      "slug":"enjin-token",
-      "image_url":"https://storage.googleapis.com/opensea-static/tokens-high-res/ENJ.png",
-      "description":"This is the collection of owners of EnjinCoin",
-      "external_url":null,
-      "owned_asset_count":20000000000000000000
-   },
-   {
-      "primary_asset_contracts":[
-         {
             "address":"0xfaafdc07907ff5120a76b34b731b278c38d6043c",
             "name":"Enjin",
             "symbol":"",
@@ -257,44 +235,51 @@ const collectionsSrcV4 = `
 `
 
 var collection1DstV4 = blockatlas.Collection{
-	Name:            "CryptoKitties",
-	Symbol:          "CKITTY",
-	Slug:            "cryptokitties",
-	ImageUrl:        "https://storage.opensea.io/0x06012c8cf97bead5deae237070f9587f8e7a266d-featured-1556588705.png",
-	Description:     "CryptoKitties is a game centered around breedable, collectible, and oh-so-adorable creatures we call CryptoKitties! Each cat is one-of-a-kind and 100% owned by you; it cannot be replicated, taken away, or destroyed.",
-	ExternalLink:    "https://www.cryptokitties.co/",
-	Total:           3,
-	CategoryAddress: "cryptokitties",
-	Id:              "cryptokitties",
-	Address:         "0x0875BCab22dE3d02402bc38aEe4104e1239374a7",
-	Version:         "1.0",
-	Coin:            60,
-	Type:            "ERC721",
+	Name:         "CryptoKitties",
+	Symbol:       "",
+	Slug:         "cryptokitties",
+	ImageUrl:     "https://storage.opensea.io/0x06012c8cf97bead5deae237070f9587f8e7a266d-featured-1556588705.png",
+	Description:  "CryptoKitties is a game centered around breedable, collectible, and oh-so-adorable creatures we call CryptoKitties! Each cat is one-of-a-kind and 100% owned by you; it cannot be replicated, taken away, or destroyed.",
+	ExternalLink: "https://www.cryptokitties.co/",
+	Total:        3,
+	Id:           "cryptokitties",
+	Address:      "0x0875BCab22dE3d02402bc38aEe4104e1239374a7",
+	Coin:         60,
 }
 
 var collection2DstV4 = blockatlas.Collection{
-	Name:            "Age of Rust",
-	Symbol:          "",
-	Slug:            "age-of-rust",
-	ImageUrl:        "https://storage.opensea.io/age-of-rust-1561960816.jpg",
-	Description:     "Year 4424: The search begins for new life on the other side of the galaxy. Explore abandoned space stations, mysterious caverns, and ruins on far away worlds in order to unlock puzzles and secrets! Beware the rogue machines!",
-	ExternalLink:    "https://www.ageofrust.games/",
-	Total:           1,
-	CategoryAddress: "age-of-rust",
-	Id:              "age-of-rust",
-	Address:         "0x0875BCab22dE3d02402bc38aEe4104e1239374a7",
-	Version:         "",
-	Coin:            60,
-	Type:            "ERC1155",
+	Name:         "Age of Rust",
+	Symbol:       "",
+	Slug:         "age-of-rust",
+	ImageUrl:     "https://storage.opensea.io/age-of-rust-1561960816.jpg",
+	Description:  "Year 4424: The search begins for new life on the other side of the galaxy. Explore abandoned space stations, mysterious caverns, and ruins on far away worlds in order to unlock puzzles and secrets! Beware the rogue machines!",
+	ExternalLink: "https://www.ageofrust.games/",
+	Total:        1,
+	Id:           "age-of-rust",
+	Address:      "0x0875BCab22dE3d02402bc38aEe4104e1239374a7",
+	Coin:         60,
+}
+
+var collection3DstV4 = blockatlas.Collection{
+	Name:         "Gods Unchained",
+	Symbol:       "",
+	Slug:         "gods-unchained",
+	ImageUrl:     "https://lh3.googleusercontent.com/yArciVdcDv3O2R-O8XCxx3YEYZdzpiCMdossjUgv0kpLIluUQ1bYN_dyEk5xcvBEOgeq0zNIoWOh7TL9DvUEv--OLQ=s60",
+	Description:  "Gods Unchained is a free-to-play, turn-based competitive trading card game in which cards can be bought and sold on the OpenSea marketplace. Players use their collection to build decks of cards, and select a God to play with at the start of each match. The goal of the game is to reduce your opponent's life to zero. Each deck contains exactly 30 cards. On OpenSea, cards can be sold for a fixed price, auctioned, or sold in bundles.",
+	ExternalLink: "https://godsunchained.com/?refcode=0x5b3256965e7C3cF26E11FCAf296DfC8807C01073",
+	Total:        535,
+	Id:           "gods-unchained",
+	Address:      "0x0875BCab22dE3d02402bc38aEe4104e1239374a7",
+	Coin:         60,
 }
 
 func TestNormalizeCollectionV4(t *testing.T) {
 	var collections []Collection
 	err := json.Unmarshal([]byte(collectionsSrcV4), &collections)
 	assert.Nil(t, err)
-	page := NormalizeCollectionPage(collections, coin.ETH, collectionsOwnerV4)
-	assert.Equal(t, len(page), 2, "collections could not be normalized")
-	expected := blockatlas.CollectionPage{collection1DstV4, collection2DstV4}
+	page := NormalizeCollectionsV4(collections, coin.ETH, collectionsOwnerV4)
+	assert.Equal(t, 3, len(page), "collections could not be normalized")
+	expected := blockatlas.CollectionPage{collection1DstV4, collection2DstV4, collection3DstV4}
 	assert.Equal(t, page, expected, "collections don't equal")
 }
 

@@ -31,16 +31,15 @@ func NormalizeCollectionsV4(collections []Collection, coinIndex uint, owner stri
 
 func NormalizeCollectionV4(c Collection, coinIndex uint, owner string) blockatlas.Collection {
 	return blockatlas.Collection{
-		Name:            c.Name,
-		Slug:            c.Slug,
-		ImageUrl:        c.ImageUrl,
-		Description:     c.Description,
-		ExternalLink:    c.ExternalUrl,
-		Total:           int(c.Total.Int64()),
-		Id:              c.Slug,
-		CategoryAddress: c.Slug,
-		Address:         owner,
-		Coin:            coinIndex,
+		Name:         c.Name,
+		Slug:         c.Slug,
+		ImageUrl:     c.ImageUrl,
+		Description:  c.Description,
+		ExternalLink: c.ExternalUrl,
+		Total:        int(c.Total.Int64()),
+		Id:           c.Slug,
+		Address:      owner,
+		Coin:         coinIndex,
 	}
 }
 
