@@ -22,12 +22,9 @@ func SetupObserverAPI(router gin.IRouter, db *storage.Storage) {
 	observerAPI.POST("/webhook/register", addCall(db))
 	observerAPI.DELETE("/webhook/register", deleteCall(db))
 	observerAPI.GET("/status", statusCall(db))
-
-	logger.Info("Routes set up", logger.Params{"routes": len(routers)})
 }
 
 func SetupPlatformAPI(root gin.IRouter) {
-
 	root.GET("/", GetRoot)
 	root.GET("/status", GetStatus)
 
