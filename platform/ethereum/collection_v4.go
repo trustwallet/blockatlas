@@ -66,7 +66,7 @@ func NormalizeCollectibleV4(a Collectible, coinIndex uint) blockatlas.Collectibl
 		Category:        a.Collection.Name,
 		ImageUrl:        a.ImagePreviewUrl,
 		ProviderLink:    a.Permalink,
-		ExternalLink:    a.ExternalLink,
+		ExternalLink:    a.Collection.ExternalLink,
 		Type:            a.AssetContract.Type,
 		Description:     a.Description,
 		Coin:            coinIndex,

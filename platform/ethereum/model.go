@@ -92,7 +92,7 @@ type CollectiblePage struct {
 
 type Collectible struct {
 	TokenId         string                 `json:"token_id"`
-	AssetContract   CollectibleContract    `json:"asset_contract"`
+	AssetContract   AssetContract          `json:"asset_contract"`
 	ImageUrl        string                 `json:"image_url"`
 	ImagePreviewUrl string                 `json:"image_preview_url"`
 	Name            string                 `json:"name"`
@@ -103,11 +103,12 @@ type Collectible struct {
 }
 
 type CollectibleCollections struct {
-	Name string `json:"name"`
-	Slug string `json:"slug"`
+	Name         string `json:"name"`
+	Slug         string `json:"slug"`
+	ExternalLink string `json:"external_url"`
 }
 
-type CollectibleContract struct {
+type AssetContract struct {
 	Address      string `json:"address"`
 	Category     string `json:"name"`
 	ExternalLink string `json:"external_link"`
