@@ -24,9 +24,6 @@ func (p *Platform) GetCollectiblesV4(owner, collectibleID string) (blockatlas.Co
 func NormalizeCollectionPageV4(collections []Collection, coinIndex uint, owner string) (page blockatlas.CollectionPage) {
 	for _, collection := range collections {
 		item := NormalizeCollectionV4(collection, coinIndex, owner)
-		if _, ok := supportedTypes[item.Type]; !ok {
-			continue
-		}
 		page = append(page, item)
 	}
 	return page
@@ -61,18 +58,18 @@ func NormalizeCollectiblePageV4(srcPage []Collectible, coinIndex uint) (page blo
 func NormalizeCollectibleV4(a Collectible, coinIndex uint) blockatlas.Collectible {
 	id := strings.Join([]string{a.AssetContract.Address, a.TokenId}, "-")
 	return blockatlas.Collectible{
-		ID:               id,
-		CollectionID:     a.Collection.Slug,
-		TokenID:          a.TokenId,
-		CategoryContract: a.AssetContract.Address,
-		Name:             a.Name,
-		Category:         a.Collection.Name,
-		ImageUrl:         a.ImagePreviewUrl,
-		ProviderLink:     a.Permalink,
-		ExternalLink:     a.ExternalLink,
-		Type:             a.AssetContract.Type,
-		Description:      a.Description,
-		Coin:             coinIndex,
-		Version:          a.AssetContract.Version,
+		ID:              id,
+		CollectionID:    a.Collection.Slug,
+		TokenID:         a.TokenId,
+		ContractAddress: a.AssetContract.Address,
+		Name:            a.Name,
+		Category:        a.Collection.Name,
+		ImageUrl:        a.ImagePreviewUrl,
+		ProviderLink:    a.Permalink,
+		ExternalLink:    a.ExternalLink,
+		Type:            a.AssetContract.Type,
+		Description:     a.Description,
+		Coin:            coinIndex,
+		Version:         a.AssetContract.Version,
 	}
 }
