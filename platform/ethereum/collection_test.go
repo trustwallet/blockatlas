@@ -246,3 +246,166 @@ func TestSearchCollection(t *testing.T) {
 	}
 
 }
+
+func TestNormalizeSupportedContracts(t *testing.T) {
+	var contracts []PrimaryAssetContract
+	err := json.Unmarshal([]byte(rawAssetContracts), &contracts)
+	assert.Nil(t, err)
+	var collection = Collection{}
+	collection.Contracts = contracts
+	normalizeSupportedContracts(&collection)
+	assert.Equal(t, len(collection.Contracts), 2, "normalizeSupportedContracts with incorrect len")
+	var expectedContracts []PrimaryAssetContract
+	err = json.Unmarshal([]byte(rawAssetContractsExpected), &expectedContracts)
+	assert.Nil(t, err)
+	assert.Equal(t, collection.Contracts, expectedContracts, "normalizeSupportedContracts expectedContracts")
+}
+
+const rawAssetContracts = `[
+    {
+        "address": "0xee85966b4974d3c6f71a2779cc3b6f53afbc2b68",
+        "asset_contract_type": "fungible",
+        "created_date": "2019-10-16T07:36:16.102163",
+        "name": "Rare Chest",
+        "nft_version": null,
+        "opensea_version": null,
+        "owner": 1610615,
+        "schema_name": "ERC20",
+        "symbol": "",
+        "total_supply": "1",
+        "description": "Gods Unchained is a free-to-play, turn-based competitive trading card game in which cards can be bought and sold on the OpenSea marketplace. Players use their collection to build decks of cards, and select a God to play with at the start of each match. The goal of the game is to reduce your opponent's life to zero. Each deck contains exactly 30 cards. On OpenSea, cards can be sold for a fixed price, auctioned, or sold in bundles.",
+        "external_link": "https://godsunchained.com/?refcode=0x5b3256965e7C3cF26E11FCAf296DfC8807C01073",
+        "image_url": "https://lh3.googleusercontent.com/yArciVdcDv3O2R-O8XCxx3YEYZdzpiCMdossjUgv0kpLIluUQ1bYN_dyEk5xcvBEOgeq0zNIoWOh7TL9DvUEv--OLQ=s60",
+        "default_to_fiat": false,
+        "dev_buyer_fee_basis_points": 0,
+        "dev_seller_fee_basis_points": 0,
+        "only_proxied_transfers": false,
+        "opensea_buyer_fee_basis_points": 0,
+        "opensea_seller_fee_basis_points": 250,
+        "buyer_fee_basis_points": 0,
+        "seller_fee_basis_points": 250,
+        "payout_address": null
+    },
+    {
+        "address": "0x20d4cec36528e1c4563c1bfbe3de06aba70b22b4",
+        "asset_contract_type": "fungible",
+        "created_date": "2019-10-16T08:06:42.727997",
+        "name": "Legendary Chest",
+        "nft_version": null,
+        "opensea_version": null,
+        "owner": 1610615,
+        "schema_name": "ERC20",
+        "symbol": "",
+        "total_supply": "1",
+        "description": "Gods Unchained is a free-to-play, turn-based competitive trading card game in which cards can be bought and sold on the OpenSea marketplace. Players use their collection to build decks of cards, and select a God to play with at the start of each match. The goal of the game is to reduce your opponent's life to zero. Each deck contains exactly 30 cards. On OpenSea, cards can be sold for a fixed price, auctioned, or sold in bundles.",
+        "external_link": "https://godsunchained.com/?refcode=0x5b3256965e7C3cF26E11FCAf296DfC8807C01073",
+        "image_url": "https://lh3.googleusercontent.com/yArciVdcDv3O2R-O8XCxx3YEYZdzpiCMdossjUgv0kpLIluUQ1bYN_dyEk5xcvBEOgeq0zNIoWOh7TL9DvUEv--OLQ=s60",
+        "default_to_fiat": false,
+        "dev_buyer_fee_basis_points": 0,
+        "dev_seller_fee_basis_points": 0,
+        "only_proxied_transfers": false,
+        "opensea_buyer_fee_basis_points": 0,
+        "opensea_seller_fee_basis_points": 250,
+        "buyer_fee_basis_points": 0,
+        "seller_fee_basis_points": 250,
+        "payout_address": null
+    },
+    {
+        "address": "0x0e3a2a1f2146d86a604adc220b4967a898d7fe07",
+        "asset_contract_type": "non-fungible",
+        "created_date": "2019-11-01T06:39:04.363034",
+        "name": "Gods Unchained Cards",
+        "nft_version": "3.0",
+        "opensea_version": null,
+        "owner": 1691695,
+        "schema_name": "ERC721",
+        "symbol": "",
+        "total_supply": "1",
+        "description": "Gods Unchained is a free-to-play, turn-based competitive trading card game in which cards can be bought and sold on the OpenSea marketplace. Players use their collection to build decks of cards, and select a God to play with at the start of each match. The goal of the game is to reduce your opponent's life to zero. Each deck contains exactly 30 cards. On OpenSea, cards can be sold for a fixed price, auctioned, or sold in bundles.",
+        "external_link": "https://godsunchained.com/?refcode=0x5b3256965e7C3cF26E11FCAf296DfC8807C01073",
+        "image_url": "https://lh3.googleusercontent.com/yArciVdcDv3O2R-O8XCxx3YEYZdzpiCMdossjUgv0kpLIluUQ1bYN_dyEk5xcvBEOgeq0zNIoWOh7TL9DvUEv--OLQ=s60",
+        "default_to_fiat": false,
+        "dev_buyer_fee_basis_points": 0,
+        "dev_seller_fee_basis_points": 0,
+        "only_proxied_transfers": false,
+        "opensea_buyer_fee_basis_points": 0,
+        "opensea_seller_fee_basis_points": 250,
+        "buyer_fee_basis_points": 0,
+        "seller_fee_basis_points": 250,
+        "payout_address": null
+    },
+    {
+        "address": "0x564cb55c655f727b61d9baf258b547ca04e9e548",
+        "asset_contract_type": "non-fungible",
+        "created_date": "2019-10-29T12:28:37.643714",
+        "name": "Gods Unchained",
+        "nft_version": "3.0",
+        "opensea_version": null,
+        "owner": 1691695,
+        "schema_name": "ERC721",
+        "symbol": "",
+        "total_supply": "205",
+        "description": "Gods Unchained is a free-to-play, turn-based competitive trading card game in which cards can be bought and sold on the OpenSea marketplace. Players use their collection to build decks of cards, and select a God to play with at the start of each match. The goal of the game is to reduce your opponent's life to zero. Each deck contains exactly 30 cards. On OpenSea, cards can be sold for a fixed price, auctioned, or sold in bundles.",
+        "external_link": "https://godsunchained.com/?refcode=0x5b3256965e7C3cF26E11FCAf296DfC8807C01073",
+        "image_url": "https://lh3.googleusercontent.com/yArciVdcDv3O2R-O8XCxx3YEYZdzpiCMdossjUgv0kpLIluUQ1bYN_dyEk5xcvBEOgeq0zNIoWOh7TL9DvUEv--OLQ=s60",
+        "default_to_fiat": false,
+        "dev_buyer_fee_basis_points": 0,
+        "dev_seller_fee_basis_points": 0,
+        "only_proxied_transfers": false,
+        "opensea_buyer_fee_basis_points": 0,
+        "opensea_seller_fee_basis_points": 250,
+        "buyer_fee_basis_points": 0,
+        "seller_fee_basis_points": 250,
+        "payout_address": null
+    }
+]`
+
+const rawAssetContractsExpected = `[{
+        "address": "0x0e3a2a1f2146d86a604adc220b4967a898d7fe07",
+        "asset_contract_type": "non-fungible",
+        "created_date": "2019-11-01T06:39:04.363034",
+        "name": "Gods Unchained Cards",
+        "nft_version": "3.0",
+        "opensea_version": null,
+        "owner": 1691695,
+        "schema_name": "ERC721",
+        "symbol": "",
+        "total_supply": "1",
+        "description": "Gods Unchained is a free-to-play, turn-based competitive trading card game in which cards can be bought and sold on the OpenSea marketplace. Players use their collection to build decks of cards, and select a God to play with at the start of each match. The goal of the game is to reduce your opponent's life to zero. Each deck contains exactly 30 cards. On OpenSea, cards can be sold for a fixed price, auctioned, or sold in bundles.",
+        "external_link": "https://godsunchained.com/?refcode=0x5b3256965e7C3cF26E11FCAf296DfC8807C01073",
+        "image_url": "https://lh3.googleusercontent.com/yArciVdcDv3O2R-O8XCxx3YEYZdzpiCMdossjUgv0kpLIluUQ1bYN_dyEk5xcvBEOgeq0zNIoWOh7TL9DvUEv--OLQ=s60",
+        "default_to_fiat": false,
+        "dev_buyer_fee_basis_points": 0,
+        "dev_seller_fee_basis_points": 0,
+        "only_proxied_transfers": false,
+        "opensea_buyer_fee_basis_points": 0,
+        "opensea_seller_fee_basis_points": 250,
+        "buyer_fee_basis_points": 0,
+        "seller_fee_basis_points": 250,
+        "payout_address": null
+    },
+    {
+        "address": "0x564cb55c655f727b61d9baf258b547ca04e9e548",
+        "asset_contract_type": "non-fungible",
+        "created_date": "2019-10-29T12:28:37.643714",
+        "name": "Gods Unchained",
+        "nft_version": "3.0",
+        "opensea_version": null,
+        "owner": 1691695,
+        "schema_name": "ERC721",
+        "symbol": "",
+        "total_supply": "205",
+        "description": "Gods Unchained is a free-to-play, turn-based competitive trading card game in which cards can be bought and sold on the OpenSea marketplace. Players use their collection to build decks of cards, and select a God to play with at the start of each match. The goal of the game is to reduce your opponent's life to zero. Each deck contains exactly 30 cards. On OpenSea, cards can be sold for a fixed price, auctioned, or sold in bundles.",
+        "external_link": "https://godsunchained.com/?refcode=0x5b3256965e7C3cF26E11FCAf296DfC8807C01073",
+        "image_url": "https://lh3.googleusercontent.com/yArciVdcDv3O2R-O8XCxx3YEYZdzpiCMdossjUgv0kpLIluUQ1bYN_dyEk5xcvBEOgeq0zNIoWOh7TL9DvUEv--OLQ=s60",
+        "default_to_fiat": false,
+        "dev_buyer_fee_basis_points": 0,
+        "dev_seller_fee_basis_points": 0,
+        "only_proxied_transfers": false,
+        "opensea_buyer_fee_basis_points": 0,
+        "opensea_seller_fee_basis_points": 250,
+        "buyer_fee_basis_points": 0,
+        "seller_fee_basis_points": 250,
+        "payout_address": null
+    }
+]`
