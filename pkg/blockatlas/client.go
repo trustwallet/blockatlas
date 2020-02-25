@@ -47,7 +47,7 @@ func (r *Request) Get(result interface{}, path string, query url.Values) error {
 		queryStr = query.Encode()
 	}
 	uri := strings.Join([]string{r.GetBase(path), queryStr}, "?")
-	return r.Execute("GET", uri, nil, result, errors.Params{"path": path})
+	return r.Execute("GET", uri, nil, result)
 }
 
 func (r *Request) Post(result interface{}, path string, body interface{}) error {
@@ -56,14 +56,13 @@ func (r *Request) Post(result interface{}, path string, body interface{}) error 
 		return err
 	}
 	uri := r.GetBase(path)
-	return r.Execute("POST", uri, buf, result, errors.Params{"path": path})
+	return r.Execute("POST", uri, buf, result)
 }
 
-func (r *Request) Execute(method string, url string, body io.Reader, result interface{}, params errors.Params) error {
-	params["method"] = method
+func (r *Request) Execute(method string, url string, body io.Reader, result interface{}) error {
 	req, err := http.NewRequest(method, url, body)
 	if err != nil {
-		return errors.E(err, errors.TypePlatformRequest, params)
+		return errors.E(err, errors.TypePlatformRequest)
 	}
 
 	for key, value := range r.Headers {
@@ -72,21 +71,21 @@ func (r *Request) Execute(method string, url string, body io.Reader, result inte
 
 	res, err := r.HttpClient.Do(req)
 	if err != nil {
-		return errors.E(err, errors.TypePlatformRequest, params)
+		return errors.E(err, errors.TypePlatformRequest)
 	}
 
 	err = r.ErrorHandler(res, url)
 	if err != nil {
-		return errors.E(err, errors.TypePlatformError, params)
+		return errors.E(err, errors.TypePlatformError)
 	}
 	defer res.Body.Close()
 	b, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		return errors.E(err, errors.TypePlatformUnmarshal, params)
+		return errors.E(err, errors.TypePlatformUnmarshal)
 	}
 	err = json.Unmarshal(b, result)
 	if err != nil {
-		return errors.E(err, errors.TypePlatformUnmarshal, params)
+		return errors.E(err, errors.TypePlatformUnmarshal)
 	}
 	return err
 }
