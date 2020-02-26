@@ -5,6 +5,7 @@ import (
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/address"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/ginutils"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"math/big"
 	"net/http"
@@ -134,7 +135,7 @@ func calcFee(gasPrice string, gasUsed string) string {
 func apiError(c *gin.Context, err error) bool {
 	if err != nil {
 		logger.Error(err, "Unhandled error")
-		c.AbortWithStatus(http.StatusInternalServerError)
+		ginutils.RenderError(c, http.StatusInternalServerError, err.Error())
 		return true
 	}
 	return false

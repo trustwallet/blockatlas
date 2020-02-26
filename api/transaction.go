@@ -71,13 +71,13 @@ func makeTxRoute(router gin.IRouter, api blockatlas.Platform, path string) {
 			errResp := ginutils.ErrorResponse(c)
 			switch {
 			case err == blockatlas.ErrInvalidAddr:
-				errResp.Params(http.StatusBadRequest, "Invalid address")
+				errResp.Params("Invalid address")
 			case err == blockatlas.ErrNotFound:
-				errResp.Params(http.StatusNotFound, "No such address")
+				errResp.Params("No such address")
 			case err == blockatlas.ErrSourceConn:
-				errResp.Params(http.StatusServiceUnavailable, "Lost connection to blockchain")
+				errResp.Params("Lost connection to blockchain")
 			}
-			errResp.Render()
+			errResp.Render(http.StatusInternalServerError)
 			return
 		}
 
