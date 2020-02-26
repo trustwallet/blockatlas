@@ -20,9 +20,7 @@ func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
 	}
 
 	for _, v := range validators.Validators {
-		if val, ok := normalizeValidator(v, apr); ok {
-			results = append(results, val)
-		}
+		results = append(results, normalizeValidator(v, apr))
 	}
 	return results, nil
 }
@@ -83,10 +81,10 @@ func getDetails(apr float64) blockatlas.StakingDetails {
 	}
 }
 
-func normalizeValidator(v Validator, apr float64) (validator blockatlas.Validator, ok bool) {
+func normalizeValidator(v Validator, apr float64) (validator blockatlas.Validator) {
 	return blockatlas.Validator{
 		Status:  true,
 		ID:      v.Address,
 		Details: getDetails(apr),
-	}, true
+	}
 }

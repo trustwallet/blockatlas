@@ -56,7 +56,7 @@ func TestNormalizeValidator(t *testing.T) {
 			Type:          blockatlas.DelegationTypeDelegate,
 		},
 	}
-	result, _ := normalizeValidator(v, 10)
+	result := normalizeValidator(v, 10)
 	assert.Equal(t, expected, result)
 }
 
