@@ -30,6 +30,18 @@
         "0x7d8bf18C7cE84b3E175b339c4Ca93aEd1dD166F1"
       ]
     }
+  ],
+  "/v4/collectibles/categories": [
+    {
+      "60": [
+        "0xb3624367b1ab37daef42e1a3a2ced012359659b0"
+      ]
+    },
+    {
+      "60": [
+        "0x7d8bf18C7cE84b3E175b339c4Ca93aEd1dD166F1"
+      ]
+    }
   ]
 }
 

@@ -976,6 +976,98 @@
                     }
                 }
             }
+        },
+        "/v4/collectibles/categories": {
+            "post": {
+                "description": "Get collection categories",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Collections"
+                ],
+                "summary": "Get list of collections from a specific coin and addresses",
+                "operationId": "collection_categories_v4",
+                "parameters": [
+                    {
+                        "default": "{\"60\": [\"0xb3624367b1ab37daef42e1a3a2ced012359659b0\"]}",
+                        "description": "Payload",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/blockatlas.DocsResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v4/{coin}/collections/{owner}/collection/{collection_id}": {
+            "get": {
+                "description": "Get a collection from the address",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Collections"
+                ],
+                "summary": "Get Collection",
+                "operationId": "collection_v4",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "ethereum",
+                        "description": "the coin name",
+                        "name": "coin",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "default": "0x0875BCab22dE3d02402bc38aEe4104e1239374a7",
+                        "description": "the query address",
+                        "name": "owner",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "default": "0x06012c8cf97bead5deae237070f9587f8e7a266d",
+                        "description": "the query collection",
+                        "name": "collection_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/blockatlas.CollectionPage"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/ginutils.ApiError"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -1147,6 +1239,7 @@
                     "type": "string"
                 },
                 "nft_version": {
+                    "description": "Delete in the future version, as it's now part of Collectible",
                     "type": "string"
                 },
                 "slug": {
