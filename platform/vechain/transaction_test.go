@@ -52,7 +52,7 @@ func TestNormalizeTransaction(t *testing.T) {
 		txId     string
 		expected blockatlas.Tx
 	}{
-		{"Test normalize VET transfer transaction", "0xb5e883349e68ab59307d1604555ac890fac47128",transferSrc, trxId, expectedTransfer},
+		{"Test normalize VET transfer transaction", "0xb5e883349e68ab59307d1604555ac890fac47128", transferSrc, trxId, expectedTransfer},
 	}
 
 	platform := Platform{}
@@ -135,15 +135,15 @@ const trxReceipt = `{
 
 var expectedTransferLog = blockatlas.TxPage{
 	{
-		ID:     "0x42f5eba46ddcc458243c753545a3faa849502d078efbc5b74baddea9e6ea5b04",
-		Coin:   coin.VET,
-		From:   "0x2c7A8d5ccE0d5E6a8a31233B7Dc3DAE9AaE4b405",
-		To:     "0x0000000000000000000000000000456E65726779",
-		Date:   1574278180,
-		Type:   blockatlas.TxTokenTransfer,
-		Fee:    blockatlas.Amount("36582000000000000000"),
-		Status: blockatlas.StatusCompleted,
-		Block:  4382764,
+		ID:        "0x42f5eba46ddcc458243c753545a3faa849502d078efbc5b74baddea9e6ea5b04",
+		Coin:      coin.VET,
+		From:      "0x2c7A8d5ccE0d5E6a8a31233B7Dc3DAE9AaE4b405",
+		To:        "0x0000000000000000000000000000456E65726779",
+		Date:      1574278180,
+		Type:      blockatlas.TxTokenTransfer,
+		Fee:       blockatlas.Amount("36582000000000000000"),
+		Status:    blockatlas.StatusCompleted,
+		Block:     4382764,
 		Direction: blockatlas.DirectionIncoming,
 		Meta: blockatlas.TokenTransfer{
 			Name:     gasTokenName,
@@ -273,7 +273,6 @@ func Test_getTransferDirectory(t *testing.T) {
 		{"Self direction for addr2", addr2, addr2, addr2, blockatlas.DirectionSelf, false},
 		{"Out direction", addr1, addr2, addr1, blockatlas.DirectionOutgoing, false},
 		{"In direction", addr1, addr2, addr2, blockatlas.DirectionIncoming, false},
-		//{"Unknown direction", addr1, addr2, addr2, "", true},
 	}
 
 	for _, tt := range tests {
