@@ -49,7 +49,6 @@ type Contract struct {
 	Decimals    uint   `json:"decimals"`
 	TotalSupply string `json:"totalSupply,omitempty"`
 	Name        string `json:"name"`
-	Contract    string `json:"contract,omitempty"`
 }
 
 type NodeInfo struct {
