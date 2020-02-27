@@ -8,6 +8,8 @@ import (
 	"strconv"
 )
 
+const Annual = 10
+
 func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 	result, err := p.client.GetTxsOfAddress(address)
 	if err != nil {
