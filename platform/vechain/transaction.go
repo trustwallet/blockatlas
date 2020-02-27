@@ -77,8 +77,6 @@ func (p *Platform) NormalizeTokenTransaction(srcTx Tx, receipt TxReceipt) (block
 		return blockatlas.TxPage{}, errors.E("NormalizeBlockTransaction: Clauses not found", errors.Params{"tx": srcTx})
 	}
 
-	origin := address.EIP55Checksum(blockatlas.GetValidParameter(srcTx.Origin, srcTx.Meta.TxOrigin))
-
 	fee, err := numbers.HexToDecimal(receipt.Paid)
 	if err != nil {
 		return blockatlas.TxPage{}, err
@@ -90,31 +88,40 @@ func (p *Platform) NormalizeTokenTransaction(srcTx Tx, receipt TxReceipt) (block
 			continue
 		}
 		event := output.Events[0] // TODO add support for multisend
-		to := address.EIP55Checksum(event.Address)
 		value, err := numbers.HexToDecimal(event.Data)
+		if err != nil {
+			continue
+		}
+		originSender := address.EIP55Checksum(blockatlas.GetValidParameter(srcTx.Origin, srcTx.Meta.TxOrigin))
+		originReceiver := address.EIP55Checksum(event.Address)
+		topicsFrom := address.EIP55Checksum(getRecipientAddress(event.Topics[1]))
+		topicsTo := address.EIP55Checksum(getRecipientAddress(event.Topics[2]))
+
+		direction, err := getTokenTransactionDirectory(originSender, topicsFrom, topicsTo)
 		if err != nil {
 			continue
 		}
 
 		txs = append(txs, blockatlas.Tx{
-			ID:     srcTx.Id,
-			Coin:   p.Coin().ID,
-			From:   origin,
-			To:     to,
-			Fee:    blockatlas.Amount(fee),
-			Date:   srcTx.Meta.BlockTimestamp,
-			Type:   blockatlas.TxTokenTransfer,
-			Block:  srcTx.Meta.BlockNumber,
-			Status: blockatlas.StatusCompleted,
+			ID:        srcTx.Id,
+			Coin:      p.Coin().ID,
+			From:      originSender,
+			To:        originReceiver,
+			Fee:       blockatlas.Amount(fee),
+			Date:      srcTx.Meta.BlockTimestamp,
+			Type:      blockatlas.TxTokenTransfer,
+			Block:     srcTx.Meta.BlockNumber,
+			Status:    blockatlas.StatusCompleted,
+			Direction: direction,
 			Meta: blockatlas.TokenTransfer{
 				// the only supported Token on VeChain is its Gas token
 				Name:     gasTokenName,
-				TokenID:  to,
+				TokenID:  originReceiver,
 				Value:    blockatlas.Amount(value),
 				Symbol:   gasTokenSymbol,
 				Decimals: gasTokenDecimals,
-				From:     origin,
-				To:       address.EIP55Checksum(getRecipientAddress(event.Topics[2])),
+				From:     originSender,
+				To:       topicsTo,
 			},
 		})
 	}
@@ -137,7 +144,7 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 		if err != nil {
 			continue
 		}
-		tx, err := p.NormalizeTransaction(t, trxId)
+		tx, err := p.NormalizeTransaction(t, trxId, address)
 		if err != nil {
 			continue
 		}
@@ -146,24 +153,33 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 	return txs, nil
 }
 
-func (p *Platform) NormalizeTransaction(srcTx LogTransfer, trxId Tx) (blockatlas.Tx, error) {
+func (p *Platform) NormalizeTransaction(srcTx LogTransfer, trxId Tx, addr string) (blockatlas.Tx, error) {
 	value, err := numbers.HexToDecimal(srcTx.Amount)
 	if err != nil {
 		return blockatlas.Tx{}, err
 	}
 
 	fee := strconv.Itoa(trxId.Gas)
+	sender := address.EIP55Checksum(srcTx.Sender)
+	recipient := address.EIP55Checksum(srcTx.Recipient)
+	addrChecksum := address.EIP55Checksum(addr)
+
+	directory, err := getTransferDirectory(sender, recipient, addrChecksum)
+	if err != nil {
+		return blockatlas.Tx{}, err
+	}
 
 	return blockatlas.Tx{
-		ID:     srcTx.Meta.TxId,
-		Coin:   p.Coin().ID,
-		From:   address.EIP55Checksum(srcTx.Sender),
-		To:     address.EIP55Checksum(srcTx.Recipient),
-		Fee:    blockatlas.Amount(fee),
-		Date:   srcTx.Meta.BlockTimestamp,
-		Type:   blockatlas.TxTransfer,
-		Block:  srcTx.Meta.BlockNumber,
-		Status: blockatlas.StatusCompleted,
+		ID:        srcTx.Meta.TxId,
+		Coin:      p.Coin().ID,
+		From:      sender,
+		To:        recipient,
+		Fee:       blockatlas.Amount(fee),
+		Date:      srcTx.Meta.BlockTimestamp,
+		Type:      blockatlas.TxTransfer,
+		Block:     srcTx.Meta.BlockNumber,
+		Direction: directory,
+		Status:    blockatlas.StatusCompleted,
 		Meta: blockatlas.Transfer{
 			Value:    blockatlas.Amount(value),
 			Symbol:   p.Coin().Symbol,
@@ -184,4 +200,30 @@ func hexToInt(hex string) (uint64, error) {
 // 0x000000000000000000000000b5e883349e68ab59307d1604555ac890fac47128 => 0xb5e883349e68ab59307d1604555ac890fac47128
 func getRecipientAddress(hex string) string {
 	return "0x" + hex[len(hex)-40:]
+}
+
+func getTokenTransactionDirectory(originSender, topicsFrom, topicsTo string) (dir blockatlas.Direction, err error) {
+	if originSender == topicsFrom && originSender == topicsTo {
+		return blockatlas.DirectionSelf, nil
+	}
+	if originSender == topicsFrom && originSender != topicsTo {
+		return blockatlas.DirectionIncoming, nil
+	}
+	if originSender == topicsTo && originSender != topicsFrom {
+		return blockatlas.DirectionOutgoing, nil
+	}
+	return "", errors.E("Unknown direction")
+}
+
+func getTransferDirectory(sender, recipient, addr string) (dir blockatlas.Direction, err error) {
+	if sender == addr && recipient == addr {
+		return blockatlas.DirectionSelf, nil
+	}
+	if sender == addr && recipient != addr {
+		return blockatlas.DirectionOutgoing, nil
+	}
+	if recipient == addr && sender != addr {
+		return blockatlas.DirectionIncoming, nil
+	}
+	return "", errors.E("Unknown direction")
 }

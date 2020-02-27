@@ -27,15 +27,16 @@ const trxId = `{
 }`
 
 var expectedTransfer = blockatlas.Tx{
-	ID:     "0x702edd54bd4e13e0012798cc8b2dfa52f7150173945103d203fae26b8e3d2ed7",
-	Coin:   coin.VET,
-	From:   "0xB5e883349e68aB59307d1604555AC890fAC47128",
-	To:     "0x2c7A8d5ccE0d5E6a8a31233B7Dc3DAE9AaE4b405",
-	Date:   1574410670,
-	Type:   blockatlas.TxTransfer,
-	Fee:    blockatlas.Amount("21000"),
-	Status: blockatlas.StatusCompleted,
-	Block:  4395940,
+	ID:        "0x702edd54bd4e13e0012798cc8b2dfa52f7150173945103d203fae26b8e3d2ed7",
+	Coin:      coin.VET,
+	From:      "0xB5e883349e68aB59307d1604555AC890fAC47128",
+	To:        "0x2c7A8d5ccE0d5E6a8a31233B7Dc3DAE9AaE4b405",
+	Date:      1574410670,
+	Type:      blockatlas.TxTransfer,
+	Fee:       blockatlas.Amount("21000"),
+	Status:    blockatlas.StatusCompleted,
+	Block:     4395940,
+	Direction: blockatlas.DirectionOutgoing,
 	Meta: blockatlas.Transfer{
 		Value:    blockatlas.Amount("1347000000000000000"),
 		Decimals: 18,
@@ -46,11 +47,12 @@ var expectedTransfer = blockatlas.Tx{
 func TestNormalizeTransaction(t *testing.T) {
 	tests := []struct {
 		name     string
+		addr     string
 		txData   string
 		txId     string
 		expected blockatlas.Tx
 	}{
-		{"Test normalize VET transfer transaction", transferSrc, trxId, expectedTransfer},
+		{"Test normalize VET transfer transaction", "0xb5e883349e68ab59307d1604555ac890fac47128", transferSrc, trxId, expectedTransfer},
 	}
 
 	platform := Platform{}
@@ -65,7 +67,7 @@ func TestNormalizeTransaction(t *testing.T) {
 			errTrxID := json.Unmarshal([]byte(tt.txId), &tId)
 			assert.Nil(t, errTrxID)
 
-			actual, err := platform.NormalizeTransaction(tx, tId)
+			actual, err := platform.NormalizeTransaction(tx, tId, tt.addr)
 			assert.Nil(t, err)
 
 			assert.Equal(t, tt.expected, actual, "tx don't equal")
@@ -133,15 +135,16 @@ const trxReceipt = `{
 
 var expectedTransferLog = blockatlas.TxPage{
 	{
-		ID:     "0x42f5eba46ddcc458243c753545a3faa849502d078efbc5b74baddea9e6ea5b04",
-		Coin:   coin.VET,
-		From:   "0x2c7A8d5ccE0d5E6a8a31233B7Dc3DAE9AaE4b405",
-		To:     "0x0000000000000000000000000000456E65726779",
-		Date:   1574278180,
-		Type:   blockatlas.TxTokenTransfer,
-		Fee:    blockatlas.Amount("36582000000000000000"),
-		Status: blockatlas.StatusCompleted,
-		Block:  4382764,
+		ID:        "0x42f5eba46ddcc458243c753545a3faa849502d078efbc5b74baddea9e6ea5b04",
+		Coin:      coin.VET,
+		From:      "0x2c7A8d5ccE0d5E6a8a31233B7Dc3DAE9AaE4b405",
+		To:        "0x0000000000000000000000000000456E65726779",
+		Date:      1574278180,
+		Type:      blockatlas.TxTokenTransfer,
+		Fee:       blockatlas.Amount("36582000000000000000"),
+		Status:    blockatlas.StatusCompleted,
+		Block:     4382764,
+		Direction: blockatlas.DirectionIncoming,
 		Meta: blockatlas.TokenTransfer{
 			Name:     gasTokenName,
 			Symbol:   gasTokenSymbol,
@@ -210,9 +213,6 @@ func Test_hexToInt(t *testing.T) {
 }
 
 func Test_getRecipientAddress(t *testing.T) {
-	type args struct {
-		hex string
-	}
 	tests := []struct {
 		name string
 		hex  string
@@ -226,6 +226,62 @@ func Test_getRecipientAddress(t *testing.T) {
 			if got := getRecipientAddress(tt.hex); got != tt.want {
 				t.Errorf("getRecipientAddress() = %v, want %v", got, tt.want)
 			}
+		})
+	}
+}
+
+func Test_getTokenTransactionDirectory(t *testing.T) {
+	addr1 := "0xb5e883349e68ab59307d1604555ac890fac47128"
+	addr2 := "0eec2bbedbb8b18357dab0b753cd1893bb832284"
+	tests := []struct {
+		name         string
+		originSender string
+		topicsFrom   string
+		topicsTo     string
+		expected     blockatlas.Direction
+		expectErr    bool
+	}{
+		{"Self direction", addr1, addr1, addr1, blockatlas.DirectionSelf, false},
+		{"In direction", addr1, addr1, addr2, blockatlas.DirectionIncoming, false},
+		{"Out direction", addr1, addr2, addr1, blockatlas.DirectionOutgoing, false},
+		{"Unknown direction", addr1, addr2, addr2, "", true},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			actual, err := getTokenTransactionDirectory(tt.originSender, tt.topicsFrom, tt.topicsTo)
+			if tt.expectErr {
+				assert.NotNil(t, err)
+			}
+			assert.Equal(t, tt.expected, actual)
+		})
+	}
+}
+
+func Test_getTransferDirectory(t *testing.T) {
+	addr1 := "0xb5e883349e68ab59307d1604555ac890fac47128"
+	addr2 := "0eec2bbedbb8b18357dab0b753cd1893bb832284"
+	tests := []struct {
+		name      string
+		sender    string
+		recipient string
+		address   string
+		expected  blockatlas.Direction
+		expectErr bool
+	}{
+		{"Self direction for addr1", addr1, addr1, addr1, blockatlas.DirectionSelf, false},
+		{"Self direction for addr2", addr2, addr2, addr2, blockatlas.DirectionSelf, false},
+		{"Out direction", addr1, addr2, addr1, blockatlas.DirectionOutgoing, false},
+		{"In direction", addr1, addr2, addr2, blockatlas.DirectionIncoming, false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			actual, err := getTransferDirectory(tt.sender, tt.recipient, tt.address)
+			if tt.expectErr {
+				assert.NotNil(t, err)
+			}
+			assert.Equal(t, tt.expected, actual)
 		})
 	}
 }
