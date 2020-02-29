@@ -28,6 +28,8 @@
   "/v2/tomochain/collections/:owner/collection/:collection_id",
   "/v2/gochain/collections/:owner/collection/:collection_id",
   "/v2/ethereum/collections/:owner/collection/:collection_id",
+  "/v3/ethereum/collections/:owner/collection/:collection_id",
+  "/v4/ethereum/collections/:owner/collection/:collection_id",
   "/v3/classic/collections/:owner",
   "/v3/callisto/collections/:owner",
   "/v3/poa/collections/:owner",
