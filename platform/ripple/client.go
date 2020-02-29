@@ -18,10 +18,11 @@ func (c *Client) GetTxsOfAddress(address string) ([]Tx, error) {
 
 	if res.Result == "error" {
 		res, err = c.fetchTransactions(address, "false")
+		if err != nil {
+			return nil, err
+		}
 	}
-	if err != nil {
-		return nil, err
-	}
+
 	return res.Transactions, nil
 }
 
