@@ -23,6 +23,6 @@ type Tracker interface {
 
 type Addresses interface {
 	Lookup(coin uint, addresses []string) ([]blockatlas.Subscription, error)
-	AddSubscriptions(subscriptions []blockatlas.Subscription)
-	DeleteSubscriptions(subscriptions []blockatlas.Subscription)
+	AddSubscriptions(subscriptions []blockatlas.Subscription) error
+	DeleteSubscriptions(subscriptions []blockatlas.Subscription) error
 }

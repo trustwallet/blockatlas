@@ -122,7 +122,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/blockatlas.Webhook"
+                            "$ref": "#/definitions/blockatlas.GUID"
                         }
                     },
                     {
@@ -163,7 +163,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/blockatlas.Webhook"
+                            "$ref": "#/definitions/blockatlas.GUID"
                         }
                     },
                     {
@@ -1603,7 +1603,7 @@ var doc = `{
                 "$ref": "#/definitions/blockatlas.Tx"
             }
         },
-        "blockatlas.Webhook": {
+        "blockatlas.GUID": {
             "type": "object",
             "properties": {
                 "subscriptions": {

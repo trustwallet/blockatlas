@@ -14,7 +14,7 @@ import (
 // @Accept json
 // @Produce json
 // @Tags Observer
-// @Param subscriptions body blockatlas.Webhook true "Accounts subscriptions"
+// @Param subscriptions body blockatlas.SubscriptionEvent true "Accounts subscriptions"
 // @Param Authorization header string true "Bearer authorization header" default(Bearer test)
 // @Header 200 {string} Authorization {token}
 // @Success 200 {object} blockatlas.Observer
@@ -24,7 +24,7 @@ func addCall(storage storage.Addresses) func(c *gin.Context) {
 		return nil
 	}
 	return func(c *gin.Context) {
-		var req blockatlas.Webhook
+		var req blockatlas.SubscriptionEvent
 		if c.BindJSON(&req) != nil {
 			return
 		}
@@ -46,7 +46,7 @@ func addCall(storage storage.Addresses) func(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Tags Observer
-// @Param subscriptions body blockatlas.Webhook true "Accounts subscriptions"
+// @Param subscriptions body blockatlas.SubscriptionEvent true "Accounts subscriptions"
 // @Param Authorization header string true "Bearer authorization header" default(Bearer test)
 // @Header 200 {string} Authorization {token}
 // @Success 200 {object} blockatlas.Observer
@@ -56,7 +56,7 @@ func deleteCall(storage storage.Addresses) func(c *gin.Context) {
 		return nil
 	}
 	return func(c *gin.Context) {
-		var req blockatlas.Webhook
+		var req blockatlas.SubscriptionEvent
 		if c.BindJSON(&req) != nil {
 			return
 		}
