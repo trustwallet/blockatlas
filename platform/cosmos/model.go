@@ -48,7 +48,8 @@ type Tx struct {
 }
 
 type TxPage struct {
-	Txs []Tx `json:"txs"`
+	PageTotal  string `json:"page_total"`
+	Txs        []Tx   `json:"txs"`
 }
 
 // Events

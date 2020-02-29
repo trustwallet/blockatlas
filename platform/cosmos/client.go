@@ -15,10 +15,10 @@ type Client struct {
 }
 
 // GetAddrTxs - get all ATOM transactions for a given address
-func (c *Client) GetAddrTxs(address string, tag string) (txs TxPage, err error) {
+func (c *Client) GetAddrTxs(address, tag string, page int) (txs TxPage, err error) {
 	query := url.Values{
 		tag:     {address},
-		"page":  {"1"},
+		"page":  {strconv.Itoa(page)},
 		"limit": {"25"},
 	}
 	err = c.Get(&txs, "txs", query)

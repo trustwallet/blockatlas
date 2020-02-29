@@ -12,24 +12,43 @@ import (
 func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 	tagsList := []string{"transfer.recipient", "message.sender"}
 	var wg sync.WaitGroup
-	out := make(chan TxPage, len(tagsList))
+	out := make(chan []Tx, len(tagsList))
 	wg.Add(len(tagsList))
 	for _, t := range tagsList {
 		go func(tag, addr string, wg *sync.WaitGroup) {
 			defer wg.Done()
-			txs, err := p.client.GetAddrTxs(addr, tag)
+			page :=  1
+			txs, err := p.client.GetAddrTxs(addr, tag, page)
 			if err != nil {
 				logger.Error("GetAddrTxs", err, logger.Params{"address": tag, "tag": tag})
 				return
 			}
-			out <- txs
+			// Condition when no more pages to paginate
+			if txs.PageTotal == "1" {
+				out <- txs.Txs
+				return
+			}
+
+			totalPages, err := strconv.Atoi(txs.PageTotal)
+			if err != nil {
+				logger.Error("GetAddrTxs", err, logger.Params{"totalPages": totalPages})
+				return
+			}
+			// gaia does support sort option, paginate to get latest transactions by passing total pages page
+			// https://github.com/cosmos/gaia/blob/f61b391aee5d04364d2b5539692bbb187ad9b946/docs/resources/gaiacli.md#query-transactions
+			txs2, err := p.client.GetAddrTxs(addr, tag, totalPages)
+			if err != nil {
+				logger.Error("GetAddrTxs", err, logger.Params{"address": tag, "tag": tag})
+				return
+			}
+			out <- txs2.Txs
 		}(t, address, &wg)
 	}
 	wg.Wait()
 	close(out)
 	srcTxs := make([]Tx, 0)
 	for r := range out {
-		srcTxs = append(srcTxs, r.Txs...)
+		srcTxs = append(srcTxs, r...)
 	}
 	return p.NormalizeTxs(srcTxs), nil
 }
