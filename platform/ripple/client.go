@@ -13,8 +13,8 @@ type Client struct {
 func (c *Client) GetTxsOfAddress(address string) ([]Tx, error) {
 	query := url.Values{
 		"type":       {"Payment"},
-		"descending": {"false"},
-		"limit":      {"200"},
+		"descending": {"true"},
+		"limit":      {"25"},
 	}
 	uri := fmt.Sprintf("accounts/%s/transactions", url.PathEscape(address))
 
