@@ -190,7 +190,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/watchmarket.Tickers"
+                            "$ref": "#/definitions/api.Tickers"
                         }
                     }
                 }
@@ -984,6 +984,50 @@
                 }
             }
         },
+        "api.Ticker": {
+            "type": "object",
+            "properties": {
+                "coin": {
+                    "type": "integer"
+                },
+                "coin_name": {
+                    "type": "string"
+                },
+                "error": {
+                    "type": "string"
+                },
+                "last_update": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "object",
+                    "$ref": "#/definitions/api.TickerPrice"
+                },
+                "token_id": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "api.TickerPrice": {
+            "type": "object",
+            "properties": {
+                "change_24h": {
+                    "type": "number"
+                },
+                "currency": {
+                    "type": "string"
+                },
+                "provider": {
+                    "type": "string"
+                },
+                "value": {
+                    "type": "number"
+                }
+            }
+        },
         "api.TickerRequest": {
             "type": "object",
             "properties": {
@@ -996,6 +1040,12 @@
                 "currency": {
                     "type": "string"
                 }
+            }
+        },
+        "api.Tickers": {
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/api.Ticker"
             }
         },
         "blockatlas.Collection": {
@@ -1334,12 +1384,6 @@
                         "type": "ChartPrice"
                     }
                 }
-            }
-        },
-        "watchmarket.Tickers": {
-            "type": "array",
-            "items": {
-                "$ref": "#/definitions/watchmarket.Ticker"
             }
         }
     }

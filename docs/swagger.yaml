@@ -19,6 +19,35 @@ definitions:
       type:
         type: string
     type: object
+  api.Ticker:
+    properties:
+      coin:
+        type: integer
+      coin_name:
+        type: string
+      error:
+        type: string
+      last_update:
+        type: string
+      price:
+        $ref: '#/definitions/api.TickerPrice'
+        type: object
+      token_id:
+        type: string
+      type:
+        type: string
+    type: object
+  api.TickerPrice:
+    properties:
+      change_24h:
+        type: number
+      currency:
+        type: string
+      provider:
+        type: string
+      value:
+        type: number
+    type: object
   api.TickerRequest:
     properties:
       assets:
@@ -28,6 +57,10 @@ definitions:
       currency:
         type: string
     type: object
+  api.Tickers:
+    items:
+      $ref: '#/definitions/api.Ticker'
+    type: array
   blockatlas.Collection:
     properties:
       address:
@@ -258,10 +291,6 @@ definitions:
           type: ChartPrice
         type: array
     type: object
-  watchmarket.Tickers:
-    items:
-      $ref: '#/definitions/watchmarket.Ticker'
-    type: array
 info:
   contact: {}
   license: {}
@@ -449,7 +478,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/watchmarket.Tickers'
+            $ref: '#/definitions/api.Tickers'
       summary: Get ticker values for a specific market
       tags:
       - Market
