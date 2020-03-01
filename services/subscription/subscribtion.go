@@ -23,7 +23,7 @@ func Consume(delivery amqp.Delivery, storage storage.Addresses) {
 	newSubscriptions := event.ParseSubscriptions(event.NewSubscriptions)
 	oldSubscriptions := event.ParseSubscriptions(event.OldSubscriptions)
 
-	params := logger.Params{"operation": event.Operation, "guid": event.GUID, "new_subscriptions_len": len(newSubscriptions), "old_subscriptions_len": len(oldSubscriptions), "subs_old": oldSubscriptions, "subs_new": newSubscriptions}
+	params := logger.Params{"operation": event.Operation, "guid": event.GUID, "new_subscriptions_len": len(newSubscriptions), "old_subscriptions_len": len(oldSubscriptions)}
 
 	switch event.Operation {
 	case UpdateSubscription:
@@ -35,30 +35,30 @@ func Consume(delivery amqp.Delivery, storage storage.Addresses) {
 		if err != nil {
 			logger.Error(err, params)
 		}
-		err = delivery.Ack(false)
-		if err != nil {
-			logger.Error(err, params)
-		}
+		//err = delivery.Ack(false)
+		//if err != nil {
+		//	logger.Error(err, params)
+		//}
 		logger.Info("Updated", params)
 	case AddSubscription:
 		err = storage.AddSubscriptions(newSubscriptions)
 		if err != nil {
 			logger.Error(err, params)
 		}
-		err = delivery.Ack(false)
-		if err != nil {
-			logger.Error(err, params)
-		}
+		//err = delivery.Ack(false)
+		//if err != nil {
+		//	logger.Error(err, params)
+		//}
 		logger.Info("Added", params)
 	case DeleteSubscription:
 		err := storage.DeleteSubscriptions(oldSubscriptions)
 		if err != nil {
 			logger.Error(err, params)
 		}
-		err = delivery.Ack(false)
-		if err != nil {
-			logger.Error(err, params)
-		}
+		//err = delivery.Ack(false)
+		//if err != nil {
+		//	logger.Error(err, params)
+		//}
 		logger.Info("Deleted", params)
 	}
 }
