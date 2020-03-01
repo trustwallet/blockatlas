@@ -69,7 +69,9 @@ func (s *Storage) DeleteSubscriptions(subscriptions []blockatlas.Subscription) e
 			continue
 		}
 		err = s.AddHM(ATLAS_OBSERVER, key, newHooks)
-		return err
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }
