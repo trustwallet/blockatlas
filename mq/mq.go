@@ -68,9 +68,9 @@ func (q Queue) RunConsumer(consumer Consumer, cache storage.Addresses) {
 	}
 
 	err = amqpChan.Qos(
-		10,
+		5,
 		0,
-		false,
+		true,
 	)
 	if err != nil {
 		logger.Error("no qos limit ", err)

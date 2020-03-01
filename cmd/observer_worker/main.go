@@ -96,6 +96,6 @@ func main() {
 	}
 
 	wg.Wait()
-
+	mq.Close()
 	logger.Info("Exiting cleanly")
 }
