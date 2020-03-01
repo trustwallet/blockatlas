@@ -41,7 +41,7 @@ func NormalizeTxs(txs []Transaction) []blockatlas.Tx {
 func NormalizeTx(srcTx Transaction) blockatlas.Tx {
 	var status = blockatlas.StatusCompleted
 	if srcTx.Status == 0 {
-		status = blockatlas.StatusFailed
+		status = blockatlas.StatusError
 	}
 	return blockatlas.Tx{
 		ID:       srcTx.Hash,

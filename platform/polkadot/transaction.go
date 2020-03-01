@@ -35,7 +35,7 @@ func (p *Platform) NormalizeTransfer(srcTx *Transfer) blockatlas.Tx {
 	amount := strings.Split(numbers.DecimalExp(srcTx.Amount, int(decimals)), ".")[0]
 	status := blockatlas.StatusCompleted
 	if !srcTx.Success {
-		status = blockatlas.StatusFailed
+		status = blockatlas.StatusError
 	}
 	result := blockatlas.Tx{
 		ID:     srcTx.Hash,
@@ -75,7 +75,7 @@ func (p *Platform) NormalizeExtrinsic(srcTx *Extrinsic) *blockatlas.Tx {
 
 	var status blockatlas.Status
 	if !srcTx.Success {
-		status = blockatlas.StatusFailed
+		status = blockatlas.StatusError
 	} else {
 		status = blockatlas.StatusCompleted
 	}

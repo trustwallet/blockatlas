@@ -664,7 +664,7 @@ var failedTransferDst = blockatlas.Tx{
 	Fee:    "2000",
 	Date:   1576120902,
 	Block:  5552,
-	Status: blockatlas.StatusFailed,
+	Status: blockatlas.StatusError,
 	Type:   blockatlas.TxTransfer,
 	Memo:   "UniCoins registration rewards",
 	Meta: blockatlas.Transfer{

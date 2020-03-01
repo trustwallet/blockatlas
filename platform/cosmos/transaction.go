@@ -96,7 +96,7 @@ func (p *Platform) Normalize(srcTx *Tx) (tx blockatlas.Tx, ok bool) {
 	status := blockatlas.StatusCompleted
 	// https://github.com/cosmos/cosmos-sdk/blob/95ddc242ad024ca78a359a13122dade6f14fd676/types/errors/errors.go#L19
 	if srcTx.Code > 0 {
-		status = blockatlas.StatusFailed
+		status = blockatlas.StatusError
 	}
 
 	tx = blockatlas.Tx{

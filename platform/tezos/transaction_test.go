@@ -274,7 +274,7 @@ var transfer3 = blockatlas.Tx{
 		Symbol:   coin.Coins[coin.XTZ].Symbol,
 		Decimals: coin.Coins[coin.XTZ].Decimals,
 	},
-	Status: blockatlas.StatusFailed,
+	Status: blockatlas.StatusError,
 	Error:  "transaction failed",
 }
 

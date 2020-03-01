@@ -34,7 +34,7 @@ func Normalize(srcTx *Tx, assetName AssetType) (tx blockatlas.Tx, ok bool) {
 	fee := numbers.DecimalExp(srcTx.Fee, ONGDecimals)
 	status := blockatlas.StatusCompleted
 	if srcTx.ConfirmFlag != 1 {
-		status = blockatlas.StatusFailed
+		status = blockatlas.StatusError
 	}
 	tx = blockatlas.Tx{
 		ID:     srcTx.Hash,

@@ -49,7 +49,7 @@ func NormalizeTx(srcTx Transaction) (blockatlas.Tx, bool) {
 	status := blockatlas.StatusCompleted
 	if srcTx.Status() != TxStatusApplied {
 		errMsg = "transaction failed"
-		status = blockatlas.StatusFailed
+		status = blockatlas.StatusError
 	}
 	tx := blockatlas.Tx{
 		ID:     srcTx.Op.OpHash,

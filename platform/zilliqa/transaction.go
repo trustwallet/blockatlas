@@ -41,7 +41,7 @@ func Normalize(srcTx *Tx) (tx blockatlas.Tx) {
 		},
 	}
 	if !srcTx.ReceiptSuccess {
-		tx.Status = blockatlas.StatusFailed
+		tx.Status = blockatlas.StatusError
 	}
 	return tx
 }
