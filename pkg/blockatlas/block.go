@@ -9,5 +9,5 @@ type Block struct {
 type Subscription struct {
 	Coin    uint   `json:"coin"`
 	Address string `json:"address"`
-	Webhook string `json:"webhook"`
+	GUID    string `json:"guid"`
 }

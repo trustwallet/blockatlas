@@ -19,6 +19,35 @@ definitions:
       type:
         type: string
     type: object
+  api.Ticker:
+    properties:
+      coin:
+        type: integer
+      coin_name:
+        type: string
+      error:
+        type: string
+      last_update:
+        type: string
+      price:
+        $ref: '#/definitions/api.TickerPrice'
+        type: object
+      token_id:
+        type: string
+      type:
+        type: string
+    type: object
+  api.TickerPrice:
+    properties:
+      change_24h:
+        type: number
+      currency:
+        type: string
+      provider:
+        type: string
+      value:
+        type: number
+    type: object
   api.TickerRequest:
     properties:
       assets:
@@ -28,68 +57,10 @@ definitions:
       currency:
         type: string
     type: object
-  blockatlas.ChartCoinInfo:
-    properties:
-      circulating_supply:
-        type: number
-      info:
-        $ref: '#/definitions/blockatlas.CoinInfo'
-        type: object
-      market_cap:
-        type: number
-      total_supply:
-        type: number
-      volume_24:
-        type: number
-    type: object
-  blockatlas.ChartData:
-    properties:
-      error:
-        type: string
-      prices:
-        items:
-          $ref: '#/definitions/blockatlas.ChartPrice'
-        type: array
-    type: object
-  blockatlas.ChartPrice:
-    properties:
-      date:
-        type: integer
-      price:
-        type: number
-    type: object
-  blockatlas.CoinInfo:
-    properties:
-      data_source:
-        type: string
-      description:
-        type: string
-      explorers:
-        items:
-          $ref: '#/definitions/blockatlas.Link'
-        type: array
-      name:
-        type: string
-      short_description:
-        type: string
-      socials:
-        items:
-          $ref: '#/definitions/blockatlas.SocialLink'
-        type: array
-      source_code:
-        type: string
-      website:
-        type: string
-      white_paper:
-        type: string
-    type: object
-  blockatlas.CoinStatus:
-    properties:
-      error:
-        type: string
-      height:
-        type: integer
-    type: object
+  api.Tickers:
+    items:
+      $ref: '#/definitions/api.Ticker'
+    type: array
   blockatlas.Collection:
     properties:
       address:
@@ -165,34 +136,11 @@ definitions:
       docs:
         type: object
     type: object
-  blockatlas.Link:
-    properties:
-      name:
-        type: string
-      url:
-        type: string
-    type: object
-  blockatlas.Observer:
-    properties:
-      message:
-        type: string
-      status:
-        type: boolean
-    type: object
   blockatlas.Resolved:
     properties:
       coin:
         type: integer
       result:
-        type: string
-    type: object
-  blockatlas.SocialLink:
-    properties:
-      handle:
-        type: string
-      name:
-        type: string
-      url:
         type: string
     type: object
   blockatlas.StakeValidator:
@@ -236,45 +184,6 @@ definitions:
       annual:
         type: number
     type: object
-  blockatlas.Subscriptions:
-    additionalProperties:
-      items:
-        type: string
-      type: array
-    type: object
-  blockatlas.Ticker:
-    properties:
-      coin:
-        type: integer
-      coin_name:
-        type: string
-      error:
-        type: string
-      last_update:
-        type: string
-      price:
-        $ref: '#/definitions/blockatlas.TickerPrice'
-        type: object
-      token_id:
-        type: string
-      type:
-        type: string
-    type: object
-  blockatlas.TickerPrice:
-    properties:
-      change_24h:
-        type: number
-      currency:
-        type: string
-      provider:
-        type: string
-      value:
-        type: number
-    type: object
-  blockatlas.Tickers:
-    items:
-      $ref: '#/definitions/blockatlas.Ticker'
-    type: array
   blockatlas.Tx:
     properties:
       block:
@@ -342,14 +251,6 @@ definitions:
     items:
       $ref: '#/definitions/blockatlas.Tx'
     type: array
-  blockatlas.Webhook:
-    properties:
-      subscriptions:
-        $ref: '#/definitions/blockatlas.Subscriptions'
-        type: object
-      webhook:
-        type: string
-    type: object
   coin.ExternalCoin:
     properties:
       coin:
@@ -367,6 +268,28 @@ definitions:
         type: integer
       status_message:
         type: string
+    type: object
+  watchmarket.ChartCoinInfo:
+    properties:
+      circulating_supply:
+        type: number
+      info:
+        type: CoinInfo
+      market_cap:
+        type: number
+      total_supply:
+        type: number
+      volume_24:
+        type: number
+    type: object
+  watchmarket.ChartData:
+    properties:
+      error:
+        type: string
+      prices:
+        items:
+          type: ChartPrice
+        type: array
     type: object
 info:
   contact: {}
@@ -399,86 +322,6 @@ paths:
       summary: Lookup .eth / .zil addresses
       tags:
       - Naming
-  /observer/v1/status:
-    get:
-      consumes:
-      - application/json
-      description: Get coin status
-      operationId: coin_status
-      parameters:
-      - default: Bearer test
-        description: Bearer authorization header
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/blockatlas.CoinStatus'
-      summary: Get coin status
-      tags:
-      - Observer
-  /observer/v1/webhook/register:
-    delete:
-      consumes:
-      - application/json
-      description: Delete a webhook for addresses transactions
-      operationId: delete_webhook
-      parameters:
-      - description: Accounts subscriptions
-        in: body
-        name: subscriptions
-        required: true
-        schema:
-          $ref: '#/definitions/blockatlas.Webhook'
-      - default: Bearer test
-        description: Bearer authorization header
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/blockatlas.Observer'
-      summary: Delete a webhook
-      tags:
-      - Observer
-    post:
-      consumes:
-      - application/json
-      description: Create a webhook for addresses transactions
-      operationId: create_webhook
-      parameters:
-      - description: Accounts subscriptions
-        in: body
-        name: subscriptions
-        required: true
-        schema:
-          $ref: '#/definitions/blockatlas.Webhook'
-      - default: Bearer test
-        description: Bearer authorization header
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/blockatlas.Observer'
-      summary: Create a webhook
-      tags:
-      - Observer
   /v1/{coin}/{address}:
     get:
       consumes:
@@ -575,7 +418,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/blockatlas.ChartData'
+            $ref: '#/definitions/watchmarket.ChartData'
       summary: Get charts data for a specific coin
       tags:
       - Market
@@ -612,7 +455,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/blockatlas.ChartCoinInfo'
+            $ref: '#/definitions/watchmarket.ChartCoinInfo'
       summary: Get charts coin info data for a specific coin
       tags:
       - Market
@@ -635,7 +478,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/blockatlas.Tickers'
+            $ref: '#/definitions/api.Tickers'
       summary: Get ticker values for a specific market
       tags:
       - Market
