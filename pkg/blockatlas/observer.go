@@ -7,9 +7,10 @@ type Subscriptions map[string][]string
 type SubscriptionOperation string
 
 type SubscriptionEvent struct {
-	Subscriptions Subscriptions         `json:"subscriptions"`
-	GUID          string                `json:"guid"`
-	Operation     SubscriptionOperation `json:"operation"`
+	NewSubscriptions Subscriptions         `json:"new_subscriptions"`
+	OldSubscriptions Subscriptions         `json:"old_subscriptions"`
+	GUID             string                `json:"guid"`
+	Operation        SubscriptionOperation `json:"operation"`
 }
 
 type CoinStatus struct {
@@ -22,9 +23,9 @@ type Observer struct {
 	Message string `json:"message"`
 }
 
-func (e *SubscriptionEvent) ParseSubscriptions() []Subscription {
+func (e *SubscriptionEvent) ParseSubscriptions(s Subscriptions) []Subscription {
 	subs := make([]Subscription, 0)
-	for coinStr, perCoin := range e.Subscriptions {
+	for coinStr, perCoin := range s {
 		coin, err := strconv.Atoi(coinStr)
 		if err != nil {
 			continue

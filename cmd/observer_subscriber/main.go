@@ -7,7 +7,6 @@ import (
 	"github.com/trustwallet/blockatlas/internal"
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/logger"
-	"github.com/trustwallet/blockatlas/platform"
 	"github.com/trustwallet/blockatlas/services/subscription"
 	"github.com/trustwallet/blockatlas/storage"
 )
@@ -35,7 +34,6 @@ func init() {
 		logger.Fatal("Failed to init Rabbit MQ", logger.Params{"uri": uri})
 	}
 
-	platform.Init(viper.GetString("platform"))
 }
 
 func main() {

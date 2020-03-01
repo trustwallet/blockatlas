@@ -11,18 +11,6 @@ services:
       - observer_api
       - platform_api
       - swagger_api
- 
-  observer_api:
-    container_name: observer_api
-    build:
-      context: .
-      args:
-        - SERVICE=observer_api
-    ports:
-      - 8422:8422
-    links:
-      - redis
-    restart: on-failure
 
   platform_api:
     container_name: platform_api
@@ -31,7 +19,7 @@ services:
       args:
         - SERVICE=platform_api
     ports:
-    - 8420:8420
+      - 8420:8420
 
   swagger_api:
     container_name: swagger_api
@@ -42,11 +30,22 @@ services:
     ports:
       - 8423:8423
 
-  platform_observer:
+  observer_worker:
     build:
       context: .
       args:
-        - SERVICE=platform_observer
+        - SERVICE=observer_worker
+    links:
+      - redis
+      - rabbit
+    restart: on-failure
+
+  observer_subscriber:
+    container_name: observer_subscriber
+    build:
+      context: .
+      args:
+        - SERVICE=observer_subscriber
     links:
       - redis
       - rabbit
@@ -67,4 +66,4 @@ services:
     container_name: redis
     image: redis
     ports:
-    - 6379:6379
+      - 6379:6379
