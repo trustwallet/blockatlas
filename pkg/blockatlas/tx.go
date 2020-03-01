@@ -11,7 +11,7 @@ type KeyTitle string
 const (
 	StatusCompleted Status = "completed"
 	StatusPending   Status = "pending"
-	StatusFailed    Status = "failed"
+	StatusError     Status = "error"
 
 	DirectionOutgoing Direction = "outgoing"
 	DirectionIncoming Direction = "incoming"

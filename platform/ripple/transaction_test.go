@@ -199,7 +199,7 @@ var failedPaymentDst = blockatlas.Tx{
 	Date:   1581590872,
 	Block:  53401154,
 	Memo:   "",
-	Status: blockatlas.StatusFailed,
+	Status: blockatlas.StatusError,
 	Meta: blockatlas.Transfer{
 		Value:    "24999750000",
 		Symbol:   "XRP",

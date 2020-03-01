@@ -172,7 +172,7 @@ var failedDst = blockatlas.Tx{
 	Date:     1554662399,
 	Block:    7522678,
 	Sequence: 1,
-	Status:   blockatlas.StatusFailed,
+	Status:   blockatlas.StatusError,
 	Error:    "Error",
 	Meta: blockatlas.Transfer{
 		Value:    "59859820000000000",

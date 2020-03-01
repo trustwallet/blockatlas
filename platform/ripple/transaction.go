@@ -55,7 +55,7 @@ func NormalizeTx(srcTx *Tx) (blockatlas.Tx, bool) {
 
 	status := blockatlas.StatusCompleted
 	if srcTx.Meta.TransactionResult != transactionResultSuccess {
-		status = blockatlas.StatusFailed
+		status = blockatlas.StatusError
 	}
 
 	result := blockatlas.Tx{

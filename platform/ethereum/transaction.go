@@ -49,7 +49,7 @@ func extractBase(srcTx *Doc, coinIndex uint) (base blockatlas.Tx, ok bool) {
 	if srcTx.Error == "" {
 		status = blockatlas.StatusCompleted
 	} else {
-		status = blockatlas.StatusFailed
+		status = blockatlas.StatusError
 		errReason = srcTx.Error
 	}
 
