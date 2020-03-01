@@ -1,12 +1,13 @@
 package domains
 
 import (
+	"math"
+	"strings"
+
 	CoinType "github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/platform"
-	"math"
-	"strings"
 )
 
 // TLDMapping Mapping of name TLD's to coin where they are handled
@@ -14,6 +15,7 @@ var TLDMapping = map[string]uint64{
 	".eth":        CoinType.ETH,
 	".xyz":        CoinType.ETH,
 	".luxe":       CoinType.ETH,
+	".kred":       CoinType.ETH,
 	".zil":        CoinType.ZIL,
 	".crypto":     CoinType.ZIL,
 	"@fiotestnet": CoinType.FIO,

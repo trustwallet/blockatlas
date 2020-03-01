@@ -3,11 +3,12 @@
 package domains
 
 import (
+	"testing"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/services/domains"
-	"testing"
 )
 
 func TestDomains(t *testing.T) {
@@ -37,6 +38,13 @@ func TestDomains(t *testing.T) {
 			"ourxyzwallet.xyz",
 			[]uint64{coin.ETH},
 			[]blockatlas.Resolved{{Result: "0x0C54eEAd78d555bE3cbCD451424F9A27a7843935", Coin: coin.ETH}},
+			false,
+		},
+		{
+			"test .kred domain",
+			"Cameron.Kred",
+			[]uint64{coin.ETH},
+			[]blockatlas.Resolved{{Result: "0xfc9FB438c456C771c0B38a57Cf0e8A3eaB4704fE", Coin: coin.ETH}},
 			false,
 		},
 		{
