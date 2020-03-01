@@ -9,13 +9,13 @@ import (
 func Test_parseSubscriptions(t *testing.T) {
 	tests := []struct {
 		name          string
-		subscriptions Webhook
+		subscriptions SubscriptionEvent
 		wantSubs      []Subscription
 	}{
 		{
 			name: "webhook with 1 coin",
-			subscriptions: Webhook{
-				Webhook: "http://127.0.0.1:8080",
+			subscriptions: SubscriptionEvent{
+				GUID: "http://127.0.0.1:8080",
 				Subscriptions: Subscriptions{
 					"0": {"xpub6BpYi6J1GZzfY3yY7DbhLLccF3efQa18nQngM3jaehgtNSoEgk6UtPULpC3oK5oA3trczY8Ld34LFw1USMPfGHwTEizdD5QyGcMyuh2UoBA", "xpub6CYwPfnPJLPquufPkb98coSb3mdy1CgaZrWUtYWGJTJ4VWZUbzH9HLGy7nHpP7DG4UdTkYYpirkTWQSP7pWHsrk24Nos5oYNHpfr4BgPVTL"},
 				},
@@ -33,8 +33,8 @@ func Test_parseSubscriptions(t *testing.T) {
 		},
 		{
 			name: "webhook with 2 coins",
-			subscriptions: Webhook{
-				Webhook: "http://127.0.0.1:8080",
+			subscriptions: SubscriptionEvent{
+				GUID: "http://127.0.0.1:8080",
 				Subscriptions: Subscriptions{
 					"2": {"zpub6rH4MwgyTmuexAX6HAraks5cKv5BbtmwdLirvnU5845ovUJb4abgjt9DtXK4ZEaToRrNj8dQznuLC6Nka4eMviGMinCVMUxKLpuyddcG9Vc"},
 					"0": {"xpub6BpYi6J1GZzfY3yY7DbhLLccF3efQa18nQngM3jaehgtNSoEgk6UtPULpC3oK5oA3trczY8Ld34LFw1USMPfGHwTEizdD5QyGcMyuh2UoBA", "xpub6CYwPfnPJLPquufPkb98coSb3mdy1CgaZrWUtYWGJTJ4VWZUbzH9HLGy7nHpP7DG4UdTkYYpirkTWQSP7pWHsrk24Nos5oYNHpfr4BgPVTL"},

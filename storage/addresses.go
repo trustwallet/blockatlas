@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
-	"github.com/trustwallet/blockatlas/pkg/logger"
 )
 
 const (
@@ -30,11 +29,11 @@ func (s *Storage) Lookup(coin uint, addresses []string) ([]blockatlas.Subscripti
 	return observers, nil
 }
 
-func (s *Storage) AddSubscriptions(subscriptions []blockatlas.Subscription) {
+func (s *Storage) AddSubscriptions(subscriptions []blockatlas.Subscription) error {
 	for _, sub := range subscriptions {
 		key := getSubscriptionKey(sub.Coin, sub.Address)
 		var webhooks []string
-		_ = s.GetHMValue(ATLAS_OBSERVER, key, &webhooks)
+		s.GetHMValue(ATLAS_OBSERVER, key, &webhooks)
 		if webhooks == nil {
 			webhooks = make([]string, 0)
 		}
@@ -44,12 +43,13 @@ func (s *Storage) AddSubscriptions(subscriptions []blockatlas.Subscription) {
 		webhooks = append(webhooks, sub.Webhook)
 		err := s.AddHM(ATLAS_OBSERVER, key, webhooks)
 		if err != nil {
-			logger.Error(err, "AddSubscriptions error", errors.Params{"webhooks": webhooks, "address": sub.Address, "coin": sub.Coin})
+			return err
 		}
 	}
+	return nil
 }
 
-func (s *Storage) DeleteSubscriptions(subscriptions []blockatlas.Subscription) {
+func (s *Storage) DeleteSubscriptions(subscriptions []blockatlas.Subscription) error {
 	for _, sub := range subscriptions {
 		key := getSubscriptionKey(sub.Coin, sub.Address)
 		var webhooks []string
@@ -69,10 +69,9 @@ func (s *Storage) DeleteSubscriptions(subscriptions []blockatlas.Subscription) {
 			continue
 		}
 		err = s.AddHM(ATLAS_OBSERVER, key, newHooks)
-		if err != nil {
-			logger.Error(err, "DeleteSubscriptions - AddHM", errors.Params{"webhook": newHooks, "address": sub.Address, "coin": sub.Coin})
-		}
+		return err
 	}
+	return nil
 }
 
 func getSubscriptionKey(coin uint, address string) string {

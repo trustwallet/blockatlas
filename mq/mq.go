@@ -2,6 +2,8 @@ package mq
 
 import (
 	"github.com/streadway/amqp"
+	"github.com/trustwallet/blockatlas/pkg/logger"
+	"github.com/trustwallet/blockatlas/storage"
 )
 
 var (
@@ -10,9 +12,15 @@ var (
 	queue    amqp.Queue
 )
 
-type QueueName string
+type (
+	Queue    string
+	Consumer func(amqp.Delivery, storage.Addresses)
+)
 
-const Notifications QueueName = "transactions"
+const (
+	Transactions  Queue = "transactions"
+	Subscriptions Queue = "subscriptions"
+)
 
 func Init(uri string) (err error) {
 	conn, err = amqp.Dial(uri)
@@ -23,7 +31,6 @@ func Init(uri string) (err error) {
 	if err != nil {
 		return
 	}
-	queue, err = amqpChan.QueueDeclare(string(Notifications), true, false, false, false, nil)
 	return
 }
 
@@ -32,10 +39,35 @@ func Close() {
 	conn.Close()
 }
 
-func Publish(body []byte) error {
-	return amqpChan.Publish("", queue.Name, false, false, amqp.Publishing{
+func (q Queue) Declare() error {
+	_, err := amqpChan.QueueDeclare(string(q), true, false, false, false, nil)
+	return err
+}
+
+func (q Queue) Publish(body []byte) error {
+	return amqpChan.Publish("", string(q), false, false, amqp.Publishing{
 		DeliveryMode: amqp.Persistent,
 		ContentType:  "text/plain",
 		Body:         body,
 	})
+}
+
+func (q Queue) RunConsumer(consumer Consumer, cache storage.Addresses) {
+	messageChannel, err := amqpChan.Consume(
+		string(q),
+		"",
+		false,
+		false,
+		false,
+		false,
+		nil,
+	)
+	if err != nil {
+		logger.Error(err)
+		return
+	}
+
+	for data := range messageChannel {
+		consumer(data, cache)
+	}
 }

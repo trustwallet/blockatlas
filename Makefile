@@ -7,8 +7,8 @@ BUILD := $(shell git rev-parse --short HEAD)
 DATETIME := $(shell date +"%Y.%m.%d-%H:%M:%S")
 PROJECT_NAME := $(shell basename "$(PWD)")
 API_SERVICE := platform_api
-OBSERVER_SERVICE := platform_observer
-OBSERVER_API := observer_api
+OBSERVER_SERVICE := observer_worker
+OBSERVER_SUBSCRIBER := observer_subscriber
 SWAGGER_API := swagger_api
 COIN_FILE := coin/coins.yml
 COIN_GO_FILE := coin/coins.go
@@ -34,7 +34,7 @@ STDERR := /tmp/.$(PROJECT_NAME)-stderr.txt
 # PID file will keep the process id of the server
 PID_API := /tmp/.$(PROJECT_NAME).$(API_SERVICE).pid
 PID_OBSERVER := /tmp/.$(PROJECT_NAME).$(OBSERVER_SERVICE).pid
-PID_OBSERVER_API := /tmp/.$(PROJECT_NAME).$(OBSERVER_API).pid
+PID_OBSERVER_SUBSCRIBER := /tmp/.$(PROJECT_NAME).$(OBSERVER_SUBSCRIBER).pid
 PID_SWAGGER_API := /tmp/.$(PROJECT_NAME).$(SWAGGER_API).pid
 # Make is verbose in Linux. Make it silent.
 MAKEFLAGS += --silent
@@ -63,8 +63,8 @@ start-platform-observer: stop
 ## start-observer: Start Observer in development mode.
 start-observer-api: stop
 	@echo "  >  Starting $(PROJECT_NAME) Observer"
-	@-$(GOBIN)/$(OBSERVER_API)/observer_api -c $(CONFIG_FILE) 2>&1 & echo $$! > $(PID_OBSERVER_API)
-	@cat $(PID_OBSERVER_API) | sed "/^/s/^/  \>  Observer PID: /"
+	@-$(GOBIN)/$(OBSERVER_SUBSCRIBER)/observer_api -c $(CONFIG_FILE) 2>&1 & echo $$! > $(PID_OBSERVER_SUBSCRIBER)
+	@cat $(PID_OBSERVER_SUBSCRIBER) | sed "/^/s/^/  \>  Observer PID: /"
 	@echo "  >  Error log: $(STDERR)"
 
 ## start-sync-market-api: Start Sync market api in development mode.
@@ -76,12 +76,12 @@ start-swagger-api: stop
 
 ## stop: Stop development mode.
 stop:
-	@-touch $(PID_API) $(PID_OBSERVER) $(PID_OBSERVER_API) $(PID_SWAGGER_API)
+	@-touch $(PID_API) $(PID_OBSERVER) $(PID_OBSERVER_SUBSCRIBER) $(PID_SWAGGER_API)
 	@-kill `cat $(PID_API)` 2> /dev/null || true
 	@-kill `cat $(PID_OBSERVER)` 2> /dev/null || true
-	@-kill `cat $(PID_OBSERVER_API)` 2> /dev/null || true
+	@-kill `cat $(PID_OBSERVER_SUBSCRIBER)` 2> /dev/null || true
 	@-kill `cat $(PID_SWAGGER_API)` 2> /dev/null || true
-	@-rm $(PID_API) $(PID_OBSERVER) $(PID_OBSERVER_API) $(PID_SWAGGER_API)
+	@-rm $(PID_API) $(PID_OBSERVER) $(PID_OBSERVER_SUBSCRIBER) $(PID_SWAGGER_API)
 
 ## compile: Compile the project.
 compile:
@@ -152,7 +152,6 @@ ifeq (,$(test))
 	@bash -c "$(MAKE) newman test=collection host=$(host)"
 	@bash -c "$(MAKE) newman test=domain host=$(host)"
 	@bash -c "$(MAKE) newman test=healthcheck host=$(host)"
-	@bash -c "$(MAKE) newman test=observer host=$(host)"
 else
 	@newman run tests/postman/Blockatlas.postman_collection.json --folder $(test) -d tests/postman/$(test)_data.json --env-var "host=$(host)"
 endif
@@ -162,10 +161,10 @@ go-compile: go-get go-build
 go-build:
 	@echo "  >  Building platform_api binary..."
 	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(API_SERVICE)/platform_api ./cmd/$(API_SERVICE)
-	@echo "  >  Building platform_observer binary..."
-	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(OBSERVER_SERVICE)/platform_observer ./cmd/$(OBSERVER_SERVICE)
-	@echo "  >  Building observer_api binary..."
-	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(OBSERVER_API)/observer_api ./cmd/$(OBSERVER_API)
+	@echo "  >  Building observer_worker binary..."
+	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(OBSERVER_SERVICE)/observer_worker ./cmd/$(OBSERVER_SERVICE)
+	@echo "  >  Building observer_subscriber binary..."
+	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(observer_subscriber)/observer_subscriber ./cmd/$(OBSERVER_SUBSCRIBER)
 	@echo "  >  Building swagger_api binary..."
 	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(SWAGGER_API)/swagger_api ./cmd/$(SWAGGER_API)
 

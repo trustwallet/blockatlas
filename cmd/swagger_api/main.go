@@ -32,7 +32,6 @@ func main() {
 	engine.Use(ginutils.CheckReverseProxy, *sg)
 	engine.Use(ginutils.CORSMiddleware())
 
-	engine.OPTIONS("/*path", ginutils.CORSMiddleware())
 	engine.GET("/", api.GetRoot)
 	engine.GET("/status", api.GetStatus)
 	engine.GET("swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))

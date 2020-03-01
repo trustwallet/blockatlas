@@ -18,16 +18,22 @@ const (
 
 var (
 	confPath string
-	cache                      *storage.Storage
+	cache    *storage.Storage
 )
 
 func init() {
 	_, confPath, _, cache = internal.InitAPIWithRedis("", defaultConfigPath)
+
 	uri := viper.GetString("observer.rabbitmq.uri")
 	err := mq.Init(uri)
 	if err != nil {
 		logger.Fatal("Failed to init Rabbit MQ", logger.Params{"uri": uri})
 	}
+	err = mq.Transactions.Declare()
+	if err != nil {
+		logger.Fatal("Failed to init Rabbit MQ", logger.Params{"uri": uri})
+	}
+
 	platform.Init(viper.GetString("platform"))
 }
 

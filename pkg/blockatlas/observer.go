@@ -4,9 +4,12 @@ import "strconv"
 
 type Subscriptions map[string][]string
 
-type Webhook struct {
-	Subscriptions Subscriptions `json:"subscriptions"`
-	Webhook       string        `json:"webhook"`
+type SubscriptionOperation string
+
+type SubscriptionEvent struct {
+	Subscriptions Subscriptions         `json:"subscriptions"`
+	GUID          string                `json:"guid"`
+	Operation     SubscriptionOperation `json:"operation"`
 }
 
 type CoinStatus struct {
@@ -19,9 +22,9 @@ type Observer struct {
 	Message string `json:"message"`
 }
 
-func (w *Webhook) ParseSubscriptions() []Subscription {
+func (e *SubscriptionEvent) ParseSubscriptions() []Subscription {
 	subs := make([]Subscription, 0)
-	for coinStr, perCoin := range w.Subscriptions {
+	for coinStr, perCoin := range e.Subscriptions {
 		coin, err := strconv.Atoi(coinStr)
 		if err != nil {
 			continue
@@ -30,7 +33,7 @@ func (w *Webhook) ParseSubscriptions() []Subscription {
 			subs = append(subs, Subscription{
 				Coin:    uint(coin),
 				Address: addr,
-				Webhook: w.Webhook,
+				Webhook: e.GUID,
 			})
 		}
 	}
