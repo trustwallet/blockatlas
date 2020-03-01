@@ -1,12 +1,15 @@
 package domains
 
 import (
+	"strings"
+	"testing"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas/pkg/errors"
-	"testing"
 )
 
 func checkGetTLD(t *testing.T, name string, expectedTLD string, expectedError error) {
+	name = strings.ToLower(name)
 	tld, err := getTLD(name)
 	assert.Equal(t, expectedTLD, tld)
 	if expectedError == nil {
@@ -20,6 +23,7 @@ func Test_getTLD(t *testing.T) {
 	checkGetTLD(t, "vitalik.eth", ".eth", nil)
 	checkGetTLD(t, "vitalik.ens", ".ens", nil)
 	checkGetTLD(t, "ourxyzwallet.xyz", ".xyz", nil)
+	checkGetTLD(t, "Cameron.Kred", ".kred", nil)
 	checkGetTLD(t, "btc.zil", ".zil", nil)
 	checkGetTLD(t, "btc.crypto", ".crypto", nil)
 	checkGetTLD(t, "nick@fiotestnet", "@fiotestnet", nil)
