@@ -40,4 +40,5 @@ func main() {
 	defer mq.Close()
 	mq.Subscriptions.RunConsumer(subscription.Consume, cache)
 	<-make(chan struct{})
+	mq.Close()
 }

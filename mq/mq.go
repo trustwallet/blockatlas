@@ -67,7 +67,16 @@ func (q Queue) RunConsumer(consumer Consumer, cache storage.Addresses) {
 		return
 	}
 
+	err = amqpChan.Qos(
+		5,
+		0,
+		true,
+	)
+	if err != nil {
+		logger.Error("no qos limit ", err)
+	}
+
 	for data := range messageChannel {
-		consumer(data, cache)
+		go consumer(data, cache)
 	}
 }
