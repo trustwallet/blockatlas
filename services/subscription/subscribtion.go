@@ -22,7 +22,8 @@ func Consume(delivery amqp.Delivery, storage storage.Addresses) {
 	}
 	newSubscriptions := event.ParseSubscriptions(event.NewSubscriptions)
 	oldSubscriptions := event.ParseSubscriptions(event.OldSubscriptions)
-	params := logger.Params{"operation": event.Operation, "guid": event.GUID, "new_subscriptions_len": len(newSubscriptions), "old_subscriptions_len": len(oldSubscriptions)}
+
+	params := logger.Params{"operation": event.Operation, "guid": event.GUID, "new_subscriptions_len": len(newSubscriptions), "old_subscriptions_len": len(oldSubscriptions), "subs_old": oldSubscriptions, "subs_new": newSubscriptions}
 
 	switch event.Operation {
 	case UpdateSubscription:
