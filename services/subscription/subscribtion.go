@@ -9,8 +9,8 @@ import (
 )
 
 const (
-	addSubscription    blockatlas.SubscriptionOperation = "AddSubscription"
-	deleteSubscription blockatlas.SubscriptionOperation = "DeleteSubscription"
+	AddSubscription    blockatlas.SubscriptionOperation = "AddSubscription"
+	DeleteSubscription blockatlas.SubscriptionOperation = "DeleteSubscription"
 )
 
 func Consume(delivery amqp.Delivery, storage storage.Addresses) {
@@ -22,13 +22,13 @@ func Consume(delivery amqp.Delivery, storage storage.Addresses) {
 	subscriptions := event.ParseSubscriptions()
 
 	switch event.Operation {
-	case addSubscription:
+	case AddSubscription:
 		err := storage.AddSubscriptions(subscriptions)
 		if err != nil {
 			logger.Fatal(err, logger.Params{"operation": event.Operation, "guid": event.GUID})
 		}
 		logger.Info("Success", logger.Params{"operation": event.Operation, "guid": event.GUID, "subscriptions_len": len(subscriptions)})
-	case deleteSubscription:
+	case DeleteSubscription:
 		err := storage.DeleteSubscriptions(nil)
 		if err != nil {
 			logger.Fatal(err, logger.Params{"operation": event.Operation, "guid": event.GUID})
