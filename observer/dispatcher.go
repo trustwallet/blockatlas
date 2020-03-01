@@ -14,9 +14,9 @@ type Dispatcher struct {
 }
 
 type DispatchEvent struct {
-	Action  blockatlas.TransactionType `json:"action"`
-	Result  *blockatlas.Tx             `json:"result"`
-	Webhook string                     `json:"webhook"`
+	Action blockatlas.TransactionType `json:"action"`
+	Result *blockatlas.Tx             `json:"result"`
+	GUID   string                     `json:"guid"`
 }
 
 func (d *Dispatcher) Run(events <-chan Event) {
@@ -26,12 +26,12 @@ func (d *Dispatcher) Run(events <-chan Event) {
 }
 
 func (d *Dispatcher) dispatch(event Event) {
-	webhook := event.Subscription.Webhook
+	guid := event.Subscription.GUID
 
 	action := DispatchEvent{
-		Action:  event.Tx.Type,
-		Result:  event.Tx,
-		Webhook: webhook,
+		Action: event.Tx.Type,
+		Result: event.Tx,
+		GUID:   guid,
 	}
 
 	txJson, err := json.Marshal(action)
@@ -40,12 +40,12 @@ func (d *Dispatcher) dispatch(event Event) {
 	}
 
 	logParams := logger.Params{
-		"webhook": webhook,
-		"coin":    event.Subscription.Coin,
-		"txID":    event.Tx.ID,
+		"guid": guid,
+		"coin": event.Subscription.Coin,
+		"txID": event.Tx.ID,
 	}
 
-	go d.postMessageToQueue(webhook, txJson, logParams)
+	go d.postMessageToQueue(guid, txJson, logParams)
 
 	logger.Info("Dispatching messages...", logParams)
 }

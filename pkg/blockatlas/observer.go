@@ -33,7 +33,7 @@ func (e *SubscriptionEvent) ParseSubscriptions() []Subscription {
 			subs = append(subs, Subscription{
 				Coin:    uint(coin),
 				Address: addr,
-				Webhook: e.GUID,
+				GUID:    e.GUID,
 			})
 		}
 	}

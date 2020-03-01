@@ -17,7 +17,7 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 	for _, t := range tagsList {
 		go func(tag, addr string, wg *sync.WaitGroup) {
 			defer wg.Done()
-			page :=  1
+			page := 1
 			txs, err := p.client.GetAddrTxs(addr, tag, page)
 			if err != nil {
 				logger.Error("GetAddrTxs", err, logger.Params{"address": tag, "tag": tag})

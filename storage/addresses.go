@@ -17,13 +17,13 @@ func (s *Storage) Lookup(coin uint, addresses []string) ([]blockatlas.Subscripti
 	observers := make([]blockatlas.Subscription, 0)
 	for _, address := range addresses {
 		key := getSubscriptionKey(coin, address)
-		var webhooks []string
-		err := s.GetHMValue(ATLAS_OBSERVER, key, &webhooks)
+		var guids []string
+		err := s.GetHMValue(ATLAS_OBSERVER, key, &guids)
 		if err != nil {
 			continue
 		}
-		for _, webhook := range webhooks {
-			observers = append(observers, blockatlas.Subscription{Coin: coin, Address: address, Webhook: webhook})
+		for _, guid := range guids {
+			observers = append(observers, blockatlas.Subscription{Coin: coin, Address: address, GUID: guid})
 		}
 	}
 	return observers, nil
@@ -32,16 +32,16 @@ func (s *Storage) Lookup(coin uint, addresses []string) ([]blockatlas.Subscripti
 func (s *Storage) AddSubscriptions(subscriptions []blockatlas.Subscription) error {
 	for _, sub := range subscriptions {
 		key := getSubscriptionKey(sub.Coin, sub.Address)
-		var webhooks []string
-		s.GetHMValue(ATLAS_OBSERVER, key, &webhooks)
-		if webhooks == nil {
-			webhooks = make([]string, 0)
+		var guids []string
+		s.GetHMValue(ATLAS_OBSERVER, key, &guids)
+		if guids == nil {
+			guids = make([]string, 0)
 		}
-		if hasObject(webhooks, sub.Webhook) {
+		if hasObject(guids, sub.GUID) {
 			continue
 		}
-		webhooks = append(webhooks, sub.Webhook)
-		err := s.AddHM(ATLAS_OBSERVER, key, webhooks)
+		guids = append(guids, sub.GUID)
+		err := s.AddHM(ATLAS_OBSERVER, key, guids)
 		if err != nil {
 			return err
 		}
@@ -52,17 +52,17 @@ func (s *Storage) AddSubscriptions(subscriptions []blockatlas.Subscription) erro
 func (s *Storage) DeleteSubscriptions(subscriptions []blockatlas.Subscription) error {
 	for _, sub := range subscriptions {
 		key := getSubscriptionKey(sub.Coin, sub.Address)
-		var webhooks []string
-		err := s.GetHMValue(ATLAS_OBSERVER, key, &webhooks)
+		var guids []string
+		err := s.GetHMValue(ATLAS_OBSERVER, key, &guids)
 		if err != nil {
 			continue
 		}
 		newHooks := make([]string, 0)
-		for _, webhook := range webhooks {
-			if webhook == sub.Webhook {
+		for _, guid := range guids {
+			if guid == sub.GUID {
 				continue
 			}
-			newHooks = append(newHooks, webhook)
+			newHooks = append(newHooks, guid)
 		}
 		if len(newHooks) == 0 {
 			_ = s.DeleteHM(ATLAS_OBSERVER, key)

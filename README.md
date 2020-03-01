@@ -13,7 +13,7 @@ BlockAtlas connects to nodes or explorer APIs of the supported coins and maps tr
 account transaction history into a generic, easy to work with JSON format.
 It is in production use at the [Trust Wallet app](https://trustwallet.com/), 
 the official cryptocurrency wallet of Binance. Also is in production at the [BUTTON Wallet](https://buttonwallet.com), Telegram based non-custodial wallet.
-The observer API watches the chain for new transactions and generates notifications by webhooks.
+The observer API watches the chain for new transactions and generates notifications by guids.
 
 #### Supported Coins
 
@@ -51,12 +51,12 @@ The observer API watches the chain for new transactions and generates notificati
 There are multiple services:
 
 1. Platform API - to get transactions, staking, tokens, domain lookup for supported coins in common format
-2. Observer API - to subscribe several addresses on different supported coins and receive webhook
+2. Observer API - to subscribe several addresses on different supported coins and receive message
 3. Swagger API - swagger for all handlers of 1-3 APIs. You need to route requests to them on you own (nginx)
 
 There are workers that are linked with Observer API and Market API:
 
-5. Platform Observer - fetching latest blocks, parse them to common block specification, check subscribed addresses - send webhook. We use Redis to get information about subscribed addresses per coin with webhooks and caching latest block that was processed by observer
+5. Platform Observer - fetching latest blocks, parse them to common block specification, check subscribed addresses - send message to queue. We use Redis to get information about subscribed addresses per coin with webhooks and caching latest block that was processed by observer
 
 Observer API <-> Redis <-> Platform Observer
 
