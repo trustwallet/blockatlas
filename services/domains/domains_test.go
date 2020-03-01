@@ -1,6 +1,7 @@
 package domains
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -8,6 +9,7 @@ import (
 )
 
 func checkGetTLD(t *testing.T, name string, expectedTLD string, expectedError error) {
+	name = strings.ToLower(name)
 	tld, err := getTLD(name)
 	assert.Equal(t, expectedTLD, tld)
 	if expectedError == nil {
