@@ -56,7 +56,7 @@ func (q Queue) RunConsumer(consumer Consumer, cache storage.Addresses) {
 	messageChannel, err := amqpChan.Consume(
 		string(q),
 		"",
-		true,
+		false,
 		false,
 		false,
 		false,
