@@ -32,7 +32,6 @@ func main() {
 	engine.Use(ginutils.CheckReverseProxy, *sg)
 	engine.Use(ginutils.CORSMiddleware())
 	engine.Use(gin.Logger())
-	engine.OPTIONS("/*path", ginutils.CORSMiddleware())
 
 	api.SetupPlatformAPI(engine)
 	internal.SetupGracefulShutdown(port, engine)
