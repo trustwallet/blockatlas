@@ -10,17 +10,21 @@ import (
 
 const tokenSrc = `
 {
-	"address": "0xa14839c9837657EFcDE754EbEAF5cbECDd801B2A",
-	"name": "FusChain",
-	"decimals": 18,
-	"symbol": "FUS"
+	"balance": "0",
+	"contract": {
+		"contract": "0xa14839c9837657efcde754ebeaf5cbecdd801b2a",
+		"address": "0xa14839c9837657efcde754ebeaf5cbecdd801b2a",
+		"name": "FusChain",
+		"decimals": 18,
+		"symbol": "FUS"
+	}
 }`
 
 var tokenDst = blockatlas.Token{
 	Name:     "FusChain",
 	Symbol:   "FUS",
 	Decimals: 18,
-	TokenID:  "0xa14839c9837657EFcDE754EbEAF5cbECDd801B2A",
+	TokenID:  "0xa14839c9837657efcde754ebeaf5cbecdd801b2a",
 	Coin:     coin.ETH,
 	Type:     blockatlas.TokenTypeERC20,
 }
@@ -40,7 +44,7 @@ func TestNormalizeToken(t *testing.T) {
 }
 
 func testNormalizeToken(t *testing.T, _test *testToken) {
-	var token Contract
+	var token Token
 	err := json.Unmarshal([]byte(_test.apiResponse), &token)
 	if err != nil {
 		t.Error(err)

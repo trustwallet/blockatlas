@@ -13,13 +13,13 @@ func (p *Platform) GetTokenListByAddress(address string) (blockatlas.TokenPage, 
 }
 
 // NormalizeToken converts a Ethereum token into the generic model
-func NormalizeToken(srcToken *Contract, coinIndex uint) (t blockatlas.Token, ok bool) {
+func NormalizeToken(srcToken *Token, coinIndex uint) (t blockatlas.Token, ok bool) {
 	t = blockatlas.Token{
-		Name:     srcToken.Name,
-		Symbol:   srcToken.Symbol,
-		TokenID:  srcToken.Address,
+		Name:     srcToken.Contract.Name,
+		Symbol:   srcToken.Contract.Symbol,
+		TokenID:  srcToken.Contract.Contract,
 		Coin:     coinIndex,
-		Decimals: srcToken.Decimals,
+		Decimals: srcToken.Contract.Decimals,
 		Type:     blockatlas.TokenTypeERC20,
 	}
 
@@ -27,7 +27,7 @@ func NormalizeToken(srcToken *Contract, coinIndex uint) (t blockatlas.Token, ok 
 }
 
 // NormalizeTxs converts multiple Ethereum tokens
-func NormalizeTokens(srcTokens []Contract, p Platform) []blockatlas.Token {
+func NormalizeTokens(srcTokens []Token, p Platform) []blockatlas.Token {
 	tokenPage := make([]blockatlas.Token, 0)
 	for _, srcToken := range srcTokens {
 		token, ok := NormalizeToken(&srcToken, p.CoinIndex)
