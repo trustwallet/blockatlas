@@ -27,7 +27,7 @@ The observer API watches the chain for new transactions and generates notificati
 <a href="https://ethereum.org" target="_blank"><img src="https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/info/logo.png" width="32" /></a>
 <a href="https://ethereumclassic.org/" target="_blank"><img src="https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/classic/info/logo.png" width="32" /></a>
 <a href="https://poa.network" target="_blank"><img src="https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/poa/info/logo.png" width="32" /></a>
-<a href="https://callisto.network" target="_blank"><img src="https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/callist/info/logo.png" width="32" /></a>
+<a href="https://callisto.network" target="_blank"><img src="https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/callisto/info/logo.png" width="32" /></a>
 <a href="https://gochain.io" target="_blank"><img src="https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/gochain/info/logo.png" width="32" /></a>
 <a href="https://wanchain.org" target="_blank"><img src="https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/wanchain/info/logo.png" width="32" /></a>
 <a href="https://thundercore.com" target="_blank"><img src="https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/thundertoken/info/logo.png" width="32" /></a>
