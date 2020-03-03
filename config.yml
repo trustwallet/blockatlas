@@ -30,6 +30,8 @@ observer:
     max: 30s
   rabbitmq:
     uri: amqp://user:bitnami@rabbit:5672
+    consumer:
+      prefetch_count: 5
 
 storage:
   redis: redis://redis:6379

@@ -7,9 +7,10 @@ import (
 )
 
 var (
-	amqpChan *amqp.Channel
-	conn     *amqp.Connection
-	queue    amqp.Queue
+	PrefetchCount int
+	amqpChan      *amqp.Channel
+	conn          *amqp.Connection
+	queue         amqp.Queue
 )
 
 type (
@@ -18,8 +19,10 @@ type (
 )
 
 const (
-	Transactions  Queue = "transactions"
-	Subscriptions Queue = "subscriptions"
+	Transactions         Queue = "transactions"
+	Subscriptions        Queue = "subscriptions"
+	defaultPrefetchCount       = 5
+	minPrefetchCount           = 1
 )
 
 func Init(uri string) (err error) {
@@ -67,11 +70,17 @@ func (q Queue) RunConsumer(consumer Consumer, cache storage.Addresses) {
 		return
 	}
 
+	if PrefetchCount < minPrefetchCount {
+		logger.Info("Change prefetch count to default")
+		PrefetchCount = defaultPrefetchCount
+	}
+
 	err = amqpChan.Qos(
-		20,
+		PrefetchCount,
 		0,
 		true,
 	)
+
 	if err != nil {
 		logger.Error("no qos limit ", err)
 	}
