@@ -89,9 +89,9 @@ func getDirection(tx blockatlas.Tx, address string) blockatlas.Direction {
 		return bitcoin.InferDirection(&tx, addressSet)
 	}
 	switch meta := tx.Meta.(type) {
-	case *blockatlas.TokenTransfer:
+	case blockatlas.TokenTransfer:
 		return determineDirection(address, meta.From, meta.To)
-	case *blockatlas.NativeTokenTransfer:
+	case blockatlas.NativeTokenTransfer:
 		return determineDirection(address, meta.From, meta.To)
 	default:
 		return determineDirection(address, tx.From, tx.To)
