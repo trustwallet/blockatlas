@@ -171,6 +171,66 @@ func Test_getDirection(t *testing.T) {
 				}, "3BMEXVshYmWqc8qcQLyBQPgRgAPfogWdJ4",
 			}, blockatlas.DirectionIncoming,
 		},
+		{"Test NativeTokenTransfer Direction Self",
+			args{
+				blockatlas.Tx{
+					Meta: &blockatlas.NativeTokenTransfer{
+						From:     "0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB",
+						To:       "0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB",
+					},
+				}, "0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB",
+			}, blockatlas.DirectionSelf,
+		},
+		{"Test NativeTokenTransfer Direction Outgoing",
+			args{
+				blockatlas.Tx{
+					Meta: &blockatlas.NativeTokenTransfer{
+						From:     "0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB",
+						To:       "0x74c8199372c584DAB8b14c519bc8BC8C622F37b7",
+					},
+				}, "0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB",
+			}, blockatlas.DirectionOutgoing,
+		},
+		{"Test NativeTokenTransfer Direction Incoming",
+			args{
+				blockatlas.Tx{
+					Meta: &blockatlas.NativeTokenTransfer{
+						From:     "0x74c8199372c584DAB8b14c519bc8BC8C622F37b7",
+						To:       "0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB",
+					},
+				}, "0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB",
+			}, blockatlas.DirectionIncoming,
+		},
+		{"Test TokenTransfer Direction Self",
+			args{
+				blockatlas.Tx{
+					Meta: &blockatlas.TokenTransfer{
+						From:     "0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB",
+						To:       "0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB",
+					},
+				}, "0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB",
+			}, blockatlas.DirectionSelf,
+		},
+		{"Test TokenTransfer Direction Outgoing",
+			args{
+				blockatlas.Tx{
+					Meta: &blockatlas.TokenTransfer{
+						From:     "0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB",
+						To:       "0x74c8199372c584DAB8b14c519bc8BC8C622F37b7",
+					},
+				}, "0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB",
+			}, blockatlas.DirectionOutgoing,
+		},
+		{"Test TokenTransfer Direction Incoming",
+			args{
+				blockatlas.Tx{
+					Meta: &blockatlas.TokenTransfer{
+						From:     "0x74c8199372c584DAB8b14c519bc8BC8C622F37b7",
+						To:       "0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB",
+					},
+				}, "0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB",
+			}, blockatlas.DirectionIncoming,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
