@@ -68,7 +68,7 @@ func (q Queue) RunConsumer(consumer Consumer, cache storage.Addresses) {
 	}
 
 	err = amqpChan.Qos(
-		5,
+		20,
 		0,
 		true,
 	)
