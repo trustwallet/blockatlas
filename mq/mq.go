@@ -9,7 +9,7 @@ import (
 var (
 	PrefetchCount int
 	amqpChan      *amqp.Channel
-	conn          *amqp.Connection
+	Conn          *amqp.Connection
 	queue         amqp.Queue
 )
 
@@ -26,11 +26,11 @@ const (
 )
 
 func Init(uri string) (err error) {
-	conn, err = amqp.Dial(uri)
+	Conn, err = amqp.Dial(uri)
 	if err != nil {
 		return
 	}
-	amqpChan, err = conn.Channel()
+	amqpChan, err = Conn.Channel()
 	if err != nil {
 		return
 	}
@@ -39,7 +39,7 @@ func Init(uri string) (err error) {
 
 func Close() {
 	amqpChan.Close()
-	conn.Close()
+	Conn.Close()
 }
 
 func (q Queue) Declare() error {
