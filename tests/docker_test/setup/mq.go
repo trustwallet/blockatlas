@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/ory/dockertest"
 	"github.com/trustwallet/blockatlas/mq"
+	"github.com/trustwallet/blockatlas/pkg/errors"
 	"log"
 )
 
@@ -28,6 +29,9 @@ func runMQContainer() error {
 		err = mq.Init(fmt.Sprintf("amqp://user:bitnami@localhost:%s", mqResource.GetPort("5672/tcp")))
 		if err != nil {
 			return err
+		}
+		if mq.Conn.IsClosed(){
+			return errors.E("not ready yet")
 		}
 		return nil
 	}); err != nil {
