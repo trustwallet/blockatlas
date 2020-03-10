@@ -18,13 +18,13 @@ func runMQContainer() error {
 		log.Fatalf("Could not connect to docker: %s", err)
 	}
 
-	mqResource, err = pool.Run("bitnami/rabbitmq", "latest", nil)
+	mqResource, err = pool.Run("rabbitmq", "latest", nil)
 	if err != nil {
 		log.Fatalf("Could not start resource: %s", err)
 	}
 
 	if err = pool.Retry(func() error {
-		return mq.Init(fmt.Sprintf("amqp://user:bitnami@localhost:%s", mqResource.GetPort("5672/tcp")))
+		return mq.Init(fmt.Sprintf("amqp://localhost:%s", mqResource.GetPort("5672/tcp")))
 	}); err != nil {
 		return err
 	}
