@@ -29,7 +29,7 @@ observer:
     min: 3s
     max: 30s
   rabbitmq:
-    uri: amqp://user:bitnami@rabbit:5672
+    uri: amqp://rabbit:5672
     consumer:
       prefetch_count: 5
 
