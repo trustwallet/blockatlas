@@ -66,7 +66,7 @@ func (q Queue) RunConsumer(consumer Consumer, cache storage.Addresses) {
 		nil,
 	)
 	if err != nil {
-		logger.Error(err)
+		logger.Fatal("MQ issue " + err.Error())
 		return
 	}
 

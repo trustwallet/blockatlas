@@ -54,7 +54,7 @@ func (d *Dispatcher) postMessageToQueue(message string, rawMessage []byte, logPa
 	err := mq.Transactions.Publish(rawMessage)
 	if err != nil {
 		err = errors.E(err, "Failed to dispatch event", errors.Params{"message": message}, logParams)
-		logger.Error(err, logger.Params{"message": message}, logParams)
+		logger.Fatal(err, logger.Params{"message": message}, logParams)
 	}
 	logger.Info("Message dispatched", logger.Params{"message": message}, logParams)
 }
