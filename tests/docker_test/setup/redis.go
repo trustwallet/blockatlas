@@ -8,8 +8,8 @@ import (
 )
 
 var (
-	Cache *storage.Storage
-	redisResource     *dockertest.Resource
+	Cache         *storage.Storage
+	redisResource *dockertest.Resource
 )
 
 func runRedisContainer() error {

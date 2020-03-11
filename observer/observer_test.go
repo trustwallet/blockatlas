@@ -175,8 +175,8 @@ func Test_getDirection(t *testing.T) {
 			args{
 				blockatlas.Tx{
 					Meta: blockatlas.NativeTokenTransfer{
-						From:     "0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB",
-						To:       "0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB",
+						From: "0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB",
+						To:   "0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB",
 					},
 				}, "0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB",
 			}, blockatlas.DirectionSelf,
@@ -185,8 +185,8 @@ func Test_getDirection(t *testing.T) {
 			args{
 				blockatlas.Tx{
 					Meta: blockatlas.NativeTokenTransfer{
-						From:     "0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB",
-						To:       "0x74c8199372c584DAB8b14c519bc8BC8C622F37b7",
+						From: "0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB",
+						To:   "0x74c8199372c584DAB8b14c519bc8BC8C622F37b7",
 					},
 				}, "0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB",
 			}, blockatlas.DirectionOutgoing,
@@ -195,8 +195,8 @@ func Test_getDirection(t *testing.T) {
 			args{
 				blockatlas.Tx{
 					Meta: blockatlas.NativeTokenTransfer{
-						From:     "0x74c8199372c584DAB8b14c519bc8BC8C622F37b7",
-						To:       "0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB",
+						From: "0x74c8199372c584DAB8b14c519bc8BC8C622F37b7",
+						To:   "0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB",
 					},
 				}, "0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB",
 			}, blockatlas.DirectionIncoming,
@@ -205,8 +205,8 @@ func Test_getDirection(t *testing.T) {
 			args{
 				blockatlas.Tx{
 					Meta: blockatlas.TokenTransfer{
-						From:     "0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB",
-						To:       "0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB",
+						From: "0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB",
+						To:   "0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB",
 					},
 				}, "0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB",
 			}, blockatlas.DirectionSelf,
@@ -215,8 +215,8 @@ func Test_getDirection(t *testing.T) {
 			args{
 				blockatlas.Tx{
 					Meta: blockatlas.TokenTransfer{
-						From:     "0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB",
-						To:       "0x74c8199372c584DAB8b14c519bc8BC8C622F37b7",
+						From: "0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB",
+						To:   "0x74c8199372c584DAB8b14c519bc8BC8C622F37b7",
 					},
 				}, "0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB",
 			}, blockatlas.DirectionOutgoing,
@@ -225,8 +225,8 @@ func Test_getDirection(t *testing.T) {
 			args{
 				blockatlas.Tx{
 					Meta: blockatlas.TokenTransfer{
-						From:     "0x74c8199372c584DAB8b14c519bc8BC8C622F37b7",
-						To:       "0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB",
+						From: "0x74c8199372c584DAB8b14c519bc8BC8C622F37b7",
+						To:   "0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB",
 					},
 				}, "0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB",
 			}, blockatlas.DirectionIncoming,
