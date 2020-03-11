@@ -22,22 +22,24 @@ var (
 )
 
 func init() {
-	_, confPath, _, cache = internal.InitAPIWithRedis("", defaultConfigPath)
+	_, confPath := internal.ParseArgs("", defaultConfigPath)
 
-	uri := viper.GetString("observer.rabbitmq.uri")
-	err := mq.Init(uri)
-	if err != nil {
-		logger.Fatal("Failed to init Rabbit MQ", logger.Params{"uri": uri})
-	}
-	err = mq.Transactions.Declare()
-	if err != nil {
-		logger.Fatal("Failed to init Rabbit MQ", logger.Params{"uri": uri})
-	}
+	internal.InitConfig(confPath)
+	logger.InitLogger()
 
-	platform.Init(viper.GetString("platform"))
+	redisHost := viper.GetString("storage.redis")
+	mqHost := viper.GetString("observer.rabbitmq.uri")
+	prefetchCount := viper.GetInt("observer.rabbitmq.consumer.prefetch_count")
+	platformHandle := viper.GetString("platform")
+
+	cache = internal.InitRedis(redisHost)
+	internal.InitRabbitMQ(mqHost, prefetchCount)
+	platform.Init(platformHandle)
 }
 
 func main() {
+	defer mq.Close()
+
 	if len(platform.BlockAPIs) == 0 {
 		logger.Fatal("No APIs to observe")
 	}
@@ -96,6 +98,5 @@ func main() {
 	}
 
 	wg.Wait()
-	mq.Close()
 	logger.Info("Exiting cleanly")
 }
