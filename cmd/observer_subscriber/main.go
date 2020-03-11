@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 	_ "github.com/trustwallet/blockatlas/docs"
 	"github.com/trustwallet/blockatlas/internal"
@@ -15,26 +16,29 @@ const (
 )
 
 var (
-	confPath string
-	cache    *storage.Storage
+	port, confPath string
+	cache          *storage.Storage
+	sg             *gin.HandlerFunc
 )
 
 func init() {
-	_, confPath := internal.ParseArgs("", defaultConfigPath)
+	_, confPath, _, cache = internal.InitAPIWithRedis("", defaultConfigPath)
 
-	internal.InitConfig(confPath)
-	logger.InitLogger()
+	uri := viper.GetString("observer.rabbitmq.uri")
+	err := mq.Init(uri)
+	if err != nil {
+		logger.Fatal("Failed to init Rabbit MQ", logger.Params{"uri": uri})
+	}
+	err = mq.Transactions.Declare()
+	if err != nil {
+		logger.Fatal("Failed to init Rabbit MQ", logger.Params{"uri": uri})
+	}
 
-	redisHost := viper.GetString("storage.redis")
-	mqHost := viper.GetString("observer.rabbitmq.uri")
-	prefetchCount := viper.GetInt("observer.rabbitmq.consumer.prefetch_count")
-
-	cache = internal.InitRedis(redisHost)
-	internal.InitRabbitMQ(mqHost, prefetchCount)
 }
 
 func main() {
 	defer mq.Close()
 	mq.Subscriptions.RunConsumer(subscription.Consume, cache)
 	<-make(chan struct{})
+	mq.Close()
 }

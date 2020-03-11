@@ -193,7 +193,7 @@ go-functional:
 
 go-integration:
 	@echo "  >  Running integration tests"
-	GOBIN=$(GOBIN) TEST_CONFIG=$(CONFIG_FILE) go test -race -tags=integration -v ./tests/integration ./tests/docker_test
+	GOBIN=$(GOBIN) TEST_CONFIG=$(CONFIG_FILE) go test -race -tags=integration -v ./tests/integration
 
 go-fmt:
 	@echo "  >  Format all go files"
