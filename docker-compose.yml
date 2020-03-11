@@ -8,7 +8,6 @@ services:
     ports:
       - 8080:80
     links:
-      - observer_api
       - platform_api
       - swagger_api
 
