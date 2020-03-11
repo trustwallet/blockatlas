@@ -37,4 +37,5 @@ func main() {
 		c.Redirect(http.StatusMovedPermanently, "swagger/index.html")
 	})
 	engine.GET("swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	internal.SetupGracefulShutdown(port, engine)
 }

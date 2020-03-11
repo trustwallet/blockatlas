@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	mqResource     *dockertest.Resource
+	mqResource *dockertest.Resource
 )
 
 func runMQContainer() error {
