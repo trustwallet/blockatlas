@@ -1,4 +1,4 @@
-// +build integration
+// build integration
 
 package docker_test
 
@@ -10,30 +10,55 @@ import (
 	"github.com/trustwallet/blockatlas/services/subscription"
 	"github.com/trustwallet/blockatlas/storage"
 	"github.com/trustwallet/blockatlas/tests/docker_test/setup"
+	"io/ioutil"
+	"path/filepath"
+	"runtime"
 	"testing"
 	"time"
 )
 
-func TestSubscriber(t *testing.T){
-	assert.Nil(t, mq.Subscriptions.Declare())
-	event := blockatlas.SubscriptionEvent{
-		NewSubscriptions: blockatlas.Subscriptions{
-			"60":[]string{"0x123"},
-		},
-		GUID:             "1",
-		Operation:        subscription.AddSubscription,
+func TestSubscriberAddSubscription(t *testing.T) {
+	_, goFile, _, _ := runtime.Caller(0)
+	testFilePathGiven := filepath.Join(filepath.Dir(goFile), "data", "given_subscriptions_added.json")
+	testFileGiven, err := ioutil.ReadFile(testFilePathGiven)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var givenEvents []blockatlas.SubscriptionEvent
+	if err := json.Unmarshal(testFileGiven, &givenEvents); err != nil {
+		t.Fatal(err)
 	}
 
-	body, err := json.Marshal(event)
-	assert.Nil(t, err)
+	testFilePathWanted := filepath.Join(filepath.Dir(goFile), "data", "wanted_subscriptions_added.json")
+	testFileWanted, err := ioutil.ReadFile(testFilePathWanted)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var wantedEvents []blockatlas.Subscription
+	if err := json.Unmarshal(testFileWanted, &wantedEvents); err != nil {
+		t.Fatal(err)
+	}
 
-	err = mq.Subscriptions.Publish(body)
-	assert.Nil(t, err)
+	assert.Nil(t, mq.Subscriptions.Declare())
 
-	go mq.Subscriptions.RunConsumer(subscription.Consume, setup.Cache)
-	time.Sleep(time.Second * 3)
+	for _, event := range givenEvents {
+		body, err := json.Marshal(event)
+		assert.Nil(t, err)
+
+		err = mq.Subscriptions.Publish(body)
+		assert.Nil(t, err)
+
+		go mq.Subscriptions.RunConsumer(subscription.Consume, setup.Cache)
+		time.Sleep(time.Second / 5)
+	}
 
 	result, err := setup.Cache.GetAllHM(storage.ATLAS_OBSERVER)
 	assert.Nil(t, err)
 	assert.NotNil(t, result)
+
+	for _, wanted := range wantedEvents {
+		result, err := setup.Cache.Lookup(wanted.Coin, []string{wanted.Address})
+		assert.Nil(t, err)
+		assert.Equal(t, result[0], wanted)
+	}
 }

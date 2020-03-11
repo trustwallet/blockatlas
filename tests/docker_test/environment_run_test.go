@@ -1,4 +1,4 @@
-// +build integration
+// build integration
 
 package docker_test
 
@@ -8,7 +8,7 @@ import (
 	"testing"
 )
 
-func TestMain(m *testing.M){
+func TestMain(m *testing.M) {
 	setup.RunMQContainer()
 	setup.RunRedisContainer()
 	code := m.Run()
