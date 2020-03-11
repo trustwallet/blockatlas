@@ -3,10 +3,10 @@ package internal
 import (
 	"flag"
 	"fmt"
+	sentrygin "github.com/getsentry/sentry-go/gin"
 	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/config"
-	"github.com/trustwallet/blockatlas/mq"
-	"github.com/trustwallet/blockatlas/pkg/ginutils"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/storage"
 	"path/filepath"
@@ -19,63 +19,58 @@ var (
 	Date  = time.Now().String()
 )
 
-func ParseArgs(defaultPort, defaultConfigPath string) (string, string) {
+func InitAPI(defaultPort, defaultConfigPath string) (string, string, *gin.HandlerFunc) {
 	var (
 		port, confPath string
+		sg             gin.HandlerFunc
 	)
+
+	LogVersionInfo()
+	sg = sentrygin.New(sentrygin.Options{})
 
 	flag.StringVar(&port, "p", defaultPort, "port for api")
 	flag.StringVar(&confPath, "c", defaultConfigPath, "config file for api")
 	flag.Parse()
 
-	return port, confPath
-}
-
-func InitRedis(host string) *storage.Storage {
-	cache := storage.New()
-	err := cache.Init(host)
-	if err != nil {
-		logger.Fatal(err)
-	}
-	return cache
-}
-
-func InitConfig(confPath string) {
 	confPath, err := filepath.Abs(confPath)
 	if err != nil {
 		logger.Fatal(err)
 	}
 
 	config.LoadConfig(confPath)
+	logger.InitLogger()
+
+	return port, confPath, &sg
 }
 
-func InitEngine(handler *gin.HandlerFunc, ginMode string) *gin.Engine {
-	gin.SetMode(ginMode)
-	engine := gin.New()
-	engine.Use(ginutils.CheckReverseProxy, *handler)
-	engine.Use(ginutils.CORSMiddleware())
-	engine.Use(gin.Logger())
+func InitAPIWithRedis(defaultPort, defaultConfigPath string) (string, string, *gin.HandlerFunc, *storage.Storage) {
+	var (
+		port, confPath string
+		cache          *storage.Storage
+		sg             gin.HandlerFunc
+	)
+	LogVersionInfo()
+	cache = storage.New()
+	sg = sentrygin.New(sentrygin.Options{})
 
-	engine.OPTIONS("/*path", ginutils.CORSMiddleware())
-	engine.GET("/status", func(c *gin.Context) {
-		ginutils.RenderSuccess(c, map[string]interface{}{
-			"status": true,
-		})
-	})
+	flag.StringVar(&port, "p", defaultPort, "port for api")
+	flag.StringVar(&confPath, "c", defaultConfigPath, "config file for api")
+	flag.Parse()
 
-	return engine
-}
-
-func InitRabbitMQ(rabbitURI string, prefetchCount int) {
-	err := mq.Init(rabbitURI)
-	if err != nil {
-		logger.Fatal("Failed to init Rabbit MQ", logger.Params{"uri": rabbitURI})
-	}
-	err = mq.Transactions.Declare()
+	confPath, err := filepath.Abs(confPath)
 	if err != nil {
 		logger.Fatal(err)
 	}
-	mq.PrefetchCount = prefetchCount
+
+	config.LoadConfig(confPath)
+	logger.InitLogger()
+
+	err = cache.Init(viper.GetString("storage.redis"))
+	if err != nil {
+		logger.Fatal(err)
+	}
+
+	return port, confPath, &sg, cache
 }
 
 func LogVersionInfo() {
