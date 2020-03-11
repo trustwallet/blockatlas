@@ -53,7 +53,7 @@ services:
 
   rabbit:
     container_name: rabbit
-    image: bitnami/rabbitmq
+    image: rabbitmq
     ports:
       - 5672:5672
     healthcheck:

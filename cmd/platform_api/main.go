@@ -1,12 +1,13 @@
 package main
 
 import (
+	sentrygin "github.com/getsentry/sentry-go/gin"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/api"
 	_ "github.com/trustwallet/blockatlas/docs"
 	"github.com/trustwallet/blockatlas/internal"
-	"github.com/trustwallet/blockatlas/pkg/ginutils"
+	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/platform"
 )
 
@@ -17,22 +18,23 @@ const (
 
 var (
 	port, confPath string
-	sg             *gin.HandlerFunc
+	engine         *gin.Engine
 )
 
 func init() {
-	port, confPath, sg = internal.InitAPI(defaultPort, defaultConfigPath)
+	port, confPath = internal.ParseArgs(defaultPort, defaultConfigPath)
+
+	internal.InitConfig(confPath)
+	logger.InitLogger()
+	tmp := sentrygin.New(sentrygin.Options{})
+	sg := &tmp
+
+	engine = internal.InitEngine(sg, viper.GetString("gin.mode"))
+
 	platform.Init(viper.GetString("platform"))
 }
 
 func main() {
-	gin.SetMode(viper.GetString("gin.mode"))
-
-	engine := gin.New()
-	engine.Use(ginutils.CheckReverseProxy, *sg)
-	engine.Use(ginutils.CORSMiddleware())
-	engine.Use(gin.Logger())
-
 	api.SetupPlatformAPI(engine)
 	internal.SetupGracefulShutdown(port, engine)
 }

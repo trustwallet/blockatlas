@@ -1,0 +1,42 @@
+[
+  {
+    "new_subscriptions": {
+      "60": [
+        "0x0000000000000000000000000000000000000000"
+      ]
+    },
+    "old_subscriptions": null,
+    "guid": "0",
+    "operation": "AddSubscription"
+  },
+  {
+    "new_subscriptions": {
+      "118": [
+        "0x0000000000000000000000000000000000000001"
+      ]
+    },
+    "old_subscriptions": null,
+    "guid": "1",
+    "operation": "AddSubscription"
+  },
+  {
+    "new_subscriptions": {
+      "714": [
+        "0x0000000000000000000000000000000000000002"
+      ]
+    },
+    "old_subscriptions": null,
+    "guid": "2",
+    "operation": "AddSubscription"
+  },
+  {
+    "new_subscriptions": {
+      "144": [
+        "0x0000000000000000000000000000000000000003"
+      ]
+    },
+    "old_subscriptions": null,
+    "guid": "3",
+    "operation": "AddSubscription"
+  }
+]

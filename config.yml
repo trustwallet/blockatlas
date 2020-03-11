@@ -29,10 +29,12 @@ observer:
     min: 3s
     max: 30s
   rabbitmq:
-    uri: amqp://user:bitnami@rabbit:5672
+    uri: amqp://rabbit:5672
+    consumer:
+      prefetch_count: 10
 
 storage:
-  redis: redis://redis:6379
+  redis: redis://localhost:6379
 
 # [BNB] Binance DEX: https://wallet.binance.org
 #       Binance Chain: https://explorer.binance.org
