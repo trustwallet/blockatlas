@@ -57,11 +57,6 @@ func InitEngine(handler *gin.HandlerFunc, ginMode string) *gin.Engine {
 	engine.Use(gin.Logger())
 
 	engine.OPTIONS("/*path", ginutils.CORSMiddleware())
-	engine.GET("/status", func(c *gin.Context) {
-		ginutils.RenderSuccess(c, map[string]interface{}{
-			"status": true,
-		})
-	})
 
 	return engine
 }
