@@ -4,7 +4,7 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 )
 
-const stakeProgramId  = "Stake11111111111111111111111111111111111111"
+const stakeProgramId = "Stake11111111111111111111111111111111111111"
 
 type Client struct {
 	blockatlas.Request

@@ -24,10 +24,10 @@ func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
 		return results, err
 	}
 
-  minimumBalance, err := p.client.GetMinimumBalanceForRentExemption()
-  if err != nil {
-    minimumBalance = 0
-  }
+	minimumBalance, err := p.client.GetMinimumBalanceForRentExemption()
+	if err != nil {
+		minimumBalance = 0
+	}
 
 	for _, v := range validators {
 		results = append(results, normalizeValidator(v, minimumBalance))
@@ -49,10 +49,10 @@ func getDetails() blockatlas.StakingDetails {
 }
 
 func normalizeValidator(v VoteAccount, minimumBalance uint64) (validator blockatlas.Validator) {
-  minimumAmount := strconv.FormatUint(minimumBalance + 1, 10) // Must stake at least 1 lamport
-  return blockatlas.Validator{
-		Status:  true,
-		ID:      v.VotePubkey,
+	minimumAmount := strconv.FormatUint(minimumBalance+1, 10) // Must stake at least 1 lamport
+	return blockatlas.Validator{
+		Status: true,
+		ID:     v.VotePubkey,
 		Details: blockatlas.StakingDetails{
 			Reward:        blockatlas.StakingReward{Annual: 0},
 			MinimumAmount: blockatlas.Amount(minimumAmount),
