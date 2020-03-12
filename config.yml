@@ -211,3 +211,6 @@ kava:
 
 kusama:
   api: https://kusama.subscan.io/api
+
+solana:
+  api: https://api.mainnet-beta.solana.com
