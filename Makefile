@@ -21,6 +21,7 @@ GOPKG := $(.)
 
 # Environment variables
 CONFIG_FILE=$(GOBASE)/config.yml
+CONFIG_MOCK_FILE=$(GOBASE)/configmock.yml
 
 # Go files
 GOFMT_FILES?=$$(find . -name '*.go' | grep -v vendor)
@@ -36,6 +37,7 @@ PID_API := /tmp/.$(PROJECT_NAME).$(API_SERVICE).pid
 PID_OBSERVER := /tmp/.$(PROJECT_NAME).$(OBSERVER_SERVICE).pid
 PID_OBSERVER_SUBSCRIBER := /tmp/.$(PROJECT_NAME).$(OBSERVER_SUBSCRIBER).pid
 PID_SWAGGER_API := /tmp/.$(PROJECT_NAME).$(SWAGGER_API).pid
+PID_DYSON := /tmp/.$(PROJECT_NAME).dyson.pid
 # Make is verbose in Linux. Make it silent.
 MAKEFLAGS += --silent
 
@@ -50,6 +52,13 @@ start:
 start-platform-api: stop
 	@echo "  >  Starting $(PROJECT_NAME) API"
 	@-$(GOBIN)/$(API_SERVICE)/platform_api -c $(CONFIG_FILE) 2>&1 & echo $$! > $(PID_API)
+	@cat $(PID_API) | sed "/^/s/^/  \>  API PID: /"
+	@echo "  >  Error log: $(STDERR)"
+
+# start-platform-api-mocked: Start API in development mode.  Similar to start-platform-api, but uses config file with mock URLs
+start-platform-api-mocked: stop
+	@echo "  >  Starting $(PROJECT_NAME) API"
+	@-$(GOBIN)/$(API_SERVICE)/platform_api -c $(CONFIG_MOCK_FILE) 2>&1 & echo $$! > $(PID_API)
 	@cat $(PID_API) | sed "/^/s/^/  \>  API PID: /"
 	@echo "  >  Error log: $(STDERR)"
 
@@ -81,6 +90,7 @@ stop:
 	@-kill `cat $(PID_OBSERVER)` 2> /dev/null || true
 	@-kill `cat $(PID_OBSERVER_SUBSCRIBER)` 2> /dev/null || true
 	@-kill `cat $(PID_SWAGGER_API)` 2> /dev/null || true
+	@-kill `cat $(PID_DYSON)` 2> /dev/null || true
 	@-rm $(PID_API) $(PID_OBSERVER) $(PID_OBSERVER_SUBSCRIBER) $(PID_SWAGGER_API)
 
 ## compile: Compile the project.
@@ -105,8 +115,13 @@ test: go-test
 ## functional: Run all functional tests.
 functional: go-functional
 
-## integration: Run all functional tests.
+## integration: Run all integration tests.
 integration: go-integration
+
+## start-mock-dyson: Start Dyson with mocks of external services
+start-mock-dyson:
+	@echo "  >  Starting Dyson with mocks"
+	@-dyson  mock/ext-api-dyson & echo $$! > $(PID_DYSON)
 
 ## fmt: Run `go fmt` for all go files.
 fmt: go-fmt
@@ -156,6 +171,13 @@ else
 	@newman run tests/postman/Blockatlas.postman_collection.json --folder $(test) -d tests/postman/$(test)_data.json --env-var "host=$(host)"
 endif
 
+## install-dyson: Install Dyson for mocked tests.
+install-dyson:
+ifeq (,$(shell which dyson))
+	@echo "  >  Installing Dyson"
+	@-npm install -g dyson
+endif
+
 go-compile: go-get go-build
 
 go-build:
@@ -189,6 +211,11 @@ go-test:
 
 go-functional:
 	@echo "  >  Running functional tests"
+	GOBIN=$(GOBIN) TEST_CONFIG=$(CONFIG_FILE) go test -race -tags=functional -v ./tests/functional
+
+## go-functional-mocked: Run platform-api with mocks, and run functional tests
+go-functional-mocked:	stop install-dyson start-mock-dyson start-platform-api-mocked
+	@echo "  >  Running functional tests with mocks"
 	GOBIN=$(GOBIN) TEST_CONFIG=$(CONFIG_FILE) go test -race -tags=functional -v ./tests/functional
 
 go-integration:
