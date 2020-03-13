@@ -66,11 +66,11 @@ tezos:
   rpc: https://mainnet.tezos.org.ua
 
 # [ETH] Ethereum: https://ethereum.org (Trust-Ray API)
-# ethereum:
-#  api: https://localhost:4567
-#  collections_api: https://api.opensea.io
-#  collections_api_key: [opensea_api_key]
-#  rpc: [ethereum rpc]
+ethereum:
+  api: https://localhost:3000/eth-node
+  collections_api: https://api.opensea.io
+  collections_api_key: opensea_api_key
+  rpc: http://localhost:3000/eth-rpc
 
 # [ETC] Ethereum Classic: https://ethereumclassic.org (Trust-Ray API)
 # classic:
