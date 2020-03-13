@@ -50,23 +50,14 @@ jobs:
         workingDirectory: '$(System.DefaultWorkingDirectory)'
         displayName: 'Run unit tests'
 
-  - job: functional_tests
+  - job: mocked_tests
     dependsOn: environment
     condition: succeeded()
     steps:
-      - script: |
-          go get github.com/gavv/httpexpect
-          make functional
+      - script: sudo make newman-mocked
         workingDirectory: '$(System.DefaultWorkingDirectory)'
-        condition: ne(variables['build.sourceBranch'], 'refs/heads/master')
-        continueOnError: true
-        displayName: "Run functional tests for new PR's"
-
-      - script: |
-          make functional
-        workingDirectory: '$(System.DefaultWorkingDirectory)'
-        condition: eq(variables['build.sourceBranch'], 'refs/heads/master')
-        displayName: 'Run functional tests for new releases'
+        condition: succeeded()
+        displayName: "Run api tests for new PR's"
 
   - job: integration_tests
     dependsOn: environment
