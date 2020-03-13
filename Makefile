@@ -55,8 +55,8 @@ start-platform-api: stop
 	@cat $(PID_API) | sed "/^/s/^/  \>  API PID: /"
 	@echo "  >  Error log: $(STDERR)"
 
-# start-platform-api-mocked: Start API in development mode.  Similar to start-platform-api, but uses config file with mock URLs
-start-platform-api-mocked: stop start-mock-dyson
+# start-platform-api-mock: Start API in development mode.  Similar to start-platform-api, but uses config file with mock URLs
+start-platform-api-mock: stop start-mock-dyson
 	@echo "  >  Starting $(PROJECT_NAME) API"
 	@-$(GOBIN)/$(API_SERVICE)/platform_api -c $(CONFIG_MOCK_FILE) 2>&1 & echo $$! > $(PID_API)
 	@cat $(PID_API) | sed "/^/s/^/  \>  API PID: /"
@@ -213,8 +213,8 @@ go-functional:
 	@echo "  >  Running functional tests"
 	GOBIN=$(GOBIN) TEST_CONFIG=$(CONFIG_FILE) go test -race -tags=functional -v ./tests/functional
 
-## go-functional-mocked: Run platform-api with mocks, and run functional tests
-go-functional-mocked:	stop install-dyson start-mock-dyson start-platform-api-mocked
+## go-functional-mock: Run platform-api with mocks, and run functional tests
+go-functional-mock:	stop install-dyson start-mock-dyson start-platform-api-mock
 	@echo "  >  Running functional tests with mocks"
 	GOBIN=$(GOBIN) TEST_CONFIG=$(CONFIG_FILE) go test -race -tags=functional -v ./tests/functional
 
