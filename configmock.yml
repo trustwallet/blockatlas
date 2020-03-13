@@ -133,7 +133,8 @@ zilliqa:
   api: https://api.viewblock.io/v1/zilliqa
   # key: YOUR_API_KEY
   rpc: https://api.zilliqa.com
-  lookup: https://unstoppabledomains.com/api/v1
+  #mock lookup: https://unstoppabledomains.com/api/v1
+  lookup: http://localhost:3000/unstoppabledomains/api/v1
 
 #[IoTeX] IoTeX: https://iotex.io
 iotex:

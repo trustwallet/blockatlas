@@ -56,7 +56,7 @@ start-platform-api: stop
 	@echo "  >  Error log: $(STDERR)"
 
 # start-platform-api-mocked: Start API in development mode.  Similar to start-platform-api, but uses config file with mock URLs
-start-platform-api-mocked: stop
+start-platform-api-mocked: stop start-mock-dyson
 	@echo "  >  Starting $(PROJECT_NAME) API"
 	@-$(GOBIN)/$(API_SERVICE)/platform_api -c $(CONFIG_MOCK_FILE) 2>&1 & echo $$! > $(PID_API)
 	@cat $(PID_API) | sed "/^/s/^/  \>  API PID: /"
