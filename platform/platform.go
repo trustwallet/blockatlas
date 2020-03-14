@@ -22,6 +22,7 @@ import (
 	"github.com/trustwallet/blockatlas/platform/ontology"
 	"github.com/trustwallet/blockatlas/platform/polkadot"
 	"github.com/trustwallet/blockatlas/platform/ripple"
+	"github.com/trustwallet/blockatlas/platform/solana"
 	"github.com/trustwallet/blockatlas/platform/stellar"
 	"github.com/trustwallet/blockatlas/platform/tezos"
 	"github.com/trustwallet/blockatlas/platform/theta"
@@ -69,6 +70,7 @@ func getPlatformMap() blockatlas.Platforms {
 		coin.Ontology().Handle:     ontology.Init(GetApiVar(coin.ONT)),
 		coin.Algorand().Handle:     algorand.Init(GetApiVar(coin.ALGO)),
 		coin.Aeternity().Handle:    aeternity.Init(GetApiVar(coin.AE)),
+		coin.Solana().Handle:       solana.Init(GetApiVar(coin.SOL)),
 		coin.Tezos().Handle:        tezos.Init(GetApiVar(coin.XTZ), GetRpcVar(coin.XTZ)),
 		coin.Binance().Handle:      binance.Init(GetApiVar(coin.BNB), GetVar("binance.dex")),
 		coin.Zilliqa().Handle:      zilliqa.Init(GetApiVar(coin.ZIL), GetVar("zilliqa.key"), GetRpcVar(coin.ZIL), GetVar("zilliqa.lookup")),

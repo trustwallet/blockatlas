@@ -33,6 +33,6 @@ func (c *Client) GetEpochInfo() (epochInfo EpochInfo, err error) {
 }
 
 func (c *Client) GetMinimumBalanceForRentExemption() (minimumBalance uint64, err error) {
-	err = c.RpcCall(&epochInfo, "getMinimumBalanceForRentExemption", []uint64{4008})
+	err = c.RpcCall(&minimumBalance, "getMinimumBalanceForRentExemption", []uint64{4008})
 	return
 }
