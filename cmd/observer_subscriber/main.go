@@ -8,6 +8,7 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/services/subscription"
 	"github.com/trustwallet/blockatlas/storage"
+	"time"
 )
 
 const (
@@ -30,11 +31,18 @@ func init() {
 	prefetchCount := viper.GetInt("observer.rabbitmq.consumer.prefetch_count")
 
 	cache = internal.InitRedis(redisHost)
+
 	internal.InitRabbitMQ(mqHost, prefetchCount)
+	
+	go mq.FatalWorker(time.Second * 10)
+	go storage.RestoreConnectionWorker(cache, redisHost, time.Second * 10)
 }
 
 func main() {
 	defer mq.Close()
+	if err := mq.Subscriptions.Declare(); err != nil{
+		logger.Fatal(err)
+	}
 	mq.Subscriptions.RunConsumer(subscription.Consume, cache)
 	<-make(chan struct{})
 }

@@ -66,10 +66,6 @@ func InitRabbitMQ(rabbitURI string, prefetchCount int) {
 	if err != nil {
 		logger.Fatal("Failed to init Rabbit MQ", logger.Params{"uri": rabbitURI})
 	}
-	err = mq.Transactions.Declare()
-	if err != nil {
-		logger.Fatal(err)
-	}
 	mq.PrefetchCount = prefetchCount
 }
 
