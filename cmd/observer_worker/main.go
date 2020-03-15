@@ -10,6 +10,7 @@ import (
 	"github.com/trustwallet/blockatlas/platform"
 	"github.com/trustwallet/blockatlas/storage"
 	"sync"
+	"time"
 )
 
 const (
@@ -35,10 +36,16 @@ func init() {
 	cache = internal.InitRedis(redisHost)
 	internal.InitRabbitMQ(mqHost, prefetchCount)
 	platform.Init(platformHandle)
+
+	go mq.RestoreConnectionWorker(mqHost,  mq.Transactions, time.Second * 10)
+	go storage.RestoreConnectionWorker(cache, redisHost, time.Second * 10)
 }
 
 func main() {
 	defer mq.Close()
+	if err := mq.Transactions.Declare(); err != nil{
+		logger.Fatal(err)
+	}
 
 	if len(platform.BlockAPIs) == 0 {
 		logger.Fatal("No APIs to observe")
