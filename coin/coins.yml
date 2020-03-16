@@ -371,3 +371,11 @@
   decimals: 10
   blockTime: 500
   sampleAddress: 'boot1Z6jb15CLqpaMTn2CxktktwZpRAVAgHZEW6SxQ7'
+
+- id: 397
+  symbol: NEAR
+  handle: near
+  name: NEAR
+  decimals: 18
+  blockTime: 2000
+  sampleAddress: 'NEAR6Y66fCzeKqWiwxoPox5oGeDN9VhNCu7CEQ9M86iniqoN9vg2X'

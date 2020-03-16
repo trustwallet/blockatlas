@@ -4,13 +4,13 @@ import (
 	"github.com/streadway/amqp"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/storage"
+	"time"
 )
 
 var (
 	PrefetchCount int
 	amqpChan      *amqp.Channel
 	conn          *amqp.Connection
-	queue         amqp.Queue
 )
 
 type (
@@ -66,7 +66,7 @@ func (q Queue) RunConsumer(consumer Consumer, cache storage.Addresses) {
 		nil,
 	)
 	if err != nil {
-		logger.Error(err)
+		logger.Fatal("MQ issue " + err.Error())
 		return
 	}
 
@@ -87,5 +87,41 @@ func (q Queue) RunConsumer(consumer Consumer, cache storage.Addresses) {
 
 	for data := range messageChannel {
 		go consumer(data, cache)
+	}
+}
+
+func RestoreConnectionWorker(uri string, queue Queue, timeout time.Duration) {
+	logger.Info("Run MQ RestoreConnectionWorker")
+	for {
+		if conn.IsClosed() {
+			for {
+				logger.Warn("MQ is not available now")
+				logger.Warn("Trying to connect to MQ...")
+				if err := Init(uri); err != nil {
+					logger.Warn("MQ is still unavailable")
+					time.Sleep(timeout)
+					continue
+				}
+				if err := queue.Declare(); err != nil {
+					logger.Warn("Can't declare queues:", queue)
+					time.Sleep(timeout)
+					continue
+				} else {
+					logger.Info("MQ connection restored")
+					break
+				}
+			}
+		}
+		time.Sleep(timeout)
+	}
+}
+
+func FatalWorker(timeout time.Duration) {
+	logger.Info("Run FatalWorker")
+	for {
+		if conn.IsClosed() {
+			logger.Fatal("MQ is not available now")
+		}
+		time.Sleep(timeout)
 	}
 }
