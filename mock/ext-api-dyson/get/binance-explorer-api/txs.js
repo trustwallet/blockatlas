@@ -51,9 +51,6 @@ module.exports = {
         }
 
         // not found, address
-        return {
-            txNums: 0,
-            txArray: []
-        }
+        return {txNums: 0, txArray: []}
     }
 };

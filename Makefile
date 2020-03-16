@@ -93,6 +93,10 @@ stop:
 	@-kill `cat $(PID_DYSON)` 2> /dev/null || true
 	@-rm $(PID_API) $(PID_OBSERVER) $(PID_OBSERVER_SUBSCRIBER) $(PID_SWAGGER_API)
 
+stop-dyson:
+	@kill `cat $(PID_DYSON)` 2> /dev/null || true
+	@rm $(PID_DYSON)
+
 ## compile: Compile the project.
 compile:
 	@-touch $(STDERR)
@@ -119,9 +123,10 @@ functional: go-functional
 integration: go-integration
 
 ## start-mock-dyson: Start Dyson with mocks of external services
-start-mock-dyson:
+start-mock-dyson: stop-dyson
 	@echo "  >  Starting Dyson with mocks"
 	@-dyson  mock/ext-api-dyson & echo $$! > $(PID_DYSON)
+	@echo "  >  Dyson started " `cat $(PID_DYSON)`
 
 ## fmt: Run `go fmt` for all go files.
 fmt: go-fmt
