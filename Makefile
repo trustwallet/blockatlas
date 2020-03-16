@@ -154,22 +154,39 @@ ifeq (,$(shell which newman))
 endif
 
 ## newman: Run Postman Newman test, the host parameter is required, and you can specify the name of the test do you wanna run (transaction, token, staking, collection, domain, healthcheck, observer). e.g $ make newman test=staking host=http//localhost
-newman: install-newman
-	@echo "  >  Running $(test) tests"
+newman: install-newman start-platform-api
+ifeq (,$(test))
+	@bash -c "$(MAKE) newman-run test=transaction host=$(host)"
+	@bash -c "$(MAKE) newman-run test=token host=$(host)"
+	@bash -c "$(MAKE) newman-run test=staking host=$(host)"
+	@bash -c "$(MAKE) newman-run test=collection host=$(host)"
+	@bash -c "$(MAKE) newman-run test=domain host=$(host)"
+	@bash -c "$(MAKE) newman-run test=healthcheck host=$(host)"
+else
+	@bash -c "$(MAKE) newman-run test=$(test) host=$(host)"
+endif
+
+## newman-mocked: Run mocked Postman Newman tests, after starting platform api. See newman target.
+newman-mocked: install-newman install-dyson start-platform-api-mock
+ifeq (,$(test))
+	@bash -c "$(MAKE) newman-run test=transaction host=$(host)"
+	@bash -c "$(MAKE) newman-run test=token host=$(host)"
+	@bash -c "$(MAKE) newman-run test=staking host=$(host)"
+	@bash -c "$(MAKE) newman-run test=collection host=$(host)"
+	@bash -c "$(MAKE) newman-run test=domain host=$(host)"
+	@bash -c "$(MAKE) newman-run test=healthcheck host=$(host)"
+else
+	@bash -c "$(MAKE) newman-run test=$(test) host=$(host)"
+endif
+
+## newman-run: Run chosen Newman tests. See newman target.
+newman-run:
 ifeq (,$(host))
 	@echo "  >  Host parameter is missing. e.g: make newman test=staking host=http://localhost:8420"
 	@exit 1
 endif
-ifeq (,$(test))
-	@bash -c "$(MAKE) newman test=transaction host=$(host)"
-	@bash -c "$(MAKE) newman test=token host=$(host)"
-	@bash -c "$(MAKE) newman test=staking host=$(host)"
-	@bash -c "$(MAKE) newman test=collection host=$(host)"
-	@bash -c "$(MAKE) newman test=domain host=$(host)"
-	@bash -c "$(MAKE) newman test=healthcheck host=$(host)"
-else
+	@echo "  >  Running $(test) tests"
 	@newman run tests/postman/Blockatlas.postman_collection.json --folder $(test) -d tests/postman/$(test)_data.json --env-var "host=$(host)"
-endif
 
 ## install-dyson: Install Dyson for mocked tests.
 install-dyson:
