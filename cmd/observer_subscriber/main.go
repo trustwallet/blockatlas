@@ -21,7 +21,7 @@ var (
 )
 
 func init() {
-	_, confPath := internal.ParseArgs("", defaultConfigPath)
+	_, confPath = internal.ParseArgs("", defaultConfigPath)
 
 	internal.InitConfig(confPath)
 	logger.InitLogger()
@@ -33,14 +33,14 @@ func init() {
 	cache = internal.InitRedis(redisHost)
 
 	internal.InitRabbitMQ(mqHost, prefetchCount)
-	
+
 	go mq.FatalWorker(time.Second * 10)
-	go storage.RestoreConnectionWorker(cache, redisHost, time.Second * 10)
+	go storage.RestoreConnectionWorker(cache, redisHost, time.Second*10)
 }
 
 func main() {
 	defer mq.Close()
-	if err := mq.Subscriptions.Declare(); err != nil{
+	if err := mq.Subscriptions.Declare(); err != nil {
 		logger.Fatal(err)
 	}
 	mq.Subscriptions.RunConsumer(subscription.Consume, cache)

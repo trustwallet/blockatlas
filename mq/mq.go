@@ -11,7 +11,6 @@ var (
 	PrefetchCount int
 	amqpChan      *amqp.Channel
 	conn          *amqp.Connection
-	queue         amqp.Queue
 )
 
 type (
@@ -117,7 +116,7 @@ func RestoreConnectionWorker(uri string, queue Queue, timeout time.Duration) {
 	}
 }
 
-func FatalWorker(timeout time.Duration){
+func FatalWorker(timeout time.Duration) {
 	logger.Info("Run FatalWorker")
 	for {
 		if conn.IsClosed() {

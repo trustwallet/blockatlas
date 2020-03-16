@@ -27,7 +27,7 @@ func RestoreConnectionWorker(storage *Storage, uri string, timeout time.Duration
 				logger.Warn("Trying to connect to MQ...")
 				if err := storage.Init(uri); err != nil {
 					logger.Warn("Redis is still unavailable")
-					 time.Sleep(timeout)
+					time.Sleep(timeout)
 					continue
 				} else {
 					logger.Info("Redis connection restored")
