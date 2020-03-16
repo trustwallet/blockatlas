@@ -201,7 +201,8 @@ algorand:
   api: https://mainnet-algorand.api.purestake.io/ps1
 
 nano:
-  api: https://nanoverse.io/api/node
+  #mock api: https://nanoverse.io/api/node
+  api: http://localhost:3000/nano-rpc
 
 digibyte:
   api: https://dgb1.trezor.io/api
