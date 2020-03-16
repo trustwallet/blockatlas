@@ -207,7 +207,8 @@ digibyte:
   api: https://dgb1.trezor.io/api
 
 harmony:
-  api: https://api.s0.t.hmny.io
+  #mock api: https://api.s0.t.hmny.io
+  api: http://localhost:3000/harmony-rpc
 
 kava:
   api: https://data.kava.io
