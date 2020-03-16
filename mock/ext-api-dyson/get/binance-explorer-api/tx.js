@@ -16,7 +16,7 @@ module.exports = {
                 blockHeight: Number.parseFrom('63280715'),
                 txType: "TRANSFER",
                 timeStamp: Number.parseFrom('1579688431580'),
-                txFee: 0.0006,
+                txFee: Number.parseFrom('0.00060'),
                 txAge: Number.parseFrom('2350509'),
                 code: 0,
                 log: "Msg 0: ",
@@ -37,11 +37,11 @@ module.exports = {
                             asset: "BNB",
                             fromAddr: "bnb1rhv98jcx2yu26shxedskttjzpkvsrz4nd226yv",
                             toAddr: "bnb1563k58pc3keeuwkhlrxwz7sdsetyn9l7gdnznp",
-                            fee: 0.0006
+                            fee: Number.parseFrom('0.00060')
                         },
                         {
                             hash: "F53BB470A3B6B83977CFFE5D5F9937FB1CBB8785FBE818D9B38AD43F3ECD82BC",
-                            height: 63280715,
+                            height: Number.parseFrom('63280715'),
                             type: "TRANSFER",
                             value: 10.0,
                             asset: "BUSD-BD1",
