@@ -167,7 +167,7 @@ else
 endif
 
 ## newman-mocked: Run mocked Postman Newman tests, after starting platform api. See newman target.
-newman-mocked: install-newman install-dyson start-platform-api-mock
+newman-mocked: install-newman install-dyson go-compile start-platform-api-mock
 ifeq (,$(test))
 	@bash -c "$(MAKE) newman-run test=transaction host=$(host)"
 	@bash -c "$(MAKE) newman-run test=token host=$(host)"
