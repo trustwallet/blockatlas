@@ -2,6 +2,7 @@ package platform
 
 import (
 	"fmt"
+
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
@@ -17,6 +18,7 @@ import (
 	"github.com/trustwallet/blockatlas/platform/icon"
 	"github.com/trustwallet/blockatlas/platform/iotex"
 	"github.com/trustwallet/blockatlas/platform/nano"
+	"github.com/trustwallet/blockatlas/platform/near"
 	"github.com/trustwallet/blockatlas/platform/nebulas"
 	"github.com/trustwallet/blockatlas/platform/nimiq"
 	"github.com/trustwallet/blockatlas/platform/ontology"
@@ -99,6 +101,7 @@ func getPlatformMap() blockatlas.Platforms {
 		coin.Wanchain().Handle:     ethereum.Init(coin.WAN, GetApiVar(coin.WAN), GetRpcVar(coin.WAN)),
 		coin.Tomochain().Handle:    ethereum.Init(coin.TOMO, GetApiVar(coin.TOMO), GetRpcVar(coin.TOMO)),
 		coin.Ethereum().Handle:     ethereum.InitWitCollection(coin.ETH, GetApiVar(coin.ETH), GetRpcVar(coin.ETH), GetVar("ethereum.collections_api"), GetVar("ethereum.collections_api_key")),
+		coin.Near().Handle:         near.Init(GetApiVar(coin.NEAR)),
 	}
 }
 
