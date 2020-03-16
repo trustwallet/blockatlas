@@ -9,26 +9,28 @@ const (
 	JsonRpcVersion = "2.0"
 )
 
-type RpcRequests []*RpcRequest
+type (
+	RpcRequests []*RpcRequest
 
-type RpcRequest struct {
-	JsonRpc string      `json:"jsonrpc"`
-	Method  string      `json:"method"`
-	Params  interface{} `json:"params,omitempty"`
-	Id      string      `json:"id,omitempty"`
-}
+	RpcRequest struct {
+		JsonRpc string      `json:"jsonrpc"`
+		Method  string      `json:"method"`
+		Params  interface{} `json:"params,omitempty"`
+		Id      string      `json:"id,omitempty"`
+	}
 
-type RpcResponse struct {
-	JsonRpc string      `json:"jsonrpc"`
-	Error   *RpcError   `json:"error,omitempty"`
-	Result  interface{} `json:"result,omitempty"`
-	Id      string      `json:"id,omitempty"`
-}
+	RpcResponse struct {
+		JsonRpc string      `json:"jsonrpc"`
+		Error   *RpcError   `json:"error,omitempty"`
+		Result  interface{} `json:"result,omitempty"`
+		Id      string      `json:"id,omitempty"`
+	}
 
-type RpcError struct {
-	Code    int    `json:"code"`
-	Message string `json:"message"`
-}
+	RpcError struct {
+		Code    int    `json:"code"`
+		Message string `json:"message"`
+	}
+)
 
 func (r *RpcResponse) GetObject(toType interface{}) error {
 	js, err := json.Marshal(r.Result)
