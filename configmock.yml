@@ -40,7 +40,7 @@ storage:
 #       Binance Chain: https://explorer.binance.org
 binance:
   #mock api: https://explorer.binance.org/api/v1
-  api: http://localhost:3000/binance-explorer-api/v1
+  api: http://localhost:3000/binance-api/v1
   dex: https://dex.binance.org/api
 
 # [NIM] Nimiq: https://nimiq.com
@@ -202,14 +202,14 @@ algorand:
 
 nano:
   #mock api: https://nanoverse.io/api/node
-  api: http://localhost:3000/nano-rpc
+  api: http://localhost:3000/nano-api
 
 digibyte:
   api: https://dgb1.trezor.io/api
 
 harmony:
   #mock api: https://api.s0.t.hmny.io
-  api: http://localhost:3000/harmony-rpc
+  api: http://localhost:3000/harmony-api
 
 kava:
   api: https://data.kava.io

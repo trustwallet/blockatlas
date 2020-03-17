@@ -1,10 +1,10 @@
 /// Nano RPC Mock
-/// curl -H 'Content-Type: application/json' -d ' {"action":"account_history","account":"nano_36e7qfxrpixge3xxujtpc87c77mn9ubu3bhywfjkr1trnubtd4qswwydhn9z","count":"25"} ' http://localhost:3000/nano-rpc
+/// curl -H 'Content-Type: application/json' -d ' {"action":"account_history","account":"nano_36e7qfxrpixge3xxujtpc87c77mn9ubu3bhywfjkr1trnubtd4qswwydhn9z","count":"25"} ' http://localhost:3000/nano-api
 /// curl -H 'Content-Type: application/json' -d ' {"action":"account_history","account":"nano_36e7qfxrpixge3xxujtpc87c77mn9ubu3bhywfjkr1trnubtd4qswwydhn9z","count":"25"} ' https://nano-rpc.trustwalletapp.com
 /// curl "http://localhost:8420/v1/nano/nano_36e7qfxrpixge3xxujtpc87c77mn9ubu3bhywfjkr1trnubtd4qswwydhn9z"
 
 module.exports = {
-    path: '/nano-rpc',
+    path: '/nano-api',
     template: function(params, query, body) {
         //console.log("curl -H 'Content-Type: application/json' -d '", JSON.stringify(body), "' https://nano-rpc.trustwalletapp.com");
         if (body.action === 'account_history') {
