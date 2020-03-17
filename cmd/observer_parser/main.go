@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/internal"
 	"github.com/trustwallet/blockatlas/mq"
@@ -37,13 +36,13 @@ func init() {
 	internal.InitRabbitMQ(mqHost, prefetchCount)
 	platform.Init(platformHandle)
 
-	go mq.RestoreConnectionWorker(mqHost,  mq.Transactions, time.Second * 10)
+	go mq.RestoreConnectionWorker(mqHost,  mq.ConfirmedBlocks, time.Second * 10)
 	go storage.RestoreConnectionWorker(cache, redisHost, time.Second * 10)
 }
 
 func main() {
 	defer mq.Close()
-	if err := mq.Transactions.Declare(); err != nil{
+	if err := mq.ConfirmedBlocks.Declare(); err != nil{
 		logger.Fatal(err)
 	}
 
@@ -81,29 +80,20 @@ func main() {
 			PollInterval: pollInterval,
 			BacklogCount: backlogCount,
 		}
-		blocks := stream.Execute(context.Background())
 
-		// Check for transaction events
-		obs := observer.Observer{
-			Storage: cache,
-			Coin:    coin.ID,
-		}
-		events := obs.Execute(blocks)
-
-		// Dispatch events
-		var dispatcher observer.Dispatcher
-		go func() {
-			dispatcher.Run(events)
-			wg.Done()
-		}()
+		go stream.Execute()
 
 		logger.Info("Observing", logger.Params{
 			"coin":     coin,
 			"interval": pollInterval,
 			"backlog":  backlogCount,
 		})
-	}
 
+		wg.Done()
+	}
 	wg.Wait()
-	logger.Info("Exiting cleanly")
+
+	logger.Info("Running parser for platforms:", platform.Platforms)
+
+	<-make(chan struct{})
 }

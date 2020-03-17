@@ -33,7 +33,7 @@ services:
     build:
       context: .
       args:
-        - SERVICE=observer_worker
+        - SERVICE=observer_notifier
     links:
       - redis
       - rabbit

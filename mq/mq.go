@@ -22,6 +22,7 @@ type (
 const (
 	Transactions         Queue = "transactions"
 	Subscriptions        Queue = "subscriptions"
+	ConfirmedBlocks      Queue = "confirmed_blocks"
 	defaultPrefetchCount       = 5
 	minPrefetchCount           = 1
 )
