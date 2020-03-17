@@ -5,6 +5,7 @@ import (
 	"github.com/trustwallet/blockatlas/internal"
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/observer"
+	"github.com/trustwallet/blockatlas/observer/parser"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/platform"
 	"github.com/trustwallet/blockatlas/storage"
@@ -19,6 +20,7 @@ const (
 var (
 	confPath string
 	cache    *storage.Storage
+	backlogTime, minInterval, maxInterval   time.Duration
 )
 
 func init() {
@@ -36,12 +38,6 @@ func init() {
 	internal.InitRabbitMQ(mqHost, prefetchCount)
 	platform.Init(platformHandle)
 
-	go mq.RestoreConnectionWorker(mqHost,  mq.ConfirmedBlocks, time.Second * 10)
-	go storage.RestoreConnectionWorker(cache, redisHost, time.Second * 10)
-}
-
-func main() {
-	defer mq.Close()
 	if err := mq.ConfirmedBlocks.Declare(); err != nil{
 		logger.Fatal(err)
 	}
@@ -50,13 +46,20 @@ func main() {
 		logger.Fatal("No APIs to observe")
 	}
 
-	backlogTime := viper.GetDuration("observer.backlog")
-	minInterval := viper.GetDuration("observer.block_poll.min")
-	maxInterval := viper.GetDuration("observer.block_poll.max")
+	backlogTime = viper.GetDuration("observer.backlog")
+	minInterval = viper.GetDuration("observer.block_poll.min")
+	maxInterval = viper.GetDuration("observer.block_poll.max")
 
 	if minInterval >= maxInterval {
 		logger.Fatal("minimum block polling interval cannot be greater or equal than maximum")
 	}
+
+	go mq.RestoreConnectionWorker(mqHost,  mq.ConfirmedBlocks, time.Second * 10)
+	go storage.RestoreConnectionWorker(cache, redisHost, time.Second * 10)
+}
+
+func main() {
+	defer mq.Close()
 
 	var wg sync.WaitGroup
 	wg.Add(len(platform.BlockAPIs))
@@ -65,7 +68,7 @@ func main() {
 		coin := api.Coin()
 		pollInterval := observer.GetInterval(coin.BlockTime, minInterval, maxInterval)
 
-		// Stream incoming blocks
+		// Parsing incoming blocks
 		var backlogCount int
 		if coin.BlockTime == 0 {
 			backlogCount = 50
@@ -74,14 +77,14 @@ func main() {
 			backlogCount = int(backlogTime / pollInterval)
 		}
 
-		stream := observer.Stream{
+		p := parser.Parser{
 			BlockAPI:     api,
 			Tracker:      cache,
 			PollInterval: pollInterval,
 			BacklogCount: backlogCount,
 		}
 
-		go stream.Execute()
+		go p.Run()
 
 		logger.Info("Observing", logger.Params{
 			"coin":     coin,
@@ -90,10 +93,10 @@ func main() {
 		})
 
 		wg.Done()
+
+		logger.Info("Running parser for platforms:", api.Coin().Handle)
 	}
 	wg.Wait()
-
-	logger.Info("Running parser for platforms:", platform.Platforms)
 
 	<-make(chan struct{})
 }
