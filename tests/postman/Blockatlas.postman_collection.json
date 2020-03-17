@@ -91,7 +91,7 @@
 											"",
 											"let handler = pm.variables.get(\"handler\");",
 											"let address = pm.variables.get(\"address\");",
-											"let expectedTxId = pm.variables.get(\"txid\");",
+											"let expectedTxId = pm.variables.get(\"expectedTxId\");",
 											"var jsonData = pm.response.json();",
 											"",
 											"pm.test(handler + \" - response must be valid and have a body: \" + address, function () {",
