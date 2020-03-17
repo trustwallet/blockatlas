@@ -2,26 +2,40 @@ package blockatlas
 
 import "strconv"
 
-type Subscriptions map[string][]string
+type (
+	Subscriptions map[string][]string
 
-type SubscriptionOperation string
+	SubscriptionOperation string
 
-type SubscriptionEvent struct {
-	NewSubscriptions Subscriptions         `json:"new_subscriptions"`
-	OldSubscriptions Subscriptions         `json:"old_subscriptions"`
-	GUID             string                `json:"guid"`
-	Operation        SubscriptionOperation `json:"operation"`
-}
+	SubscriptionEvent struct {
+		NewSubscriptions Subscriptions         `json:"new_subscriptions"`
+		OldSubscriptions Subscriptions         `json:"old_subscriptions"`
+		GUID             string                `json:"guid"`
+		Operation        SubscriptionOperation `json:"operation"`
+	}
 
-type CoinStatus struct {
-	Height int64  `json:"height"`
-	Error  string `json:"error,omitempty"`
-}
+	Subscription struct {
+		Coin    uint   `json:"coin"`
+		Address string `json:"address"`
+		GUID    string `json:"guid"`
+	}
 
-type Observer struct {
-	Status  bool   `json:"status"`
-	Message string `json:"message"`
-}
+	CoinStatus struct {
+		Height int64  `json:"height"`
+		Error  string `json:"error,omitempty"`
+	}
+
+	Observer struct {
+		Status  bool   `json:"status"`
+		Message string `json:"message"`
+	}
+
+	Block struct {
+		Number int64  `json:"number"`
+		ID     string `json:"id,omitempty"`
+		Txs    []Tx   `json:"txs"`
+	}
+)
 
 func (e *SubscriptionEvent) ParseSubscriptions(s Subscriptions) []Subscription {
 	subs := make([]Subscription, 0)

@@ -1,11 +1,9 @@
 # Block Atlas by Trust Wallet
 
 ![Go Version](https://img.shields.io/github/go-mod/go-version/TrustWallet/blockatlas)
-[![GoDoc](https://godoc.org/github.com/TrustWallet/blockatlas?status.svg)](https://godoc.org/github.com/TrustWallet/blockatlas) 
 [![Build Status](https://dev.azure.com/TrustWallet/Trust%20BlockAtlas/_apis/build/status/TrustWallet.blockatlas?branchName=master)](https://dev.azure.com/TrustWallet/Trust%20BlockAtlas/_build/latest?definitionId=27&branchName=master)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/43834b0c94ad4f6088629aa3e3bb5e94)](https://www.codacy.com/app/TrustWallet/blockatlas?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=TrustWallet/blockatlas&amp;utm_campaign=Badge_Grade)
 [![Go Report Card](https://goreportcard.com/badge/trustwallet/blockatlas)](https://goreportcard.com/report/TrustWallet/blockatlas)
-[![Docker](https://img.shields.io/docker/cloud/build/trustwallet/blockatlas.svg)](https://hub.docker.com/r/trustwallet/blockatlas)
 
 > BlockAtlas is a clean explorer API and transaction observer for cryptocurrencies.
 
@@ -39,26 +37,42 @@ The observer API watches the chain for new transactions and generates notificati
 <a href="https://bitcoin.org/" target="_blank"><img src="https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/bitcoin/info/logo.png" width="32" /></a>
 <a href="https://harmony.one/" target="_blank"><img src="https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/harmony/info/logo.png" width="32" /></a>
 
+## Architecture
+
+#### NOTE
+Currently Blockatlas is under active development and is not well documented. If you still want to run it on your own or help to contribute, **please** pay attention that currenlty integration, nemwan, functional tests are not working locally without all endpoints. We are fixing that issue and soon you will be able to test all the stuff locally
+
+Blockatlas allows to:
+- Get information about transactions, tokens, staking details, collectibles, crypto domains for supported coins.
+- Subscribe for price notifications via Rabbit MQ
+
+Platform API is independent service and can work with the specific blockchain only (like bitcoin, ethereum, etc)
+
+Notifications:
+
+(Sub Producer) - Subscribe to specific coin  [Not implemented at Atlas, write it on your own]
+
+(Sub Consumer) - Save all the subscriptions to the Redis  [Implemented, you can see it at cmd/observer_subscriber]
+
+(Tx Notifier Producer) - Parse the block, check transactions, find addresses in Redis and push the tx details for these addresses  [Implemented, you can see it at cmd/observer_worker]
+
+(Tx Notifier Consumer) - Notify users, get tx informations by GUID from queue [Not implemented at Atlas, write it on your own]
+
+```
+Sub Producer --(Rabbit MQ)--> Sub Consumer --(Redis)--> Tx Notifier Producer --(Rabbit MQ)--> Tx Notifier Consumer --> User 
+```
+
+The whole flow is not availible at Atlas repo. We will have integration tests with it. Also there will be examples of all instances soon.
+
 ## Setup
 
 ### Requirements
 
  * [Go Toolchain](https://golang.org/doc/install) versions 1.13+
  * [Redis](https://redis.io/topics/quickstart) instance for platform_observer
+ * [Rabbit MQ](https://www.rabbitmq.com/#getstarted) using to pass subscriptions and send transaction notifications
 
 ### From Source
-
-There are multiple services:
-
-1. Platform API - to get transactions, staking, tokens, domain lookup for supported coins in common format
-2. Observer API - to subscribe several addresses on different supported coins and receive message
-3. Swagger API - swagger for all handlers of 1-3 APIs. You need to route requests to them on you own (nginx)
-
-There are workers that are linked with Observer API and Market API:
-
-5. Platform Observer - fetching latest blocks, parse them to common block specification, check subscribed addresses - send message to queue. We use Redis to get information about subscribed addresses per coin with webhooks and caching latest block that was processed by observer
-
-Observer API <-> Redis <-> Platform Observer
 
 #### IMPORTANT
 
@@ -69,21 +83,21 @@ ATLAS_PLATFORM=ethereum go run main.go
 ```
 You will run platform API for Ethereum coin only. You can run 30 coins with 30 binaries for scalability and sustainability. Howevever, you can run all of them at once by using ```ATLAS_PLATFORM=all``` env param
 
-It works the same for platoform_observer - you can run all observer at 1 binary or 30 coins per 30 binaries
+It works the same for observer_worker - you can run all observer at 1 binary or 30 coins per 30 binaries
 
 ```shell
 # Download source to $GOPATH
 go get -u github.com/trustwallet/blockatlas
 cd $(go env GOPATH)/src/github.com/trustwallet/blockatlas
 
-# Start platform_observer with the path to the config.yml ./ 
-go build -o platform-observer-bin cmd/platform_observer/main.go && ./platform-observer-bin -c config.yml
+# Start observer_worker with the path to the config.yml ./ 
+go build -o observer_worker-bin cmd/observer_worker/main.go && ./observer_worker-bin -c config.yml
+
+# Start observer_subscriber with the path to the config.yml ./ 
+go build -o observer_subscriber-bin cmd/observer_subscriber/main.go && ./observer_subscriber-bin -c config.yml
 
 # Start Platform API server at port 8420 with the path to the config.yml ./ 
 go build -o platform-api-bin cmd/platform_api/main.go  && ./platform-api-bin -p 8420 -c config.yml
-
-# Start Observer API server at port 8422 with the path to the config.yml ./ 
-go build -o observer-api-bin cmd/observer-api/main.go  && ./observer-api-bin -p 8422 -c config.yml
 
 # Startp Swagger API server at port 8422 with the path to the config.yml ./ 
 go build -o swagger-api-bin cmd/swagger-api/main.go  && ./swagger-api-bin -p 8423
@@ -121,8 +135,6 @@ If you need to start one service:
 ```shell
 # Run only platform API 
 docker-compose start platform_api
-# Run only observer for addresses and api for it
-docker-compose start platform_observer observer_api redis
 # Run swagger api
 docker-compose start swagger_api
 ```

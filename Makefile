@@ -46,11 +46,11 @@ install: go-get
 
 ## start: Start API, Observer and Sync in development mode.
 start:
-	@bash -c "$(MAKE) clean compile start-platform-api start-platform-observer start-observer-api start-market-observer start-market-api"
+	@bash -c "$(MAKE) clean compile start-platform-api start-observer-worker start-observer-subscriber"
 
-## start-api: Start API in development mode.
+## start-api: Start platform api in development mode.
 start-platform-api: stop
-	@echo "  >  Starting $(PROJECT_NAME) API"
+	@echo "  >  Starting $(PROJECT_NAME)"
 	@-$(GOBIN)/$(API_SERVICE)/platform_api -c $(CONFIG_FILE) 2>&1 & echo $$! > $(PID_API)
 	@cat $(PID_API) | sed "/^/s/^/  \>  API PID: /"
 	@echo "  >  Error log: $(STDERR)"
@@ -62,25 +62,25 @@ start-platform-api-mock: stop start-mock-dyson
 	@cat $(PID_API) | sed "/^/s/^/  \>  API PID: /"
 	@echo "  >  Error log: $(STDERR)"
 
-## start-observer: Start Observer in development mode.
-start-platform-observer: stop
-	@echo "  >  Starting $(PROJECT_NAME) Observer"
-	@-$(GOBIN)/$(OBSERVER_SERVICE)/platform_observer -c $(CONFIG_FILE) 2>&1 & echo $$! > $(PID_OBSERVER)
-	@cat $(PID_OBSERVER) | sed "/^/s/^/  \>  Observer PID: /"
-	@echo "  >  Error log: $(STDERR)"
-
-## start-observer: Start Observer in development mode.
-start-observer-api: stop
-	@echo "  >  Starting $(PROJECT_NAME) Observer"
-	@-$(GOBIN)/$(OBSERVER_SUBSCRIBER)/observer_api -c $(CONFIG_FILE) 2>&1 & echo $$! > $(PID_OBSERVER_SUBSCRIBER)
-	@cat $(PID_OBSERVER_SUBSCRIBER) | sed "/^/s/^/  \>  Observer PID: /"
-	@echo "  >  Error log: $(STDERR)"
-
-## start-sync-market-api: Start Sync market api in development mode.
+## start-swagger-api: Start swagger api in development mode.
 start-swagger-api: stop
-	@echo "  >  Starting $(PROJECT_NAME) Sync API"
+	@echo "  >  Starting $(PROJECT_NAME)"
 	@-$(GOBIN)/$(SWAGGER_API)/swagger_api -c $(CONFIG_FILE) 2>&1 & echo $$! > $(PID_SWAGGER_API)
 	@cat $(PID_SWAGGER_API) | sed "/^/s/^/  \>  Sync PID: /"
+	@echo "  >  Error log: $(STDERR)"
+
+## start-observer-worker: Start swagger api in development mode.
+start-observer-worker: stop
+	@echo "  >  Starting $(PROJECT_NAME)"
+	@-$(GOBIN)/$(OBSERVER_SERVICE)/observer_worker -c $(CONFIG_FILE) 2>&1 & echo $$! > $(PID_OBSERVER)
+	@cat $(PID_OBSERVER) | sed "/^/s/^/  \>  Sync PID: /"
+	@echo "  >  Error log: $(STDERR)"
+
+## start-observer-worker: Start swagger api in development mode.
+start-observer-subscriber: stop
+	@echo "  >  Starting $(PROJECT_NAME)"
+	@-$(GOBIN)/$(OBSERVER_SUBSCRIBER)/observer_subscriber -c $(CONFIG_FILE) 2>&1 & echo $$! > $(PID_OBSERVER_SUBSCRIBER)
+	@cat $(PID_OBSERVER_SUBSCRIBER) | sed "/^/s/^/  \>  Sync PID: /"
 	@echo "  >  Error log: $(STDERR)"
 
 ## stop: Stop development mode.
@@ -208,7 +208,7 @@ go-build:
 	@echo "  >  Building observer_worker binary..."
 	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(OBSERVER_SERVICE)/observer_worker ./cmd/$(OBSERVER_SERVICE)
 	@echo "  >  Building observer_subscriber binary..."
-	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(observer_subscriber)/observer_subscriber ./cmd/$(OBSERVER_SUBSCRIBER)
+	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(OBSERVER_SUBSCRIBER)/observer_subscriber ./cmd/$(OBSERVER_SUBSCRIBER)
 	@echo "  >  Building swagger_api binary..."
 	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(SWAGGER_API)/swagger_api ./cmd/$(SWAGGER_API)
 
