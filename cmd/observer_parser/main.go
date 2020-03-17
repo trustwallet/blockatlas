@@ -18,9 +18,10 @@ const (
 )
 
 var (
-	confPath string
-	cache    *storage.Storage
-	backlogTime, minInterval, maxInterval   time.Duration
+	confPath                              string
+	cache                                 *storage.Storage
+	backlogTime, minInterval, maxInterval time.Duration
+	maxBackLogBlocks                      int64
 )
 
 func init() {
@@ -38,7 +39,7 @@ func init() {
 	internal.InitRabbitMQ(mqHost, prefetchCount)
 	platform.Init(platformHandle)
 
-	if err := mq.ConfirmedBlocks.Declare(); err != nil{
+	if err := mq.ConfirmedBlocks.Declare(); err != nil {
 		logger.Fatal(err)
 	}
 
@@ -49,13 +50,13 @@ func init() {
 	backlogTime = viper.GetDuration("observer.backlog")
 	minInterval = viper.GetDuration("observer.block_poll.min")
 	maxInterval = viper.GetDuration("observer.block_poll.max")
-
+	maxBackLogBlocks = viper.GetInt64("observer.backlog_max_blocks")
 	if minInterval >= maxInterval {
 		logger.Fatal("minimum block polling interval cannot be greater or equal than maximum")
 	}
 
-	go mq.RestoreConnectionWorker(mqHost,  mq.ConfirmedBlocks, time.Second * 10)
-	go storage.RestoreConnectionWorker(cache, redisHost, time.Second * 10)
+	go mq.RestoreConnectionWorker(mqHost, mq.ConfirmedBlocks, time.Second*10)
+	go storage.RestoreConnectionWorker(cache, redisHost, time.Second*10)
 }
 
 func main() {
@@ -78,10 +79,11 @@ func main() {
 		}
 
 		p := parser.Parser{
-			BlockAPI:     api,
-			Tracker:      cache,
-			PollInterval: pollInterval,
-			BacklogCount: backlogCount,
+			BlockAPI:                 api,
+			LatestParsedBlockTracker: cache,
+			ParsingBlocksInterval:    pollInterval,
+			BacklogCount:             backlogCount,
+			MaxBacklogBlocks:         maxBackLogBlocks,
 		}
 
 		go p.Run()

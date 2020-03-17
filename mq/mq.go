@@ -118,7 +118,7 @@ func RestoreConnectionWorker(uri string, queue Queue, timeout time.Duration) {
 	}
 }
 
-func FatalWorker(timeout time.Duration){
+func FatalWorker(timeout time.Duration) {
 	logger.Info("Run FatalWorker")
 	for {
 		if conn.IsClosed() {

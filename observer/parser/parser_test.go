@@ -2,19 +2,60 @@ package parser
 
 import (
 	"errors"
+	"fmt"
+	"github.com/alicebob/miniredis/v2"
+	"github.com/stretchr/testify/assert"
+	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/logger"
+	"github.com/trustwallet/blockatlas/storage"
 	"testing"
 	"time"
 )
 
-func getBlock(num int64) (*blockatlas.Block, error) {
-	if num == 0 {
-		return nil, errors.New("test")
-	}
-	return &blockatlas.Block{}, nil
+var wantedMockedNumber int64
+
+func TestParser_Run(t *testing.T) {
 }
 
-func TestRetry(t *testing.T) {
+func Test_getBlocksInterval(t *testing.T) {
+	p := Parser{
+		BlockAPI:                 getMockedBlockAPI(t),
+		LatestParsedBlockTracker: getMockedRedis(t),
+		ParsingBlocksInterval:    time.Minute,
+		BacklogCount:             10,
+		MaxBacklogBlocks:         100,
+	}
+	latestParsedBlock := int64(100)
+	wantedMockedNumber = 110
+	lastParsedBlock, currentBlock, err := p.getBlocksInterval()
+	assert.Nil(t, err)
+	assert.Equal(t, wantedMockedNumber, currentBlock)
+	assert.Equal(t, latestParsedBlock, lastParsedBlock)
+}
+
+func Test_addLatestParsedBlock(t *testing.T) {
+	p := Parser{
+		BlockAPI:                 getMockedBlockAPI(t),
+		LatestParsedBlockTracker: getMockedRedis(t),
+		ParsingBlocksInterval:    time.Minute,
+		BacklogCount:             10,
+		MaxBacklogBlocks:         100,
+	}
+	err := p.addLatestParsedBlock()
+	assert.Nil(t, err)
+	block, err := p.LatestParsedBlockTracker.GetBlockNumber(p.coin)
+	assert.Nil(t, err)
+	assert.Equal(t, int64(1), block)
+
+	err = p.addLatestParsedBlock()
+	assert.Nil(t, err)
+	blockTwo, err := p.LatestParsedBlockTracker.GetBlockNumber(p.coin)
+	assert.Nil(t, err)
+	assert.Equal(t, int64(2), blockTwo)
+}
+
+func TestParser_getBlockByNumberWithRetry(t *testing.T) {
 	block, err := getBlockByNumberWithRetry(3, time.Millisecond*1, getBlock, 1)
 	if err != nil {
 		t.Error(err)
@@ -25,7 +66,7 @@ func TestRetry(t *testing.T) {
 	}
 }
 
-func TestRetryError(t *testing.T) {
+func TestParser_getBlockByNumberWithRetry_Error(t *testing.T) {
 	now := time.Now()
 	block, err := getBlockByNumberWithRetry(3, time.Millisecond*1, getBlock, 0)
 	elapsed := time.Since(now)
@@ -40,4 +81,46 @@ func TestRetryError(t *testing.T) {
 	if elapsed > time.Millisecond*6 {
 		t.Error("Thundering Herd prevent doesn't work")
 	}
+}
+
+func getBlock(num int64) (*blockatlas.Block, error) {
+	if num == 0 {
+		return nil, errors.New("test")
+	}
+	return &blockatlas.Block{}, nil
+}
+
+func getMockedBlockAPI(t *testing.T) blockatlas.BlockAPI {
+	p := Platform{CoinIndex: 60}
+	return &p
+}
+
+func getMockedRedis(t *testing.T) *storage.Storage {
+	s, err := miniredis.Run()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	cache := storage.New()
+	err = cache.Init(fmt.Sprintf("redis://%s", s.Addr()))
+	if err != nil {
+		logger.Fatal(err)
+	}
+	return cache
+}
+
+type Platform struct {
+	CoinIndex uint
+}
+
+func (p *Platform) CurrentBlockNumber() (int64, error) {
+	return wantedMockedNumber, nil
+}
+
+func (p *Platform) Coin() coin.Coin {
+	return coin.Coins[p.CoinIndex]
+}
+
+func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
+	return &blockatlas.Block{}, nil
 }

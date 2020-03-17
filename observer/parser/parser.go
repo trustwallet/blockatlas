@@ -15,14 +15,16 @@ import (
 )
 
 type Parser struct {
-	BlockAPI     blockatlas.BlockAPI
-	Tracker      storage.Tracker
-	PollInterval time.Duration
-	BacklogCount int
-	coin         uint
-	logParams    logger.Params
-	blockNumber  int64
-	mu           sync.Mutex
+	BlockAPI                 blockatlas.BlockAPI
+	LatestParsedBlockTracker storage.Tracker
+	ParsingBlocksInterval    time.Duration
+	BacklogCount             int
+	MaxBacklogBlocks         int64
+
+	logParams   logger.Params
+	mu          sync.Mutex
+	coin        uint
+	blockNumber int64
 }
 
 func (s *Parser) Run() {
@@ -34,39 +36,42 @@ func (s *Parser) Run() {
 		logger.Fatal("observer.stream_conns is 0")
 	}
 	for {
-		lastHeight, height, err := s.getLastBlockParams()
+		lastParsedBlock, currentBlock, err := s.getBlocksInterval()
 		if err != nil {
 			logger.Error(err)
 		}
-		s.fetchAndPublishBlocks(lastHeight, height)
-		time.Sleep(s.PollInterval)
+		s.fetchAndPublishBlocks(lastParsedBlock, currentBlock)
+		time.Sleep(s.ParsingBlocksInterval)
 	}
 }
 
-func (s *Parser) getLastBlockParams() (int64, int64, error) {
-	lastHeight, err := s.Tracker.GetBlockNumber(s.coin)
+func (s *Parser) getBlocksInterval() (int64, int64, error) {
+	lastParsedBlock, err := s.LatestParsedBlockTracker.GetBlockNumber(s.coin)
 	if err != nil {
 		return 0, 0, errors.E(err, "Polling failed: tracker didn't return last known block number", s.logParams)
 	}
-	height, err := s.BlockAPI.CurrentBlockNumber()
-	height -= s.BlockAPI.Coin().MinConfirmations
+	currentBlock, err := s.BlockAPI.CurrentBlockNumber()
+	currentBlock -= s.BlockAPI.Coin().MinConfirmations
 	if err != nil {
 		return 0, 0, errors.E(err, "Polling failed: source didn't return chain head number", s.logParams)
 	}
-	if height-lastHeight > int64(s.BacklogCount) {
-		lastHeight = height - int64(s.BacklogCount)
+
+	if currentBlock-lastParsedBlock > int64(s.BacklogCount) {
+		lastParsedBlock = currentBlock - int64(s.BacklogCount)
 	}
-	backLogMax := viper.GetInt64("observer.backlog_max_blocks")
-	if height-lastHeight > backLogMax {
-		lastHeight = height - backLogMax
+
+	if currentBlock-lastParsedBlock > s.MaxBacklogBlocks {
+		lastParsedBlock = currentBlock - s.MaxBacklogBlocks
 	}
-	return lastHeight, height, nil
+
+	return lastParsedBlock, currentBlock, nil
 }
 
-func (s *Parser) fetchAndPublishBlocks(lastHeight, height int64) {
-	atomic.StoreInt64(&s.blockNumber, lastHeight)
+func (s *Parser) fetchAndPublishBlocks(lastParsedBlock, currentBlock int64) {
+	atomic.StoreInt64(&s.blockNumber, lastParsedBlock)
 	var wg sync.WaitGroup
-	for i := lastHeight + 1; i <= height; i++ {
+
+	for i := lastParsedBlock + 1; i <= currentBlock; i++ {
 		wg.Add(1)
 		go s.fetchAndPublishBlock(i, &wg)
 	}
@@ -75,6 +80,7 @@ func (s *Parser) fetchAndPublishBlocks(lastHeight, height int64) {
 
 func (s *Parser) fetchAndPublishBlock(num int64, wg *sync.WaitGroup) {
 	defer wg.Done()
+
 	block, err := getBlockByNumberWithRetry(5, time.Second*5, s.BlockAPI.GetBlockByNumber, num)
 	if err != nil {
 		logger.Error(err, "Polling failed: could not get block", s.logParams, logger.Params{"block": num})
@@ -84,8 +90,8 @@ func (s *Parser) fetchAndPublishBlock(num int64, wg *sync.WaitGroup) {
 
 	// Ignore block if it's not marked as parsed (set to redis) to prevent double notifications
 	// TODO: add retry
-	if err := s.setLatestParsedBlock(num); err != nil {
-		logger.Error(err)
+	if err := s.addLatestParsedBlock(); err != nil {
+		logger.Error("addLatestParsedBlock failed", s.logParams, logger.Params{"block": num, "coin": s.coin, "err": err})
 		return
 	}
 	if err := s.publishBlock(*block); err != nil {
@@ -93,13 +99,13 @@ func (s *Parser) fetchAndPublishBlock(num int64, wg *sync.WaitGroup) {
 	}
 }
 
-func (s *Parser) setLatestParsedBlock(num int64) error {
+func (s *Parser) addLatestParsedBlock() error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	newNum := atomic.AddInt64(&s.blockNumber, 1)
-	err := s.Tracker.SetBlockNumber(s.coin, newNum)
+	err := s.LatestParsedBlockTracker.SetBlockNumber(s.coin, newNum)
 	if err != nil {
-		return errors.E(err, "SetBlockNumber failed", s.logParams, logger.Params{"block": num, "coin": s.coin})
+		return err
 	}
 	return nil
 }

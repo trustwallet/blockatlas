@@ -5,9 +5,11 @@ go 1.12
 require (
 	github.com/Azure/go-ansiterm v0.0.0-20170929234023-d6e3b3328b78 // indirect
 	github.com/Microsoft/go-winio v0.4.14 // indirect
+	github.com/NeowayLabs/wabbit v0.0.0-20200103225435-d8bc549279ec
 	github.com/Nvveen/Gotty v0.0.0-20120604004816-cd527374f1e5 // indirect
 	github.com/Pantani/httpexpect v2.0.0+incompatible
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751
+	github.com/alicebob/miniredis/v2 v2.11.3
 	github.com/btcsuite/btcutil v1.0.1
 	github.com/cenkalti/backoff v2.2.1+incompatible
 	github.com/chenjiandongx/ginprom v0.0.0-20191227144730-e11ebf56bc05
