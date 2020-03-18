@@ -8,7 +8,7 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/pkg/numbers"
-	"github.com/trustwallet/blockatlas/services/observer/parser"
+	"github.com/trustwallet/blockatlas/services/observer"
 	"github.com/trustwallet/blockatlas/storage"
 	"time"
 )
@@ -20,7 +20,7 @@ type DispatchEvent struct {
 }
 
 func RunNotifier(delivery amqp.Delivery, s storage.Addresses) {
-	var blockData parser.BlockData
+	var blockData observer.BlockData
 	if err := json.Unmarshal(delivery.Body, &blockData); err != nil {
 		logger.Error(err)
 		return
@@ -33,7 +33,7 @@ func RunNotifier(delivery amqp.Delivery, s storage.Addresses) {
 
 	addresses := blockTransactions.GetUniqueAddresses()
 
-	subs, err := s.Lookup(blockData.Coin, addresses)
+	subs, err := s.FindSubscriptions(blockData.Coin, addresses)
 	if err != nil || len(subs) == 0 {
 		return
 	}

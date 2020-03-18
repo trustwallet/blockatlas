@@ -7,6 +7,7 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
+	"github.com/trustwallet/blockatlas/services/observer"
 	"github.com/trustwallet/blockatlas/storage"
 	"math/rand"
 	"sync"
@@ -20,16 +21,10 @@ type Parser struct {
 	ParsingBlocksInterval    time.Duration
 	BacklogCount             int
 	MaxBacklogBlocks         int64
-
-	logParams   logger.Params
-	mu          sync.Mutex
-	coin        uint
-	blockNumber int64
-}
-
-type BlockData struct {
-	Block blockatlas.Block
-	Coin  uint
+	logParams                logger.Params
+	mu                       sync.Mutex
+	coin                     uint
+	blockNumber              int64
 }
 
 func (s *Parser) Run() {
@@ -100,7 +95,7 @@ func (s *Parser) fetchAndPublishBlock(num int64, wg *sync.WaitGroup) {
 		return
 	}
 
-	blockData := BlockData{
+	blockData := observer.BlockData{
 		Block: *block,
 		Coin:  s.coin,
 	}
@@ -120,7 +115,7 @@ func (s *Parser) addLatestParsedBlock() error {
 	return nil
 }
 
-func (s *Parser) publishBlock(blockData BlockData) error {
+func (s *Parser) publishBlock(blockData observer.BlockData) error {
 	body, err := json.Marshal(blockData)
 	if err != nil {
 		return err

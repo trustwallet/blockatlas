@@ -57,7 +57,7 @@ func TestSubscriberAddSubscription(t *testing.T) {
 	assert.NotNil(t, result)
 
 	for _, wanted := range wantedEvents {
-		result, err := setup.Cache.Lookup(wanted.Coin, []string{wanted.Address})
+		result, err := setup.Cache.FindSubscriptions(wanted.Coin, []string{wanted.Address})
 		assert.Nil(t, err)
 		assert.Equal(t, result[0], wanted)
 	}

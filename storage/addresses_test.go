@@ -2,7 +2,7 @@ package storage
 
 import (
 	"fmt"
-	"github.com/alicebob/miniredis/v2"
+	"github.com/alicebob/miniredis"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"testing"
@@ -40,7 +40,7 @@ func TestStorage_Lookup(t *testing.T) {
 		}
 
 		t.Run(tt.name, func(t *testing.T) {
-			if got, err := s.Lookup(uint(tt.fields.coin), tt.fields.addresses); !isEqual(got, tt.want) || err != nil {
+			if got, err := s.FindSubscriptions(uint(tt.fields.coin), tt.fields.addresses); !isEqual(got, tt.want) || err != nil {
 				t.Fatal(got, tt.want)
 			}
 		})
@@ -51,12 +51,23 @@ func isEqual(given, want []blockatlas.Subscription) bool {
 	if len(given) != len(want) {
 		return false
 	}
-	for i, g := range given {
-		if g.GUID != want[i].GUID || g.Address != want[i].Address || g.Coin != want[i].Coin {
-			return false
+	var givenCounter int
+	for _, g := range given {
+		var wantCounter int
+		for _, w := range want {
+			if w == g {
+				wantCounter++
+			}
+		}
+		if wantCounter > 0 {
+			givenCounter++
 		}
 	}
-	return true
+
+	if givenCounter == len(want) {
+		return true
+	}
+	return false
 }
 
 func initStorage(t *testing.T) Storage {

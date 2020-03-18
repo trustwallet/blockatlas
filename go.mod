@@ -9,7 +9,8 @@ require (
 	github.com/Nvveen/Gotty v0.0.0-20120604004816-cd527374f1e5 // indirect
 	github.com/Pantani/httpexpect v2.0.0+incompatible
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751
-	github.com/alicebob/miniredis/v2 v2.11.3
+	github.com/alicebob/gopher-json v0.0.0-20180125190556-5a6b3ba71ee6 // indirect
+	github.com/alicebob/miniredis v2.5.0+incompatible
 	github.com/btcsuite/btcutil v1.0.1
 	github.com/cenkalti/backoff v2.2.1+incompatible
 	github.com/chenjiandongx/ginprom v0.0.0-20191227144730-e11ebf56bc05
@@ -42,6 +43,7 @@ require (
 	github.com/swaggo/gin-swagger v1.2.0
 	github.com/swaggo/swag v1.6.5
 	github.com/wealdtech/go-ens/v3 v3.2.0
+	github.com/yuin/gopher-lua v0.0.0-20191220021717-ab39c6098bdb // indirect
 	golang.org/x/crypto v0.0.0-20200128174031-69ecbb4d6d5d
 	golang.org/x/net v0.0.0-20200301022130-244492dfa37a // indirect
 	golang.org/x/sys v0.0.0-20200302150141-5c8b2ff67527 // indirect

@@ -4,35 +4,55 @@ import (
 	"fmt"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
+	"sync"
 )
 
 const (
 	ATLAS_OBSERVER = "ATLAS_OBSERVER"
 )
 
-func (s *Storage) Lookup(coin uint, addresses []string) ([]blockatlas.Subscription, error) {
+func (s *Storage) FindSubscriptions(coin uint, addresses []string) ([]blockatlas.Subscription, error) {
 	if len(addresses) == 0 {
 		return nil, errors.E("cannot look up an empty list")
 	}
-	observersChan := make(chan blockatlas.Subscription)
-	observers := make([]blockatlas.Subscription, 0)
+
+	observersSliceChan := make(chan []blockatlas.Subscription, len(addresses))
+	observers := make([]blockatlas.Subscription, 0, len(addresses))
+
+	var wg sync.WaitGroup
+	wg.Add(len(addresses))
+
 	for _, address := range addresses {
-		go s.write(coin, address, observersChan)
-		observers = append(observers, <-observersChan)
+		go s.findSubscriptionsByAddress(coin, address, observersSliceChan, &wg)
 	}
+	wg.Wait()
+	close(observersSliceChan)
+
+	for slice := range observersSliceChan {
+		for _, v := range slice {
+			observers = append(observers, v)
+		}
+	}
+
 	return observers, nil
 }
 
-func (s *Storage) write(coin uint, address string, sub chan blockatlas.Subscription) {
+func (s *Storage) findSubscriptionsByAddress(coin uint, address string, sub chan<- []blockatlas.Subscription, wg *sync.WaitGroup) {
+	defer wg.Done()
 	key := getSubscriptionKey(coin, address)
 	var guids []string
 	err := s.GetHMValue(ATLAS_OBSERVER, key, &guids)
 	if err != nil {
 		return
 	}
+
+	result := make([]blockatlas.Subscription, 0, len(guids))
+
 	for _, guid := range guids {
-		sub <- blockatlas.Subscription{Coin: coin, Address: address, GUID: guid}
+		result = append(result, blockatlas.Subscription{Coin: coin, Address: address, GUID: guid})
 	}
+
+	sub <- result
 }
 
 func (s *Storage) AddSubscriptions(subscriptions []blockatlas.Subscription) error {
