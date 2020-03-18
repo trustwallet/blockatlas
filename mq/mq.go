@@ -11,7 +11,6 @@ var (
 	PrefetchCount int
 	amqpChan      *amqp.Channel
 	conn          *amqp.Connection
-	queue         amqp.Queue
 )
 
 type (

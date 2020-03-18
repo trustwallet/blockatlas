@@ -211,3 +211,6 @@ kava:
 
 kusama:
   api: https://kusama.subscan.io/api
+
+near:
+  api: https://staging-rpc.nearprotocol.com

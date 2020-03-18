@@ -6,14 +6,6 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/numbers"
 )
 
-type Direction string
-type Status string
-type TokenType string
-type TransactionType string
-type KeyType string
-type KeyTitle string
-
-// Types of transaction statuses
 const (
 	StatusCompleted Status = "completed"
 	StatusPending   Status = "pending"
@@ -57,146 +49,177 @@ const (
 	AnyActionDelegation   KeyTitle = "Delegation"
 	AnyActionUndelegation KeyTitle = "Undelegation"
 	AnyActionClaimRewards KeyTitle = "Claim Rewards"
+
+	// TxPerPage says how many transactions to return per page
+	TxPerPage = 25
 )
 
-// TxPerPage says how many transactions to return per page
-const TxPerPage = 25
+type (
+	// Types of transaction statuses
+	Direction       string
+	Status          string
+	TokenType       string
+	TransactionType string
+	KeyType         string
+	KeyTitle        string
 
-// TxPage is a page of transactions
-type TxPage []Tx
+	Block struct {
+		Number int64  `json:"number"`
+		ID     string `json:"id,omitempty"`
+		Txs    []Tx   `json:"txs"`
+	}
 
-// Amount is a positive decimal integer string.
-// It is written in the smallest possible unit (e.g. Wei, Satoshis)
-type Amount string
+	// TxPage is a page of transactions
+	TxPage []Tx
 
-// Tx describes an on-chain transaction generically
-type Tx struct {
-	// Unique identifier
-	ID string `json:"id"`
-	// SLIP-44 coin index of the platform
-	Coin uint `json:"coin"`
-	// Address of the transaction sender
-	From string `json:"from"`
-	// Address of the transaction recipient
-	To string `json:"to"`
-	// Transaction fee (native currency)
-	Fee Amount `json:"fee"`
-	// Unix timestamp of the block the transaction was included in
-	Date int64 `json:"date"`
-	// Height of the block the transaction was included in
-	Block uint64 `json:"block"`
-	// Status of the transaction
-	Status Status `json:"status"`
-	// Empty if the transaction was successful,
-	// else error explaining why the transaction failed (optional)
-	Error string `json:"error,omitempty"`
-	// Transaction nonce or sequence
-	Sequence uint64 `json:"sequence,omitempty"`
-	// Type of metadata
-	Type TransactionType `json:"type"`
-	// Input addresses
-	Inputs []TxOutput `json:"inputs,omitempty"`
-	// Output addresses
-	Outputs []TxOutput `json:"outputs,omitempty"`
-	// Transaction Direction
-	Direction Direction `json:"direction,omitempty"`
-	// Meta data object
-	Memo string      `json:"memo"`
-	Meta interface{} `json:"metadata"`
-}
+	// Amount is a positive decimal integer string.
+	// It is written in the smallest possible unit (e.g. Wei, Satoshis)
+	Amount string
 
-type TxOutput struct {
-	Address string `json:"address"`
-	Value   Amount `json:"value"`
-}
+	// Tx describes an on-chain transaction generically
+	Tx struct {
+		// Unique identifier
+		ID string `json:"id"`
+		// SLIP-44 coin index of the platform
+		Coin uint `json:"coin"`
+		// Address of the transaction sender
+		From string `json:"from"`
+		// Address of the transaction recipient
+		To string `json:"to"`
+		// Transaction fee (native currency)
+		Fee Amount `json:"fee"`
+		// Unix timestamp of the block the transaction was included in
+		Date int64 `json:"date"`
+		// Height of the block the transaction was included in
+		Block uint64 `json:"block"`
+		// Status of the transaction
+		Status Status `json:"status"`
+		// Empty if the transaction was successful,
+		// else error explaining why the transaction failed (optional)
+		Error string `json:"error,omitempty"`
+		// Transaction nonce or sequence
+		Sequence uint64 `json:"sequence,omitempty"`
+		// Type of metadata
+		Type TransactionType `json:"type"`
+		// Input addresses
+		Inputs []TxOutput `json:"inputs,omitempty"`
+		// Output addresses
+		Outputs []TxOutput `json:"outputs,omitempty"`
+		// Transaction Direction
+		Direction Direction `json:"direction,omitempty"`
+		// Meta data object
+		Memo string      `json:"memo"`
+		Meta interface{} `json:"metadata"`
+	}
 
-// Transfer describes the transfer of currency native to the platform
-type Transfer struct {
-	Value    Amount `json:"value"`
-	Symbol   string `json:"symbol"`
-	Decimals uint   `json:"decimals"`
-}
+	TxOutput struct {
+		Address string `json:"address"`
+		Value   Amount `json:"value"`
+	}
 
-// NativeTokenTransfer describes the transfer of native tokens.
-// Example: Stellar Tokens, TRC10
-type NativeTokenTransfer struct {
-	Name     string `json:"name"`
-	Symbol   string `json:"symbol"`
-	TokenID  string `json:"token_id"`
-	Decimals uint   `json:"decimals"`
-	Value    Amount `json:"value"`
-	From     string `json:"from"`
-	To       string `json:"to"`
-}
+	// Transfer describes the transfer of currency native to the platform
+	Transfer struct {
+		Value    Amount `json:"value"`
+		Symbol   string `json:"symbol"`
+		Decimals uint   `json:"decimals"`
+	}
 
-// TokenTransfer describes the transfer of non-native tokens.
-// Examples: ERC-20, TRC20
-type TokenTransfer struct {
-	Name     string `json:"name"`
-	Symbol   string `json:"symbol"`
-	TokenID  string `json:"token_id"`
-	Decimals uint   `json:"decimals"`
-	Value    Amount `json:"value"`
-	From     string `json:"from"`
-	To       string `json:"to"`
-}
+	// NativeTokenTransfer describes the transfer of native tokens.
+	// Example: Stellar Tokens, TRC10
+	NativeTokenTransfer struct {
+		Name     string `json:"name"`
+		Symbol   string `json:"symbol"`
+		TokenID  string `json:"token_id"`
+		Decimals uint   `json:"decimals"`
+		Value    Amount `json:"value"`
+		From     string `json:"from"`
+		To       string `json:"to"`
+	}
 
-// CollectibleTransfer describes the transfer of a
-// "collectible", unique token.
-type CollectibleTransfer struct {
-	Name     string `json:"name"`
-	Contract string `json:"contract"`
-	ImageURL string `json:"image_url"`
-}
+	// TokenTransfer describes the transfer of non-native tokens.
+	// Examples: ERC-20, TRC20
+	TokenTransfer struct {
+		Name     string `json:"name"`
+		Symbol   string `json:"symbol"`
+		TokenID  string `json:"token_id"`
+		Decimals uint   `json:"decimals"`
+		Value    Amount `json:"value"`
+		From     string `json:"from"`
+		To       string `json:"to"`
+	}
 
-// TokenSwap describes the exchange of two different tokens
-type TokenSwap struct {
-	Input  TokenTransfer `json:"input"`
-	Output TokenTransfer `json:"output"`
-}
+	// CollectibleTransfer describes the transfer of a
+	// "collectible", unique token.
+	CollectibleTransfer struct {
+		Name     string `json:"name"`
+		Contract string `json:"contract"`
+		ImageURL string `json:"image_url"`
+	}
 
-// ContractCall describes a
-type ContractCall struct {
-	Input string `json:"input"`
-	Value string `json:"value"`
-}
+	// TokenSwap describes the exchange of two different tokens
+	TokenSwap struct {
+		Input  TokenTransfer `json:"input"`
+		Output TokenTransfer `json:"output"`
+	}
 
-// Currency describes currency information with its amount
-type Currency struct {
-	Token Token  `json:"token"`
-	Value Amount `json:"value"`
-}
+	// ContractCall describes a
+	ContractCall struct {
+		Input string `json:"input"`
+		Value string `json:"value"`
+	}
 
-// MultiCurrencyTransfer describes the transfer of multiple currency native to the platform
-type MultiCurrencyTransfer struct {
-	Currencies []Currency `json:"currencies"`
-	Fees       []Currency `json:"fees"`
-}
+	// Currency describes currency information with its amount
+	Currency struct {
+		Token Token  `json:"token"`
+		Value Amount `json:"value"`
+	}
 
-// AnyAction describes all other types
-type AnyAction struct {
-	Coin     uint     `json:"coin"`
-	Title    KeyTitle `json:"title"`
-	Key      KeyType  `json:"key"`
-	TokenID  string   `json:"token_id"`
-	Name     string   `json:"name"`
-	Symbol   string   `json:"symbol"`
-	Decimals uint     `json:"decimals"`
-	Value    Amount   `json:"value"`
-}
+	// MultiCurrencyTransfer describes the transfer of multiple currency native to the platform
+	MultiCurrencyTransfer struct {
+		Currencies []Currency `json:"currencies"`
+		Fees       []Currency `json:"fees"`
+	}
 
-// TokenPage is a page of transactions.
-type TokenPage []Token
+	// AnyAction describes all other types
+	AnyAction struct {
+		Coin     uint     `json:"coin"`
+		Title    KeyTitle `json:"title"`
+		Key      KeyType  `json:"key"`
+		TokenID  string   `json:"token_id"`
+		Name     string   `json:"name"`
+		Symbol   string   `json:"symbol"`
+		Decimals uint     `json:"decimals"`
+		Value    Amount   `json:"value"`
+	}
 
-// Token describes the non-native tokens.
-// Examples: ERC-20, TRC-20, BEP-2
-type Token struct {
-	Name     string    `json:"name"`
-	Symbol   string    `json:"symbol"`
-	Decimals uint      `json:"decimals"`
-	TokenID  string    `json:"token_id"`
-	Coin     uint      `json:"coin"`
-	Type     TokenType `json:"type"`
+	// TokenPage is a page of transactions.
+	TokenPage []Token
+
+	// Token describes the non-native tokens.
+	// Examples: ERC-20, TRC-20, BEP-2
+	Token struct {
+		Name     string    `json:"name"`
+		Symbol   string    `json:"symbol"`
+		Decimals uint      `json:"decimals"`
+		TokenID  string    `json:"token_id"`
+		Coin     uint      `json:"coin"`
+		Type     TokenType `json:"type"`
+	}
+)
+
+func (b *Block) GetTransactionsMap() map[string]*TxSet {
+	txMap := make(map[string]*TxSet)
+	for i := 0; i < len(b.Txs); i++ {
+		addresses := b.Txs[i].GetAddresses()
+		addresses = append(addresses, b.Txs[i].GetUtxoAddresses()...)
+		for _, address := range addresses {
+			if txMap[address] == nil {
+				txMap[address] = new(TxSet)
+			}
+			txMap[address].Add(&b.Txs[i])
+		}
+	}
+	return txMap
 }
 
 func (t *Tx) GetUtxoAddresses() (addresses []string) {
