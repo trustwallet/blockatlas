@@ -7,7 +7,8 @@ BUILD := $(shell git rev-parse --short HEAD)
 DATETIME := $(shell date +"%Y.%m.%d-%H:%M:%S")
 PROJECT_NAME := $(shell basename "$(PWD)")
 API_SERVICE := platform_api
-OBSERVER_SERVICE := observer_worker
+OSERVER_NOTIFIER := observer_notifier
+OBSERVER_PARSER := observer_parser
 OBSERVER_SUBSCRIBER := observer_subscriber
 SWAGGER_API := swagger_api
 COIN_FILE := coin/coins.yml
@@ -33,7 +34,8 @@ STDERR := /tmp/.$(PROJECT_NAME)-stderr.txt
 
 # PID file will keep the process id of the server
 PID_API := /tmp/.$(PROJECT_NAME).$(API_SERVICE).pid
-PID_OBSERVER := /tmp/.$(PROJECT_NAME).$(OBSERVER_SERVICE).pid
+PID_OBSERVER_NOTIFIER := /tmp/.$(PROJECT_NAME).$(OBSERVER_NOTIFIER).pid
+PID_OBSERVER_PARSER := /tmp/.$(PROJECT_NAME).$(OBSERVER_PARSER).pid
 PID_OBSERVER_SUBSCRIBER := /tmp/.$(PROJECT_NAME).$(OBSERVER_SUBSCRIBER).pid
 PID_SWAGGER_API := /tmp/.$(PROJECT_NAME).$(SWAGGER_API).pid
 # Make is verbose in Linux. Make it silent.
@@ -44,7 +46,7 @@ install: go-get
 
 ## start: Start API, Observer and Sync in development mode.
 start:
-	@bash -c "$(MAKE) clean compile start-platform-api start-observer-worker start-observer-subscriber"
+	@bash -c "$(MAKE) clean compile start-platform-api start-observer-parser start-observer-notifier start-observer-subscriber"
 
 ## start-api: Start platform api in development mode.
 start-platform-api: stop
@@ -60,14 +62,21 @@ start-swagger-api: stop
 	@cat $(PID_SWAGGER_API) | sed "/^/s/^/  \>  Sync PID: /"
 	@echo "  >  Error log: $(STDERR)"
 
-## start-observer-worker: Start swagger api in development mode.
-start-observer-worker: stop
+## start-observer-parser: Start observer-parser in development mode.
+start-observer-parser: stop
 	@echo "  >  Starting $(PROJECT_NAME)"
-	@-$(GOBIN)/$(OBSERVER_SERVICE)/observer_worker -c $(CONFIG_FILE) 2>&1 & echo $$! > $(PID_OBSERVER)
-	@cat $(PID_OBSERVER) | sed "/^/s/^/  \>  Sync PID: /"
+	@-$(GOBIN)/$(OBSERVER_PARSER)/observer_parser -c $(CONFIG_FILE) 2>&1 & echo $$! > $(PID_OBSERVER_PARSER)
+	@cat $(PID_OBSERVER_PARSER) | sed "/^/s/^/  \>  Sync PID: /"
 	@echo "  >  Error log: $(STDERR)"
 
-## start-observer-worker: Start swagger api in development mode.
+## start-observer-notifier: Start observer-notifier in development mode.
+start-observer-notifier: stop
+	@echo "  >  Starting $(PROJECT_NAME)"
+	@-$(GOBIN)/$(OBSERVER_NOTIFIER)/observer_notifier -c $(CONFIG_FILE) 2>&1 & echo $$! > $(PID_OBSERVER_NOTIFIER)
+	@cat $(PID_OBSERVER_NOTIFIER) | sed "/^/s/^/  \>  Sync PID: /"
+	@echo "  >  Error log: $(STDERR)"
+
+## start-observer-subscriber: Start observer-subscriber in development mode.
 start-observer-subscriber: stop
 	@echo "  >  Starting $(PROJECT_NAME)"
 	@-$(GOBIN)/$(OBSERVER_SUBSCRIBER)/observer_subscriber -c $(CONFIG_FILE) 2>&1 & echo $$! > $(PID_OBSERVER_SUBSCRIBER)
@@ -76,12 +85,13 @@ start-observer-subscriber: stop
 
 ## stop: Stop development mode.
 stop:
-	@-touch $(PID_API) $(PID_OBSERVER) $(PID_OBSERVER_SUBSCRIBER) $(PID_SWAGGER_API)
+	@-touch $(PID_API) $(PID_OBSERVER_NOTIFIER) $(PID_OBSERVER_PARSER) $(PID_OBSERVER_SUBSCRIBER) $(PID_SWAGGER_API)
 	@-kill `cat $(PID_API)` 2> /dev/null || true
-	@-kill `cat $(PID_OBSERVER)` 2> /dev/null || true
+	@-kill `cat $(OBSERVER_NOTIFIER)` 2> /dev/null || true
+	@-kill `cat $(OBSERVER_PARSER)` 2> /dev/null || true
 	@-kill `cat $(PID_OBSERVER_SUBSCRIBER)` 2> /dev/null || true
 	@-kill `cat $(PID_SWAGGER_API)` 2> /dev/null || true
-	@-rm $(PID_API) $(PID_OBSERVER) $(PID_OBSERVER_SUBSCRIBER) $(PID_SWAGGER_API)
+	@-rm $(PID_API) $(PID_OBSERVER_NOTIFIER) $(PID_OBSERVER_PARSER) $(PID_OBSERVER_SUBSCRIBER) $(PID_SWAGGER_API)
 
 ## compile: Compile the project.
 compile:
@@ -161,8 +171,10 @@ go-compile: go-get go-build
 go-build:
 	@echo "  >  Building platform_api binary..."
 	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(API_SERVICE)/platform_api ./cmd/$(API_SERVICE)
-	@echo "  >  Building observer_worker binary..."
-	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(OBSERVER_SERVICE)/observer_worker ./cmd/$(OBSERVER_SERVICE)
+	@echo "  >  Building observer_notifier binary..."
+	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(OSERVER_NOTIFIER)/observer_notifier ./cmd/$(OSERVER_NOTIFIER)
+	@echo "  >  Building observer_parser binary..."
+	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(OBSERVER_PARSER)/observer_parser ./cmd/$(OBSERVER_PARSER)
 	@echo "  >  Building observer_subscriber binary..."
 	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(OBSERVER_SUBSCRIBER)/observer_subscriber ./cmd/$(OBSERVER_SUBSCRIBER)
 	@echo "  >  Building swagger_api binary..."

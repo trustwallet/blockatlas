@@ -36,7 +36,7 @@ func Test_getBlocksInterval(t *testing.T) {
 
 func Test_addLatestParsedBlock(t *testing.T) {
 	p := Parser{
-		BlockAPI:                 getMockedBlockAPI(t),
+		BlockAPI:                 getMockedBlockAPI(),
 		LatestParsedBlockTracker: getMockedRedis(t),
 		ParsingBlocksInterval:    time.Minute,
 		BacklogCount:             10,
