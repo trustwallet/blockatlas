@@ -7,10 +7,10 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
-	"github.com/trustwallet/blockatlas/services/observer"
 	"github.com/trustwallet/blockatlas/storage"
+	"golang.org/x/sync/errgroup"
 	"math/rand"
-	"sync"
+	"sort"
 	"sync/atomic"
 	"time"
 )
@@ -22,7 +22,6 @@ type Parser struct {
 	BacklogCount             int
 	MaxBacklogBlocks         int64
 	logParams                logger.Params
-	mu                       sync.Mutex
 	coin                     uint
 	blockNumber              int64
 }
@@ -69,54 +68,58 @@ func (s *Parser) getBlocksInterval() (int64, int64, error) {
 
 func (s *Parser) fetchAndPublishBlocks(lastParsedBlock, currentBlock int64) {
 	atomic.StoreInt64(&s.blockNumber, lastParsedBlock)
-	var wg sync.WaitGroup
 
+	blocksChan := make(chan blockatlas.Block, currentBlock)
+
+	var g errgroup.Group
 	for i := lastParsedBlock + 1; i <= currentBlock; i++ {
-		wg.Add(1)
-		go s.fetchAndPublishBlock(i, &wg)
+		i := i
+		g.Go(func() error {
+			return s.fetchAndPublishBlock(i, blocksChan)
+		})
 	}
-	wg.Wait()
-}
-
-func (s *Parser) fetchAndPublishBlock(num int64, wg *sync.WaitGroup) {
-	defer wg.Done()
-
-	block, err := getBlockByNumberWithRetry(5, time.Second*5, s.BlockAPI.GetBlockByNumber, num)
-	if err != nil {
-		logger.Error(err, "Polling failed: could not get block", s.logParams, logger.Params{"block": num})
-		return
-	}
-	logger.Info(err, "Got new block", s.logParams, logger.Params{"block": num, "txs": len(block.Txs)})
-
-	// Ignore block if it's not marked as parsed (set to redis) to prevent double notifications
-	// TODO: add retry
-	if err := s.addLatestParsedBlock(); err != nil {
-		logger.Error("addLatestParsedBlock failed", s.logParams, logger.Params{"block": num, "coin": s.coin, "err": err})
-		return
-	}
-
-	blockData := observer.BlockData{
-		Block: *block,
-		Coin:  s.coin,
-	}
-	if err := s.publishBlock(blockData); err != nil {
+	if err := g.Wait(); err != nil {
 		logger.Error(err)
 	}
+	close(blocksChan)
+
+	blocksList := make([]blockatlas.Block, 0, len(blocksChan))
+	for block := range blocksChan {
+		blocksList = append(blocksList, block)
+	}
+
+	sort.Slice(blocksList, func(i, j int) bool {
+		return blocksList[i].Number < blocksList[j].Number
+	})
+
+	for _, block := range blocksList {
+		if err := s.publishBlock(block); err != nil {
+			logger.Error(err)
+		}
+	}
+
+	// Set last blockNumber to redis
+	if len(blocksList) > 0 {
+		lastBlockNumber := blocksList[len(blocksList)-1].Number
+		err := s.LatestParsedBlockTracker.SetBlockNumber(s.coin, lastBlockNumber)
+		if err != nil {
+			logger.Error(err)
+		}
+	}
 }
 
-func (s *Parser) addLatestParsedBlock() error {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	newNum := atomic.AddInt64(&s.blockNumber, 1)
-	err := s.LatestParsedBlockTracker.SetBlockNumber(s.coin, newNum)
+func (s *Parser) fetchAndPublishBlock(num int64, blocksChan chan<- blockatlas.Block) error {
+	block, err := getBlockByNumberWithRetry(5, time.Second*5, s.BlockAPI.GetBlockByNumber, num)
 	if err != nil {
-		return err
+		return errors.E(err, "Polling failed: could not get block", s.logParams, logger.Params{"block": num})
 	}
+	logger.Info(err, "Got new block", s.logParams, logger.Params{"block": num, "txs": len(block.Txs)})
+	blocksChan <- *block
 	return nil
 }
 
-func (s *Parser) publishBlock(blockData observer.BlockData) error {
-	body, err := json.Marshal(blockData)
+func (s *Parser) publishBlock(block blockatlas.Block) error {
+	body, err := json.Marshal(block)
 	if err != nil {
 		return err
 	}

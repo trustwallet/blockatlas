@@ -2,14 +2,15 @@ package notifier
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/streadway/amqp"
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/pkg/numbers"
-	"github.com/trustwallet/blockatlas/services/observer"
 	"github.com/trustwallet/blockatlas/storage"
+	"sync"
 	"time"
 )
 
@@ -20,30 +21,43 @@ type DispatchEvent struct {
 }
 
 func RunNotifier(delivery amqp.Delivery, s storage.Addresses) {
-	var blockData observer.BlockData
-	if err := json.Unmarshal(delivery.Body, &blockData); err != nil {
+	defer func() {
+		if err := delivery.Ack(false); err != nil {
+			logger.Error(err)
+		}
+	}()
+	var block blockatlas.Block
+	if err := json.Unmarshal(delivery.Body, &block); err != nil {
 		logger.Error(err)
 		return
 	}
 
-	blockTransactions := blockData.Block.GetTransactionsMap()
+	logger.Info(fmt.Sprintf("Consume new block:%d", block.Number))
+
+	blockTransactions := block.GetTransactionsMap()
 	if len(blockTransactions.Map) == 0 {
 		return
 	}
 
 	addresses := blockTransactions.GetUniqueAddresses()
 
-	subs, err := s.FindSubscriptions(blockData.Coin, addresses)
+	if len(block.Txs) == 0 {
+		return
+	}
+	subs, err := s.FindSubscriptions(block.Txs[0].Coin, addresses)
 	if err != nil || len(subs) == 0 {
 		return
 	}
-
+	var wg sync.WaitGroup
+	wg.Add(len(subs))
 	for _, sub := range subs {
-		go buildAndPostMessage(blockTransactions, sub)
+		go buildAndPostMessage(blockTransactions, sub, &wg)
 	}
+	wg.Wait()
 }
 
-func buildAndPostMessage(blockTransactions blockatlas.TxSetMap, sub blockatlas.Subscription) {
+func buildAndPostMessage(blockTransactions blockatlas.TxSetMap, sub blockatlas.Subscription, wg *sync.WaitGroup) {
+	defer wg.Done()
 	tx, ok := blockTransactions.Map[sub.Address]
 	if !ok {
 		return
@@ -67,7 +81,7 @@ func buildAndPostMessage(blockTransactions blockatlas.TxSetMap, sub blockatlas.S
 			"txID": tx.ID,
 		}
 
-		go publishTransaction(sub.GUID, txJson, logParams)
+		publishTransaction(sub.GUID, txJson, logParams)
 	}
 }
 
