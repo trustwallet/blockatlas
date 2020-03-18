@@ -26,51 +26,48 @@ func RunNotifier(delivery amqp.Delivery, s storage.Addresses) {
 		return
 	}
 
-	txMap := blockData.Block.GetTransactionsMap()
-	if len(txMap) == 0 {
+	blockTransactions := blockData.Block.GetTransactionsMap()
+	if len(blockTransactions.Map) == 0 {
 		return
 	}
 
-	// Build list of unique addresses
-	var addresses []string
-	for address := range txMap {
-		if len(address) == 0 {
-			continue
-		}
-		addresses = append(addresses, address)
-	}
+	addresses := blockTransactions.GetUniqueAddresses()
 
-	// Lookup subscriptions
 	subs, err := s.Lookup(blockData.Coin, addresses)
 	if err != nil || len(subs) == 0 {
 		return
 	}
+
 	for _, sub := range subs {
-		tx, ok := txMap[sub.Address]
-		if !ok {
-			continue
-		}
-		for _, tx := range tx.Txs() {
-			tx.Direction = tx.GetTransactionDirection(sub.Address)
-			tx.InferUtxoValue(sub.Address, tx.Coin)
-			action := DispatchEvent{
-				Action: tx.Type,
-				Result: &tx,
-				GUID:   sub.GUID,
-			}
-			txJson, err := json.Marshal(action)
-			if err != nil {
-				logger.Panic(err)
-			}
+		go buildAndPostMessage(blockTransactions, sub)
+	}
+}
 
-			logParams := logger.Params{
-				"guid": sub.GUID,
-				"coin": sub.Coin,
-				"txID": tx.ID,
-			}
-
-			go publishTransaction(sub.GUID, txJson, logParams)
+func buildAndPostMessage(blockTransactions blockatlas.TxSetMap, sub blockatlas.Subscription) {
+	tx, ok := blockTransactions.Map[sub.Address]
+	if !ok {
+		return
+	}
+	for _, tx := range tx.Txs() {
+		tx.Direction = tx.GetTransactionDirection(sub.Address)
+		tx.InferUtxoValue(sub.Address, tx.Coin)
+		action := DispatchEvent{
+			Action: tx.Type,
+			Result: &tx,
+			GUID:   sub.GUID,
 		}
+		txJson, err := json.Marshal(action)
+		if err != nil {
+			logger.Panic(err)
+		}
+
+		logParams := logger.Params{
+			"guid": sub.GUID,
+			"coin": sub.Coin,
+			"txID": tx.ID,
+		}
+
+		go publishTransaction(sub.GUID, txJson, logParams)
 	}
 }
 

@@ -48,7 +48,7 @@ func TestSubscriberAddSubscription(t *testing.T) {
 		err = mq.Subscriptions.Publish(body)
 		assert.Nil(t, err)
 
-		go mq.Subscriptions.RunConsumer(subscriber.Consume, setup.Cache)
+		go mq.Subscriptions.RunConsumer(subscriber.RunSubscriber, setup.Cache)
 		time.Sleep(time.Second / 5)
 	}
 

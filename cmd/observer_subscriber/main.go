@@ -43,6 +43,6 @@ func main() {
 	if err := mq.Subscriptions.Declare(); err != nil {
 		logger.Fatal(err)
 	}
-	mq.Subscriptions.RunConsumer(subscriber.Consume, cache)
+	mq.Subscriptions.RunConsumer(subscriber.RunSubscriber, cache)
 	<-make(chan struct{})
 }

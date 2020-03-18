@@ -207,19 +207,19 @@ type (
 	}
 )
 
-func (b *Block) GetTransactionsMap() map[string]*TxSet {
-	txMap := make(map[string]*TxSet)
+func (b *Block) GetTransactionsMap() TxSetMap {
+	txSetMap := TxSetMap{Map: make(map[string]*TxSet)}
 	for i := 0; i < len(b.Txs); i++ {
 		addresses := b.Txs[i].GetAddresses()
 		addresses = append(addresses, b.Txs[i].GetUtxoAddresses()...)
 		for _, address := range addresses {
-			if txMap[address] == nil {
-				txMap[address] = new(TxSet)
+			if txSetMap.Map[address] == nil {
+				txSetMap.Map[address] = new(TxSet)
 			}
-			txMap[address].Add(&b.Txs[i])
+			txSetMap.Map[address].Add(&b.Txs[i])
 		}
 	}
-	return txMap
+	return txSetMap
 }
 
 func (t *Tx) GetUtxoAddresses() (addresses []string) {

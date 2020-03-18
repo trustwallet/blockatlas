@@ -14,7 +14,7 @@ const (
 	UpdateSubscription blockatlas.SubscriptionOperation = "UpdateSubscription"
 )
 
-func Consume(delivery amqp.Delivery, storage storage.Addresses) {
+func RunSubscriber(delivery amqp.Delivery, storage storage.Addresses) {
 	var event blockatlas.SubscriptionEvent
 	err := json.Unmarshal(delivery.Body, &event)
 	if err != nil {
