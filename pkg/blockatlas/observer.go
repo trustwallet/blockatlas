@@ -29,8 +29,6 @@ type (
 		Status  bool   `json:"status"`
 		Message string `json:"message"`
 	}
-
-
 )
 
 func (e *SubscriptionEvent) ParseSubscriptions(s Subscriptions) []Subscription {

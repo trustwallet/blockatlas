@@ -15,9 +15,6 @@ import (
 
 var wantedMockedNumber int64
 
-func TestParser_Run(t *testing.T) {
-}
-
 func Test_getBlocksInterval(t *testing.T) {
 	p := Parser{
 		BlockAPI:                 getMockedBlockAPI(),

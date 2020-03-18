@@ -14,19 +14,25 @@ func (s *Storage) Lookup(coin uint, addresses []string) ([]blockatlas.Subscripti
 	if len(addresses) == 0 {
 		return nil, errors.E("cannot look up an empty list")
 	}
+	observersChan := make(chan blockatlas.Subscription)
 	observers := make([]blockatlas.Subscription, 0)
 	for _, address := range addresses {
-		key := getSubscriptionKey(coin, address)
-		var guids []string
-		err := s.GetHMValue(ATLAS_OBSERVER, key, &guids)
-		if err != nil {
-			continue
-		}
-		for _, guid := range guids {
-			observers = append(observers, blockatlas.Subscription{Coin: coin, Address: address, GUID: guid})
-		}
+		go s.write(coin, address, observersChan)
+		observers = append(observers, <-observersChan)
 	}
 	return observers, nil
+}
+
+func (s *Storage) write(coin uint, address string, sub chan blockatlas.Subscription) {
+	key := getSubscriptionKey(coin, address)
+	var guids []string
+	err := s.GetHMValue(ATLAS_OBSERVER, key, &guids)
+	if err != nil {
+		return
+	}
+	for _, guid := range guids {
+		sub <- blockatlas.Subscription{Coin: coin, Address: address, GUID: guid}
+	}
 }
 
 func (s *Storage) AddSubscriptions(subscriptions []blockatlas.Subscription) error {
