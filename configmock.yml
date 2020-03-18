@@ -198,7 +198,8 @@ decred:
   api: https://blockbook.decred.org:9161/api
 
 algorand:
-  api: https://mainnet-algorand.api.purestake.io/ps1
+  #mock api: https://mainnet-algorand.api.purestake.io/ps1
+  api: http://localhost:3000/algorand-api
 
 nano:
   #mock api: https://nanoverse.io/api/node

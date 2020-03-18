@@ -12,7 +12,7 @@
     {
         "handler": "algorand",
         "address": "4EZFQABCVQTHQCK3HQBIYGC4NV2VM42FZHEFTVH77ROG4ZGREC6Y7V5T2U",
-        "expectedTxId": "65TF7P4E32GK66WLXHQWJDWS5VOKLIQIVDQXKF4J5UD3DR26X55A"
+        "expectedTxId": "JZTKP6RRFGUDOZ7DQIR26DQWRDYZVYG2G3WDE4WLBJ77AMAEBFBA"
     },
     {
         "handler": "kusama",
