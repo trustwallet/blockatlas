@@ -1,4 +1,4 @@
-package observer
+package notifier
 
 import (
 	"encoding/json"
@@ -6,29 +6,18 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
-	"net/http"
 )
 
-type Dispatcher struct {
-	Client http.Client
-}
-
-type DispatchEvent struct {
+type dispatchEvent struct {
 	Action blockatlas.TransactionType `json:"action"`
 	Result *blockatlas.Tx             `json:"result"`
 	GUID   string                     `json:"guid"`
 }
 
-func (d *Dispatcher) Run(events <-chan Event) {
-	for event := range events {
-		d.dispatch(event)
-	}
-}
-
-func (d *Dispatcher) dispatch(event Event) {
+func dispatch(event Event) {
 	guid := event.Subscription.GUID
 
-	action := DispatchEvent{
+	action := dispatchEvent{
 		Action: event.Tx.Type,
 		Result: event.Tx,
 		GUID:   guid,
@@ -45,12 +34,12 @@ func (d *Dispatcher) dispatch(event Event) {
 		"txID": event.Tx.ID,
 	}
 
-	go d.postMessageToQueue(guid, txJson, logParams)
+	go postMessageToQueue(guid, txJson, logParams)
 
 	logger.Info("Dispatching messages...", logParams)
 }
 
-func (d *Dispatcher) postMessageToQueue(message string, rawMessage []byte, logParams logger.Params) {
+func postMessageToQueue(message string, rawMessage []byte, logParams logger.Params) {
 	err := mq.Transactions.Publish(rawMessage)
 	if err != nil {
 		err = errors.E(err, "Failed to dispatch event", errors.Params{"message": message}, logParams)

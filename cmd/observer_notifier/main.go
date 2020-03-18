@@ -4,6 +4,7 @@ import (
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/internal"
 	"github.com/trustwallet/blockatlas/mq"
+	"github.com/trustwallet/blockatlas/observer/notifier"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/platform"
 	"github.com/trustwallet/blockatlas/storage"
@@ -34,10 +35,20 @@ func init() {
 	internal.InitRabbitMQ(mqHost, prefetchCount)
 	platform.Init(platformHandle)
 
-	go mq.RestoreConnectionWorker(mqHost, mq.Transactions, time.Second*10)
 	go storage.RestoreConnectionWorker(cache, redisHost, time.Second*10)
 }
 
 func main() {
-	// TODO: notifier
+	defer mq.Close()
+
+	if err := mq.ConfirmedBlocks.Declare(); err != nil {
+		logger.Fatal(err)
+	}
+
+	if err := mq.Transactions.Declare(); err != nil {
+		logger.Fatal(err)
+	}
+
+	go mq.ConfirmedBlocks.RunConsumer(notifier.ProcessBlock, cache)
+	<-make(chan struct{})
 }

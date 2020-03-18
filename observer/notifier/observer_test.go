@@ -1,4 +1,4 @@
-package observer
+package notifier
 
 import (
 	"github.com/stretchr/testify/assert"

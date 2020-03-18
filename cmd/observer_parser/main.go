@@ -4,7 +4,7 @@ import (
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/internal"
 	"github.com/trustwallet/blockatlas/mq"
-	"github.com/trustwallet/blockatlas/observer"
+	"github.com/trustwallet/blockatlas/observer/notifier"
 	"github.com/trustwallet/blockatlas/observer/parser"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/platform"
@@ -67,7 +67,7 @@ func main() {
 
 	for _, api := range platform.BlockAPIs {
 		coin := api.Coin()
-		pollInterval := observer.GetInterval(coin.BlockTime, minInterval, maxInterval)
+		pollInterval := notifier.GetInterval(coin.BlockTime, minInterval, maxInterval)
 
 		// Parsing incoming blocks
 		var backlogCount int

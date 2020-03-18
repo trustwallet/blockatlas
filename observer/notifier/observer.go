@@ -1,9 +1,13 @@
-package observer
+package notifier
 
 import (
+	"encoding/json"
 	mapset "github.com/deckarep/golang-set"
+	"github.com/streadway/amqp"
 	"github.com/trustwallet/blockatlas/coin"
+	"github.com/trustwallet/blockatlas/observer/parser"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/pkg/numbers"
 	"github.com/trustwallet/blockatlas/platform/bitcoin"
 	"github.com/trustwallet/blockatlas/storage"
@@ -15,25 +19,14 @@ type Event struct {
 	Tx           *blockatlas.Tx
 }
 
-type Observer struct {
-	Storage storage.Addresses
-	Coin    uint
-}
-
-func (o *Observer) Execute(blocks <-chan *blockatlas.Block) <-chan Event {
-	events := make(chan Event)
-	go o.run(events, blocks)
-	return events
-}
-
-func (o *Observer) run(events chan<- Event, blocks <-chan *blockatlas.Block) {
-	for block := range blocks {
-		o.processBlock(events, block)
+func ProcessBlock(delivery amqp.Delivery, s storage.Addresses) {
+	var blockData parser.BlockData
+	if err := json.Unmarshal(delivery.Body, &blockData); err != nil {
+		logger.Error(err)
+		return
 	}
-}
 
-func (o *Observer) processBlock(events chan<- Event, block *blockatlas.Block) {
-	txMap := GetTxs(block)
+	txMap := GetTxs(blockData.Block)
 	if len(txMap) == 0 {
 		return
 	}
@@ -48,7 +41,7 @@ func (o *Observer) processBlock(events chan<- Event, block *blockatlas.Block) {
 	}
 
 	// Lookup subscriptions
-	subs, err := o.Storage.Lookup(o.Coin, addresses)
+	subs, err := s.Lookup(blockData.Coin, addresses)
 	if err != nil || len(subs) == 0 {
 		return
 	}
@@ -59,16 +52,16 @@ func (o *Observer) processBlock(events chan<- Event, block *blockatlas.Block) {
 		}
 		for _, tx := range tx.Txs() {
 			tx.Direction = getDirection(tx, sub.Address)
-			inferUtxoValue(&tx, sub.Address, o.Coin)
-			events <- Event{
+			inferUtxoValue(&tx, sub.Address, blockData.Coin)
+			dispatch(Event{
 				Subscription: sub,
 				Tx:           &tx,
-			}
+			})
 		}
 	}
 }
 
-func GetTxs(block *blockatlas.Block) map[string]*blockatlas.TxSet {
+func GetTxs(block blockatlas.Block) map[string]*blockatlas.TxSet {
 	txMap := make(map[string]*blockatlas.TxSet)
 	for i := 0; i < len(block.Txs); i++ {
 		addresses := block.Txs[i].GetAddresses()

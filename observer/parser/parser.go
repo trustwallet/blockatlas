@@ -27,6 +27,11 @@ type Parser struct {
 	blockNumber int64
 }
 
+type BlockData struct {
+	Block blockatlas.Block
+	Coin  uint
+}
+
 func (s *Parser) Run() {
 	coin := s.BlockAPI.Coin()
 	s.coin = coin.ID
@@ -94,7 +99,12 @@ func (s *Parser) fetchAndPublishBlock(num int64, wg *sync.WaitGroup) {
 		logger.Error("addLatestParsedBlock failed", s.logParams, logger.Params{"block": num, "coin": s.coin, "err": err})
 		return
 	}
-	if err := s.publishBlock(*block); err != nil {
+
+	blockData := BlockData{
+		Block: *block,
+		Coin:  s.coin,
+	}
+	if err := s.publishBlock(blockData); err != nil {
 		logger.Error(err)
 	}
 }
@@ -110,8 +120,8 @@ func (s *Parser) addLatestParsedBlock() error {
 	return nil
 }
 
-func (s *Parser) publishBlock(block blockatlas.Block) error {
-	body, err := json.Marshal(block)
+func (s *Parser) publishBlock(blockData BlockData) error {
+	body, err := json.Marshal(blockData)
 	if err != nil {
 		return err
 	}
