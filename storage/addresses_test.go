@@ -145,7 +145,7 @@ func isEqual(given, want []blockatlas.Subscription) bool {
 	return false
 }
 
-func initStorage(t *testing.T) Storage {
+func initStorage(t *testing.T) *Storage {
 	s, err := miniredis.Run()
 	if err != nil {
 		t.Fatal(err)
@@ -156,5 +156,5 @@ func initStorage(t *testing.T) Storage {
 	if err != nil {
 		logger.Fatal(err)
 	}
-	return *storage
+	return storage
 }
