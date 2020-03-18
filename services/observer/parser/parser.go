@@ -56,6 +56,12 @@ func RunParser(api blockatlas.BlockAPI, storage storage.Tracker, config Params) 
 }
 
 func FetchBlocks(api blockatlas.BlockAPI, lastParsedBlock, currentBlock int64) ([]blockatlas.Block, error) {
+	if lastParsedBlock == currentBlock {
+		logger.Info("No new blocks", logger.Params{"last": lastParsedBlock, "coin": api.Coin().ID, "time": time.Now().Unix()})
+		logger.Info("------------------------------------------------------------")
+		return nil, nil
+	}
+
 	blocksChan := make(chan blockatlas.Block, currentBlock)
 
 	var g errgroup.Group
@@ -90,23 +96,29 @@ func fetchBlock(api blockatlas.BlockAPI, num int64, blocksChan chan<- blockatlas
 }
 
 func SaveLastParsedBlock(storage storage.Tracker, config Params, blocks []blockatlas.Block) error {
+	if len(blocks) == 0 {
+		return nil
+	}
+
 	sort.Slice(blocks, func(i, j int) bool {
 		return blocks[i].Number < blocks[j].Number
 	})
 
-	// Set last blockNumber to redis
-	if len(blocks) > 0 {
-		lastBlockNumber := blocks[len(blocks)-1].Number
-		err := storage.SetLastParsedBlockNumber(config.Coin, lastBlockNumber)
-		if err != nil {
-			return err
-		}
-		logger.Info(err, "Last Parsed Block", logger.Params{"block": lastBlockNumber, "coin": config.Coin})
+	lastBlockNumber := blocks[len(blocks)-1].Number
+
+	err := storage.SetLastParsedBlockNumber(config.Coin, lastBlockNumber)
+	if err != nil {
+		return err
 	}
+
+	logger.Info(err, "Save last parsed block", logger.Params{"block": lastBlockNumber, "coin": config.Coin})
 	return nil
 }
 
 func PublishBlocks(blocks []blockatlas.Block) error {
+	if len(blocks) == 0 {
+		return nil
+	}
 	var txsAmount int
 	for _, block := range blocks {
 		if len(block.Txs) == 0 {
