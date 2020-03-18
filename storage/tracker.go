@@ -33,7 +33,7 @@ func (bm *BlockMap) GetHeights() map[uint]int64 {
 	return bm.heights
 }
 
-func (s *Storage) GetBlockNumber(coin uint) (int64, error) {
+func (s *Storage) GetLastParsedBlockNumber(coin uint) (int64, error) {
 	b, ok := s.blockHeights.GetBlock(coin)
 	if ok {
 		return b, nil
@@ -46,7 +46,7 @@ func (s *Storage) GetBlockNumber(coin uint) (int64, error) {
 	return b, nil
 }
 
-func (s *Storage) SetBlockNumber(coin uint, num int64) error {
+func (s *Storage) SetLastParsedBlockNumber(coin uint, num int64) error {
 	s.blockHeights.SetBlock(coin, num)
 	return s.Add(getBlockKey(coin), num)
 }

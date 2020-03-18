@@ -25,6 +25,7 @@ require (
 	github.com/hewigovens/go-coincodec v1.0.4
 	github.com/jinzhu/gorm v1.9.12
 	github.com/konsorten/go-windows-terminal-sequences v1.0.2 // indirect
+	github.com/magiconair/properties v1.8.1
 	github.com/mitchellh/mapstructure v1.1.2
 	github.com/mr-tron/base58 v1.1.3
 	github.com/opencontainers/image-spec v1.0.1 // indirect

@@ -69,7 +69,6 @@ func main() {
 		coin := api.Coin()
 		pollInterval := notifier.GetInterval(coin.BlockTime, minInterval, maxInterval)
 
-		// Parsing incoming blocks
 		var backlogCount int
 		if coin.BlockTime == 0 {
 			backlogCount = 50
@@ -78,25 +77,23 @@ func main() {
 			backlogCount = int(backlogTime / pollInterval)
 		}
 
-		p := parser.Parser{
-			BlockAPI:                 api,
-			LatestParsedBlockTracker: cache,
-			ParsingBlocksInterval:    pollInterval,
-			BacklogCount:             backlogCount,
-			MaxBacklogBlocks:         maxBackLogBlocks,
+		config := parser.Params{
+			ParsingBlocksInterval: pollInterval,
+			BacklogCount:          backlogCount,
+			MaxBacklogBlocks:      maxBackLogBlocks,
+			Coin:                  coin.ID,
 		}
 
-		go p.Run()
+		go parser.RunParser(api, cache, config)
 
-		logger.Info("Observing", logger.Params{
-			"coin":     coin,
-			"interval": pollInterval,
-			"backlog":  backlogCount,
+		logger.Info("Parser params", logger.Params{
+			"interval":    pollInterval,
+			"backlog":     backlogCount,
+			"Max backlog": maxBackLogBlocks,
 		})
 
 		wg.Done()
 
-		logger.Info("Running parser for platforms:", api.Coin().Handle)
 	}
 	wg.Wait()
 

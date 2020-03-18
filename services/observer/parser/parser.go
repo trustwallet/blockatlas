@@ -2,7 +2,6 @@ package parser
 
 import (
 	"encoding/json"
-	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
@@ -11,71 +10,59 @@ import (
 	"golang.org/x/sync/errgroup"
 	"math/rand"
 	"sort"
-	"sync/atomic"
 	"time"
 )
 
-type Parser struct {
-	BlockAPI                 blockatlas.BlockAPI
-	LatestParsedBlockTracker storage.Tracker
-	ParsingBlocksInterval    time.Duration
-	BacklogCount             int
-	MaxBacklogBlocks         int64
-	logParams                logger.Params
-	coin                     uint
-	blockNumber              int64
-}
-
-func (s *Parser) Run() {
-	coin := s.BlockAPI.Coin()
-	s.coin = coin.ID
-	s.logParams = logger.Params{"platform": coin.Handle}
-	conns := viper.GetInt("observer.stream_conns")
-	if conns == 0 {
-		logger.Fatal("observer.stream_conns is 0")
+type (
+	Params struct {
+		ParsingBlocksInterval time.Duration
+		BacklogCount          int
+		MaxBacklogBlocks      int64
+		Coin                  uint
 	}
+
+	GetBlockByNumber func(num int64) (*blockatlas.Block, error)
+
+	stop struct {
+		error
+	}
+)
+
+func RunParser(api blockatlas.BlockAPI, storage storage.Tracker, config Params) {
+	logger.Info("------------------------------------------------------------")
 	for {
-		lastParsedBlock, currentBlock, err := s.getBlocksInterval()
+		lastParsedBlock, currentBlock, err := getBlocksIntervalToFetch(api, storage, config)
 		if err != nil {
 			logger.Error(err)
 		}
-		s.fetchAndPublishBlocks(lastParsedBlock, currentBlock)
-		time.Sleep(s.ParsingBlocksInterval)
+
+		blocks, err := FetchBlocks(api, lastParsedBlock, currentBlock)
+		if err != nil {
+			logger.Error(err)
+		}
+
+		err = SaveLastParsedBlock(storage, config, blocks)
+		if err != nil {
+			logger.Error(err)
+		}
+
+		err = PublishBlocks(blocks)
+		if err != nil {
+			logger.Error(err)
+		}
+
+		time.Sleep(config.ParsingBlocksInterval)
 	}
 }
 
-func (s *Parser) getBlocksInterval() (int64, int64, error) {
-	lastParsedBlock, err := s.LatestParsedBlockTracker.GetBlockNumber(s.coin)
-	if err != nil {
-		return 0, 0, errors.E(err, "Polling failed: tracker didn't return last known block number", s.logParams)
-	}
-	currentBlock, err := s.BlockAPI.CurrentBlockNumber()
-	currentBlock -= s.BlockAPI.Coin().MinConfirmations
-	if err != nil {
-		return 0, 0, errors.E(err, "Polling failed: source didn't return chain head number", s.logParams)
-	}
-
-	if currentBlock-lastParsedBlock > int64(s.BacklogCount) {
-		lastParsedBlock = currentBlock - int64(s.BacklogCount)
-	}
-
-	if currentBlock-lastParsedBlock > s.MaxBacklogBlocks {
-		lastParsedBlock = currentBlock - s.MaxBacklogBlocks
-	}
-
-	return lastParsedBlock, currentBlock, nil
-}
-
-func (s *Parser) fetchAndPublishBlocks(lastParsedBlock, currentBlock int64) {
-	atomic.StoreInt64(&s.blockNumber, lastParsedBlock)
-
+func FetchBlocks(api blockatlas.BlockAPI, lastParsedBlock, currentBlock int64) ([]blockatlas.Block, error) {
 	blocksChan := make(chan blockatlas.Block, currentBlock)
 
 	var g errgroup.Group
 	for i := lastParsedBlock + 1; i <= currentBlock; i++ {
 		i := i
 		g.Go(func() error {
-			return s.fetchAndPublishBlock(i, blocksChan)
+			return fetchBlock(api, i, blocksChan)
 		})
 	}
 	if err := g.Wait(); err != nil {
@@ -88,51 +75,83 @@ func (s *Parser) fetchAndPublishBlocks(lastParsedBlock, currentBlock int64) {
 		blocksList = append(blocksList, block)
 	}
 
-	sort.Slice(blocksList, func(i, j int) bool {
-		return blocksList[i].Number < blocksList[j].Number
-	})
-
-	for _, block := range blocksList {
-		if err := s.publishBlock(block); err != nil {
-			logger.Error(err)
-		}
-	}
-
-	// Set last blockNumber to redis
-	if len(blocksList) > 0 {
-		lastBlockNumber := blocksList[len(blocksList)-1].Number
-		err := s.LatestParsedBlockTracker.SetBlockNumber(s.coin, lastBlockNumber)
-		if err != nil {
-			logger.Error(err)
-		}
-	}
+	logger.Info("Fetched blocks batch", logger.Params{"from": lastParsedBlock, "to": currentBlock, "total": len(blocksList)})
+	return blocksList, nil
 }
 
-func (s *Parser) fetchAndPublishBlock(num int64, blocksChan chan<- blockatlas.Block) error {
-	block, err := getBlockByNumberWithRetry(5, time.Second*5, s.BlockAPI.GetBlockByNumber, num)
+func fetchBlock(api blockatlas.BlockAPI, num int64, blocksChan chan<- blockatlas.Block) error {
+	block, err := getBlockByNumberWithRetry(5, time.Second*5, api.GetBlockByNumber, num)
 	if err != nil {
-		return errors.E(err, "Polling failed: could not get block", s.logParams, logger.Params{"block": num})
+		return errors.E(err, "Fetching failed", logger.Params{"block": num})
 	}
-	logger.Info(err, "Got new block", s.logParams, logger.Params{"block": num, "txs": len(block.Txs)})
+	//logger.Info("Fetched", logger.Params{"block": num, "txs_amount": len(block.Txs)})
 	blocksChan <- *block
 	return nil
 }
 
-func (s *Parser) publishBlock(block blockatlas.Block) error {
+func SaveLastParsedBlock(storage storage.Tracker, config Params, blocks []blockatlas.Block) error {
+	sort.Slice(blocks, func(i, j int) bool {
+		return blocks[i].Number < blocks[j].Number
+	})
+
+	// Set last blockNumber to redis
+	if len(blocks) > 0 {
+		lastBlockNumber := blocks[len(blocks)-1].Number
+		err := storage.SetLastParsedBlockNumber(config.Coin, lastBlockNumber)
+		if err != nil {
+			return err
+		}
+		logger.Info(err, "Last Parsed Block", logger.Params{"block": lastBlockNumber, "coin": config.Coin})
+	}
+	return nil
+}
+
+func PublishBlocks(blocks []blockatlas.Block) error {
+	var txsAmount int
+	for _, block := range blocks {
+		if len(block.Txs) == 0 {
+			continue
+		}
+		txsAmount += len(block.Txs)
+		if err := publishBlock(block); err != nil {
+			logger.Error(err)
+		}
+	}
+	logger.Info("Published blocks batch", logger.Params{"blocks": len(blocks), "txs": txsAmount})
+	logger.Info("------------------------------------------------------------")
+	return nil
+}
+
+func publishBlock(block blockatlas.Block) error {
 	body, err := json.Marshal(block)
 	if err != nil {
 		return err
 	}
+	//logger.Info(err, "Published", logger.Params{"block": block.Number})
 	return mq.ConfirmedBlocks.Publish(body)
 }
 
-type (
-	GetBlockByNumber func(num int64) (*blockatlas.Block, error)
-
-	stop struct {
-		error
+func getBlocksIntervalToFetch(api blockatlas.BlockAPI, storage storage.Tracker, config Params) (int64, int64, error) {
+	lastParsedBlock, err := storage.GetLastParsedBlockNumber(config.Coin)
+	if err != nil {
+		return 0, 0, errors.E(err, "Polling failed: tracker didn't return last known block number")
 	}
-)
+	currentBlock, err := api.CurrentBlockNumber()
+	currentBlock -= api.Coin().MinConfirmations
+	if err != nil {
+		return 0, 0, errors.E(err, "Polling failed: source didn't return chain head number")
+	}
+
+	if currentBlock-lastParsedBlock > int64(config.BacklogCount) {
+		lastParsedBlock = currentBlock - int64(config.BacklogCount)
+	}
+
+	if currentBlock-lastParsedBlock > config.MaxBacklogBlocks {
+		lastParsedBlock = currentBlock - config.MaxBacklogBlocks
+	}
+
+	return lastParsedBlock, currentBlock, nil
+}
 
 func getBlockByNumberWithRetry(attempts int, sleep time.Duration, getBlockByNumber GetBlockByNumber, n int64) (*blockatlas.Block, error) {
 	r, err := getBlockByNumber(n)
