@@ -1,3 +1,5 @@
+// +build integration
+
 package docker_test
 
 import (
@@ -24,27 +26,21 @@ type TestsCounter struct {
 }
 
 var (
-	globalTestsCounter TestsCounter
-	stopChan           = make(chan struct{})
-	globalTesting      *testing.T
+	globalTestsCounterConsumer TestsCounter
+	mockedCurrentBlockNumber   TestsCounter
+	stopChan                   = make(chan struct{})
+	globalTesting              *testing.T
 )
 
 func TestParserFetchAndPublishBlock_NormalCase(t *testing.T) {
 	globalTesting = t
-	p := setupParser()
+	params := setupParser()
 
-	err := p.FetchAndPublishBlocks(0, 100)
-	assert.Nil(t, err)
+	go parser.RunParser(getMockedBlockAPI(), setup.Cache, params)
 
 	go mq.ConfirmedBlocks.RunConsumer(ConsumerToTestAmountOfBlocks, nil)
 
 	<-stopChan
-}
-
-func TestParserRun(t *testing.T) {
-	globalTesting = t
-	p := setupParser()
-
 }
 
 func getMockedBlockAPI() blockatlas.BlockAPI {
@@ -57,7 +53,11 @@ type Platform struct {
 }
 
 func (p *Platform) CurrentBlockNumber() (int64, error) {
-	return 0, nil
+	mockedCurrentBlockNumber.M.Lock()
+	mockedCurrentBlockNumber.Counter = mockedCurrentBlockNumber.Counter + 50
+	a := mockedCurrentBlockNumber.Counter
+	mockedCurrentBlockNumber.M.Unlock()
+	return int64(a), nil
 }
 
 func (p *Platform) Coin() coin.Coin {
@@ -65,11 +65,34 @@ func (p *Platform) Coin() coin.Coin {
 }
 
 func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
-	return &blockatlas.Block{
-		Number: 0,
-		ID:     "0x",
-		Txs:    nil,
-	}, nil
+	if num < 101 {
+		return &blockatlas.Block{
+			Number: num,
+			ID:     "",
+			Txs: []blockatlas.Tx{
+				{
+					ID:     "95CF63FAA27579A9B6AF84EF8B2DFEAC29627479E9C98E7F5AE4535E213FA4C9",
+					Coin:   coin.BNB,
+					From:   "tbnb1ttyn4csghfgyxreu7lmdu3lcplhqhxtzced45a",
+					To:     "tbnb12hlquylu78cjylk5zshxpdj6hf3t0tahwjt3ex",
+					Fee:    "125000",
+					Date:   1555117625,
+					Block:  7928667,
+					Status: blockatlas.StatusCompleted,
+					Memo:   "test",
+					Meta: blockatlas.NativeTokenTransfer{
+						TokenID:  "YLC-D8B",
+						Symbol:   "YLC",
+						Value:    "210572645",
+						Decimals: 8,
+						From:     "tbnb1ttyn4csghfgyxreu7lmdu3lcplhqhxtzced45a",
+						To:       "tbnb12hlquylu78cjylk5zshxpdj6hf3t0tahwjt3ex",
+					},
+				},
+			},
+		}, nil
+	}
+	return &blockatlas.Block{}, nil
 }
 
 func ConsumerToTestAmountOfBlocks(delivery amqp.Delivery, s storage.Addresses) {
@@ -83,28 +106,26 @@ func ConsumerToTestAmountOfBlocks(delivery amqp.Delivery, s storage.Addresses) {
 		logger.Error(err)
 	}
 
-	globalTestsCounter.M.Lock()
-	globalTestsCounter.Counter++
-	globalTestsCounter.M.Unlock()
+	globalTestsCounterConsumer.M.Lock()
+	globalTestsCounterConsumer.Counter++
+	globalTestsCounterConsumer.M.Unlock()
 
-	globalTestsCounter.M.Lock()
-	val := globalTestsCounter.Counter
-	globalTestsCounter.M.Unlock()
+	globalTestsCounterConsumer.M.Lock()
+	val := globalTestsCounterConsumer.Counter
+	globalTestsCounterConsumer.M.Unlock()
 
-	assert.Equal(globalTesting, int(block.Number), 0)
-	assert.Equal(globalTesting, block.ID, "0x")
+	//assert.Equal(globalTesting, int(block.Number), 0)
+	assert.Equal(globalTesting, block.ID, "")
 	if val == 100 {
 		stopChan <- struct{}{}
 	}
 }
 
-func setupParser() *parser.Parser {
-	globalTestsCounter = TestsCounter{
+func setupParser() parser.Params {
+	globalTestsCounterConsumer = TestsCounter{
 		M:       sync.Mutex{},
 		Counter: 0,
 	}
-
-	api := getMockedBlockAPI()
 
 	if err := mq.ConfirmedBlocks.Declare(); err != nil {
 		logger.Fatal(err)
@@ -112,15 +133,13 @@ func setupParser() *parser.Parser {
 
 	minTime := time.Second
 	maxTime := time.Second * 2
-	maxBatchBlocksAmount := 10
+	maxBatchBlocksAmount := 100
 
 	pollInterval := notifier.GetInterval(0, minTime, maxTime)
 
 	backlogCount := 50
 
-	return &parser.Parser{
-		BlockAPI:              api,
-		Storage:               setup.Cache,
+	return parser.Params{
 		ParsingBlocksInterval: pollInterval,
 		BacklogCount:          backlogCount,
 		MaxBacklogBlocks:      int64(maxBatchBlocksAmount),

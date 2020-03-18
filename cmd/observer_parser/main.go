@@ -55,7 +55,7 @@ func init() {
 		logger.Fatal("minimum block polling interval cannot be greater or equal than maximum")
 	}
 
-	go mq.RestoreConnectionWorker(mqHost, mq.ConfirmedBlocks, time.Second*10)
+	go mq.FatalWorker(time.Second * 10)
 	go storage.RestoreConnectionWorker(cache, redisHost, time.Second*10)
 }
 

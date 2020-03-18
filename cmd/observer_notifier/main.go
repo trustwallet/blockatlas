@@ -35,12 +35,6 @@ func init() {
 	internal.InitRabbitMQ(mqHost, prefetchCount)
 	platform.Init(platformHandle)
 
-	go storage.RestoreConnectionWorker(cache, redisHost, time.Second*10)
-}
-
-func main() {
-	defer mq.Close()
-
 	if err := mq.ConfirmedBlocks.Declare(); err != nil {
 		logger.Fatal(err)
 	}
@@ -48,6 +42,13 @@ func main() {
 	if err := mq.Transactions.Declare(); err != nil {
 		logger.Fatal(err)
 	}
+
+	go storage.RestoreConnectionWorker(cache, redisHost, time.Second*10)
+	go mq.RestoreConnectionWorker(mqHost, mq.ConfirmedBlocks, time.Second*10)
+}
+
+func main() {
+	defer mq.Close()
 
 	go mq.ConfirmedBlocks.RunConsumer(notifier.RunNotifier, cache)
 	<-make(chan struct{})

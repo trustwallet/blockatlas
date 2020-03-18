@@ -2,7 +2,6 @@ package notifier
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/streadway/amqp"
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
@@ -31,8 +30,11 @@ func RunNotifier(delivery amqp.Delivery, s storage.Addresses) {
 		logger.Error(err)
 		return
 	}
+	if len(block.Txs) == 0 {
+		return
+	}
 
-	logger.Info(fmt.Sprintf("Consume new block:%d", block.Number))
+	logger.Info("Consumed", logger.Params{"num": block.Number, "txs": len(block.Txs), "coin": block.Txs[0].Coin})
 
 	blockTransactions := block.GetTransactionsMap()
 	if len(blockTransactions.Map) == 0 {
@@ -40,14 +42,11 @@ func RunNotifier(delivery amqp.Delivery, s storage.Addresses) {
 	}
 
 	addresses := blockTransactions.GetUniqueAddresses()
-
-	if len(block.Txs) == 0 {
-		return
-	}
 	subs, err := s.FindSubscriptions(block.Txs[0].Coin, addresses)
 	if err != nil || len(subs) == 0 {
 		return
 	}
+
 	var wg sync.WaitGroup
 	wg.Add(len(subs))
 	for _, sub := range subs {

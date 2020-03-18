@@ -15,41 +15,67 @@ import (
 
 var wantedMockedNumber int64
 
-func Test_getBlocksInterval(t *testing.T) {
-	p := Parser{
-		BlockAPI:              getMockedBlockAPI(),
-		Storage:               getMockedRedis(t),
+func Test_GetBlocksIntervalToFetch(t *testing.T) {
+	params := Params{
 		ParsingBlocksInterval: time.Minute,
 		BacklogCount:          10,
 		MaxBacklogBlocks:      100,
 	}
 	latestParsedBlock := int64(100)
 	wantedMockedNumber = 110
-	lastParsedBlock, currentBlock, err := p.getBlocksIntervalToFetch()
+	lastParsedBlock, currentBlock, err := GetBlocksIntervalToFetch(getMockedBlockAPI(), getMockedRedis(t), params)
 	assert.Nil(t, err)
 	assert.Equal(t, wantedMockedNumber, currentBlock)
 	assert.Equal(t, latestParsedBlock, lastParsedBlock)
 }
 
-func Test_addLatestParsedBlock(t *testing.T) {
-	p := Parser{
-		BlockAPI:              getMockedBlockAPI(),
-		Storage:               getMockedRedis(t),
+func TestFetchBlocks(t *testing.T) {
+	blocks, err := FetchBlocks(getMockedBlockAPI(), 0, 100)
+	assert.Nil(t, err)
+	assert.Equal(t, len(blocks), 100)
+}
+
+func TestSaveLastParsedBlock(t *testing.T) {
+	params := Params{
 		ParsingBlocksInterval: time.Minute,
 		BacklogCount:          10,
 		MaxBacklogBlocks:      100,
 	}
-	//err := p.SaveLastParsedBlock()
-	//assert.Nil(t, err)
-	//block, err := p.Storage.GetLastParsedBlockNumber(p.coin)
-	//assert.Nil(t, err)
-	//assert.Equal(t, int64(1), block)
-	//
-	//err = p.addLatestParsedBlock()
-	//assert.Nil(t, err)
-	//blockTwo, err := p.Storage.GetLastParsedBlockNumber(p.coin)
-	//assert.Nil(t, err)
-	//assert.Equal(t, int64(2), blockTwo)
+	blocks := []blockatlas.Block{
+		{
+			110,
+			"",
+			[]blockatlas.Tx{
+				{
+					ID:     "95CF63FAA27579A9B6AF84EF8B2DFEAC29627479E9C98E7F5AE4535E213FA4C9",
+					Coin:   coin.BNB,
+					From:   "tbnb1ttyn4csghfgyxreu7lmdu3lcplhqhxtzced45a",
+					To:     "tbnb12hlquylu78cjylk5zshxpdj6hf3t0tahwjt3ex",
+					Fee:    "125000",
+					Date:   1555117625,
+					Block:  7928667,
+					Status: blockatlas.StatusCompleted,
+					Memo:   "test",
+					Meta: blockatlas.NativeTokenTransfer{
+						TokenID:  "YLC-D8B",
+						Symbol:   "YLC",
+						Value:    "210572645",
+						Decimals: 8,
+						From:     "tbnb1ttyn4csghfgyxreu7lmdu3lcplhqhxtzced45a",
+						To:       "tbnb12hlquylu78cjylk5zshxpdj6hf3t0tahwjt3ex",
+					},
+				},
+			},
+		},
+	}
+	s := getMockedRedis(t)
+
+	err := SaveLastParsedBlock(s, params, blocks)
+	assert.Nil(t, err)
+
+	lastParsedBlock, err := s.GetLastParsedBlockNumber(params.Coin)
+	assert.Nil(t, err)
+	assert.Equal(t, lastParsedBlock, int64(110))
 }
 
 func TestParser_getBlockByNumberWithRetry(t *testing.T) {
