@@ -1,5 +1,11 @@
 package blockatlas
 
+import (
+	mapset "github.com/deckarep/golang-set"
+	"github.com/trustwallet/blockatlas/coin"
+	"github.com/trustwallet/blockatlas/pkg/numbers"
+)
+
 type Direction string
 type Status string
 type TokenType string
@@ -231,4 +237,81 @@ func (t *Tx) GetAddresses() []string {
 	default:
 		return addresses
 	}
+}
+
+func (t *Tx) GetTransactionDirection(address string) Direction {
+	if len(t.Inputs) > 0 && len(t.Outputs) > 0 {
+		addressSet := mapset.NewSet(address)
+		return InferDirection(t, addressSet)
+	}
+	switch meta := t.Meta.(type) {
+	case TokenTransfer:
+		return determineTransactionDirection(address, meta.From, meta.To)
+	case NativeTokenTransfer:
+		return determineTransactionDirection(address, meta.From, meta.To)
+	default:
+		return determineTransactionDirection(address, t.From, t.To)
+	}
+}
+
+func determineTransactionDirection(address, from, to string) Direction {
+	if address == to {
+		if from == to {
+			return DirectionSelf
+		}
+		return DirectionIncoming
+	}
+	return DirectionOutgoing
+}
+
+func (t *Tx) InferUtxoValue(address string, coinIndex uint) {
+	if len(t.Inputs) > 0 && len(t.Outputs) > 0 {
+		addressSet := mapset.NewSet(address)
+		value := InferValue(t, t.Direction, addressSet)
+		t.Meta = Transfer{
+			Value:    value,
+			Symbol:   coin.Coins[coinIndex].Symbol,
+			Decimals: coin.Coins[coinIndex].Decimals,
+		}
+	}
+}
+
+func InferDirection(tx *Tx, addressSet mapset.Set) Direction {
+	inputSet := mapset.NewSet()
+	for _, address := range tx.Inputs {
+		inputSet.Add(address.Address)
+	}
+	outputSet := mapset.NewSet()
+	for _, address := range tx.Outputs {
+		outputSet.Add(address.Address)
+	}
+	intersect := addressSet.Intersect(inputSet)
+	if intersect.Cardinality() == 0 {
+		return DirectionIncoming
+	}
+	if outputSet.IsProperSubset(addressSet) || outputSet.Equal(inputSet) {
+		return DirectionSelf
+	}
+	return DirectionOutgoing
+}
+
+func InferValue(tx *Tx, direction Direction, addressSet mapset.Set) Amount {
+	value := Amount("0")
+	if len(tx.Outputs) == 0 {
+		return value
+	}
+	if direction == DirectionOutgoing || direction == DirectionSelf {
+		value = tx.Outputs[0].Value
+	} else if direction == DirectionIncoming {
+		amount := value
+		for _, output := range tx.Outputs {
+			if !addressSet.Contains(output.Address) {
+				continue
+			}
+			value := numbers.AddAmount(string(amount), string(output.Value))
+			amount = Amount(value)
+		}
+		value = amount
+	}
+	return value
 }

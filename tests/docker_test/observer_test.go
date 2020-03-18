@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/services/subscription"
+	"github.com/trustwallet/blockatlas/services/observer/subscription"
 	"github.com/trustwallet/blockatlas/storage"
 	"github.com/trustwallet/blockatlas/tests/docker_test/setup"
 	"io/ioutil"
@@ -48,7 +48,7 @@ func TestSubscriberAddSubscription(t *testing.T) {
 		err = mq.Subscriptions.Publish(body)
 		assert.Nil(t, err)
 
-		go mq.Subscriptions.RunConsumer(subscription.Consume, setup.Cache)
+		go mq.Subscriptions.RunConsumer(subscriber.Consume, setup.Cache)
 		time.Sleep(time.Second / 5)
 	}
 

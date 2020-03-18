@@ -4,9 +4,9 @@ import (
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/internal"
 	"github.com/trustwallet/blockatlas/mq"
-	"github.com/trustwallet/blockatlas/observer/notifier"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/platform"
+	"github.com/trustwallet/blockatlas/services/observer/notifier"
 	"github.com/trustwallet/blockatlas/storage"
 	"time"
 )
@@ -21,7 +21,7 @@ var (
 )
 
 func init() {
-	_, confPath := internal.ParseArgs("", defaultConfigPath)
+	_, confPath = internal.ParseArgs("", defaultConfigPath)
 
 	internal.InitConfig(confPath)
 	logger.InitLogger()
@@ -49,6 +49,6 @@ func main() {
 		logger.Fatal(err)
 	}
 
-	go mq.ConfirmedBlocks.RunConsumer(notifier.ProcessBlock, cache)
+	go mq.ConfirmedBlocks.RunConsumer(notifier.RunNotifier, cache)
 	<-make(chan struct{})
 }

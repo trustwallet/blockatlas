@@ -20,7 +20,7 @@ func TestParser_Run(t *testing.T) {
 
 func Test_getBlocksInterval(t *testing.T) {
 	p := Parser{
-		BlockAPI:                 getMockedBlockAPI(t),
+		BlockAPI:                 getMockedBlockAPI(),
 		LatestParsedBlockTracker: getMockedRedis(t),
 		ParsingBlocksInterval:    time.Minute,
 		BacklogCount:             10,
@@ -90,7 +90,7 @@ func getBlock(num int64) (*blockatlas.Block, error) {
 	return &blockatlas.Block{}, nil
 }
 
-func getMockedBlockAPI(t *testing.T) blockatlas.BlockAPI {
+func getMockedBlockAPI() blockatlas.BlockAPI {
 	p := Platform{CoinIndex: 60}
 	return &p
 }

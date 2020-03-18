@@ -6,7 +6,7 @@ import (
 	"github.com/trustwallet/blockatlas/internal"
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/logger"
-	"github.com/trustwallet/blockatlas/services/subscription"
+	"github.com/trustwallet/blockatlas/services/observer/subscriber"
 	"github.com/trustwallet/blockatlas/storage"
 	"time"
 )
@@ -21,7 +21,7 @@ var (
 )
 
 func init() {
-	_, confPath := internal.ParseArgs("", defaultConfigPath)
+	_, confPath = internal.ParseArgs("", defaultConfigPath)
 
 	internal.InitConfig(confPath)
 	logger.InitLogger()
@@ -43,6 +43,6 @@ func main() {
 	if err := mq.Subscriptions.Declare(); err != nil {
 		logger.Fatal(err)
 	}
-	mq.Subscriptions.RunConsumer(subscription.Consume, cache)
+	mq.Subscriptions.RunConsumer(subscriber.Consume, cache)
 	<-make(chan struct{})
 }

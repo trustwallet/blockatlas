@@ -4,10 +4,10 @@ import (
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/internal"
 	"github.com/trustwallet/blockatlas/mq"
-	"github.com/trustwallet/blockatlas/observer/notifier"
-	"github.com/trustwallet/blockatlas/observer/parser"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/platform"
+	"github.com/trustwallet/blockatlas/services/observer/notifier"
+	"github.com/trustwallet/blockatlas/services/observer/parser"
 	"github.com/trustwallet/blockatlas/storage"
 	"sync"
 	"time"
@@ -25,7 +25,7 @@ var (
 )
 
 func init() {
-	_, confPath := internal.ParseArgs("", defaultConfigPath)
+	_, confPath = internal.ParseArgs("", defaultConfigPath)
 
 	internal.InitConfig(confPath)
 	logger.InitLogger()
