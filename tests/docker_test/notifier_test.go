@@ -10,10 +10,15 @@ import (
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/services/observer/notifier"
-	"github.com/trustwallet/blockatlas/storage"
 	"github.com/trustwallet/blockatlas/tests/docker_test/setup"
+	"sync"
 	"testing"
 )
+
+type TestsCounter2 struct {
+	M       sync.Mutex
+	Counter int
+}
 
 var (
 	block = blockatlas.Block{
@@ -41,14 +46,13 @@ var (
 			},
 		},
 	}
-	notifierCounter TestsCounter
+	notifierCounter TestsCounter2
 
 	stopChan2      = make(chan struct{})
 	globalTesting2 *testing.T
 )
 
 func TestNotifier(t *testing.T) {
-
 	globalTesting2 = t
 
 	if err := mq.ConfirmedBlocks.Declare(); err != nil {
@@ -62,18 +66,23 @@ func TestNotifier(t *testing.T) {
 	err := setup.Cache.AddSubscriptions([]blockatlas.Subscription{{Coin: 714, Address: "tbnb1ttyn4csghfgyxreu7lmdu3lcplhqhxtzced45a", GUID: "guid_test"}})
 	assert.Nil(t, err)
 
-	for i := 0; i < 101; i++ {
+	for i := 0; i < 31; i++ {
 		err := produceBlock(block)
 		assert.Nil(t, err)
 	}
 
 	go mq.ConfirmedBlocks.RunConsumer(notifier.RunNotifier, setup.Cache)
-	go mq.Transactions.RunConsumer(ConsumerToTestTransactions, setup.Cache)
+
+	c := mq.Transactions.GetMessageChannel()
+
+	for i := 0; i < 31; i++ {
+		go ConsumerToTestTransactions(c.GetMessage())
+	}
 
 	<-stopChan2
 }
 
-func ConsumerToTestTransactions(delivery amqp.Delivery, s storage.Addresses) {
+func ConsumerToTestTransactions(delivery amqp.Delivery) {
 	var event notifier.DispatchEvent
 	if err := json.Unmarshal(delivery.Body, &event); err != nil {
 		assert.Nil(globalTesting2, err)
@@ -121,7 +130,7 @@ func ConsumerToTestTransactions(delivery amqp.Delivery, s storage.Addresses) {
 	val := notifierCounter.Counter
 	notifierCounter.M.Unlock()
 
-	if val == 100 {
+	if val == 30 {
 		stopChan2 <- struct{}{}
 	}
 

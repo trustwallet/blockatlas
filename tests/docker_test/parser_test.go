@@ -13,7 +13,6 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/services/observer/notifier"
 	"github.com/trustwallet/blockatlas/services/observer/parser"
-	"github.com/trustwallet/blockatlas/storage"
 	"github.com/trustwallet/blockatlas/tests/docker_test/setup"
 	"sync"
 	"testing"
@@ -37,8 +36,12 @@ func TestParserFetchAndPublishBlock_NormalCase(t *testing.T) {
 	params := setupParser()
 
 	go parser.RunParser(getMockedBlockAPI(), setup.Cache, params)
-	go mq.ConfirmedBlocks.RunConsumer(ConsumerToTestAmountOfBlocks, nil)
 
+	c := mq.ConfirmedBlocks.GetMessageChannel()
+
+	for i := 0; i < 3; i++ {
+		go ConsumerToTestAmountOfBlocks(c.GetMessage())
+	}
 	<-stopChan
 }
 
@@ -56,11 +59,7 @@ type Platform struct {
 }
 
 func (p *Platform) CurrentBlockNumber() (int64, error) {
-	mockedCurrentBlockNumber.M.Lock()
-	mockedCurrentBlockNumber.Counter = mockedCurrentBlockNumber.Counter + 50
-	a := mockedCurrentBlockNumber.Counter
-	mockedCurrentBlockNumber.M.Unlock()
-	return int64(a), nil
+	return int64(100), nil
 }
 
 func (p *Platform) Coin() coin.Coin {
@@ -98,7 +97,7 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 	return &blockatlas.Block{}, nil
 }
 
-func ConsumerToTestAmountOfBlocks(delivery amqp.Delivery, s storage.Addresses) {
+func ConsumerToTestAmountOfBlocks(delivery amqp.Delivery) {
 	var block blockatlas.Block
 	if err := json.Unmarshal(delivery.Body, &block); err != nil {
 		logger.Error(err)
@@ -119,7 +118,7 @@ func ConsumerToTestAmountOfBlocks(delivery amqp.Delivery, s storage.Addresses) {
 
 	//assert.Equal(globalTesting, int(block.Number), 0)
 	assert.Equal(globalTesting, block.ID, "")
-	if val == 100 {
+	if val == 2 {
 		stopChan <- struct{}{}
 	}
 }

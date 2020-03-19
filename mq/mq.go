@@ -14,8 +14,9 @@ var (
 )
 
 type (
-	Queue    string
-	Consumer func(amqp.Delivery, storage.Addresses)
+	Queue          string
+	Consumer       func(amqp.Delivery, storage.Addresses)
+	MessageChannel <-chan amqp.Delivery
 )
 
 const (
@@ -89,6 +90,42 @@ func (q Queue) RunConsumer(consumer Consumer, cache storage.Addresses) {
 	for data := range messageChannel {
 		go consumer(data, cache)
 	}
+}
+
+func (q Queue) GetMessageChannel() MessageChannel {
+	messageChannel, err := amqpChan.Consume(
+		string(q),
+		"",
+		false,
+		false,
+		false,
+		false,
+		nil,
+	)
+	if err != nil {
+		logger.Fatal("MQ issue " + err.Error())
+	}
+
+	if PrefetchCount < minPrefetchCount {
+		logger.Info("Change prefetch count to default")
+		PrefetchCount = defaultPrefetchCount
+	}
+
+	err = amqpChan.Qos(
+		PrefetchCount,
+		0,
+		true,
+	)
+
+	if err != nil {
+		logger.Error("no qos limit ", err)
+	}
+
+	return messageChannel
+}
+
+func (mc MessageChannel) GetMessage() amqp.Delivery {
+	return <-mc
 }
 
 func RestoreConnectionWorker(uri string, queue Queue, timeout time.Duration) {
