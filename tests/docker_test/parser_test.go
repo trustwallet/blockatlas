@@ -37,10 +37,13 @@ func TestParserFetchAndPublishBlock_NormalCase(t *testing.T) {
 	params := setupParser()
 
 	go parser.RunParser(getMockedBlockAPI(), setup.Cache, params)
-
 	go mq.ConfirmedBlocks.RunConsumer(ConsumerToTestAmountOfBlocks, nil)
 
 	<-stopChan
+}
+
+func TestParser(t *testing.T) {
+	parser.PublishBlocks(nil)
 }
 
 func getMockedBlockAPI() blockatlas.BlockAPI {
