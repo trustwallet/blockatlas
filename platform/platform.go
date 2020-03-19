@@ -45,13 +45,17 @@ func GetVar(name string) string {
 }
 
 func GetApiVar(coinId uint) string {
-	varName := fmt.Sprintf("%s.api", coin.Coins[coinId].Handle)
+	varName := fmt.Sprintf("%s.api", GetHandle(coinId))
 	return GetVar(varName)
 }
 
 func GetRpcVar(coinId uint) string {
-	varName := fmt.Sprintf("%s.rpc", coin.Coins[coinId].Handle)
+	varName := fmt.Sprintf("%s.rpc", GetHandle(coinId))
 	return GetVar(varName)
+}
+
+func GetHandle(coinId uint) string {
+	return coin.Coins[coinId].Handle
 }
 
 func getPlatformMap() blockatlas.Platforms {
