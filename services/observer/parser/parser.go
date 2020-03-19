@@ -147,9 +147,7 @@ func PublishBlocks(blocks []blockatlas.Block) error {
 			continue
 		}
 		txsAmount += len(block.Txs)
-		if err := publishBlock(block); err != nil {
-			logger.Error(err)
-		}
+		go publishBlock(block)
 	}
 	logger.Info("Published blocks batch", logger.Params{"blocks": len(blocks), "txs": txsAmount})
 	logger.Info("------------------------------------------------------------")
