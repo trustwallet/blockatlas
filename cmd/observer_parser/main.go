@@ -1,6 +1,8 @@
 package main
 
 import (
+	"context"
+	"fmt"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/internal"
 	"github.com/trustwallet/blockatlas/mq"
@@ -9,7 +11,10 @@ import (
 	"github.com/trustwallet/blockatlas/services/observer/notifier"
 	"github.com/trustwallet/blockatlas/services/observer/parser"
 	"github.com/trustwallet/blockatlas/storage"
+	"os"
+	"os/signal"
 	"sync"
+	"syscall"
 	"time"
 )
 
@@ -61,13 +66,19 @@ func init() {
 
 func main() {
 	defer mq.Close()
+	var (
+		wg             sync.WaitGroup
+		coinCancel     = make(map[string]context.CancelFunc)
+		waitBeforeStop time.Duration
+	)
 
-	var wg sync.WaitGroup
 	wg.Add(len(platform.BlockAPIs))
-
 	for _, api := range platform.BlockAPIs {
 		coin := api.Coin()
 		pollInterval := notifier.GetInterval(coin.BlockTime, minInterval, maxInterval)
+		if pollInterval > waitBeforeStop {
+			waitBeforeStop = pollInterval
+		}
 
 		var backlogCount int
 		if coin.BlockTime == 0 {
@@ -84,7 +95,11 @@ func main() {
 			Coin:                  coin.ID,
 		}
 
-		go parser.RunParser(api, cache, config)
+		ctx, cancel := context.WithCancel(context.Background())
+
+		coinCancel[coin.Handle] = cancel
+
+		go parser.RunParser(api, cache, config, ctx)
 
 		logger.Info("Parser params", logger.Params{
 			"interval":    pollInterval,
@@ -93,9 +108,20 @@ func main() {
 		})
 
 		wg.Done()
-
 	}
+
 	wg.Wait()
 
-	<-make(chan struct{})
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+	logger.Info("Shutdown parser ...")
+	for coin, cancel := range coinCancel {
+		logger.Info(fmt.Sprintf("Stop %s parser...", coin))
+		cancel()
+	}
+
+	time.Sleep(waitBeforeStop * 3)
+
+	logger.Info("Parser exiting")
 }

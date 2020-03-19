@@ -106,21 +106,6 @@ func (q Queue) GetMessageChannel() MessageChannel {
 		logger.Fatal("MQ issue " + err.Error())
 	}
 
-	if PrefetchCount < minPrefetchCount {
-		logger.Info("Change prefetch count to default")
-		PrefetchCount = defaultPrefetchCount
-	}
-
-	err = amqpChan.Qos(
-		PrefetchCount,
-		0,
-		true,
-	)
-
-	if err != nil {
-		logger.Error("no qos limit ", err)
-	}
-
 	return messageChannel
 }
 

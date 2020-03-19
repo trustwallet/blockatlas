@@ -1,7 +1,9 @@
 package parser
 
 import (
+	"context"
 	"encoding/json"
+	"fmt"
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
@@ -28,30 +30,36 @@ type (
 	}
 )
 
-func RunParser(api blockatlas.BlockAPI, storage storage.Tracker, config Params) {
+func RunParser(api blockatlas.BlockAPI, storage storage.Tracker, config Params, ctx context.Context) {
 	logger.Info("------------------------------------------------------------")
 	for {
-		lastParsedBlock, currentBlock, err := GetBlocksIntervalToFetch(api, storage, config)
-		if err != nil {
-			logger.Error(err)
-		}
+		select {
+		case <-ctx.Done():
+			logger.Info(fmt.Sprintf("Parser of %d has been stopped", config.Coin))
+			return
+		default:
+			lastParsedBlock, currentBlock, err := GetBlocksIntervalToFetch(api, storage, config)
+			if err != nil {
+				logger.Error(err)
+			}
 
-		blocks, err := FetchBlocks(api, lastParsedBlock, currentBlock)
-		if err != nil {
-			logger.Error(err)
-		}
+			blocks, err := FetchBlocks(api, lastParsedBlock, currentBlock)
+			if err != nil {
+				logger.Error(err)
+			}
 
-		err = SaveLastParsedBlock(storage, config, blocks)
-		if err != nil {
-			logger.Error(err)
-		}
+			err = SaveLastParsedBlock(storage, config, blocks)
+			if err != nil {
+				logger.Error(err)
+			}
 
-		err = PublishBlocks(blocks)
-		if err != nil {
-			logger.Error(err)
-		}
+			err = PublishBlocks(blocks)
+			if err != nil {
+				logger.Error(err)
+			}
 
-		time.Sleep(config.ParsingBlocksInterval)
+			time.Sleep(config.ParsingBlocksInterval)
+		}
 	}
 }
 
