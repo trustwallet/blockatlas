@@ -39,9 +39,7 @@ func (c *Client) CurrentBlockNumber() (int64, error) {
 }
 
 func (c *Client) GetTokens(address string) (tp *TokenPage, err error) {
-	query := url.Values{
-		"address": {address},
-	}
+	query := url.Values{"address": {address}}
 	err = c.Get(&tp, "tokens", query)
 	return
 }
