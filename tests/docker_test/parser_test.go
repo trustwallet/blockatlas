@@ -3,6 +3,7 @@
 package docker_test
 
 import (
+	"context"
 	"encoding/json"
 	"github.com/stretchr/testify/assert"
 
@@ -35,7 +36,9 @@ func TestParserFetchAndPublishBlock_NormalCase(t *testing.T) {
 	globalTesting = t
 	params := setupParser()
 
-	go parser.RunParser(getMockedBlockAPI(), setup.Cache, params)
+	ctx, cancel := context.WithCancel(context.Background())
+
+	go parser.RunParser(getMockedBlockAPI(), setup.Cache, params, ctx)
 
 	c := mq.ConfirmedBlocks.GetMessageChannel()
 
@@ -43,10 +46,8 @@ func TestParserFetchAndPublishBlock_NormalCase(t *testing.T) {
 		go ConsumerToTestAmountOfBlocks(c.GetMessage())
 	}
 	<-stopChan
-}
-
-func TestParser(t *testing.T) {
-	parser.PublishBlocks(nil)
+	cancel()
+	time.Sleep(time.Second * 5)
 }
 
 func getMockedBlockAPI() blockatlas.BlockAPI {

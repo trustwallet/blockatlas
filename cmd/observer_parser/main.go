@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/internal"
 	"github.com/trustwallet/blockatlas/mq"
@@ -61,10 +62,11 @@ func init() {
 
 func main() {
 	defer mq.Close()
+	var (
+		wg sync.WaitGroup
+	)
 
-	var wg sync.WaitGroup
 	wg.Add(len(platform.BlockAPIs))
-
 	for _, api := range platform.BlockAPIs {
 		coin := api.Coin()
 		pollInterval := notifier.GetInterval(coin.BlockTime, minInterval, maxInterval)
@@ -84,7 +86,8 @@ func main() {
 			Coin:                  coin.ID,
 		}
 
-		go parser.RunParser(api, cache, config)
+		ctx, _ := context.WithCancel(context.Background())
+		go parser.RunParser(api, cache, config, ctx)
 
 		logger.Info("Parser params", logger.Params{
 			"interval":    pollInterval,
@@ -95,7 +98,9 @@ func main() {
 		wg.Done()
 
 	}
+
 	wg.Wait()
 
 	<-make(chan struct{})
+
 }
