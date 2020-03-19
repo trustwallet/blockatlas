@@ -3,6 +3,7 @@ package parser
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
@@ -34,6 +35,7 @@ func RunParser(api blockatlas.BlockAPI, storage storage.Tracker, config Params, 
 	for {
 		select {
 		case <-ctx.Done():
+			logger.Info(fmt.Sprintf("Parser of %d has been stopped", config.Coin))
 			return
 		default:
 			lastParsedBlock, currentBlock, err := GetBlocksIntervalToFetch(api, storage, config)
