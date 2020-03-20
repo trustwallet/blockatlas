@@ -22,6 +22,7 @@ GOPKG := $(.)
 
 # Environment variables
 CONFIG_FILE=$(GOBASE)/config.yml
+CONFIG_MOCK_FILE=$(GOBASE)/configmock.yml
 
 # Go files
 GOFMT_FILES?=$$(find . -name '*.go' | grep -v vendor)
@@ -38,6 +39,7 @@ PID_OBSERVER_NOTIFIER := /tmp/.$(PROJECT_NAME).$(OBSERVER_NOTIFIER).pid
 PID_OBSERVER_PARSER := /tmp/.$(PROJECT_NAME).$(OBSERVER_PARSER).pid
 PID_OBSERVER_SUBSCRIBER := /tmp/.$(PROJECT_NAME).$(OBSERVER_SUBSCRIBER).pid
 PID_SWAGGER_API := /tmp/.$(PROJECT_NAME).$(SWAGGER_API).pid
+PID_DYSON := /tmp/.$(PROJECT_NAME).dyson.pid
 # Make is verbose in Linux. Make it silent.
 MAKEFLAGS += --silent
 
@@ -52,6 +54,13 @@ start:
 start-platform-api: stop
 	@echo "  >  Starting $(PROJECT_NAME)"
 	@-$(GOBIN)/$(API_SERVICE)/platform_api -c $(CONFIG_FILE) 2>&1 & echo $$! > $(PID_API)
+	@cat $(PID_API) | sed "/^/s/^/  \>  API PID: /"
+	@echo "  >  Error log: $(STDERR)"
+
+# start-platform-api-mock: Start API in development mode.  Similar to start-platform-api, but uses config file with mock URLs
+start-platform-api-mock: stop start-mock-dyson
+	@echo "  >  Starting $(PROJECT_NAME) API"
+	@-$(GOBIN)/$(API_SERVICE)/platform_api -c $(CONFIG_MOCK_FILE) 2>&1 & echo $$! > $(PID_API)
 	@cat $(PID_API) | sed "/^/s/^/  \>  API PID: /"
 	@echo "  >  Error log: $(STDERR)"
 
@@ -91,7 +100,12 @@ stop:
 	@-kill `cat $(OBSERVER_PARSER)` 2> /dev/null || true
 	@-kill `cat $(PID_OBSERVER_SUBSCRIBER)` 2> /dev/null || true
 	@-kill `cat $(PID_SWAGGER_API)` 2> /dev/null || true
+	@-kill `cat $(PID_DYSON)` 2> /dev/null || true
 	@-rm $(PID_API) $(PID_OBSERVER_NOTIFIER) $(PID_OBSERVER_PARSER) $(PID_OBSERVER_SUBSCRIBER) $(PID_SWAGGER_API)
+
+stop-dyson:
+	@kill `cat $(PID_DYSON)` 2> /dev/null || true
+	@rm $(PID_DYSON)
 
 ## compile: Compile the project.
 compile:
@@ -115,8 +129,14 @@ test: go-test
 ## functional: Run all functional tests.
 functional: go-functional
 
-## integration: Run all functional tests.
+## integration: Run all integration tests.
 integration: go-integration
+
+## start-mock-dyson: Start Dyson with mocks of external services
+start-mock-dyson: stop-dyson
+	@echo "  >  Starting Dyson with mocks"
+	@-dyson  mock/ext-api-dyson & echo $$! > $(PID_DYSON)
+	@echo "  >  Dyson started " `cat $(PID_DYSON)`
 
 ## fmt: Run `go fmt` for all go files.
 fmt: go-fmt
@@ -149,21 +169,45 @@ ifeq (,$(shell which newman))
 endif
 
 ## newman: Run Postman Newman test, the host parameter is required, and you can specify the name of the test do you wanna run (transaction, token, staking, collection, domain, healthcheck, observer). e.g $ make newman test=staking host=http//localhost
-newman: install-newman
-	@echo "  >  Running $(test) tests"
+newman: install-newman start-platform-api
+ifeq (,$(test))
+	@bash -c "$(MAKE) newman-run test=transaction host=$(host)"
+	@bash -c "$(MAKE) newman-run test=token host=$(host)"
+	@bash -c "$(MAKE) newman-run test=staking host=$(host)"
+	@bash -c "$(MAKE) newman-run test=collection host=$(host)"
+	@bash -c "$(MAKE) newman-run test=domain host=$(host)"
+	@bash -c "$(MAKE) newman-run test=healthcheck host=$(host)"
+else
+	@bash -c "$(MAKE) newman-run test=$(test) host=$(host)"
+endif
+
+## newman-mocked: Run mocked Postman Newman tests, after starting platform api. See newman target.
+newman-mocked: install-newman install-dyson go-compile start-platform-api-mock
+ifeq (,$(test))
+	@bash -c "$(MAKE) newman-run test=transaction host=$(host)"
+	@bash -c "$(MAKE) newman-run test=token host=$(host)"
+	@bash -c "$(MAKE) newman-run test=staking host=$(host)"
+	@bash -c "$(MAKE) newman-run test=collection host=$(host)"
+	@bash -c "$(MAKE) newman-run test=domain host=$(host)"
+	@bash -c "$(MAKE) newman-run test=healthcheck host=$(host)"
+else
+	@bash -c "$(MAKE) newman-run test=$(test) host=$(host)"
+endif
+
+## newman-run: Run chosen Newman tests. See newman target.
+newman-run:
 ifeq (,$(host))
 	@echo "  >  Host parameter is missing. e.g: make newman test=staking host=http://localhost:8420"
 	@exit 1
 endif
-ifeq (,$(test))
-	@bash -c "$(MAKE) newman test=transaction host=$(host)"
-	@bash -c "$(MAKE) newman test=token host=$(host)"
-	@bash -c "$(MAKE) newman test=staking host=$(host)"
-	@bash -c "$(MAKE) newman test=collection host=$(host)"
-	@bash -c "$(MAKE) newman test=domain host=$(host)"
-	@bash -c "$(MAKE) newman test=healthcheck host=$(host)"
-else
+	@echo "  >  Running $(test) tests"
 	@newman run tests/postman/Blockatlas.postman_collection.json --folder $(test) -d tests/postman/$(test)_data.json --env-var "host=$(host)"
+
+## install-dyson: Install Dyson for mocked tests.
+install-dyson:
+ifeq (,$(shell which dyson))
+	@echo "  >  Installing Dyson"
+	@-npm install -g dyson
 endif
 
 go-compile: go-get go-build
@@ -201,6 +245,11 @@ go-test:
 
 go-functional:
 	@echo "  >  Running functional tests"
+	GOBIN=$(GOBIN) TEST_CONFIG=$(CONFIG_FILE) go test -race -tags=functional -v ./tests/functional
+
+## go-functional-mock: Run platform-api with mocks, and run functional tests
+go-functional-mock:	stop install-dyson start-mock-dyson start-platform-api-mock
+	@echo "  >  Running functional tests with mocks"
 	GOBIN=$(GOBIN) TEST_CONFIG=$(CONFIG_FILE) go test -race -tags=functional -v ./tests/functional
 
 go-integration:
