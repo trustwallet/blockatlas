@@ -476,20 +476,16 @@ var (
 			To:       "tbnb12hlquylu78cjylk5zshxpdj6hf3t0tahwjt3ex",
 		},
 	}
-	txsBlock = Block{
-		Number: 12345,
-		ID:     "12345",
-		Txs: []Tx{
-			transferDstOne,
-			transferDst2,
-			nativeTransferDstOne,
-			nativeTransferDst2,
-		},
-	}
 )
 
-func TestGetTxs(t *testing.T) {
-	txs := txsBlock.GetTransactionsMap()
+func TestGetTxsTx(t *testing.T) {
+	tx := Txs{
+		transferDstOne,
+		transferDst2,
+		nativeTransferDstOne,
+		nativeTransferDst2,
+	}
+	txs := tx.GetTransactionsMap()
 	assert.Equal(t, len(txs.Map), 4)
 	assert.Equal(t, txs.Map["tbnb1fhr04azuhcj0dulm7ka40y0cqjlafwae9k9gk2"].Size(), 2)
 	assert.Equal(t, txs.Map["tbnb1sylyjw032eajr9cyllp26n04300qzzre38qyv5"].Size(), 1)

@@ -25,24 +25,24 @@ func RunNotifier(delivery amqp.Delivery, s storage.Addresses) {
 			logger.Error(err)
 		}
 	}()
-	var block blockatlas.Block
-	if err := json.Unmarshal(delivery.Body, &block); err != nil {
+	var txs blockatlas.Txs
+	if err := json.Unmarshal(delivery.Body, &txs); err != nil {
 		logger.Error(err)
 		return
 	}
-	if len(block.Txs) == 0 {
+	if len(txs) == 0 {
 		return
 	}
 
-	logger.Info("Consumed", logger.Params{"num": block.Number, "txs": len(block.Txs), "coin": block.Txs[0].Coin})
+	logger.Info("Consumed", logger.Params{"txs": len(txs), "coin": txs[0].Coin})
 
-	blockTransactions := block.GetTransactionsMap()
+	blockTransactions := txs.GetTransactionsMap()
 	if len(blockTransactions.Map) == 0 {
 		return
 	}
 
 	addresses := blockTransactions.GetUniqueAddresses()
-	subs, err := s.FindSubscriptions(block.Txs[0].Coin, addresses)
+	subs, err := s.FindSubscriptions(txs[0].Coin, addresses)
 	if err != nil || len(subs) == 0 {
 		return
 	}

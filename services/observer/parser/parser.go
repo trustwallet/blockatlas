@@ -171,51 +171,62 @@ func PublishBlocks(blocks []blockatlas.Block) error {
 	}
 
 	var (
-		txsAmount, publishedBlocksCount int32
-		errorsChan                      = make(chan error, len(blocks))
-		wg                              sync.WaitGroup
+		//txsAmount, publishedBlocksCount int32
+		txsBatch blockatlas.Txs
+		//errorsChan                      = make(chan error, len(blocks))
+		//wg                              sync.WaitGroup
 	)
 
 	for _, block := range blocks {
-		wg.Add(1)
-		go func(block blockatlas.Block, wg *sync.WaitGroup) {
-			defer wg.Done()
-
-			if len(block.Txs) == 0 {
-				return
-			}
-
-			atomic.AddInt32(&txsAmount, int32(len(block.Txs)))
-
-			err := publishBlock(block)
-			if err != nil {
-				errorsChan <- err
-				return
-			}
-
-			atomic.AddInt32(&publishedBlocksCount, 1)
-		}(block, &wg)
-	}
-	wg.Wait()
-	close(errorsChan)
-
-	if len(errorsChan) > 0 {
-		var (
-			errorsList = make([]error, 0, len(errorsChan))
-		)
-		for err := range errorsChan {
-			errorsList = append(errorsList, err)
+		if len(block.Txs) == 0 {
+			continue
 		}
-		logger.Error("Publish block errors", logger.Params{"errorsCount": len(errorsList), "errorsDetails": errorsList})
+		for _, tx := range block.Txs {
+			txsBatch = append(txsBatch, tx)
+		}
+		//wg.Add(1)
+		//go func(block blockatlas.Block, wg *sync.WaitGroup) {
+		//	defer wg.Done()
+		//
+		//	if len(block.Txs) == 0 {
+		//		return
+		//	}
+		//
+		//	atomic.AddInt32(&txsAmount, int32(len(block.Txs)))
+		//
+		//	err := publishTxsBatch(block)
+		//	if err != nil {
+		//		errorsChan <- err
+		//		return
+		//	}
+		//
+		//	atomic.AddInt32(&publishedBlocksCount, 1)
+		//}(block, &wg)
 	}
+	//wg.Wait()
+	//close(errorsChan)
 
-	logger.Info("Published blocks batch", logger.Params{"blocks": publishedBlocksCount, "txs": txsAmount})
+	//if len(errorsChan) > 0 {
+	//	var (
+	//		errorsList = make([]error, 0, len(errorsChan))
+	//	)
+	//	for err := range errorsChan {
+	//		errorsList = append(errorsList, err)
+	//	}
+	//	logger.Error("Publish block errors", logger.Params{"errorsCount": len(errorsList), "errorsDetails": errorsList})
+	//}
+
+	err := publishTxsBatch(txsBatch)
+	if err != nil {
+		logger.Error(err)
+	}
+	logger.Info("Published blocks batch", logger.Params{"blocks": len(blocks), "txs": len(txsBatch)})
 	logger.Info("------------------------------------------------------------")
 	return nil
 }
 
-func publishBlock(block blockatlas.Block) error {
-	body, err := json.Marshal(block)
+func publishTxsBatch(txs blockatlas.Txs) error {
+	body, err := json.Marshal(txs)
 	if err != nil {
 		return err
 	}

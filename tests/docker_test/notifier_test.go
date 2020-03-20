@@ -21,28 +21,24 @@ type TestsCounter2 struct {
 }
 
 var (
-	block = blockatlas.Block{
-		Number: 100,
-		ID:     "",
-		Txs: []blockatlas.Tx{
-			{
-				ID:     "95CF63FAA27579A9B6AF84EF8B2DFEAC29627479E9C98E7F5AE4535E213FA4C9",
-				Coin:   coin.BNB,
-				From:   "tbnb1ttyn4csghfgyxreu7lmdu3lcplhqhxtzced45a",
-				To:     "tbnb12hlquylu78cjylk5zshxpdj6hf3t0tahwjt3ex",
-				Fee:    "125000",
-				Date:   1555117625,
-				Block:  7928667,
-				Status: blockatlas.StatusCompleted,
-				Memo:   "test",
-				Meta: blockatlas.NativeTokenTransfer{
-					TokenID:  "YLC-D8B",
-					Symbol:   "YLC",
-					Value:    "210572645",
-					Decimals: 8,
-					From:     "tbnb1ttyn4csghfgyxreu7lmdu3lcplhqhxtzced45a",
-					To:       "tbnb12hlquylu78cjylk5zshxpdj6hf3t0tahwjt3ex",
-				},
+	txs = blockatlas.Txs{
+		{
+			ID:     "95CF63FAA27579A9B6AF84EF8B2DFEAC29627479E9C98E7F5AE4535E213FA4C9",
+			Coin:   coin.BNB,
+			From:   "tbnb1ttyn4csghfgyxreu7lmdu3lcplhqhxtzced45a",
+			To:     "tbnb12hlquylu78cjylk5zshxpdj6hf3t0tahwjt3ex",
+			Fee:    "125000",
+			Date:   1555117625,
+			Block:  7928667,
+			Status: blockatlas.StatusCompleted,
+			Memo:   "test",
+			Meta: blockatlas.NativeTokenTransfer{
+				TokenID:  "YLC-D8B",
+				Symbol:   "YLC",
+				Value:    "210572645",
+				Decimals: 8,
+				From:     "tbnb1ttyn4csghfgyxreu7lmdu3lcplhqhxtzced45a",
+				To:       "tbnb12hlquylu78cjylk5zshxpdj6hf3t0tahwjt3ex",
 			},
 		},
 	}
@@ -67,7 +63,7 @@ func TestNotifier(t *testing.T) {
 	assert.Nil(t, err)
 
 	for i := 0; i < 31; i++ {
-		err := produceBlock(block)
+		err := produceTxs(txs)
 		assert.Nil(t, err)
 	}
 
@@ -135,8 +131,8 @@ func ConsumerToTestTransactions(delivery amqp.Delivery) {
 	}
 
 }
-func produceBlock(block blockatlas.Block) error {
-	body, err := json.Marshal(block)
+func produceTxs(txs blockatlas.Txs) error {
+	body, err := json.Marshal(txs)
 	if err != nil {
 		return err
 	}

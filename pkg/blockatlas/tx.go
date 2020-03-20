@@ -205,18 +205,20 @@ type (
 		Coin     uint      `json:"coin"`
 		Type     TokenType `json:"type"`
 	}
+
+	Txs []Tx
 )
 
-func (b *Block) GetTransactionsMap() TxSetMap {
+func (t Txs) GetTransactionsMap() TxSetMap {
 	txSetMap := TxSetMap{Map: make(map[string]*TxSet)}
-	for i := 0; i < len(b.Txs); i++ {
-		addresses := b.Txs[i].GetAddresses()
-		addresses = append(addresses, b.Txs[i].GetUtxoAddresses()...)
+	for i := 0; i < len(t); i++ {
+		addresses := t[i].GetAddresses()
+		addresses = append(addresses, t[i].GetUtxoAddresses()...)
 		for _, address := range addresses {
 			if txSetMap.Map[address] == nil {
 				txSetMap.Map[address] = new(TxSet)
 			}
-			txSetMap.Map[address].Add(&b.Txs[i])
+			txSetMap.Map[address].Add(&t[i])
 		}
 	}
 	return txSetMap
