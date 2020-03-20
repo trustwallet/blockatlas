@@ -82,6 +82,7 @@ module.exports = {
             }
             return {error: 'Bad account number'};
         }
-        return {error: 'Invalid request'};
+        var return4Codacy = {error: 'Invalid request'};
+        return return4Codacy;
     }
 };
