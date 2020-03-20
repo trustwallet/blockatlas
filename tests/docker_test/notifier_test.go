@@ -9,16 +9,14 @@ import (
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/services/observer/notifier"
 	"github.com/trustwallet/blockatlas/tests/docker_test/setup"
-	"sync"
+	"go.uber.org/atomic"
 	"testing"
 )
 
-type TestsCounter2 struct {
-	M       sync.Mutex
-	Counter int
-}
+const ParsedTransactionsBatchParser mq.Queue = "parsedtransactionsbatchparser"
 
 var (
 	txs = blockatlas.Txs{
@@ -42,16 +40,15 @@ var (
 			},
 		},
 	}
-	notifierCounter TestsCounter2
+	c atomic.Int32
 
-	stopChan2      = make(chan struct{})
-	globalTesting2 *testing.T
+	stopChan = make(chan struct{})
 )
 
 func TestNotifier(t *testing.T) {
-	globalTesting2 = t
 
-	if err := mq.ConfirmedBlocks.Declare(); err != nil {
+	logger.InitLogger()
+	if err := ParsedTransactionsBatchParser.Declare(); err != nil {
 		assert.Nil(t, err)
 	}
 
@@ -62,31 +59,29 @@ func TestNotifier(t *testing.T) {
 	err := setup.Cache.AddSubscriptions([]blockatlas.Subscription{{Coin: 714, Address: "tbnb1ttyn4csghfgyxreu7lmdu3lcplhqhxtzced45a", GUID: "guid_test"}})
 	assert.Nil(t, err)
 
-	for i := 0; i < 31; i++ {
+	for i := 0; i < 10; i++ {
 		err := produceTxs(txs)
 		assert.Nil(t, err)
 	}
 
-	go mq.ConfirmedBlocks.RunConsumer(notifier.RunNotifier, setup.Cache)
+	go ParsedTransactionsBatchParser.RunConsumer(notifier.RunNotifier, setup.Cache)
 
-	c := mq.Transactions.GetMessageChannel()
-
-	for i := 0; i < 31; i++ {
-		go ConsumerToTestTransactions(c.GetMessage())
+	for i := 0; i < 10; i++ {
+		go ConsumerToTestTransactions(mq.Transactions.GetMessageChannel().GetMessage(), t)
 	}
 
-	<-stopChan2
+	<-stopChan
 }
 
-func ConsumerToTestTransactions(delivery amqp.Delivery) {
+func ConsumerToTestTransactions(delivery amqp.Delivery, t *testing.T) {
 	var event notifier.DispatchEvent
 	if err := json.Unmarshal(delivery.Body, &event); err != nil {
-		assert.Nil(globalTesting2, err)
+		assert.Nil(t, err)
 		return
 	}
 	err := delivery.Ack(false)
 	if err != nil {
-		assert.Nil(globalTesting2, err)
+		assert.Nil(t, err)
 	}
 
 	memo := blockatlas.NativeTokenTransfer{
@@ -99,7 +94,7 @@ func ConsumerToTestTransactions(delivery amqp.Delivery) {
 		To:       "tbnb12hlquylu78cjylk5zshxpdj6hf3t0tahwjt3ex",
 	}
 
-	assert.Equal(globalTesting2, notifier.DispatchEvent{
+	assert.Equal(t, notifier.DispatchEvent{
 		Action: blockatlas.TxNativeTokenTransfer,
 		Result: &blockatlas.Tx{
 			Type:      blockatlas.TxNativeTokenTransfer,
@@ -118,16 +113,10 @@ func ConsumerToTestTransactions(delivery amqp.Delivery) {
 		GUID: "guid_test",
 	}, event)
 
-	notifierCounter.M.Lock()
-	notifierCounter.Counter++
-	notifierCounter.M.Unlock()
+	c.Add(1)
 
-	notifierCounter.M.Lock()
-	val := notifierCounter.Counter
-	notifierCounter.M.Unlock()
-
-	if val == 30 {
-		stopChan2 <- struct{}{}
+	if c.Load() == 9 {
+		stopChan <- struct{}{}
 	}
 
 }
@@ -136,5 +125,5 @@ func produceTxs(txs blockatlas.Txs) error {
 	if err != nil {
 		return err
 	}
-	return mq.ConfirmedBlocks.Publish(body)
+	return ParsedTransactionsBatchParser.Publish(body)
 }

@@ -230,7 +230,7 @@ func publishTxsBatch(txs blockatlas.Txs) error {
 	if err != nil {
 		return err
 	}
-	return mq.ConfirmedBlocks.Publish(body)
+	return mq.ParsedTransactionsBatch.Publish(body)
 }
 
 func getBlockByNumberWithRetry(attempts int, sleep time.Duration, getBlockByNumber GetBlockByNumber, n int64) (*blockatlas.Block, error) {

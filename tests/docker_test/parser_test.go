@@ -5,9 +5,8 @@ package docker_test
 import (
 	"context"
 	"encoding/json"
-	"github.com/stretchr/testify/assert"
-
 	"github.com/streadway/amqp"
+	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
@@ -15,39 +14,18 @@ import (
 	"github.com/trustwallet/blockatlas/services/observer/notifier"
 	"github.com/trustwallet/blockatlas/services/observer/parser"
 	"github.com/trustwallet/blockatlas/tests/docker_test/setup"
-	"sync"
 	"testing"
 	"time"
 )
 
-type TestsCounter struct {
-	M       sync.Mutex
-	Counter int
-}
-
-var (
-	globalTestsCounterConsumer TestsCounter
-	mockedCurrentBlockNumber   TestsCounter
-	stopChan                   = make(chan struct{})
-	globalTesting              *testing.T
-)
-
 func TestParserFetchAndPublishBlock_NormalCase(t *testing.T) {
-	globalTesting = t
 	params := setupParser()
 
 	ctx, cancel := context.WithCancel(context.Background())
 
 	go parser.RunParser(getMockedBlockAPI(), setup.Cache, params, ctx)
-
-	c := mq.ConfirmedBlocks.GetMessageChannel()
-
-	for i := 0; i < 3; i++ {
-		go ConsumerToTestAmountOfBlocks(c.GetMessage())
-	}
-	<-stopChan
-	cancel()
-	time.Sleep(time.Second * 5)
+	time.Sleep(time.Microsecond)
+	ConsumerToTestAmountOfBlocks(mq.ParsedTransactionsBatch.GetMessageChannel().GetMessage(), t, cancel)
 }
 
 func getMockedBlockAPI() blockatlas.BlockAPI {
@@ -98,9 +76,9 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 	return &blockatlas.Block{}, nil
 }
 
-func ConsumerToTestAmountOfBlocks(delivery amqp.Delivery) {
-	var block blockatlas.Block
-	if err := json.Unmarshal(delivery.Body, &block); err != nil {
+func ConsumerToTestAmountOfBlocks(delivery amqp.Delivery, t *testing.T, cancelFunc context.CancelFunc) {
+	var txs blockatlas.Txs
+	if err := json.Unmarshal(delivery.Body, &txs); err != nil {
 		logger.Error(err)
 		return
 	}
@@ -109,28 +87,12 @@ func ConsumerToTestAmountOfBlocks(delivery amqp.Delivery) {
 		logger.Error(err)
 	}
 
-	globalTestsCounterConsumer.M.Lock()
-	globalTestsCounterConsumer.Counter++
-	globalTestsCounterConsumer.M.Unlock()
-
-	globalTestsCounterConsumer.M.Lock()
-	val := globalTestsCounterConsumer.Counter
-	globalTestsCounterConsumer.M.Unlock()
-
-	//assert.Equal(globalTesting, int(block.Number), 0)
-	assert.Equal(globalTesting, block.ID, "")
-	if val == 2 {
-		stopChan <- struct{}{}
-	}
+	assert.Equal(t, len(txs), 50)
+	cancelFunc()
 }
 
 func setupParser() parser.Params {
-	globalTestsCounterConsumer = TestsCounter{
-		M:       sync.Mutex{},
-		Counter: 0,
-	}
-
-	if err := mq.ConfirmedBlocks.Declare(); err != nil {
+	if err := mq.ParsedTransactionsBatch.Declare(); err != nil {
 		logger.Fatal(err)
 	}
 

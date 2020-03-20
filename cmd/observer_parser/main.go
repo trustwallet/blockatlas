@@ -44,7 +44,7 @@ func init() {
 	internal.InitRabbitMQ(mqHost, prefetchCount)
 	platform.Init(platformHandle)
 
-	if err := mq.ConfirmedBlocks.Declare(); err != nil {
+	if err := mq.ParsedTransactionsBatch.Declare(); err != nil {
 		logger.Fatal(err)
 	}
 
