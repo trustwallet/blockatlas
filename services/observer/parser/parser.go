@@ -94,10 +94,12 @@ func FetchBlocks(api blockatlas.BlockAPI, lastParsedBlock, currentBlock int64) (
 		return nil, nil
 	}
 
-	blocksCount := currentBlock - lastParsedBlock
-
-	blocksChan := make(chan blockatlas.Block, blocksCount)
-	errorsChan := make(chan error, blocksCount)
+	var (
+		blocksCount = currentBlock - lastParsedBlock
+		blocksChan  = make(chan blockatlas.Block, blocksCount)
+		errorsChan  = make(chan error, blocksCount)
+		totalCount  int32
+	)
 	var wg sync.WaitGroup
 	for i := lastParsedBlock + 1; i <= currentBlock; i++ {
 		wg.Add(1)
@@ -106,7 +108,9 @@ func FetchBlocks(api blockatlas.BlockAPI, lastParsedBlock, currentBlock int64) (
 			err := fetchBlock(api, i, blocksChan)
 			if err != nil {
 				errorsChan <- err
+				return
 			}
+			atomic.AddInt32(&totalCount, 1)
 		}(i, &wg)
 	}
 	wg.Wait()
@@ -114,9 +118,13 @@ func FetchBlocks(api blockatlas.BlockAPI, lastParsedBlock, currentBlock int64) (
 	close(blocksChan)
 
 	if len(errorsChan) > 0 {
+		var (
+			errorsList = make([]error, 0, len(errorsChan))
+		)
 		for err := range errorsChan {
-			logger.Error(err)
+			errorsList = append(errorsList, err)
 		}
+		logger.Error("Fetch blocks errors", logger.Params{"count": len(errorsList), "blocks": errorsList})
 	}
 
 	blocksList := make([]blockatlas.Block, 0, len(blocksChan))
@@ -124,14 +132,14 @@ func FetchBlocks(api blockatlas.BlockAPI, lastParsedBlock, currentBlock int64) (
 		blocksList = append(blocksList, block)
 	}
 
-	logger.Info("Fetched blocks batch", logger.Params{"from": lastParsedBlock, "to": currentBlock, "total": len(blocksList)})
+	logger.Info("Fetched blocks batch", logger.Params{"from": lastParsedBlock, "to": currentBlock, "total": totalCount})
 	return blocksList, nil
 }
 
 func fetchBlock(api blockatlas.BlockAPI, num int64, blocksChan chan<- blockatlas.Block) error {
 	block, err := getBlockByNumberWithRetry(5, time.Second*5, api.GetBlockByNumber, num)
 	if err != nil {
-		return errors.E(err, fmt.Sprintf("Fetch failed block: %d", num))
+		return errors.E(fmt.Sprintf("%d", num))
 	}
 	blocksChan <- *block
 	return nil
@@ -162,35 +170,43 @@ func PublishBlocks(blocks []blockatlas.Block) error {
 		return nil
 	}
 
-	var txsAmount int32
+	var (
+		txsAmount, publishedBlocksCount int32
+		errorsChan                      = make(chan error, len(blocks))
+		wg                              sync.WaitGroup
+	)
 
-	errorsChan := make(chan error, len(blocks))
-
-	var wg sync.WaitGroup
-	wg.Add(len(blocks))
 	for _, block := range blocks {
+		wg.Add(1)
 		go func(block blockatlas.Block, wg *sync.WaitGroup) {
 			defer wg.Done()
+
 			if len(block.Txs) == 0 {
 				return
 			}
+
 			atomic.AddInt32(&txsAmount, int32(len(block.Txs)))
+
 			err := publishBlock(block)
 			if err != nil {
 				errorsChan <- err
+				return
 			}
+
+			atomic.AddInt32(&publishedBlocksCount, 1)
 		}(block, &wg)
 	}
 	wg.Wait()
 	close(errorsChan)
 
-	publishedBlocksCount := len(blocks)
-
 	if len(errorsChan) > 0 {
+		var (
+			errorsList = make([]error, 0, len(errorsChan))
+		)
 		for err := range errorsChan {
-			logger.Error(err)
-			publishedBlocksCount--
+			errorsList = append(errorsList, err)
 		}
+		logger.Error("Publish block errors", logger.Params{"errorsCount": len(errorsList), "errorsDetails": errorsList})
 	}
 
 	logger.Info("Published blocks batch", logger.Params{"blocks": publishedBlocksCount, "txs": txsAmount})
