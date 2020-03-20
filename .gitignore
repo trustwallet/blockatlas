@@ -88,3 +88,6 @@ _testmain.go
 
 # govendor cache
 .cache
+
+# npm-installed stuff
+node_modules
