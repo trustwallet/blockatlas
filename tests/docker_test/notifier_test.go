@@ -9,11 +9,10 @@ import (
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/services/observer/notifier"
 	"github.com/trustwallet/blockatlas/tests/docker_test/setup"
-	"go.uber.org/atomic"
 	"testing"
+	"time"
 )
 
 const ParsedTransactionsBatchParser mq.Queue = "parsedtransactionsbatchparser"
@@ -40,14 +39,9 @@ var (
 			},
 		},
 	}
-	c atomic.Int32
-
-	stopChan = make(chan struct{})
 )
 
 func TestNotifier(t *testing.T) {
-
-	logger.InitLogger()
 	if err := ParsedTransactionsBatchParser.Declare(); err != nil {
 		assert.Nil(t, err)
 	}
@@ -59,18 +53,14 @@ func TestNotifier(t *testing.T) {
 	err := setup.Cache.AddSubscriptions([]blockatlas.Subscription{{Coin: 714, Address: "tbnb1ttyn4csghfgyxreu7lmdu3lcplhqhxtzced45a", GUID: "guid_test"}})
 	assert.Nil(t, err)
 
-	for i := 0; i < 10; i++ {
-		err := produceTxs(txs)
-		assert.Nil(t, err)
-	}
+	err = produceTxs(txs)
+	assert.Nil(t, err)
 
 	go ParsedTransactionsBatchParser.RunConsumer(notifier.RunNotifier, setup.Cache)
+	time.Sleep(time.Microsecond)
 
-	for i := 0; i < 10; i++ {
-		go ConsumerToTestTransactions(mq.Transactions.GetMessageChannel().GetMessage(), t)
-	}
-
-	<-stopChan
+	ConsumerToTestTransactions(mq.Transactions.GetMessageChannel().GetMessage(), t)
+	return
 }
 
 func ConsumerToTestTransactions(delivery amqp.Delivery, t *testing.T) {
@@ -113,13 +103,9 @@ func ConsumerToTestTransactions(delivery amqp.Delivery, t *testing.T) {
 		GUID: "guid_test",
 	}, event)
 
-	c.Add(1)
-
-	if c.Load() == 9 {
-		stopChan <- struct{}{}
-	}
-
+	return
 }
+
 func produceTxs(txs blockatlas.Txs) error {
 	body, err := json.Marshal(txs)
 	if err != nil {
