@@ -9,6 +9,7 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/storage"
+	"sync"
 	"testing"
 	"time"
 )
@@ -80,8 +81,7 @@ func Test_GetBlocksIntervalToFetch(t *testing.T) {
 }
 
 func TestFetchBlocks(t *testing.T) {
-	blocks, err := FetchBlocks(getMockedBlockAPI(), 0, 100)
-	assert.Nil(t, err)
+	blocks := FetchBlocks(getMockedBlockAPI(), 0, 100)
 	assert.Equal(t, len(blocks), 100)
 }
 
@@ -101,6 +101,32 @@ func TestSaveLastParsedBlock(t *testing.T) {
 	lastParsedBlock, err := s.GetLastParsedBlockNumber(params.Coin)
 	assert.Nil(t, err)
 	assert.Equal(t, lastParsedBlock, int64(110))
+}
+
+func TestParser_ConvertToBatch(t *testing.T) {
+	blocks := []blockatlas.Block{block, block, block, block}
+	txs := ConvertToBatch(blocks)
+	assert.Equal(t, 4, len(txs))
+
+	empty := []blockatlas.Block{}
+	txsEmpty := ConvertToBatch(empty)
+	assert.Equal(t, 0, len(txsEmpty))
+}
+
+func TestParser_add(t *testing.T) {
+	blocks := []blockatlas.Block{block, block, block, block}
+	txs := ConvertToBatch(blocks)
+
+	batch := transactionsBatch{
+		Mutex: sync.Mutex{},
+		Txs:   txs,
+	}
+
+	batch.add(txs)
+	assert.Equal(t, 8, len(batch.Txs))
+
+	batch.add(nil)
+	assert.Equal(t, 8, len(batch.Txs))
 }
 
 func TestParser_getBlockByNumberWithRetry(t *testing.T) {
@@ -126,7 +152,7 @@ func TestParser_getBlockByNumberWithRetry_Error(t *testing.T) {
 		t.Error("block object need be nil")
 	}
 
-	if elapsed > time.Millisecond*8 {
+	if elapsed > time.Millisecond*7 {
 		t.Error("Thundering Herd prevent doesn't work")
 	}
 }

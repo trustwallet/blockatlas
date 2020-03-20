@@ -57,19 +57,22 @@ func RunParser(api blockatlas.BlockAPI, storage storage.Tracker, config Params, 
 			lastParsedBlock, currentBlock, err := GetBlocksIntervalToFetch(api, storage, config)
 			if err != nil {
 				logger.Error(err)
+				time.Sleep(config.ParsingBlocksInterval)
+				continue
 			}
 
-			blocks, err := FetchBlocks(api, lastParsedBlock, currentBlock)
-			if err != nil {
-				logger.Error(err)
-			}
+			blocks := FetchBlocks(api, lastParsedBlock, currentBlock)
 
 			err = SaveLastParsedBlock(storage, config, blocks)
 			if err != nil {
 				logger.Error(err)
+				time.Sleep(config.ParsingBlocksInterval)
+				continue
 			}
 
-			err = PublishBlocks(blocks)
+			txs := ConvertToBatch(blocks)
+
+			err = PublishTransactionsBatch(txs)
 			if err != nil {
 				logger.Error(err)
 			}
@@ -101,11 +104,10 @@ func GetBlocksIntervalToFetch(api blockatlas.BlockAPI, storage storage.Tracker, 
 	return lastParsedBlock, currentBlock, nil
 }
 
-func FetchBlocks(api blockatlas.BlockAPI, lastParsedBlock, currentBlock int64) ([]blockatlas.Block, error) {
+func FetchBlocks(api blockatlas.BlockAPI, lastParsedBlock, currentBlock int64) []blockatlas.Block {
 	if lastParsedBlock == currentBlock {
 		logger.Info("No new blocks", logger.Params{"last": lastParsedBlock, "coin": api.Coin().ID, "time": time.Now().Unix()})
-		logger.Info("------------------------------------------------------------")
-		return nil, nil
+		return nil
 	}
 
 	var (
@@ -113,8 +115,9 @@ func FetchBlocks(api blockatlas.BlockAPI, lastParsedBlock, currentBlock int64) (
 		blocksChan  = make(chan blockatlas.Block, blocksCount)
 		errorsChan  = make(chan error, blocksCount)
 		totalCount  int32
+		wg          sync.WaitGroup
 	)
-	var wg sync.WaitGroup
+
 	for i := lastParsedBlock + 1; i <= currentBlock; i++ {
 		wg.Add(1)
 		go func(i int64, wg *sync.WaitGroup) {
@@ -127,6 +130,7 @@ func FetchBlocks(api blockatlas.BlockAPI, lastParsedBlock, currentBlock int64) (
 			atomic.AddInt32(&totalCount, 1)
 		}(i, &wg)
 	}
+
 	wg.Wait()
 	close(errorsChan)
 	close(blocksChan)
@@ -147,7 +151,7 @@ func FetchBlocks(api blockatlas.BlockAPI, lastParsedBlock, currentBlock int64) (
 	}
 
 	logger.Info("Fetched blocks batch", logger.Params{"from": lastParsedBlock, "to": currentBlock, "total": totalCount})
-	return blocksList, nil
+	return blocksList
 }
 
 func fetchBlock(api blockatlas.BlockAPI, num int64, blocksChan chan<- blockatlas.Block) error {
@@ -179,7 +183,7 @@ func SaveLastParsedBlock(storage storage.Tracker, config Params, blocks []blocka
 	return nil
 }
 
-func PublishBlocks(blocks []blockatlas.Block) error {
+func ConvertToBatch(blocks []blockatlas.Block) blockatlas.Txs {
 	if len(blocks) == 0 {
 		return nil
 	}
@@ -198,21 +202,33 @@ func PublishBlocks(blocks []blockatlas.Block) error {
 	}
 	wg.Wait()
 
-	err := publishTxsBatch(txsBatch.Txs)
-	if err != nil {
-		logger.Error(err)
+	if len(txsBatch.Txs) == 0 {
+		logger.Info("Blocks converted to transactions batch, there is no transactions", logger.Params{"blocks": len(blocks)})
+		return nil
 	}
-	logger.Info("Published blocks batch", logger.Params{"blocks": len(blocks), "txs": len(txsBatch.Txs)})
-	logger.Info("------------------------------------------------------------")
-	return nil
+
+	logger.Info("Blocks converted to transactions batch", logger.Params{"blocks": len(blocks), "txs": len(txsBatch.Txs)})
+	return txsBatch.Txs
 }
 
-func publishTxsBatch(txs blockatlas.Txs) error {
+func PublishTransactionsBatch(txs blockatlas.Txs) error {
+	if len(txs) == 0 {
+		logger.Info("------------------------------------------------------------")
+		return nil
+	}
+
 	body, err := json.Marshal(txs)
 	if err != nil {
 		return err
 	}
-	return mq.ParsedTransactionsBatch.Publish(body)
+	err = mq.ParsedTransactionsBatch.Publish(body)
+	if err != nil {
+		logger.Error(err)
+	}
+
+	logger.Info("Published transactions batch", logger.Params{"txs": len(txs)})
+	logger.Info("------------------------------------------------------------")
+	return nil
 }
 
 func getBlockByNumberWithRetry(attempts int, sleep time.Duration, getBlockByNumber GetBlockByNumber, n int64) (*blockatlas.Block, error) {

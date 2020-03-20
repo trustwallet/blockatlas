@@ -6,7 +6,6 @@ import (
 	"github.com/trustwallet/blockatlas/internal"
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/logger"
-	"github.com/trustwallet/blockatlas/platform"
 	"github.com/trustwallet/blockatlas/services/observer/notifier"
 	"github.com/trustwallet/blockatlas/storage"
 	"os"
@@ -33,11 +32,9 @@ func init() {
 	redisHost := viper.GetString("storage.redis")
 	mqHost := viper.GetString("observer.rabbitmq.uri")
 	prefetchCount := viper.GetInt("observer.rabbitmq.consumer.prefetch_count")
-	platformHandle := viper.GetString("platform")
 
 	cache = internal.InitRedis(redisHost)
 	internal.InitRabbitMQ(mqHost, prefetchCount)
-	platform.Init(platformHandle)
 
 	if err := mq.ParsedTransactionsBatch.Declare(); err != nil {
 		logger.Fatal(err)
