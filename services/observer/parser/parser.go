@@ -30,7 +30,21 @@ type (
 	stop struct {
 		error
 	}
+
+	transactionsBatch struct {
+		sync.Mutex
+		blockatlas.Txs
+	}
 )
+
+func (t *transactionsBatch) add(transactions blockatlas.Txs) {
+	t.Lock()
+	defer t.Unlock()
+	if len(transactions) == 0 {
+		return
+	}
+	t.Txs = append(t.Txs, transactions...)
+}
 
 func RunParser(api blockatlas.BlockAPI, storage storage.Tracker, config Params, ctx context.Context) {
 	logger.Info("------------------------------------------------------------")
@@ -171,56 +185,24 @@ func PublishBlocks(blocks []blockatlas.Block) error {
 	}
 
 	var (
-		//txsAmount, publishedBlocksCount int32
-		txsBatch blockatlas.Txs
-		//errorsChan                      = make(chan error, len(blocks))
-		//wg                              sync.WaitGroup
+		txsBatch transactionsBatch
+		wg       sync.WaitGroup
 	)
 
 	for _, block := range blocks {
-		if len(block.Txs) == 0 {
-			continue
-		}
-		for _, tx := range block.Txs {
-			txsBatch = append(txsBatch, tx)
-		}
-		//wg.Add(1)
-		//go func(block blockatlas.Block, wg *sync.WaitGroup) {
-		//	defer wg.Done()
-		//
-		//	if len(block.Txs) == 0 {
-		//		return
-		//	}
-		//
-		//	atomic.AddInt32(&txsAmount, int32(len(block.Txs)))
-		//
-		//	err := publishTxsBatch(block)
-		//	if err != nil {
-		//		errorsChan <- err
-		//		return
-		//	}
-		//
-		//	atomic.AddInt32(&publishedBlocksCount, 1)
-		//}(block, &wg)
+		wg.Add(1)
+		go func(block blockatlas.Block, wg *sync.WaitGroup) {
+			defer wg.Done()
+			txsBatch.add(block.Txs)
+		}(block, &wg)
 	}
-	//wg.Wait()
-	//close(errorsChan)
+	wg.Wait()
 
-	//if len(errorsChan) > 0 {
-	//	var (
-	//		errorsList = make([]error, 0, len(errorsChan))
-	//	)
-	//	for err := range errorsChan {
-	//		errorsList = append(errorsList, err)
-	//	}
-	//	logger.Error("Publish block errors", logger.Params{"errorsCount": len(errorsList), "errorsDetails": errorsList})
-	//}
-
-	err := publishTxsBatch(txsBatch)
+	err := publishTxsBatch(txsBatch.Txs)
 	if err != nil {
 		logger.Error(err)
 	}
-	logger.Info("Published blocks batch", logger.Params{"blocks": len(blocks), "txs": len(txsBatch)})
+	logger.Info("Published blocks batch", logger.Params{"blocks": len(blocks), "txs": len(txsBatch.Txs)})
 	logger.Info("------------------------------------------------------------")
 	return nil
 }
