@@ -36,6 +36,7 @@ module.exports = {
             `);
         }
         // fallback
-        return {error: "Not implemented"}
+        var return4Codacy = {error: "Not implemented"};
+        return return4Codacy;
     }
 };

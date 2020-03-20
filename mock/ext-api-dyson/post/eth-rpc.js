@@ -72,10 +72,10 @@ module.exports = {
                     }
             }
             // fallback
-            return {error: "wrong data"}
+            return {error: "wrong data"};
         } else {
             // fallback
-            return {error: "wrong method"}
+            return {error: "wrong method"};
         }
     }
 };
