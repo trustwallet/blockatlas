@@ -44,6 +44,16 @@ func Worker(storage storage.Tracker, api blockatlas.BlockAPI) {
 		logger.Fatal(err)
 	}
 
+	var duration time.Duration
+	t := api.Coin().BlockTime / 1000
+
+	if t > 0 && t < 4 {
+		duration = time.Duration(int64(time.Second) * int64(t))
+	} else {
+		duration = time.Minute * 11
+	}
+	logger.Info("Setting update duration", logger.Params{"duration": duration})
+
 	for {
 		currentBlock, err = storage.GetLastParsedBlockNumber(api.Coin().ID)
 		if err != nil {
@@ -51,7 +61,15 @@ func Worker(storage storage.Tracker, api blockatlas.BlockAPI) {
 			continue
 		}
 
-		if currentBlock > lastParsedBlock {
+		latestBlock, err := api.CurrentBlockNumber()
+		if err != nil {
+			logger.Error(err)
+			continue
+		}
+
+		logger.Info("fetched", logger.Params{"currentBlock": currentBlock, "lastParsedBlock": lastParsedBlock, "latestBlock": latestBlock, "handle": api.Coin().Handle})
+
+		if currentBlock > lastParsedBlock || latestBlock == currentBlock {
 			lastParsedBlock = currentBlock
 			observerStatus.update(api.Coin().Handle, Info{
 				LastParsedBlock: lastParsedBlock,
@@ -64,7 +82,7 @@ func Worker(storage storage.Tracker, api blockatlas.BlockAPI) {
 			})
 		}
 
-		time.Sleep(time.Minute * 5)
+		time.Sleep(duration)
 	}
 }
 

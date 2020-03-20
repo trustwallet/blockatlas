@@ -51,7 +51,7 @@ func RunParser(api blockatlas.BlockAPI, storage storage.Tracker, config Params, 
 	for {
 		select {
 		case <-ctx.Done():
-			logger.Info(fmt.Sprintf("Parser of %d has been stopped", config.Coin))
+			logger.Info(fmt.Sprintf("Parser of %d stopped parsing blocks", config.Coin))
 			return
 		default:
 			lastParsedBlock, currentBlock, err := GetBlocksIntervalToFetch(api, storage, config)

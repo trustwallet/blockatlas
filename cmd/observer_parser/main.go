@@ -117,11 +117,11 @@ func main() {
 	<-quit
 	logger.Info("Shutdown parser ...")
 	for coin, cancel := range coinCancel {
-		logger.Info(fmt.Sprintf("Stop %s parser...", coin))
+		logger.Info(fmt.Sprintf("Starting to stop %s parser...", coin))
 		cancel()
 	}
 
 	time.Sleep(waitBeforeStop * 3)
 
-	logger.Info("Parser exiting")
+	logger.Info("Exiting gracefully")
 }

@@ -8,9 +8,6 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/services/observer/notifier"
 	"github.com/trustwallet/blockatlas/storage"
-	"os"
-	"os/signal"
-	"syscall"
 	"time"
 )
 
@@ -55,11 +52,5 @@ func main() {
 
 	go mq.ParsedTransactionsBatch.RunConsumerWithCancel(notifier.RunNotifier, cache, ctx)
 
-	quit := make(chan os.Signal, 1)
-	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
-	<-quit
-	cancel()
-	logger.Info("Shutdown notifier ...")
-	time.Sleep(time.Second * 5)
-	logger.Info("Notifier exiting gracefully")
+	internal.SetupGracefulShutdownForObserver(cancel)
 }
