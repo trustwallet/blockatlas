@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"github.com/spf13/viper"
 	_ "github.com/trustwallet/blockatlas/docs"
 	"github.com/trustwallet/blockatlas/internal"
@@ -8,6 +9,9 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/services/observer/subscriber"
 	"github.com/trustwallet/blockatlas/storage"
+	"os"
+	"os/signal"
+	"syscall"
 	"time"
 )
 
@@ -43,6 +47,15 @@ func main() {
 	if err := mq.Subscriptions.Declare(); err != nil {
 		logger.Fatal(err)
 	}
-	mq.Subscriptions.RunConsumer(subscriber.RunSubscriber, cache)
-	<-make(chan struct{})
+	ctx, cancel := context.WithCancel(context.Background())
+
+	go mq.Subscriptions.RunConsumerWithCancel(subscriber.RunSubscriber, cache, ctx)
+
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+	cancel()
+	logger.Info("Shutdown subscriber ...")
+	time.Sleep(time.Second * 5)
+	logger.Info("Subscriber exiting gracefully")
 }

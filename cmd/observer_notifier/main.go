@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/internal"
 	"github.com/trustwallet/blockatlas/mq"
@@ -8,6 +9,9 @@ import (
 	"github.com/trustwallet/blockatlas/platform"
 	"github.com/trustwallet/blockatlas/services/observer/notifier"
 	"github.com/trustwallet/blockatlas/storage"
+	"os"
+	"os/signal"
+	"syscall"
 	"time"
 )
 
@@ -50,6 +54,15 @@ func init() {
 func main() {
 	defer mq.Close()
 
-	go mq.ParsedTransactionsBatch.RunConsumer(notifier.RunNotifier, cache)
-	<-make(chan struct{})
+	ctx, cancel := context.WithCancel(context.Background())
+
+	go mq.ParsedTransactionsBatch.RunConsumerWithCancel(notifier.RunNotifier, cache, ctx)
+
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+	cancel()
+	logger.Info("Shutdown notifier ...")
+	time.Sleep(time.Second * 5)
+	logger.Info("Notifier exiting gracefully")
 }

@@ -1,6 +1,7 @@
 package mq
 
 import (
+	"context"
 	"github.com/streadway/amqp"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/storage"
@@ -89,6 +90,47 @@ func (q Queue) RunConsumer(consumer Consumer, cache storage.Addresses) {
 
 	for data := range messageChannel {
 		go consumer(data, cache)
+	}
+}
+
+func (q Queue) RunConsumerWithCancel(consumer Consumer, cache storage.Addresses, ctx context.Context) {
+	messageChannel, err := amqpChan.Consume(
+		string(q),
+		"",
+		false,
+		false,
+		false,
+		false,
+		nil,
+	)
+	if err != nil {
+		logger.Fatal("MQ issue " + err.Error())
+		return
+	}
+
+	if PrefetchCount < minPrefetchCount {
+		logger.Info("Change prefetch count to default")
+		PrefetchCount = defaultPrefetchCount
+	}
+
+	err = amqpChan.Qos(
+		PrefetchCount,
+		0,
+		true,
+	)
+
+	if err != nil {
+		logger.Error("no qos limit ", err)
+	}
+
+	for {
+		select {
+		case <-ctx.Done():
+			logger.Info("Consumer stopped")
+			return
+		case message := <-messageChannel:
+			go consumer(message, cache)
+		}
 	}
 }
 
