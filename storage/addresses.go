@@ -4,13 +4,46 @@ import (
 	"fmt"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
-	"github.com/trustwallet/blockatlas/pkg/logger"
 	"sync"
 )
 
 const (
 	ATLAS_OBSERVER = "ATLAS_OBSERVER"
 )
+
+type SubscriptionOperation func(sub blockatlas.Subscription, wg *sync.WaitGroup, errorsChan chan<- error)
+
+func (s *Storage) RunOperation(subscriptions []blockatlas.Subscription, operation SubscriptionOperation) error {
+	var (
+		errorsChan = make(chan error, len(subscriptions))
+		wg         sync.WaitGroup
+	)
+
+	for _, sub := range subscriptions {
+		wg.Add(1)
+		go operation(sub, &wg, errorsChan)
+	}
+	wg.Wait()
+	close(errorsChan)
+
+	if len(errorsChan) != 0 {
+		var errorsStr string
+		for err := range errorsChan {
+			errorsStr += err.Error() + " "
+		}
+		return errors.E(errorsStr)
+	}
+
+	return nil
+}
+
+func (s *Storage) DeleteSubscriptions(subscriptions []blockatlas.Subscription) error {
+	return s.RunOperation(subscriptions, s.deleteSubscriptions)
+}
+
+func (s *Storage) AddSubscriptions(subscriptions []blockatlas.Subscription) error {
+	return s.RunOperation(subscriptions, s.addSubscriptions)
+}
 
 func (s *Storage) FindSubscriptions(coin uint, addresses []string) ([]blockatlas.Subscription, error) {
 	if len(addresses) == 0 {
@@ -56,110 +89,48 @@ func (s *Storage) findSubscriptionsByAddress(coin uint, address string, sub chan
 	sub <- result
 }
 
-func (s *Storage) UpdateSubscriptions(old, new []blockatlas.Subscription) error {
-	type AllSubscriptions struct {
-		Subscription blockatlas.Subscription
-		Delete       bool
+func (s *Storage) deleteSubscriptions(sub blockatlas.Subscription, wg *sync.WaitGroup, errorsChan chan<- error) {
+	defer wg.Done()
+	key := getSubscriptionKey(sub.Coin, sub.Address)
+	var guids []string
+	err := s.GetHMValue(ATLAS_OBSERVER, key, &guids)
+	if err != nil {
+		errorsChan <- err
+		return
 	}
-	var allSubscriptionsList []AllSubscriptions
-
-	for _, o := range old {
-		allSubscriptionsList = append(allSubscriptionsList, AllSubscriptions{Subscription: o, Delete: true})
-	}
-	for _, n := range new {
-		allSubscriptionsList = append(allSubscriptionsList, AllSubscriptions{Subscription: n, Delete: false})
-	}
-
-	for _, a := range allSubscriptionsList {
-		key := getSubscriptionKey(a.Subscription.Coin, a.Subscription.Address)
-
-		if !a.Delete {
-			var guids []string
-			err := s.GetHMValue(ATLAS_OBSERVER, key, &guids)
-			if err != nil {
-				guids = make([]string, 0)
-			}
-			if hasObject(guids, a.Subscription.GUID) {
-				continue
-			}
-			guids = append(guids, a.Subscription.GUID)
-			err = s.AddHM(ATLAS_OBSERVER, key, guids)
-			if err != nil {
-				logger.Error(err, logger.Params{"key": key})
-				continue
-			}
-		} else {
-			var guids []string
-			err := s.GetHMValue(ATLAS_OBSERVER, key, &guids)
-			if err != nil {
-				continue
-			}
-			newHooks := make([]string, 0)
-			for _, guid := range guids {
-				if guid == a.Subscription.GUID {
-					continue
-				}
-				newHooks = append(newHooks, guid)
-			}
-			if len(newHooks) == 0 {
-				_ = s.DeleteHM(ATLAS_OBSERVER, key)
-				continue
-			}
-			err = s.AddHM(ATLAS_OBSERVER, key, newHooks)
-			if err != nil {
-				logger.Error(err, logger.Params{"key": key})
-				continue
-			}
+	newHooks := make([]string, 0)
+	for _, guid := range guids {
+		if guid == sub.GUID {
+			continue
 		}
+		newHooks = append(newHooks, guid)
 	}
-	return nil
+	if len(newHooks) == 0 {
+		_ = s.DeleteHM(ATLAS_OBSERVER, key)
+		return
+	}
+	err = s.AddHM(ATLAS_OBSERVER, key, newHooks)
+	if err != nil {
+		errorsChan <- err
+	}
 }
 
-func (s *Storage) AddSubscriptions(subscriptions []blockatlas.Subscription) error {
-	for _, sub := range subscriptions {
-		key := getSubscriptionKey(sub.Coin, sub.Address)
-		var guids []string
-		s.GetHMValue(ATLAS_OBSERVER, key, &guids)
-		if guids == nil {
-			guids = make([]string, 0)
-		}
-		if hasObject(guids, sub.GUID) {
-			continue
-		}
-		guids = append(guids, sub.GUID)
-		err := s.AddHM(ATLAS_OBSERVER, key, guids)
-		if err != nil {
-			return err
-		}
+func (s *Storage) addSubscriptions(sub blockatlas.Subscription, wg *sync.WaitGroup, errorsChan chan<- error) {
+	defer wg.Done()
+	key := getSubscriptionKey(sub.Coin, sub.Address)
+	var guids []string
+	s.GetHMValue(ATLAS_OBSERVER, key, &guids)
+	if guids == nil {
+		guids = make([]string, 0)
 	}
-	return nil
-}
-
-func (s *Storage) DeleteSubscriptions(subscriptions []blockatlas.Subscription) error {
-	for _, sub := range subscriptions {
-		key := getSubscriptionKey(sub.Coin, sub.Address)
-		var guids []string
-		err := s.GetHMValue(ATLAS_OBSERVER, key, &guids)
-		if err != nil {
-			continue
-		}
-		newHooks := make([]string, 0)
-		for _, guid := range guids {
-			if guid == sub.GUID {
-				continue
-			}
-			newHooks = append(newHooks, guid)
-		}
-		if len(newHooks) == 0 {
-			_ = s.DeleteHM(ATLAS_OBSERVER, key)
-			continue
-		}
-		err = s.AddHM(ATLAS_OBSERVER, key, newHooks)
-		if err != nil {
-			return err
-		}
+	if hasObject(guids, sub.GUID) {
+		return
 	}
-	return nil
+	guids = append(guids, sub.GUID)
+	err := s.AddHM(ATLAS_OBSERVER, key, guids)
+	if err != nil {
+		errorsChan <- err
+	}
 }
 
 func getSubscriptionKey(coin uint, address string) string {

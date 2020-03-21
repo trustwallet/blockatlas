@@ -20,12 +20,9 @@ require (
 	github.com/ethereum/go-ethereum v1.9.10
 	github.com/getsentry/sentry-go v0.4.0
 	github.com/gin-gonic/gin v1.5.0
-	github.com/go-kit/kit v0.9.0 // indirect
 	github.com/go-redis/redis v6.15.6+incompatible
-	github.com/google/go-cmp v0.4.0 // indirect
 	github.com/gotestyourself/gotestyourself v2.2.0+incompatible // indirect
 	github.com/hewigovens/go-coincodec v1.0.4
-	github.com/json-iterator/go v1.1.9 // indirect
 	github.com/konsorten/go-windows-terminal-sequences v1.0.2 // indirect
 	github.com/lib/pq v1.1.1 // indirect
 	github.com/mitchellh/mapstructure v1.1.2
@@ -34,7 +31,6 @@ require (
 	github.com/opencontainers/runc v0.1.1 // indirect
 	github.com/ory/dockertest v3.3.5+incompatible
 	github.com/patrickmn/go-cache v2.1.0+incompatible
-	github.com/pkg/errors v0.9.1 // indirect
 	github.com/shopspring/decimal v0.0.0-20200105231215-408a2507e114
 	github.com/sirupsen/logrus v1.4.2
 	github.com/spf13/cast v1.3.1 // indirect
@@ -47,7 +43,7 @@ require (
 	github.com/yuin/gopher-lua v0.0.0-20191220021717-ab39c6098bdb // indirect
 	golang.org/x/crypto v0.0.0-20200221231518-2aa609cf4a9d
 	golang.org/x/net v0.0.0-20200301022130-244492dfa37a // indirect
+	golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e
 	golang.org/x/sys v0.0.0-20200302150141-5c8b2ff67527 // indirect
-	gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15 // indirect
 	gopkg.in/yaml.v2 v2.2.8
 )

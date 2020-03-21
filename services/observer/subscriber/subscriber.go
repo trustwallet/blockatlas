@@ -35,17 +35,9 @@ func RunSubscriber(delivery amqp.Delivery, storage storage.Addresses) {
 		if err != nil {
 			logger.Error(err, params)
 		}
-		err = delivery.Ack(false)
-		if err != nil {
-			logger.Error(err, params)
-		}
 		logger.Info("Updated", params)
 	case AddSubscription:
 		err = storage.AddSubscriptions(newSubscriptions)
-		if err != nil {
-			logger.Error(err, params)
-		}
-		err = delivery.Ack(false)
 		if err != nil {
 			logger.Error(err, params)
 		}
@@ -55,10 +47,11 @@ func RunSubscriber(delivery amqp.Delivery, storage storage.Addresses) {
 		if err != nil {
 			logger.Error(err, params)
 		}
-		err = delivery.Ack(false)
-		if err != nil {
-			logger.Error(err, params)
-		}
 		logger.Info("Deleted", params)
+	}
+
+	err = delivery.Ack(false)
+	if err != nil {
+		logger.Error(err, params)
 	}
 }
