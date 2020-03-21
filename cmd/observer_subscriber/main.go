@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"github.com/spf13/viper"
 	_ "github.com/trustwallet/blockatlas/docs"
 	"github.com/trustwallet/blockatlas/internal"
@@ -43,6 +44,9 @@ func main() {
 	if err := mq.Subscriptions.Declare(); err != nil {
 		logger.Fatal(err)
 	}
-	mq.Subscriptions.RunConsumer(subscriber.RunSubscriber, cache)
-	<-make(chan struct{})
+	ctx, cancel := context.WithCancel(context.Background())
+
+	go mq.Subscriptions.RunConsumerWithCancel(subscriber.RunSubscriber, cache, ctx)
+
+	internal.SetupGracefulShutdownForObserver(cancel)
 }

@@ -83,7 +83,7 @@ func main() {
 		var backlogCount int
 		if coin.BlockTime == 0 {
 			backlogCount = 50
-			logger.Warn("Unknown block time", logger.Params{"coin": coin.ID})
+			logger.Warn("Unknown block time", logger.Params{"coin": coin.Handle})
 		} else {
 			backlogCount = int(backlogTime / pollInterval)
 		}
@@ -92,7 +92,6 @@ func main() {
 			ParsingBlocksInterval: pollInterval,
 			BacklogCount:          backlogCount,
 			MaxBacklogBlocks:      maxBackLogBlocks,
-			Coin:                  coin.ID,
 		}
 
 		ctx, cancel := context.WithCancel(context.Background())
@@ -117,11 +116,11 @@ func main() {
 	<-quit
 	logger.Info("Shutdown parser ...")
 	for coin, cancel := range coinCancel {
-		logger.Info(fmt.Sprintf("Stop %s parser...", coin))
+		logger.Info(fmt.Sprintf("Starting to stop %s parser...", coin))
 		cancel()
 	}
 
 	time.Sleep(waitBeforeStop * 3)
 
-	logger.Info("Parser exiting")
+	logger.Info("Exiting gracefully")
 }

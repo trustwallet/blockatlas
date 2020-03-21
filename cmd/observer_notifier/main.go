@@ -1,11 +1,11 @@
 package main
 
 import (
+	"context"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/internal"
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/logger"
-	"github.com/trustwallet/blockatlas/platform"
 	"github.com/trustwallet/blockatlas/services/observer/notifier"
 	"github.com/trustwallet/blockatlas/storage"
 	"time"
@@ -29,11 +29,9 @@ func init() {
 	redisHost := viper.GetString("storage.redis")
 	mqHost := viper.GetString("observer.rabbitmq.uri")
 	prefetchCount := viper.GetInt("observer.rabbitmq.consumer.prefetch_count")
-	platformHandle := viper.GetString("platform")
 
 	cache = internal.InitRedis(redisHost)
 	internal.InitRabbitMQ(mqHost, prefetchCount)
-	platform.Init(platformHandle)
 
 	if err := mq.ParsedTransactionsBatch.Declare(); err != nil {
 		logger.Fatal(err)
@@ -50,6 +48,9 @@ func init() {
 func main() {
 	defer mq.Close()
 
-	go mq.ParsedTransactionsBatch.RunConsumer(notifier.RunNotifier, cache)
-	<-make(chan struct{})
+	ctx, cancel := context.WithCancel(context.Background())
+
+	go mq.ParsedTransactionsBatch.RunConsumerWithCancel(notifier.RunNotifier, cache, ctx)
+
+	internal.SetupGracefulShutdownForObserver(cancel)
 }
