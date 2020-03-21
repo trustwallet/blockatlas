@@ -86,19 +86,14 @@ func TestFetchBlocks(t *testing.T) {
 }
 
 func TestSaveLastParsedBlock(t *testing.T) {
-	params := Params{
-		ParsingBlocksInterval: time.Minute,
-		BacklogCount:          10,
-		MaxBacklogBlocks:      100,
-	}
 	blocks := make([]blockatlas.Block, 0)
 	blocks = append(blocks, block)
 	s := getMockedRedis(t)
 
-	err := SaveLastParsedBlock(s, params, blocks)
+	err := SaveLastParsedBlock(getMockedBlockAPI(), s, blocks)
 	assert.Nil(t, err)
 
-	lastParsedBlock, err := s.GetLastParsedBlockNumber(params.Coin)
+	lastParsedBlock, err := s.GetLastParsedBlockNumber(getMockedBlockAPI().Coin().ID)
 	assert.Nil(t, err)
 	assert.Equal(t, lastParsedBlock, int64(110))
 }
@@ -197,4 +192,39 @@ func (p *Platform) Coin() coin.Coin {
 
 func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 	return &blockatlas.Block{}, nil
+}
+
+func TestGetTxBatches(t *testing.T) {
+	txs := make(blockatlas.Txs, 10000)
+	batches := getTxsBatches(txs, 1000)
+	assert.Len(t, batches, 10)
+	batches = getTxsBatches(txs, 100)
+	assert.Len(t, batches, 100)
+	batches = getTxsBatches(txs, 500)
+	assert.Len(t, batches, 20)
+
+	txs = make(blockatlas.Txs, 3800)
+	batches = getTxsBatches(txs, 100)
+	assert.Len(t, batches, 38)
+	batches = getTxsBatches(txs, 1000)
+	assert.Len(t, batches, 4)
+
+	txs = make(blockatlas.Txs, 5000)
+	batches = getTxsBatches(txs, 10000)
+	assert.Len(t, batches, 1)
+
+	txs = make(blockatlas.Txs, 0)
+	batches = getTxsBatches(txs, 100)
+	assert.Len(t, batches, 0)
+
+	txs = make(blockatlas.Txs, 0)
+	batches = getTxsBatches(txs, 100)
+	assert.Len(t, batches, 0)
+
+	batches = getTxsBatches(nil, 100)
+	assert.Len(t, batches, 0)
+
+	txs = make(blockatlas.Txs, 1000000)
+	batches = getTxsBatches(txs, 5000)
+	assert.Len(t, batches, 200)
 }

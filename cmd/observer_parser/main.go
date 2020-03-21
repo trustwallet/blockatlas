@@ -83,7 +83,7 @@ func main() {
 		var backlogCount int
 		if coin.BlockTime == 0 {
 			backlogCount = 50
-			logger.Warn("Unknown block time", logger.Params{"coin": coin.ID})
+			logger.Warn("Unknown block time", logger.Params{"coin": coin.Handle})
 		} else {
 			backlogCount = int(backlogTime / pollInterval)
 		}
@@ -92,7 +92,6 @@ func main() {
 			ParsingBlocksInterval: pollInterval,
 			BacklogCount:          backlogCount,
 			MaxBacklogBlocks:      maxBackLogBlocks,
-			Coin:                  coin.ID,
 		}
 
 		ctx, cancel := context.WithCancel(context.Background())
