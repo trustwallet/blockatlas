@@ -52,7 +52,7 @@ func TestStorage_Lookup(t *testing.T) {
 		}
 
 		t.Run(tt.name, func(t *testing.T) {
-			if got, err := s.FindSubscriptions(uint(tt.fields.coin), tt.fields.addresses); !(isEqual(got, tt.wantData) == tt.wantCondition) || err != nil {
+			if got, err := s.FindSubscriptions(uint(tt.fields.coin), tt.fields.addresses); !(isEqualSubscriptions(got, tt.wantData) == tt.wantCondition) || err != nil {
 				t.Fatal(got)
 			}
 		})
@@ -89,7 +89,7 @@ func TestStorage_Lookup_MultipleGUIDs(t *testing.T) {
 
 	given, err := s.FindSubscriptions(uint(60), []string{"1", "2", "3"})
 	assert.Nil(t, err)
-	assert.True(t, isEqual(given, want))
+	assert.True(t, isEqualSubscriptions(given, want))
 }
 
 func TestStorage_Lookup_NotFoundSeveral(t *testing.T) {
@@ -119,10 +119,286 @@ func TestStorage_Lookup_NotFoundSeveral(t *testing.T) {
 
 	given, err := s.FindSubscriptions(uint(60), []string{"1", "4", "5"})
 	assert.Nil(t, err)
-	assert.True(t, isEqual(given, want))
+	assert.True(t, isEqualSubscriptions(given, want))
 }
 
-func isEqual(given, want []blockatlas.Subscription) bool {
+func TestStorage_AddSubscriptions(t *testing.T) {
+	s := initStorage(t)
+
+	subs := []blockatlas.Subscription{
+		{Coin: 60, Address: "1", GUID: "1"},
+		{Coin: 144, Address: "11212", GUID: "112"},
+		{Coin: 144, Address: "112121", GUID: "112"},
+	}
+	var want []string
+	for _, sub := range subs {
+		key := getSubscriptionKey(sub.Coin, sub.Address)
+		var guids []string
+
+		err := s.GetHMValue(ATLAS_OBSERVER, key, &guids)
+		assert.NotNil(t, err)
+		assert.Equal(t, want, guids)
+	}
+
+	err := s.AddSubscriptions(subs)
+	assert.Nil(t, err)
+
+	for _, sub := range subs {
+		key := getSubscriptionKey(sub.Coin, sub.Address)
+		var guids []string
+		err := s.GetHMValue(ATLAS_OBSERVER, key, &guids)
+		assert.Nil(t, err)
+		assert.NotNil(t, guids)
+
+		var counter int
+		for _, g := range guids {
+			if g == sub.GUID {
+				counter++
+			}
+		}
+		assert.True(t, counter == 1)
+	}
+
+	NewSubs := []blockatlas.Subscription{
+		{Coin: 714, Address: "2", GUID: "2"},
+		{Coin: 148, Address: "21", GUID: "21"},
+		{Coin: 148, Address: "21", GUID: "21"},
+	}
+
+	err = s.AddSubscriptions(NewSubs)
+	assert.Nil(t, err)
+
+	for _, sub := range subs {
+		key := getSubscriptionKey(sub.Coin, sub.Address)
+		var guids []string
+		err := s.GetHMValue(ATLAS_OBSERVER, key, &guids)
+		assert.Nil(t, err)
+		assert.NotNil(t, guids)
+
+		var counter int
+		for _, g := range guids {
+			if g == sub.GUID {
+				counter++
+			}
+		}
+		assert.True(t, counter == 1)
+	}
+
+	for _, sub := range NewSubs {
+		key := getSubscriptionKey(sub.Coin, sub.Address)
+		var guids []string
+		err := s.GetHMValue(ATLAS_OBSERVER, key, &guids)
+		assert.Nil(t, err)
+		assert.NotNil(t, guids)
+
+		var counter int
+		for _, g := range guids {
+			if g == sub.GUID {
+				counter++
+			}
+		}
+		assert.True(t, counter == 1)
+	}
+
+	NotExistingSubs := []blockatlas.Subscription{
+		{Coin: 111, Address: "2", GUID: "2"},
+		{Coin: 222, Address: "21", GUID: "21"},
+	}
+
+	for _, sub := range NotExistingSubs {
+		key := getSubscriptionKey(sub.Coin, sub.Address)
+		var guids []string
+		err := s.GetHMValue(ATLAS_OBSERVER, key, &guids)
+		assert.NotNil(t, err)
+		assert.Nil(t, guids)
+
+		var counter int
+		for _, g := range guids {
+			if g == sub.GUID {
+				counter++
+			}
+		}
+		assert.False(t, counter == 1)
+	}
+}
+
+func TestStorage_DeleteSubscriptions(t *testing.T) {
+	s := initStorage(t)
+
+	subs := []blockatlas.Subscription{
+		{Coin: 60, Address: "1", GUID: "1"},
+		{Coin: 144, Address: "11212", GUID: "112"},
+		{Coin: 255, Address: "112121", GUID: "1121"},
+	}
+	var want []string
+	for _, sub := range subs {
+		key := getSubscriptionKey(sub.Coin, sub.Address)
+		var guids []string
+
+		err := s.GetHMValue(ATLAS_OBSERVER, key, &guids)
+		assert.NotNil(t, err)
+		assert.Equal(t, want, guids)
+	}
+
+	err := s.AddSubscriptions(subs)
+	assert.Nil(t, err)
+
+	for _, sub := range subs {
+		key := getSubscriptionKey(sub.Coin, sub.Address)
+		var guids []string
+		err := s.GetHMValue(ATLAS_OBSERVER, key, &guids)
+		assert.Nil(t, err)
+		assert.NotNil(t, guids)
+
+		var counter int
+		for _, g := range guids {
+			if g == sub.GUID {
+				counter++
+			}
+		}
+		assert.True(t, counter == 1)
+	}
+
+	deleted_subs := []blockatlas.Subscription{
+		{Coin: 60, Address: "1", GUID: "1"},
+		{Coin: 144, Address: "11212", GUID: "112"},
+	}
+
+	err = s.DeleteSubscriptions(deleted_subs)
+	assert.Nil(t, err)
+
+	for _, sub := range deleted_subs {
+		key := getSubscriptionKey(sub.Coin, sub.Address)
+		var guids []string
+		err := s.GetHMValue(ATLAS_OBSERVER, key, &guids)
+		assert.NotNil(t, err)
+		assert.Nil(t, guids)
+
+		var counter int
+		for _, g := range guids {
+			if g == sub.GUID {
+				counter++
+			}
+		}
+		assert.True(t, counter == 0)
+	}
+
+	existing_subs := []blockatlas.Subscription{
+		{Coin: 255, Address: "112121", GUID: "1121"},
+	}
+
+	for _, sub := range existing_subs {
+		key := getSubscriptionKey(sub.Coin, sub.Address)
+		var guids []string
+		err := s.GetHMValue(ATLAS_OBSERVER, key, &guids)
+		assert.Nil(t, err)
+		assert.NotNil(t, guids)
+
+		var counter int
+		for _, g := range guids {
+			if g == sub.GUID {
+				counter++
+			}
+		}
+		assert.True(t, counter == 1)
+	}
+}
+
+func TestStorage_UpdateSubscriptions(t *testing.T) {
+	s := initStorage(t)
+
+	subs := []blockatlas.Subscription{
+		{Coin: 60, Address: "1", GUID: "1"},
+		{Coin: 144, Address: "11212", GUID: "112"},
+		{Coin: 255, Address: "112121", GUID: "1121"},
+	}
+	var want []string
+	for _, sub := range subs {
+		key := getSubscriptionKey(sub.Coin, sub.Address)
+		var guids []string
+
+		err := s.GetHMValue(ATLAS_OBSERVER, key, &guids)
+		assert.NotNil(t, err)
+		assert.Equal(t, want, guids)
+	}
+
+	err := s.AddSubscriptions(subs)
+	assert.Nil(t, err)
+
+	for _, sub := range subs {
+		key := getSubscriptionKey(sub.Coin, sub.Address)
+		var guids []string
+		err := s.GetHMValue(ATLAS_OBSERVER, key, &guids)
+		assert.Nil(t, err)
+		assert.NotNil(t, guids)
+
+		var counter int
+		for _, g := range guids {
+			if g == sub.GUID {
+				counter++
+			}
+		}
+		assert.True(t, counter == 1)
+	}
+
+	deleted_subs := []blockatlas.Subscription{
+		{Coin: 60, Address: "1", GUID: "1"},
+		{Coin: 144, Address: "11212", GUID: "112"},
+	}
+
+	new_subs := []blockatlas.Subscription{
+		{Coin: 1234, Address: "1234", GUID: "1234"},
+		{Coin: 5678, Address: "5678", GUID: "5678"},
+		{Coin: 2222, Address: "2222", GUID: "2222"},
+	}
+
+	err = s.UpdateSubscriptions(deleted_subs, new_subs)
+	assert.Nil(t, err)
+
+	for _, sub := range deleted_subs {
+		key := getSubscriptionKey(sub.Coin, sub.Address)
+		var guids []string
+		err := s.GetHMValue(ATLAS_OBSERVER, key, &guids)
+		assert.NotNil(t, err)
+		assert.Nil(t, guids)
+
+		var counter int
+		for _, g := range guids {
+			if g == sub.GUID {
+				counter++
+			}
+		}
+		assert.True(t, counter == 0)
+	}
+
+	existing_subs := []blockatlas.Subscription{
+		{Coin: 1234, Address: "1234", GUID: "1234"},
+		{Coin: 5678, Address: "5678", GUID: "5678"},
+		{Coin: 255, Address: "112121", GUID: "1121"},
+		{Coin: 2222, Address: "2222", GUID: "2222"},
+	}
+
+	data, err := s.GetAllHM(ATLAS_OBSERVER)
+	assert.Nil(t, err)
+	assert.NotNil(t, data)
+	for _, sub := range existing_subs {
+		key := getSubscriptionKey(sub.Coin, sub.Address)
+		var guids []string
+		err := s.GetHMValue(ATLAS_OBSERVER, key, &guids)
+		assert.Nil(t, err)
+		assert.NotNil(t, guids)
+
+		var counter int
+		for _, g := range guids {
+			if g == sub.GUID {
+				counter++
+			}
+		}
+		assert.True(t, counter == 1)
+	}
+}
+
+func isEqualSubscriptions(given, want []blockatlas.Subscription) bool {
 	if len(given) != len(want) {
 		return false
 	}

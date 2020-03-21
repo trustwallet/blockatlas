@@ -47,5 +47,6 @@ type Tracker interface {
 type Addresses interface {
 	FindSubscriptions(coin uint, addresses []string) ([]blockatlas.Subscription, error)
 	AddSubscriptions(subscriptions []blockatlas.Subscription) error
+	UpdateSubscriptions(old, new []blockatlas.Subscription) error
 	DeleteSubscriptions(subscriptions []blockatlas.Subscription) error
 }
