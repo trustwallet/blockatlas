@@ -47,7 +47,7 @@ func Worker(storage storage.Tracker, api blockatlas.BlockAPI) {
 	var duration time.Duration
 	t := api.Coin().BlockTime / 1000
 
-	if t > 0 && t < 4 {
+	if t > 30 {
 		duration = time.Duration(int64(time.Second) * int64(t))
 	} else {
 		duration = time.Minute * 11
