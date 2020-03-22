@@ -40,8 +40,8 @@ func init() {
 }
 
 func main() {
-	for _, api := range platform.BlockAPIs {
-		go healthcheck.Worker(cache, api)
+	for _, blockAPI := range platform.BlockAPIs {
+		go healthcheck.Worker(cache, blockAPI)
 		time.Sleep(time.Millisecond * 200)
 	}
 

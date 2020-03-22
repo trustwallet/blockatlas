@@ -7,5 +7,6 @@ import (
 )
 
 func GetObserverStatus(c *gin.Context) {
-	c.JSON(http.StatusOK, healthcheck.GetStatus())
+	exclude := splitParam(c.Query("exclude"))
+	c.JSON(http.StatusOK, healthcheck.GetStatus(exclude))
 }

@@ -86,6 +86,27 @@ func Worker(storage storage.Tracker, api blockatlas.BlockAPI) {
 	}
 }
 
-func GetStatus() map[string]Info {
-	return observerStatus.get()
+func GetStatus(exclude []string) map[string]interface{} {
+	total := true
+	result := make(map[string]interface{})
+	status := observerStatus.get()
+	for k, v := range status{
+		if !contain(k, exclude){
+			if v.Healthy == false{
+				total = false
+			}
+			result[k] = v
+		}
+	}
+	result["total"] = total
+	return result
+}
+
+func contain(elem string, list []string) bool{
+	for _, v := range list{
+		if v == elem{
+			return true
+		}
+	}
+	return false
 }
