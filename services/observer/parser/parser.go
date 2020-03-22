@@ -26,6 +26,7 @@ type (
 		ParsingBlocksInterval time.Duration
 		BacklogCount          int
 		MaxBacklogBlocks      int64
+		StopChannel           chan<- struct{}
 	}
 
 	GetBlockByNumber func(num int64) (*blockatlas.Block, error)
@@ -46,6 +47,7 @@ func RunParser(params Params) {
 		select {
 		case <-params.Ctx.Done():
 			logger.Info(fmt.Sprintf("Parser of %s stopped parsing blocks", params.Api.Coin().Handle))
+			params.StopChannel <- struct{}{}
 			return
 		default:
 			lastParsedBlock, currentBlock, err := GetBlocksIntervalToFetch(params)
@@ -276,7 +278,7 @@ func getBlockByNumberWithRetry(attempts int, sleep time.Duration, getBlockByNumb
 			)
 
 			time.Sleep(sleep)
-			return getBlockByNumberWithRetry(attempts, sleep*3, getBlockByNumber, n)
+			return getBlockByNumberWithRetry(attempts, sleep*2, getBlockByNumber, n)
 		}
 	}
 	return r, err

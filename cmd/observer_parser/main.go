@@ -13,6 +13,7 @@ import (
 	"github.com/trustwallet/blockatlas/storage"
 	"os"
 	"os/signal"
+	"runtime"
 	"sync"
 	"syscall"
 	"time"
@@ -67,18 +68,15 @@ func init() {
 func main() {
 	defer mq.Close()
 	var (
-		wg             sync.WaitGroup
-		coinCancel     = make(map[string]context.CancelFunc)
-		waitBeforeStop time.Duration
+		wg          sync.WaitGroup
+		coinCancel  = make(map[string]context.CancelFunc)
+		stopChannel = make(chan<- struct{}, len(platform.BlockAPIs))
 	)
 
 	wg.Add(len(platform.BlockAPIs))
 	for _, api := range platform.BlockAPIs {
 		coin := api.Coin()
 		pollInterval := notifier.GetInterval(coin.BlockTime, minInterval, maxInterval)
-		if pollInterval > waitBeforeStop {
-			waitBeforeStop = pollInterval
-		}
 
 		var backlogCount int
 		if coin.BlockTime == 0 {
@@ -100,6 +98,7 @@ func main() {
 			ParsingBlocksInterval: pollInterval,
 			BacklogCount:          backlogCount,
 			MaxBacklogBlocks:      maxBackLogBlocks,
+			StopChannel:           stopChannel,
 		}
 
 		go parser.RunParser(params)
@@ -123,8 +122,13 @@ func main() {
 		logger.Info(fmt.Sprintf("Starting to stop %s parser...", coin))
 		cancel()
 	}
-
-	time.Sleep(waitBeforeStop)
+	for {
+		logger.Info(runtime.NumGoroutine())
+		if len(stopChannel) == len(platform.BlockAPIs) {
+			logger.Info("All parsers are stopped")
+			break
+		}
+	}
 
 	logger.Info("Exiting gracefully")
 }
