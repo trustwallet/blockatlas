@@ -58,6 +58,21 @@ func (q Queue) Publish(body []byte) error {
 	})
 }
 
+func (q Queue) RunConsumerForChannelWithCancel(consumer Consumer, messageChannel MessageChannel, cache storage.Addresses, ctx context.Context) {
+	for {
+		select {
+		case <-ctx.Done():
+			logger.Info("Consumer stopped")
+			return
+		case message := <-messageChannel:
+			if message.Body == nil {
+				continue
+			}
+			go consumer(message, cache)
+		}
+	}
+}
+
 func (q Queue) RunConsumer(consumer Consumer, cache storage.Addresses) {
 	messageChannel, err := amqpChan.Consume(
 		string(q),
@@ -129,6 +144,9 @@ func (q Queue) RunConsumerWithCancel(consumer Consumer, cache storage.Addresses,
 			logger.Info("Consumer stopped")
 			return
 		case message := <-messageChannel:
+			if message.Body == nil {
+				continue
+			}
 			go consumer(message, cache)
 		}
 	}

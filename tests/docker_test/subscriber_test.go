@@ -3,6 +3,7 @@
 package docker_test
 
 import (
+	"context"
 	"encoding/json"
 	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas/mq"
@@ -39,8 +40,6 @@ func TestSubscriberAddSubscription(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	assert.Nil(t, mq.Subscriptions.Declare())
-
 	for _, event := range givenEvents {
 		body, err := json.Marshal(event)
 		assert.Nil(t, err)
@@ -48,8 +47,11 @@ func TestSubscriberAddSubscription(t *testing.T) {
 		err = mq.Subscriptions.Publish(body)
 		assert.Nil(t, err)
 
-		go mq.Subscriptions.RunConsumer(subscriber.RunSubscriber, setup.Cache)
+		ctx, cancel := context.WithCancel(context.Background())
+
+		go mq.Subscriptions.RunConsumerForChannelWithCancel(subscriber.RunSubscriber, subscriptionChannel, setup.Cache, ctx)
 		time.Sleep(time.Second / 5)
+		cancel()
 	}
 
 	result, err := setup.Cache.GetAllHM(storage.ATLAS_OBSERVER)

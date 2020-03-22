@@ -13,7 +13,6 @@ import (
 	"github.com/trustwallet/blockatlas/storage"
 	"os"
 	"os/signal"
-	"runtime"
 	"sync"
 	"syscall"
 	"time"
@@ -133,7 +132,6 @@ func main() {
 		cancel()
 	}
 	for {
-		logger.Info(runtime.NumGoroutine())
 		if len(stopChannel) == len(platform.BlockAPIs) {
 			logger.Info("All parsers are stopped")
 			break

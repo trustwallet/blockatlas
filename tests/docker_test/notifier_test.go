@@ -3,6 +3,7 @@
 package docker_test
 
 import (
+	"context"
 	"encoding/json"
 	"github.com/streadway/amqp"
 	"github.com/stretchr/testify/assert"
@@ -14,8 +15,6 @@ import (
 	"testing"
 	"time"
 )
-
-const ParsedTransactionsBatchParser mq.Queue = "parsedtransactionsbatchparser"
 
 var (
 	txs = blockatlas.Txs{
@@ -42,25 +41,19 @@ var (
 )
 
 func TestNotifier(t *testing.T) {
-	if err := ParsedTransactionsBatchParser.Declare(); err != nil {
-		assert.Nil(t, err)
-	}
-
-	if err := mq.Transactions.Declare(); err != nil {
-		assert.Nil(t, err)
-	}
-
 	err := setup.Cache.AddSubscriptions([]blockatlas.Subscription{{Coin: 714, Address: "tbnb1ttyn4csghfgyxreu7lmdu3lcplhqhxtzced45a", GUID: "guid_test"}})
 	assert.Nil(t, err)
 
 	err = produceTxs(txs)
 	assert.Nil(t, err)
 
-	go ParsedTransactionsBatchParser.RunConsumer(notifier.RunNotifier, setup.Cache)
-	time.Sleep(time.Microsecond)
+	ctx, cancel := context.WithCancel(context.Background())
 
-	ConsumerToTestTransactions(mq.Transactions.GetMessageChannel().GetMessage(), t)
-	return
+	go mq.RawTransactions.RunConsumerForChannelWithCancel(notifier.RunNotifier, rawTransactionsChannel, setup.Cache, ctx)
+	time.Sleep(time.Second * 3)
+	msg := transactionsChannel.GetMessage()
+	ConsumerToTestTransactions(msg, t)
+	cancel()
 }
 
 func ConsumerToTestTransactions(delivery amqp.Delivery, t *testing.T) {
@@ -111,5 +104,5 @@ func produceTxs(txs blockatlas.Txs) error {
 	if err != nil {
 		return err
 	}
-	return ParsedTransactionsBatchParser.Publish(body)
+	return mq.RawTransactions.Publish(body)
 }

@@ -19,11 +19,9 @@ import (
 )
 
 func TestParserFetchAndPublishBlock_NormalCase(t *testing.T) {
-	if err := mq.RawTransactions.Declare(); err != nil {
-		logger.Fatal(err)
-	}
+	stopChan := make(chan struct{}, 1)
 
-	params := setupParser()
+	params := setupParser(stopChan)
 
 	ctx, cancel := context.WithCancel(context.Background())
 
@@ -33,7 +31,8 @@ func TestParserFetchAndPublishBlock_NormalCase(t *testing.T) {
 	go parser.RunParser(params)
 
 	time.Sleep(time.Microsecond)
-	ConsumerToTestAmountOfBlocks(mq.RawTransactions.GetMessageChannel().GetMessage(), t, cancel)
+	ConsumerToTestAmountOfBlocks(rawTransactionsChannel.GetMessage(), t, cancel)
+	<-stopChan
 }
 
 func getMockedBlockAPI() blockatlas.BlockAPI {
@@ -99,8 +98,7 @@ func ConsumerToTestAmountOfBlocks(delivery amqp.Delivery, t *testing.T, cancelFu
 	cancelFunc()
 }
 
-func setupParser() parser.Params {
-
+func setupParser(stopChan chan struct{}) parser.Params {
 	minTime := time.Second
 	maxTime := time.Second * 2
 	maxBatchBlocksAmount := 100
@@ -115,5 +113,7 @@ func setupParser() parser.Params {
 		ParsingBlocksInterval: pollInterval,
 		BacklogCount:          backlogCount,
 		MaxBacklogBlocks:      int64(maxBatchBlocksAmount),
+		TxBatchLimit:          100,
+		StopChannel:           stopChan,
 	}
 }

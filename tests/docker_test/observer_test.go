@@ -18,43 +18,32 @@ import (
 	"time"
 )
 
-const (
-	RawTransactionsTest mq.Queue = "rawTransactionsTest"
-)
-
 var counter atomic.Int32
 var counterBlock atomic.Int32
 
 func TestFullFlow(t *testing.T) {
-	if err := RawTransactionsTest.Declare(); err != nil {
-		assert.Nil(t, err)
-	}
-	if err := mq.Transactions.Declare(); err != nil {
-		assert.Nil(t, err)
-	}
-
 	err := setup.Cache.AddSubscriptions([]blockatlas.Subscription{{Coin: 60, Address: "testAddress", GUID: "guid_test"}})
 	assert.Nil(t, err)
 
 	ctx, cancel := context.WithCancel(context.Background())
-	ctx2, cancel2 := context.WithCancel(context.Background())
 
-	params := setupParserFull()
+	stopChan := make(chan struct{}, 1)
+
+	params := setupParserFull(stopChan)
 	params.Ctx = ctx
-	params.Queue = RawTransactionsTest
+	params.Queue = mq.RawTransactions
 
 	go parser.RunParser(params)
 	time.Sleep(time.Second * 2)
 
-	go RawTransactionsTest.RunConsumerWithCancel(notifier.RunNotifier, setup.Cache, ctx2)
+	go mq.RawTransactions.RunConsumerForChannelWithCancel(notifier.RunNotifier, rawTransactionsChannel, setup.Cache, ctx)
 	time.Sleep(time.Second * 5)
 
-	channel := mq.Transactions.GetMessageChannel()
 	for i := 0; i < 11; i++ {
-		ConsumerToTestTransactionsFull(channel.GetMessage(), t, cancel, cancel2)
+		x := transactionsChannel.GetMessage()
+		ConsumerToTestTransactionsFull(x, t, cancel, i)
 	}
-
-	return
+	<-stopChan
 }
 
 func getMockedBlockAPIFull() blockatlas.BlockAPI {
@@ -77,7 +66,7 @@ func (p *PlatformFullFlow) Coin() coin.Coin {
 }
 
 func (p *PlatformFullFlow) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
-	if num < 11 {
+	if num < 100 {
 		return &blockatlas.Block{
 			Number: num,
 			ID:     "",
@@ -107,7 +96,7 @@ func (p *PlatformFullFlow) GetBlockByNumber(num int64) (*blockatlas.Block, error
 	return &blockatlas.Block{}, nil
 }
 
-func ConsumerToTestTransactionsFull(delivery amqp.Delivery, t *testing.T, cancel, cancel2 context.CancelFunc) {
+func ConsumerToTestTransactionsFull(delivery amqp.Delivery, t *testing.T, cancel context.CancelFunc, counter int) {
 	var event notifier.DispatchEvent
 	if err := json.Unmarshal(delivery.Body, &event); err != nil {
 		assert.Nil(t, err)
@@ -145,15 +134,12 @@ func ConsumerToTestTransactionsFull(delivery amqp.Delivery, t *testing.T, cancel
 		GUID: "guid_test",
 	}, event)
 
-	counter.Add(1)
-
-	if counter.Load() == int32(10) {
+	if counter == 10 {
 		cancel()
-		cancel2()
 	}
 }
 
-func setupParserFull() parser.Params {
+func setupParserFull(stopChan chan<- struct{}) parser.Params {
 	minTime := time.Second
 	maxTime := time.Second * 2
 	maxBatchBlocksAmount := 1
@@ -168,5 +154,7 @@ func setupParserFull() parser.Params {
 		ParsingBlocksInterval: pollInterval,
 		BacklogCount:          backlogCount,
 		MaxBacklogBlocks:      int64(maxBatchBlocksAmount),
+		TxBatchLimit:          100,
+		StopChannel:           stopChan,
 	}
 }
