@@ -20,7 +20,7 @@ type Tx struct {
 
 type Data struct {
 	Fee     Fee      `json:"fee"`
-	Inputs  []Inputs `json:"inputs"`
+	Inputs  []Input  `json:"inputs"`
 	Outputs []Output `json:"outputs"`
 }
 
@@ -29,7 +29,7 @@ type Fee struct {
 	Tfuelwei string `json:"tfuelwei"`
 }
 
-type Inputs struct {
+type Input struct {
 	Address  string `json:"address"`
 	Sequence string `json:"sequence"`
 }
