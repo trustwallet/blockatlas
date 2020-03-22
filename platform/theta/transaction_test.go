@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"gotest.tools/assert"
 	"testing"
 )
 
@@ -158,5 +159,30 @@ func TestNormalize(t *testing.T) {
 			println(string(expected))
 			t.Error("Transactions not equal")
 		}
+	}
+}
+
+func TestGetDirection(t *testing.T) {
+	var addrChecksum = "0x42616C88c7076FbE6e1596b734c13356b5A508a4"
+	var addr = "0x42616c88c7076fbe6e1596b734c13356b5a508a4"
+	var otherAddr = "0x8665a3cbc02ff17cf9d712e8a20f3d7bb1444517"
+
+	var tests = []struct {
+		address     string
+		expectedDir blockatlas.Direction
+		trxInput    Input
+		trxOutput   Output
+	}{
+		{address: addrChecksum, expectedDir: blockatlas.DirectionSelf, trxInput: Input{Address: addr}, trxOutput: Output{Address: addr},},
+		{address: addrChecksum, expectedDir: blockatlas.DirectionOutgoing, trxInput: Input{Address: addr}, trxOutput: Output{Address: otherAddr}},
+		{address: addrChecksum, expectedDir: blockatlas.DirectionIncoming, trxInput: Input{Address: otherAddr}, trxOutput: Output{Address: addr}},
+	}
+
+	for _, test := range tests {
+		actualDir, err := getDirection(test.address, test.trxInput, test.trxOutput)
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, test.expectedDir, actualDir, test.expectedDir)
 	}
 }
