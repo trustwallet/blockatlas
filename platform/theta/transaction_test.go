@@ -98,16 +98,16 @@ var expectedTransferTrx = blockatlas.Tx{
 }
 
 var expectedTfuelTransfer = blockatlas.Tx{
-	ID:       "0x558cb5ec877119c2c84a677277efb5b3059adb830c6e74971b3dbe93221b7132",
-	Coin:     coin.THETA,
-	From:     "0x0a7d7141e9abe5d1c760cffa1129c6eb94f35a2a",
-	To:       "0xac0eeb6ee3e32e2c74e14ac74155063e4f4f981f",
-	Fee:      "2000000000000",
-	Date:     1557136821,
-	Type:     blockatlas.TxNativeTokenTransfer,
-	Status:   blockatlas.StatusCompleted,
-	Sequence: 44,
-	Block:    700327,
+	ID:        "0x558cb5ec877119c2c84a677277efb5b3059adb830c6e74971b3dbe93221b7132",
+	Coin:      coin.THETA,
+	From:      "0x0a7d7141e9abe5d1c760cffa1129c6eb94f35a2a",
+	To:        "0xac0eeb6ee3e32e2c74e14ac74155063e4f4f981f",
+	Fee:       "2000000000000",
+	Date:      1557136821,
+	Type:      blockatlas.TxNativeTokenTransfer,
+	Status:    blockatlas.StatusCompleted,
+	Sequence:  44,
+	Block:     700327,
 	Direction: blockatlas.DirectionIncoming,
 	Meta: blockatlas.NativeTokenTransfer{
 		Name:     "Theta Fuel",
@@ -175,7 +175,7 @@ func TestGetDirection(t *testing.T) {
 		trxInput    Input
 		trxOutput   Output
 	}{
-		{address: addrChecksum, expectedDir: blockatlas.DirectionSelf, trxInput: Input{Address: addr}, trxOutput: Output{Address: addr},},
+		{address: addrChecksum, expectedDir: blockatlas.DirectionSelf, trxInput: Input{Address: addr}, trxOutput: Output{Address: addr}},
 		{address: addrChecksum, expectedDir: blockatlas.DirectionOutgoing, trxInput: Input{Address: addr}, trxOutput: Output{Address: otherAddr}},
 		{address: addrChecksum, expectedDir: blockatlas.DirectionIncoming, trxInput: Input{Address: otherAddr}, trxOutput: Output{Address: addr}},
 	}
