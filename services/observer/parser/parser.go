@@ -27,6 +27,7 @@ type (
 		BacklogCount          int
 		MaxBacklogBlocks      int64
 		StopChannel           chan<- struct{}
+		TxBatchLimit          uint
 	}
 
 	GetBlockByNumber func(num int64) (*blockatlas.Block, error)
@@ -40,6 +41,8 @@ type (
 		blockatlas.Txs
 	}
 )
+
+const MinTxsBatchLimit = 500
 
 func RunParser(params Params) {
 	logger.Info("------------------------------------------------------------")
@@ -215,7 +218,7 @@ func PublishTransactionsBatch(params Params, txs blockatlas.Txs) {
 		return
 	}
 
-	batches := getTxsBatches(txs, 5000)
+	batches := getTxsBatches(txs, params.TxBatchLimit)
 
 	var wg sync.WaitGroup
 	for _, batch := range batches {
