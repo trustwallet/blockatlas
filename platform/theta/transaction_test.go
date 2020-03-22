@@ -9,7 +9,7 @@ import (
 	"testing"
 )
 
-var transferReceipt = `{
+var thetaTransfer = `{
 	"hash": "0x413d8423fd1e6df99fc57f425dfd58c791c877657b364c62c15905ade5114a70",
 	"data": {
 		"fee": {
@@ -53,7 +53,7 @@ var tFuelTransfer = `
 		},
 		"inputs": [
 			{
-				"address": "0xac0eeb6ee3e32e2c74e14ac74155063e4f4f981f",
+				"address": "0x0a7d7141e9abe5d1c760cffa1129c6eb94f35a2a",
 				"coins": {
 					"thetawei": "0",
 					"tfuelwei": "44326000000000000"
@@ -63,7 +63,7 @@ var tFuelTransfer = `
 		],
 		"outputs": [
 			{
-				"address": "0x0a7d7141e9abe5d1c760cffa1129c6eb94f35a2a",
+				"address": "0xac0eeb6ee3e32e2c74e14ac74155063e4f4f981f",
 				"coins": {
 					"thetawei": "0",
 					"tfuelwei": "44324000000000000"
@@ -79,16 +79,17 @@ var tFuelTransfer = `
 `
 
 var expectedTransferTrx = blockatlas.Tx{
-	ID:       "0x413d8423fd1e6df99fc57f425dfd58c791c877657b364c62c15905ade5114a70",
-	Coin:     coin.THETA,
-	From:     "0xac0eeb6ee3e32e2c74e14ac74155063e4f4f981f",
-	To:       "0x0a7d7141e9abe5d1c760cffa1129c6eb94f35a2a",
-	Fee:      "2000000000000",
-	Date:     1557136781,
-	Type:     "transfer",
-	Status:   blockatlas.StatusCompleted,
-	Block:    700321,
-	Sequence: 43,
+	ID:        "0x413d8423fd1e6df99fc57f425dfd58c791c877657b364c62c15905ade5114a70",
+	Coin:      coin.THETA,
+	From:      "0xac0eeb6ee3e32e2c74e14ac74155063e4f4f981f",
+	To:        "0x0a7d7141e9abe5d1c760cffa1129c6eb94f35a2a",
+	Fee:       "2000000000000",
+	Date:      1557136781,
+	Type:      "transfer",
+	Status:    blockatlas.StatusCompleted,
+	Block:     700321,
+	Sequence:  43,
+	Direction: blockatlas.DirectionOutgoing,
 	Meta: blockatlas.Transfer{
 		Value:    "4000000000000000000",
 		Symbol:   "THETA",
@@ -99,22 +100,23 @@ var expectedTransferTrx = blockatlas.Tx{
 var expectedTfuelTransfer = blockatlas.Tx{
 	ID:       "0x558cb5ec877119c2c84a677277efb5b3059adb830c6e74971b3dbe93221b7132",
 	Coin:     coin.THETA,
-	From:     "0xac0eeb6ee3e32e2c74e14ac74155063e4f4f981f",
-	To:       "0x0a7d7141e9abe5d1c760cffa1129c6eb94f35a2a",
+	From:     "0x0a7d7141e9abe5d1c760cffa1129c6eb94f35a2a",
+	To:       "0xac0eeb6ee3e32e2c74e14ac74155063e4f4f981f",
 	Fee:      "2000000000000",
 	Date:     1557136821,
 	Type:     blockatlas.TxNativeTokenTransfer,
 	Status:   blockatlas.StatusCompleted,
 	Sequence: 44,
 	Block:    700327,
+	Direction: blockatlas.DirectionIncoming,
 	Meta: blockatlas.NativeTokenTransfer{
 		Name:     "Theta Fuel",
 		Symbol:   "TFUEL",
 		TokenID:  "tfuel",
 		Decimals: 18,
 		Value:    "44324000000000000",
-		From:     "0xac0eeb6ee3e32e2c74e14ac74155063e4f4f981f",
-		To:       "0x0a7d7141e9abe5d1c760cffa1129c6eb94f35a2a",
+		From:     "0x0a7d7141e9abe5d1c760cffa1129c6eb94f35a2a",
+		To:       "0xac0eeb6ee3e32e2c74e14ac74155063e4f4f981f",
 	},
 }
 
@@ -125,7 +127,7 @@ func TestNormalize(t *testing.T) {
 		Token       string
 		Expected    blockatlas.Tx
 	}{
-		{transferReceipt, "0xac0eeb6ee3e32e2c74e14ac74155063e4f4f981f", "", expectedTransferTrx},
+		{thetaTransfer, "0xac0eeb6ee3e32e2c74e14ac74155063e4f4f981f", "", expectedTransferTrx},
 		{tFuelTransfer, "0xac0eeb6ee3e32e2c74e14ac74155063e4f4f981f", "tfuel", expectedTfuelTransfer},
 	}
 
