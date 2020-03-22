@@ -33,7 +33,7 @@ func init() {
 	cache = internal.InitRedis(redisHost)
 	internal.InitRabbitMQ(mqHost, prefetchCount)
 
-	if err := mq.ParsedTransactionsBatch.Declare(); err != nil {
+	if err := mq.RawTransactions.Declare(); err != nil {
 		logger.Fatal(err)
 	}
 
@@ -42,7 +42,7 @@ func init() {
 	}
 
 	go storage.RestoreConnectionWorker(cache, redisHost, time.Second*10)
-	go mq.RestoreConnectionWorker(mqHost, mq.ParsedTransactionsBatch, time.Second*10)
+	go mq.RestoreConnectionWorker(mqHost, mq.RawTransactions, time.Second*10)
 }
 
 func main() {
@@ -50,7 +50,7 @@ func main() {
 
 	ctx, cancel := context.WithCancel(context.Background())
 
-	go mq.ParsedTransactionsBatch.RunConsumerWithCancel(notifier.RunNotifier, cache, ctx)
+	go mq.RawTransactions.RunConsumerWithCancel(notifier.RunNotifier, cache, ctx)
 
 	internal.SetupGracefulShutdownForObserver(cancel)
 }

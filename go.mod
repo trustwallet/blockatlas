@@ -41,6 +41,7 @@ require (
 	github.com/swaggo/swag v1.6.5
 	github.com/wealdtech/go-ens/v3 v3.2.0
 	github.com/yuin/gopher-lua v0.0.0-20191220021717-ab39c6098bdb // indirect
+	go.uber.org/atomic v1.4.0
 	golang.org/x/crypto v0.0.0-20200221231518-2aa609cf4a9d
 	golang.org/x/net v0.0.0-20200301022130-244492dfa37a // indirect
 	golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e

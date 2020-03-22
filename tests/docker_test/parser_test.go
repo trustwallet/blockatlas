@@ -19,13 +19,21 @@ import (
 )
 
 func TestParserFetchAndPublishBlock_NormalCase(t *testing.T) {
+	if err := mq.RawTransactions.Declare(); err != nil {
+		logger.Fatal(err)
+	}
+
 	params := setupParser()
 
 	ctx, cancel := context.WithCancel(context.Background())
 
-	go parser.RunParser(getMockedBlockAPI(), setup.Cache, params, ctx)
+	params.Ctx = ctx
+	params.Queue = mq.RawTransactions
+
+	go parser.RunParser(params)
+
 	time.Sleep(time.Microsecond)
-	ConsumerToTestAmountOfBlocks(mq.ParsedTransactionsBatch.GetMessageChannel().GetMessage(), t, cancel)
+	ConsumerToTestAmountOfBlocks(mq.RawTransactions.GetMessageChannel().GetMessage(), t, cancel)
 }
 
 func getMockedBlockAPI() blockatlas.BlockAPI {
@@ -92,9 +100,6 @@ func ConsumerToTestAmountOfBlocks(delivery amqp.Delivery, t *testing.T, cancelFu
 }
 
 func setupParser() parser.Params {
-	if err := mq.ParsedTransactionsBatch.Declare(); err != nil {
-		logger.Fatal(err)
-	}
 
 	minTime := time.Second
 	maxTime := time.Second * 2
@@ -105,6 +110,8 @@ func setupParser() parser.Params {
 	backlogCount := 50
 
 	return parser.Params{
+		Api:                   getMockedBlockAPI(),
+		Storage:               setup.Cache,
 		ParsingBlocksInterval: pollInterval,
 		BacklogCount:          backlogCount,
 		MaxBacklogBlocks:      int64(maxBatchBlocksAmount),

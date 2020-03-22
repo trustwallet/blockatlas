@@ -21,11 +21,11 @@ type (
 )
 
 const (
-	Transactions            Queue = "transactions"
-	Subscriptions           Queue = "subscriptions"
-	ParsedTransactionsBatch Queue = "parsedtransactionsbatch"
-	defaultPrefetchCount          = 5
-	minPrefetchCount              = 1
+	Transactions         Queue = "transactions"
+	Subscriptions        Queue = "subscriptions"
+	RawTransactions      Queue = "rawTransactions"
+	defaultPrefetchCount       = 5
+	minPrefetchCount           = 1
 )
 
 func Init(uri string) (err error) {

@@ -44,7 +44,7 @@ func init() {
 	internal.InitRabbitMQ(mqHost, prefetchCount)
 	platform.Init(platformHandle)
 
-	if err := mq.ParsedTransactionsBatch.Declare(); err != nil {
+	if err := mq.RawTransactions.Declare(); err != nil {
 		logger.Fatal(err)
 	}
 
@@ -88,17 +88,21 @@ func main() {
 			backlogCount = int(backlogTime / pollInterval)
 		}
 
-		config := parser.Params{
+		ctx, cancel := context.WithCancel(context.Background())
+
+		coinCancel[coin.Handle] = cancel
+
+		params := parser.Params{
+			Ctx:                   ctx,
+			Api:                   api,
+			Storage:               cache,
+			Queue:                 mq.RawTransactions,
 			ParsingBlocksInterval: pollInterval,
 			BacklogCount:          backlogCount,
 			MaxBacklogBlocks:      maxBackLogBlocks,
 		}
 
-		ctx, cancel := context.WithCancel(context.Background())
-
-		coinCancel[coin.Handle] = cancel
-
-		go parser.RunParser(api, cache, config, ctx)
+		go parser.RunParser(params)
 
 		logger.Info("Parser params", logger.Params{
 			"interval":    pollInterval,
@@ -120,7 +124,7 @@ func main() {
 		cancel()
 	}
 
-	time.Sleep(waitBeforeStop * 3)
+	time.Sleep(waitBeforeStop)
 
 	logger.Info("Exiting gracefully")
 }

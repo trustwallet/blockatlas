@@ -67,14 +67,17 @@ var (
 )
 
 func Test_GetBlocksIntervalToFetch(t *testing.T) {
+
 	params := Params{
 		ParsingBlocksInterval: time.Minute,
 		BacklogCount:          10,
 		MaxBacklogBlocks:      100,
+		Storage:               getMockedRedis(t),
+		Api:                   getMockedBlockAPI(),
 	}
 	latestParsedBlock := int64(100)
 	wantedMockedNumber = 110
-	lastParsedBlock, currentBlock, err := GetBlocksIntervalToFetch(getMockedBlockAPI(), getMockedRedis(t), params)
+	lastParsedBlock, currentBlock, err := GetBlocksIntervalToFetch(params)
 	assert.Nil(t, err)
 	assert.Equal(t, wantedMockedNumber, currentBlock)
 	assert.Equal(t, latestParsedBlock, lastParsedBlock)
@@ -90,7 +93,14 @@ func TestSaveLastParsedBlock(t *testing.T) {
 	blocks = append(blocks, block)
 	s := getMockedRedis(t)
 
-	err := SaveLastParsedBlock(getMockedBlockAPI(), s, blocks)
+	params := Params{
+		ParsingBlocksInterval: time.Minute,
+		BacklogCount:          10,
+		MaxBacklogBlocks:      100,
+		Storage:               s,
+		Api:                   getMockedBlockAPI(),
+	}
+	err := SaveLastParsedBlock(params, blocks)
 	assert.Nil(t, err)
 
 	lastParsedBlock, err := s.GetLastParsedBlockNumber(getMockedBlockAPI().Coin().ID)
@@ -117,10 +127,10 @@ func TestParser_add(t *testing.T) {
 		Txs:   txs,
 	}
 
-	batch.add(txs)
+	batch.fillBatch(txs)
 	assert.Equal(t, 8, len(batch.Txs))
 
-	batch.add(nil)
+	batch.fillBatch(nil)
 	assert.Equal(t, 8, len(batch.Txs))
 }
 

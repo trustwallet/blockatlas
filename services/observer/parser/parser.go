@@ -19,6 +19,10 @@ import (
 
 type (
 	Params struct {
+		Ctx                   context.Context
+		Api                   blockatlas.BlockAPI
+		Storage               storage.Tracker
+		Queue                 mq.Queue
 		ParsingBlocksInterval time.Duration
 		BacklogCount          int
 		MaxBacklogBlocks      int64
@@ -36,65 +40,56 @@ type (
 	}
 )
 
-func (t *transactionsBatch) add(transactions blockatlas.Txs) {
-	t.Lock()
-	defer t.Unlock()
-	if len(transactions) == 0 {
-		return
-	}
-	t.Txs = append(t.Txs, transactions...)
-}
-
-func RunParser(api blockatlas.BlockAPI, storage storage.Tracker, config Params, ctx context.Context) {
+func RunParser(params Params) {
 	logger.Info("------------------------------------------------------------")
 	for {
 		select {
-		case <-ctx.Done():
-			logger.Info(fmt.Sprintf("Parser of %s stopped parsing blocks", api.Coin().Handle))
+		case <-params.Ctx.Done():
+			logger.Info(fmt.Sprintf("Parser of %s stopped parsing blocks", params.Api.Coin().Handle))
 			return
 		default:
-			lastParsedBlock, currentBlock, err := GetBlocksIntervalToFetch(api, storage, config)
+			lastParsedBlock, currentBlock, err := GetBlocksIntervalToFetch(params)
 			if err != nil {
-				logger.Error(err, logger.Params{"coin": api.Coin().Handle})
-				time.Sleep(config.ParsingBlocksInterval)
+				logger.Error(err, logger.Params{"coin": params.Api.Coin().Handle})
+				time.Sleep(params.ParsingBlocksInterval)
 				continue
 			}
 
-			blocks := FetchBlocks(api, lastParsedBlock, currentBlock)
+			blocks := FetchBlocks(params.Api, lastParsedBlock, currentBlock)
 
-			err = SaveLastParsedBlock(api, storage, blocks)
+			err = SaveLastParsedBlock(params, blocks)
 			if err != nil {
-				logger.Error(err, logger.Params{"coin": api.Coin().Handle})
-				time.Sleep(config.ParsingBlocksInterval)
+				logger.Error(err, logger.Params{"coin": params.Api.Coin().Handle})
+				time.Sleep(params.ParsingBlocksInterval)
 				continue
 			}
 
 			txs := ConvertToBatch(blocks)
 
-			PublishTransactionsBatch(api, txs)
+			PublishTransactionsBatch(params, txs)
 
-			time.Sleep(config.ParsingBlocksInterval)
+			time.Sleep(params.ParsingBlocksInterval)
 		}
 	}
 }
 
-func GetBlocksIntervalToFetch(api blockatlas.BlockAPI, storage storage.Tracker, config Params) (int64, int64, error) {
-	lastParsedBlock, err := storage.GetLastParsedBlockNumber(api.Coin().ID)
+func GetBlocksIntervalToFetch(params Params) (int64, int64, error) {
+	lastParsedBlock, err := params.Storage.GetLastParsedBlockNumber(params.Api.Coin().ID)
 	if err != nil {
 		return 0, 0, errors.E(err, "Polling failed: tracker didn't return last known block number")
 	}
-	currentBlock, err := api.CurrentBlockNumber()
-	currentBlock -= api.Coin().MinConfirmations
+	currentBlock, err := params.Api.CurrentBlockNumber()
+	currentBlock -= params.Api.Coin().MinConfirmations
 	if err != nil {
 		return 0, 0, errors.E(err, "Polling failed: source didn't return chain head number")
 	}
 
-	if currentBlock-lastParsedBlock > int64(config.BacklogCount) {
-		lastParsedBlock = currentBlock - int64(config.BacklogCount)
+	if currentBlock-lastParsedBlock > int64(params.BacklogCount) {
+		lastParsedBlock = currentBlock - int64(params.BacklogCount)
 	}
 
-	if currentBlock-lastParsedBlock > config.MaxBacklogBlocks {
-		lastParsedBlock = currentBlock - config.MaxBacklogBlocks
+	if currentBlock-lastParsedBlock > params.MaxBacklogBlocks {
+		lastParsedBlock = currentBlock - params.MaxBacklogBlocks
 	}
 
 	return lastParsedBlock, currentBlock, nil
@@ -164,7 +159,7 @@ func fetchBlock(api blockatlas.BlockAPI, num int64, blocksChan chan<- blockatlas
 	return nil
 }
 
-func SaveLastParsedBlock(api blockatlas.BlockAPI, storage storage.Tracker, blocks []blockatlas.Block) error {
+func SaveLastParsedBlock(params Params, blocks []blockatlas.Block) error {
 	if len(blocks) == 0 {
 		return nil
 	}
@@ -175,12 +170,12 @@ func SaveLastParsedBlock(api blockatlas.BlockAPI, storage storage.Tracker, block
 
 	lastBlockNumber := blocks[len(blocks)-1].Number
 
-	err := storage.SetLastParsedBlockNumber(api.Coin().ID, lastBlockNumber)
+	err := params.Storage.SetLastParsedBlockNumber(params.Api.Coin().ID, lastBlockNumber)
 	if err != nil {
 		return err
 	}
 
-	logger.Info(err, "Save last parsed block", logger.Params{"block": lastBlockNumber, "coin": api.Coin().Handle})
+	logger.Info(err, "Save last parsed block", logger.Params{"block": lastBlockNumber, "coin": params.Api.Coin().Handle})
 	return nil
 }
 
@@ -198,7 +193,7 @@ func ConvertToBatch(blocks []blockatlas.Block) blockatlas.Txs {
 		wg.Add(1)
 		go func(block blockatlas.Block, wg *sync.WaitGroup) {
 			defer wg.Done()
-			txsBatch.add(block.Txs)
+			txsBatch.fillBatch(block.Txs)
 		}(block, &wg)
 	}
 	wg.Wait()
@@ -212,7 +207,7 @@ func ConvertToBatch(blocks []blockatlas.Block) blockatlas.Txs {
 	return txsBatch.Txs
 }
 
-func PublishTransactionsBatch(api blockatlas.BlockAPI, txs blockatlas.Txs) {
+func PublishTransactionsBatch(params Params, txs blockatlas.Txs) {
 	if len(txs) == 0 {
 		logger.Info("------------------------------------------------------------")
 		return
@@ -223,7 +218,7 @@ func PublishTransactionsBatch(api blockatlas.BlockAPI, txs blockatlas.Txs) {
 	var wg sync.WaitGroup
 	for _, batch := range batches {
 		wg.Add(1)
-		go publish(api, batch, &wg)
+		go publish(params, batch, &wg)
 	}
 	wg.Wait()
 
@@ -246,16 +241,16 @@ func getTxsBatches(txs blockatlas.Txs, sizeUint uint) []blockatlas.Txs {
 	return result
 }
 
-func publish(api blockatlas.BlockAPI, txs blockatlas.Txs, wg *sync.WaitGroup) {
+func publish(params Params, txs blockatlas.Txs, wg *sync.WaitGroup) {
 	defer wg.Done()
 	body, err := json.Marshal(txs)
 	if err != nil {
-		logger.Error(err, logger.Params{"coin": api.Coin().Handle})
+		logger.Error(err, logger.Params{"coin": params.Api.Coin().Handle})
 		return
 	}
-	err = mq.ParsedTransactionsBatch.Publish(body)
+	err = params.Queue.Publish(body)
 	if err != nil {
-		logger.Error(err, logger.Params{"coin": api.Coin().Handle})
+		logger.Error(err, logger.Params{"coin": params.Api.Coin().Handle})
 		return
 	}
 }
@@ -285,4 +280,13 @@ func getBlockByNumberWithRetry(attempts int, sleep time.Duration, getBlockByNumb
 		}
 	}
 	return r, err
+}
+
+func (t *transactionsBatch) fillBatch(transactions blockatlas.Txs) {
+	t.Lock()
+	defer t.Unlock()
+	if len(transactions) == 0 {
+		return
+	}
+	t.Txs = append(t.Txs, transactions...)
 }

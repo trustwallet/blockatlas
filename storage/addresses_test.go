@@ -11,6 +11,7 @@ import (
 
 func TestStorage_Lookup(t *testing.T) {
 	s := initStorage(t)
+	assert.NotNil(t, s)
 
 	type fields struct {
 		coin      int
@@ -61,6 +62,7 @@ func TestStorage_Lookup(t *testing.T) {
 
 func TestStorage_Lookup_MultipleGUIDs(t *testing.T) {
 	s := initStorage(t)
+	assert.NotNil(t, s)
 
 	want := []blockatlas.Subscription{
 		{Coin: 60, Address: "1", GUID: "1"},
@@ -94,6 +96,7 @@ func TestStorage_Lookup_MultipleGUIDs(t *testing.T) {
 
 func TestStorage_Lookup_NotFoundSeveral(t *testing.T) {
 	s := initStorage(t)
+	assert.NotNil(t, s)
 
 	want := []blockatlas.Subscription{
 		{Coin: 60, Address: "1", GUID: "1"},
@@ -124,6 +127,7 @@ func TestStorage_Lookup_NotFoundSeveral(t *testing.T) {
 
 func TestStorage_AddSubscriptions(t *testing.T) {
 	s := initStorage(t)
+	assert.NotNil(t, s)
 
 	subs := []blockatlas.Subscription{
 		{Coin: 60, Address: "1", GUID: "1"},
@@ -224,6 +228,7 @@ func TestStorage_AddSubscriptions(t *testing.T) {
 
 func TestStorage_DeleteSubscriptions(t *testing.T) {
 	s := initStorage(t)
+	assert.NotNil(t, s)
 
 	subs := []blockatlas.Subscription{
 		{Coin: 60, Address: "1", GUID: "1"},
