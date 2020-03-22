@@ -27,6 +27,7 @@ var (
 	cache                                 *storage.Storage
 	backlogTime, minInterval, maxInterval time.Duration
 	maxBackLogBlocks                      int64
+	txsBatchLimit                         uint
 )
 
 func init() {
@@ -51,7 +52,7 @@ func init() {
 	if len(platform.BlockAPIs) == 0 {
 		logger.Fatal("No APIs to observe")
 	}
-
+	txsBatchLimit = viper.GetUint("observer.txs_batch_limit")
 	backlogTime = viper.GetDuration("observer.backlog")
 	minInterval = viper.GetDuration("observer.block_poll.min")
 	maxInterval = viper.GetDuration("observer.block_poll.max")
@@ -61,7 +62,9 @@ func init() {
 	}
 
 	go mq.FatalWorker(time.Second * 10)
+	time.Sleep(time.Millisecond)
 	go storage.RestoreConnectionWorker(cache, redisHost, time.Second*10)
+	time.Sleep(time.Millisecond)
 }
 
 func main() {
@@ -88,6 +91,11 @@ func main() {
 			backlogCount = int(backlogTime / pollInterval)
 		}
 
+		// do not allow
+		if txsBatchLimit < parser.MinTxsBatchLimit {
+			txsBatchLimit = parser.MinTxsBatchLimit
+		}
+
 		ctx, cancel := context.WithCancel(context.Background())
 
 		coinCancel[coin.Handle] = cancel
@@ -100,14 +108,16 @@ func main() {
 			ParsingBlocksInterval: pollInterval,
 			BacklogCount:          backlogCount,
 			MaxBacklogBlocks:      maxBackLogBlocks,
+			TxBatchLimit:          txsBatchLimit,
 		}
 
 		go parser.RunParser(params)
 
 		logger.Info("Parser params", logger.Params{
-			"interval":    pollInterval,
-			"backlog":     backlogCount,
-			"Max backlog": maxBackLogBlocks,
+			"interval":        pollInterval,
+			"backlog":         backlogCount,
+			"Max backlog":     maxBackLogBlocks,
+			"Txs Batch limit": txsBatchLimit,
 		})
 
 		wg.Done()
