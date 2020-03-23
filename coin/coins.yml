@@ -364,6 +364,14 @@
   blockTime: 6000
   sampleAddress: 'HewiDTQv92L2bVtkziZC8ASxrFUxr6ajQ62RXAnwQ8FDVmg'
 
+- id: 501
+  symbol: SOL
+  handle: solana
+  name: Solana
+  decimals: 9
+  blockTime: 500
+  sampleAddress: 'boot1Z6jb15CLqpaMTn2CxktktwZpRAVAgHZEW6SxQ7'
+
 - id: 397
   symbol: NEAR
   handle: near
