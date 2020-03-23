@@ -29,12 +29,6 @@ type (
 		Status  bool   `json:"status"`
 		Message string `json:"message"`
 	}
-
-	Block struct {
-		Number int64  `json:"number"`
-		ID     string `json:"id,omitempty"`
-		Txs    []Tx   `json:"txs"`
-	}
 )
 
 func (e *SubscriptionEvent) ParseSubscriptions(s Subscriptions) []Subscription {

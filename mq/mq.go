@@ -1,6 +1,7 @@
 package mq
 
 import (
+	"context"
 	"github.com/streadway/amqp"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/storage"
@@ -14,13 +15,15 @@ var (
 )
 
 type (
-	Queue    string
-	Consumer func(amqp.Delivery, storage.Addresses)
+	Queue          string
+	Consumer       func(amqp.Delivery, storage.Addresses)
+	MessageChannel <-chan amqp.Delivery
 )
 
 const (
 	Transactions         Queue = "transactions"
 	Subscriptions        Queue = "subscriptions"
+	RawTransactions      Queue = "rawTransactions"
 	defaultPrefetchCount       = 5
 	minPrefetchCount           = 1
 )
@@ -53,6 +56,21 @@ func (q Queue) Publish(body []byte) error {
 		ContentType:  "text/plain",
 		Body:         body,
 	})
+}
+
+func (q Queue) RunConsumerForChannelWithCancel(consumer Consumer, messageChannel MessageChannel, cache storage.Addresses, ctx context.Context) {
+	for {
+		select {
+		case <-ctx.Done():
+			logger.Info("Consumer stopped")
+			return
+		case message := <-messageChannel:
+			if message.Body == nil {
+				continue
+			}
+			go consumer(message, cache)
+		}
+	}
 }
 
 func (q Queue) RunConsumer(consumer Consumer, cache storage.Addresses) {
@@ -88,6 +106,71 @@ func (q Queue) RunConsumer(consumer Consumer, cache storage.Addresses) {
 	for data := range messageChannel {
 		go consumer(data, cache)
 	}
+}
+
+func (q Queue) RunConsumerWithCancel(consumer Consumer, cache storage.Addresses, ctx context.Context) {
+	messageChannel, err := amqpChan.Consume(
+		string(q),
+		"",
+		false,
+		false,
+		false,
+		false,
+		nil,
+	)
+	if err != nil {
+		logger.Fatal("MQ issue " + err.Error())
+		return
+	}
+
+	if PrefetchCount < minPrefetchCount {
+		logger.Info("Change prefetch count to default")
+		PrefetchCount = defaultPrefetchCount
+	}
+
+	err = amqpChan.Qos(
+		PrefetchCount,
+		0,
+		true,
+	)
+
+	if err != nil {
+		logger.Error("no qos limit ", err)
+	}
+
+	for {
+		select {
+		case <-ctx.Done():
+			logger.Info("Consumer stopped")
+			return
+		case message := <-messageChannel:
+			if message.Body == nil {
+				continue
+			}
+			go consumer(message, cache)
+		}
+	}
+}
+
+func (q Queue) GetMessageChannel() MessageChannel {
+	messageChannel, err := amqpChan.Consume(
+		string(q),
+		"",
+		false,
+		false,
+		false,
+		false,
+		nil,
+	)
+	if err != nil {
+		logger.Fatal("MQ issue " + err.Error())
+	}
+
+	return messageChannel
+}
+
+func (mc MessageChannel) GetMessage() amqp.Delivery {
+	return <-mc
 }
 
 func RestoreConnectionWorker(uri string, queue Queue, timeout time.Duration) {

@@ -40,12 +40,12 @@ func RestoreConnectionWorker(storage *Storage, uri string, timeout time.Duration
 }
 
 type Tracker interface {
-	GetBlockNumber(coin uint) (int64, error)
-	SetBlockNumber(coin uint, num int64) error
+	GetLastParsedBlockNumber(coin uint) (int64, error)
+	SetLastParsedBlockNumber(coin uint, num int64) error
 }
 
 type Addresses interface {
-	Lookup(coin uint, addresses []string) ([]blockatlas.Subscription, error)
+	FindSubscriptions(coin uint, addresses []string) ([]blockatlas.Subscription, error)
 	AddSubscriptions(subscriptions []blockatlas.Subscription) error
 	DeleteSubscriptions(subscriptions []blockatlas.Subscription) error
 }

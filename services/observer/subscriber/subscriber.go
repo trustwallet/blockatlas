@@ -1,4 +1,4 @@
-package subscription
+package subscriber
 
 import (
 	"encoding/json"
@@ -14,7 +14,7 @@ const (
 	UpdateSubscription blockatlas.SubscriptionOperation = "UpdateSubscription"
 )
 
-func Consume(delivery amqp.Delivery, storage storage.Addresses) {
+func RunSubscriber(delivery amqp.Delivery, storage storage.Addresses) {
 	var event blockatlas.SubscriptionEvent
 	err := json.Unmarshal(delivery.Body, &event)
 	if err != nil {
@@ -35,17 +35,9 @@ func Consume(delivery amqp.Delivery, storage storage.Addresses) {
 		if err != nil {
 			logger.Error(err, params)
 		}
-		err = delivery.Ack(false)
-		if err != nil {
-			logger.Error(err, params)
-		}
 		logger.Info("Updated", params)
 	case AddSubscription:
 		err = storage.AddSubscriptions(newSubscriptions)
-		if err != nil {
-			logger.Error(err, params)
-		}
-		err = delivery.Ack(false)
 		if err != nil {
 			logger.Error(err, params)
 		}
@@ -55,10 +47,11 @@ func Consume(delivery amqp.Delivery, storage storage.Addresses) {
 		if err != nil {
 			logger.Error(err, params)
 		}
-		err = delivery.Ack(false)
-		if err != nil {
-			logger.Error(err, params)
-		}
 		logger.Info("Deleted", params)
+	}
+
+	err = delivery.Ack(false)
+	if err != nil {
+		logger.Error(err, params)
 	}
 }

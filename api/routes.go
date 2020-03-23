@@ -7,6 +7,7 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/ginutils"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/platform"
+	"strings"
 )
 
 var routers = make(map[string]gin.IRouter)
@@ -74,6 +75,10 @@ func SetupPlatformAPI(root gin.IRouter) {
 	logger.Info("Routes set up", logger.Params{"routes": len(routers)})
 }
 
+func SetupHealthCheckApi(root gin.IRouter) {
+	root.GET("/", GetObserverStatus)
+}
+
 // getRouter lazy loads routers
 func getRouter(router *gin.RouterGroup, handle string) gin.IRouter {
 	key := fmt.Sprintf("%s/%s", router.BasePath(), handle)
@@ -106,4 +111,11 @@ func GetStatus(c *gin.Context) {
 		"build":  internal.Build,
 		"date":   internal.Date,
 	})
+}
+
+func splitParam(param string) []string {
+	splitFn := func(c rune) bool {
+		return c == ','
+	}
+	return strings.FieldsFunc(param, splitFn)
 }
