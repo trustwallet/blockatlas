@@ -10,9 +10,11 @@ type Platform struct {
 }
 
 func Init(api string) *Platform {
-	return &Platform{
+	p := &Platform{
 		client: Client{blockatlas.InitClient(api)},
 	}
+	p.client.Headers["Content-Type"] = "application/json"
+	return p
 }
 
 func (p *Platform) Coin() coin.Coin {
