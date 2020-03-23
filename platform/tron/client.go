@@ -31,10 +31,9 @@ func (c *Client) GetTxsOfAddress(address, token string) ([]Tx, error) {
 
 	var txs Page
 	err := c.Get(&txs, path, url.Values{
-		"only_confirmed": {"true"},
-		"limit":          {"200"},
-		"token_id":       {token},
-		"order_by":       {"block_timestamp,desc"},
+		"limit":    {"25"},
+		"token_id": {token},
+		"order_by": {"block_timestamp,desc"},
 	})
 
 	return txs.Txs, err
