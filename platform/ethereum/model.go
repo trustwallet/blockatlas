@@ -1,8 +1,9 @@
 package ethereum
 
 import (
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"math/big"
+
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 )
 
 type Page struct {
@@ -108,4 +109,8 @@ type AssetContract struct {
 	ExternalLink string `json:"external_link"`
 	Type         string `json:"schema_name"`
 	Version      string `json:"nft_version"`
+}
+
+type RpcResponse struct {
+	result string `json:"result"`
 }
