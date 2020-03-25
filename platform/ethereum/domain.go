@@ -5,7 +5,7 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
-	cc "github.com/trustwallet/ens-coincodec"
+	AddressEncoder "github.com/trustwallet/ens-coincodec"
 )
 
 func (p *Platform) Lookup(coins []uint64, name string) ([]blockatlas.Resolved, error) {
@@ -44,7 +44,7 @@ func (p *Platform) addressForCoin(resovler string, node []byte, coin uint64) (st
 		}
 		return "", errors.E(err, "query multi coin address failed")
 	}
-	encoded, err := cc.ToString(result, uint32(coin))
+	encoded, err := AddressEncoder.ToString(result, uint32(coin))
 	if err != nil {
 		return "", errors.E(err, "encode to address failed")
 	}

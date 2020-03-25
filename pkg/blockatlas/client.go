@@ -34,6 +34,19 @@ func InitClient(baseUrl string) Request {
 	}
 }
 
+func InitJSONClient(baseUrl string) Request {
+	headers := map[string]string{
+		"Content-Type": "application/json",
+		"Accept":       "application/json",
+	}
+	return Request{
+		Headers:      headers,
+		HttpClient:   DefaultClient,
+		ErrorHandler: DefaultErrorHandler,
+		BaseUrl:      baseUrl,
+	}
+}
+
 var DefaultClient = &http.Client{
 	Timeout: time.Second * 15,
 }

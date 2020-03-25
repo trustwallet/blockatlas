@@ -18,9 +18,8 @@ func Init(coin uint, api, rpc string) *Platform {
 		CoinIndex: coin,
 		RpcURL:    rpc,
 		client:    Client{blockatlas.InitClient(api)},
-		ens:       RpcClient{blockatlas.InitClient(rpc)},
+		ens:       RpcClient{blockatlas.InitJSONClient(rpc)},
 	}
-	p.ens.Headers["Content-Type"] = "application/json"
 	return p
 }
 
