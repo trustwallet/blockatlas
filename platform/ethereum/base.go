@@ -14,13 +14,12 @@ type Platform struct {
 }
 
 func Init(coin uint, api, rpc string) *Platform {
-	p := &Platform{
+	return &Platform{
 		CoinIndex: coin,
 		RpcURL:    rpc,
 		client:    Client{blockatlas.InitClient(api)},
 		ens:       RpcClient{blockatlas.InitJSONClient(rpc)},
 	}
-	return p
 }
 
 func InitWitCollection(coin uint, api, rpc, collectionApi, collectionKey string) *Platform {
