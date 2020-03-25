@@ -201,7 +201,7 @@ func Test_getDirection(t *testing.T) {
 		{"Test NativeTokenTransfer Direction Self",
 			args{
 				Tx{
-					Meta: NativeTokenTransfer{
+					Meta: &NativeTokenTransfer{
 						From: "0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB",
 						To:   "0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB",
 					},
@@ -211,7 +211,7 @@ func Test_getDirection(t *testing.T) {
 		{"Test NativeTokenTransfer Direction Outgoing",
 			args{
 				Tx{
-					Meta: NativeTokenTransfer{
+					Meta: &NativeTokenTransfer{
 						From: "0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB",
 						To:   "0x74c8199372c584DAB8b14c519bc8BC8C622F37b7",
 					},
@@ -221,7 +221,7 @@ func Test_getDirection(t *testing.T) {
 		{"Test NativeTokenTransfer Direction Incoming",
 			args{
 				Tx{
-					Meta: NativeTokenTransfer{
+					Meta: &NativeTokenTransfer{
 						From: "0x74c8199372c584DAB8b14c519bc8BC8C622F37b7",
 						To:   "0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB",
 					},
@@ -231,7 +231,7 @@ func Test_getDirection(t *testing.T) {
 		{"Test TokenTransfer Direction Self",
 			args{
 				Tx{
-					Meta: TokenTransfer{
+					Meta: &TokenTransfer{
 						From: "0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB",
 						To:   "0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB",
 					},
@@ -241,7 +241,7 @@ func Test_getDirection(t *testing.T) {
 		{"Test TokenTransfer Direction Outgoing",
 			args{
 				Tx{
-					Meta: TokenTransfer{
+					Meta: &TokenTransfer{
 						From: "0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB",
 						To:   "0x74c8199372c584DAB8b14c519bc8BC8C622F37b7",
 					},
@@ -251,7 +251,7 @@ func Test_getDirection(t *testing.T) {
 		{"Test TokenTransfer Direction Incoming",
 			args{
 				Tx{
-					Meta: TokenTransfer{
+					Meta: &TokenTransfer{
 						From: "0x74c8199372c584DAB8b14c519bc8BC8C622F37b7",
 						To:   "0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB",
 					},
@@ -491,4 +491,38 @@ func TestGetTxsTx(t *testing.T) {
 	assert.Equal(t, txs.Map["tbnb1sylyjw032eajr9cyllp26n04300qzzre38qyv5"].Size(), 1)
 	assert.Equal(t, txs.Map["tbnb1ttyn4csghfgyxreu7lmdu3lcplhqhxtzced45a"].Size(), 2)
 	assert.Equal(t, txs.Map["tbnb12hlquylu78cjylk5zshxpdj6hf3t0tahwjt3ex"].Size(), 2)
+}
+
+func TestTx_GetTransactionDirection(t *testing.T) {
+	txMeta := TokenTransfer{
+		Name:     "Kyber Network Crystal",
+		Symbol:   "KNC",
+		TokenID:  "0xdd974D5C2e2928deA5F71b9825b8b646686BD200",
+		Decimals: 18,
+		Value:    "100000000000000",
+		From:     "0x08777CB1e80F45642752662B04886Df2d271E049",
+		To:       "0x38d45371993eEc84f38FEDf93C646aA2D2267CEA",
+	}
+
+	tx := Tx{
+		ID:       "0xbcd1a43e796de4035e5e2991d8db332958e36031d54cb1d3a08d2cb790e338c4",
+		Coin:     60,
+		From:     "0x08777CB1e80F45642752662B04886Df2d271E049",
+		To:       "0xdd974D5C2e2928deA5F71b9825b8b646686BD200",
+		Fee:      "52473000000000",
+		Date:     1585169424,
+		Block:    9742705,
+		Status:   "completed",
+		Sequence: 149,
+		Type:     "token_transfer",
+		Meta:     txMeta,
+	}
+
+	tx.Direction = tx.GetTransactionDirection("0x38d45371993eEc84f38FEDf93C646aA2D2267CEA")
+	assert.Equal(t, Direction("incoming"), tx.Direction)
+
+	tx.Meta = &txMeta
+
+	tx.Direction = tx.GetTransactionDirection("0x38d45371993eEc84f38FEDf93C646aA2D2267CEA")
+	assert.Equal(t, Direction("incoming"), tx.Direction)
 }
