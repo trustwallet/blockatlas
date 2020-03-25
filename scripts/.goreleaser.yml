@@ -12,9 +12,9 @@ builds:
       - amd64
     env:
       - CGO_ENABLED=0
-  - id: observer
-    binary: observer
-    main: "./cmd/observer/main.go"
+  - id: observer_test
+    binary: observer_test
+    main: "./cmd/observer_test/main.go"
     goos:
       - linux
     goarch:

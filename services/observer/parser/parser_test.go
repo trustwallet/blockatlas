@@ -2,13 +2,9 @@ package parser
 
 import (
 	"errors"
-	"fmt"
-	"github.com/alicebob/miniredis"
 	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/pkg/logger"
-	"github.com/trustwallet/blockatlas/storage"
 	"sync"
 	"testing"
 	"time"
@@ -66,46 +62,9 @@ var (
 	}
 )
 
-func Test_GetBlocksIntervalToFetch(t *testing.T) {
-
-	params := Params{
-		ParsingBlocksInterval: time.Minute,
-		BacklogCount:          10,
-		MaxBacklogBlocks:      100,
-		Storage:               getMockedRedis(t),
-		Api:                   getMockedBlockAPI(),
-	}
-	latestParsedBlock := int64(100)
-	wantedMockedNumber = 110
-	lastParsedBlock, currentBlock, err := GetBlocksIntervalToFetch(params)
-	assert.Nil(t, err)
-	assert.Equal(t, wantedMockedNumber, currentBlock)
-	assert.Equal(t, latestParsedBlock, lastParsedBlock)
-}
-
 func TestFetchBlocks(t *testing.T) {
 	blocks := FetchBlocks(getMockedBlockAPI(), 0, 100)
 	assert.Equal(t, len(blocks), 100)
-}
-
-func TestSaveLastParsedBlock(t *testing.T) {
-	blocks := make([]blockatlas.Block, 0)
-	blocks = append(blocks, block)
-	s := getMockedRedis(t)
-
-	params := Params{
-		ParsingBlocksInterval: time.Minute,
-		BacklogCount:          10,
-		MaxBacklogBlocks:      100,
-		Storage:               s,
-		Api:                   getMockedBlockAPI(),
-	}
-	err := SaveLastParsedBlock(params, blocks)
-	assert.Nil(t, err)
-
-	lastParsedBlock, err := s.GetLastParsedBlockNumber(getMockedBlockAPI().Coin().ID)
-	assert.Nil(t, err)
-	assert.Equal(t, lastParsedBlock, int64(110))
 }
 
 func TestParser_ConvertToBatch(t *testing.T) {
@@ -172,20 +131,6 @@ func getBlock(num int64) (*blockatlas.Block, error) {
 func getMockedBlockAPI() blockatlas.BlockAPI {
 	p := Platform{CoinIndex: 60}
 	return &p
-}
-
-func getMockedRedis(t *testing.T) *storage.Storage {
-	s, err := miniredis.Run()
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	cache := storage.New()
-	err = cache.Init(fmt.Sprintf("redis://%s", s.Addr()))
-	if err != nil {
-		logger.Fatal(err)
-	}
-	return cache
 }
 
 type Platform struct {

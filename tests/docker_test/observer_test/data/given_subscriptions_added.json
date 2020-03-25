@@ -1,42 +1,38 @@
 [
   {
-    "new_subscriptions": {
+    "subscriptions": {
       "60": [
         "0x0000000000000000000000000000000000000000"
       ]
     },
-    "old_subscriptions": null,
-    "guid": "0",
+    "id": 10,
     "operation": "AddSubscription"
   },
   {
-    "new_subscriptions": {
+    "subscriptions": {
       "118": [
         "0x0000000000000000000000000000000000000001"
       ]
     },
-    "old_subscriptions": null,
-    "guid": "1",
+    "id": 1,
     "operation": "AddSubscription"
   },
   {
-    "new_subscriptions": {
+    "subscriptions": {
       "714": [
         "0x0000000000000000000000000000000000000002"
       ]
     },
-    "old_subscriptions": null,
-    "guid": "2",
+    "id": 2,
     "operation": "AddSubscription"
   },
   {
-    "new_subscriptions": {
+    "subscriptions": {
       "144": [
         "0x0000000000000000000000000000000000000003"
       ]
     },
-    "old_subscriptions": null,
-    "guid": "3",
+    "id": 3,
     "operation": "AddSubscription"
   }
 ]
