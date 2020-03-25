@@ -270,9 +270,9 @@ func (t *Tx) GetTransactionDirection(address string) Direction {
 		return InferDirection(t, addressSet)
 	}
 	switch meta := t.Meta.(type) {
-	case TokenTransfer:
+	case *TokenTransfer:
 		return determineTransactionDirection(address, meta.From, meta.To)
-	case NativeTokenTransfer:
+	case *NativeTokenTransfer:
 		return determineTransactionDirection(address, meta.From, meta.To)
 	default:
 		return determineTransactionDirection(address, t.From, t.To)
