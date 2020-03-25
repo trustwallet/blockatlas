@@ -110,7 +110,3 @@ type AssetContract struct {
 	Type         string `json:"schema_name"`
 	Version      string `json:"nft_version"`
 }
-
-type RpcResponse struct {
-	result string `json:"result"`
-}

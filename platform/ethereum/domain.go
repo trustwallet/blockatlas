@@ -19,10 +19,6 @@ func (p *Platform) Lookup(coins []uint64, name string) ([]blockatlas.Resolved, e
 		if err != nil {
 			return result, errors.E(err, "query resolver failed")
 		}
-		// empty resolver
-		if allZero(resolver) {
-			return result, nil
-		}
 		// try to get multi coin address
 		address, err := p.addressForCoin("0x"+resolver, node[:], coin)
 		if err != nil {
@@ -57,13 +53,4 @@ func (p *Platform) addressForCoin(resovler string, node []byte, coin uint64) (st
 
 func (p *Platform) lookupLegacyETH(resolver string, node []byte) (string, error) {
 	return p.ens.LegacyAddr(resolver, node)
-}
-
-func allZero(s string) bool {
-	for _, v := range s {
-		if v != '0' {
-			return false
-		}
-	}
-	return true
 }

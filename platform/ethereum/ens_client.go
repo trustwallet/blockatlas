@@ -3,7 +3,9 @@ package ethereum
 import (
 	"encoding/hex"
 
+	"github.com/trustwallet/blockatlas/pkg/address"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/errors"
 )
 
 const (
@@ -15,12 +17,12 @@ type RpcClient struct {
 }
 
 func (c *RpcClient) EthCall(params []interface{}) (string, error) {
-	var res RpcResponse
+	var res string
 	err := c.RpcCall(&res, "eth_call", params)
 	if err != nil {
 		return "", err
 	}
-	return res.result, nil
+	return res, nil
 }
 
 func (c *RpcClient) toParams(to string, data []byte) []interface{} {
@@ -37,28 +39,46 @@ func (c *RpcClient) Resolver(node []byte) (string, error) {
 	data := encodeResolver(node)
 	params := c.toParams(registry, data)
 	result, err := c.EthCall(params)
-	if err != nil || len(result) < 20 {
+	if err != nil {
 		return "", err
 	}
-	return result[len(result)-20:], nil
+	if allZero(address.Remove0x(result)) {
+		return "", errors.E("unregistered name or resolver not set")
+	}
+	if len(result) < 40 {
+		return "", errors.E("invalid address length")
+	}
+	return result[len(result)-40:], nil
 }
 
 func (c *RpcClient) Addr(resolver string, node []byte, coin uint64) ([]byte, error) {
 	data := encodeAddr(node, coin)
-	params := c.toParams(registry, data)
+	params := c.toParams(resolver, data)
 	result, err := c.EthCall(params)
 	if err != nil {
 		return nil, err
 	}
-	return decodeHex(result), nil
+	if len(result) < 32 {
+		return nil, errors.E("invalid result length")
+	}
+	return decodeBytesInHex(result), nil
 }
 
 func (c *RpcClient) LegacyAddr(resolver string, node []byte) (string, error) {
 	data := encodeLegacyAddr(node)
-	params := c.toParams(registry, data)
+	params := c.toParams(resolver, data)
 	result, err := c.EthCall(params)
-	if err != nil {
+	if err != nil || len(result) < 40 {
 		return "", err
 	}
-	return "0x" + result[len(result)-20:], nil
+	return address.EIP55Checksum(result[len(result)-40:]), nil
+}
+
+func allZero(s string) bool {
+	for _, v := range s {
+		if v != '0' {
+			return false
+		}
+	}
+	return true
 }

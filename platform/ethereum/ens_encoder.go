@@ -5,6 +5,7 @@ import (
 	"encoding/binary"
 	"encoding/hex"
 	"math/big"
+	"strings"
 
 	"golang.org/x/crypto/sha3"
 )
@@ -23,6 +24,14 @@ func encodeAddr(node []byte, coinType uint64) []byte {
 	data = append(data, signature...)
 	data = append(data, node...)
 	data = append(data, encodeCoinType(coinType)...)
+	return data
+}
+
+func encodeSupportsInterface(id []byte) []byte {
+	data := make([]byte, 0, 8)
+	signature := encodeFunc("supportsInterface(bytes4)")
+	data = append(data, signature...)
+	data = append(data, id[:4]...)
 	return data
 }
 
@@ -55,12 +64,15 @@ func encodeCoinType(i uint64) []byte {
 	return data
 }
 
-func decodeHex(hexString string) []byte {
-	decoded, err := hex.DecodeString(hexString)
-	if err != nil {
+func decodeBytesInHex(s string) []byte {
+	if strings.HasPrefix(s, "0x") {
+		s = strings.TrimPrefix(s, "0x")
+	}
+	bytes, err := hex.DecodeString(s)
+	if err != nil || len(bytes) < 32 {
 		return []byte{}
 	}
-	return decoded
+	return decodeBytes(bytes)
 }
 
 func decodeBytes(b []byte) []byte {

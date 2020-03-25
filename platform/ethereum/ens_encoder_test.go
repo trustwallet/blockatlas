@@ -59,6 +59,34 @@ func Test_encodeAddr(t *testing.T) {
 	}
 }
 
+func Test_encodeSupportsInterface(t *testing.T) {
+	tests := []struct {
+		name string
+		id   string
+		want string
+	}{
+		{
+			"Test encodeSupportsInterface",
+			"3b3b57de",
+			"01ffc9a73b3b57de",
+		},
+		{
+			"Test encodeSupportsInterface",
+			"f1cb7e06",
+			"01ffc9a7f1cb7e06",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			id, _ := hex.DecodeString(tt.id)
+			want, _ := hex.DecodeString(tt.want)
+			if got := encodeSupportsInterface(id); !reflect.DeepEqual(got, want) {
+				t.Errorf("encodeSupportsInterface() = %v, want %v", hex.EncodeToString(got), tt.want)
+			}
+		})
+	}
+}
+
 func Test_encodeLegacyAddr(t *testing.T) {
 	tests := []struct {
 		name string
