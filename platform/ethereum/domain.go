@@ -1,11 +1,11 @@
 package ethereum
 
 import (
-	cc "github.com/hewigovens/go-coincodec"
 	CoinType "github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
+	cc "github.com/trustwallet/ens-coincodec"
 )
 
 func (p *Platform) Lookup(coins []uint64, name string) ([]blockatlas.Resolved, error) {
