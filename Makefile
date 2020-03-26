@@ -96,8 +96,8 @@ start-observer-subscriber: stop
 stop:
 	@-touch $(PID_API) $(PID_OBSERVER_NOTIFIER) $(PID_OBSERVER_PARSER) $(PID_OBSERVER_SUBSCRIBER) $(PID_SWAGGER_API)
 	@-kill `cat $(PID_API)` 2> /dev/null || true
-	@-kill `cat $(OBSERVER_NOTIFIER)` 2> /dev/null || true
-	@-kill `cat $(OBSERVER_PARSER)` 2> /dev/null || true
+	@-kill `cat $(PID_OBSERVER_NOTIFIER)` 2> /dev/null || true
+	@-kill `cat $(PID_OBSERVER_PARSER)` 2> /dev/null || true
 	@-kill `cat $(PID_OBSERVER_SUBSCRIBER)` 2> /dev/null || true
 	@-kill `cat $(PID_SWAGGER_API)` 2> /dev/null || true
 	@-kill `cat $(PID_DYSON)` 2> /dev/null || true
@@ -169,7 +169,7 @@ ifeq (,$(shell which newman))
 endif
 
 ## newman: Run Postman Newman test, the host parameter is required, and you can specify the name of the test do you wanna run (transaction, token, staking, collection, domain, healthcheck, observer). e.g $ make newman test=staking host=http//localhost
-newman: install-newman start-platform-api
+newman: install-newman
 ifeq (,$(test))
 	@bash -c "$(MAKE) newman-run test=transaction host=$(host)"
 	@bash -c "$(MAKE) newman-run test=token host=$(host)"
