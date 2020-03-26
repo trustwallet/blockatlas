@@ -169,7 +169,7 @@ ifeq (,$(shell which newman))
 endif
 
 ## newman: Run Postman Newman test, the host parameter is required, and you can specify the name of the test do you wanna run (transaction, token, staking, collection, domain, healthcheck, observer). e.g $ make newman test=staking host=http//localhost
-newman: install-newman start-platform-api
+newman: install-newman
 ifeq (,$(test))
 	@bash -c "$(MAKE) newman-run test=transaction host=$(host)"
 	@bash -c "$(MAKE) newman-run test=token host=$(host)"
