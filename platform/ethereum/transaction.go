@@ -34,8 +34,9 @@ func (p *Platform) getTransactions(c *gin.Context) {
 	}
 
 	var txs []blockatlas.Tx
-	for _, srcTx := range srcPage.Docs {
+	for i, srcTx := range srcPage.Docs {
 		txs = AppendTxs(txs, &srcTx, p.CoinIndex)
+		txs[i].Direction = txs[i].GetTransactionDirection(address)
 	}
 
 	page := blockatlas.TxPage(txs)
