@@ -4,13 +4,14 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/trustwallet/blockatlas/pkg/errors"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
 	"time"
+
+	"github.com/trustwallet/blockatlas/pkg/errors"
 )
 
 type Request struct {
@@ -27,6 +28,19 @@ func (r *Request) SetTimeout(seconds time.Duration) {
 func InitClient(baseUrl string) Request {
 	return Request{
 		Headers:      make(map[string]string),
+		HttpClient:   DefaultClient,
+		ErrorHandler: DefaultErrorHandler,
+		BaseUrl:      baseUrl,
+	}
+}
+
+func InitJSONClient(baseUrl string) Request {
+	headers := map[string]string{
+		"Content-Type": "application/json",
+		"Accept":       "application/json",
+	}
+	return Request{
+		Headers:      headers,
 		HttpClient:   DefaultClient,
 		ErrorHandler: DefaultErrorHandler,
 		BaseUrl:      baseUrl,

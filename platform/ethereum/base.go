@@ -10,6 +10,7 @@ type Platform struct {
 	RpcURL            string
 	client            Client
 	collectionsClient CollectionsClient
+	ens               RpcClient
 }
 
 func Init(coin uint, api, rpc string) *Platform {
@@ -17,6 +18,7 @@ func Init(coin uint, api, rpc string) *Platform {
 		CoinIndex: coin,
 		RpcURL:    rpc,
 		client:    Client{blockatlas.InitClient(api)},
+		ens:       RpcClient{blockatlas.InitJSONClient(rpc)},
 	}
 }
 

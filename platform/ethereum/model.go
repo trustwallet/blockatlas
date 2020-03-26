@@ -1,8 +1,9 @@
 package ethereum
 
 import (
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"math/big"
+
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 )
 
 type Page struct {

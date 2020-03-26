@@ -1,11 +1,12 @@
 package api
 
 import (
-	"github.com/trustwallet/blockatlas/pkg/errors"
-	"github.com/trustwallet/blockatlas/services/domains"
 	"net/http"
 	"strconv"
 	"strings"
+
+	"github.com/trustwallet/blockatlas/pkg/errors"
+	"github.com/trustwallet/blockatlas/services/domains"
 
 	"github.com/trustwallet/blockatlas/pkg/ginutils"
 
