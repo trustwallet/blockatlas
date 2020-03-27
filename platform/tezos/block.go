@@ -11,7 +11,7 @@ func (p *Platform) CurrentBlockNumber() (int64, error) {
 }
 
 func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
-	txTypes := []TxType{TxTransactions, TxDelegations}
+	txTypes := []TxType{TxTransaction, TxDelegation}
 	var wg sync.WaitGroup
 	out := make(chan []Transaction, len(txTypes))
 	wg.Add(len(txTypes))
