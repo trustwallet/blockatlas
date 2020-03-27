@@ -4,17 +4,18 @@ import (
 	"fmt"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"net/url"
+	"strings"
 )
 
 type Client struct {
 	blockatlas.Request
 }
 
-func (c *Client) GetTxsOfAddress(address string, txType TxType) (txs ExplorerAccount, err error) {
+func (c *Client) GetTxsOfAddress(address string, txType []string) (txs ExplorerAccount, err error) {
 	var path = fmt.Sprintf("/account/%s/op", address)
 	err = c.Get(&txs, path, url.Values{
 		"order": {"desc"},
-		"type":  {string(txType)},
+		"type":  {strings.Join(txType, ",")},
 		"limit": {"25"},
 	})
 	return
@@ -27,12 +28,12 @@ func (c *Client) GetCurrentBlock() (int64, error) {
 	return status.Indexed, err
 }
 
-func (c *Client) GetBlockByNumber(num int64, txType TxType) ([]Transaction, error) {
+func (c *Client) GetBlockByNumber(num int64, txType string) ([]Transaction, error) {
 	var blockOps ExplorerAccount
 	var path = fmt.Sprintf("/account/%d/op", num)
 	err := c.Get(&blockOps, path, url.Values{
-		"limit": {"500"}, // TODO Remove once fixed https://github.com/blockwatch-cc/tzindex/issues/17
-		"type":  {string(txType)},
+		"limit": {"5000"}, // https://github.com/blockwatch-cc/tzindex/issues/17#issuecomment-604967761
+		"type":  {txType},
 	})
 	return blockOps.Transactions, err
 }
