@@ -5,32 +5,17 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/pkg/numbers"
-	"sync"
 )
 
 func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
-	txTypes := []TxType{TxTransaction, TxDelegation}
-	var wg sync.WaitGroup
-	out := make(chan []Transaction, len(txTypes))
-	wg.Add(len(txTypes))
-	for _, t := range txTypes {
-		go func(txType TxType, addr string, wg *sync.WaitGroup) {
-			defer wg.Done()
-			txs, err := p.client.GetTxsOfAddress(address, txType)
-			if err != nil {
-				logger.Error("GetAddrTxs", err, logger.Params{"txType": txType, "addr": addr})
-				return
-			}
-			out <- txs.Transactions
-		}(t, address, &wg)
+	txTypes := []string{TxTypeTransaction, TxTypeDelegation}
+	txs, err := p.client.GetTxsOfAddress(address, txTypes)
+	if err != nil {
+		logger.Error("GetAddrTxs", err, logger.Params{"txType": txTypes, "addr": address})
+		return nil, err
 	}
-	wg.Wait()
-	close(out)
-	srcTxs := make([]Transaction, 0)
-	for r := range out {
-		srcTxs = append(srcTxs, r...)
-	}
-	return NormalizeTxs(srcTxs, address), nil
+
+	return NormalizeTxs(txs.Transactions, address), nil
 }
 
 func NormalizeTxs(srcTxs []Transaction, address string) (txs []blockatlas.Tx) {

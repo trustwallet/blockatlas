@@ -11,12 +11,12 @@ func (p *Platform) CurrentBlockNumber() (int64, error) {
 }
 
 func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
-	txTypes := []TxType{TxTransaction, TxDelegation}
+	txTypes := []string{TxTypeTransaction, TxTypeDelegation}
 	var wg sync.WaitGroup
 	out := make(chan []Transaction, len(txTypes))
 	wg.Add(len(txTypes))
 	for _, t := range txTypes {
-		go func(txType TxType, num int64, wg *sync.WaitGroup) {
+		go func(txType string, num int64, wg *sync.WaitGroup) {
 			defer wg.Done()
 			txs, err := p.client.GetBlockByNumber(num, txType)
 			if err != nil {
