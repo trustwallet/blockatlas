@@ -1,12 +1,14 @@
 package ethereum
 
 import (
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"strings"
+
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/platform/ethereum/collection"
 )
 
 func (p *Platform) GetCollectionsV4(owner string) (blockatlas.CollectionPage, error) {
-	collections, err := p.collectionsClient.GetCollections(owner)
+	collections, err := p.collectible.GetCollections(owner)
 	if err != nil {
 		return nil, err
 	}
@@ -14,14 +16,14 @@ func (p *Platform) GetCollectionsV4(owner string) (blockatlas.CollectionPage, er
 }
 
 func (p *Platform) GetCollectiblesV4(owner, collectibleID string) (blockatlas.CollectiblePage, error) {
-	items, err := p.collectionsClient.GetCollectiblesV4(owner, collectibleID)
+	items, err := p.collectible.GetCollectiblesV4(owner, collectibleID)
 	if err != nil {
 		return nil, err
 	}
 	return NormalizeCollectiblePageV4(items, p.CoinIndex), nil
 }
 
-func NormalizeCollectionsV4(collections []Collection, coinIndex uint, owner string) (page blockatlas.CollectionPage) {
+func NormalizeCollectionsV4(collections []collection.Collection, coinIndex uint, owner string) (page blockatlas.CollectionPage) {
 	for _, collection := range collections {
 		item := NormalizeCollectionV4(collection, coinIndex, owner)
 		page = append(page, item)
@@ -29,7 +31,7 @@ func NormalizeCollectionsV4(collections []Collection, coinIndex uint, owner stri
 	return page
 }
 
-func NormalizeCollectionV4(c Collection, coinIndex uint, owner string) blockatlas.Collection {
+func NormalizeCollectionV4(c collection.Collection, coinIndex uint, owner string) blockatlas.Collection {
 	return blockatlas.Collection{
 		Name:         c.Name,
 		Slug:         c.Slug,
@@ -43,7 +45,7 @@ func NormalizeCollectionV4(c Collection, coinIndex uint, owner string) blockatla
 	}
 }
 
-func NormalizeCollectiblePageV4(collectibles []Collectible, coinIndex uint) (page blockatlas.CollectiblePage) {
+func NormalizeCollectiblePageV4(collectibles []collection.Collectible, coinIndex uint) (page blockatlas.CollectiblePage) {
 	for _, collectible := range collectibles {
 		item := NormalizeCollectibleV4(collectible, coinIndex)
 		if _, ok := supportedTypes[item.Type]; ok {
@@ -53,7 +55,7 @@ func NormalizeCollectiblePageV4(collectibles []Collectible, coinIndex uint) (pag
 	return page
 }
 
-func NormalizeCollectibleV4(a Collectible, coinIndex uint) blockatlas.Collectible {
+func NormalizeCollectibleV4(a collection.Collectible, coinIndex uint) blockatlas.Collectible {
 	id := strings.Join([]string{a.AssetContract.Address, a.TokenId}, "-")
 	return blockatlas.Collectible{
 		ID:              id,

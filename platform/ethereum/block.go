@@ -1,16 +1,17 @@
 package ethereum
 
 import (
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"strconv"
+
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 )
 
 func (p *Platform) CurrentBlockNumber() (int64, error) {
-	return p.client.CurrentBlockNumber()
+	return p.trustray.CurrentBlockNumber()
 }
 
 func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
-	if srcPage, err := p.client.GetBlockByNumber(num); err == nil {
+	if srcPage, err := p.trustray.GetBlockByNumber(num); err == nil {
 		var txs []blockatlas.Tx
 		for _, srcTx := range srcPage {
 			txs = AppendTxs(txs, &srcTx, p.CoinIndex)

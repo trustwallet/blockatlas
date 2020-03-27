@@ -3,10 +3,11 @@ package ethereum
 import (
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/platform/ethereum/trustray"
 )
 
 func (p *Platform) GetTokenListByAddress(address string) (blockatlas.TokenPage, error) {
-	account, err := p.client.GetTokens(address)
+	account, err := p.trustray.GetTokens(address)
 	if err != nil {
 		return nil, err
 	}
@@ -48,7 +49,7 @@ func NormalizeToken(srcToken *Contract, coinIndex uint) (t blockatlas.Token, ok 
 }
 
 // NormalizeTxs converts multiple Ethereum tokens
-func NormalizeTokens(srcTokens []Contract, p Platform) []blockatlas.Token {
+func NormalizeTokens(srcTokens []trustray.Contract, p Platform) []blockatlas.Token {
 	tokenPage := make([]blockatlas.Token, 0)
 	for _, srcToken := range srcTokens {
 		token, ok := NormalizeToken(&srcToken, p.CoinIndex)
