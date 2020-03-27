@@ -164,7 +164,7 @@ var (
 )
 
 func TestNormalize(t *testing.T) {
-	var tests = []struct {
+	tests := []struct {
 		name        string
 		Transaction string
 		AssetName   AssetType
