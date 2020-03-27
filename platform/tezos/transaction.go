@@ -4,11 +4,12 @@ import (
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
+	"github.com/trustwallet/blockatlas/pkg/numbers"
 	"sync"
 )
 
 func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
-	txTypes := []TxType{TxTransactions}
+	txTypes := []TxType{TxTransaction, TxDelegation}
 	var wg sync.WaitGroup
 	out := make(chan []Transaction, len(txTypes))
 	wg.Add(len(txTypes))
@@ -20,7 +21,7 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 				logger.Error("GetAddrTxs", err, logger.Params{"txType": txType, "addr": addr})
 				return
 			}
-			out <- txs
+			out <- txs.Transactions
 		}(t, address, &wg)
 	}
 	wg.Wait()
@@ -45,33 +46,23 @@ func NormalizeTxs(srcTxs []Transaction) (txs []blockatlas.Tx) {
 
 // NormalizeTx converts a Tezos transaction into the generic model
 func NormalizeTx(srcTx Transaction) (blockatlas.Tx, bool) {
-	errMsg := ""
-	status := blockatlas.StatusCompleted
-	if srcTx.Status() != TxStatusApplied {
-		errMsg = "transaction failed"
-		status = blockatlas.StatusError
-	}
 	tx := blockatlas.Tx{
-		ID:     srcTx.Op.OpHash,
+		Block:  srcTx.Height,
 		Coin:   coin.XTZ,
-		Date:   srcTx.Op.BlockTimestamp.Unix(),
-		From:   srcTx.Source(),
-		To:     srcTx.Destination(),
-		Fee:    blockatlas.Amount(srcTx.Fee()),
-		Block:  srcTx.Op.BlockLevel,
-		Status: status,
-		Error:  errMsg,
+		Date:   srcTx.BlockTimestamp(),
+		Error:  srcTx.ErrorMsg(),
+		Fee:    blockatlas.Amount(numbers.Float64toString(srcTx.Fee)),
+		From:   srcTx.Sender,
+		ID:     srcTx.Hash,
+		Status: srcTx.Status(),
+		To:     srcTx.Receiver,
 	}
 
 	switch srcTx.Kind() {
 	case TxKindDelegation:
-		title := blockatlas.AnyActionDelegation
-		if len(srcTx.Delegation.Delegate) == 0 {
-			title = blockatlas.AnyActionUndelegation
-		}
 		tx.Meta = blockatlas.AnyAction{
 			Coin:     coin.Tezos().ID,
-			Title:    title,
+			Title:    srcTx.Title(),
 			Key:      blockatlas.KeyStakeDelegate,
 			Name:     coin.Tezos().Name,
 			Symbol:   coin.Tezos().Symbol,
@@ -79,7 +70,7 @@ func NormalizeTx(srcTx Transaction) (blockatlas.Tx, bool) {
 		}
 	case TxKindTransaction:
 		tx.Meta = blockatlas.Transfer{
-			Value:    blockatlas.Amount(srcTx.Tx.Amount),
+			Value:    blockatlas.Amount(numbers.Float64toString(srcTx.Volume)),
 			Symbol:   coin.Coins[coin.XTZ].Symbol,
 			Decimals: coin.Coins[coin.XTZ].Decimals,
 		}

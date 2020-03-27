@@ -56,12 +56,12 @@ const (
 
 type (
 	// Types of transaction statuses
-	Direction       string
-	Status          string
-	TokenType       string
-	TransactionType string
-	KeyType         string
-	KeyTitle        string
+	Direction        string
+	Status           string
+	TokenType        string
+	TransactionType  string
+	KeyType          string
+	KeyTitle         string
 
 	Block struct {
 		Number int64  `json:"number"`
