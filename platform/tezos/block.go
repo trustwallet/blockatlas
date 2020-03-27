@@ -32,7 +32,7 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 	for r := range out {
 		srcTxs = append(srcTxs, r...)
 	}
-	txs := NormalizeTxs(srcTxs)
+	txs := NormalizeTxs(srcTxs, "")
 	return &blockatlas.Block{
 		Number: num,
 		Txs:    txs,
