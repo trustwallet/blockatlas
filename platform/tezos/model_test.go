@@ -79,10 +79,10 @@ func TestTransaction_Status(t *testing.T) {
 	testsKind := []struct {
 		name string
 		in   Transaction
-		out  string
+		out  blockatlas.TransactionType
 	}{
-		{"Type should be transaction", Transaction{Type: "transaction",}, TxTransaction},
-		{"Type should be delegation", Transaction{Type: "delegation",}, TxDelegation},
+		{"Type should be transaction", Transaction{Type: "transaction",}, blockatlas.TxTransfer},
+		{"Type should be delegation", Transaction{Type: "delegation",}, blockatlas.TxAnyAction},
 		{"Type unsupported", Transaction{Type: "bake",}, ""},
 		{"Type endorsement", Transaction{Type: "endorsement",}, ""},
 	}
