@@ -6,18 +6,11 @@ import (
 	"time"
 )
 
-type TxType string
-type TxKind string
-type TxStatus string
-
 const (
-	TxTransaction TxType = "transaction"
-	TxDelegation  TxType = "delegation"
+	TxTypeTransaction string = "transaction"
+	TxTypeDelegation  string = "delegation"
 
-	TxKindTransaction TxKind = "transaction"
-	TxKindDelegation  TxKind = "delegation"
-
-	TxStatusApplied TxStatus = "applied"
+	TxStatusApplied string = "applied"
 )
 
 type Account struct {
@@ -59,7 +52,7 @@ type Validator struct {
 
 func (t *Transaction) Status() blockatlas.Status {
 	switch t.Stat {
-	case string(TxStatusApplied):
+	case TxStatusApplied:
 		return blockatlas.StatusCompleted
 	default:
 		return blockatlas.StatusError
@@ -98,14 +91,24 @@ func (t *Transaction) BlockTimestamp() int64 {
 	return unix
 }
 
-func (t *Transaction) Kind() TxKind {
+func (t *Transaction) TransferType() blockatlas.TransactionType {
 	switch t.Type {
-	case string(TxTransaction):
-		return TxKindTransaction
-	case string(TxDelegation):
-		return TxKindDelegation
+	case TxTypeTransaction:
+		return blockatlas.TxTransfer
+	case TxTypeDelegation:
+		return blockatlas.TxAnyAction
 	default:
 		return ""
 	}
 }
 
+func (t *Transaction) Direction(address string) blockatlas.Direction {
+	if t.Sender == address && t.Receiver == address {
+		return blockatlas.DirectionSelf
+	}
+	if t.Sender == address && t.Receiver != address {
+		return blockatlas.DirectionOutgoing
+	}
+
+	return blockatlas.DirectionIncoming
+}

@@ -7,50 +7,8 @@ import (
 )
 
 var (
-	tezosTransfer = Transaction{
-		Hash:      "op6GzJ3a3wGJTu4KuD2WNCVJdwEU5WKDXV6EyjsBYMEjyPQWozF",
-		Type:      "transaction",
-		Time:      "2020-02-28T12:59:06Z",
-		Height:    843988,
-		Stat:      "applied",
-		IsSuccess: true,
-		Volume:    0.000001,
-		Fee:       0.0015,
-		Sender:    "tz1WDujRWCYjLBDfZieXW6insg5EUbg1rCRK",
-		Receiver:  "tz1WDujRWCYjLBDfZieXW6insg5EUbg1rCRK",
-		//Errors: {{ID: "proto.005-PsBabyM1.delegate.unchanged"}, Kind: "temporary"}
-	}
-	normalizedTezosTransfer = blockatlas.Tx{
-		ID:        "op6GzJ3a3wGJTu4KuD2WNCVJdwEU5WKDXV6EyjsBYMEjyPQWozF",
-		Coin:      1729,
-		From:      "tz1WDujRWCYjLBDfZieXW6insg5EUbg1rCRK",
-		To:        "tz1WDujRWCYjLBDfZieXW6insg5EUbg1rCRK",
-		Fee:       "0.001500",
-		Date:      1582894746,
-		Block:     843988,
-		Status:    "completed",
-		Type:      "transfer",
-		Direction: "yourself",
-		Memo:      "",
-		Meta: blockatlas.Transfer{
-			Value:    "0.000001",
-			Symbol:   "XTZ",
-			Decimals: 6,
-		},
-	}
-	//delegationTransfer = Delegation{
-	//	Delegate: "tz2FCNBrERXtaTtNX6iimR1UJ5JSDxvdHM93",
-	//	GasLimit: "10600",
-	//	Kind:     TxKindDelegation,
-	//	Status:   TxStatusApplied,
-	//	Fee:      "1500",
-	//	Source:   "tz1WDujRWCYjLBDfZieXW6insg5EUbg1rCRK",
-	//}
-	//op = Op{
-	//	OpHash:         "BMDYrXJ7GSwztzsy3ykJb43VXciNk1WY8EAaSoGbcUE7mA7HUzj",
-	//	BlockLevel:     788568,
-	//	BlockTimestamp: time.Time{},
-	//}
+	addr1 = "tz1WDujRWCYjLBDfZieXW6insg5EUbg1rCRK"
+	addr2 = "tz1egbN6RK2bM5vt4aAZw6r9j4nL8z49bPdS"
 )
 
 func TestTransaction_Status(t *testing.T) {
@@ -92,10 +50,10 @@ func TestTransaction_Status(t *testing.T) {
 		in   Transaction
 		out  blockatlas.KeyTitle
 	}{
-		{"Delegation", Transaction{Delegate: "", Receiver: "tz1WDujRWCYjLBDfZieXW6insg5EUbg1rCRK"}, blockatlas.AnyActionDelegation},
-		{"Undelegation", Transaction{Delegate: "tz1WDujRWCYjLBDfZieXW6insg5EUbg1rCRK", Receiver: ""}, blockatlas.AnyActionUndelegation},
+		{"Delegation", Transaction{Delegate: "", Receiver: addr1}, blockatlas.AnyActionDelegation},
+		{"Undelegation", Transaction{Delegate: addr1, Receiver: ""}, blockatlas.AnyActionUndelegation},
 		{"Delegation", Transaction{Delegate: "", Receiver: ""}, blockatlas.AnyActionDelegation},
-		{"Delegation", Transaction{Delegate: "tz1WDujRWCYjLBDfZieXW6insg5EUbg1rCRK", Receiver: "tz1WDujRWCYjLBDfZieXW6insg5EUbg1rCRK"}, blockatlas.AnyActionDelegation},
+		{"Delegation", Transaction{Delegate: addr1, Receiver: addr1}, blockatlas.AnyActionDelegation},
 	}
 
 	for _, tt := range testsTitle {
@@ -121,31 +79,49 @@ func TestTransaction_Status(t *testing.T) {
 	testsKind := []struct {
 		name string
 		in   Transaction
-		out  TxKind
+		out  string
 	}{
-		{"Type should be transaction", Transaction{Type: "transaction",}, TxKindTransaction},
-		{"Type should be delegation", Transaction{Type: "delegation",}, TxKindDelegation},
+		{"Type should be transaction", Transaction{Type: "transaction",}, TxTransaction},
+		{"Type should be delegation", Transaction{Type: "delegation",}, TxDelegation},
 		{"Type unsupported", Transaction{Type: "bake",}, ""},
 		{"Type endorsement", Transaction{Type: "endorsement",}, ""},
 	}
 
 	for _, tt := range testsKind {
 		t.Run(tt.name, func(t *testing.T) {
-			assert.Equal(t, tt.out, tt.in.Kind())
+			assert.Equal(t, tt.out, tt.in.TransferType())
+		})
+	}
+
+	testsDirection := []struct {
+		name    string
+		in      Transaction
+		out     blockatlas.Direction
+		address string
+	}{
+		{"Direction self", Transaction{Sender: addr1, Receiver: addr1}, blockatlas.DirectionSelf, addr1},
+		{"Direction outgoing", Transaction{Sender: addr1, Receiver: addr2}, blockatlas.DirectionOutgoing, addr1},
+		{"Direction incoming", Transaction{Sender: addr2, Receiver: addr1}, blockatlas.DirectionIncoming, addr1},
+	}
+
+	for _, tt := range testsDirection {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.out, tt.in.Direction(tt.address))
 		})
 	}
 
 	testsNormalize := []struct {
-		name string
-		in   Transaction
-		out  blockatlas.Tx
+		name    string
+		in      Transaction
+		out     blockatlas.Tx
+		address string
 	}{
-		{"Normalize XTZ transfer", tezosTransfer, normalizedTezosTransfer},
+		{"Normalize XTZ transfer", tezosTransfer, normalizedTezosTransfer, addr1},
 	}
 
 	for _, tt := range testsNormalize {
 		t.Run(tt.name, func(t *testing.T) {
-			normalized, ok := NormalizeTx(tt.in)
+			normalized, ok := NormalizeTx(tt.in, tt.address)
 			if !ok {
 				assert.False(t, ok, "issue to normalize")
 			}
