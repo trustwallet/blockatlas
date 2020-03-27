@@ -225,7 +225,7 @@ var c3 = Collection{
 }
 
 func TestSearchCollection(t *testing.T) {
-	var tests = []struct {
+	tests := []struct {
 		collections   []Collection
 		collectibleID string
 		result        *Collection

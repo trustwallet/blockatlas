@@ -226,7 +226,7 @@ func TestNormalizeTransfer(t *testing.T) {
 	incomingTxSet.Add("t1ZBs9xvRypkjXmci2SS6zbNWVhuWH1h93L")
 	incomingTxSet.Add("t1VZp67AK9zgdXwa35kwYrJ1Mh4NWjUENrM")
 
-	var tests = []struct {
+	tests := []struct {
 		RawTx      string
 		Expected   blockatlas.Tx
 		AddressSet mapset.Set
@@ -270,7 +270,7 @@ func TestNormalizeTransfer(t *testing.T) {
 }
 
 func TestTransactionStatus(t *testing.T) {
-	var tests = []struct {
+	tests := []struct {
 		Tx       Transaction
 		Expected blockatlas.Status
 	}{
