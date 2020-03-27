@@ -23,10 +23,10 @@ require (
 	github.com/google/go-cmp v0.4.0 // indirect
 	github.com/gorilla/websocket v1.4.1 // indirect
 	github.com/gotestyourself/gotestyourself v2.2.0+incompatible // indirect
+	github.com/hewigovens/go-coincodec v1.0.4
+	github.com/jinzhu/gorm v1.9.12
 	github.com/json-iterator/go v1.1.9 // indirect
 	github.com/klauspost/compress v1.10.1 // indirect
-	github.com/hewigovens/go-coincodec v1.0.4
-	github.com/jinzhu/gorm v1.9.12 // indirect
 	github.com/konsorten/go-windows-terminal-sequences v1.0.2 // indirect
 	github.com/kr/pretty v0.2.0 // indirect
 	github.com/lib/pq v1.1.1 // indirect

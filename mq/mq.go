@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/streadway/amqp"
 	"github.com/trustwallet/blockatlas/pkg/logger"
-	"github.com/trustwallet/blockatlas/storage"
 	"time"
 )
 
@@ -16,7 +15,7 @@ var (
 
 type (
 	Queue          string
-	Consumer       func(amqp.Delivery, storage.Addresses)
+	Consumer       func(amqp.Delivery)
 	MessageChannel <-chan amqp.Delivery
 )
 
@@ -58,7 +57,7 @@ func (q Queue) Publish(body []byte) error {
 	})
 }
 
-func (q Queue) RunConsumerForChannelWithCancel(consumer Consumer, messageChannel MessageChannel, cache storage.Addresses, ctx context.Context) {
+func (q Queue) RunConsumerForChannelWithCancel(consumer Consumer, messageChannel MessageChannel, ctx context.Context) {
 	for {
 		select {
 		case <-ctx.Done():
@@ -68,12 +67,12 @@ func (q Queue) RunConsumerForChannelWithCancel(consumer Consumer, messageChannel
 			if message.Body == nil {
 				continue
 			}
-			go consumer(message, cache)
+			go consumer(message)
 		}
 	}
 }
 
-func (q Queue) RunConsumer(consumer Consumer, cache storage.Addresses) {
+func (q Queue) RunConsumer(consumer Consumer) {
 	messageChannel, err := amqpChan.Consume(
 		string(q),
 		"",
@@ -104,11 +103,11 @@ func (q Queue) RunConsumer(consumer Consumer, cache storage.Addresses) {
 	}
 
 	for data := range messageChannel {
-		go consumer(data, cache)
+		go consumer(data)
 	}
 }
 
-func (q Queue) RunConsumerWithCancel(consumer Consumer, cache storage.Addresses, ctx context.Context) {
+func (q Queue) RunConsumerWithCancel(consumer Consumer, ctx context.Context) {
 	messageChannel, err := amqpChan.Consume(
 		string(q),
 		"",
@@ -147,7 +146,7 @@ func (q Queue) RunConsumerWithCancel(consumer Consumer, cache storage.Addresses,
 			if message.Body == nil {
 				continue
 			}
-			go consumer(message, cache)
+			go consumer(message)
 		}
 	}
 }

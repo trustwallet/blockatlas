@@ -1,6 +1,6 @@
 // +build integration
 
-package docker_test
+package observer_test
 
 import (
 	"context"
@@ -19,6 +19,7 @@ import (
 )
 
 func TestParserFetchAndPublishBlock_NormalCase(t *testing.T) {
+	setup.CleanupPgContainer()
 	stopChan := make(chan struct{}, 1)
 
 	params := setupParser(stopChan)
@@ -109,7 +110,6 @@ func setupParser(stopChan chan struct{}) parser.Params {
 
 	return parser.Params{
 		Api:                   getMockedBlockAPI(),
-		Storage:               setup.Cache,
 		ParsingBlocksInterval: pollInterval,
 		BacklogCount:          backlogCount,
 		MaxBacklogBlocks:      int64(maxBatchBlocksAmount),

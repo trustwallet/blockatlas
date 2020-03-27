@@ -3,14 +3,13 @@ package db
 import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
+	"github.com/trustwallet/blockatlas/db/models"
 
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"time"
 )
 
-var (
-	GormDb *gorm.DB
-)
+var GormDb *gorm.DB
 
 func Setup(uri string) error {
 	var err error
@@ -19,22 +18,11 @@ func Setup(uri string) error {
 		return err
 	}
 
-	//GormDb.AutoMigrate(
-	//	&models.User{},
-	//	&models.UserRewards{},
-	//	&models.UserDevices{},
-	//	&models.UserReferrals{},
-	//	&models.Device{},
-	//	&models.Referral{},
-	//	&models.Reward{},
-	//	&models.CoinStatusHistory{},
-	//	&models.Token{},
-	//	&models.Notification{},
-	//)
-
-	//// Setup. Make this async in the future
-	//SetupRewards()
-
+	GormDb.AutoMigrate(
+		&models.Subscription{},
+		&models.SubscriptionData{},
+		&models.Tracker{},
+	)
 	return nil
 }
 
@@ -57,11 +45,4 @@ func RestoreConnectionWorker(timeout time.Duration, uri string) {
 		}
 		time.Sleep(timeout)
 	}
-}
-
-func FindByQuery(query *gorm.DB, result interface{}) error {
-	if err := query.Find(result).Error; err != nil {
-		return err
-	}
-	return nil
 }

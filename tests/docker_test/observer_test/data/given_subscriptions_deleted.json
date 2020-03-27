@@ -1,0 +1,58 @@
+[
+  {
+    "new_subscriptions": {
+      "60": [
+        "0x0000000000000000000000000000000000000000"
+      ]
+    },
+    "old_subscriptions": {
+      "61": [
+        "0x0000000000000000000000000000000000000000"
+      ]
+    },
+    "guid": "0",
+    "operation": "UpdateSubscription"
+  },
+  {
+    "new_subscriptions": {
+      "118": [
+        "0x0000000000000000000000000000000000000001"
+      ]
+    },
+    "old_subscriptions":{
+      "62": [
+        "0x0000000000000000000000000000000000000000"
+      ]
+    },
+    "guid": "1",
+    "operation": "UpdateSubscription"
+  },
+  {
+    "new_subscriptions": {
+      "714": [
+        "0x0000000000000000000000000000000000000002"
+      ]
+    },
+    "old_subscriptions": {
+      "63": [
+        "0x0000000000000000000000000000000000000000"
+      ]
+    },
+    "guid": "2",
+    "operation": "UpdateSubscription"
+  },
+  {
+    "new_subscriptions": {
+      "144": [
+        "0x0000000000000000000000000000000000000003"
+      ]
+    },
+    "old_subscriptions": {
+      "64": [
+        "0x0000000000000000000000000000000000000000"
+      ]
+    },
+    "guid": "3",
+    "operation": "UpdateSubscription"
+  }
+]

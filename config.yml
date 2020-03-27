@@ -32,8 +32,8 @@ observer:
     consumer:
       prefetch_count: 10
 
-storage:
-  redis: redis://localhost:6379
+postgres:
+  uri: postgresql://user:pass@localhost/my_db?sslmode=disable
 
 # [BNB] Binance DEX: https://wallet.binance.org
 #       Binance Chain: https://explorer.binance.org

@@ -2,10 +2,8 @@ package healthcheck
 
 import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/pkg/logger"
-	"github.com/trustwallet/blockatlas/storage"
+
 	"sync"
-	"time"
 )
 
 var observerStatus status
@@ -33,66 +31,66 @@ func (cr *status) get() map[string]Info {
 	return cr.m
 }
 
-func Worker(storage storage.Tracker, api blockatlas.BlockAPI) {
-	var (
-		lastParsedBlock, currentBlock int64
-		err                           error
-	)
-
-	lastParsedBlock, err = storage.GetLastParsedBlockNumber(api.Coin().ID)
-	if err != nil {
-		logger.Fatal(err)
-	}
-
-	var duration time.Duration
-	t := api.Coin().BlockTime / 1000
-
-	if t > 30 {
-		duration = time.Duration(int64(time.Second) * int64(t))
-	} else {
-		duration = time.Minute * 11
-	}
-	logger.Info("Setting update duration", logger.Params{"duration": duration})
-
-	for {
-		currentBlock, err = storage.GetLastParsedBlockNumber(api.Coin().ID)
-		if err != nil {
-			logger.Error(err)
-			continue
-		}
-
-		latestBlock, err := api.CurrentBlockNumber()
-		if err != nil {
-			logger.Error(err)
-			continue
-		}
-
-		logger.Info("fetched", logger.Params{"currentBlock": currentBlock, "lastParsedBlock": lastParsedBlock, "latestBlock": latestBlock, "handle": api.Coin().Handle})
-
-		if currentBlock > lastParsedBlock || latestBlock == currentBlock {
-			lastParsedBlock = currentBlock
-			observerStatus.update(api.Coin().Handle, Info{
-				LastParsedBlock: lastParsedBlock,
-				Healthy:         true,
-			})
-		} else {
-			observerStatus.update(api.Coin().Handle, Info{
-				LastParsedBlock: lastParsedBlock,
-				Healthy:         false,
-			})
-		}
-
-		time.Sleep(duration)
-	}
+func Worker(api blockatlas.BlockAPI) {
+	//var (
+	//	lastParsedBlock, currentBlock int64
+	//	err                           error
+	//)
+	//
+	//lastParsedBlock, err = storage.GetLastParsedBlockNumber(api.Coin().ID)
+	//if err != nil {
+	//	logger.Fatal(err)
+	//}
+	//
+	//var duration time.Duration
+	//t := api.Coin().BlockTime / 1000
+	//
+	//if t > 30 {
+	//	duration = time.Duration(int64(time.Second) * int64(t))
+	//} else {
+	//	duration = time.Minute * 11
+	//}
+	//logger.Info("Setting update duration", logger.Params{"duration": duration})
+	//
+	//for {
+	//	currentBlock, err = storage.GetLastParsedBlockNumber(api.Coin().ID)
+	//	if err != nil {
+	//		logger.Error(err)
+	//		continue
+	//	}
+	//
+	//	latestBlock, err := api.CurrentBlockNumber()
+	//	if err != nil {
+	//		logger.Error(err)
+	//		continue
+	//	}
+	//
+	//	logger.Info("fetched", logger.Params{"currentBlock": currentBlock, "lastParsedBlock": lastParsedBlock, "latestBlock": latestBlock, "handle": api.Coin().Handle})
+	//
+	//	if currentBlock > lastParsedBlock || latestBlock == currentBlock {
+	//		lastParsedBlock = currentBlock
+	//		observerStatus.update(api.Coin().Handle, Info{
+	//			LastParsedBlock: lastParsedBlock,
+	//			Healthy:         true,
+	//		})
+	//	} else {
+	//		observerStatus.update(api.Coin().Handle, Info{
+	//			LastParsedBlock: lastParsedBlock,
+	//			Healthy:         false,
+	//		})
+	//	}
+	//
+	//	time.Sleep(duration)
+	//}
 }
 
 func GetStatus(exclude []string) map[string]interface{} {
 	total := true
 	result := make(map[string]interface{})
 	status := observerStatus.get()
-	for k, v := range status{
-		if !contain(k, exclude){
-			if v.Healthy == false{
+	for k, v := range status {
+		if !contain(k, exclude) {
+			if v.Healthy == false {
 				total = false
 			}
 			result[k] = v
@@ -102,9 +100,9 @@ func GetStatus(exclude []string) map[string]interface{} {
 	return result
 }
 
-func contain(elem string, list []string) bool{
-	for _, v := range list{
-		if v == elem{
+func contain(elem string, list []string) bool {
+	for _, v := range list {
+		if v == elem {
 			return true
 		}
 	}

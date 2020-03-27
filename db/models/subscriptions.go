@@ -1,10 +1,13 @@
 package models
 
-import "github.com/jinzhu/gorm"
-
 type Subscription struct {
-	gorm.Model
-	GUID    string `json:"guid" sql:"index" gorm:"ForeignKey:UserId; not null"`
-	Coin    uint   `json:"coin" sql:"index"`
-	Address string `json:"address" sql:"index"`
+	GUID string             `gorm:"primary_key:true"`
+	Data []SubscriptionData `gorm:"many2many:subscription_associations"`
+}
+
+type SubscriptionData struct {
+	ID             uint   `gorm:"primary_key:true"`
+	SubscriptionId string `sql:"index"`
+	Coin           uint   `sql:"index"`
+	Address        string `sql:"index"`
 }
