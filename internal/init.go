@@ -8,7 +8,7 @@ import (
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/ginutils"
 	"github.com/trustwallet/blockatlas/pkg/logger"
-	"github.com/trustwallet/blockatlas/storage"
+
 	"path/filepath"
 	"runtime"
 	"time"
@@ -29,15 +29,6 @@ func ParseArgs(defaultPort, defaultConfigPath string) (string, string) {
 	flag.Parse()
 
 	return port, confPath
-}
-
-func InitRedis(host string) *storage.Storage {
-	cache := storage.New()
-	err := cache.Init(host)
-	if err != nil {
-		logger.Fatal(err)
-	}
-	return cache
 }
 
 func InitConfig(confPath string) {

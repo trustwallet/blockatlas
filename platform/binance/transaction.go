@@ -65,7 +65,7 @@ func normalizeTransfer(tx blockatlas.Tx, srcTx Tx, token, address string) (block
 		txs := make(blockatlas.TxPage, 0)
 		// Parse all assets as a transaction
 		for _, subTx := range srcTx.SubTxsDto.SubTxDtoList.getTxs() {
-			// If this is not called from a block observer, only get the user txs/assets
+			// If this is not called from a block observer_test, only get the user txs/assets
 			if !subTx.containAddress(address) {
 				continue
 			}

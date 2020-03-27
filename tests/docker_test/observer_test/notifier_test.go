@@ -1,6 +1,6 @@
 // +build integration
 
-package docker_test
+package observer_test
 
 import (
 	"context"
@@ -8,6 +8,8 @@ import (
 	"github.com/streadway/amqp"
 	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas/coin"
+	"github.com/trustwallet/blockatlas/db"
+	"github.com/trustwallet/blockatlas/db/models"
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/services/observer/notifier"
@@ -41,7 +43,8 @@ var (
 )
 
 func TestNotifier(t *testing.T) {
-	err := setup.Cache.AddSubscriptions([]blockatlas.Subscription{{Coin: 714, Address: "tbnb1ttyn4csghfgyxreu7lmdu3lcplhqhxtzced45a", GUID: "guid_test"}})
+	setup.CleanupPgContainer()
+	err := db.AddSubscriptions("guid_test", []models.SubscriptionData{{Coin: 714, Address: "tbnb1ttyn4csghfgyxreu7lmdu3lcplhqhxtzced45a", SubscriptionId: "guid_test"}})
 	assert.Nil(t, err)
 
 	err = produceTxs(txs)
@@ -49,7 +52,7 @@ func TestNotifier(t *testing.T) {
 
 	ctx, cancel := context.WithCancel(context.Background())
 
-	go mq.RawTransactions.RunConsumerForChannelWithCancel(notifier.RunNotifier, rawTransactionsChannel, setup.Cache, ctx)
+	go mq.RawTransactions.RunConsumerForChannelWithCancel(notifier.RunNotifier, rawTransactionsChannel, ctx)
 	time.Sleep(time.Second * 3)
 	msg := transactionsChannel.GetMessage()
 	ConsumerToTestTransactions(msg, t)

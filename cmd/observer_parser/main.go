@@ -4,13 +4,13 @@ import (
 	"context"
 	"fmt"
 	"github.com/spf13/viper"
+	"github.com/trustwallet/blockatlas/db"
 	"github.com/trustwallet/blockatlas/internal"
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/platform"
 	"github.com/trustwallet/blockatlas/services/observer/notifier"
 	"github.com/trustwallet/blockatlas/services/observer/parser"
-	"github.com/trustwallet/blockatlas/storage"
 	"os"
 	"os/signal"
 	"sync"
@@ -24,7 +24,6 @@ const (
 
 var (
 	confPath                              string
-	cache                                 *storage.Storage
 	backlogTime, minInterval, maxInterval time.Duration
 	maxBackLogBlocks                      int64
 	txsBatchLimit                         uint
@@ -36,12 +35,10 @@ func init() {
 	internal.InitConfig(confPath)
 	logger.InitLogger()
 
-	redisHost := viper.GetString("storage.redis")
-	mqHost := viper.GetString("observer.rabbitmq.uri")
-	prefetchCount := viper.GetInt("observer.rabbitmq.consumer.prefetch_count")
+	mqHost := viper.GetString("observer_test.rabbitmq.uri")
+	prefetchCount := viper.GetInt("observer_test.rabbitmq.consumer.prefetch_count")
 	platformHandle := viper.GetString("platform")
 
-	cache = internal.InitRedis(redisHost)
 	internal.InitRabbitMQ(mqHost, prefetchCount)
 	platform.Init(platformHandle)
 
@@ -52,18 +49,24 @@ func init() {
 	if len(platform.BlockAPIs) == 0 {
 		logger.Fatal("No APIs to observe")
 	}
-	txsBatchLimit = viper.GetUint("observer.txs_batch_limit")
-	backlogTime = viper.GetDuration("observer.backlog")
-	minInterval = viper.GetDuration("observer.block_poll.min")
-	maxInterval = viper.GetDuration("observer.block_poll.max")
-	maxBackLogBlocks = viper.GetInt64("observer.backlog_max_blocks")
+
+	pgUri := viper.GetString("postgres.uri")
+
+	txsBatchLimit = viper.GetUint("observer_test.txs_batch_limit")
+	backlogTime = viper.GetDuration("observer_test.backlog")
+	minInterval = viper.GetDuration("observer_test.block_poll.min")
+	maxInterval = viper.GetDuration("observer_test.block_poll.max")
+	maxBackLogBlocks = viper.GetInt64("observer_test.backlog_max_blocks")
 	if minInterval >= maxInterval {
 		logger.Fatal("minimum block polling interval cannot be greater or equal than maximum")
 	}
 
+	if err := db.Setup(pgUri); err != nil {
+		logger.Fatal(err)
+	}
+
 	go mq.FatalWorker(time.Second * 10)
 	time.Sleep(time.Millisecond)
-	go storage.RestoreConnectionWorker(cache, redisHost, time.Second*10)
 	time.Sleep(time.Millisecond)
 }
 
@@ -100,7 +103,6 @@ func main() {
 		params := parser.Params{
 			Ctx:                   ctx,
 			Api:                   api,
-			Storage:               cache,
 			Queue:                 mq.RawTransactions,
 			ParsingBlocksInterval: pollInterval,
 			BacklogCount:          backlogCount,

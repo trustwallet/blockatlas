@@ -3,12 +3,12 @@ package notifier
 import (
 	"encoding/json"
 	"github.com/streadway/amqp"
+	"github.com/trustwallet/blockatlas/db"
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/pkg/numbers"
-	"github.com/trustwallet/blockatlas/storage"
 	"sync"
 	"time"
 )
@@ -19,7 +19,7 @@ type DispatchEvent struct {
 	GUID   string                     `json:"guid"`
 }
 
-func RunNotifier(delivery amqp.Delivery, s storage.Addresses) {
+func RunNotifier(delivery amqp.Delivery) {
 	defer func() {
 		if err := delivery.Ack(false); err != nil {
 			logger.Error(err)
@@ -42,15 +42,18 @@ func RunNotifier(delivery amqp.Delivery, s storage.Addresses) {
 	}
 
 	addresses := blockTransactions.GetUniqueAddresses()
-	subs, err := s.FindSubscriptions(txs[0].Coin, addresses)
-	if err != nil || len(subs) == 0 {
+	subscriptionsDataList, err := db.GetSubscriptionData(txs[0].Coin, addresses)
+	if err != nil || len(subscriptionsDataList) == 0 {
 		return
 	}
 
 	var wg sync.WaitGroup
-	wg.Add(len(subs))
-	for _, sub := range subs {
-		go buildAndPostMessage(blockTransactions, sub, &wg)
+	wg.Add(len(subscriptionsDataList))
+	for _, data := range subscriptionsDataList {
+		go buildAndPostMessage(
+			blockTransactions,
+			blockatlas.Subscription{Coin: data.Coin, Address: data.Address, GUID: data.SubscriptionId},
+			&wg)
 	}
 	wg.Wait()
 }

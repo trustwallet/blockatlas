@@ -1,6 +1,6 @@
 // +build integration
 
-package docker_test
+package observer_test
 
 import (
 	"context"
@@ -8,6 +8,8 @@ import (
 	"github.com/streadway/amqp"
 	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas/coin"
+	"github.com/trustwallet/blockatlas/db"
+	"github.com/trustwallet/blockatlas/db/models"
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/services/observer/notifier"
@@ -18,11 +20,13 @@ import (
 	"time"
 )
 
-var counter atomic.Int32
-var counterBlock atomic.Int32
+var (
+	currentBlockNumberCounter atomic.Int32
+)
 
 func TestFullFlow(t *testing.T) {
-	err := setup.Cache.AddSubscriptions([]blockatlas.Subscription{{Coin: 60, Address: "testAddress", GUID: "guid_test"}})
+	setup.CleanupPgContainer()
+	err := db.AddSubscriptions("guid_test", []models.SubscriptionData{{Coin: 60, Address: "testAddress", SubscriptionId: "guid_test"}})
 	assert.Nil(t, err)
 
 	ctx, cancel := context.WithCancel(context.Background())
@@ -36,7 +40,7 @@ func TestFullFlow(t *testing.T) {
 	go parser.RunParser(params)
 	time.Sleep(time.Second * 2)
 
-	go mq.RawTransactions.RunConsumerForChannelWithCancel(notifier.RunNotifier, rawTransactionsChannel, setup.Cache, ctx)
+	go mq.RawTransactions.RunConsumerForChannelWithCancel(notifier.RunNotifier, rawTransactionsChannel, ctx)
 	time.Sleep(time.Second * 5)
 
 	for i := 0; i < 11; i++ {
@@ -56,8 +60,8 @@ type PlatformFullFlow struct {
 }
 
 func (p *PlatformFullFlow) CurrentBlockNumber() (int64, error) {
-	i := counterBlock.Load()
-	counterBlock.Add(1)
+	i := currentBlockNumberCounter.Load()
+	currentBlockNumberCounter.Add(1)
 	return int64(i), nil
 }
 
@@ -150,7 +154,6 @@ func setupParserFull(stopChan chan<- struct{}) parser.Params {
 
 	return parser.Params{
 		Api:                   getMockedBlockAPIFull(),
-		Storage:               setup.Cache,
 		ParsingBlocksInterval: pollInterval,
 		BacklogCount:          backlogCount,
 		MaxBacklogBlocks:      int64(maxBatchBlocksAmount),
