@@ -28,12 +28,14 @@ func (c *Client) GetCurrentBlock() (int64, error) {
 	return status.Indexed, err
 }
 
-func (c *Client) GetBlockByNumber(num int64, txType string) ([]Transaction, error) {
+func (c *Client) GetBlockByNumber(num int64, txType []string) ([]Transaction, error) {
 	var blockOps ExplorerAccount
 	var path = fmt.Sprintf("/account/%d/op", num)
+	var types = strings.Join(txType, ",")
+
 	err := c.Get(&blockOps, path, url.Values{
 		"limit": {"5000"}, // https://github.com/blockwatch-cc/tzindex/issues/17#issuecomment-604967761
-		"type":  {txType},
+		"type":  {types},
 	})
 	return blockOps.Transactions, err
 }
