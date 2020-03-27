@@ -1,9 +1,10 @@
-package ethereum
+package trustray
 
 import (
 	"fmt"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"net/url"
+
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 )
 
 type Client struct {

@@ -1,14 +1,16 @@
 package ethereum
 
 import (
+	"math/big"
+	"net/http"
+	"sort"
+
 	"github.com/gin-gonic/gin"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/address"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
-	"math/big"
-	"net/http"
-	"sort"
+	"github.com/trustwallet/blockatlas/platform/ethereum/trustray"
 )
 
 func (p *Platform) RegisterRoutes(router gin.IRouter) {
@@ -20,13 +22,13 @@ func (p *Platform) RegisterRoutes(router gin.IRouter) {
 func (p *Platform) getTransactions(c *gin.Context) {
 	token := c.Query("token")
 	address := c.Param("address")
-	var srcPage *Page
+	var srcPage *trustray.Page
 	var err error
 
 	if token != "" {
-		srcPage, err = p.client.GetTxsWithContract(address, token)
+		srcPage, err = p.trustray.GetTxsWithContract(address, token)
 	} else {
-		srcPage, err = p.client.GetTxs(address)
+		srcPage, err = p.trustray.GetTxs(address)
 	}
 
 	if apiError(c, err) {
@@ -44,7 +46,7 @@ func (p *Platform) getTransactions(c *gin.Context) {
 	c.JSON(http.StatusOK, &page)
 }
 
-func extractBase(srcTx *Doc, coinIndex uint) (base blockatlas.Tx, ok bool) {
+func extractBase(srcTx *trustray.Doc, coinIndex uint) (base blockatlas.Tx, ok bool) {
 	var status blockatlas.Status
 	var errReason string
 	if srcTx.Error == "" {
@@ -71,7 +73,7 @@ func extractBase(srcTx *Doc, coinIndex uint) (base blockatlas.Tx, ok bool) {
 	return base, true
 }
 
-func AppendTxs(in []blockatlas.Tx, srcTx *Doc, coinIndex uint) (out []blockatlas.Tx) {
+func AppendTxs(in []blockatlas.Tx, srcTx *trustray.Doc, coinIndex uint) (out []blockatlas.Tx) {
 	out = in
 	baseTx, ok := extractBase(srcTx, coinIndex)
 	if !ok {

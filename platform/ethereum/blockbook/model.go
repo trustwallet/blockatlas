@@ -1,4 +1,4 @@
-package ethereum_blockbook
+package blockbook
 
 import "math/big"
 
@@ -42,13 +42,13 @@ type Transaction struct {
 
 // Vin contains information about single transaction input
 type Vin struct {
-	Addresses []string `json:addresses`
+	Addresses []string `json:"addresses"`
 }
 
 // Vout contains information about single transaction output
 type Vout struct {
 	Value     string   `json:"value"`
-	Addresses []string `json:addresses`
+	Addresses []string `json:"addresses"`
 }
 
 // TokenType specifies type of token

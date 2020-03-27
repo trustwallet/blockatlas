@@ -1,31 +1,26 @@
-package ethereum_blockbook
+package ethereum
 
 import (
 	"fmt"
+	"net/http"
+	"sort"
+
 	"github.com/gin-gonic/gin"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/pkg/logger"
-	"net/http"
-	"sort"
+	"github.com/trustwallet/blockatlas/platform/ethereum/blockbook"
 )
 
-func (p *Platform) RegisterRoutes(router gin.IRouter) {
-	router.GET("/:address", func(c *gin.Context) {
-		p.getTransactions(c)
-	})
-}
-
-func (p *Platform) getTransactions(c *gin.Context) {
+func (p *Platform) getTxsFromBlockbook(c *gin.Context) {
 	token := c.Query("token")
 	address := c.Param("address")
-	var srcPage *Page
+	var srcPage *blockbook.Page
 	var err error
 
 	if token != "" {
-		srcPage, err = p.client.GetTxsWithContract(address, token)
+		srcPage, err = p.blockbook.GetTxsWithContract(address, token)
 	} else {
-		srcPage, err = p.client.GetTxs(address)
+		srcPage, err = p.blockbook.GetTxs(address)
 	}
 
 	if apiError(c, err) {
@@ -34,7 +29,7 @@ func (p *Platform) getTransactions(c *gin.Context) {
 
 	var txs []blockatlas.Tx
 	for _, srcTx := range srcPage.Transactions {
-		txs = AppendTxs(txs, &srcTx, p.CoinIndex)
+		txs = AppendTxsBlockbook(txs, &srcTx, p.CoinIndex)
 	}
 
 	page := blockatlas.TxPage(txs)
@@ -42,7 +37,7 @@ func (p *Platform) getTransactions(c *gin.Context) {
 	c.JSON(http.StatusOK, &page)
 }
 
-func extractBase(srcTx *Transaction, coinIndex uint) (base blockatlas.Tx, ok bool) {
+func extractBaseBlockbook(srcTx *blockbook.Transaction, coinIndex uint) (base blockatlas.Tx, ok bool) {
 	status, errReason := getStatus(srcTx.EthereumSpecific)
 	from, err := getSenderOrRecipient(*srcTx)
 	if err != nil {
@@ -69,9 +64,9 @@ func extractBase(srcTx *Transaction, coinIndex uint) (base blockatlas.Tx, ok boo
 	return base, true
 }
 
-func AppendTxs(in []blockatlas.Tx, srcTx *Transaction, coinIndex uint) (out []blockatlas.Tx) {
+func AppendTxsBlockbook(in []blockatlas.Tx, srcTx *blockbook.Transaction, coinIndex uint) (out []blockatlas.Tx) {
 	out = in
-	baseTx, ok := extractBase(srcTx, coinIndex)
+	baseTx, ok := extractBaseBlockbook(srcTx, coinIndex)
 	if !ok {
 		return
 	}
@@ -119,7 +114,7 @@ func AppendTxs(in []blockatlas.Tx, srcTx *Transaction, coinIndex uint) (out []bl
 	return
 }
 
-func getStatus(specific *EthereumSpecific) (status blockatlas.Status, e string) {
+func getStatus(specific *blockbook.EthereumSpecific) (status blockatlas.Status, e string) {
 	switch specific.Status {
 	case -1:
 		return blockatlas.StatusPending, ""
@@ -132,14 +127,14 @@ func getStatus(specific *EthereumSpecific) (status blockatlas.Status, e string) 
 	}
 }
 
-func getSenderOrRecipient(t Transaction) (address string, err error) {
+func getSenderOrRecipient(t blockbook.Transaction) (address string, err error) {
 	if len(t.VIN) > 0 && len(t.VIN[0].Addresses) > 0 {
 		return t.VIN[0].Addresses[0], nil
 	}
 	return "", nil
 }
 
-func getTransferType(t Transaction) (tt blockatlas.TransactionType, err error) {
+func getTransferType(t blockbook.Transaction) (tt blockatlas.TransactionType, err error) {
 	if len(t.TokenTransfers) == 0 {
 		return blockatlas.TxTransfer, nil
 	}
@@ -148,13 +143,4 @@ func getTransferType(t Transaction) (tt blockatlas.TransactionType, err error) {
 	}
 	// TODO blockatlas.TxContractCall
 	return "", fmt.Errorf("can't define tranfer type")
-}
-
-func apiError(c *gin.Context, err error) bool {
-	if err != nil {
-		logger.Error(err, "Unhandled error")
-		c.AbortWithStatus(http.StatusInternalServerError)
-		return true
-	}
-	return false
 }

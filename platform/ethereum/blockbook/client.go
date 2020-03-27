@@ -1,9 +1,10 @@
-package ethereum_blockbook
+package blockbook
 
 import (
 	"fmt"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"net/url"
+
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 )
 
 type Client struct {
