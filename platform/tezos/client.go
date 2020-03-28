@@ -12,7 +12,7 @@ type Client struct {
 }
 
 func (c *Client) GetTxsOfAddress(address string, txType []string) (txs ExplorerAccount, err error) {
-	var path = fmt.Sprintf("/account/%s/op", address)
+	path := fmt.Sprintf("/account/%s/op", address)
 	err = c.Get(&txs, path, url.Values{
 		"order": {"desc"},
 		"type":  {strings.Join(txType, ",")},
@@ -30,8 +30,8 @@ func (c *Client) GetCurrentBlock() (int64, error) {
 
 func (c *Client) GetBlockByNumber(num int64, txType []string) ([]Transaction, error) {
 	var blockOps ExplorerAccount
-	var path = fmt.Sprintf("/account/%d/op", num)
-	var types = strings.Join(txType, ",")
+	path := fmt.Sprintf("/account/%d/op", num)
+	types := strings.Join(txType, ",")
 
 	err := c.Get(&blockOps, path, url.Values{
 		"limit": {"5000"}, // https://github.com/blockwatch-cc/tzindex/issues/17#issuecomment-604967761
