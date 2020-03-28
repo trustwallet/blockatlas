@@ -16,27 +16,128 @@ const tokenSrc = `
 	"symbol": "FUS"
 }`
 
-var tokenDst = blockatlas.Token{
-	Name:     "FusChain",
-	Symbol:   "FUS",
-	Decimals: 18,
-	TokenID:  "0xa14839c9837657EFcDE754EbEAF5cbECDd801B2A",
-	Coin:     coin.ETH,
-	Type:     blockatlas.TokenTypeERC20,
-}
-
 type testToken struct {
 	name        string
 	apiResponse string
 	expected    *blockatlas.Token
+	coin        int
 }
 
 func TestNormalizeToken(t *testing.T) {
-	testNormalizeToken(t, &testToken{
-		name:        "token",
-		apiResponse: tokenSrc,
-		expected:    &tokenDst,
-	})
+	var tests = []struct {
+		name     string
+		tokenRaw string
+		coin     int
+		want     blockatlas.Token
+	}{
+		{
+			"ethereum erc20",
+			tokenSrc,
+			coin.ETH,
+			blockatlas.Token{
+				Name:     "FusChain",
+				Symbol:   "FUS",
+				Decimals: 18,
+				TokenID:  "0xa14839c9837657EFcDE754EbEAF5cbECDd801B2A",
+				Coin:     coin.ETH,
+				Type:     blockatlas.TokenTypeERC20,
+			},
+		},
+		{"classic etc20",
+			tokenSrc,
+			coin.ETC,
+			blockatlas.Token{
+				Name:     "FusChain",
+				Symbol:   "FUS",
+				Decimals: 18,
+				TokenID:  "0xa14839c9837657EFcDE754EbEAF5cbECDd801B2A",
+				Coin:     coin.ETC,
+				Type:     blockatlas.TokenTypeETC20,
+			},
+		},
+		{"gochain go20",
+			tokenSrc,
+			coin.GO,
+			blockatlas.Token{
+				Name:     "FusChain",
+				Symbol:   "FUS",
+				Decimals: 18,
+				TokenID:  "0xa14839c9837657EFcDE754EbEAF5cbECDd801B2A",
+				Coin:     coin.GO,
+				Type:     blockatlas.TokenTypeGO20,
+			},
+		},
+		{"thudertoken tt20",
+			tokenSrc,
+			coin.TT,
+			blockatlas.Token{
+				Name:     "FusChain",
+				Symbol:   "FUS",
+				Decimals: 18,
+				TokenID:  "0xa14839c9837657EFcDE754EbEAF5cbECDd801B2A",
+				Coin:     coin.TT,
+				Type:     blockatlas.TokenTypeTT20,
+			},
+		},
+		{"wanchain wan20",
+			tokenSrc,
+			coin.WAN,
+			blockatlas.Token{
+				Name:     "FusChain",
+				Symbol:   "FUS",
+				Decimals: 18,
+				TokenID:  "0xa14839c9837657EFcDE754EbEAF5cbECDd801B2A",
+				Coin:     coin.WAN,
+				Type:     blockatlas.TokenTypeWAN20,
+			},
+		},
+		{"poa poa20",
+			tokenSrc,
+			coin.POA,
+			blockatlas.Token{
+				Name:     "FusChain",
+				Symbol:   "FUS",
+				Decimals: 18,
+				TokenID:  "0xa14839c9837657EFcDE754EbEAF5cbECDd801B2A",
+				Coin:     coin.POA,
+				Type:     blockatlas.TokenTypePOA20,
+			},
+		},
+		{"callisto clo20",
+			tokenSrc,
+			coin.CLO,
+			blockatlas.Token{
+				Name:     "FusChain",
+				Symbol:   "FUS",
+				Decimals: 18,
+				TokenID:  "0xa14839c9837657EFcDE754EbEAF5cbECDd801B2A",
+				Coin:     coin.CLO,
+				Type:     blockatlas.TokenTypeCLO20,
+			},
+		},
+		{"unkown",
+			tokenSrc,
+			1999,
+			blockatlas.Token{
+				Name:     "FusChain",
+				Symbol:   "FUS",
+				Decimals: 18,
+				TokenID:  "0xa14839c9837657EFcDE754EbEAF5cbECDd801B2A",
+				Coin:     1999,
+				Type:     "unknown",
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			testNormalizeToken(t, &testToken{
+				apiResponse: tt.tokenRaw,
+				expected:    &tt.want,
+				coin:        tt.coin,
+			})
+		})
+	}
+
 }
 
 func testNormalizeToken(t *testing.T, _test *testToken) {
@@ -46,7 +147,7 @@ func testNormalizeToken(t *testing.T, _test *testToken) {
 		t.Error(err)
 		return
 	}
-	tk, ok := NormalizeToken(&token, coin.ETH)
+	tk, ok := NormalizeToken(&token, uint(_test.coin))
 	if !ok {
 		t.Errorf("token: token could not be normalized")
 	}
