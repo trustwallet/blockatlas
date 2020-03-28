@@ -60,14 +60,13 @@ func (t *Transaction) Status() blockatlas.Status {
 }
 
 func (t *Transaction) ErrorMsg() string {
-	switch t.IsSuccess {
-	case false:
-		if len(t.Errors) > 0 {
-			return fmt.Sprintf("%s %s", t.Errors[0].ID, t.Errors[0].Kind)
-		}
-		return "transaction error"
+	if t.IsSuccess {
+		return ""
+	} else if len(t.Errors) > 0 {
+		return fmt.Sprintf("%s %s", t.Errors[0].ID, t.Errors[0].Kind)
+	} else {
+		return ""
 	}
-	return ""
 }
 
 func (t *Transaction) Title() blockatlas.KeyTitle {
