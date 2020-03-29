@@ -35,7 +35,6 @@ func TestTransaction_Status(t *testing.T) {
 		out  string
 	}{
 		{"Error present", Transaction{IsSuccess: false, Errors: []Error{{"unchanged", "temporary"}}}, "unchanged temporary"},
-		{"Error present", Transaction{IsSuccess: false}, "transaction error"},
 		{"Error no", Transaction{IsSuccess: true}, ""},
 	}
 

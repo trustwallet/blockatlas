@@ -60,9 +60,7 @@ func (t *Transaction) Status() blockatlas.Status {
 }
 
 func (t *Transaction) ErrorMsg() string {
-	if t.IsSuccess {
-		return ""
-	} else if len(t.Errors) > 0 {
+	if !t.IsSuccess && len(t.Errors) > 0 {
 		return fmt.Sprintf("%s %s", t.Errors[0].ID, t.Errors[0].Kind)
 	} else {
 		return ""
