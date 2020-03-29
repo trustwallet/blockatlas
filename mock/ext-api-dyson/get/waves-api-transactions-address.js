@@ -5,58 +5,57 @@
 /// curl http://localhost:8420/v1/waves/3PJ4q4sqriJs2y7Z45wmbLrbmV9MDecbPxD
 module.exports = {
     path: "/waves-api/transactions/address/:address/limit/:limit",
-    template: function(params, query, body) {
+    template: function (params, query, body) {
         //console.log(params)
         if (params.address === '3PJ4q4sqriJs2y7Z45wmbLrbmV9MDecbPxD') {
-            return JSON.parse(`
+            return [
                 [
-                    [
-                        {
-                            "senderPublicKey": "2UstBx1nMYQ2mPeaJi6tv9oUFCUHLvU1G7nS8Leazsbw",
-                            "amount": 369133368000,
-                            "signature": "5Hw5SW7C1EK8hE2YKawFCAWcJoB1Z5NSZFkA65bS3PcDY9w2fi7etPCJDamK2WNb14RWa3BykdT5yFd64SxodjeQ",
-                            "fee": 100000,
-                            "type": 4,
-                            "version": 1,
-                            "attachment": "",
-                            "sender": "3PJ4q4sqriJs2y7Z45wmbLrbmV9MDecbPxD",
-                            "feeAssetId": null,
-                            "proofs": [
-                                "5Hw5SW7C1EK8hE2YKawFCAWcJoB1Z5NSZFkA65bS3PcDY9w2fi7etPCJDamK2WNb14RWa3BykdT5yFd64SxodjeQ"
-                            ],
-                            "assetId": null,
-                            "recipient": "3PLrCnhKyX5iFbGDxbqqMvea5VAqxMcinPW",
-                            "feeAsset": null,
-                            "id": "23JGFzBh65fzZArK6KSeRqjjBG5WnQshJJkUv53hCE1E",
-                            "timestamp": 1582527770493,
-                            "height": 1943922
-                        },
-                        {
-                            "senderPublicKey": "3uT3a9ceebFf6vEa5DmedD5pK6xa1GY7PnvhWPMVyqxC",
-                            "amount": 369133468000,
-                            "signature": "3Nrz47KpD3U39Nf7Los23MDoukqXCrCJun1BqnUgjpy9iZLfXc163dTrz4wVvURC2yiULsNYDYA2pxTPGWpBotc5",
-                            "fee": 100000,
-                            "type": 4,
-                            "version": 1,
-                            "attachment": "Paribu",
-                            "sender": "3PHYYqBA6ZfBsoGsrXP8r7ZptLXYdGDt1Cm",
-                            "feeAssetId": null,
-                            "proofs": [
-                                "3Nrz47KpD3U39Nf7Los23MDoukqXCrCJun1BqnUgjpy9iZLfXc163dTrz4wVvURC2yiULsNYDYA2pxTPGWpBotc5"
-                            ],
-                            "assetId": null,
-                            "recipient": "3PJ4q4sqriJs2y7Z45wmbLrbmV9MDecbPxD",
-                            "feeAsset": null,
-                            "id": "1456haw7zSTKDmVSbY1njrYdskX7xKbv241c5WJjWhCu",
-                            "timestamp": 1582527244669,
-                            "height": 1943911
-                        }
-                    ]
+                    {
+                        senderPublicKey: "2UstBx1nMYQ2mPeaJi6tv9oUFCUHLvU1G7nS8Leazsbw",
+                        amount: Number(369133368000),
+                        signature: "5Hw5SW7C1EK8hE2YKawFCAWcJoB1Z5NSZFkA65bS3PcDY9w2fi7etPCJDamK2WNb14RWa3BykdT5yFd64SxodjeQ",
+                        fee: Number(100000),
+                        type: Number(4),
+                        version: Number(1),
+                        attachment: "",
+                        sender: "3PJ4q4sqriJs2y7Z45wmbLrbmV9MDecbPxD",
+                        feeAssetId: null,
+                        proofs: [
+                            "5Hw5SW7C1EK8hE2YKawFCAWcJoB1Z5NSZFkA65bS3PcDY9w2fi7etPCJDamK2WNb14RWa3BykdT5yFd64SxodjeQ"
+                        ],
+                        assetId: null,
+                        recipient: "3PLrCnhKyX5iFbGDxbqqMvea5VAqxMcinPW",
+                        feeAsset: null,
+                        id: "23JGFzBh65fzZArK6KSeRqjjBG5WnQshJJkUv53hCE1E",
+                        timestamp: Number(1582527770493),
+                        height: Number(1943922)
+                    },
+                    {
+                        senderPublicKey: "3uT3a9ceebFf6vEa5DmedD5pK6xa1GY7PnvhWPMVyqxC",
+                        amount: Number(369133468000),
+                        signature: "3Nrz47KpD3U39Nf7Los23MDoukqXCrCJun1BqnUgjpy9iZLfXc163dTrz4wVvURC2yiULsNYDYA2pxTPGWpBotc5",
+                        fee: Number(100000),
+                        type: Number(4),
+                        version: Number(1),
+                        attachment: "Paribu",
+                        sender: "3PHYYqBA6ZfBsoGsrXP8r7ZptLXYdGDt1Cm",
+                        feeAssetId: null,
+                        proofs: [
+                            "3Nrz47KpD3U39Nf7Los23MDoukqXCrCJun1BqnUgjpy9iZLfXc163dTrz4wVvURC2yiULsNYDYA2pxTPGWpBotc5"
+                        ],
+                        assetId: null,
+                        recipient: "3PJ4q4sqriJs2y7Z45wmbLrbmV9MDecbPxD",
+                        feeAsset: null,
+                        id: "1456haw7zSTKDmVSbY1njrYdskX7xKbv241c5WJjWhCu",
+                        timestamp: Number(1582527244669),
+                        height: Number(1943911)
+                    }
                 ]
-            `);
+            ]
         }
         // fallback
         var return4Codacy = {error: "Not implemented"};
         return return4Codacy;
     }
-};
+}
+;
