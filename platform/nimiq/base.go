@@ -11,7 +11,7 @@ type Platform struct {
 
 func Init(api string) *Platform {
 	return &Platform{
-		client: Client{blockatlas.InitClient(api)},
+		client: Client{blockatlas.InitJSONClient(api)},
 	}
 }
 

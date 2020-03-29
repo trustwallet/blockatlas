@@ -94,16 +94,17 @@ start-observer-subscriber: stop
 
 ## stop: Stop development mode.
 stop:
-	@-touch $(PID_API) $(PID_OBSERVER_NOTIFIER) $(PID_OBSERVER_PARSER) $(PID_OBSERVER_SUBSCRIBER) $(PID_SWAGGER_API)
+	@-touch $(PID_API) $(PID_OBSERVER_NOTIFIER) $(PID_OBSERVER_PARSER) $(PID_OBSERVER_SUBSCRIBER) $(PID_SWAGGER_API) $(PID_DYSON)
 	@-kill `cat $(PID_API)` 2> /dev/null || true
 	@-kill `cat $(PID_OBSERVER_NOTIFIER)` 2> /dev/null || true
 	@-kill `cat $(PID_OBSERVER_PARSER)` 2> /dev/null || true
 	@-kill `cat $(PID_OBSERVER_SUBSCRIBER)` 2> /dev/null || true
 	@-kill `cat $(PID_SWAGGER_API)` 2> /dev/null || true
 	@-kill `cat $(PID_DYSON)` 2> /dev/null || true
-	@-rm $(PID_API) $(PID_OBSERVER_NOTIFIER) $(PID_OBSERVER_PARSER) $(PID_OBSERVER_SUBSCRIBER) $(PID_SWAGGER_API)
+	@-rm $(PID_API) $(PID_OBSERVER_NOTIFIER) $(PID_OBSERVER_PARSER) $(PID_OBSERVER_SUBSCRIBER) $(PID_SWAGGER_API) $(PID_DYSON)
 
 stop-dyson:
+	@-touch $(PID_DYSON)
 	@kill `cat $(PID_DYSON)` 2> /dev/null || true
 	@rm $(PID_DYSON)
 
@@ -125,9 +126,6 @@ clean:
 
 ## test: Run all unit tests.
 test: go-test
-
-## functional: Run all functional tests.
-functional: go-functional
 
 ## integration: Run all integration tests.
 integration: go-integration
@@ -165,24 +163,29 @@ docs: go-gen-docs
 install-newman:
 ifeq (,$(shell which newman))
 	@echo "  >  Installing Postman Newman"
-	@-npm install -g newman
+	@-sudo npm install -g newman
 endif
 
-## newman: Run Postman Newman test, the host parameter is required, and you can specify the name of the test do you wanna run (transaction, token, staking, collection, domain, healthcheck, observer). e.g $ make newman test=staking host=http//localhost
-newman: install-newman
+## newman-mocked: Run mocked Postman Newman tests.
+newman-mocked: install-newman install-dyson go-compile
+	@bash -c "$(MAKE) newman-mocked-params host=http://localhost:8420"
+
+## newman-mocked-params: Run mocked Postman Newman tests, after starting platform api.
+## The host parameter is required.
+## E.g.: $ make newman-mocked-params test=domain host=http://localhost:8420
+newman-mocked-params: start-platform-api-mock
 ifeq (,$(test))
-	@bash -c "$(MAKE) newman-run test=transaction host=$(host)"
-	@bash -c "$(MAKE) newman-run test=token host=$(host)"
-	@bash -c "$(MAKE) newman-run test=staking host=$(host)"
-	@bash -c "$(MAKE) newman-run test=collection host=$(host)"
-	@bash -c "$(MAKE) newman-run test=domain host=$(host)"
-	@bash -c "$(MAKE) newman-run test=healthcheck host=$(host)"
+	@bash -c "$(MAKE) newman-run test=transaction host=$(host) && \
+	          $(MAKE) newman-run test=domain host=$(host)"
+	#not-mocked-yet: $(MAKE) newman-run test=token host=$(host) && \
+	#not-mocked-yet: $(MAKE) newman-run test=staking host=$(host) && \
+	#not-mocked-yet: $(MAKE) newman-run test=collection host=$(host) &&
 else
 	@bash -c "$(MAKE) newman-run test=$(test) host=$(host)"
 endif
 
-## newman-mocked: Run mocked Postman Newman tests, after starting platform api. See newman target.
-newman-mocked: install-newman install-dyson go-compile start-platform-api-mock
+## newman: Run Postman Newman test, the host parameter is required, and you can specify the name of the test do you wanna run (transaction, token, staking, collection, domain, healthcheck, observer). e.g $ make newman test=staking host=http//localhost
+newman: install-newman
 ifeq (,$(test))
 	@bash -c "$(MAKE) newman-run test=transaction host=$(host)"
 	@bash -c "$(MAKE) newman-run test=token host=$(host)"
@@ -207,7 +210,7 @@ endif
 install-dyson:
 ifeq (,$(shell which dyson))
 	@echo "  >  Installing Dyson"
-	@-npm install -g dyson
+	@-sudo npm install -g dyson
 endif
 
 go-compile: go-get go-build
@@ -242,15 +245,6 @@ go-clean:
 go-test:
 	@echo "  >  Running unit tests"
 	GOBIN=$(GOBIN) go test -cover -race -v ./...
-
-go-functional:
-	@echo "  >  Running functional tests"
-	GOBIN=$(GOBIN) TEST_CONFIG=$(CONFIG_FILE) go test -race -tags=functional -v ./tests/functional
-
-## go-functional-mock: Run platform-api with mocks, and run functional tests
-go-functional-mock:	stop install-dyson start-mock-dyson start-platform-api-mock
-	@echo "  >  Running functional tests with mocks"
-	GOBIN=$(GOBIN) TEST_CONFIG=$(CONFIG_FILE) go test -race -tags=functional -v ./tests/functional
 
 go-integration:
 	@echo "  >  Running integration tests"

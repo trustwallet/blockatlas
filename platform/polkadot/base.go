@@ -13,7 +13,7 @@ type Platform struct {
 func Init(coin uint, api string) *Platform {
 	return &Platform{
 		CoinIndex: coin,
-		client:    Client{blockatlas.InitClient(api)},
+		client:    Client{blockatlas.InitJSONClient(api)},
 	}
 }
 
