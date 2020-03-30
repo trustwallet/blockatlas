@@ -12,7 +12,7 @@ type TimeModel struct {
 type Subscription struct {
 	TimeModel
 	SubscriptionId uint               `gorm:"primary_key:true"`
-	Data           []SubscriptionData `gorm:"many2many:subscription_associations"`
+	Data           []SubscriptionData `gorm:"foreignkey:SubscriptionId"`
 }
 
 type SubscriptionData struct {
