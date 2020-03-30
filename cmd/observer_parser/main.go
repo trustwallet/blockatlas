@@ -35,8 +35,8 @@ func init() {
 	internal.InitConfig(confPath)
 	logger.InitLogger()
 
-	mqHost := viper.GetString("observer_test.rabbitmq.uri")
-	prefetchCount := viper.GetInt("observer_test.rabbitmq.consumer.prefetch_count")
+	mqHost := viper.GetString("observer.rabbitmq.uri")
+	prefetchCount := viper.GetInt("observer.rabbitmq.consumer.prefetch_count")
 	platformHandle := viper.GetString("platform")
 
 	internal.InitRabbitMQ(mqHost, prefetchCount)
@@ -52,11 +52,11 @@ func init() {
 
 	pgUri := viper.GetString("postgres.uri")
 
-	txsBatchLimit = viper.GetUint("observer_test.txs_batch_limit")
-	backlogTime = viper.GetDuration("observer_test.backlog")
-	minInterval = viper.GetDuration("observer_test.block_poll.min")
-	maxInterval = viper.GetDuration("observer_test.block_poll.max")
-	maxBackLogBlocks = viper.GetInt64("observer_test.backlog_max_blocks")
+	txsBatchLimit = viper.GetUint("observer.txs_batch_limit")
+	backlogTime = viper.GetDuration("observer.backlog")
+	minInterval = viper.GetDuration("observer.block_poll.min")
+	maxInterval = viper.GetDuration("observer.block_poll.max")
+	maxBackLogBlocks = viper.GetInt64("observer.backlog_max_blocks")
 	if minInterval >= maxInterval {
 		logger.Fatal("minimum block polling interval cannot be greater or equal than maximum")
 	}

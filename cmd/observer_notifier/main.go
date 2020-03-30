@@ -25,8 +25,8 @@ func init() {
 	internal.InitConfig(confPath)
 	logger.InitLogger()
 
-	mqHost := viper.GetString("observer_test.rabbitmq.uri")
-	prefetchCount := viper.GetInt("observer_test.rabbitmq.consumer.prefetch_count")
+	mqHost := viper.GetString("observer.rabbitmq.uri")
+	prefetchCount := viper.GetInt("observer.rabbitmq.consumer.prefetch_count")
 	pgUri := viper.GetString("postgres.uri")
 
 	internal.InitRabbitMQ(mqHost, prefetchCount)

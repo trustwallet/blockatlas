@@ -9,6 +9,7 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/services/observer/subscriber"
 	"github.com/trustwallet/blockatlas/tests/docker_test/setup"
+	"strconv"
 	"testing"
 )
 
@@ -17,18 +18,18 @@ func TestDb_AddSubscriptions(t *testing.T) {
 	var subscriptions []models.SubscriptionData
 	guid := "testGuid"
 	subscriptions = append(subscriptions, models.SubscriptionData{
-		Coin:           60,
-		Address:        "testAddr",
+		Coin:    60,
+		Address: "testAddr",
 	})
 
 	subscriptions = append(subscriptions, models.SubscriptionData{
-		Coin:           61,
-		Address:        "testAddr2",
+		Coin:    61,
+		Address: "testAddr2",
 	})
 
 	subscriptions = append(subscriptions, models.SubscriptionData{
-		Coin:           62,
-		Address:        "testAddr3",
+		Coin:    62,
+		Address: "testAddr3",
 	})
 
 	assert.Nil(t, db.AddSubscriptions(guid, subscriptions))
@@ -66,18 +67,18 @@ func TestDb_AddSubscriptionsWithRewrite(t *testing.T) {
 
 	var subscriptions []models.SubscriptionData
 	subscriptions = append(subscriptions, models.SubscriptionData{
-		Coin:           60,
-		Address:        "testAddr",
+		Coin:    60,
+		Address: "testAddr",
 	})
 
 	subscriptions = append(subscriptions, models.SubscriptionData{
-		Coin:           714,
-		Address:        "testAddr",
+		Coin:    714,
+		Address: "testAddr",
 	})
 
 	subscriptions = append(subscriptions, models.SubscriptionData{
-		Coin:           144,
-		Address:        "testAddr",
+		Coin:    144,
+		Address: "testAddr",
 	})
 
 	assert.Nil(t, db.AddSubscriptions(guid, subscriptions))
@@ -106,21 +107,19 @@ func TestDb_AddSubscriptionsWithRewrite(t *testing.T) {
 	assert.Equal(t, subscriptions[2].Coin, subs144[0].Coin)
 	assert.Equal(t, subscriptions[2].Address, subs144[0].Address)
 
-
-
 	subscriptions = append(subscriptions, models.SubscriptionData{
-		Coin:           60,
-		Address:        "testAddr2",
+		Coin:    60,
+		Address: "testAddr2",
 	})
 
 	subscriptions = append(subscriptions, models.SubscriptionData{
-		Coin:           714,
-		Address:        "testAddr2",
+		Coin:    714,
+		Address: "testAddr2",
 	})
 
 	subscriptions = append(subscriptions, models.SubscriptionData{
-		Coin:           144,
-		Address:        "testAddr2",
+		Coin:    144,
+		Address: "testAddr2",
 	})
 
 	assert.Nil(t, db.AddSubscriptions(guid, subscriptions))
@@ -157,7 +156,7 @@ func TestDb_FindSubscriptions(t *testing.T) {
 	setup.CleanupPgContainer()
 
 	var subscriptionsA []blockatlas.Subscription
-	guid :=  "testGuid"
+	guid := "testGuid"
 	subscriptionsA = append(subscriptionsA, blockatlas.Subscription{
 		Coin:    60,
 		Address: "etherAddress",
@@ -221,18 +220,18 @@ func TestDb_DeleteSubscriptions(t *testing.T) {
 
 	guid := "testGuid"
 	subscriptions = append(subscriptions, models.SubscriptionData{
-		Coin:           60,
-		Address:        "testAddr",
+		Coin:    60,
+		Address: "testAddr",
 	})
 
 	subscriptions = append(subscriptions, models.SubscriptionData{
-		Coin:           714,
-		Address:        "testAddr2",
+		Coin:    714,
+		Address: "testAddr2",
 	})
 
 	subscriptions = append(subscriptions, models.SubscriptionData{
-		Coin:           144,
-		Address:        "testAddr3",
+		Coin:    144,
+		Address: "testAddr3",
 	})
 
 	assert.Nil(t, db.AddSubscriptions(guid, subscriptions))
@@ -290,12 +289,12 @@ func TestDb_DuplicateEntries(t *testing.T) {
 	setup.CleanupPgContainer()
 	var subscriptions []models.SubscriptionData
 
-	guid :=  "testGuid"
+	guid := "testGuid"
 
 	for i := 0; i < 10; i++ {
 		subscriptions = append(subscriptions, models.SubscriptionData{
-			Coin:           60,
-			Address:        "testAddr",
+			Coin:    60,
+			Address: "testAddr",
 		})
 	}
 
@@ -306,6 +305,32 @@ func TestDb_DuplicateEntries(t *testing.T) {
 	assert.NotNil(t, subs)
 	assert.Equal(t, 1, len(subs))
 	assert.True(t, containSub(subscriptions[0], subs))
+}
+
+func TestDb_FindSubscriptions_Multiple(t *testing.T) {
+	setup.CleanupPgContainer()
+
+	var subscriptions []models.SubscriptionData
+	subscriptions = append(subscriptions, models.SubscriptionData{
+		Coin:    60,
+		Address: "testAddr",
+	})
+
+	for i := 0; i < 5; i++ {
+		subscriptions[0].SubscriptionId = strconv.Itoa(i)
+		assert.Nil(t, db.AddSubscriptions(strconv.Itoa(i), subscriptions))
+	}
+
+	subscriptions[0].SubscriptionId = strconv.Itoa(1)
+	assert.Nil(t, db.AddSubscriptions(strconv.Itoa(1), subscriptions))
+
+	subs, err := db.GetSubscriptionData(60, []string{"testAddr"})
+	assert.Nil(t, err)
+	assert.Equal(t, 5, len(subs))
+
+	for i := 0; i < 5; i++ {
+		assert.Equal(t, strconv.Itoa(i), subs[i].SubscriptionId)
+	}
 }
 
 func containSub(sub models.SubscriptionData, list []models.SubscriptionData) bool {
