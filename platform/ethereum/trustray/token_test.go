@@ -1,4 +1,4 @@
-package ethereum
+package trustray
 
 import (
 	"bytes"
@@ -7,7 +7,6 @@ import (
 
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/platform/ethereum/trustray"
 )
 
 const tokenSrc = `
@@ -143,7 +142,7 @@ func TestNormalizeToken(t *testing.T) {
 }
 
 func testNormalizeToken(t *testing.T, _test *testToken) {
-	var token trustray.Contract
+	var token Contract
 	err := json.Unmarshal([]byte(_test.apiResponse), &token)
 	if err != nil {
 		t.Error(err)

@@ -1,23 +1,22 @@
-package ethereum
+package blockbook
 
 import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/platform/ethereum/blockbook"
 )
 
-func (p *Platform) GetTokenListByAddressFromBlockbook(address string) (blockatlas.TokenPage, error) {
-	account, err := p.blockbook.GetTokens(address)
+func (c *Client) GetTokenList(address string, coinIndex uint) (blockatlas.TokenPage, error) {
+	account, err := c.GetTokens(address)
 	if err != nil {
 		return nil, err
 	}
-	return NormalizeTokensBlockbook(account.Tokens, *p), nil
+	return NormalizeTokens(account.Tokens, coinIndex), nil
 }
 
 // NormalizeTxs converts multiple Ethereum tokens
-func NormalizeTokensBlockbook(srcTokens []blockbook.Token, p Platform) []blockatlas.Token {
+func NormalizeTokens(srcTokens []Token, coinIndex uint) []blockatlas.Token {
 	tokenPage := make([]blockatlas.Token, 0)
 	for _, srcToken := range srcTokens {
-		token, ok := NormalizeTokenBlockbook(&srcToken, p.CoinIndex)
+		token, ok := NormalizeToken(&srcToken, coinIndex)
 		if !ok {
 			continue
 		}
@@ -27,7 +26,7 @@ func NormalizeTokensBlockbook(srcTokens []blockbook.Token, p Platform) []blockat
 }
 
 // NormalizeToken converts a Blockbook Ethereum token into the generic model
-func NormalizeTokenBlockbook(srcToken *blockbook.Token, coinIndex uint) (t blockatlas.Token, ok bool) {
+func NormalizeToken(srcToken *Token, coinIndex uint) (t blockatlas.Token, ok bool) {
 	t = blockatlas.Token{
 		Name:     srcToken.Name,
 		Symbol:   srcToken.Symbol,
