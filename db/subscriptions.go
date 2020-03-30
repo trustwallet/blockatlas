@@ -84,7 +84,7 @@ func AddToExistingSubscription(id uint, subscriptions []models.SubscriptionData)
 }
 
 func DeleteAllSubscriptions(id uint) error {
-	return GormDb.Model(&models.Subscription{SubscriptionId: id}).Association("Data").Clear().Error
+	return GormDb.Where("subscription_id = ?", id).Delete(&models.SubscriptionData{}).Error
 }
 
 func DeleteSubscriptions(subscriptions []models.SubscriptionData) error {

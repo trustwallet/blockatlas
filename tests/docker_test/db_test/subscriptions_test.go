@@ -300,6 +300,67 @@ func TestDb_DeleteSubscriptions(t *testing.T) {
 	assert.Len(t, subs60N2, 0)
 }
 
+func TestDeleteAll(t *testing.T){
+	setup.CleanupPgContainer()
+
+	var subscriptions []models.SubscriptionData
+
+	id := uint(1)
+	subscriptions = append(subscriptions, models.SubscriptionData{
+		SubscriptionId:id,
+		Coin:    60,
+		Address: "testAddr",
+	})
+
+	subscriptions = append(subscriptions, models.SubscriptionData{
+		SubscriptionId:id,
+		Coin:    714,
+		Address: "testAddr2",
+	})
+
+	subscriptions = append(subscriptions, models.SubscriptionData{
+		SubscriptionId:id,
+		Coin:    144,
+		Address: "testAddr3",
+	})
+	assert.Nil(t, db.AddSubscriptions(id, subscriptions))
+
+	subs60, err := db.GetSubscriptionData(60, []string{"testAddr"})
+	assert.Nil(t, err)
+	assert.Len(t, subs60, 1)
+
+	subs714, err := db.GetSubscriptionData(714, []string{"testAddr2"})
+	assert.Nil(t, err)
+	assert.Len(t, subs714, 1)
+
+	subs144, err := db.GetSubscriptionData(144, []string{"testAddr3"})
+	assert.Nil(t, err)
+	assert.Len(t, subs144, 1)
+
+
+	assert.Nil(t, db.DeleteAllSubscriptions(1))
+
+
+	subs60, err = db.GetSubscriptionData(60, []string{"testAddr"})
+	assert.Nil(t, err)
+	assert.Len(t, subs60, 0)
+
+	subs714, err = db.GetSubscriptionData(714, []string{"testAddr2"})
+	assert.Nil(t, err)
+	assert.Len(t, subs714, 0)
+
+	subs144, err = db.GetSubscriptionData(144, []string{"testAddr3"})
+	assert.Nil(t, err)
+	assert.Len(t, subs144, 0)
+
+
+	assert.Nil(t, db.AddSubscriptions(id, subscriptions))
+
+	subs60, err = db.GetSubscriptionData(60, []string{"testAddr"})
+	assert.Nil(t, err)
+	assert.Len(t, subs60, 1)
+}
+
 func TestDb_DuplicateEntries(t *testing.T) {
 	setup.CleanupPgContainer()
 	var subscriptions []models.SubscriptionData
