@@ -66,7 +66,7 @@ func init() {
 	}
 
 	go mq.FatalWorker(time.Second * 10)
-	time.Sleep(time.Millisecond)
+	go db.RestoreConnectionWorker(time.Second*10, pgUri)
 	time.Sleep(time.Millisecond)
 }
 
