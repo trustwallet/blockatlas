@@ -3,11 +3,13 @@ package ethereum
 import (
 	"encoding/json"
 	"fmt"
+	"math/big"
+	"testing"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"math/big"
-	"testing"
+	"github.com/trustwallet/blockatlas/platform/ethereum/collection"
 )
 
 const collectionsOwner = "0x0875BCab22dE3d02402bc38aEe4104e1239374a7"
@@ -128,7 +130,7 @@ var collection2Dst = blockatlas.Collection{
 }
 
 func TestNormalizeCollection(t *testing.T) {
-	var collections []Collection
+	var collections []collection.Collection
 	err := json.Unmarshal([]byte(collectionsSrc), &collections)
 	assert.Nil(t, err)
 	page := NormalizeCollectionPage(collections, coin.ETH, collectionsOwner)
@@ -159,14 +161,14 @@ const collectibleSrc = `
 ]
 `
 
-var collectibleCollectionDst = Collection{
+var collectibleCollectionDst = collection.Collection{
 	Name:        "Age of Rust",
 	ImageUrl:    "https://storage.opensea.io/age-of-rust-1561960816.jpg",
 	Description: "Year 4424: The search begins for new life on the other side of the galaxy. Explore abandoned space stations, mysterious caverns, and ruins on far away worlds in order to unlock puzzles and secrets! Beware the rogue machines!",
 	ExternalUrl: "https://www.ageofrust.games/",
 	Total:       big.NewInt(1),
 	Slug:        "age-of-rust",
-	Contracts: []PrimaryAssetContract{
+	Contracts: []collection.PrimaryAssetContract{
 		{
 			Name:        "Age of Rust",
 			Address:     "0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB",
@@ -196,7 +198,7 @@ var collectibleDst = blockatlas.Collectible{
 }
 
 func TestNormalizeCollectible(t *testing.T) {
-	var collectible []Collectible
+	var collectible []collection.Collectible
 	err := json.Unmarshal([]byte(collectibleSrc), &collectible)
 	assert.Nil(t, err)
 	page := NormalizeCollectiblePage(&collectibleCollectionDst, collectible, coin.ETH)
@@ -205,42 +207,42 @@ func TestNormalizeCollectible(t *testing.T) {
 	assert.Equal(t, page, expected, "collectible don't equal")
 }
 
-var c1 = Collection{
+var c1 = collection.Collection{
 	Slug: "enjin",
-	Contracts: []PrimaryAssetContract{{
+	Contracts: []collection.PrimaryAssetContract{{
 		Address: "0xfaafdc07907ff5120a76b34b731b278c38d6043c",
 	}},
 }
-var c2 = Collection{
+var c2 = collection.Collection{
 	Slug: "cryptokitties",
-	Contracts: []PrimaryAssetContract{{
+	Contracts: []collection.PrimaryAssetContract{{
 		Address: "0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB",
 	}},
 }
-var c3 = Collection{
+var c3 = collection.Collection{
 	Slug: "age-of-rust",
-	Contracts: []PrimaryAssetContract{{
+	Contracts: []collection.PrimaryAssetContract{{
 		Address: "0x0875BCab22dE3d02402bc38aEe4104e1239374a7",
 	}},
 }
 
 func TestSearchCollection(t *testing.T) {
-	tests := []struct {
-		collections   []Collection
+	var tests = []struct {
+		collections   []collection.Collection
 		collectibleID string
-		result        *Collection
+		result        *collection.Collection
 	}{
-		{[]Collection{c1, c2, c3}, "enjin", &c1},
-		{[]Collection{c1, c2, c3}, "cryptokitties", &c2},
-		{[]Collection{c1, c2}, "age-of-rust", nil},
-		{[]Collection{c1, c2, c3}, "age-of-rust", &c3},
-		{[]Collection{c1, c2}, "cryptokitties", &c2},
-		{[]Collection{c1}, "age-of-rust", nil},
-		{[]Collection{c1, c3}, "enjin", &c1},
+		{[]collection.Collection{c1, c2, c3}, "enjin", &c1},
+		{[]collection.Collection{c1, c2, c3}, "cryptokitties", &c2},
+		{[]collection.Collection{c1, c2}, "age-of-rust", nil},
+		{[]collection.Collection{c1, c2, c3}, "age-of-rust", &c3},
+		{[]collection.Collection{c1, c2}, "cryptokitties", &c2},
+		{[]collection.Collection{c1}, "age-of-rust", nil},
+		{[]collection.Collection{c1, c3}, "enjin", &c1},
 	}
 	for i, tt := range tests {
 		t.Run(fmt.Sprintf("searchCollection %d", i), func(t *testing.T) {
-			s := searchCollection(tt.collections, tt.collectibleID)
+			s := collection.SearchCollection(tt.collections, tt.collectibleID)
 			assert.EqualValues(t, s, tt.result)
 		})
 	}
@@ -248,17 +250,17 @@ func TestSearchCollection(t *testing.T) {
 }
 
 func TestNormalizeSupportedContracts(t *testing.T) {
-	var contracts []PrimaryAssetContract
+	var contracts []collection.PrimaryAssetContract
 	err := json.Unmarshal([]byte(rawAssetContracts), &contracts)
 	assert.Nil(t, err)
-	var collection = Collection{}
-	collection.Contracts = contracts
-	normalizeSupportedContracts(&collection)
-	assert.Equal(t, len(collection.Contracts), 2, "normalizeSupportedContracts with incorrect len")
-	var expectedContracts []PrimaryAssetContract
+	var c = collection.Collection{}
+	c.Contracts = contracts
+	normalizeSupportedContracts(&c)
+	assert.Equal(t, len(c.Contracts), 2, "normalizeSupportedContracts with incorrect len")
+	var expectedContracts []collection.PrimaryAssetContract
 	err = json.Unmarshal([]byte(rawAssetContractsExpected), &expectedContracts)
 	assert.Nil(t, err)
-	assert.Equal(t, collection.Contracts, expectedContracts, "normalizeSupportedContracts expectedContracts")
+	assert.Equal(t, c.Contracts, expectedContracts, "normalizeSupportedContracts expectedContracts")
 }
 
 const rawAssetContracts = `[
