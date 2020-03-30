@@ -42,7 +42,7 @@ func RunSubscriber(delivery amqp.Delivery) {
 		}
 		logger.Info("Added", params)
 	case DeleteSubscription:
-		err := db.DeleteSubscriptions(ToSubscriptionData(subscriptions))
+		err := db.DeleteAllSubscriptions(id)
 		if err != nil {
 			logger.Error(err, params)
 		}

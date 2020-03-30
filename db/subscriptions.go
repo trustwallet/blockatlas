@@ -83,6 +83,10 @@ func AddToExistingSubscription(id uint, subscriptions []models.SubscriptionData)
 	return nil
 }
 
+func DeleteAllSubscriptions(id uint) error {
+	return GormDb.Model(&models.Subscription{SubscriptionId: id}).Association("Data").Clear().Error
+}
+
 func DeleteSubscriptions(subscriptions []models.SubscriptionData) error {
 	var (
 		errorsList = make([]error, 0)
