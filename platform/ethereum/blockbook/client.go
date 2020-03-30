@@ -23,7 +23,7 @@ func (c *Client) GetTokens(address string) (tp *TokenPage, err error) {
 	return c.fetchTokens(address)
 }
 
-func (c *Client) CurrentBlockNumber() (int64, error) {
+func (c *Client) GetCurrentBlockNumber() (int64, error) {
 	var nodeInfo NodeInfo
 	err := c.Get(&nodeInfo, "", nil)
 	if err != nil {
@@ -32,9 +32,9 @@ func (c *Client) CurrentBlockNumber() (int64, error) {
 	return nodeInfo.Blockbook.BestHeight, nil
 }
 
-func (c *Client) GetBlockByNumber(block int64) (page []Block, err error) {
-	path := fmt.Sprintf("/v2/block/%d", block)
-	err = c.Get(&page, path, nil)
+func (c *Client) GetBlock(num int64) (block Block, err error) {
+	path := fmt.Sprintf("/v2/block/%d", num)
+	err = c.Get(&block, path, nil)
 	return
 }
 

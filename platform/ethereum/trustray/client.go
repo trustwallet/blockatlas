@@ -24,13 +24,13 @@ func (c *Client) getTxs(query url.Values) (page *Page, err error) {
 	return
 }
 
-func (c *Client) GetBlockByNumber(num int64) (page []Doc, err error) {
+func (c *Client) GetBlock(num int64) (page []Doc, err error) {
 	path := fmt.Sprintf("transactions/block/%d", num)
 	err = c.Get(&page, path, nil)
 	return
 }
 
-func (c *Client) CurrentBlockNumber() (int64, error) {
+func (c *Client) GetCurrentBlockNumber() (int64, error) {
 	var nodeInfo NodeInfo
 	err := c.Get(&nodeInfo, "node_info", nil)
 	if err != nil {

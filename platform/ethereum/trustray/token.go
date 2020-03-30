@@ -1,17 +1,16 @@
-package ethereum
+package trustray
 
 import (
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/platform/ethereum/trustray"
 )
 
-func (p *Platform) GetTokenListByAddress(address string) (blockatlas.TokenPage, error) {
-	account, err := p.trustray.GetTokens(address)
+func (c *Client) GetTokenList(address string, coinIndex uint) (blockatlas.TokenPage, error) {
+	account, err := c.GetTokens(address)
 	if err != nil {
 		return nil, err
 	}
-	return NormalizeTokens(account.Docs, *p), nil
+	return NormalizeTokens(account.Docs, coinIndex), nil
 }
 
 // NormalizeToken converts a Ethereum token into the generic model
@@ -49,10 +48,10 @@ func NormalizeToken(srcToken *Contract, coinIndex uint) (t blockatlas.Token, ok 
 }
 
 // NormalizeTxs converts multiple Ethereum tokens
-func NormalizeTokens(srcTokens []trustray.Contract, p Platform) []blockatlas.Token {
+func NormalizeTokens(srcTokens []Contract, coinIndex uint) []blockatlas.Token {
 	tokenPage := make([]blockatlas.Token, 0)
 	for _, srcToken := range srcTokens {
-		token, ok := NormalizeToken(&srcToken, p.CoinIndex)
+		token, ok := NormalizeToken(&srcToken, coinIndex)
 		if !ok {
 			continue
 		}

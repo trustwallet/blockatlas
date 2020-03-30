@@ -106,7 +106,7 @@ func getPlatformMap() blockatlas.Platforms {
 		coin.Callisto().Handle:     ethereum.Init(coin.CLO, GetApiVar(coin.CLO), GetRpcVar(coin.CLO)),
 		coin.Wanchain().Handle:     ethereum.Init(coin.WAN, GetApiVar(coin.WAN), GetRpcVar(coin.WAN)),
 		coin.Tomochain().Handle:    ethereum.Init(coin.TOMO, GetApiVar(coin.TOMO), GetRpcVar(coin.TOMO)),
-		coin.Ethereum().Handle:     ethereum.InitWitCollection(coin.ETH, GetApiVar(coin.ETH), GetRpcVar(coin.ETH), GetVar("ethereum.collections_api"), GetVar("ethereum.collections_api_key")),
+		coin.Ethereum().Handle:     ethereum.InitWitCollection(coin.ETH, GetApiVar(coin.ETH), GetRpcVar(coin.ETH), GetVar("ethereum.blockbook_api"), GetVar("ethereum.collections_api"), GetVar("ethereum.collections_api_key")),
 		coin.Near().Handle:         near.Init(GetApiVar(coin.NEAR)),
 	}
 }

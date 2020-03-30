@@ -12,26 +12,31 @@ import (
 type Platform struct {
 	CoinIndex   uint
 	RpcURL      string
-	trustray    trustray.Client
-	blockbook   blockbook.Client
+	client      EthereumClient
+	tokens      EthereumClient
 	collectible collection.Client
 	ens         ens.RpcClient
 }
 
-func Init(coin uint, api, rpc string) *Platform {
+func Init(coinType uint, api, rpc string) *Platform {
 	return &Platform{
-		CoinIndex: coin,
+		CoinIndex: coinType,
 		RpcURL:    rpc,
-		trustray:  trustray.Client{blockatlas.InitClient(api)},
 		ens:       ens.RpcClient{blockatlas.InitJSONClient(rpc)},
+		tokens:    &trustray.Client{blockatlas.InitClient(api)},
 	}
 }
 
-func InitWitCollection(coin uint, api, rpc, collectionApi, collectionKey string) *Platform {
-	p := Init(coin, api, rpc)
-	p.collectible = collection.Client{blockatlas.InitClient(collectionApi)}
-	p.collectible.Headers["X-API-KEY"] = collectionKey
-	return p
+func InitWitCollection(coinType uint, api, rpc, blockbookApi, collectionApi, collectionKey string) *Platform {
+	platform := Init(coinType, api, rpc)
+	if coinType == coin.ETH {
+		platform.client = &blockbook.Client{blockatlas.InitClient(blockbookApi)}
+	} else {
+		platform.client = &trustray.Client{blockatlas.InitClient(api)}
+	}
+	platform.collectible = collection.Client{blockatlas.InitClient(collectionApi)}
+	platform.collectible.Headers["X-API-KEY"] = collectionKey
+	return platform
 }
 
 func (p *Platform) Coin() coin.Coin {
