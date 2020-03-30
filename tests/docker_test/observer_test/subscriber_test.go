@@ -52,7 +52,7 @@ func TestSubscriberAddSubscription(t *testing.T) {
 		ctx, cancel := context.WithCancel(context.Background())
 
 		go mq.Subscriptions.RunConsumerForChannelWithCancel(subscriber.RunSubscriber, subscriptionChannel, ctx)
-		time.Sleep(time.Second)
+		time.Sleep(time.Second*2)
 		cancel()
 	}
 
@@ -93,8 +93,8 @@ func TestSubscriber_UpdateSubscription(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	db.AddSubscriptions(0, []models.SubscriptionData{
-		{Coin: 61, Address: "0x0000000000000000000000000000000000000000", SubscriptionId: 0},
+	db.AddSubscriptions(10, []models.SubscriptionData{
+		{Coin: 61, Address: "0x0000000000000000000000000000000000000000", SubscriptionId: 10},
 	})
 	db.AddSubscriptions(1, []models.SubscriptionData{
 		{Coin: 62, Address: "0x0000000000000000000000000000000000000000", SubscriptionId: 1},
@@ -116,7 +116,7 @@ func TestSubscriber_UpdateSubscription(t *testing.T) {
 		ctx, cancel := context.WithCancel(context.Background())
 
 		go mq.Subscriptions.RunConsumerForChannelWithCancel(subscriber.RunSubscriber, subscriptionChannel, ctx)
-		time.Sleep(time.Second / 5)
+		time.Sleep(time.Second)
 		cancel()
 	}
 
