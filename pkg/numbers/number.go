@@ -33,7 +33,7 @@ func Float64toPrecision(num float64, precision int) float64 {
 }
 
 func Float64toString(num float64) string {
-	return strconv.FormatFloat(num, 'f', 6, 64)
+	return strconv.FormatFloat(num, 'f', -1, 64)
 }
 
 func FromDecimal(dec string) string {
