@@ -92,7 +92,7 @@
     {
         "handler": "tezos",
         "address": "tz1foWxaV3VQyWqFbWTERS6YDJjPT6C7jPp8",
-        "expectedTxNum": 1,
+        "expectedTxNum": 2,
         "expectedTxId": "ooLrNAP233Qvoz3AGvjRjhk1fjG7z19UfyLEGBm1rwfHn4NSVhd"
     },
     {

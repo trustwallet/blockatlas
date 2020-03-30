@@ -12,7 +12,7 @@ type Client struct {
 }
 
 func (c *Client) GetTxsOfAddress(address string, txType []string) (txs ExplorerAccount, err error) {
-	path := fmt.Sprintf("/account/%s/op", address)
+	path := fmt.Sprintf("account/%s/op", address)
 	err = c.Get(&txs, path, url.Values{
 		"order": {"desc"},
 		"type":  {strings.Join(txType, ",")},
@@ -24,13 +24,13 @@ func (c *Client) GetTxsOfAddress(address string, txType []string) (txs ExplorerA
 // Get last indexed block by explorer
 func (c *Client) GetCurrentBlock() (int64, error) {
 	var status Status
-	err := c.Get(&status, "/status", nil)
+	err := c.Get(&status, "status", nil)
 	return status.Indexed, err
 }
 
 func (c *Client) GetBlockByNumber(num int64, txType []string) ([]Transaction, error) {
 	var blockOps ExplorerAccount
-	path := fmt.Sprintf("/account/%d/op", num)
+	path := fmt.Sprintf("account/%d/op", num)
 	types := strings.Join(txType, ",")
 
 	err := c.Get(&blockOps, path, url.Values{
