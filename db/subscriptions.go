@@ -6,6 +6,10 @@ import (
 )
 
 func GetSubscriptionData(coin uint, addresses []string) ([]models.SubscriptionData, error) {
+	if len(addresses) == 0 {
+		return nil, errors.E("Empty addresses")
+	}
+
 	var subscriptionsDataList []models.SubscriptionData
 
 	err := GormDb.
@@ -24,7 +28,7 @@ func AddSubscriptions(id uint, subscriptions []models.SubscriptionData) error {
 	if len(subscriptions) == 0 {
 		return errors.E("Empty subscriptions")
 	}
-	var errorsList = make([]error, 0)
+
 	var (
 		existingSub models.Subscription
 		err         error
@@ -44,26 +48,14 @@ func AddSubscriptions(id uint, subscriptions []models.SubscriptionData) error {
 	}
 
 	if err != nil {
-		errorsList = append(errorsList, err)
+		return err
 	}
 
-	return toError(errorsList)
+	return nil
 }
 
 func AddSubscription(id uint, data []models.SubscriptionData) error {
 	return GormDb.Create(&models.Subscription{SubscriptionId: id, Data: data}).Error
-}
-
-func removeSubscriptionDuplicates(sub []models.SubscriptionData) []models.SubscriptionData {
-	keys := make(map[models.SubscriptionData]bool)
-	result := make([]models.SubscriptionData, 0)
-	for _, entry := range sub {
-		if _, value := keys[entry]; !value {
-			keys[entry] = true
-			result = append(result, entry)
-		}
-	}
-	return result
 }
 
 func AddToExistingSubscription(id uint, subscriptions []models.SubscriptionData) error {
@@ -77,6 +69,7 @@ func AddToExistingSubscription(id uint, subscriptions []models.SubscriptionData)
 	}
 
 	updateList, deleteList := getSubscriptionsToDeleteAndUpdate(existingData, subscriptions)
+
 	if len(updateList) > 0 {
 		if err := GormDb.Model(sub).Association("Data").Append(updateList).Error; err != nil {
 			return err
@@ -86,6 +79,27 @@ func AddToExistingSubscription(id uint, subscriptions []models.SubscriptionData)
 		if err := DeleteSubscriptions(deleteList); err != nil {
 			return err
 		}
+	}
+	return nil
+}
+
+func DeleteSubscriptions(subscriptions []models.SubscriptionData) error {
+	var (
+		errorsList = make([]error, 0)
+		errDetails string
+	)
+
+	for _, sub := range subscriptions {
+		if err := GormDb.Delete(&models.SubscriptionData{}, sub).Error; err != nil {
+			errorsList = append(errorsList, err)
+		}
+	}
+
+	if len(errorsList) != 0 {
+		for _, err := range errorsList {
+			errDetails += err.Error() + " "
+		}
+		return errors.E(errDetails)
 	}
 	return nil
 }
@@ -113,23 +127,14 @@ func containSubscription(sub models.SubscriptionData, list []models.Subscription
 	return false
 }
 
-func DeleteSubscriptions(subscriptions []models.SubscriptionData) error {
-	var errorsList = make([]error, 0)
-	for _, sub := range subscriptions {
-		if err := GormDb.Delete(&models.SubscriptionData{}, sub).Error; err != nil {
-			errorsList = append(errorsList, err)
+func removeSubscriptionDuplicates(sub []models.SubscriptionData) []models.SubscriptionData {
+	keys := make(map[models.SubscriptionData]bool)
+	result := make([]models.SubscriptionData, 0)
+	for _, entry := range sub {
+		if _, value := keys[entry]; !value {
+			keys[entry] = true
+			result = append(result, entry)
 		}
 	}
-	return toError(errorsList)
-}
-
-func toError(errorsList []error) error {
-	var errDetails string
-	if len(errorsList) != 0 {
-		for _, err := range errorsList {
-			errDetails += err.Error() + " "
-		}
-		return errors.E(errDetails)
-	}
-	return nil
+	return result
 }

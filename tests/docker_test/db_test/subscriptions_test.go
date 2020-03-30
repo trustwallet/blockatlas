@@ -306,6 +306,32 @@ func TestDb_DuplicateEntries(t *testing.T) {
 	assert.True(t, containSub(subscriptions[0], subs))
 }
 
+func TestDb_FindSubscriptions_Multiple(t *testing.T) {
+	setup.CleanupPgContainer()
+
+	var subscriptions []models.SubscriptionData
+	subscriptions = append(subscriptions, models.SubscriptionData{
+		Coin:    60,
+		Address: "testAddr",
+	})
+
+	for i := 1; i < 6; i++ {
+		subscriptions[0].SubscriptionId = uint(i)
+		assert.Nil(t, db.AddSubscriptions(uint(i), subscriptions))
+	}
+
+	subscriptions[0].SubscriptionId = uint(1)
+	assert.Nil(t, db.AddSubscriptions(uint(1), subscriptions))
+
+	subs, err := db.GetSubscriptionData(60, []string{"testAddr"})
+	assert.Nil(t, err)
+	assert.Equal(t, 5, len(subs))
+
+	for i := 0; i < 5; i++ {
+		assert.Equal(t, uint(i)+1, subs[i].SubscriptionId)
+	}
+}
+
 func containSub(sub models.SubscriptionData, list []models.SubscriptionData) bool {
 	for _, s := range list {
 		if sub.Address == s.Address && sub.Coin == s.Coin && sub.SubscriptionId == s.SubscriptionId {
