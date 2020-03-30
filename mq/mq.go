@@ -199,7 +199,7 @@ func RestoreConnectionWorker(uri string, queue Queue, timeout time.Duration) {
 }
 
 func FatalWorker(timeout time.Duration) {
-	logger.Info("Run FatalWorker")
+	logger.Info("Run MQ FatalWorker")
 	for {
 		if conn.IsClosed() {
 			logger.Fatal("MQ is not available now")

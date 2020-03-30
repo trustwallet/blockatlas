@@ -36,7 +36,10 @@ func init() {
 	if err := db.Setup(pgUri); err != nil {
 		logger.Fatal(err)
 	}
+
 	go mq.FatalWorker(time.Second * 10)
+	go db.RestoreConnectionWorker(time.Second*10, pgUri)
+	time.Sleep(time.Millisecond)
 }
 
 func main() {
