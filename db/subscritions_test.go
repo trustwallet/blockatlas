@@ -6,27 +6,27 @@ import (
 	"testing"
 )
 
-func TestGetSubscriptionsToDeleteAndUpdate(t *testing.T){
+func TestGetSubscriptionsToDeleteAndUpdate(t *testing.T) {
 	oldSubscriptions := []models.SubscriptionData{{
-		SubscriptionId: "1",
+		SubscriptionId: 1,
 		Coin:           60,
 		Address:        "A",
-	},{
-		SubscriptionId: "1",
+	}, {
+		SubscriptionId: 1,
 		Coin:           60,
 		Address:        "B",
-	},{
-		SubscriptionId: "1",
+	}, {
+		SubscriptionId: 1,
 		Coin:           60,
 		Address:        "C",
 	}}
 
 	newSubscription := []models.SubscriptionData{{
-		SubscriptionId: "1",
+		SubscriptionId: 1,
 		Coin:           60,
 		Address:        "B",
-	},{
-		SubscriptionId: "1",
+	}, {
+		SubscriptionId: 1,
 		Coin:           60,
 		Address:        "C",
 	}}
@@ -37,25 +37,25 @@ func TestGetSubscriptionsToDeleteAndUpdate(t *testing.T){
 	assert.Equal(t, "A", delete[0].Address)
 
 	oldSubscriptions = []models.SubscriptionData{{
-		SubscriptionId: "1",
+		SubscriptionId: 1,
 		Coin:           60,
 		Address:        "A",
-	},{
-		SubscriptionId: "1",
+	}, {
+		SubscriptionId: 1,
 		Coin:           60,
 		Address:        "B",
-	},{
-		SubscriptionId: "1",
+	}, {
+		SubscriptionId: 1,
 		Coin:           60,
 		Address:        "C",
-	},{
-		SubscriptionId: "1",
+	}, {
+		SubscriptionId: 1,
 		Coin:           60,
 		Address:        "D",
 	}}
 
 	newSubscription = []models.SubscriptionData{{
-		SubscriptionId: "1",
+		SubscriptionId: 1,
 		Coin:           60,
 		Address:        "E",
 	}}
@@ -65,21 +65,21 @@ func TestGetSubscriptionsToDeleteAndUpdate(t *testing.T){
 	assert.Len(t, delete, 4)
 
 	oldSubscriptions = []models.SubscriptionData{{
-		SubscriptionId: "1",
+		SubscriptionId: 1,
 		Coin:           60,
 		Address:        "A",
-	},{
-		SubscriptionId: "1",
+	}, {
+		SubscriptionId: 1,
 		Coin:           60,
 		Address:        "B",
 	}}
 
 	newSubscription = []models.SubscriptionData{{
-		SubscriptionId: "1",
+		SubscriptionId: 1,
 		Coin:           60,
 		Address:        "A",
-	},{
-		SubscriptionId: "1",
+	}, {
+		SubscriptionId: 1,
 		Coin:           60,
 		Address:        "B",
 	}}

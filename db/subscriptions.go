@@ -20,7 +20,7 @@ func GetSubscriptionData(coin uint, addresses []string) ([]models.SubscriptionDa
 	return subscriptionsDataList, nil
 }
 
-func AddSubscriptions(guid string, subscriptions []models.SubscriptionData) error {
+func AddSubscriptions(id uint, subscriptions []models.SubscriptionData) error {
 	if len(subscriptions) == 0 {
 		return errors.E("Empty subscriptions")
 	}
@@ -31,16 +31,16 @@ func AddSubscriptions(guid string, subscriptions []models.SubscriptionData) erro
 	)
 
 	recordNotFound := GormDb.
-		Where(models.Subscription{GUID: guid}).
+		Where(models.Subscription{SubscriptionId: id}).
 		First(&existingSub).
 		RecordNotFound()
 
 	subscriptions = removeSubscriptionDuplicates(subscriptions)
 
 	if recordNotFound {
-		err = AddSubscription(guid, subscriptions)
+		err = AddSubscription(id, subscriptions)
 	} else {
-		err = AddToExistingSubscription(guid, subscriptions)
+		err = AddToExistingSubscription(id, subscriptions)
 	}
 
 	if err != nil {
@@ -50,8 +50,8 @@ func AddSubscriptions(guid string, subscriptions []models.SubscriptionData) erro
 	return toError(errorsList)
 }
 
-func AddSubscription(guid string, data []models.SubscriptionData) error {
-	return GormDb.Create(&models.Subscription{GUID: guid, Data: data}).Error
+func AddSubscription(id uint, data []models.SubscriptionData) error {
+	return GormDb.Create(&models.Subscription{SubscriptionId: id, Data: data}).Error
 }
 
 func removeSubscriptionDuplicates(sub []models.SubscriptionData) []models.SubscriptionData {
@@ -66,17 +66,17 @@ func removeSubscriptionDuplicates(sub []models.SubscriptionData) []models.Subscr
 	return result
 }
 
-func AddToExistingSubscription(guid string, newSubscriptions []models.SubscriptionData) error {
+func AddToExistingSubscription(id uint, subscriptions []models.SubscriptionData) error {
 	var (
 		existingData []models.SubscriptionData
-		sub = &models.Subscription{GUID:guid}
-     )
+		sub          = &models.Subscription{SubscriptionId: id}
+	)
 
 	if err := GormDb.Model(sub).Association("Data").Find(&existingData).Error; err != nil {
 		return err
 	}
 
-	updateList, deleteList := getSubscriptionsToDeleteAndUpdate(existingData, newSubscriptions)
+	updateList, deleteList := getSubscriptionsToDeleteAndUpdate(existingData, subscriptions)
 	if len(updateList) > 0 {
 		if err := GormDb.Model(sub).Association("Data").Append(updateList).Error; err != nil {
 			return err
@@ -90,14 +90,14 @@ func AddToExistingSubscription(guid string, newSubscriptions []models.Subscripti
 	return nil
 }
 
-func getSubscriptionsToDeleteAndUpdate(existing, new []models.SubscriptionData) (subToUpdate, subToDelete []models.SubscriptionData)  {
+func getSubscriptionsToDeleteAndUpdate(existing, new []models.SubscriptionData) (subToUpdate, subToDelete []models.SubscriptionData) {
 	for _, n := range new {
 		if !containSubscription(n, existing) {
 			subToUpdate = append(subToUpdate, n)
 		}
 	}
-	for _, e := range existing{
-		if !containSubscription(e, new){
+	for _, e := range existing {
+		if !containSubscription(e, new) {
 			subToDelete = append(subToDelete, e)
 		}
 	}
