@@ -16,30 +16,35 @@ type ActionData struct {
 type ActionAct struct {
 	Account string     `json:"account"`
 	Name 	string     `json:"name"`
-	Data    ActionData `json:"data"`
+	Data    interface{} `json:"data"` // Structure of data is action-specific
 }
 // ActionTrace
 type ActionTrace struct {
-	Receiver string `json:"receiver"`
-	Act 	 ActionAct
-	TrxID 	 string `json:"trx_id"`
-	BlockNum uint64 `json:"block_num"`
+	Receiver  string    `json:"receiver"`
+	Act 	  ActionAct `json:"act"`
+	TrxID 	  string    `json:"trx_id"`
+	BlockNum  uint64    `json:"block_num"`
+	BlockTime string    `json:"block_time"`
 }
 // Action (from get_actions)
 type Action struct {
 	BlockNum 	uint64      `json:"block_num"`
+	BlockTime   string      `json:"block_time"`
 	ActionTrace ActionTrace `json:"action_trace"`
 }
 
 // GetActionsRequest request struct for get_actions
 type GetActionsRequest struct {
 	AccountName string `json:"account_name"`
+	// pos, offset
+	Sort        string `json:"sort"` // desc
 }
 
 // GetActionsResponse request struct for get_actions
 type GetActionsResponse struct {
-	Actions []Action `json:"actions"`
+	Actions   []Action `json:"actions"`
 	//Error 	string	  `json:"error"`
+	LastBlock int64    `json:"last_irreversible_block"`
 }
 
 // GetPubAddressRequest request struct for get_pub_address
