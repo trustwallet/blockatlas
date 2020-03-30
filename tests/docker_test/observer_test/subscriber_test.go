@@ -52,14 +52,14 @@ func TestSubscriberAddSubscription(t *testing.T) {
 		ctx, cancel := context.WithCancel(context.Background())
 
 		go mq.Subscriptions.RunConsumerForChannelWithCancel(subscriber.RunSubscriber, subscriptionChannel, ctx)
-		time.Sleep(time.Second / 5)
+		time.Sleep(time.Second)
 		cancel()
 	}
 
 	for _, wanted := range wantedEvents {
 		result, err := db.GetSubscriptionData(wanted.Coin, []string{wanted.Address})
 		assert.Nil(t, err)
-		assert.Equal(t, result[0].SubscriptionId, wanted.GUID)
+		assert.Equal(t, result[0].SubscriptionId, wanted.Id)
 		assert.Equal(t, result[0].Coin, wanted.Coin)
 		assert.Equal(t, result[0].Address, wanted.Address)
 	}
@@ -93,17 +93,17 @@ func TestSubscriber_UpdateSubscription(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	db.AddSubscriptions("0", []models.SubscriptionData{
-		{Coin: 61, Address: "0x0000000000000000000000000000000000000000", SubscriptionId: "0"},
+	db.AddSubscriptions(0, []models.SubscriptionData{
+		{Coin: 61, Address: "0x0000000000000000000000000000000000000000", SubscriptionId: 0},
 	})
-	db.AddSubscriptions("1", []models.SubscriptionData{
-		{Coin: 62, Address: "0x0000000000000000000000000000000000000000", SubscriptionId: "1"},
+	db.AddSubscriptions(1, []models.SubscriptionData{
+		{Coin: 62, Address: "0x0000000000000000000000000000000000000000", SubscriptionId: 1},
 	})
-	db.AddSubscriptions("2", []models.SubscriptionData{
-		{Coin: 63, Address: "0x0000000000000000000000000000000000000000", SubscriptionId: "2"},
+	db.AddSubscriptions(2, []models.SubscriptionData{
+		{Coin: 63, Address: "0x0000000000000000000000000000000000000000", SubscriptionId: 2},
 	})
-	db.AddSubscriptions("3", []models.SubscriptionData{
-		{Coin: 64, Address: "0x0000000000000000000000000000000000000000", SubscriptionId: "3"},
+	db.AddSubscriptions(3, []models.SubscriptionData{
+		{Coin: 64, Address: "0x0000000000000000000000000000000000000000", SubscriptionId: 3},
 	})
 
 	for _, event := range givenEvents {
@@ -123,7 +123,7 @@ func TestSubscriber_UpdateSubscription(t *testing.T) {
 	for _, wanted := range wantedEvents {
 		result, err := db.GetSubscriptionData(wanted.Coin, []string{wanted.Address})
 		assert.Nil(t, err)
-		assert.Equal(t, result[0].SubscriptionId, wanted.GUID)
+		assert.Equal(t, result[0].SubscriptionId, wanted.Id)
 		assert.Equal(t, result[0].Coin, wanted.Coin)
 		assert.Equal(t, result[0].Address, wanted.Address)
 
