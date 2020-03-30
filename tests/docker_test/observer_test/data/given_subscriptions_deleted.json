@@ -1,6 +1,6 @@
 [
   {
-    "subscription": {
+    "subscriptions": {
       "60": [
         "0x0000000000000000000000000000000000000000"
       ]
@@ -9,7 +9,7 @@
     "operation": "UpdateSubscription"
   },
   {
-    "subscription": {
+    "subscriptions": {
       "118": [
         "0x0000000000000000000000000000000000000001"
       ]
@@ -18,7 +18,7 @@
     "operation": "UpdateSubscription"
   },
   {
-    "subscription": {
+    "subscriptions": {
       "714": [
         "0x0000000000000000000000000000000000000002"
       ]
@@ -27,7 +27,7 @@
     "operation": "UpdateSubscription"
   },
   {
-    "subscription": {
+    "subscriptions": {
       "144": [
         "0x0000000000000000000000000000000000000003"
       ]
