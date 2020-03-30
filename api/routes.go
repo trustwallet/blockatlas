@@ -75,10 +75,6 @@ func SetupPlatformAPI(root gin.IRouter) {
 	logger.Info("Routes set up", logger.Params{"routes": len(routers)})
 }
 
-func SetupHealthCheckApi(root gin.IRouter) {
-	root.GET("/", GetObserverStatus)
-}
-
 // getRouter lazy loads routers
 func getRouter(router *gin.RouterGroup, handle string) gin.IRouter {
 	key := fmt.Sprintf("%s/%s", router.BasePath(), handle)
