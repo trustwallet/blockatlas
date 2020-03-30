@@ -1,4 +1,4 @@
-/// FIO RPC API Mock, get_pub_address
+/// FIO RPC API Mock, chain API
 /// Returns:
 /// - public address for certain fio name and coin combinations
 /// - public address not found message for other input
@@ -8,13 +8,16 @@
 /// curl "http://localhost:8420/v2/ns/lookup?name=adam@fiotestnet&coins=60"
 
 module.exports = {
-    path: '/fio-api/v1/chain/get_pub_address',
+    path: '/fio-api/v1/chain/:action',
     template: function(params, query, body) {
-        var addr = getAddress(body.fio_address, body.token_code);
-        if (addr == '') {
-            return {message: 'Public address not found'};
+        if (params.action === 'get_pub_address') {
+            var addr = getAddress(body.fio_address, body.token_code);
+            if (addr == '') {
+                return {message: 'Public address not found'};
+            }
+            return {public_address: addr};
         }
-        return {public_address: addr};
+        return {error: 'Not implemented'};
     }
 };
 
