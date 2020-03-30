@@ -26,7 +26,7 @@ var (
 
 func TestFullFlow(t *testing.T) {
 	setup.CleanupPgContainer()
-	err := db.AddSubscriptions("guid_test", []models.SubscriptionData{{Coin: 60, Address: "testAddress", SubscriptionId: "guid_test"}})
+	err := db.AddSubscriptions(1, []models.SubscriptionData{{Coin: 60, Address: "testAddress", SubscriptionId: 1}})
 	assert.Nil(t, err)
 
 	ctx, cancel := context.WithCancel(context.Background())
@@ -135,7 +135,7 @@ func ConsumerToTestTransactionsFull(delivery amqp.Delivery, t *testing.T, cancel
 			Memo:      "test",
 			Meta:      &memo,
 		},
-		GUID: "guid_test",
+		Id: 1,
 	}, event)
 
 	if counter == 10 {
