@@ -15,23 +15,23 @@ import (
 func TestDb_AddSubscriptions(t *testing.T) {
 	setup.CleanupPgContainer()
 	var subscriptions []models.SubscriptionData
-	guid := "testGuid"
+	id := uint(1)
 	subscriptions = append(subscriptions, models.SubscriptionData{
-		Coin:           60,
-		Address:        "testAddr",
+		Coin:    60,
+		Address: "testAddr",
 	})
 
 	subscriptions = append(subscriptions, models.SubscriptionData{
-		Coin:           61,
-		Address:        "testAddr2",
+		Coin:    61,
+		Address: "testAddr2",
 	})
 
 	subscriptions = append(subscriptions, models.SubscriptionData{
-		Coin:           62,
-		Address:        "testAddr3",
+		Coin:    62,
+		Address: "testAddr3",
 	})
 
-	assert.Nil(t, db.AddSubscriptions(guid, subscriptions))
+	assert.Nil(t, db.AddSubscriptions(id, subscriptions))
 
 	subs, err := db.GetSubscriptionData(60, []string{"testAddr"})
 	assert.Nil(t, err)
@@ -62,25 +62,25 @@ func TestDb_AddSubscriptions(t *testing.T) {
 func TestDb_AddSubscriptionsWithRewrite(t *testing.T) {
 	setup.CleanupPgContainer()
 
-	guid := "testGuid"
+	id := uint(1)
 
 	var subscriptions []models.SubscriptionData
 	subscriptions = append(subscriptions, models.SubscriptionData{
-		Coin:           60,
-		Address:        "testAddr",
+		Coin:    60,
+		Address: "testAddr",
 	})
 
 	subscriptions = append(subscriptions, models.SubscriptionData{
-		Coin:           714,
-		Address:        "testAddr",
+		Coin:    714,
+		Address: "testAddr",
 	})
 
 	subscriptions = append(subscriptions, models.SubscriptionData{
-		Coin:           144,
-		Address:        "testAddr",
+		Coin:    144,
+		Address: "testAddr",
 	})
 
-	assert.Nil(t, db.AddSubscriptions(guid, subscriptions))
+	assert.Nil(t, db.AddSubscriptions(id, subscriptions))
 
 	subs60, err := db.GetSubscriptionData(60, []string{"testAddr"})
 	assert.Nil(t, err)
@@ -106,24 +106,22 @@ func TestDb_AddSubscriptionsWithRewrite(t *testing.T) {
 	assert.Equal(t, subscriptions[2].Coin, subs144[0].Coin)
 	assert.Equal(t, subscriptions[2].Address, subs144[0].Address)
 
-
-
 	subscriptions = append(subscriptions, models.SubscriptionData{
-		Coin:           60,
-		Address:        "testAddr2",
+		Coin:    60,
+		Address: "testAddr2",
 	})
 
 	subscriptions = append(subscriptions, models.SubscriptionData{
-		Coin:           714,
-		Address:        "testAddr2",
+		Coin:    714,
+		Address: "testAddr2",
 	})
 
 	subscriptions = append(subscriptions, models.SubscriptionData{
-		Coin:           144,
-		Address:        "testAddr2",
+		Coin:    144,
+		Address: "testAddr2",
 	})
 
-	assert.Nil(t, db.AddSubscriptions(guid, subscriptions))
+	assert.Nil(t, db.AddSubscriptions(id, subscriptions))
 
 	subs2N60, err := db.GetSubscriptionData(60, []string{"testAddr2"})
 	assert.Nil(t, err)
@@ -157,7 +155,7 @@ func TestDb_FindSubscriptions(t *testing.T) {
 	setup.CleanupPgContainer()
 
 	var subscriptionsA []blockatlas.Subscription
-	guid :=  "testGuid"
+	id := uint(1)
 	subscriptionsA = append(subscriptionsA, blockatlas.Subscription{
 		Coin:    60,
 		Address: "etherAddress",
@@ -183,15 +181,15 @@ func TestDb_FindSubscriptions(t *testing.T) {
 		Address: "ETCAddress",
 	})
 
-	assert.Nil(t, db.AddSubscriptions(guid, subscriber.ToSubscriptionData(subscriptionsA)))
+	assert.Nil(t, db.AddSubscriptions(id, subscriber.ToSubscriptionData(subscriptionsA)))
 
 	var subscriptionsB []blockatlas.Subscription
 
 	for _, sub := range subscriptionsA {
-		sub.GUID = "testGuidB"
+		sub.Id = uint(2)
 		subscriptionsB = append(subscriptionsB, sub)
 	}
-	assert.Nil(t, db.AddSubscriptions("testGuidB", subscriber.ToSubscriptionData(subscriptionsB)))
+	assert.Nil(t, db.AddSubscriptions(2, subscriber.ToSubscriptionData(subscriptionsB)))
 
 	returnedSubs, err := db.GetSubscriptionData(60, []string{"etherAddress"})
 	assert.Nil(t, err)
@@ -219,23 +217,23 @@ func TestDb_DeleteSubscriptions(t *testing.T) {
 
 	var subscriptions []models.SubscriptionData
 
-	guid := "testGuid"
+	id := uint(1)
 	subscriptions = append(subscriptions, models.SubscriptionData{
-		Coin:           60,
-		Address:        "testAddr",
+		Coin:    60,
+		Address: "testAddr",
 	})
 
 	subscriptions = append(subscriptions, models.SubscriptionData{
-		Coin:           714,
-		Address:        "testAddr2",
+		Coin:    714,
+		Address: "testAddr2",
 	})
 
 	subscriptions = append(subscriptions, models.SubscriptionData{
-		Coin:           144,
-		Address:        "testAddr3",
+		Coin:    144,
+		Address: "testAddr3",
 	})
 
-	assert.Nil(t, db.AddSubscriptions(guid, subscriptions))
+	assert.Nil(t, db.AddSubscriptions(id, subscriptions))
 
 	subs60, err := db.GetSubscriptionData(60, []string{"testAddr"})
 	assert.Nil(t, err)
@@ -290,16 +288,16 @@ func TestDb_DuplicateEntries(t *testing.T) {
 	setup.CleanupPgContainer()
 	var subscriptions []models.SubscriptionData
 
-	guid :=  "testGuid"
+	id := uint(1)
 
 	for i := 0; i < 10; i++ {
 		subscriptions = append(subscriptions, models.SubscriptionData{
-			Coin:           60,
-			Address:        "testAddr",
+			Coin:    60,
+			Address: "testAddr",
 		})
 	}
 
-	assert.Nil(t, db.AddSubscriptions(guid, subscriptions))
+	assert.Nil(t, db.AddSubscriptions(id, subscriptions))
 
 	subs, err := db.GetSubscriptionData(60, []string{"testAddr"})
 	assert.Nil(t, err)
