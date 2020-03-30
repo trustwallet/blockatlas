@@ -27,7 +27,7 @@ func (c Client) GetCollectibles(owner string, collectibleID string) (*Collection
 	if err != nil {
 		return nil, nil, err
 	}
-	collection := searchCollection(collections, collectibleID)
+	collection := SearchCollection(collections, collectibleID)
 	if collection == nil {
 		return nil, nil, errors.E("collectible not found", errors.TypePlatformClient,
 			errors.Params{"collectibleID": collectibleID})
@@ -57,7 +57,7 @@ func (c Client) GetCollectiblesV4(owner string, collectibleID string) ([]Collect
 	return page.Collectibles, err
 }
 
-func searchCollection(collections []Collection, collectibleID string) *Collection {
+func SearchCollection(collections []Collection, collectibleID string) *Collection {
 	for _, i := range collections {
 		if strings.EqualFold(i.Slug, collectibleID) {
 			return &i
