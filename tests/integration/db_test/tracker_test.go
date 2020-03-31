@@ -11,16 +11,16 @@ import (
 
 func TestDb_SetBlock(t *testing.T) {
 	setup.CleanupPgContainer(dbConn)
+	db := db.Instance{DB: *dbConn}
+	assert.Nil(t, db.SetLastParsedBlockNumber(60, 0))
 
-	assert.Nil(t, db.SetLastParsedBlockNumber(dbConn, 60, 0))
-
-	block, err := db.GetLastParsedBlockNumber(dbConn, 60)
+	block, err := db.GetLastParsedBlockNumber(60)
 	assert.Nil(t, err)
 	assert.Equal(t, block, int64(0))
 
-	assert.Nil(t, db.SetLastParsedBlockNumber(dbConn, 60, 110))
+	assert.Nil(t, db.SetLastParsedBlockNumber(60, 110))
 
-	newBlock, err := db.GetLastParsedBlockNumber(dbConn, 60)
+	newBlock, err := db.GetLastParsedBlockNumber(60)
 	assert.Nil(t, err)
 	assert.Equal(t, newBlock, int64(110))
 }

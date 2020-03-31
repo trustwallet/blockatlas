@@ -52,8 +52,9 @@ func main() {
 		logger.Fatal(err)
 	}
 	ctx, cancel := context.WithCancel(context.Background())
+	dbInstance := db.Instance{DB: *dbConn}
 
-	go mq.Subscriptions.RunConsumerWithCancelAndDbConn(subscriber.RunSubscriber, dbConn, ctx)
+	go mq.Subscriptions.RunConsumerWithCancelAndDbConn(subscriber.RunSubscriber, &dbInstance, ctx)
 
 	internal.SetupGracefulShutdownForObserver(cancel)
 }

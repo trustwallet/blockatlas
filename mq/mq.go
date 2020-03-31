@@ -2,8 +2,8 @@ package mq
 
 import (
 	"context"
-	"github.com/jinzhu/gorm"
 	"github.com/streadway/amqp"
+	"github.com/trustwallet/blockatlas/db"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"time"
 )
@@ -17,7 +17,7 @@ var (
 type (
 	Queue              string
 	Consumer           func(amqp.Delivery)
-	ConsumerWithDbConn func(*gorm.DB, amqp.Delivery)
+	ConsumerWithDbConn func(*db.Instance, amqp.Delivery)
 	MessageChannel     <-chan amqp.Delivery
 )
 
@@ -60,7 +60,7 @@ func (q Queue) Publish(body []byte) error {
 	})
 }
 
-func RunConsumerForChannelWithCancelAndDbConn(consumer ConsumerWithDbConn, messageChannel MessageChannel, dbConn *gorm.DB, ctx context.Context) {
+func RunConsumerForChannelWithCancelAndDbConn(consumer ConsumerWithDbConn, messageChannel MessageChannel, dbInstance *db.Instance, ctx context.Context) {
 	for {
 		select {
 		case <-ctx.Done():
@@ -70,7 +70,7 @@ func RunConsumerForChannelWithCancelAndDbConn(consumer ConsumerWithDbConn, messa
 			if message.Body == nil {
 				continue
 			}
-			go consumer(dbConn, message)
+			go consumer(dbInstance, message)
 		}
 	}
 }
@@ -124,7 +124,7 @@ func (q Queue) RunConsumerWithCancel(consumer Consumer, ctx context.Context) {
 	}
 }
 
-func (q Queue) RunConsumerWithCancelAndDbConn(consumer ConsumerWithDbConn, dbConn *gorm.DB, ctx context.Context) {
+func (q Queue) RunConsumerWithCancelAndDbConn(consumer ConsumerWithDbConn, dbInstance *db.Instance, ctx context.Context) {
 	messageChannel := q.GetMessageChannel()
 	for {
 		select {
@@ -135,7 +135,7 @@ func (q Queue) RunConsumerWithCancelAndDbConn(consumer ConsumerWithDbConn, dbCon
 			if message.Body == nil {
 				continue
 			}
-			go consumer(dbConn, message)
+			go consumer(dbInstance, message)
 		}
 	}
 }

@@ -56,8 +56,9 @@ func main() {
 	defer mq.Close()
 
 	ctx, cancel := context.WithCancel(context.Background())
+	dbInstance := db.Instance{DB: *dbConn}
 
-	go mq.RawTransactions.RunConsumerWithCancelAndDbConn(notifier.RunNotifier, dbConn, ctx)
+	go mq.RawTransactions.RunConsumerWithCancelAndDbConn(notifier.RunNotifier, &dbInstance, ctx)
 
 	internal.SetupGracefulShutdownForObserver(cancel)
 }

@@ -21,6 +21,8 @@ import (
 
 func TestSubscriberAddSubscription(t *testing.T) {
 	setup.CleanupPgContainer(dbConn)
+	db := db.Instance{DB: *dbConn}
+
 	_, goFile, _, _ := runtime.Caller(0)
 	testFilePathGiven := filepath.Join(filepath.Dir(goFile), "data", "given_subscriptions_added.json")
 	testFileGiven, err := ioutil.ReadFile(testFilePathGiven)
@@ -51,13 +53,13 @@ func TestSubscriberAddSubscription(t *testing.T) {
 
 		ctx, cancel := context.WithCancel(context.Background())
 
-		go mq.RunConsumerForChannelWithCancelAndDbConn(subscriber.RunSubscriber, subscriptionChannel, dbConn, ctx)
+		go mq.RunConsumerForChannelWithCancelAndDbConn(subscriber.RunSubscriber, subscriptionChannel, dbInstance, ctx)
 		time.Sleep(time.Second * 2)
 		cancel()
 	}
 
 	for _, wanted := range wantedEvents {
-		result, err := db.GetSubscriptionData(dbConn, wanted.Coin, []string{wanted.Address})
+		result, err := db.GetSubscriptionData(wanted.Coin, []string{wanted.Address})
 		assert.Nil(t, err)
 		assert.Equal(t, result[0].SubscriptionId, wanted.Id)
 		assert.Equal(t, result[0].Coin, wanted.Coin)
@@ -67,7 +69,7 @@ func TestSubscriberAddSubscription(t *testing.T) {
 
 func TestSubscriber_UpdateSubscription(t *testing.T) {
 	setup.CleanupPgContainer(dbConn)
-
+	db := db.Instance{DB: *dbConn}
 	_, goFile, _, _ := runtime.Caller(0)
 	testFilePathGiven := filepath.Join(filepath.Dir(goFile), "data", "given_subscriptions_deleted.json")
 	testFileGiven, err := ioutil.ReadFile(testFilePathGiven)
@@ -93,16 +95,16 @@ func TestSubscriber_UpdateSubscription(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	db.AddSubscriptions(dbConn, 10, []models.SubscriptionData{
+	db.AddSubscriptions(10, []models.SubscriptionData{
 		{Coin: 61, Address: "0x0000000000000000000000000000000000000000", SubscriptionId: 10},
 	})
-	db.AddSubscriptions(dbConn, 1, []models.SubscriptionData{
+	db.AddSubscriptions(1, []models.SubscriptionData{
 		{Coin: 62, Address: "0x0000000000000000000000000000000000000000", SubscriptionId: 1},
 	})
-	db.AddSubscriptions(dbConn, 2, []models.SubscriptionData{
+	db.AddSubscriptions(2, []models.SubscriptionData{
 		{Coin: 63, Address: "0x0000000000000000000000000000000000000000", SubscriptionId: 2},
 	})
-	db.AddSubscriptions(dbConn, 3, []models.SubscriptionData{
+	db.AddSubscriptions(3, []models.SubscriptionData{
 		{Coin: 64, Address: "0x0000000000000000000000000000000000000000", SubscriptionId: 3},
 	})
 
@@ -115,13 +117,13 @@ func TestSubscriber_UpdateSubscription(t *testing.T) {
 
 		ctx, cancel := context.WithCancel(context.Background())
 
-		go mq.RunConsumerForChannelWithCancelAndDbConn(subscriber.RunSubscriber, subscriptionChannel, dbConn, ctx)
+		go mq.RunConsumerForChannelWithCancelAndDbConn(subscriber.RunSubscriber, subscriptionChannel, dbInstance, ctx)
 		time.Sleep(time.Second)
 		cancel()
 	}
 
 	for _, wanted := range wantedEvents {
-		result, err := db.GetSubscriptionData(dbConn, wanted.Coin, []string{wanted.Address})
+		result, err := db.GetSubscriptionData(wanted.Coin, []string{wanted.Address})
 		assert.Nil(t, err)
 		assert.Equal(t, result[0].SubscriptionId, wanted.Id)
 		assert.Equal(t, result[0].Coin, wanted.Coin)
@@ -129,19 +131,19 @@ func TestSubscriber_UpdateSubscription(t *testing.T) {
 
 	}
 
-	abs61, err := db.GetSubscriptionData(dbConn, 61, []string{"0x0000000000000000000000000000000000000000"})
+	abs61, err := db.GetSubscriptionData(61, []string{"0x0000000000000000000000000000000000000000"})
 	assert.Nil(t, err)
 	assert.Len(t, abs61, 0)
 
-	abs62, err := db.GetSubscriptionData(dbConn, 62, []string{"0x0000000000000000000000000000000000000000"})
+	abs62, err := db.GetSubscriptionData(62, []string{"0x0000000000000000000000000000000000000000"})
 	assert.Nil(t, err)
 	assert.Len(t, abs62, 0)
 
-	abs63, err := db.GetSubscriptionData(dbConn, 63, []string{"0x0000000000000000000000000000000000000000"})
+	abs63, err := db.GetSubscriptionData(63, []string{"0x0000000000000000000000000000000000000000"})
 	assert.Nil(t, err)
 	assert.Len(t, abs63, 0)
 
-	abs64, err := db.GetSubscriptionData(dbConn, 64, []string{"0x0000000000000000000000000000000000000000"})
+	abs64, err := db.GetSubscriptionData(64, []string{"0x0000000000000000000000000000000000000000"})
 	assert.Nil(t, err)
 	assert.Len(t, abs64, 0)
 }

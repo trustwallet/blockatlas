@@ -23,7 +23,7 @@ func TestParserFetchAndPublishBlock_NormalCase(t *testing.T) {
 	stopChan := make(chan struct{}, 1)
 
 	params := setupParser(stopChan)
-	params.DbConn = dbConn
+	params.DBInstance = dbInstance
 
 	ctx, cancel := context.WithCancel(context.Background())
 

@@ -66,7 +66,7 @@ func TestTransaction_Status(t *testing.T) {
 		in   Transaction
 		out  int64
 	}{
-		{"Delegation", Transaction{Time: "2020-02-04T12:27:59Z",}, 1580819279},
+		{"Delegation", Transaction{Time: "2020-02-04T12:27:59Z"}, 1580819279},
 	}
 
 	for _, tt := range testsBlockTimestamp {
@@ -80,10 +80,10 @@ func TestTransaction_Status(t *testing.T) {
 		in   Transaction
 		out  blockatlas.TransactionType
 	}{
-		{"Type should be transaction", Transaction{Type: "transaction",}, blockatlas.TxTransfer},
-		{"Type should be delegation", Transaction{Type: "delegation",}, blockatlas.TxAnyAction},
-		{"Type unsupported", Transaction{Type: "bake",}, ""},
-		{"Type endorsement", Transaction{Type: "endorsement",}, ""},
+		{"Type should be transaction", Transaction{Type: "transaction"}, blockatlas.TxTransfer},
+		{"Type should be delegation", Transaction{Type: "delegation"}, blockatlas.TxAnyAction},
+		{"Type unsupported", Transaction{Type: "bake"}, ""},
+		{"Type endorsement", Transaction{Type: "endorsement"}, ""},
 	}
 
 	for _, tt := range testsKind {

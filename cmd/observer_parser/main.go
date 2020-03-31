@@ -101,6 +101,7 @@ func main() {
 		}
 
 		ctx, cancel := context.WithCancel(context.Background())
+		dbInstance := db.Instance{DB: *dbConn}
 
 		coinCancel[coin.Handle] = cancel
 
@@ -113,7 +114,7 @@ func main() {
 			MaxBacklogBlocks:      maxBackLogBlocks,
 			StopChannel:           stopChannel,
 			TxBatchLimit:          txsBatchLimit,
-			DbConn:                dbConn,
+			DBInstance:            &dbInstance,
 		}
 
 		go parser.RunParser(params)

@@ -2,7 +2,6 @@ package subscriber
 
 import (
 	"encoding/json"
-	"github.com/jinzhu/gorm"
 	"github.com/streadway/amqp"
 	"github.com/trustwallet/blockatlas/db"
 	"github.com/trustwallet/blockatlas/db/models"
@@ -16,7 +15,7 @@ const (
 	UpdateSubscription blockatlas.SubscriptionOperation = "UpdateSubscription"
 )
 
-func RunSubscriber(dbConn *gorm.DB, delivery amqp.Delivery) {
+func RunSubscriber(dbInstance *db.Instance, delivery amqp.Delivery) {
 	var event blockatlas.SubscriptionEvent
 	err := json.Unmarshal(delivery.Body, &event)
 	if err != nil {
@@ -31,19 +30,19 @@ func RunSubscriber(dbConn *gorm.DB, delivery amqp.Delivery) {
 
 	switch event.Operation {
 	case UpdateSubscription:
-		err := db.AddToExistingSubscription(dbConn, id, ToSubscriptionData(subscriptions))
+		err := dbInstance.AddToExistingSubscription(id, ToSubscriptionData(subscriptions))
 		if err != nil {
 			logger.Error(err, params)
 		}
 		logger.Info("Updated", params)
 	case AddSubscription:
-		err = db.AddSubscriptions(dbConn, id, ToSubscriptionData(subscriptions))
+		err = dbInstance.AddSubscriptions(id, ToSubscriptionData(subscriptions))
 		if err != nil {
 			logger.Error(err, params)
 		}
 		logger.Info("Added", params)
 	case DeleteSubscription:
-		err := db.DeleteAllSubscriptions(dbConn, id)
+		err := dbInstance.DeleteAllSubscriptions(id)
 		if err != nil {
 			logger.Error(err, params)
 		}

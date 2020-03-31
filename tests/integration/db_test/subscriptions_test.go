@@ -15,6 +15,8 @@ import (
 func TestDb_AddSubscriptions(t *testing.T) {
 	setup.CleanupPgContainer(dbConn)
 	var subscriptions []models.SubscriptionData
+	db := db.Instance{DB: *dbConn}
+
 	id := uint(1)
 	subscriptions = append(subscriptions, models.SubscriptionData{
 		SubscriptionId: id,
@@ -34,9 +36,9 @@ func TestDb_AddSubscriptions(t *testing.T) {
 		Address:        "testAddr3",
 	})
 
-	assert.Nil(t, db.AddSubscriptions(dbConn, id, subscriptions))
+	assert.Nil(t, db.AddSubscriptions(id, subscriptions))
 
-	subs, err := db.GetSubscriptionData(dbConn, 60, []string{"testAddr"})
+	subs, err := db.GetSubscriptionData(60, []string{"testAddr"})
 	assert.Nil(t, err)
 	assert.NotNil(t, subs)
 	assert.Equal(t, 1, len(subs))
@@ -44,7 +46,7 @@ func TestDb_AddSubscriptions(t *testing.T) {
 	assert.Equal(t, subscriptions[0].Coin, subs[0].Coin)
 	assert.Equal(t, subscriptions[0].Address, subs[0].Address)
 
-	subs, err = db.GetSubscriptionData(dbConn, 61, []string{"testAddr2"})
+	subs, err = db.GetSubscriptionData(61, []string{"testAddr2"})
 	assert.Nil(t, err)
 	assert.NotNil(t, subs)
 	assert.Equal(t, 1, len(subs))
@@ -52,7 +54,7 @@ func TestDb_AddSubscriptions(t *testing.T) {
 	assert.Equal(t, subscriptions[1].Coin, subs[0].Coin)
 	assert.Equal(t, subscriptions[1].Address, subs[0].Address)
 
-	subs, err = db.GetSubscriptionData(dbConn, 62, []string{"testAddr3"})
+	subs, err = db.GetSubscriptionData(62, []string{"testAddr3"})
 	assert.Nil(t, err)
 	assert.NotNil(t, subs)
 	assert.Equal(t, 1, len(subs))
@@ -63,7 +65,7 @@ func TestDb_AddSubscriptions(t *testing.T) {
 
 func TestDb_AddSubscriptionsWithRewrite(t *testing.T) {
 	setup.CleanupPgContainer(dbConn)
-
+	db := db.Instance{DB: *dbConn}
 	id := uint(1)
 
 	var subscriptions []models.SubscriptionData
@@ -85,9 +87,9 @@ func TestDb_AddSubscriptionsWithRewrite(t *testing.T) {
 		Address:        "testAddr",
 	})
 
-	assert.Nil(t, db.AddSubscriptions(dbConn, id, subscriptions))
+	assert.Nil(t, db.AddSubscriptions(id, subscriptions))
 
-	subs60, err := db.GetSubscriptionData(dbConn, 60, []string{"testAddr"})
+	subs60, err := db.GetSubscriptionData(60, []string{"testAddr"})
 	assert.Nil(t, err)
 	assert.NotNil(t, subs60)
 	assert.Equal(t, 1, len(subs60))
@@ -95,7 +97,7 @@ func TestDb_AddSubscriptionsWithRewrite(t *testing.T) {
 	assert.Equal(t, subscriptions[0].Coin, subs60[0].Coin)
 	assert.Equal(t, subscriptions[0].Address, subs60[0].Address)
 
-	subs714, err := db.GetSubscriptionData(dbConn, 714, []string{"testAddr"})
+	subs714, err := db.GetSubscriptionData(714, []string{"testAddr"})
 	assert.Nil(t, err)
 	assert.NotNil(t, subs714)
 	assert.Equal(t, 1, len(subs714))
@@ -103,7 +105,7 @@ func TestDb_AddSubscriptionsWithRewrite(t *testing.T) {
 	assert.Equal(t, subscriptions[1].Coin, subs714[0].Coin)
 	assert.Equal(t, subscriptions[1].Address, subs714[0].Address)
 
-	subs144, err := db.GetSubscriptionData(dbConn, 144, []string{"testAddr"})
+	subs144, err := db.GetSubscriptionData(144, []string{"testAddr"})
 	assert.Nil(t, err)
 	assert.NotNil(t, subs144)
 	assert.Equal(t, 1, len(subs144))
@@ -129,9 +131,9 @@ func TestDb_AddSubscriptionsWithRewrite(t *testing.T) {
 		Address:        "testAddr2",
 	})
 
-	assert.Nil(t, db.AddSubscriptions(dbConn, id, subscriptions))
+	assert.Nil(t, db.AddSubscriptions(id, subscriptions))
 
-	subs2N60, err := db.GetSubscriptionData(dbConn, 60, []string{"testAddr2"})
+	subs2N60, err := db.GetSubscriptionData(60, []string{"testAddr2"})
 	assert.Nil(t, err)
 	assert.Nil(t, err)
 	assert.NotNil(t, subs2N60)
@@ -140,7 +142,7 @@ func TestDb_AddSubscriptionsWithRewrite(t *testing.T) {
 	assert.Equal(t, subscriptions[3].Coin, subs2N60[0].Coin)
 	assert.Equal(t, subscriptions[3].Address, subs2N60[0].Address)
 
-	subs2N714, err := db.GetSubscriptionData(dbConn, 714, []string{"testAddr2"})
+	subs2N714, err := db.GetSubscriptionData(714, []string{"testAddr2"})
 	assert.Nil(t, err)
 	assert.Nil(t, err)
 	assert.NotNil(t, subs2N714)
@@ -149,7 +151,7 @@ func TestDb_AddSubscriptionsWithRewrite(t *testing.T) {
 	assert.Equal(t, subscriptions[4].Coin, subs2N714[0].Coin)
 	assert.Equal(t, subscriptions[4].Address, subs2N714[0].Address)
 
-	subs2N114, err := db.GetSubscriptionData(dbConn, 144, []string{"testAddr2"})
+	subs2N114, err := db.GetSubscriptionData(144, []string{"testAddr2"})
 	assert.Nil(t, err)
 	assert.Nil(t, err)
 	assert.NotNil(t, subs2N114)
@@ -161,6 +163,7 @@ func TestDb_AddSubscriptionsWithRewrite(t *testing.T) {
 
 func TestDb_FindSubscriptions(t *testing.T) {
 	setup.CleanupPgContainer(dbConn)
+	db := db.Instance{DB: *dbConn}
 
 	var subscriptionsA []blockatlas.Subscription
 	id := uint(1)
@@ -194,7 +197,7 @@ func TestDb_FindSubscriptions(t *testing.T) {
 		Address: "ETCAddress",
 	})
 
-	assert.Nil(t, db.AddSubscriptions(dbConn, id, subscriber.ToSubscriptionData(subscriptionsA)))
+	assert.Nil(t, db.AddSubscriptions(id, subscriber.ToSubscriptionData(subscriptionsA)))
 
 	var subscriptionsB []blockatlas.Subscription
 
@@ -202,32 +205,32 @@ func TestDb_FindSubscriptions(t *testing.T) {
 		sub.Id = uint(2)
 		subscriptionsB = append(subscriptionsB, sub)
 	}
-	assert.Nil(t, db.AddSubscriptions(dbConn, 2, subscriber.ToSubscriptionData(subscriptionsB)))
+	assert.Nil(t, db.AddSubscriptions(2, subscriber.ToSubscriptionData(subscriptionsB)))
 
-	returnedSubs, err := db.GetSubscriptionData(dbConn, 60, []string{"etherAddress"})
+	returnedSubs, err := db.GetSubscriptionData(60, []string{"etherAddress"})
 	assert.Nil(t, err)
 	assert.Equal(t, 2, len(returnedSubs))
 
-	returnedSubs, err = db.GetSubscriptionData(dbConn, 714, []string{"binanceAddress"})
+	returnedSubs, err = db.GetSubscriptionData(714, []string{"binanceAddress"})
 	assert.Nil(t, err)
 	assert.Equal(t, 2, len(returnedSubs))
 
-	returnedSubs, err = db.GetSubscriptionData(dbConn, 144, []string{"XLMAddress"})
+	returnedSubs, err = db.GetSubscriptionData(144, []string{"XLMAddress"})
 	assert.Nil(t, err)
 	assert.Equal(t, 2, len(returnedSubs))
 
-	returnedSubs, err = db.GetSubscriptionData(dbConn, 148, []string{"AtomAddress"})
+	returnedSubs, err = db.GetSubscriptionData(148, []string{"AtomAddress"})
 	assert.Nil(t, err)
 	assert.Equal(t, 2, len(returnedSubs))
 
-	returnedSubs, err = db.GetSubscriptionData(dbConn, 61, []string{"ETCAddress"})
+	returnedSubs, err = db.GetSubscriptionData(61, []string{"ETCAddress"})
 	assert.Nil(t, err)
 	assert.Equal(t, 2, len(returnedSubs))
 }
 
 func TestDb_DeleteSubscriptions(t *testing.T) {
 	setup.CleanupPgContainer(dbConn)
-
+	db := db.Instance{DB: *dbConn}
 	var subscriptions []models.SubscriptionData
 
 	id := uint(1)
@@ -249,9 +252,9 @@ func TestDb_DeleteSubscriptions(t *testing.T) {
 		Address:        "testAddr3",
 	})
 
-	assert.Nil(t, db.AddSubscriptions(dbConn, id, subscriptions))
+	assert.Nil(t, db.AddSubscriptions(id, subscriptions))
 
-	subs60, err := db.GetSubscriptionData(dbConn, 60, []string{"testAddr"})
+	subs60, err := db.GetSubscriptionData(60, []string{"testAddr"})
 	assert.Nil(t, err)
 	assert.NotNil(t, subs60)
 	assert.Equal(t, 1, len(subs60))
@@ -259,7 +262,7 @@ func TestDb_DeleteSubscriptions(t *testing.T) {
 	assert.Equal(t, subscriptions[0].Coin, subs60[0].Coin)
 	assert.Equal(t, subscriptions[0].Address, subs60[0].Address)
 
-	subs714, err := db.GetSubscriptionData(dbConn, 714, []string{"testAddr2"})
+	subs714, err := db.GetSubscriptionData(714, []string{"testAddr2"})
 	assert.Nil(t, err)
 	assert.NotNil(t, subs714)
 	assert.Equal(t, 1, len(subs714))
@@ -267,7 +270,7 @@ func TestDb_DeleteSubscriptions(t *testing.T) {
 	assert.Equal(t, subscriptions[1].Coin, subs714[0].Coin)
 	assert.Equal(t, subscriptions[1].Address, subs714[0].Address)
 
-	subs144, err := db.GetSubscriptionData(dbConn, 144, []string{"testAddr3"})
+	subs144, err := db.GetSubscriptionData(144, []string{"testAddr3"})
 	assert.Nil(t, err)
 	assert.NotNil(t, subs144)
 	assert.Equal(t, 1, len(subs144))
@@ -277,9 +280,9 @@ func TestDb_DeleteSubscriptions(t *testing.T) {
 
 	subsToDel := []models.SubscriptionData{subscriptions[0]}
 
-	assert.Nil(t, db.DeleteSubscriptions(dbConn, subsToDel))
+	assert.Nil(t, db.DeleteSubscriptions(subsToDel))
 
-	subs714N2, err := db.GetSubscriptionData(dbConn, 714, []string{"testAddr2"})
+	subs714N2, err := db.GetSubscriptionData(714, []string{"testAddr2"})
 	assert.Nil(t, err)
 	assert.NotNil(t, subs714N2)
 	assert.Equal(t, 1, len(subs714N2))
@@ -287,7 +290,7 @@ func TestDb_DeleteSubscriptions(t *testing.T) {
 	assert.Equal(t, subscriptions[1].Coin, subs714N2[0].Coin)
 	assert.Equal(t, subscriptions[1].Address, subs714N2[0].Address)
 
-	subs144N2, err := db.GetSubscriptionData(dbConn, 144, []string{"testAddr3"})
+	subs144N2, err := db.GetSubscriptionData(144, []string{"testAddr3"})
 	assert.Nil(t, err)
 	assert.NotNil(t, subs144N2)
 	assert.Equal(t, 1, len(subs144N2))
@@ -295,14 +298,14 @@ func TestDb_DeleteSubscriptions(t *testing.T) {
 	assert.Equal(t, subscriptions[2].Coin, subs144N2[0].Coin)
 	assert.Equal(t, subscriptions[2].Address, subs144N2[0].Address)
 
-	subs60N2, err := db.GetSubscriptionData(dbConn, 60, []string{"testAddr"})
+	subs60N2, err := db.GetSubscriptionData(60, []string{"testAddr"})
 	assert.Nil(t, err)
 	assert.Len(t, subs60N2, 0)
 }
 
 func TestDeleteAll(t *testing.T) {
 	setup.CleanupPgContainer(dbConn)
-
+	db := db.Instance{DB: *dbConn}
 	var subscriptions []models.SubscriptionData
 
 	id := uint(1)
@@ -323,43 +326,44 @@ func TestDeleteAll(t *testing.T) {
 		Coin:           144,
 		Address:        "testAddr3",
 	})
-	assert.Nil(t, db.AddSubscriptions(dbConn, id, subscriptions))
+	assert.Nil(t, db.AddSubscriptions(id, subscriptions))
 
-	subs60, err := db.GetSubscriptionData(dbConn, 60, []string{"testAddr"})
+	subs60, err := db.GetSubscriptionData(60, []string{"testAddr"})
 	assert.Nil(t, err)
 	assert.Len(t, subs60, 1)
 
-	subs714, err := db.GetSubscriptionData(dbConn, 714, []string{"testAddr2"})
+	subs714, err := db.GetSubscriptionData(714, []string{"testAddr2"})
 	assert.Nil(t, err)
 	assert.Len(t, subs714, 1)
 
-	subs144, err := db.GetSubscriptionData(dbConn, 144, []string{"testAddr3"})
+	subs144, err := db.GetSubscriptionData(144, []string{"testAddr3"})
 	assert.Nil(t, err)
 	assert.Len(t, subs144, 1)
 
-	assert.Nil(t, db.DeleteAllSubscriptions(dbConn, 1))
+	assert.Nil(t, db.DeleteAllSubscriptions(1))
 
-	subs60, err = db.GetSubscriptionData(dbConn, 60, []string{"testAddr"})
+	subs60, err = db.GetSubscriptionData(60, []string{"testAddr"})
 	assert.Nil(t, err)
 	assert.Len(t, subs60, 0)
 
-	subs714, err = db.GetSubscriptionData(dbConn, 714, []string{"testAddr2"})
+	subs714, err = db.GetSubscriptionData(714, []string{"testAddr2"})
 	assert.Nil(t, err)
 	assert.Len(t, subs714, 0)
 
-	subs144, err = db.GetSubscriptionData(dbConn, 144, []string{"testAddr3"})
+	subs144, err = db.GetSubscriptionData(144, []string{"testAddr3"})
 	assert.Nil(t, err)
 	assert.Len(t, subs144, 0)
 
-	assert.Nil(t, db.AddSubscriptions(dbConn, id, subscriptions))
+	assert.Nil(t, db.AddSubscriptions(id, subscriptions))
 
-	subs60, err = db.GetSubscriptionData(dbConn, 60, []string{"testAddr"})
+	subs60, err = db.GetSubscriptionData(60, []string{"testAddr"})
 	assert.Nil(t, err)
 	assert.Len(t, subs60, 1)
 }
 
 func TestDb_DuplicateEntries(t *testing.T) {
 	setup.CleanupPgContainer(dbConn)
+	db := db.Instance{DB: *dbConn}
 	var subscriptions []models.SubscriptionData
 
 	id := uint(1)
@@ -372,9 +376,9 @@ func TestDb_DuplicateEntries(t *testing.T) {
 		})
 	}
 
-	assert.Nil(t, db.AddSubscriptions(dbConn, id, subscriptions))
+	assert.Nil(t, db.AddSubscriptions(id, subscriptions))
 
-	subs, err := db.GetSubscriptionData(dbConn, 60, []string{"testAddr"})
+	subs, err := db.GetSubscriptionData(60, []string{"testAddr"})
 	assert.Nil(t, err)
 	assert.NotNil(t, subs)
 	assert.Equal(t, 1, len(subs))
@@ -383,7 +387,7 @@ func TestDb_DuplicateEntries(t *testing.T) {
 
 func TestDb_FindSubscriptions_Multiple(t *testing.T) {
 	setup.CleanupPgContainer(dbConn)
-
+	db := db.Instance{DB: *dbConn}
 	var subscriptions []models.SubscriptionData
 	subscriptions = append(subscriptions, models.SubscriptionData{
 		Coin:    60,
@@ -392,13 +396,13 @@ func TestDb_FindSubscriptions_Multiple(t *testing.T) {
 
 	for i := 1; i < 6; i++ {
 		subscriptions[0].SubscriptionId = uint(i)
-		assert.Nil(t, db.AddSubscriptions(dbConn, uint(i), subscriptions))
+		assert.Nil(t, db.AddSubscriptions(uint(i), subscriptions))
 	}
 
 	subscriptions[0].SubscriptionId = uint(1)
-	assert.Nil(t, db.AddSubscriptions(dbConn, uint(1), subscriptions))
+	assert.Nil(t, db.AddSubscriptions(uint(1), subscriptions))
 
-	subs, err := db.GetSubscriptionData(dbConn, 60, []string{"testAddr"})
+	subs, err := db.GetSubscriptionData(60, []string{"testAddr"})
 	assert.Nil(t, err)
 	assert.Equal(t, 5, len(subs))
 
@@ -409,7 +413,7 @@ func TestDb_FindSubscriptions_Multiple(t *testing.T) {
 
 func TestDb_AddToExisting(t *testing.T) {
 	setup.CleanupPgContainer(dbConn)
-
+	db := db.Instance{DB: *dbConn}
 	var subscriptions []models.SubscriptionData
 	subscriptions = append(subscriptions, models.SubscriptionData{
 		Coin:    60,
@@ -417,29 +421,29 @@ func TestDb_AddToExisting(t *testing.T) {
 	})
 
 	subscriptions[0].SubscriptionId = uint(1)
-	assert.Nil(t, db.AddSubscriptions(dbConn, uint(1), subscriptions))
+	assert.Nil(t, db.AddSubscriptions(uint(1), subscriptions))
 
-	subs, err := db.GetSubscriptionData(dbConn, 60, []string{"testAddr"})
+	subs, err := db.GetSubscriptionData(60, []string{"testAddr"})
 	assert.Nil(t, err)
 	assert.Equal(t, 1, len(subs))
 
 	assert.Equal(t, uint(1), subs[0].SubscriptionId)
 
-	assert.Nil(t, db.AddToExistingSubscription(dbConn, uint(1), subscriptions))
+	assert.Nil(t, db.AddToExistingSubscription(uint(1), subscriptions))
 
-	subs2, err2 := db.GetSubscriptionData(dbConn, 60, []string{"testAddr"})
+	subs2, err2 := db.GetSubscriptionData(60, []string{"testAddr"})
 	assert.Nil(t, err2)
 	assert.Equal(t, 1, len(subs2))
 
 	assert.Equal(t, uint(1), subs2[0].SubscriptionId)
 
-	assert.Nil(t, db.AddToExistingSubscription(dbConn, uint(2), subscriptions))
-	assert.Nil(t, db.AddToExistingSubscription(dbConn, uint(1), subscriptions))
+	assert.Nil(t, db.AddToExistingSubscription(uint(2), subscriptions))
+	assert.Nil(t, db.AddToExistingSubscription(uint(1), subscriptions))
 
 	for i := 1; i < 2; i++ {
-		assert.Nil(t, db.AddToExistingSubscription(dbConn, uint(i), subscriptions))
+		assert.Nil(t, db.AddToExistingSubscription(uint(i), subscriptions))
 	}
-	assert.NotNil(t, db.AddToExistingSubscription(dbConn, uint(0), subscriptions))
+	assert.NotNil(t, db.AddToExistingSubscription(uint(0), subscriptions))
 
 }
 

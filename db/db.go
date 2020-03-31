@@ -9,6 +9,10 @@ import (
 	"time"
 )
 
+type Instance struct {
+	DB gorm.DB
+}
+
 func Setup(uri string) (*gorm.DB, error) {
 	dbConn, err := gorm.Open("postgres", uri)
 	if err != nil {
