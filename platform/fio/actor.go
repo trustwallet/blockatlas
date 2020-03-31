@@ -7,7 +7,7 @@ import (
 
 func actorFromPublicKeyOrActor(addressOrActor string) string {
 	len := len(addressOrActor)
-	if len >= 51 && len <= 55 {
+	if len >= 51 && len <= 55 && addressOrActor[:3] == "FIO" {
 		// assume public key string
 		pkBytes, err := bytesFromPublicKeyString(addressOrActor)
 		if err != nil {
