@@ -40,7 +40,7 @@ func NormalizeTx(srcTx Transaction, address string) (blockatlas.Tx, bool) {
 		From:   srcTx.Sender,
 		ID:     srcTx.Hash,
 		Status: srcTx.Status(),
-		To:     srcTx.Receiver,
+		To:     srcTx.GetReceiver(),
 		Type:   srcTx.TransferType(),
 	}
 	if address != "" {
