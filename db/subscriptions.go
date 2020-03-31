@@ -64,14 +64,20 @@ func AddToExistingSubscription(id uint, subscriptions []models.SubscriptionData)
 		sub          = &models.Subscription{SubscriptionId: id}
 	)
 
-	if err := GormDb.Model(sub).Association("Data").Find(&existingData).Error; err != nil {
+	association := GormDb.Model(sub).Association("Data")
+
+	if err := association.Error; err != nil {
+		return err
+	}
+
+	if err := association.Find(&existingData).Error; err != nil {
 		return err
 	}
 
 	updateList, deleteList := getSubscriptionsToDeleteAndUpdate(existingData, subscriptions)
 
 	if len(updateList) > 0 {
-		if err := GormDb.Model(sub).Association("Data").Append(updateList).Error; err != nil {
+		if err := association.Append(updateList).Error; err != nil {
 			return err
 		}
 	}

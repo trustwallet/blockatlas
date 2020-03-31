@@ -436,9 +436,10 @@ func TestDb_AddToExisting(t *testing.T) {
 	assert.Nil(t, db.AddToExistingSubscription(uint(2), subscriptions))
 	assert.Nil(t, db.AddToExistingSubscription(uint(1), subscriptions))
 
-	for i := 0; i < 2; i++ {
+	for i := 1; i < 2; i++ {
 		assert.Nil(t, db.AddToExistingSubscription(uint(i), subscriptions))
 	}
+	assert.NotNil(t, db.AddToExistingSubscription(uint(0), subscriptions))
 
 }
 
