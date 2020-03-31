@@ -3,7 +3,6 @@
 package observer_test
 
 import (
-	"github.com/jinzhu/gorm"
 	"github.com/trustwallet/blockatlas/db"
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/tests/integration/setup"
@@ -15,12 +14,10 @@ import (
 var (
 	rawTransactionsChannel, transactionsChannel, subscriptionChannel mq.MessageChannel
 	dbInstance                                                       *db.Instance
-	dbConn                                                           *gorm.DB
 )
 
 func TestMain(m *testing.M) {
-	dbConn = setup.RunPgContainer()
-	dbInstance = &db.Instance{DB: *dbConn}
+	dbInstance = setup.RunPgContainer()
 	setup.RunMQContainer()
 	if err := mq.RawTransactions.Declare(); err != nil {
 		log.Fatal(err)

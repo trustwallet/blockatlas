@@ -32,19 +32,19 @@ var (
 	uri string
 )
 
-func runPgContainerAndInitConnection() (*gorm.DB, error) {
+func runPgContainerAndInitConnection() (*db.Instance, error) {
 	pool := runPgContainer()
 	var (
-		dbConn *gorm.DB
+		dbConn *db.Instance
 		err    error
 	)
 	if err := pool.Retry(func() error {
-		dbConn, err = db.Setup(uri)
+		dbConn, err = db.New(uri)
 		return err
 	}); err != nil {
 		return nil, err
 	}
-	autoMigrate(dbConn)
+	autoMigrate(dbConn.DB)
 
 	return dbConn, nil
 }

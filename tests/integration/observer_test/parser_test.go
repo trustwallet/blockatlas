@@ -19,7 +19,7 @@ import (
 )
 
 func TestParserFetchAndPublishBlock_NormalCase(t *testing.T) {
-	setup.CleanupPgContainer(dbConn)
+	setup.CleanupPgContainer(dbInstance.DB)
 	stopChan := make(chan struct{}, 1)
 
 	params := setupParser(stopChan)

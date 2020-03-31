@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"github.com/jinzhu/gorm"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/db"
 	"github.com/trustwallet/blockatlas/internal"
@@ -17,8 +16,8 @@ const (
 )
 
 var (
-	confPath string
-	dbConn   *gorm.DB
+	confPath   string
+	dbInstance *db.Instance
 )
 
 func init() {
@@ -41,14 +40,13 @@ func init() {
 		logger.Fatal(err)
 	}
 
-	var err error
-	dbConn, err = db.Setup(pgUri)
+	dbInstance, err := db.New(pgUri)
 	if err != nil {
 		logger.Fatal(err)
 	}
 
 	go mq.RestoreConnectionWorker(mqHost, mq.RawTransactions, time.Second*10)
-	go db.RestoreConnectionWorker(dbConn, time.Second*10, pgUri)
+	go db.RestoreConnectionWorker(dbInstance.DB, time.Second*10, pgUri)
 	time.Sleep(time.Millisecond)
 }
 
@@ -56,9 +54,8 @@ func main() {
 	defer mq.Close()
 
 	ctx, cancel := context.WithCancel(context.Background())
-	dbInstance := db.Instance{DB: *dbConn}
 
-	go mq.RawTransactions.RunConsumerWithCancelAndDbConn(notifier.RunNotifier, &dbInstance, ctx)
+	go mq.RawTransactions.RunConsumerWithCancelAndDbConn(notifier.RunNotifier, dbInstance, ctx)
 
 	internal.SetupGracefulShutdownForObserver(cancel)
 }

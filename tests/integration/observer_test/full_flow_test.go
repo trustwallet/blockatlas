@@ -8,7 +8,6 @@ import (
 	"github.com/streadway/amqp"
 	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas/coin"
-	"github.com/trustwallet/blockatlas/db"
 	"github.com/trustwallet/blockatlas/db/models"
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
@@ -25,9 +24,8 @@ var (
 )
 
 func TestFullFlow(t *testing.T) {
-	setup.CleanupPgContainer(dbConn)
-	db := db.Instance{DB: *dbConn}
-	err := db.AddSubscriptions(1, []models.SubscriptionData{{Coin: 60, Address: "testAddress", SubscriptionId: 1}})
+	setup.CleanupPgContainer(dbInstance.DB)
+	err := dbInstance.AddSubscriptions(1, []models.SubscriptionData{{Coin: 60, Address: "testAddress", SubscriptionId: 1}})
 	assert.Nil(t, err)
 
 	ctx, cancel := context.WithCancel(context.Background())
@@ -35,14 +33,14 @@ func TestFullFlow(t *testing.T) {
 	stopChan := make(chan struct{}, 1)
 
 	params := setupParserFull(stopChan)
-	params.DBInstance = &db
+	params.DBInstance = dbInstance
 	params.Ctx = ctx
 	params.Queue = mq.RawTransactions
 
 	go parser.RunParser(params)
 	time.Sleep(time.Second * 2)
 
-	go mq.RunConsumerForChannelWithCancelAndDbConn(notifier.RunNotifier, rawTransactionsChannel, &db, ctx)
+	go mq.RunConsumerForChannelWithCancelAndDbConn(notifier.RunNotifier, rawTransactionsChannel, dbInstance, ctx)
 	time.Sleep(time.Second * 5)
 
 	for i := 0; i < 11; i++ {

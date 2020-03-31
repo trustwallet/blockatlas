@@ -10,13 +10,13 @@ import (
 )
 
 type Instance struct {
-	DB gorm.DB
+	DB *gorm.DB
 }
 
-func Setup(uri string) (*gorm.DB, error) {
+func New(uri string) (*Instance, error) {
 	dbConn, err := gorm.Open("postgres", uri)
 	if err != nil {
-		return dbConn, err
+		return nil, err
 	}
 
 	dbConn.AutoMigrate(
@@ -24,8 +24,9 @@ func Setup(uri string) (*gorm.DB, error) {
 		&models.SubscriptionData{},
 		&models.Tracker{},
 	)
+	i := &Instance{DB: dbConn}
 
-	return dbConn, nil
+	return i, nil
 }
 
 func RestoreConnectionWorker(dbConn *gorm.DB, timeout time.Duration, uri string) {

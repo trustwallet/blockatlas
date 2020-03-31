@@ -1,7 +1,7 @@
 package setup
 
 import (
-	"github.com/jinzhu/gorm"
+	"github.com/trustwallet/blockatlas/db"
 	"log"
 )
 
@@ -17,7 +17,7 @@ func StopMQContainer() {
 	}
 }
 
-func RunPgContainer() *gorm.DB {
+func RunPgContainer() *db.Instance {
 	dbConn, err := runPgContainerAndInitConnection()
 	if err != nil {
 		log.Fatal(err)

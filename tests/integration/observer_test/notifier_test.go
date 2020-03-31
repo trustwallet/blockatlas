@@ -8,7 +8,6 @@ import (
 	"github.com/streadway/amqp"
 	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas/coin"
-	"github.com/trustwallet/blockatlas/db"
 	"github.com/trustwallet/blockatlas/db/models"
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
@@ -43,9 +42,9 @@ var (
 )
 
 func TestNotifier(t *testing.T) {
-	setup.CleanupPgContainer(dbConn)
-	db := db.Instance{DB: *dbConn}
-	err := db.AddSubscriptions(1, []models.SubscriptionData{{Coin: 714, Address: "tbnb1ttyn4csghfgyxreu7lmdu3lcplhqhxtzced45a", SubscriptionId: 1}})
+	setup.CleanupPgContainer(dbInstance.DB)
+
+	err := dbInstance.AddSubscriptions(1, []models.SubscriptionData{{Coin: 714, Address: "tbnb1ttyn4csghfgyxreu7lmdu3lcplhqhxtzced45a", SubscriptionId: 1}})
 	assert.Nil(t, err)
 
 	err = produceTxs(txs)
@@ -53,7 +52,7 @@ func TestNotifier(t *testing.T) {
 
 	ctx, cancel := context.WithCancel(context.Background())
 
-	go mq.RunConsumerForChannelWithCancelAndDbConn(notifier.RunNotifier, rawTransactionsChannel, &db, ctx)
+	go mq.RunConsumerForChannelWithCancelAndDbConn(notifier.RunNotifier, rawTransactionsChannel, dbInstance, ctx)
 	time.Sleep(time.Second * 3)
 	msg := transactionsChannel.GetMessage()
 	ConsumerToTestTransactions(msg, t)

@@ -6,7 +6,6 @@ import (
 	"context"
 	"encoding/json"
 	"github.com/stretchr/testify/assert"
-	"github.com/trustwallet/blockatlas/db"
 	"github.com/trustwallet/blockatlas/db/models"
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
@@ -20,8 +19,7 @@ import (
 )
 
 func TestSubscriberAddSubscription(t *testing.T) {
-	setup.CleanupPgContainer(dbConn)
-	db := db.Instance{DB: *dbConn}
+	setup.CleanupPgContainer(dbInstance.DB)
 
 	_, goFile, _, _ := runtime.Caller(0)
 	testFilePathGiven := filepath.Join(filepath.Dir(goFile), "data", "given_subscriptions_added.json")
@@ -59,7 +57,7 @@ func TestSubscriberAddSubscription(t *testing.T) {
 	}
 
 	for _, wanted := range wantedEvents {
-		result, err := db.GetSubscriptionData(wanted.Coin, []string{wanted.Address})
+		result, err := dbInstance.GetSubscriptionData(wanted.Coin, []string{wanted.Address})
 		assert.Nil(t, err)
 		assert.Equal(t, result[0].SubscriptionId, wanted.Id)
 		assert.Equal(t, result[0].Coin, wanted.Coin)
@@ -68,8 +66,7 @@ func TestSubscriberAddSubscription(t *testing.T) {
 }
 
 func TestSubscriber_UpdateSubscription(t *testing.T) {
-	setup.CleanupPgContainer(dbConn)
-	db := db.Instance{DB: *dbConn}
+	setup.CleanupPgContainer(dbInstance.DB)
 	_, goFile, _, _ := runtime.Caller(0)
 	testFilePathGiven := filepath.Join(filepath.Dir(goFile), "data", "given_subscriptions_deleted.json")
 	testFileGiven, err := ioutil.ReadFile(testFilePathGiven)
@@ -95,16 +92,16 @@ func TestSubscriber_UpdateSubscription(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	db.AddSubscriptions(10, []models.SubscriptionData{
+	dbInstance.AddSubscriptions(10, []models.SubscriptionData{
 		{Coin: 61, Address: "0x0000000000000000000000000000000000000000", SubscriptionId: 10},
 	})
-	db.AddSubscriptions(1, []models.SubscriptionData{
+	dbInstance.AddSubscriptions(1, []models.SubscriptionData{
 		{Coin: 62, Address: "0x0000000000000000000000000000000000000000", SubscriptionId: 1},
 	})
-	db.AddSubscriptions(2, []models.SubscriptionData{
+	dbInstance.AddSubscriptions(2, []models.SubscriptionData{
 		{Coin: 63, Address: "0x0000000000000000000000000000000000000000", SubscriptionId: 2},
 	})
-	db.AddSubscriptions(3, []models.SubscriptionData{
+	dbInstance.AddSubscriptions(3, []models.SubscriptionData{
 		{Coin: 64, Address: "0x0000000000000000000000000000000000000000", SubscriptionId: 3},
 	})
 
@@ -123,7 +120,7 @@ func TestSubscriber_UpdateSubscription(t *testing.T) {
 	}
 
 	for _, wanted := range wantedEvents {
-		result, err := db.GetSubscriptionData(wanted.Coin, []string{wanted.Address})
+		result, err := dbInstance.GetSubscriptionData(wanted.Coin, []string{wanted.Address})
 		assert.Nil(t, err)
 		assert.Equal(t, result[0].SubscriptionId, wanted.Id)
 		assert.Equal(t, result[0].Coin, wanted.Coin)
@@ -131,19 +128,19 @@ func TestSubscriber_UpdateSubscription(t *testing.T) {
 
 	}
 
-	abs61, err := db.GetSubscriptionData(61, []string{"0x0000000000000000000000000000000000000000"})
+	abs61, err := dbInstance.GetSubscriptionData(61, []string{"0x0000000000000000000000000000000000000000"})
 	assert.Nil(t, err)
 	assert.Len(t, abs61, 0)
 
-	abs62, err := db.GetSubscriptionData(62, []string{"0x0000000000000000000000000000000000000000"})
+	abs62, err := dbInstance.GetSubscriptionData(62, []string{"0x0000000000000000000000000000000000000000"})
 	assert.Nil(t, err)
 	assert.Len(t, abs62, 0)
 
-	abs63, err := db.GetSubscriptionData(63, []string{"0x0000000000000000000000000000000000000000"})
+	abs63, err := dbInstance.GetSubscriptionData(63, []string{"0x0000000000000000000000000000000000000000"})
 	assert.Nil(t, err)
 	assert.Len(t, abs63, 0)
 
-	abs64, err := db.GetSubscriptionData(64, []string{"0x0000000000000000000000000000000000000000"})
+	abs64, err := dbInstance.GetSubscriptionData(64, []string{"0x0000000000000000000000000000000000000000"})
 	assert.Nil(t, err)
 	assert.Len(t, abs64, 0)
 }
