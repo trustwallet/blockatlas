@@ -109,3 +109,11 @@ func (t *Transaction) Direction(address string) blockatlas.Direction {
 
 	return blockatlas.DirectionIncoming
 }
+
+func (t *Transaction) GetReceiver() string {
+	if t.Receiver != "" {
+		return t.Receiver
+	} else {
+		return t.Delegate
+	}
+}

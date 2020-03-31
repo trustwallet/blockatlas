@@ -128,4 +128,19 @@ func TestTransaction_Status(t *testing.T) {
 		})
 	}
 
+	testsGetReceiver := []struct {
+		name string
+		in   Transaction
+		out  string
+	}{
+		{"Should get receiver when no delegate", Transaction{Receiver: addr1, Delegate: ""}, addr1},
+		{"Should get receiver when delegate", Transaction{Receiver: "", Delegate: addr1}, addr1},
+	}
+
+	for _, tt := range testsGetReceiver {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.out, tt.in.GetReceiver())
+		})
+	}
+
 }
