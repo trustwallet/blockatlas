@@ -74,7 +74,7 @@ func buildAndPostMessage(blockTransactions blockatlas.TxSetMap, sub blockatlas.S
 		}
 		txJson, err := json.Marshal(action)
 		if err != nil {
-			logger.Panic(err)
+			logger.Panic(err, logger.Params{"coin": tx.Coin})
 		}
 
 		logParams := logger.Params{
