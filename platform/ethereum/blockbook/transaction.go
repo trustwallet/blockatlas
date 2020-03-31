@@ -1,6 +1,8 @@
 package blockbook
 
 import (
+	"strings"
+
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 )
@@ -10,7 +12,7 @@ func (c *Client) GetTransactions(address string, coinIndex uint) (blockatlas.TxP
 	if err != nil {
 		return nil, err
 	}
-	return normalizePage(page, address, coinIndex), nil
+	return normalizePage(page, address, "", coinIndex), nil
 }
 
 func (c *Client) GetTokenTxs(address, token string, coinIndex uint) (blockatlas.TxPage, error) {
@@ -18,78 +20,24 @@ func (c *Client) GetTokenTxs(address, token string, coinIndex uint) (blockatlas.
 	if err != nil {
 		return nil, err
 	}
-	return normalizePage(page, address, coinIndex), nil
+	return normalizePage(page, address, token, coinIndex), nil
 }
 
-func normalizePage(srcPage *Page, address string, coinIndex uint) blockatlas.TxPage {
+func normalizePage(srcPage *Page, address, token string, coinIndex uint) blockatlas.TxPage {
 	var txs []blockatlas.Tx
 	for _, srcTx := range srcPage.Transactions {
-		txs = AppendTxs(txs, &srcTx, coinIndex)
+		tx := normalizeTxWithAddress(&srcTx, address, token, coinIndex)
+		txs = append(txs, tx)
 	}
-
-	page := blockatlas.TxPage(txs)
-	return page
+	return blockatlas.TxPage(txs)
 }
 
-func AppendTxs(in []blockatlas.Tx, srcTx *Transaction, coinIndex uint) (out []blockatlas.Tx) {
-	out = in
-	baseTx, ok := extractBase(srcTx, coinIndex)
-	if !ok {
-		return
-	}
-
-	transferType, err := getTransferType(*srcTx)
-	if err != nil {
-		return
-	}
-
-	switch transferType {
-	case blockatlas.TxTransfer:
-		transfer := baseTx
-		transfer.Meta = blockatlas.Transfer{
-			Value:    blockatlas.Amount(srcTx.Value),
-			Symbol:   coin.Coins[coinIndex].Symbol,
-			Decimals: coin.Coins[coinIndex].Decimals,
-		}
-		out = append(out, transfer)
-	case blockatlas.TxTokenTransfer:
-		tokenTransfer := baseTx
-		contractMeta := srcTx.TokenTransfers[0]
-
-		tokenTransfer.Meta = blockatlas.TokenTransfer{
-			Name:     contractMeta.Name,
-			Symbol:   contractMeta.Symbol,
-			TokenID:  contractMeta.Token,
-			Decimals: contractMeta.Decimals,
-			Value:    blockatlas.Amount(contractMeta.Value),
-			From:     contractMeta.From,
-			To:       contractMeta.To,
-		}
-		out = append(out, tokenTransfer)
-	case blockatlas.TxContractCall:
-		contractTx := baseTx
-		contractTx.Meta = blockatlas.ContractCall{
-			Input: baseTx.To,
-			Value: srcTx.Value,
-		}
-		out = append(out, contractTx)
-	}
-	return
-}
-
-func extractBase(srcTx *Transaction, coinIndex uint) (base blockatlas.Tx, ok bool) {
+func normalizeTx(srcTx *Transaction, coinIndex uint) blockatlas.Tx {
 	status, errReason := getStatus(srcTx.EthereumSpecific)
-	from, err := getSenderOrRecipient(*srcTx)
-	if err != nil {
-		return
-	}
+	from := getFrom(srcTx)
+	to := getTo(srcTx)
 
-	to, err := getSenderOrRecipient(*srcTx)
-	if err != nil {
-		return
-	}
-
-	base = blockatlas.Tx{
+	return blockatlas.Tx{
 		ID:       srcTx.TxID,
 		Coin:     coinIndex,
 		From:     from,
@@ -101,10 +49,16 @@ func extractBase(srcTx *Transaction, coinIndex uint) (base blockatlas.Tx, ok boo
 		Error:    errReason,
 		Sequence: srcTx.EthereumSpecific.Nonce,
 	}
-	return base, true
 }
 
-func getStatus(specific *EthereumSpecific) (status blockatlas.Status, e string) {
+func normalizeTxWithAddress(srcTx *Transaction, address, token string, coinIndex uint) blockatlas.Tx {
+	normalized := normalizeTx(srcTx, coinIndex)
+	normalized.Direction = getDirection(address, normalized.From, normalized.To)
+	fillMeta(&normalized, srcTx, address, token, coinIndex)
+	return normalized
+}
+
+func getStatus(specific *EthereumSpecific) (blockatlas.Status, string) {
 	switch specific.Status {
 	case -1:
 		return blockatlas.StatusPending, ""
@@ -117,19 +71,76 @@ func getStatus(specific *EthereumSpecific) (status blockatlas.Status, e string) 
 	}
 }
 
-func getSenderOrRecipient(t Transaction) (address string, err error) {
-	if len(t.VIN) > 0 && len(t.VIN[0].Addresses) > 0 {
-		return t.VIN[0].Addresses[0], nil
+func getFrom(srcTx *Transaction) string {
+	if len(srcTx.Vin) > 0 {
+		return srcTx.Vin[0].Addresses[0]
 	}
-	return "", nil
+	return ""
 }
 
-func getTransferType(t Transaction) (tt blockatlas.TransactionType, err error) {
-	if len(t.TokenTransfers) == 1 && t.TokenTransfers[0].Token == t.VOUT[0].Addresses[0] {
-		return blockatlas.TxTokenTransfer, nil
+func getTo(srcTx *Transaction) string {
+	if len(srcTx.Vout) > 0 {
+		return srcTx.Vout[0].Addresses[0]
 	}
-	if t.Value != "0" && t.EthereumSpecific.GasLimit.Uint64() == 21000 {
-		return blockatlas.TxTransfer, nil
+	return ""
+}
+
+func getDirection(address, from, to string) blockatlas.Direction {
+	if address == from && address == to {
+		return blockatlas.DirectionSelf
 	}
-	return blockatlas.TxContractCall, nil
+	if address == from {
+		return blockatlas.DirectionOutgoing
+	} else {
+		return blockatlas.DirectionIncoming
+	}
+}
+
+func fillMeta(final *blockatlas.Tx, tx *Transaction, address, token string, coinIndex uint) {
+	if len(tx.TokenTransfers) > 0 {
+		for _, transfer := range tx.TokenTransfers {
+			if transfer.To == address || transfer.From == address {
+				// filter token if specified
+				if token != "" {
+					if strings.ToLower(token) != strings.ToLower(transfer.Token) {
+						continue
+					}
+				}
+				direction := getDirection(address, transfer.From, transfer.To)
+				metadata := blockatlas.TokenTransfer{
+					Name:     transfer.Name,
+					Symbol:   transfer.Symbol,
+					TokenID:  transfer.Token,
+					Decimals: transfer.Decimals,
+					Value:    blockatlas.Amount(transfer.Value),
+				}
+				if direction == blockatlas.DirectionSelf {
+					metadata.From = address
+					metadata.To = address
+				} else if direction == blockatlas.DirectionOutgoing {
+					metadata.From = address
+					metadata.To = transfer.To
+				} else {
+					metadata.From = transfer.From
+					metadata.To = address
+				}
+				final.Direction = direction
+				final.Meta = metadata
+				return
+			}
+		}
+	} else {
+		if tx.EthereumSpecific.GasLimit.Uint64() == 21000 {
+			final.Meta = blockatlas.Transfer{
+				Value:    blockatlas.Amount(tx.Value),
+				Symbol:   coin.Coins[coinIndex].Symbol,
+				Decimals: coin.Coins[coinIndex].Decimals,
+			}
+			return
+		}
+	}
+	final.Meta = blockatlas.ContractCall{
+		Input: "0x", // FIXME blockbook api doesn't return tx data field
+		Value: tx.Value,
+	}
 }

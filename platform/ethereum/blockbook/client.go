@@ -19,8 +19,9 @@ func (c *Client) GetTxsWithContract(address, contract string) (*Page, error) {
 	return c.fetchTransactions(address, contract)
 }
 
-func (c *Client) GetTokens(address string) (tp *TokenPage, err error) {
-	return c.fetchTokens(address)
+// FIXME: blockbook doesn't have api to return all tokens
+func (c *Client) GetTokens(address string) (tp *Page, err error) {
+	return
 }
 
 func (c *Client) GetCurrentBlockNumber() (int64, error) {
@@ -33,21 +34,14 @@ func (c *Client) GetCurrentBlockNumber() (int64, error) {
 }
 
 func (c *Client) GetBlock(num int64) (block Block, err error) {
-	path := fmt.Sprintf("/v2/block/%d", num)
+	path := fmt.Sprintf("v2/block/%d", num)
 	err = c.Get(&block, path, nil)
 	return
 }
 
 func (c *Client) fetchTransactions(address, contract string) (page *Page, err error) {
-	path := fmt.Sprintf("/v2/address/%s", address)
-	query := url.Values{"page": {"1"}, "pageSize": {"25"}, "details": {"txslight"}, "address": {address}, "contract": {contract}}
+	path := fmt.Sprintf("v2/address/%s", address)
+	query := url.Values{"page": {"1"}, "pageSize": {"25"}, "details": {"txs"}, "address": {address}, "contract": {contract}}
 	err = c.Get(&page, path, query)
-	return
-}
-
-func (c *Client) fetchTokens(address string) (tp *TokenPage, err error) {
-	path := fmt.Sprintf("/v2/address/%s", address)
-	query := url.Values{"details": {"tokens"}, "address": {address}}
-	err = c.Get(&tp, path, query)
 	return
 }

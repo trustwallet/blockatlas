@@ -3,12 +3,8 @@ package blockbook
 import "math/big"
 
 type Page struct {
-	Transactions []Transaction `json:"transactions"`
-	//Tokens       []Token       `json:"tokens"`
-}
-
-type TokenPage struct {
-	Tokens []Token `json:"tokens"`
+	Transactions []Transaction `json:"transactions,omitempty"`
+	Tokens       []Token       `json:"tokens,omitempty"`
 }
 
 type NodeInfo struct {
@@ -30,32 +26,23 @@ type Block struct {
 
 type Transaction struct {
 	TxID             string            `json:"txid"`
-	VIN              []Vin             `json:"vin"`
-	VOUT             []Vout            `json:"vout"`
+	Vin              []Output          `json:"vin"`
+	Vout             []Output          `json:"vout"`
 	BlockHeight      uint64            `json:"blockHeight"`
 	BlockTime        int64             `json:"blockTime"`
 	Value            string            `json:"value"`
 	Fees             string            `json:"fees"`
-	TokenTransfers   []TokenTransfer   `json:"tokenTransfers"`
+	TokenTransfers   []TokenTransfer   `json:"tokenTransfers,omitempty"`
 	EthereumSpecific *EthereumSpecific `json:"ethereumSpecific,omitempty"`
 }
 
-// Vin contains information about single transaction input
-type Vin struct {
-	Addresses []string `json:"addresses"`
-}
-
-// Vout contains information about single transaction output
-type Vout struct {
-	Value     string   `json:"value"`
+type Output struct {
+	Value     string   `json:"value,omitempty"`
 	Addresses []string `json:"addresses"`
 }
 
 // TokenType specifies type of token
 type TokenType string
-
-// Amount is datatype holding amounts
-type Amount big.Int
 
 // ERC20TokenType is Ethereum ERC20 token
 const ERC20TokenType TokenType = "ERC20"
@@ -87,5 +74,5 @@ type EthereumSpecific struct {
 	Nonce    uint64   `json:"nonce"`
 	GasLimit *big.Int `json:"gasLimit"`
 	GasUsed  *big.Int `json:"gasUsed"`
-	GasPrice *Amount  `json:"gasPrice"`
+	GasPrice string   `json:"gasPrice"`
 }
