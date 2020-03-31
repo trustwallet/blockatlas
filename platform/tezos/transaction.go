@@ -36,7 +36,7 @@ func NormalizeTx(srcTx Transaction, address string) (blockatlas.Tx, bool) {
 		Coin:   coin.XTZ,
 		Date:   srcTx.BlockTimestamp(),
 		Error:  srcTx.ErrorMsg(),
-		Fee:    blockatlas.Amount(numbers.Float64toString(srcTx.Fee)),
+		Fee:    blockatlas.Amount(numbers.DecimalExp(numbers.Float64toString(srcTx.Fee), 6)),
 		From:   srcTx.Sender,
 		ID:     srcTx.Hash,
 		Status: srcTx.Status(),
