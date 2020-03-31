@@ -61,8 +61,8 @@ func init() {
 	if minInterval >= maxInterval {
 		logger.Fatal("minimum block polling interval cannot be greater or equal than maximum")
 	}
-
-	dbInstance, err := db.New(pgUri)
+	var err error
+	dbInstance, err = db.New(pgUri)
 	if err != nil {
 		logger.Fatal(err)
 	}

@@ -34,7 +34,8 @@ func init() {
 
 	internal.InitRabbitMQ(mqHost, prefetchCount)
 
-	dbInstance, err := db.New(pgUri)
+	var err error
+	dbInstance, err = db.New(pgUri)
 	if err != nil {
 		logger.Fatal(err)
 	}
