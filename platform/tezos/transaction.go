@@ -52,7 +52,7 @@ func NormalizeTx(srcTx Transaction, address string) (blockatlas.Tx, bool) {
 	case blockatlas.TxAnyAction:
 		tx.Meta = blockatlas.AnyAction{
 			Coin:     coin.Tezos().ID,
-			Title:    srcTx.Title(),
+			Title:    srcTx.Title(address),
 			Key:      blockatlas.KeyStakeDelegate,
 			Name:     coin.Tezos().Name,
 			Symbol:   coin.Tezos().Symbol,

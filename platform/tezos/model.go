@@ -67,16 +67,18 @@ func (t *Transaction) ErrorMsg() string {
 	}
 }
 
-func (t *Transaction) Title() blockatlas.KeyTitle {
-	if t.Delegate == "" && t.Receiver != "" {
-		return blockatlas.AnyActionDelegation
+func (t *Transaction) Title(address string) blockatlas.KeyTitle {
+	if t.Type == TxTypeDelegation {
+		if address == t.Sender && t.Delegate != "" && t.Receiver == "" {
+			return blockatlas.AnyActionDelegation
+		}
+
+		if address == t.Sender && t.Delegate == "" && t.Receiver != "" {
+			return blockatlas.AnyActionUndelegation
+		}
 	}
 
-	if t.Delegate != "" && t.Receiver == "" {
-		return blockatlas.AnyActionUndelegation
-	}
-
-	return blockatlas.AnyActionDelegation
+	return ""
 }
 
 func (t *Transaction) BlockTimestamp() int64 {

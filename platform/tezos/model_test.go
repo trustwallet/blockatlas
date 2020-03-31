@@ -45,19 +45,22 @@ func TestTransaction_Status(t *testing.T) {
 	}
 
 	testsTitle := []struct {
-		name string
-		in   Transaction
-		out  blockatlas.KeyTitle
+		name    string
+		address string
+		in      Transaction
+		out     blockatlas.KeyTitle
 	}{
-		{"Delegation", Transaction{Delegate: "", Receiver: addr1}, blockatlas.AnyActionDelegation},
-		{"Undelegation", Transaction{Delegate: addr1, Receiver: ""}, blockatlas.AnyActionUndelegation},
-		{"Delegation", Transaction{Delegate: "", Receiver: ""}, blockatlas.AnyActionDelegation},
-		{"Delegation", Transaction{Delegate: addr1, Receiver: addr1}, blockatlas.AnyActionDelegation},
+		{"Delegation", addr1, Transaction{Sender: addr1, Delegate: addr2, Receiver: "", Type:TxTypeDelegation}, blockatlas.AnyActionDelegation},
+		{"Undelegation", addr1, Transaction{Sender: addr1, Delegate: "", Receiver: addr2, Type:TxTypeDelegation}, blockatlas.AnyActionUndelegation},
+		{"Unknown type", addr1, Transaction{Sender: addr1, Delegate: addr1, Receiver: addr1}, ""},
+		{"Unknown type", addr1, Transaction{Sender: addr1, Delegate: addr2, Receiver: addr1}, ""},
+		{"Unknown type", addr1, Transaction{Sender: addr1, Delegate: addr1, Receiver: addr2}, ""},
+		{"Unknown type", addr1, Transaction{Sender: addr1, Delegate: addr2, Receiver: addr2}, ""},
 	}
 
 	for _, tt := range testsTitle {
 		t.Run(tt.name, func(t *testing.T) {
-			assert.Equal(t, tt.out, tt.in.Title())
+			assert.Equal(t, tt.out, tt.in.Title(tt.address))
 		})
 	}
 
