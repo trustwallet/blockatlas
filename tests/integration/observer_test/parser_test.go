@@ -13,7 +13,7 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/services/observer/notifier"
 	"github.com/trustwallet/blockatlas/services/observer/parser"
-	"github.com/trustwallet/blockatlas/tests/docker_test/setup"
+	"github.com/trustwallet/blockatlas/tests/integration/setup"
 	"testing"
 	"time"
 )

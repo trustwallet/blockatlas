@@ -8,7 +8,7 @@ import (
 	"github.com/trustwallet/blockatlas/db/models"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/services/observer/subscriber"
-	"github.com/trustwallet/blockatlas/tests/docker_test/setup"
+	"github.com/trustwallet/blockatlas/tests/integration/setup"
 	"testing"
 )
 

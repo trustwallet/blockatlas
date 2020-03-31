@@ -4,7 +4,7 @@ package observer_test
 
 import (
 	"github.com/trustwallet/blockatlas/mq"
-	"github.com/trustwallet/blockatlas/tests/docker_test/setup"
+	"github.com/trustwallet/blockatlas/tests/integration/setup"
 	"log"
 	"os"
 	"testing"
