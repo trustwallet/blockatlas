@@ -2,6 +2,7 @@ package mq
 
 import (
 	"context"
+	"github.com/jinzhu/gorm"
 	"github.com/streadway/amqp"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"time"
@@ -14,9 +15,10 @@ var (
 )
 
 type (
-	Queue          string
-	Consumer       func(amqp.Delivery)
-	MessageChannel <-chan amqp.Delivery
+	Queue              string
+	Consumer           func(amqp.Delivery)
+	ConsumerWithDbConn func(*gorm.DB, amqp.Delivery)
+	MessageChannel     <-chan amqp.Delivery
 )
 
 const (
@@ -30,18 +32,19 @@ const (
 func Init(uri string) (err error) {
 	conn, err = amqp.Dial(uri)
 	if err != nil {
-		return
+		return err
 	}
 	amqpChan, err = conn.Channel()
-	if err != nil {
-		return
-	}
-	return
+	return err
 }
 
 func Close() {
 	amqpChan.Close()
 	conn.Close()
+}
+
+func (mc MessageChannel) GetMessage() amqp.Delivery {
+	return <-mc
 }
 
 func (q Queue) Declare() error {
@@ -57,7 +60,7 @@ func (q Queue) Publish(body []byte) error {
 	})
 }
 
-func (q Queue) RunConsumerForChannelWithCancel(consumer Consumer, messageChannel MessageChannel, ctx context.Context) {
+func RunConsumerForChannelWithCancelAndDbConn(consumer ConsumerWithDbConn, messageChannel MessageChannel, dbConn *gorm.DB, ctx context.Context) {
 	for {
 		select {
 		case <-ctx.Done():
@@ -67,86 +70,7 @@ func (q Queue) RunConsumerForChannelWithCancel(consumer Consumer, messageChannel
 			if message.Body == nil {
 				continue
 			}
-			go consumer(message)
-		}
-	}
-}
-
-func (q Queue) RunConsumer(consumer Consumer) {
-	messageChannel, err := amqpChan.Consume(
-		string(q),
-		"",
-		false,
-		false,
-		false,
-		false,
-		nil,
-	)
-	if err != nil {
-		logger.Fatal("MQ issue " + err.Error())
-		return
-	}
-
-	if PrefetchCount < minPrefetchCount {
-		logger.Info("Change prefetch count to default")
-		PrefetchCount = defaultPrefetchCount
-	}
-
-	err = amqpChan.Qos(
-		PrefetchCount,
-		0,
-		true,
-	)
-
-	if err != nil {
-		logger.Error("no qos limit ", err)
-	}
-
-	for data := range messageChannel {
-		go consumer(data)
-	}
-}
-
-func (q Queue) RunConsumerWithCancel(consumer Consumer, ctx context.Context) {
-	messageChannel, err := amqpChan.Consume(
-		string(q),
-		"",
-		false,
-		false,
-		false,
-		false,
-		nil,
-	)
-	if err != nil {
-		logger.Fatal("MQ issue " + err.Error())
-		return
-	}
-
-	if PrefetchCount < minPrefetchCount {
-		logger.Info("Change prefetch count to default")
-		PrefetchCount = defaultPrefetchCount
-	}
-
-	err = amqpChan.Qos(
-		PrefetchCount,
-		0,
-		true,
-	)
-
-	if err != nil {
-		logger.Error("no qos limit ", err)
-	}
-
-	for {
-		select {
-		case <-ctx.Done():
-			logger.Info("Consumer stopped")
-			return
-		case message := <-messageChannel:
-			if message.Body == nil {
-				continue
-			}
-			go consumer(message)
+			go consumer(dbConn, message)
 		}
 	}
 }
@@ -165,11 +89,55 @@ func (q Queue) GetMessageChannel() MessageChannel {
 		logger.Fatal("MQ issue " + err.Error())
 	}
 
+	err = amqpChan.Qos(
+		PrefetchCount,
+		0,
+		true,
+	)
+	if err != nil {
+		logger.Fatal("No qos limit ", err)
+	}
+
 	return messageChannel
 }
 
-func (mc MessageChannel) GetMessage() amqp.Delivery {
-	return <-mc
+func (q Queue) RunConsumer(consumer Consumer) {
+	messageChannel := q.GetMessageChannel()
+	for data := range messageChannel {
+		go consumer(data)
+	}
+}
+
+func (q Queue) RunConsumerWithCancel(consumer Consumer, ctx context.Context) {
+	messageChannel := q.GetMessageChannel()
+	for {
+		select {
+		case <-ctx.Done():
+			logger.Info("Consumer stopped")
+			return
+		case message := <-messageChannel:
+			if message.Body == nil {
+				continue
+			}
+			go consumer(message)
+		}
+	}
+}
+
+func (q Queue) RunConsumerWithCancelAndDbConn(consumer ConsumerWithDbConn, dbConn *gorm.DB, ctx context.Context) {
+	messageChannel := q.GetMessageChannel()
+	for {
+		select {
+		case <-ctx.Done():
+			logger.Info("Consumer stopped")
+			return
+		case message := <-messageChannel:
+			if message.Body == nil {
+				continue
+			}
+			go consumer(dbConn, message)
+		}
+	}
 }
 
 func RestoreConnectionWorker(uri string, queue Queue, timeout time.Duration) {

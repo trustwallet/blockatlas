@@ -19,10 +19,11 @@ import (
 )
 
 func TestParserFetchAndPublishBlock_NormalCase(t *testing.T) {
-	setup.CleanupPgContainer()
+	setup.CleanupPgContainer(dbConn)
 	stopChan := make(chan struct{}, 1)
 
 	params := setupParser(stopChan)
+	params.DbConn = dbConn
 
 	ctx, cancel := context.WithCancel(context.Background())
 

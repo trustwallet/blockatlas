@@ -1,6 +1,9 @@
 package setup
 
-import "log"
+import (
+	"github.com/jinzhu/gorm"
+	"log"
+)
 
 func RunMQContainer() {
 	if err := runMQContainer(); err != nil {
@@ -14,10 +17,12 @@ func StopMQContainer() {
 	}
 }
 
-func RunPgContainer() {
-	if err := runPgContainerAndInitConnection(); err != nil {
+func RunPgContainer() *gorm.DB {
+	dbConn, err := runPgContainerAndInitConnection()
+	if err != nil {
 		log.Fatal(err)
 	}
+	return dbConn
 }
 
 func StopPgContainer() {

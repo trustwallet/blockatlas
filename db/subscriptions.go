@@ -1,18 +1,19 @@
 package db
 
 import (
+	"github.com/jinzhu/gorm"
 	"github.com/trustwallet/blockatlas/db/models"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 )
 
-func GetSubscriptionData(coin uint, addresses []string) ([]models.SubscriptionData, error) {
+func GetSubscriptionData(db *gorm.DB, coin uint, addresses []string) ([]models.SubscriptionData, error) {
 	if len(addresses) == 0 {
 		return nil, errors.E("Empty addresses")
 	}
 
 	var subscriptionsDataList []models.SubscriptionData
 
-	err := GormDb.
+	err := db.
 		Model(&models.SubscriptionData{}).
 		Where("address in (?) AND coin = ?", addresses, coin).
 		Find(&subscriptionsDataList).Error
@@ -24,7 +25,7 @@ func GetSubscriptionData(coin uint, addresses []string) ([]models.SubscriptionDa
 	return subscriptionsDataList, nil
 }
 
-func AddSubscriptions(id uint, subscriptions []models.SubscriptionData) error {
+func AddSubscriptions(db *gorm.DB, id uint, subscriptions []models.SubscriptionData) error {
 	if len(subscriptions) == 0 {
 		return errors.E("Empty subscriptions")
 	}
@@ -34,7 +35,7 @@ func AddSubscriptions(id uint, subscriptions []models.SubscriptionData) error {
 		err         error
 	)
 
-	recordNotFound := GormDb.
+	recordNotFound := db.
 		Where(models.Subscription{SubscriptionId: id}).
 		First(&existingSub).
 		RecordNotFound()
@@ -42,9 +43,9 @@ func AddSubscriptions(id uint, subscriptions []models.SubscriptionData) error {
 	subscriptions = removeSubscriptionDuplicates(subscriptions)
 
 	if recordNotFound {
-		err = AddSubscription(id, subscriptions)
+		err = AddSubscription(db, id, subscriptions)
 	} else {
-		err = AddToExistingSubscription(id, subscriptions)
+		err = AddToExistingSubscription(db, id, subscriptions)
 	}
 
 	if err != nil {
@@ -54,17 +55,17 @@ func AddSubscriptions(id uint, subscriptions []models.SubscriptionData) error {
 	return nil
 }
 
-func AddSubscription(id uint, data []models.SubscriptionData) error {
-	return GormDb.Create(&models.Subscription{SubscriptionId: id, Data: data}).Error
+func AddSubscription(db *gorm.DB, id uint, data []models.SubscriptionData) error {
+	return db.Create(&models.Subscription{SubscriptionId: id, Data: data}).Error
 }
 
-func AddToExistingSubscription(id uint, subscriptions []models.SubscriptionData) error {
+func AddToExistingSubscription(db *gorm.DB, id uint, subscriptions []models.SubscriptionData) error {
 	var (
 		existingData []models.SubscriptionData
 		sub          = &models.Subscription{SubscriptionId: id}
 	)
 
-	association := GormDb.Model(sub).Association("Data")
+	association := db.Model(sub).Association("Data")
 
 	if err := association.Error; err != nil {
 		return err
@@ -82,25 +83,25 @@ func AddToExistingSubscription(id uint, subscriptions []models.SubscriptionData)
 		}
 	}
 	if len(deleteList) > 0 {
-		if err := DeleteSubscriptions(deleteList); err != nil {
+		if err := DeleteSubscriptions(db, deleteList); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func DeleteAllSubscriptions(id uint) error {
-	return GormDb.Where("subscription_id = ?", id).Delete(&models.SubscriptionData{}).Error
+func DeleteAllSubscriptions(db *gorm.DB, id uint) error {
+	return db.Where("subscription_id = ?", id).Delete(&models.SubscriptionData{}).Error
 }
 
-func DeleteSubscriptions(subscriptions []models.SubscriptionData) error {
+func DeleteSubscriptions(db *gorm.DB, subscriptions []models.SubscriptionData) error {
 	var (
 		errorsList = make([]error, 0)
 		errDetails string
 	)
 
 	for _, sub := range subscriptions {
-		if err := GormDb.Delete(&models.SubscriptionData{}, sub).Error; err != nil {
+		if err := db.Delete(&models.SubscriptionData{}, sub).Error; err != nil {
 			errorsList = append(errorsList, err)
 		}
 	}

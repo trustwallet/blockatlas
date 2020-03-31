@@ -2,6 +2,7 @@ package notifier
 
 import (
 	"encoding/json"
+	"github.com/jinzhu/gorm"
 	"github.com/streadway/amqp"
 	"github.com/trustwallet/blockatlas/db"
 	"github.com/trustwallet/blockatlas/mq"
@@ -19,7 +20,7 @@ type DispatchEvent struct {
 	Id     uint                       `json:"id"`
 }
 
-func RunNotifier(delivery amqp.Delivery) {
+func RunNotifier(dbConn *gorm.DB, delivery amqp.Delivery) {
 	defer func() {
 		if err := delivery.Ack(false); err != nil {
 			logger.Error(err)
@@ -42,7 +43,7 @@ func RunNotifier(delivery amqp.Delivery) {
 	}
 
 	addresses := blockTransactions.GetUniqueAddresses()
-	subscriptionsDataList, err := db.GetSubscriptionData(txs[0].Coin, addresses)
+	subscriptionsDataList, err := db.GetSubscriptionData(dbConn, txs[0].Coin, addresses)
 	if err != nil || len(subscriptionsDataList) == 0 {
 		return
 	}

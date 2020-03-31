@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"github.com/jinzhu/gorm"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/db"
 	"github.com/trustwallet/blockatlas/internal"
@@ -17,6 +18,7 @@ const (
 
 var (
 	confPath string
+	dbConn   *gorm.DB
 )
 
 func init() {
@@ -39,12 +41,14 @@ func init() {
 		logger.Fatal(err)
 	}
 
-	if err := db.Setup(pgUri); err != nil {
+	var err error
+	dbConn, err = db.Setup(pgUri)
+	if err != nil {
 		logger.Fatal(err)
 	}
 
 	go mq.RestoreConnectionWorker(mqHost, mq.RawTransactions, time.Second*10)
-	go db.RestoreConnectionWorker(time.Second*10, pgUri)
+	go db.RestoreConnectionWorker(dbConn, time.Second*10, pgUri)
 	time.Sleep(time.Millisecond)
 }
 
@@ -53,7 +57,7 @@ func main() {
 
 	ctx, cancel := context.WithCancel(context.Background())
 
-	go mq.RawTransactions.RunConsumerWithCancel(notifier.RunNotifier, ctx)
+	go mq.RawTransactions.RunConsumerWithCancelAndDbConn(notifier.RunNotifier, dbConn, ctx)
 
 	internal.SetupGracefulShutdownForObserver(cancel)
 }

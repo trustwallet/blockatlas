@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"github.com/jinzhu/gorm"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/db"
 	_ "github.com/trustwallet/blockatlas/docs"
@@ -18,6 +19,7 @@ const (
 
 var (
 	confPath string
+	dbConn   *gorm.DB
 )
 
 func init() {
@@ -33,11 +35,14 @@ func init() {
 
 	internal.InitRabbitMQ(mqHost, prefetchCount)
 
-	if err := db.Setup(pgUri); err != nil {
+	var err error
+	dbConn, err = db.Setup(pgUri)
+	if err != nil {
 		logger.Fatal(err)
 	}
+
 	go mq.FatalWorker(time.Second * 10)
-	go db.RestoreConnectionWorker(time.Second*10, pgUri)
+	go db.RestoreConnectionWorker(dbConn, time.Second*10, pgUri)
 	time.Sleep(time.Millisecond)
 }
 
@@ -48,7 +53,7 @@ func main() {
 	}
 	ctx, cancel := context.WithCancel(context.Background())
 
-	go mq.Subscriptions.RunConsumerWithCancel(subscriber.RunSubscriber, ctx)
+	go mq.Subscriptions.RunConsumerWithCancelAndDbConn(subscriber.RunSubscriber, dbConn, ctx)
 
 	internal.SetupGracefulShutdownForObserver(cancel)
 }

@@ -43,8 +43,8 @@ var (
 )
 
 func TestNotifier(t *testing.T) {
-	setup.CleanupPgContainer()
-	err := db.AddSubscriptions(1, []models.SubscriptionData{{Coin: 714, Address: "tbnb1ttyn4csghfgyxreu7lmdu3lcplhqhxtzced45a", SubscriptionId: 1}})
+	setup.CleanupPgContainer(dbConn)
+	err := db.AddSubscriptions(dbConn, 1, []models.SubscriptionData{{Coin: 714, Address: "tbnb1ttyn4csghfgyxreu7lmdu3lcplhqhxtzced45a", SubscriptionId: 1}})
 	assert.Nil(t, err)
 
 	err = produceTxs(txs)
@@ -52,7 +52,7 @@ func TestNotifier(t *testing.T) {
 
 	ctx, cancel := context.WithCancel(context.Background())
 
-	go mq.RawTransactions.RunConsumerForChannelWithCancel(notifier.RunNotifier, rawTransactionsChannel, ctx)
+	go mq.RunConsumerForChannelWithCancelAndDbConn(notifier.RunNotifier, rawTransactionsChannel, dbConn, ctx)
 	time.Sleep(time.Second * 3)
 	msg := transactionsChannel.GetMessage()
 	ConsumerToTestTransactions(msg, t)

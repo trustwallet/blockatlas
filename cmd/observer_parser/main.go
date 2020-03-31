@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/jinzhu/gorm"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/db"
 	"github.com/trustwallet/blockatlas/internal"
@@ -27,6 +28,7 @@ var (
 	backlogTime, minInterval, maxInterval time.Duration
 	maxBackLogBlocks                      int64
 	txsBatchLimit                         uint
+	dbConn                                *gorm.DB
 )
 
 func init() {
@@ -61,12 +63,14 @@ func init() {
 		logger.Fatal("minimum block polling interval cannot be greater or equal than maximum")
 	}
 
-	if err := db.Setup(pgUri); err != nil {
+	var err error
+	dbConn, err = db.Setup(pgUri)
+	if err != nil {
 		logger.Fatal(err)
 	}
 
 	go mq.FatalWorker(time.Second * 10)
-	go db.RestoreConnectionWorker(time.Second*10, pgUri)
+	go db.RestoreConnectionWorker(dbConn, time.Second*10, pgUri)
 	time.Sleep(time.Millisecond)
 }
 
@@ -109,6 +113,7 @@ func main() {
 			MaxBacklogBlocks:      maxBackLogBlocks,
 			StopChannel:           stopChannel,
 			TxBatchLimit:          txsBatchLimit,
+			DbConn:                dbConn,
 		}
 
 		go parser.RunParser(params)

@@ -2,6 +2,7 @@ package setup
 
 import (
 	"fmt"
+	"github.com/jinzhu/gorm"
 	"github.com/ory/dockertest"
 	"github.com/trustwallet/blockatlas/db"
 	"github.com/trustwallet/blockatlas/db/models"
@@ -31,25 +32,30 @@ var (
 	uri string
 )
 
-func runPgContainerAndInitConnection() error {
+func runPgContainerAndInitConnection() (*gorm.DB, error) {
 	pool := runPgContainer()
+	var (
+		dbConn *gorm.DB
+		err    error
+	)
 	if err := pool.Retry(func() error {
-		return db.Setup(uri)
-	}); err != nil {
+		dbConn, err = db.Setup(uri)
 		return err
+	}); err != nil {
+		return nil, err
 	}
+	autoMigrate(dbConn)
 
-	autoMigrate()
-	return nil
+	return dbConn, nil
 }
 
-func CleanupPgContainer() {
-	db.GormDb.DropTable(tables...)
-	autoMigrate()
+func CleanupPgContainer(dbConn *gorm.DB) {
+	dbConn.DropTable(tables...)
+	autoMigrate(dbConn)
 }
 
-func autoMigrate() {
-	db.GormDb.AutoMigrate(tables...)
+func autoMigrate(dbConn *gorm.DB) {
+	dbConn.AutoMigrate(tables...)
 }
 
 func stopPgContainer() error {
