@@ -5,11 +5,11 @@ import (
 )
 
 func (c *Client) GetTokenList(address string, coinIndex uint) (blockatlas.TokenPage, error) {
-	account, err := c.GetTokens(address)
+	tokens, err := c.GetTokens(address)
 	if err != nil {
 		return nil, err
 	}
-	return NormalizeTokens(account.Tokens, coinIndex), nil
+	return NormalizeTokens(tokens, coinIndex), nil
 }
 
 func NormalizeTokens(srcTokens []Token, coinIndex uint) []blockatlas.Token {
@@ -28,6 +28,6 @@ func NormalizeToken(srcToken *Token, coinIndex uint) blockatlas.Token {
 		TokenID:  srcToken.Contract,
 		Coin:     coinIndex,
 		Decimals: srcToken.Decimals,
-		Type:     blockatlas.TokenTypeERC20,
+		Type:     blockatlas.TokenTypeERC20, // TODO dynamically set type in case coinIndex != 60
 	}
 }

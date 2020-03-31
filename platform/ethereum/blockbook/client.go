@@ -19,9 +19,8 @@ func (c *Client) GetTxsWithContract(address, contract string) (*Page, error) {
 	return c.fetchTransactions(address, contract)
 }
 
-// FIXME: blockbook doesn't have api to return all tokens
-func (c *Client) GetTokens(address string) (tp *Page, err error) {
-	return
+func (c *Client) GetTokens(address string) ([]Token, error) {
+	return c.fetchTokens(address)
 }
 
 func (c *Client) GetCurrentBlockNumber() (int64, error) {
@@ -44,4 +43,13 @@ func (c *Client) fetchTransactions(address, contract string) (page *Page, err er
 	query := url.Values{"page": {"1"}, "pageSize": {"25"}, "details": {"txs"}, "address": {address}, "contract": {contract}}
 	err = c.Get(&page, path, query)
 	return
+}
+
+func (c *Client) fetchTokens(address string) ([]Token, error) {
+	var res Page
+	path := fmt.Sprintf("v2/address/%s", address)
+	query := url.Values{"details": {"tokens"}, "address": {address}}
+	err := c.Get(&res, path, query)
+
+	return res.Tokens, err
 }
