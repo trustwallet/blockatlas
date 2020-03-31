@@ -25,6 +25,17 @@ func (i *Instance) GetSubscriptionData(coin uint, addresses []string) ([]models.
 }
 
 func (i *Instance) AddSubscriptions(id uint, subscriptions []models.SubscriptionData) error {
+	txInstance := Instance{DB: i.DB.Begin()}
+	defer func() {
+		if r := recover(); r != nil {
+			txInstance.DB.Rollback()
+		}
+	}()
+
+	if err := txInstance.DB.Error; err != nil {
+		return err
+	}
+
 	if len(subscriptions) == 0 {
 		return errors.E("Empty subscriptions")
 	}
@@ -34,7 +45,7 @@ func (i *Instance) AddSubscriptions(id uint, subscriptions []models.Subscription
 		err         error
 	)
 
-	recordNotFound := i.DB.
+	recordNotFound := txInstance.DB.
 		Where(models.Subscription{SubscriptionId: id}).
 		First(&existingSub).
 		RecordNotFound()
@@ -42,16 +53,17 @@ func (i *Instance) AddSubscriptions(id uint, subscriptions []models.Subscription
 	subscriptions = removeSubscriptionDuplicates(subscriptions)
 
 	if recordNotFound {
-		err = i.AddSubscription(id, subscriptions)
+		err = txInstance.AddSubscription(id, subscriptions)
 	} else {
-		err = i.AddToExistingSubscription(id, subscriptions)
+		err = txInstance.AddToExistingSubscription(id, subscriptions)
 	}
 
 	if err != nil {
+		txInstance.DB.Rollback()
 		return err
 	}
 
-	return nil
+	return txInstance.DB.Commit().Error
 }
 
 func (i *Instance) AddSubscription(id uint, data []models.SubscriptionData) error {
