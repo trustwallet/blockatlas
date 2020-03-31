@@ -14,7 +14,7 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/services/observer/notifier"
 	"github.com/trustwallet/blockatlas/services/observer/parser"
-	"github.com/trustwallet/blockatlas/tests/docker_test/setup"
+	"github.com/trustwallet/blockatlas/tests/integration/setup"
 	"go.uber.org/atomic"
 	"testing"
 	"time"
