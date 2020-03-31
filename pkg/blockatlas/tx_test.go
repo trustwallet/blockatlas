@@ -359,7 +359,7 @@ var (
 )
 
 func TestInferDirection(t *testing.T) {
-	var tests = []struct {
+	tests := []struct {
 		AddressSet mapset.Set
 		Inputs     []TxOutput
 		Outputs    []TxOutput

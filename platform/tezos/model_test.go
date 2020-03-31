@@ -2,82 +2,130 @@ package tezos
 
 import (
 	"github.com/stretchr/testify/assert"
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"testing"
-	"time"
 )
 
 var (
-	transaction = Tx{
-		Destination: "tz1WDujRWCYjLBDfZieXW6insg5EUbg1rCRK",
-		Amount:      "1751",
-		GasLimit:    "15385",
-		Kind:        TxKindTransaction,
-		BlockHash:   "BMDYrXJ7GSwztzsy3ykJb43VXciNk1WY8EAaSoGbcUE7mA7HUzj",
-		Fee:         "0",
-		Source:      "tz2FCNBrERXtaTtNX6iimR1UJ5JSDxvdHM93",
-		Status:      TxStatusApplied,
-	}
-	del = Delegation{
-		Delegate: "tz2FCNBrERXtaTtNX6iimR1UJ5JSDxvdHM93",
-		GasLimit: "10600",
-		Kind:     TxKindDelegation,
-		Status:   TxStatusApplied,
-		Fee:      "1500",
-		Source:   "tz1WDujRWCYjLBDfZieXW6insg5EUbg1rCRK",
-	}
-	op = Op{
-		OpHash:         "BMDYrXJ7GSwztzsy3ykJb43VXciNk1WY8EAaSoGbcUE7mA7HUzj",
-		BlockLevel:     788568,
-		BlockTimestamp: time.Time{},
-	}
+	addr1 = "tz1WDujRWCYjLBDfZieXW6insg5EUbg1rCRK"
+	addr2 = "tz1egbN6RK2bM5vt4aAZw6r9j4nL8z49bPdS"
 )
 
 func TestTransaction_Status(t *testing.T) {
-	type fields struct {
-		Op         Op
-		Tx         Tx
-		Delegation Delegation
-	}
-	type want struct {
-		Status      TxStatus
-		Kind        TxKind
-		Source      string
-		Destination string
-		Fee         string
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		want   want
+	testStatus := []struct {
+		name string
+		in   Transaction
+		out  blockatlas.Status
 	}{
-		{
-			"transaction",
-			fields{op, transaction, Delegation{}},
-			want{TxStatusApplied, TxKindTransaction, "tz2FCNBrERXtaTtNX6iimR1UJ5JSDxvdHM93", "tz1WDujRWCYjLBDfZieXW6insg5EUbg1rCRK", "0"},
-		},
-		{
-			"delegation",
-			fields{op, Tx{}, del},
-			want{TxStatusApplied, TxKindDelegation, "tz1WDujRWCYjLBDfZieXW6insg5EUbg1rCRK", "tz2FCNBrERXtaTtNX6iimR1UJ5JSDxvdHM93", "1500"},
-		},
-		{
-			"transaction and delegation",
-			fields{op, transaction, del},
-			want{TxStatusApplied, TxKindTransaction, "tz2FCNBrERXtaTtNX6iimR1UJ5JSDxvdHM93", "tz1WDujRWCYjLBDfZieXW6insg5EUbg1rCRK", "0"},
-		},
+		{"Status completed", Transaction{Stat: "applied"}, blockatlas.StatusCompleted},
+		{"Status error", Transaction{Stat: "failed"}, blockatlas.StatusError},
+		{"Status error", Transaction{Stat: ""}, blockatlas.StatusError},
+		{"Status error", Transaction{Stat: "something else"}, blockatlas.StatusError},
 	}
-	for _, tt := range tests {
+
+	for _, tt := range testStatus {
 		t.Run(tt.name, func(t *testing.T) {
-			tx := &Transaction{
-				Tx:         tt.fields.Tx,
-				Op:         tt.fields.Op,
-				Delegation: tt.fields.Delegation,
-			}
-			assert.Equal(t, tt.want.Status, tx.Status())
-			assert.Equal(t, tt.want.Kind, tx.Kind())
-			assert.Equal(t, tt.want.Source, tx.Source())
-			assert.Equal(t, tt.want.Destination, tx.Destination())
-			assert.Equal(t, tt.want.Fee, tx.Fee())
+			assert.Equal(t, tt.out, tt.in.Status())
 		})
 	}
+
+	testsError := []struct {
+		name string
+		in   Transaction
+		out  string
+	}{
+		{"Error present", Transaction{IsSuccess: false, Errors: []Error{{"unchanged", "temporary"}}}, "unchanged temporary"},
+		{"Error no", Transaction{IsSuccess: true}, ""},
+	}
+
+	for _, tt := range testsError {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.out, tt.in.ErrorMsg())
+		})
+	}
+
+	testsTitle := []struct {
+		name string
+		in   Transaction
+		out  blockatlas.KeyTitle
+	}{
+		{"Delegation", Transaction{Delegate: "", Receiver: addr1}, blockatlas.AnyActionDelegation},
+		{"Undelegation", Transaction{Delegate: addr1, Receiver: ""}, blockatlas.AnyActionUndelegation},
+		{"Delegation", Transaction{Delegate: "", Receiver: ""}, blockatlas.AnyActionDelegation},
+		{"Delegation", Transaction{Delegate: addr1, Receiver: addr1}, blockatlas.AnyActionDelegation},
+	}
+
+	for _, tt := range testsTitle {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.out, tt.in.Title())
+		})
+	}
+
+	testsBlockTimestamp := []struct {
+		name string
+		in   Transaction
+		out  int64
+	}{
+		{"Delegation", Transaction{Time: "2020-02-04T12:27:59Z",}, 1580819279},
+	}
+
+	for _, tt := range testsBlockTimestamp {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.out, tt.in.BlockTimestamp())
+		})
+	}
+
+	testsKind := []struct {
+		name string
+		in   Transaction
+		out  blockatlas.TransactionType
+	}{
+		{"Type should be transaction", Transaction{Type: "transaction",}, blockatlas.TxTransfer},
+		{"Type should be delegation", Transaction{Type: "delegation",}, blockatlas.TxAnyAction},
+		{"Type unsupported", Transaction{Type: "bake",}, ""},
+		{"Type endorsement", Transaction{Type: "endorsement",}, ""},
+	}
+
+	for _, tt := range testsKind {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.out, tt.in.TransferType())
+		})
+	}
+
+	testsDirection := []struct {
+		name    string
+		in      Transaction
+		out     blockatlas.Direction
+		address string
+	}{
+		{"Direction self", Transaction{Sender: addr1, Receiver: addr1}, blockatlas.DirectionSelf, addr1},
+		{"Direction outgoing", Transaction{Sender: addr1, Receiver: addr2}, blockatlas.DirectionOutgoing, addr1},
+		{"Direction incoming", Transaction{Sender: addr2, Receiver: addr1}, blockatlas.DirectionIncoming, addr1},
+	}
+
+	for _, tt := range testsDirection {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.out, tt.in.Direction(tt.address))
+		})
+	}
+
+	testsNormalize := []struct {
+		name    string
+		in      Transaction
+		out     blockatlas.Tx
+		address string
+	}{
+		{"Normalize XTZ transfer", tezosTransfer, normalizedTezosTransfer, addr1},
+	}
+
+	for _, tt := range testsNormalize {
+		t.Run(tt.name, func(t *testing.T) {
+			normalized, ok := NormalizeTx(tt.in, tt.address)
+			if !ok {
+				assert.False(t, ok, "issue to normalize")
+			}
+			assert.Equal(t, tt.out, normalized)
+		})
+	}
+
 }

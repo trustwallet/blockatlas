@@ -1,94 +1,111 @@
 package tezos
 
-import "time"
-
-type TxType string
-type TxKind string
-type TxStatus string
-
-const (
-	TxTransactions TxType = "transactions"
-	TxDelegations  TxType = "delegations"
-
-	TxKindTransaction TxKind = "transaction"
-	TxKindDelegation  TxKind = "delegation"
-
-	TxStatusApplied TxStatus = "applied"
-	TxStatusSkipped TxStatus = "skipped"
+import (
+	"fmt"
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"time"
 )
 
-type Op struct {
-	OpHash         string    `json:"opHash"`
-	BlockLevel     uint64    `json:"blockLevel"`
-	BlockTimestamp time.Time `json:"blockTimestamp"`
+const (
+	TxTypeTransaction string = "transaction"
+	TxTypeDelegation  string = "delegation"
+
+	TxStatusApplied string = "applied"
+)
+
+type Account struct {
+	Balance  string `json:"balance"`
+	Delegate string `json:"delegate"`
+}
+
+type ExplorerAccount struct {
+	Transactions []Transaction `json:"ops"`
 }
 
 type Transaction struct {
-	Tx         Tx         `json:"tx"`
-	Op         Op         `json:"op"`
-	Delegation Delegation `json:"delegation"`
+	Delegate  string  `json:"delegate"` // Current delegate (may be self when registered as delegate).
+	Errors    []Error `json:"errors"`   // Operation status applied, failed, backtracked, skipped.
+	Fee       float64 `json:"fee"`      // Total fee paid (and frozen) by all operations.
+	Hash      string  `json:"hash"`     // Operation hash.
+	Height    uint64  `json:"height"`
+	IsSuccess bool    `json:"is_success"` // Flag indicating operation was successfully applied.
+	Receiver  string  `json:"receiver"`
+	Sender    string  `json:"sender"`
+	Stat      string  `json:"status"` // Operation status applied, failed, backtracked, skipped.
+	Time      string  `json:"time"`   // Block time at which the operation was included on-chain e.g: 2019-09-28T13:10:51Z
+	Type      string  `json:"type"`   // Operation type, one of activate_account, double_baking_evidence, double_endorsement_evidence, seed_nonce_revelation, transaction, origination, delegation, reveal, endorsement, proposals, ballot.
+	Volume    float64 `json:"volume"`
 }
 
-func (t *Transaction) Status() TxStatus {
-	if len(t.Tx.Status) > 0 {
-		return t.Tx.Status
-	}
-	return t.Delegation.Status
+type Error struct {
+	ID   string `json:"id"`
+	Kind string `json:"kind"`
 }
 
-func (t *Transaction) Kind() TxKind {
-	if len(t.Tx.Kind) > 0 {
-		return t.Tx.Kind
-	}
-	return t.Delegation.Kind
-}
-
-func (t *Transaction) Source() string {
-	if len(t.Tx.Source) > 0 {
-		return t.Tx.Source
-	}
-	return t.Delegation.Source
-}
-
-func (t *Transaction) Destination() string {
-	if len(t.Tx.Destination) > 0 {
-		return t.Tx.Destination
-	}
-	return t.Delegation.Delegate
-}
-
-func (t *Transaction) Fee() string {
-	if len(t.Tx.Fee) > 0 {
-		return t.Tx.Fee
-	}
-	return t.Delegation.Fee
-}
-
-type Tx struct {
-	Destination string   `json:"destination"`
-	Amount      string   `json:"amount"`
-	GasLimit    string   `json:"gasLimit"`
-	Kind        TxKind   `json:"kind"`
-	BlockHash   string   `json:"blockHash"`
-	Fee         string   `json:"fee"`
-	Source      string   `json:"source"`
-	Status      TxStatus `json:"operationResultStatus"`
-}
-
-type Delegation struct {
-	Delegate string   `json:"delegate"`
-	GasLimit string   `json:"gasLimit"`
-	Kind     TxKind   `json:"kind"`
-	Status   TxStatus `json:"operationResultStatus"`
-	Fee      string   `json:"fee"`
-	Source   string   `json:"source"`
+type Status struct {
+	Indexed int64 `json:"indexed"`
 }
 
 type Validator struct {
 	Address string `json:"pkh"`
 }
 
-type Account struct {
-	Balance  string `json:"balance"`
-	Delegate string `json:"delegate"`
+func (t *Transaction) Status() blockatlas.Status {
+	switch t.Stat {
+	case TxStatusApplied:
+		return blockatlas.StatusCompleted
+	default:
+		return blockatlas.StatusError
+	}
+}
+
+func (t *Transaction) ErrorMsg() string {
+	if !t.IsSuccess && len(t.Errors) > 0 {
+		return fmt.Sprintf("%s %s", t.Errors[0].ID, t.Errors[0].Kind)
+	} else {
+		return ""
+	}
+}
+
+func (t *Transaction) Title() blockatlas.KeyTitle {
+	if t.Delegate == "" && t.Receiver != "" {
+		return blockatlas.AnyActionDelegation
+	}
+
+	if t.Delegate != "" && t.Receiver == "" {
+		return blockatlas.AnyActionUndelegation
+	}
+
+	return blockatlas.AnyActionDelegation
+}
+
+func (t *Transaction) BlockTimestamp() int64 {
+	unix := int64(0)
+	date, err := time.Parse(time.RFC3339, t.Time)
+	if err == nil {
+		unix = date.Unix()
+	}
+	return unix
+}
+
+func (t *Transaction) TransferType() blockatlas.TransactionType {
+	switch t.Type {
+	case TxTypeTransaction:
+		return blockatlas.TxTransfer
+	case TxTypeDelegation:
+		return blockatlas.TxAnyAction
+	default:
+		return ""
+	}
+}
+
+func (t *Transaction) Direction(address string) blockatlas.Direction {
+	if t.Sender == address && t.Receiver == address {
+		return blockatlas.DirectionSelf
+	}
+	if t.Sender == address && t.Receiver != address {
+		return blockatlas.DirectionOutgoing
+	}
+
+	return blockatlas.DirectionIncoming
 }

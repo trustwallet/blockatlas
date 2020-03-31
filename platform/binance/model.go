@@ -104,7 +104,7 @@ func (subTxs *SubTxs) getTxs() (txs []Tx) {
 		if err != nil {
 			subTxValue = 0
 		}
-		value := strconv.FormatFloat(txValue+subTxValue, 'f', -1, 64)
+		value := numbers.Float64toString(txValue+subTxValue)
 		tx.Value = json.Number(value)
 		mapTx[key] = tx
 	}

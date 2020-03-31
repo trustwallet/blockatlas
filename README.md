@@ -97,10 +97,10 @@ go build -o observer_worker-bin cmd/observer_worker/main.go && ./observer_worker
 go build -o observer_subscriber-bin cmd/observer_subscriber/main.go && ./observer_subscriber-bin -c config.yml
 
 # Start Platform API server at port 8420 with the path to the config.yml ./ 
-go build -o platform-api-bin cmd/platform_api/main.go  && ./platform-api-bin -p 8420 -c config.yml
+go build -o platform-api-bin cmd/platform_api/main.go && ./platform-api-bin -p 8420 -c config.yml
 
 # Startp Swagger API server at port 8422 with the path to the config.yml ./ 
-go build -o swagger-api-bin cmd/swagger-api/main.go  && ./swagger-api-bin -p 8423
+go build -o swagger-api-bin cmd/swagger-api/main.go && ./swagger-api-bin -p 8423
 ```
 
 OR 
