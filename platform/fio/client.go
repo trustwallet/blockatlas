@@ -14,7 +14,7 @@ func (c *Client) getTransactions(account string) (actions []Action, error error)
 	var res GetActionsResponse
 	err := c.Post(&res, "v1/history/get_actions", GetActionsRequest{
 		AccountName: account,
-		Sort: "desc",
+		Sort:        "desc",
 	})
 	if err != nil {
 		return nil, errors.E(err, "Error from get_actions", errors.Params{"account_name": account, "inner_error": err.Error()})

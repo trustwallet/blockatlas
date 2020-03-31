@@ -5,30 +5,33 @@ type ActionData struct {
 	From           string `json:"from"`
 	To             string `json:"to"`
 	PayeePublicKey string `json:"payee_public_key"`
-	Amount 		   int64  `json:"amount"`
+	Amount         int64  `json:"amount"`
 	Quantity       string `json:"quantity"`
 	Fee            int64  `json:"max_fee"`
 	Actor          string `json:"actor"`
 	TpID           string `json:"tpid"`
-	Memo    string     `json:"memo"`
+	Memo           string `json:"memo"`
 }
+
 // ActionAct (from get_actions)
 type ActionAct struct {
-	Account string     `json:"account"`
-	Name 	string     `json:"name"`
+	Account string      `json:"account"`
+	Name    string      `json:"name"`
 	Data    interface{} `json:"data"` // Structure of data is action-specific
 }
+
 // ActionTrace
 type ActionTrace struct {
 	Receiver  string    `json:"receiver"`
-	Act 	  ActionAct `json:"act"`
-	TrxID 	  string    `json:"trx_id"`
+	Act       ActionAct `json:"act"`
+	TrxID     string    `json:"trx_id"`
 	BlockNum  uint64    `json:"block_num"`
 	BlockTime string    `json:"block_time"`
 }
+
 // Action (from get_actions)
 type Action struct {
-	BlockNum 	uint64      `json:"block_num"`
+	BlockNum    uint64      `json:"block_num"`
 	BlockTime   string      `json:"block_time"`
 	ActionTrace ActionTrace `json:"action_trace"`
 }
@@ -37,14 +40,14 @@ type Action struct {
 type GetActionsRequest struct {
 	AccountName string `json:"account_name"`
 	// pos, offset
-	Sort        string `json:"sort"` // desc
+	Sort string `json:"sort"` // desc
 }
 
 // GetActionsResponse request struct for get_actions
 type GetActionsResponse struct {
-	Actions   []Action `json:"actions"`
+	Actions []Action `json:"actions"`
 	//Error 	string	  `json:"error"`
-	LastBlock int64    `json:"last_irreversible_block"`
+	LastBlock int64 `json:"last_irreversible_block"`
 }
 
 // GetPubAddressRequest request struct for get_pub_address
