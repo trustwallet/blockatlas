@@ -6,7 +6,7 @@ import (
 )
 
 func TestIsType(t *testing.T) {
-	var tests = []struct {
+	tests := []struct {
 		error     error
 		errorType Type
 		result    bool
@@ -26,7 +26,7 @@ func TestIsType(t *testing.T) {
 }
 
 func TestEqual(t *testing.T) {
-	var tests = []struct {
+	tests := []struct {
 		err1   error
 		err2   error
 		result bool

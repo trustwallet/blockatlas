@@ -6,7 +6,7 @@ import (
 )
 
 func TestGetValidParameter(t *testing.T) {
-	var tests = []struct {
+	tests := []struct {
 		first  string
 		second string
 		result string

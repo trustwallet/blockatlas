@@ -12,7 +12,7 @@ import (
 )
 
 func TestDomains(t *testing.T) {
-	var tests = []struct {
+	tests := []struct {
 		name     string
 		domain   string
 		coins    []uint64

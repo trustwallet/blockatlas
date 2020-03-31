@@ -54,3 +54,14 @@ func TestFloat64toPrecision(t *testing.T) {
 	assert.Equal(t, Float64toPrecision(26.5, 4), 26.5)
 	assert.Equal(t, Float64toPrecision(3374, 4), 3374.0)
 }
+
+func TestFloat64toString(t *testing.T) {
+	assert.Equal(t, Float64toString(0), "0")
+	assert.Equal(t, Float64toString(0.0), "0")
+	assert.Equal(t, Float64toString(0.1), "0.1")
+	assert.Equal(t, Float64toString(0.1010), "0.101")
+	assert.Equal(t, Float64toString(0.015), "0.015")
+	assert.Equal(t, Float64toString(1), "1")
+	assert.Equal(t, Float64toString(1.1), "1.1")
+	assert.Equal(t, Float64toString(1.015), "1.015")
+}

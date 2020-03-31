@@ -32,6 +32,10 @@ func Float64toPrecision(num float64, precision int) float64 {
 	return float64(Round(num*output)) / output
 }
 
+func Float64toString(num float64) string {
+	return strconv.FormatFloat(num, 'f', -1, 64)
+}
+
 func FromDecimal(dec string) string {
 	v, err := DecimalToSatoshis(dec)
 	if err != nil {

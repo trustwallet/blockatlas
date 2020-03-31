@@ -60,7 +60,6 @@ kin:
 
 # [XTZ] Tezos: https://tezos.com
 tezos:
-  stake_api: https://api.tzstats.com/explorer
   api: http://localhost:3000/tezos-api
   rpc: https://mainnet.tezos.org.ua
 

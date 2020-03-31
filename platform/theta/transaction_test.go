@@ -121,7 +121,7 @@ var expectedTfuelTransfer = blockatlas.Tx{
 }
 
 func TestNormalize(t *testing.T) {
-	var tests = []struct {
+	tests := []struct {
 		Transaction string
 		Address     string
 		Token       string
@@ -169,7 +169,7 @@ func TestGetDirection(t *testing.T) {
 	var addr = "0x42616c88c7076fbe6e1596b734c13356b5a508a4"
 	var otherAddr = "0x8665a3cbc02ff17cf9d712e8a20f3d7bb1444517"
 
-	var tests = []struct {
+	tests := []struct {
 		address     string
 		expectedDir blockatlas.Direction
 		trxInput    Input
