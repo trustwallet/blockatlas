@@ -73,10 +73,8 @@ func (i *Instance) AddSubscription(id uint, data []models.SubscriptionData) erro
 func (i *Instance) AddToExistingSubscription(id uint, subscriptions []models.SubscriptionData) error {
 	var (
 		existingData []models.SubscriptionData
-		sub          = &models.Subscription{SubscriptionId: id}
+		association  = i.DB.Model(&models.Subscription{SubscriptionId: id}).Association("Data")
 	)
-
-	association := i.DB.Model(sub).Association("Data")
 
 	if err := association.Error; err != nil {
 		return err
@@ -102,7 +100,11 @@ func (i *Instance) AddToExistingSubscription(id uint, subscriptions []models.Sub
 }
 
 func (i *Instance) DeleteAllSubscriptions(id uint) error {
-	return i.DB.Where("subscription_id = ?", id).Delete(&models.SubscriptionData{}).Error
+	request := i.DB.Where("subscription_id = ?", id)
+	if err := request.Error; err != nil {
+		return err
+	}
+	return request.Delete(&models.SubscriptionData{}).Error
 }
 
 func (i *Instance) DeleteSubscriptions(subscriptions []models.SubscriptionData) error {
