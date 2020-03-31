@@ -8,7 +8,7 @@ import (
 var memoryCache heightBlockMap
 
 func init() {
-	memoryCache.m = make(map[uint]int64, 0)
+	memoryCache.m = make(map[uint]int64)
 }
 
 type heightBlockMap struct {

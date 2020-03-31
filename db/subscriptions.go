@@ -11,7 +11,6 @@ func (i *Instance) GetSubscriptionData(coin uint, addresses []string) ([]models.
 	}
 
 	var subscriptionsDataList []models.SubscriptionData
-
 	err := i.DB.
 		Model(&models.SubscriptionData{}).
 		Where("address in (?) AND coin = ?", addresses, coin).
@@ -20,7 +19,6 @@ func (i *Instance) GetSubscriptionData(coin uint, addresses []string) ([]models.
 	if err != nil {
 		return nil, err
 	}
-
 	return subscriptionsDataList, nil
 }
 
@@ -35,11 +33,9 @@ func (i *Instance) AddSubscriptions(id uint, subscriptions []models.Subscription
 	if err := txInstance.DB.Error; err != nil {
 		return err
 	}
-
 	if len(subscriptions) == 0 {
 		return errors.E("Empty subscriptions")
 	}
-
 	var (
 		existingSub models.Subscription
 		err         error
@@ -51,18 +47,15 @@ func (i *Instance) AddSubscriptions(id uint, subscriptions []models.Subscription
 		RecordNotFound()
 
 	subscriptions = removeSubscriptionDuplicates(subscriptions)
-
 	if recordNotFound {
 		err = txInstance.AddSubscription(id, subscriptions)
 	} else {
 		err = txInstance.AddToExistingSubscription(id, subscriptions)
 	}
-
 	if err != nil {
 		txInstance.DB.Rollback()
 		return err
 	}
-
 	return txInstance.DB.Commit().Error
 }
 
@@ -75,17 +68,14 @@ func (i *Instance) AddToExistingSubscription(id uint, subscriptions []models.Sub
 		existingData []models.SubscriptionData
 		association  = i.DB.Model(&models.Subscription{SubscriptionId: id}).Association("Data")
 	)
-
 	if err := association.Error; err != nil {
 		return err
 	}
-
 	if err := association.Find(&existingData).Error; err != nil {
 		return err
 	}
 
 	updateList, deleteList := getSubscriptionsToDeleteAndUpdate(existingData, subscriptions)
-
 	if len(updateList) > 0 {
 		if err := association.Append(updateList).Error; err != nil {
 			return err
@@ -112,13 +102,11 @@ func (i *Instance) DeleteSubscriptions(subscriptions []models.SubscriptionData) 
 		errorsList = make([]error, 0)
 		errDetails string
 	)
-
 	for _, sub := range subscriptions {
 		if err := i.DB.Delete(&models.SubscriptionData{}, sub).Error; err != nil {
 			errorsList = append(errorsList, err)
 		}
 	}
-
 	if len(errorsList) != 0 {
 		for _, err := range errorsList {
 			errDetails += err.Error() + " "
@@ -144,7 +132,7 @@ func getSubscriptionsToDeleteAndUpdate(existing, new []models.SubscriptionData) 
 
 func containSubscription(sub models.SubscriptionData, list []models.SubscriptionData) bool {
 	for _, s := range list {
-		if s.Address == sub.Address && sub.Coin == s.Coin && sub.SubscriptionId == sub.SubscriptionId {
+		if s.Address == sub.Address && sub.Coin == s.Coin && s.SubscriptionId == sub.SubscriptionId {
 			return true
 		}
 	}
