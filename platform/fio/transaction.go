@@ -11,7 +11,7 @@ import (
 
 func (p *Platform) GetTxsByAddress(address string) (page blockatlas.TxPage, err error) {
 	// take actor from address
-	account := actorFromPublicKey(address)
+	account := actorFromPublicKeyOrActor(address)
 	actions, err := p.client.getTransactions(account)
 	if err != nil {
 		return nil, err
