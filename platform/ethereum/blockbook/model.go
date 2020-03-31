@@ -60,7 +60,7 @@ type TokenTransfer struct {
 
 // Token contains info about tokens held by an address
 type Token struct {
-	Balance  string    `json:"balance"`
+	//Balance  string    `json:"balance"`
 	Contract string    `json:"contract"`
 	Decimals uint      `json:"decimals"`
 	Name     string    `json:"name"`

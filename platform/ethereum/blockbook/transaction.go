@@ -29,7 +29,7 @@ func normalizePage(srcPage *Page, address, token string, coinIndex uint) blockat
 		tx := normalizeTxWithAddress(&srcTx, address, token, coinIndex)
 		txs = append(txs, tx)
 	}
-	return blockatlas.TxPage(txs)
+	return txs
 }
 
 func normalizeTx(srcTx *Transaction, coinIndex uint) blockatlas.Tx {
