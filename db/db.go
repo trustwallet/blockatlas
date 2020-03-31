@@ -23,6 +23,7 @@ func Setup(uri string) error {
 		&models.SubscriptionData{},
 		&models.Tracker{},
 	)
+
 	return nil
 }
 
