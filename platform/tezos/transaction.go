@@ -46,7 +46,8 @@ func NormalizeTx(srcTx Transaction, address string) (blockatlas.Tx, bool) {
 	if address != "" {
 		tx.Direction = srcTx.Direction(address)
 	}
-	value := blockatlas.Amount(numbers.Float64toString(srcTx.Volume))
+
+	value := blockatlas.Amount(numbers.DecimalExp(numbers.Float64toString(srcTx.Volume), 6))
 	switch srcTx.TransferType() {
 	case blockatlas.TxAnyAction:
 		tx.Meta = blockatlas.AnyAction{
