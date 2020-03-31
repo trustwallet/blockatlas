@@ -346,5 +346,17 @@
         "address": "xpub/xpub6CKAjCUKKPW7bzYEG5mzRsmzyTRp7XzauqFWNmpGVNqMqsSQpLMCN3ygEmD6ZEGVocNDrDhE7SeGot78noEWpwPDbJjfxREHC848sxNrUkD",
         "expectedTxNum": 2,
         "expectedTxId": "2b67e2fbe6a212286243bc539cca3c1d877e85ffec7c925e34f2bfb7b6cc498c"
+    },
+    {
+        "handler": "fio",
+        "address": "FIO7Q3XfQ2ocGP1zYst6Sfx5qrsiZ865Cu8So2atrub9JN94so7gt",
+        "expectedTxNum": 2,
+        "expectedTxId": "5cd8d902a675d608d4c82eca892c7973deaa6aefcc58ed9bcbd382ebdc7271c8"
+    },
+    {
+        "handler": "fio",
+        "address": "ezsmbcy2opod",
+        "expectedTxNum": 2,
+        "expectedTxId": "5cd8d902a675d608d4c82eca892c7973deaa6aefcc58ed9bcbd382ebdc7271c8"
     }
 ]
