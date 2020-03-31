@@ -26,7 +26,7 @@ var (
 		Coin:      1729,
 		From:      addr1,
 		To:        addr1,
-		Fee:       "0.0015",
+		Fee:       "1500",
 		Date:      1582894746,
 		Block:     843988,
 		Status:    "completed",
