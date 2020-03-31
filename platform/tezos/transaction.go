@@ -46,7 +46,7 @@ func NormalizeTx(srcTx Transaction, address string) (blockatlas.Tx, bool) {
 	if address != "" {
 		tx.Direction = srcTx.Direction(address)
 	}
-
+	value := blockatlas.Amount(numbers.Float64toString(srcTx.Volume))
 	switch srcTx.TransferType() {
 	case blockatlas.TxAnyAction:
 		tx.Meta = blockatlas.AnyAction{
@@ -56,10 +56,11 @@ func NormalizeTx(srcTx Transaction, address string) (blockatlas.Tx, bool) {
 			Name:     coin.Tezos().Name,
 			Symbol:   coin.Tezos().Symbol,
 			Decimals: coin.Tezos().Decimals,
+			Value:    value,
 		}
 	case blockatlas.TxTransfer:
 		tx.Meta = blockatlas.Transfer{
-			Value:    blockatlas.Amount(numbers.Float64toString(srcTx.Volume)),
+			Value:    value,
 			Symbol:   coin.Coins[coin.XTZ].Symbol,
 			Decimals: coin.Coins[coin.XTZ].Decimals,
 		}
