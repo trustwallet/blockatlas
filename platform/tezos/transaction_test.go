@@ -34,7 +34,7 @@ var (
 		Direction: "yourself",
 		Memo:      "",
 		Meta: blockatlas.Transfer{
-			Value:    "0.000001",
+			Value:    "1",
 			Symbol:   "XTZ",
 			Decimals: 6,
 		},
