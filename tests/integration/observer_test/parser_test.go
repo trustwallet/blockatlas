@@ -1,6 +1,6 @@
 // +build integration
 
-package docker_test
+package observer_test
 
 import (
 	"context"
@@ -13,15 +13,17 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/services/observer/notifier"
 	"github.com/trustwallet/blockatlas/services/observer/parser"
-	"github.com/trustwallet/blockatlas/tests/docker_test/setup"
+	"github.com/trustwallet/blockatlas/tests/integration/setup"
 	"testing"
 	"time"
 )
 
 func TestParserFetchAndPublishBlock_NormalCase(t *testing.T) {
+	setup.CleanupPgContainer(database.DB)
 	stopChan := make(chan struct{}, 1)
 
 	params := setupParser(stopChan)
+	params.Database = database
 
 	ctx, cancel := context.WithCancel(context.Background())
 
@@ -109,7 +111,6 @@ func setupParser(stopChan chan struct{}) parser.Params {
 
 	return parser.Params{
 		Api:                   getMockedBlockAPI(),
-		Storage:               setup.Cache,
 		ParsingBlocksInterval: pollInterval,
 		BacklogCount:          backlogCount,
 		MaxBacklogBlocks:      int64(maxBatchBlocksAmount),

@@ -3,11 +3,11 @@ package main
 import (
 	"context"
 	"github.com/spf13/viper"
+	"github.com/trustwallet/blockatlas/db"
 	"github.com/trustwallet/blockatlas/internal"
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/services/observer/notifier"
-	"github.com/trustwallet/blockatlas/storage"
 	"time"
 )
 
@@ -17,7 +17,7 @@ const (
 
 var (
 	confPath string
-	cache    *storage.Storage
+	database *db.Instance
 )
 
 func init() {
@@ -26,11 +26,10 @@ func init() {
 	internal.InitConfig(confPath)
 	logger.InitLogger()
 
-	redisHost := viper.GetString("storage.redis")
 	mqHost := viper.GetString("observer.rabbitmq.uri")
 	prefetchCount := viper.GetInt("observer.rabbitmq.consumer.prefetch_count")
+	pgUri := viper.GetString("postgres.uri")
 
-	cache = internal.InitRedis(redisHost)
 	internal.InitRabbitMQ(mqHost, prefetchCount)
 
 	if err := mq.RawTransactions.Declare(); err != nil {
@@ -41,8 +40,15 @@ func init() {
 		logger.Fatal(err)
 	}
 
-	go storage.RestoreConnectionWorker(cache, redisHost, time.Second*10)
+	var err error
+	database, err = db.New(pgUri)
+	if err != nil {
+		logger.Fatal(err)
+	}
+
 	go mq.RestoreConnectionWorker(mqHost, mq.RawTransactions, time.Second*10)
+	go db.RestoreConnectionWorker(database.DB, time.Second*10, pgUri)
+	time.Sleep(time.Millisecond)
 }
 
 func main() {
@@ -50,7 +56,7 @@ func main() {
 
 	ctx, cancel := context.WithCancel(context.Background())
 
-	go mq.RawTransactions.RunConsumerWithCancel(notifier.RunNotifier, cache, ctx)
+	go mq.RawTransactions.RunConsumerWithCancelAndDbConn(notifier.RunNotifier, database, ctx)
 
 	internal.SetupGracefulShutdownForObserver(cancel)
 }

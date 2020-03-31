@@ -1,21 +1,23 @@
 // +build integration
 
-package docker_test
+package observer_test
 
 import (
+	"github.com/trustwallet/blockatlas/db"
 	"github.com/trustwallet/blockatlas/mq"
-	"github.com/trustwallet/blockatlas/tests/docker_test/setup"
+	"github.com/trustwallet/blockatlas/tests/integration/setup"
 	"log"
 	"os"
 	"testing"
 )
 
 var (
-	rawTransactionsChannel,
-	transactionsChannel, subscriptionChannel mq.MessageChannel
+	rawTransactionsChannel, transactionsChannel, subscriptionChannel mq.MessageChannel
+	database                                                         *db.Instance
 )
 
 func TestMain(m *testing.M) {
+	database = setup.RunPgContainer()
 	setup.RunMQContainer()
 	if err := mq.RawTransactions.Declare(); err != nil {
 		log.Fatal(err)
@@ -30,9 +32,9 @@ func TestMain(m *testing.M) {
 	subscriptionChannel = mq.Subscriptions.GetMessageChannel()
 	transactionsChannel = mq.Transactions.GetMessageChannel()
 
-	setup.RunRedisContainer()
 	code := m.Run()
+
 	setup.StopMQContainer()
-	setup.StopRedisContainer()
+	setup.StopPgContainer()
 	os.Exit(code)
 }

@@ -3,9 +3,10 @@ package subscriber
 import (
 	"encoding/json"
 	"github.com/streadway/amqp"
+	"github.com/trustwallet/blockatlas/db"
+	"github.com/trustwallet/blockatlas/db/models"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
-	"github.com/trustwallet/blockatlas/storage"
 )
 
 const (
@@ -14,36 +15,34 @@ const (
 	UpdateSubscription blockatlas.SubscriptionOperation = "UpdateSubscription"
 )
 
-func RunSubscriber(delivery amqp.Delivery, storage storage.Addresses) {
+func RunSubscriber(database *db.Instance, delivery amqp.Delivery) {
 	var event blockatlas.SubscriptionEvent
 	err := json.Unmarshal(delivery.Body, &event)
 	if err != nil {
 		logger.Fatal(err)
 	}
-	newSubscriptions := event.ParseSubscriptions(event.NewSubscriptions)
-	oldSubscriptions := event.ParseSubscriptions(event.OldSubscriptions)
 
-	params := logger.Params{"operation": event.Operation, "guid": event.GUID, "new_subscriptions_len": len(newSubscriptions), "old_subscriptions_len": len(oldSubscriptions)}
+	subscriptions := event.ParseSubscriptions(event.Subscriptions)
+
+	params := logger.Params{"operation": event.Operation, "id": event.Id, "subscriptions_len": len(subscriptions)}
+
+	id := event.Id
 
 	switch event.Operation {
 	case UpdateSubscription:
-		err := storage.DeleteSubscriptions(oldSubscriptions)
-		if err != nil {
-			logger.Error(err, params)
-		}
-		err = storage.AddSubscriptions(newSubscriptions)
+		err := database.AddToExistingSubscription(id, ToSubscriptionData(subscriptions))
 		if err != nil {
 			logger.Error(err, params)
 		}
 		logger.Info("Updated", params)
 	case AddSubscription:
-		err = storage.AddSubscriptions(newSubscriptions)
+		err = database.AddSubscriptions(id, ToSubscriptionData(subscriptions))
 		if err != nil {
 			logger.Error(err, params)
 		}
 		logger.Info("Added", params)
 	case DeleteSubscription:
-		err := storage.DeleteSubscriptions(oldSubscriptions)
+		err := database.DeleteAllSubscriptions(id)
 		if err != nil {
 			logger.Error(err, params)
 		}
@@ -54,4 +53,12 @@ func RunSubscriber(delivery amqp.Delivery, storage storage.Addresses) {
 	if err != nil {
 		logger.Error(err, params)
 	}
+}
+
+func ToSubscriptionData(sub []blockatlas.Subscription) []models.SubscriptionData {
+	data := make([]models.SubscriptionData, 0, len(sub))
+	for _, s := range sub {
+		data = append(data, models.SubscriptionData{Coin: s.Coin, Address: s.Address, SubscriptionId: s.Id})
+	}
+	return data
 }

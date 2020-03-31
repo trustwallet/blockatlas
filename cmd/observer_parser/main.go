@@ -4,13 +4,13 @@ import (
 	"context"
 	"fmt"
 	"github.com/spf13/viper"
+	"github.com/trustwallet/blockatlas/db"
 	"github.com/trustwallet/blockatlas/internal"
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/platform"
 	"github.com/trustwallet/blockatlas/services/observer/notifier"
 	"github.com/trustwallet/blockatlas/services/observer/parser"
-	"github.com/trustwallet/blockatlas/storage"
 	"os"
 	"os/signal"
 	"sync"
@@ -24,10 +24,10 @@ const (
 
 var (
 	confPath                              string
-	cache                                 *storage.Storage
 	backlogTime, minInterval, maxInterval time.Duration
 	maxBackLogBlocks                      int64
 	txsBatchLimit                         uint
+	database                              *db.Instance
 )
 
 func init() {
@@ -36,12 +36,10 @@ func init() {
 	internal.InitConfig(confPath)
 	logger.InitLogger()
 
-	redisHost := viper.GetString("storage.redis")
 	mqHost := viper.GetString("observer.rabbitmq.uri")
 	prefetchCount := viper.GetInt("observer.rabbitmq.consumer.prefetch_count")
 	platformHandle := viper.GetString("platform")
 
-	cache = internal.InitRedis(redisHost)
 	internal.InitRabbitMQ(mqHost, prefetchCount)
 	platform.Init(platformHandle)
 
@@ -52,6 +50,9 @@ func init() {
 	if len(platform.BlockAPIs) == 0 {
 		logger.Fatal("No APIs to observe")
 	}
+
+	pgUri := viper.GetString("postgres.uri")
+
 	txsBatchLimit = viper.GetUint("observer.txs_batch_limit")
 	backlogTime = viper.GetDuration("observer.backlog")
 	minInterval = viper.GetDuration("observer.block_poll.min")
@@ -60,10 +61,14 @@ func init() {
 	if minInterval >= maxInterval {
 		logger.Fatal("minimum block polling interval cannot be greater or equal than maximum")
 	}
+	var err error
+	database, err = db.New(pgUri)
+	if err != nil {
+		logger.Fatal(err)
+	}
 
 	go mq.FatalWorker(time.Second * 10)
-	time.Sleep(time.Millisecond)
-	go storage.RestoreConnectionWorker(cache, redisHost, time.Second*10)
+	go db.RestoreConnectionWorker(database.DB, time.Second*10, pgUri)
 	time.Sleep(time.Millisecond)
 }
 
@@ -100,13 +105,13 @@ func main() {
 		params := parser.Params{
 			Ctx:                   ctx,
 			Api:                   api,
-			Storage:               cache,
 			Queue:                 mq.RawTransactions,
 			ParsingBlocksInterval: pollInterval,
 			BacklogCount:          backlogCount,
 			MaxBacklogBlocks:      maxBackLogBlocks,
 			StopChannel:           stopChannel,
 			TxBatchLimit:          txsBatchLimit,
+			Database:              database,
 		}
 
 		go parser.RunParser(params)
