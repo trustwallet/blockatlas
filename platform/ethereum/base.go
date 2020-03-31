@@ -22,19 +22,18 @@ func Init(coinType uint, api, rpc string) *Platform {
 	return &Platform{
 		CoinIndex: coinType,
 		RpcURL:    rpc,
-		ens:       ens.RpcClient{blockatlas.InitJSONClient(rpc)},
-		tokens:    &trustray.Client{blockatlas.InitClient(api)},
+		ens:       ens.RpcClient{Request: blockatlas.InitJSONClient(rpc)},
+		client:    &trustray.Client{Request: blockatlas.InitClient(api)},
+		tokens:    &trustray.Client{Request: blockatlas.InitClient(api)},
 	}
 }
 
 func InitWitCollection(coinType uint, api, rpc, blockbookApi, collectionApi, collectionKey string) *Platform {
 	platform := Init(coinType, api, rpc)
 	if coinType == coin.ETH {
-		platform.client = &blockbook.Client{blockatlas.InitClient(blockbookApi)}
-	} else {
-		platform.client = &trustray.Client{blockatlas.InitClient(api)}
+		platform.client = &blockbook.Client{Request: blockatlas.InitClient(blockbookApi)}
 	}
-	platform.collectible = collection.Client{blockatlas.InitClient(collectionApi)}
+	platform.collectible = collection.Client{Request: blockatlas.InitClient(collectionApi)}
 	platform.collectible.Headers["X-API-KEY"] = collectionKey
 	return platform
 }
