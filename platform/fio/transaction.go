@@ -28,9 +28,10 @@ func (p *Platform) GetTxsByAddress(address string) (page blockatlas.TxPage, err 
 }
 
 func (p *Platform) Normalize(action *Action, account string) (blockatlas.Tx, error) {
-	var from string
-	var to string
-	var amount blockatlas.Amount
+	var (
+		to, from string
+		amount blockatlas.Amount
+	)
 
 	// Action Act.Name == "trnsfiopubky" not handled
 	if action.ActionTrace.Act.Account == "fio.token" &&
