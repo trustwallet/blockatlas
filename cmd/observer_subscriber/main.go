@@ -17,8 +17,8 @@ const (
 )
 
 var (
-	confPath   string
-	dbInstance *db.Instance
+	confPath string
+	database *db.Instance
 )
 
 func init() {
@@ -35,13 +35,13 @@ func init() {
 	internal.InitRabbitMQ(mqHost, prefetchCount)
 
 	var err error
-	dbInstance, err = db.New(pgUri)
+	database, err = db.New(pgUri)
 	if err != nil {
 		logger.Fatal(err)
 	}
 
 	go mq.FatalWorker(time.Second * 10)
-	go db.RestoreConnectionWorker(dbInstance.DB, time.Second*10, pgUri)
+	go db.RestoreConnectionWorker(database.DB, time.Second*10, pgUri)
 	time.Sleep(time.Millisecond)
 }
 
@@ -52,7 +52,7 @@ func main() {
 	}
 	ctx, cancel := context.WithCancel(context.Background())
 
-	go mq.Subscriptions.RunConsumerWithCancelAndDbConn(subscriber.RunSubscriber, dbInstance, ctx)
+	go mq.Subscriptions.RunConsumerWithCancelAndDbConn(subscriber.RunSubscriber, database, ctx)
 
 	internal.SetupGracefulShutdownForObserver(cancel)
 }

@@ -15,7 +15,7 @@ const (
 	UpdateSubscription blockatlas.SubscriptionOperation = "UpdateSubscription"
 )
 
-func RunSubscriber(dbInstance *db.Instance, delivery amqp.Delivery) {
+func RunSubscriber(database *db.Instance, delivery amqp.Delivery) {
 	var event blockatlas.SubscriptionEvent
 	err := json.Unmarshal(delivery.Body, &event)
 	if err != nil {
@@ -30,19 +30,19 @@ func RunSubscriber(dbInstance *db.Instance, delivery amqp.Delivery) {
 
 	switch event.Operation {
 	case UpdateSubscription:
-		err := dbInstance.AddToExistingSubscription(id, ToSubscriptionData(subscriptions))
+		err := database.AddToExistingSubscription(id, ToSubscriptionData(subscriptions))
 		if err != nil {
 			logger.Error(err, params)
 		}
 		logger.Info("Updated", params)
 	case AddSubscription:
-		err = dbInstance.AddSubscriptions(id, ToSubscriptionData(subscriptions))
+		err = database.AddSubscriptions(id, ToSubscriptionData(subscriptions))
 		if err != nil {
 			logger.Error(err, params)
 		}
 		logger.Info("Added", params)
 	case DeleteSubscription:
-		err := dbInstance.DeleteAllSubscriptions(id)
+		err := database.DeleteAllSubscriptions(id)
 		if err != nil {
 			logger.Error(err, params)
 		}

@@ -24,8 +24,8 @@ var (
 )
 
 func TestFullFlow(t *testing.T) {
-	setup.CleanupPgContainer(dbInstance.DB)
-	err := dbInstance.AddSubscriptions(1, []models.SubscriptionData{{Coin: 60, Address: "testAddress", SubscriptionId: 1}})
+	setup.CleanupPgContainer(database.DB)
+	err := database.AddSubscriptions(1, []models.SubscriptionData{{Coin: 60, Address: "testAddress", SubscriptionId: 1}})
 	assert.Nil(t, err)
 
 	ctx, cancel := context.WithCancel(context.Background())
@@ -33,14 +33,14 @@ func TestFullFlow(t *testing.T) {
 	stopChan := make(chan struct{}, 1)
 
 	params := setupParserFull(stopChan)
-	params.DBInstance = dbInstance
+	params.Database = database
 	params.Ctx = ctx
 	params.Queue = mq.RawTransactions
 
 	go parser.RunParser(params)
 	time.Sleep(time.Second * 2)
 
-	go mq.RunConsumerForChannelWithCancelAndDbConn(notifier.RunNotifier, rawTransactionsChannel, dbInstance, ctx)
+	go mq.RunConsumerForChannelWithCancelAndDbConn(notifier.RunNotifier, rawTransactionsChannel, database, ctx)
 	time.Sleep(time.Second * 5)
 
 	for i := 0; i < 11; i++ {

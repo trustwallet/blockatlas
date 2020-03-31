@@ -19,7 +19,7 @@ type DispatchEvent struct {
 	Id     uint                       `json:"id"`
 }
 
-func RunNotifier(dbInstance *db.Instance, delivery amqp.Delivery) {
+func RunNotifier(database *db.Instance, delivery amqp.Delivery) {
 	defer func() {
 		if err := delivery.Ack(false); err != nil {
 			logger.Error(err)
@@ -42,7 +42,7 @@ func RunNotifier(dbInstance *db.Instance, delivery amqp.Delivery) {
 	}
 
 	addresses := blockTransactions.GetUniqueAddresses()
-	subscriptionsDataList, err := dbInstance.GetSubscriptionData(txs[0].Coin, addresses)
+	subscriptionsDataList, err := database.GetSubscriptionData(txs[0].Coin, addresses)
 	if err != nil || len(subscriptionsDataList) == 0 {
 		return
 	}

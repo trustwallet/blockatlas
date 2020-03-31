@@ -60,7 +60,7 @@ func (q Queue) Publish(body []byte) error {
 	})
 }
 
-func RunConsumerForChannelWithCancelAndDbConn(consumer ConsumerWithDbConn, messageChannel MessageChannel, dbInstance *db.Instance, ctx context.Context) {
+func RunConsumerForChannelWithCancelAndDbConn(consumer ConsumerWithDbConn, messageChannel MessageChannel, database *db.Instance, ctx context.Context) {
 	for {
 		select {
 		case <-ctx.Done():
@@ -70,7 +70,7 @@ func RunConsumerForChannelWithCancelAndDbConn(consumer ConsumerWithDbConn, messa
 			if message.Body == nil {
 				continue
 			}
-			go consumer(dbInstance, message)
+			go consumer(database, message)
 		}
 	}
 }
@@ -124,7 +124,7 @@ func (q Queue) RunConsumerWithCancel(consumer Consumer, ctx context.Context) {
 	}
 }
 
-func (q Queue) RunConsumerWithCancelAndDbConn(consumer ConsumerWithDbConn, dbInstance *db.Instance, ctx context.Context) {
+func (q Queue) RunConsumerWithCancelAndDbConn(consumer ConsumerWithDbConn, database *db.Instance, ctx context.Context) {
 	messageChannel := q.GetMessageChannel()
 	for {
 		select {
@@ -135,7 +135,7 @@ func (q Queue) RunConsumerWithCancelAndDbConn(consumer ConsumerWithDbConn, dbIns
 			if message.Body == nil {
 				continue
 			}
-			go consumer(dbInstance, message)
+			go consumer(database, message)
 		}
 	}
 }

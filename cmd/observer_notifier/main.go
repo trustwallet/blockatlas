@@ -16,8 +16,8 @@ const (
 )
 
 var (
-	confPath   string
-	dbInstance *db.Instance
+	confPath string
+	database *db.Instance
 )
 
 func init() {
@@ -41,13 +41,13 @@ func init() {
 	}
 
 	var err error
-	dbInstance, err = db.New(pgUri)
+	database, err = db.New(pgUri)
 	if err != nil {
 		logger.Fatal(err)
 	}
 
 	go mq.RestoreConnectionWorker(mqHost, mq.RawTransactions, time.Second*10)
-	go db.RestoreConnectionWorker(dbInstance.DB, time.Second*10, pgUri)
+	go db.RestoreConnectionWorker(database.DB, time.Second*10, pgUri)
 	time.Sleep(time.Millisecond)
 }
 
@@ -56,7 +56,7 @@ func main() {
 
 	ctx, cancel := context.WithCancel(context.Background())
 
-	go mq.RawTransactions.RunConsumerWithCancelAndDbConn(notifier.RunNotifier, dbInstance, ctx)
+	go mq.RawTransactions.RunConsumerWithCancelAndDbConn(notifier.RunNotifier, database, ctx)
 
 	internal.SetupGracefulShutdownForObserver(cancel)
 }

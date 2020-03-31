@@ -27,7 +27,7 @@ type (
 		MaxBacklogBlocks      int64
 		StopChannel           chan<- struct{}
 		TxBatchLimit          uint
-		DBInstance            *db.Instance
+		Database              *db.Instance
 	}
 
 	GetBlockByNumber func(num int64) (*blockatlas.Block, error)
@@ -79,7 +79,7 @@ func RunParser(params Params) {
 }
 
 func GetBlocksIntervalToFetch(params Params) (int64, int64, error) {
-	lastParsedBlock, err := params.DBInstance.GetLastParsedBlockNumber(params.Api.Coin().ID)
+	lastParsedBlock, err := params.Database.GetLastParsedBlockNumber(params.Api.Coin().ID)
 	if err != nil {
 		return 0, 0, errors.E(err, "Polling failed: tracker didn't return last known block number")
 	}
@@ -174,7 +174,7 @@ func SaveLastParsedBlock(params Params, blocks []blockatlas.Block) error {
 	})
 
 	lastBlockNumber := blocks[len(blocks)-1].Number
-	err := params.DBInstance.SetLastParsedBlockNumber(params.Api.Coin().ID, lastBlockNumber)
+	err := params.Database.SetLastParsedBlockNumber(params.Api.Coin().ID, lastBlockNumber)
 	if err != nil {
 		return err
 	}

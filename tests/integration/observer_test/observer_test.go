@@ -13,11 +13,11 @@ import (
 
 var (
 	rawTransactionsChannel, transactionsChannel, subscriptionChannel mq.MessageChannel
-	dbInstance                                                       *db.Instance
+	database                                                         *db.Instance
 )
 
 func TestMain(m *testing.M) {
-	dbInstance = setup.RunPgContainer()
+	database = setup.RunPgContainer()
 	setup.RunMQContainer()
 	if err := mq.RawTransactions.Declare(); err != nil {
 		log.Fatal(err)

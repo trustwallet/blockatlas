@@ -27,7 +27,7 @@ var (
 	backlogTime, minInterval, maxInterval time.Duration
 	maxBackLogBlocks                      int64
 	txsBatchLimit                         uint
-	dbInstance                            *db.Instance
+	database                              *db.Instance
 )
 
 func init() {
@@ -62,13 +62,13 @@ func init() {
 		logger.Fatal("minimum block polling interval cannot be greater or equal than maximum")
 	}
 	var err error
-	dbInstance, err = db.New(pgUri)
+	database, err = db.New(pgUri)
 	if err != nil {
 		logger.Fatal(err)
 	}
 
 	go mq.FatalWorker(time.Second * 10)
-	go db.RestoreConnectionWorker(dbInstance.DB, time.Second*10, pgUri)
+	go db.RestoreConnectionWorker(database.DB, time.Second*10, pgUri)
 	time.Sleep(time.Millisecond)
 }
 
@@ -111,7 +111,7 @@ func main() {
 			MaxBacklogBlocks:      maxBackLogBlocks,
 			StopChannel:           stopChannel,
 			TxBatchLimit:          txsBatchLimit,
-			DBInstance:            dbInstance,
+			Database:              database,
 		}
 
 		go parser.RunParser(params)

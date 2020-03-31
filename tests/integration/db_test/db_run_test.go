@@ -10,16 +10,16 @@ import (
 	"testing"
 )
 
-var dbInstance *db.Instance
+var database *db.Instance
 
 func TestMain(m *testing.M) {
-	dbInstance = setup.RunPgContainer()
+	database = setup.RunPgContainer()
 	code := m.Run()
 	setup.StopPgContainer()
 	os.Exit(code)
 }
 
 func TestPgSetup(t *testing.T) {
-	assert.NotNil(t, dbInstance)
-	assert.NotNil(t, dbInstance.DB)
+	assert.NotNil(t, database)
+	assert.NotNil(t, database.DB)
 }
