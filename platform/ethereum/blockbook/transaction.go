@@ -12,7 +12,7 @@ func (c *Client) GetTransactions(address string, coinIndex uint) (blockatlas.TxP
 	if err != nil {
 		return nil, err
 	}
-	return normalizePage(page, address, "", coinIndex), nil
+	return NormalizePage(page, address, "", coinIndex), nil
 }
 
 func (c *Client) GetTokenTxs(address, token string, coinIndex uint) (blockatlas.TxPage, error) {
@@ -20,10 +20,10 @@ func (c *Client) GetTokenTxs(address, token string, coinIndex uint) (blockatlas.
 	if err != nil {
 		return nil, err
 	}
-	return normalizePage(page, address, token, coinIndex), nil
+	return NormalizePage(page, address, token, coinIndex), nil
 }
 
-func normalizePage(srcPage *Page, address, token string, coinIndex uint) blockatlas.TxPage {
+func NormalizePage(srcPage *Page, address, token string, coinIndex uint) blockatlas.TxPage {
 	var txs []blockatlas.Tx
 	for _, srcTx := range srcPage.Transactions {
 		tx := normalizeTxWithAddress(&srcTx, address, token, coinIndex)
