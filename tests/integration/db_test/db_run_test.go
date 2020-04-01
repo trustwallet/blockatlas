@@ -21,5 +21,5 @@ func TestMain(m *testing.M) {
 
 func TestPgSetup(t *testing.T) {
 	assert.NotNil(t, database)
-	assert.NotNil(t, database.DB)
+	assert.NotNil(t, database.Gorm)
 }

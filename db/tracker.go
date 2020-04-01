@@ -35,7 +35,7 @@ func (i *Instance) GetLastParsedBlockNumber(coin uint) (int64, error) {
 		return height, nil
 	}
 	var tracker models.Tracker
-	if err := i.DB.Where(models.Tracker{Coin: coin}).Find(&tracker).Error; err != nil {
+	if err := i.Gorm.Where(models.Tracker{Coin: coin}).Find(&tracker).Error; err != nil {
 		return 0, nil
 	}
 	return tracker.Height, nil
@@ -48,7 +48,7 @@ func (i *Instance) SetLastParsedBlockNumber(coin uint, num int64) error {
 		Height: num,
 	}
 
-	return i.DB.
+	return i.Gorm.
 		Set("gorm:insert_option", "ON CONFLICT (coin) DO UPDATE SET height = excluded.height").
 		Where(models.Tracker{Coin: coin}).
 		Create(&tracker).Error

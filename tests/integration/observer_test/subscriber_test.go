@@ -19,7 +19,7 @@ import (
 )
 
 func TestSubscriberAddSubscription(t *testing.T) {
-	setup.CleanupPgContainer(database.DB)
+	setup.CleanupPgContainer(database.Gorm)
 
 	_, goFile, _, _ := runtime.Caller(0)
 	testFilePathGiven := filepath.Join(filepath.Dir(goFile), "data", "given_subscriptions_added.json")
@@ -66,7 +66,7 @@ func TestSubscriberAddSubscription(t *testing.T) {
 }
 
 func TestSubscriber_UpdateSubscription(t *testing.T) {
-	setup.CleanupPgContainer(database.DB)
+	setup.CleanupPgContainer(database.Gorm)
 	_, goFile, _, _ := runtime.Caller(0)
 	testFilePathGiven := filepath.Join(filepath.Dir(goFile), "data", "given_subscriptions_deleted.json")
 	testFileGiven, err := ioutil.ReadFile(testFilePathGiven)

@@ -12,7 +12,7 @@ import (
 )
 
 func TestDb_AddSubscriptionsBulk(t *testing.T) {
-	setup.CleanupPgContainer(database.DB)
+	setup.CleanupPgContainer(database.Gorm)
 	var subscriptions []models.SubscriptionData
 
 	id := uint(1)
@@ -35,7 +35,7 @@ func TestDb_AddSubscriptionsBulk(t *testing.T) {
 }
 
 func TestDb_AddSubscriptions(t *testing.T) {
-	setup.CleanupPgContainer(database.DB)
+	setup.CleanupPgContainer(database.Gorm)
 	var subscriptions []models.SubscriptionData
 
 	id := uint(1)
@@ -85,7 +85,7 @@ func TestDb_AddSubscriptions(t *testing.T) {
 }
 
 func TestDb_AddSubscriptionsWithRewrite(t *testing.T) {
-	setup.CleanupPgContainer(database.DB)
+	setup.CleanupPgContainer(database.Gorm)
 	id := uint(1)
 
 	var subscriptions []models.SubscriptionData
@@ -182,7 +182,7 @@ func TestDb_AddSubscriptionsWithRewrite(t *testing.T) {
 }
 
 func TestDb_FindSubscriptions(t *testing.T) {
-	setup.CleanupPgContainer(database.DB)
+	setup.CleanupPgContainer(database.Gorm)
 
 	var subscriptionsA []blockatlas.Subscription
 	id := uint(1)
@@ -248,7 +248,7 @@ func TestDb_FindSubscriptions(t *testing.T) {
 }
 
 func TestDb_DeleteSubscriptions(t *testing.T) {
-	setup.CleanupPgContainer(database.DB)
+	setup.CleanupPgContainer(database.Gorm)
 	var subscriptions []models.SubscriptionData
 
 	id := uint(1)
@@ -296,6 +296,7 @@ func TestDb_DeleteSubscriptions(t *testing.T) {
 	assert.Equal(t, subscriptions[2].Coin, subs144[0].Coin)
 	assert.Equal(t, subscriptions[2].Address, subs144[0].Address)
 
+	subscriptions[0].ID = subs60[0].ID
 	subsToDel := []models.SubscriptionData{subscriptions[0]}
 
 	assert.Nil(t, database.DeleteSubscriptions(subsToDel))
@@ -322,7 +323,7 @@ func TestDb_DeleteSubscriptions(t *testing.T) {
 }
 
 func TestDeleteAll(t *testing.T) {
-	setup.CleanupPgContainer(database.DB)
+	setup.CleanupPgContainer(database.Gorm)
 	var subscriptions []models.SubscriptionData
 
 	id := uint(1)
@@ -379,7 +380,7 @@ func TestDeleteAll(t *testing.T) {
 }
 
 func TestDb_DuplicateEntries(t *testing.T) {
-	setup.CleanupPgContainer(database.DB)
+	setup.CleanupPgContainer(database.Gorm)
 	var subscriptions []models.SubscriptionData
 
 	id := uint(1)
@@ -402,7 +403,7 @@ func TestDb_DuplicateEntries(t *testing.T) {
 }
 
 func TestDb_FindSubscriptions_Multiple(t *testing.T) {
-	setup.CleanupPgContainer(database.DB)
+	setup.CleanupPgContainer(database.Gorm)
 	var subscriptions []models.SubscriptionData
 	subscriptions = append(subscriptions, models.SubscriptionData{
 		Coin:    60,
@@ -427,7 +428,7 @@ func TestDb_FindSubscriptions_Multiple(t *testing.T) {
 }
 
 func TestDb_AddToExisting(t *testing.T) {
-	setup.CleanupPgContainer(database.DB)
+	setup.CleanupPgContainer(database.Gorm)
 	var subscriptions []models.SubscriptionData
 	subscriptions = append(subscriptions, models.SubscriptionData{
 		Coin:    60,

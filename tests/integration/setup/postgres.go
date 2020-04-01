@@ -44,7 +44,7 @@ func runPgContainerAndInitConnection() (*db.Instance, error) {
 	}); err != nil {
 		return nil, err
 	}
-	autoMigrate(dbConn.DB)
+	autoMigrate(dbConn.Gorm)
 
 	return dbConn, nil
 }

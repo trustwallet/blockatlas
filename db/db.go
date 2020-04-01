@@ -2,41 +2,39 @@ package db
 
 import (
 	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/trustwallet/blockatlas/db/models"
-
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"time"
 )
 
 type Instance struct {
-	DB *gorm.DB
+	Gorm *gorm.DB
 }
 
 func New(uri string) (*Instance, error) {
-	dbConn, err := gorm.Open("postgres", uri)
+	g, err := gorm.Open("postgres", uri)
 	if err != nil {
 		return nil, err
 	}
 
-	dbConn.AutoMigrate(
+	g.AutoMigrate(
 		&models.Subscription{},
 		&models.SubscriptionData{},
 		&models.Tracker{},
 	)
-	i := &Instance{DB: dbConn}
+	i := &Instance{Gorm: g}
 
 	return i, nil
 }
 
-func RestoreConnectionWorker(dbConn *gorm.DB, timeout time.Duration, uri string) {
+func RestoreConnectionWorker(database *Instance, timeout time.Duration, uri string) {
 	logger.Info("Run PG RestoreConnectionWorker")
 	for {
-		if err := dbConn.DB().Ping(); err != nil {
+		if err := database.Gorm.DB().Ping(); err != nil {
 			for {
 				logger.Warn("PG is not available now")
 				logger.Warn("Trying to connect to PG...")
-				dbConn, err = gorm.Open("postgres", uri)
+				database.Gorm, err = gorm.Open("postgres", uri)
 				if err != nil {
 					logger.Warn("PG is still unavailable:", err.Error())
 					time.Sleep(timeout)

@@ -24,7 +24,7 @@ var (
 )
 
 func TestFullFlow(t *testing.T) {
-	setup.CleanupPgContainer(database.DB)
+	setup.CleanupPgContainer(database.Gorm)
 	err := database.AddSubscriptions(1, []models.SubscriptionData{{Coin: 60, Address: "testAddress", SubscriptionId: 1}})
 	assert.Nil(t, err)
 

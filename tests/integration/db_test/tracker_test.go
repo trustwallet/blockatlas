@@ -9,7 +9,7 @@ import (
 )
 
 func TestDb_SetBlock(t *testing.T) {
-	setup.CleanupPgContainer(database.DB)
+	setup.CleanupPgContainer(database.Gorm)
 
 	assert.Nil(t, database.SetLastParsedBlockNumber(60, 0))
 
