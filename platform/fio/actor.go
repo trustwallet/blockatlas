@@ -6,12 +6,12 @@ import (
 )
 
 func actorFromPublicKeyOrActor(addressOrActor string) string {
-	len := len(addressOrActor)
-	if len >= 51 && len <= 55 && addressOrActor[:3] == "FIO" {
+	l := len(addressOrActor)
+	if l >= 51 && l <= 55 && addressOrActor[:3] == "FIO" {
 		// assume public key string
 		return actorFromPublicKey(addressOrActor)
 	}
-	if len <= 13 {
+	if l <= 13 {
 		// assume actor
 		return addressOrActor
 	}
@@ -61,22 +61,22 @@ func mask0(len int) byte {
 func shortenKey(addrKey []byte) uint64 {
 	var (
 		res uint64 = 0
-		i   int    = 1 // Ignore key head
-		len int    = 0
+		i          = 1 // Ignore key head
+		l          = 0
 	)
-	for len <= 12 {
+	for l <= 12 {
 		//assert(i < 33)
-		trimmedChar := uint64(addrKey[i] & mask12(len))
+		trimmedChar := uint64(addrKey[i] & mask12(l))
 		if trimmedChar == 0 {
 			i++
 			continue
 		} // Skip a zero and move to next
 		var shuffle byte = 0
-		if len < 12 {
-			shuffle = byte(5*(12-len) - 1)
+		if l < 12 {
+			shuffle = byte(5*(12-l) - 1)
 		}
 		res = res | (trimmedChar << shuffle)
-		len++
+		l++
 		i++
 	}
 	return res
@@ -84,9 +84,9 @@ func shortenKey(addrKey []byte) uint64 {
 
 func getName(shortKey uint64) string {
 	var (
-		charmap string = ".12345abcdefghijklmnopqrstuvwxyz"
+		charmap = ".12345abcdefghijklmnopqrstuvwxyz"
 		str     [13]byte
-		tmp     uint64 = shortKey
+		tmp     = shortKey
 	)
 	for i := 0; i <= 12; i++ {
 		c := charmap[tmp&uint64(mask0(i))]

@@ -34,7 +34,7 @@ func TestActorFromPublicKey(t *testing.T) {
 		"FIO5kJKNHwct",
 	}
 	for i := range addrArr {
-		assert.Equal(t, actorArr[i], actorFromPublicKeyOrActor(addrArr[i]))
+		assert.Equal(t, actorArr[i], actorFromPublicKeyOrActor(actorArr[i]))
 	}
 }
 

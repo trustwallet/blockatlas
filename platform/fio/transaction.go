@@ -16,7 +16,7 @@ func (p *Platform) GetTxsByAddress(address string) (page blockatlas.TxPage, err 
 	if err != nil {
 		return nil, err
 	}
-	var txs []blockatlas.Tx = make([]blockatlas.Tx, 0)
+	txs := make([]blockatlas.Tx, 0)
 	for _, a := range actions {
 		tx, err := p.Normalize(&a, account)
 		if err != nil {
