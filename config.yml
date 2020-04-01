@@ -148,9 +148,9 @@ aeternity:
 nebulas:
   api: https://explorer-backend.nebulas.io/api
 
+# [FIO] FIO: https://fioprotocol.io
 fio:
-  # api: https://addresses.fio.foundation
-  api: http://testnet.fioprotocol.io/v1/chain
+  api: https://fio.eosphere.io
 
 # [BTC] Bitcoin: https://bitcoin.org/ (Blockbook API https://github.com/trezor/blockbook)
 bitcoin:
