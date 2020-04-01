@@ -33,16 +33,15 @@ func (p *Platform) Normalize(action *Action, account string) (blockatlas.Tx, err
 		to, from string
 		amount   blockatlas.Amount
 	)
+	const dateFormat string = "2006-01-02T15:04:05"
 
-	// Action Act.Name == "trnsfiopubky" not handled
+	// Action type "transfer" handled (trnsfiopubky not)
 	if action.ActionTrace.Act.Account == "fio.token" &&
 		action.ActionTrace.Act.Name == "transfer" {
-		//if action.ActionTrace.Act.Name == "transfer" {
 		// convert to action-specific data
 		var actionData ActionData
 		dataJson, _ := json.Marshal(action.ActionTrace.Act.Data)
-		dataErr := json.Unmarshal(dataJson, &actionData)
-		if dataErr != nil {
+		if json.Unmarshal(dataJson, &actionData) != nil {
 			return blockatlas.Tx{}, errors.E("Unparseable Data")
 		}
 		from = actionData.From
@@ -51,12 +50,7 @@ func (p *Platform) Normalize(action *Action, account string) (blockatlas.Tx, err
 		if err == nil {
 			amount = blockatlas.Amount(strconv.Itoa(int(amountNum * 1000000000)))
 		}
-		//}
-		//if action.ActionTrace.Act.Name == "trnsfiopubky" {
-		//	to = actionData.PayeePublicKey
-		//	amount = blockatlas.Amount(string(actionData.Amount))
-		//}
-		date, _ := time.Parse("2006-01-02T15:04:05", action.BlockTime)
+		date, _ := time.Parse(dateFormat, action.BlockTime)
 		tx := blockatlas.Tx{
 			ID:     action.ActionTrace.TrxID,
 			Coin:   p.Coin().ID,

@@ -17,8 +17,8 @@ func TestActorFromPublicKey(t *testing.T) {
 		"2odzomo2v4pe", // actor
 		"hhq2g4qgycfb", // actor
 		"FIO5kJKNHwctcfUM5XZyiWSqSTM5HTzznJP9F3ZdbhaQAHEVq575", // invalid length
-		"FIO5kJKNHwctcfUM5XZyiWSqSTM5H", // invalid length
-		"FIO5kJKNHwct", // assume actor
+		"FIO5kJKNHwctcfUM5XZyiWSqSTM5H",                        // invalid length
+		"FIO5kJKNHwct",                                         // assume actor
 	}
 	actorArr := []string{
 		"2odzomo2v4pe",
