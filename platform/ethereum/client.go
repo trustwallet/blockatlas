@@ -13,7 +13,7 @@ type EthereumClient interface {
 }
 
 func (p *Platform) GetTokenListByAddress(address string) (blockatlas.TokenPage, error) {
-	return p.tokens.GetTokenList(address, p.CoinIndex)
+	return p.client.GetTokenList(address, p.CoinIndex)
 }
 
 func (p *Platform) CurrentBlockNumber() (int64, error) {

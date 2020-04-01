@@ -13,8 +13,7 @@ func (c *Client) GetTokenList(address string, coinIndex uint) (blockatlas.TokenP
 	return NormalizeTokens(account.Docs, coinIndex), nil
 }
 
-// NormalizeToken converts a Ethereum token into the generic model
-func NormalizeToken(srcToken *Contract, coinIndex uint) (t blockatlas.Token, ok bool) {
+func GetTokenTypeByIndex(coinIndex uint) blockatlas.TokenType {
 	var tokenType blockatlas.TokenType
 	switch coinIndex {
 	case coin.Ethereum().ID:
@@ -34,8 +33,14 @@ func NormalizeToken(srcToken *Contract, coinIndex uint) (t blockatlas.Token, ok 
 	default:
 		tokenType = "unknown"
 	}
+	return tokenType
+}
 
-	t = blockatlas.Token{
+// NormalizeToken converts a Ethereum token into the generic model
+func NormalizeToken(srcToken *Contract, coinIndex uint) blockatlas.Token {
+	tokenType := GetTokenTypeByIndex(coinIndex)
+
+	return blockatlas.Token{
 		Name:     srcToken.Name,
 		Symbol:   srcToken.Symbol,
 		TokenID:  srcToken.Address,
@@ -43,18 +48,13 @@ func NormalizeToken(srcToken *Contract, coinIndex uint) (t blockatlas.Token, ok 
 		Decimals: srcToken.Decimals,
 		Type:     tokenType,
 	}
-
-	return t, true
 }
 
 // NormalizeTxs converts multiple Ethereum tokens
 func NormalizeTokens(srcTokens []Contract, coinIndex uint) []blockatlas.Token {
 	tokenPage := make([]blockatlas.Token, 0)
 	for _, srcToken := range srcTokens {
-		token, ok := NormalizeToken(&srcToken, coinIndex)
-		if !ok {
-			continue
-		}
+		token := NormalizeToken(&srcToken, coinIndex)
 		tokenPage = append(tokenPage, token)
 	}
 	return tokenPage

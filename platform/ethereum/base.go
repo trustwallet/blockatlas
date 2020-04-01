@@ -24,7 +24,6 @@ func Init(coinType uint, api, rpc string) *Platform {
 		RpcURL:    rpc,
 		ens:       ens.RpcClient{Request: blockatlas.InitJSONClient(rpc)},
 		client:    &trustray.Client{Request: blockatlas.InitClient(api)},
-		tokens:    &trustray.Client{Request: blockatlas.InitClient(api)},
 	}
 }
 

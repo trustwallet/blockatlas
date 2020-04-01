@@ -2,6 +2,7 @@ package blockbook
 
 import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/platform/ethereum/trustray"
 )
 
 func (c *Client) GetTokenList(address string, coinIndex uint) (blockatlas.TokenPage, error) {
@@ -28,6 +29,6 @@ func NormalizeToken(srcToken *Token, coinIndex uint) blockatlas.Token {
 		TokenID:  srcToken.Contract,
 		Coin:     coinIndex,
 		Decimals: srcToken.Decimals,
-		Type:     blockatlas.TokenTypeERC20, // TODO dynamically set type in case coinIndex != 60
+		Type:     trustray.GetTokenTypeByIndex(coinIndex),
 	}
 }
