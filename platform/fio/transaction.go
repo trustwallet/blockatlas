@@ -40,9 +40,12 @@ func (p *Platform) Normalize(action *Action, account string) (blockatlas.Tx, err
 		action.ActionTrace.Act.Name == "transfer" {
 		// convert to action-specific data
 		var actionData ActionData
-		dataJson, _ := json.Marshal(action.ActionTrace.Act.Data)
-		if json.Unmarshal(dataJson, &actionData) != nil {
-			return blockatlas.Tx{}, errors.E("Unparseable Data")
+		dataJSON, err := json.Marshal(action.ActionTrace.Act.Data)
+		if err != nil {
+			return blockatlas.Tx{}, errors.E("Unparseable Data field")
+		}
+		if json.Unmarshal(dataJSON, &actionData) != nil {
+			return blockatlas.Tx{}, errors.E("Unparseable Data field")
 		}
 		from = actionData.From
 		to = actionData.To
