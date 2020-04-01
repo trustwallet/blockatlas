@@ -47,7 +47,7 @@ func init() {
 	}
 
 	go mq.RestoreConnectionWorker(mqHost, mq.RawTransactions, time.Second*10)
-	go db.RestoreConnectionWorker(database.DB, time.Second*10, pgUri)
+	go db.RestoreConnectionWorker(database, time.Second*10, pgUri)
 	time.Sleep(time.Millisecond)
 }
 

@@ -1,8 +1,11 @@
 package db
 
 import (
+	"fmt"
 	"github.com/trustwallet/blockatlas/db/models"
 	"github.com/trustwallet/blockatlas/pkg/errors"
+	"strconv"
+	"strings"
 )
 
 func (i *Instance) GetSubscriptionData(coin uint, addresses []string) ([]models.SubscriptionData, error) {
@@ -11,7 +14,7 @@ func (i *Instance) GetSubscriptionData(coin uint, addresses []string) ([]models.
 	}
 
 	var subscriptionsDataList []models.SubscriptionData
-	err := i.DB.
+	err := i.Gorm.
 		Model(&models.SubscriptionData{}).
 		Where("address in (?) AND coin = ?", addresses, coin).
 		Find(&subscriptionsDataList).Error
@@ -23,50 +26,53 @@ func (i *Instance) GetSubscriptionData(coin uint, addresses []string) ([]models.
 }
 
 func (i *Instance) AddSubscriptions(id uint, subscriptions []models.SubscriptionData) error {
-	txInstance := Instance{DB: i.DB.Begin()}
-	defer func() {
-		if r := recover(); r != nil {
-			txInstance.DB.Rollback()
-		}
-	}()
-
-	if err := txInstance.DB.Error; err != nil {
-		return err
-	}
 	if len(subscriptions) == 0 {
 		return errors.E("Empty subscriptions")
 	}
+
+	txInstance := Instance{Gorm: i.Gorm.Begin()}
+	defer func() {
+		if r := recover(); r != nil {
+			txInstance.Gorm.Rollback()
+		}
+	}()
+
+	if err := txInstance.Gorm.Error; err != nil {
+		return err
+	}
+
 	var (
 		existingSub models.Subscription
 		err         error
 	)
 
-	recordNotFound := txInstance.DB.
+	recordNotFound := txInstance.Gorm.
 		Where(models.Subscription{SubscriptionId: id}).
 		First(&existingSub).
 		RecordNotFound()
 
 	subscriptions = removeSubscriptionDuplicates(subscriptions)
 	if recordNotFound {
-		err = txInstance.AddSubscription(id, subscriptions)
+		if err = txInstance.Gorm.Create(&models.Subscription{SubscriptionId: id}).Error; err != nil {
+			txInstance.Gorm.Rollback()
+			return err
+		}
+		err = txInstance.BulkCreate(subscriptions)
 	} else {
 		err = txInstance.AddToExistingSubscription(id, subscriptions)
 	}
+
 	if err != nil {
-		txInstance.DB.Rollback()
+		txInstance.Gorm.Rollback()
 		return err
 	}
-	return txInstance.DB.Commit().Error
-}
-
-func (i *Instance) AddSubscription(id uint, data []models.SubscriptionData) error {
-	return i.DB.Create(&models.Subscription{SubscriptionId: id, Data: data}).Error
+	return txInstance.Gorm.Commit().Error
 }
 
 func (i *Instance) AddToExistingSubscription(id uint, subscriptions []models.SubscriptionData) error {
 	var (
 		existingData []models.SubscriptionData
-		association  = i.DB.Model(&models.Subscription{SubscriptionId: id}).Association("Data")
+		association  = i.Gorm.Model(&models.Subscription{SubscriptionId: id}).Association("Data")
 	)
 	if err := association.Error; err != nil {
 		return err
@@ -77,7 +83,7 @@ func (i *Instance) AddToExistingSubscription(id uint, subscriptions []models.Sub
 
 	updateList, deleteList := getSubscriptionsToDeleteAndUpdate(existingData, subscriptions)
 	if len(updateList) > 0 {
-		if err := association.Append(updateList).Error; err != nil {
+		if err := i.BulkCreate(updateList); err != nil {
 			return err
 		}
 	}
@@ -90,7 +96,7 @@ func (i *Instance) AddToExistingSubscription(id uint, subscriptions []models.Sub
 }
 
 func (i *Instance) DeleteAllSubscriptions(id uint) error {
-	request := i.DB.Where("subscription_id = ?", id)
+	request := i.Gorm.Where("subscription_id = ?", id)
 	if err := request.Error; err != nil {
 		return err
 	}
@@ -98,21 +104,46 @@ func (i *Instance) DeleteAllSubscriptions(id uint) error {
 }
 
 func (i *Instance) DeleteSubscriptions(subscriptions []models.SubscriptionData) error {
-	var (
-		errorsList = make([]error, 0)
-		errDetails string
-	)
+	var idList = make([]string, 0, len(subscriptions))
+
 	for _, sub := range subscriptions {
-		if err := i.DB.Delete(&models.SubscriptionData{}, sub).Error; err != nil {
-			errorsList = append(errorsList, err)
-		}
+		idList = append(idList, strconv.Itoa(int(sub.ID)))
 	}
-	if len(errorsList) != 0 {
-		for _, err := range errorsList {
-			errDetails += err.Error() + " "
-		}
-		return errors.E(errDetails)
+
+	request := i.Gorm.Where("id in (?)", idList)
+
+	if err := request.Error; err != nil {
+		return err
 	}
+	if err := request.Delete(&models.SubscriptionData{}).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (i *Instance) BulkCreate(dataList []models.SubscriptionData) error {
+	var (
+		valueStrings []string
+		valueArgs    []interface{}
+	)
+
+	for _, d := range dataList {
+		valueStrings = append(valueStrings, "(?, ?, ?)")
+
+		valueArgs = append(valueArgs, d.SubscriptionId)
+		valueArgs = append(valueArgs, d.Coin)
+		valueArgs = append(valueArgs, d.Address)
+	}
+
+	smt := `INSERT INTO subscription_data(subscription_id, coin, address) VALUES %s`
+
+	smt = fmt.Sprintf(smt, strings.Join(valueStrings, ","))
+
+	if err := i.Gorm.Exec(smt, valueArgs...).Error; err != nil {
+		return err
+	}
+
 	return nil
 }
 

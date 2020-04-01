@@ -29,13 +29,7 @@ func RunSubscriber(database *db.Instance, delivery amqp.Delivery) {
 	id := event.Id
 
 	switch event.Operation {
-	case UpdateSubscription:
-		err := database.AddToExistingSubscription(id, ToSubscriptionData(subscriptions))
-		if err != nil {
-			logger.Error(err, params)
-		}
-		logger.Info("Updated", params)
-	case AddSubscription:
+	case AddSubscription, UpdateSubscription:
 		err = database.AddSubscriptions(id, ToSubscriptionData(subscriptions))
 		if err != nil {
 			logger.Error(err, params)
