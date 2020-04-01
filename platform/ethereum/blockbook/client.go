@@ -40,7 +40,7 @@ func (c *Client) GetBlock(num int64) (block Block, err error) {
 
 func (c *Client) fetchTransactions(address, contract string) (page *Page, err error) {
 	path := fmt.Sprintf("v2/address/%s", address)
-	query := url.Values{"page": {"1"}, "pageSize": {"25"}, "details": {"txs"}, "address": {address}, "contract": {contract}}
+	query := url.Values{"page": {"1"}, "pageSize": {"25"}, "details": {"txs"}, "contract": {contract}}
 	err = c.Get(&page, path, query)
 	return
 }
@@ -48,7 +48,7 @@ func (c *Client) fetchTransactions(address, contract string) (page *Page, err er
 func (c *Client) fetchTokens(address string) ([]Token, error) {
 	var res Page
 	path := fmt.Sprintf("v2/address/%s", address)
-	query := url.Values{"details": {"tokens"}, "address": {address}}
+	query := url.Values{"details": {"tokens"}}
 	err := c.Get(&res, path, query)
 
 	return res.Tokens, err
