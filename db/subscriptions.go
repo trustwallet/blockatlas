@@ -1,8 +1,10 @@
 package db
 
 import (
+	"fmt"
 	"github.com/trustwallet/blockatlas/db/models"
 	"github.com/trustwallet/blockatlas/pkg/errors"
+	"strings"
 )
 
 func (i *Instance) GetSubscriptionData(coin uint, addresses []string) ([]models.SubscriptionData, error) {
@@ -48,19 +50,20 @@ func (i *Instance) AddSubscriptions(id uint, subscriptions []models.Subscription
 
 	subscriptions = removeSubscriptionDuplicates(subscriptions)
 	if recordNotFound {
-		err = txInstance.AddSubscription(id, subscriptions)
+		if err = txInstance.DB.Create(&models.Subscription{SubscriptionId: id}).Error; err != nil {
+			txInstance.DB.Rollback()
+			return err
+		}
+		err = txInstance.BulkCreate(subscriptions)
 	} else {
 		err = txInstance.AddToExistingSubscription(id, subscriptions)
 	}
+
 	if err != nil {
 		txInstance.DB.Rollback()
 		return err
 	}
 	return txInstance.DB.Commit().Error
-}
-
-func (i *Instance) AddSubscription(id uint, data []models.SubscriptionData) error {
-	return i.DB.Create(&models.Subscription{SubscriptionId: id, Data: data}).Error
 }
 
 func (i *Instance) AddToExistingSubscription(id uint, subscriptions []models.SubscriptionData) error {
@@ -77,7 +80,7 @@ func (i *Instance) AddToExistingSubscription(id uint, subscriptions []models.Sub
 
 	updateList, deleteList := getSubscriptionsToDeleteAndUpdate(existingData, subscriptions)
 	if len(updateList) > 0 {
-		if err := association.Append(updateList).Error; err != nil {
+		if err := i.BulkCreate(updateList); err != nil {
 			return err
 		}
 	}
@@ -113,6 +116,31 @@ func (i *Instance) DeleteSubscriptions(subscriptions []models.SubscriptionData) 
 		}
 		return errors.E(errDetails)
 	}
+	return nil
+}
+
+func (i *Instance) BulkCreate(fs []models.SubscriptionData) error {
+	var (
+		valueStrings []string
+		valueArgs    []interface{}
+	)
+
+	for _, f := range fs {
+		valueStrings = append(valueStrings, "(?, ?, ?)")
+
+		valueArgs = append(valueArgs, f.SubscriptionId)
+		valueArgs = append(valueArgs, f.Coin)
+		valueArgs = append(valueArgs, f.Address)
+	}
+
+	smt := `INSERT INTO subscription_data(subscription_id, coin, address) VALUES %s`
+
+	smt = fmt.Sprintf(smt, strings.Join(valueStrings, ","))
+
+	if err := i.DB.Exec(smt, valueArgs...).Error; err != nil {
+		return err
+	}
+
 	return nil
 }
 

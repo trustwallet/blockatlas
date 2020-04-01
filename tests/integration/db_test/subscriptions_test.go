@@ -11,6 +11,29 @@ import (
 	"testing"
 )
 
+func TestDb_AddSubscriptionsBulk(t *testing.T) {
+	setup.CleanupPgContainer(database.DB)
+	var subscriptions []models.SubscriptionData
+
+	id := uint(1)
+
+	for i := 0; i < 100; i++ {
+		subscriptions = append(subscriptions, models.SubscriptionData{
+			SubscriptionId: id,
+			Coin:           uint(i),
+			Address:        "testAddrtestAddrtestAddrtestAddrtestAddrtestAddrtestAddrtestAddrtestAddrtestAddr",
+		})
+	}
+
+	assert.Nil(t, database.AddSubscriptions(id, subscriptions))
+	for i := 0; i < 100; i++ {
+		s, err := database.GetSubscriptionData(uint(i), []string{"testAddrtestAddrtestAddrtestAddrtestAddrtestAddrtestAddrtestAddrtestAddrtestAddr"})
+		assert.Nil(t, err)
+		assert.Equal(t, id, s[0].SubscriptionId)
+	}
+
+}
+
 func TestDb_AddSubscriptions(t *testing.T) {
 	setup.CleanupPgContainer(database.DB)
 	var subscriptions []models.SubscriptionData
@@ -419,7 +442,6 @@ func TestDb_AddToExisting(t *testing.T) {
 	assert.Equal(t, 1, len(subs))
 
 	assert.Equal(t, uint(1), subs[0].SubscriptionId)
-
 	assert.Nil(t, database.AddToExistingSubscription(uint(1), subscriptions))
 
 	subs2, err2 := database.GetSubscriptionData(60, []string{"testAddr"})
