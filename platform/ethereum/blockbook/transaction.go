@@ -79,7 +79,7 @@ func getFrom(srcTx *Transaction) string {
 }
 
 func getTo(srcTx *Transaction) string {
-	if len(srcTx.Vout) > 0 {
+	if len(srcTx.Vout) > 0 && len(srcTx.Vout[0].Addresses) > 0 {
 		return srcTx.Vout[0].Addresses[0]
 	}
 	return ""
