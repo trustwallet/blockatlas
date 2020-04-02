@@ -31,7 +31,13 @@ func NormalizeTxs(srcTxs []Transaction, address string) (txs []blockatlas.Tx) {
 
 // NormalizeTx converts a Tezos transaction into the generic model
 func NormalizeTx(srcTx Transaction, address string) (blockatlas.Tx, bool) {
-	var tx = blockatlas.Tx{
+	var tx blockatlas.Tx
+	tt, ok := srcTx.TransferType()
+	if !ok {
+		return tx, false
+	}
+
+	tx = blockatlas.Tx{
 		Block:  srcTx.Height,
 		Coin:   coin.XTZ,
 		Date:   srcTx.BlockTimestamp(),
@@ -41,18 +47,22 @@ func NormalizeTx(srcTx Transaction, address string) (blockatlas.Tx, bool) {
 		ID:     srcTx.Hash,
 		Status: srcTx.Status(),
 		To:     srcTx.GetReceiver(),
-		Type:   srcTx.TransferType(),
+		Type:   tt,
 	}
 	if address != "" {
 		tx.Direction = srcTx.Direction(address)
 	}
 
 	value := blockatlas.Amount(numbers.DecimalExp(numbers.Float64toString(srcTx.Volume), 6))
-	switch srcTx.TransferType() {
+	switch tt {
 	case blockatlas.TxAnyAction:
+		title, ok := srcTx.Title(address)
+		if !ok {
+			return tx, false
+		}
 		tx.Meta = blockatlas.AnyAction{
 			Coin:     coin.Tezos().ID,
-			Title:    srcTx.Title(),
+			Title:    title,
 			Key:      blockatlas.KeyStakeDelegate,
 			Name:     coin.Tezos().Name,
 			Symbol:   coin.Tezos().Symbol,
