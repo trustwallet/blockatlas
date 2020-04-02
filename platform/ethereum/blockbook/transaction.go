@@ -72,7 +72,7 @@ func getStatus(specific *EthereumSpecific) (blockatlas.Status, string) {
 }
 
 func getFrom(srcTx *Transaction) string {
-	if len(srcTx.Vin) > 0 {
+	if len(srcTx.Vin) > 0 && len(srcTx.Vin[0].Addresses) > 0 {
 		return srcTx.Vin[0].Addresses[0]
 	}
 	return ""
