@@ -9,6 +9,7 @@ import (
 	"github.com/trustwallet/blockatlas/services/observer/subscriber"
 	"github.com/trustwallet/blockatlas/tests/integration/setup"
 	"testing"
+	"time"
 )
 
 func TestDb_AddSubscriptionsBulk(t *testing.T) {
@@ -458,6 +459,45 @@ func TestDb_AddToExisting(t *testing.T) {
 		assert.Nil(t, database.AddToExistingSubscription(uint(i), subscriptions))
 	}
 	assert.NotNil(t, database.AddToExistingSubscription(uint(0), subscriptions))
+
+}
+
+func TestDb_UpdatedAt(t *testing.T) {
+	setup.CleanupPgContainer(database.Gorm)
+	var subscriptions []models.SubscriptionData
+	subscriptions = append(subscriptions, models.SubscriptionData{
+		Coin:    60,
+		Address: "testAddr",
+	})
+
+	subscriptions[0].SubscriptionId = uint(1)
+	assert.Nil(t, database.AddSubscriptions(uint(1), subscriptions))
+	subs, err := database.GetSubscriptionData(60, []string{"testAddr"})
+	assert.Nil(t, err)
+	assert.Equal(t, 1, len(subs))
+
+	time.Sleep(time.Second)
+
+	var existingSub models.Subscription
+	assert.False(t, database.Gorm.Where(models.Subscription{SubscriptionId: uint(1)}).First(&existingSub).RecordNotFound())
+	assert.Greater(t, time.Now().Unix(), existingSub.UpdatedAt.Unix())
+	assert.Greater(t, existingSub.UpdatedAt.Unix(), time.Now().Unix()-120)
+
+	subscriptions = append(subscriptions, models.SubscriptionData{
+		Coin:    714,
+		Address: "newtestAddr",
+	})
+
+	assert.Nil(t, database.AddSubscriptions(uint(1), subscriptions))
+
+	time.Sleep(time.Second)
+
+	var existingSub2 models.Subscription
+	assert.False(t, database.Gorm.Where(models.Subscription{SubscriptionId: uint(1)}).First(&existingSub2).RecordNotFound())
+
+	assert.Greater(t, time.Now().Unix(), existingSub2.UpdatedAt.Unix())
+	assert.Greater(t, existingSub2.UpdatedAt.Unix(), time.Now().Unix()-120)
+	assert.Greater(t, existingSub2.UpdatedAt.Unix(), existingSub.UpdatedAt.Unix())
 
 }
 

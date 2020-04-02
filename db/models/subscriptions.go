@@ -1,7 +1,10 @@
 package models
 
+import "time"
+
 type Subscription struct {
-	SubscriptionId uint               `gorm:"primary_key:true"`
+	SubscriptionId uint `gorm:"primary_key:true"`
+	UpdatedAt      time.Time
 	Data           []SubscriptionData `gorm:"foreignkey:SubscriptionId"`
 }
 
