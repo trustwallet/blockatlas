@@ -70,7 +70,7 @@ func TestTransaction_Status(t *testing.T) {
 		in   Transaction
 		out  int64
 	}{
-		{"Delegation", Transaction{Time: "2020-02-04T12:27:59Z",}, 1580819279},
+		{"Delegation", Transaction{Time: "2020-02-04T12:27:59Z"}, 1580819279},
 	}
 
 	for _, tt := range testsBlockTimestamp {

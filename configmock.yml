@@ -150,7 +150,7 @@ nebulas:
   api: http://localhost:3000/nebulas-api
 
 fio:
-  api: http://localhost:3000/fio-api/v1/chain
+  api: http://localhost:3000/fio-api
 
 # [BTC] Bitcoin: https://bitcoin.org/ (Blockbook API https://github.com/trezor/blockbook)
 bitcoin:

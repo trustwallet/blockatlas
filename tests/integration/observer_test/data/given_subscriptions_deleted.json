@@ -1,0 +1,38 @@
+[
+  {
+    "subscriptions": {
+      "60": [
+        "0x0000000000000000000000000000000000000000"
+      ]
+    },
+    "id": 10,
+    "operation": "UpdateSubscription"
+  },
+  {
+    "subscriptions": {
+      "118": [
+        "0x0000000000000000000000000000000000000001"
+      ]
+    },
+    "id": 1,
+    "operation": "UpdateSubscription"
+  },
+  {
+    "subscriptions": {
+      "714": [
+        "0x0000000000000000000000000000000000000002"
+      ]
+    },
+    "id": 2,
+    "operation": "UpdateSubscription"
+  },
+  {
+    "subscriptions": {
+      "144": [
+        "0x0000000000000000000000000000000000000003"
+      ]
+    },
+    "id": 3,
+    "operation": "UpdateSubscription"
+  }
+]
