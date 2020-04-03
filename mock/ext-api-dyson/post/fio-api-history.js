@@ -6,8 +6,8 @@
 module.exports = {
     path: '/fio-api/v1/history/:action',
     template: function(params, query, body) {
-        //console.log(params);
-        //console.log(body);
+        console.log(params);
+        console.log(body);
         if (params.action === 'get_actions') {
             switch (body.account_name) {
                 case 'ezsmbcy2opod': // FIO7Q3XfQ2ocGP1zYst6Sfx5qrsiZ865Cu8So2atrub9JN94so7gt
