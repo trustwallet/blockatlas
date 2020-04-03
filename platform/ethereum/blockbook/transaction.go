@@ -26,22 +26,24 @@ func (c *Client) GetTokenTxs(address, token string, coinIndex uint) (blockatlas.
 func NormalizePage(srcPage *Page, address, token string, coinIndex uint) blockatlas.TxPage {
 	var txs []blockatlas.Tx
 	for _, srcTx := range srcPage.Transactions {
-		tx := normalizeTxWithAddress(&srcTx, address, token, coinIndex)
+		var tx blockatlas.Tx
+		if address != "" {
+			tx = normalizeTxWithAddress(&srcTx, address, token, coinIndex)
+		} else {
+			tx = normalizeTx(&srcTx, coinIndex)
+		}
 		txs = append(txs, tx)
 	}
 	return txs
 }
 
 func normalizeTx(srcTx *Transaction, coinIndex uint) blockatlas.Tx {
-	status, errReason := getStatus(srcTx.EthereumSpecific)
-	from := getFrom(srcTx)
-	to := getTo(srcTx)
-
-	return blockatlas.Tx{
+	status, errReason := srcTx.EthereumSpecific.GetStatus()
+	normalized := blockatlas.Tx{
 		ID:       srcTx.TxID,
 		Coin:     coinIndex,
-		From:     from,
-		To:       to,
+		From:     srcTx.FromAddress(),
+		To:       srcTx.ToAddress(),
 		Fee:      blockatlas.Amount(srcTx.Fees),
 		Date:     srcTx.BlockTime,
 		Block:    srcTx.BlockHeight,
@@ -49,54 +51,37 @@ func normalizeTx(srcTx *Transaction, coinIndex uint) blockatlas.Tx {
 		Error:    errReason,
 		Sequence: srcTx.EthereumSpecific.Nonce,
 	}
+	FillMeta(&normalized, srcTx, coinIndex)
+	return normalized
 }
 
 func normalizeTxWithAddress(srcTx *Transaction, address, token string, coinIndex uint) blockatlas.Tx {
 	normalized := normalizeTx(srcTx, coinIndex)
-	normalized.Direction = getDirection(address, normalized.From, normalized.To)
-	fillMeta(&normalized, srcTx, address, token, coinIndex)
+	normalized.Direction = GetDirection(address, normalized.From, normalized.To)
+	FillMetaWithAddress(&normalized, srcTx, address, token, coinIndex)
 	return normalized
 }
 
-func getStatus(specific *EthereumSpecific) (blockatlas.Status, string) {
-	switch specific.Status {
-	case -1:
-		return blockatlas.StatusPending, ""
-	case 0:
-		return blockatlas.StatusError, "Error"
-	case 1:
-		return blockatlas.StatusCompleted, ""
-	default:
-		return blockatlas.StatusError, "Unable to define transaction status"
+func FillMeta(final *blockatlas.Tx, tx *Transaction, coinIndex uint) {
+	if len(tx.TokenTransfers) == 1 {
+		transfer := tx.TokenTransfers[0]
+		if transfer.Token == tx.FromAddress() && transfer.Token == tx.ToAddress() {
+			final.Meta = blockatlas.TokenTransfer{
+				Name:     transfer.Name,
+				Symbol:   transfer.Symbol,
+				TokenID:  transfer.Token,
+				Decimals: transfer.Decimals,
+				Value:    blockatlas.Amount(transfer.Value),
+				From:     transfer.From,
+				To:       transfer.To,
+			}
+			return
+		}
 	}
+	fillMeta(final, tx, coinIndex)
 }
 
-func getFrom(srcTx *Transaction) string {
-	if len(srcTx.Vin) > 0 && len(srcTx.Vin[0].Addresses) > 0 {
-		return srcTx.Vin[0].Addresses[0]
-	}
-	return ""
-}
-
-func getTo(srcTx *Transaction) string {
-	if len(srcTx.Vout) > 0 && len(srcTx.Vout[0].Addresses) > 0 {
-		return srcTx.Vout[0].Addresses[0]
-	}
-	return ""
-}
-
-func getDirection(address, from, to string) blockatlas.Direction {
-	if address == from && address == to {
-		return blockatlas.DirectionSelf
-	}
-	if address == from {
-		return blockatlas.DirectionOutgoing
-	} else {
-		return blockatlas.DirectionIncoming
-	}
-}
-
-func fillMeta(final *blockatlas.Tx, tx *Transaction, address, token string, coinIndex uint) {
+func FillMetaWithAddress(final *blockatlas.Tx, tx *Transaction, address, token string, coinIndex uint) {
 	if len(tx.TokenTransfers) > 0 {
 		for _, transfer := range tx.TokenTransfers {
 			if transfer.To == address || transfer.From == address {
@@ -106,7 +91,7 @@ func fillMeta(final *blockatlas.Tx, tx *Transaction, address, token string, coin
 						continue
 					}
 				}
-				direction := getDirection(address, transfer.From, transfer.To)
+				direction := GetDirection(address, transfer.From, transfer.To)
 				metadata := blockatlas.TokenTransfer{
 					Name:     transfer.Name,
 					Symbol:   transfer.Symbol,
@@ -129,15 +114,18 @@ func fillMeta(final *blockatlas.Tx, tx *Transaction, address, token string, coin
 				return
 			}
 		}
-	} else {
-		if tx.EthereumSpecific.GasLimit.Uint64() == 21000 {
-			final.Meta = blockatlas.Transfer{
-				Value:    blockatlas.Amount(tx.Value),
-				Symbol:   coin.Coins[coinIndex].Symbol,
-				Decimals: coin.Coins[coinIndex].Decimals,
-			}
-			return
+	}
+	fillMeta(final, tx, coinIndex)
+}
+
+func fillMeta(final *blockatlas.Tx, tx *Transaction, coinIndex uint) {
+	if tx.EthereumSpecific.GasUsed.Uint64() == 21000 {
+		final.Meta = blockatlas.Transfer{
+			Value:    blockatlas.Amount(tx.Value),
+			Symbol:   coin.Coins[coinIndex].Symbol,
+			Decimals: coin.Coins[coinIndex].Decimals,
 		}
+		return
 	}
 	final.Meta = blockatlas.ContractCall{
 		Input: "0x", // FIXME blockbook api doesn't return tx data field
