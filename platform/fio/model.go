@@ -1,11 +1,20 @@
 package fio
 
-// ActionData (from get_actions)
-type ActionData struct {
+// ActionDataTransfer (from get_actions)
+type ActionDataTransfer struct {
 	From     string `json:"from"`
 	To       string `json:"to"`
 	Quantity string `json:"quantity"`
 	Memo     string `json:"memo"`
+}
+
+// ActionDataTrnsfiopubky (from get_actions)
+type ActionDataTrnsfiopubky struct {
+	PayeePublicKey string `json:"payee_public_key"`
+	Amount         int64  `json:"amount"`
+	MaxFee         int64  `json:"max_fee"`
+	Actor          string `json:"actor"`
+	TpID           string `json:"tpid"`
 }
 
 // ActionAct (from get_actions)

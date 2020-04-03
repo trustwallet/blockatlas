@@ -30,28 +30,47 @@ func (p *Platform) GetTxsByAddress(address string) (page blockatlas.TxPage, err 
 
 func (p *Platform) Normalize(action *Action, account string) (blockatlas.Tx, error) {
 	var (
-		to, from string
-		amount   blockatlas.Amount
+		to, from    string
+		amount, fee blockatlas.Amount
+		memo        string
 	)
 	const dateFormat string = "2006-01-02T15:04:05"
 
 	// Action type "transfer" handled (trnsfiopubky not)
 	if action.ActionTrace.Act.Account == "fio.token" &&
-		action.ActionTrace.Act.Name == "transfer" {
+		(action.ActionTrace.Act.Name == "transfer" || action.ActionTrace.Act.Name == "trnsfiopubky") {
 		// convert to action-specific data
-		var actionData ActionData
 		dataJSON, err := json.Marshal(action.ActionTrace.Act.Data)
 		if err != nil {
 			return blockatlas.Tx{}, errors.E("Unparseable Data field")
 		}
-		if json.Unmarshal(dataJSON, &actionData) != nil {
-			return blockatlas.Tx{}, errors.E("Unparseable Data field")
-		}
-		from = actionData.From
-		to = actionData.To
-		amountNum, err := strconv.ParseFloat(strings.Split(actionData.Quantity, " ")[0], 64)
-		if err == nil {
-			amount = blockatlas.Amount(strconv.Itoa(int(amountNum * 1000000000)))
+		switch action.ActionTrace.Act.Name {
+		case "transfer":
+			var actionData ActionDataTransfer
+			if json.Unmarshal(dataJSON, &actionData) != nil {
+				return blockatlas.Tx{}, errors.E("Unparseable Data field")
+			}
+			from = actionData.From
+			to = actionData.To
+			amountNum, err := strconv.ParseFloat(strings.Split(actionData.Quantity, " ")[0], 64)
+			if err == nil {
+				amount = blockatlas.Amount(strconv.Itoa(int(amountNum * 1000000000)))
+			}
+			// fee unknown
+			memo = actionData.Memo
+			break
+
+		case "trnsfiopubky":
+			var actionData ActionDataTrnsfiopubky
+			if json.Unmarshal(dataJSON, &actionData) != nil {
+				return blockatlas.Tx{}, errors.E("Unparseable Data field")
+			}
+			from = actionData.Actor
+			to = actorFromPublicKeyOrActor(actionData.PayeePublicKey)
+			amount = blockatlas.Amount(strconv.FormatInt(actionData.Amount, 10))
+			fee = blockatlas.Amount(strconv.FormatInt(actionData.MaxFee, 10))
+			// no memo
+			break
 		}
 		date, _ := time.Parse(dateFormat, action.BlockTime)
 		tx := blockatlas.Tx{
@@ -62,13 +81,13 @@ func (p *Platform) Normalize(action *Action, account string) (blockatlas.Tx, err
 			To:     to,
 			Block:  action.BlockNum,
 			Status: blockatlas.StatusCompleted,
-			Fee:    "0", // trnsfiopubky: actionData.Fee
+			Fee:    fee,
 			Meta: blockatlas.Transfer{
 				Value:    amount,
 				Symbol:   p.Coin().Symbol,
 				Decimals: p.Coin().Decimals,
 			},
-			Memo: actionData.Memo,
+			Memo: memo,
 			Type: blockatlas.TxTransfer,
 		}
 		tx.Direction = tx.GetTransactionDirection(account)
