@@ -92,7 +92,7 @@ func TestNormalizePage(t *testing.T) {
 						}
 					  }
 					]}`,
-				address:   "0x7d8bf18C7cE84b3E175b339c4Ca93aEd1dD166F1",
+				address:   "0x7d8bf18c7ce84b3e175b339c4ca93aed1dd166f1",
 				token:     "0x6b175474e89094c44da98b954eedeac495271d0f",
 				coinIndex: 60,
 			},
@@ -124,8 +124,8 @@ func TestNormalizePage(t *testing.T) {
 	for _, tt := range tests {
 		var page Page
 		var txPage blockatlas.TxPage
-		json.Unmarshal([]byte(tt.args.srcPage), &page)
-		json.Unmarshal([]byte(tt.want), &txPage)
+		_ = json.Unmarshal([]byte(tt.args.srcPage), &page)
+		_ = json.Unmarshal([]byte(tt.want), &txPage)
 		t.Run(tt.name, func(t *testing.T) {
 			got := NormalizePage(&page, tt.args.address, tt.args.token, tt.args.coinIndex)
 			gotJson, _ := json.Marshal(got)

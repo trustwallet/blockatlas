@@ -1,9 +1,8 @@
 package blockbook
 
 import (
-	"strings"
-
 	"github.com/trustwallet/blockatlas/coin"
+	Address "github.com/trustwallet/blockatlas/pkg/address"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 )
 
@@ -25,13 +24,13 @@ func (c *Client) GetTokenTxs(address, token string, coinIndex uint) (blockatlas.
 
 func NormalizePage(srcPage *Page, address, token string, coinIndex uint) blockatlas.TxPage {
 	var txs []blockatlas.Tx
+	normalized_addr := Address.EIP55Checksum(address)
+	normalized_token := ""
+	if token != "" {
+		normalized_token = Address.EIP55Checksum(token)
+	}
 	for _, srcTx := range srcPage.Transactions {
-		var tx blockatlas.Tx
-		if address != "" {
-			tx = normalizeTxWithAddress(&srcTx, address, token, coinIndex)
-		} else {
-			tx = normalizeTx(&srcTx, coinIndex)
-		}
+		tx := normalizeTxWithAddress(&srcTx, normalized_addr, normalized_token, coinIndex)
 		txs = append(txs, tx)
 	}
 	return txs
@@ -87,7 +86,7 @@ func FillMetaWithAddress(final *blockatlas.Tx, tx *Transaction, address, token s
 			if transfer.To == address || transfer.From == address {
 				// filter token if specified
 				if token != "" {
-					if strings.ToLower(token) != strings.ToLower(transfer.Token) {
+					if token != transfer.Token {
 						continue
 					}
 				}
