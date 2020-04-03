@@ -29,10 +29,12 @@ type Action struct {
 }
 
 // GetActionsRequest request struct for get_actions
+// see https://github.com/EOSIO/eos/blob/master/plugins/history_plugin/include/eosio/history_plugin/history_plugin.hpp
 type GetActionsRequest struct {
 	AccountName string `json:"account_name"`
-	// pos, offset
-	Sort string `json:"sort"` // desc
+	Pos         int32  `json:"pos"`
+	Offset      int32  `json:"offset"`
+	Sort        string `json:"sort"` // desc
 }
 
 // GetActionsResponse request struct for get_actions
