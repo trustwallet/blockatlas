@@ -29,14 +29,24 @@ services:
     ports:
       - 8423:8423
 
-  observer_worker:
+  observer_notifier:
     build:
       context: .
       args:
         - SERVICE=observer_notifier
     links:
-      - redis
       - rabbit
+      - postgres
+    restart: on-failure
+
+  observer_parser:
+    build:
+      context: .
+      args:
+        - SERVICE=observer_parser
+    links:
+      - rabbit
+      - postgres
     restart: on-failure
 
   observer_subscriber:
@@ -46,8 +56,8 @@ services:
       args:
         - SERVICE=observer_subscriber
     links:
-      - redis
       - rabbit
+      - postgres
     restart: on-failure
 
   rabbit:
@@ -61,8 +71,17 @@ services:
       timeout: 10s
       retries: 5
 
-  redis:
-    container_name: redis
-    image: redis
+  postgres:
+    container_name: postgres
+    image: postgres
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=pass
+      - POSTGRES_DB=my_db
     ports:
-      - 6379:6379
+      - 5432:5432
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5432"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
