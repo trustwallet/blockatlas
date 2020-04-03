@@ -1,6 +1,10 @@
 package blockbook
 
-import "math/big"
+import (
+	"math/big"
+
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+)
 
 type Page struct {
 	Transactions []Transaction `json:"transactions,omitempty"`
@@ -41,12 +45,6 @@ type Output struct {
 	Addresses []string `json:"addresses"`
 }
 
-// TokenType specifies type of token
-type TokenType string
-
-// ERC20TokenType is Ethereum ERC20 token
-const ERC20TokenType TokenType = "ERC20"
-
 type TokenTransfer struct {
 	Decimals uint   `json:"decimals"`
 	From     string `json:"from"`
@@ -60,11 +58,11 @@ type TokenTransfer struct {
 
 // Token contains info about tokens held by an address
 type Token struct {
-	Contract string    `json:"contract"`
-	Decimals uint      `json:"decimals"`
-	Name     string    `json:"name"`
-	Symbol   string    `json:"symbol"`
-	Type     TokenType `json:"type"`
+	Contract string               `json:"contract"`
+	Decimals uint                 `json:"decimals"`
+	Name     string               `json:"name"`
+	Symbol   string               `json:"symbol"`
+	Type     blockatlas.TokenType `json:"type"`
 }
 
 // EthereumSpecific contains ethereum specific transaction data
