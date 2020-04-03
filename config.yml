@@ -150,7 +150,7 @@ nebulas:
 
 # [FIO] FIO: https://fioprotocol.io
 fio:
-  api: https://fio.eosphere.io
+  api: https://fio.greymass.com
 
 # [BTC] Bitcoin: https://bitcoin.org/ (Blockbook API https://github.com/trezor/blockbook)
 bitcoin:
