@@ -95,8 +95,11 @@ It works the same for observer_worker - you can run all observer at 1 binary or 
 go get -u github.com/trustwallet/blockatlas
 cd $(go env GOPATH)/src/github.com/trustwallet/blockatlas
 
-# Start observer_worker with the path to the config.yml ./ 
-go build -o observer_worker-bin cmd/observer_worker/main.go && ./observer_worker-bin -c config.yml
+# Start observer_parser with the path to the config.yml ./ 
+go build -o observer_parser-bin cmd/observer_parser/main.go && ./observer_parser-bin -c config.yml
+
+# Start observer_notifier with the path to the config.yml ./ 
+go build -o observer_notifier-bin cmd/observer_notifier/main.go && ./observer_notifier-bin -c config.yml
 
 # Start observer_subscriber with the path to the config.yml ./ 
 go build -o observer_subscriber-bin cmd/observer_subscriber/main.go && ./observer_subscriber-bin -c config.yml
