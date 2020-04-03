@@ -50,16 +50,21 @@ Platform API is independent service and can work with the specific blockchain on
 
 Notifications:
 
-(Sub Producer) - Subscribe to specific coin  [Not implemented at Atlas, write it on your own]
+(Observer Subscriber Producer) - Create new blockatlas.SubscriptionEvent [Not implemented at Atlas, write it on your own]
 
-(Sub Consumer) - Save all the subscriptions to the Redis  [Implemented, you can see it at cmd/observer_subscriber]
+(Observer Subscriber) - Get subscriptions from queue, set them to the DB
 
-(Tx Notifier Producer) - Parse the block, check transactions, find addresses in Redis and push the tx details for these addresses  [Implemented, you can see it at cmd/observer_worker]
+(Observer Parser) - Parse the block, convert block to the transactions batch, send to queue
 
-(Tx Notifier Consumer) - Notify users, get tx informations by GUID from queue [Not implemented at Atlas, write it on your own]
+(Observer Notifier) - Check each transaction for having the same address as stored at DB, if so - send tx data and id to the next queue
+
+(Observer Notifier Consumer) - Notify the user [Not implemented at Atlas, write it on your own]
 
 ```
-Sub Producer --(Rabbit MQ)--> Sub Consumer --(Redis)--> Tx Notifier Producer --(Rabbit MQ)--> Tx Notifier Consumer --> User 
+New Subscriptions --(Rabbit MQ)--> Subscriber --> DB
+                                                   |
+                      Parser  --(Rabbit MQ)--> Notifier --(Rabbit MQ)--> Notifier Consumer --> User
+
 ```
 
 The whole flow is not availible at Atlas repo. We will have integration tests with it. Also there will be examples of all instances soon.
@@ -69,7 +74,7 @@ The whole flow is not availible at Atlas repo. We will have integration tests wi
 ### Requirements
 
  * [Go Toolchain](https://golang.org/doc/install) versions 1.13+
- * [Redis](https://redis.io/topics/quickstart) instance for platform_observer
+ * [Postgres](https://www.postgresql.org/download) storing user subscriptions and latest parsed block number
  * [Rabbit MQ](https://www.rabbitmq.com/#getstarted) using to pass subscriptions and send transaction notifications
 
 ### From Source
@@ -90,8 +95,11 @@ It works the same for observer_worker - you can run all observer at 1 binary or 
 go get -u github.com/trustwallet/blockatlas
 cd $(go env GOPATH)/src/github.com/trustwallet/blockatlas
 
-# Start observer_worker with the path to the config.yml ./ 
-go build -o observer_worker-bin cmd/observer_worker/main.go && ./observer_worker-bin -c config.yml
+# Start observer_parser with the path to the config.yml ./ 
+go build -o observer_parser-bin cmd/observer_parser/main.go && ./observer_parser-bin -c config.yml
+
+# Start observer_notifier with the path to the config.yml ./ 
+go build -o observer_notifier-bin cmd/observer_notifier/main.go && ./observer_notifier-bin -c config.yml
 
 # Start observer_subscriber with the path to the config.yml ./ 
 go build -o observer_subscriber-bin cmd/observer_subscriber/main.go && ./observer_subscriber-bin -c config.yml
@@ -117,10 +125,6 @@ make start
 
 Build and run from local Dockerfile:
 
-You should change `config.yml`:
-```yaml
-redis: redis://redis:6379
-```
 Then build:
 ```shell
 docker-compose build
