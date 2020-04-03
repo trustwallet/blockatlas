@@ -125,10 +125,6 @@ make start
 
 Build and run from local Dockerfile:
 
-You should change `config.yml`:
-```yaml
-redis: redis://redis:6379
-```
 Then build:
 ```shell
 docker-compose build
