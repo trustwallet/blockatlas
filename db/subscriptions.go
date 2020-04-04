@@ -145,7 +145,7 @@ func (i *Instance) BulkCreate(dataList []models.SubscriptionData) error {
 		valueArgs = append(valueArgs, d.Address)
 	}
 
-	smt := `INSERT INTO subscription_data(subscription_id, coin, address) VALUES %s`
+	smt := `INSERT INTO subscription_data(subscription_id, coin, address) VALUES %s ON CONFLICT DO NOTHING`
 
 	smt = fmt.Sprintf(smt, strings.Join(valueStrings, ","))
 
