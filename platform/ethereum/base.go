@@ -13,7 +13,6 @@ type Platform struct {
 	CoinIndex   uint
 	RpcURL      string
 	client      EthereumClient
-	tokens      EthereumClient
 	collectible collection.Client
 	ens         ens.RpcClient
 }
