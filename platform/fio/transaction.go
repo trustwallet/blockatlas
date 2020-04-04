@@ -2,11 +2,12 @@ package fio
 
 import (
 	"encoding/json"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/pkg/errors"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/errors"
 )
 
 func (p *Platform) GetTxsByAddress(address string) (page blockatlas.TxPage, err error) {
@@ -58,8 +59,6 @@ func (p *Platform) Normalize(action *Action, account string) (blockatlas.Tx, err
 			}
 			// fee unknown
 			memo = actionData.Memo
-			break
-
 		case "trnsfiopubky":
 			var actionData ActionDataTrnsfiopubky
 			if json.Unmarshal(dataJSON, &actionData) != nil {
@@ -70,18 +69,18 @@ func (p *Platform) Normalize(action *Action, account string) (blockatlas.Tx, err
 			amount = blockatlas.Amount(strconv.FormatInt(actionData.Amount, 10))
 			fee = blockatlas.Amount(strconv.FormatInt(actionData.MaxFee, 10))
 			// no memo
-			break
 		}
 		date, _ := time.Parse(dateFormat, action.BlockTime)
 		tx := blockatlas.Tx{
-			ID:     action.ActionTrace.TrxID,
-			Coin:   p.Coin().ID,
-			Date:   date.Unix(),
-			From:   from,
-			To:     to,
-			Block:  action.BlockNum,
-			Status: blockatlas.StatusCompleted,
-			Fee:    fee,
+			ID:       action.ActionTrace.TrxID,
+			Coin:     p.Coin().ID,
+			Date:     date.Unix(),
+			From:     from,
+			To:       to,
+			Block:    action.BlockNum,
+			Sequence: action.ActionSeq,
+			Status:   blockatlas.StatusCompleted,
+			Fee:      fee,
 			Meta: blockatlas.Transfer{
 				Value:    amount,
 				Symbol:   p.Coin().Symbol,

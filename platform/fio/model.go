@@ -32,6 +32,7 @@ type ActionTrace struct {
 
 // Action (from get_actions)
 type Action struct {
+	ActionSeq   uint64      `json:"account_action_seq"`
 	BlockNum    uint64      `json:"block_num"`
 	BlockTime   string      `json:"block_time"`
 	ActionTrace ActionTrace `json:"action_trace"`
