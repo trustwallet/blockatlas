@@ -10,7 +10,6 @@ import (
 	"github.com/patrickmn/go-cache"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
-	"github.com/trustwallet/blockatlas/pkg/storage/util"
 	"io/ioutil"
 	"net/http"
 	"sync"
@@ -135,7 +134,7 @@ func (mc *memCache) getCache(key string) (cacheResponse, error) {
 	}
 	err := json.Unmarshal(r, &result)
 	if err != nil {
-		return result, errors.E(err, util.ErrNotFound)
+		return result, errors.E(err, "not found")
 	}
 	return result, nil
 }

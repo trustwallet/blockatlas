@@ -4,13 +4,13 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/trustwallet/blockatlas/db"
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"sync/atomic"
 
 	"github.com/trustwallet/blockatlas/pkg/logger"
-	"github.com/trustwallet/blockatlas/storage"
 	"math/rand"
 	"sort"
 	"sync"
@@ -21,13 +21,13 @@ type (
 	Params struct {
 		Ctx                   context.Context
 		Api                   blockatlas.BlockAPI
-		Storage               storage.Tracker
 		Queue                 mq.Queue
 		ParsingBlocksInterval time.Duration
 		BacklogCount          int
 		MaxBacklogBlocks      int64
 		StopChannel           chan<- struct{}
 		TxBatchLimit          uint
+		Database              *db.Instance
 	}
 
 	GetBlockByNumber func(num int64) (*blockatlas.Block, error)
@@ -79,7 +79,7 @@ func RunParser(params Params) {
 }
 
 func GetBlocksIntervalToFetch(params Params) (int64, int64, error) {
-	lastParsedBlock, err := params.Storage.GetLastParsedBlockNumber(params.Api.Coin().ID)
+	lastParsedBlock, err := params.Database.GetLastParsedBlockNumber(params.Api.Coin().ID)
 	if err != nil {
 		return 0, 0, errors.E(err, "Polling failed: tracker didn't return last known block number")
 	}
@@ -174,8 +174,7 @@ func SaveLastParsedBlock(params Params, blocks []blockatlas.Block) error {
 	})
 
 	lastBlockNumber := blocks[len(blocks)-1].Number
-
-	err := params.Storage.SetLastParsedBlockNumber(params.Api.Coin().ID, lastBlockNumber)
+	err := params.Database.SetLastParsedBlockNumber(params.Api.Coin().ID, lastBlockNumber)
 	if err != nil {
 		return err
 	}

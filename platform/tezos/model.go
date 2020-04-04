@@ -67,16 +67,18 @@ func (t *Transaction) ErrorMsg() string {
 	}
 }
 
-func (t *Transaction) Title() blockatlas.KeyTitle {
-	if t.Delegate == "" && t.Receiver != "" {
-		return blockatlas.AnyActionDelegation
+func (t *Transaction) Title(address string) (blockatlas.KeyTitle, bool) {
+	if t.Type == TxTypeDelegation {
+		if address == t.Sender && t.Delegate != "" && t.Receiver == "" {
+			return blockatlas.AnyActionDelegation, true
+		}
+
+		if address == t.Sender && t.Delegate == "" && t.Receiver != "" {
+			return blockatlas.AnyActionUndelegation, true
+		}
 	}
 
-	if t.Delegate != "" && t.Receiver == "" {
-		return blockatlas.AnyActionUndelegation
-	}
-
-	return blockatlas.AnyActionDelegation
+	return "unsupported title", false
 }
 
 func (t *Transaction) BlockTimestamp() int64 {
@@ -88,14 +90,14 @@ func (t *Transaction) BlockTimestamp() int64 {
 	return unix
 }
 
-func (t *Transaction) TransferType() blockatlas.TransactionType {
+func (t *Transaction) TransferType() (blockatlas.TransactionType, bool) {
 	switch t.Type {
 	case TxTypeTransaction:
-		return blockatlas.TxTransfer
+		return blockatlas.TxTransfer, true
 	case TxTypeDelegation:
-		return blockatlas.TxAnyAction
+		return blockatlas.TxAnyAction, true
 	default:
-		return ""
+		return "unsupported type", false
 	}
 }
 

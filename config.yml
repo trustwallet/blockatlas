@@ -9,7 +9,7 @@ gin:
 # If all - run all platforms in one binary. You can pick specific coin handle to run binary only with specific coin
 # Example: ethereum
 # You can see all the coin handles at coins/coins.yml file
-platform: all
+platform: binance
 
 # Sentry error tracking
 #sentry:
@@ -32,8 +32,8 @@ observer:
     consumer:
       prefetch_count: 10
 
-storage:
-  redis: redis://localhost:6379
+postgres:
+  uri: postgresql://user:pass@localhost/my_db?sslmode=disable
 
 # [BNB] Binance DEX: https://wallet.binance.org
 #       Binance Chain: https://explorer.binance.org
@@ -149,9 +149,9 @@ aeternity:
 nebulas:
   api: https://explorer-backend.nebulas.io/api
 
+# [FIO] FIO: https://fioprotocol.io
 fio:
-  # api: https://addresses.fio.foundation
-  api: http://testnet.fioprotocol.io/v1/chain
+  api: https://fio.eosphere.io
 
 # [BTC] Bitcoin: https://bitcoin.org/ (Blockbook API https://github.com/trezor/blockbook)
 bitcoin:

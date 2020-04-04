@@ -45,19 +45,23 @@ func TestTransaction_Status(t *testing.T) {
 	}
 
 	testsTitle := []struct {
-		name string
-		in   Transaction
-		out  blockatlas.KeyTitle
+		name    string
+		address string
+		in      Transaction
+		out     blockatlas.KeyTitle
 	}{
-		{"Delegation", Transaction{Delegate: "", Receiver: addr1}, blockatlas.AnyActionDelegation},
-		{"Undelegation", Transaction{Delegate: addr1, Receiver: ""}, blockatlas.AnyActionUndelegation},
-		{"Delegation", Transaction{Delegate: "", Receiver: ""}, blockatlas.AnyActionDelegation},
-		{"Delegation", Transaction{Delegate: addr1, Receiver: addr1}, blockatlas.AnyActionDelegation},
+		{"Delegation title", addr1, Transaction{Sender: addr1, Delegate: addr2, Receiver: "", Type: TxTypeDelegation}, blockatlas.AnyActionDelegation},
+		{"Undelegation title", addr1, Transaction{Sender: addr1, Delegate: "", Receiver: addr2, Type: TxTypeDelegation}, blockatlas.AnyActionUndelegation},
+		{"Unsupported title", addr1, Transaction{Sender: addr1, Delegate: addr1, Receiver: addr1}, "unsupported title"},
+		{"Unsupported title", addr1, Transaction{Sender: addr1, Delegate: addr2, Receiver: addr1}, "unsupported title"},
+		{"Unsupported title", addr1, Transaction{Sender: addr1, Delegate: addr1, Receiver: addr2}, "unsupported title"},
+		{"Unsupported title", addr1, Transaction{Sender: addr1, Delegate: addr2, Receiver: addr2}, "unsupported title"},
 	}
 
 	for _, tt := range testsTitle {
 		t.Run(tt.name, func(t *testing.T) {
-			assert.Equal(t, tt.out, tt.in.Title())
+			title, _ := tt.in.Title(tt.address)
+			assert.Equal(t, tt.out, title)
 		})
 	}
 
@@ -66,7 +70,7 @@ func TestTransaction_Status(t *testing.T) {
 		in   Transaction
 		out  int64
 	}{
-		{"Delegation", Transaction{Time: "2020-02-04T12:27:59Z",}, 1580819279},
+		{"Delegation", Transaction{Time: "2020-02-04T12:27:59Z"}, 1580819279},
 	}
 
 	for _, tt := range testsBlockTimestamp {
@@ -75,20 +79,20 @@ func TestTransaction_Status(t *testing.T) {
 		})
 	}
 
-	testsKind := []struct {
+	testsTransferType := []struct {
 		name string
 		in   Transaction
 		out  blockatlas.TransactionType
 	}{
 		{"Type should be transaction", Transaction{Type: "transaction",}, blockatlas.TxTransfer},
 		{"Type should be delegation", Transaction{Type: "delegation",}, blockatlas.TxAnyAction},
-		{"Type unsupported", Transaction{Type: "bake",}, ""},
-		{"Type endorsement", Transaction{Type: "endorsement",}, ""},
+		{"Type unsupported", Transaction{Type: "bake"}, "unsupported type"},
 	}
 
-	for _, tt := range testsKind {
+	for _, tt := range testsTransferType {
 		t.Run(tt.name, func(t *testing.T) {
-			assert.Equal(t, tt.out, tt.in.TransferType())
+			transferType, _ := tt.in.TransferType()
+			assert.Equal(t, tt.out, transferType)
 		})
 	}
 
