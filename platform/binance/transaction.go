@@ -15,12 +15,12 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 	return p.GetTokenTxsByAddress(address, p.Coin().Symbol)
 }
 
-func (p *Platform) GetTokenTxsByAddress(address string, token string) (blockatlas.TxPage, error) {
-	srcTxs, err := p.client.GetTxsOfAddress(address, token)
+func (p *Platform) GetTokenTxsByAddress(address, token string) (blockatlas.TxPage, error) {
+	addrTxs, err := p.client.GetTxsOfAddress(address, token)
 	if err != nil {
 		return nil, err
 	}
-	txs, err := p.getTxChildChan(srcTxs.Txs)
+	txs, err := p.getTxChildChan(addrTxs.Txs)
 	if err != nil {
 		return nil, err
 	}
@@ -41,7 +41,7 @@ func (p *Platform) getTxChildChan(srcTxs []Tx) ([]Tx, error) {
 		wg.Add(1)
 		go func(srcTx Tx, out chan Tx, wg *sync.WaitGroup) {
 			defer wg.Done()
-			tx, err := p.client.GetTx(srcTx.Hash)
+			tx, err := p.client.GetTxByHash(srcTx.Hash)
 			if err != nil {
 				// Return the same transaction if an error occurs
 				out <- srcTx

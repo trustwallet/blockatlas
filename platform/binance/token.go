@@ -7,15 +7,27 @@ import (
 )
 
 func (p *Platform) GetTokenListByAddress(address string) (blockatlas.TokenPage, error) {
-	account, err := p.dexClient.GetAccountMetadata(address)
+	account, err := p.client.GetAccountMetadata(address)
 	if err != nil || len(account.Balances) == 0 {
 		return []blockatlas.Token{}, nil
 	}
-	tokens, err := p.dexClient.GetTokens()
+	tokens, err := p.client.GetTokens()
 	if err != nil {
 		return nil, err
 	}
 	return NormalizeTokens(account.Balances, tokens), nil
+}
+
+// NormalizeTxs converts multiple Binance tokens
+func NormalizeTokens(srcBalance []Balance, tokens *TokenPage) (tokenPage []blockatlas.Token) {
+	for _, srcToken := range srcBalance {
+		token, ok := NormalizeToken(&srcToken, tokens)
+		if !ok {
+			continue
+		}
+		tokenPage = append(tokenPage, token)
+	}
+	return
 }
 
 // NormalizeToken converts a Binance token into the generic model
@@ -29,28 +41,14 @@ func NormalizeToken(srcToken *Balance, tokens *TokenPage) (t blockatlas.Token, o
 		return t, false
 	}
 
-	t = blockatlas.Token{
+	return blockatlas.Token{
 		Name:     tk.Name,
 		Symbol:   tk.OriginalSymbol,
 		TokenID:  tk.Symbol,
 		Coin:     coin.BNB,
 		Decimals: uint(decimalPlaces(tk.TotalSupply)),
 		Type:     blockatlas.TokenTypeBEP2,
-	}
-
-	return t, true
-}
-
-// NormalizeTxs converts multiple Binance tokens
-func NormalizeTokens(srcBalance []Balance, tokens *TokenPage) (tokenPage []blockatlas.Token) {
-	for _, srcToken := range srcBalance {
-		token, ok := NormalizeToken(&srcToken, tokens)
-		if !ok {
-			continue
-		}
-		tokenPage = append(tokenPage, token)
-	}
-	return
+	}, true
 }
 
 // decimalPlaces count the decimals places.

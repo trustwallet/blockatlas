@@ -41,6 +41,14 @@ type BlockList struct {
 	BlockArray []BlockDescriptor `json:"blockArray"`
 }
 
+type NodeInfo struct {
+	SyncInfo SyncInfo `json:"sync_info"`
+}
+
+type SyncInfo struct {
+	LatestBlockHeight int64 `json:"latest_block_height"`
+}
+
 type TxType string
 
 const (
@@ -49,7 +57,7 @@ const (
 	TxCancelOrder TxType = "CANCEL_ORDER"
 )
 
-type Tx struct {
+type TxV1 struct {
 	BlockHeight   uint64      `json:"blockHeight"`
 	Type          TxType      `json:"txType"`
 	Code          int         `json:"code"`
@@ -87,8 +95,8 @@ type SubTx struct {
 
 type SubTxs []SubTx
 
-func (subTxs *SubTxs) getTxs() (txs []Tx) {
-	mapTx := map[string]Tx{}
+func (subTxs *SubTxs) getTxs() (txs []TxV1) {
+	mapTx := map[string]TxV1{}
 	for _, subTx := range *subTxs {
 		key := subTx.ToAddr + subTx.Asset
 		tx, ok := mapTx[key]
@@ -114,8 +122,8 @@ func (subTxs *SubTxs) getTxs() (txs []Tx) {
 	return
 }
 
-func (subTx *SubTx) toTx() Tx {
-	return Tx{
+func (subTx *SubTx) toTx() TxV1 {
+	return TxV1{
 		Hash:        subTx.Hash,
 		BlockHeight: subTx.Height,
 		Type:        TxTransfer,
@@ -128,7 +136,7 @@ func (subTx *SubTx) toTx() Tx {
 	}
 }
 
-func (tx *Tx) containAddress(address string) bool {
+func (tx *TxV1) containAddress(address string) bool {
 	if len(address) == 0 {
 		return true
 	}
@@ -141,7 +149,7 @@ func (tx *Tx) containAddress(address string) bool {
 	return false
 }
 
-func (tx *Tx) getFee() string {
+func (tx *TxV1) getFee() string {
 	fee := "0"
 	feeNumber, err := tx.Fee.Float64()
 	if err == nil && feeNumber > 0 {
@@ -150,7 +158,7 @@ func (tx *Tx) getFee() string {
 	return fee
 }
 
-func (tx *Tx) getData() (Data, error) {
+func (tx *TxV1) getData() (Data, error) {
 	rawIn := json.RawMessage(tx.Data)
 	b, err := rawIn.MarshalJSON()
 	if err != nil {
@@ -206,8 +214,34 @@ func (od OrderData) GetQuantity() (float64, bool) {
 }
 
 type TxPage struct {
-	Nums int  `json:"txNums"`
-	Txs  []Tx `json:"txArray"`
+	Nums int    `json:"txNums"`
+	Txs  []TxV1 `json:"txArray"`
+}
+
+type TransactionsV1 struct {
+	Txs  []TxV1 `json:"tx"`
+}
+
+type BlockTxV2 struct {
+	BlockHeight int64  `json:"blockHeight"`
+	Txs         []TxV2 `json:"tx"`
+}
+
+type TxV2 struct {
+	TxHash      string      `json:"txHash"`
+	BlockHeight int64       `json:"blockHeight"`
+	TxType      TxType      `json:"txType"`
+	TimeStamp   string      `json:"timeStamp"`
+	FromAddr    string      `json:"fromAddr"`
+	ToAddr      string      `json:"toAddr"`
+	Value       json.Number `json:"value"`
+	Asset       string      `json:"txAsset"`
+	Fee         json.Number `json:"txFee"`
+	Code        int         `json:"code"`
+	Data        string      `json:"data"`
+	Memo        string      `json:"memo"`
+	Source      json.Number `json:"source"`
+	Sequence    json.Number `json:"sequence"`
 }
 
 type Token struct {
