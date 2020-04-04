@@ -9,7 +9,6 @@ import (
 
 var (
 	supportedTypes = map[string]bool{"ERC721": true, "ERC1155": true}
-	slugTokens     = map[string]bool{"ERC1155": true}
 )
 
 func (p *Platform) GetCollections(owner string) (blockatlas.CollectionPage, error) {

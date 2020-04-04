@@ -24,13 +24,13 @@ func (c *Client) GetTokenTxs(address, token string, coinIndex uint) (blockatlas.
 
 func NormalizePage(srcPage *Page, address, token string, coinIndex uint) blockatlas.TxPage {
 	var txs []blockatlas.Tx
-	normalized_addr := Address.EIP55Checksum(address)
-	normalized_token := ""
+	normalizedAddr := Address.EIP55Checksum(address)
+	normalizedToken := ""
 	if token != "" {
-		normalized_token = Address.EIP55Checksum(token)
+		normalizedToken = Address.EIP55Checksum(token)
 	}
 	for _, srcTx := range srcPage.Transactions {
-		tx := normalizeTxWithAddress(&srcTx, normalized_addr, normalized_token, coinIndex)
+		tx := normalizeTxWithAddress(&srcTx, normalizedAddr, normalizedToken, coinIndex)
 		txs = append(txs, tx)
 	}
 	return txs
