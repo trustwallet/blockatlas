@@ -31,7 +31,7 @@ func (p *Platform) GetTokenTxsByAddress(address, token string) (blockatlas.TxPag
 			defer wg.Done()
 			txs, err := p.client.GetTxsOfAddress(address, token, string(txType))
 			if err != nil {
-				log.Error("GetTxsOfAddress", err, logger.Params{"txType": txType, "address": address, "token": token})
+				log.Error("GetTxsOfAddress : ", err, logger.Params{"txType": txType, "address": address, "token": token})
 				return
 			}
 			out <- txs

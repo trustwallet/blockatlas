@@ -245,7 +245,7 @@ type TxBase struct {
 	Memo        string `json:"memo"`
 	OrderID     string `json:"orderId"`
 	Sequence    uint64 `json:"sequence"`
-	Source      string `json:"source"`
+	Source      int    `json:"source"`
 	Timestamp   string `json:"timeStamp"`
 	ToAddr      string `json:"toAddr"`
 	TxHash      string `json:"txHash"`

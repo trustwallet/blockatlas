@@ -36,11 +36,10 @@ func (c *Client) GetBlockTransactions(num int64) (*[]TxV2, error) {
 //  Gets a list of address or token transactions by type
 func (c *Client) GetTxsOfAddress(address, token, txType string) ([]TxV1, error) {
 	stx := new(TransactionsV1)
-	endTime := strconv.FormatInt(time.Now().AddDate(0, 3, 0).Unix()*1000, 10)
-	println(endTime)
+	endTime := strconv.FormatInt(time.Now().AddDate(0, -3, 0).Unix()*1000, 10)
 	query := url.Values{
 		"address":   {address},
-		"rows":      {"20"},
+		"limit":     {"25"},
 		"txType":    {txType},
 		"startTime": {endTime},
 	}
@@ -48,7 +47,6 @@ func (c *Client) GetTxsOfAddress(address, token, txType string) ([]TxV1, error) 
 	if token != "" {
 		query.Add("txAsset", token)
 	}
-	print("query: ", query)
 	err := c.Get(stx, "v1/transactions", query) // Multisend transaction is not available in this API
 	return stx.Txs, err
 }
