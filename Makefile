@@ -177,8 +177,10 @@ newman-mocked-params: start-platform-api-mock
 ifeq (,$(test))
 	@bash -c "$(MAKE) newman-run test=transaction host=$(host) && \
 	          $(MAKE) newman-run test=domain host=$(host)"
+	@bash -c "$(MAKE) stop"
 else
 	@bash -c "$(MAKE) newman-run test=$(test) host=$(host)"
+	@bash -c "$(MAKE) stop"
 endif
 
 ## newman: Run Postman Newman test, the host parameter is required, and you can specify the name of the test do you wanna run (transaction, token, staking, collection, domain, healthcheck, observer). e.g $ make newman test=staking host=http//localhost
