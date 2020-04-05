@@ -121,7 +121,7 @@ func NormalizeTx(t TxV1, address, token string) (blockatlas.TxPage, bool) {
 	//		Key:      key,
 	//	}
 	//}
-	return blockatlas.TxPage{tx}, false
+	return blockatlas.TxPage{tBase}, false
 }
 
 func normalizeTransfer(t blockatlas.Tx, srcTx TxV1, address, token string) (blockatlas.Tx, bool) {

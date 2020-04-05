@@ -79,64 +79,64 @@ type Value struct {
 type Msg struct {
 }
 
-type SubTxsDto struct {
-	TotalNum     uint   `json:"totalNum"`
-	SubTxDtoList SubTxs `json:"subTxDtoList"`
-}
+//type SubTxsDto struct {
+//	TotalNum     uint   `json:"totalNum"`
+//	SubTxDtoList SubTxs `json:"subTxDtoList"`
+//}
 
-type SubTx struct {
-	Hash     string      `json:"hash"`
-	Height   uint64      `json:"height"`
-	Type     TxType      `json:"type"`
-	Value    json.Number `json:"value"`
-	Asset    string      `json:"asset"`
-	FromAddr string      `json:"fromAddr"`
-	ToAddr   string      `json:"toAddr"`
-	Fee      json.Number `json:"fee"`
-}
+//type SubTx struct {
+//	Hash     string      `json:"hash"`
+//	Height   uint64      `json:"height"`
+//	Type     TxType      `json:"type"`
+//	Value    json.Number `json:"value"`
+//	Asset    string      `json:"asset"`
+//	FromAddr string      `json:"fromAddr"`
+//	ToAddr   string      `json:"toAddr"`
+//	Fee      json.Number `json:"fee"`
+//}
 
-type SubTxs []SubTx
-
-func (subTxs *SubTxs) getTxs() (txs []TxV1) {
-	mapTx := map[string]TxV1{}
-	for _, subTx := range *subTxs {
-		key := subTx.ToAddr + subTx.Asset
-		tx, ok := mapTx[key]
-		if !ok {
-			mapTx[key] = subTx.toTx()
-			continue
-		}
-		txValue, err := tx.Value.Float64()
-		if err != nil {
-			txValue = 0
-		}
-		subTxValue, err := subTx.Value.Float64()
-		if err != nil {
-			subTxValue = 0
-		}
-		value := numbers.Float64toString(txValue + subTxValue)
-		tx.Value = json.Number(value)
-		mapTx[key] = tx
-	}
-	for _, tx := range mapTx {
-		txs = append(txs, tx)
-	}
-	return
-}
-
-func (subTx *SubTx) toTx() TxV1 {
-	return TxV1{
-		Hash:        subTx.Hash,
-		BlockHeight: subTx.Height,
-		Type:        TxTransfer,
-		FromAddr:    subTx.FromAddr,
-		ToAddr:      subTx.ToAddr,
-		Asset:       subTx.Asset,
-		Fee:         subTx.Fee,
-		Value:       subTx.Value,
-		HasChildren: 0,
-	}
-}
+//type SubTxs []SubTx
+//
+//func (subTxs *SubTxs) getTxs() (txs []TxV1) {
+//	mapTx := map[string]TxV1{}
+//	for _, subTx := range *subTxs {
+//		key := subTx.ToAddr + subTx.Asset
+//		tx, ok := mapTx[key]
+//		if !ok {
+//			mapTx[key] = subTx.toTx()
+//			continue
+//		}
+//		txValue, err := tx.Value.Float64()
+//		if err != nil {
+//			txValue = 0
+//		}
+//		subTxValue, err := subTx.Value.Float64()
+//		if err != nil {
+//			subTxValue = 0
+//		}
+//		value := numbers.Float64toString(txValue + subTxValue)
+//		tx.Value = json.Number(value)
+//		mapTx[key] = tx
+//	}
+//	for _, tx := range mapTx {
+//		txs = append(txs, tx)
+//	}
+//	return
+//}
+//
+//func (subTx *SubTx) toTx() TxV1 {
+//	return TxV1{
+//		Hash:        subTx.Hash,
+//		BlockHeight: subTx.Height,
+//		Type:        TxTransfer,
+//		FromAddr:    subTx.FromAddr,
+//		ToAddr:      subTx.ToAddr,
+//		Asset:       subTx.Asset,
+//		Fee:         subTx.Fee,
+//		Value:       subTx.Value,
+//		HasChildren: 0,
+//	}
+//}
 
 func (tx *TxV1) containAddress(address string) bool {
 	if len(address) == 0 {
@@ -235,49 +235,48 @@ type TransactionsV1 struct {
 	Txs   []TxV1 `json:"tx"`
 }
 
-type TxV1 struct {
-	Age         int64  `json:"txAge"`
+type TxBase struct {
 	Asset       string `json:"txAsset"`
 	BlockHeight uint64 `json:"blockHeight"`
 	Code        int    `json:"code"`
-	//ConfirmBlocks int    `json:"confirmBlocks"`
-	Data     string `json:"data"`
-	Fee      string `json:"txFee"`
-	FromAddr string `json:"fromAddr"`
-	//HasChildren   int         `json:"hasChildren"`
-	Memo      string    `json:"memo"`
-	OrderID   string    `json:"orderId"`
-	SubTxsDto SubTxsDto `json:"subTxsDto"`
-	Sequence  uint64    `json:"sequence"`
-	Timestamp string    `json:"timeStamp"`
-	ToAddr    string    `json:"toAddr"`
-	TxHash    string    `json:"txHash"`
-	Type      TxType    `json:"txType"`
-	Value     string    `json:"value"`
+	Data        string `json:"data"`
+	Fee         string `json:"txFee"`
+	FromAddr    string `json:"fromAddr"`
+	Memo        string `json:"memo"`
+	OrderID     string `json:"orderId"`
+	Sequence    uint64 `json:"sequence"`
+	Source      string `json:"source"`
+	Timestamp   string `json:"timeStamp"`
+	ToAddr      string `json:"toAddr"`
+	TxHash      string `json:"txHash"`
+	Type        TxType `json:"txType"`
+	Value       string `json:"value"`
+}
+
+type TxV1 struct {
+	TxBase
+}
+
+type TxV2 struct {
+	TxBase
+	OrderID         string  `json:"orderId"`         // Optional. Available when the transaction type is NEW_ORDER
+	SubTransactions []SubTx `json:"subTransactions"` // 	Optional. Available when the transaction has sub-transactions, such as multi-send transaction or a transaction have multiple assets
+}
+
+type SubTx struct {
+	Asset       string `json:"txAsset"`
+	BlockHeight uint64 `json:"blockHeight"`
+	Fee         string `json:"txFee"`
+	FromAddr    string `json:"fromAddr"`
+	Hash        string `json:"txHash"`
+	ToAddr      string `json:"toAddr"`
+	Type        TxType `json:"txType"`
+	Value       string `json:"value"`
 }
 
 type BlockTxV2 struct {
 	BlockHeight int64  `json:"blockHeight"`
 	Txs         []TxV2 `json:"tx"`
-}
-
-type TxV2 struct {
-	TxHash          string      `json:"txHash"`
-	BlockHeight     int64       `json:"blockHeight"`
-	TxType          TxType      `json:"txType"`
-	TimeStamp       string      `json:"timeStamp"`
-	FromAddr        string      `json:"fromAddr"`
-	ToAddr          string      `json:"toAddr"`
-	Value           json.Number `json:"value"`
-	Asset           string      `json:"txAsset"`
-	Fee             json.Number `json:"txFee"`
-	Code            int         `json:"code"`
-	Data            string      `json:"data"`
-	Memo            string      `json:"memo"`
-	Source          json.Number `json:"source"`
-	Sequence        json.Number `json:"sequence"`
-	OrderID         string      `json:"orderId"`         // Optional. Available when the transaction type is NEW_ORDER
-	SubTransactions string      `json:"subTransactions"` // 	Optional. Available when the transaction has sub-transactions, such as multi-send transaction or a transaction have multiple assets
 }
 
 type Token struct {
