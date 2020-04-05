@@ -65,7 +65,7 @@ func buildAndPostMessage(blockTransactions blockatlas.TxSetMap, sub blockatlas.S
 	if !ok {
 		return
 	}
-	notifications := make([]TransactionNotification, 0)
+	notifications := make([]TransactionNotification, 0, len(tx.Txs()))
 	for _, tx := range tx.Txs() {
 		tx.Direction = tx.GetTransactionDirection(sub.Address)
 		tx.InferUtxoValue(sub.Address, tx.Coin)
@@ -79,7 +79,12 @@ func buildAndPostMessage(blockTransactions blockatlas.TxSetMap, sub blockatlas.S
 
 		notifications = append(notifications, notification)
 	}
-	publishNotificationBatch(notifications)
+
+	batches := getNotificationBatches(notifications, 50)
+
+	for _, batch := range batches {
+		publishNotificationBatch(batch)
+	}
 }
 
 func publishNotificationBatch(batch []TransactionNotification) {
@@ -103,4 +108,19 @@ func GetInterval(value int, minInterval, maxInterval time.Duration) time.Duratio
 	pMin := numbers.Max(minInterval.Nanoseconds(), interval.Nanoseconds())
 	pMax := numbers.Min(int(maxInterval.Nanoseconds()), int(pMin))
 	return time.Duration(pMax)
+}
+
+func getNotificationBatches(notifications []TransactionNotification, sizeUint uint) [][]TransactionNotification {
+	size := int(sizeUint)
+	resultLength := (len(notifications) + size - 1) / size
+	result := make([][]TransactionNotification, resultLength)
+	lo, hi := 0, size
+	for i := range result {
+		if hi > len(notifications) {
+			hi = len(notifications)
+		}
+		result[i] = notifications[lo:hi:hi]
+		lo, hi = hi, hi+size
+	}
+	return result
 }
