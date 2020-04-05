@@ -54,7 +54,7 @@ func RunParser(params Params) {
 			return
 		default:
 			lastParsedBlock, currentBlock, err := GetBlocksIntervalToFetch(params)
-			if err != nil {
+			if err != nil || lastParsedBlock > currentBlock {
 				logger.Error(err, logger.Params{"coin": params.Api.Coin().Handle})
 				time.Sleep(params.ParsingBlocksInterval)
 				continue
@@ -174,6 +174,9 @@ func SaveLastParsedBlock(params Params, blocks []blockatlas.Block) error {
 	})
 
 	lastBlockNumber := blocks[len(blocks)-1].Number
+	if lastBlockNumber <= 0 {
+		return errors.E(fmt.Sprintf("Parser of %s failed to save last block, lastBlockNumber <= 0", params.Api.Coin().Handle))
+	}
 	err := params.Database.SetLastParsedBlockNumber(params.Api.Coin().ID, lastBlockNumber)
 	if err != nil {
 		return err
