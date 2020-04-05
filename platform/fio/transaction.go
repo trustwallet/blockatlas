@@ -2,6 +2,8 @@ package fio
 
 import (
 	"encoding/json"
+	"fmt"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -25,19 +27,20 @@ func (p *Platform) GetTxsByAddress(address string) (page blockatlas.TxPage, err 
 		}
 		txs = append(txs, tx)
 	}
+	txs = unique(txs)
 	txPage := blockatlas.TxPage(txs)
+	sort.Sort(txPage)
 	return txPage, nil
 }
 
 func (p *Platform) Normalize(action *Action, account string) (blockatlas.Tx, error) {
 	var (
-		to, from    string
-		amount, fee blockatlas.Amount
-		memo        string
+		to, from, memo string
+		amount, fee    blockatlas.Amount
+		sequence       uint64
 	)
 	const dateFormat string = "2006-01-02T15:04:05"
 
-	// Action type "transfer" handled (trnsfiopubky not)
 	if action.ActionTrace.Act.Account == "fio.token" &&
 		(action.ActionTrace.Act.Name == "transfer" || action.ActionTrace.Act.Name == "trnsfiopubky") {
 		// convert to action-specific data
@@ -51,6 +54,9 @@ func (p *Platform) Normalize(action *Action, account string) (blockatlas.Tx, err
 			if json.Unmarshal(dataJSON, &actionData) != nil {
 				return blockatlas.Tx{}, errors.E("Unparseable Data field")
 			}
+			if actionData.Memo == "FIO API fees. Thank you." {
+				return blockatlas.Tx{}, errors.E("Skip meaningless hardcoded fee action")
+			}
 			from = actionData.From
 			to = actionData.To
 			amountNum, err := strconv.ParseFloat(strings.Split(actionData.Quantity, " ")[0], 64)
@@ -59,6 +65,7 @@ func (p *Platform) Normalize(action *Action, account string) (blockatlas.Tx, err
 			}
 			// fee unknown
 			memo = actionData.Memo
+			sequence = action.ActionSeq
 		case "trnsfiopubky":
 			var actionData ActionDataTrnsfiopubky
 			if json.Unmarshal(dataJSON, &actionData) != nil {
@@ -68,7 +75,7 @@ func (p *Platform) Normalize(action *Action, account string) (blockatlas.Tx, err
 			to = actorFromPublicKeyOrActor(actionData.PayeePublicKey)
 			amount = blockatlas.Amount(strconv.FormatInt(actionData.Amount, 10))
 			fee = blockatlas.Amount(strconv.FormatInt(actionData.MaxFee, 10))
-			// no memo
+			// not set sequence because it might be duplicated
 		}
 		date, _ := time.Parse(dateFormat, action.BlockTime)
 		tx := blockatlas.Tx{
@@ -78,7 +85,7 @@ func (p *Platform) Normalize(action *Action, account string) (blockatlas.Tx, err
 			From:     from,
 			To:       to,
 			Block:    action.BlockNum,
-			Sequence: action.ActionSeq,
+			Sequence: sequence,
 			Status:   blockatlas.StatusCompleted,
 			Fee:      fee,
 			Meta: blockatlas.Transfer{
@@ -93,4 +100,19 @@ func (p *Platform) Normalize(action *Action, account string) (blockatlas.Tx, err
 		return tx, nil
 	}
 	return blockatlas.Tx{}, errors.E("Unknown action")
+}
+
+func unique(txs []blockatlas.Tx) []blockatlas.Tx {
+	set := make(map[string]struct{})
+	var result []blockatlas.Tx
+	for _, tx := range txs {
+		id := fmt.Sprintf("%s-%d", tx.ID, tx.Sequence)
+		if _, ok := set[id]; ok {
+			continue
+		} else {
+			set[id] = struct{}{}
+			result = append(result, tx)
+		}
+	}
+	return result
 }

@@ -350,19 +350,19 @@
     {
         "handler": "fio",
         "address": "FIO7Q3XfQ2ocGP1zYst6Sfx5qrsiZ865Cu8So2atrub9JN94so7gt",
-        "expectedTxNum": 3,
-        "expectedTxId": "5cd8d902a675d608d4c82eca892c7973deaa6aefcc58ed9bcbd382ebdc7271c8"
+        "expectedTxNum": 1,
+        "expectedTxId": "2e0a7dc3640768e1d644cee871734dd2efa23e65a54c438c1ba03801d7386fb7"
     },
     {
         "handler": "fio",
         "address": "ezsmbcy2opod",
-        "expectedTxNum": 3,
-        "expectedTxId": "5cd8d902a675d608d4c82eca892c7973deaa6aefcc58ed9bcbd382ebdc7271c8"
+        "expectedTxNum": 1,
+        "expectedTxId": "2e0a7dc3640768e1d644cee871734dd2efa23e65a54c438c1ba03801d7386fb7"
     },
     {
         "handler": "fio",
         "address": "FIO6gZthsHigy7wXeev4MKS4MuoygkxQ1yirmmUqpoubDWLJTASa2",
-        "expectedTxNum": 2,
-        "expectedTxId": "0abe876176bbc7b29ef837d180b1061b5839e67f9211a5c26dea55360baa758a"
+        "expectedTxNum": 1,
+        "expectedTxId": "d2dd588ac5e46cb072d0a2673ea59b88187f0331b26906fabbafddbcea291450"
     }
 ]
