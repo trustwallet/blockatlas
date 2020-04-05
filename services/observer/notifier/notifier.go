@@ -15,7 +15,7 @@ import (
 
 const DefaultPushNotificationsBatchLimit = 50
 
-var MaxPushNotificationsBatchLimit uint
+var MaxPushNotificationsBatchLimit uint = DefaultPushNotificationsBatchLimit
 
 type TransactionNotification struct {
 	Action blockatlas.TransactionType `json:"action"`
