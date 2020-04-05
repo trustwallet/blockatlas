@@ -63,7 +63,19 @@ var (
 )
 
 func TestFetchBlocks(t *testing.T) {
-	blocks := FetchBlocks(getMockedBlockAPI(), 0, 100)
+	params := Params{
+		Ctx:                   nil,
+		Api:                   getMockedBlockAPI(),
+		Queue:                 "",
+		ParsingBlocksInterval: 0,
+		FetchBlocksTimeout:    0,
+		BacklogCount:          0,
+		MaxBacklogBlocks:      0,
+		StopChannel:           nil,
+		TxBatchLimit:          0,
+		Database:              nil,
+	}
+	blocks := FetchBlocks(params, 0, 100)
 	assert.Equal(t, len(blocks), 100)
 }
 
