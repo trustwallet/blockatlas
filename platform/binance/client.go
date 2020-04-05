@@ -25,35 +25,39 @@ func (c *Client) fetchNodeInfo() (*NodeInfo, error) {
 	return result, err
 }
 
-func (c *Client) GetBlockTransactions(num int64) (*BlockTxV2, error) {
+// Get transactions in the block. Multi-send and multi-coin transactions are included as sub-transactions.
+func (c *Client) GetBlockTransactions(num int64) (*[]TxV2, error) {
 	stx := new(BlockTxV2)
 	path := fmt.Sprintf("v2/transactions-in-block/%d", num)
 	err := c.Get(stx, path, nil)
-	return stx, err
+	return &stx.Txs, err
 }
 
-// Get transactions in the block. Multi-send and multi-coin transactions are included as sub-transactions.
-func (c *Client) GetTxsOfAddress(address, token string) (*TxPage, error) {
-	stx := new(TxPage)
+//  Gets a list of address or token transactions by type
+func (c *Client) GetTxsOfAddress(address, token, txType string) ([]TxV1, error) {
+	stx := new(TransactionsV1)
 	endTime := strconv.FormatInt(time.Now().AddDate(0, 3, 0).Unix()*1000, 10)
 	println(endTime)
 	query := url.Values{
-		"address": {address},
-		"rows":    {"25"},
-		"page":    {"1"},
-		"txAsset": {token},
-		"txType":  {"TRANSFER"},
-		"endTime": {endTime},
+		"address":   {address},
+		"rows":      {"20"},
+		"txType":    {txType},
+		"startTime": {endTime},
 	}
-	err := c.Get(stx, "v2/transactions", query)
-	return stx, err
+
+	if token != "" {
+		query.Add("txAsset", token)
+	}
+	print("query: ", query)
+	err := c.Get(stx, "v1/transactions", query) // Multisend transaction is not available in this API
+	return stx.Txs, err
 }
 
-// Gets transaction metadata by transaction ID
-func (c *Client) GetTxByHash(hash string) (stx TxV1, err error) {
-	err = c.Get(&stx, "v2/tx", url.Values{"txHash": {hash}})
-	return
-}
+// Gets transaction metadata by transaction ID/Hash
+//func (c *Client) GetTxByHash(hash string) (stx TxHash, err error) {
+//	err = c.Get(&stx, "v1/tx", url.Values{"hash": {hash}})
+//	return
+//}
 
 // Gets account metadata for an address
 func (c *Client) GetAccountMetadata(address string) (account *Account, err error) {

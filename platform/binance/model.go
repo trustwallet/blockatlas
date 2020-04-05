@@ -4,11 +4,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/trustwallet/blockatlas/coin"
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/numbers"
 	"math"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type Account struct {
@@ -57,24 +59,24 @@ const (
 	TxCancelOrder TxType = "CANCEL_ORDER"
 )
 
-type TxV1 struct {
-	BlockHeight   uint64      `json:"blockHeight"`
-	Type          TxType      `json:"txType"`
-	Code          int         `json:"code"`
-	ConfirmBlocks int         `json:"confirmBlocks"`
-	Data          string      `json:"data"`
-	FromAddr      string      `json:"fromAddr"`
-	OrderID       string      `json:"orderId"`
-	Timestamp     int64       `json:"timeStamp"`
-	ToAddr        string      `json:"toAddr"`
-	Age           int64       `json:"txAge"`
-	Asset         string      `json:"txAsset"`
-	Fee           json.Number `json:"txFee"`
-	Hash          string      `json:"txHash"`
-	Value         json.Number `json:"value"`
-	Memo          string      `json:"memo"`
-	HasChildren   int         `json:"hasChildren"`
-	SubTxsDto     SubTxsDto   `json:"subTxsDto"`
+type TxHash struct {
+	Hash int `json:"hash"`
+
+	Height uint64 `json:"height"`
+	Tx     []Txx  `json:"tx"`
+}
+
+type Txx struct {
+	Type string `json:"type"`
+	V    Value  `json:"value"`
+}
+
+type Value struct {
+	Memo string `json:"memo"`
+	Msgs []Msg  `json:"msg"`
+}
+
+type Msg struct {
 }
 
 type SubTxsDto struct {
@@ -149,13 +151,23 @@ func (tx *TxV1) containAddress(address string) bool {
 	return false
 }
 
-func (tx *TxV1) getFee() string {
-	fee := "0"
-	feeNumber, err := tx.Fee.Float64()
-	if err == nil && feeNumber > 0 {
-		fee = numbers.DecimalExp(string(tx.Fee), 8)
+func (t *TxV1) getFee() string {
+	return numbers.DecimalExp(t.Fee, 8)
+	//fee := "0"
+	//feeNumber, err := t.Fee.Float64()
+	//if err == nil && feeNumber > 0 {
+	//	fee = numbers.DecimalExp(string(t.Fee), 8)
+	//}
+	//return fee
+}
+
+func (t *TxV1) BlockTimestamp() int64 {
+	unix := int64(0)
+	date, err := time.Parse(time.RFC3339, t.Timestamp)
+	if err == nil {
+		unix = date.Unix()
 	}
-	return fee
+	return unix
 }
 
 func (tx *TxV1) getData() (Data, error) {
@@ -219,7 +231,29 @@ type TxPage struct {
 }
 
 type TransactionsV1 struct {
-	Txs  []TxV1 `json:"tx"`
+	Total int    `json:"total"`
+	Txs   []TxV1 `json:"tx"`
+}
+
+type TxV1 struct {
+	Age         int64  `json:"txAge"`
+	Asset       string `json:"txAsset"`
+	BlockHeight uint64 `json:"blockHeight"`
+	Code        int    `json:"code"`
+	//ConfirmBlocks int    `json:"confirmBlocks"`
+	Data     string `json:"data"`
+	Fee      string `json:"txFee"`
+	FromAddr string `json:"fromAddr"`
+	//HasChildren   int         `json:"hasChildren"`
+	Memo      string    `json:"memo"`
+	OrderID   string    `json:"orderId"`
+	SubTxsDto SubTxsDto `json:"subTxsDto"`
+	Sequence  uint64    `json:"sequence"`
+	Timestamp string    `json:"timeStamp"`
+	ToAddr    string    `json:"toAddr"`
+	TxHash    string    `json:"txHash"`
+	Type      TxType    `json:"txType"`
+	Value     string    `json:"value"`
 }
 
 type BlockTxV2 struct {
@@ -228,20 +262,22 @@ type BlockTxV2 struct {
 }
 
 type TxV2 struct {
-	TxHash      string      `json:"txHash"`
-	BlockHeight int64       `json:"blockHeight"`
-	TxType      TxType      `json:"txType"`
-	TimeStamp   string      `json:"timeStamp"`
-	FromAddr    string      `json:"fromAddr"`
-	ToAddr      string      `json:"toAddr"`
-	Value       json.Number `json:"value"`
-	Asset       string      `json:"txAsset"`
-	Fee         json.Number `json:"txFee"`
-	Code        int         `json:"code"`
-	Data        string      `json:"data"`
-	Memo        string      `json:"memo"`
-	Source      json.Number `json:"source"`
-	Sequence    json.Number `json:"sequence"`
+	TxHash          string      `json:"txHash"`
+	BlockHeight     int64       `json:"blockHeight"`
+	TxType          TxType      `json:"txType"`
+	TimeStamp       string      `json:"timeStamp"`
+	FromAddr        string      `json:"fromAddr"`
+	ToAddr          string      `json:"toAddr"`
+	Value           json.Number `json:"value"`
+	Asset           string      `json:"txAsset"`
+	Fee             json.Number `json:"txFee"`
+	Code            int         `json:"code"`
+	Data            string      `json:"data"`
+	Memo            string      `json:"memo"`
+	Source          json.Number `json:"source"`
+	Sequence        json.Number `json:"sequence"`
+	OrderID         string      `json:"orderId"`         // Optional. Available when the transaction type is NEW_ORDER
+	SubTransactions string      `json:"subTransactions"` // 	Optional. Available when the transaction has sub-transactions, such as multi-send transaction or a transaction have multiple assets
 }
 
 type Token struct {
@@ -285,6 +321,18 @@ func removeFloatPoint(value float64) int64 {
 	bnbCoin := coin.Coins[coin.BNB]
 	pow := math.Pow(10, float64(bnbCoin.Decimals))
 	return int64(value * pow)
+}
+
+// Add test
+func (t *TxV1) Direction(address string) blockatlas.Direction {
+	if t.FromAddr == address && t.ToAddr == address {
+		return blockatlas.DirectionSelf
+	}
+	if t.FromAddr == address && t.ToAddr != address {
+		return blockatlas.DirectionOutgoing
+	}
+
+	return blockatlas.DirectionIncoming
 }
 
 func convertValue(value interface{}) (float64, bool) {

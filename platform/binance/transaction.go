@@ -1,6 +1,7 @@
 package binance
 
 import (
+	log "github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/pkg/numbers"
@@ -11,126 +12,80 @@ import (
 )
 
 func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
-	// Endpoint supports queries without token query parameter
-	return p.GetTokenTxsByAddress(address, p.Coin().Symbol)
+	return p.GetTokenTxsByAddress(address, "")
 }
 
 func (p *Platform) GetTokenTxsByAddress(address, token string) (blockatlas.TxPage, error) {
-	addrTxs, err := p.client.GetTxsOfAddress(address, token)
-	if err != nil {
-		return nil, err
+	var transferTypes []TxType
+	if token == "" {
+		transferTypes = []TxType{TxTransfer, TxNewOrder, TxCancelOrder}
+	} else {
+		transferTypes = []TxType{TxTransfer}
 	}
-	txs, err := p.getTxChildChan(addrTxs.Txs)
-	if err != nil {
-		return nil, err
-	}
-	return NormalizeTxs(txs, token, address), nil
-}
 
-// getTxChildChan get all child assets from a tx
-func (p *Platform) getTxChildChan(srcTxs []Tx) ([]Tx, error) {
-	txs := make([]Tx, 0)
 	var wg sync.WaitGroup
-	out := make(chan Tx, len(srcTxs))
-	for _, srcTx := range srcTxs {
-		if srcTx.HasChildren != 1 {
-			// Return the same transaction if doesn't have a child
-			txs = append(txs, srcTx)
-			continue
-		}
-		wg.Add(1)
-		go func(srcTx Tx, out chan Tx, wg *sync.WaitGroup) {
+	out := make(chan []TxV1, len(transferTypes))
+	wg.Add(len(transferTypes))
+	for _, t := range transferTypes {
+		go func(txType TxType, address, token string, wg *sync.WaitGroup) {
 			defer wg.Done()
-			tx, err := p.client.GetTxByHash(srcTx.Hash)
+			txs, err := p.client.GetTxsOfAddress(address, token, string(txType))
 			if err != nil {
-				// Return the same transaction if an error occurs
-				out <- srcTx
-				logger.Error("GetTransactionsByBlockChan", err, logger.Params{"hash": srcTx.Hash})
+				log.Error("GetTxsOfAddress", err, logger.Params{"txType": txType, "address": address, "token": token})
 				return
 			}
-			out <- tx
-		}(srcTx, out, &wg)
+			out <- txs
+		}(t, address, token, &wg)
 	}
 	wg.Wait()
 	close(out)
+
+	srcTx := make([]TxV1, 0)
 	for r := range out {
-		txs = append(txs, r)
+		srcTx = append(srcTx, r...)
 	}
-	return txs, nil
+
+	return NormalizeTxs(srcTx, address, token), nil
 }
 
-func normalizeTransfer(tx blockatlas.Tx, srcTx Tx, token, address string) (blockatlas.TxPage, bool) {
-	// Verify if the tx has more them one asset
-	if srcTx.HasChildren == 1 {
-		txs := make(blockatlas.TxPage, 0)
-		// Parse all assets as a transaction
-		for _, subTx := range srcTx.SubTxsDto.SubTxDtoList.getTxs() {
-			// If this is not called from a block observer_test, only get the user txs/assets
-			if !subTx.containAddress(address) {
-				continue
-			}
-			// Recursive call to normalize the tx
-			newTxs, ok := normalizeTransfer(tx, subTx, token, address)
-			if !ok {
-				continue
-			}
-			txs = append(txs, newTxs...)
+// NormalizeTxs converts multiple Binance transactions
+func NormalizeTxs(srcTxs []TxV1, address, token string) (txs []blockatlas.Tx) {
+	for _, srcTx := range srcTxs {
+		tx, ok := NormalizeTx(srcTx, address, token)
+		if !ok {
+			continue
 		}
-		if len(txs) == 0 {
-			return txs, false
-		}
-		return txs, true
+		txs = append(txs, tx...)
 	}
-
-	// Verify if this is the same asset we are looking for
-	if len(token) > 0 && srcTx.Asset != token {
-		return blockatlas.TxPage{tx}, false
-	}
-
-	tx.From = srcTx.FromAddr
-	tx.To = srcTx.ToAddr
-
-	bnbCoin := coin.Coins[coin.BNB]
-	value := numbers.DecimalExp(string(srcTx.Value), 8)
-	if srcTx.Asset == bnbCoin.Symbol {
-		// Condition for native transfer (BNB)
-		tx.Meta = blockatlas.Transfer{
-			Value:    blockatlas.Amount(value),
-			Symbol:   bnbCoin.Symbol,
-			Decimals: bnbCoin.Decimals,
-		}
-		return blockatlas.TxPage{tx}, true
-	}
-
-	// Condition for native token transfer
-	tx.Meta = blockatlas.NativeTokenTransfer{
-		TokenID:  srcTx.Asset,
-		Symbol:   TokenSymbol(srcTx.Asset),
-		Value:    blockatlas.Amount(value),
-		Decimals: bnbCoin.Decimals,
-		From:     srcTx.FromAddr,
-		To:       srcTx.ToAddr,
-	}
-	return blockatlas.TxPage{tx}, true
+	return
 }
 
 // NormalizeTx converts a Binance transaction into the generic model
-func NormalizeTx(srcTx Tx, token, address string) (blockatlas.TxPage, bool) {
-	tx := blockatlas.Tx{
-		ID:     srcTx.Hash,
-		Coin:   coin.BNB,
-		From:   srcTx.FromAddr,
-		To:     srcTx.ToAddr,
-		Fee:    blockatlas.Amount(srcTx.getFee()),
-		Date:   srcTx.Timestamp / 1000,
-		Block:  srcTx.BlockHeight,
-		Status: blockatlas.StatusCompleted,
-		Memo:   srcTx.Memo,
+func NormalizeTx(t TxV1, address, token string) (blockatlas.TxPage, bool) {
+	tBase := blockatlas.Tx{
+		ID:       t.TxHash,
+		Coin:     coin.BNB,
+		From:     t.FromAddr,
+		To:       t.ToAddr,
+		Fee:      blockatlas.Amount(t.getFee()),
+		Date:     t.BlockTimestamp(),
+		Block:    t.BlockHeight,
+		Status:   blockatlas.StatusCompleted, // FIX
+		Error:    "",
+		Sequence: t.Sequence,
+		//Type: add infunc
+		Direction: t.Direction(address),
+		Memo:      t.Memo,
+		//Meta: add in func
 	}
 
-	switch srcTx.Type {
+	switch t.Type {
 	case TxTransfer:
-		return normalizeTransfer(tx, srcTx, token, address)
+		normalized, ok := normalizeTransfer(tBase, t, address, token)
+		if !ok {
+			return blockatlas.TxPage{}, false
+		}
+		return blockatlas.TxPage{normalized}, true
 	}
 	//case TxCancelOrder, TxNewOrder:
 	//	return tx, false
@@ -169,22 +124,39 @@ func NormalizeTx(srcTx Tx, token, address string) (blockatlas.TxPage, bool) {
 	return blockatlas.TxPage{tx}, false
 }
 
+func normalizeTransfer(t blockatlas.Tx, srcTx TxV1, address, token string) (blockatlas.Tx, bool) {
+	t.Type = blockatlas.TxTransfer
+	bnbCoin := coin.Coins[coin.BNB]
+	value := blockatlas.Amount(numbers.DecimalExp(srcTx.Value, 8))
+
+	// Condition for native transfer (BNB)
+	if srcTx.Asset == bnbCoin.Symbol {
+		t.Meta = blockatlas.Transfer{
+			Value:    value,
+			Symbol:   bnbCoin.Symbol,
+			Decimals: bnbCoin.Decimals,
+		}
+		return t, true
+	}
+
+	// Condition for BEP2 token transfer e.g. TWT-8C2
+	t.Meta = blockatlas.NativeTokenTransfer{
+		Name:     "",
+		TokenID:  srcTx.Asset,
+		Symbol:   TokenSymbol(srcTx.Asset),
+		Value:    value,
+		Decimals: bnbCoin.Decimals,
+		From:     srcTx.FromAddr,
+		To:       srcTx.ToAddr,
+	}
+	return t, true
+}
+
+// Extract BEP2 token symbol from asset name e.g: TWT-8C2 => TWT
 func TokenSymbol(asset string) string {
 	s := strings.Split(asset, "-")
 	if len(s) > 1 {
 		return s[0]
 	}
 	return asset
-}
-
-// NormalizeTxs converts multiple Binance transactions
-func NormalizeTxs(srcTxs []Tx, token, adress string) (txs []blockatlas.Tx) {
-	for _, srcTx := range srcTxs {
-		tx, ok := NormalizeTx(srcTx, token, adress)
-		if !ok {
-			continue
-		}
-		txs = append(txs, tx...)
-	}
-	return
 }
