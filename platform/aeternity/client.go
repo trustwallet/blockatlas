@@ -11,15 +11,15 @@ type Client struct {
 	blockatlas.Request
 }
 
-func (c *Client) GetTxs(address string, limit int) (transactions []Transaction, err error) {
+func (c *Client) GetTxs(address string, limit int) ([]Transaction, error) {
 	query := url.Values{
 		"limit": {strconv.Itoa(limit)},
 	}
 	uri := fmt.Sprintf("middleware/transactions/account/%s", address)
-
-	err = c.Get(&transactions, uri, query)
+	var transactions []Transaction
+	err := c.Get(&transactions, uri, query)
 	if err != nil {
-		return
+		return nil, err
 	}
 
 	var result []Transaction
@@ -28,5 +28,5 @@ func (c *Client) GetTxs(address string, limit int) (transactions []Transaction, 
 			result = append(result, tx)
 		}
 	}
-	return
+	return result, nil
 }

@@ -30,7 +30,7 @@ func TestWrite(t *testing.T) {
 
 	c.Writer.WriteHeader(204)
 	c.Writer.WriteHeaderNow()
-	c.Writer.Write([]byte("foo"))
+	c.Writer.Write([]byte("foo")) // nolint
 	assert.Equal(t, 204, c.Writer.Status())
 	assert.Equal(t, "foo", w.Body.String())
 	assert.True(t, c.Writer.Written())

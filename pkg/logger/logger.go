@@ -28,7 +28,7 @@ func (msg *message) String() string {
 	if len(msg.params) > 0 {
 		return fmt.Sprintf("%s - %v", msg.message, msg.params)
 	}
-	return fmt.Sprintf("%s", msg.message)
+	return msg.message
 }
 
 func Info(args ...interface{}) {

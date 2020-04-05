@@ -34,13 +34,13 @@ jobs:
           workingDirectory: '$(System.DefaultWorkingDirectory)'
         displayName: 'Get dependencies'
 
-  - job: go_vet
+  - job: go_lint
     dependsOn: environment
     condition: succeeded()
     steps:
-      - script: make govet
+      - script: sudo make lint
         workingDirectory: '$(System.DefaultWorkingDirectory)'
-        displayName: 'Run go vet'
+        displayName: 'Run go lint'
 
   - job: unit_tests
     dependsOn: environment
