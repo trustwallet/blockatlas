@@ -154,7 +154,7 @@ goreleaser: go-goreleaser
 govet: go-vet
 
 ## golint: Run golint.
-golint: go-lint
+lint: go-lint-install go-lint
 
 ## docs: Generate swagger docs.
 docs: go-gen-docs
@@ -177,9 +177,6 @@ newman-mocked-params: start-platform-api-mock
 ifeq (,$(test))
 	@bash -c "$(MAKE) newman-run test=transaction host=$(host) && \
 	          $(MAKE) newman-run test=domain host=$(host)"
-	#not-mocked-yet: $(MAKE) newman-run test=token host=$(host) && \
-	#not-mocked-yet: $(MAKE) newman-run test=staking host=$(host) && \
-	#not-mocked-yet: $(MAKE) newman-run test=collection host=$(host) &&
 else
 	@bash -c "$(MAKE) newman-run test=$(test) host=$(host)"
 endif
@@ -270,9 +267,13 @@ go-vet:
 	@echo "  >  Running go vet"
 	GOBIN=$(GOBIN) go vet ./...
 
+go-lint-install:
+	@echo "  >  Installing golint"
+	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s
+
 go-lint:
 	@echo "  >  Running golint"
-	GOBIN=$(GOBIN) golint ./...
+	bin/golangci-lint run
 
 .PHONY: help
 all: help

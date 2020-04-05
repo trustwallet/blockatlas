@@ -25,7 +25,7 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 		return nil, err
 	}
 
-	txs := make(blockatlas.TxPage, 0)
+	var txs blockatlas.TxPage
 	childTxs, err := p.getTxChildChan(srcTxs.Txs)
 	if err == nil {
 		txs = NormalizeTxs(childTxs, "", "")

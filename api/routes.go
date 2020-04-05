@@ -7,7 +7,6 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/ginutils"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/platform"
-	"strings"
 )
 
 var routers = make(map[string]gin.IRouter)
@@ -107,11 +106,4 @@ func GetStatus(c *gin.Context) {
 		"build":  internal.Build,
 		"date":   internal.Date,
 	})
-}
-
-func splitParam(param string) []string {
-	splitFn := func(c rune) bool {
-		return c == ','
-	}
-	return strings.FieldsFunc(param, splitFn)
 }
