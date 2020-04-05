@@ -23,11 +23,11 @@ const (
 )
 
 var (
-	confPath                              string
-	backlogTime, minInterval, maxInterval time.Duration
-	maxBackLogBlocks                      int64
-	txsBatchLimit                         uint
-	database                              *db.Instance
+	confPath                                                   string
+	backlogTime, minInterval, maxInterval, fetchBlocksInterval time.Duration
+	maxBackLogBlocks                                           int64
+	txsBatchLimit                                              uint
+	database                                                   *db.Instance
 )
 
 func init() {
@@ -57,6 +57,7 @@ func init() {
 	backlogTime = viper.GetDuration("observer.backlog")
 	minInterval = viper.GetDuration("observer.block_poll.min")
 	maxInterval = viper.GetDuration("observer.block_poll.max")
+	fetchBlocksInterval = viper.GetDuration("observer.fetch_blocks_interval")
 	maxBackLogBlocks = viper.GetInt64("observer.backlog_max_blocks")
 	if minInterval >= maxInterval {
 		logger.Fatal("minimum block polling interval cannot be greater or equal than maximum")
@@ -107,6 +108,7 @@ func main() {
 			Api:                   api,
 			Queue:                 mq.RawTransactions,
 			ParsingBlocksInterval: pollInterval,
+			FetchBlocksTimeout:    fetchBlocksInterval,
 			BacklogCount:          backlogCount,
 			MaxBacklogBlocks:      maxBackLogBlocks,
 			StopChannel:           stopChannel,
@@ -117,10 +119,11 @@ func main() {
 		go parser.RunParser(params)
 
 		logger.Info("Parser params", logger.Params{
-			"interval":        pollInterval,
-			"backlog":         backlogCount,
-			"Max backlog":     maxBackLogBlocks,
-			"Txs Batch limit": txsBatchLimit,
+			"interval":                 pollInterval,
+			"backlog":                  backlogCount,
+			"Max backlog":              maxBackLogBlocks,
+			"Txs Batch limit":          txsBatchLimit,
+			"Fetching blocks interval": fetchBlocksInterval,
 		})
 
 		wg.Done()

@@ -13,7 +13,11 @@ import (
 	"time"
 )
 
-type DispatchEvent struct {
+const DefaultPushNotificationsBatchLimit = 50
+
+var MaxPushNotificationsBatchLimit uint = DefaultPushNotificationsBatchLimit
+
+type TransactionNotification struct {
 	Action blockatlas.TransactionType `json:"action"`
 	Result *blockatlas.Tx             `json:"result"`
 	Id     uint                       `json:"id"`
@@ -60,40 +64,47 @@ func RunNotifier(database *db.Instance, delivery amqp.Delivery) {
 
 func buildAndPostMessage(blockTransactions blockatlas.TxSetMap, sub blockatlas.Subscription, wg *sync.WaitGroup) {
 	defer wg.Done()
+
 	tx, ok := blockTransactions.Map[sub.Address]
 	if !ok {
 		return
 	}
+	notifications := make([]TransactionNotification, 0, len(tx.Txs()))
 	for _, tx := range tx.Txs() {
 		tx.Direction = tx.GetTransactionDirection(sub.Address)
 		tx.InferUtxoValue(sub.Address, tx.Coin)
-		action := DispatchEvent{
+		notification := TransactionNotification{
 			Action: tx.Type,
 			Result: &tx,
 			Id:     sub.Id,
 		}
-		txJson, err := json.Marshal(action)
-		if err != nil {
-			logger.Panic(err, logger.Params{"coin": tx.Coin})
-		}
 
-		logParams := logger.Params{
-			"Id":   sub.Id,
-			"coin": sub.Coin,
-			"txID": tx.ID,
-		}
+		logger.Info("Notification ready", logger.Params{"Id": sub.Id, "coin": sub.Coin, "txID": tx.ID})
 
-		publishTransaction(sub.Id, txJson, logParams)
+		notifications = append(notifications, notification)
+	}
+
+	batches := getNotificationBatches(notifications, MaxPushNotificationsBatchLimit)
+
+	for _, batch := range batches {
+		publishNotificationBatch(batch)
 	}
 }
 
-func publishTransaction(id uint, rawMessage []byte, logParams logger.Params) {
-	err := mq.Transactions.Publish(rawMessage)
+func publishNotificationBatch(batch []TransactionNotification) {
+	raw, err := json.Marshal(batch)
 	if err != nil {
-		err = errors.E(err, "Failed to dispatch event", errors.Params{"id": id}, logParams)
-		logger.Fatal(err, logger.Params{"id": id}, logParams)
+		err = errors.E(err, " failed to dispatch event")
+		logger.Fatal(err)
 	}
-	logger.Info("Message dispatched", logger.Params{"id": id}, logParams)
+
+	err = mq.TxNotifications.Publish(raw)
+	if err != nil {
+		err = errors.E(err, " failed to dispatch event")
+		logger.Fatal(err)
+	}
+
+	logger.Info("Txs batch dispatched", logger.Params{"txs": len(batch)})
 }
 
 func GetInterval(value int, minInterval, maxInterval time.Duration) time.Duration {
@@ -101,4 +112,19 @@ func GetInterval(value int, minInterval, maxInterval time.Duration) time.Duratio
 	pMin := numbers.Max(minInterval.Nanoseconds(), interval.Nanoseconds())
 	pMax := numbers.Min(int(maxInterval.Nanoseconds()), int(pMin))
 	return time.Duration(pMax)
+}
+
+func getNotificationBatches(notifications []TransactionNotification, sizeUint uint) [][]TransactionNotification {
+	size := int(sizeUint)
+	resultLength := (len(notifications) + size - 1) / size
+	result := make([][]TransactionNotification, resultLength)
+	lo, hi := 0, size
+	for i := range result {
+		if hi > len(notifications) {
+			hi = len(notifications)
+		}
+		result[i] = notifications[lo:hi:hi]
+		lo, hi = hi, hi+size
+	}
+	return result
 }
