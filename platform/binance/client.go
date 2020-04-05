@@ -51,12 +51,6 @@ func (c *Client) GetTxsOfAddress(address, token, txType string) ([]TxV1, error) 
 	return stx.Txs, err
 }
 
-// Gets transaction metadata by transaction ID/Hash
-//func (c *Client) GetTxByHash(hash string) (stx TxHash, err error) {
-//	err = c.Get(&stx, "v1/tx", url.Values{"hash": {hash}})
-//	return
-//}
-
 // Gets account metadata for an address
 func (c *Client) GetAccountMetadata(address string) (account *Account, err error) {
 	path := fmt.Sprintf("v1/account/%s", address)
@@ -67,7 +61,7 @@ func (c *Client) GetAccountMetadata(address string) (account *Account, err error
 // Gets a list of tokens that have been issued.
 func (c *Client) GetTokens() (*TokenPage, error) {
 	stp := new(TokenPage)
-	query := url.Values{"limit": {"1000"}, "offset": {"0"}}
+	query := url.Values{"limit": {"1000"}}
 	err := c.Get(stp, "v1/tokens", query)
 	return stp, err
 }

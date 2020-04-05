@@ -16,13 +16,13 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 }
 
 func (p *Platform) GetTokenTxsByAddress(address, token string) (blockatlas.TxPage, error) {
-	var transferTypes []TxType
-	if token == "" {
-		transferTypes = []TxType{TxTransfer, TxNewOrder, TxCancelOrder}
-	} else {
-		transferTypes = []TxType{TxTransfer}
-	}
-
+	//var transferTypes []TxType
+	//if token == "" {
+	//	transferTypes = []TxType{TxTransfer, TxNewOrder, TxCancelOrder}
+	//} else {
+	//	transferTypes = []TxType{TxTransfer}
+	//}
+	var transferTypes = []TxType{TxTransfer}
 	var wg sync.WaitGroup
 	out := make(chan []TxV1, len(transferTypes))
 	wg.Add(len(transferTypes))
@@ -63,25 +63,23 @@ func NormalizeTxs(srcTxs []TxV1, address, token string) (txs []blockatlas.Tx) {
 // NormalizeTx converts a Binance transaction into the generic model
 func NormalizeTx(t TxV1, address, token string) (blockatlas.TxPage, bool) {
 	tBase := blockatlas.Tx{
-		ID:       t.TxHash,
-		Coin:     coin.BNB,
-		From:     t.FromAddr,
-		To:       t.ToAddr,
-		Fee:      blockatlas.Amount(t.getFee()),
-		Date:     t.BlockTimestamp(),
-		Block:    t.BlockHeight,
-		Status:   blockatlas.StatusCompleted, // FIX
-		Error:    "",
-		Sequence: t.Sequence,
-		//Type: add infunc
+		ID:        t.TxHash,
+		Coin:      coin.BNB,
+		From:      t.FromAddr,
+		To:        t.ToAddr,
+		Fee:       blockatlas.Amount(t.getFee()),
+		Date:      t.BlockTimestamp(),
+		Block:     t.BlockHeight,
+		Status:    blockatlas.StatusCompleted, // FIX
+		Error:     "",
+		Sequence:  t.Sequence,
 		Direction: t.Direction(address),
 		Memo:      t.Memo,
-		//Meta: add in func
 	}
 
 	switch t.Type {
 	case TxTransfer:
-		normalized, ok := normalizeTransfer(tBase, t, address, token)
+		normalized, ok := normalizeTransfer(tBase, t)
 		if !ok {
 			return blockatlas.TxPage{}, false
 		}
@@ -124,7 +122,7 @@ func NormalizeTx(t TxV1, address, token string) (blockatlas.TxPage, bool) {
 	return blockatlas.TxPage{tBase}, false
 }
 
-func normalizeTransfer(t blockatlas.Tx, srcTx TxV1, address, token string) (blockatlas.Tx, bool) {
+func normalizeTransfer(t blockatlas.Tx, srcTx TxV1) (blockatlas.Tx, bool) {
 	t.Type = blockatlas.TxTransfer
 	bnbCoin := coin.Coins[coin.BNB]
 	value := blockatlas.Amount(numbers.DecimalExp(srcTx.Value, 8))
@@ -132,22 +130,22 @@ func normalizeTransfer(t blockatlas.Tx, srcTx TxV1, address, token string) (bloc
 	// Condition for native transfer (BNB)
 	if srcTx.Asset == bnbCoin.Symbol {
 		t.Meta = blockatlas.Transfer{
-			Value:    value,
-			Symbol:   bnbCoin.Symbol,
 			Decimals: bnbCoin.Decimals,
+			Symbol:   bnbCoin.Symbol,
+			Value:    value,
 		}
 		return t, true
 	}
 
 	// Condition for BEP2 token transfer e.g. TWT-8C2
 	t.Meta = blockatlas.NativeTokenTransfer{
-		Name:     "",
-		TokenID:  srcTx.Asset,
-		Symbol:   TokenSymbol(srcTx.Asset),
-		Value:    value,
 		Decimals: bnbCoin.Decimals,
 		From:     srcTx.FromAddr,
+		Symbol:   TokenSymbol(srcTx.Asset),
 		To:       srcTx.ToAddr,
+		TokenID:  srcTx.Asset,
+		Value:    value,
+		Name:     "",
 	}
 	return t, true
 }

@@ -33,15 +33,15 @@ type Error struct {
 	Message string `json:"message"`
 }
 
-type BlockDescriptor struct {
-	BlockHeight int64  `json:"blockHeight"`
-	BlockHash   string `json:"blockHash"`
-	TxNum       int    `json:"txNum"`
-}
-
-type BlockList struct {
-	BlockArray []BlockDescriptor `json:"blockArray"`
-}
+//type BlockDescriptor struct {
+//	BlockHeight int64  `json:"blockHeight"`
+//	BlockHash   string `json:"blockHash"`
+//	TxNum       int    `json:"txNum"`
+//}
+//
+//type BlockList struct {
+//	BlockArray []BlockDescriptor `json:"blockArray"`
+//}
 
 type NodeInfo struct {
 	SyncInfo SyncInfo `json:"sync_info"`
@@ -54,9 +54,9 @@ type SyncInfo struct {
 type TxType string
 
 const (
-	TxTransfer    TxType = "TRANSFER"
-	TxNewOrder    TxType = "NEW_ORDER"
-	TxCancelOrder TxType = "CANCEL_ORDER"
+	TxTransfer TxType = "TRANSFER"
+	//TxNewOrder    TxType = "NEW_ORDER"
+	//TxCancelOrder TxType = "CANCEL_ORDER"
 )
 
 type TxHash struct {
@@ -138,7 +138,7 @@ type Msg struct {
 //	}
 //}
 
-func (tx *TxV1) containAddress(address string) bool {
+func (tx *TxBase) containAddress(address string) bool {
 	if len(address) == 0 {
 		return true
 	}
@@ -151,8 +151,8 @@ func (tx *TxV1) containAddress(address string) bool {
 	return false
 }
 
-func (t *TxV1) getFee() string {
-	return numbers.DecimalExp(t.Fee, 8)
+func (tx *TxV1) getFee() string {
+	return numbers.DecimalExp(tx.Fee, 8)
 	//fee := "0"
 	//feeNumber, err := t.Fee.Float64()
 	//if err == nil && feeNumber > 0 {
@@ -205,25 +205,25 @@ type OrderData struct {
 	Price    interface{} `json:"price"`
 }
 
-func (od OrderData) GetVolume() (int64, bool) {
-	price, ok := od.GetPrice()
-	if !ok {
-		return 0, false
-	}
-	quantity, ok := od.GetQuantity()
-	if !ok {
-		return 0, false
-	}
-	return removeFloatPoint(price * quantity), true
-}
+//func (od OrderData) GetVolume() (int64, bool) {
+//	price, ok := od.GetPrice()
+//	if !ok {
+//		return 0, false
+//	}
+//	quantity, ok := od.GetQuantity()
+//	if !ok {
+//		return 0, false
+//	}
+//	return removeFloatPoint(price * quantity), true
+//}
 
-func (od OrderData) GetPrice() (float64, bool) {
-	return convertValue(od.Price)
-}
+//func (od OrderData) GetPrice() (float64, bool) {
+//	return convertValue(od.Price)
+//}
 
-func (od OrderData) GetQuantity() (float64, bool) {
-	return convertValue(od.Quantity)
-}
+//func (od OrderData) GetQuantity() (float64, bool) {
+//	return convertValue(od.Quantity)
+//}
 
 type TxPage struct {
 	Nums int    `json:"txNums"`
@@ -264,14 +264,14 @@ type TxV2 struct {
 }
 
 type SubTx struct {
-	Asset       string `json:"txAsset"`
-	BlockHeight uint64 `json:"blockHeight"`
-	Fee         string `json:"txFee"`
-	FromAddr    string `json:"fromAddr"`
-	Hash        string `json:"txHash"`
-	ToAddr      string `json:"toAddr"`
-	Type        TxType `json:"txType"`
-	Value       string `json:"value"`
+	Asset    string `json:"txAsset"`
+	Height   uint64 `json:"blockHeight"`
+	Fee      string `json:"txFee"`
+	FromAddr string `json:"fromAddr"`
+	Hash     string `json:"txHash"`
+	ToAddr   string `json:"toAddr"`
+	Type     TxType `json:"txType"`
+	Value    string `json:"value"`
 }
 
 type BlockTxV2 struct {
@@ -334,20 +334,20 @@ func (t *TxV1) Direction(address string) blockatlas.Direction {
 	return blockatlas.DirectionIncoming
 }
 
-func convertValue(value interface{}) (float64, bool) {
-	result := 0.0
-	switch v := value.(type) {
-	case float64:
-		result = v
-	case int:
-		result = float64(v)
-	case string:
-		f, err := strconv.ParseFloat(v, 64)
-		if err == nil {
-			result = f
-		}
-	default:
-		return result, false
-	}
-	return result, true
-}
+//func convertValue(value interface{}) (float64, bool) {
+//	result := 0.0
+//	switch v := value.(type) {
+//	case float64:
+//		result = v
+//	case int:
+//		result = float64(v)
+//	case string:
+//		f, err := strconv.ParseFloat(v, 64)
+//		if err == nil {
+//			result = f
+//		}
+//	default:
+//		return result, false
+//	}
+//	return result, true
+//}

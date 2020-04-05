@@ -36,7 +36,7 @@ func NormalizeToken(srcToken *Balance, tokens *TokenPage) (t blockatlas.Token, o
 		return t, false
 	}
 
-	tk := tokens.findToken(srcToken.Symbol)
+	tk := tokens.findToken(srcToken.Symbol) // TODO create and use cache instead query tokens list every time
 	if tk == nil {
 		return t, false
 	}

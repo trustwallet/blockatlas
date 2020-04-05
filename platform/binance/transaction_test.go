@@ -340,7 +340,7 @@ func TestNormalizeTx(t *testing.T) {
 
 	for _, testTxInstance := range testTxList {
 		t.Run(testTxInstance.name, func(t *testing.T) {
-			var srcTx Tx
+			var srcTx TxV1
 			err := json.Unmarshal([]byte(testTxInstance.apiResponse), &srcTx)
 			assert.Nil(t, err)
 			tx, ok := NormalizeTx(srcTx, testTxInstance.token, "")
@@ -376,7 +376,7 @@ func TestNormalizeTxs(t *testing.T) {
 
 	for _, testTxsInstance := range testTxsList {
 		t.Run(testTxsInstance.name, func(t *testing.T) {
-			var srcTxs []Tx
+			var srcTxs []TxV1
 			err := json.Unmarshal([]byte(testTxsInstance.apiResponse), &srcTxs)
 			assert.Nil(t, err)
 			txs := NormalizeTxs(srcTxs, testTxsInstance.token, "")
@@ -404,6 +404,7 @@ var (
 )
 
 func Test_normalizeTransfer(t *testing.T) {
+	addr := "tbnb1qxm48ndhmh7su0r7zgwmwkltuqgly57jdf8yf8"
 	testTx := baseTransferTx
 	testTx.Meta = metaTx
 	testTx2 := baseTransferTx
@@ -422,43 +423,18 @@ func Test_normalizeTransfer(t *testing.T) {
 		want  blockatlas.TxPage
 		want1 bool
 	}{
-		{"test multiple tx 1", args{
-			tx:      baseTransferTx,
-			srcTx:   multipleTx,
-			token:   "BNB",
-			address: "",
-		}, blockatlas.TxPage{testTx}, true},
-		{"test multiple tx 2", args{
-			tx:      baseTransferTx,
-			srcTx:   multipleTwiceTx,
-			token:   "BNB",
-			address: "",
-		}, blockatlas.TxPage{testTx2}, true},
-		{"tx multiple token tx", args{
-			tx:      baseTransferTx,
-			srcTx:   multipleTx,
-			token:   "AERGO-46B",
-			address: "",
-		}, blockatlas.TxPage{testTokenTx}, true},
-		{"test multiple tx fail", args{
-			tx:      baseTransferTx,
-			srcTx:   multipleTwiceTx,
-			token:   "AERGO-46B",
-			address: "",
-		}, blockatlas.TxPage{}, false},
-		{"test multiple tx address fail", args{
-			tx:      baseTransferTx,
-			srcTx:   multipleTwiceTx,
-			token:   "AERGO-46B",
-			address: "tbnb1qxm48ndhmh7su0r7zgwmwkltuqgly57jdf8yf8",
-		}, blockatlas.TxPage{}, false},
+		{"test multiple tx 1", args{tx: baseTransferTx, srcTx: multipleTx, token: "BNB", address: ""}, blockatlas.TxPage{testTx}, true},
+		{"test multiple tx 2", args{tx: baseTransferTx, srcTx: multipleTwiceTx, token: "BNB", address: "",}, blockatlas.TxPage{testTx2}, true},
+		{"tx multiple token tx", args{tx: baseTransferTx, srcTx: multipleTx, token: "AERGO-46B", address: "",}, blockatlas.TxPage{testTokenTx}, true},
+		{"test multiple tx fail", args{tx: baseTransferTx, srcTx: multipleTwiceTx, token: "AERGO-46B", address: "",}, blockatlas.TxPage{}, false},
+		{"test multiple tx address fail", args{tx: baseTransferTx, srcTx: multipleTwiceTx, token: "AERGO-46B", address: addr,}, blockatlas.TxPage{}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			var srcTx Tx
+			var srcTx TxV1
 			err := json.Unmarshal([]byte(tt.args.srcTx), &srcTx)
 			assert.Nil(t, err)
-			got, got1 := normalizeTransfer(tt.args.tx, srcTx, tt.args.token, tt.args.address)
+			got, got1 := normalizeTransfer(tt.args.tx, srcTx)
 			assert.Equal(t, tt.want, got)
 			assert.Equal(t, tt.want1, got1)
 		})
