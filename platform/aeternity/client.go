@@ -17,8 +17,7 @@ func (c *Client) GetTxs(address string, limit int) ([]Transaction, error) {
 	}
 	uri := fmt.Sprintf("middleware/transactions/account/%s", address)
 	var transactions []Transaction
-	err := c.Get(&transactions, uri, query)
-	if err != nil {
+	if err := c.Get(&transactions, uri, query); err != nil {
 		return nil, err
 	}
 
