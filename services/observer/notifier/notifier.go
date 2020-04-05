@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-type DispatchEvent struct {
+type TransactionNotification struct {
 	Action blockatlas.TransactionType `json:"action"`
 	Result *blockatlas.Tx             `json:"result"`
 	Id     uint                       `json:"id"`
@@ -60,40 +60,42 @@ func RunNotifier(database *db.Instance, delivery amqp.Delivery) {
 
 func buildAndPostMessage(blockTransactions blockatlas.TxSetMap, sub blockatlas.Subscription, wg *sync.WaitGroup) {
 	defer wg.Done()
+
 	tx, ok := blockTransactions.Map[sub.Address]
 	if !ok {
 		return
 	}
+	notifications := make([]TransactionNotification, 0)
 	for _, tx := range tx.Txs() {
 		tx.Direction = tx.GetTransactionDirection(sub.Address)
 		tx.InferUtxoValue(sub.Address, tx.Coin)
-		action := DispatchEvent{
+		notification := TransactionNotification{
 			Action: tx.Type,
 			Result: &tx,
 			Id:     sub.Id,
 		}
-		txJson, err := json.Marshal(action)
-		if err != nil {
-			logger.Panic(err, logger.Params{"coin": tx.Coin})
-		}
 
-		logParams := logger.Params{
-			"Id":   sub.Id,
-			"coin": sub.Coin,
-			"txID": tx.ID,
-		}
+		logger.Info("Notification ready", logger.Params{"Id": sub.Id, "coin": sub.Coin, "txID": tx.ID})
 
-		publishTransaction(sub.Id, txJson, logParams)
+		notifications = append(notifications, notification)
 	}
+	publishNotificationBatch(notifications)
 }
 
-func publishTransaction(id uint, rawMessage []byte, logParams logger.Params) {
-	err := mq.Transactions.Publish(rawMessage)
+func publishNotificationBatch(batch []TransactionNotification) {
+	raw, err := json.Marshal(batch)
 	if err != nil {
-		err = errors.E(err, "Failed to dispatch event", errors.Params{"id": id}, logParams)
-		logger.Fatal(err, logger.Params{"id": id}, logParams)
+		err = errors.E(err, " failed to dispatch event")
+		logger.Fatal(err)
 	}
-	logger.Info("Message dispatched", logger.Params{"id": id}, logParams)
+
+	err = mq.TxNotifications.Publish(raw)
+	if err != nil {
+		err = errors.E(err, " failed to dispatch event")
+		logger.Fatal(err)
+	}
+
+	logger.Info("Txs batch dispatched", logger.Params{"txs": len(batch)})
 }
 
 func GetInterval(value int, minInterval, maxInterval time.Duration) time.Duration {

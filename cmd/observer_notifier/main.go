@@ -36,7 +36,7 @@ func init() {
 		logger.Fatal(err)
 	}
 
-	if err := mq.Transactions.Declare(); err != nil {
+	if err := mq.TxNotifications.Declare(); err != nil {
 		logger.Fatal(err)
 	}
 

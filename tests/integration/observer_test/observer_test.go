@@ -22,7 +22,7 @@ func TestMain(m *testing.M) {
 	if err := mq.RawTransactions.Declare(); err != nil {
 		log.Fatal(err)
 	}
-	if err := mq.Transactions.Declare(); err != nil {
+	if err := mq.TxNotifications.Declare(); err != nil {
 		log.Fatal(err)
 	}
 	if err := mq.Subscriptions.Declare(); err != nil {
@@ -30,7 +30,7 @@ func TestMain(m *testing.M) {
 	}
 	rawTransactionsChannel = mq.RawTransactions.GetMessageChannel()
 	subscriptionChannel = mq.Subscriptions.GetMessageChannel()
-	transactionsChannel = mq.Transactions.GetMessageChannel()
+	transactionsChannel = mq.TxNotifications.GetMessageChannel()
 
 	code := m.Run()
 

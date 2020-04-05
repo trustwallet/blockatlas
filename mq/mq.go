@@ -22,11 +22,9 @@ type (
 )
 
 const (
-	Transactions         Queue = "transactions"
-	Subscriptions        Queue = "subscriptions"
-	RawTransactions      Queue = "rawTransactions"
-	defaultPrefetchCount       = 5
-	minPrefetchCount           = 1
+	TxNotifications Queue = "txNotifications"
+	Subscriptions   Queue = "subscriptions"
+	RawTransactions Queue = "rawTransactions"
 )
 
 func Init(uri string) (err error) {
@@ -39,8 +37,15 @@ func Init(uri string) (err error) {
 }
 
 func Close() {
-	amqpChan.Close()
-	conn.Close()
+	err := amqpChan.Close()
+	if err != nil {
+		logger.Error(err)
+	}
+
+	err = conn.Close()
+	if err != nil {
+		logger.Error(err)
+	}
 }
 
 func (mc MessageChannel) GetMessage() amqp.Delivery {
