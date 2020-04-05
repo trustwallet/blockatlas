@@ -273,7 +273,7 @@ go-lint-install:
 
 go-lint:
 	@echo "  >  Running golint"
-	golangci-lint run
+	GOBIN=$(GOBIN) golangci-lint run
 
 .PHONY: help
 all: help
