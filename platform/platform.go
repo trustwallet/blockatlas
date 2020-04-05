@@ -76,7 +76,7 @@ func getAllHandlers() blockatlas.Platforms {
 		coin.Aeternity().Handle:    aeternity.Init(GetApiVar(coin.AE)),
 		coin.Solana().Handle:       solana.Init(GetApiVar(coin.SOL)),
 		coin.Tezos().Handle:        tezos.Init(GetApiVar(coin.XTZ), GetRpcVar(coin.XTZ)),
-		coin.Binance().Handle:      binance.Init(GetApiVar(coin.BNB)),
+		coin.Binance().Handle:      binance.Init(GetRpcVar(coin.BNB)),
 		coin.Zilliqa().Handle:      zilliqa.Init(GetApiVar(coin.ZIL), GetVar("zilliqa.key"), GetRpcVar(coin.ZIL), GetVar("zilliqa.lookup")),
 		coin.Kusama().Handle:       polkadot.Init(coin.KSM, GetApiVar(coin.KSM)),
 		coin.Stellar().Handle:      stellar.Init(coin.XLM, GetApiVar(coin.XLM)),

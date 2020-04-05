@@ -40,7 +40,7 @@ postgres:
 # [BNB] Binance DEX: https://wallet.binance.org
 #       Binance Chain: https://explorer.binance.org
 binance:
-  api: https://explorer.binance.org/api/
+  rpc: https://dex.binance.org/api/
 
 # [NIM] Nimiq: https://nimiq.com
 #nimiq:
