@@ -13,6 +13,10 @@ import (
 	"time"
 )
 
+const DefaultPushNotificationsBatchLimit = 50
+
+var MaxPushNotificationsBatchLimit uint
+
 type TransactionNotification struct {
 	Action blockatlas.TransactionType `json:"action"`
 	Result *blockatlas.Tx             `json:"result"`
@@ -80,7 +84,7 @@ func buildAndPostMessage(blockTransactions blockatlas.TxSetMap, sub blockatlas.S
 		notifications = append(notifications, notification)
 	}
 
-	batches := getNotificationBatches(notifications, 50)
+	batches := getNotificationBatches(notifications, MaxPushNotificationsBatchLimit)
 
 	for _, batch := range batches {
 		publishNotificationBatch(batch)
