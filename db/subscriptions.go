@@ -9,6 +9,8 @@ import (
 	"time"
 )
 
+const rawBulkInsert = `INSERT INTO subscription_data(subscription_id, coin, address) VALUES %s ON CONFLICT DO NOTHING`
+
 func (i *Instance) GetSubscriptionData(coin uint, addresses []string) ([]models.SubscriptionData, error) {
 	if len(addresses) == 0 {
 		return nil, errors.E("Empty addresses")
@@ -145,9 +147,7 @@ func (i *Instance) BulkCreate(dataList []models.SubscriptionData) error {
 		valueArgs = append(valueArgs, d.Address)
 	}
 
-	smt := `INSERT INTO subscription_data(subscription_id, coin, address) VALUES %s ON CONFLICT DO NOTHING`
-
-	smt = fmt.Sprintf(smt, strings.Join(valueStrings, ","))
+	smt := fmt.Sprintf(rawBulkInsert, strings.Join(valueStrings, ","))
 
 	if err := i.Gorm.Exec(smt, valueArgs...).Error; err != nil {
 		return err

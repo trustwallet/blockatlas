@@ -24,8 +24,6 @@ func New(uri string) (*Instance, error) {
 		&models.Tracker{},
 	)
 
-	g.LogMode(true)
-
 	i := &Instance{Gorm: g}
 
 	return i, nil
