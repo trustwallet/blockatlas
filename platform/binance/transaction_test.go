@@ -327,68 +327,15 @@ type testTx struct {
 
 func TestNormalizeTx(t *testing.T) {
 	testTxList := []testTx{
-		{
-			name:        "bnb transfer",
-			apiResponse: transferTransaction,
-			expected:    transferDst,
-			token:       "BNB",
-			wantError:   false,
-		},
-		{
-			name:        "native token transfer",
-			apiResponse: tokenTransferTransaction,
-			expected:    tokenTransferDst,
-			token:       "YLC-D8B",
-			wantError:   false,
-		},
-		{
-			name:        "multiple addresses token transfer",
-			apiResponse: multipleTx,
-			expected:    multipleTxDst,
-			token:       "AERGO-46B",
-			wantError:   false,
-		},
-		{
-			name:        "multiple addresses with two transfers",
-			apiResponse: multipleTwiceTx,
-			expected:    multipleTwiceTxDst,
-			token:       "BNB",
-			wantError:   false,
-		},
-		{
-			name:        "new order transfer",
-			apiResponse: newOrderTransaction,
-			expected:    newOrderTransferDst,
-			token:       "AWC-986",
-			wantError:   true,
-		},
-		{
-			name:        "cancel order transfer",
-			apiResponse: cancelOrderTransaction,
-			expected:    cancelOrdeTransferDst,
-			token:       "GTO-908",
-			wantError:   true,
-		},
-		{
-			name:        "new order transfer",
-			apiResponse: newOrderTransaction,
-			expected:    metaFreeNewOrderTransferDst,
-			token:       "AWC-986",
-			wantError:   true,
-		},
-		{
-			name:        "cancel order transfer",
-			apiResponse: cancelOrderTransaction,
-			expected:    metaFreeCancelOrdeTransferDst,
-			token:       "GTO-908",
-			wantError:   true,
-		},
-		{
-			name:        "normalize error transfer",
-			apiResponse: tokenTransferTransaction,
-			token:       "GTO-908",
-			wantError:   true,
-		},
+		{name: "bnb transfer", apiResponse: transferTransaction, expected: transferDst, token: "BNB", wantError: false,},
+		{name: "native token transfer", apiResponse: tokenTransferTransaction, expected: tokenTransferDst, token: "YLC-D8B", wantError: false,},
+		{name: "multiple addresses token transfer", apiResponse: multipleTx, expected: multipleTxDst, token: "AERGO-46B", wantError: false,},
+		{name: "multiple addresses with two transfers", apiResponse: multipleTwiceTx, expected: multipleTwiceTxDst, token: "BNB", wantError: false,},
+		{name: "new order transfer", apiResponse: newOrderTransaction, expected: newOrderTransferDst, token: "AWC-986", wantError: true,},
+		{name: "cancel order transfer", apiResponse: cancelOrderTransaction, expected: cancelOrdeTransferDst, token: "GTO-908", wantError: true,},
+		{name: "new order transfer", apiResponse: newOrderTransaction, expected: metaFreeNewOrderTransferDst, token: "AWC-986", wantError: true,},
+		{name: "cancel order transfer", apiResponse: cancelOrderTransaction, expected: metaFreeCancelOrdeTransferDst, token: "GTO-908", wantError: true,},
+		{name: "normalize error transfer", apiResponse: tokenTransferTransaction, token: "GTO-908", wantError: true,},
 	}
 
 	for _, testTxInstance := range testTxList {
@@ -420,36 +367,11 @@ func convertJsonToArray(jsonString string) string {
 
 func TestNormalizeTxs(t *testing.T) {
 	testTxsList := []testTxs{
-		{
-			name:        "bnb transfer",
-			apiResponse: convertJsonToArray(transferTransaction),
-			expected:    []blockatlas.Tx{transferDst},
-			token:       "BNB",
-		},
-		{
-			name:        "native token transfer",
-			apiResponse: convertJsonToArray(tokenTransferTransaction),
-			expected:    []blockatlas.Tx{tokenTransferDst},
-			token:       "YLC-D8B",
-		},
-		//{
-		//	name:        "all transfers",
-		//	apiResponse: AllTransfersType,
-		//	expected:    []blockatlas.Tx{transferDst, tokenTransferDst, newOrderTransferDst, cancelOrdeTransferDst},
-		//	token:       "",
-		//},
-		//{
-		//	name:        "new order transfer",
-		//	apiResponse: convertJsonToArray(newOrderTransaction),
-		//	expected:    []blockatlas.Tx{newOrderTransferDst},
-		//	token:       "AWC-986",
-		//},
-		//{
-		//	name:        "cancel order transfer",
-		//	apiResponse: convertJsonToArray(cancelOrderTransaction),
-		//	expected:    []blockatlas.Tx{cancelOrdeTransferDst},
-		//	token:       "GTO-908",
-		//}
+		{name: "bnb transfer", apiResponse: convertJsonToArray(transferTransaction), expected: []blockatlas.Tx{transferDst}, token: "BNB"},
+		{name: "native token transfer", apiResponse: convertJsonToArray(tokenTransferTransaction), expected: []blockatlas.Tx{tokenTransferDst}, token: "YLC-D8B"},
+		//{name: "all transfers", apiResponse: AllTransfersType, expected: []blockatlas.Tx{transferDst, tokenTransferDst, newOrderTransferDst, cancelOrdeTransferDst}, token: ""},
+		//{name: "new order transfer", apiResponse: convertJsonToArray(newOrderTransaction), expected: []blockatlas.Tx{newOrderTransferDst}, token: "AWC-986"},
+		//{name: "cancel order transfer", apiResponse: convertJsonToArray(cancelOrderTransaction), expected: []blockatlas.Tx{cancelOrdeTransferDst}, token: "GTO-908"}},
 	}
 
 	for _, testTxsInstance := range testTxsList {
@@ -469,16 +391,8 @@ func TestTokenSymbol(t *testing.T) {
 }
 
 var (
-	metaTx = blockatlas.Transfer{
-		Value:    "100000000",
-		Symbol:   "BNB",
-		Decimals: 8,
-	}
-	metaTx2 = blockatlas.Transfer{
-		Value:    "2",
-		Symbol:   "BNB",
-		Decimals: 8,
-	}
+	metaTx      = blockatlas.Transfer{Value: "100000000", Symbol: "BNB", Decimals: 8,}
+	metaTx2     = blockatlas.Transfer{Value: "2", Symbol: "BNB", Decimals: 8,}
 	metaTokenTx = blockatlas.NativeTokenTransfer{
 		Value:    "326900000000",
 		TokenID:  "AERGO-46B",
