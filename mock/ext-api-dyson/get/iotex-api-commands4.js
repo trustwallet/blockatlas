@@ -76,25 +76,27 @@ module.exports = {
                         switch (params.arg3) {
                             case 'io1mwekae7qqwlr23220k5n9z3fmjxz72tuchra3m':
                                 return JSON.parse(`
-                                    [{
-                                        "delegator": {
-                                            "id": "iotxplorerio",
-                                            "status": true,
-                                            "info": {
-                                                "name": "iotxplorer",
-                                                "description": "",
-                                                "image": "https://imgc.iotex.io/dokc3pa1x/image/upload/v1551121446/delegates/iotxplorer/Group_2.png",
-                                                "website": "https://twitter.com/iotxplorer"
+                                    [
+                                        {
+                                            "delegator": {
+                                                "id": "iotxplorerio",
+                                                "status": true,
+                                                "info": {
+                                                    "name": "iotxplorer",
+                                                    "description": "",
+                                                    "image": "https://imgc.iotex.io/dokc3pa1x/image/upload/v1551121446/delegates/iotxplorer/Group_2.png",
+                                                    "website": "https://twitter.com/iotxplorer"
+                                                },
+                                                "details": {
+                                                    "reward": {"annual": 0},
+                                                    "locktime": 259200,
+                                                    "minimum_amount": "100000000000000000000"
+                                                }
                                             },
-                                            "details": {
-                                                "reward": {"annual": 0},
-                                                "locktime": 259200,
-                                                "minimum_amount": "100000000000000000000"
-                                            }
-                                        },
-                                        "value": "100000000000000000000",
-                                        "status": "active"
-                                    }]
+                                            "value": "100000000000000000000",
+                                            "status": "active"
+                                        }
+                                    ]
                                 `);
                         }
                 }
