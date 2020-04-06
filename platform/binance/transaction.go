@@ -64,8 +64,8 @@ func NormalizeTx(t Tx, address string) (blockatlas.TxPage, bool) {
 		Fee:       blockatlas.Amount(t.getFee()),
 		Date:      t.blockTimestamp(),
 		Block:     t.BlockHeight,
-		Status:    blockatlas.StatusCompleted, // FIX
-		Error:     "",                         // TODO check for error
+		Status:    t.getStatus(),
+		Error:     "", // FIXME check for an error
 		Sequence:  t.Sequence,
 		Direction: t.Direction(address),
 		Memo:      t.Memo,
@@ -84,12 +84,12 @@ func NormalizeTx(t Tx, address string) (blockatlas.TxPage, bool) {
 }
 
 func normalizeTransfer(t blockatlas.Tx, srcTx Tx) (blockatlas.Tx, bool) {
-	t.Type = blockatlas.TxTransfer
 	bnbCoin := coin.Coins[coin.BNB]
 	value := blockatlas.Amount(numbers.DecimalExp(srcTx.Value, 8))
 
-	// Condition for native transfer (BNB)
+	// Condition for native transfer e.g.: BNB
 	if srcTx.Asset == bnbCoin.Symbol {
+		t.Type = blockatlas.TxTransfer
 		t.Meta = blockatlas.Transfer{
 			Decimals: bnbCoin.Decimals,
 			Symbol:   bnbCoin.Symbol,
@@ -98,7 +98,8 @@ func normalizeTransfer(t blockatlas.Tx, srcTx Tx) (blockatlas.Tx, bool) {
 		return t, true
 	}
 
-	// Condition for BEP2 token transfer e.g. TWT-8C2
+	// Condition for BEP2 token transfer e.g.: TWT-8C2
+	t.Type = blockatlas.TxNativeTokenTransfer
 	t.Meta = blockatlas.NativeTokenTransfer{
 		Decimals: bnbCoin.Decimals,
 		From:     srcTx.FromAddr,
