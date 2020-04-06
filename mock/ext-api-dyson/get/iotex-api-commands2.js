@@ -18,6 +18,9 @@ module.exports = {
                     case 'io1mwekae7qqwlr23220k5n9z3fmjxz72tuchra3m':
                         // status=bonded
                         return JSON.parse(`{"accountMeta":{"address":"io1mwekae7qqwlr23220k5n9z3fmjxz72tuchra3m","balance":"15578806681028832609262","nonce":"583","pendingNonce":"584","numActions":"647"}}`);
+
+                    case 'io1vg808avg2ydye8djl2axmkc9j0xhzu6vdaw6g5':
+                        return JSON.parse(`{"accountMeta":{"address":"io1vg808avg2ydye8djl2axmkc9j0xhzu6vdaw6g5","balance":"33829692159741946535","nonce":"4","pendingNonce":"5","numActions":"57"}}`);
                 }
 
             case 'staking':
