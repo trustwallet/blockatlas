@@ -197,6 +197,7 @@ var (
 		Status: blockatlas.StatusCompleted,
 		Memo:   "test",
 		Meta: blockatlas.NativeTokenTransfer{
+			Name:     "",
 			TokenID:  "YLC-D8B",
 			Symbol:   "YLC",
 			Value:    "210572645",
@@ -264,6 +265,7 @@ var (
 		Block:  64374278,
 		Status: blockatlas.StatusCompleted,
 		Meta: blockatlas.NativeTokenTransfer{
+			Name:     "",
 			From:     "bnb1nm4n03x00gw0x6v784jzryyp6wxnjaxswr3xm8",
 			To:       "bnb1eff4hzx4lfsun3px5walchdy4vek4n0njcdzyn",
 			TokenID:  "AERGO-46B",
@@ -300,20 +302,18 @@ var (
 		Meta:   nil,
 	}
 	baseTransferTx = blockatlas.Tx{
-		ID:     "0C954A46D5AE90EBF9CB7E6F2EAC0E7C3E8DA2DA94B868962164A3AF9D54BEE8",
-		Coin:   coin.BNB,
-		From:   "bnb1nm4n03x00gw0x6v784jzryyp6wxnjaxswr3xm8",
-		To:     "bnb1eff4hzx4lfsun3px5walchdy4vek4n0njcdzyn",
-		Fee:    "60000",
-		Date:   1580128370,
-		Block:  63591484,
-		Status: blockatlas.StatusCompleted,
-		Memo:   "Trust Wallet Redeem",
-		Meta: blockatlas.Transfer{
-			Value:    "2",
-			Decimals: 8,
-			Symbol:   "BNB",
-		},
+		ID:        "0C954A46D5AE90EBF9CB7E6F2EAC0E7C3E8DA2DA94B868962164A3AF9D54BEE8",
+		Coin:      coin.BNB,
+		From:      "bnb1nm4n03x00gw0x6v784jzryyp6wxnjaxswr3xm8",
+		To:        "bnb1eff4hzx4lfsun3px5walchdy4vek4n0njcdzyn",
+		Fee:       "0.00037500",
+		Date:      1580128370,
+		Block:     63591484,
+		Status:    blockatlas.StatusCompleted,
+		Error:     "",
+		Sequence:  158,
+		Direction: blockatlas.DirectionOutgoing,
+		Memo:      "Trust Wallet Redeem",
 	}
 )
 
@@ -322,20 +322,20 @@ type testTx struct {
 	apiResponse string
 	expected    blockatlas.Tx
 	token       string
-	wantError   bool
+	expectErr   bool
 }
 
 func TestNormalizeTx(t *testing.T) {
 	testTxList := []testTx{
-		{name: "bnb transfer", apiResponse: transferTransaction, expected: transferDst, token: "BNB", wantError: false,},
-		{name: "native token transfer", apiResponse: tokenTransferTransaction, expected: tokenTransferDst, token: "YLC-D8B", wantError: false,},
-		{name: "multiple addresses token transfer", apiResponse: multipleTx, expected: multipleTxDst, token: "AERGO-46B", wantError: false,},
-		{name: "multiple addresses with two transfers", apiResponse: multipleTwiceTx, expected: multipleTwiceTxDst, token: "BNB", wantError: false,},
-		{name: "new order transfer", apiResponse: newOrderTransaction, expected: newOrderTransferDst, token: "AWC-986", wantError: true,},
-		{name: "cancel order transfer", apiResponse: cancelOrderTransaction, expected: cancelOrdeTransferDst, token: "GTO-908", wantError: true,},
-		{name: "new order transfer", apiResponse: newOrderTransaction, expected: metaFreeNewOrderTransferDst, token: "AWC-986", wantError: true,},
-		{name: "cancel order transfer", apiResponse: cancelOrderTransaction, expected: metaFreeCancelOrdeTransferDst, token: "GTO-908", wantError: true,},
-		{name: "normalize error transfer", apiResponse: tokenTransferTransaction, token: "GTO-908", wantError: true,},
+		{name: "bnb transfer", apiResponse: transferTransaction, expected: transferDst, token: "BNB", expectErr: false,},
+		{name: "native token transfer", apiResponse: tokenTransferTransaction, expected: tokenTransferDst, token: "YLC-D8B", expectErr: false,},
+		{name: "multiple addresses token transfer", apiResponse: multipleTx, expected: multipleTxDst, token: "AERGO-46B", expectErr: false,},
+		{name: "multiple addresses with two transfers", apiResponse: multipleTwiceTx, expected: multipleTwiceTxDst, token: "BNB", expectErr: false,},
+		{name: "new order transfer", apiResponse: newOrderTransaction, expected: newOrderTransferDst, token: "AWC-986", expectErr: true,},
+		{name: "cancel order transfer", apiResponse: cancelOrderTransaction, expected: cancelOrdeTransferDst, token: "GTO-908", expectErr: true,},
+		{name: "new order transfer", apiResponse: newOrderTransaction, expected: metaFreeNewOrderTransferDst, token: "AWC-986", expectErr: true,},
+		{name: "cancel order transfer", apiResponse: cancelOrderTransaction, expected: metaFreeCancelOrdeTransferDst, token: "GTO-908", expectErr: true,},
+		{name: "normalize error transfer", apiResponse: tokenTransferTransaction, token: "GTO-908", expectErr: true,},
 	}
 
 	for _, testTxInstance := range testTxList {
@@ -343,8 +343,8 @@ func TestNormalizeTx(t *testing.T) {
 			var srcTx Tx
 			err := json.Unmarshal([]byte(testTxInstance.apiResponse), &srcTx)
 			assert.Nil(t, err)
-			tx, ok := NormalizeTx(srcTx, testTxInstance.token, "")
-			if testTxInstance.wantError {
+			tx, ok := NormalizeTx(srcTx, testTxInstance.token)
+			if testTxInstance.expectErr {
 				assert.False(t, ok, "transfer: tx could be normalized")
 				return
 			}
@@ -361,10 +361,6 @@ type testTxs struct {
 	token       string
 }
 
-func convertJsonToArray(jsonString string) string {
-	return "[" + jsonString + "]"
-}
-
 func TestNormalizeTxs(t *testing.T) {
 	testTxsList := []testTxs{
 		{name: "bnb transfer", apiResponse: convertJsonToArray(transferTransaction), expected: []blockatlas.Tx{transferDst}, token: "BNB"},
@@ -379,7 +375,7 @@ func TestNormalizeTxs(t *testing.T) {
 			var srcTxs []Tx
 			err := json.Unmarshal([]byte(testTxsInstance.apiResponse), &srcTxs)
 			assert.Nil(t, err)
-			txs := NormalizeTxs(srcTxs, testTxsInstance.token, "")
+			txs := NormalizeTxs(srcTxs, testTxsInstance.token)
 			assert.Equal(t, testTxsInstance.expected, txs, "transfer: tx don't equal")
 		})
 	}
@@ -391,9 +387,9 @@ func TestTokenSymbol(t *testing.T) {
 }
 
 var (
-	metaTx      = blockatlas.Transfer{Value: "100000000", Symbol: "BNB", Decimals: 8,}
-	metaTx2     = blockatlas.Transfer{Value: "2", Symbol: "BNB", Decimals: 8,}
-	metaTokenTx = blockatlas.NativeTokenTransfer{
+	metaTransfer = blockatlas.Transfer{Value: "100000000", Symbol: "BNB", Decimals: 8}
+	metaTx2      = blockatlas.Transfer{Value: "2", Symbol: "BNB", Decimals: 8,}
+	metaTokenTx  = blockatlas.NativeTokenTransfer{
 		Value:    "326900000000",
 		TokenID:  "AERGO-46B",
 		Symbol:   "AERGO",
@@ -404,39 +400,50 @@ var (
 )
 
 func Test_normalizeTransfer(t *testing.T) {
-	addr := "tbnb1qxm48ndhmh7su0r7zgwmwkltuqgly57jdf8yf8"
-	testTx := baseTransferTx
-	testTx.Meta = metaTx
-	testTx2 := baseTransferTx
-	testTx2.Meta = metaTx2
-	testTokenTx := baseTransferTx
-	testTokenTx.Meta = metaTokenTx
+	expectTransferTx := baseTransferTx
+	expectTransferTx.Type = blockatlas.TxTransfer
+	expectTransferTx.Meta = metaTransfer
+
+	//testTx2 := baseTransferTx
+	//testTx2.Meta = metaTx2
+	//
+	//testTokenTx := baseTransferTx
+	//testTokenTx.Meta = metaTokenTx
+
 	type args struct {
-		tx      blockatlas.Tx
+		baseTx  blockatlas.Tx
 		srcTx   string
 		token   string
 		address string
 	}
 	tests := []struct {
-		name  string
-		args  args
-		want  blockatlas.TxPage
-		want1 bool
+		name      string
+		args      args
+		expectTrx blockatlas.TxPage
+		expectErr bool
 	}{
-		{"test multiple tx 1", args{tx: baseTransferTx, srcTx: multipleTx, token: "BNB", address: ""}, blockatlas.TxPage{testTx}, true},
-		{"test multiple tx 2", args{tx: baseTransferTx, srcTx: multipleTwiceTx, token: "BNB", address: "",}, blockatlas.TxPage{testTx2}, true},
-		{"tx multiple token tx", args{tx: baseTransferTx, srcTx: multipleTx, token: "AERGO-46B", address: "",}, blockatlas.TxPage{testTokenTx}, true},
-		{"test multiple tx fail", args{tx: baseTransferTx, srcTx: multipleTwiceTx, token: "AERGO-46B", address: "",}, blockatlas.TxPage{}, false},
-		{"test multiple tx address fail", args{tx: baseTransferTx, srcTx: multipleTwiceTx, token: "AERGO-46B", address: addr,}, blockatlas.TxPage{}, false},
+		{"Should normalize BNB transfer", args{baseTx: baseTransferTx, srcTx: multipleTx}, blockatlas.TxPage{expectTransferTx}, true},
+		//{"test multiple tx 2", args{baseTx: baseTransferTx, srcTx: multipleTwiceTx}, blockatlas.TxPage{testTx2}, true},
+		//{"tx multiple token tx", args{baseTx: baseTransferTx, srcTx: multipleTx}, blockatlas.TxPage{testTokenTx}, true},
+		//{"test multiple tx fail", args{baseTx: baseTransferTx, srcTx: multipleTwiceTx}, blockatlas.TxPage{}, false},
+		//{"test multiple tx address fail", args{baseTx: baseTransferTx, srcTx: multipleTwiceTx}, blockatlas.TxPage{}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			var srcTx Tx
 			err := json.Unmarshal([]byte(tt.args.srcTx), &srcTx)
 			assert.Nil(t, err)
-			got, got1 := normalizeTransfer(tt.args.tx, srcTx)
-			assert.Equal(t, tt.want, got)
-			assert.Equal(t, tt.want1, got1)
+			got, got1 := normalizeTransfer(tt.args.baseTx, srcTx)
+			assert.Equal(t, tt.expectTrx, got)
+			assert.Equal(t, tt.expectErr, got1)
 		})
 	}
+}
+
+
+
+// Helpers
+
+func convertJsonToArray(jsonString string) string {
+	return "[" + jsonString + "]"
 }

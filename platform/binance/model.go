@@ -149,16 +149,14 @@ func (tx *Tx) containAddress(address string) bool {
 }
 
 func (tx *Tx) getFee() string {
-	return numbers.DecimalExp(tx.Fee, 8)
-	//fee := "0"
-	//feeNumber, err := t.Fee.Float64()
-	//if err == nil && feeNumber > 0 {
-	//	fee = numbers.DecimalExp(string(t.Fee), 8)
-	//}
-	//return fee
+	fee := "0"
+	if _, err := strconv.ParseFloat(tx.Fee, 64); err == nil {
+		fee = numbers.DecimalExp(tx.Fee, 8)
+	}
+	return fee
 }
 
-func (t *Tx) BlockTimestamp() int64 {
+func (t *Tx) blockTimestamp() int64 {
 	unix := int64(0)
 	date, err := time.Parse(time.RFC3339, t.Timestamp)
 	if err == nil {
@@ -223,12 +221,12 @@ type OrderData struct {
 //}
 
 type TxPage struct {
-	Nums int    `json:"txNums"`
+	Nums int  `json:"txNums"`
 	Txs  []Tx `json:"txArray"`
 }
 
 type TransactionsV1 struct {
-	Total int    `json:"total"`
+	Total int  `json:"total"`
 	Txs   []Tx `json:"tx"`
 }
 

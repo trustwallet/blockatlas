@@ -3,6 +3,7 @@ package binance
 import (
 	//"github.com/stretchr/testify/assert"
 	//"sort"
+	"gotest.tools/assert"
 	"testing"
 )
 
@@ -162,7 +163,7 @@ var (
 		Fee:      "0.0006",
 	}
 	txDst = Tx{
-		TxHash:        "C29D822EFBC0C91656D1C5870BA55922F3A72A25BC8415B32D1D1AD0C85142F5",
+		TxHash:      "C29D822EFBC0C91656D1C5870BA55922F3A72A25BC8415B32D1D1AD0C85142F5",
 		BlockHeight: 63591484,
 		Type:        "TRANSFER",
 		Value:       "0.00000001",
@@ -172,7 +173,7 @@ var (
 		Fee:         "0.0006",
 	}
 	txTokenDst = Tx{
-		TxHash:        "C29D822EFBC0C91656D1C5870BA55922F3A72A25BC8415B32D1D1AD0C85142F5",
+		TxHash:      "C29D822EFBC0C91656D1C5870BA55922F3A72A25BC8415B32D1D1AD0C85142F5",
 		BlockHeight: 63591485,
 		Type:        "TRANSFER",
 		Value:       "0.000064",
@@ -270,7 +271,7 @@ func TestTx_containAddress(t *testing.T) {
 	}
 }
 
-func TestTx_getFee(t *testing.T) {
+func Test_getFee(t *testing.T) {
 	tests := []struct {
 		name string
 		fee  string
@@ -280,6 +281,7 @@ func TestTx_getFee(t *testing.T) {
 		{"test error", "test", "0"},
 		{"test float 1", "444.5", "44450000000"},
 		{"test float 2", "0.00000001", "1"},
+		{"test float 3", "0.00037500", "37500"}, // standard fee
 		{"test int", "3", "300000000"},
 	}
 	for _, tt := range tests {
@@ -288,6 +290,21 @@ func TestTx_getFee(t *testing.T) {
 			if got := tx.getFee(); got != tt.want {
 				t.Errorf("getFee() = %v, want %v", got, tt.want)
 			}
+		})
+	}
+}
+
+func Test_blockTimestamp(t *testing.T) {
+	tests := []struct {
+		trx    Tx
+		expect int64
+	}{
+		{Tx{Timestamp: "2020-03-16T05:34:38.947Z"}, 1584336878},
+		{Tx{Timestamp: ""}, 0},
+	}
+	for _, tt := range tests {
+		t.Run("", func(t *testing.T) {
+			assert.Equal(t, tt.trx.blockTimestamp(), tt.expect)
 		})
 	}
 }

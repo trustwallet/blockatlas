@@ -39,13 +39,13 @@ func (p *Platform) GetTokenTxsByAddress(address, token string) (blockatlas.TxPag
 		srcTx = append(srcTx, r...)
 	}
 
-	return NormalizeTxs(srcTx, address, token), nil
+	return NormalizeTxs(srcTx, address), nil
 }
 
 // NormalizeTxs converts multiple Binance transactions
-func NormalizeTxs(srcTxs []Tx, address, token string) (txs []blockatlas.Tx) {
+func NormalizeTxs(srcTxs []Tx, address string) (txs []blockatlas.Tx) {
 	for _, srcTx := range srcTxs {
-		tx, ok := NormalizeTx(srcTx, address, token)
+		tx, ok := NormalizeTx(srcTx, address)
 		if !ok {
 			continue
 		}
@@ -55,17 +55,17 @@ func NormalizeTxs(srcTxs []Tx, address, token string) (txs []blockatlas.Tx) {
 }
 
 // NormalizeTx converts a Binance transaction into the generic model
-func NormalizeTx(t Tx, address, token string) (blockatlas.TxPage, bool) {
+func NormalizeTx(t Tx, address string) (blockatlas.TxPage, bool) {
 	tBase := blockatlas.Tx{
 		ID:        t.TxHash,
 		Coin:      coin.BNB,
 		From:      t.FromAddr,
 		To:        t.ToAddr,
 		Fee:       blockatlas.Amount(t.getFee()),
-		Date:      t.BlockTimestamp(),
+		Date:      t.blockTimestamp(),
 		Block:     t.BlockHeight,
 		Status:    blockatlas.StatusCompleted, // FIX
-		Error:     "",
+		Error:     "",                         // TODO check for error
 		Sequence:  t.Sequence,
 		Direction: t.Direction(address),
 		Memo:      t.Memo,
