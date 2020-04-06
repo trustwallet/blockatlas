@@ -26,22 +26,28 @@ func (c *Client) fetchNodeInfo() (*NodeInfo, error) {
 }
 
 // Get transactions in the block. Multi-send and multi-coin transactions are included as sub-transactions.
-func (c *Client) GetBlockTransactions(num int64) (*[]TxV2, error) {
+func (c *Client) GetBlockTransactions(num int64) ([]TxV2, error) {
 	stx := new(BlockTxV2)
 	path := fmt.Sprintf("v2/transactions-in-block/%d", num)
 	err := c.Get(stx, path, nil)
-	return &stx.Txs, err
+	return stx.Txs, err
 }
 
 //  Gets a list of address or token transactions by type
-func (c *Client) GetTxsOfAddress(address, token, txType string) ([]TxV1, error) {
+func (c *Client) GetAddressAssetTrx(address, token, txType string) ([]Tx, error) {
+	if address == "" && token == "" {
+		return []Tx{}, errors.E("Address and token not specified")
+	}
 	stx := new(TransactionsV1)
 	endTime := strconv.FormatInt(time.Now().AddDate(0, -3, 0).Unix()*1000, 10)
 	query := url.Values{
 		"address":   {address},
 		"limit":     {"25"},
-		"txType":    {txType},
 		"startTime": {endTime},
+		"txType":    {txType},
+	}
+	if address != "" && token == "" {
+		query.Add("txAsset", "BNB")
 	}
 
 	if token != "" {

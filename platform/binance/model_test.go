@@ -161,7 +161,7 @@ var (
 		ToAddr:   "bnb1eff4hzx4lfsun3px5walchdy4vek4n0njcdzyn",
 		Fee:      "0.0006",
 	}
-	txDst = TxBase{
+	txDst = Tx{
 		TxHash:        "C29D822EFBC0C91656D1C5870BA55922F3A72A25BC8415B32D1D1AD0C85142F5",
 		BlockHeight: 63591484,
 		Type:        "TRANSFER",
@@ -171,7 +171,7 @@ var (
 		ToAddr:      "bnb1eff4hzx4lfsun3px5walchdy4vek4n0njcdzyn",
 		Fee:         "0.0006",
 	}
-	txTokenDst = TxBase{
+	txTokenDst = Tx{
 		TxHash:        "C29D822EFBC0C91656D1C5870BA55922F3A72A25BC8415B32D1D1AD0C85142F5",
 		BlockHeight: 63591485,
 		Type:        "TRANSFER",
@@ -259,7 +259,7 @@ func TestTx_containAddress(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tx := &TxBase{
+			tx := &Tx{
 				FromAddr: tt.fields.FromAddr,
 				ToAddr:   tt.fields.ToAddr,
 			}
@@ -284,7 +284,7 @@ func TestTx_getFee(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tx := &TxV1{TxBase{Fee: tt.fee}}
+			tx := &Tx{Fee: tt.fee}
 			if got := tx.getFee(); got != tt.want {
 				t.Errorf("getFee() = %v, want %v", got, tt.want)
 			}

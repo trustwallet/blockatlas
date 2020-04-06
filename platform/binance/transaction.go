@@ -16,22 +16,16 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 }
 
 func (p *Platform) GetTokenTxsByAddress(address, token string) (blockatlas.TxPage, error) {
-	//var transferTypes []TxType
-	//if token == "" {
-	//	transferTypes = []TxType{TxTransfer, TxNewOrder, TxCancelOrder}
-	//} else {
-	//	transferTypes = []TxType{TxTransfer}
-	//}
 	var transferTypes = []TxType{TxTransfer}
 	var wg sync.WaitGroup
-	out := make(chan []TxV1, len(transferTypes))
+	out := make(chan []Tx, len(transferTypes))
 	wg.Add(len(transferTypes))
 	for _, t := range transferTypes {
 		go func(txType TxType, address, token string, wg *sync.WaitGroup) {
 			defer wg.Done()
-			txs, err := p.client.GetTxsOfAddress(address, token, string(txType))
+			txs, err := p.client.GetAddressAssetTrx(address, token, string(txType))
 			if err != nil {
-				log.Error("GetTxsOfAddress : ", err, logger.Params{"txType": txType, "address": address, "token": token})
+				log.Error("GetAddressAssetTrx : ", err, logger.Params{"txType": txType, "address": address, "token": token})
 				return
 			}
 			out <- txs
@@ -40,7 +34,7 @@ func (p *Platform) GetTokenTxsByAddress(address, token string) (blockatlas.TxPag
 	wg.Wait()
 	close(out)
 
-	srcTx := make([]TxV1, 0)
+	srcTx := make([]Tx, 0)
 	for r := range out {
 		srcTx = append(srcTx, r...)
 	}
@@ -49,7 +43,7 @@ func (p *Platform) GetTokenTxsByAddress(address, token string) (blockatlas.TxPag
 }
 
 // NormalizeTxs converts multiple Binance transactions
-func NormalizeTxs(srcTxs []TxV1, address, token string) (txs []blockatlas.Tx) {
+func NormalizeTxs(srcTxs []Tx, address, token string) (txs []blockatlas.Tx) {
 	for _, srcTx := range srcTxs {
 		tx, ok := NormalizeTx(srcTx, address, token)
 		if !ok {
@@ -61,7 +55,7 @@ func NormalizeTxs(srcTxs []TxV1, address, token string) (txs []blockatlas.Tx) {
 }
 
 // NormalizeTx converts a Binance transaction into the generic model
-func NormalizeTx(t TxV1, address, token string) (blockatlas.TxPage, bool) {
+func NormalizeTx(t Tx, address, token string) (blockatlas.TxPage, bool) {
 	tBase := blockatlas.Tx{
 		ID:        t.TxHash,
 		Coin:      coin.BNB,
@@ -85,44 +79,11 @@ func NormalizeTx(t TxV1, address, token string) (blockatlas.TxPage, bool) {
 		}
 		return blockatlas.TxPage{normalized}, true
 	}
-	//case TxCancelOrder, TxNewOrder:
-	//	return tx, false
-	//	dt, err := srcTx.getData()
-	//	if err != nil {
-	//		return tx, false
-	//	}
-	//
-	//	symbol := dt.OrderData.Quote
-	//	if len(token) > 0 && symbol != token {
-	//		return tx, false
-	//	}
-	//
-	//	key := blockatlas.KeyPlaceOrder
-	//	title := blockatlas.KeyTitlePlaceOrder
-	//	if srcTx.Type == TxCancelOrder {
-	//		key = blockatlas.KeyCancelOrder
-	//		title = blockatlas.KeyTitleCancelOrder
-	//	}
-	//	volume, ok := dt.OrderData.GetVolume()
-	//	if ok {
-	//		value = strconv.Itoa(int(volume))
-	//	}
-	//
-	//	tx.Meta = blockatlas.AnyAction{
-	//		Coin:     coin.BNB,
-	//		TokenID:  dt.OrderData.Symbol,
-	//		Symbol:   TokenSymbol(symbol),
-	//		Name:     symbol,
-	//		Value:    blockatlas.Amount(value),
-	//		Decimals: coin.Coins[coin.BNB].Decimals,
-	//		Title:    title,
-	//		Key:      key,
-	//	}
-	//}
-	return blockatlas.TxPage{tBase}, false
+
+	return blockatlas.TxPage{}, false
 }
 
-func normalizeTransfer(t blockatlas.Tx, srcTx TxV1) (blockatlas.Tx, bool) {
+func normalizeTransfer(t blockatlas.Tx, srcTx Tx) (blockatlas.Tx, bool) {
 	t.Type = blockatlas.TxTransfer
 	bnbCoin := coin.Coins[coin.BNB]
 	value := blockatlas.Amount(numbers.DecimalExp(srcTx.Value, 8))

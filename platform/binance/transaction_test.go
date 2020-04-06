@@ -340,7 +340,7 @@ func TestNormalizeTx(t *testing.T) {
 
 	for _, testTxInstance := range testTxList {
 		t.Run(testTxInstance.name, func(t *testing.T) {
-			var srcTx TxV1
+			var srcTx Tx
 			err := json.Unmarshal([]byte(testTxInstance.apiResponse), &srcTx)
 			assert.Nil(t, err)
 			tx, ok := NormalizeTx(srcTx, testTxInstance.token, "")
@@ -376,7 +376,7 @@ func TestNormalizeTxs(t *testing.T) {
 
 	for _, testTxsInstance := range testTxsList {
 		t.Run(testTxsInstance.name, func(t *testing.T) {
-			var srcTxs []TxV1
+			var srcTxs []Tx
 			err := json.Unmarshal([]byte(testTxsInstance.apiResponse), &srcTxs)
 			assert.Nil(t, err)
 			txs := NormalizeTxs(srcTxs, testTxsInstance.token, "")
@@ -431,7 +431,7 @@ func Test_normalizeTransfer(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			var srcTx TxV1
+			var srcTx Tx
 			err := json.Unmarshal([]byte(tt.args.srcTx), &srcTx)
 			assert.Nil(t, err)
 			got, got1 := normalizeTransfer(tt.args.tx, srcTx)

@@ -1,15 +1,12 @@
 package binance
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/numbers"
 	"math"
 	"strconv"
-	"strings"
 	"time"
 )
 
@@ -97,8 +94,8 @@ type Msg struct {
 
 //type SubTxs []SubTx
 //
-//func (subTxs *SubTxs) getTxs() (txs []TxV1) {
-//	mapTx := map[string]TxV1{}
+//func (subTxs *SubTxs) getTxs() (txs []Tx) {
+//	mapTx := map[string]Tx{}
 //	for _, subTx := range *subTxs {
 //		key := subTx.ToAddr + subTx.Asset
 //		tx, ok := mapTx[key]
@@ -124,8 +121,8 @@ type Msg struct {
 //	return
 //}
 //
-//func (subTx *SubTx) toTx() TxV1 {
-//	return TxV1{
+//func (subTx *SubTx) toTx() Tx {
+//	return Tx{
 //		Hash:        subTx.Hash,
 //		BlockHeight: subTx.Height,
 //		Type:        TxTransfer,
@@ -138,7 +135,7 @@ type Msg struct {
 //	}
 //}
 
-func (tx *TxBase) containAddress(address string) bool {
+func (tx *Tx) containAddress(address string) bool {
 	if len(address) == 0 {
 		return true
 	}
@@ -151,7 +148,7 @@ func (tx *TxBase) containAddress(address string) bool {
 	return false
 }
 
-func (tx *TxV1) getFee() string {
+func (tx *Tx) getFee() string {
 	return numbers.DecimalExp(tx.Fee, 8)
 	//fee := "0"
 	//feeNumber, err := t.Fee.Float64()
@@ -161,7 +158,7 @@ func (tx *TxV1) getFee() string {
 	//return fee
 }
 
-func (t *TxV1) BlockTimestamp() int64 {
+func (t *Tx) BlockTimestamp() int64 {
 	unix := int64(0)
 	date, err := time.Parse(time.RFC3339, t.Timestamp)
 	if err == nil {
@@ -170,28 +167,28 @@ func (t *TxV1) BlockTimestamp() int64 {
 	return unix
 }
 
-func (tx *TxV1) getData() (Data, error) {
-	rawIn := json.RawMessage(tx.Data)
-	b, err := rawIn.MarshalJSON()
-	if err != nil {
-		return Data{}, errors.E(err, "getData MarshalJSON", errors.Params{"data": tx.Data})
-	}
-
-	var data Data
-	err = json.Unmarshal(b, &data)
-	if err != nil {
-		return Data{}, errors.E(err, "getData Unmarshal", errors.Params{"data": string(b)})
-	}
-
-	symbols := strings.Split(data.OrderData.Symbol, "_")
-	if len(symbols) < 2 {
-		return data, nil
-	}
-
-	data.OrderData.Base = symbols[0]
-	data.OrderData.Quote = symbols[1]
-	return data, nil
-}
+//func (t *Tx) getData() (Data, error) {
+//	rawIn := json.RawMessage(t.Data)
+//	b, err := rawIn.MarshalJSON()
+//	if err != nil {
+//		return Data{}, errors.E(err, "getData MarshalJSON", errors.Params{"data": tx.Data})
+//	}
+//
+//	var data Data
+//	err = json.Unmarshal(b, &data)
+//	if err != nil {
+//		return Data{}, errors.E(err, "getData Unmarshal", errors.Params{"data": string(b)})
+//	}
+//
+//	symbols := strings.Split(data.OrderData.Symbol, "_")
+//	if len(symbols) < 2 {
+//		return data, nil
+//	}
+//
+//	data.OrderData.Base = symbols[0]
+//	data.OrderData.Quote = symbols[1]
+//	return data, nil
+//}
 
 type Data struct {
 	OrderData OrderData `json:"orderData"`
@@ -227,15 +224,15 @@ type OrderData struct {
 
 type TxPage struct {
 	Nums int    `json:"txNums"`
-	Txs  []TxV1 `json:"txArray"`
+	Txs  []Tx `json:"txArray"`
 }
 
 type TransactionsV1 struct {
 	Total int    `json:"total"`
-	Txs   []TxV1 `json:"tx"`
+	Txs   []Tx `json:"tx"`
 }
 
-type TxBase struct {
+type Tx struct {
 	Asset       string `json:"txAsset"`
 	BlockHeight uint64 `json:"blockHeight"`
 	Code        int    `json:"code"`
@@ -253,12 +250,8 @@ type TxBase struct {
 	Value       string `json:"value"`
 }
 
-type TxV1 struct {
-	TxBase
-}
-
 type TxV2 struct {
-	TxBase
+	Tx
 	OrderID         string  `json:"orderId"`         // Optional. Available when the transaction type is NEW_ORDER
 	SubTransactions []SubTx `json:"subTransactions"` // 	Optional. Available when the transaction has sub-transactions, such as multi-send transaction or a transaction have multiple assets
 }
@@ -323,7 +316,7 @@ func removeFloatPoint(value float64) int64 {
 }
 
 // Add test
-func (t *TxV1) Direction(address string) blockatlas.Direction {
+func (t *Tx) Direction(address string) blockatlas.Direction {
 	if t.FromAddr == address && t.ToAddr == address {
 		return blockatlas.DirectionSelf
 	}
