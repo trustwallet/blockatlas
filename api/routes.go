@@ -17,7 +17,6 @@ func SetupPlatformAPI(root gin.IRouter) {
 
 	v1 := root.Group("/v1")
 	v2 := root.Group("/v2")
-	v3 := root.Group("/v3")
 	v4 := root.Group("/v4")
 
 	v1.GET("/", GetSupportedEndpoints)
@@ -42,12 +41,7 @@ func SetupPlatformAPI(root gin.IRouter) {
 	}
 
 	for _, collectionAPI := range platform.Platforms {
-		routerV3 := getRouter(v3, collectionAPI.Coin().Handle)
 		routerV4 := getRouter(v4, collectionAPI.Coin().Handle)
-
-		makeCollectionsRoute(routerV3, collectionAPI)
-		makeCollectionRoute(routerV3, collectionAPI)
-
 		makeCollectionRouteV4(routerV4, collectionAPI)
 	}
 
@@ -61,7 +55,6 @@ func SetupPlatformAPI(root gin.IRouter) {
 	MakeLookupRoute(ns)
 	MakeLookupBatchRoute(batchNs)
 
-	makeCategoriesBatchRoute(v3)
 	makeCategoriesBatchRouteV4(v4)
 	makeStakingDelegationsBatchRoute(v2)
 	makeStakingDelegationsSimpleBatchRoute(v2)
