@@ -3,9 +3,9 @@
 /// curl "http://localhost:3000/kava-api/staking/validators?status=bonded"
 /// curl "http://localhost:3000/kava-api/staking/pool"
 /// curl "http://localhost:3000/kava-api/minting/inflation"
-/// curl "https://kava-rpc.trustwalletapp.com/staking/validators?status=bonded"
-/// curl "https://kava-rpc.trustwalletapp.com/staking/pool"
-/// curl "https://kava-rpc.trustwalletapp.com/minting/inflation"
+/// curl "https://{kava_rpc}/staking/validators?status=bonded"
+/// curl "https://{kava_rpc}/staking/pool"
+/// curl "https://{kava_rpc}/minting/inflation"
 /// curl "http://localhost:8420/v2/kava/staking/validators"
 /// curl "http://localhost:8420/v2/kava/staking/delegations/kava1l8va9zyl50cpzv447c694k3jndelc9ygtfll2m?Authorization=Bearer"
 
