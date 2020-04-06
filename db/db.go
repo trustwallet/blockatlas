@@ -23,6 +23,7 @@ func New(uri string) (*Instance, error) {
 		&models.SubscriptionData{},
 		&models.Tracker{},
 	)
+
 	i := &Instance{Gorm: g}
 
 	return i, nil

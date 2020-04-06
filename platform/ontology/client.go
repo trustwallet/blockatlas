@@ -32,7 +32,7 @@ func (c *Client) GetTxsOfAddress(address string) (txPage TxsResult, err error) {
 
 func (c *Client) CurrentBlockNumber() (blocks BlockResult, err error) {
 	query := url.Values{"page_size": {"1"}, "page_number": {"1"}}
-	path := fmt.Sprintf("v2/blocks")
+	path := "v2/blocks"
 	err = c.Get(&blocks, path, query)
 	if err != nil || blocks.Msg != MsgSuccess {
 		return blocks, errors.E(err, "explorer client CurrentBlockNumber", errors.Params{"platform": "ONT"})

@@ -56,6 +56,7 @@ func (r *Request) GetWithCache(result interface{}, path string, query url.Values
 	return err
 }
 
+//nolint
 func (mc *memCache) deleteCache(key string) {
 	mc.RLock()
 	defer mc.RUnlock()

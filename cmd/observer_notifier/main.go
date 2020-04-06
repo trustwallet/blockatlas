@@ -28,6 +28,7 @@ func init() {
 
 	mqHost := viper.GetString("observer.rabbitmq.uri")
 	prefetchCount := viper.GetInt("observer.rabbitmq.consumer.prefetch_count")
+	maxPushNotificationsBatchLimit := viper.GetUint("observer.push_notifications_batch_limit")
 	pgUri := viper.GetString("postgres.uri")
 
 	internal.InitRabbitMQ(mqHost, prefetchCount)
@@ -36,7 +37,7 @@ func init() {
 		logger.Fatal(err)
 	}
 
-	if err := mq.Transactions.Declare(); err != nil {
+	if err := mq.TxNotifications.Declare(); err != nil {
 		logger.Fatal(err)
 	}
 
@@ -45,6 +46,14 @@ func init() {
 	if err != nil {
 		logger.Fatal(err)
 	}
+
+	if maxPushNotificationsBatchLimit == 0 {
+		notifier.MaxPushNotificationsBatchLimit = notifier.DefaultPushNotificationsBatchLimit
+	} else {
+		notifier.MaxPushNotificationsBatchLimit = maxPushNotificationsBatchLimit
+	}
+
+	logger.Info("maxPushNotificationsBatchLimit ", logger.Params{"limit": maxPushNotificationsBatchLimit})
 
 	go mq.RestoreConnectionWorker(mqHost, mq.RawTransactions, time.Second*10)
 	go db.RestoreConnectionWorker(database, time.Second*10, pgUri)

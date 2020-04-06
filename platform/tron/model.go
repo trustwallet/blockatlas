@@ -48,8 +48,6 @@ type ContractType string
 const (
 	TransferContract      ContractType = "TransferContract"
 	TransferAssetContract ContractType = "TransferAssetContract"
-	CreateSmartContract   ContractType = "CreateSmartContract"
-	TriggerSmartContract  ContractType = "TriggerSmartContract"
 )
 
 type Contract struct {
@@ -88,7 +86,7 @@ type Votes struct {
 
 type Frozen struct {
 	ExpireTime    int64       `json:"expire_time"`
-	FrozenBalance interface{} `json:"frozen_balance,string"`
+	FrozenBalance interface{} `json:"frozen_balance,string"` // nolint
 }
 
 type Asset struct {

@@ -12,9 +12,7 @@ type BlockTxs [][]string
 func (b BlockTxs) txs() []string {
 	txs := make([]string, 0)
 	for _, ids := range b {
-		for _, id := range ids {
-			txs = append(txs, id)
-		}
+		txs = append(txs, ids...)
 	}
 	return txs
 }

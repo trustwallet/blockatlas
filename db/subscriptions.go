@@ -6,7 +6,10 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"strconv"
 	"strings"
+	"time"
 )
+
+const rawBulkInsert = `INSERT INTO subscription_data(subscription_id, coin, address) VALUES %s ON CONFLICT DO NOTHING`
 
 func (i *Instance) GetSubscriptionData(coin uint, addresses []string) ([]models.SubscriptionData, error) {
 	if len(addresses) == 0 {
@@ -53,7 +56,10 @@ func (i *Instance) AddSubscriptions(id uint, subscriptions []models.Subscription
 
 	subscriptions = removeSubscriptionDuplicates(subscriptions)
 	if recordNotFound {
-		if err = txInstance.Gorm.Create(&models.Subscription{SubscriptionId: id}).Error; err != nil {
+		err = txInstance.Gorm.Set("gorm:insert_option",
+			"ON CONFLICT (subscription_id) DO UPDATE SET subscription_id = excluded.subscription_id").
+			Create(&models.Subscription{SubscriptionId: id, UpdatedAt: time.Now()}).Error
+		if err != nil {
 			txInstance.Gorm.Rollback()
 			return err
 		}
@@ -92,6 +98,11 @@ func (i *Instance) AddToExistingSubscription(id uint, subscriptions []models.Sub
 			return err
 		}
 	}
+
+	if err := i.Gorm.Model(&models.Subscription{SubscriptionId: id}).Update("updated_at", time.Now()).Error; err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -136,9 +147,7 @@ func (i *Instance) BulkCreate(dataList []models.SubscriptionData) error {
 		valueArgs = append(valueArgs, d.Address)
 	}
 
-	smt := `INSERT INTO subscription_data(subscription_id, coin, address) VALUES %s`
-
-	smt = fmt.Sprintf(smt, strings.Join(valueStrings, ","))
+	smt := fmt.Sprintf(rawBulkInsert, strings.Join(valueStrings, ","))
 
 	if err := i.Gorm.Exec(smt, valueArgs...).Error; err != nil {
 		return err

@@ -12,13 +12,17 @@ import (
 
 // TLDMapping Mapping of name TLD's to coin where they are handled
 var TLDMapping = map[string]uint64{
-	".eth":        CoinType.ETH,
-	".xyz":        CoinType.ETH,
-	".luxe":       CoinType.ETH,
-	".kred":       CoinType.ETH,
-	".zil":        CoinType.ZIL,
-	".crypto":     CoinType.ZIL,
-	"@fiotestnet": CoinType.FIO,
+	".eth":         CoinType.ETH,
+	".xyz":         CoinType.ETH,
+	".luxe":        CoinType.ETH,
+	".kred":        CoinType.ETH,
+	".zil":         CoinType.ZIL,
+	".crypto":      CoinType.ZIL,
+	"@trust":       CoinType.FIO,
+	"@trustwallet": CoinType.FIO,
+	"@binance":     CoinType.FIO,
+	"@fiomembers":  CoinType.FIO,
+	"@":            CoinType.FIO, // any FIO domain
 }
 
 func HandleLookup(name string, coins []uint64) ([]blockatlas.Resolved, error) {
@@ -30,7 +34,14 @@ func HandleLookup(name string, coins []uint64) ([]blockatlas.Resolved, error) {
 	}
 	id, ok := TLDMapping[tld]
 	if !ok {
-		return nil, errors.E("name not found", errors.Params{"name": name, "coins": coins, "tld": tld})
+		// special handling for FIO, any fio domain
+		if len(tld) >= 2 && tld[0] == '@' {
+			tld = string("@")
+			id, ok = TLDMapping[tld]
+			if !ok {
+				return nil, errors.E("name not found", errors.Params{"name": name, "coins": coins, "tld": tld})
+			}
+		}
 	}
 	api, ok := platform.NamingAPIs[id]
 	if !ok {

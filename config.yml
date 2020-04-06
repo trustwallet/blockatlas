@@ -19,10 +19,14 @@ platform: binance
 observer:
   # Don't request blocks older than this
   backlog: 3h
+  # Amount of time between fetching blocks concurrently
+  fetch_blocks_interval: 1ms
   # Don't request more than N blocks at once
   backlog_max_blocks: 200
   # Limit amount of transactions in batch
   txs_batch_limit: 3000
+  # Limit of push notifications in batch
+  push_notifications_batch_limit: 50
   # Block polling interval
   block_poll:
     min: 3s
@@ -150,7 +154,7 @@ nebulas:
 
 # [FIO] FIO: https://fioprotocol.io
 fio:
-  api: https://fio.eosphere.io
+  api: https://fio.greymass.com
 
 # [BTC] Bitcoin: https://bitcoin.org/ (Blockbook API https://github.com/trezor/blockbook)
 bitcoin:

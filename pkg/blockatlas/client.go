@@ -106,7 +106,7 @@ func (r *Request) Execute(method string, url string, body io.Reader, result inte
 
 func (r *Request) GetBase(path string) string {
 	if path == "" {
-		return fmt.Sprintf("%s", r.BaseUrl)
+		return r.BaseUrl
 	}
 	return fmt.Sprintf("%s/%s", r.BaseUrl, path)
 }
