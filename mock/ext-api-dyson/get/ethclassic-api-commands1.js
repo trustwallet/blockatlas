@@ -10,8 +10,8 @@
 module.exports = {
     path: '/ethclassic-api/:command1?',
     template: function(params, query, body) {
-        console.log(params)
-        console.log(query)
+        //console.log(params)
+        //console.log(query)
         switch (params.command1) {
             case 'transactions':
                 if (query.address === '0x7d2d0e153026fb428b885d86de50768d4cfeac37') {
