@@ -27,7 +27,7 @@ func (c *Client) fetchNodeInfo() (*NodeInfo, error) {
 
 // Get transactions in the block. Multi-send and multi-coin transactions are included as sub-transactions.
 func (c *Client) GetBlockTransactions(num int64) ([]TxV2, error) {
-	stx := new(BlockTxV2)
+	stx := new(BlockTransactions)
 	path := fmt.Sprintf("v2/transactions-in-block/%d", num)
 	err := c.Get(stx, path, nil)
 	return stx.Txs, err
@@ -38,7 +38,7 @@ func (c *Client) GetAddressAssetTransactions(address, token, txType string) ([]T
 	if address == "" && token == "" {
 		return []Tx{}, errors.E("Address and token not specified")
 	}
-	stx := new(TransactionsV1)
+	stx := new(Transactions)
 	endTime := strconv.FormatInt(time.Now().AddDate(0, -3, 0).Unix()*1000, 10)
 	query := url.Values{
 		"address":   {address},
@@ -65,8 +65,8 @@ func (c *Client) GetAccountMetadata(address string) (account *Account, err error
 }
 
 // Gets a list of tokens that have been issued.
-func (c *Client) GetTokens() (*TokenPage, error) {
-	stp := new(TokenPage)
+func (c *Client) GetTokens() (*TokenList, error) {
+	stp := new(TokenList)
 	query := url.Values{"limit": {"1000"}}
 	err := c.GetWithCache(stp, "v1/tokens", query, time.Minute*1)
 	return stp, err

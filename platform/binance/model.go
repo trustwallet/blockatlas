@@ -42,7 +42,7 @@ type SyncInfo struct {
 
 type TxType string
 
-type TransactionsV1 struct {
+type Transactions struct {
 	Total int  `json:"total"`
 	Txs   []Tx `json:"tx"`
 }
@@ -65,7 +65,7 @@ type Tx struct {
 	Value       string `json:"value"`
 }
 
-type BlockTxV2 struct {
+type BlockTransactions struct {
 	BlockHeight int64  `json:"blockHeight"`
 	Txs         []TxV2 `json:"tx"`
 }
@@ -73,7 +73,7 @@ type BlockTxV2 struct {
 type TxV2 struct {
 	Tx
 	OrderID         string  `json:"orderId"`         // Optional. Available when the transaction type is NEW_ORDER
-	SubTransactions []SubTx `json:"subTransactions"` // 	Optional. Available when the transaction has sub-transactions, such as multi-send transaction or a transaction have multiple assets
+	SubTransactions []SubTx `json:"subTransactions"` // Optional. Available when the transaction has sub-transactions, such as multi-send transaction or a transaction have multiple assets
 }
 
 type SubTx struct {
@@ -87,10 +87,9 @@ type SubTx struct {
 	Value    string `json:"value"`
 }
 
-type TokenPage []Token
+type TokenList []Token
 
 type Token struct {
-	Mintable       bool   `json:"mintable"`
 	Name           string `json:"name"`
 	OriginalSymbol string `json:"original_symbol"`
 	Owner          string `json:"owner"`
@@ -147,7 +146,7 @@ func (tx *Tx) containAddress(address string) bool {
 }
 
 // findToken find a token into a token list
-func (page TokenPage) findToken(symbol string) *Token {
+func (page TokenList) findToken(symbol string) *Token {
 	for _, t := range page {
 		if t.Symbol == symbol {
 			return &t

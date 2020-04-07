@@ -120,7 +120,7 @@ func TestNormalizeToken(t *testing.T) {
 			err := json.Unmarshal([]byte(testToken.apiResponse), &srcToken)
 			assert.Nil(t, err)
 
-			var srcTokens TokenPage
+			var srcTokens TokenList
 			err = json.Unmarshal([]byte(testToken.tokens), &srcTokens)
 			assert.Nil(t, err)
 

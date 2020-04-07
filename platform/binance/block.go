@@ -52,3 +52,23 @@ func normalizeBlockSubTx(t *TxV2, tSub *SubTx) Tx {
 		Value:       tSub.Value,
 	}
 }
+
+func normalizeBlockSubTx(t *TxV2, tSub *SubTx) Tx {
+	return Tx{
+		Asset:       tSub.Asset,
+		BlockHeight: t.BlockHeight,
+		Code:        t.Code,
+		Data:        t.Data,
+		Fee:         tSub.Fee,
+		FromAddr:    tSub.FromAddr,
+		Memo:        t.Memo,
+		OrderID:     t.OrderID,
+		Sequence:    t.Sequence,
+		Source:      t.Source,
+		Timestamp:   t.Timestamp,
+		ToAddr:      tSub.ToAddr,
+		TxHash:      t.TxHash,
+		Type:        tSub.Type,
+		Value:       tSub.Value,
+	}
+}

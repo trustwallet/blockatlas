@@ -54,7 +54,7 @@ func NormalizeTxs(srcTxs []Tx, address string) (txs []blockatlas.Tx) {
 	return
 }
 
-// NormalizeTx converts a Binance transaction into the generic model
+// Converts a Binance transaction into the generic model
 func NormalizeTx(t Tx, address string) (blockatlas.TxPage, bool) {
 	tBase := blockatlas.Tx{
 		ID:        t.TxHash,

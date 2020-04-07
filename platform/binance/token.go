@@ -19,7 +19,7 @@ func (p *Platform) GetTokenListByAddress(address string) (blockatlas.TokenPage, 
 }
 
 // NormalizeTxs converts multiple Binance tokens
-func NormalizeTokens(srcBalance []Balance, tokens *TokenPage) (tokenPage []blockatlas.Token) {
+func NormalizeTokens(srcBalance []Balance, tokens *TokenList) (tokenPage []blockatlas.Token) {
 	for _, srcToken := range srcBalance {
 		token, ok := NormalizeToken(&srcToken, tokens)
 		if !ok {
@@ -31,7 +31,7 @@ func NormalizeTokens(srcBalance []Balance, tokens *TokenPage) (tokenPage []block
 }
 
 // NormalizeToken converts a Binance token into the generic model
-func NormalizeToken(srcToken *Balance, tokens *TokenPage) (t blockatlas.Token, ok bool) {
+func NormalizeToken(srcToken *Balance, tokens *TokenList) (t blockatlas.Token, ok bool) {
 	if srcToken.isAllZeroBalance() {
 		return t, false
 	}
