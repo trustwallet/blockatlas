@@ -1,7 +1,7 @@
 {
 	"info": {
 		"_postman_id": "7c16faaa-629e-4a75-a8bc-2ccaacb540ff",
-		"name": "Blockatlas-new",
+		"name": "Blockatlas",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -1025,9 +1025,6 @@
 											"          \"token_id\": {",
 											"            \"type\": \"string\"",
 											"          },",
-											"          \"category_contract\": {",
-											"            \"type\": \"string\"",
-											"          },",
 											"          \"contract_address\": {",
 											"            \"type\": \"string\"",
 											"          },",
@@ -1053,6 +1050,9 @@
 											"            \"type\": \"integer\"",
 											"          },",
 											"          \"name\": {",
+											"            \"type\": \"string\"",
+											"          },",
+											"          \"nft_version\": {",
 											"            \"type\": \"string\"",
 											"          }",
 											"        }",
@@ -1151,12 +1151,6 @@
 											"          \"name\": {",
 											"            \"type\": \"string\"",
 											"          },",
-											"          \"symbol\": {",
-											"            \"type\": \"string\"",
-											"          },",
-											"          \"slug\": {",
-											"            \"type\": \"string\"",
-											"          },",
 											"          \"image_url\": {",
 											"            \"type\": \"string\"",
 											"          },",
@@ -1166,13 +1160,7 @@
 											"          \"total\": {",
 											"            \"type\": \"integer\"",
 											"          },",
-											"          \"category_address\": {",
-											"            \"type\": \"string\"",
-											"          },",
 											"          \"address\": {",
-											"            \"type\": \"string\"",
-											"          },",
-											"          \"nft_version\": {",
 											"            \"type\": \"string\"",
 											"          },",
 											"          \"coin\": {",
@@ -2058,25 +2046,25 @@
 	],
 	"variable": [
 		{
-			"id": "ad2326b7-fb90-4b11-a1e3-dfe8ea3aae65",
+			"id": "c6d3b134-d68f-4747-b5c5-a687412f2166",
 			"key": "host",
 			"value": "http://localhost:8420",
 			"type": "string"
 		},
 		{
-			"id": "7ae1014f-44e1-4c16-aacd-2be971ee15ef",
+			"id": "cfde5bdb-eecf-472c-b1bf-d944a63befff",
 			"key": "observer_auth",
 			"value": "test",
 			"type": "string"
 		},
 		{
-			"id": "0d3dcacb-5b63-409a-8150-9e06d24e1eb4",
+			"id": "1455449b-6372-4c16-81d9-ed93ab4aafd7",
 			"key": "market_auth",
 			"value": "",
 			"type": "string"
 		},
 		{
-			"id": "c42f8723-ad35-45ea-9dd2-066ced0780bc",
+			"id": "4180368d-8afe-4432-8ecb-48db2f778a72",
 			"key": "platform_auth",
 			"value": "",
 			"type": "string"

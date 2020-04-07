@@ -36,7 +36,7 @@ func makeCategoriesBatchRouteV4(router gin.IRouter) {
 				continue
 			}
 			for _, address := range addresses {
-				collections, err := p.GetCollectionsV4(address)
+				collections, err := p.GetCollections(address)
 				if err != nil {
 					continue
 				}
@@ -68,7 +68,7 @@ func makeCollectionRouteV4(router gin.IRouter, api blockatlas.Platform) {
 	}
 
 	router.GET("/collections/:owner/collection/:collection_id", func(c *gin.Context) {
-		collectibles, err := collectionAPI.GetCollectiblesV4(c.Param("owner"), c.Param("collection_id"))
+		collectibles, err := collectionAPI.GetCollectibles(c.Param("owner"), c.Param("collection_id"))
 		if err != nil {
 			ginutils.ErrorResponse(c).Message(err.Error()).Render()
 			return

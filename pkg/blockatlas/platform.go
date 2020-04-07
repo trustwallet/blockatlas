@@ -55,9 +55,6 @@ type (
 		Platform
 		GetCollections(owner string) (CollectionPage, error)
 		GetCollectibles(owner, collectibleID string) (CollectiblePage, error)
-
-		GetCollectionsV4(owner string) (CollectionPage, error)
-		GetCollectiblesV4(owner, collectibleID string) (CollectiblePage, error)
 	}
 
 	// CustomAPI provides custom HTTP routes
