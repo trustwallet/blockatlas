@@ -2,9 +2,10 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/trustwallet/blockatlas/api/middleware"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/pkg/ginutils"
 	"github.com/trustwallet/blockatlas/platform"
+	"net/http"
 	"strconv"
 )
 
@@ -17,7 +18,7 @@ import (
 // @Param coin path string true "the coin name" default(ethereum)
 // @Param address path string true "the query address" default(0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB)
 // @Success 200 {object} blockatlas.CollectionPage
-// @Failure 500 {object} ginutils.ApiError
+// @Failure 500 {object} middleware.ApiError
 // @Router /v2/{coin}/collections/{address} [get]
 //TODO: remove once most of the clients will be updated (deadline: March 17th)
 func oldMakeCollectionsRoute(router gin.IRouter, api blockatlas.Platform) {
@@ -31,11 +32,16 @@ func oldMakeCollectionsRoute(router gin.IRouter, api blockatlas.Platform) {
 	router.GET("/collections/:owner", func(c *gin.Context) {
 		collections, err := collectionAPI.OldGetCollections(c.Param("owner"))
 		if err != nil {
-			ginutils.ErrorResponse(c).Message(err.Error()).Render()
+			c.JSON(http.StatusNotFound, gin.H{
+				"error": gin.H{
+					"code":    0,
+					"message": err.Error(),
+				},
+			})
 			return
 		}
 
-		ginutils.RenderSuccess(c, collections)
+		c.JSON(http.StatusOK, collections)
 	})
 }
 
@@ -48,7 +54,7 @@ func oldMakeCollectionsRoute(router gin.IRouter, api blockatlas.Platform) {
 // @Param coin path string true "the coin name" default(ethereum)
 // @Param address path string true "the query address" default(0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB)
 // @Success 200 {object} blockatlas.CollectionPage
-// @Failure 500 {object} ginutils.ApiError
+// @Failure 500 {object} middleware.ApiError
 // @Router /v3/{coin}/collections/{address} [get]
 func makeCollectionsRoute(router gin.IRouter, api blockatlas.Platform) {
 	var collectionAPI blockatlas.CollectionAPI
@@ -61,11 +67,11 @@ func makeCollectionsRoute(router gin.IRouter, api blockatlas.Platform) {
 	router.GET("/collections/:owner", func(c *gin.Context) {
 		collections, err := collectionAPI.GetCollections(c.Param("owner"))
 		if err != nil {
-			ginutils.ErrorResponse(c).Message(err.Error()).Render()
+			middleware.ErrorResponse(c).Message(err.Error()).Render()
 			return
 		}
 
-		ginutils.RenderSuccess(c, collections)
+		middleware.RenderSuccess(c, collections)
 	})
 }
 
@@ -79,7 +85,7 @@ func makeCollectionsRoute(router gin.IRouter, api blockatlas.Platform) {
 // @Param owner path string true "the query address" default(0x0875BCab22dE3d02402bc38aEe4104e1239374a7)
 // @Param collection_id path string true "the query collection" default(0x06012c8cf97bead5deae237070f9587f8e7a266d)
 // @Success 200 {object} blockatlas.CollectionPage
-// @Failure 500 {object} ginutils.ApiError
+// @Failure 500 {object} middleware.ApiError
 // @Router /v2/{coin}/collections/{owner}/collection/{collection_id} [get]
 //TODO: remove once most of the clients will be updated (deadline: March 17th)
 func oldMakeCollectionRoute(router gin.IRouter, api blockatlas.Platform) {
@@ -93,11 +99,11 @@ func oldMakeCollectionRoute(router gin.IRouter, api blockatlas.Platform) {
 	router.GET("/collections/:owner/collection/:collection_id", func(c *gin.Context) {
 		collectibles, err := collectionAPI.OldGetCollectibles(c.Param("owner"), c.Param("collection_id"))
 		if err != nil {
-			ginutils.ErrorResponse(c).Message(err.Error()).Render()
+			middleware.ErrorResponse(c).Message(err.Error()).Render()
 			return
 		}
 
-		ginutils.RenderSuccess(c, collectibles)
+		middleware.RenderSuccess(c, collectibles)
 	})
 }
 
@@ -111,7 +117,7 @@ func oldMakeCollectionRoute(router gin.IRouter, api blockatlas.Platform) {
 // @Param owner path string true "the query address" default(0x0875BCab22dE3d02402bc38aEe4104e1239374a7)
 // @Param collection_id path string true "the query collection" default(0x06012c8cf97bead5deae237070f9587f8e7a266d)
 // @Success 200 {object} blockatlas.CollectionPage
-// @Failure 500 {object} ginutils.ApiError
+// @Failure 500 {object} middleware.ApiError
 // @Router /v3/{coin}/collections/{owner}/collection/{collection_id} [get]
 func makeCollectionRoute(router gin.IRouter, api blockatlas.Platform) {
 	var collectionAPI blockatlas.CollectionAPI
@@ -124,11 +130,11 @@ func makeCollectionRoute(router gin.IRouter, api blockatlas.Platform) {
 	router.GET("/collections/:owner/collection/:collection_id", func(c *gin.Context) {
 		collectibles, err := collectionAPI.GetCollectibles(c.Param("owner"), c.Param("collection_id"))
 		if err != nil {
-			ginutils.ErrorResponse(c).Message(err.Error()).Render()
+			middleware.ErrorResponse(c).Message(err.Error()).Render()
 			return
 		}
 
-		ginutils.RenderSuccess(c, collectibles)
+		middleware.RenderSuccess(c, collectibles)
 	})
 }
 
@@ -146,7 +152,7 @@ func oldMakeCategoriesBatchRoute(router gin.IRouter) {
 	router.POST("/collectibles/categories", func(c *gin.Context) {
 		var reqs map[string][]string
 		if err := c.BindJSON(&reqs); err != nil {
-			ginutils.ErrorResponse(c).Message(err.Error()).Render()
+			middleware.ErrorResponse(c).Message(err.Error()).Render()
 			return
 		}
 
@@ -168,7 +174,7 @@ func oldMakeCategoriesBatchRoute(router gin.IRouter) {
 				batch = append(batch, collections...)
 			}
 		}
-		ginutils.RenderSuccess(c, batch)
+		middleware.RenderSuccess(c, batch)
 	})
 }
 
@@ -185,7 +191,7 @@ func makeCategoriesBatchRoute(router gin.IRouter) {
 	router.POST("/collectibles/categories", func(c *gin.Context) {
 		var reqs map[string][]string
 		if err := c.BindJSON(&reqs); err != nil {
-			ginutils.ErrorResponse(c).Message(err.Error()).Render()
+			middleware.ErrorResponse(c).Message(err.Error()).Render()
 			return
 		}
 
@@ -207,7 +213,7 @@ func makeCategoriesBatchRoute(router gin.IRouter) {
 				batch = append(batch, collections...)
 			}
 		}
-		ginutils.RenderSuccess(c, batch)
+		middleware.RenderSuccess(c, batch)
 	})
 }
 
@@ -224,7 +230,7 @@ func makeCategoriesBatchRouteV4(router gin.IRouter) {
 	router.POST("/collectibles/categories", func(c *gin.Context) {
 		var reqs map[string][]string
 		if err := c.BindJSON(&reqs); err != nil {
-			ginutils.ErrorResponse(c).Message(err.Error()).Render()
+			middleware.ErrorResponse(c).Message(err.Error()).Render()
 			return
 		}
 
@@ -246,7 +252,7 @@ func makeCategoriesBatchRouteV4(router gin.IRouter) {
 				batch = append(batch, collections...)
 			}
 		}
-		ginutils.RenderSuccess(c, batch)
+		middleware.RenderSuccess(c, batch)
 	})
 }
 
@@ -260,7 +266,7 @@ func makeCategoriesBatchRouteV4(router gin.IRouter) {
 // @Param owner path string true "the query address" default(0x0875BCab22dE3d02402bc38aEe4104e1239374a7)
 // @Param collection_id path string true "the query collection" default(0x06012c8cf97bead5deae237070f9587f8e7a266d)
 // @Success 200 {object} blockatlas.CollectionPage
-// @Failure 500 {object} ginutils.ApiError
+// @Failure 500 {object} middleware.ApiError
 // @Router /v4/{coin}/collections/{owner}/collection/{collection_id} [get]
 func makeCollectionRouteV4(router gin.IRouter, api blockatlas.Platform) {
 	var collectionAPI blockatlas.CollectionAPI
@@ -273,15 +279,15 @@ func makeCollectionRouteV4(router gin.IRouter, api blockatlas.Platform) {
 	router.GET("/collections/:owner/collection/:collection_id", func(c *gin.Context) {
 		collectibles, err := collectionAPI.GetCollectiblesV4(c.Param("owner"), c.Param("collection_id"))
 		if err != nil {
-			ginutils.ErrorResponse(c).Message(err.Error()).Render()
+			middleware.ErrorResponse(c).Message(err.Error()).Render()
 			return
 		}
 
-		ginutils.RenderSuccess(c, collectibles)
+		middleware.RenderSuccess(c, collectibles)
 	})
 }
 
 func emptyPage(c *gin.Context) {
 	var page blockatlas.TxPage
-	ginutils.RenderSuccess(c, &page)
+	middleware.RenderSuccess(c, &page)
 }

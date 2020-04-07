@@ -61,7 +61,7 @@ var doc = `{
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/ginutils.ApiError"
+                            "$ref": "#/definitions/middleware.ApiError"
                         }
                     }
                 }
@@ -295,7 +295,7 @@ var doc = `{
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/ginutils.ApiError"
+                            "$ref": "#/definitions/middleware.ApiError"
                         }
                     }
                 }
@@ -376,7 +376,7 @@ var doc = `{
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/ginutils.ApiError"
+                            "$ref": "#/definitions/middleware.ApiError"
                         }
                     }
                 }
@@ -494,7 +494,7 @@ var doc = `{
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/ginutils.ApiError"
+                            "$ref": "#/definitions/middleware.ApiError"
                         }
                     }
                 }
@@ -550,7 +550,7 @@ var doc = `{
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/ginutils.ApiError"
+                            "$ref": "#/definitions/middleware.ApiError"
                         }
                     }
                 }
@@ -598,7 +598,7 @@ var doc = `{
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/ginutils.ApiError"
+                            "$ref": "#/definitions/middleware.ApiError"
                         }
                     }
                 }
@@ -638,7 +638,7 @@ var doc = `{
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/ginutils.ApiError"
+                            "$ref": "#/definitions/middleware.ApiError"
                         }
                     }
                 }
@@ -686,7 +686,7 @@ var doc = `{
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/ginutils.ApiError"
+                            "$ref": "#/definitions/middleware.ApiError"
                         }
                     }
                 }
@@ -734,7 +734,7 @@ var doc = `{
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/ginutils.ApiError"
+                            "$ref": "#/definitions/middleware.ApiError"
                         }
                     }
                 }
@@ -818,7 +818,7 @@ var doc = `{
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/ginutils.ApiError"
+                            "$ref": "#/definitions/middleware.ApiError"
                         }
                     }
                 }
@@ -874,7 +874,7 @@ var doc = `{
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/ginutils.ApiError"
+                            "$ref": "#/definitions/middleware.ApiError"
                         }
                     }
                 }
@@ -966,7 +966,7 @@ var doc = `{
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/ginutils.ApiError"
+                            "$ref": "#/definitions/middleware.ApiError"
                         }
                     }
                 }
@@ -1362,7 +1362,7 @@ var doc = `{
                 }
             }
         },
-        "ginutils.ApiError": {
+        "middleware.ApiError": {
             "type": "object",
             "properties": {
                 "status_code": {

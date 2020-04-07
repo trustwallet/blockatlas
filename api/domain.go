@@ -8,7 +8,7 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/services/domains"
 
-	"github.com/trustwallet/blockatlas/pkg/ginutils"
+	"github.com/trustwallet/blockatlas/api/middleware"
 
 	"github.com/gin-gonic/gin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
@@ -24,7 +24,7 @@ type LookupBatchPage []blockatlas.Resolved
 // @Param name query string empty "string name"
 // @Param coin query string 60 "string coin"
 // @Success 200 {object} blockatlas.Resolved
-// @Failure 500 {object} ginutils.ApiError
+// @Failure 500 {object} middleware.ApiError
 // @Router /ns/lookup [get]
 func MakeLookupRoute(router gin.IRouter) {
 	router.GET("/lookup", func(c *gin.Context) {
@@ -32,20 +32,20 @@ func MakeLookupRoute(router gin.IRouter) {
 		coinQuery := c.Query("coin")
 		coin, err := strconv.ParseUint(coinQuery, 10, 64)
 		if err != nil {
-			ginutils.RenderError(c, http.StatusBadRequest, "coin query is invalid")
+			middleware.RenderError(c, http.StatusBadRequest, "coin query is invalid")
 			return
 		}
 
 		result, err := domains.HandleLookup(name, []uint64{coin})
 		if err != nil {
-			ginutils.RenderError(c, http.StatusBadRequest, err.Error())
+			middleware.RenderError(c, http.StatusBadRequest, err.Error())
 			return
 		}
 		if len(result) == 0 {
-			ginutils.RenderError(c, http.StatusBadRequest, errors.E("name not found", errors.Params{"coin": coin, "name": name}).Error())
+			middleware.RenderError(c, http.StatusBadRequest, errors.E("name not found", errors.Params{"coin": coin, "name": name}).Error())
 			return
 		}
-		ginutils.RenderSuccess(c, result[0])
+		middleware.RenderSuccess(c, result[0])
 	})
 }
 
@@ -57,7 +57,7 @@ func MakeLookupRoute(router gin.IRouter) {
 // @Param name query string empty "string name"
 // @Param coins query string true "List of coins"
 // @Success 200 {array} blockatlas.Resolved
-// @Failure 500 {object} ginutils.ApiError
+// @Failure 500 {object} middleware.ApiError
 // @Router /v2/ns/lookup [get]
 func MakeLookupBatchRoute(router gin.IRouter) {
 	router.GET("/lookup", func(c *gin.Context) {
@@ -65,20 +65,20 @@ func MakeLookupBatchRoute(router gin.IRouter) {
 		coinsRaw := strings.Split(c.Query("coins"), ",")
 		coins, err := sliceAtoi(coinsRaw)
 		if err != nil {
-			ginutils.RenderError(c, http.StatusBadRequest, "coin query is invalid")
+			middleware.RenderError(c, http.StatusBadRequest, "coin query is invalid")
 			return
 		}
 
 		result, err := domains.HandleLookup(name, coins)
 		if err != nil {
-			ginutils.RenderError(c, http.StatusBadRequest, err.Error())
+			middleware.RenderError(c, http.StatusBadRequest, err.Error())
 			return
 		}
 		if len(result) == 0 {
-			ginutils.RenderError(c, http.StatusBadRequest, errors.E("name not found", errors.Params{"name": name}).Error())
+			middleware.RenderError(c, http.StatusBadRequest, errors.E("name not found", errors.Params{"name": name}).Error())
 			return
 		}
-		ginutils.RenderSuccess(c, result)
+		middleware.RenderSuccess(c, result)
 	})
 }
 

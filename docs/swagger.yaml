@@ -318,7 +318,7 @@ paths:
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/ginutils.ApiError'
+            $ref: '#/definitions/middleware.ApiError'
       summary: Lookup .eth / .zil addresses
       tags:
       - Naming
@@ -347,7 +347,7 @@ paths:
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/ginutils.ApiError'
+            $ref: '#/definitions/middleware.ApiError'
       summary: Get Transactions
       tags:
       - Transactions
@@ -511,7 +511,7 @@ paths:
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/ginutils.ApiError'
+            $ref: '#/definitions/middleware.ApiError'
       summary: Get Collections
       tags:
       - Collections
@@ -550,7 +550,7 @@ paths:
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/ginutils.ApiError'
+            $ref: '#/definitions/middleware.ApiError'
       summary: Get Collection
       tags:
       - Collections
@@ -583,7 +583,7 @@ paths:
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/ginutils.ApiError'
+            $ref: '#/definitions/middleware.ApiError'
       summary: Get Stake Delegations
       tags:
       - Staking
@@ -610,7 +610,7 @@ paths:
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/ginutils.ApiError'
+            $ref: '#/definitions/middleware.ApiError'
       summary: Get Validators
       tags:
       - Staking
@@ -643,7 +643,7 @@ paths:
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/ginutils.ApiError'
+            $ref: '#/definitions/middleware.ApiError'
       summary: Get Tokens
       tags:
       - Transactions
@@ -676,7 +676,7 @@ paths:
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/ginutils.ApiError'
+            $ref: '#/definitions/middleware.ApiError'
       summary: Get Transactions
       tags:
       - Transactions
@@ -730,7 +730,7 @@ paths:
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/ginutils.ApiError'
+            $ref: '#/definitions/middleware.ApiError'
       summary: Lookup .eth / .zil addresses
       tags:
       - Naming
@@ -809,7 +809,7 @@ paths:
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/ginutils.ApiError'
+            $ref: '#/definitions/middleware.ApiError'
       summary: Get Collections
       tags:
       - Collections
@@ -848,7 +848,7 @@ paths:
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/ginutils.ApiError'
+            $ref: '#/definitions/middleware.ApiError'
       summary: Get Collection
       tags:
       - Collections
@@ -911,7 +911,7 @@ paths:
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/ginutils.ApiError'
+            $ref: '#/definitions/middleware.ApiError'
       summary: Get Collection
       tags:
       - Collections
