@@ -34,7 +34,7 @@ func (c *Client) GetBlockTransactions(num int64) ([]TxV2, error) {
 }
 
 //  Gets a list of address or token transactions by type
-func (c *Client) GetAddressAssetTrx(address, token, txType string) ([]Tx, error) {
+func (c *Client) GetAddressAssetTransactions(address, token, txType string) ([]Tx, error) {
 	if address == "" && token == "" {
 		return []Tx{}, errors.E("Address and token not specified")
 	}

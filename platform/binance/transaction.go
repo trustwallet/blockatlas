@@ -23,9 +23,9 @@ func (p *Platform) GetTokenTxsByAddress(address, token string) (blockatlas.TxPag
 	for _, t := range transferTypes {
 		go func(txType TxType, address, token string, wg *sync.WaitGroup) {
 			defer wg.Done()
-			txs, err := p.client.GetAddressAssetTrx(address, token, string(txType))
+			txs, err := p.client.GetAddressAssetTransactions(address, token, string(txType))
 			if err != nil {
-				log.Error("GetAddressAssetTrx : ", err, logger.Params{"txType": txType, "address": address, "token": token})
+				log.Error("GetAddressAssetTransactions : ", err, logger.Params{"txType": txType, "address": address, "token": token})
 				return
 			}
 			out <- txs
