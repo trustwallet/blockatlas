@@ -28,7 +28,7 @@ func makeCollectionsRoute(router gin.IRouter, api blockatlas.Platform) {
 	}
 
 	router.GET("/collections/:owner", func(c *gin.Context) {
-		collections, err := collectionAPI.GetCollections(c.Param("owner"))
+		collections, err := collectionAPI.GetCollectionsV3(c.Param("owner"))
 		if err != nil {
 			ginutils.ErrorResponse(c).Message(err.Error()).Render()
 			return
@@ -59,7 +59,7 @@ func makeCollectionRoute(router gin.IRouter, api blockatlas.Platform) {
 	}
 
 	router.GET("/collections/:owner/collection/:collection_id", func(c *gin.Context) {
-		collectibles, err := collectionAPI.GetCollectibles(c.Param("owner"), c.Param("collection_id"))
+		collectibles, err := collectionAPI.GetCollectiblesV3(c.Param("owner"), c.Param("collection_id"))
 		if err != nil {
 			ginutils.ErrorResponse(c).Message(err.Error()).Render()
 			return
@@ -86,7 +86,7 @@ func makeCategoriesBatchRoute(router gin.IRouter) {
 			return
 		}
 
-		batch := make(blockatlas.CollectionPage, 0)
+		batch := make(blockatlas.CollectionPageV3, 0)
 		for key, addresses := range reqs {
 			coinId, err := strconv.Atoi(key)
 			if err != nil {
@@ -97,7 +97,7 @@ func makeCategoriesBatchRoute(router gin.IRouter) {
 				continue
 			}
 			for _, address := range addresses {
-				collections, err := p.GetCollections(address)
+				collections, err := p.GetCollectionsV3(address)
 				if err != nil {
 					continue
 				}
