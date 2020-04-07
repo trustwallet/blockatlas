@@ -42,7 +42,7 @@ func (p *Platform) GetTokenTxsByAddress(address, token string) (blockatlas.TxPag
 	return NormalizeTxs(srcTx, address), nil
 }
 
-// NormalizeTxs converts multiple Binance transactions
+// Converts multiple transactions
 func NormalizeTxs(srcTxs []Tx, address string) (txs []blockatlas.Tx) {
 	for _, srcTx := range srcTxs {
 		tx, ok := NormalizeTx(srcTx, address)
