@@ -65,7 +65,7 @@ func NormalizeTx(t Tx, address string) (blockatlas.TxPage, bool) {
 		Date:      t.blockTimestamp(),
 		Block:     t.BlockHeight,
 		Status:    t.getStatus(),
-		Error:     "", // FIXME check for an error
+		Error:     t.getError(),
 		Sequence:  t.Sequence,
 		Direction: t.Direction(address),
 		Memo:      t.Memo,

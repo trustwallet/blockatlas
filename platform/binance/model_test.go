@@ -1,10 +1,8 @@
 package binance
 
 import (
+	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	//"github.com/stretchr/testify/assert"
-	//"sort"
-	"gotest.tools/assert"
 	"testing"
 )
 
@@ -57,104 +55,7 @@ func Test_isZeroBalance(t *testing.T) {
 	}
 }
 
-var (
-	subTxDst = SubTx{
-		Hash:     "C29D822EFBC0C91656D1C5870BA55922F3A72A25BC8415B32D1D1AD0C85142F5",
-		Height:   63591484,
-		Type:     "TRANSFER",
-		Value:    "0.00000001",
-		Asset:    "BNB",
-		FromAddr: "bnb1nm4n03x00gw0x6v784jzryyp6wxnjaxswr3xm8",
-		ToAddr:   "bnb1eff4hzx4lfsun3px5walchdy4vek4n0njcdzyn",
-		Fee:      "0.0006",
-	}
-	subTxTokenDst = SubTx{
-		Hash:     "C29D822EFBC0C91656D1C5870BA55922F3A72A25BC8415B32D1D1AD0C85142F5",
-		Height:   63591485,
-		Type:     "TRANSFER",
-		Value:    "0.000064",
-		Asset:    "AERGO-46B",
-		FromAddr: "bnb1nm4n03x00gw0x6v784jzryyp6wxnjaxswr3xm8",
-		ToAddr:   "bnb1eff4hzx4lfsun3px5walchdy4vek4n0njcdzyn",
-		Fee:      "0.0006",
-	}
-	txDst = Tx{
-		TxHash:      "C29D822EFBC0C91656D1C5870BA55922F3A72A25BC8415B32D1D1AD0C85142F5",
-		BlockHeight: 63591484,
-		Type:        "TRANSFER",
-		Value:       "0.00000001",
-		Asset:       "BNB",
-		FromAddr:    "bnb1nm4n03x00gw0x6v784jzryyp6wxnjaxswr3xm8",
-		ToAddr:      "bnb1eff4hzx4lfsun3px5walchdy4vek4n0njcdzyn",
-		Fee:         "0.0006",
-	}
-	txTokenDst = Tx{
-		TxHash:      "C29D822EFBC0C91656D1C5870BA55922F3A72A25BC8415B32D1D1AD0C85142F5",
-		BlockHeight: 63591485,
-		Type:        "TRANSFER",
-		Value:       "0.000064",
-		Asset:       "AERGO-46B",
-		FromAddr:    "bnb1nm4n03x00gw0x6v784jzryyp6wxnjaxswr3xm8",
-		ToAddr:      "bnb1eff4hzx4lfsun3px5walchdy4vek4n0njcdzyn",
-		Fee:         "0.0006",
-	}
-)
-
-//func TestSubTx_toTx(t *testing.T) {
-//	tests := []struct {
-//		name  string
-//		subTx SubTx
-//		want  Tx
-//	}{
-//		{"test conversion subTx to Tx", subTxTokenDst,
-//			Tx{
-//				Hash:        "C29D822EFBC0C91656D1C5870BA55922F3A72A25BC8415B32D1D1AD0C85142F5",
-//				BlockHeight: 63591485,
-//				Type:        TxTransfer,
-//				FromAddr:    "bnb1nm4n03x00gw0x6v784jzryyp6wxnjaxswr3xm8",
-//				ToAddr:      "bnb1eff4hzx4lfsun3px5walchdy4vek4n0njcdzyn",
-//				Asset:       "AERGO-46B",
-//				Fee:         "0.0006",
-//				Value:       "0.000064",
-//				SubTxsDto:   SubTxsDto{},
-//			},
-//		},
-//	}
-//	for _, tt := range tests {
-//		t.Run(tt.name, func(t *testing.T) {
-//			got := tt.subTx.toTx()
-//			assert.Equal(t, tt.want, got, "conversion failed")
-//		})
-//	}
-//}
-
-//func TestSubTxs_getTxs(t *testing.T) {
-//	txDuplicatedTokenDst := txTokenDst
-//	txDuplicatedTokenDst.Value = "0.000128"
-//	txDuplicatedDst := txDst
-//	txDuplicatedDst.Value = "0.00000002"
-//	tests := []struct {
-//		name    string
-//		subTxs  SubTxs
-//		wantTxs []Tx
-//	}{
-//		{"test empty", SubTxs{}, nil},
-//		{"test subTx transfer", SubTxs{subTxDst}, []Tx{txDst}},
-//		{"test subTx token transfer", SubTxs{subTxTokenDst}, []Tx{txTokenDst}},
-//		{"test subTx and token transfer", SubTxs{subTxDst, subTxTokenDst}, []Tx{txDst, txTokenDst}},
-//		{"test duplicate subTx token transfer", SubTxs{subTxTokenDst, subTxTokenDst}, []Tx{txDuplicatedTokenDst}},
-//		{"test duplicate subTx", SubTxs{subTxDst, subTxDst}, []Tx{txDuplicatedDst}},
-//	}
-//	for _, tt := range tests {
-//		t.Run(tt.name, func(t *testing.T) {
-//			gotTxs := tt.subTxs.getTxs()
-//			sort.Slice(gotTxs, func(i, j int) bool {
-//				return gotTxs[i].BlockHeight < gotTxs[j].BlockHeight
-//			})
-//			assert.Equal(t, tt.wantTxs, gotTxs, "get txs from subTxs failed")
-//		})
-//	}
-//}
+//
 
 func TestTx_containAddress(t *testing.T) {
 	type fields struct {
@@ -238,6 +139,23 @@ func Test_getStatus(t *testing.T) {
 	for _, tt := range tests {
 		t.Run("", func(t *testing.T) {
 			assert.Equal(t, tt.trx.getStatus(), tt.expect)
+		})
+	}
+}
+
+func Test_getError(t *testing.T) {
+	tests := []struct {
+		name   string
+		trx    Tx
+		expect string
+	}{
+		{"Should not have error message", Tx{Code: 0}, ""},
+		{"Should have error message", Tx{Code: 1}, "error"},
+		{"Should have error message", Tx{Code: -1}, "error"},
+	}
+	for _, tt := range tests {
+		t.Run("", func(t *testing.T) {
+			assert.Equal(t, tt.trx.getError(), tt.expect)
 		})
 	}
 }

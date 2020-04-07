@@ -110,8 +110,18 @@ func (tx *Tx) getStatus() blockatlas.Status {
 	switch tx.Code {
 	case 0:
 		return blockatlas.StatusCompleted
+	default:
+		return blockatlas.StatusError
 	}
-	return blockatlas.StatusError
+}
+
+func (tx *Tx) getError() string {
+	switch tx.getStatus() {
+	case blockatlas.StatusCompleted:
+		return ""
+	default:
+		return "error"
+	}
 }
 
 func (tx *Tx) blockTimestamp() int64 {

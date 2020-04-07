@@ -68,7 +68,7 @@ func (c *Client) GetAccountMetadata(address string) (account *Account, err error
 func (c *Client) GetTokens() (*TokenPage, error) {
 	stp := new(TokenPage)
 	query := url.Values{"limit": {"1000"}}
-	err := c.Get(stp, "v1/tokens", query)
+	err := c.GetWithCache(stp, "v1/tokens", query, time.Minute*1)
 	return stp, err
 }
 
