@@ -3,10 +3,10 @@ package api
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/trustwallet/blockatlas/api/middleware"
 	"github.com/trustwallet/blockatlas/internal"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/platform"
+	"net/http"
 )
 
 var routers = make(map[string]gin.IRouter)
@@ -91,13 +91,13 @@ func GetSupportedEndpoints(c *gin.Context) {
 	for handle := range routers {
 		resp.Endpoints = append(resp.Endpoints, handle)
 	}
-	middleware.RenderSuccess(c, &resp)
+	c.JSON(http.StatusOK, &resp)
 }
 
-func GetRoot(c *gin.Context) { middleware.RenderSuccess(c, "Welcome to the Block Atlas API") }
+func GetRoot(c *gin.Context) { c.JSON(http.StatusOK, "Welcome to the Block Atlas API") }
 
 func GetStatus(c *gin.Context) {
-	middleware.RenderSuccess(c, map[string]interface{}{
+	c.JSON(http.StatusOK, map[string]interface{}{
 		"status": true,
 		"build":  internal.Build,
 		"date":   internal.Date,

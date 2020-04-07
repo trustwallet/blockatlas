@@ -3,40 +3,12 @@ package api
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/pkg/ginutils"
 	"github.com/trustwallet/blockatlas/platform"
+	"net/http"
 	"strconv"
 )
 
-// @Summary Get Collections
-// @ID collections_v3
-// @Description Get all collections from the address
-// @Accept json
-// @Produce json
-// @Tags Collections
-// @Param coin path string true "the coin name" default(ethereum)
-// @Param address path string true "the query address" default(0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB)
-// @Success 200 {object} blockatlas.CollectionPage
-// @Failure 500 {object} ginutils.ApiError
-// @Router /v3/{coin}/collections/{address} [get]
-func makeCollectionsRoute(router gin.IRouter, api blockatlas.Platform) {
-	var collectionAPI blockatlas.CollectionAPI
-	collectionAPI, _ = api.(blockatlas.CollectionAPI)
 
-	if collectionAPI == nil {
-		return
-	}
-
-	router.GET("/collections/:owner", func(c *gin.Context) {
-		collections, err := collectionAPI.GetCollectionsV3(c.Param("owner"))
-		if err != nil {
-			ginutils.ErrorResponse(c).Message(err.Error()).Render()
-			return
-		}
-
-		ginutils.RenderSuccess(c, collections)
-	})
-}
 
 // @Summary Get Collection
 // @ID collection_v3
@@ -61,50 +33,11 @@ func makeCollectionRoute(router gin.IRouter, api blockatlas.Platform) {
 	router.GET("/collections/:owner/collection/:collection_id", func(c *gin.Context) {
 		collectibles, err := collectionAPI.GetCollectiblesV3(c.Param("owner"), c.Param("collection_id"))
 		if err != nil {
-			ginutils.ErrorResponse(c).Message(err.Error()).Render()
+			c.JSON(http.StatusInternalServerError, CreateErrorResponse(0, err))
 			return
 		}
 
-		ginutils.RenderSuccess(c, collectibles)
-	})
-}
-
-// @Description Get collection categories
-// @ID collection_categories_v3
-// @Summary Get list of collections from a specific coin and addresses
-// @Accept json
-// @Produce json
-// @Tags Collections
-// @Param data body string true "Payload" default({"60": ["0xb3624367b1ab37daef42e1a3a2ced012359659b0"]})
-// @Success 200 {object} blockatlas.DocsResponse
-// @Router /v3/collectibles/categories [post]
-func makeCategoriesBatchRoute(router gin.IRouter) {
-	router.POST("/collectibles/categories", func(c *gin.Context) {
-		var reqs map[string][]string
-		if err := c.BindJSON(&reqs); err != nil {
-			ginutils.ErrorResponse(c).Message(err.Error()).Render()
-			return
-		}
-
-		batch := make(blockatlas.CollectionPageV3, 0)
-		for key, addresses := range reqs {
-			coinId, err := strconv.Atoi(key)
-			if err != nil {
-				continue
-			}
-			p, ok := platform.CollectionAPIs[uint(coinId)]
-			if !ok {
-				continue
-			}
-			for _, address := range addresses {
-				collections, err := p.GetCollectionsV3(address)
-				if err != nil {
-					continue
-				}
-				batch = append(batch, collections...)
-			}
-		}
-		ginutils.RenderSuccess(c, batch)
+		c.JSON(http.StatusOK, &collectibles)
 	})
 }
 
@@ -121,7 +54,7 @@ func makeCategoriesBatchRouteV4(router gin.IRouter) {
 	router.POST("/collectibles/categories", func(c *gin.Context) {
 		var reqs map[string][]string
 		if err := c.BindJSON(&reqs); err != nil {
-			ginutils.ErrorResponse(c).Message(err.Error()).Render()
+			c.JSON(http.StatusBadRequest, CreateErrorResponse(Default, err))
 			return
 		}
 
@@ -143,7 +76,7 @@ func makeCategoriesBatchRouteV4(router gin.IRouter) {
 				batch = append(batch, collections...)
 			}
 		}
-		ginutils.RenderSuccess(c, batch)
+		c.JSON(http.StatusOK, &batch)
 	})
 }
 
@@ -170,15 +103,14 @@ func makeCollectionRouteV4(router gin.IRouter, api blockatlas.Platform) {
 	router.GET("/collections/:owner/collection/:collection_id", func(c *gin.Context) {
 		collectibles, err := collectionAPI.GetCollectibles(c.Param("owner"), c.Param("collection_id"))
 		if err != nil {
-			ginutils.ErrorResponse(c).Message(err.Error()).Render()
+			c.JSON(http.StatusInternalServerError, CreateErrorResponse(InternalFail, err))
 			return
 		}
-
-		ginutils.RenderSuccess(c, collectibles)
+		c.JSON(http.StatusOK, &collectibles)
 	})
 }
 
 func emptyPage(c *gin.Context) {
 	var page blockatlas.TxPage
-	ginutils.RenderSuccess(c, &page)
+	c.JSON(http.StatusOK, &page)
 }

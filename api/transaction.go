@@ -2,7 +2,6 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/trustwallet/blockatlas/api/middleware"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"net/http"
 	"sort"
@@ -68,17 +67,20 @@ func makeTxRoute(router gin.IRouter, api blockatlas.Platform, path string) {
 		}
 
 		if err != nil {
-			errResp := middleware.ErrorResponse(c)
 			switch {
 			case err == blockatlas.ErrInvalidAddr:
-				errResp.Params(http.StatusBadRequest, "Invalid address")
+				c.JSON(http.StatusBadRequest, CreateErrorResponse(InvalidQuery, blockatlas.ErrInvalidAddr))
+				return
 			case err == blockatlas.ErrNotFound:
-				errResp.Params(http.StatusNotFound, "No such address")
+				c.JSON(http.StatusNotFound, CreateErrorResponse(RequestedDataNotFound, blockatlas.ErrNotFound))
+				return
 			case err == blockatlas.ErrSourceConn:
-				errResp.Params(http.StatusServiceUnavailable, "Lost connection to blockchain")
+				c.JSON(http.StatusServiceUnavailable, CreateErrorResponse(InternalFail, blockatlas.ErrSourceConn))
+				return
+			default:
+				c.JSON(http.StatusInternalServerError, CreateErrorResponse(Default, err))
+				return
 			}
-			errResp.Render()
-			return
 		}
 
 		page := make(blockatlas.TxPage, 0)
@@ -99,8 +101,8 @@ func makeTxRoute(router gin.IRouter, api blockatlas.Platform, path string) {
 		if len(page) > blockatlas.TxPerPage {
 			page = page[0:blockatlas.TxPerPage]
 		}
-		sort.Sort(page)
-		middleware.RenderSuccess(c, &page)
+		sort.Sort(&page)
+		c.JSON(http.StatusOK, &page)
 	})
 }
 
@@ -132,10 +134,9 @@ func makeTokenRoute(router gin.IRouter, api blockatlas.Platform) {
 
 		tl, err := tokenAPI.GetTokenListByAddress(address)
 		if err != nil {
-			middleware.ErrorResponse(c).Message(err.Error()).Render()
+			c.JSON(http.StatusInternalServerError, CreateErrorResponse(InternalFail, err))
 			return
 		}
-
-		middleware.RenderSuccess(c, blockatlas.DocsResponse{Docs: tl})
+		c.JSON(http.StatusOK, blockatlas.DocsResponse{Docs: &tl})
 	})
 }
