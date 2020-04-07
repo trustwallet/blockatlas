@@ -2,8 +2,8 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/trustwallet/blockatlas/api/middleware"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/pkg/ginutils"
 	"net/http"
 	"sort"
 )
@@ -16,7 +16,7 @@ import (
 // @Tags Transactions
 // @Param coin path string true "the coin name" default(tezos)
 // @Param address path string true "the query address" default(tz1WCd2jm4uSt4vntk4vSuUWoZQGhLcDuR9q)
-// @Failure 500 {object} ginutils.ApiError
+// @Failure 500 {object} middleware.ApiError
 // @Router /v1/{coin}/{address} [get]
 func makeTxRouteV1(router gin.IRouter, api blockatlas.Platform) {
 	makeTxRoute(router, api, "/:address")
@@ -31,7 +31,7 @@ func makeTxRouteV1(router gin.IRouter, api blockatlas.Platform) {
 // @Param coin path string true "the coin name" default(tezos)
 // @Param address path string true "the query address" default(tz1WCd2jm4uSt4vntk4vSuUWoZQGhLcDuR9q)
 // @Success 200 {object} blockatlas.TxPage
-// @Failure 500 {object} ginutils.ApiError
+// @Failure 500 {object} middleware.ApiError
 // @Router /v2/{coin}/transactions/{address} [get]
 func makeTxRouteV2(router gin.IRouter, api blockatlas.Platform) {
 	makeTxRoute(router, api, "/transactions/:address")
@@ -68,7 +68,7 @@ func makeTxRoute(router gin.IRouter, api blockatlas.Platform, path string) {
 		}
 
 		if err != nil {
-			errResp := ginutils.ErrorResponse(c)
+			errResp := middleware.ErrorResponse(c)
 			switch {
 			case err == blockatlas.ErrInvalidAddr:
 				errResp.Params(http.StatusBadRequest, "Invalid address")
@@ -100,7 +100,7 @@ func makeTxRoute(router gin.IRouter, api blockatlas.Platform, path string) {
 			page = page[0:blockatlas.TxPerPage]
 		}
 		sort.Sort(page)
-		ginutils.RenderSuccess(c, &page)
+		middleware.RenderSuccess(c, &page)
 	})
 }
 
@@ -113,7 +113,7 @@ func makeTxRoute(router gin.IRouter, api blockatlas.Platform, path string) {
 // @Param coin path string true "the coin name" default(ethereum)
 // @Param address path string true "the query address" default(0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB)
 // @Success 200 {object} blockatlas.CollectionPage
-// @Failure 500 {object} ginutils.ApiError
+// @Failure 500 {object} middleware.ApiError
 // @Router /v2/{coin}/tokens/{address} [get]
 func makeTokenRoute(router gin.IRouter, api blockatlas.Platform) {
 	var tokenAPI blockatlas.TokenAPI
@@ -132,10 +132,10 @@ func makeTokenRoute(router gin.IRouter, api blockatlas.Platform) {
 
 		tl, err := tokenAPI.GetTokenListByAddress(address)
 		if err != nil {
-			ginutils.ErrorResponse(c).Message(err.Error()).Render()
+			middleware.ErrorResponse(c).Message(err.Error()).Render()
 			return
 		}
 
-		ginutils.RenderSuccess(c, blockatlas.DocsResponse{Docs: tl})
+		middleware.RenderSuccess(c, blockatlas.DocsResponse{Docs: tl})
 	})
 }

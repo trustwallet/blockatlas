@@ -1,4 +1,4 @@
-package gincache
+package middleware
 
 import (
 	"bytes"
@@ -42,8 +42,6 @@ type cachedWriter struct {
 	expire  time.Duration
 	key     string
 }
-
-var _ gin.ResponseWriter = &cachedWriter{}
 
 func newCachedWriter(expire time.Duration, writer gin.ResponseWriter, key string) *cachedWriter {
 	return &cachedWriter{writer, 0, false, expire, key}
