@@ -1,10 +1,33 @@
 package api
 
-type ErrorResponse struct {
-	Error ErrorDetails `json:"error"`
-}
+const (
+	Default ErrorCode = iota
+	InvalidQuery
+	RequestedDataNotFound
+	InternalFail
+)
 
-type ErrorDetails struct {
-	Message string `json:"message"`
-	Code    int    `json:"code"`
+type (
+	ErrorResponse struct {
+		Error ErrorDetails `json:"error"`
+	}
+	ErrorDetails struct {
+		Message string    `json:"message"`
+		Code    ErrorCode `json:"code"`
+	}
+
+	ErrorCode int
+)
+
+func CreateErrorResponse(code ErrorCode, err error) ErrorResponse {
+	var message string
+	if err != nil {
+		message = err.Error()
+	} else {
+		message = ""
+	}
+	return ErrorResponse{Error: ErrorDetails{
+		Message: message,
+		Code:    code,
+	}}
 }

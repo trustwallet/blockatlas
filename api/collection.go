@@ -2,7 +2,6 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/trustwallet/blockatlas/api/middleware"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/platform"
 	"net/http"
@@ -32,16 +31,11 @@ func oldMakeCollectionsRoute(router gin.IRouter, api blockatlas.Platform) {
 	router.GET("/collections/:owner", func(c *gin.Context) {
 		collections, err := collectionAPI.OldGetCollections(c.Param("owner"))
 		if err != nil {
-			c.JSON(http.StatusNotFound, gin.H{
-				"error": gin.H{
-					"code":    0,
-					"message": err.Error(),
-				},
-			})
+			c.JSON(http.StatusInternalServerError, CreateErrorResponse(Default, err))
 			return
 		}
 
-		c.JSON(http.StatusOK, collections)
+		c.JSON(http.StatusOK, &collections)
 	})
 }
 
@@ -67,11 +61,10 @@ func makeCollectionsRoute(router gin.IRouter, api blockatlas.Platform) {
 	router.GET("/collections/:owner", func(c *gin.Context) {
 		collections, err := collectionAPI.GetCollections(c.Param("owner"))
 		if err != nil {
-			middleware.ErrorResponse(c).Message(err.Error()).Render()
+			c.JSON(http.StatusInternalServerError, CreateErrorResponse(Default, err))
 			return
 		}
-
-		middleware.RenderSuccess(c, collections)
+		c.JSON(http.StatusOK, &collections)
 	})
 }
 
@@ -99,11 +92,10 @@ func oldMakeCollectionRoute(router gin.IRouter, api blockatlas.Platform) {
 	router.GET("/collections/:owner/collection/:collection_id", func(c *gin.Context) {
 		collectibles, err := collectionAPI.OldGetCollectibles(c.Param("owner"), c.Param("collection_id"))
 		if err != nil {
-			middleware.ErrorResponse(c).Message(err.Error()).Render()
+			c.JSON(http.StatusInternalServerError, CreateErrorResponse(Default, err))
 			return
 		}
-
-		middleware.RenderSuccess(c, collectibles)
+		c.JSON(http.StatusOK, &collectibles)
 	})
 }
 
@@ -130,11 +122,10 @@ func makeCollectionRoute(router gin.IRouter, api blockatlas.Platform) {
 	router.GET("/collections/:owner/collection/:collection_id", func(c *gin.Context) {
 		collectibles, err := collectionAPI.GetCollectibles(c.Param("owner"), c.Param("collection_id"))
 		if err != nil {
-			middleware.ErrorResponse(c).Message(err.Error()).Render()
+			c.JSON(http.StatusInternalServerError, CreateErrorResponse(0, err))
 			return
 		}
-
-		middleware.RenderSuccess(c, collectibles)
+		c.JSON(http.StatusOK, &collectibles)
 	})
 }
 
@@ -152,7 +143,7 @@ func oldMakeCategoriesBatchRoute(router gin.IRouter) {
 	router.POST("/collectibles/categories", func(c *gin.Context) {
 		var reqs map[string][]string
 		if err := c.BindJSON(&reqs); err != nil {
-			middleware.ErrorResponse(c).Message(err.Error()).Render()
+			c.JSON(http.StatusBadRequest, CreateErrorResponse(Default, err))
 			return
 		}
 
@@ -174,7 +165,7 @@ func oldMakeCategoriesBatchRoute(router gin.IRouter) {
 				batch = append(batch, collections...)
 			}
 		}
-		middleware.RenderSuccess(c, batch)
+		c.JSON(http.StatusOK, &batch)
 	})
 }
 
@@ -191,7 +182,7 @@ func makeCategoriesBatchRoute(router gin.IRouter) {
 	router.POST("/collectibles/categories", func(c *gin.Context) {
 		var reqs map[string][]string
 		if err := c.BindJSON(&reqs); err != nil {
-			middleware.ErrorResponse(c).Message(err.Error()).Render()
+			c.JSON(http.StatusBadRequest, CreateErrorResponse(Default, err))
 			return
 		}
 
@@ -213,7 +204,7 @@ func makeCategoriesBatchRoute(router gin.IRouter) {
 				batch = append(batch, collections...)
 			}
 		}
-		middleware.RenderSuccess(c, batch)
+		c.JSON(http.StatusOK, &batch)
 	})
 }
 
@@ -230,7 +221,7 @@ func makeCategoriesBatchRouteV4(router gin.IRouter) {
 	router.POST("/collectibles/categories", func(c *gin.Context) {
 		var reqs map[string][]string
 		if err := c.BindJSON(&reqs); err != nil {
-			middleware.ErrorResponse(c).Message(err.Error()).Render()
+			c.JSON(http.StatusBadRequest, CreateErrorResponse(Default, err))
 			return
 		}
 
@@ -252,7 +243,7 @@ func makeCategoriesBatchRouteV4(router gin.IRouter) {
 				batch = append(batch, collections...)
 			}
 		}
-		middleware.RenderSuccess(c, batch)
+		c.JSON(http.StatusOK, &batch)
 	})
 }
 
@@ -279,15 +270,14 @@ func makeCollectionRouteV4(router gin.IRouter, api blockatlas.Platform) {
 	router.GET("/collections/:owner/collection/:collection_id", func(c *gin.Context) {
 		collectibles, err := collectionAPI.GetCollectiblesV4(c.Param("owner"), c.Param("collection_id"))
 		if err != nil {
-			middleware.ErrorResponse(c).Message(err.Error()).Render()
+			c.JSON(http.StatusInternalServerError, CreateErrorResponse(InternalFail, err))
 			return
 		}
-
-		middleware.RenderSuccess(c, collectibles)
+		c.JSON(http.StatusOK, &collectibles)
 	})
 }
 
 func emptyPage(c *gin.Context) {
 	var page blockatlas.TxPage
-	middleware.RenderSuccess(c, &page)
+	c.JSON(http.StatusOK, &page)
 }

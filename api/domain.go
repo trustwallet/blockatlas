@@ -5,10 +5,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/services/domains"
-
-	"github.com/trustwallet/blockatlas/api/middleware"
 
 	"github.com/gin-gonic/gin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
@@ -32,20 +29,19 @@ func MakeLookupRoute(router gin.IRouter) {
 		coinQuery := c.Query("coin")
 		coin, err := strconv.ParseUint(coinQuery, 10, 64)
 		if err != nil {
-			middleware.RenderError(c, http.StatusBadRequest, "coin query is invalid")
+			c.JSON(http.StatusBadRequest, CreateErrorResponse(InvalidQuery, err))
 			return
 		}
-
 		result, err := domains.HandleLookup(name, []uint64{coin})
 		if err != nil {
-			middleware.RenderError(c, http.StatusBadRequest, err.Error())
+			c.JSON(http.StatusInternalServerError, CreateErrorResponse(InternalFail, err))
 			return
 		}
 		if len(result) == 0 {
-			middleware.RenderError(c, http.StatusBadRequest, errors.E("name not found", errors.Params{"coin": coin, "name": name}).Error())
+			c.JSON(http.StatusNotFound, CreateErrorResponse(RequestedDataNotFound, err))
 			return
 		}
-		middleware.RenderSuccess(c, result[0])
+		c.JSON(http.StatusOK, result[0])
 	})
 }
 
@@ -65,20 +61,19 @@ func MakeLookupBatchRoute(router gin.IRouter) {
 		coinsRaw := strings.Split(c.Query("coins"), ",")
 		coins, err := sliceAtoi(coinsRaw)
 		if err != nil {
-			middleware.RenderError(c, http.StatusBadRequest, "coin query is invalid")
+			c.JSON(http.StatusBadRequest, CreateErrorResponse(InvalidQuery, err))
 			return
 		}
-
 		result, err := domains.HandleLookup(name, coins)
 		if err != nil {
-			middleware.RenderError(c, http.StatusBadRequest, err.Error())
+			c.JSON(http.StatusInternalServerError, CreateErrorResponse(InternalFail, err))
 			return
 		}
 		if len(result) == 0 {
-			middleware.RenderError(c, http.StatusBadRequest, errors.E("name not found", errors.Params{"name": name}).Error())
+			c.JSON(http.StatusNotFound, CreateErrorResponse(RequestedDataNotFound, err))
 			return
 		}
-		middleware.RenderSuccess(c, result)
+		c.JSON(http.StatusOK, &result)
 	})
 }
 

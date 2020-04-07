@@ -3,13 +3,12 @@ package api
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/trustwallet/blockatlas/api/middleware"
-	"github.com/trustwallet/blockatlas/api/middleware/gincache"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
-	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/platform"
 	services "github.com/trustwallet/blockatlas/services/assets"
+	"net/http"
 	"time"
 )
 
@@ -45,7 +44,7 @@ func makeStakingDelegationsBatchRoute(router gin.IRouter) {
 	router.POST("/staking/delegations", func(c *gin.Context) {
 		var reqs AddressesRequest
 		if err := c.BindJSON(&reqs); err != nil {
-			middleware.ErrorResponse(c).Message(err.Error()).Render()
+			c.JSON(http.StatusBadRequest, CreateErrorResponse(InvalidQuery, err))
 			return
 		}
 
@@ -65,7 +64,7 @@ func makeStakingDelegationsBatchRoute(router gin.IRouter) {
 			}
 			batch = append(batch, delegation)
 		}
-		middleware.RenderSuccess(c, blockatlas.DocsResponse{Docs: batch})
+		c.JSON(http.StatusOK, blockatlas.DocsResponse{Docs: &batch})
 	})
 }
 
@@ -79,10 +78,10 @@ func makeStakingDelegationsBatchRoute(router gin.IRouter) {
 // @Success 200 {object} blockatlas.DelegationsBatchPage
 // @Router /v2/staking/list [post]
 func makeStakingDelegationsSimpleBatchRoute(router gin.IRouter) {
-	router.POST("/staking/list", gincache.CacheMiddleware(time.Hour*24, func(c *gin.Context) {
+	router.POST("/staking/list", middleware.CacheMiddleware(time.Hour*24, func(c *gin.Context) {
 		var reqs CoinsRequest
 		if err := c.BindJSON(&reqs); err != nil {
-			middleware.ErrorResponse(c).Message(err.Error()).Render()
+			c.JSON(http.StatusBadRequest, CreateErrorResponse(InvalidQuery, err))
 			return
 		}
 
@@ -99,7 +98,7 @@ func makeStakingDelegationsSimpleBatchRoute(router gin.IRouter) {
 			staking := getStakingResponse(p)
 			batch = append(batch, staking)
 		}
-		middleware.RenderSuccess(c, blockatlas.DocsResponse{Docs: batch})
+		c.JSON(http.StatusOK, blockatlas.DocsResponse{Docs: &batch})
 	}))
 }
 
@@ -121,14 +120,13 @@ func makeStakingValidatorsRoute(router gin.IRouter, api blockatlas.Platform) {
 		return
 	}
 
-	router.GET("/staking/validators", gincache.CacheMiddleware(time.Hour, func(c *gin.Context) {
+	router.GET("/staking/validators", middleware.CacheMiddleware(time.Hour, func(c *gin.Context) {
 		results, err := services.GetActiveValidators(stakingAPI)
 		if err != nil {
-			logger.Error(err)
-			middleware.ErrorResponse(c).Message(err.Error()).Render()
+			c.JSON(http.StatusInternalServerError, CreateErrorResponse(InternalFail, err))
 			return
 		}
-		middleware.RenderSuccess(c, blockatlas.DocsResponse{Docs: results})
+		c.JSON(http.StatusOK, blockatlas.DocsResponse{Docs: &results})
 	}))
 }
 
@@ -154,11 +152,10 @@ func makeStakingDelegationsRoute(router gin.IRouter, api blockatlas.Platform) {
 	router.GET("/staking/delegations/:address", func(c *gin.Context) {
 		response, err := getDelegationResponse(stakingAPI, c.Param("address"))
 		if err != nil {
-			middleware.ErrorResponse(c).Message(err.Error()).Render()
+			c.JSON(http.StatusInternalServerError, CreateErrorResponse(InternalFail, err))
 			return
 		}
-
-		middleware.RenderSuccess(c, response)
+		c.JSON(http.StatusOK, &response)
 	})
 }
 
