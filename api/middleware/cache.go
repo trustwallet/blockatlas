@@ -121,9 +121,7 @@ func (mc *memCache) setCache(k string, x interface{}, d time.Duration) {
 }
 
 func (mc *memCache) getCache(key string) (cacheResponse, time.Time, error) {
-	var (
-		result cacheResponse
-	)
+	var result cacheResponse
 	c, exp, ok := mc.cache.GetWithExpiration(key)
 	if !ok {
 		return result, time.Time{}, fmt.Errorf("gin-cache: invalid cache key %s", key)
