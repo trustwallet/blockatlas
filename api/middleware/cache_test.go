@@ -64,3 +64,24 @@ func TestCachePageExpire(t *testing.T) {
 	assert.Equal(t, http.StatusOK, w2.Code)
 	assert.NotEqual(t, w1.Body.String(), w2.Body.String())
 }
+
+func TestCacheControl(t *testing.T) {
+	router := gin.New()
+	router.GET("/cache_ping_control", CacheMiddleware(time.Second*30, func(c *gin.Context) {
+		c.JSON(http.StatusOK, "pong "+fmt.Sprint(time.Now().UnixNano()))
+	}))
+
+	w1 := performRequest("GET", "/cache_ping_control", router)
+	w1CacheControl := w1.Header().Get("Cache-Control")
+	assert.NotEqual(t, "no-cache", w1CacheControl)
+	time.Sleep(time.Second * 1)
+	w2 := performRequest("GET", "/cache_ping_control", router)
+	w2CacheControl := w2.Header().Get("Cache-Control")
+
+	assert.NotEqual(t, w1CacheControl, w2CacheControl)
+	assert.Equal(t, w1.Body.String(), w2.Body.String())
+
+	assert.Equal(t, http.StatusOK, w1.Code)
+	assert.Equal(t, http.StatusOK, w2.Code)
+
+}

@@ -275,7 +275,7 @@ go-lint-install:
 
 go-lint:
 	@echo "  >  Running golint"
-	bin/golangci-lint run
+	bin/golangci-lint run --timeout=2m
 
 .PHONY: help
 all: help
