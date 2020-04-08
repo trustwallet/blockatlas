@@ -265,6 +265,9 @@ func (t *Tx) GetAddresses() []string {
 }
 
 func (t *Tx) GetTransactionDirection(address string) Direction {
+	if t.Direction != "" {
+		return t.Direction
+	}
 	if len(t.Inputs) > 0 && len(t.Outputs) > 0 {
 		addressSet := mapset.NewSet(address)
 		return InferDirection(t, addressSet)

@@ -78,11 +78,6 @@ func GetTransactionsHistory(c *gin.Context, txAPI blockatlas.TxAPI, tokenTxAPI b
 
 	page := make(blockatlas.TxPage, 0)
 	for _, tx := range txs {
-		if tx.Direction != "" {
-			page = append(page, tx)
-			continue
-		}
-
 		tx.Direction = tx.GetTransactionDirection(address)
 		page = append(page, tx)
 	}

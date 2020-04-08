@@ -3,9 +3,11 @@ package api
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/trustwallet/blockatlas/api/endpoint"
+	"github.com/trustwallet/blockatlas/api/middleware"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/platform"
+	"time"
 )
 
 func RegisterCollectionsAPI(root gin.IRouter, api blockatlas.Platform) {
@@ -65,9 +67,9 @@ func RegisterStakeAPI(root gin.IRouter, api blockatlas.Platform) {
 	}
 	handle := api.Coin().Handle
 
-	root.GET("/v2/"+handle+"/staking/validators", func(c *gin.Context) {
+	root.GET("/v2/"+handle+"/staking/validators", middleware.CacheMiddleware(time.Hour, func(c *gin.Context) {
 		endpoint.GetValidators(c, stakingAPI)
-	})
+	}))
 	root.GET("/v2/"+handle+"/staking/delegations/:address", func(c *gin.Context) {
 		endpoint.GetStakingDelegationsForSpecificCoin(c, stakingAPI)
 	})
@@ -77,9 +79,9 @@ func RegisterBatchAPI(root gin.IRouter) {
 	root.POST("v2/staking/delegations", func(c *gin.Context) {
 		endpoint.GetStakeDelegationsWithAllInfoForBatch(c, platform.StakeAPIs)
 	})
-	root.POST("v2/staking/list", func(c *gin.Context) {
+	root.POST("v2/staking/list", middleware.CacheMiddleware(time.Hour, func(c *gin.Context) {
 		endpoint.GetStakeInfoForBatch(c, platform.StakeAPIs)
-	})
+	}))
 	root.POST("/v3/collectibles/categories", func(c *gin.Context) {
 		endpoint.GetCollectionCategoriesFromListV3(c, platform.CollectionAPIs)
 	})
