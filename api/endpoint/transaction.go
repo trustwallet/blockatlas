@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/trustwallet/blockatlas/api/model"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/errors"
 	"net/http"
 	"sort"
 )
@@ -33,53 +34,51 @@ import (
 func GetTransactionsHistory(c *gin.Context, txAPI blockatlas.TxAPI, tokenTxAPI blockatlas.TokenTxAPI) {
 	address := c.Param("address")
 	if address == "" {
-		EmptyPage(c)
+		c.JSON(http.StatusBadRequest, model.CreateErrorResponse(model.InvalidQuery, blockatlas.ErrInvalidAddr))
 		return
 	}
 	token := c.Query("token")
 
-	var txs []blockatlas.Tx
-	var err error
+	var (
+		txs []blockatlas.Tx
+		err error
+	)
+
 	switch {
 	case token == "" && txAPI != nil:
 		txs, err = txAPI.GetTxsByAddress(address)
 	case token != "" && tokenTxAPI != nil:
 		txs, err = tokenTxAPI.GetTokenTxsByAddress(address, token)
 	default:
-		EmptyPage(c)
+		c.JSON(http.StatusInternalServerError,
+			model.CreateErrorResponse(model.InternalFail, errors.E("Failed to find api for that coin")))
 		return
 	}
 
 	if err != nil {
-		switch {
-		case err == blockatlas.ErrInvalidAddr:
-			c.JSON(http.StatusBadRequest, model.CreateErrorResponse(model.InvalidQuery, blockatlas.ErrInvalidAddr))
+		switch err {
+		case blockatlas.ErrInvalidAddr:
+			c.JSON(http.StatusBadRequest,
+				model.CreateErrorResponse(model.InvalidQuery, blockatlas.ErrInvalidAddr))
 			return
-		case err == blockatlas.ErrNotFound:
-			c.JSON(http.StatusNotFound, model.CreateErrorResponse(model.RequestedDataNotFound, blockatlas.ErrNotFound))
+		case blockatlas.ErrNotFound:
+			c.JSON(http.StatusNotFound,
+				model.CreateErrorResponse(model.RequestedDataNotFound, blockatlas.ErrNotFound))
 			return
-		case err == blockatlas.ErrSourceConn:
-			c.JSON(http.StatusServiceUnavailable, model.CreateErrorResponse(model.InternalFail, blockatlas.ErrSourceConn))
+		case blockatlas.ErrSourceConn:
+			c.JSON(http.StatusServiceUnavailable,
+				model.CreateErrorResponse(model.InternalFail, blockatlas.ErrSourceConn))
 			return
 		default:
-			c.JSON(http.StatusInternalServerError, model.CreateErrorResponse(model.Default, err))
+			c.JSON(http.StatusInternalServerError,
+				model.CreateErrorResponse(model.Default, err))
 			return
 		}
 	}
 
 	page := make(blockatlas.TxPage, 0)
 	for _, tx := range txs {
-		if tx.Direction != "" {
-			goto AddTx
-		}
-		tx.Direction = blockatlas.DirectionOutgoing
-		if tx.To == address {
-			tx.Direction = blockatlas.DirectionIncoming
-			if tx.From == address {
-				tx.Direction = blockatlas.DirectionSelf
-			}
-		}
-	AddTx:
+		tx.Direction = tx.GetTransactionDirection(address)
 		page = append(page, tx)
 	}
 	if len(page) > blockatlas.TxPerPage {

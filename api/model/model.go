@@ -23,8 +23,6 @@ func CreateErrorResponse(code ErrorCode, err error) ErrorResponse {
 	var message string
 	if err != nil {
 		message = err.Error()
-	} else {
-		message = ""
 	}
 	return ErrorResponse{Error: ErrorDetails{
 		Message: message,
