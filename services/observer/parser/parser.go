@@ -19,15 +19,15 @@ import (
 
 type (
 	Params struct {
-		Ctx                   context.Context
-		Api                   blockatlas.BlockAPI
-		Queue                 mq.Queue
-		ParsingBlocksInterval time.Duration
-		BacklogCount          int
-		MaxBacklogBlocks      int64
-		StopChannel           chan<- struct{}
-		TxBatchLimit          uint
-		Database              *db.Instance
+		Ctx                                       context.Context
+		Api                                       blockatlas.BlockAPI
+		Queue                                     mq.Queue
+		ParsingBlocksInterval, FetchBlocksTimeout time.Duration
+		BacklogCount                              int
+		MaxBacklogBlocks                          int64
+		StopChannel                               chan<- struct{}
+		TxBatchLimit                              uint
+		Database                                  *db.Instance
 	}
 
 	GetBlockByNumber func(num int64) (*blockatlas.Block, error)
@@ -54,13 +54,13 @@ func RunParser(params Params) {
 			return
 		default:
 			lastParsedBlock, currentBlock, err := GetBlocksIntervalToFetch(params)
-			if err != nil {
+			if err != nil || lastParsedBlock > currentBlock {
 				logger.Error(err, logger.Params{"coin": params.Api.Coin().Handle})
 				time.Sleep(params.ParsingBlocksInterval)
 				continue
 			}
 
-			blocks := FetchBlocks(params.Api, lastParsedBlock, currentBlock)
+			blocks := FetchBlocks(params, lastParsedBlock, currentBlock)
 
 			err = SaveLastParsedBlock(params, blocks)
 			if err != nil {
@@ -100,15 +100,15 @@ func GetBlocksIntervalToFetch(params Params) (int64, int64, error) {
 	return lastParsedBlock, currentBlock, nil
 }
 
-func FetchBlocks(api blockatlas.BlockAPI, lastParsedBlock, currentBlock int64) []blockatlas.Block {
+func FetchBlocks(params Params, lastParsedBlock, currentBlock int64) []blockatlas.Block {
 	if lastParsedBlock == currentBlock {
-		logger.Info("No new blocks", logger.Params{"last": lastParsedBlock, "coin": api.Coin().ID, "time": time.Now().Unix()})
+		logger.Info("No new blocks", logger.Params{"last": lastParsedBlock, "coin": params.Api.Coin().ID, "time": time.Now().Unix()})
 		return nil
 	}
 
 	blocksCount := currentBlock - lastParsedBlock
 	if blocksCount < 0 {
-		logger.Error("Current block is 0", logger.Params{"coin": api.Coin().Handle})
+		logger.Error("Current block is 0", logger.Params{"coin": params.Api.Coin().Handle})
 		return nil
 	}
 
@@ -121,9 +121,10 @@ func FetchBlocks(api blockatlas.BlockAPI, lastParsedBlock, currentBlock int64) [
 
 	for i := lastParsedBlock + 1; i <= currentBlock; i++ {
 		wg.Add(1)
+		time.Sleep(params.FetchBlocksTimeout)
 		go func(i int64, wg *sync.WaitGroup) {
 			defer wg.Done()
-			err := fetchBlock(api, i, blocksChan)
+			err := fetchBlock(params.Api, i, blocksChan)
 			if err != nil {
 				errorsChan <- err
 				return
@@ -174,6 +175,9 @@ func SaveLastParsedBlock(params Params, blocks []blockatlas.Block) error {
 	})
 
 	lastBlockNumber := blocks[len(blocks)-1].Number
+	if lastBlockNumber <= 0 {
+		return errors.E(fmt.Sprintf("Parser of %s failed to save last block, lastBlockNumber <= 0", params.Api.Coin().Handle))
+	}
 	err := params.Database.SetLastParsedBlockNumber(params.Api.Coin().ID, lastBlockNumber)
 	if err != nil {
 		return err

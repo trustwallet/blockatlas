@@ -18,7 +18,6 @@ const tokenSrc = `
 }`
 
 type testToken struct {
-	name        string
 	apiResponse string
 	expected    *blockatlas.Token
 	coin        int

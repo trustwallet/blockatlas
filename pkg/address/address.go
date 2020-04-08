@@ -5,11 +5,10 @@ import (
 	"encoding/hex"
 	"github.com/mr-tron/base58"
 	"github.com/trustwallet/blockatlas/pkg/errors"
+	"github.com/trustwallet/blockatlas/pkg/logger"
 	"golang.org/x/crypto/sha3"
 	"strings"
 )
-
-const ethereumAddressLength = 40
 
 // Decode decodes a hex string with 0x prefix.
 func Remove0x(input string) string {
@@ -23,7 +22,10 @@ func Remove0x(input string) string {
 func EIP55Checksum(unchecksummed string) string {
 	v := []byte(Remove0x(strings.ToLower(unchecksummed)))
 	sha := sha3.NewLegacyKeccak256()
-	sha.Write(v)
+	_, err := sha.Write(v)
+	if err != nil {
+		logger.Error(err)
+	}
 	hash := sha.Sum(nil)
 
 	result := v

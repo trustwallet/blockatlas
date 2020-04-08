@@ -17,8 +17,6 @@ platform: all
 
 # The transaction watcher
 observer:
-  auth: test
-  # Don't request blocks older than this
   backlog: 3h
   # Don't request more than N blocks at once
   backlog_max_blocks: 200
@@ -33,8 +31,8 @@ observer:
     consumer:
       prefetch_count: 10
 
-storage:
-  redis: redis://localhost:6379
+postgres:
+  uri: postgresql://user:pass@localhost/my_db?sslmode=disable
 
 # [BNB] Binance DEX: https://wallet.binance.org
 #       Binance Chain: https://explorer.binance.org

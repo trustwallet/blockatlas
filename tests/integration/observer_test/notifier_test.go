@@ -60,8 +60,8 @@ func TestNotifier(t *testing.T) {
 }
 
 func ConsumerToTestTransactions(delivery amqp.Delivery, t *testing.T) {
-	var event notifier.DispatchEvent
-	if err := json.Unmarshal(delivery.Body, &event); err != nil {
+	var notifications []notifier.TransactionNotification
+	if err := json.Unmarshal(delivery.Body, &notifications); err != nil {
 		assert.Nil(t, err)
 		return
 	}
@@ -80,7 +80,7 @@ func ConsumerToTestTransactions(delivery amqp.Delivery, t *testing.T) {
 		To:       "tbnb12hlquylu78cjylk5zshxpdj6hf3t0tahwjt3ex",
 	}
 
-	assert.Equal(t, notifier.DispatchEvent{
+	assert.Equal(t, notifier.TransactionNotification{
 		Action: blockatlas.TxNativeTokenTransfer,
 		Result: &blockatlas.Tx{
 			Type:      blockatlas.TxNativeTokenTransfer,
@@ -97,7 +97,7 @@ func ConsumerToTestTransactions(delivery amqp.Delivery, t *testing.T) {
 			Meta:      &memo,
 		},
 		Id: 1,
-	}, event)
+	}, notifications[0])
 
 	return
 }

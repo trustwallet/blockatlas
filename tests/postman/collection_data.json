@@ -2,7 +2,7 @@
     {
         "coin": 60,
         "handler": "ethereum",
-        "address": "0x7d8bf18C7cE84b3E175b339c4Ca93aEd1dD166F1",
-        "collection": "0x35b7838dd7507ada69610397a85310ae0abd5034"
+        "address": "0x84E79D544B4b13bC3560069cfD56A9D5bbE7521d",
+        "collection": "unstoppable-domains"
     }
 ]

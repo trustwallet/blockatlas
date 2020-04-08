@@ -1,11 +1,20 @@
 package fio
 
-// ActionData (from get_actions)
-type ActionData struct {
+// ActionDataTransfer (from get_actions)
+type ActionDataTransfer struct {
 	From     string `json:"from"`
 	To       string `json:"to"`
 	Quantity string `json:"quantity"`
 	Memo     string `json:"memo"`
+}
+
+// ActionDataTrnsfiopubky (from get_actions)
+type ActionDataTrnsfiopubky struct {
+	PayeePublicKey string `json:"payee_public_key"`
+	Amount         int64  `json:"amount"`
+	MaxFee         int64  `json:"max_fee"`
+	Actor          string `json:"actor"`
+	TpID           string `json:"tpid"`
 }
 
 // ActionAct (from get_actions)
@@ -23,16 +32,19 @@ type ActionTrace struct {
 
 // Action (from get_actions)
 type Action struct {
+	ActionSeq   uint64      `json:"account_action_seq"`
 	BlockNum    uint64      `json:"block_num"`
 	BlockTime   string      `json:"block_time"`
 	ActionTrace ActionTrace `json:"action_trace"`
 }
 
 // GetActionsRequest request struct for get_actions
+// see https://github.com/EOSIO/eos/blob/master/plugins/history_plugin/include/eosio/history_plugin/history_plugin.hpp
 type GetActionsRequest struct {
 	AccountName string `json:"account_name"`
-	// pos, offset
-	Sort string `json:"sort"` // desc
+	Pos         int32  `json:"pos"`
+	Offset      int32  `json:"offset"`
+	Sort        string `json:"sort"` // desc
 }
 
 // GetActionsResponse request struct for get_actions

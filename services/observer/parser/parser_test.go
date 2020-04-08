@@ -38,32 +38,22 @@ var (
 			},
 		},
 	}
-
-	txs = blockatlas.Txs{
-		{
-			ID:     "95CF63FAA27579A9B6AF84EF8B2DFEAC29627479E9C98E7F5AE4535E213FA4C9",
-			Coin:   coin.BNB,
-			From:   "tbnb1ttyn4csghfgyxreu7lmdu3lcplhqhxtzced45a",
-			To:     "tbnb12hlquylu78cjylk5zshxpdj6hf3t0tahwjt3ex",
-			Fee:    "125000",
-			Date:   1555117625,
-			Block:  7928667,
-			Status: blockatlas.StatusCompleted,
-			Memo:   "test",
-			Meta: blockatlas.NativeTokenTransfer{
-				TokenID:  "YLC-D8B",
-				Symbol:   "YLC",
-				Value:    "210572645",
-				Decimals: 8,
-				From:     "tbnb1ttyn4csghfgyxreu7lmdu3lcplhqhxtzced45a",
-				To:       "tbnb12hlquylu78cjylk5zshxpdj6hf3t0tahwjt3ex",
-			},
-		},
-	}
 )
 
 func TestFetchBlocks(t *testing.T) {
-	blocks := FetchBlocks(getMockedBlockAPI(), 0, 100)
+	params := Params{
+		Ctx:                   nil,
+		Api:                   getMockedBlockAPI(),
+		Queue:                 "",
+		ParsingBlocksInterval: 0,
+		FetchBlocksTimeout:    0,
+		BacklogCount:          0,
+		MaxBacklogBlocks:      0,
+		StopChannel:           nil,
+		TxBatchLimit:          0,
+		Database:              nil,
+	}
+	blocks := FetchBlocks(params, 0, 100)
 	assert.Equal(t, len(blocks), 100)
 }
 

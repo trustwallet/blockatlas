@@ -1,5 +1,5 @@
 /// FIO RPC API Mock, history API
-/// curl -H "Content-Type: application/json" -d '{"account_name": "ezsmbcy2opod"}' https://fio.eosphere.io/v1/history/get_actions
+/// curl -H "Content-Type: application/json" -d '{"account_name": "ezsmbcy2opod"}' https://fio.greymass.com/v1/history/get_actions
 /// curl -H "Content-Type: application/json" -d '{"account_name": "ezsmbcy2opod"}' http://localhost:3000/fio-api/v1/history/get_actions
 /// curl "http://localhost:8420/v1/fio/FIO7Q3XfQ2ocGP1zYst6Sfx5qrsiZ865Cu8So2atrub9JN94so7gt"
 

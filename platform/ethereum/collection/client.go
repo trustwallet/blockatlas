@@ -22,7 +22,19 @@ func (c Client) GetCollections(owner string) (page []Collection, err error) {
 	return
 }
 
-func (c Client) GetCollectibles(owner string, collectibleID string) (*Collection, []Collectible, error) {
+func (c Client) GetCollectibles(owner string, collectibleID string) ([]Collectible, error) {
+	query := url.Values{
+		"owner":      {owner},
+		"collection": {collectibleID},
+		"limit":      {strconv.Itoa(300)},
+	}
+
+	var page CollectiblePage
+	err := c.Get(&page, "api/v1/assets", query)
+	return page.Collectibles, err
+}
+
+func (c Client) GetCollectiblesV3(owner string, collectibleID string) (*Collection, []Collectible, error) {
 	collections, err := c.GetCollections(owner)
 	if err != nil {
 		return nil, nil, err
@@ -43,18 +55,6 @@ func (c Client) GetCollectibles(owner string, collectibleID string) (*Collection
 	var page CollectiblePage
 	err = c.Get(&page, "api/v1/assets", query)
 	return collection, page.Collectibles, err
-}
-
-func (c Client) GetCollectiblesV4(owner string, collectibleID string) ([]Collectible, error) {
-	query := url.Values{
-		"owner":      {owner},
-		"collection": {collectibleID},
-		"limit":      {strconv.Itoa(300)},
-	}
-
-	var page CollectiblePage
-	err := c.Get(&page, "api/v1/assets", query)
-	return page.Collectibles, err
 }
 
 func SearchCollection(collections []Collection, collectibleID string) *Collection {
