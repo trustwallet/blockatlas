@@ -149,7 +149,7 @@ func generateKey(c *gin.Context) string {
 	return base64.URLEncoding.EncodeToString(hash[:])
 }
 
-// CacheMiddleware encapsulates a gin handler function and caches the response with an expiration time.
+// CacheMiddleware encapsulates a gin handler function and caches the model with an expiration time.
 func CacheMiddleware(expiration time.Duration, handle gin.HandlerFunc) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		defer c.Next()
