@@ -68,7 +68,7 @@ func TestCachePageExpire(t *testing.T) {
 func TestCacheControl(t *testing.T) {
 	router := gin.New()
 	router.GET("/cache_ping", CacheMiddleware(time.Second*30, func(c *gin.Context) {
-		ginutils.RenderSuccess(c, "pong "+fmt.Sprint(time.Now().UnixNano()))
+		c.JSON(200, "pong "+fmt.Sprint(time.Now().UnixNano()))
 	}))
 
 	w1 := performRequest("GET", "/cache_ping", router)
