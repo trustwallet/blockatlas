@@ -120,21 +120,21 @@ func (mc *memCache) setCache(k string, x interface{}, d time.Duration) {
 	memoryCache.cache.Set(k, b, d)
 }
 
-func (mc *memCache) getCache(key string) (cacheResponse, time.Time, error) {
+func (mc *memCache) getCache(key string) (cacheResponse, error) {
 	var result cacheResponse
-	c, exp, ok := mc.cache.GetWithExpiration(key)
+	c, ok := mc.cache.Get(key)
 	if !ok {
-		return result, time.Time{}, fmt.Errorf("gin-cache: invalid cache key %s", key)
+		return result, fmt.Errorf("gin-cache: invalid cache key %s", key)
 	}
 	r, ok := c.([]byte)
 	if !ok {
-		return result, time.Time{}, errors.E("validator cache: failed to cast cache to bytes")
+		return result, errors.E("validator cache: failed to cast cache to bytes")
 	}
 	err := json.Unmarshal(r, &result)
 	if err != nil {
-		return result, time.Time{}, errors.E(err, "not found")
+		return result, errors.E(err, "not found")
 	}
-	return result, exp, nil
+	return result, nil
 }
 
 func generateKey(c *gin.Context) string {
@@ -154,12 +154,12 @@ func CacheMiddleware(expiration time.Duration, handle gin.HandlerFunc) gin.Handl
 	return func(c *gin.Context) {
 		defer c.Next()
 		key := generateKey(c)
-		mc, exp, err := memoryCache.getCache(key)
+		cacheControlValue := uint(expiration.Seconds())
+		mc, err := memoryCache.getCache(key)
 		if err != nil || mc.Data == nil {
 			writer := newCachedWriter(expiration, c.Writer, key)
 
-			expForSet := uint(expiration.Seconds())
-			writer.Header().Set("Cache-Control", fmt.Sprintf("max-age=%d", expForSet))
+			writer.Header().Set("Cache-Control", fmt.Sprintf("max-age=%d", cacheControlValue))
 
 			c.Writer = writer
 			handle(c)
@@ -176,13 +176,7 @@ func CacheMiddleware(expiration time.Duration, handle gin.HandlerFunc) gin.Handl
 			}
 		}
 
-		expCacheTime := (exp.UnixNano() - time.Now().UnixNano()) / int64(time.Second)
-
-		if expCacheTime < 0 {
-			logger.Error("Invalid expiration time")
-		} else {
-			c.Writer.Header().Set("Cache-Control", fmt.Sprintf("max-age=%d", expCacheTime))
-		}
+		c.Writer.Header().Set("Cache-Control", fmt.Sprintf("max-age=%d", cacheControlValue))
 
 		_, err = c.Writer.Write(mc.Data)
 		if err != nil {

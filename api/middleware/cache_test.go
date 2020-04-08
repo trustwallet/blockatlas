@@ -78,7 +78,7 @@ func TestCacheControl(t *testing.T) {
 	w2 := performRequest("GET", "/cache_ping_control", router)
 	w2CacheControl := w2.Header().Get("Cache-Control")
 
-	assert.NotEqual(t, w1CacheControl, w2CacheControl)
+	assert.Equal(t, w1CacheControl, w2CacheControl)
 	assert.Equal(t, w1.Body.String(), w2.Body.String())
 
 	assert.Equal(t, http.StatusOK, w1.Code)
