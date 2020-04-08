@@ -26,8 +26,7 @@ func init() {
 
 type memCache struct {
 	sync.RWMutex
-	creationTime time.Duration
-	cache        *cache.Cache
+	cache *cache.Cache
 }
 
 type cacheResponse struct {
@@ -161,8 +160,8 @@ func CacheMiddleware(expiration time.Duration, handle gin.HandlerFunc) gin.Handl
 		if err != nil || mc.Data == nil {
 			writer := newCachedWriter(expiration, c.Writer, key)
 
-			expirationSeconds := uint(expiration.Seconds())
-			writer.Header().Set("Cache-Control", fmt.Sprintf("max-age=%d", expirationSeconds))
+			expForSet := uint(expiration.Seconds())
+			writer.Header().Set("Cache-Control", fmt.Sprintf("max-age=%d", expForSet))
 
 			c.Writer = writer
 			handle(c)
@@ -179,12 +178,12 @@ func CacheMiddleware(expiration time.Duration, handle gin.HandlerFunc) gin.Handl
 			}
 		}
 
-		expTime := (exp.UnixNano() - time.Now().UnixNano()) / int64(time.Second)
+		expCacheTime := (exp.UnixNano() - time.Now().UnixNano()) / int64(time.Second)
 
-		if expTime < 0 {
+		if expCacheTime < 0 {
 			logger.Error("Invalid expiration time")
 		} else {
-			c.Writer.Header().Set("Cache-Control", fmt.Sprintf("max-age=%d", expTime))
+			c.Writer.Header().Set("Cache-Control", fmt.Sprintf("max-age=%d", expCacheTime))
 		}
 
 		_, err = c.Writer.Write(mc.Data)
