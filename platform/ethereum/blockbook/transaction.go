@@ -45,7 +45,7 @@ func normalizeTx(srcTx *Transaction, coinIndex uint) blockatlas.Tx {
 		To:       srcTx.ToAddress(),
 		Fee:      blockatlas.Amount(srcTx.Fees),
 		Date:     srcTx.BlockTime,
-		Block:    srcTx.BlockHeight,
+		Block:    normalizeBlockHeight(srcTx.BlockHeight),
 		Status:   status,
 		Error:    errReason,
 		Sequence: srcTx.EthereumSpecific.Nonce,
@@ -59,6 +59,13 @@ func normalizeTxWithAddress(srcTx *Transaction, address, token string, coinIndex
 	normalized.Direction = GetDirection(address, normalized.From, normalized.To)
 	FillMetaWithAddress(&normalized, srcTx, address, token, coinIndex)
 	return normalized
+}
+
+func normalizeBlockHeight(height int64) uint64 {
+	if height < 0 {
+		return uint64(0)
+	}
+	return uint64(height)
 }
 
 func FillMeta(final *blockatlas.Tx, tx *Transaction, coinIndex uint) {
@@ -116,7 +123,8 @@ func FillMetaWithAddress(final *blockatlas.Tx, tx *Transaction, address, token s
 }
 
 func fillMeta(final *blockatlas.Tx, tx *Transaction, coinIndex uint) {
-	if tx.EthereumSpecific.GasUsed.Uint64() == 21000 {
+	gasUsed := tx.EthereumSpecific.GasUsed
+	if gasUsed != nil && gasUsed.Int64() == 21000 {
 		final.Meta = blockatlas.Transfer{
 			Value:    blockatlas.Amount(tx.Value),
 			Symbol:   coin.Coins[coinIndex].Symbol,

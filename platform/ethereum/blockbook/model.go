@@ -32,7 +32,7 @@ type Transaction struct {
 	TxID             string            `json:"txid"`
 	Vin              []Output          `json:"vin"`
 	Vout             []Output          `json:"vout"`
-	BlockHeight      uint64            `json:"blockHeight"`
+	BlockHeight      int64             `json:"blockHeight"`
 	BlockTime        int64             `json:"blockTime"`
 	Value            string            `json:"value"`
 	Fees             string            `json:"fees"`
