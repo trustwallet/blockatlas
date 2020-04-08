@@ -1,4 +1,4 @@
-package gincache
+package middleware
 
 import (
 	"bytes"
@@ -42,8 +42,6 @@ type cachedWriter struct {
 	expire  time.Duration
 	key     string
 }
-
-var _ gin.ResponseWriter = &cachedWriter{}
 
 func newCachedWriter(expire time.Duration, writer gin.ResponseWriter, key string) *cachedWriter {
 	return &cachedWriter{writer, 0, false, expire, key}
@@ -151,7 +149,7 @@ func generateKey(c *gin.Context) string {
 	return base64.URLEncoding.EncodeToString(hash[:])
 }
 
-// CacheMiddleware encapsulates a gin handler function and caches the response with an expiration time.
+// CacheMiddleware encapsulates a gin handler function and caches the model with an expiration time.
 func CacheMiddleware(expiration time.Duration, handle gin.HandlerFunc) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		defer c.Next()
