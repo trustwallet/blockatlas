@@ -4,9 +4,9 @@ import (
 	"flag"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/trustwallet/blockatlas/api/middleware"
 	"github.com/trustwallet/blockatlas/config"
 	"github.com/trustwallet/blockatlas/mq"
-	"github.com/trustwallet/blockatlas/pkg/ginutils"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 
 	"path/filepath"
@@ -43,11 +43,11 @@ func InitConfig(confPath string) {
 func InitEngine(handler *gin.HandlerFunc, ginMode string) *gin.Engine {
 	gin.SetMode(ginMode)
 	engine := gin.New()
-	engine.Use(ginutils.CheckReverseProxy, *handler)
-	engine.Use(ginutils.CORSMiddleware())
+	engine.Use(middleware.CheckReverseProxy, *handler)
+	engine.Use(middleware.CORSMiddleware())
 	engine.Use(gin.Logger())
 
-	engine.OPTIONS("/*path", ginutils.CORSMiddleware())
+	engine.OPTIONS("/*path", middleware.CORSMiddleware())
 
 	return engine
 }
