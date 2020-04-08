@@ -1,33 +1,20 @@
 package api
 
-const (
-	Default ErrorCode = iota
-	InvalidQuery
-	RequestedDataNotFound
-	InternalFail
+import (
+	"github.com/gin-gonic/gin"
+	"github.com/trustwallet/blockatlas/platform"
 )
 
-type (
-	ErrorResponse struct {
-		Error ErrorDetails `json:"error"`
-	}
-	ErrorDetails struct {
-		Message string    `json:"message"`
-		Code    ErrorCode `json:"code"`
+func SetupPlatformAPI(root gin.IRouter) {
+	for _, api := range platform.Platforms {
+		RegisterCollectionsAPI(root, api)
+		RegisterTransactionsAPI(root, api)
+		RegisterCustomAPI(root, api)
+		RegisterTokensAPI(root, api)
+		RegisterStakeAPI(root, api)
 	}
 
-	ErrorCode int
-)
-
-func CreateErrorResponse(code ErrorCode, err error) ErrorResponse {
-	var message string
-	if err != nil {
-		message = err.Error()
-	} else {
-		message = ""
-	}
-	return ErrorResponse{Error: ErrorDetails{
-		Message: message,
-		Code:    code,
-	}}
+	RegisterBatchAPI(root)
+	RegisterDomainAPI(root)
+	RegisterBasicAPI(root)
 }
