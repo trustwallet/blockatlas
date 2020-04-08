@@ -64,18 +64,16 @@ func normalizeTxWithAddress(srcTx *Transaction, address, token string, coinIndex
 func FillMeta(final *blockatlas.Tx, tx *Transaction, coinIndex uint) {
 	if len(tx.TokenTransfers) == 1 {
 		transfer := tx.TokenTransfers[0]
-		if transfer.Token == tx.FromAddress() && transfer.Token == tx.ToAddress() {
-			final.Meta = blockatlas.TokenTransfer{
-				Name:     transfer.Name,
-				Symbol:   transfer.Symbol,
-				TokenID:  transfer.Token,
-				Decimals: transfer.Decimals,
-				Value:    blockatlas.Amount(transfer.Value),
-				From:     transfer.From,
-				To:       transfer.To,
-			}
-			return
+		final.Meta = blockatlas.TokenTransfer{
+			Name:     transfer.Name,
+			Symbol:   transfer.Symbol,
+			TokenID:  transfer.Token,
+			Decimals: transfer.Decimals,
+			Value:    blockatlas.Amount(transfer.Value),
+			From:     transfer.From,
+			To:       transfer.To,
 		}
+		return
 	}
 	fillMeta(final, tx, coinIndex)
 }
