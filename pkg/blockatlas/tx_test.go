@@ -525,4 +525,8 @@ func TestTx_GetTransactionDirection(t *testing.T) {
 
 	tx.Direction = tx.GetTransactionDirection("0x38d45371993eEc84f38FEDf93C646aA2D2267CEA")
 	assert.Equal(t, Direction("incoming"), tx.Direction)
+
+	tx.Direction = DirectionSelf
+	tx.Direction = tx.GetTransactionDirection("0x38d45371993eEc84f38FEDf93C646aA2D2267CEA")
+	assert.Equal(t, Direction("yourself"), tx.Direction)
 }
