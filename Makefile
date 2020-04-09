@@ -214,7 +214,7 @@ endif
 
 go-compile: go-get go-build
 
-go-build: go-build-platform-api go-build-observer-notifier -observer-parser -observer-subscriber -swagger-api
+go-build: go-build-platform-api go-build-observer-notifier go-build-observer-parser go-build-observer-subscriber go-build-swagger-api
 
 go-build-platform-api:
 	@echo "  >  Building platform_api binary..."
