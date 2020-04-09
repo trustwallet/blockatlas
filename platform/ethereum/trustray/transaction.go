@@ -30,8 +30,7 @@ func normalizePage(srcPage *Page, address string, coinIndex uint) blockatlas.TxP
 		txs = AppendTxs(txs, &srcTx, coinIndex)
 		txs[i].Direction = txs[i].GetTransactionDirection(address)
 	}
-	page := blockatlas.TxPage(txs)
-	return page
+	return blockatlas.TxPage(txs)
 }
 
 func AppendTxs(in []blockatlas.Tx, srcTx *Doc, coinIndex uint) (out []blockatlas.Tx) {
@@ -85,8 +84,11 @@ func AppendTxs(in []blockatlas.Tx, srcTx *Doc, coinIndex uint) (out []blockatlas
 }
 
 func extractBase(srcTx *Doc, coinIndex uint) (base blockatlas.Tx, ok bool) {
-	var status blockatlas.Status
-	var errReason string
+	var (
+		status    blockatlas.Status
+		errReason string
+	)
+
 	if srcTx.Error == "" {
 		status = blockatlas.StatusCompleted
 	} else {

@@ -14,7 +14,7 @@ func (c *Client) GetTokenList(address string, coinIndex uint) (blockatlas.TokenP
 }
 
 func NormalizeTokens(srcTokens []Token, coinIndex uint) []blockatlas.Token {
-	tokenPage := make([]blockatlas.Token, 0)
+	tokenPage := make([]blockatlas.Token, 0, len(srcTokens))
 	for _, srcToken := range srcTokens {
 		token := NormalizeToken(&srcToken, coinIndex)
 		tokenPage = append(tokenPage, token)

@@ -25,7 +25,7 @@ func (c *Client) GetTokenTxs(address, token string, coinIndex uint) (blockatlas.
 func NormalizePage(srcPage *Page, address, token string, coinIndex uint) blockatlas.TxPage {
 	var txs []blockatlas.Tx
 	normalizedAddr := Address.EIP55Checksum(address)
-	normalizedToken := ""
+	var normalizedToken string
 	if token != "" {
 		normalizedToken = Address.EIP55Checksum(token)
 	}

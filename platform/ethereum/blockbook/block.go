@@ -12,7 +12,7 @@ func (c *Client) GetBlockByNumber(num int64, coinIndex uint) (*blockatlas.Block,
 		return nil, err
 	}
 
-	var txs []blockatlas.Tx
+	txs := make([]blockatlas.Tx, 0, len(block.Transactions))
 	for _, srcTx := range block.Transactions {
 		tx := normalizeTx(&srcTx, coinIndex)
 		txs = append(txs, tx)
