@@ -170,15 +170,3 @@ func (balance *Balance) isAllZeroBalance() bool {
 func (e *Error) Error() string {
 	return fmt.Sprintf("%d: %s", e.Code, e.Message)
 }
-
-// Add test
-func (tx *Tx) Direction(address string) blockatlas.Direction {
-	if tx.FromAddr == address && tx.ToAddr == address {
-		return blockatlas.DirectionSelf
-	}
-	if tx.FromAddr == address && tx.ToAddr != address {
-		return blockatlas.DirectionOutgoing
-	}
-
-	return blockatlas.DirectionIncoming
-}

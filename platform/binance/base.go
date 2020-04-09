@@ -13,7 +13,7 @@ func Init(api string) *Platform {
 	p := &Platform{
 		client: Client{blockatlas.InitClient(api)},
 	}
-	p.client.ErrorHandler = getHTTPError
+	p.client.ErrorHandler = handleHttpError
 	return p
 }
 

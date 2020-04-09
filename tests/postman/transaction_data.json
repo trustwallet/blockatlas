@@ -85,7 +85,7 @@
     },
     {
         "handler": "binance",
-        "address": "bnb1mnf0g6zhy2rpy63w8ryc6yp77s0fmqfyzjtkvd",
+        "address": "bnb1jeu6gscugy6l2wyatxthkh2hmer4hzevgcmf0q",
         "expectedTxNum": 1,
         "expectedTxId": "91AFC91FCEFC1C556A79A25F640622F379F75F2CD23FD2A806B27BE049EFA828"
     },

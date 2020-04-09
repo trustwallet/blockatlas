@@ -56,24 +56,24 @@ func NormalizeTxs(srcTxs []Tx, address string) (txs []blockatlas.Tx) {
 
 // Converts a Binance transaction into the generic model
 func NormalizeTx(t Tx, address string) (blockatlas.TxPage, bool) {
-	tBase := blockatlas.Tx{
-		ID:        t.TxHash,
-		Coin:      coin.BNB,
-		From:      t.FromAddr,
-		To:        t.ToAddr,
-		Fee:       blockatlas.Amount(t.getFee()),
-		Date:      t.blockTimestamp(),
-		Block:     t.BlockHeight,
-		Status:    t.getStatus(),
-		Error:     t.getError(),
-		Sequence:  t.Sequence,
-		Direction: t.Direction(address),
-		Memo:      t.Memo,
+	rawTx := blockatlas.Tx{
+		ID:       t.TxHash,
+		Coin:     coin.BNB,
+		From:     t.FromAddr,
+		To:       t.ToAddr,
+		Fee:      blockatlas.Amount(t.getFee()),
+		Date:     t.blockTimestamp(),
+		Block:    t.BlockHeight,
+		Status:   t.getStatus(),
+		Error:    t.getError(),
+		Sequence: t.Sequence,
+		Memo:     t.Memo,
 	}
+	rawTx.Direction = rawTx.GetTransactionDirection(address)
 
 	switch t.Type {
 	case TxTransfer:
-		normalized, ok := normalizeTransfer(tBase, t)
+		normalized, ok := normalizeTransfer(rawTx, t)
 		if !ok {
 			return blockatlas.TxPage{}, false
 		}
