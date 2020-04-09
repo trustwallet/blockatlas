@@ -87,7 +87,7 @@
         "handler": "binance",
         "address": "bnb1mnf0g6zhy2rpy63w8ryc6yp77s0fmqfyzjtkvd",
         "expectedTxNum": 1,
-        "expectedTxId": "DDA939C475755B2A00123CDA37A5EC442F502EA2983014D04F647C3CB9FB57A0"
+        "expectedTxId": "91AFC91FCEFC1C556A79A25F640622F379F75F2CD23FD2A806B27BE049EFA828"
     },
     {
         "handler": "tezos",
