@@ -17,7 +17,7 @@ type Client struct {
 }
 
 const (
-	TokensLimit       = "1000"
+	TokensLimit = 1000
 )
 
 // Fetch runtime information about the node
@@ -82,7 +82,7 @@ func (c *Client) GetAccountMetadata(address string) (*Account, error) {
 // Gets a list of tokens that have been issued.
 func (c *Client) GetTokens() (*TokenList, error) {
 	var (
-		query = url.Values{"limit": {TokensLimit}}
+		query = url.Values{"limit": {string(TokensLimit)}}
 		stp   = new(TokenList)
 	)
 
