@@ -9,4 +9,10 @@ coverage:
         # basic
         target: 30%
 
-
+  ignore:
+    - "mock"
+    - "config"
+    - "tests"
+    - "services"
+    - "scripts"
+    - "docs"
