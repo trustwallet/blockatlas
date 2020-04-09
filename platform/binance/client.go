@@ -44,7 +44,7 @@ func (c *Client) GetAddressAssetTransactions(address, token, txType string) ([]T
 	endTime := strconv.FormatInt(time.Now().AddDate(0, -3, 0).Unix()*1000, 10)
 	query := url.Values{
 		"address":   {address},
-		"limit":     {string(blockatlas.TxPerPage)},
+		"limit":     {strconv.Itoa(blockatlas.TxPerPage)},
 		"startTime": {endTime},
 		"txType":    {txType},
 	}
