@@ -18,7 +18,6 @@ type Client struct {
 
 const (
 	TokensLimit       = "1000"
-	TransactionsLimit = "25"
 )
 
 // Fetch runtime information about the node
@@ -45,7 +44,7 @@ func (c *Client) GetAddressAssetTransactions(address, token, txType string) ([]T
 	endTime := strconv.FormatInt(time.Now().AddDate(0, -3, 0).Unix()*1000, 10)
 	query := url.Values{
 		"address":   {address},
-		"limit":     {TransactionsLimit},
+		"limit":     {string(blockatlas.TxPerPage)},
 		"startTime": {endTime},
 		"txType":    {txType},
 	}
