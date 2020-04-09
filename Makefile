@@ -243,7 +243,7 @@ go-clean:
 
 go-test:
 	@echo "  >  Running unit tests"
-	GOBIN=$(GOBIN) go test -cover -race -v ./...
+	GOBIN=$(GOBIN) go test -cover -race -coverprofile=coverage.txt -covermode=atomic -v ./...
 
 go-integration:
 	@echo "  >  Running integration tests"
