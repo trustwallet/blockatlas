@@ -12,8 +12,6 @@ import (
 	"time"
 )
 
-// TODO Headers + rate limiting
-
 type Client struct {
 	blockatlas.Request
 }
