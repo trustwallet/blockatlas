@@ -31,6 +31,24 @@ func (p *Platform) Lookup(coins []uint64, name string) ([]blockatlas.Resolved, e
 	return result, nil
 }
 
+func (p *Platform) ReverseLookup(coin uint64, address string) ([]blockatlas.Resolved, error) {
+	var results []blockatlas.Resolved
+	node, err := ReverseNameHash(address)
+	if err != nil {
+		return results, errors.E(err, "name hash failed")
+	}
+	resolver, err := p.ens.Resolver(node[:])
+	if err != nil {
+		return results, errors.E(err, "query resolver failed")
+	}
+	result, err := p.ens.ReverseName("0x"+resolver, node[:])
+	if err != nil {
+		return results, errors.E(err, "reverse name err")
+	}
+	results = append(results, blockatlas.Resolved{Coin: coin, Result: result})
+	return results, nil
+}
+
 func (p *Platform) addressForCoin(resovler string, node []byte, coin uint64) (string, error) {
 	result, err := p.ens.Addr(resovler, node, coin)
 	if err != nil {

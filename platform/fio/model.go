@@ -64,3 +64,18 @@ type GetPubAddressResponse struct {
 	PublicAddress string `json:"public_address"`
 	Message       string `json:"message"`
 }
+
+// GetFIONameRequest struct for get_fio_names
+type GetFIONameRequest struct {
+	PublicKey string `json:"fio_public_key"`
+}
+
+// GetFIONameResponse struct for get_fio_names
+type GetFIONameResponse struct {
+	FioAddresses []FioAddresses `json:"fio_addresses"`
+}
+
+type FioAddresses struct {
+	FioAddress string `json:"fio_address"`
+	Expiration string `json:"expiration"`
+}

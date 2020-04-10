@@ -1,12 +1,13 @@
 package endpoint
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/trustwallet/blockatlas/api/model"
-	"github.com/trustwallet/blockatlas/services/domains"
 	"net/http"
 	"strconv"
 	"strings"
+
+	"github.com/gin-gonic/gin"
+	"github.com/trustwallet/blockatlas/api/model"
+	"github.com/trustwallet/blockatlas/services/domains"
 )
 
 // @Summary Lookup .eth / .zil addresses
@@ -67,6 +68,36 @@ func GetAddressByCoinAndDomainBatch(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, &result)
+}
+
+// @Summary Reverse lookup domain from address
+// @ID reverse
+// @Description Lookup ENS/FIO domain from address
+// @Produce json
+// @Tags Naming
+// @Param address query string empty "string address"
+// @Param coin query string 60 "string coin"
+// @Success 200 {array} blockatlas.Resolved
+// @Failure 500 {object} middleware.ApiError
+// @Router /ns/reverse [get]
+func GetDomainByAddressAndCoin(c *gin.Context) {
+	address := c.Query("address")
+	coinQuery := c.Query("coin")
+	coin, err := strconv.ParseUint(coinQuery, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, model.CreateErrorResponse(model.InvalidQuery, err))
+		return
+	}
+	result, err := domains.HandleReverseLookup(address, []uint64{coin})
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, model.CreateErrorResponse(model.InternalFail, err))
+		return
+	}
+	if len(result) == 0 {
+		c.JSON(http.StatusNotFound, model.CreateErrorResponse(model.RequestedDataNotFound, err))
+		return
+	}
+	c.JSON(http.StatusOK, result)
 }
 
 func sliceAtoi(sa []string) ([]uint64, error) {

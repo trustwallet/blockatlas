@@ -43,6 +43,14 @@ func encodeLegacyAddr(node []byte) []byte {
 	return data
 }
 
+func encodeName(node []byte) []byte {
+	data := make([]byte, 0, 36)
+	signature := encodeFunc("name(bytes32)")
+	data = append(data, signature...)
+	data = append(data, node...)
+	return data
+}
+
 func encodeFunc(fn string) []byte {
 	data := make([]byte, 0, 32)
 	sha := sha3.NewLegacyKeccak256()

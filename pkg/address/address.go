@@ -3,19 +3,17 @@ package address
 import (
 	"crypto/sha256"
 	"encoding/hex"
+	"strings"
+
 	"github.com/mr-tron/base58"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"golang.org/x/crypto/sha3"
-	"strings"
 )
 
 // Decode decodes a hex string with 0x prefix.
 func Remove0x(input string) string {
-	if strings.HasPrefix(input, "0x") {
-		return input[2:]
-	}
-	return input
+	return strings.TrimPrefix(input, "0x")
 }
 
 // Hex returns an EIP55-compliant hex string representation of the address.

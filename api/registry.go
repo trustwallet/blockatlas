@@ -1,13 +1,14 @@
 package api
 
 import (
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"github.com/trustwallet/blockatlas/api/endpoint"
 	"github.com/trustwallet/blockatlas/api/middleware"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/platform"
-	"time"
 )
 
 func RegisterCollectionsAPI(root gin.IRouter, api blockatlas.Platform) {
@@ -104,6 +105,7 @@ func RegisterCustomAPI(root gin.IRouter, api blockatlas.Platform) {
 
 func RegisterDomainAPI(root gin.IRouter) {
 	root.GET("/ns/lookup", endpoint.GetAddressByCoinAndDomain)
+	root.GET("/ns/reverse", endpoint.GetDomainByAddressAndCoin)
 	root.GET("v2/ns/lookup", endpoint.GetAddressByCoinAndDomainBatch)
 }
 

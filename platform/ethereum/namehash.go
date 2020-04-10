@@ -71,6 +71,12 @@ func NameHash(name string) (hash [32]byte, err error) {
 	return
 }
 
+// ReverseNameHash generates a hash from a name for reverse ENS lookup
+func ReverseNameHash(name string) ([32]byte, error) {
+	name = strings.ToLower(strings.TrimPrefix(name, "0x"))
+	return NameHash(name + ".addr.reverse")
+}
+
 func nameHashPart(currentHash [32]byte, name string) (hash [32]byte, err error) {
 	sha := sha3.NewLegacyKeccak256()
 	if _, err = sha.Write(currentHash[:]); err != nil {

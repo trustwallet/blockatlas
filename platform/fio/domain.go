@@ -18,3 +18,15 @@ func (p *Platform) Lookup(coins []uint64, name string) ([]blockatlas.Resolved, e
 
 	return result, nil
 }
+
+func (p *Platform) ReverseLookup(coin uint64, publicKey string) ([]blockatlas.Resolved, error) {
+	var results []blockatlas.Resolved
+	addresses, err := p.client.lookupPublicKey(publicKey)
+	if err != nil {
+		return results, err
+	}
+	for _, address := range addresses {
+		results = append(results, blockatlas.Resolved{Coin: coin, Result: address})
+	}
+	return results, nil
+}

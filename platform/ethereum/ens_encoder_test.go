@@ -110,6 +110,29 @@ func Test_encodeLegacyAddr(t *testing.T) {
 	}
 }
 
+func Test_encodeName(t *testing.T) {
+	tests := []struct {
+		name    string
+		address string
+		want    string
+	}{
+		{
+			"Test encodeName",
+			"0xC36edF48e21cf395B206352A1819DE658fD7f988",
+			"691f34316bbbd375ff850b95ea6bdf3bb4df758b48bf45e4057cd991f5d78481b1c8d7c7",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			node, _ := ReverseNameHash(tt.address)
+			want, _ := hex.DecodeString(tt.want)
+			if got := encodeName(node[:]); !reflect.DeepEqual(got, want) {
+				t.Errorf("encodeName() = %v, want %v", hex.EncodeToString(got), tt.want)
+			}
+		})
+	}
+}
+
 func Test_encodeFunc(t *testing.T) {
 	tests := []struct {
 		name string

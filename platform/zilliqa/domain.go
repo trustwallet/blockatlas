@@ -21,3 +21,8 @@ func (p *Platform) Lookup(coins []uint64, name string) ([]blockatlas.Resolved, e
 	}
 	return result, nil
 }
+
+func (p *Platform) ReverseLookup(coin uint64, address string) ([]blockatlas.Resolved, error) {
+	// api not supported yet
+	return []blockatlas.Resolved{}, nil
+}

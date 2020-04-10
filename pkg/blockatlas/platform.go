@@ -70,6 +70,7 @@ type (
 	NamingServiceAPI interface {
 		Platform
 		Lookup(coins []uint64, name string) ([]Resolved, error)
+		ReverseLookup(coin uint64, address string) ([]Resolved, error)
 	}
 )
 

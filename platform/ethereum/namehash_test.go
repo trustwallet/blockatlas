@@ -88,3 +88,32 @@ func TestLabelHash(t *testing.T) {
 		}
 	}
 }
+
+func TestReverseNameHash(t *testing.T) {
+	tests := []struct {
+		input  string
+		output string
+		err    error
+	}{
+		{"0x5aAeb6053F3E94C9b9A09f33669435E7Ef1BeAed", "2103fd044150f573e47fcb48a7eedec6afd0911f9af1b0ff9167014ff22edd24", nil},
+	}
+
+	for _, tt := range tests {
+		output, err := ReverseNameHash(tt.input)
+		if tt.err == nil {
+			if err != nil {
+				t.Fatalf("unexpected error %v", err)
+			}
+			if tt.output != hex.EncodeToString(output[:]) {
+				t.Errorf("Failure: %v => %v (expected %v)\n", tt.input, hex.EncodeToString(output[:]), tt.output)
+			}
+		} else {
+			if err == nil {
+				t.Fatalf("missing expected error")
+			}
+			if tt.err.Error() != err.Error() {
+				t.Errorf("unexpected error value %v", err)
+			}
+		}
+	}
+}

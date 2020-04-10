@@ -74,6 +74,17 @@ func (c *RpcClient) LegacyAddr(resolver string, node []byte) (string, error) {
 	return address.EIP55Checksum(result[len(result)-40:]), nil
 }
 
+func (c *RpcClient) ReverseName(resolver string, node []byte) (string, error) {
+	data := encodeName(node)
+	params := c.toParams(resolver, data)
+	result, err := c.EthCall(params)
+	if err != nil {
+		return "", err
+	}
+	decoded := decodeBytesInHex(result)
+	return string(decoded), nil
+}
+
 func allZero(s string) bool {
 	for _, v := range s {
 		if v != '0' {

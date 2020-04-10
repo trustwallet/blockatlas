@@ -35,3 +35,16 @@ func (c *Client) lookupPubAddress(name string, coinSymbol string) (address strin
 	}
 	return res.PublicAddress, nil
 }
+
+func (c *Client) lookupPublicKey(publicKey string) (address []string, error error) {
+	var res GetFIONameResponse
+	addresses := make([]string, 0)
+	err := c.Post(&res, "v1/chain/get_fio_names", GetFIONameRequest{PublicKey: publicKey})
+	if err != nil {
+		return addresses, errors.E(err, "Error looking up FIO name", errors.Params{"publicKey": publicKey, "inner_error": err.Error()})
+	}
+	for _, address := range res.FioAddresses {
+		addresses = append(addresses, address.FioAddress)
+	}
+	return addresses, nil
+}

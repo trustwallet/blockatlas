@@ -54,6 +54,22 @@ func HandleLookup(name string, coins []uint64) ([]blockatlas.Resolved, error) {
 	return result, nil
 }
 
+func HandleReverseLookup(address string, coins []uint64) ([]blockatlas.Resolved, error) {
+	results := make([]blockatlas.Resolved, 0, len(coins))
+	for _, coin := range coins {
+		api, ok := platform.NamingAPIs[coin]
+		if !ok {
+			return nil, errors.E("platform not found", errors.Params{"address": address, "coins": coins})
+		}
+		result, err := api.ReverseLookup(coin, address)
+		if err != nil {
+			return nil, errors.E(err, "name format not recognized", errors.Params{"address": address, "coins": coins})
+		}
+		results = append(results, result...)
+	}
+	return results, nil
+}
+
 // Obtain tld from then name, e.g. ".ens" from "nick.ens"
 func getTLD(name string) (tld string, error error) {
 	// find last separator
