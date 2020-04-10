@@ -243,7 +243,7 @@ go-clean:
 
 go-test:
 	@echo "  >  Running unit tests"
-	GOBIN=$(GOBIN) go test -cover -race -v ./...
+	GOBIN=$(GOBIN) go test -cover -race -coverprofile=coverage.txt -covermode=atomic -v ./...
 
 go-integration:
 	@echo "  >  Running integration tests"
@@ -275,7 +275,7 @@ go-lint-install:
 
 go-lint:
 	@echo "  >  Running golint"
-	bin/golangci-lint run
+	bin/golangci-lint run --timeout=2m
 
 .PHONY: help
 all: help

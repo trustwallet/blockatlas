@@ -19,6 +19,7 @@ cmd/__debug_bin
 config_*.yml
 *.orig
 *~
+coverage.txt
 
 ### macOS ###
 *.DS_Store

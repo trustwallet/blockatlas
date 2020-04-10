@@ -2,7 +2,8 @@
 
 ![Go Version](https://img.shields.io/github/go-mod/go-version/TrustWallet/blockatlas)
 [![Build Status](https://dev.azure.com/TrustWallet/Trust%20BlockAtlas/_apis/build/status/TrustWallet.blockatlas?branchName=master)](https://dev.azure.com/TrustWallet/Trust%20BlockAtlas/_build/latest?definitionId=27&branchName=master)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/43834b0c94ad4f6088629aa3e3bb5e94)](https://www.codacy.com/app/TrustWallet/blockatlas?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=TrustWallet/blockatlas&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/f11889e08c604dd08c28b76c350a6c4f)](https://www.codacy.com/gh/trustwallet/blockatlas?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=trustwallet/blockatlas&amp;utm_campaign=Badge_Grade)
+[![codecov](https://codecov.io/gh/trustwallet/blockatlas/branch/master/graph/badge.svg)](https://codecov.io/gh/trustwallet/blockatlas)
 [![Go Report Card](https://goreportcard.com/badge/trustwallet/blockatlas)](https://goreportcard.com/report/TrustWallet/blockatlas)
 
 > BlockAtlas is a clean explorer API and transaction observer for cryptocurrencies.
