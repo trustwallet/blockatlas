@@ -46,7 +46,7 @@ func InitEngine(handler *gin.HandlerFunc, ginMode string) *gin.Engine {
 	engine.Use(middleware.CheckReverseProxy, *handler)
 	engine.Use(middleware.CORSMiddleware())
 	engine.Use(gin.Logger())
-
+	engine.Use(middleware.Prometheus())
 	engine.OPTIONS("/*path", middleware.CORSMiddleware())
 
 	return engine
