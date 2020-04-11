@@ -8,28 +8,28 @@ import (
 var memoryCache heightBlockMap
 
 func init() {
-	memoryCache.m = make(map[uint]int64)
+	memoryCache.m = make(map[string]int64)
 }
 
 type heightBlockMap struct {
-	m map[uint]int64
+	m map[string]int64
 	sync.RWMutex
 }
 
-func (hbm *heightBlockMap) SetHeight(coin uint, b int64) {
+func (hbm *heightBlockMap) SetHeight(coin string, b int64) {
 	hbm.Lock()
 	defer hbm.Unlock()
 	hbm.m[coin] = b
 }
 
-func (hbm *heightBlockMap) GetHeight(coin uint) (int64, bool) {
+func (hbm *heightBlockMap) GetHeight(coin string) (int64, bool) {
 	hbm.RLock()
 	defer hbm.RUnlock()
 	b, ok := hbm.m[coin]
 	return b, ok
 }
 
-func (i *Instance) GetLastParsedBlockNumber(coin uint) (int64, error) {
+func (i *Instance) GetLastParsedBlockNumber(coin string) (int64, error) {
 	height, ok := memoryCache.GetHeight(coin)
 	if ok {
 		return height, nil
@@ -41,7 +41,7 @@ func (i *Instance) GetLastParsedBlockNumber(coin uint) (int64, error) {
 	return tracker.Height, nil
 }
 
-func (i *Instance) SetLastParsedBlockNumber(coin uint, num int64) error {
+func (i *Instance) SetLastParsedBlockNumber(coin string, num int64) error {
 	memoryCache.SetHeight(coin, num)
 	tracker := models.Tracker{
 		Coin:   coin,

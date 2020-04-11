@@ -3,6 +3,7 @@ module github.com/trustwallet/blockatlas
 go 1.14
 
 require (
+	github.com/DATA-DOG/go-sqlmock v1.4.1
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751
 	github.com/btcsuite/btcutil v1.0.1
 	github.com/chenjiandongx/ginprom v0.0.0-20200410120253-7cfb22707fa6
