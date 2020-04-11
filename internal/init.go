@@ -3,6 +3,7 @@ package internal
 import (
 	"flag"
 	"fmt"
+	"github.com/Depado/ginprom"
 	"github.com/gin-gonic/gin"
 	"github.com/trustwallet/blockatlas/api/middleware"
 	"github.com/trustwallet/blockatlas/config"
@@ -47,6 +48,12 @@ func InitEngine(handler *gin.HandlerFunc, ginMode string) *gin.Engine {
 	engine.Use(middleware.CORSMiddleware())
 	engine.Use(gin.Logger())
 
+	p := ginprom.New(
+		ginprom.Engine(engine),
+		ginprom.Subsystem("gin"),
+		ginprom.Path("/metrics"),
+	)
+	engine.Use(p.Instrument())
 	engine.OPTIONS("/*path", middleware.CORSMiddleware())
 
 	return engine
