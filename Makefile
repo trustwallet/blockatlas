@@ -7,7 +7,7 @@ BUILD := $(shell git rev-parse --short HEAD)
 DATETIME := $(shell date +"%Y.%m.%d-%H:%M:%S")
 PROJECT_NAME := $(shell basename "$(PWD)")
 API_SERVICE := platform_api
-OSERVER_NOTIFIER := observer_notifier
+OBSERVER_NOTIFIER := observer_notifier
 OBSERVER_PARSER := observer_parser
 OBSERVER_SUBSCRIBER := observer_subscriber
 SWAGGER_API := swagger_api
@@ -134,7 +134,7 @@ integration: go-integration
 start-mock-dyson: stop-dyson
 	@echo "  >  Starting Dyson with mocks"
 	@-dyson  mock/ext-api-dyson & echo $$! > $(PID_DYSON)
-	@echo "  >  Dyson started " `cat $(PID_DYSON)`
+	@echo "  >  Dyson started with PID: " `cat $(PID_DYSON)`
 
 ## fmt: Run `go fmt` for all go files.
 fmt: go-fmt
@@ -183,7 +183,7 @@ else
 	@bash -c "$(MAKE) stop"
 endif
 
-## newman: Run Postman Newman test, the host parameter is required, and you can specify the name of the test do you wanna run (transaction, token, staking, collection, domain, healthcheck, observer). e.g $ make newman test=staking host=http//localhost
+## newman: Run Postman Newman test, the host parameter is required, and you can specify the name of the test do you wanna run (transaction, token, staking, collection, domain, healthcheck, observer). e.g $ make newman test=staking host=http://localhost:8420
 newman: install-newman
 ifeq (,$(test))
 	@bash -c "$(MAKE) newman-run test=transaction host=$(host)"
@@ -214,15 +214,25 @@ endif
 
 go-compile: go-get go-build
 
-go-build:
+go-build: go-build-platform-api go-build-observer-notifier go-build-observer-parser go-build-observer-subscriber go-build-swagger-api
+
+go-build-platform-api:
 	@echo "  >  Building platform_api binary..."
 	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(API_SERVICE)/platform_api ./cmd/$(API_SERVICE)
+
+go-build-observer-notifier:
 	@echo "  >  Building observer_notifier binary..."
-	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(OSERVER_NOTIFIER)/observer_notifier ./cmd/$(OSERVER_NOTIFIER)
+	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(OBSERVER_NOTIFIER)/observer_notifier ./cmd/$(OBSERVER_NOTIFIER)
+
+go-build-observer-parser:
 	@echo "  >  Building observer_parser binary..."
 	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(OBSERVER_PARSER)/observer_parser ./cmd/$(OBSERVER_PARSER)
+
+go-build-observer-subscriber:
 	@echo "  >  Building observer_subscriber binary..."
 	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(OBSERVER_SUBSCRIBER)/observer_subscriber ./cmd/$(OBSERVER_SUBSCRIBER)
+
+go-build-swagger-api:
 	@echo "  >  Building swagger_api binary..."
 	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(SWAGGER_API)/swagger_api ./cmd/$(SWAGGER_API)
 
