@@ -9,7 +9,7 @@ import (
 
 var labels = []string{"status", "endpoint", "method"}
 
-func PromMiddleware() gin.HandlerFunc {
+func Prometheus() gin.HandlerFunc {
 	serverReqCount := prometheus.NewCounterVec(
 		prometheus.CounterOpts{
 			Namespace: "atlas",
@@ -26,13 +26,13 @@ func PromMiddleware() gin.HandlerFunc {
 		url := c.Request.URL.Path
 		method := c.Request.Method
 
-		lvs := []string{status, removeAddresses(url), method}
+		lvs := []string{status, removeAddress(url), method}
 
 		serverReqCount.WithLabelValues(lvs...).Inc()
 	}
 }
 
-func removeAddresses(info string) string {
+func removeAddress(info string) string {
 	reg := regexp.MustCompile(`([a-zA-Z0-9\s]{30,})|([0-9]{4,})|(=(.*?)[^(&|$)]+)|(--[^$]+)|(&asset_contract_addresses)`)
 	return reg.ReplaceAllString(info, "")
 }
