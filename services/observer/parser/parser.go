@@ -79,7 +79,7 @@ func RunParser(params Params) {
 }
 
 func GetBlocksIntervalToFetch(params Params) (int64, int64, error) {
-	lastParsedBlock, err := params.Database.GetLastParsedBlockNumber(params.Api.Coin().ID)
+	lastParsedBlock, err := params.Database.GetLastParsedBlockNumber(params.Api.Coin().Handle)
 	if err != nil {
 		return 0, 0, errors.E(err, "Polling failed: tracker didn't return last known block number")
 	}
@@ -178,7 +178,7 @@ func SaveLastParsedBlock(params Params, blocks []blockatlas.Block) error {
 	if lastBlockNumber <= 0 {
 		return errors.E(fmt.Sprintf("Parser of %s failed to save last block, lastBlockNumber <= 0", params.Api.Coin().Handle))
 	}
-	err := params.Database.SetLastParsedBlockNumber(params.Api.Coin().ID, lastBlockNumber)
+	err := params.Database.SetLastParsedBlockNumber(params.Api.Coin().Handle, lastBlockNumber)
 	if err != nil {
 		return err
 	}
