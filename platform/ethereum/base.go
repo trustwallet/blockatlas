@@ -26,11 +26,17 @@ func Init(coinType uint, api, rpc string) *Platform {
 	}
 }
 
-func InitWitCollection(coinType uint, api, rpc, blockbookApi, collectionApi, collectionKey string) *Platform {
-	platform := Init(coinType, api, rpc)
-	if coinType == coin.ETH {
-		platform.client = &blockbook.Client{Request: blockatlas.InitClient(blockbookApi)}
+func InitWithBlockbook(coinType uint, blockbookApi, rpc string) *Platform {
+	return &Platform{
+		CoinIndex: coinType,
+		RpcURL:    rpc,
+		ens:       ens.RpcClient{Request: blockatlas.InitJSONClient(rpc)},
+		client:    &blockbook.Client{Request: blockatlas.InitClient(blockbookApi)},
 	}
+}
+
+func InitWitCollection(coinType uint, api, rpc, blockbookApi, collectionApi, collectionKey string) *Platform {
+	platform := InitWithBlockbook(coinType, blockbookApi, rpc)
 	platform.collectible = collection.Client{Request: blockatlas.InitClient(collectionApi)}
 	platform.collectible.Headers["X-API-KEY"] = collectionKey
 	return platform

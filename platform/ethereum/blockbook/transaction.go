@@ -30,6 +30,9 @@ func NormalizePage(srcPage *Page, address, token string, coinIndex uint) blockat
 		normalizedToken = Address.EIP55Checksum(token)
 	}
 	for _, srcTx := range srcPage.Transactions {
+		if srcTx.BlockHeight < 0 {
+			continue // Skip pending tx
+		}
 		tx := normalizeTxWithAddress(&srcTx, normalizedAddr, normalizedToken, coinIndex)
 		txs = append(txs, tx)
 	}
@@ -50,14 +53,14 @@ func normalizeTx(srcTx *Transaction, coinIndex uint) blockatlas.Tx {
 		Error:    errReason,
 		Sequence: srcTx.EthereumSpecific.Nonce,
 	}
-	FillMeta(&normalized, srcTx, coinIndex)
+	fillMeta(&normalized, srcTx, coinIndex)
 	return normalized
 }
 
 func normalizeTxWithAddress(srcTx *Transaction, address, token string, coinIndex uint) blockatlas.Tx {
 	normalized := normalizeTx(srcTx, coinIndex)
 	normalized.Direction = GetDirection(address, normalized.From, normalized.To)
-	FillMetaWithAddress(&normalized, srcTx, address, token, coinIndex)
+	fillMetaWithAddress(&normalized, srcTx, address, token, coinIndex)
 	return normalized
 }
 
@@ -68,7 +71,19 @@ func normalizeBlockHeight(height int64) uint64 {
 	return uint64(height)
 }
 
-func FillMeta(final *blockatlas.Tx, tx *Transaction, coinIndex uint) {
+func fillMeta(final *blockatlas.Tx, tx *Transaction, coinIndex uint) {
+	if ok := fillTokenTransfer(final, tx, coinIndex); !ok {
+		fillTransferOrContract(final, tx, coinIndex)
+	}
+}
+
+func fillMetaWithAddress(final *blockatlas.Tx, tx *Transaction, address, token string, coinIndex uint) {
+	if ok := fillTokenTransferWithAddress(final, tx, address, token, coinIndex); !ok {
+		fillTransferOrContract(final, tx, coinIndex)
+	}
+}
+
+func fillTokenTransfer(final *blockatlas.Tx, tx *Transaction, coinIndex uint) bool {
 	if len(tx.TokenTransfers) == 1 {
 		transfer := tx.TokenTransfers[0]
 		final.Meta = blockatlas.TokenTransfer{
@@ -80,12 +95,12 @@ func FillMeta(final *blockatlas.Tx, tx *Transaction, coinIndex uint) {
 			From:     transfer.From,
 			To:       transfer.To,
 		}
-		return
+		return true
 	}
-	fillMeta(final, tx, coinIndex)
+	return false
 }
 
-func FillMetaWithAddress(final *blockatlas.Tx, tx *Transaction, address, token string, coinIndex uint) {
+func fillTokenTransferWithAddress(final *blockatlas.Tx, tx *Transaction, address, token string, coinIndex uint) bool {
 	if len(tx.TokenTransfers) > 0 {
 		for _, transfer := range tx.TokenTransfers {
 			if transfer.To == address || transfer.From == address {
@@ -115,14 +130,14 @@ func FillMetaWithAddress(final *blockatlas.Tx, tx *Transaction, address, token s
 				}
 				final.Direction = direction
 				final.Meta = metadata
-				return
+				return true
 			}
 		}
 	}
-	fillMeta(final, tx, coinIndex)
+	return false
 }
 
-func fillMeta(final *blockatlas.Tx, tx *Transaction, coinIndex uint) {
+func fillTransferOrContract(final *blockatlas.Tx, tx *Transaction, coinIndex uint) {
 	gasUsed := tx.EthereumSpecific.GasUsed
 	if gasUsed != nil && gasUsed.Int64() == 21000 {
 		final.Meta = blockatlas.Transfer{

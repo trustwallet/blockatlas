@@ -58,21 +58,21 @@ func NormalizeCollectiblePage(collectibles []collection.Collectible, coinIndex u
 	return page
 }
 
-func NormalizeCollectible(a collection.Collectible, coinIndex uint) blockatlas.Collectible {
-	id := strings.Join([]string{a.AssetContract.Address, a.TokenId}, "-")
+func NormalizeCollectible(c collection.Collectible, coinIndex uint) blockatlas.Collectible {
+	id := strings.Join([]string{c.AssetContract.Address, c.TokenId}, "-")
 	return blockatlas.Collectible{
 		ID:              id,
-		CollectionID:    a.Collection.Slug,
-		TokenID:         a.TokenId,
-		ContractAddress: a.AssetContract.Address,
-		Name:            a.Name,
-		Category:        a.Collection.Name,
-		ImageUrl:        a.ImagePreviewUrl,
-		ProviderLink:    a.Permalink,
-		ExternalLink:    a.Collection.ExternalLink,
-		Type:            a.AssetContract.Type,
-		Description:     a.Description,
+		CollectionID:    c.Collection.Slug,
+		TokenID:         c.TokenId,
+		ContractAddress: c.AssetContract.Address,
+		Name:            c.Name,
+		Category:        c.Collection.Name,
+		ImageUrl:        c.ImagePreviewUrl,
+		ProviderLink:    c.Permalink,
+		ExternalLink:    c.Collection.ExternalLink,
+		Type:            c.AssetContract.Type,
+		Description:     c.Description,
 		Coin:            coinIndex,
-		Version:         a.AssetContract.Version,
+		Version:         c.AssetContract.Version,
 	}
 }
