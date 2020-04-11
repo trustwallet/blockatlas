@@ -3,33 +3,51 @@ before:
     - git reset --hard
     - git checkout .
 builds:
-  - id: api
-    binary: api
-    main: "./cmd/api/main.go"
+  - id: platform_api
+    binary: platform_api
+    main: "./cmd/platform_api/main.go"
     goos:
       - linux
     goarch:
       - amd64
     env:
       - CGO_ENABLED=0
-  - id: observer_test
-    binary: observer_test
-    main: "./cmd/observer_test/main.go"
+  - id: swagger_api
+      binary: swagger_api
+      main: "./cmd/swagger_api/main.go"
+      goos:
+        - linux
+      goarch:
+        - amd64
+      env:
+        - CGO_ENABLED=0
+  - id: observer_parser
+    binary: observer_parser
+    main: "./cmd/observer_parser/main.go"
     goos:
       - linux
     goarch:
       - amd64
     env:
       - CGO_ENABLED=0
-  - id: market
-    binary: market
-    main: "./cmd/market/main.go"
+  - id: observer_subscriber
+    binary: observer_subscriber
+    main: "./cmd/observer_subscriber/main.go"
     goos:
       - linux
     goarch:
       - amd64
     env:
       - CGO_ENABLED=0
+  - id: observer_notifier
+      binary: observer_notifier
+      main: "./cmd/observer_notifier/main.go"
+      goos:
+        - linux
+      goarch:
+        - amd64
+      env:
+        - CGO_ENABLED=0
 archives:
   - replacements:
       amd64: 64-bit
