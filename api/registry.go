@@ -110,8 +110,7 @@ func RegisterDomainAPI(root gin.IRouter) {
 }
 
 func RegisterBasicAPI(root gin.IRouter) {
-	root.GET("/", endpoint.GetRoot)
-	root.GET("/status", endpoint.GetStatus)
+	root.GET("/", endpoint.GetStatus)
 	root.GET("/metrics", ginprom.PromHandler(promhttp.Handler()))
 }
 
