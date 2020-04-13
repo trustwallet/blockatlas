@@ -1,8 +1,12 @@
 /// Tron API Mock
 /// See:
 /// curl "http://localhost:3000/tron-api/v1/accounts/TFFriedwRtWdFuzerDDtkoQTZ29smDZ1MB/transactions?token_id=&limit=25&order_by=block_timestamp,desc"
+/// curl "http://localhost:3000/tron-api/v1/accounts/TFFriedwRtWdFuzerDDtkoQTZ29smDZ1MB"
 /// curl "http://{Tron rpc}/v1/accounts/TFFriedwRtWdFuzerDDtkoQTZ29smDZ1MB/transactions?token_id=&limit=25&order_by=block_timestamp,desc"
-/// curl http://localhost:8420/v1/tron/TFFriedwRtWdFuzerDDtkoQTZ29smDZ1MB
+/// curl "http://{Tron rpc}/v1/accounts/TFFriedwRtWdFuzerDDtkoQTZ29smDZ1MB"
+/// curl "http://localhost:8420/v1/tron/TFFriedwRtWdFuzerDDtkoQTZ29smDZ1MB"
+/// curl "http://localhost:8420/v2/tron/tokens/TFFriedwRtWdFuzerDDtkoQTZ29smDZ1MB?Authorization=Bearer"
+
 module.exports = {
     path: "/tron-api/v1/accounts/:address/:operation?",
     template: function(params, query, body) {
@@ -94,6 +98,91 @@ module.exports = {
                 `);
             }
         }
+
+        if (typeof params.operation === 'undefined') {
+            if (params.address === 'TFFriedwRtWdFuzerDDtkoQTZ29smDZ1MB') {
+                return JSON.parse(`
+                    {
+                        "success": true,
+                        "meta": {
+                            "at": 1586264949424,
+                            "page_size": 1
+                        },
+                        "data": [
+                            {
+                                "account_resource": {},
+                                "active_permission": [
+                                    {
+                                        "id": 2,
+                                        "keys": [
+                                            {
+                                                "address": "4139fec4d95bb59f45a727f9234020adaf2cec9e20",
+                                                "weight": 1
+                                            }
+                                        ],
+                                        "operations": "7fff1fc0033e0000000000000000000000000000000000000000000000000000",
+                                        "permission_name": "active",
+                                        "threshold": 1,
+                                        "type": "Active"
+                                    }
+                                ],
+                                "address": "4139fec4d95bb59f45a727f9234020adaf2cec9e20",
+                                "allowance": 848829,
+                                "assetV2": [
+                                    {
+                                        "key": "1002000",
+                                        "value": 10183240058
+                                    },
+                                    {
+                                        "key": "1002798",
+                                        "value": 10000000
+                                    },
+                                    {
+                                        "key": "1002814",
+                                        "value": 10000000
+                                    }
+                                ],
+                                "balance": 278720000,
+                                "create_time": 1553864037000,
+                                "free_asset_net_usageV2": [
+                                    {
+                                        "key": "1002000",
+                                        "value": 0
+                                    },
+                                    {
+                                        "key": "1002798",
+                                        "value": 0
+                                    },
+                                    {
+                                        "key": "1002814",
+                                        "value": 0
+                                    }
+                                ],
+                                "latest_consume_free_time": 1575142326000,
+                                "latest_consume_time": 1576767612000,
+                                "latest_opration_time": 1576767612000,
+                                "owner_permission": {
+                                    "keys": [
+                                        {
+                                            "address": "4139fec4d95bb59f45a727f9234020adaf2cec9e20",
+                                            "weight": 1
+                                        }
+                                    ],
+                                    "permission_name": "owner",
+                                    "threshold": 1
+                                },
+                                "trc20": [
+                                    {
+                                        "TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7": "50356946"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                `);
+            }
+        }
+
         // fallback
         var return4Codacy = {error: "Not implemented"};
         return return4Codacy;

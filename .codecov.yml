@@ -16,3 +16,4 @@ coverage:
     - "services"
     - "scripts"
     - "docs"
+    - "db/models"
