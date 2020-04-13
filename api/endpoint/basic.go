@@ -7,8 +7,6 @@ import (
 	"net/http"
 )
 
-func GetRoot(c *gin.Context) { c.JSON(http.StatusOK, "Welcome to the Block Atlas API") }
-
 func GetStatus(c *gin.Context) {
 	c.JSON(http.StatusOK, map[string]interface{}{
 		"status": true,
