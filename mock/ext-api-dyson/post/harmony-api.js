@@ -1,12 +1,12 @@
 /// Harmony RPC Mock
 /// curl -H 'Content-Type: application/json' -d ' {"jsonrpc":"2.0","method":"hmy_getTransactionsHistory","params":[{"address":"one1e4mr7tp0a76wnhv9xd0wzentdjnjnsh3fwzgfv","fullTx":true}],"id":"hmy_getTransactionsHistory"} ' http://localhost:3000/harmony-api
-/// curl -H 'Content-Type: application/json' -d ' {"jsonrpc":"2.0","method":"hmy_getTransactionsHistory","params":[{"address":"one1e4mr7tp0a76wnhv9xd0wzentdjnjnsh3fwzgfv","fullTx":true}],"id":"hmy_getTransactionsHistory"} ' https://harmony-rpc.trustwalletapp.com
+/// curl -H 'Content-Type: application/json' -d ' {"jsonrpc":"2.0","method":"hmy_getTransactionsHistory","params":[{"address":"one1e4mr7tp0a76wnhv9xd0wzentdjnjnsh3fwzgfv","fullTx":true}],"id":"hmy_getTransactionsHistory"} ' https://{harmony_rpc}
 /// curl "http://localhost:8420/v2/harmony/one1e4mr7tp0a76wnhv9xd0wzentdjnjnsh3fwzgfv"
 
 module.exports = {
     path: '/harmony-api',
     template: function(params, query, body) {
-        //console.log("curl -H 'Content-Type: application/json' -d '", JSON.stringify(body), "' https://harmony-rpc.trustwalletapp.com");
+        //console.log("curl -H 'Content-Type: application/json' -d '", JSON.stringify(body), "' https://{harmony_rpc}");
         if (body.method === 'hmy_getTransactionsHistory') {
             //console.log('body.params[0].address', body.params[0].address);
             if (body.params[0].address === 'one1e4mr7tp0a76wnhv9xd0wzentdjnjnsh3fwzgfv') {
