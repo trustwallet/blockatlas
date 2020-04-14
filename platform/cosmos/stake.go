@@ -49,7 +49,7 @@ func (p *Platform) GetDetails() blockatlas.StakingDetails {
 		},
 		MinimumAmount: minimumAmount,
 		LockTime:      lockTime,
-		Type:          blockatlas.DelegationTypeDelegate,
+		Type:          blockatlas.DelegationDelegate,
 	}
 }
 
@@ -99,9 +99,9 @@ func (p *Platform) UndelegatedBalance(address string) (string, error) {
 	if err != nil {
 		return "0", err
 	}
-	for _, coin := range account.Account.Value.Coins {
-		if coin.Denom == p.Denom() {
-			return coin.Amount, nil
+	for _, c := range account.Account.Value.Coins {
+		if c.Denom == p.Denom() {
+			return c.Amount, nil
 		}
 	}
 	return "0", nil
@@ -158,7 +158,7 @@ func normalizeValidator(v Validator, p Pool, inflation float64) (validator block
 			Reward:        blockatlas.StakingReward{Annual: reward},
 			MinimumAmount: minimumAmount,
 			LockTime:      lockTime,
-			Type:          blockatlas.DelegationTypeDelegate,
+			Type:          blockatlas.DelegationDelegate,
 		},
 	}
 }
@@ -182,7 +182,7 @@ func CalculateAnnualReward(p Pool, inflation float64, validator Validator) float
 	return (result - (result * commission)) * 100
 }
 
-func (p *Platform) Denom() DenomType {
+func (p *Platform) Denom() Denom {
 	switch p.CoinIndex {
 	case coin.Cosmos().ID:
 		return DenomAtom

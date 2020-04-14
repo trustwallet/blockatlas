@@ -10,7 +10,7 @@ func (p *Platform) CurrentBlockNumber() (int64, error) {
 }
 
 func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
-	txTypes := []string{TxTypeTransaction, TxTypeDelegation}
+	txTypes := []string{OperationTransaction, OperationDelegation}
 	srcTxs, err := p.client.GetBlockByNumber(num, txTypes)
 	if err != nil {
 		logger.Error("GetAddrTxs", err, logger.Params{"txType": txTypes, "num": num})

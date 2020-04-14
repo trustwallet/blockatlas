@@ -23,11 +23,11 @@ func (p *Platform) GetTokenTxsByAddress(address string, token string) (blockatla
 			})
 		return blockatlas.TxPage{}, err
 	}
-	txPage := normalizeTxs(srcTxs.Result, AssetType(token))
+	txPage := normalizeTxs(srcTxs.Result, Asset(token))
 	return txPage, nil
 }
 
-func Normalize(srcTx *Tx, assetName AssetType) (tx blockatlas.Tx, ok bool) {
+func Normalize(srcTx *Tx, assetName Asset) (tx blockatlas.Tx, ok bool) {
 	if len(srcTx.getTransfers()) < 1 {
 		return tx, false
 	}
@@ -134,7 +134,7 @@ func (p *Platform) getTxDetails(srcTx []Tx) ([]Tx, error) {
 	return txsOntV2, nil
 }
 
-func normalizeTxs(srcTxs []Tx, assetType AssetType) blockatlas.TxPage {
+func normalizeTxs(srcTxs []Tx, assetType Asset) blockatlas.TxPage {
 	var txs blockatlas.TxPage
 	for _, srcTx := range srcTxs {
 		transfer := srcTx.getTransfers().getTransfer(assetType)

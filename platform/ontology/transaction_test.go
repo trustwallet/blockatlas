@@ -167,7 +167,7 @@ func TestNormalize(t *testing.T) {
 	tests := []struct {
 		name        string
 		Transaction string
-		AssetName   AssetType
+		AssetName   Asset
 		Expected    blockatlas.Tx
 		wantErr     bool
 	}{

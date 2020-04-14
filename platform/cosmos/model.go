@@ -6,35 +6,35 @@ import (
 	"strings"
 )
 
-type TxType string
-type EventType string
+type TxOperation string
+type EventOperation string
 type AttributeKey string
-type DenomType string
+type Denom string
 
 // Types of messages
 const (
-	MsgSend                        TxType = "cosmos-sdk/MsgSend"
-	MsgMultiSend                   TxType = "cosmos-sdk/MsgMultiSend"
-	MsgCreateValidator             TxType = "cosmos-sdk/MsgCreateValidator"
-	MsgDelegate                    TxType = "cosmos-sdk/MsgDelegate"
-	MsgUndelegate                  TxType = "cosmos-sdk/MsgUndelegate"
-	MsgBeginRedelegate             TxType = "cosmos-sdk/MsgBeginRedelegate"
-	MsgWithdrawDelegationReward    TxType = "cosmos-sdk/MsgWithdrawDelegationReward"
-	MsgWithdrawValidatorCommission TxType = "cosmos-sdk/MsgWithdrawValidatorCommission"
-	MsgSubmitProposal              TxType = "cosmos-sdk/MsgSubmitProposal"
-	MsgDeposit                     TxType = "cosmos-sdk/MsgDeposit"
-	MsgVote                        TxType = "cosmos-sdk/MsgVote"
-	TextProposal                   TxType = "cosmos-sdk/TextProposal"
-	MsgUnjail                      TxType = "cosmos-sdk/MsgUnjail"
+	MsgSend                        TxOperation = "cosmos-sdk/MsgSend"
+	MsgMultiSend                   TxOperation = "cosmos-sdk/MsgMultiSend"
+	MsgCreateValidator             TxOperation = "cosmos-sdk/MsgCreateValidator"
+	MsgDelegate                    TxOperation = "cosmos-sdk/MsgDelegate"
+	MsgUndelegate                  TxOperation = "cosmos-sdk/MsgUndelegate"
+	MsgBeginRedelegate             TxOperation = "cosmos-sdk/MsgBeginRedelegate"
+	MsgWithdrawDelegationReward    TxOperation = "cosmos-sdk/MsgWithdrawDelegationReward"
+	MsgWithdrawValidatorCommission TxOperation = "cosmos-sdk/MsgWithdrawValidatorCommission"
+	MsgSubmitProposal              TxOperation = "cosmos-sdk/MsgSubmitProposal"
+	MsgDeposit                     TxOperation = "cosmos-sdk/MsgDeposit"
+	MsgVote                        TxOperation = "cosmos-sdk/MsgVote"
+	TextProposal                   TxOperation = "cosmos-sdk/TextProposal"
+	MsgUnjail                      TxOperation = "cosmos-sdk/MsgUnjail"
 
-	EventTransfer        EventType = "transfer"
-	EventWithdrawRewards EventType = "withdraw_rewards"
+	EventTransfer        EventOperation = "transfer"
+	EventWithdrawRewards EventOperation = "withdraw_rewards"
 
 	AttributeAmount    AttributeKey = "amount"
 	AttributeValidator AttributeKey = "validator"
 
-	DenomAtom DenomType = "uatom"
-	DenomKava DenomType = "ukava"
+	DenomAtom Denom = "uatom"
+	DenomKava Denom = "ukava"
 )
 
 // Tx - Base transaction object. Always returned as part of an array
@@ -54,7 +54,7 @@ type TxPage struct {
 
 // Events
 type Event struct {
-	Type       EventType
+	Type       EventOperation
 	Attributes Attributes `json:"Attributes"`
 }
 
@@ -110,7 +110,7 @@ type Contents struct {
 
 // Message - an array that holds multiple 'particulars' entries. Possibly used for multiple transfers in one transaction?
 type Message struct {
-	Type  TxType
+	Type  TxOperation
 	Value interface{}
 }
 
@@ -224,7 +224,7 @@ type BlockHeader struct {
 //UnmarshalJSON reads different message types
 func (m *Message) UnmarshalJSON(buf []byte) error {
 	var messageInternal struct {
-		Type  TxType          `json:"type"`
+		Type  TxOperation     `json:"type"`
 		Value json.RawMessage `json:"value"`
 	}
 
@@ -261,6 +261,6 @@ type AccountValue struct {
 }
 
 type Balance struct {
-	Denom  DenomType `json:"denom"`
-	Amount string    `json:"amount"`
+	Denom  Denom  `json:"denom"`
+	Amount string `json:"amount"`
 }

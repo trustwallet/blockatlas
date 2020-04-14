@@ -44,7 +44,7 @@ var expectedValidators = []blockatlas.Validator{
 			Reward:        blockatlas.StakingReward{Annual: 0},
 			MinimumAmount: blockatlas.Amount("2282881"),
 			LockTime:      0,
-			Type:          blockatlas.DelegationTypeDelegate,
+			Type:          blockatlas.DelegationDelegate,
 		},
 	},
 	blockatlas.Validator{
@@ -54,7 +54,7 @@ var expectedValidators = []blockatlas.Validator{
 			Reward:        blockatlas.StakingReward{Annual: 0},
 			MinimumAmount: blockatlas.Amount("2282881"),
 			LockTime:      0,
-			Type:          blockatlas.DelegationTypeDelegate,
+			Type:          blockatlas.DelegationDelegate,
 		},
 	},
 }

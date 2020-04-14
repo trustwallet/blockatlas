@@ -41,17 +41,17 @@ type BlockList struct {
 	BlockArray []BlockDescriptor `json:"blockArray"`
 }
 
-type TxType string
+type Operation string
 
 const (
-	TxTransfer    TxType = "TRANSFER"
-	TxNewOrder    TxType = "NEW_ORDER"
-	TxCancelOrder TxType = "CANCEL_ORDER"
+	TxTransfer    Operation = "TRANSFER"
+	TxNewOrder    Operation = "NEW_ORDER"
+	TxCancelOrder Operation = "CANCEL_ORDER"
 )
 
 type Tx struct {
 	BlockHeight   uint64      `json:"blockHeight"`
-	Type          TxType      `json:"txType"`
+	Type          Operation   `json:"txType"`
 	Code          int         `json:"code"`
 	ConfirmBlocks int         `json:"confirmBlocks"`
 	Data          string      `json:"data"`
@@ -77,7 +77,7 @@ type SubTxsDto struct {
 type SubTx struct {
 	Hash     string      `json:"hash"`
 	Height   uint64      `json:"height"`
-	Type     TxType      `json:"type"`
+	Type     Operation   `json:"type"`
 	Value    json.Number `json:"value"`
 	Asset    string      `json:"asset"`
 	FromAddr string      `json:"fromAddr"`

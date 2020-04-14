@@ -50,8 +50,8 @@ func TestTransaction_Status(t *testing.T) {
 		in      Transaction
 		out     blockatlas.KeyTitle
 	}{
-		{"Delegation title", addr1, Transaction{Sender: addr1, Delegate: addr2, Receiver: "", Type: TxTypeDelegation}, blockatlas.AnyActionDelegation},
-		{"Undelegation title", addr1, Transaction{Sender: addr1, Delegate: "", Receiver: addr2, Type: TxTypeDelegation}, blockatlas.AnyActionUndelegation},
+		{"Delegation title", addr1, Transaction{Sender: addr1, Delegate: addr2, Receiver: "", Type: OperationDelegation}, blockatlas.AnyActionDelegation},
+		{"Undelegation title", addr1, Transaction{Sender: addr1, Delegate: "", Receiver: addr2, Type: OperationDelegation}, blockatlas.AnyActionUndelegation},
 		{"Unsupported title", addr1, Transaction{Sender: addr1, Delegate: addr1, Receiver: addr1}, "unsupported title"},
 		{"Unsupported title", addr1, Transaction{Sender: addr1, Delegate: addr2, Receiver: addr1}, "unsupported title"},
 		{"Unsupported title", addr1, Transaction{Sender: addr1, Delegate: addr1, Receiver: addr2}, "unsupported title"},
@@ -82,10 +82,10 @@ func TestTransaction_Status(t *testing.T) {
 	testsTransferType := []struct {
 		name string
 		in   Transaction
-		out  blockatlas.TransactionType
+		out  blockatlas.TxOperation
 	}{
-		{"Type should be transaction", Transaction{Type: "transaction",}, blockatlas.TxTransfer},
-		{"Type should be delegation", Transaction{Type: "delegation",}, blockatlas.TxAnyAction},
+		{"Type should be transaction", Transaction{Type: "transaction"}, blockatlas.TxTransfer},
+		{"Type should be delegation", Transaction{Type: "delegation"}, blockatlas.TxAnyAction},
 		{"Type unsupported", Transaction{Type: "bake"}, "unsupported type"},
 	}
 

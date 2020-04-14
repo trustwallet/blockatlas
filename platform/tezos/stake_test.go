@@ -25,7 +25,7 @@ var validator = blockatlas.Validator{
 	Details: blockatlas.StakingDetails{
 		Reward:        blockatlas.StakingReward{Annual: Annual},
 		MinimumAmount: blockatlas.Amount("0"),
-		Type:          blockatlas.DelegationTypeDelegate,
+		Type:          blockatlas.DelegationDelegate,
 	},
 }
 

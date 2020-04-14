@@ -1,24 +1,26 @@
 package ontology
 
-type AssetType string
-type MsgType string
-type Transfers []Transfer
-type Balances []Balance
+type (
+	Asset     string
+	Msg       string
+	Transfers []Transfer
+	Balances  []Balance
+)
 
 const (
 	GovernanceContract = "AFmseVrdL9f9oyCzZefL9tG6UbviEH9ugK"
 	ONGDecimals        = 9
 
-	MsgSuccess MsgType = "SUCCESS"
+	MsgSuccess Msg = "SUCCESS"
 
-	AssetONT AssetType = "ont"
-	AssetONG AssetType = "ong"
-	AssetAll AssetType = "all"
+	AssetONT Asset = "ont"
+	AssetONG Asset = "ong"
+	AssetAll Asset = "all"
 )
 
 type BaseResponse struct {
-	Code int     `json:"code"`
-	Msg  MsgType `json:"msg"`
+	Code int `json:"code"`
+	Msg  Msg `json:"msg"`
 }
 
 type BlockResults struct {
@@ -75,18 +77,18 @@ type Detail struct {
 }
 
 type Transfer struct {
-	Amount      string    `json:"amount"`
-	FromAddress string    `json:"from_address"`
-	ToAddress   string    `json:"to_address"`
-	AssetName   AssetType `json:"asset_name"`
-	Description string    `json:"description,omitempty"`
+	Amount      string `json:"amount"`
+	FromAddress string `json:"from_address"`
+	ToAddress   string `json:"to_address"`
+	AssetName   Asset  `json:"asset_name"`
+	Description string `json:"description,omitempty"`
 }
 
 type Balance struct {
-	Balance      string    `json:"balance"`
-	AssetName    AssetType `json:"asset_name"`
-	AssetType    string    `json:"asset_type"`
-	ContractHash string    `json:"contract_hash"`
+	Balance      string `json:"balance"`
+	AssetName    Asset  `json:"asset_name"`
+	AssetType    string `json:"asset_type"`
+	ContractHash string `json:"contract_hash"`
 }
 
 func (tf *Transfer) isFeeTransfer() bool {
@@ -112,7 +114,7 @@ func (tx *Tx) getTransfers() Transfers {
 	return append(tx.Details.Transfers, tx.Transfers...)
 }
 
-func (tfs Transfers) getTransfer(assetType AssetType) *Transfer {
+func (tfs Transfers) getTransfer(assetType Asset) *Transfer {
 	for _, tf := range tfs {
 		if tf.isFeeTransfer() {
 			continue
@@ -153,7 +155,7 @@ func (tfs Transfers) isClaimReward() bool {
 
 }
 
-func (bs Balances) getBalance(assetType AssetType) *Balance {
+func (bs Balances) getBalance(assetType Asset) *Balance {
 	for _, b := range bs {
 		if b.AssetName == assetType {
 			return &b

@@ -30,7 +30,7 @@ type Tx struct {
 }
 
 type Payment struct {
-	TransactionType TransactionType   `json:"TransactionType"`
+	TransactionType TransactionType   `json:"TxOperation"`
 	Flags           uint64            `json:"Flags"`
 	Sequence        uint64            `json:"Sequence"`
 	Fee             blockatlas.Amount `json:"Fee"`

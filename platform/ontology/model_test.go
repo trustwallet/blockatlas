@@ -9,7 +9,7 @@ import (
 func TestTransfer_isFeeTransfer(t *testing.T) {
 	type fields struct {
 		ToAddress string
-		AssetName AssetType
+		AssetName Asset
 	}
 	tests := []struct {
 		name   string
@@ -99,7 +99,7 @@ func TestTransfers_getTransfer(t *testing.T) {
 	tests := []struct {
 		name  string
 		tfs   Transfers
-		asset AssetType
+		asset Asset
 		want  *Transfer
 	}{
 		{"Transfer Claims Asset Ong", transfersClaims1, AssetONG, &transferOng},
@@ -174,7 +174,7 @@ func TestBalances_getBalance(t *testing.T) {
 	tests := []struct {
 		name      string
 		bs        Balances
-		assetType AssetType
+		assetType Asset
 		want      *Balance
 	}{
 		{

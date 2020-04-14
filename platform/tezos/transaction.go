@@ -8,7 +8,7 @@ import (
 )
 
 func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
-	txTypes := []string{TxTypeTransaction, TxTypeDelegation}
+	txTypes := []string{OperationTransaction, OperationDelegation}
 	txs, err := p.client.GetTxsOfAddress(address, txTypes)
 	if err != nil {
 		logger.Error("GetAddrTxs", err, logger.Params{"txType": txTypes, "addr": address})

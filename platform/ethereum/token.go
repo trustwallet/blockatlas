@@ -15,22 +15,22 @@ func (p *Platform) GetTokenListByAddress(address string) (blockatlas.TokenPage, 
 
 // NormalizeToken converts a Ethereum token into the generic model
 func NormalizeToken(srcToken *Contract, coinIndex uint) (t blockatlas.Token, ok bool) {
-	var tokenType blockatlas.TokenType
+	var tokenType blockatlas.TokenStandard
 	switch coinIndex {
 	case coin.Ethereum().ID:
-		tokenType = blockatlas.TokenTypeERC20
+		tokenType = blockatlas.TokenERC20
 	case coin.Classic().ID:
-		tokenType = blockatlas.TokenTypeETC20
+		tokenType = blockatlas.TokenETC20
 	case coin.Poa().ID:
-		tokenType = blockatlas.TokenTypePOA20
+		tokenType = blockatlas.TokenPOA20
 	case coin.Callisto().ID:
-		tokenType = blockatlas.TokenTypeCLO20
+		tokenType = blockatlas.TokenCLO20
 	case coin.Wanchain().ID:
-		tokenType = blockatlas.TokenTypeWAN20
+		tokenType = blockatlas.TokenWAN20
 	case coin.Thundertoken().ID:
-		tokenType = blockatlas.TokenTypeTT20
+		tokenType = blockatlas.TokenTT20
 	case coin.Gochain().ID:
-		tokenType = blockatlas.TokenTypeGO20
+		tokenType = blockatlas.TokenGO20
 	default:
 		tokenType = "unknown"
 	}

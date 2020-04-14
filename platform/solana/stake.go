@@ -44,7 +44,7 @@ func getDetails() blockatlas.StakingDetails {
 		Reward:        blockatlas.StakingReward{Annual: 0},
 		MinimumAmount: "0",
 		LockTime:      0,
-		Type:          blockatlas.DelegationTypeDelegate,
+		Type:          blockatlas.DelegationDelegate,
 	}
 }
 
@@ -57,7 +57,7 @@ func normalizeValidator(v VoteAccount, minimumBalance uint64) (validator blockat
 			Reward:        blockatlas.StakingReward{Annual: 0},
 			MinimumAmount: blockatlas.Amount(minimumAmount),
 			LockTime:      0,
-			Type:          blockatlas.DelegationTypeDelegate,
+			Type:          blockatlas.DelegationDelegate,
 		},
 	}
 }

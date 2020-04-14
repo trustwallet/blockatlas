@@ -18,9 +18,9 @@ const DefaultPushNotificationsBatchLimit = 50
 var MaxPushNotificationsBatchLimit uint = DefaultPushNotificationsBatchLimit
 
 type TransactionNotification struct {
-	Action blockatlas.TransactionType `json:"action"`
-	Result *blockatlas.Tx             `json:"result"`
-	Id     uint                       `json:"id"`
+	Action blockatlas.TxOperation `json:"action"`
+	Result *blockatlas.Tx         `json:"result"`
+	Id     uint                   `json:"id"`
 }
 
 func RunNotifier(database *db.Instance, delivery amqp.Delivery) {

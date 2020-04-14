@@ -70,7 +70,7 @@ var (
 		Decimals: 8,
 		TokenID:  "ARN-71B",
 		Coin:     coin.BNB,
-		Type:     blockatlas.TokenTypeBEP2,
+		Type:     blockatlas.TokenBEP2,
 	}
 	emptyTokenDst = blockatlas.Token{}
 )

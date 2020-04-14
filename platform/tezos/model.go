@@ -7,10 +7,9 @@ import (
 )
 
 const (
-	TxTypeTransaction string = "transaction"
-	TxTypeDelegation  string = "delegation"
-
-	TxStatusApplied string = "applied"
+	OperationTransaction string = "transaction"
+	OperationDelegation  string = "delegation"
+	OperationApplied     string = "applied"
 )
 
 type Account struct {
@@ -52,7 +51,7 @@ type Validator struct {
 
 func (t *Transaction) Status() blockatlas.Status {
 	switch t.Stat {
-	case TxStatusApplied:
+	case OperationApplied:
 		return blockatlas.StatusCompleted
 	default:
 		return blockatlas.StatusError
@@ -68,7 +67,7 @@ func (t *Transaction) ErrorMsg() string {
 }
 
 func (t *Transaction) Title(address string) (blockatlas.KeyTitle, bool) {
-	if t.Type == TxTypeDelegation {
+	if t.Type == OperationDelegation {
 		if address == t.Sender && t.Delegate != "" && t.Receiver == "" {
 			return blockatlas.AnyActionDelegation, true
 		}
@@ -90,11 +89,11 @@ func (t *Transaction) BlockTimestamp() int64 {
 	return unix
 }
 
-func (t *Transaction) TransferType() (blockatlas.TransactionType, bool) {
+func (t *Transaction) TransferType() (blockatlas.TxOperation, bool) {
 	switch t.Type {
-	case TxTypeTransaction:
+	case OperationTransaction:
 		return blockatlas.TxTransfer, true
-	case TxTypeDelegation:
+	case OperationDelegation:
 		return blockatlas.TxAnyAction, true
 	default:
 		return "unsupported type", false

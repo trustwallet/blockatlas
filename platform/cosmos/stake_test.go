@@ -77,7 +77,7 @@ func TestNormalizeValidator(t *testing.T) {
 			Reward:        blockatlas.StakingReward{Annual: 462.6619201898575},
 			LockTime:      lockTime,
 			MinimumAmount: minimumAmount,
-			Type:          blockatlas.DelegationTypeDelegate,
+			Type:          blockatlas.DelegationDelegate,
 		},
 	}
 	result := normalizeValidator(v, stakingPool, inflation)

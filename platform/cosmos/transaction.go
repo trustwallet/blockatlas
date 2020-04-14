@@ -145,7 +145,7 @@ func (p *Platform) fillTransfer(tx *blockatlas.Tx, transfer MessageValueTransfer
 	}
 }
 
-func (p *Platform) fillDelegate(tx *blockatlas.Tx, delegate MessageValueDelegate, events Events, msgType TxType) {
+func (p *Platform) fillDelegate(tx *blockatlas.Tx, delegate MessageValueDelegate, events Events, msgType TxOperation) {
 	value, err := numbers.DecimalToSatoshis(delegate.Amount.Quantity)
 	if err != nil {
 		return

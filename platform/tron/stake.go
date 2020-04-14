@@ -36,7 +36,7 @@ func getDetails() blockatlas.StakingDetails {
 		Reward:        blockatlas.StakingReward{Annual: Annual},
 		MinimumAmount: blockatlas.Amount("1000000"),
 		LockTime:      259200,
-		Type:          blockatlas.DelegationTypeDelegate,
+		Type:          blockatlas.DelegationDelegate,
 	}
 }
 
@@ -70,14 +70,14 @@ func (p *Platform) UndelegatedBalance(address string) (string, error) {
 }
 
 func normalizeValidator(v Validator) (validator blockatlas.Validator, ok bool) {
-	address, err := address.HexToAddress(v.Address)
+	a, err := address.HexToAddress(v.Address)
 	if err != nil {
 		return validator, false
 	}
 
 	return blockatlas.Validator{
 		Status:  true,
-		ID:      address,
+		ID:      a,
 		Details: getDetails(),
 	}, true
 }

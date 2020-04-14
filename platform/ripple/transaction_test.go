@@ -15,7 +15,7 @@ const paymentSrc = `
 	"ledger_index": 34698103,
 	"date": "2017-12-01T22:45:30+00:00",
 	"tx": {
-		"TransactionType": "Payment",
+		"TxOperation": "Payment",
 		"Flags": 2147483648,
 		"Sequence": 21,
 		"LastLedgerSequence": 34698105,
@@ -66,7 +66,7 @@ const paymentSrc2 = `
    "ledger_index":49163909,
    "date":"2019-08-06T17:58:01+00:00",
    "tx":{
-      "TransactionType":"Payment",
+      "TxOperation":"Payment",
       "Flags":2147614720,
       "Sequence":115,
       "DestinationTag":0,
@@ -123,7 +123,7 @@ const paymentSrc3 = `
    "ledger_index":49163909,
    "date":"2019-08-06T17:58:01+00:00",
    "tx":{
-      "TransactionType": "SetRegularKey"
+      "TxOperation": "SetRegularKey"
    }
 }
 `
@@ -134,7 +134,7 @@ const paymentSrc4 = `
   "ledger_index": 49841027,
   "date": "2019-09-06T01:48:32+00:00",
   "tx": {
-    "TransactionType": "Payment",
+    "TxOperation": "Payment",
     "Flags": 2147942400,
     "Sequence": 292765,
     "LastLedgerSequence": 49841035,
@@ -171,7 +171,7 @@ const failedPayment = `
   "ledger_index": 53401154,
   "date": "2020-02-13T10:47:52+00:00",
   "tx": {
-    "TransactionType": "Payment",
+    "TxOperation": "Payment",
     "Flags": 2147483648,
     "Sequence": 2102726,
     "LastLedgerSequence": 53401182,

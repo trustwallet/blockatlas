@@ -6,8 +6,8 @@ const (
 	DelegationStatusActive  DelegationStatus = "active"
 	DelegationStatusPending DelegationStatus = "pending"
 
-	DelegationTypeAuto     DelegationType = "auto"
-	DelegationTypeDelegate DelegationType = "delegate"
+	DelegationAuto     DelegationOperation = "auto"
+	DelegationDelegate DelegationOperation = "delegate"
 
 	DefaultAnnualReward = 0
 )
@@ -19,8 +19,8 @@ type (
 	StakingBatchPage     []StakingResponse
 	StakeValidators      []StakeValidator
 
-	DelegationStatus string
-	DelegationType   string
+	DelegationStatus    string
+	DelegationOperation string
 
 	ValidatorMap map[string]StakeValidator
 
@@ -29,10 +29,10 @@ type (
 	}
 
 	StakingDetails struct {
-		Reward        StakingReward  `json:"reward"`
-		LockTime      int            `json:"locktime"`
-		MinimumAmount Amount         `json:"minimum_amount"`
-		Type          DelegationType `json:"type"`
+		Reward        StakingReward       `json:"reward"`
+		LockTime      int                 `json:"locktime"`
+		MinimumAmount Amount              `json:"minimum_amount"`
+		Type          DelegationOperation `json:"type"`
 	}
 
 	Validator struct {

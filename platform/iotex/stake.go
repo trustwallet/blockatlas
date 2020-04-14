@@ -17,7 +17,7 @@ func (p *Platform) GetDetails() blockatlas.StakingDetails {
 		Reward:        blockatlas.StakingReward{Annual: 0},
 		MinimumAmount: blockatlas.Amount("100000000000000000000"),
 		LockTime:      259200,
-		Type:          blockatlas.DelegationTypeDelegate,
+		Type:          blockatlas.DelegationDelegate,
 	}
 }
 
