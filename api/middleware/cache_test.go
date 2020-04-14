@@ -1,10 +1,10 @@
-package gincache
+package middleware
 
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
-	"github.com/trustwallet/blockatlas/pkg/ginutils"
+	"net/http"
 	"net/http/httptest"
 	"testing"
 	"time"
@@ -28,10 +28,10 @@ func TestWrite(t *testing.T) {
 	writer := newCachedWriter(time.Second*3, c.Writer, "mykey")
 	c.Writer = writer
 
-	c.Writer.WriteHeader(204)
+	c.Writer.WriteHeader(http.StatusNoContent)
 	c.Writer.WriteHeaderNow()
-	c.Writer.Write([]byte("foo")) // nolint
-	assert.Equal(t, 204, c.Writer.Status())
+	_, _ = c.Writer.Write([]byte("foo")) // nolint
+	assert.Equal(t, http.StatusNoContent, c.Writer.Status())
 	assert.Equal(t, "foo", w.Body.String())
 	assert.True(t, c.Writer.Written())
 }
@@ -39,28 +39,49 @@ func TestWrite(t *testing.T) {
 func TestCachePage(t *testing.T) {
 	router := gin.New()
 	router.GET("/cache_ping", CacheMiddleware(time.Second*3, func(c *gin.Context) {
-		ginutils.RenderSuccess(c, "pong "+fmt.Sprint(time.Now().UnixNano()))
+		c.JSON(http.StatusOK, "pong "+fmt.Sprint(time.Now().UnixNano()))
 	}))
 
 	w1 := performRequest("GET", "/cache_ping", router)
 	w2 := performRequest("GET", "/cache_ping", router)
 
-	assert.Equal(t, 200, w1.Code)
-	assert.Equal(t, 200, w2.Code)
+	assert.Equal(t, http.StatusOK, w1.Code)
+	assert.Equal(t, http.StatusOK, w2.Code)
 	assert.Equal(t, w1.Body.String(), w2.Body.String())
 }
 
 func TestCachePageExpire(t *testing.T) {
 	router := gin.New()
 	router.GET("/cache_ping", CacheMiddleware(time.Second, func(c *gin.Context) {
-		ginutils.RenderSuccess(c, "pong "+fmt.Sprint(time.Now().UnixNano()))
+		c.JSON(http.StatusOK, "pong "+fmt.Sprint(time.Now().UnixNano()))
 	}))
 
 	w1 := performRequest("GET", "/cache_ping", router)
 	time.Sleep(time.Second * 3)
 	w2 := performRequest("GET", "/cache_ping", router)
 
-	assert.Equal(t, 200, w1.Code)
-	assert.Equal(t, 200, w2.Code)
+	assert.Equal(t, http.StatusOK, w1.Code)
+	assert.Equal(t, http.StatusOK, w2.Code)
 	assert.NotEqual(t, w1.Body.String(), w2.Body.String())
+}
+
+func TestCacheControl(t *testing.T) {
+	router := gin.New()
+	router.GET("/cache_ping_control", CacheMiddleware(time.Second*30, func(c *gin.Context) {
+		c.JSON(http.StatusOK, "pong "+fmt.Sprint(time.Now().UnixNano()))
+	}))
+
+	w1 := performRequest("GET", "/cache_ping_control", router)
+	w1CacheControl := w1.Header().Get("Cache-Control")
+	assert.NotEqual(t, "no-cache", w1CacheControl)
+	time.Sleep(time.Second * 1)
+	w2 := performRequest("GET", "/cache_ping_control", router)
+	w2CacheControl := w2.Header().Get("Cache-Control")
+
+	assert.Equal(t, w1CacheControl, w2CacheControl)
+	assert.Equal(t, w1.Body.String(), w2.Body.String())
+
+	assert.Equal(t, http.StatusOK, w1.Code)
+	assert.Equal(t, http.StatusOK, w2.Code)
+
 }

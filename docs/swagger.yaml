@@ -17,7 +17,8 @@ definitions:
       token_id:
         type: string
       type:
-        type: string
+        $ref: '#/definitions/blockatlas.CoinStatus'
+        type: object
     type: object
   api.Ticker:
     properties:
@@ -61,6 +62,13 @@ definitions:
     items:
       $ref: '#/definitions/api.Ticker'
     type: array
+  blockatlas.CoinStatus:
+    properties:
+      error:
+        type: string
+      height:
+        type: integer
+    type: object
   blockatlas.Collection:
     properties:
       address:
@@ -300,16 +308,16 @@ paths:
       description: Lookup ENS/ZNS to find registered addresses
       operationId: lookup
       parameters:
-      - description: string name
-        in: query
-        name: name
-        type: string
-      - description: string coin
-        in: query
-        name: coin
-        type: string
+        - description: string name
+          in: query
+          name: name
+          type: string
+        - description: string coin
+          in: query
+          name: coin
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
@@ -321,28 +329,28 @@ paths:
             $ref: '#/definitions/ginutils.ApiError'
       summary: Lookup .eth / .zil addresses
       tags:
-      - Naming
+        - Naming
   /v1/{coin}/{address}:
     get:
       consumes:
-      - application/json
+        - application/json
       description: Get transactions from the address
       operationId: tx_v1
       parameters:
-      - default: tezos
-        description: the coin name
-        in: path
-        name: coin
-        required: true
-        type: string
-      - default: tz1WCd2jm4uSt4vntk4vSuUWoZQGhLcDuR9q
-        description: the query address
-        in: path
-        name: address
-        required: true
-        type: string
+        - default: tezos
+          description: the coin name
+          in: path
+          name: coin
+          required: true
+          type: string
+        - default: tz1WCd2jm4uSt4vntk4vSuUWoZQGhLcDuR9q
+          description: the query address
+          in: path
+          name: address
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "500":
           description: Internal Server Error
@@ -350,28 +358,28 @@ paths:
             $ref: '#/definitions/ginutils.ApiError'
       summary: Get Transactions
       tags:
-      - Transactions
+        - Transactions
   /v1/{coin}/xpub/{xpub}:
     get:
       consumes:
-      - application/json
+        - application/json
       description: Get transactions from xpub address
       operationId: xpub
       parameters:
-      - default: bitcoin
-        description: the coin name
-        in: path
-        name: coin
-        required: true
-        type: string
-      - default: zpub6ruK9k6YGm8BRHWvTiQcrEPnFkuRDJhR7mPYzV2LDvjpLa5CuGgrhCYVZjMGcLcFqv9b2WvsFtY2Gb3xq8NVq8qhk9veozrA2W9QaWtihrC
-        description: the xpub address
-        in: path
-        name: xpub
-        required: true
-        type: string
+        - default: bitcoin
+          description: the coin name
+          in: path
+          name: coin
+          required: true
+          type: string
+        - default: zpub6ruK9k6YGm8BRHWvTiQcrEPnFkuRDJhR7mPYzV2LDvjpLa5CuGgrhCYVZjMGcLcFqv9b2WvsFtY2Gb3xq8NVq8qhk9veozrA2W9QaWtihrC
+          description: the xpub address
+          in: path
+          name: xpub
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
@@ -379,41 +387,41 @@ paths:
             $ref: '#/definitions/blockatlas.TxPage'
       summary: Get xpub transactions
       tags:
-      - Transactions
+        - Transactions
   /v1/market/charts:
     get:
       consumes:
-      - application/json
+        - application/json
       description: Get the charts data from an market and coin/token
       operationId: get_charts_data
       parameters:
-      - default: 60
-        description: Coin ID
-        in: query
-        name: coin
-        required: true
-        type: integer
-      - description: Token ID
-        in: query
-        name: token
-        type: string
-      - default: 1574483028
-        description: Start timestamp
-        in: query
-        name: time_start
-        type: integer
-      - default: 64
-        description: Max number of items in result prices array
-        in: query
-        name: max_items
-        type: integer
-      - default: USD
-        description: The currency to show charts
-        in: query
-        name: currency
-        type: string
+        - default: 60
+          description: Coin ID
+          in: query
+          name: coin
+          required: true
+          type: integer
+        - description: Token ID
+          in: query
+          name: token
+          type: string
+        - default: 1574483028
+          description: Start timestamp
+          in: query
+          name: time_start
+          type: integer
+        - default: 64
+          description: Max number of items in result prices array
+          in: query
+          name: max_items
+          type: integer
+        - default: USD
+          description: The currency to show charts
+          in: query
+          name: currency
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
@@ -421,36 +429,31 @@ paths:
             $ref: '#/definitions/watchmarket.ChartData'
       summary: Get charts data for a specific coin
       tags:
-      - Market
+        - Market
   /v1/market/info:
     get:
       consumes:
-      - application/json
+        - application/json
       description: Get the charts coin info data from an market and coin/contract
       operationId: get_charts_coin_info
       parameters:
-      - default: 60
-        description: Coin ID
-        in: query
-        name: coin
-        required: true
-        type: integer
-      - description: Token ID
-        in: query
-        name: token
-        type: string
-      - default: 1574483028
-        description: Start timestamp
-        in: query
-        name: time_start
-        type: integer
-      - default: USD
-        description: The currency to show coin info in
-        in: query
-        name: currency
-        type: string
+        - default: 60
+          description: Coin ID
+          in: query
+          name: coin
+          required: true
+          type: integer
+        - description: Token ID
+          in: query
+          name: token
+          type: string
+        - default: USD
+          description: The currency to show coin info in
+          in: query
+          name: currency
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
@@ -458,22 +461,22 @@ paths:
             $ref: '#/definitions/watchmarket.ChartCoinInfo'
       summary: Get charts coin info data for a specific coin
       tags:
-      - Market
+        - Market
   /v1/market/ticker:
     post:
       consumes:
-      - application/json
+        - application/json
       description: Get the ticker values from many market and coin/token
       operationId: get_tickers
       parameters:
-      - description: Ticker
-        in: body
-        name: tickers
-        required: true
-        schema:
-          $ref: '#/definitions/api.TickerRequest'
+        - description: Ticker
+          in: body
+          name: tickers
+          required: true
+          schema:
+            $ref: '#/definitions/api.TickerRequest'
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
@@ -481,100 +484,28 @@ paths:
             $ref: '#/definitions/api.Tickers'
       summary: Get ticker values for a specific market
       tags:
-      - Market
-  /v2/{coin}/collections/{address}:
-    get:
-      consumes:
-      - application/json
-      description: Get all collections from the address
-      operationId: collections_v2
-      parameters:
-      - default: ethereum
-        description: the coin name
-        in: path
-        name: coin
-        required: true
-        type: string
-      - default: 0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB
-        description: the query address
-        in: path
-        name: address
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/blockatlas.CollectionPage'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/ginutils.ApiError'
-      summary: Get Collections
-      tags:
-      - Collections
-  /v2/{coin}/collections/{owner}/collection/{collection_id}:
-    get:
-      consumes:
-      - application/json
-      description: Get a collection from the address
-      operationId: collection_v2
-      parameters:
-      - default: ethereum
-        description: the coin name
-        in: path
-        name: coin
-        required: true
-        type: string
-      - default: 0x0875BCab22dE3d02402bc38aEe4104e1239374a7
-        description: the query address
-        in: path
-        name: owner
-        required: true
-        type: string
-      - default: 0x06012c8cf97bead5deae237070f9587f8e7a266d
-        description: the query collection
-        in: path
-        name: collection_id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/blockatlas.CollectionPage'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/ginutils.ApiError'
-      summary: Get Collection
-      tags:
-      - Collections
+        - Market
   /v2/{coin}/staking/delegations/{address}:
     get:
       consumes:
-      - application/json
+        - application/json
       description: Get stake delegations from the address
       operationId: delegations
       parameters:
-      - default: tron
-        description: the coin name
-        in: path
-        name: coin
-        required: true
-        type: string
-      - default: TPJYCz8ppZNyvw7pTwmjajcx4Kk1MmEUhD
-        description: the query address
-        in: path
-        name: address
-        required: true
-        type: string
+        - default: tron
+          description: the coin name
+          in: path
+          name: coin
+          required: true
+          type: string
+        - default: TPJYCz8ppZNyvw7pTwmjajcx4Kk1MmEUhD
+          description: the query address
+          in: path
+          name: address
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
@@ -586,22 +517,22 @@ paths:
             $ref: '#/definitions/ginutils.ApiError'
       summary: Get Stake Delegations
       tags:
-      - Staking
+        - Staking
   /v2/{coin}/staking/validators:
     get:
       consumes:
-      - application/json
+        - application/json
       description: Get validators from the address
       operationId: validators
       parameters:
-      - default: cosmos
-        description: the coin name
-        in: path
-        name: coin
-        required: true
-        type: string
+        - default: cosmos
+          description: the coin name
+          in: path
+          name: coin
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
@@ -613,28 +544,28 @@ paths:
             $ref: '#/definitions/ginutils.ApiError'
       summary: Get Validators
       tags:
-      - Staking
+        - Staking
   /v2/{coin}/tokens/{address}:
     get:
       consumes:
-      - application/json
+        - application/json
       description: Get tokens from the address
       operationId: tokens
       parameters:
-      - default: ethereum
-        description: the coin name
-        in: path
-        name: coin
-        required: true
-        type: string
-      - default: 0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB
-        description: the query address
-        in: path
-        name: address
-        required: true
-        type: string
+        - default: ethereum
+          description: the coin name
+          in: path
+          name: coin
+          required: true
+          type: string
+        - default: 0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB
+          description: the query address
+          in: path
+          name: address
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
@@ -646,28 +577,28 @@ paths:
             $ref: '#/definitions/ginutils.ApiError'
       summary: Get Tokens
       tags:
-      - Transactions
+        - Transactions
   /v2/{coin}/transactions/{address}:
     get:
       consumes:
-      - application/json
+        - application/json
       description: Get transactions from the address
       operationId: tx_v2
       parameters:
-      - default: tezos
-        description: the coin name
-        in: path
-        name: coin
-        required: true
-        type: string
-      - default: tz1WCd2jm4uSt4vntk4vSuUWoZQGhLcDuR9q
-        description: the query address
-        in: path
-        name: address
-        required: true
-        type: string
+        - default: tezos
+          description: the coin name
+          in: path
+          name: coin
+          required: true
+          type: string
+        - default: tz1WCd2jm4uSt4vntk4vSuUWoZQGhLcDuR9q
+          description: the query address
+          in: path
+          name: address
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
@@ -679,47 +610,23 @@ paths:
             $ref: '#/definitions/ginutils.ApiError'
       summary: Get Transactions
       tags:
-      - Transactions
-  /v2/collectibles/categories:
-    post:
-      consumes:
-      - application/json
-      description: Get collection categories
-      operationId: collection_categories_v2
-      parameters:
-      - default: '{"60": ["0xb3624367b1ab37daef42e1a3a2ced012359659b0"]}'
-        description: Payload
-        in: body
-        name: data
-        required: true
-        schema:
-          type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/blockatlas.DocsResponse'
-      summary: Get list of collections from a specific coin and addresses
-      tags:
-      - Collections
+        - Transactions
   /v2/ns/lookup:
     get:
       description: Lookup ENS/ZNS to find registered addresses for multiple coins
       operationId: lookup
       parameters:
-      - description: string name
-        in: query
-        name: name
-        type: string
-      - description: List of coins
-        in: query
-        name: coins
-        required: true
-        type: string
+        - description: string name
+          in: query
+          name: name
+          type: string
+        - description: List of coins
+          in: query
+          name: coins
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
@@ -733,22 +640,22 @@ paths:
             $ref: '#/definitions/ginutils.ApiError'
       summary: Lookup .eth / .zil addresses
       tags:
-      - Naming
+        - Naming
   /v2/staking/delegations:
     post:
       consumes:
-      - application/json
+        - application/json
       description: Get Stake Delegations for multiple coins
       operationId: batch_delegations
       parameters:
-      - description: Validators addresses and coins
-        in: body
-        name: delegations
-        required: true
-        schema:
-          $ref: '#/definitions/api.AddressesRequest'
+        - description: Validators addresses and coins
+          in: body
+          name: delegations
+          required: true
+          schema:
+            $ref: '#/definitions/api.AddressesRequest'
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
@@ -756,22 +663,22 @@ paths:
             $ref: '#/definitions/blockatlas.DelegationsBatchPage'
       summary: Get Multiple Stake Delegations
       tags:
-      - Staking
+        - Staking
   /v2/staking/list:
     post:
       consumes:
-      - application/json
+        - application/json
       description: Get Stake Delegations for multiple coins
       operationId: batch_delegations
       parameters:
-      - description: Validators addresses and coins
-        in: body
-        name: delegations
-        required: true
-        schema:
-          $ref: '#/definitions/api.AddressesRequest'
+        - description: Validators addresses and coins
+          in: body
+          name: delegations
+          required: true
+          schema:
+            $ref: '#/definitions/api.AddressesRequest'
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
@@ -779,130 +686,34 @@ paths:
             $ref: '#/definitions/blockatlas.DelegationsBatchPage'
       summary: Get Multiple Stake Delegations
       tags:
-      - Staking
-  /v3/{coin}/collections/{address}:
-    get:
-      consumes:
-      - application/json
-      description: Get all collections from the address
-      operationId: collections_v3
-      parameters:
-      - default: ethereum
-        description: the coin name
-        in: path
-        name: coin
-        required: true
-        type: string
-      - default: 0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB
-        description: the query address
-        in: path
-        name: address
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/blockatlas.CollectionPage'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/ginutils.ApiError'
-      summary: Get Collections
-      tags:
-      - Collections
-  /v3/{coin}/collections/{owner}/collection/{collection_id}:
-    get:
-      consumes:
-      - application/json
-      description: Get a collection from the address
-      operationId: collection_v3
-      parameters:
-      - default: ethereum
-        description: the coin name
-        in: path
-        name: coin
-        required: true
-        type: string
-      - default: 0x0875BCab22dE3d02402bc38aEe4104e1239374a7
-        description: the query address
-        in: path
-        name: owner
-        required: true
-        type: string
-      - default: 0x06012c8cf97bead5deae237070f9587f8e7a266d
-        description: the query collection
-        in: path
-        name: collection_id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/blockatlas.CollectionPage'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/ginutils.ApiError'
-      summary: Get Collection
-      tags:
-      - Collections
-  /v3/collectibles/categories:
-    post:
-      consumes:
-      - application/json
-      description: Get collection categories
-      operationId: collection_categories_v3
-      parameters:
-      - default: '{"60": ["0xb3624367b1ab37daef42e1a3a2ced012359659b0"]}'
-        description: Payload
-        in: body
-        name: data
-        required: true
-        schema:
-          type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/blockatlas.DocsResponse'
-      summary: Get list of collections from a specific coin and addresses
-      tags:
-      - Collections
+        - Staking
   /v4/{coin}/collections/{owner}/collection/{collection_id}:
     get:
       consumes:
-      - application/json
+        - application/json
       description: Get a collection from the address
       operationId: collection_v4
       parameters:
-      - default: ethereum
-        description: the coin name
-        in: path
-        name: coin
-        required: true
-        type: string
-      - default: 0x0875BCab22dE3d02402bc38aEe4104e1239374a7
-        description: the query address
-        in: path
-        name: owner
-        required: true
-        type: string
-      - default: 0x06012c8cf97bead5deae237070f9587f8e7a266d
-        description: the query collection
-        in: path
-        name: collection_id
-        required: true
-        type: string
+        - default: ethereum
+          description: the coin name
+          in: path
+          name: coin
+          required: true
+          type: string
+        - default: 0x0875BCab22dE3d02402bc38aEe4104e1239374a7
+          description: the query address
+          in: path
+          name: owner
+          required: true
+          type: string
+        - default: 0x06012c8cf97bead5deae237070f9587f8e7a266d
+          description: the query collection
+          in: path
+          name: collection_id
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
@@ -914,23 +725,23 @@ paths:
             $ref: '#/definitions/ginutils.ApiError'
       summary: Get Collection
       tags:
-      - Collections
+        - Collections
   /v4/collectibles/categories:
     post:
       consumes:
-      - application/json
+        - application/json
       description: Get collection categories
       operationId: collection_categories_v4
       parameters:
-      - default: '{"60": ["0xb3624367b1ab37daef42e1a3a2ced012359659b0"]}'
-        description: Payload
-        in: body
-        name: data
-        required: true
-        schema:
-          type: string
+        - default: '{"60": ["0xb3624367b1ab37daef42e1a3a2ced012359659b0"]}'
+          description: Payload
+          in: body
+          name: data
+          required: true
+          schema:
+            type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
@@ -938,5 +749,5 @@ paths:
             $ref: '#/definitions/blockatlas.DocsResponse'
       summary: Get list of collections from a specific coin and addresses
       tags:
-      - Collections
+        - Collections
 swagger: "2.0"

@@ -137,13 +137,6 @@
                         "in": "query"
                     },
                     {
-                        "type": "integer",
-                        "default": 1574483028,
-                        "description": "Start timestamp",
-                        "name": "time_start",
-                        "in": "query"
-                    },
-                    {
                         "type": "string",
                         "default": "USD",
                         "description": "The currency to show coin info in",
@@ -280,42 +273,6 @@
                 }
             }
         },
-        "/v2/collectibles/categories": {
-            "post": {
-                "description": "Get collection categories",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Collections"
-                ],
-                "summary": "Get list of collections from a specific coin and addresses",
-                "operationId": "collection_categories_v2",
-                "parameters": [
-                    {
-                        "default": "{\"60\": [\"0xb3624367b1ab37daef42e1a3a2ced012359659b0\"]}",
-                        "description": "Payload",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/blockatlas.DocsResponse"
-                        }
-                    }
-                }
-            }
-        },
         "/v2/ns/lookup": {
             "get": {
                 "description": "Lookup ENS/ZNS to find registered addresses for multiple coins",
@@ -426,110 +383,6 @@
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/blockatlas.DelegationsBatchPage"
-                        }
-                    }
-                }
-            }
-        },
-        "/v2/{coin}/collections/{address}": {
-            "get": {
-                "description": "Get all collections from the address",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Collections"
-                ],
-                "summary": "Get Collections",
-                "operationId": "collections_v2",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "default": "ethereum",
-                        "description": "the coin name",
-                        "name": "coin",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "default": "0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB",
-                        "description": "the query address",
-                        "name": "address",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/blockatlas.CollectionPage"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/ginutils.ApiError"
-                        }
-                    }
-                }
-            }
-        },
-        "/v2/{coin}/collections/{owner}/collection/{collection_id}": {
-            "get": {
-                "description": "Get a collection from the address",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Collections"
-                ],
-                "summary": "Get Collection",
-                "operationId": "collection_v2",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "default": "ethereum",
-                        "description": "the coin name",
-                        "name": "coin",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "default": "0x0875BCab22dE3d02402bc38aEe4104e1239374a7",
-                        "description": "the query address",
-                        "name": "owner",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "default": "0x06012c8cf97bead5deae237070f9587f8e7a266d",
-                        "description": "the query collection",
-                        "name": "collection_id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/blockatlas.CollectionPage"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/ginutils.ApiError"
                         }
                     }
                 }
@@ -719,146 +572,6 @@
                 }
             }
         },
-        "/v3/collectibles/categories": {
-            "post": {
-                "description": "Get collection categories",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Collections"
-                ],
-                "summary": "Get list of collections from a specific coin and addresses",
-                "operationId": "collection_categories_v3",
-                "parameters": [
-                    {
-                        "default": "{\"60\": [\"0xb3624367b1ab37daef42e1a3a2ced012359659b0\"]}",
-                        "description": "Payload",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/blockatlas.DocsResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/v3/{coin}/collections/{address}": {
-            "get": {
-                "description": "Get all collections from the address",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Collections"
-                ],
-                "summary": "Get Collections",
-                "operationId": "collections_v3",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "default": "ethereum",
-                        "description": "the coin name",
-                        "name": "coin",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "default": "0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB",
-                        "description": "the query address",
-                        "name": "address",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/blockatlas.CollectionPage"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/ginutils.ApiError"
-                        }
-                    }
-                }
-            }
-        },
-        "/v3/{coin}/collections/{owner}/collection/{collection_id}": {
-            "get": {
-                "description": "Get a collection from the address",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Collections"
-                ],
-                "summary": "Get Collection",
-                "operationId": "collection_v3",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "default": "ethereum",
-                        "description": "the coin name",
-                        "name": "coin",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "default": "0x0875BCab22dE3d02402bc38aEe4104e1239374a7",
-                        "description": "the query address",
-                        "name": "owner",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "default": "0x06012c8cf97bead5deae237070f9587f8e7a266d",
-                        "description": "the query collection",
-                        "name": "collection_id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/blockatlas.CollectionPage"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/ginutils.ApiError"
-                        }
-                    }
-                }
-            }
-        },
         "/v4/collectibles/categories": {
             "post": {
                 "description": "Get collection categories",
@@ -980,7 +693,8 @@
                     "type": "string"
                 },
                 "type": {
-                    "type": "string"
+                    "type": "object",
+                    "$ref": "#/definitions/blockatlas.CoinStatus"
                 }
             }
         },
@@ -1046,6 +760,17 @@
             "type": "array",
             "items": {
                 "$ref": "#/definitions/api.Ticker"
+            }
+        },
+        "blockatlas.CoinStatus": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "height": {
+                    "type": "integer"
+                }
             }
         },
         "blockatlas.Collection": {

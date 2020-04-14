@@ -1,4 +1,4 @@
-package gincache
+package middleware
 
 import (
 	"bytes"
@@ -42,8 +42,6 @@ type cachedWriter struct {
 	expire  time.Duration
 	key     string
 }
-
-var _ gin.ResponseWriter = &cachedWriter{}
 
 func newCachedWriter(expire time.Duration, writer gin.ResponseWriter, key string) *cachedWriter {
 	return &cachedWriter{writer, 0, false, expire, key}
@@ -151,17 +149,20 @@ func generateKey(c *gin.Context) string {
 	return base64.URLEncoding.EncodeToString(hash[:])
 }
 
-// CacheMiddleware encapsulates a gin handler function and caches the response with an expiration time.
+// CacheMiddleware encapsulates a gin handler function and caches the model with an expiration time.
 func CacheMiddleware(expiration time.Duration, handle gin.HandlerFunc) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		defer c.Next()
 		key := generateKey(c)
+		cacheControlValue := uint(expiration.Seconds())
 		mc, err := memoryCache.getCache(key)
 		if err != nil || mc.Data == nil {
 			writer := newCachedWriter(expiration, c.Writer, key)
+
+			writer.Header().Set("Cache-Control", fmt.Sprintf("max-age=%d", cacheControlValue))
+
 			c.Writer = writer
 			handle(c)
-
 			if c.IsAborted() {
 				memoryCache.deleteCache(key)
 			}
@@ -174,6 +175,9 @@ func CacheMiddleware(expiration time.Duration, handle gin.HandlerFunc) gin.Handl
 				c.Writer.Header().Set(k, v)
 			}
 		}
+
+		c.Writer.Header().Set("Cache-Control", fmt.Sprintf("max-age=%d", cacheControlValue))
+
 		_, err = c.Writer.Write(mc.Data)
 		if err != nil {
 			memoryCache.deleteCache(key)

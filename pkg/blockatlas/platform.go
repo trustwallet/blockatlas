@@ -56,11 +56,8 @@ type (
 		GetCollections(owner string) (CollectionPage, error)
 		GetCollectibles(owner, collectibleID string) (CollectiblePage, error)
 
-		OldGetCollections(owner string) (CollectionPage, error)
-		OldGetCollectibles(owner, collectibleID string) (CollectiblePage, error)
-
-		GetCollectionsV4(owner string) (CollectionPage, error)
-		GetCollectiblesV4(owner, collectibleID string) (CollectiblePage, error)
+		GetCollectionsV3(owner string) (CollectionPageV3, error)
+		GetCollectiblesV3(owner, collectibleID string) (CollectiblePageV3, error)
 	}
 
 	// CustomAPI provides custom HTTP routes
