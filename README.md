@@ -176,6 +176,25 @@ Example:
 ATLAS_NIMIQ_API=http://localhost:8648
 ```
 
+## Tests
+
+### Unit tests
+
+### Mocked tests
+
+End-to-end tests with calls to external APIs has great value, but is not suitable for regular CI verification, as any external reasons could break the tests.
+
+Therefore mocked API-level tests are used, whereby external APIs are replaced by mocks.
+
+* External mocks are implemented using *dyson*, as javascript files.  They generally return constant, pre-canned responses to the reuests that occur during tests.
+* Mocks are 'turned on' by corresponging API endpoints in the configmock.yml config file (localhost:3000).
+* Tests invoke into blockatlas through public APIs only, and are executed using *newman* (Postman cli -- `make newman-mocked`).
+* Product code, and even test code should not be aware whether it runs with mocks or the real external endpoints.
+* See Makefile for targets with 'mock'; platform can be started locally with mocks using `make start-platform-api-mock`.
+* When dyson is started (e.g. with `make start-platform-api-mock`), it outputs requests, which helps debugging
+* The newman tests can be executed with unmocked external APIs as well, but verifications may fail, because some APIs return variable responses.  Unmocked tests are not intended for regular CI execution, but as ad-hoc development tests.
+* General steps for creating new mocked tests: replace endpoint to localhost:3000, observer incoming calls (dyson output), obtain real response from external API (with exact same parameters), enhance dsyon script to return the same output, verify that blockatlas provides correct output.  Also, add verifications of results to the tests.
+
 ## Docs
 
 Swagger API docs provided at path `/swagger/index.html`
