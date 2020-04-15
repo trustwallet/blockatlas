@@ -45,13 +45,17 @@ func GetVar(name string) string {
 }
 
 func GetApiVar(coinId uint) string {
-	varName := fmt.Sprintf("%s.api", coin.Coins[coinId].Handle)
+	varName := fmt.Sprintf("%s.api", GetHandle(coinId))
 	return GetVar(varName)
 }
 
 func GetRpcVar(coinId uint) string {
-	varName := fmt.Sprintf("%s.rpc", coin.Coins[coinId].Handle)
+	varName := fmt.Sprintf("%s.rpc", GetHandle(coinId))
 	return GetVar(varName)
+}
+
+func GetHandle(coinId uint) string {
+	return coin.Coins[coinId].Handle
 }
 
 func getPlatformMap() blockatlas.Platforms {
@@ -102,7 +106,7 @@ func getPlatformMap() blockatlas.Platforms {
 		coin.Callisto().Handle:     ethereum.Init(coin.CLO, GetApiVar(coin.CLO), GetRpcVar(coin.CLO)),
 		coin.Wanchain().Handle:     ethereum.Init(coin.WAN, GetApiVar(coin.WAN), GetRpcVar(coin.WAN)),
 		coin.Tomochain().Handle:    ethereum.Init(coin.TOMO, GetApiVar(coin.TOMO), GetRpcVar(coin.TOMO)),
-		coin.Ethereum().Handle:     ethereum.InitWitCollection(coin.ETH, GetApiVar(coin.ETH), GetRpcVar(coin.ETH), GetVar("ethereum.collections_api"), GetVar("ethereum.collections_api_key")),
+		coin.Ethereum().Handle:     ethereum.InitWitCollection(coin.ETH, GetApiVar(coin.ETH), GetRpcVar(coin.ETH), GetVar("ethereum.blockbook_api"), GetVar("ethereum.collections_api"), GetVar("ethereum.collections_api_key")),
 		coin.Near().Handle:         near.Init(GetApiVar(coin.NEAR)),
 	}
 }

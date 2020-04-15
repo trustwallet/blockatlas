@@ -2,11 +2,12 @@ package ethereum
 
 import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/platform/ethereum/collection"
 	"strings"
 )
 
 func (p *Platform) GetCollectionsV3(owner string) (blockatlas.CollectionPageV3, error) {
-	collections, err := p.collectionsClient.GetCollections(owner)
+	collections, err := p.collectible.GetCollections(owner)
 	if err != nil {
 		return nil, err
 	}
@@ -15,7 +16,7 @@ func (p *Platform) GetCollectionsV3(owner string) (blockatlas.CollectionPageV3, 
 }
 
 func (p *Platform) GetCollectiblesV3(owner, collectibleID string) (blockatlas.CollectiblePageV3, error) {
-	collection, items, err := p.collectionsClient.GetCollectiblesV3(owner, collectibleID)
+	collection, items, err := p.collectible.GetCollectiblesV3(owner, collectibleID)
 	if err != nil {
 		return nil, err
 	}
@@ -23,7 +24,7 @@ func (p *Platform) GetCollectiblesV3(owner, collectibleID string) (blockatlas.Co
 	return page, nil
 }
 
-func NormalizeCollectionPageV3(collections []Collection, coinIndex uint, owner string) (page blockatlas.CollectionPageV3) {
+func NormalizeCollectionPageV3(collections []collection.Collection, coinIndex uint, owner string) (page blockatlas.CollectionPageV3) {
 	for _, collection := range collections {
 		if len(collection.Contracts) == 0 {
 			continue
@@ -37,7 +38,7 @@ func NormalizeCollectionPageV3(collections []Collection, coinIndex uint, owner s
 	return
 }
 
-func NormalizeCollectionV3(c Collection, coinIndex uint, owner string) blockatlas.CollectionV3 {
+func NormalizeCollectionV3(c collection.Collection, coinIndex uint, owner string) blockatlas.CollectionV3 {
 	normalizeSupportedContracts(&c)
 	if len(c.Contracts) == 0 {
 		return blockatlas.CollectionV3{}
@@ -65,8 +66,8 @@ func NormalizeCollectionV3(c Collection, coinIndex uint, owner string) blockatla
 	}
 }
 
-func normalizeSupportedContracts(c *Collection) {
-	supportedContracts := make([]PrimaryAssetContract, 0)
+func normalizeSupportedContracts(c *collection.Collection) {
+	supportedContracts := make([]collection.PrimaryAssetContract, 0)
 	for _, contract := range c.Contracts {
 		if _, ok := supportedTypes[contract.Type]; !ok {
 			continue
@@ -76,7 +77,7 @@ func normalizeSupportedContracts(c *Collection) {
 	c.Contracts = supportedContracts
 }
 
-func NormalizeCollectiblePageV3(c *Collection, srcPage []Collectible, coinIndex uint) (page blockatlas.CollectiblePageV3) {
+func NormalizeCollectiblePageV3(c *collection.Collection, srcPage []collection.Collectible, coinIndex uint) (page blockatlas.CollectiblePageV3) {
 	normalizeSupportedContracts(c)
 	if len(c.Contracts) == 0 {
 		return
@@ -91,7 +92,7 @@ func NormalizeCollectiblePageV3(c *Collection, srcPage []Collectible, coinIndex 
 	return
 }
 
-func NormalizeCollectibleV3(c *Collection, a Collectible, coinIndex uint) blockatlas.CollectibleV3 {
+func NormalizeCollectibleV3(c *collection.Collection, a collection.Collectible, coinIndex uint) blockatlas.CollectibleV3 {
 	address := blockatlas.GetValidParameter(c.Contracts[0].Address, "")
 	collectionType := blockatlas.GetValidParameter(c.Contracts[0].Type, "")
 	externalLink := blockatlas.GetValidParameter(a.ExternalLink, a.AssetContract.ExternalLink)

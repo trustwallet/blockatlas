@@ -1,10 +1,11 @@
-package ethereum
+package trustray
 
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"testing"
+
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 
 	"github.com/trustwallet/blockatlas/coin"
 )
