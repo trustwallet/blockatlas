@@ -11,8 +11,7 @@ module.exports = {
         if (params.operation === 'getaccount') {
             return {balance: 1, assetV2: [], votes: [], frozen: []}
         }
-        // fallback
-        var return4Codacy = {error: "Not implemented"};
-        return return4Codacy;
+
+        return {error: "Not implemented"};
     }
 };

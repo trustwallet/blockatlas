@@ -177,8 +177,8 @@ newman-mocked-params: start-platform-api-mock
 ifeq (,$(test))
 	@bash -c "$(MAKE) newman-run test=transaction host=$(host) && \
 	          $(MAKE) newman-run test=domain host=$(host) && \
-			  $(MAKE) newman-run test=staking host=$(host)"
-	#not-mocked-yet: $(MAKE) newman-run test=token host=$(host) && \
+			  $(MAKE) newman-run test=staking host=$(host) && \
+			  $(MAKE) newman-run test=token host=$(host)"
 	#not-mocked-yet: $(MAKE) newman-run test=collection host=$(host) &&
 	@bash -c "$(MAKE) stop"
 else
