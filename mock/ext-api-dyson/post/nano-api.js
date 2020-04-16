@@ -42,7 +42,8 @@ module.exports = {
             }
             return {error: 'Bad account number'};
         }
-        var return4Codacy = {error: 'Invalid request'};
-        return return4Codacy;
+
+        // fallback
+        return {error: "Not implemented"};
     }
 };
