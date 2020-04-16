@@ -66,12 +66,13 @@ tezos:
   api: https://api.tzstats.com/explorer # https://tzstats.com/docs/api/index.html#introduction
   rpc: https://mainnet.tezos.org.ua
 
-# [ETH] Ethereum: https://ethereum.org (Trust-Ray API)
+# [ETH] Ethereum: https://ethereum.org
 # ethereum:
-#  api: https://localhost:4567
-#  collections_api: https://api.opensea.io
-#  collections_api_key: [opensea_api_key]
-#  rpc: [ethereum rpc]
+# api: https://localhost:4567 (Trust-Ray API)
+# blockbook_api: [blockbook api]
+# collections_api: https://api.opensea.io
+# collections_api_key: [opensea_api_key]
+# rpc: [ethereum rpc]
 
 # [ETC] Ethereum Classic: https://ethereumclassic.org (Trust-Ray API)
 # classic:

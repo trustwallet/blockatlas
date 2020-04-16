@@ -1,4 +1,4 @@
-package ethereum
+package ens
 
 import (
 	"bytes"

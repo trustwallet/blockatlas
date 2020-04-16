@@ -5,12 +5,13 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
+	"github.com/trustwallet/blockatlas/platform/ethereum/ens"
 	AddressEncoder "github.com/trustwallet/ens-coincodec"
 )
 
 func (p *Platform) Lookup(coins []uint64, name string) ([]blockatlas.Resolved, error) {
 	var result []blockatlas.Resolved
-	node, err := NameHash(name)
+	node, err := ens.NameHash(name)
 	if err != nil {
 		return result, errors.E(err, "name hash failed")
 	}
