@@ -43,7 +43,6 @@ module.exports = {
             return {error: 'Bad account number'};
         }
 
-        // fallback
         return {error: "Not implemented"};
     }
 };

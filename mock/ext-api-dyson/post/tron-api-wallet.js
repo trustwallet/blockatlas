@@ -11,7 +11,7 @@ module.exports = {
         if (params.operation === 'getaccount') {
             return {balance: 1, assetV2: [], votes: [], frozen: []}
         }
-        // fallback
+
         return {error: "Not implemented"};
     }
 };

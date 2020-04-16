@@ -2622,7 +2622,6 @@ module.exports = {
                 }
         }
 
-        // fallback
         return {error: "Not implemented"};
     }
 };
