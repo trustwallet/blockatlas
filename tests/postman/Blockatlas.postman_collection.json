@@ -256,6 +256,7 @@
 											"    pm.response.to.be.json;",
 											"});",
 											"",
+											"console.log(jsonData);",
 											"pm.test(handler + \" - schema is valid: \" + address, function() {",
 											"    pm.expect(ajv.validate(schema, jsonData)).to.be.true;",
 											"});",
