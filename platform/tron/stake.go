@@ -5,7 +5,6 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
-	services "github.com/trustwallet/blockatlas/services/assets"
 	"strconv"
 	"time"
 )
@@ -49,7 +48,7 @@ func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, e
 	if len(votes.Votes) == 0 {
 		return results, nil
 	}
-	validators, err := services.GetValidatorsMap(p)
+	validators, err := p.assets.GetValidatorsMap(p)
 	if err != nil {
 		return nil, err
 	}

@@ -4,15 +4,33 @@ import (
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
+	"github.com/trustwallet/blockatlas/pkg/servicerepo"
 	"sort"
 	"time"
 )
+
+type AssetsServiceI interface {
+	GetValidatorsMap(api blockatlas.StakeAPI) (blockatlas.ValidatorMap, error)
+	GetActiveValidators(api blockatlas.StakeAPI) (blockatlas.StakeValidators, error)
+	GetValidators(api blockatlas.StakeAPI) (AssetValidators, blockatlas.ValidatorPage, error)
+}
+
+type AssetsService struct {
+}
+
+func InitService(serviceRepo *servicerepo.ServiceRepo) {
+	serviceRepo.Add(new(AssetsService))
+}
+
+func GetService(s *servicerepo.ServiceRepo) AssetsServiceI {
+	return s.Get("assets.AssetsService").(AssetsServiceI)
+}
 
 const (
 	AssetsURL = "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/"
 )
 
-func requestValidatorsInfo(coin coin.Coin) (AssetValidators, error) {
+func (s *AssetsService) requestValidatorsInfo(coin coin.Coin) (AssetValidators, error) {
 	var results AssetValidators
 	request := blockatlas.InitClient(AssetsURL + coin.Handle)
 	err := request.GetWithCache(&results, "validators/list.json", nil, time.Hour*1)
@@ -22,8 +40,8 @@ func requestValidatorsInfo(coin coin.Coin) (AssetValidators, error) {
 	return results, nil
 }
 
-func GetValidatorsMap(api blockatlas.StakeAPI) (blockatlas.ValidatorMap, error) {
-	assets, validators, err := GetValidators(api)
+func (s *AssetsService) GetValidatorsMap(api blockatlas.StakeAPI) (blockatlas.ValidatorMap, error) {
+	assets, validators, err := s.GetValidators(api)
 	if err != nil {
 		return nil, err
 	}
@@ -31,8 +49,8 @@ func GetValidatorsMap(api blockatlas.StakeAPI) (blockatlas.ValidatorMap, error) 
 	return results.ToMap(), nil
 }
 
-func GetActiveValidators(api blockatlas.StakeAPI) (blockatlas.StakeValidators, error) {
-	assets, validators, err := GetValidators(api)
+func (s *AssetsService) GetActiveValidators(api blockatlas.StakeAPI) (blockatlas.StakeValidators, error) {
+	assets, validators, err := s.GetValidators(api)
 	if err != nil {
 		return nil, err
 	}
@@ -40,8 +58,8 @@ func GetActiveValidators(api blockatlas.StakeAPI) (blockatlas.StakeValidators, e
 	return results, nil
 }
 
-func GetValidators(api blockatlas.StakeAPI) (AssetValidators, blockatlas.ValidatorPage, error) {
-	assetsValidators, err := requestValidatorsInfo(api.Coin())
+func (s *AssetsService) GetValidators(api blockatlas.StakeAPI) (AssetValidators, blockatlas.ValidatorPage, error) {
+	assetsValidators, err := s.requestValidatorsInfo(api.Coin())
 	if err != nil {
 		return nil, nil, errors.E(err, "unable to fetch validators list from the registry")
 	}

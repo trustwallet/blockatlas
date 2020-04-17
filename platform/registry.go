@@ -5,6 +5,7 @@ import (
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
+	"github.com/trustwallet/blockatlas/pkg/servicerepo"
 )
 
 var (
@@ -27,8 +28,8 @@ var (
 	CollectionAPIs map[uint]blockatlas.CollectionAPI
 )
 
-func getActivePlatforms(handle string) []blockatlas.Platform {
-	platforms := getPlatformMap()
+func getActivePlatforms(serviceRepo *servicerepo.ServiceRepo, handle string) []blockatlas.Platform {
+	platforms := getPlatformMap(serviceRepo)
 	logger.Info("Platform API setup with: ", logger.Params{"handle": handle})
 
 	if handle == allPlatformsHandle {
@@ -44,8 +45,8 @@ func getActivePlatforms(handle string) []blockatlas.Platform {
 	return nil
 }
 
-func Init(platformHandle string) {
-	platformList := getActivePlatforms(platformHandle)
+func Init(serviceRepo *servicerepo.ServiceRepo, platformHandle string) {
+	platformList := getActivePlatforms(serviceRepo, platformHandle)
 
 	// white list of collection api coins (only ETH now)
 	InitCollectionsWhitelist()

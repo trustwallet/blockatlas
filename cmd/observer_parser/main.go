@@ -8,6 +8,7 @@ import (
 	"github.com/trustwallet/blockatlas/internal"
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/logger"
+	"github.com/trustwallet/blockatlas/pkg/servicerepo"
 	"github.com/trustwallet/blockatlas/platform"
 	"github.com/trustwallet/blockatlas/services/observer/notifier"
 	"github.com/trustwallet/blockatlas/services/observer/parser"
@@ -27,11 +28,13 @@ var (
 	backlogTime, minInterval, maxInterval, fetchBlocksInterval time.Duration
 	maxBackLogBlocks                                           int64
 	txsBatchLimit                                              uint
+	serviceRepo                                                *servicerepo.ServiceRepo
 	database                                                   *db.Instance
 )
 
 func init() {
 	_, confPath = internal.ParseArgs("", defaultConfigPath)
+	serviceRepo = servicerepo.New()
 
 	internal.InitConfig(confPath)
 	logger.InitLogger()
@@ -41,7 +44,7 @@ func init() {
 	platformHandle := viper.GetString("platform")
 
 	internal.InitRabbitMQ(mqHost, prefetchCount)
-	platform.Init(platformHandle)
+	platform.Init(serviceRepo, platformHandle)
 
 	if err := mq.RawTransactions.Declare(); err != nil {
 		logger.Fatal(err)

@@ -3,8 +3,8 @@ package endpoint
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/trustwallet/blockatlas/api/model"
-	"github.com/trustwallet/blockatlas/services/domains"
 	"github.com/trustwallet/blockatlas/pkg/servicerepo"
+	"github.com/trustwallet/blockatlas/services/domains"
 	"net/http"
 	"strconv"
 	"strings"
@@ -12,8 +12,7 @@ import (
 
 var domainsServ domains.DomainsServiceI
 
-func InitService(serviceRepo *servicerepo.ServiceRepo) {
-	domains.InitService(serviceRepo)
+func initDomainsService(serviceRepo *servicerepo.ServiceRepo) {
 	//domainsServ = serviceRepo.Get("domains.DomainsService").(domains.DomainsServiceI)
 	domainsServ = domains.GetService(serviceRepo)
 }

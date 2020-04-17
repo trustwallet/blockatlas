@@ -3,7 +3,6 @@ package tezos
 import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
-	services "github.com/trustwallet/blockatlas/services/assets"
 )
 
 const Annual = 6.09
@@ -17,7 +16,7 @@ func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, e
 		return make(blockatlas.DelegationsPage, 0), nil
 	}
 
-	validators, err := services.GetValidatorsMap(p)
+	validators, err := p.assets.GetValidatorsMap(p)
 	if err != nil {
 		return nil, err
 	}

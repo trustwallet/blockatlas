@@ -6,6 +6,7 @@ import (
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/servicerepo"
 	"github.com/trustwallet/blockatlas/platform/aeternity"
 	"github.com/trustwallet/blockatlas/platform/aion"
 	"github.com/trustwallet/blockatlas/platform/algorand"
@@ -58,12 +59,12 @@ func GetHandle(coinId uint) string {
 	return coin.Coins[coinId].Handle
 }
 
-func getPlatformMap() blockatlas.Platforms {
+func getPlatformMap(serviceRepo *servicerepo.ServiceRepo) blockatlas.Platforms {
 	return blockatlas.Platforms{
 		coin.Fio().Handle:          fio.Init(GetApiVar(coin.FIO)),
 		coin.Aion().Handle:         aion.Init(GetApiVar(coin.AION)),
 		coin.Icon().Handle:         icon.Init(GetApiVar(coin.ICX)),
-		coin.Tron().Handle:         tron.Init(GetApiVar(coin.TRX)),
+		coin.Tron().Handle:         tron.Init(serviceRepo, GetApiVar(coin.TRX)),
 		coin.Nano().Handle:         nano.Init(GetApiVar(coin.NANO)),
 		coin.Nimiq().Handle:        nimiq.Init(GetApiVar(coin.NIM)),
 		coin.Iotex().Handle:        iotex.Init(GetApiVar(coin.IOTX)),
@@ -76,15 +77,15 @@ func getPlatformMap() blockatlas.Platforms {
 		coin.Ontology().Handle:     ontology.Init(GetApiVar(coin.ONT)),
 		coin.Algorand().Handle:     algorand.Init(GetApiVar(coin.ALGO)),
 		coin.Aeternity().Handle:    aeternity.Init(GetApiVar(coin.AE)),
-		coin.Solana().Handle:       solana.Init(GetApiVar(coin.SOL)),
-		coin.Tezos().Handle:        tezos.Init(GetApiVar(coin.XTZ), GetRpcVar(coin.XTZ)),
+		coin.Solana().Handle:       solana.Init(serviceRepo, GetApiVar(coin.SOL)),
+		coin.Tezos().Handle:        tezos.Init(serviceRepo, GetApiVar(coin.XTZ), GetRpcVar(coin.XTZ)),
 		coin.Binance().Handle:      binance.Init(GetApiVar(coin.BNB), GetVar("binance.dex")),
 		coin.Zilliqa().Handle:      zilliqa.Init(GetApiVar(coin.ZIL), GetVar("zilliqa.key"), GetRpcVar(coin.ZIL), GetVar("zilliqa.lookup")),
 		coin.Kusama().Handle:       polkadot.Init(coin.KSM, GetApiVar(coin.KSM)),
 		coin.Stellar().Handle:      stellar.Init(coin.XLM, GetApiVar(coin.XLM)),
 		coin.Kin().Handle:          stellar.Init(coin.KIN, GetApiVar(coin.KIN)),
-		coin.Cosmos().Handle:       cosmos.Init(coin.ATOM, GetApiVar(coin.ATOM)),
-		coin.Kava().Handle:         cosmos.Init(coin.KAVA, GetApiVar(coin.KAVA)),
+		coin.Cosmos().Handle:       cosmos.Init(serviceRepo, coin.ATOM, GetApiVar(coin.ATOM)),
+		coin.Kava().Handle:         cosmos.Init(serviceRepo, coin.KAVA, GetApiVar(coin.KAVA)),
 		coin.Bitcoin().Handle:      bitcoin.Init(coin.BTC, GetApiVar(coin.BTC)),
 		coin.Litecoin().Handle:     bitcoin.Init(coin.LTC, GetApiVar(coin.LTC)),
 		coin.Bitcoincash().Handle:  bitcoin.Init(coin.BCH, GetApiVar(coin.BCH)),
