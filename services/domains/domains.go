@@ -8,10 +8,26 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/platform"
+	"github.com/trustwallet/blockatlas/common/servicerepo"
 )
 
-// TLDMapping Mapping of name TLD's to coin where they are handled
-var TLDMapping = map[string]uint64{
+type DomainsServiceI interface {
+	HandleLookup(name string, coins []uint64) ([]blockatlas.Resolved, error)
+}
+
+type DomainsService struct {
+}
+
+func InitService(serviceRepo *servicerepo.ServiceRepo) {
+	serviceRepo.Add(new(DomainsService))
+}
+
+func GetService(s *servicerepo.ServiceRepo) DomainsServiceI {
+	return s.Get("domains.DomainsService").(DomainsServiceI)
+}
+
+// tldMapping Mapping of name TLD's to coin where they are handled
+var tldMapping = map[string]uint64{
 	".eth":         CoinType.ETH,
 	".xyz":         CoinType.ETH,
 	".luxe":        CoinType.ETH,
@@ -25,19 +41,19 @@ var TLDMapping = map[string]uint64{
 	"@":            CoinType.FIO, // any FIO domain
 }
 
-func HandleLookup(name string, coins []uint64) ([]blockatlas.Resolved, error) {
+func (d *DomainsService) HandleLookup(name string, coins []uint64) ([]blockatlas.Resolved, error) {
 	// Assumption: format of the name can be decided (top-level-domain), and at most one naming service is tried
 	name = strings.ToLower(name)
 	tld, err := getTLD(name)
 	if err != nil {
 		return nil, errors.E(err, "name format not recognized", errors.Params{"name": name, "coins": coins})
 	}
-	id, ok := TLDMapping[tld]
+	id, ok := tldMapping[tld]
 	if !ok {
 		// special handling for FIO, any fio domain
 		if len(tld) >= 2 && tld[0] == '@' {
 			tld = string("@")
-			id, ok = TLDMapping[tld]
+			id, ok = tldMapping[tld]
 			if !ok {
 				return nil, errors.E("name not found", errors.Params{"name": name, "coins": coins, "tld": tld})
 			}

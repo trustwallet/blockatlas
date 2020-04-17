@@ -9,6 +9,7 @@ import (
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/platform"
+	"github.com/trustwallet/blockatlas/common/servicerepo"
 	"time"
 )
 
@@ -104,7 +105,10 @@ func RegisterCustomAPI(root gin.IRouter, api blockatlas.Platform) {
 	customAPI.RegisterRoutes(customRouter)
 }
 
+var serviceRepo *servicerepo.ServiceRepo = servicerepo.New()
+
 func RegisterDomainAPI(root gin.IRouter) {
+	endpoint.InitService(serviceRepo)
 	root.GET("/ns/lookup", endpoint.GetAddressByCoinAndDomain)
 	root.GET("v2/ns/lookup", endpoint.GetAddressByCoinAndDomainBatch)
 }

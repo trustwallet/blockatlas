@@ -4,10 +4,19 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/trustwallet/blockatlas/api/model"
 	"github.com/trustwallet/blockatlas/services/domains"
+	"github.com/trustwallet/blockatlas/common/servicerepo"
 	"net/http"
 	"strconv"
 	"strings"
 )
+
+var domainsServ domains.DomainsServiceI
+
+func InitService(serviceRepo *servicerepo.ServiceRepo) {
+	domains.InitService(serviceRepo)
+	//domainsServ = serviceRepo.Get("domains.DomainsService").(domains.DomainsServiceI)
+	domainsServ = domains.GetService(serviceRepo)
+}
 
 // @Summary Lookup .eth / .zil addresses
 // @ID lookup
@@ -27,7 +36,7 @@ func GetAddressByCoinAndDomain(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, model.CreateErrorResponse(model.InvalidQuery, err))
 		return
 	}
-	result, err := domains.HandleLookup(name, []uint64{coin})
+	result, err := domainsServ.HandleLookup(name, []uint64{coin})
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.CreateErrorResponse(model.InternalFail, err))
 		return
@@ -57,7 +66,7 @@ func GetAddressByCoinAndDomainBatch(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, model.CreateErrorResponse(model.InvalidQuery, err))
 		return
 	}
-	result, err := domains.HandleLookup(name, coins)
+	result, err := domainsServ.HandleLookup(name, coins)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.CreateErrorResponse(model.InternalFail, err))
 		return
