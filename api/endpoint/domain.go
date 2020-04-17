@@ -4,7 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/trustwallet/blockatlas/api/model"
 	"github.com/trustwallet/blockatlas/services/domains"
-	"github.com/trustwallet/blockatlas/common/servicerepo"
+	"github.com/trustwallet/blockatlas/pkg/servicerepo"
 	"net/http"
 	"strconv"
 	"strings"

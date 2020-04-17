@@ -9,7 +9,7 @@ import (
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/platform"
-	"github.com/trustwallet/blockatlas/common/servicerepo"
+	"github.com/trustwallet/blockatlas/pkg/servicerepo"
 	"time"
 )
 
