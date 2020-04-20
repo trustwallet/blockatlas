@@ -2,6 +2,7 @@ package notifier
 
 import (
 	"github.com/stretchr/testify/assert"
+	"github.com/trustwallet/blockatlas/mq"
 	"testing"
 	"time"
 )
@@ -45,7 +46,8 @@ func TestGetInterval(t *testing.T) {
 			5000 * time.Millisecond,
 		},
 	}
-	notifierService := NewNotifierService()
+	mqService := mq.NewMQService()
+	notifierService := NewNotifierService(mqService)
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := notifierService.GetInterval(tt.args.blockTime, tt.args.minInterval, tt.args.maxInterval)

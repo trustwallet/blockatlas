@@ -29,6 +29,10 @@ type mqService struct {
 	rawTransactions *Queue
 }
 
+func NewMQService() MQServiceIface {
+	return interface{}(new(mqService)).(MQServiceIface)
+}
+
 // InitService Adds new mq.mqService instance
 func InitService(serviceRepo *servicerepo.ServiceRepo) {
 	serviceRepo.Add(new(mqService))

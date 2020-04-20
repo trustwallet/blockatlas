@@ -27,8 +27,6 @@ var (
 func init() {
 	_, confPath = internal.ParseArgs("", defaultConfigPath)
 	serviceRepo = servicerepo.New()
-	notifier.InitService(serviceRepo)
-	notifierService = notifier.GetService(serviceRepo)
 
 	internal.InitConfig(confPath)
 	logger.InitLogger()
@@ -40,6 +38,8 @@ func init() {
 
 	internal.InitRabbitMQ(serviceRepo, mqHost, prefetchCount)
 	mqService = mq.GetService(serviceRepo)
+	notifier.InitService(serviceRepo)
+	notifierService = notifier.GetService(serviceRepo)
 
 	if err := mqService.RawTransactions().Declare(); err != nil {
 		logger.Fatal(err)

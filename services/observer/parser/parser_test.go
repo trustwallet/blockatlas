@@ -45,7 +45,7 @@ func TestFetchBlocks(t *testing.T) {
 	params := Params{
 		Ctx:                   nil,
 		Api:                   getMockedBlockAPI(),
-		Queue:                 "",
+		Queue:                 nil,
 		ParsingBlocksInterval: 0,
 		FetchBlocksTimeout:    0,
 		BacklogCount:          0,
