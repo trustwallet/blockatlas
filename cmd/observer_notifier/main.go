@@ -20,7 +20,7 @@ var (
 	confPath        string
 	database        *db.Instance
 	serviceRepo     *servicerepo.ServiceRepo
-	notifierService notifier.NotifierServiceI
+	notifierService notifier.NotifierServiceIface
 )
 
 func init() {

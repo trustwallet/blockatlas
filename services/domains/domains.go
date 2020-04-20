@@ -11,19 +11,19 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/servicerepo"
 )
 
-type DomainsServiceI interface {
+type DomainsServiceIface interface {
 	HandleLookup(name string, coins []uint64) ([]blockatlas.Resolved, error)
 }
 
-type DomainsService struct {
+type domainsService struct {
 }
 
 func InitService(serviceRepo *servicerepo.ServiceRepo) {
-	serviceRepo.Add(new(DomainsService))
+	serviceRepo.Add(new(domainsService))
 }
 
-func GetService(s *servicerepo.ServiceRepo) DomainsServiceI {
-	return s.Get("domains.DomainsService").(DomainsServiceI)
+func GetService(s *servicerepo.ServiceRepo) DomainsServiceIface {
+	return s.Get("domains.domainsService").(DomainsServiceIface)
 }
 
 // tldMapping Mapping of name TLD's to coin where they are handled
@@ -41,7 +41,7 @@ var tldMapping = map[string]uint64{
 	"@":            CoinType.FIO, // any FIO domain
 }
 
-func (d *DomainsService) HandleLookup(name string, coins []uint64) ([]blockatlas.Resolved, error) {
+func (d *domainsService) HandleLookup(name string, coins []uint64) ([]blockatlas.Resolved, error) {
 	// Assumption: format of the name can be decided (top-level-domain), and at most one naming service is tried
 	name = strings.ToLower(name)
 	tld, err := getTLD(name)

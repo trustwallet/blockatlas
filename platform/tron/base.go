@@ -9,7 +9,7 @@ import (
 
 type Platform struct {
 	client Client
-	assets assets.AssetsServiceI
+	assets assets.AssetsServiceIface
 }
 
 func Init(serviceRepo *servicerepo.ServiceRepo, api string) *Platform {

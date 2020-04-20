@@ -10,8 +10,7 @@ import (
 	"github.com/trustwallet/blockatlas/services/assets"
 	"net/http"
 )
-
-var assetsServ assets.AssetsServiceI
+var assetsServ assets.AssetsServiceIface
 
 func initAssetsService(serviceRepo *servicerepo.ServiceRepo) {
 	assetsServ = assets.GetService(serviceRepo)

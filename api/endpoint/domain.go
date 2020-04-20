@@ -10,10 +10,10 @@ import (
 	"strings"
 )
 
-var domainsServ domains.DomainsServiceI
+var domainsServ domains.DomainsServiceIface
 
 func initDomainsService(serviceRepo *servicerepo.ServiceRepo) {
-	//domainsServ = serviceRepo.Get("domains.DomainsService").(domains.DomainsServiceI)
+	//domainsServ = serviceRepo.Get("domains.DomainsService").(domains.DomainsServiceIface)
 	domainsServ = domains.GetService(serviceRepo)
 }
 

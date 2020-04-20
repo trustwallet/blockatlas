@@ -6,7 +6,7 @@ package servicerepo
  * Intended usage:
  * - Create one instance of the repo, early on.
  * - Pass this repo to service initialization, in a tree of calls.  This may seem cumbersome, but it ensures determined initialization order (avoid circular dependencies)
- * - Services should add themself to the repo, by interface.
+ * - Services should add themself to the repo, by interface.  Service type should be private, only interface methods should be public.
  * - Services can take out other services they need, they should store them in local variables.
  * - If interfaces are added, there is no dependency to implementations, mocking is easy to achieve.
  */

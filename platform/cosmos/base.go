@@ -10,7 +10,7 @@ import (
 type Platform struct {
 	client    Client
 	CoinIndex uint
-	assets    assets.AssetsServiceI
+	assets    assets.AssetsServiceIface
 }
 
 func Init(serviceRepo *servicerepo.ServiceRepo, coin uint, api string) *Platform {

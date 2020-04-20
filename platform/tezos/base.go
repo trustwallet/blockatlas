@@ -10,7 +10,7 @@ import (
 type Platform struct {
 	client    Client
 	rpcClient RpcClient
-	assets    assets.AssetsServiceI
+	assets    assets.AssetsServiceIface
 }
 
 func Init(serviceRepo *servicerepo.ServiceRepo, api, rpc string) *Platform {
