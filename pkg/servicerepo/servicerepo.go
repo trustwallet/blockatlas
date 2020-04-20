@@ -1,5 +1,16 @@
 package servicerepo
 
+/**
+ * ServiceRepository: a simple repository of string-keyed interfaces,
+ * intended to be used as repo for internal services/components, to be used by each other.
+ * Intended usage:
+ * - Create one instance of the repo, early on.
+ * - Pass this repo to service initialization, in a tree of calls.  This may seem cumbersome, but it ensures determined initialization order (avoid circular dependencies)
+ * - Services should add themself to the repo, by interface.
+ * - Services can take out other services they need, they should store them in local variables.
+ * - If interfaces are added, there is no dependency to implementations, mocking is easy to achieve.
+ */
+
 import (
 	"reflect"
 )
