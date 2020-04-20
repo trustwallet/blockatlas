@@ -37,7 +37,7 @@ func InitService(serviceRepo *servicerepo.ServiceRepo) {
 }
 
 func GetService(s *servicerepo.ServiceRepo) NotifierServiceIface {
-	return s.Get("notifier.NotifierService").(NotifierServiceIface)
+	return s.Get("notifier.notifierService").(NotifierServiceIface)
 }
 
 func (n *notifierService) GetMaxPushNotificationsBatchLimit() uint {
