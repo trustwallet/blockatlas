@@ -30,6 +30,7 @@ var (
 	txsBatchLimit                                              uint
 	serviceRepo                                                *servicerepo.ServiceRepo
 	database                                                   *db.Instance
+	mqService                                                  mq.MQServiceIface
 )
 
 func init() {
@@ -43,12 +44,13 @@ func init() {
 	prefetchCount := viper.GetInt("observer.rabbitmq.consumer.prefetch_count")
 	platformHandle := viper.GetString("platform")
 
-	internal.InitRabbitMQ(mqHost, prefetchCount)
+	internal.InitRabbitMQ(serviceRepo, mqHost, prefetchCount)
 	platform.Init(serviceRepo, platformHandle)
 	notifier.InitService(serviceRepo)
 	parser.InitService(serviceRepo)
+	mqService = mq.GetService(serviceRepo)
 
-	if err := mq.RawTransactions.Declare(); err != nil {
+	if err := mqService.RawTransactions().Declare(); err != nil {
 		logger.Fatal(err)
 	}
 
@@ -73,13 +75,13 @@ func init() {
 		logger.Fatal(err)
 	}
 
-	go mq.FatalWorker(time.Second * 10)
+	go mqService.FatalWorker(time.Second * 10)
 	go db.RestoreConnectionWorker(database, time.Second*10, pgUri)
 	time.Sleep(time.Millisecond)
 }
 
 func main() {
-	defer mq.Close()
+	defer mqService.Close()
 	var (
 		wg          sync.WaitGroup
 		coinCancel  = make(map[string]context.CancelFunc)
@@ -114,7 +116,7 @@ func main() {
 		params := parser.Params{
 			Ctx:                   ctx,
 			Api:                   api,
-			Queue:                 mq.RawTransactions,
+			Queue:                 mqService.RawTransactions(),
 			ParsingBlocksInterval: pollInterval,
 			FetchBlocksTimeout:    fetchBlocksInterval,
 			BacklogCount:          backlogCount,

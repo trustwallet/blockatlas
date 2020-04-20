@@ -26,7 +26,9 @@ func TestParserFetchAndPublishBlock_NormalCase(t *testing.T) {
 	serviceRepo := servicerepo.New()
 	parser.InitService(serviceRepo)
 	notifier.InitService(serviceRepo)
+	mq.InitService(serviceRepo)
 	parserService := parser.GetService(serviceRepo)
+	mqService := mq.GetService(serviceRepo)
 
 	params := setupParser(serviceRepo, stopChan)
 	params.Database = database
@@ -34,7 +36,7 @@ func TestParserFetchAndPublishBlock_NormalCase(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	params.Ctx = ctx
-	params.Queue = mq.RawTransactions
+	params.Queue = mqService.RawTransactions()
 
 	go parserService.RunParser(params)
 

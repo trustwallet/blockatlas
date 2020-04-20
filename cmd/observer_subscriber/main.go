@@ -21,6 +21,7 @@ var (
 	confPath    string
 	serviceRepo *servicerepo.ServiceRepo
 	database    *db.Instance
+	mqService   mq.MQServiceIface
 )
 
 func init() {
@@ -35,8 +36,9 @@ func init() {
 	mqHost := viper.GetString("observer.rabbitmq.uri")
 	prefetchCount := viper.GetInt("observer.rabbitmq.consumer.prefetch_count")
 
-	internal.InitRabbitMQ(mqHost, prefetchCount)
+	internal.InitRabbitMQ(serviceRepo, mqHost, prefetchCount)
 	subscriber.InitService(serviceRepo)
+	mqService = mq.GetService(serviceRepo)
 
 	var err error
 	database, err = db.New(pgUri)
@@ -44,20 +46,20 @@ func init() {
 		logger.Fatal(err)
 	}
 
-	go mq.FatalWorker(time.Second * 10)
+	go mqService.FatalWorker(time.Second * 10)
 	go db.RestoreConnectionWorker(database, time.Second*10, pgUri)
 	time.Sleep(time.Millisecond)
 }
 
 func main() {
-	defer mq.Close()
-	if err := mq.Subscriptions.Declare(); err != nil {
+	defer mqService.Close()
+	if err := mqService.Subscriptions().Declare(); err != nil {
 		logger.Fatal(err)
 	}
 	ctx, cancel := context.WithCancel(context.Background())
 
 	subscriberService := subscriber.GetService(serviceRepo)
-	go mq.Subscriptions.RunConsumerWithCancelAndDbConn(subscriberService.RunSubscriber, database, ctx)
+	go mqService.Subscriptions().RunConsumerWithCancelAndDbConn(subscriberService.RunSubscriber, database, ctx)
 
 	internal.SetupGracefulShutdownForObserver(cancel)
 }

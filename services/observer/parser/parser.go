@@ -39,7 +39,7 @@ type (
 	Params struct {
 		Ctx                                       context.Context
 		Api                                       blockatlas.BlockAPI
-		Queue                                     mq.Queue
+		Queue                                     *mq.Queue
 		ParsingBlocksInterval, FetchBlocksTimeout time.Duration
 		BacklogCount                              int
 		MaxBacklogBlocks                          int64

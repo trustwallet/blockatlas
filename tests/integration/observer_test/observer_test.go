@@ -5,6 +5,7 @@ package observer_test
 import (
 	"github.com/trustwallet/blockatlas/db"
 	"github.com/trustwallet/blockatlas/mq"
+	"github.com/trustwallet/blockatlas/pkg/servicerepo"
 	"github.com/trustwallet/blockatlas/tests/integration/setup"
 	"log"
 	"os"
@@ -17,20 +18,24 @@ var (
 )
 
 func TestMain(m *testing.M) {
+	serviceRepo := servicerepo.New()
+	mq.InitService(serviceRepo)
+	mqService := mq.GetService(serviceRepo)
+
 	database = setup.RunPgContainer()
-	setup.RunMQContainer()
-	if err := mq.RawTransactions.Declare(); err != nil {
+	setup.RunMQContainer(serviceRepo)
+	if err := mqService.RawTransactions().Declare(); err != nil {
 		log.Fatal(err)
 	}
-	if err := mq.TxNotifications.Declare(); err != nil {
+	if err := mqService.TxNotifications().Declare(); err != nil {
 		log.Fatal(err)
 	}
-	if err := mq.Subscriptions.Declare(); err != nil {
+	if err := mqService.Subscriptions().Declare(); err != nil {
 		log.Fatal(err)
 	}
-	rawTransactionsChannel = mq.RawTransactions.GetMessageChannel()
-	subscriptionChannel = mq.Subscriptions.GetMessageChannel()
-	transactionsChannel = mq.TxNotifications.GetMessageChannel()
+	rawTransactionsChannel = mqService.RawTransactions().GetMessageChannel()
+	subscriptionChannel = mqService.Subscriptions().GetMessageChannel()
+	transactionsChannel = mqService.TxNotifications().GetMessageChannel()
 
 	code := m.Run()
 

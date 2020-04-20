@@ -4,14 +4,17 @@ import (
 	"fmt"
 	"github.com/ory/dockertest"
 	"github.com/trustwallet/blockatlas/mq"
+	"github.com/trustwallet/blockatlas/pkg/servicerepo"
 	"log"
 )
 
 var (
 	mqResource *dockertest.Resource
+	mqService  mq.MQServiceIface
 )
 
-func runMQContainer() error {
+func runMQContainer(serviceRepo *servicerepo.ServiceRepo) error {
+	mqService = mq.GetService(serviceRepo)
 	var err error
 	pool, err := dockertest.NewPool("")
 	if err != nil {
@@ -24,7 +27,7 @@ func runMQContainer() error {
 	}
 
 	if err = pool.Retry(func() error {
-		return mq.Init(fmt.Sprintf("amqp://localhost:%s", mqResource.GetPort("5672/tcp")))
+		return mqService.Init(fmt.Sprintf("amqp://localhost:%s", mqResource.GetPort("5672/tcp")), 500)
 	}); err != nil {
 		return err
 	}
@@ -32,6 +35,6 @@ func runMQContainer() error {
 }
 
 func stopMQContainer() error {
-	mq.Close()
+	mqService.Close()
 	return mqResource.Close()
 }

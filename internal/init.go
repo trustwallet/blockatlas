@@ -8,6 +8,7 @@ import (
 	"github.com/trustwallet/blockatlas/config"
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/logger"
+	"github.com/trustwallet/blockatlas/pkg/servicerepo"
 
 	"path/filepath"
 	"runtime"
@@ -52,12 +53,13 @@ func InitEngine(handler *gin.HandlerFunc, ginMode string) *gin.Engine {
 	return engine
 }
 
-func InitRabbitMQ(rabbitURI string, prefetchCount int) {
-	err := mq.Init(rabbitURI)
+func InitRabbitMQ(serviceRepo *servicerepo.ServiceRepo, rabbitURI string, prefetchCount int) {
+	mq.InitService(serviceRepo)
+	mqService := mq.GetService(serviceRepo)
+	err := mqService.Init(rabbitURI, prefetchCount)
 	if err != nil {
 		logger.Fatal("Failed to init Rabbit MQ", logger.Params{"uri": rabbitURI})
 	}
-	mq.PrefetchCount = prefetchCount
 }
 
 func LogVersionInfo() {

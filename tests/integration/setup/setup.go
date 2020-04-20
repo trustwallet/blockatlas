@@ -2,11 +2,12 @@ package setup
 
 import (
 	"github.com/trustwallet/blockatlas/db"
+	"github.com/trustwallet/blockatlas/pkg/servicerepo"
 	"log"
 )
 
-func RunMQContainer() {
-	if err := runMQContainer(); err != nil {
+func RunMQContainer(serviceRepo *servicerepo.ServiceRepo) {
+	if err := runMQContainer(serviceRepo); err != nil {
 		log.Fatal(err)
 	}
 }

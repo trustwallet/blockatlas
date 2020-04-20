@@ -43,19 +43,20 @@ var (
 )
 
 func TestNotifier(t *testing.T) {
+	serviceRepo := servicerepo.New()
+	notifier.InitService(serviceRepo)
+	notifierService := notifier.GetService(serviceRepo)
+	mqService := mq.GetService(serviceRepo)
+
 	setup.CleanupPgContainer(database.Gorm)
 
 	err := database.AddSubscriptions(1, []models.SubscriptionData{{Coin: 714, Address: "tbnb1ttyn4csghfgyxreu7lmdu3lcplhqhxtzced45a", SubscriptionId: 1}})
 	assert.Nil(t, err)
 
-	err = produceTxs(txs)
+	err = produceTxs(txs, mqService.RawTransactions())
 	assert.Nil(t, err)
 
 	ctx, cancel := context.WithCancel(context.Background())
-
-	serviceRepo := servicerepo.New()
-	notifier.InitService(serviceRepo)
-	notifierService := notifier.GetService(serviceRepo)
 
 	go mq.RunConsumerForChannelWithCancelAndDbConn(notifierService.RunNotifier, rawTransactionsChannel, database, ctx)
 	time.Sleep(time.Second * 3)
@@ -107,10 +108,10 @@ func ConsumerToTestTransactions(delivery amqp.Delivery, t *testing.T) {
 	return
 }
 
-func produceTxs(txs blockatlas.Txs) error {
+func produceTxs(txs blockatlas.Txs, queue *mq.Queue) error {
 	body, err := json.Marshal(txs)
 	if err != nil {
 		return err
 	}
-	return mq.RawTransactions.Publish(body)
+	return queue.Publish(body)
 }

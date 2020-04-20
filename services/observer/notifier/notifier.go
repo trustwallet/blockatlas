@@ -25,16 +25,22 @@ type NotifierServiceIface interface {
 
 type notifierService struct {
 	maxPushNotificationsBatchLimit uint
+	mqService                      mq.MQServiceIface
 }
 
-func NewNotifierService() NotifierServiceIface {
-	s := notifierService{maxPushNotificationsBatchLimit: defaultPushNotificationsBatchLimit}
+func NewNotifierService(mqService mq.MQServiceIface) NotifierServiceIface {
+	s := notifierService{
+		maxPushNotificationsBatchLimit: defaultPushNotificationsBatchLimit,
+		mqService:                      mqService,
+	}
 	return interface{}(&s).(NotifierServiceIface)
 }
 
-// InitService Adds new notifier.notifierService instance
+// InitService Adds new notifier.notifierService instance, requires mq.mqService
 func InitService(serviceRepo *servicerepo.ServiceRepo) {
-	serviceRepo.Add(NewNotifierService())
+	mqService := mq.GetService(serviceRepo)
+	serviceRepo.Add(NewNotifierService(mqService))
+
 }
 
 func GetService(s *servicerepo.ServiceRepo) NotifierServiceIface {
@@ -119,18 +125,18 @@ func (n *notifierService) buildAndPostMessage(blockTransactions blockatlas.TxSet
 	batches := getNotificationBatches(notifications, n.maxPushNotificationsBatchLimit)
 
 	for _, batch := range batches {
-		publishNotificationBatch(batch)
+		n.publishNotificationBatch(batch)
 	}
 }
 
-func publishNotificationBatch(batch []TransactionNotification) {
+func (n *notifierService) publishNotificationBatch(batch []TransactionNotification) {
 	raw, err := json.Marshal(batch)
 	if err != nil {
 		err = errors.E(err, " failed to dispatch event")
 		logger.Fatal(err)
 	}
 
-	err = mq.TxNotifications.Publish(raw)
+	err = n.mqService.TxNotifications().Publish(raw)
 	if err != nil {
 		err = errors.E(err, " failed to dispatch event")
 		logger.Fatal(err)

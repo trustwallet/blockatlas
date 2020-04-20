@@ -38,11 +38,12 @@ func TestFullFlow(t *testing.T) {
 	parser.InitService(serviceRepo)
 	notifierService := notifier.GetService(serviceRepo)
 	parserService := parser.GetService(serviceRepo)
+	mqService := mq.GetService(serviceRepo)
 
 	params := setupParserFull(serviceRepo, stopChan)
 	params.Database = database
 	params.Ctx = ctx
-	params.Queue = mq.RawTransactions
+	params.Queue = mqService.RawTransactions()
 
 	go parserService.RunParser(params)
 	time.Sleep(time.Second * 2)
