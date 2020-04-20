@@ -275,6 +275,7 @@ func publish(params Params, txs blockatlas.Txs, wg *sync.WaitGroup) {
 		return
 	}
 	if params.Queue == nil {
+		logger.Error(err, logger.Params{"coin": params.Api.Coin().Handle})
 		return
 	}
 	err = params.Queue.Publish(body)

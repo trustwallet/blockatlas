@@ -40,6 +40,7 @@ func TestFullFlow(t *testing.T) {
 	notifierService := notifier.GetService(serviceRepo)
 	parserService := parser.GetService(serviceRepo)
 	mqService := mq.GetService(serviceRepo)
+	mqService.Init("http://dummyurl", 100)
 
 	params := setupParserFull(serviceRepo, stopChan)
 	params.Database = database
