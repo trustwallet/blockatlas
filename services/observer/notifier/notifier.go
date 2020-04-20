@@ -32,6 +32,7 @@ func NewNotifierService() NotifierServiceIface {
 	return interface{}(&s).(NotifierServiceIface)
 }
 
+// InitService Adds new notifier.notifierService instance
 func InitService(serviceRepo *servicerepo.ServiceRepo) {
 	serviceRepo.Add(NewNotifierService())
 }

@@ -18,6 +18,7 @@ type AssetsServiceIface interface {
 type assetsService struct {
 }
 
+// InitService Adds new assets.assetsService instance
 func InitService(serviceRepo *servicerepo.ServiceRepo) {
 	serviceRepo.Add(new(assetsService))
 }

@@ -18,6 +18,7 @@ type DomainsServiceIface interface {
 type domainsService struct {
 }
 
+// InitService Adds new domains.domainsService instance
 func InitService(serviceRepo *servicerepo.ServiceRepo) {
 	serviceRepo.Add(new(domainsService))
 }

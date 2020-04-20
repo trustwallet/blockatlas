@@ -26,6 +26,7 @@ type ParserServiceIface interface {
 type parserService struct {
 }
 
+// InitService Adds new parser.parserService instance
 func InitService(serviceRepo *servicerepo.ServiceRepo) {
 	serviceRepo.Add(new(parserService))
 }

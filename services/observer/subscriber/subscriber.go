@@ -18,6 +18,7 @@ type SubscriberServiceIface interface {
 type subscriberService struct {
 }
 
+// InitService Adds new subscriber.subscriberService instance
 func InitService(serviceRepo *servicerepo.ServiceRepo) {
 	serviceRepo.Add(new(subscriberService))
 }
