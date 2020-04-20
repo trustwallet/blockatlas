@@ -7,7 +7,23 @@ import (
 	"github.com/trustwallet/blockatlas/db/models"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
+	"github.com/trustwallet/blockatlas/pkg/servicerepo"
 )
+
+type SubscriberServiceIface interface {
+	RunSubscriber(database *db.Instance, delivery amqp.Delivery)
+}
+
+type subscriberService struct {
+}
+
+func InitService(serviceRepo *servicerepo.ServiceRepo) {
+	serviceRepo.Add(new(subscriberService))
+}
+
+func GetService(s *servicerepo.ServiceRepo) SubscriberServiceIface {
+	return s.Get("subscriber.subscriberService").(SubscriberServiceIface)
+}
 
 const (
 	AddSubscription    blockatlas.SubscriptionOperation = "AddSubscription"
@@ -15,7 +31,7 @@ const (
 	UpdateSubscription blockatlas.SubscriptionOperation = "UpdateSubscription"
 )
 
-func RunSubscriber(database *db.Instance, delivery amqp.Delivery) {
+func (s *subscriberService) RunSubscriber(database *db.Instance, delivery amqp.Delivery) {
 	var event blockatlas.SubscriptionEvent
 	err := json.Unmarshal(delivery.Body, &event)
 	if err != nil {
@@ -30,7 +46,7 @@ func RunSubscriber(database *db.Instance, delivery amqp.Delivery) {
 
 	switch event.Operation {
 	case AddSubscription, UpdateSubscription:
-		err = database.AddSubscriptions(id, ToSubscriptionData(subscriptions))
+		err = database.AddSubscriptions(id, toSubscriptionData(subscriptions))
 		if err != nil {
 			logger.Error(err, params)
 		}
@@ -49,7 +65,7 @@ func RunSubscriber(database *db.Instance, delivery amqp.Delivery) {
 	}
 }
 
-func ToSubscriptionData(sub []blockatlas.Subscription) []models.SubscriptionData {
+func toSubscriptionData(sub []blockatlas.Subscription) []models.SubscriptionData {
 	data := make([]models.SubscriptionData, 0, len(sub))
 	for _, s := range sub {
 		data = append(data, models.SubscriptionData{Coin: s.Coin, Address: s.Address, SubscriptionId: s.Id})
