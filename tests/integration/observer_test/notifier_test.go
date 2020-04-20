@@ -11,7 +11,6 @@ import (
 	"github.com/trustwallet/blockatlas/db/models"
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/pkg/servicerepo"
 	"github.com/trustwallet/blockatlas/services/observer/notifier"
 	"github.com/trustwallet/blockatlas/tests/integration/setup"
 	"testing"
@@ -43,7 +42,6 @@ var (
 )
 
 func TestNotifier(t *testing.T) {
-	serviceRepo := servicerepo.New()
 	notifier.InitService(serviceRepo)
 	notifierService := notifier.GetService(serviceRepo)
 	mqService := mq.GetService(serviceRepo)

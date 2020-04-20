@@ -33,13 +33,10 @@ func TestFullFlow(t *testing.T) {
 
 	stopChan := make(chan struct{}, 1)
 
-	serviceRepo := servicerepo.New()
-	mq.InitService(serviceRepo)
 	notifier.InitService(serviceRepo)
 	parser.InitService(serviceRepo)
 	notifierService := notifier.GetService(serviceRepo)
 	parserService := parser.GetService(serviceRepo)
-	setup.RunMQContainer(serviceRepo)
 	mqService := mq.GetService(serviceRepo)
 
 	params := setupParserFull(serviceRepo, stopChan)

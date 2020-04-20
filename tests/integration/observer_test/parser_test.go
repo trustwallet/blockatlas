@@ -23,10 +23,8 @@ func TestParserFetchAndPublishBlock_NormalCase(t *testing.T) {
 	setup.CleanupPgContainer(database.Gorm)
 	stopChan := make(chan struct{}, 1)
 
-	serviceRepo := servicerepo.New()
 	parser.InitService(serviceRepo)
 	notifier.InitService(serviceRepo)
-	mq.InitService(serviceRepo)
 	parserService := parser.GetService(serviceRepo)
 	mqService := mq.GetService(serviceRepo)
 

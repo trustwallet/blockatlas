@@ -9,7 +9,6 @@ import (
 	"github.com/trustwallet/blockatlas/db/models"
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/pkg/servicerepo"
 	"github.com/trustwallet/blockatlas/services/observer/subscriber"
 	"github.com/trustwallet/blockatlas/tests/integration/setup"
 	"io/ioutil"
@@ -43,9 +42,7 @@ func TestSubscriberAddSubscription(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	serviceRepo := servicerepo.New()
 	subscriber.InitService(serviceRepo)
-	mq.InitService(serviceRepo)
 	subscriberService := subscriber.GetService(serviceRepo)
 	mqService := mq.GetService(serviceRepo)
 
@@ -112,9 +109,7 @@ func TestSubscriber_UpdateSubscription(t *testing.T) {
 		{Coin: 64, Address: "0x0000000000000000000000000000000000000000", SubscriptionId: 3},
 	})
 
-	serviceRepo := servicerepo.New()
 	subscriber.InitService(serviceRepo)
-	mq.InitService(serviceRepo)
 	subscriberService := subscriber.GetService(serviceRepo)
 	mqService := mq.GetService(serviceRepo)
 

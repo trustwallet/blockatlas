@@ -17,9 +17,12 @@ var (
 	database                                                         *db.Instance
 )
 
+var serviceRepo *servicerepo.ServiceRepo;
+
 func TestMain(m *testing.M) {
-	serviceRepo := servicerepo.New()
+	serviceRepo = servicerepo.New()
 	mq.InitService(serviceRepo)
+	setup.RunMQContainer(serviceRepo)
 	mqService := mq.GetService(serviceRepo)
 
 	database = setup.RunPgContainer()
