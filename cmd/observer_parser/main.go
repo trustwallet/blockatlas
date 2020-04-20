@@ -46,6 +46,7 @@ func init() {
 	internal.InitRabbitMQ(mqHost, prefetchCount)
 	platform.Init(serviceRepo, platformHandle)
 	notifier.InitService(serviceRepo)
+	parser.InitService()
 
 	if err := mq.RawTransactions.Declare(); err != nil {
 		logger.Fatal(err)
@@ -86,6 +87,7 @@ func main() {
 	)
 
 	notifierService := notifier.GetService(serviceRepo)
+	parserService := parser.GetService()
 
 	wg.Add(len(platform.BlockAPIs))
 	for _, api := range platform.BlockAPIs {
@@ -101,8 +103,8 @@ func main() {
 		}
 
 		// do not allow
-		if txsBatchLimit < parser.MinTxsBatchLimit {
-			txsBatchLimit = parser.MinTxsBatchLimit
+		if txsBatchLimit < parserService.MinTxsBatchLimit() {
+			txsBatchLimit = parserService.MinTxsBatchLimit()
 		}
 
 		ctx, cancel := context.WithCancel(context.Background())
@@ -122,7 +124,7 @@ func main() {
 			Database:              database,
 		}
 
-		go parser.RunParser(params)
+		go parserService.RunParser(params)
 
 		logger.Info("Parser params", logger.Params{
 			"interval":                 pollInterval,

@@ -17,6 +17,18 @@ import (
 	"time"
 )
 
+type ParserService struct {
+}
+
+func InitService() {//serviceRepo *servicerepo.ServiceRepo) {
+	//serviceRepo.Add(new(domainsService))
+}
+
+func GetService() *ParserService {//s *servicerepo.ServiceRepo) DomainsServiceIface {
+	//return s.Get("domains.domainsService").(DomainsServiceIface)
+	return &ParserService{};
+}
+
 type (
 	Params struct {
 		Ctx                                       context.Context
@@ -42,9 +54,9 @@ type (
 	}
 )
 
-const MinTxsBatchLimit = 500
+func (p *ParserService) MinTxsBatchLimit() uint { return 500 }
 
-func RunParser(params Params) {
+func (p *ParserService) RunParser(params Params) {
 	logger.Info("------------------------------------------------------------")
 	for {
 		select {
@@ -53,32 +65,32 @@ func RunParser(params Params) {
 			params.StopChannel <- struct{}{}
 			return
 		default:
-			lastParsedBlock, currentBlock, err := GetBlocksIntervalToFetch(params)
+			lastParsedBlock, currentBlock, err := p.GetBlocksIntervalToFetch(params)
 			if err != nil || lastParsedBlock > currentBlock {
 				logger.Error(err, logger.Params{"coin": params.Api.Coin().Handle})
 				time.Sleep(params.ParsingBlocksInterval)
 				continue
 			}
 
-			blocks := FetchBlocks(params, lastParsedBlock, currentBlock)
+			blocks := p.FetchBlocks(params, lastParsedBlock, currentBlock)
 
-			err = SaveLastParsedBlock(params, blocks)
+			err = p.SaveLastParsedBlock(params, blocks)
 			if err != nil {
 				logger.Error(err, logger.Params{"coin": params.Api.Coin().Handle})
 				time.Sleep(params.ParsingBlocksInterval)
 				continue
 			}
 
-			txs := ConvertToBatch(blocks)
+			txs := p.ConvertToBatch(blocks)
 
-			PublishTransactionsBatch(params, txs)
+			p.PublishTransactionsBatch(params, txs)
 
 			time.Sleep(params.ParsingBlocksInterval)
 		}
 	}
 }
 
-func GetBlocksIntervalToFetch(params Params) (int64, int64, error) {
+func (p *ParserService) GetBlocksIntervalToFetch(params Params) (int64, int64, error) {
 	lastParsedBlock, err := params.Database.GetLastParsedBlockNumber(params.Api.Coin().Handle)
 	if err != nil {
 		return 0, 0, errors.E(err, "Polling failed: tracker didn't return last known block number")
@@ -100,7 +112,7 @@ func GetBlocksIntervalToFetch(params Params) (int64, int64, error) {
 	return lastParsedBlock, currentBlock, nil
 }
 
-func FetchBlocks(params Params, lastParsedBlock, currentBlock int64) []blockatlas.Block {
+func (p *ParserService) FetchBlocks(params Params, lastParsedBlock, currentBlock int64) []blockatlas.Block {
 	if lastParsedBlock == currentBlock {
 		logger.Info("No new blocks", logger.Params{"last": lastParsedBlock, "coin": params.Api.Coin().ID, "time": time.Now().Unix()})
 		return nil
@@ -165,7 +177,7 @@ func fetchBlock(api blockatlas.BlockAPI, num int64, blocksChan chan<- blockatlas
 	return nil
 }
 
-func SaveLastParsedBlock(params Params, blocks []blockatlas.Block) error {
+func (p *ParserService) SaveLastParsedBlock(params Params, blocks []blockatlas.Block) error {
 	if len(blocks) == 0 {
 		return nil
 	}
@@ -187,7 +199,7 @@ func SaveLastParsedBlock(params Params, blocks []blockatlas.Block) error {
 	return nil
 }
 
-func ConvertToBatch(blocks []blockatlas.Block) blockatlas.Txs {
+func (p *ParserService) ConvertToBatch(blocks []blockatlas.Block) blockatlas.Txs {
 	if len(blocks) == 0 {
 		return nil
 	}
@@ -215,7 +227,7 @@ func ConvertToBatch(blocks []blockatlas.Block) blockatlas.Txs {
 	return txsBatch.Txs
 }
 
-func PublishTransactionsBatch(params Params, txs blockatlas.Txs) {
+func (p *ParserService) PublishTransactionsBatch(params Params, txs blockatlas.Txs) {
 	if len(txs) == 0 {
 		logger.Info("------------------------------------------------------------")
 		return
