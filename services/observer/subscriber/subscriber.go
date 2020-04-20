@@ -12,6 +12,7 @@ import (
 
 type SubscriberServiceIface interface {
 	RunSubscriber(database *db.Instance, delivery amqp.Delivery)
+	ToSubscriptionData(sub []blockatlas.Subscription) []models.SubscriptionData
 }
 
 type subscriberService struct {
@@ -46,7 +47,7 @@ func (s *subscriberService) RunSubscriber(database *db.Instance, delivery amqp.D
 
 	switch event.Operation {
 	case AddSubscription, UpdateSubscription:
-		err = database.AddSubscriptions(id, toSubscriptionData(subscriptions))
+		err = database.AddSubscriptions(id, s.ToSubscriptionData(subscriptions))
 		if err != nil {
 			logger.Error(err, params)
 		}
@@ -65,7 +66,7 @@ func (s *subscriberService) RunSubscriber(database *db.Instance, delivery amqp.D
 	}
 }
 
-func toSubscriptionData(sub []blockatlas.Subscription) []models.SubscriptionData {
+func (s *subscriberService) ToSubscriptionData(sub []blockatlas.Subscription) []models.SubscriptionData {
 	data := make([]models.SubscriptionData, 0, len(sub))
 	for _, s := range sub {
 		data = append(data, models.SubscriptionData{Coin: s.Coin, Address: s.Address, SubscriptionId: s.Id})

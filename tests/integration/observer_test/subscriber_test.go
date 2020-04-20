@@ -9,6 +9,7 @@ import (
 	"github.com/trustwallet/blockatlas/db/models"
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/servicerepo"
 	"github.com/trustwallet/blockatlas/services/observer/subscriber"
 	"github.com/trustwallet/blockatlas/tests/integration/setup"
 	"io/ioutil"
@@ -42,6 +43,10 @@ func TestSubscriberAddSubscription(t *testing.T) {
 		t.Fatal(err)
 	}
 
+	serviceRepo := servicerepo.New()
+	subscriber.InitService(serviceRepo)
+	subscriberService := subscriber.GetService(serviceRepo)
+
 	for _, event := range givenEvents {
 		body, err := json.Marshal(event)
 		assert.Nil(t, err)
@@ -51,7 +56,7 @@ func TestSubscriberAddSubscription(t *testing.T) {
 
 		ctx, cancel := context.WithCancel(context.Background())
 
-		go mq.RunConsumerForChannelWithCancelAndDbConn(subscriber.RunSubscriber, subscriptionChannel, database, ctx)
+		go mq.RunConsumerForChannelWithCancelAndDbConn(subscriberService.RunSubscriber, subscriptionChannel, database, ctx)
 		time.Sleep(time.Second * 2)
 		cancel()
 	}
@@ -105,6 +110,10 @@ func TestSubscriber_UpdateSubscription(t *testing.T) {
 		{Coin: 64, Address: "0x0000000000000000000000000000000000000000", SubscriptionId: 3},
 	})
 
+	serviceRepo := servicerepo.New()
+	subscriber.InitService(serviceRepo)
+	subscriberService := subscriber.GetService(serviceRepo)
+
 	for _, event := range givenEvents {
 		body, err := json.Marshal(event)
 		assert.Nil(t, err)
@@ -114,7 +123,7 @@ func TestSubscriber_UpdateSubscription(t *testing.T) {
 
 		ctx, cancel := context.WithCancel(context.Background())
 
-		go mq.RunConsumerForChannelWithCancelAndDbConn(subscriber.RunSubscriber, subscriptionChannel, database, ctx)
+		go mq.RunConsumerForChannelWithCancelAndDbConn(subscriberService.RunSubscriber, subscriptionChannel, database, ctx)
 		time.Sleep(time.Second)
 		cancel()
 	}

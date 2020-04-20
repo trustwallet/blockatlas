@@ -6,6 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas/db/models"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/servicerepo"
 	"github.com/trustwallet/blockatlas/services/observer/subscriber"
 	"github.com/trustwallet/blockatlas/tests/integration/setup"
 	"testing"
@@ -217,7 +218,11 @@ func TestDb_FindSubscriptions(t *testing.T) {
 		Address: "ETCAddress",
 	})
 
-	assert.Nil(t, database.AddSubscriptions(id, subscriber.ToSubscriptionData(subscriptionsA)))
+	serviceRepo := servicerepo.New()
+	subscriber.InitService(serviceRepo)
+	subscriberService := subscriber.GetService(serviceRepo)
+
+	assert.Nil(t, database.AddSubscriptions(id, subscriberService.ToSubscriptionData(subscriptionsA)))
 
 	var subscriptionsB []blockatlas.Subscription
 
@@ -225,7 +230,7 @@ func TestDb_FindSubscriptions(t *testing.T) {
 		sub.Id = uint(2)
 		subscriptionsB = append(subscriptionsB, sub)
 	}
-	assert.Nil(t, database.AddSubscriptions(2, subscriber.ToSubscriptionData(subscriptionsB)))
+	assert.Nil(t, database.AddSubscriptions(2, subscriberService.ToSubscriptionData(subscriptionsB)))
 
 	returnedSubs, err := database.GetSubscriptionData(60, []string{"etherAddress"})
 	assert.Nil(t, err)

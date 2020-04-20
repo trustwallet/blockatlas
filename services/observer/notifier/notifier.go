@@ -27,8 +27,9 @@ type notifierService struct {
 	maxPushNotificationsBatchLimit uint
 }
 
-func NewNotifierService() *notifierService {
-	return &notifierService{maxPushNotificationsBatchLimit: defaultPushNotificationsBatchLimit}
+func NewNotifierService() NotifierServiceIface {
+	s := notifierService{maxPushNotificationsBatchLimit: defaultPushNotificationsBatchLimit}
+	return interface{}(&s).(NotifierServiceIface)
 }
 
 func InitService(serviceRepo *servicerepo.ServiceRepo) {

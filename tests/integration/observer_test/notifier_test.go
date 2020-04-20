@@ -11,6 +11,7 @@ import (
 	"github.com/trustwallet/blockatlas/db/models"
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/servicerepo"
 	"github.com/trustwallet/blockatlas/services/observer/notifier"
 	"github.com/trustwallet/blockatlas/tests/integration/setup"
 	"testing"
@@ -52,7 +53,11 @@ func TestNotifier(t *testing.T) {
 
 	ctx, cancel := context.WithCancel(context.Background())
 
-	go mq.RunConsumerForChannelWithCancelAndDbConn(notifier.RunNotifier, rawTransactionsChannel, database, ctx)
+	serviceRepo := servicerepo.New()
+	notifier.InitService(serviceRepo)
+	notifierService := notifier.GetService(serviceRepo)
+
+	go mq.RunConsumerForChannelWithCancelAndDbConn(notifierService.RunNotifier, rawTransactionsChannel, database, ctx)
 	time.Sleep(time.Second * 3)
 	msg := transactionsChannel.GetMessage()
 	ConsumerToTestTransactions(msg, t)
