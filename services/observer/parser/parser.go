@@ -8,6 +8,7 @@ import (
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
+	"github.com/trustwallet/blockatlas/pkg/servicerepo"
 	"sync/atomic"
 
 	"github.com/trustwallet/blockatlas/pkg/logger"
@@ -17,16 +18,20 @@ import (
 	"time"
 )
 
-type ParserService struct {
+type ParserServiceIface interface {
+	MinTxsBatchLimit() uint
+	RunParser(params Params)
 }
 
-func InitService() {//serviceRepo *servicerepo.ServiceRepo) {
-	//serviceRepo.Add(new(domainsService))
+type parserService struct {
 }
 
-func GetService() *ParserService {//s *servicerepo.ServiceRepo) DomainsServiceIface {
-	//return s.Get("domains.domainsService").(DomainsServiceIface)
-	return &ParserService{};
+func InitService(serviceRepo *servicerepo.ServiceRepo) {
+	serviceRepo.Add(new(parserService))
+}
+
+func GetService(s *servicerepo.ServiceRepo) ParserServiceIface {
+	return s.Get("parser.parserService").(ParserServiceIface)
 }
 
 type (
@@ -54,9 +59,9 @@ type (
 	}
 )
 
-func (p *ParserService) MinTxsBatchLimit() uint { return 500 }
+func (p *parserService) MinTxsBatchLimit() uint { return 500 }
 
-func (p *ParserService) RunParser(params Params) {
+func (p *parserService) RunParser(params Params) {
 	logger.Info("------------------------------------------------------------")
 	for {
 		select {
@@ -65,32 +70,32 @@ func (p *ParserService) RunParser(params Params) {
 			params.StopChannel <- struct{}{}
 			return
 		default:
-			lastParsedBlock, currentBlock, err := p.GetBlocksIntervalToFetch(params)
+			lastParsedBlock, currentBlock, err := p.getBlocksIntervalToFetch(params)
 			if err != nil || lastParsedBlock > currentBlock {
 				logger.Error(err, logger.Params{"coin": params.Api.Coin().Handle})
 				time.Sleep(params.ParsingBlocksInterval)
 				continue
 			}
 
-			blocks := p.FetchBlocks(params, lastParsedBlock, currentBlock)
+			blocks := p.fetchBlocks(params, lastParsedBlock, currentBlock)
 
-			err = p.SaveLastParsedBlock(params, blocks)
+			err = p.saveLastParsedBlock(params, blocks)
 			if err != nil {
 				logger.Error(err, logger.Params{"coin": params.Api.Coin().Handle})
 				time.Sleep(params.ParsingBlocksInterval)
 				continue
 			}
 
-			txs := p.ConvertToBatch(blocks)
+			txs := p.convertToBatch(blocks)
 
-			p.PublishTransactionsBatch(params, txs)
+			p.publishTransactionsBatch(params, txs)
 
 			time.Sleep(params.ParsingBlocksInterval)
 		}
 	}
 }
 
-func (p *ParserService) GetBlocksIntervalToFetch(params Params) (int64, int64, error) {
+func (p *parserService) getBlocksIntervalToFetch(params Params) (int64, int64, error) {
 	lastParsedBlock, err := params.Database.GetLastParsedBlockNumber(params.Api.Coin().Handle)
 	if err != nil {
 		return 0, 0, errors.E(err, "Polling failed: tracker didn't return last known block number")
@@ -112,7 +117,7 @@ func (p *ParserService) GetBlocksIntervalToFetch(params Params) (int64, int64, e
 	return lastParsedBlock, currentBlock, nil
 }
 
-func (p *ParserService) FetchBlocks(params Params, lastParsedBlock, currentBlock int64) []blockatlas.Block {
+func (p *parserService) fetchBlocks(params Params, lastParsedBlock, currentBlock int64) []blockatlas.Block {
 	if lastParsedBlock == currentBlock {
 		logger.Info("No new blocks", logger.Params{"last": lastParsedBlock, "coin": params.Api.Coin().ID, "time": time.Now().Unix()})
 		return nil
@@ -177,7 +182,7 @@ func fetchBlock(api blockatlas.BlockAPI, num int64, blocksChan chan<- blockatlas
 	return nil
 }
 
-func (p *ParserService) SaveLastParsedBlock(params Params, blocks []blockatlas.Block) error {
+func (p *parserService) saveLastParsedBlock(params Params, blocks []blockatlas.Block) error {
 	if len(blocks) == 0 {
 		return nil
 	}
@@ -199,7 +204,7 @@ func (p *ParserService) SaveLastParsedBlock(params Params, blocks []blockatlas.B
 	return nil
 }
 
-func (p *ParserService) ConvertToBatch(blocks []blockatlas.Block) blockatlas.Txs {
+func (p *parserService) convertToBatch(blocks []blockatlas.Block) blockatlas.Txs {
 	if len(blocks) == 0 {
 		return nil
 	}
@@ -227,7 +232,7 @@ func (p *ParserService) ConvertToBatch(blocks []blockatlas.Block) blockatlas.Txs
 	return txsBatch.Txs
 }
 
-func (p *ParserService) PublishTransactionsBatch(params Params, txs blockatlas.Txs) {
+func (p *parserService) publishTransactionsBatch(params Params, txs blockatlas.Txs) {
 	if len(txs) == 0 {
 		logger.Info("------------------------------------------------------------")
 		return

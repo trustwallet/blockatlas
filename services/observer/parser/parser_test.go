@@ -41,7 +41,7 @@ var (
 )
 
 func TestFetchBlocks(t *testing.T) {
-	parserService := ParserService{}
+	parserSvc := parserService{}
 	params := Params{
 		Ctx:                   nil,
 		Api:                   getMockedBlockAPI(),
@@ -54,25 +54,25 @@ func TestFetchBlocks(t *testing.T) {
 		TxBatchLimit:          0,
 		Database:              nil,
 	}
-	blocks := parserService.FetchBlocks(params, 0, 100)
+	blocks := parserSvc.fetchBlocks(params, 0, 100)
 	assert.Equal(t, len(blocks), 100)
 }
 
 func TestParser_ConvertToBatch(t *testing.T) {
-	parserService := ParserService{}
+	parserSvc := parserService{}
 	blocks := []blockatlas.Block{block, block, block, block}
-	txs := parserService.ConvertToBatch(blocks)
+	txs := parserSvc.convertToBatch(blocks)
 	assert.Equal(t, 4, len(txs))
 
 	empty := []blockatlas.Block{}
-	txsEmpty := parserService.ConvertToBatch(empty)
+	txsEmpty := parserSvc.convertToBatch(empty)
 	assert.Equal(t, 0, len(txsEmpty))
 }
 
 func TestParser_add(t *testing.T) {
-	parserService := ParserService{}
+	parserSvc := parserService{}
 	blocks := []blockatlas.Block{block, block, block, block}
-	txs := parserService.ConvertToBatch(blocks)
+	txs := parserSvc.convertToBatch(blocks)
 
 	batch := transactionsBatch{
 		Mutex: sync.Mutex{},

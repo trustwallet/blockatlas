@@ -46,7 +46,7 @@ func init() {
 	internal.InitRabbitMQ(mqHost, prefetchCount)
 	platform.Init(serviceRepo, platformHandle)
 	notifier.InitService(serviceRepo)
-	parser.InitService()
+	parser.InitService(serviceRepo)
 
 	if err := mq.RawTransactions.Declare(); err != nil {
 		logger.Fatal(err)
@@ -87,7 +87,7 @@ func main() {
 	)
 
 	notifierService := notifier.GetService(serviceRepo)
-	parserService := parser.GetService()
+	parserService := parser.GetService(serviceRepo)
 
 	wg.Add(len(platform.BlockAPIs))
 	for _, api := range platform.BlockAPIs {
