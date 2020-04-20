@@ -14,7 +14,6 @@ var (
 )
 
 func runMQContainer(serviceRepo *servicerepo.ServiceRepo) error {
-	mqService = mq.GetService(serviceRepo)
 	var err error
 	pool, err := dockertest.NewPool("")
 	if err != nil {
@@ -26,6 +25,7 @@ func runMQContainer(serviceRepo *servicerepo.ServiceRepo) error {
 		log.Fatalf("Could not start resource: %s", err)
 	}
 
+	mqService = mq.GetService(serviceRepo)
 	if err = pool.Retry(func() error {
 		return mqService.Init(fmt.Sprintf("amqp://localhost:%s", mqResource.GetPort("5672/tcp")), 500)
 	}); err != nil {
