@@ -7,6 +7,7 @@ import (
 	"github.com/trustwallet/blockatlas/internal"
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/logger"
+	"github.com/trustwallet/blockatlas/pkg/servicerepo"
 	"github.com/trustwallet/blockatlas/services/observer/notifier"
 	"time"
 )
@@ -16,12 +17,17 @@ const (
 )
 
 var (
-	confPath string
-	database *db.Instance
+	confPath        string
+	database        *db.Instance
+	serviceRepo     *servicerepo.ServiceRepo
+	notifierService notifier.NotifierServiceI
 )
 
 func init() {
 	_, confPath = internal.ParseArgs("", defaultConfigPath)
+	serviceRepo = servicerepo.New()
+	notifier.InitService(serviceRepo)
+	notifierService = notifier.GetService(serviceRepo)
 
 	internal.InitConfig(confPath)
 	logger.InitLogger()
@@ -48,10 +54,10 @@ func init() {
 	}
 
 	if notificationsBatchLimit != 0 {
-		notifier.SetMaxPushNotificationsBatchLimit(notificationsBatchLimit)
+		notifierService.SetMaxPushNotificationsBatchLimit(notificationsBatchLimit)
 	}
 
-	logger.Info("maxPushNotificationsBatchLimit ", logger.Params{"limit": notifier.GetMaxPushNotificationsBatchLimit()})
+	logger.Info("maxPushNotificationsBatchLimit ", logger.Params{"limit": notifierService.GetMaxPushNotificationsBatchLimit()})
 
 	go mq.RestoreConnectionWorker(mqHost, mq.RawTransactions, time.Second*10)
 	go db.RestoreConnectionWorker(database, time.Second*10, pgUri)
@@ -63,7 +69,7 @@ func main() {
 
 	ctx, cancel := context.WithCancel(context.Background())
 
-	go mq.RawTransactions.RunConsumerWithCancelAndDbConn(notifier.RunNotifier, database, ctx)
+	go mq.RawTransactions.RunConsumerWithCancelAndDbConn(notifierService.RunNotifier, database, ctx)
 
 	internal.SetupGracefulShutdownForObserver(cancel)
 }

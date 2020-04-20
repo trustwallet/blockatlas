@@ -45,6 +45,7 @@ func init() {
 
 	internal.InitRabbitMQ(mqHost, prefetchCount)
 	platform.Init(serviceRepo, platformHandle)
+	notifier.InitService(serviceRepo)
 
 	if err := mq.RawTransactions.Declare(); err != nil {
 		logger.Fatal(err)
@@ -84,10 +85,12 @@ func main() {
 		stopChannel = make(chan<- struct{}, len(platform.BlockAPIs))
 	)
 
+	notifierService := notifier.GetService(serviceRepo)
+
 	wg.Add(len(platform.BlockAPIs))
 	for _, api := range platform.BlockAPIs {
 		coin := api.Coin()
-		pollInterval := notifier.GetInterval(coin.BlockTime, minInterval, maxInterval)
+		pollInterval := notifierService.GetInterval(coin.BlockTime, minInterval, maxInterval)
 
 		var backlogCount int
 		if coin.BlockTime == 0 {

@@ -45,9 +45,10 @@ func TestGetInterval(t *testing.T) {
 			5000 * time.Millisecond,
 		},
 	}
+	notifierService := NewNotifierService()
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := GetInterval(tt.args.blockTime, tt.args.minInterval, tt.args.maxInterval)
+			got := notifierService.GetInterval(tt.args.blockTime, tt.args.minInterval, tt.args.maxInterval)
 			assert.EqualValues(t, tt.want, got)
 		})
 	}

@@ -9,20 +9,42 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/pkg/numbers"
+	"github.com/trustwallet/blockatlas/pkg/servicerepo"
 	"sync"
 	"time"
 )
 
 const defaultPushNotificationsBatchLimit = 50
 
-var maxPushNotificationsBatchLimit uint = defaultPushNotificationsBatchLimit
-
-func GetMaxPushNotificationsBatchLimit() uint {
-	return maxPushNotificationsBatchLimit
+type NotifierServiceI interface {
+	RunNotifier(database *db.Instance, delivery amqp.Delivery)
+	GetInterval(value int, minInterval, maxInterval time.Duration) time.Duration
+	GetMaxPushNotificationsBatchLimit() uint
+	SetMaxPushNotificationsBatchLimit(val uint)
 }
 
-func SetMaxPushNotificationsBatchLimit(val uint) {
-	maxPushNotificationsBatchLimit = val
+type NotifierService struct {
+	maxPushNotificationsBatchLimit uint
+}
+
+func NewNotifierService() *NotifierService {
+	return &NotifierService{maxPushNotificationsBatchLimit: defaultPushNotificationsBatchLimit}
+}
+
+func InitService(serviceRepo *servicerepo.ServiceRepo) {
+	serviceRepo.Add(NewNotifierService())
+}
+
+func GetService(s *servicerepo.ServiceRepo) NotifierServiceI {
+	return s.Get("notifier.NotifierService").(NotifierServiceI)
+}
+
+func (n *NotifierService) GetMaxPushNotificationsBatchLimit() uint {
+	return n.maxPushNotificationsBatchLimit
+}
+
+func (n *NotifierService) SetMaxPushNotificationsBatchLimit(val uint) {
+	n.maxPushNotificationsBatchLimit = val
 }
 
 type TransactionNotification struct {
@@ -31,7 +53,7 @@ type TransactionNotification struct {
 	Id     uint                       `json:"id"`
 }
 
-func RunNotifier(database *db.Instance, delivery amqp.Delivery) {
+func (n *NotifierService) RunNotifier(database *db.Instance, delivery amqp.Delivery) {
 	defer func() {
 		if err := delivery.Ack(false); err != nil {
 			logger.Error(err)
@@ -62,7 +84,7 @@ func RunNotifier(database *db.Instance, delivery amqp.Delivery) {
 	var wg sync.WaitGroup
 	wg.Add(len(subscriptionsDataList))
 	for _, data := range subscriptionsDataList {
-		go buildAndPostMessage(
+		go n.buildAndPostMessage(
 			blockTransactions,
 			blockatlas.Subscription{Coin: data.Coin, Address: data.Address, Id: data.SubscriptionId},
 			&wg)
@@ -70,7 +92,7 @@ func RunNotifier(database *db.Instance, delivery amqp.Delivery) {
 	wg.Wait()
 }
 
-func buildAndPostMessage(blockTransactions blockatlas.TxSetMap, sub blockatlas.Subscription, wg *sync.WaitGroup) {
+func (n *NotifierService) buildAndPostMessage(blockTransactions blockatlas.TxSetMap, sub blockatlas.Subscription, wg *sync.WaitGroup) {
 	defer wg.Done()
 
 	tx, ok := blockTransactions.Map[sub.Address]
@@ -92,7 +114,7 @@ func buildAndPostMessage(blockTransactions blockatlas.TxSetMap, sub blockatlas.S
 		notifications = append(notifications, notification)
 	}
 
-	batches := getNotificationBatches(notifications, maxPushNotificationsBatchLimit)
+	batches := getNotificationBatches(notifications, n.maxPushNotificationsBatchLimit)
 
 	for _, batch := range batches {
 		publishNotificationBatch(batch)
@@ -115,7 +137,7 @@ func publishNotificationBatch(batch []TransactionNotification) {
 	logger.Info("Txs batch dispatched", logger.Params{"txs": len(batch)})
 }
 
-func GetInterval(value int, minInterval, maxInterval time.Duration) time.Duration {
+func (n *NotifierService) GetInterval(value int, minInterval, maxInterval time.Duration) time.Duration {
 	interval := time.Duration(value) * time.Millisecond
 	pMin := numbers.Max(minInterval.Nanoseconds(), interval.Nanoseconds())
 	pMax := numbers.Min(int(maxInterval.Nanoseconds()), int(pMin))
