@@ -10,11 +10,11 @@ import (
 	"strings"
 )
 
-var domainsServ domains.DomainsServiceIface
+var domainsService domains.DomainsServiceIface
 
 func initDomainsService(serviceRepo *servicerepo.ServiceRepo) {
-	//domainsServ = serviceRepo.Get("domains.DomainsService").(domains.DomainsServiceIface)
-	domainsServ = domains.GetService(serviceRepo)
+	//domainsService = serviceRepo.Get("domains.domainsService").(domains.DomainsServiceIface)
+	domainsService = domains.GetService(serviceRepo)
 }
 
 // @Summary Lookup .eth / .zil addresses
@@ -35,7 +35,7 @@ func GetAddressByCoinAndDomain(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, model.CreateErrorResponse(model.InvalidQuery, err))
 		return
 	}
-	result, err := domainsServ.HandleLookup(name, []uint64{coin})
+	result, err := domainsService.HandleLookup(name, []uint64{coin})
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.CreateErrorResponse(model.InternalFail, err))
 		return
@@ -65,7 +65,7 @@ func GetAddressByCoinAndDomainBatch(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, model.CreateErrorResponse(model.InvalidQuery, err))
 		return
 	}
-	result, err := domainsServ.HandleLookup(name, coins)
+	result, err := domainsService.HandleLookup(name, coins)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.CreateErrorResponse(model.InternalFail, err))
 		return

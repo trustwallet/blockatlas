@@ -10,10 +10,11 @@ import (
 	"github.com/trustwallet/blockatlas/services/assets"
 	"net/http"
 )
-var assetsServ assets.AssetsServiceIface
+
+var assetsService assets.AssetsServiceIface
 
 func initAssetsService(serviceRepo *servicerepo.ServiceRepo) {
-	assetsServ = assets.GetService(serviceRepo)
+	assetsService = assets.GetService(serviceRepo)
 }
 
 type (
@@ -113,7 +114,7 @@ func GetStakeInfoForBatch(c *gin.Context, apis map[string]blockatlas.StakeAPI) {
 // @Failure 500 {object} middleware.ApiError
 // @Router /v2/{coin}/staking/validators [get]
 func GetValidators(c *gin.Context, api blockatlas.StakeAPI) {
-	results, err := assetsServ.GetActiveValidators(api)
+	results, err := assetsService.GetActiveValidators(api)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.CreateErrorResponse(model.InternalFail, err))
 		return

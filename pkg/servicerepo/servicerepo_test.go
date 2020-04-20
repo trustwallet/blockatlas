@@ -29,11 +29,11 @@ func (s *ServiceRepo) getServiceOne() serviceOneI {
 	return s.Get("servicerepo.serviceOneType").(serviceOneI)
 }
 
-func TestAddName(t *testing.T) {
+func TestAddByName(t *testing.T) {
 	sr := New()
 	service1 := newOne("S1")
 	const serviceName = "ServiceOne"
-	sr.AddName(serviceName, service1)
+	sr.AddByName(serviceName, service1)
 	if len(sr.s) != 1 {
 		t.Errorf("Wrong size")
 	}
@@ -92,10 +92,10 @@ func TestGetNonexistentPanics(t *testing.T) {
 	sr.Add(service1)
 
 	defer func() {
-        if r := recover(); r == nil {
-            t.Errorf("The code did not panic")
-        }
+		if r := recover(); r == nil {
+			t.Errorf("The code did not panic")
+		}
 	}()
-	
+
 	_ = sr.Get("NO_SUCH_SERVICE")
 }

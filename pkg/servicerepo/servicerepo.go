@@ -30,12 +30,10 @@ func Inst() *ServiceRepo {
 }
 
 func New() *ServiceRepo {
-	newInstance := new(ServiceRepo)
-	newInstance.s = make(map[string]interface{})
-	return newInstance
+	return &ServiceRepo{s: make(map[string]interface{})}
 }
 
-func typeName(obj interface{}) string {
+func getTypeName(obj interface{}) string {
 	typeName := reflect.TypeOf(obj).String()
 	if len(typeName) >= 1 && typeName[0] == '*' {
 		typeName = typeName[1:]
@@ -44,11 +42,10 @@ func typeName(obj interface{}) string {
 }
 
 func (s *ServiceRepo) Add(service interface{}) {
-	typeName := typeName(service)
-	s.AddName(typeName, service)
+	s.AddByName(getTypeName(service), service)
 }
 
-func (s *ServiceRepo) AddName(typeName string, service interface{}) {
+func (s *ServiceRepo) AddByName(typeName string, service interface{}) {
 	s.s[typeName] = service
 }
 
