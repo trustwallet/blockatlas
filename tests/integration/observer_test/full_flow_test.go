@@ -34,6 +34,7 @@ func TestFullFlow(t *testing.T) {
 	stopChan := make(chan struct{}, 1)
 
 	serviceRepo := servicerepo.New()
+	mq.InitService(serviceRepo)
 	notifier.InitService(serviceRepo)
 	parser.InitService(serviceRepo)
 	notifierService := notifier.GetService(serviceRepo)
