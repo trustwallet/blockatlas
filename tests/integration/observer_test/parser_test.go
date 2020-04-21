@@ -39,7 +39,7 @@ func TestParserFetchAndPublishBlock_NormalCase(t *testing.T) {
 	go parserService.RunParser(params)
 
 	time.Sleep(time.Microsecond)
-	ConsumerToTestAmountOfBlocks(mqService.RawTransactions().GetMessageChannel().GetMessage(), t, cancel)
+	ConsumerToTestAmountOfBlocks(rawTransactionsChannel.GetMessage(), t, cancel)
 	<-stopChan
 }
 

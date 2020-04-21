@@ -6,17 +6,35 @@ import (
 	"github.com/trustwallet/blockatlas/db"
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/servicerepo"
+	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/tests/integration/setup"
+	"context"
 	"log"
 	"os"
 	"testing"
 )
 
 var (
+	rawTransactionsChannel, transactionsChannel, subscriptionChannel mq.MessageChannel
 	database                                                         *db.Instance
 )
 
 var serviceRepo *servicerepo.ServiceRepo;
+
+func RunConsumerForChannelWithCancelAndDbConn(consumer mq.ConsumerWithDbConn, messageChannel mq.MessageChannel, database *db.Instance, ctx context.Context) {
+	for {
+		select {
+		case <-ctx.Done():
+			logger.Info("Consumer stopped")
+			return
+		case message := <-messageChannel:
+			if message.Body == nil {
+				continue
+			}
+			go consumer(database, message)
+		}
+	}
+}
 
 func TestMain(m *testing.M) {
 	serviceRepo = servicerepo.New()
@@ -35,6 +53,9 @@ func TestMain(m *testing.M) {
 	if err := mqService.Subscriptions().Declare(); err != nil {
 		log.Fatal(err)
 	}
+	rawTransactionsChannel = mqService.RawTransactions().GetMessageChannel()
+	subscriptionChannel = mqService.Subscriptions().GetMessageChannel()
+	transactionsChannel = mqService.TxNotifications().GetMessageChannel()
 
 	code := m.Run()
 

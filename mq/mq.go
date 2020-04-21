@@ -112,21 +112,6 @@ func (q Queue) Publish(body []byte) error {
 	})
 }
 
-func (queue *Queue) RunConsumerForChannelWithCancelAndDbConn(consumer ConsumerWithDbConn, database *db.Instance, ctx context.Context) {
-	for {
-		select {
-		case <-ctx.Done():
-			logger.Info("Consumer stopped")
-			return
-		case message := <-queue.GetMessageChannel():
-			if message.Body == nil {
-				continue
-			}
-			go consumer(database, message)
-		}
-	}
-}
-
 func (q Queue) GetMessageChannel() MessageChannel {
 	messageChannel, err := q.channel.Consume(
 		q.name,
