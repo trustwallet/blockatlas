@@ -13,7 +13,6 @@ import (
 )
 
 var (
-	rawTransactionsChannel, transactionsChannel, subscriptionChannel mq.MessageChannel
 	database                                                         *db.Instance
 )
 
@@ -36,9 +35,6 @@ func TestMain(m *testing.M) {
 	if err := mqService.Subscriptions().Declare(); err != nil {
 		log.Fatal(err)
 	}
-	rawTransactionsChannel = mqService.RawTransactions().GetMessageChannel()
-	subscriptionChannel = mqService.Subscriptions().GetMessageChannel()
-	transactionsChannel = mqService.TxNotifications().GetMessageChannel()
 
 	code := m.Run()
 

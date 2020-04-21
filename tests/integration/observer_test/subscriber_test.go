@@ -55,7 +55,7 @@ func TestSubscriberAddSubscription(t *testing.T) {
 
 		ctx, cancel := context.WithCancel(context.Background())
 
-		go mq.RunConsumerForChannelWithCancelAndDbConn(subscriberService.RunSubscriber, subscriptionChannel, database, ctx)
+		go mqService.Subscriptions().RunConsumerForChannelWithCancelAndDbConn(subscriberService.RunSubscriber, database, ctx)
 		time.Sleep(time.Second * 2)
 		cancel()
 	}
@@ -122,7 +122,7 @@ func TestSubscriber_UpdateSubscription(t *testing.T) {
 
 		ctx, cancel := context.WithCancel(context.Background())
 
-		go mq.RunConsumerForChannelWithCancelAndDbConn(subscriberService.RunSubscriber, subscriptionChannel, database, ctx)
+		go mqService.Subscriptions().RunConsumerForChannelWithCancelAndDbConn(subscriberService.RunSubscriber, database, ctx)
 		time.Sleep(time.Second)
 		cancel()
 	}

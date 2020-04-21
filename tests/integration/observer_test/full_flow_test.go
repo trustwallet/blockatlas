@@ -47,11 +47,11 @@ func TestFullFlow(t *testing.T) {
 	go parserService.RunParser(params)
 	time.Sleep(time.Second * 2)
 
-	go mq.RunConsumerForChannelWithCancelAndDbConn(notifierService.RunNotifier, rawTransactionsChannel, database, ctx)
+	go mqService.RawTransactions().RunConsumerForChannelWithCancelAndDbConn(notifierService.RunNotifier, database, ctx)
 	time.Sleep(time.Second * 5)
 
 	for i := 0; i < 11; i++ {
-		x := transactionsChannel.GetMessage()
+		x := mqService.TxNotifications().GetMessageChannel().GetMessage()
 		ConsumerToTestTransactionsFull(x, t, cancel, i)
 	}
 	<-stopChan

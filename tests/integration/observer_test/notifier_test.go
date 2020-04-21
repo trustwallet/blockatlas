@@ -56,9 +56,9 @@ func TestNotifier(t *testing.T) {
 
 	ctx, cancel := context.WithCancel(context.Background())
 
-	go mq.RunConsumerForChannelWithCancelAndDbConn(notifierService.RunNotifier, rawTransactionsChannel, database, ctx)
+	go mqService.RawTransactions().RunConsumerForChannelWithCancelAndDbConn(notifierService.RunNotifier, database, ctx)
 	time.Sleep(time.Second * 3)
-	msg := transactionsChannel.GetMessage()
+	msg := mqService.TxNotifications().GetMessageChannel().GetMessage()
 	ConsumerToTestTransactions(msg, t)
 	cancel()
 }
