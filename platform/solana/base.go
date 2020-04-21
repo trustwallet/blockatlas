@@ -12,6 +12,7 @@ type Platform struct {
 	assets assets.AssetsServiceIface
 }
 
+// Requires assetsService from serviceRepo.
 func Init(serviceRepo *servicerepo.ServiceRepo, api string) *Platform {
 	p := &Platform{
 		client: Client{blockatlas.InitJSONClient(api)},

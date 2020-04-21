@@ -13,6 +13,7 @@ type Platform struct {
 	assets    assets.AssetsServiceIface
 }
 
+// Requires assetsService from serviceRepo.
 func Init(serviceRepo *servicerepo.ServiceRepo, coin uint, api string) *Platform {
 	return &Platform{
 		CoinIndex: coin,

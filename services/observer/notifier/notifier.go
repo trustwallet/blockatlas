@@ -40,7 +40,6 @@ func NewNotifierService(mqService mq.MQServiceIface) NotifierServiceIface {
 func InitService(serviceRepo *servicerepo.ServiceRepo) {
 	mqService := mq.GetService(serviceRepo)
 	serviceRepo.Add(NewNotifierService(mqService))
-
 }
 
 func GetService(s *servicerepo.ServiceRepo) NotifierServiceIface {

@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/streadway/amqp"
 	"github.com/trustwallet/blockatlas/db"
+	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/pkg/servicerepo"
 	"time"
@@ -61,11 +62,11 @@ type (
 func (m *mqService) Init(uri string, prefetchCount int) (err error) {
 	m.conn, err = amqp.Dial(uri)
 	if err != nil {
-		return err
+		return errors.E("Failed to init Rabbit MQ, dial error", err)
 	}
 	m.amqpChan, err = m.conn.Channel()
 	if err != nil {
-		return err
+		return errors.E("Failed to init Rabbit MQ, channel error", err)
 	}
 	m.prefetchCount = prefetchCount
 
@@ -111,13 +112,13 @@ func (q Queue) Publish(body []byte) error {
 	})
 }
 
-func RunConsumerForChannelWithCancelAndDbConn(consumer ConsumerWithDbConn, messageChannel MessageChannel, database *db.Instance, ctx context.Context) {
+func (queue *Queue) RunConsumerForChannelWithCancelAndDbConn(consumer ConsumerWithDbConn, database *db.Instance, ctx context.Context) {
 	for {
 		select {
 		case <-ctx.Done():
 			logger.Info("Consumer stopped")
 			return
-		case message := <-messageChannel:
+		case message := <-queue.GetMessageChannel():
 			if message.Body == nil {
 				continue
 			}
