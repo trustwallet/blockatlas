@@ -44,12 +44,15 @@ func init() {
 	prefetchCount := viper.GetInt("observer.rabbitmq.consumer.prefetch_count")
 	platformHandle := viper.GetString("platform")
 
-	internal.InitRabbitMQ(serviceRepo, mqHost, prefetchCount)
+	mq.InitService(serviceRepo)
 	platform.Init(serviceRepo, platformHandle)
 	notifier.InitService(serviceRepo)
 	parser.InitService(serviceRepo)
-	mqService = mq.GetService(serviceRepo)
 
+	mqService = mq.GetService(serviceRepo)
+	if err := mqService.Init(mqHost, prefetchCount); err != nil {
+		logger.Fatal(err)
+	}
 	if err := mqService.RawTransactions().Declare(); err != nil {
 		logger.Fatal(err)
 	}

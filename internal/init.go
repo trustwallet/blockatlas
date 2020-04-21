@@ -6,9 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/trustwallet/blockatlas/api/middleware"
 	"github.com/trustwallet/blockatlas/config"
-	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/logger"
-	"github.com/trustwallet/blockatlas/pkg/servicerepo"
 
 	"path/filepath"
 	"runtime"
@@ -51,15 +49,6 @@ func InitEngine(handler *gin.HandlerFunc, ginMode string) *gin.Engine {
 	engine.OPTIONS("/*path", middleware.CORSMiddleware())
 
 	return engine
-}
-
-func InitRabbitMQ(serviceRepo *servicerepo.ServiceRepo, rabbitURI string, prefetchCount int) {
-	mq.InitService(serviceRepo)
-	mqService := mq.GetService(serviceRepo)
-	err := mqService.Init(rabbitURI, prefetchCount)
-	if err != nil {
-		logger.Fatal("Failed to init Rabbit MQ", logger.Params{"uri": rabbitURI})
-	}
 }
 
 func LogVersionInfo() {

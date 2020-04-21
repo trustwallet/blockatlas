@@ -36,9 +36,13 @@ func init() {
 	mqHost := viper.GetString("observer.rabbitmq.uri")
 	prefetchCount := viper.GetInt("observer.rabbitmq.consumer.prefetch_count")
 
-	internal.InitRabbitMQ(serviceRepo, mqHost, prefetchCount)
+	mq.InitService(serviceRepo)
 	subscriber.InitService(serviceRepo)
+
 	mqService = mq.GetService(serviceRepo)
+	if err := mqService.Init(mqHost, prefetchCount); err != nil {
+		logger.Fatal(err)
+	}
 
 	var err error
 	database, err = db.New(pgUri)

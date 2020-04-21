@@ -36,15 +36,17 @@ func init() {
 	notificationsBatchLimit := viper.GetUint("observer.push_notifications_batch_limit")
 	pgUri := viper.GetString("postgres.uri")
 
-	internal.InitRabbitMQ(serviceRepo, mqHost, prefetchCount)
-	mqService = mq.GetService(serviceRepo)
+	mq.InitService(serviceRepo)
 	notifier.InitService(serviceRepo)
-	notifierService = notifier.GetService(serviceRepo)
 
+	notifierService = notifier.GetService(serviceRepo)
+	mqService = mq.GetService(serviceRepo)
+	if err := mqService.Init(mqHost, prefetchCount); err != nil {
+		logger.Fatal(err)
+	}
 	if err := mqService.RawTransactions().Declare(); err != nil {
 		logger.Fatal(err)
 	}
-
 	if err := mqService.TxNotifications().Declare(); err != nil {
 		logger.Fatal(err)
 	}
