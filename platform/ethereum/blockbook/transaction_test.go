@@ -90,10 +90,57 @@ func TestNormalizePage(t *testing.T) {
 						  "gasUsed": 174659,
 						  "gasPrice": "1300000000"
 						}
-					  }
+					  },
+					  {
+						"txid": "0x17bb2b5e61f34119d4d4fbfae406ad3d854f0a00f13013d77de9aab7179f183f",
+						"vin": [
+							{
+								"n": 0,
+								"addresses": [
+									"0x7d8bf18C7cE84b3E175b339c4Ca93aEd1dD166F1"
+								],
+								"isAddress": true
+							}
+						],
+						"vout": [
+							{
+								"value": "0",
+								"n": 0,
+								"addresses": [
+									"0x89d24A6b4CcB1B6fAA2625fE562bDD9a23260359"
+								],
+								"isAddress": true
+							}
+						],
+						"blockHash": "0xcee3a57858e3629785fb6e7ca34e68605fe3d2f149b73138f38314a3ef935723",
+						"blockHeight": 9852430,
+						"confirmations": 67071,
+						"blockTime": 1586627561,
+						"value": "0",
+						"fees": "87378000000000",
+						"tokenTransfers": [
+							{
+								"type": "ERC20",
+								"from": "0x7d8bf18C7cE84b3E175b339c4Ca93aEd1dD166F1",
+								"to": "0x7d8bf18C7cE84b3E175b339c4Ca93aEd1dD166F1",
+								"token": "0x89d24A6b4CcB1B6fAA2625fE562bDD9a23260359",
+								"name": "Dai Stablecoin v1.0",
+								"symbol": "DAI",
+								"decimals": 18,
+								"value": "100000000000000"
+							}
+						],
+						"ethereumSpecific": {
+							"status": 1,
+							"nonce": 523,
+							"gasLimit": 43323,
+							"gasUsed": 29126,
+							"gasPrice": "3000000000"
+						}
+  					  }
 					]}`,
 				address:   "0x7d8bf18c7ce84b3e175b339c4ca93aed1dd166f1",
-				token:     "0x6b175474e89094c44da98b954eedeac495271d0f",
+				token:     "",
 				coinIndex: 60,
 			},
 			want: `[{
@@ -113,7 +160,29 @@ func TestNormalizePage(t *testing.T) {
 						"input": "0x",
 						"value": "0"
 					}
-				}]`,
+				  },{
+					"id": "0x17bb2b5e61f34119d4d4fbfae406ad3d854f0a00f13013d77de9aab7179f183f",
+					"coin": 60,
+					"from": "0x7d8bf18C7cE84b3E175b339c4Ca93aEd1dD166F1",
+					"to": "0x89d24A6b4CcB1B6fAA2625fE562bDD9a23260359",
+					"fee": "87378000000000",
+					"date": 1586627561,
+					"block": 9852430,
+					"status": "completed",
+					"sequence": 523,
+					"type": "token_transfer",
+					"direction": "yourself",
+					"memo": "",
+					"metadata": {
+						"name": "Dai Stablecoin v1.0",
+						"symbol": "DAI",
+						"token_id": "0x89d24A6b4CcB1B6fAA2625fE562bDD9a23260359",
+						"decimals": 18,
+						"value": "100000000000000",
+						"from": "0x7d8bf18C7cE84b3E175b339c4Ca93aEd1dD166F1",
+						"to": "0x7d8bf18C7cE84b3E175b339c4Ca93aEd1dD166F1"
+					}
+				  }]`,
 		},
 	}
 	for _, tt := range tests {
