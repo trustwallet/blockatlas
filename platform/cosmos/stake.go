@@ -13,6 +13,7 @@ import (
 const (
 	lockTime      = 1814400
 	minimumAmount = "1"
+	unknown       = "unknown"
 )
 
 func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
@@ -112,8 +113,11 @@ func NormalizeDelegations(delegations []Delegation, validators blockatlas.Valida
 	for _, v := range delegations {
 		validator, ok := validators[v.ValidatorAddress]
 		if !ok {
-			logger.Error(errors.E("Validator not found", errors.Params{"address": v.ValidatorAddress, "platform": "cosmos", "delegation": v.DelegatorAddress}))
-			continue
+			logger.Warn(errors.E("Validator not found", errors.Params{"address": v.ValidatorAddress, "platform": "cosmos", "delegation": v.DelegatorAddress}))
+			validator = blockatlas.StakeValidator{
+				ID:     unknown,
+				Status: false,
+			}
 		}
 		delegation := blockatlas.Delegation{
 			Delegator: validator,
@@ -131,8 +135,11 @@ func NormalizeUnbondingDelegations(delegations []UnbondingDelegation, validators
 		for _, entry := range v.Entries {
 			validator, ok := validators[v.ValidatorAddress]
 			if !ok {
-				logger.Error(errors.E("Validator not found", errors.Params{"address": v.ValidatorAddress, "platform": "cosmos", "delegation": v.DelegatorAddress}))
-				continue
+				logger.Warn(errors.E("Validator not found", errors.Params{"address": v.ValidatorAddress, "platform": "cosmos", "delegation": v.DelegatorAddress}))
+				validator = blockatlas.StakeValidator{
+					ID:     unknown,
+					Status: false,
+				}
 			}
 			t, _ := time.Parse(time.RFC3339, entry.CompletionTime)
 			delegation := blockatlas.Delegation{
