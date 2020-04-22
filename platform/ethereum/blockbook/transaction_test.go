@@ -106,17 +106,12 @@ func TestNormalizePage(t *testing.T) {
 					"block": 8958320,
 					"status": "completed",
 					"sequence": 378,
-					"type": "token_transfer",
-					"direction": "incoming",
+					"type": "contract_call",
+					"direction": "outgoing",
 					"memo": "",
 					"metadata": {
-					  "name": "Dai Stablecoin",
-					  "symbol": "DAI",
-					  "token_id": "0x6B175474E89094C44Da98b954EedeAC495271d0F",
-					  "decimals": 18,
-					  "value": "2255656573089233195",
-					  "from": "0x0000000000000000000000000000000000000000",
-					  "to": "0x7d8bf18C7cE84b3E175b339c4Ca93aEd1dD166F1"
+						"input": "0x",
+						"value": "0"
 					}
 				}]`,
 		},
