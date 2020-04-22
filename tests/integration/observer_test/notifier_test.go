@@ -42,16 +42,15 @@ var (
 )
 
 func TestNotifier(t *testing.T) {
-	notifier.InitService(serviceRepo)
-	notifierService := notifier.GetService(serviceRepo)
-	mqService := mq.GetService(serviceRepo)
+	notifier.InitService()
+	notifierService := notifier.GetService()
 
 	setup.CleanupPgContainer(database.Gorm)
 
 	err := database.AddSubscriptions(1, []models.SubscriptionData{{Coin: 714, Address: "tbnb1ttyn4csghfgyxreu7lmdu3lcplhqhxtzced45a", SubscriptionId: 1}})
 	assert.Nil(t, err)
 
-	err = produceTxs(txs, mqService.RawTransactions())
+	err = produceTxs(txs, mq.GetService().RawTransactions())
 	assert.Nil(t, err)
 
 	ctx, cancel := context.WithCancel(context.Background())

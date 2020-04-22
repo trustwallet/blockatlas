@@ -42,15 +42,14 @@ func TestSubscriberAddSubscription(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	subscriber.InitService(serviceRepo)
-	subscriberService := subscriber.GetService(serviceRepo)
-	mqService := mq.GetService(serviceRepo)
+	subscriber.InitService()
+	subscriberService := subscriber.GetService()
 
 	for _, event := range givenEvents {
 		body, err := json.Marshal(event)
 		assert.Nil(t, err)
 
-		err = mqService.Subscriptions().Publish(body)
+		err = mq.GetService().Subscriptions().Publish(body)
 		assert.Nil(t, err)
 
 		ctx, cancel := context.WithCancel(context.Background())
@@ -109,15 +108,14 @@ func TestSubscriber_UpdateSubscription(t *testing.T) {
 		{Coin: 64, Address: "0x0000000000000000000000000000000000000000", SubscriptionId: 3},
 	})
 
-	subscriber.InitService(serviceRepo)
-	subscriberService := subscriber.GetService(serviceRepo)
-	mqService := mq.GetService(serviceRepo)
+	subscriber.InitService()
+	subscriberService := subscriber.GetService()
 
 	for _, event := range givenEvents {
 		body, err := json.Marshal(event)
 		assert.Nil(t, err)
 
-		err = mqService.Subscriptions().Publish(body)
+		err = mq.GetService().Subscriptions().Publish(body)
 		assert.Nil(t, err)
 
 		ctx, cancel := context.WithCancel(context.Background())

@@ -8,7 +8,6 @@ import (
 	"github.com/trustwallet/blockatlas/internal"
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/logger"
-	"github.com/trustwallet/blockatlas/pkg/servicerepo"
 	"github.com/trustwallet/blockatlas/services/observer/subscriber"
 	"time"
 )
@@ -19,14 +18,12 @@ const (
 
 var (
 	confPath    string
-	serviceRepo *servicerepo.ServiceRepo
 	database    *db.Instance
 	mqService   mq.MQServiceIface
 )
 
 func init() {
 	_, confPath = internal.ParseArgs("", defaultConfigPath)
-	serviceRepo = servicerepo.New()
 
 	internal.InitConfig(confPath)
 	logger.InitLogger()
@@ -36,10 +33,10 @@ func init() {
 	mqHost := viper.GetString("observer.rabbitmq.uri")
 	prefetchCount := viper.GetInt("observer.rabbitmq.consumer.prefetch_count")
 
-	mq.InitService(serviceRepo)
-	subscriber.InitService(serviceRepo)
+	mq.InitService()
+	subscriber.InitService()
 
-	mqService = mq.GetService(serviceRepo)
+	mqService = mq.GetService()
 	if err := mqService.Init(mqHost, prefetchCount); err != nil {
 		logger.Fatal(err)
 	}
@@ -62,7 +59,7 @@ func main() {
 	}
 	ctx, cancel := context.WithCancel(context.Background())
 
-	subscriberService := subscriber.GetService(serviceRepo)
+	subscriberService := subscriber.GetService()
 	go mqService.Subscriptions().RunConsumerWithCancelAndDbConn(subscriberService.RunSubscriber, database, ctx)
 
 	internal.SetupGracefulShutdownForObserver(cancel)

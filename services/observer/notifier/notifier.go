@@ -9,7 +9,7 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/pkg/numbers"
-	"github.com/trustwallet/blockatlas/pkg/servicerepo"
+	"github.com/vardius/gocontainer"
 	"sync"
 	"time"
 )
@@ -36,14 +36,14 @@ func NewNotifierService(mqService mq.MQServiceIface) NotifierServiceIface {
 	return interface{}(&s).(NotifierServiceIface)
 }
 
-// InitService Adds new notifier.notifierService instance, requires mq.mqService
-func InitService(serviceRepo *servicerepo.ServiceRepo) {
-	mqService := mq.GetService(serviceRepo)
-	serviceRepo.Add(NewNotifierService(mqService))
+// InitService Adds new notifier instance, requires mq.
+func InitService() {
+	mqService := mq.GetService()
+	gocontainer.Register("notifier", NewNotifierService(mqService))
 }
 
-func GetService(s *servicerepo.ServiceRepo) NotifierServiceIface {
-	return s.Get("notifier.notifierService").(NotifierServiceIface)
+func GetService() NotifierServiceIface {
+	return gocontainer.MustGet("notifier").(NotifierServiceIface)
 }
 
 func (n *notifierService) GetMaxPushNotificationsBatchLimit() uint {

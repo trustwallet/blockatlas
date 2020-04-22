@@ -4,7 +4,7 @@ import (
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
-	"github.com/trustwallet/blockatlas/pkg/servicerepo"
+	"github.com/vardius/gocontainer"
 	"sort"
 	"time"
 )
@@ -18,13 +18,13 @@ type AssetsServiceIface interface {
 type assetsService struct {
 }
 
-// InitService Adds new assets.assetsService instance
-func InitService(serviceRepo *servicerepo.ServiceRepo) {
-	serviceRepo.Add(new(assetsService))
+// InitService Adds new assets.assets instance
+func InitService() {
+	gocontainer.Register("assets", new (assetsService))
 }
 
-func GetService(s *servicerepo.ServiceRepo) AssetsServiceIface {
-	return s.Get("assets.assetsService").(AssetsServiceIface)
+func GetService() AssetsServiceIface {
+	return gocontainer.MustGet("assets").(AssetsServiceIface);
 }
 
 const (

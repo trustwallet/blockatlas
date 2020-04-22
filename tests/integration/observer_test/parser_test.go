@@ -11,7 +11,6 @@ import (
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
-	"github.com/trustwallet/blockatlas/pkg/servicerepo"
 	"github.com/trustwallet/blockatlas/services/observer/notifier"
 	"github.com/trustwallet/blockatlas/services/observer/parser"
 	"github.com/trustwallet/blockatlas/tests/integration/setup"
@@ -23,18 +22,17 @@ func TestParserFetchAndPublishBlock_NormalCase(t *testing.T) {
 	setup.CleanupPgContainer(database.Gorm)
 	stopChan := make(chan struct{}, 1)
 
-	parser.InitService(serviceRepo)
-	notifier.InitService(serviceRepo)
-	parserService := parser.GetService(serviceRepo)
-	mqService := mq.GetService(serviceRepo)
+	parser.InitService()
+	notifier.InitService()
+	parserService := parser.GetService()
 
-	params := setupParser(serviceRepo, stopChan)
+	params := setupParser(stopChan)
 	params.Database = database
 
 	ctx, cancel := context.WithCancel(context.Background())
 
 	params.Ctx = ctx
-	params.Queue = mqService.RawTransactions()
+	params.Queue = mq.GetService().RawTransactions()
 
 	go parserService.RunParser(params)
 
@@ -106,12 +104,12 @@ func ConsumerToTestAmountOfBlocks(delivery amqp.Delivery, t *testing.T, cancelFu
 	cancelFunc()
 }
 
-func setupParser(serviceRepo *servicerepo.ServiceRepo, stopChan chan struct{}) parser.Params {
+func setupParser(stopChan chan struct{}) parser.Params {
 	minTime := time.Second
 	maxTime := time.Second * 2
 	maxBatchBlocksAmount := 100
 
-	notifierService := notifier.GetService(serviceRepo)
+	notifierService := notifier.GetService()
 	pollInterval := notifierService.GetInterval(0, minTime, maxTime)
 
 	backlogCount := 50

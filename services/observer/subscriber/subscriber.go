@@ -7,7 +7,7 @@ import (
 	"github.com/trustwallet/blockatlas/db/models"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
-	"github.com/trustwallet/blockatlas/pkg/servicerepo"
+	"github.com/vardius/gocontainer"
 )
 
 type SubscriberServiceIface interface {
@@ -18,13 +18,13 @@ type SubscriberServiceIface interface {
 type subscriberService struct {
 }
 
-// InitService Adds new subscriber.subscriberService instance
-func InitService(serviceRepo *servicerepo.ServiceRepo) {
-	serviceRepo.Add(new(subscriberService))
+// InitService Adds new subscriber instance
+func InitService() {
+	gocontainer.Register("subscriber", new(subscriberService))
 }
 
-func GetService(s *servicerepo.ServiceRepo) SubscriberServiceIface {
-	return s.Get("subscriber.subscriberService").(SubscriberServiceIface)
+func GetService() SubscriberServiceIface {
+	return gocontainer.MustGet("subscriber").(SubscriberServiceIface)
 }
 
 const (

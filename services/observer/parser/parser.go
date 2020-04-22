@@ -4,18 +4,18 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/trustwallet/blockatlas/db"
-	"github.com/trustwallet/blockatlas/mq"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/pkg/errors"
-	"github.com/trustwallet/blockatlas/pkg/servicerepo"
+	"github.com/vardius/gocontainer"
 	"sync/atomic"
-
-	"github.com/trustwallet/blockatlas/pkg/logger"
 	"math/rand"
 	"sort"
 	"sync"
 	"time"
+
+	"github.com/trustwallet/blockatlas/db"
+	"github.com/trustwallet/blockatlas/mq"
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/errors"
+	"github.com/trustwallet/blockatlas/pkg/logger"
 )
 
 type ParserServiceIface interface {
@@ -26,13 +26,13 @@ type ParserServiceIface interface {
 type parserService struct {
 }
 
-// InitService Adds new parser.parserService instance
-func InitService(serviceRepo *servicerepo.ServiceRepo) {
-	serviceRepo.Add(new(parserService))
+// InitService Adds new parser instance
+func InitService() {
+	gocontainer.Register("parser", new(parserService))
 }
 
-func GetService(s *servicerepo.ServiceRepo) ParserServiceIface {
-	return s.Get("parser.parserService").(ParserServiceIface)
+func GetService() ParserServiceIface {
+	return gocontainer.MustGet("parser").(ParserServiceIface)
 }
 
 type (

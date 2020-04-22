@@ -8,7 +8,6 @@ import (
 	"github.com/trustwallet/blockatlas/internal"
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/logger"
-	"github.com/trustwallet/blockatlas/pkg/servicerepo"
 	"github.com/trustwallet/blockatlas/platform"
 	"github.com/trustwallet/blockatlas/services/observer/notifier"
 	"github.com/trustwallet/blockatlas/services/observer/parser"
@@ -28,14 +27,12 @@ var (
 	backlogTime, minInterval, maxInterval, fetchBlocksInterval time.Duration
 	maxBackLogBlocks                                           int64
 	txsBatchLimit                                              uint
-	serviceRepo                                                *servicerepo.ServiceRepo
 	database                                                   *db.Instance
 	mqService                                                  mq.MQServiceIface
 )
 
 func init() {
 	_, confPath = internal.ParseArgs("", defaultConfigPath)
-	serviceRepo = servicerepo.New()
 
 	internal.InitConfig(confPath)
 	logger.InitLogger()
@@ -44,12 +41,12 @@ func init() {
 	prefetchCount := viper.GetInt("observer.rabbitmq.consumer.prefetch_count")
 	platformHandle := viper.GetString("platform")
 
-	mq.InitService(serviceRepo)
-	platform.Init(serviceRepo, platformHandle)
-	notifier.InitService(serviceRepo)
-	parser.InitService(serviceRepo)
+	mq.InitService()
+	platform.Init(platformHandle)
+	notifier.InitService()
+	parser.InitService()
 
-	mqService = mq.GetService(serviceRepo)
+	mqService = mq.GetService()
 	if err := mqService.Init(mqHost, prefetchCount); err != nil {
 		logger.Fatal(err)
 	}
@@ -91,8 +88,8 @@ func main() {
 		stopChannel = make(chan<- struct{}, len(platform.BlockAPIs))
 	)
 
-	notifierService := notifier.GetService(serviceRepo)
-	parserService := parser.GetService(serviceRepo)
+	notifierService := notifier.GetService()
+	parserService := parser.GetService()
 
 	wg.Add(len(platform.BlockAPIs))
 	for _, api := range platform.BlockAPIs {

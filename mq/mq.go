@@ -6,7 +6,7 @@ import (
 	"github.com/trustwallet/blockatlas/db"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
-	"github.com/trustwallet/blockatlas/pkg/servicerepo"
+	"github.com/vardius/gocontainer"
 	"time"
 )
 
@@ -35,12 +35,12 @@ func NewMQService() MQServiceIface {
 }
 
 // InitService Adds new mq.mqService instance
-func InitService(serviceRepo *servicerepo.ServiceRepo) {
-	serviceRepo.Add(new(mqService))
+func InitService() {
+	gocontainer.Register("mq", new(mqService))
 }
 
-func GetService(s *servicerepo.ServiceRepo) MQServiceIface {
-	return s.Get("mq.mqService").(MQServiceIface)
+func GetService() MQServiceIface {
+	return gocontainer.MustGet("mq").(MQServiceIface)
 }
 
 type Queue struct {

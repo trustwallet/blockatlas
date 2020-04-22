@@ -7,7 +7,6 @@ import (
 	"github.com/trustwallet/blockatlas/internal"
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/logger"
-	"github.com/trustwallet/blockatlas/pkg/servicerepo"
 	"github.com/trustwallet/blockatlas/services/observer/notifier"
 	"time"
 )
@@ -19,14 +18,12 @@ const (
 var (
 	confPath        string
 	database        *db.Instance
-	serviceRepo     *servicerepo.ServiceRepo
 	notifierService notifier.NotifierServiceIface
 	mqService       mq.MQServiceIface
 )
 
 func init() {
 	_, confPath = internal.ParseArgs("", defaultConfigPath)
-	serviceRepo = servicerepo.New()
 
 	internal.InitConfig(confPath)
 	logger.InitLogger()
@@ -36,11 +33,11 @@ func init() {
 	notificationsBatchLimit := viper.GetUint("observer.push_notifications_batch_limit")
 	pgUri := viper.GetString("postgres.uri")
 
-	mq.InitService(serviceRepo)
-	notifier.InitService(serviceRepo)
+	mq.InitService()
+	notifier.InitService()
 
-	notifierService = notifier.GetService(serviceRepo)
-	mqService = mq.GetService(serviceRepo)
+	notifierService = notifier.GetService()
+	mqService = mq.GetService()
 	if err := mqService.Init(mqHost, prefetchCount); err != nil {
 		logger.Fatal(err)
 	}

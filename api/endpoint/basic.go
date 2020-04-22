@@ -4,7 +4,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/trustwallet/blockatlas/internal"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/pkg/servicerepo"
 	"github.com/trustwallet/blockatlas/services/assets"
 	"github.com/trustwallet/blockatlas/services/domains"
 	"net/http"
@@ -13,9 +12,9 @@ import (
 var domainsService domains.DomainsServiceIface
 var assetsService assets.AssetsServiceIface
 
-func Init(serviceRepo *servicerepo.ServiceRepo) {
-	domainsService = domains.GetService(serviceRepo)
-	assetsService = assets.GetService(serviceRepo)
+func Init() {
+	domainsService = domains.GetService()
+	assetsService = assets.GetService()
 }
 
 func GetStatus(c *gin.Context) {

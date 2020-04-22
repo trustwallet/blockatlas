@@ -5,7 +5,6 @@ package observer_test
 import (
 	"github.com/trustwallet/blockatlas/db"
 	"github.com/trustwallet/blockatlas/mq"
-	"github.com/trustwallet/blockatlas/pkg/servicerepo"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/tests/integration/setup"
 	"context"
@@ -18,8 +17,6 @@ var (
 	rawTransactionsChannel, transactionsChannel, subscriptionChannel mq.MessageChannel
 	database                                                         *db.Instance
 )
-
-var serviceRepo *servicerepo.ServiceRepo;
 
 func RunConsumerForChannelWithCancelAndDbConn(consumer mq.ConsumerWithDbConn, messageChannel mq.MessageChannel, database *db.Instance, ctx context.Context) {
 	for {
@@ -37,13 +34,12 @@ func RunConsumerForChannelWithCancelAndDbConn(consumer mq.ConsumerWithDbConn, me
 }
 
 func TestMain(m *testing.M) {
-	serviceRepo = servicerepo.New()
-	mq.InitService(serviceRepo)
-	setup.RunMQContainer(serviceRepo)
-	mqService := mq.GetService(serviceRepo)
+	mq.InitService()
+	setup.RunMQContainer()
+	mqService := mq.GetService()
 
 	database = setup.RunPgContainer()
-	setup.RunMQContainer(serviceRepo)
+	setup.RunMQContainer()
 	if err := mqService.RawTransactions().Declare(); err != nil {
 		log.Fatal(err)
 	}

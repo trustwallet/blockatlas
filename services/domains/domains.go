@@ -8,7 +8,7 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/platform"
-	"github.com/trustwallet/blockatlas/pkg/servicerepo"
+	"github.com/vardius/gocontainer"
 )
 
 type DomainsServiceIface interface {
@@ -18,13 +18,13 @@ type DomainsServiceIface interface {
 type domainsService struct {
 }
 
-// InitService Adds new domains.domainsService instance
-func InitService(serviceRepo *servicerepo.ServiceRepo) {
-	serviceRepo.Add(new(domainsService))
+// InitService Adds new domains instance
+func InitService() {
+	gocontainer.Register("domains", new(domainsService))
 }
 
-func GetService(s *servicerepo.ServiceRepo) DomainsServiceIface {
-	return s.Get("domains.domainsService").(DomainsServiceIface)
+func GetService() DomainsServiceIface {
+	return gocontainer.MustGet("domains").(DomainsServiceIface)
 }
 
 // tldMapping Mapping of name TLD's to coin where they are handled
