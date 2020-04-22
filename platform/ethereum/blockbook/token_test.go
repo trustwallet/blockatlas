@@ -19,11 +19,42 @@ func TestNormalizeToken(t *testing.T) {
 	}{
 		{
 			name: "Should normalize and return token with balance",
-			args: args{srcToken: Token{Balance: "100", Type: "ERC20", Name: "USD//C", Contract: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48", Symbol: "USDC", Decimals: 6}, coinIndex: 60},
-			want: []blockatlas.Token{{Type: "ERC20", Name: "USD//C", TokenID: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48", Symbol: "USDC", Decimals: 6, Coin: 60}},
-		},		{
+			args: args{srcToken: Token{
+				Balance:  "100",
+				Type:     "ERC20",
+				Name:     "USD//C",
+				Contract: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+				Symbol:   "USDC",
+				Decimals: 6},
+				coinIndex: 60},
+			want: []blockatlas.Token{
+				{
+					Type:    "ERC20",
+					Name:    "USD//C",
+					TokenID: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+					Symbol:  "USDC", Decimals: 6, Coin: 60}},
+		},
+		{
 			name: "Should not return token with zero balance",
-			args: args{srcToken: Token{Balance: "0", Type: "ERC20", Name: "USD//C", Contract: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48", Symbol: "USDC", Decimals: 6}, coinIndex: 60},
+			args: args{srcToken: Token{
+				Balance:  "0",
+				Type:     "ERC20",
+				Name:     "USD//C",
+				Contract: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+				Symbol:   "USDC",
+				Decimals: 6},
+				coinIndex: 60},
+			want: []blockatlas.Token{},
+		}, {
+			name: "Should not return token with zero balance",
+			args: args{srcToken: Token{
+				Balance:  "",
+				Type:     "ERC20",
+				Name:     "USD//C",
+				Contract: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+				Symbol:   "USDC",
+				Decimals: 6},
+				coinIndex: 60},
 			want: []blockatlas.Token{},
 		},
 	}
