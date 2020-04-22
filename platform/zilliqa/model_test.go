@@ -43,8 +43,8 @@ func TestTxRPC_toTx(t *testing.T) {
 		return
 	}
 
-	if got := txRPC.toTx(); !reflect.DeepEqual(got, tx) {
-		t.Errorf("TxRPC.toTx() = %v, want %v", got, tx)
+	if got := txRPC.toTx(); !reflect.DeepEqual(*got, tx) {
+		t.Errorf("TxRPC.toTx() = %v, want %v", *got, tx)
 	}
 }
 
