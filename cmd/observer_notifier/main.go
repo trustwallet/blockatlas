@@ -19,7 +19,6 @@ var (
 	confPath        string
 	database        *db.Instance
 	notifierService notifier.NotifierServiceIface
-	mqService       mq.MQServiceIface
 )
 
 func init() {
@@ -37,14 +36,13 @@ func init() {
 	notifier.InitService()
 
 	notifierService = notifier.GetService()
-	mqService = mq.GetService()
-	if err := mqService.Init(mqHost, prefetchCount); err != nil {
+	if err := mq.GetService().Init(mqHost, prefetchCount); err != nil {
 		logger.Fatal(err)
 	}
-	if err := mqService.RawTransactions().Declare(); err != nil {
+	if err := mq.GetService().RawTransactions().Declare(); err != nil {
 		logger.Fatal(err)
 	}
-	if err := mqService.TxNotifications().Declare(); err != nil {
+	if err := mq.GetService().TxNotifications().Declare(); err != nil {
 		logger.Fatal(err)
 	}
 
@@ -60,17 +58,17 @@ func init() {
 
 	logger.Info("maxPushNotificationsBatchLimit ", logger.Params{"limit": notifierService.GetMaxPushNotificationsBatchLimit()})
 
-	go mqService.RestoreConnectionWorker(mqHost, mqService.RawTransactions(), time.Second*10)
+	go mq.GetService().RestoreConnectionWorker(mqHost, mq.GetService().RawTransactions(), time.Second*10)
 	go db.RestoreConnectionWorker(database, time.Second*10, pgUri)
 	time.Sleep(time.Millisecond)
 }
 
 func main() {
-	defer mqService.Close()
+	defer mq.GetService().Close()
 
 	ctx, cancel := context.WithCancel(context.Background())
 
-	go mqService.RawTransactions().RunConsumerWithCancelAndDbConn(notifierService.RunNotifier, database, ctx)
+	go mq.GetService().RawTransactions().RunConsumerWithCancelAndDbConn(notifierService.RunNotifier, database, ctx)
 
 	internal.SetupGracefulShutdownForObserver(cancel)
 }

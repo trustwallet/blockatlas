@@ -36,22 +36,21 @@ func RunConsumerForChannelWithCancelAndDbConn(consumer mq.ConsumerWithDbConn, me
 func TestMain(m *testing.M) {
 	mq.InitService()
 	setup.RunMQContainer()
-	mqService := mq.GetService()
 
 	database = setup.RunPgContainer()
 	setup.RunMQContainer()
-	if err := mqService.RawTransactions().Declare(); err != nil {
+	if err := mq.GetService().RawTransactions().Declare(); err != nil {
 		log.Fatal(err)
 	}
-	if err := mqService.TxNotifications().Declare(); err != nil {
+	if err := mq.GetService().TxNotifications().Declare(); err != nil {
 		log.Fatal(err)
 	}
-	if err := mqService.Subscriptions().Declare(); err != nil {
+	if err := mq.GetService().Subscriptions().Declare(); err != nil {
 		log.Fatal(err)
 	}
-	rawTransactionsChannel = mqService.RawTransactions().GetMessageChannel()
-	subscriptionChannel = mqService.Subscriptions().GetMessageChannel()
-	transactionsChannel = mqService.TxNotifications().GetMessageChannel()
+	rawTransactionsChannel = mq.GetService().RawTransactions().GetMessageChannel()
+	subscriptionChannel = mq.GetService().Subscriptions().GetMessageChannel()
+	transactionsChannel = mq.GetService().TxNotifications().GetMessageChannel()
 
 	code := m.Run()
 

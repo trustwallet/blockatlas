@@ -19,7 +19,6 @@ const (
 var (
 	confPath    string
 	database    *db.Instance
-	mqService   mq.MQServiceIface
 )
 
 func init() {
@@ -36,8 +35,7 @@ func init() {
 	mq.InitService()
 	subscriber.InitService()
 
-	mqService = mq.GetService()
-	if err := mqService.Init(mqHost, prefetchCount); err != nil {
+	if err := mq.GetService().Init(mqHost, prefetchCount); err != nil {
 		logger.Fatal(err)
 	}
 
@@ -47,20 +45,20 @@ func init() {
 		logger.Fatal(err)
 	}
 
-	go mqService.FatalWorker(time.Second * 10)
+	go mq.GetService().FatalWorker(time.Second * 10)
 	go db.RestoreConnectionWorker(database, time.Second*10, pgUri)
 	time.Sleep(time.Millisecond)
 }
 
 func main() {
-	defer mqService.Close()
-	if err := mqService.Subscriptions().Declare(); err != nil {
+	defer mq.GetService().Close()
+	if err := mq.GetService().Subscriptions().Declare(); err != nil {
 		logger.Fatal(err)
 	}
 	ctx, cancel := context.WithCancel(context.Background())
 
 	subscriberService := subscriber.GetService()
-	go mqService.Subscriptions().RunConsumerWithCancelAndDbConn(subscriberService.RunSubscriber, database, ctx)
+	go mq.GetService().Subscriptions().RunConsumerWithCancelAndDbConn(subscriberService.RunSubscriber, database, ctx)
 
 	internal.SetupGracefulShutdownForObserver(cancel)
 }

@@ -28,7 +28,6 @@ var (
 	maxBackLogBlocks                                           int64
 	txsBatchLimit                                              uint
 	database                                                   *db.Instance
-	mqService                                                  mq.MQServiceIface
 )
 
 func init() {
@@ -46,11 +45,10 @@ func init() {
 	notifier.InitService()
 	parser.InitService()
 
-	mqService = mq.GetService()
-	if err := mqService.Init(mqHost, prefetchCount); err != nil {
+	if err := mq.GetService().Init(mqHost, prefetchCount); err != nil {
 		logger.Fatal(err)
 	}
-	if err := mqService.RawTransactions().Declare(); err != nil {
+	if err := mq.GetService().RawTransactions().Declare(); err != nil {
 		logger.Fatal(err)
 	}
 
@@ -75,13 +73,13 @@ func init() {
 		logger.Fatal(err)
 	}
 
-	go mqService.FatalWorker(time.Second * 10)
+	go mq.GetService().FatalWorker(time.Second * 10)
 	go db.RestoreConnectionWorker(database, time.Second*10, pgUri)
 	time.Sleep(time.Millisecond)
 }
 
 func main() {
-	defer mqService.Close()
+	defer mq.GetService().Close()
 	var (
 		wg          sync.WaitGroup
 		coinCancel  = make(map[string]context.CancelFunc)
@@ -116,7 +114,7 @@ func main() {
 		params := parser.Params{
 			Ctx:                   ctx,
 			Api:                   api,
-			Queue:                 mqService.RawTransactions(),
+			Queue:                 mq.GetService().RawTransactions(),
 			ParsingBlocksInterval: pollInterval,
 			FetchBlocksTimeout:    fetchBlocksInterval,
 			BacklogCount:          backlogCount,
