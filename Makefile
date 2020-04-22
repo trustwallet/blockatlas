@@ -130,10 +130,10 @@ test: go-test
 ## integration: Run all integration tests.
 integration: go-integration
 
-## start-mock-dyson: Start Dyson with mocks of external services
+## start-mock-dyson: Start Dyson with mocks of external services.  Make sure not to swallow error code in case port is taken.
 start-mock-dyson: stop-dyson
 	@echo "  >  Starting Dyson with mocks"
-	@-dyson  mock/ext-api-dyson & echo $$! > $(PID_DYSON)
+	@dyson  mock/ext-api-dyson && echo $$! > $(PID_DYSON)
 	@echo "  >  Dyson started with PID: " `cat $(PID_DYSON)`
 
 ## fmt: Run `go fmt` for all go files.
