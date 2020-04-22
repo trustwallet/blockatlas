@@ -3,19 +3,10 @@ package endpoint
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/trustwallet/blockatlas/api/model"
-	"github.com/trustwallet/blockatlas/pkg/servicerepo"
-	"github.com/trustwallet/blockatlas/services/domains"
 	"net/http"
 	"strconv"
 	"strings"
 )
-
-var domainsService domains.DomainsServiceIface
-
-func initDomainsService(serviceRepo *servicerepo.ServiceRepo) {
-	//domainsService = serviceRepo.Get("domains.domainsService").(domains.DomainsServiceIface)
-	domainsService = domains.GetService(serviceRepo)
-}
 
 // @Summary Lookup .eth / .zil addresses
 // @ID lookup

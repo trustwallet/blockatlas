@@ -6,16 +6,8 @@ import (
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
-	"github.com/trustwallet/blockatlas/pkg/servicerepo"
-	"github.com/trustwallet/blockatlas/services/assets"
 	"net/http"
 )
-
-var assetsService assets.AssetsServiceIface
-
-func initAssetsService(serviceRepo *servicerepo.ServiceRepo) {
-	assetsService = assets.GetService(serviceRepo)
-}
 
 type (
 	AddressBatchRequest struct {
