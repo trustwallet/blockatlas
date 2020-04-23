@@ -133,8 +133,10 @@ integration: go-integration
 ## start-mock-dyson: Start Dyson with mocks of external services.  Make sure not to swallow error code in case port is taken.
 start-mock-dyson: stop-dyson
 	@echo "  >  Starting Dyson with mocks"
-	@dyson  mock/ext-api-dyson && echo $$! > $(PID_DYSON)
+	@-dyson  mock/ext-api-dyson & echo $$! > $(PID_DYSON)
 	@echo "  >  Dyson started with PID: " `cat $(PID_DYSON)`
+	# Check that it is running (e.g. may fail due to unavailable port)
+	@$(MAKE) newman-run test=mock-healthcheck host=http://localhost:8420
 
 ## fmt: Run `go fmt` for all go files.
 fmt: go-fmt
