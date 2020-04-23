@@ -12,6 +12,11 @@ import (
 
 const Annual = 0.74
 
+var unknownStakeValidator = blockatlas.StakeValidator{
+	ID:     "unknown",
+	Status: false,
+}
+
 func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
 	results := make(blockatlas.ValidatorPage, 0)
 	validators, err := p.client.GetValidators()
@@ -87,8 +92,8 @@ func NormalizeDelegations(data *AccountData, validators blockatlas.ValidatorMap)
 	for _, v := range data.Votes {
 		validator, ok := validators[v.VoteAddress]
 		if !ok {
-			logger.Error(errors.E("Validator not found", errors.Params{"address": v.VoteAddress, "platform": "tron"}))
-			continue
+			logger.Warn(errors.E("Validator not found", errors.Params{"address": v.VoteAddress, "platform": "tron"}))
+			validator = unknownStakeValidator
 		}
 		delegation := blockatlas.Delegation{
 			Delegator: validator,
