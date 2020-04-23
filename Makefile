@@ -206,7 +206,7 @@ ifeq (,$(host))
 	@exit 1
 endif
 	@echo "  >  Running $(test) tests"
-	@newman run tests/postman/Blockatlas.postman_collection.json --folder $(test) -d tests/postman/$(test)_data.json --env-var "host=$(host)"
+	@newman run tests/postman/blockatlas.postman_collection.json --folder $(test) -d tests/postman/$(test)_data.json --env-var "host=$(host)"
 
 ## install-dyson: Install Dyson for mocked tests.
 install-dyson:

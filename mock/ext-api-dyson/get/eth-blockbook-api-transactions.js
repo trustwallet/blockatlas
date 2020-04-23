@@ -1,9 +1,9 @@
 /// Ethereum Blockbook API Mock
 /// See:
 /// curl "http://localhost:3000/eth-blockbook-api/v2/address/0x0875BCab22dE3d02402bc38aEe4104e1239374a7?details=txs"
-/// curl "http://localhost:3000/eth-blockbook-api/v2/address/0x0875BCab22dE3d02402bc38aEe4104e1239374a7?details=tokens"
+/// curl "http://localhost:3000/eth-blockbook-api/v2/address/0x0875BCab22dE3d02402bc38aEe4104e1239374a7?details=tokenBalances"
 /// curl "https://{eth blockbook api}/api/v2/address/0x0875BCab22dE3d02402bc38aEe4104e1239374a7?details=txs"
-/// curl "https://{eth blockbook api}/api/v2/address/0x0875BCab22dE3d02402bc38aEe4104e1239374a7?details=tokens"
+/// curl "https://{eth blockbook api}/api/v2/address/0x0875BCab22dE3d02402bc38aEe4104e1239374a7?details=tokenBalances"
 /// curl "http://localhost:8420/v1/ethereum/0x0875BCab22dE3d02402bc38aEe4104e1239374a7"
 /// curl "http://localhost:8420/v2/ethereum/tokens/0x0875BCab22dE3d02402bc38aEe4104e1239374a7?Authorization=Bearer"
 
@@ -11,7 +11,7 @@ module.exports = {
     path: '/eth-blockbook-api/v2/address/:address?',
     template: function(params, query) {
         if (params.address === '0x0875BCab22dE3d02402bc38aEe4104e1239374a7') {
-            if (query.details === 'tokens') {
+            if (query.details === 'tokenBalances') {
                 return JSON.parse(`
                     {
                         "address": "0x0875BCab22dE3d02402bc38aEe4104e1239374a7",
@@ -38,18 +38,17 @@ module.exports = {
                                 "transfers": 4,
                                 "symbol": "BNB",
                                 "decimals": 18,
-                                "balance": "0"
+                                "balance": "100500"
                             },
                             {
                                 "type": "ERC20",
-                                "name": "Mycion",
-                                "contract": "0xE1Ac9Eb7cDDAbfd9e5CA49c23bd521aFcDF8BE49",
-                                "transfers": 1,
-                                "symbol": "MYC",
+                                "name": "BNB",
+                                "contract": "0xB8c77482e45F1F44dE1745F52C74426C631bDD52",
+                                "transfers": 4,
+                                "symbol": "BNB",
                                 "decimals": 18,
-                                "balance": ""
-                            },
-                            
+                                "balance": "0"
+                            }
                         ]
                     }
                 `);
