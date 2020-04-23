@@ -5,6 +5,7 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
+	"github.com/trustwallet/blockatlas/platform/types"
 	services "github.com/trustwallet/blockatlas/services/assets"
 	"strconv"
 	"time"
@@ -14,11 +15,6 @@ const (
 	lockTime      = 1814400
 	minimumAmount = "1"
 )
-
-var unknownStakeValidator = blockatlas.StakeValidator{
-	ID:     "unknown",
-	Status: false,
-}
 
 func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
 	results := make(blockatlas.ValidatorPage, 0)
@@ -118,7 +114,7 @@ func NormalizeDelegations(delegations []Delegation, validators blockatlas.Valida
 		validator, ok := validators[v.ValidatorAddress]
 		if !ok {
 			logger.Warn(errors.E("Validator not found", errors.Params{"address": v.ValidatorAddress, "platform": "cosmos", "delegation": v.DelegatorAddress}))
-			validator = unknownStakeValidator
+			validator = types.UnknownStakeValidator
 		}
 		delegation := blockatlas.Delegation{
 			Delegator: validator,
@@ -137,7 +133,7 @@ func NormalizeUnbondingDelegations(delegations []UnbondingDelegation, validators
 			validator, ok := validators[v.ValidatorAddress]
 			if !ok {
 				logger.Warn(errors.E("Validator not found", errors.Params{"address": v.ValidatorAddress, "platform": "cosmos", "delegation": v.DelegatorAddress}))
-				validator = unknownStakeValidator
+				validator = types.UnknownStakeValidator
 			}
 			t, _ := time.Parse(time.RFC3339, entry.CompletionTime)
 			delegation := blockatlas.Delegation{

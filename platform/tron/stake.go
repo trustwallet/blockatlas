@@ -5,17 +5,13 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
+	"github.com/trustwallet/blockatlas/platform/types"
 	services "github.com/trustwallet/blockatlas/services/assets"
 	"strconv"
 	"time"
 )
 
 const Annual = 0.74
-
-var unknownStakeValidator = blockatlas.StakeValidator{
-	ID:     "unknown",
-	Status: false,
-}
 
 func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
 	results := make(blockatlas.ValidatorPage, 0)
@@ -93,7 +89,7 @@ func NormalizeDelegations(data *AccountData, validators blockatlas.ValidatorMap)
 		validator, ok := validators[v.VoteAddress]
 		if !ok {
 			logger.Warn(errors.E("Validator not found", errors.Params{"address": v.VoteAddress, "platform": "tron"}))
-			validator = unknownStakeValidator
+			validator = types.UnknownStakeValidator
 		}
 		delegation := blockatlas.Delegation{
 			Delegator: validator,
