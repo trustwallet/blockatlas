@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "7c16faaa-629e-4a75-a8bc-2ccaacb540ff",
+		"_postman_id": "57634a03-7dfa-4b5b-b48e-f6321ea4ba1e",
 		"name": "Blockatlas",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -188,7 +188,7 @@
 					"_postman_isSubFolder": true
 				},
 				{
-					"name": "tokens",
+					"name": "token",
 					"item": [
 						{
 							"name": "token",
