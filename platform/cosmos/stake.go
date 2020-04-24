@@ -113,7 +113,7 @@ func NormalizeDelegations(delegations []Delegation, validators blockatlas.Valida
 		validator, ok := validators[v.ValidatorAddress]
 		if !ok {
 			logger.Warn("Validator not found", logger.Params{"address": v.ValidatorAddress, "platform": "cosmos", "delegation": v.DelegatorAddress})
-			validator = blockatlas.GetUnknownValidator(v.ValidatorAddress)
+			validator = getUnknownValidator(v.ValidatorAddress)
 		}
 		delegation := blockatlas.Delegation{
 			Delegator: validator,
@@ -132,7 +132,7 @@ func NormalizeUnbondingDelegations(delegations []UnbondingDelegation, validators
 			validator, ok := validators[v.ValidatorAddress]
 			if !ok {
 				logger.Warn("Validator not found", logger.Params{"address": v.ValidatorAddress, "platform": "cosmos", "delegation": v.DelegatorAddress})
-				validator = blockatlas.GetUnknownValidator(v.ValidatorAddress)
+				validator = getUnknownValidator(v.ValidatorAddress)
 			}
 			t, _ := time.Parse(time.RFC3339, entry.CompletionTime)
 			delegation := blockatlas.Delegation{
@@ -190,5 +190,24 @@ func (p *Platform) Denom() DenomType {
 		return DenomKava
 	default:
 		return DenomAtom
+	}
+}
+
+func getUnknownValidator(address string) blockatlas.StakeValidator {
+	return blockatlas.StakeValidator{
+		ID:     address,
+		Status: false,
+		Info: blockatlas.StakeValidatorInfo{
+			Name:        "Decommissioned",
+			Description: "Decommissioned",
+		},
+		Details: blockatlas.StakingDetails{
+			Reward: blockatlas.StakingReward{
+				Annual: 0,
+			},
+			LockTime:      1814400,
+			MinimumAmount: "1",
+			Type:          "delegate",
+		},
 	}
 }

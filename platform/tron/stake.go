@@ -87,7 +87,7 @@ func NormalizeDelegations(data *AccountData, validators blockatlas.ValidatorMap)
 		validator, ok := validators[v.VoteAddress]
 		if !ok {
 			logger.Warn("Validator not found", logger.Params{"address": v.VoteAddress, "platform": "tron"})
-			validator = blockatlas.GetUnknownValidator(v.VoteAddress)
+			continue
 		}
 		delegation := blockatlas.Delegation{
 			Delegator: validator,
