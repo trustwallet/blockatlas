@@ -255,13 +255,13 @@
         "handler": "bitcoin",
         "address": "address/bc1qrfr44n2j4czd5c9txwlnw0yj2h82x9566fglqj",
         "expectedTxNum": 2,
-        "expectedTxId": "8180545030fcfb7b14ee90acb01b606c5a68fe1d520bcf140bd0097108c2b7f4"
+        "expectedTxId": "36b1e721a25ea3ac2fcc09a92d4ff1e2ae4ed70d593e276806d9a9fd2a901132"
     },
     {
         "handler": "bitcoin",
         "address": "xpub/zpub6ruK9k6YGm8BRHWvTiQcrEPnFkuRDJhR7mPYzV2LDvjpLa5CuGgrhCYVZjMGcLcFqv9b2WvsFtY2Gb3xq8NVq8qhk9veozrA2W9QaWtihrC",
         "expectedTxNum": 3,
-        "expectedTxId": "8180545030fcfb7b14ee90acb01b606c5a68fe1d520bcf140bd0097108c2b7f4"
+        "expectedTxId": "c6a4c82d5c7a342796e7d81237ab399918d3205f791ebc40e63501cac28c32be"
     },
     {
         "handler": "bitcoincash",
@@ -291,7 +291,7 @@
         "handler": "viacoin",
         "address": "address/VdMPvn7vUTSzbYjiMDs1jku9wAh1Ri2Y1A",
         "expectedTxNum": 2,
-        "expectedTxId": "dadbe1f13dc5ecd1cfb0d8ae139a4e55493eb9ab2c937cb78b67a5d9c1ded7e8"
+        "expectedTxId": "1b311427cd4749cbebd5c1fc70896b9e92a58d6935ba75bb40ed4a9e22e4a6cb"
     },
     {
         "handler": "viacoin",
