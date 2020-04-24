@@ -81,7 +81,7 @@ var keyedStakeAccount = KeyedAccount{
 	Pubkey: "EgR17fgGmwQQaMZPsuJdk9oHw2xY8TJQj3Bp44o24mar",
 }
 
-var stakeState = StakeState{
+var stakeState = StakeData{
 	State:                2,
 	RentExemptReserve:    2282880,
 	AuthorizedStaker:     arrayOfPubkey("B52Da5MCyTcyVJEsR9RUnbf715YuBAJMxCEEPzyZXgvY"),
@@ -145,7 +145,7 @@ var delegation = blockatlas.DelegationsPage{
 }
 
 func TestNormalizeDelegations(t *testing.T) {
-	result, err := NormalizeDelegations([]StakeState{stakeState}, validatorMap, epochInfo)
+	result, err := NormalizeDelegations([]StakeData{stakeState}, validatorMap, epochInfo)
 	assert.NoError(t, err)
 	assert.Equal(t, delegation, result)
 }
