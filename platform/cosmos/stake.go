@@ -114,6 +114,7 @@ func NormalizeDelegations(delegations []Delegation, validators blockatlas.Valida
 		if !ok {
 			logger.Warn("Validator not found", logger.Params{"address": v.ValidatorAddress, "platform": "cosmos", "delegation": v.DelegatorAddress})
 			validator = getUnknownValidator(v.ValidatorAddress)
+
 		}
 		delegation := blockatlas.Delegation{
 			Delegator: validator,
@@ -205,9 +206,9 @@ func getUnknownValidator(address string) blockatlas.StakeValidator {
 			Reward: blockatlas.StakingReward{
 				Annual: 0,
 			},
-			LockTime:      1814400,
-			MinimumAmount: "1",
-			Type:          "delegate",
+			LockTime:      lockTime,
+			MinimumAmount: minimumAmount,
+			Type:          blockatlas.DelegationTypeDelegate,
 		},
 	}
 }
