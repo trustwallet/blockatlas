@@ -1,11 +1,11 @@
 /// Mock for external Litecoin API
 /// See:
 /// curl "http://{ltc rpc}/api/v2/address/ltc1qpm594ntjq6ayqjngf6t9td2dxtey9d7985eept?details=txs"
-/// curl "http://localhost:3000/litecoin-api/address/ltc1qpm594ntjq6ayqjngf6t9td2dxtey9d7985eept?details=txs"
+/// curl "http://localhost:3000/litecoin-api/v2/address/ltc1qpm594ntjq6ayqjngf6t9td2dxtey9d7985eept?details=txs"
 /// curl "http://localhost:8420/v1/litecoin/address/ltc1qpm594ntjq6ayqjngf6t9td2dxtey9d7985eept"
 
 module.exports = {
-    path: '/litecoin-api/address/:address?',
+    path: '/litecoin-api/v2/address/:address?',
     template: function(params, query, body) {
         switch (params.address) {
             case 'ltc1qpm594ntjq6ayqjngf6t9td2dxtey9d7985eept':

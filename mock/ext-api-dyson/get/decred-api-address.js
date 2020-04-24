@@ -1,11 +1,11 @@
 /// Mock for external Decred API
 /// See:
 /// curl "http://{decred rpc}/api/v2/address/DsTxPUVFxXeNgu5fzozr4mTR4tqqMaKcvpY?details=txs"
-/// curl "http://localhost:3000/decred-api/address/DsTxPUVFxXeNgu5fzozr4mTR4tqqMaKcvpY?details=txs"
+/// curl "http://localhost:3000/decred-api/v2/address/DsTxPUVFxXeNgu5fzozr4mTR4tqqMaKcvpY?details=txs"
 /// curl "http://localhost:8420/v1/decred/address/DsTxPUVFxXeNgu5fzozr4mTR4tqqMaKcvpY"
 
 module.exports = {
-    path: '/decred-api/address/:address?',
+    path: '/decred-api/v2/address/:address?',
     template: function(params, query, body) {
         switch (params.address) {
             case 'DsTxPUVFxXeNgu5fzozr4mTR4tqqMaKcvpY':

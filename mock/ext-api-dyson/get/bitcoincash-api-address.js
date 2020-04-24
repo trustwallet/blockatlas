@@ -1,11 +1,11 @@
 /// Mock for external Bitcoincash API
 /// See:
 /// curl "http://{bch rpc}/api/v2/address/bitcoincash:qq07l6rr5lsdm3m80qxw80ku2ex0tj76vvsxpvmgme?details=txs"
-/// curl "http://localhost:3000/bitcoincash-api/address/bitcoincash:qq07l6rr5lsdm3m80qxw80ku2ex0tj76vvsxpvmgme?details=txs"
+/// curl "http://localhost:3000/bitcoincash-api/v2/address/bitcoincash:qq07l6rr5lsdm3m80qxw80ku2ex0tj76vvsxpvmgme?details=txs"
 /// curl "http://localhost:8420/v1/bitcoincash/address/bitcoincash:qq07l6rr5lsdm3m80qxw80ku2ex0tj76vvsxpvmgme"
 
 module.exports = {
-    path: '/bitcoincash-api/address/:address?',
+    path: '/bitcoincash-api/v2/address/:address?',
     template: function(params, query, body) {
         switch (params.address) {
             case 'bitcoincash:qq07l6rr5lsdm3m80qxw80ku2ex0tj76vvsxpvmgme':

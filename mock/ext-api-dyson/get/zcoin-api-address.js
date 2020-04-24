@@ -1,11 +1,11 @@
 /// Mock for external Zcoin API
 /// See:
 /// curl "http://{Zcoin rpc}/api/v2/address/a8EF4cpenEgEn9hm2NL5KfFK1UmSZZaQVn?details=txs"
-/// curl "http://localhost:3000/zcoin-api/address/a8EF4cpenEgEn9hm2NL5KfFK1UmSZZaQVn?details=txs"
+/// curl "http://localhost:3000/zcoin-api/v2/address/a8EF4cpenEgEn9hm2NL5KfFK1UmSZZaQVn?details=txs"
 /// curl "http://localhost:8420/v1/zcoin/address/a8EF4cpenEgEn9hm2NL5KfFK1UmSZZaQVn"
 
 module.exports = {
-    path: '/zcoin-api/address/:address?',
+    path: '/zcoin-api/v2/address/:address?',
     template: function(params, query, body) {
         switch (params.address) {
             case 'a8EF4cpenEgEn9hm2NL5KfFK1UmSZZaQVn':
