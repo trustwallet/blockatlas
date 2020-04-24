@@ -1,11 +1,11 @@
 /// Mock for external Dash API
 /// See:
 /// curl "http://{dash rpc}/api/v2/address/XrcbsQdrFYEzbqA9nCJi8zDtnRZzNKkCtG?details=txs"
-/// curl "http://localhost:3000/dash-api/address/XrcbsQdrFYEzbqA9nCJi8zDtnRZzNKkCtG?details=txs"
+/// curl "http://localhost:3000/dash-api/v2/address/XrcbsQdrFYEzbqA9nCJi8zDtnRZzNKkCtG?details=txs"
 /// curl "http://localhost:8420/v1/dash/address/XrcbsQdrFYEzbqA9nCJi8zDtnRZzNKkCtG"
 
 module.exports = {
-    path: '/dash-api/address/:address?',
+    path: '/dash-api/v2/address/:address?',
     template: function(params, query, body) {
         switch (params.address) {
             case 'XrcbsQdrFYEzbqA9nCJi8zDtnRZzNKkCtG':

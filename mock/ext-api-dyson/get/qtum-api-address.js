@@ -1,11 +1,11 @@
 /// Mock for external Qtum API
 /// See:
 /// curl "http://{qtum rpc}/api/v2/address/QZJbNrGT3cZ1J1AEHtgH3JWM7uLBNAejLZ?details=txs"
-/// curl "http://localhost:3000/qtum-api/address/QZJbNrGT3cZ1J1AEHtgH3JWM7uLBNAejLZ?details=txs"
+/// curl "http://localhost:3000/qtum-api/v2/address/QZJbNrGT3cZ1J1AEHtgH3JWM7uLBNAejLZ?details=txs"
 /// curl "http://localhost:8420/v1/qtum/address/QZJbNrGT3cZ1J1AEHtgH3JWM7uLBNAejLZ"
 
 module.exports = {
-    path: '/qtum-api/address/:address?',
+    path: '/qtum-api/v2/address/:address?',
     template: function(params, query, body) {
         switch (params.address) {
             case 'QZJbNrGT3cZ1J1AEHtgH3JWM7uLBNAejLZ':
