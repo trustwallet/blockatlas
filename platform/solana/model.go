@@ -1,5 +1,14 @@
 package solana
 
+const (
+	StakeStateUninitialized StakeState = 0
+	StakeStateInitialized   StakeState = 1
+	StakeStateDelegated     StakeState = 2
+	StakeStateRewardsPool   StakeState = 3
+)
+
+type StakeState uint32
+
 type VoteAccount struct {
 	NodePubkey       string     `json:"nodePubkey"`
 	VotePubkey       string     `json:"votePubkey"`
@@ -38,8 +47,8 @@ type RpcContext struct {
 	Slot uint64 `json:"slot"`
 }
 
-type StakeState struct {
-	State                uint32
+type StakeData struct {
+	State                StakeState
 	RentExemptReserve    uint64
 	AuthorizedStaker     [32]byte
 	AuthorizedWithdrawer [32]byte
