@@ -277,7 +277,7 @@
     },
     {
         "handler": "ravencoin",
-        "address": "address/RHoCwPc2FCQqwToYnSiAb3SrCET4zEHsbS",
+        "address": "address/RGkwvrUors8DtmhKy5bddFwRCTZaunjpvo",
         "expectedTxNum": 2,
         "expectedTxId": "fc6c9e9c6cd0253f05e43a12d64154a689115f0103dc0b64957a8cb92b67f306"
     },

@@ -454,7 +454,7 @@ var Coins = map[uint]Coin{
 		Decimals:         8,
 		BlockTime:        60000,
 		MinConfirmations: 0,
-		SampleAddr:       "RHoCwPc2FCQqwToYnSiAb3SrCET4zEHsbS",
+		SampleAddr:       "RGkwvrUors8DtmhKy5bddFwRCTZaunjpvo",
 	},
 	QTUM: {
 		ID:               2301,
@@ -557,6 +557,7 @@ var Coins = map[uint]Coin{
 		SampleAddr:       "NEAR6Y66fCzeKqWiwxoPox5oGeDN9VhNCu7CEQ9M86iniqoN9vg2X",
 	},
 }
+
 func Ethereum() Coin {
 	return Coins[ETH]
 }
@@ -701,4 +702,3 @@ func Solana() Coin {
 func Near() Coin {
 	return Coins[NEAR]
 }
-
