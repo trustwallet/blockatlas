@@ -1,13 +1,14 @@
 package bitcoin
 
 import (
+	"net/http"
+	"sort"
+
 	mapset "github.com/deckarep/golang-set"
 	"github.com/gin-gonic/gin"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/numbers"
-	"net/http"
-	"sort"
 )
 
 // @Summary Get xpub transactions
@@ -142,7 +143,7 @@ func normalizeTransaction(tx Transaction, coinIndex uint) blockatlas.Tx {
 }
 
 func parseOutputs(outputs []Output) (addresses []blockatlas.TxOutput) {
-	set := make(map[string]blockatlas.TxOutput)
+	set := make(map[string]*blockatlas.TxOutput)
 	var ordered []string
 	for _, output := range outputs {
 		for _, address := range output.OutputAddress() {
@@ -151,7 +152,7 @@ func parseOutputs(outputs []Output) (addresses []blockatlas.TxOutput) {
 				val.Value = blockatlas.Amount(value)
 			} else {
 				amount := numbers.GetAmountValue(output.Value)
-				set[address] = blockatlas.TxOutput{
+				set[address] = &blockatlas.TxOutput{
 					Address: address,
 					Value:   blockatlas.Amount(amount),
 				}
@@ -160,7 +161,7 @@ func parseOutputs(outputs []Output) (addresses []blockatlas.TxOutput) {
 		}
 	}
 	for _, val := range ordered {
-		addresses = append(addresses, set[val])
+		addresses = append(addresses, *set[val])
 	}
 	return addresses
 }

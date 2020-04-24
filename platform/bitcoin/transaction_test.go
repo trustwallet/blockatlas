@@ -3,11 +3,13 @@ package bitcoin
 import (
 	"bytes"
 	"encoding/json"
+	"reflect"
+	"testing"
+
 	mapset "github.com/deckarep/golang-set"
 	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"testing"
 )
 
 const outgoingTx = `{
@@ -280,5 +282,98 @@ func TestTransactionStatus(t *testing.T) {
 
 	for _, test := range tests {
 		assert.Equal(t, test.Expected, test.Tx.getStatus())
+	}
+}
+
+func TestParseOutputs(t *testing.T) {
+	tests := []struct {
+		name    string
+		outputs string
+		want    []blockatlas.TxOutput
+	}{
+		{
+			name: "Test Doge inputs from 0xb02977b96e5c65fd807e28230375c1267ded1de7c2c43292bf36552283bc5696",
+			outputs: `[{
+				"txid": "6f59c4d96566c84aecb8399884d781766fe39d3ec76c609e6c11b01192c07341",
+				"sequence": 4294967295,
+				"n": 0,
+				"addresses": [
+					"DPoYGk1wGQ3uWs5G3exd9WKvVyu8weKYVA"
+				],
+				"isAddress": true,
+				"value": "10000000",
+				"hex": "47304402207bb4fe5709874e5bc82c88945f8abb9aebdab996a1a619b0f01ec9a2ca3f862702204c02f986653bbf322ff5813322b72a7f7ac6cedfabf32d8e576be5eeee4acfc4012103565519e77659aae844889ae12609309f85a8d22bf815c4daa418e457c7cb01eb"
+			},
+			{
+				"txid": "b476736ec08dc16942941103806ec16ce71ddde4d5422dcf6f05b4381c23b8b0",
+				"sequence": 4294967295,
+				"n": 1,
+				"addresses": [
+					"DPoYGk1wGQ3uWs5G3exd9WKvVyu8weKYVA"
+				],
+				"isAddress": true,
+				"value": "500000000",
+				"hex": "48304502210085426a63df0fa1343a3f7aa8903804a8e49815006f9ed65494b68a81588e605c02207a487df90dcc76e4cbe70358054084b97d407529912762fb784aac825c120125012103565519e77659aae844889ae12609309f85a8d22bf815c4daa418e457c7cb01eb"
+			},
+			{
+				"txid": "239582019ca4dd5e4ba4441cdd949d67eb2461b6f0600d77245355f751bf9fb4",
+				"sequence": 4294967295,
+				"n": 2,
+				"addresses": [
+					"DPoYGk1wGQ3uWs5G3exd9WKvVyu8weKYVA"
+				],
+				"isAddress": true,
+				"value": "500000000",
+				"hex": "473044022047cad0afd2aa4ff9b3fc45a6afb40b9745c1b39499a96df803f899d189f3822c0220267464d2954de54825717b93e3597a0915c71aecf1215ed33021bef376813b9a012103565519e77659aae844889ae12609309f85a8d22bf815c4daa418e457c7cb01eb"
+			}]`,
+			want: []blockatlas.TxOutput{
+				{
+					Address: "DPoYGk1wGQ3uWs5G3exd9WKvVyu8weKYVA",
+					Value:   "1010000000",
+				},
+			},
+		},
+		{
+			name: "Test Doge outputs from 0xb02977b96e5c65fd807e28230375c1267ded1de7c2c43292bf36552283bc5696",
+			outputs: `[{
+				"value": "1000000000",
+				"n": 0,
+				"spent": true,
+				"hex": "76a914e34df4959b71f9a06af1eeb4f836e521067b777988ac",
+				"addresses": [
+					"DRryKEukopEDv7cm6Y1Li6232VHEjnXptA"
+				],
+				"isAddress": true
+			},
+			{
+				"value": "9973378",
+				"n": 1,
+				"hex": "76a914ccb78d11b3850ac3252c1cbda0a2ceeaa833feaf88ac",
+				"addresses": [
+					"DPoYGk1wGQ3uWs5G3exd9WKvVyu8weKYVA"
+				],
+				"isAddress": true
+			}]`,
+			want: []blockatlas.TxOutput{
+				{
+					Address: "DRryKEukopEDv7cm6Y1Li6232VHEjnXptA",
+					Value:   "1000000000",
+				},
+				{
+					Address: "DPoYGk1wGQ3uWs5G3exd9WKvVyu8weKYVA",
+					Value:   "9973378",
+				},
+			},
+		},
+	}
+	for _, tt := range tests {
+		var outputs []Output
+		_ = json.Unmarshal([]byte(tt.outputs), &outputs)
+		want := parseOutputs(outputs)
+		t.Run(tt.name, func(t *testing.T) {
+			if !reflect.DeepEqual(want, tt.want) {
+				t.Errorf("parseOutputs() = %v, want %v", want, tt.want)
+			}
+		})
 	}
 }
