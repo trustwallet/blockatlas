@@ -112,11 +112,8 @@ func NormalizeDelegations(delegations []Delegation, validators blockatlas.Valida
 	for _, v := range delegations {
 		validator, ok := validators[v.ValidatorAddress]
 		if !ok {
-			logger.Warn(errors.E("Validator not found", errors.Params{"address": v.ValidatorAddress, "platform": "cosmos", "delegation": v.DelegatorAddress}))
-			validator = blockatlas.StakeValidator{
-				ID:     v.ValidatorAddress,
-				Status: false,
-			}
+			logger.Warn("Validator not found", logger.Params{"address": v.ValidatorAddress, "platform": "cosmos", "delegation": v.DelegatorAddress})
+			validator.ToDecommissioned(v.ValidatorAddress)
 		}
 		delegation := blockatlas.Delegation{
 			Delegator: validator,
@@ -134,11 +131,8 @@ func NormalizeUnbondingDelegations(delegations []UnbondingDelegation, validators
 		for _, entry := range v.Entries {
 			validator, ok := validators[v.ValidatorAddress]
 			if !ok {
-				logger.Warn(errors.E("Validator not found", errors.Params{"address": v.ValidatorAddress, "platform": "cosmos", "delegation": v.DelegatorAddress}))
-				validator = blockatlas.StakeValidator{
-					ID:     v.ValidatorAddress,
-					Status: false,
-				}
+				logger.Warn("Validator not found", logger.Params{"address": v.ValidatorAddress, "platform": "cosmos", "delegation": v.DelegatorAddress})
+				validator.ToDecommissioned(v.ValidatorAddress)
 			}
 			t, _ := time.Parse(time.RFC3339, entry.CompletionTime)
 			delegation := blockatlas.Delegation{

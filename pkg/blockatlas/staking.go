@@ -86,3 +86,12 @@ func (sv StakeValidators) ToMap() ValidatorMap {
 	}
 	return validators
 }
+
+func (s *StakeValidator) ToDecommissioned(address string) {
+	s.ID = address
+	s.Status = false
+	s.Info = StakeValidatorInfo{
+		Name:        "Decommissioned",
+		Description: "Decommissioned",
+	}
+}
