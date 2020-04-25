@@ -90,7 +90,7 @@ func RegisterBatchAPI(root gin.IRouter) {
 	root.POST("/v4/collectibles/categories", func(c *gin.Context) {
 		endpoint.GetCollectionCategoriesFromList(c, platform.CollectionAPIs)
 	})
-	root.POST("/v3/tokens", func(c *gin.Context) {
+	root.POST("/v2/tokens", func(c *gin.Context) {
 		endpoint.GetTokens(c, platform.TokensAPIs)
 	})
 }
