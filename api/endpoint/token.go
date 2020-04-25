@@ -5,6 +5,8 @@ import (
 	"github.com/trustwallet/blockatlas/api/model"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"net/http"
+	"strconv"
+	"sync"
 )
 
 // @Summary Get Tokens
@@ -31,4 +33,66 @@ func GetTokensByAddress(c *gin.Context, tokenAPI blockatlas.TokenAPI) {
 		return
 	}
 	c.JSON(http.StatusOK, blockatlas.DocsResponse{Docs: &result})
+}
+
+// @Description Get tokens
+// @ID tokens_v3
+// @Summary Get list of tokens by map: coin -> [addresses]
+// @Accept json
+// @Produce json
+// @Tags Transactions
+// @Param data body string true "Payload" default({"60": ["0xb3624367b1ab37daef42e1a3a2ced012359659b0"]})
+// @Success 200 {object} blockatlas.ResultsResponse
+// @Router /v3/tokens [post]
+func GetTokens(c *gin.Context, tokens map[uint]blockatlas.TokenAPI) {
+	var query map[string][]string
+	if err := c.Bind(&query); err != nil {
+		c.JSON(http.StatusInternalServerError, model.CreateErrorResponse(model.InternalFail, err))
+		return
+	}
+	result := make(blockatlas.TokenPage, 0)
+	for coinStr, addresses := range query {
+		coinNum, err := strconv.ParseUint(coinStr, 10, 32)
+		if err != nil {
+			continue
+		}
+		tokenAPI, ok := tokens[uint(coinNum)]
+		if !ok {
+			continue
+		}
+
+		tokens := getTokens(tokenAPI, addresses)
+		result = append(result, tokens...)
+	}
+	c.JSON(http.StatusOK, blockatlas.ResultsResponse{Total: len(result), Results: &result})
+}
+
+func getTokens(tokenAPI blockatlas.TokenAPI, addresses []string) blockatlas.TokenPage {
+	var (
+		tokenPagesChan = make(chan blockatlas.TokenPage, len(addresses))
+		wg             sync.WaitGroup
+		result         blockatlas.TokenPage
+	)
+
+	for _, address := range addresses {
+		wg.Add(1)
+		go func(address string, wg *sync.WaitGroup) {
+			defer wg.Done()
+
+			tokenPage, err := tokenAPI.GetTokenListByAddress(address)
+			if err != nil {
+				return
+			}
+
+			tokenPagesChan <- tokenPage
+		}(address, &wg)
+	}
+	wg.Wait()
+	close(tokenPagesChan)
+
+	for page := range tokenPagesChan {
+		result = append(result, page...)
+	}
+
+	return result
 }
