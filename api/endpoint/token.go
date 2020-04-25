@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"strconv"
 	"sync"
+	"time"
 )
 
 // @Summary Get Tokens
@@ -79,12 +80,25 @@ func getTokens(tokenAPI blockatlas.TokenAPI, addresses []string) blockatlas.Toke
 		go func(address string, wg *sync.WaitGroup) {
 			defer wg.Done()
 
-			tokenPage, err := tokenAPI.GetTokenListByAddress(address)
-			if err != nil {
-				return
-			}
+			stopChan := make(chan struct{})
+			pageChan := make(chan blockatlas.TokenPage)
 
-			tokenPagesChan <- tokenPage
+			go func() {
+				tokenPage, err := tokenAPI.GetTokenListByAddress(address)
+				if err != nil {
+					stopChan <- struct{}{}
+				}
+				pageChan <- tokenPage
+			}()
+
+			select {
+			case <-time.After(time.Second * 3):
+				return
+			case <-stopChan:
+				return
+			case p := <-pageChan:
+				tokenPagesChan <- p
+			}
 		}(address, &wg)
 	}
 	wg.Wait()
