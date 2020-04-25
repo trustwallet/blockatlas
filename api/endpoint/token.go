@@ -44,7 +44,7 @@ func GetTokensByAddress(c *gin.Context, tokenAPI blockatlas.TokenAPI) {
 // @Param data body string true "Payload" default({"60": ["0xb3624367b1ab37daef42e1a3a2ced012359659b0"]})
 // @Success 200 {object} blockatlas.ResultsResponse
 // @Router /v3/tokens [post]
-func GetTokens(c *gin.Context, tokens map[uint]blockatlas.TokenAPI) {
+func GetTokens(c *gin.Context, tokensAPIs map[uint]blockatlas.TokenAPI) {
 	var query map[string][]string
 	if err := c.Bind(&query); err != nil {
 		c.JSON(http.StatusInternalServerError, model.CreateErrorResponse(model.InternalFail, err))
@@ -56,7 +56,7 @@ func GetTokens(c *gin.Context, tokens map[uint]blockatlas.TokenAPI) {
 		if err != nil {
 			continue
 		}
-		tokenAPI, ok := tokens[uint(coinNum)]
+		tokenAPI, ok := tokensAPIs[uint(coinNum)]
 		if !ok {
 			continue
 		}
