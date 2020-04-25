@@ -73,6 +73,7 @@ func getTokens(tokenAPI blockatlas.TokenAPI, addresses []string) blockatlas.Toke
 		tokenPagesChan = make(chan blockatlas.TokenPage, len(addresses))
 		wg             sync.WaitGroup
 		result         blockatlas.TokenPage
+		timeout        = time.Second * 3
 	)
 
 	for _, address := range addresses {
@@ -84,15 +85,18 @@ func getTokens(tokenAPI blockatlas.TokenAPI, addresses []string) blockatlas.Toke
 			pageChan := make(chan blockatlas.TokenPage)
 
 			go func() {
+				defer close(stopChan)
+				defer close(pageChan)
 				tokenPage, err := tokenAPI.GetTokenListByAddress(address)
 				if err != nil {
 					stopChan <- struct{}{}
+					return
 				}
 				pageChan <- tokenPage
 			}()
 
 			select {
-			case <-time.After(time.Second * 3):
+			case <-time.After(timeout):
 				return
 			case <-stopChan:
 				return
