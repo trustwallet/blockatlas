@@ -25,6 +25,9 @@ var (
 
 	// CollectionAPIs contain platforms which collections services
 	CollectionAPIs map[uint]blockatlas.CollectionAPI
+
+	// TokensAPIs contain platforms with token services
+	TokensAPIs map[uint]blockatlas.TokenAPI
 )
 
 func getActivePlatforms(handle string) []blockatlas.Platform {
@@ -56,6 +59,7 @@ func Init(platformHandle string) {
 	CustomAPIs = make(map[string]blockatlas.CustomAPI)
 	NamingAPIs = make(map[uint64]blockatlas.NamingServiceAPI)
 	CollectionAPIs = make(map[uint]blockatlas.CollectionAPI)
+	TokensAPIs = make(map[uint]blockatlas.TokenAPI)
 
 	for _, platform := range platformList {
 		handle := platform.Coin().Handle
@@ -91,6 +95,9 @@ func Init(platformHandle string) {
 		}
 		if collectionAPI, ok := platform.(blockatlas.CollectionAPI); ok && CollectionsWhitelist[platform.Coin().ID] {
 			CollectionAPIs[platform.Coin().ID] = collectionAPI
+		}
+		if tokenAPI, ok := platform.(blockatlas.TokenAPI); ok {
+			TokensAPIs[platform.Coin().ID] = tokenAPI
 		}
 	}
 }
