@@ -2,9 +2,12 @@ package blockatlas
 
 import (
 	"encoding/json"
-	"time"
 
 	"github.com/trustwallet/blockatlas/pkg/errors"
+)
+
+var (
+	requestId = int64(0)
 )
 
 const (
@@ -82,5 +85,6 @@ func (rs RpcRequests) fillDefaultValues() RpcRequests {
 }
 
 func genId() int64 {
-	return time.Now().Unix()
+	requestId += 1
+	return requestId
 }
