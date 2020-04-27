@@ -17,7 +17,11 @@ func (p *Platform) Lookup(coins []uint64, name string) ([]blockatlas.Resolved, e
 	}
 	for _, coin := range coins {
 		symbol := CoinType.Coins[uint(coin)].Symbol
-		result = append(result, blockatlas.Resolved{Coin: coin, Result: resp.Addresses[symbol]})
+		address := resp.Addresses[symbol]
+		if len(address) == 0 {
+			continue
+		}
+		result = append(result, blockatlas.Resolved{Coin: coin, Result: address})
 	}
 	return result, nil
 }
