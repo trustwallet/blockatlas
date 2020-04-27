@@ -52,7 +52,7 @@ module.exports = {
                                     "flags": 0
                                 }
                             ],
-                            "id": "getTransactionsByAddress"
+                            "id": 2
                         }
                     `);
             }

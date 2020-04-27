@@ -23,12 +23,12 @@ func (c *RpcClient) GetTx(hash string) (tx TxRPC, err error) {
 }
 
 func (c *RpcClient) GetBlockByNumber(number int64) ([]string, error) {
-	strNumber := strconv.Itoa(int(number))
+	strNumber := strconv.FormatInt(number, 10)
 	req := &blockatlas.RpcRequest{
 		JsonRpc: blockatlas.JsonRpcVersion,
 		Method:  "GetTransactionsForTxBlock",
 		Params:  []string{strNumber},
-		Id:      "GetTransactionsForTxBlock_" + strNumber,
+		Id:      number,
 	}
 	var resp *BlockTxRpc
 	err := c.Post(&resp, "", req)
