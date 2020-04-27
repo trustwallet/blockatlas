@@ -90,6 +90,9 @@ func RegisterBatchAPI(root gin.IRouter) {
 	root.POST("/v4/collectibles/categories", func(c *gin.Context) {
 		endpoint.GetCollectionCategoriesFromList(c, platform.CollectionAPIs)
 	})
+	root.POST("/v2/tokens", func(c *gin.Context) {
+		endpoint.GetTokens(c, platform.TokensAPIs)
+	})
 }
 
 // CustomAPI must be removed and all handlers needs to be migrated to the transactions, tokens api

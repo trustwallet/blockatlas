@@ -3,9 +3,10 @@ package solana
 import (
 	"bytes"
 	"encoding/binary"
+	"fmt"
 	"github.com/btcsuite/btcutil/base58"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/pkg/errors"
+	"github.com/trustwallet/blockatlas/pkg/logger"
 	services "github.com/trustwallet/blockatlas/services/assets"
 	"strconv"
 )
@@ -68,13 +69,13 @@ func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, e
 		return nil, err
 	}
 
-	stakeAccounts := make([]StakeState, 0)
+	stakeAccounts := make([]StakeData, 0)
 	for _, keyedAccount := range accounts {
 		account, err := parseStakeData(keyedAccount.Account)
 		if err != nil {
 			return nil, err
 		}
-		if isAuthorized(account, address) {
+		if account.State == StakeStateDelegated && isAuthorized(account, address) {
 			stakeAccounts = append(stakeAccounts, account)
 		}
 	}
@@ -95,14 +96,14 @@ func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, e
 	return NormalizeDelegations(stakeAccounts, validators, epochInfo)
 }
 
-func parseStakeData(account Account) (stakeAccount StakeState, err error) {
+func parseStakeData(account Account) (stakeAccount StakeData, err error) {
 	buffer := base58.Decode(account.Data)
 	r := bytes.NewReader(buffer)
 	err = binary.Read(r, binary.LittleEndian, &stakeAccount)
 	return
 }
 
-func isAuthorized(stakeAccount StakeState, address string) bool {
+func isAuthorized(stakeAccount StakeData, address string) bool {
 	return stakeAccount.AuthorizedStaker == arrayOfPubkey(address)
 }
 
@@ -114,18 +115,21 @@ func (p *Platform) UndelegatedBalance(address string) (string, error) {
 	return strconv.FormatUint(account.Lamports, 10), nil
 }
 
-func NormalizeDelegations(stakeAccounts []StakeState, validators blockatlas.ValidatorMap, epochInfo EpochInfo) (blockatlas.DelegationsPage, error) {
+func NormalizeDelegations(stakeAccounts []StakeData, validators blockatlas.ValidatorMap, epochInfo EpochInfo) (blockatlas.DelegationsPage, error) {
 	results := make([]blockatlas.Delegation, 0)
 	for _, stakeState := range stakeAccounts {
 		votePubkey := base58.Encode(stakeState.VoterPubkey[:])
 		validator, ok := validators[votePubkey]
 		if !ok {
-			return nil, errors.E("Validator not found",
-				errors.Params{"Validator": votePubkey, "Platform": "solana"})
+			logger.Debug(fmt.Sprintf("Unpublished solana validator: %s", votePubkey))
+			continue
 		}
 		status := blockatlas.DelegationStatusPending
 		if stakeState.ActivationEpoch > 0 && stakeState.ActivationEpoch <= epochInfo.Epoch {
 			status = blockatlas.DelegationStatusActive
+		}
+		if epochInfo.Epoch > stakeState.DeactivationEpoch {
+			continue
 		}
 		delegation := blockatlas.Delegation{
 			Delegator: validator,

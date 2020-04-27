@@ -186,8 +186,8 @@ End-to-end tests with calls to external APIs has great value, but is not suitabl
 
 Therefore mocked API-level tests are used, whereby external APIs are replaced by mocks.
 
-* External mocks are implemented using *dyson*, as javascript files.  They generally return constant, pre-canned responses to the reuests that occur during tests.
-* Mocks are 'turned on' by corresponging API endpoints in the configmock.yml config file (localhost:3347).
+* External mocks are implemented using *dyson*, as javascript files.  They generally return constant, pre-canned responses to the requests that occur during tests.
+* Mocks are 'turned on' by corresponding API endpoints in the configmock.yml config file (localhost:3347).
 * Tests invoke into blockatlas through public APIs only, and are executed using *newman* (Postman cli -- `make newman-mocked`).
 * Product code, and even test code should not be aware whether it runs with mocks or the real external endpoints.
 * See Makefile for targets with 'mock'; platform can be started locally with mocks using `make start-platform-api-mock`.
