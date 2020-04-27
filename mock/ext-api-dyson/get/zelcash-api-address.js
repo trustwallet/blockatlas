@@ -1,8 +1,8 @@
 /// Mock for external Zelcash API
 /// See:
 /// curl "http://{Zelcash rpc}/api/v2/address/t1JKRwXGfKTGfPV1z48rvoLyabk31z3xwHa?details=txs&pageSize=25"
-/// curl "http://localhost:3000/zelcash-api/v2/address/t1JKRwXGfKTGfPV1z48rvoLyabk31z3xwHa?details=txs"
-/// curl "http://localhost:8420/v1/zelcash/address/t1JKRwXGfKTGfPV1z48rvoLyabk31z3xwHa"
+/// curl "http://localhost:3347/zelcash-api/v2/address/t1JKRwXGfKTGfPV1z48rvoLyabk31z3xwHa?details=txs"
+/// curl "http://localhost:8437/v1/zelcash/address/t1JKRwXGfKTGfPV1z48rvoLyabk31z3xwHa"
 
 module.exports = {
     path: '/zelcash-api/v2/address/:address?',

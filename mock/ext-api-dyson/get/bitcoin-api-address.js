@@ -1,8 +1,8 @@
 /// Mock for external Bitcoin API
 /// See:
-/// curl "http://localhost:3000/bitcoin-api/v2/address/bc1qrfr44n2j4czd5c9txwlnw0yj2h82x9566fglqj?details=txs"
+/// curl "http://localhost:3347/bitcoin-api/v2/address/bc1qrfr44n2j4czd5c9txwlnw0yj2h82x9566fglqj?details=txs"
 /// curl "https://btc1.trezor.io/api/v2/address/bc1qrfr44n2j4czd5c9txwlnw0yj2h82x9566fglqj?details=txs"
-/// curl "http://localhost:8420/v1/bitcoin/address/bc1qrfr44n2j4czd5c9txwlnw0yj2h82x9566fglqj"
+/// curl "http://localhost:8437/v1/bitcoin/address/bc1qrfr44n2j4czd5c9txwlnw0yj2h82x9566fglqj"
 
 module.exports = {
     path: '/bitcoin-api/v2/address/:address?',

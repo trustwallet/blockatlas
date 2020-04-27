@@ -1,11 +1,11 @@
 /// Gochain API Mock
 /// See:
-/// curl "http://localhost:3000/gochain-api/transactions?address=0xEd7F2e81B0264177e0df8f275f97Fd74Fa51A896"
-/// curl "http://localhost:3000/gochain-api/tokens?address=0x0Fd98FB42C439E5F6484f7E71Caa6661d81d0628"
+/// curl "http://localhost:3347/gochain-api/transactions?address=0xEd7F2e81B0264177e0df8f275f97Fd74Fa51A896"
+/// curl "http://localhost:3347/gochain-api/tokens?address=0x0Fd98FB42C439E5F6484f7E71Caa6661d81d0628"
 /// curl "https://{go rpc}/transactions?address=0xEd7F2e81B0264177e0df8f275f97Fd74Fa51A896"
 /// curl "https://{go rpc}/ 
-/// curl "http://localhost:8420/v1/gochain/0xEd7F2e81B0264177e0df8f275f97Fd74Fa51A896"
-/// curl "http://localhost:8420/v2/gochain/tokens/0x0Fd98FB42C439E5F6484f7E71Caa6661d81d0628?Authorization=Bearer"
+/// curl "http://localhost:8437/v1/gochain/0xEd7F2e81B0264177e0df8f275f97Fd74Fa51A896"
+/// curl "http://localhost:8437/v2/gochain/tokens/0x0Fd98FB42C439E5F6484f7E71Caa6661d81d0628?Authorization=Bearer"
 
 module.exports = {
     path: '/gochain-api/:command1?',

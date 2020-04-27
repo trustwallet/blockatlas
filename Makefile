@@ -57,10 +57,10 @@ start-platform-api: stop
 	@cat $(PID_API) | sed "/^/s/^/  \>  API PID: /"
 	@echo "  >  Error log: $(STDERR)"
 
-# start-platform-api-mock: Start API in development mode.  Similar to start-platform-api, but uses config file with mock URLs
+# start-platform-api-mock: Start API.  Similar to start-platform-api, but uses config file with mock URLs, and port 8437.
 start-platform-api-mock: stop start-mock-dyson
 	@echo "  >  Starting $(PROJECT_NAME) API"
-	@-$(GOBIN)/$(API_SERVICE)/platform_api -c $(CONFIG_MOCK_FILE) 2>&1 & echo $$! > $(PID_API)
+	@-$(GOBIN)/$(API_SERVICE)/platform_api -p 8437 -c $(CONFIG_MOCK_FILE) 2>&1 & echo $$! > $(PID_API)
 	@cat $(PID_API) | sed "/^/s/^/  \>  API PID: /"
 	@echo "  >  Error log: $(STDERR)"
 
@@ -130,11 +130,13 @@ test: go-test
 ## integration: Run all integration tests.
 integration: go-integration
 
-## start-mock-dyson: Start Dyson with mocks of external services
+## start-mock-dyson: Start Dyson with mocks of external services.  Make sure not to swallow error code in case port is taken.
 start-mock-dyson: stop-dyson
 	@echo "  >  Starting Dyson with mocks"
 	@-dyson  mock/ext-api-dyson & echo $$! > $(PID_DYSON)
 	@echo "  >  Dyson started with PID: " `cat $(PID_DYSON)`
+	# Check that it is running (e.g. may fail due to unavailable port)
+	@$(MAKE) newman-run test=mock-healthcheck host=http://localhost:8437
 
 ## fmt: Run `go fmt` for all go files.
 fmt: go-fmt
@@ -168,11 +170,11 @@ endif
 
 ## newman-mocked: Run mocked Postman Newman tests.
 newman-mocked: install-newman install-dyson go-compile
-	@bash -c "$(MAKE) newman-mocked-params host=http://localhost:8420"
+	@bash -c "$(MAKE) newman-mocked-params host=http://localhost:8437"
 
 ## newman-mocked-params: Run mocked Postman Newman tests, after starting platform api.
 ## The host parameter is required.
-## E.g.: $ make newman-mocked-params test=domain host=http://localhost:8420
+## E.g.: $ make newman-mocked-params test=domain host=http://localhost:8437
 newman-mocked-params: start-platform-api-mock
 ifeq (,$(test))
 	@bash -c "$(MAKE) newman-run test=transaction host=$(host) && \
@@ -202,7 +204,7 @@ endif
 ## newman-run: Run chosen Newman tests. See newman target.
 newman-run:
 ifeq (,$(host))
-	@echo "  >  Host parameter is missing. e.g: make newman test=staking host=http://localhost:8420"
+	@echo "  >  Host parameter is missing. e.g: make newman test=staking host=http://localhost:8437"
 	@exit 1
 endif
 	@echo "  >  Running $(test) tests"

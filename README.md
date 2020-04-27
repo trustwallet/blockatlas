@@ -95,6 +95,9 @@ It works the same for observer_worker - you can run all observer at 1 binary or 
 go get -u github.com/trustwallet/blockatlas
 cd $(go env GOPATH)/src/github.com/trustwallet/blockatlas
 
+# Start Platform API server at port 8420 with the path to the config.yml ./ 
+go build -o platform-api-bin cmd/platform_api/main.go && ./platform-api-bin -p 8420 -c config.yml
+
 # Start observer_parser with the path to the config.yml ./ 
 go build -o observer_parser-bin cmd/observer_parser/main.go && ./observer_parser-bin -c config.yml
 
@@ -104,11 +107,11 @@ go build -o observer_notifier-bin cmd/observer_notifier/main.go && ./observer_no
 # Start observer_subscriber with the path to the config.yml ./ 
 go build -o observer_subscriber-bin cmd/observer_subscriber/main.go && ./observer_subscriber-bin -c config.yml
 
-# Start Platform API server at port 8420 with the path to the config.yml ./ 
-go build -o platform-api-bin cmd/platform_api/main.go && ./platform-api-bin -p 8420 -c config.yml
-
 # Startp Swagger API server at port 8422 with the path to the config.yml ./ 
 go build -o swagger-api-bin cmd/swagger-api/main.go && ./swagger-api-bin -p 8423
+
+# Start Platform API server with mocked config, at port 8437 ./ 
+go build -o platform-api-bin cmd/platform_api/main.go && ./platform-api-bin -p 8437 -c configmock.yml
 ```
 
 OR 
@@ -187,13 +190,13 @@ End-to-end tests with calls to external APIs has great value, but is not suitabl
 Therefore mocked API-level tests are used, whereby external APIs are replaced by mocks.
 
 * External mocks are implemented using *dyson*, as javascript files.  They generally return constant, pre-canned responses to the requests that occur during tests.
-* Mocks are 'turned on' by corresponding API endpoints in the configmock.yml config file (localhost:3000).
+* Mocks are 'turned on' by corresponding API endpoints in the configmock.yml config file (localhost:3347).
 * Tests invoke into blockatlas through public APIs only, and are executed using *newman* (Postman cli -- `make newman-mocked`).
 * Product code, and even test code should not be aware whether it runs with mocks or the real external endpoints.
 * See Makefile for targets with 'mock'; platform can be started locally with mocks using `make start-platform-api-mock`.
 * When dyson is started (e.g. with `make start-platform-api-mock`), it outputs requests, which helps debugging
 * The newman tests can be executed with unmocked external APIs as well, but verifications may fail, because some APIs return variable responses.  Unmocked tests are not intended for regular CI execution, but as ad-hoc development tests.
-* General steps for creating new mocked tests: replace endpoint to localhost:3000, observer incoming calls (dyson output), obtain real response from external API (with exact same parameters), enhance dsyon script to return the same output, verify that blockatlas provides correct output.  Also, add verifications of results to the tests.
+* General steps for creating new mocked tests: replace endpoint to localhost:3347, observer incoming calls (dyson output), obtain real response from external API (with exact same parameters), enhance dsyon script to return the same output, verify that blockatlas provides correct output.  Also, add verifications of results to the tests.
 
 ## Docs
 

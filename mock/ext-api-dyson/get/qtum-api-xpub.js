@@ -1,8 +1,8 @@
 /// Mock for external Qtum API
 /// See:
 /// curl "http://{qtum rpc}/v2/xpub/xpub6CvFuU1yPwHjMekXqgEZjcQy22ZWiKgRUY6yAneNNyk1trZhV6ZBFSY8Vt2wygTXTVHBkfi4n823vm79yiw42w6xTL2UjKyh2W9V88sXoNd?details=txs"
-/// curl "http://localhost:3000/qtum-api/v2/xpub/xpub6CvFuU1yPwHjMekXqgEZjcQy22ZWiKgRUY6yAneNNyk1trZhV6ZBFSY8Vt2wygTXTVHBkfi4n823vm79yiw42w6xTL2UjKyh2W9V88sXoNd?details=txs"
-/// curl "http://localhost:8420/v1/qtum/xpub/xpub6CvFuU1yPwHjMekXqgEZjcQy22ZWiKgRUY6yAneNNyk1trZhV6ZBFSY8Vt2wygTXTVHBkfi4n823vm79yiw42w6xTL2UjKyh2W9V88sXoNd"
+/// curl "http://localhost:3347/qtum-api/v2/xpub/xpub6CvFuU1yPwHjMekXqgEZjcQy22ZWiKgRUY6yAneNNyk1trZhV6ZBFSY8Vt2wygTXTVHBkfi4n823vm79yiw42w6xTL2UjKyh2W9V88sXoNd?details=txs"
+/// curl "http://localhost:8437/v1/qtum/xpub/xpub6CvFuU1yPwHjMekXqgEZjcQy22ZWiKgRUY6yAneNNyk1trZhV6ZBFSY8Vt2wygTXTVHBkfi4n823vm79yiw42w6xTL2UjKyh2W9V88sXoNd"
 
 module.exports = {
     path: '/qtum-api/v2/xpub/:xpubkey?',

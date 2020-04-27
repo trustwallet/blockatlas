@@ -1,8 +1,8 @@
 /// Mock for external Zcash API
 /// See:
 /// curl "http://{Zcash rpc}/api/v2/address/t1LwLWo1Mo3s4RPtUpeyUD1eYd47inL3bwX?details=txs"
-/// curl "http://localhost:3000/zcash-api/v2/address/t1LwLWo1Mo3s4RPtUpeyUD1eYd47inL3bwX?details=txs"
-/// curl "http://localhost:8420/v1/zcash/address/t1LwLWo1Mo3s4RPtUpeyUD1eYd47inL3bwX"
+/// curl "http://localhost:3347/zcash-api/v2/address/t1LwLWo1Mo3s4RPtUpeyUD1eYd47inL3bwX?details=txs"
+/// curl "http://localhost:8437/v1/zcash/address/t1LwLWo1Mo3s4RPtUpeyUD1eYd47inL3bwX"
 
 module.exports = {
     path: '/zcash-api/v2/address/:address?',

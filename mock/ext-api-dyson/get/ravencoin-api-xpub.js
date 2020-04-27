@@ -1,8 +1,8 @@
 /// Mock for external Ravencoin API
 /// See:
 /// curl "http://{Ravencoin rpc}/v2/xpub/xpub6BrkWQHMnuGcvKowEn2hpvnZ41SiCsu38mgFThKU3nMzPUN9r9C26puf18rfVdHH3nDwSkeMgsjVniNDKUk5arxekekGpNyVLsWihYAfC5B?details=txs"
-/// curl "http://localhost:3000/ravencoin-api/v2/xpub/xpub6BrkWQHMnuGcvKowEn2hpvnZ41SiCsu38mgFThKU3nMzPUN9r9C26puf18rfVdHH3nDwSkeMgsjVniNDKUk5arxekekGpNyVLsWihYAfC5B?details=txs"
-/// curl "http://localhost:8420/v1/ravencoin/xpub/xpub6BrkWQHMnuGcvKowEn2hpvnZ41SiCsu38mgFThKU3nMzPUN9r9C26puf18rfVdHH3nDwSkeMgsjVniNDKUk5arxekekGpNyVLsWihYAfC5B"
+/// curl "http://localhost:3347/ravencoin-api/v2/xpub/xpub6BrkWQHMnuGcvKowEn2hpvnZ41SiCsu38mgFThKU3nMzPUN9r9C26puf18rfVdHH3nDwSkeMgsjVniNDKUk5arxekekGpNyVLsWihYAfC5B?details=txs"
+/// curl "http://localhost:8437/v1/ravencoin/xpub/xpub6BrkWQHMnuGcvKowEn2hpvnZ41SiCsu38mgFThKU3nMzPUN9r9C26puf18rfVdHH3nDwSkeMgsjVniNDKUk5arxekekGpNyVLsWihYAfC5B"
 
 module.exports = {
     path: '/ravencoin-api/v2/xpub/:xpubkey?',

@@ -1,11 +1,11 @@
 /// Ethereum Blockbook API Mock
 /// See:
-/// curl "http://localhost:3000/eth-blockbook-api/v2/address/0x0875BCab22dE3d02402bc38aEe4104e1239374a7?details=txs"
-/// curl "http://localhost:3000/eth-blockbook-api/v2/address/0x0875BCab22dE3d02402bc38aEe4104e1239374a7?details=tokenBalances"
+/// curl "http://localhost:3347/eth-blockbook-api/v2/address/0x0875BCab22dE3d02402bc38aEe4104e1239374a7?details=txs"
+/// curl "http://localhost:3347/eth-blockbook-api/v2/address/0x0875BCab22dE3d02402bc38aEe4104e1239374a7?details=tokenBalances"
 /// curl "https://{eth blockbook api}/api/v2/address/0x0875BCab22dE3d02402bc38aEe4104e1239374a7?details=txs"
 /// curl "https://{eth blockbook api}/api/v2/address/0x0875BCab22dE3d02402bc38aEe4104e1239374a7?details=tokenBalances"
-/// curl "http://localhost:8420/v1/ethereum/0x0875BCab22dE3d02402bc38aEe4104e1239374a7"
-/// curl "http://localhost:8420/v2/ethereum/tokens/0x0875BCab22dE3d02402bc38aEe4104e1239374a7?Authorization=Bearer"
+/// curl "http://localhost:8437/v1/ethereum/0x0875BCab22dE3d02402bc38aEe4104e1239374a7"
+/// curl "http://localhost:8437/v2/ethereum/tokens/0x0875BCab22dE3d02402bc38aEe4104e1239374a7?Authorization=Bearer"
 
 module.exports = {
     path: '/eth-blockbook-api/v2/address/:address?',

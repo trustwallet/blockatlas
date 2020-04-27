@@ -1,10 +1,10 @@
 /// Binance chain block explorer API Mock, Dex
 /// See:
-/// curl "http://localhost:3000/binance-dex/v1/account/bnb1jxfh2g85q3v0tdq56fnevx6xcxtcnhtsmcu64m"
-/// curl "http://localhost:3000/binance-dex/v1/tokens?limit=1000&offset=0"
+/// curl "http://localhost:3347/binance-dex/v1/account/bnb1jxfh2g85q3v0tdq56fnevx6xcxtcnhtsmcu64m"
+/// curl "http://localhost:3347/binance-dex/v1/tokens?limit=1000&offset=0"
 /// curl "https://dex.binance.org/api/v1/account/bnb1jxfh2g85q3v0tdq56fnevx6xcxtcnhtsmcu64m"
 /// curl "https://dex.binance.org/api/v1/tokens?limit=1000&offset=0"
-/// curl "http://localhost:8420/v2/binance/tokens/bnb1jxfh2g85q3v0tdq56fnevx6xcxtcnhtsmcu64m?Authorization=Bearer"
+/// curl "http://localhost:8437/v2/binance/tokens/bnb1jxfh2g85q3v0tdq56fnevx6xcxtcnhtsmcu64m?Authorization=Bearer"
 
 module.exports = {
     path: '/binance-dex/:version/:command1/:command2?',
@@ -458,7 +458,7 @@ module.exports = {
                                     "original_symbol": "ABCD",
                                     "owner": "bnb1ujvzeuft0ezf9fu4u0mk52t8mc7t8geyfkevms",
                                     "symbol": "ABCD-5D8",
-                                    "total_supply": "3000000.00000000"
+                                    "total_supply": "3347000.00000000"
                                 },
                                 {
                                     "mintable": false,
