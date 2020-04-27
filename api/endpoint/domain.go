@@ -1,12 +1,14 @@
 package endpoint
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/trustwallet/blockatlas/api/model"
-	"github.com/trustwallet/blockatlas/services/domains"
 	"net/http"
 	"strconv"
 	"strings"
+
+	"github.com/gin-gonic/gin"
+	"github.com/trustwallet/blockatlas/api/model"
+	"github.com/trustwallet/blockatlas/pkg/logger"
+	"github.com/trustwallet/blockatlas/services/domains"
 )
 
 // @Summary Lookup .eth / .zil addresses
@@ -29,7 +31,8 @@ func GetAddressByCoinAndDomain(c *gin.Context) {
 	}
 	result, err := domains.HandleLookup(name, []uint64{coin})
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, model.CreateErrorResponse(model.InternalFail, err))
+		logger.Warn(err)
+		c.JSON(http.StatusNotFound, model.CreateErrorResponse(model.InternalFail, err))
 		return
 	}
 	if len(result) == 0 {
@@ -59,7 +62,8 @@ func GetAddressByCoinAndDomainBatch(c *gin.Context) {
 	}
 	result, err := domains.HandleLookup(name, coins)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, model.CreateErrorResponse(model.InternalFail, err))
+		logger.Warn(err)
+		c.JSON(http.StatusNotFound, model.CreateErrorResponse(model.InternalFail, err))
 		return
 	}
 	if len(result) == 0 {
