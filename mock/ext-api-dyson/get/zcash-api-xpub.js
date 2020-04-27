@@ -1,7 +1,7 @@
 /// Mock for external Zcash API
 /// See:
 /// curl "http://{Zcash rpc}/v2/xpub/xpub6CCXGBJ13akWuKSn4iU7CqQeXzLyDC2Y1Z83Mmg2xz11PX2EeZJJKRECz29iN4eHewRh8yfb7FpnCcjYbkqn6ynHnXW3jczPcJcenThfFeS?details=txs"
-/// curl "http://localhost:3000/zcash-api/v2/xpub/xpub6CCXGBJ13akWuKSn4iU7CqQeXzLyDC2Y1Z83Mmg2xz11PX2EeZJJKRECz29iN4eHewRh8yfb7FpnCcjYbkqn6ynHnXW3jczPcJcenThfFeS?details=txs"
+/// curl "http://localhost:3347/zcash-api/v2/xpub/xpub6CCXGBJ13akWuKSn4iU7CqQeXzLyDC2Y1Z83Mmg2xz11PX2EeZJJKRECz29iN4eHewRh8yfb7FpnCcjYbkqn6ynHnXW3jczPcJcenThfFeS?details=txs"
 /// curl "http://localhost:8420/v1/zcash/xpub/xpub6CCXGBJ13akWuKSn4iU7CqQeXzLyDC2Y1Z83Mmg2xz11PX2EeZJJKRECz29iN4eHewRh8yfb7FpnCcjYbkqn6ynHnXW3jczPcJcenThfFeS"
 
 module.exports = {

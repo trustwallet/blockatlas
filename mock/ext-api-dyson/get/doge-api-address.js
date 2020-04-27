@@ -1,7 +1,7 @@
 /// Mock for external Doge API
 /// See:
 /// curl "http://{doge rpc}/address/D5dAUAx3Ezg1q4dRgzKTBsxp4VJietWkDh?details=txs"
-/// curl "http://localhost:3000/doge-api/address/D5dAUAx3Ezg1q4dRgzKTBsxp4VJietWkDh?details=txs"
+/// curl "http://localhost:3347/doge-api/address/D5dAUAx3Ezg1q4dRgzKTBsxp4VJietWkDh?details=txs"
 /// curl "http://localhost:8420/v1/doge/address/D5dAUAx3Ezg1q4dRgzKTBsxp4VJietWkDh"
 
 module.exports = {

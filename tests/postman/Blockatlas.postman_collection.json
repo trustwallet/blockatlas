@@ -2076,9 +2076,9 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:3000/dyson-ping/ping",
+							"raw": "localhost:3347/dyson-ping/ping",
 							"host": [
-								"localhost:3000"
+								"localhost:3347"
 							],
 							"path": [
 								"dyson-ping/ping"

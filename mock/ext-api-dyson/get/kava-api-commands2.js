@@ -1,8 +1,8 @@
 /// Kava API Mock
 /// See:
-/// curl "http://localhost:3000/kava-api/staking/validators?status=bonded"
-/// curl "http://localhost:3000/kava-api/staking/pool"
-/// curl "http://localhost:3000/kava-api/minting/inflation"
+/// curl "http://localhost:3347/kava-api/staking/validators?status=bonded"
+/// curl "http://localhost:3347/kava-api/staking/pool"
+/// curl "http://localhost:3347/kava-api/minting/inflation"
 /// curl "https://{kava_rpc}/staking/validators?status=bonded"
 /// curl "https://{kava_rpc}/staking/pool"
 /// curl "https://{kava_rpc}/minting/inflation"

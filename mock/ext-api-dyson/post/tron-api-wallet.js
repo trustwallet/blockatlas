@@ -1,6 +1,6 @@
 /// Tron API Mock
 /// See:
-/// curl http://localhost:3000/tron-api/wallet/listwitnesses
+/// curl http://localhost:3347/tron-api/wallet/listwitnesses
 /// curl http://localhost:8420/v2/tron/staking/validators
 
 module.exports = {

@@ -1,7 +1,7 @@
 /// Tomochain API Mock
 /// See:
-/// curl "http://localhost:3000/tomochain-api/transactions?address=0x17e4c16605e32adead5fa371bf6117df34ca0200"
-/// curl "http://localhost:3000/tomochain-api/tokens?address=0x8b353021189375591723e7384262f45709a3c3dc"
+/// curl "http://localhost:3347/tomochain-api/transactions?address=0x17e4c16605e32adead5fa371bf6117df34ca0200"
+/// curl "http://localhost:3347/tomochain-api/tokens?address=0x8b353021189375591723e7384262f45709a3c3dc"
 /// curl "https://{Tomochain rpc}/transactions?address=0x17e4c16605e32adead5fa371bf6117df34ca0200"
 /// curl "https://{Tomochain rpc}/tokens?address=0x8b353021189375591723e7384262f45709a3c3dc"
 /// curl "http://localhost:8420/v1/tomochain/0x17e4c16605e32adead5fa371bf6117df34ca0200"

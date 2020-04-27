@@ -1,7 +1,7 @@
 /// Mock for external Dash API
 /// See:
 /// curl "http://{dash rpc}/address/XrcbsQdrFYEzbqA9nCJi8zDtnRZzNKkCtG?details=txs"
-/// curl "http://localhost:3000/dash-api/address/XrcbsQdrFYEzbqA9nCJi8zDtnRZzNKkCtG?details=txs"
+/// curl "http://localhost:3347/dash-api/address/XrcbsQdrFYEzbqA9nCJi8zDtnRZzNKkCtG?details=txs"
 /// curl "http://localhost:8420/v1/dash/address/XrcbsQdrFYEzbqA9nCJi8zDtnRZzNKkCtG"
 
 module.exports = {

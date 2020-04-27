@@ -1,6 +1,6 @@
 /// Tron API Mock
 /// See:
-/// curl "http://localhost:3000/tron-api/v1/assets/1002798"
+/// curl "http://localhost:3347/tron-api/v1/assets/1002798"
 /// curl "https://{tron_rpc}/v1/assets/1002798"
 /// curl "http://localhost:8420/v2/tron/tokens/TFFriedwRtWdFuzerDDtkoQTZ29smDZ1MB?Authorization=Bearer"
 

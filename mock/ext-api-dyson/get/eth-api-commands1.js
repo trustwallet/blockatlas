@@ -1,7 +1,7 @@
 /// Ethereum API Mock
 /// See:
-/// curl "http://localhost:3000/eth-api/transactions?address=0x0875BCab22dE3d02402bc38aEe4104e1239374a7"
-/// curl "http://localhost:3000/eth-api/tokens?address=0x0875BCab22dE3d02402bc38aEe4104e1239374a7"
+/// curl "http://localhost:3347/eth-api/transactions?address=0x0875BCab22dE3d02402bc38aEe4104e1239374a7"
+/// curl "http://localhost:3347/eth-api/tokens?address=0x0875BCab22dE3d02402bc38aEe4104e1239374a7"
 /// curl "https://{eth rpc}/transactions?address=0x0875BCab22dE3d02402bc38aEe4104e1239374a7"
 /// curl "https://{eth rpc}/tokens?address=0x0875BCab22dE3d02402bc38aEe4104e1239374a7"
 /// curl "http://localhost:8420/v1/ethereum/0x0875BCab22dE3d02402bc38aEe4104e1239374a7"

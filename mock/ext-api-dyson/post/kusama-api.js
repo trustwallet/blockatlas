@@ -1,7 +1,7 @@
 /// Kusama RPC API Mock
 /// See:
 /// curl -H "Content-Type: application/json" -d '{"address": "HZaz6cUo8wJ9zjwoDtA3ZzYkrCLfDYU8b3uPmYttKFFvvRK", "row": 25}' https://kusama.subscan.io/api/scan/transfers
-/// curl -H "Content-Type: application/json" -d '{"address": "HZaz6cUo8wJ9zjwoDtA3ZzYkrCLfDYU8b3uPmYttKFFvvRK", "row": 25}' http://localhost:3000/kusama-rpc/scan/transfers
+/// curl -H "Content-Type: application/json" -d '{"address": "HZaz6cUo8wJ9zjwoDtA3ZzYkrCLfDYU8b3uPmYttKFFvvRK", "row": 25}' http://localhost:3347/kusama-rpc/scan/transfers
 /// curl "http://localhost:8420/v1/kusama/HZaz6cUo8wJ9zjwoDtA3ZzYkrCLfDYU8b3uPmYttKFFvvRK"
 
 module.exports = {

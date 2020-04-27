@@ -1,6 +1,6 @@
 /// Aeternity API Mock
 /// See:
-/// curl "http://localhost:3000/aeternity-api/middleware/transactions/account/ak_2WGWYMgWy1opZxgA8AVzGCTavCQyUBtbKx5SrCX6E4kmDZMtJb?"
+/// curl "http://localhost:3347/aeternity-api/middleware/transactions/account/ak_2WGWYMgWy1opZxgA8AVzGCTavCQyUBtbKx5SrCX6E4kmDZMtJb?"
 /// curl "https://mdw.aepps.com/middleware/transactions/account/ak_2WGWYMgWy1opZxgA8AVzGCTavCQyUBtbKx5SrCX6E4kmDZMtJb?"
 /// curl http://localhost:8420/v1/aeternity/ak_2WGWYMgWy1opZxgA8AVzGCTavCQyUBtbKx5SrCX6E4kmDZMtJb
 module.exports = {

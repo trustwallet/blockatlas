@@ -1,7 +1,7 @@
 /// Mock for external Viacoin API
 /// See:
 /// curl "http://{Viacoin rpc}/address/VdMPvn7vUTSzbYjiMDs1jku9wAh1Ri2Y1A?details=txs"
-/// curl "http://localhost:3000/viacoin-api/address/VdMPvn7vUTSzbYjiMDs1jku9wAh1Ri2Y1A?details=txs"
+/// curl "http://localhost:3347/viacoin-api/address/VdMPvn7vUTSzbYjiMDs1jku9wAh1Ri2Y1A?details=txs"
 /// curl "http://localhost:8420/v1/viacoin/address/VdMPvn7vUTSzbYjiMDs1jku9wAh1Ri2Y1A"
 
 module.exports = {

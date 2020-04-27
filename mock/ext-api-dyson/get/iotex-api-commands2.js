@@ -1,7 +1,7 @@
 /// Iotex API Mock
 /// See:
-/// curl "http://localhost:3000/iotex-api/staking/validators?status=bonded"
-/// curl "http://localhost:3000/iotex-api/accounts/io1mwekae7qqwlr23220k5n9z3fmjxz72tuchra3m"
+/// curl "http://localhost:3347/iotex-api/staking/validators?status=bonded"
+/// curl "http://localhost:3347/iotex-api/accounts/io1mwekae7qqwlr23220k5n9z3fmjxz72tuchra3m"
 /// curl "https://{iotex_rpc}/v1/staking/validators?status=bonded"
 /// curl "https://{iotex_rpc}/v1/accounts/io1mwekae7qqwlr23220k5n9z3fmjxz72tuchra3m"
 /// curl "http://localhost:8420/v2/iotex/staking/validators"

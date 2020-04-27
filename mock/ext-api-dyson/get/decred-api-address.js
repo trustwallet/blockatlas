@@ -1,7 +1,7 @@
 /// Mock for external Decred API
 /// See:
 /// curl "http://{decred rpc}/address/DsTxPUVFxXeNgu5fzozr4mTR4tqqMaKcvpY?details=txs"
-/// curl "http://localhost:3000/decred-api/address/DsTxPUVFxXeNgu5fzozr4mTR4tqqMaKcvpY?details=txs"
+/// curl "http://localhost:3347/decred-api/address/DsTxPUVFxXeNgu5fzozr4mTR4tqqMaKcvpY?details=txs"
 /// curl "http://localhost:8420/v1/decred/address/DsTxPUVFxXeNgu5fzozr4mTR4tqqMaKcvpY"
 
 module.exports = {

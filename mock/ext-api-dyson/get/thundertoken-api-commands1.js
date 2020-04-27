@@ -1,7 +1,7 @@
 /// Thundertoken API Mock
 /// See:
-/// curl "http://localhost:3000/thundertoken-api/transactions?address=0x0b230def08139f18a86536d9cfa150f04435414c"
-/// curl "http://localhost:3000/thundertoken-api/tokens?address=0x0b230def08139f18a86536d9cfa150f04435414c"
+/// curl "http://localhost:3347/thundertoken-api/transactions?address=0x0b230def08139f18a86536d9cfa150f04435414c"
+/// curl "http://localhost:3347/thundertoken-api/tokens?address=0x0b230def08139f18a86536d9cfa150f04435414c"
 /// curl "https://{Thundertoken rpc}/transactions?address=0x0b230def08139f18a86536d9cfa150f04435414c"
 /// curl "https://{Thundertoken rpc}/tokens?address=0x0b230def08139f18a86536d9cfa150f04435414c"
 /// curl "http://localhost:8420/v1/thundertoken/0x0b230def08139f18a86536d9cfa150f04435414c"

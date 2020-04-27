@@ -1,8 +1,8 @@
 /// Cosmos API Mock
 /// See:
-/// curl "http://localhost:3000/cosmos-api/staking/validators?status=bonded"
-/// curl "http://localhost:3000/cosmos-api/staking/pool"
-/// curl "http://localhost:3000/cosmos-api/minting/inflation"
+/// curl "http://localhost:3347/cosmos-api/staking/validators?status=bonded"
+/// curl "http://localhost:3347/cosmos-api/staking/pool"
+/// curl "http://localhost:3347/cosmos-api/minting/inflation"
 /// curl "https://{cosmos_rpc}/staking/validators?status=bonded"
 /// curl "https://{cosmos_rpc}/staking/pool"
 /// curl "https://{cosmos_rpc}/minting/inflation"

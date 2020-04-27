@@ -4,7 +4,7 @@
 /// - public address for certain name and coin combinations
 /// - public address not found message for other input
 /// See:
-/// curl "http://localhost:3000/unstoppabledomains/api/v1//dpantani.zil"
+/// curl "http://localhost:3347/unstoppabledomains/api/v1//dpantani.zil"
 /// curl "https://unstoppabledomains.com/api/v1/dpantani.zil"
 /// curl "http://localhost:8420/v2/ns/lookup?name=dpantani.zil&coins=313"
 

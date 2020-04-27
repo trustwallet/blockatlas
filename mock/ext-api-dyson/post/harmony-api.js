@@ -1,5 +1,5 @@
 /// Harmony RPC Mock
-/// curl -H 'Content-Type: application/json' -d ' {"jsonrpc":"2.0","method":"hmy_getTransactionsHistory","params":[{"address":"one1e4mr7tp0a76wnhv9xd0wzentdjnjnsh3fwzgfv","fullTx":true}],"id":"hmy_getTransactionsHistory"} ' http://localhost:3000/harmony-api
+/// curl -H 'Content-Type: application/json' -d ' {"jsonrpc":"2.0","method":"hmy_getTransactionsHistory","params":[{"address":"one1e4mr7tp0a76wnhv9xd0wzentdjnjnsh3fwzgfv","fullTx":true}],"id":"hmy_getTransactionsHistory"} ' http://localhost:3347/harmony-api
 /// curl -H 'Content-Type: application/json' -d ' {"jsonrpc":"2.0","method":"hmy_getTransactionsHistory","params":[{"address":"one1e4mr7tp0a76wnhv9xd0wzentdjnjnsh3fwzgfv","fullTx":true}],"id":"hmy_getTransactionsHistory"} ' https://{harmony_rpc}
 /// curl "http://localhost:8420/v2/harmony/one1e4mr7tp0a76wnhv9xd0wzentdjnjnsh3fwzgfv"
 

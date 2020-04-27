@@ -1,7 +1,7 @@
 /// Mock for external Groestlcoin API
 /// See:
 /// curl "http://{groestlcoin rpc}/address/33Ym3fecmWaHD19jymYt6fGd9TqSDQFfQj?details=txs"
-/// curl "http://localhost:3000/groestlcoin-api/address/33Ym3fecmWaHD19jymYt6fGd9TqSDQFfQj?details=txs"
+/// curl "http://localhost:3347/groestlcoin-api/address/33Ym3fecmWaHD19jymYt6fGd9TqSDQFfQj?details=txs"
 /// curl "http://localhost:8420/v1/groestlcoin/address/33Ym3fecmWaHD19jymYt6fGd9TqSDQFfQj"
 
 module.exports = {

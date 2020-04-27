@@ -1,6 +1,6 @@
 /// Iotex API Mock
 /// See:
-/// curl "http://localhost:3000/iotex-api/staking/delegations/io1mwekae7qqwlr23220k5n9z3fmjxz72tuchra3m"
+/// curl "http://localhost:3347/iotex-api/staking/delegations/io1mwekae7qqwlr23220k5n9z3fmjxz72tuchra3m"
 /// curl "https://{iotex_rpc}/v1/staking/delegations/io1mwekae7qqwlr23220k5n9z3fmjxz72tuchra3m"
 /// curl "http://localhost:8420/v2/iotex/staking/delegations/io1mwekae7qqwlr23220k5n9z3fmjxz72tuchra3m?Authorization=Bearer"
 

@@ -1,7 +1,7 @@
 /// Mock for external Bitcoincash API
 /// See:
 /// curl "http://{bch rpc}/address/bitcoincash:qq07l6rr5lsdm3m80qxw80ku2ex0tj76vvsxpvmgme?details=txs"
-/// curl "http://localhost:3000/bitcoincash-api/address/bitcoincash:qq07l6rr5lsdm3m80qxw80ku2ex0tj76vvsxpvmgme?details=txs"
+/// curl "http://localhost:3347/bitcoincash-api/address/bitcoincash:qq07l6rr5lsdm3m80qxw80ku2ex0tj76vvsxpvmgme?details=txs"
 /// curl "http://localhost:8420/v1/bitcoincash/address/bitcoincash:qq07l6rr5lsdm3m80qxw80ku2ex0tj76vvsxpvmgme"
 
 module.exports = {

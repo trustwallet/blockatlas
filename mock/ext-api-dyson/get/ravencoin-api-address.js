@@ -1,7 +1,7 @@
 /// Mock for external Ravencoin API
 /// See:
 /// curl "http://{Ravencoin rpc}/address/RHoCwPc2FCQqwToYnSiAb3SrCET4zEHsbS?details=txs"
-/// curl "http://localhost:3000/ravencoin-api/address/RHoCwPc2FCQqwToYnSiAb3SrCET4zEHsbS?details=txs"
+/// curl "http://localhost:3347/ravencoin-api/address/RHoCwPc2FCQqwToYnSiAb3SrCET4zEHsbS?details=txs"
 /// curl "http://localhost:8420/v1/ravencoin/address/RHoCwPc2FCQqwToYnSiAb3SrCET4zEHsbS"
 
 module.exports = {

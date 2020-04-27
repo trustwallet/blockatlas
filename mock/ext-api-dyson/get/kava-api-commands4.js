@@ -1,6 +1,6 @@
 /// Kava API Mock
 /// See:
-/// curl "http://localhost:3000/kava-api/staking/delegators/kava1l8va9zyl50cpzv447c694k3jndelc9ygtfll2m/delegations"
+/// curl "http://localhost:3347/kava-api/staking/delegators/kava1l8va9zyl50cpzv447c694k3jndelc9ygtfll2m/delegations"
 /// curl "https://{kava_rpc}/staking/delegators/kava1l8va9zyl50cpzv447c694k3jndelc9ygtfll2m/delegations"
 /// curl "http://localhost:8420/v2/kava/staking/delegations/kava1l8va9zyl50cpzv447c694k3jndelc9ygtfll2m?Authorization=Bearer"
 
