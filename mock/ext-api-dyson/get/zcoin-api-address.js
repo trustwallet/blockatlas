@@ -2,7 +2,7 @@
 /// See:
 /// curl "http://{Zcoin rpc}/api/v2/address/a8EF4cpenEgEn9hm2NL5KfFK1UmSZZaQVn?details=txs"
 /// curl "http://localhost:3347/zcoin-api/v2/address/a8EF4cpenEgEn9hm2NL5KfFK1UmSZZaQVn?details=txs"
-/// curl "http://localhost:8420/v1/zcoin/address/a8EF4cpenEgEn9hm2NL5KfFK1UmSZZaQVn"
+/// curl "http://localhost:8437/v1/zcoin/address/a8EF4cpenEgEn9hm2NL5KfFK1UmSZZaQVn"
 
 module.exports = {
     path: '/zcoin-api/v2/address/:address?',

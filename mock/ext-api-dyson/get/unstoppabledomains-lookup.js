@@ -6,7 +6,7 @@
 /// See:
 /// curl "http://localhost:3347/unstoppabledomains/api/v1//dpantani.zil"
 /// curl "https://unstoppabledomains.com/api/v1/dpantani.zil"
-/// curl "http://localhost:8420/v2/ns/lookup?name=dpantani.zil&coins=313"
+/// curl "http://localhost:8437/v2/ns/lookup?name=dpantani.zil&coins=313"
 
 module.exports = {
     path: '/unstoppabledomains/api/v1//:name?',

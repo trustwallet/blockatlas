@@ -19,6 +19,7 @@ services:
         - SERVICE=platform_api
     ports:
       - 8420:8420
+      - 8437:8437
 
   swagger_api:
     container_name: swagger_api

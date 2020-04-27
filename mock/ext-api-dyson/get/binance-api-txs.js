@@ -6,7 +6,7 @@
 /// See:
 /// curl "http://localhost:3347/explorer-api/v1/txs?address=bnb1563k58pc3keeuwkhlrxwz7sdsetyn9l7gdnznp&page=1&rows=20&txAsset=BNB&txType=TRANSFER"
 /// curl "https://explorer.binance.org/api/v1/txs?address=bnb1563k58pc3keeuwkhlrxwz7sdsetyn9l7gdnznp&page=1&rows=20&txAsset=BNB&txType=TRANSFER"
-/// curl "http://localhost:8420/v1/binance/bnb1563k58pc3keeuwkhlrxwz7sdsetyn9l7gdnznp"
+/// curl "http://localhost:8437/v1/binance/bnb1563k58pc3keeuwkhlrxwz7sdsetyn9l7gdnznp"
 
 module.exports = {
     path: '/binance-api/v1/txs',

@@ -2,7 +2,7 @@
 /// See:
 /// curl "http://{Zcoin rpc}/v2/xpub/xpub6Cgu6WtTyo99pRtTabwscog2ncj4BUbTWzk7bt7habdLYwgnXLEWH3TuR1789QSTPVsPjLMa2KQzHffyZHTkLQQyRxeEBmWHaETS2btF5fK?details=txs"
 /// curl "http://localhost:3347/zcoin-api/v2/xpub/xpub6Cgu6WtTyo99pRtTabwscog2ncj4BUbTWzk7bt7habdLYwgnXLEWH3TuR1789QSTPVsPjLMa2KQzHffyZHTkLQQyRxeEBmWHaETS2btF5fK?details=txs"
-/// curl "http://localhost:8420/v1/zcoin/xpub/xpub6Cgu6WtTyo99pRtTabwscog2ncj4BUbTWzk7bt7habdLYwgnXLEWH3TuR1789QSTPVsPjLMa2KQzHffyZHTkLQQyRxeEBmWHaETS2btF5fK"
+/// curl "http://localhost:8437/v1/zcoin/xpub/xpub6Cgu6WtTyo99pRtTabwscog2ncj4BUbTWzk7bt7habdLYwgnXLEWH3TuR1789QSTPVsPjLMa2KQzHffyZHTkLQQyRxeEBmWHaETS2btF5fK"
 
 module.exports = {
     path: '/zcoin-api/v2/xpub/:xpubkey?',

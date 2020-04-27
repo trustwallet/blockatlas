@@ -2,7 +2,7 @@
 /// See:
 /// curl "http://{doge rpc}/api/v2/address/D5dAUAx3Ezg1q4dRgzKTBsxp4VJietWkDh?details=txs"
 /// curl "http://localhost:3347/doge-api/v2/address/D5dAUAx3Ezg1q4dRgzKTBsxp4VJietWkDh?details=txs"
-/// curl "http://localhost:8420/v1/doge/address/D5dAUAx3Ezg1q4dRgzKTBsxp4VJietWkDh"
+/// curl "http://localhost:8437/v1/doge/address/D5dAUAx3Ezg1q4dRgzKTBsxp4VJietWkDh"
 
 module.exports = {
     path: '/doge-api/v2/address/:address?',

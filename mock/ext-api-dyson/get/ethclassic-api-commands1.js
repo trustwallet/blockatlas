@@ -4,8 +4,8 @@
 /// curl "http://localhost:3347/ethclassic-api/tokens?address=0xa12105efa0663147bddee178f6a741ac15676b79"
 /// curl "https://{etc rpc}/transactions?address=0x7d2d0e153026fb428b885d86de50768d4cfeac37"
 /// curl "https://{etc rpc}/tokens?address=0xa12105efa0663147bddee178f6a741ac15676b79"
-/// curl "http://localhost:8420/v1/ethereumclassic/0x7d2d0e153026fb428b885d86de50768d4cfeac37"
-/// curl "http://localhost:8420/v2/classic/tokens/0xa12105efa0663147bddee178f6a741ac15676b79?Authorization=Bearer"
+/// curl "http://localhost:8437/v1/ethereumclassic/0x7d2d0e153026fb428b885d86de50768d4cfeac37"
+/// curl "http://localhost:8437/v2/classic/tokens/0xa12105efa0663147bddee178f6a741ac15676b79?Authorization=Bearer"
 
 module.exports = {
     path: '/ethclassic-api/:command1?',

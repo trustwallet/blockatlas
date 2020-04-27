@@ -2,7 +2,7 @@
 /// See:
 /// curl "http://{Viacoin rpc}/v2/address/VdMPvn7vUTSzbYjiMDs1jku9wAh1Ri2Y1A?details=txs"
 /// curl "http://localhost:3347/viacoin-api/v2/address/VdMPvn7vUTSzbYjiMDs1jku9wAh1Ri2Y1A?details=txs"
-/// curl "http://localhost:8420/v1/viacoin/address/VdMPvn7vUTSzbYjiMDs1jku9wAh1Ri2Y1A"
+/// curl "http://localhost:8437/v1/viacoin/address/VdMPvn7vUTSzbYjiMDs1jku9wAh1Ri2Y1A"
 
 module.exports = {
     path: '/viacoin-api/v2/address/:address?',
