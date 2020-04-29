@@ -31,8 +31,8 @@ func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, e
 func NormalizeDelegation(account Account, validators blockatlas.ValidatorMap) (blockatlas.DelegationsPage, error) {
 	validator, ok := validators[account.Delegate]
 	if !ok {
-		logger.Warn("Validator not found", logger.Params{"address": validator.ID, "platform": "tezos", "delegation": account.Delegate})
-		validator = getUnknownValidator(validator.ID)
+		logger.Warn("Validator not found", logger.Params{"platform": "tezos", "delegation": account.Delegate})
+		validator = getUnknownValidator(account.Delegate)
 	}
 	return blockatlas.DelegationsPage{
 		{
@@ -86,8 +86,8 @@ func (p *Platform) UndelegatedBalance(address string) (string, error) {
 func getDetails() blockatlas.StakingDetails {
 	return blockatlas.StakingDetails{
 		Reward:        blockatlas.StakingReward{Annual: Annual},
-		MinimumAmount: "0",
-		LockTime:      0,
+		MinimumAmount: MinimumStakeAmount,
+		LockTime:      LockTime,
 		Type:          blockatlas.DelegationTypeDelegate,
 	}
 }
