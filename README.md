@@ -40,13 +40,13 @@ The observer API watches the chain for new transactions and generates notificati
 ## Architecture
 
 #### NOTE
-Currently Blockatlas is under active development and is not well documented. If you still want to run it on your own or help to contribute, **please** pay attention that currenlty integration, nemwan, functional tests are not working locally without all endpoints. We are fixing that issue and soon you will be able to test all the stuff locally
+Currently Block Atlas is under active development and is not well documented. If you still want to run it on your own or help to contribute, **please** pay attention that currently integration, nemwan, functional tests are not working locally without all endpoints. We are fixing that issue and soon you will be able to test all the stuff locally
 
 Blockatlas allows to:
 - Get information about transactions, tokens, staking details, collectibles, crypto domains for supported coins.
 - Subscribe for price notifications via Rabbit MQ
 
-Platform API is independent service and can work with the specific blockchain only (like bitcoin, ethereum, etc)
+Platform API is independent service and can work with the specific blockchain only (like Bitcoin, Ethereum, etc)
 
 Notifications:
 
@@ -67,45 +67,43 @@ New Subscriptions --(Rabbit MQ)--> Subscriber --> DB
 
 ```
 
-The whole flow is not availible at Atlas repo. We will have integration tests with it. Also there will be examples of all instances soon.
+The whole flow is not available at Atlas repo. We will have integration tests with it. Also there will be examples of all instances soon.
 
 ## Setup
 
-### Requirements
+### Prerequisite
+ * [Go Toolchain](https://golang.org/doc/install) versions 1.14+
+ 
+ Depends on what type of Blockatlas service you would like to run will also be needed.
+ * [Postgres](https://www.postgresql.org/download) to store user subscriptions and latest parsed block number
+ * [Rabbit MQ](https://www.rabbitmq.com/#getstarted) to pass subscriptions and send transaction notifications
 
- * [Go Toolchain](https://golang.org/doc/install) versions 1.13+
- * [Postgres](https://www.postgresql.org/download) storing user subscriptions and latest parsed block number
- * [Rabbit MQ](https://www.rabbitmq.com/#getstarted) using to pass subscriptions and send transaction notifications
+### Quick Start
 
-### From Source
+#### Get source code
 
-#### IMPORTANT
-
-You can run platform API for specific coin only!
+Download source to `GOPATH`
 ```shell
-cd cmd/platform_api
-ATLAS_PLATFORM=ethereum go run main.go
-```
-You will run platform API for Ethereum coin only. You can run 30 coins with 30 binaries for scalability and sustainability. Howevever, you can run all of them at once by using ```ATLAS_PLATFORM=all``` env param
-
-It works the same for observer_worker - you can run all observer at 1 binary or 30 coins per 30 binaries
-
-```shell
-# Download source to $GOPATH
 go get -u github.com/trustwallet/blockatlas
 cd $(go env GOPATH)/src/github.com/trustwallet/blockatlas
+```
 
-# Start Platform API server at port 8420 with the path to the config.yml ./ 
-go build -o platform-api-bin cmd/platform_api/main.go && ./platform-api-bin -p 8420 -c config.yml
+#### Build and run
+
+Read [configuration](#configuration) info
+
+```shell
+# Start Platform API server at port 8420 with the path to the config.yml ./
+go build -o platform-api-bin cmd/platform_api/main.go && ./platform-api-bin -p 8420
 
 # Start observer_parser with the path to the config.yml ./ 
-go build -o observer_parser-bin cmd/observer_parser/main.go && ./observer_parser-bin -c config.yml
+go build -o observer_parser-bin cmd/observer_parser/main.go && ./observer_parser-bin
 
 # Start observer_notifier with the path to the config.yml ./ 
-go build -o observer_notifier-bin cmd/observer_notifier/main.go && ./observer_notifier-bin -c config.yml
+go build -o observer_notifier-bin cmd/observer_notifier/main.go && ./observer_notifier-bin
 
 # Start observer_subscriber with the path to the config.yml ./ 
-go build -o observer_subscriber-bin cmd/observer_subscriber/main.go && ./observer_subscriber-bin -c config.yml
+go build -o observer_subscriber-bin cmd/observer_subscriber/main.go && ./observer_subscriber-bin
 
 # Startp Swagger API server at port 8422 with the path to the config.yml ./ 
 go build -o swagger-api-bin cmd/swagger-api/main.go && ./swagger-api-bin -p 8423
@@ -114,64 +112,63 @@ go build -o swagger-api-bin cmd/swagger-api/main.go && ./swagger-api-bin -p 8423
 go build -o platform-api-bin cmd/platform_api/main.go && ./platform-api-bin -p 8437 -c configmock.yml
 ```
 
-OR 
+### make command
 
+Build and start all services:
 ```shell
 make go-build
+make start
 ```
-Then
+
+Build and start individual service:
 ```shell
+make go-build-platform-api
 make start
 ```
 
 ### Docker
 
-Build and run from local Dockerfile:
+Build and run all services:
 
-Then build:
 ```shell
 docker-compose build
-```
-
-Run all services:
-```shell
 docker-compose up
 ```
 
-If you need to start one service:
+Build and run individual service:
 ```shell
-# Run only platform API 
-docker-compose start platform_api
-# Run swagger api
+docker-compose build swagger_api
 docker-compose start swagger_api
 ```
 
 ## Configuration
+When any of Block Atlas services started they look up inside [default configuration](./config.yml).
+Most coins offering public RPC/explorer APIs are enabled, thus Block Atlas can be started and used right away, no additional configuration needed.
+By default starting any of the [services](#architecture) will enable all platforms
 
-Block Atlas can run just fine without configuration.
-By default, all coins offering public RPC/explorer APIs are enabled.
+To run a specific service only by passing environmental variable, e.g: `platfrom_api` :
+```shell
+ATLAS_PLATFORM=ethereum go run cmd/platform_api/main.go
+```
 
-If you want to use custom RPC endpoints, or enable coins without public RPC (like Nimiq),
-you can configure Block Atlas over `config.yml` or environment variables.
+or change in config file
+```yaml
+platform: ethereum
+```
 
-#### Config File
+This way you can one platform per binary, for scalability and sustainability.
 
-Config is loaded from `config.yml` if it exists in the working directory.
-The repository includes a [default config](./config.yml) for reference with all available config options.
-
-Example (`config.yml`):
-
+To enable use of private endpoint:
 ```yaml
 nimiq:
   api: http://localhost:8648
-#...
 ```
+It works the same for observer_worker - you can run all observer at 1 binary or 30 coins per 30 binaries
 
 #### Environment
 
 The rest gets loaded from environment variables.
-Every config option is available under the `ATLAS_` prefix.
-Nested keys are joined via `_` (Example `nimiq.api` => `NIMIQ_API`)
+Every config option is available under the `ATLAS_` prefix. Nested keys are joined via `_`.
 
 Example:
 
