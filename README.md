@@ -46,7 +46,7 @@ Blockatlas allows to:
 - Get information about transactions, tokens, staking details, collectibles, crypto domains for supported coins.
 - Subscribe for price notifications via Rabbit MQ
 
-Platform API is independent service and can work with the specific blockchain only (like bitcoin, ethereum, etc)
+Platform API is independent service and can work with the specific blockchain only (like Bitcoin, Ethereum, etc)
 
 Notifications:
 
@@ -67,33 +67,40 @@ New Subscriptions --(Rabbit MQ)--> Subscriber --> DB
 
 ```
 
-The whole flow is not availible at Atlas repo. We will have integration tests with it. Also there will be examples of all instances soon.
+The whole flow is not available at Atlas repo. We will have integration tests with it. Also there will be examples of all instances soon.
 
 ## Setup
 
-### Requirements
+### Prerequisite
+ * [Go Toolchain](https://golang.org/doc/install) versions 1.14+
+ 
+ Depends what type of Blockatlas service you want 
+ * [Postgres](https://www.postgresql.org/download) store user subscriptions and latest parsed block number
+ * [Rabbit MQ](https://www.rabbitmq.com/#getstarted) used to pass subscriptions and send transaction notifications
 
- * [Go Toolchain](https://golang.org/doc/install) versions 1.13+
- * [Postgres](https://www.postgresql.org/download) storing user subscriptions and latest parsed block number
- * [Rabbit MQ](https://www.rabbitmq.com/#getstarted) using to pass subscriptions and send transaction notifications
+### Quick Start
 
-### From Source
-
-#### IMPORTANT
-
-You can run platform API for specific coin only!
-```shell
-cd cmd/platform_api
-ATLAS_PLATFORM=ethereum go run main.go
-```
-You will run platform API for Ethereum coin only. You can run 30 coins with 30 binaries for scalability and sustainability. Howevever, you can run all of them at once by using ```ATLAS_PLATFORM=all``` env param
-
-It works the same for observer_worker - you can run all observer at 1 binary or 30 coins per 30 binaries
+#### Install the binaries
 
 ```shell
 # Download source to $GOPATH
 go get -u github.com/trustwallet/blockatlas
 cd $(go env GOPATH)/src/github.com/trustwallet/blockatlas
+```
+
+#### Build and run binary
+
+#### IMPORTANT
+
+To run platform API for a specific coin only!
+```shell
+cd cmd/platform_api
+ATLAS_PLATFORM=ethereum go run main.go
+```
+You will run platform API for Ethereum coin only. You can run 30 coins with 30 binaries for scalability and sustainability.
+However, you can run all of them at once by using ```ATLAS_PLATFORM=all``` env param
+
+
 
 # Start Platform API server at port 8420 with the path to the config.yml ./ 
 go build -o platform-api-bin cmd/platform_api/main.go && ./platform-api-bin -p 8420 -c config.yml
@@ -155,6 +162,8 @@ If you want to use custom RPC endpoints, or enable coins without public RPC (lik
 you can configure Block Atlas over `config.yml` or environment variables.
 
 #### Config File
+
+It works the same for observer_worker - you can run all observer at 1 binary or 30 coins per 30 binaries
 
 Config is loaded from `config.yml` if it exists in the working directory.
 The repository includes a [default config](./config.yml) for reference with all available config options.
