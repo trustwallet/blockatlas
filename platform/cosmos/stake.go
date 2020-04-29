@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	lockTime      = 1814400
+	lockTime      = 1814400 // in seconds (21 days)
 	minimumAmount = "1"
 )
 

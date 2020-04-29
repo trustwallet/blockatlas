@@ -2,11 +2,15 @@ package tezos
 
 import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/pkg/errors"
-	services "github.com/trustwallet/blockatlas/services/assets"
+	"github.com/trustwallet/blockatlas/pkg/logger"
+	"github.com/trustwallet/blockatlas/services/assets"
 )
 
-const Annual = 6.09
+const (
+	Annual             = 6.09
+	LockTime           = 0
+	MinimumStakeAmount = "0"
+)
 
 func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, error) {
 	account, err := p.rpcClient.GetAccount(address)
@@ -17,7 +21,7 @@ func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, e
 		return make(blockatlas.DelegationsPage, 0), nil
 	}
 
-	validators, err := services.GetValidatorsMap(p)
+	validators, err := assets.GetValidatorsMap(p)
 	if err != nil {
 		return nil, err
 	}
@@ -27,8 +31,8 @@ func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, e
 func NormalizeDelegation(account Account, validators blockatlas.ValidatorMap) (blockatlas.DelegationsPage, error) {
 	validator, ok := validators[account.Delegate]
 	if !ok {
-		return nil, errors.E("Validator not found",
-			errors.Params{"Delegate": account.Delegate, "Balance": account.Balance})
+		logger.Warn("Validator not found", logger.Params{"platform": "tezos", "delegation": account.Delegate})
+		validator = getUnknownValidator(account.Delegate)
 	}
 	return blockatlas.DelegationsPage{
 		{
@@ -82,8 +86,8 @@ func (p *Platform) UndelegatedBalance(address string) (string, error) {
 func getDetails() blockatlas.StakingDetails {
 	return blockatlas.StakingDetails{
 		Reward:        blockatlas.StakingReward{Annual: Annual},
-		MinimumAmount: "0",
-		LockTime:      0,
+		MinimumAmount: MinimumStakeAmount,
+		LockTime:      LockTime,
 		Type:          blockatlas.DelegationTypeDelegate,
 	}
 }
@@ -95,5 +99,24 @@ func normalizeValidator(v Validator) (validator blockatlas.Validator) {
 		Status:  true,
 		ID:      v.Address,
 		Details: getDetails(),
+	}
+}
+
+func getUnknownValidator(address string) blockatlas.StakeValidator {
+	return blockatlas.StakeValidator{
+		ID:     address,
+		Status: false,
+		Info: blockatlas.StakeValidatorInfo{
+			Name:        "Decommissioned",
+			Description: "Decommissioned",
+		},
+		Details: blockatlas.StakingDetails{
+			Reward: blockatlas.StakingReward{
+				Annual: Annual,
+			},
+			LockTime:      LockTime,
+			MinimumAmount: MinimumStakeAmount,
+			Type:          blockatlas.DelegationTypeDelegate,
+		},
 	}
 }
