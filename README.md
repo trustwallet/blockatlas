@@ -221,6 +221,3 @@ Please be sure to include your operating system, version number, and
 [steps](https://gist.github.com/nrollr/eb24336b8fb8e7ba5630) to reproduce reported bugs.
 
 More resources for developers are in [CONTRIBUTING.md](CONTRIBUTING.md).
-
-
-### Tips
