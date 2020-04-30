@@ -65,7 +65,7 @@ tezos:
 ethereum:
   api: http://localhost:3347/eth-api
   blockbook_api: http://localhost:3347/eth-blockbook-api
-  collections_api: https://api.opensea.io
+  collections_api: http://localhost:3347/opensea-api
   collections_api_key: opensea_api_key
   rpc: http://localhost:3347/eth-rpc
 
