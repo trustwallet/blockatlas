@@ -1,45 +1,18 @@
 package ethereum
 
 import (
-	"net/http"
-	"sort"
-
-	"github.com/gin-gonic/gin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/pkg/logger"
 )
 
-func (p *Platform) RegisterRoutes(router gin.IRouter) {
-	router.GET("/:address", func(c *gin.Context) {
-		p.getTransactions(c)
-	})
+func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
+	// Endpoint supports queries without token query parameter
+	return p.GetTokenTxsByAddress(address, p.Coin().Symbol)
 }
 
-func (p *Platform) getTransactions(c *gin.Context) {
-	token := c.Query("token")
-	address := c.Param("address")
-	var page blockatlas.TxPage
-	var err error
-
-	if token != "" {
-		page, err = p.client.GetTokenTxs(address, token, p.CoinIndex)
-	} else {
-		page, err = p.client.GetTransactions(address, p.CoinIndex)
-	}
-
-	if apiError(c, err) {
-		return
-	}
-
-	sort.Sort(page)
-	c.JSON(http.StatusOK, &page)
-}
-
-func apiError(c *gin.Context, err error) bool {
+func (p *Platform) GetTokenTxsByAddress(address string, token string) (blockatlas.TxPage, error) {
+	page, err := p.client.GetTransactions(address, p.CoinIndex)
 	if err != nil {
-		logger.Error(err, "Unhandled error")
-		c.AbortWithStatus(http.StatusInternalServerError)
-		return true
+		return nil, err
 	}
-	return false
+	return page, err
 }

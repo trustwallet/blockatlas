@@ -119,14 +119,7 @@ func RegisterBasicAPI(router gin.IRouter) {
 
 func IsForCustomAPI(handle string) bool {
 	switch handle {
-	case coin.Gochain().Handle,
-		coin.Thundertoken().Handle,
-		coin.Classic().Handle,
-		coin.Poa().Handle,
-		coin.Callisto().Handle,
-		coin.Wanchain().Handle,
-		coin.Tomochain().Handle,
-		coin.Ethereum().Handle,
+	case
 		coin.Bitcoin().Handle,
 		coin.Litecoin().Handle,
 		coin.Bitcoincash().Handle,
