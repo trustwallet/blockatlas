@@ -6,14 +6,17 @@ import (
 )
 
 type Platform struct {
-	client Client
+	rpcClient Client
+	dexClient DexClient
 }
 
-func Init(api string) *Platform {
+func Init(api, dex string) *Platform {
 	p := &Platform{
-		client: Client{blockatlas.InitClient(api)},
+		rpcClient: Client{blockatlas.InitClient(api)},
+		dexClient: DexClient{blockatlas.InitClient(dex)},
 	}
-	p.client.ErrorHandler = getHTTPError
+	p.rpcClient.ErrorHandler = getHTTPError
+	p.dexClient.ErrorHandler = getHTTPError
 	return p
 }
 

@@ -5,7 +5,7 @@ import (
 )
 
 func (p *Platform) CurrentBlockNumber() (int64, error) {
-	info, err := p.client.fetchNodeInfo()
+	info, err := p.rpcClient.fetchNodeInfo()
 	if err != nil {
 		return 0, err
 	}
@@ -14,7 +14,7 @@ func (p *Platform) CurrentBlockNumber() (int64, error) {
 }
 
 func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
-	blockTxs, err := p.client.GetBlockTransactions(num)
+	blockTxs, err := p.rpcClient.GetBlockTransactions(num)
 	if err != nil {
 		return nil, err
 	}

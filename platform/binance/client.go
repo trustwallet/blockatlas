@@ -70,6 +70,12 @@ func (c *Client) GetTokens() (*TokenList, error) {
 	return stp, err
 }
 
+func (c *Client) GetTransactionHash(hash string) (account *TxHash, err error) {
+	query := url.Values{"hash": {hash}, "format": {"json"}}
+	err = c.Get(&account, "tx", query)
+	return account, err
+}
+
 func getHTTPError(res *http.Response, desc string) error {
 	switch res.StatusCode {
 	case http.StatusBadRequest:
