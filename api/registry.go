@@ -6,7 +6,6 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/trustwallet/blockatlas/api/endpoint"
 	"github.com/trustwallet/blockatlas/api/middleware"
-	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/platform"
 	"time"
@@ -45,14 +44,14 @@ func RegisterTokensAPI(router gin.IRouter, api blockatlas.Platform) {
 }
 
 func RegisterTransactionsAPI(router gin.IRouter, api blockatlas.Platform) {
+	if _, ok := api.(blockatlas.TxByAddrAndXPubAPI); ok {
+		// this is XPUB style
+		return
+	}
 	txAPI, _ := api.(blockatlas.TxAPI)
 	tokenTxAPI, _ := api.(blockatlas.TokenTxAPI)
 
 	handle := api.Coin().Handle
-
-	if IsForCustomAPI(handle) {
-		return
-	}
 
 	router.GET("/v1/"+handle+"/:address", func(c *gin.Context) {
 		endpoint.GetTransactionsHistory(c, txAPI, tokenTxAPI)
@@ -105,18 +104,6 @@ func RegisterBatchAPI(router gin.IRouter) {
 	})
 }
 
-// CustomAPI must be removed and all handlers needs to be migrated to the transactions, tokens api
-func RegisterCustomAPI(router gin.IRouter, api blockatlas.Platform) {
-	customAPI, ok := api.(blockatlas.CustomAPI)
-	if !ok {
-		return
-	}
-	handle := api.Coin().Handle
-
-	customRouter := router.Group("/v1/" + handle)
-	customAPI.RegisterRoutes(customRouter)
-}
-
 func RegisterDomainAPI(router gin.IRouter) {
 	router.GET("/ns/lookup", endpoint.GetAddressByCoinAndDomain)
 	router.GET("v2/ns/lookup", endpoint.GetAddressByCoinAndDomainBatch)
@@ -125,27 +112,4 @@ func RegisterDomainAPI(router gin.IRouter) {
 func RegisterBasicAPI(router gin.IRouter) {
 	router.GET("/", endpoint.GetStatus)
 	router.GET("/metrics", ginprom.PromHandler(promhttp.Handler()))
-}
-
-func IsForCustomAPI(handle string) bool {
-	switch handle {
-	case
-		coin.Bitcoin().Handle,
-		coin.Litecoin().Handle,
-		coin.Bitcoincash().Handle,
-		coin.Zcash().Handle,
-		coin.Zcoin().Handle,
-		coin.Viacoin().Handle,
-		coin.Ravencoin().Handle,
-		coin.Groestlcoin().Handle,
-		coin.Zelcash().Handle,
-		coin.Decred().Handle,
-		coin.Digibyte().Handle,
-		coin.Dash().Handle,
-		coin.Doge().Handle,
-		coin.Qtum().Handle:
-		return true
-	default:
-		return false
-	}
 }

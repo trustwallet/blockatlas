@@ -12,7 +12,6 @@ func SetupPlatformAPI(router gin.IRouter) {
 	for _, api := range platform.Platforms {
 		RegisterCollectionsAPI(router, api)
 		RegisterTransactionsAPI(router, api)
-		RegisterCustomAPI(router, api)
 		RegisterTokensAPI(router, api)
 		RegisterStakeAPI(router, api)
 	}

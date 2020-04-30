@@ -1,7 +1,6 @@
 package blockatlas
 
 import (
-	"github.com/gin-gonic/gin"
 	"github.com/trustwallet/blockatlas/coin"
 )
 
@@ -64,12 +63,6 @@ type (
 
 		GetCollectionsV3(owner string) (CollectionPageV3, error)
 		GetCollectiblesV3(owner, collectibleID string) (CollectiblePageV3, error)
-	}
-
-	// CustomAPI provides custom HTTP routes
-	CustomAPI interface {
-		Platform
-		RegisterRoutes(router gin.IRouter)
 	}
 
 	// NamingServiceAPI provides public name service domains HTTP routes

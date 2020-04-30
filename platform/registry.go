@@ -20,9 +20,6 @@ var (
 	// StakeAPIs contain platforms with staking services
 	StakeAPIs map[string]blockatlas.StakeAPI
 
-	// CustomAPIs contain platforms with custom HTTP services
-	CustomAPIs map[string]blockatlas.CustomAPI
-
 	// NamingAPIs contain platforms which support naming services
 	NamingAPIs map[uint64]blockatlas.NamingServiceAPI
 
@@ -60,7 +57,6 @@ func Init(platformHandle string) {
 	TxByAddrAndXPubAPIs = make(map[string]blockatlas.TxByAddrAndXPubAPI)
 	BlockAPIs = make(map[string]blockatlas.BlockAPI)
 	StakeAPIs = make(map[string]blockatlas.StakeAPI)
-	CustomAPIs = make(map[string]blockatlas.CustomAPI)
 	NamingAPIs = make(map[uint64]blockatlas.NamingServiceAPI)
 	CollectionAPIs = make(map[uint]blockatlas.CollectionAPI)
 	TokensAPIs = make(map[uint]blockatlas.TokenAPI)
@@ -93,9 +89,6 @@ func Init(platformHandle string) {
 		}
 		if stakeAPI, ok := platform.(blockatlas.StakeAPI); ok {
 			StakeAPIs[handle] = stakeAPI
-		}
-		if customAPI, ok := platform.(blockatlas.CustomAPI); ok {
-			CustomAPIs[handle] = customAPI
 		}
 		if namingAPI, ok := platform.(blockatlas.NamingServiceAPI); ok {
 			NamingAPIs[uint64(platform.Coin().ID)] = namingAPI
