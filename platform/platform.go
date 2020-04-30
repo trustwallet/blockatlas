@@ -38,8 +38,6 @@ const (
 	allPlatformsHandle = "all"
 )
 
-var CollectionsWhitelist map[uint]bool
-
 func GetVar(name string) string {
 	return viper.GetString(name)
 }
@@ -58,7 +56,7 @@ func GetHandle(coinId uint) string {
 	return coin.Coins[coinId].Handle
 }
 
-func getPlatformMap() blockatlas.Platforms {
+func getAllHandlers() blockatlas.Platforms {
 	return blockatlas.Platforms{
 		coin.Fio().Handle:          fio.Init(GetApiVar(coin.FIO)),
 		coin.Aion().Handle:         aion.Init(GetApiVar(coin.AION)),
@@ -111,7 +109,22 @@ func getPlatformMap() blockatlas.Platforms {
 	}
 }
 
-func InitCollectionsWhitelist() {
-	CollectionsWhitelist = make(map[uint]bool)
-	CollectionsWhitelist[coin.Ethereum().ID] = true
+func getCollectionsHandlers() map[uint]blockatlas.CollectionsAPI {
+	return map[uint]blockatlas.CollectionsAPI {
+		coin.ETH: ethereum.InitWitCollection(coin.ETH, GetApiVar(coin.ETH), GetRpcVar(coin.ETH), GetVar("ethereum.blockbook_api"), GetVar("ethereum.collections_api"), GetVar("ethereum.collections_api_key")),
+	}
+}
+
+func getNamingHandlers() map[uint]blockatlas.NamingServiceAPI {
+	return map[uint]blockatlas.NamingServiceAPI {
+		coin.ETH:  ethereum.Init(coin.ETH, GetApiVar(coin.ETH), GetRpcVar(coin.ETH)),
+		coin.CLO:  ethereum.Init(coin.CLO, GetApiVar(coin.CLO), GetRpcVar(coin.CLO)),
+		coin.TOMO: ethereum.Init(coin.TOMO, GetApiVar(coin.TOMO), GetRpcVar(coin.TOMO)),
+		coin.GO:   ethereum.Init(coin.GO, GetApiVar(coin.GO), GetRpcVar(coin.GO)),
+		coin.ETC:  ethereum.Init(coin.ETC, GetApiVar(coin.ETC), GetRpcVar(coin.ETC)),
+		coin.POA:  ethereum.Init(coin.POA, GetApiVar(coin.POA), GetRpcVar(coin.POA)),
+		coin.TT:   ethereum.Init(coin.TT, GetApiVar(coin.TT), GetRpcVar(coin.TT)),
+		coin.FIO:  fio.Init(GetApiVar(coin.FIO)),
+		coin.ZIL:  zilliqa.Init(GetApiVar(coin.ZIL), GetVar("zilliqa.key"), GetRpcVar(coin.ZIL), GetVar("zilliqa.lookup")),
+	}
 }

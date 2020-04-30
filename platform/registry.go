@@ -30,11 +30,11 @@ var (
 	CollectionsAPIs map[uint]blockatlas.CollectionsAPI
 
 	// NamingAPIs contain platforms which support naming services
-	NamingAPIs map[uint64]blockatlas.NamingServiceAPI
+	NamingAPIs map[uint]blockatlas.NamingServiceAPI
 )
 
 func getActivePlatforms(handle string) []blockatlas.Platform {
-	platforms := getPlatformMap()
+	platforms := getAllHandlers()
 	logger.Info("Platform API setup with: ", logger.Params{"handle": handle})
 
 	if handle == allPlatformsHandle {
@@ -53,17 +53,12 @@ func getActivePlatforms(handle string) []blockatlas.Platform {
 func Init(platformHandle string) {
 	platformList := getActivePlatforms(platformHandle)
 
-	// white list of collection api coins (only ETH now)
-	InitCollectionsWhitelist()
-
 	Platforms = make(map[string]blockatlas.Platform)
 	BlockAPIs = make(map[string]blockatlas.BlockAPI)
 	TxByAddrAPIs        = make(map[string]blockatlas.TxAPI)
 	TxByAddrAndXPubAPIs = make(map[string]blockatlas.TxByAddrAndXPubAPI)
 	TokensAPIs = make(map[uint]blockatlas.TokensAPI)
 	StakeAPIs = make(map[string]blockatlas.StakeAPI)
-	CollectionsAPIs = make(map[uint]blockatlas.CollectionsAPI)
-	NamingAPIs = make(map[uint64]blockatlas.NamingServiceAPI)
 
 	for _, platform := range platformList {
 		handle := platform.Coin().Handle
@@ -102,11 +97,8 @@ func Init(platformHandle string) {
 		if stakeAPI, ok := platform.(blockatlas.StakeAPI); ok {
 			StakeAPIs[handle] = stakeAPI
 		}
-		if collectionAPI, ok := platform.(blockatlas.CollectionsAPI); ok && CollectionsWhitelist[platform.Coin().ID] {
-			CollectionsAPIs[platform.Coin().ID] = collectionAPI
-		}
-		if namingAPI, ok := platform.(blockatlas.NamingServiceAPI); ok {
-			NamingAPIs[uint64(platform.Coin().ID)] = namingAPI
-		}
 	}
+
+	CollectionsAPIs = getCollectionsHandlers()
+	NamingAPIs = getNamingHandlers()
 }

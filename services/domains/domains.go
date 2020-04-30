@@ -11,7 +11,7 @@ import (
 )
 
 // TLDMapping Mapping of name TLD's to coin where they are handled
-var TLDMapping = map[string]uint64{
+var TLDMapping = map[string]uint{
 	".eth":         CoinType.ETH,
 	".xyz":         CoinType.ETH,
 	".luxe":        CoinType.ETH,
