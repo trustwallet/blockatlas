@@ -11,23 +11,26 @@ var (
 	// Platforms contains all registered platforms by handle
 	Platforms map[string]blockatlas.Platform
 
-	// TxByAddrAndXPubAPIs contains handles with XPUB-based transactions service
-	TxByAddrAndXPubAPIs map[string]blockatlas.TxByAddrAndXPubAPI
-
 	// BlockAPIs contain platforms with block services
 	BlockAPIs map[string]blockatlas.BlockAPI
+
+	// TxByAddrAPIs contains handlers with address-based transactions service
+	TxByAddrAPIs map[string]blockatlas.TxAPI
+
+	// TxByAddrAndXPubAPIs contains handlers with Xaddress- and PUB-based transactions service
+	TxByAddrAndXPubAPIs map[string]blockatlas.TxByAddrAndXPubAPI
+
+	// TokensAPIs contain platforms with token services
+	TokensAPIs map[uint]blockatlas.TokensAPI
 
 	// StakeAPIs contain platforms with staking services
 	StakeAPIs map[string]blockatlas.StakeAPI
 
+	// CollectionsAPIs contain platforms which collections services
+	CollectionsAPIs map[uint]blockatlas.CollectionsAPI
+
 	// NamingAPIs contain platforms which support naming services
 	NamingAPIs map[uint64]blockatlas.NamingServiceAPI
-
-	// CollectionAPIs contain platforms which collections services
-	CollectionAPIs map[uint]blockatlas.CollectionAPI
-
-	// TokensAPIs contain platforms with token services
-	TokensAPIs map[uint]blockatlas.TokenAPI
 )
 
 func getActivePlatforms(handle string) []blockatlas.Platform {
@@ -54,12 +57,13 @@ func Init(platformHandle string) {
 	InitCollectionsWhitelist()
 
 	Platforms = make(map[string]blockatlas.Platform)
-	TxByAddrAndXPubAPIs = make(map[string]blockatlas.TxByAddrAndXPubAPI)
 	BlockAPIs = make(map[string]blockatlas.BlockAPI)
+	TxByAddrAPIs        = make(map[string]blockatlas.TxAPI)
+	TxByAddrAndXPubAPIs = make(map[string]blockatlas.TxByAddrAndXPubAPI)
+	TokensAPIs = make(map[uint]blockatlas.TokensAPI)
 	StakeAPIs = make(map[string]blockatlas.StakeAPI)
+	CollectionsAPIs = make(map[uint]blockatlas.CollectionsAPI)
 	NamingAPIs = make(map[uint64]blockatlas.NamingServiceAPI)
-	CollectionAPIs = make(map[uint]blockatlas.CollectionAPI)
-	TokensAPIs = make(map[uint]blockatlas.TokenAPI)
 
 	for _, platform := range platformList {
 		handle := platform.Coin().Handle
@@ -81,23 +85,28 @@ func Init(platformHandle string) {
 			logger.Fatal("Duplicate handle", p)
 		}
 		Platforms[handle] = platform
-		if txByAddrAndXPubAPI, ok := platform.(blockatlas.TxByAddrAndXPubAPI); ok {
-			TxByAddrAndXPubAPIs[handle] = txByAddrAndXPubAPI
-		}
 		if blockAPI, ok := platform.(blockatlas.BlockAPI); ok {
 			BlockAPIs[handle] = blockAPI
+		}
+		if txByAddrAndXPubAPI, ok := platform.(blockatlas.TxByAddrAndXPubAPI); ok {
+			TxByAddrAndXPubAPIs[handle] = txByAddrAndXPubAPI
+		} else {
+			// ByAddrAndXPub prevents ByAddr API
+			if txByAddrAPI, ok := platform.(blockatlas.TxAPI); ok {
+				TxByAddrAPIs[handle] = txByAddrAPI
+			}
+		}
+		if tokenAPI, ok := platform.(blockatlas.TokensAPI); ok {
+			TokensAPIs[platform.Coin().ID] = tokenAPI
 		}
 		if stakeAPI, ok := platform.(blockatlas.StakeAPI); ok {
 			StakeAPIs[handle] = stakeAPI
 		}
+		if collectionAPI, ok := platform.(blockatlas.CollectionsAPI); ok && CollectionsWhitelist[platform.Coin().ID] {
+			CollectionsAPIs[platform.Coin().ID] = collectionAPI
+		}
 		if namingAPI, ok := platform.(blockatlas.NamingServiceAPI); ok {
 			NamingAPIs[uint64(platform.Coin().ID)] = namingAPI
-		}
-		if collectionAPI, ok := platform.(blockatlas.CollectionAPI); ok && CollectionsWhitelist[platform.Coin().ID] {
-			CollectionAPIs[platform.Coin().ID] = collectionAPI
-		}
-		if tokenAPI, ok := platform.(blockatlas.TokenAPI); ok {
-			TokensAPIs[platform.Coin().ID] = tokenAPI
 		}
 	}
 }

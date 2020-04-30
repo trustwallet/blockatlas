@@ -10,6 +10,13 @@ type (
 		Coin() coin.Coin
 	}
 
+	// BlockAPI provides block information and lookups
+	BlockAPI interface {
+		Platform
+		CurrentBlockNumber() (int64, error)
+		GetBlockByNumber(num int64) (*Block, error)
+	}
+
 	// TxAPI provides transaction lookups based on address
 	TxAPI interface {
 		Platform
@@ -22,29 +29,16 @@ type (
 		GetTokenTxsByAddress(address, token string) (TxPage, error)
 	}
 
-	// TokenAPI provides token lookups
-	TokenAPI interface {
-		Platform
-		GetTokenListByAddress(address string) (TokenPage, error)
-	}
-
 	// TxByAddrAndXPubAPI provides transaction lookup based on address and XPUB (Bitcoin-style)
 	TxByAddrAndXPubAPI interface {
 		TxAPI
 		GetTxsByXPub(xpub string) (TxPage, error)
 	}
 
-	// BlockAPI provides block information and lookups
-	BlockAPI interface {
+	// TokensAPI provides token lookups
+	TokensAPI interface {
 		Platform
-		CurrentBlockNumber() (int64, error)
-		GetBlockByNumber(num int64) (*Block, error)
-	}
-
-	// AddressAPI provides address information
-	AddressAPI interface {
-		Platform
-		GetAddressesFromXpub(xpub string) ([]string, error)
+		GetTokenListByAddress(address string) (TokenPage, error)
 	}
 
 	// StakingAPI provides staking information
@@ -56,7 +50,7 @@ type (
 		GetDelegations(address string) (DelegationsPage, error)
 	}
 
-	CollectionAPI interface {
+	CollectionsAPI interface {
 		Platform
 		GetCollections(owner string) (CollectionPage, error)
 		GetCollectibles(owner, collectibleID string) (CollectiblePage, error)

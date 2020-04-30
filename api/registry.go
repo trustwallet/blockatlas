@@ -11,48 +11,31 @@ import (
 	"time"
 )
 
-func RegisterCollectionsAPI(router gin.IRouter, api blockatlas.Platform) {
-	collectionAPI, ok := api.(blockatlas.CollectionAPI)
-	if !ok {
-		return
-	}
-
-	handle := collectionAPI.Coin().Handle
-
-	router.GET("/v3/"+handle+"/collections/:owner/collection/:collection_id", func(c *gin.Context) {
-		endpoint.GetCollectiblesForSpecificCollectionAndOwnerV3(c, collectionAPI)
-	})
-	router.GET("/v3/"+handle+"/collections/:owner", func(c *gin.Context) {
-		endpoint.GetCollectiblesForOwnerV3(c, collectionAPI)
-	})
-	router.GET("/v4/"+handle+"/collections/:owner/collection/:collection_id", func(c *gin.Context) {
-		endpoint.GetCollectiblesForSpecificCollectionAndOwner(c, collectionAPI)
-	})
-}
-
-func RegisterTokensAPI(router gin.IRouter, api blockatlas.Platform) {
-	tokenAPI, ok := api.(blockatlas.TokenAPI)
-	if !ok {
-		return
-	}
-
+func RegisterCollectionsAPI(router gin.IRouter, api blockatlas.CollectionsAPI) {
 	handle := api.Coin().Handle
-
-	router.GET("/v2/"+handle+"/tokens/:address", func(c *gin.Context) {
-		endpoint.GetTokensByAddress(c, tokenAPI)
+	router.GET("/v3/" + handle + "/collections/:owner/collection/:collection_id", func(c *gin.Context) {
+		endpoint.GetCollectiblesForSpecificCollectionAndOwnerV3(c, api)
+	})
+	router.GET("/v3/" + handle + "/collections/:owner", func(c *gin.Context) {
+		endpoint.GetCollectiblesForOwnerV3(c, api)
+	})
+	router.GET("/v4/" + handle + "/collections/:owner/collection/:collection_id", func(c *gin.Context) {
+		endpoint.GetCollectiblesForSpecificCollectionAndOwner(c, api)
 	})
 }
 
-func RegisterTransactionsAPI(router gin.IRouter, api blockatlas.Platform) {
-	if _, ok := api.(blockatlas.TxByAddrAndXPubAPI); ok {
-		// this is XPUB style
-		return
-	}
+func RegisterTokensAPI(router gin.IRouter, api blockatlas.TokensAPI) {
+	handle := api.Coin().Handle
+	router.GET("/v2/" + handle + "/tokens/:address", func(c *gin.Context) {
+		endpoint.GetTokensByAddress(c, api)
+	})
+}
+
+func RegisterTxByAddrAPI(router gin.IRouter, api blockatlas.TxAPI) {
 	txAPI, _ := api.(blockatlas.TxAPI)
 	tokenTxAPI, _ := api.(blockatlas.TokenTxAPI)
 
 	handle := api.Coin().Handle
-
 	router.GET("/v1/"+handle+"/:address", func(c *gin.Context) {
 		endpoint.GetTransactionsHistory(c, txAPI, tokenTxAPI)
 	})
@@ -71,18 +54,13 @@ func RegisterTxByAddrAndXPubAPI(router gin.IRouter, api blockatlas.TxByAddrAndXP
 	})
 }
 
-func RegisterStakeAPI(router gin.IRouter, api blockatlas.Platform) {
-	stakingAPI, ok := api.(blockatlas.StakeAPI)
-	if !ok {
-		return
-	}
+func RegisterStakeAPI(router gin.IRouter, api blockatlas.StakeAPI) {
 	handle := api.Coin().Handle
-
-	router.GET("/v2/"+handle+"/staking/validators", middleware.CacheMiddleware(time.Hour, func(c *gin.Context) {
-		endpoint.GetValidators(c, stakingAPI)
+	router.GET("/v2/" + handle + "/staking/validators", middleware.CacheMiddleware(time.Hour, func(c *gin.Context) {
+		endpoint.GetValidators(c, api)
 	}))
-	router.GET("/v2/"+handle+"/staking/delegations/:address", func(c *gin.Context) {
-		endpoint.GetStakingDelegationsForSpecificCoin(c, stakingAPI)
+	router.GET("/v2/" + handle + "/staking/delegations/:address", func(c *gin.Context) {
+		endpoint.GetStakingDelegationsForSpecificCoin(c, api)
 	})
 }
 
@@ -94,10 +72,10 @@ func RegisterBatchAPI(router gin.IRouter) {
 		endpoint.GetStakeInfoForBatch(c, platform.StakeAPIs)
 	}))
 	router.POST("/v3/collectibles/categories", func(c *gin.Context) {
-		endpoint.GetCollectionCategoriesFromListV3(c, platform.CollectionAPIs)
+		endpoint.GetCollectionCategoriesFromListV3(c, platform.CollectionsAPIs)
 	})
 	router.POST("/v4/collectibles/categories", func(c *gin.Context) {
-		endpoint.GetCollectionCategoriesFromList(c, platform.CollectionAPIs)
+		endpoint.GetCollectionCategoriesFromList(c, platform.CollectionsAPIs)
 	})
 	router.POST("/v2/tokens", func(c *gin.Context) {
 		endpoint.GetTokens(c, platform.TokensAPIs)
