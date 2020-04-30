@@ -1,9 +1,9 @@
-/// Binance chain block explorer API Mock, tx
+/// Binance chain block explorer RPC Mock, tx
 /// Returns:
 /// - Multi-transaction transaction for a specific address
-///   see http://localhost:3000/binance-rpc/v1/transactions?address=bnb1jeu6gscugy6l2wyatxthkh2hmer4hzevgcmf0q&limit=25&startTime=1578585526000&txAsset=BNB&txType=TRANSFER
-///   see https://dex.binance.org/api/v1/transactions?address=bnb1jeu6gscugy6l2wyatxthkh2hmer4hzevgcmf0q&limit=25&startTime=1578585526000&txAsset=BNB&txType=TRANSFER
-///   see http://localhost:8420/v1/binance/bnb1jeu6gscugy6l2wyatxthkh2hmer4hzevgcmf0q
+///   see http://localhost:3347/binance-rpc/v1/transactions?address=bnb1jeu6gscugy6l2wyatxthkh2hmer4hzevgcmf0q&limit=25&startTime=1578585526000&txAsset=BNB&txType=TRANSFER
+///   see https://{binance_rpc}/v1/transactions?address=bnb1jeu6gscugy6l2wyatxthkh2hmer4hzevgcmf0q&limit=25&startTime=1578585526000&txAsset=BNB&txType=TRANSFER
+///   see http://localhost:8437/v1/binance/bnb1jeu6gscugy6l2wyatxthkh2hmer4hzevgcmf0q
 /// - empty response for other txHash'es
 
 module.exports = {

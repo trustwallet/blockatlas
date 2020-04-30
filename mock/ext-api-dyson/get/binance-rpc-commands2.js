@@ -1,10 +1,10 @@
-/// Binance chain block explorer API Mock, Dex
+/// Binance chain RPC Mock
 /// See:
-/// curl "http://localhost:3347/binance-dex/v1/account/bnb1jxfh2g85q3v0tdq56fnevx6xcxtcnhtsmcu64m"
-/// curl "http://localhost:3347/binance-dex/v1/tokens?limit=1000&offset=0"
-/// curl "https://dex.binance.org/api/v1/account/bnb1jxfh2g85q3v0tdq56fnevx6xcxtcnhtsmcu64m"
-/// curl "https://dex.binance.org/api/v1/tokens?limit=1000&offset=0"
-/// curl "http://localhost:8437/v2/binance/tokens/bnb1jxfh2g85q3v0tdq56fnevx6xcxtcnhtsmcu64m?Authorization=Bearer"
+/// curl "http://localhost:3347/binance-rpc/v1/account/bnb1jeu6gscugy6l2wyatxthkh2hmer4hzevgcmf0q"
+/// curl "http://localhost:3347/binance-rpc/v1/tokens?limit=1000&offset=0"
+/// curl "https://{binance_rpc}/v1/account/bnb1jeu6gscugy6l2wyatxthkh2hmer4hzevgcmf0q"
+/// curl "https://{binance_rpc}/v1/tokens?limit=1000&offset=0"
+/// curl "http://localhost:8437/v2/binance/tokens/bnb1jeu6gscugy6l2wyatxthkh2hmer4hzevgcmf0q?Authorization=Bearer"
 
 module.exports = {
     path: '/binance-rpc/:version/:command1/:command2?',
@@ -14,24 +14,36 @@ module.exports = {
                 switch (params.command1) {
                     case 'account':
                         switch (params.command2) {
-                            case 'bnb1jxfh2g85q3v0tdq56fnevx6xcxtcnhtsmcu64m':
+                            case 'bnb1jeu6gscugy6l2wyatxthkh2hmer4hzevgcmf0q':
                                 return JSON.parse(`
                                     {
-                                        "account_number": 1,
-                                        "address": "bnb1jxfh2g85q3v0tdq56fnevx6xcxtcnhtsmcu64m",
+                                        "account_number": 273171,
+                                        "address": "bnb1jeu6gscugy6l2wyatxthkh2hmer4hzevgcmf0q",
                                         "balances": [
                                             {
-                                                "free": "1732627268.91580163",
+                                                "free": "226.53110295",
                                                 "frozen": "0.00000000",
                                                 "locked": "0.00000000",
-                                                "symbol": "CHZ-ECD"
+                                                "symbol": "BNB"
+                                            },
+                                            {
+                                                "free": "2623.96917801",
+                                                "frozen": "0.00000000",
+                                                "locked": "0.00000000",
+                                                "symbol": "BUSD-BD1"
+                                            },
+                                            {
+                                                "free": "0.05000000",
+                                                "frozen": "0.00000000",
+                                                "locked": "0.00000000",
+                                                "symbol": "TWT-8C2"
                                             }
                                         ],
                                         "flags": 0,
                                         "public_key": [
-                                            3,
+                                            2, 142, 117
                                         ],
-                                        "sequence": 547072
+                                        "sequence": 75
                                     }
                                 `);
                         }
