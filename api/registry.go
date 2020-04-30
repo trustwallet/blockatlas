@@ -62,6 +62,16 @@ func RegisterTransactionsAPI(router gin.IRouter, api blockatlas.Platform) {
 	})
 }
 
+func RegisterTxByAddrAndXPubAPI(router gin.IRouter, api blockatlas.TxByAddrAndXPubAPI) {
+	handle := api.Coin().Handle
+	router.GET("/v1/" + handle + "/address/:address", func(c *gin.Context) {
+		endpoint.GetTransactionsHistory(c, api, nil)
+	})
+	router.GET("/v1/" + handle + "/xpub/:xpub", func(c *gin.Context) {
+		endpoint.GetTransactionsByXPub(c, api)
+	})
+}
+
 func RegisterStakeAPI(router gin.IRouter, api blockatlas.Platform) {
 	stakingAPI, ok := api.(blockatlas.StakeAPI)
 	if !ok {

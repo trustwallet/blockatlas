@@ -87,3 +87,50 @@ func GetTransactionsHistory(c *gin.Context, txAPI blockatlas.TxAPI, tokenTxAPI b
 	sort.Sort(&page)
 	c.JSON(http.StatusOK, &page)
 }
+
+// @Summary Get Transactions by XPUB
+// @ID txxpub_v1
+// @Description Get transactions from XPUB address
+// @Accept json
+// @Produce json
+// @Tags Transactions
+// @Param coin path string true "the coin name" default(bitcoin)
+// @Param xpub path string true "the xpub key" default(zpub6ruK9k6YGm8BRHWvTiQcrEPnFkuRDJhR7mPYzV2LDvjpLa5CuGgrhCYVZjMGcLcFqv9b2WvsFtY2Gb3xq8NVq8qhk9veozrA2W9QaWtihrC)
+// @Failure 500 {object} middleware.ApiError
+// @Router /v1/{coin}/xpub/{xpub} [get]
+func GetTransactionsByXPub(c *gin.Context, api blockatlas.TxByAddrAndXPubAPI) {
+	xPubKey := c.Param("xpub")
+	if xPubKey == "" {
+		c.JSON(http.StatusBadRequest, model.CreateErrorResponse(model.InvalidQuery, blockatlas.ErrInvalidKey))
+		return
+	}
+
+	txs, err := api.GetTxsByXPub(xPubKey)
+	if err != nil {
+		switch err {
+		case blockatlas.ErrInvalidKey:
+			c.JSON(http.StatusBadRequest,
+				model.CreateErrorResponse(model.InvalidQuery, blockatlas.ErrInvalidKey))
+			return
+		case blockatlas.ErrNotFound:
+			c.JSON(http.StatusNotFound,
+				model.CreateErrorResponse(model.RequestedDataNotFound, blockatlas.ErrNotFound))
+			return
+		case blockatlas.ErrSourceConn:
+			c.JSON(http.StatusServiceUnavailable,
+				model.CreateErrorResponse(model.InternalFail, blockatlas.ErrSourceConn))
+			return
+		default:
+			c.JSON(http.StatusInternalServerError,
+				model.CreateErrorResponse(model.Default, err))
+			return
+		}
+	}
+
+	page := blockatlas.TxPage(txs)
+	if len(page) > blockatlas.TxPerPage {
+		page = page[0:blockatlas.TxPerPage]
+	}
+	sort.Sort(&page)
+	c.JSON(http.StatusOK, &page)
+}

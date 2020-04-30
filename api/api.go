@@ -6,6 +6,9 @@ import (
 )
 
 func SetupPlatformAPI(router gin.IRouter) {
+	for _, api := range platform.TxByAddrAndXPubAPIs {
+		RegisterTxByAddrAndXPubAPI(router, api)
+	}
 	for _, api := range platform.Platforms {
 		RegisterCollectionsAPI(router, api)
 		RegisterTransactionsAPI(router, api)

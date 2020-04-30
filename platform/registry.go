@@ -11,6 +11,9 @@ var (
 	// Platforms contains all registered platforms by handle
 	Platforms map[string]blockatlas.Platform
 
+	// TxByAddrAndXPubAPIs contains handles with XPUB-based transactions service
+	TxByAddrAndXPubAPIs map[string]blockatlas.TxByAddrAndXPubAPI
+
 	// BlockAPIs contain platforms with block services
 	BlockAPIs map[string]blockatlas.BlockAPI
 
@@ -54,6 +57,7 @@ func Init(platformHandle string) {
 	InitCollectionsWhitelist()
 
 	Platforms = make(map[string]blockatlas.Platform)
+	TxByAddrAndXPubAPIs = make(map[string]blockatlas.TxByAddrAndXPubAPI)
 	BlockAPIs = make(map[string]blockatlas.BlockAPI)
 	StakeAPIs = make(map[string]blockatlas.StakeAPI)
 	CustomAPIs = make(map[string]blockatlas.CustomAPI)
@@ -81,6 +85,9 @@ func Init(platformHandle string) {
 			logger.Fatal("Duplicate handle", p)
 		}
 		Platforms[handle] = platform
+		if txByAddrAndXPubAPI, ok := platform.(blockatlas.TxByAddrAndXPubAPI); ok {
+			TxByAddrAndXPubAPIs[handle] = txByAddrAndXPubAPI
+		}
 		if blockAPI, ok := platform.(blockatlas.BlockAPI); ok {
 			BlockAPIs[handle] = blockAPI
 		}

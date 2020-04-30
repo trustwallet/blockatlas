@@ -11,7 +11,7 @@ type (
 		Coin() coin.Coin
 	}
 
-	// TxAPI provides transaction lookups
+	// TxAPI provides transaction lookups based on address
 	TxAPI interface {
 		Platform
 		GetTxsByAddress(address string) (TxPage, error)
@@ -27,6 +27,12 @@ type (
 	TokenAPI interface {
 		Platform
 		GetTokenListByAddress(address string) (TokenPage, error)
+	}
+
+	// TxByAddrAndXPubAPI provides transaction lookup based on address and XPUB (Bitcoin-style)
+	TxByAddrAndXPubAPI interface {
+		TxAPI
+		GetTxsByXPub(xpub string) (TxPage, error)
 	}
 
 	// BlockAPI provides block information and lookups

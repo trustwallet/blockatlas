@@ -10,3 +10,6 @@ var ErrInvalidAddr = errors.New("invalid address")
 
 // ErrNotFound signals that the resource has not been found
 var ErrNotFound = errors.New("not found")
+
+// ErrInvalidKey signals that the requested key is invalid
+var ErrInvalidKey = errors.New("invalid key")
