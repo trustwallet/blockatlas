@@ -7,11 +7,11 @@ import (
 )
 
 func (p *Platform) GetTokenListByAddress(address string) (blockatlas.TokenPage, error) {
-	account, err := p.client.GetAccountMetadata(address)
+	account, err := p.rpcClient.GetAccountMetadata(address)
 	if err != nil || len(account.Balances) == 0 {
 		return []blockatlas.Token{}, nil
 	}
-	tokens, err := p.client.GetTokens()
+	tokens, err := p.rpcClient.GetTokens()
 	if err != nil {
 		return nil, err
 	}

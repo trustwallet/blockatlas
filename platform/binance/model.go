@@ -1,7 +1,6 @@
 package binance
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/numbers"
@@ -10,9 +9,12 @@ import (
 )
 
 type TxType string
+type QuantityTransfer string
 
 const (
-	TxTransfer TxType = "TRANSFER"
+	TxTransfer     TxType           = "TRANSFER"
+	SingleTransfer QuantityTransfer = "singleTransfer" // e.g: BNB => BNB, TWT-8C2 => TWT-8C2
+	MultiTransfer  QuantityTransfer = "multiTransfer"
 )
 
 type Account struct {
@@ -105,54 +107,34 @@ type DexTxPage struct {
 }
 
 type DexTx struct {
-	//Age           int64       `json:"txAge"`
-	Asset         string      `json:"txAsset"`
-	//Code          int         `json:"code"`
-	//ConfirmBlocks int         `json:"confirmBlocks"`
-	Data          string      `json:"data"`
-	Fee           json.Number `json:"txFee"`
-	FromAddr      string      `json:"fromAddr"`
-	HasChildren   int         `json:"hasChildren"`
-	Hash          string      `json:"txHash"`
-	Memo          string      `json:"memo"`
-	OrderID       string      `json:"orderId"`
-	Timestamp     int64       `json:"timeStamp"`
-	ToAddr        string      `json:"toAddr"`
-	Type          TxType      `json:"txType"`
-	Value         json.Number `json:"value"`
-	BlockHeight   uint64      `json:"blockHeight"`
-	//SubTxsDto     SubTxsDto   `json:"subTxsDto"`
+	Asset              string  `json:"txAsset"`
+	Code               int     `json:"code"`
+	Data               string  `json:"data"`
+	Fee                float64 `json:"txFee"`
+	FromAddr           string  `json:"fromAddr"`
+	HasChildren        int     `json:"hasChildren"`
+	Hash               string  `json:"txHash"`
+	Memo               string  `json:"memo"`
+	OrderID            string  `json:"orderId"`
+	Timestamp          int64   `json:"timeStamp"`
+	ToAddr             string  `json:"toAddr"`
+	Type               TxType  `json:"txType"`
+	Value              float64 `json:"value"`
+	BlockHeight        uint64  `json:"blockHeight"`
+	MultisendTransfers []Msg   `json:"subTxsDto"` // Added from hash info tx
 }
 
-//type SubTxsDto struct {
-//	TotalNum     uint   `json:"totalNum"`
-//	SubTxDtoList SubTxs `json:"subTxDtoList"`
-//}
-//
-//type SubTxs []SubTrx
-//
-//type SubTrx struct {
-//	Hash     string      `json:"hash"`
-//	Height   uint64      `json:"height"`
-//	Type     TxType      `json:"type"`
-//	Value    json.Number `json:"value"`
-//	Asset    string      `json:"asset"`
-//	FromAddr string      `json:"fromAddr"`
-//	ToAddr   string      `json:"toAddr"`
-//	Fee      json.Number `json:"fee"`
-//}
-
-type TxHash struct {
-	Code   int      `json:"code"`
-	Hash   string   `json:"hash"`
-	Height string   `json:"height"`
-	Log    string   `json:"log"`
-	Ok     bool     `json:"ok"`
-	Tx     TxHashTx `json:"tx"`
+type TxHashRPC struct {
+	//Code   int      `json:"code"`
+	Hash string `json:"hash"`
+	//Height string   `json:"height"`
+	//Log    string   `json:"log"`
+	//Ok     bool     `json:"ok"`
+	Tx TxHashTx `json:"tx"`
 }
 
 type TxHashTx struct {
-	V Value `json:"value"`
+	Value Value `json:"value"`
 }
 
 type Value struct {
@@ -160,7 +142,7 @@ type Value struct {
 }
 
 type Msg struct {
-	MV MsgValue `json:"msg"`
+	Value MsgValue `json:"msg"`
 }
 
 type MsgValue struct {
@@ -180,45 +162,29 @@ type Output struct {
 	} `json:"coins"`
 }
 
-func (subTxs *SubTxs) getTxs() (txs []Tx) {
-	mapTx := map[string]Tx{}
-	for _, subTx := range *subTxs {
-		key := subTx.ToAddr + subTx.Asset
-		tx, ok := mapTx[key]
-		if !ok {
-			mapTx[key] = subTx.toTx()
-			continue
-		}
-		txValue, err := tx.Value.Float64()
-		if err != nil {
-			txValue = 0
-		}
-		subTxValue, err := subTx.Value.Float64()
-		if err != nil {
-			subTxValue = 0
-		}
-		value := numbers.Float64toString(txValue + subTxValue)
-		tx.Value = json.Number(value)
-		mapTx[key] = tx
-	}
-	for _, tx := range mapTx {
-		txs = append(txs, tx)
-	}
-	return
+type Extracted struct {
+	Amount string
+	Asset  string
+	From   string
+	To     string
 }
 
-func (subTx *SubTx) toTx() Tx {
-	return Tx{
-		Hash:        subTx.Hash,
-		BlockHeight: subTx.Height,
-		Type:        TxTransfer,
-		FromAddr:    subTx.FromAddr,
-		ToAddr:      subTx.ToAddr,
-		Asset:       subTx.Asset,
-		Fee:         subTx.Fee,
-		Value:       subTx.Value,
-		HasChildren: 0,
+func (srcTx *DexTx) extractMultiTransfers(address string) (extracted []Extracted) {
+	for _, msg := range srcTx.MultisendTransfers {
+		var tr Extracted
+		tr.From = msg.Value.Inputs[0].Address // Assumed multisend transfer has one input, never seen multiple
+		for _, output := range msg.Value.Outputs {
+			if output.Address == address {
+				tr.Amount = output.Coins[0].Amount
+				tr.Asset = output.Coins[0].Denom
+				tr.To = output.Address
+
+				extracted = append(extracted, tr)
+			}
+			continue
+		}
 	}
+	return
 }
 
 func (tx *Tx) getFee() string {
@@ -266,13 +232,7 @@ func (tx *Tx) blockTimestamp() int64 {
 }
 
 func (tx *Tx) containAddress(address string) bool {
-	if len(address) == 0 {
-		return true
-	}
-	if tx.FromAddr == address {
-		return true
-	}
-	if tx.ToAddr == address {
+	if len(address) == 0 || tx.FromAddr == address || tx.ToAddr == address {
 		return true
 	}
 	return false
@@ -305,13 +265,21 @@ func (e *Error) Error() string {
 }
 
 // Add test
-func (tx *Tx) Direction(address string) blockatlas.Direction {
-	if tx.FromAddr == address && tx.ToAddr == address {
+func (srcTx *DexTx) Direction(address string) blockatlas.Direction {
+	if srcTx.FromAddr == address && srcTx.ToAddr == address {
 		return blockatlas.DirectionSelf
 	}
-	if tx.FromAddr == address && tx.ToAddr != address {
+	if srcTx.FromAddr == address && srcTx.ToAddr != address {
 		return blockatlas.DirectionOutgoing
 	}
 
 	return blockatlas.DirectionIncoming
+}
+
+func (srcTx *DexTx) QuantityTransferType() QuantityTransfer {
+	if srcTx.HasChildren == 1 {
+		return MultiTransfer
+	} else {
+		return SingleTransfer
+	}
 }

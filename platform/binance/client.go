@@ -70,7 +70,7 @@ func (c *Client) GetTokens() (*TokenList, error) {
 	return stp, err
 }
 
-func (c *Client) GetTransactionHash(hash string) (account *TxHash, err error) {
+func (c *Client) GetTransactionHash(hash string) (account *TxHashRPC, err error) {
 	query := url.Values{"hash": {hash}, "format": {"json"}}
 	err = c.Get(&account, "tx", query)
 	return account, err
