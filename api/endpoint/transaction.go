@@ -98,14 +98,14 @@ func GetTransactionsHistory(c *gin.Context, txAPI blockatlas.TxAPI, tokenTxAPI b
 // @Param xpub path string true "the xpub key" default(zpub6ruK9k6YGm8BRHWvTiQcrEPnFkuRDJhR7mPYzV2LDvjpLa5CuGgrhCYVZjMGcLcFqv9b2WvsFtY2Gb3xq8NVq8qhk9veozrA2W9QaWtihrC)
 // @Failure 500 {object} middleware.ApiError
 // @Router /v1/{coin}/xpub/{xpub} [get]
-func GetTransactionsByXPub(c *gin.Context, api blockatlas.TxByAddrAndXPubAPI) {
+func GetTransactionsByXpub(c *gin.Context, api blockatlas.TxByAddrAndXpubAPI) {
 	xPubKey := c.Param("xpub")
 	if xPubKey == "" {
 		c.JSON(http.StatusBadRequest, model.CreateErrorResponse(model.InvalidQuery, blockatlas.ErrInvalidKey))
 		return
 	}
 
-	txs, err := api.GetTxsByXPub(xPubKey)
+	txs, err := api.GetTxsByXpub(xPubKey)
 	if err != nil {
 		switch err {
 		case blockatlas.ErrInvalidKey:

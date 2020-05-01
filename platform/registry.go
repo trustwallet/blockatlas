@@ -17,8 +17,8 @@ var (
 	// TxByAddrAPIs contains handlers with address-based transactions service
 	TxByAddrAPIs map[string]blockatlas.TxAPI
 
-	// TxByAddrAndXPubAPIs contains handlers with Xaddress- and PUB-based transactions service
-	TxByAddrAndXPubAPIs map[string]blockatlas.TxByAddrAndXPubAPI
+	// TxByAddrAndXpubAPIs contains handlers with Xaddress- and PUB-based transactions service
+	TxByAddrAndXpubAPIs map[string]blockatlas.TxByAddrAndXpubAPI
 
 	// TokensAPIs contain platforms with token services
 	TokensAPIs map[uint]blockatlas.TokensAPI
@@ -56,7 +56,7 @@ func Init(platformHandle string) {
 	Platforms = make(map[string]blockatlas.Platform)
 	BlockAPIs = make(map[string]blockatlas.BlockAPI)
 	TxByAddrAPIs        = make(map[string]blockatlas.TxAPI)
-	TxByAddrAndXPubAPIs = make(map[string]blockatlas.TxByAddrAndXPubAPI)
+	TxByAddrAndXpubAPIs = make(map[string]blockatlas.TxByAddrAndXpubAPI)
 	TokensAPIs = make(map[uint]blockatlas.TokensAPI)
 	StakeAPIs = make(map[string]blockatlas.StakeAPI)
 
@@ -83,10 +83,10 @@ func Init(platformHandle string) {
 		if blockAPI, ok := platform.(blockatlas.BlockAPI); ok {
 			BlockAPIs[handle] = blockAPI
 		}
-		if txByAddrAndXPubAPI, ok := platform.(blockatlas.TxByAddrAndXPubAPI); ok {
-			TxByAddrAndXPubAPIs[handle] = txByAddrAndXPubAPI
+		if txByAddrAndXpubAPI, ok := platform.(blockatlas.TxByAddrAndXpubAPI); ok {
+			TxByAddrAndXpubAPIs[handle] = txByAddrAndXpubAPI
 		} else {
-			// ByAddrAndXPub prevents ByAddr API
+			// ByAddrAndXpub prevents ByAddr API
 			if txByAddrAPI, ok := platform.(blockatlas.TxAPI); ok {
 				TxByAddrAPIs[handle] = txByAddrAPI
 			}

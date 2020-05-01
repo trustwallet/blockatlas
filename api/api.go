@@ -9,8 +9,8 @@ func SetupPlatformAPI(router gin.IRouter) {
 	for _, api := range platform.TxByAddrAPIs {
 		RegisterTxByAddrAPI(router, api)
 	}
-	for _, api := range platform.TxByAddrAndXPubAPIs {
-		RegisterTxByAddrAndXPubAPI(router, api)
+	for _, api := range platform.TxByAddrAndXpubAPIs {
+		RegisterTxByAddrAndXpubAPI(router, api)
 	}
 	for _, api := range platform.TokensAPIs {
 		RegisterTokensAPI(router, api)

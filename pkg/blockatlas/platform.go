@@ -29,10 +29,10 @@ type (
 		GetTokenTxsByAddress(address, token string) (TxPage, error)
 	}
 
-	// TxByAddrAndXPubAPI provides transaction lookup based on address and XPUB (Bitcoin-style)
-	TxByAddrAndXPubAPI interface {
+	// TxByAddrAndXpubAPI provides transaction lookup based on address and XPUB (Bitcoin-style)
+	TxByAddrAndXpubAPI interface {
 		TxAPI
-		GetTxsByXPub(xpub string) (TxPage, error)
+		GetTxsByXpub(xpub string) (TxPage, error)
 	}
 
 	// TokensAPI provides token lookups

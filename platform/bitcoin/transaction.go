@@ -19,8 +19,8 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 	return txPage, nil
 }
 
-func (p *Platform) GetTxsByXPub(xpub string) (blockatlas.TxPage, error) {
-	txs, err := p.getTxsByXPub(xpub)
+func (p *Platform) GetTxsByXpub(xpub string) (blockatlas.TxPage, error) {
+	txs, err := p.getTxsByXpub(xpub)
 	if err != nil {
 		return nil, err
 	}
@@ -29,7 +29,7 @@ func (p *Platform) GetTxsByXPub(xpub string) (blockatlas.TxPage, error) {
 	return txPage, nil
 }
 
-func (p *Platform) getTxsByXPub(xpub string) ([]blockatlas.Tx, error) {
+func (p *Platform) getTxsByXpub(xpub string) ([]blockatlas.Tx, error) {
 	sourceTxs, err := p.client.GetTransactionsByXpub(xpub)
 
 	if err != nil {
