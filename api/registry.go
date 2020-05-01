@@ -103,8 +103,10 @@ func RegisterCustomAPI(root gin.IRouter, api blockatlas.Platform) {
 	}
 	handle := api.Coin().Handle
 
-	customRouter := root.Group("/v1/" + handle)
-	customAPI.RegisterRoutes(customRouter)
+	customRouterV1 := root.Group("/v1/" + handle)
+	customRouterV2 := root.Group("/v2/" + handle)
+	customAPI.RegisterRoutes(customRouterV1)
+	customAPI.RegisterRoutes(customRouterV2)
 }
 
 func RegisterDomainAPI(root gin.IRouter) {
