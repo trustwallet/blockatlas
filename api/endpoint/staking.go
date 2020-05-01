@@ -35,7 +35,7 @@ type (
 // @Accept json
 // @Produce json
 // @Tags Staking
-// @Param delegations body api.AddressesRequest true "Validators addresses and coins"
+// @Param delegations body AddressesRequest true "Validators addresses and coins"
 // @Success 200 {object} blockatlas.DelegationsBatchPage
 // @Router /v2/staking/delegations [post]
 func GetStakeDelegationsWithAllInfoForBatch(c *gin.Context, apis map[string]blockatlas.StakeAPI) {
@@ -70,7 +70,7 @@ func GetStakeDelegationsWithAllInfoForBatch(c *gin.Context, apis map[string]bloc
 // @Accept json
 // @Produce json
 // @Tags Staking
-// @Param delegations body api.AddressesRequest true "Validators addresses and coins"
+// @Param delegations body AddressesRequest true "Validators addresses and coins"
 // @Success 200 {object} blockatlas.DelegationsBatchPage
 // @Router /v2/staking/list [post]
 func GetStakeInfoForBatch(c *gin.Context, apis map[string]blockatlas.StakeAPI) {
@@ -104,7 +104,7 @@ func GetStakeInfoForBatch(c *gin.Context, apis map[string]blockatlas.StakeAPI) {
 // @Tags Staking
 // @Param coin path string true "the coin name" default(cosmos)
 // @Success 200 {object} blockatlas.DocsResponse
-// @Failure 500 {object} middleware.ApiError
+// @Failure 500 {object} model.ErrorResponse
 // @Router /v2/{coin}/staking/validators [get]
 func GetValidators(c *gin.Context, api blockatlas.StakeAPI) {
 	results, err := services.GetActiveValidators(api)
@@ -124,7 +124,7 @@ func GetValidators(c *gin.Context, api blockatlas.StakeAPI) {
 // @Param coin path string true "the coin name" default(tron)
 // @Param address path string true "the query address" default(TPJYCz8ppZNyvw7pTwmjajcx4Kk1MmEUhD)
 // @Success 200 {object} blockatlas.DelegationResponse
-// @Failure 500 {object} middleware.ApiError
+// @Failure 500 {object} model.ErrorResponse
 // @Router /v2/{coin}/staking/delegations/{address} [get]
 func GetStakingDelegationsForSpecificCoin(c *gin.Context, api blockatlas.StakeAPI) {
 	result, err := getDelegationResponse(api, c.Param("address"))
