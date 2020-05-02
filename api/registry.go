@@ -106,7 +106,11 @@ func RegisterCustomAPI(root gin.IRouter, api blockatlas.Platform) {
 	customRouterV1 := root.Group("/v1/" + handle)
 	customRouterV2 := root.Group("/v2/" + handle)
 	customAPI.RegisterRoutes(customRouterV1)
-	customAPI.RegisterRoutes(customRouterV2)
+
+	if isForUtxoAPI(handle) {
+		customAPI.RegisterRoutes(customRouterV2)
+	}
+
 }
 
 func RegisterDomainAPI(root gin.IRouter) {
@@ -130,6 +134,28 @@ func IsForCustomAPI(handle string) bool {
 		coin.Tomochain().Handle,
 		coin.Ethereum().Handle,
 		coin.Bitcoin().Handle,
+		coin.Litecoin().Handle,
+		coin.Bitcoincash().Handle,
+		coin.Zcash().Handle,
+		coin.Zcoin().Handle,
+		coin.Viacoin().Handle,
+		coin.Ravencoin().Handle,
+		coin.Groestlcoin().Handle,
+		coin.Zelcash().Handle,
+		coin.Decred().Handle,
+		coin.Digibyte().Handle,
+		coin.Dash().Handle,
+		coin.Doge().Handle,
+		coin.Qtum().Handle:
+		return true
+	default:
+		return false
+	}
+}
+
+func isForUtxoAPI(handle string) bool {
+	switch handle {
+	case coin.Bitcoin().Handle,
 		coin.Litecoin().Handle,
 		coin.Bitcoincash().Handle,
 		coin.Zcash().Handle,
