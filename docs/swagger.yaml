@@ -402,35 +402,6 @@ paths:
       summary: Get Tokens
       tags:
       - Transactions
-  /v2/{coin}/xpub/{xpub}:
-    get:
-      consumes:
-      - application/json
-      description: Get transactions from xpub address
-      operationId: xpub
-      parameters:
-      - default: bitcoin
-        description: the coin name
-        in: path
-        name: coin
-        required: true
-        type: string
-      - default: zpub6ruK9k6YGm8BRHWvTiQcrEPnFkuRDJhR7mPYzV2LDvjpLa5CuGgrhCYVZjMGcLcFqv9b2WvsFtY2Gb3xq8NVq8qhk9veozrA2W9QaWtihrC
-        description: the xpub address
-        in: path
-        name: xpub
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/blockatlas.TxPage'
-      summary: Get xpub transactions
-      tags:
-      - Transactions
   /v2/ns/lookup:
     get:
       description: Lookup ENS/ZNS to find registered addresses for multiple coins
