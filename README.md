@@ -179,7 +179,9 @@ ATLAS_NIMIQ_API=http://localhost:8648
 ## Tests
 
 ### Unit tests
-
+```
+make test
+```
 ### Mocked tests
 
 End-to-end tests with calls to external APIs has great value, but is not suitable for regular CI verification, as any external reasons could break the tests.
