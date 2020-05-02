@@ -25,6 +25,11 @@ func (p *Platform) RegisterRoutes(router gin.IRouter) {
 	router.GET("/xpub/:key", func(c *gin.Context) {
 		p.handleXpubRoute(c)
 	})
+
+	router.GET("/transactions/xpub/:key", func(c *gin.Context) {
+		p.handleXpubRoute(c)
+	})
+
 	router.GET("/address/:address", func(c *gin.Context) {
 		p.handleAddressRoute(c)
 	})

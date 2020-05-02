@@ -402,12 +402,45 @@ paths:
       summary: Get Tokens
       tags:
       - Transactions
-  /v2/{coin}/xpub/{xpub}:
+  /v2/{coin}/transactions/{address}:
+    get:
+      consumes:
+      - application/json
+      description: Get transactions from the address
+      operationId: tx_v2
+      parameters:
+      - default: tezos
+        description: the coin name
+        in: path
+        name: coin
+        required: true
+        type: string
+      - default: tz1WCd2jm4uSt4vntk4vSuUWoZQGhLcDuR9q
+        description: the query address
+        in: path
+        name: address
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/blockatlas.TxPage'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+      summary: Get Transactions
+      tags:
+      - Transactions
+  /v2/{coin}/transactions/xpub/{xpub}:
     get:
       consumes:
       - application/json
       description: Get transactions from xpub address
-      operationId: xpub
+      operationId: xpubV2
       parameters:
       - default: bitcoin
         description: the coin name

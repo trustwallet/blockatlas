@@ -417,7 +417,7 @@
                 }
             }
         },
-        "/v2/{coin}/xpub/{xpub}": {
+        "/v2/{coin}/transactions/xpub/{xpub}": {
             "get": {
                 "description": "Get transactions from xpub address",
                 "consumes": [
@@ -430,7 +430,7 @@
                     "Transactions"
                 ],
                 "summary": "Get xpub transactions",
-                "operationId": "xpub",
+                "operationId": "xpubV2",
                 "parameters": [
                     {
                         "type": "string",
@@ -454,6 +454,54 @@
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/blockatlas.TxPage"
+                        }
+                    }
+                }
+            }
+        },
+        "/v2/{coin}/transactions/{address}": {
+            "get": {
+                "description": "Get transactions from the address",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Transactions"
+                ],
+                "summary": "Get Transactions",
+                "operationId": "tx_v2",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "tezos",
+                        "description": "the coin name",
+                        "name": "coin",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "default": "tz1WCd2jm4uSt4vntk4vSuUWoZQGhLcDuR9q",
+                        "description": "the query address",
+                        "name": "address",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/blockatlas.TxPage"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.ErrorResponse"
                         }
                     }
                 }
