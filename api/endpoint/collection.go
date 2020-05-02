@@ -18,7 +18,7 @@ import (
 // @Param owner path string true "the query address" default(0x0875BCab22dE3d02402bc38aEe4104e1239374a7)
 // @Param collection_id path string true "the query collection" default(0x06012c8cf97bead5deae237070f9587f8e7a266d)
 // @Success 200 {object} blockatlas.CollectionPage
-// @Failure 500 {object} middleware.ApiError
+// @Failure 500 {object} model.ErrorResponse
 // @Router /v4/{coin}/collections/{owner}/collection/{collection_id} [get]
 func GetCollectiblesForSpecificCollectionAndOwner(c *gin.Context, api blockatlas.CollectionAPI) {
 	collectibles, err := api.GetCollectibles(c.Param("owner"), c.Param("collection_id"))
