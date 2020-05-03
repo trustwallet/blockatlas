@@ -71,8 +71,8 @@ func (c *Client) GetTokens() (*TokenList, error) {
 }
 
 func (c *Client) GetTransactionHash(hash string) (account *TxHashRPC, err error) {
-	query := url.Values{"hash": {hash}, "format": {"json"}}
-	err = c.Get(&account, "tx", query)
+	path := fmt.Sprintf("v1/tx/%s", hash)
+	err = c.Get(&account, path, url.Values{"format": {"json"}})
 	return account, err
 }
 
