@@ -64,4 +64,10 @@ func TestFloat64toString(t *testing.T) {
 	assert.Equal(t, Float64toString(1), "1")
 	assert.Equal(t, Float64toString(1.1), "1.1")
 	assert.Equal(t, Float64toString(1.015), "1.015")
+	assert.Equal(t, Float64toString(2800.00000000), "2800")
+}
+
+func TestStringNumberToFloat64(t *testing.T) {
+	assert.Equal(t, 0.2997, StringNumberToFloat64("0.29970000"))
+	assert.Equal(t, 0.000375, StringNumberToFloat64("0.00037500"))
 }

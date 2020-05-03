@@ -32,8 +32,19 @@ func Float64toPrecision(num float64, precision int) float64 {
 	return float64(Round(num*output)) / output
 }
 
+// 0.1010 => "0.101"
 func Float64toString(num float64) string {
 	return strconv.FormatFloat(num, 'f', -1, 64)
+}
+
+// "0.00037500" => 0.000375
+func StringNumberToFloat64(str string) float64 {
+	value, err := strconv.ParseFloat(str, 64)
+	if err != nil {
+		return 0
+	} else {
+		return value
+	}
 }
 
 func FromDecimal(dec string) string {
