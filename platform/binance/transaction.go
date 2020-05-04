@@ -1,7 +1,6 @@
 package binance
 
 import (
-	"encoding/json"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
@@ -37,7 +36,6 @@ func (p *Platform) GetTokenTxsByAddress(address, token string) (blockatlas.TxPag
 	return normTxs, nil
 }
 
-// getTxChildChan get transaction hash for multisend transfer
 func (p *Platform) getTxChildChan(srcTxs []DexTx) ([]DexTx, error) {
 	var (
 		wg      sync.WaitGroup
@@ -51,18 +49,18 @@ func (p *Platform) getTxChildChan(srcTxs []DexTx) ([]DexTx, error) {
 				defer wg.Done()
 				defer close(out)
 
-				txHash, err := p.rpcClient.GetTransactionHash(srcTx.Hash)
+				txHash, err := p.rpcClient.GetTransactionHash(srcTx.TxHash)
 				if err == nil {
 					out <- *txHash
 					return
-					logger.Error("GetTransactionHash", err, logger.Params{"hash": srcTx.Hash})
+					logger.Error("GetTransactionHash", err, logger.Params{"hash": srcTx.TxHash})
 				}
 			}(srcT, outChan, &wg)
 
 			select {
 			case hash := <-outChan:
-				if len(hash.Tx.V.Messages) > 0 {
-					srcTxs[i].MultisendTransfers = hash.Tx.V.Messages[0]
+				if len(hash.Tx.Value.Msg) > 0 {
+					srcTxs[i].MultisendTransfers = extractMultiTransfers(hash.Tx.Value)
 				}
 			}
 		}
@@ -73,24 +71,14 @@ func (p *Platform) getTxChildChan(srcTxs []DexTx) ([]DexTx, error) {
 }
 
 // NormalizeTx converts a Binance transaction into the generic model
-func NormalizeTx(srcTx DexTx, address, token string) (blockatlas.TxPage, bool) {
-	txBase := blockatlas.Tx{
-		ID:     srcTx.Hash,
-		Coin:   coin.BNB,
-		Fee:    blockatlas.Amount(srcTx.getDexFee()),
-		Date:   srcTx.Timestamp / 1000,
-		Block:  srcTx.BlockHeight,
-		Status: blockatlas.StatusCompleted, // TODO status
-		Memo:   srcTx.Memo,
-	}
-
-	switch srcTx.Type {
+func NormalizeTx(srcTx DexTx, address, token string) ([]blockatlas.Tx, bool) {
+	switch srcTx.TxType {
 	case TxTransfer:
 		switch srcTx.QuantityTransferType() {
 		case SingleTransfer:
-			return normalizeSingleTransfer(txBase, srcTx, address, token)
+			return normalizeSingleTransfer(srcTx, address, token)
 		case MultiTransfer:
-			return normalizeMultiTransfer(txBase, srcTx, address, token)
+			return normalizeMultiTransfer(srcTx, address, token)
 		default:
 			return blockatlas.TxPage{}, false
 		}
@@ -101,33 +89,33 @@ func NormalizeTx(srcTx DexTx, address, token string) (blockatlas.TxPage, bool) {
 	return blockatlas.TxPage{}, false
 }
 
-func normalizeSingleTransfer(tx blockatlas.Tx, srcTx DexTx, address, token string) (blockatlas.TxPage, bool) {
-	tx.From = srcTx.FromAddr
-	tx.To = srcTx.ToAddr
-
+func normalizeSingleTransfer(srcTx DexTx, address, token string) (blockatlas.TxPage, bool) {
+	tx := getBase(&srcTx)
+	tx.Direction = srcTx.Direction(address)
 	bnbCoin := coin.Coins[coin.BNB]
-	value := numbers.DecimalExp(string(srcTx.Value), 8)
-	if srcTx.Asset == bnbCoin.Symbol {
-		tx.Direction = srcTx.Direction(address)
-		// Native coin transfer condition e.g: BNB
+
+	// Native coin transfer condition e.g: BNB
+	if srcTx.TxAsset == bnbCoin.Symbol {
+		tx.Type = blockatlas.TxTransfer
 		tx.Meta = blockatlas.Transfer{
 			Decimals: bnbCoin.Decimals,
 			Symbol:   bnbCoin.Symbol,
-			Value:    blockatlas.Amount(value),
+			Value:    srcTx.getDexValue(),
 		}
 		return blockatlas.TxPage{tx}, true
 	}
 
 	// Native token transfer condition e.g: TWT-8C2
-	if srcTx.Asset == token {
+	if srcTx.TxAsset == token {
+		tx.Type = blockatlas.TxNativeTokenTransfer
 		tx.Meta = blockatlas.NativeTokenTransfer{
 			Decimals: bnbCoin.Decimals,
 			From:     srcTx.FromAddr,
 			Name:     "", // TODO add name
-			Symbol:   TokenSymbol(srcTx.Asset),
+			Symbol:   TokenSymbol(srcTx.TxAsset),
 			To:       srcTx.ToAddr,
-			TokenID:  srcTx.Asset,
-			Value:    blockatlas.Amount(value),
+			TokenID:  srcTx.TxAsset,
+			Value:    srcTx.getDexValue(),
 		}
 		return blockatlas.TxPage{tx}, true
 	}
@@ -135,26 +123,42 @@ func normalizeSingleTransfer(tx blockatlas.Tx, srcTx DexTx, address, token strin
 	return blockatlas.TxPage{}, false
 }
 
-func normalizeMultiTransfer(tx blockatlas.Tx, srcTx DexTx, address, token string) (page []blockatlas.Tx, ok bool) {
-	var multisends = srcTx.extractMultiTransfers(address)
-
-	for _, m := range multisends {
-		srcTx.FromAddr = m.From
-		srcTx.ToAddr = m.To
-		srcTx.Asset = m.Asset
-		val, err := strconv.ParseFloat(m.Amount, 64)
-		if err != nil {
-			val = 0
+func normalizeMultiTransfer(srcTx DexTx, address, token string) ([]blockatlas.Tx, bool) {
+	var txs blockatlas.TxPage
+	for _, m := range srcTx.MultisendTransfers {
+		if m.From == address || m.To == address {
+			srcTx.FromAddr = m.From
+			srcTx.ToAddr = m.To
+			srcTx.TxAsset = m.Asset
+			value, err := strconv.ParseFloat(numbers.ToDecimal(m.Amount, 8), 64)
+			if err != nil {
+				value = 0
+			}
+			srcTx.Value = value
+			single, ok := normalizeSingleTransfer(srcTx, address, token)
+			if !ok {
+				continue
+			}
+			txs = append(txs, single...)
 		}
-		srcTx.Value = val
-		single, ok := normalizeSingleTransfer(tx, srcTx, address, token)
-		if !ok {
-			continue
-		}
-		page = append(page, single)
 	}
+	return txs, true
+}
 
-	return
+func getBase(srcTx *DexTx) blockatlas.Tx {
+	return blockatlas.Tx{
+		ID:       srcTx.TxHash,
+		Coin:     coin.BNB,
+		From:     srcTx.FromAddr,
+		Fee:      srcTx.getDexFee(),
+		Date:     srcTx.Timestamp / 1000,
+		Block:    srcTx.BlockHeight,
+		Status:   srcTx.getStatus(),
+		Memo:     srcTx.Memo,
+		Error:    "",
+		Sequence: 0,
+		To:       srcTx.ToAddr,
+	}
 }
 
 // Extract BEP2 token symbol from asset name e.g: TWT-8C2 => TWT

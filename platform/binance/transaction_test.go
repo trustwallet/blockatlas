@@ -13,63 +13,74 @@ const (
 )
 
 const (
-	bnbTransferResponse = `
+	bnbSingleExplorerTransferResponse = `
         {
             "txHash": "73176E5BFA5856AEAB9BAB1F3030E6F2B2F274324052E84562BE9BE70E1AAEE7",
             "blockHeight": 74821444,
             "txType": "TRANSFER",
-            "timeStamp": "2020-03-16T05:34:38.947Z",
+            "timeStamp": 1588086370574,
             "fromAddr": "bnb13a7gyv5zl57c0rzeu0henx6d0tzspvrrakxxtv",
             "toAddr": "bnb1t6tnm2rckd3pfptngj6u8466v3ah4fcdu78n5y",
-            "value": "10.00000000",
+            "value": 10.00000000,
             "txAsset": "BNB",
-            "txFee": "0.00037500",
-            "proposalId": null,
+            "txFee": 0.00037500,
             "txAge": 1868055,
-            "orderId": null,
             "code": 0,
-            "data": null,
+			"log": "Msg 0: ",
             "confirmBlocks": 0,
-            "memo": "bnb-transfer",
-            "source": 1,
-            "sequence": 158
+			"memo": "bnb-transfer",
+			"source": 1,
+            "hasChildren": 0
         }`
 
-	bep2TransferResponse = `
+	bep2SingleExplorerTransferResponse = `
 		{
             "txHash": "73176E5BFA5856AEAB9BAB1F3030E6F2B2F274324052E84562BE9BE70E1AAEE7",
             "blockHeight": 74821444,
             "txType": "TRANSFER",
-            "timeStamp": "2020-03-16T05:34:38.947Z",
+            "timeStamp": 1588086357686,
             "fromAddr": "bnb13a7gyv5zl57c0rzeu0henx6d0tzspvrrakxxtv",
             "toAddr": "bnb1t6tnm2rckd3pfptngj6u8466v3ah4fcdu78n5y",
-            "value": "50.00000000",
+            "value": 2800.00000000,
             "txAsset": "TWT-8C2",
-            "txFee": "0.00037500",
-            "proposalId": null,
+            "txFee": 0.00037500,
             "txAge": 276251,
-            "orderId": null,
             "code": 0,
-            "data": null,
+            "log": "Msg 0: ",
             "confirmBlocks": 0,
             "memo": "bep2-transfer",
             "source": 0,
-            "sequence": 158
+            "hasChildren": 0
+        }`
+	bep2MultipleExplorerTransferResponse = `
+		        {
+            "txHash": "FAD8C1C5E450BE5E0913B12007AAEACC307F8CFFAFFB0844A9F83155E1235C25",
+            "blockHeight": 80167666,
+            "txType": "TRANSFER",
+            "timeStamp": 1586464452922,
+            "txFee": 0.29970000,
+            "txAge": 2068619,
+            "code": 0,
+            "log": "Msg 0: ",
+            "confirmBlocks": 0,
+            "memo": "",
+            "source": 0,
+            "hasChildren": 1
         }`
 )
 
 var (
-	expectBNBTransfer = blockatlas.Tx{
+	expectBnbSingleExplorerTransferResponse = blockatlas.Tx{
 		ID:        "73176E5BFA5856AEAB9BAB1F3030E6F2B2F274324052E84562BE9BE70E1AAEE7",
 		Coin:      714,
 		From:      addr1,
 		To:        addr2,
 		Fee:       "37500",
-		Date:      1584336878,
+		Date:      1588086370,
 		Block:     74821444,
 		Status:    blockatlas.StatusCompleted,
 		Error:     "",
-		Sequence:  158,
+		Sequence:  0,
 		Type:      blockatlas.TxTransfer,
 		Direction: blockatlas.DirectionOutgoing,
 		Memo:      "bnb-transfer",
@@ -86,11 +97,11 @@ var (
 		From:      addr1,
 		To:        addr2,
 		Fee:       "37500",
-		Date:      1584336878,
+		Date:      1588086357,
 		Block:     74821444,
 		Status:    blockatlas.StatusCompleted,
 		Error:     "",
-		Sequence:  158,
+		Sequence:  0,
 		Type:      blockatlas.TxNativeTokenTransfer,
 		Direction: blockatlas.DirectionIncoming,
 		Memo:      "bep2-transfer",
@@ -101,30 +112,30 @@ var (
 			Symbol:   "TWT",
 			To:       addr2,
 			TokenID:  "TWT-8C2",
-			Value:    "5000000000",
+			Value:    "280000000000",
 		},
 	}
 )
 
 func TestNormalizeTxs(t *testing.T) {
-	type testTxs struct {
-		name        string
-		apiResponse string
-		expected    []blockatlas.Tx
-		address     string
+	type test struct {
+		name, address, token, dexTxResponse string
+		expected                            []blockatlas.Tx
 	}
-	testTxsList := []testTxs{
-		{name: "BNB transfer", apiResponse: bnbTransferResponse, expected: []blockatlas.Tx{expectBNBTransfer}, address: addr1},
-		{name: "BEP2 transfer", apiResponse: bep2TransferResponse, expected: []blockatlas.Tx{expectBEP2Transfer}, address: addr2},
+	tests := []test{
+		{name: "BNB single transfer", dexTxResponse: bnbSingleExplorerTransferResponse, expected: []blockatlas.Tx{expectBnbSingleExplorerTransferResponse}, address: addr1, token: ""},
+		{name: "BEP2 single transfer", dexTxResponse: bep2SingleExplorerTransferResponse, expected: []blockatlas.Tx{expectBEP2Transfer}, address: addr2, token: "TWT-8C2"},
+		//{name: "BEP2 multiple transfer", dexTxResponse: bep2MultipleExplorerTransferResponse, expected: []blockatlas.Tx{expectBEP2Transfer}, address: addr2, token: "TWT-8C2"},
 	}
 
-	for _, testTxsInstance := range testTxsList {
-		t.Run(testTxsInstance.name, func(t *testing.T) {
-			var srcTxs []Tx
-			err := json.Unmarshal([]byte(convertJsonToArray(testTxsInstance.apiResponse)), &srcTxs)
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var srcTx DexTx
+			err := json.Unmarshal([]byte(tt.dexTxResponse), &srcTx)
 			assert.Nil(t, err)
-			txs := NormalizeTxs(srcTxs, testTxsInstance.address)
-			assert.Equal(t, testTxsInstance.expected, txs, "tx don't equal")
+			actual, ok := NormalizeTx(srcTx, tt.address, tt.token)
+			assert.Equal(t, true, ok)
+			assert.Equal(t, tt.expected, actual, "tx don't equal")
 		})
 	}
 }
@@ -132,8 +143,4 @@ func TestNormalizeTxs(t *testing.T) {
 func TestTokenSymbol(t *testing.T) {
 	assert.Equal(t, "UGAS", TokenSymbol("UGAS"))
 	assert.Equal(t, "UGAS", TokenSymbol("UGAS-B0C"))
-}
-
-func convertJsonToArray(jsonString string) string {
-	return "[" + jsonString + "]"
 }
