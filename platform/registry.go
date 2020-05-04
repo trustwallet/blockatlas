@@ -14,12 +14,6 @@ var (
 	// BlockAPIs contain platforms with block services
 	BlockAPIs map[string]blockatlas.BlockAPI
 
-	// TxByAddrAPIs contains handlers with address-based transactions service
-	TxByAddrAPIs map[string]blockatlas.TxAPI
-
-	// TxByAddrAndXpubAPIs contains handlers with Xaddress- and PUB-based transactions service
-	TxByAddrAndXpubAPIs map[string]blockatlas.TxByAddrAndXpubAPI
-
 	// TokensAPIs contain platforms with token services
 	TokensAPIs map[uint]blockatlas.TokensAPI
 
@@ -55,8 +49,6 @@ func Init(platformHandle string) {
 
 	Platforms = make(map[string]blockatlas.Platform)
 	BlockAPIs = make(map[string]blockatlas.BlockAPI)
-	TxByAddrAPIs        = make(map[string]blockatlas.TxAPI)
-	TxByAddrAndXpubAPIs = make(map[string]blockatlas.TxByAddrAndXpubAPI)
 	TokensAPIs = make(map[uint]blockatlas.TokensAPI)
 	StakeAPIs = make(map[string]blockatlas.StakeAPI)
 
@@ -82,14 +74,6 @@ func Init(platformHandle string) {
 		Platforms[handle] = platform
 		if blockAPI, ok := platform.(blockatlas.BlockAPI); ok {
 			BlockAPIs[handle] = blockAPI
-		}
-		if txByAddrAndXpubAPI, ok := platform.(blockatlas.TxByAddrAndXpubAPI); ok {
-			TxByAddrAndXpubAPIs[handle] = txByAddrAndXpubAPI
-		} else {
-			// ByAddrAndXpub prevents ByAddr API
-			if txByAddrAPI, ok := platform.(blockatlas.TxAPI); ok {
-				TxByAddrAPIs[handle] = txByAddrAPI
-			}
 		}
 		if tokenAPI, ok := platform.(blockatlas.TokensAPI); ok {
 			TokensAPIs[platform.Coin().ID] = tokenAPI
