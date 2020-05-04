@@ -10,9 +10,5 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 }
 
 func (p *Platform) GetTokenTxsByAddress(address string, token string) (blockatlas.TxPage, error) {
-	page, err := p.client.GetTransactions(address, p.CoinIndex)
-	if err != nil {
-		return nil, err
-	}
-	return page, err
+	return p.client.GetTransactions(address, p.CoinIndex)
 }

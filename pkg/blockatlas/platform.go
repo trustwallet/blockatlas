@@ -64,9 +64,11 @@ type (
 		Platform
 		Lookup(coins []uint64, name string) ([]Resolved, error)
 	}
-)
 
-type Platforms map[string]Platform
+	Platforms map[string]Platform
+
+	CollectionsAPIs map[uint]CollectionsAPI
+)
 
 func (ps Platforms) GetPlatformList() []Platform {
 	platforms := make([]Platform, 0)

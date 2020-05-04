@@ -109,8 +109,8 @@ func getAllHandlers() blockatlas.Platforms {
 	}
 }
 
-func getCollectionsHandlers() map[uint]blockatlas.CollectionsAPI {
-	return map[uint]blockatlas.CollectionsAPI {
+func getCollectionsHandlers() blockatlas.CollectionsAPIs {
+	return blockatlas.CollectionsAPIs {
 		coin.ETH: ethereum.InitWitCollection(coin.ETH, GetApiVar(coin.ETH), GetRpcVar(coin.ETH), GetVar("ethereum.blockbook_api"), GetVar("ethereum.collections_api"), GetVar("ethereum.collections_api_key")),
 	}
 }

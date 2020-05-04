@@ -27,7 +27,7 @@ var (
 	StakeAPIs map[string]blockatlas.StakeAPI
 
 	// CollectionsAPIs contain platforms which collections services
-	CollectionsAPIs map[uint]blockatlas.CollectionsAPI
+	CollectionsAPIs blockatlas.CollectionsAPIs
 
 	// NamingAPIs contain platforms which support naming services
 	NamingAPIs map[uint]blockatlas.NamingServiceAPI
