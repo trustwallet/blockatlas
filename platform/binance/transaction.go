@@ -39,7 +39,7 @@ func (p *Platform) GetTokenTxsByAddress(address, token string) (blockatlas.TxPag
 func (p *Platform) getTxChildChan(srcTxs []DexTx) ([]DexTx, error) {
 	var (
 		wg      sync.WaitGroup
-		outChan = make(chan TxHashRPC)
+		hashChan = make(chan TxHashRPC)
 	)
 
 	for i, srcT := range srcTxs {
@@ -53,12 +53,11 @@ func (p *Platform) getTxChildChan(srcTxs []DexTx) ([]DexTx, error) {
 				if err == nil {
 					out <- *txHash
 					return
-					logger.Error("GetTransactionHash", err, logger.Params{"hash": srcTx.TxHash})
 				}
-			}(srcT, outChan, &wg)
+				logger.Error("GetTransactionHash", err, logger.Params{"hash": srcTx.TxHash})
+			}(srcT, hashChan, &wg)
 
-			select {
-			case hash := <-outChan:
+			for hash := range hashChan {
 				if len(hash.Tx.Value.Msg) > 0 {
 					srcTxs[i].MultisendTransfers = extractMultiTransfers(hash.Tx.Value)
 				}
@@ -85,8 +84,6 @@ func NormalizeTx(srcTx DexTx, address, token string) ([]blockatlas.Tx, bool) {
 	default:
 		return blockatlas.TxPage{}, false
 	}
-
-	return blockatlas.TxPage{}, false
 }
 
 func normalizeSingleTransfer(srcTx DexTx, address, token string) (blockatlas.TxPage, bool) {

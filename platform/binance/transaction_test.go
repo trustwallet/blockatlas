@@ -53,24 +53,32 @@ const (
             "hasChildren": 0
         }`
 	bep2MultipleExplorerTransferResponse = `
-		        {
-            "txHash": "FAD8C1C5E450BE5E0913B12007AAEACC307F8CFFAFFB0844A9F83155E1235C25",
-            "blockHeight": 80167666,
-            "txType": "TRANSFER",
-            "timeStamp": 1586464452922,
-            "txFee": 0.29970000,
-            "txAge": 2068619,
-            "code": 0,
-            "log": "Msg 0: ",
-            "confirmBlocks": 0,
-            "memo": "",
-            "source": 0,
-            "hasChildren": 1
-        }`
+		{
+  			"txHash": "73176E5BFA5856AEAB9BAB1F3030E6F2B2F274324052E84562BE9BE70E1AAEE7",
+  			"blockHeight": 74821444,
+  			"txType": "TRANSFER",
+  			"timeStamp": 1588086357686,
+  			"txFee": 0.00037500,
+  			"txAge": 2068619,
+  			"code": 0,
+  			"log": "Msg 0: ",
+  			"confirmBlocks": 0,
+ 			"memo": "bep2-transfer",
+  			"source": 0,
+  			"hasChildren": 1,
+  			"subTxsDto": [
+   			 {
+      			"amount": "280000000000",
+      			"asset": "TWT-8C2",
+      			"from": "bnb13a7gyv5zl57c0rzeu0henx6d0tzspvrrakxxtv",
+      			"to": "bnb1t6tnm2rckd3pfptngj6u8466v3ah4fcdu78n5y"
+  			 }
+  			 ]
+		}`
 )
 
 var (
-	expectBnbSingleExplorerTransferResponse = blockatlas.Tx{
+	expectBnbSingleExplorerTransfer = blockatlas.Tx{
 		ID:        "73176E5BFA5856AEAB9BAB1F3030E6F2B2F274324052E84562BE9BE70E1AAEE7",
 		Coin:      714,
 		From:      addr1,
@@ -91,7 +99,7 @@ var (
 		},
 	}
 
-	expectBEP2Transfer = blockatlas.Tx{
+	expectBEP2SingleExplorerTransfer = blockatlas.Tx{
 		ID:        "73176E5BFA5856AEAB9BAB1F3030E6F2B2F274324052E84562BE9BE70E1AAEE7",
 		Coin:      714,
 		From:      addr1,
@@ -123,9 +131,9 @@ func TestNormalizeTxs(t *testing.T) {
 		expected                            []blockatlas.Tx
 	}
 	tests := []test{
-		{name: "BNB single transfer", dexTxResponse: bnbSingleExplorerTransferResponse, expected: []blockatlas.Tx{expectBnbSingleExplorerTransferResponse}, address: addr1, token: ""},
-		{name: "BEP2 single transfer", dexTxResponse: bep2SingleExplorerTransferResponse, expected: []blockatlas.Tx{expectBEP2Transfer}, address: addr2, token: "TWT-8C2"},
-		//{name: "BEP2 multiple transfer", dexTxResponse: bep2MultipleExplorerTransferResponse, expected: []blockatlas.Tx{expectBEP2Transfer}, address: addr2, token: "TWT-8C2"},
+		{name: "BNB single transfer", dexTxResponse: bnbSingleExplorerTransferResponse, expected: []blockatlas.Tx{expectBnbSingleExplorerTransfer}, address: addr1, token: ""},
+		{name: "BEP2 single transfer", dexTxResponse: bep2SingleExplorerTransferResponse, expected: []blockatlas.Tx{expectBEP2SingleExplorerTransfer}, address: addr2, token: "TWT-8C2"},
+		{name: "BEP2 multiple transfer", dexTxResponse: bep2MultipleExplorerTransferResponse, expected: []blockatlas.Tx{expectBEP2SingleExplorerTransfer}, address: addr2, token: "TWT-8C2"},
 	}
 
 	for _, tt := range tests {

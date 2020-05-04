@@ -123,11 +123,7 @@ type DexTx struct {
 }
 
 type TxHashRPC struct {
-	//Code   int      `json:"code"`
 	Hash string `json:"hash"`
-	//Height string   `json:"height"`
-	//Log    string   `json:"log"`
-	//Ok     bool     `json:"ok"`
 	Tx TxHashTx `json:"tx"`
 }
 
@@ -161,7 +157,10 @@ type Output struct {
 }
 
 type multiTransfer struct {
-	Amount, Asset, From, To string
+	Amount string `json:"amount"`
+	Asset  string `json:"asset"`
+	From   string `json:"from"`
+	To     string `json:"to"`
 }
 
 func extractMultiTransfers(messages Value) (extracted []multiTransfer) {

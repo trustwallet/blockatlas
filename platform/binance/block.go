@@ -72,13 +72,13 @@ func normalizeBlockSubTx(t *TxV2) DexTx {
 
 	var multisend []multiTransfer
 	for _, st := range t.SubTransactions {
-		v := multiTransfer{
-			Amount: numbers.ToDecimal(st.Value, 8),
+		m := multiTransfer{
+			Amount: numbers.Float64toString(numbers.StringNumberToFloat64(st.Value)),
 			Asset:  st.Asset,
 			From:   st.FromAddr,
 			To:     st.ToAddr,
 		}
-		multisend = append(multisend, v)
+		multisend = append(multisend, m)
 	}
 	tx.MultisendTransfers = multisend
 

@@ -290,7 +290,7 @@ func getBlockByNumberWithRetry(attempts int, sleep time.Duration, getBlockByNumb
 	return r, err
 }
 
-func (t *transactionsBatch) fillBatch(transactions blockatlas.Txs) {
+func (t *transactionsBatch) fillBatch(transactions []blockatlas.Tx) {
 	t.Lock()
 	defer t.Unlock()
 	if len(transactions) == 0 {
