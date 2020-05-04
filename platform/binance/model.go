@@ -100,28 +100,26 @@ type Token struct {
 	TotalSupply    string `json:"total_supply"`
 }
 
-// From Explorer
+// Transaction response from Explorer
 type DexTxPage struct {
 	Nums int     `json:"txNums"`
 	Txs  []DexTx `json:"txArray"`
 }
 
 type DexTx struct {
-	Asset              string  `json:"txAsset"`
-	Code               int     `json:"code"`
-	Data               string  `json:"data"`
-	Fee                float64 `json:"txFee"`
-	FromAddr           string  `json:"fromAddr"`
-	HasChildren        int     `json:"hasChildren"`
-	Hash               string  `json:"txHash"`
-	Memo               string  `json:"memo"`
-	OrderID            string  `json:"orderId"`
-	Timestamp          int64   `json:"timeStamp"`
-	ToAddr             string  `json:"toAddr"`
-	Type               TxType  `json:"txType"`
-	Value              float64 `json:"value"`
-	BlockHeight        uint64  `json:"blockHeight"`
-	MultisendTransfers []Msg   `json:"subTxsDto"` // Added from hash info tx
+	BlockHeight        uint64          `json:"blockHeight"`
+	Code               int             `json:"code"`
+	FromAddr           string          `json:"fromAddr"`
+	HasChildren        int             `json:"hasChildren"`
+	Memo               string          `json:"memo"`
+	MultisendTransfers []multiTransfer `json:"subTxsDto"` // Not part of response, added from hash info tx for simplifying logic
+	Timestamp          int64           `json:"timeStamp"`
+	ToAddr             string          `json:"toAddr"`
+	TxFee              float64         `json:"txFee"`
+	TxHash             string          `json:"txHash"`
+	TxType             TxType          `json:"txType"`
+	Value              float64         `json:"value,omitempty"`
+	TxAsset            string          `json:"txAsset"`
 }
 
 type TxHashRPC struct {
@@ -138,11 +136,11 @@ type TxHashTx struct {
 }
 
 type Value struct {
-	Messages []Msg `json:"msg"`
+	Msg []Msg `json:"msg"`
 }
 
 type Msg struct {
-	Value MsgValue `json:"msg"`
+	Value MsgValue `json:"value"`
 }
 
 type MsgValue struct {
@@ -162,26 +160,20 @@ type Output struct {
 	} `json:"coins"`
 }
 
-type Extracted struct {
-	Amount string
-	Asset  string
-	From   string
-	To     string
+type multiTransfer struct {
+	Amount, Asset, From, To string
 }
 
-func (srcTx *DexTx) extractMultiTransfers(address string) (extracted []Extracted) {
-	for _, msg := range srcTx.MultisendTransfers {
-		var tr Extracted
+func extractMultiTransfers(messages Value) (extracted []multiTransfer) {
+	for _, msg := range messages.Msg {
+		var tr multiTransfer
 		tr.From = msg.Value.Inputs[0].Address // Assumed multisend transfer has one input, never seen multiple
 		for _, output := range msg.Value.Outputs {
-			if output.Address == address {
-				tr.Amount = output.Coins[0].Amount
-				tr.Asset = output.Coins[0].Denom
-				tr.To = output.Address
+			tr.Amount = output.Coins[0].Amount
+			tr.Asset = output.Coins[0].Denom
+			tr.To = output.Address
 
-				extracted = append(extracted, tr)
-			}
-			continue
+			extracted = append(extracted, tr)
 		}
 	}
 	return
@@ -195,13 +187,26 @@ func (tx *Tx) getFee() string {
 	return fee
 }
 
-func (tx *DexTx) getDexFee() string {
-	fee := "0"
-	feeNumber, err := tx.Fee.Float64()
-	if err == nil && feeNumber > 0 {
-		fee = numbers.DecimalExp(string(tx.Fee), 8)
+func (tx *DexTx) getDexFee() blockatlas.Amount {
+	if tx.TxFee > 0 {
+		return blockatlas.Amount(numbers.DecimalExp(numbers.Float64toString(tx.TxFee), 8))
+	} else {
+		return blockatlas.Amount(0)
 	}
-	return fee
+}
+
+func (tx *DexTx) getStatus() blockatlas.Status {
+	switch tx.Code {
+	case 0:
+		return blockatlas.StatusCompleted
+	default:
+		return blockatlas.StatusError
+	}
+}
+
+func (tx *DexTx) getDexValue() blockatlas.Amount {
+	val := numbers.DecimalExp(numbers.Float64toString(tx.Value), 8)
+	return blockatlas.Amount(val)
 }
 
 func (tx *Tx) getStatus() blockatlas.Status {
@@ -257,7 +262,6 @@ func (balance *Balance) isAllZeroBalance() bool {
 		}
 	}
 	return true
-
 }
 
 func (e *Error) Error() string {
@@ -265,19 +269,19 @@ func (e *Error) Error() string {
 }
 
 // Add test
-func (srcTx *DexTx) Direction(address string) blockatlas.Direction {
-	if srcTx.FromAddr == address && srcTx.ToAddr == address {
+func (tx *DexTx) Direction(address string) blockatlas.Direction {
+	if tx.FromAddr == address && tx.ToAddr == address {
 		return blockatlas.DirectionSelf
 	}
-	if srcTx.FromAddr == address && srcTx.ToAddr != address {
+	if tx.FromAddr == address && tx.ToAddr != address {
 		return blockatlas.DirectionOutgoing
 	}
 
 	return blockatlas.DirectionIncoming
 }
 
-func (srcTx *DexTx) QuantityTransferType() QuantityTransfer {
-	if srcTx.HasChildren == 1 {
+func (tx *DexTx) QuantityTransferType() QuantityTransfer {
+	if tx.HasChildren == 1 {
 		return MultiTransfer
 	} else {
 		return SingleTransfer
