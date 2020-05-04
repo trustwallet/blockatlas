@@ -108,7 +108,6 @@ func normalizeSingleTransfer(srcTx DexTx, address, token string) (blockatlas.TxP
 		tx.Meta = blockatlas.NativeTokenTransfer{
 			Decimals: bnbCoin.Decimals,
 			From:     srcTx.FromAddr,
-			Name:     "", // TODO add name
 			Symbol:   TokenSymbol(srcTx.TxAsset),
 			To:       srcTx.ToAddr,
 			TokenID:  srcTx.TxAsset,

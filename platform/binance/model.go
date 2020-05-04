@@ -2,6 +2,7 @@ package binance
 
 import (
 	"fmt"
+	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/numbers"
 	"strconv"
@@ -123,8 +124,8 @@ type DexTx struct {
 }
 
 type TxHashRPC struct {
-	Hash string `json:"hash"`
-	Tx TxHashTx `json:"tx"`
+	Hash string   `json:"hash"`
+	Tx   TxHashTx `json:"tx"`
 }
 
 type TxHashTx struct {
@@ -181,14 +182,14 @@ func extractMultiTransfers(messages Value) (extracted []multiTransfer) {
 func (tx *Tx) getFee() string {
 	fee := "0"
 	if _, err := strconv.ParseFloat(tx.Fee, 64); err == nil {
-		fee = numbers.DecimalExp(tx.Fee, 8)
+		fee = numbers.DecimalExp(tx.Fee, int(coin.Binance().Decimals))
 	}
 	return fee
 }
 
 func (tx *DexTx) getDexFee() blockatlas.Amount {
 	if tx.TxFee > 0 {
-		return blockatlas.Amount(numbers.DecimalExp(numbers.Float64toString(tx.TxFee), 8))
+		return blockatlas.Amount(numbers.DecimalExp(numbers.Float64toString(tx.TxFee), int(coin.Binance().Decimals)))
 	} else {
 		return blockatlas.Amount(0)
 	}
@@ -204,7 +205,7 @@ func (tx *DexTx) getStatus() blockatlas.Status {
 }
 
 func (tx *DexTx) getDexValue() blockatlas.Amount {
-	val := numbers.DecimalExp(numbers.Float64toString(tx.Value), 8)
+	val := numbers.DecimalExp(numbers.Float64toString(tx.Value), int(coin.Binance().Decimals))
 	return blockatlas.Amount(val)
 }
 

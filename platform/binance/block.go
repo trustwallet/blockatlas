@@ -51,12 +51,19 @@ func normalizeBlockSubTx(t *TxV2) DexTx {
 		BlockHeight: t.BlockHeight,
 	}
 
-	tx.Value = numbers.StringNumberToFloat64(t.Value)
+	value, err := numbers.StringNumberToFloat64(t.Value)
+	if err != nil {
+		tx.Value = value
+	} else {
+		tx.Value = 0
+	}
 
 	if t.Fee == "" && len(t.SubTransactions) > 1 {
-		tx.TxFee = numbers.StringNumberToFloat64(t.SubTransactions[0].Fee)
+		fee, _ := numbers.StringNumberToFloat64(t.SubTransactions[0].Fee)
+		tx.TxFee = fee
 	} else {
-		tx.TxFee = numbers.StringNumberToFloat64(t.Fee)
+		fee, _ := numbers.StringNumberToFloat64(t.Fee)
+		tx.TxFee = fee
 	}
 
 	if len(t.SubTransactions) > 0 {
@@ -72,8 +79,9 @@ func normalizeBlockSubTx(t *TxV2) DexTx {
 
 	var multisend []multiTransfer
 	for _, st := range t.SubTransactions {
+		amount, _ := numbers.StringNumberToFloat64(st.Value)
 		m := multiTransfer{
-			Amount: numbers.Float64toString(numbers.StringNumberToFloat64(st.Value)),
+			Amount: numbers.Float64toString(amount),
 			Asset:  st.Asset,
 			From:   st.FromAddr,
 			To:     st.ToAddr,
