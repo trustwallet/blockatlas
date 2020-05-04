@@ -52,6 +52,9 @@ func RegisterTxByAddrAndXpubAPI(router gin.IRouter, api blockatlas.TxByAddrAndXp
 	router.GET("/v1/" + handle + "/xpub/:xpub", func(c *gin.Context) {
 		endpoint.GetTransactionsByXpub(c, api)
 	})
+	router.GET("/v2/" + handle + "/xpub/:xpub", func(c *gin.Context) {
+		endpoint.GetTransactionsByXpub(c, api)
+	})
 }
 
 func RegisterStakeAPI(router gin.IRouter, api blockatlas.StakeAPI) {
