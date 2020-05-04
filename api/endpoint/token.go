@@ -21,7 +21,7 @@ import (
 // @Success 200 {object} blockatlas.CollectionPage
 // @Failure 500 {object} model.ErrorResponse
 // @Router /v2/{coin}/tokens/{address} [get]
-func GetTokensByAddress(c *gin.Context, tokenAPI blockatlas.TokenAPI) {
+func GetTokensByAddress(c *gin.Context, tokenAPI blockatlas.TokensAPI) {
 	address := c.Param("address")
 	if address == "" {
 		EmptyPage(c)
@@ -45,7 +45,7 @@ func GetTokensByAddress(c *gin.Context, tokenAPI blockatlas.TokenAPI) {
 // @Param data body string true "Payload" default({"60": ["0xb3624367b1ab37daef42e1a3a2ced012359659b0"]})
 // @Success 200 {object} blockatlas.ResultsResponse
 // @Router /v2/tokens [post]
-func GetTokens(c *gin.Context, apis map[uint]blockatlas.TokenAPI) {
+func GetTokens(c *gin.Context, apis map[uint]blockatlas.TokensAPI) {
 	var query map[string][]string
 	if err := c.Bind(&query); err != nil {
 		c.JSON(http.StatusInternalServerError, model.CreateErrorResponse(model.InternalFail, err))
@@ -68,7 +68,7 @@ func GetTokens(c *gin.Context, apis map[uint]blockatlas.TokenAPI) {
 	c.JSON(http.StatusOK, blockatlas.ResultsResponse{Total: len(result), Results: &result})
 }
 
-func getTokens(tokenAPI blockatlas.TokenAPI, addresses []string) blockatlas.TokenPage {
+func getTokens(tokenAPI blockatlas.TokensAPI, addresses []string) blockatlas.TokenPage {
 	var (
 		tokenPagesChan = make(chan blockatlas.TokenPage, len(addresses))
 		wg             sync.WaitGroup

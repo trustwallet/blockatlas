@@ -1,7 +1,6 @@
 package blockatlas
 
 import (
-	"github.com/gin-gonic/gin"
 	"github.com/trustwallet/blockatlas/coin"
 )
 
@@ -11,7 +10,14 @@ type (
 		Coin() coin.Coin
 	}
 
-	// TxAPI provides transaction lookups
+	// BlockAPI provides block information and lookups
+	BlockAPI interface {
+		Platform
+		CurrentBlockNumber() (int64, error)
+		GetBlockByNumber(num int64) (*Block, error)
+	}
+
+	// TxAPI provides transaction lookups based on address
 	TxAPI interface {
 		Platform
 		GetTxsByAddress(address string) (TxPage, error)
@@ -23,23 +29,16 @@ type (
 		GetTokenTxsByAddress(address, token string) (TxPage, error)
 	}
 
-	// TokenAPI provides token lookups
-	TokenAPI interface {
+	// TxUtxoAPI provides transaction lookup based on address and XPUB (Bitcoin-style)
+	TxUtxoAPI interface {
+		TxAPI
+		GetTxsByXpub(xpub string) (TxPage, error)
+	}
+
+	// TokensAPI provides token lookups
+	TokensAPI interface {
 		Platform
 		GetTokenListByAddress(address string) (TokenPage, error)
-	}
-
-	// BlockAPI provides block information and lookups
-	BlockAPI interface {
-		Platform
-		CurrentBlockNumber() (int64, error)
-		GetBlockByNumber(num int64) (*Block, error)
-	}
-
-	// AddressAPI provides address information
-	AddressAPI interface {
-		Platform
-		GetAddressesFromXpub(xpub string) ([]string, error)
 	}
 
 	// StakingAPI provides staking information
@@ -51,7 +50,7 @@ type (
 		GetDelegations(address string) (DelegationsPage, error)
 	}
 
-	CollectionAPI interface {
+	CollectionsAPI interface {
 		Platform
 		GetCollections(owner string) (CollectionPage, error)
 		GetCollectibles(owner, collectibleID string) (CollectiblePage, error)
@@ -60,20 +59,16 @@ type (
 		GetCollectiblesV3(owner, collectibleID string) (CollectiblePageV3, error)
 	}
 
-	// CustomAPI provides custom HTTP routes
-	CustomAPI interface {
-		Platform
-		RegisterRoutes(router gin.IRouter)
-	}
-
 	// NamingServiceAPI provides public name service domains HTTP routes
 	NamingServiceAPI interface {
 		Platform
 		Lookup(coins []uint64, name string) ([]Resolved, error)
 	}
-)
 
-type Platforms map[string]Platform
+	Platforms map[string]Platform
+
+	CollectionsAPIs map[uint]CollectionsAPI
+)
 
 func (ps Platforms) GetPlatformList() []Platform {
 	platforms := make([]Platform, 0)
