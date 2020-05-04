@@ -29,8 +29,8 @@ type (
 		GetTokenTxsByAddress(address, token string) (TxPage, error)
 	}
 
-	// TxByAddrAndXpubAPI provides transaction lookup based on address and XPUB (Bitcoin-style)
-	TxByAddrAndXpubAPI interface {
+	// TxUtxoAPI provides transaction lookup based on address and XPUB (Bitcoin-style)
+	TxUtxoAPI interface {
 		TxAPI
 		GetTxsByXpub(xpub string) (TxPage, error)
 	}
