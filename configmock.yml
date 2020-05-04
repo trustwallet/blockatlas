@@ -34,6 +34,7 @@ postgres:
 #       Binance Chain: https://explorer.binance.org
 binance:
   api: http://localhost:3347/binance-rpc
+  dex: https://explorer.binance.org/api/v1
 
 # [NIM] Nimiq: https://nimiq.com
 nimiq:
