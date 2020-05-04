@@ -16,6 +16,16 @@ func TestPlatform_GetTokenTxsByAddress(t *testing.T) {
 	assert.Equal(t, page, resp)
 }
 
+func TestPlatform_GetTxsByAddress(t *testing.T) {
+	p := Platform{
+		client: getTxClientMock(),
+	}
+
+	resp, err := p.GetTokenTxsByAddress("A", "")
+	assert.Nil(t, err)
+	assert.Equal(t, page, resp)
+}
+
 func getTxClientMock() EthereumClient {
 	return &c
 }
@@ -52,7 +62,9 @@ func (c Client) GetTransactions(address string, coinIndex uint) (blockatlas.TxPa
 }
 
 func (c Client) GetTokenTxs(address, token string, coinIndex uint) (blockatlas.TxPage, error) {
-	return blockatlas.TxPage{}, nil
+	txs := make([]blockatlas.Tx, 0)
+	txs = append(txs, tx)
+	return txs, nil
 }
 func (c Client) GetTokenList(address string, coinIndex uint) (blockatlas.TokenPage, error) {
 	return blockatlas.TokenPage{}, nil
