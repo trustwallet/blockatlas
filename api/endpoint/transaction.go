@@ -18,7 +18,7 @@ import (
 // @Param coin path string true "the coin name" default(tezos)
 // @Param address path string true "the query address" default(tz1WCd2jm4uSt4vntk4vSuUWoZQGhLcDuR9q)
 // @Success 200 {object} blockatlas.TxPage
-// @Failure 500 {object} middleware.ApiError
+// @Failure 500 {object} model.ErrorResponse
 // @Router /v2/{coin}/transactions/{address} [get]
 
 // @Summary Get Transactions
@@ -29,7 +29,7 @@ import (
 // @Tags Transactions
 // @Param coin path string true "the coin name" default(tezos)
 // @Param address path string true "the query address" default(tz1WCd2jm4uSt4vntk4vSuUWoZQGhLcDuR9q)
-// @Failure 500 {object} middleware.ApiError
+// @Failure 500 {object} model.ErrorResponse
 // @Router /v1/{coin}/{address} [get]
 func GetTransactionsHistory(c *gin.Context, txAPI blockatlas.TxAPI, tokenTxAPI blockatlas.TokenTxAPI) {
 	address := c.Param("address")

@@ -19,7 +19,7 @@ import (
 // @Param name query string empty "string name"
 // @Param coin query string 60 "string coin"
 // @Success 200 {object} blockatlas.Resolved
-// @Failure 500 {object} middleware.ApiError
+// @Failure 500 {object} model.ErrorResponse
 // @Router /ns/lookup [get]
 func GetAddressByCoinAndDomain(c *gin.Context) {
 	name := c.Query("name")
@@ -50,7 +50,7 @@ func GetAddressByCoinAndDomain(c *gin.Context) {
 // @Param name query string empty "string name"
 // @Param coins query string true "List of coins"
 // @Success 200 {array} blockatlas.Resolved
-// @Failure 500 {object} middleware.ApiError
+// @Failure 500 {object} model.ErrorResponse
 // @Router /v2/ns/lookup [get]
 func GetAddressByCoinAndDomainBatch(c *gin.Context) {
 	name := c.Query("name")
