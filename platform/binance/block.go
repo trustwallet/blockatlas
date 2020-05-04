@@ -2,6 +2,8 @@ package binance
 
 import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/numbers"
+	"time"
 )
 
 func (p *Platform) CurrentBlockNumber() (int64, error) {
@@ -18,37 +20,67 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	childTxs := make([]Tx, 0)
-	for _, t := range blockTxs {
-		if len(t.SubTransactions) > 0 {
-			for _, tSub := range t.SubTransactions {
-				childTxs = append(childTxs, normalizeBlockSubTx(&t, &tSub))
-			}
-		}
+	childTxs := make([]DexTx, 0)
+	for _, bTrx := range blockTxs {
+		childTxs = append(childTxs, normalizeBlockSubTx(&bTrx))
 	}
 
-	txs := NormalizeTxs(childTxs, "")
+	var normTxs []blockatlas.Tx
+	print(len(childTxs))
+	for _, srcTx := range childTxs {
+		normT, ok := NormalizeTx(srcTx, "", "")
+		if !ok {
+			continue
+		}
+		normTxs = append(normTxs, normT...)
+	}
 
-	return &blockatlas.Block{Number: num, Txs: txs}, nil
+	return &blockatlas.Block{Number: num, Txs: normTxs}, nil
 }
 
-func normalizeBlockSubTx(t *TxV2, tSub *SubTx) Tx {
-	return Tx{
-		Asset:       tSub.Asset,
-		BlockHeight: t.BlockHeight,
+// Normalize block sub transaction from RPC to explorer transaction
+func normalizeBlockSubTx(t *TxV2) DexTx {
+	tx := DexTx{
+		TxAsset:     t.Asset,
 		Code:        t.Code,
-		Data:        t.Data,
-		Fee:         tSub.Fee,
-		FromAddr:    tSub.FromAddr,
-		Memo:        t.Memo,
-		OrderID:     t.OrderID,
-		Sequence:    t.Sequence,
-		Source:      t.Source,
-		Timestamp:   t.Timestamp,
-		ToAddr:      tSub.ToAddr,
+		FromAddr:    t.FromAddr,
 		TxHash:      t.TxHash,
-		Type:        tSub.Type,
-		Value:       tSub.Value,
+		Memo:        t.Memo,
+		ToAddr:      t.ToAddr,
+		TxType:      t.Type,
+		BlockHeight: t.BlockHeight,
 	}
+
+	tx.Value = numbers.StringNumberToFloat64(t.Value)
+
+	if t.Fee == "" && len(t.SubTransactions) > 1 {
+		tx.TxFee = numbers.StringNumberToFloat64(t.SubTransactions[0].Fee)
+	} else {
+		tx.TxFee = numbers.StringNumberToFloat64(t.Fee)
+	}
+
+	if len(t.SubTransactions) > 0 {
+		tx.HasChildren = 1
+	} else {
+		tx.HasChildren = 0
+	}
+
+	time, err := time.Parse(time.RFC3339, t.Timestamp)
+	if err != nil {
+		tx.Timestamp = time.Unix()
+	}
+
+	var multisend []multiTransfer
+	for _, st := range t.SubTransactions {
+		v := multiTransfer{
+			Amount: numbers.ToDecimal(st.Value, 8),
+			Asset:  st.Asset,
+			From:   st.FromAddr,
+			To:     st.ToAddr,
+		}
+		multisend = append(multisend, v)
+	}
+	tx.MultisendTransfers = multisend
+
+	return tx
 }
