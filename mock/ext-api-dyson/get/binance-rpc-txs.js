@@ -1,9 +1,9 @@
 /// Binance chain block explorer RPC Mock, tx
 /// Returns:
 /// - Multi-transaction transaction for a specific address
-///   see http://localhost:3347/binance-dex/api/v1/txs?address=bnb1jeu6gscugy6l2wyatxthkh2hmer4hzevgcmf0q&page=1&rows=25&txType=TRANSFER
-///   see https://{binance_dex}/api/v1/txs?address=bnb1jeu6gscugy6l2wyatxthkh2hmer4hzevgcmf0q&page=1&rows=25&txType=TRANSFER
-///   see http://localhost:8437/v1/binance/bnb1jeu6gscugy6l2wyatxthkh2hmer4hzevgcmf0q
+///   1. newman calls: http://localhost:8437/v1/binance/bnb1jeu6gscugy6l2wyatxthkh2hmer4hzevgcmf0q
+///   2. Block atlas call internally : https://{binance_rpc}/api/v1/txs?address=bnb1jeu6gscugy6l2wyatxthkh2hmer4hzevgcmf0q&page=1&rows=25&txType=TRANSFER
+///   3. Dyson response mock data: http://localhost:3347/binance-dex/api/v1/txs?address=bnb1jeu6gscugy6l2wyatxthkh2hmer4hzevgcmf0q&page=1&rows=25&txType=TRANSFER
 /// - empty response for other txHash'es
 
 // Example contains each type, BNB transfer, BEP2 transfer, BEP2 transfer as multisend transaction
