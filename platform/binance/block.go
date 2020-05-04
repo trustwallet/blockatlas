@@ -53,9 +53,9 @@ func normalizeBlockSubTx(t *TxV2) DexTx {
 
 	value, err := numbers.StringNumberToFloat64(t.Value)
 	if err != nil {
-		tx.Value = value
-	} else {
 		tx.Value = 0
+	} else {
+		tx.Value = value
 	}
 
 	if t.Fee == "" && len(t.SubTransactions) > 1 {
