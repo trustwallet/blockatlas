@@ -10,18 +10,6 @@ import (
 )
 
 // @Summary Get Transactions
-// @ID tx_v2
-// @Description Get transactions from the address
-// @Accept json
-// @Produce json
-// @Tags Transactions
-// @Param coin path string true "the coin name" default(tezos)
-// @Param address path string true "the query address" default(tz1WCd2jm4uSt4vntk4vSuUWoZQGhLcDuR9q)
-// @Success 200 {object} blockatlas.TxPage
-// @Failure 500 {object} model.ErrorResponse
-// @Router /v2/{coin}/transactions/{address} [get]
-
-// @Summary Get Transactions
 // @ID tx_v1
 // @Description Get transactions from the address
 // @Accept json
@@ -96,7 +84,7 @@ func GetTransactionsHistory(c *gin.Context, txAPI blockatlas.TxAPI, tokenTxAPI b
 // @Tags Transactions
 // @Param coin path string true "the coin name" default(bitcoin)
 // @Param xpub path string true "the xpub key" default(zpub6ruK9k6YGm8BRHWvTiQcrEPnFkuRDJhR7mPYzV2LDvjpLa5CuGgrhCYVZjMGcLcFqv9b2WvsFtY2Gb3xq8NVq8qhk9veozrA2W9QaWtihrC)
-// @Failure 500 {object} middleware.ApiError
+// @Failure 500 {object} model.ErrorResponse
 // @Router /v1/{coin}/xpub/{xpub} [get]
 func GetTransactionsByXpub(c *gin.Context, api blockatlas.TxUtxoAPI) {
 	xPubKey := c.Param("xpub")

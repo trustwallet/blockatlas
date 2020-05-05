@@ -77,6 +77,9 @@ func RegisterCollectionsAPI(router gin.IRouter, api blockatlas.CollectionsAPI) {
 }
 
 func RegisterBatchAPI(router gin.IRouter) {
+	router.GET("/v3/staking/list", middleware.CacheMiddleware(time.Hour*10, func(c *gin.Context) {
+		endpoint.GetStakeInfoForCoins(c, platform.StakeAPIs)
+	}))
 	router.POST("/v2/staking/delegations", func(c *gin.Context) {
 		endpoint.GetStakeDelegationsWithAllInfoForBatch(c, platform.StakeAPIs)
 	})
