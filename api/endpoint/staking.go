@@ -8,6 +8,7 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	services "github.com/trustwallet/blockatlas/services/assets"
 	"net/http"
+	"strings"
 )
 
 type (
@@ -78,6 +79,51 @@ func GetStakeInfoForBatch(c *gin.Context, apis map[string]blockatlas.StakeAPI) {
 	if err := c.BindJSON(&reqs); err != nil {
 		c.JSON(http.StatusBadRequest, model.CreateErrorResponse(model.InvalidQuery, err))
 		return
+	}
+
+	batch := make(blockatlas.StakingBatchPage, 0)
+	for _, r := range reqs {
+		requestCoin, ok := coin.Coins[r.Coin]
+		if !ok {
+			continue
+		}
+		p, ok := apis[requestCoin.Handle]
+		if !ok {
+			continue
+		}
+		staking := getStakingResponse(p)
+		batch = append(batch, staking)
+	}
+	c.JSON(http.StatusOK, blockatlas.DocsResponse{Docs: &batch})
+}
+
+// @Summary Get staking info by coin ID
+// @ID batch_info
+// @Description Get staking info by coin ID
+// @Produce json
+// @Tags Staking
+// @Param coins query string true "List of coins"
+// @Success 200 {array} blockatlas.DelegationsBatchPage
+// @Failure 400 {object} model.ErrorResponse
+// @Router /v3/staking/list [get]
+func GetStakeInfoForCoins(c *gin.Context, apis map[string]blockatlas.StakeAPI) {
+	coinsRequest := c.Query("coins")
+	if coinsRequest == "" {
+		c.JSON(http.StatusBadRequest, model.CreateErrorResponse(model.InvalidQuery, errors.E("empty coins list")))
+		return
+	}
+
+	coinsRaw := strings.Split(coinsRequest, ",")
+
+	coins, err := sliceAtoi(coinsRaw)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, model.CreateErrorResponse(model.InvalidQuery, err))
+		return
+	}
+
+	var reqs CoinsRequest
+	for _, c := range coins {
+		reqs = append(reqs, CoinBatchRequest{Coin: uint(c)})
 	}
 
 	batch := make(blockatlas.StakingBatchPage, 0)
