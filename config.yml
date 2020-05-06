@@ -64,7 +64,7 @@ kin:
 # [XTZ] Tezos: https://tezos.com
 tezos:
   api: https://api.tzstats.com/explorer # https://tzstats.com/docs/api/index.html#introduction
-  rpc: https://mainnet.tezos.org.ua
+  rpc: https://mainnet-tezos.giganode.io
 
 # [ETH] Ethereum: https://ethereum.org
 ethereum:
