@@ -82,7 +82,7 @@ func normalizeBlockSubTx(txV2 TxV2) DexTx {
 		tx.Timestamp = time.Unix()
 	}
 
-	multisend := make([]multiTransfer, 0, len(txV2.SubTransactions))
+	subTransfers := make([]multiTransfer, 0)
 	for _, st := range txV2.SubTransactions {
 		amount, _ := numbers.StringNumberToFloat64(st.Value)
 		m := multiTransfer{
@@ -91,9 +91,9 @@ func normalizeBlockSubTx(txV2 TxV2) DexTx {
 			From:   st.FromAddr,
 			To:     st.ToAddr,
 		}
-		multisend = append(multisend, m)
+		subTransfers = append(subTransfers, m)
 	}
-	tx.MultisendTransfers = multisend
+	tx.MultisendTransfers = subTransfers
 
 	return tx
 }
