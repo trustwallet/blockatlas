@@ -15,7 +15,7 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 }
 
 func (p *Platform) GetTokenTxsByAddress(address, token string) (blockatlas.TxPage, error) {
-	txPage, err := p.dexClient.GetTxsOfAddress(address, token)
+	txPage, err := p.explorerClient.GetTxsOfAddress(address, token)
 	if err != nil {
 		return nil, err
 	}
