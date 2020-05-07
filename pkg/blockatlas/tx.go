@@ -66,7 +66,7 @@ type (
 	Block struct {
 		Number int64  `json:"number"`
 		ID     string `json:"id,omitempty"`
-		Txs    TxPage `json:"txs"`
+		Txs    []Tx `json:"txs"`
 	}
 
 	// TxPage is a page of transactions
