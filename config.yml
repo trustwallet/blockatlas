@@ -40,7 +40,7 @@ postgres:
 # [BNB] Binance DEX: https://www.binance.org/
 binance:
   api: https://dex.binance.org/api
-  dex: https://explorer.binance.org/api/v1
+  explorer: https://explorer.binance.org/api
 
 # [NIM] Nimiq: https://nimiq.com
 #nimiq:
