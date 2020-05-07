@@ -8,47 +8,47 @@ import (
 
 const (
 	StatusCompleted Status = "completed"
-	StatusPending   Status = "pending"
 	StatusError     Status = "error"
+	StatusPending   Status = "pending"
 
-	DirectionOutgoing Direction = "outgoing"
 	DirectionIncoming Direction = "incoming"
+	DirectionOutgoing Direction = "outgoing"
 	DirectionSelf     Direction = "yourself"
 
-	TokenTypeERC20 TokenType = "ERC20"
 	TokenTypeBEP2  TokenType = "BEP2"
-	TokenTypeTRC10 TokenType = "TRC10"
-	TokenTypeETC20 TokenType = "ETC20"
-	TokenTypePOA20 TokenType = "POA20"
-	TokenTypeTRC20 TokenType = "TRC20"
 	TokenTypeCLO20 TokenType = "CLO20"
+	TokenTypeERC20 TokenType = "ERC20"
+	TokenTypeETC20 TokenType = "ETC20"
 	TokenTypeGO20  TokenType = "G020"
-	TokenTypeWAN20 TokenType = "WAN20"
+	TokenTypePOA20 TokenType = "POA20"
+	TokenTypeTRC10 TokenType = "TRC10"
+	TokenTypeTRC20 TokenType = "TRC20"
 	TokenTypeTT20  TokenType = "TT20"
+	TokenTypeWAN20 TokenType = "WAN20"
 
-	TxTransfer              TransactionType = "transfer"
-	TxNativeTokenTransfer   TransactionType = "native_token_transfer"
-	TxTokenTransfer         TransactionType = "token_transfer"
-	TxCollectibleTransfer   TransactionType = "collectible_transfer"
-	TxTokenSwap             TransactionType = "token_swap"
-	TxContractCall          TransactionType = "contract_call"
 	TxAnyAction             TransactionType = "any_action"
+	TxCollectibleTransfer   TransactionType = "collectible_transfer"
+	TxContractCall          TransactionType = "contract_call"
 	TxMultiCurrencyTransfer TransactionType = "multi_currency_transfer"
+	TxNativeTokenTransfer   TransactionType = "native_token_transfer"
+	TxTokenSwap             TransactionType = "token_swap"
+	TxTokenTransfer         TransactionType = "token_transfer"
+	TxTransfer              TransactionType = "transfer"
 
-	KeyPlaceOrder        KeyType = "place_order"
+	KeyApproveToken      KeyType = "approve_token"
+	KeyBurnToken         KeyType = "burn_token"
 	KeyCancelOrder       KeyType = "cancel_order"
 	KeyIssueToken        KeyType = "issue_token"
-	KeyBurnToken         KeyType = "burn_token"
 	KeyMintToken         KeyType = "mint_token"
-	KeyApproveToken      KeyType = "approve_token"
-	KeyStakeDelegate     KeyType = "stake_delegate"
+	KeyPlaceOrder        KeyType = "place_order"
 	KeyStakeClaimRewards KeyType = "stake_claim_rewards"
+	KeyStakeDelegate     KeyType = "stake_delegate"
 
-	KeyTitlePlaceOrder    KeyTitle = "Place Order"
-	KeyTitleCancelOrder   KeyTitle = "Cancel Order"
+	AnyActionClaimRewards KeyTitle = "Claim Rewards"
 	AnyActionDelegation   KeyTitle = "Delegation"
 	AnyActionUndelegation KeyTitle = "Undelegation"
-	AnyActionClaimRewards KeyTitle = "Claim Rewards"
+	KeyTitleCancelOrder   KeyTitle = "Cancel Order"
+	KeyTitlePlaceOrder    KeyTitle = "Place Order"
 
 	// TxPerPage says how many transactions to return per page
 	TxPerPage = 25
@@ -66,7 +66,7 @@ type (
 	Block struct {
 		Number int64  `json:"number"`
 		ID     string `json:"id,omitempty"`
-		Txs    []Tx   `json:"txs"`
+		Txs    TxPage `json:"txs"`
 	}
 
 	// TxPage is a page of transactions
@@ -119,41 +119,41 @@ type (
 
 	// Transfer describes the transfer of currency native to the platform
 	Transfer struct {
-		Value    Amount `json:"value"`
-		Symbol   string `json:"symbol"`
 		Decimals uint   `json:"decimals"`
+		Symbol   string `json:"symbol"`
+		Value    Amount `json:"value"`
 	}
 
 	// NativeTokenTransfer describes the transfer of native tokens.
 	// Example: Stellar Tokens, TRC10
 	NativeTokenTransfer struct {
+		Decimals uint   `json:"decimals"`
+		From     string `json:"from"`
 		Name     string `json:"name"`
 		Symbol   string `json:"symbol"`
-		TokenID  string `json:"token_id"`
-		Decimals uint   `json:"decimals"`
-		Value    Amount `json:"value"`
-		From     string `json:"from"`
 		To       string `json:"to"`
+		TokenID  string `json:"token_id"`
+		Value    Amount `json:"value"`
 	}
 
 	// TokenTransfer describes the transfer of non-native tokens.
 	// Examples: ERC-20, TRC20
 	TokenTransfer struct {
+		Decimals uint   `json:"decimals"`
+		From     string `json:"from"`
 		Name     string `json:"name"`
 		Symbol   string `json:"symbol"`
-		TokenID  string `json:"token_id"`
-		Decimals uint   `json:"decimals"`
-		Value    Amount `json:"value"`
-		From     string `json:"from"`
 		To       string `json:"to"`
+		TokenID  string `json:"token_id"`
+		Value    Amount `json:"value"`
 	}
 
 	// CollectibleTransfer describes the transfer of a
 	// "collectible", unique token.
 	CollectibleTransfer struct {
-		Name     string `json:"name"`
 		Contract string `json:"contract"`
 		ImageURL string `json:"image_url"`
+		Name     string `json:"name"`
 	}
 
 	// TokenSwap describes the exchange of two different tokens
@@ -183,12 +183,12 @@ type (
 	// AnyAction describes all other types
 	AnyAction struct {
 		Coin     uint     `json:"coin"`
-		Title    KeyTitle `json:"title"`
+		Decimals uint     `json:"decimals"`
 		Key      KeyType  `json:"key"`
-		TokenID  string   `json:"token_id"`
 		Name     string   `json:"name"`
 		Symbol   string   `json:"symbol"`
-		Decimals uint     `json:"decimals"`
+		Title    KeyTitle `json:"title"`
+		TokenID  string   `json:"token_id"`
 		Value    Amount   `json:"value"`
 	}
 
@@ -198,11 +198,11 @@ type (
 	// Token describes the non-native tokens.
 	// Examples: ERC-20, TRC-20, BEP-2
 	Token struct {
+		Coin     uint      `json:"coin"`
+		Decimals uint      `json:"decimals"`
 		Name     string    `json:"name"`
 		Symbol   string    `json:"symbol"`
-		Decimals uint      `json:"decimals"`
 		TokenID  string    `json:"token_id"`
-		Coin     uint      `json:"coin"`
 		Type     TokenType `json:"type"`
 	}
 
