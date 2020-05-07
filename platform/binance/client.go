@@ -18,7 +18,7 @@ type Client struct {
 // Fetch runtime information about the node
 func (c *Client) fetchNodeInfo() (*NodeInfo, error) {
 	result := new(NodeInfo)
-	err := c.Get(result, "/v1/node-info", nil)
+	err := c.Get(result, "v1/node-info", nil)
 	return result, err
 }
 
