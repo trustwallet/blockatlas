@@ -20,9 +20,9 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 	if err != nil {
 		return nil, err
 	}
-	childTxs := make([]DexTx, 0)
+	childTxs := make([]DexTx, 0, len(blockTxs))
 	for _, bTrx := range blockTxs {
-		childTxs = append(childTxs, normalizeBlockSubTx(&bTrx))
+		childTxs = append(childTxs, normalizeBlockSubTx(bTrx))
 	}
 
 	var normTxs []blockatlas.Tx
@@ -39,46 +39,51 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 }
 
 // Normalize block sub transaction from RPC to explorer transaction
-func normalizeBlockSubTx(t *TxV2) DexTx {
+func normalizeBlockSubTx(txV2 TxV2) DexTx {
 	tx := DexTx{
-		TxAsset:     t.Asset,
-		Code:        t.Code,
-		FromAddr:    t.FromAddr,
-		TxHash:      t.TxHash,
-		Memo:        t.Memo,
-		ToAddr:      t.ToAddr,
-		TxType:      t.Type,
-		BlockHeight: t.BlockHeight,
+		TxAsset:     txV2.Asset,
+		Code:        txV2.Code,
+		FromAddr:    txV2.FromAddr,
+		TxHash:      txV2.TxHash,
+		Memo:        txV2.Memo,
+		ToAddr:      txV2.ToAddr,
+		TxType:      txV2.Type,
+		BlockHeight: txV2.BlockHeight,
 	}
 
-	value, err := numbers.StringNumberToFloat64(t.Value)
+	value, err := numbers.StringNumberToFloat64(txV2.Value)
 	if err != nil {
 		tx.Value = 0
 	} else {
 		tx.Value = value
 	}
 
-	if t.Fee == "" && len(t.SubTransactions) > 1 {
-		fee, _ := numbers.StringNumberToFloat64(t.SubTransactions[0].Fee)
-		tx.TxFee = fee
+	var feeStr string
+	if txV2.Fee == "" && len(txV2.SubTransactions) > 1 {
+		feeStr = txV2.SubTransactions[0].Fee
 	} else {
-		fee, _ := numbers.StringNumberToFloat64(t.Fee)
-		tx.TxFee = fee
+		feeStr = txV2.Fee
 	}
 
-	if len(t.SubTransactions) > 0 {
+	feeFloat, err := numbers.StringNumberToFloat64(feeStr)
+	if err != nil {
+		tx.TxFee = 0
+	}
+	tx.TxFee = feeFloat
+
+	if len(txV2.SubTransactions) > 0 {
 		tx.HasChildren = 1
 	} else {
 		tx.HasChildren = 0
 	}
 
-	time, err := time.Parse(time.RFC3339, t.Timestamp)
+	time, err := time.Parse(time.RFC3339, txV2.Timestamp)
 	if err != nil {
 		tx.Timestamp = time.Unix()
 	}
 
-	var multisend []multiTransfer
-	for _, st := range t.SubTransactions {
+	multisend := make([]multiTransfer, 0, len(txV2.SubTransactions))
+	for _, st := range txV2.SubTransactions {
 		amount, _ := numbers.StringNumberToFloat64(st.Value)
 		m := multiTransfer{
 			Amount: numbers.Float64toString(amount),
