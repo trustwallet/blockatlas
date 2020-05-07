@@ -9,6 +9,8 @@ import (
 
 var (
 	cosmosCoin = coin.Coin{Handle: "cosmos"}
+	tezosCoin  = coin.Coin{Handle: "tezos"}
+
 	validators = []blockatlas.Validator{
 		{
 			ID:     "test1",
@@ -51,31 +53,70 @@ var (
 			Status:      ValidatorStatus{Disabled: true},
 		},
 	}
-	expectedStakeValidator = blockatlas.StakeValidator{
+
+	tezosValidators = []blockatlas.Validator{
+		{
+			ID:     "test1",
+			Status: true,
+		},
+	}
+
+	tezosAssets1 = []AssetValidator{
+		{
+			ID:          "test1",
+			Name:        "🐠stake.fish",
+			Description: "Leading validator for Proof of Stake blockchains.",
+			Website:     "https://stake.fish/",
+			Status:      ValidatorStatus{Disabled: false},
+			Staking:     StakingInfo{MinDelegation: 10},
+		},
+	}
+	expectTezosVal1 = blockatlas.StakeValidator{
+		ID: "test1", Status: true,
+		Info: blockatlas.StakeValidatorInfo{
+			Name:        "🐠stake.fish",
+			Description: "Leading validator for Proof of Stake blockchains.",
+			Image:       getImage(tezosCoin, "test1"),
+			Website:     "https://stake.fish/",
+		},
+		Details: blockatlas.StakingDetails{
+			MinimumAmount: blockatlas.Amount("10"),
+		},
+	}
+	expectedCosmosStakeValidator = blockatlas.StakeValidator{
 		ID: "test1", Status: true,
 		Info: blockatlas.StakeValidatorInfo{
 			Name:        "Spider",
 			Description: "yo",
-			Image:       "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/cosmos/validators/assets/test1/logo.png",
+			Image:       getImage(cosmosCoin, "test1"),
 			Website:     "https://tw.com",
 		},
+		Details: blockatlas.StakingDetails{
+			MinimumAmount: blockatlas.Amount("0"),
+		},
 	}
-	expectedStakeValidatorDisabled1 = blockatlas.StakeValidator{
+	expectedCosmosStakeValidatorDisabled1 = blockatlas.StakeValidator{
 		ID: "test1", Status: false,
 		Info: blockatlas.StakeValidatorInfo{
 			Name:        "Spider",
 			Description: "yo",
-			Image:       "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/cosmos/validators/assets/test1/logo.png",
+			Image:       getImage(cosmosCoin, "test1"),
 			Website:     "https://tw.com",
 		},
+		Details: blockatlas.StakingDetails{
+			MinimumAmount: blockatlas.Amount("0"),
+		},
 	}
-	expectedStakeValidatorDisabled2 = blockatlas.StakeValidator{
+	expectedCosmosStakeValidatorDisabled2 = blockatlas.StakeValidator{
 		ID: "test2", Status: false,
 		Info: blockatlas.StakeValidatorInfo{
 			Name:        "Man",
 			Description: "lo",
-			Image:       "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/cosmos/validators/assets/test2/logo.png",
+			Image:       getImage(cosmosCoin, "test2"),
 			Website:     "https://tw.com",
+		},
+		Details: blockatlas.StakingDetails{
+			MinimumAmount: blockatlas.Amount("0"),
 		},
 	}
 )
@@ -141,7 +182,7 @@ func TestCalcAnnual(t *testing.T) {
 
 func TestNormalizeValidator(t *testing.T) {
 	result := normalizeValidator(validators[0], assets1[0], cosmosCoin)
-	assert.Equal(t, expectedStakeValidator, result)
+	assert.Equal(t, expectedCosmosStakeValidator, result)
 }
 
 func Test_normalizeValidators(t *testing.T) {
@@ -155,8 +196,9 @@ func Test_normalizeValidators(t *testing.T) {
 		args args
 		want blockatlas.StakeValidators
 	}{
-		{"normalize validator 1", args{assets1, validators, cosmosCoin}, blockatlas.StakeValidators{expectedStakeValidator, expectedStakeValidatorDisabled2}},
-		{"normalize validator 2", args{assets2, validators, cosmosCoin}, blockatlas.StakeValidators{expectedStakeValidatorDisabled1, expectedStakeValidatorDisabled2}},
+		{"normalize validator 1", args{assets1, validators, cosmosCoin}, blockatlas.StakeValidators{expectedCosmosStakeValidator, expectedCosmosStakeValidatorDisabled2}},
+		{"normalize validator 2", args{assets2, validators, cosmosCoin}, blockatlas.StakeValidators{expectedCosmosStakeValidatorDisabled1, expectedCosmosStakeValidatorDisabled2}},
+		{"normalize tezos validator", args{tezosAssets1, tezosValidators, tezosCoin}, blockatlas.StakeValidators{expectTezosVal1}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
