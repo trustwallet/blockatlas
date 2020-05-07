@@ -8,7 +8,6 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"net/http"
 	"net/url"
-	"strconv"
 	"time"
 )
 
@@ -28,30 +27,6 @@ func (c *Client) GetBlockTransactions(num int64) ([]TxV2, error) {
 	stx := new(BlockTransactions)
 	path := fmt.Sprintf("v2/transactions-in-block/%d", num)
 	err := c.Get(stx, path, nil)
-	return stx.Txs, err
-}
-
-//  Gets a list of address or token transactions by type
-func (c *Client) GetAddressAssetTransactions(address, token, txType string) ([]Tx, error) {
-	if address == "" && token == "" {
-		return []Tx{}, errors.E("Address and token not specified")
-	}
-	stx := new(Transactions)
-	endTime := strconv.FormatInt(time.Now().AddDate(0, -3, 0).Unix()*1000, 10)
-	query := url.Values{
-		"address":   {address},
-		"limit":     {"25"},
-		"startTime": {endTime},
-		"txType":    {txType},
-	}
-	if address != "" && token == "" {
-		query.Add("txAsset", "BNB")
-	}
-
-	if token != "" {
-		query.Add("txAsset", token)
-	}
-	err := c.Get(stx, "v1/transactions", query) // Multisend transaction is not available in this API
 	return stx.Txs, err
 }
 
