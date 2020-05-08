@@ -25,16 +25,16 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 		childTxs = append(childTxs, normalizeBlockSubTx(bTrx))
 	}
 
-	var normTxs []blockatlas.Tx
-	for _, srcTx := range childTxs {
-		normT, ok := NormalizeTx(srcTx, "", "")
+	var normalizedTxs []blockatlas.Tx
+	for _, childTx := range childTxs {
+		normalizedTx, ok := NormalizeTx(childTx, "", "")
 		if !ok {
 			continue
 		}
-		normTxs = append(normTxs, normT...)
+		normalizedTxs = append(normalizedTxs, normalizedTx...)
 	}
 
-	return &blockatlas.Block{Number: num, Txs: normTxs}, nil
+	return &blockatlas.Block{Number: num, Txs: normalizedTxs}, nil
 }
 
 // Normalize block sub transaction from RPC to explorer transaction
@@ -57,18 +57,18 @@ func normalizeBlockSubTx(txV2 TxV2) DexTx {
 		tx.Value = value
 	}
 
-	var feeStr string
+	var rawFee string
 	if txV2.Fee == "" && len(txV2.SubTransactions) > 1 {
-		feeStr = txV2.SubTransactions[0].Fee
+		rawFee = txV2.SubTransactions[0].Fee
 	} else {
-		feeStr = txV2.Fee
+		rawFee = txV2.Fee
 	}
 
-	feeFloat, err := numbers.StringNumberToFloat64(feeStr)
+	fee, err := numbers.StringNumberToFloat64(rawFee)
 	if err != nil {
 		tx.TxFee = 0
 	}
-	tx.TxFee = feeFloat
+	tx.TxFee = fee
 
 	if len(txV2.SubTransactions) > 0 {
 		tx.HasChildren = 1
@@ -76,9 +76,9 @@ func normalizeBlockSubTx(txV2 TxV2) DexTx {
 		tx.HasChildren = 0
 	}
 
-	time, err := time.Parse(time.RFC3339, txV2.Timestamp)
+	t, err := time.Parse(time.RFC3339, txV2.Timestamp)
 	if err != nil {
-		tx.Timestamp = time.Unix()
+		tx.Timestamp = t.Unix()
 	}
 
 	subTransfers := make([]multiTransfer, 0)
