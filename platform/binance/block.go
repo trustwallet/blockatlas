@@ -26,7 +26,6 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 	}
 
 	var normTxs []blockatlas.Tx
-	print(len(childTxs))
 	for _, srcTx := range childTxs {
 		normT, ok := NormalizeTx(srcTx, "", "")
 		if !ok {
