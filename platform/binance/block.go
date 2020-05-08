@@ -83,9 +83,8 @@ func normalizeBlockSubTx(txV2 TxV2) DexTx {
 
 	subTransfers := make([]multiTransfer, 0)
 	for _, st := range txV2.SubTransactions {
-		amount, _ := numbers.StringNumberToFloat64(st.Value)
 		m := multiTransfer{
-			Amount: numbers.Float64toString(amount),
+			Amount: st.Value,
 			Asset:  st.Asset,
 			From:   st.FromAddr,
 			To:     st.ToAddr,
