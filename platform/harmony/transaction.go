@@ -5,6 +5,7 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/numbers"
+	"sort"
 	"strconv"
 )
 
@@ -25,6 +26,9 @@ func NormalizeTxs(txs []Transaction) blockatlas.TxPage {
 		}
 		normalizeTxs = append(normalizeTxs, normalized)
 	}
+	sort.Slice(normalizeTxs, func(i, j int) bool {
+		return normalizeTxs[i].Date > normalizeTxs[j].Date
+	})
 	return normalizeTxs
 }
 
