@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-func (p *Platform) CurrentBlockNumber() (int64, error) {
+func (p Platform) CurrentBlockNumber() (int64, error) {
 	info, err := p.rpcClient.fetchNodeInfo()
 	if err != nil {
 		return 0, err
@@ -15,20 +15,21 @@ func (p *Platform) CurrentBlockNumber() (int64, error) {
 	return info.SyncInfo.LatestBlockHeight, nil
 }
 
-func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
-	blockTxs, err := p.rpcClient.GetBlockTransactions(num)
+func (p Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
+	blockTransactions, err := p.rpcClient.fetchBlockTransactions(num)
 	if err != nil {
 		return nil, err
 	}
-	childTxs := make([]DexTx, 0, len(blockTxs))
-	for _, bTrx := range blockTxs {
-		childTxs = append(childTxs, normalizeBlockSubTx(bTrx))
+
+	explorerTransactions := make([]ExplorerTxs, 0, len(blockTransactions))
+	for _, tx := range blockTransactions {
+		explorerTransactions = append(explorerTransactions, normalizeTxsForExplorer(tx))
 	}
 
 	var normalizedTxs []blockatlas.Tx
-	for _, childTx := range childTxs {
-		normalizedTx, ok := NormalizeTx(childTx, "", "")
-		if !ok {
+	for _, tx := range explorerTransactions {
+		normalizedTx := normalizeTx(tx, "", "")
+		if normalizedTx == nil {
 			continue
 		}
 		normalizedTxs = append(normalizedTxs, normalizedTx...)
@@ -37,9 +38,8 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 	return &blockatlas.Block{Number: num, Txs: normalizedTxs}, nil
 }
 
-// Normalize block sub transaction from RPC to explorer transaction
-func normalizeBlockSubTx(txV2 TxV2) DexTx {
-	tx := DexTx{
+func normalizeTxsForExplorer(txV2 TxV2) ExplorerTxs {
+	tx := ExplorerTxs{
 		TxAsset:     txV2.Asset,
 		Code:        txV2.Code,
 		FromAddr:    txV2.FromAddr,
@@ -50,48 +50,26 @@ func normalizeBlockSubTx(txV2 TxV2) DexTx {
 		BlockHeight: txV2.BlockHeight,
 	}
 
-	value, err := numbers.StringNumberToFloat64(txV2.Value)
-	if err != nil {
-		tx.Value = 0
-	} else {
+	if value, err := numbers.StringNumberToFloat64(txV2.Value); err == nil {
 		tx.Value = value
 	}
-
-	var rawFee string
 	if txV2.Fee == "" && len(txV2.SubTransactions) > 1 {
-		rawFee = txV2.SubTransactions[0].Fee
-	} else {
-		rawFee = txV2.Fee
+		txV2.Fee = txV2.SubTransactions[0].Fee
 	}
-
-	fee, err := numbers.StringNumberToFloat64(rawFee)
-	if err != nil {
-		tx.TxFee = 0
+	if fee, err := numbers.StringNumberToFloat64(txV2.Fee); err == nil {
+		tx.TxFee = fee
 	}
-	tx.TxFee = fee
-
 	if len(txV2.SubTransactions) > 0 {
 		tx.HasChildren = 1
-	} else {
-		tx.HasChildren = 0
 	}
-
-	t, err := time.Parse(time.RFC3339, txV2.Timestamp)
-	if err != nil {
+	if t, err := time.Parse(time.RFC3339, txV2.Timestamp); err == nil {
 		tx.Timestamp = t.Unix()
 	}
 
-	subTransfers := make([]multiTransfer, 0)
-	for _, st := range txV2.SubTransactions {
-		m := multiTransfer{
-			Amount: st.Value,
-			Asset:  st.Asset,
-			From:   st.FromAddr,
-			To:     st.ToAddr,
-		}
-		subTransfers = append(subTransfers, m)
+	mts := make([]MultiTransfer, len(txV2.SubTransactions))
+	for i, st := range txV2.SubTransactions {
+		mts[i] = MultiTransfer{Amount: st.Value, Asset: st.Asset, From: st.FromAddr, To: st.ToAddr}
 	}
-	tx.MultisendTransfers = subTransfers
-
+	tx.MultisendTransfers = mts
 	return tx
 }

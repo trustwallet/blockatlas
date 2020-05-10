@@ -9,164 +9,166 @@ import (
 	"time"
 )
 
-type TxType string
-type QuantityTransfer string
-
 const (
-	TxTransfer     TxType           = "TRANSFER"
-	SingleTransfer QuantityTransfer = "singleTransfer" // e.g: BNB => BNB, TWT-8C2 => TWT-8C2
-	MultiTransfer  QuantityTransfer = "multiTransfer"
+	TxTransfer              TxType           = "TRANSFER"
+	SingleTransferOperation QuantityTransfer = "singleTransfer" // e.g: BNB => BNB, TWT-8C2 => TWT-8C2
+	MultiTransferOperation  QuantityTransfer = "multiTransfer"
 )
 
-type Account struct {
-	AccountNumber int       `json:"account_number"`
-	Address       string    `json:"address"`
-	Balances      []Balance `json:"balances"`
-	PublicKey     []byte    `json:"public_key"`
-	Sequence      uint64    `json:"sequence"`
-}
+type (
+	TxType           string
+	QuantityTransfer string
 
-type Balance struct {
-	Free   string `json:"free"`
-	Frozen string `json:"frozen"`
-	Locked string `json:"locked"`
-	Symbol string `json:"symbol"`
-}
+	Account struct {
+		AccountNumber int       `json:"account_number"`
+		Address       string    `json:"address"`
+		Balances      []Balance `json:"balances"`
+		PublicKey     []byte    `json:"public_key"`
+		Sequence      uint64    `json:"sequence"`
+	}
 
-type Error struct {
-	Code    int64  `json:"code"`
-	Message string `json:"message"`
-}
+	Balance struct {
+		Free   string `json:"free"`
+		Frozen string `json:"frozen"`
+		Locked string `json:"locked"`
+		Symbol string `json:"symbol"`
+	}
 
-type NodeInfo struct {
-	SyncInfo SyncInfo `json:"sync_info"`
-}
+	Error struct {
+		Code    int64  `json:"code"`
+		Message string `json:"message"`
+	}
 
-type SyncInfo struct {
-	LatestBlockHeight int64 `json:"latest_block_height"`
-}
+	NodeInfo struct {
+		SyncInfo SyncInfo `json:"sync_info"`
+	}
 
-type Transactions struct {
-	Total int  `json:"total"`
-	Txs   []Tx `json:"tx"`
-}
+	SyncInfo struct {
+		LatestBlockHeight int64 `json:"latest_block_height"`
+	}
 
-type Tx struct {
-	Asset       string `json:"txAsset"`
-	BlockHeight uint64 `json:"blockHeight"`
-	Code        int    `json:"code"`
-	Data        string `json:"data"`
-	Fee         string `json:"txFee"`
-	FromAddr    string `json:"fromAddr"`
-	Memo        string `json:"memo"`
-	OrderID     string `json:"orderId"`
-	Sequence    uint64 `json:"sequence"`
-	Source      int    `json:"source"`
-	Timestamp   string `json:"timeStamp"`
-	ToAddr      string `json:"toAddr"`
-	TxHash      string `json:"txHash"`
-	Type        TxType `json:"txType"`
-	Value       string `json:"value"`
-}
+	Transactions struct {
+		Total int  `json:"total"`
+		Txs   []Tx `json:"tx"`
+	}
 
-type BlockTransactions struct {
-	BlockHeight int64  `json:"blockHeight"`
-	Txs         []TxV2 `json:"tx"`
-}
+	Tx struct {
+		Asset       string `json:"txAsset"`
+		BlockHeight uint64 `json:"blockHeight"`
+		Code        int    `json:"code"`
+		Data        string `json:"data"`
+		Fee         string `json:"txFee"`
+		FromAddr    string `json:"fromAddr"`
+		Memo        string `json:"memo"`
+		OrderID     string `json:"orderId"`
+		Sequence    uint64 `json:"sequence"`
+		Source      int    `json:"source"`
+		Timestamp   string `json:"timeStamp"`
+		ToAddr      string `json:"toAddr"`
+		TxHash      string `json:"txHash"`
+		Type        TxType `json:"txType"`
+		Value       string `json:"value"`
+	}
 
-type TxV2 struct {
-	Tx
-	OrderID         string  `json:"orderId"`         // Optional. Available when the transaction type is NEW_ORDER
-	SubTransactions []SubTx `json:"subTransactions"` // Optional. Available when the transaction has sub-transactions, such as multi-send transaction or a transaction have multiple assets
-}
+	BlockTransactions struct {
+		BlockHeight int64  `json:"blockHeight"`
+		Txs         []TxV2 `json:"tx"`
+	}
 
-type SubTx struct {
-	Asset    string `json:"txAsset"`
-	Height   uint64 `json:"blockHeight"`
-	Fee      string `json:"txFee"`
-	FromAddr string `json:"fromAddr"`
-	Hash     string `json:"txHash"`
-	ToAddr   string `json:"toAddr"`
-	Type     TxType `json:"txType"`
-	Value    string `json:"value"`
-}
+	TxV2 struct {
+		Tx
+		OrderID         string  `json:"orderId"`         // Optional. Available when the transaction type is NEW_ORDER
+		SubTransactions []SubTx `json:"subTransactions"` // Optional. Available when the transaction has sub-transactions, such as multi-send transaction or a transaction have multiple assets
+	}
 
-type TokenList []Token
+	SubTx struct {
+		Asset    string `json:"txAsset"`
+		Height   uint64 `json:"blockHeight"`
+		Fee      string `json:"txFee"`
+		FromAddr string `json:"fromAddr"`
+		Hash     string `json:"txHash"`
+		ToAddr   string `json:"toAddr"`
+		Type     TxType `json:"txType"`
+		Value    string `json:"value"`
+	}
 
-type Token struct {
-	Name           string `json:"name"`
-	OriginalSymbol string `json:"original_symbol"`
-	Owner          string `json:"owner"`
-	Symbol         string `json:"symbol"`
-	TotalSupply    string `json:"total_supply"`
-}
+	TokenList []Token
 
-// Transaction response from Explorer
-type DexTxPage struct {
-	Nums int     `json:"txNums"`
-	Txs  []DexTx `json:"txArray"`
-}
+	Token struct {
+		Name           string `json:"name"`
+		OriginalSymbol string `json:"original_symbol"`
+		Owner          string `json:"owner"`
+		Symbol         string `json:"symbol"`
+		TotalSupply    string `json:"total_supply"`
+	}
 
-type DexTx struct {
-	BlockHeight        uint64          `json:"blockHeight"`
-	Code               int             `json:"code"`
-	FromAddr           string          `json:"fromAddr"`
-	HasChildren        int             `json:"hasChildren"`
-	Memo               string          `json:"memo"`
-	MultisendTransfers []multiTransfer `json:"subTxsDto"` // Not part of response, added from hash info tx for simplifying logic
-	Timestamp          int64           `json:"timeStamp"`
-	ToAddr             string          `json:"toAddr"`
-	TxFee              float64         `json:"txFee"`
-	TxHash             string          `json:"txHash"`
-	TxType             TxType          `json:"txType"`
-	Value              float64         `json:"value,omitempty"`
-	TxAsset            string          `json:"txAsset"`
-}
+	// Transaction response from Explorer
+	ExplorerResponse struct {
+		Nums int           `json:"txNums"`
+		Txs  []ExplorerTxs `json:"txArray"`
+	}
 
-type TxHashRPC struct {
-	Hash string   `json:"hash"`
-	Tx   TxHashTx `json:"tx"`
-}
+	ExplorerTxs struct {
+		BlockHeight        uint64          `json:"blockHeight"`
+		Code               int             `json:"code"`
+		FromAddr           string          `json:"fromAddr"`
+		HasChildren        int             `json:"hasChildren"`
+		Memo               string          `json:"memo"`
+		MultisendTransfers []MultiTransfer `json:"subTxsDto"` // Not part of response, added from hash info tx for simplifying logic
+		Timestamp          int64           `json:"timeStamp"`
+		ToAddr             string          `json:"toAddr"`
+		TxFee              float64         `json:"txFee"`
+		TxHash             string          `json:"txHash"`
+		TxType             TxType          `json:"txType"`
+		Value              float64         `json:"value"`
+		TxAsset            string          `json:"txAsset"`
+	}
 
-type TxHashTx struct {
-	Value Value `json:"value"`
-}
+	TxHashRPC struct {
+		Hash string   `json:"hash"`
+		Tx   TxHashTx `json:"tx"`
+	}
 
-type Value struct {
-	Msg []Msg `json:"msg"`
-}
+	TxHashTx struct {
+		Value Value `json:"value"`
+	}
 
-type Msg struct {
-	Value MsgValue `json:"value"`
-}
+	Value struct {
+		Msg []Msg `json:"msg"`
+	}
 
-type MsgValue struct {
-	Inputs  []Input  `json:"inputs"`
-	Outputs []Output `json:"outputs"`
-}
+	Msg struct {
+		Value MsgValue `json:"value"`
+	}
 
-type Input struct {
-	Address string `json:"address"`
-}
+	MsgValue struct {
+		Inputs  []Input  `json:"inputs"`
+		Outputs []Output `json:"outputs"`
+	}
 
-type Output struct {
-	Address string `json:"address"`
-	Coins   []struct {
+	Input struct {
+		Address string `json:"address"`
+	}
+
+	Output struct {
+		Address string `json:"address"`
+		Coins   []struct {
+			Amount string `json:"amount"`
+			Denom  string `json:"denom"`
+		} `json:"coins"`
+	}
+
+	MultiTransfer struct {
 		Amount string `json:"amount"`
-		Denom  string `json:"denom"`
-	} `json:"coins"`
-}
+		Asset  string `json:"asset"`
+		From   string `json:"from"`
+		To     string `json:"to"`
+	}
+)
 
-type multiTransfer struct {
-	Amount string `json:"amount"`
-	Asset  string `json:"asset"`
-	From   string `json:"from"`
-	To     string `json:"to"`
-}
-
-func extractMultiTransfers(messages Value) (extracted []multiTransfer) {
+func extractMultiTransfers(messages Value) (extracted []MultiTransfer) {
 	for _, msg := range messages.Msg {
-		var tr multiTransfer
+		var tr MultiTransfer
 		tr.From = msg.Value.Inputs[0].Address // Assumed multisend transfer has one input, never seen multiple
 		for _, output := range msg.Value.Outputs {
 			tr.Amount = output.Coins[0].Amount
@@ -179,7 +181,7 @@ func extractMultiTransfers(messages Value) (extracted []multiTransfer) {
 	return
 }
 
-func (tx *Tx) getFee() string {
+func (tx Tx) getFee() string {
 	fee := "0"
 	if _, err := strconv.ParseFloat(tx.Fee, 64); err == nil {
 		fee = numbers.DecimalExp(tx.Fee, int(coin.Binance().Decimals))
@@ -187,7 +189,7 @@ func (tx *Tx) getFee() string {
 	return fee
 }
 
-func (tx *DexTx) getDexFee() blockatlas.Amount {
+func (tx ExplorerTxs) getDexFee() blockatlas.Amount {
 	if tx.TxFee > 0 {
 		return blockatlas.Amount(numbers.DecimalExp(numbers.Float64toString(tx.TxFee), int(coin.Binance().Decimals)))
 	} else {
@@ -195,7 +197,7 @@ func (tx *DexTx) getDexFee() blockatlas.Amount {
 	}
 }
 
-func (tx *DexTx) getStatus() blockatlas.Status {
+func (tx ExplorerTxs) getStatus() blockatlas.Status {
 	switch tx.Code {
 	case 0:
 		return blockatlas.StatusCompleted
@@ -204,12 +206,12 @@ func (tx *DexTx) getStatus() blockatlas.Status {
 	}
 }
 
-func (tx *DexTx) getDexValue() blockatlas.Amount {
+func (tx ExplorerTxs) getDexValue() blockatlas.Amount {
 	val := numbers.DecimalExp(numbers.Float64toString(tx.Value), int(coin.Binance().Decimals))
 	return blockatlas.Amount(val)
 }
 
-func (tx *Tx) getStatus() blockatlas.Status {
+func (tx Tx) getStatus() blockatlas.Status {
 	switch tx.Code {
 	case 0:
 		return blockatlas.StatusCompleted
@@ -269,7 +271,7 @@ func (e *Error) Error() string {
 }
 
 // Add test
-func (tx *DexTx) Direction(address string) blockatlas.Direction {
+func (tx *ExplorerTxs) Direction(address string) blockatlas.Direction {
 	if tx.FromAddr == address && tx.ToAddr == address {
 		return blockatlas.DirectionSelf
 	}
@@ -280,10 +282,10 @@ func (tx *DexTx) Direction(address string) blockatlas.Direction {
 	return blockatlas.DirectionIncoming
 }
 
-func (tx *DexTx) QuantityTransferType() QuantityTransfer {
+func (tx *ExplorerTxs) QuantityTransferType() QuantityTransfer {
 	if tx.HasChildren == 1 {
-		return MultiTransfer
+		return MultiTransferOperation
 	} else {
-		return SingleTransfer
+		return SingleTransferOperation
 	}
 }

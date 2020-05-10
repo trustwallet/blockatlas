@@ -6,12 +6,12 @@ import (
 	"strings"
 )
 
-func (p *Platform) GetTokenListByAddress(address string) (blockatlas.TokenPage, error) {
-	account, err := p.rpcClient.GetAccountMetadata(address)
+func (p Platform) GetTokenListByAddress(address string) (blockatlas.TokenPage, error) {
+	account, err := p.rpcClient.fetchAccountMetadata(address)
 	if err != nil || len(account.Balances) == 0 {
 		return []blockatlas.Token{}, nil
 	}
-	tokens, err := p.rpcClient.GetTokens()
+	tokens, err := p.rpcClient.fetchTokens()
 	if err != nil {
 		return nil, err
 	}

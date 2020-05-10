@@ -9,12 +9,17 @@ type ExplorerClient struct {
 	blockatlas.Request
 }
 
-func (c *ExplorerClient) GetTxsOfAddress(address, token string) (*DexTxPage, error) {
-	stx := new(DexTxPage)
-	query := url.Values{"address": {address}, "rows": {"25"}, "page": {"1"}, "txType": {string(TxTransfer)}}
+const (
+	explorerRows = "25"
+	explorerPage = "1"
+)
+
+func (c ExplorerClient) getTxsOfAddress(address, token string) (ExplorerResponse, error) {
+	stx := new(ExplorerResponse)
+	query := url.Values{"address": {address}, "rows": {explorerRows}, "page": {explorerPage}, "txType": {string(TxTransfer)}}
 	if token != "" {
 		query.Add("txAsset", token)
 	}
 	err := c.Get(stx, "v1/txs", query)
-	return stx, err
+	return *stx, err
 }

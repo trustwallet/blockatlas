@@ -32,27 +32,27 @@ const (
 )
 
 var (
-	expectBnbSingleRPCV2TransferResponse = DexTx{
-		BlockHeight: 84191216,
-		Code:        0,
-		FromAddr:    "bnb1mr5f97rx5wnkfcakx9fcpvljmx2s6kwqc08yur",
-		HasChildren: 0,
-		Memo:        "",
-		MultisendTransfers: []multiTransfer{},
-		Timestamp:   0,
-		ToAddr:      "bnb14cjy0yl23xkf0hnw3ql295v8nghqstvlzkvqpl",
-		TxFee:       0.000375,
-		TxHash:      "4577CB3B5B202696E9E0B093A6DA973C7DD9CBC6808DA1326872745C35F3C089",
-		TxType:      "TRANSFER",
-		Value:       0.0004,
-		TxAsset:     "BNB",
+	expectBnbSingleRPCV2TransferResponse = ExplorerTxs{
+		BlockHeight:        84191216,
+		Code:               0,
+		FromAddr:           "bnb1mr5f97rx5wnkfcakx9fcpvljmx2s6kwqc08yur",
+		HasChildren:        0,
+		Memo:               "",
+		MultisendTransfers: []MultiTransfer{},
+		Timestamp:          1588086357,
+		ToAddr:             "bnb14cjy0yl23xkf0hnw3ql295v8nghqstvlzkvqpl",
+		TxFee:              0.000375,
+		TxHash:             "4577CB3B5B202696E9E0B093A6DA973C7DD9CBC6808DA1326872745C35F3C089",
+		TxType:             "TRANSFER",
+		Value:              0.0004,
+		TxAsset:            "BNB",
 	}
 )
 
 func Test_normalizeBlockSubTx(t *testing.T) {
 	tests := []struct {
 		name, V2Response string
-		expected         DexTx
+		expected         ExplorerTxs
 	}{
 		{name: "Should normalize RPC trx response v2 to explorer transfer", V2Response: bnbSingleTransfer, expected: expectBnbSingleRPCV2TransferResponse},
 	}
@@ -62,7 +62,7 @@ func Test_normalizeBlockSubTx(t *testing.T) {
 			var blockTxs BlockTransactions
 			err := json.Unmarshal([]byte(tt.V2Response), &blockTxs)
 			assert.Nil(t, err)
-			assert.Equal(t, tt.expected, normalizeBlockSubTx(blockTxs.Txs[0]), "tx don't equal")
+			assert.Equal(t, tt.expected, normalizeTxsForExplorer(blockTxs.Txs[0]), "tx don't equal")
 		})
 	}
 }

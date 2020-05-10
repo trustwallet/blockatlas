@@ -138,17 +138,16 @@ func TestNormalizeTxs(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			var srcTx DexTx
+			var srcTx ExplorerTxs
 			err := json.Unmarshal([]byte(tt.dexTxResponse), &srcTx)
 			assert.Nil(t, err)
-			actual, ok := NormalizeTx(srcTx, tt.address, tt.token)
-			assert.Equal(t, true, ok)
+			actual := normalizeTx(srcTx, tt.address, tt.token)
 			assert.Equal(t, tt.expected, actual, "tx don't equal")
 		})
 	}
 }
 
 func TestTokenSymbol(t *testing.T) {
-	assert.Equal(t, "UGAS", TokenSymbol("UGAS"))
-	assert.Equal(t, "UGAS", TokenSymbol("UGAS-B0C"))
+	assert.Equal(t, "UGAS", tokenSymbol("UGAS"))
+	assert.Equal(t, "UGAS", tokenSymbol("UGAS-B0C"))
 }

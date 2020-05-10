@@ -3,95 +3,64 @@ package binance
 import (
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/pkg/numbers"
 	"strconv"
 	"strings"
 	"sync"
 )
 
-func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
-	return p.GetTokenTxsByAddress(address, "")
+const emptyToken = ""
+
+func (p Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
+	return p.GetTokenTxsByAddress(address, emptyToken)
 }
 
-func (p *Platform) GetTokenTxsByAddress(address, token string) (blockatlas.TxPage, error) {
-	txPage, err := p.explorerClient.GetTxsOfAddress(address, token)
-	if err != nil {
-		return nil, err
-	}
-	txs, err := p.getTxChildChan(txPage.Txs)
+func (p Platform) GetTokenTxsByAddress(address, token string) (blockatlas.TxPage, error) {
+	explorerResponse, err := p.explorerClient.getTxsOfAddress(address, token)
 	if err != nil {
 		return nil, err
 	}
 
-	var normTxs []blockatlas.Tx
-	for _, srcTx := range txs {
-		tx, ok := NormalizeTx(srcTx, address, token)
-		if !ok {
+	explorerTxs, err := p.addTxDetails(explorerResponse.Txs)
+	if err != nil {
+		return nil, err
+	}
+
+	return normalizeTxs(explorerTxs, address, token), nil
+}
+
+func normalizeTxs(explorerTxs []ExplorerTxs, address, token string) []blockatlas.Tx {
+	var txs []blockatlas.Tx
+	for _, tx := range explorerTxs {
+		normalizedTxs := normalizeTx(tx, address, token)
+		if normalizedTxs == nil {
 			continue
 		}
-		normTxs = append(normTxs, tx...)
+		txs = append(txs, normalizedTxs...)
 	}
-
-	return normTxs, nil
+	return txs
 }
 
-func (p *Platform) getTxChildChan(srcTxs []DexTx) ([]DexTx, error) {
-	var (
-		wg      sync.WaitGroup
-		hashChan = make(chan TxHashRPC)
-	)
-
-	for i, srcT := range srcTxs {
-		if srcT.HasChildren == 1 {
-			wg.Add(1)
-			go func(srcTx DexTx, out chan TxHashRPC, wg *sync.WaitGroup) {
-				defer wg.Done()
-				defer close(out)
-
-				txHash, err := p.rpcClient.GetTransactionHash(srcTx.TxHash)
-				if err == nil {
-					out <- *txHash
-					return
-				}
-				logger.Error("GetTransactionHash", err, logger.Params{"hash": srcTx.TxHash})
-			}(srcT, hashChan, &wg)
-
-			for hash := range hashChan {
-				if len(hash.Tx.Value.Msg) > 0 {
-					srcTxs[i].MultisendTransfers = extractMultiTransfers(hash.Tx.Value)
-				}
-			}
-		}
+func normalizeTx(srcTx ExplorerTxs, address, token string) []blockatlas.Tx {
+	if srcTx.TxType != TxTransfer {
+		return nil
 	}
-	wg.Wait()
 
-	return srcTxs, nil
-}
-
-// NormalizeTx converts a Binance transaction into the generic model
-func NormalizeTx(srcTx DexTx, address, token string) ([]blockatlas.Tx, bool) {
-	switch srcTx.TxType {
-	case TxTransfer:
-		switch srcTx.QuantityTransferType() {
-		case SingleTransfer:
-			return normalizeSingleTransfer(srcTx, address, token)
-		case MultiTransfer:
-			return normalizeMultiTransfer(srcTx, address, token)
-		default:
-			return blockatlas.TxPage{}, false
-		}
+	switch srcTx.QuantityTransferType() {
+	case SingleTransferOperation:
+		return normalizeSingleTransfer(srcTx, address, token)
+	case MultiTransferOperation:
+		return normalizeMultiTransfer(srcTx, address, token)
 	default:
-		return blockatlas.TxPage{}, false
+		return nil
 	}
 }
 
-func normalizeSingleTransfer(srcTx DexTx, address, token string) (blockatlas.TxPage, bool) {
-	tx := getBase(&srcTx)
+func normalizeSingleTransfer(srcTx ExplorerTxs, address, token string) blockatlas.TxPage {
+	tx := getBase(srcTx)
 	tx.Direction = srcTx.Direction(address)
 	bnbCoin := coin.Coins[coin.BNB]
 
-	// Native coin transfer condition e.g: BNB
 	if srcTx.TxAsset == bnbCoin.Symbol {
 		tx.Type = blockatlas.TxTransfer
 		tx.Meta = blockatlas.Transfer{
@@ -99,66 +68,109 @@ func normalizeSingleTransfer(srcTx DexTx, address, token string) (blockatlas.TxP
 			Symbol:   bnbCoin.Symbol,
 			Value:    srcTx.getDexValue(),
 		}
-		return blockatlas.TxPage{tx}, true
+		return blockatlas.TxPage{tx}
 	}
 
-	// Native token transfer condition e.g: TWT-8C2
 	if srcTx.TxAsset == token {
 		tx.Type = blockatlas.TxNativeTokenTransfer
 		tx.Meta = blockatlas.NativeTokenTransfer{
 			Decimals: bnbCoin.Decimals,
 			From:     srcTx.FromAddr,
-			Symbol:   TokenSymbol(srcTx.TxAsset),
+			Symbol:   tokenSymbol(srcTx.TxAsset),
 			To:       srcTx.ToAddr,
 			TokenID:  srcTx.TxAsset,
 			Value:    srcTx.getDexValue(),
 		}
-		return blockatlas.TxPage{tx}, true
+		return blockatlas.TxPage{tx}
 	}
 
-	return blockatlas.TxPage{}, false
+	return nil
 }
 
-func normalizeMultiTransfer(srcTx DexTx, address, token string) ([]blockatlas.Tx, bool) {
+func normalizeMultiTransfer(srcTx ExplorerTxs, address, token string) []blockatlas.Tx {
 	var txs blockatlas.TxPage
-	for _, m := range srcTx.MultisendTransfers {
-		if m.From == address || m.To == address {
-			srcTx.FromAddr = m.From
-			srcTx.ToAddr = m.To
-			srcTx.TxAsset = m.Asset
-			value, err := strconv.ParseFloat(numbers.ToDecimal(m.Amount, 8), 64)
-			if err != nil {
-				value = 0
+	for _, t := range srcTx.MultisendTransfers {
+		if t.From == address || t.To == address {
+			srcTx.FromAddr = t.From
+			srcTx.ToAddr = t.To
+			srcTx.TxAsset = t.Asset
+
+			if value, err := strconv.ParseFloat(numbers.ToDecimal(t.Amount, 8), 64); err == nil {
+				srcTx.Value = value
 			}
-			srcTx.Value = value
-			single, ok := normalizeSingleTransfer(srcTx, address, token)
+
+			if single := normalizeSingleTransfer(srcTx, address, token); single != nil {
+				txs = append(txs, single...)
+			}
+		}
+	}
+	return txs
+}
+
+func (p Platform) addTxDetails(txs []ExplorerTxs) ([]ExplorerTxs, error) {
+	var (
+		wg              sync.WaitGroup
+		txsWithDetails  = make([]ExplorerTxs, 0, len(txs))
+		txHashChan      = make(chan TxHashRPC, len(txs))
+		multiSendTxsMap = make(map[string]ExplorerTxs, len(txs))
+	)
+
+	for _, tx := range txs {
+		multiSendTxsMap[tx.TxHash] = tx
+
+		if tx.HasChildren != 1 {
+			continue
+		}
+
+		wg.Add(1)
+
+		go func(srcTx ExplorerTxs, txHashChan chan TxHashRPC, wg *sync.WaitGroup) {
+			defer wg.Done()
+			txHash, err := p.rpcClient.fetchTransactionHash(srcTx.TxHash)
+			if err != nil {
+				return
+			}
+			txHashChan <- *txHash
+		}(tx, txHashChan, &wg)
+	}
+
+	wg.Wait()
+	close(txHashChan)
+
+	for res := range txHashChan {
+		if len(res.Tx.Value.Msg) > 0 {
+			a, ok := multiSendTxsMap[res.Hash]
 			if !ok {
 				continue
 			}
-			txs = append(txs, single...)
+			a.MultisendTransfers = extractMultiTransfers(res.Tx.Value)
+			multiSendTxsMap[res.Hash] = a
 		}
 	}
-	return txs, true
+
+	for _, tx := range multiSendTxsMap {
+		txsWithDetails = append(txsWithDetails, tx)
+	}
+
+	return txsWithDetails, nil
 }
 
-func getBase(srcTx *DexTx) blockatlas.Tx {
+func getBase(srcTx ExplorerTxs) blockatlas.Tx {
 	return blockatlas.Tx{
-		ID:       srcTx.TxHash,
-		Coin:     coin.BNB,
-		From:     srcTx.FromAddr,
-		Fee:      srcTx.getDexFee(),
-		Date:     srcTx.Timestamp / 1000,
-		Block:    srcTx.BlockHeight,
-		Status:   srcTx.getStatus(),
-		Memo:     srcTx.Memo,
-		Error:    "",
-		Sequence: 0,
-		To:       srcTx.ToAddr,
+		ID:     srcTx.TxHash,
+		Coin:   coin.BNB,
+		From:   srcTx.FromAddr,
+		Fee:    srcTx.getDexFee(),
+		Date:   srcTx.Timestamp / 1000,
+		Block:  srcTx.BlockHeight,
+		Status: srcTx.getStatus(),
+		Memo:   srcTx.Memo,
+		To:     srcTx.ToAddr,
 	}
 }
 
 // Extract BEP2 token symbol from asset name e.g: TWT-8C2 => TWT
-func TokenSymbol(asset string) string {
+func tokenSymbol(asset string) string {
 	s := strings.Split(asset, "-")
 	if len(s) > 1 {
 		return s[0]

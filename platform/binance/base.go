@@ -11,15 +11,15 @@ type Platform struct {
 }
 
 func Init(api, explorer string) *Platform {
-	p := &Platform{
+	p := Platform{
 		rpcClient:      Client{blockatlas.InitClient(api)},
 		explorerClient: ExplorerClient{blockatlas.InitClient(explorer)},
 	}
-	p.rpcClient.ErrorHandler = getHTTPError
-	p.explorerClient.ErrorHandler = getHTTPError
-	return p
+	p.rpcClient.ErrorHandler = handleHTTPError
+	p.explorerClient.ErrorHandler = handleHTTPError
+	return &p
 }
 
-func (p *Platform) Coin() coin.Coin {
+func (p Platform) Coin() coin.Coin {
 	return coin.Coins[coin.BNB]
 }
