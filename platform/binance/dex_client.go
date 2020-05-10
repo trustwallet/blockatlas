@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"net/url"
+	"time"
 )
 
 // TODO Headers + rate limiting
@@ -21,6 +22,6 @@ func (c *DexClient) GetAccountMetadata(address string) (account *Account, err er
 func (c *DexClient) GetTokens() (*TokenPage, error) {
 	stp := new(TokenPage)
 	query := url.Values{"limit": {"1000"}, "offset": {"0"}}
-	err := c.Get(stp, "v1/tokens", query)
+	err := c.GetWithCache(stp, "v1/tokens", query, time.Hour*1)
 	return stp, err
 }
