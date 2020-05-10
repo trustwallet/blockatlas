@@ -5,7 +5,6 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/numbers"
-	"sort"
 	"strconv"
 )
 
@@ -19,17 +18,13 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 
 func NormalizeTxs(txs []Transaction) blockatlas.TxPage {
 	normalizeTxs := make([]blockatlas.Tx, 0)
-	filteredTxs := unique(txs)
-	for _, srcTx := range filteredTxs {
+	for _, srcTx := range txs {
 		normalized, isCorrect, err := NormalizeTx(&srcTx)
 		if !isCorrect || err != nil {
 			return []blockatlas.Tx{}
 		}
 		normalizeTxs = append(normalizeTxs, normalized)
 	}
-	sort.Slice(normalizeTxs, func(i, j int) bool {
-		return normalizeTxs[i].Date > normalizeTxs[j].Date
-	})
 	return normalizeTxs
 }
 
@@ -86,17 +81,4 @@ func NormalizeTx(trx *Transaction) (tx blockatlas.Tx, b bool, err error) {
 			Decimals: coin.Coins[coin.ONE].Decimals,
 		},
 	}, true, nil
-}
-
-// Remove duplicate transaction with same hash
-func unique(intSlice []Transaction) []Transaction {
-	keys := make(map[string]bool)
-	list := make([]Transaction, 0)
-	for _, entry := range intSlice {
-		if _, value := keys[entry.Hash]; !value {
-			keys[entry.Hash] = true
-			list = append(list, entry)
-		}
-	}
-	return list
 }
