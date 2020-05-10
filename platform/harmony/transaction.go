@@ -19,7 +19,8 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 
 func NormalizeTxs(txs []Transaction) blockatlas.TxPage {
 	normalizeTxs := make([]blockatlas.Tx, 0)
-	for _, srcTx := range txs {
+	filteredTxs := unique(txs)
+	for _, srcTx := range filteredTxs {
 		normalized, isCorrect, err := NormalizeTx(&srcTx)
 		if !isCorrect || err != nil {
 			return []blockatlas.Tx{}
@@ -85,4 +86,17 @@ func NormalizeTx(trx *Transaction) (tx blockatlas.Tx, b bool, err error) {
 			Decimals: coin.Coins[coin.ONE].Decimals,
 		},
 	}, true, nil
+}
+
+// Remove duplicate transaction with same hash
+func unique(intSlice []Transaction) []Transaction {
+	keys := make(map[string]bool)
+	list := make([]Transaction, 0)
+	for _, entry := range intSlice {
+		if _, value := keys[entry.Hash]; !value {
+			keys[entry.Hash] = true
+			list = append(list, entry)
+		}
+	}
+	return list
 }
