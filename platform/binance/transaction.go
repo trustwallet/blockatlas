@@ -43,12 +43,22 @@ func normalizeTxs(explorerTxs []ExplorerTxs, address, token string) []blockatlas
 
 func normalizeTx(srcTx ExplorerTxs, address, token string) []blockatlas.Tx {
 	if srcTx.TxType != TxTransfer {
-		return nil
+		return []blockatlas.Tx{{
+			ID:     srcTx.TxHash,
+			Coin:   coin.BNB,
+			From:   srcTx.FromAddr,
+			To:     srcTx.ToAddr,
+			Fee:    blockatlas.Amount(feeToAmount(srcTx.TxFee)),
+			Date:   srcTx.Timestamp / 1000,
+			Block:  srcTx.BlockHeight,
+			Status: blockatlas.StatusCompleted,
+			Memo:   srcTx.Memo,
+		}}
 	}
 
 	switch srcTx.QuantityTransferType() {
 	case SingleTransferOperation:
-		return normalizeSingleTransfer(srcTx, address, token)
+		return normalizeSingleTransfer(srcTx, address)
 	case MultiTransferOperation:
 		return normalizeMultiTransfer(srcTx, address, token)
 	default:
@@ -56,7 +66,15 @@ func normalizeTx(srcTx ExplorerTxs, address, token string) []blockatlas.Tx {
 	}
 }
 
-func normalizeSingleTransfer(srcTx ExplorerTxs, address, token string) blockatlas.TxPage {
+func feeToAmount(fee float64) string {
+	var res string
+	if fee > 0 {
+		res = numbers.Float64toString(fee)
+	}
+	return res
+}
+
+func normalizeSingleTransfer(srcTx ExplorerTxs, address string) blockatlas.TxPage {
 	tx := getBase(srcTx)
 	tx.Direction = srcTx.Direction(address)
 	bnbCoin := coin.Coins[coin.BNB]
@@ -71,7 +89,7 @@ func normalizeSingleTransfer(srcTx ExplorerTxs, address, token string) blockatla
 		return blockatlas.TxPage{tx}
 	}
 
-	if srcTx.TxAsset == token {
+	if srcTx.TxAsset != "" {
 		tx.Type = blockatlas.TxNativeTokenTransfer
 		tx.Meta = blockatlas.NativeTokenTransfer{
 			Decimals: bnbCoin.Decimals,
@@ -99,7 +117,7 @@ func normalizeMultiTransfer(srcTx ExplorerTxs, address, token string) []blockatl
 				srcTx.Value = value
 			}
 
-			if single := normalizeSingleTransfer(srcTx, address, token); single != nil {
+			if single := normalizeSingleTransfer(srcTx, address); single != nil {
 				txs = append(txs, single...)
 			}
 		}
