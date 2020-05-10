@@ -16,13 +16,13 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 	return p.NormalizePayments(payments), nil
 }
 
-func (p *Platform) NormalizePayments(payments []Payment) (txs []blockatlas.Tx) {
+func (p *Platform) NormalizePayments(payments []Payment) []blockatlas.Tx {
+	txs := make([]blockatlas.Tx, 0, len(payments))
 	for _, payment := range payments {
 		if tx, ok := Normalize(&payment, p.CoinIndex); ok {
 			txs = append(txs, tx)
 		}
 	}
-
 	return txs
 }
 
