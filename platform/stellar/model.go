@@ -38,26 +38,22 @@ type Block struct {
 
 // Payment model returned by Horizon
 type Payment struct {
-	ID              string `json:"id"`
-	Type            string `json:"type"`
-	SourceAccount   string `json:"source_account"`
-	CreatedAt       string `json:"created_at"`
-	Account         string `json:"account"`
-	Funder          string `json:"funder"`
-	StartingBalance string `json:"starting_balance"`
-	Into            string `json:"into"`
-	From            string `json:"from"`
-	To              string `json:"to"`
-	AssetType       string `json:"asset_type"`
-	Amount          string `json:"amount"`
-	TransactionHash string `json:"transaction_hash"`
+	ID              string      `json:"id"`
+	Type            string      `json:"type"`
+	SourceAccount   string      `json:"source_account"`
+	CreatedAt       string      `json:"created_at"`
+	Account         string      `json:"account"`
+	Funder          string      `json:"funder"`
+	StartingBalance string      `json:"starting_balance"`
+	Into            string      `json:"into"`
+	From            string      `json:"from"`
+	To              string      `json:"to"`
+	AssetType       string      `json:"asset_type"`
+	Amount          string      `json:"amount"`
+	TransactionHash string      `json:"transaction_hash"`
+	Transaction     Transaction `json:"transaction"`
 }
 
-type TxHash struct {
+type Transaction struct {
 	Memo string `json:"memo"`
-}
-
-type Tuple struct {
-	Payment
-	TxHash
 }

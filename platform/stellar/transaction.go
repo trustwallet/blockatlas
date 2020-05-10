@@ -5,7 +5,6 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/numbers"
 	"strconv"
-	"sync"
 	"time"
 )
 
@@ -19,42 +18,17 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 }
 
 func (p *Platform) NormalizePayments(payments []Payment) (txs []blockatlas.Tx) {
-	var (
-		wg      sync.WaitGroup
-		txsChan = make(chan blockatlas.Tx, len(payments))
-	)
-
 	for _, payment := range payments {
-		wg.Add(1)
-		go func(pay Payment) {
-			defer wg.Done()
-
-			txHash, err := p.client.GetTxHash(pay.TransactionHash)
-			if err != nil {
-				return
-			}
-
-			tx, ok := Normalize(&pay, p.CoinIndex, txHash)
-			if !ok {
-				return
-			}
-
-			txsChan <- tx
-
-		}(payment)
-	}
-	wg.Wait()
-	close(txsChan)
-
-	for tx := range txsChan {
-		txs = append(txs, tx)
+		if tx, ok := Normalize(&payment, p.CoinIndex); ok {
+			txs = append(txs, tx)
+		}
 	}
 
-	return
+	return txs
 }
 
 // Normalize converts a Stellar-based transaction into the generic model
-func Normalize(payment *Payment, nativeCoinIndex uint, hash TxHash) (tx blockatlas.Tx, ok bool) {
+func Normalize(payment *Payment, nativeCoinIndex uint) (tx blockatlas.Tx, ok bool) {
 	switch payment.Type {
 	case PaymentType:
 		if payment.AssetType != Native {
@@ -95,7 +69,7 @@ func Normalize(payment *Payment, nativeCoinIndex uint, hash TxHash) (tx blockatl
 		To:    to,
 		Fee:   FixedFee,
 		Date:  date.Unix(),
-		Memo:  hash.Memo,
+		Memo:  payment.Transaction.Memo,
 		Block: id,
 		Meta: blockatlas.Transfer{
 			Value:    blockatlas.Amount(value),

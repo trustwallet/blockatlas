@@ -1,8 +1,8 @@
 package stellar
 
 import (
-	"bytes"
 	"encoding/json"
+	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"testing"
@@ -31,7 +31,6 @@ var createDst = blockatlas.Tx{
 	To:    "GDKIJJIKXLOM2NRMPNQZUUYK24ZPVFC6426GZAEP3KUK6KEJLACCWNMX",
 	Fee:   "100",
 	Date:  1470850220,
-	Memo:  "testing",
 	Block: 25002129911451649,
 	Meta: blockatlas.Transfer{
 		Value:    "473269393700000000",
@@ -53,7 +52,10 @@ const transferSrc = `
 	"asset_type": "native",
 	"from": "GDKIJJIKXLOM2NRMPNQZUUYK24ZPVFC6426GZAEP3KUK6KEJLACCWNMX",
 	"to": "GAX3BRBNB5WTJ2GNEFFH7A4CZKT2FORYABDDBZR5FIIT3P7FLS2EFOZZ",
-	"amount": "100000000.0000000"
+	"amount": "100000000.0000000",
+	"transaction": {
+		"memo": "testing"
+	}
 }
 `
 
@@ -73,14 +75,9 @@ var transferDst = blockatlas.Tx{
 	},
 }
 
-var hash = TxHash{
-	Memo: "testing",
-}
-
 type test struct {
 	name        string
 	apiResponse string
-	hash        TxHash
 	expected    *blockatlas.Tx
 }
 
@@ -88,13 +85,11 @@ func TestNormalize(t *testing.T) {
 	testNormalize(t, &test{
 		name:        "create account",
 		apiResponse: createSrc,
-		hash:        hash,
 		expected:    &createDst,
 	})
 	testNormalize(t, &test{
 		name:        "transfer",
 		apiResponse: transferSrc,
-		hash:        hash,
 		expected:    &transferDst,
 	})
 }
@@ -106,24 +101,20 @@ func testNormalize(t *testing.T, _test *test) {
 		t.Error(err)
 		return
 	}
-	tx, ok := Normalize(&payment, coin.XLM, _test.hash)
+	tx, ok := Normalize(&payment, coin.XLM)
 	if !ok {
 		t.Errorf("%s: tx could not be normalized", _test.name)
 	}
 
-	resJSON, err := json.Marshal(&tx)
+	_, err = json.Marshal(&tx)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	dstJSON, err := json.Marshal(&_test.expected)
+	_, err = json.Marshal(&_test.expected)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if !bytes.Equal(resJSON, dstJSON) {
-		println(string(resJSON))
-		println(string(dstJSON))
-		t.Error(_test.name + ": tx don't equal")
-	}
+	assert.Equal(t, tx, *_test.expected)
 }
