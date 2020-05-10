@@ -98,7 +98,7 @@ type (
 		// else error explaining why the transaction failed (optional)
 		Error string `json:"error,omitempty"`
 		// Transaction nonce or sequence
-		Sequence uint64 `json:"sequence,omitempty"`
+		Sequence uint64 `json:"sequence"`
 		// Type of metadata
 		Type TransactionType `json:"type"`
 		// Input addresses
