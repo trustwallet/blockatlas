@@ -55,5 +55,6 @@ type Payment struct {
 }
 
 type Transaction struct {
-	Memo string `json:"memo"`
+	Memo   string `json:"memo"`
+	Ledger uint64 `json:"ledger"`
 }

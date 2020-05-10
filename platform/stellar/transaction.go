@@ -4,7 +4,6 @@ import (
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/numbers"
-	"strconv"
 	"time"
 )
 
@@ -39,10 +38,6 @@ func Normalize(payment *Payment, nativeCoinIndex uint) (tx blockatlas.Tx, ok boo
 	default:
 		return tx, false
 	}
-	id, err := strconv.ParseUint(payment.ID, 10, 64)
-	if err != nil {
-		return tx, false
-	}
 	date, err := time.Parse("2006-01-02T15:04:05Z", payment.CreatedAt)
 	if err != nil {
 		return tx, false
@@ -70,7 +65,7 @@ func Normalize(payment *Payment, nativeCoinIndex uint) (tx blockatlas.Tx, ok boo
 		Fee:   FixedFee,
 		Date:  date.Unix(),
 		Memo:  payment.Transaction.Memo,
-		Block: id,
+		Block: payment.Transaction.Ledger,
 		Meta: blockatlas.Transfer{
 			Value:    blockatlas.Amount(value),
 			Symbol:   coin.Coins[nativeCoinIndex].Symbol,

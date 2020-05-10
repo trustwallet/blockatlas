@@ -31,7 +31,7 @@ var createDst = blockatlas.Tx{
 	To:    "GDKIJJIKXLOM2NRMPNQZUUYK24ZPVFC6426GZAEP3KUK6KEJLACCWNMX",
 	Fee:   "100",
 	Date:  1470850220,
-	Block: 25002129911451649,
+	Block: 0,
 	Meta: blockatlas.Transfer{
 		Value:    "473269393700000000",
 		Symbol:   "XLM",
@@ -54,7 +54,8 @@ const transferSrc = `
 	"to": "GAX3BRBNB5WTJ2GNEFFH7A4CZKT2FORYABDDBZR5FIIT3P7FLS2EFOZZ",
 	"amount": "100000000.0000000",
 	"transaction": {
-		"memo": "testing"
+		"memo": "testing",
+		"ledger": 123
 	}
 }
 `
@@ -67,7 +68,7 @@ var transferDst = blockatlas.Tx{
 	Fee:   "100",
 	Date:  1470857941,
 	Memo:  "testing",
-	Block: 25008572362395649,
+	Block: 123,
 	Meta: blockatlas.Transfer{
 		Value:    blockatlas.Amount("1000000000000000"),
 		Symbol:   "XLM",
