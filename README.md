@@ -1,7 +1,7 @@
 # Block Atlas by Trust Wallet
 
 ![Go Version](https://img.shields.io/github/go-mod/go-version/TrustWallet/blockatlas)
-[![Build Status](https://dev.azure.com/TrustWallet/Trust%20BlockAtlas/_apis/build/status/TrustWallet.blockatlas?branchName=master)](https://dev.azure.com/TrustWallet/Trust%20BlockAtlas/_build/latest?definitionId=27&branchName=master)
+![CI](https://github.com/trustwallet/blockatlas/workflows/CI/badge.svg)
 [![codecov](https://codecov.io/gh/trustwallet/blockatlas/branch/master/graph/badge.svg)](https://codecov.io/gh/trustwallet/blockatlas)
 [![Go Report Card](https://goreportcard.com/badge/trustwallet/blockatlas)](https://goreportcard.com/report/TrustWallet/blockatlas)
 
