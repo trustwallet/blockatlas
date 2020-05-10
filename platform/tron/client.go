@@ -5,6 +5,7 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"net/url"
+	"time"
 )
 
 type Client struct {
@@ -52,7 +53,7 @@ func (c *Client) GetAccountVotes(address string) (account *AccountData, err erro
 
 func (c *Client) GetTokenInfo(id string) (asset Asset, err error) {
 	path := fmt.Sprintf("v1/assets/%s", id)
-	err = c.Get(&asset, path, nil)
+	err = c.GetWithCache(&asset, path, nil, time.Hour*24)
 	return
 }
 
