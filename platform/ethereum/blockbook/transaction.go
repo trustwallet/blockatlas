@@ -30,9 +30,6 @@ func NormalizePage(srcPage *Page, address, token string, coinIndex uint) blockat
 		normalizedToken = Address.EIP55Checksum(token)
 	}
 	for _, srcTx := range srcPage.Transactions {
-		if srcTx.BlockHeight < 0 {
-			continue // Skip pending tx
-		}
 		tx := normalizeTxWithAddress(&srcTx, normalizedAddr, normalizedToken, coinIndex)
 		txs = append(txs, tx)
 	}
