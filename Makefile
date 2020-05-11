@@ -135,8 +135,8 @@ start-mock-dyson: stop-dyson
 	@echo "  >  Starting Dyson with mocks"
 	@-dyson  mock/ext-api-dyson & echo $$! > $(PID_DYSON)
 	@echo "  >  Dyson started with PID: " `cat $(PID_DYSON)`
-	# Check that it is running (e.g. may fail due to unavailable port)
-	@$(MAKE) newman-run test=mock-healthcheck host=http://localhost:8437
+	# Check that mock is running, by making a test with simple call (e.g. may fail due to unavailable port)
+	@newman run tests/postman/blockatlas.postman_collection.json --folder mock-healthcheck --env-var "host=http://localhost:8437"
 
 ## fmt: Run `go fmt` for all go files.
 fmt: go-fmt
