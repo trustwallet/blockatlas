@@ -58,3 +58,12 @@ jobs:
 
     - name: Mock Test
       run: make newman-mocked
+
+  deploy:
+    - name: CD Trigger
+      if: github.ref == 'refs/heads/master'
+      uses: Azure/pipelines@releases/v1
+      with:
+        azure-devops-project-url: 'https://dev.azure.com/TrustWallet/Trust%20BlockAtlas'
+        azure-pipeline-name: 'AutomaticCD'
+        azure-devops-token: '${{ secrets.AZURE_DEVOPS_TOKEN }}'
