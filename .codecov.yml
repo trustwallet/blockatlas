@@ -17,3 +17,4 @@ coverage:
     - "scripts"
     - "docs"
     - "db/models"
+    - "Makefile"
