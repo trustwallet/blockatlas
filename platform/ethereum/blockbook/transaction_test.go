@@ -137,7 +137,42 @@ func TestNormalizePage(t *testing.T) {
 							"gasUsed": 29126,
 							"gasPrice": "3000000000"
 						}
-  					  }
+					},
+					{
+						"txid": "0xfea3444def47c77c5ede0f705d1bc84bb258d51fa454971985c181d6bc679144",
+						"vin": [
+							{
+								"n": 0,
+								"addresses": [
+									"0x7d8bf18C7cE84b3E175b339c4Ca93aEd1dD166F1"
+								],
+								"isAddress": true
+							}
+						],
+						"vout": [
+							{
+								"value": "234000000000000",
+								"n": 0,
+								"addresses": [
+									"0x47331175b23C2f067204B506CA1501c26731C990"
+								],
+								"isAddress": true
+							}
+						],
+						"blockHash": "0x73773a3a240f3f3db689f033ec21cc6e2e2012ad7ac2fe28dfe9b333db5343d2",
+						"blockHeight": -1,
+						"confirmations": 0,
+						"blockTime": 1589249442,
+						"value": "0",
+						"fees": "0",
+						"ethereumSpecific": {
+							"status": -1,
+							"nonce": 0,
+							"gasLimit": 21000,
+							"gasUsed": null,
+							"gasPrice": "11433730000"
+						}
+					}
 					]}`,
 				address:   "0x7d8bf18c7ce84b3e175b339c4ca93aed1dd166f1",
 				token:     "",
@@ -181,6 +216,23 @@ func TestNormalizePage(t *testing.T) {
 						"value": "100000000000000",
 						"from": "0x7d8bf18C7cE84b3E175b339c4Ca93aEd1dD166F1",
 						"to": "0x7d8bf18C7cE84b3E175b339c4Ca93aEd1dD166F1"
+					}
+				  },{
+					"id": "0xfea3444def47c77c5ede0f705d1bc84bb258d51fa454971985c181d6bc679144",
+					"coin": 60,
+					"from": "0x7d8bf18C7cE84b3E175b339c4Ca93aEd1dD166F1",
+					"to": "0x47331175b23C2f067204B506CA1501c26731C990",
+					"fee": "0",
+					"date": 1589249442,
+					"block": 0,
+					"status": "pending",
+					"sequence": 0,
+					"type": "contract_call",
+					"direction": "outgoing",
+					"memo": "",
+					"metadata": {
+						"input": "0x",
+						"value": "0"
 					}
 				  }]`,
 		},
