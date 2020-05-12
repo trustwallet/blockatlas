@@ -1,10 +1,10 @@
 /// ETH RPC API Mock
 /// See:
-/// curl -H "Content-Type: application/json" -d '{"jsonrpc":"2.0","id":2,"method":"eth_call","params":[{"data":"0x02571be3ee6c4522aab0003e8d14cd40a6af439055fd2577951148c14b6cea9a53475835","from":"0x0000000000000000000000000000000000000000","to":"0x00000000000c2e074ec69a0dfb2997ba6c7d2e1e"},"latest"]}' http://localhost:3347/eth-rpc
+/// curl -H "Content-Type: application/json" -d '{"jsonrpc":"2.0","id":2,"method":"eth_call","params":[{"data":"0x02571be3ee6c4522aab0003e8d14cd40a6af439055fd2577951148c14b6cea9a53475835","from":"0x0000000000000000000000000000000000000000","to":"0x00000000000c2e074ec69a0dfb2997ba6c7d2e1e"},"latest"]}' http://localhost:3347/mock/eth-rpc
 /// curl "http://localhost:8437/v2/ns/lookup?name=vitalik.eth&coins=60"
 
 module.exports = {
-    path: '/eth-rpc',
+    path: '/mock/eth-rpc',
     template: function(params, query, body) {
         //console.log(body);
         var jsonrpc = body.jsonrpc;

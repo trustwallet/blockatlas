@@ -1,8 +1,8 @@
 /// Cosmos API Mock
 /// See:
-/// curl "http://localhost:3347/cosmos-api/staking/validators?status=bonded"
-/// curl "http://localhost:3347/cosmos-api/staking/pool"
-/// curl "http://localhost:3347/cosmos-api/minting/inflation"
+/// curl "http://localhost:3347/mock/cosmos-api/staking/validators?status=bonded"
+/// curl "http://localhost:3347/mock/cosmos-api/staking/pool"
+/// curl "http://localhost:3347/mock/cosmos-api/minting/inflation"
 /// curl "https://{cosmos_rpc}/staking/validators?status=bonded"
 /// curl "https://{cosmos_rpc}/staking/pool"
 /// curl "https://{cosmos_rpc}/minting/inflation"
@@ -10,7 +10,7 @@
 /// curl "http://localhost:8437/v2/cosmos/staking/delegations/cosmos1dx27g0kzhwej0ekcf2k9hsktcxnmpl7fcehcvq?Authorization=Bearer"
 
 module.exports = {
-    path: "/cosmos-api/:command1/:command2?",
+    path: "/mock/cosmos-api/:command1/:command2?",
     template: function(params, query, body) {
         //console.log(params)
         //console.log(query)

@@ -1,10 +1,10 @@
 /// Icon API Mock
 /// See:
-/// curl "http://localhost:3347/icon-api/address/txList?address=hxee691e7bccc4eb11fee922896e9f51490e62b12e&count=25"
+/// curl "http://localhost:3347/mock/icon-api/address/txList?address=hxee691e7bccc4eb11fee922896e9f51490e62b12e&count=25"
 /// curl "https://tracker.icon.foundation/v3/address/txList?address=hxee691e7bccc4eb11fee922896e9f51490e62b12e&count=25"
 /// curl http://localhost:8437/v1/icon/hxee691e7bccc4eb11fee922896e9f51490e62b12e
 module.exports = {
-    path: "/icon-api/address/:action?",
+    path: "/mock/icon-api/address/:action?",
     template: function(params, query, body) {
         //console.log(query)
         if (params.action === 'txList') {

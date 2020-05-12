@@ -1,11 +1,11 @@
 /// Mock for external Zilliqa API
 /// See:
 /// curl -H "X-APIKEY: YOUR_API_KEY" "https://api.viewblock.io/v1/zilliqa/addresses/zil1l8ddxvejeam70qang54wnqkgtmlu5mwlgzy64z/txs"
-/// curl "http://localhost:3347/zilliqa-api/addresses/zil1l8ddxvejeam70qang54wnqkgtmlu5mwlgzy64z/txs"
+/// curl "http://localhost:3347/mock/zilliqa-api/addresses/zil1l8ddxvejeam70qang54wnqkgtmlu5mwlgzy64z/txs"
 /// curl "http://localhost:8437/v1/zilliqa/zil1l8ddxvejeam70qang54wnqkgtmlu5mwlgzy64z"
 
 module.exports = {
-    path: '/zilliqa-api/addresses/:address/txs',
+    path: '/mock/zilliqa-api/addresses/:address/txs',
     template: function(params, query, body) {
         //console.log(params)
         //console.log(query)

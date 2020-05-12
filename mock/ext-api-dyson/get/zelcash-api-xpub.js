@@ -1,11 +1,11 @@
 /// Mock for external Zelcash API
 /// See:
 /// curl "http://{Zelcash rpc}/v2/xpub/xpub6C5soBeFd2uZLCcEvsqaoGXuh9UposMMfk2jSiBKMN8rJKs9NLqjPK51gWv9mYBpUY95GtHYsofwpPRdB6FJ56cEaTJGCba5GKv55wPNZNf?details=txs"
-/// curl "http://localhost:3347/zelcash-api/v2/xpub/xpub6C5soBeFd2uZLCcEvsqaoGXuh9UposMMfk2jSiBKMN8rJKs9NLqjPK51gWv9mYBpUY95GtHYsofwpPRdB6FJ56cEaTJGCba5GKv55wPNZNf?details=txs"
+/// curl "http://localhost:3347/mock/zelcash-api/v2/xpub/xpub6C5soBeFd2uZLCcEvsqaoGXuh9UposMMfk2jSiBKMN8rJKs9NLqjPK51gWv9mYBpUY95GtHYsofwpPRdB6FJ56cEaTJGCba5GKv55wPNZNf?details=txs"
 /// curl "http://localhost:8437/v1/zelcash/xpub/xpub6C5soBeFd2uZLCcEvsqaoGXuh9UposMMfk2jSiBKMN8rJKs9NLqjPK51gWv9mYBpUY95GtHYsofwpPRdB6FJ56cEaTJGCba5GKv55wPNZNf"
 
 module.exports = {
-    path: '/zelcash-api/v2/xpub/:xpubkey?',
+    path: '/mock/zelcash-api/v2/xpub/:xpubkey?',
     template: function(params, query, body) {
         //console.log(params)
         //console.log(query)

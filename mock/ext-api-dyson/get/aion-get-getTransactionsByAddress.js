@@ -1,10 +1,10 @@
 /// Aion API Mock
 /// See:
-/// curl "http://localhost:3347/aion-api/getTransactionsByAddress?accountAddress=0xa04f0117864ccf5013861a89f08c6fc790284d72356c8a362025d31b855ed6ed&size=25"
+/// curl "http://localhost:3347/mock/aion-api/getTransactionsByAddress?accountAddress=0xa04f0117864ccf5013861a89f08c6fc790284d72356c8a362025d31b855ed6ed&size=25"
 /// curl "https://mainnet-api.theoan.com/aion/dashboard/getTransactionsByAddress?accountAddress=0xa04f0117864ccf5013861a89f08c6fc790284d72356c8a362025d31b855ed6ed&size=25"
 /// curl http://localhost:8437/v1/aion/0xa04f0117864ccf5013861a89f08c6fc790284d72356c8a362025d31b855ed6ed
 module.exports = {
-    path: "/aion-api/getTransactionsByAddress?",
+    path: "/mock/aion-api/getTransactionsByAddress?",
     template: function(params, query, body) {
         //console.log(query)
         if (query.accountAddress === '0xa04f0117864ccf5013861a89f08c6fc790284d72356c8a362025d31b855ed6ed') {

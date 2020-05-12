@@ -1,10 +1,10 @@
 /// Ontology API Mock
 /// See:
-/// curl "http://localhost:3347/ontology-api/v2/addresses/AUyL4TZ1zFEcSKDJrjFnD7vsq5iFZMZqT7/transactions?page_size=20&page_number=1"
+/// curl "http://localhost:3347/mock/ontology-api/v2/addresses/AUyL4TZ1zFEcSKDJrjFnD7vsq5iFZMZqT7/transactions?page_size=20&page_number=1"
 /// curl "https://explorer.ont.io/v2/addresses/AUyL4TZ1zFEcSKDJrjFnD7vsq5iFZMZqT7/transactions?page_size=20&page_number=1"
 /// curl http://localhost:8437/v1/ontology/AUyL4TZ1zFEcSKDJrjFnD7vsq5iFZMZqT7
 module.exports = {
-    path: "/ontology-api/v2/addresses/:address/:operation?",
+    path: "/mock/ontology-api/v2/addresses/:address/:operation?",
     template: function(params, query, body) {
         //console.log(params)
         if (params.address === 'AUyL4TZ1zFEcSKDJrjFnD7vsq5iFZMZqT7') {

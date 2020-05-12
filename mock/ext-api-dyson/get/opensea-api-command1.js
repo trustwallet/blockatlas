@@ -1,16 +1,16 @@
 /// OpenSea API Mock
 /// See:
 
-/// curl "http://localhost:3347/opensea-api/api/v1/assets/?collection=unstoppable-domains&limit=300&owner=0x84E79D544B4b13bC3560069cfD56A9D5bbE7521d"
+/// curl "http://localhost:3347/mock/opensea-api/api/v1/assets/?collection=unstoppable-domains&limit=300&owner=0x84E79D544B4b13bC3560069cfD56A9D5bbE7521d"
 /// curl "https://api.opensea.io/api/v1/assets/?collection=unstoppable-domains&limit=300&owner=0x84E79D544B4b13bC3560069cfD56A9D5bbE7521d"
 /// curl "http://localhost:8437/v4/ethereum/collections/0x84E79D544B4b13bC3560069cfD56A9D5bbE7521d/collection/unstoppable-domains"
 
-/// curl "http://localhost:3347/opensea-api/api/v1/collections/?asset_owner=0x84E79D544B4b13bC3560069cfD56A9D5bbE7521d&limit=1000"
+/// curl "http://localhost:3347/mock/opensea-api/api/v1/collections/?asset_owner=0x84E79D544B4b13bC3560069cfD56A9D5bbE7521d&limit=1000"
 /// curl "https://api.opensea.io/api/v1/collections?asset_owner=0x84E79D544B4b13bC3560069cfD56A9D5bbE7521d&limit=1000"
 /// curl -d '{"60":["0x84E79D544B4b13bC3560069cfD56A9D5bbE7521d"]}' http://localhost:8437/v4/collectibles/categories
 
 module.exports = {
-    path: "/opensea-api/api/v1/:command1/?",
+    path: "/mock/opensea-api/api/v1/:command1/?",
     template: function(params, query) {
         switch (params.command1) {
             case 'assets':

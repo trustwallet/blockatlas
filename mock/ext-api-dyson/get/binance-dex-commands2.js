@@ -1,13 +1,13 @@
 /// Binance chain block explorer API Mock, Dex
 /// See:
-/// curl "http://localhost:3347/binance-dex/v1/account/bnb1jxfh2g85q3v0tdq56fnevx6xcxtcnhtsmcu64m"
-/// curl "http://localhost:3347/binance-dex/v1/tokens?limit=1000&offset=0"
+/// curl "http://localhost:3347/mock/binance-dex/v1/account/bnb1jxfh2g85q3v0tdq56fnevx6xcxtcnhtsmcu64m"
+/// curl "http://localhost:3347/mock/binance-dex/v1/tokens?limit=1000&offset=0"
 /// curl "https://dex.binance.org/api/v1/account/bnb1jxfh2g85q3v0tdq56fnevx6xcxtcnhtsmcu64m"
 /// curl "https://dex.binance.org/api/v1/tokens?limit=1000&offset=0"
 /// curl "http://localhost:8437/v2/binance/tokens/bnb1jxfh2g85q3v0tdq56fnevx6xcxtcnhtsmcu64m?Authorization=Bearer"
 
 module.exports = {
-    path: '/binance-dex/:version/:command1/:command2?',
+    path: '/mock/binance-dex/:version/:command1/:command2?',
     template: function(params, query, body) {
         //console.log(params);
         //console.log(query);

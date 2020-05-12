@@ -1,10 +1,10 @@
 /// Nebulas API Mock
 /// See:
-/// curl "http://localhost:3347/nebulas-api/tx?a=n1RCYwrpLMpSpUCQ8QUDzGRg6B2PnY8R94a&p=0"
+/// curl "http://localhost:3347/mock/nebulas-api/tx?a=n1RCYwrpLMpSpUCQ8QUDzGRg6B2PnY8R94a&p=0"
 /// curl "https://explorer-backend.nebulas.io/api/tx?a=n1RCYwrpLMpSpUCQ8QUDzGRg6B2PnY8R94a&p=0"
 /// curl http://localhost:8437/v1/nebulas/n1RCYwrpLMpSpUCQ8QUDzGRg6B2PnY8R94a
 module.exports = {
-    path: "/nebulas-api/tx?",
+    path: "/mock/nebulas-api/tx?",
     template: function(params, query, body) {
         //console.log(query)
         if (query.a === 'n1RCYwrpLMpSpUCQ8QUDzGRg6B2PnY8R94a') {

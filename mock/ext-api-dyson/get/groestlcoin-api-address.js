@@ -1,11 +1,11 @@
 /// Mock for external Groestlcoin API
 /// See:
 /// curl "http://{groestlcoin rpc}/api/v2/address/33Ym3fecmWaHD19jymYt6fGd9TqSDQFfQj?details=txs"
-/// curl "http://localhost:3347/groestlcoin-api/v2/address/33Ym3fecmWaHD19jymYt6fGd9TqSDQFfQj?details=txs"
+/// curl "http://localhost:3347/mock/groestlcoin-api/v2/address/33Ym3fecmWaHD19jymYt6fGd9TqSDQFfQj?details=txs"
 /// curl "http://localhost:8437/v1/groestlcoin/address/33Ym3fecmWaHD19jymYt6fGd9TqSDQFfQj"
 
 module.exports = {
-    path: '/groestlcoin-api/v2/address/:address?',
+    path: '/mock/groestlcoin-api/v2/address/:address?',
     template: function(params, query, body) {
         switch (params.address) {
             case '33Ym3fecmWaHD19jymYt6fGd9TqSDQFfQj':

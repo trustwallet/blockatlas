@@ -1,11 +1,11 @@
 /// Nimiq RPC API Mock
 /// See:
 /// curl -H "Content-Type: application/json" -d '{"jsonrpc": "2.0", "method": "getTransactionsByAddress", "params": [ "NQ94HC9AK9D83FSJM6PT8XGNNMXLR0E53Y07", "25" ], "id": "getTransactionsByAddress"}' https://{nimiq_rpc}
-/// curl -H "Content-Type: application/json" -d '{"jsonrpc": "2.0", "method": "getTransactionsByAddress", "params": [ "NQ94HC9AK9D83FSJM6PT8XGNNMXLR0E53Y07", "25" ], "id": "getTransactionsByAddress"}' http://localhost:3347/nimiq-rpc
+/// curl -H "Content-Type: application/json" -d '{"jsonrpc": "2.0", "method": "getTransactionsByAddress", "params": [ "NQ94HC9AK9D83FSJM6PT8XGNNMXLR0E53Y07", "25" ], "id": "getTransactionsByAddress"}' http://localhost:3347/mock/nimiq-rpc
 /// curl "http://localhost:8437/v1/nimiq/NQ94HC9AK9D83FSJM6PT8XGNNMXLR0E53Y07"
 
 module.exports = {
-    path: '/nimiq-rpc',
+    path: '/mock/nimiq-rpc',
     template: function(params, query, body) {
         //console.log(body);
         //console.log('body.method', body.method);

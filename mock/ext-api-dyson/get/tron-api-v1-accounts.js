@@ -1,14 +1,14 @@
 /// Tron API Mock
 /// See:
-/// curl "http://localhost:3347/tron-api/v1/accounts/TFFriedwRtWdFuzerDDtkoQTZ29smDZ1MB/transactions?token_id=&limit=25&order_by=block_timestamp,desc"
-/// curl "http://localhost:3347/tron-api/v1/accounts/TFFriedwRtWdFuzerDDtkoQTZ29smDZ1MB"
+/// curl "http://localhost:3347/mock/tron-api/v1/accounts/TFFriedwRtWdFuzerDDtkoQTZ29smDZ1MB/transactions?token_id=&limit=25&order_by=block_timestamp,desc"
+/// curl "http://localhost:3347/mock/tron-api/v1/accounts/TFFriedwRtWdFuzerDDtkoQTZ29smDZ1MB"
 /// curl "http://{Tron rpc}/v1/accounts/TFFriedwRtWdFuzerDDtkoQTZ29smDZ1MB/transactions?token_id=&limit=25&order_by=block_timestamp,desc"
 /// curl "http://{Tron rpc}/v1/accounts/TFFriedwRtWdFuzerDDtkoQTZ29smDZ1MB"
 /// curl "http://localhost:8437/v1/tron/TFFriedwRtWdFuzerDDtkoQTZ29smDZ1MB"
 /// curl "http://localhost:8437/v2/tron/tokens/TFFriedwRtWdFuzerDDtkoQTZ29smDZ1MB?Authorization=Bearer"
 
 module.exports = {
-    path: "/tron-api/v1/accounts/:address/:operation?",
+    path: "/mock/tron-api/v1/accounts/:address/:operation?",
     template: function(params, query, body) {
         //console.log(params)
         //console.log(query)

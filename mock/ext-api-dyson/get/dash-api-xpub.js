@@ -1,11 +1,11 @@
 /// Mock for external Dash API
 /// See:
 /// curl "http://{dash rpc}/v2/xpub/xpub6CKAjCUKKPW7bzYEG5mzRsmzyTRp7XzauqFWNmpGVNqMqsSQpLMCN3ygEmD6ZEGVocNDrDhE7SeGot78noEWpwPDbJjfxREHC848sxNrUkD?details=txs"
-/// curl "http://localhost:3347/dash-api/v2/xpub/xpub6CKAjCUKKPW7bzYEG5mzRsmzyTRp7XzauqFWNmpGVNqMqsSQpLMCN3ygEmD6ZEGVocNDrDhE7SeGot78noEWpwPDbJjfxREHC848sxNrUkD?details=txs"
+/// curl "http://localhost:3347/mock/dash-api/v2/xpub/xpub6CKAjCUKKPW7bzYEG5mzRsmzyTRp7XzauqFWNmpGVNqMqsSQpLMCN3ygEmD6ZEGVocNDrDhE7SeGot78noEWpwPDbJjfxREHC848sxNrUkD?details=txs"
 /// curl "http://localhost:8437/v1/dash/xpub/xpub6CKAjCUKKPW7bzYEG5mzRsmzyTRp7XzauqFWNmpGVNqMqsSQpLMCN3ygEmD6ZEGVocNDrDhE7SeGot78noEWpwPDbJjfxREHC848sxNrUkD"
 
 module.exports = {
-    path: '/dash-api/v2/xpub/:xpubkey?',
+    path: '/mock/dash-api/v2/xpub/:xpubkey?',
     template: function(params, query, body) {
         //console.log(params)
         //console.log(query)

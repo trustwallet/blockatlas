@@ -1,10 +1,10 @@
 /// Stellar API Mock, transactions
 /// See:
-/// curl "http://localhost:3347/stellar-api/transactions/2912d519b2c2174b0147a9e02208f3ed14820228913142f8c6a5cd360783c029?"
+/// curl "http://localhost:3347/mock/stellar-api/transactions/2912d519b2c2174b0147a9e02208f3ed14820228913142f8c6a5cd360783c029?"
 /// curl "https://horizon.stellar.org/transactions/2912d519b2c2174b0147a9e02208f3ed14820228913142f8c6a5cd360783c029?"
 /// curl http://localhost:8437/v1/stellar/GDKIJJIKXLOM2NRMPNQZUUYK24ZPVFC6426GZAEP3KUK6KEJLACCWNMX
 module.exports = {
-    path: "/stellar-api/transactions/:txid?",
+    path: "/mock/stellar-api/transactions/:txid?",
     template: function(params, query, body) {
         //console.log(query)
         if (params.txid === '2912d519b2c2174b0147a9e02208f3ed14820228913142f8c6a5cd360783c029') {
