@@ -1,0 +1,4 @@
+mock/aeternity-api:
+  url: https://mdw.aepps.com
+mock/aion-api:
+  url: https://mainnet-api.theoan.com/aion/dashboard

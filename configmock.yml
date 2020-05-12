@@ -142,7 +142,7 @@ waves:
 
 # [AE] Aeternity: https://aeternity.com
 aeternity:
-  api: http://localhost:3347/aeternity-api
+  api: http://localhost:3347/mock/aeternity-api
 
 # [NAS] Nebulas: https://nebulas.io
 nebulas:
