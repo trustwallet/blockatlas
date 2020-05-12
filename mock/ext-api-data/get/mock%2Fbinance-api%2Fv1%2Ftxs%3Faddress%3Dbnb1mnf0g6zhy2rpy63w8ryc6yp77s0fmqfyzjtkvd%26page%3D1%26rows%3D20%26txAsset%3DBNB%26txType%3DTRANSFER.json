@@ -1,0 +1,23 @@
+{
+    "txNums": 1,
+    "txArray": [
+        {
+            "txHash": "DDA939C475755B2A00123CDA37A5EC442F502EA2983014D04F647C3CB9FB57A0",
+            "blockHeight": 75110907,
+            "txType": "TRANSFER",
+            "timeStamp": 1584450870939,
+            "fromAddr": "bnb166fvwtfra2atta5mm8mygt2fyltktqctgpedcg",
+            "toAddr": "bnb1mnf0g6zhy2rpy63w8ryc6yp77s0fmqfyzjtkvd",
+            "value": 0.00037500,
+            "txAsset": "BNB",
+            "txFee": 0.00037500,
+            "txAge": 10170,
+            "code": 0,
+            "log": "Msg 0: ",
+            "confirmBlocks": 0,
+            "memo": "",
+            "source": 0,
+            "hasChildren": 0
+        }
+    ]
+}
