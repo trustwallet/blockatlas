@@ -13,7 +13,7 @@ module.exports = {
             case 'xpub6Bq3UUphocwroXkhA9sn8ACnZpJNuwaBehgo7WbDi2DULYnvT72Uzgsv9cE5EiP8ThDYdMyZREfbpkUY4KZ88ZaUQxXciBcZ1soSi1d8xtX':
                 var fn = "../../ext-api-data/get/" +
                     "mock%2Fbitcoincash-api%2Fv2%2Fxpub%2Fxpub6Bq3UUphocwroXkhA9sn8ACnZpJNuwaBehgo7WbDi2DULYnvT72Uzgsv9cE5EiP8ThDYdMyZREfbpkUY4KZ88ZaUQxXciBcZ1soSi1d8xtX%3Fdetails%3Dtxs.json";
-                let json = require(fn);
+                var json = require(fn);
                 return json;
         }
 

@@ -11,7 +11,7 @@ module.exports = {
             case 'bitcoincash:qq07l6rr5lsdm3m80qxw80ku2ex0tj76vvsxpvmgme':
                 var fn = "../../ext-api-data/get/" +
                     "mock%2Fbitcoincash-api%2Fv2%2Faddress%2Fbitcoincash%3Aqq07l6rr5lsdm3m80qxw80ku2ex0tj76vvsxpvmgme%3Fdetails%3Dtxs.json";
-                let json = require(fn);
+                var json = require(fn);
                 return json;
         }
         return {error: "Not implemented"};

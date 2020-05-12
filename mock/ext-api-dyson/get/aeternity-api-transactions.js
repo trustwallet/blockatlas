@@ -11,7 +11,7 @@ module.exports = {
             if (params.address === 'ak_2WGWYMgWy1opZxgA8AVzGCTavCQyUBtbKx5SrCX6E4kmDZMtJb') {
                 var fn = "../../ext-api-data/get/" +
                     "mock%2Faeternity-api%2Fmiddleware%2Ftransactions%2Faccount%2Fak_2WGWYMgWy1opZxgA8AVzGCTavCQyUBtbKx5SrCX6E4kmDZMtJb.json";
-                let json = require(fn);
+                var json = require(fn);
                 return json;
             }
         }

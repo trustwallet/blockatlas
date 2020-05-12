@@ -11,7 +11,7 @@ module.exports = {
             case '5478346':
                 var fn = "../../ext-api-data/get/" +
                     "mock%2Falgorand-api%2Fv1%2Fblock%2F5478346.json";
-                let json = require(fn);
+                var json = require(fn);
                 return json;
         }
 

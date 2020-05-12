@@ -12,8 +12,8 @@ module.exports = {
     template: function(params, query, body) {
         if (query['txHash'] == 'F53BB470A3B6B83977CFFE5D5F9937FB1CBB8785FBE818D9B38AD43F3ECD82BC') {
             var fn = "../../ext-api-data/get/" +
-                "get/mock%2Fbinance-api%2Fv1%2Ftx%3FtxHash%3DF53BB470A3B6B83977CFFE5D5F9937FB1CBB8785FBE818D9B38AD43F3ECD82BC.json";
-            let json = require(fn);
+                "mock%2Fbinance-api%2Fv1%2Ftx%3FtxHash%3DF53BB470A3B6B83977CFFE5D5F9937FB1CBB8785FBE818D9B38AD43F3ECD82BC.json";
+            var json = require(fn);
             return json;
         }
 
