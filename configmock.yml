@@ -159,7 +159,7 @@ litecoin:
   api: http://localhost:3347/litecoin-api
 
 bitcoincash:
-  api: http://localhost:3347/bitcoincash-api
+  api: http://localhost:3347/mock/bitcoincash-api
 
 doge:
   api: http://localhost:3347/doge-api
@@ -192,7 +192,7 @@ decred:
   api: http://localhost:3347/decred-api
 
 algorand:
-  api: http://localhost:3347/algorand-api
+  api: http://localhost:3347/mock/algorand-api
 
 nano:
   api: http://localhost:3347/nano-api

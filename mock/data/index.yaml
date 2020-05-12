@@ -2,3 +2,7 @@ mock/aeternity-api:
   url: https://mdw.aepps.com
 mock/aion-api:
   url: https://mainnet-api.theoan.com/aion/dashboard
+#mock/algorand-api:
+#  url: https://{algorand rpc}
+#mock/bitcoincash-api:
+#  url: https://{bch rpc}/api
