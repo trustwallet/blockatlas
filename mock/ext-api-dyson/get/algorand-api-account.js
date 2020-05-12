@@ -9,7 +9,7 @@ module.exports = {
         //console.log(params)
         switch (params.account) {
             case '4EZFQABCVQTHQCK3HQBIYGC4NV2VM42FZHEFTVH77ROG4ZGREC6Y7V5T2U':
-                var fn = "../../data/get/" +
+                var fn = "../../ext-api-data/get/" +
                     "mock%2Falgorand-api%2Fv1%2Faccount%2F4EZFQABCVQTHQCK3HQBIYGC4NV2VM42FZHEFTVH77ROG4ZGREC6Y7V5T2U%2Ftransactions.json";
                 let json = require(fn);
                 return json;

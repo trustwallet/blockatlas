@@ -8,7 +8,7 @@ module.exports = {
     template: function(params, query, body) {
         //console.log(query)
         if (query.accountAddress === '0xa04f0117864ccf5013861a89f08c6fc790284d72356c8a362025d31b855ed6ed') {
-            var fn = "../../data/get/" +
+            var fn = "../../ext-api-data/get/" +
                 "mock%2Faion-api%2FgetTransactionsByAddress%3FaccountAddress%3D0xa04f0117864ccf5013861a89f08c6fc790284d72356c8a362025d31b855ed6ed%26size%3D25.json";
             let json = require(fn);
             return json;
