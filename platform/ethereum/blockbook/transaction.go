@@ -1,6 +1,8 @@
 package blockbook
 
 import (
+	"strings"
+
 	"github.com/trustwallet/blockatlas/coin"
 	Address "github.com/trustwallet/blockatlas/pkg/address"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
@@ -43,7 +45,7 @@ func normalizeTx(srcTx *Transaction, coinIndex uint) blockatlas.Tx {
 		Coin:     coinIndex,
 		From:     srcTx.FromAddress(),
 		To:       srcTx.ToAddress(),
-		Fee:      blockatlas.Amount(srcTx.Fees),
+		Fee:      blockatlas.Amount(srcTx.GetFee()),
 		Date:     srcTx.BlockTime,
 		Block:    normalizeBlockHeight(srcTx.BlockHeight),
 		Status:   status,
@@ -143,8 +145,25 @@ func fillTransferOrContract(final *blockatlas.Tx, tx *Transaction, coinIndex uin
 		}
 		return
 	}
-	final.Meta = blockatlas.ContractCall{
-		Input: "0x", // FIXME blockbook api doesn't return tx data field
-		Value: tx.Value,
+	data := tx.EthereumSpecific.Data
+	if data == "" {
+		// old node doesn't have data field
+		final.Meta = blockatlas.ContractCall{
+			Input: "0x",
+			Value: tx.Value,
+		}
+	} else {
+		if len(strings.TrimPrefix(data, "0x")) > 0 {
+			final.Meta = blockatlas.ContractCall{
+				Input: data,
+				Value: tx.Value,
+			}
+		} else {
+			final.Meta = blockatlas.Transfer{
+				Value:    blockatlas.Amount(tx.Value),
+				Symbol:   coin.Coins[coinIndex].Symbol,
+				Decimals: coin.Coins[coinIndex].Decimals,
+			}
+		}
 	}
 }

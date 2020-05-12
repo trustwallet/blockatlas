@@ -73,4 +73,5 @@ type EthereumSpecific struct {
 	GasLimit *big.Int `json:"gasLimit"`
 	GasUsed  *big.Int `json:"gasUsed"`
 	GasPrice string   `json:"gasPrice"`
+	Data     string   `json:"data,omitempty"`
 }

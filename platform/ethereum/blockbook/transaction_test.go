@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 )
 
@@ -139,7 +140,7 @@ func TestNormalizePage(t *testing.T) {
 						}
 					},
 					{
-						"txid": "0xfea3444def47c77c5ede0f705d1bc84bb258d51fa454971985c181d6bc679144",
+						"txid": "0x7a3929f2fad5e61f535ed5c1317f34e739655d582bc1b0161b9869b0957df6af",
 						"vin": [
 							{
 								"n": 0,
@@ -151,7 +152,7 @@ func TestNormalizePage(t *testing.T) {
 						],
 						"vout": [
 							{
-								"value": "234000000000000",
+								"value": "567000000000000",
 								"n": 0,
 								"addresses": [
 									"0x47331175b23C2f067204B506CA1501c26731C990"
@@ -159,18 +160,103 @@ func TestNormalizePage(t *testing.T) {
 								"isAddress": true
 							}
 						],
-						"blockHash": "0x73773a3a240f3f3db689f033ec21cc6e2e2012ad7ac2fe28dfe9b333db5343d2",
+						"blockHash": "0xf08fd4b1d6ace92bf9516bbed37de100025f8b0879a80a92359a08f37e788b95",
+						"blockHeight": 10050786,
+						"confirmations": 43,
+						"blockTime": 1589278824,
+						"value": "567000000000000",
+						"fees": "407799043328112",
+						"ethereumSpecific": {
+							"status": 1,
+							"nonce": 535,
+							"gasLimit": 33000,
+							"gasUsed": 21064,
+							"gasPrice": "19360000158",
+							"data": "0xdeadbeef"
+						}
+					},
+					{
+						"txid": "0xb1a56570bcb072d376630b987bd1f44ecc8f2c20ece52f02c9245296d3e3da39",
+						"vin": [
+							{
+								"n": 0,
+								"addresses": [
+									"0x2A0A572d77F6d6Ce62C6539E679d943824c3b218"
+								],
+								"isAddress": true
+							}
+						],
+						"vout": [
+							{
+								"value": "0",
+								"n": 0,
+								"addresses": [
+									"0xdAC17F958D2ee523a2206206994597C13D831ec7"
+								],
+								"isAddress": true
+							}
+						],
 						"blockHeight": -1,
 						"confirmations": 0,
-						"blockTime": 1589249442,
+						"blockTime": 1589279659,
 						"value": "0",
 						"fees": "0",
+						"rbf": true,
+						"tokenTransfers": [
+							{
+								"type": "ERC20",
+								"from": "0x2A0A572d77F6d6Ce62C6539E679d943824c3b218",
+								"to": "0x7d8bf18C7cE84b3E175b339c4Ca93aEd1dD166F1",
+								"token": "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+								"name": "Tether USD",
+								"symbol": "USDT",
+								"decimals": 6,
+								"value": "23000000"
+							}
+						],
 						"ethereumSpecific": {
 							"status": -1,
-							"nonce": 0,
-							"gasLimit": 21000,
+							"nonce": 15647,
+							"gasLimit": 100000,
 							"gasUsed": null,
-							"gasPrice": "11433730000"
+							"gasPrice": "28560000000",
+							"data": "0xa9059cbb000000000000000000000000595031ff9bf6e0c1de20349e1377f43934f8951400000000000000000000000000000000000000000000000000000000015ef3c0"
+						}
+					},
+					{
+						"txid": "0xfe7cce9928450e356f3332485e611781e407425b5888b8b2c7c66afaa4787cb1",
+						"vin": [
+							{
+								"n": 0,
+								"addresses": [
+									"0x267be1C1D684F78cb4F6a176C4911b741E4Ffdc0"
+								],
+								"isAddress": true
+							}
+						],
+						"vout": [
+							{
+								"value": "295000000000000000",
+								"n": 0,
+								"addresses": [
+									"0x7d8bf18C7cE84b3E175b339c4Ca93aEd1dD166F1"
+								],
+								"isAddress": true
+							}
+						],
+						"blockHeight": -1,
+						"confirmations": 0,
+						"blockTime": 1589287339,
+						"value": "295000000000000000",
+						"fees": "0",
+						"rbf": true,
+						"ethereumSpecific": {
+							"status": -1,
+							"nonce": 1282636,
+							"gasLimit": 30000,
+							"gasUsed": null,
+							"gasPrice": "24255000245",
+							"data": "0x"
 						}
 					}
 					]}`,
@@ -218,34 +304,79 @@ func TestNormalizePage(t *testing.T) {
 						"to": "0x7d8bf18C7cE84b3E175b339c4Ca93aEd1dD166F1"
 					}
 				  },{
-					"id": "0xfea3444def47c77c5ede0f705d1bc84bb258d51fa454971985c181d6bc679144",
+					"id": "0x7a3929f2fad5e61f535ed5c1317f34e739655d582bc1b0161b9869b0957df6af",
 					"coin": 60,
 					"from": "0x7d8bf18C7cE84b3E175b339c4Ca93aEd1dD166F1",
 					"to": "0x47331175b23C2f067204B506CA1501c26731C990",
-					"fee": "0",
-					"date": 1589249442,
-					"block": 0,
-					"status": "pending",
-					"sequence": 0,
+					"fee": "407799043328112",
+					"date": 1589278824,
+					"block": 10050786,
+					"status": "completed",
+					"sequence": 535,
 					"type": "contract_call",
 					"direction": "outgoing",
 					"memo": "",
 					"metadata": {
-						"input": "0x",
-						"value": "0"
+						"input": "0xdeadbeef",
+						"value": "567000000000000"
 					}
-				  }]`,
+				  },{
+					"id": "0xb1a56570bcb072d376630b987bd1f44ecc8f2c20ece52f02c9245296d3e3da39",
+					"coin": 60,
+					"from": "0x2A0A572d77F6d6Ce62C6539E679d943824c3b218",
+					"to": "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+					"fee": "2856000000000000",
+					"date": 1589279659,
+					"block": 0,
+					"status": "pending",
+					"sequence": 15647,
+					"type": "token_transfer",
+					"direction": "incoming",
+					"memo": "",
+					"metadata": {
+						"name": "Tether USD",
+						"symbol": "USDT",
+						"token_id": "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+						"decimals": 6,
+						"value": "23000000",
+						"from": "0x2A0A572d77F6d6Ce62C6539E679d943824c3b218",
+						"to": "0x7d8bf18C7cE84b3E175b339c4Ca93aEd1dD166F1"
+					}
+				  },{
+					"id": "0xfe7cce9928450e356f3332485e611781e407425b5888b8b2c7c66afaa4787cb1",
+					"coin": 60,
+					"from": "0x267be1C1D684F78cb4F6a176C4911b741E4Ffdc0",
+					"to": "0x7d8bf18C7cE84b3E175b339c4Ca93aEd1dD166F1",
+					"fee": "727650007350000",
+					"date": 1589287339,
+					"block": 0,
+					"status": "pending",
+					"sequence": 1282636,
+					"type": "transfer",
+					"direction": "incoming",
+					"memo": "",
+					"metadata": {
+						"value": "295000000000000000",
+						"symbol": "ETH",
+						"decimals": 18
+					}
+				  }
+				  ]`,
 		},
 	}
 	for _, tt := range tests {
 		var page Page
 		var txPage blockatlas.TxPage
-		_ = json.Unmarshal([]byte(tt.args.srcPage), &page)
-		_ = json.Unmarshal([]byte(tt.want), &txPage)
+		err := json.Unmarshal([]byte(tt.args.srcPage), &page)
+		assert.Nil(t, err)
+		err = json.Unmarshal([]byte(tt.want), &txPage)
+		assert.Nil(t, err)
 		t.Run(tt.name, func(t *testing.T) {
 			got := NormalizePage(&page, tt.args.address, tt.args.token, tt.args.coinIndex)
-			gotJson, _ := json.Marshal(got)
-			gotTxPage, _ := json.Marshal(txPage)
+			gotJson, err := json.Marshal(got)
+			assert.Nil(t, err)
+			gotTxPage, err := json.Marshal(txPage)
+			assert.Nil(t, err)
 			if string(gotJson) != string(gotTxPage) {
 				t.Errorf("NormalizePage() = %v, want %v", string(gotJson), string(gotTxPage))
 			}
