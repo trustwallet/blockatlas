@@ -15,7 +15,6 @@ require (
 	github.com/deckarep/golang-set v1.7.1
 	github.com/docker/go-connections v0.4.0 // indirect
 	github.com/docker/go-units v0.4.0 // indirect
-	github.com/getsentry/sentry-go v0.6.0
 	github.com/gin-gonic/gin v1.6.3
 	github.com/gotestyourself/gotestyourself v2.2.0+incompatible // indirect
 	github.com/jinzhu/gorm v1.9.12
@@ -35,8 +34,9 @@ require (
 	github.com/swaggo/swag v1.6.5
 	github.com/trustwallet/ens-coincodec v1.0.5
 	go.uber.org/atomic v1.6.0
-	golang.org/x/crypto v0.0.0-20200429183012-4b2356b1ed79
+	golang.org/x/crypto v0.0.0-20200510223506-06a226fb4e37
 	golang.org/x/net v0.0.0-20200506145744-7e3656a0809f
+	golang.org/x/tools v0.0.0-20200513175351-0951661448da // indirect
 	gopkg.in/yaml.v2 v2.2.8
 	gotest.tools v2.2.0+incompatible // indirect
 )
