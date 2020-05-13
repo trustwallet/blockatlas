@@ -4,6 +4,8 @@ package main
 
 import (
 	//"bufio"
+	"bytes"
+	"encoding/json"
 	//"errors"
 	"fmt"
 	"gopkg.in/yaml.v2"
@@ -27,7 +29,7 @@ var urlList URLMap
 
 type TestDataEntry struct {
 	Filename   string
-	Subdir     string
+	Basedir    string
 	HTTPMethod string
 }
 
@@ -57,12 +59,12 @@ func enumerateAllDataFiles(directory string) []TestDataEntry {
 	filesGet := enumerateDataFiles(directory + "/" + subdir)
 	var dataFiles []TestDataEntry
 	for _, f := range filesGet {
-		dataFiles = append(dataFiles, TestDataEntry{f, subdir, "GET"})
+		dataFiles = append(dataFiles, TestDataEntry{f, directory + "/" + subdir, "GET"})
 	}
-	subdir = "./post"
+	subdir = "post"
 	filesPost := enumerateDataFiles(directory + "/" + subdir)
 	for _, f := range filesPost {
-		dataFiles = append(dataFiles, TestDataEntry{f, subdir, "POST"})
+		dataFiles = append(dataFiles, TestDataEntry{f, directory + "/" + subdir, "POST"})
 	}
 	fmt.Printf("  %v data files found\n", len(dataFiles))
 	return dataFiles
@@ -155,7 +157,7 @@ func getMockURL(realURL string, urlMap URLMap) string {
 
 // Process a test data file: given the esacaped relative path (== filename without extension), get the real URL, and retrieve response from there.
 // The old file is renamed to .bak (unless there is error), and the result is written to the old name.
-func processFile(file TestDataEntry, directory string, listOnly bool) {
+func processFile(file TestDataEntry, listOnly bool) {
 	fmt.Printf("Filename:   %v\n", file.Filename)
 	if !strings.HasSuffix(file.Filename, extension) {
 		return
@@ -202,13 +204,20 @@ func processFile(file TestDataEntry, directory string, listOnly bool) {
 			return
 		}
 		// write to file
-		outFile := directory + "/" + escapedMockURL + ".json"
+		outFile := file.Basedir + "/" + escapedMockURL + ".json"
 		err = os.Rename(outFile, outFile+".bak")
 		if err != nil {
 			log.Printf("Rename to Bak failed, err %v, file %v", err.Error(), outFile)
 			return
 		}
-		err = ioutil.WriteFile(outFile, body, 0644)
+		// pretty print
+		var prettyJSON bytes.Buffer
+		err = json.Indent(&prettyJSON, body, "", "\t")
+		if err != nil {
+			log.Println("JSON parse error, err %v, file %v", err.Error(), outFile)
+			return
+		}
+		err = ioutil.WriteFile(outFile, prettyJSON.Bytes(), 0644)
 		if err != nil {
 			log.Printf("Could not write response to file, err %v, file %v", err.Error(), outFile)
 			return
@@ -236,18 +245,18 @@ func ListAll(directory string) {
 	for _, f := range dataFiles {
 		i++
 		fmt.Printf("%v:\n", i)
-		processFile(f, directory, true)
+		processFile(f, true)
 	}
 }
 
-func httpMethodFromFilename(filename string) (method, lastDir string, ok bool) {
-	lastDir = filepath.Base(filepath.Dir(filename))
+func httpMethodFromFilename(filename string) (method string, ok bool) {
+	lastDir := filepath.Base(filepath.Dir(filename))
 	method = strings.ToUpper(lastDir)
 	if method == "GET" || method == "POST" {
-		return method, lastDir, true
+		return method, true
 	}
 	log.Printf("Could not determine HTTP method for file %v", filename)
-	return "", lastDir, false
+	return "", false
 }
 
 func AddFile(realURL, method, directory string) {
@@ -260,17 +269,17 @@ func AddFile(realURL, method, directory string) {
 	subdir := strings.ToLower(method)
 	filename := escapedMockURL + extension
 	fmt.Printf("Mock path and filename:  %v  %v\n", mockURL, filename)
-	entry := TestDataEntry{filename, subdir, strings.ToUpper(method)}
-	processFile(entry, directory + "/" + subdir, false)
+	entry := TestDataEntry{filename, directory + "/" + subdir, strings.ToUpper(method)}
+	processFile(entry, false)
 }
 
 func UpdateFile(filename string) {
-	method, lastDir, ok := httpMethodFromFilename(filename)
+	method, ok := httpMethodFromFilename(filename)
 	if !ok {
 		return
 	}
-	entry := TestDataEntry{filepath.Base(filename), lastDir, method}
-	processFile(entry, filepath.Dir(filename), false)
+	entry := TestDataEntry{filepath.Base(filename), filepath.Dir(filename), method}
+	processFile(entry, false)
 }
 
 func UpdateAllFiles(directory string) {
@@ -279,7 +288,7 @@ func UpdateAllFiles(directory string) {
 	for _, f := range dataFiles {
 		i++
 		fmt.Printf("%v:\n", i)
-		processFile(f, directory, false)
+		processFile(f, false)
 	}
 }
 
