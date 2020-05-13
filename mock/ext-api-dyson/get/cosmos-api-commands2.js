@@ -14,9 +14,7 @@
 
 module.exports = {
     path: "/mock/cosmos-api/:command1/:command2?",
-    template: function(params, query, body) {
-        //console.log(params)
-        //console.log(query)
+    template: function(params, query) {
         switch(params.command1) {
             case 'minting':
                 switch(params.command2) {

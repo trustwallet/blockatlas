@@ -22,7 +22,7 @@ module.exports = {
                         var fn = "../../ext-api-data/get/" +
                             "mock%2Fkava-api%2Fminting%2Finflation.json";
                         var json = require(fn);
-                        return json;        
+                        return json;
                     }
 
             case 'txs': {
@@ -30,14 +30,14 @@ module.exports = {
                     var fn = "../../ext-api-data/get/" +
                         "mock%2Fkava-api%2Ftxs%3Flimit%3D25%26page%3D1%26transfer.recipient%3Dkava1l8va9zyl50cpzv447c694k3jndelc9ygtfll2m.json";
                     var json = require(fn);
-                    return json;    
+                    return json;
                 }
         
                 if (query["message.sender"] === 'kava1l8va9zyl50cpzv447c694k3jndelc9ygtfll2m') {
                     var fn = "../../ext-api-data/get/" +
                         "mock%2Fkava-api%2Ftxs%3Flimit%3D25%26message.sender%3Dkava1l8va9zyl50cpzv447c694k3jndelc9ygtfll2m%26page%3D1.json";
                     var json = require(fn);
-                    return json;    
+                    return json;
                 }        
             }
 
@@ -54,7 +54,7 @@ module.exports = {
                         var fn = "../../ext-api-data/get/" +
                             "mock%2Fkava-api%2Fstaking%2Fvalidators%3Fstatus%3Dbonded.json";
                         var json = require(fn);
-                        return json;        
+                        return json;
                 }
         }
 

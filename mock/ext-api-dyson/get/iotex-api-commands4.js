@@ -17,7 +17,7 @@ module.exports = {
                                 var fn = "../../ext-api-data/get/" +
                                     "mock%2Fiotex-api%2Factions%2Faddr%2Fio1vg808avg2ydye8djl2axmkc9j0xhzu6vdaw6g5%3Fcount%3D25%26start%3D32.json";
                                 var json = require(fn);
-                                return json;                
+                                return json;
                         }
                 }
                 break;
@@ -30,7 +30,7 @@ module.exports = {
                                 var fn = "../../ext-api-data/get/" +
                                     "mock%2Fiotex-api%2Fstaking%2Fdelegations%2Fio1mwekae7qqwlr23220k5n9z3fmjxz72tuchra3m.json";
                                 var json = require(fn);
-                                return json;                
+                                return json;
                         }
                 }
                 break;
