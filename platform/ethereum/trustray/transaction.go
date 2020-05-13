@@ -72,7 +72,7 @@ func AppendTxs(in []blockatlas.Tx, srcTx *Doc, coinIndex uint) (out []blockatlas
 		var tokenID string
 		switch coinIndex {
 		case coin.WAN:
-			tokenID = address.EIP55ChecksumWanchain(srcTx.From)
+			tokenID = address.EIP55ChecksumWanchain(op.Contract.Address)
 		default:
 			tokenID = address.EIP55Checksum(op.Contract.Address)
 		}
