@@ -205,10 +205,14 @@ func processFile(file TestDataEntry, listOnly bool) {
 		}
 		// write to file
 		outFile := file.Basedir + "/" + escapedMockURL + ".json"
-		err = os.Rename(outFile, outFile+".bak")
-		if err != nil {
-			log.Printf("Rename to Bak failed, err %v, file %v", err.Error(), outFile)
-			return
+		if _, err = os.Stat(outFile); err == nil {
+			// file exists, rename
+			bakFile := outFile+".bak"
+			err = os.Rename(outFile, bakFile)
+			if err != nil {
+				log.Printf("Rename to Bak failed, err %v, file %v", err.Error(), outFile)
+				return
+			}
 		}
 		// pretty print
 		var prettyJSON bytes.Buffer
