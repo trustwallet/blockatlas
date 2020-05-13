@@ -34,6 +34,7 @@ type TestDataEntry struct {
 }
 
 const extension string = ".json"
+const extensionPost string = ".request_json"
 
 // Enumerate data files (extension .json) in given directoty; return filenames without extension == escaped relative URL paths
 func enumerateDataFiles(path string) []string {
@@ -155,9 +156,34 @@ func getMockURL(realURL string, urlMap URLMap) string {
 
 }
 
+func readOrWritePostRequestData(entry TestDataEntry, postRequestData string) string {
+	// check if request data file exists
+	postFile := strings.Replace(entry.Basedir + "/" + entry.Filename, extension, extensionPost, -1)
+	b, err := ioutil.ReadFile(postFile)
+	if err == nil {
+		// file exists, return its content
+		fmt.Printf("Post request data read from file  %v\n", postFile)
+		return string(b)
+	}
+	// file could not be read, use parameter, write it to file
+	var prettyJSON bytes.Buffer
+	err = json.Indent(&prettyJSON, []byte(postRequestData), "", "\t")
+	if err != nil {
+		log.Printf("JSON parse error, err %v, data %v\n", err.Error(), postRequestData)
+		return postRequestData
+	}
+	err = ioutil.WriteFile(postFile, prettyJSON.Bytes(), 0644)
+	if err != nil {
+		log.Printf("Could not write post params to new file, err %v, file %v", err.Error(), postFile)
+		return postRequestData
+	}
+	fmt.Printf("Post request data written to file  %v\n", postFile)
+	return postRequestData
+}
+
 // Process a test data file: given the esacaped relative path (== filename without extension), get the real URL, and retrieve response from there.
 // The old file is renamed to .bak (unless there is error), and the result is written to the old name.
-func processFile(file TestDataEntry, listOnly bool) {
+func processFile(file TestDataEntry, listOnly bool, postRequestData string) {
 	fmt.Printf("Filename:   %v\n", file.Filename)
 	if !strings.HasSuffix(file.Filename, extension) {
 		return
@@ -178,67 +204,77 @@ func processFile(file TestDataEntry, listOnly bool) {
 	if listOnly {
 		return
 	}
+
 	// continue with processing
-	if file.HTTPMethod != "GET" && file.HTTPMethod != "POST" {
-		log.Printf("Invalid method %v, url %v", file.HTTPMethod, realURL)
+	var resp *http.Response
+	switch (file.HTTPMethod) {
+		case "GET":
+			resp, err = http.Get(realURL)
+			break
+		case "POST":
+			postData := readOrWritePostRequestData(file, postRequestData)
+			resp, err = http.Post(realURL, "application/json", bytes.NewBuffer([]byte(postData)))
+			break
+		default:
+			log.Printf("Invalid method %v, url %v", file.HTTPMethod, realURL)
+			return
+	}
+
+	if err != nil {
+		log.Printf("Error reading from external service, err %v, url %v", err.Error(), realURL)
 		return
 	}
-	if file.HTTPMethod == "GET" {
-		resp, err := http.Get(realURL)
-		if err != nil {
-			log.Printf("Error reading from external service, err %v, url %v", err.Error(), realURL)
-			return
-		}
-		if resp.StatusCode != 200 {
-			log.Printf("Non-OK status from external service, status %v, url %v", resp.StatusCode, realURL)
-			return
-		}
-		defer resp.Body.Close()
-		body, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			log.Printf("Error reading from external service, err %v, url %v", err.Error(), realURL)
-			return
-		}
-		if len(body) == 0 {
-			log.Printf("Empty response from external service, url %v", realURL)
-			return
-		}
-		// write to file
-		outFile := file.Basedir + "/" + escapedMockURL + ".json"
-		if _, err = os.Stat(outFile); err == nil {
-			// file exists, rename
-			bakFile := outFile+".bak"
-			err = os.Rename(outFile, bakFile)
-			if err != nil {
-				log.Printf("Rename to Bak failed, err %v, file %v", err.Error(), outFile)
-				return
-			}
-		}
-		// pretty print
-		var prettyJSON bytes.Buffer
-		err = json.Indent(&prettyJSON, body, "", "\t")
-		if err != nil {
-			log.Printf("JSON parse error, err %v, file %v\n", err.Error(), outFile)
-			return
-		}
-		err = ioutil.WriteFile(outFile, prettyJSON.Bytes(), 0644)
-		if err != nil {
-			log.Printf("Could not write response to file, err %v, file %v", err.Error(), outFile)
-			return
-		}
-		fmt.Printf("Response file written, %v bytes, url %v, file %v\n", len(body), realURL, outFile)
+	if resp.StatusCode != 200 {
+		log.Printf("Non-OK status from external service, status %v, url %v", resp.StatusCode, realURL)
 		return
 	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Printf("Error reading from external service, err %v, url %v", err.Error(), realURL)
+		return
+	}
+	if len(body) == 0 {
+		log.Printf("Empty response from external service, url %v", realURL)
+		return
+	}
+	// write to file
+	outFile := file.Basedir + "/" + escapedMockURL + ".json"
+	if _, err = os.Stat(outFile); err == nil {
+		// file exists, rename
+		bakFile := outFile+".bak"
+		err = os.Rename(outFile, bakFile)
+		if err != nil {
+			log.Printf("Rename to Bak failed, err %v, file %v", err.Error(), outFile)
+			return
+		}
+	}
+	// pretty print
+	var prettyJSON bytes.Buffer
+	err = json.Indent(&prettyJSON, body, "", "\t")
+	if err != nil {
+		log.Printf("JSON parse error, err %v, file %v\n", err.Error(), outFile)
+		return
+	}
+	err = ioutil.WriteFile(outFile, prettyJSON.Bytes(), 0644)
+	if err != nil {
+		log.Printf("Could not write response to file, err %v, file %v", err.Error(), outFile)
+		return
+	}
+	fmt.Printf("Response file written, %v bytes, url %v, file %v\n", len(body), realURL, outFile)
+	return
 }
 
 func PrintUsage() {
 	fmt.Println("Usage:")
 	prog := "testdatatool"
+	fmt.Printf("  %v help                   Print this help\n", prog)
 	fmt.Printf("  %v list <folder>          List all test data files.                        Ex.: %v list .\n", prog, prog)
-	fmt.Printf("  %v add <realURL> <method> Create a new data file from a real full URL.     Ex.: %v add https://api.trongrid.io/v1/assets/1002798 get\n", prog, prog)
 	fmt.Printf("  %v update <datafile>      Update a test data from external source.         Ex.: %v update get/mock2Fsomthing.json\n", prog, prog)
 	fmt.Printf("  %v updateall <folder>     Update all test data files from external source. Ex.: %v updateall .\n", prog, prog)
-	fmt.Printf("  %v help                   Print this help\n", prog)
+	fmt.Printf("  %v add <realURL> <method> [<postReqData>]\n", prog)
+	fmt.Printf("                                    Create a new data file from a real full URL.     Ex.: %v add https://api.trongrid.io/v1/assets/1002798 get\n", prog)
+	fmt.Printf("                                    Ex.: %v add https://vethor-pubnode.digonchain.com/logs/transfer post '{\"options\":{\"offset\":0,\"limit\":15},...}'\n", prog)
 	fmt.Printf("Mapping to real URLs is taken from file urlmap.yaml\n")
 }
 
@@ -249,7 +285,7 @@ func ListAll(directory string) {
 	for _, f := range dataFiles {
 		i++
 		fmt.Printf("%v:\n", i)
-		processFile(f, true)
+		processFile(f, true, "")
 	}
 }
 
@@ -263,7 +299,7 @@ func httpMethodFromFilename(filename string) (method string, ok bool) {
 	return "", false
 }
 
-func AddFile(realURL, method, directory string) {
+func AddFile(realURL, method, directory, postRequestData string) {
 	mockURL := getMockURL(realURL, urlList)
 	if len(mockURL) == 0 {
 		log.Printf("Could not obtain mock URL for URL %v.  Does mapping exists between real hostname and mock prefix?", realURL)
@@ -274,7 +310,7 @@ func AddFile(realURL, method, directory string) {
 	filename := escapedMockURL + extension
 	fmt.Printf("Mock path and filename:  %v  %v\n", mockURL, filename)
 	entry := TestDataEntry{filename, directory + "/" + subdir, strings.ToUpper(method)}
-	processFile(entry, false)
+	processFile(entry, false, postRequestData)
 }
 
 func UpdateFile(filename string) {
@@ -283,7 +319,7 @@ func UpdateFile(filename string) {
 		return
 	}
 	entry := TestDataEntry{filepath.Base(filename), filepath.Dir(filename), method}
-	processFile(entry, false)
+	processFile(entry, false, "")
 }
 
 func UpdateAllFiles(directory string) {
@@ -292,7 +328,7 @@ func UpdateAllFiles(directory string) {
 	for _, f := range dataFiles {
 		i++
 		fmt.Printf("%v:\n", i)
-		processFile(f, false)
+		processFile(f, false, "")
 	}
 }
 
@@ -310,7 +346,7 @@ func main() {
 
 	switch os.Args[1] {
 	case "list":
-		if nArgs < 3 {
+		if nArgs != 3 {
 			PrintUsage()
 			return
 		}
@@ -321,20 +357,8 @@ func main() {
 		ListAll(dir)
 		return
 
-	case "add":
-		if nArgs < 4 {
-			PrintUsage()
-			return
-		}
-		dir := "."
-		if !readURLList(dir) {
-			return
-		}
-		AddFile(os.Args[2], os.Args[3], dir)
-		return
-
 	case "update":
-		if nArgs < 3 {
+		if nArgs != 3 {
 			PrintUsage()
 			return
 		}
@@ -346,7 +370,7 @@ func main() {
 		return
 
 	case "updateall":
-		if nArgs < 3 {
+		if nArgs != 3 {
 			PrintUsage()
 			return
 		}
@@ -355,6 +379,22 @@ func main() {
 			return
 		}
 		UpdateAllFiles(dir)
+		return
+
+	case "add":
+		if nArgs < 4 || nArgs > 5 {
+			PrintUsage()
+			return
+		}
+		dir := "."
+		if !readURLList(dir) {
+			return
+		}
+		arg4 := ""
+		if nArgs >= 5 {
+			arg4 = os.Args[4]
+		}
+		AddFile(os.Args[2], os.Args[3], dir, arg4)
 		return
 
 	case "help":
