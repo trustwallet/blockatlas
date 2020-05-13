@@ -18,7 +18,10 @@ module.exports = {
                                 switch (params.arg4) {
                                     case 'delegations':
                                     case 'unbonding_delegations':
-                                        return {height: "1793219", result: []};
+                                        var fn = "../../ext-api-data/get/" +
+                                            "mock%2Fkava-api%2Fstaking%2Fdelegators%2Fkava1l8va9zyl50cpzv447c694k3jndelc9ygtfll2m%2Fdelegations.json";
+                                        var json = require(fn);
+                                        return json;
                                 }
                         }
                 }
