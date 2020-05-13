@@ -7,6 +7,7 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"net/url"
 	"strconv"
+	"time"
 )
 
 // Client - the HTTP client
@@ -32,7 +33,7 @@ func (c *Client) GetValidators() (validators Validators, err error) {
 	query := url.Values{
 		"status": {"bonded"},
 	}
-	err = c.Get(&validators, "staking/validators", query)
+	err = c.GetWithCache(&validators, "staking/validators", query, time.Minute*10)
 	return
 }
 
@@ -58,11 +59,11 @@ func (c *Client) CurrentBlockNumber() (num int64, err error) {
 }
 
 func (c *Client) GetPool() (result StakingPool, err error) {
-	return result, c.Get(&result, "staking/pool", nil)
+	return result, c.GetWithCache(&result, "staking/pool", nil, time.Minute*20)
 }
 
 func (c *Client) GetInflation() (inflation Inflation, err error) {
-	err = c.Get(&inflation, "minting/inflation", nil)
+	err = c.GetWithCache(&inflation, "minting/inflation", nil, time.Minute*20)
 	return
 }
 
