@@ -1,6 +1,8 @@
 package blockbook
 
 import (
+	"math/big"
+
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 )
 
@@ -22,6 +24,21 @@ func (t *Transaction) FromAddress() string {
 		return t.Vin[0].Addresses[0]
 	}
 	return ""
+}
+
+func (t *Transaction) GetFee() string {
+	status, _ := t.EthereumSpecific.GetStatus()
+	if status != blockatlas.StatusPending {
+		return t.Fees
+	}
+
+	gasLimit := t.EthereumSpecific.GasLimit
+	gasPrice, ok := new(big.Int).SetString(t.EthereumSpecific.GasPrice, 10)
+	if gasLimit == nil || !ok {
+		return "0"
+	}
+	fee := new(big.Int).Mul(gasLimit, gasPrice)
+	return fee.String()
 }
 
 func (t *Transaction) ToAddress() string {
