@@ -49,6 +49,7 @@ func AppendTxs(in []blockatlas.Tx, srcTx *Doc, coinIndex uint) (out []blockatlas
 			Decimals: coin.Coins[coinIndex].Decimals,
 		}
 		out = append(out, transferTx)
+		return
 	}
 
 	// Smart Contract Call
@@ -59,16 +60,15 @@ func AppendTxs(in []blockatlas.Tx, srcTx *Doc, coinIndex uint) (out []blockatlas
 			Value: srcTx.Value,
 		}
 		out = append(out, contractTx)
+		return
 	}
 
 	if len(srcTx.Ops) == 0 {
 		return
 	}
 	op := &srcTx.Ops[0]
-
+	// Token transfer transaction
 	if op.Type == blockatlas.TxTokenTransfer && op.Contract != nil {
-		tokenTx := baseTx
-
 		var tokenID string
 		switch coinIndex {
 		case coin.WAN:
@@ -77,6 +77,7 @@ func AppendTxs(in []blockatlas.Tx, srcTx *Doc, coinIndex uint) (out []blockatlas
 			tokenID = address.EIP55Checksum(op.Contract.Address)
 		}
 
+		tokenTx := baseTx
 		tokenTx.Meta = blockatlas.TokenTransfer{
 			Name:     op.Contract.Name,
 			Symbol:   op.Contract.Symbol,
@@ -86,8 +87,8 @@ func AppendTxs(in []blockatlas.Tx, srcTx *Doc, coinIndex uint) (out []blockatlas
 			From:     op.From,
 			To:       op.To,
 		}
-
 		out = append(out, tokenTx)
+		return
 	}
 	return
 }
