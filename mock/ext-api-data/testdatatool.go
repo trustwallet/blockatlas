@@ -21,7 +21,9 @@ type URLEntry struct {
 	URL string
 }
 
-var urlList map[string]URLEntry
+type URLMap map[string]URLEntry
+
+var urlList URLMap
 
 type TestDataEntry struct {
 	Filename   string
@@ -71,12 +73,12 @@ func readURLList(directory string) bool {
 	list := map[string]URLEntry{}
 	yamlFile, err := ioutil.ReadFile(filename)
 	if err != nil {
-		log.Fatal("Could not read index file")
+		log.Fatalf("Could not read index file %v", filename)
 		return false
 	}
 	err = yaml.Unmarshal(yamlFile, list)
 	if err != nil {
-		log.Fatal("Could not read index file")
+		log.Fatalf("Could not read index file %v", filename)
 		return false
 	}
 	urlList = list
@@ -125,16 +127,30 @@ func normalizeURL(inurl string) string {
 }
 
 // Given a mock URL relative path, return corresponding full path of the external service.  Mapping from urlList is used.
-func getRealURL(mockURL string) string {
-	for mockURLRoot := range urlList {
+func getRealURL(mockURL string, urlMap URLMap) string {
+	for mockURLRoot := range urlMap {
 		if strings.HasPrefix(mockURL, mockURLRoot) {
-			realURLRoot := urlList[mockURLRoot].URL
+			realURLRoot := urlMap[mockURLRoot].URL
 			realURL := strings.Replace(mockURL, mockURLRoot, realURLRoot, -1)
 			return realURL
 		}
 	}
 	// none found
 	return ""
+}
+
+// Given a real external API URL, return the corressponding mock path.  Mapping must exists.
+func getMockURL(realURL string, urlMap URLMap) string {
+	for mockURLRoot := range urlMap {
+		realURLRoot := urlMap[mockURLRoot].URL
+		if strings.HasPrefix(realURL, realURLRoot) {
+			mockURL := strings.Replace(realURL, realURLRoot, mockURLRoot, -1)
+			return mockURL
+		}
+	}
+	// none found
+	return ""
+
 }
 
 // Process a test data file: given the esacaped relative path (== filename without extension), get the real URL, and retrieve response from there.
@@ -151,7 +167,7 @@ func processFile(file TestDataEntry, directory string, listOnly bool) {
 		log.Printf("Could not un-escape url, err %v, url %v", err.Error(), escapedMockURL)
 		return
 	}
-	realURL := getRealURL(mockURL)
+	realURL := getRealURL(mockURL, urlList)
 	if len(realURL) == 0 {
 		log.Printf("Could not obtain real URL")
 		return
@@ -161,6 +177,10 @@ func processFile(file TestDataEntry, directory string, listOnly bool) {
 		return
 	}
 	// continue with processing
+	if file.HTTPMethod != "GET" && file.HTTPMethod != "POST" {
+		log.Printf("Invalid method %v, url %v", file.HTTPMethod, realURL)
+		return
+	}
 	if file.HTTPMethod == "GET" {
 		resp, err := http.Get(realURL)
 		if err != nil {
@@ -193,45 +213,19 @@ func processFile(file TestDataEntry, directory string, listOnly bool) {
 			log.Printf("Could not write response to file, err %v, file %v", err.Error(), outFile)
 			return
 		}
-		fmt.Printf("Response file written, %v bytes, url %v, file %v", len(body), realURL, outFile)
+		fmt.Printf("Response file written, %v bytes, url %v, file %v\n", len(body), realURL, outFile)
 		return
 	}
 }
 
-/*
-func processInitial(initialMockURLListFileName, folder string) {
-	file, err := os.Open(initialMockURLListFileName)
-    if err != nil {
-		log.Fatal(err)
-		return
-    }
-    defer file.Close()
-
-    scanner := bufio.NewScanner(file)
-    for scanner.Scan() {
-		url0 := scanner.Text()
-		nurl := normalizeURL(url0)
-		fn := folder + "/" + url.QueryEscape(nurl) + ".json"
-		log.Println(fn)
-		err = ioutil.WriteFile(fn, []byte{}, 0644)
-		if err != nil {
-			log.Printf("Could not write empty data file, err %v, file %v", err.Error(), fn)
-		}
-    }
-
-    if err := scanner.Err(); err != nil {
-        log.Fatal(err)
-    }
-}
-*/
-
 func PrintUsage() {
 	fmt.Println("Usage:")
 	prog := "testdatatool"
-	fmt.Printf("  %v list <folder>        List all test data files.                        Ex.: %v list .\n", prog, prog)
-	fmt.Printf("  %v update <datafile>    Update a test data from external source.         Ex.: %v update get/mock2Fsomthing.json\n", prog, prog)
-	fmt.Printf("  %v updateall <folder>   Update all test data files from external source. Ex.: %v updateall .\n", prog, prog)
-	fmt.Printf("  %v help                 Print this help\n", prog)
+	fmt.Printf("  %v list <folder>          List all test data files.                        Ex.: %v list .\n", prog, prog)
+	fmt.Printf("  %v add <realURL> <method> Create a new data file from a real full URL.     Ex.: %v add https://api.trongrid.io/v1/assets/1002798 get\n", prog, prog)
+	fmt.Printf("  %v update <datafile>      Update a test data from external source.         Ex.: %v update get/mock2Fsomthing.json\n", prog, prog)
+	fmt.Printf("  %v updateall <folder>     Update all test data files from external source. Ex.: %v updateall .\n", prog, prog)
+	fmt.Printf("  %v help                   Print this help\n", prog)
 	fmt.Printf("Mapping to real URLs is taken from file urlmap.yaml\n")
 }
 
@@ -254,6 +248,20 @@ func httpMethodFromFilename(filename string) (method, lastDir string, ok bool) {
 	}
 	log.Printf("Could not determine HTTP method for file %v", filename)
 	return "", lastDir, false
+}
+
+func AddFile(realURL, method, directory string) {
+	mockURL := getMockURL(realURL, urlList)
+	if len(mockURL) == 0 {
+		log.Printf("Could not obtain mock URL for URL %v.  Does mapping exists between real hostname and mock prefix?", realURL)
+		return
+	}
+	escapedMockURL := url.QueryEscape(mockURL)
+	subdir := strings.ToLower(method)
+	filename := escapedMockURL + extension
+	fmt.Printf("Mock path and filename:  %v  %v\n", mockURL, filename)
+	entry := TestDataEntry{filename, subdir, strings.ToUpper(method)}
+	processFile(entry, directory + "/" + subdir, false)
 }
 
 func UpdateFile(filename string) {
@@ -298,6 +306,18 @@ func main() {
 			return
 		}
 		ListAll(dir)
+		return
+
+	case "add":
+		if nArgs < 4 {
+			PrintUsage()
+			return
+		}
+		dir := "."
+		if !readURLList(dir) {
+			return
+		}
+		AddFile(os.Args[2], os.Args[3], dir)
 		return
 
 	case "update":
