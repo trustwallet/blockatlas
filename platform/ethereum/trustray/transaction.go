@@ -30,7 +30,7 @@ func normalizePage(srcPage *Page, address string, coinIndex uint) blockatlas.TxP
 		txs = AppendTxs(txs, &srcTx, coinIndex)
 		txs[i].Direction = txs[i].GetTransactionDirection(address)
 	}
-	return blockatlas.TxPage(txs)
+	return txs
 }
 
 func AppendTxs(in []blockatlas.Tx, srcTx *Doc, coinIndex uint) (out []blockatlas.Tx) {
@@ -69,15 +69,24 @@ func AppendTxs(in []blockatlas.Tx, srcTx *Doc, coinIndex uint) (out []blockatlas
 	if op.Type == blockatlas.TxTokenTransfer && op.Contract != nil {
 		tokenTx := baseTx
 
+		var tokenID string
+		switch coinIndex {
+		case coin.WAN:
+			tokenID = address.EIP55ChecksumWanchain(srcTx.From)
+		default:
+			tokenID = address.EIP55Checksum(op.Contract.Address)
+		}
+
 		tokenTx.Meta = blockatlas.TokenTransfer{
 			Name:     op.Contract.Name,
 			Symbol:   op.Contract.Symbol,
-			TokenID:  address.EIP55Checksum(op.Contract.Address),
+			TokenID:  tokenID,
 			Decimals: op.Contract.Decimals,
 			Value:    blockatlas.Amount(op.Value),
 			From:     op.From,
 			To:       op.To,
 		}
+
 		out = append(out, tokenTx)
 	}
 	return
@@ -101,8 +110,6 @@ func extractBase(srcTx *Doc, coinIndex uint) (base blockatlas.Tx, ok bool) {
 	base = blockatlas.Tx{
 		ID:       srcTx.ID,
 		Coin:     coinIndex,
-		From:     srcTx.From,
-		To:       srcTx.To,
 		Fee:      blockatlas.Amount(fee),
 		Date:     srcTx.Timestamp,
 		Block:    srcTx.BlockNumber,
@@ -110,6 +117,17 @@ func extractBase(srcTx *Doc, coinIndex uint) (base blockatlas.Tx, ok bool) {
 		Error:    errReason,
 		Sequence: srcTx.Nonce,
 	}
+
+	switch coinIndex {
+	case coin.WAN:
+		base.From = address.EIP55ChecksumWanchain(srcTx.From)
+		base.To = address.EIP55ChecksumWanchain(srcTx.To)
+	default:
+		// Expect address already in checksum from Trust Ray
+		base.From = srcTx.From
+		base.To = srcTx.To
+	}
+
 	return base, true
 }
 

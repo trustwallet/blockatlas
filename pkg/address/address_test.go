@@ -16,11 +16,30 @@ func TestChecksum(t *testing.T) {
 		{"test checksum hex", "fffdefefed", "0xFfFDEfeFeD"},
 		{"test checksum 3", "0x0000000000000000003731342d4f4e452d354639", "0x0000000000000000003731342d4f4E452d354639"},
 		{"test checksum 4", "0000000000000000003731342d4f4e452d354639", "0x0000000000000000003731342d4f4E452d354639"},
+		{"test checksum Ethereum address", "0x84a0d77c693adabe0ebc48f88b3ffff010577051", "0x84A0d77c693aDAbE0ebc48F88b3fFFF010577051"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := EIP55Checksum(tt.unchecksummed); got != tt.want {
 				t.Errorf("EIP55Checksum() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestEIP55ChecksumWanchain(t *testing.T) {
+	tests := []struct {
+		name          string
+		unchecksummed string
+		want          string
+	}{
+		{"test checksum 1", "0xae96137e0e05681ed2f5d1af272c3ee512939d0f", "0xaE96137e0E05681Ed2f5d1af272c3EE512939d0f"},
+		{"test checksum 2", "0xAe96137E0e05681eD2F5D1AF272C3ee512939D0F", "0xaE96137e0E05681Ed2f5d1af272c3EE512939d0f"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := EIP55ChecksumWanchain(tt.unchecksummed); got != tt.want {
+				t.Errorf("EIP55ChecksumWanchain() = %v, want %v", got, tt.want)
 			}
 		})
 	}
