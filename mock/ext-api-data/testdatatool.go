@@ -210,11 +210,9 @@ func processFile(file TestDataEntry, listOnly bool, postRequestData string) {
 	switch (file.HTTPMethod) {
 		case "GET":
 			resp, err = http.Get(realURL)
-			break
 		case "POST":
 			postData := readOrWritePostRequestData(file, postRequestData)
 			resp, err = http.Post(realURL, "application/json", bytes.NewBuffer([]byte(postData)))
-			break
 		default:
 			log.Printf("Invalid method %v, url %v", file.HTTPMethod, realURL)
 			return
@@ -262,7 +260,6 @@ func processFile(file TestDataEntry, listOnly bool, postRequestData string) {
 		return
 	}
 	fmt.Printf("Response file written, %v bytes, url %v, file %v\n", len(body), realURL, outFile)
-	return
 }
 
 func PrintUsage() {
