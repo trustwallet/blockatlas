@@ -3,24 +3,33 @@
 package main
 
 import (
-	"bufio"
-	"errors"
-	//"fmt"
+	//"bufio"
+	//"errors"
+	"fmt"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
 	"os"
+	"path/filepath"
 	"sort"
 	"strings"
 )
 
-type UrlEntry struct {
-	Url string
+type URLEntry struct {
+	URL string
 }
 
-var urlList map[string]UrlEntry
+var urlList map[string]URLEntry
+
+type TestDataEntry struct {
+	Filename   string
+	Subdir     string
+	HTTPMethod string
+}
+
+const extension string = ".json"
 
 // Enumerate data files (extension .json) in given directoty; return filenames without extension == escaped relative URL paths
 func enumerateDataFiles(path string) []string {
@@ -29,45 +38,62 @@ func enumerateDataFiles(path string) []string {
 		log.Fatal(err)
 	}
 
-	const extension string = ".json"
 	filenames := make([]string, 0)
 	for _, f := range files {
 		if len(f.Name()) > 0 {
-			filename := f.Name()
-			if strings.HasSuffix(filename, extension) {
-				filename = filename[:len(filename)-len(extension)]
-				filenames = append(filenames, filename)
+			if strings.HasSuffix(f.Name(), extension) {
+				filenames = append(filenames, f.Name())
 			}
 		}
 	}
 	return filenames
 }
 
-func readUrlList() (map[string]UrlEntry, error) {
-	filename := "urlmap.yaml"
-	list := map[string]UrlEntry{}
+func enumerateAllDataFiles(directory string) []TestDataEntry {
+	fmt.Printf("Enumerating test data files ... ")
+	subdir := "get"
+	filesGet := enumerateDataFiles(directory + "/" + subdir)
+	var dataFiles []TestDataEntry
+	for _, f := range filesGet {
+		dataFiles = append(dataFiles, TestDataEntry{f, subdir, "GET"})
+	}
+	subdir = "./post"
+	filesPost := enumerateDataFiles(directory + "/" + subdir)
+	for _, f := range filesPost {
+		dataFiles = append(dataFiles, TestDataEntry{f, subdir, "POST"})
+	}
+	fmt.Printf("  %v data files found\n", len(dataFiles))
+	return dataFiles
+}
+
+func readURLList(directory string) bool {
+	filename := directory + "/urlmap.yaml"
+	list := map[string]URLEntry{}
 	yamlFile, err := ioutil.ReadFile(filename)
 	if err != nil {
-		return list, errors.New("Could not read index file")
+		log.Fatal("Could not read index file")
+		return false
 	}
 	err = yaml.Unmarshal(yamlFile, list)
 	if err != nil {
-		return list, errors.New("Could not read index file")
+		log.Fatal("Could not read index file")
+		return false
 	}
-	return list, nil
+	urlList = list
+	return true
 }
 
 // Normalize a relative path URL.  If there are query parameters, they are sorted.
-func normalizeUrl(inurl string) string {
-	parsedUrl, err := url.Parse(inurl)
+func normalizeURL(inurl string) string {
+	parsedURL, err := url.Parse(inurl)
 	if err != nil {
 		return inurl
 	}
-	if len(parsedUrl.RawQuery) == 0 {
+	if len(parsedURL.RawQuery) == 0 {
 		// no query, nothing to sort
 		return inurl
 	}
-	values, err := url.ParseQuery(parsedUrl.RawQuery)
+	values, err := url.ParseQuery(parsedURL.RawQuery)
 	if err != nil {
 		return inurl
 	}
@@ -76,35 +102,35 @@ func normalizeUrl(inurl string) string {
 		return inurl
 	}
 	// sort values by key
-    var keys []string
-    for k := range values {
-        keys = append(keys, k)
-    }
-    sort.Strings(keys)
+	var keys []string
+	for k := range values {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
 
 	var querySorted string = ""
 	idx := 0
-    for _, k := range keys {
+	for _, k := range keys {
 		if idx > 0 {
 			querySorted += "&"
 		}
 		querySorted += k + "=" + values[k][0]
 		idx++
 	}
-	
+
 	// build URL
-	parsedUrl.RawQuery = querySorted
-	normalized := parsedUrl.String()
+	parsedURL.RawQuery = querySorted
+	normalized := parsedURL.String()
 	return normalized
 }
 
 // Given a mock URL relative path, return corresponding full path of the external service.  Mapping from urlList is used.
-func getRealUrl(mockUrl string) string {
-	for mockUrlRoot := range urlList {
-		if strings.HasPrefix(mockUrl, mockUrlRoot) {
-			realUrlRoot := urlList[mockUrlRoot].Url
-			realUrl := strings.Replace(mockUrl, mockUrlRoot, realUrlRoot, -1)
-			return realUrl
+func getRealURL(mockURL string) string {
+	for mockURLRoot := range urlList {
+		if strings.HasPrefix(mockURL, mockURLRoot) {
+			realURLRoot := urlList[mockURLRoot].URL
+			realURL := strings.Replace(mockURL, mockURLRoot, realURLRoot, -1)
+			return realURL
 		}
 	}
 	// none found
@@ -113,40 +139,51 @@ func getRealUrl(mockUrl string) string {
 
 // Process a test data file: given the esacaped relative path (== filename without extension), get the real URL, and retrieve response from there.
 // The old file is renamed to .bak (unless there is error), and the result is written to the old name.
-func processFile(escapedMockUrl, httpMethod, folder string) {
-	log.Printf("Processing %v", escapedMockUrl)
-	mockUrl, err := url.QueryUnescape(escapedMockUrl)
-	if err != nil {
-		log.Printf("Could not un-escape url, err %v, url %v", err.Error(), escapedMockUrl)
+func processFile(file TestDataEntry, directory string, listOnly bool) {
+	fmt.Printf("Filename:   %v\n", file.Filename)
+	if !strings.HasSuffix(file.Filename, extension) {
 		return
 	}
-	realUrl := getRealUrl(mockUrl)
-	if len(realUrl) == 0 {
+	escapedMockURL := file.Filename[:len(file.Filename)-len(extension)]
+	mockURL, err := url.QueryUnescape(escapedMockURL)
+	fmt.Printf("Mock URL:   %v\n", mockURL)
+	if err != nil {
+		log.Printf("Could not un-escape url, err %v, url %v", err.Error(), escapedMockURL)
+		return
+	}
+	realURL := getRealURL(mockURL)
+	if len(realURL) == 0 {
 		log.Printf("Could not obtain real URL")
 		return
 	}
-	if httpMethod == "GET" {
-		resp, err := http.Get(realUrl)
+	fmt.Printf("Real URL:   %v\n", realURL)
+	if listOnly {
+		return
+	}
+	// continue with processing
+	if file.HTTPMethod == "GET" {
+		resp, err := http.Get(realURL)
 		if err != nil {
-			log.Printf("Error reading from external service, err %v, url %v", err.Error(), realUrl)
+			log.Printf("Error reading from external service, err %v, url %v", err.Error(), realURL)
 			return
 		}
-		if (resp.StatusCode != 200) {
-			log.Printf("Non-OK status from external service, status %v, url %v", resp.StatusCode, realUrl)
+		if resp.StatusCode != 200 {
+			log.Printf("Non-OK status from external service, status %v, url %v", resp.StatusCode, realURL)
+			return
 		}
 		defer resp.Body.Close()
 		body, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
-			log.Printf("Error reading from external service, err %v, url %v", err.Error(), realUrl)
+			log.Printf("Error reading from external service, err %v, url %v", err.Error(), realURL)
 			return
 		}
 		if len(body) == 0 {
-			log.Printf("Empty response from external service, url %v", realUrl)
+			log.Printf("Empty response from external service, url %v", realURL)
 			return
 		}
 		// write to file
-		outFile := folder + "/" + escapedMockUrl + ".json"
-		err = os.Rename(outFile, outFile + ".bak")
+		outFile := directory + "/" + escapedMockURL + ".json"
+		err = os.Rename(outFile, outFile+".bak")
 		if err != nil {
 			log.Printf("Rename to Bak failed, err %v, file %v", err.Error(), outFile)
 			return
@@ -156,13 +193,14 @@ func processFile(escapedMockUrl, httpMethod, folder string) {
 			log.Printf("Could not write response to file, err %v, file %v", err.Error(), outFile)
 			return
 		}
-		log.Printf("Response file written, %v bytes, url %v, file %v", len(body), realUrl, outFile)
+		fmt.Printf("Response file written, %v bytes, url %v, file %v", len(body), realURL, outFile)
 		return
 	}
 }
 
-func processInitial(initialMockUrlListFileName, folder string) {
-	file, err := os.Open(initialMockUrlListFileName)
+/*
+func processInitial(initialMockURLListFileName, folder string) {
+	file, err := os.Open(initialMockURLListFileName)
     if err != nil {
 		log.Fatal(err)
 		return
@@ -172,7 +210,7 @@ func processInitial(initialMockUrlListFileName, folder string) {
     scanner := bufio.NewScanner(file)
     for scanner.Scan() {
 		url0 := scanner.Text()
-		nurl := normalizeUrl(url0)
+		nurl := normalizeURL(url0)
 		fn := folder + "/" + url.QueryEscape(nurl) + ".json"
 		log.Println(fn)
 		err = ioutil.WriteFile(fn, []byte{}, 0644)
@@ -185,33 +223,113 @@ func processInitial(initialMockUrlListFileName, folder string) {
         log.Fatal(err)
     }
 }
+*/
 
-func main() {
-	/*
-	fmt.Println(normalizeUrl("mock/kava-api/txs?limit=25&message.sender=kava1l8va&page=1"))
-	fmt.Println(normalizeUrl("mock/kava-api/txs?page=1&message.sender=kava1l8va&limit=25"))
-	fmt.Println(normalizeUrl("mock/kava-api/txs?message.sender=kava1l8va&page=1&limit=25"))
+func PrintUsage() {
+	fmt.Println("Usage:")
+	prog := "testdatatool"
+	fmt.Printf("  %v list <folder>        List all test data files.                        Ex.: %v list .\n", prog, prog)
+	fmt.Printf("  %v update <datafile>    Update a test data from external source.         Ex.: %v update get/mock2Fsomthing.json\n", prog, prog)
+	fmt.Printf("  %v updateall <folder>   Update all test data files from external source. Ex.: %v updateall .\n", prog, prog)
+	fmt.Printf("  %v help                 Print this help\n", prog)
+	fmt.Printf("Mapping to real URLs is taken from file urlmap.yaml\n")
+}
 
-	processInitial("out", "./get")
-	return
-	*/
+// ListAll lists all test data files and prints info about them
+func ListAll(directory string) {
+	dataFiles := enumerateAllDataFiles(directory)
+	i := 0
+	for _, f := range dataFiles {
+		i++
+		fmt.Printf("%v:\n", i)
+		processFile(f, directory, true)
+	}
+}
 
-	urlList1, err := readUrlList()
-	if err != nil {
-		log.Fatal(err)
+func httpMethodFromFilename(filename string) (method, lastDir string, ok bool) {
+	lastDir = filepath.Base(filepath.Dir(filename))
+	method = strings.ToUpper(lastDir)
+	if method == "GET" || method == "POST" {
+		return method, lastDir, true
+	}
+	log.Printf("Could not determine HTTP method for file %v", filename)
+	return "", lastDir, false
+}
+
+func UpdateFile(filename string) {
+	method, lastDir, ok := httpMethodFromFilename(filename)
+	if !ok {
 		return
 	}
-	urlList = urlList1
+	entry := TestDataEntry{filepath.Base(filename), lastDir, method}
+	processFile(entry, filepath.Dir(filename), false)
+}
 
-	log.Printf("Enumerating test data files ... ")
-	files := enumerateDataFiles("./get")
-	log.Printf("%v data files found in get", len(files))
-	for _, f := range files {
-		processFile(f, "GET", "./get")
+func UpdateAllFiles(directory string) {
+	dataFiles := enumerateAllDataFiles(directory)
+	i := 0
+	for _, f := range dataFiles {
+		i++
+		fmt.Printf("%v:\n", i)
+		processFile(f, directory, false)
 	}
-	files = enumerateDataFiles("./post")
-	log.Printf("%v data files found in post", len(files))
-	for _, f := range files {
-		processFile(f, "POST", "./post")
+}
+
+func main() {
+	nArgs := len(os.Args)
+	if nArgs <= 1 {
+		// no args, list by default
+		dir := "."
+		if !readURLList(dir) {
+			return
+		}
+		ListAll(dir)
+		return
+	}
+
+	switch os.Args[1] {
+	case "list":
+		if nArgs < 3 {
+			PrintUsage()
+			return
+		}
+		dir := os.Args[2]
+		if !readURLList(dir) {
+			return
+		}
+		ListAll(dir)
+		return
+
+	case "update":
+		if nArgs < 3 {
+			PrintUsage()
+			return
+		}
+		filename := os.Args[2]
+		if !readURLList(".") {
+			return
+		}
+		UpdateFile(filename)
+		return
+
+	case "updateall":
+		if nArgs < 3 {
+			PrintUsage()
+			return
+		}
+		dir := os.Args[2]
+		if !readURLList(".") {
+			return
+		}
+		UpdateAllFiles(dir)
+		return
+
+	case "help":
+		PrintUsage()
+		return
+
+	default:
+		PrintUsage()
+		return
 	}
 }
