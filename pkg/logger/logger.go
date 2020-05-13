@@ -3,7 +3,6 @@ package logger
 import (
 	"fmt"
 	log "github.com/sirupsen/logrus"
-	"github.com/trustwallet/blockatlas/pkg/errors"
 	"os"
 	"strings"
 )
@@ -13,10 +12,6 @@ type Params map[string]interface{}
 func InitLogger() {
 	log.SetFormatter(&log.TextFormatter{})
 	log.SetOutput(os.Stdout)
-	err := errors.InitSentry()
-	if err != nil {
-		Error(err)
-	}
 }
 
 type message struct {

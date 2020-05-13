@@ -23,7 +23,6 @@ func Fatal(args ...interface{}) {
 		Panic("call to logger.Fatal with no arguments")
 	}
 	e := getError(args...)
-	errors.SendFatal(e.err)
 	log.WithFields(e.params).Fatal(e.err)
 }
 
@@ -32,7 +31,6 @@ func Panic(args ...interface{}) {
 		Panic("call to logger.Panic with no arguments")
 	}
 	e := getError(args...)
-	errors.SendFatal(e.err)
 	log.WithFields(e.params).Panic(e.err)
 }
 

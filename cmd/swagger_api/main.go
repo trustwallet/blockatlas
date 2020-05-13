@@ -1,7 +1,6 @@
 package main
 
 import (
-	sentrygin "github.com/getsentry/sentry-go/gin"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -24,11 +23,9 @@ var (
 
 func init() {
 	port, confPath = internal.ParseArgs(defaultPort, defaultConfigPath)
-	tmp := sentrygin.New(sentrygin.Options{})
-	sg := &tmp
 	internal.InitConfig(confPath)
 	logger.InitLogger()
-	engine = internal.InitEngine(sg, viper.GetString("gin.mode"))
+	engine = internal.InitEngine(viper.GetString("gin.mode"))
 }
 
 func main() {

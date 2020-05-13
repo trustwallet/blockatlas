@@ -64,11 +64,8 @@ errors.E(err, errors.TypePlatformRequest, errors.Params{
 ```
  - Any other combinations above
 
-You can send the errors to sentry using `.PushToSentry()`
-`errors.E(err, errors.TypePlatformRequest).PushToSentry()`
 
-
-*All fatal errors emitted by logger package already send the error to Sentry*
+*All fatal errors emitted by logger package already send the error to *
 
 __[List of error types](https://godoc.org/github.com/trustwallet/blockatlas/pkg/errors#Type)__
 
