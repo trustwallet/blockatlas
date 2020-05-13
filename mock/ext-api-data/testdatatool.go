@@ -214,7 +214,7 @@ func processFile(file TestDataEntry, listOnly bool) {
 		var prettyJSON bytes.Buffer
 		err = json.Indent(&prettyJSON, body, "", "\t")
 		if err != nil {
-			log.Println("JSON parse error, err %v, file %v", err.Error(), outFile)
+			log.Printf("JSON parse error, err %v, file %v\n", err.Error(), outFile)
 			return
 		}
 		err = ioutil.WriteFile(outFile, prettyJSON.Bytes(), 0644)
