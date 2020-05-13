@@ -5,16 +5,17 @@ import (
 	"github.com/trustwallet/blockatlas/platform"
 )
 
-func SetupPlatformAPI(root gin.IRouter) {
+func SetupPlatformAPI(router gin.IRouter) {
 	for _, api := range platform.Platforms {
-		RegisterCollectionsAPI(root, api)
-		RegisterTransactionsAPI(root, api)
-		RegisterCustomAPI(root, api)
-		RegisterTokensAPI(root, api)
-		RegisterStakeAPI(root, api)
+		RegisterTransactionsAPI(router, api)
+		RegisterTokensAPI(router, api)
+		RegisterStakeAPI(router, api)
+	}
+	for _, api := range platform.CollectionsAPIs {
+		RegisterCollectionsAPI(router, api)
 	}
 
-	RegisterBatchAPI(root)
-	RegisterDomainAPI(root)
-	RegisterBasicAPI(root)
+	RegisterBatchAPI(router)
+	RegisterDomainAPI(router)
+	RegisterBasicAPI(router)
 }

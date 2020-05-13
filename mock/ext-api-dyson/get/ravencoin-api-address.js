@@ -1,137 +1,121 @@
 /// Mock for external Ravencoin API
 /// See:
-/// curl "http://{Ravencoin rpc}/address/RHoCwPc2FCQqwToYnSiAb3SrCET4zEHsbS?details=txs"
-/// curl "http://localhost:3000/ravencoin-api/address/RHoCwPc2FCQqwToYnSiAb3SrCET4zEHsbS?details=txs"
-/// curl "http://localhost:8420/v1/ravencoin/address/RHoCwPc2FCQqwToYnSiAb3SrCET4zEHsbS"
+/// curl "http://{Ravencoin rpc}/api/v2/address/RGkwvrUors8DtmhKy5bddFwRCTZaunjpvo?details=txs"
+/// curl "http://localhost:3347/ravencoin-api/v2/address/RGkwvrUors8DtmhKy5bddFwRCTZaunjpvo?details=txs"
+/// curl "http://localhost:8437/v1/ravencoin/address/RGkwvrUors8DtmhKy5bddFwRCTZaunjpvo"
 
 module.exports = {
-    path: '/ravencoin-api/address/:address?',
+    path: '/ravencoin-api/v2/address/:address?',
     template: function(params, query, body) {
-        //console.log(params)
-        //console.log(query)
         switch (params.address) {
-            case 'RHoCwPc2FCQqwToYnSiAb3SrCET4zEHsbS':
+            case 'RGkwvrUors8DtmhKy5bddFwRCTZaunjpvo':
                 return JSON.parse(`
-                    {
-                        "page": 1,
-                        "totalPages": 1,
-                        "itemsOnPage": 1000,
-                        "addrStr": "RHoCwPc2FCQqwToYnSiAb3SrCET4zEHsbS",
-                        "balance": "0",
-                        "totalReceived": "10.48",
-                        "totalSent": "10.48",
-                        "unconfirmedBalance": "0",
-                        "unconfirmedTxApperances": 0,
-                        "txApperances": 5,
-                        "txs": [
-                            {
-                                "txid": "fc6c9e9c6cd0253f05e43a12d64154a689115f0103dc0b64957a8cb92b67f306",
-                                "version": 1,
-                                "vin": [
-                                    {
-                                        "txid": "3717b528eb4925461d9de5a596d2eefe175985740b4fda153255e10135f236a6",
-                                        "vout": 1,
-                                        "sequence": 4294967293,
-                                        "n": 0,
-                                        "scriptSig": {
-                                            "hex": "483045022100b085c0f7d09937eed588f4c18e8ea600382926bcd0467a90436c7d3446ae2aa202206261e0b98c5d4852b17e32bcc04c2d6bc01dad327be0c16776ce9b6f57a44142012102138724e702d25b0fdce73372ccea9734f9349442d5a9681a5f4d831036cd9429"
-                                        },
-                                        "addresses": [
-                                            "RHoCwPc2FCQqwToYnSiAb3SrCET4zEHsbS"
-                                        ],
-                                        "value": "0.48"
-                                    },
-                                    {
-                                        "txid": "128793fa1635c630a3463225515f9aabfa6160ae32028d5ae6f09b04802abebe",
-                                        "vout": 0,
-                                        "sequence": 4294967294,
-                                        "n": 1,
-                                        "scriptSig": {
-                                            "hex": "47304402202f7f64346ddf51e1304e46407e1a285625b1c8e743b2a8ac919520a924be6ca102206a452426f9a1e105b0ba422b321cf358fe8d357cf985f43caf581ec7275f03ce0121030b22ea9d87e08432c18606849e801462189a45aaa9e158306cd5f26bcea3c61e"
-                                        },
-                                        "addresses": [
-                                            "RVtWJKBbG7JN3GQBkgwz4n4GYVPeViNer7"
-                                        ],
-                                        "value": "5.988166"
-                                    }
-                                ],
-                                "vout": [
-                                    {
-                                        "value": "6.4679603",
-                                        "n": 0,
-                                        "scriptPubKey": {
-                                            "hex": "76a9148272c538003476df668581ad1336eecc774f274c88ac",
-                                            "addresses": [
-                                                "RMAwQqgkYur4un2JbE6vPnZWeyzunXkuWo"
-                                            ]
-                                        },
-                                        "spent": true
-                                    }
-                                ],
-                                "blockhash": "0000000000005cbc77e1a4b921e5de4fc5388fb661065e825877911d2364472a",
-                                "blockheight": 753909,
-                                "confirmations": 405243,
-                                "time": 1560658623,
-                                "blocktime": 1560658623,
-                                "valueOut": "6.4679603",
-                                "valueIn": "6.468166",
-                                "fees": "0.0002057",
-                                "hex": "0100000002a636f23501e1553215da4f0b74855917feeed296a5e59d1d462549eb28b51737010000006b483045022100b085c0f7d09937eed588f4c18e8ea600382926bcd0467a90436c7d3446ae2aa202206261e0b98c5d4852b17e32bcc04c2d6bc01dad327be0c16776ce9b6f57a44142012102138724e702d25b0fdce73372ccea9734f9349442d5a9681a5f4d831036cd9429fdffffffbebe2a80049bf0e65a8d0232ae6061faab9a5f51253246a330c63516fa938712000000006a47304402202f7f64346ddf51e1304e46407e1a285625b1c8e743b2a8ac919520a924be6ca102206a452426f9a1e105b0ba422b321cf358fe8d357cf985f43caf581ec7275f03ce0121030b22ea9d87e08432c18606849e801462189a45aaa9e158306cd5f26bcea3c61efeffffff01fe528d26000000001976a9148272c538003476df668581ad1336eecc774f274c88ac00000000"
-                            },
-                            {
-                                "txid": "3717b528eb4925461d9de5a596d2eefe175985740b4fda153255e10135f236a6",
-                                "version": 1,
-                                "vin": [
-                                    {
-                                        "txid": "0c7e82b44eec71d634c013e2db3cb4fa26f87fbc90eb8734da93807d23605544",
-                                        "vout": 0,
-                                        "sequence": 4294967295,
-                                        "n": 0,
-                                        "scriptSig": {
-                                            "hex": "483045022100d790bdaa3c44eb5e3a422365ca5fc009c4512625222e3378f2f16e7e6ef1732a0220688c1bb995b7ff2f12729e101d7c24b6314430317e7717911fdc35c0d84f2f0d012102138724e702d25b0fdce73372ccea9734f9349442d5a9681a5f4d831036cd9429"
-                                        },
-                                        "addresses": [
-                                            "RHoCwPc2FCQqwToYnSiAb3SrCET4zEHsbS"
-                                        ],
-                                        "value": "1"
-                                    }
-                                ],
-                                "vout": [
-                                    {
-                                        "value": "0.5",
-                                        "n": 0,
-                                        "scriptPubKey": {
-                                            "hex": "76a9149451f4546e09fc2e49ef9b5303924712ec2b038e88ac",
-                                            "addresses": [
-                                                "RNoSGCX8SPFscj8epDaJjqEpuZa2B5in88"
-                                            ]
-                                        },
-                                        "spent": false
-                                    },
-                                    {
-                                        "value": "0.48",
-                                        "n": 1,
-                                        "scriptPubKey": {
-                                            "hex": "76a9145d6e33f3a108bbcc586cbbe90994d5baf5a9cce488ac",
-                                            "addresses": [
-                                                "RHoCwPc2FCQqwToYnSiAb3SrCET4zEHsbS"
-                                            ]
-                                        },
-                                        "spent": true
-                                    }
-                                ],
-                                "blockhash": "0000000000004b942df6b9736c0a4b1a320cadfe46ca10351e43b35cccee7be1",
-                                "blockheight": 734142,
-                                "confirmations": 425010,
-                                "time": 1559464388,
-                                "blocktime": 1559464388,
-                                "valueOut": "0.98",
-                                "valueIn": "1",
-                                "fees": "0.02",
-                                "hex": "0100000001445560237d8093da3487eb90bc7ff826fab43cdbe213c034d671ec4eb4827e0c000000006b483045022100d790bdaa3c44eb5e3a422365ca5fc009c4512625222e3378f2f16e7e6ef1732a0220688c1bb995b7ff2f12729e101d7c24b6314430317e7717911fdc35c0d84f2f0d012102138724e702d25b0fdce73372ccea9734f9349442d5a9681a5f4d831036cd9429ffffffff0280f0fa02000000001976a9149451f4546e09fc2e49ef9b5303924712ec2b038e88ac006cdc02000000001976a9145d6e33f3a108bbcc586cbbe90994d5baf5a9cce488ac00000000"
-                            }
-                        ]
-                    }
+                {
+                    "page": 1,
+                    "totalPages": 1,
+                    "itemsOnPage": 1000,
+                    "address": "RGkwvrUors8DtmhKy5bddFwRCTZaunjpvo",
+                    "balance": "8525568094",
+                    "totalReceived": "8525568094",
+                    "totalSent": "0",
+                    "unconfirmedBalance": "-8525568094",
+                    "unconfirmedTxs": 1,
+                    "txs": 1,
+                    "transactions": [
+                        {
+                            "txid": "fc226aad6fc28e1204b747042e8c8b25f5d28424b9669bd162ba6a0149df2f71",
+                            "version": 2,
+                            "lockTime": 1201754,
+                            "vin": [
+                                {
+                                    "txid": "1222cb57d31bfb439e94080266c33ebb0134cdb90999a9fad99455d09a15159b",
+                                    "sequence": 4294967294,
+                                    "n": 0,
+                                    "addresses": [
+                                        "RGkwvrUors8DtmhKy5bddFwRCTZaunjpvo"
+                                    ],
+                                    "isAddress": true,
+                                    "value": "8525568094",
+                                    "hex": "483045022100dc56832c815e7294dd51c7bb1ba342af80f5d25c3bc44c9689a55ccd94d18d01022063d3420930736fb1c1ab9a851ec0d1ff01dc906c66685b35972e3ab26b2d5d040121032dd4ba9d193e1912a6b48bd5642cb3579415ebabfc61e9fec9690fcd466dea15"
+                                }
+                            ],
+                            "vout": [
+                                {
+                                    "value": "78460623",
+                                    "n": 0,
+                                    "hex": "76a9141657456724a83ca9e4c4cc0b65c98b6ffdba5bae88ac",
+                                    "addresses": [
+                                        "RBKKVSR79YjBSGBE5pymUCaa871qogE5aY"
+                                    ],
+                                    "isAddress": true
+                                },
+                                {
+                                    "value": "8446853390",
+                                    "n": 1,
+                                    "hex": "76a9142e664ae2c04d6292d50bcd65b644553eea7d7f1388ac",
+                                    "addresses": [
+                                        "RDWXhkQyUkgmumGbzdR6JetLChVzUbStRq"
+                                    ],
+                                    "isAddress": true
+                                }
+                            ],
+                            "blockHeight": -1,
+                            "confirmations": 0,
+                            "blockTime": 1587702074,
+                            "value": "8525314013",
+                            "valueIn": "8525568094",
+                            "fees": "254081",
+                            "hex": "02000000019b15159ad05594d9faa99909b9cd3401bb3ec3660208949e43fb1bd357cb2212000000006b483045022100dc56832c815e7294dd51c7bb1ba342af80f5d25c3bc44c9689a55ccd94d18d01022063d3420930736fb1c1ab9a851ec0d1ff01dc906c66685b35972e3ab26b2d5d040121032dd4ba9d193e1912a6b48bd5642cb3579415ebabfc61e9fec9690fcd466dea15feffffff02cf36ad04000000001976a9141657456724a83ca9e4c4cc0b65c98b6ffdba5bae88ac0ec178f7010000001976a9142e664ae2c04d6292d50bcd65b644553eea7d7f1388ac5a561200"
+                        },
+                        {
+                            "txid": "1222cb57d31bfb439e94080266c33ebb0134cdb90999a9fad99455d09a15159b",
+                            "version": 2,
+                            "lockTime": 1201750,
+                            "vin": [
+                                {
+                                    "txid": "003d748c2c3541535093e840b4c5e54b966915eb522bac06028bc8d1376e1e63",
+                                    "sequence": 4294967294,
+                                    "n": 0,
+                                    "addresses": [
+                                        "R9kyoRBmiF89o5ACFXF4EY7GawGjURP1Z5"
+                                    ],
+                                    "isAddress": true,
+                                    "value": "8530842427",
+                                    "hex": "47304402207ea927cfb1c7d8e14b067aa5b892cfde8b7b96b8bd95866b906c13e168581fd20220423bee1c4e25f66cc5ac27d94a33540307edb2a9a8874e800a1e1f875194dabf012103ded5613a24b22a8dc0c416f3ac4b436372a5b581b42e2d45f00fbd042cb066f1"
+                                }
+                            ],
+                            "vout": [
+                                {
+                                    "value": "8525568094",
+                                    "n": 0,
+                                    "hex": "76a9145208b754b23169797a19e0ffaa9041ab5e29b9ef88ac",
+                                    "addresses": [
+                                        "RGkwvrUors8DtmhKy5bddFwRCTZaunjpvo"
+                                    ],
+                                    "isAddress": true
+                                },
+                                {
+                                    "value": "5020252",
+                                    "n": 1,
+                                    "spent": true,
+                                    "hex": "76a914bb7590eef377d63adcda0d080073035ad9a86bfc88ac",
+                                    "addresses": [
+                                        "RSNPH2YPN69PNRj6BYq4V3orCyC7nahG9R"
+                                    ],
+                                    "isAddress": true
+                                }
+                            ],
+                            "blockHash": "00000000000003efc9fb9dd4d5deb4e6ca393266191771d5d2e2426a191e69b3",
+                            "blockHeight": 1201752,
+                            "confirmations": 3,
+                            "blockTime": 1587701825,
+                            "value": "8530588346",
+                            "valueIn": "8530842427",
+                            "fees": "254081",
+                            "hex": "0200000001631e6e37d1c88b0206ac2b52eb1569964be5c5b440e893505341352c8c743d00000000006a47304402207ea927cfb1c7d8e14b067aa5b892cfde8b7b96b8bd95866b906c13e168581fd20220423bee1c4e25f66cc5ac27d94a33540307edb2a9a8874e800a1e1f875194dabf012103ded5613a24b22a8dc0c416f3ac4b436372a5b581b42e2d45f00fbd042cb066f1feffffff025ed829fc010000001976a9145208b754b23169797a19e0ffaa9041ab5e29b9ef88ac5c9a4c00000000001976a914bb7590eef377d63adcda0d080073035ad9a86bfc88ac56561200"
+                        }
+                    ]
+                }
                 `);
         }
         return {error: "Not implemented"};

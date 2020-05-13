@@ -8,6 +8,7 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	services "github.com/trustwallet/blockatlas/services/assets"
 	"net/http"
+	"strings"
 )
 
 type (
@@ -35,7 +36,7 @@ type (
 // @Accept json
 // @Produce json
 // @Tags Staking
-// @Param delegations body api.AddressesRequest true "Validators addresses and coins"
+// @Param delegations body AddressesRequest true "Validators addresses and coins"
 // @Success 200 {object} blockatlas.DelegationsBatchPage
 // @Router /v2/staking/delegations [post]
 func GetStakeDelegationsWithAllInfoForBatch(c *gin.Context, apis map[string]blockatlas.StakeAPI) {
@@ -70,7 +71,7 @@ func GetStakeDelegationsWithAllInfoForBatch(c *gin.Context, apis map[string]bloc
 // @Accept json
 // @Produce json
 // @Tags Staking
-// @Param delegations body api.AddressesRequest true "Validators addresses and coins"
+// @Param delegations body AddressesRequest true "Validators addresses and coins"
 // @Success 200 {object} blockatlas.DelegationsBatchPage
 // @Router /v2/staking/list [post]
 func GetStakeInfoForBatch(c *gin.Context, apis map[string]blockatlas.StakeAPI) {
@@ -78,6 +79,51 @@ func GetStakeInfoForBatch(c *gin.Context, apis map[string]blockatlas.StakeAPI) {
 	if err := c.BindJSON(&reqs); err != nil {
 		c.JSON(http.StatusBadRequest, model.CreateErrorResponse(model.InvalidQuery, err))
 		return
+	}
+
+	batch := make(blockatlas.StakingBatchPage, 0)
+	for _, r := range reqs {
+		requestCoin, ok := coin.Coins[r.Coin]
+		if !ok {
+			continue
+		}
+		p, ok := apis[requestCoin.Handle]
+		if !ok {
+			continue
+		}
+		staking := getStakingResponse(p)
+		batch = append(batch, staking)
+	}
+	c.JSON(http.StatusOK, blockatlas.DocsResponse{Docs: &batch})
+}
+
+// @Summary Get staking info by coin ID
+// @ID batch_info
+// @Description Get staking info by coin ID
+// @Produce json
+// @Tags Staking
+// @Param coins query string true "List of coins"
+// @Success 200 {array} blockatlas.DelegationsBatchPage
+// @Failure 400 {object} model.ErrorResponse
+// @Router /v3/staking/list [get]
+func GetStakeInfoForCoins(c *gin.Context, apis map[string]blockatlas.StakeAPI) {
+	coinsRequest := c.Query("coins")
+	if coinsRequest == "" {
+		c.JSON(http.StatusBadRequest, model.CreateErrorResponse(model.InvalidQuery, errors.E("empty coins list")))
+		return
+	}
+
+	coinsRaw := strings.Split(coinsRequest, ",")
+
+	coins, err := sliceAtoi(coinsRaw)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, model.CreateErrorResponse(model.InvalidQuery, err))
+		return
+	}
+
+	var reqs CoinsRequest
+	for _, c := range coins {
+		reqs = append(reqs, CoinBatchRequest{Coin: uint(c)})
 	}
 
 	batch := make(blockatlas.StakingBatchPage, 0)
@@ -104,7 +150,7 @@ func GetStakeInfoForBatch(c *gin.Context, apis map[string]blockatlas.StakeAPI) {
 // @Tags Staking
 // @Param coin path string true "the coin name" default(cosmos)
 // @Success 200 {object} blockatlas.DocsResponse
-// @Failure 500 {object} middleware.ApiError
+// @Failure 500 {object} model.ErrorResponse
 // @Router /v2/{coin}/staking/validators [get]
 func GetValidators(c *gin.Context, api blockatlas.StakeAPI) {
 	results, err := services.GetActiveValidators(api)
@@ -124,7 +170,7 @@ func GetValidators(c *gin.Context, api blockatlas.StakeAPI) {
 // @Param coin path string true "the coin name" default(tron)
 // @Param address path string true "the query address" default(TPJYCz8ppZNyvw7pTwmjajcx4Kk1MmEUhD)
 // @Success 200 {object} blockatlas.DelegationResponse
-// @Failure 500 {object} middleware.ApiError
+// @Failure 500 {object} model.ErrorResponse
 // @Router /v2/{coin}/staking/delegations/{address} [get]
 func GetStakingDelegationsForSpecificCoin(c *gin.Context, api blockatlas.StakeAPI) {
 	result, err := getDelegationResponse(api, c.Param("address"))

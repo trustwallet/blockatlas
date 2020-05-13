@@ -1,7 +1,7 @@
 /// Nano RPC Mock
-/// curl -H 'Content-Type: application/json' -d ' {"action":"account_history","account":"nano_36e7qfxrpixge3xxujtpc87c77mn9ubu3bhywfjkr1trnubtd4qswwydhn9z","count":"25"} ' http://localhost:3000/nano-api
+/// curl -H 'Content-Type: application/json' -d ' {"action":"account_history","account":"nano_36e7qfxrpixge3xxujtpc87c77mn9ubu3bhywfjkr1trnubtd4qswwydhn9z","count":"25"} ' http://localhost:3347/nano-api
 /// curl -H 'Content-Type: application/json' -d ' {"action":"account_history","account":"nano_36e7qfxrpixge3xxujtpc87c77mn9ubu3bhywfjkr1trnubtd4qswwydhn9z","count":"25"} ' https://{nano_rpc}
-/// curl "http://localhost:8420/v1/nano/nano_36e7qfxrpixge3xxujtpc87c77mn9ubu3bhywfjkr1trnubtd4qswwydhn9z"
+/// curl "http://localhost:8437/v1/nano/nano_36e7qfxrpixge3xxujtpc87c77mn9ubu3bhywfjkr1trnubtd4qswwydhn9z"
 
 module.exports = {
     path: '/nano-api',
@@ -42,7 +42,7 @@ module.exports = {
             }
             return {error: 'Bad account number'};
         }
-        var return4Codacy = {error: 'Invalid request'};
-        return return4Codacy;
+
+        return {error: "Not implemented"};
     }
 };

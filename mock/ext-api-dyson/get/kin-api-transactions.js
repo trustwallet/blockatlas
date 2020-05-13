@@ -1,8 +1,8 @@
 /// Kin API Mock, transactions
 /// See:
-/// curl "http://localhost:3000/kin-api/transactions/b2131beb8e0c57dfd3309914fce08ac4e094c51dc918087171150dd5b996076a?"
+/// curl "http://localhost:3347/kin-api/transactions/b2131beb8e0c57dfd3309914fce08ac4e094c51dc918087171150dd5b996076a?"
 /// curl "https://horizon-block-explorer.kininfrastructure.com/transactions/b2131beb8e0c57dfd3309914fce08ac4e094c51dc918087171150dd5b996076a?"
-/// curl http://localhost:8420/v1/kin/GDKIJJIKXLOM2NRMPNQZUUYK24ZPVFC6426GZAEP3KUK6KEJLACCWNMX
+/// curl http://localhost:8437/v1/kin/GDKIJJIKXLOM2NRMPNQZUUYK24ZPVFC6426GZAEP3KUK6KEJLACCWNMX
 module.exports = {
     path: "/kin-api/transactions/:txid?",
     template: function(params, query, body) {
@@ -105,8 +105,7 @@ module.exports = {
               }
             `);
         }
-        // fallback
-        var return4Codacy = {error: "Not implemented"};
-        return return4Codacy;
+        
+        return {error: "Not implemented"};
     }
 };

@@ -1,8 +1,8 @@
 /// Cosmos API Mock
 /// See:
-/// curl "http://localhost:3000/cosmos-api/staking/delegators/cosmos1dx27g0kzhwej0ekcf2k9hsktcxnmpl7fcehcvq/delegations"
+/// curl "http://localhost:3347/cosmos-api/staking/delegators/cosmos1dx27g0kzhwej0ekcf2k9hsktcxnmpl7fcehcvq/delegations"
 /// curl "https://{cosmos_rpc}/staking/delegators/cosmos1dx27g0kzhwej0ekcf2k9hsktcxnmpl7fcehcvq/delegations"
-/// curl "http://localhost:8420/v2/cosmos/staking/delegations/cosmos1dx27g0kzhwej0ekcf2k9hsktcxnmpl7fcehcvq?Authorization=Bearer"
+/// curl "http://localhost:8437/v2/cosmos/staking/delegations/cosmos1dx27g0kzhwej0ekcf2k9hsktcxnmpl7fcehcvq?Authorization=Bearer"
 
 module.exports = {
     path: "/cosmos-api/:command1/:command2/:arg3/:arg4?",
@@ -36,9 +36,7 @@ module.exports = {
                 }
         }
 
-        // fallback
-        var return4Codacy = {error: "Not implemented"};
-        return return4Codacy;
+        return {error: "Not implemented"};
     }
 };
 

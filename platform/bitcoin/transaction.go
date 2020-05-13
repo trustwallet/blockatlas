@@ -1,59 +1,35 @@
 package bitcoin
 
 import (
+	"sort"
+
 	mapset "github.com/deckarep/golang-set"
-	"github.com/gin-gonic/gin"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/numbers"
-	"net/http"
-	"sort"
 )
 
-// @Summary Get xpub transactions
-// @ID xpub
-// @Description Get transactions from xpub address
-// @Accept json
-// @Produce json
-// @Tags Transactions
-// @Param coin path string true "the coin name" default(bitcoin)
-// @Param xpub path string true "the xpub address" default(zpub6ruK9k6YGm8BRHWvTiQcrEPnFkuRDJhR7mPYzV2LDvjpLa5CuGgrhCYVZjMGcLcFqv9b2WvsFtY2Gb3xq8NVq8qhk9veozrA2W9QaWtihrC)
-// @Success 200 {object} blockatlas.TxPage
-// @Router /v1/{coin}/xpub/{xpub} [get]
-func (p *Platform) RegisterRoutes(router gin.IRouter) {
-	router.GET("/xpub/:key", func(c *gin.Context) {
-		p.handleXpubRoute(c)
-	})
-	router.GET("/address/:address", func(c *gin.Context) {
-		p.handleAddressRoute(c)
-	})
-}
-
-func (p *Platform) handleAddressRoute(c *gin.Context) {
-	address := c.Param("address")
-	txs, ok := p.getTxsByAddress(address)
+func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
+	txs, err := p.getTxsByAddress(address)
+	if err != nil {
+		return nil, err
+	}
 	txPage := blockatlas.TxPage(txs)
 	sort.Sort(txPage)
-	if ok != nil {
-		c.JSON(http.StatusInternalServerError, ok)
-		return
-	}
-	c.JSON(http.StatusOK, &txPage)
+	return txPage, nil
 }
 
-func (p *Platform) handleXpubRoute(c *gin.Context) {
-	xpub := c.Param("key")
-	txs, ok := p.getTxsByXPub(xpub)
+func (p *Platform) GetTxsByXpub(xpub string) (blockatlas.TxPage, error) {
+	txs, err := p.getTxsByXpub(xpub)
+	if err != nil {
+		return nil, err
+	}
 	txPage := blockatlas.TxPage(txs)
 	sort.Sort(txPage)
-	if ok != nil {
-		c.JSON(http.StatusInternalServerError, ok)
-		return
-	}
-	c.JSON(http.StatusOK, &txPage)
+	return txPage, nil
 }
 
-func (p *Platform) getTxsByXPub(xpub string) ([]blockatlas.Tx, error) {
+func (p *Platform) getTxsByXpub(xpub string) ([]blockatlas.Tx, error) {
 	sourceTxs, err := p.client.GetTransactionsByXpub(xpub)
 
 	if err != nil {
@@ -142,7 +118,7 @@ func normalizeTransaction(tx Transaction, coinIndex uint) blockatlas.Tx {
 }
 
 func parseOutputs(outputs []Output) (addresses []blockatlas.TxOutput) {
-	set := make(map[string]blockatlas.TxOutput)
+	set := make(map[string]*blockatlas.TxOutput)
 	var ordered []string
 	for _, output := range outputs {
 		for _, address := range output.OutputAddress() {
@@ -151,7 +127,7 @@ func parseOutputs(outputs []Output) (addresses []blockatlas.TxOutput) {
 				val.Value = blockatlas.Amount(value)
 			} else {
 				amount := numbers.GetAmountValue(output.Value)
-				set[address] = blockatlas.TxOutput{
+				set[address] = &blockatlas.TxOutput{
 					Address: address,
 					Value:   blockatlas.Amount(amount),
 				}
@@ -160,7 +136,7 @@ func parseOutputs(outputs []Output) (addresses []blockatlas.TxOutput) {
 		}
 	}
 	for _, val := range ordered {
-		addresses = append(addresses, set[val])
+		addresses = append(addresses, *set[val])
 	}
 	return addresses
 }

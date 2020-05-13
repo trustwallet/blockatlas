@@ -1,11 +1,12 @@
-package ethereum
+package trustray
 
 import (
 	"bytes"
 	"encoding/json"
+	"testing"
+
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"testing"
 )
 
 const tokenSrc = `
@@ -146,10 +147,7 @@ func testNormalizeToken(t *testing.T, _test *testToken) {
 		t.Error(err)
 		return
 	}
-	tk, ok := NormalizeToken(&token, uint(_test.coin))
-	if !ok {
-		t.Errorf("token: token could not be normalized")
-	}
+	tk := NormalizeToken(&token, uint(_test.coin))
 
 	resJSON, err := json.Marshal(&tk)
 	if err != nil {

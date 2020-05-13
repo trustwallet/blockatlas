@@ -4,6 +4,7 @@ import (
 	mapset "github.com/deckarep/golang-set"
 	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas/coin"
+	"sort"
 	"testing"
 )
 
@@ -529,4 +530,96 @@ func TestTx_GetTransactionDirection(t *testing.T) {
 	tx.Direction = DirectionSelf
 	tx.Direction = tx.GetTransactionDirection("0x38d45371993eEc84f38FEDf93C646aA2D2267CEA")
 	assert.Equal(t, Direction("yourself"), tx.Direction)
+}
+
+func TestTxs_FilterUniqueID(t *testing.T) {
+	tx := Tx{
+		ID:       "0xbcd1a43e796de4035e5e2991d8db332958e36031d54cb1d3a08d2cb790e338c4",
+		Coin:     60,
+		From:     "0x08777CB1e80F45642752662B04886Df2d271E049",
+		To:       "0xdd974D5C2e2928deA5F71b9825b8b646686BD200",
+		Fee:      "52473000000000",
+		Date:     1585169424,
+		Block:    9742705,
+		Status:   "completed",
+		Sequence: 149,
+		Type:     "token_transfer",
+	}
+	tx2 := Tx{
+		ID:       "0xbcd1a43e796de4035e5e2991d8db332958e36031d54cb1d3a08d2cb790e338c4",
+		Coin:     60,
+		From:     "0x08777CB1e80F45642752662B04886Df2d271E049",
+		To:       "0xdd974D5C2e2928deA5F71b9825b8b646686BD200",
+		Fee:      "52473000000000",
+		Date:     1585169424,
+		Block:    9742705,
+		Status:   "completed",
+		Sequence: 149,
+		Type:     "token_transfer",
+	}
+
+	txs := make([]Tx, 0)
+	txs = append(txs, tx)
+	txs = append(txs, tx2)
+
+	entry := Txs(txs)
+
+	result := entry.FilterUniqueID()
+
+	assert.Equal(t, entry[:1], result)
+}
+
+func TestTxs_SortByDate(t *testing.T) {
+	tx := Tx{
+		ID:       "0xbcd1a43e796de4035e5e2991d8db332958e36031d54cb1d3a08d2cb790e338c4",
+		Coin:     60,
+		From:     "0x08777CB1e80F45642752662B04886Df2d271E049",
+		To:       "0xdd974D5C2e2928deA5F71b9825b8b646686BD200",
+		Fee:      "52473000000000",
+		Date:     1585169423,
+		Block:    9742705,
+		Status:   "completed",
+		Sequence: 149,
+		Type:     "token_transfer",
+	}
+	tx2 := Tx{
+		ID:       "0xbcd1a43e796de4035e5e2991d8db332958e36031d54cb1d3a08d2cb790e338c5",
+		Coin:     60,
+		From:     "0x08777CB1e80F45642752662B04886Df2d271E049",
+		To:       "0xdd974D5C2e2928deA5F71b9825b8b646686BD200",
+		Fee:      "52473000000000",
+		Date:     1585169424,
+		Block:    9742705,
+		Status:   "completed",
+		Sequence: 149,
+		Type:     "token_transfer",
+	}
+	tx3 := Tx{
+		ID:       "0xbcd1a43e796de4035e5e2991d8db332958e36031d54cb1d3a08d2cb790e338c6",
+		Coin:     60,
+		From:     "0x08777CB1e80F45642752662B04886Df2d271E049",
+		To:       "0xdd974D5C2e2928deA5F71b9825b8b646686BD200",
+		Fee:      "52473000000000",
+		Date:     1585169425,
+		Block:    9742705,
+		Status:   "completed",
+		Sequence: 149,
+		Type:     "token_transfer",
+	}
+
+	txs := make([]Tx, 0)
+	txs = append(txs, tx)
+	txs = append(txs, tx2)
+	txs = append(txs, tx3)
+
+	entry := Txs(txs)
+	isNotSorted := sort.SliceIsSorted(entry, func(i, j int) bool {
+		return entry[i].Date > entry[j].Date
+	})
+	assert.True(t, !isNotSorted)
+	result := entry.SortByDate()
+	isSorted := sort.SliceIsSorted(result, func(i, j int) bool {
+		return result[i].Date > result[j].Date
+	})
+	assert.True(t, isSorted)
 }

@@ -1,10 +1,11 @@
 package zilliqa
 
 import (
+	"strconv"
+
 	"github.com/mitchellh/mapstructure"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
-	"strconv"
 )
 
 type RpcClient struct {
@@ -22,12 +23,12 @@ func (c *RpcClient) GetTx(hash string) (tx TxRPC, err error) {
 }
 
 func (c *RpcClient) GetBlockByNumber(number int64) ([]string, error) {
-	strNumber := strconv.Itoa(int(number))
+	strNumber := strconv.FormatInt(number, 10)
 	req := &blockatlas.RpcRequest{
 		JsonRpc: blockatlas.JsonRpcVersion,
 		Method:  "GetTransactionsForTxBlock",
 		Params:  []string{strNumber},
-		Id:      "GetTransactionsForTxBlock_" + strNumber,
+		Id:      number,
 	}
 	var resp *BlockTxRpc
 	err := c.Post(&resp, "", req)
@@ -66,7 +67,9 @@ func (c *RpcClient) GetTxInBlock(number int64) ([]Tx, error) {
 		if mapstructure.Decode(result.Result, &txRPC) != nil {
 			continue
 		}
-		txs = append(txs, txRPC.toTx())
+		if tx := txRPC.toTx(); tx != nil {
+			txs = append(txs, *tx)
+		}
 	}
 	return txs, nil
 }

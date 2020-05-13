@@ -1,8 +1,8 @@
 /// Mock for external Viacoin API
 /// See:
 /// curl "http://{Viacoin rpc}/v2/xpub/zpub6qVn6ubhK9tfepuABqy8wBXXn3qUZTbpqyNBqLyqakqTrZZD9rXZ3L5MZ945g8Mu7vmMSbC7vfLtLatTgxAnVJ8ECCtwmKqCo6TJm2ZsFJK?details=txs"
-/// curl "http://localhost:3000/viacoin-api/v2/xpub/zpub6qVn6ubhK9tfepuABqy8wBXXn3qUZTbpqyNBqLyqakqTrZZD9rXZ3L5MZ945g8Mu7vmMSbC7vfLtLatTgxAnVJ8ECCtwmKqCo6TJm2ZsFJK?details=txs"
-/// curl "http://localhost:8420/v1/viacoin/xpub/zpub6qVn6ubhK9tfepuABqy8wBXXn3qUZTbpqyNBqLyqakqTrZZD9rXZ3L5MZ945g8Mu7vmMSbC7vfLtLatTgxAnVJ8ECCtwmKqCo6TJm2ZsFJK"
+/// curl "http://localhost:3347/viacoin-api/v2/xpub/zpub6qVn6ubhK9tfepuABqy8wBXXn3qUZTbpqyNBqLyqakqTrZZD9rXZ3L5MZ945g8Mu7vmMSbC7vfLtLatTgxAnVJ8ECCtwmKqCo6TJm2ZsFJK?details=txs"
+/// curl "http://localhost:8437/v1/viacoin/xpub/zpub6qVn6ubhK9tfepuABqy8wBXXn3qUZTbpqyNBqLyqakqTrZZD9rXZ3L5MZ945g8Mu7vmMSbC7vfLtLatTgxAnVJ8ECCtwmKqCo6TJm2ZsFJK"
 
 module.exports = {
     path: '/viacoin-api/v2/xpub/:xpubkey?',

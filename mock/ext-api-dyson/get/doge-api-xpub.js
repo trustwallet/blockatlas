@@ -1,8 +1,8 @@
 /// Mock for external Doge API
 /// See:
 /// curl "http://{doge rpc}/v2/xpub/dgub8rceyfsEvGDexmvJcBqiKBrmuxWGgYJxHjtbouHTwTfQrCQcMjxyNf6vUPY4dUp23QtReFy6WGedutBk9XUaYNupUqVAZcweqGhfsudUELN?details=txs"
-/// curl "http://localhost:3000/doge-api/v2/xpub/dgub8rceyfsEvGDexmvJcBqiKBrmuxWGgYJxHjtbouHTwTfQrCQcMjxyNf6vUPY4dUp23QtReFy6WGedutBk9XUaYNupUqVAZcweqGhfsudUELN?details=txs"
-/// curl "http://localhost:8420/v1/doge/xpub/dgub8rceyfsEvGDexmvJcBqiKBrmuxWGgYJxHjtbouHTwTfQrCQcMjxyNf6vUPY4dUp23QtReFy6WGedutBk9XUaYNupUqVAZcweqGhfsudUELN"
+/// curl "http://localhost:3347/doge-api/v2/xpub/dgub8rceyfsEvGDexmvJcBqiKBrmuxWGgYJxHjtbouHTwTfQrCQcMjxyNf6vUPY4dUp23QtReFy6WGedutBk9XUaYNupUqVAZcweqGhfsudUELN?details=txs"
+/// curl "http://localhost:8437/v1/doge/xpub/dgub8rceyfsEvGDexmvJcBqiKBrmuxWGgYJxHjtbouHTwTfQrCQcMjxyNf6vUPY4dUp23QtReFy6WGedutBk9XUaYNupUqVAZcweqGhfsudUELN"
 
 module.exports = {
     path: '/doge-api/v2/xpub/:xpubkey?',

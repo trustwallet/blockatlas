@@ -55,8 +55,9 @@ func init() {
 
 	logger.Info("maxPushNotificationsBatchLimit ", logger.Params{"limit": maxPushNotificationsBatchLimit})
 
-	go mq.RestoreConnectionWorker(mqHost, mq.RawTransactions, time.Second*10)
+	go mq.FatalWorker(time.Second * 10)
 	go db.RestoreConnectionWorker(database, time.Second*10, pgUri)
+
 	time.Sleep(time.Millisecond)
 }
 

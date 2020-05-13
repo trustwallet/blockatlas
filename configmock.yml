@@ -37,52 +37,53 @@ postgres:
 # [BNB] Binance DEX: https://wallet.binance.org
 #       Binance Chain: https://explorer.binance.org
 binance:
-  api: http://localhost:3000/binance-api/v1
-  dex: https://dex.binance.org/api
+  api: http://localhost:3347/binance-api/v1
+  dex: http://localhost:3347/binance-dex
 
 # [NIM] Nimiq: https://nimiq.com
 nimiq:
-  api: http://localhost:3000/nimiq-rpc
+  api: http://localhost:3347/nimiq-rpc
 
 # [XRP] Ripple: https://ripple.com
 ripple:
-  api: http://localhost:3000/ripple-api
+  api: http://localhost:3347/ripple-api
 
 # [XLM] Stellar Lumen: https://www.stellar.org
 stellar:
-  api: http://localhost:3000/stellar-api
+  api: http://localhost:3347/stellar-api
 
 # [KIN] Kin: https://www.kin.org
 kin:
-  api: http://localhost:3000/kin-api
+  api: http://localhost:3347/kin-api
 
 # [XTZ] Tezos: https://tezos.com
 tezos:
-  api: http://localhost:3000/tezos-api
+  api: http://localhost:3347/tezos-api
   rpc: https://mainnet.tezos.org.ua
 
 # [ETH] Ethereum: https://ethereum.org (Trust-Ray API)
 ethereum:
-  api: http://localhost:3000/eth-api
-  collections_api: https://api.opensea.io
+  api: http://localhost:3347/eth-api
+  blockbook_api: http://localhost:3347/eth-blockbook-api
+  collections_api: http://localhost:3347/opensea-api
   collections_api_key: opensea_api_key
-  rpc: http://localhost:3000/eth-rpc
+  rpc: http://localhost:3347/eth-rpc
 
 # [ETC] Ethereum Classic: https://ethereumclassic.org (Trust-Ray API)
 classic:
-  api: http://localhost:3000/ethclassic-api
+  api: http://localhost:3347/ethclassic-api
 
 # [POA] POA Network: https://poa.network (Trust-Ray API)
 poa:
-  api: http://localhost:3000/poa-api
+  api: http://localhost:3347/poa-api
 
 # [CLO] Callisto Network: https://callisto.network (Trust-Ray API)
 callisto:
-  api: http://localhost:3000/callisto-api
+  api: http://localhost:3347/callisto-api
 
 # [GO] GoChain: https://gochain.io (Trust-Ray API)
 gochain:
-  api: http://localhost:3000/gochain-api
+  api: http://localhost:3347/gochain-api
 
 # [WAN] Wanchain: https://wanchain.org (Trust-Ray API)
 # wanchain:
@@ -90,120 +91,120 @@ gochain:
 
 # [TOMO] TomoChain: https://tomochain.com (Trust-Ray API)
 tomochain:
-  api: http://localhost:3000/tomochain-api
+  api: http://localhost:3347/tomochain-api
 
 # [TT] ThunderCore: https://www.thundercore.com (Trust-Ray API)
 thundertoken:
-  api: http://localhost:3000/thundertoken-api
+  api: http://localhost:3347/thundertoken-api
 
 # [AION] Aion: https://aion.network
 aion:
-  api: http://localhost:3000/aion-api
+  api: http://localhost:3347/aion-api
 
 # [ICX] ICON: https://icon.foundation
 icon:
-  api: http://localhost:3000/icon-api
+  api: http://localhost:3347/icon-api
 
 # [TRX] Tron: https://tron.network/
 tron:
-  api: http://localhost:3000/tron-api
+  api: http://localhost:3347/tron-api
 
 # [VET] VeChain: https://www.vechain.org
 vechain:
-  api: http://localhost:3000/vechain-api
+  api: http://localhost:3347/vechain-api
 
 # [THETA] THETA: https://www.thetatoken.org/
 theta:
-  api: http://localhost:3000/theta-api
+  api: http://localhost:3347/theta-api
 
 # [ATOM] Cosmos: https://cosmos.network/
 cosmos:
-  api: http://localhost:3000/cosmos-api
+  api: http://localhost:3347/cosmos-api
 
 # [ONTOLOGY] ONT: https://ont.io/
 ontology:
-  api: http://localhost:3000/ontology-api
+  api: http://localhost:3347/ontology-api
 
 # [ZIL] Zilliqa: https://zilliqa.com
 zilliqa:
-  api: http://localhost:3000/zilliqa-api
+  api: http://localhost:3347/zilliqa-api
   # key: YOUR_API_KEY
   rpc: https://api.zilliqa.com
-  lookup: http://localhost:3000/unstoppabledomains/api/v1
+  lookup: http://localhost:3347/unstoppabledomains/api/v1
 
 #[IoTeX] IoTeX: https://iotex.io
 iotex:
-  api: http://localhost:3000/iotex-api
+  api: http://localhost:3347/iotex-api
 
 # [WAVES] Waves: http://wavesplatform.com
 waves:
-  api: http://localhost:3000/waves-api
+  api: http://localhost:3347/waves-api
 
 # [AE] Aeternity: https://aeternity.com
 aeternity:
-  api: http://localhost:3000/aeternity-api
+  api: http://localhost:3347/aeternity-api
 
 # [NAS] Nebulas: https://nebulas.io
 nebulas:
-  api: http://localhost:3000/nebulas-api
+  api: http://localhost:3347/nebulas-api
 
 fio:
-  api: http://localhost:3000/fio-api
+  api: http://localhost:3347/fio-api
 
 # [BTC] Bitcoin: https://bitcoin.org/ (Blockbook API https://github.com/trezor/blockbook)
 bitcoin:
-  api: http://localhost:3000/bitcoin-api
+  api: http://localhost:3347/bitcoin-api
 
 litecoin:
-  api: http://localhost:3000/litecoin-api
+  api: http://localhost:3347/litecoin-api
 
 bitcoincash:
-  api: http://localhost:3000/bitcoincash-api
+  api: http://localhost:3347/bitcoincash-api
 
 doge:
-  api: http://localhost:3000/doge-api
+  api: http://localhost:3347/doge-api
 
 dash:
-  api: http://localhost:3000/dash-api
+  api: http://localhost:3347/dash-api
 
 zcoin:
-  api: http://localhost:3000/zcoin-api
+  api: http://localhost:3347/zcoin-api
 
 zcash:
-  api: http://localhost:3000/zcash-api
+  api: http://localhost:3347/zcash-api
 
 zelcash:
-  api: http://localhost:3000/zelcash-api
+  api: http://localhost:3347/zelcash-api
 
 viacoin:
-  api: http://localhost:3000/viacoin-api
+  api: http://localhost:3347/viacoin-api
 
 qtum:
-  api: http://localhost:3000/qtum-api
+  api: http://localhost:3347/qtum-api
 
 groestlcoin:
-  api: http://localhost:3000/groestlcoin-api
+  api: http://localhost:3347/groestlcoin-api
 
 ravencoin:
-  api: http://localhost:3000/ravencoin-api
+  api: http://localhost:3347/ravencoin-api
 
 decred:
-  api: http://localhost:3000/decred-api
+  api: http://localhost:3347/decred-api
 
 algorand:
-  api: http://localhost:3000/algorand-api
+  api: http://localhost:3347/algorand-api
 
 nano:
-  api: http://localhost:3000/nano-api
+  api: http://localhost:3347/nano-api
 
 digibyte:
-  api: http://localhost:3000/digibyte-api
+  api: http://localhost:3347/digibyte-api
 
 harmony:
-  api: http://localhost:3000/harmony-api
+  api: http://localhost:3347/harmony-api
 
 kava:
-  api: http://localhost:3000/kava-api
+  api: http://localhost:3347/kava-api
 
 kusama:
-  api: http://localhost:3000/kusama-rpc
+  api: http://localhost:3347/kusama-rpc

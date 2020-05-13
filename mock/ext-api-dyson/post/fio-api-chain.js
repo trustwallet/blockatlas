@@ -3,9 +3,9 @@
 /// - public address for certain fio name and coin combinations
 /// - public address not found message for other input
 /// See:
-/// curl -H "Content-Type: application/json" -d '{"fio_address":"trust@trust","token_code":"BTC","chain_code":"BTC"}' "http://localhost:3000/fio-api/v1/chain/get_pub_address"
+/// curl -H "Content-Type: application/json" -d '{"fio_address":"trust@trust","token_code":"BTC","chain_code":"BTC"}' "http://localhost:3347/fio-api/v1/chain/get_pub_address"
 /// curl -H "Content-Type: application/json" -d '{"fio_address":"trust@trust","token_code":"BTC","chain_code":"BTC"}' "http://testnet.fioprotocol.io/v1/chain/get_pub_address"
-/// curl "http://localhost:8420/v2/ns/lookup?name=trust@trust&coins=60"
+/// curl "http://localhost:8437/v2/ns/lookup?name=trust@trust&coins=60"
 
 module.exports = {
     path: '/fio-api/v1/chain/:action',

@@ -1,105 +1,87 @@
 /// Mock for external Viacoin API
 /// See:
-/// curl "http://{Viacoin rpc}/address/VdMPvn7vUTSzbYjiMDs1jku9wAh1Ri2Y1A?details=txs"
-/// curl "http://localhost:3000/viacoin-api/address/VdMPvn7vUTSzbYjiMDs1jku9wAh1Ri2Y1A?details=txs"
-/// curl "http://localhost:8420/v1/viacoin/address/VdMPvn7vUTSzbYjiMDs1jku9wAh1Ri2Y1A"
+/// curl "http://{Viacoin rpc}/v2/address/VdMPvn7vUTSzbYjiMDs1jku9wAh1Ri2Y1A?details=txs"
+/// curl "http://localhost:3347/viacoin-api/v2/address/VdMPvn7vUTSzbYjiMDs1jku9wAh1Ri2Y1A?details=txs"
+/// curl "http://localhost:8437/v1/viacoin/address/VdMPvn7vUTSzbYjiMDs1jku9wAh1Ri2Y1A"
 
 module.exports = {
-    path: '/viacoin-api/address/:address?',
+    path: '/viacoin-api/v2/address/:address?',
     template: function(params, query, body) {
-        //console.log(params)
-        //console.log(query)
         switch (params.address) {
             case 'VdMPvn7vUTSzbYjiMDs1jku9wAh1Ri2Y1A':
                 return JSON.parse(`
-                    {
-                        "page": 1,
-                        "totalPages": 1,
-                        "itemsOnPage": 2,
-                        "addrStr": "VdMPvn7vUTSzbYjiMDs1jku9wAh1Ri2Y1A",
-                        "balance": "737.5107688",
-                        "totalReceived": "183234.99094131",
-                        "totalSent": "182497.48017251",
-                        "unconfirmedBalance": "0",
-                        "unconfirmedTxApperances": 0,
-                        "txApperances": 1523480,
-                        "txs": [
-                            {
-                                "txid": "dadbe1f13dc5ecd1cfb0d8ae139a4e55493eb9ab2c937cb78b67a5d9c1ded7e8",
-                                "version": 1,
-                                "vin": [
-                                    {
-                                        "txid": "",
-                                        "vout": 0,
-                                        "sequence": 4294967295,
-                                        "n": 0,
-                                        "scriptSig": {},
-                                        "addresses": null,
-                                        "value": ""
-                                    }
-                                ],
-                                "vout": [
-                                    {
-                                        "value": "0.00976562",
-                                        "n": 0,
-                                        "scriptPubKey": {
-                                            "hex": "76a91424cc424c1e5e977175d2b20012554d39024bd68f88ac",
-                                            "addresses": [
-                                                "VdMPvn7vUTSzbYjiMDs1jku9wAh1Ri2Y1A"
-                                            ]
-                                        },
-                                        "spent": false
-                                    }
-                                ],
-                                "blockhash": "496ff7e4cf450449ade88fc8bf214fd39a6d4203da8f8256492c589bf28de1a7",
-                                "blockheight": 7423549,
-                                "confirmations": 6,
-                                "time": 1584742971,
-                                "blocktime": 1584742971,
-                                "valueOut": "0.00976562",
-                                "valueIn": "0",
-                                "fees": "0",
-                                "hex": "01000000010000000000000000000000000000000000000000000000000000000000000000ffffffff09033d4671045e75423bffffffff01b2e60e00000000001976a91424cc424c1e5e977175d2b20012554d39024bd68f88ac00000000"
-                            },
-                            {
-                                "txid": "be2a7b573af425f8f309561b3db4631f905626057da94399d7e44f97595c7dbe",
-                                "version": 1,
-                                "vin": [
-                                    {
-                                        "txid": "",
-                                        "vout": 0,
-                                        "sequence": 4294967295,
-                                        "n": 0,
-                                        "scriptSig": {},
-                                        "addresses": null,
-                                        "value": ""
-                                    }
-                                ],
-                                "vout": [
-                                    {
-                                        "value": "0.00976562",
-                                        "n": 0,
-                                        "scriptPubKey": {
-                                            "hex": "76a91424cc424c1e5e977175d2b20012554d39024bd68f88ac",
-                                            "addresses": [
-                                                "VdMPvn7vUTSzbYjiMDs1jku9wAh1Ri2Y1A"
-                                            ]
-                                        },
-                                        "spent": false
-                                    }
-                                ],
-                                "blockhash": "36c57ff80410c9c32790b75e566fdf855c6302a6a09f6dc75b362f9c6b3c884c",
-                                "blockheight": 7423545,
-                                "confirmations": 10,
-                                "time": 1584742872,
-                                "blocktime": 1584742872,
-                                "valueOut": "0.00976562",
-                                "valueIn": "0",
-                                "fees": "0",
-                                "hex": "01000000010000000000000000000000000000000000000000000000000000000000000000ffffffff0903394671045e7541d8ffffffff01b2e60e00000000001976a91424cc424c1e5e977175d2b20012554d39024bd68f88ac00000000"
-                            }
-                        ]
-                    }                
+                {
+                    "page": 1,
+                    "totalPages": 785695,
+                    "itemsOnPage": 2,
+                    "address": "VdMPvn7vUTSzbYjiMDs1jku9wAh1Ri2Y1A",
+                    "balance": "120312392935",
+                    "totalReceived": "18370512600313",
+                    "totalSent": "18250200207378",
+                    "unconfirmedBalance": "0",
+                    "unconfirmedTxs": 0,
+                    "txs": 1571390,
+                    "transactions": [
+                        {
+                            "txid": "1b311427cd4749cbebd5c1fc70896b9e92a58d6935ba75bb40ed4a9e22e4a6cb",
+                            "version": 1,
+                            "vin": [
+                                {
+                                    "sequence": 4294967295,
+                                    "n": 0,
+                                    "coinbase": "03a02873045ea2915d"
+                                }
+                            ],
+                            "vout": [
+                                {
+                                    "value": "976562",
+                                    "n": 0,
+                                    "hex": "76a91424cc424c1e5e977175d2b20012554d39024bd68f88ac",
+                                    "addresses": [
+                                        "VdMPvn7vUTSzbYjiMDs1jku9wAh1Ri2Y1A"
+                                    ]
+                                }
+                            ],
+                            "blockHash": "c590a4a7357d308917c6d3d8a8bd75b27968db346b965f2cd6e2be639e792f24",
+                            "blockHeight": 7547040,
+                            "confirmations": 3,
+                            "blockTime": 1587712349,
+                            "value": "976562",
+                            "valueIn": "0",
+                            "fees": "0",
+                            "hex": "01000000010000000000000000000000000000000000000000000000000000000000000000ffffffff0903a02873045ea2915dffffffff01b2e60e00000000001976a91424cc424c1e5e977175d2b20012554d39024bd68f88ac00000000"
+                        },
+                        {
+                            "txid": "e7393042e4b7755ba320a80ee734b0f0bd496a46fa3c9e9982c1a8176b6815b4",
+                            "version": 1,
+                            "vin": [
+                                {
+                                    "sequence": 4294967295,
+                                    "n": 0,
+                                    "coinbase": "039e2873045ea29101"
+                                }
+                            ],
+                            "vout": [
+                                {
+                                    "value": "976562",
+                                    "n": 0,
+                                    "hex": "76a91424cc424c1e5e977175d2b20012554d39024bd68f88ac",
+                                    "addresses": [
+                                        "VdMPvn7vUTSzbYjiMDs1jku9wAh1Ri2Y1A"
+                                    ]
+                                }
+                            ],
+                            "blockHash": "87f245b6882d8d1a0a2122c5dd5e00a8a6ea0e811d8bc53cde5ba00a1a7b63ce",
+                            "blockHeight": 7547038,
+                            "confirmations": 5,
+                            "blockTime": 1587712257,
+                            "value": "976562",
+                            "valueIn": "0",
+                            "fees": "0",
+                            "hex": "01000000010000000000000000000000000000000000000000000000000000000000000000ffffffff09039e2873045ea29101ffffffff01b2e60e00000000001976a91424cc424c1e5e977175d2b20012554d39024bd68f88ac00000000"
+                        }
+                    ]
+                }                
                 `);
         }
         return {error: "Not implemented"};

@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "7c16faaa-629e-4a75-a8bc-2ccaacb540ff",
+		"_postman_id": "57634a03-7dfa-4b5b-b48e-f6321ea4ba1e",
 		"name": "Blockatlas",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -188,7 +188,7 @@
 					"_postman_isSubFolder": true
 				},
 				{
-					"name": "tokens",
+					"name": "token",
 					"item": [
 						{
 							"name": "token",
@@ -1991,6 +1991,97 @@
 							],
 							"path": [
 								"v1"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "2f430d33-58dd-4df5-b3bb-2826e76b89b2",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "727ab826-5939-45a7-96be-d8382192a69e",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "mock-healthcheck",
+			"item": [
+				{
+					"name": "status",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "7312c9e7-5330-421a-9ca8-171101050e38",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "acec8baa-0ef0-4703-ab83-c555260deffa",
+								"exec": [
+									"var Ajv = require('ajv');",
+									"var ajv = new Ajv({logger: console});",
+									"let schema = {",
+									"  \"status\": \"boolean\",",
+									"  \"msg\": \"string\"",
+									"};",
+									"",
+									"pm.test(\"response must be valid and have a body -- HAS MOCK STARTED?\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.be.ok;",
+									"    pm.response.to.not.be.error;",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test(\"verify the status\", function() {",
+									"    pm.expect(jsonData.status).to.equal(true);",
+									"});",
+									"",
+									"pm.test(\"schema is valid\", function() {",
+									"    pm.expect(ajv.validate(schema, jsonData)).to.be.true;",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3347/dyson-ping/ping",
+							"host": [
+								"localhost:3347"
+							],
+							"path": [
+								"dyson-ping/ping"
 							]
 						}
 					},

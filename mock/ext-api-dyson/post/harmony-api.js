@@ -1,7 +1,7 @@
 /// Harmony RPC Mock
-/// curl -H 'Content-Type: application/json' -d ' {"jsonrpc":"2.0","method":"hmy_getTransactionsHistory","params":[{"address":"one1e4mr7tp0a76wnhv9xd0wzentdjnjnsh3fwzgfv","fullTx":true}],"id":"hmy_getTransactionsHistory"} ' http://localhost:3000/harmony-api
-/// curl -H 'Content-Type: application/json' -d ' {"jsonrpc":"2.0","method":"hmy_getTransactionsHistory","params":[{"address":"one1e4mr7tp0a76wnhv9xd0wzentdjnjnsh3fwzgfv","fullTx":true}],"id":"hmy_getTransactionsHistory"} ' https://{harmony_rpc}
-/// curl "http://localhost:8420/v2/harmony/one1e4mr7tp0a76wnhv9xd0wzentdjnjnsh3fwzgfv"
+/// curl -H 'Content-Type: application/json' -d ' {"jsonrpc":"2.0","method":"hmy_getTransactionsHistory","params":[{"address":"one1e4mr7tp0a76wnhv9xd0wzentdjnjnsh3fwzgfv","fullTx":true}],"id":1} ' http://localhost:3347/harmony-api
+/// curl -H 'Content-Type: application/json' -d ' {"jsonrpc":"2.0","method":"hmy_getTransactionsHistory","params":[{"address":"one1e4mr7tp0a76wnhv9xd0wzentdjnjnsh3fwzgfv","fullTx":true}],"id":1} ' https://{harmony_rpc}
+/// curl "http://localhost:8437/v2/harmony/one1e4mr7tp0a76wnhv9xd0wzentdjnjnsh3fwzgfv"
 
 module.exports = {
     path: '/harmony-api',
@@ -12,7 +12,7 @@ module.exports = {
             if (body.params[0].address === 'one1e4mr7tp0a76wnhv9xd0wzentdjnjnsh3fwzgfv') {
                 return JSON.parse(`{
                     "jsonrpc": "2.0",
-                    "id": "hmy_getTransactionsHistory",
+                    "id": 1,
                     "result": {
                         "transactions": [
                             {
@@ -76,7 +76,7 @@ module.exports = {
                     }
                 }`);
             }
-            return {jsonrpc:"2.0",id:"hmy_getTransactionsHistory",result:{"transactions":[]}};
+            return {jsonrpc:"2.0",id:1,result:{"transactions":[]}};
         }
         return {error: 'Invalid request'};
     }

@@ -1,8 +1,8 @@
 /// Mock for external Tezos API, transactions
 /// See
 /// curl "https://api.tzstats.com/explorer/account/tz1foWxaV3VQyWqFbWTERS6YDJjPT6C7jPp8/op?limit=25&order=desc&type=transaction%2Cdelegation"
-/// curl "http://localhost:3000/tezos-api/account/tz1foWxaV3VQyWqFbWTERS6YDJjPT6C7jPp8/op?limit=25&order=desc&type=transaction%2Cdelegation"
-/// curl "http://localhost:8420/v1/tezos/tz1foWxaV3VQyWqFbWTERS6YDJjPT6C7jPp8"
+/// curl "http://localhost:3347/tezos-api/account/tz1foWxaV3VQyWqFbWTERS6YDJjPT6C7jPp8/op?limit=25&order=desc&type=transaction%2Cdelegation"
+/// curl "http://localhost:8437/v1/tezos/tz1foWxaV3VQyWqFbWTERS6YDJjPT6C7jPp8"
 
 module.exports = {
     path: '/tezos-api/account/:account/:op?',
@@ -176,7 +176,7 @@ module.exports = {
                 }
                 `)
         }
-        // fallback
+        
         return {error: "Not implemented"}
     }
 };

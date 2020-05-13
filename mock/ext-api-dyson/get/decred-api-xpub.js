@@ -1,8 +1,8 @@
 /// Mock for external Decred API
 /// See:
 /// curl "http://{decred rpc}v2/xpub/dpubZFf1tYMxcku9nvDRxnYdE4yrEESrkuQFRq5RwA4KoYQKpDSRszN2emePTwLgfQpd4mZHGrHbQkKPZdjH1BcopomXRnr5Gt43rjpNEfeuJLN?details=txs"
-/// curl "http://localhost:3000/decred-api/v2/xpub/dpubZFf1tYMxcku9nvDRxnYdE4yrEESrkuQFRq5RwA4KoYQKpDSRszN2emePTwLgfQpd4mZHGrHbQkKPZdjH1BcopomXRnr5Gt43rjpNEfeuJLN?details=txs"
-/// curl "http://localhost:8420/v1/decred/xpub/dpubZFf1tYMxcku9nvDRxnYdE4yrEESrkuQFRq5RwA4KoYQKpDSRszN2emePTwLgfQpd4mZHGrHbQkKPZdjH1BcopomXRnr5Gt43rjpNEfeuJLN"
+/// curl "http://localhost:3347/decred-api/v2/xpub/dpubZFf1tYMxcku9nvDRxnYdE4yrEESrkuQFRq5RwA4KoYQKpDSRszN2emePTwLgfQpd4mZHGrHbQkKPZdjH1BcopomXRnr5Gt43rjpNEfeuJLN?details=txs"
+/// curl "http://localhost:8437/v1/decred/xpub/dpubZFf1tYMxcku9nvDRxnYdE4yrEESrkuQFRq5RwA4KoYQKpDSRszN2emePTwLgfQpd4mZHGrHbQkKPZdjH1BcopomXRnr5Gt43rjpNEfeuJLN"
 
 module.exports = {
     path: '/decred-api/v2/xpub/:xpubkey?',

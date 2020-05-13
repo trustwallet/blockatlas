@@ -1,8 +1,8 @@
 /// Ripple API Mock
 /// See:
-/// curl "http://localhost:3000/ripple-api/accounts/rMQ98K56yXJbDGv49ZSmW51sLn94Xe1mu1/transactions?type=Payment&descending=false&limit=25"
+/// curl "http://localhost:3347/ripple-api/accounts/rMQ98K56yXJbDGv49ZSmW51sLn94Xe1mu1/transactions?type=Payment&descending=false&limit=25"
 /// curl "https://data.ripple.com/v2/accounts/rMQ98K56yXJbDGv49ZSmW51sLn94Xe1mu1/transactions?type=Payment&descending=false&limit=25"
-/// curl http://localhost:8420/v1/ripple/rMQ98K56yXJbDGv49ZSmW51sLn94Xe1mu1
+/// curl http://localhost:8437/v1/ripple/rMQ98K56yXJbDGv49ZSmW51sLn94Xe1mu1
 module.exports = {
     path: "/ripple-api/accounts/:address/transactions?",
     template: function(params, query, body) {
@@ -198,8 +198,7 @@ module.exports = {
                 }
             `);
         }
-        // fallback
-        var return4Codacy = {error: "Not implemented"};
-        return return4Codacy;
+        
+        return {error: "Not implemented"};
     }
 };

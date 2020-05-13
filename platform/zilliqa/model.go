@@ -2,9 +2,10 @@ package zilliqa
 
 import (
 	"encoding/hex"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"math/big"
 	"strconv"
+
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 )
 
 type BlockTxs [][]string
@@ -33,7 +34,10 @@ type Tx struct {
 func (tx Tx) NonceValue() uint64 {
 	switch n := tx.Nonce.(type) {
 	case string:
-		r, _ := strconv.Atoi(n)
+		r, err := strconv.Atoi(n)
+		if err != nil {
+			break
+		}
 		return uint64(r)
 	case int:
 		return uint64(n)
@@ -66,14 +70,26 @@ type TxRPC struct {
 	Version      string    `json:"version"`
 }
 
-func (t *TxRPC) toTx() Tx {
-	to, _ := hex.DecodeString(t.ToAddr)
-	height, _ := strconv.ParseUint(t.Receipt.EpochNum, 10, 64)
-	gasLimt, _ := new(big.Int).SetString(t.GasLimit, 10)
-	gasPrice, _ := new(big.Int).SetString(t.GasPrice, 10)
+func (t *TxRPC) toTx() *Tx {
+	to, err := hex.DecodeString(t.ToAddr)
+	if err != nil {
+		return nil
+	}
+	height, err := strconv.ParseUint(t.Receipt.EpochNum, 10, 64)
+	if err != nil {
+		return nil
+	}
+	gasLimt, ok := new(big.Int).SetString(t.GasLimit, 10)
+	if !ok {
+		return nil
+	}
+	gasPrice, ok := new(big.Int).SetString(t.GasPrice, 10)
+	if !ok {
+		return nil
+	}
 	fee := new(big.Int).Mul(gasLimt, gasPrice)
 
-	tx := Tx{
+	return &Tx{
 		Hash:           "0x" + t.ID,
 		BlockHeight:    height,
 		From:           EncodePublicKeyToAddress(t.SenderPubKey),
@@ -84,7 +100,6 @@ func (t *TxRPC) toTx() Tx {
 		Nonce:          t.Nonce,
 		ReceiptSuccess: t.Receipt.Success,
 	}
-	return tx
 }
 
 type BlockTxRpc struct {

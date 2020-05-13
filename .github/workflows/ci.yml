@@ -1,0 +1,73 @@
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  test:
+    name: Unit Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Go 1.x
+        uses: actions/setup-go@v2
+        with:
+          go-version: ^1.13
+        id: go
+
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Get dependencies
+        run: |
+          go get -v -t -d ./...
+
+      - name: Lint
+        run: make lint
+
+      - name: Build
+        run: make go-build
+
+      - name: Unit Test
+        run: make test
+
+      - name: Upload coverage
+        run: bash <(curl -s https://codecov.io/bash) -f coverage.txt
+
+  integration:
+    name: Integration Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Go 1.x
+        uses: actions/setup-go@v2
+        with:
+          go-version: ^1.13
+        id: go
+
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Get dependencies
+        run: |
+          go get -v -t -d ./...
+
+      - name: Integration Test
+        run: make integration
+
+      - name: Mock Test
+        run: make newman-mocked
+
+  deploy:
+    name: CD
+    runs-on: ubuntu-latest
+    needs: [test, integration]
+    steps:
+      - name: CD Trigger
+        if: github.ref == 'refs/heads/master'
+        uses: Azure/pipelines@releases/v1
+        with:
+          azure-devops-project-url: 'https://dev.azure.com/TrustWallet/Trust%20BlockAtlas'
+          azure-pipeline-name: 'AutomaticCD'
+          azure-devops-token: '${{ secrets.AZURE_DEVOPS_TOKEN }}'

@@ -1,79 +1,7 @@
 definitions:
-  api.AddressBatchRequest:
-    properties:
-      address:
-        type: string
-      coin:
-        type: integer
-    type: object
-  api.AddressesRequest:
-    items:
-      $ref: '#/definitions/api.AddressBatchRequest'
-    type: array
-  api.Coin:
-    properties:
-      coin:
-        type: integer
-      token_id:
-        type: string
-      type:
-        $ref: '#/definitions/blockatlas.CoinStatus'
-        type: object
-    type: object
-  api.Ticker:
-    properties:
-      coin:
-        type: integer
-      coin_name:
-        type: string
-      error:
-        type: string
-      last_update:
-        type: string
-      price:
-        $ref: '#/definitions/api.TickerPrice'
-        type: object
-      token_id:
-        type: string
-      type:
-        type: string
-    type: object
-  api.TickerPrice:
-    properties:
-      change_24h:
-        type: number
-      currency:
-        type: string
-      provider:
-        type: string
-      value:
-        type: number
-    type: object
-  api.TickerRequest:
-    properties:
-      assets:
-        items:
-          $ref: '#/definitions/api.Coin'
-        type: array
-      currency:
-        type: string
-    type: object
-  api.Tickers:
-    items:
-      $ref: '#/definitions/api.Ticker'
-    type: array
-  blockatlas.CoinStatus:
-    properties:
-      error:
-        type: string
-      height:
-        type: integer
-    type: object
   blockatlas.Collection:
     properties:
       address:
-        type: string
-      category_address:
         type: string
       coin:
         type: integer
@@ -87,17 +15,8 @@ definitions:
         type: string
       name:
         type: string
-      nft_version:
-        description: Delete in the future version, as it's now part of Collectible
-        type: string
-      slug:
-        type: string
-      symbol:
-        type: string
       total:
         type: integer
-      type:
-        type: string
     type: object
   blockatlas.CollectionPage:
     items:
@@ -150,6 +69,13 @@ definitions:
         type: integer
       result:
         type: string
+    type: object
+  blockatlas.ResultsResponse:
+    properties:
+      docs:
+        type: object
+      total:
+        type: integer
     type: object
   blockatlas.StakeValidator:
     properties:
@@ -270,34 +196,144 @@ definitions:
       symbol:
         type: string
     type: object
-  ginutils.ApiError:
+  endpoint.AddressBatchRequest:
     properties:
-      status_code:
-        type: integer
-      status_message:
+      address:
         type: string
+      coin:
+        type: integer
     type: object
-  watchmarket.ChartCoinInfo:
+  endpoint.AddressesRequest:
+    items:
+      $ref: '#/definitions/endpoint.AddressBatchRequest'
+    type: array
+  endpoint.ChartCoinInfo:
     properties:
       circulating_supply:
         type: number
       info:
-        type: CoinInfo
+        $ref: '#/definitions/endpoint.CoinInfo'
+        type: object
       market_cap:
         type: number
+      provider:
+        type: string
       total_supply:
         type: number
       volume_24:
         type: number
     type: object
-  watchmarket.ChartData:
+  endpoint.ChartData:
     properties:
       error:
         type: string
       prices:
         items:
-          type: ChartPrice
+          $ref: '#/definitions/endpoint.ChartPrice'
         type: array
+      provider:
+        type: string
+    type: object
+  endpoint.ChartPrice:
+    properties:
+      date:
+        type: integer
+      price:
+        type: number
+    type: object
+  endpoint.Coin:
+    properties:
+      coin:
+        type: integer
+      token_id:
+        type: string
+      type:
+        type: string
+    type: object
+  endpoint.CoinInfo:
+    properties:
+      description:
+        type: string
+      explorer:
+        type: string
+      name:
+        type: string
+      short_description:
+        type: string
+      socials:
+        items:
+          $ref: '#/definitions/endpoint.SocialLink'
+        type: array
+      source_code:
+        type: string
+      website:
+        type: string
+      white_paper:
+        type: string
+    type: object
+  endpoint.SocialLink:
+    properties:
+      handle:
+        type: string
+      name:
+        type: string
+      url:
+        type: string
+    type: object
+  endpoint.Ticker:
+    properties:
+      coin:
+        type: integer
+      coin_name:
+        type: string
+      error:
+        type: string
+      last_update:
+        type: string
+      price:
+        $ref: '#/definitions/endpoint.TickerPrice'
+        type: object
+      token_id:
+        type: string
+      type:
+        type: string
+    type: object
+  endpoint.TickerPrice:
+    properties:
+      change_24h:
+        type: number
+      currency:
+        type: string
+      provider:
+        type: string
+      value:
+        type: number
+    type: object
+  endpoint.TickerRequest:
+    properties:
+      assets:
+        items:
+          $ref: '#/definitions/endpoint.Coin'
+        type: array
+      currency:
+        type: string
+    type: object
+  endpoint.Tickers:
+    items:
+      $ref: '#/definitions/endpoint.Ticker'
+    type: array
+  model.ErrorDetails:
+    properties:
+      code:
+        type: integer
+      message:
+        type: string
+    type: object
+  model.ErrorResponse:
+    properties:
+      error:
+        $ref: '#/definitions/model.ErrorDetails'
+        type: object
     type: object
 info:
   contact: {}
@@ -308,16 +344,16 @@ paths:
       description: Lookup ENS/ZNS to find registered addresses
       operationId: lookup
       parameters:
-        - description: string name
-          in: query
-          name: name
-          type: string
-        - description: string coin
-          in: query
-          name: coin
-          type: string
+      - description: string name
+        in: query
+        name: name
+        type: string
+      - description: string coin
+        in: query
+        name: coin
+        type: string
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
@@ -326,186 +362,186 @@ paths:
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/ginutils.ApiError'
+            $ref: '#/definitions/model.ErrorResponse'
       summary: Lookup .eth / .zil addresses
       tags:
-        - Naming
+      - Naming
   /v1/{coin}/{address}:
     get:
       consumes:
-        - application/json
+      - application/json
       description: Get transactions from the address
       operationId: tx_v1
       parameters:
-        - default: tezos
-          description: the coin name
-          in: path
-          name: coin
-          required: true
-          type: string
-        - default: tz1WCd2jm4uSt4vntk4vSuUWoZQGhLcDuR9q
-          description: the query address
-          in: path
-          name: address
-          required: true
-          type: string
+      - default: tezos
+        description: the coin name
+        in: path
+        name: coin
+        required: true
+        type: string
+      - default: tz1WCd2jm4uSt4vntk4vSuUWoZQGhLcDuR9q
+        description: the query address
+        in: path
+        name: address
+        required: true
+        type: string
       produces:
-        - application/json
+      - application/json
       responses:
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/ginutils.ApiError'
+            $ref: '#/definitions/model.ErrorResponse'
       summary: Get Transactions
       tags:
-        - Transactions
+      - Transactions
   /v1/{coin}/xpub/{xpub}:
     get:
       consumes:
-        - application/json
-      description: Get transactions from xpub address
-      operationId: xpub
+      - application/json
+      description: Get transactions from XPUB address
+      operationId: txxpub_v1
       parameters:
-        - default: bitcoin
-          description: the coin name
-          in: path
-          name: coin
-          required: true
-          type: string
-        - default: zpub6ruK9k6YGm8BRHWvTiQcrEPnFkuRDJhR7mPYzV2LDvjpLa5CuGgrhCYVZjMGcLcFqv9b2WvsFtY2Gb3xq8NVq8qhk9veozrA2W9QaWtihrC
-          description: the xpub address
-          in: path
-          name: xpub
-          required: true
-          type: string
+      - default: bitcoin
+        description: the coin name
+        in: path
+        name: coin
+        required: true
+        type: string
+      - default: zpub6ruK9k6YGm8BRHWvTiQcrEPnFkuRDJhR7mPYzV2LDvjpLa5CuGgrhCYVZjMGcLcFqv9b2WvsFtY2Gb3xq8NVq8qhk9veozrA2W9QaWtihrC
+        description: the xpub key
+        in: path
+        name: xpub
+        required: true
+        type: string
       produces:
-        - application/json
+      - application/json
       responses:
-        "200":
-          description: OK
+        "500":
+          description: Internal Server Error
           schema:
-            $ref: '#/definitions/blockatlas.TxPage'
-      summary: Get xpub transactions
+            $ref: '#/definitions/model.ErrorResponse'
+      summary: Get Transactions by XPUB
       tags:
-        - Transactions
+      - Transactions
   /v1/market/charts:
     get:
       consumes:
-        - application/json
+      - application/json
       description: Get the charts data from an market and coin/token
       operationId: get_charts_data
       parameters:
-        - default: 60
-          description: Coin ID
-          in: query
-          name: coin
-          required: true
-          type: integer
-        - description: Token ID
-          in: query
-          name: token
-          type: string
-        - default: 1574483028
-          description: Start timestamp
-          in: query
-          name: time_start
-          type: integer
-        - default: 64
-          description: Max number of items in result prices array
-          in: query
-          name: max_items
-          type: integer
-        - default: USD
-          description: The currency to show charts
-          in: query
-          name: currency
-          type: string
+      - default: 60
+        description: Coin ID
+        in: query
+        name: coin
+        required: true
+        type: integer
+      - description: Token ID
+        in: query
+        name: token
+        type: string
+      - default: 1574483028
+        description: Start timestamp
+        in: query
+        name: time_start
+        type: integer
+      - default: 64
+        description: Max number of items in result prices array
+        in: query
+        name: max_items
+        type: integer
+      - default: USD
+        description: The currency to show charts
+        in: query
+        name: currency
+        type: string
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/watchmarket.ChartData'
+            $ref: '#/definitions/endpoint.ChartData'
       summary: Get charts data for a specific coin
       tags:
-        - Market
+      - Market
   /v1/market/info:
     get:
       consumes:
-        - application/json
+      - application/json
       description: Get the charts coin info data from an market and coin/contract
       operationId: get_charts_coin_info
       parameters:
-        - default: 60
-          description: Coin ID
-          in: query
-          name: coin
-          required: true
-          type: integer
-        - description: Token ID
-          in: query
-          name: token
-          type: string
-        - default: USD
-          description: The currency to show coin info in
-          in: query
-          name: currency
-          type: string
+      - default: 60
+        description: Coin ID
+        in: query
+        name: coin
+        required: true
+        type: integer
+      - description: Token ID
+        in: query
+        name: token
+        type: string
+      - default: USD
+        description: The currency to show coin info in
+        in: query
+        name: currency
+        type: string
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/watchmarket.ChartCoinInfo'
+            $ref: '#/definitions/endpoint.ChartCoinInfo'
       summary: Get charts coin info data for a specific coin
       tags:
-        - Market
+      - Market
   /v1/market/ticker:
     post:
       consumes:
-        - application/json
+      - application/json
       description: Get the ticker values from many market and coin/token
       operationId: get_tickers
       parameters:
-        - description: Ticker
-          in: body
-          name: tickers
-          required: true
-          schema:
-            $ref: '#/definitions/api.TickerRequest'
+      - description: Ticker
+        in: body
+        name: tickers
+        required: true
+        schema:
+          $ref: '#/definitions/endpoint.TickerRequest'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/api.Tickers'
+            $ref: '#/definitions/endpoint.Tickers'
       summary: Get ticker values for a specific market
       tags:
-        - Market
+      - Market
   /v2/{coin}/staking/delegations/{address}:
     get:
       consumes:
-        - application/json
+      - application/json
       description: Get stake delegations from the address
       operationId: delegations
       parameters:
-        - default: tron
-          description: the coin name
-          in: path
-          name: coin
-          required: true
-          type: string
-        - default: TPJYCz8ppZNyvw7pTwmjajcx4Kk1MmEUhD
-          description: the query address
-          in: path
-          name: address
-          required: true
-          type: string
+      - default: tron
+        description: the coin name
+        in: path
+        name: coin
+        required: true
+        type: string
+      - default: TPJYCz8ppZNyvw7pTwmjajcx4Kk1MmEUhD
+        description: the query address
+        in: path
+        name: address
+        required: true
+        type: string
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
@@ -514,25 +550,25 @@ paths:
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/ginutils.ApiError'
+            $ref: '#/definitions/model.ErrorResponse'
       summary: Get Stake Delegations
       tags:
-        - Staking
+      - Staking
   /v2/{coin}/staking/validators:
     get:
       consumes:
-        - application/json
+      - application/json
       description: Get validators from the address
       operationId: validators
       parameters:
-        - default: cosmos
-          description: the coin name
-          in: path
-          name: coin
-          required: true
-          type: string
+      - default: cosmos
+        description: the coin name
+        in: path
+        name: coin
+        required: true
+        type: string
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
@@ -541,31 +577,31 @@ paths:
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/ginutils.ApiError'
+            $ref: '#/definitions/model.ErrorResponse'
       summary: Get Validators
       tags:
-        - Staking
+      - Staking
   /v2/{coin}/tokens/{address}:
     get:
       consumes:
-        - application/json
+      - application/json
       description: Get tokens from the address
       operationId: tokens
       parameters:
-        - default: ethereum
-          description: the coin name
-          in: path
-          name: coin
-          required: true
-          type: string
-        - default: 0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB
-          description: the query address
-          in: path
-          name: address
-          required: true
-          type: string
+      - default: ethereum
+        description: the coin name
+        in: path
+        name: coin
+        required: true
+        type: string
+      - default: 0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB
+        description: the query address
+        in: path
+        name: address
+        required: true
+        type: string
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
@@ -574,31 +610,31 @@ paths:
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/ginutils.ApiError'
+            $ref: '#/definitions/model.ErrorResponse'
       summary: Get Tokens
       tags:
-        - Transactions
+      - Transactions
   /v2/{coin}/transactions/{address}:
     get:
       consumes:
-        - application/json
+      - application/json
       description: Get transactions from the address
       operationId: tx_v2
       parameters:
-        - default: tezos
-          description: the coin name
-          in: path
-          name: coin
-          required: true
-          type: string
-        - default: tz1WCd2jm4uSt4vntk4vSuUWoZQGhLcDuR9q
-          description: the query address
-          in: path
-          name: address
-          required: true
-          type: string
+      - default: tezos
+        description: the coin name
+        in: path
+        name: coin
+        required: true
+        type: string
+      - default: tz1WCd2jm4uSt4vntk4vSuUWoZQGhLcDuR9q
+        description: the query address
+        in: path
+        name: address
+        required: true
+        type: string
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
@@ -607,26 +643,55 @@ paths:
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/ginutils.ApiError'
+            $ref: '#/definitions/model.ErrorResponse'
       summary: Get Transactions
       tags:
-        - Transactions
+      - Transactions
+  /v2/{coin}/transactions/xpub/{xpub}:
+    get:
+      consumes:
+      - application/json
+      description: Get transactions from XPUB address
+      operationId: txxpub_v2
+      parameters:
+      - default: bitcoin
+        description: the coin name
+        in: path
+        name: coin
+        required: true
+        type: string
+      - default: zpub6ruK9k6YGm8BRHWvTiQcrEPnFkuRDJhR7mPYzV2LDvjpLa5CuGgrhCYVZjMGcLcFqv9b2WvsFtY2Gb3xq8NVq8qhk9veozrA2W9QaWtihrC
+        description: the xpub key
+        in: path
+        name: xpub
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+      summary: Get Transactions by XPUB
+      tags:
+      - Transactions
   /v2/ns/lookup:
     get:
       description: Lookup ENS/ZNS to find registered addresses for multiple coins
       operationId: lookup
       parameters:
-        - description: string name
-          in: query
-          name: name
-          type: string
-        - description: List of coins
-          in: query
-          name: coins
-          required: true
-          type: string
+      - description: string name
+        in: query
+        name: name
+        type: string
+      - description: List of coins
+        in: query
+        name: coins
+        required: true
+        type: string
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
@@ -637,25 +702,25 @@ paths:
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/ginutils.ApiError'
+            $ref: '#/definitions/model.ErrorResponse'
       summary: Lookup .eth / .zil addresses
       tags:
-        - Naming
+      - Naming
   /v2/staking/delegations:
     post:
       consumes:
-        - application/json
+      - application/json
       description: Get Stake Delegations for multiple coins
       operationId: batch_delegations
       parameters:
-        - description: Validators addresses and coins
-          in: body
-          name: delegations
-          required: true
-          schema:
-            $ref: '#/definitions/api.AddressesRequest'
+      - description: Validators addresses and coins
+        in: body
+        name: delegations
+        required: true
+        schema:
+          $ref: '#/definitions/endpoint.AddressesRequest'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
@@ -663,22 +728,22 @@ paths:
             $ref: '#/definitions/blockatlas.DelegationsBatchPage'
       summary: Get Multiple Stake Delegations
       tags:
-        - Staking
+      - Staking
   /v2/staking/list:
     post:
       consumes:
-        - application/json
+      - application/json
       description: Get Stake Delegations for multiple coins
       operationId: batch_delegations
       parameters:
-        - description: Validators addresses and coins
-          in: body
-          name: delegations
-          required: true
-          schema:
-            $ref: '#/definitions/api.AddressesRequest'
+      - description: Validators addresses and coins
+        in: body
+        name: delegations
+        required: true
+        schema:
+          $ref: '#/definitions/endpoint.AddressesRequest'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
@@ -686,34 +751,84 @@ paths:
             $ref: '#/definitions/blockatlas.DelegationsBatchPage'
       summary: Get Multiple Stake Delegations
       tags:
-        - Staking
+      - Staking
+  /v2/tokens:
+    post:
+      consumes:
+      - application/json
+      description: Get tokens
+      operationId: tokens_v3
+      parameters:
+      - default: '{"60": ["0xb3624367b1ab37daef42e1a3a2ced012359659b0"]}'
+        description: Payload
+        in: body
+        name: data
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/blockatlas.ResultsResponse'
+      summary: 'Get list of tokens by map: coin -> [addresses]'
+      tags:
+      - Transactions
+  /v3/staking/list:
+    get:
+      description: Get staking info by coin ID
+      operationId: batch_info
+      parameters:
+      - description: List of coins
+        in: query
+        name: coins
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/blockatlas.DelegationsBatchPage'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+      summary: Get staking info by coin ID
+      tags:
+      - Staking
   /v4/{coin}/collections/{owner}/collection/{collection_id}:
     get:
       consumes:
-        - application/json
+      - application/json
       description: Get a collection from the address
       operationId: collection_v4
       parameters:
-        - default: ethereum
-          description: the coin name
-          in: path
-          name: coin
-          required: true
-          type: string
-        - default: 0x0875BCab22dE3d02402bc38aEe4104e1239374a7
-          description: the query address
-          in: path
-          name: owner
-          required: true
-          type: string
-        - default: 0x06012c8cf97bead5deae237070f9587f8e7a266d
-          description: the query collection
-          in: path
-          name: collection_id
-          required: true
-          type: string
+      - default: ethereum
+        description: the coin name
+        in: path
+        name: coin
+        required: true
+        type: string
+      - default: 0x0875BCab22dE3d02402bc38aEe4104e1239374a7
+        description: the query address
+        in: path
+        name: owner
+        required: true
+        type: string
+      - default: 0x06012c8cf97bead5deae237070f9587f8e7a266d
+        description: the query collection
+        in: path
+        name: collection_id
+        required: true
+        type: string
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
@@ -722,26 +837,26 @@ paths:
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/ginutils.ApiError'
+            $ref: '#/definitions/model.ErrorResponse'
       summary: Get Collection
       tags:
-        - Collections
+      - Collections
   /v4/collectibles/categories:
     post:
       consumes:
-        - application/json
+      - application/json
       description: Get collection categories
       operationId: collection_categories_v4
       parameters:
-        - default: '{"60": ["0xb3624367b1ab37daef42e1a3a2ced012359659b0"]}'
-          description: Payload
-          in: body
-          name: data
-          required: true
-          schema:
-            type: string
+      - default: '{"60": ["0xb3624367b1ab37daef42e1a3a2ced012359659b0"]}'
+        description: Payload
+        in: body
+        name: data
+        required: true
+        schema:
+          type: string
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
@@ -749,5 +864,5 @@ paths:
             $ref: '#/definitions/blockatlas.DocsResponse'
       summary: Get list of collections from a specific coin and addresses
       tags:
-        - Collections
+      - Collections
 swagger: "2.0"

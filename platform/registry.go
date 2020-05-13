@@ -14,21 +14,21 @@ var (
 	// BlockAPIs contain platforms with block services
 	BlockAPIs map[string]blockatlas.BlockAPI
 
+	// TokensAPIs contain platforms with token services
+	TokensAPIs map[uint]blockatlas.TokensAPI
+
 	// StakeAPIs contain platforms with staking services
 	StakeAPIs map[string]blockatlas.StakeAPI
 
-	// CustomAPIs contain platforms with custom HTTP services
-	CustomAPIs map[string]blockatlas.CustomAPI
+	// CollectionsAPIs contain platforms which collections services
+	CollectionsAPIs blockatlas.CollectionsAPIs
 
 	// NamingAPIs contain platforms which support naming services
-	NamingAPIs map[uint64]blockatlas.NamingServiceAPI
-
-	// CollectionAPIs contain platforms which collections services
-	CollectionAPIs map[uint]blockatlas.CollectionAPI
+	NamingAPIs map[uint]blockatlas.NamingServiceAPI
 )
 
 func getActivePlatforms(handle string) []blockatlas.Platform {
-	platforms := getPlatformMap()
+	platforms := getAllHandlers()
 	logger.Info("Platform API setup with: ", logger.Params{"handle": handle})
 
 	if handle == allPlatformsHandle {
@@ -47,15 +47,10 @@ func getActivePlatforms(handle string) []blockatlas.Platform {
 func Init(platformHandle string) {
 	platformList := getActivePlatforms(platformHandle)
 
-	// white list of collection api coins (only ETH now)
-	InitCollectionsWhitelist()
-
 	Platforms = make(map[string]blockatlas.Platform)
 	BlockAPIs = make(map[string]blockatlas.BlockAPI)
+	TokensAPIs = make(map[uint]blockatlas.TokensAPI)
 	StakeAPIs = make(map[string]blockatlas.StakeAPI)
-	CustomAPIs = make(map[string]blockatlas.CustomAPI)
-	NamingAPIs = make(map[uint64]blockatlas.NamingServiceAPI)
-	CollectionAPIs = make(map[uint]blockatlas.CollectionAPI)
 
 	for _, platform := range platformList {
 		handle := platform.Coin().Handle
@@ -80,17 +75,14 @@ func Init(platformHandle string) {
 		if blockAPI, ok := platform.(blockatlas.BlockAPI); ok {
 			BlockAPIs[handle] = blockAPI
 		}
+		if tokenAPI, ok := platform.(blockatlas.TokensAPI); ok {
+			TokensAPIs[platform.Coin().ID] = tokenAPI
+		}
 		if stakeAPI, ok := platform.(blockatlas.StakeAPI); ok {
 			StakeAPIs[handle] = stakeAPI
 		}
-		if customAPI, ok := platform.(blockatlas.CustomAPI); ok {
-			CustomAPIs[handle] = customAPI
-		}
-		if namingAPI, ok := platform.(blockatlas.NamingServiceAPI); ok {
-			NamingAPIs[uint64(platform.Coin().ID)] = namingAPI
-		}
-		if collectionAPI, ok := platform.(blockatlas.CollectionAPI); ok && CollectionsWhitelist[platform.Coin().ID] {
-			CollectionAPIs[platform.Coin().ID] = collectionAPI
-		}
 	}
+
+	CollectionsAPIs = getCollectionsHandlers()
+	NamingAPIs = getNamingHandlers()
 }

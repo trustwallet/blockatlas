@@ -1,8 +1,8 @@
 /// Mock for external Digibyte API
 /// See:
 /// curl "http://{digibyte rpc}/v2/xpub/zpub6ricE56nzsDeTAVo4w68vQQ3tRvR6C18JjKVsgbiRFjEawGV9SuS2gfkpm5qFxjbTNPPuvAA3cqRsxNHxFwVnpYD2Lawjtb3wowbFdwmjow?details=txs"
-/// curl "http://localhost:3000/digibyte-api/v2/xpub/zpub6ricE56nzsDeTAVo4w68vQQ3tRvR6C18JjKVsgbiRFjEawGV9SuS2gfkpm5qFxjbTNPPuvAA3cqRsxNHxFwVnpYD2Lawjtb3wowbFdwmjow?details=txs"
-/// curl "http://localhost:8420/v1/digibyte/xpub/zpub6ricE56nzsDeTAVo4w68vQQ3tRvR6C18JjKVsgbiRFjEawGV9SuS2gfkpm5qFxjbTNPPuvAA3cqRsxNHxFwVnpYD2Lawjtb3wowbFdwmjow"
+/// curl "http://localhost:3347/digibyte-api/v2/xpub/zpub6ricE56nzsDeTAVo4w68vQQ3tRvR6C18JjKVsgbiRFjEawGV9SuS2gfkpm5qFxjbTNPPuvAA3cqRsxNHxFwVnpYD2Lawjtb3wowbFdwmjow?details=txs"
+/// curl "http://localhost:8437/v1/digibyte/xpub/zpub6ricE56nzsDeTAVo4w68vQQ3tRvR6C18JjKVsgbiRFjEawGV9SuS2gfkpm5qFxjbTNPPuvAA3cqRsxNHxFwVnpYD2Lawjtb3wowbFdwmjow"
 
 module.exports = {
     path: '/digibyte-api/v2/xpub/:xpubkey?',

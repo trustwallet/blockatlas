@@ -2,9 +2,10 @@ package bitcoin
 
 import (
 	"fmt"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"net/url"
 	"strconv"
+
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 )
 
 type Client struct {
@@ -12,7 +13,7 @@ type Client struct {
 }
 
 func (c *Client) GetTransactions(address string) (transactions TransactionsList, err error) {
-	path := fmt.Sprintf("address/%s", address)
+	path := fmt.Sprintf("v2/address/%s", address)
 	err = c.Get(&transactions, path, url.Values{
 		"details":  {"txs"},
 		"pageSize": {strconv.Itoa(blockatlas.TxPerPage)},

@@ -5,6 +5,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/platform/ethereum/collection"
 	"testing"
 )
 
@@ -268,7 +269,7 @@ var collection3DstV4 = blockatlas.Collection{
 }
 
 func TestNormalizeCollectionV4(t *testing.T) {
-	var collections []Collection
+	var collections []collection.Collection
 	err := json.Unmarshal([]byte(collectionsSrcV4), &collections)
 	assert.Nil(t, err)
 	page := NormalizeCollections(collections, coin.ETH, collectionsOwnerV4)
@@ -320,7 +321,7 @@ var collectibleDstV4 = blockatlas.Collectible{
 }
 
 func TestNormalizeCollectibleV4(t *testing.T) {
-	var collectibles []Collectible
+	var collectibles []collection.Collectible
 	err := json.Unmarshal([]byte(collectibleSrcV4), &collectibles)
 	assert.Nil(t, err)
 	page := NormalizeCollectiblePage(collectibles, coin.ETH)

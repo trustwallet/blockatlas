@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	lockTime      = 1814400
+	lockTime      = 1814400 // in seconds (21 days)
 	minimumAmount = "1"
 )
 
@@ -112,8 +112,9 @@ func NormalizeDelegations(delegations []Delegation, validators blockatlas.Valida
 	for _, v := range delegations {
 		validator, ok := validators[v.ValidatorAddress]
 		if !ok {
-			logger.Error(errors.E("Validator not found", errors.Params{"address": v.ValidatorAddress, "platform": "cosmos", "delegation": v.DelegatorAddress}))
-			continue
+			logger.Warn("Validator not found", logger.Params{"address": v.ValidatorAddress, "platform": "cosmos", "delegation": v.DelegatorAddress})
+			validator = getUnknownValidator(v.ValidatorAddress)
+
 		}
 		delegation := blockatlas.Delegation{
 			Delegator: validator,
@@ -131,8 +132,8 @@ func NormalizeUnbondingDelegations(delegations []UnbondingDelegation, validators
 		for _, entry := range v.Entries {
 			validator, ok := validators[v.ValidatorAddress]
 			if !ok {
-				logger.Error(errors.E("Validator not found", errors.Params{"address": v.ValidatorAddress, "platform": "cosmos", "delegation": v.DelegatorAddress}))
-				continue
+				logger.Warn("Validator not found", logger.Params{"address": v.ValidatorAddress, "platform": "cosmos", "delegation": v.DelegatorAddress})
+				validator = getUnknownValidator(v.ValidatorAddress)
 			}
 			t, _ := time.Parse(time.RFC3339, entry.CompletionTime)
 			delegation := blockatlas.Delegation{
@@ -190,5 +191,24 @@ func (p *Platform) Denom() DenomType {
 		return DenomKava
 	default:
 		return DenomAtom
+	}
+}
+
+func getUnknownValidator(address string) blockatlas.StakeValidator {
+	return blockatlas.StakeValidator{
+		ID:     address,
+		Status: false,
+		Info: blockatlas.StakeValidatorInfo{
+			Name:        "Decommissioned",
+			Description: "Decommissioned",
+		},
+		Details: blockatlas.StakingDetails{
+			Reward: blockatlas.StakingReward{
+				Annual: 0,
+			},
+			LockTime:      lockTime,
+			MinimumAmount: minimumAmount,
+			Type:          blockatlas.DelegationTypeDelegate,
+		},
 	}
 }

@@ -4,6 +4,7 @@ import (
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
+	"github.com/trustwallet/blockatlas/pkg/numbers"
 	"sort"
 	"time"
 )
@@ -40,6 +41,7 @@ func GetActiveValidators(api blockatlas.StakeAPI) (blockatlas.StakeValidators, e
 	return results, nil
 }
 
+// Get validators from assets repository and RPC
 func GetValidators(api blockatlas.StakeAPI) (AssetValidators, blockatlas.ValidatorPage, error) {
 	assetsValidators, err := requestValidatorsInfo(api.Coin())
 	if err != nil {
@@ -53,10 +55,10 @@ func GetValidators(api blockatlas.StakeAPI) (AssetValidators, blockatlas.Validat
 	return assetsValidators, validators, nil
 }
 
-func normalizeValidators(assets AssetValidators, validators []blockatlas.Validator, coin coin.Coin) blockatlas.StakeValidators {
+func normalizeValidators(assetsValidators AssetValidators, rpcValidators []blockatlas.Validator, coin coin.Coin) blockatlas.StakeValidators {
 	results := make(blockatlas.StakeValidators, 0)
-	assetsMap := assets.toMap()
-	for _, v := range validators {
+	assetsMap := assetsValidators.toMap()
+	for _, v := range rpcValidators {
 		asset, ok := assetsMap[v.ID]
 		if !ok {
 			continue
@@ -70,17 +72,19 @@ func normalizeValidators(assets AssetValidators, validators []blockatlas.Validat
 	return results
 }
 
-func normalizeValidator(plainValidator blockatlas.Validator, validator AssetValidator, coin coin.Coin) blockatlas.StakeValidator {
-	details := plainValidator.Details
-	details.Reward.Annual = calculateAnnual(details.Reward.Annual, validator.Payout.Commission)
+func normalizeValidator(rpcValidator blockatlas.Validator, assetValidator AssetValidator, coin coin.Coin) blockatlas.StakeValidator {
+	details := rpcValidator.Details
+	details.MinimumAmount = blockatlas.Amount(numbers.Float64toString(assetValidator.Staking.MinDelegation))
+	details.Reward.Annual = calculateAnnual(details.Reward.Annual, assetValidator.Payout.Commission)
+
 	return blockatlas.StakeValidator{
-		ID:     validator.ID,
-		Status: plainValidator.Status && !validator.Status.Disabled,
+		ID:     assetValidator.ID,
+		Status: rpcValidator.Status && !assetValidator.Status.Disabled,
 		Info: blockatlas.StakeValidatorInfo{
-			Name:        validator.Name,
-			Description: validator.Description,
-			Image:       getImage(coin, plainValidator.ID),
-			Website:     validator.Website,
+			Name:        assetValidator.Name,
+			Description: assetValidator.Description,
+			Image:       getImage(coin, rpcValidator.ID),
+			Website:     assetValidator.Website,
 		},
 		Details: details,
 	}

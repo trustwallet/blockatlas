@@ -4,6 +4,7 @@ import (
 	mapset "github.com/deckarep/golang-set"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/numbers"
+	"sort"
 )
 
 const (
@@ -98,7 +99,7 @@ type (
 		// else error explaining why the transaction failed (optional)
 		Error string `json:"error,omitempty"`
 		// Transaction nonce or sequence
-		Sequence uint64 `json:"sequence,omitempty"`
+		Sequence uint64 `json:"sequence"`
 		// Type of metadata
 		Type TransactionType `json:"type"`
 		// Input addresses
@@ -208,6 +209,25 @@ type (
 
 	Txs []Tx
 )
+
+func (t Txs) FilterUniqueID() Txs {
+	keys := make(map[string]bool)
+	list := make(Txs, 0)
+	for _, entry := range t {
+		if _, value := keys[entry.ID]; !value {
+			keys[entry.ID] = true
+			list = append(list, entry)
+		}
+	}
+	return list
+}
+
+func (t Txs) SortByDate() Txs {
+	sort.Slice(t, func(i, j int) bool {
+		return t[i].Date > t[j].Date
+	})
+	return t
+}
 
 func (t Txs) GetTransactionsMap() TxSetMap {
 	txSetMap := TxSetMap{Map: make(map[string]*TxSet)}

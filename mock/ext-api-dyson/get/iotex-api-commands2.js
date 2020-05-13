@@ -1,11 +1,11 @@
 /// Iotex API Mock
 /// See:
-/// curl "http://localhost:3000/iotex-api/staking/validators?status=bonded"
-/// curl "http://localhost:3000/iotex-api/accounts/io1mwekae7qqwlr23220k5n9z3fmjxz72tuchra3m"
+/// curl "http://localhost:3347/iotex-api/staking/validators?status=bonded"
+/// curl "http://localhost:3347/iotex-api/accounts/io1mwekae7qqwlr23220k5n9z3fmjxz72tuchra3m"
 /// curl "https://{iotex_rpc}/v1/staking/validators?status=bonded"
 /// curl "https://{iotex_rpc}/v1/accounts/io1mwekae7qqwlr23220k5n9z3fmjxz72tuchra3m"
-/// curl "http://localhost:8420/v2/iotex/staking/validators"
-/// curl "http://localhost:8420/v2/iotex/staking/delegations/io1mwekae7qqwlr23220k5n9z3fmjxz72tuchra3m?Authorization=Bearer"
+/// curl "http://localhost:8437/v2/iotex/staking/validators"
+/// curl "http://localhost:8437/v2/iotex/staking/delegations/io1mwekae7qqwlr23220k5n9z3fmjxz72tuchra3m?Authorization=Bearer"
 
 module.exports = {
     path: "/iotex-api/:command1/:command2?",
@@ -815,9 +815,7 @@ module.exports = {
                 }
         }
 
-        // fallback
-        var return4Codacy = {error: "Not implemented"};
-        return return4Codacy;
+        return {error: "Not implemented"};
     }
 };
 

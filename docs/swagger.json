@@ -40,7 +40,7 @@
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/ginutils.ApiError"
+                            "$ref": "#/definitions/model.ErrorResponse"
                         }
                     }
                 }
@@ -101,7 +101,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/watchmarket.ChartData"
+                            "$ref": "#/definitions/endpoint.ChartData"
                         }
                     }
                 }
@@ -148,7 +148,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/watchmarket.ChartCoinInfo"
+                            "$ref": "#/definitions/endpoint.ChartCoinInfo"
                         }
                     }
                 }
@@ -175,7 +175,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/api.TickerRequest"
+                            "$ref": "#/definitions/endpoint.TickerRequest"
                         }
                     }
                 ],
@@ -183,7 +183,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/api.Tickers"
+                            "$ref": "#/definitions/endpoint.Tickers"
                         }
                     }
                 }
@@ -191,7 +191,7 @@
         },
         "/v1/{coin}/xpub/{xpub}": {
             "get": {
-                "description": "Get transactions from xpub address",
+                "description": "Get transactions from XPUB address",
                 "consumes": [
                     "application/json"
                 ],
@@ -201,8 +201,8 @@
                 "tags": [
                     "Transactions"
                 ],
-                "summary": "Get xpub transactions",
-                "operationId": "xpub",
+                "summary": "Get Transactions by XPUB",
+                "operationId": "txxpub_v1",
                 "parameters": [
                     {
                         "type": "string",
@@ -215,17 +215,17 @@
                     {
                         "type": "string",
                         "default": "zpub6ruK9k6YGm8BRHWvTiQcrEPnFkuRDJhR7mPYzV2LDvjpLa5CuGgrhCYVZjMGcLcFqv9b2WvsFtY2Gb3xq8NVq8qhk9veozrA2W9QaWtihrC",
-                        "description": "the xpub address",
+                        "description": "the xpub key",
                         "name": "xpub",
                         "in": "path",
                         "required": true
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "500": {
+                        "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/blockatlas.TxPage"
+                            "$ref": "#/definitions/model.ErrorResponse"
                         }
                     }
                 }
@@ -267,7 +267,7 @@
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/ginutils.ApiError"
+                            "$ref": "#/definitions/model.ErrorResponse"
                         }
                     }
                 }
@@ -312,7 +312,7 @@
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/ginutils.ApiError"
+                            "$ref": "#/definitions/model.ErrorResponse"
                         }
                     }
                 }
@@ -339,7 +339,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/api.AddressesRequest"
+                            "$ref": "#/definitions/endpoint.AddressesRequest"
                         }
                     }
                 ],
@@ -374,7 +374,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/api.AddressesRequest"
+                            "$ref": "#/definitions/endpoint.AddressesRequest"
                         }
                     }
                 ],
@@ -383,6 +383,42 @@
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/blockatlas.DelegationsBatchPage"
+                        }
+                    }
+                }
+            }
+        },
+        "/v2/tokens": {
+            "post": {
+                "description": "Get tokens",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Transactions"
+                ],
+                "summary": "Get list of tokens by map: coin -\u003e [addresses]",
+                "operationId": "tokens_v3",
+                "parameters": [
+                    {
+                        "default": "{\"60\": [\"0xb3624367b1ab37daef42e1a3a2ced012359659b0\"]}",
+                        "description": "Payload",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/blockatlas.ResultsResponse"
                         }
                     }
                 }
@@ -430,7 +466,7 @@
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/ginutils.ApiError"
+                            "$ref": "#/definitions/model.ErrorResponse"
                         }
                     }
                 }
@@ -470,7 +506,7 @@
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/ginutils.ApiError"
+                            "$ref": "#/definitions/model.ErrorResponse"
                         }
                     }
                 }
@@ -518,7 +554,49 @@
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/ginutils.ApiError"
+                            "$ref": "#/definitions/model.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v2/{coin}/transactions/xpub/{xpub}": {
+            "get": {
+                "description": "Get transactions from XPUB address",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Transactions"
+                ],
+                "summary": "Get Transactions by XPUB",
+                "operationId": "txxpub_v2",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "bitcoin",
+                        "description": "the coin name",
+                        "name": "coin",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "default": "zpub6ruK9k6YGm8BRHWvTiQcrEPnFkuRDJhR7mPYzV2LDvjpLa5CuGgrhCYVZjMGcLcFqv9b2WvsFtY2Gb3xq8NVq8qhk9veozrA2W9QaWtihrC",
+                        "description": "the xpub key",
+                        "name": "xpub",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.ErrorResponse"
                         }
                     }
                 }
@@ -566,7 +644,46 @@
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/ginutils.ApiError"
+                            "$ref": "#/definitions/model.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v3/staking/list": {
+            "get": {
+                "description": "Get staking info by coin ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Staking"
+                ],
+                "summary": "Get staking info by coin ID",
+                "operationId": "batch_info",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "List of coins",
+                        "name": "coins",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/blockatlas.DelegationsBatchPage"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.ErrorResponse"
                         }
                     }
                 }
@@ -658,7 +775,7 @@
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/ginutils.ApiError"
+                            "$ref": "#/definitions/model.ErrorResponse"
                         }
                     }
                 }
@@ -666,120 +783,10 @@
         }
     },
     "definitions": {
-        "api.AddressBatchRequest": {
-            "type": "object",
-            "properties": {
-                "address": {
-                    "type": "string"
-                },
-                "coin": {
-                    "type": "integer"
-                }
-            }
-        },
-        "api.AddressesRequest": {
-            "type": "array",
-            "items": {
-                "$ref": "#/definitions/api.AddressBatchRequest"
-            }
-        },
-        "api.Coin": {
-            "type": "object",
-            "properties": {
-                "coin": {
-                    "type": "integer"
-                },
-                "token_id": {
-                    "type": "string"
-                },
-                "type": {
-                    "type": "object",
-                    "$ref": "#/definitions/blockatlas.CoinStatus"
-                }
-            }
-        },
-        "api.Ticker": {
-            "type": "object",
-            "properties": {
-                "coin": {
-                    "type": "integer"
-                },
-                "coin_name": {
-                    "type": "string"
-                },
-                "error": {
-                    "type": "string"
-                },
-                "last_update": {
-                    "type": "string"
-                },
-                "price": {
-                    "type": "object",
-                    "$ref": "#/definitions/api.TickerPrice"
-                },
-                "token_id": {
-                    "type": "string"
-                },
-                "type": {
-                    "type": "string"
-                }
-            }
-        },
-        "api.TickerPrice": {
-            "type": "object",
-            "properties": {
-                "change_24h": {
-                    "type": "number"
-                },
-                "currency": {
-                    "type": "string"
-                },
-                "provider": {
-                    "type": "string"
-                },
-                "value": {
-                    "type": "number"
-                }
-            }
-        },
-        "api.TickerRequest": {
-            "type": "object",
-            "properties": {
-                "assets": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/api.Coin"
-                    }
-                },
-                "currency": {
-                    "type": "string"
-                }
-            }
-        },
-        "api.Tickers": {
-            "type": "array",
-            "items": {
-                "$ref": "#/definitions/api.Ticker"
-            }
-        },
-        "blockatlas.CoinStatus": {
-            "type": "object",
-            "properties": {
-                "error": {
-                    "type": "string"
-                },
-                "height": {
-                    "type": "integer"
-                }
-            }
-        },
         "blockatlas.Collection": {
             "type": "object",
             "properties": {
                 "address": {
-                    "type": "string"
-                },
-                "category_address": {
                     "type": "string"
                 },
                 "coin": {
@@ -800,21 +807,8 @@
                 "name": {
                     "type": "string"
                 },
-                "nft_version": {
-                    "description": "Delete in the future version, as it's now part of Collectible",
-                    "type": "string"
-                },
-                "slug": {
-                    "type": "string"
-                },
-                "symbol": {
-                    "type": "string"
-                },
                 "total": {
                     "type": "integer"
-                },
-                "type": {
-                    "type": "string"
                 }
             }
         },
@@ -893,6 +887,17 @@
                 },
                 "result": {
                     "type": "string"
+                }
+            }
+        },
+        "blockatlas.ResultsResponse": {
+            "type": "object",
+            "properties": {
+                "docs": {
+                    "type": "object"
+                },
+                "total": {
+                    "type": "integer"
                 }
             }
         },
@@ -1066,28 +1071,38 @@
                 }
             }
         },
-        "ginutils.ApiError": {
+        "endpoint.AddressBatchRequest": {
             "type": "object",
             "properties": {
-                "status_code": {
-                    "type": "integer"
-                },
-                "status_message": {
+                "address": {
                     "type": "string"
+                },
+                "coin": {
+                    "type": "integer"
                 }
             }
         },
-        "watchmarket.ChartCoinInfo": {
+        "endpoint.AddressesRequest": {
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/endpoint.AddressBatchRequest"
+            }
+        },
+        "endpoint.ChartCoinInfo": {
             "type": "object",
             "properties": {
                 "circulating_supply": {
                     "type": "number"
                 },
                 "info": {
-                    "type": "CoinInfo"
+                    "type": "object",
+                    "$ref": "#/definitions/endpoint.CoinInfo"
                 },
                 "market_cap": {
                     "type": "number"
+                },
+                "provider": {
+                    "type": "string"
                 },
                 "total_supply": {
                     "type": "number"
@@ -1097,7 +1112,7 @@
                 }
             }
         },
-        "watchmarket.ChartData": {
+        "endpoint.ChartData": {
             "type": "object",
             "properties": {
                 "error": {
@@ -1106,8 +1121,166 @@
                 "prices": {
                     "type": "array",
                     "items": {
-                        "type": "ChartPrice"
+                        "$ref": "#/definitions/endpoint.ChartPrice"
                     }
+                },
+                "provider": {
+                    "type": "string"
+                }
+            }
+        },
+        "endpoint.ChartPrice": {
+            "type": "object",
+            "properties": {
+                "date": {
+                    "type": "integer"
+                },
+                "price": {
+                    "type": "number"
+                }
+            }
+        },
+        "endpoint.Coin": {
+            "type": "object",
+            "properties": {
+                "coin": {
+                    "type": "integer"
+                },
+                "token_id": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "endpoint.CoinInfo": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "explorer": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "short_description": {
+                    "type": "string"
+                },
+                "socials": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/endpoint.SocialLink"
+                    }
+                },
+                "source_code": {
+                    "type": "string"
+                },
+                "website": {
+                    "type": "string"
+                },
+                "white_paper": {
+                    "type": "string"
+                }
+            }
+        },
+        "endpoint.SocialLink": {
+            "type": "object",
+            "properties": {
+                "handle": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "endpoint.Ticker": {
+            "type": "object",
+            "properties": {
+                "coin": {
+                    "type": "integer"
+                },
+                "coin_name": {
+                    "type": "string"
+                },
+                "error": {
+                    "type": "string"
+                },
+                "last_update": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "object",
+                    "$ref": "#/definitions/endpoint.TickerPrice"
+                },
+                "token_id": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "endpoint.TickerPrice": {
+            "type": "object",
+            "properties": {
+                "change_24h": {
+                    "type": "number"
+                },
+                "currency": {
+                    "type": "string"
+                },
+                "provider": {
+                    "type": "string"
+                },
+                "value": {
+                    "type": "number"
+                }
+            }
+        },
+        "endpoint.TickerRequest": {
+            "type": "object",
+            "properties": {
+                "assets": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/endpoint.Coin"
+                    }
+                },
+                "currency": {
+                    "type": "string"
+                }
+            }
+        },
+        "endpoint.Tickers": {
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/endpoint.Ticker"
+            }
+        },
+        "model.ErrorDetails": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "object",
+                    "$ref": "#/definitions/model.ErrorDetails"
                 }
             }
         }

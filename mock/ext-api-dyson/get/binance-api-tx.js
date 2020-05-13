@@ -1,10 +1,10 @@
 /// Binance chain block explorer API Mock, tx
 /// Returns:
 /// - Multi-transaction transaction for a specific address
-///   see http://localhost:3000/binance-api/v1/tx?txHash=F53BB470A3B6B83977CFFE5D5F9937FB1CBB8785FBE818D9B38AD43F3ECD82BC
+///   see http://localhost:3347/binance-api/v1/tx?txHash=F53BB470A3B6B83977CFFE5D5F9937FB1CBB8785FBE818D9B38AD43F3ECD82BC
 ///   see https://explorer.binance.org/api/v1/tx?txHash=F53BB470A3B6B83977CFFE5D5F9937FB1CBB8785FBE818D9B38AD43F3ECD82BC
-///   see http://localhost:8420/v1/binance/bnb1563k58pc3keeuwkhlrxwz7sdsetyn9l7gdnznp
-///   see http://localhost:8420/v1/binance/bnb1563k58pc3keeuwkhlrxwz7sdsetyn9l7gdnznp?token=BUSD-BD1
+///   see http://localhost:8437/v1/binance/bnb1563k58pc3keeuwkhlrxwz7sdsetyn9l7gdnznp
+///   see http://localhost:8437/v1/binance/bnb1563k58pc3keeuwkhlrxwz7sdsetyn9l7gdnznp?token=BUSD-BD1
 /// - empty response for other txHash'es
 
 module.exports = {

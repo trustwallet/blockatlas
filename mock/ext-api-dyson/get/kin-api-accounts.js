@@ -1,8 +1,8 @@
 /// Kin API Mock, accounts
 /// See:
-/// curl "http://localhost:3000/kin-api/accounts/GBHKUZ7C2SZ5N3X2S7O6TT6LNUWSEA2BXMSR5GTTSR6VZARSVAXIQNGH/payments?order=desc&limit=25"
+/// curl "http://localhost:3347/kin-api/accounts/GBHKUZ7C2SZ5N3X2S7O6TT6LNUWSEA2BXMSR5GTTSR6VZARSVAXIQNGH/payments?order=desc&limit=25"
 /// curl "https://horizon-block-explorer.kininfrastructure.com/accounts/GBHKUZ7C2SZ5N3X2S7O6TT6LNUWSEA2BXMSR5GTTSR6VZARSVAXIQNGH/payments?order=desc&limit=25"
-/// curl http://localhost:8420/v1/kin/GBHKUZ7C2SZ5N3X2S7O6TT6LNUWSEA2BXMSR5GTTSR6VZARSVAXIQNGH
+/// curl http://localhost:8437/v1/kin/GBHKUZ7C2SZ5N3X2S7O6TT6LNUWSEA2BXMSR5GTTSR6VZARSVAXIQNGH
 module.exports = {
     path: "/kin-api/accounts/:address/:operation?",
     template: function(params, query, body) {
@@ -90,8 +90,7 @@ module.exports = {
                 `);
             }
         }
-        // fallback
-        var return4Codacy = {error: "Not implemented"};
-        return return4Codacy;
+        
+        return {error: "Not implemented"};
     }
 };

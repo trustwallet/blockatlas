@@ -64,10 +64,10 @@ func (w *cachedWriter) Written() bool {
 func (w *cachedWriter) Write(data []byte) (int, error) {
 	ret, err := w.ResponseWriter.Write(data)
 	if err != nil {
-		return 0, errors.E(err, "fail to cache write string", errors.Params{"data": data})
+		return 0, nil
 	}
 	if w.Status() != 200 {
-		return 0, errors.E("Write: invalid cache status", errors.Params{"data": data})
+		return 0, nil
 	}
 	val := cacheResponse{
 		w.Status(),

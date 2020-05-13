@@ -2,9 +2,9 @@
 /// See
 /// curl https://vethor-pubnode.digonchain.com/blocks/best
 /// curl https://vethor-pubnode.digonchain.com/transactions/0x702edd54bd4e13e0012798cc8b2dfa52f7150173945103d203fae26b8e3d2ed7
-/// curl http://localhost:3000/vechain-api/blocks/best
-/// curl http://localhost:3000/vechain-api/transactions/0x702edd54bd4e13e0012798cc8b2dfa52f7150173945103d203fae26b8e3d2ed7
-/// curl "http://localhost:8420/v1/vechain/0xB5e883349e68aB59307d1604555AC890fAC47128"
+/// curl http://localhost:3347/vechain-api/blocks/best
+/// curl http://localhost:3347/vechain-api/transactions/0x702edd54bd4e13e0012798cc8b2dfa52f7150173945103d203fae26b8e3d2ed7
+/// curl "http://localhost:8437/v1/vechain/0xB5e883349e68aB59307d1604555AC890fAC47128"
 
 module.exports = {
     path: '/vechain-api/:entity/:id?',
@@ -100,8 +100,7 @@ module.exports = {
                     `);    
             }
         }
-        // fallback
-        var return4Codacy = {error: "Not implemented"};
-        return return4Codacy;
+        
+        return {error: "Not implemented"};
     }
 };

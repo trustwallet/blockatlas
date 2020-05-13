@@ -1,10 +1,10 @@
 /// Kava API Mock
 /// See:
-/// curl "http://localhost:3000/kava-api/txs?transfer.recipient=kava1l8va9zyl50cpzv447c694k3jndelc9ygtfll2m&page=1&limit=25"
-/// curl "http://localhost:3000/kava-api/txs?message.sender=kava1l8va9zyl50cpzv447c694k3jndelc9ygtfll2m&page=1&limit=25"
+/// curl "http://localhost:3347/kava-api/txs?transfer.recipient=kava1l8va9zyl50cpzv447c694k3jndelc9ygtfll2m&page=1&limit=25"
+/// curl "http://localhost:3347/kava-api/txs?message.sender=kava1l8va9zyl50cpzv447c694k3jndelc9ygtfll2m&page=1&limit=25"
 /// curl "http://{kava rpc}/txs?transfer.recipient=kava1l8va9zyl50cpzv447c694k3jndelc9ygtfll2m&page=1&limit=25"
 /// curl "http://{kava rpc}/txs?message.sender=kava1l8va9zyl50cpzv447c694k3jndelc9ygtfll2m&page=1&limit=25"
-/// curl http://localhost:8420/v1/kava/kava1l8va9zyl50cpzv447c694k3jndelc9ygtfll2m
+/// curl http://localhost:8437/v1/kava/kava1l8va9zyl50cpzv447c694k3jndelc9ygtfll2m
 module.exports = {
     path: "/kava-api/txs?",
     template: function(params, query, body) {
@@ -271,9 +271,7 @@ module.exports = {
             `);
         }
 
-        // fallback
-        var return4Codacy = {error: "Not implemented"};
-        return return4Codacy;
+        return {error: "Not implemented"};
     }
 };
 

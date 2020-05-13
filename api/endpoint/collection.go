@@ -18,9 +18,9 @@ import (
 // @Param owner path string true "the query address" default(0x0875BCab22dE3d02402bc38aEe4104e1239374a7)
 // @Param collection_id path string true "the query collection" default(0x06012c8cf97bead5deae237070f9587f8e7a266d)
 // @Success 200 {object} blockatlas.CollectionPage
-// @Failure 500 {object} middleware.ApiError
+// @Failure 500 {object} model.ErrorResponse
 // @Router /v4/{coin}/collections/{owner}/collection/{collection_id} [get]
-func GetCollectiblesForSpecificCollectionAndOwner(c *gin.Context, api blockatlas.CollectionAPI) {
+func GetCollectiblesForSpecificCollectionAndOwner(c *gin.Context, api blockatlas.CollectionsAPI) {
 	collectibles, err := api.GetCollectibles(c.Param("owner"), c.Param("collection_id"))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.CreateErrorResponse(model.InternalFail, err))
@@ -38,7 +38,7 @@ func GetCollectiblesForSpecificCollectionAndOwner(c *gin.Context, api blockatlas
 // @Param data body string true "Payload" default({"60": ["0xb3624367b1ab37daef42e1a3a2ced012359659b0"]})
 // @Success 200 {object} blockatlas.DocsResponse
 // @Router /v4/collectibles/categories [post]
-func GetCollectionCategoriesFromList(c *gin.Context, apis map[uint]blockatlas.CollectionAPI) {
+func GetCollectionCategoriesFromList(c *gin.Context, apis blockatlas.CollectionsAPIs) {
 	var reqs map[string][]string
 	if err := c.BindJSON(&reqs); err != nil {
 		c.JSON(http.StatusBadRequest, model.CreateErrorResponse(model.Default, err))
@@ -66,7 +66,7 @@ func GetCollectionCategoriesFromList(c *gin.Context, apis map[uint]blockatlas.Co
 	c.JSON(http.StatusOK, &batch)
 }
 
-func GetCollectiblesForOwnerV3(c *gin.Context, api blockatlas.CollectionAPI) {
+func GetCollectiblesForOwnerV3(c *gin.Context, api blockatlas.CollectionsAPI) {
 	collections, err := api.GetCollectionsV3(c.Param("owner"))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.CreateErrorResponse(model.InternalFail, err))
@@ -76,7 +76,7 @@ func GetCollectiblesForOwnerV3(c *gin.Context, api blockatlas.CollectionAPI) {
 	c.JSON(http.StatusOK, &collections)
 }
 
-func GetCollectiblesForSpecificCollectionAndOwnerV3(c *gin.Context, api blockatlas.CollectionAPI) {
+func GetCollectiblesForSpecificCollectionAndOwnerV3(c *gin.Context, api blockatlas.CollectionsAPI) {
 	collectibles, err := api.GetCollectiblesV3(c.Param("owner"), c.Param("collection_id"))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.CreateErrorResponse(model.InternalFail, err))
@@ -85,7 +85,7 @@ func GetCollectiblesForSpecificCollectionAndOwnerV3(c *gin.Context, api blockatl
 	c.JSON(http.StatusOK, &collectibles)
 }
 
-func GetCollectionCategoriesFromListV3(c *gin.Context, apis map[uint]blockatlas.CollectionAPI) {
+func GetCollectionCategoriesFromListV3(c *gin.Context, apis blockatlas.CollectionsAPIs) {
 	var reqs map[string][]string
 	if err := c.BindJSON(&reqs); err != nil {
 		c.JSON(http.StatusBadRequest, model.CreateErrorResponse(model.Default, err))

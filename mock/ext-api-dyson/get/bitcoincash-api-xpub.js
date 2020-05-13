@@ -1,8 +1,8 @@
 /// Mock for external Bitcoincash API
 /// See:
 /// curl "http://{bch rpc}/v2/xpub/xpub6Bq3UUphocwroXkhA9sn8ACnZpJNuwaBehgo7WbDi2DULYnvT72Uzgsv9cE5EiP8ThDYdMyZREfbpkUY4KZ88ZaUQxXciBcZ1soSi1d8xtX?details=txs"
-/// curl "http://localhost:3000/bitcoincash-api/v2/xpub/xpub6Bq3UUphocwroXkhA9sn8ACnZpJNuwaBehgo7WbDi2DULYnvT72Uzgsv9cE5EiP8ThDYdMyZREfbpkUY4KZ88ZaUQxXciBcZ1soSi1d8xtX?details=txs"
-/// curl "http://localhost:8420/v1/bitcoincash/xpub/xpub6Bq3UUphocwroXkhA9sn8ACnZpJNuwaBehgo7WbDi2DULYnvT72Uzgsv9cE5EiP8ThDYdMyZREfbpkUY4KZ88ZaUQxXciBcZ1soSi1d8xtX"
+/// curl "http://localhost:3347/bitcoincash-api/v2/xpub/xpub6Bq3UUphocwroXkhA9sn8ACnZpJNuwaBehgo7WbDi2DULYnvT72Uzgsv9cE5EiP8ThDYdMyZREfbpkUY4KZ88ZaUQxXciBcZ1soSi1d8xtX?details=txs"
+/// curl "http://localhost:8437/v1/bitcoincash/xpub/xpub6Bq3UUphocwroXkhA9sn8ACnZpJNuwaBehgo7WbDi2DULYnvT72Uzgsv9cE5EiP8ThDYdMyZREfbpkUY4KZ88ZaUQxXciBcZ1soSi1d8xtX"
 
 module.exports = {
     path: '/bitcoincash-api/v2/xpub/:xpubkey?',

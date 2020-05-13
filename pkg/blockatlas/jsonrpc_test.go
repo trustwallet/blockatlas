@@ -1,8 +1,9 @@
 package blockatlas
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestRpcRequests_fillDefaultValues(t *testing.T) {
@@ -14,14 +15,14 @@ func TestRpcRequests_fillDefaultValues(t *testing.T) {
 		{
 			"test 1",
 			RpcRequests{{Method: "method1", Params: "params1"}},
-			RpcRequests{{Method: "method1", Params: "params1", JsonRpc: JsonRpcVersion, Id: "method1"}},
+			RpcRequests{{Method: "method1", Params: "params1", JsonRpc: JsonRpcVersion, Id: 1}},
 		}, {
 			"test 2",
 			RpcRequests{
 				{Method: "method1", Params: "params1"}, {Method: "method2", Params: "params2"}},
 			RpcRequests{
-				{Method: "method1", Params: "params1", JsonRpc: JsonRpcVersion, Id: "method1"},
-				{Method: "method2", Params: "params2", JsonRpc: JsonRpcVersion, Id: "method2"},
+				{Method: "method1", Params: "params1", JsonRpc: JsonRpcVersion, Id: 2},
+				{Method: "method2", Params: "params2", JsonRpc: JsonRpcVersion, Id: 3},
 			},
 		},
 	}

@@ -1,8 +1,8 @@
 /// Waves API Mock
 /// See:
-/// curl "http://localhost:3000/waves-api/transactions/address/3PJ4q4sqriJs2y7Z45wmbLrbmV9MDecbPxD/limit/25"
+/// curl "http://localhost:3347/waves-api/transactions/address/3PJ4q4sqriJs2y7Z45wmbLrbmV9MDecbPxD/limit/25"
 /// curl "https://nodes.wavesnodes.com/transactions/address/3PJ4q4sqriJs2y7Z45wmbLrbmV9MDecbPxD/limit/25"
-/// curl http://localhost:8420/v1/waves/3PJ4q4sqriJs2y7Z45wmbLrbmV9MDecbPxD
+/// curl http://localhost:8437/v1/waves/3PJ4q4sqriJs2y7Z45wmbLrbmV9MDecbPxD
 module.exports = {
     path: "/waves-api/transactions/address/:address/limit/:limit",
     template: function (params, query, body) {
@@ -53,9 +53,8 @@ module.exports = {
                 ]
             ]
         }
-        // fallback
-        var return4Codacy = {error: "Not implemented"};
-        return return4Codacy;
+
+        return {error: "Not implemented"};
     }
 }
 ;

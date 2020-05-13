@@ -81,7 +81,7 @@ var keyedStakeAccount = KeyedAccount{
 	Pubkey: "EgR17fgGmwQQaMZPsuJdk9oHw2xY8TJQj3Bp44o24mar",
 }
 
-var stakeState = StakeState{
+var stakeState = StakeData{
 	State:                2,
 	RentExemptReserve:    2282880,
 	AuthorizedStaker:     arrayOfPubkey("B52Da5MCyTcyVJEsR9RUnbf715YuBAJMxCEEPzyZXgvY"),
@@ -93,6 +93,38 @@ var stakeState = StakeState{
 	Stake:                99997717120,
 	ActivationEpoch:      79,
 	DeactivationEpoch:    ^uint64(0),
+	WarmupCooldownRate:   0.25,
+	CreditsObserved:      21143,
+}
+
+var deactivatedStakeState = StakeData{
+	State:                2,
+	RentExemptReserve:    2282880,
+	AuthorizedStaker:     arrayOfPubkey("B52Da5MCyTcyVJEsR9RUnbf715YuBAJMxCEEPzyZXgvY"),
+	AuthorizedWithdrawer: arrayOfPubkey("B52Da5MCyTcyVJEsR9RUnbf715YuBAJMxCEEPzyZXgvY"),
+	UnixTimestamp:        0,
+	LockupEpoch:          0,
+	Custodian:            arrayOfPubkey("11111111111111111111111111111111"),
+	VoterPubkey:          arrayOfPubkey("5CgQubGD1uwodwCe5UXDADbC69SiqXR8qq6pDMSm7ut5"),
+	Stake:                99997717120,
+	ActivationEpoch:      70,
+	DeactivationEpoch:    78,
+	WarmupCooldownRate:   0.25,
+	CreditsObserved:      21143,
+}
+
+var unpublishedValidatorStakeState = StakeData{
+	State:                2,
+	RentExemptReserve:    2282880,
+	AuthorizedStaker:     arrayOfPubkey("B52Da5MCyTcyVJEsR9RUnbf715YuBAJMxCEEPzyZXgvY"),
+	AuthorizedWithdrawer: arrayOfPubkey("B52Da5MCyTcyVJEsR9RUnbf715YuBAJMxCEEPzyZXgvY"),
+	UnixTimestamp:        0,
+	LockupEpoch:          0,
+	Custodian:            arrayOfPubkey("11111111111111111111111111111111"),
+	VoterPubkey:          arrayOfPubkey("BNTmegvdXzNVyc3UMTWSMSfJUryjr3fXEVErtdqrfs6y"),
+	Stake:                99997717120,
+	ActivationEpoch:      70,
+	DeactivationEpoch:    78,
 	WarmupCooldownRate:   0.25,
 	CreditsObserved:      21143,
 }
@@ -145,7 +177,8 @@ var delegation = blockatlas.DelegationsPage{
 }
 
 func TestNormalizeDelegations(t *testing.T) {
-	result, err := NormalizeDelegations([]StakeState{stakeState}, validatorMap, epochInfo)
+	stakeAccounts := []StakeData{stakeState, deactivatedStakeState, unpublishedValidatorStakeState}
+	result, err := NormalizeDelegations(stakeAccounts, validatorMap, epochInfo)
 	assert.NoError(t, err)
 	assert.Equal(t, delegation, result)
 }

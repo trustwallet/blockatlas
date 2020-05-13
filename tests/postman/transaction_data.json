@@ -182,8 +182,8 @@
     {
         "handler": "digibyte",
         "address": "address/DEs1RJKuASSjfphFJdxX9eidrjWewMZgAi",
-        "expectedTxNum": 3,
-        "expectedTxId": "d7efaffeded550697d7385d3eb07e539237615792b29e3639df427ce919c8d6e"
+        "expectedTxNum": 2,
+        "expectedTxId": "2b7ba9b43d615fe03bc14bc18201d1bd73c7a0f8aad428accf51725743f9073a"
     },
     {
         "handler": "digibyte",
@@ -218,8 +218,8 @@
     {
         "handler": "zelcash",
         "address": "address/t1JKRwXGfKTGfPV1z48rvoLyabk31z3xwHa",
-        "expectedTxNum": 3,
-        "expectedTxId": "ca8b3fa115c5eae0f056d9b629680c521f4d9d271abbe86d4c482c54117e15a1"
+        "expectedTxNum": 2,
+        "expectedTxId": "58b5ce7d497d95e21ad9ebe2f2a3fb480483f77ca4de3ce1bc9a95eb9c0d18e1"
     },
     {
         "handler": "zelcash",
@@ -230,8 +230,8 @@
     {
         "handler": "zcoin",
         "address": "address/a8EF4cpenEgEn9hm2NL5KfFK1UmSZZaQVn",
-        "expectedTxNum": 5,
-        "expectedTxId": "86fb43e30f9bc2a8a6492e67e2b893680526987ae8b5ec56e2587381813927ef"
+        "expectedTxNum": 2,
+        "expectedTxId": "f1db892b13a2cb34a9a1ed0890b85050c43b95e06dc085d7f063e9207e984609"
     },
     {
         "handler": "zcoin",
@@ -243,7 +243,7 @@
         "handler": "zcash",
         "address": "address/t1LwLWo1Mo3s4RPtUpeyUD1eYd47inL3bwX",
         "expectedTxNum": 2,
-        "expectedTxId": "d504755667e0fb61543e16d09aff5f84733f500190a07acb4a6784b4dc4c99e7"
+        "expectedTxId": "ca640e5215e141a4f9c235dd91e4b99fd1e0defdd5da27d78ec2cee02d3493dc"
     },
     {
         "handler": "zcash",
@@ -255,13 +255,13 @@
         "handler": "bitcoin",
         "address": "address/bc1qrfr44n2j4czd5c9txwlnw0yj2h82x9566fglqj",
         "expectedTxNum": 2,
-        "expectedTxId": "8180545030fcfb7b14ee90acb01b606c5a68fe1d520bcf140bd0097108c2b7f4"
+        "expectedTxId": "36b1e721a25ea3ac2fcc09a92d4ff1e2ae4ed70d593e276806d9a9fd2a901132"
     },
     {
         "handler": "bitcoin",
         "address": "xpub/zpub6ruK9k6YGm8BRHWvTiQcrEPnFkuRDJhR7mPYzV2LDvjpLa5CuGgrhCYVZjMGcLcFqv9b2WvsFtY2Gb3xq8NVq8qhk9veozrA2W9QaWtihrC",
         "expectedTxNum": 3,
-        "expectedTxId": "8180545030fcfb7b14ee90acb01b606c5a68fe1d520bcf140bd0097108c2b7f4"
+        "expectedTxId": "c6a4c82d5c7a342796e7d81237ab399918d3205f791ebc40e63501cac28c32be"
     },
     {
         "handler": "bitcoincash",
@@ -277,9 +277,9 @@
     },
     {
         "handler": "ravencoin",
-        "address": "address/RHoCwPc2FCQqwToYnSiAb3SrCET4zEHsbS",
+        "address": "address/RGkwvrUors8DtmhKy5bddFwRCTZaunjpvo",
         "expectedTxNum": 2,
-        "expectedTxId": "fc6c9e9c6cd0253f05e43a12d64154a689115f0103dc0b64957a8cb92b67f306"
+        "expectedTxId": "fc226aad6fc28e1204b747042e8c8b25f5d28424b9669bd162ba6a0149df2f71"
     },
     {
         "handler": "ravencoin",
@@ -291,7 +291,7 @@
         "handler": "viacoin",
         "address": "address/VdMPvn7vUTSzbYjiMDs1jku9wAh1Ri2Y1A",
         "expectedTxNum": 2,
-        "expectedTxId": "dadbe1f13dc5ecd1cfb0d8ae139a4e55493eb9ab2c937cb78b67a5d9c1ded7e8"
+        "expectedTxId": "1b311427cd4749cbebd5c1fc70896b9e92a58d6935ba75bb40ed4a9e22e4a6cb"
     },
     {
         "handler": "viacoin",
@@ -338,8 +338,8 @@
     {
         "handler": "dash",
         "address": "address/XrcbsQdrFYEzbqA9nCJi8zDtnRZzNKkCtG",
-        "expectedTxNum": 3,
-        "expectedTxId": "f47a4929bcd8767819b6969c83893a76d5b26a145c74ace416ce4c454166186e"
+        "expectedTxNum": 2,
+        "expectedTxId": "8a1859bb849e207b7771c0301a6109a039eec955234b7848715b150f20fabeca"
     },
     {
         "handler": "dash",

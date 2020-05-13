@@ -2,7 +2,12 @@ package blockatlas
 
 import (
 	"encoding/json"
+
 	"github.com/trustwallet/blockatlas/pkg/errors"
+)
+
+var (
+	requestId = int64(0)
 )
 
 const (
@@ -16,14 +21,14 @@ type (
 		JsonRpc string      `json:"jsonrpc"`
 		Method  string      `json:"method"`
 		Params  interface{} `json:"params,omitempty"`
-		Id      string      `json:"id,omitempty"`
+		Id      int64       `json:"id,omitempty"`
 	}
 
 	RpcResponse struct {
 		JsonRpc string      `json:"jsonrpc"`
 		Error   *RpcError   `json:"error,omitempty"`
 		Result  interface{} `json:"result,omitempty"`
-		Id      string      `json:"id,omitempty"`
+		Id      int64       `json:"id,omitempty"`
 	}
 
 	RpcError struct {
@@ -46,7 +51,8 @@ func (r *RpcResponse) GetObject(toType interface{}) error {
 }
 
 func (r *Request) RpcCall(result interface{}, method string, params interface{}) error {
-	req := &RpcRequest{JsonRpc: JsonRpcVersion, Method: method, Params: params, Id: method}
+
+	req := &RpcRequest{JsonRpc: JsonRpcVersion, Method: method, Params: params, Id: genId()}
 	var resp *RpcResponse
 	err := r.Post(&resp, "", req)
 	if err != nil {
@@ -73,7 +79,12 @@ func (r *Request) RpcBatchCall(requests RpcRequests) ([]RpcResponse, error) {
 func (rs RpcRequests) fillDefaultValues() RpcRequests {
 	for _, r := range rs {
 		r.JsonRpc = JsonRpcVersion
-		r.Id = r.Method
+		r.Id = genId()
 	}
 	return rs
+}
+
+func genId() int64 {
+	requestId += 1
+	return requestId
 }

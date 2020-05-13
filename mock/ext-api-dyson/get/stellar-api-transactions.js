@@ -1,8 +1,8 @@
 /// Stellar API Mock, transactions
 /// See:
-/// curl "http://localhost:3000/stellar-api/transactions/2912d519b2c2174b0147a9e02208f3ed14820228913142f8c6a5cd360783c029?"
+/// curl "http://localhost:3347/stellar-api/transactions/2912d519b2c2174b0147a9e02208f3ed14820228913142f8c6a5cd360783c029?"
 /// curl "https://horizon.stellar.org/transactions/2912d519b2c2174b0147a9e02208f3ed14820228913142f8c6a5cd360783c029?"
-/// curl http://localhost:8420/v1/stellar/GDKIJJIKXLOM2NRMPNQZUUYK24ZPVFC6426GZAEP3KUK6KEJLACCWNMX
+/// curl http://localhost:8437/v1/stellar/GDKIJJIKXLOM2NRMPNQZUUYK24ZPVFC6426GZAEP3KUK6KEJLACCWNMX
 module.exports = {
     path: "/stellar-api/transactions/:txid?",
     template: function(params, query, body) {
@@ -111,8 +111,7 @@ module.exports = {
                 }
             `);
         }
-        // fallback
-        var return4Codacy = {error: "Not implemented"};
-        return return4Codacy;
+        
+        return {error: "Not implemented"};
     }
 };

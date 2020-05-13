@@ -12,6 +12,7 @@ type (
 		Website     string          `json:"website"`
 		Payout      ValidatorPayout `json:"payout,omitempty"`
 		Status      ValidatorStatus `json:"status,omitempty"`
+		Staking     StakingInfo     `json:"staking,omitempty"`
 	}
 
 	ValidatorPayout struct {
@@ -20,6 +21,10 @@ type (
 
 	ValidatorStatus struct {
 		Disabled bool `json:"disabled"`
+	}
+
+	StakingInfo struct {
+		MinDelegation float64 `json:"minDelegation"`
 	}
 )
 
