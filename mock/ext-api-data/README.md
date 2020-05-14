@@ -23,6 +23,12 @@ Corresponding real path: `https://api.trongrid.io/v1/assets/1002798`
 
 provided the mapping exists in urlmap.yaml `mock/tron-api` to `https://api.trongrid.io`.
 
+POST input files.  Input data for POST requests is in file with same filename, extension .request_json :
+`mock%2Ftron-api%2Fv1%2Fassets%2F1002798.request_json`
+
+Counter: for POST requests, multiple files may be needed to the same URL.  A 4-digit numerical counter can be added to the filename:
+`mock%2Ftron-api%2Fv1%2Fassets%2F1002798.0002.json`
+
 ## List files
 
 Use testdatatool to list data files and info about them:  `testdatatool list .`
