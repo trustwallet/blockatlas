@@ -192,12 +192,11 @@ func TestNormalize(t *testing.T) {
 		tests = []struct {
 			name, apiResponse string
 			expected          *blockatlas.Tx
-			token             bool
 		}{
-			{"transfer", transferSrc, &transferDst, false},
-			{"token transfer", tokenTransferSrc, &tokenTransferDst, true},
-			{"contract call", contractCallSrc, &contractCallDst, false},
-			{"failed transaction", failedSrc, &failedDst, false},
+			{"transfer", transferSrc, &transferDst},
+			{"token transfer", tokenTransferSrc, &tokenTransferDst},
+			{"contract call", contractCallSrc, &contractCallDst},
+			{"failed transaction", failedSrc, &failedDst},
 		}
 	)
 
