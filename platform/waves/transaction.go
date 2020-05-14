@@ -19,7 +19,7 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 func NormalizeTxs(srcTxs []Transaction) (txs []blockatlas.Tx) {
 	for _, srcTx := range srcTxs {
 		tx, ok := NormalizeTx(&srcTx)
-		if !ok || len(txs) >= blockatlas.TxPerPage {
+		if !ok {
 			continue
 		}
 		txs = append(txs, tx)
@@ -28,10 +28,8 @@ func NormalizeTxs(srcTxs []Transaction) (txs []blockatlas.Tx) {
 }
 
 func NormalizeTx(srcTx *Transaction) (tx blockatlas.Tx, ok bool) {
-	var result blockatlas.Tx
-
 	if srcTx.Type == 4 && len(srcTx.AssetId) == 0 {
-		result = blockatlas.Tx{
+		return blockatlas.Tx{
 			ID:     srcTx.Id,
 			Coin:   coin.WAVES,
 			From:   srcTx.Sender,
@@ -46,9 +44,8 @@ func NormalizeTx(srcTx *Transaction) (tx blockatlas.Tx, ok bool) {
 				Symbol:   coin.Coins[coin.WAVES].Symbol,
 				Decimals: coin.Coins[coin.WAVES].Decimals,
 			},
-		}
-		return result, true
+		}, true
 	}
 
-	return result, false
+	return
 }
