@@ -71,11 +71,7 @@ module.exports = {
                             return {jsonrpc: jsonrpc, id: id, result: "0x"};
                     }
             }
-            // fallback
-            return {error: "wrong data"};
-        } else {
-            // fallback
-            return {error: "wrong method"};
         }
+        return {error: "Not implemented"};
     }
 };

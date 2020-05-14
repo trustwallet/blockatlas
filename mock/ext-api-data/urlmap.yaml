@@ -96,3 +96,5 @@ mock/zelcash-api:
   url: https://blockbook.zel.network/api
 mock/zilliqa-api:
   url: https://api.viewblock.io/v1/zilliqa
+#mock/nimiq-rpc:
+#  url: https://{nimiq rpc}
