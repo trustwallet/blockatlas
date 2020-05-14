@@ -30,6 +30,7 @@ func TestDecimalExp(t *testing.T) {
 
 	// No-Op
 	assertEquals("0", 300, "0")
+	assertEquals("0", 8, "0")
 	assertEquals("123", 0, "123")
 	assertEquals("0.456", 0, "0.456")
 	assertEquals("123.456", 0, "123.456")
@@ -57,6 +58,7 @@ func TestDecimalExp(t *testing.T) {
 	// Tiny
 	assertEquals("0.001234", -1, "0.0001234")
 	assertEquals("0.001234", 1, "0.01234")
+	assertEquals("0.000375", 8, "37500")
 }
 
 func TestCutZeroFractional(t *testing.T) {

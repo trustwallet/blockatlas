@@ -3,6 +3,7 @@ package binance
 import (
 	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"strconv"
 	"testing"
 )
 
@@ -98,7 +99,7 @@ func Test_getFee(t *testing.T) {
 		{"test error", "test", "0"},
 		{"test float 1", "444.5", "44450000000"},
 		{"test float 2", "0.00000001", "1"},
-		{"test float 3", "0.00037500", "37500"}, // standard fee
+		{"test float 3", "0.00037500", "37500"}, // standard transfer fee
 		{"test int", "3", "300000000"},
 	}
 	for _, tt := range tests {
@@ -146,12 +147,12 @@ func Test_getStatus(t *testing.T) {
 func Test_getError(t *testing.T) {
 	tests := []struct {
 		name   string
-		trx    Tx
+		trx    ExplorerTxs
 		expect string
 	}{
-		{"Should not have error message", Tx{Code: 0}, ""},
-		{"Should have error message", Tx{Code: 1}, "error"},
-		{"Should have error message", Tx{Code: -1}, "error"},
+		{"Should not have error message", ExplorerTxs{Code: 0}, ""},
+		{"Should have error message", ExplorerTxs{Code: 1}, "error"},
+		{"Should have error message", ExplorerTxs{Code: -1}, "error"},
 	}
 	for _, tt := range tests {
 		t.Run("", func(t *testing.T) {
@@ -160,4 +161,59 @@ func Test_getError(t *testing.T) {
 	}
 }
 
+func Test_QuantityTransferType(t *testing.T) {
+	tests := []struct {
+		name   string
+		trx    ExplorerTxs
+		expect QuantityTransfer
+	}{
+		{"Should be multi transfer", ExplorerTxs{HasChildren: 1}, MultiTransferOperation},
+		{"Should be single transfer", ExplorerTxs{HasChildren: 0}, SingleTransferOperation},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.trx.QuantityTransferType(), tt.expect)
+		})
+	}
+}
 
+func Test_Direction(t *testing.T) {
+	const (
+		addr1 = "bnb14cjy0yl23xkf0hnw3ql295v8nghqstvlzkvqpl"
+		addr2 = "bnb1mr5f97rx5wnkfcakx9fcpvljmx2s6kwqc08yur"
+	)
+
+	tests := []struct {
+		name    string
+		address string
+		trx     ExplorerTxs
+		expect  blockatlas.Direction
+	}{
+		{"Direction should be self send", addr1, ExplorerTxs{FromAddr: addr1, ToAddr: addr1}, blockatlas.DirectionSelf},
+		{"Direction should be incoming", addr1, ExplorerTxs{FromAddr: addr2, ToAddr: addr1}, blockatlas.DirectionIncoming},
+		{"Direction should be outgoing", addr1, ExplorerTxs{FromAddr: addr1, ToAddr: addr2}, blockatlas.DirectionOutgoing},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.trx.Direction(tt.address), tt.expect)
+		})
+	}
+}
+
+func Test_getDexFee(t *testing.T) {
+	tests := []struct {
+		name      string
+		trx       ExplorerTxs
+		expectFee blockatlas.Amount
+	}{
+		{"Should have zero fee", ExplorerTxs{TxFee: 0}, blockatlas.Amount(0)},
+		{"Should have zero fee", ExplorerTxs{TxFee: 0.0}, blockatlas.Amount(0)},
+		{"Should have standard fee", ExplorerTxs{TxFee: 0.00037500}, blockatlas.Amount(strconv.Itoa(37500))},
+	}
+	for _, tt := range tests {
+		t.Run("", func(t *testing.T) {
+			fee := tt.trx.getDexFee()
+			assert.Equal(t, fee, tt.expectFee)
+		})
+	}
+}

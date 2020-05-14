@@ -26,13 +26,13 @@ func (p Platform) GetTokenTxsByAddress(address, token string) (blockatlas.TxPage
 		return nil, err
 	}
 
-	return normalizeTxs(explorerTxs, address, token), nil
+	return normalizeTxs(explorerTxs, address), nil
 }
 
-func normalizeTxs(explorerTxs []ExplorerTxs, address, token string) []blockatlas.Tx {
+func normalizeTxs(explorerTxs []ExplorerTxs, address string) []blockatlas.Tx {
 	var txs []blockatlas.Tx
 	for _, tx := range explorerTxs {
-		normalizedTxs := normalizeTx(tx, address, token)
+		normalizedTxs := normalizeTx(tx, address)
 		if normalizedTxs == nil {
 			continue
 		}
@@ -41,14 +41,14 @@ func normalizeTxs(explorerTxs []ExplorerTxs, address, token string) []blockatlas
 	return txs
 }
 
-func normalizeTx(srcTx ExplorerTxs, address, token string) []blockatlas.Tx {
+func normalizeTx(srcTx ExplorerTxs, address string) []blockatlas.Tx {
 	if srcTx.TxType != TxTransfer {
 		return []blockatlas.Tx{{
 			ID:     srcTx.TxHash,
 			Coin:   coin.BNB,
 			From:   srcTx.FromAddr,
 			To:     srcTx.ToAddr,
-			Fee:    blockatlas.Amount(feeToAmount(srcTx.TxFee)),
+			Fee:    feeToAmount(srcTx.TxFee),
 			Date:   srcTx.Timestamp / 1000,
 			Block:  srcTx.BlockHeight,
 			Status: blockatlas.StatusCompleted,
@@ -60,18 +60,18 @@ func normalizeTx(srcTx ExplorerTxs, address, token string) []blockatlas.Tx {
 	case SingleTransferOperation:
 		return normalizeSingleTransfer(srcTx, address)
 	case MultiTransferOperation:
-		return normalizeMultiTransfer(srcTx, address, token)
+		return normalizeMultiTransfer(srcTx, address)
 	default:
 		return nil
 	}
 }
 
-func feeToAmount(fee float64) string {
-	var res string
+func feeToAmount(fee float64) blockatlas.Amount {
 	if fee > 0 {
-		res = numbers.Float64toString(fee)
+		return blockatlas.Amount(numbers.Float64toString(fee))
+	} else {
+		return "0"
 	}
-	return res
 }
 
 func normalizeSingleTransfer(srcTx ExplorerTxs, address string) blockatlas.TxPage {
@@ -105,7 +105,7 @@ func normalizeSingleTransfer(srcTx ExplorerTxs, address string) blockatlas.TxPag
 	return nil
 }
 
-func normalizeMultiTransfer(srcTx ExplorerTxs, address, token string) []blockatlas.Tx {
+func normalizeMultiTransfer(srcTx ExplorerTxs, address string) []blockatlas.Tx {
 	var txs blockatlas.TxPage
 	for _, t := range srcTx.MultisendTransfers {
 		if t.From == address || t.To == address {
@@ -173,18 +173,26 @@ func (p Platform) addTxDetails(txs []ExplorerTxs) ([]ExplorerTxs, error) {
 	return txsWithDetails, nil
 }
 
+// Construct base Tx out of explorer transfer using common fields for all type of Blockatlas transfers
 func getBase(srcTx ExplorerTxs) blockatlas.Tx {
-	return blockatlas.Tx{
-		ID:     srcTx.TxHash,
-		Coin:   coin.BNB,
-		From:   srcTx.FromAddr,
-		Fee:    srcTx.getDexFee(),
-		Date:   srcTx.Timestamp / 1000,
-		Block:  srcTx.BlockHeight,
-		Status: srcTx.getStatus(),
-		Memo:   srcTx.Memo,
-		To:     srcTx.ToAddr,
+	base := blockatlas.Tx{
+		ID:    srcTx.TxHash,
+		Coin:  coin.BNB,
+		From:  srcTx.FromAddr,
+		Fee:   srcTx.getDexFee(),
+		Date:  srcTx.Timestamp / 1000,
+		Block: srcTx.BlockHeight,
+		Memo:  srcTx.Memo,
+		To:    srcTx.ToAddr,
 	}
+
+	status := srcTx.getStatus()
+	base.Status = status
+	if status == blockatlas.StatusError {
+		base.Error = srcTx.getError()
+	}
+
+	return base
 }
 
 // Extract BEP2 token symbol from asset name e.g: TWT-8C2 => TWT

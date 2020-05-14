@@ -6,13 +6,12 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/numbers"
 	"strconv"
-	"time"
 )
 
 const (
-	TxTransfer              TxType           = "TRANSFER"
-	SingleTransferOperation QuantityTransfer = "singleTransfer" // e.g: BNB => BNB, TWT-8C2 => TWT-8C2
-	MultiTransferOperation  QuantityTransfer = "multiTransfer"
+	TxTransfer              TxType           = "TRANSFER"       // e.g: BNB, TWT-8C2
+	SingleTransferOperation QuantityTransfer = "singleTransfer" // e.g: BNB, TWT-8C2
+	MultiTransferOperation  QuantityTransfer = "multiTransfer"  // e.g [BNB, BNB], [TWT-8C2, TWT-8C2]
 )
 
 type (
@@ -181,14 +180,15 @@ func extractMultiTransfers(messages Value) (extracted []MultiTransfer) {
 	return
 }
 
+// Get explorer transfer fee converted to decimal expression
 func (tx Tx) getFee() string {
-	fee := "0"
 	if _, err := strconv.ParseFloat(tx.Fee, 64); err == nil {
-		fee = numbers.DecimalExp(tx.Fee, int(coin.Binance().Decimals))
+		return numbers.DecimalExp(tx.Fee, int(coin.Binance().Decimals))
 	}
-	return fee
+	return "0"
 }
 
+// Converts explorer transfer fee to amount in decimal expression
 func (tx ExplorerTxs) getDexFee() blockatlas.Amount {
 	if tx.TxFee > 0 {
 		return blockatlas.Amount(numbers.DecimalExp(numbers.Float64toString(tx.TxFee), int(coin.Binance().Decimals)))
@@ -197,6 +197,7 @@ func (tx ExplorerTxs) getDexFee() blockatlas.Amount {
 	}
 }
 
+// Get Explorer transfer status based on transfer code
 func (tx ExplorerTxs) getStatus() blockatlas.Status {
 	switch tx.Code {
 	case 0:
@@ -211,6 +212,7 @@ func (tx ExplorerTxs) getDexValue() blockatlas.Amount {
 	return blockatlas.Amount(val)
 }
 
+// Determines transaction status
 func (tx Tx) getStatus() blockatlas.Status {
 	switch tx.Code {
 	case 0:
@@ -220,22 +222,14 @@ func (tx Tx) getStatus() blockatlas.Status {
 	}
 }
 
-func (tx *Tx) getError() string {
+// Get explorer transfer error message if transaction failed
+func (tx *ExplorerTxs) getError() string {
 	switch tx.getStatus() {
 	case blockatlas.StatusCompleted:
 		return ""
 	default:
 		return "error"
 	}
-}
-
-func (tx *Tx) blockTimestamp() int64 {
-	unix := int64(0)
-	date, err := time.Parse(time.RFC3339, tx.Timestamp)
-	if err == nil {
-		unix = date.Unix()
-	}
-	return unix
 }
 
 func (tx *Tx) containAddress(address string) bool {
@@ -270,7 +264,7 @@ func (e *Error) Error() string {
 	return fmt.Sprintf("%d: %s", e.Code, e.Message)
 }
 
-// Add test
+// Determines Explorer transaction direction relatively to address
 func (tx *ExplorerTxs) Direction(address string) blockatlas.Direction {
 	if tx.FromAddr == address && tx.ToAddr == address {
 		return blockatlas.DirectionSelf
@@ -282,6 +276,7 @@ func (tx *ExplorerTxs) Direction(address string) blockatlas.Direction {
 	return blockatlas.DirectionIncoming
 }
 
+// Determines Explorer transaction type
 func (tx *ExplorerTxs) QuantityTransferType() QuantityTransfer {
 	if tx.HasChildren == 1 {
 		return MultiTransferOperation

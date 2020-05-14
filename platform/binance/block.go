@@ -28,7 +28,7 @@ func (p Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 
 	var normalizedTxs []blockatlas.Tx
 	for _, tx := range explorerTransactions {
-		normalizedTx := normalizeTx(tx, "", "")
+		normalizedTx := normalizeTx(tx, "")
 		if normalizedTx == nil {
 			continue
 		}

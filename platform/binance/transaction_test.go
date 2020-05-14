@@ -127,13 +127,13 @@ var (
 
 func TestNormalizeTxs(t *testing.T) {
 	type test struct {
-		name, address, token, dexTxResponse string
-		expected                            []blockatlas.Tx
+		name, address, dexTxResponse string
+		expected                     []blockatlas.Tx
 	}
 	tests := []test{
-		{name: "BNB single transfer", dexTxResponse: bnbSingleExplorerTransferResponse, expected: []blockatlas.Tx{expectBnbSingleExplorerTransfer}, address: addr1, token: ""},
-		{name: "BEP2 single transfer", dexTxResponse: bep2SingleExplorerTransferResponse, expected: []blockatlas.Tx{expectBEP2SingleExplorerTransfer}, address: addr2, token: "TWT-8C2"},
-		{name: "BEP2 multiple transfer", dexTxResponse: bep2MultipleExplorerTransferResponse, expected: []blockatlas.Tx{expectBEP2SingleExplorerTransfer}, address: addr2, token: "TWT-8C2"},
+		{name: "BNB single transfer", dexTxResponse: bnbSingleExplorerTransferResponse, expected: []blockatlas.Tx{expectBnbSingleExplorerTransfer}, address: addr1},
+		{name: "BEP2 single transfer", dexTxResponse: bep2SingleExplorerTransferResponse, expected: []blockatlas.Tx{expectBEP2SingleExplorerTransfer}, address: addr2},
+		{name: "BEP2 multiple transfer", dexTxResponse: bep2MultipleExplorerTransferResponse, expected: []blockatlas.Tx{expectBEP2SingleExplorerTransfer}, address: addr2},
 	}
 
 	for _, tt := range tests {
@@ -141,7 +141,7 @@ func TestNormalizeTxs(t *testing.T) {
 			var srcTx ExplorerTxs
 			err := json.Unmarshal([]byte(tt.dexTxResponse), &srcTx)
 			assert.Nil(t, err)
-			actual := normalizeTx(srcTx, tt.address, tt.token)
+			actual := normalizeTx(srcTx, tt.address)
 			assert.Equal(t, tt.expected, actual, "tx don't equal")
 		})
 	}
@@ -150,4 +150,27 @@ func TestNormalizeTxs(t *testing.T) {
 func TestTokenSymbol(t *testing.T) {
 	assert.Equal(t, "UGAS", tokenSymbol("UGAS"))
 	assert.Equal(t, "UGAS", tokenSymbol("UGAS-B0C"))
+	assert.Equal(t, "cargabe", tokenSymbol("cargabe"))
+	assert.Equal(t, "CARBAGE", tokenSymbol("CARBAGE"))
+	assert.Equal(t, "", tokenSymbol(""))
+}
+
+func Test_getBase(t *testing.T) {
+	tests := []struct {
+		name           string
+		srcTx          ExplorerTxs
+		expectStatus   blockatlas.Status
+		expectErrorMsg string
+	}{
+		{"Should have status completed", ExplorerTxs{Code: 0}, blockatlas.StatusCompleted, ""},
+		{"Should have status error and error message", ExplorerTxs{Code: 1}, blockatlas.StatusError, "error"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			base := getBase(tt.srcTx)
+			assert.Equal(t, base.Status, tt.expectStatus)
+			assert.Equal(t, base.Error, tt.expectErrorMsg)
+		})
+	}
 }
