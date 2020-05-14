@@ -11,31 +11,26 @@ module.exports = {
     path: '/mock/fio-api/v1/chain/:action',
     template: function(params, query, body) {
         if (params.action === 'get_pub_address') {
-            var addr = getAddress(body.fio_address, body.token_code);
-            if (addr == '') {
-                return {message: 'Public address not found'};
+            switch (body.fio_address) {
+                case 'trust@trust':
+                    switch (body.token_code) {
+                        case 'BTC':
+                            return {public_address: 'bc1qvy4074rggkdr2pzw5vpnn62eg0smzlxwp70d7v'};
+                        case 'ETH':
+                            return {public_address: '0xce5cB6c92Da37bbBa91Bd40D4C9D4D724A3a8F51'};
+                        case 'BNB':
+                            return {public_address: 'bnb1ts3dg54apwlvr9hupv2n0j6e46q54znnusjk9s'};
+                    }
+                    break;
+        
+                case 'trust@trustwallet':
+                    return {public_address: '0xce5cB6c92Da37bbBa91Bd40D4C9D4D724A3a0001'};
+        
+                case 'name@somefiodomain':
+                    return {public_address: '0xce5cB6c92Da37bbBa91Bd40D4C9D4D724A3a0002'};
             }
-            return {public_address: addr};
+            return {message: 'Public address not found'};
         }
-        return {error: 'Not implemented'};
+        return {error: "Not implemented"};
     }
-};
-
-function getAddress(fio_address, token_code) {
-    switch (fio_address) {
-        case 'trust@trust':
-            switch (token_code) {
-                case 'BTC': return 'bc1qvy4074rggkdr2pzw5vpnn62eg0smzlxwp70d7v';
-                case 'ETH': return '0xce5cB6c92Da37bbBa91Bd40D4C9D4D724A3a8F51';
-                case 'BNB': return 'bnb1ts3dg54apwlvr9hupv2n0j6e46q54znnusjk9s';
-                default: return '';
-            }
-
-        case 'trust@trustwallet':
-            return '0xce5cB6c92Da37bbBa91Bd40D4C9D4D724A3a0001';
-
-        case 'name@somefiodomain':
-            return '0xce5cB6c92Da37bbBa91Bd40D4C9D4D724A3a0002';
-    }
-    return '';
 };
