@@ -8,14 +8,12 @@ import (
 )
 
 func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
-	addressTxs, err := p.client.GetTxs(address, 25)
+	addressTxs, err := p.client.GetTxs(address)
 	if err != nil {
 		return nil, err
 	}
 
-	txs := NormalizeTxs(addressTxs)
-
-	return txs, nil
+	return NormalizeTxs(addressTxs), nil
 }
 
 func NormalizeTxs(srcTxs []Transaction) (txs []blockatlas.Tx) {
