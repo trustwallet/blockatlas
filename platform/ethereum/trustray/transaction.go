@@ -69,19 +69,11 @@ func AppendTxs(in []blockatlas.Tx, srcTx *Doc, coinIndex uint) (out []blockatlas
 	op := &srcTx.Ops[0]
 	// Token transfer transaction
 	if op.Type == blockatlas.TxTokenTransfer && op.Contract != nil {
-		var tokenID string
-		switch coinIndex {
-		case coin.WAN:
-			tokenID = address.EIP55ChecksumWanchain(op.Contract.Address)
-		default:
-			tokenID = address.EIP55Checksum(op.Contract.Address)
-		}
-
 		tokenTx := baseTx
 		tokenTx.Meta = blockatlas.TokenTransfer{
 			Name:     op.Contract.Name,
 			Symbol:   op.Contract.Symbol,
-			TokenID:  tokenID,
+			TokenID:  address.ToEIP55ByCoinID(op.Contract.Address, coinIndex),
 			Decimals: op.Contract.Decimals,
 			Value:    blockatlas.Amount(op.Value),
 			From:     op.From,
@@ -112,21 +104,13 @@ func extractBase(srcTx *Doc, coinIndex uint) (base blockatlas.Tx, ok bool) {
 		ID:       srcTx.ID,
 		Coin:     coinIndex,
 		Fee:      blockatlas.Amount(fee),
+		From:     address.ToEIP55ByCoinID(srcTx.From, coinIndex),
+		To:       address.ToEIP55ByCoinID(srcTx.To, coinIndex),
 		Date:     srcTx.Timestamp,
 		Block:    srcTx.BlockNumber,
 		Status:   status,
 		Error:    errReason,
 		Sequence: srcTx.Nonce,
-	}
-
-	switch coinIndex {
-	case coin.WAN:
-		base.From = address.EIP55ChecksumWanchain(srcTx.From)
-		base.To = address.EIP55ChecksumWanchain(srcTx.To)
-	default:
-		// Expect address already in checksum from Trust Ray
-		base.From = srcTx.From
-		base.To = srcTx.To
 	}
 
 	return base, true

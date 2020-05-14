@@ -4,6 +4,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"github.com/mr-tron/base58"
+	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"golang.org/x/crypto/sha3"
@@ -85,4 +86,15 @@ func EIP55ChecksumWanchain(address string) string {
 		}
 	}
 	return "0x" + string(result)
+}
+
+func ToEIP55ByCoinID(str string, coinID uint) string {
+	switch coinID {
+	case coin.ETH, coin.POA, coin.ETC, coin.TOMO, coin.CLO, coin.TT, coin.GO:
+		return EIP55Checksum(str)
+	case coin.WAN:
+		return EIP55ChecksumWanchain(str)
+	default:
+		return str
+	}
 }
