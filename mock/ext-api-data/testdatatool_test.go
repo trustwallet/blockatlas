@@ -94,7 +94,6 @@ func TestURLMap(t *testing.T) {
 	urlMap["mock/tron-api"] = URLEntry{"https://api.trongrid.io"}
 	urlMap["mock/binance-api"] = URLEntry{"https://explorer.binance.org/api/v1"}
 
-
 	result := getRealURL("mock/tron-api/v1/assets/1002798", urlMap)
 	expected := "https://api.trongrid.io/v1/assets/1002798"
 	if result != expected {

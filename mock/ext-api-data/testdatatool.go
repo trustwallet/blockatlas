@@ -92,7 +92,7 @@ func readURLList(directory string) bool {
 func mockURLFromFilename(filename string) (mockURL, counter string, err error) {
 	// strip extension
 	escapedMockURL := filename
-	if (strings.HasSuffix(filename, extension)) {
+	if strings.HasSuffix(filename, extension) {
 		escapedMockURL = escapedMockURL[:len(escapedMockURL)-len(extension)]
 	}
 	// strip counter if present
@@ -102,7 +102,7 @@ func mockURLFromFilename(filename string) (mockURL, counter string, err error) {
 		if _, err := strconv.Atoi(counterExt[1:]); err == nil {
 			// there is a counter extension
 			counter = counterExt[1:]
-			escapedMockURL = escapedMockURL[:len(escapedMockURL)-len("." + counter)]
+			escapedMockURL = escapedMockURL[:len(escapedMockURL)-len("."+counter)]
 		}
 	}
 	mockURL, err = url.QueryUnescape(escapedMockURL)
@@ -192,7 +192,7 @@ func getMockURL(realURL string, urlMap URLMap) string {
 
 func readOrWritePostRequestData(entry TestDataEntry, postRequestData string) string {
 	// check if request data file exists
-	postFile := strings.Replace(entry.Basedir + "/" + entry.Filename, extension, extensionPost, -1)
+	postFile := strings.Replace(entry.Basedir+"/"+entry.Filename, extension, extensionPost, -1)
 	b, err := ioutil.ReadFile(postFile)
 	if err == nil {
 		// file exists, return its content
@@ -241,15 +241,15 @@ func processFile(file TestDataEntry, listOnly bool, postRequestData string) {
 	// continue with processing
 
 	var resp *http.Response
-	switch (file.HTTPMethod) {
-		case "GET":
-			resp, err = http.Get(realURL)
-		case "POST":
-			postData := readOrWritePostRequestData(file, postRequestData)
-			resp, err = http.Post(realURL, "application/json", bytes.NewBuffer([]byte(postData)))
-		default:
-			log.Printf("Invalid method %v, url %v", file.HTTPMethod, realURL)
-			return
+	switch file.HTTPMethod {
+	case "GET":
+		resp, err = http.Get(realURL)
+	case "POST":
+		postData := readOrWritePostRequestData(file, postRequestData)
+		resp, err = http.Post(realURL, "application/json", bytes.NewBuffer([]byte(postData)))
+	default:
+		log.Printf("Invalid method %v, url %v", file.HTTPMethod, realURL)
+		return
 	}
 
 	if err != nil {
@@ -274,7 +274,7 @@ func processFile(file TestDataEntry, listOnly bool, postRequestData string) {
 	outFile := file.Basedir + "/" + file.Filename
 	if _, err = os.Stat(outFile); err == nil {
 		// file exists, rename
-		bakFile := outFile+".bak"
+		bakFile := outFile + ".bak"
 		err = os.Rename(outFile, bakFile)
 		if err != nil {
 			log.Printf("Rename to Bak failed, err %v, file %v", err.Error(), outFile)
@@ -341,16 +341,15 @@ func AddFile(realURL, method, directory, postRequestData string) {
 	counter := ""
 	filename := filenameFromMockURL(mockURL, counter)
 
-
 	if _, err := os.Stat(fulldir + "/" + filename); err == nil {
 		// file exists, check different counters
 		for i := 1; i < 10000; i++ {
 			counter = "0000" + strconv.Itoa(i)
-			counter = counter[len(counter)-4:len(counter)]
+			counter = counter[len(counter)-4 : len(counter)]
 			fmt.Println(i, counter)
 			filename = filenameFromMockURL(mockURL, counter)
 			if _, err = os.Stat(fulldir + "/" + filename); err != nil {
-				break;
+				break
 			}
 		}
 		fmt.Printf("File already exists, chose counter:  %v filename %v\n", counter, filename)
