@@ -3,7 +3,6 @@ package trustray
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"testing"
@@ -229,25 +228,3 @@ func TestNormalize(t *testing.T) {
 	})
 }
 
-func TestExtractBase(t *testing.T) {
-	const (
-		addr1      = "0xea674fdde714fd979de3edf0f56aa9716b898ec8"
-		addr1EIP55 = "0xEA674fdDe714fd979de3EdF0F56AA9716B898ec8"
-	)
-	var tests = []struct {
-		name      string
-		srcTx     Doc
-		coinIndex uint
-		expect    blockatlas.Tx
-	}{
-		{name: "Ethereum", srcTx: Doc{From: addr1, To: addr1}, coinIndex: coin.ETH, expect: blockatlas.Tx{From: addr1EIP55, To: addr1EIP55}},
-	}
-
-	t.Run("Test extractBase", func(t *testing.T) {
-		for _, tt := range tests {
-			actual, _ := extractBase(&tt.srcTx, tt.coinIndex)
-			assert.Equal(t, tt.expect.From, actual.From, "From")
-			assert.Equal(t, tt.expect.To, actual.To, "To")
-		}
-	})
-}
