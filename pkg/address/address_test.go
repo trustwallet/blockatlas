@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestChecksum(t *testing.T) {
+func TestEIP55Checksum(t *testing.T) {
 	tests := []struct {
 		name          string
 		unchecksummed string
