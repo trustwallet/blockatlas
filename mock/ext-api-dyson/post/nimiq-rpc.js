@@ -8,17 +8,15 @@ module.exports = {
     path: '/mock/nimiq-rpc',
     template: function(params, query, body) {
         if (body.method === 'getTransactionsByAddress') {
-            //console.log('body.params', body.params);
-            if (body.params.length == 0) {
-                return {error: "missing parameters"};
-            }
-            var address = body.params[0];
-            switch (address) {
-                case 'NQ94HC9AK9D83FSJM6PT8XGNNMXLR0E53Y07':
-                    var fn = "../../ext-api-data/post/" +
-                        "mock%2Fnimiq-rpc.json";
-                    var json = require(fn);
-                    return json;    
+            if (body.params.length > 0) {
+                var address = body.params[0];
+                switch (address) {
+                    case 'NQ94HC9AK9D83FSJM6PT8XGNNMXLR0E53Y07':
+                        var fn = "../../ext-api-data/post/" +
+                            "mock%2Fnimiq-rpc.json";
+                        var json = require(fn);
+                        return json;    
+                }
             }
         }
         return {error: "Not implemented"};

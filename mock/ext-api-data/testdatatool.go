@@ -16,6 +16,7 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
+	"strconv"
 	"strings"
 )
 
@@ -36,7 +37,7 @@ type TestDataEntry struct {
 const extension string = ".json"
 const extensionPost string = ".request_json"
 
-// Enumerate data files (extension .json) in given directoty; return filenames without extension == escaped relative URL paths
+// Enumerate data files (with extension .json) in given directoty; return filenames
 func enumerateDataFiles(path string) []string {
 	files, err := ioutil.ReadDir(path)
 	if err != nil {
@@ -86,6 +87,39 @@ func readURLList(directory string) bool {
 	}
 	urlList = list
 	return true
+}
+
+func mockURLFromFilename(filename string) (mockURL, counter string, err error) {
+	// strip extension
+	escapedMockURL := filename
+	if (strings.HasSuffix(filename, extension)) {
+		escapedMockURL = escapedMockURL[:len(escapedMockURL)-len(extension)]
+	}
+	// strip counter if present
+	counter = ""
+	counterExt := filepath.Ext(escapedMockURL)
+	if len(counterExt) >= 2 && len(counterExt) <= 5 {
+		if _, err := strconv.Atoi(counterExt[1:]); err == nil {
+			// there is a counter extension
+			counter = counterExt[1:]
+			escapedMockURL = escapedMockURL[:len(escapedMockURL)-len("." + counter)]
+		}
+	}
+	mockURL, err = url.QueryUnescape(escapedMockURL)
+	if err != nil {
+		log.Printf("Could not un-escape url, err %v, url %v", err.Error(), escapedMockURL)
+		return mockURL, counter, err
+	}
+	return mockURL, counter, nil
+}
+
+func filenameFromMockURL(mockURL, counter string) string {
+	filename := url.QueryEscape(mockURL)
+	if len(counter) > 0 {
+		filename = filename + "." + counter
+	}
+	filename = filename + extension
+	return filename
 }
 
 // Normalize a relative path URL.  If there are query parameters, they are sorted.
@@ -188,24 +222,24 @@ func processFile(file TestDataEntry, listOnly bool, postRequestData string) {
 	if !strings.HasSuffix(file.Filename, extension) {
 		return
 	}
-	escapedMockURL := file.Filename[:len(file.Filename)-len(extension)]
-	mockURL, err := url.QueryUnescape(escapedMockURL)
-	fmt.Printf("Mock URL:   %v\n", mockURL)
+	mockURL, _, err := mockURLFromFilename(file.Filename)
 	if err != nil {
-		log.Printf("Could not un-escape url, err %v, url %v", err.Error(), escapedMockURL)
+		log.Printf("Could not obtain URL from filename, err %v, filename %v", err.Error(), file.Filename)
 		return
 	}
+	fmt.Printf("Mock URL:   %v\n", mockURL)
 	realURL := getRealURL(mockURL, urlList)
 	if len(realURL) == 0 {
 		log.Printf("Could not obtain real URL")
 		return
 	}
 	fmt.Printf("Real URL:   %v\n", realURL)
+
 	if listOnly {
 		return
 	}
-
 	// continue with processing
+
 	var resp *http.Response
 	switch (file.HTTPMethod) {
 		case "GET":
@@ -237,7 +271,7 @@ func processFile(file TestDataEntry, listOnly bool, postRequestData string) {
 		return
 	}
 	// write to file
-	outFile := file.Basedir + "/" + escapedMockURL + ".json"
+	outFile := file.Basedir + "/" + file.Filename
 	if _, err = os.Stat(outFile); err == nil {
 		// file exists, rename
 		bakFile := outFile+".bak"
@@ -302,11 +336,28 @@ func AddFile(realURL, method, directory, postRequestData string) {
 		log.Printf("Could not obtain mock URL for URL %v.  Does mapping exists between real hostname and mock prefix?", realURL)
 		return
 	}
-	escapedMockURL := url.QueryEscape(mockURL)
 	subdir := strings.ToLower(method)
-	filename := escapedMockURL + extension
+	fulldir := directory + "/" + subdir
+	counter := ""
+	filename := filenameFromMockURL(mockURL, counter)
+
+
+	if _, err := os.Stat(fulldir + "/" + filename); err == nil {
+		// file exists, check different counters
+		for i := 1; i < 10000; i++ {
+			counter = "0000" + strconv.Itoa(i)
+			counter = counter[len(counter)-4:len(counter)]
+			fmt.Println(i, counter)
+			filename = filenameFromMockURL(mockURL, counter)
+			if _, err = os.Stat(fulldir + "/" + filename); err != nil {
+				break;
+			}
+		}
+		fmt.Printf("File already exists, chose counter:  %v filename %v\n", counter, filename)
+	}
+
 	fmt.Printf("Mock path and filename:  %v  %v\n", mockURL, filename)
-	entry := TestDataEntry{filename, directory + "/" + subdir, strings.ToUpper(method)}
+	entry := TestDataEntry{filename, fulldir, strings.ToUpper(method)}
 	processFile(entry, false, postRequestData)
 }
 

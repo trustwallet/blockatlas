@@ -98,3 +98,5 @@ mock/zilliqa-api:
   url: https://api.viewblock.io/v1/zilliqa
 #mock/nimiq-rpc:
 #  url: https://{nimiq rpc}
+mock/fio-api:
+  url: https://fio.greymass.com
