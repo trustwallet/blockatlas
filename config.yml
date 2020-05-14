@@ -1,6 +1,8 @@
 # Gin is the web framework
 gin:
   # Possible values: "debug", "release"
+  login: admin
+  pass: pass
   mode: release
   # App running behind a reverse proxy?
   # If set, HTTP Forwarded headers will be respected
@@ -10,10 +12,6 @@ gin:
 # Example: ethereum
 # You can see all the coin handles at coins/coins.yml file
 platform: all
-
-# Sentry error tracking
-#sentry:
-#  dsn: https://xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx@sentry.io/xxxxxxx
 
 # The transaction watcher
 observer:

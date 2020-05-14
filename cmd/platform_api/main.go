@@ -1,7 +1,6 @@
 package main
 
 import (
-	sentrygin "github.com/getsentry/sentry-go/gin"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/api"
@@ -26,10 +25,8 @@ func init() {
 
 	internal.InitConfig(confPath)
 	logger.InitLogger()
-	tmp := sentrygin.New(sentrygin.Options{})
-	sg := &tmp
 
-	engine = internal.InitEngine(sg, viper.GetString("gin.mode"))
+	engine = internal.InitEngine(viper.GetString("gin.mode"))
 
 	platform.Init(viper.GetString("platform"))
 }
