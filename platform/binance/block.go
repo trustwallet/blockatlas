@@ -23,7 +23,7 @@ func (p Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 
 	explorerTransactions := make([]ExplorerTxs, 0, len(blockTransactions))
 	for _, tx := range blockTransactions {
-		explorerTransactions = append(explorerTransactions, normalizeTxsForExplorer(tx))
+		explorerTransactions = append(explorerTransactions, normalizeTxsToExplorer(tx))
 	}
 
 	var normalizedTxs []blockatlas.Tx
@@ -38,7 +38,7 @@ func (p Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 	return &blockatlas.Block{Number: num, Txs: normalizedTxs}, nil
 }
 
-func normalizeTxsForExplorer(txV2 TxV2) ExplorerTxs {
+func normalizeTxsToExplorer(txV2 TxV2) ExplorerTxs {
 	tx := ExplorerTxs{
 		TxAsset:     txV2.Asset,
 		Code:        txV2.Code,

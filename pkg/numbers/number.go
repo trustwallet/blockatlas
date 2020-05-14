@@ -37,8 +37,8 @@ func Float64toString(num float64) string {
 	return strconv.FormatFloat(num, 'f', -1, 64)
 }
 
-// "0.00037500" => 0.000375
-func StringNumberToFloat64(str string) (float64, error) {
+// "0.00037500" => 0.000375, "non-string-number" => 0
+func StringNumberToFloat64(str string) (float64,  error) {
 	value, err := strconv.ParseFloat(str, 64)
 	if err != nil {
 		return 0, err

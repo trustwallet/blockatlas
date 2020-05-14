@@ -158,7 +158,7 @@ type (
 	}
 
 	MultiTransfer struct {
-		Amount string `json:"amount"`
+		Amount string `json:"amount"` // Float string ind decimal point
 		Asset  string `json:"asset"`
 		From   string `json:"from"`
 		To     string `json:"to"`

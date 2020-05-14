@@ -112,21 +112,6 @@ func Test_getFee(t *testing.T) {
 	}
 }
 
-func Test_blockTimestamp(t *testing.T) {
-	tests := []struct {
-		trx    Tx
-		expect int64
-	}{
-		{Tx{Timestamp: "2020-03-16T05:34:38.947Z"}, 1584336878},
-		{Tx{Timestamp: ""}, 0},
-	}
-	for _, tt := range tests {
-		t.Run("", func(t *testing.T) {
-			assert.Equal(t, tt.trx.blockTimestamp(), tt.expect)
-		})
-	}
-}
-
 func Test_getStatus(t *testing.T) {
 	tests := []struct {
 		name   string
