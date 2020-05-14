@@ -31,7 +31,7 @@ Counter: for POST requests, multiple files may be needed to the same URL.  A 4-d
 
 ## List files
 
-Use testdatatool to list data files and info about them:  `testdatatool list .`
+Use testdatatool to list data files and info about them:  `testdatatool list .` (or `go run testdatatool.go list .`)
 
 ## Add a new file
 
