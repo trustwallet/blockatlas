@@ -345,7 +345,7 @@ func AddFile(realURL, method, directory, postRequestData string) {
 		// file exists, check different counters
 		for i := 1; i < 10000; i++ {
 			counter = "0000" + strconv.Itoa(i)
-			counter = counter[len(counter)-4 : len(counter)]
+			counter = counter[len(counter)-4:]
 			fmt.Println(i, counter)
 			filename = filenameFromMockURL(mockURL, counter)
 			if _, err = os.Stat(fulldir + "/" + filename); err != nil {
