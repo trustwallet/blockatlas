@@ -47,7 +47,11 @@ func (t *Tx) UnmarshalJSON(data []byte) error {
 	default:
 		return errors.E("unsupported tx type", errors.Params{"type": t.Type})
 	}
-	if err := json.Unmarshal(raw, t.Meta); err != nil {
+	if raw == nil {
+		return nil
+	}
+	err := json.Unmarshal(raw, t.Meta)
+	if err != nil {
 		return err
 	}
 	return nil
