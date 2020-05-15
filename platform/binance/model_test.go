@@ -162,7 +162,7 @@ func Test_QuantityTransferType(t *testing.T) {
 	}
 }
 
-func Test_Direction(t *testing.T) {
+func TestExplorerTxs_getDirection(t *testing.T) {
 	const (
 		addr1 = "bnb14cjy0yl23xkf0hnw3ql295v8nghqstvlzkvqpl"
 		addr2 = "bnb1mr5f97rx5wnkfcakx9fcpvljmx2s6kwqc08yur"
@@ -174,13 +174,14 @@ func Test_Direction(t *testing.T) {
 		trx     ExplorerTxs
 		expect  blockatlas.Direction
 	}{
-		{"Direction should be self send", addr1, ExplorerTxs{FromAddr: addr1, ToAddr: addr1}, blockatlas.DirectionSelf},
-		{"Direction should be incoming", addr1, ExplorerTxs{FromAddr: addr2, ToAddr: addr1}, blockatlas.DirectionIncoming},
-		{"Direction should be outgoing", addr1, ExplorerTxs{FromAddr: addr1, ToAddr: addr2}, blockatlas.DirectionOutgoing},
+		{"getDirection should be self send", addr1, ExplorerTxs{FromAddr: addr1, ToAddr: addr1}, blockatlas.DirectionSelf},
+		{"getDirection should be incoming", addr1, ExplorerTxs{FromAddr: addr2, ToAddr: addr1}, blockatlas.DirectionIncoming},
+		{"getDirection should be outgoing", addr1, ExplorerTxs{FromAddr: addr1, ToAddr: addr2}, blockatlas.DirectionOutgoing},
+		{"getDirection should be empty", "", ExplorerTxs{FromAddr: addr1, ToAddr: addr2}, blockatlas.Direction("")},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			assert.Equal(t, tt.trx.Direction(tt.address), tt.expect)
+			assert.Equal(t, tt.trx.getDirection(tt.address), tt.expect)
 		})
 	}
 }

@@ -76,7 +76,7 @@ func feeToAmount(fee float64) blockatlas.Amount {
 
 func normalizeSingleTransfer(srcTx ExplorerTxs, address string) blockatlas.TxPage {
 	tx := getBase(srcTx)
-	tx.Direction = srcTx.Direction(address)
+	tx.Direction = srcTx.getDirection(address)
 	bnbCoin := coin.Coins[coin.BNB]
 
 	if srcTx.TxAsset == bnbCoin.Symbol {

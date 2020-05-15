@@ -265,7 +265,7 @@ func (e *Error) Error() string {
 }
 
 // Determines Explorer transaction direction relatively to address
-func (tx *ExplorerTxs) Direction(address string) blockatlas.Direction {
+func (tx *ExplorerTxs) getDirection(address string) blockatlas.Direction {
 	if address == "" {
 		return ""
 	}
