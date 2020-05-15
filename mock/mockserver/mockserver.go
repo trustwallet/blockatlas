@@ -86,6 +86,7 @@ func readFileList(directory string) error {
 }
 
 func findFileForMockURL(mockURL, queryParams string) (TestDataEntryInternal, error) {
+	lasterr := ""
 	for _, ff := range files {
 		//if mockURL[:7] == ff.MockURL[:7] {
 		//	fmt.Println("  ", ff.MockURL, mockURL)
@@ -97,15 +98,15 @@ func findFileForMockURL(mockURL, queryParams string) (TestDataEntryInternal, err
 		// check with query params
 		if mockURL == ff.ParsedURL.Path {
 			if !matchQueryParams(ff.ParsedURL.RawQuery, queryParams) {
-				log.Printf("Mismatch in query params, expected %v, actual %v", ff.ParsedURL.RawQuery, queryParams)
-				return TestDataEntryInternal{}, errors.New("Mismatch in query params")
+				// remember error, but continue trying
+				lasterr = "Mismatch in query params, expected " + ff.ParsedURL.RawQuery + ", actual " + queryParams
 			} else {
 				return ff, nil
 			}
 		}
 
 	}
-	return TestDataEntryInternal{}, errors.New("Could not find matching entry for URL")
+	return TestDataEntryInternal{}, errors.New("Could not find matching entry for URL, " + lasterr)
 }
 
 func requestHandlerIntern(w http.ResponseWriter, r *http.Request, basedir string) error {
@@ -145,8 +146,8 @@ func requestHandler(w http.ResponseWriter, r *http.Request, basedir string) {
 }
 
 func main() {
-	basedir := "../"
-	if err := readFileList(".."); err != nil {
+	basedir := "../.."
+	if err := readFileList(basedir + "/mock"); err != nil {
 		log.Fatalf("Could not read data file list, err %v", err.Error())
 		return
 	}

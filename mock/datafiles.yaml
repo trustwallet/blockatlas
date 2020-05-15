@@ -125,7 +125,7 @@
   mockURL: mock/iotex-api/accounts/io1vg808avg2ydye8djl2axmkc9j0xhzu6vdaw6g5
   extURL: https://pharos.iotex.io/v1/accounts/io1vg808avg2ydye8djl2axmkc9j0xhzu6vdaw6g5
 - file: mock/ext-api-data/iotex-api_actions_addr_io1vg808avg2ydye8djl2axmkc9j0xhzu6vdaw6g5__count_25_start_32.json
-  mockURL: mock/iotex-api/actions/addr/io1vg808avg2ydye8djl2axmkc9j0xhzu6vdaw6g5?count=25&start=32
+  mockURL: mock/iotex-api/actions/addr/io1vg808avg2ydye8djl2axmkc9j0xhzu6vdaw6g5?count=25
   extURL: https://pharos.iotex.io/v1/actions/addr/io1vg808avg2ydye8djl2axmkc9j0xhzu6vdaw6g5?count=25&start=32
 - file: mock/ext-api-data/iotex-api_staking_delegations_io1mwekae7qqwlr23220k5n9z3fmjxz72tuchra3m.json
   mockURL: mock/iotex-api/staking/delegations/io1mwekae7qqwlr23220k5n9z3fmjxz72tuchra3m
@@ -167,7 +167,7 @@
   mockURL: mock/litecoin-api/v2/xpub/zpub6rpF5Uxuz4KKWePLorSz2QrHMmk1iiZvGUGgtSHpor8yiGekyRuWf5ZNmf6GUKB4v3ibQDuZp5v8RnjEGq58kR3WPtGPn8Lrg677MQ8YeKu?details=txs
   extURL: https://ltc1.trezor.io/api/v2/xpub/zpub6rpF5Uxuz4KKWePLorSz2QrHMmk1iiZvGUGgtSHpor8yiGekyRuWf5ZNmf6GUKB4v3ibQDuZp5v8RnjEGq58kR3WPtGPn8Lrg677MQ8YeKu?details=txs
 - file: mock/ext-api-data/nebulas-api_tx__a_n1RCYwrpLMpSpUCQ8QUDzGRg6B2PnY8R94a_p_0.json
-  mockURL: mock/nebulas-api/tx?a=n1RCYwrpLMpSpUCQ8QUDzGRg6B2PnY8R94a&p=0
+  mockURL: mock/nebulas-api/tx?a=n1RCYwrpLMpSpUCQ8QUDzGRg6B2PnY8R94a
   extURL: https://explorer-backend.nebulas.io/api/tx?a=n1RCYwrpLMpSpUCQ8QUDzGRg6B2PnY8R94a&p=0
 - file: mock/ext-api-data/ontology-api_v2_addresses_AUyL4TZ1zFEcSKDJrjFnD7vsq5iFZMZqT7_transactions__page_number_1_page_size_20.json
   mockURL: mock/ontology-api/v2/addresses/AUyL4TZ1zFEcSKDJrjFnD7vsq5iFZMZqT7/transactions?page_number=1&page_size=20
@@ -197,7 +197,7 @@
   mockURL: mock/ravencoin-api/v2/xpub/xpub6BrkWQHMnuGcvKowEn2hpvnZ41SiCsu38mgFThKU3nMzPUN9r9C26puf18rfVdHH3nDwSkeMgsjVniNDKUk5arxekekGpNyVLsWihYAfC5B?details=txs
   extURL: https://blockbook.ravencoin.org/api/v2/xpub/xpub6BrkWQHMnuGcvKowEn2hpvnZ41SiCsu38mgFThKU3nMzPUN9r9C26puf18rfVdHH3nDwSkeMgsjVniNDKUk5arxekekGpNyVLsWihYAfC5B?details=txs
 - file: mock/ext-api-data/ripple-api_accounts_rMQ98K56yXJbDGv49ZSmW51sLn94Xe1mu1_transactions__descending_false_limit_25_type_Payment.json
-  mockURL: mock/ripple-api/accounts/rMQ98K56yXJbDGv49ZSmW51sLn94Xe1mu1/transactions?descending=false&limit=25&type=Payment
+  mockURL: mock/ripple-api/accounts/rMQ98K56yXJbDGv49ZSmW51sLn94Xe1mu1/transactions?limit=25&type=Payment
   extURL: https://data.ripple.com/v2/accounts/rMQ98K56yXJbDGv49ZSmW51sLn94Xe1mu1/transactions?descending=false&limit=25&type=Payment
 - file: mock/ext-api-data/stellar-api_accounts_GDKIJJIKXLOM2NRMPNQZUUYK24ZPVFC6426GZAEP3KUK6KEJLACCWNMX_payments__limit_25_order_desc.json
   mockURL: mock/stellar-api/accounts/GDKIJJIKXLOM2NRMPNQZUUYK24ZPVFC6426GZAEP3KUK6KEJLACCWNMX/payments?limit=25&order=desc
