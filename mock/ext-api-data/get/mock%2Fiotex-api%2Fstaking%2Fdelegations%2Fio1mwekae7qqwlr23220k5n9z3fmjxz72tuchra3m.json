@@ -1,0 +1,23 @@
+[
+	{
+		"delegator": {
+			"id": "iotxplorerio",
+			"status": true,
+			"info": {
+				"name": "iotxplorer",
+				"description": "",
+				"image": "https://imgc.iotex.io/dokc3pa1x/image/upload/v1551121446/delegates/iotxplorer/Group_2.png",
+				"website": "https://twitter.com/iotxplorer"
+			},
+			"details": {
+				"reward": {
+					"annual": 0
+				},
+				"locktime": 259200,
+				"minimum_amount": "100000000000000000000"
+			}
+		},
+		"value": "100000000000000000000",
+		"status": "active"
+	}
+]

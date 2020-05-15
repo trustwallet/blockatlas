@@ -4,12 +4,12 @@
 /// - public address for certain name and coin combinations
 /// - public address not found message for other input
 /// See:
-/// curl "http://localhost:3347/unstoppabledomains/api/v1//dpantani.zil"
+/// curl "http://localhost:3347/mock/unstoppabledomains/api/v1//dpantani.zil"
 /// curl "https://unstoppabledomains.com/api/v1/dpantani.zil"
 /// curl "http://localhost:8437/v2/ns/lookup?name=dpantani.zil&coins=313"
 
 module.exports = {
-    path: '/unstoppabledomains/api/v1//:name?',
+    path: '/mock/unstoppabledomains/api/v1//:name?',
     template: function(params, query, body) { return lookup(params, query, body); }
 };
 

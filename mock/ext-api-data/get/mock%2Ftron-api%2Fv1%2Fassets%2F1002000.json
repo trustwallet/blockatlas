@@ -1,0 +1,23 @@
+{
+	"success": true,
+	"meta": {
+		"at": 1589387413939,
+		"page_size": 1
+	},
+	"data": [
+		{
+			"id": "1002000",
+			"abbr": "BTT",
+			"description": "Official Token of BitTorrent Protocol",
+			"name": "BitTorrent",
+			"num": 1,
+			"precision": 6,
+			"total_supply": "990000000000000000",
+			"trx_num": 1,
+			"url": "www.bittorrent.com",
+			"owner_address": "4137fa1a56eb8c503624701d776d95f6dae1d9f0d6",
+			"start_time": 1548000000000,
+			"end_time": 1548000001000
+		}
+	]
+}

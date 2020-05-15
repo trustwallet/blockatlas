@@ -1,0 +1,103 @@
+mock/aeternity-api:
+  url: https://mdw.aepps.com
+###mock/aion-api:
+###  url: https://mainnet-api.theoan.com/aion/dashboard
+#mock/algorand-api:
+#  url: https://mainnet-algorand.api.purestake.io/ps1
+mock/binance-api:
+  url: https://explorer.binance.org/api/v1
+mock/binance-dex:
+  url: https://dex.binance.org/api
+mock/bitcoin-api:
+  url: https://btc1.trezor.io/api
+#mock/bitcoincash-api:
+#  url: https://{bch rpc}/api
+#mock/callisto-api:
+#  url: https://{callisto rpc}
+mock/cosmos-api:
+  url: https://api.cosmos.network
+mock/dash-api:
+  url: https://dash1.trezor.io/api
+mock/decred-api:
+  url: https://blockbook.decred.org:9161/api
+mock/digibyte-api:
+  url: https://dgb1.trezor.io/api
+mock/doge-api:
+  url: https://doge1.trezor.io/api
+mock/eth-api:
+  url: https://localhost:4567
+#mock/eth-blockbook-api:
+#  url: https://{eth blockbook api}/api
+#mock/ethclassic-api:
+#  url: https://{etc rpc}
+#mock/gochain-api:
+#  url: https://{go rpc}
+mock/groestlcoin-api:
+  url: https://blockbook.groestlcoin.org/api
+mock/harmony-api:
+  url: https://api.s0.t.hmny.io
+mock/icon-api:
+  url: https://tracker.icon.foundation/v3
+mock/iotex-api:
+  url: https://pharos.iotex.io/v1
+mock/kava-api:
+  url: https://data.kava.io
+mock/kusama-api:
+  url: https://kusama.subscan.io/api
+mock/kin-api:
+  url: https://horizon-block-explorer.kininfrastructure.com
+mock/litecoin-api:
+  url: https://ltc1.trezor.io/api
+mock/nano-api:
+  url: https://nanoverse.io/api/node
+mock/near-api:
+  url: https://staging-rpc.nearprotocol.com
+mock/nebulas-api:
+  url: https://explorer-backend.nebulas.io/api
+mock/ontology-api:
+  url: https://explorer.ont.io
+mock/opensea-api:
+  url: https://api.opensea.io
+#mock/poa-api:
+#  url: https://{poa rpc}
+mock/qtum-api:
+  url: https://blockv3.qtum.info/api
+mock/ravencoin-api:
+  url: https://blockbook.ravencoin.org/api
+mock/ripple-api:
+  url: https://data.ripple.com/v2
+mock/stellar-api:
+  url: https://horizon.stellar.org
+mock/solana-api:
+  url: https://api.mainnet-beta.solana.com
+mock/tezos-api:
+  url: https://api.tzstats.com/explorer
+mock/theta-api:
+  url: https://explorer.thetatoken.org:9000/api
+#mock/thundertoken-api:
+#  url: https://{thundertoken rpc}
+#mock/tomochain-api:
+#  url: https://{tomochain rpc}
+mock/tron-api:
+  url: https://api.trongrid.io
+mock/unstoppabledomains:
+  url: https://unstoppabledomains.com
+mock/vechain-api:
+  url: https://vethor-pubnode.digonchain.com
+mock/viacoin-api:
+  url: https://blockbook.viacoin.org/api
+mock/waves-api:
+  url: https://nodes.wavesnodes.com
+mock/zcash-api:
+  url: https://zec1.trezor.io/api
+mock/zcoin-api:
+  url: https://blockbook.zcoin.io/api
+mock/zelcash-api:
+  url: https://blockbook.zel.network/api
+mock/zilliqa-api:
+  url: https://api.viewblock.io/v1/zilliqa
+#mock/nimiq-rpc:
+#  url: https://{nimiq rpc}
+# FIO not to be updated automatically
+#mock/fio-api:
+#  url: https://fio.greymass.com

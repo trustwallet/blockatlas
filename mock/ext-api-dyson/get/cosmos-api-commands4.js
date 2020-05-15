@@ -1,11 +1,11 @@
 /// Cosmos API Mock
 /// See:
-/// curl "http://localhost:3347/cosmos-api/staking/delegators/cosmos1dx27g0kzhwej0ekcf2k9hsktcxnmpl7fcehcvq/delegations"
+/// curl "http://localhost:3347/mock/cosmos-api/staking/delegators/cosmos1dx27g0kzhwej0ekcf2k9hsktcxnmpl7fcehcvq/delegations"
 /// curl "https://{cosmos_rpc}/staking/delegators/cosmos1dx27g0kzhwej0ekcf2k9hsktcxnmpl7fcehcvq/delegations"
 /// curl "http://localhost:8437/v2/cosmos/staking/delegations/cosmos1dx27g0kzhwej0ekcf2k9hsktcxnmpl7fcehcvq?Authorization=Bearer"
 
 module.exports = {
-    path: "/cosmos-api/:command1/:command2/:arg3/:arg4?",
+    path: "/mock/cosmos-api/:command1/:command2/:arg3/:arg4?",
     template: function(params, query, body) {
         //console.log(params)
         //console.log(query)
@@ -18,19 +18,10 @@ module.exports = {
                                 switch (params.arg4) {
                                     case 'delegations':
                                     case 'unbonding_delegations':
-                                        return JSON.parse(`
-                                            {
-                                                "height": "1419065",
-                                                "result": [
-                                                    {
-                                                        "delegator_address": "cosmos1dx27g0kzhwej0ekcf2k9hsktcxnmpl7fcehcvq",
-                                                        "validator_address": "cosmosvaloper17h2x3j7u44qkrq0sk8ul0r2qr440rwgjkfg0gh",
-                                                        "shares": "2211271.000000000000000000",
-                                                        "balance": "2211271"
-                                                    }
-                                                ]
-                                            }
-                                        `);
+                                        var fn = "../../ext-api-data/get/" +
+                                            "mock%2Fcosmos-api%2Fstaking%2Fdelegators%2Fcosmos1dx27g0kzhwej0ekcf2k9hsktcxnmpl7fcehcvq%2Fdelegations.json";
+                                        var json = require(fn);
+                                        return json;
                                 }
                         }
                 }

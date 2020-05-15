@@ -1,0 +1,20 @@
+{
+	"number": 5887932,
+	"id": "0x0059d7bc873407f863b77f731f8e3c9335dc16aae1c53c0f18e780773d42a7f0",
+	"size": 542,
+	"parentID": "0x0059d7bb2f7ba5a8482d0b9937788f212f9b6b1de08818466985f943dbc8b4c6",
+	"timestamp": 1589366680,
+	"gasLimit": 38953771,
+	"beneficiary": "0xeb0c565f69557481c6c7fa347cae273128a0996e",
+	"gasUsed": 66003,
+	"totalScore": 566756408,
+	"txsRoot": "0xc4b8844cdc5dcd6b48627205ef30d7e09041d0e7ba013057690778e33e881127",
+	"txsFeatures": 1,
+	"stateRoot": "0xf572f33e7d55a193c7ef31f6cda0a0d51b339085e2296b6e05a81b593aa66e6e",
+	"receiptsRoot": "0x65bf45677f275349a9a9eeebdfdcb1ffd8760c98cd273fb909453b444265d081",
+	"signer": "0x8eaefdf7d25c001e7e59363c33d7f5ad47970086",
+	"isTrunk": true,
+	"transactions": [
+		"0x36720eaff4ac46835d3300bab1c2a6e9f45907c3151ff36c247dd7c287ba8125"
+	]
+}
