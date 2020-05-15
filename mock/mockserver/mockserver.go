@@ -11,6 +11,7 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+	"strings"
 )
 
 type TestDataEntry struct {
@@ -18,15 +19,17 @@ type TestDataEntry struct {
 	MockURL    string `yaml:"mockURL"`
 	ExtURL     string `yaml:"extURL,omitempty"`
 	ReqFile    string `yaml:"reqFile,omitempty"`
+	ReqField   string `yaml:"reqField,omitempty"`
 }
 
 type TestDataEntryInternal struct {
-	Filename   string   `yaml:"file"`
-	MockURL    string   `yaml:"mockURL"`
-	ExtURL     string   `yaml:"extURL,omitempty"`
-	ParsedURL  *url.URL `yaml:"-"`
-	Method     string   `yaml:"-"`
-	ReqFile    string   `yaml:"reqFile,omitempty"`
+	Filename   string
+	MockURL    string
+	ExtURL     string
+	ParsedURL  *url.URL
+	Method     string
+	ReqFile    string
+	ReqField   string
 }
 
 var files []TestDataEntryInternal
@@ -79,38 +82,104 @@ func readFileList(directory string) error {
 	for _, e := range files1 {
 		parsedURL, err := url.Parse(e.MockURL)
 		if err == nil {
-			files = append(files, TestDataEntryInternal{e.Filename, e.MockURL, e.ExtURL, parsedURL, "?", e.ReqFile})
+			files = append(files, TestDataEntryInternal{e.Filename, e.MockURL, e.ExtURL, parsedURL, "?", e.ReqFile, e.ReqField})
 		}
 	}
 	fmt.Printf("Info about %v data files read\n", len(files))
 	return nil
 }
 
-func findFileForMockURL(mockURL, queryParams string) (TestDataEntryInternal, error) {
+func fieldValueFromJson(json, field string) (string, error) {
+	fieldIdx := strings.Index(json, field)
+	if fieldIdx < 0 {
+		return "", errors.New("Field not found")
+	}
+	rest := json[fieldIdx+len(field)+1:]
+	firstQuote := strings.Index(rest, "\"") 
+	if fieldIdx < 0 {
+		return "", errors.New("1st quote not found")
+	}
+	rest = rest[firstQuote+1:]
+	secondQuote := strings.Index(rest, "\"")
+	if fieldIdx < 0 {
+		return "", errors.New("1st quote not found")
+	}
+	val := rest[:secondQuote]
+	return val, nil
+}
+
+func preprocessRequestJson(j string) string {
+	j = strings.Replace(j, "\"", "", -1)
+	j = strings.Replace(j, "'", "", -1)
+	j = strings.Replace(j, " ", "", -1)
+	j = strings.Replace(j, "\n", "", -1)
+	return j
+}
+
+func matchRequestDataJson(actualReqData, expReqData, fieldDiscriminator string) error {
+	if len(fieldDiscriminator) > 0 {
+		valActual, err := fieldValueFromJson(actualReqData, fieldDiscriminator)
+		if err != nil {
+			return err
+		}
+		valExp, err := fieldValueFromJson(expReqData, fieldDiscriminator)
+		if err != nil {
+			return err
+		}
+		if valExp == valActual {
+			// OK, match
+			log.Println("Request data match based on discriminator field " + fieldDiscriminator + " val " + valActual)
+			return nil
+		}
+		return errors.New("Request data mismatch, discriminator field " + fieldDiscriminator + " actual " + valActual + " expected " + valExp)
+	}
+	// no field separator, full  match
+	if actualReqData == expReqData {
+		return nil
+	}
+	v1r := preprocessRequestJson(actualReqData)
+	v2r := preprocessRequestJson(expReqData)
+	if v1r == v2r {
+		return nil
+	}
+	return errors.New("Mismatch in request data, actual " + actualReqData + " expected " + expReqData)
+}
+
+func findFileForMockURL(mockURL, queryParams, requestBody string) (TestDataEntryInternal, error) {
 	lasterr := ""
 	for _, ff := range files {
-		//if mockURL[:7] == ff.MockURL[:7] {
-		//	fmt.Println("  ", ff.MockURL, mockURL)
-		//}
 		// simple check
-		if mockURL == ff.MockURL {
-			return ff, nil
+		if mockURL != ff.MockURL {
+			continue
 		}
-		// check with query params
-		if mockURL == ff.ParsedURL.Path {
+		// check query params
+		if len(queryParams) > 0 {
 			if !matchQueryParams(ff.ParsedURL.RawQuery, queryParams) {
-				// remember error, but continue trying
+				// mismatch in query, remember message, but continue trying
 				lasterr = "Mismatch in query params, expected " + ff.ParsedURL.RawQuery + ", actual " + queryParams
-			} else {
-				return ff, nil
+				continue
 			}
 		}
-
+		// check request data
+		if len(requestBody) > 0 {
+			// read request file
+			reqFileB, err := ioutil.ReadFile(ff.ReqFile)
+			if err == nil {
+				expectedRequestData := string(reqFileB)
+				if err = matchRequestDataJson(requestBody, expectedRequestData, ff.ReqField); err != nil {
+					// mismatch in request data, remember message, but continue trying
+					lasterr = "Mismatch in request data " + err.Error()
+					continue
+				}
+			}
+		}
+		// all matches
+		return ff, nil
 	}
 	return TestDataEntryInternal{}, errors.New("Could not find matching entry for URL, " + lasterr)
 }
 
-func requestHandlerIntern(w http.ResponseWriter, r *http.Request, basedir string) error {
+func requestHandlerIntern(w http.ResponseWriter, r *http.Request, body, basedir string) error {
 	if r.URL.Path == "/mock/mock-healtcheck" {
 		fmt.Fprintf(w, "{\"status\": true, \"msg\": \"Mockserver is alive\"}")
 		return nil
@@ -121,7 +190,7 @@ func requestHandlerIntern(w http.ResponseWriter, r *http.Request, basedir string
 		mockURL = mockURL[1:]
 	}
 
-	entry, err := findFileForMockURL(mockURL, r.URL.RawQuery)
+	entry, err := findFileForMockURL(mockURL, r.URL.RawQuery, body)
 	if err != nil {
 		return err
 	}
@@ -135,14 +204,22 @@ func requestHandlerIntern(w http.ResponseWriter, r *http.Request, basedir string
 }
 
 func requestHandler(w http.ResponseWriter, r *http.Request, basedir string) {
-	err := requestHandlerIntern(w, r, basedir)
+	// read body
+	body := ""
+	if r.Method == "POST" {
+		bodyByte, err := ioutil.ReadAll(r.Body)
+		if err == nil {
+			body = string(bodyByte)
+		}
+	}
+	err := requestHandlerIntern(w, r, body, basedir)
 	if err == nil {
-		log.Println("Request ok", r.Method, r.URL.Path)
+		log.Println("Request ok", r.Method, r.URL.Path, body)
 		return
 	}
 	// error
 	errorMsg := err.Error()
-	log.Println("ERROR for request:", errorMsg, r.Method, r.URL.Path)
+	log.Println("ERROR for request:", errorMsg, r.Method, r.URL.Path, body)
 	fmt.Fprintf(w, "{\"error\": \"" + errorMsg + "\", \"url\": \"" + r.URL.Path + "\"")
 }
 
