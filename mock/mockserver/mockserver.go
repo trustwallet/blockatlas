@@ -10,6 +10,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"strconv"
 )
 
 type TestDataEntry struct {
@@ -146,7 +147,7 @@ func requestHandler(w http.ResponseWriter, r *http.Request, basedir string) {
 }
 
 func main() {
-	basedir := "../.."
+	basedir := "."
 	if err := readFileList(basedir + "/mock"); err != nil {
 		log.Fatalf("Could not read data file list, err %v", err.Error())
 		return
@@ -156,5 +157,10 @@ func main() {
 		requestHandler(w, r, basedir)
 	})
 
-    http.ListenAndServe(":3347", nil)
+	port := 3347
+	log.Printf("About to listening on port %v", port)
+	err := http.ListenAndServe(":" + strconv.Itoa(port), nil)
+	if err != nil {
+		log.Fatalf("Could not listen on port %v", port)
+	}
 }
