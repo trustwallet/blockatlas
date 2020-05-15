@@ -95,7 +95,7 @@ func TestNormalizeValidator(t *testing.T) {
 		ID:     v.Info.Address,
 		Details: blockatlas.StakingDetails{
 			Reward:        blockatlas.StakingReward{Annual: 12.345},
-			LockTime:      0,
+			LockTime:      604800,
 			MinimumAmount: "0",
 			Type:          blockatlas.DelegationTypeDelegate,
 		},
