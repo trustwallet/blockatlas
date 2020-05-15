@@ -9,14 +9,14 @@ import (
 )
 
 const (
-	TxTransfer              TxType           = "TRANSFER"       // e.g: BNB, TWT-8C2
-	SingleTransferOperation QuantityTransfer = "singleTransfer" // e.g: BNB, TWT-8C2
-	MultiTransferOperation  QuantityTransfer = "multiTransfer"  // e.g [BNB, BNB], [TWT-8C2, TWT-8C2]
+	TxTransfer              TxType                  = "TRANSFER"       // e.g: BNB, TWT-8C2
+	SingleTransferOperation ExplorerTransactionType = "singleTransfer" // e.g: BNB, TWT-8C2
+	MultiTransferOperation  ExplorerTransactionType = "multiTransfer"  // e.g [BNB, BNB], [TWT-8C2, TWT-8C2]
 )
 
 type (
-	TxType           string
-	QuantityTransfer string
+	TxType                  string
+	ExplorerTransactionType string
 
 	Account struct {
 		AccountNumber int       `json:"account_number"`
@@ -281,10 +281,12 @@ func (tx *ExplorerTxs) getDirection(address string) blockatlas.Direction {
 }
 
 // Determines Explorer transaction type
-func (tx *ExplorerTxs) QuantityTransferType() QuantityTransfer {
+func (tx *ExplorerTxs) getTransactionType() ExplorerTransactionType {
+	var txType ExplorerTransactionType
 	if tx.HasChildren == 1 {
-		return MultiTransferOperation
+		txType = MultiTransferOperation
 	} else {
-		return SingleTransferOperation
+		txType = SingleTransferOperation
 	}
+	return txType
 }

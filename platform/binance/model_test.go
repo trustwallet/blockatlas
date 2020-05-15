@@ -150,14 +150,14 @@ func Test_QuantityTransferType(t *testing.T) {
 	tests := []struct {
 		name   string
 		trx    ExplorerTxs
-		expect QuantityTransfer
+		expect ExplorerTransactionType
 	}{
 		{"Should be multi transfer", ExplorerTxs{HasChildren: 1}, MultiTransferOperation},
 		{"Should be single transfer", ExplorerTxs{HasChildren: 0}, SingleTransferOperation},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			assert.Equal(t, tt.trx.QuantityTransferType(), tt.expect)
+			assert.Equal(t, tt.trx.getTransactionType(), tt.expect)
 		})
 	}
 }

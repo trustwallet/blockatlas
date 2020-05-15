@@ -12,7 +12,8 @@ import (
 const emptyToken = ""
 
 func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
-	return p.GetTokenTxsByAddress(address, emptyToken)
+	explorerResponse, err := p.GetTokenTxsByAddress(address, emptyToken)
+	return filterTxsByType(explorerResponse, blockatlas.TxTransfer), err
 }
 
 func (p *Platform) GetTokenTxsByAddress(address, token string) (blockatlas.TxPage, error) {
@@ -41,29 +42,19 @@ func normalizeTxs(explorerTxs []ExplorerTxs, address string) []blockatlas.Tx {
 	return txs
 }
 
-func normalizeTx(srcTx ExplorerTxs, address string) []blockatlas.Tx {
-	if srcTx.TxType != TxTransfer {
-		return []blockatlas.Tx{{
-			ID:     srcTx.TxHash,
-			Coin:   coin.BNB,
-			From:   srcTx.FromAddr,
-			To:     srcTx.ToAddr,
-			Fee:    feeToAmount(srcTx.TxFee),
-			Date:   srcTx.Timestamp / 1000,
-			Block:  srcTx.BlockHeight,
-			Status: blockatlas.StatusCompleted,
-			Memo:   srcTx.Memo,
-			Type:   blockatlas.TxAnyAction,
-			Meta: blockatlas.AnyAction{
-				Decimals: coin.Binance().Decimals,
-				Symbol:   tokenSymbol(srcTx.TxAsset),
-				TokenID:  srcTx.TxAsset,
-				Value:    srcTx.getDexValue(),
-			},
-		}}
+func filterTxsByType(txs []blockatlas.Tx, txType blockatlas.TransactionType) []blockatlas.Tx {
+	var result = make([]blockatlas.Tx, 0, len(txs))
+	for _, tx := range txs {
+		if tx.Type == txType {
+			result = append(result, tx)
+		}
 	}
+	return result
+}
 
-	switch srcTx.QuantityTransferType() {
+func normalizeTx(srcTx ExplorerTxs, address string) []blockatlas.Tx {
+	explorerTxType := srcTx.getTransactionType()
+	switch explorerTxType {
 	case SingleTransferOperation:
 		return normalizeSingleTransfer(srcTx, address)
 	case MultiTransferOperation:
@@ -82,6 +73,9 @@ func feeToAmount(fee float64) blockatlas.Amount {
 }
 
 func normalizeSingleTransfer(srcTx ExplorerTxs, address string) blockatlas.TxPage {
+	if srcTx.TxType != TxTransfer {
+		return nil
+	}
 	tx := getBase(srcTx)
 	tx.Direction = srcTx.getDirection(address)
 	bnbCoin := coin.Coins[coin.BNB]
@@ -108,16 +102,7 @@ func normalizeSingleTransfer(srcTx ExplorerTxs, address string) blockatlas.TxPag
 		}
 		return blockatlas.TxPage{tx}
 	}
-
-	tx.Type = blockatlas.TxAnyAction
-	tx.Meta = blockatlas.AnyAction{
-		Decimals: bnbCoin.Decimals,
-		Symbol:   tokenSymbol(srcTx.TxAsset),
-		TokenID:  srcTx.TxAsset,
-		Value:    srcTx.getDexValue(),
-	}
-	return blockatlas.TxPage{tx}
-
+	return nil
 }
 
 func normalizeMultiTransfer(srcTx ExplorerTxs, address string) []blockatlas.Tx {
