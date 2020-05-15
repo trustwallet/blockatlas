@@ -291,31 +291,43 @@
   extURL:  https://api.viewblock.io/v1/zilliqa/addresses/zil1l8ddxvejeam70qang54wnqkgtmlu5mwlgzy64z/txs
 - file:    mock/ext-api-data/post/mock%2Ffio-api%2Fv1%2Fchain%2Fget_pub_address.0001.json
   mockURL: mock/fio-api/v1/chain/get_pub_address
+  reqfile: mock/ext-api-data/post/mock%2Ffio-api%2Fv1%2Fchain%2Fget_pub_address.0001.request_json
 - file:    mock/ext-api-data/post/mock%2Ffio-api%2Fv1%2Fchain%2Fget_pub_address.0002.json
   mockURL: mock/fio-api/v1/chain/get_pub_address
+  reqfile: mock/ext-api-data/post/mock%2Ffio-api%2Fv1%2Fchain%2Fget_pub_address.0002.request_json
 - file:    mock/ext-api-data/post/mock%2Ffio-api%2Fv1%2Fchain%2Fget_pub_address.json
   mockURL: mock/fio-api/v1/chain/get_pub_address
+  reqfile: mock/ext-api-data/post/mock%2Ffio-api%2Fv1%2Fchain%2Fget_pub_address.request_json
 - file:    mock/ext-api-data/post/mock%2Ffio-api%2Fv1%2Fhistory%2Fget_actions.0001.json
   mockURL: mock/fio-api/v1/history/get_actions
+  reqfile: mock/ext-api-data/post/mock%2Ffio-api%2Fv1%2Fhistory%2Fget_actions.0001.request_json
 - file:    mock/ext-api-data/post/mock%2Ffio-api%2Fv1%2Fhistory%2Fget_actions.0002.json
   mockURL: mock/fio-api/v1/history/get_actions
+  reqfile: mock/ext-api-data/post/mock%2Ffio-api%2Fv1%2Fhistory%2Fget_actions.0002.request_json
 - file:    mock/ext-api-data/post/mock%2Ffio-api%2Fv1%2Fhistory%2Fget_actions.json
   mockURL: mock/fio-api/v1/history/get_actions
+  reqfile: mock/ext-api-data/post/mock%2Ffio-api%2Fv1%2Fhistory%2Fget_actions.request_json
 - file:    mock/ext-api-data/post/mock%2Fharmony-api.json
   mockURL: mock/harmony-api
   extURL:  https://api.s0.t.hmny.io
+  reqfile: mock/ext-api-data/post/mock%2Fharmony-api.request_json
 - file:    mock/ext-api-data/post/mock%2Fkusama-api%2Fscan%2Ftransfers.json
   mockURL: mock/kusama-api/scan/transfers
   extURL:  https://kusama.subscan.io/api/scan/transfers
+  reqfile: mock/ext-api-data/post/mock%2Fkusama-api%2Fscan%2Ftransfers.request_json
 - file:    mock/ext-api-data/post/mock%2Fnano-api.json
   mockURL: mock/nano-api
   extURL:  https://nanoverse.io/api/node
+  reqfile: mock/ext-api-data/post/mock%2Fnano-api.request_json
 - file:    mock/ext-api-data/post/mock%2Fnimiq-rpc.json
   mockURL: mock/nimiq-rpc
   extURL:  https://<nimiq_rpc>
+  reqfile: mock/ext-api-data/post/mock%2Fnimiq-rpc.request_json
 - file:    mock/ext-api-data/post/mock%2Ftron-api%2Fwallet%2Fgetaccount.json
   mockURL: mock/tron-api/wallet/getaccount
   extURL:  https://api.trongrid.io/wallet/getaccount
+  reqfile: mock/ext-api-data/post/mock%2Ftron-api%2Fwallet%2Fgetaccount.request_json
 - file:    mock/ext-api-data/post/mock%2Fvechain-api%2Flogs%2Ftransfer.json
   mockURL: mock/vechain-api/logs/transfer
   extURL:  https://vethor-pubnode.digonchain.com/logs/transfer
+  reqfile: mock/ext-api-data/post/mock%2Fvechain-api%2Flogs%2Ftransfer.request_json

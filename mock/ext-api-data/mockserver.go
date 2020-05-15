@@ -15,6 +15,8 @@ import (
 type TestDataEntry struct {
 	Filename   string `yaml:"file"`
 	MockURL    string `yaml:"mockURL"`
+	ExtURL     string `yaml:"extURL,omitempty"`
+	ReqFile    string `yaml:"reqFile,omitempty"`
 }
 
 type TestDataEntryInternal struct {
