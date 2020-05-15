@@ -60,7 +60,7 @@ func matchQueryParams(expected, actual string) bool {
 }
 
 func readFileList(directory string) error {
-	filename := directory + "/files.yaml"
+	filename := directory + "/datafiles.yaml"
 	yamlFile, err := ioutil.ReadFile(filename)
 	if err != nil {
 		log.Fatalf("Could not read index err %v file %v", err.Error(), filename)
@@ -145,8 +145,8 @@ func requestHandler(w http.ResponseWriter, r *http.Request, basedir string) {
 }
 
 func main() {
-	basedir := "../.."
-	if err := readFileList("."); err != nil {
+	basedir := "../"
+	if err := readFileList(".."); err != nil {
 		log.Fatalf("Could not read data file list, err %v", err.Error())
 		return
 	}
