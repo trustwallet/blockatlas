@@ -13,7 +13,10 @@ const emptyToken = ""
 
 func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 	explorerResponse, err := p.GetTokenTxsByAddress(address, emptyToken)
-	return filterTxsByType(explorerResponse, blockatlas.TxTransfer), err
+	if err != nil {
+		return nil, err
+	}
+	return filterTxsByType(explorerResponse, blockatlas.TxTransfer), nil
 }
 
 func (p *Platform) GetTokenTxsByAddress(address, token string) (blockatlas.TxPage, error) {
