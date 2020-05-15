@@ -20,10 +20,12 @@ type TestDataEntry struct {
 }
 
 type TestDataEntryInternal struct {
-	Filename   string
-	MockURL    string
-	ParsedURL  *url.URL
-	Method     string
+	Filename   string   `yaml:"file"`
+	MockURL    string   `yaml:"mockURL"`
+	ExtURL     string   `yaml:"extURL,omitempty"`
+	ParsedURL  *url.URL `yaml:"-"`
+	Method     string   `yaml:"-"`
+	ReqFile    string   `yaml:"reqFile,omitempty"`
 }
 
 var files []TestDataEntryInternal
@@ -57,7 +59,6 @@ func matchQueryParams(expected, actual string) bool {
 	return true
 }
 
-
 func readFileList(directory string) error {
 	filename := directory + "/files.yaml"
 	yamlFile, err := ioutil.ReadFile(filename)
@@ -77,7 +78,7 @@ func readFileList(directory string) error {
 	for _, e := range files1 {
 		parsedURL, err := url.Parse(e.MockURL)
 		if err == nil {
-			files = append(files, TestDataEntryInternal{e.Filename, e.MockURL, parsedURL, "?"})
+			files = append(files, TestDataEntryInternal{e.Filename, e.MockURL, e.ExtURL, parsedURL, "?", e.ReqFile})
 		}
 	}
 	fmt.Printf("Info about %v data files read\n", len(files))
@@ -145,7 +146,6 @@ func requestHandler(w http.ResponseWriter, r *http.Request, basedir string) {
 
 func main() {
 	basedir := "../.."
-	//loadFiles(basedir)
 	if err := readFileList("."); err != nil {
 		log.Fatalf("Could not read data file list, err %v", err.Error())
 		return
