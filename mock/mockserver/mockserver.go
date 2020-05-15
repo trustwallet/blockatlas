@@ -113,6 +113,7 @@ func preprocessRequestJson(j string) string {
 	j = strings.Replace(j, "'", "", -1)
 	j = strings.Replace(j, " ", "", -1)
 	j = strings.Replace(j, "\n", "", -1)
+	j = strings.Replace(j, "\t", "", -1)
 	return j
 }
 
@@ -142,7 +143,7 @@ func matchRequestDataJson(actualReqData, expReqData, fieldDiscriminator string) 
 	if v1r == v2r {
 		return nil
 	}
-	return errors.New("Mismatch in request data, actual " + actualReqData + " expected " + expReqData)
+	return errors.New("Mismatch in request data, actual '" + actualReqData + "' expected '" + expReqData + "'")
 }
 
 func findFileForMockURL(mockURL, queryParams, requestBody string) (TestDataEntryInternal, error) {
@@ -219,7 +220,7 @@ func requestHandler(w http.ResponseWriter, r *http.Request, basedir string) {
 	}
 	// error
 	errorMsg := err.Error()
-	log.Println("ERROR for request:", errorMsg, r.Method, r.URL.Path, body)
+	log.Println("ERROR for request:", errorMsg, r.Method, r.URL.Path, r.URL.RawQuery, body)
 	fmt.Fprintf(w, "{\"error\": \"" + errorMsg + "\", \"url\": \"" + r.URL.Path + "\"")
 }
 

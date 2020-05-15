@@ -49,6 +49,9 @@
 - file: mock/ext-api-data/cosmos-api_staking_delegators_cosmos1dx27g0kzhwej0ekcf2k9hsktcxnmpl7fcehcvq_delegations.json
   mockURL: mock/cosmos-api/staking/delegators/cosmos1dx27g0kzhwej0ekcf2k9hsktcxnmpl7fcehcvq/delegations
   extURL: https://api.cosmos.network/staking/delegators/cosmos1dx27g0kzhwej0ekcf2k9hsktcxnmpl7fcehcvq/delegations
+- file: mock/ext-api-data/cosmos-api_staking_delegators_cosmos1dx27g0kzhwej0ekcf2k9hsktcxnmpl7fcehcvq_delegations.json
+  mockURL: mock/cosmos-api/staking/delegators/cosmos1dx27g0kzhwej0ekcf2k9hsktcxnmpl7fcehcvq/unbonding_delegations
+  extURL: https://api.cosmos.network/staking/delegators/cosmos1dx27g0kzhwej0ekcf2k9hsktcxnmpl7fcehcvq/unbonding_delegations
 - file: mock/ext-api-data/cosmos-api_staking_pool.json
   mockURL: mock/cosmos-api/staking/pool
   extURL: https://api.cosmos.network/staking/pool
@@ -139,6 +142,9 @@
 - file: mock/ext-api-data/kava-api_staking_delegators_kava1l8va9zyl50cpzv447c694k3jndelc9ygtfll2m_delegations.json
   mockURL: mock/kava-api/staking/delegators/kava1l8va9zyl50cpzv447c694k3jndelc9ygtfll2m/delegations
   extURL: https://data.kava.io/staking/delegators/kava1l8va9zyl50cpzv447c694k3jndelc9ygtfll2m/delegations
+- file: mock/ext-api-data/kava-api_staking_delegators_kava1l8va9zyl50cpzv447c694k3jndelc9ygtfll2m_delegations.json
+  mockURL: mock/kava-api/staking/delegators/kava1l8va9zyl50cpzv447c694k3jndelc9ygtfll2m/unbonding_delegations
+  extURL: https://data.kava.io/staking/delegators/kava1l8va9zyl50cpzv447c694k3jndelc9ygtfll2m/unbonding_delegations
 - file: mock/ext-api-data/kava-api_staking_pool.json
   mockURL: mock/kava-api/staking/pool
   extURL: https://data.kava.io/staking/pool
@@ -173,10 +179,10 @@
   mockURL: mock/ontology-api/v2/addresses/AUyL4TZ1zFEcSKDJrjFnD7vsq5iFZMZqT7/transactions?page_number=1&page_size=20
   extURL: https://explorer.ont.io/v2/addresses/AUyL4TZ1zFEcSKDJrjFnD7vsq5iFZMZqT7/transactions?page_number=1&page_size=20
 - file: mock/ext-api-data/opensea-api_api_v1_assets___collection_unstoppable-domains_limit_300_owner_0x84E79D544B4b13bC3560069cfD56A9D5bbE7521d.json
-  mockURL: mock/opensea-api/api/v1/assets/?collection=unstoppable-domains&limit=300&owner=0x84E79D544B4b13bC3560069cfD56A9D5bbE7521d
+  mockURL: mock/opensea-api/api/v1/assets?collection=unstoppable-domains&owner=0x84E79D544B4b13bC3560069cfD56A9D5bbE7521d
   extURL: https://api.opensea.io/api/v1/assets/?collection=unstoppable-domains&limit=300&owner=0x84E79D544B4b13bC3560069cfD56A9D5bbE7521d
 - file: mock/ext-api-data/opensea-api_api_v1_collections___asset_owner_0x84E79D544B4b13bC3560069cfD56A9D5bbE7521d_limit_1000.json
-  mockURL: mock/opensea-api/api/v1/collections/?asset_owner=0x84E79D544B4b13bC3560069cfD56A9D5bbE7521d&limit=1000
+  mockURL: mock/opensea-api/api/v1/collections?asset_owner=0x84E79D544B4b13bC3560069cfD56A9D5bbE7521d
   extURL: https://api.opensea.io/api/v1/collections/?asset_owner=0x84E79D544B4b13bC3560069cfD56A9D5bbE7521d&limit=1000
 - file: mock/ext-api-data/poa-api_tokens__address_0x0875BCab22dE3d02402bc38aEe4104e1239374a7.json
   mockURL: mock/poa-api/tokens?address=0x0875BCab22dE3d02402bc38aEe4104e1239374a7
@@ -301,16 +307,20 @@
 - file: mock/ext-api-data/fio-api_v1_history_get_actions.0001.json
   mockURL: mock/fio-api/v1/history/get_actions
   reqFile: mock/ext-api-data/fio-api_v1_history_get_actions.0001.request_json
+  reqField: account_name
 - file: mock/ext-api-data/fio-api_v1_history_get_actions.0002.json
   mockURL: mock/fio-api/v1/history/get_actions
   reqFile: mock/ext-api-data/fio-api_v1_history_get_actions.0002.request_json
+  reqField: account_name
 - file: mock/ext-api-data/fio-api_v1_history_get_actions.json
   mockURL: mock/fio-api/v1/history/get_actions
   reqFile: mock/ext-api-data/fio-api_v1_history_get_actions.request_json
+  reqField: account_name
 - file: mock/ext-api-data/harmony-api.json
   mockURL: mock/harmony-api
   extURL: https://api.s0.t.hmny.io
   reqFile: mock/ext-api-data/harmony-api.request_json
+  reqField: address
 - file: mock/ext-api-data/kusama-api_scan_transfers.json
   mockURL: mock/kusama-rpc/scan/transfers
   extURL: https://kusama.subscan.io/api/scan/transfers
@@ -323,6 +333,7 @@
   mockURL: mock/nimiq-rpc
   extURL: https://<nimiq_rpc>
   reqFile: mock/ext-api-data/nimiq-rpc.request_json
+  reqField: params
 - file: mock/ext-api-data/tron-api_wallet_getaccount.json
   mockURL: mock/tron-api/wallet/getaccount
   extURL: https://api.trongrid.io/wallet/getaccount
@@ -331,6 +342,7 @@
   mockURL: mock/vechain-api/logs/transfer
   extURL: https://vethor-pubnode.digonchain.com/logs/transfer
   reqFile: mock/ext-api-data/vechain-api_logs_transfer.request_json
+  reqField: sender
 - file: mock/ext-api-data/eth-rpc__eth_call_data_0x0178b8bfa538cd174de170e8062c97c25c40a7ceb56aca81b12e6f5afc46f5a429999aa4.json
   mockURL: mock/eth-rpc
   extURL:  https://<eth-rpc>
