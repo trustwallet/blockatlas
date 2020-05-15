@@ -251,7 +251,7 @@ func getTxsBatches(txs blockatlas.Txs, sizeUint uint) []blockatlas.Txs {
 
 func publish(params Params, txs blockatlas.Txs, wg *sync.WaitGroup) {
 	defer wg.Done()
-	body, err := json.Marshal(txs)
+	body, err := json.Marshal(txs[0])
 	if err != nil {
 		logger.Error(err, logger.Params{"coin": params.Api.Coin().Handle})
 		return

@@ -53,6 +53,13 @@ func normalizeTx(srcTx ExplorerTxs, address string) []blockatlas.Tx {
 			Block:  srcTx.BlockHeight,
 			Status: blockatlas.StatusCompleted,
 			Memo:   srcTx.Memo,
+			Type:   blockatlas.TxAnyAction,
+			Meta: blockatlas.AnyAction{
+				Decimals: coin.Binance().Decimals,
+				Symbol:   tokenSymbol(srcTx.TxAsset),
+				TokenID:  srcTx.TxAsset,
+				Value:    srcTx.getDexValue(),
+			},
 		}}
 	}
 
@@ -102,7 +109,15 @@ func normalizeSingleTransfer(srcTx ExplorerTxs, address string) blockatlas.TxPag
 		return blockatlas.TxPage{tx}
 	}
 
-	return nil
+	tx.Type = blockatlas.TxAnyAction
+	tx.Meta = blockatlas.AnyAction{
+		Decimals: bnbCoin.Decimals,
+		Symbol:   tokenSymbol(srcTx.TxAsset),
+		TokenID:  srcTx.TxAsset,
+		Value:    srcTx.getDexValue(),
+	}
+	return blockatlas.TxPage{tx}
+
 }
 
 func normalizeMultiTransfer(srcTx ExplorerTxs, address string) []blockatlas.Tx {

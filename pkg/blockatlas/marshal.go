@@ -47,9 +47,7 @@ func (t *Tx) UnmarshalJSON(data []byte) error {
 	default:
 		return errors.E("unsupported tx type", errors.Params{"type": t.Type})
 	}
-	if raw == nil {
-		return nil
-	}
+
 	err := json.Unmarshal(raw, t.Meta)
 	if err != nil {
 		return err
@@ -77,8 +75,6 @@ func (t *Tx) MarshalJSON() ([]byte, error) {
 	case ContractCall, *ContractCall:
 		t.Type = TxContractCall
 	case AnyAction, *AnyAction:
-		t.Type = TxAnyAction
-	case nil:
 		t.Type = TxAnyAction
 	default:
 		return nil, errors.E("unsupported tx metadata", errors.Params{"meta": t.Meta})
