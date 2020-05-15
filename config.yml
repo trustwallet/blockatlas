@@ -37,11 +37,10 @@ observer:
 postgres:
   uri: postgresql://user:pass@localhost/my_db?sslmode=disable
 
-# [BNB] Binance DEX: https://wallet.binance.org
-#       Binance Chain: https://explorer.binance.org
+# [BNB] Binance DEX: https://www.binance.org/
 binance:
-  api: https://explorer.binance.org/api/v1
-  dex: https://dex.binance.org/api
+  api: https://dex.binance.org/api
+  explorer: https://explorer.binance.org/api
 
 # [NIM] Nimiq: https://nimiq.com
 #nimiq:

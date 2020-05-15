@@ -64,4 +64,32 @@ func TestFloat64toString(t *testing.T) {
 	assert.Equal(t, Float64toString(1), "1")
 	assert.Equal(t, Float64toString(1.1), "1.1")
 	assert.Equal(t, Float64toString(1.015), "1.015")
+	assert.Equal(t, Float64toString(2800.00000000), "2800")
+	assert.Equal(t, Float64toString(0.00037500), "0.000375")
+}
+
+func TestStringNumberToFloat64(t *testing.T) {
+	var tests = []struct {
+		stringNumber string
+		expect       float64
+		ecpectErr    bool
+	}{
+		{"0.29970000", 0.2997, false},
+		{"0.00037500", 0.000375, false},
+		{"1.0", 1, false},
+		{"1", 1, false},
+		{"0", 0, false},
+		{"23.12", 23.120, true},
+	}
+
+	for _, tt := range tests {
+		t.Run("", func(t *testing.T) {
+			actual, err := StringNumberToFloat64(tt.stringNumber)
+			if tt.ecpectErr {
+				assert.Nil(t, err)
+			} else {
+				assert.Equal(t, tt.expect, actual)
+			}
+		})
+	}
 }
