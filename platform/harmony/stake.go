@@ -108,7 +108,7 @@ func NormalizeDelegations(delegations []Delegation, validators blockatlas.Valida
 func getDetails(apr float64) blockatlas.StakingDetails {
 	return blockatlas.StakingDetails{
 		Reward:        blockatlas.StakingReward{Annual: apr},
-		MinimumAmount: blockatlas.Amount("0"),
+		MinimumAmount: blockatlas.Amount("1000"),
 		LockTime:      lockTime,
 		Type:          blockatlas.DelegationTypeDelegate,
 	}
