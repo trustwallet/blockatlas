@@ -158,7 +158,7 @@ func main() {
 	})
 
 	port := 3347
-	log.Printf("About to listening on port %v", port)
+	log.Printf("About to listen on port %v", port)
 	err := http.ListenAndServe(":" + strconv.Itoa(port), nil)
 	if err != nil {
 		log.Fatalf("Could not listen on port %v", port)

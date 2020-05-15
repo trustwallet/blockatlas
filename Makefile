@@ -133,7 +133,8 @@ integration: go-integration
 ## start-mockserver: Start Mockserver with mocks of external services.  Test that it is operational (nasty case if port is taken).
 start-mockserver: stop-mockserver
 	@echo "  >  Starting Mockserver"
-	@-go run mock/mockserver/mockserver.go & echo $$! > $(PID_MOCKSERVER)
+	GOBIN=$(GOBIN) go build -o $(GOBIN)/mockserver/mockserver ./mock/mockserver
+	@-./bin/mockserver/mockserver & echo $$! > $(PID_MOCKSERVER)
 	@echo "  >  Mockserver started with PID: " `cat $(PID_MOCKSERVER)`
 	@sleep 1
 	# Check that mock is running, by making a test with simple call (e.g. may fail due to unavailable port)
