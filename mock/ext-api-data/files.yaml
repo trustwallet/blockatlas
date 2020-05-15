@@ -1,218 +1,321 @@
-- file: get/mock%2Faeternity-api%2Fmiddleware%2Ftransactions%2Faccount%2Fak_2WGWYMgWy1opZxgA8AVzGCTavCQyUBtbKx5SrCX6E4kmDZMtJb.json
+- file:    mock/ext-api-data/get/mock%2Faeternity-api%2Fmiddleware%2Ftransactions%2Faccount%2Fak_2WGWYMgWy1opZxgA8AVzGCTavCQyUBtbKx5SrCX6E4kmDZMtJb.json
   mockURL: mock/aeternity-api/middleware/transactions/account/ak_2WGWYMgWy1opZxgA8AVzGCTavCQyUBtbKx5SrCX6E4kmDZMtJb
-- file: get/mock%2Faion-api%2FgetTransactionsByAddress%3FaccountAddress%3D0xa04f0117864ccf5013861a89f08c6fc790284d72356c8a362025d31b855ed6ed%26size%3D25.json
+  extURL:  https://mdw.aepps.com/middleware/transactions/account/ak_2WGWYMgWy1opZxgA8AVzGCTavCQyUBtbKx5SrCX6E4kmDZMtJb
+- file:    mock/ext-api-data/get/mock%2Faion-api%2FgetTransactionsByAddress%3FaccountAddress%3D0xa04f0117864ccf5013861a89f08c6fc790284d72356c8a362025d31b855ed6ed%26size%3D25.json
   mockURL: mock/aion-api/getTransactionsByAddress?accountAddress=0xa04f0117864ccf5013861a89f08c6fc790284d72356c8a362025d31b855ed6ed&size=25
-- file: get/mock%2Falgorand-api%2Fv1%2Faccount%2F4EZFQABCVQTHQCK3HQBIYGC4NV2VM42FZHEFTVH77ROG4ZGREC6Y7V5T2U%2Ftransactions.json
+  extURL:  https://mainnet-api.theoan.com/aion/dashboard/getTransactionsByAddress?accountAddress=0xa04f0117864ccf5013861a89f08c6fc790284d72356c8a362025d31b855ed6ed&size=25
+- file:    mock/ext-api-data/get/mock%2Falgorand-api%2Fv1%2Faccount%2F4EZFQABCVQTHQCK3HQBIYGC4NV2VM42FZHEFTVH77ROG4ZGREC6Y7V5T2U%2Ftransactions.json
   mockURL: mock/algorand-api/v1/account/4EZFQABCVQTHQCK3HQBIYGC4NV2VM42FZHEFTVH77ROG4ZGREC6Y7V5T2U/transactions
-- file: get/mock%2Falgorand-api%2Fv1%2Fblock%2F5478346.json
+  extURL:  https://mainnet-algorand.api.purestake.io/ps1/v1/account/4EZFQABCVQTHQCK3HQBIYGC4NV2VM42FZHEFTVH77ROG4ZGREC6Y7V5T2U/transactions
+- file:    mock/ext-api-data/get/mock%2Falgorand-api%2Fv1%2Fblock%2F5478346.json
   mockURL: mock/algorand-api/v1/block/5478346
-- file: get/mock%2Fbinance-api%2Fv1%2Ftx%3FtxHash%3DF53BB470A3B6B83977CFFE5D5F9937FB1CBB8785FBE818D9B38AD43F3ECD82BC.json
+  extURL:  https://mainnet-algorand.api.purestake.io/ps1/v1/block/5478346
+- file:    mock/ext-api-data/get/mock%2Fbinance-api%2Fv1%2Ftx%3FtxHash%3DF53BB470A3B6B83977CFFE5D5F9937FB1CBB8785FBE818D9B38AD43F3ECD82BC.json
   mockURL: mock/binance-api/v1/tx?txHash=F53BB470A3B6B83977CFFE5D5F9937FB1CBB8785FBE818D9B38AD43F3ECD82BC
-- file: get/mock%2Fbinance-api%2Fv1%2Ftxs%3Faddress%3Dbnb1563k58pc3keeuwkhlrxwz7sdsetyn9l7gdnznp%26page%3D1%26rows%3D20%26txAsset%3DBNB%26txType%3DTRANSFER.json
+  extURL:  https://explorer.binance.org/api/v1/v1/tx?txHash=F53BB470A3B6B83977CFFE5D5F9937FB1CBB8785FBE818D9B38AD43F3ECD82BC
+- file:    mock/ext-api-data/get/mock%2Fbinance-api%2Fv1%2Ftxs%3Faddress%3Dbnb1563k58pc3keeuwkhlrxwz7sdsetyn9l7gdnznp%26page%3D1%26rows%3D20%26txAsset%3DBNB%26txType%3DTRANSFER.json
   mockURL: mock/binance-api/v1/txs?address=bnb1563k58pc3keeuwkhlrxwz7sdsetyn9l7gdnznp&page=1&rows=20&txAsset=BNB&txType=TRANSFER
-- file: get/mock%2Fbinance-api%2Fv1%2Ftxs%3Faddress%3Dbnb1mnf0g6zhy2rpy63w8ryc6yp77s0fmqfyzjtkvd%26page%3D1%26rows%3D20%26txAsset%3DBNB%26txType%3DTRANSFER.json
+  extURL:  https://explorer.binance.org/api/v1/v1/txs?address=bnb1563k58pc3keeuwkhlrxwz7sdsetyn9l7gdnznp&page=1&rows=20&txAsset=BNB&txType=TRANSFER
+- file:    mock/ext-api-data/get/mock%2Fbinance-api%2Fv1%2Ftxs%3Faddress%3Dbnb1mnf0g6zhy2rpy63w8ryc6yp77s0fmqfyzjtkvd%26page%3D1%26rows%3D20%26txAsset%3DBNB%26txType%3DTRANSFER.json
   mockURL: mock/binance-api/v1/txs?address=bnb1mnf0g6zhy2rpy63w8ryc6yp77s0fmqfyzjtkvd&page=1&rows=20&txAsset=BNB&txType=TRANSFER
-- file: get/mock%2Fbinance-dex%2Fv1%2Faccount%2Fbnb1jxfh2g85q3v0tdq56fnevx6xcxtcnhtsmcu64m.json
+  extURL:  https://explorer.binance.org/api/v1/v1/txs?address=bnb1mnf0g6zhy2rpy63w8ryc6yp77s0fmqfyzjtkvd&page=1&rows=20&txAsset=BNB&txType=TRANSFER
+- file:    mock/ext-api-data/get/mock%2Fbinance-dex%2Fv1%2Faccount%2Fbnb1jxfh2g85q3v0tdq56fnevx6xcxtcnhtsmcu64m.json
   mockURL: mock/binance-dex/v1/account/bnb1jxfh2g85q3v0tdq56fnevx6xcxtcnhtsmcu64m
-- file: get/mock%2Fbinance-dex%2Fv1%2Ftokens%3Flimit%3D1000%26offset%3D0.json
+  extURL:  https://dex.binance.org/api/v1/account/bnb1jxfh2g85q3v0tdq56fnevx6xcxtcnhtsmcu64m
+- file:    mock/ext-api-data/get/mock%2Fbinance-dex%2Fv1%2Ftokens%3Flimit%3D1000%26offset%3D0.json
   mockURL: mock/binance-dex/v1/tokens?limit=1000&offset=0
-- file: get/mock%2Fbitcoin-api%2Fv2%2Faddress%2Fbc1qrfr44n2j4czd5c9txwlnw0yj2h82x9566fglqj%3Fdetails%3Dtxs.json
+  extURL:  https://dex.binance.org/api/v1/tokens?limit=1000&offset=0
+- file:    mock/ext-api-data/get/mock%2Fbitcoin-api%2Fv2%2Faddress%2Fbc1qrfr44n2j4czd5c9txwlnw0yj2h82x9566fglqj%3Fdetails%3Dtxs.json
   mockURL: mock/bitcoin-api/v2/address/bc1qrfr44n2j4czd5c9txwlnw0yj2h82x9566fglqj?details=txs
-- file: get/mock%2Fbitcoin-api%2Fv2%2Fxpub%2Fzpub6ruK9k6YGm8BRHWvTiQcrEPnFkuRDJhR7mPYzV2LDvjpLa5CuGgrhCYVZjMGcLcFqv9b2WvsFtY2Gb3xq8NVq8qhk9veozrA2W9QaWtihrC%3Fdetails%3Dtxs.json
+  extURL:  https://btc1.trezor.io/api/v2/address/bc1qrfr44n2j4czd5c9txwlnw0yj2h82x9566fglqj?details=txs
+- file:    mock/ext-api-data/get/mock%2Fbitcoin-api%2Fv2%2Fxpub%2Fzpub6ruK9k6YGm8BRHWvTiQcrEPnFkuRDJhR7mPYzV2LDvjpLa5CuGgrhCYVZjMGcLcFqv9b2WvsFtY2Gb3xq8NVq8qhk9veozrA2W9QaWtihrC%3Fdetails%3Dtxs.json
   mockURL: mock/bitcoin-api/v2/xpub/zpub6ruK9k6YGm8BRHWvTiQcrEPnFkuRDJhR7mPYzV2LDvjpLa5CuGgrhCYVZjMGcLcFqv9b2WvsFtY2Gb3xq8NVq8qhk9veozrA2W9QaWtihrC?details=txs
-- file: get/mock%2Fbitcoincash-api%2Fv2%2Faddress%2Fbitcoincash%3Aqq07l6rr5lsdm3m80qxw80ku2ex0tj76vvsxpvmgme%3Fdetails%3Dtxs.json
+  extURL:  https://btc1.trezor.io/api/v2/xpub/zpub6ruK9k6YGm8BRHWvTiQcrEPnFkuRDJhR7mPYzV2LDvjpLa5CuGgrhCYVZjMGcLcFqv9b2WvsFtY2Gb3xq8NVq8qhk9veozrA2W9QaWtihrC?details=txs
+- file:    mock/ext-api-data/get/mock%2Fbitcoincash-api%2Fv2%2Faddress%2Fbitcoincash%3Aqq07l6rr5lsdm3m80qxw80ku2ex0tj76vvsxpvmgme%3Fdetails%3Dtxs.json
   mockURL: mock/bitcoincash-api/v2/address/bitcoincash:qq07l6rr5lsdm3m80qxw80ku2ex0tj76vvsxpvmgme?details=txs
-- file: get/mock%2Fbitcoincash-api%2Fv2%2Fxpub%2Fxpub6Bq3UUphocwroXkhA9sn8ACnZpJNuwaBehgo7WbDi2DULYnvT72Uzgsv9cE5EiP8ThDYdMyZREfbpkUY4KZ88ZaUQxXciBcZ1soSi1d8xtX%3Fdetails%3Dtxs.json
+  extURL:  https://<bch_rpc>/api/v2/address/bitcoincash:qq07l6rr5lsdm3m80qxw80ku2ex0tj76vvsxpvmgme?details=txs
+- file:    mock/ext-api-data/get/mock%2Fbitcoincash-api%2Fv2%2Fxpub%2Fxpub6Bq3UUphocwroXkhA9sn8ACnZpJNuwaBehgo7WbDi2DULYnvT72Uzgsv9cE5EiP8ThDYdMyZREfbpkUY4KZ88ZaUQxXciBcZ1soSi1d8xtX%3Fdetails%3Dtxs.json
   mockURL: mock/bitcoincash-api/v2/xpub/xpub6Bq3UUphocwroXkhA9sn8ACnZpJNuwaBehgo7WbDi2DULYnvT72Uzgsv9cE5EiP8ThDYdMyZREfbpkUY4KZ88ZaUQxXciBcZ1soSi1d8xtX?details=txs
-- file: get/mock%2Fcallisto-api%2Ftokens%3Faddress%3D0xc3d5b69f65027ddf48f894e6e90121293a2f6615.json
+  extURL:  https://<bch_rpc>/api/v2/xpub/xpub6Bq3UUphocwroXkhA9sn8ACnZpJNuwaBehgo7WbDi2DULYnvT72Uzgsv9cE5EiP8ThDYdMyZREfbpkUY4KZ88ZaUQxXciBcZ1soSi1d8xtX?details=txs
+- file:    mock/ext-api-data/get/mock%2Fcallisto-api%2Ftokens%3Faddress%3D0xc3d5b69f65027ddf48f894e6e90121293a2f6615.json
   mockURL: mock/callisto-api/tokens?address=0xc3d5b69f65027ddf48f894e6e90121293a2f6615
-- file: get/mock%2Fcallisto-api%2Ftransactions%3Faddress%3D0x3083a7ec44ca2b038d4be4b0798152f948f0f3d7.json
+  extURL:  https://<callisto_rpc>/tokens?address=0xc3d5b69f65027ddf48f894e6e90121293a2f6615
+- file:    mock/ext-api-data/get/mock%2Fcallisto-api%2Ftransactions%3Faddress%3D0x3083a7ec44ca2b038d4be4b0798152f948f0f3d7.json
   mockURL: mock/callisto-api/transactions?address=0x3083a7ec44ca2b038d4be4b0798152f948f0f3d7
-- file: get/mock%2Fcosmos-api%2Fminting%2Finflation.json
+  extURL:  https://<callisto_rpc>/transactions?address=0x3083a7ec44ca2b038d4be4b0798152f948f0f3d7
+- file:    mock/ext-api-data/get/mock%2Fcosmos-api%2Fminting%2Finflation.json
   mockURL: mock/cosmos-api/minting/inflation
-- file: get/mock%2Fcosmos-api%2Fstaking%2Fdelegators%2Fcosmos1dx27g0kzhwej0ekcf2k9hsktcxnmpl7fcehcvq%2Fdelegations.json
+  extURL:  https://api.cosmos.network/minting/inflation
+- file:    mock/ext-api-data/get/mock%2Fcosmos-api%2Fstaking%2Fdelegators%2Fcosmos1dx27g0kzhwej0ekcf2k9hsktcxnmpl7fcehcvq%2Fdelegations.json
   mockURL: mock/cosmos-api/staking/delegators/cosmos1dx27g0kzhwej0ekcf2k9hsktcxnmpl7fcehcvq/delegations
-- file: get/mock%2Fcosmos-api%2Fstaking%2Fpool.json
+  extURL:  https://api.cosmos.network/staking/delegators/cosmos1dx27g0kzhwej0ekcf2k9hsktcxnmpl7fcehcvq/delegations
+- file:    mock/ext-api-data/get/mock%2Fcosmos-api%2Fstaking%2Fpool.json
   mockURL: mock/cosmos-api/staking/pool
-- file: get/mock%2Fcosmos-api%2Fstaking%2Fvalidators%3Fstatus%3Dbonded.json
+  extURL:  https://api.cosmos.network/staking/pool
+- file:    mock/ext-api-data/get/mock%2Fcosmos-api%2Fstaking%2Fvalidators%3Fstatus%3Dbonded.json
   mockURL: mock/cosmos-api/staking/validators?status=bonded
-- file: get/mock%2Fcosmos-api%2Ftxs%3Flimit%3D25%26message.sender%3Dcosmos1dx27g0kzhwej0ekcf2k9hsktcxnmpl7fcehcvq%26page%3D1.json
+  extURL:  https://api.cosmos.network/staking/validators?status=bonded
+- file:    mock/ext-api-data/get/mock%2Fcosmos-api%2Ftxs%3Flimit%3D25%26message.sender%3Dcosmos1dx27g0kzhwej0ekcf2k9hsktcxnmpl7fcehcvq%26page%3D1.json
   mockURL: mock/cosmos-api/txs?limit=25&message.sender=cosmos1dx27g0kzhwej0ekcf2k9hsktcxnmpl7fcehcvq&page=1
-- file: get/mock%2Fcosmos-api%2Ftxs%3Flimit%3D25%26page%3D1%26transfer.recipient%3Dcosmos1dx27g0kzhwej0ekcf2k9hsktcxnmpl7fcehcvq.json
+  extURL:  https://api.cosmos.network/txs?limit=25&message.sender=cosmos1dx27g0kzhwej0ekcf2k9hsktcxnmpl7fcehcvq&page=1
+- file:    mock/ext-api-data/get/mock%2Fcosmos-api%2Ftxs%3Flimit%3D25%26page%3D1%26transfer.recipient%3Dcosmos1dx27g0kzhwej0ekcf2k9hsktcxnmpl7fcehcvq.json
   mockURL: mock/cosmos-api/txs?limit=25&page=1&transfer.recipient=cosmos1dx27g0kzhwej0ekcf2k9hsktcxnmpl7fcehcvq
-- file: get/mock%2Fcosmos-api%2Ftxs%3Flimit%3D25%26page%3D1%26transfer.recipient%3Dcosmos1dx27g0kzhwej0ekcf2k9hsktcxnmpl7fcehcvqtors%3Fstatus%3Dbonded.json
+  extURL:  https://api.cosmos.network/txs?limit=25&page=1&transfer.recipient=cosmos1dx27g0kzhwej0ekcf2k9hsktcxnmpl7fcehcvq
+- file:    mock/ext-api-data/get/mock%2Fcosmos-api%2Ftxs%3Flimit%3D25%26page%3D1%26transfer.recipient%3Dcosmos1dx27g0kzhwej0ekcf2k9hsktcxnmpl7fcehcvqtors%3Fstatus%3Dbonded.json
   mockURL: mock/cosmos-api/txs?limit=25&page=1&transfer.recipient=cosmos1dx27g0kzhwej0ekcf2k9hsktcxnmpl7fcehcvqtors?status=bonded
-- file: get/mock%2Fdash-api%2Fv2%2Faddress%2FXrcbsQdrFYEzbqA9nCJi8zDtnRZzNKkCtG%3Fdetails%3Dtxs.json
+  extURL:  https://api.cosmos.network/txs?limit=25&page=1&transfer.recipient=cosmos1dx27g0kzhwej0ekcf2k9hsktcxnmpl7fcehcvqtors?status=bonded
+- file:    mock/ext-api-data/get/mock%2Fdash-api%2Fv2%2Faddress%2FXrcbsQdrFYEzbqA9nCJi8zDtnRZzNKkCtG%3Fdetails%3Dtxs.json
   mockURL: mock/dash-api/v2/address/XrcbsQdrFYEzbqA9nCJi8zDtnRZzNKkCtG?details=txs
-- file: get/mock%2Fdash-api%2Fv2%2Fxpub%2Fxpub6CKAjCUKKPW7bzYEG5mzRsmzyTRp7XzauqFWNmpGVNqMqsSQpLMCN3ygEmD6ZEGVocNDrDhE7SeGot78noEWpwPDbJjfxREHC848sxNrUkD%3Fdetails%3Dtxs.json
-  mockURL: mock/dash-api/v2/xpub/xpub6CKAjCUKKPW7bzYEG5mzRsmzyTRp7XzauqFWNmpGVNqMqsSQpLMCN3ygEmD6ZEGVocNDrDhE7SeGot78noEWpwPDbJjfxREHC848sxNrUkD?details=txs&pageSize=25&tokens=derived
-- file: get/mock%2Fdecred-api%2Fv2%2Faddress%2FDsTxPUVFxXeNgu5fzozr4mTR4tqqMaKcvpY%3Fdetails%3Dtxs.json
+  extURL:  https://dash1.trezor.io/api/v2/address/XrcbsQdrFYEzbqA9nCJi8zDtnRZzNKkCtG?details=txs
+- file:    mock/ext-api-data/get/mock%2Fdash-api%2Fv2%2Fxpub%2Fxpub6CKAjCUKKPW7bzYEG5mzRsmzyTRp7XzauqFWNmpGVNqMqsSQpLMCN3ygEmD6ZEGVocNDrDhE7SeGot78noEWpwPDbJjfxREHC848sxNrUkD%3Fdetails%3Dtxs.json
+  mockURL: mock/dash-api/v2/xpub/xpub6CKAjCUKKPW7bzYEG5mzRsmzyTRp7XzauqFWNmpGVNqMqsSQpLMCN3ygEmD6ZEGVocNDrDhE7SeGot78noEWpwPDbJjfxREHC848sxNrUkD?details=txs
+  extURL:  https://dash1.trezor.io/api/v2/xpub/xpub6CKAjCUKKPW7bzYEG5mzRsmzyTRp7XzauqFWNmpGVNqMqsSQpLMCN3ygEmD6ZEGVocNDrDhE7SeGot78noEWpwPDbJjfxREHC848sxNrUkD?details=txs
+- file:    mock/ext-api-data/get/mock%2Fdecred-api%2Fv2%2Faddress%2FDsTxPUVFxXeNgu5fzozr4mTR4tqqMaKcvpY%3Fdetails%3Dtxs.json
   mockURL: mock/decred-api/v2/address/DsTxPUVFxXeNgu5fzozr4mTR4tqqMaKcvpY?details=txs
-- file: get/mock%2Fdecred-api%2Fv2%2Fxpub%2FdpubZFf1tYMxcku9nvDRxnYdE4yrEESrkuQFRq5RwA4KoYQKpDSRszN2emePTwLgfQpd4mZHGrHbQkKPZdjH1BcopomXRnr5Gt43rjpNEfeuJLN%3Fdetails%3Dtxs.json
+  extURL:  https://blockbook.decred.org:9161/api/v2/address/DsTxPUVFxXeNgu5fzozr4mTR4tqqMaKcvpY?details=txs
+- file:    mock/ext-api-data/get/mock%2Fdecred-api%2Fv2%2Fxpub%2FdpubZFf1tYMxcku9nvDRxnYdE4yrEESrkuQFRq5RwA4KoYQKpDSRszN2emePTwLgfQpd4mZHGrHbQkKPZdjH1BcopomXRnr5Gt43rjpNEfeuJLN%3Fdetails%3Dtxs.json
   mockURL: mock/decred-api/v2/xpub/dpubZFf1tYMxcku9nvDRxnYdE4yrEESrkuQFRq5RwA4KoYQKpDSRszN2emePTwLgfQpd4mZHGrHbQkKPZdjH1BcopomXRnr5Gt43rjpNEfeuJLN?details=txs
-- file: get/mock%2Fdigibyte-api%2Fv2%2Faddress%2FDEs1RJKuASSjfphFJdxX9eidrjWewMZgAi%3Fdetails%3Dtxs.json
+  extURL:  https://blockbook.decred.org:9161/api/v2/xpub/dpubZFf1tYMxcku9nvDRxnYdE4yrEESrkuQFRq5RwA4KoYQKpDSRszN2emePTwLgfQpd4mZHGrHbQkKPZdjH1BcopomXRnr5Gt43rjpNEfeuJLN?details=txs
+- file:    mock/ext-api-data/get/mock%2Fdigibyte-api%2Fv2%2Faddress%2FDEs1RJKuASSjfphFJdxX9eidrjWewMZgAi%3Fdetails%3Dtxs.json
   mockURL: mock/digibyte-api/v2/address/DEs1RJKuASSjfphFJdxX9eidrjWewMZgAi?details=txs
-- file: get/mock%2Fdigibyte-api%2Fv2%2Fxpub%2Fzpub6ricE56nzsDeTAVo4w68vQQ3tRvR6C18JjKVsgbiRFjEawGV9SuS2gfkpm5qFxjbTNPPuvAA3cqRsxNHxFwVnpYD2Lawjtb3wowbFdwmjow%3Fdetails%3Dtxs.json
+  extURL:  https://dgb1.trezor.io/api/v2/address/DEs1RJKuASSjfphFJdxX9eidrjWewMZgAi?details=txs
+- file:    mock/ext-api-data/get/mock%2Fdigibyte-api%2Fv2%2Fxpub%2Fzpub6ricE56nzsDeTAVo4w68vQQ3tRvR6C18JjKVsgbiRFjEawGV9SuS2gfkpm5qFxjbTNPPuvAA3cqRsxNHxFwVnpYD2Lawjtb3wowbFdwmjow%3Fdetails%3Dtxs.json
   mockURL: mock/digibyte-api/v2/xpub/zpub6ricE56nzsDeTAVo4w68vQQ3tRvR6C18JjKVsgbiRFjEawGV9SuS2gfkpm5qFxjbTNPPuvAA3cqRsxNHxFwVnpYD2Lawjtb3wowbFdwmjow?details=txs
-- file: get/mock%2Fdoge-api%2Fv2%2Faddress%2FD5dAUAx3Ezg1q4dRgzKTBsxp4VJietWkDh%3Fdetails%3Dtxs.json
+  extURL:  https://dgb1.trezor.io/api/v2/xpub/zpub6ricE56nzsDeTAVo4w68vQQ3tRvR6C18JjKVsgbiRFjEawGV9SuS2gfkpm5qFxjbTNPPuvAA3cqRsxNHxFwVnpYD2Lawjtb3wowbFdwmjow?details=txs
+- file:    mock/ext-api-data/get/mock%2Fdoge-api%2Fv2%2Faddress%2FD5dAUAx3Ezg1q4dRgzKTBsxp4VJietWkDh%3Fdetails%3Dtxs.json
   mockURL: mock/doge-api/v2/address/D5dAUAx3Ezg1q4dRgzKTBsxp4VJietWkDh?details=txs
-- file: get/mock%2Fdoge-api%2Fv2%2Fxpub%2Fdgub8rceyfsEvGDexmvJcBqiKBrmuxWGgYJxHjtbouHTwTfQrCQcMjxyNf6vUPY4dUp23QtReFy6WGedutBk9XUaYNupUqVAZcweqGhfsudUELN%3Fdetails%3Dtxs.json
+  extURL:  https://doge1.trezor.io/api/v2/address/D5dAUAx3Ezg1q4dRgzKTBsxp4VJietWkDh?details=txs
+- file:    mock/ext-api-data/get/mock%2Fdoge-api%2Fv2%2Fxpub%2Fdgub8rceyfsEvGDexmvJcBqiKBrmuxWGgYJxHjtbouHTwTfQrCQcMjxyNf6vUPY4dUp23QtReFy6WGedutBk9XUaYNupUqVAZcweqGhfsudUELN%3Fdetails%3Dtxs.json
   mockURL: mock/doge-api/v2/xpub/dgub8rceyfsEvGDexmvJcBqiKBrmuxWGgYJxHjtbouHTwTfQrCQcMjxyNf6vUPY4dUp23QtReFy6WGedutBk9XUaYNupUqVAZcweqGhfsudUELN?details=txs
-- file: get/mock%2Feth-api%2Ftokens%3Faddress%3D0x0875BCab22dE3d02402bc38aEe4104e1239374a7.json
+  extURL:  https://doge1.trezor.io/api/v2/xpub/dgub8rceyfsEvGDexmvJcBqiKBrmuxWGgYJxHjtbouHTwTfQrCQcMjxyNf6vUPY4dUp23QtReFy6WGedutBk9XUaYNupUqVAZcweqGhfsudUELN?details=txs
+- file:    mock/ext-api-data/get/mock%2Feth-api%2Ftokens%3Faddress%3D0x0875BCab22dE3d02402bc38aEe4104e1239374a7.json
   mockURL: mock/eth-api/tokens?address=0x0875BCab22dE3d02402bc38aEe4104e1239374a7
-- file: get/mock%2Feth-api%2Ftransactions%3Faddress%3D0x0875BCab22dE3d02402bc38aEe4104e1239374a7.json
+  extURL:  https://localhost:4567/tokens?address=0x0875BCab22dE3d02402bc38aEe4104e1239374a7
+- file:    mock/ext-api-data/get/mock%2Feth-api%2Ftransactions%3Faddress%3D0x0875BCab22dE3d02402bc38aEe4104e1239374a7.json
   mockURL: mock/eth-api/transactions?address=0x0875BCab22dE3d02402bc38aEe4104e1239374a7
-- file: get/mock%2Feth-blockbook-api%2Fv2%2Faddress%2F0x0875BCab22dE3d02402bc38aEe4104e1239374a7%3Fdetails%3DtokenBalances.json
+  extURL:  https://localhost:4567/transactions?address=0x0875BCab22dE3d02402bc38aEe4104e1239374a7
+- file:    mock/ext-api-data/get/mock%2Feth-blockbook-api%2Fv2%2Faddress%2F0x0875BCab22dE3d02402bc38aEe4104e1239374a7%3Fdetails%3DtokenBalances.json
   mockURL: mock/eth-blockbook-api/v2/address/0x0875BCab22dE3d02402bc38aEe4104e1239374a7?details=tokenBalances
-- file: get/mock%2Feth-blockbook-api%2Fv2%2Faddress%2F0x0875BCab22dE3d02402bc38aEe4104e1239374a7%3Fdetails%3Dtxs.json
+  extURL:  https://<eth_blockbook_api>/api/v2/address/0x0875BCab22dE3d02402bc38aEe4104e1239374a7?details=tokenBalances
+- file:    mock/ext-api-data/get/mock%2Feth-blockbook-api%2Fv2%2Faddress%2F0x0875BCab22dE3d02402bc38aEe4104e1239374a7%3Fdetails%3Dtxs.json
   mockURL: mock/eth-blockbook-api/v2/address/0x0875BCab22dE3d02402bc38aEe4104e1239374a7?details=txs
-- file: get/mock%2Fethclassic-api%2Ftokens%3Faddress%3D0xa12105efa0663147bddee178f6a741ac15676b79.json
+  extURL:  https://<eth_blockbook_api>/api/v2/address/0x0875BCab22dE3d02402bc38aEe4104e1239374a7?details=txs
+- file:    mock/ext-api-data/get/mock%2Fethclassic-api%2Ftokens%3Faddress%3D0xa12105efa0663147bddee178f6a741ac15676b79.json
   mockURL: mock/ethclassic-api/tokens?address=0xa12105efa0663147bddee178f6a741ac15676b79
-- file: get/mock%2Fethclassic-api%2Ftransactions%3Faddress%3D0x7d2d0e153026fb428b885d86de50768d4cfeac37.json
+  extURL:  https://<etc_rpc>/tokens?address=0xa12105efa0663147bddee178f6a741ac15676b79
+- file:    mock/ext-api-data/get/mock%2Fethclassic-api%2Ftransactions%3Faddress%3D0x7d2d0e153026fb428b885d86de50768d4cfeac37.json
   mockURL: mock/ethclassic-api/transactions?address=0x7d2d0e153026fb428b885d86de50768d4cfeac37
-- file: get/mock%2Fgochain-api%2Ftokens%3Faddress%3D0x0Fd98FB42C439E5F6484f7E71Caa6661d81d0628.json
+  extURL:  https://<etc_rpc>/transactions?address=0x7d2d0e153026fb428b885d86de50768d4cfeac37
+- file:    mock/ext-api-data/get/mock%2Fgochain-api%2Ftokens%3Faddress%3D0x0Fd98FB42C439E5F6484f7E71Caa6661d81d0628.json
   mockURL: mock/gochain-api/tokens?address=0x0Fd98FB42C439E5F6484f7E71Caa6661d81d0628
-- file: get/mock%2Fgochain-api%2Ftransactions%3Faddress%3D0xEd7F2e81B0264177e0df8f275f97Fd74Fa51A896.json
+  extURL:  https://<go_rpc>/tokens?address=0x0Fd98FB42C439E5F6484f7E71Caa6661d81d0628
+- file:    mock/ext-api-data/get/mock%2Fgochain-api%2Ftransactions%3Faddress%3D0xEd7F2e81B0264177e0df8f275f97Fd74Fa51A896.json
   mockURL: mock/gochain-api/transactions?address=0xEd7F2e81B0264177e0df8f275f97Fd74Fa51A896
-- file: get/mock%2Fgroestlcoin-api%2Fv2%2Faddress%2F33Ym3fecmWaHD19jymYt6fGd9TqSDQFfQj%3Fdetails%3Dtxs.json
+  extURL:  https://<go_rpc>/transactions?address=0xEd7F2e81B0264177e0df8f275f97Fd74Fa51A896
+- file:    mock/ext-api-data/get/mock%2Fgroestlcoin-api%2Fv2%2Faddress%2F33Ym3fecmWaHD19jymYt6fGd9TqSDQFfQj%3Fdetails%3Dtxs.json
   mockURL: mock/groestlcoin-api/v2/address/33Ym3fecmWaHD19jymYt6fGd9TqSDQFfQj?details=txs
-- file: get/mock%2Fgroestlcoin-api%2Fv2%2Fxpub%2Fzpub6rWUMiiVPxjWVHffT8x3AfcbyDu8SZJAiuKUTBmhxT7Bvqk1WitxndDStG1qHN6XzRM7JgsaRaVccRFW3AprWk4Fpaev1N6QSp1aNnP5JPf%3Fdetails%3Dtxs.json
+  extURL:  https://blockbook.groestlcoin.org/api/v2/address/33Ym3fecmWaHD19jymYt6fGd9TqSDQFfQj?details=txs
+- file:    mock/ext-api-data/get/mock%2Fgroestlcoin-api%2Fv2%2Fxpub%2Fzpub6rWUMiiVPxjWVHffT8x3AfcbyDu8SZJAiuKUTBmhxT7Bvqk1WitxndDStG1qHN6XzRM7JgsaRaVccRFW3AprWk4Fpaev1N6QSp1aNnP5JPf%3Fdetails%3Dtxs.json
   mockURL: mock/groestlcoin-api/v2/xpub/zpub6rWUMiiVPxjWVHffT8x3AfcbyDu8SZJAiuKUTBmhxT7Bvqk1WitxndDStG1qHN6XzRM7JgsaRaVccRFW3AprWk4Fpaev1N6QSp1aNnP5JPf?details=txs
-- file: get/mock%2Ficon-api%2Faddress%2FtxList%3Faddress%3Dhxee691e7bccc4eb11fee922896e9f51490e62b12e%26count%3D25.json
+  extURL:  https://blockbook.groestlcoin.org/api/v2/xpub/zpub6rWUMiiVPxjWVHffT8x3AfcbyDu8SZJAiuKUTBmhxT7Bvqk1WitxndDStG1qHN6XzRM7JgsaRaVccRFW3AprWk4Fpaev1N6QSp1aNnP5JPf?details=txs
+- file:    mock/ext-api-data/get/mock%2Ficon-api%2Faddress%2FtxList%3Faddress%3Dhxee691e7bccc4eb11fee922896e9f51490e62b12e%26count%3D25.json
   mockURL: mock/icon-api/address/txList?address=hxee691e7bccc4eb11fee922896e9f51490e62b12e&count=25
-- file: get/mock%2Fiotex-api%2Faccounts%2Fio1mwekae7qqwlr23220k5n9z3fmjxz72tuchra3m.json
+  extURL:  https://tracker.icon.foundation/v3/address/txList?address=hxee691e7bccc4eb11fee922896e9f51490e62b12e&count=25
+- file:    mock/ext-api-data/get/mock%2Fiotex-api%2Faccounts%2Fio1mwekae7qqwlr23220k5n9z3fmjxz72tuchra3m.json
   mockURL: mock/iotex-api/accounts/io1mwekae7qqwlr23220k5n9z3fmjxz72tuchra3m
-- file: get/mock%2Fiotex-api%2Faccounts%2Fio1vg808avg2ydye8djl2axmkc9j0xhzu6vdaw6g5.json
+  extURL:  https://pharos.iotex.io/v1/accounts/io1mwekae7qqwlr23220k5n9z3fmjxz72tuchra3m
+- file:    mock/ext-api-data/get/mock%2Fiotex-api%2Faccounts%2Fio1vg808avg2ydye8djl2axmkc9j0xhzu6vdaw6g5.json
   mockURL: mock/iotex-api/accounts/io1vg808avg2ydye8djl2axmkc9j0xhzu6vdaw6g5
-- file: get/mock%2Fiotex-api%2Factions%2Faddr%2Fio1vg808avg2ydye8djl2axmkc9j0xhzu6vdaw6g5%3Fcount%3D25%26start%3D32.json
+  extURL:  https://pharos.iotex.io/v1/accounts/io1vg808avg2ydye8djl2axmkc9j0xhzu6vdaw6g5
+- file:    mock/ext-api-data/get/mock%2Fiotex-api%2Factions%2Faddr%2Fio1vg808avg2ydye8djl2axmkc9j0xhzu6vdaw6g5%3Fcount%3D25%26start%3D32.json
   mockURL: mock/iotex-api/actions/addr/io1vg808avg2ydye8djl2axmkc9j0xhzu6vdaw6g5?count=25&start=32
-- file: get/mock%2Fiotex-api%2Fstaking%2Fdelegations%2Fio1mwekae7qqwlr23220k5n9z3fmjxz72tuchra3m.json
+  extURL:  https://pharos.iotex.io/v1/actions/addr/io1vg808avg2ydye8djl2axmkc9j0xhzu6vdaw6g5?count=25&start=32
+- file:    mock/ext-api-data/get/mock%2Fiotex-api%2Fstaking%2Fdelegations%2Fio1mwekae7qqwlr23220k5n9z3fmjxz72tuchra3m.json
   mockURL: mock/iotex-api/staking/delegations/io1mwekae7qqwlr23220k5n9z3fmjxz72tuchra3m
-- file: get/mock%2Fiotex-api%2Fstaking%2Fvalidators%3Fstatus%3Dbonded.json
+  extURL:  https://pharos.iotex.io/v1/staking/delegations/io1mwekae7qqwlr23220k5n9z3fmjxz72tuchra3m
+- file:    mock/ext-api-data/get/mock%2Fiotex-api%2Fstaking%2Fvalidators%3Fstatus%3Dbonded.json
   mockURL: mock/iotex-api/staking/validators?status=bonded
-- file: get/mock%2Fkava-api%2Fminting%2Finflation.json
+  extURL:  https://pharos.iotex.io/v1/staking/validators?status=bonded
+- file:    mock/ext-api-data/get/mock%2Fkava-api%2Fminting%2Finflation.json
   mockURL: mock/kava-api/minting/inflation
-- file: get/mock%2Fkava-api%2Fstaking%2Fdelegators%2Fkava1l8va9zyl50cpzv447c694k3jndelc9ygtfll2m%2Fdelegations.json
+  extURL:  https://data.kava.io/minting/inflation
+- file:    mock/ext-api-data/get/mock%2Fkava-api%2Fstaking%2Fdelegators%2Fkava1l8va9zyl50cpzv447c694k3jndelc9ygtfll2m%2Fdelegations.json
   mockURL: mock/kava-api/staking/delegators/kava1l8va9zyl50cpzv447c694k3jndelc9ygtfll2m/delegations
-- file: get/mock%2Fkava-api%2Fstaking%2Fpool.json
+  extURL:  https://data.kava.io/staking/delegators/kava1l8va9zyl50cpzv447c694k3jndelc9ygtfll2m/delegations
+- file:    mock/ext-api-data/get/mock%2Fkava-api%2Fstaking%2Fpool.json
   mockURL: mock/kava-api/staking/pool
-- file: get/mock%2Fkava-api%2Fstaking%2Fvalidators%3Fstatus%3Dbonded.json
+  extURL:  https://data.kava.io/staking/pool
+- file:    mock/ext-api-data/get/mock%2Fkava-api%2Fstaking%2Fvalidators%3Fstatus%3Dbonded.json
   mockURL: mock/kava-api/staking/validators?status=bonded
-- file: get/mock%2Fkava-api%2Ftxs%3Flimit%3D25%26message.sender%3Dkava1l8va9zyl50cpzv447c694k3jndelc9ygtfll2m%26page%3D1.json
+  extURL:  https://data.kava.io/staking/validators?status=bonded
+- file:    mock/ext-api-data/get/mock%2Fkava-api%2Ftxs%3Flimit%3D25%26message.sender%3Dkava1l8va9zyl50cpzv447c694k3jndelc9ygtfll2m%26page%3D1.json
   mockURL: mock/kava-api/txs?limit=25&message.sender=kava1l8va9zyl50cpzv447c694k3jndelc9ygtfll2m&page=1
-- file: get/mock%2Fkava-api%2Ftxs%3Flimit%3D25%26page%3D1%26transfer.recipient%3Dkava1l8va9zyl50cpzv447c694k3jndelc9ygtfll2m.json
+  extURL:  https://data.kava.io/txs?limit=25&message.sender=kava1l8va9zyl50cpzv447c694k3jndelc9ygtfll2m&page=1
+- file:    mock/ext-api-data/get/mock%2Fkava-api%2Ftxs%3Flimit%3D25%26page%3D1%26transfer.recipient%3Dkava1l8va9zyl50cpzv447c694k3jndelc9ygtfll2m.json
   mockURL: mock/kava-api/txs?limit=25&page=1&transfer.recipient=kava1l8va9zyl50cpzv447c694k3jndelc9ygtfll2m
-- file: get/mock%2Fkin-api%2Faccounts%2FGBHKUZ7C2SZ5N3X2S7O6TT6LNUWSEA2BXMSR5GTTSR6VZARSVAXIQNGH%2Fpayments%3Flimit%3D25%26order%3Ddesc.json
+  extURL:  https://data.kava.io/txs?limit=25&page=1&transfer.recipient=kava1l8va9zyl50cpzv447c694k3jndelc9ygtfll2m
+- file:    mock/ext-api-data/get/mock%2Fkin-api%2Faccounts%2FGBHKUZ7C2SZ5N3X2S7O6TT6LNUWSEA2BXMSR5GTTSR6VZARSVAXIQNGH%2Fpayments%3Flimit%3D25%26order%3Ddesc.json
   mockURL: mock/kin-api/accounts/GBHKUZ7C2SZ5N3X2S7O6TT6LNUWSEA2BXMSR5GTTSR6VZARSVAXIQNGH/payments?limit=25&order=desc
-- file: get/mock%2Fkin-api%2Ftransactions%2Fb2131beb8e0c57dfd3309914fce08ac4e094c51dc918087171150dd5b996076a%3F.json
+  extURL:  https://horizon-block-explorer.kininfrastructure.com/accounts/GBHKUZ7C2SZ5N3X2S7O6TT6LNUWSEA2BXMSR5GTTSR6VZARSVAXIQNGH/payments?limit=25&order=desc
+- file:    mock/ext-api-data/get/mock%2Fkin-api%2Ftransactions%2Fb2131beb8e0c57dfd3309914fce08ac4e094c51dc918087171150dd5b996076a%3F.json
   mockURL: mock/kin-api/transactions/b2131beb8e0c57dfd3309914fce08ac4e094c51dc918087171150dd5b996076a?
-- file: get/mock%2Fkin-api%2Ftransactions%2Feb070218bfde8c48af6071432bc9f19b7690b9dc50535cc135f67ea046e70bed.json
+  extURL:  https://horizon-block-explorer.kininfrastructure.com/transactions/b2131beb8e0c57dfd3309914fce08ac4e094c51dc918087171150dd5b996076a?
+- file:    mock/ext-api-data/get/mock%2Fkin-api%2Ftransactions%2Feb070218bfde8c48af6071432bc9f19b7690b9dc50535cc135f67ea046e70bed.json
   mockURL: mock/kin-api/transactions/eb070218bfde8c48af6071432bc9f19b7690b9dc50535cc135f67ea046e70bed
-- file: get/mock%2Flitecoin-api%2Fv2%2Faddress%2Fltc1qpm594ntjq6ayqjngf6t9td2dxtey9d7985eept%3Fdetails%3Dtxs.json
+  extURL:  https://horizon-block-explorer.kininfrastructure.com/transactions/eb070218bfde8c48af6071432bc9f19b7690b9dc50535cc135f67ea046e70bed
+- file:    mock/ext-api-data/get/mock%2Flitecoin-api%2Fv2%2Faddress%2Fltc1qpm594ntjq6ayqjngf6t9td2dxtey9d7985eept%3Fdetails%3Dtxs.json
   mockURL: mock/litecoin-api/v2/address/ltc1qpm594ntjq6ayqjngf6t9td2dxtey9d7985eept?details=txs
-- file: get/mock%2Flitecoin-api%2Fv2%2Fxpub%2Fzpub6rpF5Uxuz4KKWePLorSz2QrHMmk1iiZvGUGgtSHpor8yiGekyRuWf5ZNmf6GUKB4v3ibQDuZp5v8RnjEGq58kR3WPtGPn8Lrg677MQ8YeKu%3Fdetails%3Dtxs.json
+  extURL:  https://ltc1.trezor.io/api/v2/address/ltc1qpm594ntjq6ayqjngf6t9td2dxtey9d7985eept?details=txs
+- file:    mock/ext-api-data/get/mock%2Flitecoin-api%2Fv2%2Fxpub%2Fzpub6rpF5Uxuz4KKWePLorSz2QrHMmk1iiZvGUGgtSHpor8yiGekyRuWf5ZNmf6GUKB4v3ibQDuZp5v8RnjEGq58kR3WPtGPn8Lrg677MQ8YeKu%3Fdetails%3Dtxs.json
   mockURL: mock/litecoin-api/v2/xpub/zpub6rpF5Uxuz4KKWePLorSz2QrHMmk1iiZvGUGgtSHpor8yiGekyRuWf5ZNmf6GUKB4v3ibQDuZp5v8RnjEGq58kR3WPtGPn8Lrg677MQ8YeKu?details=txs
-- file: get/mock%2Fnebulas-api%2Ftx%3Fa%3Dn1RCYwrpLMpSpUCQ8QUDzGRg6B2PnY8R94a%26p%3D0.json
+  extURL:  https://ltc1.trezor.io/api/v2/xpub/zpub6rpF5Uxuz4KKWePLorSz2QrHMmk1iiZvGUGgtSHpor8yiGekyRuWf5ZNmf6GUKB4v3ibQDuZp5v8RnjEGq58kR3WPtGPn8Lrg677MQ8YeKu?details=txs
+- file:    mock/ext-api-data/get/mock%2Fnebulas-api%2Ftx%3Fa%3Dn1RCYwrpLMpSpUCQ8QUDzGRg6B2PnY8R94a%26p%3D0.json
   mockURL: mock/nebulas-api/tx?a=n1RCYwrpLMpSpUCQ8QUDzGRg6B2PnY8R94a&p=0
-- file: get/mock%2Fontology-api%2Fv2%2Faddresses%2FAUyL4TZ1zFEcSKDJrjFnD7vsq5iFZMZqT7%2Ftransactions%3Fpage_number%3D1%26page_size%3D20.json
+  extURL:  https://explorer-backend.nebulas.io/api/tx?a=n1RCYwrpLMpSpUCQ8QUDzGRg6B2PnY8R94a&p=0
+- file:    mock/ext-api-data/get/mock%2Fontology-api%2Fv2%2Faddresses%2FAUyL4TZ1zFEcSKDJrjFnD7vsq5iFZMZqT7%2Ftransactions%3Fpage_number%3D1%26page_size%3D20.json
   mockURL: mock/ontology-api/v2/addresses/AUyL4TZ1zFEcSKDJrjFnD7vsq5iFZMZqT7/transactions?page_number=1&page_size=20
-- file: get/mock%2Fopensea-api%2Fapi%2Fv1%2Fassets%2F%3Fcollection%3Dunstoppable-domains%26limit%3D300%26owner%3D0x84E79D544B4b13bC3560069cfD56A9D5bbE7521d.json
+  extURL:  https://explorer.ont.io/v2/addresses/AUyL4TZ1zFEcSKDJrjFnD7vsq5iFZMZqT7/transactions?page_number=1&page_size=20
+- file:    mock/ext-api-data/get/mock%2Fopensea-api%2Fapi%2Fv1%2Fassets%2F%3Fcollection%3Dunstoppable-domains%26limit%3D300%26owner%3D0x84E79D544B4b13bC3560069cfD56A9D5bbE7521d.json
   mockURL: mock/opensea-api/api/v1/assets/?collection=unstoppable-domains&limit=300&owner=0x84E79D544B4b13bC3560069cfD56A9D5bbE7521d
-- file: get/mock%2Fopensea-api%2Fapi%2Fv1%2Fcollections%2F%3Fasset_owner%3D0x84E79D544B4b13bC3560069cfD56A9D5bbE7521d%26limit%3D1000.json
+  extURL:  https://api.opensea.io/api/v1/assets/?collection=unstoppable-domains&limit=300&owner=0x84E79D544B4b13bC3560069cfD56A9D5bbE7521d
+- file:    mock/ext-api-data/get/mock%2Fopensea-api%2Fapi%2Fv1%2Fcollections%2F%3Fasset_owner%3D0x84E79D544B4b13bC3560069cfD56A9D5bbE7521d%26limit%3D1000.json
   mockURL: mock/opensea-api/api/v1/collections/?asset_owner=0x84E79D544B4b13bC3560069cfD56A9D5bbE7521d&limit=1000
-- file: get/mock%2Fpoa-api%2Ftokens%3Faddress%3D0x0875BCab22dE3d02402bc38aEe4104e1239374a7.json
+  extURL:  https://api.opensea.io/api/v1/collections/?asset_owner=0x84E79D544B4b13bC3560069cfD56A9D5bbE7521d&limit=1000
+- file:    mock/ext-api-data/get/mock%2Fpoa-api%2Ftokens%3Faddress%3D0x0875BCab22dE3d02402bc38aEe4104e1239374a7.json
   mockURL: mock/poa-api/tokens?address=0x0875BCab22dE3d02402bc38aEe4104e1239374a7
-- file: get/mock%2Fpoa-api%2Ftransactions%3Faddress%3D0x55798eCbF17ce1241d543c22dCE46134c13b4bc0.json
+  extURL:  https://<poa_rpc>/tokens?address=0x0875BCab22dE3d02402bc38aEe4104e1239374a7
+- file:    mock/ext-api-data/get/mock%2Fpoa-api%2Ftransactions%3Faddress%3D0x55798eCbF17ce1241d543c22dCE46134c13b4bc0.json
   mockURL: mock/poa-api/transactions?address=0x55798eCbF17ce1241d543c22dCE46134c13b4bc0
-- file: get/mock%2Fqtum-api%2Fv2%2Faddress%2FQZJbNrGT3cZ1J1AEHtgH3JWM7uLBNAejLZ%3Fdetails%3Dtxs.json
+  extURL:  https://<poa_rpc>/transactions?address=0x55798eCbF17ce1241d543c22dCE46134c13b4bc0
+- file:    mock/ext-api-data/get/mock%2Fqtum-api%2Fv2%2Faddress%2FQZJbNrGT3cZ1J1AEHtgH3JWM7uLBNAejLZ%3Fdetails%3Dtxs.json
   mockURL: mock/qtum-api/v2/address/QZJbNrGT3cZ1J1AEHtgH3JWM7uLBNAejLZ?details=txs
-- file: get/mock%2Fqtum-api%2Fv2%2Fxpub%2Fxpub6CvFuU1yPwHjMekXqgEZjcQy22ZWiKgRUY6yAneNNyk1trZhV6ZBFSY8Vt2wygTXTVHBkfi4n823vm79yiw42w6xTL2UjKyh2W9V88sXoNd%3Fdetails%3Dtxs.json
+  extURL:  https://blockv3.qtum.info/api/v2/address/QZJbNrGT3cZ1J1AEHtgH3JWM7uLBNAejLZ?details=txs
+- file:    mock/ext-api-data/get/mock%2Fqtum-api%2Fv2%2Fxpub%2Fxpub6CvFuU1yPwHjMekXqgEZjcQy22ZWiKgRUY6yAneNNyk1trZhV6ZBFSY8Vt2wygTXTVHBkfi4n823vm79yiw42w6xTL2UjKyh2W9V88sXoNd%3Fdetails%3Dtxs.json
   mockURL: mock/qtum-api/v2/xpub/xpub6CvFuU1yPwHjMekXqgEZjcQy22ZWiKgRUY6yAneNNyk1trZhV6ZBFSY8Vt2wygTXTVHBkfi4n823vm79yiw42w6xTL2UjKyh2W9V88sXoNd?details=txs
-- file: get/mock%2Fravencoin-api%2Fv2%2Faddress%2FRGkwvrUors8DtmhKy5bddFwRCTZaunjpvo%3Fdetails%3Dtxs.json
+  extURL:  https://blockv3.qtum.info/api/v2/xpub/xpub6CvFuU1yPwHjMekXqgEZjcQy22ZWiKgRUY6yAneNNyk1trZhV6ZBFSY8Vt2wygTXTVHBkfi4n823vm79yiw42w6xTL2UjKyh2W9V88sXoNd?details=txs
+- file:    mock/ext-api-data/get/mock%2Fravencoin-api%2Fv2%2Faddress%2FRGkwvrUors8DtmhKy5bddFwRCTZaunjpvo%3Fdetails%3Dtxs.json
   mockURL: mock/ravencoin-api/v2/address/RGkwvrUors8DtmhKy5bddFwRCTZaunjpvo?details=txs
-- file: get/mock%2Fravencoin-api%2Fv2%2Fxpub%2Fxpub6BrkWQHMnuGcvKowEn2hpvnZ41SiCsu38mgFThKU3nMzPUN9r9C26puf18rfVdHH3nDwSkeMgsjVniNDKUk5arxekekGpNyVLsWihYAfC5B%3Fdetails%3Dtxs.json
+  extURL:  https://blockbook.ravencoin.org/api/v2/address/RGkwvrUors8DtmhKy5bddFwRCTZaunjpvo?details=txs
+- file:    mock/ext-api-data/get/mock%2Fravencoin-api%2Fv2%2Fxpub%2Fxpub6BrkWQHMnuGcvKowEn2hpvnZ41SiCsu38mgFThKU3nMzPUN9r9C26puf18rfVdHH3nDwSkeMgsjVniNDKUk5arxekekGpNyVLsWihYAfC5B%3Fdetails%3Dtxs.json
   mockURL: mock/ravencoin-api/v2/xpub/xpub6BrkWQHMnuGcvKowEn2hpvnZ41SiCsu38mgFThKU3nMzPUN9r9C26puf18rfVdHH3nDwSkeMgsjVniNDKUk5arxekekGpNyVLsWihYAfC5B?details=txs
-- file: get/mock%2Fripple-api%2Faccounts%2FrMQ98K56yXJbDGv49ZSmW51sLn94Xe1mu1%2Ftransactions%3Fdescending%3Dfalse%26limit%3D25%26type%3DPayment.json
+  extURL:  https://blockbook.ravencoin.org/api/v2/xpub/xpub6BrkWQHMnuGcvKowEn2hpvnZ41SiCsu38mgFThKU3nMzPUN9r9C26puf18rfVdHH3nDwSkeMgsjVniNDKUk5arxekekGpNyVLsWihYAfC5B?details=txs
+- file:    mock/ext-api-data/get/mock%2Fripple-api%2Faccounts%2FrMQ98K56yXJbDGv49ZSmW51sLn94Xe1mu1%2Ftransactions%3Fdescending%3Dfalse%26limit%3D25%26type%3DPayment.json
   mockURL: mock/ripple-api/accounts/rMQ98K56yXJbDGv49ZSmW51sLn94Xe1mu1/transactions?descending=false&limit=25&type=Payment
-- file: get/mock%2Fstellar-api%2Faccounts%2FGDKIJJIKXLOM2NRMPNQZUUYK24ZPVFC6426GZAEP3KUK6KEJLACCWNMX%2Fpayments%3Flimit%3D25%26order%3Ddesc.json
+  extURL:  https://data.ripple.com/v2/accounts/rMQ98K56yXJbDGv49ZSmW51sLn94Xe1mu1/transactions?descending=false&limit=25&type=Payment
+- file:    mock/ext-api-data/get/mock%2Fstellar-api%2Faccounts%2FGDKIJJIKXLOM2NRMPNQZUUYK24ZPVFC6426GZAEP3KUK6KEJLACCWNMX%2Fpayments%3Flimit%3D25%26order%3Ddesc.json
   mockURL: mock/stellar-api/accounts/GDKIJJIKXLOM2NRMPNQZUUYK24ZPVFC6426GZAEP3KUK6KEJLACCWNMX/payments?limit=25&order=desc
-- file: get/mock%2Fstellar-api%2Ftransactions%2F23fa4d3c787f22a1755afa4275761ffba516ec4f2e039440ec02a5522b388f2c.json
+  extURL:  https://horizon.stellar.org/accounts/GDKIJJIKXLOM2NRMPNQZUUYK24ZPVFC6426GZAEP3KUK6KEJLACCWNMX/payments?limit=25&order=desc
+- file:    mock/ext-api-data/get/mock%2Fstellar-api%2Ftransactions%2F23fa4d3c787f22a1755afa4275761ffba516ec4f2e039440ec02a5522b388f2c.json
   mockURL: mock/stellar-api/transactions/23fa4d3c787f22a1755afa4275761ffba516ec4f2e039440ec02a5522b388f2c
-- file: get/mock%2Fstellar-api%2Ftransactions%2F2912d519b2c2174b0147a9e02208f3ed14820228913142f8c6a5cd360783c029%3F.json
+  extURL:  https://horizon.stellar.org/transactions/23fa4d3c787f22a1755afa4275761ffba516ec4f2e039440ec02a5522b388f2c
+- file:    mock/ext-api-data/get/mock%2Fstellar-api%2Ftransactions%2F2912d519b2c2174b0147a9e02208f3ed14820228913142f8c6a5cd360783c029%3F.json
   mockURL: mock/stellar-api/transactions/2912d519b2c2174b0147a9e02208f3ed14820228913142f8c6a5cd360783c029?
-- file: get/mock%2Ftezos-api%2Faccount%2Ftz1foWxaV3VQyWqFbWTERS6YDJjPT6C7jPp8%2Fop%3Flimit%3D25%26order%3Ddesc%26type%3Dtransaction%2Cdelegation.json
+  extURL:  https://horizon.stellar.org/transactions/2912d519b2c2174b0147a9e02208f3ed14820228913142f8c6a5cd360783c029?
+- file:    mock/ext-api-data/get/mock%2Ftezos-api%2Faccount%2Ftz1foWxaV3VQyWqFbWTERS6YDJjPT6C7jPp8%2Fop%3Flimit%3D25%26order%3Ddesc%26type%3Dtransaction%2Cdelegation.json
   mockURL: mock/tezos-api/account/tz1foWxaV3VQyWqFbWTERS6YDJjPT6C7jPp8/op?limit=25&order=desc&type=transaction,delegation
-- file: get/mock%2Ftheta-api%2Faccounttx%2F0xac0eeb6ee3e32e2c74e14ac74155063e4f4f981f%3FisEqualType%3Dtrue%26limitNumber%3D100%26pageNumber%3D1%26type%3D2.json
+  extURL:  https://api.tzstats.com/explorer/account/tz1foWxaV3VQyWqFbWTERS6YDJjPT6C7jPp8/op?limit=25&order=desc&type=transaction,delegation
+- file:    mock/ext-api-data/get/mock%2Ftheta-api%2Faccounttx%2F0xac0eeb6ee3e32e2c74e14ac74155063e4f4f981f%3FisEqualType%3Dtrue%26limitNumber%3D100%26pageNumber%3D1%26type%3D2.json
   mockURL: mock/theta-api/accounttx/0xac0eeb6ee3e32e2c74e14ac74155063e4f4f981f?isEqualType=true&limitNumber=100&pageNumber=1&type=2
-- file: get/mock%2Fthundertoken-api%2Ftokens%3Faddress%3D0x0b230def08139f18a86536d9cfa150f04435414c.json
+  extURL:  https://explorer.thetatoken.org:9000/api/accounttx/0xac0eeb6ee3e32e2c74e14ac74155063e4f4f981f?isEqualType=true&limitNumber=100&pageNumber=1&type=2
+- file:    mock/ext-api-data/get/mock%2Fthundertoken-api%2Ftokens%3Faddress%3D0x0b230def08139f18a86536d9cfa150f04435414c.json
   mockURL: mock/thundertoken-api/tokens?address=0x0b230def08139f18a86536d9cfa150f04435414c
-- file: get/mock%2Fthundertoken-api%2Ftransactions%3Faddress%3D0x0b230def08139f18a86536d9cfa150f04435414c.json
+  extURL:  https://<thundertoken_rpc>/tokens?address=0x0b230def08139f18a86536d9cfa150f04435414c
+- file:    mock/ext-api-data/get/mock%2Fthundertoken-api%2Ftransactions%3Faddress%3D0x0b230def08139f18a86536d9cfa150f04435414c.json
   mockURL: mock/thundertoken-api/transactions?address=0x0b230def08139f18a86536d9cfa150f04435414c
-- file: get/mock%2Ftomochain-api%2Ftokens%3Faddress%3D0x8b353021189375591723e7384262f45709a3c3dc.json
+  extURL:  https://<thundertoken_rpc>/transactions?address=0x0b230def08139f18a86536d9cfa150f04435414c
+- file:    mock/ext-api-data/get/mock%2Ftomochain-api%2Ftokens%3Faddress%3D0x8b353021189375591723e7384262f45709a3c3dc.json
   mockURL: mock/tomochain-api/tokens?address=0x8b353021189375591723e7384262f45709a3c3dc
-- file: get/mock%2Ftomochain-api%2Ftransactions%3Faddress%3D0x17e4c16605e32adead5fa371bf6117df34ca0200.json
+  extURL:  https://<tomochain_rpc>/tokens?address=0x8b353021189375591723e7384262f45709a3c3dc
+- file:    mock/ext-api-data/get/mock%2Ftomochain-api%2Ftransactions%3Faddress%3D0x17e4c16605e32adead5fa371bf6117df34ca0200.json
   mockURL: mock/tomochain-api/transactions?address=0x17e4c16605e32adead5fa371bf6117df34ca0200
-- file: get/mock%2Ftron-api%2Fv1%2Faccounts%2FTFFriedwRtWdFuzerDDtkoQTZ29smDZ1MB%2Ftransactions%3Flimit%3D25%26order_by%3Dblock_timestamp%2Cdesc%26token_id%3D.json
+  extURL:  https://<tomochain_rpc>/transactions?address=0x17e4c16605e32adead5fa371bf6117df34ca0200
+- file:    mock/ext-api-data/get/mock%2Ftron-api%2Fv1%2Faccounts%2FTFFriedwRtWdFuzerDDtkoQTZ29smDZ1MB%2Ftransactions%3Flimit%3D25%26order_by%3Dblock_timestamp%2Cdesc%26token_id%3D.json
   mockURL: mock/tron-api/v1/accounts/TFFriedwRtWdFuzerDDtkoQTZ29smDZ1MB/transactions?limit=25&order_by=block_timestamp,desc&token_id=
-- file: get/mock%2Ftron-api%2Fv1%2Faccounts%2FTFFriedwRtWdFuzerDDtkoQTZ29smDZ1MB.json
+  extURL:  https://api.trongrid.io/v1/accounts/TFFriedwRtWdFuzerDDtkoQTZ29smDZ1MB/transactions?limit=25&order_by=block_timestamp,desc&token_id=
+- file:    mock/ext-api-data/get/mock%2Ftron-api%2Fv1%2Faccounts%2FTFFriedwRtWdFuzerDDtkoQTZ29smDZ1MB.json
   mockURL: mock/tron-api/v1/accounts/TFFriedwRtWdFuzerDDtkoQTZ29smDZ1MB
-- file: get/mock%2Ftron-api%2Fv1%2Fassets%2F1002000.json
+  extURL:  https://api.trongrid.io/v1/accounts/TFFriedwRtWdFuzerDDtkoQTZ29smDZ1MB
+- file:    mock/ext-api-data/get/mock%2Ftron-api%2Fv1%2Fassets%2F1002000.json
   mockURL: mock/tron-api/v1/assets/1002000
-- file: get/mock%2Ftron-api%2Fv1%2Fassets%2F1002798.json
+  extURL:  https://api.trongrid.io/v1/assets/1002000
+- file:    mock/ext-api-data/get/mock%2Ftron-api%2Fv1%2Fassets%2F1002798.json
   mockURL: mock/tron-api/v1/assets/1002798
-- file: get/mock%2Ftron-api%2Fv1%2Fassets%2F1002814.json
+  extURL:  https://api.trongrid.io/v1/assets/1002798
+- file:    mock/ext-api-data/get/mock%2Ftron-api%2Fv1%2Fassets%2F1002814.json
   mockURL: mock/tron-api/v1/assets/1002814
-- file: get/mock%2Ftron-api%2Fwallet%2Flistwitnesses.json
+  extURL:  https://api.trongrid.io/v1/assets/1002814
+- file:    mock/ext-api-data/get/mock%2Ftron-api%2Fwallet%2Flistwitnesses.json
   mockURL: mock/tron-api/wallet/listwitnesses
-- file: get/mock%2Funstoppabledomains%2Fapi%2Fv1%2F%2Fdpantani.zil.json
+  extURL:  https://api.trongrid.io/wallet/listwitnesses
+- file:    mock/ext-api-data/get/mock%2Funstoppabledomains%2Fapi%2Fv1%2F%2Fdpantani.zil.json
   mockURL: mock/unstoppabledomains/api/v1//dpantani.zil
-- file: get/mock%2Fvechain-api%2Fblocks%2Fbest.json
+  extURL:  https://unstoppabledomains.com/api/v1//dpantani.zil
+- file:    mock/ext-api-data/get/mock%2Fvechain-api%2Fblocks%2Fbest.json
   mockURL: mock/vechain-api/blocks/best
-- file: get/mock%2Fvechain-api%2Ftransactions%2F0x004aa0448e458105b098aea2a764a1d54ab95451bee488869f417b351857c3c5.json
+  extURL:  https://vethor-pubnode.digonchain.com/blocks/best
+- file:    mock/ext-api-data/get/mock%2Fvechain-api%2Ftransactions%2F0x004aa0448e458105b098aea2a764a1d54ab95451bee488869f417b351857c3c5.json
   mockURL: mock/vechain-api/transactions/0x004aa0448e458105b098aea2a764a1d54ab95451bee488869f417b351857c3c5
-- file: get/mock%2Fvechain-api%2Ftransactions%2F0x702edd54bd4e13e0012798cc8b2dfa52f7150173945103d203fae26b8e3d2ed7.json
+  extURL:  https://vethor-pubnode.digonchain.com/transactions/0x004aa0448e458105b098aea2a764a1d54ab95451bee488869f417b351857c3c5
+- file:    mock/ext-api-data/get/mock%2Fvechain-api%2Ftransactions%2F0x702edd54bd4e13e0012798cc8b2dfa52f7150173945103d203fae26b8e3d2ed7.json
   mockURL: mock/vechain-api/transactions/0x702edd54bd4e13e0012798cc8b2dfa52f7150173945103d203fae26b8e3d2ed7
-- file: get/mock%2Fviacoin-api%2Fv2%2Faddress%2FVdMPvn7vUTSzbYjiMDs1jku9wAh1Ri2Y1A%3Fdetails%3Dtxs.json
+  extURL:  https://vethor-pubnode.digonchain.com/transactions/0x702edd54bd4e13e0012798cc8b2dfa52f7150173945103d203fae26b8e3d2ed7
+- file:    mock/ext-api-data/get/mock%2Fviacoin-api%2Fv2%2Faddress%2FVdMPvn7vUTSzbYjiMDs1jku9wAh1Ri2Y1A%3Fdetails%3Dtxs.json
   mockURL: mock/viacoin-api/v2/address/VdMPvn7vUTSzbYjiMDs1jku9wAh1Ri2Y1A?details=txs
-- file: get/mock%2Fviacoin-api%2Fv2%2Fxpub%2Fzpub6qVn6ubhK9tfepuABqy8wBXXn3qUZTbpqyNBqLyqakqTrZZD9rXZ3L5MZ945g8Mu7vmMSbC7vfLtLatTgxAnVJ8ECCtwmKqCo6TJm2ZsFJK%3Fdetails%3Dtxs.json
+  extURL:  https://blockbook.viacoin.org/api/v2/address/VdMPvn7vUTSzbYjiMDs1jku9wAh1Ri2Y1A?details=txs
+- file:    mock/ext-api-data/get/mock%2Fviacoin-api%2Fv2%2Fxpub%2Fzpub6qVn6ubhK9tfepuABqy8wBXXn3qUZTbpqyNBqLyqakqTrZZD9rXZ3L5MZ945g8Mu7vmMSbC7vfLtLatTgxAnVJ8ECCtwmKqCo6TJm2ZsFJK%3Fdetails%3Dtxs.json
   mockURL: mock/viacoin-api/v2/xpub/zpub6qVn6ubhK9tfepuABqy8wBXXn3qUZTbpqyNBqLyqakqTrZZD9rXZ3L5MZ945g8Mu7vmMSbC7vfLtLatTgxAnVJ8ECCtwmKqCo6TJm2ZsFJK?details=txs
-- file: get/mock%2Fwaves-api%2Ftransactions%2Faddress%2F3PJ4q4sqriJs2y7Z45wmbLrbmV9MDecbPxD%2Flimit%2F25.json
+  extURL:  https://blockbook.viacoin.org/api/v2/xpub/zpub6qVn6ubhK9tfepuABqy8wBXXn3qUZTbpqyNBqLyqakqTrZZD9rXZ3L5MZ945g8Mu7vmMSbC7vfLtLatTgxAnVJ8ECCtwmKqCo6TJm2ZsFJK?details=txs
+- file:    mock/ext-api-data/get/mock%2Fwaves-api%2Ftransactions%2Faddress%2F3PJ4q4sqriJs2y7Z45wmbLrbmV9MDecbPxD%2Flimit%2F25.json
   mockURL: mock/waves-api/transactions/address/3PJ4q4sqriJs2y7Z45wmbLrbmV9MDecbPxD/limit/25
-- file: get/mock%2Fzcash-api%2Fv2%2Faddress%2Ft1LwLWo1Mo3s4RPtUpeyUD1eYd47inL3bwX%3Fdetails%3Dtxs.json
+  extURL:  https://nodes.wavesnodes.com/transactions/address/3PJ4q4sqriJs2y7Z45wmbLrbmV9MDecbPxD/limit/25
+- file:    mock/ext-api-data/get/mock%2Fzcash-api%2Fv2%2Faddress%2Ft1LwLWo1Mo3s4RPtUpeyUD1eYd47inL3bwX%3Fdetails%3Dtxs.json
   mockURL: mock/zcash-api/v2/address/t1LwLWo1Mo3s4RPtUpeyUD1eYd47inL3bwX?details=txs
-- file: get/mock%2Fzcash-api%2Fv2%2Fxpub%2Fxpub6CCXGBJ13akWuKSn4iU7CqQeXzLyDC2Y1Z83Mmg2xz11PX2EeZJJKRECz29iN4eHewRh8yfb7FpnCcjYbkqn6ynHnXW3jczPcJcenThfFeS%3Fdetails%3Dtxs.json
+  extURL:  https://zec1.trezor.io/api/v2/address/t1LwLWo1Mo3s4RPtUpeyUD1eYd47inL3bwX?details=txs
+- file:    mock/ext-api-data/get/mock%2Fzcash-api%2Fv2%2Fxpub%2Fxpub6CCXGBJ13akWuKSn4iU7CqQeXzLyDC2Y1Z83Mmg2xz11PX2EeZJJKRECz29iN4eHewRh8yfb7FpnCcjYbkqn6ynHnXW3jczPcJcenThfFeS%3Fdetails%3Dtxs.json
   mockURL: mock/zcash-api/v2/xpub/xpub6CCXGBJ13akWuKSn4iU7CqQeXzLyDC2Y1Z83Mmg2xz11PX2EeZJJKRECz29iN4eHewRh8yfb7FpnCcjYbkqn6ynHnXW3jczPcJcenThfFeS?details=txs
-- file: get/mock%2Fzcoin-api%2Fv2%2Faddress%2Fa8EF4cpenEgEn9hm2NL5KfFK1UmSZZaQVn%3Fdetails%3Dtxs.json
+  extURL:  https://zec1.trezor.io/api/v2/xpub/xpub6CCXGBJ13akWuKSn4iU7CqQeXzLyDC2Y1Z83Mmg2xz11PX2EeZJJKRECz29iN4eHewRh8yfb7FpnCcjYbkqn6ynHnXW3jczPcJcenThfFeS?details=txs
+- file:    mock/ext-api-data/get/mock%2Fzcoin-api%2Fv2%2Faddress%2Fa8EF4cpenEgEn9hm2NL5KfFK1UmSZZaQVn%3Fdetails%3Dtxs.json
   mockURL: mock/zcoin-api/v2/address/a8EF4cpenEgEn9hm2NL5KfFK1UmSZZaQVn?details=txs
-- file: get/mock%2Fzcoin-api%2Fv2%2Fxpub%2Fxpub6Cgu6WtTyo99pRtTabwscog2ncj4BUbTWzk7bt7habdLYwgnXLEWH3TuR1789QSTPVsPjLMa2KQzHffyZHTkLQQyRxeEBmWHaETS2btF5fK%3Fdetails%3Dtxs.json
+  extURL:  https://blockbook.zcoin.io/api/v2/address/a8EF4cpenEgEn9hm2NL5KfFK1UmSZZaQVn?details=txs
+- file:    mock/ext-api-data/get/mock%2Fzcoin-api%2Fv2%2Fxpub%2Fxpub6Cgu6WtTyo99pRtTabwscog2ncj4BUbTWzk7bt7habdLYwgnXLEWH3TuR1789QSTPVsPjLMa2KQzHffyZHTkLQQyRxeEBmWHaETS2btF5fK%3Fdetails%3Dtxs.json
   mockURL: mock/zcoin-api/v2/xpub/xpub6Cgu6WtTyo99pRtTabwscog2ncj4BUbTWzk7bt7habdLYwgnXLEWH3TuR1789QSTPVsPjLMa2KQzHffyZHTkLQQyRxeEBmWHaETS2btF5fK?details=txs
-- file: get/mock%2Fzelcash-api%2Fv2%2Faddress%2Ft1JKRwXGfKTGfPV1z48rvoLyabk31z3xwHa%3Fdetails%3Dtxs.json
+  extURL:  https://blockbook.zcoin.io/api/v2/xpub/xpub6Cgu6WtTyo99pRtTabwscog2ncj4BUbTWzk7bt7habdLYwgnXLEWH3TuR1789QSTPVsPjLMa2KQzHffyZHTkLQQyRxeEBmWHaETS2btF5fK?details=txs
+- file:    mock/ext-api-data/get/mock%2Fzelcash-api%2Fv2%2Faddress%2Ft1JKRwXGfKTGfPV1z48rvoLyabk31z3xwHa%3Fdetails%3Dtxs.json
   mockURL: mock/zelcash-api/v2/address/t1JKRwXGfKTGfPV1z48rvoLyabk31z3xwHa?details=txs
-- file: get/mock%2Fzelcash-api%2Fv2%2Fxpub%2Fxpub6C5soBeFd2uZLCcEvsqaoGXuh9UposMMfk2jSiBKMN8rJKs9NLqjPK51gWv9mYBpUY95GtHYsofwpPRdB6FJ56cEaTJGCba5GKv55wPNZNf%3Fdetails%3Dtxs.json
+  extURL:  https://blockbook.zel.network/api/v2/address/t1JKRwXGfKTGfPV1z48rvoLyabk31z3xwHa?details=txs
+- file:    mock/ext-api-data/get/mock%2Fzelcash-api%2Fv2%2Fxpub%2Fxpub6C5soBeFd2uZLCcEvsqaoGXuh9UposMMfk2jSiBKMN8rJKs9NLqjPK51gWv9mYBpUY95GtHYsofwpPRdB6FJ56cEaTJGCba5GKv55wPNZNf%3Fdetails%3Dtxs.json
   mockURL: mock/zelcash-api/v2/xpub/xpub6C5soBeFd2uZLCcEvsqaoGXuh9UposMMfk2jSiBKMN8rJKs9NLqjPK51gWv9mYBpUY95GtHYsofwpPRdB6FJ56cEaTJGCba5GKv55wPNZNf?details=txs
-- file: get/mock%2Fzilliqa-api%2Faddresses%2Fzil1l8ddxvejeam70qang54wnqkgtmlu5mwlgzy64z%2Ftxs.json
+  extURL:  https://blockbook.zel.network/api/v2/xpub/xpub6C5soBeFd2uZLCcEvsqaoGXuh9UposMMfk2jSiBKMN8rJKs9NLqjPK51gWv9mYBpUY95GtHYsofwpPRdB6FJ56cEaTJGCba5GKv55wPNZNf?details=txs
+- file:    mock/ext-api-data/get/mock%2Fzilliqa-api%2Faddresses%2Fzil1l8ddxvejeam70qang54wnqkgtmlu5mwlgzy64z%2Ftxs.json
   mockURL: mock/zilliqa-api/addresses/zil1l8ddxvejeam70qang54wnqkgtmlu5mwlgzy64z/txs
-- file: post/mock%2Ffio-api%2Fv1%2Fchain%2Fget_pub_address.0001.json
+  extURL:  https://api.viewblock.io/v1/zilliqa/addresses/zil1l8ddxvejeam70qang54wnqkgtmlu5mwlgzy64z/txs
+- file:    mock/ext-api-data/post/mock%2Ffio-api%2Fv1%2Fchain%2Fget_pub_address.0001.json
   mockURL: mock/fio-api/v1/chain/get_pub_address
-- file: post/mock%2Ffio-api%2Fv1%2Fchain%2Fget_pub_address.0002.json
+- file:    mock/ext-api-data/post/mock%2Ffio-api%2Fv1%2Fchain%2Fget_pub_address.0002.json
   mockURL: mock/fio-api/v1/chain/get_pub_address
-- file: post/mock%2Ffio-api%2Fv1%2Fchain%2Fget_pub_address.json
+- file:    mock/ext-api-data/post/mock%2Ffio-api%2Fv1%2Fchain%2Fget_pub_address.json
   mockURL: mock/fio-api/v1/chain/get_pub_address
-- file: post/mock%2Ffio-api%2Fv1%2Fhistory%2Fget_actions.0001.json
+- file:    mock/ext-api-data/post/mock%2Ffio-api%2Fv1%2Fhistory%2Fget_actions.0001.json
   mockURL: mock/fio-api/v1/history/get_actions
-- file: post/mock%2Ffio-api%2Fv1%2Fhistory%2Fget_actions.0002.json
+- file:    mock/ext-api-data/post/mock%2Ffio-api%2Fv1%2Fhistory%2Fget_actions.0002.json
   mockURL: mock/fio-api/v1/history/get_actions
-- file: post/mock%2Ffio-api%2Fv1%2Fhistory%2Fget_actions.json
+- file:    mock/ext-api-data/post/mock%2Ffio-api%2Fv1%2Fhistory%2Fget_actions.json
   mockURL: mock/fio-api/v1/history/get_actions
-- file: post/mock%2Fharmony-api.json
+- file:    mock/ext-api-data/post/mock%2Fharmony-api.json
   mockURL: mock/harmony-api
-- file: post/mock%2Fkusama-api%2Fscan%2Ftransfers.json
+  extURL:  https://api.s0.t.hmny.io
+- file:    mock/ext-api-data/post/mock%2Fkusama-api%2Fscan%2Ftransfers.json
   mockURL: mock/kusama-api/scan/transfers
-- file: post/mock%2Fnano-api.json
+  extURL:  https://kusama.subscan.io/api/scan/transfers
+- file:    mock/ext-api-data/post/mock%2Fnano-api.json
   mockURL: mock/nano-api
-- file: post/mock%2Fnimiq-rpc.json
+  extURL:  https://nanoverse.io/api/node
+- file:    mock/ext-api-data/post/mock%2Fnimiq-rpc.json
   mockURL: mock/nimiq-rpc
-- file: post/mock%2Ftron-api%2Fwallet%2Fgetaccount.json
+  extURL:  https://<nimiq_rpc>
+- file:    mock/ext-api-data/post/mock%2Ftron-api%2Fwallet%2Fgetaccount.json
   mockURL: mock/tron-api/wallet/getaccount
-- file: post/mock%2Fvechain-api%2Flogs%2Ftransfer.json
+  extURL:  https://api.trongrid.io/wallet/getaccount
+- file:    mock/ext-api-data/post/mock%2Fvechain-api%2Flogs%2Ftransfer.json
   mockURL: mock/vechain-api/logs/transfer
+  extURL:  https://vethor-pubnode.digonchain.com/logs/transfer

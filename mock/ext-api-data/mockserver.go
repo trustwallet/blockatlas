@@ -82,33 +82,33 @@ func readFileList(directory string) error {
 	return nil
 }
 
-func findFileForMockURL(mockURL, queryParams string) (TestDataEntryInternal, bool) {
+func findFileForMockURL(mockURL, queryParams string) (TestDataEntryInternal, error) {
 	for _, ff := range files {
 		//if mockURL[:7] == ff.MockURL[:7] {
 		//	fmt.Println("  ", ff.MockURL, mockURL)
 		//}
 		// simple check
 		if mockURL == ff.MockURL {
-			return ff, true
+			return ff, nil
 		}
 		// check with query params
 		if mockURL == ff.ParsedURL.Path {
 			if !matchQueryParams(ff.ParsedURL.RawQuery, queryParams) {
 				log.Printf("Mismatch in query params, expected %v, actual %v", ff.ParsedURL.RawQuery, queryParams)
+				return TestDataEntryInternal{}, errors.New("Mismatch in query params")
 			} else {
-				return ff, true
+				return ff, nil
 			}
 		}
 
 	}
-	return TestDataEntryInternal{}, false
+	return TestDataEntryInternal{}, errors.New("Could not find matching entry for URL")
 }
 
-func requestHandler(w http.ResponseWriter, r *http.Request, basedir string) {
-	log.Println(r.Method, r.URL.Path, r.URL.RawPath, r.URL.RawQuery)
+func requestHandlerIntern(w http.ResponseWriter, r *http.Request, basedir string) error {
 	if r.URL.Path == "/mock/mock-healtcheck" {
 		fmt.Fprintf(w, "{\"status\": true, \"msg\": \"Mockserver is alive\"}")
-		return
+		return nil
 	}
 
 	mockURL := r.URL.Path
@@ -116,26 +116,35 @@ func requestHandler(w http.ResponseWriter, r *http.Request, basedir string) {
 		mockURL = mockURL[1:]
 	}
 
-	entry, ok := findFileForMockURL(mockURL, r.URL.RawQuery)
-	if !ok {
-		log.Printf("Can't handle mock URL %v!", mockURL)
-		fmt.Fprintf(w, "{\"error\": \"Can't handle mock URL\"}")
-		return
+	entry, err := findFileForMockURL(mockURL, r.URL.RawQuery)
+	if err != nil {
+		return err
 	}
 	// read and return response
 	b, err := ioutil.ReadFile(basedir + "/" + entry.Filename)
 	if err != nil {
-		log.Fatalf("Can't read data file file %v url %v!", entry.Filename, mockURL)
-		fmt.Fprintf(w, "{\"error\": \"Can't read file\"}")
-		return
+		return errors.New("Could not read data file for request")
 	}
 	fmt.Fprintf(w, string(b))
+	return nil
+}
+
+func requestHandler(w http.ResponseWriter, r *http.Request, basedir string) {
+	err := requestHandlerIntern(w, r, basedir)
+	if err == nil {
+		log.Println("Request ok", r.Method, r.URL.Path)
+		return
+	}
+	// error
+	errorMsg := err.Error()
+	log.Println("ERROR for request:", errorMsg, r.Method, r.URL.Path)
+	fmt.Fprintf(w, "{\"error\": \"" + errorMsg + "\", \"url\": \"" + r.URL.Path + "\"")
 }
 
 func main() {
-	basedir := "."
+	basedir := "../.."
 	//loadFiles(basedir)
-	if err := readFileList(basedir); err != nil {
+	if err := readFileList("."); err != nil {
 		log.Fatalf("Could not read data file list, err %v", err.Error())
 		return
 	}
