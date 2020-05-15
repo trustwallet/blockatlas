@@ -64,14 +64,6 @@ func normalizeTx(srcTx ExplorerTxs, address string) []blockatlas.Tx {
 	}
 }
 
-func feeToAmount(fee float64) blockatlas.Amount {
-	if fee > 0 {
-		return blockatlas.Amount(numbers.Float64toString(fee))
-	} else {
-		return "0"
-	}
-}
-
 func normalizeSingleTransfer(srcTx ExplorerTxs, address string) blockatlas.TxPage {
 	if srcTx.TxType != TxTransfer {
 		return nil
