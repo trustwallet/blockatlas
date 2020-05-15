@@ -149,7 +149,7 @@ func findFileForMockURL(mockURL, queryParams, requestBody string) (TestDataEntry
 	lasterr := ""
 	for _, ff := range files {
 		// simple check
-		if mockURL != ff.MockURL {
+		if mockURL != ff.ParsedURL.Path {
 			continue
 		}
 		// check query params
