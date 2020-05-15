@@ -14,12 +14,12 @@ const (
 	explorerPage = "1"
 )
 
-func (c ExplorerClient) getTxsOfAddress(address, token string) (ExplorerResponse, error) {
-	stx := new(ExplorerResponse)
+func (c *ExplorerClient) getTxsOfAddress(address, token string) (ExplorerResponse, error) {
+	result := new(ExplorerResponse)
 	query := url.Values{"address": {address}, "rows": {explorerRows}, "page": {explorerPage}, "txType": {string(TxTransfer)}}
 	if token != "" {
 		query.Add("txAsset", token)
 	}
-	err := c.Get(stx, "v1/txs", query)
-	return *stx, err
+	err := c.Get(result, "v1/txs", query)
+	return *result, err
 }

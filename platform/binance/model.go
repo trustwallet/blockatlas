@@ -181,7 +181,7 @@ func extractMultiTransfers(messages Value) (extracted []MultiTransfer) {
 }
 
 // Get explorer transfer fee converted to decimal expression
-func (tx Tx) getFee() string {
+func (tx *Tx) getFee() string {
 	if _, err := strconv.ParseFloat(tx.Fee, 64); err == nil {
 		return numbers.DecimalExp(tx.Fee, int(coin.Binance().Decimals))
 	}
@@ -189,7 +189,7 @@ func (tx Tx) getFee() string {
 }
 
 // Converts explorer transfer fee to amount in decimal expression
-func (tx ExplorerTxs) getDexFee() blockatlas.Amount {
+func (tx *ExplorerTxs) getDexFee() blockatlas.Amount {
 	if tx.TxFee > 0 {
 		return blockatlas.Amount(numbers.DecimalExp(numbers.Float64toString(tx.TxFee), int(coin.Binance().Decimals)))
 	} else {
@@ -198,7 +198,7 @@ func (tx ExplorerTxs) getDexFee() blockatlas.Amount {
 }
 
 // Get Explorer transfer status based on transfer code
-func (tx ExplorerTxs) getStatus() blockatlas.Status {
+func (tx *ExplorerTxs) getStatus() blockatlas.Status {
 	switch tx.Code {
 	case 0:
 		return blockatlas.StatusCompleted
@@ -207,13 +207,13 @@ func (tx ExplorerTxs) getStatus() blockatlas.Status {
 	}
 }
 
-func (tx ExplorerTxs) getDexValue() blockatlas.Amount {
+func (tx *ExplorerTxs) getDexValue() blockatlas.Amount {
 	val := numbers.DecimalExp(numbers.Float64toString(tx.Value), int(coin.Binance().Decimals))
 	return blockatlas.Amount(val)
 }
 
 // Determines transaction status
-func (tx Tx) getStatus() blockatlas.Status {
+func (tx *Tx) getStatus() blockatlas.Status {
 	switch tx.Code {
 	case 0:
 		return blockatlas.StatusCompleted

@@ -17,32 +17,32 @@ type Client struct {
 
 const tokensLimit = "1000"
 
-func (c Client) fetchNodeInfo() (*NodeInfo, error) {
+func (c *Client) fetchNodeInfo() (*NodeInfo, error) {
 	result := new(NodeInfo)
 	err := c.Get(result, "v1/node-info", nil)
 	return result, err
 }
 
-func (c Client) fetchBlockTransactions(num int64) ([]TxV2, error) {
+func (c *Client) fetchBlockTransactions(num int64) ([]TxV2, error) {
 	stx := new(BlockTransactions)
 	err := c.Get(stx, fmt.Sprintf("v2/transactions-in-block/%d", num), nil)
 	return stx.Txs, err
 }
 
-func (c Client) fetchAccountMetadata(address string) (*Account, error) {
+func (c *Client) fetchAccountMetadata(address string) (*Account, error) {
 	var result Account
 	err := c.Get(&result, fmt.Sprintf("v1/account/%s", address), nil)
 	return &result, err
 }
 
-func (c Client) fetchTokens() (*TokenList, error) {
+func (c *Client) fetchTokens() (*TokenList, error) {
 	stp := new(TokenList)
 	query := url.Values{"limit": {tokensLimit}}
 	err := c.GetWithCache(stp, "v1/tokens", query, time.Minute*1)
 	return stp, err
 }
 
-func (c Client) fetchTransactionHash(hash string) (*TxHashRPC, error) {
+func (c *Client) fetchTransactionHash(hash string) (*TxHashRPC, error) {
 	var result TxHashRPC
 	err := c.Get(&result, fmt.Sprintf("v1/tx/%s", hash), url.Values{"format": {"json"}})
 	return &result, err

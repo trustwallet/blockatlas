@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-func (p Platform) GetTokenListByAddress(address string) (blockatlas.TokenPage, error) {
+func (p *Platform) GetTokenListByAddress(address string) (blockatlas.TokenPage, error) {
 	account, err := p.rpcClient.fetchAccountMetadata(address)
 	if err != nil || len(account.Balances) == 0 {
 		return []blockatlas.Token{}, nil
@@ -15,13 +15,13 @@ func (p Platform) GetTokenListByAddress(address string) (blockatlas.TokenPage, e
 	if err != nil {
 		return nil, err
 	}
-	return NormalizeTokens(account.Balances, tokens), nil
+	return normalizeTokens(account.Balances, tokens), nil
 }
 
 // NormalizeTxs converts multiple Binance tokens
-func NormalizeTokens(srcBalance []Balance, tokens *TokenList) (tokenPage []blockatlas.Token) {
+func normalizeTokens(srcBalance []Balance, tokens *TokenList) (tokenPage []blockatlas.Token) {
 	for _, srcToken := range srcBalance {
-		token, ok := NormalizeToken(&srcToken, tokens)
+		token, ok := normalizeToken(&srcToken, tokens)
 		if !ok {
 			continue
 		}
@@ -30,25 +30,28 @@ func NormalizeTokens(srcBalance []Balance, tokens *TokenList) (tokenPage []block
 	return
 }
 
-// NormalizeToken converts a Binance token into the generic model
-func NormalizeToken(srcToken *Balance, tokens *TokenList) (t blockatlas.Token, ok bool) {
+// normalizeToken converts a Binance token into the generic model
+func normalizeToken(srcToken *Balance, tokens *TokenList) (blockatlas.Token, bool) {
+	var result blockatlas.Token
 	if srcToken.isAllZeroBalance() {
-		return t, false
+		return result, false
 	}
 
-	tk := tokens.findToken(srcToken.Symbol)
-	if tk == nil {
-		return t, false
+	token := tokens.findToken(srcToken.Symbol)
+	if token == nil {
+		return result, false
 	}
 
-	return blockatlas.Token{
-		Name:     tk.Name,
-		Symbol:   tk.OriginalSymbol,
-		TokenID:  tk.Symbol,
+	result = blockatlas.Token{
+		Name:     token.Name,
+		Symbol:   token.OriginalSymbol,
+		TokenID:  token.Symbol,
 		Coin:     coin.BNB,
-		Decimals: uint(decimalPlaces(tk.TotalSupply)),
+		Decimals: uint(decimalPlaces(token.TotalSupply)),
 		Type:     blockatlas.TokenTypeBEP2,
-	}, true
+	}
+
+	return result, true
 }
 
 // decimalPlaces count the decimals places.

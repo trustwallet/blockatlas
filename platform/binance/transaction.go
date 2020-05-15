@@ -11,11 +11,11 @@ import (
 
 const emptyToken = ""
 
-func (p Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
+func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 	return p.GetTokenTxsByAddress(address, emptyToken)
 }
 
-func (p Platform) GetTokenTxsByAddress(address, token string) (blockatlas.TxPage, error) {
+func (p *Platform) GetTokenTxsByAddress(address, token string) (blockatlas.TxPage, error) {
 	explorerResponse, err := p.explorerClient.getTxsOfAddress(address, token)
 	if err != nil {
 		return nil, err
@@ -140,7 +140,7 @@ func normalizeMultiTransfer(srcTx ExplorerTxs, address string) []blockatlas.Tx {
 	return txs
 }
 
-func (p Platform) addTxDetails(txs []ExplorerTxs) ([]ExplorerTxs, error) {
+func (p *Platform) addTxDetails(txs []ExplorerTxs) ([]ExplorerTxs, error) {
 	var (
 		wg              sync.WaitGroup
 		txsWithDetails  = make([]ExplorerTxs, 0, len(txs))

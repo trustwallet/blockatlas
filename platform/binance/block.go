@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-func (p Platform) CurrentBlockNumber() (int64, error) {
+func (p *Platform) CurrentBlockNumber() (int64, error) {
 	info, err := p.rpcClient.fetchNodeInfo()
 	if err != nil {
 		return 0, err
@@ -15,7 +15,7 @@ func (p Platform) CurrentBlockNumber() (int64, error) {
 	return info.SyncInfo.LatestBlockHeight, nil
 }
 
-func (p Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
+func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 	blockTransactions, err := p.rpcClient.fetchBlockTransactions(num)
 	if err != nil {
 		return nil, err
