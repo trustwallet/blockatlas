@@ -150,11 +150,12 @@ type (
 	}
 
 	Output struct {
-		Address string `json:"address"`
-		Coins   []struct {
-			Amount string `json:"amount"`
-			Denom  string `json:"denom"`
-		} `json:"coins"`
+		Address string  `json:"address"`
+		Coins   []Coins `json:"coins"`
+	}
+	Coins struct {
+		Amount string `json:"amount"`
+		Denom  string `json:"denom"`
 	}
 
 	MultiTransfer struct {
@@ -165,19 +166,21 @@ type (
 	}
 )
 
-func extractMultiTransfers(messages Value) (extracted []MultiTransfer) {
+func extractMultiTransfers(messages Value) []MultiTransfer {
+	var extracted = make([]MultiTransfer, 0)
 	for _, msg := range messages.Msg {
 		var tr MultiTransfer
 		tr.From = msg.Value.Inputs[0].Address // Assumed multisend transfer has one input, never seen multiple
 		for _, output := range msg.Value.Outputs {
-			tr.Amount = output.Coins[0].Amount
-			tr.Asset = output.Coins[0].Denom
 			tr.To = output.Address
-
-			extracted = append(extracted, tr)
+			for _, c := range output.Coins {
+				tr.Amount = c.Amount
+				tr.Asset = c.Denom
+				extracted = append(extracted, tr)
+			}
 		}
 	}
-	return
+	return extracted
 }
 
 // Get explorer transfer fee converted to decimal expression
