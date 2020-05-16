@@ -11,7 +11,7 @@ gin:
 # If all - run all platforms in one binary. You can pick specific coin handle to run binary only with specific coin
 # Example: ethereum
 # You can see all the coin handles at coins/coins.yml file
-platform: all
+platform: [ethereum, binance]
 
 # The transaction watcher
 observer:

@@ -84,7 +84,7 @@ func TestParser_add(t *testing.T) {
 }
 
 func TestParser_getBlockByNumberWithRetry(t *testing.T) {
-	block, err := getBlockByNumberWithRetry(3, time.Millisecond*1, getBlock, 1)
+	block, err := getBlockByNumberWithRetry(3, time.Millisecond*1, getBlock, 1, "")
 	if err != nil {
 		t.Error(err)
 	}
@@ -96,7 +96,7 @@ func TestParser_getBlockByNumberWithRetry(t *testing.T) {
 
 func TestParser_getBlockByNumberWithRetry_Error(t *testing.T) {
 	now := time.Now()
-	block, err := getBlockByNumberWithRetry(2, time.Millisecond*2, getBlock, 0)
+	block, err := getBlockByNumberWithRetry(2, time.Millisecond*2, getBlock, 0, "")
 	elapsed := time.Since(now)
 	if err == nil {
 		t.Error("getBlockByNumberWithRetry method need fail")

@@ -38,10 +38,10 @@ func init() {
 
 	mqHost := viper.GetString("observer.rabbitmq.uri")
 	prefetchCount := viper.GetInt("observer.rabbitmq.consumer.prefetch_count")
-	platformHandle := viper.GetString("platform")
+	platformHandles := viper.GetStringSlice("platform")
 
 	internal.InitRabbitMQ(mqHost, prefetchCount)
-	platform.Init(platformHandle)
+	platform.Init(platformHandles)
 
 	if err := mq.RawTransactions.Declare(); err != nil {
 		logger.Fatal(err)
@@ -83,6 +83,7 @@ func main() {
 
 	wg.Add(len(platform.BlockAPIs))
 	for _, api := range platform.BlockAPIs {
+		time.Sleep(time.Millisecond * 5)
 		coin := api.Coin()
 		pollInterval := notifier.GetInterval(coin.BlockTime, minInterval, maxInterval)
 
