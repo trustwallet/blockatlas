@@ -83,6 +83,7 @@ func main() {
 
 	wg.Add(len(platform.BlockAPIs))
 	for _, api := range platform.BlockAPIs {
+		time.Sleep(time.Millisecond * 5)
 		coin := api.Coin()
 		pollInterval := notifier.GetInterval(coin.BlockTime, minInterval, maxInterval)
 

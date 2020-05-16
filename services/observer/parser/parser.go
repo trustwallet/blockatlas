@@ -157,7 +157,7 @@ func FetchBlocks(params Params, lastParsedBlock, currentBlock int64) []blockatla
 }
 
 func fetchBlock(api blockatlas.BlockAPI, num int64, blocksChan chan<- blockatlas.Block) error {
-	block, err := getBlockByNumberWithRetry(5, time.Second*5, api.GetBlockByNumber, num)
+	block, err := getBlockByNumberWithRetry(5, time.Second*5, api.GetBlockByNumber, num, api.Coin().Symbol)
 	if err != nil {
 		return errors.E(fmt.Sprintf("%d", num))
 	}
@@ -263,7 +263,7 @@ func publish(params Params, txs blockatlas.Txs, wg *sync.WaitGroup) {
 	}
 }
 
-func getBlockByNumberWithRetry(attempts int, sleep time.Duration, getBlockByNumber GetBlockByNumber, n int64) (*blockatlas.Block, error) {
+func getBlockByNumberWithRetry(attempts int, sleep time.Duration, getBlockByNumber GetBlockByNumber, n int64, symbol string) (*blockatlas.Block, error) {
 	r, err := getBlockByNumber(n)
 	if err != nil {
 		if s, ok := err.(stop); ok {
@@ -280,11 +280,12 @@ func getBlockByNumberWithRetry(attempts int, sleep time.Duration, getBlockByNumb
 					"number":   n,
 					"attempts": attempts,
 					"sleep":    sleep.String(),
+					"symbol":   symbol,
 				},
 			)
 
 			time.Sleep(sleep)
-			return getBlockByNumberWithRetry(attempts, sleep*2, getBlockByNumber, n)
+			return getBlockByNumberWithRetry(attempts, sleep*2, getBlockByNumber, n, symbol)
 		}
 	}
 	return r, err
