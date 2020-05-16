@@ -64,6 +64,9 @@
 - file: mock/ext-api-data/cosmos-api_txs__limit_25_page_1_transfer.recipient_cosmos1dx27g0kzhwej0ekcf2k9hsktcxnmpl7fcehcvq.json
   mockURL: mock/cosmos-api/txs?limit=25&page=1&transfer.recipient=cosmos1dx27g0kzhwej0ekcf2k9hsktcxnmpl7fcehcvq
   extURL: https://api.cosmos.network/txs?limit=25&page=1&transfer.recipient=cosmos1dx27g0kzhwej0ekcf2k9hsktcxnmpl7fcehcvq
+- file: mock/ext-api-data/cosmos-api_auth_accounts_cosmos1dx27g0kzhwej0ekcf2k9hsktcxnmpl7fcehcvq.json
+  mockURL: mock/cosmos-api/auth/accounts/cosmos1dx27g0kzhwej0ekcf2k9hsktcxnmpl7fcehcvq
+  extURL: https://api.cosmos.network/auth/accounts/cosmos1dx27g0kzhwej0ekcf2k9hsktcxnmpl7fcehcvq
 - file: mock/ext-api-data/dash-api_v2_address_XrcbsQdrFYEzbqA9nCJi8zDtnRZzNKkCtG__details_txs.json
   mockURL: mock/dash-api/v2/address/XrcbsQdrFYEzbqA9nCJi8zDtnRZzNKkCtG?details=txs
   extURL: https://dash1.trezor.io/api/v2/address/XrcbsQdrFYEzbqA9nCJi8zDtnRZzNKkCtG?details=txs
@@ -157,6 +160,9 @@
 - file: mock/ext-api-data/kava-api_txs__limit_25_page_1_transfer.recipient_kava1l8va9zyl50cpzv447c694k3jndelc9ygtfll2m.json
   mockURL: mock/kava-api/txs?limit=25&page=1&transfer.recipient=kava1l8va9zyl50cpzv447c694k3jndelc9ygtfll2m
   extURL: https://data.kava.io/txs?limit=25&page=1&transfer.recipient=kava1l8va9zyl50cpzv447c694k3jndelc9ygtfll2m
+- file: mock/ext-api-data/kava-api_auth_accounts_kava1l8va9zyl50cpzv447c694k3jndelc9ygtfll2m.json
+  mockURL: mock/kava-api/auth/accounts/kava1l8va9zyl50cpzv447c694k3jndelc9ygtfll2m
+  extURL: https://data.kava.io/auth/accounts/kava1l8va9zyl50cpzv447c694k3jndelc9ygtfll2m
 - file: mock/ext-api-data/kin-api_accounts_GBHKUZ7C2SZ5N3X2S7O6TT6LNUWSEA2BXMSR5GTTSR6VZARSVAXIQNGH_payments__limit_25_order_desc.json
   mockURL: mock/kin-api/accounts/GBHKUZ7C2SZ5N3X2S7O6TT6LNUWSEA2BXMSR5GTTSR6VZARSVAXIQNGH/payments?limit=25&order=desc
   extURL: https://horizon-block-explorer.kininfrastructure.com/accounts/GBHKUZ7C2SZ5N3X2S7O6TT6LNUWSEA2BXMSR5GTTSR6VZARSVAXIQNGH/payments?limit=25&order=desc

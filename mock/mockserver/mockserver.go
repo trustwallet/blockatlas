@@ -200,7 +200,7 @@ func requestHandlerIntern(w http.ResponseWriter, r *http.Request, body, basedir 
 	if err != nil {
 		return errors.New("Could not read data file for request")
 	}
-	fmt.Fprintf(w, string(b))
+	fmt.Fprint(w, string(b))
 	return nil
 }
 
@@ -215,7 +215,7 @@ func requestHandler(w http.ResponseWriter, r *http.Request, basedir string) {
 	}
 	err := requestHandlerIntern(w, r, body, basedir)
 	if err == nil {
-		log.Println("Request ok", r.Method, r.URL.Path, body)
+		log.Println("Request ok", r.Method, r.URL.Path, r.URL.RawQuery, body)
 		return
 	}
 	// error
