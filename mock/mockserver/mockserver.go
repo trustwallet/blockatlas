@@ -187,10 +187,6 @@ func requestHandlerIntern(w http.ResponseWriter, r *http.Request, body, basedir 
 	}
 
 	mockURL := r.URL.Path
-	if len(mockURL) >= 1 && mockURL[0] == '/' {
-		mockURL = mockURL[1:]
-	}
-
 	entry, err := findFileForMockURL(mockURL, r.URL.RawQuery, body)
 	if err != nil {
 		return err
