@@ -15,21 +15,21 @@ import (
 )
 
 type TestDataEntry struct {
-	Filename   string `yaml:"file"`
-	MockURL    string `yaml:"mockURL"`
-	ExtURL     string `yaml:"extURL,omitempty"`
-	ReqFile    string `yaml:"reqFile,omitempty"`
-	ReqField   string `yaml:"reqField,omitempty"`
+	Filename string `yaml:"file"`
+	MockURL  string `yaml:"mockURL"`
+	ExtURL   string `yaml:"extURL,omitempty"`
+	ReqFile  string `yaml:"reqFile,omitempty"`
+	ReqField string `yaml:"reqField,omitempty"`
 }
 
 type TestDataEntryInternal struct {
-	Filename   string
-	MockURL    string
-	ExtURL     string
-	ParsedURL  *url.URL
-	Method     string
-	ReqFile    string
-	ReqField   string
+	Filename  string
+	MockURL   string
+	ExtURL    string
+	ParsedURL *url.URL
+	Method    string
+	ReqFile   string
+	ReqField  string
 }
 
 var files []TestDataEntryInternal
@@ -95,7 +95,7 @@ func fieldValueFromJson(json, field string) (string, error) {
 		return "", errors.New("Field not found")
 	}
 	rest := json[fieldIdx+len(field)+1:]
-	firstQuote := strings.Index(rest, "\"") 
+	firstQuote := strings.Index(rest, "\"")
 	if fieldIdx < 0 {
 		return "", errors.New("1st quote not found")
 	}
@@ -217,7 +217,7 @@ func requestHandler(w http.ResponseWriter, r *http.Request, basedir string) {
 	// error
 	errorMsg := err.Error()
 	log.Println("ERROR for request:", errorMsg, r.Method, r.URL.Path, r.URL.RawQuery, body)
-	fmt.Fprintf(w, "{\"error\": \"" + errorMsg + "\", \"url\": \"" + r.URL.Path + "\"")
+	fmt.Fprintf(w, "{\"error\": \""+errorMsg+"\", \"url\": \""+r.URL.Path+"\"")
 }
 
 func main() {
@@ -227,13 +227,13 @@ func main() {
 		return
 	}
 
-	http.HandleFunc("/", func (w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		requestHandler(w, r, basedir)
 	})
 
 	port := 3347
 	log.Printf("About to listen on port %v", port)
-	err := http.ListenAndServe(":" + strconv.Itoa(port), nil)
+	err := http.ListenAndServe(":"+strconv.Itoa(port), nil)
 	if err != nil {
 		log.Fatalf("Could not listen on port %v", port)
 	}
