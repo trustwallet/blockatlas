@@ -203,3 +203,46 @@ func Test_getDexFee(t *testing.T) {
 		})
 	}
 }
+
+func Test_extractMultiTransfers(t *testing.T) {
+	multiAssetTransfer := Value{
+		Msg: []Msg{
+			{
+				MsgValue{
+					Inputs: []Input{
+						{Address: "bnb1nm4n03x00gw0x6v784jzryyp6wxnjaxswr3xm8"},
+					},
+					Outputs: []Output{
+						{Address: "bnb1eff4hzx4lfsun3px5walchdy4vek4n0njcdzyn", Coins: []Coins{
+							{Amount: "3068900000000", Denom: "AERGO-46B"},
+							{Amount: "4100000000", Denom: "BNB"},
+						},
+						},
+					},
+				},
+			},
+		},
+	}
+
+	wantedAssetMultiTransfers := []MultiTransfer{
+		{
+			Amount: "3068900000000",
+			Asset:  "AERGO-46B",
+			From:   "bnb1nm4n03x00gw0x6v784jzryyp6wxnjaxswr3xm8",
+			To:     "bnb1eff4hzx4lfsun3px5walchdy4vek4n0njcdzyn",
+		},
+		{
+			Amount: "4100000000",
+			Asset:  "BNB",
+			From:   "bnb1nm4n03x00gw0x6v784jzryyp6wxnjaxswr3xm8",
+			To:     "bnb1eff4hzx4lfsun3px5walchdy4vek4n0njcdzyn",
+		},
+	}
+
+	res := extractMultiTransfers(multiAssetTransfer)
+	assert.NotNil(t, res)
+
+	assert.Equal(t, 2, len(res))
+	assert.Equal(t, res[0], wantedAssetMultiTransfers[0])
+	assert.Equal(t, res[1], wantedAssetMultiTransfers[1])
+}
