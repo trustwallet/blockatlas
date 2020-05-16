@@ -38,10 +38,10 @@ func init() {
 
 	mqHost := viper.GetString("observer.rabbitmq.uri")
 	prefetchCount := viper.GetInt("observer.rabbitmq.consumer.prefetch_count")
-	platformHandle := viper.GetString("platform")
+	platformHandles := viper.GetStringSlice("platform")
 
 	internal.InitRabbitMQ(mqHost, prefetchCount)
-	platform.Init(platformHandle)
+	platform.Init(platformHandles)
 
 	if err := mq.RawTransactions.Declare(); err != nil {
 		logger.Fatal(err)
