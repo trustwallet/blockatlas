@@ -38,6 +38,7 @@ require (
 	github.com/swaggo/swag v1.6.5
 	github.com/trustwallet/ens-coincodec v1.0.5
 	go.elastic.co/apm/module/apmgin v1.8.0
+	go.elastic.co/apm/module/apmlogrus v1.8.0
 	go.elastic.co/fastjson v1.1.0 // indirect
 	go.uber.org/atomic v1.6.0
 	golang.org/x/crypto v0.0.0-20200510223506-06a226fb4e37
