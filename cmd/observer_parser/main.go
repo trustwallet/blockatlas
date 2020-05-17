@@ -20,6 +20,7 @@ import (
 
 const (
 	defaultConfigPath = "../../config.yml"
+	prod              = "prod"
 )
 
 var (
@@ -63,7 +64,7 @@ func init() {
 		logger.Fatal("minimum block polling interval cannot be greater or equal than maximum")
 	}
 	var err error
-	database, err = db.New(pgUri)
+	database, err = db.New(pgUri, prod)
 	if err != nil {
 		logger.Fatal(err)
 	}
