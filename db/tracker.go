@@ -37,10 +37,8 @@ func (i *Instance) GetLastParsedBlockNumber(coin string, ctx context.Context) (i
 		return height, nil
 	}
 	var tracker models.Tracker
-	i.Lock()
-	i.Gorm = apmgorm.WithContext(ctx, i.Gorm)
-	i.Unlock()
-	if err := i.Gorm.Where(models.Tracker{Coin: coin}).Find(&tracker).Error; err != nil {
+	g := apmgorm.WithContext(ctx, i.Gorm)
+	if err := g.Where(models.Tracker{Coin: coin}).Find(&tracker).Error; err != nil {
 		return 0, nil
 	}
 	return tracker.Height, nil
@@ -52,10 +50,8 @@ func (i *Instance) SetLastParsedBlockNumber(coin string, num int64, ctx context.
 		Coin:   coin,
 		Height: num,
 	}
-	i.Lock()
-	i.Gorm = apmgorm.WithContext(ctx, i.Gorm)
-	i.Unlock()
-	return i.Gorm.
+	g := apmgorm.WithContext(ctx, i.Gorm)
+	return g.
 		Set("gorm:insert_option", "ON CONFLICT (coin) DO UPDATE SET height = excluded.height").
 		Where(models.Tracker{Coin: coin}).
 		Create(&tracker).Error

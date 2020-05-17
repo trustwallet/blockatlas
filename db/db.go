@@ -6,12 +6,10 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"go.elastic.co/apm/module/apmgorm"
 	_ "go.elastic.co/apm/module/apmgorm/dialects/postgres"
-	"sync"
 	"time"
 )
 
 type Instance struct {
-	sync.Mutex
 	Gorm *gorm.DB
 }
 

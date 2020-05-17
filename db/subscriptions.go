@@ -17,11 +17,9 @@ func (i *Instance) GetSubscriptionData(coin uint, addresses []string, ctx contex
 	if len(addresses) == 0 {
 		return nil, errors.E("Empty addresses")
 	}
-	i.Lock()
-	i.Gorm = apmgorm.WithContext(ctx, i.Gorm)
-	i.Unlock()
+	g := apmgorm.WithContext(ctx, i.Gorm)
 	var subscriptionsDataList []models.SubscriptionData
-	err := i.Gorm.
+	err := g.
 		Model(&models.SubscriptionData{}).
 		Where("address in (?) AND coin = ?", addresses, coin).
 		Find(&subscriptionsDataList).Error
@@ -36,10 +34,8 @@ func (i *Instance) AddSubscriptions(id uint, subscriptions []models.Subscription
 	if len(subscriptions) == 0 {
 		return errors.E("Empty subscriptions")
 	}
-	i.Lock()
-	i.Gorm = apmgorm.WithContext(ctx, i.Gorm)
-	i.Unlock()
-	txInstance := Instance{Gorm: i.Gorm.Begin()}
+	g := apmgorm.WithContext(ctx, i.Gorm)
+	txInstance := Instance{Gorm: g.Begin()}
 	defer func() {
 		if r := recover(); r != nil {
 			txInstance.Gorm.Rollback()
@@ -113,10 +109,8 @@ func (i *Instance) AddToExistingSubscription(id uint, subscriptions []models.Sub
 }
 
 func (i *Instance) DeleteAllSubscriptions(id uint, ctx context.Context) error {
-	i.Lock()
-	i.Gorm = apmgorm.WithContext(ctx, i.Gorm)
-	i.Unlock()
-	request := i.Gorm.Where("subscription_id = ?", id)
+	g := apmgorm.WithContext(ctx, i.Gorm)
+	request := g.Where("subscription_id = ?", id)
 	if err := request.Error; err != nil {
 		return err
 	}
