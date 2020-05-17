@@ -57,7 +57,7 @@ func TestSubscriberAddSubscription(t *testing.T) {
 	}
 
 	for _, wanted := range wantedEvents {
-		result, err := database.GetSubscriptionData(wanted.Coin, []string{wanted.Address}, context.TODO())
+		result, err := database.GetSubscriptionData(wanted.Coin, []string{wanted.Address}, context.Background())
 		assert.Nil(t, err)
 		assert.Equal(t, result[0].SubscriptionId, wanted.Id)
 		assert.Equal(t, result[0].Coin, wanted.Coin)
@@ -94,16 +94,16 @@ func TestSubscriber_UpdateSubscription(t *testing.T) {
 
 	database.AddSubscriptions(10, []models.SubscriptionData{
 		{Coin: 61, Address: "0x0000000000000000000000000000000000000000", SubscriptionId: 10},
-	}, context.TODO())
+	}, context.Background())
 	database.AddSubscriptions(1, []models.SubscriptionData{
 		{Coin: 62, Address: "0x0000000000000000000000000000000000000000", SubscriptionId: 1},
-	}, context.TODO())
+	}, context.Background())
 	database.AddSubscriptions(2, []models.SubscriptionData{
 		{Coin: 63, Address: "0x0000000000000000000000000000000000000000", SubscriptionId: 2},
-	}, context.TODO())
+	}, context.Background())
 	database.AddSubscriptions(3, []models.SubscriptionData{
 		{Coin: 64, Address: "0x0000000000000000000000000000000000000000", SubscriptionId: 3},
-	}, context.TODO())
+	}, context.Background())
 
 	for _, event := range givenEvents {
 		body, err := json.Marshal(event)
@@ -120,7 +120,7 @@ func TestSubscriber_UpdateSubscription(t *testing.T) {
 	}
 
 	for _, wanted := range wantedEvents {
-		result, err := database.GetSubscriptionData(wanted.Coin, []string{wanted.Address}, context.TODO())
+		result, err := database.GetSubscriptionData(wanted.Coin, []string{wanted.Address}, context.Background())
 		assert.Nil(t, err)
 		assert.Equal(t, result[0].SubscriptionId, wanted.Id)
 		assert.Equal(t, result[0].Coin, wanted.Coin)
@@ -128,19 +128,19 @@ func TestSubscriber_UpdateSubscription(t *testing.T) {
 
 	}
 
-	abs61, err := database.GetSubscriptionData(61, []string{"0x0000000000000000000000000000000000000000"}, context.TODO())
+	abs61, err := database.GetSubscriptionData(61, []string{"0x0000000000000000000000000000000000000000"}, context.Background())
 	assert.Nil(t, err)
 	assert.Len(t, abs61, 0)
 
-	abs62, err := database.GetSubscriptionData(62, []string{"0x0000000000000000000000000000000000000000"}, context.TODO())
+	abs62, err := database.GetSubscriptionData(62, []string{"0x0000000000000000000000000000000000000000"}, context.Background())
 	assert.Nil(t, err)
 	assert.Len(t, abs62, 0)
 
-	abs63, err := database.GetSubscriptionData(63, []string{"0x0000000000000000000000000000000000000000"}, context.TODO())
+	abs63, err := database.GetSubscriptionData(63, []string{"0x0000000000000000000000000000000000000000"}, context.Background())
 	assert.Nil(t, err)
 	assert.Len(t, abs63, 0)
 
-	abs64, err := database.GetSubscriptionData(64, []string{"0x0000000000000000000000000000000000000000"}, context.TODO())
+	abs64, err := database.GetSubscriptionData(64, []string{"0x0000000000000000000000000000000000000000"}, context.Background())
 	assert.Nil(t, err)
 	assert.Len(t, abs64, 0)
 }

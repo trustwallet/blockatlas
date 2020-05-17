@@ -96,7 +96,7 @@ func parse(params Params) {
 }
 
 func GetBlocksIntervalToFetch(params Params, ctx context.Context) (int64, int64, error) {
-	span, ctx := apm.StartSpan(ctx, "GetBlocksIntervalToFetch", "go")
+	span, ctx := apm.StartSpan(ctx, "GetBlocksIntervalToFetch", "app")
 	defer span.End()
 
 	lastParsedBlock, err := params.Database.GetLastParsedBlockNumber(params.Api.Coin().Handle, ctx)
@@ -121,7 +121,7 @@ func GetBlocksIntervalToFetch(params Params, ctx context.Context) (int64, int64,
 }
 
 func FetchBlocks(params Params, lastParsedBlock, currentBlock int64, ctx context.Context) []blockatlas.Block {
-	span, ctx := apm.StartSpan(ctx, "FetchBlocks", "go")
+	span, ctx := apm.StartSpan(ctx, "FetchBlocks", "app")
 	defer span.End()
 
 	if lastParsedBlock == currentBlock {
@@ -180,7 +180,7 @@ func FetchBlocks(params Params, lastParsedBlock, currentBlock int64, ctx context
 }
 
 func fetchBlock(api blockatlas.BlockAPI, num int64, blocksChan chan<- blockatlas.Block, ctx context.Context) error {
-	span, ctx := apm.StartSpan(ctx, "fetchBlock", "go")
+	span, ctx := apm.StartSpan(ctx, "fetchBlock", "app")
 	defer span.End()
 	block, err := getBlockByNumberWithRetry(5, time.Second*5, api.GetBlockByNumber, num, api.Coin().Symbol, ctx)
 	if err != nil {
@@ -191,7 +191,7 @@ func fetchBlock(api blockatlas.BlockAPI, num int64, blocksChan chan<- blockatlas
 }
 
 func SaveLastParsedBlock(params Params, blocks []blockatlas.Block, ctx context.Context) error {
-	span, ctx := apm.StartSpan(ctx, "SaveLastParsedBlock", "go")
+	span, ctx := apm.StartSpan(ctx, "SaveLastParsedBlock", "app")
 	defer span.End()
 
 	if len(blocks) == 0 {
@@ -216,7 +216,7 @@ func SaveLastParsedBlock(params Params, blocks []blockatlas.Block, ctx context.C
 }
 
 func ConvertToBatch(blocks []blockatlas.Block, ctx context.Context) blockatlas.Txs {
-	span, ctx := apm.StartSpan(ctx, "ConvertToBatch", "go")
+	span, ctx := apm.StartSpan(ctx, "ConvertToBatch", "app")
 	defer span.End()
 	if len(blocks) == 0 {
 		return nil
@@ -246,7 +246,7 @@ func ConvertToBatch(blocks []blockatlas.Block, ctx context.Context) blockatlas.T
 }
 
 func PublishTransactionsBatch(params Params, txs blockatlas.Txs, ctx context.Context) {
-	span, ctx := apm.StartSpan(ctx, "PublishTransactionsBatch", "go")
+	span, ctx := apm.StartSpan(ctx, "PublishTransactionsBatch", "app")
 	defer span.End()
 	if len(txs) == 0 {
 		logger.Info("------------------------------------------------------------")
@@ -267,7 +267,7 @@ func PublishTransactionsBatch(params Params, txs blockatlas.Txs, ctx context.Con
 }
 
 func getTxsBatches(txs blockatlas.Txs, sizeUint uint, ctx context.Context) []blockatlas.Txs {
-	span, _ := apm.StartSpan(ctx, "getTxsBatches", "go")
+	span, _ := apm.StartSpan(ctx, "getTxsBatches", "app")
 	defer span.End()
 	size := int(sizeUint)
 	resultLength := (len(txs) + size - 1) / size
@@ -284,7 +284,7 @@ func getTxsBatches(txs blockatlas.Txs, sizeUint uint, ctx context.Context) []blo
 }
 
 func publish(params Params, txs blockatlas.Txs, wg *sync.WaitGroup, ctx context.Context) {
-	span, _ := apm.StartSpan(ctx, "publish", "go")
+	span, _ := apm.StartSpan(ctx, "publish", "app")
 	defer span.End()
 	defer wg.Done()
 	body, err := json.Marshal(txs)
@@ -300,7 +300,7 @@ func publish(params Params, txs blockatlas.Txs, wg *sync.WaitGroup, ctx context.
 }
 
 func getBlockByNumberWithRetry(attempts int, sleep time.Duration, getBlockByNumber GetBlockByNumber, n int64, symbol string, ctx context.Context) (*blockatlas.Block, error) {
-	span, ctx := apm.StartSpan(ctx, "getBlockByNumberWithRetry", "go")
+	span, ctx := apm.StartSpan(ctx, "getBlockByNumberWithRetry", "app")
 	defer span.End()
 	r, err := getBlockByNumber(n)
 	if err != nil {
@@ -330,7 +330,7 @@ func getBlockByNumberWithRetry(attempts int, sleep time.Duration, getBlockByNumb
 }
 
 func (t *transactionsBatch) fillBatch(transactions []blockatlas.Tx, ctx context.Context) {
-	span, _ := apm.StartSpan(ctx, "fillBatch", "go")
+	span, _ := apm.StartSpan(ctx, "fillBatch", "app")
 	defer span.End()
 	t.Lock()
 	defer t.Unlock()

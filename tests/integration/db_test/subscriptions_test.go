@@ -27,9 +27,9 @@ func TestDb_AddSubscriptionsBulk(t *testing.T) {
 		})
 	}
 
-	assert.Nil(t, database.AddSubscriptions(id, subscriptions, context.TODO()))
+	assert.Nil(t, database.AddSubscriptions(id, subscriptions, context.Background()))
 	for i := 0; i < 100; i++ {
-		s, err := database.GetSubscriptionData(uint(i), []string{"testAddrtestAddrtestAddrtestAddrtestAddrtestAddrtestAddrtestAddrtestAddrtestAddr"}, context.TODO())
+		s, err := database.GetSubscriptionData(uint(i), []string{"testAddrtestAddrtestAddrtestAddrtestAddrtestAddrtestAddrtestAddrtestAddrtestAddr"}, context.Background())
 		assert.Nil(t, err)
 		assert.Equal(t, id, s[0].SubscriptionId)
 	}
@@ -59,9 +59,9 @@ func TestDb_AddSubscriptions(t *testing.T) {
 		Address:        "testAddr3",
 	})
 
-	assert.Nil(t, database.AddSubscriptions(id, subscriptions, context.TODO()))
+	assert.Nil(t, database.AddSubscriptions(id, subscriptions, context.Background()))
 
-	subs, err := database.GetSubscriptionData(60, []string{"testAddr"}, context.TODO())
+	subs, err := database.GetSubscriptionData(60, []string{"testAddr"}, context.Background())
 	assert.Nil(t, err)
 	assert.NotNil(t, subs)
 	assert.Equal(t, 1, len(subs))
@@ -69,7 +69,7 @@ func TestDb_AddSubscriptions(t *testing.T) {
 	assert.Equal(t, subscriptions[0].Coin, subs[0].Coin)
 	assert.Equal(t, subscriptions[0].Address, subs[0].Address)
 
-	subs, err = database.GetSubscriptionData(61, []string{"testAddr2"}, context.TODO())
+	subs, err = database.GetSubscriptionData(61, []string{"testAddr2"}, context.Background())
 	assert.Nil(t, err)
 	assert.NotNil(t, subs)
 	assert.Equal(t, 1, len(subs))
@@ -77,7 +77,7 @@ func TestDb_AddSubscriptions(t *testing.T) {
 	assert.Equal(t, subscriptions[1].Coin, subs[0].Coin)
 	assert.Equal(t, subscriptions[1].Address, subs[0].Address)
 
-	subs, err = database.GetSubscriptionData(62, []string{"testAddr3"}, context.TODO())
+	subs, err = database.GetSubscriptionData(62, []string{"testAddr3"}, context.Background())
 	assert.Nil(t, err)
 	assert.NotNil(t, subs)
 	assert.Equal(t, 1, len(subs))
@@ -109,9 +109,9 @@ func TestDb_AddSubscriptionsWithRewrite(t *testing.T) {
 		Address:        "testAddr",
 	})
 
-	assert.Nil(t, database.AddSubscriptions(id, subscriptions, context.TODO()))
+	assert.Nil(t, database.AddSubscriptions(id, subscriptions, context.Background()))
 
-	subs60, err := database.GetSubscriptionData(60, []string{"testAddr"}, context.TODO())
+	subs60, err := database.GetSubscriptionData(60, []string{"testAddr"}, context.Background())
 	assert.Nil(t, err)
 	assert.NotNil(t, subs60)
 	assert.Equal(t, 1, len(subs60))
@@ -119,7 +119,7 @@ func TestDb_AddSubscriptionsWithRewrite(t *testing.T) {
 	assert.Equal(t, subscriptions[0].Coin, subs60[0].Coin)
 	assert.Equal(t, subscriptions[0].Address, subs60[0].Address)
 
-	subs714, err := database.GetSubscriptionData(714, []string{"testAddr"}, context.TODO())
+	subs714, err := database.GetSubscriptionData(714, []string{"testAddr"}, context.Background())
 	assert.Nil(t, err)
 	assert.NotNil(t, subs714)
 	assert.Equal(t, 1, len(subs714))
@@ -127,7 +127,7 @@ func TestDb_AddSubscriptionsWithRewrite(t *testing.T) {
 	assert.Equal(t, subscriptions[1].Coin, subs714[0].Coin)
 	assert.Equal(t, subscriptions[1].Address, subs714[0].Address)
 
-	subs144, err := database.GetSubscriptionData(144, []string{"testAddr"}, context.TODO())
+	subs144, err := database.GetSubscriptionData(144, []string{"testAddr"}, context.Background())
 	assert.Nil(t, err)
 	assert.NotNil(t, subs144)
 	assert.Equal(t, 1, len(subs144))
@@ -153,9 +153,9 @@ func TestDb_AddSubscriptionsWithRewrite(t *testing.T) {
 		Address:        "testAddr2",
 	})
 
-	assert.Nil(t, database.AddSubscriptions(id, subscriptions, context.TODO()))
+	assert.Nil(t, database.AddSubscriptions(id, subscriptions, context.Background()))
 
-	subs2N60, err := database.GetSubscriptionData(60, []string{"testAddr2"}, context.TODO())
+	subs2N60, err := database.GetSubscriptionData(60, []string{"testAddr2"}, context.Background())
 	assert.Nil(t, err)
 	assert.Nil(t, err)
 	assert.NotNil(t, subs2N60)
@@ -164,7 +164,7 @@ func TestDb_AddSubscriptionsWithRewrite(t *testing.T) {
 	assert.Equal(t, subscriptions[3].Coin, subs2N60[0].Coin)
 	assert.Equal(t, subscriptions[3].Address, subs2N60[0].Address)
 
-	subs2N714, err := database.GetSubscriptionData(714, []string{"testAddr2"}, context.TODO())
+	subs2N714, err := database.GetSubscriptionData(714, []string{"testAddr2"}, context.Background())
 	assert.Nil(t, err)
 	assert.Nil(t, err)
 	assert.NotNil(t, subs2N714)
@@ -173,7 +173,7 @@ func TestDb_AddSubscriptionsWithRewrite(t *testing.T) {
 	assert.Equal(t, subscriptions[4].Coin, subs2N714[0].Coin)
 	assert.Equal(t, subscriptions[4].Address, subs2N714[0].Address)
 
-	subs2N114, err := database.GetSubscriptionData(144, []string{"testAddr2"}, context.TODO())
+	subs2N114, err := database.GetSubscriptionData(144, []string{"testAddr2"}, context.Background())
 	assert.Nil(t, err)
 	assert.Nil(t, err)
 	assert.NotNil(t, subs2N114)
@@ -218,7 +218,7 @@ func TestDb_FindSubscriptions(t *testing.T) {
 		Address: "ETCAddress",
 	})
 
-	assert.Nil(t, database.AddSubscriptions(id, subscriber.ToSubscriptionData(subscriptionsA), context.TODO()))
+	assert.Nil(t, database.AddSubscriptions(id, subscriber.ToSubscriptionData(subscriptionsA), context.Background()))
 
 	var subscriptionsB []blockatlas.Subscription
 
@@ -226,25 +226,25 @@ func TestDb_FindSubscriptions(t *testing.T) {
 		sub.Id = uint(2)
 		subscriptionsB = append(subscriptionsB, sub)
 	}
-	assert.Nil(t, database.AddSubscriptions(2, subscriber.ToSubscriptionData(subscriptionsB), context.TODO()))
+	assert.Nil(t, database.AddSubscriptions(2, subscriber.ToSubscriptionData(subscriptionsB), context.Background()))
 
-	returnedSubs, err := database.GetSubscriptionData(60, []string{"etherAddress"}, context.TODO())
+	returnedSubs, err := database.GetSubscriptionData(60, []string{"etherAddress"}, context.Background())
 	assert.Nil(t, err)
 	assert.Equal(t, 2, len(returnedSubs))
 
-	returnedSubs, err = database.GetSubscriptionData(714, []string{"binanceAddress"}, context.TODO())
+	returnedSubs, err = database.GetSubscriptionData(714, []string{"binanceAddress"}, context.Background())
 	assert.Nil(t, err)
 	assert.Equal(t, 2, len(returnedSubs))
 
-	returnedSubs, err = database.GetSubscriptionData(144, []string{"XLMAddress"}, context.TODO())
+	returnedSubs, err = database.GetSubscriptionData(144, []string{"XLMAddress"}, context.Background())
 	assert.Nil(t, err)
 	assert.Equal(t, 2, len(returnedSubs))
 
-	returnedSubs, err = database.GetSubscriptionData(148, []string{"AtomAddress"}, context.TODO())
+	returnedSubs, err = database.GetSubscriptionData(148, []string{"AtomAddress"}, context.Background())
 	assert.Nil(t, err)
 	assert.Equal(t, 2, len(returnedSubs))
 
-	returnedSubs, err = database.GetSubscriptionData(61, []string{"ETCAddress"}, context.TODO())
+	returnedSubs, err = database.GetSubscriptionData(61, []string{"ETCAddress"}, context.Background())
 	assert.Nil(t, err)
 	assert.Equal(t, 2, len(returnedSubs))
 }
@@ -272,9 +272,9 @@ func TestDb_DeleteSubscriptions(t *testing.T) {
 		Address:        "testAddr3",
 	})
 
-	assert.Nil(t, database.AddSubscriptions(id, subscriptions, context.TODO()))
+	assert.Nil(t, database.AddSubscriptions(id, subscriptions, context.Background()))
 
-	subs60, err := database.GetSubscriptionData(60, []string{"testAddr"}, context.TODO())
+	subs60, err := database.GetSubscriptionData(60, []string{"testAddr"}, context.Background())
 	assert.Nil(t, err)
 	assert.NotNil(t, subs60)
 	assert.Equal(t, 1, len(subs60))
@@ -282,7 +282,7 @@ func TestDb_DeleteSubscriptions(t *testing.T) {
 	assert.Equal(t, subscriptions[0].Coin, subs60[0].Coin)
 	assert.Equal(t, subscriptions[0].Address, subs60[0].Address)
 
-	subs714, err := database.GetSubscriptionData(714, []string{"testAddr2"}, context.TODO())
+	subs714, err := database.GetSubscriptionData(714, []string{"testAddr2"}, context.Background())
 	assert.Nil(t, err)
 	assert.NotNil(t, subs714)
 	assert.Equal(t, 1, len(subs714))
@@ -290,7 +290,7 @@ func TestDb_DeleteSubscriptions(t *testing.T) {
 	assert.Equal(t, subscriptions[1].Coin, subs714[0].Coin)
 	assert.Equal(t, subscriptions[1].Address, subs714[0].Address)
 
-	subs144, err := database.GetSubscriptionData(144, []string{"testAddr3"}, context.TODO())
+	subs144, err := database.GetSubscriptionData(144, []string{"testAddr3"}, context.Background())
 	assert.Nil(t, err)
 	assert.NotNil(t, subs144)
 	assert.Equal(t, 1, len(subs144))
@@ -303,7 +303,7 @@ func TestDb_DeleteSubscriptions(t *testing.T) {
 
 	assert.Nil(t, database.DeleteSubscriptions(subsToDel))
 
-	subs714N2, err := database.GetSubscriptionData(714, []string{"testAddr2"}, context.TODO())
+	subs714N2, err := database.GetSubscriptionData(714, []string{"testAddr2"}, context.Background())
 	assert.Nil(t, err)
 	assert.NotNil(t, subs714N2)
 	assert.Equal(t, 1, len(subs714N2))
@@ -311,7 +311,7 @@ func TestDb_DeleteSubscriptions(t *testing.T) {
 	assert.Equal(t, subscriptions[1].Coin, subs714N2[0].Coin)
 	assert.Equal(t, subscriptions[1].Address, subs714N2[0].Address)
 
-	subs144N2, err := database.GetSubscriptionData(144, []string{"testAddr3"}, context.TODO())
+	subs144N2, err := database.GetSubscriptionData(144, []string{"testAddr3"}, context.Background())
 	assert.Nil(t, err)
 	assert.NotNil(t, subs144N2)
 	assert.Equal(t, 1, len(subs144N2))
@@ -319,7 +319,7 @@ func TestDb_DeleteSubscriptions(t *testing.T) {
 	assert.Equal(t, subscriptions[2].Coin, subs144N2[0].Coin)
 	assert.Equal(t, subscriptions[2].Address, subs144N2[0].Address)
 
-	subs60N2, err := database.GetSubscriptionData(60, []string{"testAddr"}, context.TODO())
+	subs60N2, err := database.GetSubscriptionData(60, []string{"testAddr"}, context.Background())
 	assert.Nil(t, err)
 	assert.Len(t, subs60N2, 0)
 }
@@ -346,37 +346,37 @@ func TestDeleteAll(t *testing.T) {
 		Coin:           144,
 		Address:        "testAddr3",
 	})
-	assert.Nil(t, database.AddSubscriptions(id, subscriptions, context.TODO()))
+	assert.Nil(t, database.AddSubscriptions(id, subscriptions, context.Background()))
 
-	subs60, err := database.GetSubscriptionData(60, []string{"testAddr"}, context.TODO())
+	subs60, err := database.GetSubscriptionData(60, []string{"testAddr"}, context.Background())
 	assert.Nil(t, err)
 	assert.Len(t, subs60, 1)
 
-	subs714, err := database.GetSubscriptionData(714, []string{"testAddr2"}, context.TODO())
+	subs714, err := database.GetSubscriptionData(714, []string{"testAddr2"}, context.Background())
 	assert.Nil(t, err)
 	assert.Len(t, subs714, 1)
 
-	subs144, err := database.GetSubscriptionData(144, []string{"testAddr3"}, context.TODO())
+	subs144, err := database.GetSubscriptionData(144, []string{"testAddr3"}, context.Background())
 	assert.Nil(t, err)
 	assert.Len(t, subs144, 1)
 
-	assert.Nil(t, database.DeleteAllSubscriptions(1, context.TODO()))
+	assert.Nil(t, database.DeleteAllSubscriptions(1, context.Background()))
 
-	subs60, err = database.GetSubscriptionData(60, []string{"testAddr"}, context.TODO())
+	subs60, err = database.GetSubscriptionData(60, []string{"testAddr"}, context.Background())
 	assert.Nil(t, err)
 	assert.Len(t, subs60, 0)
 
-	subs714, err = database.GetSubscriptionData(714, []string{"testAddr2"}, context.TODO())
+	subs714, err = database.GetSubscriptionData(714, []string{"testAddr2"}, context.Background())
 	assert.Nil(t, err)
 	assert.Len(t, subs714, 0)
 
-	subs144, err = database.GetSubscriptionData(144, []string{"testAddr3"}, context.TODO())
+	subs144, err = database.GetSubscriptionData(144, []string{"testAddr3"}, context.Background())
 	assert.Nil(t, err)
 	assert.Len(t, subs144, 0)
 
-	assert.Nil(t, database.AddSubscriptions(id, subscriptions, context.TODO()))
+	assert.Nil(t, database.AddSubscriptions(id, subscriptions, context.Background()))
 
-	subs60, err = database.GetSubscriptionData(60, []string{"testAddr"}, context.TODO())
+	subs60, err = database.GetSubscriptionData(60, []string{"testAddr"}, context.Background())
 	assert.Nil(t, err)
 	assert.Len(t, subs60, 1)
 }
@@ -395,9 +395,9 @@ func TestDb_DuplicateEntries(t *testing.T) {
 		})
 	}
 
-	assert.Nil(t, database.AddSubscriptions(id, subscriptions, context.TODO()))
+	assert.Nil(t, database.AddSubscriptions(id, subscriptions, context.Background()))
 
-	subs, err := database.GetSubscriptionData(60, []string{"testAddr"}, context.TODO())
+	subs, err := database.GetSubscriptionData(60, []string{"testAddr"}, context.Background())
 	assert.Nil(t, err)
 	assert.NotNil(t, subs)
 	assert.Equal(t, 1, len(subs))
@@ -414,13 +414,13 @@ func TestDb_FindSubscriptions_Multiple(t *testing.T) {
 
 	for i := 1; i < 6; i++ {
 		subscriptions[0].SubscriptionId = uint(i)
-		assert.Nil(t, database.AddSubscriptions(uint(i), subscriptions, context.TODO()))
+		assert.Nil(t, database.AddSubscriptions(uint(i), subscriptions, context.Background()))
 	}
 
 	subscriptions[0].SubscriptionId = uint(1)
-	assert.Nil(t, database.AddSubscriptions(uint(1), subscriptions, context.TODO()))
+	assert.Nil(t, database.AddSubscriptions(uint(1), subscriptions, context.Background()))
 
-	subs, err := database.GetSubscriptionData(60, []string{"testAddr"}, context.TODO())
+	subs, err := database.GetSubscriptionData(60, []string{"testAddr"}, context.Background())
 	assert.Nil(t, err)
 	assert.Equal(t, 5, len(subs))
 
@@ -438,16 +438,16 @@ func TestDb_AddToExisting(t *testing.T) {
 	})
 
 	subscriptions[0].SubscriptionId = uint(1)
-	assert.Nil(t, database.AddSubscriptions(uint(1), subscriptions, context.TODO()))
+	assert.Nil(t, database.AddSubscriptions(uint(1), subscriptions, context.Background()))
 
-	subs, err := database.GetSubscriptionData(60, []string{"testAddr"}, context.TODO())
+	subs, err := database.GetSubscriptionData(60, []string{"testAddr"}, context.Background())
 	assert.Nil(t, err)
 	assert.Equal(t, 1, len(subs))
 
 	assert.Equal(t, uint(1), subs[0].SubscriptionId)
 	assert.Nil(t, database.AddToExistingSubscription(uint(1), subscriptions))
 
-	subs2, err2 := database.GetSubscriptionData(60, []string{"testAddr"}, context.TODO())
+	subs2, err2 := database.GetSubscriptionData(60, []string{"testAddr"}, context.Background())
 	assert.Nil(t, err2)
 	assert.Equal(t, 1, len(subs2))
 
@@ -472,8 +472,8 @@ func TestDb_UpdatedAt(t *testing.T) {
 	})
 
 	subscriptions[0].SubscriptionId = uint(1)
-	assert.Nil(t, database.AddSubscriptions(uint(1), subscriptions, context.TODO()))
-	subs, err := database.GetSubscriptionData(60, []string{"testAddr"}, context.TODO())
+	assert.Nil(t, database.AddSubscriptions(uint(1), subscriptions, context.Background()))
+	subs, err := database.GetSubscriptionData(60, []string{"testAddr"}, context.Background())
 	assert.Nil(t, err)
 	assert.Equal(t, 1, len(subs))
 
@@ -489,7 +489,7 @@ func TestDb_UpdatedAt(t *testing.T) {
 		Address: "newtestAddr",
 	})
 
-	assert.Nil(t, database.AddSubscriptions(uint(1), subscriptions, context.TODO()))
+	assert.Nil(t, database.AddSubscriptions(uint(1), subscriptions, context.Background()))
 
 	time.Sleep(time.Second)
 

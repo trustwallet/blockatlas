@@ -70,7 +70,7 @@ func RunNotifier(database *db.Instance, delivery amqp.Delivery) {
 func buildAndPostMessage(blockTransactions blockatlas.TxSetMap, sub blockatlas.Subscription, wg *sync.WaitGroup, ctx context.Context) {
 	defer wg.Done()
 
-	span, ctx := apm.StartSpan(ctx, "buildAndPostMessage", "go")
+	span, ctx := apm.StartSpan(ctx, "buildAndPostMessage", "app")
 	defer span.End()
 
 	tx, ok := blockTransactions.Map[sub.Address]
@@ -100,7 +100,7 @@ func buildAndPostMessage(blockTransactions blockatlas.TxSetMap, sub blockatlas.S
 }
 
 func publishNotificationBatch(batch []TransactionNotification, ctx context.Context) {
-	span, _ := apm.StartSpan(ctx, "getNotificationBatches", "go")
+	span, _ := apm.StartSpan(ctx, "getNotificationBatches", "app")
 	defer span.End()
 	raw, err := json.Marshal(batch)
 	if err != nil {
@@ -125,7 +125,7 @@ func GetInterval(value int, minInterval, maxInterval time.Duration) time.Duratio
 }
 
 func getNotificationBatches(notifications []TransactionNotification, sizeUint uint, ctx context.Context) [][]TransactionNotification {
-	span, _ := apm.StartSpan(ctx, "getNotificationBatches", "go")
+	span, _ := apm.StartSpan(ctx, "getNotificationBatches", "app")
 	defer span.End()
 	size := int(sizeUint)
 	resultLength := (len(notifications) + size - 1) / size

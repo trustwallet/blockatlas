@@ -20,7 +20,7 @@ func TestHeightBlockMap_SetHeight(t *testing.T) {
 	mock.ExpectCommit()
 	i := Instance{Gorm: db}
 
-	assert.Nil(t, i.SetLastParsedBlockNumber("bitcoin", 1, context.TODO()))
+	assert.Nil(t, i.SetLastParsedBlockNumber("bitcoin", 1, context.Background()))
 }
 
 func TestHeightBlockMap_GetHeight(t *testing.T) {
@@ -34,8 +34,8 @@ func TestHeightBlockMap_GetHeight(t *testing.T) {
 	mock.ExpectCommit()
 	i := Instance{Gorm: db}
 
-	assert.Nil(t, i.SetLastParsedBlockNumber("bitcoin", 1, context.TODO()))
-	block, err := i.GetLastParsedBlockNumber("bitcoin", context.TODO())
+	assert.Nil(t, i.SetLastParsedBlockNumber("bitcoin", 1, context.Background()))
+	block, err := i.GetLastParsedBlockNumber("bitcoin", context.Background())
 	assert.Nil(t, err)
 	assert.Equal(t, int64(1), block)
 
@@ -44,7 +44,7 @@ func TestHeightBlockMap_GetHeight(t *testing.T) {
 			`SELECT * FROM "trackers"  WHERE ("trackers"."coin" = $1`)).WithArgs("ethereum").WillReturnRows(sqlmock.NewRows([]string{"coin", "height"}).
 		AddRow("ethereum", 1))
 
-	b, err := i.GetLastParsedBlockNumber("ethereum", context.TODO())
+	b, err := i.GetLastParsedBlockNumber("ethereum", context.Background())
 	assert.Nil(t, err)
 	assert.Equal(t, int64(1), b)
 
