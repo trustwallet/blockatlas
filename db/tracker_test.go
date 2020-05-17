@@ -1,6 +1,7 @@
 package db
 
 import (
+	"context"
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
@@ -19,7 +20,7 @@ func TestHeightBlockMap_SetHeight(t *testing.T) {
 	mock.ExpectCommit()
 	i := Instance{Gorm: db}
 
-	assert.Nil(t, i.SetLastParsedBlockNumber("bitcoin", 1))
+	assert.Nil(t, i.SetLastParsedBlockNumber("bitcoin", 1, context.TODO()))
 }
 
 func TestHeightBlockMap_GetHeight(t *testing.T) {
@@ -33,8 +34,8 @@ func TestHeightBlockMap_GetHeight(t *testing.T) {
 	mock.ExpectCommit()
 	i := Instance{Gorm: db}
 
-	assert.Nil(t, i.SetLastParsedBlockNumber("bitcoin", 1))
-	block, err := i.GetLastParsedBlockNumber("bitcoin")
+	assert.Nil(t, i.SetLastParsedBlockNumber("bitcoin", 1, context.TODO()))
+	block, err := i.GetLastParsedBlockNumber("bitcoin", context.TODO())
 	assert.Nil(t, err)
 	assert.Equal(t, int64(1), block)
 
@@ -43,7 +44,7 @@ func TestHeightBlockMap_GetHeight(t *testing.T) {
 			`SELECT * FROM "trackers"  WHERE ("trackers"."coin" = $1`)).WithArgs("ethereum").WillReturnRows(sqlmock.NewRows([]string{"coin", "height"}).
 		AddRow("ethereum", 1))
 
-	b, err := i.GetLastParsedBlockNumber("ethereum")
+	b, err := i.GetLastParsedBlockNumber("ethereum", context.TODO())
 	assert.Nil(t, err)
 	assert.Equal(t, int64(1), b)
 

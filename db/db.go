@@ -6,15 +6,26 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"go.elastic.co/apm/module/apmgorm"
 	_ "go.elastic.co/apm/module/apmgorm/dialects/postgres"
+	"sync"
 	"time"
 )
 
 type Instance struct {
+	sync.Mutex
 	Gorm *gorm.DB
 }
 
-func New(uri string) (*Instance, error) {
-	g, err := apmgorm.Open("postgres", uri)
+func New(uri, env string) (*Instance, error) {
+	var (
+		g   *gorm.DB
+		err error
+	)
+	if env == "prod" {
+		g, err = apmgorm.Open("postgres", uri)
+	} else {
+		g, err = gorm.Open("postgres", uri)
+	}
+
 	if err != nil {
 		return nil, err
 	}
