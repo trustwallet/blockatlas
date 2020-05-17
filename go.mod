@@ -40,7 +40,6 @@ require (
 	go.elastic.co/apm v1.8.0
 	go.elastic.co/apm/module/apmgin v1.8.0
 	go.elastic.co/apm/module/apmgorm v1.8.0
-	go.elastic.co/apm/module/apmhttp v1.8.0
 	go.elastic.co/apm/module/apmlogrus v1.8.0
 	go.elastic.co/fastjson v1.1.0 // indirect
 	go.uber.org/atomic v1.6.0
