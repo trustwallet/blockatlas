@@ -6,18 +6,18 @@ import (
 )
 
 type Platform struct {
-	client    Client
-	dexClient DexClient
+	rpcClient      Client
+	explorerClient ExplorerClient
 }
 
-func Init(api, dex string) *Platform {
-	p := &Platform{
-		client:    Client{blockatlas.InitClient(api)},
-		dexClient: DexClient{blockatlas.InitClient(dex)},
+func Init(rpcApi, explorerApi string) *Platform {
+	p := Platform{
+		rpcClient:      Client{blockatlas.InitClient(rpcApi)},
+		explorerClient: ExplorerClient{blockatlas.InitClient(explorerApi)},
 	}
-	p.client.ErrorHandler = getHTTPError
-	p.dexClient.ErrorHandler = getHTTPError
-	return p
+	p.rpcClient.ErrorHandler = handleHTTPError
+	p.explorerClient.ErrorHandler = handleHTTPError
+	return &p
 }
 
 func (p *Platform) Coin() coin.Coin {

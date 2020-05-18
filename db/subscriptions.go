@@ -1,9 +1,11 @@
 package db
 
 import (
+	"context"
 	"fmt"
 	"github.com/trustwallet/blockatlas/db/models"
 	"github.com/trustwallet/blockatlas/pkg/errors"
+	"go.elastic.co/apm/module/apmgorm"
 	"strconv"
 	"strings"
 	"time"
@@ -11,13 +13,13 @@ import (
 
 const rawBulkInsert = `INSERT INTO subscription_data(subscription_id, coin, address) VALUES %s ON CONFLICT DO NOTHING`
 
-func (i *Instance) GetSubscriptionData(coin uint, addresses []string) ([]models.SubscriptionData, error) {
+func (i *Instance) GetSubscriptionData(coin uint, addresses []string, ctx context.Context) ([]models.SubscriptionData, error) {
 	if len(addresses) == 0 {
 		return nil, errors.E("Empty addresses")
 	}
-
+	g := apmgorm.WithContext(ctx, i.Gorm)
 	var subscriptionsDataList []models.SubscriptionData
-	err := i.Gorm.
+	err := g.
 		Model(&models.SubscriptionData{}).
 		Where("address in (?) AND coin = ?", addresses, coin).
 		Find(&subscriptionsDataList).Error
@@ -28,12 +30,12 @@ func (i *Instance) GetSubscriptionData(coin uint, addresses []string) ([]models.
 	return subscriptionsDataList, nil
 }
 
-func (i *Instance) AddSubscriptions(id uint, subscriptions []models.SubscriptionData) error {
+func (i *Instance) AddSubscriptions(id uint, subscriptions []models.SubscriptionData, ctx context.Context) error {
 	if len(subscriptions) == 0 {
 		return errors.E("Empty subscriptions")
 	}
-
-	txInstance := Instance{Gorm: i.Gorm.Begin()}
+	g := apmgorm.WithContext(ctx, i.Gorm)
+	txInstance := Instance{Gorm: g.Begin()}
 	defer func() {
 		if r := recover(); r != nil {
 			txInstance.Gorm.Rollback()
@@ -106,8 +108,9 @@ func (i *Instance) AddToExistingSubscription(id uint, subscriptions []models.Sub
 	return nil
 }
 
-func (i *Instance) DeleteAllSubscriptions(id uint) error {
-	request := i.Gorm.Where("subscription_id = ?", id)
+func (i *Instance) DeleteAllSubscriptions(id uint, ctx context.Context) error {
+	g := apmgorm.WithContext(ctx, i.Gorm)
+	request := g.Where("subscription_id = ?", id)
 	if err := request.Error; err != nil {
 		return err
 	}

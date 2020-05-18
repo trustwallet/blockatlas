@@ -28,7 +28,7 @@ func init() {
 
 	engine = internal.InitEngine(viper.GetString("gin.mode"))
 
-	platform.Init(viper.GetString("platform"))
+	platform.Init(viper.GetStringSlice("platform"))
 }
 
 func main() {
