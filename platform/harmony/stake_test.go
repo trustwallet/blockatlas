@@ -158,12 +158,12 @@ func TestHexToInt(t *testing.T) {
 
 func TestGetDetails(t *testing.T) {
 	var expected = blockatlas.StakingDetails{
-		blockatlas.StakingReward{Annual: 10},
-		lockTime ,
-		"1000",
-		blockatlas.DelegationTypeDelegate}
+			Reward:        blockatlas.StakingReward{Annual: 10},
+			LockTime:      lockTime,
+			MinimumAmount: "1000",
+			Type:          blockatlas.DelegationTypeDelegate,
+		}
 
 	result := getDetails(10)
-
 	assert.Equal(t,expected, result)
 }
