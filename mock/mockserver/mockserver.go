@@ -178,11 +178,6 @@ func findFileForMockURL(mockURL, method, queryParams, requestBody string) (TestD
 }
 
 func requestHandlerIntern(w http.ResponseWriter, r *http.Request, method, body, basedir string) error {
-	if r.URL.Path == "/mock/mock-healtcheck" {
-		fmt.Fprintf(w, "{\"status\": true, \"msg\": \"Mockserver is alive\"}")
-		return nil
-	}
-
 	mockURL := r.URL.Path
 	entry, err := findFileForMockURL(mockURL, method, r.URL.RawQuery, body)
 	if err != nil {

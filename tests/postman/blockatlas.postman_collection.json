@@ -2076,12 +2076,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:3347/mock/mock-healtcheck",
+							"raw": "localhost:3347/mock/mock-healthcheck",
 							"host": [
 								"localhost:3347"
 							],
 							"path": [
-								"mock/mock-healtcheck"
+								"mock/mock-healthcheck"
 							]
 						}
 					},

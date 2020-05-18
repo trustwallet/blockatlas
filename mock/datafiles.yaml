@@ -1,3 +1,6 @@
+- file: mock/mockserver/mock-healthcheck.json
+  mockURL: /mock/mock-healthcheck
+  method: GET
 - file: mock/ext-api-data/aeternity-api_middleware_transactions_account_ak_2WGWYMgWy1opZxgA8AVzGCTavCQyUBtbKx5SrCX6E4kmDZMtJb.json
   mockURL: /mock/aeternity-api/middleware/transactions/account/ak_2WGWYMgWy1opZxgA8AVzGCTavCQyUBtbKx5SrCX6E4kmDZMtJb
   method: GET
