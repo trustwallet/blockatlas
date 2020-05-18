@@ -30,8 +30,6 @@ type TestDataEntryInternal struct {
 
 var files []TestDataEntryInternal
 
-const extension string = ".json"
-
 // matchQueryParams compares HTTP GET params, checks that all provided params contain all parameters from the expected params, with the same values
 func matchQueryParams(expected, actual string) bool {
 	if len(expected) == 0 {
