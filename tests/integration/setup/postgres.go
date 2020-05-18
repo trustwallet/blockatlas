@@ -39,7 +39,7 @@ func runPgContainerAndInitConnection() (*db.Instance, error) {
 		err    error
 	)
 	if err := pool.Retry(func() error {
-		dbConn, err = db.New(uri)
+		dbConn, err = db.New(uri, "test")
 		return err
 	}); err != nil {
 		return nil, err

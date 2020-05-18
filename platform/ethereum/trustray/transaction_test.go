@@ -3,11 +3,9 @@ package trustray
 import (
 	"bytes"
 	"encoding/json"
-	"testing"
-
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-
 	"github.com/trustwallet/blockatlas/coin"
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"testing"
 )
 
 const tokenTransferSrc = `
@@ -22,8 +20,8 @@ const tokenTransferSrc = `
                 "totalSupply": "120000000000000000",
                 "name": "KaratBank Coin"
             },
-            "from": "0xd35f30d194684a391c63a6deced7d3dd5207c265",
-            "to": "0xaa4d790076f1bf7511a0a0ac498c89e13e1efe17",
+            "from": "0xd35F30D194684a391C63A6decEd7d3dd5207c265",
+            "to": "0xaA4D790076f1Bf7511a0A0AC498C89e13e1eFE17",
             "type": "token_transfer",
             "value": "4291000000",
             "coin": 60
@@ -110,11 +108,16 @@ const failedSrc = `
 	"coin": 60
 }`
 
+var (
+	addr1     = "0xd35F30D194684a391C63A6decEd7d3dd5207c265"
+	addr2     = "0xaA4D790076f1Bf7511a0A0AC498C89e13e1eFE17"
+	contract1 = "0xf3586684107CE0859c44aa2b2E0fB8cd8731a15a"
+)
 var tokenTransferDst = blockatlas.Tx{
 	ID:       "0x7777854580f273df61e0162e1a41b3e1e05ab8b9f553036fa9329a90dd7e9ab2",
 	Coin:     coin.ETH,
-	From:     "0xd35f30d194684a391c63a6deced7d3dd5207c265",
-	To:       "0xf3586684107ce0859c44aa2b2e0fb8cd8731a15a",
+	From:     addr1,
+	To:       contract1,
 	Fee:      "358254913291776",
 	Date:     1554248437,
 	Block:    7491945,
@@ -123,19 +126,19 @@ var tokenTransferDst = blockatlas.Tx{
 	Meta: blockatlas.TokenTransfer{
 		Name:     "KaratBank Coin",
 		Symbol:   "KBC",
-		TokenID:  "0xf3586684107CE0859c44aa2b2E0fB8cd8731a15a",
+		TokenID:  contract1,
 		Decimals: 7,
 		Value:    "4291000000",
-		From:     "0xd35f30d194684a391c63a6deced7d3dd5207c265",
-		To:       "0xaa4d790076f1bf7511a0a0ac498c89e13e1efe17",
+		From:     addr1,
+		To:       addr2,
 	},
 }
 
 var contractCallDst = blockatlas.Tx{
 	ID:       "0x34ab0028a9aa794d5cc12887e7b813cec17889948276b301028f24a408da6da4",
 	Coin:     coin.ETH,
-	From:     "0xc9a16a82c284efc3cb0fe8c891ab85d6eba0eefb",
-	To:       "0xc67f9c909c4d185e4a5d21d642c27d05a145a76c",
+	From:     "0xc9a16a82c284EFC3cB0fE8C891ab85d6EBa0EeFB",
+	To:       "0xc67f9C909C4d185E4A5d21D642c27D05A145a76c",
 	Fee:      "42680000000000",
 	Date:     1554661737,
 	Block:    7522627,
@@ -150,8 +153,8 @@ var contractCallDst = blockatlas.Tx{
 var transferDst = blockatlas.Tx{
 	ID:       "0x77f8a3b2203933493d103a1637de814b4853410b1fb2981c4d2cff4d7a3071ab",
 	Coin:     coin.ETH,
-	From:     "0xf5aea47e57c058881b31ee8fce1002c409188f06",
-	To:       "0x0ae933a89d9e249d0873cfc7ca022fcb3f1280ce",
+	From:     "0xf5AeA47E57c058881B31EE8fcE1002C409188F06",
+	To:       "0x0Ae933A89D9E249D0873cfc7CA022fCB3F1280Ce",
 	Fee:      "105000000000000",
 	Date:     1554663642,
 	Block:    7522781,
@@ -167,8 +170,8 @@ var transferDst = blockatlas.Tx{
 var failedDst = blockatlas.Tx{
 	ID:       "0x8dfe7e859f7bdcea4e6f4ada18567d96a51c3aa29e618ef09b80ae99385e191e",
 	Coin:     coin.ETH,
-	From:     "0x4b55af7ce28a113d794f9a9940fe1506f37aa619",
-	To:       "0xe65f787c8561a4b15771111bb427274dedfe85d7",
+	From:     "0x4b55af7cE28A113D794F9A9940fe1506f37aA619",
+	To:       "0xE65f787c8561A4b15771111bb427274deDfe85D7",
 	Fee:      "63000000000000",
 	Date:     1554662399,
 	Block:    7522678,
@@ -182,59 +185,46 @@ var failedDst = blockatlas.Tx{
 	},
 }
 
-type test struct {
-	name        string
-	apiResponse string
-	expected    *blockatlas.Tx
-	token       bool
-}
-
 func TestNormalize(t *testing.T) {
-	testNormalize(t, &test{
-		name:        "transfer",
-		apiResponse: transferSrc,
-		expected:    &transferDst,
-	})
-	testNormalize(t, &test{
-		name:        "token transfer",
-		apiResponse: tokenTransferSrc,
-		expected:    &tokenTransferDst,
-		token:       true,
-	})
-	testNormalize(t, &test{
-		name:        "contract call",
-		apiResponse: contractCallSrc,
-		expected:    &contractCallDst,
-	})
-	testNormalize(t, &test{
-		name:        "failed transaction",
-		apiResponse: failedSrc,
-		expected:    &failedDst,
+	var (
+		doc   Doc
+		tests = []struct {
+			name, apiResponse string
+			expected          *blockatlas.Tx
+		}{
+			{"transfer", transferSrc, &transferDst},
+			{"token transfer", tokenTransferSrc, &tokenTransferDst},
+			{"contract call", contractCallSrc, &contractCallDst},
+			{"failed transaction", failedSrc, &failedDst},
+		}
+	)
+
+	t.Run("TestNormalize", func(t *testing.T) {
+		for _, tt := range tests {
+			err := json.Unmarshal([]byte(tt.apiResponse), &doc)
+			if err != nil {
+				t.Error(err)
+				return
+			}
+			res := AppendTxs(nil, &doc, coin.ETH)
+
+			resJSON, err := json.Marshal(res)
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			dstJSON, err := json.Marshal([]blockatlas.Tx{*tt.expected})
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			if !bytes.Equal(resJSON, dstJSON) {
+				println("\n", "Test failed ", tt.name)
+				println("resJSON", string(resJSON))
+				println("dstJSON", string(dstJSON))
+				t.Error(tt.name + ": tx don't equal")
+			}
+		}
 	})
 }
 
-func testNormalize(t *testing.T, _test *test) {
-	var doc Doc
-	err := json.Unmarshal([]byte(_test.apiResponse), &doc)
-	if err != nil {
-		t.Error(err)
-		return
-	}
-	res := AppendTxs(nil, &doc, coin.ETH)
-
-	resJSON, err := json.Marshal(res)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	dstJSON, err := json.Marshal([]blockatlas.Tx{*_test.expected})
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if !bytes.Equal(resJSON, dstJSON) {
-		println(string(resJSON))
-		println(string(dstJSON))
-		t.Error(_test.name + ": tx don't equal")
-	}
-}

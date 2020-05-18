@@ -120,11 +120,11 @@ func TestNormalizeToken(t *testing.T) {
 			err := json.Unmarshal([]byte(testToken.apiResponse), &srcToken)
 			assert.Nil(t, err)
 
-			var srcTokens TokenPage
+			var srcTokens TokenList
 			err = json.Unmarshal([]byte(testToken.tokens), &srcTokens)
 			assert.Nil(t, err)
 
-			tk, ok := NormalizeToken(&srcToken, &srcTokens)
+			tk, ok := normalizeToken(&srcToken, &srcTokens)
 			assert.Equal(t, testToken.ok, ok, "token: token could not be normalized")
 			assert.Equal(t, testToken.expected, tk, "token: token don't equal")
 		})
