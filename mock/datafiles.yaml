@@ -18,16 +18,12 @@
   mockURL: /mock/binance-explorer/v1/txs?address=bnb1jeu6gscugy6l2wyatxthkh2hmer4hzevgcmf0q&txAsset=BNB&txType=TRANSFER
   method: GET
   extURL: https://explorer.binance.org/api/v1/txs?address=bnb1jeu6gscugy6l2wyatxthkh2hmer4hzevgcmf0q&page=1&rows=20&txAsset=BNB&txType=TRANSFER
-- file: mock/ext-api-data/binance-api_v1_tx__txHash_F53BB470A3B6B83977CFFE5D5F9937FB1CBB8785FBE818D9B38AD43F3ECD82BC.json
-  mockURL: /mock/binance-api/v1/tx?txHash=F53BB470A3B6B83977CFFE5D5F9937FB1CBB8785FBE818D9B38AD43F3ECD82BC
+- file: mock/ext-api-data/binance-api_v1_account_bnb1jeu6gscugy6l2wyatxthkh2hmer4hzevgcmf0q
+  mockURL: /mock/binance-api/v1/account/bnb1jeu6gscugy6l2wyatxthkh2hmer4hzevgcmf0q
   method: GET
-  extURL: https://explorer.binance.org/api/v1/v1/tx?txHash=F53BB470A3B6B83977CFFE5D5F9937FB1CBB8785FBE818D9B38AD43F3ECD82BC
-- file: mock/ext-api-data/binance-dex_v1_account_bnb1jxfh2g85q3v0tdq56fnevx6xcxtcnhtsmcu64m.json
-  mockURL: /mock/binance-dex/v1/account/bnb1jxfh2g85q3v0tdq56fnevx6xcxtcnhtsmcu64m
-  method: GET
-  extURL: https://dex.binance.org/api/v1/account/bnb1jxfh2g85q3v0tdq56fnevx6xcxtcnhtsmcu64m
-- file: mock/ext-api-data/binance-dex_v1_tokens__limit_1000_offset_0.json
-  mockURL: /mock/binance-dex/v1/tokens?limit=1000&offset=0
+  extURL: https://dex.binance.org/api/v1/account/bnb1jeu6gscugy6l2wyatxthkh2hmer4hzevgcmf0q
+- file: mock/ext-api-data/binance-api_v1_tokens__limit_1000_offset_0.json
+  mockURL: /mock/binance-api/v1/tokens?limit=1000
   method: GET
   extURL: https://dex.binance.org/api/v1/tokens?limit=1000&offset=0
 - file: mock/ext-api-data/bitcoin-api_v2_address_bc1qrfr44n2j4czd5c9txwlnw0yj2h82x9566fglqj__details_txs.json
