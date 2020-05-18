@@ -13,6 +13,7 @@ import (
 
 const (
 	defaultConfigPath = "../../config.yml"
+	prod              = "prod"
 )
 
 var (
@@ -42,7 +43,7 @@ func init() {
 	}
 
 	var err error
-	database, err = db.New(pgUri)
+	database, err = db.New(pgUri, prod)
 	if err != nil {
 		logger.Fatal(err)
 	}

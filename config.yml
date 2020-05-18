@@ -11,7 +11,7 @@ gin:
 # If all - run all platforms in one binary. You can pick specific coin handle to run binary only with specific coin
 # Example: ethereum
 # You can see all the coin handles at coins/coins.yml file
-platform: all
+platform: [ethereum]
 
 # The transaction watcher
 observer:
@@ -37,11 +37,10 @@ observer:
 postgres:
   uri: postgresql://user:pass@localhost/my_db?sslmode=disable
 
-# [BNB] Binance DEX: https://wallet.binance.org
-#       Binance Chain: https://explorer.binance.org
+# [BNB] Binance DEX: https://www.binance.org/
 binance:
-  api: https://explorer.binance.org/api/v1
-  dex: https://dex.binance.org/api
+  api: https://dex.binance.org/api
+  explorer: https://explorer.binance.org/api
 
 # [NIM] Nimiq: https://nimiq.com
 #nimiq:
@@ -67,7 +66,7 @@ tezos:
 # [ETH] Ethereum: https://ethereum.org
 ethereum:
   api: https://localhost:4567 #(Trust-Ray API)
-  blockbook_api: https://eth1.trezor.io/api/
+  blockbook_api: https://eth1.trezor.io/api
   collections_api: https://api.opensea.io
 #  collections_api_key: [opensea_api_key]
   rpc: https://main-rpc.linkpool.io

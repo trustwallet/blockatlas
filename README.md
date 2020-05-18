@@ -149,11 +149,16 @@ By default starting any of the [services](#architecture) will enable all platfor
 To run a specific service only by passing environmental variable, e.g: `platfrom_api` :
 ```shell
 ATLAS_PLATFORM=ethereum go run cmd/platform_api/main.go
+
+ATLAS_PLATFORM=ethereum binance bitcoin go run cmd/platform_api/main.go # for multiple platforms
 ```
 
 or change in config file
 ```yaml
-platform: ethereum
+# Single
+platform: [ethereum]
+# Multiple 
+platform: [ethereum, binance, bitcoin]
 ```
 
 This way you can one platform per binary, for scalability and sustainability.

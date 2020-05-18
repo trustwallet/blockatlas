@@ -1,12 +1,14 @@
 package subscriber
 
 import (
+	"context"
 	"encoding/json"
 	"github.com/streadway/amqp"
 	"github.com/trustwallet/blockatlas/db"
 	"github.com/trustwallet/blockatlas/db/models"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
+	"go.elastic.co/apm"
 )
 
 const (
@@ -16,6 +18,9 @@ const (
 )
 
 func RunSubscriber(database *db.Instance, delivery amqp.Delivery) {
+	tx := apm.DefaultTracer.StartTransaction("RunSubscriber", "app")
+	defer tx.End()
+	ctx := apm.ContextWithTransaction(context.Background(), tx)
 	var event blockatlas.SubscriptionEvent
 	err := json.Unmarshal(delivery.Body, &event)
 	if err != nil {
@@ -30,13 +35,13 @@ func RunSubscriber(database *db.Instance, delivery amqp.Delivery) {
 
 	switch event.Operation {
 	case AddSubscription, UpdateSubscription:
-		err = database.AddSubscriptions(id, ToSubscriptionData(subscriptions))
+		err = database.AddSubscriptions(id, ToSubscriptionData(subscriptions), ctx)
 		if err != nil {
 			logger.Error(err, params)
 		}
 		logger.Info("Added", params)
 	case DeleteSubscription:
-		err := database.DeleteAllSubscriptions(id)
+		err := database.DeleteAllSubscriptions(id, ctx)
 		if err != nil {
 			logger.Error(err, params)
 		}

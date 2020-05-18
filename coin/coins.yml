@@ -130,6 +130,7 @@
   name: BNB
   decimals: 8
   blockTime: 4000
+  minConfirmations: 2
   sampleAddress: 'tbnb1fhr04azuhcj0dulm7ka40y0cqjlafwae9k9gk2'
 
 - id: 818

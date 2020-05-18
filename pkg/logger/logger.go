@@ -3,6 +3,7 @@ package logger
 import (
 	"fmt"
 	log "github.com/sirupsen/logrus"
+	"go.elastic.co/apm/module/apmlogrus"
 	"os"
 	"strings"
 )
@@ -12,6 +13,7 @@ type Params map[string]interface{}
 func InitLogger() {
 	log.SetFormatter(&log.TextFormatter{})
 	log.SetOutput(os.Stdout)
+	log.AddHook(&apmlogrus.Hook{})
 }
 
 type message struct {

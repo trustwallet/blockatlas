@@ -7,6 +7,7 @@ import (
 	"github.com/trustwallet/blockatlas/config"
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/logger"
+	"go.elastic.co/apm/module/apmgin"
 
 	"path/filepath"
 	"time"
@@ -42,6 +43,7 @@ func InitEngine(ginMode string) *gin.Engine {
 	gin.SetMode(ginMode)
 	engine := gin.New()
 	engine.Use(middleware.CORSMiddleware())
+	engine.Use(apmgin.Middleware(engine))
 	engine.Use(gin.Logger())
 	engine.Use(middleware.Prometheus())
 	engine.OPTIONS("/*path", middleware.CORSMiddleware())

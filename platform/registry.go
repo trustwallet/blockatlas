@@ -27,25 +27,31 @@ var (
 	NamingAPIs map[uint]blockatlas.NamingServiceAPI
 )
 
-func getActivePlatforms(handle string) []blockatlas.Platform {
-	platforms := getAllHandlers()
-	logger.Info("Platform API setup with: ", logger.Params{"handle": handle})
-
-	if handle == allPlatformsHandle {
-		return platforms.GetPlatformList()
+func getActivePlatforms(handles []string) []blockatlas.Platform {
+	if len(handles) == 0 {
+		logger.Fatal("Please, use ATLAS_PLATFORM handle with non-empty value, see more at Readme. Example: all", logger.Params{"ATLAS_PLATFORM": handles})
+		return nil
 	}
 
-	platform, ok := platforms[handle]
-	if ok {
-		return []blockatlas.Platform{platform}
-	}
+	allPlatforms := getAllHandlers()
+	logger.Info("Platform API setup with: ", logger.Params{"handles": handles})
 
-	logger.Fatal("Please, use ATLAS_PLATFORM handle with non-empty value, see more at Readme. Example: all", logger.Params{"ATLAS_PLATFORM": handle})
-	return nil
+	platforms := make([]blockatlas.Platform, 0, len(handles))
+
+	for _, handle := range handles {
+		if handle == allPlatformsHandle {
+			return allPlatforms.GetPlatformList()
+		}
+		p, ok := allPlatforms[handle]
+		if ok {
+			platforms = append(platforms, p)
+		}
+	}
+	return platforms
 }
 
-func Init(platformHandle string) {
-	platformList := getActivePlatforms(platformHandle)
+func Init(platformHandles []string) {
+	platformList := getActivePlatforms(platformHandles)
 
 	Platforms = make(map[string]blockatlas.Platform)
 	BlockAPIs = make(map[string]blockatlas.BlockAPI)

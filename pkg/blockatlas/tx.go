@@ -93,10 +93,9 @@ type (
 		Date int64 `json:"date"`
 		// Height of the block the transaction was included in
 		Block uint64 `json:"block"`
-		// Status of the transaction
+		// Status of the transaction e.g: "completed", "pending", "error"
 		Status Status `json:"status"`
-		// Empty if the transaction was successful,
-		// else error explaining why the transaction failed (optional)
+		// Empty if the transaction "completed" or "pending", else error explaining why the transaction failed (optional)
 		Error string `json:"error,omitempty"`
 		// Transaction nonce or sequence
 		Sequence uint64 `json:"sequence"`

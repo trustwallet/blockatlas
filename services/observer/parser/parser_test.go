@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"context"
 	"errors"
 	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas/coin"
@@ -53,38 +54,38 @@ func TestFetchBlocks(t *testing.T) {
 		TxBatchLimit:          0,
 		Database:              nil,
 	}
-	blocks := FetchBlocks(params, 0, 100)
+	blocks := FetchBlocks(params, 0, 100, context.Background())
 	assert.Equal(t, len(blocks), 100)
 }
 
 func TestParser_ConvertToBatch(t *testing.T) {
 	blocks := []blockatlas.Block{block, block, block, block}
-	txs := ConvertToBatch(blocks)
+	txs := ConvertToBatch(blocks, context.Background())
 	assert.Equal(t, 4, len(txs))
 
 	empty := []blockatlas.Block{}
-	txsEmpty := ConvertToBatch(empty)
+	txsEmpty := ConvertToBatch(empty, context.Background())
 	assert.Equal(t, 0, len(txsEmpty))
 }
 
 func TestParser_add(t *testing.T) {
 	blocks := []blockatlas.Block{block, block, block, block}
-	txs := ConvertToBatch(blocks)
+	txs := ConvertToBatch(blocks, context.Background())
 
 	batch := transactionsBatch{
 		Mutex: sync.Mutex{},
 		Txs:   txs,
 	}
 
-	batch.fillBatch(txs)
+	batch.fillBatch(txs, context.Background())
 	assert.Equal(t, 8, len(batch.Txs))
 
-	batch.fillBatch(nil)
+	batch.fillBatch(nil, context.Background())
 	assert.Equal(t, 8, len(batch.Txs))
 }
 
 func TestParser_getBlockByNumberWithRetry(t *testing.T) {
-	block, err := getBlockByNumberWithRetry(3, time.Millisecond*1, getBlock, 1)
+	block, err := getBlockByNumberWithRetry(3, time.Millisecond*1, getBlock, 1, "", context.Background())
 	if err != nil {
 		t.Error(err)
 	}
@@ -96,7 +97,7 @@ func TestParser_getBlockByNumberWithRetry(t *testing.T) {
 
 func TestParser_getBlockByNumberWithRetry_Error(t *testing.T) {
 	now := time.Now()
-	block, err := getBlockByNumberWithRetry(2, time.Millisecond*2, getBlock, 0)
+	block, err := getBlockByNumberWithRetry(2, time.Millisecond*2, getBlock, 0, "", context.Background())
 	elapsed := time.Since(now)
 	if err == nil {
 		t.Error("getBlockByNumberWithRetry method need fail")
@@ -141,35 +142,35 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 
 func TestGetTxBatches(t *testing.T) {
 	txs := make(blockatlas.Txs, 10000)
-	batches := getTxsBatches(txs, 1000)
+	batches := getTxsBatches(txs, 1000, context.Background())
 	assert.Len(t, batches, 10)
-	batches = getTxsBatches(txs, 100)
+	batches = getTxsBatches(txs, 100, context.Background())
 	assert.Len(t, batches, 100)
-	batches = getTxsBatches(txs, 500)
+	batches = getTxsBatches(txs, 500, context.Background())
 	assert.Len(t, batches, 20)
 
 	txs = make(blockatlas.Txs, 3800)
-	batches = getTxsBatches(txs, 100)
+	batches = getTxsBatches(txs, 100, context.Background())
 	assert.Len(t, batches, 38)
-	batches = getTxsBatches(txs, 1000)
+	batches = getTxsBatches(txs, 1000, context.Background())
 	assert.Len(t, batches, 4)
 
 	txs = make(blockatlas.Txs, 5000)
-	batches = getTxsBatches(txs, 10000)
+	batches = getTxsBatches(txs, 10000, context.Background())
 	assert.Len(t, batches, 1)
 
 	txs = make(blockatlas.Txs, 0)
-	batches = getTxsBatches(txs, 100)
+	batches = getTxsBatches(txs, 100, context.Background())
 	assert.Len(t, batches, 0)
 
 	txs = make(blockatlas.Txs, 0)
-	batches = getTxsBatches(txs, 100)
+	batches = getTxsBatches(txs, 100, context.Background())
 	assert.Len(t, batches, 0)
 
-	batches = getTxsBatches(nil, 100)
+	batches = getTxsBatches(nil, 100, context.Background())
 	assert.Len(t, batches, 0)
 
 	txs = make(blockatlas.Txs, 1000000)
-	batches = getTxsBatches(txs, 5000)
+	batches = getTxsBatches(txs, 5000, context.Background())
 	assert.Len(t, batches, 200)
 }
