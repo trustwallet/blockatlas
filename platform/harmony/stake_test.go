@@ -95,7 +95,7 @@ func TestNormalizeValidator(t *testing.T) {
 		ID:     v.Info.Address,
 		Details: blockatlas.StakingDetails{
 			Reward:        blockatlas.StakingReward{Annual: 12.345},
-			LockTime:      604800,
+			LockTime:      lockTime,
 			MinimumAmount: "1000",
 			Type:          blockatlas.DelegationTypeDelegate,
 		},
@@ -148,4 +148,22 @@ func TestNormalizeDelegations(t *testing.T) {
 	}
 	result := NormalizeDelegations(delegations, validatorMap)
 	assert.Equal(t, expected, result)
+}
+
+func TestHexToInt(t *testing.T) {
+	result, _ := hexToInt("0x604800")
+
+	assert.Equal(t,uint64(6309888), result)
+}
+
+func TestGetDetails(t *testing.T) {
+	var expected = blockatlas.StakingDetails{
+		blockatlas.StakingReward{Annual: 10},
+		lockTime ,
+		"1000",
+		blockatlas.DelegationTypeDelegate}
+
+	result := getDetails(10)
+
+	assert.Equal(t,expected, result)
 }
