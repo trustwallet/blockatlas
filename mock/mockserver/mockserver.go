@@ -17,19 +17,15 @@ import (
 type TestDataEntry struct {
 	Filename string `yaml:"file"`
 	MockURL  string `yaml:"mockURL"`
+	Method   string `yaml:"method"`  
 	ExtURL   string `yaml:"extURL,omitempty"`
 	ReqFile  string `yaml:"reqFile,omitempty"`
 	ReqField string `yaml:"reqField,omitempty"`
 }
 
 type TestDataEntryInternal struct {
-	Filename  string
-	MockURL   string
-	ExtURL    string
-	ParsedURL *url.URL
-	Method    string
-	ReqFile   string
-	ReqField  string
+	TestDataEntry
+	ParsedURL *url.URL `yaml:"-"`
 }
 
 var files []TestDataEntryInternal
@@ -82,7 +78,7 @@ func readFileList(directory string) error {
 	for _, e := range files1 {
 		parsedURL, err := url.Parse(e.MockURL)
 		if err == nil {
-			files = append(files, TestDataEntryInternal{e.Filename, e.MockURL, e.ExtURL, parsedURL, "?", e.ReqFile, e.ReqField})
+			files = append(files, TestDataEntryInternal{e, parsedURL})
 		}
 	}
 	fmt.Printf("Info about %v data files read\n", len(files))
@@ -146,9 +142,12 @@ func matchRequestDataJson(actualReqData, expReqData, fieldDiscriminator string) 
 	return errors.New("Mismatch in request data, actual '" + actualReqData + "' expected '" + expReqData + "'")
 }
 
-func findFileForMockURL(mockURL, queryParams, requestBody string) (TestDataEntryInternal, error) {
+func findFileForMockURL(mockURL, method, queryParams, requestBody string) (TestDataEntryInternal, error) {
 	lasterr := ""
 	for _, ff := range files {
+		if method != ff.Method {
+			continue
+		}
 		// simple check
 		if mockURL != ff.ParsedURL.Path {
 			continue
@@ -180,14 +179,14 @@ func findFileForMockURL(mockURL, queryParams, requestBody string) (TestDataEntry
 	return TestDataEntryInternal{}, errors.New("Could not find matching entry for URL, " + lasterr)
 }
 
-func requestHandlerIntern(w http.ResponseWriter, r *http.Request, body, basedir string) error {
+func requestHandlerIntern(w http.ResponseWriter, r *http.Request, method, body, basedir string) error {
 	if r.URL.Path == "/mock/mock-healtcheck" {
 		fmt.Fprintf(w, "{\"status\": true, \"msg\": \"Mockserver is alive\"}")
 		return nil
 	}
 
 	mockURL := r.URL.Path
-	entry, err := findFileForMockURL(mockURL, r.URL.RawQuery, body)
+	entry, err := findFileForMockURL(mockURL, method, r.URL.RawQuery, body)
 	if err != nil {
 		return err
 	}
@@ -209,7 +208,7 @@ func requestHandler(w http.ResponseWriter, r *http.Request, basedir string) {
 			body = string(bodyByte)
 		}
 	}
-	err := requestHandlerIntern(w, r, body, basedir)
+	err := requestHandlerIntern(w, r, r.Method, body, basedir)
 	if err == nil {
 		log.Println("Request ok", r.Method, r.URL.Path, r.URL.RawQuery, body)
 		return
