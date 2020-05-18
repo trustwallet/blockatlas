@@ -33,8 +33,8 @@ postgres:
 # [BNB] Binance DEX: https://wallet.binance.org
 #       Binance Chain: https://explorer.binance.org
 binance:
-  api: http://localhost:3347/mock/binance-api/v1
-  dex: http://localhost:3347/mock/binance-dex
+  api: http://localhost:3347/mock/binance-api
+  explorer: http://localhost:3347/mock/binance-explorer
 
 # [NIM] Nimiq: https://nimiq.com
 nimiq:
