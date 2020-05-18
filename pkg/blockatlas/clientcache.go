@@ -1,6 +1,7 @@
 package blockatlas
 
 import (
+	"context"
 	"crypto/sha1"
 	"encoding/base64"
 	"encoding/json"
@@ -41,7 +42,37 @@ func (r *Request) PostWithCache(result interface{}, path string, body interface{
 	return err
 }
 
+func (r *Request) PostWithCacheAndContext(result interface{}, path string, body interface{}, cache time.Duration, ctx context.Context) error {
+	key := r.generateKey(path, nil, body)
+	err := memoryCache.getCache(key, result)
+	if err == nil {
+		return nil
+	}
+
+	err = r.PostWithContext(result, path, body, ctx)
+	if err != nil {
+		return err
+	}
+	memoryCache.setCache(key, result, cache)
+	return err
+}
+
 func (r *Request) GetWithCache(result interface{}, path string, query url.Values, cache time.Duration) error {
+	key := r.generateKey(path, query, nil)
+	err := memoryCache.getCache(key, result)
+	if err == nil {
+		return nil
+	}
+
+	err = r.Get(result, path, query)
+	if err != nil {
+		return err
+	}
+	memoryCache.setCache(key, result, cache)
+	return err
+}
+
+func (r *Request) GetWithCacheAndContext(result interface{}, path string, query url.Values, cache time.Duration, ctx context.Context) error {
 	key := r.generateKey(path, query, nil)
 	err := memoryCache.getCache(key, result)
 	if err == nil {
