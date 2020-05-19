@@ -43,8 +43,10 @@ func (c *Client) GetBlockByNumber(num int64) (info BlockInfo, err error) {
 	return
 }
 
+
 func (c *Client) GetValidators() (validators Validators, err error) {
-	err = c.RpcCall(&validators.Validators, "hmy_getAllValidatorInformation", []interface{}{-1})
+	err = rpcCallStub(c, &validators.Validators, "hmy_getAllValidatorInformation", []interface{}{-1})
+
 	if err != nil {
 		logger.Error(err, "Harmony: Failed to get all validator addresses")
 	}
@@ -53,7 +55,8 @@ func (c *Client) GetValidators() (validators Validators, err error) {
 }
 
 func (c *Client) GetDelegations(address string) (delegations Delegations, err error) {
-	err = c.RpcCall(&delegations.List, "hmy_getDelegationsByDelegator", []interface{}{address})
+	err = rpcCallStub(c, &delegations.List, "hmy_getDelegationsByDelegator", []interface{}{address})
+
 	if err != nil {
 		logger.Error(err, "Harmony: Failed to get delegations for address")
 	}
@@ -79,4 +82,9 @@ func hexToInt(hex string) (uint64, error) {
 		return 0, err
 	}
 	return strconv.ParseUint(nonceStr, 10, 64)
+}
+
+// rpcCallStub is can be overwritten by the unit test
+var rpcCallStub = func (c *Client, result interface{}, method string, params interface{}) error {
+	return c.RpcCall(result, method, params)
 }

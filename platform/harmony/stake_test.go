@@ -2,11 +2,10 @@ package harmony
 
 import (
 	"encoding/json"
-	"strconv"
-	"testing"
-
 	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"strconv"
+	"testing"
 )
 
 const validatorSrc = `
@@ -166,4 +165,58 @@ func TestGetDetails(t *testing.T) {
 
 	result := getDetails(10)
 	assert.Equal(t,expected, result)
+}
+
+
+func TestGetValidators(t *testing.T) {
+	var c Client
+
+	p := Platform{
+		client: c,
+	}
+
+	var validators = []Validator{
+		Validator{
+			Info: ValidatorInfo{
+				Address: "one1pdv9lrdwl0rg5vglh4xtyrv3wjk3wsqket7zxy",
+			},
+			Active: true,
+			Lifetime: LifetimeInfo{Apr: "10"},
+		},
+	}
+
+	rpcCallStub = func (c *Client, result interface{}, method string, params interface{}) error {
+		jsonData, _ := json.Marshal(validators)
+		 _ = json.Unmarshal(jsonData, result)
+		return nil
+	}
+
+	result, _ := p.GetValidators()
+	assert.Equal(t, lockTime, result[0].Details.LockTime)
+	assert.Equal(t, float64(10), result[0].Details.Reward.Annual)
+}
+
+func TestGetDelegation(t *testing.T) {
+	var c Client
+
+	p := Platform{
+		client: c,
+	}
+
+	var delegations = []Delegation{
+		Delegation{
+			DelegatorAddress: "one1pdv9lrdwl0rg5vglh4xtyrv3wjk3wsqket7zxy",
+			ValidatorAddress: "one1pdv9lrdwl0rg5vglh4xtyrv3wjk3wsqket7zxy",
+			Amount:           100,
+		},
+	}
+
+	rpcCallStub = func (c *Client, result interface{}, method string, params interface{}) error {
+		jsonData, _ := json.Marshal(delegations)
+		_ = json.Unmarshal(jsonData, result)
+		return nil
+	}
+
+	result, _ := p.GetDelegations("one1pdv9lrdwl0rg5vglh4xtyrv3wjk3wsqket7zxy")
+	assert.Equal(t, 0, len(result))
 }
