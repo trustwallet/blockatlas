@@ -146,9 +146,13 @@ func (p *Platform) fillTransfer(tx *blockatlas.Tx, transfer MessageValueTransfer
 }
 
 func (p *Platform) fillDelegate(tx *blockatlas.Tx, delegate MessageValueDelegate, events Events, msgType TxType) {
-	value, err := numbers.DecimalToSatoshis(delegate.Amount.Quantity)
-	if err != nil {
-		return
+	value := ""
+	if len(delegate.Amount.Quantity) > 0 {
+		var err error
+		value, err = numbers.DecimalToSatoshis(delegate.Amount.Quantity)
+		if err != nil {
+			return
+		}
 	}
 	tx.From = delegate.DelegatorAddr
 	tx.To = delegate.ValidatorAddr
