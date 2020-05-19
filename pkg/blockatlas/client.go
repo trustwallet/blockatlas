@@ -2,8 +2,10 @@ package blockatlas
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
+	"go.elastic.co/apm/module/apmhttp"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -55,13 +57,22 @@ var DefaultErrorHandler = func(res *http.Response, uri string) error {
 	return nil
 }
 
+func (r *Request) GetWithContext(result interface{}, path string, query url.Values, ctx context.Context) error {
+	var queryStr = ""
+	if query != nil {
+		queryStr = query.Encode()
+	}
+	uri := strings.Join([]string{r.GetBase(path), queryStr}, "?")
+	return r.Execute("GET", uri, nil, result, ctx)
+}
+
 func (r *Request) Get(result interface{}, path string, query url.Values) error {
 	var queryStr = ""
 	if query != nil {
 		queryStr = query.Encode()
 	}
 	uri := strings.Join([]string{r.GetBase(path), queryStr}, "?")
-	return r.Execute("GET", uri, nil, result)
+	return r.Execute("GET", uri, nil, result, context.Background())
 }
 
 func (r *Request) Post(result interface{}, path string, body interface{}) error {
@@ -70,10 +81,19 @@ func (r *Request) Post(result interface{}, path string, body interface{}) error 
 		return err
 	}
 	uri := r.GetBase(path)
-	return r.Execute("POST", uri, buf, result)
+	return r.Execute("POST", uri, buf, result, context.Background())
 }
 
-func (r *Request) Execute(method string, url string, body io.Reader, result interface{}) error {
+func (r *Request) PostWithContext(result interface{}, path string, body interface{}, ctx context.Context) error {
+	buf, err := GetBody(body)
+	if err != nil {
+		return err
+	}
+	uri := r.GetBase(path)
+	return r.Execute("POST", uri, buf, result, ctx)
+}
+
+func (r *Request) Execute(method string, url string, body io.Reader, result interface{}, ctx context.Context) error {
 	req, err := http.NewRequest(method, url, body)
 	if err != nil {
 		return errors.E(err, errors.TypePlatformRequest)
@@ -83,7 +103,9 @@ func (r *Request) Execute(method string, url string, body io.Reader, result inte
 		req.Header.Set(key, value)
 	}
 
-	res, err := r.HttpClient.Do(req)
+	c := apmhttp.WrapClient(r.HttpClient)
+
+	res, err := c.Do(req.WithContext(ctx))
 	if err != nil {
 		return errors.E(err, errors.TypePlatformRequest)
 	}
