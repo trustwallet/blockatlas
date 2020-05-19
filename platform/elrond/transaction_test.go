@@ -9,6 +9,8 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 )
 
+const userAddress = `erd10yagg2vme2jns9zqf9xn8kl86fkc6dr063vnuj0mz2kk2jw0qwuqmfmaw0`
+
 const txTransferSrc1 = `
 {
 	"hash":"30d404cc7a42b0158b95f6adfbf9a517627d60f6c7e497c1442dfdb6460285df",
@@ -30,13 +32,28 @@ const txTransferSrc2 = `
 	"nonce":1,
 	"round":100,
 	"value":"2000",
-	"receiver":"erd1qqqqqqqqqqqqqpgq9lqq6w7tddk3gx0c6qefmfph56ve7styx7ys8j3g0s",
-	"sender":"erd1v0ce6rapup6rwma5sltyv05xhp33u543nex75a7j39vsz9m6squq6mxm7y",
+	"receiver":"erd10yagg2vme2jns9zqf9xn8kl86fkc6dr063vnuj0mz2kk2jw0qwuqmfmaw0",
+	"sender":"erd10yagg2vme2jns9zqf9xn8kl86fkc6dr063vnuj0mz2kk2jw0qwuqmfmaw0",
 	"data":"money",
 	"signature":"",
 	"timestamp":1588757256,
 	"status":"Pending",
 	"fee": "1500"
+}`
+
+const txTransferSrc3 = `
+{
+	"hash":"30d404cc7a42b0158b95f6adfbf9a517627d60f6c7e497c1442dfdb6460285df",
+	"nonce":19,
+	"round":200,
+	"value":"2",
+	"receiver":"erd1v0ce6rapup6rwma5sltyv05xhp33u543nex75a7j39vsz9m6squq6mxm7y",
+	"sender":"erd10yagg2vme2jns9zqf9xn8kl86fkc6dr063vnuj0mz2kk2jw0qwuqmfmaw0",
+	"data":"bla bla bla",
+	"signature":"",
+	"timestamp":1588757256,
+	"status":"Not executed",
+	"fee": "5000"
 }`
 
 var txTransfer1Normalized = blockatlas.Tx{
@@ -61,14 +78,32 @@ var txTransfer2Normalized = blockatlas.Tx{
 	ID:       "30d404cc7a42b0158b95f6adfbf9a517627d60f6c7e497c1442dfdb6460285df",
 	Coin:     coin.ERD,
 	Date:     int64(1588757256),
-	From:     "erd1v0ce6rapup6rwma5sltyv05xhp33u543nex75a7j39vsz9m6squq6mxm7y",
-	To:       "erd1qqqqqqqqqqqqqpgq9lqq6w7tddk3gx0c6qefmfph56ve7styx7ys8j3g0s",
+	From:     "erd10yagg2vme2jns9zqf9xn8kl86fkc6dr063vnuj0mz2kk2jw0qwuqmfmaw0",
+	To:       "erd10yagg2vme2jns9zqf9xn8kl86fkc6dr063vnuj0mz2kk2jw0qwuqmfmaw0",
 	Fee:      "1500",
 	Status:   blockatlas.StatusPending,
 	Memo:     "money",
 	Sequence: 1,
 	Meta: blockatlas.Transfer{
 		Value:    "2000",
+		Symbol:   coin.Elrond().Symbol,
+		Decimals: coin.Elrond().Decimals,
+	},
+	Direction: blockatlas.DirectionSelf,
+}
+
+var txTransfer3Normalized = blockatlas.Tx{
+	ID:       "30d404cc7a42b0158b95f6adfbf9a517627d60f6c7e497c1442dfdb6460285df",
+	Coin:     coin.ERD,
+	Date:     int64(1588757256),
+	From:     "erd10yagg2vme2jns9zqf9xn8kl86fkc6dr063vnuj0mz2kk2jw0qwuqmfmaw0",
+	To:       "erd1v0ce6rapup6rwma5sltyv05xhp33u543nex75a7j39vsz9m6squq6mxm7y",
+	Fee:      "5000",
+	Status:   blockatlas.StatusError,
+	Memo:     "bla bla bla",
+	Sequence: 19,
+	Meta: blockatlas.Transfer{
+		Value:    "2",
 		Symbol:   coin.Elrond().Symbol,
 		Decimals: coin.Elrond().Decimals,
 	},
@@ -93,6 +128,24 @@ func TestNormalize(t *testing.T) {
 		apiResponse: txTransferSrc2,
 		expected:    &txTransfer2Normalized,
 	})
+
+	testNormalize(t, &test{
+		name:        "transferNotExecuted",
+		apiResponse: txTransferSrc3,
+		expected:    &txTransfer3Normalized,
+	})
+}
+
+func TestNormalizeTxs(t *testing.T) {
+	var tx1, tx2, tx3 Transaction
+
+	_ = json.Unmarshal([]byte(txTransferSrc1), &tx1)
+	_ = json.Unmarshal([]byte(txTransferSrc1), &tx2)
+	_ = json.Unmarshal([]byte(txTransferSrc1), &tx3)
+
+	txs := []Transaction{tx1, tx2, tx3}
+	normalizedTxs := NormalizeTxs(txs, userAddress)
+	require.Equal(t, len(txs), len(normalizedTxs))
 }
 
 func testNormalize(t *testing.T, _test *test) {
