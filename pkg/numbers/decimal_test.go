@@ -9,14 +9,14 @@ func TestDecimalToSatoshis(t *testing.T) {
 			t.Error(err)
 		}
 		if expected != actual {
-			t.Errorf("expected: %s, got %s", expected, actual)
+			t.Errorf("expected %s, got %s, input %s", expected, actual, input)
 		}
 	}
 
 	assertSatError := func(input string) {
 		actual, err := DecimalToSatoshis(input)
 		if err == nil {
-			t.Errorf("Expected error but no error: got %s", actual)
+			t.Errorf("Expected error but no error: got %s, input %s", actual, input)
 		}
 	}
 
@@ -29,9 +29,15 @@ func TestDecimalToSatoshis(t *testing.T) {
 	assertSatEquals("2030", "0.002030")
 	assertSatEquals("101010", "0101010")
 	assertSatEquals("11001100", "0011001100")
+	assertSatEquals("376", " 376")
+	assertSatEquals("376", "376 ")
 	
 	assertSatError("12NotNumber34")
 	assertSatError("12,34")
+	assertSatError("")
+	assertSatError(" ")
+	assertSatError("37 6")
+	assertSatError("37,6")
 }
 
 func TestDecimalExp(t *testing.T) {
