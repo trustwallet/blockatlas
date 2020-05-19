@@ -205,18 +205,53 @@ func TestGetDelegation(t *testing.T) {
 
 	var delegations = []Delegation{
 		Delegation{
-			DelegatorAddress: "one1pdv9lrdwl0rg5vglh4xtyrv3wjk3wsqket7zxy",
-			ValidatorAddress: "one1pdv9lrdwl0rg5vglh4xtyrv3wjk3wsqket7zxy",
+			DelegatorAddress: "one1a0au0p33zrns49h3qw7prn02s4wphu0ggcqrhm",
+			ValidatorAddress: "one1a0au0p33zrns49h3qw7prn02s4wphu0ggcqrhm",
 			Amount:           100,
 		},
 	}
 
+	var validators = []Validator{
+		Validator{
+			Info: ValidatorInfo{
+				Address: "one1a0au0p33zrns49h3qw7prn02s4wphu0ggcqrhm",
+			},
+			Active: true,
+			Lifetime: LifetimeInfo{Apr: "10"},
+		},
+	}
+
 	rpcCallStub = func (c *Client, result interface{}, method string, params interface{}) error {
-		jsonData, _ := json.Marshal(delegations)
-		_ = json.Unmarshal(jsonData, result)
+		if (method == "hmy_getAllValidatorInformation") {
+			jsonData, _ := json.Marshal(validators)
+			_ = json.Unmarshal(jsonData, result)
+		} else {
+			jsonData, _ := json.Marshal(delegations)
+			_ = json.Unmarshal(jsonData, result)
+		}
 		return nil
 	}
 
 	result, _ := p.GetDelegations("one1pdv9lrdwl0rg5vglh4xtyrv3wjk3wsqket7zxy")
-	assert.Equal(t, 0, len(result))
+	assert.Equal(t, delegations[0].DelegatorAddress, result[0].Delegator.ID)
+}
+
+
+func TestGeBalance(t *testing.T) {
+	var c Client
+
+	p := Platform{
+		client: c,
+	}
+
+	var balance = "0x100"
+
+	rpcCallStub = func (c *Client, result interface{}, method string, params interface{}) error {
+		jsonData, _ := json.Marshal(balance)
+		_ = json.Unmarshal(jsonData, result)
+		return nil
+	}
+
+	result, _ := p.UndelegatedBalance("one1pdv9lrdwl0rg5vglh4xtyrv3wjk3wsqket7zxy")
+	assert.Equal(t, "256",result)
 }

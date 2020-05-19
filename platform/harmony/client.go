@@ -65,7 +65,8 @@ func (c *Client) GetDelegations(address string) (delegations Delegations, err er
 
 func (c *Client) GetBalance(address string) (string, error) {
 	var result string
-	err := c.RpcCall(&result, "hmy_getBalance", []interface{}{address, "latest"})
+	err := rpcCallStub(c, &result, "hmy_getBalance", []interface{}{address, "latest"})
+
 	if err != nil {
 		return "0", err
 	}
