@@ -1,6 +1,7 @@
 package blockatlas
 
 import (
+	"context"
 	"encoding/json"
 
 	"github.com/trustwallet/blockatlas/pkg/errors"
@@ -65,6 +66,32 @@ func (r *Request) RpcCall(result interface{}, method string, params interface{})
 			"error_message": resp.Error.Message})
 	}
 	return resp.GetObject(result)
+}
+
+func (r *Request) RpcCallWithContext(result interface{}, method string, params interface{}, ctx context.Context) error {
+
+	req := &RpcRequest{JsonRpc: JsonRpcVersion, Method: method, Params: params, Id: genId()}
+	var resp *RpcResponse
+	err := r.PostWithContext(&resp, "", req, ctx)
+	if err != nil {
+		return err
+	}
+	if resp.Error != nil {
+		return errors.E("RPC Call error", errors.Params{
+			"method":        method,
+			"error_code":    resp.Error.Code,
+			"error_message": resp.Error.Message})
+	}
+	return resp.GetObject(result)
+}
+
+func (r *Request) RpcBatchCallWithContext(requests RpcRequests, ctx context.Context) ([]RpcResponse, error) {
+	var resp []RpcResponse
+	err := r.PostWithContext(&resp, "", requests.fillDefaultValues(), ctx)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
 }
 
 func (r *Request) RpcBatchCall(requests RpcRequests) ([]RpcResponse, error) {
