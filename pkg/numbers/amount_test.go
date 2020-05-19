@@ -33,7 +33,7 @@ func Test_addAmount(t *testing.T) {
 	}
 }
 
-func Test_decimalToSatoshis(t *testing.T) {
+func Test_ToSatoshi(t *testing.T) {
 	tests := []struct {
 		name   string
 		amount string
@@ -47,7 +47,7 @@ func Test_decimalToSatoshis(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := ToSatoshi(tt.amount); got != tt.want {
-				t.Errorf("decimalToSatoshis() = %v, want %v", got, tt.want)
+				t.Errorf("ToSatoshi() = %v, want %v", got, tt.want)
 			}
 		})
 	}
