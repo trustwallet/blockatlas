@@ -9,7 +9,6 @@ import (
 	"go.elastic.co/apm"
 	"go.elastic.co/apm/module/apmgorm"
 	"strings"
-	"time"
 )
 
 func (i *Instance) GetSubscriptions(coin uint, addresses []string, ctx context.Context) ([]models.Subscription, error) {
@@ -63,7 +62,7 @@ func (i *Instance) DeleteSubscriptions(subscriptions []models.Subscription, ctx 
 
 const (
 	batchLimit    = 3000
-	rawBulkInsert = `INSERT INTO subscriptions(created_at,coin,address) VALUES %s ON CONFLICT DO NOTHING`
+	rawBulkInsert = `INSERT INTO subscriptions(coin,address) VALUES %s ON CONFLICT DO NOTHING`
 )
 
 func bulkCreate(db *gorm.DB, dataList []models.Subscription) error {
@@ -73,9 +72,8 @@ func bulkCreate(db *gorm.DB, dataList []models.Subscription) error {
 	)
 
 	for _, d := range dataList {
-		valueStrings = append(valueStrings, "(?, ?, ?)")
+		valueStrings = append(valueStrings, "(?, ?)")
 
-		valueArgs = append(valueArgs, time.Now())
 		valueArgs = append(valueArgs, d.Coin)
 		valueArgs = append(valueArgs, d.Address)
 	}
