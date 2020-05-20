@@ -13,7 +13,6 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/services/observer/notifier"
 	"github.com/trustwallet/blockatlas/tests/integration/setup"
-	"github.com/trustwallet/blockatlas/tests/integration/setup/testdata"
 	"testing"
 	"time"
 )
@@ -45,7 +44,7 @@ var (
 func TestNotifier(t *testing.T) {
 	setup.CleanupPgContainer(database.Gorm)
 
-	err := database.AddSubscriptions(1, []models.SubscriptionData{{Coin: &testdata.BnbCoin.ID, Address: "tbnb1ttyn4csghfgyxreu7lmdu3lcplhqhxtzced45a", SubscriptionId: 1}}, context.Background())
+	err := database.AddSubscriptions(1, []models.SubscriptionData{{Coin: 714, Address: "tbnb1ttyn4csghfgyxreu7lmdu3lcplhqhxtzced45a", SubscriptionId: 1}}, context.Background())
 	assert.Nil(t, err)
 
 	err = produceTxs(txs)

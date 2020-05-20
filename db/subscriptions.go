@@ -2,12 +2,16 @@ package db
 
 import (
 	"context"
+	"fmt"
 	"github.com/trustwallet/blockatlas/db/models"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"go.elastic.co/apm/module/apmgorm"
 	"strconv"
+	"strings"
 	"time"
 )
+
+const rawBulkInsert = `INSERT INTO subscription_data(subscription_id, coin, address) VALUES %s ON CONFLICT DO NOTHING`
 
 func (i *Instance) GetSubscriptionData(coin uint, addresses []string, ctx context.Context) ([]models.SubscriptionData, error) {
 	if len(addresses) == 0 {
@@ -61,10 +65,7 @@ func (i *Instance) AddSubscriptions(id uint, subscriptions []models.Subscription
 			txInstance.Gorm.Rollback()
 			return err
 		}
-
-		db := txInstance.Gorm.Set("gorm:insert_option", "ON CONFLICT DO NOTHING")
-		err = bulkInsert(db, subscriptions)
-
+		err = txInstance.BulkCreate(subscriptions)
 	} else {
 		err = txInstance.AddToExistingSubscription(id, subscriptions)
 	}
@@ -90,8 +91,7 @@ func (i *Instance) AddToExistingSubscription(id uint, subscriptions []models.Sub
 
 	updateList, deleteList := getSubscriptionsToDeleteAndUpdate(existingData, subscriptions)
 	if len(updateList) > 0 {
-		db := i.Gorm.Set("gorm:insert_option", "ON CONFLICT DO NOTHING")
-		if err := bulkInsert(db, updateList); err != nil {
+		if err := i.BulkCreate(updateList); err != nil {
 			return err
 		}
 	}
@@ -130,6 +130,29 @@ func (i *Instance) DeleteSubscriptions(subscriptions []models.SubscriptionData) 
 		return err
 	}
 	if err := request.Delete(&models.SubscriptionData{}).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (i *Instance) BulkCreate(dataList []models.SubscriptionData) error {
+	var (
+		valueStrings []string
+		valueArgs    []interface{}
+	)
+
+	for _, d := range dataList {
+		valueStrings = append(valueStrings, "(?, ?, ?)")
+
+		valueArgs = append(valueArgs, d.SubscriptionId)
+		valueArgs = append(valueArgs, d.Coin)
+		valueArgs = append(valueArgs, d.Address)
+	}
+
+	smt := fmt.Sprintf(rawBulkInsert, strings.Join(valueStrings, ","))
+
+	if err := i.Gorm.Exec(smt, valueArgs...).Error; err != nil {
 		return err
 	}
 

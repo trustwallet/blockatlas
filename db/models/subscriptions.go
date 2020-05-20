@@ -11,6 +11,6 @@ type Subscription struct {
 type SubscriptionData struct {
 	ID             uint   `gorm:"primary_key;"`
 	SubscriptionId uint   `gorm:"primary_key; column:subscription_id; auto_increment:false"`
-	Coin           *uint  `gorm:"primary_key; column:coin; auto_increment:false"`
+	Coin           uint   `gorm:"primary_key; column:coin; auto_increment:false"`
 	Address        string `gorm:"primary_key; column:address; type:varchar(128)"`
 }

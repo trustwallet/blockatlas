@@ -61,7 +61,7 @@ func RunNotifier(database *db.Instance, delivery amqp.Delivery) {
 	for _, data := range subscriptionsDataList {
 		go buildAndPostMessage(
 			blockTransactions,
-			blockatlas.Subscription{Coin: *data.Coin, Address: data.Address, Id: data.SubscriptionId},
+			blockatlas.Subscription{Coin: data.Coin, Address: data.Address, Id: data.SubscriptionId},
 			&wg, ctx)
 	}
 	wg.Wait()
