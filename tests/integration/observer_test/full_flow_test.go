@@ -14,7 +14,6 @@ import (
 	"github.com/trustwallet/blockatlas/services/observer/notifier"
 	"github.com/trustwallet/blockatlas/services/observer/parser"
 	"github.com/trustwallet/blockatlas/tests/integration/setup"
-	"github.com/trustwallet/blockatlas/tests/integration/setup/testdata"
 	"go.uber.org/atomic"
 	"testing"
 	"time"
@@ -26,8 +25,7 @@ var (
 
 func TestFullFlow(t *testing.T) {
 	setup.CleanupPgContainer(database.Gorm)
-
-	err := database.AddSubscriptions(1, []models.SubscriptionData{{Coin: &testdata.EthCoin.ID, Address: "testAddress", SubscriptionId: 1}}, context.Background())
+	err := database.AddSubscriptions(1, []models.SubscriptionData{{Coin: 60, Address: "testAddress", SubscriptionId: 1}}, context.Background())
 	assert.Nil(t, err)
 
 	ctx, cancel := context.WithCancel(context.Background())
