@@ -26,3 +26,31 @@ type BlockInfo struct {
 	Number       string        `json:"number"`
 	Transactions []Transaction `json:"transactions"`
 }
+
+type ValidatorInfo struct {
+	Address string  `json:"address"`
+}
+
+type LifetimeInfo struct {
+	Apr     string `json:"apr"`
+}
+
+type Validator struct {
+	Info      ValidatorInfo    `json:"validator"`
+	Active    bool             `json:"currently-in-committee"`
+	Lifetime  LifetimeInfo      `json:"lifetime"`
+}
+
+type Validators struct {
+	Validators []Validator `json:"result"`
+}
+
+type Delegation struct {
+	DelegatorAddress string   `json:"delegator_address"`
+	ValidatorAddress string   `json:"validator_address"`
+	Amount           float64  `json:"amount"`
+}
+
+type Delegations struct {
+	List []Delegation `json:"result"`
+}
