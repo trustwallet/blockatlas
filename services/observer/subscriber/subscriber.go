@@ -20,15 +20,17 @@ const (
 func RunSubscriber(database *db.Instance, delivery amqp.Delivery) {
 	tx := apm.DefaultTracer.StartTransaction("RunSubscriber", "app")
 	defer tx.End()
+
 	ctx := apm.ContextWithTransaction(context.Background(), tx)
+
 	var event blockatlas.SubscriptionEvent
 	err := json.Unmarshal(delivery.Body, &event)
 	if err != nil {
-		logger.Fatal(err)
+		errAck := delivery.Ack(false)
+		logger.Fatal(err, errAck)
 	}
 
 	subscriptions := event.ParseSubscriptions(event.Subscriptions)
-
 	params := logger.Params{"operation": event.Operation, "subscriptions_len": len(subscriptions)}
 
 	switch event.Operation {

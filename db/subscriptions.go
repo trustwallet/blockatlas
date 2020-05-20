@@ -33,7 +33,8 @@ func (i *Instance) AddSubscriptions(subscriptions []models.Subscription, ctx con
 	if len(subscriptions) == 0 {
 		return errors.E("Empty subscriptions")
 	}
-	subscriptionsBatch := convertToBatch(subscriptions, 3000, ctx)
+
+	subscriptionsBatch := toSubscriptionBatch(subscriptions, batchLimit, ctx)
 	g := apmgorm.WithContext(ctx, i.Gorm)
 
 	for _, s := range subscriptionsBatch {
@@ -46,6 +47,10 @@ func (i *Instance) AddSubscriptions(subscriptions []models.Subscription, ctx con
 }
 
 func (i *Instance) DeleteSubscriptions(subscriptions []models.Subscription, ctx context.Context) error {
+	if len(subscriptions) == 0 {
+		return errors.E("Empty subscriptions")
+	}
+
 	g := apmgorm.WithContext(ctx, i.Gorm)
 	for _, s := range subscriptions {
 		err := g.Where("coin = ? and address = ?", s.Coin, s.Address).Delete(&models.Subscription{}).Error
@@ -56,7 +61,10 @@ func (i *Instance) DeleteSubscriptions(subscriptions []models.Subscription, ctx 
 	return nil
 }
 
-const rawBulkInsert = `INSERT INTO subscriptions(created_at,coin,address) VALUES %s ON CONFLICT DO NOTHING`
+const (
+	batchLimit    = 3000
+	rawBulkInsert = `INSERT INTO subscriptions(created_at,coin,address) VALUES %s ON CONFLICT DO NOTHING`
+)
 
 func bulkCreate(db *gorm.DB, dataList []models.Subscription) error {
 	var (
@@ -81,8 +89,8 @@ func bulkCreate(db *gorm.DB, dataList []models.Subscription) error {
 	return nil
 }
 
-func convertToBatch(txs []models.Subscription, sizeUint uint, ctx context.Context) [][]models.Subscription {
-	span, _ := apm.StartSpan(ctx, "convertToBatch", "app")
+func toSubscriptionBatch(txs []models.Subscription, sizeUint uint, ctx context.Context) [][]models.Subscription {
+	span, _ := apm.StartSpan(ctx, "toSubscriptionBatch", "app")
 	defer span.End()
 	size := int(sizeUint)
 	resultLength := (len(txs) + size - 1) / size
