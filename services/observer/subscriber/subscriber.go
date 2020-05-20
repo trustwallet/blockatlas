@@ -29,19 +29,17 @@ func RunSubscriber(database *db.Instance, delivery amqp.Delivery) {
 
 	subscriptions := event.ParseSubscriptions(event.Subscriptions)
 
-	params := logger.Params{"operation": event.Operation, "id": event.Id, "subscriptions_len": len(subscriptions)}
-
-	id := event.Id
+	params := logger.Params{"operation": event.Operation, "subscriptions_len": len(subscriptions)}
 
 	switch event.Operation {
 	case AddSubscription, UpdateSubscription:
-		err = database.AddSubscriptions(id, ToSubscriptionData(subscriptions), ctx)
+		err = database.AddSubscriptions(ToSubscriptionData(subscriptions), ctx)
 		if err != nil {
 			logger.Error(err, params)
 		}
 		logger.Info("Added", params)
 	case DeleteSubscription:
-		err := database.DeleteAllSubscriptions(id, ctx)
+		err := database.DeleteSubscriptions(ToSubscriptionData(subscriptions), ctx)
 		if err != nil {
 			logger.Error(err, params)
 		}
@@ -54,10 +52,10 @@ func RunSubscriber(database *db.Instance, delivery amqp.Delivery) {
 	}
 }
 
-func ToSubscriptionData(sub []blockatlas.Subscription) []models.SubscriptionData {
-	data := make([]models.SubscriptionData, 0, len(sub))
+func ToSubscriptionData(sub []blockatlas.Subscription) []models.Subscription {
+	data := make([]models.Subscription, 0, len(sub))
 	for _, s := range sub {
-		data = append(data, models.SubscriptionData{Coin: s.Coin, Address: s.Address, SubscriptionId: s.Id})
+		data = append(data, models.Subscription{Coin: s.Coin, Address: s.Address})
 	}
 	return data
 }

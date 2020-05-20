@@ -22,7 +22,6 @@ var MaxPushNotificationsBatchLimit uint = DefaultPushNotificationsBatchLimit
 type TransactionNotification struct {
 	Action blockatlas.TransactionType `json:"action"`
 	Result *blockatlas.Tx             `json:"result"`
-	Id     uint                       `json:"id"`
 }
 
 func RunNotifier(database *db.Instance, delivery amqp.Delivery) {
@@ -51,7 +50,7 @@ func RunNotifier(database *db.Instance, delivery amqp.Delivery) {
 	}
 
 	addresses := blockTransactions.GetUniqueAddresses()
-	subscriptionsDataList, err := database.GetSubscriptionData(txs[0].Coin, addresses, ctx)
+	subscriptionsDataList, err := database.GetSubscriptions(txs[0].Coin, addresses, ctx)
 	if err != nil || len(subscriptionsDataList) == 0 {
 		return
 	}
@@ -61,7 +60,7 @@ func RunNotifier(database *db.Instance, delivery amqp.Delivery) {
 	for _, data := range subscriptionsDataList {
 		go buildAndPostMessage(
 			blockTransactions,
-			blockatlas.Subscription{Coin: data.Coin, Address: data.Address, Id: data.SubscriptionId},
+			blockatlas.Subscription{Coin: data.Coin, Address: data.Address},
 			&wg, ctx)
 	}
 	wg.Wait()
@@ -84,10 +83,9 @@ func buildAndPostMessage(blockTransactions blockatlas.TxSetMap, sub blockatlas.S
 		notification := TransactionNotification{
 			Action: tx.Type,
 			Result: &tx,
-			Id:     sub.Id,
 		}
 
-		logger.Info("Notification ready", logger.Params{"Id": sub.Id, "coin": sub.Coin, "txID": tx.ID})
+		logger.Info("Notification ready", logger.Params{"coin": sub.Coin, "txID": tx.ID})
 
 		notifications = append(notifications, notification)
 	}

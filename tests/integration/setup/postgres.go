@@ -25,7 +25,6 @@ var (
 
 	tables = []interface{}{
 		&models.Subscription{},
-		&models.SubscriptionData{},
 		&models.Tracker{},
 	}
 
