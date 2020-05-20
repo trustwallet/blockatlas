@@ -60,7 +60,7 @@ func TestSubscriberAddSubscription(t *testing.T) {
 		result, err := database.GetSubscriptionData(wanted.Coin, []string{wanted.Address}, context.Background())
 		assert.Nil(t, err)
 		assert.Equal(t, result[0].SubscriptionId, wanted.Id)
-		assert.Equal(t, result[0].Coin, wanted.Coin)
+		assert.Equal(t, wanted.Coin, *result[0].Coin)
 		assert.Equal(t, result[0].Address, wanted.Address)
 	}
 }
@@ -91,18 +91,21 @@ func TestSubscriber_UpdateSubscription(t *testing.T) {
 	if err := json.Unmarshal(testFileWanted, &wantedEvents); err != nil {
 		t.Fatal(err)
 	}
-
+	c1 := uint(61)
+	c2 := uint(62)
+	c3 := uint(63)
+	c4 := uint(64)
 	database.AddSubscriptions(10, []models.SubscriptionData{
-		{Coin: 61, Address: "0x0000000000000000000000000000000000000000", SubscriptionId: 10},
+		{Coin: &c1, Address: "0x0000000000000000000000000000000000000000", SubscriptionId: 10},
 	}, context.Background())
 	database.AddSubscriptions(1, []models.SubscriptionData{
-		{Coin: 62, Address: "0x0000000000000000000000000000000000000000", SubscriptionId: 1},
+		{Coin: &c2, Address: "0x0000000000000000000000000000000000000000", SubscriptionId: 1},
 	}, context.Background())
 	database.AddSubscriptions(2, []models.SubscriptionData{
-		{Coin: 63, Address: "0x0000000000000000000000000000000000000000", SubscriptionId: 2},
+		{Coin: &c3, Address: "0x0000000000000000000000000000000000000000", SubscriptionId: 2},
 	}, context.Background())
 	database.AddSubscriptions(3, []models.SubscriptionData{
-		{Coin: 64, Address: "0x0000000000000000000000000000000000000000", SubscriptionId: 3},
+		{Coin: &c4, Address: "0x0000000000000000000000000000000000000000", SubscriptionId: 3},
 	}, context.Background())
 
 	for _, event := range givenEvents {
@@ -123,7 +126,7 @@ func TestSubscriber_UpdateSubscription(t *testing.T) {
 		result, err := database.GetSubscriptionData(wanted.Coin, []string{wanted.Address}, context.Background())
 		assert.Nil(t, err)
 		assert.Equal(t, result[0].SubscriptionId, wanted.Id)
-		assert.Equal(t, result[0].Coin, wanted.Coin)
+		assert.Equal(t, wanted.Coin, *result[0].Coin)
 		assert.Equal(t, result[0].Address, wanted.Address)
 
 	}

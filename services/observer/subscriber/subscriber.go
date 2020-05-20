@@ -57,7 +57,8 @@ func RunSubscriber(database *db.Instance, delivery amqp.Delivery) {
 func ToSubscriptionData(sub []blockatlas.Subscription) []models.SubscriptionData {
 	data := make([]models.SubscriptionData, 0, len(sub))
 	for _, s := range sub {
-		data = append(data, models.SubscriptionData{Coin: s.Coin, Address: s.Address, SubscriptionId: s.Id})
+		coin := s.Coin
+		data = append(data, models.SubscriptionData{Coin: &coin, Address: s.Address, SubscriptionId: s.Id})
 	}
 	return data
 }

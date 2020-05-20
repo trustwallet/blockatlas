@@ -3,31 +3,32 @@ package db
 import (
 	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas/db/models"
+	"github.com/trustwallet/blockatlas/tests/integration/setup/testdata"
 	"testing"
 )
 
 func TestGetSubscriptionsToDeleteAndUpdate(t *testing.T) {
 	oldSubscriptions := []models.SubscriptionData{{
 		SubscriptionId: 1,
-		Coin:           60,
+		Coin:           &testdata.EthCoin.ID,
 		Address:        "A",
 	}, {
 		SubscriptionId: 1,
-		Coin:           60,
+		Coin:           &testdata.EthCoin.ID,
 		Address:        "B",
 	}, {
 		SubscriptionId: 1,
-		Coin:           60,
+		Coin:           &testdata.EthCoin.ID,
 		Address:        "C",
 	}}
 
 	newSubscription := []models.SubscriptionData{{
 		SubscriptionId: 1,
-		Coin:           60,
+		Coin:           &testdata.EthCoin.ID,
 		Address:        "B",
 	}, {
 		SubscriptionId: 1,
-		Coin:           60,
+		Coin:           &testdata.EthCoin.ID,
 		Address:        "C",
 	}}
 
@@ -38,25 +39,25 @@ func TestGetSubscriptionsToDeleteAndUpdate(t *testing.T) {
 
 	oldSubscriptions = []models.SubscriptionData{{
 		SubscriptionId: 1,
-		Coin:           60,
+		Coin:           &testdata.EthCoin.ID,
 		Address:        "A",
 	}, {
 		SubscriptionId: 1,
-		Coin:           60,
+		Coin:           &testdata.EthCoin.ID,
 		Address:        "B",
 	}, {
 		SubscriptionId: 1,
-		Coin:           60,
+		Coin:           &testdata.EthCoin.ID,
 		Address:        "C",
 	}, {
 		SubscriptionId: 1,
-		Coin:           60,
+		Coin:           &testdata.EthCoin.ID,
 		Address:        "D",
 	}}
 
 	newSubscription = []models.SubscriptionData{{
 		SubscriptionId: 1,
-		Coin:           60,
+		Coin:           &testdata.EthCoin.ID,
 		Address:        "E",
 	}}
 
@@ -66,21 +67,21 @@ func TestGetSubscriptionsToDeleteAndUpdate(t *testing.T) {
 
 	oldSubscriptions = []models.SubscriptionData{{
 		SubscriptionId: 1,
-		Coin:           60,
+		Coin:           &testdata.EthCoin.ID,
 		Address:        "A",
 	}, {
 		SubscriptionId: 1,
-		Coin:           60,
+		Coin:           &testdata.EthCoin.ID,
 		Address:        "B",
 	}}
 
 	newSubscription = []models.SubscriptionData{{
 		SubscriptionId: 1,
-		Coin:           60,
+		Coin:           &testdata.EthCoin.ID,
 		Address:        "A",
 	}, {
 		SubscriptionId: 1,
-		Coin:           60,
+		Coin:           &testdata.EthCoin.ID,
 		Address:        "B",
 	}}
 
