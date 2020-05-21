@@ -1,0 +1,1617 @@
+{
+	"witnesses": [
+		{
+			"address": "417bdd2efb4401c50b6ad255e6428ba688e0b83f81",
+			"voteCount": 298493753,
+			"url": "https://minergate.com",
+			"totalProduced": 409483,
+			"totalMissed": 801,
+			"latestBlockNum": 19700720,
+			"latestSlotNum": 529788893,
+			"isJobs": true
+		},
+		{
+			"address": "41d376d829440505ea13c9d1c455317d51b62e4ab6",
+			"voteCount": 317269760,
+			"url": "http://blockchain.org",
+			"totalProduced": 482712,
+			"totalMissed": 2654,
+			"latestBlockNum": 19700712,
+			"latestSlotNum": 529788885,
+			"isJobs": true
+		},
+		{
+			"address": "4138e3e3a163163db1f6cfceca1d1c64594dd1f0ca",
+			"voteCount": 312761034,
+			"url": "https://twitter.com/justinsuntron",
+			"totalProduced": 678403,
+			"totalMissed": 1714,
+			"latestBlockNum": 19700713,
+			"latestSlotNum": 529788886,
+			"isJobs": true
+		},
+		{
+			"address": "41037e18c9ca44b2ba35f0bb7d0c075f252a191294",
+			"voteCount": 299572403,
+			"url": "https://trxultra.org",
+			"totalProduced": 414497,
+			"totalMissed": 1608,
+			"latestBlockNum": 19700719,
+			"latestSlotNum": 529788892,
+			"isJobs": true
+		},
+		{
+			"address": "4114f2c09d3de3fe82a71960da65d4935a30b24e1f",
+			"voteCount": 304155685,
+			"url": "https://staked.us",
+			"totalProduced": 11668,
+			"latestBlockNum": 19700717,
+			"latestSlotNum": 529788890,
+			"isJobs": true
+		},
+		{
+			"address": "41c05142fd1ca1e03688a43585096866ae658f2cb2",
+			"voteCount": 312143320,
+			"url": "http://tronalliance.org",
+			"totalProduced": 475137,
+			"totalMissed": 1236,
+			"latestBlockNum": 19700714,
+			"latestSlotNum": 529788887,
+			"isJobs": true
+		},
+		{
+			"address": "41f29f57614a6b201729473c837e1d2879e9f90b8e",
+			"voteCount": 330655577,
+			"url": "https://www.utorrent.com/",
+			"totalProduced": 695385,
+			"totalMissed": 1972,
+			"latestBlockNum": 19700710,
+			"latestSlotNum": 529788883,
+			"isJobs": true
+		},
+		{
+			"address": "4118e2e1c6cdf4b74b7c1eb84682e503213a174955",
+			"voteCount": 307176451,
+			"url": "https://tronscan.org",
+			"totalProduced": 419985,
+			"totalMissed": 436,
+			"latestBlockNum": 19700716,
+			"latestSlotNum": 529788889,
+			"isJobs": true
+		},
+		{
+			"address": "41a9d4b388c009b7ee36819114b8558d078103ad0b",
+			"voteCount": 300055396,
+			"url": "https://hitbtc.com",
+			"totalProduced": 402664,
+			"totalMissed": 4553,
+			"latestBlockNum": 19700718,
+			"latestSlotNum": 529788891,
+			"isJobs": true
+		},
+		{
+			"address": "414d1ef8673f916debb7e2515a8f3ecaf2611034aa",
+			"voteCount": 364140926,
+			"url": "https://www.sesameseed.org",
+			"totalProduced": 711187,
+			"totalMissed": 5755,
+			"latestBlockNum": 19700704,
+			"latestSlotNum": 529788877,
+			"isJobs": true
+		},
+		{
+			"address": "4192c5d96c3b847268f4cb3e33b87ecfc67b5ce3de",
+			"voteCount": 330908358,
+			"url": "https://infstones.io/",
+			"totalProduced": 572555,
+			"totalMissed": 2232,
+			"latestBlockNum": 19700709,
+			"latestSlotNum": 529788882,
+			"isJobs": true
+		},
+		{
+			"address": "4178c842ee63b253f8f0d2955bbc582c661a078c9d",
+			"voteCount": 311816791,
+			"url": "https://www.binance.com/en/staking",
+			"totalProduced": 241472,
+			"totalMissed": 73,
+			"latestBlockNum": 19700715,
+			"latestSlotNum": 529788888,
+			"isJobs": true
+		},
+		{
+			"address": "415863f6091b8e71766da808b1dd3159790f61de7d",
+			"voteCount": 341400688,
+			"url": "https://www.huobipool.com",
+			"totalProduced": 662003,
+			"totalMissed": 7871,
+			"latestBlockNum": 19700706,
+			"latestSlotNum": 529788879,
+			"isJobs": true
+		},
+		{
+			"address": "41e40302d6b5e889bfbd395ed884638d7f03ee3f87",
+			"voteCount": 344070018,
+			"url": "https://tronlink.org",
+			"totalProduced": 413730,
+			"totalMissed": 331,
+			"latestBlockNum": 19700705,
+			"latestSlotNum": 529788878,
+			"isJobs": true
+		},
+		{
+			"address": "41beab998551416b02f6721129bb01b51fceceba08",
+			"voteCount": 330974623,
+			"url": "https://tronspark.com",
+			"totalProduced": 671456,
+			"totalMissed": 3504,
+			"latestBlockNum": 19700708,
+			"latestSlotNum": 529788881,
+			"isJobs": true
+		},
+		{
+			"address": "41c189fa6fc9ed7a3580c3fe291915d5c6a6259be7",
+			"voteCount": 327673142,
+			"url": "https://www.cryptoguyinza.co.za/",
+			"totalProduced": 703648,
+			"totalMissed": 2328,
+			"latestBlockNum": 19700711,
+			"latestSlotNum": 529788884,
+			"isJobs": true
+		},
+		{
+			"address": "41c81107148e5fa4b4a2edf3d5354db6c6be5b5549",
+			"voteCount": 367283865,
+			"url": "https://www.trongrid.io",
+			"totalProduced": 338991,
+			"totalMissed": 95,
+			"latestBlockNum": 19700703,
+			"latestSlotNum": 529788876,
+			"isJobs": true
+		},
+		{
+			"address": "4167e39013be3cdd3814bed152d7439fb5b6791409",
+			"voteCount": 334317801,
+			"url": "http://cryptochain.network",
+			"totalProduced": 695157,
+			"totalMissed": 2269,
+			"latestBlockNum": 19700707,
+			"latestSlotNum": 529788880,
+			"isJobs": true
+		},
+		{
+			"address": "4100e9fdbd1d24ab56996bd37d76fb7b16dcf62ff1",
+			"voteCount": 288043,
+			"url": "https://www.tronmacau.com"
+		},
+		{
+			"address": "41012f81bd368f632fb22b9ddfeb284155f1f04198",
+			"voteCount": 213,
+			"url": "https://firekraken.media"
+		},
+		{
+			"address": "4101c17562ee5a1ecb60f9ea6e49ef94ec0de99580",
+			"voteCount": 113369,
+			"url": "https://tronpad.com"
+		},
+		{
+			"address": "4102a0ed82a9609e7ea9155f00137dc3fce818033f",
+			"voteCount": 1834997,
+			"url": "XREGlobal.com"
+		},
+		{
+			"address": "4102f95b2185f52ac539128b28033998ab01466986",
+			"voteCount": 114,
+			"url": "http://imcash.io"
+		},
+		{
+			"address": "4103ca8124bfa7c06b20b2e3d2278f67d5d1cb6a66",
+			"voteCount": 151702,
+			"url": "https://twitter.com/mr_oceanview"
+		},
+		{
+			"address": "41061e3f4e108d8aaf5cd75b499f811ae30ed04b77",
+			"voteCount": 87612,
+			"url": "https://dexnode.net"
+		},
+		{
+			"address": "410694981b116304ed21e05896fb16a6bc2e91c92c",
+			"voteCount": 1501,
+			"url": "http://TronGr21.com",
+			"totalProduced": 28449,
+			"latestBlockNum": 1614751,
+			"latestSlotNum": 511581581
+		},
+		{
+			"address": "41080126628c7a8c7edfddf6a027e458f0001d2e09",
+			"voteCount": 248,
+			"url": "https://rinzler.eu"
+		},
+		{
+			"address": "4108b55b2611ec829d308a62b3339fba9dd5c27151",
+			"voteCount": 203,
+			"url": "http://TronGr5.com",
+			"totalProduced": 36710,
+			"latestBlockNum": 1226106,
+			"latestSlotNum": 511192800
+		},
+		{
+			"address": "410b05a97454cc7aac6e736b4390ee751665941568",
+			"voteCount": 778744,
+			"url": "http://test.com"
+		},
+		{
+			"address": "410c6747caa68213bd0d1f3ed891ee93b090fbf223",
+			"voteCount": 3408489,
+			"url": "https://bixin.com"
+		},
+		{
+			"address": "4110dc5d4731b5463c372a5615d47fc4ad470c3c6b",
+			"voteCount": 1037,
+			"url": "http://www.ocoins.cc/"
+		},
+		{
+			"address": "411103d62d8299e90fa011b4ce7fc6ba151e5f1a23",
+			"voteCount": 106693397,
+			"url": "https://www.tronvietnam.com/",
+			"totalProduced": 594831,
+			"totalMissed": 9060,
+			"latestBlockNum": 17299301,
+			"latestSlotNum": 527385598
+		},
+		{
+			"address": "411155d10415fac16a8f4cb2f382ce0e0f0a7e64cc",
+			"voteCount": 1029,
+			"url": "http://TronGr22.com",
+			"totalProduced": 21773,
+			"latestBlockNum": 1593157,
+			"latestSlotNum": 511559981
+		},
+		{
+			"address": "41137c94812b79641515e92c5a567bd3a79d1f9f7b",
+			"voteCount": 29003,
+			"url": "http://tronjapan.io"
+		},
+		{
+			"address": "4116329c4b64920408342e66221a1d52a974901984",
+			"voteCount": 7678,
+			"url": "https://trx.bitcoingod.org"
+		},
+		{
+			"address": "4116440834509c59de4ee6ba4933678626f451befe",
+			"voteCount": 801768,
+			"url": "https://WINTokenGames.com",
+			"totalProduced": 104760,
+			"totalMissed": 819,
+			"latestBlockNum": 4144662,
+			"latestSlotNum": 514129269
+		},
+		{
+			"address": "411661f25387370c9cd3a9a5d97e60ca90f4844e7e",
+			"voteCount": 611,
+			"url": "http://TronGr8.com",
+			"totalProduced": 47910,
+			"totalMissed": 1,
+			"latestBlockNum": 1650122,
+			"latestSlotNum": 511617599
+		},
+		{
+			"address": "41167647e8720a4ac305c1c0fa3c71e8a7be3d7d39",
+			"voteCount": 15001,
+			"url": "NULL.DAT"
+		},
+		{
+			"address": "4116aaab3741fc65dc875585ee7eae622daaf425ca",
+			"voteCount": 20,
+			"url": "http://blog.naver.com/coolkim01"
+		},
+		{
+			"address": "4119bec4e96e417f936d40bd4fe3876d1a516a064d",
+			"voteCount": 340228,
+			"url": "digitalgeotreasure.com/"
+		},
+		{
+			"address": "411d7aba13ea199a63d1647e58e39c16a9bb9da689",
+			"voteCount": 29410,
+			"url": "http://TronGr20.com",
+			"totalProduced": 56172,
+			"latestBlockNum": 1549970,
+			"latestSlotNum": 511516780
+		},
+		{
+			"address": "411e65f18ba80f132fa645727f4dd05cd7eb72e3b1",
+			"voteCount": 251,
+			"url": "https://theseusx.net"
+		},
+		{
+			"address": "411ec54599d42f1e2e699cd1c24dcd79644d8b3e19",
+			"voteCount": 196,
+			"url": "https://twitter.com/KaanKOZANn"
+		},
+		{
+			"address": "41207ab1585b9cc6c4c1232f67e4a10e19a442fe68",
+			"voteCount": 501,
+			"url": "http://TronGr10.com",
+			"totalProduced": 26298,
+			"latestBlockNum": 1076255,
+			"latestSlotNum": 511041581
+		},
+		{
+			"address": "4121eca596da7e2465b390df2e8bd297881ab3dc57",
+			"voteCount": 139058,
+			"url": "https://tronsecure.io"
+		},
+		{
+			"address": "4123d6947ca8b9b3748f1d1aac88a0867d415d4ac9",
+			"voteCount": 601,
+			"url": "http://www.trongalaxy.io"
+		},
+		{
+			"address": "41241d998b00b3431e3b2d1cce714566659ccaef5c",
+			"voteCount": 584,
+			"url": "https://www.museprotocol.com"
+		},
+		{
+			"address": "41243accc5241d97ce79272b06952ee88a34d8e1f9",
+			"voteCount": 6490100,
+			"url": "https://www.tronics.io/",
+			"totalProduced": 134119,
+			"totalMissed": 96,
+			"latestBlockNum": 4203064,
+			"latestSlotNum": 514187999
+		},
+		{
+			"address": "4124443254e2d1f3e1f55521d518bd875138f4173c",
+			"voteCount": 6594518,
+			"url": "http://www.communitynode.org/"
+		},
+		{
+			"address": "41247c3c989c2d31e454ba06e6d9d421908d7a0fd8",
+			"voteCount": 67132,
+			"url": "https://tronlottery.io"
+		},
+		{
+			"address": "41267e38504037133a20a79d38dfbb2cf0988942e6",
+			"voteCount": 61,
+			"url": "https://reyna2.com"
+		},
+		{
+			"address": "4127a6419bbe59f4e64a064d710787e578a150d6a7",
+			"voteCount": 2732,
+			"url": "http://TronGr4.com",
+			"totalProduced": 53772,
+			"latestBlockNum": 1513990,
+			"latestSlotNum": 511480789
+		},
+		{
+			"address": "4127bf0d1a57f335c11bc5d002dd82e9e0727cb967",
+			"voteCount": 1214,
+			"url": "http://TronGr26.com",
+			"totalProduced": 24711,
+			"latestBlockNum": 1104788,
+			"latestSlotNum": 511070388
+		},
+		{
+			"address": "4128283cfbbffe9e267fb32bfef1e0533042ad3756",
+			"voteCount": 61611,
+			"url": "https://www.tronboston.com"
+		},
+		{
+			"address": "412929e0e1d5d0ba3b68d8e3a376ef884ab23dd8e0",
+			"voteCount": 300,
+			"url": "http://hqn.vn"
+		},
+		{
+			"address": "4129f3dd5bb0941bde8dc4538332c14fca595a7fe0",
+			"voteCount": 604,
+			"url": "http://www.tron.school/"
+		},
+		{
+			"address": "412a5308a747e62dda5fd06cf516b31bf746ce2b3d",
+			"voteCount": 600,
+			"url": "http://www.linkvc.com/"
+		},
+		{
+			"address": "412c31119d41ba850dd666b6d7d5c52ec85da9e4ef",
+			"voteCount": 120,
+			"url": "http://cryptochain.network"
+		},
+		{
+			"address": "412d62975bc329b501368110f435cd8d277a1115e9",
+			"voteCount": 79535,
+			"url": "https://sites.google.com/view/proudbtc1nvest/startsida"
+		},
+		{
+			"address": "412d7bdb9846499a2e5e6c5a7e6fb05731c83107c7",
+			"voteCount": 407990435,
+			"url": "https://www.tronwallet.me/",
+			"totalProduced": 588418,
+			"totalMissed": 1230,
+			"latestBlockNum": 19700702,
+			"latestSlotNum": 529788875,
+			"isJobs": true
+		},
+		{
+			"address": "412edce151c81d9b4aae17f974f7f646242eff989d",
+			"voteCount": 1839,
+			"url": "http://TronGr14.com",
+			"totalProduced": 27117,
+			"latestBlockNum": 760520,
+			"latestSlotNum": 510724788
+		},
+		{
+			"address": "412fb5abdf8a1670f533c219e7251fe30b89849359",
+			"voteCount": 6061915,
+			"url": "http://www.lianjinshu.com",
+			"totalProduced": 405906,
+			"totalMissed": 6512,
+			"latestBlockNum": 11497746,
+			"latestSlotNum": 521575194
+		},
+		{
+			"address": "412ff2cc08e2b4ae41adae991b20c582f42c958efa",
+			"url": "http://the-crazy-once.de"
+		},
+		{
+			"address": "41318b2b6b4c7fcaa4b62f25a282329e1952a3c0d1",
+			"voteCount": 1525,
+			"url": "http://TronGr23.com",
+			"totalProduced": 19115,
+			"latestBlockNum": 1557177,
+			"latestSlotNum": 511523990
+		},
+		{
+			"address": "4131b0bbc3ec749ed0666e4ea6db0a58d464daf007",
+			"voteCount": 17,
+			"url": "https://darano.network/"
+		},
+		{
+			"address": "4132c014adb6ff15038d5b67d97046c2556d9a9dc3",
+			"voteCount": 711,
+			"url": "https://www.robocoinexchange.com"
+		},
+		{
+			"address": "41333bf31c095163a07e14a75c1f717f99f7934a8c",
+			"voteCount": 17712832,
+			"url": "\thttps://www.cashierest.com"
+		},
+		{
+			"address": "4135c07ff4c26880a9c758a8b15e6fa1ad6d7e18a2",
+			"voteCount": 905197,
+			"url": "https://noraigi.com/en/home"
+		},
+		{
+			"address": "4135c3c756c094d7b7f4f733f5b61bafc36b52510b",
+			"voteCount": 52,
+			"url": "https://inrtoken.io/"
+		},
+		{
+			"address": "4135d7a72c7431d36f076d2c078a149a9037bb244b",
+			"voteCount": 27,
+			"url": "http://t.me/TheL1Crew"
+		},
+		{
+			"address": "41362519bf874a901e7488fba6a0e06bc6ba781489",
+			"voteCount": 2239,
+			"url": "http://www.meg4tron.com/"
+		},
+		{
+			"address": "4139801ec34decc39c8c206b46c79cd2c46f48e08a",
+			"voteCount": 408495,
+			"url": "."
+		},
+		{
+			"address": "413ba13182b026a6e8ec8af2302ad86d221682000d",
+			"voteCount": 2138794,
+			"url": "https://www.coinnest.co.kr"
+		},
+		{
+			"address": "413d2e1a011533da0da6f5b4d07384945b45e0cd0e",
+			"voteCount": 4415,
+			"url": "https://helloworldteam.org"
+		},
+		{
+			"address": "413dd6a14c95be5d43d1d1e51f94205ffbfc63b8fb",
+			"voteCount": 93766,
+			"url": "https://tronbet.com",
+			"totalProduced": 13060,
+			"totalMissed": 1,
+			"latestBlockNum": 4259295,
+			"latestSlotNum": 514245587
+		},
+		{
+			"address": "413f5f20247069fe5b674ed21c693f7d382db0b8e0",
+			"voteCount": 54,
+			"url": "https://atticlab.net"
+		},
+		{
+			"address": "414061ef90a87bf861cb5dddb7897f60ffd1f36372",
+			"voteCount": 82007323,
+			"url": "https://www.nodeasy.com"
+		},
+		{
+			"address": "4140c59d6ae1923d3a67bc49b40981c1569b8a2475",
+			"voteCount": 1621,
+			"url": "https://tronkh.org"
+		},
+		{
+			"address": "41410e468919155aa847d83b0c206148511b6dc848",
+			"voteCount": 5501,
+			"url": "http://TronGr11.com",
+			"totalProduced": 30041,
+			"totalMissed": 5,
+			"latestBlockNum": 1463589,
+			"latestSlotNum": 511430374
+		},
+		{
+			"address": "41411d7f31ae1a4840458667c52ac1e4d25843e009",
+			"voteCount": 1083,
+			"url": "https://globalricetoken.wixsite.com/grttoken"
+		},
+		{
+			"address": "4141b285495e0dba4a39fe79dba38b068506b2f841",
+			"voteCount": 31,
+			"url": "http://tronman.io/"
+		},
+		{
+			"address": "4142e95c76430e62dfe5182d58f46a482101648304",
+			"voteCount": 782704,
+			"url": "https://member.alleexchange.com",
+			"totalProduced": 37122,
+			"totalMissed": 1002,
+			"latestBlockNum": 5116518,
+			"latestSlotNum": 515131163
+		},
+		{
+			"address": "41432bd4093f1c8ef0ffe38f5e2f75f52c884c1986",
+			"voteCount": 645,
+			"url": "http://jdi.group"
+		},
+		{
+			"address": "414431bf75a2acb6e36802a371447ffe559f3cf642",
+			"voteCount": 30086,
+			"url": "https://www.tron.buzz"
+		},
+		{
+			"address": "414593d27b70d21454b39ab60bf13291dae8dc0326",
+			"voteCount": 4236,
+			"url": "http://TronGr16.com",
+			"totalProduced": 54023,
+			"totalMissed": 559,
+			"latestBlockNum": 1542790,
+			"latestSlotNum": 511509598
+		},
+		{
+			"address": "4145955a72c20b65ce9bae07830ce240bff3108389",
+			"voteCount": 521,
+			"url": "https://trongameglobal.network"
+		},
+		{
+			"address": "41460b49a0ec5ce6340ff40020704f21b1d4e4f7ff",
+			"voteCount": 6,
+			"url": "http://www.nextgenius.com.au"
+		},
+		{
+			"address": "4147e83677cf459b0bdc976ae6fe27b91c0d49329d",
+			"voteCount": 827,
+			"url": "http://VeganIS.ME/"
+		},
+		{
+			"address": "414853b6a81a6ea7be929758c6adafda1f4f4faea2",
+			"voteCount": 600,
+			"url": "https://DoNotVote-Not-Active-SR"
+		},
+		{
+			"address": "41496e85711fa3b7ba5a093af635269a67230ac2c1",
+			"voteCount": 21774463,
+			"url": "https://www.beatzcoin.io/",
+			"totalProduced": 221974,
+			"totalMissed": 3004,
+			"latestBlockNum": 14077587,
+			"latestSlotNum": 524159989
+		},
+		{
+			"address": "4149939465083f75a8769087f89aaf68032b575ceb",
+			"voteCount": 2963,
+			"url": "https://t.me/joinchat/F5QrYU9C8y-nAN2w0M327Q"
+		},
+		{
+			"address": "4149f34cc0e7eecf4ad4515b7f5a5c333469f76ca5",
+			"voteCount": 15957,
+			"url": "https://twitter.com/1000WONG"
+		},
+		{
+			"address": "414a193c92cd631c1911b99ca964da8fd342f4cddd",
+			"voteCount": 462393856,
+			"url": "http://www.skypeople.co.kr",
+			"totalProduced": 726373,
+			"totalMissed": 4883,
+			"latestBlockNum": 19700700,
+			"latestSlotNum": 529788873,
+			"isJobs": true
+		},
+		{
+			"address": "414ac0706a3d08c0416ad361878b05d6fc8d36863e",
+			"voteCount": 207208,
+			"url": "https://cobo.com"
+		},
+		{
+			"address": "414b4778beebb48abe0bc1df42e92e0fe64d0c8685",
+			"voteCount": 701,
+			"url": "http://TronGr7.com",
+			"totalProduced": 35113,
+			"latestBlockNum": 1571562,
+			"latestSlotNum": 511538379
+		},
+		{
+			"address": "414c121deddd140d5969dbbd8ac3aa611421251ecf",
+			"voteCount": 128,
+			"url": "http://he.capital/"
+		},
+		{
+			"address": "414dd6d662582d5b6ff6c5b824a2b194f41e361631",
+			"voteCount": 5004,
+			"url": "https://tron.34rth.com/"
+		},
+		{
+			"address": "414e785037af0091f269d1d47506be94336b317e86",
+			"voteCount": 12400,
+			"url": "https://gotno.life"
+		},
+		{
+			"address": "415095d4f4d26ebc672ca12fc0e3a48d6ce3b169d2",
+			"voteCount": 5782,
+			"url": "http://TronGr1.com",
+			"totalProduced": 58297,
+			"latestBlockNum": 1621714,
+			"latestSlotNum": 511588788
+		},
+		{
+			"address": "4150eae1569968dbb87bbd786e6cfbf60c47464644",
+			"voteCount": 142499,
+			"url": "https://CharityCompassionCoin.com"
+		},
+		{
+			"address": "4152a5962248ce05bcd114f976304eb2d052b6f034",
+			"voteCount": 12734,
+			"url": "https://www.neoply.com"
+		},
+		{
+			"address": "4152bb0b293d6441ef44a36b92a290f0a9b952ffa0",
+			"voteCount": 2,
+			"url": "VoteTronicStorm"
+		},
+		{
+			"address": "4152cca32a23b5a78b26237cb3ef587a0f20d113e1",
+			"voteCount": 20658,
+			"url": "https://www.thz.net"
+		},
+		{
+			"address": "41530f931037de0c369968a5cf622003d240ef96e2",
+			"voteCount": 459657456,
+			"url": "https://www.beekuaibao.com",
+			"totalProduced": 213438,
+			"totalMissed": 475,
+			"latestBlockNum": 19700701,
+			"latestSlotNum": 529788874,
+			"isJobs": true
+		},
+		{
+			"address": "41561bfd00769866b44282b773f2ed8bba00907dd9",
+			"voteCount": 35,
+			"url": "https://www.rightbtc.com"
+		},
+		{
+			"address": "4157c381611f36ee7da21e6ab0bdc825774045de83",
+			"voteCount": 196,
+			"url": "https://www.livenodes.network/"
+		},
+		{
+			"address": "415a8f7b00624fbcc0ec022d91a04000f573356cb9",
+			"voteCount": 408,
+			"url": "Https://www.numeriuno.eu"
+		},
+		{
+			"address": "415baad9ab1e821a81ad4d512d71037326e3b04126",
+			"voteCount": 1260157,
+			"url": "http://troncoin.nl"
+		},
+		{
+			"address": "415c6202be8f2a984c8f73f4d9fd841c0bfca8e3be",
+			"voteCount": 299011,
+			"url": "https://tronhope.org/"
+		},
+		{
+			"address": "415c7f4890ed927ad276401851f38575fe42ff2eb3",
+			"voteCount": 12270,
+			"url": "https://www.cityuptake.com"
+		},
+		{
+			"address": "415dc72ddad8966b1e22dfc94980243fce1c75ef9b",
+			"voteCount": 86686,
+			"url": "https://www.tron-mining.com"
+		},
+		{
+			"address": "415f9d90205868184e240937140ab44b30f8012dbf",
+			"voteCount": 2033040,
+			"url": "www"
+		},
+		{
+			"address": "416202093e031985b877eb60d508f583f45b50ae16",
+			"voteCount": 502,
+			"url": "http://www.apexinformatics.com"
+		},
+		{
+			"address": "4162398d516b555ac64af24416e05c199c01823048",
+			"voteCount": 901559198,
+			"url": "https://poloniex.com/",
+			"totalProduced": 89458,
+			"totalMissed": 5,
+			"latestBlockNum": 19700698,
+			"latestSlotNum": 529788871,
+			"isJobs": true
+		},
+		{
+			"address": "4162e1a76d28c0bee6eb56a53e864c810514c7fa08",
+			"voteCount": 1322,
+			"url": "www.tronixglobal.com"
+		},
+		{
+			"address": "4163233b6d495606ded800a4e2d7b2a5eafbf4e53b",
+			"voteCount": 207,
+			"url": "https://molotovlab.com"
+		},
+		{
+			"address": "4163ca1146abdf34944b5b84d62deac68b56fdc0f9",
+			"voteCount": 1837235,
+			"url": "https://activ8coin.com"
+		},
+		{
+			"address": "416419765bacf1dc441f722cabc8b661140558bb5d",
+			"voteCount": 3257,
+			"url": "http://TronGr6.com",
+			"totalProduced": 55640,
+			"totalMissed": 1,
+			"latestBlockNum": 1513988,
+			"latestSlotNum": 511480787
+		},
+		{
+			"address": "4164bba21b3e2d1635fdf3eea556fe1e98763eb8a6",
+			"voteCount": 339976,
+			"url": "https://tran.systems/tronhub/"
+		},
+		{
+			"address": "4165ad45cfb233daa0816f5df5444c5c5f4a189f20",
+			"voteCount": 501,
+			"url": "http://d2fapp.com"
+		},
+		{
+			"address": "41685ef5321f2d94080d6bdcd1d4cbdded428cecb6",
+			"voteCount": 3529011,
+			"url": "http://tronkorea.io",
+			"totalProduced": 238,
+			"totalMissed": 28,
+			"latestBlockNum": 300029,
+			"latestSlotNum": 510263985
+		},
+		{
+			"address": "4168e2922f40b2971311b5e57b7573c526399860d0",
+			"voteCount": 158723,
+			"url": "https://promo.network/"
+		},
+		{
+			"address": "4169051b001c6169201970f5a6a4f9ababfd916ae3",
+			"voteCount": 690238,
+			"url": "https://WinTokenGames.com",
+			"totalProduced": 23273,
+			"totalMissed": 187,
+			"latestBlockNum": 4791405,
+			"latestSlotNum": 514782404
+		},
+		{
+			"address": "416f849a033d62d854b6daad9052f6d9686c60c1c6",
+			"voteCount": 88,
+			"url": "https://cobo.com"
+		},
+		{
+			"address": "417040583133e831953ea4f65a8196fcffcfbf0d80",
+			"voteCount": 330,
+			"url": "http://TronGr13.com",
+			"totalProduced": 24448,
+			"latestBlockNum": 1571564,
+			"latestSlotNum": 511538381
+		},
+		{
+			"address": "41704833c02883b3261f7baf62f8cb19b4b0c2e64e",
+			"voteCount": 6167,
+			"url": "https://game.com"
+		},
+		{
+			"address": "4170b1be516ef67e1ca019d78b2112ccc8a3e8bd1b",
+			"voteCount": 7038,
+			"url": "https://tronvip.io"
+		},
+		{
+			"address": "4172fd5dfb8ab36eb28df8e4aee97966a60ebf9efe",
+			"voteCount": 315,
+			"url": "http://TronGr27.com",
+			"totalProduced": 30838,
+			"latestBlockNum": 1513987,
+			"latestSlotNum": 511480786
+		},
+		{
+			"address": "417312080619a24d38a2029b724ff5c84d8f2e4483",
+			"voteCount": 9672,
+			"url": "https://weibo.com/bitdog666",
+			"totalProduced": 27199,
+			"totalMissed": 1,
+			"latestBlockNum": 3226491,
+			"latestSlotNum": 513208790
+		},
+		{
+			"address": "41746e6af4ac9db3473c0c955f1fca11d4013f32ed",
+			"voteCount": 7831,
+			"url": "http://TronGr17.com",
+			"totalProduced": 49765,
+			"totalMissed": 8,
+			"latestBlockNum": 1650121,
+			"latestSlotNum": 511617598
+		},
+		{
+			"address": "4175f1045e92680e52d072c1f92dec0874a8cbe2cc",
+			"voteCount": 35,
+			"url": "https://gconnect.io/"
+		},
+		{
+			"address": "41770407d686a8a57c035a9615f25e4a7748a67739",
+			"voteCount": 416861,
+			"url": "http://tronshares.com"
+		},
+		{
+			"address": "41788cd87d1525c0163240cd8832863845605fddc8",
+			"voteCount": 303500,
+			"url": "https://kryptowaluty.org.pl"
+		},
+		{
+			"address": "4178af3274df44866a5bb63671d648583fce7ab08e",
+			"voteCount": 519,
+			"url": "https://c773.com/"
+		},
+		{
+			"address": "4179497d5a29cbade8fac1394148379037e5618aed",
+			"voteCount": 4052,
+			"url": "http://tron-man.com/"
+		},
+		{
+			"address": "417ad0ee1300d0366e901fa613a929137dde1d2224",
+			"voteCount": 221419,
+			"url": "https://mlgblockchain.com",
+			"totalProduced": 16896,
+			"totalMissed": 963,
+			"latestBlockNum": 1370030,
+			"latestSlotNum": 511336789
+		},
+		{
+			"address": "417b88db9da8aacae0a7e967d24c0fc00129e815f6",
+			"voteCount": 1498089,
+			"url": "www.Tron-Europe.com",
+			"totalProduced": 122888,
+			"totalMissed": 5326,
+			"latestBlockNum": 5101331,
+			"latestSlotNum": 515111693
+		},
+		{
+			"address": "417d0fa745bc8ee7137544ef93230089a34846892b",
+			"voteCount": 167,
+			"url": "https://cobo.com"
+		},
+		{
+			"address": "417ec8dc8ceebf5e8b37875a3ab2769e93454465b9",
+			"voteCount": 2465,
+			"url": "Change Your Vote From This SR Position, To Our New SR Position: \"DEXExchange-DEXCOIN\""
+		},
+		{
+			"address": "417ecf3ba1ea90bce91a3b82c0774811d886bd85f6",
+			"voteCount": 240486,
+			"url": " https://www.phituasesor.com/smart-2/"
+		},
+		{
+			"address": "4181d3b51217f51831d1600dc1903c7b7a3bbd5444",
+			"voteCount": 247,
+			"url": "https://twitter.com/@brianjun09"
+		},
+		{
+			"address": "418276c0d4adc3f99daf592d90369f64ee16d1fb94",
+			"voteCount": 57667,
+			"url": "https://twitter.com/black0din"
+		},
+		{
+			"address": "418343eae219414f585c21cd0c6610c0b0de19dedf",
+			"voteCount": 979612,
+			"url": "http://tronsiqveland.co.uk/"
+		},
+		{
+			"address": "4183bbde499a4e7792dbf69033115180a36630cb8d",
+			"voteCount": 10,
+			"url": "https://www.wunderchain.com"
+		},
+		{
+			"address": "41841201843fc3b0ee68a36ada464f606e82a53b05",
+			"voteCount": 5540,
+			"url": "https://gravelproject.io/"
+		},
+		{
+			"address": "4184399fc6a98edc11a6efb146e86a3e153d0a0933",
+			"voteCount": 295142167,
+			"url": "https://www.tron-europe.org",
+			"totalProduced": 468341,
+			"totalMissed": 1894,
+			"latestBlockNum": 19700696,
+			"latestSlotNum": 529788869,
+			"isJobs": true
+		},
+		{
+			"address": "418440ffd578f7a5abf3537b5f46a6980d382db581",
+			"voteCount": 17708684,
+			"url": "https://www.huobiwallet.com/"
+		},
+		{
+			"address": "418565229cdbc48f6155c9863abedff8c8f3f61fcf",
+			"voteCount": 1616254,
+			"url": "https://twitter.com/TronsRocknRoll"
+		},
+		{
+			"address": "41856eef3d964e450b52def7c0d49bb5719d2d22d3",
+			"voteCount": 11560,
+			"url": "tronsr",
+			"totalProduced": 1065,
+			"latestBlockNum": 3908714,
+			"latestSlotNum": 513892774
+		},
+		{
+			"address": "4185a503b5341d9628618d92b97d506788b92d0a12",
+			"voteCount": 32042,
+			"url": "http://www.tron-france.com"
+		},
+		{
+			"address": "41869648f6368ec64afa4a68e00bd6864ee1b13583",
+			"voteCount": 4824,
+			"url": "https://www.gameoftron.net/"
+		},
+		{
+			"address": "4186f5793eb678c65d9673d5498c550439d762c1cc",
+			"voteCount": 3370,
+			"url": "http://TronGr12.com",
+			"totalProduced": 46832,
+			"latestBlockNum": 1492394,
+			"latestSlotNum": 511459187
+		},
+		{
+			"address": "4187269d327159dcf579f267aa8d44631c49c7d8d6",
+			"voteCount": 3678,
+			"url": "https://www.google.com/"
+		},
+		{
+			"address": "4187de03394f21e3d7b2e630296e4ea1ea994bb6d3",
+			"voteCount": 98664314,
+			"url": "https://tron.newdex.one"
+		},
+		{
+			"address": "418891e5cd756727a61f2332bbaef99722a4e6d8b7",
+			"voteCount": 505,
+			"url": "http://www.tronium.net"
+		},
+		{
+			"address": "418a445facc2aa94d72292ebbcb2a611e9fd8a6c6e",
+			"voteCount": 295494001,
+			"url": "http://zempty.peiwo.cn/",
+			"totalProduced": 559467,
+			"totalMissed": 1861,
+			"latestBlockNum": 19700695,
+			"latestSlotNum": 529788868,
+			"isJobs": true
+		},
+		{
+			"address": "418a470d3a9614f93f43b332ba49b8848c26598352",
+			"voteCount": 800,
+			"url": "https://tronix.international/"
+		},
+		{
+			"address": "418ac86d2381c71c405bd0703a944d428ac49a01a8",
+			"voteCount": 25,
+			"url": "www.upvote.world TBD"
+		},
+		{
+			"address": "418ae580dfed3ce5c55232fb506c768463d68cf0db",
+			"voteCount": 376058,
+			"url": "https://www.baggi.co/"
+		},
+		{
+			"address": "418b50e0f2952edcd43391aede597b85408f7eb4a2",
+			"voteCount": 250,
+			"url": "www.dtroynx.com"
+		},
+		{
+			"address": "418bbd49f14ddd5d1ff996ccbbcde9ed0416c5a216",
+			"voteCount": 1000,
+			"url": "ffgtrgh"
+		},
+		{
+			"address": "418c2e9bbc8c6fff0f947f264fae318b53815b4af7",
+			"voteCount": 103954,
+			"url": "https://healthport.io/"
+		},
+		{
+			"address": "418c66e4883782b793fcf2dcb92b23eece57769499",
+			"voteCount": 290038614,
+			"url": "http://www.thelast.me",
+			"totalProduced": 215545,
+			"totalMissed": 3326,
+			"latestBlockNum": 18946553,
+			"latestSlotNum": 529034381
+		},
+		{
+			"address": "4193a8bc2e7d6bb1bd75fb2d74107ffbda81af439d",
+			"voteCount": 1839063,
+			"url": "http://www.cryptodiva.io/",
+			"totalProduced": 503055,
+			"totalMissed": 4892,
+			"latestBlockNum": 14005616,
+			"latestSlotNum": 524087980
+		},
+		{
+			"address": "41944d972a983881fd86c5b2cd49e18bdbaff116d0",
+			"voteCount": 174,
+			"url": "https://www.facebook.com/sevo.nikolov"
+		},
+		{
+			"address": "4196ff32cfa51692dd6987ae161e3cf8b36143d827",
+			"voteCount": 35005157,
+			"url": "http://bz.com/"
+		},
+		{
+			"address": "419837a9e5e14ce4921a2c6bd33cdba00e2f2688c5",
+			"voteCount": 518,
+			"url": "https://t.me/ONGISTRON_NewsChannel"
+		},
+		{
+			"address": "4198787f5ebebb0a8fe26f148d81de0fdd88c28329",
+			"voteCount": 239,
+			"url": "http://www.contactnetwork.fr/"
+		},
+		{
+			"address": "4198bf627cb3d9b3ac11cb9fbbb10aeed74615936d",
+			"voteCount": 562,
+			"url": "https://tronblock.co"
+		},
+		{
+			"address": "4199fe7d33b4d7fc111fb1c5ef2c751676e1fb250b",
+			"voteCount": 76890,
+			"url": "https://TRONS.WORLD"
+		},
+		{
+			"address": "419a856a04df38a4d9ce74d046af96872741ded747",
+			"voteCount": 1116,
+			"url": "https://trontx.com"
+		},
+		{
+			"address": "419bae807d803192c5cc09a1f6c98c43a9141c32cf",
+			"voteCount": 83,
+			"url": "https://mobile.twitter.com/busyblaze"
+		},
+		{
+			"address": "419deb263b16e25063fd47208fac89b01a32003ce7",
+			"voteCount": 500,
+			"url": "https://TRXGUARDIAN.ORG"
+		},
+		{
+			"address": "419e46cd3c3b4a5543798962bd5f14d017cf6a124c",
+			"voteCount": 5131,
+			"url": "https://www.bitcoinworld.com/"
+		},
+		{
+			"address": "41a300b290201cb337fe62794afbe9ed5cb183db55",
+			"voteCount": 103,
+			"url": "https://www.trxkings.com"
+		},
+		{
+			"address": "41a4475dbd14feb2221f303fc33dc8d0a08f25f445",
+			"voteCount": 30583389,
+			"url": "https://tron-society.com",
+			"totalProduced": 168733,
+			"totalMissed": 2433,
+			"latestBlockNum": 8208429,
+			"latestSlotNum": 518255974
+		},
+		{
+			"address": "41a47e8b12d006a2c2a3f044453e2745bfb9321939",
+			"voteCount": 6859,
+			"url": "http://tronpro.io",
+			"totalProduced": 15194,
+			"totalMissed": 1,
+			"latestBlockNum": 1305260,
+			"latestSlotNum": 511271991
+		},
+		{
+			"address": "41a6c467ef40aa712fa239153309c0225300fbfa88",
+			"voteCount": 159,
+			"url": "https://www.vena.network"
+		},
+		{
+			"address": "41a75a876ef0e8715aa2cd34597154382502b8d646",
+			"voteCount": 1523,
+			"url": " ",
+			"totalProduced": 102241,
+			"totalMissed": 426,
+			"latestBlockNum": 13998453,
+			"latestSlotNum": 524080797
+		},
+		{
+			"address": "41a857362c1b77cb04e8f2b51b6e970f24fa5c1e5b",
+			"voteCount": 6007,
+			"url": "http://TronGr24.com",
+			"totalProduced": 21248,
+			"latestBlockNum": 1614750,
+			"latestSlotNum": 511581580
+		},
+		{
+			"address": "41a89e743413e30d5462c95ac8ff0abcc13e7cf38f",
+			"voteCount": 2001,
+			"url": "https://mdt.co"
+		},
+		{
+			"address": "41a8bb7680d85f9821b3d82505edc4663f6fbd8fde",
+			"voteCount": 1626,
+			"url": "http://TronGr25.com",
+			"totalProduced": 18571,
+			"totalMissed": 11,
+			"latestBlockNum": 1542791,
+			"latestSlotNum": 511509599
+		},
+		{
+			"address": "41a9b6a087c7f622548e338884f1a4c69972d691ab",
+			"voteCount": 6690,
+			"url": "https://www.troncanada.com/"
+		},
+		{
+			"address": "41aa97642e4137cf828a971de448756958b844d72f",
+			"voteCount": 2830146,
+			"url": "https://github.com/trondex/",
+			"totalProduced": 25313,
+			"latestBlockNum": 1154111,
+			"latestSlotNum": 511120783
+		},
+		{
+			"address": "41ad85b8b51c9651f911da795e4d481db419c00c6b",
+			"voteCount": 497,
+			"url": "https://youtu.be/pWhw_NjVV68"
+		},
+		{
+			"address": "41b096b3251f131f8a16f4b1beb7126d3ee071bc59",
+			"voteCount": 13457,
+			"url": "https://teamhelios.org/"
+		},
+		{
+			"address": "41b25bd7ef93130ca2bf6eb05f1bdb9ee0f055c60a",
+			"voteCount": 80,
+			"url": "https://zhizhu.top/"
+		},
+		{
+			"address": "41b3eec71481e8864f0fc1f601b836b74c40548287",
+			"voteCount": 293541325,
+			"url": "https://www.bittorrent.com/",
+			"totalProduced": 687487,
+			"totalMissed": 3836,
+			"latestBlockNum": 19479108,
+			"latestSlotNum": 529567199
+		},
+		{
+			"address": "41b438be21f9652e7f41b1d34a5a999f75ffeb2375",
+			"voteCount": 140,
+			"url": " "
+		},
+		{
+			"address": "41b487cdc02de90f15ac89a68c82f44cbfe3d915ea",
+			"voteCount": 104879,
+			"url": "http://dapps.house",
+			"totalProduced": 250389,
+			"totalMissed": 2342,
+			"latestBlockNum": 8387532,
+			"latestSlotNum": 518435979
+		},
+		{
+			"address": "41b668d4991cd636b694989ebf3fa1a84613d7899e",
+			"voteCount": 5760439,
+			"url": "https://www.iggalaxy.com",
+			"totalProduced": 154409,
+			"totalMissed": 1550,
+			"latestBlockNum": 8416221,
+			"latestSlotNum": 518464799
+		},
+		{
+			"address": "41b6e726360eccfbeeb3bd52ae89aff8aeb2b23e14",
+			"voteCount": 1013,
+			"url": "https://tronswap.io"
+		},
+		{
+			"address": "41b6eed928f86c2b80a85b83572a87311e7da7682c",
+			"voteCount": 206,
+			"url": "https://a4oo.ml"
+		},
+		{
+			"address": "41b813e99b6a9fc38fb279d51a0d217fccece3280a",
+			"voteCount": 1567,
+			"url": "https://antpool.com"
+		},
+		{
+			"address": "41ba7cc2711b5b3dcdedfd5ae493197d5bae597202",
+			"voteCount": 136738,
+			"url": "xreglobal.com"
+		},
+		{
+			"address": "41bac7378c4265ad2739772337682183b8864f517a",
+			"voteCount": 295548591,
+			"url": "http://trx.market",
+			"totalProduced": 662356,
+			"totalMissed": 4092,
+			"latestBlockNum": 19700694,
+			"latestSlotNum": 529788867,
+			"isJobs": true
+		},
+		{
+			"address": "41bd0e945de2c2397b24aafd0ab02422705f6dbc87",
+			"voteCount": 70946,
+			"url": "https://www.tronvietnam.org"
+		},
+		{
+			"address": "41bd2fee2df4a2ba73f29d58b777c4c1113b74e5db",
+			"voteCount": 200,
+			"url": "https://www.teamx.com",
+			"totalProduced": 17850,
+			"totalMissed": 2,
+			"latestBlockNum": 3966296,
+			"latestSlotNum": 513950399
+		},
+		{
+			"address": "41bd58a790f43b052cd39418d2ffaefb316b846578",
+			"voteCount": 220791,
+			"url": "https://bankroll.network"
+		},
+		{
+			"address": "41bfd6af35f4cbf8846b8ecd5d8d24a444d47e4aaf",
+			"voteCount": 984,
+			"url": "www.tbd.com"
+		},
+		{
+			"address": "41c299c307d6dc655520f7e77438c57a002d0c3810",
+			"voteCount": 31,
+			"url": "Can"
+		},
+		{
+			"address": "41c2de79fc11be35c35e5148bd2e45d0633f641ac8",
+			"voteCount": 2527121420,
+			"url": "https://www.neoply.com",
+			"totalProduced": 46832,
+			"totalMissed": 44,
+			"latestBlockNum": 19700697,
+			"latestSlotNum": 529788870,
+			"isJobs": true
+		},
+		{
+			"address": "41c4bc4d7f64df4fd3670ce38e1a60080a50da85cf",
+			"voteCount": 72431,
+			"url": "http://raybo.com",
+			"totalProduced": 267142,
+			"totalMissed": 2326,
+			"latestBlockNum": 8523378,
+			"latestSlotNum": 518572799
+		},
+		{
+			"address": "41c56268480d3d9f8943eccd9a63caf19dd6fe4950",
+			"voteCount": 24871,
+			"url": "https://global.bittrex.com/"
+		},
+		{
+			"address": "41c57a3e8c229b611fc81ba9adadd758ee47e58457",
+			"voteCount": 974,
+			"url": "http://tronbitcoin.io"
+		},
+		{
+			"address": "41c6a0f6bdc5380d47d4d96a9ae5d283f9b520f8f3",
+			"voteCount": 32,
+			"url": "https://gsc.social"
+		},
+		{
+			"address": "41c6ab8f6fa5717f49b5c19c5b527d34c885d507b3",
+			"voteCount": 3322,
+			"url": "https://dexexchange.us"
+		},
+		{
+			"address": "41c8f401931724be02deed70cb7e8349a1a13af896",
+			"voteCount": 22531,
+			"url": "https://huxlium.org"
+		},
+		{
+			"address": "41c912b348e87b518aacc270642e115b5cda59e409",
+			"voteCount": 10301,
+			"url": "http://StakeWithMe.io"
+		},
+		{
+			"address": "41cc49d79ad451bcf4b35f785d84d169cda2913626",
+			"voteCount": 6021,
+			"url": "https://www.hashfin.com"
+		},
+		{
+			"address": "41ced3494c81de8d5ff4da950c7137120a2bbf8e1e",
+			"voteCount": 6821,
+			"url": "https://trip4web.com"
+		},
+		{
+			"address": "41d1dbde8b8f71b48655bec4f6bb532a0142b88bc0",
+			"voteCount": 5232636,
+			"url": "Tronstronics",
+			"totalProduced": 195873,
+			"totalMissed": 1952,
+			"latestBlockNum": 5971325,
+			"latestSlotNum": 516002399
+		},
+		{
+			"address": "41d25855804e4e65de904faf3ac74b0bdfc53fac76",
+			"voteCount": 691735170,
+			"url": "https://www.bitguild.com",
+			"totalProduced": 637652,
+			"totalMissed": 2606,
+			"latestBlockNum": 19700699,
+			"latestSlotNum": 529788872,
+			"isJobs": true
+		},
+		{
+			"address": "41d32b3fa8ca0b4896257fdf1821ac8d116da84c45",
+			"voteCount": 3050,
+			"url": "http://TronGr2.com",
+			"totalProduced": 53764,
+			"totalMissed": 2,
+			"latestBlockNum": 1549967,
+			"latestSlotNum": 511516777
+		},
+		{
+			"address": "41d3b1e86db62d5a870d605ae39fb1ad7ee2ddca12",
+			"voteCount": 2017932,
+			"url": "HTTPS://AOCOIN.IO"
+		},
+		{
+			"address": "41d492cf18007c62026f66742446d19368773fb8bc",
+			"voteCount": 206,
+			"url": "https://dootron.com/en/home"
+		},
+		{
+			"address": "41d49bf5202b3dba65d46a5be73396b6b66d3555aa",
+			"voteCount": 2280286,
+			"url": "https://www.cryptogirls.ro/",
+			"totalProduced": 127145,
+			"totalMissed": 305,
+			"latestBlockNum": 4052661,
+			"latestSlotNum": 514036796
+		},
+		{
+			"address": "41d51fb9ae063610ddd8f04ecedb2a36f97fbb9a53",
+			"voteCount": 1015,
+			"url": "https://www.tronbet.io",
+			"totalProduced": 800,
+			"latestBlockNum": 17306496,
+			"latestSlotNum": 527392798
+		},
+		{
+			"address": "41d599cb8c1b609722e81741667ba3c8fb441fba41",
+			"voteCount": 120683597,
+			"url": "www.tronspirit.com",
+			"totalProduced": 214599,
+			"totalMissed": 4863,
+			"latestBlockNum": 17284888,
+			"latestSlotNum": 527371181
+		},
+		{
+			"address": "41d70365508e5a6fe846ad433af9302779fd5fdb1b",
+			"voteCount": 214157644,
+			"url": "http://krypto-knight.us/",
+			"totalProduced": 484381,
+			"totalMissed": 1288,
+			"latestBlockNum": 18550761,
+			"latestSlotNum": 528638395
+		},
+		{
+			"address": "41da5cf6279279a93572362b9edc7cdd86644b6214",
+			"voteCount": 1377,
+			"url": "https://coinhe.io"
+		},
+		{
+			"address": "41dca1955f9edbfb7b25a3fe2998793a4b22746eb9",
+			"voteCount": 110011856,
+			"url": "https://www.tronace.com",
+			"totalProduced": 800,
+			"latestBlockNum": 17306495,
+			"latestSlotNum": 527392797
+		},
+		{
+			"address": "41de4c45a96857dc02fe1b9ba8d534dabc46245164",
+			"voteCount": 1558561,
+			"url": "https://www.millioncoinx.com/pl"
+		},
+		{
+			"address": "41de9c3c2276abe2da70a7cdb34a205ecf7750d063",
+			"voteCount": 4010755,
+			"url": "https://www.tron-family.de"
+		},
+		{
+			"address": "41df3bd4e0463534cb7f1f3ffc2ec14ac4693dc3b2",
+			"voteCount": 702,
+			"url": "http://TronGr3.com",
+			"totalProduced": 25247,
+			"latestBlockNum": 681353,
+			"latestSlotNum": 510645598
+		},
+		{
+			"address": "41e0a6cd1f1465a48195d93980b33e2658706203f6",
+			"voteCount": 346,
+			"url": "    "
+		},
+		{
+			"address": "41e27744d39af1e582cba7d80d65f413b5a3e80a70",
+			"voteCount": 1697784,
+			"url": "https://www.whaleex.com"
+		},
+		{
+			"address": "41e2d3e56c42a2d304167b8abf5394ac2552f7f007",
+			"voteCount": 5002,
+			"url": "http://www.nodecap.com/"
+		},
+		{
+			"address": "41e3b821e76830fef394a570c57c3c8aa2c1079348",
+			"voteCount": 4324,
+			"url": "https://tronvote.club"
+		},
+		{
+			"address": "41e40de6895c142ade8b86194063bcdbaa6c9360b6",
+			"voteCount": 2452,
+			"url": "http://TronGr9.com",
+			"totalProduced": 47904,
+			"latestBlockNum": 1362829,
+			"latestSlotNum": 511329585
+		},
+		{
+			"address": "41e425fe49e76e7573b7aa746ac92fbf795b6b660e",
+			"voteCount": 5561,
+			"url": "http://bt.co"
+		},
+		{
+			"address": "41e60b9bdd083676b2d58d179764edbe773e7f7fe6",
+			"voteCount": 5495,
+			"url": "https://www.troninvestgroup.org"
+		},
+		{
+			"address": "41e72d833e0c46837c0802864acc5f119a0a904d05",
+			"voteCount": 8758,
+			"url": "http://TronGr18.com",
+			"totalProduced": 34565,
+			"latestBlockNum": 1492396,
+			"latestSlotNum": 511459189
+		},
+		{
+			"address": "41e7a7be105be761a13d3c821c1b02d0283e64669b",
+			"voteCount": 218503,
+			"url": "https://www.musiccasper.com/"
+		},
+		{
+			"address": "41e85b204342401ab30a4e84f9b2356e05fb2c017f",
+			"voteCount": 659,
+			"url": "http://www.troncenter.com"
+		},
+		{
+			"address": "41eb8d54ea7886df726114ac5089f253c13902c039",
+			"voteCount": 500,
+			"url": "https://t.me/TronParty"
+		},
+		{
+			"address": "41ebf50b9054cd1c9f05cba54a9c335140cab81ca5",
+			"voteCount": 27507,
+			"url": "https://pyro.network"
+		},
+		{
+			"address": "41ee98edeedd68ddce222f5f6ccfd07cea8735282f",
+			"voteCount": 247,
+			"url": "www"
+		},
+		{
+			"address": "41ef5c9152d74a044cc0cd9156b1335345eea8aa25",
+			"voteCount": 136567,
+			"url": "https://TRON-Want"
+		},
+		{
+			"address": "41f439093df1758a8b6b4b1279a702ef9939fef3ee",
+			"voteCount": 652,
+			"url": "http://www.dagbvi.com"
+		},
+		{
+			"address": "41f5c3ccb9d2d776e20e892188d983dbcc590d3408",
+			"voteCount": 5012,
+			"url": "http://newgenesiscap.com/"
+		},
+		{
+			"address": "41f6862099bff15eade076c3a8f1b5abd7712b46d4",
+			"voteCount": 1392,
+			"url": "http://www.tronfans.info",
+			"totalProduced": 5328,
+			"latestBlockNum": 2480734,
+			"latestSlotNum": 512452775
+		},
+		{
+			"address": "41f6af07517ab62b3af95017b440efb3e8454376b4",
+			"voteCount": 132843,
+			"url": "https://www.tronlabs.ro"
+		},
+		{
+			"address": "41f70386347e689e6308e4172ed7319c49c0f66e0b",
+			"voteCount": 39457396,
+			"url": "http://tronone.com",
+			"totalProduced": 518353,
+			"totalMissed": 5124,
+			"latestBlockNum": 15149942,
+			"latestSlotNum": 525232781
+		},
+		{
+			"address": "41f8c7acc4c08cf36ca08fc2a61b1f5a7c8dea7bec",
+			"voteCount": 10,
+			"url": "http://TronGr19.com",
+			"totalProduced": 26567,
+			"latestBlockNum": 1621715,
+			"latestSlotNum": 511588789
+		},
+		{
+			"address": "41f90484ea93e94f2b92479d3d8b8dbadda6ddef3e",
+			"voteCount": 177799,
+			"url": "https://reyna.exchange/"
+		},
+		{
+			"address": "41faec1ff18daaec28f080c54ba9bf8168c2cfadf8",
+			"voteCount": 46887,
+			"url": "https://www.gm-informatics.com"
+		},
+		{
+			"address": "41fc45da0e51966bd1af2cb1e0f66633f160603a8b",
+			"voteCount": 3198,
+			"url": "http://www.etherpoker.cc",
+			"totalProduced": 69878,
+			"totalMissed": 249,
+			"latestBlockNum": 3548904,
+			"latestSlotNum": 513532790
+		},
+		{
+			"address": "41fcbc93454e116c2213f794d931c03b0943df2633",
+			"voteCount": 2103780,
+			"url": "https://metronix.imba-exchange.co"
+		},
+		{
+			"address": "41fcf485751e99f5da9501b31733a2ae0c5c657ce2",
+			"voteCount": 667,
+			"url": "http://bit.ly/libertytron"
+		},
+		{
+			"address": "41fe069c89ef4d59e7566ca7d794797a45feeb7a89",
+			"voteCount": 46979,
+			"url": "https://t.me/tron_my"
+		},
+		{
+			"address": "41fe8d87ba51f89b6e29948dc86b69600d253632ec",
+			"voteCount": 205,
+			"url": "https://cryptotalkers.com"
+		},
+		{
+			"address": "41ffd564656556a8b6b79311a932e3d216f4fc030b",
+			"voteCount": 125,
+			"url": "http://TronGr15.com",
+			"totalProduced": 25516,
+			"latestBlockNum": 1549971,
+			"latestSlotNum": 511516781
+		}
+	]
+}

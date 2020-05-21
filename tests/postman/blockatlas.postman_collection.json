@@ -2076,12 +2076,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:3347/dyson-ping/ping",
+							"raw": "localhost:3347/mock/mock-healthcheck",
 							"host": [
 								"localhost:3347"
 							],
 							"path": [
-								"dyson-ping/ping"
+								"mock/mock-healthcheck"
 							]
 						}
 					},

@@ -1,0 +1,5 @@
+{
+  fio_address: 'trust@trustwallet',
+  token_code: 'ETH',
+  chain_code: 'ETH'
+}

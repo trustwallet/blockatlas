@@ -39,7 +39,7 @@ PID_OBSERVER_NOTIFIER := /tmp/.$(PROJECT_NAME).$(OBSERVER_NOTIFIER).pid
 PID_OBSERVER_PARSER := /tmp/.$(PROJECT_NAME).$(OBSERVER_PARSER).pid
 PID_OBSERVER_SUBSCRIBER := /tmp/.$(PROJECT_NAME).$(OBSERVER_SUBSCRIBER).pid
 PID_SWAGGER_API := /tmp/.$(PROJECT_NAME).$(SWAGGER_API).pid
-PID_DYSON := /tmp/.$(PROJECT_NAME).dyson.pid
+PID_MOCKSERVER := /tmp/.$(PROJECT_NAME).mockserver.pid
 # Make is verbose in Linux. Make it silent.
 MAKEFLAGS += --silent
 
@@ -58,7 +58,7 @@ start-platform-api: stop
 	@echo "  >  Error log: $(STDERR)"
 
 # start-platform-api-mock: Start API.  Similar to start-platform-api, but uses config file with mock URLs, and port 8437.
-start-platform-api-mock: stop start-mock-dyson
+start-platform-api-mock: stop start-mockserver
 	@echo "  >  Starting $(PROJECT_NAME) API"
 	@-$(GOBIN)/$(API_SERVICE)/platform_api -p 8437 -c $(CONFIG_MOCK_FILE) 2>&1 & echo $$! > $(PID_API)
 	@cat $(PID_API) | sed "/^/s/^/  \>  API PID: /"
@@ -94,19 +94,19 @@ start-observer-subscriber: stop
 
 ## stop: Stop development mode.
 stop:
-	@-touch $(PID_API) $(PID_OBSERVER_NOTIFIER) $(PID_OBSERVER_PARSER) $(PID_OBSERVER_SUBSCRIBER) $(PID_SWAGGER_API) $(PID_DYSON)
+	@-touch $(PID_API) $(PID_OBSERVER_NOTIFIER) $(PID_OBSERVER_PARSER) $(PID_OBSERVER_SUBSCRIBER) $(PID_SWAGGER_API) $(PID_MOCKSERVER)
 	@-kill `cat $(PID_API)` 2> /dev/null || true
 	@-kill `cat $(PID_OBSERVER_NOTIFIER)` 2> /dev/null || true
 	@-kill `cat $(PID_OBSERVER_PARSER)` 2> /dev/null || true
 	@-kill `cat $(PID_OBSERVER_SUBSCRIBER)` 2> /dev/null || true
 	@-kill `cat $(PID_SWAGGER_API)` 2> /dev/null || true
-	@-kill `cat $(PID_DYSON)` 2> /dev/null || true
-	@-rm $(PID_API) $(PID_OBSERVER_NOTIFIER) $(PID_OBSERVER_PARSER) $(PID_OBSERVER_SUBSCRIBER) $(PID_SWAGGER_API) $(PID_DYSON)
+	@-kill `cat $(PID_MOCKSERVER)` 2> /dev/null || true
+	@-rm $(PID_API) $(PID_OBSERVER_NOTIFIER) $(PID_OBSERVER_PARSER) $(PID_OBSERVER_SUBSCRIBER) $(PID_SWAGGER_API) $(PID_MOCKSERVER)
 
-stop-dyson:
-	@-touch $(PID_DYSON)
-	@kill `cat $(PID_DYSON)` 2> /dev/null || true
-	@rm $(PID_DYSON)
+stop-mockserver:
+	@-touch $(PID_MOCKSERVER)
+	@kill `cat $(PID_MOCKSERVER)` 2> /dev/null || true
+	@rm $(PID_MOCKSERVER)
 
 ## compile: Compile the project.
 compile:
@@ -130,11 +130,13 @@ test: go-test
 ## integration: Run all integration tests.
 integration: go-integration
 
-## start-mock-dyson: Start Dyson with mocks of external services.  Make sure not to swallow error code in case port is taken.
-start-mock-dyson: stop-dyson
-	@echo "  >  Starting Dyson with mocks"
-	@-dyson  mock/ext-api-dyson & echo $$! > $(PID_DYSON)
-	@echo "  >  Dyson started with PID: " `cat $(PID_DYSON)`
+## start-mockserver: Start Mockserver with mocks of external services.  Test that it is operational (nasty case if port is taken).
+start-mockserver: stop-mockserver
+	@echo "  >  Starting Mockserver"
+	GOBIN=$(GOBIN) go build -o $(GOBIN)/mockserver/mockserver ./mock/mockserver
+	@-./bin/mockserver/mockserver & echo $$! > $(PID_MOCKSERVER)
+	@echo "  >  Mockserver started with PID: " `cat $(PID_MOCKSERVER)`
+	@sleep 1
 	# Check that mock is running, by making a test with simple call (e.g. may fail due to unavailable port)
 	@newman run tests/postman/blockatlas.postman_collection.json --folder mock-healthcheck --env-var "host=http://localhost:8437"
 
@@ -169,7 +171,7 @@ ifeq (,$(shell which newman))
 endif
 
 ## newman-mocked: Run mocked Postman Newman tests.
-newman-mocked: install-newman install-dyson go-compile
+newman-mocked: install-newman go-compile
 	@bash -c "$(MAKE) newman-mocked-params host=http://localhost:8437"
 
 ## newman-mocked-params: Run mocked Postman Newman tests, after starting platform api.
@@ -209,13 +211,6 @@ ifeq (,$(host))
 endif
 	@echo "  >  Running $(test) tests"
 	@newman run tests/postman/blockatlas.postman_collection.json --folder $(test) -d tests/postman/$(test)_data.json --env-var "host=$(host)"
-
-## install-dyson: Install Dyson for mocked tests.
-install-dyson:
-ifeq (,$(shell which dyson))
-	@echo "  >  Installing Dyson"
-	@-sudo npm install -g dyson
-endif
 
 go-compile: go-get go-build
 
