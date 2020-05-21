@@ -5,65 +5,25 @@ The mock uses these files to return canned responses.
 
 The data files can be updated, by reading and storing responses from the real external APIs.
 
-## File structure
+## File list
 
-**Subfolder**
-The subfolder is either **get** or **post** that corresponds to the HTTP method.
-
-**Filename**
-The filename must be the URL path of the call, in the mock.  The path is URL encoded (special characters would casue trouble in the filename).
+There is a file `mock/datafiles.yaml` containing API paths and corresponding data files.
 
 Example:
 
-Filename:  `mock%2Ftron-api%2Fv1%2Fassets%2F1002798.json`
-
-Corresponding unescaped path: `mock/tron-api/v1/assets/1002798`
-
-Corresponding real path: `https://api.trongrid.io/v1/assets/1002798`
-
-provided the mapping exists in urlmap.yaml `mock/tron-api` to `https://api.trongrid.io`.
-
-POST input files.  Input data for POST requests is in file with same filename, extension .request_json :
-`mock%2Ftron-api%2Fv1%2Fassets%2F1002798.request_json`
-
-Counter: for POST requests, multiple files may be needed to the same URL.  A 4-digit numerical counter can be added to the filename:
-`mock%2Ftron-api%2Fv1%2Fassets%2F1002798.0002.json`
-
-## List files
-
-Use testdatatool to list data files and info about them:  `testdatatool list .` (or `go run testdatatool.go list .`)
-
-## Add a new file
-
-To add a new test data file:
-
-1. Start with the full external API URL, such as https://api.trongrid.io/v1/assets/1002798
-
-2. If not exist yet, add mapping to a local mock URL prefix, such as mock/tron-api -- https://api.trongrid.io.
-Add the mapping to urlmap.yaml.  Please observer the style of the mappings.
-
-3. Derive the mock URL, such as mock/tron-api/v1/assets/1002798
-
-4. Derive the filename, such as get/mock%2Ftron-api%2Fv1%2Fassets%2F1002798.json
-
-5. Retrieve the response, and store it in the file.
-
-6. Make sure the test uses this filem, and add the file to git repo.
-
-For steps 3-5 you can use the testdatatool, like this:
-
 ```
-$ go run testdatatool.go add https://api.trongrid.io/v1/assets/1002798 get
-Filename:   mock%2Ftron-api%2Fv1%2Fassets%2F1002798.json
-Mock URL:   mock/tron-api/v1/assets/1002798
-Real URL:   https://api.trongrid.io/v1/assets/1002798
-Response file written, 410 bytes, url https://api.trongrid.io/v1/assets/1002798, file ./get/mock%2Ftron-api%2Fv1%2Fassets%2F1002798.json
+- file: mock/ext-api-data/tron-api_v1_assets_1002814.json
+  mockURL: /mock/tron-api/v1/assets/1002814
+  method: GET
+  extURL: https://api.trongrid.io/v1/assets/1002814
 ```
 
-## Update data files
+Fields:
 
-Use testdatatool to update a data file (or all):
+* file: name of response data json file (relative to repository root).
+* mockURL: the API path for this call, in the mock server.  Usually starts with '/mock/<service>'.
+* method: GET or POST
+* extURL: Optional.  The full URL of the external reap API.  Used to refresh the data file, manually during development, or automatically.
+* reqFile: In case of POST requests, the json file containing POST request.  Used to select which resposne to return, and when invoking external API.
+* reqField: Optional. Some POST requests cannot be matched by full request json matching, because they contain a changing field, typically call id.  In this case one field can be selected (.e.g 'address'), and input is matched by the field only.
 
-`testdatatool update get/mock%2Ftron-api%2Fv1%2Fassets%2F1002798.json`
-
-`testdatatool updateall .`
