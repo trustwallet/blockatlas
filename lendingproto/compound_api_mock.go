@@ -2,6 +2,8 @@ package main
 
 import ()
 
+// Simulates Compound API; see https://compound.finance/docs/api
+
 type (
 	CMAccountRequest struct {
 		Addresses []string `json:"addresses"`
@@ -40,7 +42,7 @@ var sampleContractsInternal []contractInternalType = []contractInternalType{
 	{"0x12560000", CMAccountCToken{tokenAddressUSDC, "USDC", 1001.25, 2.25}},
 }
 
-func CompoundMock_GetContracts(request CMAccountRequest) (CMAccountResponse, error) {
+func CompoundMockGetContracts(request CMAccountRequest) (CMAccountResponse, error) {
 	var resp CMAccountResponse
 	for _, addr := range request.Addresses {
 		cmAccount := CMAccount{addr, []CMAccountCToken{}}

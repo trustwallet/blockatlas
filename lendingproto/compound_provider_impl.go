@@ -37,16 +37,6 @@ func matchAsset(asset string, assets []string) bool {
 	return false
 }
 
-func matchAddress(address string, addresses []string) bool {
-	for _, a := range addresses {
-		if address == a {
-			return true
-		}
-	}
-	// no match
-	return false
-}
-
 func getAssets() []string {
 	res := make([]string, len(sampleCurrentRates))
 	for i := range sampleCurrentRates {

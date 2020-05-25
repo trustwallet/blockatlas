@@ -3,8 +3,8 @@ package main
 import (
 	//"errors"
 	//"fmt"
-	"time"
 	"strconv"
+	"time"
 )
 
 // Lending API, as realized by Compound.
@@ -56,7 +56,7 @@ func GetAccountLendingContracts(address string, assets []string) (AccountLending
 		address,
 		LendingContracts{},
 	}
-	contracts, _ := CompoundMock_GetContracts(CMAccountRequest{[]string{address}})
+	contracts, _ := CompoundMockGetContracts(CMAccountRequest{[]string{address}})
 	for _, sc := range contracts.Account {
 		for _, t := range sc.Tokens {
 			asset := t.Symbol
@@ -70,7 +70,7 @@ func GetAccountLendingContracts(address string, assets []string) (AccountLending
 				t.Symbol,
 				0, // term
 				// startAmount: not available in API, derive as currentAmount - interest earn
-				strconv.FormatFloat(t.SupplyBalanceUnderlying - t.SupplyInterest, 'f', 10, 64),
+				strconv.FormatFloat(t.SupplyBalanceUnderlying-t.SupplyInterest, 'f', 10, 64),
 				strconv.FormatFloat(t.SupplyBalanceUnderlying, 'f', 10, 64),
 				strconv.FormatFloat(t.SupplyBalanceUnderlying, 'f', 10, 64),
 				apr,

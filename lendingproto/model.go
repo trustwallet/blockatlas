@@ -37,7 +37,7 @@ type (
 
 	AssetTerms []AssetTerm
 
-	// LendingAssetAPR Asset yield APR, for an asset for a period.  E.g. {30, 1.45}
+	// LendingTermAPR Asset yield APR, for an asset for a period.  E.g. {30, 1.45}
 	LendingTermAPR struct {
 		Term float64 `json:"term"`
 		APR  float64 `json:"apr"`
