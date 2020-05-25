@@ -7,13 +7,13 @@ import (
 )
 
 func printContract(contract LendingContract) {
-	daysAgo := float64(contract.CurrentTime - contract.StartTime) / 86400.0;
+	daysAgo := float64(contract.CurrentTime-contract.StartTime) / 86400.0
 	startAmnt, _ := strconv.ParseFloat(contract.StartAmount, 64)
 	currentAmnt, _ := strconv.ParseFloat(contract.CurrentAmount, 64)
 	fmt.Printf("You have lent the amount of %v %v %v days ago, yield so far: %v %v, %v%% APR \n",
 		strconv.FormatFloat(startAmnt, 'f', 2, 64), contract.Asset,
 		strconv.FormatFloat(daysAgo, 'f', 1, 64),
-		strconv.FormatFloat(currentAmnt - startAmnt, 'f', 2, 64), contract.Asset,
+		strconv.FormatFloat(currentAmnt-startAmnt, 'f', 2, 64), contract.Asset,
 		strconv.FormatFloat(contract.CurrentAPR, 'f', 2, 64))
 }
 

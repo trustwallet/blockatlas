@@ -3,6 +3,8 @@ package main
 import (
 	//"errors"
 	//"fmt"
+	"time"
+	"strconv"
 )
 
 // Lending API, as realized by Compound.
@@ -33,14 +35,15 @@ func GetProviderInfo() (LendingProvider, error) {
 // assets: List asset IDs to consider, or empty for all
 // Note: can use the CTokenRequest compound API
 func GetCurrentLendingRates(assets []string) (LendingRates, error) {
-	var res LendingRates = LendingRates{}
-	for i := range sampleCurrentRates {
-		if !matchAsset(sampleCurrentRates[i].Asset, assets) {
-			continue
+	var res LendingRates
+	if len(assets) == 0 {
+		assets = getAssets()
+	}
+	for _, asset := range assets {
+		rates, err := getCurrentLendingRatesForAsset(asset)
+		if err == nil {
+			res = append(res, rates)
 		}
-		r := &sampleCurrentRates[i]
-		enrichAssetRatesWithMax(r)
-		res = append(res, *r)
 	}
 	return res, nil
 }
@@ -48,18 +51,35 @@ func GetCurrentLendingRates(assets []string) (LendingRates, error) {
 // GetAccountLendingContracts return current contract details for a given address.
 // assets: List asset IDs to consider, or empty for all
 func GetAccountLendingContracts(address string, assets []string) (AccountLendingContracts, error) {
+	var now int32 = int32(time.Now().Unix())
 	res := AccountLendingContracts{
 		address,
 		LendingContracts{},
 	}
-	for _, sc := range sampleContracts {
-		if sc.address != address {
-			continue
+	contracts, _ := CompoundMock_GetContracts(CMAccountRequest{[]string{address}})
+	for _, sc := range contracts.Account {
+		for _, t := range sc.Tokens {
+			asset := t.Symbol
+			// APR: no info, take general current APR
+			var apr float64 = 0
+			assetInfo, err := getCurrentLendingRatesForAsset(asset)
+			if err == nil {
+				apr = assetInfo.MaxAPR
+			}
+			res.Contracts = append(res.Contracts, LendingContract{
+				t.Symbol,
+				0, // term
+				// startAmount: not available in API, derive as currentAmount - interest earn
+				strconv.FormatFloat(t.SupplyBalanceUnderlying - t.SupplyInterest, 'f', 10, 64),
+				strconv.FormatFloat(t.SupplyBalanceUnderlying, 'f', 10, 64),
+				strconv.FormatFloat(t.SupplyBalanceUnderlying, 'f', 10, 64),
+				apr,
+				// startTime: no info, use current time
+				now,
+				now,
+				now,
+			})
 		}
-		if !matchAsset(sc.asset, assets) {
-			continue
-		}
-		res.Contracts = append(res.Contracts, getCurrentContractValues(sc))
 	}
 	return res, nil
 }
