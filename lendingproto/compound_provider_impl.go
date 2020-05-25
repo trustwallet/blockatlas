@@ -24,19 +24,6 @@ func enrichAssetRatesWithMax(rates *LendingAssetRates) {
 	rates.MaxAPR = max
 }
 
-func matchAsset(asset string, assets []string) bool {
-	if len(assets) == 0 {
-		return true
-	}
-	for _, a := range assets {
-		if asset == a {
-			return true
-		}
-	}
-	// no match
-	return false
-}
-
 func getAssets() []string {
 	res := make([]string, len(sampleCurrentRates))
 	for i := range sampleCurrentRates {
