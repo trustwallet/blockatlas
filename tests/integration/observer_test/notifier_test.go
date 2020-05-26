@@ -44,7 +44,7 @@ var (
 func TestNotifier(t *testing.T) {
 	setup.CleanupPgContainer(database.Gorm)
 
-	err := database.AddSubscriptions(1, []models.SubscriptionData{{Coin: 714, Address: "tbnb1ttyn4csghfgyxreu7lmdu3lcplhqhxtzced45a", SubscriptionId: 1}}, context.Background())
+	err := database.AddSubscriptions([]models.Subscription{{Coin: 714, Address: "tbnb1ttyn4csghfgyxreu7lmdu3lcplhqhxtzced45a"}}, context.Background())
 	assert.Nil(t, err)
 
 	err = produceTxs(txs)
@@ -96,7 +96,6 @@ func ConsumerToTestTransactions(delivery amqp.Delivery, t *testing.T) {
 			Memo:      "test",
 			Meta:      &memo,
 		},
-		Id: 1,
 	}, notifications[0])
 
 	return

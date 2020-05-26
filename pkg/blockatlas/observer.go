@@ -9,14 +9,12 @@ type (
 
 	SubscriptionEvent struct {
 		Subscriptions Subscriptions         `json:"subscriptions"`
-		Id            uint                  `json:"id"`
 		Operation     SubscriptionOperation `json:"operation"`
 	}
 
 	Subscription struct {
 		Coin    uint   `json:"coin"`
 		Address string `json:"address"`
-		Id      uint   `json:"id"`
 	}
 
 	CoinStatus struct {
@@ -41,7 +39,6 @@ func (e *SubscriptionEvent) ParseSubscriptions(s Subscriptions) []Subscription {
 			subs = append(subs, Subscription{
 				Coin:    uint(coin),
 				Address: addr,
-				Id:      e.Id,
 			})
 		}
 	}
