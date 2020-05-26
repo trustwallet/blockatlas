@@ -1,15 +1,14 @@
 package main
 
-import ()
-
 type (
 	// LendingProvider static info about the lending provider, such as name and asset classes supported.
 	LendingProvider struct {
-		ID           string              `json:"id"`
-		Info         LendingProviderInfo `json:"info"`
-		AssetClasses AssetClasses        `json:"assets"`
+		ID     string              `json:"id"`
+		Info   LendingProviderInfo `json:"info"`
+		Assets []AssetClass        `json:"assets"`
 	}
 
+	// LendingProviderInfo basic information about a lending provider.
 	LendingProviderInfo struct {
 		ID          string `json:"id"`
 		Description string `json:"description"`
@@ -17,6 +16,7 @@ type (
 		Website     string `json:"website"`
 	}
 
+	// AssetClass Info about an asset that can be lent
 	AssetClass struct {
 		Symbol      string `json:"symbol"`
 		Chain       string `json:"chain"`
@@ -24,22 +24,15 @@ type (
 		// YieldFrequency the period of yield computation in seconds, e.g. 86400 for daily.
 		YieldFrequency int64 `json:"yield_freq"`
 		// Terms Predefined lending term periods, like [7, 30.5, 180].
-		Terms AssetTerms `json:"terms"`
+		Terms []Term `json:"terms"`
 	}
 
-	AssetClasses []AssetClass
+	// Term length of a predefined term, in days
+	Term float64
 
-	// AssetTerm length of a predefined term for the asset, in days
-	AssetTerm struct {
-		Asset string  `json:"asset"`
-		Term  float64 `json:"term"`
-	}
-
-	AssetTerms []AssetTerm
-
-	// LendingTermAPR Asset yield APR, for an asset for a period.  E.g. {30, 1.45}
+	// LendingTermAPR Asset yield APR, for an asset for a term.  E.g. {30, 1.45}
 	LendingTermAPR struct {
-		Term float64 `json:"term"`
+		Term `json:"term"`
 		APR  float64 `json:"apr"`
 	}
 
@@ -51,24 +44,28 @@ type (
 		MaxAPR float64 `json:"max_apr"`
 	}
 
+	// LendingRates List of yield rates, for multiple assets.
 	LendingRates []LendingAssetRates
 
+	// Time Second-granular UNIX time
+	Time int32
+
+	// LendingContract Describes a lending contract, of a user, of an asset.
 	LendingContract struct {
 		Asset             string  `json:"asset"`
-		Term              float64 `json:"term"`
+		Term              Term    `json:"term"`
 		StartAmount       string  `json:"start_amount"`
 		CurrentAmount     string  `json:"current_amount"`
 		EndAmountEstimate string  `json:"end_amount_estimate"`
 		CurrentAPR        float64 `json:"current_apr"`
-		StartTime         int32   `json:"start_time"`
-		CurrentTime       int32   `json:"current_time"`
-		EndTime           int32   `json:"end_time"`
+		StartTime         Time    `json:"start_time"`
+		CurrentTime       Time    `json:"current_time"`
+		EndTime           Time    `json:"end_time"`
 	}
 
-	LendingContracts []LendingContract
-
+	// AccountLendingContracts Contracts of an address
 	AccountLendingContracts struct {
-		Address   string           `json:"address"`
-		Contracts LendingContracts `json:"contracts"`
+		Address   string            `json:"address"`
+		Contracts []LendingContract `json:"contracts"`
 	}
 )

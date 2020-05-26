@@ -1,8 +1,6 @@
 package main
 
 import (
-	//"errors"
-	//"fmt"
 	"strconv"
 	"time"
 )
@@ -22,11 +20,11 @@ func GetProviderInfo() (LendingProvider, error) {
 			"https://compound.finance",
 		},
 		// In compound all assets are updated with each ETH block, about each 15 seconds.  There are no predefined terms.
-		AssetClasses{
-			AssetClass{"ETH", "ETH", "Ethereum native coin", 15, AssetTerms{}},
-			AssetClass{"USDC", "ETH", "USDC stablecoin token", 15, AssetTerms{}},
-			AssetClass{"DAI", "ETH", "DAI stablecoin token", 15, AssetTerms{}},
-			AssetClass{"WBTC", "ETH", "Wrapped Bitcoin token", 15, AssetTerms{}},
+		[]AssetClass{
+			AssetClass{"ETH", "ETH", "Ethereum native coin", 15, []Term{}},
+			AssetClass{"USDC", "ETH", "USDC stablecoin token", 15, []Term{}},
+			AssetClass{"DAI", "ETH", "DAI stablecoin token", 15, []Term{}},
+			AssetClass{"WBTC", "ETH", "Wrapped Bitcoin token", 15, []Term{}},
 		},
 	}, nil
 }
@@ -35,13 +33,12 @@ func GetProviderInfo() (LendingProvider, error) {
 // assets: List asset IDs to consider, or empty for all
 // Note: can use the CTokenRequest compound API
 func GetCurrentLendingRates(assets []string) (LendingRates, error) {
-	var res LendingRates
+	res := LendingRates{}
 	if len(assets) == 0 {
 		assets = getAssets()
 	}
 	for _, asset := range assets {
-		rates, err := getCurrentLendingRatesForAsset(asset)
-		if err == nil {
+		if rates, err := getCurrentLendingRatesForAsset(asset); err == nil {
 			res = append(res, rates)
 		}
 	}
@@ -51,19 +48,15 @@ func GetCurrentLendingRates(assets []string) (LendingRates, error) {
 // GetAccountLendingContracts return current contract details for a given address.
 // assets: List asset IDs to consider, or empty for all
 func GetAccountLendingContracts(address string, assets []string) (AccountLendingContracts, error) {
-	var now int32 = int32(time.Now().Unix())
-	res := AccountLendingContracts{
-		address,
-		LendingContracts{},
-	}
+	now := Time(time.Now().Unix())
+	res := AccountLendingContracts{address, []LendingContract{}}
 	contracts, _ := CompoundMockGetContracts(CMAccountRequest{[]string{address}})
 	for _, sc := range contracts.Account {
 		for _, t := range sc.Tokens {
 			asset := t.Symbol
 			// APR: no info, take general current APR
 			var apr float64 = 0
-			assetInfo, err := getCurrentLendingRatesForAsset(asset)
-			if err == nil {
+			if assetInfo, err := getCurrentLendingRatesForAsset(asset); err == nil {
 				apr = assetInfo.MaxAPR
 			}
 			res.Contracts = append(res.Contracts, LendingContract{

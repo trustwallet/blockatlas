@@ -1,13 +1,8 @@
 package main
 
-import (
-	"errors"
-	//"fmt"
-	//"strconv"
-	//"time"
-)
+import "fmt"
 
-var sampleCurrentRates LendingRates = LendingRates{
+var sampleCurrentRates = LendingRates{
 	LendingAssetRates{"ETH", []LendingTermAPR{LendingTermAPR{0.00017, 0.01}}, 0},
 	LendingAssetRates{"DAI", []LendingTermAPR{LendingTermAPR{0.00017, 0.73}}, 0},
 	LendingAssetRates{"USDC", []LendingTermAPR{LendingTermAPR{0.00017, 1.67}}, 0},
@@ -40,5 +35,5 @@ func getCurrentLendingRatesForAsset(asset string) (LendingAssetRates, error) {
 			return *r, nil
 		}
 	}
-	return LendingAssetRates{}, errors.New("Asset not found")
+	return LendingAssetRates{}, fmt.Errorf("Asset not found")
 }
