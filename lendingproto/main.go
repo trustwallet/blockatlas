@@ -45,8 +45,8 @@ func main() {
 	lending.Init(":8080")
 
 	// curl "http://localhost:8080/v1/lending/providers"
-	// curl -d '{"provider":"compound"}' "http://localhost:8080/v1/lending/rates"
-	// curl -d '{"provider":"compound","assets":["USDC"]}' "http://localhost:8080/v1/lending/rates"
+	// curl -d '{}' "http://localhost:8080/v1/lending/rates/compound"
+	// curl -d '{"assets":["USDC"]}' "http://localhost:8080/v1/lending/rates/compound"
 
 	printContracts("0x12340000", "")
 	printContracts("0x12560000", "")

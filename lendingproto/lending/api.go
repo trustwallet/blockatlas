@@ -18,7 +18,7 @@ func Init(endpoint string) {
 	r := gin.Default()
 
 	r.GET("/v1/lending/providers", serveProviders)
-	r.POST("/v1/lending/rates", serveRates)
+	r.POST("/v1/lending/rates/:provider", serveRates)
 
 	r.Run(endpoint)
 }
@@ -33,6 +33,11 @@ func serveProviders(c *gin.Context) {
 }
 
 func serveRates(c *gin.Context) {
+	provider, ok := c.Params.Get("provider")
+	if !ok {
+		c.JSON(500, gin.H{"error": "Fatal: missing provider"})
+		return
+	}
 	bodyB, err := ioutil.ReadAll(c.Request.Body)
 	if err != nil {
 		c.JSON(500, gin.H{"error": "Fatal: " + err.Error()})
@@ -44,7 +49,7 @@ func serveRates(c *gin.Context) {
 		c.JSON(500, gin.H{"error": "Parsing: " + err.Error()})
 		return
 	}
-	p, err := GetRates(req)
+	p, err := GetRates(provider, req)
 	if err != nil {
 		c.JSON(500, gin.H{"error": err.Error()})
 		return
@@ -65,14 +70,14 @@ func GetProviders() (*[]model.LendingProvider, error) {
 }
 
 // GetRates return rates info
-func GetRates(req model.RatesRequest) (*model.RatesResponse, error) {
+func GetRates(provider string, req model.RatesRequest) (*model.RatesResponse, error) {
 	// we have one provider
-	if req.Provider != compoundProviderName {
-		return nil, fmt.Errorf("Unknown provider %v", req.Provider)
+	if provider != compoundProviderName {
+		return nil, fmt.Errorf("Unknown provider %v", provider)
 	}
 	rates, err := compound.GetCurrentLendingRates(req.Assets)
 	if err != nil {
 		return nil, err
 	}
-	return &model.RatesResponse{req.Provider, rates}, nil
+	return &model.RatesResponse{provider, rates}, nil
 }

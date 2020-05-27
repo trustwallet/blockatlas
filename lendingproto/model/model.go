@@ -31,8 +31,7 @@ type (
 	Term float64
 
 	RatesRequest struct {
-		Provider string   `json:"provider"`
-		Assets   []string `json:"assets"`
+		Assets []string `json:"assets"`
 	}
 
 	RatesResponse struct {
