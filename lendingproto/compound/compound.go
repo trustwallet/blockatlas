@@ -47,14 +47,17 @@ func GetCurrentLendingRates(assets []string) (model.LendingRates, error) {
 }
 
 // GetAccountLendingContracts return current contract details for a given address.
-// assets: List asset IDs to consider, or empty for all
-func GetAccountLendingContracts(address string, assets []string) (model.AccountLendingContracts, error) {
+// req.Assets: List asset IDs to consider, or empty for all
+func GetAccountLendingContracts(req model.AccountRequest) (model.AccountLendingContracts, error) {
 	now := model.Time(time.Now().Unix())
-	res := model.AccountLendingContracts{address, []model.LendingContract{}}
-	contracts, _ := CMockAccount(CMAccountRequest{[]string{address}})
+	res := model.AccountLendingContracts{req.Address, []model.LendingContract{}}
+	contracts, _ := CMockAccount(CMAccountRequest{[]string{req.Address}})
 	for _, sc := range contracts.Account {
 		for _, t := range sc.Tokens {
 			asset := t.Symbol
+			if !matchAsset(asset, req.Assets) {
+				continue
+			}
 			// APR: no info, take general current APR
 			var apr float64 = 0
 			if assetInfo, err := getCurrentLendingRatesForAsset(asset); err == nil {
@@ -148,4 +151,16 @@ func enrichAssetRatesWithMax(rates *model.LendingAssetRates) {
 		}
 	}
 	rates.MaxAPR = max
+}
+
+func matchAsset(asset string, assets []string) bool {
+	if len(assets) == 0 {
+		return true
+	}
+	for _, a := range assets {
+		if asset == a {
+			return true
+		}
+	}
+	return false
 }
