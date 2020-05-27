@@ -38,21 +38,7 @@ func printContracts(address string, asset string) {
 func main() {
 	fmt.Println("Lending proto")
 
-	providerInfo, _ := GetProviderInfo()
-	fmt.Println("ProviderInfo:")
-	b, _ := json.MarshalIndent(providerInfo, "    ", "    ")
-	fmt.Println(string(b))
-
-	asset := "WBTC"
-	rate, _ := GetCurrentLendingRates([]string{asset})
-	fmt.Println("CurrentLendingRates for " + asset + ":")
-	b, _ = json.MarshalIndent(rate, "    ", "    ")
-	fmt.Println(string(b))
-
-	rates, _ := GetCurrentLendingRates([]string{})
-	fmt.Println("CurrentLendingRates for all:")
-	b, _ = json.MarshalIndent(rates, "    ", "    ")
-	fmt.Println(string(b))
+	Init()
 
 	printContracts("0x12340000", "")
 	printContracts("0x12560000", "")
