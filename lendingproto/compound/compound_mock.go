@@ -57,7 +57,7 @@ var (
 	sampleContractsInternal = []contractInternalType{
 		{"0x12340000", CMAccountCToken{tokenAddressUSDC, "USDC", 200.45, 0.45}},
 		{"0x12340000", CMAccountCToken{tokenAddressDAI, "DAI", 300.85, 0.85}},
-		{"0x12560000", CMAccountCToken{tokenAddressUSDC, "USDC", 1001.25, 2.25}},
+		{"0x12360000", CMAccountCToken{tokenAddressUSDC, "USDC", 1001.25, 2.25}},
 	}
 )
 

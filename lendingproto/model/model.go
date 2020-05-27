@@ -60,13 +60,13 @@ type (
 
 	// AccountRequest Account API request
 	AccountRequest struct {
-		Address string   `json:"address"`
-		Assets  []string `json:"assets"`
+		Addresses []string `json:"addresses"`
+		Assets    []string `json:"assets"`
 	}
 
 	// AccountResponse Account API response, contracts
 	AccountResponse struct {
-		Contracts AccountLendingContracts `json:"contracts"`
+		Contracts []AccountLendingContracts `json:"contracts"`
 	}
 
 	// Time Second-granular UNIX time

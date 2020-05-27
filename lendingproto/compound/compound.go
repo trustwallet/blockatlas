@@ -48,37 +48,44 @@ func GetCurrentLendingRates(assets []string) (model.LendingRates, error) {
 
 // GetAccountLendingContracts return current contract details for a given address.
 // req.Assets: List asset IDs to consider, or empty for all
-func GetAccountLendingContracts(req model.AccountRequest) (model.AccountLendingContracts, error) {
+func GetAccountLendingContracts(req model.AccountRequest) (*[]model.AccountLendingContracts, error) {
 	now := model.Time(time.Now().Unix())
-	res := model.AccountLendingContracts{req.Address, []model.LendingContract{}}
-	contracts, _ := CMockAccount(CMAccountRequest{[]string{req.Address}})
-	for _, sc := range contracts.Account {
-		for _, t := range sc.Tokens {
-			asset := t.Symbol
-			if !matchAsset(asset, req.Assets) {
-				continue
-			}
-			// APR: no info, take general current APR
-			var apr float64 = 0
-			if assetInfo, err := getCurrentLendingRatesForAsset(asset); err == nil {
-				apr = assetInfo.MaxAPR
-			}
-			res.Contracts = append(res.Contracts, model.LendingContract{
-				t.Symbol,
-				0, // term
-				// startAmount: not available in API, derive as currentAmount - interest earn
-				strconv.FormatFloat(t.SupplyBalanceUnderlying-t.SupplyInterest, 'f', 10, 64),
-				strconv.FormatFloat(t.SupplyBalanceUnderlying, 'f', 10, 64),
-				strconv.FormatFloat(t.SupplyBalanceUnderlying, 'f', 10, 64),
-				apr,
-				// startTime: no info, use current time
-				now,
-				now,
-				now,
-			})
-		}
+	res := []model.AccountLendingContracts{}
+	if len(req.Addresses) == 0 {
+		return nil, fmt.Errorf("Missing addresses")
 	}
-	return res, nil
+	for _, address := range req.Addresses {
+		res1 := model.AccountLendingContracts{address, []model.LendingContract{}}
+		contracts, _ := CMockAccount(CMAccountRequest{[]string{address}})
+		for _, sc := range contracts.Account {
+			for _, t := range sc.Tokens {
+				asset := t.Symbol
+				if !matchAsset(asset, req.Assets) {
+					continue
+				}
+				// APR: no info, take general current APR
+				var apr float64 = 0
+				if assetInfo, err := getCurrentLendingRatesForAsset(asset); err == nil {
+					apr = assetInfo.MaxAPR
+				}
+				res1.Contracts = append(res1.Contracts, model.LendingContract{
+					t.Symbol,
+					0, // term
+					// startAmount: not available in API, derive as currentAmount - interest earn
+					strconv.FormatFloat(t.SupplyBalanceUnderlying-t.SupplyInterest, 'f', 10, 64),
+					strconv.FormatFloat(t.SupplyBalanceUnderlying, 'f', 10, 64),
+					strconv.FormatFloat(t.SupplyBalanceUnderlying, 'f', 10, 64),
+					apr,
+					// startTime: no info, use current time
+					now,
+					now,
+					now,
+				})
+			}
+		}
+		res = append(res, res1)
+	}
+	return &res, nil
 }
 
 type tokenInfo struct {

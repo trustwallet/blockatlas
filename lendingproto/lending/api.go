@@ -118,5 +118,5 @@ func GetAccount(provider string, req model.AccountRequest) (*model.AccountRespon
 	if err != nil {
 		return nil, err
 	}
-	return &model.AccountResponse{contracts}, nil
+	return &model.AccountResponse{*contracts}, nil
 }
