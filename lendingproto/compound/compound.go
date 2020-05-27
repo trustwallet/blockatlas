@@ -17,10 +17,10 @@ func GetProviderInfo() (model.LendingProvider, error) {
 	return model.LendingProvider{
 		ID: "compound",
 		Info: model.LendingProviderInfo{
-			"compound",
-			"Compound Decentralized Finance Protocol",
-			"https://compound.finance/images/compound-logo.svg",
-			"https://compound.finance",
+			ID:          "compound",
+			Description: "Compound Decentralized Finance Protocol",
+			Image:       "https://compound.finance/images/compound-logo.svg",
+			Website:     "https://compound.finance",
 		},
 		Assets: getTokensNormalized(),
 	}, nil
