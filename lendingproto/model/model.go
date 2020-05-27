@@ -30,6 +30,15 @@ type (
 	// Term length of a predefined term, in days
 	Term float64
 
+	RatesRequest struct {
+		Provider string   `json:"provider"`
+		Assets   []string `json:"assets"`
+	}
+
+	RatesResponse struct {
+		Provider string       `json:"provider"`
+		Rates    LendingRates `json:"rates"`
+	}
 	// LendingTermAPR Asset yield APR, for an asset for a term.  E.g. {30, 1.45}
 	LendingTermAPR struct {
 		Term `json:"term"`
