@@ -53,17 +53,17 @@ var (
 		{tokenAddressETH, "800000", "1.2657", "0.0085", "cETH", "Compound Ether", "ETH", "Ether"},
 		{tokenAddressWBTC, "60000", "1.0456", "0.0220", "cWBTC", "Compound Wrapped Bitcoin", "WBTC", "Wrpaped Bitcoin"},
 	}
+
+	sampleContractsInternal = []contractInternalType{
+		{"0x12340000", CMAccountCToken{tokenAddressUSDC, "USDC", 200.45, 0.45}},
+		{"0x12340000", CMAccountCToken{tokenAddressDAI, "DAI", 300.85, 0.85}},
+		{"0x12560000", CMAccountCToken{tokenAddressUSDC, "USDC", 1001.25, 2.25}},
+	}
 )
 
 type contractInternalType struct {
 	userAddress string
 	contract    CMAccountCToken
-}
-
-var sampleContractsInternal = []contractInternalType{
-	{"0x12340000", CMAccountCToken{tokenAddressUSDC, "USDC", 200.45, 0.45}},
-	{"0x12340000", CMAccountCToken{tokenAddressDAI, "DAI", 300.85, 0.85}},
-	{"0x12560000", CMAccountCToken{tokenAddressUSDC, "USDC", 1001.25, 2.25}},
 }
 
 func CMockAccount(request CMAccountRequest) (CMAccountResponse, error) {
@@ -80,14 +80,14 @@ func CMockAccount(request CMAccountRequest) (CMAccountResponse, error) {
 	return resp, nil
 }
 
-func CMockCToken(tokenAddresses []string) CMCTokenResponse {
+func CMockCToken(tokenAddresses []string) (CMCTokenResponse, error) {
 	var res CMCTokenResponse
 	for _, ct := range sampleTokenInfo {
 		if matchAddress(ct.TokenAddress, tokenAddresses) {
 			res.CToken = append(res.CToken, ct)
 		}
 	}
-	return res
+	return res, nil
 }
 
 func matchAddress(address string, addresses []string) bool {

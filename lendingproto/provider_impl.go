@@ -23,8 +23,11 @@ func getTokensNormalized() []AssetClass {
 // Returns a info on tokens, map by symbol
 // Note: this should be cached
 func getTokens() map[string]tokenInfo {
-	tokens := CMockCToken([]string{})
 	res := make(map[string]tokenInfo)
+	tokens, err := CMockCToken([]string{})
+	if err != nil {
+		return res
+	}
 	for _, t := range tokens.CToken {
 		res[t.UnderlyingSymbol] = tokenInfo{t.TokenAddress, t.Name}
 	}
@@ -47,7 +50,10 @@ func getCurrentLendingRatesForAsset(asset string) (LendingAssetRates, error) {
 	if !ok {
 		return res, fmt.Errorf("Token not found %v", asset)
 	}
-	tokens := CMockCToken([]string{address})
+	tokens, err := CMockCToken([]string{address})
+	if err != nil {
+		return res, fmt.Errorf("Token not found %v", asset)
+	}
 	for _, t := range tokens.CToken {
 		apr, err := strconv.ParseFloat(t.SupplyRate, 64)
 		if err != nil {
