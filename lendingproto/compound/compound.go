@@ -15,14 +15,14 @@ import (
 func GetProviderInfo() (model.LendingProvider, error) {
 	// Note: should be cached
 	return model.LendingProvider{
-		"compound",
-		model.LendingProviderInfo{
+		ID: "compound",
+		Info: model.LendingProviderInfo{
 			"compound",
 			"Compound Decentralized Finance Protocol",
 			"https://compound.finance/images/compound-logo.svg",
 			"https://compound.finance",
 		},
-		getTokensNormalized(),
+		Assets: getTokensNormalized(),
 	}, nil
 }
 
@@ -55,7 +55,7 @@ func GetAccountLendingContracts(req model.AccountRequest) (*[]model.AccountLendi
 		return nil, fmt.Errorf("Missing addresses")
 	}
 	for _, address := range req.Addresses {
-		res1 := model.AccountLendingContracts{address, []model.LendingContract{}}
+		res1 := model.AccountLendingContracts{Address: address, Contracts: []model.LendingContract{}}
 		contracts, _ := CMockAccount(CMAccountRequest{[]string{address}})
 		for _, sc := range contracts.Account {
 			for _, t := range sc.Tokens {
@@ -69,17 +69,17 @@ func GetAccountLendingContracts(req model.AccountRequest) (*[]model.AccountLendi
 					apr = assetInfo.MaxAPR
 				}
 				res1.Contracts = append(res1.Contracts, model.LendingContract{
-					t.Symbol,
-					0, // term
+					Asset: t.Symbol,
+					Term:  0,
 					// startAmount: not available in API, derive as currentAmount - interest earn
-					strconv.FormatFloat(t.SupplyBalanceUnderlying-t.SupplyInterest, 'f', 10, 64),
-					strconv.FormatFloat(t.SupplyBalanceUnderlying, 'f', 10, 64),
-					strconv.FormatFloat(t.SupplyBalanceUnderlying, 'f', 10, 64),
-					apr,
+					StartAmount:       strconv.FormatFloat(t.SupplyBalanceUnderlying-t.SupplyInterest, 'f', 10, 64),
+					CurrentAmount:     strconv.FormatFloat(t.SupplyBalanceUnderlying, 'f', 10, 64),
+					EndAmountEstimate: strconv.FormatFloat(t.SupplyBalanceUnderlying, 'f', 10, 64),
+					CurrentAPR:        apr,
 					// startTime: no info, use current time
-					now,
-					now,
-					now,
+					StartTime:   now,
+					CurrentTime: now,
+					EndTime:     now,
 				})
 			}
 		}
@@ -98,7 +98,7 @@ func getTokensNormalized() []model.AssetClass {
 	tokens := getTokens()
 	res := []model.AssetClass{}
 	for s, t := range tokens {
-		res = append(res, model.AssetClass{s, "ETH", t.name, 15, []model.Term{}})
+		res = append(res, model.AssetClass{Symbol: s, Chain: "ETH", Description: t.name, YieldFrequency: 15, Terms: []model.Term{}})
 	}
 	return res
 }
@@ -128,7 +128,7 @@ func addressOfToken(symbol string) (string, bool) {
 }
 
 func getCurrentLendingRatesForAsset(asset string) (model.LendingAssetRates, error) {
-	res := model.LendingAssetRates{asset, []model.LendingTermAPR{}, 0}
+	res := model.LendingAssetRates{Asset: asset, TermRates: []model.LendingTermAPR{}, MaxAPR: 0}
 	address, ok := addressOfToken(asset)
 	if !ok {
 		return res, fmt.Errorf("Token not found %v", asset)
@@ -144,7 +144,7 @@ func getCurrentLendingRatesForAsset(asset string) (model.LendingAssetRates, erro
 		} else {
 			apr = 100.0 * apr
 		}
-		res.TermRates = append(res.TermRates, model.LendingTermAPR{0.00017, apr})
+		res.TermRates = append(res.TermRates, model.LendingTermAPR{Term: 0.00017, APR: apr})
 	}
 	enrichAssetRatesWithMax(&res)
 	return res, nil

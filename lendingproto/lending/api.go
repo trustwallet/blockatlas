@@ -14,14 +14,14 @@ import (
 // As currently only Compuond is planned, API is not made entirely generic, but prepared for later generalization.
 
 // Init Setup HTTP API
-func Init(endpoint string) {
+func Init(endpoint string) error {
 	r := gin.Default()
 
 	r.GET("/v1/lending/providers", serveProviders)
 	r.POST("/v1/lending/rates/:provider", serveRates)
 	r.POST("/v1/lending/account/:provider", serveAccount)
 
-	r.Run(endpoint)
+	return r.Run(endpoint)
 }
 
 func serveProviders(c *gin.Context) {
@@ -105,7 +105,7 @@ func GetRates(provider string, req model.RatesRequest) (*model.RatesResponse, er
 	if err != nil {
 		return nil, err
 	}
-	return &model.RatesResponse{provider, rates}, nil
+	return &model.RatesResponse{Provider: provider, Rates: rates}, nil
 }
 
 // GetAccount return account contract
@@ -118,5 +118,5 @@ func GetAccount(provider string, req model.AccountRequest) (*model.AccountRespon
 	if err != nil {
 		return nil, err
 	}
-	return &model.AccountResponse{*contracts}, nil
+	return &model.AccountResponse{Contracts: *contracts}, nil
 }

@@ -9,7 +9,9 @@ import (
 func main() {
 	fmt.Println("Lending proto")
 
-	lending.Init(":8080")
+	if err := lending.Init(":8080"); err != nil {
+		panic(err.Error())
+	}
 
 	// curl "http://localhost:8080/v1/lending/providers"
 	// curl -d '{}' "http://localhost:8080/v1/lending/rates/compound"

@@ -13,7 +13,9 @@ func sortJSON(j string) string {
 	if j[0] == '{' {
 		// map
 		var interfaceMap map[string]interface{}
-		json.Unmarshal([]byte(j), &interfaceMap)
+		if err := json.Unmarshal([]byte(j), &interfaceMap); err != nil {
+			return j
+		}
 		keys := []string{}
 		for key := range interfaceMap {
 			keys = append(keys, key)
@@ -35,7 +37,9 @@ func sortJSON(j string) string {
 	if j[0] == '[' {
 		// array
 		var interfaceArray []interface{}
-		json.Unmarshal([]byte(j), &interfaceArray)
+		if err := json.Unmarshal([]byte(j), &interfaceArray); err != nil {
+			return j
+		}
 		// marshal each element to string
 		stringArray := make([]string, len(interfaceArray))
 		for idx, val := range interfaceArray {
