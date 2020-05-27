@@ -1,4 +1,4 @@
-package main
+package compound
 
 // Simulates Compound API; see https://compound.finance/docs/api
 

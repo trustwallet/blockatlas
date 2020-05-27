@@ -1,20 +1,22 @@
-package main
+package compound
 
 import (
 	"fmt"
 	"strconv"
 	"time"
+
+	"github.com/trustwallet/blockatlas/lendingproto/model"
 )
 
 // Compound Lending Provider
 // Compound does not use fixed terms, only open-ended, but structure is done to support different predefined terms.
 
 // GetProviderInfo return static info about the lending provider, such as name and asset classes supported.
-func GetProviderInfo() (LendingProvider, error) {
+func GetProviderInfo() (model.LendingProvider, error) {
 	// Note: should be cached
-	return LendingProvider{
+	return model.LendingProvider{
 		"compound",
-		LendingProviderInfo{
+		model.LendingProviderInfo{
 			"compound",
 			"Compound Decentralized Finance Protocol",
 			"https://compound.finance/images/compound-logo.svg",
@@ -27,8 +29,8 @@ func GetProviderInfo() (LendingProvider, error) {
 // GetCurrentLendingRates return current estimated yield rates for assets.  Rates are annualized.  Rates vary over time.
 // assets: List asset IDs to consider, or empty for all
 // Note: can use the CTokenRequest compound API
-func GetCurrentLendingRates(assets []string) (LendingRates, error) {
-	res := LendingRates{}
+func GetCurrentLendingRates(assets []string) (model.LendingRates, error) {
+	res := model.LendingRates{}
 	if len(assets) == 0 {
 		// empty filter, get all available assets
 		tokens := getTokens()
@@ -46,9 +48,9 @@ func GetCurrentLendingRates(assets []string) (LendingRates, error) {
 
 // GetAccountLendingContracts return current contract details for a given address.
 // assets: List asset IDs to consider, or empty for all
-func GetAccountLendingContracts(address string, assets []string) (AccountLendingContracts, error) {
-	now := Time(time.Now().Unix())
-	res := AccountLendingContracts{address, []LendingContract{}}
+func GetAccountLendingContracts(address string, assets []string) (model.AccountLendingContracts, error) {
+	now := model.Time(time.Now().Unix())
+	res := model.AccountLendingContracts{address, []model.LendingContract{}}
 	contracts, _ := CMockAccount(CMAccountRequest{[]string{address}})
 	for _, sc := range contracts.Account {
 		for _, t := range sc.Tokens {
@@ -58,7 +60,7 @@ func GetAccountLendingContracts(address string, assets []string) (AccountLending
 			if assetInfo, err := getCurrentLendingRatesForAsset(asset); err == nil {
 				apr = assetInfo.MaxAPR
 			}
-			res.Contracts = append(res.Contracts, LendingContract{
+			res.Contracts = append(res.Contracts, model.LendingContract{
 				t.Symbol,
 				0, // term
 				// startAmount: not available in API, derive as currentAmount - interest earn
@@ -81,12 +83,12 @@ type tokenInfo struct {
 	name    string
 }
 
-func getTokensNormalized() []AssetClass {
+func getTokensNormalized() []model.AssetClass {
 	// In compound all assets are updated with each ETH block, about each 15 seconds.  There are no predefined terms.
 	tokens := getTokens()
-	res := []AssetClass{}
+	res := []model.AssetClass{}
 	for s, t := range tokens {
-		res = append(res, AssetClass{s, "ETH", t.name, 15, []Term{}})
+		res = append(res, model.AssetClass{s, "ETH", t.name, 15, []model.Term{}})
 	}
 	return res
 }
@@ -115,8 +117,8 @@ func addressOfToken(symbol string) (string, bool) {
 	return tokenInfo.address, true
 }
 
-func getCurrentLendingRatesForAsset(asset string) (LendingAssetRates, error) {
-	res := LendingAssetRates{asset, []LendingTermAPR{}, 0}
+func getCurrentLendingRatesForAsset(asset string) (model.LendingAssetRates, error) {
+	res := model.LendingAssetRates{asset, []model.LendingTermAPR{}, 0}
 	address, ok := addressOfToken(asset)
 	if !ok {
 		return res, fmt.Errorf("Token not found %v", asset)
@@ -132,13 +134,13 @@ func getCurrentLendingRatesForAsset(asset string) (LendingAssetRates, error) {
 		} else {
 			apr = 100.0 * apr
 		}
-		res.TermRates = append(res.TermRates, LendingTermAPR{0.00017, apr})
+		res.TermRates = append(res.TermRates, model.LendingTermAPR{0.00017, apr})
 	}
 	enrichAssetRatesWithMax(&res)
 	return res, nil
 }
 
-func enrichAssetRatesWithMax(rates *LendingAssetRates) {
+func enrichAssetRatesWithMax(rates *model.LendingAssetRates) {
 	var max float64 = 0
 	for _, r := range rates.TermRates {
 		if r.APR > max {

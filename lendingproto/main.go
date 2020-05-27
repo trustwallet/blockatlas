@@ -4,9 +4,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
+
+	"github.com/trustwallet/blockatlas/lendingproto/compound"
+	"github.com/trustwallet/blockatlas/lendingproto/lending"
+	"github.com/trustwallet/blockatlas/lendingproto/model"
 )
 
-func printContract(contract LendingContract) {
+func printContract(contract model.LendingContract) {
 	daysAgo := float64(contract.CurrentTime-contract.StartTime) / 86400.0
 	startAmnt, _ := strconv.ParseFloat(contract.StartAmount, 64)
 	currentAmnt, _ := strconv.ParseFloat(contract.CurrentAmount, 64)
@@ -27,7 +31,7 @@ func printContracts(address string, asset string) {
 		fmt.Printf("all assets ")
 	}
 	fmt.Printf(":\n")
-	contracts, _ := GetAccountLendingContracts(address, assetList)
+	contracts, _ := compound.GetAccountLendingContracts(address, assetList)
 	for _, c := range contracts.Contracts {
 		printContract(c)
 	}
@@ -38,7 +42,9 @@ func printContracts(address string, asset string) {
 func main() {
 	fmt.Println("Lending proto")
 
-	Init()
+	lending.Init(":8080")
+
+	// curl "http://localhost:8080/v1/lending/providers"
 
 	printContracts("0x12340000", "")
 	printContracts("0x12560000", "")
