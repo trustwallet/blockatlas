@@ -11,6 +11,7 @@ import (
 
 // GetProviderInfo return static info about the lending provider, such as name and asset classes supported.
 func GetProviderInfo() (LendingProvider, error) {
+	// Note: should be cached
 	return LendingProvider{
 		"compound",
 		LendingProviderInfo{
@@ -19,13 +20,7 @@ func GetProviderInfo() (LendingProvider, error) {
 			"https://compound.finance/images/compound-logo.svg",
 			"https://compound.finance",
 		},
-		// In compound all assets are updated with each ETH block, about each 15 seconds.  There are no predefined terms.
-		[]AssetClass{
-			AssetClass{"ETH", "ETH", "Ethereum native coin", 15, []Term{}},
-			AssetClass{"USDC", "ETH", "USDC stablecoin token", 15, []Term{}},
-			AssetClass{"DAI", "ETH", "DAI stablecoin token", 15, []Term{}},
-			AssetClass{"WBTC", "ETH", "Wrapped Bitcoin token", 15, []Term{}},
-		},
+		getTokensNormalized(),
 	}, nil
 }
 
@@ -35,7 +30,11 @@ func GetProviderInfo() (LendingProvider, error) {
 func GetCurrentLendingRates(assets []string) (LendingRates, error) {
 	res := LendingRates{}
 	if len(assets) == 0 {
-		assets = getAssets()
+		// empty filter, get all available assets
+		tokens := getTokens()
+		for t := range tokens {
+			assets = append(assets, t)
+		}
 	}
 	for _, asset := range assets {
 		if rates, err := getCurrentLendingRatesForAsset(asset); err == nil {
@@ -50,7 +49,7 @@ func GetCurrentLendingRates(assets []string) (LendingRates, error) {
 func GetAccountLendingContracts(address string, assets []string) (AccountLendingContracts, error) {
 	now := Time(time.Now().Unix())
 	res := AccountLendingContracts{address, []LendingContract{}}
-	contracts, _ := CompoundMockGetContracts(CMAccountRequest{[]string{address}})
+	contracts, _ := CMockAccount(CMAccountRequest{[]string{address}})
 	for _, sc := range contracts.Account {
 		for _, t := range sc.Tokens {
 			asset := t.Symbol

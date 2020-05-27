@@ -1,12 +1,64 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"strconv"
+)
 
-var sampleCurrentRates = LendingRates{
-	LendingAssetRates{"ETH", []LendingTermAPR{LendingTermAPR{0.00017, 0.01}}, 0},
-	LendingAssetRates{"DAI", []LendingTermAPR{LendingTermAPR{0.00017, 0.73}}, 0},
-	LendingAssetRates{"USDC", []LendingTermAPR{LendingTermAPR{0.00017, 1.67}}, 0},
-	LendingAssetRates{"WBTC", []LendingTermAPR{LendingTermAPR{0.00017, 0.15}}, 0},
+type tokenInfo struct {
+	address string
+	name    string
+}
+
+func getTokensNormalized() []AssetClass {
+	// In compound all assets are updated with each ETH block, about each 15 seconds.  There are no predefined terms.
+	tokens := getTokens()
+	res := []AssetClass{}
+	for s, t := range tokens {
+		res = append(res, AssetClass{s, "ETH", t.name, 15, []Term{}})
+	}
+	return res
+}
+
+// Returns a info on tokens, map by symbol
+// Note: this should be cached
+func getTokens() map[string]tokenInfo {
+	tokens := CMockCToken([]string{})
+	res := make(map[string]tokenInfo)
+	for _, t := range tokens.CToken {
+		res[t.UnderlyingSymbol] = tokenInfo{t.TokenAddress, t.Name}
+	}
+	return res
+}
+
+// Note: should work from cached data
+func addressOfToken(symbol string) (string, bool) {
+	tokens := getTokens()
+	tokenInfo, ok := tokens[symbol]
+	if !ok {
+		return "", false
+	}
+	return tokenInfo.address, true
+}
+
+func getCurrentLendingRatesForAsset(asset string) (LendingAssetRates, error) {
+	res := LendingAssetRates{asset, []LendingTermAPR{}, 0}
+	address, ok := addressOfToken(asset)
+	if !ok {
+		return res, fmt.Errorf("Token not found %v", asset)
+	}
+	tokens := CMockCToken([]string{address})
+	for _, t := range tokens.CToken {
+		apr, err := strconv.ParseFloat(t.SupplyRate, 64)
+		if err != nil {
+			apr = 0
+		} else {
+			apr = 100.0 * apr
+		}
+		res.TermRates = append(res.TermRates, LendingTermAPR{0.00017, apr})
+	}
+	enrichAssetRatesWithMax(&res)
+	return res, nil
 }
 
 func enrichAssetRatesWithMax(rates *LendingAssetRates) {
@@ -17,23 +69,4 @@ func enrichAssetRatesWithMax(rates *LendingAssetRates) {
 		}
 	}
 	rates.MaxAPR = max
-}
-
-func getAssets() []string {
-	res := make([]string, len(sampleCurrentRates))
-	for i := range sampleCurrentRates {
-		res[i] = sampleCurrentRates[i].Asset
-	}
-	return res
-}
-
-func getCurrentLendingRatesForAsset(asset string) (LendingAssetRates, error) {
-	for i := range sampleCurrentRates {
-		if sampleCurrentRates[i].Asset == asset {
-			r := &sampleCurrentRates[i]
-			enrichAssetRatesWithMax(r)
-			return *r, nil
-		}
-	}
-	return LendingAssetRates{}, fmt.Errorf("Asset not found")
 }
