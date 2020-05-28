@@ -6,7 +6,7 @@ import (
 )
 
 // Recursive-sort a json string
-func sortJSON(j string) string {
+func sortJSON(j string, ignoreField string) string {
 	if len(j) == 0 {
 		return j
 	}
@@ -24,12 +24,15 @@ func sortJSON(j string) string {
 		// put together
 		sorted := "{"
 		for idx, key := range keys {
+			if key == ignoreField {
+				continue
+			}
 			if idx > 0 {
 				sorted += ","
 			}
 			sorted += "\"" + key + "\":"
 			jb, _ := json.Marshal(interfaceMap[key])
-			sorted += sortJSON(string(jb))
+			sorted += sortJSON(string(jb), ignoreField)
 		}
 		sorted += "}"
 		return sorted
@@ -54,7 +57,7 @@ func sortJSON(j string) string {
 			if idx > 0 {
 				sorted += ","
 			}
-			sorted += sortJSON(val)
+			sorted += sortJSON(val, ignoreField)
 		}
 		sorted += "]"
 		return sorted
@@ -64,8 +67,8 @@ func sortJSON(j string) string {
 }
 
 // Compare two json strings
-func CompareJSON(j1, j2 string) bool {
-	sorted1 := sortJSON(j1)
-	sorted2 := sortJSON(j2)
+func CompareJSON(j1, j2 string, ignoreField string) bool {
+	sorted1 := sortJSON(j1, ignoreField)
+	sorted2 := sortJSON(j2, ignoreField)
 	return (sorted1 == sorted2)
 }

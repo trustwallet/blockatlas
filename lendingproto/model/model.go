@@ -76,6 +76,7 @@ type (
 		EndAmountEstimate string  `json:"end_amount_estimate"`
 		CurrentAPR        float64 `json:"current_apr"`
 		StartTime         Time    `json:"start_time"`
+		CurrentTime       Time    `json:"current_time"`
 		EndTime           Time    `json:"end_time"`
 	}
 

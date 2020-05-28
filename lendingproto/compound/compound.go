@@ -3,6 +3,7 @@ package compound
 import (
 	"fmt"
 	"strconv"
+	"time"
 
 	"github.com/trustwallet/blockatlas/lendingproto/model"
 )
@@ -75,8 +76,9 @@ func GetAccountLendingContracts(req model.AccountRequest) (*[]model.AccountLendi
 					EndAmountEstimate: strconv.FormatFloat(t.SupplyBalanceUnderlying, 'f', 10, 64),
 					CurrentAPR:        apr,
 					// startTime: no info
-					StartTime: 0, // no info
-					EndTime:   0, // no info
+					StartTime:   0, // no info
+					CurrentTime: model.Time(time.Now().Unix()),
+					EndTime:     0, // no info
 				})
 			}
 		}

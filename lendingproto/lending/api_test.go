@@ -16,7 +16,7 @@ func TestGetProviders(t *testing.T) {
 	expResJSON := `[{"id":"compound","info":{"id":"compound","description":"Compound Decentralized Finance Protocol","image":"https://compound.finance/images/compound-logo.svg","website":"https://compound.finance"},"assets":[{"symbol":"DAI","chain":"ETH","description":"Compound DAI","yield_freq":15,"terms":[]},{"symbol":"USDC","chain":"ETH","description":"Compound USD Coin","yield_freq":15,"terms":[]},{"symbol":"ETH","chain":"ETH","description":"Compound Ether","yield_freq":15,"terms":[]},{"symbol":"WBTC","chain":"ETH","description":"Compound Wrapped Bitcoin","yield_freq":15,"terms":[]}]}]`
 	b, _ := json.Marshal(res)
 	resJSON := string(b)
-	if !compound.CompareJSON(resJSON, expResJSON) {
+	if !compound.CompareJSON(resJSON, expResJSON, "") {
 		t.Errorf("Wrong result, %v vs %v", resJSON, expResJSON)
 	}
 }
@@ -39,7 +39,7 @@ func TestGetRates(t *testing.T) {
 			}
 			b, _ := json.Marshal(res)
 			resJSON := string(b)
-			if !compound.CompareJSON(resJSON, tt.expJSON) {
+			if !compound.CompareJSON(resJSON, tt.expJSON, "") {
 				t.Errorf("Wrong result, %v %v vs %v", tt.name, resJSON, tt.expJSON)
 			}
 		})
@@ -66,7 +66,7 @@ func TestGetAccount(t *testing.T) {
 			}
 			b, _ := json.Marshal(res)
 			resJSON := string(b)
-			if !compound.CompareJSON(resJSON, tt.expJSON) {
+			if !compound.CompareJSON(resJSON, tt.expJSON, "current_time") {
 				t.Errorf("Wrong result, %v %v vs %v", tt.name, resJSON, tt.expJSON)
 			}
 		})
