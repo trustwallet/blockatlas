@@ -80,6 +80,7 @@ func CMockAccount(request CMAccountRequest) (CMAccountResponse, error) {
 	return resp, nil
 }
 
+// See "https://api.compound.finance/api/v2/ctoken"
 func CMockCToken(tokenAddresses []string) (CMCTokenResponse, error) {
 	var res CMCTokenResponse
 	for _, ct := range sampleTokenInfo {

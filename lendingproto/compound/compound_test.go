@@ -3,6 +3,8 @@ package compound
 import (
 	"encoding/json"
 	"testing"
+
+	"github.com/trustwallet/blockatlas/lendingproto/model"
 )
 
 func TestGetProviderInfo(t *testing.T) {
@@ -39,6 +41,36 @@ func TestGetCurrentLendingRates(t *testing.T) {
 			resJSON := string(b)
 			if !compareJSON(resJSON, tt.responseJSON) {
 				t.Errorf("Wrong result, %v vs %v", resJSON, tt.responseJSON)
+			}
+		})
+	}
+}
+
+func TestGetAccountLendingContracts(t *testing.T) {
+	tests := []struct {
+		name    string
+		reqJson string
+		expJson string
+	}{
+		{"40", `{"addresses":["0x12340000"]}`, `[{"address":"0x12340000","contracts":[{"asset":"USDC","term":0,"start_amount":"200.0000000000","current_amount":"200.4500000000","end_amount_estimate":"200.4500000000","current_apr":1.67,"start_time":0,"end_time":0},{"asset":"DAI","term":0,"start_amount":"300.0000000000","current_amount":"300.8500000000","end_amount_estimate":"300.8500000000","current_apr":1.32,"start_time":0,"end_time":0}]}]`},
+		{"60", `{"addresses":["0x12360000"]}`, `[{"address":"0x12360000","contracts":[{"asset":"USDC","term":0,"start_amount":"999.0000000000","current_amount":"1001.2500000000","end_amount_estimate":"1001.2500000000","current_apr":1.67,"start_time":0,"end_time":0}]}]`},
+		{"40_usdc", `{"addresses":["0x12340000"], "assets":["USDC"]}`, `[{"address":"0x12340000","contracts":[{"asset":"USDC","term":0,"start_amount":"200.0000000000","current_amount":"200.4500000000","end_amount_estimate":"200.4500000000","current_apr":1.67,"start_time":0,"end_time":0}]}]`},
+		{"40_60", `{"addresses":["0x12340000", "0x12360000"],"assets":[]}`, `[{"address":"0x12340000","contracts":[{"asset":"USDC","term":0,"start_amount":"200.0000000000","current_amount":"200.4500000000","end_amount_estimate":"200.4500000000","current_apr":1.67,"start_time":0,"end_time":0},{"asset":"DAI","term":0,"start_amount":"300.0000000000","current_amount":"300.8500000000","end_amount_estimate":"300.8500000000","current_apr":1.32,"start_time":0,"end_time":0}]},{"address":"0x12360000","contracts":[{"asset":"USDC","term":0,"start_amount":"999.0000000000","current_amount":"1001.2500000000","end_amount_estimate":"1001.2500000000","current_apr":1.67,"start_time":0,"end_time":0}]}]`},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var req model.AccountRequest
+			if err := json.Unmarshal([]byte(tt.reqJson), &req); err != nil {
+				t.Errorf("Input json unmarshal error %v", err)
+			}
+			res, err := GetAccountLendingContracts(req)
+			if err != nil {
+				t.Errorf("Unexpected error %v %v", tt.name, err)
+			}
+			b, _ := json.Marshal(res)
+			resJSON := string(b)
+			if !compareJSON(resJSON, tt.expJson) {
+				t.Errorf("Wrong result, %v %v vs %v", tt.name, resJSON, tt.expJson)
 			}
 		})
 	}

@@ -4,10 +4,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/trustwallet/blockatlas/lendingproto/compound"
 	"github.com/trustwallet/blockatlas/lendingproto/model"
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 )
 
 // Lending API
@@ -27,60 +29,60 @@ func Init(endpoint string) error {
 func serveProviders(c *gin.Context) {
 	p, err := GetProviders()
 	if err != nil {
-		c.JSON(500, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(200, p)
+	c.JSON(http.StatusOK, blockatlas.DocsResponse{Docs: &p})
 }
 
 func serveRates(c *gin.Context) {
 	provider, ok := c.Params.Get("provider")
 	if !ok {
-		c.JSON(500, gin.H{"error": "Fatal: missing provider"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "Fatal: missing provider"})
 		return
 	}
 	bodyB, err := ioutil.ReadAll(c.Request.Body)
 	if err != nil {
-		c.JSON(500, gin.H{"error": "Fatal: " + err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Fatal: " + err.Error()})
 		return
 	}
 	var req model.RatesRequest
 	err = json.Unmarshal(bodyB, &req)
 	if err != nil {
-		c.JSON(500, gin.H{"error": "Parsing: " + err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Parsing: " + err.Error()})
 		return
 	}
 	p, err := GetRates(provider, req)
 	if err != nil {
-		c.JSON(500, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(200, p)
+	c.JSON(http.StatusOK, blockatlas.DocsResponse{Docs: &p})
 }
 
 func serveAccount(c *gin.Context) {
 	provider, ok := c.Params.Get("provider")
 	if !ok {
-		c.JSON(500, gin.H{"error": "Fatal: missing provider"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "Fatal: missing provider"})
 		return
 	}
 	bodyB, err := ioutil.ReadAll(c.Request.Body)
 	if err != nil {
-		c.JSON(500, gin.H{"error": "Fatal: " + err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Fatal: " + err.Error()})
 		return
 	}
 	var req model.AccountRequest
 	err = json.Unmarshal(bodyB, &req)
 	if err != nil {
-		c.JSON(500, gin.H{"error": "Parsing: " + err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Parsing: " + err.Error()})
 		return
 	}
 	p, err := GetAccount(provider, req)
 	if err != nil {
-		c.JSON(500, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(200, p)
+	c.JSON(http.StatusOK, blockatlas.DocsResponse{Docs: &p})
 }
 
 var compoundProviderName string = "compound"
@@ -109,14 +111,10 @@ func GetRates(provider string, req model.RatesRequest) (*model.RatesResponse, er
 }
 
 // GetAccount return account contract
-func GetAccount(provider string, req model.AccountRequest) (*model.AccountResponse, error) {
+func GetAccount(provider string, req model.AccountRequest) (*[]model.AccountLendingContracts, error) {
 	// we have one provider
 	if provider != compoundProviderName {
 		return nil, fmt.Errorf("Unknown provider %v", provider)
 	}
-	contracts, err := compound.GetAccountLendingContracts(req)
-	if err != nil {
-		return nil, err
-	}
-	return &model.AccountResponse{Contracts: *contracts}, nil
+	return compound.GetAccountLendingContracts(req)
 }

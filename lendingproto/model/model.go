@@ -64,11 +64,6 @@ type (
 		Assets    []string `json:"assets"`
 	}
 
-	// AccountResponse Account API response, contracts
-	AccountResponse struct {
-		Contracts []AccountLendingContracts `json:"contracts"`
-	}
-
 	// Time Second-granular UNIX time
 	Time int32
 
@@ -81,7 +76,6 @@ type (
 		EndAmountEstimate string  `json:"end_amount_estimate"`
 		CurrentAPR        float64 `json:"current_apr"`
 		StartTime         Time    `json:"start_time"`
-		CurrentTime       Time    `json:"current_time"`
 		EndTime           Time    `json:"end_time"`
 	}
 

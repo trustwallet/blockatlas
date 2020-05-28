@@ -3,7 +3,6 @@ package compound
 import (
 	"fmt"
 	"strconv"
-	"time"
 
 	"github.com/trustwallet/blockatlas/lendingproto/model"
 )
@@ -49,7 +48,6 @@ func GetCurrentLendingRates(assets []string) (model.LendingRates, error) {
 // GetAccountLendingContracts return current contract details for a given address.
 // req.Assets: List asset IDs to consider, or empty for all
 func GetAccountLendingContracts(req model.AccountRequest) (*[]model.AccountLendingContracts, error) {
-	now := model.Time(time.Now().Unix())
 	res := []model.AccountLendingContracts{}
 	if len(req.Addresses) == 0 {
 		return nil, fmt.Errorf("Missing addresses")
@@ -76,10 +74,9 @@ func GetAccountLendingContracts(req model.AccountRequest) (*[]model.AccountLendi
 					CurrentAmount:     strconv.FormatFloat(t.SupplyBalanceUnderlying, 'f', 10, 64),
 					EndAmountEstimate: strconv.FormatFloat(t.SupplyBalanceUnderlying, 'f', 10, 64),
 					CurrentAPR:        apr,
-					// startTime: no info, use current time
-					StartTime:   now,
-					CurrentTime: now,
-					EndTime:     now,
+					// startTime: no info
+					StartTime: 0, // no info
+					EndTime:   0, // no info
 				})
 			}
 		}
