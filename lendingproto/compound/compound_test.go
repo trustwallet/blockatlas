@@ -16,7 +16,7 @@ func TestGetProviderInfo(t *testing.T) {
 		}
 		b, _ := json.Marshal(res)
 		resJSON := string(b)
-		if !compareJSON(resJSON, expectedJSON) {
+		if !CompareJSON(resJSON, expectedJSON) {
 			t.Errorf("Wrong result, %v vs %v", resJSON, expectedJSON)
 		}
 	})
@@ -39,7 +39,7 @@ func TestGetCurrentLendingRates(t *testing.T) {
 			}
 			b, _ := json.Marshal(res)
 			resJSON := string(b)
-			if !compareJSON(resJSON, tt.responseJSON) {
+			if !CompareJSON(resJSON, tt.responseJSON) {
 				t.Errorf("Wrong result, %v vs %v", resJSON, tt.responseJSON)
 			}
 		})
@@ -69,7 +69,7 @@ func TestGetAccountLendingContracts(t *testing.T) {
 			}
 			b, _ := json.Marshal(res)
 			resJSON := string(b)
-			if !compareJSON(resJSON, tt.expJson) {
+			if !CompareJSON(resJSON, tt.expJson) {
 				t.Errorf("Wrong result, %v %v vs %v", tt.name, resJSON, tt.expJson)
 			}
 		})

@@ -64,7 +64,7 @@ func sortJSON(j string) string {
 }
 
 // Compare two json strings
-func compareJSON(j1, j2 string) bool {
+func CompareJSON(j1, j2 string) bool {
 	sorted1 := sortJSON(j1)
 	sorted2 := sortJSON(j2)
 	return (sorted1 == sorted2)
