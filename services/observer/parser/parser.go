@@ -49,17 +49,17 @@ const MinTxsBatchLimit = 500
 
 func RunParser(params Params) {
 	logger.Info("------------------------------------------------------------")
-	for {
-		select {
-		case <-params.Ctx.Done():
-			logger.Info(fmt.Sprintf("Parser of %s stopped parsing blocks", params.Api.Coin().Handle))
-			params.StopChannel <- struct{}{}
-			return
-		default:
-			parse(params)
-			time.Sleep(params.ParsingBlocksInterval)
-		}
+	//for {
+	select {
+	case <-params.Ctx.Done():
+		logger.Info(fmt.Sprintf("Parser of %s stopped parsing blocks", params.Api.Coin().Handle))
+		params.StopChannel <- struct{}{}
+		return
+	default:
+		parse(params)
+		time.Sleep(params.ParsingBlocksInterval)
 	}
+	//}
 }
 
 func GetInterval(value int, minInterval, maxInterval time.Duration) time.Duration {
@@ -85,7 +85,7 @@ func parse(params Params) {
 	tx.Context.SetTag("lastParsedBlock", strconv.Itoa(int(lastParsedBlock)))
 	tx.Context.SetTag("lastParsedBlock", strconv.Itoa(int(lastParsedBlock)))
 
-	blocks := FetchBlocks(params, lastParsedBlock, currentBlock, ctx)
+	blocks := FetchBlocks(params, 632195, 632196, ctx)
 
 	tx.Context.SetTag("blocks len", strconv.Itoa(len(blocks)))
 
