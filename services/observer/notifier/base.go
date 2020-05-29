@@ -36,6 +36,9 @@ func RunNotifier(database *db.Instance, delivery amqp.Delivery) {
 
 	addresses := toUniqueAddresses(allAddresses)
 
+	if len(txs) < 1 {
+		return
+	}
 	subscriptionsDataList, err := database.GetSubscriptions(txs[0].Coin, addresses, ctx)
 	if err != nil || len(subscriptionsDataList) == 0 {
 		return
