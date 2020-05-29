@@ -142,5 +142,5 @@ func Test_buildNotificationsByAddress(t *testing.T) {
 		return notifications[i].Action < notifications[j].Action
 	})
 	nativeTokenTransfer.Direction = blockatlas.DirectionOutgoing
-	assert.Equal(t, nativeTokenTransfer, *notifications[0].Result)
+	assert.Equal(t, nativeTokenTransfer, notifications[0].Result)
 }
