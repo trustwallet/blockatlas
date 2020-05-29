@@ -82,7 +82,7 @@ func ConsumerToTestTransactions(delivery amqp.Delivery, t *testing.T) {
 
 	assert.Equal(t, notifier.TransactionNotification{
 		Action: blockatlas.TxNativeTokenTransfer,
-		Result: &blockatlas.Tx{
+		Result: blockatlas.Tx{
 			Type:      blockatlas.TxNativeTokenTransfer,
 			Direction: "outgoing",
 			ID:        "95CF63FAA27579A9B6AF84EF8B2DFEAC29627479E9C98E7F5AE4535E213FA4C9",

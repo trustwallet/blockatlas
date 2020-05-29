@@ -11,7 +11,6 @@ import (
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
-	"github.com/trustwallet/blockatlas/services/observer/notifier"
 	"github.com/trustwallet/blockatlas/services/observer/parser"
 	"github.com/trustwallet/blockatlas/tests/integration/setup"
 	"testing"
@@ -105,7 +104,7 @@ func setupParser(stopChan chan struct{}) parser.Params {
 	maxTime := time.Second * 2
 	maxBatchBlocksAmount := 100
 
-	pollInterval := notifier.GetInterval(0, minTime, maxTime)
+	pollInterval := parser.GetInterval(0, minTime, maxTime)
 
 	backlogCount := 50
 
