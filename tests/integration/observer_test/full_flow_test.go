@@ -147,7 +147,7 @@ func setupParserFull(stopChan chan<- struct{}) parser.Params {
 	maxTime := time.Second * 2
 	maxBatchBlocksAmount := 1
 
-	pollInterval := notifier.GetInterval(0, minTime, maxTime)
+	pollInterval := parser.GetInterval(0, minTime, maxTime)
 
 	backlogCount := 1
 

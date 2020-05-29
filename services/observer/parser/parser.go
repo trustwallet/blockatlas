@@ -8,6 +8,7 @@ import (
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
+	"github.com/trustwallet/blockatlas/pkg/numbers"
 	"go.elastic.co/apm"
 	"strconv"
 	"sync/atomic"
@@ -59,6 +60,13 @@ func RunParser(params Params) {
 			time.Sleep(params.ParsingBlocksInterval)
 		}
 	}
+}
+
+func GetInterval(value int, minInterval, maxInterval time.Duration) time.Duration {
+	interval := time.Duration(value) * time.Millisecond
+	pMin := numbers.Max(minInterval.Nanoseconds(), interval.Nanoseconds())
+	pMax := numbers.Min(int(maxInterval.Nanoseconds()), int(pMin))
+	return time.Duration(pMax)
 }
 
 func parse(params Params) {

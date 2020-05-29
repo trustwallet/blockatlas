@@ -8,11 +8,10 @@ import (
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
+
 	"github.com/trustwallet/blockatlas/pkg/logger"
-	"github.com/trustwallet/blockatlas/pkg/numbers"
+
 	"go.elastic.co/apm"
-	"sync"
-	"time"
 )
 
 const DefaultPushNotificationsBatchLimit = 50
@@ -28,66 +27,29 @@ func RunNotifier(database *db.Instance, delivery amqp.Delivery) {
 	tx := apm.DefaultTracer.StartTransaction("RunNotifier", "app")
 	defer tx.End()
 	ctx := apm.ContextWithTransaction(context.Background(), tx)
+
 	defer func() {
 		if err := delivery.Ack(false); err != nil {
 			logger.Error(err)
 		}
 	}()
-	var txs blockatlas.Txs
-	if err := json.Unmarshal(delivery.Body, &txs); err != nil {
-		logger.Error(err)
-		return
-	}
-	if len(txs) == 0 {
-		return
+
+	txs, err := getTransactionsFromDelivery(delivery, ctx)
+	if err != nil {
+		logger.Error("failed to get transactions", err)
 	}
 
-	logger.Info("Consumed", logger.Params{"txs": len(txs), "coin": txs[0].Coin})
+	addresses := uniqueAddresses(getAddressesFromTransactions(txs))
 
-	blockTransactions := txs.GetTransactionsMap()
-	if len(blockTransactions.Map) == 0 {
-		return
-	}
-
-	addresses := blockTransactions.GetUniqueAddresses()
 	subscriptionsDataList, err := database.GetSubscriptions(txs[0].Coin, addresses, ctx)
 	if err != nil || len(subscriptionsDataList) == 0 {
 		return
 	}
 
-	var wg sync.WaitGroup
-	wg.Add(len(subscriptionsDataList))
-	for _, data := range subscriptionsDataList {
-		go buildAndPostMessage(
-			blockTransactions,
-			blockatlas.Subscription{Coin: data.Coin, Address: data.Address},
-			&wg, ctx)
-	}
-	wg.Wait()
-}
-
-func buildAndPostMessage(blockTransactions blockatlas.TxSetMap, sub blockatlas.Subscription, wg *sync.WaitGroup, ctx context.Context) {
-	defer wg.Done()
-
-	span, ctx := apm.StartSpan(ctx, "buildAndPostMessage", "app")
-	defer span.End()
-
-	tx, ok := blockTransactions.Map[sub.Address]
-	if !ok {
-		return
-	}
-	notifications := make([]TransactionNotification, 0, len(tx.Txs()))
-	for _, tx := range tx.Txs() {
-		tx.Direction = tx.GetTransactionDirection(sub.Address)
-		tx.InferUtxoValue(sub.Address, tx.Coin)
-		notification := TransactionNotification{
-			Action: tx.Type,
-			Result: &tx,
-		}
-
-		logger.Info("Notification ready", logger.Params{"coin": sub.Coin, "txID": tx.ID})
-
-		notifications = append(notifications, notification)
+	notifications := make([]TransactionNotification, 0)
+	for _, sub := range subscriptionsDataList {
+		notificationsForAddress := buildNotificationsByAddress(sub.Address, txs, ctx)
+		notifications = append(notifications, notificationsForAddress...)
 	}
 
 	batches := getNotificationBatches(notifications, MaxPushNotificationsBatchLimit, ctx)
@@ -95,6 +57,93 @@ func buildAndPostMessage(blockTransactions blockatlas.TxSetMap, sub blockatlas.S
 	for _, batch := range batches {
 		publishNotificationBatch(batch, ctx)
 	}
+}
+
+func getTransactionsFromDelivery(delivery amqp.Delivery, ctx context.Context) (blockatlas.Txs, error) {
+	var txs blockatlas.Txs
+
+	span, ctx := apm.StartSpan(ctx, "getTransactionsFromDelivery", "app")
+	defer span.End()
+
+	if err := json.Unmarshal(delivery.Body, &txs); err != nil {
+		return nil, err
+	}
+
+	logger.Info("Consumed", logger.Params{"txs": len(txs), "coin": txs[0].Coin})
+
+	if len(txs) == 0 {
+		return nil, errors.E("empty txs list")
+	}
+	return txs, nil
+}
+
+func getAddressesFromTransactions(txs blockatlas.Txs) []string {
+	result := make([]string, 0)
+	for _, tx := range txs {
+		result = append(result, tx.GetAddresses()...)
+	}
+	return result
+}
+
+func uniqueAddresses(addresses []string) []string {
+	keys := make(map[string]bool)
+	var list []string
+	for _, entry := range addresses {
+		if _, value := keys[entry]; !value {
+			keys[entry] = true
+			list = append(list, entry)
+		}
+	}
+	return list
+}
+
+func buildNotificationsByAddress(address string, txs blockatlas.Txs, ctx context.Context) []TransactionNotification {
+	span, ctx := apm.StartSpan(ctx, "buildNotification", "app")
+	defer span.End()
+
+	transactionsByAddress := uniqueTransactions(findTransactionsByAddress(txs, address))
+
+	result := make([]TransactionNotification, 0)
+	for _, tx := range transactionsByAddress {
+		tx.Direction = tx.GetTransactionDirection(address)
+		tx.InferUtxoValue(address, tx.Coin)
+		result = append(result, TransactionNotification{Action: tx.Type, Result: &tx})
+	}
+
+	return result
+}
+
+func uniqueTransactions(txs []blockatlas.Tx) []blockatlas.Tx {
+	keys := make(map[string]bool)
+	var list []blockatlas.Tx
+	for _, entry := range txs {
+		key := entry.ID + string(entry.Direction)
+		if _, value := keys[key]; !value {
+			keys[key] = true
+			list = append(list, entry)
+		}
+	}
+	return list
+}
+
+func findTransactionsByAddress(txs blockatlas.Txs, address string) []blockatlas.Tx {
+	result := make([]blockatlas.Tx, 0)
+	for _, tx := range txs {
+		if containsAddress(tx, address) {
+			result = append(result, tx)
+		}
+	}
+	return result
+}
+
+func containsAddress(tx blockatlas.Tx, address string) bool {
+	txAddresses := uniqueAddresses(tx.GetAddresses())
+	for _, a := range txAddresses {
+		if a == address {
+			return true
+		}
+	}
+	return false
 }
 
 func publishNotificationBatch(batch []TransactionNotification, ctx context.Context) {
@@ -105,7 +154,6 @@ func publishNotificationBatch(batch []TransactionNotification, ctx context.Conte
 		err = errors.E(err, " failed to dispatch event")
 		logger.Fatal(err)
 	}
-
 	err = mq.TxNotifications.Publish(raw)
 	if err != nil {
 		err = errors.E(err, " failed to dispatch event")
@@ -113,13 +161,6 @@ func publishNotificationBatch(batch []TransactionNotification, ctx context.Conte
 	}
 
 	logger.Info("Txs batch dispatched", logger.Params{"txs": len(batch)})
-}
-
-func GetInterval(value int, minInterval, maxInterval time.Duration) time.Duration {
-	interval := time.Duration(value) * time.Millisecond
-	pMin := numbers.Max(minInterval.Nanoseconds(), interval.Nanoseconds())
-	pMax := numbers.Min(int(maxInterval.Nanoseconds()), int(pMin))
-	return time.Duration(pMax)
 }
 
 func getNotificationBatches(notifications []TransactionNotification, sizeUint uint, ctx context.Context) [][]TransactionNotification {
