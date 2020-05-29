@@ -8,7 +8,7 @@ import (
 
 type TransactionNotification struct {
 	Action blockatlas.TransactionType `json:"action"`
-	Result *blockatlas.Tx             `json:"result"`
+	Result blockatlas.Tx              `json:"result"`
 }
 
 func getNotificationBatches(notifications []TransactionNotification, sizeUint uint, ctx context.Context) [][]TransactionNotification {
@@ -38,7 +38,7 @@ func buildNotificationsByAddress(address string, txs blockatlas.Txs, ctx context
 	for _, tx := range transactionsByAddress {
 		tx.Direction = tx.GetTransactionDirection(address)
 		tx.InferUtxoValue(address, tx.Coin)
-		result = append(result, TransactionNotification{Action: tx.Type, Result: &tx})
+		result = append(result, TransactionNotification{Action: tx.Type, Result: tx})
 	}
 
 	return result
