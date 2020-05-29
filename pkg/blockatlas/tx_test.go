@@ -109,17 +109,6 @@ var utxoTransferDst2 = Tx{
 	Memo:   "test",
 }
 
-func TestTxSet_Add(t *testing.T) {
-	set := TxSet{}
-	set.Add(&transferDst1)
-	var txs = set.Txs()
-	assert.Equal(t, txs[0].ID, transferDst1.ID)
-	set.Add(&transferDst1)
-	assert.Equal(t, set.Size(), 1)
-	set.Add(&nativeTransferDst1)
-	assert.Equal(t, set.Size(), 2)
-}
-
 func TestTx_GetAddresses(t *testing.T) {
 	assert.Equal(t, transferDst1.GetAddresses(), []string{"tbnb1fhr04azuhcj0dulm7ka40y0cqjlafwae9k9gk2", "tbnb1sylyjw032eajr9cyllp26n04300qzzre38qyv5"})
 	assert.Equal(t, nativeTransferDst1.GetAddresses(), []string{"tbnb1ttyn4csghfgyxreu7lmdu3lcplhqhxtzced45a", "tbnb12hlquylu78cjylk5zshxpdj6hf3t0tahwjt3ex"})
@@ -478,21 +467,6 @@ var (
 		},
 	}
 )
-
-func TestGetTxsTx(t *testing.T) {
-	tx := Txs{
-		transferDstOne,
-		transferDst2,
-		nativeTransferDstOne,
-		nativeTransferDst2,
-	}
-	txs := tx.GetTransactionsMap()
-	assert.Equal(t, len(txs.Map), 4)
-	assert.Equal(t, txs.Map["tbnb1fhr04azuhcj0dulm7ka40y0cqjlafwae9k9gk2"].Size(), 2)
-	assert.Equal(t, txs.Map["tbnb1sylyjw032eajr9cyllp26n04300qzzre38qyv5"].Size(), 1)
-	assert.Equal(t, txs.Map["tbnb1ttyn4csghfgyxreu7lmdu3lcplhqhxtzced45a"].Size(), 2)
-	assert.Equal(t, txs.Map["tbnb12hlquylu78cjylk5zshxpdj6hf3t0tahwjt3ex"].Size(), 2)
-}
 
 func TestTx_GetTransactionDirection(t *testing.T) {
 	txMeta := TokenTransfer{
