@@ -17,12 +17,14 @@ func (p *Platform) GetTokenListByAddress(address string) (blockatlas.TokenPage, 
 		return tokenPage, nil
 	}
 
-	var tokenIds []string
-	for _, v := range tokens.Data[0].AssetsV2 {
-		tokenIds = append(tokenIds, v.Key)
+	var trc10TokenIds []string
+	for _, trc10 := range tokens.Data[0].AssetsV2 {
+		if trc10.Value > 0 {
+			trc10TokenIds = append(trc10TokenIds, trc10.Key)
+		}
 	}
 
-	tokensChan := p.getTokens(tokenIds)
+	tokensChan := p.getTokens(trc10TokenIds)
 	for info := range tokensChan {
 		tokenPage = append(tokenPage, info)
 	}
