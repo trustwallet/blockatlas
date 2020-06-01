@@ -22,13 +22,23 @@ func Init(api string) *Provider {
 	}
 }
 
+var (
+	_providerName                       = "compound"
+	_cachedTokens     map[string]CToken = make(map[string]CToken, 30)
+	_cachedTokenTime  time.Time
+	_cacheValiditySec = 15
+)
+
+func (p *Provider) GetName() string {
+	return _providerName
+}
+
 // GetProviderInfo return static info about the lending provider, such as name and asset classes supported.
 func (p *Provider) GetProviderInfo() (model.LendingProvider, error) {
-	// Note: should be cached
 	return model.LendingProvider{
 		ID: "compound",
 		Info: model.LendingProviderInfo{
-			ID:          "compound",
+			ID:          _providerName,
 			Description: "Compound Decentralized Finance Protocol",
 			Image:       "https://compound.finance/images/compound-logo.svg",
 			Website:     "https://compound.finance",
@@ -39,7 +49,6 @@ func (p *Provider) GetProviderInfo() (model.LendingProvider, error) {
 
 // GetCurrentLendingRates return current estimated yield rates for assets.  Rates are annualized.  Rates vary over time.
 // assets: List asset IDs to consider, or empty for all
-// Note: can use the CTokenRequest compound API
 func (p *Provider) GetCurrentLendingRates(assets []string) (model.LendingRates, error) {
 	if len(assets) == 0 {
 		// empty filter, means any; get all available assets
@@ -56,7 +65,7 @@ func (p *Provider) GetCurrentLendingRates(assets []string) (model.LendingRates, 
 func (p *Provider) GetAccountLendingContracts(req model.AccountRequest) (*[]model.AccountLendingContracts, error) {
 	accounts, err := p.client.GetAccounts(req.Addresses)
 	if err != nil {
-		return nil, nil
+		return nil, err
 	}
 	ret := []model.AccountLendingContracts{}
 	for _, acc := range accounts {
@@ -64,7 +73,7 @@ func (p *Provider) GetAccountLendingContracts(req model.AccountRequest) (*[]mode
 		for _, t := range acc.Tokens {
 			asset := t.Symbol
 			if len(req.Assets) > 0 && !sliceContains(asset, req.Assets) {
-				continue
+				continue // not requested, skip
 			}
 			// APR: no info, take general current APR
 			var apr float64 = 0
@@ -106,16 +115,11 @@ func (p *Provider) getTokensNormalized() []model.AssetClass {
 	return res
 }
 
-var (
-	_cachedTokens    map[string]CToken = make(map[string]CToken, 30)
-	_cachedTokenTime time.Time
-)
-
 // Returns a info on tokens, map by symbol
-// Cached for few seconds
+// Cached for _cacheValiditySec seconds
 func (p *Provider) getTokensCached() map[string]CToken {
 	now := time.Now()
-	if now.Sub(_cachedTokenTime) < 30000 && len(_cachedTokens) > 0 {
+	if now.Sub(_cachedTokenTime) < time.Duration(_cacheValiditySec*1000) && len(_cachedTokens) > 0 {
 		// cached and recent
 		return _cachedTokens
 	}
@@ -132,30 +136,6 @@ func (p *Provider) getTokensCached() map[string]CToken {
 	_cachedTokenTime = now
 	return _cachedTokens
 }
-
-/*
-func (p *Provider) getTokens() map[string]tokenInfo {
-	ret := make(map[string]tokenInfo)
-	res, err := p.client.GetTokens([]string{})
-	if err != nil {
-		return ret
-	}
-	for _, t := range res.CToken {
-		ret[t.UnderlyingSymbol] = tokenInfo{t.TokenAddress, t.Name}
-	}
-	return ret
-}
-
-// Note: should work from cached data
-func (p *Provider) addressOfToken(symbol string) (string, bool) {
-	tokens := p.getTokens()
-	tokenInfo, ok := tokens[symbol]
-	if !ok {
-		return "", false
-	}
-	return tokenInfo.address, true
-}
-*/
 
 func (p *Provider) getCurrentLendingRatesForAssets(assets []string) ([]model.LendingAssetRates, error) {
 	ret := []model.LendingAssetRates{}
@@ -180,12 +160,7 @@ func (p *Provider) getCurrentLendingRatesForAssets(assets []string) ([]model.Len
 			currSymbol = symbol
 			ret1 = &model.LendingAssetRates{Asset: currSymbol, TermRates: []model.LendingTermAPR{}, MaxAPR: 0}
 		}
-		apr, err := strconv.ParseFloat(t.SupplyRate.Value, 64)
-		if err != nil {
-			apr = 0
-		} else {
-			apr = 100.0 * apr
-		}
+		apr := aprOfToken(&t)
 		ret1.TermRates = append(ret1.TermRates, model.LendingTermAPR{Term: 0.00017, APR: apr})
 	}
 	if ret1 != nil {
@@ -198,15 +173,6 @@ func (p *Provider) getCurrentLendingRatesForAssets(assets []string) ([]model.Len
 	return ret, nil
 }
 
-func sliceContains(elem string, slice []string) bool {
-	for _, e := range slice {
-		if e == elem {
-			return true
-		}
-	}
-	return false
-}
-
 func (p *Provider) getCurrentLendingRatesForAsset(asset string) (model.LendingAssetRates, error) {
 	ret := model.LendingAssetRates{Asset: asset, TermRates: []model.LendingTermAPR{}, MaxAPR: 0}
 	tokens := p.getTokensCached()
@@ -214,12 +180,7 @@ func (p *Provider) getCurrentLendingRatesForAsset(asset string) (model.LendingAs
 	if !ok {
 		return ret, fmt.Errorf("Token not found %v", asset)
 	}
-	apr, err := strconv.ParseFloat(token.SupplyRate.Value, 64)
-	if err != nil {
-		apr = 0
-	} else {
-		apr = 100.0 * apr
-	}
+	apr := aprOfToken(&token)
 	ret.TermRates = append(ret.TermRates, model.LendingTermAPR{Term: 0.00017, APR: apr})
 	enrichAssetRatesWithMax(&ret)
 	return ret, nil
@@ -233,4 +194,21 @@ func enrichAssetRatesWithMax(rates *model.LendingAssetRates) {
 		}
 	}
 	rates.MaxAPR = max
+}
+
+func aprOfToken(token *CToken) float64 {
+	apr, err := strconv.ParseFloat(token.SupplyRate.Value, 64)
+	if err != nil {
+		return 0
+	}
+	return 100.0 * apr
+}
+
+func sliceContains(elem string, slice []string) bool {
+	for _, e := range slice {
+		if e == elem {
+			return true
+		}
+	}
+	return false
 }
