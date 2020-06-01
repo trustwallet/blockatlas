@@ -160,7 +160,7 @@ func (p *Provider) getCurrentLendingRatesForAssets(assets []string) ([]blockatla
 			ret1 = &blockatlas.LendingAssetRates{Asset: currSymbol, TermRates: []blockatlas.LendingTermAPR{}, MaxAPR: 0}
 		}
 		apr := aprOfToken(&t)
-		ret1.TermRates = append(ret1.TermRates, blockatlas.LendingTermAPR{Term: 0.00017, APR: apr})
+		ret1.TermRates = append(ret1.TermRates, blockatlas.LendingTermAPR{Term: 0.00017, APR: apr, MinimumAmount: "0"})
 	}
 	if ret1 != nil {
 		// close previous
@@ -180,7 +180,7 @@ func (p *Provider) getCurrentLendingRatesForAsset(asset string) (blockatlas.Lend
 		return ret, fmt.Errorf("Token not found %v", asset)
 	}
 	apr := aprOfToken(&token)
-	ret.TermRates = append(ret.TermRates, blockatlas.LendingTermAPR{Term: 0.00017, APR: apr})
+	ret.TermRates = append(ret.TermRates, blockatlas.LendingTermAPR{Term: 0.00017, APR: apr, MinimumAmount: "0"})
 	enrichAssetRatesWithMax(&ret)
 	return ret, nil
 }

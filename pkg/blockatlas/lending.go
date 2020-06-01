@@ -43,8 +43,9 @@ type (
 
 	// LendingTermAPR Asset yield APR, for an asset for a term.  E.g. {30, 1.45}
 	LendingTermAPR struct {
-		Term `json:"term"`
-		APR  float64 `json:"apr"`
+		Term          `json:"term"`
+		APR           float64 `json:"apr"`
+		MinimumAmount string  `json:"minimum_amount"`
 	}
 
 	// LendingAssetRates Asset yield rates, for an asset for one or more periods.  E.g. [{7, 0.9}, {30, 1.45}]
