@@ -1,9 +1,7 @@
 package lending
 
 import (
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -45,15 +43,10 @@ func serveRates(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Fatal: missing provider"})
 		return
 	}
-	bodyB, err := ioutil.ReadAll(c.Request.Body)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Fatal: " + err.Error()})
-		return
-	}
 	var req model.RatesRequest
-	err = json.Unmarshal(bodyB, &req)
+	err := c.BindJSON(&req)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Parsing: " + err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid request: " + err.Error()})
 		return
 	}
 	p, err := GetRates(provider, req)
@@ -70,15 +63,10 @@ func serveAccount(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Fatal: missing provider"})
 		return
 	}
-	bodyB, err := ioutil.ReadAll(c.Request.Body)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Fatal: " + err.Error()})
-		return
-	}
 	var req model.AccountRequest
-	err = json.Unmarshal(bodyB, &req)
+	err := c.BindJSON(&req)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Parsing: " + err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid request: " + err.Error()})
 		return
 	}
 	p, err := GetAccounts(provider, req)
@@ -88,8 +76,6 @@ func serveAccount(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, blockatlas.DocsResponse{Docs: &p})
 }
-
-var compoundProviderName string = "compound"
 
 // GetProviders return provider info list
 func GetProviders() (*[]model.LendingProvider, error) {
@@ -104,7 +90,7 @@ func GetProviders() (*[]model.LendingProvider, error) {
 // GetRates return rates info
 func GetRates(provider string, req model.RatesRequest) (*model.RatesResponse, error) {
 	// we have one provider
-	if provider != compoundProviderName {
+	if provider != compoundProvider.Name() {
 		return nil, fmt.Errorf("Unknown provider %v", provider)
 	}
 	rates, err := compoundProvider.GetCurrentLendingRates(req.Assets)
@@ -117,7 +103,7 @@ func GetRates(provider string, req model.RatesRequest) (*model.RatesResponse, er
 // GetAccounts return account contract
 func GetAccounts(provider string, req model.AccountRequest) (*[]model.AccountLendingContracts, error) {
 	// we have one provider
-	if provider != compoundProviderName {
+	if provider != compoundProvider.Name() {
 		return nil, fmt.Errorf("Unknown provider %v", provider)
 	}
 	return compoundProvider.GetAccountLendingContracts(req)

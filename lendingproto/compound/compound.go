@@ -29,7 +29,7 @@ var (
 	_cacheValiditySec = 15
 )
 
-func (p *Provider) GetName() string {
+func (p *Provider) Name() string {
 	return _providerName
 }
 
