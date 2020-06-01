@@ -21,7 +21,7 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 			continue
 		}
 
-		if len(srcTx.Data.Contracts) > 0 && srcTx.Data.Contracts[0].Type == TransferContract {
+		if len(srcTx.RawData.Contracts) > 0 && srcTx.RawData.Contracts[0].Type == TransferContract {
 			txs = append(txs, *tx)
 		} else {
 			continue
@@ -64,7 +64,7 @@ func (p *Platform) GetTokenTxsByAddress(address, token string) (blockatlas.TxPag
 }
 
 func setTokenMeta(tx *blockatlas.Tx, srcTx Tx, tokenInfo AssetInfo) {
-	transfer := srcTx.Data.Contracts[0].Parameter.Value
+	transfer := srcTx.RawData.Contracts[0].Parameter.Value
 	tx.Meta = blockatlas.TokenTransfer{
 		Name:     tokenInfo.Name,
 		Symbol:   tokenInfo.Symbol,
@@ -78,24 +78,24 @@ func setTokenMeta(tx *blockatlas.Tx, srcTx Tx, tokenInfo AssetInfo) {
 
 /// Normalize converts a Tron transaction into the generic model
 func Normalize(srcTx Tx) (*blockatlas.Tx, error) {
-	if len(srcTx.Data.Contracts) == 0 {
+	if len(srcTx.RawData.Contracts) == 0 {
 		return nil, errors.E("TRON: transfer without contract", errors.TypePlatformApi,
 			errors.Params{"tx": srcTx})
 	}
 
-	contract := srcTx.Data.Contracts[0]
+	contract := srcTx.RawData.Contracts[0]
 	if contract.Type != TransferContract && contract.Type != TransferAssetContract {
 		return nil, errors.E("TRON: invalid contract transfer", errors.TypePlatformApi,
 			errors.Params{"tx": srcTx, "type": contract.Type})
 	}
 
 	transfer := contract.Parameter.Value
-	from, err := address.HexToAddress(transfer.OwnerAddress)
+	from, err := address.HexToBase58(transfer.OwnerAddress)
 	if err != nil {
 		return nil, errors.E(err, "TRON: failed to get from address", errors.TypePlatformApi,
 			errors.Params{"tx": srcTx})
 	}
-	to, err := address.HexToAddress(transfer.ToAddress)
+	to, err := address.HexToBase58(transfer.ToAddress)
 	if err != nil {
 		return nil, errors.E(err, "TRON: failed to get to address", errors.TypePlatformApi,
 			errors.Params{"tx": srcTx})
@@ -107,9 +107,9 @@ func Normalize(srcTx Tx) (*blockatlas.Tx, error) {
 		Date:   srcTx.BlockTime / 1000,
 		From:   from,
 		To:     to,
-		Fee:    "0",
-		Block:  0,
-		Status: blockatlas.StatusCompleted,
+		Fee:    "0", // TODO get fee
+		Block:  0,   // TODO get block
+		Status: blockatlas.StatusCompleted, // TODO determine status
 		Meta: blockatlas.Transfer{
 			Value:    transfer.Amount,
 			Symbol:   coin.Coins[coin.TRX].Symbol,

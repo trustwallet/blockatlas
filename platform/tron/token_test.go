@@ -12,7 +12,7 @@ var tokenDst = blockatlas.Token{
 	Decimals: 8,
 	TokenID:  "1",
 	Coin:     195,
-	Type:     "TRC10",
+	Type:     blockatlas.TokenTypeTRC10,
 }
 
 func TestNormalizeToken(t *testing.T) {

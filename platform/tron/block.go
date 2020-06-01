@@ -44,7 +44,7 @@ func (p *Platform) NormalizeBlockTxs(srcTxs []Tx) chan blockatlas.Tx {
 }
 
 func (p *Platform) NormalizeBlockChannel(srcTx Tx, txChan chan blockatlas.Tx) {
-	if len(srcTx.Data.Contracts) == 0 {
+	if len(srcTx.RawData.Contracts) == 0 {
 		return
 	}
 
@@ -52,7 +52,7 @@ func (p *Platform) NormalizeBlockChannel(srcTx Tx, txChan chan blockatlas.Tx) {
 	if err != nil {
 		return
 	}
-	transfer := srcTx.Data.Contracts[0].Parameter.Value
+	transfer := srcTx.RawData.Contracts[0].Parameter.Value
 	if len(transfer.AssetName) > 0 {
 		assetName, err := hex.DecodeString(transfer.AssetName[:])
 		if err == nil {

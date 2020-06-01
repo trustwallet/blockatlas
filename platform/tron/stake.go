@@ -69,7 +69,7 @@ func (p *Platform) UndelegatedBalance(address string) (string, error) {
 }
 
 func normalizeValidator(v Validator) (validator blockatlas.Validator, ok bool) {
-	address, err := address.HexToAddress(v.Address)
+	address, err := address.HexToBase58(v.Address)
 	if err != nil {
 		return validator, false
 	}

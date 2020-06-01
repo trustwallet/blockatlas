@@ -48,7 +48,7 @@ func EIP55Checksum(unchecksummed string) string {
 // HexToAddress converts a hex representation of a Tron address
 // into a Base58 string with a 4 byte checksum.
 // 41C29B75739D24DD34CD91EDDB53216255E9DBD1FC => TTiCKjuWyyakAin4PL9ekPpmPtphSpxu8V
-func HexToAddress(hexAddr string) (b58 string, err error) {
+func HexToBase58(hexAddr string) (b58 string, err error) {
 	bytes, err := hex.DecodeString(hexAddr)
 	if err != nil {
 		return "", errors.E(err, errors.TypePlatformUnmarshal,
