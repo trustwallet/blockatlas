@@ -28,9 +28,8 @@ var (
 	// NamingAPIs contain platforms which support naming services
 	NamingAPIs map[uint]blockatlas.NamingServiceAPI
 
-	// LendingAPI contains Lending providers
-	// TODO change to map
-	LendingAPI blockatlas.LendingAPI
+	// LendingAPI contains lending providers, key is provider name
+	LendingAPIs map[string]blockatlas.LendingAPI
 )
 
 func getActivePlatforms(handles []string) []blockatlas.Platform {
@@ -98,5 +97,7 @@ func Init(platformHandles []string) {
 	CollectionsAPIs = getCollectionsHandlers()
 	NamingAPIs = getNamingHandlers()
 
-	LendingAPI = compound.Init("https://api.compound.finance/api")
+	compoundLendingProvider := compound.Init("https://api.compound.finance/api") // TODO into config
+	LendingAPIs = make(map[string]blockatlas.LendingAPI, 10)
+	LendingAPIs[compoundLendingProvider.Name()] = compoundLendingProvider
 }
