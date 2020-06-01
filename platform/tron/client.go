@@ -27,17 +27,29 @@ func (c *Client) GetBlockByNumber(num int64) (Block, error) {
 	return blocks.Blocks[0], nil
 }
 
-func (c *Client) GetTxsOfAddress(address, token string) ([]Tx, error) {
+func (c *Client) getTxsOfAddress(address string) ([]Tx, error) {
 	path := fmt.Sprintf("v1/accounts/%s/transactions", url.PathEscape(address))
+	value := url.Values{
+		"limit": {"200"},
+	}
 
 	var txs Page
-	err := c.Get(&txs, path, url.Values{
-		"limit":    {"25"},
-		"token_id": {token},
-		"order_by": {"block_timestamp,desc"},
-	})
+	err := c.Get(&txs, path, value)
 
 	return txs.Txs, err
+}
+
+func (c *Client) getTRC20TxsOfAddress(address, token string) ([]D, error) {
+	path := fmt.Sprintf("v1/accounts/%s/transactions/trc20", address)
+	values := url.Values{
+		"limit":            {"25"},
+		"contract_address": {token},
+	}
+
+	var txs trc20Page
+	err := c.Get(&txs, path, values)
+
+	return txs.Data, err
 }
 
 func (c *Client) GetAccount(address string) (accounts *Account, err error) {

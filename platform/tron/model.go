@@ -4,6 +4,11 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 )
 
+const (
+	TransferContract      ContractType = "TransferContract"
+	TransferAssetContract ContractType = "TransferAssetContract"
+)
+
 type BlockRequest struct {
 	StartNum int64 `json:"startNum"`
 	EndNum   int64 `json:"endNum"`
@@ -35,20 +40,13 @@ type Page struct {
 type Tx struct {
 	ID        string `json:"txID"`
 	BlockTime int64  `json:"block_timestamp"`
-	Data      TxData `json:"raw_data"`
+	RawData   TxData `json:"raw_data"`
 }
 
 type TxData struct {
 	Timestamp int64      `json:"timestamp"`
 	Contracts []Contract `json:"contract"`
 }
-
-type ContractType string
-
-const (
-	TransferContract      ContractType = "TransferContract"
-	TransferAssetContract ContractType = "TransferAssetContract"
-)
 
 type Contract struct {
 	Type      ContractType `json:"type"`
@@ -64,19 +62,44 @@ type TransferValue struct {
 	AssetName    string            `json:"asset_name,omitempty"`
 }
 
+type trc20Page struct {
+	Data []D `json:"data"`
+}
+
+type D struct {
+	From           string `json:"from"`
+	To             string `json:"to"`
+	BlockTimestamp int64  `json:"block_timestamp"`
+	Value          string `json:"value"`
+	Type           string `json:"type"`
+	TransactionId  string `json:"transaction_id"`
+	TokenInfo      DInfo  `json:"token_info"`
+}
+
+type DInfo struct {
+	Address  string `json:"address"`
+	Name     string `json:"name"`
+	Symbol   string `json:"symbol"`
+	Decimals uint   `json:"decimals"`
+}
+
+type ContractType string
+
 type Account struct {
 	Data []AccountData `json:"data"`
 }
 
 type AccountData struct {
-	Balance  uint      `json:"balance"`
-	AssetsV2 []AssetV2 `json:"assetV2"`
-	Votes    []Votes   `json:"votes"`
-	Frozen   []Frozen  `json:"frozen"`
+	Balance  uint                `json:"balance"`
+	AssetsV2 []AssetV2           `json:"assetV2"`
+	Votes    []Votes             `json:"votes"`
+	Frozen   []Frozen            `json:"frozen"`
+	TRC20    []map[string]string `json:"trc20"`
 }
 
 type AssetV2 struct {
-	Key string `json:"key"`
+	Key   string `json:"key"`
+	Value uint64 `json:"value"`
 }
 
 type Votes struct {

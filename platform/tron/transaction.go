@@ -6,10 +6,11 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
+	"strings"
 )
 
 func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
-	Txs, err := p.client.GetTxsOfAddress(address, "")
+	Txs, err := p.client.getTxsOfAddress(address)
 	if err != nil && len(Txs) == 0 {
 		return nil, err
 	}
@@ -32,16 +33,38 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 }
 
 func (p *Platform) GetTokenTxsByAddress(address, token string) (blockatlas.TxPage, error) {
-	tokenTxs, err := p.client.GetTxsOfAddress(address, token)
+	tokenType, err := getTokenType(token)
+	if err != nil {
+		return nil, err
+	}
+
+	switch tokenType {
+	case blockatlas.TokenTypeTRC10:
+		return getTRC10Txs(address, token, p)
+	case blockatlas.TokenTypeTRC20:
+		return getTRC20Txs(address, token, p)
+	default:
+		return make(blockatlas.TxPage, 0), nil
+	}
+}
+
+func getTRC10Txs(address, token string, p *Platform) (blockatlas.TxPage, error) {
+	tokenTxs, err := p.client.GetTxsOfAddress(address)
 	if err != nil {
 		return nil, errors.E(err, "TRON: failed to get token from address", errors.TypePlatformApi,
 			errors.Params{"address": address, "token": token})
 	}
 
 	txs := make(blockatlas.TxPage, 0)
-
 	if len(tokenTxs) == 0 {
 		return txs, nil
+	}
+
+	trc10Txs := make([]Tx, 0)
+	for _, tx := range tokenTxs {
+		if len(tx.RawData.Contracts) > 0 && tx.RawData.Contracts[0].Parameter.Value.AssetName == token {
+			trc10Txs = append(trc10Txs, tx)
+		}
 	}
 
 	info, err := p.client.GetTokenInfo(token)
@@ -50,17 +73,59 @@ func (p *Platform) GetTokenTxsByAddress(address, token string) (blockatlas.TxPag
 			errors.Params{"address": address, "token": token})
 	}
 
-	for _, srcTx := range tokenTxs {
-		tx, err := Normalize(srcTx)
+	for _, trc10Tx := range trc10Txs {
+		normalizedTx, err := Normalize(trc10Tx)
 		if err != nil {
 			logger.Error(err)
 			continue
 		}
-		setTokenMeta(tx, srcTx, info.Data[0])
-		txs = append(txs, *tx)
+		setTokenMeta(normalizedTx, trc10Tx, info.Data[0])
+		txs = append(txs, *normalizedTx)
 	}
 
 	return txs, nil
+}
+
+func getTRC20Txs(address, token string, p *Platform) (blockatlas.TxPage, error) {
+	tokenTxs, err := p.client.getTRC20TxsOfAddress(address, token)
+	if err != nil {
+		return nil, errors.E(err, "TRON: failed to get token from address", errors.TypePlatformApi,
+			errors.Params{"address": address, "token": token})
+	}
+
+	txs := make(blockatlas.TxPage, 0)
+	for _, tx := range tokenTxs {
+		normalizedTx, err := normalizeTrc20Transfer(tx)
+		if err != nil {
+			logger.Error(err)
+			continue
+		}
+		txs = append(txs, *normalizedTx)
+	}
+
+	return txs, nil
+}
+
+func normalizeTrc20Transfer(d D) (*blockatlas.Tx, error) {
+	return &blockatlas.Tx{
+		ID:     d.TransactionId,
+		Coin:   coin.TRX,
+		Date:   d.BlockTimestamp / 1000,
+		From:   d.From,
+		To:     d.TokenInfo.Address,
+		Fee:    "0",                        // TODO get fee
+		Block:  0,                          // TODO get block
+		Status: blockatlas.StatusCompleted, // TODO determine status
+		Meta: blockatlas.TokenTransfer{
+			Name:     d.TokenInfo.Name,
+			Symbol:   d.TokenInfo.Symbol,
+			TokenID:  d.TokenInfo.Address,
+			Decimals: d.TokenInfo.Decimals,
+			Value:    blockatlas.Amount(d.Value),
+			From:     d.From,
+			To:       d.To,
+		},
+	}, nil
 }
 
 func setTokenMeta(tx *blockatlas.Tx, srcTx Tx, tokenInfo AssetInfo) {
@@ -107,8 +172,8 @@ func Normalize(srcTx Tx) (*blockatlas.Tx, error) {
 		Date:   srcTx.BlockTime / 1000,
 		From:   from,
 		To:     to,
-		Fee:    "0", // TODO get fee
-		Block:  0,   // TODO get block
+		Fee:    "0",                        // TODO get fee
+		Block:  0,                          // TODO get block
 		Status: blockatlas.StatusCompleted, // TODO determine status
 		Meta: blockatlas.Transfer{
 			Value:    transfer.Amount,
@@ -116,4 +181,14 @@ func Normalize(srcTx Tx) (*blockatlas.Tx, error) {
 			Decimals: coin.Coins[coin.TRX].Decimals,
 		},
 	}, nil
+}
+
+func getTokenType(token string) (blockatlas.TokenType, error) {
+	if len(token) == 7 {
+		return blockatlas.TokenTypeTRC10, nil
+	}
+	if len(token) == 34 && strings.HasPrefix(token, "T") {
+		return blockatlas.TokenTypeTRC20, nil
+	}
+	return "", errors.E("token not TRC10 or TRC20", errors.Params{"token": token})
 }
