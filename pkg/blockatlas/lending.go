@@ -1,4 +1,4 @@
-package model
+package blockatlas
 
 type (
 	// LendingProvider static info about the lending provider, such as name and asset classes supported.

@@ -41,7 +41,7 @@ type (
 		GetTokenListByAddress(address string) (TokenPage, error)
 	}
 
-	// StakingAPI provides staking information
+	// StakeAPI provides staking information
 	StakeAPI interface {
 		Platform
 		UndelegatedBalance(address string) (string, error)
@@ -63,6 +63,14 @@ type (
 	NamingServiceAPI interface {
 		Platform
 		Lookup(coins []uint64, name string) ([]Resolved, error)
+	}
+
+	// LendingAPI Lending provider interface
+	LendingAPI interface {
+		Name() string
+		GetProviderInfo() (LendingProvider, error)
+		GetCurrentLendingRates(assets []string) (LendingRates, error)
+		GetAccountLendingContracts(req AccountRequest) (*[]AccountLendingContracts, error)
 	}
 
 	Platforms map[string]Platform

@@ -1,6 +1,8 @@
 package api
 
 import (
+	"time"
+
 	"github.com/chenjiandongx/ginprom"
 	"github.com/gin-gonic/gin"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -8,7 +10,6 @@ import (
 	"github.com/trustwallet/blockatlas/api/middleware"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/platform"
-	"time"
 )
 
 func RegisterTransactionsAPI(router gin.IRouter, api blockatlas.Platform) {
@@ -105,4 +106,16 @@ func RegisterDomainAPI(router gin.IRouter) {
 func RegisterBasicAPI(router gin.IRouter) {
 	router.GET("/", endpoint.GetStatus)
 	router.GET("/metrics", ginprom.PromHandler(promhttp.Handler()))
+}
+
+func RegisterLendingAPI(router gin.IRouter) {
+	router.GET("/v1/lending/providers", middleware.CacheMiddleware(time.Hour*10, func(c *gin.Context) {
+		endpoint.ServeProviders(c, platform.LendingAPI)
+	}))
+	router.POST("/v1/lending/rates/:provider", middleware.CacheMiddleware(time.Hour*10, func(c *gin.Context) {
+		endpoint.ServeRates(c, platform.LendingAPI)
+	}))
+	router.POST("/v1/lending/account/:provider", middleware.CacheMiddleware(time.Hour*10, func(c *gin.Context) {
+		endpoint.ServeAccount(c, platform.LendingAPI)
+	}))
 }

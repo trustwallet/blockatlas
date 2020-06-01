@@ -2,9 +2,11 @@ package platform
 
 import (
 	"fmt"
+
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
+	"github.com/trustwallet/blockatlas/platform/compound"
 )
 
 var (
@@ -25,6 +27,10 @@ var (
 
 	// NamingAPIs contain platforms which support naming services
 	NamingAPIs map[uint]blockatlas.NamingServiceAPI
+
+	// LendingAPI contains Lending providers
+	// TODO change to map
+	LendingAPI blockatlas.LendingAPI
 )
 
 func getActivePlatforms(handles []string) []blockatlas.Platform {
@@ -91,4 +97,6 @@ func Init(platformHandles []string) {
 
 	CollectionsAPIs = getCollectionsHandlers()
 	NamingAPIs = getNamingHandlers()
+
+	LendingAPI = compound.Init("https://api.compound.finance/api")
 }

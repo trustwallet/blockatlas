@@ -5,7 +5,6 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/trustwallet/blockatlas/lendingproto/model"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 )
 
@@ -34,10 +33,10 @@ func (p *Provider) Name() string {
 }
 
 // GetProviderInfo return static info about the lending provider, such as name and asset classes supported.
-func (p *Provider) GetProviderInfo() (model.LendingProvider, error) {
-	return model.LendingProvider{
+func (p *Provider) GetProviderInfo() (blockatlas.LendingProvider, error) {
+	return blockatlas.LendingProvider{
 		ID: "compound",
-		Info: model.LendingProviderInfo{
+		Info: blockatlas.LendingProviderInfo{
 			ID:          _providerName,
 			Description: "Compound Decentralized Finance Protocol",
 			Image:       "https://compound.finance/images/compound-logo.svg",
@@ -49,7 +48,7 @@ func (p *Provider) GetProviderInfo() (model.LendingProvider, error) {
 
 // GetCurrentLendingRates return current estimated yield rates for assets.  Rates are annualized.  Rates vary over time.
 // assets: List asset IDs to consider, or empty for all
-func (p *Provider) GetCurrentLendingRates(assets []string) (model.LendingRates, error) {
+func (p *Provider) GetCurrentLendingRates(assets []string) (blockatlas.LendingRates, error) {
 	if len(assets) == 0 {
 		// empty filter, means any; get all available assets
 		tokens := p.getTokensCached()
@@ -62,14 +61,14 @@ func (p *Provider) GetCurrentLendingRates(assets []string) (model.LendingRates, 
 
 // GetAccountLendingContracts return current contract details for a given address.
 // req.Assets: List asset IDs to consider, or empty for all
-func (p *Provider) GetAccountLendingContracts(req model.AccountRequest) (*[]model.AccountLendingContracts, error) {
+func (p *Provider) GetAccountLendingContracts(req blockatlas.AccountRequest) (*[]blockatlas.AccountLendingContracts, error) {
 	accounts, err := p.client.GetAccounts(req.Addresses)
 	if err != nil {
 		return nil, err
 	}
-	ret := []model.AccountLendingContracts{}
+	ret := []blockatlas.AccountLendingContracts{}
 	for _, acc := range accounts {
-		ret1 := model.AccountLendingContracts{Address: acc.Address, Contracts: []model.LendingContract{}}
+		ret1 := blockatlas.AccountLendingContracts{Address: acc.Address, Contracts: []blockatlas.LendingContract{}}
 		for _, t := range acc.Tokens {
 			asset := t.Symbol
 			if len(req.Assets) > 0 && !sliceContains(asset, req.Assets) {
@@ -80,7 +79,7 @@ func (p *Provider) GetAccountLendingContracts(req model.AccountRequest) (*[]mode
 			if assetInfo, err := p.getCurrentLendingRatesForAsset(asset); err == nil {
 				apr = assetInfo.MaxAPR
 			}
-			ret1.Contracts = append(ret1.Contracts, model.LendingContract{
+			ret1.Contracts = append(ret1.Contracts, blockatlas.LendingContract{
 				Asset: t.Symbol,
 				Term:  0,
 				// startAmount: not available in API, derive as currentAmount - interest earn
@@ -90,7 +89,7 @@ func (p *Provider) GetAccountLendingContracts(req model.AccountRequest) (*[]mode
 				CurrentAPR:        apr,
 				// startTime: no info
 				StartTime:   0, // no info
-				CurrentTime: model.Time(time.Now().Unix()),
+				CurrentTime: blockatlas.Time(time.Now().Unix()),
 				EndTime:     0, // no info
 			})
 		}
@@ -99,17 +98,17 @@ func (p *Provider) GetAccountLendingContracts(req model.AccountRequest) (*[]mode
 	return &ret, nil
 }
 
-func (p *Provider) getTokensNormalized() []model.AssetClass {
+func (p *Provider) getTokensNormalized() []blockatlas.AssetClass {
 	// In compound all assets are updated with each ETH block, about each 15 seconds.  There are no predefined terms.
 	tokens := p.getTokensCached()
-	res := []model.AssetClass{}
+	res := []blockatlas.AssetClass{}
 	for s, t := range tokens {
-		res = append(res, model.AssetClass{
+		res = append(res, blockatlas.AssetClass{
 			Symbol:         s,
 			Chain:          "ETH",
 			Description:    t.Name,
 			YieldFrequency: 15,
-			Terms:          []model.Term{},
+			Terms:          []blockatlas.Term{},
 		})
 	}
 	return res
@@ -137,12 +136,12 @@ func (p *Provider) getTokensCached() map[string]CToken {
 	return _cachedTokens
 }
 
-func (p *Provider) getCurrentLendingRatesForAssets(assets []string) ([]model.LendingAssetRates, error) {
-	ret := []model.LendingAssetRates{}
+func (p *Provider) getCurrentLendingRatesForAssets(assets []string) ([]blockatlas.LendingAssetRates, error) {
+	ret := []blockatlas.LendingAssetRates{}
 	tokens := p.getTokensCached()
 	// group by asset (symbol)
 	currSymbol := ""
-	var ret1 *model.LendingAssetRates = nil
+	var ret1 *blockatlas.LendingAssetRates = nil
 	for _, t := range tokens {
 		symbol := t.UnderlyingSymbol
 		if !sliceContains(symbol, assets) {
@@ -158,10 +157,10 @@ func (p *Provider) getCurrentLendingRatesForAssets(assets []string) ([]model.Len
 		if len(currSymbol) == 0 {
 			// start new
 			currSymbol = symbol
-			ret1 = &model.LendingAssetRates{Asset: currSymbol, TermRates: []model.LendingTermAPR{}, MaxAPR: 0}
+			ret1 = &blockatlas.LendingAssetRates{Asset: currSymbol, TermRates: []blockatlas.LendingTermAPR{}, MaxAPR: 0}
 		}
 		apr := aprOfToken(&t)
-		ret1.TermRates = append(ret1.TermRates, model.LendingTermAPR{Term: 0.00017, APR: apr})
+		ret1.TermRates = append(ret1.TermRates, blockatlas.LendingTermAPR{Term: 0.00017, APR: apr})
 	}
 	if ret1 != nil {
 		// close previous
@@ -173,20 +172,20 @@ func (p *Provider) getCurrentLendingRatesForAssets(assets []string) ([]model.Len
 	return ret, nil
 }
 
-func (p *Provider) getCurrentLendingRatesForAsset(asset string) (model.LendingAssetRates, error) {
-	ret := model.LendingAssetRates{Asset: asset, TermRates: []model.LendingTermAPR{}, MaxAPR: 0}
+func (p *Provider) getCurrentLendingRatesForAsset(asset string) (blockatlas.LendingAssetRates, error) {
+	ret := blockatlas.LendingAssetRates{Asset: asset, TermRates: []blockatlas.LendingTermAPR{}, MaxAPR: 0}
 	tokens := p.getTokensCached()
 	token, ok := tokens[asset]
 	if !ok {
 		return ret, fmt.Errorf("Token not found %v", asset)
 	}
 	apr := aprOfToken(&token)
-	ret.TermRates = append(ret.TermRates, model.LendingTermAPR{Term: 0.00017, APR: apr})
+	ret.TermRates = append(ret.TermRates, blockatlas.LendingTermAPR{Term: 0.00017, APR: apr})
 	enrichAssetRatesWithMax(&ret)
 	return ret, nil
 }
 
-func enrichAssetRatesWithMax(rates *model.LendingAssetRates) {
+func enrichAssetRatesWithMax(rates *blockatlas.LendingAssetRates) {
 	var max float64 = 0
 	for _, r := range rates.TermRates {
 		if r.APR > max {
