@@ -60,7 +60,7 @@ func TestGetAccount(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			res, err := GetAccount(tt.provider, tt.req)
+			res, err := GetAccounts(tt.provider, tt.req)
 			if err != nil {
 				t.Errorf("Unexpected error %v %v", tt.name, err)
 			}

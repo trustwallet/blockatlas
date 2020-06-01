@@ -6,13 +6,24 @@ import (
 	"time"
 
 	"github.com/trustwallet/blockatlas/lendingproto/model"
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 )
 
 // Compound Lending Provider
 // Compound does not use fixed terms, only open-ended, but structure is done to support different predefined terms.
 
+type Provider struct {
+	client Client
+}
+
+func Init(api string) *Provider {
+	return &Provider{
+		client: Client{blockatlas.InitClient(api)},
+	}
+}
+
 // GetProviderInfo return static info about the lending provider, such as name and asset classes supported.
-func GetProviderInfo() (model.LendingProvider, error) {
+func (p *Provider) GetProviderInfo() (model.LendingProvider, error) {
 	// Note: should be cached
 	return model.LendingProvider{
 		ID: "compound",
@@ -22,131 +33,196 @@ func GetProviderInfo() (model.LendingProvider, error) {
 			Image:       "https://compound.finance/images/compound-logo.svg",
 			Website:     "https://compound.finance",
 		},
-		Assets: getTokensNormalized(),
+		Assets: p.getTokensNormalized(),
 	}, nil
 }
 
 // GetCurrentLendingRates return current estimated yield rates for assets.  Rates are annualized.  Rates vary over time.
 // assets: List asset IDs to consider, or empty for all
 // Note: can use the CTokenRequest compound API
-func GetCurrentLendingRates(assets []string) (model.LendingRates, error) {
-	res := model.LendingRates{}
+func (p *Provider) GetCurrentLendingRates(assets []string) (model.LendingRates, error) {
 	if len(assets) == 0 {
-		// empty filter, get all available assets
-		tokens := getTokens()
+		// empty filter, means any; get all available assets
+		tokens := p.getTokensCached()
 		for t := range tokens {
 			assets = append(assets, t)
 		}
 	}
-	for _, asset := range assets {
-		if rates, err := getCurrentLendingRatesForAsset(asset); err == nil {
-			res = append(res, rates)
-		}
-	}
-	return res, nil
+	return p.getCurrentLendingRatesForAssets(assets)
 }
 
 // GetAccountLendingContracts return current contract details for a given address.
 // req.Assets: List asset IDs to consider, or empty for all
-func GetAccountLendingContracts(req model.AccountRequest) (*[]model.AccountLendingContracts, error) {
-	res := []model.AccountLendingContracts{}
-	if len(req.Addresses) == 0 {
-		return nil, fmt.Errorf("Missing addresses")
+func (p *Provider) GetAccountLendingContracts(req model.AccountRequest) (*[]model.AccountLendingContracts, error) {
+	accounts, err := p.client.GetAccounts(req.Addresses)
+	if err != nil {
+		return nil, nil
 	}
-	for _, address := range req.Addresses {
-		res1 := model.AccountLendingContracts{Address: address, Contracts: []model.LendingContract{}}
-		contracts, _ := CMockAccount(CMAccountRequest{[]string{address}})
-		for _, sc := range contracts.Account {
-			for _, t := range sc.Tokens {
-				asset := t.Symbol
-				if !matchAsset(asset, req.Assets) {
-					continue
-				}
-				// APR: no info, take general current APR
-				var apr float64 = 0
-				if assetInfo, err := getCurrentLendingRatesForAsset(asset); err == nil {
-					apr = assetInfo.MaxAPR
-				}
-				res1.Contracts = append(res1.Contracts, model.LendingContract{
-					Asset: t.Symbol,
-					Term:  0,
-					// startAmount: not available in API, derive as currentAmount - interest earn
-					StartAmount:       strconv.FormatFloat(t.SupplyBalanceUnderlying-t.SupplyInterest, 'f', 10, 64),
-					CurrentAmount:     strconv.FormatFloat(t.SupplyBalanceUnderlying, 'f', 10, 64),
-					EndAmountEstimate: strconv.FormatFloat(t.SupplyBalanceUnderlying, 'f', 10, 64),
-					CurrentAPR:        apr,
-					// startTime: no info
-					StartTime:   0, // no info
-					CurrentTime: model.Time(time.Now().Unix()),
-					EndTime:     0, // no info
-				})
+	ret := []model.AccountLendingContracts{}
+	for _, acc := range accounts {
+		ret1 := model.AccountLendingContracts{Address: acc.Address, Contracts: []model.LendingContract{}}
+		for _, t := range acc.Tokens {
+			asset := t.Symbol
+			if len(req.Assets) > 0 && !sliceContains(asset, req.Assets) {
+				continue
 			}
+			// APR: no info, take general current APR
+			var apr float64 = 0
+			if assetInfo, err := p.getCurrentLendingRatesForAsset(asset); err == nil {
+				apr = assetInfo.MaxAPR
+			}
+			ret1.Contracts = append(ret1.Contracts, model.LendingContract{
+				Asset: t.Symbol,
+				Term:  0,
+				// startAmount: not available in API, derive as currentAmount - interest earn
+				StartAmount:       strconv.FormatFloat(t.SupplyBalanceUnderlying-t.SupplyInterest, 'f', 10, 64),
+				CurrentAmount:     strconv.FormatFloat(t.SupplyBalanceUnderlying, 'f', 10, 64),
+				EndAmountEstimate: strconv.FormatFloat(t.SupplyBalanceUnderlying, 'f', 10, 64),
+				CurrentAPR:        apr,
+				// startTime: no info
+				StartTime:   0, // no info
+				CurrentTime: model.Time(time.Now().Unix()),
+				EndTime:     0, // no info
+			})
 		}
-		res = append(res, res1)
+		ret = append(ret, ret1)
 	}
-	return &res, nil
+	return &ret, nil
 }
 
-type tokenInfo struct {
-	address string
-	name    string
-}
-
-func getTokensNormalized() []model.AssetClass {
+func (p *Provider) getTokensNormalized() []model.AssetClass {
 	// In compound all assets are updated with each ETH block, about each 15 seconds.  There are no predefined terms.
-	tokens := getTokens()
+	tokens := p.getTokensCached()
 	res := []model.AssetClass{}
 	for s, t := range tokens {
-		res = append(res, model.AssetClass{Symbol: s, Chain: "ETH", Description: t.name, YieldFrequency: 15, Terms: []model.Term{}})
+		res = append(res, model.AssetClass{
+			Symbol:         s,
+			Chain:          "ETH",
+			Description:    t.Name,
+			YieldFrequency: 15,
+			Terms:          []model.Term{},
+		})
 	}
 	return res
 }
 
+var (
+	_cachedTokens    map[string]CToken = make(map[string]CToken, 30)
+	_cachedTokenTime time.Time
+)
+
 // Returns a info on tokens, map by symbol
-// Note: this should be cached
-func getTokens() map[string]tokenInfo {
-	res := make(map[string]tokenInfo)
-	tokens, err := CMockCToken([]string{})
+// Cached for few seconds
+func (p *Provider) getTokensCached() map[string]CToken {
+	now := time.Now()
+	if now.Sub(_cachedTokenTime) < 30000 && len(_cachedTokens) > 0 {
+		// cached and recent
+		return _cachedTokens
+	}
+	// rertieve and cache
+	_cachedTokens = make(map[string]CToken, 30)
+	res, err := p.client.GetTokens([]string{})
+	now = time.Now()
 	if err != nil {
-		return res
+		return _cachedTokens
 	}
-	for _, t := range tokens.CToken {
-		res[t.UnderlyingSymbol] = tokenInfo{t.TokenAddress, t.Name}
+	for _, t := range res.CToken {
+		_cachedTokens[t.UnderlyingSymbol] = t
 	}
-	return res
+	_cachedTokenTime = now
+	return _cachedTokens
+}
+
+/*
+func (p *Provider) getTokens() map[string]tokenInfo {
+	ret := make(map[string]tokenInfo)
+	res, err := p.client.GetTokens([]string{})
+	if err != nil {
+		return ret
+	}
+	for _, t := range res.CToken {
+		ret[t.UnderlyingSymbol] = tokenInfo{t.TokenAddress, t.Name}
+	}
+	return ret
 }
 
 // Note: should work from cached data
-func addressOfToken(symbol string) (string, bool) {
-	tokens := getTokens()
+func (p *Provider) addressOfToken(symbol string) (string, bool) {
+	tokens := p.getTokens()
 	tokenInfo, ok := tokens[symbol]
 	if !ok {
 		return "", false
 	}
 	return tokenInfo.address, true
 }
+*/
 
-func getCurrentLendingRatesForAsset(asset string) (model.LendingAssetRates, error) {
-	res := model.LendingAssetRates{Asset: asset, TermRates: []model.LendingTermAPR{}, MaxAPR: 0}
-	address, ok := addressOfToken(asset)
-	if !ok {
-		return res, fmt.Errorf("Token not found %v", asset)
-	}
-	tokens, err := CMockCToken([]string{address})
-	if err != nil {
-		return res, fmt.Errorf("Token not found %v", asset)
-	}
-	for _, t := range tokens.CToken {
-		apr, err := strconv.ParseFloat(t.SupplyRate, 64)
+func (p *Provider) getCurrentLendingRatesForAssets(assets []string) ([]model.LendingAssetRates, error) {
+	ret := []model.LendingAssetRates{}
+	tokens := p.getTokensCached()
+	// group by asset (symbol)
+	currSymbol := ""
+	var ret1 *model.LendingAssetRates = nil
+	for _, t := range tokens {
+		symbol := t.UnderlyingSymbol
+		if !sliceContains(symbol, assets) {
+			continue
+		}
+		if len(currSymbol) > 0 && currSymbol != symbol && ret1 != nil {
+			// close previous
+			enrichAssetRatesWithMax(ret1)
+			ret = append(ret, *ret1)
+			ret1 = nil
+			currSymbol = ""
+		}
+		if len(currSymbol) == 0 {
+			// start new
+			currSymbol = symbol
+			ret1 = &model.LendingAssetRates{Asset: currSymbol, TermRates: []model.LendingTermAPR{}, MaxAPR: 0}
+		}
+		apr, err := strconv.ParseFloat(t.SupplyRate.Value, 64)
 		if err != nil {
 			apr = 0
 		} else {
 			apr = 100.0 * apr
 		}
-		res.TermRates = append(res.TermRates, model.LendingTermAPR{Term: 0.00017, APR: apr})
+		ret1.TermRates = append(ret1.TermRates, model.LendingTermAPR{Term: 0.00017, APR: apr})
 	}
-	enrichAssetRatesWithMax(&res)
-	return res, nil
+	if ret1 != nil {
+		// close previous
+		enrichAssetRatesWithMax(ret1)
+		ret = append(ret, *ret1)
+		ret1 = nil
+		currSymbol = ""
+	}
+	return ret, nil
+}
+
+func sliceContains(elem string, slice []string) bool {
+	for _, e := range slice {
+		if e == elem {
+			return true
+		}
+	}
+	return false
+}
+
+func (p *Provider) getCurrentLendingRatesForAsset(asset string) (model.LendingAssetRates, error) {
+	ret := model.LendingAssetRates{Asset: asset, TermRates: []model.LendingTermAPR{}, MaxAPR: 0}
+	tokens := p.getTokensCached()
+	token, ok := tokens[asset]
+	if !ok {
+		return ret, fmt.Errorf("Token not found %v", asset)
+	}
+	apr, err := strconv.ParseFloat(token.SupplyRate.Value, 64)
+	if err != nil {
+		apr = 0
+	} else {
+		apr = 100.0 * apr
+	}
+	ret.TermRates = append(ret.TermRates, model.LendingTermAPR{Term: 0.00017, APR: apr})
+	enrichAssetRatesWithMax(&ret)
+	return ret, nil
 }
 
 func enrichAssetRatesWithMax(rates *model.LendingAssetRates) {
@@ -157,16 +233,4 @@ func enrichAssetRatesWithMax(rates *model.LendingAssetRates) {
 		}
 	}
 	rates.MaxAPR = max
-}
-
-func matchAsset(asset string, assets []string) bool {
-	if len(assets) == 0 {
-		return true
-	}
-	for _, a := range assets {
-		if asset == a {
-			return true
-		}
-	}
-	return false
 }

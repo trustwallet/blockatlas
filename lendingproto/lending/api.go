@@ -15,8 +15,12 @@ import (
 // Lending API
 // As currently only Compuond is planned, API is not made entirely generic, but prepared for later generalization.
 
+var compoundProvider *compound.Provider
+
 // Init Setup HTTP API
 func Init(endpoint string) error {
+	compoundProvider = compound.Init("https://api.compound.finance/api")
+
 	r := gin.Default()
 
 	r.GET("/v1/lending/providers", serveProviders)
@@ -77,7 +81,7 @@ func serveAccount(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Parsing: " + err.Error()})
 		return
 	}
-	p, err := GetAccount(provider, req)
+	p, err := GetAccounts(provider, req)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -90,7 +94,7 @@ var compoundProviderName string = "compound"
 // GetProviders return provider info list
 func GetProviders() (*[]model.LendingProvider, error) {
 	// we have one provider
-	provCompound, err := compound.GetProviderInfo()
+	provCompound, err := compoundProvider.GetProviderInfo()
 	if err != nil {
 		return nil, err
 	}
@@ -103,18 +107,18 @@ func GetRates(provider string, req model.RatesRequest) (*model.RatesResponse, er
 	if provider != compoundProviderName {
 		return nil, fmt.Errorf("Unknown provider %v", provider)
 	}
-	rates, err := compound.GetCurrentLendingRates(req.Assets)
+	rates, err := compoundProvider.GetCurrentLendingRates(req.Assets)
 	if err != nil {
 		return nil, err
 	}
 	return &model.RatesResponse{Provider: provider, Rates: rates}, nil
 }
 
-// GetAccount return account contract
-func GetAccount(provider string, req model.AccountRequest) (*[]model.AccountLendingContracts, error) {
+// GetAccounts return account contract
+func GetAccounts(provider string, req model.AccountRequest) (*[]model.AccountLendingContracts, error) {
 	// we have one provider
 	if provider != compoundProviderName {
 		return nil, fmt.Errorf("Unknown provider %v", provider)
 	}
-	return compound.GetAccountLendingContracts(req)
+	return compoundProvider.GetAccountLendingContracts(req)
 }
