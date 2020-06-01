@@ -69,7 +69,7 @@ type (
 	LendingAPI interface {
 		Name() string
 		GetProviderInfo() (LendingProvider, error)
-		GetCurrentLendingRates(assets []string) (LendingRates, error)
+		GetCurrentLendingRates(assets []string) ([]LendingAssetRates, error)
 		GetAccountLendingContracts(req AccountRequest) (*[]AccountLendingContracts, error)
 	}
 

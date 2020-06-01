@@ -35,12 +35,6 @@ type (
 		Assets []string `json:"assets"`
 	}
 
-	// RatesResponse Rates API response
-	RatesResponse struct {
-		Provider string       `json:"provider"`
-		Rates    LendingRates `json:"rates"`
-	}
-
 	// LendingTermAPR Asset yield APR, for an asset for a term.  E.g. {30, 1.45}
 	LendingTermAPR struct {
 		Term          `json:"term"`
@@ -55,9 +49,6 @@ type (
 		// MaxAPR the rate of the term with the highest rate
 		MaxAPR float64 `json:"max_apr"`
 	}
-
-	// LendingRates List of yield rates, for multiple assets.
-	LendingRates []LendingAssetRates
 
 	// AccountRequest Account API request
 	AccountRequest struct {

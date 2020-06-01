@@ -48,7 +48,7 @@ func (p *Provider) GetProviderInfo() (blockatlas.LendingProvider, error) {
 
 // GetCurrentLendingRates return current estimated yield rates for assets.  Rates are annualized.  Rates vary over time.
 // assets: List asset IDs to consider, or empty for all
-func (p *Provider) GetCurrentLendingRates(assets []string) (blockatlas.LendingRates, error) {
+func (p *Provider) GetCurrentLendingRates(assets []string) ([]blockatlas.LendingAssetRates, error) {
 	if len(assets) == 0 {
 		// empty filter, means any; get all available assets
 		tokens := p.getTokensCached()

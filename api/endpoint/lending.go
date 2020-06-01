@@ -8,6 +8,13 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 )
 
+// @Summary Get Lending Providers Info.
+// @ID lending_providers
+// @Description Get lending providers, their info, and supported assets.
+// @Produce json
+// @Tags Lending
+// @Success 200 {object} blockatlas.DocsResponse Docs: []blockatlas.LendingProvider
+// @Router /v1/lending/providers [get]
 func ServeProviders(c *gin.Context, apis map[string]blockatlas.LendingAPI) {
 	p, err := getProviders(apis)
 	if err != nil {
@@ -17,6 +24,16 @@ func ServeProviders(c *gin.Context, apis map[string]blockatlas.LendingAPI) {
 	c.JSON(http.StatusOK, blockatlas.DocsResponse{Docs: &p})
 }
 
+// @Summary Get Lending Rates.
+// @ID lending_providers
+// @Description Get lending rates, for one or more assets, of a provider.
+// @Accept json
+// @Produce json
+// @Tags Lending
+// @Param provider path string true "Lending provider name"
+// @Param request body blockatlas.RatesRequest true "Request, containing one or more assets (token symbols)"
+// @Success 200 {object} blockatlas.DocsResponse Docs: []blockatlas.LendingAssetRates
+// @Router /v1/lending/rates/:provider [post]
 func ServeRates(c *gin.Context, apis map[string]blockatlas.LendingAPI) {
 	provider, ok := c.Params.Get("provider")
 	if !ok {
@@ -34,9 +51,19 @@ func ServeRates(c *gin.Context, apis map[string]blockatlas.LendingAPI) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, blockatlas.DocsResponse{Docs: &p})
+	c.JSON(http.StatusOK, blockatlas.DocsResponse{Docs: p})
 }
 
+// @Summary Get Account Contracts.
+// @ID lending_providers
+// @Description Get lending constracts, for one or more adresses, one or more assets (at one provider).
+// @Accept json
+// @Produce json
+// @Tags Lending
+// @Param provider path string true "Lending provider name"
+// @Param request body blockatlas.RatesRequest true "Request, containing one or more assets (token symbols)"
+// @Success 200 {object} blockatlas.DocsResponse Docs: []blockatlas.AccountLendingContracts
+// @Router /v1/lending/account/:provider [post]
 func ServeAccount(c *gin.Context, apis map[string]blockatlas.LendingAPI) {
 	provider, ok := c.Params.Get("provider")
 	if !ok {
@@ -71,16 +98,12 @@ func getProviders(apis map[string]blockatlas.LendingAPI) (*[]blockatlas.LendingP
 }
 
 // GetRates return rates info
-func getRates(provider string, req blockatlas.RatesRequest, apis map[string]blockatlas.LendingAPI) (*blockatlas.RatesResponse, error) {
+func getRates(provider string, req blockatlas.RatesRequest, apis map[string]blockatlas.LendingAPI) ([]blockatlas.LendingAssetRates, error) {
 	api, ok := apis[provider]
 	if !ok {
 		return nil, fmt.Errorf("Unknown provider %v", provider)
 	}
-	rates, err := api.GetCurrentLendingRates(req.Assets)
-	if err != nil {
-		return nil, err
-	}
-	return &blockatlas.RatesResponse{Provider: provider, Rates: rates}, nil
+	return api.GetCurrentLendingRates(req.Assets)
 }
 
 // GetAccounts return account contract
