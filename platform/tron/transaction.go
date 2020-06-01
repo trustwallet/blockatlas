@@ -49,7 +49,7 @@ func (p *Platform) GetTokenTxsByAddress(address, token string) (blockatlas.TxPag
 }
 
 func getTRC10Txs(address, token string, p *Platform) (blockatlas.TxPage, error) {
-	tokenTxs, err := p.client.GetTxsOfAddress(address)
+	tokenTxs, err := p.client.getTxsOfAddress(address)
 	if err != nil {
 		return nil, errors.E(err, "TRON: failed to get token from address", errors.TypePlatformApi,
 			errors.Params{"address": address, "token": token})
@@ -95,12 +95,14 @@ func getTRC20Txs(address, token string, p *Platform) (blockatlas.TxPage, error) 
 
 	txPage := make(blockatlas.TxPage, 0)
 	for _, t := range txs {
-		normalizedTx, err := normalizeTrc20Transfer(t)
-		if err != nil {
-			logger.Error(err)
-			continue
+		if t.Type == Transfer {
+			normalizedTx, err := normalizeTrc20Transfer(t)
+			if err != nil {
+				logger.Error(err)
+				continue
+			}
+			txPage = append(txPage, *normalizedTx)
 		}
-		txPage = append(txPage, *normalizedTx)
 	}
 
 	return txPage, nil

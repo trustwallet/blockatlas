@@ -4,7 +4,10 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 )
 
+type ContractType string
+
 const (
+	Transfer              ContractType = "Transfer"
 	TransferContract      ContractType = "TransferContract"
 	TransferAssetContract ContractType = "TransferAssetContract"
 )
@@ -67,13 +70,13 @@ type trc20Page struct {
 }
 
 type D struct {
-	From           string `json:"from"`
-	To             string `json:"to"`
-	BlockTimestamp int64  `json:"block_timestamp"`
-	Value          string `json:"value"`
-	Type           string `json:"type"`
-	TransactionId  string `json:"transaction_id"`
-	TokenInfo      DInfo  `json:"token_info"`
+	From           string       `json:"from"`
+	To             string       `json:"to"`
+	BlockTimestamp int64        `json:"block_timestamp"`
+	Value          string       `json:"value"`
+	Type           ContractType `json:"type"`
+	TransactionId  string       `json:"transaction_id"`
+	TokenInfo      DInfo        `json:"token_info"`
 }
 
 type DInfo struct {
@@ -82,8 +85,6 @@ type DInfo struct {
 	Symbol   string `json:"symbol"`
 	Decimals uint   `json:"decimals"`
 }
-
-type ContractType string
 
 type Account struct {
 	Data []AccountData `json:"data"`
