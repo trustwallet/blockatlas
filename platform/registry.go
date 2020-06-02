@@ -6,7 +6,7 @@ import (
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
-	"github.com/trustwallet/blockatlas/platform/compound"
+	"github.com/trustwallet/blockatlas/platform/ethereum/compound"
 )
 
 var (
