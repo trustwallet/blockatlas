@@ -7,9 +7,10 @@ import (
 type ContractType string
 
 const (
-	Transfer              ContractType = "Transfer"
-	TransferContract      ContractType = "TransferContract"
-	TransferAssetContract ContractType = "TransferAssetContract"
+	Transfer              ContractType = "Transfer"              // TRX20 transfer
+	TransferContract      ContractType = "TransferContract"      // TRX transfer
+	TransferAssetContract ContractType = "TransferAssetContract" // TRC10 transfer
+	FreezeBalanceContract ContractType = "FreezeBalanceContract" // Stake TRX
 )
 
 type BlockRequest struct {

@@ -17,12 +17,11 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 
 	txPage := make(blockatlas.TxPage, 0)
 	for _, t := range txs {
-		normalizedTx, err := Normalize(t)
-		if err != nil {
-			continue
-		}
-
 		if len(t.RawData.Contracts) > 0 && t.RawData.Contracts[0].Type == TransferContract {
+			normalizedTx, err := normalizeTransfer(t)
+			if err != nil {
+				continue
+			}
 			txPage = append(txPage, *normalizedTx)
 		} else {
 			continue
@@ -67,19 +66,19 @@ func getTRC10Txs(address, token string, p *Platform) (blockatlas.TxPage, error) 
 		}
 	}
 
-	info, err := p.client.getTokenInfo(token)
-	if err != nil || len(info.Data) == 0 {
+	tInfo, err := p.client.getTokenInfo(token)
+	if err != nil || len(tInfo.Data) == 0 {
 		return nil, errors.E(err, "TRON: failed to get token info", errors.TypePlatformApi,
 			errors.Params{"address": address, "token": token})
 	}
 
 	for _, trc10Tx := range trc10Txs {
-		normalizedTx, err := Normalize(trc10Tx)
+		normalizedTx, err := normalizeTransfer(trc10Tx)
 		if err != nil {
 			logger.Error(err)
 			continue
 		}
-		setTokenMeta(normalizedTx, trc10Tx, info.Data[0])
+		setTokenTransferMeta(normalizedTx, trc10Tx, tInfo.Data[0])
 		txs = append(txs, *normalizedTx)
 	}
 
@@ -130,42 +129,37 @@ func normalizeTrc20Transfer(d D) (*blockatlas.Tx, error) {
 	}, nil
 }
 
-func setTokenMeta(tx *blockatlas.Tx, srcTx Tx, tokenInfo AssetInfo) {
-	transfer := srcTx.RawData.Contracts[0].Parameter.Value
+func setTokenTransferMeta(tx *blockatlas.Tx, srcTx Tx, tokenInfo AssetInfo) {
 	tx.Meta = blockatlas.TokenTransfer{
 		Name:     tokenInfo.Name,
 		Symbol:   tokenInfo.Symbol,
 		TokenID:  tokenInfo.ID,
 		Decimals: tokenInfo.Decimals,
-		Value:    transfer.Amount,
+		Value:    srcTx.RawData.Contracts[0].Parameter.Value.Amount,
 		From:     tx.From,
 		To:       tx.To,
 	}
 }
 
 /// Normalize converts a Tron transaction into the generic model
-func Normalize(srcTx Tx) (*blockatlas.Tx, error) {
+func normalizeTransfer(srcTx Tx) (*blockatlas.Tx, error) {
 	if len(srcTx.RawData.Contracts) == 0 {
-		return nil, errors.E("TRON: transfer without contract", errors.TypePlatformApi,
-			errors.Params{"tx": srcTx})
+		return nil, errors.E("TRON: transfer without contract", errors.TypePlatformApi, errors.Params{"tx": srcTx})
 	}
 
 	contract := srcTx.RawData.Contracts[0]
 	if contract.Type != TransferContract && contract.Type != TransferAssetContract {
-		return nil, errors.E("TRON: invalid contract transfer", errors.TypePlatformApi,
-			errors.Params{"tx": srcTx, "type": contract.Type})
+		return nil, errors.E("TRON: invalid contract transfer", errors.TypePlatformApi, errors.Params{"tx": srcTx, "type": contract.Type})
 	}
 
 	transfer := contract.Parameter.Value
 	from, err := address.HexToBase58(transfer.OwnerAddress)
 	if err != nil {
-		return nil, errors.E(err, "TRON: failed to get from address", errors.TypePlatformApi,
-			errors.Params{"tx": srcTx})
+		return nil, errors.E(err, "TRON: failed to get from address", errors.TypePlatformApi, errors.Params{"tx": srcTx})
 	}
 	to, err := address.HexToBase58(transfer.ToAddress)
 	if err != nil {
-		return nil, errors.E(err, "TRON: failed to get to address", errors.TypePlatformApi,
-			errors.Params{"tx": srcTx})
+		return nil, errors.E(err, "TRON: failed to get to address", errors.TypePlatformApi, errors.Params{"tx": srcTx})
 	}
 
 	return &blockatlas.Tx{
