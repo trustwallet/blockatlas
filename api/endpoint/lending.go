@@ -15,7 +15,7 @@ import (
 // @Tags Lending
 // @Success 200 {object} blockatlas.DocsResponse Docs: []blockatlas.LendingProvider
 // @Router /v1/lending/providers [get]
-func ServeProviders(c *gin.Context, apis map[string]blockatlas.LendingAPI) {
+func HandleLendingProviders(c *gin.Context, apis map[string]blockatlas.LendingAPI) {
 	p, err := getProviders(apis)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -34,7 +34,7 @@ func ServeProviders(c *gin.Context, apis map[string]blockatlas.LendingAPI) {
 // @Param request body blockatlas.RatesRequest true "Request, containing one or more assets (token symbols)"
 // @Success 200 {object} blockatlas.DocsResponse Docs: []blockatlas.LendingAssetRates
 // @Router /v1/lending/rates/:provider [post]
-func ServeRates(c *gin.Context, apis map[string]blockatlas.LendingAPI) {
+func HandleLendingRates(c *gin.Context, apis map[string]blockatlas.LendingAPI) {
 	provider, ok := c.Params.Get("provider")
 	if !ok {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Fatal: missing provider"})
@@ -64,7 +64,7 @@ func ServeRates(c *gin.Context, apis map[string]blockatlas.LendingAPI) {
 // @Param request body blockatlas.RatesRequest true "Request, containing one or more assets (token symbols)"
 // @Success 200 {object} blockatlas.DocsResponse Docs: []blockatlas.AccountLendingContracts
 // @Router /v1/lending/account/:provider [post]
-func ServeAccount(c *gin.Context, apis map[string]blockatlas.LendingAPI) {
+func HandleLendingAccount(c *gin.Context, apis map[string]blockatlas.LendingAPI) {
 	provider, ok := c.Params.Get("provider")
 	if !ok {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Fatal: missing provider"})
