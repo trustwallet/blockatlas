@@ -67,7 +67,7 @@ func getTRC10Txs(address, token string, p *Platform) (blockatlas.TxPage, error) 
 		}
 	}
 
-	info, err := p.client.GetTokenInfo(token)
+	info, err := p.client.getTokenInfo(token)
 	if err != nil || len(info.Data) == 0 {
 		return nil, errors.E(err, "TRON: failed to get token info", errors.TypePlatformApi,
 			errors.Params{"address": address, "token": token})
@@ -87,7 +87,7 @@ func getTRC10Txs(address, token string, p *Platform) (blockatlas.TxPage, error) 
 }
 
 func getTRC20Txs(address, token string, p *Platform) (blockatlas.TxPage, error) {
-	txs, err := p.client.getTRC20TxsOfAddress(address, token)
+	txs, err := p.client.getTRC20TxsOfAddress(address, token, blockatlas.TxPerPage)
 	if err != nil {
 		return nil, errors.E(err, "TRON: failed to get token from address", errors.TypePlatformApi,
 			errors.Params{"address": address, "token": token})

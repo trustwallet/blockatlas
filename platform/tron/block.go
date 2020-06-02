@@ -56,7 +56,7 @@ func (p *Platform) NormalizeBlockChannel(srcTx Tx, txChan chan blockatlas.Tx) {
 	if len(transfer.AssetName) > 0 {
 		assetName, err := hex.DecodeString(transfer.AssetName[:])
 		if err == nil {
-			info, err := p.client.GetTokenInfo(string(assetName))
+			info, err := p.client.getTokenInfo(string(assetName))
 			if err == nil && len(info.Data) > 0 {
 				setTokenMeta(tx, srcTx, info.Data[0])
 			}

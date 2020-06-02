@@ -39,10 +39,10 @@ func (c *Client) getTxsOfAddress(address string) ([]Tx, error) {
 	return txs.Txs, err
 }
 
-func (c *Client) getTRC20TxsOfAddress(address, token string) ([]D, error) {
+func (c *Client) getTRC20TxsOfAddress(address, token string, limit int) ([]D, error) {
 	path := fmt.Sprintf("v1/accounts/%s/transactions/trc20", address)
 	values := url.Values{
-		"limit":            {"25"},
+		"limit":            {string(limit)},
 		"contract_address": {token},
 	}
 
@@ -63,7 +63,7 @@ func (c *Client) GetAccountVotes(address string) (account *AccountData, err erro
 	return
 }
 
-func (c *Client) GetTokenInfo(id string) (asset Asset, err error) {
+func (c *Client) getTokenInfo(id string) (asset Asset, err error) {
 	path := fmt.Sprintf("v1/assets/%s", id)
 	err = c.GetWithCache(&asset, path, nil, time.Hour*24)
 	return
