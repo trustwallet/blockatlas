@@ -61,7 +61,7 @@ func (p *Provider) GetCurrentLendingRates(assets []string) ([]blockatlas.Lending
 
 // GetAccountLendingContracts return current contract details for a given address.
 // req.Assets: List asset IDs to consider, or empty for all
-func (p *Provider) GetAccountLendingContracts(req blockatlas.AccountRequest) (*[]blockatlas.AccountLendingContracts, error) {
+func (p *Provider) GetAccountLendingContracts(req blockatlas.AccountRequest) ([]blockatlas.AccountLendingContracts, error) {
 	accounts, err := p.client.GetAccounts(req.Addresses)
 	if err != nil {
 		return nil, err
@@ -95,7 +95,7 @@ func (p *Provider) GetAccountLendingContracts(req blockatlas.AccountRequest) (*[
 		}
 		ret = append(ret, ret1)
 	}
-	return &ret, nil
+	return ret, nil
 }
 
 func (p *Provider) getTokensNormalized() []blockatlas.AssetClass {
@@ -166,8 +166,6 @@ func (p *Provider) getCurrentLendingRatesForAssets(assets []string) ([]blockatla
 		// close previous
 		enrichAssetRatesWithMax(ret1)
 		ret = append(ret, *ret1)
-		ret1 = nil
-		currSymbol = ""
 	}
 	return ret, nil
 }

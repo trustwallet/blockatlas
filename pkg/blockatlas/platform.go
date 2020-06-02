@@ -70,7 +70,7 @@ type (
 		Name() string
 		GetProviderInfo() (LendingProvider, error)
 		GetCurrentLendingRates(assets []string) ([]LendingAssetRates, error)
-		GetAccountLendingContracts(req AccountRequest) (*[]AccountLendingContracts, error)
+		GetAccountLendingContracts(req AccountRequest) ([]AccountLendingContracts, error)
 	}
 
 	Platforms map[string]Platform

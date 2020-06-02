@@ -85,7 +85,7 @@ func ServeAccount(c *gin.Context, apis map[string]blockatlas.LendingAPI) {
 }
 
 // GetProviders return provider info list
-func getProviders(apis map[string]blockatlas.LendingAPI) (*[]blockatlas.LendingProvider, error) {
+func getProviders(apis map[string]blockatlas.LendingAPI) ([]blockatlas.LendingProvider, error) {
 	ret := []blockatlas.LendingProvider{}
 	for _, api := range apis {
 		prov, err := api.GetProviderInfo()
@@ -94,7 +94,7 @@ func getProviders(apis map[string]blockatlas.LendingAPI) (*[]blockatlas.LendingP
 		}
 		ret = append(ret, prov)
 	}
-	return &ret, nil
+	return ret, nil
 }
 
 // GetRates return rates info
@@ -107,7 +107,7 @@ func getRates(provider string, req blockatlas.RatesRequest, apis map[string]bloc
 }
 
 // GetAccounts return account contract
-func getAccounts(provider string, req blockatlas.AccountRequest, apis map[string]blockatlas.LendingAPI) (*[]blockatlas.AccountLendingContracts, error) {
+func getAccounts(provider string, req blockatlas.AccountRequest, apis map[string]blockatlas.LendingAPI) ([]blockatlas.AccountLendingContracts, error) {
 	api, ok := apis[provider]
 	if !ok {
 		return nil, fmt.Errorf("Unknown provider %v", provider)

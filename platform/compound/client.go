@@ -1,7 +1,6 @@
 package compound
 
 import (
-	"fmt"
 	"net/url"
 
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
@@ -14,7 +13,7 @@ type Client struct {
 }
 
 func (c *Client) GetAccounts(addresses []string) ([]Account, error) {
-	path := fmt.Sprintf("/v2/account")
+	path := "/v2/account"
 	var resp AccountResponse
 	err := c.Get(&resp, path, url.Values{"addresses": addresses})
 	return resp.Accounts, err
@@ -23,7 +22,7 @@ func (c *Client) GetAccounts(addresses []string) ([]Account, error) {
 // See "https://api.compound.finance/api/v2/ctoken"
 // "https://api.compound.finance/api/v2/ctoken?addresses[]=0x6c8c6b02e7b2be14d4fa6022dfd6d75921d90e4e"
 func (c *Client) GetTokens(tokenAddresses []string) (CTokenResponse, error) {
-	path := fmt.Sprintf("/v2/ctoken")
+	path := "/v2/ctoken"
 	var resp CTokenResponse
 	err := c.Get(&resp, path, url.Values{"addresses": tokenAddresses})
 	return resp, err
