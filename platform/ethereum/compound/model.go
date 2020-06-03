@@ -11,8 +11,8 @@ type (
 		Address string `json:"address"`
 		Symbol  string `json:"symbol"`
 		// The cToken balance converted to underlying tokens; cTokens held x exchange rate
-		SupplyBalanceUnderlying float64 `json:"supply_balance_underlying"`
-		SupplyInterest          float64 `json:"lifetime_supply_interest_accrued"`
+		SupplyBalanceUnderlying Precise `json:"supply_balance_underlying"`
+		SupplyInterest          Precise `json:"lifetime_supply_interest_accrued"`
 	}
 
 	AccountResponse struct {

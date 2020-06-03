@@ -12,6 +12,8 @@ type Client struct {
 	blockatlas.Request
 }
 
+// See "https://api.compound.finance/api/v2/account"
+// "https://api.compound.finance/api/v2/account?addresses[]=0xf9C659D90663BC4e0F7a8766112fE806bae3b5aE"
 func (c *Client) GetAccounts(addresses []string) ([]Account, error) {
 	path := "/v2/account"
 	var resp AccountResponse

@@ -70,7 +70,7 @@ func (p *Provider) GetAccountLendingContracts(req blockatlas.AccountRequest) ([]
 	for _, acc := range accounts {
 		ret1 := blockatlas.AccountLendingContracts{Address: acc.Address, Contracts: []blockatlas.LendingContract{}}
 		for _, t := range acc.Tokens {
-			asset := t.Symbol
+			asset := p.getUnderlyingSymbol(t.Symbol)
 			if len(req.Assets) > 0 && !sliceContains(asset, req.Assets) {
 				continue // not requested, skip
 			}
@@ -80,12 +80,12 @@ func (p *Provider) GetAccountLendingContracts(req blockatlas.AccountRequest) ([]
 				apr = assetInfo.MaxAPR
 			}
 			ret1.Contracts = append(ret1.Contracts, blockatlas.LendingContract{
-				Asset: t.Symbol,
+				Asset: asset,
 				Term:  0,
 				// startAmount: not available in API, derive as currentAmount - interest earn
-				StartAmount:       strconv.FormatFloat(t.SupplyBalanceUnderlying-t.SupplyInterest, 'f', 10, 64),
-				CurrentAmount:     strconv.FormatFloat(t.SupplyBalanceUnderlying, 'f', 10, 64),
-				EndAmountEstimate: strconv.FormatFloat(t.SupplyBalanceUnderlying, 'f', 10, 64),
+				StartAmount:       strconv.FormatFloat(asFloat(t.SupplyBalanceUnderlying.Value)-asFloat(t.SupplyInterest.Value), 'f', 10, 64),
+				CurrentAmount:     strconv.FormatFloat(asFloat(t.SupplyBalanceUnderlying.Value), 'f', 10, 64),
+				EndAmountEstimate: strconv.FormatFloat(asFloat(t.SupplyBalanceUnderlying.Value), 'f', 10, 64),
 				CurrentAPR:        apr,
 				// startTime: no info
 				StartTime:   0, // no info
@@ -183,6 +183,16 @@ func (p *Provider) getCurrentLendingRatesForAsset(asset string) (blockatlas.Lend
 	return ret, nil
 }
 
+func (p *Provider) getUnderlyingSymbol(symbol string) string {
+	tokens := p.getTokensCached()
+	for s := range tokens {
+		if tokens[s].Symbol == symbol {
+			return s
+		}
+	}
+	return ""
+}
+
 func enrichAssetRatesWithMax(rates *blockatlas.LendingAssetRates) {
 	var max float64 = 0
 	for _, r := range rates.TermRates {
@@ -193,12 +203,16 @@ func enrichAssetRatesWithMax(rates *blockatlas.LendingAssetRates) {
 	rates.MaxAPR = max
 }
 
-func aprOfToken(token *CToken) float64 {
-	apr, err := strconv.ParseFloat(token.SupplyRate.Value, 64)
+func asFloat(value string) float64 {
+	valF, err := strconv.ParseFloat(value, 64)
 	if err != nil {
 		return 0
 	}
-	return 100.0 * apr
+	return valF
+}
+
+func aprOfToken(token *CToken) float64 {
+	return 100.0 * asFloat(token.SupplyRate.Value)
 }
 
 func sliceContains(elem string, slice []string) bool {
