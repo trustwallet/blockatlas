@@ -7,8 +7,6 @@ import (
 )
 
 func HandleLookup(name string, coins []uint64) ([]blockatlas.Resolved, error) {
-	// Visit all providers, try lookup with all matching ones
-	// There must be at least one provider (normally ==1)
 	addresses := make([]blockatlas.Resolved, 0)
 	providerCount := 0 // to count number of providers visited, may be different than number of results
 	for _, api := range platform.NamingAPIs {
