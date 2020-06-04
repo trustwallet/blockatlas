@@ -6,6 +6,7 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"net/http"
+	"strings"
 )
 
 // @Summary Get Transactions
@@ -70,6 +71,11 @@ func GetTransactionsHistory(c *gin.Context, txAPI blockatlas.TxAPI, tokenTxAPI b
 		tx.Direction = tx.GetTransactionDirection(address)
 		page = append(page, tx)
 	}
+
+	if token != "" {
+		page = filterTransactionsByToken(token, page)
+	}
+
 	if len(page) > blockatlas.TxPerPage {
 		page = page[0:blockatlas.TxPerPage]
 	}
@@ -123,4 +129,19 @@ func GetTransactionsByXpub(c *gin.Context, api blockatlas.TxUtxoAPI) {
 		page = page[0:blockatlas.TxPerPage]
 	}
 	c.JSON(http.StatusOK, &page)
+}
+
+func filterTransactionsByToken(token string, txs blockatlas.TxPage) blockatlas.TxPage {
+	result := make(blockatlas.TxPage, 0)
+	for _, tx := range txs {
+		switch tx.Meta.(type) {
+		case *blockatlas.TokenTransfer, blockatlas.TokenTransfer:
+			if strings.EqualFold(tx.Meta.(blockatlas.TokenTransfer).TokenID, token) {
+				result = append(result, tx)
+			}
+		default:
+			continue
+		}
+	}
+	return result
 }
