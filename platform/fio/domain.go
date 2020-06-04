@@ -8,8 +8,7 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 )
 
-// Supported tlds
-var tlds = map[string]interface{}{
+var domains = map[string]interface{}{
 	"@trust":       nil,
 	"@trustwallet": nil,
 	"@binance":     nil,
@@ -21,10 +20,10 @@ func (p *Platform) Match(name string) bool {
 	if len(tld) == 0 {
 		return false
 	}
-	if _, ok := tlds[strings.ToLower(tld)]; ok {
+	if _, ok := domains[strings.ToLower(tld)]; ok {
 		return true
 	}
-	// we match any @xxx domain
+	// we match any @xxx domain!
 	if len(tld) >= 2 {
 		return true
 	}
