@@ -9,7 +9,6 @@ import (
 )
 
 // Compound Lending Provider
-// Compound does not use fixed terms, only open-ended, but structure is done to support different predefined terms.
 
 type Provider struct {
 	client Client
@@ -43,21 +42,18 @@ func (p *Provider) GetProviderInfo() (blockatlas.LendingProvider, error) {
 			Website:     "https://compound.finance",
 		},
 		Type:   blockatlas.ProviderTypeLending,
-		Assets: p.getTokensNormalized(),
+		Assets: p.getAssetInfos(false),
 	}, nil
 }
 
 // GetCurrentLendingRates return current estimated yield rates for assets.  Rates are annualized.  Rates vary over time.
 // assets: List asset IDs to consider, or empty for all
-func (p *Provider) GetCurrentLendingRates(assets []string) ([]blockatlas.LendingAssetRates, error) {
+func (p *Provider) GetCurrentLendingRates(assets []string) ([]blockatlas.AssetInfo, error) {
 	if len(assets) == 0 {
 		// empty filter, means any; get all available assets
-		tokens := p.getTokensCached()
-		for t := range tokens {
-			assets = append(assets, t)
-		}
+		assets = p.getAssetSymbols()
 	}
-	return p.getCurrentLendingRatesForAssets(assets)
+	return p.getAssetInfosFiltered(assets), nil
 }
 
 // GetAccountLendingContracts return current contract details for a given address.
@@ -75,23 +71,13 @@ func (p *Provider) GetAccountLendingContracts(req blockatlas.AccountRequest) ([]
 			if len(req.Assets) > 0 && !sliceContains(asset, req.Assets) {
 				continue // not requested, skip
 			}
-			// APR: no info, take general current APR
-			var apr float64 = 0
-			if assetInfo, err := p.getCurrentLendingRatesForAsset(asset); err == nil {
-				apr = assetInfo.MaxAPR
+			assetInfo := blockatlas.AssetInfo{Symbol: asset}
+			if ai, err := p.getAssetInfosForAsset(asset); err == nil {
+				assetInfo = ai
 			}
 			ret1.Contracts = append(ret1.Contracts, blockatlas.LendingContract{
-				Asset: asset,
-				Term:  0,
-				// startAmount: not available in API, derive as currentAmount - interest earn
-				StartAmount:       strconv.FormatFloat(asFloat(t.SupplyBalanceUnderlying.Value)-asFloat(t.SupplyInterest.Value), 'f', 10, 64),
-				CurrentAmount:     strconv.FormatFloat(asFloat(t.SupplyBalanceUnderlying.Value), 'f', 10, 64),
-				EndAmountEstimate: strconv.FormatFloat(asFloat(t.SupplyBalanceUnderlying.Value), 'f', 10, 64),
-				CurrentAPR:        apr,
-				// startTime: no info
-				StartTime:   0, // no info
-				CurrentTime: blockatlas.Time(time.Now().Unix()),
-				EndTime:     0, // no info
+				Asset:         assetInfo,
+				CurrentAmount: strconv.FormatFloat(asFloat(t.SupplyBalanceUnderlying.Value), 'f', 10, 64),
 			})
 		}
 		ret = append(ret, ret1)
@@ -99,18 +85,70 @@ func (p *Provider) GetAccountLendingContracts(req blockatlas.AccountRequest) ([]
 	return ret, nil
 }
 
-func (p *Provider) getTokensNormalized() []blockatlas.AssetClass {
-	// In compound all assets are updated with each ETH block, about each 15 seconds.  There are no predefined terms.
+func (p *Provider) getAssetSymbols() []string {
 	tokens := p.getTokensCached()
-	res := []blockatlas.AssetClass{}
+	ret := []string{}
+	for s := range tokens {
+		ret = append(ret, s)
+	}
+	return ret
+}
+
+func getAssetInfo(t *CToken, includeMeta bool) blockatlas.AssetInfo {
+	ret := blockatlas.AssetInfo{
+		Symbol:         t.UnderlyingSymbol,
+		Description:    t.Name,
+		APY:            apyOfToken(t),
+		YieldPeriod:    0,
+		YieldFrequency: 15,
+		TotalSupply:    t.TotalSupply.Value,
+		MinimumAmount:  "0",
+	}
+	if includeMeta {
+		ret.MetaInfo = blockatlas.AssetMetaInfo{
+			DefiInfo: blockatlas.DefiAssetInfo{
+				AssetToken: blockatlas.DefiTokenInfo{
+					Symbol: t.UnderlyingSymbol,
+					Chain:  Chain,
+				},
+				TechnicalToken: blockatlas.DefiTokenInfo{
+					Symbol:          t.Symbol,
+					Chain:           Chain,
+					ContractAddress: t.TokenAddress,
+				},
+			},
+		}
+	}
+	return ret
+}
+
+func (p *Provider) getAssetInfosForAsset(asset string) (blockatlas.AssetInfo, error) {
+	tokens := p.getTokensCached()
+	token, ok := tokens[asset]
+	if !ok {
+		return blockatlas.AssetInfo{}, fmt.Errorf("Token not found %v", asset)
+	}
+	return getAssetInfo(&token, true), nil
+}
+
+func (p *Provider) getAssetInfos(includeMeta bool) []blockatlas.AssetInfo {
+	// In compound all assets are updated with each ETH block, about each 15 seconds.
+	tokens := p.getTokensCached()
+	res := []blockatlas.AssetInfo{}
+	for _, t := range tokens {
+		res = append(res, getAssetInfo(&t, includeMeta))
+	}
+	return res
+}
+
+func (p *Provider) getAssetInfosFiltered(assets []string) []blockatlas.AssetInfo {
+	tokens := p.getTokensCached()
+	res := []blockatlas.AssetInfo{}
 	for s, t := range tokens {
-		res = append(res, blockatlas.AssetClass{
-			Symbol:         s,
-			Chain:          "ETH",
-			Description:    t.Name,
-			YieldFrequency: 15,
-			Terms:          []blockatlas.Term{},
-		})
+		if !sliceContains(s, assets) {
+			continue
+		}
+		res = append(res, getAssetInfo(&t, true))
 	}
 	return res
 }
@@ -137,53 +175,6 @@ func (p *Provider) getTokensCached() map[string]CToken {
 	return _cachedTokens
 }
 
-func (p *Provider) getCurrentLendingRatesForAssets(assets []string) ([]blockatlas.LendingAssetRates, error) {
-	ret := []blockatlas.LendingAssetRates{}
-	tokens := p.getTokensCached()
-	// group by asset (symbol)
-	currSymbol := ""
-	var ret1 *blockatlas.LendingAssetRates = nil
-	for _, t := range tokens {
-		symbol := t.UnderlyingSymbol
-		if !sliceContains(symbol, assets) {
-			continue
-		}
-		if len(currSymbol) > 0 && currSymbol != symbol && ret1 != nil {
-			// close previous
-			enrichAssetRatesWithMax(ret1)
-			ret = append(ret, *ret1)
-			ret1 = nil
-			currSymbol = ""
-		}
-		if len(currSymbol) == 0 {
-			// start new
-			currSymbol = symbol
-			ret1 = &blockatlas.LendingAssetRates{Asset: currSymbol, TermRates: []blockatlas.LendingTermAPR{}, MaxAPR: 0}
-		}
-		apr := aprOfToken(&t)
-		ret1.TermRates = append(ret1.TermRates, blockatlas.LendingTermAPR{Term: 0.00017, APR: apr, MinimumAmount: "0"})
-	}
-	if ret1 != nil {
-		// close previous
-		enrichAssetRatesWithMax(ret1)
-		ret = append(ret, *ret1)
-	}
-	return ret, nil
-}
-
-func (p *Provider) getCurrentLendingRatesForAsset(asset string) (blockatlas.LendingAssetRates, error) {
-	ret := blockatlas.LendingAssetRates{Asset: asset, TermRates: []blockatlas.LendingTermAPR{}, MaxAPR: 0}
-	tokens := p.getTokensCached()
-	token, ok := tokens[asset]
-	if !ok {
-		return ret, fmt.Errorf("Token not found %v", asset)
-	}
-	apr := aprOfToken(&token)
-	ret.TermRates = append(ret.TermRates, blockatlas.LendingTermAPR{Term: 0.00017, APR: apr, MinimumAmount: "0"})
-	enrichAssetRatesWithMax(&ret)
-	return ret, nil
-}
-
 func (p *Provider) getUnderlyingSymbol(symbol string) string {
 	tokens := p.getTokensCached()
 	for s := range tokens {
@@ -194,14 +185,8 @@ func (p *Provider) getUnderlyingSymbol(symbol string) string {
 	return ""
 }
 
-func enrichAssetRatesWithMax(rates *blockatlas.LendingAssetRates) {
-	var max float64 = 0
-	for _, r := range rates.TermRates {
-		if r.APR > max {
-			max = r.APR
-		}
-	}
-	rates.MaxAPR = max
+func apyOfToken(token *CToken) float64 {
+	return 100.0 * asFloat(token.SupplyRate.Value)
 }
 
 func asFloat(value string) float64 {
@@ -210,10 +195,6 @@ func asFloat(value string) float64 {
 		return 0
 	}
 	return valF
-}
-
-func aprOfToken(token *CToken) float64 {
-	return 100.0 * asFloat(token.SupplyRate.Value)
 }
 
 func sliceContains(elem string, slice []string) bool {

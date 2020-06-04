@@ -32,7 +32,7 @@ func HandleLendingProviders(c *gin.Context, apis map[string]blockatlas.LendingAP
 // @Tags Lending
 // @Param provider path string true "Lending provider name"
 // @Param request body blockatlas.RatesRequest true "Request, containing one or more assets (token symbols)"
-// @Success 200 {object} blockatlas.DocsResponse Docs: []blockatlas.LendingAssetRates
+// @Success 200 {object} blockatlas.DocsResponse Docs: []blockatlas.AssetInfo
 // @Router /v1/lending/rates/:provider [post]
 func HandleLendingRates(c *gin.Context, apis map[string]blockatlas.LendingAPI) {
 	provider, ok := c.Params.Get("provider")
@@ -98,7 +98,7 @@ func getProviders(apis map[string]blockatlas.LendingAPI) ([]blockatlas.LendingPr
 }
 
 // GetRates return rates info
-func getRates(provider string, req blockatlas.RatesRequest, apis map[string]blockatlas.LendingAPI) ([]blockatlas.LendingAssetRates, error) {
+func getRates(provider string, req blockatlas.RatesRequest, apis map[string]blockatlas.LendingAPI) ([]blockatlas.AssetInfo, error) {
 	api, ok := apis[provider]
 	if !ok {
 		return nil, fmt.Errorf("Unknown provider %v", provider)

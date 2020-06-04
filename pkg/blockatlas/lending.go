@@ -13,7 +13,7 @@ type (
 		ID     string              `json:"id"`
 		Info   LendingProviderInfo `json:"info"`
 		Type   ProviderType        `json:"type"`
-		Assets []AssetClass        `json:"assets"`
+		Assets []AssetInfo         `json:"assets"`
 	}
 
 	// LendingProviderInfo basic information about a lending provider.
@@ -24,38 +24,36 @@ type (
 		Website     string `json:"website"`
 	}
 
-	// AssetClass Info about an asset that can be lent
-	AssetClass struct {
-		Symbol      string `json:"symbol"`
-		Chain       string `json:"chain"`
-		Description string `json:"description"`
-		// YieldFrequency the period of yield computation in seconds, e.g. 86400 for daily.
-		YieldFrequency int64 `json:"yield_freq"`
-		// Terms Predefined lending term periods, like [7, 30.5, 180].
-		Terms []Term `json:"terms"`
+	// AssetInfo Info about an asset that can be lent
+	AssetInfo struct {
+		Symbol         string        `json:"symbol"`
+		Description    string        `json:"description"`
+		APY            float64       `json:"apy"`
+		YieldPeriod    int64         `json:"yield_period"` // the period of validity of current APY, 0 for variable APY
+		YieldFrequency int64         `json:"yield_freq"`   // the period of yield computation, in seconds, e.g. 86400 for daily yield writeoff.
+		TotalSupply    string        `json:"total_supply"`
+		MinimumAmount  string        `json:"minimum_amount"`
+		MetaInfo       AssetMetaInfo `json:"meta_info,omitempty"`
 	}
 
-	// Term length of a predefined term, in days
-	Term float64
+	AssetMetaInfo struct {
+		DefiInfo DefiAssetInfo `json:"defi_info,omitempty"`
+	}
+
+	DefiAssetInfo struct {
+		AssetToken     DefiTokenInfo `json:"asset_token,omitempty"`
+		TechnicalToken DefiTokenInfo `json:"technical_token,omitempty"`
+	}
+
+	DefiTokenInfo struct {
+		Symbol          string `json:"symbol"`
+		Chain           string `json:"chain"`
+		ContractAddress string `json:"contract_address,omitempty"`
+	}
 
 	// RatesRequest Rates API request
 	RatesRequest struct {
 		Assets []string `json:"assets"`
-	}
-
-	// LendingTermAPR Asset yield APR, for an asset for a term.  E.g. {30, 1.45}
-	LendingTermAPR struct {
-		Term          `json:"term"`
-		APR           float64 `json:"apr"`
-		MinimumAmount string  `json:"minimum_amount"`
-	}
-
-	// LendingAssetRates Asset yield rates, for an asset for one or more periods.  E.g. [{7, 0.9}, {30, 1.45}]
-	LendingAssetRates struct {
-		Asset     string           `json:"asset"`
-		TermRates []LendingTermAPR `json:"term_rates"`
-		// MaxAPR the rate of the term with the highest rate
-		MaxAPR float64 `json:"max_apr"`
 	}
 
 	// AccountRequest Account API request
@@ -64,20 +62,10 @@ type (
 		Assets    []string `json:"assets"`
 	}
 
-	// Time Second-granular UNIX time
-	Time int32
-
 	// LendingContract Describes a lending contract, of a user, of an asset.
 	LendingContract struct {
-		Asset             string  `json:"asset"`
-		Term              Term    `json:"term"`
-		StartAmount       string  `json:"start_amount"`
-		CurrentAmount     string  `json:"current_amount"`
-		EndAmountEstimate string  `json:"end_amount_estimate"`
-		CurrentAPR        float64 `json:"current_apr"`
-		StartTime         Time    `json:"start_time"`
-		CurrentTime       Time    `json:"current_time"`
-		EndTime           Time    `json:"end_time"`
+		Asset         AssetInfo `json:"asset"`
+		CurrentAmount string    `json:"current_amount"`
 	}
 
 	// AccountLendingContracts Contracts of an address

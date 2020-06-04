@@ -39,3 +39,7 @@ type (
 		Value string
 	}
 )
+
+const (
+	Chain string = "ETH"
+)
