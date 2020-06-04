@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	CoinType "github.com/trustwallet/blockatlas/coin"
+	"github.com/trustwallet/blockatlas/pkg/address"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
@@ -20,7 +21,7 @@ var tlds = map[string]int{
 }
 
 func (p *Platform) Match(name string) bool {
-	tld := getTLD(name)
+	tld := address.GetTLD(name, ".")
 	if len(tld) == 0 {
 		return false
 	}
@@ -73,15 +74,4 @@ func (p *Platform) addressForCoin(resovler string, node []byte, coin uint64) (st
 
 func (p *Platform) lookupLegacyETH(resolver string, node []byte) (string, error) {
 	return p.ens.LegacyAddr(resolver, node)
-}
-
-// Obtain tld from then name, e.g. ".eth" from "nick.eth"
-func getTLD(name string) string {
-	lastSeparatorIdx := strings.LastIndex(name, ".")
-	if lastSeparatorIdx < 0 || lastSeparatorIdx >= len(name)-1 {
-		// no separator inside string
-		return ""
-	}
-	// return tail including separator
-	return name[lastSeparatorIdx:]
 }
