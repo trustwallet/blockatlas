@@ -3,7 +3,6 @@ package ethereum
 import (
 	"strings"
 
-	CoinType "github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/address"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
@@ -12,12 +11,11 @@ import (
 	AddressEncoder "github.com/trustwallet/ens-coincodec"
 )
 
-// Supported tlds
-var tlds = map[string]int{
-	".eth":  CoinType.ETH,
-	".xyz":  CoinType.ETH,
-	".luxe": CoinType.ETH,
-	".kred": CoinType.ETH,
+var domains = map[string]interface{}{
+	".eth":  nil,
+	".xyz":  nil,
+	".luxe": nil,
+	".kred": nil,
 }
 
 func (p *Platform) Match(name string) bool {
@@ -25,7 +23,7 @@ func (p *Platform) Match(name string) bool {
 	if len(tld) == 0 {
 		return false
 	}
-	_, ok := tlds[strings.ToLower(tld)]
+	_, ok := domains[strings.ToLower(tld)]
 	return ok
 }
 
@@ -55,7 +53,7 @@ func (p *Platform) Lookup(coins []uint64, name string) ([]blockatlas.Resolved, e
 func (p *Platform) addressForCoin(resovler string, node []byte, coin uint64) (string, error) {
 	result, err := p.ens.Addr(resovler, node, coin)
 	if err != nil {
-		if coin == CoinType.ETH {
+		if coin == nil {
 			// user may not set multi coin address
 			result, err := p.lookupLegacyETH(resovler, node)
 			if err != nil {

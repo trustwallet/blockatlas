@@ -3,7 +3,6 @@ package zilliqa
 import (
 	"strings"
 
-	CoinType "github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/address"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 )
@@ -12,10 +11,10 @@ type ZNSResponse struct {
 	Addresses map[string]string
 }
 
-// Supported tlds
-var tlds = map[string]int{
-	".zil":    CoinType.ZIL,
-	".crypto": CoinType.ZIL,
+// Supported domains
+var domains = map[string]interface{}{
+	".zil":    nil,
+	".crypto": nil,
 }
 
 func (p *Platform) Match(name string) bool {
@@ -23,7 +22,7 @@ func (p *Platform) Match(name string) bool {
 	if len(tld) == 0 {
 		return false
 	}
-	_, ok := tlds[strings.ToLower(tld)]
+	_, ok := domains[strings.ToLower(tld)]
 	return ok
 }
 

@@ -4,17 +4,16 @@ import (
 	"strings"
 
 	"github.com/trustwallet/blockatlas/coin"
-	CoinType "github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/address"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 )
 
 // Supported tlds
-var tlds = map[string]int{
-	"@trust":       CoinType.FIO,
-	"@trustwallet": CoinType.FIO,
-	"@binance":     CoinType.FIO,
-	"@fiomembers":  CoinType.FIO,
+var tlds = map[string]interface{}{
+	"@trust":       nil,
+	"@trustwallet": nil,
+	"@binance":     nil,
+	"@fiomembers":  nil,
 }
 
 func (p *Platform) Match(name string) bool {
