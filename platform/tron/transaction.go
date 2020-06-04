@@ -107,7 +107,7 @@ func getTRC20Txs(address, token string, p *Platform) (blockatlas.TxPage, error) 
 	return txPage, nil
 }
 
-func normalizeTrc20Transfer(d D) (*blockatlas.Tx, error) {
+func normalizeTrc20Transfer(d trc20Data) (*blockatlas.Tx, error) {
 	return &blockatlas.Tx{
 		ID:     d.TransactionId,
 		Coin:   coin.TRX,

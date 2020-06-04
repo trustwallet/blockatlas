@@ -39,7 +39,7 @@ func (c *Client) getTxsOfAddress(address string) ([]Tx, error) {
 	return txs.Txs, err
 }
 
-func (c *Client) getTRC20TxsOfAddress(address, token string, limit int) ([]D, error) {
+func (c *Client) getTRC20TxsOfAddress(address, token string, limit int) ([]trc20Data, error) {
 	path := fmt.Sprintf("v1/accounts/%s/transactions/trc20", address)
 	values := url.Values{
 		"limit":            {string(limit)},

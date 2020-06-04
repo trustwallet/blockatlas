@@ -106,7 +106,7 @@ func (p *Platform) getTRC20TokenChannel(id, address string, tkChan chan blockatl
 	return nil
 }
 
-func normalizeTRC20Token(info DInfo) blockatlas.Token {
+func normalizeTRC20Token(info trc20Info) blockatlas.Token {
 	return blockatlas.Token{
 		Name:     info.Name,
 		Symbol:   info.Symbol,

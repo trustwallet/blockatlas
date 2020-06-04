@@ -67,20 +67,20 @@ type TransferValue struct {
 }
 
 type trc20Page struct {
-	Data []D `json:"data"`
+	Data []trc20Data `json:"data"`
 }
 
-type D struct {
+type trc20Data struct {
 	From           string       `json:"from"`
 	To             string       `json:"to"`
 	BlockTimestamp int64        `json:"block_timestamp"`
 	Value          string       `json:"value"`
 	Type           ContractType `json:"type"`
 	TransactionId  string       `json:"transaction_id"`
-	TokenInfo      DInfo        `json:"token_info"`
+	TokenInfo      trc20Info    `json:"token_info"`
 }
 
-type DInfo struct {
+type trc20Info struct {
 	Address  string `json:"address"`
 	Name     string `json:"name"`
 	Symbol   string `json:"symbol"`
