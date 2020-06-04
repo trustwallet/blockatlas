@@ -2,6 +2,7 @@ package compound
 
 import (
 	"net/url"
+	"time"
 
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 )
@@ -23,9 +24,9 @@ func (c *Client) GetAccounts(addresses []string) ([]Account, error) {
 
 // See "https://api.compound.finance/api/v2/ctoken"
 // "https://api.compound.finance/api/v2/ctoken?addresses[]=0x6c8c6b02e7b2be14d4fa6022dfd6d75921d90e4e"
-func (c *Client) GetTokens(tokenAddresses []string) (CTokenResponse, error) {
+func (c *Client) GetCTokensCached(tokenAddresses []string, cacheExpiry time.Duration) (CTokenResponse, error) {
 	path := "/v2/ctoken"
 	var resp CTokenResponse
-	err := c.Get(&resp, path, url.Values{"addresses": tokenAddresses})
+	err := c.GetWithCache(&resp, path, url.Values{"addresses": tokenAddresses}, cacheExpiry)
 	return resp, err
 }

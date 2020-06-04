@@ -21,11 +21,9 @@ func Init(api string) *Provider {
 	}
 }
 
-var (
-	_providerName                       = "compound"
-	_cachedTokens     map[string]CToken = make(map[string]CToken, 30)
-	_cachedTokenTime  time.Time
-	_cacheValiditySec = 15
+const (
+	_providerName                   = "compound"
+	_cacheValiditySec time.Duration = 15 * time.Second
 )
 
 func (p *Provider) Name() string {
@@ -34,7 +32,7 @@ func (p *Provider) Name() string {
 
 // GetProviderInfo return static info about the lending provider, such as name and asset classes supported.
 func (p *Provider) GetProviderInfo() (blockatlas.LendingProvider, error) {
-	return blockatlas.LendingProvider{
+	prov := blockatlas.LendingProvider{
 		ID: "compound",
 		Info: blockatlas.LendingProviderInfo{
 			ID:          _providerName,
@@ -43,8 +41,13 @@ func (p *Provider) GetProviderInfo() (blockatlas.LendingProvider, error) {
 			Website:     "https://compound.finance",
 		},
 		Type:   blockatlas.ProviderTypeLending,
-		Assets: p.getAssetInfos(false),
-	}, nil
+		Assets: []blockatlas.AssetInfo{},
+	}
+	assets, err := p.getAssetInfos(false)
+	if err != nil {
+		prov.Assets = assets
+	}
+	return prov, nil
 }
 
 // GetAsset return asset info including APY.  Rates are annualized.  Rates vary over time.
@@ -52,7 +55,7 @@ func (p *Provider) GetProviderInfo() (blockatlas.LendingProvider, error) {
 func (p *Provider) GetAsset(asset string) ([]blockatlas.AssetInfo, error) {
 	if len(asset) == 0 {
 		// empty filter, means any; get all available assets
-		return p.getAssetInfos(true), nil
+		return p.getAssetInfos(true)
 	}
 	ret := []blockatlas.AssetInfo{}
 	res, err := p.getAssetInfoForSymbol(asset)
@@ -130,7 +133,10 @@ func getAssetInfo(t *CToken, includeMeta bool) blockatlas.AssetInfo {
 }
 
 func (p *Provider) getAssetInfoForSymbol(asset string) (blockatlas.AssetInfo, error) {
-	tokens := p.getTokensCached()
+	tokens, err := p.getTokensCached()
+	if err != nil {
+		return blockatlas.AssetInfo{}, err
+	}
 	token, ok := tokens[strings.ToUpper(asset)]
 	if !ok {
 		return blockatlas.AssetInfo{}, fmt.Errorf("Token not found %v", asset)
@@ -138,53 +144,51 @@ func (p *Provider) getAssetInfoForSymbol(asset string) (blockatlas.AssetInfo, er
 	return getAssetInfo(&token, true), nil
 }
 
-func (p *Provider) getAssetInfos(includeMeta bool) []blockatlas.AssetInfo {
-	// In compound all assets are updated with each ETH block, about each 15 seconds.
-	tokens := p.getTokensCached()
+func (p *Provider) getAssetInfos(includeMeta bool) ([]blockatlas.AssetInfo, error) {
 	res := []blockatlas.AssetInfo{}
+	tokens, err := p.getTokensCached()
+	if err != nil {
+		return res, err
+	}
 	for _, t := range tokens {
 		res = append(res, getAssetInfo(&t, includeMeta))
 	}
-	return res
+	return res, nil
 }
 
 // Returns a info on tokens, map by uppercase symbol
 // Cached for _cacheValiditySec seconds
-func (p *Provider) getTokensCached() map[string]CToken {
-	now := time.Now()
-	if now.Sub(_cachedTokenTime) < time.Duration(_cacheValiditySec*1000) && len(_cachedTokens) > 0 {
-		// cached and recent
-		return _cachedTokens
-	}
-	// rertieve and cache
-	_cachedTokens = make(map[string]CToken, 30)
-	res, err := p.client.GetTokens([]string{})
-	now = time.Now()
+func (p *Provider) getTokensCached() (map[string]CToken, error) {
+	tokens := make(map[string]CToken, 30)
+	res, err := p.client.GetCTokensCached([]string{}, _cacheValiditySec)
 	if err != nil {
-		return _cachedTokens
+		return tokens, err
 	}
 	for _, t := range res.CToken {
-		_cachedTokens[strings.ToUpper(t.UnderlyingSymbol)] = t
+		tokens[strings.ToUpper(t.UnderlyingSymbol)] = t
 	}
-	_cachedTokenTime = now
-	return _cachedTokens
+	return tokens, nil
 }
 
 func (p *Provider) getSymbolByCSymbol(symbol string) string {
-	tokens := p.getTokensCached()
-	for s := range tokens {
-		if tokens[s].Symbol == symbol {
-			return s
+	tokens, err := p.getTokensCached()
+	if err == nil {
+		for s := range tokens {
+			if tokens[s].Symbol == symbol {
+				return s
+			}
 		}
 	}
 	return ""
 }
 
 func (p *Provider) getSymbolByAddress(tokenAddress string) string {
-	tokens := p.getTokensCached()
-	for s := range tokens {
-		if tokens[s].TokenAddress == tokenAddress {
-			return s
+	tokens, err := p.getTokensCached()
+	if err == nil {
+		for s := range tokens {
+			if tokens[s].TokenAddress == tokenAddress {
+				return s
+			}
 		}
 	}
 	return ""
