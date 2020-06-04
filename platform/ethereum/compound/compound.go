@@ -101,15 +101,6 @@ func (p *Provider) GetAccountLendingContracts(req blockatlas.AccountRequest) ([]
 	return ret, nil
 }
 
-func (p *Provider) getAssetSymbols() []string {
-	tokens := p.getTokensCached()
-	ret := []string{}
-	for s := range tokens {
-		ret = append(ret, s)
-	}
-	return ret
-}
-
 func getAssetInfo(t *CToken, includeMeta bool) blockatlas.AssetInfo {
 	ret := blockatlas.AssetInfo{
 		Symbol:         t.UnderlyingSymbol,
@@ -153,18 +144,6 @@ func (p *Provider) getAssetInfos(includeMeta bool) []blockatlas.AssetInfo {
 	res := []blockatlas.AssetInfo{}
 	for _, t := range tokens {
 		res = append(res, getAssetInfo(&t, includeMeta))
-	}
-	return res
-}
-
-func (p *Provider) getAssetInfosFiltered(assets []string) []blockatlas.AssetInfo {
-	tokens := p.getTokensCached()
-	res := []blockatlas.AssetInfo{}
-	for s, t := range tokens {
-		if !sliceContains(s, assets) {
-			continue
-		}
-		res = append(res, getAssetInfo(&t, true))
 	}
 	return res
 }

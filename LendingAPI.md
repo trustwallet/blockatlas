@@ -70,7 +70,7 @@ Sample Response:
 
 ## /lending/assets/:provider/:asset
 
-Get Asset infos, with yield rates.
+Get Asset infos, with yield rates and full info.
 
 Sample requests:
 ```
