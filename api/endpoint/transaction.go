@@ -1,16 +1,17 @@
 package endpoint
 
 import (
+	"net/http"
+	"strings"
+
 	"github.com/gin-gonic/gin"
 	"github.com/trustwallet/blockatlas/api/model"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
-	"net/http"
-	"strings"
 )
 
 // @Summary Get Transactions
-// @ID tx_v1
+// @ID tx_v2
 // @Description Get transactions from the address
 // @Accept json
 // @Produce json
@@ -19,6 +20,7 @@ import (
 // @Param address path string true "the query address" default(tz1WCd2jm4uSt4vntk4vSuUWoZQGhLcDuR9q)
 // @Failure 500 {object} model.ErrorResponse
 // @Router /v1/{coin}/{address} [get]
+// @Router /v2/{coin}/transactions/{address} [get]
 func GetTransactionsHistory(c *gin.Context, txAPI blockatlas.TxAPI, tokenTxAPI blockatlas.TokenTxAPI) {
 	address := c.Param("address")
 	if address == "" {
@@ -83,7 +85,7 @@ func GetTransactionsHistory(c *gin.Context, txAPI blockatlas.TxAPI, tokenTxAPI b
 }
 
 // @Summary Get Transactions by XPUB
-// @ID txxpub_v1
+// @ID tx_xpub_v2
 // @Description Get transactions from XPUB address
 // @Accept json
 // @Produce json
@@ -91,7 +93,8 @@ func GetTransactionsHistory(c *gin.Context, txAPI blockatlas.TxAPI, tokenTxAPI b
 // @Param coin path string true "the coin name" default(bitcoin)
 // @Param xpub path string true "the xpub key" default(zpub6ruK9k6YGm8BRHWvTiQcrEPnFkuRDJhR7mPYzV2LDvjpLa5CuGgrhCYVZjMGcLcFqv9b2WvsFtY2Gb3xq8NVq8qhk9veozrA2W9QaWtihrC)
 // @Failure 500 {object} model.ErrorResponse
-// @Router /v1/{coin}/xpub/{xpub} [get]
+// @Router /v1/{coin}/{address} [get]
+// @Router /v2/{coin}/transactions/xpub/{xpub} [get]
 func GetTransactionsByXpub(c *gin.Context, api blockatlas.TxUtxoAPI) {
 	xPubKey := c.Param("xpub")
 	if xPubKey == "" {

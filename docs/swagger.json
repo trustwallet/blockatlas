@@ -573,7 +573,7 @@
                     "Transactions"
                 ],
                 "summary": "Get Transactions by XPUB",
-                "operationId": "txxpub_v2",
+                "operationId": "tx_xpub_v2",
                 "parameters": [
                     {
                         "type": "string",
