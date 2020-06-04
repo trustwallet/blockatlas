@@ -652,7 +652,7 @@ paths:
       consumes:
       - application/json
       description: Get transactions from XPUB address
-      operationId: txxpub_v2
+      operationId: tx_xpub_v2
       parameters:
       - default: bitcoin
         description: the coin name

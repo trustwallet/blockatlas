@@ -9,6 +9,8 @@ coverage:
         # basic
         target: 30%
 
+    patch: no
+
   ignore:
     - "mock"
     - "config"

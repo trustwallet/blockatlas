@@ -25,7 +25,7 @@ var (
 
 func TestFullFlow(t *testing.T) {
 	setup.CleanupPgContainer(database.Gorm)
-	err := database.AddSubscriptions(1, []models.SubscriptionData{{Coin: 60, Address: "testAddress", SubscriptionId: 1}}, context.Background())
+	err := database.AddSubscriptions([]models.Subscription{{Coin: 60, Address: "testAddress"}}, context.Background())
 	assert.Nil(t, err)
 
 	ctx, cancel := context.WithCancel(context.Background())
@@ -121,7 +121,7 @@ func ConsumerToTestTransactionsFull(delivery amqp.Delivery, t *testing.T, cancel
 
 	assert.Equal(t, notifier.TransactionNotification{
 		Action: blockatlas.TxNativeTokenTransfer,
-		Result: &blockatlas.Tx{
+		Result: blockatlas.Tx{
 			Type:      blockatlas.TxNativeTokenTransfer,
 			Direction: "incoming",
 			ID:        "95CF63FAA27579A9B6AF84EF8B2DFEAC29627479E9C98E7F5AE4535E213FA4C9",
@@ -135,7 +135,6 @@ func ConsumerToTestTransactionsFull(delivery amqp.Delivery, t *testing.T, cancel
 			Memo:      "test",
 			Meta:      &memo,
 		},
-		Id: 1,
 	}, notifications[0])
 
 	if counter == 10 {
@@ -148,7 +147,7 @@ func setupParserFull(stopChan chan<- struct{}) parser.Params {
 	maxTime := time.Second * 2
 	maxBatchBlocksAmount := 1
 
-	pollInterval := notifier.GetInterval(0, minTime, maxTime)
+	pollInterval := parser.GetInterval(0, minTime, maxTime)
 
 	backlogCount := 1
 

@@ -30,7 +30,6 @@ func New(uri, env string) (*Instance, error) {
 
 	g.AutoMigrate(
 		&models.Subscription{},
-		&models.SubscriptionData{},
 		&models.Tracker{},
 	)
 

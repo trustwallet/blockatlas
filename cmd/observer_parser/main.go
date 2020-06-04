@@ -9,7 +9,6 @@ import (
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/platform"
-	"github.com/trustwallet/blockatlas/services/observer/notifier"
 	"github.com/trustwallet/blockatlas/services/observer/parser"
 	"os"
 	"os/signal"
@@ -86,7 +85,7 @@ func main() {
 	for _, api := range platform.BlockAPIs {
 		time.Sleep(time.Millisecond * 5)
 		coin := api.Coin()
-		pollInterval := notifier.GetInterval(coin.BlockTime, minInterval, maxInterval)
+		pollInterval := parser.GetInterval(coin.BlockTime, minInterval, maxInterval)
 
 		var backlogCount int
 		if coin.BlockTime == 0 {
