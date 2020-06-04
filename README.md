@@ -206,16 +206,25 @@ Therefore mocked API-level tests are used, whereby external APIs are replaced by
 
 Swagger API docs provided at path `/swagger/index.html`
 
+or you can install `go-swagger` and render it locally (macOS example)
+
+Install:
+
+```shell
+brew tap go-swagger/go-swagger
+brew install go-swagger
+```
+
+Render: 
+```shell
+swagger serve docs/swagger.yaml
+```
+
 #### Updating Docs
 
 - After creating a new route, add comments to your API source code, [See Declarative Comments Format](https://swaggo.github.io/swaggo.io/declarative_comments_format/).
-- Download Swag for Go by using:
 
-    `$ go get -u github.com/swaggo/swag/cmd/swag`
-
-- Run the Swag in your Go project root folder.
-
-    `$ swag init -g ./cmd/platform_api/main.go -o ./docs`
+- Run `$ make go-gen-docs` in root folder.
 
 ## Contributing
 

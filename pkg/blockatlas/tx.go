@@ -228,21 +228,6 @@ func (t Txs) SortByDate() Txs {
 	return t
 }
 
-func (t Txs) GetTransactionsMap() TxSetMap {
-	txSetMap := TxSetMap{Map: make(map[string]*TxSet)}
-	for i := 0; i < len(t); i++ {
-		addresses := t[i].GetAddresses()
-		addresses = append(addresses, t[i].GetUtxoAddresses()...)
-		for _, address := range addresses {
-			if txSetMap.Map[address] == nil {
-				txSetMap.Map[address] = new(TxSet)
-			}
-			txSetMap.Map[address].Add(&t[i])
-		}
-	}
-	return txSetMap
-}
-
 func (t *Tx) GetUtxoAddresses() (addresses []string) {
 	for _, input := range t.Inputs {
 		addresses = append(addresses, input.Address)

@@ -3,24 +3,22 @@ package db
 import (
 	"context"
 	"fmt"
+	"github.com/jinzhu/gorm"
 	"github.com/trustwallet/blockatlas/db/models"
 	"github.com/trustwallet/blockatlas/pkg/errors"
+	"go.elastic.co/apm"
 	"go.elastic.co/apm/module/apmgorm"
-	"strconv"
 	"strings"
-	"time"
 )
 
-const rawBulkInsert = `INSERT INTO subscription_data(subscription_id, coin, address) VALUES %s ON CONFLICT DO NOTHING`
-
-func (i *Instance) GetSubscriptionData(coin uint, addresses []string, ctx context.Context) ([]models.SubscriptionData, error) {
+func (i *Instance) GetSubscriptions(coin uint, addresses []string, ctx context.Context) ([]models.Subscription, error) {
 	if len(addresses) == 0 {
 		return nil, errors.E("Empty addresses")
 	}
 	g := apmgorm.WithContext(ctx, i.Gorm)
-	var subscriptionsDataList []models.SubscriptionData
+	var subscriptionsDataList []models.Subscription
 	err := g.
-		Model(&models.SubscriptionData{}).
+		Model(&models.Subscription{}).
 		Where("address in (?) AND coin = ?", addresses, coin).
 		Find(&subscriptionsDataList).Error
 
@@ -30,166 +28,78 @@ func (i *Instance) GetSubscriptionData(coin uint, addresses []string, ctx contex
 	return subscriptionsDataList, nil
 }
 
-func (i *Instance) AddSubscriptions(id uint, subscriptions []models.SubscriptionData, ctx context.Context) error {
+func (i *Instance) AddSubscriptions(subscriptions []models.Subscription, ctx context.Context) error {
 	if len(subscriptions) == 0 {
 		return errors.E("Empty subscriptions")
 	}
-	g := apmgorm.WithContext(ctx, i.Gorm)
-	txInstance := Instance{Gorm: g.Begin()}
-	defer func() {
-		if r := recover(); r != nil {
-			txInstance.Gorm.Rollback()
-		}
-	}()
 
-	if err := txInstance.Gorm.Error; err != nil {
-		return err
+	subscriptionsBatch := toSubscriptionBatch(subscriptions, batchLimit, ctx)
+	g := apmgorm.WithContext(ctx, i.Gorm)
+
+	for _, s := range subscriptionsBatch {
+		if err := bulkCreate(g, s); err != nil {
+			return err
+		}
 	}
 
-	var (
-		existingSub models.Subscription
-		err         error
-	)
+	return nil
+}
 
-	recordNotFound := txInstance.Gorm.
-		Where(models.Subscription{SubscriptionId: id}).
-		First(&existingSub).
-		RecordNotFound()
+func (i *Instance) DeleteSubscriptions(subscriptions []models.Subscription, ctx context.Context) error {
+	if len(subscriptions) == 0 {
+		return errors.E("Empty subscriptions")
+	}
 
-	subscriptions = removeSubscriptionDuplicates(subscriptions)
-	if recordNotFound {
-		err = txInstance.Gorm.Set("gorm:insert_option",
-			"ON CONFLICT (subscription_id) DO UPDATE SET subscription_id = excluded.subscription_id").
-			Create(&models.Subscription{SubscriptionId: id, UpdatedAt: time.Now()}).Error
+	g := apmgorm.WithContext(ctx, i.Gorm)
+	for _, s := range subscriptions {
+		err := g.Where("coin = ? and address = ?", s.Coin, s.Address).Delete(&models.Subscription{}).Error
 		if err != nil {
-			txInstance.Gorm.Rollback()
-			return err
-		}
-		err = txInstance.BulkCreate(subscriptions)
-	} else {
-		err = txInstance.AddToExistingSubscription(id, subscriptions)
-	}
-
-	if err != nil {
-		txInstance.Gorm.Rollback()
-		return err
-	}
-	return txInstance.Gorm.Commit().Error
-}
-
-func (i *Instance) AddToExistingSubscription(id uint, subscriptions []models.SubscriptionData) error {
-	var (
-		existingData []models.SubscriptionData
-		association  = i.Gorm.Model(&models.Subscription{SubscriptionId: id}).Association("Data")
-	)
-	if err := association.Error; err != nil {
-		return err
-	}
-	if err := association.Find(&existingData).Error; err != nil {
-		return err
-	}
-
-	updateList, deleteList := getSubscriptionsToDeleteAndUpdate(existingData, subscriptions)
-	if len(updateList) > 0 {
-		if err := i.BulkCreate(updateList); err != nil {
 			return err
 		}
 	}
-	if len(deleteList) > 0 {
-		if err := i.DeleteSubscriptions(deleteList); err != nil {
-			return err
-		}
-	}
-
-	if err := i.Gorm.Model(&models.Subscription{SubscriptionId: id}).Update("updated_at", time.Now()).Error; err != nil {
-		return err
-	}
-
 	return nil
 }
 
-func (i *Instance) DeleteAllSubscriptions(id uint, ctx context.Context) error {
-	g := apmgorm.WithContext(ctx, i.Gorm)
-	request := g.Where("subscription_id = ?", id)
-	if err := request.Error; err != nil {
-		return err
-	}
-	return request.Delete(&models.SubscriptionData{}).Error
-}
+const (
+	batchLimit    = 3000
+	rawBulkInsert = `INSERT INTO subscriptions(coin,address) VALUES %s ON CONFLICT DO NOTHING`
+)
 
-func (i *Instance) DeleteSubscriptions(subscriptions []models.SubscriptionData) error {
-	var idList = make([]string, 0, len(subscriptions))
-
-	for _, sub := range subscriptions {
-		idList = append(idList, strconv.Itoa(int(sub.ID)))
-	}
-
-	request := i.Gorm.Where("id in (?)", idList)
-
-	if err := request.Error; err != nil {
-		return err
-	}
-	if err := request.Delete(&models.SubscriptionData{}).Error; err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (i *Instance) BulkCreate(dataList []models.SubscriptionData) error {
+func bulkCreate(db *gorm.DB, dataList []models.Subscription) error {
 	var (
 		valueStrings []string
 		valueArgs    []interface{}
 	)
 
 	for _, d := range dataList {
-		valueStrings = append(valueStrings, "(?, ?, ?)")
+		valueStrings = append(valueStrings, "(?, ?)")
 
-		valueArgs = append(valueArgs, d.SubscriptionId)
 		valueArgs = append(valueArgs, d.Coin)
 		valueArgs = append(valueArgs, d.Address)
 	}
 
 	smt := fmt.Sprintf(rawBulkInsert, strings.Join(valueStrings, ","))
 
-	if err := i.Gorm.Exec(smt, valueArgs...).Error; err != nil {
+	if err := db.Exec(smt, valueArgs...).Error; err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func getSubscriptionsToDeleteAndUpdate(existing, new []models.SubscriptionData) (subToUpdate, subToDelete []models.SubscriptionData) {
-	for _, n := range new {
-		if !containSubscription(n, existing) {
-			subToUpdate = append(subToUpdate, n)
+func toSubscriptionBatch(txs []models.Subscription, sizeUint uint, ctx context.Context) [][]models.Subscription {
+	span, _ := apm.StartSpan(ctx, "toSubscriptionBatch", "app")
+	defer span.End()
+	size := int(sizeUint)
+	resultLength := (len(txs) + size - 1) / size
+	result := make([][]models.Subscription, resultLength)
+	lo, hi := 0, size
+	for i := range result {
+		if hi > len(txs) {
+			hi = len(txs)
 		}
-	}
-	for _, e := range existing {
-		if !containSubscription(e, new) {
-			subToDelete = append(subToDelete, e)
-		}
-	}
-	return subToUpdate, subToDelete
-}
-
-func containSubscription(sub models.SubscriptionData, list []models.SubscriptionData) bool {
-	for _, s := range list {
-		if s.Address == sub.Address && sub.Coin == s.Coin && s.SubscriptionId == sub.SubscriptionId {
-			return true
-		}
-	}
-	return false
-}
-
-func removeSubscriptionDuplicates(sub []models.SubscriptionData) []models.SubscriptionData {
-	keys := make(map[models.SubscriptionData]bool)
-	result := make([]models.SubscriptionData, 0)
-	for _, entry := range sub {
-		if _, value := keys[entry]; !value {
-			keys[entry] = true
-			result = append(result, entry)
-		}
+		result[i] = txs[lo:hi:hi]
+		lo, hi = hi, hi+size
 	}
 	return result
 }

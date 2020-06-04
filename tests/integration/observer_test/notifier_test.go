@@ -44,7 +44,7 @@ var (
 func TestNotifier(t *testing.T) {
 	setup.CleanupPgContainer(database.Gorm)
 
-	err := database.AddSubscriptions(1, []models.SubscriptionData{{Coin: 714, Address: "tbnb1ttyn4csghfgyxreu7lmdu3lcplhqhxtzced45a", SubscriptionId: 1}}, context.Background())
+	err := database.AddSubscriptions([]models.Subscription{{Coin: 714, Address: "tbnb1ttyn4csghfgyxreu7lmdu3lcplhqhxtzced45a"}}, context.Background())
 	assert.Nil(t, err)
 
 	err = produceTxs(txs)
@@ -82,7 +82,7 @@ func ConsumerToTestTransactions(delivery amqp.Delivery, t *testing.T) {
 
 	assert.Equal(t, notifier.TransactionNotification{
 		Action: blockatlas.TxNativeTokenTransfer,
-		Result: &blockatlas.Tx{
+		Result: blockatlas.Tx{
 			Type:      blockatlas.TxNativeTokenTransfer,
 			Direction: "outgoing",
 			ID:        "95CF63FAA27579A9B6AF84EF8B2DFEAC29627479E9C98E7F5AE4535E213FA4C9",
@@ -96,7 +96,6 @@ func ConsumerToTestTransactions(delivery amqp.Delivery, t *testing.T) {
 			Memo:      "test",
 			Meta:      &memo,
 		},
-		Id: 1,
 	}, notifications[0])
 
 	return
