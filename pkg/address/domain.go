@@ -6,11 +6,10 @@ import (
 
 // Obtain tld from the name, e.g. ".eth" from "nick.eth"
 func GetTLD(name, separator string) string {
-	lastSeparatorIdx := strings.LastIndex(name, separator)
-	if lastSeparatorIdx < 0 || lastSeparatorIdx >= len(name)-1 {
-		// no separator inside string
+	lastIdx := strings.LastIndex(name, separator)
+	if lastIdx < 0 || lastIdx >= len(name)-1 {
 		return ""
 	}
 	// return tail including separator
-	return name[lastSeparatorIdx:]
+	return name[lastIdx:]
 }
