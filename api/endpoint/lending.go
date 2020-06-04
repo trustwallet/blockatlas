@@ -24,7 +24,7 @@ func HandleLendingProviders(c *gin.Context, apis map[string]blockatlas.LendingAP
 	c.JSON(http.StatusOK, blockatlas.DocsResponse{Docs: &p})
 }
 
-// @Summary Get Lending Rates.
+// @Summary Get Asset infos, with yield rates.
 // @ID lending_providers
 // @Description Get lending rates, for one or more assets, of a provider.
 // @Accept json
@@ -33,20 +33,15 @@ func HandleLendingProviders(c *gin.Context, apis map[string]blockatlas.LendingAP
 // @Param provider path string true "Lending provider name"
 // @Param request body blockatlas.RatesRequest true "Request, containing one or more assets (token symbols)"
 // @Success 200 {object} blockatlas.DocsResponse Docs: []blockatlas.AssetInfo
-// @Router /v1/lending/rates/:provider [post]
-func HandleLendingRates(c *gin.Context, apis map[string]blockatlas.LendingAPI) {
+// @Router /v1/lending/assets/:provider/:asset [get]
+func HandleLendingAssets(c *gin.Context, apis map[string]blockatlas.LendingAPI) {
 	provider, ok := c.Params.Get("provider")
 	if !ok {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Fatal: missing provider"})
 		return
 	}
-	var req blockatlas.RatesRequest
-	err := c.BindJSON(&req)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid request: " + err.Error()})
-		return
-	}
-	p, err := getRates(provider, req, apis)
+	asset, _ := c.Params.Get("asset")
+	p, err := getAssets(provider, asset, apis)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -98,12 +93,12 @@ func getProviders(apis map[string]blockatlas.LendingAPI) ([]blockatlas.LendingPr
 }
 
 // GetRates return rates info
-func getRates(provider string, req blockatlas.RatesRequest, apis map[string]blockatlas.LendingAPI) ([]blockatlas.AssetInfo, error) {
+func getAssets(provider, asset string, apis map[string]blockatlas.LendingAPI) ([]blockatlas.AssetInfo, error) {
 	api, ok := apis[provider]
 	if !ok {
 		return nil, fmt.Errorf("Unknown provider %v", provider)
 	}
-	return api.GetCurrentLendingRates(req.Assets)
+	return api.GetAsset(asset)
 }
 
 // GetAccounts return account contract

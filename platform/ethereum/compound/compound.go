@@ -3,6 +3,7 @@ package compound
 import (
 	"fmt"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
@@ -46,14 +47,29 @@ func (p *Provider) GetProviderInfo() (blockatlas.LendingProvider, error) {
 	}, nil
 }
 
-// GetCurrentLendingRates return current estimated yield rates for assets.  Rates are annualized.  Rates vary over time.
-// assets: List asset IDs to consider, or empty for all
-func (p *Provider) GetCurrentLendingRates(assets []string) ([]blockatlas.AssetInfo, error) {
-	if len(assets) == 0 {
+// GetAsset return asset info including APY.  Rates are annualized.  Rates vary over time.
+// asset: Symbol to consider, or token address.  Can be empty, then all are returned.
+func (p *Provider) GetAsset(asset string) ([]blockatlas.AssetInfo, error) {
+	if len(asset) == 0 {
 		// empty filter, means any; get all available assets
-		assets = p.getAssetSymbols()
+		return p.getAssetInfos(true), nil
 	}
-	return p.getAssetInfosFiltered(assets), nil
+	ret := []blockatlas.AssetInfo{}
+	res, err := p.getAssetInfoForSymbol(asset)
+	if err == nil {
+		ret = append(ret, res)
+	} else {
+		// symbol not found, try as contract
+		symbol := p.getSymbolByAddress(asset)
+		res, err = p.getAssetInfoForSymbol(symbol)
+		if err == nil {
+			ret = append(ret, res)
+		}
+	}
+	if len(ret) == 0 {
+		return ret, fmt.Errorf("Asset not found %v (symbol or token address", asset)
+	}
+	return ret, nil
 }
 
 // GetAccountLendingContracts return current contract details for a given address.
@@ -67,12 +83,12 @@ func (p *Provider) GetAccountLendingContracts(req blockatlas.AccountRequest) ([]
 	for _, acc := range accounts {
 		ret1 := blockatlas.AccountLendingContracts{Address: acc.Address, Contracts: []blockatlas.LendingContract{}}
 		for _, t := range acc.Tokens {
-			asset := p.getUnderlyingSymbol(t.Symbol)
+			asset := p.getSymbolByCSymbol(t.Symbol)
 			if len(req.Assets) > 0 && !sliceContains(asset, req.Assets) {
 				continue // not requested, skip
 			}
 			assetInfo := blockatlas.AssetInfo{Symbol: asset}
-			if ai, err := p.getAssetInfosForAsset(asset); err == nil {
+			if ai, err := p.getAssetInfoForSymbol(asset); err == nil {
 				assetInfo = ai
 			}
 			ret1.Contracts = append(ret1.Contracts, blockatlas.LendingContract{
@@ -106,7 +122,7 @@ func getAssetInfo(t *CToken, includeMeta bool) blockatlas.AssetInfo {
 	}
 	if includeMeta {
 		ret.MetaInfo = blockatlas.AssetMetaInfo{
-			DefiInfo: blockatlas.DefiAssetInfo{
+			DefiInfo: &blockatlas.DefiAssetInfo{
 				AssetToken: blockatlas.DefiTokenInfo{
 					Symbol: t.UnderlyingSymbol,
 					Chain:  Chain,
@@ -122,9 +138,9 @@ func getAssetInfo(t *CToken, includeMeta bool) blockatlas.AssetInfo {
 	return ret
 }
 
-func (p *Provider) getAssetInfosForAsset(asset string) (blockatlas.AssetInfo, error) {
+func (p *Provider) getAssetInfoForSymbol(asset string) (blockatlas.AssetInfo, error) {
 	tokens := p.getTokensCached()
-	token, ok := tokens[asset]
+	token, ok := tokens[strings.ToUpper(asset)]
 	if !ok {
 		return blockatlas.AssetInfo{}, fmt.Errorf("Token not found %v", asset)
 	}
@@ -153,7 +169,7 @@ func (p *Provider) getAssetInfosFiltered(assets []string) []blockatlas.AssetInfo
 	return res
 }
 
-// Returns a info on tokens, map by symbol
+// Returns a info on tokens, map by uppercase symbol
 // Cached for _cacheValiditySec seconds
 func (p *Provider) getTokensCached() map[string]CToken {
 	now := time.Now()
@@ -169,16 +185,26 @@ func (p *Provider) getTokensCached() map[string]CToken {
 		return _cachedTokens
 	}
 	for _, t := range res.CToken {
-		_cachedTokens[t.UnderlyingSymbol] = t
+		_cachedTokens[strings.ToUpper(t.UnderlyingSymbol)] = t
 	}
 	_cachedTokenTime = now
 	return _cachedTokens
 }
 
-func (p *Provider) getUnderlyingSymbol(symbol string) string {
+func (p *Provider) getSymbolByCSymbol(symbol string) string {
 	tokens := p.getTokensCached()
 	for s := range tokens {
 		if tokens[s].Symbol == symbol {
+			return s
+		}
+	}
+	return ""
+}
+
+func (p *Provider) getSymbolByAddress(tokenAddress string) string {
+	tokens := p.getTokensCached()
+	for s := range tokens {
+		if tokens[s].TokenAddress == tokenAddress {
 			return s
 		}
 	}

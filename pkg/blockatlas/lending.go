@@ -37,7 +37,7 @@ type (
 	}
 
 	AssetMetaInfo struct {
-		DefiInfo DefiAssetInfo `json:"defi_info,omitempty"`
+		DefiInfo *DefiAssetInfo `json:"defi_info,omitempty"` // pointer for omit to work
 	}
 
 	DefiAssetInfo struct {
@@ -49,11 +49,6 @@ type (
 		Symbol          string `json:"symbol"`
 		Chain           string `json:"chain"`
 		ContractAddress string `json:"contract_address,omitempty"`
-	}
-
-	// RatesRequest Rates API request
-	RatesRequest struct {
-		Assets []string `json:"assets"`
 	}
 
 	// AccountRequest Account API request

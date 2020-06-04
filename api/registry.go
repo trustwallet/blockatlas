@@ -112,8 +112,11 @@ func RegisterLendingAPI(router gin.IRouter) {
 	router.GET("/v1/lending/providers", middleware.CacheMiddleware(time.Hour*10, func(c *gin.Context) {
 		endpoint.HandleLendingProviders(c, platform.LendingAPIs)
 	}))
-	router.POST("/v1/lending/rates/:provider", middleware.CacheMiddleware(time.Hour*10, func(c *gin.Context) {
-		endpoint.HandleLendingRates(c, platform.LendingAPIs)
+	router.GET("/v1/lending/assets/:provider", middleware.CacheMiddleware(time.Hour*10, func(c *gin.Context) {
+		endpoint.HandleLendingAssets(c, platform.LendingAPIs)
+	}))
+	router.GET("/v1/lending/assets/:provider/:asset", middleware.CacheMiddleware(time.Hour*10, func(c *gin.Context) {
+		endpoint.HandleLendingAssets(c, platform.LendingAPIs)
 	}))
 	router.POST("/v1/lending/account/:provider", middleware.CacheMiddleware(time.Hour*10, func(c *gin.Context) {
 		endpoint.HandleLendingAccount(c, platform.LendingAPIs)
