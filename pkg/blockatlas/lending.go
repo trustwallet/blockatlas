@@ -1,10 +1,18 @@
 package blockatlas
 
+type ProviderType string
+
+const (
+	ProviderTypeLending ProviderType = "lending"
+	ProviderTypeStaking ProviderType = "staking"
+)
+
 type (
 	// LendingProvider static info about the lending provider, such as name and asset classes supported.
 	LendingProvider struct {
 		ID     string              `json:"id"`
 		Info   LendingProviderInfo `json:"info"`
+		Type   ProviderType        `json:"type"`
 		Assets []AssetClass        `json:"assets"`
 	}
 

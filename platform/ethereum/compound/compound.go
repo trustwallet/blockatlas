@@ -42,6 +42,7 @@ func (p *Provider) GetProviderInfo() (blockatlas.LendingProvider, error) {
 			Image:       "https://compound.finance/images/compound-logo.svg",
 			Website:     "https://compound.finance",
 		},
+		Type:   blockatlas.ProviderTypeLending,
 		Assets: p.getTokensNormalized(),
 	}, nil
 }
