@@ -44,7 +44,7 @@ func (p *Provider) GetProviderInfo() (blockatlas.LendingProvider, error) {
 		Assets: make([]blockatlas.AssetInfo, 0),
 	}
 	assets, err := p.getAssetInfos(false)
-	if err != nil {
+	if err == nil {
 		provider.Assets = assets
 	}
 	return provider, nil
