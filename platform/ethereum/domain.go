@@ -9,7 +9,7 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/platform/ethereum/ens"
-	enscoincodec "github.com/trustwallet/ens-coincodec"
+	coincodec "github.com/trustwallet/ens-coincodec"
 )
 
 var domains = map[string]interface{}{
@@ -51,10 +51,10 @@ func (p *Platform) Lookup(coins []uint64, name string) ([]blockatlas.Resolved, e
 	return result, nil
 }
 
-func (p *Platform) addressForCoin(resovler string, node []byte, cionInt uint64) (string, error) {
-	result, err := p.ens.Addr(resovler, node, cionInt)
+func (p *Platform) addressForCoin(resovler string, node []byte, coinType uint64) (string, error) {
+	result, err := p.ens.Addr(resovler, node, coinType)
 	if err != nil {
-		if cionInt == coin.ETH {
+		if coinType == coin.ETH {
 			// user may not set multi coin address
 			result, err := p.lookupLegacyETH(resovler, node)
 			if err != nil {
@@ -64,7 +64,7 @@ func (p *Platform) addressForCoin(resovler string, node []byte, cionInt uint64) 
 		}
 		return "", errors.E(err, "query multi coin address failed")
 	}
-	encoded, err := enscoincodec.ToString(result, uint32(cionInt))
+	encoded, err := coincodec.ToString(result, uint32(coinType))
 	if err != nil {
 		return "", errors.E(err, "encode to address failed")
 	}
