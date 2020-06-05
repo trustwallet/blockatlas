@@ -1,8 +1,6 @@
 package fio
 
 import (
-	"strings"
-
 	"github.com/minio/minio-go/pkg/set"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
@@ -17,15 +15,15 @@ var domains = set.CreateStringSet(
 )
 
 func (p *Platform) CanHandle(name string) bool {
-	tld := strings.ToLower(naming.GetTLD(name, "@"))
-	if len(tld) == 0 {
+	domain := naming.GetTopDomain(name, "@")
+	if len(domain) == 0 {
 		return false
 	}
-	if domains.Contains(strings.ToLower(tld)) {
+	if domains.Contains(domain) {
 		return true
 	}
 	// we match any @xxx domain!
-	if len(tld) >= 2 {
+	if len(domain) >= 2 {
 		return true
 	}
 	return false
