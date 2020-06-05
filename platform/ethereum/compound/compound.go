@@ -2,6 +2,7 @@ package compound
 
 import (
 	"fmt"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -11,8 +12,13 @@ import (
 
 // Compound Lending Provider
 
+type CompoundClient interface {
+	GetAccounts(addresses []string) ([]Account, error)
+	GetCTokensCached(tokenAddresses []string, cacheExpiry time.Duration) (CTokenResponse, error)
+}
+
 type Provider struct {
-	client Client
+	client CompoundClient
 }
 
 const (
@@ -22,8 +28,12 @@ const (
 
 func Init(api string) *Provider {
 	return &Provider{
-		client: Client{blockatlas.InitClient(api)},
+		client: &Client{blockatlas.InitClient(api)},
 	}
+}
+
+func InitForTest(client CompoundClient) *Provider {
+	return &Provider{client: client}
 }
 
 func (p *Provider) Name() string {
@@ -133,6 +143,7 @@ func (p *Provider) getAssetInfos(includeMeta bool) ([]blockatlas.AssetInfo, erro
 	for _, t := range tokens {
 		res = append(res, getAssetInfo(&t, includeMeta))
 	}
+	sort.Slice(res, func(i, j int) bool { return res[i].Symbol < res[j].Symbol })
 	return res, nil
 }
 
