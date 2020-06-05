@@ -60,7 +60,7 @@ type (
 	}
 
 	NamingServiceAPI interface {
-		Match(name string) bool // Return true for names that may be handled by this provider (e.g. if it has specific suffic)
+		CanHandle(name string) bool
 		Lookup(coins []uint64, name string) ([]Resolved, error)
 	}
 

@@ -4,10 +4,10 @@ import (
 	"strings"
 
 	"github.com/trustwallet/blockatlas/coin"
-	"github.com/trustwallet/blockatlas/pkg/address"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
+	"github.com/trustwallet/blockatlas/pkg/naming"
 	"github.com/trustwallet/blockatlas/platform/ethereum/ens"
 	coincodec "github.com/trustwallet/ens-coincodec"
 )
@@ -19,8 +19,8 @@ var domains = map[string]interface{}{
 	".kred": nil,
 }
 
-func (p *Platform) Match(name string) bool {
-	tld := address.GetTLD(name, ".")
+func (p *Platform) CanHandle(name string) bool {
+	tld := naming.GetTLD(name, ".")
 	if len(tld) == 0 {
 		return false
 	}

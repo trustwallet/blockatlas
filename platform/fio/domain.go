@@ -4,8 +4,8 @@ import (
 	"strings"
 
 	"github.com/trustwallet/blockatlas/coin"
-	"github.com/trustwallet/blockatlas/pkg/address"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/naming"
 )
 
 var domains = map[string]interface{}{
@@ -15,8 +15,8 @@ var domains = map[string]interface{}{
 	"@fiomembers":  nil,
 }
 
-func (p *Platform) Match(name string) bool {
-	tld := strings.ToLower(address.GetTLD(name, "@"))
+func (p *Platform) CanHandle(name string) bool {
+	tld := strings.ToLower(naming.GetTLD(name, "@"))
 	if len(tld) == 0 {
 		return false
 	}

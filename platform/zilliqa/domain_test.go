@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestMatch(t *testing.T) {
+func TestCanHandle(t *testing.T) {
 	tests := []struct {
 		name string
 		want bool
@@ -23,7 +23,7 @@ func TestMatch(t *testing.T) {
 	}
 	p := Init("", "", "", "")
 	for _, tt := range tests {
-		res := p.Match(tt.name)
+		res := p.CanHandle(tt.name)
 		assert.Equal(t, tt.want, res)
 	}
 }
