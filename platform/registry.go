@@ -97,7 +97,7 @@ func Init(platformHandles []string) {
 	CollectionsAPIs = getCollectionsHandlers()
 	NamingAPIs = getNamingHandlers()
 
-	compoundLendingProvider := compound.Init("https://api.compound.finance/api") // TODO into config
+	compoundLendingProvider := compound.Init(viper.GetString("ethereum.compound_api"))
 	LendingAPIs = make(map[string]blockatlas.LendingAPI, 10)
 	LendingAPIs[compoundLendingProvider.Name()] = compoundLendingProvider
 }
