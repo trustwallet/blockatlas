@@ -109,18 +109,73 @@ func TestGetAssets(t *testing.T) {
 }
 
 func TestGetAccountLendingContracts(t *testing.T) {
+	tests := []struct {
+		name     string
+		request  blockatlas.AccountRequest
+		expected string
+		expError bool
+	}{
+		{
+			name: "addr1 normal",
+			request: blockatlas.AccountRequest{
+				Addresses: []string{accountAddr1},
+				Assets:    []string{},
+			},
+			expected: `[{"address":"0xf9C659D90663BC4e0F7a8766112fE806bae3b5aE","contracts":[{"asset":{"symbol":"USDC","description":"Compound USD Coin","apy":1.6573,"yield_freq":15,"total_supply":"1023919029.5655","minimum_amount":"0","meta_info":{"defi_info":{"asset_token":{"symbol":"USDC","chain":"ETH"},"technical_token":{"symbol":"cUSDC","chain":"ETH","contract_address":"0x39aa39c021dfbae8fac545936693ac917d5e7563"}}}},"current_amount":"4.0000973986"}]}]`,
+			expError: false,
+		},
+		{
+			name: "addr1 with asset",
+			request: blockatlas.AccountRequest{
+				Addresses: []string{accountAddr1},
+				Assets:    []string{"USDC"},
+			},
+			expected: `[{"address":"0xf9C659D90663BC4e0F7a8766112fE806bae3b5aE","contracts":[{"asset":{"symbol":"USDC","description":"Compound USD Coin","apy":1.6573,"yield_freq":15,"total_supply":"1023919029.5655","minimum_amount":"0","meta_info":{"defi_info":{"asset_token":{"symbol":"USDC","chain":"ETH"},"technical_token":{"symbol":"cUSDC","chain":"ETH","contract_address":"0x39aa39c021dfbae8fac545936693ac917d5e7563"}}}},"current_amount":"4.0000973986"}]}]`,
+			expError: false,
+		},
+		{
+			name: "addr1 with wrong asset",
+			request: blockatlas.AccountRequest{
+				Addresses: []string{accountAddr1},
+				Assets:    []string{"ETH"},
+			},
+			expected: `[{"address":"0xf9C659D90663BC4e0F7a8766112fE806bae3b5aE","contracts":[]}]`,
+			expError: false,
+		},
+		{
+			name: "wrong address",
+			request: blockatlas.AccountRequest{
+				Addresses: []string{"0x4ddc2d193948926d02f9b1fe9e1daa0718270ed5"},
+				Assets:    []string{},
+			},
+			expected: `null`,
+			expError: true,
+		},
+	}
 	p := InitForTest(&TestClient{})
-	req := blockatlas.AccountRequest{
-		Addresses: []string{accountAddr1},
-		Assets:    []string{},
+	for _, tt := range tests {
+		res, err := p.GetAccountLendingContracts(tt.request)
+		if !tt.expError {
+			if err != nil {
+				t.Errorf("Unexpected error %v %v", tt.name, err.Error())
+			}
+			resJSON := jsonToString(res)
+			if resJSON != tt.expected {
+				t.Errorf("Wrong result %v\n%v\n%v", tt.name, resJSON, tt.expected)
+			}
+		} else {
+			if err == nil {
+				t.Errorf("Expected error, got none %v", tt.name)
+			}
+		}
 	}
-	res, err := p.GetAccountLendingContracts(req)
-	if err != nil {
-		t.Errorf("Unexpected error %v", err.Error())
-	}
-	resJSON := jsonToString(res)
-	expected := `[{"address":"0xf9C659D90663BC4e0F7a8766112fE806bae3b5aE","contracts":[{"asset":{"symbol":"USDC","description":"Compound USD Coin","apy":1.6573,"yield_freq":15,"total_supply":"1023919029.5655","minimum_amount":"0","meta_info":{"defi_info":{"asset_token":{"symbol":"USDC","chain":"ETH"},"technical_token":{"symbol":"cUSDC","chain":"ETH","contract_address":"0x39aa39c021dfbae8fac545936693ac917d5e7563"}}}},"current_amount":"4.0000973986"}]}]`
-	if resJSON != expected {
-		t.Errorf("Wrong result\n%v\n%v", resJSON, expected)
+}
+
+func TestProviderName(t *testing.T) {
+	p := InitForTest(&TestClient{})
+	expected := "compound"
+	res := p.Name()
+	if res != expected {
+		t.Errorf("Wrong result %v %v", res, expected)
 	}
 }
