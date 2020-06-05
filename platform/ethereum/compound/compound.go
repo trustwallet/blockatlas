@@ -50,29 +50,8 @@ func (p *Provider) GetProviderInfo() (blockatlas.LendingProvider, error) {
 	return provider, nil
 }
 
-// GetAsset return asset info including APY.  Rates are annualized.  Rates vary over time.
-// asset: Symbol to consider, or token address.  Can be empty, then all are returned.
-func (p *Provider) GetAsset(asset string) ([]blockatlas.AssetInfo, error) {
-	if len(asset) == 0 {
-		// empty filter, means any; get all available assets
-		return p.getAssetInfos(true)
-	}
-	ret := []blockatlas.AssetInfo{}
-	res, err := p.getAssetInfoForSymbol(asset)
-	if err == nil {
-		ret = append(ret, res)
-	} else {
-		// symbol not found, try as contract
-		symbol := p.getSymbolByAddress(asset)
-		res, err = p.getAssetInfoForSymbol(symbol)
-		if err == nil {
-			ret = append(ret, res)
-		}
-	}
-	if len(ret) == 0 {
-		return ret, fmt.Errorf("Asset not found %v (symbol or token address", asset)
-	}
-	return ret, nil
+func (p *Provider) GetAssets() ([]blockatlas.AssetInfo, error) {
+	return p.getAssetInfos(true)
 }
 
 // GetAccountLendingContracts return current contract details for a given address.
@@ -173,18 +152,6 @@ func (p *Provider) getSymbolByCSymbol(symbol string) string {
 	if err == nil {
 		for s := range tokens {
 			if tokens[s].Symbol == symbol {
-				return s
-			}
-		}
-	}
-	return ""
-}
-
-func (p *Provider) getSymbolByAddress(tokenAddress string) string {
-	tokens, err := p.getTokensCached()
-	if err == nil {
-		for s := range tokens {
-			if tokens[s].TokenAddress == tokenAddress {
 				return s
 			}
 		}
