@@ -41,7 +41,7 @@ func (p *Provider) GetProviderInfo() (blockatlas.LendingProvider, error) {
 			Website:     "https://compound.finance",
 		},
 		Type:   blockatlas.ProviderTypeLending,
-		Assets: []blockatlas.AssetInfo{},
+		Assets: make([]blockatlas.AssetInfo, 0),
 	}
 	assets, err := p.getAssetInfos(false)
 	if err != nil {
@@ -61,9 +61,9 @@ func (p *Provider) GetAccountLendingContracts(req blockatlas.AccountRequest) ([]
 	if err != nil {
 		return nil, err
 	}
-	ret := []blockatlas.AccountLendingContracts{}
+	ret := make([]blockatlas.AccountLendingContracts, 0)
 	for _, acc := range accounts {
-		ret1 := blockatlas.AccountLendingContracts{Address: acc.Address, Contracts: []blockatlas.LendingContract{}}
+		ret1 := blockatlas.AccountLendingContracts{Address: acc.Address, Contracts: make([]blockatlas.LendingContract, 0)}
 		for _, t := range acc.Tokens {
 			asset := p.getSymbolByCSymbol(t.Symbol)
 			if len(req.Assets) > 0 && !sliceContains(asset, req.Assets) {
@@ -90,8 +90,9 @@ func getAssetInfo(t *CToken, includeMeta bool) blockatlas.AssetInfo {
 		APY:            apyOfToken(t),
 		YieldPeriod:    0,
 		YieldFrequency: 15,
-		TotalSupply:    t.TotalSupply.Value,
-		MinimumAmount:  "0",
+		TotalSupply:    blockatlas.Amount(t.TotalSupply.Value),
+		MinimumAmount:  blockatlas.Amount("0"),
+		LockTime:       0,
 	}
 	if includeMeta {
 		ret.MetaInfo = blockatlas.AssetMetaInfo{
@@ -124,7 +125,7 @@ func (p *Provider) getAssetInfoForSymbol(asset string) (blockatlas.AssetInfo, er
 }
 
 func (p *Provider) getAssetInfos(includeMeta bool) ([]blockatlas.AssetInfo, error) {
-	res := []blockatlas.AssetInfo{}
+	res := make([]blockatlas.AssetInfo, 0)
 	tokens, err := p.getTokensCached()
 	if err != nil {
 		return res, err
@@ -137,7 +138,7 @@ func (p *Provider) getAssetInfos(includeMeta bool) ([]blockatlas.AssetInfo, erro
 
 func (p *Provider) getTokensCached() (map[string]CToken, error) {
 	tokens := make(map[string]CToken, 30)
-	res, err := p.client.GetCTokensCached([]string{}, cacheValiditySec)
+	res, err := p.client.GetCTokensCached(make([]string, 0), cacheValiditySec)
 	if err != nil {
 		return tokens, err
 	}

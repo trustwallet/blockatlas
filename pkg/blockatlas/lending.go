@@ -21,8 +21,9 @@ type (
 		APY            float64       `json:"apy"`
 		YieldPeriod    int64         `json:"yield_period"` // the period of validity of current APY, 0 for variable APY
 		YieldFrequency int64         `json:"yield_freq"`   // the period of yield computation, in seconds, e.g. 86400 for daily yield writeoff.
-		TotalSupply    string        `json:"total_supply"`
-		MinimumAmount  string        `json:"minimum_amount"`
+		TotalSupply    Amount        `json:"total_supply"`
+		MinimumAmount  Amount        `json:"minimum_amount"`
+		LockTime       int64         `json:"lock_time"`
 		MetaInfo       AssetMetaInfo `json:"meta_info,omitempty"`
 	}
 
