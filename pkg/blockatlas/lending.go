@@ -9,17 +9,10 @@ const (
 
 type (
 	LendingProvider struct {
-		ID     string              `json:"id"`
-		Info   LendingProviderInfo `json:"info"`
-		Type   ProviderType        `json:"type"`
-		Assets []AssetInfo         `json:"assets"`
-	}
-
-	LendingProviderInfo struct {
-		ID          string `json:"id"`
-		Description string `json:"description"`
-		Image       string `json:"image"`
-		Website     string `json:"website"`
+		ID     string             `json:"id"`
+		Info   StakeValidatorInfo `json:"info"`
+		Type   ProviderType       `json:"type"`
+		Assets []AssetInfo        `json:"assets"`
 	}
 
 	AssetInfo struct {
@@ -34,7 +27,7 @@ type (
 	}
 
 	AssetMetaInfo struct {
-		DefiInfo *DefiAssetInfo `json:"defi_info,omitempty"` // pointer for omit to work
+		DefiInfo *DefiAssetInfo `json:"defi_info,omitempty"` // pointer type for omit to work
 	}
 
 	DefiAssetInfo struct {

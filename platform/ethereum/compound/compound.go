@@ -34,8 +34,8 @@ func (p *Provider) Name() string {
 func (p *Provider) GetProviderInfo() (blockatlas.LendingProvider, error) {
 	provider := blockatlas.LendingProvider{
 		ID: "compound",
-		Info: blockatlas.LendingProviderInfo{
-			ID:          providerName,
+		Info: blockatlas.StakeValidatorInfo{
+			Name:        providerName,
 			Description: "Compound Decentralized Finance Protocol",
 			Image:       "https://compound.finance/images/compound-logo.svg",
 			Website:     "https://compound.finance",
