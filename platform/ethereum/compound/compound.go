@@ -15,27 +15,27 @@ type Provider struct {
 	client Client
 }
 
+const (
+	providerName                   = "compound"
+	cacheValiditySec time.Duration = 15 * time.Second
+)
+
 func Init(api string) *Provider {
 	return &Provider{
 		client: Client{blockatlas.InitClient(api)},
 	}
 }
 
-const (
-	_providerName                   = "compound"
-	_cacheValiditySec time.Duration = 15 * time.Second
-)
-
 func (p *Provider) Name() string {
-	return _providerName
+	return providerName
 }
 
 // GetProviderInfo return static info about the lending provider, such as name and asset classes supported.
 func (p *Provider) GetProviderInfo() (blockatlas.LendingProvider, error) {
-	prov := blockatlas.LendingProvider{
+	provider := blockatlas.LendingProvider{
 		ID: "compound",
 		Info: blockatlas.LendingProviderInfo{
-			ID:          _providerName,
+			ID:          providerName,
 			Description: "Compound Decentralized Finance Protocol",
 			Image:       "https://compound.finance/images/compound-logo.svg",
 			Website:     "https://compound.finance",
@@ -45,9 +45,9 @@ func (p *Provider) GetProviderInfo() (blockatlas.LendingProvider, error) {
 	}
 	assets, err := p.getAssetInfos(false)
 	if err != nil {
-		prov.Assets = assets
+		provider.Assets = assets
 	}
-	return prov, nil
+	return provider, nil
 }
 
 // GetAsset return asset info including APY.  Rates are annualized.  Rates vary over time.
@@ -156,11 +156,9 @@ func (p *Provider) getAssetInfos(includeMeta bool) ([]blockatlas.AssetInfo, erro
 	return res, nil
 }
 
-// Returns a info on tokens, map by uppercase symbol
-// Cached for _cacheValiditySec seconds
 func (p *Provider) getTokensCached() (map[string]CToken, error) {
 	tokens := make(map[string]CToken, 30)
-	res, err := p.client.GetCTokensCached([]string{}, _cacheValiditySec)
+	res, err := p.client.GetCTokensCached([]string{}, cacheValiditySec)
 	if err != nil {
 		return tokens, err
 	}

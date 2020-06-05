@@ -8,7 +8,6 @@ const (
 )
 
 type (
-	// LendingProvider static info about the lending provider, such as name and asset classes supported.
 	LendingProvider struct {
 		ID     string              `json:"id"`
 		Info   LendingProviderInfo `json:"info"`
@@ -16,7 +15,6 @@ type (
 		Assets []AssetInfo         `json:"assets"`
 	}
 
-	// LendingProviderInfo basic information about a lending provider.
 	LendingProviderInfo struct {
 		ID          string `json:"id"`
 		Description string `json:"description"`
@@ -24,7 +22,6 @@ type (
 		Website     string `json:"website"`
 	}
 
-	// AssetInfo Info about an asset that can be lent
 	AssetInfo struct {
 		Symbol         string        `json:"symbol"`
 		Description    string        `json:"description"`
@@ -51,19 +48,16 @@ type (
 		ContractAddress string `json:"contract_address,omitempty"`
 	}
 
-	// AccountRequest Account API request
 	AccountRequest struct {
 		Addresses []string `json:"addresses"`
 		Assets    []string `json:"assets"`
 	}
 
-	// LendingContract Describes a lending contract, of a user, of an asset.
 	LendingContract struct {
 		Asset         AssetInfo `json:"asset"`
 		CurrentAmount string    `json:"current_amount"`
 	}
 
-	// AccountLendingContracts Contracts of an address
 	AccountLendingContracts struct {
 		Address   string            `json:"address"`
 		Contracts []LendingContract `json:"contracts"`

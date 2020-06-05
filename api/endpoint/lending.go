@@ -73,7 +73,7 @@ func HandleLendingAccount(c *gin.Context, apis map[string]blockatlas.LendingAPI)
 	}
 	p, err := getAccounts(provider, req, apis)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error from provider"})
 		return
 	}
 	c.JSON(http.StatusOK, blockatlas.DocsResponse{Docs: &p})

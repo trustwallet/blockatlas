@@ -1,5 +1,9 @@
 package compound
 
+import (
+	"github.com/trustwallet/blockatlas/coin"
+)
+
 type (
 	Account struct {
 		Address string          `json:"address"`
@@ -40,6 +44,6 @@ type (
 	}
 )
 
-const (
-	Chain string = "ETH"
+var (
+	Chain string = coin.Ethereum().Symbol
 )
