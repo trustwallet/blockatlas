@@ -19,7 +19,14 @@ func (p *Platform) CanHandle(name string) bool {
 	if len(domain) == 0 {
 		return false
 	}
-	if domains.Contains(domain) {
+	switch domain {
+	case "@trust":
+		return true
+	case "@trustwallet":
+		return true
+	case "@binance":
+		return true
+	case "@fiomembers":
 		return true
 	}
 	// we match any @xxx domain!
