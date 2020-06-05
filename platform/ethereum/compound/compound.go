@@ -88,8 +88,10 @@ func (p *Provider) GetAccountLendingContracts(req blockatlas.AccountRequest) ([]
 				CurrentAmount: strconv.FormatFloat(asFloat(t.SupplyBalanceUnderlying.Value), 'f', 10, 64),
 			})
 		}
+		sort.Slice(ret1.Contracts, func(a, b int) bool { return ret1.Contracts[a].CurrentAmount > ret1.Contracts[b].CurrentAmount })
 		ret = append(ret, ret1)
 	}
+	sort.Slice(ret, func(a, b int) bool { return ret[a].Address > ret[b].Address })
 	return ret, nil
 }
 

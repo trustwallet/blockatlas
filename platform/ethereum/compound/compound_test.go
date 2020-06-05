@@ -27,6 +27,12 @@ func (c *TestClient) GetAccounts(addresses []string) ([]Account, error) {
 							SupplyBalanceUnderlying: precise("4.000097398638441"),
 							SupplyInterest:          precise("0.000097398638441"),
 						},
+						AccountCToken{
+							Address:                 "0xc11b1268c1a384e55c48c2391d8d480264a3a7f4",
+							Symbol:                  "cWBTC",
+							SupplyBalanceUnderlying: precise("0.10234"),
+							SupplyInterest:          precise("0.01401"),
+						},
 					},
 				},
 			}, nil
@@ -121,7 +127,7 @@ func TestGetAccountLendingContracts(t *testing.T) {
 				Addresses: []string{accountAddr1},
 				Assets:    []string{},
 			},
-			expected: `[{"address":"0xf9C659D90663BC4e0F7a8766112fE806bae3b5aE","contracts":[{"asset":{"symbol":"USDC","description":"Compound USD Coin","apy":1.6573,"yield_freq":15,"total_supply":"1023919029.5655","minimum_amount":"0","meta_info":{"defi_info":{"asset_token":{"symbol":"USDC","chain":"ETH"},"technical_token":{"symbol":"cUSDC","chain":"ETH","contract_address":"0x39aa39c021dfbae8fac545936693ac917d5e7563"}}}},"current_amount":"4.0000973986"}]}]`,
+			expected: `[{"address":"0xf9C659D90663BC4e0F7a8766112fE806bae3b5aE","contracts":[{"asset":{"symbol":"USDC","description":"Compound USD Coin","apy":1.6573,"yield_freq":15,"total_supply":"1023919029.5655","minimum_amount":"0","meta_info":{"defi_info":{"asset_token":{"symbol":"USDC","chain":"ETH"},"technical_token":{"symbol":"cUSDC","chain":"ETH","contract_address":"0x39aa39c021dfbae8fac545936693ac917d5e7563"}}}},"current_amount":"4.0000973986"},{"asset":{"symbol":"WBTC","description":"Compound Wrapped BTC","apy":0.1717,"yield_freq":15,"total_supply":"9562.9935","minimum_amount":"0","meta_info":{"defi_info":{"asset_token":{"symbol":"WBTC","chain":"ETH"},"technical_token":{"symbol":"cWBTC","chain":"ETH","contract_address":"0xc11b1268c1a384e55c48c2391d8d480264a3a7f4"}}}},"current_amount":"0.1023400000"}]}]`,
 			expError: false,
 		},
 		{
@@ -131,6 +137,15 @@ func TestGetAccountLendingContracts(t *testing.T) {
 				Assets:    []string{"USDC"},
 			},
 			expected: `[{"address":"0xf9C659D90663BC4e0F7a8766112fE806bae3b5aE","contracts":[{"asset":{"symbol":"USDC","description":"Compound USD Coin","apy":1.6573,"yield_freq":15,"total_supply":"1023919029.5655","minimum_amount":"0","meta_info":{"defi_info":{"asset_token":{"symbol":"USDC","chain":"ETH"},"technical_token":{"symbol":"cUSDC","chain":"ETH","contract_address":"0x39aa39c021dfbae8fac545936693ac917d5e7563"}}}},"current_amount":"4.0000973986"}]}]`,
+			expError: false,
+		},
+		{
+			name: "addr1 with assets",
+			request: blockatlas.AccountRequest{
+				Addresses: []string{accountAddr1},
+				Assets:    []string{"WBTC", "USDC"},
+			},
+			expected: `[{"address":"0xf9C659D90663BC4e0F7a8766112fE806bae3b5aE","contracts":[{"asset":{"symbol":"USDC","description":"Compound USD Coin","apy":1.6573,"yield_freq":15,"total_supply":"1023919029.5655","minimum_amount":"0","meta_info":{"defi_info":{"asset_token":{"symbol":"USDC","chain":"ETH"},"technical_token":{"symbol":"cUSDC","chain":"ETH","contract_address":"0x39aa39c021dfbae8fac545936693ac917d5e7563"}}}},"current_amount":"4.0000973986"},{"asset":{"symbol":"WBTC","description":"Compound Wrapped BTC","apy":0.1717,"yield_freq":15,"total_supply":"9562.9935","minimum_amount":"0","meta_info":{"defi_info":{"asset_token":{"symbol":"WBTC","chain":"ETH"},"technical_token":{"symbol":"cWBTC","chain":"ETH","contract_address":"0xc11b1268c1a384e55c48c2391d8d480264a3a7f4"}}}},"current_amount":"0.1023400000"}]}]`,
 			expError: false,
 		},
 		{
