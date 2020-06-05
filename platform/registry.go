@@ -28,7 +28,6 @@ var (
 	// NamingAPIs contain platforms which support naming services
 	NamingAPIs map[uint]blockatlas.NamingServiceAPI
 
-	// LendingAPI contains lending providers, key is provider name
 	LendingAPIs map[string]blockatlas.LendingAPI
 )
 

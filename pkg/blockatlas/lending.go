@@ -19,8 +19,8 @@ type (
 		Symbol         string        `json:"symbol"`
 		Description    string        `json:"description"`
 		APY            float64       `json:"apy"`
-		YieldPeriod    int64         `json:"yield_period,omitempty"` // the period of validity of current APY, 0 for variable APY
-		YieldFrequency int64         `json:"yield_freq,omitempty"`   // the period of yield computation, in seconds, e.g. 86400 for daily yield writeoff.
+		YieldPeriod    int64         `json:"yield_period,omitempty"`
+		YieldFrequency int64         `json:"yield_freq,omitempty"`
 		TotalSupply    Amount        `json:"total_supply,omitempty"`
 		MinimumAmount  Amount        `json:"minimum_amount,omitempty"`
 		LockTime       int64         `json:"lock_time,omitempty"`

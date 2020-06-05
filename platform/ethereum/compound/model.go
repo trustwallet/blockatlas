@@ -11,10 +11,8 @@ type (
 	}
 
 	AccountCToken struct {
-		// Token address
-		Address string `json:"address"`
-		Symbol  string `json:"symbol"`
-		// The cToken balance converted to underlying tokens; cTokens held x exchange rate
+		Address                 string  `json:"address"`
+		Symbol                  string  `json:"symbol"`
 		SupplyBalanceUnderlying Precise `json:"supply_balance_underlying"`
 		SupplyInterest          Precise `json:"lifetime_supply_interest_accrued"`
 	}

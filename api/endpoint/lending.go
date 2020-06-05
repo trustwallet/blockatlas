@@ -77,7 +77,6 @@ func HandleLendingAccount(c *gin.Context, apis map[string]blockatlas.LendingAPI)
 	c.JSON(http.StatusOK, blockatlas.DocsResponse{Docs: &p})
 }
 
-// GetProviders return provider info list
 func getProviders(apis map[string]blockatlas.LendingAPI) ([]blockatlas.LendingProvider, error) {
 	ret := []blockatlas.LendingProvider{}
 	for _, api := range apis {
@@ -90,7 +89,6 @@ func getProviders(apis map[string]blockatlas.LendingAPI) ([]blockatlas.LendingPr
 	return ret, nil
 }
 
-// GetRates return rates info
 func getAssets(provider string, apis map[string]blockatlas.LendingAPI) ([]blockatlas.AssetInfo, error) {
 	api, ok := apis[provider]
 	if !ok {
@@ -99,7 +97,6 @@ func getAssets(provider string, apis map[string]blockatlas.LendingAPI) ([]blocka
 	return api.GetAssets()
 }
 
-// GetAccounts return account contract
 func getAccounts(provider string, req blockatlas.AccountRequest, apis map[string]blockatlas.LendingAPI) ([]blockatlas.AccountLendingContracts, error) {
 	api, ok := apis[provider]
 	if !ok {
