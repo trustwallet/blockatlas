@@ -59,9 +59,8 @@ type (
 		GetCollectiblesV3(owner, collectibleID string) (CollectiblePageV3, error)
 	}
 
-	// NamingServiceAPI provides public name service domains HTTP routes
 	NamingServiceAPI interface {
-		Platform
+		CanHandle(name string) bool
 		Lookup(coins []uint64, name string) ([]Resolved, error)
 	}
 
