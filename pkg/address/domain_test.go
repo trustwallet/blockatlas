@@ -1,17 +1,10 @@
 package address
 
 import (
-	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
-
-func checkGetTLD(t *testing.T, name string, separator string, expectedTLD string) {
-	name = strings.ToLower(name)
-	tld := GetTLD(name, separator)
-	assert.Equal(t, expectedTLD, tld)
-}
 
 func Test_getTLD(t *testing.T) {
 	tests := []struct {
@@ -20,7 +13,7 @@ func Test_getTLD(t *testing.T) {
 		{"vitalik.eth", ".", ".eth"},
 		{"vitalik.ens", ".", ".ens"},
 		{"ourxyzwallet.xyz", ".", ".xyz"},
-		{"Cameron.Kred", ".", ".kred"},
+		{"Cameron.Kred", ".", ".Kred"},
 		{"btc.zil", ".", ".zil"},
 		{"btc.crypto", ".", ".crypto"},
 		{"nick@fiotestnet", "@", "@fiotestnet"},
@@ -31,6 +24,7 @@ func Test_getTLD(t *testing.T) {
 		{"a@b.c", "@", "@b.c"},
 	}
 	for _, tt := range tests {
-		checkGetTLD(t, tt.name, tt.separator, tt.wantTLD)
+		result := GetTLD(tt.name, tt.separator)
+		assert.Equal(t, tt.wantTLD, result)
 	}
 }
