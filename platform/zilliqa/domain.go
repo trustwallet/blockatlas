@@ -6,24 +6,25 @@ import (
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/naming"
+
+	"github.com/minio/minio-go/pkg/set"
 )
 
 type ZNSResponse struct {
 	Addresses map[string]string
 }
 
-var domains = map[string]interface{}{
-	".zil":    nil,
-	".crypto": nil,
-}
+var domains = set.CreateStringSet(
+	".zil",
+	".crypto",
+)
 
 func (p *Platform) CanHandle(name string) bool {
 	tld := naming.GetTLD(name, ".")
 	if len(tld) == 0 {
 		return false
 	}
-	_, ok := domains[strings.ToLower(tld)]
-	return ok
+	return domains.Contains(strings.ToLower(tld))
 }
 
 func (p *Platform) Lookup(coins []uint64, name string) ([]blockatlas.Resolved, error) {

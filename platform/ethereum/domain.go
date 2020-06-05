@@ -3,6 +3,7 @@ package ethereum
 import (
 	"strings"
 
+	"github.com/minio/minio-go/pkg/set"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
@@ -12,20 +13,19 @@ import (
 	coincodec "github.com/trustwallet/ens-coincodec"
 )
 
-var domains = map[string]interface{}{
-	".eth":  nil,
-	".xyz":  nil,
-	".luxe": nil,
-	".kred": nil,
-}
+var domains = set.CreateStringSet(
+	".eth",
+	".xyz",
+	".luxe",
+	".kred",
+)
 
 func (p *Platform) CanHandle(name string) bool {
 	tld := naming.GetTLD(name, ".")
 	if len(tld) == 0 {
 		return false
 	}
-	_, ok := domains[strings.ToLower(tld)]
-	return ok
+	return domains.Contains(strings.ToLower(tld))
 }
 
 func (p *Platform) Lookup(coins []uint64, name string) ([]blockatlas.Resolved, error) {

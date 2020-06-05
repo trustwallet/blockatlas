@@ -3,24 +3,25 @@ package fio
 import (
 	"strings"
 
+	"github.com/minio/minio-go/pkg/set"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/naming"
 )
 
-var domains = map[string]interface{}{
-	"@trust":       nil,
-	"@trustwallet": nil,
-	"@binance":     nil,
-	"@fiomembers":  nil,
-}
+var domains = set.CreateStringSet(
+	"@trust",
+	"@trustwallet",
+	"@binance",
+	"@fiomembers",
+)
 
 func (p *Platform) CanHandle(name string) bool {
 	tld := strings.ToLower(naming.GetTLD(name, "@"))
 	if len(tld) == 0 {
 		return false
 	}
-	if _, ok := domains[strings.ToLower(tld)]; ok {
+	if domains.Contains(strings.ToLower(tld)) {
 		return true
 	}
 	// we match any @xxx domain!
