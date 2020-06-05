@@ -1,4 +1,4 @@
-package address
+package naming
 
 import (
 	"testing"
