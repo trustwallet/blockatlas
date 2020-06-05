@@ -1,17 +1,9 @@
 package fio
 
 import (
-	"github.com/minio/minio-go/pkg/set"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/naming"
-)
-
-var domains = set.CreateStringSet(
-	"@trust",
-	"@trustwallet",
-	"@binance",
-	"@fiomembers",
 )
 
 func (p *Platform) CanHandle(name string) bool {
@@ -30,10 +22,7 @@ func (p *Platform) CanHandle(name string) bool {
 		return true
 	}
 	// we match any @xxx domain!
-	if len(domain) >= 2 {
-		return true
-	}
-	return false
+	return len(domain) >= 2
 }
 
 func (p *Platform) Lookup(coins []uint64, name string) ([]blockatlas.Resolved, error) {
