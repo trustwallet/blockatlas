@@ -8,7 +8,7 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/pkg/naming"
 	"github.com/trustwallet/blockatlas/platform/ethereum/ens"
-	coincodec "github.com/trustwallet/ens-coincodec"
+	"github.com/trustwallet/ens-coincodec"
 )
 
 var domains = set.CreateStringSet(
