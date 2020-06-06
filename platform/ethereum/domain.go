@@ -1,13 +1,28 @@
 package ethereum
 
 import (
-	CoinType "github.com/trustwallet/blockatlas/coin"
+	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
+	"github.com/trustwallet/blockatlas/pkg/naming"
 	"github.com/trustwallet/blockatlas/platform/ethereum/ens"
-	AddressEncoder "github.com/trustwallet/ens-coincodec"
+	"github.com/trustwallet/ens-coincodec"
 )
+
+func (p *Platform) CanHandle(name string) bool {
+	switch naming.GetTopDomain(name, ".") {
+	case ".eth":
+		return true
+	case ".xyz":
+		return true
+	case ".luxe":
+		return true
+	case ".kred":
+		return true
+	}
+	return false
+}
 
 func (p *Platform) Lookup(coins []uint64, name string) ([]blockatlas.Resolved, error) {
 	var result []blockatlas.Resolved
@@ -32,10 +47,10 @@ func (p *Platform) Lookup(coins []uint64, name string) ([]blockatlas.Resolved, e
 	return result, nil
 }
 
-func (p *Platform) addressForCoin(resovler string, node []byte, coin uint64) (string, error) {
-	result, err := p.ens.Addr(resovler, node, coin)
+func (p *Platform) addressForCoin(resovler string, node []byte, coinID uint64) (string, error) {
+	result, err := p.ens.Addr(resovler, node, coinID)
 	if err != nil {
-		if coin == CoinType.ETH {
+		if coinID == coin.ETH {
 			// user may not set multi coin address
 			result, err := p.lookupLegacyETH(resovler, node)
 			if err != nil {
@@ -45,7 +60,7 @@ func (p *Platform) addressForCoin(resovler string, node []byte, coin uint64) (st
 		}
 		return "", errors.E(err, "query multi coin address failed")
 	}
-	encoded, err := AddressEncoder.ToString(result, uint32(coin))
+	encoded, err := coincodec.ToString(result, uint32(coinID))
 	if err != nil {
 		return "", errors.E(err, "encode to address failed")
 	}
