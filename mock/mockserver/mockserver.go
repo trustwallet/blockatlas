@@ -3,21 +3,24 @@
 package main
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
-	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
+	"os"
 	"strconv"
 	"strings"
+
+	"gopkg.in/yaml.v2"
 )
 
 type TestDataEntry struct {
 	Filename string `yaml:"file"`
 	MockURL  string `yaml:"mockURL"`
-	Method   string `yaml:"method"`  
+	Method   string `yaml:"method"`
 	ExtURL   string `yaml:"extURL,omitempty"`
 	ReqFile  string `yaml:"reqFile,omitempty"`
 	ReqField string `yaml:"reqField,omitempty"`
@@ -212,8 +215,61 @@ func requestHandler(w http.ResponseWriter, r *http.Request, basedir string) {
 	fmt.Fprintf(w, "{\"error\": \""+errorMsg+"\", \"url\": \""+r.URL.Path+"\"")
 }
 
-func main() {
-	basedir := "."
+func getDataFromExt(f *TestDataEntryInternal) {
+	if len(f.ExtURL) == 0 {
+		return
+	}
+	var resp *http.Response
+	var err error
+	if strings.ToUpper(f.Method) == "GET" {
+		resp, err = http.Get(f.ExtURL)
+	} else if strings.ToUpper(f.Method) == "POST" {
+		if len(f.ReqFile) == 0 {
+			log.Printf("Error ReqFile is missing, url %v", f.ExtURL)
+			return
+		}
+		var b []byte
+		b, err = ioutil.ReadFile(f.ReqFile)
+		if err != nil {
+			log.Printf("Error ReqFile could not be read, error %v, url %v", err.Error(), f.ReqFile)
+			return
+		}
+		resp, err = http.Post(f.ExtURL, "application/json", bytes.NewBuffer(b))
+	}
+	if err != nil {
+		log.Printf("Error reading from external service, err %v, url %v", err.Error(), f.ExtURL)
+		return
+	}
+	if resp.StatusCode != 200 {
+		log.Printf("Non-OK status from external service, status %v, url %v", resp.StatusCode, f.ExtURL)
+		return
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Printf("Error reading from external service, err %v, url %v", err.Error(), f.ExtURL)
+		return
+	}
+	if len(body) == 0 {
+		log.Printf("Empty response from external service, url %v", f.ExtURL)
+		return
+	}
+	// write to file
+	outFile := f.Filename
+	err = ioutil.WriteFile(outFile, body, 0644)
+	if err != nil {
+		log.Printf("Could not write response to file, err %v, file %v", err.Error(), outFile)
+		return
+	}
+	fmt.Printf("Response file written, %v bytes, url %v, file %v\n", len(body), f.ExtURL, outFile)
+}
+
+func usage() {
+	fmt.Println("mockserver           -- start mock server")
+	fmt.Println("mockserver -update   -- update data files from external services")
+}
+
+func doStartServer(basedir string) {
 	if err := readFileList(basedir + "/mock"); err != nil {
 		log.Fatalf("Could not read data file list, err %v", err.Error())
 		return
@@ -229,4 +285,34 @@ func main() {
 	if err != nil {
 		log.Fatalf("Could not listen on port %v", port)
 	}
+}
+
+func doUpdate(basedir string) {
+	if err := readFileList(basedir + "/mock"); err != nil {
+		log.Fatalf("Could not read data file list, err %v", err.Error())
+		return
+	}
+
+	for _, f := range files {
+		if len(f.ExtURL) >= 0 {
+			getDataFromExt(&f)
+		}
+	}
+}
+
+func main() {
+	basedir := "."
+
+	nArgs := len(os.Args)
+	if nArgs >= 2 {
+		if os.Args[1] == "-update" {
+			doUpdate(basedir)
+			return
+		}
+
+		usage()
+		return
+	}
+
+	doStartServer(basedir)
 }
