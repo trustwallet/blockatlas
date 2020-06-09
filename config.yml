@@ -13,6 +13,9 @@ gin:
 # You can see all the coin handles at coins/coins.yml file
 platform: [ethereum]
 
+# Can be platform or swagger
+rest_api: all
+
 # The transaction watcher
 observer:
   # Don't request blocks older than this

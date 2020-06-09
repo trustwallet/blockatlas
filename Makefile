@@ -6,11 +6,10 @@ VERSION := $(shell git describe --tags 2>/dev/null || git describe --all)
 BUILD := $(shell git rev-parse --short HEAD)
 DATETIME := $(shell date +"%Y.%m.%d-%H:%M:%S")
 PROJECT_NAME := $(shell basename "$(PWD)")
-API_SERVICE := platform_api
-OBSERVER_NOTIFIER := observer_notifier
-OBSERVER_PARSER := observer_parser
-OBSERVER_SUBSCRIBER := observer_subscriber
-SWAGGER_API := swagger_api
+API := api
+NOTIFIER := notifier
+PARSER := parser
+SUBSCRIBER := subscriber
 COIN_FILE := coin/coins.yml
 COIN_GO_FILE := coin/coins.go
 GEN_COIN_FILE := coin/gen.go
@@ -34,11 +33,10 @@ LDFLAGS=-ldflags "-X=$(PACKAGE)/build.Version=$(VERSION) -X=$(PACKAGE)/build.Bui
 STDERR := /tmp/.$(PROJECT_NAME)-stderr.txt
 
 # PID file will keep the process id of the server
-PID_API := /tmp/.$(PROJECT_NAME).$(API_SERVICE).pid
-PID_OBSERVER_NOTIFIER := /tmp/.$(PROJECT_NAME).$(OBSERVER_NOTIFIER).pid
-PID_OBSERVER_PARSER := /tmp/.$(PROJECT_NAME).$(OBSERVER_PARSER).pid
-PID_OBSERVER_SUBSCRIBER := /tmp/.$(PROJECT_NAME).$(OBSERVER_SUBSCRIBER).pid
-PID_SWAGGER_API := /tmp/.$(PROJECT_NAME).$(SWAGGER_API).pid
+PID_API := /tmp/.$(PROJECT_NAME).$(API).pid
+PID_NOTIFIER := /tmp/.$(PROJECT_NAME).$(NOTIFIER).pid
+PID_PARSER := /tmp/.$(PROJECT_NAME).$(PARSER).pid
+PID_SUBSCRIBER := /tmp/.$(PROJECT_NAME).$(SUBSCRIBER).pid
 PID_MOCKSERVER := /tmp/.$(PROJECT_NAME).mockserver.pid
 # Make is verbose in Linux. Make it silent.
 MAKEFLAGS += --silent
@@ -48,60 +46,52 @@ install: go-get
 
 ## start: Start API, Observer and Sync in development mode.
 start:
-	@bash -c "$(MAKE) clean compile start-platform-api start-observer-parser start-observer-notifier start-observer-subscriber"
+	@bash -c "$(MAKE) clean compile start-api start-parser start-notifier start-subscriber"
 
 ## start-api: Start platform api in development mode.
-start-platform-api: stop
+start-api: stop
 	@echo "  >  Starting $(PROJECT_NAME)"
-	@-$(GOBIN)/$(API_SERVICE)/platform_api -c $(CONFIG_FILE) 2>&1 & echo $$! > $(PID_API)
+	@-$(GOBIN)/$(API)/api -c $(CONFIG_FILE) 2>&1 & echo $$! > $(PID_API)
 	@cat $(PID_API) | sed "/^/s/^/  \>  API PID: /"
 	@echo "  >  Error log: $(STDERR)"
 
 # start-platform-api-mock: Start API.  Similar to start-platform-api, but uses config file with mock URLs, and port 8437.
-start-platform-api-mock: stop start-mockserver
+start-api-mock: stop start-mockserver
 	@echo "  >  Starting $(PROJECT_NAME) API"
-	@-$(GOBIN)/$(API_SERVICE)/platform_api -p 8437 -c $(CONFIG_MOCK_FILE) 2>&1 & echo $$! > $(PID_API)
+	@-$(GOBIN)/$(API)/api -p 8437 -c $(CONFIG_MOCK_FILE) 2>&1 & echo $$! > $(PID_API)
 	@cat $(PID_API) | sed "/^/s/^/  \>  API PID: /"
 	@echo "  >  Error log: $(STDERR)"
 
-## start-swagger-api: Start swagger api in development mode.
-start-swagger-api: stop
-	@echo "  >  Starting $(PROJECT_NAME)"
-	@-$(GOBIN)/$(SWAGGER_API)/swagger_api -c $(CONFIG_FILE) 2>&1 & echo $$! > $(PID_SWAGGER_API)
-	@cat $(PID_SWAGGER_API) | sed "/^/s/^/  \>  Sync PID: /"
-	@echo "  >  Error log: $(STDERR)"
-
 ## start-observer-parser: Start observer-parser in development mode.
-start-observer-parser: stop
+start-parser: stop
 	@echo "  >  Starting $(PROJECT_NAME)"
-	@-$(GOBIN)/$(OBSERVER_PARSER)/observer_parser -c $(CONFIG_FILE) 2>&1 & echo $$! > $(PID_OBSERVER_PARSER)
-	@cat $(PID_OBSERVER_PARSER) | sed "/^/s/^/  \>  Sync PID: /"
+	@-$(GOBIN)/$(PARSER)/parser -c $(CONFIG_FILE) 2>&1 & echo $$! > $(PID_PARSER)
+	@cat $(PID_PARSER) | sed "/^/s/^/  \>  Sync PID: /"
 	@echo "  >  Error log: $(STDERR)"
 
 ## start-observer-notifier: Start observer-notifier in development mode.
-start-observer-notifier: stop
+start-notifier: stop
 	@echo "  >  Starting $(PROJECT_NAME)"
-	@-$(GOBIN)/$(OBSERVER_NOTIFIER)/observer_notifier -c $(CONFIG_FILE) 2>&1 & echo $$! > $(PID_OBSERVER_NOTIFIER)
-	@cat $(PID_OBSERVER_NOTIFIER) | sed "/^/s/^/  \>  Sync PID: /"
+	@-$(GOBIN)/$(NOTIFIER)/notifier -c $(CONFIG_FILE) 2>&1 & echo $$! > $(PID_NOTIFIER)
+	@cat $(PID_NOTIFIER) | sed "/^/s/^/  \>  Sync PID: /"
 	@echo "  >  Error log: $(STDERR)"
 
 ## start-observer-subscriber: Start observer-subscriber in development mode.
-start-observer-subscriber: stop
+start-subscriber: stop
 	@echo "  >  Starting $(PROJECT_NAME)"
-	@-$(GOBIN)/$(OBSERVER_SUBSCRIBER)/observer_subscriber -c $(CONFIG_FILE) 2>&1 & echo $$! > $(PID_OBSERVER_SUBSCRIBER)
-	@cat $(PID_OBSERVER_SUBSCRIBER) | sed "/^/s/^/  \>  Sync PID: /"
+	@-$(GOBIN)/$(SUBSCRIBER)/subscriber -c $(CONFIG_FILE) 2>&1 & echo $$! > $(PID_SUBSCRIBER)
+	@cat $(PID_SUBSCRIBER) | sed "/^/s/^/  \>  Sync PID: /"
 	@echo "  >  Error log: $(STDERR)"
 
 ## stop: Stop development mode.
 stop:
-	@-touch $(PID_API) $(PID_OBSERVER_NOTIFIER) $(PID_OBSERVER_PARSER) $(PID_OBSERVER_SUBSCRIBER) $(PID_SWAGGER_API) $(PID_MOCKSERVER)
+	@-touch $(PID_API) $(PID_NOTIFIER) $(PID_PARSER) $(PID_SUBSCRIBER) $(PID_MOCKSERVER)
 	@-kill `cat $(PID_API)` 2> /dev/null || true
-	@-kill `cat $(PID_OBSERVER_NOTIFIER)` 2> /dev/null || true
-	@-kill `cat $(PID_OBSERVER_PARSER)` 2> /dev/null || true
-	@-kill `cat $(PID_OBSERVER_SUBSCRIBER)` 2> /dev/null || true
-	@-kill `cat $(PID_SWAGGER_API)` 2> /dev/null || true
+	@-kill `cat $(PID_NOTIFIER)` 2> /dev/null || true
+	@-kill `cat $(PID_PARSER)` 2> /dev/null || true
+	@-kill `cat $(PID_SUBSCRIBER)` 2> /dev/null || true
 	@-kill `cat $(PID_MOCKSERVER)` 2> /dev/null || true
-	@-rm $(PID_API) $(PID_OBSERVER_NOTIFIER) $(PID_OBSERVER_PARSER) $(PID_OBSERVER_SUBSCRIBER) $(PID_SWAGGER_API) $(PID_MOCKSERVER)
+	@-rm $(PID_API) $(PID_NOTIFIER) $(PID_PARSER) $(PID_SUBSCRIBER) $(PID_MOCKSERVER)
 
 stop-mockserver:
 	@-touch $(PID_MOCKSERVER)
@@ -177,7 +167,7 @@ newman-mocked: install-newman go-compile
 ## newman-mocked-params: Run mocked Postman Newman tests, after starting platform api.
 ## The host parameter is required.
 ## E.g.: $ make newman-mocked-params test=domain host=http://localhost:8437
-newman-mocked-params: start-platform-api-mock
+newman-mocked-params: start-api-mock
 ifeq (,$(test))
 	@bash -c "$(MAKE) newman-run test=transaction host=$(host) && \
 	          $(MAKE) newman-run test=domain host=$(host) && \
@@ -214,27 +204,23 @@ endif
 
 go-compile: go-get go-build
 
-go-build: go-build-platform-api go-build-observer-notifier go-build-observer-parser go-build-observer-subscriber go-build-swagger-api
+go-build: go-build-api go-build-notifier go-build-parser go-build-subscriber
 
-go-build-platform-api:
-	@echo "  >  Building platform_api binary..."
-	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(API_SERVICE)/platform_api ./cmd/$(API_SERVICE)
+go-build-api:
+	@echo "  >  Building api binary..."
+	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(API)/api ./cmd/$(API)
 
-go-build-observer-notifier:
-	@echo "  >  Building observer_notifier binary..."
-	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(OBSERVER_NOTIFIER)/observer_notifier ./cmd/$(OBSERVER_NOTIFIER)
+go-build-notifier:
+	@echo "  >  Building notifier binary..."
+	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(NOTIFIER)/notifier ./cmd/$(NOTIFIER)
 
-go-build-observer-parser:
-	@echo "  >  Building observer_parser binary..."
-	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(OBSERVER_PARSER)/observer_parser ./cmd/$(OBSERVER_PARSER)
+go-build-parser:
+	@echo "  >  Building parser binary..."
+	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(PARSER)/parser ./cmd/$(PARSER)
 
-go-build-observer-subscriber:
-	@echo "  >  Building observer_subscriber binary..."
-	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(OBSERVER_SUBSCRIBER)/observer_subscriber ./cmd/$(OBSERVER_SUBSCRIBER)
-
-go-build-swagger-api:
-	@echo "  >  Building swagger_api binary..."
-	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(SWAGGER_API)/swagger_api ./cmd/$(SWAGGER_API)
+go-build-subscriber:
+	@echo "  >  Building subscriber binary..."
+	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(SUBSCRIBER)/subscriber ./cmd/$(SUBSCRIBER)
 
 go-generate:
 	@echo "  >  Generating dependency files..."
@@ -269,7 +255,7 @@ go-gen-coins:
 
 go-gen-docs:
 	@echo "  >  Generating swagger files"
-	swag init -g ./cmd/platform_api/main.go -o ./docs
+	swag init -g ./cmd/api/main.go -o ./docs
 
 go-goreleaser:
 	@echo "  >  Releasing a new version"

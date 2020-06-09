@@ -32,6 +32,14 @@ func init() {
 }
 
 func main() {
-	api.SetupPlatformAPI(engine)
+	switch viper.GetString("rest_api") {
+	case "swagger":
+		api.SetupSwaggerAPI(engine)
+	case "platform":
+		api.SetupPlatformAPI(engine)
+	default:
+		api.SetupSwaggerAPI(engine)
+		api.SetupPlatformAPI(engine)
+	}
 	internal.SetupGracefulShutdown(port, engine)
 }

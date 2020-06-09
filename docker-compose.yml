@@ -12,11 +12,11 @@ services:
       - swagger_api
 
   platform_api:
-    container_name: platform_api
+    container_name: api
     build:
       context: .
       args:
-        - SERVICE=platform_api
+        - SERVICE=api
     ports:
       - 8420:8420
       - 8437:8437
@@ -34,7 +34,7 @@ services:
     build:
       context: .
       args:
-        - SERVICE=observer_notifier
+        - SERVICE=notifier
     links:
       - rabbit
       - postgres
@@ -44,18 +44,18 @@ services:
     build:
       context: .
       args:
-        - SERVICE=observer_parser
+        - SERVICE=parser
     links:
       - rabbit
       - postgres
     restart: on-failure
 
   observer_subscriber:
-    container_name: observer_subscriber
+    container_name: subscriber
     build:
       context: .
       args:
-        - SERVICE=observer_subscriber
+        - SERVICE=subscriber
     links:
       - rabbit
       - postgres
