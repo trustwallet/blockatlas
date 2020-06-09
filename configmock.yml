@@ -11,6 +11,9 @@ gin:
 # You can see all the coin handles at coins/coins.yml file
 platform: all
 
+# Can be platform or swagger
+rest_api: all
+
 # The transaction watcher
 observer:
   backlog: 3h
