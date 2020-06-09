@@ -53,15 +53,15 @@ Platform API is independent service and can work with the specific blockchain on
 
 Notifications:
 
-(Observer Subscriber Producer) - Create new blockatlas.SubscriptionEvent [Not implemented at Atlas, write it on your own]
+- Subscriber Producer - Create new blockatlas.SubscriptionEvent [Not implemented at Atlas, write it on your own]
 
-(Observer Subscriber) - Get subscriptions from queue, set them to the DB
+- Subscriber - Get subscriptions from queue, set them to the DB
 
-(Observer Parser) - Parse the block, convert block to the transactions batch, send to queue
+- Parser - Parse the block, convert block to the transactions batch, send to queue
 
-(Observer Notifier) - Check each transaction for having the same address as stored at DB, if so - send tx data and id to the next queue
+- Notifier - Check each transaction for having the same address as stored at DB, if so - send tx data and id to the next queue
 
-(Observer Notifier Consumer) - Notify the user [Not implemented at Atlas, write it on your own]
+- Notifier Consumer - Notify the user [Not implemented at Atlas, write it on your own]
 
 ```
 New Subscriptions --(Rabbit MQ)--> Subscriber --> DB
@@ -97,22 +97,16 @@ Read [configuration](#configuration) info
 
 ```shell
 # Start Platform API server at port 8420 with the path to the config.yml ./
-go build -o platform-api-bin cmd/platform_api/main.go && ./platform-api-bin -p 8420
+go build -o api-bin cmd/api/main.go && ./api-bin -p 8420
 
-# Start observer_parser with the path to the config.yml ./ 
-go build -o observer_parser-bin cmd/observer_parser/main.go && ./observer_parser-bin
+# Start parser with the path to the config.yml ./ 
+go build -o parser-bin cmd/parser/main.go && ./parser-bin
 
-# Start observer_notifier with the path to the config.yml ./ 
-go build -o observer_notifier-bin cmd/observer_notifier/main.go && ./observer_notifier-bin
+# Start notifier with the path to the config.yml ./ 
+go build -o notifier-bin cmd/notifier/main.go && ./notifier-bin
 
-# Start observer_subscriber with the path to the config.yml ./ 
-go build -o observer_subscriber-bin cmd/observer_subscriber/main.go && ./observer_subscriber-bin
-
-# Startp Swagger API server at port 8422 with the path to the config.yml ./ 
-go build -o swagger-api-bin cmd/swagger-api/main.go && ./swagger-api-bin -p 8423
-
-# Start Platform API server with mocked config, at port 8437 ./ 
-go build -o platform-api-bin cmd/platform_api/main.go && ./platform-api-bin -p 8437 -c configmock.yml
+# Start subscriber with the path to the config.yml ./ 
+go build -o subscriber-bin cmd/subscriber/main.go && ./subscriber-bin
 ```
 
 ### make command
@@ -125,7 +119,7 @@ make start
 
 Build and start individual service:
 ```shell
-make go-build-platform-api
+make go-build-api
 make start
 ```
 
@@ -140,8 +134,8 @@ docker-compose up
 
 Build and run individual service:
 ```shell
-docker-compose build swagger_api
-docker-compose start swagger_api
+docker-compose build api
+docker-compose start api
 ```
 
 ## Configuration
@@ -149,11 +143,11 @@ When any of Block Atlas services started they look up inside [default configurat
 Most coins offering public RPC/explorer APIs are enabled, thus Block Atlas can be started and used right away, no additional configuration needed.
 By default starting any of the [services](#architecture) will enable all platforms
 
-To run a specific service only by passing environmental variable, e.g: `platfrom_api` :
+To run a specific service only by passing environmental variable, e.g: `ATLAS_PLATFORM=ethereum` :
 ```shell
-ATLAS_PLATFORM=ethereum go run cmd/platform_api/main.go
+ATLAS_PLATFORM=ethereum go run cmd/api/main.go
 
-ATLAS_PLATFORM=ethereum binance bitcoin go run cmd/platform_api/main.go # for multiple platforms
+ATLAS_PLATFORM=ethereum binance bitcoin go run cmd/api/main.go # for multiple platforms
 ```
 
 or change in config file
@@ -171,7 +165,7 @@ To enable use of private endpoint:
 nimiq:
   api: http://localhost:8648
 ```
-It works the same for observer_worker - you can run all observer at 1 binary or 30 coins per 30 binaries
+It works the same for worker - you can run all observer at 1 binary or 30 coins per 30 binaries
 
 #### Environment
 
@@ -193,6 +187,11 @@ make test
 ### Mocked tests
 
 End-to-end tests with calls to external APIs has great value, but they are not suitable for regular CI verification, beacuse any external reason could break the tests.
+
+```
+# Start API server with mocked config, at port 8437 ./ 
+go build -o api-bin cmd/api/main.go && ./api-bin -p 8437 -c configmock.yml
+```
 
 Therefore mocked API-level tests are used, whereby external APIs are replaced by mocks.
 
