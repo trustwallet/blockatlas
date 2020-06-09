@@ -505,3 +505,13 @@
   extURL: https://<eth-rpc>
   reqFile: mock/ext-api-data/eth-rpc__eth_call_data_0x3b3b57dea538cd174de170e8062c97c25c40a7ceb56aca81b12e6f5afc46f5a429999aa4.request_json
   reqField: data
+- file: mock/ext-api-data/compound-api_v2_ctoken.json
+  mockURL: /mock/compound-api/v2/ctoken
+  method: GET
+  extURL: https://api.compound.finance/api/v2/ctoken
+- file: mock/ext-api-data/compound-api_v2_acount__addresses_0x4383e7cb85743fcd95e29a528b5d1efddaa9488f.json
+  mockURL: /mock/compound-api/v2/account?addresses=0x4383e7cb85743fcd95e29a528b5d1efddaa9488f
+  method: GET
+  extURL: https://api.compound.finance/api/v2/account?addresses[]=0xf9C659D90663BC4e0F7a8766112fE806bae3b5aE
+  reqFile: mock/ext-api-data/compound-api_v2_acount__addresses_0x4383e7cb85743fcd95e29a528b5d1efddaa9488f.request_json
+  reqField: addresses

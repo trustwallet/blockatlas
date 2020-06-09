@@ -1,0 +1,55 @@
+{
+    "accounts": [
+        {
+            "address": "0x4383e7cb85743fcd95e29a528b5d1efddaa9488f",
+            "block_updated": null,
+            "health": null,
+            "tokens": [
+                {
+                    "address": "0x5d3a536e4d6dbd6114cc1ead35777bab948e3643",
+                    "borrow_balance_underlying": {
+                        "value": "0"
+                    },
+                    "lifetime_borrow_interest_accrued": {
+                        "value": "0"
+                    },
+                    "lifetime_supply_interest_accrued": {
+                        "value": "0.00013424439162456795"
+                    },
+                    "safe_withdraw_amount_underlying": {
+                        "value": "0.0"
+                    },
+                    "supply_balance_underlying": {
+                        "value": "1.0"
+                    },
+                    "symbol": "cDAI"
+                }
+            ],
+            "total_borrow_value_in_eth": {
+                "value": "0.143"
+            },
+            "total_collateral_value_in_eth": {
+                "value": "0.00000000000000000000000000000000000000000000000000000000000000000000000000000000"
+            }
+        }
+    ],
+    "error": null,
+    "pagination_summary": {
+        "page_number": 1,
+        "page_size": 10,
+        "total_entries": 1,
+        "total_pages": 1
+    },
+    "request": {
+        "addresses": [
+            "0x4383e7cb85743fcd95e29a528b5d1efddaa9488f"
+        ],
+        "block_number": 0,
+        "block_timestamp": 0,
+        "max_health": null,
+        "min_borrow_value_in_eth": null,
+        "network": "mainnet",
+        "page_number": 1,
+        "page_size": 10
+    }
+}

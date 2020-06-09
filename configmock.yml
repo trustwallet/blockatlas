@@ -64,7 +64,7 @@ ethereum:
   collections_api: http://localhost:3347/mock/opensea-api
   collections_api_key: opensea_api_key
   rpc: http://localhost:3347/mock/eth-rpc
-  compound_api: https://api.compound.finance/api
+  compound_api: http://localhost:3347/mock/compound-api
 
 # [ETC] Ethereum Classic: https://ethereumclassic.org (Trust-Ray API)
 classic:
