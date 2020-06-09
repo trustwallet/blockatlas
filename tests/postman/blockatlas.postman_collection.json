@@ -1538,8 +1538,6 @@
 											"let expectedTxNum = pm.variables.get(\"expectedTxNum\") || 1;",
 											"var jsonData = pm.response.json();",
 											"",
-											"console.log(jsonData);",
-											"",
 											"pm.test(provider + \" - response must be valid and have a body: \" + address, function () {",
 											"    pm.response.to.have.status(200);",
 											"    pm.response.to.be.ok;",

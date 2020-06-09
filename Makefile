@@ -182,9 +182,9 @@ ifeq (,$(test))
 	@bash -c "$(MAKE) newman-run test=transaction host=$(host) && \
 	          $(MAKE) newman-run test=domain host=$(host) && \
 			  $(MAKE) newman-run test=staking host=$(host) && \
+	          $(MAKE) newman-run test=lending host=$(host) && \
 			  $(MAKE) newman-run test=token host=$(host) && \
-			  $(MAKE) newman-run test=collection host=$(host) && \
-	          $(MAKE) newman-run test=lending host=$(host)"
+			  $(MAKE) newman-run test=collection host=$(host)"
 	@bash -c "$(MAKE) stop"
 else
 	@bash -c "$(MAKE) newman-run test=$(test) host=$(host)"
