@@ -2,11 +2,10 @@ package endpoint
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/trustwallet/blockatlas/api/model"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
-	services "github.com/trustwallet/blockatlas/services/assets"
+	"github.com/trustwallet/blockatlas/services/assets"
 	"net/http"
 	"sort"
 	"strconv"
@@ -44,7 +43,7 @@ type (
 func GetStakeDelegationsWithAllInfoForBatch(c *gin.Context, apis map[string]blockatlas.StakeAPI) {
 	var reqs AddressesRequest
 	if err := c.BindJSON(&reqs); err != nil {
-		c.JSON(http.StatusBadRequest, model.CreateErrorResponse(model.InvalidQuery, err))
+		c.AbortWithStatusJSON(http.StatusBadRequest, createErrorResponse(InvalidQuery, err))
 		return
 	}
 
@@ -80,7 +79,7 @@ func GetStakeDelegationsWithAllInfoForBatch(c *gin.Context, apis map[string]bloc
 func GetStakeInfoForBatch(c *gin.Context, apis map[string]blockatlas.StakeAPI) {
 	var reqs CoinsRequest
 	if err := c.BindJSON(&reqs); err != nil {
-		c.JSON(http.StatusBadRequest, model.CreateErrorResponse(model.InvalidQuery, err))
+		c.AbortWithStatusJSON(http.StatusBadRequest, createErrorResponse(InvalidQuery, err))
 		return
 	}
 
@@ -107,12 +106,12 @@ func GetStakeInfoForBatch(c *gin.Context, apis map[string]blockatlas.StakeAPI) {
 // @Tags Staking
 // @Param coins query string true "List of coins"
 // @Success 200 {array} blockatlas.DelegationsBatchPage
-// @Failure 400 {object} model.ErrorResponse
+// @Failure 400 {object} ErrorResponse
 // @Router /v3/staking/list [get]
 func GetStakeInfoForCoins(c *gin.Context, apis map[string]blockatlas.StakeAPI) {
 	coinsRequest := c.Query("coins")
 	if coinsRequest == "" {
-		c.JSON(http.StatusBadRequest, model.CreateErrorResponse(model.InvalidQuery, errors.E("empty coins list")))
+		c.AbortWithStatusJSON(http.StatusBadRequest, createErrorResponse(InvalidQuery, errors.E("empty coins list")))
 		return
 	}
 
@@ -120,7 +119,7 @@ func GetStakeInfoForCoins(c *gin.Context, apis map[string]blockatlas.StakeAPI) {
 
 	coins, err := sliceAtoi(coinsRaw)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, model.CreateErrorResponse(model.InvalidQuery, err))
+		c.AbortWithStatusJSON(http.StatusBadRequest, createErrorResponse(InvalidQuery, err))
 		return
 	}
 
@@ -153,12 +152,12 @@ func GetStakeInfoForCoins(c *gin.Context, apis map[string]blockatlas.StakeAPI) {
 // @Tags Staking
 // @Param coin path string true "the coin name" default(cosmos)
 // @Success 200 {object} blockatlas.DocsResponse
-// @Failure 500 {object} model.ErrorResponse
+// @Failure 500 {object} ErrorResponse
 // @Router /v2/{coin}/staking/validators [get]
 func GetValidators(c *gin.Context, api blockatlas.StakeAPI) {
-	results, err := services.GetActiveValidators(api)
+	results, err := assets.GetActiveValidators(api)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, model.CreateErrorResponse(model.InternalFail, err))
+		c.AbortWithStatusJSON(http.StatusInternalServerError, createErrorResponse(InternalFail, err))
 		return
 	}
 	c.JSON(http.StatusOK, blockatlas.DocsResponse{Docs: &results})
@@ -173,12 +172,12 @@ func GetValidators(c *gin.Context, api blockatlas.StakeAPI) {
 // @Param coin path string true "the coin name" default(tron)
 // @Param address path string true "the query address" default(TPJYCz8ppZNyvw7pTwmjajcx4Kk1MmEUhD)
 // @Success 200 {object} blockatlas.DelegationResponse
-// @Failure 500 {object} model.ErrorResponse
+// @Failure 500 {object} ErrorResponse
 // @Router /v2/{coin}/staking/delegations/{address} [get]
 func GetStakingDelegationsForSpecificCoin(c *gin.Context, api blockatlas.StakeAPI) {
 	result, err := getDelegationResponse(api, c.Param("address"))
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, model.CreateErrorResponse(model.InternalFail, err))
+		c.AbortWithStatusJSON(http.StatusInternalServerError, createErrorResponse(InternalFail, err))
 		return
 	}
 	result.Delegations = sortDelegations(result.Delegations)

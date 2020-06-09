@@ -5,7 +5,6 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"github.com/trustwallet/blockatlas/api/model"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 )
@@ -18,13 +17,13 @@ import (
 // @Tags Transactions
 // @Param coin path string true "the coin name" default(tezos)
 // @Param address path string true "the query address" default(tz1WCd2jm4uSt4vntk4vSuUWoZQGhLcDuR9q)
-// @Failure 500 {object} model.ErrorResponse
+// @Failure 500 {object} ErrorResponse
 // @Router /v1/{coin}/{address} [get]
 // @Router /v2/{coin}/transactions/{address} [get]
 func GetTransactionsHistory(c *gin.Context, txAPI blockatlas.TxAPI, tokenTxAPI blockatlas.TokenTxAPI) {
 	address := c.Param("address")
 	if address == "" {
-		c.JSON(http.StatusBadRequest, model.CreateErrorResponse(model.InvalidQuery, blockatlas.ErrInvalidAddr))
+		c.AbortWithStatusJSON(http.StatusBadRequest, createErrorResponse(InvalidQuery, blockatlas.ErrInvalidAddr))
 		return
 	}
 	token := c.Query("token")
@@ -40,28 +39,38 @@ func GetTransactionsHistory(c *gin.Context, txAPI blockatlas.TxAPI, tokenTxAPI b
 	case token != "" && tokenTxAPI != nil:
 		txs, err = tokenTxAPI.GetTokenTxsByAddress(address, token)
 	default:
-		c.JSON(http.StatusInternalServerError,
-			model.CreateErrorResponse(model.InternalFail, errors.E("Failed to find api for that coin")))
+		c.AbortWithStatusJSON(
+			http.StatusInternalServerError,
+			createErrorResponse(InternalFail, errors.E("Failed to find api for that coin")),
+		)
 		return
 	}
 
 	if err != nil {
 		switch err {
 		case blockatlas.ErrInvalidAddr:
-			c.JSON(http.StatusBadRequest,
-				model.CreateErrorResponse(model.InvalidQuery, blockatlas.ErrInvalidAddr))
+			c.AbortWithStatusJSON(
+				http.StatusBadRequest,
+				createErrorResponse(InvalidQuery, blockatlas.ErrInvalidAddr),
+				)
 			return
 		case blockatlas.ErrNotFound:
-			c.JSON(http.StatusNotFound,
-				model.CreateErrorResponse(model.RequestedDataNotFound, blockatlas.ErrNotFound))
+			c.AbortWithStatusJSON(
+				http.StatusNotFound,
+				createErrorResponse(RequestedDataNotFound, blockatlas.ErrNotFound),
+				)
 			return
 		case blockatlas.ErrSourceConn:
-			c.JSON(http.StatusServiceUnavailable,
-				model.CreateErrorResponse(model.InternalFail, blockatlas.ErrSourceConn))
+			c.AbortWithStatusJSON(
+				http.StatusServiceUnavailable,
+				createErrorResponse(InternalFail, blockatlas.ErrSourceConn),
+				)
 			return
 		default:
-			c.JSON(http.StatusInternalServerError,
-				model.CreateErrorResponse(model.Default, err))
+			c.AbortWithStatusJSON(
+				http.StatusInternalServerError,
+				createErrorResponse(Default, err),
+				)
 			return
 		}
 	}
@@ -92,13 +101,13 @@ func GetTransactionsHistory(c *gin.Context, txAPI blockatlas.TxAPI, tokenTxAPI b
 // @Tags Transactions
 // @Param coin path string true "the coin name" default(bitcoin)
 // @Param xpub path string true "the xpub key" default(zpub6ruK9k6YGm8BRHWvTiQcrEPnFkuRDJhR7mPYzV2LDvjpLa5CuGgrhCYVZjMGcLcFqv9b2WvsFtY2Gb3xq8NVq8qhk9veozrA2W9QaWtihrC)
-// @Failure 500 {object} model.ErrorResponse
+// @Failure 500 {object} ErrorResponse
 // @Router /v1/{coin}/{address} [get]
 // @Router /v2/{coin}/transactions/xpub/{xpub} [get]
 func GetTransactionsByXpub(c *gin.Context, api blockatlas.TxUtxoAPI) {
 	xPubKey := c.Param("xpub")
 	if xPubKey == "" {
-		c.JSON(http.StatusBadRequest, model.CreateErrorResponse(model.InvalidQuery, blockatlas.ErrInvalidKey))
+		c.AbortWithStatusJSON(http.StatusBadRequest, createErrorResponse(InvalidQuery, blockatlas.ErrInvalidKey))
 		return
 	}
 
@@ -106,20 +115,28 @@ func GetTransactionsByXpub(c *gin.Context, api blockatlas.TxUtxoAPI) {
 	if err != nil {
 		switch err {
 		case blockatlas.ErrInvalidKey:
-			c.JSON(http.StatusBadRequest,
-				model.CreateErrorResponse(model.InvalidQuery, blockatlas.ErrInvalidKey))
+			c.AbortWithStatusJSON(
+				http.StatusBadRequest,
+				createErrorResponse(InvalidQuery, blockatlas.ErrInvalidKey),
+				)
 			return
 		case blockatlas.ErrNotFound:
-			c.JSON(http.StatusNotFound,
-				model.CreateErrorResponse(model.RequestedDataNotFound, blockatlas.ErrNotFound))
+			c.AbortWithStatusJSON(
+				http.StatusNotFound,
+				createErrorResponse(RequestedDataNotFound, blockatlas.ErrNotFound),
+				)
 			return
 		case blockatlas.ErrSourceConn:
-			c.JSON(http.StatusServiceUnavailable,
-				model.CreateErrorResponse(model.InternalFail, blockatlas.ErrSourceConn))
+			c.AbortWithStatusJSON(
+				http.StatusServiceUnavailable,
+				createErrorResponse(InternalFail, blockatlas.ErrSourceConn),
+				)
 			return
 		default:
-			c.JSON(http.StatusInternalServerError,
-				model.CreateErrorResponse(model.Default, err))
+			c.AbortWithStatusJSON(
+				http.StatusInternalServerError,
+				createErrorResponse(Default, err),
+				)
 			return
 		}
 	}

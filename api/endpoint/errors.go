@@ -1,4 +1,4 @@
-package model
+package endpoint
 
 const (
 	Default ErrorCode = iota
@@ -19,7 +19,7 @@ type (
 	ErrorCode int
 )
 
-func CreateErrorResponse(code ErrorCode, err error) ErrorResponse {
+func createErrorResponse(code ErrorCode, err error) ErrorResponse {
 	var message string
 	if err != nil {
 		message = err.Error()
