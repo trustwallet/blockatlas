@@ -43,7 +43,7 @@ type (
 func GetStakeDelegationsWithAllInfoForBatch(c *gin.Context, apis map[string]blockatlas.StakeAPI) {
 	var reqs AddressesRequest
 	if err := c.BindJSON(&reqs); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, createErrorResponse(InvalidQuery, err))
+		c.AbortWithStatusJSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
 
@@ -79,7 +79,7 @@ func GetStakeDelegationsWithAllInfoForBatch(c *gin.Context, apis map[string]bloc
 func GetStakeInfoForBatch(c *gin.Context, apis map[string]blockatlas.StakeAPI) {
 	var reqs CoinsRequest
 	if err := c.BindJSON(&reqs); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, createErrorResponse(InvalidQuery, err))
+		c.AbortWithStatusJSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
 
@@ -111,7 +111,7 @@ func GetStakeInfoForBatch(c *gin.Context, apis map[string]blockatlas.StakeAPI) {
 func GetStakeInfoForCoins(c *gin.Context, apis map[string]blockatlas.StakeAPI) {
 	coinsRequest := c.Query("coins")
 	if coinsRequest == "" {
-		c.AbortWithStatusJSON(http.StatusBadRequest, createErrorResponse(InvalidQuery, errors.E("empty coins list")))
+		c.AbortWithStatusJSON(http.StatusBadRequest, errorResponse(errors.E("empty coins list")))
 		return
 	}
 
@@ -119,7 +119,7 @@ func GetStakeInfoForCoins(c *gin.Context, apis map[string]blockatlas.StakeAPI) {
 
 	coins, err := sliceAtoi(coinsRaw)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, createErrorResponse(InvalidQuery, err))
+		c.AbortWithStatusJSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
 
@@ -157,7 +157,7 @@ func GetStakeInfoForCoins(c *gin.Context, apis map[string]blockatlas.StakeAPI) {
 func GetValidators(c *gin.Context, api blockatlas.StakeAPI) {
 	results, err := assets.GetActiveValidators(api)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, createErrorResponse(InternalFail, err))
+		c.AbortWithStatusJSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 	c.JSON(http.StatusOK, blockatlas.DocsResponse{Docs: &results})
@@ -177,7 +177,7 @@ func GetValidators(c *gin.Context, api blockatlas.StakeAPI) {
 func GetStakingDelegationsForSpecificCoin(c *gin.Context, api blockatlas.StakeAPI) {
 	result, err := getDelegationResponse(api, c.Param("address"))
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, createErrorResponse(InternalFail, err))
+		c.AbortWithStatusJSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 	result.Delegations = sortDelegations(result.Delegations)

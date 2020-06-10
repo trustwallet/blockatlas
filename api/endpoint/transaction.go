@@ -23,7 +23,7 @@ import (
 func GetTransactionsHistory(c *gin.Context, txAPI blockatlas.TxAPI, tokenTxAPI blockatlas.TokenTxAPI) {
 	address := c.Param("address")
 	if address == "" {
-		c.AbortWithStatusJSON(http.StatusBadRequest, createErrorResponse(InvalidQuery, blockatlas.ErrInvalidAddr))
+		c.AbortWithStatusJSON(http.StatusBadRequest, errorResponse(blockatlas.ErrInvalidAddr))
 		return
 	}
 	token := c.Query("token")
@@ -41,7 +41,7 @@ func GetTransactionsHistory(c *gin.Context, txAPI blockatlas.TxAPI, tokenTxAPI b
 	default:
 		c.AbortWithStatusJSON(
 			http.StatusInternalServerError,
-			createErrorResponse(InternalFail, errors.E("Failed to find api for that coin")),
+			errorResponse(errors.E("Failed to find api for that coin")),
 		)
 		return
 	}
@@ -51,26 +51,26 @@ func GetTransactionsHistory(c *gin.Context, txAPI blockatlas.TxAPI, tokenTxAPI b
 		case blockatlas.ErrInvalidAddr:
 			c.AbortWithStatusJSON(
 				http.StatusBadRequest,
-				createErrorResponse(InvalidQuery, blockatlas.ErrInvalidAddr),
-				)
+				errorResponse(blockatlas.ErrInvalidAddr),
+			)
 			return
 		case blockatlas.ErrNotFound:
 			c.AbortWithStatusJSON(
 				http.StatusNotFound,
-				createErrorResponse(RequestedDataNotFound, blockatlas.ErrNotFound),
-				)
+				errorResponse(blockatlas.ErrNotFound),
+			)
 			return
 		case blockatlas.ErrSourceConn:
 			c.AbortWithStatusJSON(
 				http.StatusServiceUnavailable,
-				createErrorResponse(InternalFail, blockatlas.ErrSourceConn),
-				)
+				errorResponse(blockatlas.ErrSourceConn),
+			)
 			return
 		default:
 			c.AbortWithStatusJSON(
 				http.StatusInternalServerError,
-				createErrorResponse(Default, err),
-				)
+				errorResponse(err),
+			)
 			return
 		}
 	}
@@ -107,7 +107,7 @@ func GetTransactionsHistory(c *gin.Context, txAPI blockatlas.TxAPI, tokenTxAPI b
 func GetTransactionsByXpub(c *gin.Context, api blockatlas.TxUtxoAPI) {
 	xPubKey := c.Param("xpub")
 	if xPubKey == "" {
-		c.AbortWithStatusJSON(http.StatusBadRequest, createErrorResponse(InvalidQuery, blockatlas.ErrInvalidKey))
+		c.AbortWithStatusJSON(http.StatusBadRequest, errorResponse(blockatlas.ErrInvalidKey))
 		return
 	}
 
@@ -117,26 +117,26 @@ func GetTransactionsByXpub(c *gin.Context, api blockatlas.TxUtxoAPI) {
 		case blockatlas.ErrInvalidKey:
 			c.AbortWithStatusJSON(
 				http.StatusBadRequest,
-				createErrorResponse(InvalidQuery, blockatlas.ErrInvalidKey),
-				)
+				errorResponse(blockatlas.ErrInvalidKey),
+			)
 			return
 		case blockatlas.ErrNotFound:
 			c.AbortWithStatusJSON(
 				http.StatusNotFound,
-				createErrorResponse(RequestedDataNotFound, blockatlas.ErrNotFound),
-				)
+				errorResponse(blockatlas.ErrNotFound),
+			)
 			return
 		case blockatlas.ErrSourceConn:
 			c.AbortWithStatusJSON(
 				http.StatusServiceUnavailable,
-				createErrorResponse(InternalFail, blockatlas.ErrSourceConn),
-				)
+				errorResponse(blockatlas.ErrSourceConn),
+			)
 			return
 		default:
 			c.AbortWithStatusJSON(
 				http.StatusInternalServerError,
-				createErrorResponse(Default, err),
-				)
+				errorResponse(err),
+			)
 			return
 		}
 	}

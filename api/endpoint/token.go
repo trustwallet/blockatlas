@@ -29,7 +29,7 @@ func GetTokensByAddress(c *gin.Context, tokenAPI blockatlas.TokensAPI) {
 
 	result, err := tokenAPI.GetTokenListByAddress(address)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, createErrorResponse(InternalFail, err))
+		c.AbortWithStatusJSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 	c.JSON(http.StatusOK, blockatlas.DocsResponse{Docs: &result})
@@ -47,7 +47,7 @@ func GetTokensByAddress(c *gin.Context, tokenAPI blockatlas.TokensAPI) {
 func GetTokens(c *gin.Context, apis map[uint]blockatlas.TokensAPI) {
 	var query map[string][]string
 	if err := c.Bind(&query); err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, createErrorResponse(InternalFail, err))
+		c.AbortWithStatusJSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 	result := make(blockatlas.TokenPage, 0)
