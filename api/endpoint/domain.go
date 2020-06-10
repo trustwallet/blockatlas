@@ -24,16 +24,16 @@ func GetAddressByCoinAndDomain(c *gin.Context) {
 	coinQuery := c.Query("coin")
 	coin, err := strconv.ParseUint(coinQuery, 10, 64)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, createErrorResponse(InvalidQuery, err))
+		c.AbortWithStatusJSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
 	result, err := domains.HandleLookup(name, []uint64{coin})
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, createErrorResponse(InternalFail, err))
+		c.AbortWithStatusJSON(http.StatusNotFound, errorResponse(err))
 		return
 	}
 	if len(result) == 0 {
-		c.AbortWithStatusJSON(http.StatusNotFound, createErrorResponse(RequestedDataNotFound, err))
+		c.AbortWithStatusJSON(http.StatusNotFound, errorResponse(err))
 		return
 	}
 	c.JSON(http.StatusOK, result[0])
@@ -54,16 +54,16 @@ func GetAddressByCoinAndDomainBatch(c *gin.Context) {
 	coinsRaw := strings.Split(c.Query("coins"), ",")
 	coins, err := sliceAtoi(coinsRaw)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, createErrorResponse(InvalidQuery, err))
+		c.AbortWithStatusJSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
 	result, err := domains.HandleLookup(name, coins)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, createErrorResponse(InternalFail, err))
+		c.AbortWithStatusJSON(http.StatusNotFound, errorResponse(err))
 		return
 	}
 	if len(result) == 0 {
-		c.AbortWithStatusJSON(http.StatusNotFound, createErrorResponse(RequestedDataNotFound, err))
+		c.AbortWithStatusJSON(http.StatusNotFound, errorResponse(err))
 		return
 	}
 	c.JSON(http.StatusOK, &result)

@@ -1,31 +1,22 @@
 package endpoint
 
-const (
-	Default ErrorCode = iota
-	InvalidQuery
-	RequestedDataNotFound
-	InternalFail
-)
-
 type (
 	ErrorResponse struct {
 		Error ErrorDetails `json:"error"`
 	}
 	ErrorDetails struct {
-		Message string    `json:"message"`
-		Code    ErrorCode `json:"code"`
+		Message string `json:"message"`
 	}
 
 	ErrorCode int
 )
 
-func createErrorResponse(code ErrorCode, err error) ErrorResponse {
+func errorResponse(err error) ErrorResponse {
 	var message string
 	if err != nil {
 		message = err.Error()
 	}
 	return ErrorResponse{Error: ErrorDetails{
 		Message: message,
-		Code:    code,
 	}}
 }

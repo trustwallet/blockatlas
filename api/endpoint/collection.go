@@ -22,7 +22,7 @@ import (
 func GetCollectiblesForSpecificCollectionAndOwner(c *gin.Context, api blockatlas.CollectionsAPI) {
 	collectibles, err := api.GetCollectibles(c.Param("owner"), c.Param("collection_id"))
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, createErrorResponse(InternalFail, err))
+		c.AbortWithStatusJSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 	c.JSON(http.StatusOK, &collectibles)
@@ -40,7 +40,7 @@ func GetCollectiblesForSpecificCollectionAndOwner(c *gin.Context, api blockatlas
 func GetCollectionCategoriesFromList(c *gin.Context, apis blockatlas.CollectionsAPIs) {
 	var reqs map[string][]string
 	if err := c.BindJSON(&reqs); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, createErrorResponse(Default, err))
+		c.AbortWithStatusJSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
 
@@ -68,7 +68,7 @@ func GetCollectionCategoriesFromList(c *gin.Context, apis blockatlas.Collections
 func GetCollectiblesForOwnerV3(c *gin.Context, api blockatlas.CollectionsAPI) {
 	collections, err := api.GetCollectionsV3(c.Param("owner"))
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, createErrorResponse(InternalFail, err))
+		c.AbortWithStatusJSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 
@@ -78,7 +78,7 @@ func GetCollectiblesForOwnerV3(c *gin.Context, api blockatlas.CollectionsAPI) {
 func GetCollectiblesForSpecificCollectionAndOwnerV3(c *gin.Context, api blockatlas.CollectionsAPI) {
 	collectibles, err := api.GetCollectiblesV3(c.Param("owner"), c.Param("collection_id"))
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, createErrorResponse(InternalFail, err))
+		c.AbortWithStatusJSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 	c.JSON(http.StatusOK, &collectibles)
@@ -87,7 +87,7 @@ func GetCollectiblesForSpecificCollectionAndOwnerV3(c *gin.Context, api blockatl
 func GetCollectionCategoriesFromListV3(c *gin.Context, apis blockatlas.CollectionsAPIs) {
 	var reqs map[string][]string
 	if err := c.BindJSON(&reqs); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, createErrorResponse(Default, err))
+		c.AbortWithStatusJSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
 
