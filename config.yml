@@ -1,8 +1,6 @@
 # Gin is the web framework
 gin:
   # Possible values: "debug", "release"
-  login: admin
-  pass: pass
   mode: release
   # App running behind a reverse proxy?
   # If set, HTTP Forwarded headers will be respected
