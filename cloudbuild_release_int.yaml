@@ -1,0 +1,30 @@
+# test, build, tag, push container
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [ 'build', '-t', 'asia.gcr.io/$PROJECT_ID/blockatlas-parser:$COMMIT_SHA', '.' ]
+  - name: "gcr.io/cloud-builders/docker"
+    args: ["push", "asia.gcr.io/$PROJECT_ID/blockatlas-parser:$COMMIT_SHA"]
+
+  # deploy with helm 3
+  - name: "asia.gcr.io/$PROJECT_ID/sports-devops-build"
+    entrypoint: sh
+    args:
+      - "-c"
+      - |
+        helm template --name-template=blockatlas-parser \
+        --set image.tag=$COMMIT_SHA \
+        --values=./cd-assets/values-int.yaml \
+        --repo=https://$$HELM_GITHUB_TOKEN@raw.githubusercontent.com/bitgaming/sports-charts/master/ deployment-chart \
+        | /gke-deploy run -f - -n payments -a blockatlas-parser -c $$CLUSTER_NAME --project $$CLUSTER_PROJECT -l $$CLUSTER_REGION
+    env:
+      - "CLUSTER_REGION=asia-east1-a"
+      - "CLUSTER_NAME=kubershmuber-int-payments"
+      - "CLUSTER_PROJECT=kubershmuber-preprod-payments"
+      - "SERVICE=parser"
+    secretEnv:
+      - "HELM_GITHUB_TOKEN"
+
+secrets:
+  - kmsKeyName: projects/kubershmuber-preprod-payments/locations/global/keyRings/global-keyring/cryptoKeys/cloud-build-key
+    secretEnv:
+      HELM_GITHUB_TOKEN: CiQA8vZ5kFjfe6R/lbqxZNticwkE/LI+u+rEmnsmvtsSd2EDr54SUQAsgQ57BycX5s6E9NEZKhAIgjwrHI6PBldFfTaTy50IQQCWgDddYETPr/fJGWQRAFQzmf2Svh7Dem2Jz3aZknR1KydpsXEKcrLWFKajE3H33Q==
