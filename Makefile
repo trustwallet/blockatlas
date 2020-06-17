@@ -18,6 +18,9 @@ GEN_COIN_FILE := coin/gen.go
 GOBASE := $(shell pwd)
 GOBIN := $(GOBASE)/bin
 GOPKG := $(.)
+# A valid GOPATH is required to use the `go get` command.
+# If $GOPATH is not specified, $HOME/go will be used by default
+GOPATH := $(if $(GOPATH),$(GOPATH),~/go)
 
 # Environment variables
 CONFIG_FILE=$(GOBASE)/config.yml
@@ -150,8 +153,15 @@ govet: go-vet
 ## golint: Run golint.
 lint: go-lint-install go-lint
 
-## docs: Generate swagger docs.
-docs: go-gen-docs
+
+install-swag:
+ifeq (,$(wildcard test -f $(GOPATH)/bin/swag))
+	@echo "  >  Installing swagger"
+	@-bash -c "go get github.com/swaggo/swag/cmd/swag"
+endif
+
+swag: install-swag
+	@bash -c "$(GOPATH)/bin/swag init --parseDependency -g ./cmd/api/main.go -o ./docs"
 
 ## install-newman: Install Postman Newman for tests.
 install-newman:
@@ -252,10 +262,6 @@ go-fmt:
 go-gen-coins:
 	@echo "  >  Generating coin file"
 	COIN_FILE=$(COIN_FILE) COIN_GO_FILE=$(COIN_GO_FILE) GOBIN=$(GOBIN) go run -tags=coins $(GEN_COIN_FILE)
-
-go-gen-docs:
-	@echo "  >  Generating swagger files"
-	swag init -g ./cmd/api/main.go -o ./docs
 
 go-goreleaser:
 	@echo "  >  Releasing a new version"
