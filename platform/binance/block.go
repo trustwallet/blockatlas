@@ -63,7 +63,7 @@ func normalizeTxsToExplorer(txV2 TxV2) ExplorerTxs {
 		tx.HasChildren = 1
 	}
 	if t, err := time.Parse(time.RFC3339, txV2.Timestamp); err == nil {
-		tx.Timestamp = t.Unix()
+		tx.Timestamp = t.Unix() * 1000
 	}
 
 	mts := make([]MultiTransfer, len(txV2.SubTransactions))
