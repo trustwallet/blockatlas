@@ -140,17 +140,15 @@ definitions:
     items:
       $ref: '#/definitions/endpoint.AddressBatchRequest'
     type: array
-  model.ErrorDetails:
+  endpoint.ErrorDetails:
     properties:
-      code:
-        type: integer
       message:
         type: string
     type: object
-  model.ErrorResponse:
+  endpoint.ErrorResponse:
     properties:
       error:
-        $ref: '#/definitions/model.ErrorDetails'
+        $ref: '#/definitions/endpoint.ErrorDetails'
         type: object
     type: object
 info:
@@ -180,7 +178,7 @@ paths:
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/model.ErrorResponse'
+            $ref: '#/definitions/endpoint.ErrorResponse'
       summary: Lookup .eth / .zil addresses
       tags:
       - Naming
@@ -213,7 +211,7 @@ paths:
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/model.ErrorResponse'
+            $ref: '#/definitions/endpoint.ErrorResponse'
       summary: Get Stake Delegations
       tags:
       - Staking
@@ -240,7 +238,7 @@ paths:
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/model.ErrorResponse'
+            $ref: '#/definitions/endpoint.ErrorResponse'
       summary: Get Validators
       tags:
       - Staking
@@ -273,7 +271,7 @@ paths:
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/model.ErrorResponse'
+            $ref: '#/definitions/endpoint.ErrorResponse'
       summary: Get Tokens
       tags:
       - Transactions
@@ -302,7 +300,7 @@ paths:
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/model.ErrorResponse'
+            $ref: '#/definitions/endpoint.ErrorResponse'
       summary: Get Transactions
       tags:
       - Transactions
@@ -331,7 +329,7 @@ paths:
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/model.ErrorResponse'
+            $ref: '#/definitions/endpoint.ErrorResponse'
       summary: Get Transactions by XPUB
       tags:
       - Transactions
@@ -361,7 +359,7 @@ paths:
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/model.ErrorResponse'
+            $ref: '#/definitions/endpoint.ErrorResponse'
       summary: Lookup .eth / .zil addresses
       tags:
       - Naming
@@ -457,7 +455,7 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/model.ErrorResponse'
+            $ref: '#/definitions/endpoint.ErrorResponse'
       summary: Get staking info by coin ID
       tags:
       - Staking
@@ -496,7 +494,7 @@ paths:
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/model.ErrorResponse'
+            $ref: '#/definitions/endpoint.ErrorResponse'
       summary: Get Collection
       tags:
       - Collections

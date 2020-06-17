@@ -40,7 +40,7 @@
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/model.ErrorResponse"
+                            "$ref": "#/definitions/endpoint.ErrorResponse"
                         }
                     }
                 }
@@ -85,7 +85,7 @@
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/model.ErrorResponse"
+                            "$ref": "#/definitions/endpoint.ErrorResponse"
                         }
                     }
                 }
@@ -239,7 +239,7 @@
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/model.ErrorResponse"
+                            "$ref": "#/definitions/endpoint.ErrorResponse"
                         }
                     }
                 }
@@ -279,7 +279,7 @@
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/model.ErrorResponse"
+                            "$ref": "#/definitions/endpoint.ErrorResponse"
                         }
                     }
                 }
@@ -327,7 +327,7 @@
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/model.ErrorResponse"
+                            "$ref": "#/definitions/endpoint.ErrorResponse"
                         }
                     }
                 }
@@ -369,7 +369,7 @@
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/model.ErrorResponse"
+                            "$ref": "#/definitions/endpoint.ErrorResponse"
                         }
                     }
                 }
@@ -411,7 +411,7 @@
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/model.ErrorResponse"
+                            "$ref": "#/definitions/endpoint.ErrorResponse"
                         }
                     }
                 }
@@ -450,7 +450,7 @@
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/model.ErrorResponse"
+                            "$ref": "#/definitions/endpoint.ErrorResponse"
                         }
                     }
                 }
@@ -542,7 +542,7 @@
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/model.ErrorResponse"
+                            "$ref": "#/definitions/endpoint.ErrorResponse"
                         }
                     }
                 }
@@ -764,23 +764,20 @@
                 "$ref": "#/definitions/endpoint.AddressBatchRequest"
             }
         },
-        "model.ErrorDetails": {
+        "endpoint.ErrorDetails": {
             "type": "object",
             "properties": {
-                "code": {
-                    "type": "integer"
-                },
                 "message": {
                     "type": "string"
                 }
             }
         },
-        "model.ErrorResponse": {
+        "endpoint.ErrorResponse": {
             "type": "object",
             "properties": {
                 "error": {
                     "type": "object",
-                    "$ref": "#/definitions/model.ErrorDetails"
+                    "$ref": "#/definitions/endpoint.ErrorDetails"
                 }
             }
         }

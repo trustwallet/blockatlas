@@ -18,7 +18,7 @@ import (
 // @Param coin path string true "the coin name" default(ethereum)
 // @Param address path string true "the query address" default(0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB)
 // @Success 200 {object} blockatlas.CollectionPage
-// @Failure 500 {object} model.ErrorResponse
+// @Failure 500 {object} ErrorResponse
 // @Router /v2/{coin}/tokens/{address} [get]
 func GetTokensByAddress(c *gin.Context, tokenAPI blockatlas.TokensAPI) {
 	address := c.Param("address")
