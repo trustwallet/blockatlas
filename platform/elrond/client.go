@@ -78,10 +78,5 @@ func fillStruct(data interface{}, result interface{}) error {
 		return err
 	}
 
-	err = json.Unmarshal(structBytes, &result)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return json.Unmarshal(structBytes, &result)
 }
