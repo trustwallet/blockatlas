@@ -155,8 +155,20 @@ func filterTransactionsByToken(token string, txs blockatlas.TxPage) blockatlas.T
 	result := make(blockatlas.TxPage, 0)
 	for _, tx := range txs {
 		switch tx.Meta.(type) {
-		case *blockatlas.TokenTransfer, blockatlas.TokenTransfer, blockatlas.NativeTokenTransfer, *blockatlas.NativeTokenTransfer:
+		case blockatlas.TokenTransfer:
 			if strings.EqualFold(tx.Meta.(blockatlas.TokenTransfer).TokenID, token) {
+				result = append(result, tx)
+			}
+		case *blockatlas.TokenTransfer:
+			if strings.EqualFold(tx.Meta.(*blockatlas.TokenTransfer).TokenID, token) {
+				result = append(result, tx)
+			}
+		case blockatlas.NativeTokenTransfer:
+			if strings.EqualFold(tx.Meta.(blockatlas.NativeTokenTransfer).TokenID, token) {
+				result = append(result, tx)
+			}
+		case *blockatlas.NativeTokenTransfer:
+			if strings.EqualFold(tx.Meta.(*blockatlas.NativeTokenTransfer).TokenID, token) {
 				result = append(result, tx)
 			}
 		default:
