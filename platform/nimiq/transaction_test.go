@@ -6,6 +6,7 @@ import (
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"io/ioutil"
+	"math"
 	"path/filepath"
 	"runtime"
 	"sort"
@@ -68,7 +69,7 @@ var (
 		From:  "NQ74 SJ0Q 49T1 4XQL KABH 1RUC 8DPT 9F0U 9P0B",
 		To:    "NQ97 18BJ 33YV QGHQ BV2K 56V4 12CH J8TD S9S3",
 		Fee:   "300",
-		Date:  time.Now().Unix(),
+		Date:  666666, // special placholder value
 		Block: 0,
 		Meta: blockatlas.Transfer{
 			Value:    "100000",
@@ -79,6 +80,7 @@ var (
 )
 
 func TestNormalizeTx1(t *testing.T) {
+	now := time.Now().Unix()
 	tests := []struct {
 		name  string
 		srcTx string
@@ -96,6 +98,10 @@ func TestNormalizeTx1(t *testing.T) {
 				return
 			}
 			got := NormalizeTx(&srcTx)
+			// special handling for current date, if around now, replace with special value
+			if math.Abs(float64(got.Date - now)) < 30 {
+				got.Date = 666666
+			}
 			assert.Equal(t, tt.want, got)
 		})
 	}

@@ -3,9 +3,9 @@ before:
     - git reset --hard
     - git checkout .
 builds:
-  - id: platform_api
-    binary: platform_api
-    main: "./cmd/platform_api/main.go"
+  - id: api
+    binary: api
+    main: "./cmd/api/main.go"
     goos:
       - linux
     goarch:
@@ -21,27 +21,27 @@ builds:
         - amd64
       env:
         - CGO_ENABLED=0
-  - id: observer_parser
-    binary: observer_parser
-    main: "./cmd/observer_parser/main.go"
+  - id: parser
+    binary: parser
+    main: "./cmd/parser/main.go"
     goos:
       - linux
     goarch:
       - amd64
     env:
       - CGO_ENABLED=0
-  - id: observer_subscriber
-    binary: observer_subscriber
-    main: "./cmd/observer_subscriber/main.go"
+  - id: subscriber
+    binary: subscriber
+    main: "./cmd/subscriber/main.go"
     goos:
       - linux
     goarch:
       - amd64
     env:
       - CGO_ENABLED=0
-  - id: observer_notifier
-      binary: observer_notifier
-      main: "./cmd/observer_notifier/main.go"
+  - id: notifier
+      binary: notifier
+      main: "./cmd/notifier/main.go"
       goos:
         - linux
       goarch:

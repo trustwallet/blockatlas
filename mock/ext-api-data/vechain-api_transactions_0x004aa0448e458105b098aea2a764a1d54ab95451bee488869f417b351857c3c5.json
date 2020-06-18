@@ -1,0 +1,25 @@
+{
+	"id": "0x004aa0448e458105b098aea2a764a1d54ab95451bee488869f417b351857c3c5",
+	"chainTag": 74,
+	"blockRef": "0x0042249a647f63e7",
+	"expiration": 720,
+	"clauses": [
+		{
+			"to": "0x00bae5ed35736e4ef17af1be0c6f50e0fb73d685",
+			"value": "0x38f6ea18e810b6f00",
+			"data": "0x"
+		}
+	],
+	"gasPriceCoef": 0,
+	"gas": 21000,
+	"origin": "0xb5e883349e68ab59307d1604555ac890fac47128",
+	"delegator": null,
+	"nonce": "0x6fa76caac4c18bd",
+	"dependsOn": null,
+	"size": 130,
+	"meta": {
+		"blockID": "0x0042249bee56223e0ed7a9c7fcfffe8e61b9fd95d29d24843c558ff2c46ea094",
+		"blockNumber": 4334747,
+		"blockTimestamp": 1573795570
+	}
+}

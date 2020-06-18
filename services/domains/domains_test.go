@@ -1,34 +1,73 @@
 package domains
 
 import (
-	"strings"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
-	"github.com/trustwallet/blockatlas/pkg/errors"
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/naming"
 )
 
-func checkGetTLD(t *testing.T, name string, expectedTLD string, expectedError error) {
-	name = strings.ToLower(name)
-	tld, err := getTLD(name)
-	assert.Equal(t, expectedTLD, tld)
-	if expectedError == nil {
-		assert.Nil(t, err)
-	} else {
-		assert.NotNil(t, err)
+type (
+	ProviderOne struct{}
+	ProviderTwo struct{}
+)
+
+func (p *ProviderOne) CanHandle(name string) bool {
+	domain := naming.GetTopDomain(name, ".")
+	return domain == ".one" || domain == ".zero"
+}
+
+func (p *ProviderOne) Lookup(coins []uint64, name string) ([]blockatlas.Resolved, error) {
+	return []blockatlas.Resolved{}, nil
+}
+
+func (p *ProviderTwo) CanHandle(name string) bool {
+	domain := naming.GetTopDomain(name, ".")
+	return domain == ".two" || domain == ".zero"
+}
+
+func (p *ProviderTwo) Lookup(coins []uint64, name string) ([]blockatlas.Resolved, error) {
+	return []blockatlas.Resolved{}, nil
+}
+
+func setupProviders() map[uint]blockatlas.NamingServiceAPI {
+	return map[uint]blockatlas.NamingServiceAPI{
+		1: &ProviderOne{},
+		2: &ProviderTwo{},
 	}
 }
 
-func Test_getTLD(t *testing.T) {
-	checkGetTLD(t, "vitalik.eth", ".eth", nil)
-	checkGetTLD(t, "vitalik.ens", ".ens", nil)
-	checkGetTLD(t, "ourxyzwallet.xyz", ".xyz", nil)
-	checkGetTLD(t, "Cameron.Kred", ".kred", nil)
-	checkGetTLD(t, "btc.zil", ".zil", nil)
-	checkGetTLD(t, "btc.crypto", ".crypto", nil)
-	checkGetTLD(t, "nick@fiotestnet", "@fiotestnet", nil)
-	checkGetTLD(t, "a", "", errors.E("No TLD found in name"))  // no tld
-	checkGetTLD(t, "a.", "", errors.E("No TLD found in name")) // empty tld
-	checkGetTLD(t, "a@b.c", ".c", nil)
-	checkGetTLD(t, "a.b@c", "@c", nil)
+func TestFindHandlerApis(t *testing.T) {
+	tests := []struct {
+		name      string
+		wantCount int
+	}{
+		{
+			name:      "user.one",
+			wantCount: 1,
+		},
+		{
+			name:      "user.two",
+			wantCount: 1,
+		},
+		{
+			name:      "user.NOSUCHDOMAIN",
+			wantCount: 0,
+		},
+		{
+			name:      "user.zero",
+			wantCount: 2,
+		},
+		{
+			name:      "user.ONE",
+			wantCount: 1,
+		},
+	}
+	allApis := setupProviders()
+	for _, tt := range tests {
+		res := findHandlerApis(tt.name, allApis)
+		if len(res) != tt.wantCount {
+			t.Errorf("Wrong answer %v %v %v", tt.name, len(res), tt.wantCount)
+		}
+	}
 }

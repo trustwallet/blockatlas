@@ -1,0 +1,20 @@
+{
+	"options": {
+		"offset": 0,
+		"limit": 15
+	},
+	"criteriaSet": [
+		{
+			"sender": "0xB5e883349e68aB59307d1604555AC890fAC47128"
+		},
+		{
+			"recipient": "0xB5e883349e68aB59307d1604555AC890fAC47128"
+		}
+	],
+	"range": {
+		"unit": "block",
+		"from": 0,
+		"to": 5466405
+	},
+	"order": "desc"
+}

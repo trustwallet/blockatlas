@@ -1,0 +1,77 @@
+{
+	"success": true,
+	"meta": {
+		"at": 1589366680095,
+		"page_size": 1
+	},
+	"data": [
+		{
+			"account_resource": {},
+			"active_permission": [
+				{
+					"id": 2,
+					"keys": [
+						{
+							"address": "4139fec4d95bb59f45a727f9234020adaf2cec9e20",
+							"weight": 1
+						}
+					],
+					"operations": "7fff1fc0033e0000000000000000000000000000000000000000000000000000",
+					"permission_name": "active",
+					"threshold": 1,
+					"type": "Active"
+				}
+			],
+			"address": "4139fec4d95bb59f45a727f9234020adaf2cec9e20",
+			"allowance": 848829,
+			"assetV2": [
+				{
+					"key": "1002000",
+					"value": 10189204891
+				},
+				{
+					"key": "1002798",
+					"value": 10000000
+				},
+				{
+					"key": "1002814",
+					"value": 10000000
+				}
+			],
+			"balance": 278720000,
+			"create_time": 1553864037000,
+			"free_asset_net_usageV2": [
+				{
+					"key": "1002000",
+					"value": 0
+				},
+				{
+					"key": "1002798",
+					"value": 0
+				},
+				{
+					"key": "1002814",
+					"value": 0
+				}
+			],
+			"latest_consume_free_time": 1575142326000,
+			"latest_consume_time": 1576767612000,
+			"latest_opration_time": 1576767612000,
+			"owner_permission": {
+				"keys": [
+					{
+						"address": "4139fec4d95bb59f45a727f9234020adaf2cec9e20",
+						"weight": 1
+					}
+				],
+				"permission_name": "owner",
+				"threshold": 1
+			},
+			"trc20": [
+				{
+					"TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7": "53135738"
+				}
+			]
+		}
+	]
+}

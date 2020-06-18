@@ -6,8 +6,6 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"github.com/trustwallet/blockatlas/api/model"
-	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/services/domains"
 )
 
@@ -19,24 +17,23 @@ import (
 // @Param name query string empty "string name"
 // @Param coin query string 60 "string coin"
 // @Success 200 {object} blockatlas.Resolved
-// @Failure 500 {object} model.ErrorResponse
+// @Failure 500 {object} ErrorResponse
 // @Router /ns/lookup [get]
 func GetAddressByCoinAndDomain(c *gin.Context) {
 	name := c.Query("name")
 	coinQuery := c.Query("coin")
 	coin, err := strconv.ParseUint(coinQuery, 10, 64)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, model.CreateErrorResponse(model.InvalidQuery, err))
+		c.AbortWithStatusJSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
 	result, err := domains.HandleLookup(name, []uint64{coin})
 	if err != nil {
-		logger.Warn(err)
-		c.JSON(http.StatusNotFound, model.CreateErrorResponse(model.InternalFail, err))
+		c.AbortWithStatusJSON(http.StatusNotFound, errorResponse(err))
 		return
 	}
 	if len(result) == 0 {
-		c.JSON(http.StatusNotFound, model.CreateErrorResponse(model.RequestedDataNotFound, err))
+		c.AbortWithStatusJSON(http.StatusNotFound, errorResponse(err))
 		return
 	}
 	c.JSON(http.StatusOK, result[0])
@@ -50,24 +47,23 @@ func GetAddressByCoinAndDomain(c *gin.Context) {
 // @Param name query string empty "string name"
 // @Param coins query string true "List of coins"
 // @Success 200 {array} blockatlas.Resolved
-// @Failure 500 {object} model.ErrorResponse
+// @Failure 500 {object} ErrorResponse
 // @Router /v2/ns/lookup [get]
 func GetAddressByCoinAndDomainBatch(c *gin.Context) {
 	name := c.Query("name")
 	coinsRaw := strings.Split(c.Query("coins"), ",")
 	coins, err := sliceAtoi(coinsRaw)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, model.CreateErrorResponse(model.InvalidQuery, err))
+		c.AbortWithStatusJSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
 	result, err := domains.HandleLookup(name, coins)
 	if err != nil {
-		logger.Warn(err)
-		c.JSON(http.StatusNotFound, model.CreateErrorResponse(model.InternalFail, err))
+		c.AbortWithStatusJSON(http.StatusNotFound, errorResponse(err))
 		return
 	}
 	if len(result) == 0 {
-		c.JSON(http.StatusNotFound, model.CreateErrorResponse(model.RequestedDataNotFound, err))
+		c.AbortWithStatusJSON(http.StatusNotFound, errorResponse(err))
 		return
 	}
 	c.JSON(http.StatusOK, &result)

@@ -1,0 +1,24 @@
+{
+	"success": true,
+	"meta": {
+		"at": 1589387440079,
+		"page_size": 1
+	},
+	"data": [
+		{
+			"id": "1002814",
+			"abbr": "AX",
+			"description": "The token of the game TrainX",
+			"name": "AX",
+			"num": 1000000000,
+			"precision": 6,
+			"total_supply": "10000000000000000",
+			"trx_num": 1000000000,
+			"url": "https://trainx.fun",
+			"vote_score": 0,
+			"owner_address": "418e267ead411aaaf671be100a7afe587d4eab0d71",
+			"start_time": 1576483805985,
+			"end_time": 1576483865985
+		}
+	]
+}
