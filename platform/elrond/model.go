@@ -6,11 +6,13 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 )
 
-type NetworkStatus struct {
-	NetworkStatus Status `json:"message"`
+type GenericResponse struct {
+	Data  interface{} `json:"data"`
+	Code  string      `json:"code"`
+	Error string      `json:"error"`
 }
 
-type Status struct {
+type NetworkStatus struct {
 	Status StatusDetails `json:"status"`
 }
 
