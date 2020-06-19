@@ -1,15 +1,16 @@
 package elrond
 
 import (
+	"encoding/json"
 	"time"
 
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 )
 
 type GenericResponse struct {
-	Data  interface{} `json:"data"`
-	Code  string      `json:"code"`
-	Error string      `json:"error"`
+	Data  json.RawMessage `json:"data"`
+	Code  string          `json:"code"`
+	Error string          `json:"error"`
 }
 
 type NetworkStatus struct {

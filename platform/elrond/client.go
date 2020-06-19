@@ -69,14 +69,5 @@ func (c *Client) getResponse(result interface{}, path string, query url.Values) 
 		return fmt.Errorf("%s", genericResponse.Error)
 	}
 
-	return fillStruct(genericResponse.Data, &result)
-}
-
-func fillStruct(data interface{}, result interface{}) error {
-	structBytes, err := json.Marshal(data)
-	if err != nil {
-		return err
-	}
-
-	return json.Unmarshal(structBytes, &result)
+	return json.Unmarshal(genericResponse.Data, &result)
 }
