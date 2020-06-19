@@ -12,6 +12,18 @@ const (
 	MinimumStakeAmount = "0"
 )
 
+func (p *Platform) GetActiveValidators() (blockatlas.StakeValidators, error) {
+	validators, err := assets.GetValidatorsMap(p)
+	if err != nil {
+		return nil, err
+	}
+	result := make(blockatlas.StakeValidators, 0, len(validators))
+	for _, v := range validators {
+		result = append(result, v)
+	}
+	return result, nil
+}
+
 func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, error) {
 	account, err := p.rpcClient.GetAccount(address)
 	if err != nil {

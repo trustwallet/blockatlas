@@ -1,0 +1,22 @@
+package assets
+
+import (
+	"github.com/trustwallet/blockatlas/coin"
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/errors"
+	"time"
+)
+
+const (
+	AssetsURL = "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/"
+)
+
+func fetchValidatorsInfo(coin coin.Coin) (AssetValidators, error) {
+	var results AssetValidators
+	request := blockatlas.InitClient(AssetsURL + coin.Handle)
+	err := request.GetWithCache(&results, "validators/list.json", nil, time.Hour*1)
+	if err != nil {
+		return nil, errors.E(err, errors.Params{"coin": coin.Handle})
+	}
+	return results, nil
+}
