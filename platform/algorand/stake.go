@@ -1,13 +1,25 @@
 package algorand
 
 import (
+	"github.com/trustwallet/blockatlas/services/assets"
 	"strconv"
 
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 )
 
+func (p *Platform) GetActiveValidators() (blockatlas.StakeValidators, error) {
+	validators, err := assets.GetValidatorsMap(p)
+	if err != nil {
+		return nil, err
+	}
+	result := make(blockatlas.StakeValidators, 0, len(validators))
+	for _, v := range validators {
+		result = append(result, v)
+	}
+	return result, nil
+}
+
 func (p *Platform) GetDetails() blockatlas.StakingDetails {
-	//TODO: Find a way to have a dynamic
 	return blockatlas.StakingDetails{
 		Reward:        blockatlas.StakingReward{Annual: 6.1},
 		MinimumAmount: "0",

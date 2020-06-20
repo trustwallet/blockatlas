@@ -7,7 +7,7 @@ import (
 	"github.com/btcsuite/btcutil/base58"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
-	services "github.com/trustwallet/blockatlas/services/assets"
+	"github.com/trustwallet/blockatlas/services/assets"
 	"strconv"
 )
 
@@ -15,6 +15,18 @@ func arrayOfPubkey(pubkey string) [32]byte {
 	var array [32]byte
 	copy(array[:], base58.Decode(pubkey))
 	return array
+}
+
+func (p *Platform) GetActiveValidators() (blockatlas.StakeValidators, error) {
+	validators, err := assets.GetValidatorsMap(p)
+	if err != nil {
+		return nil, err
+	}
+	result := make(blockatlas.StakeValidators, 0, len(validators))
+	for _, v := range validators {
+		result = append(result, v)
+	}
+	return result, nil
 }
 
 func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
@@ -83,7 +95,7 @@ func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, e
 		return make(blockatlas.DelegationsPage, 0), nil
 	}
 
-	validators, err := services.GetValidatorsMap(p)
+	validators, err := assets.GetValidatorsMap(p)
 	if err != nil {
 		return nil, err
 	}

@@ -13,42 +13,48 @@ const (
 	TxStatusApplied string = "applied"
 )
 
-type Account struct {
-	Balance  string `json:"balance"`
-	Delegate string `json:"delegate"`
-}
+type (
+	Account struct {
+		Balance  string `json:"balance"`
+		Delegate string `json:"delegate"`
+	}
 
-type ExplorerAccount struct {
-	Transactions []Transaction `json:"ops"`
-}
+	ExplorerAccount struct {
+		Transactions []Transaction `json:"ops"`
+	}
 
-type Transaction struct {
-	Delegate  string  `json:"delegate"` // Current delegate (may be self when registered as delegate).
-	Errors    []Error `json:"errors"`   // Operation status applied, failed, backtracked, skipped.
-	Fee       float64 `json:"fee"`      // Total fee paid (and frozen) by all operations.
-	Hash      string  `json:"hash"`     // Operation hash.
-	Height    uint64  `json:"height"`
-	IsSuccess bool    `json:"is_success"` // Flag indicating operation was successfully applied.
-	Receiver  string  `json:"receiver"`
-	Sender    string  `json:"sender"`
-	Stat      string  `json:"status"` // Operation status applied, failed, backtracked, skipped.
-	Time      string  `json:"time"`   // Block time at which the operation was included on-chain e.g: 2019-09-28T13:10:51Z
-	Type      string  `json:"type"`   // Operation type, one of activate_account, double_baking_evidence, double_endorsement_evidence, seed_nonce_revelation, transaction, origination, delegation, reveal, endorsement, proposals, ballot.
-	Volume    float64 `json:"volume"`
-}
+	Transaction struct {
+		Delegate  string  `json:"delegate"` // Current delegate (may be self when registered as delegate).
+		Errors    []Error `json:"errors"`   // Operation status applied, failed, backtracked, skipped.
+		Fee       float64 `json:"fee"`      // Total fee paid (and frozen) by all operations.
+		Hash      string  `json:"hash"`     // Operation hash.
+		Height    uint64  `json:"height"`
+		IsSuccess bool    `json:"is_success"` // Flag indicating operation was successfully applied.
+		Receiver  string  `json:"receiver"`
+		Sender    string  `json:"sender"`
+		Stat      string  `json:"status"` // Operation status applied, failed, backtracked, skipped.
+		Time      string  `json:"time"`   // Block time at which the operation was included on-chain e.g: 2019-09-28T13:10:51Z
+		Type      string  `json:"type"`   // Operation type, one of activate_account, double_baking_evidence, double_endorsement_evidence, seed_nonce_revelation, transaction, origination, delegation, reveal, endorsement, proposals, ballot.
+		Volume    float64 `json:"volume"`
+	}
 
-type Error struct {
-	ID   string `json:"id"`
-	Kind string `json:"kind"`
-}
+	Error struct {
+		ID   string `json:"id"`
+		Kind string `json:"kind"`
+	}
 
-type Status struct {
-	Indexed int64 `json:"indexed"`
-}
+	Status struct {
+		Indexed int64 `json:"indexed"`
+	}
 
-type Validator struct {
-	Address string `json:"pkh"`
-}
+	Validator struct {
+		Address string `json:"pkh"`
+	}
+
+	ActivityValidatorInfo struct {
+		Deactivated bool `json:"deactivated"`
+	}
+)
 
 func (t *Transaction) Status() blockatlas.Status {
 	switch t.Stat {
