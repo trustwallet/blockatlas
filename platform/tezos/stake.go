@@ -19,9 +19,20 @@ func (p *Platform) GetActiveValidators() (blockatlas.StakeValidators, error) {
 	}
 	result := make(blockatlas.StakeValidators, 0, len(validators))
 	for _, v := range validators {
-		result = append(result, v)
+		if p.isValidatorActive(v.ID) {
+			result = append(result, v)
+		}
 	}
 	return result, nil
+}
+
+func (p *Platform) isValidatorActive(id string) bool {
+	res, err := p.rpcClient.fetchValidatorActivityInfo(id)
+	if err != nil {
+		logger.Error("Tezos activity validator " + err.Error())
+		return false
+	}
+	return !res.Deactivated
 }
 
 func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, error) {
