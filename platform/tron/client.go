@@ -72,7 +72,7 @@ func (c *Client) fetchTRC20Transactions(address string) (TRC20Transactions, erro
 	var result TRC20Transactions
 	path := fmt.Sprintf("v1/accounts/%s/transactions/trc20", address)
 	err := c.Get(&result, path, url.Values{
-		"limit":          {"50"},
+		"limit":          {"200"},
 		"order_by":       {"block_timestamp,desc"},
 		"only_confirmed": {"true"},
 	})
