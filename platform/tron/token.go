@@ -26,6 +26,23 @@ func (p *Platform) GetTokenListByAddress(address string) (blockatlas.TokenPage, 
 	for info := range tokensChan {
 		tokenPage = append(tokenPage, info)
 	}
+
+	trc20Tokens, err := p.explorerClient.fetchAllTRC20Tokens(address)
+	if err != nil {
+		logger.Error("Explorer error" + err.Error())
+	}
+
+	for _, t := range trc20Tokens {
+		tokenPage = append(tokenPage, blockatlas.Token{
+			Name:     t.Name,
+			Symbol:   t.Symbol,
+			Decimals: uint(t.Decimals),
+			TokenID:  t.ContractAddress,
+			Coin:     coin.Tron().ID,
+			Type:     blockatlas.TokenTypeTRC20,
+		})
+	}
+
 	return tokenPage, nil
 }
 

@@ -69,10 +69,11 @@ type Account struct {
 }
 
 type AccountData struct {
-	Balance  uint      `json:"balance"`
-	AssetsV2 []AssetV2 `json:"assetV2"`
-	Votes    []Votes   `json:"votes"`
-	Frozen   []Frozen  `json:"frozen"`
+	Balance  uint                `json:"balance"`
+	AssetsV2 []AssetV2           `json:"assetV2"`
+	Votes    []Votes             `json:"votes"`
+	Frozen   []Frozen            `json:"frozen"`
+	Trc20    []map[string]string `json:"trc20"`
 }
 
 type AssetV2 struct {
@@ -111,4 +112,36 @@ type Validator struct {
 type VotesRequest struct {
 	Address string `json:"address"`
 	Visible bool   `json:"visible"`
+}
+
+type TRC20Transactions struct {
+	Data []TRC20Transaction `json:"data"`
+}
+
+type TRC20Transaction struct {
+	From           string         `json:"from"`
+	To             string         `json:"to"`
+	BlockTimestamp int64          `json:"block_timestamp"`
+	Value          string         `json:"value"`
+	Type           string         `json:"type"`
+	TransactionID  string         `json:"transaction_id"`
+	TokenInfo      TRC20TokenInfo `json:"token_info"`
+}
+
+type TRC20TokenInfo struct {
+	Name     string `json:"name"`
+	Symbol   string `json:"symbol"`
+	Decimals int    `json:"decimals"`
+	Address  string `json:"address"`
+}
+
+type ExplorerResponse struct {
+	ExplorerTrc20Tokens []ExplorerTrc20Tokens `json:"trc20token_balances"`
+}
+
+type ExplorerTrc20Tokens struct {
+	Name            string `json:"name"`
+	Symbol          string `json:"symbol"`
+	Decimals        int    `json:"decimals"`
+	ContractAddress string `json:"contract_address"`
 }

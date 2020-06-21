@@ -61,3 +61,32 @@ func (c *Client) GetValidators() (validators Validators, err error) {
 	err = c.Get(&validators, "wallet/listwitnesses", nil)
 	return
 }
+
+func (c *Client) fetchTRC20Transactions(address string) (TRC20Transactions, error) {
+	var result TRC20Transactions
+	path := fmt.Sprintf("v1/accounts/%s/transactions/trc20", address)
+	err := c.Get(&result, path, url.Values{
+		"limit":          {"50"},
+		"order_by":       {"block_timestamp,desc"},
+		"only_confirmed": {"true"},
+	})
+	if err != nil {
+		return TRC20Transactions{}, err
+	}
+	return result, nil
+}
+
+func (c *Client) fetchAllTRC20Tokens(address string) ([]ExplorerTrc20Tokens, error) {
+	var result ExplorerResponse
+	path := "api/account"
+	err := c.Get(&result, path, url.Values{
+		"address": {address},
+	})
+	if err != nil {
+		return nil, err
+	}
+	if result.ExplorerTrc20Tokens != nil {
+		return result.ExplorerTrc20Tokens, nil
+	}
+	return nil, nil
+}

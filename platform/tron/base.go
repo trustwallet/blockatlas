@@ -6,12 +6,14 @@ import (
 )
 
 type Platform struct {
-	client Client
+	client         Client
+	explorerClient Client
 }
 
-func Init(api string) *Platform {
+func Init(api, explorerApi string) *Platform {
 	return &Platform{
-		client: Client{blockatlas.InitClient(api)},
+		client:         Client{blockatlas.InitClient(api)},
+		explorerClient: Client{blockatlas.InitClient(explorerApi)},
 	}
 }
 
