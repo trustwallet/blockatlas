@@ -8,7 +8,7 @@ import (
 )
 
 func (p *Platform) GetTokenListByAddress(address string) (blockatlas.TokenPage, error) {
-	tokens, err := p.client.GetAccount(address)
+	tokens, err := p.client.fetchAccount(address)
 	if err != nil {
 		return nil, err
 	}
@@ -65,9 +65,9 @@ func (p *Platform) getTokens(ids []string) chan blockatlas.Token {
 }
 
 func (p *Platform) getTokensChannel(id string, tkChan chan blockatlas.Token) error {
-	info, err := p.client.GetTokenInfo(id)
+	info, err := p.client.fetchTokenInfo(id)
 	if err != nil || len(info.Data) == 0 {
-		logger.Error(err, "GetTokenInfo: invalid token")
+		logger.Error(err, "fetchTokenInfo: invalid token")
 		return err
 	}
 	asset := NormalizeToken(info.Data[0])

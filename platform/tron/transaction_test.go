@@ -108,10 +108,10 @@ func testNormalizeTokenTransfer(t *testing.T, _test *test) {
 	err := json.Unmarshal([]byte(_test.apiResponse), &srcTx)
 	assert.NoError(t, err)
 	assert.NotNil(t, srcTx)
-	res, err := Normalize(srcTx)
+	res, err := normalize(srcTx)
 	assert.NoError(t, err)
 	assert.NotNil(t, res)
-	setTokenMeta(res, srcTx, assetInfo)
+	addTokenMeta(res, srcTx, assetInfo)
 	assert.Equal(t, _test.expected, res)
 }
 
@@ -128,7 +128,7 @@ func testNormalize(t *testing.T, _test *test) {
 	err := json.Unmarshal([]byte(_test.apiResponse), &srcTx)
 	assert.NoError(t, err)
 	assert.NotNil(t, srcTx)
-	res, err := Normalize(srcTx)
+	res, err := normalize(srcTx)
 	assert.NoError(t, err)
 	assert.NotNil(t, res)
 	assert.Equal(t, _test.expected, res)

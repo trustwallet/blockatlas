@@ -7,11 +7,11 @@ import (
 )
 
 func (p *Platform) CurrentBlockNumber() (int64, error) {
-	return p.client.CurrentBlockNumber()
+	return p.client.fetchCurrentBlockNumber()
 }
 
 func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
-	block, err := p.client.GetBlockByNumber(num)
+	block, err := p.client.fetchBlockByNumber(num)
 	if err != nil {
 		return nil, err
 	}
@@ -48,7 +48,7 @@ func (p *Platform) NormalizeBlockChannel(srcTx Tx, txChan chan blockatlas.Tx) {
 		return
 	}
 
-	tx, err := Normalize(srcTx)
+	tx, err := normalize(srcTx)
 	if err != nil {
 		return
 	}
@@ -56,9 +56,9 @@ func (p *Platform) NormalizeBlockChannel(srcTx Tx, txChan chan blockatlas.Tx) {
 	if len(transfer.AssetName) > 0 {
 		assetName, err := hex.DecodeString(transfer.AssetName[:])
 		if err == nil {
-			info, err := p.client.GetTokenInfo(string(assetName))
+			info, err := p.client.fetchTokenInfo(string(assetName))
 			if err == nil && len(info.Data) > 0 {
-				setTokenMeta(tx, srcTx, info.Data[0])
+				addTokenMeta(tx, srcTx, info.Data[0])
 			}
 		}
 	}

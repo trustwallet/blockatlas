@@ -9,14 +9,14 @@ import (
 )
 
 func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
-	Txs, err := p.client.GetTxsOfAddress(address, "")
+	Txs, err := p.client.fetchTxsOfAddress(address, "")
 	if err != nil && len(Txs) == 0 {
 		return nil, err
 	}
 
 	txs := make(blockatlas.TxPage, 0)
 	for _, srcTx := range Txs {
-		tx, err := Normalize(srcTx)
+		tx, err := normalize(srcTx)
 		if err != nil {
 			continue
 		}
@@ -32,7 +32,7 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 }
 
 func (p *Platform) GetTokenTxsByAddress(address, token string) (blockatlas.TxPage, error) {
-	tokenTxs, err := p.client.GetTxsOfAddress(address, token)
+	tokenTxs, err := p.client.fetchTxsOfAddress(address, token)
 	if err != nil {
 		return nil, errors.E(err, "TRON: failed to get token from address", errors.TypePlatformApi,
 			errors.Params{"address": address, "token": token})
@@ -40,40 +40,32 @@ func (p *Platform) GetTokenTxsByAddress(address, token string) (blockatlas.TxPag
 
 	txs := make(blockatlas.TxPage, 0)
 
-	info, err := p.client.GetTokenInfo(token)
+	info, err := p.client.fetchTokenInfo(token)
 	if err != nil {
 		return nil, errors.E(err, "TRON: failed to get token info", errors.TypePlatformApi,
 			errors.Params{"address": address, "token": token})
 	}
-
-	trc20Transactions, err := p.client.fetchTRC20Transactions(address)
-	if err != nil {
-		return nil, errors.E(err, "TRON: failed to fetch fetchTRC20Transactions", errors.TypePlatformApi,
-			errors.Params{"address": address, "token": token})
-	}
-
-	normalizedTRC20Transactions := normalizeTRC20Transactions(trc20Transactions)
-
 	for _, srcTx := range tokenTxs {
-		tx, err := Normalize(srcTx)
+		tx, err := normalize(srcTx)
 		if err != nil {
 			logger.Error(err)
 			continue
 		}
-		setTokenMeta(tx, srcTx, info.Data[0])
+		addTokenMeta(tx, srcTx, info.Data[0])
 		txs = append(txs, *tx)
 	}
 
-	txs = append(txs, normalizedTRC20Transactions...)
-
-	if len(txs) == 0 {
-		return txs, nil
+	trc20Transactions, err := p.client.fetchTRC20Transactions(address)
+	if err != nil {
+		logger.Error("TRON: failed to fetch fetchTRC20Transactions " + err.Error())
 	}
+
+	txs = append(txs, normalizeTRC20Transactions(trc20Transactions)...)
 
 	return txs, nil
 }
 
-func setTokenMeta(tx *blockatlas.Tx, srcTx Tx, tokenInfo AssetInfo) {
+func addTokenMeta(tx *blockatlas.Tx, srcTx Tx, tokenInfo AssetInfo) {
 	transfer := srcTx.Data.Contracts[0].Parameter.Value
 	tx.Meta = blockatlas.TokenTransfer{
 		Name:     tokenInfo.Name,
@@ -113,8 +105,7 @@ func normalizeTRC20Transactions(transactions TRC20Transactions) blockatlas.Txs {
 	return txs
 }
 
-/// Normalize converts a Tron transaction into the generic model
-func Normalize(srcTx Tx) (*blockatlas.Tx, error) {
+func normalize(srcTx Tx) (*blockatlas.Tx, error) {
 	if len(srcTx.Data.Contracts) == 0 {
 		return nil, errors.E("TRON: transfer without contract", errors.TypePlatformApi,
 			errors.Params{"tx": srcTx})

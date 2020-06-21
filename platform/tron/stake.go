@@ -25,7 +25,7 @@ func (p *Platform) GetActiveValidators() (blockatlas.StakeValidators, error) {
 
 func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
 	results := make(blockatlas.ValidatorPage, 0)
-	validators, err := p.client.GetValidators()
+	validators, err := p.client.fetchValidators()
 	if err != nil {
 		return results, err
 	}
@@ -53,7 +53,7 @@ func getDetails() blockatlas.StakingDetails {
 
 func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, error) {
 	results := make(blockatlas.DelegationsPage, 0)
-	votes, err := p.client.GetAccountVotes(address)
+	votes, err := p.client.fetchAccountVotes(address)
 	if err != nil {
 		return nil, err
 	}
@@ -69,7 +69,7 @@ func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, e
 }
 
 func (p *Platform) UndelegatedBalance(address string) (string, error) {
-	account, err := p.client.GetAccount(address)
+	account, err := p.client.fetchAccount(address)
 	if err != nil {
 		return "0", err
 	}
