@@ -176,11 +176,11 @@ newman-mocked: install-newman go-compile
 
 ## newman-mocked-params: Run mocked Postman Newman tests, after starting platform api.
 ## The host parameter is required.
-## E.g.: $ make newman-mocked-params test=domain host=http://localhost:8437
+## E.g.: $ make newman-mocked-params test=naming host=http://localhost:8437
 newman-mocked-params: start-api-mock
 ifeq (,$(test))
 	@bash -c "$(MAKE) newman-run test=transaction host=$(host) && \
-	          $(MAKE) newman-run test=domain host=$(host) && \
+	          $(MAKE) newman-run test=naming host=$(host) && \
 			  $(MAKE) newman-run test=staking host=$(host) && \
 			  $(MAKE) newman-run test=token host=$(host) && \
 			  $(MAKE) newman-run test=collection host=$(host)"
@@ -190,14 +190,14 @@ else
 	@bash -c "$(MAKE) stop"
 endif
 
-## newman: Run Postman Newman test, the host parameter is required, and you can specify the name of the test do you wanna run (transaction, token, staking, collection, domain, healthcheck, observer). e.g $ make newman test=staking host=http://localhost:8420
+## newman: Run Postman Newman test, the host parameter is required, and you can specify the name of the test do you wanna run (transaction, token, staking, collection, naming, healthcheck, observer). e.g $ make newman test=staking host=http://localhost:8420
 newman: install-newman
 ifeq (,$(test))
 	@bash -c "$(MAKE) newman-run test=transaction host=$(host)"
 	@bash -c "$(MAKE) newman-run test=token host=$(host)"
 	@bash -c "$(MAKE) newman-run test=staking host=$(host)"
 	@bash -c "$(MAKE) newman-run test=collection host=$(host)"
-	@bash -c "$(MAKE) newman-run test=domain host=$(host)"
+	@bash -c "$(MAKE) newman-run test=naming host=$(host)"
 	@bash -c "$(MAKE) newman-run test=healthcheck host=$(host)"
 else
 	@bash -c "$(MAKE) newman-run test=$(test) host=$(host)"

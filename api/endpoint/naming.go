@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"github.com/trustwallet/blockatlas/services/domains"
+	"github.com/trustwallet/blockatlas/services/naming"
 )
 
 // @Summary Lookup .eth / .zil addresses
@@ -19,7 +19,7 @@ import (
 // @Success 200 {object} blockatlas.Resolved
 // @Failure 500 {object} ErrorResponse
 // @Router /ns/lookup [get]
-func GetAddressByCoinAndDomain(c *gin.Context) {
+func GetAddressByCoinAndNaming(c *gin.Context) {
 	name := c.Query("name")
 	coinQuery := c.Query("coin")
 	coin, err := strconv.ParseUint(coinQuery, 10, 64)
@@ -27,7 +27,7 @@ func GetAddressByCoinAndDomain(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
-	result, err := domains.HandleLookup(name, []uint64{coin})
+	result, err := naming.HandleLookup(name, []uint64{coin})
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusNotFound, errorResponse(err))
 		return
@@ -49,7 +49,7 @@ func GetAddressByCoinAndDomain(c *gin.Context) {
 // @Success 200 {array} blockatlas.Resolved
 // @Failure 500 {object} ErrorResponse
 // @Router /v2/ns/lookup [get]
-func GetAddressByCoinAndDomainBatch(c *gin.Context) {
+func GetAddressByCoinAndNamingBatch(c *gin.Context) {
 	name := c.Query("name")
 	coinsRaw := strings.Split(c.Query("coins"), ",")
 	coins, err := sliceAtoi(coinsRaw)
@@ -57,7 +57,7 @@ func GetAddressByCoinAndDomainBatch(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
-	result, err := domains.HandleLookup(name, coins)
+	result, err := naming.HandleLookup(name, coins)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusNotFound, errorResponse(err))
 		return

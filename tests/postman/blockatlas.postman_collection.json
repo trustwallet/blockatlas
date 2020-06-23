@@ -1243,7 +1243,7 @@
 					"_postman_isSubFolder": true
 				},
 				{
-					"name": "domain",
+					"name": "naming",
 					"item": [
 						{
 							"name": "v2/ns/lookup",
@@ -1282,13 +1282,13 @@
 											"  }",
 											"};",
 											"",
-											"let domain = pm.variables.get(\"domain\");",
+											"let naming = pm.variables.get(\"naming\");",
 											"let coins = pm.variables.get(\"coins\");",
 											"let address = pm.variables.get(\"address\");",
 											"var jsonData = pm.response.json();",
 											"var result = jsonData[0];",
 											"",
-											"pm.test(domain + \" - response must be valid and have a body\", function () {",
+											"pm.test(naming + \" - response must be valid and have a body\", function () {",
 											"    pm.response.to.have.status(200);",
 											"    pm.response.to.be.ok;",
 											"    pm.response.to.not.be.error;",
@@ -1296,11 +1296,11 @@
 											"    pm.response.to.be.json;",
 											"});",
 											"",
-											"pm.test(domain + \" - schema is valid\", function() {",
+											"pm.test(naming + \" - schema is valid\", function() {",
 											"    pm.expect(ajv.validate(schema, jsonData)).to.be.true;",
 											"});",
 											"",
-											"pm.test(domain + \" - address is valid: \" + address, function() {",
+											"pm.test(naming + \" - address is valid: \" + address, function() {",
 											"    pm.expect(result.result).to.eql(address);",
 											"});",
 											""
@@ -1319,7 +1319,7 @@
 									}
 								],
 								"url": {
-									"raw": "{{host}}/v2/ns/lookup?name={{domain}}&coins={{coins}}",
+									"raw": "{{host}}/v2/ns/lookup?name={{name}}&coins={{coins}}",
 									"host": [
 										"{{host}}"
 									],
@@ -1331,7 +1331,7 @@
 									"query": [
 										{
 											"key": "name",
-											"value": "{{domain}}"
+											"value": "{{name}}"
 										},
 										{
 											"key": "coins",
@@ -1374,12 +1374,12 @@
 											"  }",
 											"};",
 											"",
-											"let domain = pm.variables.get(\"domain\");",
+											"let naming = pm.variables.get(\"naming\");",
 											"let coins = pm.variables.get(\"coins\");",
 											"let address = pm.variables.get(\"address\");",
 											"var jsonData = pm.response.json();",
 											"",
-											"pm.test(domain + \" - response must be valid and have a body\", function () {",
+											"pm.test(naming + \" - response must be valid and have a body\", function () {",
 											"    pm.response.to.have.status(200);",
 											"    pm.response.to.be.ok;",
 											"    pm.response.to.not.be.error;",
@@ -1387,11 +1387,11 @@
 											"    pm.response.to.be.json;",
 											"});",
 											"",
-											"pm.test(domain + \" - schema is valid\", function() {",
+											"pm.test(naming + \" - schema is valid\", function() {",
 											"    pm.expect(ajv.validate(schema, jsonData)).to.be.true;",
 											"});",
 											"",
-											"pm.test(domain + \" - address is valid: \" + address, function() {",
+											"pm.test(naming + \" - address is valid: \" + address, function() {",
 											"    pm.expect(jsonData.result).to.eql(address);",
 											"});",
 											""
@@ -1410,7 +1410,7 @@
 									}
 								],
 								"url": {
-									"raw": "{{host}}/ns/lookup?name={{domain}}&coin={{coins}}",
+									"raw": "{{host}}/ns/lookup?name={{name}}&coin={{coins}}",
 									"host": [
 										"{{host}}"
 									],
@@ -1421,7 +1421,7 @@
 									"query": [
 										{
 											"key": "name",
-											"value": "{{domain}}"
+											"value": "{{name}}"
 										},
 										{
 											"key": "coin",

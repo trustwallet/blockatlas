@@ -1,4 +1,4 @@
-package domains
+package naming
 
 import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"

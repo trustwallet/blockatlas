@@ -1,6 +1,8 @@
 package api
 
 import (
+	"time"
+
 	"github.com/chenjiandongx/ginprom"
 	"github.com/gin-gonic/gin"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -8,7 +10,6 @@ import (
 	"github.com/trustwallet/blockatlas/api/middleware"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/platform"
-	"time"
 )
 
 func RegisterTransactionsAPI(router gin.IRouter, api blockatlas.Platform) {
@@ -97,9 +98,9 @@ func RegisterBatchAPI(router gin.IRouter) {
 	})
 }
 
-func RegisterDomainAPI(router gin.IRouter) {
-	router.GET("/ns/lookup", endpoint.GetAddressByCoinAndDomain)
-	router.GET("/v2/ns/lookup", endpoint.GetAddressByCoinAndDomainBatch)
+func RegisterNamingAPI(router gin.IRouter) {
+	router.GET("/ns/lookup", endpoint.GetAddressByCoinAndNaming)
+	router.GET("/v2/ns/lookup", endpoint.GetAddressByCoinAndNamingBatch)
 }
 
 func RegisterBasicAPI(router gin.IRouter) {
