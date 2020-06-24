@@ -27,7 +27,7 @@ require (
 	github.com/ory/dockertest v3.3.5+incompatible
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/pkg/errors v0.9.1 // indirect
-	github.com/prometheus/client_golang v1.7.0
+	github.com/prometheus/client_golang v1.7.1
 	github.com/shopspring/decimal v1.2.0
 	github.com/sirupsen/logrus v1.6.0
 	github.com/spf13/viper v1.7.0
