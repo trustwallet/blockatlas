@@ -15,7 +15,7 @@ func TestHeightBlockMap_SetHeight(t *testing.T) {
 	mock.ExpectBegin()
 	mock.ExpectQuery(
 		regexp.QuoteMeta(
-			`INSERT INTO "trackers" ("coin","height") VALUES ($1,$2) ON CONFLICT (coin) DO UPDATE SET height = excluded.height RETURNING "trackers"."coin"`)).WithArgs("bitcoin", 1).WillReturnRows(sqlmock.NewRows([]string{"id"}).
+			`INSERT INTO "trackers" ("updated_at","coin","height") VALUES ($1,$2,$3) ON CONFLICT (coin) DO UPDATE SET height = excluded.height, updated_at = excluded.updated_at RETURNING "trackers"."coin"`)).WithArgs(sqlmock.AnyArg(), "bitcoin", 1).WillReturnRows(sqlmock.NewRows([]string{"id"}).
 		AddRow("id"))
 	mock.ExpectCommit()
 	i := Instance{Gorm: db}
@@ -29,7 +29,7 @@ func TestHeightBlockMap_GetHeight(t *testing.T) {
 	mock.ExpectBegin()
 	mock.ExpectQuery(
 		regexp.QuoteMeta(
-			`INSERT INTO "trackers" ("coin","height") VALUES ($1,$2) ON CONFLICT (coin) DO UPDATE SET height = excluded.height RETURNING "trackers"."coin"`)).WithArgs("bitcoin", 1).WillReturnRows(sqlmock.NewRows([]string{"id"}).
+			`INSERT INTO "trackers" ("updated_at","coin","height") VALUES ($1,$2,$3) ON CONFLICT (coin) DO UPDATE SET height = excluded.height, updated_at = excluded.updated_at RETURNING "trackers"."coin"`)).WithArgs(sqlmock.AnyArg(), "bitcoin", 1).WillReturnRows(sqlmock.NewRows([]string{"id"}).
 		AddRow("id"))
 	mock.ExpectCommit()
 	i := Instance{Gorm: db}
