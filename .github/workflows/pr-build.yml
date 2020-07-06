@@ -45,8 +45,8 @@ jobs:
          env:
            API_IMAGE: ${{ secrets.REGISTRY }}:api-${{ steps.hash.outputs.sha7 }}
            PARSER_IMAGE: ${{ secrets.REGISTRY }}:parser-${{ steps.hash.outputs.sha7 }}
-           OBSERVER_SUBSCRIBER_IMAGE: ${{ secrets.REGISTRY }}:observer-subscriber-${{ steps.hash.outputs.sha7 }}
-           OBSERVER_NOTIFIER_IMAGE: ${{ secrets.REGISTRY }}:observer-notifier-${{ steps.hash.outputs.sha7 }}
+           OBSERVER_SUBSCRIBER_IMAGE: ${{ secrets.REGISTRY }}:subscriber-${{ steps.hash.outputs.sha7 }}
+           OBSERVER_NOTIFIER_IMAGE: ${{ secrets.REGISTRY }}:notifier-${{ steps.hash.outputs.sha7 }}
          run: |
            docker build --build-arg SERVICE=api -f Dockerfile.runner -t $API_IMAGE .
            docker build --build-arg SERVICE=parser -f Dockerfile.runner -t $PARSER_IMAGE .
