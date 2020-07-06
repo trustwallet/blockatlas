@@ -1,0 +1,58 @@
+name: PRBuild
+
+on:
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+       - name: Login to DockerHub Registry
+         run: echo ${{ secrets.REGISTRY_PASSWORD }} | docker login -u ${{ secrets.REGISTRY_USERNAME }} --password-stdin
+
+       - name: Set up Go 1.x
+         uses: actions/setup-go@v2
+         with:
+           go-version: ^1.13
+         id: go
+
+       - name: Check out code into the Go module directory
+         uses: actions/checkout@v2
+         with:
+          ref: ${{ github.head_ref }}
+
+       - name: Get short commit hash
+         id: hash
+         run: echo "::set-output name=sha7::$(echo $(git rev-parse --short HEAD) | cut -c1-7)"
+
+       - name: Show short hash
+         run: |
+           echo ${{ steps.hash.outputs.sha7 }}
+
+       - name: Get dependencies
+         run: |
+           go get -v -t -d ./...
+
+       - name: Swagger
+         run: make swag
+
+       - name: Build
+         run: make go-build
+
+       - name: Docker Build & Push Release Images
+         env:
+           API_IMAGE: ${{ secrets.REGISTRY }}:api-${{ steps.hash.outputs.sha7 }}
+           PARSER_IMAGE: ${{ secrets.REGISTRY }}:parser-${{ steps.hash.outputs.sha7 }}
+           OBSERVER_SUBSCRIBER_IMAGE: ${{ secrets.REGISTRY }}:observer-subscriber-${{ steps.hash.outputs.sha7 }}
+           OBSERVER_NOTIFIER_IMAGE: ${{ secrets.REGISTRY }}:observer-notifier-${{ steps.hash.outputs.sha7 }}
+         run: |
+           docker build --build-arg SERVICE=api -f Dockerfile.runner -t $API_IMAGE .
+           docker build --build-arg SERVICE=parser -f Dockerfile.runner -t $PARSER_IMAGE .
+           docker build --build-arg SERVICE=subscriber -f Dockerfile.runner -t $OBSERVER_SUBSCRIBER_IMAGE .
+           docker build --build-arg SERVICE=notifier -f Dockerfile.runner -t $API_IMAGE .
+           docker push $API_IMAGE
+           docker push $PARSER_IMAGE
+           docker push $OBSERVER_SUBSCRIBER_IMAGE
+           docker push $OBSERVER_NOTIFIER_IMAGE
