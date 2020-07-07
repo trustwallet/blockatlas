@@ -9,7 +9,7 @@ import (
 
 // @Summary Get Collection
 // @ID collection_v4
-// @Description GET a collection from the address
+// @Description Get a collection from the address
 // @Accept json
 // @Produce json
 // @Tags Collections
