@@ -13,6 +13,11 @@ SUBSCRIBER := subscriber
 COIN_FILE := coin/coins.yml
 COIN_GO_FILE := coin/coins.go
 GEN_COIN_FILE := coin/gen.go
+DOCKER_LOCAL_DB_IMAGE_NAME := test_db
+DOCKER_LOCAL_MQ_IMAGE_NAME := mq
+DOCKER_LOCAL_DB_USER :=user
+DOCKER_LOCAL_DB_PASS :=pass
+DOCKER_LOCAL_DB := my_db
 
 # Go related variables.
 GOBASE := $(shell pwd)
@@ -215,6 +220,16 @@ endif
 go-compile: go-get go-build
 
 go-build: go-build-api go-build-notifier go-build-parser go-build-subscriber
+
+docker-shutdown:
+	@echo "  >  Shutdown docker containers..."
+	@-bash -c "docker rm -f $(DOCKER_LOCAL_DB_IMAGE_NAME) 2> /dev/null"
+	@-bash -c "docker rm -f $(DOCKER_LOCAL_MQ_IMAGE_NAME) 2> /dev/null"
+
+start-docker-services: docker-shutdown
+	@echo "  >  Starting docker containers"
+	docker run -d -p 5432:5432 --name $(DOCKER_LOCAL_DB_IMAGE_NAME) -e POSTGRES_USER=$(DOCKER_LOCAL_DB_USER) -e POSTGRES_PASSWORD=$(DOCKER_LOCAL_DB_PASS) -e POSTGRES_DB=$(DOCKER_LOCAL_DB) postgres
+	docker run -d -p 5672:5672 --name $(DOCKER_LOCAL_MQ_IMAGE_NAME) rabbitmq
 
 go-build-api:
 	@echo "  >  Building api binary..."
