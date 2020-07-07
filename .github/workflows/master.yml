@@ -60,10 +60,9 @@ jobs:
       - name: Mock Test
         run: make newman-mocked
 
-  deploy:
-    name: CD
+  build:
+    name: Build
     runs-on: ubuntu-latest
-    needs: [test, integration]
     steps:
        - name: Login to DockerHub Registry
          run: echo ${{ secrets.REGISTRY_PASSWORD }} | docker login -u ${{ secrets.REGISTRY_USERNAME }} --password-stdin
@@ -113,6 +112,11 @@ jobs:
            docker push $OBSERVER_SUBSCRIBER_IMAGE
            docker push $OBSERVER_NOTIFIER_IMAGE
 
+  deploy:
+    name: CD
+    runs-on: ubuntu-latest
+    needs: [test, integration, build]
+    steps:
        - name: CD Trigger
          if: github.ref == 'refs/heads/master'
          uses: Azure/pipelines@releases/v1
