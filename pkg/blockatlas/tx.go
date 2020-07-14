@@ -18,6 +18,7 @@ const (
 
 	TokenTypeERC20 TokenType = "ERC20"
 	TokenTypeBEP2  TokenType = "BEP2"
+	TokenTypeBEP8  TokenType = "BEP8"
 	TokenTypeTRC10 TokenType = "TRC10"
 	TokenTypeETC20 TokenType = "ETC20"
 	TokenTypePOA20 TokenType = "POA20"
