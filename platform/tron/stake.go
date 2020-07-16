@@ -4,16 +4,28 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/address"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
-	services "github.com/trustwallet/blockatlas/services/assets"
+	"github.com/trustwallet/blockatlas/services/assets"
 	"strconv"
 	"time"
 )
 
 const Annual = 0.74
 
+func (p *Platform) GetActiveValidators() (blockatlas.StakeValidators, error) {
+	validators, err := assets.GetValidatorsMap(p)
+	if err != nil {
+		return nil, err
+	}
+	result := make(blockatlas.StakeValidators, 0, len(validators))
+	for _, v := range validators {
+		result = append(result, v)
+	}
+	return result, nil
+}
+
 func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
 	results := make(blockatlas.ValidatorPage, 0)
-	validators, err := p.client.GetValidators()
+	validators, err := p.client.fetchValidators()
 	if err != nil {
 		return results, err
 	}
@@ -41,14 +53,14 @@ func getDetails() blockatlas.StakingDetails {
 
 func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, error) {
 	results := make(blockatlas.DelegationsPage, 0)
-	votes, err := p.client.GetAccountVotes(address)
+	votes, err := p.client.fetchAccountVotes(address)
 	if err != nil {
 		return nil, err
 	}
 	if len(votes.Votes) == 0 {
 		return results, nil
 	}
-	validators, err := services.GetValidatorsMap(p)
+	validators, err := assets.GetValidatorsMap(p)
 	if err != nil {
 		return nil, err
 	}
@@ -57,7 +69,7 @@ func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, e
 }
 
 func (p *Platform) UndelegatedBalance(address string) (string, error) {
-	account, err := p.client.GetAccount(address)
+	account, err := p.client.fetchAccount(address)
 	if err != nil {
 		return "0", err
 	}
@@ -69,14 +81,14 @@ func (p *Platform) UndelegatedBalance(address string) (string, error) {
 }
 
 func normalizeValidator(v Validator) (validator blockatlas.Validator, ok bool) {
-	address, err := address.HexToAddress(v.Address)
+	a, err := address.HexToAddress(v.Address)
 	if err != nil {
 		return validator, false
 	}
 
 	return blockatlas.Validator{
 		Status:  true,
-		ID:      address,
+		ID:      a,
 		Details: getDetails(),
 	}, true
 }

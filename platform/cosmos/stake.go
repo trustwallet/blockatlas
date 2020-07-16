@@ -5,7 +5,7 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
-	services "github.com/trustwallet/blockatlas/services/assets"
+	"github.com/trustwallet/blockatlas/services/assets"
 	"strconv"
 	"time"
 )
@@ -14,6 +14,18 @@ const (
 	lockTime      = 1814400 // in seconds (21 days)
 	minimumAmount = "1"
 )
+
+func (p *Platform) GetActiveValidators() (blockatlas.StakeValidators, error) {
+	validators, err := assets.GetValidatorsMap(p)
+	if err != nil {
+		return nil, err
+	}
+	result := make(blockatlas.StakeValidators, 0, len(validators))
+	for _, v := range validators {
+		result = append(result, v)
+	}
+	return result, nil
+}
 
 func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
 	results := make(blockatlas.ValidatorPage, 0)
@@ -84,7 +96,7 @@ func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, e
 	if delegations.List == nil && unbondingDelegations.List == nil {
 		return results, nil
 	}
-	validators, err := services.GetValidatorsMap(p)
+	validators, err := assets.GetValidatorsMap(p)
 	if err != nil {
 		return nil, err
 	}

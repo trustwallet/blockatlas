@@ -3,6 +3,7 @@ package tezos
 import (
 	"fmt"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"time"
 )
 
 type RpcClient struct {
@@ -28,4 +29,14 @@ func (c *RpcClient) GetPeriodType() (periodType PeriodType, err error) {
 func (c *RpcClient) GetAccount(address string) (account Account, err error) {
 	err = c.Get(&account, "chains/main/blocks/head/context/contracts/"+address, nil)
 	return
+}
+
+func (c *RpcClient) fetchValidatorActivityInfo(id string) (ActivityValidatorInfo, error) {
+	var info ActivityValidatorInfo
+	path := fmt.Sprintf("/chains/main/blocks/head/context/delegates/%s", id)
+	err := c.GetWithCache(&info, path, nil, time.Minute*5)
+	if err != nil {
+		return ActivityValidatorInfo{}, err
+	}
+	return info, nil
 }

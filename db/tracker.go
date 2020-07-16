@@ -52,7 +52,7 @@ func (i *Instance) SetLastParsedBlockNumber(coin string, num int64, ctx context.
 	}
 	g := apmgorm.WithContext(ctx, i.Gorm)
 	return g.
-		Set("gorm:insert_option", "ON CONFLICT (coin) DO UPDATE SET height = excluded.height").
+		Set("gorm:insert_option", "ON CONFLICT (coin) DO UPDATE SET height = excluded.height, updated_at = excluded.updated_at").
 		Where(models.Tracker{Coin: coin}).
 		Create(&tracker).Error
 }

@@ -9,7 +9,7 @@ gin:
 # If all - run all platforms in one binary. You can pick specific coin handle to run binary only with specific coin
 # Example: ethereum
 # You can see all the coin handles at coins/coins.yml file
-platform: [ethereum]
+platform: [all]
 
 # Can be platform or swagger
 rest_api: all
@@ -111,6 +111,7 @@ icon:
 # [TRX] Tron: https://tron.network/
 tron:
   api: https://api.trongrid.io
+  explorer: https://apilist.tronscan.org
 
 # [VET] VeChain: https://www.vechain.org
 vechain:

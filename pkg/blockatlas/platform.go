@@ -48,6 +48,7 @@ type (
 		GetDetails() StakingDetails
 		GetValidators() (ValidatorPage, error)
 		GetDelegations(address string) (DelegationsPage, error)
+		GetActiveValidators() (StakeValidators, error)
 	}
 
 	CollectionsAPI interface {
