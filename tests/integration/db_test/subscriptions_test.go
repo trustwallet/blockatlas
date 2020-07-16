@@ -337,6 +337,34 @@ func TestDb_DuplicateEntries(t *testing.T) {
 	assert.True(t, containSub(subscriptions[0], subs))
 }
 
+func TestDb_CreateDeleteCreate(t *testing.T) {
+	setup.CleanupPgContainer(database.Gorm)
+	var subscriptions []models.Subscription
+	subscriptions = append(subscriptions, models.Subscription{
+		Coin:    60,
+		Address: "testAddr",
+	})
+
+	assert.Nil(t, database.AddSubscriptions(subscriptions, context.Background()))
+	subs, err := database.GetSubscriptions(60, []string{"testAddr"}, context.Background())
+	assert.Nil(t, err)
+	assert.Equal(t, 1, len(subs))
+
+	time.Sleep(time.Second)
+
+	assert.Nil(t, database.DeleteSubscriptions(subs, context.Background()))
+
+	subs2, err := database.GetSubscriptions(60, []string{"testAddr"}, context.Background())
+	assert.Nil(t, err)
+	assert.Equal(t, 0, len(subs2))
+
+	assert.Nil(t, database.AddSubscriptions(subscriptions, context.Background()))
+
+	subs3, err := database.GetSubscriptions(60, []string{"testAddr"}, context.Background())
+	assert.Nil(t, err)
+	assert.Equal(t, 1, len(subs3))
+}
+
 func TestDb_UpdatedAt(t *testing.T) {
 	setup.CleanupPgContainer(database.Gorm)
 	var subscriptions []models.Subscription
@@ -372,7 +400,6 @@ func TestDb_UpdatedAt(t *testing.T) {
 	assert.Greater(t, time.Now().Unix(), existingSub2.CreatedAt.Unix())
 	assert.Greater(t, existingSub2.CreatedAt.Unix(), time.Now().Unix()-120)
 	assert.GreaterOrEqual(t, existingSub2.CreatedAt.Unix(), existingSub.CreatedAt.Unix())
-
 }
 
 func containSub(sub models.Subscription, list []models.Subscription) bool {

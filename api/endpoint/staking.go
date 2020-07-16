@@ -5,7 +5,6 @@ import (
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
-	"github.com/trustwallet/blockatlas/services/assets"
 	"net/http"
 	"sort"
 	"strconv"
@@ -155,7 +154,7 @@ func GetStakeInfoForCoins(c *gin.Context, apis map[string]blockatlas.StakeAPI) {
 // @Failure 500 {object} ErrorResponse
 // @Router /v2/{coin}/staking/validators [get]
 func GetValidators(c *gin.Context, api blockatlas.StakeAPI) {
-	results, err := assets.GetActiveValidators(api)
+	results, err := api.GetActiveValidators()
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, errorResponse(err))
 		return
