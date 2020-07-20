@@ -9,13 +9,6 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
-       - name: Login to DockerHub Registry
-         uses: azure/docker-login@v1
-         with:
-          login-server: index.docker.io
-          username: ${{ secrets.REGISTRY_USERNAME }}
-          password: ${{ secrets.REGISTRY_PASSWORD }}
-         
        - name: Set up Go 1.x
          uses: actions/setup-go@v2
          with:
@@ -44,6 +37,13 @@ jobs:
 
        - name: Build
          run: make go-build
+         
+       - name: Login to DockerHub Registry
+         uses: azure/docker-login@v1
+         with:
+          login-server: index.docker.io/v2/
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
 
        - name: Docker Build & Push Release Images
          env:
