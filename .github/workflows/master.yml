@@ -65,7 +65,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
        - name: Login to DockerHub Registry
-         run: echo ${{ secrets.REGISTRY_PASSWORD }} | docker login -u ${{ secrets.REGISTRY_USERNAME }} --password-stdin
+         uses: azure/docker-login@v1
+         with:
+          login-server: index.docker.io
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
 
        - name: Set up Go 1.x
          uses: actions/setup-go@v2
