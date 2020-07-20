@@ -38,12 +38,8 @@ jobs:
        - name: Build
          run: make go-build
          
-       - name: Login to DockerHub Registry
-         uses: azure/docker-login@v1
-         with:
-          login-server: index.docker.io/v2/
-          username: ${{ secrets.REGISTRY_USERNAME }}
-          password: ${{ secrets.REGISTRY_PASSWORD }}
+       - name: Login to DockerHub Registry	
+         run: echo ${{ secrets.REGISTRY_PASSWORD }} | docker login -u ${{ secrets.REGISTRY_USERNAME }} --password-stdin
 
        - name: Docker Build & Push Release Images
          env:
