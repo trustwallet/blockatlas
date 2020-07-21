@@ -92,8 +92,17 @@ jobs:
 
        - name: Build
          run: make go-build
-
+         
+       - name: Check user permission
+         id: check_for_build
+         uses: scherermichael-oss/action-has-permission@master
+         with:
+           required-permission: write
+         env:
+           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+       
        - name: Login to DockerHub Registry
+         if: steps.check_for_build.outputs.has-permission
          uses: azure/docker-login@v1
          with:
           login-server: index.docker.io/v2/
@@ -101,6 +110,7 @@ jobs:
           password: ${{ secrets.REGISTRY_PASSWORD }}
 
        - name: Docker Build & Push Release Images
+         if: steps.check_for_build.outputs.has-permission
          env:
            API_IMAGE: ${{ secrets.REGISTRY }}:api-${{ steps.hash.outputs.sha7 }}
            PARSER_IMAGE: ${{ secrets.REGISTRY }}:parser-${{ steps.hash.outputs.sha7 }}
@@ -121,8 +131,16 @@ jobs:
     runs-on: ubuntu-latest
     needs: [test, integration, build]
     steps:
+       - name: Check user permission
+         id: check_for_deploy
+         uses: scherermichael-oss/action-has-permission@master
+         with:
+           required-permission: write
+         env:
+           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+       
        - name: CD Trigger
-         if: github.ref == 'refs/heads/master'
+         if: github.ref == 'refs/heads/master' && steps.check_for_deploy.outputs.has-permission
          uses: Azure/pipelines@releases/v1
          with:
            azure-devops-project-url: 'https://dev.azure.com/TrustWallet/Trust%20BlockAtlas'
