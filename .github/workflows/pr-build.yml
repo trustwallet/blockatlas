@@ -46,7 +46,8 @@ jobs:
          env:
            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                 
-       - name: Login to DockerHub Registry	
+       - name: Login to DockerHub Registry
+         if: steps.check.outputs.has-permission
          run: echo ${{ secrets.REGISTRY_PASSWORD }} | docker login -u ${{ secrets.REGISTRY_USERNAME }} --password-stdin
 
        - name: Docker Build & Push Release Images
