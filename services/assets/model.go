@@ -11,8 +11,6 @@ type (
 		Description string          `json:"description"`
 		Website     string          `json:"website"`
 		Payout      ValidatorPayout `json:"payout,omitempty"`
-		Status      ValidatorStatus `json:"status,omitempty"`
-		Staking     StakingInfo     `json:"staking,omitempty"`
 	}
 
 	ValidatorPayout struct {
@@ -34,14 +32,4 @@ func (av AssetValidators) toMap() AssetValidatorMap {
 		validators[v.ID] = v
 	}
 	return validators
-}
-
-func (av AssetValidators) activeValidators() AssetValidators {
-	activeAssets := make(AssetValidators, 0)
-	for _, a := range av {
-		if !a.Status.Disabled {
-			activeAssets = append(activeAssets, a)
-		}
-	}
-	return activeAssets
 }

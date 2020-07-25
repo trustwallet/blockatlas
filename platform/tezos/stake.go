@@ -3,13 +3,14 @@ package tezos
 import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
+	"github.com/trustwallet/blockatlas/platform/tezos/bakingbad"
 	"github.com/trustwallet/blockatlas/services/assets"
+	"strconv"
 )
 
 const (
-	Annual             = 6.09
-	LockTime           = 0
-	MinimumStakeAmount = "0"
+	lockTime           = 0
+	minimumStakeAmount = "0"
 )
 
 func (p *Platform) GetActiveValidators() (blockatlas.StakeValidators, error) {
@@ -19,20 +20,11 @@ func (p *Platform) GetActiveValidators() (blockatlas.StakeValidators, error) {
 	}
 	result := make(blockatlas.StakeValidators, 0, len(validators))
 	for _, v := range validators {
-		if p.isValidatorActive(v.ID) {
+		if v.Status {
 			result = append(result, v)
 		}
 	}
 	return result, nil
-}
-
-func (p *Platform) isValidatorActive(id string) bool {
-	res, err := p.rpcClient.fetchValidatorActivityInfo(id)
-	if err != nil {
-		logger.Error("Tezos activity validator " + err.Error())
-		return false
-	}
-	return !res.Deactivated
 }
 
 func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, error) {
@@ -69,33 +61,43 @@ func NormalizeDelegation(account Account, validators blockatlas.ValidatorMap) (b
 func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
 	results := make(blockatlas.ValidatorPage, 0)
 
-	validators, err := p.getCurrentValidators()
+	validators, err := p.bakingbadClient.GetBakers()
 	if err != nil {
 		return results, err
 	}
-
-	for _, v := range validators {
+	for _, v := range *validators {
 		results = append(results, normalizeValidator(v))
 	}
 	return results, nil
 }
 
-func (p *Platform) getCurrentValidators() (validators []Validator, err error) {
-	periodType, err := p.rpcClient.GetPeriodType()
-	if err != nil {
-		return validators, err
-	}
-
-	switch periodType {
-	case TestingPeriodType:
-		return p.rpcClient.GetValidators("head~32768")
-	default:
-		return p.rpcClient.GetValidators("head")
+func (p *Platform) GetDetails() blockatlas.StakingDetails {
+	return blockatlas.StakingDetails{
+		Reward: blockatlas.StakingReward{
+			Annual: p.GetMaxAPR(),
+		},
+		MinimumAmount: minimumStakeAmount,
+		LockTime:      lockTime,
+		Type:          blockatlas.DelegationTypeDelegate,
 	}
 }
 
-func (p *Platform) GetDetails() blockatlas.StakingDetails {
-	return getDetails()
+func (p *Platform) GetMaxAPR() float64 {
+	validators, err := p.GetActiveValidators()
+	if err != nil {
+		logger.Error("GetMaxAPR", logger.Params{"details": err, "platform": p.Coin().Symbol})
+		return blockatlas.DefaultAnnualReward
+	}
+
+	var max = 0.0
+	for _, e := range validators {
+		v := e.Details.Reward.Annual
+		if v > max {
+			max = v
+		}
+	}
+
+	return max
 }
 
 func (p *Platform) UndelegatedBalance(address string) (string, error) {
@@ -106,22 +108,20 @@ func (p *Platform) UndelegatedBalance(address string) (string, error) {
 	return account.Balance, nil
 }
 
-func getDetails() blockatlas.StakingDetails {
+func getDetails(baker bakingbad.Baker) blockatlas.StakingDetails {
 	return blockatlas.StakingDetails{
-		Reward:        blockatlas.StakingReward{Annual: Annual},
-		MinimumAmount: MinimumStakeAmount,
-		LockTime:      LockTime,
+		Reward:        blockatlas.StakingReward{Annual: baker.EstimatedRoi * 100},
+		MinimumAmount: blockatlas.Amount(strconv.Itoa(baker.MinDelegation)),
+		LockTime:      lockTime,
 		Type:          blockatlas.DelegationTypeDelegate,
 	}
 }
 
-func normalizeValidator(v Validator) (validator blockatlas.Validator) {
-	// How to calculate Tezos APR? I have no idea. Tezos team does not know either. let's assume it's around 7% - no way to calculate in decentralized manner
-	// Delegation rewards distributed by the validators manually, it's up to them to do it.
+func normalizeValidator(v bakingbad.Baker) (validator blockatlas.Validator) {
 	return blockatlas.Validator{
 		Status:  true,
 		ID:      v.Address,
-		Details: getDetails(),
+		Details: getDetails(v),
 	}
 }
 
@@ -135,10 +135,10 @@ func getUnknownValidator(address string) blockatlas.StakeValidator {
 		},
 		Details: blockatlas.StakingDetails{
 			Reward: blockatlas.StakingReward{
-				Annual: Annual,
+				Annual: 0,
 			},
-			LockTime:      LockTime,
-			MinimumAmount: MinimumStakeAmount,
+			LockTime:      lockTime,
+			MinimumAmount: minimumStakeAmount,
 			Type:          blockatlas.DelegationTypeDelegate,
 		},
 	}

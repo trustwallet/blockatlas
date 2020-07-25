@@ -4,7 +4,6 @@ import (
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
-	"github.com/trustwallet/blockatlas/pkg/numbers"
 	"sort"
 )
 
@@ -49,12 +48,11 @@ func normalizeValidators(assetsValidators AssetValidators, rpcValidators []block
 
 func normalizeValidator(rpcValidator blockatlas.Validator, assetValidator AssetValidator, coin coin.Coin) blockatlas.StakeValidator {
 	details := rpcValidator.Details
-	details.MinimumAmount = blockatlas.Amount(numbers.Float64toString(assetValidator.Staking.MinDelegation))
 	details.Reward.Annual = calculateAnnual(details.Reward.Annual, assetValidator.Payout.Commission)
 
 	return blockatlas.StakeValidator{
 		ID:     assetValidator.ID,
-		Status: rpcValidator.Status && !assetValidator.Status.Disabled,
+		Status: rpcValidator.Status,
 		Info: blockatlas.StakeValidatorInfo{
 			Name:        assetValidator.Name,
 			Description: assetValidator.Description,
