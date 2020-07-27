@@ -19,8 +19,8 @@ require (
 	github.com/elastic/go-windows v1.0.1 // indirect
 	github.com/gin-gonic/gin v1.6.3
 	github.com/gotestyourself/gotestyourself v2.2.0+incompatible // indirect
-	github.com/jinzhu/gorm v1.9.14
-	github.com/mitchellh/mapstructure v1.3.2
+	github.com/jinzhu/gorm v1.9.15
+	github.com/mitchellh/mapstructure v1.3.3
 	github.com/mr-tron/base58 v1.2.0
 	github.com/opencontainers/image-spec v1.0.1 // indirect
 	github.com/opencontainers/runc v0.1.1 // indirect
