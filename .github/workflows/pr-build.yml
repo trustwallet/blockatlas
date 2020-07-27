@@ -9,9 +9,6 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
-       - name: Login to DockerHub Registry
-         run: echo ${{ secrets.REGISTRY_PASSWORD }} | docker login -u ${{ secrets.REGISTRY_USERNAME }} --password-stdin
-
        - name: Set up Go 1.x
          uses: actions/setup-go@v2
          with:
@@ -41,7 +38,20 @@ jobs:
        - name: Build
          run: make go-build
 
+       - name: Check user permission
+         id: check
+         uses: scherermichael-oss/action-has-permission@master
+         with:
+           required-permission: write
+         env:
+           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                
+       - name: Login to DockerHub Registry
+         if: steps.check.outputs.has-permission
+         run: echo ${{ secrets.REGISTRY_PASSWORD }} | docker login -u ${{ secrets.REGISTRY_USERNAME }} --password-stdin
+
        - name: Docker Build & Push Release Images
+         if: steps.check.outputs.has-permission
          env:
            API_IMAGE: ${{ secrets.REGISTRY }}:api-${{ steps.hash.outputs.sha7 }}
            PARSER_IMAGE: ${{ secrets.REGISTRY }}:parser-${{ steps.hash.outputs.sha7 }}
