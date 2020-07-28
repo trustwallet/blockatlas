@@ -23,7 +23,7 @@ const txTransferSrc1 = `
 	"signature":"",
 	"timestamp":1587715632,
 	"status":"Success",
-    "fee": "1000"
+	"fee": "1000"
 }`
 
 const txTransferSrc2 = `
