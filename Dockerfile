@@ -11,6 +11,8 @@ RUN go mod download
 COPY . .
 RUN go build -o bin/blockatlas ./cmd/$SERVICE
 
+
+
 FROM alpine:latest
 COPY --from=builder /build/bin /bin/
 COPY --from=builder /build/config.yml /config/
