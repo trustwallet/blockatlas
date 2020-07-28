@@ -35,7 +35,7 @@ require (
 	github.com/stretchr/testify v1.6.1
 	github.com/swaggo/gin-swagger v1.2.0
 	github.com/swaggo/swag v1.6.7
-	github.com/trustwallet/ens-coincodec v1.0.5
+	github.com/trustwallet/ens-coincodec v1.0.6
 	go.elastic.co/apm v1.8.0
 	go.elastic.co/apm/module/apmgin v1.8.0
 	go.elastic.co/apm/module/apmgorm v1.8.0
