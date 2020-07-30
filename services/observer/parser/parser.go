@@ -198,7 +198,7 @@ func SaveLastParsedBlock(params Params, blocks []blockatlas.Block, ctx context.C
 	span, ctx := apm.StartSpan(ctx, "SaveLastParsedBlock", "app")
 	defer span.End()
 
-	if blocks == nil || len(blocks) == 0 {
+	if len(blocks) == 0 {
 		return nil
 	}
 
