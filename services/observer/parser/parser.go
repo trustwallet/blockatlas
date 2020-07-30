@@ -255,19 +255,16 @@ func ConvertToBatch(blocks []blockatlas.Block, ctx context.Context) blockatlas.T
 func PublishTransactionsBatch(params Params, txs blockatlas.Txs, ctx context.Context) {
 	span, ctx := apm.StartSpan(ctx, "PublishTransactionsBatch", "app")
 	defer span.End()
+
 	if len(txs) == 0 {
-		//logger.Info("------------------------------------------------------------")
 		return
 	}
 
 	batches := getTxsBatches(txs, params.TxBatchLimit, ctx)
 
-	var wg sync.WaitGroup
 	for _, batch := range batches {
-		wg.Add(1)
-		go publish(params, batch, &wg, ctx)
+		publish(params, batch, ctx)
 	}
-	wg.Wait()
 
 	logger.Info("Published transactions batch", logger.Params{"txs": len(txs), "batchCount": len(batches)})
 }
@@ -275,6 +272,7 @@ func PublishTransactionsBatch(params Params, txs blockatlas.Txs, ctx context.Con
 func getTxsBatches(txs blockatlas.Txs, sizeUint uint, ctx context.Context) []blockatlas.Txs {
 	span, _ := apm.StartSpan(ctx, "getTxsBatches", "app")
 	defer span.End()
+
 	size := int(sizeUint)
 	resultLength := (len(txs) + size - 1) / size
 	result := make([]blockatlas.Txs, resultLength)
@@ -289,10 +287,10 @@ func getTxsBatches(txs blockatlas.Txs, sizeUint uint, ctx context.Context) []blo
 	return result
 }
 
-func publish(params Params, txs blockatlas.Txs, wg *sync.WaitGroup, ctx context.Context) {
+func publish(params Params, txs blockatlas.Txs, ctx context.Context) {
 	span, _ := apm.StartSpan(ctx, "publish", "app")
 	defer span.End()
-	defer wg.Done()
+
 	body, err := json.Marshal(txs)
 	if err != nil {
 		logger.Error(err, logger.Params{"coin": params.Api.Coin().Handle})
