@@ -48,6 +48,7 @@ func normalizeValidators(assetsValidators AssetValidators, rpcValidators []block
 
 func normalizeValidator(rpcValidator blockatlas.Validator, assetValidator AssetValidator, coin coin.Coin) blockatlas.StakeValidator {
 	details := rpcValidator.Details
+	details.MinimumAmount = blockatlas.Amount("0")
 	details.Reward.Annual = calculateAnnual(details.Reward.Annual, assetValidator.Payout.Commission)
 
 	return blockatlas.StakeValidator{

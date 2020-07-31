@@ -18,9 +18,11 @@ func TestNormalizeValidator(t *testing.T) {
 			Reward: blockatlas.StakingReward{
 				Annual: Annual,
 			},
-			LockTime:      259200,
-			MinimumAmount: "1000000",
-			Type:          blockatlas.DelegationTypeDelegate,
+			StakingBasicDetails: blockatlas.StakingBasicDetails{
+				LockTime:      259200,
+				MinimumAmount: "1000000",
+				Type:          blockatlas.DelegationTypeDelegate,
+			},
 		},
 	}
 	assert.Equal(t, expected, actual)
@@ -81,8 +83,10 @@ var validator1 = blockatlas.StakeValidator{
 		Reward: blockatlas.StakingReward{
 			Annual: 4.32,
 		},
-		LockTime:      259200,
-		MinimumAmount: "1000000",
+		StakingBasicDetails: blockatlas.StakingBasicDetails{
+			LockTime:      259200,
+			MinimumAmount: "1000000",
+		},
 	},
 }
 
@@ -99,8 +103,10 @@ var validator2 = blockatlas.StakeValidator{
 		Reward: blockatlas.StakingReward{
 			Annual: 4.32,
 		},
-		LockTime:      259200,
-		MinimumAmount: "1000000",
+		StakingBasicDetails: blockatlas.StakingBasicDetails{
+			LockTime:      259200,
+			MinimumAmount: "1000000",
+		},
 	},
 }
 

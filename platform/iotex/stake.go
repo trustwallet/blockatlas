@@ -25,9 +25,8 @@ func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, e
 	return p.client.GetDelegations(address)
 }
 
-func (p *Platform) GetDetails() blockatlas.StakingDetails {
-	return blockatlas.StakingDetails{
-		Reward:        blockatlas.StakingReward{Annual: 0},
+func (p *Platform) GetDetails() blockatlas.StakingBasicDetails {
+	return blockatlas.StakingBasicDetails{
 		MinimumAmount: blockatlas.Amount("100000000000000000000"),
 		LockTime:      259200,
 		Type:          blockatlas.DelegationTypeDelegate,

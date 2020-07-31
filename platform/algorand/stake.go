@@ -19,9 +19,8 @@ func (p *Platform) GetActiveValidators() (blockatlas.StakeValidators, error) {
 	return result, nil
 }
 
-func (p *Platform) GetDetails() blockatlas.StakingDetails {
-	return blockatlas.StakingDetails{
-		Reward:        blockatlas.StakingReward{Annual: 6.1},
+func (p *Platform) GetDetails() blockatlas.StakingBasicDetails {
+	return blockatlas.StakingBasicDetails{
 		MinimumAmount: "0",
 		LockTime:      0,
 		Type:          blockatlas.DelegationTypeAuto,

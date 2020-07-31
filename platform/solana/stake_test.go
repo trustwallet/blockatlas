@@ -37,24 +37,28 @@ const currentValidators = `
 ]`
 
 var expectedValidators = []blockatlas.Validator{
-	blockatlas.Validator{
+	{
 		Status: true,
 		ID:     "2Afu38M1KaSfDBpjZjnJb9BSWP6YkBkoPiBfnFedD7JW",
 		Details: blockatlas.StakingDetails{
-			Reward:        blockatlas.StakingReward{Annual: 0},
-			MinimumAmount: blockatlas.Amount("2282881"),
-			LockTime:      0,
-			Type:          blockatlas.DelegationTypeDelegate,
+			Reward: blockatlas.StakingReward{Annual: 0},
+			StakingBasicDetails: blockatlas.StakingBasicDetails{
+				MinimumAmount: blockatlas.Amount("2282881"),
+				LockTime:      0,
+				Type:          blockatlas.DelegationTypeDelegate,
+			},
 		},
 	},
-	blockatlas.Validator{
+	{
 		Status: true,
 		ID:     "5CgQubGD1uwodwCe5UXDADbC69SiqXR8qq6pDMSm7ut5",
 		Details: blockatlas.StakingDetails{
-			Reward:        blockatlas.StakingReward{Annual: 0},
-			MinimumAmount: blockatlas.Amount("2282881"),
-			LockTime:      0,
-			Type:          blockatlas.DelegationTypeDelegate,
+			Reward: blockatlas.StakingReward{Annual: 0},
+			StakingBasicDetails: blockatlas.StakingBasicDetails{
+				MinimumAmount: blockatlas.Amount("2282881"),
+				LockTime:      0,
+				Type:          blockatlas.DelegationTypeDelegate,
+			},
 		},
 	},
 }
@@ -154,7 +158,12 @@ var stakeValidator = blockatlas.StakeValidator{
 		Image:       "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/solana/validators/assets/2Afu38M1KaSfDBpjZjnJb9BSWP6YkBkoPiBfnFedD7JW/logo.png",
 		Website:     "https://certus.one",
 	},
-	Details: getDetails(),
+	Details: blockatlas.StakingDetails{
+		Reward: blockatlas.StakingReward{
+			Annual: 0,
+		},
+		StakingBasicDetails: getDetails("1"),
+	},
 }
 
 var validatorMap = blockatlas.ValidatorMap{

@@ -38,17 +38,8 @@ func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
 	return results, nil
 }
 
-func (p *Platform) GetDetails() blockatlas.StakingDetails {
-	return getDetails()
-}
-
-func getDetails() blockatlas.StakingDetails {
-	return blockatlas.StakingDetails{
-		Reward:        blockatlas.StakingReward{Annual: Annual},
-		MinimumAmount: blockatlas.Amount("1000000"),
-		LockTime:      259200,
-		Type:          blockatlas.DelegationTypeDelegate,
-	}
+func (p *Platform) GetDetails() blockatlas.StakingBasicDetails {
+	return getBasicDetails()
 }
 
 func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, error) {
@@ -87,10 +78,23 @@ func normalizeValidator(v Validator) (validator blockatlas.Validator, ok bool) {
 	}
 
 	return blockatlas.Validator{
-		Status:  true,
-		ID:      a,
-		Details: getDetails(),
+		Status: true,
+		ID:     a,
+		Details: blockatlas.StakingDetails{
+			Reward: blockatlas.StakingReward{
+				Annual: Annual,
+			},
+			StakingBasicDetails: getBasicDetails(),
+		},
 	}, true
+}
+
+func getBasicDetails() blockatlas.StakingBasicDetails {
+	return blockatlas.StakingBasicDetails{
+		MinimumAmount: blockatlas.Amount("1000000"),
+		LockTime:      259200,
+		Type:          blockatlas.DelegationTypeDelegate,
+	}
 }
 
 func NormalizeDelegations(data *AccountData, validators blockatlas.ValidatorMap) []blockatlas.Delegation {

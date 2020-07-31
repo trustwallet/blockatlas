@@ -71,33 +71,12 @@ func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
 	return results, nil
 }
 
-func (p *Platform) GetDetails() blockatlas.StakingDetails {
-	return blockatlas.StakingDetails{
-		Reward: blockatlas.StakingReward{
-			Annual: p.GetMaxAPR(),
-		},
+func (p *Platform) GetDetails() blockatlas.StakingBasicDetails {
+	return blockatlas.StakingBasicDetails{
 		MinimumAmount: minimumStakeAmount,
 		LockTime:      lockTime,
 		Type:          blockatlas.DelegationTypeDelegate,
 	}
-}
-
-func (p *Platform) GetMaxAPR() float64 {
-	validators, err := p.GetActiveValidators()
-	if err != nil {
-		logger.Error("GetMaxAPR", logger.Params{"details": err, "platform": p.Coin().Symbol})
-		return blockatlas.DefaultAnnualReward
-	}
-
-	var max = 0.0
-	for _, e := range validators {
-		v := e.Details.Reward.Annual
-		if v > max {
-			max = v
-		}
-	}
-
-	return max
 }
 
 func (p *Platform) UndelegatedBalance(address string) (string, error) {
@@ -110,10 +89,12 @@ func (p *Platform) UndelegatedBalance(address string) (string, error) {
 
 func getDetails(baker bakingbad.Baker) blockatlas.StakingDetails {
 	return blockatlas.StakingDetails{
-		Reward:        blockatlas.StakingReward{Annual: baker.EstimatedRoi * 100},
-		MinimumAmount: blockatlas.Amount(strconv.Itoa(baker.MinDelegation)),
-		LockTime:      lockTime,
-		Type:          blockatlas.DelegationTypeDelegate,
+		Reward: blockatlas.StakingReward{Annual: baker.EstimatedRoi * 100},
+		StakingBasicDetails: blockatlas.StakingBasicDetails{
+			MinimumAmount: blockatlas.Amount(strconv.Itoa(baker.MinDelegation)),
+			LockTime:      lockTime,
+			Type:          blockatlas.DelegationTypeDelegate,
+		},
 	}
 }
 
@@ -137,9 +118,11 @@ func getUnknownValidator(address string) blockatlas.StakeValidator {
 			Reward: blockatlas.StakingReward{
 				Annual: 0,
 			},
-			LockTime:      lockTime,
-			MinimumAmount: minimumStakeAmount,
-			Type:          blockatlas.DelegationTypeDelegate,
+			StakingBasicDetails: blockatlas.StakingBasicDetails{
+				LockTime:      lockTime,
+				MinimumAmount: minimumStakeAmount,
+				Type:          blockatlas.DelegationTypeDelegate,
+			},
 		},
 	}
 }

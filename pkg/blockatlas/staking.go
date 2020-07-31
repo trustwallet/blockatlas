@@ -24,15 +24,19 @@ type (
 
 	ValidatorMap map[string]StakeValidator
 
+	StakingBasicDetails struct {
+		LockTime      int            `json:"locktime"`
+		MinimumAmount Amount         `json:"minimum_amount"`
+		Type          DelegationType `json:"type"`
+	}
+
 	StakingReward struct {
 		Annual float64 `json:"annual"`
 	}
 
 	StakingDetails struct {
-		Reward        StakingReward  `json:"reward"`
-		LockTime      int            `json:"locktime"`
-		MinimumAmount Amount         `json:"minimum_amount"`
-		Type          DelegationType `json:"type"`
+		Reward StakingReward `json:"reward"`
+		StakingBasicDetails
 	}
 
 	Validator struct {

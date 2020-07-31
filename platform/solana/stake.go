@@ -11,6 +11,10 @@ import (
 	"strconv"
 )
 
+const (
+	minimumAmount = blockatlas.Amount(1)
+)
+
 func arrayOfPubkey(pubkey string) [32]byte {
 	var array [32]byte
 	copy(array[:], base58.Decode(pubkey))
@@ -48,14 +52,13 @@ func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
 	return results, nil
 }
 
-func (p *Platform) GetDetails() blockatlas.StakingDetails {
-	return getDetails()
+func (p *Platform) GetDetails() blockatlas.StakingBasicDetails {
+	return getDetails(minimumAmount)
 }
 
-func getDetails() blockatlas.StakingDetails {
-	return blockatlas.StakingDetails{
-		Reward:        blockatlas.StakingReward{Annual: 0},
-		MinimumAmount: "0",
+func getDetails(minimumAmount blockatlas.Amount) blockatlas.StakingBasicDetails {
+	return blockatlas.StakingBasicDetails{
+		MinimumAmount: minimumAmount,
 		LockTime:      0,
 		Type:          blockatlas.DelegationTypeDelegate,
 	}
@@ -67,10 +70,8 @@ func normalizeValidator(v VoteAccount, minimumBalance uint64) (validator blockat
 		Status: true,
 		ID:     v.VotePubkey,
 		Details: blockatlas.StakingDetails{
-			Reward:        blockatlas.StakingReward{Annual: 0},
-			MinimumAmount: blockatlas.Amount(minimumAmount),
-			LockTime:      0,
-			Type:          blockatlas.DelegationTypeDelegate,
+			Reward:              blockatlas.StakingReward{Annual: 0},
+			StakingBasicDetails: getDetails(blockatlas.Amount(minimumAmount)),
 		},
 	}
 }

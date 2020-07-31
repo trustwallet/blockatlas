@@ -45,7 +45,7 @@ type (
 	StakeAPI interface {
 		Platform
 		UndelegatedBalance(address string) (string, error)
-		GetDetails() StakingDetails
+		GetDetails() StakingBasicDetails
 		GetValidators() (ValidatorPage, error)
 		GetDelegations(address string) (DelegationsPage, error)
 		GetActiveValidators() (StakeValidators, error)

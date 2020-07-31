@@ -54,33 +54,12 @@ func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
 	return results, nil
 }
 
-func (p *Platform) GetDetails() blockatlas.StakingDetails {
-	return blockatlas.StakingDetails{
-		Reward: blockatlas.StakingReward{
-			Annual: p.GetMaxAPR(),
-		},
+func (p *Platform) GetDetails() blockatlas.StakingBasicDetails {
+	return blockatlas.StakingBasicDetails{
 		MinimumAmount: minimumAmount,
 		LockTime:      lockTime,
 		Type:          blockatlas.DelegationTypeDelegate,
 	}
-}
-
-func (p *Platform) GetMaxAPR() float64 {
-	validators, err := p.GetValidators()
-	if err != nil {
-		logger.Error("GetMaxAPR", logger.Params{"details": err, "platform": p.Coin().Symbol})
-		return blockatlas.DefaultAnnualReward
-	}
-
-	var max = 0.0
-	for _, e := range validators {
-		v := e.Details.Reward.Annual
-		if v > max {
-			max = v
-		}
-	}
-
-	return max
 }
 
 func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, error) {
@@ -168,10 +147,12 @@ func normalizeValidator(v Validator, p Pool, inflation float64) (validator block
 		Status: v.Status == 2,
 		ID:     v.Address,
 		Details: blockatlas.StakingDetails{
-			Reward:        blockatlas.StakingReward{Annual: reward},
-			MinimumAmount: minimumAmount,
-			LockTime:      lockTime,
-			Type:          blockatlas.DelegationTypeDelegate,
+			Reward: blockatlas.StakingReward{Annual: reward},
+			StakingBasicDetails: blockatlas.StakingBasicDetails{
+				MinimumAmount: minimumAmount,
+				LockTime:      lockTime,
+				Type:          blockatlas.DelegationTypeDelegate,
+			},
 		},
 	}
 }
@@ -218,9 +199,11 @@ func getUnknownValidator(address string) blockatlas.StakeValidator {
 			Reward: blockatlas.StakingReward{
 				Annual: 0,
 			},
-			LockTime:      lockTime,
-			MinimumAmount: minimumAmount,
-			Type:          blockatlas.DelegationTypeDelegate,
+			StakingBasicDetails: blockatlas.StakingBasicDetails{
+				LockTime:      lockTime,
+				MinimumAmount: minimumAmount,
+				Type:          blockatlas.DelegationTypeDelegate,
+			},
 		},
 	}
 }

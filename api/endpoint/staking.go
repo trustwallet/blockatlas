@@ -5,9 +5,8 @@ import (
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
+	"github.com/trustwallet/blockatlas/services/stake"
 	"net/http"
-	"sort"
-	"strconv"
 	"strings"
 )
 
@@ -60,7 +59,7 @@ func GetStakeDelegationsWithAllInfoForBatch(c *gin.Context, apis map[string]bloc
 		if err != nil {
 			continue
 		}
-		delegation.Delegations = sortDelegations(delegation.Delegations)
+		delegation.Delegations = stake.SortDelegations(delegation.Delegations)
 		batch = append(batch, delegation)
 	}
 	c.JSON(http.StatusOK, blockatlas.DocsResponse{Docs: &batch})
@@ -179,7 +178,7 @@ func GetStakingDelegationsForSpecificCoin(c *gin.Context, api blockatlas.StakeAP
 		c.AbortWithStatusJSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
-	result.Delegations = sortDelegations(result.Delegations)
+	result.Delegations = stake.SortDelegations(result.Delegations)
 	c.JSON(http.StatusOK, &result)
 }
 
@@ -209,23 +208,13 @@ func getDelegationResponse(api blockatlas.StakeAPI, address string) (blockatlas.
 
 func getStakingResponse(api blockatlas.StakeAPI) blockatlas.StakingResponse {
 	stakingCoin := api.Coin()
+	basicDetails := api.GetDetails()
+	reward := stake.GetStakingReward(api)
 	return blockatlas.StakingResponse{
-		Coin:    stakingCoin.External(),
-		Details: api.GetDetails(),
+		Coin: stakingCoin.External(),
+		Details: blockatlas.StakingDetails{
+			Reward:              reward,
+			StakingBasicDetails: basicDetails,
+		},
 	}
-}
-
-func sortDelegations(delegations blockatlas.DelegationsPage) blockatlas.DelegationsPage {
-	sort.Slice(delegations, func(i, j int) bool {
-		iA, err := strconv.Atoi(delegations[i].Value)
-		if err != nil {
-			return false
-		}
-		jA, err := strconv.Atoi(delegations[j].Value)
-		if err != nil {
-			return false
-		}
-		return iA > jA
-	})
-	return delegations
 }

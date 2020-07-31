@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	lockTime  = 604800 // in seconds (7 epochs or 7 days)
+	lockTime = 604800 // in seconds (7 epochs or 7 days)
 )
 
 func (p *Platform) GetActiveValidators() (blockatlas.StakeValidators, error) {
@@ -43,31 +43,8 @@ func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
 	return results, nil
 }
 
-func (p *Platform) GetDetails() blockatlas.StakingDetails {
-	apr := p.GetMaxAPR()
-	return getDetails(apr)
-}
-
-func (p *Platform) GetMaxAPR() float64 {
-	validators, err := p.client.GetValidators()
-	if err != nil {
-		logger.Error("GetMaxAPR", logger.Params{"details": err, "platform": p.Coin().Symbol})
-		return Annual
-	}
-
-	var max = 0.0
-	for _, e := range validators.Validators {
-		var apr float64
-		if apr, err = strconv.ParseFloat(e.Lifetime.Apr, 64); err != nil {
-			apr = 0.0
-		}
-
-		if apr > max {
-			max = apr
-		}
-	}
-
-	return max
+func (p *Platform) GetDetails() blockatlas.StakingBasicDetails {
+	return getBasicDetails()
 }
 
 func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, error) {
@@ -117,9 +94,8 @@ func NormalizeDelegations(delegations []Delegation, validators blockatlas.Valida
 	return results
 }
 
-func getDetails(apr float64) blockatlas.StakingDetails {
-	return blockatlas.StakingDetails{
-		Reward:        blockatlas.StakingReward{Annual: apr},
+func getBasicDetails() blockatlas.StakingBasicDetails {
+	return blockatlas.StakingBasicDetails{
 		MinimumAmount: blockatlas.Amount("1000"),
 		LockTime:      lockTime,
 		Type:          blockatlas.DelegationTypeDelegate,
@@ -128,8 +104,13 @@ func getDetails(apr float64) blockatlas.StakingDetails {
 
 func normalizeValidator(v Validator, apr float64) (validator blockatlas.Validator) {
 	return blockatlas.Validator{
-		Status:  v.Active,
-		ID:      v.Info.Address,
-		Details: getDetails(apr),
+		Status: v.Active,
+		ID:     v.Info.Address,
+		Details: blockatlas.StakingDetails{
+			Reward: blockatlas.StakingReward{
+				Annual: apr,
+			},
+			StakingBasicDetails: getBasicDetails(),
+		},
 	}
 }

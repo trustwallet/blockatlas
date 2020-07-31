@@ -15,6 +15,11 @@ var (
 		{
 			ID:     "test1",
 			Status: true,
+			Details: blockatlas.StakingDetails{
+				StakingBasicDetails: blockatlas.StakingBasicDetails{
+					MinimumAmount: blockatlas.Amount("0"),
+				},
+			},
 		},
 		{
 			ID:     "test2",
@@ -27,14 +32,12 @@ var (
 			Name:        "Spider",
 			Description: "yo",
 			Website:     "https://tw.com",
-			Status:      ValidatorStatus{Disabled: false},
 		},
 		{
 			ID:          "test2",
 			Name:        "Man",
 			Description: "lo",
 			Website:     "https://tw.com",
-			Status:      ValidatorStatus{Disabled: true},
 		},
 	}
 	assets2 = []AssetValidator{
@@ -43,14 +46,12 @@ var (
 			Name:        "Spider",
 			Description: "yo",
 			Website:     "https://tw.com",
-			Status:      ValidatorStatus{Disabled: true},
 		},
 		{
 			ID:          "test2",
 			Name:        "Man",
 			Description: "lo",
 			Website:     "https://tw.com",
-			Status:      ValidatorStatus{Disabled: true},
 		},
 	}
 
@@ -67,8 +68,6 @@ var (
 			Name:        "🐠stake.fish",
 			Description: "Leading validator for Proof of Stake blockchains.",
 			Website:     "https://stake.fish/",
-			Status:      ValidatorStatus{Disabled: false},
-			Staking:     StakingInfo{MinDelegation: 10},
 		},
 	}
 	expectTezosVal1 = blockatlas.StakeValidator{
@@ -80,11 +79,14 @@ var (
 			Website:     "https://stake.fish/",
 		},
 		Details: blockatlas.StakingDetails{
-			MinimumAmount: blockatlas.Amount("10"),
+			StakingBasicDetails: blockatlas.StakingBasicDetails{
+				MinimumAmount: blockatlas.Amount("0"),
+			},
 		},
 	}
 	expectedCosmosStakeValidator = blockatlas.StakeValidator{
-		ID: "test1", Status: true,
+		ID:     "test1",
+		Status: true,
 		Info: blockatlas.StakeValidatorInfo{
 			Name:        "Spider",
 			Description: "yo",
@@ -92,11 +94,14 @@ var (
 			Website:     "https://tw.com",
 		},
 		Details: blockatlas.StakingDetails{
-			MinimumAmount: blockatlas.Amount("0"),
+			StakingBasicDetails: blockatlas.StakingBasicDetails{
+				MinimumAmount: blockatlas.Amount("0"),
+			},
 		},
 	}
 	expectedCosmosStakeValidatorDisabled1 = blockatlas.StakeValidator{
-		ID: "test1", Status: false,
+		ID:     "test1",
+		Status: true,
 		Info: blockatlas.StakeValidatorInfo{
 			Name:        "Spider",
 			Description: "yo",
@@ -104,11 +109,14 @@ var (
 			Website:     "https://tw.com",
 		},
 		Details: blockatlas.StakingDetails{
-			MinimumAmount: blockatlas.Amount("0"),
+			StakingBasicDetails: blockatlas.StakingBasicDetails{
+				MinimumAmount: blockatlas.Amount("0"),
+			},
 		},
 	}
 	expectedCosmosStakeValidatorDisabled2 = blockatlas.StakeValidator{
-		ID: "test2", Status: false,
+		ID:     "test2",
+		Status: true,
 		Info: blockatlas.StakeValidatorInfo{
 			Name:        "Man",
 			Description: "lo",
@@ -116,7 +124,9 @@ var (
 			Website:     "https://tw.com",
 		},
 		Details: blockatlas.StakingDetails{
-			MinimumAmount: blockatlas.Amount("0"),
+			StakingBasicDetails: blockatlas.StakingBasicDetails{
+				MinimumAmount: blockatlas.Amount("0"),
+			},
 		},
 	}
 )
