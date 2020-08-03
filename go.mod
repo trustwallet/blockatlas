@@ -30,7 +30,7 @@ require (
 	github.com/prometheus/client_golang v1.7.1
 	github.com/shopspring/decimal v1.2.0
 	github.com/sirupsen/logrus v1.6.0
-	github.com/spf13/viper v1.7.0
+	github.com/spf13/viper v1.7.1
 	github.com/streadway/amqp v0.0.0-20200108173154-1c71cc93ed71
 	github.com/stretchr/testify v1.6.1
 	github.com/swaggo/gin-swagger v1.2.0
