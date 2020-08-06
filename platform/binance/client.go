@@ -28,16 +28,16 @@ func (c Client) FetchLatestBlockNumber() (int64, error) {
 	return int64(result.SyncInfo.LatestBlockHeight), nil
 }
 
-func (c Client) FetchTransactionsInBlock(blockNumber int64) (int64, error) {
-	resp, err := req.Get(c.url+fmt.Sprintf("v2/transactions-in-block/%d", blockNumber), nil)
+func (c Client) FetchTransactionsInBlock(blockNumber int64) (TransactionsInBlockResponse, error) {
+	resp, err := req.Get(c.url+fmt.Sprintf("/v2/transactions-in-block/%d", blockNumber), nil)
 	if err != nil {
-		return 0, err
+		return TransactionsInBlockResponse{}, err
 	}
-	var result NodeInfoResponse
+	var result TransactionsInBlockResponse
 	if err := resp.ToJSON(&result); err != nil {
 		logger.Error("URL: " + resp.Request().URL.String())
 		logger.Error("Status code: " + resp.Response().Status)
-		return 0, err
+		return TransactionsInBlockResponse{}, err
 	}
-	return int64(result.SyncInfo.LatestBlockHeight), nil
+	return result, nil
 }
