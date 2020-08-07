@@ -20,9 +20,13 @@ func TestPlatform_GetTokenListByAddress(t *testing.T) {
 
 	tokens, err = p.GetTokenListByAddress("bnb1w7puzjxu05ktc5zvpnzkndt6tyl720nsutzvpg")
 	assert.Nil(t, err)
+	res, err = json.Marshal(tokens)
+	assert.Nil(t, err)
 	assert.Equal(t, wantedTokens, string(res))
 
 	tokens, err = p.GetTokenListByAddress("bnb1w7puzjxu05ktc5zvpnzkndt6tyl720nsutzvpg")
+	assert.Nil(t, err)
+	res, err = json.Marshal(tokens)
 	assert.Nil(t, err)
 	assert.Equal(t, wantedTokens, string(res))
 }
