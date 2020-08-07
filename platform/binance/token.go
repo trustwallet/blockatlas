@@ -46,14 +46,14 @@ func normalizeToken(srcToken TokenBalance, tokens Tokens) (blockatlas.Token, boo
 		Symbol:   token.OriginalSymbol,
 		TokenID:  token.Symbol,
 		Coin:     coin.BNB,
-		Decimals: uint(decimalPlaces(token.TotalSupply)),
+		Decimals: uint(countDecimals(token.TotalSupply)),
 		Type:     blockatlas.TokenTypeBEP2,
 	}
 
 	return result, true
 }
 
-func decimalPlaces(v string) int {
+func countDecimals(v string) int {
 	s := strings.Split(v, ".")
 	if len(s) < 2 {
 		return 0
