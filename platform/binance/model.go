@@ -29,11 +29,11 @@ type (
 	TxType string
 
 	TransactionsInBlockResponse struct {
-		BlockHeight int       `json:"blockHeight"`
-		Tx          []BlockTx `json:"tx"`
+		BlockHeight int  `json:"blockHeight"`
+		Tx          []Tx `json:"tx"`
 	}
 
-	BlockTx struct {
+	Tx struct {
 		TxHash          string            `json:"txHash"`
 		BlockHeight     int               `json:"blockHeight"`
 		TxType          TxType            `json:"txType"`
@@ -76,6 +76,12 @@ type (
 	}
 )
 
+type (
+	TransactionsByAddressAndAssetResponse struct {
+		Txs []Tx `json:"tx"`
+	}
+)
+
 func normalizeAmount(amount string) blockatlas.Amount {
 	val := numbers.DecimalExp(amount, int(coin.Binance().Decimals))
 	return blockatlas.Amount(val)
@@ -86,6 +92,6 @@ func normalizeFee(amount string) blockatlas.Amount {
 	if a != 0 && err == nil {
 		return blockatlas.Amount(numbers.DecimalExp(amount, int(coin.Binance().Decimals)))
 	} else {
-		return blockatlas.Amount("0")
+		return "0"
 	}
 }

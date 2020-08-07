@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/imroc/req"
 	"github.com/trustwallet/blockatlas/pkg/logger"
+	"net/url"
 )
 
 type Client struct {
@@ -40,4 +41,19 @@ func (c Client) FetchTransactionsInBlock(blockNumber int64) (TransactionsInBlock
 		return TransactionsInBlockResponse{}, err
 	}
 	return result, nil
+}
+
+func (c Client) FetchTransactionsByAddressAndAssetID(address, assetID string) ([]Tx, error) {
+	params := url.Values{"address": {address}, "txAsset": {assetID}}
+	resp, err := req.Get(c.url+fmt.Sprintf("/v1/transactions"), params)
+	if err != nil {
+		return nil, err
+	}
+	var result TransactionsInBlockResponse
+	if err := resp.ToJSON(&result); err != nil {
+		logger.Error("URL: " + resp.Request().URL.String())
+		logger.Error("Status code: " + resp.Response().Status)
+		return nil, err
+	}
+	return result.Tx, nil
 }

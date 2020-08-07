@@ -29,8 +29,13 @@ func normalizeBlock(response TransactionsInBlockResponse) blockatlas.Block {
 	result := blockatlas.Block{
 		Number: int64(response.BlockHeight),
 	}
-	totalTxs := make([]blockatlas.Tx, 0, len(response.Tx))
-	for _, t := range response.Tx {
+	result.Txs = normalizeTransactions(response.Tx)
+	return result
+}
+
+func normalizeTransactions(txs []Tx) []blockatlas.Tx {
+	totalTxs := make([]blockatlas.Tx, 0, len(txs))
+	for _, t := range txs {
 		var txs []blockatlas.Tx
 		switch t.TxType {
 		case CancelOrder, NewOrder:
@@ -44,11 +49,10 @@ func normalizeBlock(response TransactionsInBlockResponse) blockatlas.Block {
 		}
 		totalTxs = append(totalTxs, txs...)
 	}
-	result.Txs = totalTxs
-	return result
+	return totalTxs
 }
 
-func normalizeTransferTransactionForBlock(t BlockTx) blockatlas.Tx {
+func normalizeTransferTransactionForBlock(t Tx) blockatlas.Tx {
 	tx := getBaseTxBodyForBlock(t)
 	tx.To = t.ToAddr.(string)
 	tx.From = t.FromAddr.(string)
@@ -74,7 +78,7 @@ func normalizeTransferTransactionForBlock(t BlockTx) blockatlas.Tx {
 	return tx
 }
 
-func normalizeMultiTransferTransactionForBlock(t BlockTx) []blockatlas.Tx {
+func normalizeMultiTransferTransactionForBlock(t Tx) []blockatlas.Tx {
 	txs := make([]blockatlas.Tx, 0, len(t.SubTransactions))
 	for _, subTx := range t.SubTransactions {
 		tx := blockatlas.Tx{
@@ -115,7 +119,7 @@ func normalizeMultiTransferTransactionForBlock(t BlockTx) []blockatlas.Tx {
 	return txs
 }
 
-func getBaseTxBodyForBlock(t BlockTx) blockatlas.Tx {
+func getBaseTxBodyForBlock(t Tx) blockatlas.Tx {
 	return blockatlas.Tx{
 		ID:       t.TxHash,
 		Coin:     coin.Binance().ID,
@@ -129,7 +133,7 @@ func getBaseTxBodyForBlock(t BlockTx) blockatlas.Tx {
 	}
 }
 
-func normalizeOrderTransactionForBlock(t BlockTx) blockatlas.Tx {
+func normalizeOrderTransactionForBlock(t Tx) blockatlas.Tx {
 	tx := getBaseTxBodyForBlock(t)
 
 	tx.Type = blockatlas.TxAnyAction
