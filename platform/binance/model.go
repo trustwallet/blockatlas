@@ -38,7 +38,7 @@ type (
 		BlockHeight     int               `json:"blockHeight"`
 		TxType          TxType            `json:"txType"`
 		TimeStamp       time.Time         `json:"timeStamp"`
-		FromAddr        string            `json:"fromAddr"`
+		FromAddr        interface{}       `json:"fromAddr"`
 		ToAddr          interface{}       `json:"toAddr"`
 		Value           string            `json:"value"`
 		TxAsset         string            `json:"txAsset"`

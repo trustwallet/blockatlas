@@ -25,4 +25,10 @@ func TestPlatform_GetBlockByNumber(t *testing.T) {
 	res, err := json.Marshal(block)
 	assert.Nil(t, err)
 	assert.Equal(t, wantedBlock, string(res))
+
+	blockMulti, err := p.GetBlockByNumber(105529271)
+	assert.Nil(t, err)
+	resMulti, err := json.Marshal(blockMulti)
+	assert.Nil(t, err)
+	assert.Equal(t, wantedBlockMulti, string(resMulti))
 }
