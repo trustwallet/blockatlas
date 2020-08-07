@@ -4,6 +4,7 @@ import (
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/numbers"
+	"strconv"
 	"time"
 )
 
@@ -13,9 +14,8 @@ const (
 	Transfer    TxType = "TRANSFER"
 )
 
-const (
-	BNBAsset = "BNB"
-)
+const BNBAsset = "BNB"
+const tokensLimit = "1000"
 
 type (
 	NodeInfoResponse struct {
@@ -82,6 +82,29 @@ type (
 	}
 )
 
+type (
+	AccountMeta struct {
+		Balances []TokenBalance `json:"balances"`
+	}
+
+	TokenBalance struct {
+		Free   string `json:"free"`
+		Frozen string `json:"frozen"`
+		Locked string `json:"locked"`
+		Symbol string `json:"symbol"`
+	}
+
+	Tokens []Token
+
+	Token struct {
+		Name           string `json:"name"`
+		OriginalSymbol string `json:"original_symbol"`
+		Owner          string `json:"owner"`
+		Symbol         string `json:"symbol"`
+		TotalSupply    string `json:"total_supply"`
+	}
+)
+
 func normalizeAmount(amount string) blockatlas.Amount {
 	val := numbers.DecimalExp(amount, int(coin.Binance().Decimals))
 	return blockatlas.Amount(val)
@@ -94,4 +117,24 @@ func normalizeFee(amount string) blockatlas.Amount {
 	} else {
 		return "0"
 	}
+}
+
+func (balance TokenBalance) isAllZeroBalance() bool {
+	balances := [3]string{balance.Frozen, balance.Free, balance.Locked}
+	for _, value := range balances {
+		value, err := strconv.ParseFloat(value, 64)
+		if err != nil || value > 0 {
+			return false
+		}
+	}
+	return true
+}
+
+func (page Tokens) findTokenBySymbol(symbol string) (Token, bool) {
+	for _, t := range page {
+		if t.Symbol == symbol {
+			return t, true
+		}
+	}
+	return Token{}, false
 }

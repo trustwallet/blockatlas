@@ -3,16 +3,19 @@ package binance
 import (
 	"fmt"
 	"github.com/imroc/req"
+	"github.com/patrickmn/go-cache"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"net/url"
+	"time"
 )
 
 type Client struct {
+	*cache.Cache
 	url string
 }
 
 func InitClient(url string) Client {
-	return Client{url: url}
+	return Client{url: url, Cache: cache.New(5*time.Minute, 10*time.Minute)}
 }
 
 func (c Client) FetchLatestBlockNumber() (int64, error) {
@@ -45,7 +48,7 @@ func (c Client) FetchTransactionsInBlock(blockNumber int64) (TransactionsInBlock
 
 func (c Client) FetchTransactionsByAddressAndAssetID(address, assetID string) ([]Tx, error) {
 	params := url.Values{"address": {address}, "txAsset": {assetID}}
-	resp, err := req.Get(c.url+fmt.Sprintf("/v1/transactions"), params)
+	resp, err := req.Get(c.url+"/v1/transactions", params)
 	if err != nil {
 		return nil, err
 	}
@@ -56,4 +59,38 @@ func (c Client) FetchTransactionsByAddressAndAssetID(address, assetID string) ([
 		return nil, err
 	}
 	return result.Tx, nil
+}
+
+func (c Client) FetchAccountMeta(address string) (AccountMeta, error) {
+	resp, err := req.Get(c.url+fmt.Sprintf("/v1/account/%s", address), nil)
+	if err != nil {
+		return AccountMeta{}, err
+	}
+	var result AccountMeta
+	if err := resp.ToJSON(&result); err != nil {
+		logger.Error("URL: " + resp.Request().URL.String())
+		logger.Error("Status code: " + resp.Response().Status)
+		return AccountMeta{}, err
+	}
+	return result, nil
+}
+
+func (c Client) FetchTokens() (Tokens, error) {
+	cachedResult, ok := c.Cache.Get("tokens")
+	if ok {
+		return cachedResult.(Tokens), nil
+	}
+	result := new(Tokens)
+	query := url.Values{"limit": {tokensLimit}}
+	resp, err := req.Get(c.url+"/v1/tokens", query)
+	if err != nil {
+		return nil, err
+	}
+	if err := resp.ToJSON(&result); err != nil {
+		logger.Error("URL: " + resp.Request().URL.String())
+		logger.Error("Status code: " + resp.Response().Status)
+		return nil, err
+	}
+	c.Cache.Set("tokens", *result, cache.DefaultExpiration)
+	return *result, nil
 }
