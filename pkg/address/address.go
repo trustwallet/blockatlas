@@ -11,6 +11,8 @@ import (
 	"strings"
 )
 
+const prefixBitcoinCash = "bitcoincash:"
+
 // Decode decodes a hex string with 0x prefix.
 func Remove0x(input string) string {
 	if strings.HasPrefix(input, "0x") {
@@ -96,5 +98,20 @@ func ToEIP55ByCoinID(str string, coinID uint) string {
 		return EIP55ChecksumWanchain(str)
 	default:
 		return str
+	}
+}
+
+func removePrefix(address string) string {
+	return strings.TrimPrefix(address, prefixBitcoinCash)
+}
+
+func FormatAddress(address string, coinID uint) string {
+	switch coinID {
+	case coin.ETH, coin.POA, coin.ETC, coin.TOMO, coin.CLO, coin.TT, coin.GO, coin.WAN:
+		return ToEIP55ByCoinID(address, coinID)
+	case coin.BCH:
+		return removePrefix(address)
+	default:
+		return address
 	}
 }
