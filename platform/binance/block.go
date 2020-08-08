@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/numbers"
 	"strings"
 )
 
@@ -146,7 +147,7 @@ func normalizeOrderTransactionForBlock(t Tx) blockatlas.Tx {
 	if err == nil {
 		base, _ := parseOrderDataSymbol(data.OrderData.Symbol)
 		meta.TokenID = base
-		meta.Value = blockatlas.Amount(data.OrderData.Quantity)
+		meta.Value = blockatlas.Amount(numbers.FromDecimalExp(data.OrderData.Quantity, int(coin.Binance().Decimals)))
 		meta.Name = data.OrderData.Side
 		meta.Symbol = tokenSymbol(base)
 	}
@@ -154,6 +155,7 @@ func normalizeOrderTransactionForBlock(t Tx) blockatlas.Tx {
 	case CancelOrder:
 		meta.Title = blockatlas.KeyTitleCancelOrder
 		meta.Key = blockatlas.KeyCancelOrder
+		meta.Value = "0"
 	case NewOrder:
 		meta.Title = blockatlas.KeyTitlePlaceOrder
 		meta.Key = blockatlas.KeyPlaceOrder
