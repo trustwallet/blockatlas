@@ -5,16 +5,16 @@ import (
 )
 
 type Platform struct {
-	client      Client
+	client Client
 }
 
-func Init(rpcApi string) *Platform {
+func Init(api string) *Platform {
 	p := Platform{
-		client:      InitClient(rpcApi),
+		client: InitClient(api),
 	}
 	return &p
 }
 
 func (p *Platform) Coin() coin.Coin {
-	return coin.Coins[coin.BNB]
+	return coin.Binance()
 }
