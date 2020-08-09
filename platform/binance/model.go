@@ -270,19 +270,11 @@ func normalizeToken(srcToken TokenBalance, tokens Tokens) (blockatlas.Token, boo
 		Symbol:   token.OriginalSymbol,
 		TokenID:  token.Symbol,
 		Coin:     coin.Binance().ID,
-		Decimals: countDecimals(token.TotalSupply),
+		Decimals: coin.Binance().Decimals,
 		Type:     blockatlas.TokenTypeBEP2,
 	}
 
 	return result, true
-}
-
-func countDecimals(v string) uint {
-	s := strings.Split(v, ".")
-	if len(s) < 2 {
-		return 0
-	}
-	return uint(len(s[1]))
 }
 
 func getTransactionData(rawOrderData string) (TransactionData, error) {
