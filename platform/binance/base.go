@@ -2,24 +2,19 @@ package binance
 
 import (
 	"github.com/trustwallet/blockatlas/coin"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 )
 
 type Platform struct {
-	rpcClient      Client
-	explorerClient ExplorerClient
+	client Client
 }
 
-func Init(rpcApi, explorerApi string) *Platform {
+func Init(api string) *Platform {
 	p := Platform{
-		rpcClient:      Client{blockatlas.InitClient(rpcApi)},
-		explorerClient: ExplorerClient{blockatlas.InitClient(explorerApi)},
+		client: InitClient(api),
 	}
-	p.rpcClient.ErrorHandler = handleHTTPError
-	p.explorerClient.ErrorHandler = handleHTTPError
 	return &p
 }
 
 func (p *Platform) Coin() coin.Coin {
-	return coin.Coins[coin.BNB]
+	return coin.Binance()
 }

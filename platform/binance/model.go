@@ -1,97 +1,98 @@
 package binance
 
 import (
-	"fmt"
+	"encoding/json"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/numbers"
 	"strconv"
+	"strings"
+	"time"
 )
 
 const (
-	TxTransfer              TxType                  = "TRANSFER"       // e.g: BNB, TWT-8C2
-	SingleTransferOperation ExplorerTransactionType = "singleTransfer" // e.g: BNB, TWT-8C2
-	MultiTransferOperation  ExplorerTransactionType = "multiTransfer"  // e.g [BNB, BNB], [TWT-8C2, TWT-8C2]
+	NewOrder    TxType = "NEW_ORDER"
+	CancelOrder TxType = "CANCEL_ORDER"
+	Transfer    TxType = "TRANSFER"
+)
+
+const (
+	BNBAsset    = "BNB"
+	tokensLimit = "1000"
 )
 
 type (
-	TxType                  string
-	ExplorerTransactionType string
-
-	Account struct {
-		AccountNumber int       `json:"account_number"`
-		Address       string    `json:"address"`
-		Balances      []Balance `json:"balances"`
-		PublicKey     []byte    `json:"public_key"`
-		Sequence      uint64    `json:"sequence"`
+	NodeInfoResponse struct {
+		SyncInfo struct {
+			LatestBlockHeight int `json:"latest_block_height"`
+		} `json:"sync_info"`
 	}
 
-	Balance struct {
+	TxType string
+
+	TransactionsInBlockResponse struct {
+		BlockHeight int  `json:"blockHeight"`
+		Tx          []Tx `json:"tx"`
+	}
+
+	Tx struct {
+		TxHash          string            `json:"txHash"`
+		BlockHeight     int               `json:"blockHeight"`
+		TxType          TxType            `json:"txType"`
+		TimeStamp       time.Time         `json:"timeStamp"`
+		FromAddr        interface{}       `json:"fromAddr"`
+		ToAddr          interface{}       `json:"toAddr"`
+		Value           string            `json:"value"`
+		TxAsset         string            `json:"txAsset"`
+		TxFee           string            `json:"txFee"`
+		OrderID         string            `json:"orderId,omitempty"`
+		Code            int               `json:"code"`
+		Data            string            `json:"data"`
+		Memo            string            `json:"memo"`
+		Source          int               `json:"source"`
+		SubTransactions []SubTransactions `json:"subTransactions,omitempty"`
+		Sequence        int               `json:"sequence"`
+	}
+
+	TransactionData struct {
+		OrderData struct {
+			Symbol      string `json:"symbol"`
+			OrderType   string `json:"orderType"`
+			Side        string `json:"side"`
+			Price       string `json:"price"`
+			Quantity    string `json:"quantity"`
+			TimeInForce string `json:"timeInForce"`
+			OrderID     string `json:"orderId"`
+		} `json:"orderData"`
+	}
+
+	SubTransactions struct {
+		TxHash      string `json:"txHash"`
+		BlockHeight int    `json:"blockHeight"`
+		TxType      string `json:"txType"`
+		FromAddr    string `json:"fromAddr"`
+		ToAddr      string `json:"toAddr"`
+		TxAsset     string `json:"txAsset"`
+		TxFee       string `json:"txFee"`
+		Value       string `json:"value"`
+	}
+
+	TransactionsByAddressAndAssetResponse struct {
+		Txs []Tx `json:"tx"`
+	}
+
+	AccountMeta struct {
+		Balances []TokenBalance `json:"balances"`
+	}
+
+	TokenBalance struct {
 		Free   string `json:"free"`
 		Frozen string `json:"frozen"`
 		Locked string `json:"locked"`
 		Symbol string `json:"symbol"`
 	}
 
-	Error struct {
-		Code    int64  `json:"code"`
-		Message string `json:"message"`
-	}
-
-	NodeInfo struct {
-		SyncInfo SyncInfo `json:"sync_info"`
-	}
-
-	SyncInfo struct {
-		LatestBlockHeight int64 `json:"latest_block_height"`
-	}
-
-	Transactions struct {
-		Total int  `json:"total"`
-		Txs   []Tx `json:"tx"`
-	}
-
-	Tx struct {
-		Asset       string `json:"txAsset"`
-		BlockHeight uint64 `json:"blockHeight"`
-		Code        int    `json:"code"`
-		Data        string `json:"data"`
-		Fee         string `json:"txFee"`
-		FromAddr    string `json:"fromAddr"`
-		Memo        string `json:"memo"`
-		OrderID     string `json:"orderId"`
-		Sequence    uint64 `json:"sequence"`
-		Source      int    `json:"source"`
-		Timestamp   string `json:"timeStamp"`
-		ToAddr      string `json:"toAddr"`
-		TxHash      string `json:"txHash"`
-		Type        TxType `json:"txType"`
-		Value       string `json:"value"`
-	}
-
-	BlockTransactions struct {
-		BlockHeight int64  `json:"blockHeight"`
-		Txs         []TxV2 `json:"tx"`
-	}
-
-	TxV2 struct {
-		Tx
-		OrderID         string  `json:"orderId"`         // Optional. Available when the transaction type is NEW_ORDER
-		SubTransactions []SubTx `json:"subTransactions"` // Optional. Available when the transaction has sub-transactions, such as multi-send transaction or a transaction have multiple assets
-	}
-
-	SubTx struct {
-		Asset    string `json:"txAsset"`
-		Height   uint64 `json:"blockHeight"`
-		Fee      string `json:"txFee"`
-		FromAddr string `json:"fromAddr"`
-		Hash     string `json:"txHash"`
-		ToAddr   string `json:"toAddr"`
-		Type     TxType `json:"txType"`
-		Value    string `json:"value"`
-	}
-
-	TokenList []Token
+	Tokens []Token
 
 	Token struct {
 		Name           string `json:"name"`
@@ -100,159 +101,219 @@ type (
 		Symbol         string `json:"symbol"`
 		TotalSupply    string `json:"total_supply"`
 	}
-
-	// Transaction response from Explorer
-	ExplorerResponse struct {
-		Nums int           `json:"txNums"`
-		Txs  []ExplorerTxs `json:"txArray"`
-	}
-
-	ExplorerTxs struct {
-		BlockHeight        uint64          `json:"blockHeight"`
-		Code               int             `json:"code"`
-		FromAddr           string          `json:"fromAddr"`
-		HasChildren        int             `json:"hasChildren"`
-		Memo               string          `json:"memo"`
-		MultisendTransfers []MultiTransfer `json:"subTxsDto"` // Not part of response, added from hash info tx for simplifying logic
-		Timestamp          int64           `json:"timeStamp"`
-		ToAddr             string          `json:"toAddr"`
-		TxFee              float64         `json:"txFee"`
-		TxHash             string          `json:"txHash"`
-		TxType             TxType          `json:"txType"`
-		Value              float64         `json:"value"`
-		TxAsset            string          `json:"txAsset"`
-	}
-
-	TxHashRPC struct {
-		Hash string   `json:"hash"`
-		Tx   TxHashTx `json:"tx"`
-	}
-
-	TxHashTx struct {
-		Value Value `json:"value"`
-	}
-
-	Value struct {
-		Msg []Msg `json:"msg"`
-	}
-
-	Msg struct {
-		Value MsgValue `json:"value"`
-	}
-
-	MsgValue struct {
-		Inputs  []Input  `json:"inputs"`
-		Outputs []Output `json:"outputs"`
-	}
-
-	Input struct {
-		Address string `json:"address"`
-	}
-
-	Output struct {
-		Address string  `json:"address"`
-		Coins   []Coins `json:"coins"`
-	}
-	Coins struct {
-		Amount string `json:"amount"`
-		Denom  string `json:"denom"`
-	}
-
-	MultiTransfer struct {
-		Amount string `json:"amount"` // Float string ind decimal point
-		Asset  string `json:"asset"`
-		From   string `json:"from"`
-		To     string `json:"to"`
-	}
 )
 
-func extractMultiTransfers(messages Value) []MultiTransfer {
-	var extracted = make([]MultiTransfer, 0)
-	for _, msg := range messages.Msg {
-		var tr MultiTransfer
-		tr.From = msg.Value.Inputs[0].Address // Assumed multisend transfer has one input, never seen multiple
-		for _, output := range msg.Value.Outputs {
-			tr.To = output.Address
-			for _, c := range output.Coins {
-				tr.Amount = c.Amount
-				tr.Asset = c.Denom
-				extracted = append(extracted, tr)
+func normalizeBlock(response TransactionsInBlockResponse) blockatlas.Block {
+	result := blockatlas.Block{
+		Number: int64(response.BlockHeight),
+	}
+	result.Txs = normalizeTransactions(response.Tx)
+	return result
+}
+
+func normalizeTransactions(txs []Tx) []blockatlas.Tx {
+	totalTxs := make([]blockatlas.Tx, 0, len(txs))
+	for _, t := range txs {
+		var txs []blockatlas.Tx
+		switch t.TxType {
+		case CancelOrder, NewOrder:
+			txs = append(txs, normalizeOrderTransaction(t))
+		case Transfer:
+			if len(t.SubTransactions) > 0 {
+				txs = normalizeMultiTransferTransaction(t)
+			} else {
+				txs = append(txs, normalizeTransferTransaction(t))
 			}
 		}
+		totalTxs = append(totalTxs, txs...)
 	}
-	return extracted
+	return totalTxs
 }
 
-// Get explorer transfer fee converted to decimal expression
-func (tx *Tx) getFee() string {
-	if _, err := strconv.ParseFloat(tx.Fee, 64); err == nil {
-		return numbers.DecimalExp(tx.Fee, int(coin.Binance().Decimals))
+func normalizeTransferTransaction(t Tx) blockatlas.Tx {
+	tx := normalizeBaseOfTransaction(t)
+	tx.To = t.ToAddr.(string)
+	tx.From = t.FromAddr.(string)
+	switch {
+	case t.TxAsset == BNBAsset:
+		tx.Type = blockatlas.TxTransfer
+		tx.Meta = blockatlas.Transfer{
+			Value:    normalizeAmount(t.Value),
+			Symbol:   coin.Binance().Symbol,
+			Decimals: coin.Binance().Decimals,
+		}
+	case t.TxAsset != "":
+		tx.Type = blockatlas.TxNativeTokenTransfer
+		tx.Meta = blockatlas.NativeTokenTransfer{
+			Decimals: coin.Binance().Decimals,
+			From:     t.FromAddr.(string),
+			Symbol:   getTokenSymbolFromID(t.TxAsset),
+			To:       t.ToAddr.(string),
+			TokenID:  t.TxAsset,
+			Value:    normalizeAmount(t.Value),
+		}
 	}
-	return "0"
+	return tx
 }
 
-// Converts explorer transfer fee to amount in decimal expression
-func (tx *ExplorerTxs) getDexFee() blockatlas.Amount {
-	if tx.TxFee > 0 {
-		return blockatlas.Amount(numbers.DecimalExp(numbers.Float64toString(tx.TxFee), int(coin.Binance().Decimals)))
-	} else {
-		return blockatlas.Amount(0)
+func normalizeMultiTransferTransaction(t Tx) []blockatlas.Tx {
+	txs := make([]blockatlas.Tx, 0, len(t.SubTransactions))
+	for _, subTx := range t.SubTransactions {
+		tx := blockatlas.Tx{
+			ID:       subTx.TxHash,
+			Coin:     coin.Binance().ID,
+			From:     subTx.FromAddr,
+			To:       subTx.ToAddr,
+			Fee:      normalizeFee(subTx.TxFee),
+			Date:     t.TimeStamp.Unix(),
+			Block:    uint64(t.BlockHeight),
+			Status:   blockatlas.StatusCompleted,
+			Sequence: uint64(t.Sequence),
+			Memo:     t.Memo,
+		}
+		switch {
+		case subTx.TxAsset == BNBAsset:
+			tx.Type = blockatlas.TxTransfer
+			tx.Meta = blockatlas.Transfer{
+				Value:    normalizeAmount(subTx.Value),
+				Symbol:   coin.Binance().Symbol,
+				Decimals: coin.Binance().Decimals,
+			}
+		case subTx.TxAsset != "":
+			tx.Type = blockatlas.TxNativeTokenTransfer
+			tx.Meta = blockatlas.NativeTokenTransfer{
+				Decimals: coin.Binance().Decimals,
+				From:     subTx.FromAddr,
+				Symbol:   getTokenSymbolFromID(subTx.TxAsset),
+				To:       subTx.ToAddr,
+				TokenID:  subTx.TxAsset,
+				Value:    normalizeAmount(subTx.Value),
+			}
+		default:
+			continue
+		}
+		txs = append(txs, tx)
+	}
+	return txs
+}
+
+func normalizeBaseOfTransaction(t Tx) blockatlas.Tx {
+	return blockatlas.Tx{
+		ID:       t.TxHash,
+		Coin:     coin.Binance().ID,
+		From:     t.FromAddr.(string),
+		Fee:      normalizeFee(t.TxFee),
+		Date:     t.TimeStamp.Unix(),
+		Block:    uint64(t.BlockHeight),
+		Status:   blockatlas.StatusCompleted,
+		Sequence: uint64(t.Sequence),
+		Memo:     t.Memo,
 	}
 }
 
-// Get Explorer transfer status based on transfer code
-func (tx *ExplorerTxs) getStatus() blockatlas.Status {
-	switch tx.Code {
-	case 0:
-		return blockatlas.StatusCompleted
-	default:
-		return blockatlas.StatusError
+func normalizeOrderTransaction(t Tx) blockatlas.Tx {
+	tx := normalizeBaseOfTransaction(t)
+	tx.Type = blockatlas.TxAnyAction
+	meta := blockatlas.AnyAction{
+		Coin:     coin.Binance().ID,
+		Decimals: coin.Binance().Decimals,
 	}
+
+	data, err := getTransactionData(t.Data)
+	if err == nil {
+		base, _ := getTokenIDsFromPair(data.OrderData.Symbol)
+		meta.TokenID = base
+		meta.Value = blockatlas.Amount(numbers.FromDecimalExp(data.OrderData.Quantity, int(coin.Binance().Decimals)))
+		meta.Name = data.OrderData.Side
+		meta.Symbol = getTokenSymbolFromID(base)
+	}
+	switch t.TxType {
+	case CancelOrder:
+		meta.Title = blockatlas.KeyTitleCancelOrder
+		meta.Key = blockatlas.KeyCancelOrder
+		meta.Value = "0"
+	case NewOrder:
+		meta.Title = blockatlas.KeyTitlePlaceOrder
+		meta.Key = blockatlas.KeyPlaceOrder
+	}
+
+	tx.Meta = meta
+	tx.Direction = blockatlas.DirectionOutgoing
+	return tx
 }
 
-func (tx *ExplorerTxs) getDexValue() blockatlas.Amount {
-	val := numbers.DecimalExp(numbers.Float64toString(tx.Value), int(coin.Binance().Decimals))
+func normalizeTokens(srcBalance []TokenBalance, tokens Tokens) []blockatlas.Token {
+	tokensList := make([]blockatlas.Token, 0, len(srcBalance))
+	for _, srcToken := range srcBalance {
+		token, ok := normalizeToken(srcToken, tokens)
+		if !ok {
+			continue
+		}
+		tokensList = append(tokensList, token)
+	}
+	return tokensList
+}
+
+func normalizeToken(srcToken TokenBalance, tokens Tokens) (blockatlas.Token, bool) {
+	var result blockatlas.Token
+	if srcToken.isAllZeroBalance() {
+		return result, false
+	}
+
+	token, ok := tokens.findTokenBySymbol(srcToken.Symbol)
+	if !ok {
+		return result, false
+	}
+
+	result = blockatlas.Token{
+		Name:     token.Name,
+		Symbol:   token.OriginalSymbol,
+		TokenID:  token.Symbol,
+		Coin:     coin.Binance().ID,
+		Decimals: coin.Binance().Decimals,
+		Type:     blockatlas.TokenTypeBEP2,
+	}
+
+	return result, true
+}
+
+func getTransactionData(rawOrderData string) (TransactionData, error) {
+	var result TransactionData
+	err := json.Unmarshal([]byte(rawOrderData), &result)
+	return result, err
+}
+
+func getTokenIDsFromPair(pair string) (string, string) {
+	result := strings.Split(pair, "_")
+	if len(result) == 1 || len(result) == 0 {
+		return pair, pair
+	}
+	return result[0], result[1]
+}
+
+func getTokenSymbolFromID(tokenID string) string {
+	s := strings.Split(tokenID, "-")
+	if len(s) > 1 {
+		return s[0]
+	}
+	return tokenID
+}
+
+func normalizeAmount(amount string) blockatlas.Amount {
+	val := numbers.DecimalExp(amount, int(coin.Binance().Decimals))
 	return blockatlas.Amount(val)
 }
 
-// Determines transaction status
-func (tx *Tx) getStatus() blockatlas.Status {
-	switch tx.Code {
-	case 0:
-		return blockatlas.StatusCompleted
-	default:
-		return blockatlas.StatusError
+func normalizeFee(amount string) blockatlas.Amount {
+	a, err := numbers.StringNumberToFloat64(amount)
+	if a != 0 && err == nil {
+		return blockatlas.Amount(numbers.DecimalExp(amount, int(coin.Binance().Decimals)))
+	} else {
+		return "0"
 	}
 }
 
-// Get explorer transfer error message if transaction failed
-func (tx *ExplorerTxs) getError() string {
-	switch tx.getStatus() {
-	case blockatlas.StatusCompleted:
-		return ""
-	default:
-		return "error"
-	}
-}
-
-func (tx *Tx) containAddress(address string) bool {
-	if len(address) == 0 || tx.FromAddr == address || tx.ToAddr == address {
-		return true
-	}
-	return false
-}
-
-// findToken find a token into a token list
-func (page TokenList) findToken(symbol string) *Token {
-	for _, t := range page {
-		if t.Symbol == symbol {
-			return &t
-		}
-	}
-	return nil
-}
-
-func (balance *Balance) isAllZeroBalance() bool {
+func (balance TokenBalance) isAllZeroBalance() bool {
 	balances := [3]string{balance.Frozen, balance.Free, balance.Locked}
 	for _, value := range balances {
 		value, err := strconv.ParseFloat(value, 64)
@@ -263,33 +324,11 @@ func (balance *Balance) isAllZeroBalance() bool {
 	return true
 }
 
-func (e *Error) Error() string {
-	return fmt.Sprintf("%d: %s", e.Code, e.Message)
-}
-
-// Determines Explorer transaction direction relatively to address
-func (tx *ExplorerTxs) getDirection(address string) blockatlas.Direction {
-	if address == "" {
-		return ""
+func (page Tokens) findTokenBySymbol(symbol string) (Token, bool) {
+	for _, t := range page {
+		if t.Symbol == symbol {
+			return t, true
+		}
 	}
-
-	if tx.FromAddr == address && tx.ToAddr == address {
-		return blockatlas.DirectionSelf
-	}
-	if tx.FromAddr == address && tx.ToAddr != address {
-		return blockatlas.DirectionOutgoing
-	}
-
-	return blockatlas.DirectionIncoming
-}
-
-// Determines Explorer transaction type
-func (tx *ExplorerTxs) getTransactionType() ExplorerTransactionType {
-	var txType ExplorerTransactionType
-	if tx.HasChildren == 1 {
-		txType = MultiTransferOperation
-	} else {
-		txType = SingleTransferOperation
-	}
-	return txType
+	return Token{}, false
 }

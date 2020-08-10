@@ -1,71 +1,100 @@
 package binance
 
 import (
-	"encoding/json"
 	"fmt"
+	"github.com/imroc/req"
+	"github.com/patrickmn/go-cache"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
-	"net/http"
 	"net/url"
+	"strconv"
 	"time"
 )
 
 type Client struct {
-	blockatlas.Request
+	*cache.Cache
+	url string
 }
 
-const tokensLimit = "1000"
-
-func (c *Client) fetchNodeInfo() (*NodeInfo, error) {
-	result := new(NodeInfo)
-	err := c.Get(result, "v1/node-info", nil)
-	return result, err
+func InitClient(url string) Client {
+	return Client{url: url, Cache: cache.New(5*time.Minute, 10*time.Minute)}
 }
 
-func (c *Client) fetchBlockTransactions(num int64) ([]TxV2, error) {
-	stx := new(BlockTransactions)
-	err := c.Get(stx, fmt.Sprintf("v2/transactions-in-block/%d", num), nil)
-	return stx.Txs, err
+func (c Client) FetchLatestBlockNumber() (int64, error) {
+	resp, err := req.Get(c.url+"/v1/node-info", nil)
+	if err != nil {
+		return 0, err
+	}
+	var result NodeInfoResponse
+	if err := resp.ToJSON(&result); err != nil {
+		logger.Error("URL: " + resp.Request().URL.String())
+		logger.Error("Status code: " + resp.Response().Status)
+		return 0, err
+	}
+	return int64(result.SyncInfo.LatestBlockHeight), nil
 }
 
-func (c *Client) fetchAccountMetadata(address string) (*Account, error) {
-	var result Account
-	err := c.Get(&result, fmt.Sprintf("v1/account/%s", address), nil)
-	return &result, err
+func (c Client) FetchTransactionsInBlock(blockNumber int64) (TransactionsInBlockResponse, error) {
+	resp, err := req.Get(c.url+fmt.Sprintf("/v2/transactions-in-block/%d", blockNumber), nil)
+	if err != nil {
+		return TransactionsInBlockResponse{}, err
+	}
+	var result TransactionsInBlockResponse
+	if err := resp.ToJSON(&result); err != nil {
+		logger.Error("URL: " + resp.Request().URL.String())
+		logger.Error("Status code: " + resp.Response().Status)
+		return TransactionsInBlockResponse{}, err
+	}
+	return result, nil
 }
 
-func (c *Client) fetchTokens() (*TokenList, error) {
-	stp := new(TokenList)
+func (c Client) FetchTransactionsByAddressAndTokenID(address, tokenID string) ([]Tx, error) {
+	startTime := strconv.Itoa(int(time.Now().AddDate(0, -3, 0).Unix() * 1000))
+	limit := strconv.Itoa(blockatlas.TxPerPage)
+	params := url.Values{"address": {address}, "txAsset": {tokenID}, "startTime": {startTime}, "limit": {limit}}
+	resp, err := req.Get(c.url+"/v1/transactions", params)
+	if err != nil {
+		return nil, err
+	}
+	var result TransactionsInBlockResponse
+	if err := resp.ToJSON(&result); err != nil {
+		logger.Error("URL: " + resp.Request().URL.String())
+		logger.Error("Status code: " + resp.Response().Status)
+		return nil, err
+	}
+	return result.Tx, nil
+}
+
+func (c Client) FetchAccountMeta(address string) (AccountMeta, error) {
+	resp, err := req.Get(c.url+fmt.Sprintf("/v1/account/%s", address), nil)
+	if err != nil {
+		return AccountMeta{}, err
+	}
+	var result AccountMeta
+	if err := resp.ToJSON(&result); err != nil {
+		logger.Error("URL: " + resp.Request().URL.String())
+		logger.Error("Status code: " + resp.Response().Status)
+		return AccountMeta{}, err
+	}
+	return result, nil
+}
+
+func (c Client) FetchTokens() (Tokens, error) {
+	cachedResult, ok := c.Cache.Get("tokens")
+	if ok {
+		return cachedResult.(Tokens), nil
+	}
+	result := new(Tokens)
 	query := url.Values{"limit": {tokensLimit}}
-	err := c.GetWithCache(stp, "v1/tokens", query, time.Minute*1)
-	return stp, err
-}
-
-func (c *Client) fetchTransactionHash(hash string) (*TxHashRPC, error) {
-	var result TxHashRPC
-	err := c.Get(&result, fmt.Sprintf("v1/tx/%s", hash), url.Values{"format": {"json"}})
-	return &result, err
-}
-
-func handleHTTPError(res *http.Response, desc string) error {
-	switch res.StatusCode {
-	case http.StatusBadRequest:
-		return handleAPIError(res, desc)
-	case http.StatusNotFound:
-		return blockatlas.ErrNotFound
-	case http.StatusOK:
-		return nil
-	default:
-		return errors.E("handleHTTPError error", errors.Params{"status": res.Status})
+	resp, err := req.Get(c.url+"/v1/tokens", query)
+	if err != nil {
+		return nil, err
 	}
-}
-
-func handleAPIError(res *http.Response, desc string) error {
-	var e Error
-	if json.NewDecoder(res.Body).Decode(&e) == nil && e.Message == "address is not valid" {
-		return blockatlas.ErrInvalidAddr
+	if err := resp.ToJSON(&result); err != nil {
+		logger.Error("URL: " + resp.Request().URL.String())
+		logger.Error("Status code: " + resp.Response().Status)
+		return nil, err
 	}
-	logger.Error(desc, logger.Params{"status": res.StatusCode, "code": e.Code, "message": e.Message})
-	return blockatlas.ErrSourceConn
+	c.Cache.Set("tokens", *result, cache.DefaultExpiration)
+	return *result, nil
 }
