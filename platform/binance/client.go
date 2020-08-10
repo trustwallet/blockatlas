@@ -4,8 +4,10 @@ import (
 	"fmt"
 	"github.com/imroc/req"
 	"github.com/patrickmn/go-cache"
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"net/url"
+	"strconv"
 	"time"
 )
 
@@ -47,7 +49,9 @@ func (c Client) FetchTransactionsInBlock(blockNumber int64) (TransactionsInBlock
 }
 
 func (c Client) FetchTransactionsByAddressAndTokenID(address, tokenID string) ([]Tx, error) {
-	params := url.Values{"address": {address}, "txAsset": {tokenID}}
+	startTime := strconv.Itoa(int(time.Now().AddDate(0, -3, 0).Unix() * 1000))
+	limit := strconv.Itoa(blockatlas.TxPerPage)
+	params := url.Values{"address": {address}, "txAsset": {tokenID}, "startTime": {startTime}, "limit": {limit}}
 	resp, err := req.Get(c.url+"/v1/transactions", params)
 	if err != nil {
 		return nil, err
