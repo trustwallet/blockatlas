@@ -46,8 +46,8 @@ func (c Client) FetchTransactionsInBlock(blockNumber int64) (TransactionsInBlock
 	return result, nil
 }
 
-func (c Client) FetchTransactionsByAddressAndAssetID(address, assetID string) ([]Tx, error) {
-	params := url.Values{"address": {address}, "txAsset": {assetID}}
+func (c Client) FetchTransactionsByAddressAndTokenID(address, tokenID string) ([]Tx, error) {
+	params := url.Values{"address": {address}, "txAsset": {tokenID}}
 	resp, err := req.Get(c.url+"/v1/transactions", params)
 	if err != nil {
 		return nil, err

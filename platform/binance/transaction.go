@@ -6,7 +6,7 @@ import (
 )
 
 func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
-	txsFromClient, err := p.client.FetchTransactionsByAddressAndAssetID(address, coin.Binance().Symbol)
+	txsFromClient, err := p.client.FetchTransactionsByAddressAndTokenID(address, coin.Binance().Symbol)
 	if err != nil {
 		return nil, err
 	}
@@ -14,7 +14,7 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 }
 
 func (p *Platform) GetTokenTxsByAddress(address, token string) (blockatlas.TxPage, error) {
-	txsFromClient, err := p.client.FetchTransactionsByAddressAndAssetID(address, token)
+	txsFromClient, err := p.client.FetchTransactionsByAddressAndTokenID(address, token)
 	if err != nil {
 		return nil, err
 	}
