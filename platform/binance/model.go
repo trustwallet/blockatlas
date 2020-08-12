@@ -1,7 +1,6 @@
 package binance
 
 import (
-	"encoding/json"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/numbers"
@@ -117,7 +116,8 @@ func normalizeTransactions(txs []Tx) []blockatlas.Tx {
 		var txs []blockatlas.Tx
 		switch t.TxType {
 		case CancelOrder, NewOrder:
-			txs = append(txs, normalizeOrderTransaction(t))
+			//txs = append(txs, normalizeOrderTransaction(t))
+			continue
 		case Transfer:
 			if len(t.SubTransactions) > 0 {
 				txs = normalizeMultiTransferTransaction(t)
@@ -211,36 +211,36 @@ func normalizeBaseOfTransaction(t Tx) blockatlas.Tx {
 	}
 }
 
-func normalizeOrderTransaction(t Tx) blockatlas.Tx {
-	tx := normalizeBaseOfTransaction(t)
-	tx.Type = blockatlas.TxAnyAction
-	meta := blockatlas.AnyAction{
-		Coin:     coin.Binance().ID,
-		Decimals: coin.Binance().Decimals,
-	}
-
-	data, err := getTransactionData(t.Data)
-	if err == nil {
-		base, _ := getTokenIDsFromPair(data.OrderData.Symbol)
-		meta.TokenID = base
-		meta.Value = blockatlas.Amount(numbers.FromDecimalExp(data.OrderData.Quantity, int(coin.Binance().Decimals)))
-		meta.Name = data.OrderData.Side
-		meta.Symbol = getTokenSymbolFromID(base)
-	}
-	switch t.TxType {
-	case CancelOrder:
-		meta.Title = blockatlas.KeyTitleCancelOrder
-		meta.Key = blockatlas.KeyCancelOrder
-		meta.Value = "0"
-	case NewOrder:
-		meta.Title = blockatlas.KeyTitlePlaceOrder
-		meta.Key = blockatlas.KeyPlaceOrder
-	}
-
-	tx.Meta = meta
-	tx.Direction = blockatlas.DirectionOutgoing
-	return tx
-}
+//func normalizeOrderTransaction(t Tx) blockatlas.Tx {
+//	tx := normalizeBaseOfTransaction(t)
+//	tx.Type = blockatlas.TxAnyAction
+//	meta := blockatlas.AnyAction{
+//		Coin:     coin.Binance().ID,
+//		Decimals: coin.Binance().Decimals,
+//	}
+//
+//	data, err := getTransactionData(t.Data)
+//	if err == nil {
+//		base, _ := getTokenIDsFromPair(data.OrderData.Symbol)
+//		meta.TokenID = base
+//		meta.Value = blockatlas.Amount(numbers.FromDecimalExp(data.OrderData.Quantity, int(coin.Binance().Decimals)))
+//		meta.Name = data.OrderData.Side
+//		meta.Symbol = getTokenSymbolFromID(base)
+//	}
+//	switch t.TxType {
+//	case CancelOrder:
+//		meta.Title = blockatlas.KeyTitleCancelOrder
+//		meta.Key = blockatlas.KeyCancelOrder
+//		meta.Value = "0"
+//	case NewOrder:
+//		meta.Title = blockatlas.KeyTitlePlaceOrder
+//		meta.Key = blockatlas.KeyPlaceOrder
+//	}
+//
+//	tx.Meta = meta
+//	tx.Direction = blockatlas.DirectionOutgoing
+//	return tx
+//}
 
 func normalizeTokens(srcBalance []TokenBalance, tokens Tokens) []blockatlas.Token {
 	tokensList := make([]blockatlas.Token, 0, len(srcBalance))
@@ -277,19 +277,19 @@ func normalizeToken(srcToken TokenBalance, tokens Tokens) (blockatlas.Token, boo
 	return result, true
 }
 
-func getTransactionData(rawOrderData string) (TransactionData, error) {
-	var result TransactionData
-	err := json.Unmarshal([]byte(rawOrderData), &result)
-	return result, err
-}
-
-func getTokenIDsFromPair(pair string) (string, string) {
-	result := strings.Split(pair, "_")
-	if len(result) == 1 || len(result) == 0 {
-		return pair, pair
-	}
-	return result[0], result[1]
-}
+//func getTransactionData(rawOrderData string) (TransactionData, error) {
+//	var result TransactionData
+//	err := json.Unmarshal([]byte(rawOrderData), &result)
+//	return result, err
+//}
+//
+//func getTokenIDsFromPair(pair string) (string, string) {
+//	result := strings.Split(pair, "_")
+//	if len(result) == 1 || len(result) == 0 {
+//		return pair, pair
+//	}
+//	return result[0], result[1]
+//}
 
 func getTokenSymbolFromID(tokenID string) string {
 	s := strings.Split(tokenID, "-")
