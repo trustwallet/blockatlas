@@ -117,7 +117,8 @@ func normalizeTransactions(txs []Tx) []blockatlas.Tx {
 		var txs []blockatlas.Tx
 		switch t.TxType {
 		case CancelOrder, NewOrder:
-			txs = append(txs, normalizeOrderTransaction(t))
+			//txs = append(txs, normalizeOrderTransaction(t))
+			continue
 		case Transfer:
 			if len(t.SubTransactions) > 0 {
 				txs = normalizeMultiTransferTransaction(t)
