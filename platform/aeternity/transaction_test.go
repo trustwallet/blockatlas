@@ -63,7 +63,8 @@ func testNormalize(t *testing.T, _test *test) {
 		return
 	}
 
-	tx := NormalizeTx(&srcTx)
+	tx, err := NormalizeTx(&srcTx)
+	assert.Nil(t, err)
 
 	resJSON, err := json.Marshal(&tx)
 	if err != nil {
