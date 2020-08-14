@@ -8,6 +8,7 @@ const (
 const (
 	gasTokenName     = "VeThor"
 	gasTokenSymbol   = "VTHO"
+	gasTokenAddress  = "0x0000000000000000000000000000456E65726779"
 	gasTokenDecimals = 18
 )
 
