@@ -365,6 +365,14 @@
   blockTime: 6000
   sampleAddress: 'HewiDTQv92L2bVtkziZC8ASxrFUxr6ajQ62RXAnwQ8FDVmg'
 
+- id: 354
+  symbol: DOT
+  handle: polkadot
+  name: Polkadot
+  decimals: 10
+  blockTime: 6000
+  sampleAddress: '13SkL2uACPqBzpKBh3d2n5msYNFB2QapA5vEDeKeLjG2LS3Y'
+
 - id: 501
   symbol: SOL
   handle: solana
