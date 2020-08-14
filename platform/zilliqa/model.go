@@ -77,7 +77,7 @@ func (t *TxRPC) toTx() *Tx {
 	}
 	height, err := strconv.ParseUint(t.Receipt.EpochNum, 10, 64)
 	if err != nil {
-		return nil
+		height = 0
 	}
 	gasLimt, ok := new(big.Int).SetString(t.GasLimit, 10)
 	if !ok {
@@ -107,4 +107,18 @@ type BlockTxRpc struct {
 	Error   *blockatlas.RpcError `json:"error,omitempty"`
 	Result  BlockTxs             `json:"result,omitempty"`
 	Id      string               `json:"id,omitempty"`
+}
+
+type HashesResponse struct {
+	ID      int        `json:"id"`
+	Jsonrpc string     `json:"jsonrpc"`
+	Result  [][]string `json:"result"`
+}
+
+func (h HashesResponse) Txs() []string {
+	var result []string
+	for _, subRes := range h.Result {
+		result = append(result, subRes...)
+	}
+	return result
 }
