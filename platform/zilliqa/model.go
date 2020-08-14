@@ -118,9 +118,7 @@ type HashesResponse struct {
 func (h HashesResponse) Txs() []string {
 	var result []string
 	for _, subRes := range h.Result {
-		for _, r := range subRes {
-			result = append(result, r)
-		}
+		result = append(result, subRes...)
 	}
 	return result
 }
