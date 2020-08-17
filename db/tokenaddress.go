@@ -13,13 +13,13 @@ func (i *Instance) AddAssociationToAddress(association models.AddressToTokenAsso
 }
 
 func (i *Instance) GetAssociationsByAddresses(addresses []string, ctx context.Context) ([]models.AddressToTokenAssociation, error) {
-	db := apmgorm.WithContext(ctx, i.Gorm)
-	var result []models.AddressToTokenAssociation
-	err := db.Where("address in (?)", addresses).Find(&result).Error
-	if err != nil {
-		return nil, err
-	}
-	return result, nil
+	//db := apmgorm.WithContext(ctx, i.Gorm)
+	//var result []models.AddressToTokenAssociation
+	//err := db.Where("address in (?)", addresses).Find(&result).Error
+	//if err != nil {
+	//	return nil, err
+	//}
+	return nil, nil
 }
 
 func (i *Instance) AddAssociations(associations map[string][]string, ctx context.Context) error {
