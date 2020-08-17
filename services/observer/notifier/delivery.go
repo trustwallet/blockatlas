@@ -11,10 +11,10 @@ import (
 	"go.elastic.co/apm"
 )
 
-func getTransactionsFromDelivery(delivery amqp.Delivery, ctx context.Context) (blockatlas.Txs, error) {
+func GetTransactionsFromDelivery(delivery amqp.Delivery, ctx context.Context) (blockatlas.Txs, error) {
 	var txs blockatlas.Txs
 
-	span, _ := apm.StartSpan(ctx, "getTransactionsFromDelivery", "app")
+	span, _ := apm.StartSpan(ctx, "GetTransactionsFromDelivery", "app")
 	defer span.End()
 
 	if err := json.Unmarshal(delivery.Body, &txs); err != nil {

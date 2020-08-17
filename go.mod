@@ -37,6 +37,7 @@ require (
 	github.com/swaggo/gin-swagger v1.2.0
 	github.com/swaggo/swag v1.6.7
 	github.com/trustwallet/ens-coincodec v1.0.6
+	github.com/trustwallet/watchmarket v1.1.0 // indirect
 	go.elastic.co/apm v1.8.0
 	go.elastic.co/apm/module/apmgin v1.8.0
 	go.elastic.co/apm/module/apmgorm v1.8.0

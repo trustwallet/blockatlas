@@ -24,7 +24,7 @@ func RunNotifier(database *db.Instance, delivery amqp.Delivery) {
 		}
 	}()
 
-	txs, err := getTransactionsFromDelivery(delivery, ctx)
+	txs, err := GetTransactionsFromDelivery(delivery, ctx)
 	if err != nil {
 		logger.Error("failed to get transactions", err)
 	}
@@ -34,7 +34,7 @@ func RunNotifier(database *db.Instance, delivery amqp.Delivery) {
 		allAddresses = append(allAddresses, tx.GetAddresses()...)
 	}
 
-	addresses := toUniqueAddresses(allAddresses)
+	addresses := ToUniqueAddresses(allAddresses)
 
 	if len(txs) < 1 {
 		return
