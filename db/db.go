@@ -29,6 +29,8 @@ func New(uri, env string) (*Instance, error) {
 	}
 
 	g.AutoMigrate(
+		&models.AddressTokenTracker{},
+		&models.AddressToken{},
 		&models.Subscription{},
 		&models.Tracker{},
 	)

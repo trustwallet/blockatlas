@@ -72,6 +72,20 @@ New Subscriptions --(Rabbit MQ)--> Subscriber --> DB
 
 The whole flow is not available at Atlas repo. We will have integration tests with it. Also there will be examples of all instances soon.
 
+### Tokens Cache
+
+A quite common, expensive operation is looking up the set of owned tokens for an address.
+(Referring to tokens as user-defined such as ERC-20).
+
+We remember the list of tokens for an address in the "tokens cache" tables.
+The API fills the cache lazily, whenever a request for the tokens list comes in.
+On top of that, a background routine updates the cache incrementally for existing addresses,
+by observing new token transactions.
+
+As of now, there is no garbage collection logic for the tokens cache, so it grows without bounds.
+The cache can be safely reset using SQL truncate: `TRUNCATE address_tokens, address_token_trackers;`.
+Just be sure to clean both tables at once, otherwise inconsistency arises.
+
 ## Setup
 
 ### Prerequisite
