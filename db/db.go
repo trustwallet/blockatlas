@@ -31,6 +31,7 @@ func New(uri, env string) (*Instance, error) {
 	g.AutoMigrate(
 		&models.Subscription{},
 		&models.Tracker{},
+		&models.AddressToTokenAssociation{},
 	)
 
 	i := &Instance{Gorm: g}

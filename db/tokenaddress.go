@@ -2,25 +2,17 @@ package db
 
 import (
 	"context"
-	"errors"
+	"fmt"
 	"github.com/trustwallet/blockatlas/db/models"
 	"go.elastic.co/apm/module/apmgorm"
 )
 
-func (i *Instance) AddTokenToAddress(association models.AddressToTokenAssociation, ctx context.Context) error {
+func (i *Instance) AddAssociationToAddress(association models.AddressToTokenAssociation, ctx context.Context) error {
 	db := apmgorm.WithContext(ctx, i.Gorm)
-	var result models.AddressToTokenAssociation
-	err := db.Where("address = ?", association.Address).First(&result).Error
-	if err != nil {
-		return err
-	}
-	if association.LastUpdatedBlock < result.LastUpdatedBlock {
-		return errors.New("block at db > new block ")
-	}
 	return db.Set("gorm:insert_option", "ON CONFLICT DO NOTHING").Create(&association).Error
 }
 
-func (i *Instance) GetTokensByAddresses(addresses []string, ctx context.Context) ([]models.AddressToTokenAssociation, error) {
+func (i *Instance) GetAssociationsByAddresses(addresses []string, ctx context.Context) ([]models.AddressToTokenAssociation, error) {
 	db := apmgorm.WithContext(ctx, i.Gorm)
 	var result []models.AddressToTokenAssociation
 	err := db.Where("address in (?)", addresses).Find(&result).Error
@@ -30,6 +22,16 @@ func (i *Instance) GetTokensByAddresses(addresses []string, ctx context.Context)
 	return result, nil
 }
 
-func (i *Instance) AddAssociations(associations []models.AddressToTokenAssociation, ctx context.Context) error {
-	return nil
+func (i *Instance) AddAssociations(associations map[string][]string, ctx context.Context) error {
+	db := apmgorm.WithContext(ctx, i.Gorm)
+	for address, assets := range associations {
+		var addressFromDB models.Address
+		err := db.Where("address = ?", address).First(&addressFromDB).Error
+		if err != nil {
+			// bulk create of assets
+		}
+		// add association for all assets with current address
+		fmt.Println(assets)
+	}
+	return db.Error
 }

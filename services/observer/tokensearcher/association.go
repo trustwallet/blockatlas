@@ -1,70 +1,56 @@
 package tokensearcher
 
 import (
-	"context"
-	"github.com/trustwallet/blockatlas/db"
-	"github.com/trustwallet/blockatlas/db/models"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/watchmarket/pkg/watchmarket"
+	"strconv"
 	"strings"
 )
 
-func allAssociationsToAdd(database *db.Instance, associations []models.AddressToTokenAssociation, txs map[string]blockatlas.Txs) []models.AddressToTokenAssociation {
-	var result []models.AddressToTokenAssociation
-	for _, a := range associations {
-		for address, tx := range txs {
-			if strings.EqualFold(a.Address, address) {
-				result = append(result, addAssociationsForAddress(database, a, tx)...)
-			}
-		}
+func assetsMap(txs blockatlas.Txs) map[string][]string {
+	if len(txs) == 0 {
+		return nil
 	}
-	return result
-}
-
-func addAssociationsForAddress(database *db.Instance, association models.AddressToTokenAssociation, txs blockatlas.Txs) []models.AddressToTokenAssociation {
-	var result []models.AddressToTokenAssociation
+	coin := txs[0].Coin
+	result := make(map[string][]string)
+	prefix := strconv.Itoa(int(coin)) + "_"
 	for _, tx := range txs {
-		if isTokenAlreadyAssociated(association, tx) == 2 {
-			t, _, _, ok := getInfoByMeta(tx)
-			if !ok {
-				continue
-			}
-			a, err := addAssociationForAddress(database, association.Address, t, uint(tx.Block))
-			if err != nil {
-				continue
-			}
-			result = append(result, a)
+		addresses := tx.GetAddresses()
+		tokenID, ok := tx.TokenID()
+		if !ok {
+			continue
+		}
+		assetID := watchmarket.BuildID(tx.Coin, tokenID)
+		for _, a := range addresses {
+			assetIDs := result[prefix+a]
+			result[prefix+a] = append(assetIDs, assetID)
 		}
 	}
 	return result
 }
 
-func isTokenAlreadyAssociated(association models.AddressToTokenAssociation, tx blockatlas.Tx) int {
-	token, _, _, ok := getInfoByMeta(tx)
-	if !ok {
-		return 0
+func associationsToAdd(associations map[string][]string, assetIDsMap map[string][]string) map[string][]string {
+	result := make(map[string][]string)
+	for addressFromAssociation, currentAssets := range associations {
+		for addressFromTransactions, newAssets := range assetIDsMap {
+			if strings.EqualFold(addressFromAssociation, addressFromTransactions) {
+				m := result[addressFromTransactions]
+				result[addressFromTransactions] = append(m, newAssociationsForAddress(currentAssets, newAssets)...)
+			}
+		}
 	}
-	if strings.EqualFold(token.TokenID, association.Token.TokenID) {
-		return 1
-	}
-	return 2
+	return result
 }
 
-func addAssociationForAddress(database *db.Instance, address string, token models.Token, blockNumber uint) (models.AddressToTokenAssociation, error) {
-	token, err := database.GetTokenByTokenID(token.TokenID, context.TODO())
-	if err != nil {
-		err := database.AddToken(token, context.TODO())
-		if err != nil {
-			return models.AddressToTokenAssociation{}, err
-		}
-		token, err = database.GetTokenByTokenID(token.TokenID, context.TODO())
-		if err != nil {
-			return models.AddressToTokenAssociation{}, err
+func newAssociationsForAddress(oldAssociations []string, assetIDs []string) []string {
+	var result []string
+	for _, o := range oldAssociations {
+		for _, n := range assetIDs {
+			if strings.EqualFold(o, n) {
+				continue
+			}
+			result = append(result, n)
 		}
 	}
-	association := models.AddressToTokenAssociation{
-		Address:          address,
-		TokenID:          token.ID,
-		LastUpdatedBlock: blockNumber,
-	}
-	return association, nil
+	return result
 }
