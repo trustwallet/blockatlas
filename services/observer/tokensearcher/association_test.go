@@ -2,6 +2,7 @@ package tokensearcher
 
 import (
 	"github.com/stretchr/testify/assert"
+	"github.com/trustwallet/blockatlas/db/models"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"testing"
 )
@@ -61,4 +62,39 @@ func Test_associationsToAdd(t *testing.T) {
 
 	assert.Equal(t, result["A"], []string{"5"})
 	assert.Equal(t, result["B"], []string{"9", "8"})
+}
+
+func Test_newAssociationsForAddress(t *testing.T) {
+	o := []string{"1", "2", "3"}
+	n := []string{"1", "2", "3", "4", "5"}
+
+	result := newAssociationsForAddress(o, n)
+	assert.Equal(t, result, []string{"4", "5"})
+
+	o = []string{"1", "2", "3"}
+	n = []string{"1", "2", "3"}
+
+	result = newAssociationsForAddress(o, n)
+	assert.Equal(t, len(result), len([]string{}))
+
+	o = []string{"1", "2", "3"}
+	n = []string{"1", "2"}
+
+	result = newAssociationsForAddress(o, n)
+	assert.Equal(t, len(result), len([]string{}))
+}
+
+func Test_fromModelToAssociation(t *testing.T) {
+	a := []models.AddressToTokenAssociation{
+		{Address: models.Address{Address: "A"}, Asset: models.Asset{AssetID: "1"}},
+		{Address: models.Address{Address: "A"}, Asset: models.Asset{AssetID: "2"}},
+		{Address: models.Address{Address: "A"}, Asset: models.Asset{AssetID: "3"}},
+		{Address: models.Address{Address: "B"}, Asset: models.Asset{AssetID: "2"}},
+		{Address: models.Address{Address: "B"}, Asset: models.Asset{AssetID: "3"}},
+		{Address: models.Address{Address: "B"}, Asset: models.Asset{AssetID: "4"}},
+	}
+
+	result := fromModelToAssociation(a)
+	assert.Equal(t, result["A"], []string{"1", "2", "3"})
+	assert.Equal(t, result["B"], []string{"2", "3", "4"})
 }

@@ -1,6 +1,7 @@
 package tokensearcher
 
 import (
+	"github.com/trustwallet/blockatlas/db/models"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/watchmarket/pkg/watchmarket"
 	"strconv"
@@ -52,6 +53,15 @@ func newAssociationsForAddress(oldAssociations []string, newAssociations []strin
 		if ok := oldM[n]; !ok {
 			result = append(result, n)
 		}
+	}
+	return result
+}
+
+func fromModelToAssociation(associations []models.AddressToTokenAssociation) map[string][]string {
+	result := make(map[string][]string)
+	for _, a := range associations {
+		m := result[a.Address.Address]
+		result[a.Address.Address] = append(m, a.Asset.AssetID)
 	}
 	return result
 }
