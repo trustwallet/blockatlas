@@ -505,3 +505,7 @@
   extURL: https://<eth-rpc>
   reqFile: mock/ext-api-data/eth-rpc__eth_call_data_0x3b3b57dea538cd174de170e8062c97c25c40a7ceb56aca81b12e6f5afc46f5a429999aa4.request_json
   reqField: data
+- file: mock/ext-api-data/binance-api_v1_staking_chains_0_delegators_bnb13mjfgll6sad6ucdnlf4ww5mm2l5uhdxrsu633p_delegations.json
+  mockURL: /mock/binance-api/v1/staking/chains/0/delegators/bnb13mjfgll6sad6ucdnlf4ww5mm2l5uhdxrsu633p/delegations
+  method: GET
+  extURL: https://testnet-api.binance.org/v1/staking/chains/0/delegators/bnb13mjfgll6sad6ucdnlf4ww5mm2l5uhdxrsu633p/delegations

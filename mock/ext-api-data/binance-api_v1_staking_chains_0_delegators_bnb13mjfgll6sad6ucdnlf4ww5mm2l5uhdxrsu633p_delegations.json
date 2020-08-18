@@ -1,0 +1,10 @@
+{
+    "delegations": [
+        {
+            "amount": "1000",
+            "delegator": "bnb1k9sqnmmwhy2n9lzvjymq5y0evfky7rgcqwwfp5",
+            "validator": "bnb18cy9pjf3ym239w5qec0kkeuktyywx8wpq3jt0c"
+        }
+    ],
+    "total": 3
+}
