@@ -23,5 +23,10 @@
     "handler": "iotex",
     "coin": 304,
     "address": "io1mwekae7qqwlr23220k5n9z3fmjxz72tuchra3m"
+  },
+  {
+    "handler": "binance",
+    "coin": 714,
+    "address": "bnb13mjfgll6sad6ucdnlf4ww5mm2l5uhdxrsu633p"
   }
 ]
