@@ -7,11 +7,6 @@ import (
 	"go.elastic.co/apm/module/apmgorm"
 )
 
-func (i *Instance) AddAssociationToAddress(association models.AddressToTokenAssociation, ctx context.Context) error {
-	db := apmgorm.WithContext(ctx, i.Gorm)
-	return db.Set("gorm:insert_option", "ON CONFLICT DO NOTHING").Create(&association).Error
-}
-
 func (i *Instance) GetAssociationsByAddresses(addresses []string, ctx context.Context) ([]models.AddressToTokenAssociation, error) {
 	db := apmgorm.WithContext(ctx, i.Gorm)
 

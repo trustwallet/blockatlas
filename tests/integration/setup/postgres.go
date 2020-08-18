@@ -26,6 +26,9 @@ var (
 	tables = []interface{}{
 		&models.Subscription{},
 		&models.Tracker{},
+		&models.AddressToTokenAssociation{},
+		&models.Asset{},
+		&models.Address{},
 	}
 
 	uri string

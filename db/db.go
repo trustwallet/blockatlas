@@ -37,6 +37,8 @@ func New(uri, env string) (*Instance, error) {
 		&models.Subscription{},
 		&models.Tracker{},
 		&models.AddressToTokenAssociation{},
+		&models.Asset{},
+		&models.Address{},
 	)
 
 	i := &Instance{Gorm: g}
