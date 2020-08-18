@@ -25,7 +25,7 @@ func (c *Client) GetTokens(address string) ([]Token, error) {
 
 func (c *Client) GetCurrentBlockNumber() (int64, error) {
 	var nodeInfo NodeInfo
-	err := c.Get(&nodeInfo, "", nil)
+	err := c.Get(&nodeInfo, "api", nil)
 	if err != nil {
 		return 0, err
 	}
@@ -33,13 +33,13 @@ func (c *Client) GetCurrentBlockNumber() (int64, error) {
 }
 
 func (c *Client) GetBlock(num int64) (block Block, err error) {
-	path := fmt.Sprintf("v2/block/%d", num)
+	path := fmt.Sprintf("api/v2/block/%d", num)
 	err = c.Get(&block, path, nil)
 	return
 }
 
 func (c *Client) getTransactions(address, contract string) (page *Page, err error) {
-	path := fmt.Sprintf("v2/address/%s", address)
+	path := fmt.Sprintf("api/v2/address/%s", address)
 	query := url.Values{"page": {"1"}, "pageSize": {"25"}, "details": {"txs"}, "contract": {contract}}
 	err = c.Get(&page, path, query)
 	return
