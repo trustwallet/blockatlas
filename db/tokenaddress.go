@@ -30,6 +30,41 @@ func (i *Instance) GetAssociationsByAddresses(addresses []string, ctx context.Co
 	return result, err
 }
 
+func (i *Instance) AddAssociationsForAddress(address string, assets []string, ctx context.Context) error {
+	db := apmgorm.WithContext(ctx, i.Gorm)
+	return db.Transaction(func(tx *gorm.DB) error {
+		uniqueAssets := getUniqueAssets(assets)
+
+		err := BulkInsert(db.Set("gorm:insert_option", "ON CONFLICT DO NOTHING"), uniqueAssets)
+		if err != nil {
+			return err
+		}
+
+		var dbAssets []models.Asset
+		if err := db.Find(&dbAssets).Error; err != nil {
+			return err
+		}
+
+		var dbAddress models.Address
+
+		if err := db.
+			Where("address = ?", address).
+			FirstOrCreate(&dbAddress).Error; err != nil {
+			return err
+		}
+
+		var result []models.AddressToTokenAssociation
+		for _, asset := range dbAssets {
+			result = append(result, models.AddressToTokenAssociation{
+				AddressID: dbAddress.ID,
+				AssetID:   asset.ID,
+			})
+		}
+
+		return BulkInsert(db.Set("gorm:insert_option", "ON CONFLICT DO NOTHING"), result)
+	})
+}
+
 func (i *Instance) UpdateAssociationsForExistingAddresses(associations map[string][]string, ctx context.Context) error {
 	db := apmgorm.WithContext(ctx, i.Gorm)
 	return db.Transaction(func(tx *gorm.DB) error {
