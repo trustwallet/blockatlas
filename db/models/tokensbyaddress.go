@@ -1,20 +1,25 @@
 package models
 
-import "github.com/jinzhu/gorm"
+import (
+	"github.com/jinzhu/gorm"
+	"time"
+)
 
 type (
 	Address struct {
 		gorm.Model
-		Address string `gorm:"type:varchar(128); primary_key; unique_index"`
+		Address string `gorm:"type:varchar(128); unique_index"`
 	}
 
 	Asset struct {
 		gorm.Model
-		AssetID string `gorm:"type:varchar(128); primary_key; unique_index"`
+		AssetID string `gorm:"type:varchar(128); unique_index"`
 	}
 
 	AddressToTokenAssociation struct {
-		gorm.Model
+		CreatedAt time.Time
+		UpdatedAt time.Time
+		DeletedAt *time.Time `sql:"index"`
 
 		Address   Address `gorm:"ForeignKey:AddressID; not null"`
 		AddressID uint    `sql:"index"`

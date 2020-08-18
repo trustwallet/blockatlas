@@ -34,7 +34,7 @@ func Run(database *db.Instance, delivery amqp.Delivery) {
 	}
 
 	associationsToAdd := associationsToAdd(fromModelToAssociation(associationsFromTransactions), assetsMap(txs))
-	err = database.AddAssociations(associationsToAdd, ctx)
+	err = database.UpdateAssociationsForExistingAddresses(associationsToAdd, ctx)
 	if err != nil {
 		logger.Error(err)
 		return
