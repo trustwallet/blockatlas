@@ -29,26 +29,27 @@ func assetsMap(txs blockatlas.Txs) map[string][]string {
 	return result
 }
 
-func associationsToAdd(associations map[string][]string, assetIDsMap map[string][]string) map[string][]string {
+func associationsToAdd(oldAssociations map[string][]string, newAssociations map[string][]string) map[string][]string {
 	result := make(map[string][]string)
-	for addressFromAssociation, currentAssets := range associations {
-		for addressFromTransactions, newAssets := range assetIDsMap {
-			if strings.EqualFold(addressFromAssociation, addressFromTransactions) {
-				m := result[addressFromTransactions]
-				result[addressFromTransactions] = append(m, newAssociationsForAddress(currentAssets, newAssets)...)
+	for oldAddresses, oldAssets := range oldAssociations {
+		for newAddresses, newAssets := range newAssociations {
+			if strings.EqualFold(oldAddresses, newAddresses) {
+				m := result[newAddresses]
+				result[newAddresses] = append(m, newAssociationsForAddress(oldAssets, newAssets)...)
 			}
 		}
 	}
 	return result
 }
 
-func newAssociationsForAddress(oldAssociations []string, assetIDs []string) []string {
+func newAssociationsForAddress(oldAssociations []string, newAssociations []string) []string {
 	var result []string
+	oldM := make(map[string]bool)
 	for _, o := range oldAssociations {
-		for _, n := range assetIDs {
-			if strings.EqualFold(o, n) {
-				continue
-			}
+		oldM[o] = true
+	}
+	for _, n := range newAssociations {
+		if ok := oldM[n]; !ok {
 			result = append(result, n)
 		}
 	}

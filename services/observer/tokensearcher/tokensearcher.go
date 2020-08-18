@@ -22,7 +22,7 @@ func Run(database *db.Instance, delivery amqp.Delivery) {
 		}
 	}
 
-	addresses := make([]string, 0)
+	var addresses []string
 	for _, tx := range txs {
 		addresses = append(addresses, tx.GetAddresses()...)
 	}
