@@ -7,7 +7,7 @@ import (
 	"go.elastic.co/apm/module/apmgorm"
 )
 
-func (i Instance) GetAssetsByAddressesMap(addresses []string, ctx context.Context) (map[string][]string, error) {
+func (i Instance) GetAssetsMapByAddresses(addresses []string, ctx context.Context) (map[string][]string, error) {
 	db := apmgorm.WithContext(ctx, i.Gorm)
 
 	var addressesFromDB []models.Address

@@ -10,7 +10,7 @@ import (
 	"testing"
 )
 
-func Test_GetAssetsByAddressesMap(t *testing.T) {
+func Test_GetAssetsMapByAddresses(t *testing.T) {
 	setup.CleanupPgContainer(database.Gorm)
 
 	assets := []string{"aa", "bbb", "cccc"}

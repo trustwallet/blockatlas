@@ -6,6 +6,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/trustwallet/blockatlas/api/endpoint"
 	"github.com/trustwallet/blockatlas/api/middleware"
+	"github.com/trustwallet/blockatlas/db"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/platform"
 	"time"
@@ -105,4 +106,8 @@ func RegisterDomainAPI(router gin.IRouter) {
 func RegisterBasicAPI(router gin.IRouter) {
 	router.GET("/", endpoint.GetStatus)
 	router.GET("/metrics", ginprom.PromHandler(promhttp.Handler()))
+}
+
+func RegisterTokensIndexAPI(router gin.IRouter, api blockatlas.Platform, database *db.Instance)  {
+
 }

@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
+	"github.com/trustwallet/blockatlas/db"
 	_ "github.com/trustwallet/blockatlas/docs"
 	"github.com/trustwallet/blockatlas/platform"
 )
@@ -21,6 +22,10 @@ func SetupPlatformAPI(router gin.IRouter) {
 	RegisterBatchAPI(router)
 	RegisterDomainAPI(router)
 	RegisterBasicAPI(router)
+}
+
+func SetupTokensIndexAPI(router gin.IRouter, database *db.Instance) {
+
 }
 
 func SetupSwaggerAPI(router gin.IRouter) {
