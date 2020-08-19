@@ -10,6 +10,25 @@ import (
 	"testing"
 )
 
+func Test_GetAssetsByAddressesMap(t *testing.T) {
+	setup.CleanupPgContainer(database.Gorm)
+
+	assets := []string{"aa", "bbb", "cccc"}
+
+	err := database.AddAssociationsForAddress("a", assets, context.Background())
+	assert.Nil(t, err)
+
+	err = database.AddAssociationsForAddress("b", nil, context.Background())
+	assert.Nil(t, err)
+
+	m, err := database.GetTokensByAddressesMap([]string{"a", "b"}, context.Background())
+	assert.Nil(t, err)
+	wantedMap := make(map[string][]string)
+	wantedMap["a"] = assets
+	wantedMap["b"] = []string{""}
+	assert.Equal(t, wantedMap, m)
+}
+
 func Test_AddNewAssociationForAddress(t *testing.T) {
 	setup.CleanupPgContainer(database.Gorm)
 	assets := []string{"aa", "bbb", "cccc"}

@@ -7,6 +7,44 @@ import (
 	"go.elastic.co/apm/module/apmgorm"
 )
 
+func (i Instance) GetAssetsByAddressesMap(addresses []string, ctx context.Context) (map[string][]string, error) {
+	db := apmgorm.WithContext(ctx, i.Gorm)
+
+	var addressesFromDB []models.Address
+	err := db.Where("address in (?)", addresses).Find(&addressesFromDB).Error
+	if err != nil {
+		return nil, err
+	}
+
+	addressesIDs := make([]uint, 0, len(addressesFromDB))
+	for _, a := range addressesFromDB {
+		addressesIDs = append(addressesIDs, a.ID)
+	}
+
+	var associations []models.AddressToTokenAssociation
+	err = db.
+		Preload("Address").
+		Preload("Asset").
+		Where("address_id in (?)", addressesIDs).
+		Find(&associations).Error
+	if err != nil {
+		return nil, err
+	}
+
+	result := make(map[string][]string)
+	for _, a := range associations {
+		assets := result[a.Address.Address]
+		result[a.Address.Address] = append(assets, a.Asset.AssetID)
+	}
+	for _, a := range addressesFromDB {
+		_, ok := result[a.Address]
+		if !ok {
+			result[a.Address] = []string{""}
+		}
+	}
+	return result, nil
+}
+
 func (i *Instance) GetAssociationsByAddresses(addresses []string, ctx context.Context) ([]models.AddressToTokenAssociation, error) {
 	db := apmgorm.WithContext(ctx, i.Gorm)
 
