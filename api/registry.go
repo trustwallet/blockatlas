@@ -108,6 +108,8 @@ func RegisterBasicAPI(router gin.IRouter) {
 	router.GET("/metrics", ginprom.PromHandler(promhttp.Handler()))
 }
 
-func RegisterTokensIndexAPI(router gin.IRouter, api blockatlas.Platform, database *db.Instance)  {
-
+func RegisterTokensIndexAPI(router gin.IRouter, database *db.Instance) {
+	router.POST("/v3/tokens", func(c *gin.Context) {
+		endpoint.GetTokensByAddressIndexer(c, database)
+	})
 }

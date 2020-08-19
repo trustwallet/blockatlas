@@ -133,6 +133,5 @@ func GetTokensByAddressIndexer(c *gin.Context, database *db.Instance) {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, errorResponse(errors.New("db issue")))
 		return
 	}
-
 	c.JSON(http.StatusOK, assetsByAddresses)
 }

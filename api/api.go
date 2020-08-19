@@ -25,7 +25,7 @@ func SetupPlatformAPI(router gin.IRouter) {
 }
 
 func SetupTokensIndexAPI(router gin.IRouter, database *db.Instance) {
-
+	RegisterTokensIndexAPI(router, database)
 }
 
 func SetupSwaggerAPI(router gin.IRouter) {
