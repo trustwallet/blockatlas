@@ -47,7 +47,7 @@ func (c *Client) getTransactions(address, contract string) (page *Page, err erro
 
 func (c *Client) getTokens(address string) ([]Token, error) {
 	var res Page
-	path := fmt.Sprintf("v2/address/%s", address)
+	path := fmt.Sprintf("api/v2/address/%s", address)
 	query := url.Values{"details": {"tokenBalances"}}
 	err := c.Get(&res, path, query)
 
