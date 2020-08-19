@@ -40,8 +40,8 @@ postgres:
 
 # [BNB] Binance DEX: https://www.binance.org/
 binance:
-  api: https://dex.binance.org/
-  explorer: https://explorer.binance.org/
+  api: https://dex.binance.org
+  explorer: https://explorer.binance.org
 
 # [NIM] Nimiq: https://nimiq.com
 #nimiq:
@@ -158,43 +158,43 @@ fio:
 
 # [BTC] Bitcoin: https://bitcoin.org/ (Blockbook API https://github.com/trezor/blockbook)
 bitcoin:
-  api: https://btc1.trezor.io/
+  api: https://btc1.trezor.io
 
 litecoin:
-  api: https://ltc1.trezor.io/
+  api: https://ltc1.trezor.io
 
 bitcoincash:
-  api: https://bch1.trezor.io/
+  api: https://bch1.trezor.io
 
 doge:
-  api: https://doge1.trezor.io/
+  api: https://doge1.trezor.io
 
 dash:
-  api: https://dash1.trezor.io/
+  api: https://dash1.trezor.io
 
 zcoin:
-  api: https://blockbook.zcoin.io/
+  api: https://blockbook.zcoin.io
 
 zcash:
-  api: https://zec1.trezor.io/
+  api: https://zec1.trezor.io
 
 zelcash:
-  api: https://blockbook.zel.network/
+  api: https://blockbook.zel.network
 
 viacoin:
-  api: https://blockbook.viacoin.org/
+  api: https://blockbook.viacoin.org
 
 qtum:
-  api: https://blockv3.qtum.info/
+  api: https://blockv3.qtum.info
 
 groestlcoin:
-  api: https://blockbook.groestlcoin.org/
+  api: https://blockbook.groestlcoin.org
 
 ravencoin:
-  api: https://blockbook.ravencoin.org/
+  api: https://blockbook.ravencoin.org
 
 decred:
-  api: https://blockbook.decred.org:9161/
+  api: https://blockbook.decred.org:9161
 
 algorand:
   api: https://mainnet-algorand.api.purestake.io/ps1
@@ -203,7 +203,7 @@ nano:
   api: https://nanoverse.io/api/node
 
 digibyte:
-  api: https://dgb1.trezor.io/
+  api: https://dgb1.trezor.io
 
 harmony:
   api: https://api.s0.t.hmny.io
