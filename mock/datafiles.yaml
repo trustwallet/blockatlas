@@ -18,7 +18,7 @@
   method: GET
   extURL: https://mainnet-algorand.api.purestake.io/ps1/v1/block/5478346
 - file: mock/ext-api-data/binance-api_v1_txs__address_bnb1z35wusfv8twfele77vddclka9z84ugywug48gn_txAsset_BNB.json
-  mockURL: /mock/binance-api/v1/transactions?address=bnb1z35wusfv8twfele77vddclka9z84ugywug48gn&txAsset=BNB
+  mockURL: /mock/binance-api/api/v1/transactions?address=bnb1z35wusfv8twfele77vddclka9z84ugywug48gn&txAsset=BNB
   method: GET
   extURL: https://dex.binance.org/api/v1/transactions?address=bnb1z35wusfv8twfele77vddclka9z84ugywug48gn&txAsset=BNB
 - file: mock/ext-api-data/binance-api_v1_account_bnb1jeu6gscugy6l2wyatxthkh2hmer4hzevgcmf0q
