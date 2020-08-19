@@ -26,7 +26,7 @@
   method: GET
   extURL: https://dex.binance.org/api/v1/account/bnb1jeu6gscugy6l2wyatxthkh2hmer4hzevgcmf0q
 - file: mock/ext-api-data/binance-api_v1_tokens__limit_1000_offset_0.json
-  mockURL: /mock/api/binance-api/v1/tokens?limit=1000
+  mockURL: /mock/api/binance-api/api/v1/tokens?limit=1000
   method: GET
   extURL: https://dex.binance.org/api/v1/tokens?limit=1000&offset=0
 - file: mock/ext-api-data/bitcoin-api_v2_address_bc1qrfr44n2j4czd5c9txwlnw0yj2h82x9566fglqj__details_txs.json
@@ -46,11 +46,11 @@
   method: GET
   extURL: https://<bch_rpc>/api/v2/xpub/xpub6Bq3UUphocwroXkhA9sn8ACnZpJNuwaBehgo7WbDi2DULYnvT72Uzgsv9cE5EiP8ThDYdMyZREfbpkUY4KZ88ZaUQxXciBcZ1soSi1d8xtX?details=txs&pageSize=10
 - file: mock/ext-api-data/callisto-api_tokens__address_0xc3d5b69f65027ddf48f894e6e90121293a2f6615.json
-  mockURL: /mock/callisto-api/api/tokens?address=0xc3d5b69f65027ddf48f894e6e90121293a2f6615
+  mockURL: /mock/callisto-api/tokens?address=0xc3d5b69f65027ddf48f894e6e90121293a2f6615
   method: GET
   extURL: https://<callisto_rpc>/tokens?address=0xc3d5b69f65027ddf48f894e6e90121293a2f6615
 - file: mock/ext-api-data/callisto-api_transactions__address_0x3083a7ec44ca2b038d4be4b0798152f948f0f3d7.json
-  mockURL: /mock/callisto-api/api/transactions?address=0x3083a7ec44ca2b038d4be4b0798152f948f0f3d7
+  mockURL: /mock/callisto-api/transactions?address=0x3083a7ec44ca2b038d4be4b0798152f948f0f3d7
   method: GET
   extURL: https://<callisto_rpc>/transactions?address=0x3083a7ec44ca2b038d4be4b0798152f948f0f3d7
 - file: mock/ext-api-data/cosmos-api_minting_inflation.json
@@ -86,7 +86,7 @@
   method: GET
   extURL: https://api.cosmos.network/auth/accounts/cosmos1dx27g0kzhwej0ekcf2k9hsktcxnmpl7fcehcvq
 - file: mock/ext-api-data/dash-api_v2_address_XrcbsQdrFYEzbqA9nCJi8zDtnRZzNKkCtG__details_txs.json
-  mockURL: /mock/dash-api/v2/address/XrcbsQdrFYEzbqA9nCJi8zDtnRZzNKkCtG?details=txs
+  mockURL: /mock/dash-api/api/v2/address/XrcbsQdrFYEzbqA9nCJi8zDtnRZzNKkCtG?details=txs
   method: GET
   extURL: https://dash1.trezor.io/api/v2/address/XrcbsQdrFYEzbqA9nCJi8zDtnRZzNKkCtG?details=txs&pageSize=10
 - file: mock/ext-api-data/dash-api_v2_xpub_xpub6CKAjCUKKPW7bzYEG5mzRsmzyTRp7XzauqFWNmpGVNqMqsSQpLMCN3ygEmD6ZEGVocNDrDhE7SeGot78noEWpwPDbJjfxREHC848sxNrUkD__details_txs.json
@@ -158,7 +158,7 @@
   method: GET
   extURL: https://blockbook.groestlcoin.org/api/v2/xpub/zpub6rWUMiiVPxjWVHffT8x3AfcbyDu8SZJAiuKUTBmhxT7Bvqk1WitxndDStG1qHN6XzRM7JgsaRaVccRFW3AprWk4Fpaev1N6QSp1aNnP5JPf?details=txs&pageSize=10
 - file: mock/ext-api-data/icon-api_address_txList__address_hxee691e7bccc4eb11fee922896e9f51490e62b12e_count_25.json
-  mockURL: /mock/icon-api/api/address/txList?address=hxee691e7bccc4eb11fee922896e9f51490e62b12e&count=25
+  mockURL: /mock/icon-api/address/txList?address=hxee691e7bccc4eb11fee922896e9f51490e62b12e&count=25
   method: GET
   extURL: https://tracker.icon.foundation/v3/address/txList?address=hxee691e7bccc4eb11fee922896e9f51490e62b12e&count=25
 - file: mock/ext-api-data/iotex-api_accounts_io1mwekae7qqwlr23220k5n9z3fmjxz72tuchra3m.json
@@ -258,7 +258,7 @@
   method: GET
   extURL: https://<poa_rpc>/transactions?address=0x55798eCbF17ce1241d543c22dCE46134c13b4bc0
 - file: mock/ext-api-data/qtum-api_v2_address_QZJbNrGT3cZ1J1AEHtgH3JWM7uLBNAejLZ__details_txs.json
-  mockURL: /mock/qtum-api/v2/address/QZJbNrGT3cZ1J1AEHtgH3JWM7uLBNAejLZ?details=txs
+  mockURL: /mock/qtum-api/api/v2/address/QZJbNrGT3cZ1J1AEHtgH3JWM7uLBNAejLZ?details=txs
   method: GET
   extURL: https://blockv3.qtum.info/api/v2/address/QZJbNrGT3cZ1J1AEHtgH3JWM7uLBNAejLZ?details=txs&pageSize=10
 - file: mock/ext-api-data/qtum-api_v2_xpub_xpub6CvFuU1yPwHjMekXqgEZjcQy22ZWiKgRUY6yAneNNyk1trZhV6ZBFSY8Vt2wygTXTVHBkfi4n823vm79yiw42w6xTL2UjKyh2W9V88sXoNd__details_txs.json
@@ -274,7 +274,7 @@
   method: GET
   extURL: https://blockbook.ravencoin.org/api/v2/xpub/xpub6BrkWQHMnuGcvKowEn2hpvnZ41SiCsu38mgFThKU3nMzPUN9r9C26puf18rfVdHH3nDwSkeMgsjVniNDKUk5arxekekGpNyVLsWihYAfC5B?details=txs&pageSize=10
 - file: mock/ext-api-data/ripple-api_accounts_rMQ98K56yXJbDGv49ZSmW51sLn94Xe1mu1_transactions__descending_false_limit_25_type_Payment.json
-  mockURL: /mock/ripple-api/api/accounts/rMQ98K56yXJbDGv49ZSmW51sLn94Xe1mu1/transactions?limit=25&type=Payment
+  mockURL: /mock/ripple-api/accounts/rMQ98K56yXJbDGv49ZSmW51sLn94Xe1mu1/transactions?limit=25&type=Payment
   method: GET
   extURL: https://data.ripple.com/v2/accounts/rMQ98K56yXJbDGv49ZSmW51sLn94Xe1mu1/transactions?descending=false&limit=25&type=Payment
 - file: mock/ext-api-data/stellar-api_accounts_GDKIJJIKXLOM2NRMPNQZUUYK24ZPVFC6426GZAEP3KUK6KEJLACCWNMX_payments__limit_25_order_desc.json
@@ -370,7 +370,7 @@
   method: GET
   extURL: https://nodes.wavesnodes.com/transactions/address/3PJ4q4sqriJs2y7Z45wmbLrbmV9MDecbPxD/limit/25
 - file: mock/ext-api-data/zcash-api_v2_address_t1LwLWo1Mo3s4RPtUpeyUD1eYd47inL3bwX__details_txs.json
-  mockURL: /mock/zcash-api/v2/address/t1LwLWo1Mo3s4RPtUpeyUD1eYd47inL3bwX?details=txs
+  mockURL: /mock/zcash-api/api/v2/address/t1LwLWo1Mo3s4RPtUpeyUD1eYd47inL3bwX?details=txs
   method: GET
   extURL: https://zec1.trezor.io/api/v2/address/t1LwLWo1Mo3s4RPtUpeyUD1eYd47inL3bwX?details=txs&pageSize=10
 - file: mock/ext-api-data/zcash-api_v2_xpub_xpub6CCXGBJ13akWuKSn4iU7CqQeXzLyDC2Y1Z83Mmg2xz11PX2EeZJJKRECz29iN4eHewRh8yfb7FpnCcjYbkqn6ynHnXW3jczPcJcenThfFeS__details_txs.json
@@ -394,7 +394,7 @@
   method: GET
   extURL: https://blockbook.zel.network/api/v2/xpub/xpub6C5soBeFd2uZLCcEvsqaoGXuh9UposMMfk2jSiBKMN8rJKs9NLqjPK51gWv9mYBpUY95GtHYsofwpPRdB6FJ56cEaTJGCba5GKv55wPNZNf?details=txs&pageSize=10
 - file: mock/ext-api-data/zilliqa-api_addresses_zil1l8ddxvejeam70qang54wnqkgtmlu5mwlgzy64z_txs.json
-  mockURL: /mock/zilliqa-api/api/addresses/zil1l8ddxvejeam70qang54wnqkgtmlu5mwlgzy64z/txs
+  mockURL: /mock/zilliqa-api/addresses/zil1l8ddxvejeam70qang54wnqkgtmlu5mwlgzy64z/txs
   method: GET
   extURL: https://api.viewblock.io/v1/zilliqa/addresses/zil1l8ddxvejeam70qang54wnqkgtmlu5mwlgzy64z/txs
 - file: mock/ext-api-data/fio-api_v1_chain_get_pub_address.0001.json
