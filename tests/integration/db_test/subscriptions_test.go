@@ -30,7 +30,6 @@ func TestDb_AddSubscriptionsBulk(t *testing.T) {
 		assert.Nil(t, err)
 		assert.NotNil(t, s)
 	}
-
 }
 
 func TestDb_AddSubscriptions(t *testing.T) {

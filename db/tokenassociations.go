@@ -29,26 +29,31 @@ func (i *Instance) AddAssociationsForAddress(address string, assets []string, ct
 	db := apmgorm.WithContext(ctx, i.Gorm)
 	return db.Transaction(func(tx *gorm.DB) error {
 		uniqueAssets := getUniqueAssets(assets)
+		uniqueAssetsModel := make([]models.Asset, 0, len(uniqueAssets))
+		for _, l := range uniqueAssets {
+			uniqueAssetsModel = append(uniqueAssetsModel, models.Asset{
+				AssetID: l,
+			})
+		}
 
-		err := BulkInsert(db.Set("gorm:insert_option", "ON CONFLICT DO NOTHING"), uniqueAssets)
+		err := BulkInsert(db.Set("gorm:insert_option", "ON CONFLICT DO NOTHING"), uniqueAssetsModel)
 		if err != nil {
 			return err
 		}
 
 		var dbAssets []models.Asset
-		if err := db.Find(&dbAssets).Error; err != nil {
+		err = db.Where("asset_id in (?)", uniqueAssets).Find(&dbAssets).Error
+		if err != nil {
 			return err
 		}
 
-		var dbAddress models.Address
-
-		if err := db.
-			Where("address = ?", address).
-			FirstOrCreate(&dbAddress).Error; err != nil {
+		dbAddress := models.Address{Address: address}
+		err = db.Where("address = ?", address).FirstOrCreate(&dbAddress).Error
+		if err != nil {
 			return err
 		}
 
-		var result []models.AddressToTokenAssociation
+		result := make([]models.AddressToTokenAssociation, 0, len(dbAssets))
 		for _, asset := range dbAssets {
 			result = append(result, models.AddressToTokenAssociation{
 				AddressID: dbAddress.ID,
@@ -70,14 +75,21 @@ func (i *Instance) UpdateAssociationsForExistingAddresses(associations map[strin
 		}
 
 		uniqueAssets := getUniqueAssets(assets)
+		uniqueAssetsModel := make([]models.Asset, 0, len(uniqueAssets))
+		for _, l := range uniqueAssets {
+			uniqueAssetsModel = append(uniqueAssetsModel, models.Asset{
+				AssetID: l,
+			})
+		}
 
-		err := BulkInsert(db.Set("gorm:insert_option", "ON CONFLICT DO NOTHING"), uniqueAssets)
+		err := BulkInsert(db.Set("gorm:insert_option", "ON CONFLICT DO NOTHING"), uniqueAssetsModel)
 		if err != nil {
 			return err
 		}
 
 		var dbAssets []models.Asset
-		if err := db.Find(&dbAssets).Error; err != nil {
+		err = db.Where("asset_id in (?)", uniqueAssets).Find(&dbAssets).Error
+		if err != nil {
 			return err
 		}
 
@@ -127,7 +139,7 @@ func makeMapAddress(addresses []models.Address) map[string]uint {
 	return result
 }
 
-func getUniqueAssets(assets []string) []models.Asset {
+func getUniqueAssets(assets []string) []string {
 	keys := make(map[string]bool)
 	var list []string
 	for _, entry := range assets {
@@ -136,13 +148,5 @@ func getUniqueAssets(assets []string) []models.Asset {
 			list = append(list, entry)
 		}
 	}
-
-	result := make([]models.Asset, 0, len(list))
-	for _, l := range list {
-		result = append(result, models.Asset{
-			AssetID: l,
-		})
-	}
-
-	return result
+	return list
 }

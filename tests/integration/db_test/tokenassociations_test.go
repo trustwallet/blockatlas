@@ -34,6 +34,13 @@ func Test_AddNewAssociationForAddress(t *testing.T) {
 	})
 
 	assert.Equal(t, assetIDsFromDB, assets)
+
+	err = database.AddAssociationsForAddress("b", nil, context.Background())
+	assert.Nil(t, err)
+
+	associations2, err := database.GetAssociationsByAddresses([]string{"b"}, context.Background())
+	assert.Nil(t, err)
+	assert.NotNil(t, associations2)
 }
 
 func Test_UpdateAssociationsForExistingAddresses(t *testing.T) {
@@ -85,7 +92,7 @@ func Test_UpdateAssociationsForExistingAddresses(t *testing.T) {
 	assetsB := []string{"as", "bbb", "cccc", "f"}
 
 	sort.Slice(assetsB, func(i, j int) bool {
-		return len(assetsA[i]) > len(assetsA[j])
+		return len(assetsB[i]) > len(assetsB[j])
 	})
 
 	sort.Slice(assetIDsFromDBB, func(i, j int) bool {
@@ -101,7 +108,7 @@ func Test_UpdateAssociationsForExistingAddresses(t *testing.T) {
 	for _, a := range associationsAB {
 		assetIDsFromDBAB = append(assetIDsFromDBAB, a.Asset.AssetID)
 	}
-	assetsAB := []string{"aa", "as", "bbb", "cccc", "f"}
+	assetsAB := []string{"cccc", "cccc", "bbb", "bbb", "aa", "as", "f", "f"}
 
 	sort.Slice(assetsAB, func(i, j int) bool {
 		return len(assetsAB[i]) > len(assetsAB[j])
