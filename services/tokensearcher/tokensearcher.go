@@ -5,7 +5,7 @@ import (
 	"github.com/streadway/amqp"
 	"github.com/trustwallet/blockatlas/db"
 	"github.com/trustwallet/blockatlas/pkg/logger"
-	"github.com/trustwallet/blockatlas/services/observer/notifier"
+	"github.com/trustwallet/blockatlas/services/notifier"
 	"go.elastic.co/apm"
 )
 

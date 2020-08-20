@@ -17,8 +17,8 @@ const (
 	UpdateSubscription blockatlas.SubscriptionOperation = "UpdateSubscription"
 )
 
-func RunSubscriber(database *db.Instance, delivery amqp.Delivery) {
-	tx := apm.DefaultTracer.StartTransaction("RunSubscriber", "app")
+func RunTransactionsSubscriber(database *db.Instance, delivery amqp.Delivery) {
+	tx := apm.DefaultTracer.StartTransaction("RunTransactionsSubscriber", "app")
 	defer tx.End()
 
 	ctx := apm.ContextWithTransaction(context.Background(), tx)

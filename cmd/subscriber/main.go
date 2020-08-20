@@ -8,7 +8,7 @@ import (
 	"github.com/trustwallet/blockatlas/internal"
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/logger"
-	"github.com/trustwallet/blockatlas/services/observer/subscriber"
+	"github.com/trustwallet/blockatlas/services/subscriber"
 	"time"
 )
 
@@ -53,7 +53,7 @@ func main() {
 	}
 	ctx, cancel := context.WithCancel(context.Background())
 
-	go mq.Subscriptions.RunConsumerWithCancelAndDbConn(subscriber.RunSubscriber, database, ctx)
+	go mq.Subscriptions.RunConsumerWithCancelAndDbConn(subscriber.RunTransactionsSubscriber, database, ctx)
 
 	internal.SetupGracefulShutdownForObserver(cancel)
 }

@@ -11,7 +11,7 @@ import (
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
-	"github.com/trustwallet/blockatlas/services/observer/parser"
+	"github.com/trustwallet/blockatlas/services/parser"
 	"github.com/trustwallet/blockatlas/tests/integration/setup"
 	"testing"
 	"time"

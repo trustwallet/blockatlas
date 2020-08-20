@@ -9,7 +9,7 @@ import (
 	"github.com/trustwallet/blockatlas/db/models"
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/services/observer/subscriber"
+	"github.com/trustwallet/blockatlas/services/subscriber"
 	"github.com/trustwallet/blockatlas/tests/integration/setup"
 	"io/ioutil"
 	"path/filepath"
@@ -51,7 +51,7 @@ func TestSubscriberAddSubscription(t *testing.T) {
 
 		ctx, cancel := context.WithCancel(context.Background())
 
-		go mq.RunConsumerForChannelWithCancelAndDbConn(subscriber.RunSubscriber, subscriptionChannel, database, ctx)
+		go mq.RunConsumerForChannelWithCancelAndDbConn(subscriber.RunTransactionsSubscriber, subscriptionChannel, database, ctx)
 		time.Sleep(time.Second * 2)
 		cancel()
 	}
@@ -109,7 +109,7 @@ func TestSubscriber_UpdateSubscription(t *testing.T) {
 
 		ctx, cancel := context.WithCancel(context.Background())
 
-		go mq.RunConsumerForChannelWithCancelAndDbConn(subscriber.RunSubscriber, subscriptionChannel, database, ctx)
+		go mq.RunConsumerForChannelWithCancelAndDbConn(subscriber.RunTransactionsSubscriber, subscriptionChannel, database, ctx)
 		time.Sleep(time.Second)
 		cancel()
 	}

@@ -7,7 +7,7 @@ import (
 	"github.com/trustwallet/blockatlas/internal"
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/logger"
-	"github.com/trustwallet/blockatlas/services/observer/notifier"
+	"github.com/trustwallet/blockatlas/services/notifier"
 	"time"
 )
 
