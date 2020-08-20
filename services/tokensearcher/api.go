@@ -26,5 +26,26 @@ func (i Instance) HandleTokensRequest(request map[string][]string, ctx context.C
 	if err != nil {
 		return err
 	}
+
+	addressesToRegister := getAddressesToRegister(assetsByAddresses, addresses)
+	assetsByAddressesToRegister := getAssetsForAddressesFromNodes(addressesToRegister)
+
+	err = publishNewAddressesToQueue(assetsByAddressesToRegister)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func getAddressesToRegister(assetsByAddresses map[string][]string, addressesFromRequest []string) map[string][]string {
+	return nil
+}
+
+func getAssetsForAddressesFromNodes(addresses map[string][]string) map[string][]string {
+	return nil
+}
+
+func publishNewAddressesToQueue(map[string][]string) error {
 	return nil
 }
