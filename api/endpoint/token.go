@@ -1,11 +1,9 @@
 package endpoint
 
 import (
-	"errors"
 	"github.com/gin-gonic/gin"
 	"github.com/trustwallet/blockatlas/db"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/pkg/logger"
 	"net/http"
 	"strconv"
 	"sync"
@@ -118,20 +116,11 @@ func getTokens(tokenAPI blockatlas.TokensAPI, addresses []string) blockatlas.Tok
 }
 
 func GetTokensByAddressIndexer(c *gin.Context, database *db.Instance) {
-	var query map[string]string
+	var query map[string][]string
 	if err := c.Bind(&query); err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
-	var addresses []string
-	for coinID, a := range query {
-		addresses = append(addresses, coinID+"_"+a)
-	}
-	assetsByAddresses, err := database.GetAssetsMapByAddresses(addresses, c.Request.Context())
-	if err != nil {
-		logger.Error(err)
-		c.AbortWithStatusJSON(http.StatusInternalServerError, errorResponse(errors.New("db issue")))
-		return
-	}
-	c.JSON(http.StatusOK, assetsByAddresses)
+
+	//c.JSON(http.StatusOK, assetsByAddresses)
 }
