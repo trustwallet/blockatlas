@@ -4,9 +4,9 @@ import (
 	"github.com/gin-gonic/gin"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
-	"github.com/trustwallet/blockatlas/db"
 	_ "github.com/trustwallet/blockatlas/docs"
 	"github.com/trustwallet/blockatlas/platform"
+	"github.com/trustwallet/blockatlas/services/tokensearcher"
 )
 
 func SetupPlatformAPI(router gin.IRouter) {
@@ -24,8 +24,8 @@ func SetupPlatformAPI(router gin.IRouter) {
 	RegisterBasicAPI(router)
 }
 
-func SetupTokensIndexAPI(router gin.IRouter, database *db.Instance) {
-	RegisterTokensIndexAPI(router, database)
+func SetupTokensIndexAPI(router gin.IRouter, instance tokensearcher.Instance) {
+	RegisterTokensIndexAPI(router, instance)
 }
 
 func SetupSwaggerAPI(router gin.IRouter) {

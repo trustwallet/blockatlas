@@ -6,9 +6,9 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/trustwallet/blockatlas/api/endpoint"
 	"github.com/trustwallet/blockatlas/api/middleware"
-	"github.com/trustwallet/blockatlas/db"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/platform"
+	"github.com/trustwallet/blockatlas/services/tokensearcher"
 	"time"
 )
 
@@ -108,8 +108,8 @@ func RegisterBasicAPI(router gin.IRouter) {
 	router.GET("/metrics", ginprom.PromHandler(promhttp.Handler()))
 }
 
-func RegisterTokensIndexAPI(router gin.IRouter, database *db.Instance) {
+func RegisterTokensIndexAPI(router gin.IRouter, instance tokensearcher.Instance) {
 	router.POST("/v3/tokens", func(c *gin.Context) {
-		endpoint.GetTokensByAddressIndexer(c, database)
+		endpoint.GetTokensByAddressIndexer(c, instance)
 	})
 }
