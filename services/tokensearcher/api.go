@@ -5,6 +5,7 @@ import (
 	"github.com/trustwallet/blockatlas/db"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
+	"github.com/trustwallet/watchmarket/pkg/watchmarket"
 	"strconv"
 	"strings"
 	"sync"
@@ -25,10 +26,8 @@ func (i Instance) HandleTokensRequest(request map[string][]string, ctx context.C
 	if err != nil {
 		return nil, err
 	}
-
 	addressesToRegisterByCoin := getAddressesToRegisterByCoin(assetsByAddresses, addresses)
 	assetsByAddressesToRegister := getAssetsForAddressesFromNodes(addressesToRegisterByCoin, i.apis)
-
 	err = publishNewAddressesToQueue(assetsByAddressesToRegister)
 	if err != nil {
 		logger.Error(err)
@@ -69,7 +68,6 @@ func getAddressesToRegisterByCoin(assetsByAddresses map[string][]string, address
 func getAssetsForAddressesFromNodes(addresses map[uint][]string, apis map[uint]blockatlas.TokensAPI) map[string][]string {
 	a := assetsByAddresses{Result: make(map[string][]string)}
 	var wg sync.WaitGroup
-
 	for coinID, addresses := range addresses {
 		api, ok := apis[coinID]
 		if !ok {
@@ -79,7 +77,6 @@ func getAssetsForAddressesFromNodes(addresses map[uint][]string, apis map[uint]b
 		go fetchAssetsByAddresses(api, addresses, &a, &wg)
 	}
 	wg.Wait()
-
 	return a.Result
 }
 
@@ -100,7 +97,20 @@ func getCoinIDFromAddress(address string) (string, uint, bool) {
 }
 
 func fetchAssetsByAddresses(tokenAPI blockatlas.TokensAPI, addresses []string, result *assetsByAddresses, wg *sync.WaitGroup) {
-
+	for _, a := range addresses {
+		tokens, err := tokenAPI.GetTokenListByAddress(a)
+		if err != nil {
+			logger.Error("Chain: " + tokenAPI.Coin().Handle + " Address: " + a)
+			continue
+		}
+		result.Lock()
+		for _, t := range tokens {
+			r := result.Result[a]
+			result.Result[a] = append(r, watchmarket.BuildID(t.Coin, t.TokenID))
+		}
+		result.Unlock()
+	}
+	wg.Done()
 }
 
 func getAssetsToResponse(assetsFromDB, assetsFromNodes map[string][]string, addressesFromRequest []string) map[string][]string {
