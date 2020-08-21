@@ -97,20 +97,27 @@ func getCoinIDFromAddress(address string) (string, uint, bool) {
 }
 
 func fetchAssetsByAddresses(tokenAPI blockatlas.TokensAPI, addresses []string, result *assetsByAddresses, wg *sync.WaitGroup) {
+	defer wg.Done()
+
+	var tWg sync.WaitGroup
+	tWg.Add(len(addresses))
 	for _, a := range addresses {
-		tokens, err := tokenAPI.GetTokenListByAddress(a)
-		if err != nil {
-			logger.Error("Chain: " + tokenAPI.Coin().Handle + " Address: " + a)
-			continue
-		}
-		result.Lock()
-		for _, t := range tokens {
-			r := result.Result[a]
-			result.Result[a] = append(r, watchmarket.BuildID(t.Coin, t.TokenID))
-		}
-		result.Unlock()
+		go func(address string, tWg *sync.WaitGroup) {
+			defer tWg.Done()
+			tokens, err := tokenAPI.GetTokenListByAddress(address)
+			if err != nil {
+				logger.Error("Chain: " + tokenAPI.Coin().Handle + " Address: " + address)
+				return
+			}
+			result.Lock()
+			for _, t := range tokens {
+				r := result.Result[address]
+				result.Result[address] = append(r, watchmarket.BuildID(t.Coin, t.TokenID))
+			}
+			result.Unlock()
+		}(a, &tWg)
 	}
-	wg.Done()
+	tWg.Wait()
 }
 
 func getAssetsToResponse(assetsFromDB, assetsFromNodes map[string][]string, addressesFromRequest []string) map[string][]string {
