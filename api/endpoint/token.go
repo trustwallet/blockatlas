@@ -121,6 +121,10 @@ func GetTokensByAddressIndexer(c *gin.Context, instance tokensearcher.Instance) 
 		c.AbortWithStatusJSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
-
-	//c.JSON(http.StatusOK, assetsByAddresses)
+	result, err := instance.HandleTokensRequest(query, c.Request.Context())
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+	c.JSON(http.StatusOK, result)
 }

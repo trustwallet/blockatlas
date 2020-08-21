@@ -95,8 +95,9 @@ func fetchAssetsByAddresses(tokenAPI blockatlas.TokensAPI, addresses []string, r
 			}
 			result.Lock()
 			for _, t := range tokens {
-				r := result.Result[address]
-				result.Result[address] = append(r, watchmarket.BuildID(t.Coin, t.TokenID))
+				key := strconv.Itoa(int(tokenAPI.Coin().ID)) + "_" + address
+				r := result.Result[key]
+				result.Result[key] = append(r, watchmarket.BuildID(t.Coin, t.TokenID))
 			}
 			result.Unlock()
 		}(a, &tWg)
