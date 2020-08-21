@@ -25,12 +25,12 @@ func (i Instance) HandleTokensRequest(request map[string][]string, ctx context.C
 			addresses = append(addresses, coinID+"_"+a)
 		}
 	}
-	assetsByAddressesFromDB, err := i.database.GetAssetsMapByAddresses(addresses, ctx)
+	assetsByAddresses, err := i.database.GetAssetsMapByAddresses(addresses, ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	addressesToRegisterByCoin := getAddressesToRegisterByCoin(assetsByAddressesFromDB, addresses)
+	addressesToRegisterByCoin := getAddressesToRegisterByCoin(assetsByAddresses, addresses)
 	assetsByAddressesToRegister := getAssetsForAddressesFromNodes(addressesToRegisterByCoin, i.apis)
 
 	err = publishNewAddressesToQueue(assetsByAddressesToRegister)
@@ -38,7 +38,7 @@ func (i Instance) HandleTokensRequest(request map[string][]string, ctx context.C
 		return nil, err
 	}
 
-	return getAssetsToResponse(assetsByAddressesFromDB, assetsByAddressesToRegister), nil
+	return getAssetsToResponse(assetsByAddresses, assetsByAddressesToRegister), nil
 }
 
 func getAddressesToRegisterByCoin(assetsByAddresses map[string][]string, addressesFromRequest []string) map[uint][]string {
@@ -47,8 +47,8 @@ func getAddressesToRegisterByCoin(assetsByAddresses map[string][]string, address
 	for _, a := range addressesFromRequest {
 		addressesFromRequestMap[a] = true
 	}
-	for address, _ := range assetsByAddresses {
-		_, ok := addressesFromRequestMap[address]
+	for _, address := range addressesFromRequest {
+		_, ok := assetsByAddresses[address]
 		if !ok {
 			a, coinID, ok := getCoinIDFromAddress(address)
 			if !ok {
