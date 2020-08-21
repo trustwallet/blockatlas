@@ -2,7 +2,9 @@ package tokensearcher
 
 import (
 	"context"
+	"encoding/json"
 	"github.com/trustwallet/blockatlas/db"
+	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/watchmarket/pkg/watchmarket"
@@ -14,10 +16,11 @@ import (
 type Instance struct {
 	database *db.Instance
 	apis     map[uint]blockatlas.TokensAPI
+	queue    mq.Queue
 }
 
-func Init(database *db.Instance, apis map[uint]blockatlas.TokensAPI) Instance {
-	return Instance{database: database, apis: apis}
+func Init(database *db.Instance, apis map[uint]blockatlas.TokensAPI, queue mq.Queue) Instance {
+	return Instance{database: database, apis: apis, queue: queue}
 }
 
 func (i Instance) HandleTokensRequest(request map[string][]string, ctx context.Context) (map[string][]string, error) {
@@ -26,12 +29,16 @@ func (i Instance) HandleTokensRequest(request map[string][]string, ctx context.C
 	if err != nil {
 		return nil, err
 	}
+	assetsByAddressesToRegister := make(map[string][]string)
 	addressesToRegisterByCoin := getAddressesToRegisterByCoin(assetsByAddresses, addresses)
-	assetsByAddressesToRegister := getAssetsForAddressesFromNodes(addressesToRegisterByCoin, i.apis)
-	err = publishNewAddressesToQueue(assetsByAddressesToRegister)
-	if err != nil {
-		logger.Error(err)
+	if len(addressesToRegisterByCoin) == 0 {
+		assetsByAddressesToRegister = getAssetsForAddressesFromNodes(addressesToRegisterByCoin, i.apis)
+		err = publishNewAddressesToQueue(i.queue, assetsByAddressesToRegister)
+		if err != nil {
+			logger.Error(err)
+		}
 	}
+
 	return getAssetsToResponse(assetsByAddresses, assetsByAddressesToRegister, addresses), nil
 }
 
@@ -105,7 +112,15 @@ func fetchAssetsByAddresses(tokenAPI blockatlas.TokensAPI, addresses []string, r
 	tWg.Wait()
 }
 
-func publishNewAddressesToQueue(map[string][]string) error {
+func publishNewAddressesToQueue(queue mq.Queue, message map[string][]string) error {
+	body, err := json.Marshal(message)
+	if err != nil {
+		return err
+	}
+	err = queue.Publish(body)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 

@@ -14,6 +14,10 @@ platform: [all]
 # Can be platform or swagger
 rest_api: all
 
+
+# Can be tokens or notifications
+subscriber: tokens
+
 # The transaction watcher
 observer:
   # Don't request blocks older than this
@@ -69,7 +73,7 @@ ethereum:
   api: https://localhost:4567 #(Trust-Ray API)
   blockbook_api: https://eth1.trezor.io/api
   collections_api: https://api.opensea.io
-#  collections_api_key: [opensea_api_key]
+  #  collections_api_key: [opensea_api_key]
   rpc: https://main-rpc.linkpool.io
 
 # [ETC] Ethereum Classic: https://ethereumclassic.org (Trust-Ray API)

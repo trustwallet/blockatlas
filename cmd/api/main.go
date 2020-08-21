@@ -7,6 +7,7 @@ import (
 	"github.com/trustwallet/blockatlas/db"
 	_ "github.com/trustwallet/blockatlas/docs"
 	"github.com/trustwallet/blockatlas/internal"
+	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/platform"
 	"github.com/trustwallet/blockatlas/services/tokensearcher"
@@ -41,9 +42,19 @@ func init() {
 		logger.Fatal(err)
 	}
 
+	mqHost := viper.GetString("observer.rabbitmq.uri")
+	prefetchCount := viper.GetInt("observer.rabbitmq.consumer.prefetch_count")
+	internal.InitRabbitMQ(mqHost, prefetchCount)
+
 	platform.Init(viper.GetStringSlice("platform"))
-	t = tokensearcher.Init(database, platform.TokensAPIs)
+
+	if err := mq.TokensRegistration.Declare(); err != nil {
+		logger.Fatal(err)
+	}
+	t = tokensearcher.Init(database, platform.TokensAPIs, mq.TokensRegistration)
+
 	go db.RestoreConnectionWorker(database, time.Second*10, pgUri)
+	go mq.FatalWorker(time.Second * 10)
 }
 
 func main() {
