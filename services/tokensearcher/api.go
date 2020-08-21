@@ -80,22 +80,6 @@ func getAssetsForAddressesFromNodes(addresses map[uint][]string, apis map[uint]b
 	return a.Result
 }
 
-func publishNewAddressesToQueue(map[string][]string) error {
-	return nil
-}
-
-func getCoinIDFromAddress(address string) (string, uint, bool) {
-	result := strings.Split(address, "_")
-	if len(result) != 2 {
-		return "", 0, false
-	}
-	id, err := strconv.Atoi(result[0])
-	if err != nil {
-		return "", 0, false
-	}
-	return result[1], uint(id), true
-}
-
 func fetchAssetsByAddresses(tokenAPI blockatlas.TokensAPI, addresses []string, result *assetsByAddresses, wg *sync.WaitGroup) {
 	defer wg.Done()
 
@@ -118,6 +102,22 @@ func fetchAssetsByAddresses(tokenAPI blockatlas.TokensAPI, addresses []string, r
 		}(a, &tWg)
 	}
 	tWg.Wait()
+}
+
+func publishNewAddressesToQueue(map[string][]string) error {
+	return nil
+}
+
+func getCoinIDFromAddress(address string) (string, uint, bool) {
+	result := strings.Split(address, "_")
+	if len(result) != 2 {
+		return "", 0, false
+	}
+	id, err := strconv.Atoi(result[0])
+	if err != nil {
+		return "", 0, false
+	}
+	return result[1], uint(id), true
 }
 
 func getAssetsToResponse(assetsFromDB, assetsFromNodes map[string][]string, addressesFromRequest []string) map[string][]string {

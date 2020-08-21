@@ -1,6 +1,7 @@
 package tokensearcher
 
 import (
+	"errors"
 	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
@@ -72,6 +73,9 @@ type mockedTokenAPI struct {
 }
 
 func (m mockedTokenAPI) GetTokenListByAddress(address string) (blockatlas.TokenPage, error) {
+	if address == "Y" {
+		return nil, errors.New("failed")
+	}
 	tk := blockatlas.Token{
 		Name:     "",
 		Symbol:   "",
