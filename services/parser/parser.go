@@ -23,7 +23,7 @@ type (
 	Params struct {
 		Ctx                                       context.Context
 		Api                                       blockatlas.BlockAPI
-		Queue                                     mq.Queue
+		Queue                                     []mq.Queue
 		ParsingBlocksInterval, FetchBlocksTimeout time.Duration
 		BacklogCount                              int
 		MaxBacklogBlocks                          int64
@@ -296,10 +296,12 @@ func publish(params Params, txs blockatlas.Txs, ctx context.Context) {
 		logger.Error(err, logger.Params{"coin": params.Api.Coin().Handle})
 		return
 	}
-	err = params.Queue.Publish(body)
-	if err != nil {
-		logger.Error(err, logger.Params{"coin": params.Api.Coin().Handle})
-		return
+	for _, q := range params.Queue {
+		err = q.Publish(body)
+		if err != nil {
+			logger.Error(err, logger.Params{"coin": params.Api.Coin().Handle})
+			return
+		}
 	}
 }
 
@@ -318,12 +320,7 @@ func getBlockByNumberWithRetry(attempts int, sleep time.Duration, getBlockByNumb
 			sleep = sleep + jitter/2
 
 			logger.Info("retry GetBlockByNumber",
-				logger.Params{
-					"number":   n,
-					"attempts": attempts,
-					"sleep":    sleep.String(),
-					"symbol":   symbol,
-				},
+				logger.Params{"number": n, "attempts": attempts, "sleep": sleep.String(), "symbol": symbol},
 			)
 
 			time.Sleep(sleep)

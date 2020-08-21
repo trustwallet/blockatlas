@@ -7,6 +7,7 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/services/notifier"
 	"go.elastic.co/apm"
+	"strconv"
 )
 
 func Run(database *db.Instance, delivery amqp.Delivery) {
@@ -21,10 +22,16 @@ func Run(database *db.Instance, delivery amqp.Delivery) {
 			logger.Error(err)
 		}
 	}
-
+	if len(txs) == 0 {
+		return
+	}
+	coinID := strconv.Itoa(int(txs[0].Coin))
 	var addresses []string
 	for _, tx := range txs {
 		addresses = append(addresses, tx.GetAddresses()...)
+	}
+	for i := range addresses {
+		addresses[i] = coinID + "_" + addresses[i]
 	}
 
 	associationsFromTransactions, err := database.GetAssociationsByAddresses(notifier.ToUniqueAddresses(addresses), ctx)
@@ -33,7 +40,7 @@ func Run(database *db.Instance, delivery amqp.Delivery) {
 		return
 	}
 
-	associationsToAdd := associationsToAdd(fromModelToAssociation(associationsFromTransactions), assetsMap(txs))
+	associationsToAdd := associationsToAdd(fromModelToAssociation(associationsFromTransactions), assetsMap(txs, coinID))
 	err = database.UpdateAssociationsForExistingAddresses(associationsToAdd, ctx)
 	if err != nil {
 		logger.Error(err)

@@ -4,17 +4,12 @@ import (
 	"github.com/trustwallet/blockatlas/db/models"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/watchmarket/pkg/watchmarket"
-	"strconv"
 	"strings"
 )
 
-func assetsMap(txs blockatlas.Txs) map[string][]string {
-	if len(txs) == 0 {
-		return nil
-	}
-	coin := txs[0].Coin
+func assetsMap(txs blockatlas.Txs, coinID string) map[string][]string {
 	result := make(map[string][]string)
-	prefix := strconv.Itoa(int(coin)) + "_"
+	prefix := coinID + "_"
 	for _, tx := range txs {
 		addresses := tx.GetAddresses()
 		tokenID, ok := tx.TokenID()

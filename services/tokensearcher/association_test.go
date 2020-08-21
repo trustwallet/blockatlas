@@ -39,7 +39,7 @@ func Test_assetsMap(t *testing.T) {
 		},
 	}
 
-	result := assetsMap(blockatlas.Txs{tx1, tx2, tx3})
+	result := assetsMap(blockatlas.Txs{tx1, tx2, tx3}, "60")
 	assert.Equal(t, result["60_A"], []string{"c60_tABC"})
 	assert.Equal(t, result["60_C"], []string{"c60_tABC"})
 	assert.Equal(t, result["60_D"], []string{"c60_tEFG"})

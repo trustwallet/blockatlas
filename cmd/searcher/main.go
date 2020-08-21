@@ -68,7 +68,7 @@ func main() {
 
 	ctx, cancel := context.WithCancel(context.Background())
 
-	go mq.RawTransactions.RunConsumerWithCancelAndDbConn(tokensearcher.Run, database, ctx)
+	go mq.TokensRegistration.RunConsumerWithCancelAndDbConn(tokensearcher.Run, database, ctx)
 
 	internal.SetupGracefulShutdownForObserver(cancel)
 }
