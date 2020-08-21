@@ -2,6 +2,8 @@ package tokensearcher
 
 import (
 	"github.com/stretchr/testify/assert"
+	"github.com/trustwallet/blockatlas/coin"
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"testing"
 )
 
@@ -48,4 +50,38 @@ func Test_getAssetsToResponse(t *testing.T) {
 	assert.Equal(t, []string{"1", "2", "3"}, result["60_a"])
 	assert.Equal(t, []string{"1", "3"}, result["714_b"])
 	assert.Equal(t, []string{"1", "2", "3"}, result["118_c"])
+}
+
+func Test_getAssetsForAddressesFromNodes(t *testing.T) {
+	apis := make(map[uint]blockatlas.TokensAPI)
+	mock0 := mockedTokenAPI{WantedToken: "ABC", WantedCoin: 0}
+	mock60 := mockedTokenAPI{WantedToken: "XYZ", WantedCoin: 60}
+	apis[0] = mock0
+	apis[60] = mock60
+
+	addresses := make(map[uint][]string)
+	addresses[0] = []string{"A", "B", "C"}
+	addresses[60] = []string{"X", "Y", "Z"}
+	result := getAssetsForAddressesFromNodes(addresses, apis)
+	assert.NotNil(t, result)
+}
+
+type mockedTokenAPI struct {
+	WantedCoin  uint
+	WantedToken string
+}
+
+func (m mockedTokenAPI) GetTokenListByAddress(address string) (blockatlas.TokenPage, error) {
+	tk := blockatlas.Token{
+		Name:     "",
+		Symbol:   "",
+		Decimals: 0,
+		TokenID:  m.WantedToken,
+		Coin:     m.WantedCoin,
+		Type:     "",
+	}
+	return blockatlas.TokenPage{tk}, nil
+}
+func (m mockedTokenAPI) Coin() coin.Coin {
+	return coin.Coin{ID: m.WantedCoin}
 }
