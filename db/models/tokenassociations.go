@@ -21,10 +21,10 @@ type (
 		UpdatedAt time.Time
 		DeletedAt *time.Time `sql:"index"`
 
-		Address   Address `gorm:"primary_key; ForeignKey:AddressID; not null"`
+		Address   Address `gorm:"ForeignKey:AddressID; not null"`
 		AddressID uint    `sql:"index"`
 
-		Asset   Asset `gorm:"primary_key; ForeignKey:AssetID; not null"`
+		Asset   Asset `gorm:"ForeignKey:AssetID; not null"`
 		AssetID uint  `sql:"index"`
 	}
 )

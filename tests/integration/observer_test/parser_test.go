@@ -27,7 +27,7 @@ func TestParserFetchAndPublishBlock_NormalCase(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	params.Ctx = ctx
-	params.Queue = mq.RawTransactions
+	params.Queue = []mq.Queue{mq.RawTransactions}
 
 	go parser.RunParser(params)
 

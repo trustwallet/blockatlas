@@ -21,7 +21,7 @@ func Test_GetAssetsMapByAddresses(t *testing.T) {
 	err = database.AddAssociationsForAddress("b", nil, context.Background())
 	assert.Nil(t, err)
 
-	m, err := database.GetTokensByAddressesMap([]string{"a", "b"}, context.Background())
+	m, err := database.GetAssetsMapByAddresses([]string{"a", "b"}, context.Background())
 	assert.Nil(t, err)
 	wantedMap := make(map[string][]string)
 	wantedMap["a"] = assets
