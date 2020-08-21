@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/trustwallet/blockatlas/db"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/logger"
 	"strconv"
 	"strings"
 	"sync"
@@ -19,12 +20,7 @@ func Init(database *db.Instance, apis map[uint]blockatlas.TokensAPI) Instance {
 }
 
 func (i Instance) HandleTokensRequest(request map[string][]string, ctx context.Context) (map[string][]string, error) {
-	var addresses []string
-	for coinID, requestAddresses := range request {
-		for _, a := range requestAddresses {
-			addresses = append(addresses, coinID+"_"+a)
-		}
-	}
+	addresses := getAddressesFromRequest(request)
 	assetsByAddresses, err := i.database.GetAssetsMapByAddresses(addresses, ctx)
 	if err != nil {
 		return nil, err
@@ -35,10 +31,19 @@ func (i Instance) HandleTokensRequest(request map[string][]string, ctx context.C
 
 	err = publishNewAddressesToQueue(assetsByAddressesToRegister)
 	if err != nil {
-		return nil, err
+		logger.Error(err)
 	}
+	return getAssetsToResponse(assetsByAddresses, assetsByAddressesToRegister, addresses), nil
+}
 
-	return getAssetsToResponse(assetsByAddresses, assetsByAddressesToRegister), nil
+func getAddressesFromRequest(request map[string][]string) []string {
+	var addresses []string
+	for coinID, requestAddresses := range request {
+		for _, a := range requestAddresses {
+			addresses = append(addresses, coinID+"_"+a)
+		}
+	}
+	return addresses
 }
 
 func getAddressesToRegisterByCoin(assetsByAddresses map[string][]string, addressesFromRequest []string) map[uint][]string {
@@ -98,6 +103,19 @@ func fetchAssetsByAddresses(tokenAPI blockatlas.TokensAPI, addresses []string, r
 
 }
 
-func getAssetsToResponse(assetsFromDB, assetsFromNodes map[string][]string) map[string][]string {
-	return nil
+func getAssetsToResponse(assetsFromDB, assetsFromNodes map[string][]string, addressesFromRequest []string) map[string][]string {
+	result := make(map[string][]string)
+	for _, address := range addressesFromRequest {
+		assetsFromDBForAddress, ok := assetsFromDB[address]
+		if !ok {
+			assetsFromNodesForAddress, ok := assetsFromNodes[address]
+			if !ok {
+				continue
+			}
+			result[address] = assetsFromNodesForAddress
+			continue
+		}
+		result[address] = assetsFromDBForAddress
+	}
+	return result
 }
