@@ -18,27 +18,27 @@ func Init(database *db.Instance, apis map[uint]blockatlas.TokensAPI) Instance {
 	return Instance{database: database, apis: apis}
 }
 
-func (i Instance) HandleTokensRequest(request map[string][]string, ctx context.Context) error {
+func (i Instance) HandleTokensRequest(request map[string][]string, ctx context.Context) (map[string][]string, error) {
 	var addresses []string
 	for coinID, requestAddresses := range request {
 		for _, a := range requestAddresses {
 			addresses = append(addresses, coinID+"_"+a)
 		}
 	}
-	assetsByAddresses, err := i.database.GetAssetsMapByAddresses(addresses, ctx)
+	assetsByAddressesFromDB, err := i.database.GetAssetsMapByAddresses(addresses, ctx)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	addressesToRegisterByCoin := getAddressesToRegisterByCoin(assetsByAddresses, addresses)
+	addressesToRegisterByCoin := getAddressesToRegisterByCoin(assetsByAddressesFromDB, addresses)
 	assetsByAddressesToRegister := getAssetsForAddressesFromNodes(addressesToRegisterByCoin, i.apis)
 
 	err = publishNewAddressesToQueue(assetsByAddressesToRegister)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return getAssetsToResponse(assetsByAddressesFromDB, assetsByAddressesToRegister), nil
 }
 
 func getAddressesToRegisterByCoin(assetsByAddresses map[string][]string, addressesFromRequest []string) map[uint][]string {
@@ -96,4 +96,8 @@ func getCoinIDFromAddress(address string) (string, uint, bool) {
 
 func fetchAssetsByAddresses(tokenAPI blockatlas.TokensAPI, addresses []string, result *assetsByAddresses, wg *sync.WaitGroup) {
 
+}
+
+func getAssetsToResponse(assetsFromDB, assetsFromNodes map[string][]string) map[string][]string {
+	return nil
 }
