@@ -17,32 +17,20 @@
   mockURL: /mock/algorand-api/v1/block/5478346
   method: GET
   extURL: https://mainnet-algorand.api.purestake.io/ps1/v1/block/5478346
-- file: mock/ext-api-data/binance-api_v1_txs__address_bnb1z35wusfv8twfele77vddclka9z84ugywug48gn_txAsset_BNB.json
-  mockURL: /mock/binance-api/v1/transactions?address=bnb1z35wusfv8twfele77vddclka9z84ugywug48gn&txAsset=BNB
-  method: GET
-  extURL: https://dex.binance.org/api/v1/transactions?address=bnb1z35wusfv8twfele77vddclka9z84ugywug48gn&txAsset=BNB
-- file: mock/ext-api-data/binance-api_v1_account_bnb1jeu6gscugy6l2wyatxthkh2hmer4hzevgcmf0q
-  mockURL: /mock/binance-api/v1/account/bnb1jeu6gscugy6l2wyatxthkh2hmer4hzevgcmf0q
-  method: GET
-  extURL: https://dex.binance.org/api/v1/account/bnb1jeu6gscugy6l2wyatxthkh2hmer4hzevgcmf0q
-- file: mock/ext-api-data/binance-api_v1_tokens__limit_1000_offset_0.json
-  mockURL: /mock/binance-api/v1/tokens?limit=1000
-  method: GET
-  extURL: https://dex.binance.org/api/v1/tokens?limit=1000&offset=0
 - file: mock/ext-api-data/bitcoin-api_v2_address_bc1qrfr44n2j4czd5c9txwlnw0yj2h82x9566fglqj__details_txs.json
-  mockURL: /mock/bitcoin-api/v2/address/bc1qrfr44n2j4czd5c9txwlnw0yj2h82x9566fglqj?details=txs
+  mockURL: /mock/bitcoin-api/api/v2/address/bc1qrfr44n2j4czd5c9txwlnw0yj2h82x9566fglqj?details=txs
   method: GET
   extURL: https://btc1.trezor.io/api/v2/address/bc1qrfr44n2j4czd5c9txwlnw0yj2h82x9566fglqj?details=txs&pageSize=10
 - file: mock/ext-api-data/bitcoin-api_v2_xpub_zpub6ruK9k6YGm8BRHWvTiQcrEPnFkuRDJhR7mPYzV2LDvjpLa5CuGgrhCYVZjMGcLcFqv9b2WvsFtY2Gb3xq8NVq8qhk9veozrA2W9QaWtihrC__details_txs.json
-  mockURL: /mock/bitcoin-api/v2/xpub/zpub6ruK9k6YGm8BRHWvTiQcrEPnFkuRDJhR7mPYzV2LDvjpLa5CuGgrhCYVZjMGcLcFqv9b2WvsFtY2Gb3xq8NVq8qhk9veozrA2W9QaWtihrC?details=txs
+  mockURL: /mock/bitcoin-api/api/v2/xpub/zpub6ruK9k6YGm8BRHWvTiQcrEPnFkuRDJhR7mPYzV2LDvjpLa5CuGgrhCYVZjMGcLcFqv9b2WvsFtY2Gb3xq8NVq8qhk9veozrA2W9QaWtihrC?details=txs
   method: GET
   extURL: https://btc1.trezor.io/api/v2/xpub/zpub6ruK9k6YGm8BRHWvTiQcrEPnFkuRDJhR7mPYzV2LDvjpLa5CuGgrhCYVZjMGcLcFqv9b2WvsFtY2Gb3xq8NVq8qhk9veozrA2W9QaWtihrC?details=txs&pageSize=10
 - file: mock/ext-api-data/bitcoincash-api_v2_address_bitcoincash_qq07l6rr5lsdm3m80qxw80ku2ex0tj76vvsxpvmgme__details_txs.json
-  mockURL: /mock/bitcoincash-api/v2/address/bitcoincash:qq07l6rr5lsdm3m80qxw80ku2ex0tj76vvsxpvmgme?details=txs
+  mockURL: /mock/bitcoincash-api/api/v2/address/bitcoincash:qq07l6rr5lsdm3m80qxw80ku2ex0tj76vvsxpvmgme?details=txs
   method: GET
   extURL: https://<bch_rpc>/v2/address/bitcoincash:qq07l6rr5lsdm3m80qxw80ku2ex0tj76vvsxpvmgme?details=txs&pageSize=5
 - file: mock/ext-api-data/bitcoincash-api_v2_xpub_xpub6Bq3UUphocwroXkhA9sn8ACnZpJNuwaBehgo7WbDi2DULYnvT72Uzgsv9cE5EiP8ThDYdMyZREfbpkUY4KZ88ZaUQxXciBcZ1soSi1d8xtX__details_txs.json
-  mockURL: /mock/bitcoincash-api/v2/xpub/xpub6Bq3UUphocwroXkhA9sn8ACnZpJNuwaBehgo7WbDi2DULYnvT72Uzgsv9cE5EiP8ThDYdMyZREfbpkUY4KZ88ZaUQxXciBcZ1soSi1d8xtX?details=txs
+  mockURL: /mock/bitcoincash-api/api/v2/xpub/xpub6Bq3UUphocwroXkhA9sn8ACnZpJNuwaBehgo7WbDi2DULYnvT72Uzgsv9cE5EiP8ThDYdMyZREfbpkUY4KZ88ZaUQxXciBcZ1soSi1d8xtX?details=txs
   method: GET
   extURL: https://<bch_rpc>/api/v2/xpub/xpub6Bq3UUphocwroXkhA9sn8ACnZpJNuwaBehgo7WbDi2DULYnvT72Uzgsv9cE5EiP8ThDYdMyZREfbpkUY4KZ88ZaUQxXciBcZ1soSi1d8xtX?details=txs&pageSize=10
 - file: mock/ext-api-data/callisto-api_tokens__address_0xc3d5b69f65027ddf48f894e6e90121293a2f6615.json
@@ -86,35 +74,35 @@
   method: GET
   extURL: https://api.cosmos.network/auth/accounts/cosmos1dx27g0kzhwej0ekcf2k9hsktcxnmpl7fcehcvq
 - file: mock/ext-api-data/dash-api_v2_address_XrcbsQdrFYEzbqA9nCJi8zDtnRZzNKkCtG__details_txs.json
-  mockURL: /mock/dash-api/v2/address/XrcbsQdrFYEzbqA9nCJi8zDtnRZzNKkCtG?details=txs
+  mockURL: /mock/dash-api/api/v2/address/XrcbsQdrFYEzbqA9nCJi8zDtnRZzNKkCtG?details=txs
   method: GET
   extURL: https://dash1.trezor.io/api/v2/address/XrcbsQdrFYEzbqA9nCJi8zDtnRZzNKkCtG?details=txs&pageSize=10
 - file: mock/ext-api-data/dash-api_v2_xpub_xpub6CKAjCUKKPW7bzYEG5mzRsmzyTRp7XzauqFWNmpGVNqMqsSQpLMCN3ygEmD6ZEGVocNDrDhE7SeGot78noEWpwPDbJjfxREHC848sxNrUkD__details_txs.json
-  mockURL: /mock/dash-api/v2/xpub/xpub6CKAjCUKKPW7bzYEG5mzRsmzyTRp7XzauqFWNmpGVNqMqsSQpLMCN3ygEmD6ZEGVocNDrDhE7SeGot78noEWpwPDbJjfxREHC848sxNrUkD?details=txs
+  mockURL: /mock/dash-api/api/v2/xpub/xpub6CKAjCUKKPW7bzYEG5mzRsmzyTRp7XzauqFWNmpGVNqMqsSQpLMCN3ygEmD6ZEGVocNDrDhE7SeGot78noEWpwPDbJjfxREHC848sxNrUkD?details=txs
   method: GET
   extURL: https://dash1.trezor.io/api/v2/xpub/xpub6CKAjCUKKPW7bzYEG5mzRsmzyTRp7XzauqFWNmpGVNqMqsSQpLMCN3ygEmD6ZEGVocNDrDhE7SeGot78noEWpwPDbJjfxREHC848sxNrUkD?details=txs&pageSize=10
 - file: mock/ext-api-data/decred-api_v2_address_DsTxPUVFxXeNgu5fzozr4mTR4tqqMaKcvpY__details_txs.json
-  mockURL: /mock/decred-api/v2/address/DsTxPUVFxXeNgu5fzozr4mTR4tqqMaKcvpY?details=txs
+  mockURL: /mock/decred-api/api/v2/address/DsTxPUVFxXeNgu5fzozr4mTR4tqqMaKcvpY?details=txs
   method: GET
   extURL: https://blockbook.decred.org:9161/api/v2/address/DsTxPUVFxXeNgu5fzozr4mTR4tqqMaKcvpY?details=txs&pageSize=10
 - file: mock/ext-api-data/decred-api_v2_xpub_dpubZFf1tYMxcku9nvDRxnYdE4yrEESrkuQFRq5RwA4KoYQKpDSRszN2emePTwLgfQpd4mZHGrHbQkKPZdjH1BcopomXRnr5Gt43rjpNEfeuJLN__details_txs.json
-  mockURL: /mock/decred-api/v2/xpub/dpubZFf1tYMxcku9nvDRxnYdE4yrEESrkuQFRq5RwA4KoYQKpDSRszN2emePTwLgfQpd4mZHGrHbQkKPZdjH1BcopomXRnr5Gt43rjpNEfeuJLN?details=txs
+  mockURL: /mock/decred-api/api/v2/xpub/dpubZFf1tYMxcku9nvDRxnYdE4yrEESrkuQFRq5RwA4KoYQKpDSRszN2emePTwLgfQpd4mZHGrHbQkKPZdjH1BcopomXRnr5Gt43rjpNEfeuJLN?details=txs
   method: GET
   extURL: https://blockbook.decred.org:9161/api/v2/xpub/dpubZFf1tYMxcku9nvDRxnYdE4yrEESrkuQFRq5RwA4KoYQKpDSRszN2emePTwLgfQpd4mZHGrHbQkKPZdjH1BcopomXRnr5Gt43rjpNEfeuJLN?details=txs&pageSize=10
 - file: mock/ext-api-data/digibyte-api_v2_address_DEs1RJKuASSjfphFJdxX9eidrjWewMZgAi__details_txs.json
-  mockURL: /mock/digibyte-api/v2/address/DEs1RJKuASSjfphFJdxX9eidrjWewMZgAi?details=txs
+  mockURL: /mock/digibyte-api/api/v2/address/DEs1RJKuASSjfphFJdxX9eidrjWewMZgAi?details=txs
   method: GET
   extURL: https://dgb1.trezor.io/api/v2/address/DEs1RJKuASSjfphFJdxX9eidrjWewMZgAi?details=txs&pageSize=10
 - file: mock/ext-api-data/digibyte-api_v2_xpub_zpub6ricE56nzsDeTAVo4w68vQQ3tRvR6C18JjKVsgbiRFjEawGV9SuS2gfkpm5qFxjbTNPPuvAA3cqRsxNHxFwVnpYD2Lawjtb3wowbFdwmjow__details_txs.json
-  mockURL: /mock/digibyte-api/v2/xpub/zpub6ricE56nzsDeTAVo4w68vQQ3tRvR6C18JjKVsgbiRFjEawGV9SuS2gfkpm5qFxjbTNPPuvAA3cqRsxNHxFwVnpYD2Lawjtb3wowbFdwmjow?details=txs
+  mockURL: /mock/digibyte-api/api/v2/xpub/zpub6ricE56nzsDeTAVo4w68vQQ3tRvR6C18JjKVsgbiRFjEawGV9SuS2gfkpm5qFxjbTNPPuvAA3cqRsxNHxFwVnpYD2Lawjtb3wowbFdwmjow?details=txs
   method: GET
   extURL: https://dgb1.trezor.io/api/v2/xpub/zpub6ricE56nzsDeTAVo4w68vQQ3tRvR6C18JjKVsgbiRFjEawGV9SuS2gfkpm5qFxjbTNPPuvAA3cqRsxNHxFwVnpYD2Lawjtb3wowbFdwmjow?details=txs&pageSize=10
 - file: mock/ext-api-data/doge-api_v2_address_D5dAUAx3Ezg1q4dRgzKTBsxp4VJietWkDh__details_txs.json
-  mockURL: /mock/doge-api/v2/address/D5dAUAx3Ezg1q4dRgzKTBsxp4VJietWkDh?details=txs
+  mockURL: /mock/doge-api/api/v2/address/D5dAUAx3Ezg1q4dRgzKTBsxp4VJietWkDh?details=txs
   method: GET
   extURL: https://doge1.trezor.io/api/v2/address/D5dAUAx3Ezg1q4dRgzKTBsxp4VJietWkDh?details=txs&pageSize=10
 - file: mock/ext-api-data/doge-api_v2_xpub_dgub8rceyfsEvGDexmvJcBqiKBrmuxWGgYJxHjtbouHTwTfQrCQcMjxyNf6vUPY4dUp23QtReFy6WGedutBk9XUaYNupUqVAZcweqGhfsudUELN__details_txs.json
-  mockURL: /mock/doge-api/v2/xpub/dgub8rceyfsEvGDexmvJcBqiKBrmuxWGgYJxHjtbouHTwTfQrCQcMjxyNf6vUPY4dUp23QtReFy6WGedutBk9XUaYNupUqVAZcweqGhfsudUELN?details=txs
+  mockURL: /mock/doge-api/api/v2/xpub/dgub8rceyfsEvGDexmvJcBqiKBrmuxWGgYJxHjtbouHTwTfQrCQcMjxyNf6vUPY4dUp23QtReFy6WGedutBk9XUaYNupUqVAZcweqGhfsudUELN?details=txs
   method: GET
   extURL: https://doge1.trezor.io/api/v2/xpub/dgub8rceyfsEvGDexmvJcBqiKBrmuxWGgYJxHjtbouHTwTfQrCQcMjxyNf6vUPY4dUp23QtReFy6WGedutBk9XUaYNupUqVAZcweqGhfsudUELN?details=txs&pageSize=10
 - file: mock/ext-api-data/eth-api_tokens__address_0x0875BCab22dE3d02402bc38aEe4104e1239374a7.json
@@ -126,11 +114,11 @@
   method: GET
   extURL: https://localhost:4567/transactions?address=0x0875BCab22dE3d02402bc38aEe4104e1239374a7
 - file: mock/ext-api-data/eth-blockbook-api_v2_address_0x0875BCab22dE3d02402bc38aEe4104e1239374a7__details_tokenBalances.json
-  mockURL: /mock/eth-blockbook-api/v2/address/0x0875BCab22dE3d02402bc38aEe4104e1239374a7?details=tokenBalances
+  mockURL: /mock/eth-blockbook-api/api/v2/address/0x0875BCab22dE3d02402bc38aEe4104e1239374a7?details=tokenBalances
   method: GET
   extURL: https://<eth_blockbook_api>/api/v2/address/0x0875BCab22dE3d02402bc38aEe4104e1239374a7?details=tokenBalances
 - file: mock/ext-api-data/eth-blockbook-api_v2_address_0x0875BCab22dE3d02402bc38aEe4104e1239374a7__details_txs.json
-  mockURL: /mock/eth-blockbook-api/v2/address/0x0875BCab22dE3d02402bc38aEe4104e1239374a7?details=txs
+  mockURL: /mock/eth-blockbook-api/api/v2/address/0x0875BCab22dE3d02402bc38aEe4104e1239374a7?details=txs
   method: GET
   extURL: https://<eth_blockbook_api>/api/v2/address/0x0875BCab22dE3d02402bc38aEe4104e1239374a7?details=txs&pageSize=10
 - file: mock/ext-api-data/ethclassic-api_tokens__address_0xa12105efa0663147bddee178f6a741ac15676b79.json
@@ -150,11 +138,11 @@
   method: GET
   extURL: https://<go_rpc>/transactions?address=0xEd7F2e81B0264177e0df8f275f97Fd74Fa51A896
 - file: mock/ext-api-data/groestlcoin-api_v2_address_33Ym3fecmWaHD19jymYt6fGd9TqSDQFfQj__details_txs.json
-  mockURL: /mock/groestlcoin-api/v2/address/33Ym3fecmWaHD19jymYt6fGd9TqSDQFfQj?details=txs
+  mockURL: /mock/groestlcoin-api/api/v2/address/33Ym3fecmWaHD19jymYt6fGd9TqSDQFfQj?details=txs
   method: GET
   extURL: https://blockbook.groestlcoin.org/api/v2/address/33Ym3fecmWaHD19jymYt6fGd9TqSDQFfQj?details=txs&pageSize=10
 - file: mock/ext-api-data/groestlcoin-api_v2_xpub_zpub6rWUMiiVPxjWVHffT8x3AfcbyDu8SZJAiuKUTBmhxT7Bvqk1WitxndDStG1qHN6XzRM7JgsaRaVccRFW3AprWk4Fpaev1N6QSp1aNnP5JPf__details_txs.json
-  mockURL: /mock/groestlcoin-api/v2/xpub/zpub6rWUMiiVPxjWVHffT8x3AfcbyDu8SZJAiuKUTBmhxT7Bvqk1WitxndDStG1qHN6XzRM7JgsaRaVccRFW3AprWk4Fpaev1N6QSp1aNnP5JPf?details=txs
+  mockURL: /mock/groestlcoin-api/api/v2/xpub/zpub6rWUMiiVPxjWVHffT8x3AfcbyDu8SZJAiuKUTBmhxT7Bvqk1WitxndDStG1qHN6XzRM7JgsaRaVccRFW3AprWk4Fpaev1N6QSp1aNnP5JPf?details=txs
   method: GET
   extURL: https://blockbook.groestlcoin.org/api/v2/xpub/zpub6rWUMiiVPxjWVHffT8x3AfcbyDu8SZJAiuKUTBmhxT7Bvqk1WitxndDStG1qHN6XzRM7JgsaRaVccRFW3AprWk4Fpaev1N6QSp1aNnP5JPf?details=txs&pageSize=10
 - file: mock/ext-api-data/icon-api_address_txList__address_hxee691e7bccc4eb11fee922896e9f51490e62b12e_count_25.json
@@ -226,11 +214,11 @@
   method: GET
   extURL: https://horizon-block-explorer.kininfrastructure.com/transactions/eb070218bfde8c48af6071432bc9f19b7690b9dc50535cc135f67ea046e70bed
 - file: mock/ext-api-data/litecoin-api_v2_address_ltc1qpm594ntjq6ayqjngf6t9td2dxtey9d7985eept__details_txs.json
-  mockURL: /mock/litecoin-api/v2/address/ltc1qpm594ntjq6ayqjngf6t9td2dxtey9d7985eept?details=txs
+  mockURL: /mock/litecoin-api/api/v2/address/ltc1qpm594ntjq6ayqjngf6t9td2dxtey9d7985eept?details=txs
   method: GET
   extURL: https://ltc1.trezor.io/api/v2/address/ltc1qpm594ntjq6ayqjngf6t9td2dxtey9d7985eept?details=txs&pageSize=10
 - file: mock/ext-api-data/litecoin-api_v2_xpub_zpub6rpF5Uxuz4KKWePLorSz2QrHMmk1iiZvGUGgtSHpor8yiGekyRuWf5ZNmf6GUKB4v3ibQDuZp5v8RnjEGq58kR3WPtGPn8Lrg677MQ8YeKu__details_txs.json
-  mockURL: /mock/litecoin-api/v2/xpub/zpub6rpF5Uxuz4KKWePLorSz2QrHMmk1iiZvGUGgtSHpor8yiGekyRuWf5ZNmf6GUKB4v3ibQDuZp5v8RnjEGq58kR3WPtGPn8Lrg677MQ8YeKu?details=txs
+  mockURL: /mock/litecoin-api/api/v2/xpub/zpub6rpF5Uxuz4KKWePLorSz2QrHMmk1iiZvGUGgtSHpor8yiGekyRuWf5ZNmf6GUKB4v3ibQDuZp5v8RnjEGq58kR3WPtGPn8Lrg677MQ8YeKu?details=txs
   method: GET
   extURL: https://ltc1.trezor.io/api/v2/xpub/zpub6rpF5Uxuz4KKWePLorSz2QrHMmk1iiZvGUGgtSHpor8yiGekyRuWf5ZNmf6GUKB4v3ibQDuZp5v8RnjEGq58kR3WPtGPn8Lrg677MQ8YeKu?details=txs&pageSize=10
 - file: mock/ext-api-data/nebulas-api_tx__a_n1RCYwrpLMpSpUCQ8QUDzGRg6B2PnY8R94a_p_0.json
@@ -258,19 +246,19 @@
   method: GET
   extURL: https://<poa_rpc>/transactions?address=0x55798eCbF17ce1241d543c22dCE46134c13b4bc0
 - file: mock/ext-api-data/qtum-api_v2_address_QZJbNrGT3cZ1J1AEHtgH3JWM7uLBNAejLZ__details_txs.json
-  mockURL: /mock/qtum-api/v2/address/QZJbNrGT3cZ1J1AEHtgH3JWM7uLBNAejLZ?details=txs
+  mockURL: /mock/qtum-api/api/v2/address/QZJbNrGT3cZ1J1AEHtgH3JWM7uLBNAejLZ?details=txs
   method: GET
   extURL: https://blockv3.qtum.info/api/v2/address/QZJbNrGT3cZ1J1AEHtgH3JWM7uLBNAejLZ?details=txs&pageSize=10
 - file: mock/ext-api-data/qtum-api_v2_xpub_xpub6CvFuU1yPwHjMekXqgEZjcQy22ZWiKgRUY6yAneNNyk1trZhV6ZBFSY8Vt2wygTXTVHBkfi4n823vm79yiw42w6xTL2UjKyh2W9V88sXoNd__details_txs.json
-  mockURL: /mock/qtum-api/v2/xpub/xpub6CvFuU1yPwHjMekXqgEZjcQy22ZWiKgRUY6yAneNNyk1trZhV6ZBFSY8Vt2wygTXTVHBkfi4n823vm79yiw42w6xTL2UjKyh2W9V88sXoNd?details=txs
+  mockURL: /mock/qtum-api/api/v2/xpub/xpub6CvFuU1yPwHjMekXqgEZjcQy22ZWiKgRUY6yAneNNyk1trZhV6ZBFSY8Vt2wygTXTVHBkfi4n823vm79yiw42w6xTL2UjKyh2W9V88sXoNd?details=txs
   method: GET
   extURL: https://blockv3.qtum.info/api/v2/xpub/xpub6CvFuU1yPwHjMekXqgEZjcQy22ZWiKgRUY6yAneNNyk1trZhV6ZBFSY8Vt2wygTXTVHBkfi4n823vm79yiw42w6xTL2UjKyh2W9V88sXoNd?details=txs&pageSize=10
 - file: mock/ext-api-data/ravencoin-api_v2_address_RGkwvrUors8DtmhKy5bddFwRCTZaunjpvo__details_txs.json
-  mockURL: /mock/ravencoin-api/v2/address/RGkwvrUors8DtmhKy5bddFwRCTZaunjpvo?details=txs
+  mockURL: /mock/ravencoin-api/api/v2/address/RGkwvrUors8DtmhKy5bddFwRCTZaunjpvo?details=txs
   method: GET
   extURL: https://blockbook.ravencoin.org/api/v2/address/RGkwvrUors8DtmhKy5bddFwRCTZaunjpvo?details=txs&pageSize=10
 - file: mock/ext-api-data/ravencoin-api_v2_xpub_xpub6BrkWQHMnuGcvKowEn2hpvnZ41SiCsu38mgFThKU3nMzPUN9r9C26puf18rfVdHH3nDwSkeMgsjVniNDKUk5arxekekGpNyVLsWihYAfC5B__details_txs.json
-  mockURL: /mock/ravencoin-api/v2/xpub/xpub6BrkWQHMnuGcvKowEn2hpvnZ41SiCsu38mgFThKU3nMzPUN9r9C26puf18rfVdHH3nDwSkeMgsjVniNDKUk5arxekekGpNyVLsWihYAfC5B?details=txs
+  mockURL: /mock/ravencoin-api/api/v2/xpub/xpub6BrkWQHMnuGcvKowEn2hpvnZ41SiCsu38mgFThKU3nMzPUN9r9C26puf18rfVdHH3nDwSkeMgsjVniNDKUk5arxekekGpNyVLsWihYAfC5B?details=txs
   method: GET
   extURL: https://blockbook.ravencoin.org/api/v2/xpub/xpub6BrkWQHMnuGcvKowEn2hpvnZ41SiCsu38mgFThKU3nMzPUN9r9C26puf18rfVdHH3nDwSkeMgsjVniNDKUk5arxekekGpNyVLsWihYAfC5B?details=txs&pageSize=10
 - file: mock/ext-api-data/ripple-api_accounts_rMQ98K56yXJbDGv49ZSmW51sLn94Xe1mu1_transactions__descending_false_limit_25_type_Payment.json
@@ -358,11 +346,11 @@
   method: GET
   extURL: https://vethor-pubnode.digonchain.com/transactions/0x702edd54bd4e13e0012798cc8b2dfa52f7150173945103d203fae26b8e3d2ed7
 - file: mock/ext-api-data/viacoin-api_v2_address_VdMPvn7vUTSzbYjiMDs1jku9wAh1Ri2Y1A__details_txs.json
-  mockURL: /mock/viacoin-api/v2/address/VdMPvn7vUTSzbYjiMDs1jku9wAh1Ri2Y1A?details=txs
+  mockURL: /mock/viacoin-api/api/v2/address/VdMPvn7vUTSzbYjiMDs1jku9wAh1Ri2Y1A?details=txs
   method: GET
   extURL: https://blockbook.viacoin.org/api/v2/address/VdMPvn7vUTSzbYjiMDs1jku9wAh1Ri2Y1A?details=txs&pageSize=10
 - file: mock/ext-api-data/viacoin-api_v2_xpub_zpub6qVn6ubhK9tfepuABqy8wBXXn3qUZTbpqyNBqLyqakqTrZZD9rXZ3L5MZ945g8Mu7vmMSbC7vfLtLatTgxAnVJ8ECCtwmKqCo6TJm2ZsFJK__details_txs.json
-  mockURL: /mock/viacoin-api/v2/xpub/zpub6qVn6ubhK9tfepuABqy8wBXXn3qUZTbpqyNBqLyqakqTrZZD9rXZ3L5MZ945g8Mu7vmMSbC7vfLtLatTgxAnVJ8ECCtwmKqCo6TJm2ZsFJK?details=txs
+  mockURL: /mock/viacoin-api/api/v2/xpub/zpub6qVn6ubhK9tfepuABqy8wBXXn3qUZTbpqyNBqLyqakqTrZZD9rXZ3L5MZ945g8Mu7vmMSbC7vfLtLatTgxAnVJ8ECCtwmKqCo6TJm2ZsFJK?details=txs
   method: GET
   extURL: https://blockbook.viacoin.org/api/v2/xpub/zpub6qVn6ubhK9tfepuABqy8wBXXn3qUZTbpqyNBqLyqakqTrZZD9rXZ3L5MZ945g8Mu7vmMSbC7vfLtLatTgxAnVJ8ECCtwmKqCo6TJm2ZsFJK?details=txs&pageSize=10
 - file: mock/ext-api-data/waves-api_transactions_address_3PJ4q4sqriJs2y7Z45wmbLrbmV9MDecbPxD_limit_25.json
@@ -370,27 +358,27 @@
   method: GET
   extURL: https://nodes.wavesnodes.com/transactions/address/3PJ4q4sqriJs2y7Z45wmbLrbmV9MDecbPxD/limit/25
 - file: mock/ext-api-data/zcash-api_v2_address_t1LwLWo1Mo3s4RPtUpeyUD1eYd47inL3bwX__details_txs.json
-  mockURL: /mock/zcash-api/v2/address/t1LwLWo1Mo3s4RPtUpeyUD1eYd47inL3bwX?details=txs
+  mockURL: /mock/zcash-api/api/v2/address/t1LwLWo1Mo3s4RPtUpeyUD1eYd47inL3bwX?details=txs
   method: GET
   extURL: https://zec1.trezor.io/api/v2/address/t1LwLWo1Mo3s4RPtUpeyUD1eYd47inL3bwX?details=txs&pageSize=10
 - file: mock/ext-api-data/zcash-api_v2_xpub_xpub6CCXGBJ13akWuKSn4iU7CqQeXzLyDC2Y1Z83Mmg2xz11PX2EeZJJKRECz29iN4eHewRh8yfb7FpnCcjYbkqn6ynHnXW3jczPcJcenThfFeS__details_txs.json
-  mockURL: /mock/zcash-api/v2/xpub/xpub6CCXGBJ13akWuKSn4iU7CqQeXzLyDC2Y1Z83Mmg2xz11PX2EeZJJKRECz29iN4eHewRh8yfb7FpnCcjYbkqn6ynHnXW3jczPcJcenThfFeS?details=txs
+  mockURL: /mock/zcash-api/api/v2/xpub/xpub6CCXGBJ13akWuKSn4iU7CqQeXzLyDC2Y1Z83Mmg2xz11PX2EeZJJKRECz29iN4eHewRh8yfb7FpnCcjYbkqn6ynHnXW3jczPcJcenThfFeS?details=txs
   method: GET
   extURL: https://zec1.trezor.io/api/v2/xpub/xpub6CCXGBJ13akWuKSn4iU7CqQeXzLyDC2Y1Z83Mmg2xz11PX2EeZJJKRECz29iN4eHewRh8yfb7FpnCcjYbkqn6ynHnXW3jczPcJcenThfFeS?details=txs&pageSize=10
 - file: mock/ext-api-data/zcoin-api_v2_address_a8EF4cpenEgEn9hm2NL5KfFK1UmSZZaQVn__details_txs.json
-  mockURL: /mock/zcoin-api/v2/address/a8EF4cpenEgEn9hm2NL5KfFK1UmSZZaQVn?details=txs
+  mockURL: /mock/zcoin-api/api/v2/address/a8EF4cpenEgEn9hm2NL5KfFK1UmSZZaQVn?details=txs
   method: GET
   extURL: https://blockbook.zcoin.io/api/v2/address/a8EF4cpenEgEn9hm2NL5KfFK1UmSZZaQVn?details=txs&pageSize=10
 - file: mock/ext-api-data/zcoin-api_v2_xpub_xpub6Cgu6WtTyo99pRtTabwscog2ncj4BUbTWzk7bt7habdLYwgnXLEWH3TuR1789QSTPVsPjLMa2KQzHffyZHTkLQQyRxeEBmWHaETS2btF5fK__details_txs.json
-  mockURL: /mock/zcoin-api/v2/xpub/xpub6Cgu6WtTyo99pRtTabwscog2ncj4BUbTWzk7bt7habdLYwgnXLEWH3TuR1789QSTPVsPjLMa2KQzHffyZHTkLQQyRxeEBmWHaETS2btF5fK?details=txs
+  mockURL: /mock/zcoin-api/api/v2/xpub/xpub6Cgu6WtTyo99pRtTabwscog2ncj4BUbTWzk7bt7habdLYwgnXLEWH3TuR1789QSTPVsPjLMa2KQzHffyZHTkLQQyRxeEBmWHaETS2btF5fK?details=txs
   method: GET
   extURL: https://blockbook.zcoin.io/api/v2/xpub/xpub6Cgu6WtTyo99pRtTabwscog2ncj4BUbTWzk7bt7habdLYwgnXLEWH3TuR1789QSTPVsPjLMa2KQzHffyZHTkLQQyRxeEBmWHaETS2btF5fK?details=txs&pageSize=10
 - file: mock/ext-api-data/zelcash-api_v2_address_t1JKRwXGfKTGfPV1z48rvoLyabk31z3xwHa__details_txs.json
-  mockURL: /mock/zelcash-api/v2/address/t1JKRwXGfKTGfPV1z48rvoLyabk31z3xwHa?details=txs
+  mockURL: /mock/zelcash-api/api/v2/address/t1JKRwXGfKTGfPV1z48rvoLyabk31z3xwHa?details=txs
   method: GET
   extURL: https://blockbook.zel.network/api/v2/address/t1JKRwXGfKTGfPV1z48rvoLyabk31z3xwHa?details=txs&&pageSize=10
 - file: mock/ext-api-data/zelcash-api_v2_xpub_xpub6C5soBeFd2uZLCcEvsqaoGXuh9UposMMfk2jSiBKMN8rJKs9NLqjPK51gWv9mYBpUY95GtHYsofwpPRdB6FJ56cEaTJGCba5GKv55wPNZNf__details_txs.json
-  mockURL: /mock/zelcash-api/v2/xpub/xpub6C5soBeFd2uZLCcEvsqaoGXuh9UposMMfk2jSiBKMN8rJKs9NLqjPK51gWv9mYBpUY95GtHYsofwpPRdB6FJ56cEaTJGCba5GKv55wPNZNf?details=txs
+  mockURL: /mock/zelcash-api/api/v2/xpub/xpub6C5soBeFd2uZLCcEvsqaoGXuh9UposMMfk2jSiBKMN8rJKs9NLqjPK51gWv9mYBpUY95GtHYsofwpPRdB6FJ56cEaTJGCba5GKv55wPNZNf?details=txs
   method: GET
   extURL: https://blockbook.zel.network/api/v2/xpub/xpub6C5soBeFd2uZLCcEvsqaoGXuh9UposMMfk2jSiBKMN8rJKs9NLqjPK51gWv9mYBpUY95GtHYsofwpPRdB6FJ56cEaTJGCba5GKv55wPNZNf?details=txs&pageSize=10
 - file: mock/ext-api-data/zilliqa-api_addresses_zil1l8ddxvejeam70qang54wnqkgtmlu5mwlgzy64z_txs.json
