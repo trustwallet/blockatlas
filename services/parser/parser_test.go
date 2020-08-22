@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas/coin"
+	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"sync"
 	"testing"
@@ -45,7 +46,7 @@ func TestFetchBlocks(t *testing.T) {
 	params := Params{
 		Ctx:                   nil,
 		Api:                   getMockedBlockAPI(),
-		Queue:                 "",
+		Queue:                 []mq.Queue{""},
 		ParsingBlocksInterval: 0,
 		FetchBlocksTimeout:    0,
 		BacklogCount:          0,
