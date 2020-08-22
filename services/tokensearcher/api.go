@@ -7,10 +7,15 @@ import (
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
-	"github.com/trustwallet/watchmarket/pkg/watchmarket"
 	"strconv"
 	"strings"
 	"sync"
+)
+
+type (
+	AddressesByCoin map[uint][]string
+	AssetsByAddress map[string][]string
+	Request         map[string][]string
 )
 
 type Instance struct {
@@ -23,26 +28,26 @@ func Init(database *db.Instance, apis map[uint]blockatlas.TokensAPI, queue mq.Qu
 	return Instance{database: database, apis: apis, queue: queue}
 }
 
-func (i Instance) HandleTokensRequest(request map[string][]string, ctx context.Context) (map[string][]string, error) {
+func (i Instance) HandleTokensRequest(request Request, ctx context.Context) (AssetsByAddress, error) {
 	addresses := getAddressesFromRequest(request)
-	assetsByAddresses, err := i.database.GetAssetsMapByAddresses(addresses, ctx)
+	dbAssetsMap, err := i.database.GetAssetsMapByAddresses(addresses, ctx)
 	if err != nil {
 		return nil, err
 	}
-	assetsByAddressesToRegister := make(map[string][]string)
-	addressesToRegisterByCoin := getAddressesToRegisterByCoin(assetsByAddresses, addresses)
-	if len(addressesToRegisterByCoin) == 0 {
-		assetsByAddressesToRegister = getAssetsForAddressesFromNodes(addressesToRegisterByCoin, i.apis)
-		err = publishNewAddressesToQueue(i.queue, assetsByAddressesToRegister)
+	assetsByAddress := make(AssetsByAddress)
+	addressesByCoin := getAddressesToRegisterByCoin(dbAssetsMap, addresses)
+	if len(addressesByCoin) == 0 {
+		assetsByAddress = getAssetsByAddressFromNodes(addressesByCoin, i.apis)
+		err = publishNewAddressesToQueue(i.queue, assetsByAddress)
 		if err != nil {
 			logger.Error(err)
 		}
 	}
 
-	return getAssetsToResponse(assetsByAddresses, assetsByAddressesToRegister, addresses), nil
+	return getAssetsToResponse(dbAssetsMap, assetsByAddress, addresses), nil
 }
 
-func getAddressesFromRequest(request map[string][]string) []string {
+func getAddressesFromRequest(request Request) []string {
 	var addresses []string
 	for coinID, requestAddresses := range request {
 		for _, a := range requestAddresses {
@@ -52,30 +57,30 @@ func getAddressesFromRequest(request map[string][]string) []string {
 	return addresses
 }
 
-func getAddressesToRegisterByCoin(assetsByAddresses map[string][]string, addressesFromRequest []string) map[uint][]string {
-	addressesToRegisterByCoin := make(map[uint][]string)
+func getAddressesToRegisterByCoin(assetsByAddresses AssetsByAddress, addresses []string) AddressesByCoin {
+	addressesByCoin := make(AddressesByCoin)
 	addressesFromRequestMap := make(map[string]bool)
-	for _, a := range addressesFromRequest {
+	for _, a := range addresses {
 		addressesFromRequestMap[a] = true
 	}
-	for _, address := range addressesFromRequest {
+	for _, address := range addresses {
 		_, ok := assetsByAddresses[address]
 		if !ok {
 			a, coinID, ok := getCoinIDFromAddress(address)
 			if !ok {
 				continue
 			}
-			currentAddresses := addressesToRegisterByCoin[coinID]
-			addressesToRegisterByCoin[coinID] = append(currentAddresses, a)
+			currentAddresses := addressesByCoin[coinID]
+			addressesByCoin[coinID] = append(currentAddresses, a)
 		}
 	}
-	return addressesToRegisterByCoin
+	return addressesByCoin
 }
 
-func getAssetsForAddressesFromNodes(addresses map[uint][]string, apis map[uint]blockatlas.TokensAPI) map[string][]string {
-	a := assetsByAddresses{Result: make(map[string][]string)}
+func getAssetsByAddressFromNodes(addressesByCoin AddressesByCoin, apis map[uint]blockatlas.TokensAPI) AssetsByAddress {
+	a := NodesResponse{AssetsByAddress: make(AssetsByAddress)}
 	var wg sync.WaitGroup
-	for coinID, addresses := range addresses {
+	for coinID, addresses := range addressesByCoin {
 		api, ok := apis[coinID]
 		if !ok {
 			continue
@@ -84,10 +89,10 @@ func getAssetsForAddressesFromNodes(addresses map[uint][]string, apis map[uint]b
 		go fetchAssetsByAddresses(api, addresses, &a, &wg)
 	}
 	wg.Wait()
-	return a.Result
+	return a.AssetsByAddress
 }
 
-func fetchAssetsByAddresses(tokenAPI blockatlas.TokensAPI, addresses []string, result *assetsByAddresses, wg *sync.WaitGroup) {
+func fetchAssetsByAddresses(tokenAPI blockatlas.TokensAPI, addresses []string, result *NodesResponse, wg *sync.WaitGroup) {
 	defer wg.Done()
 
 	var tWg sync.WaitGroup
@@ -100,28 +105,18 @@ func fetchAssetsByAddresses(tokenAPI blockatlas.TokensAPI, addresses []string, r
 				logger.Error("Chain: " + tokenAPI.Coin().Handle + " Address: " + address)
 				return
 			}
-			result.Lock()
-			for _, t := range tokens {
-				key := strconv.Itoa(int(tokenAPI.Coin().ID)) + "_" + address
-				r := result.Result[key]
-				result.Result[key] = append(r, watchmarket.BuildID(t.Coin, t.TokenID))
-			}
-			result.Unlock()
+			result.UpdateAssetsByAddress(tokens, int(tokenAPI.Coin().ID), address)
 		}(a, &tWg)
 	}
 	tWg.Wait()
 }
 
-func publishNewAddressesToQueue(queue mq.Queue, message map[string][]string) error {
+func publishNewAddressesToQueue(queue mq.Queue, message AssetsByAddress) error {
 	body, err := json.Marshal(message)
 	if err != nil {
 		return err
 	}
-	err = queue.Publish(body)
-	if err != nil {
-		return err
-	}
-	return nil
+	return queue.Publish(body)
 }
 
 func getCoinIDFromAddress(address string) (string, uint, bool) {
@@ -136,19 +131,19 @@ func getCoinIDFromAddress(address string) (string, uint, bool) {
 	return result[1], uint(id), true
 }
 
-func getAssetsToResponse(assetsFromDB, assetsFromNodes map[string][]string, addressesFromRequest []string) map[string][]string {
+func getAssetsToResponse(dbAssetsMap, nodesAssetsMap AssetsByAddress, addresses []string) map[string][]string {
 	result := make(map[string][]string)
-	for _, address := range addressesFromRequest {
-		assetsFromDBForAddress, ok := assetsFromDB[address]
+	for _, address := range addresses {
+		dbAddresses, ok := dbAssetsMap[address]
 		if !ok {
-			assetsFromNodesForAddress, ok := assetsFromNodes[address]
+			nodesAssets, ok := nodesAssetsMap[address]
 			if !ok {
 				continue
 			}
-			result[address] = assetsFromNodesForAddress
+			result[address] = nodesAssets
 			continue
 		}
-		result[address] = assetsFromDBForAddress
+		result[address] = dbAddresses
 	}
 	return result
 }
