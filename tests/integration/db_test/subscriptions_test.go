@@ -5,6 +5,7 @@ package db_test
 import (
 	"context"
 	"github.com/stretchr/testify/assert"
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/tests/integration/setup"
 	"testing"
 )
@@ -25,193 +26,89 @@ func TestDb_AddSubscriptionsBulk(t *testing.T) {
 	}
 }
 
-//
-//func TestDb_AddSubscriptions(t *testing.T) {
-//	setup.CleanupPgContainer(database.Gorm)
-//	var subscriptions []models.NotificationSubscription
-//
-//	subscriptions = append(subscriptions, models.NotificationSubscription{
-//		Coin:    60,
-//		Address: "testAddr",
-//	})
-//
-//	subscriptions = append(subscriptions, models.NotificationSubscription{
-//		Coin:    61,
-//		Address: "testAddr2",
-//	})
-//
-//	subscriptions = append(subscriptions, models.NotificationSubscription{
-//		Coin:    62,
-//		Address: "testAddr3",
-//	})
-//
-//	assert.Nil(t, database.AddSubscriptions(subscriptions, context.Background()))
-//
-//	subs, err := database.GetSubscriptions(60, []string{"testAddr"}, context.Background())
-//	assert.Nil(t, err)
-//	assert.NotNil(t, subs)
-//	assert.Equal(t, 1, len(subs))
-//	assert.Equal(t, subscriptions[0].Coin, subs[0].Coin)
-//	assert.Equal(t, subscriptions[0].Address, subs[0].Address)
-//
-//	subs, err = database.GetSubscriptions(61, []string{"testAddr2"}, context.Background())
-//	assert.Nil(t, err)
-//	assert.NotNil(t, subs)
-//	assert.Equal(t, 1, len(subs))
-//	assert.Equal(t, subscriptions[1].Coin, subs[0].Coin)
-//	assert.Equal(t, subscriptions[1].Address, subs[0].Address)
-//
-//	subs, err = database.GetSubscriptions(62, []string{"testAddr3"}, context.Background())
-//	assert.Nil(t, err)
-//	assert.NotNil(t, subs)
-//	assert.Equal(t, 1, len(subs))
-//	assert.Equal(t, subscriptions[2].Coin, subs[0].Coin)
-//	assert.Equal(t, subscriptions[2].Address, subs[0].Address)
-//}
-//
-//func TestDb_AddSubscriptionsWithRewrite(t *testing.T) {
-//	setup.CleanupPgContainer(database.Gorm)
-//
-//	var subscriptions []models.NotificationSubscription
-//	subscriptions = append(subscriptions, models.NotificationSubscription{
-//		Coin:    60,
-//		Address: "testAddr",
-//	})
-//
-//	subscriptions = append(subscriptions, models.NotificationSubscription{
-//		Coin:    714,
-//		Address: "testAddr",
-//	})
-//
-//	subscriptions = append(subscriptions, models.NotificationSubscription{
-//		Coin:    144,
-//		Address: "testAddr",
-//	})
-//
-//	assert.Nil(t, database.AddSubscriptions(subscriptions, context.Background()))
-//
-//	subs60, err := database.GetSubscriptions(60, []string{"testAddr"}, context.Background())
-//	assert.Nil(t, err)
-//	assert.NotNil(t, subs60)
-//	assert.Equal(t, 1, len(subs60))
-//	assert.Equal(t, subscriptions[0].Coin, subs60[0].Coin)
-//	assert.Equal(t, subscriptions[0].Address, subs60[0].Address)
-//
-//	subs714, err := database.GetSubscriptions(714, []string{"testAddr"}, context.Background())
-//	assert.Nil(t, err)
-//	assert.NotNil(t, subs714)
-//	assert.Equal(t, 1, len(subs714))
-//	assert.Equal(t, subscriptions[1].Coin, subs714[0].Coin)
-//	assert.Equal(t, subscriptions[1].Address, subs714[0].Address)
-//
-//	subs144, err := database.GetSubscriptions(144, []string{"testAddr"}, context.Background())
-//	assert.Nil(t, err)
-//	assert.NotNil(t, subs144)
-//	assert.Equal(t, 1, len(subs144))
-//	assert.Equal(t, subscriptions[2].Coin, subs144[0].Coin)
-//	assert.Equal(t, subscriptions[2].Address, subs144[0].Address)
-//
-//	subscriptions = append(subscriptions, models.NotificationSubscription{
-//		Coin:    60,
-//		Address: "testAddr2",
-//	})
-//
-//	subscriptions = append(subscriptions, models.NotificationSubscription{
-//		Coin:    714,
-//		Address: "testAddr2",
-//	})
-//
-//	subscriptions = append(subscriptions, models.NotificationSubscription{
-//		Coin:    144,
-//		Address: "testAddr2",
-//	})
-//
-//	assert.Nil(t, database.AddSubscriptions(subscriptions, context.Background()))
-//
-//	subs2N60, err := database.GetSubscriptions(60, []string{"testAddr2"}, context.Background())
-//	assert.Nil(t, err)
-//	assert.Nil(t, err)
-//	assert.NotNil(t, subs2N60)
-//	assert.Equal(t, 1, len(subs2N60))
-//	assert.Equal(t, subscriptions[3].Coin, subs2N60[0].Coin)
-//	assert.Equal(t, subscriptions[3].Address, subs2N60[0].Address)
-//
-//	subs2N714, err := database.GetSubscriptions(714, []string{"testAddr2"}, context.Background())
-//	assert.Nil(t, err)
-//	assert.Nil(t, err)
-//	assert.NotNil(t, subs2N714)
-//	assert.Equal(t, 1, len(subs2N714))
-//	assert.Equal(t, subscriptions[4].Coin, subs2N714[0].Coin)
-//	assert.Equal(t, subscriptions[4].Address, subs2N714[0].Address)
-//
-//	subs2N114, err := database.GetSubscriptions(144, []string{"testAddr2"}, context.Background())
-//	assert.Nil(t, err)
-//	assert.Nil(t, err)
-//	assert.NotNil(t, subs2N114)
-//	assert.Equal(t, 1, len(subs2N114))
-//	assert.Equal(t, subscriptions[5].Coin, subs2N114[0].Coin)
-//	assert.Equal(t, subscriptions[5].Address, subs2N114[0].Address)
-//}
-//
-//func TestDb_FindSubscriptions(t *testing.T) {
-//	setup.CleanupPgContainer(database.Gorm)
-//
-//	var subscriptionsA []blockatlas.Subscription
-//	subscriptionsA = append(subscriptionsA, blockatlas.Subscription{
-//		Coin:    60,
-//		Address: "etherAddress",
-//	})
-//
-//	subscriptionsA = append(subscriptionsA, blockatlas.Subscription{
-//		Coin:    714,
-//		Address: "binanceAddress",
-//	})
-//
-//	subscriptionsA = append(subscriptionsA, blockatlas.Subscription{
-//		Coin:    148,
-//		Address: "AtomAddress",
-//	})
-//
-//	subscriptionsA = append(subscriptionsA, blockatlas.Subscription{
-//		Coin:    144,
-//		Address: "XLMAddress",
-//	})
-//
-//	subscriptionsA = append(subscriptionsA, blockatlas.Subscription{
-//		Coin:    61,
-//		Address: "ETCAddress",
-//	})
-//
-//	assert.Nil(t, database.AddSubscriptions(subscriber.ToSubscriptionData(subscriptionsA), context.Background()))
-//
-//	var subscriptionsB []blockatlas.Subscription
-//
-//	for _, sub := range subscriptionsA {
-//		subscriptionsB = append(subscriptionsB, sub)
-//	}
-//	assert.Nil(t, database.AddSubscriptions(subscriber.ToSubscriptionData(subscriptionsB), context.Background()))
-//
-//	returnedSubs, err := database.GetSubscriptions(60, []string{"etherAddress"}, context.Background())
-//	assert.Nil(t, err)
-//	assert.Equal(t, 1, len(returnedSubs))
-//
-//	returnedSubs, err = database.GetSubscriptions(714, []string{"binanceAddress"}, context.Background())
-//	assert.Nil(t, err)
-//	assert.Equal(t, 1, len(returnedSubs))
-//
-//	returnedSubs, err = database.GetSubscriptions(144, []string{"XLMAddress"}, context.Background())
-//	assert.Nil(t, err)
-//	assert.Equal(t, 1, len(returnedSubs))
-//
-//	returnedSubs, err = database.GetSubscriptions(148, []string{"AtomAddress"}, context.Background())
-//	assert.Nil(t, err)
-//	assert.Equal(t, 1, len(returnedSubs))
-//
-//	returnedSubs, err = database.GetSubscriptions(61, []string{"ETCAddress"}, context.Background())
-//	assert.Nil(t, err)
-//	assert.Equal(t, 1, len(returnedSubs))
-//}
-//
+func TestDb_AddSubscriptions(t *testing.T) {
+	setup.CleanupPgContainer(database.Gorm)
+
+	assert.Nil(t, database.AddSubscriptionsForNotifications([]string{"60_testAddr", "60_testAddr2", "60_testAddr3"}, context.Background()))
+
+	subs, err := database.GetSubscriptionsForNotifications([]string{"60_testAddr"}, context.Background())
+	assert.Nil(t, err)
+	assert.NotNil(t, subs)
+	assert.Equal(t, 1, len(subs))
+	assert.Equal(t, "60_testAddr", subs[0].Address.Address)
+
+	subs, err = database.GetSubscriptionsForNotifications([]string{"60_testAddr2"}, context.Background())
+	assert.Nil(t, err)
+	assert.NotNil(t, subs)
+	assert.Equal(t, 1, len(subs))
+	assert.Equal(t, "60_testAddr2", subs[0].Address.Address)
+
+	subs, err = database.GetSubscriptionsForNotifications([]string{"60_testAddr3"}, context.Background())
+	assert.Nil(t, err)
+	assert.NotNil(t, subs)
+	assert.Equal(t, 1, len(subs))
+	assert.Equal(t, "60_testAddr3", subs[0].Address.Address)
+}
+
+func TestDb_FindSubscriptions(t *testing.T) {
+	setup.CleanupPgContainer(database.Gorm)
+
+	var subscriptionsA []blockatlas.Subscription
+	subscriptionsA = append(subscriptionsA, blockatlas.Subscription{
+		Coin:    60,
+		Address: "etherAddress",
+	})
+
+	subscriptionsA = append(subscriptionsA, blockatlas.Subscription{
+		Coin:    714,
+		Address: "binanceAddress",
+	})
+
+	subscriptionsA = append(subscriptionsA, blockatlas.Subscription{
+		Coin:    148,
+		Address: "AtomAddress",
+	})
+
+	subscriptionsA = append(subscriptionsA, blockatlas.Subscription{
+		Coin:    144,
+		Address: "XLMAddress",
+	})
+
+	subscriptionsA = append(subscriptionsA, blockatlas.Subscription{
+		Coin:    61,
+		Address: "ETCAddress",
+	})
+
+	assert.Nil(t, database.AddSubscriptions(subscriber.ToSubscriptionData(subscriptionsA), context.Background()))
+
+	var subscriptionsB []blockatlas.Subscription
+
+	for _, sub := range subscriptionsA {
+		subscriptionsB = append(subscriptionsB, sub)
+	}
+	assert.Nil(t, database.AddSubscriptions(subscriber.ToSubscriptionData(subscriptionsB), context.Background()))
+
+	returnedSubs, err := database.GetSubscriptions(60, []string{"etherAddress"}, context.Background())
+	assert.Nil(t, err)
+	assert.Equal(t, 1, len(returnedSubs))
+
+	returnedSubs, err = database.GetSubscriptions(714, []string{"binanceAddress"}, context.Background())
+	assert.Nil(t, err)
+	assert.Equal(t, 1, len(returnedSubs))
+
+	returnedSubs, err = database.GetSubscriptions(144, []string{"XLMAddress"}, context.Background())
+	assert.Nil(t, err)
+	assert.Equal(t, 1, len(returnedSubs))
+
+	returnedSubs, err = database.GetSubscriptions(148, []string{"AtomAddress"}, context.Background())
+	assert.Nil(t, err)
+	assert.Equal(t, 1, len(returnedSubs))
+
+	returnedSubs, err = database.GetSubscriptions(61, []string{"ETCAddress"}, context.Background())
+	assert.Nil(t, err)
+	assert.Equal(t, 1, len(returnedSubs))
+}
+
 //func TestDb_DeleteSubscriptions(t *testing.T) {
 //	setup.CleanupPgContainer(database.Gorm)
 //	var subscriptions []models.NotificationSubscription

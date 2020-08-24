@@ -29,7 +29,7 @@ func (i *Instance) GetSubscriptionsForNotifications(addresses []string, ctx cont
 	if err != nil {
 		return nil, err
 	}
-	return nil, nil
+	return subscriptionsDataList, nil
 }
 
 func (i *Instance) AddSubscriptionsForNotifications(addresses []string, ctx context.Context) error {
@@ -53,7 +53,7 @@ func (i *Instance) AddSubscriptionsForNotifications(addresses []string, ctx cont
 		}
 
 		var addressesFromDB []models.Address
-		err = db.Where("address in (?)", addressesFromDB).Find(&addressesFromDB).Error
+		err = db.Where("address in (?)", uniqueAddresses).Find(&addressesFromDB).Error
 		if err != nil {
 			return err
 		}
