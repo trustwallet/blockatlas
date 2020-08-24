@@ -24,9 +24,9 @@ var (
 	}
 
 	tables = []interface{}{
-		&models.Subscription{},
+		&models.Notification{},
 		&models.Tracker{},
-		&models.AddressToTokenAssociation{},
+		&models.AddressToAssetAssociation{},
 		&models.Asset{},
 		&models.Address{},
 	}

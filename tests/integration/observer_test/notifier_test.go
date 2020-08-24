@@ -44,7 +44,7 @@ var (
 func TestNotifier(t *testing.T) {
 	setup.CleanupPgContainer(database.Gorm)
 
-	err := database.AddSubscriptions([]models.Subscription{{Coin: 714, Address: "tbnb1ttyn4csghfgyxreu7lmdu3lcplhqhxtzced45a"}}, context.Background())
+	err := database.AddSubscriptions([]models.Notification{{Coin: 714, Address: "tbnb1ttyn4csghfgyxreu7lmdu3lcplhqhxtzced45a"}}, context.Background())
 	assert.Nil(t, err)
 
 	err = produceTxs(txs)

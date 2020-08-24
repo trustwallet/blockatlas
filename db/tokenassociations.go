@@ -21,7 +21,7 @@ func (i Instance) GetAssetsMapByAddresses(addresses []string, ctx context.Contex
 		addressesIDs = append(addressesIDs, a.ID)
 	}
 
-	var associations []models.AddressToTokenAssociation
+	var associations []models.AddressToAssetAssociation
 	err = db.
 		Preload("Address").
 		Preload("Asset").
@@ -45,7 +45,7 @@ func (i Instance) GetAssetsMapByAddresses(addresses []string, ctx context.Contex
 	return result, nil
 }
 
-func (i *Instance) GetAssociationsByAddresses(addresses []string, ctx context.Context) ([]models.AddressToTokenAssociation, error) {
+func (i *Instance) GetAssociationsByAddresses(addresses []string, ctx context.Context) ([]models.AddressToAssetAssociation, error) {
 	db := apmgorm.WithContext(ctx, i.Gorm)
 
 	addressesSubQuery := db.Table("addresses").
@@ -53,7 +53,7 @@ func (i *Instance) GetAssociationsByAddresses(addresses []string, ctx context.Co
 		Where("address in (?)", addresses).
 		QueryExpr()
 
-	var result []models.AddressToTokenAssociation
+	var result []models.AddressToAssetAssociation
 	err := db.
 		Preload("Address").
 		Preload("Asset").
@@ -91,9 +91,9 @@ func (i *Instance) AddAssociationsForAddress(address string, assets []string, ct
 			return err
 		}
 
-		result := make([]models.AddressToTokenAssociation, 0, len(dbAssets))
+		result := make([]models.AddressToAssetAssociation, 0, len(dbAssets))
 		for _, asset := range dbAssets {
-			result = append(result, models.AddressToTokenAssociation{
+			result = append(result, models.AddressToAssetAssociation{
 				AddressID: dbAddress.ID,
 				AssetID:   asset.ID,
 			})
@@ -145,11 +145,11 @@ func (i *Instance) UpdateAssociationsForExistingAddresses(associations map[strin
 
 		addressesMap := makeMapAddress(dbAddresses)
 
-		var result []models.AddressToTokenAssociation
+		var result []models.AddressToAssetAssociation
 
 		for address, assets := range associations {
 			for _, asset := range assets {
-				r := models.AddressToTokenAssociation{
+				r := models.AddressToAssetAssociation{
 					AddressID: addressesMap[address],
 					AssetID:   assetsMap[asset],
 				}

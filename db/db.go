@@ -34,9 +34,9 @@ func New(uri, env string) (*Instance, error) {
 	}
 
 	g.AutoMigrate(
-		&models.Subscription{},
+		&models.Notification{},
 		&models.Tracker{},
-		&models.AddressToTokenAssociation{},
+		&models.AddressToAssetAssociation{},
 		&models.Asset{},
 		&models.Address{},
 	)

@@ -85,7 +85,7 @@ func Test_newAssociationsForAddress(t *testing.T) {
 }
 
 func Test_fromModelToAssociation(t *testing.T) {
-	a := []models.AddressToTokenAssociation{
+	a := []models.AddressToAssetAssociation{
 		{Address: models.Address{Address: "A"}, Asset: models.Asset{AssetID: "1"}},
 		{Address: models.Address{Address: "A"}, Asset: models.Asset{AssetID: "2"}},
 		{Address: models.Address{Address: "A"}, Asset: models.Asset{AssetID: "3"}},

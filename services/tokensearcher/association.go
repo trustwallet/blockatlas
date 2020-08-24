@@ -52,7 +52,7 @@ func newAssociationsForAddress(oldAssociations []string, newAssociations []strin
 	return result
 }
 
-func fromModelToAssociation(associations []models.AddressToTokenAssociation) map[string][]string {
+func fromModelToAssociation(associations []models.AddressToAssetAssociation) map[string][]string {
 	result := make(map[string][]string)
 	for _, a := range associations {
 		m := result[a.Address.Address]
