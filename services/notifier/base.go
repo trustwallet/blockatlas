@@ -43,7 +43,7 @@ func RunNotifier(database *db.Instance, delivery amqp.Delivery) {
 	if len(txs) < 1 {
 		return
 	}
-	subscriptionsDataList, err := database.GetSubscriptionsForNotification(addresses, ctx)
+	subscriptionsDataList, err := database.GetSubscriptionsForNotifications(addresses, ctx)
 	if err != nil || len(subscriptionsDataList) == 0 {
 		return
 	}

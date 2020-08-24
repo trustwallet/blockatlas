@@ -36,13 +36,13 @@ func RunTransactionsSubscriber(database *db.Instance, delivery amqp.Delivery) {
 
 	switch event.Operation {
 	case AddSubscription, UpdateSubscription:
-		err = database.AddSubscriptions(ToSubscriptionData(subscriptions), ctx)
+		err = database.AddSubscriptionsForNotifications(ToSubscriptionData(subscriptions), ctx)
 		if err != nil {
 			logger.Error(err, params)
 		}
 		logger.Info("Added", params)
 	case DeleteSubscription:
-		err := database.DeleteSubscriptions(ToSubscriptionData(subscriptions), ctx)
+		err := database.DeleteSubscriptionsForNotifications(ToSubscriptionData(subscriptions), ctx)
 		if err != nil {
 			logger.Error(err, params)
 		}

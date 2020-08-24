@@ -20,7 +20,8 @@ func (i Instance) GetSubscribedAddresses(ctx context.Context, addresses []string
 	err := db.
 		Preload("Address").
 		Where("address_id in (?)", addressesSubQuery).
-		Find(&assetSubs).Error
+		Find(&assetSubs).
+		Error
 	if err != nil {
 		return nil, err
 	}
@@ -51,7 +52,8 @@ func (i Instance) GetAssetsMapByAddresses(addresses []string, ctx context.Contex
 		Preload("Address").
 		Preload("Asset").
 		Where("address_id in (?)", addressesIDs).
-		Find(&associations).Error
+		Find(&associations).
+		Error
 	if err != nil {
 		return nil, err
 	}
@@ -77,14 +79,15 @@ func (i *Instance) GetAssociationsByAddresses(addresses []string, ctx context.Co
 		Preload("Address").
 		Preload("Asset").
 		Where("address_id in (?)", addressesSubQuery).
-		Find(&result).Error
+		Find(&result).
+		Error
 	return result, err
 }
 
 func (i *Instance) AddAssociationsForAddress(address string, assets []string, ctx context.Context) error {
 	db := apmgorm.WithContext(ctx, i.Gorm)
 	return db.Transaction(func(tx *gorm.DB) error {
-		uniqueAssets := getUniqueAssets(assets)
+		uniqueAssets := getUniqueStrings(assets)
 		uniqueAssetsModel := make([]models.Asset, 0, len(uniqueAssets))
 		for _, l := range uniqueAssets {
 			uniqueAssetsModel = append(uniqueAssetsModel, models.Asset{
@@ -129,7 +132,7 @@ func (i *Instance) UpdateAssociationsForExistingAddresses(associations map[strin
 			assets = append(assets, v...)
 		}
 
-		uniqueAssets := getUniqueAssets(assets)
+		uniqueAssets := getUniqueStrings(assets)
 		uniqueAssetsModel := make([]models.Asset, 0, len(uniqueAssets))
 		for _, l := range uniqueAssets {
 			uniqueAssetsModel = append(uniqueAssetsModel, models.Asset{
@@ -193,10 +196,10 @@ func makeMapAddress(addresses []models.Address) map[string]uint {
 	return result
 }
 
-func getUniqueAssets(assets []string) []string {
+func getUniqueStrings(values []string) []string {
 	keys := make(map[string]bool)
 	var list []string
-	for _, entry := range assets {
+	for _, entry := range values {
 		if _, value := keys[entry]; !value {
 			keys[entry] = true
 			list = append(list, entry)
