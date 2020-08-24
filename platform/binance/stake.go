@@ -25,6 +25,7 @@ func (p *Platform) GetActiveValidators() (blockatlas.StakeValidators, error) {
 
 func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
 	results := make(blockatlas.ValidatorPage, 0)
+	// TODO
 	/*
 		validators, err := p.client.GetValidators()
 		if err != nil {
@@ -83,25 +84,30 @@ func (p *Platform) GetMaxAPR() float64 {
 
 func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, error) {
 	results := make(blockatlas.DelegationsPage, 0)
+	const chainID = "0" // TODO
+	delegations, err := p.client.GetDelegations(chainID, address)
+	if err != nil {
+		return nil, err
+	}
+	// TODO
 	/*
-		delegations, err := p.client.GetDelegations(address)
-		if err != nil {
-			return nil, err
-		}
 		unbondingDelegations, err := p.client.GetUnbondingDelegations(address)
 		if err != nil {
 			return nil, err
 		}
 		if delegations.List == nil && unbondingDelegations.List == nil {
-			return results, nil
-		}
+	*/
+	if delegations == nil {
+		return results, nil
+	}
+	/*
 		validators, err := assets.GetValidatorsMap(p)
 		if err != nil {
 			return nil, err
 		}
-		results = append(results, NormalizeDelegations(delegations.List, validators)...)
-		results = append(results, NormalizeUnbondingDelegations(unbondingDelegations.List, validators)...)
 	*/
+	results = append(results, NormalizeDelegations(delegations)...)
+	//results = append(results, NormalizeUnbondingDelegations(unbondingDelegations.List, validators)...)
 
 	return results, nil
 }
@@ -121,19 +127,20 @@ func (p *Platform) UndelegatedBalance(address string) (string, error) {
 	return "0", nil
 }
 
-/*
-func NormalizeDelegations(delegations []Delegation, validators blockatlas.ValidatorMap) []blockatlas.Delegation {
+func NormalizeDelegations(delegations []Delegation /*, validators blockatlas.ValidatorMap*/) []blockatlas.Delegation {
 	results := make([]blockatlas.Delegation, 0)
 	for _, v := range delegations {
-		validator, ok := validators[v.ValidatorAddress]
-		if !ok {
-			logger.Warn("Validator not found", logger.Params{"address": v.ValidatorAddress, "platform": "binance", "delegation": v.DelegatorAddress})
-			validator = getUnknownValidator(v.ValidatorAddress)
+		/*
+			validator, ok := validators[v.ValidatorAddress]
+			if !ok {
+				logger.Warn("Validator not found", logger.Params{"address": v.ValidatorAddress, "platform": "binance", "delegation": v.DelegatorAddress})
+				validator = getUnknownValidator(v.ValidatorAddress)
 
-		}
+			}
+		*/
 		delegation := blockatlas.Delegation{
-			Delegator: validator,
-			Value:     v.Value(),
+			Delegator: blockatlas.StakeValidator{v.Delegator, true, blockatlas.StakeValidatorInfo{}, blockatlas.StakingDetails{}},
+			Value:     v.Value,
 			Status:    blockatlas.DelegationStatusActive,
 		}
 		results = append(results, delegation)
@@ -141,6 +148,7 @@ func NormalizeDelegations(delegations []Delegation, validators blockatlas.Valida
 	return results
 }
 
+/*
 func NormalizeUnbondingDelegations(delegations []UnbondingDelegation, validators blockatlas.ValidatorMap) []blockatlas.Delegation {
 	results := make([]blockatlas.Delegation, 0)
 	for _, v := range delegations {

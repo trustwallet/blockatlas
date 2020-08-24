@@ -2,13 +2,14 @@ package binance
 
 import (
 	"fmt"
+	"net/url"
+	"strconv"
+	"time"
+
 	"github.com/imroc/req"
 	"github.com/patrickmn/go-cache"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
-	"net/url"
-	"strconv"
-	"time"
 )
 
 type Client struct {
@@ -97,4 +98,20 @@ func (c Client) FetchTokens() (Tokens, error) {
 	}
 	c.Cache.Set("tokens", *result, cache.DefaultExpiration)
 	return *result, nil
+}
+
+func (c *Client) GetDelegations(chainID string, address string) (delegations []Delegation, err error) {
+	path := fmt.Sprintf("/v1/staking/chains/%s/delegators/%s/delegations", chainID, address)
+	resp, err := req.Get(c.url + path)
+	if err != nil {
+		return []Delegation{}, err
+	}
+	var result DelegationsResponse
+	if err := resp.ToJSON(&result); err != nil {
+		logger.Error("URL: " + resp.Request().URL.String())
+		logger.Error("Status code: " + resp.Response().Status)
+		return []Delegation{}, err
+	}
+	fmt.Println(result)
+	return result.Delegations, nil
 }

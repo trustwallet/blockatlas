@@ -1,12 +1,13 @@
 package binance
 
 import (
-	"github.com/trustwallet/blockatlas/coin"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/pkg/numbers"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/trustwallet/blockatlas/coin"
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/numbers"
 )
 
 const (
@@ -99,6 +100,17 @@ type (
 		Owner          string `json:"owner"`
 		Symbol         string `json:"symbol"`
 		TotalSupply    string `json:"total_supply"`
+	}
+
+	Delegation struct {
+		Value     string `json:"amount"`
+		Delegator string `json:"delegator"`
+		Validator string `json:"validator"`
+	}
+
+	DelegationsResponse struct {
+		Delegations []Delegation `json:"delegations"`
+		Total       int          `json:"total"`
 	}
 )
 
