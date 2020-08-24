@@ -31,31 +31,36 @@ func (i *Instance) GetSubscriptionsForNotification(addresses []string, ctx conte
 	return nil, nil
 }
 
-func (i *Instance) AddSubscriptions(subscriptions []models.NotificationSubscription, ctx context.Context) error {
-	if len(subscriptions) == 0 {
+func (i *Instance) AddSubscriptions(addresses []string, ctx context.Context) error {
+	if len(addresses) == 0 {
 		return errors.E("Empty subscriptions")
 	}
-	//subscriptionsBatch := toSubscriptionBatch(subscriptions, batchLimit, ctx)
-	//g := apmgorm.WithContext(ctx, i.Gorm)
-	//
-	//for _, s := range subscriptionsBatch {
-	//	if err := bulkCreate(g, s); err != nil {
-	//		return err
-	//	}
-	//}
-	return nil
+
+	db := apmgorm.WithContext(ctx, i.Gorm)
+
+	var notificationsSubscriptions []models.NotificationSubscription
+	for _, a := range addresses {
+		na := models.Address{Address: a}
+		notificationsSubscriptions = append(notificationsSubscriptions, models.NotificationSubscription{Address: na})
+	}
+	return BulkInsert(db.Set("gorm:insert_option", "ON CONFLICT DO NOTHING"), notificationsSubscriptions)
 }
 
-func (i *Instance) DeleteSubscriptions(subscriptions []models.NotificationSubscription, ctx context.Context) error {
-	if len(subscriptions) == 0 {
+func (i *Instance) DeleteSubscriptions(addresses []string, ctx context.Context) error {
+	if len(addresses) == 0 {
 		return errors.E("Empty subscriptions")
 	}
-	//g := apmgorm.WithContext(ctx, i.Gorm)
-	//for _, s := range subscriptions {
-	//	err := g.Where("coin = ? and address = ?", s.Coin, s.Address).Delete(&models.NotificationSubscription{}).Error
-	//	if err != nil {
-	//		return err
-	//	}
-	//}
-	return nil
+
+	db := apmgorm.WithContext(ctx, i.Gorm)
+
+	var notificationsSubscriptions []models.NotificationSubscription
+	for _, a := range addresses {
+		na := models.Address{Address: a}
+		notificationsSubscriptions = append(notificationsSubscriptions, models.NotificationSubscription{Address: na})
+	}
+
+	return db.
+		Where("address in (?)", addresses).
+		Delete(&models.NotificationSubscription{}).
+		Error
 }
