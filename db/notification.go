@@ -6,14 +6,14 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/errors"
 )
 
-func (i *Instance) GetSubscriptionsForNotification(coin uint, addresses []string, ctx context.Context) ([]models.Notification, error) {
+func (i *Instance) GetSubscriptionsForNotification(coin uint, addresses []string, ctx context.Context) ([]models.NotificationSubscription, error) {
 	if len(addresses) == 0 {
 		return nil, errors.E("Empty addresses")
 	}
 	//g := apmgorm.WithContext(ctx, i.Gorm)
-	//var subscriptionsDataList []models.Notification
+	//var subscriptionsDataList []models.NotificationSubscription
 	//err := g.
-	//	Model(&models.Notification{}).
+	//	Model(&models.NotificationSubscription{}).
 	//	Where("address in (?) AND coin = ?", addresses, coin).
 	//	Find(&subscriptionsDataList).Error
 	//
@@ -23,7 +23,7 @@ func (i *Instance) GetSubscriptionsForNotification(coin uint, addresses []string
 	return nil, nil
 }
 
-func (i *Instance) AddSubscriptions(subscriptions []models.Notification, ctx context.Context) error {
+func (i *Instance) AddSubscriptions(subscriptions []models.NotificationSubscription, ctx context.Context) error {
 	if len(subscriptions) == 0 {
 		return errors.E("Empty subscriptions")
 	}
@@ -40,14 +40,14 @@ func (i *Instance) AddSubscriptions(subscriptions []models.Notification, ctx con
 	return nil
 }
 
-func (i *Instance) DeleteSubscriptions(subscriptions []models.Notification, ctx context.Context) error {
+func (i *Instance) DeleteSubscriptions(subscriptions []models.NotificationSubscription, ctx context.Context) error {
 	if len(subscriptions) == 0 {
 		return errors.E("Empty subscriptions")
 	}
 
 	//g := apmgorm.WithContext(ctx, i.Gorm)
 	//for _, s := range subscriptions {
-	//	err := g.Where("coin = ? and address = ?", s.Coin, s.Address).Delete(&models.Notification{}).Error
+	//	err := g.Where("coin = ? and address = ?", s.Coin, s.Address).Delete(&models.NotificationSubscription{}).Error
 	//	if err != nil {
 	//		return err
 	//	}

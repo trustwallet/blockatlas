@@ -34,7 +34,7 @@ func New(uri, env string) (*Instance, error) {
 	}
 
 	g.AutoMigrate(
-		&models.Notification{},
+		&models.NotificationSubscription{},
 		&models.Tracker{},
 		&models.AddressToAssetAssociation{},
 		&models.Asset{},

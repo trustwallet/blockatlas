@@ -91,13 +91,13 @@ func TestSubscriber_UpdateSubscription(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	database.AddSubscriptions([]models.Notification{
+	database.AddSubscriptions([]models.NotificationSubscription{
 		{Coin: 61, Address: "0x0000000000000000000000000000000000000000"}}, context.Background())
-	database.AddSubscriptions([]models.Notification{
+	database.AddSubscriptions([]models.NotificationSubscription{
 		{Coin: 62, Address: "0x0000000000000000000000000000000000000000"}}, context.Background())
-	database.AddSubscriptions([]models.Notification{
+	database.AddSubscriptions([]models.NotificationSubscription{
 		{Coin: 63, Address: "0x0000000000000000000000000000000000000000"}}, context.Background())
-	database.AddSubscriptions([]models.Notification{
+	database.AddSubscriptions([]models.NotificationSubscription{
 		{Coin: 64, Address: "0x0000000000000000000000000000000000000000"}}, context.Background())
 
 	for _, event := range givenEvents {

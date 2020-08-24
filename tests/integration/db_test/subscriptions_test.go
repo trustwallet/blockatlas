@@ -15,10 +15,10 @@ import (
 
 func TestDb_AddSubscriptionsBulk(t *testing.T) {
 	setup.CleanupPgContainer(database.Gorm)
-	var subscriptions []models.Notification
+	var subscriptions []models.NotificationSubscription
 
 	for i := 0; i < 100; i++ {
-		subscriptions = append(subscriptions, models.Notification{
+		subscriptions = append(subscriptions, models.NotificationSubscription{
 			Coin:    uint(i),
 			Address: "testAddrtestAddrtestAddrtestAddrtestAddrtestAddrtestAddrtestAddrtestAddrtestAddr",
 		})
@@ -34,19 +34,19 @@ func TestDb_AddSubscriptionsBulk(t *testing.T) {
 
 func TestDb_AddSubscriptions(t *testing.T) {
 	setup.CleanupPgContainer(database.Gorm)
-	var subscriptions []models.Notification
+	var subscriptions []models.NotificationSubscription
 
-	subscriptions = append(subscriptions, models.Notification{
+	subscriptions = append(subscriptions, models.NotificationSubscription{
 		Coin:    60,
 		Address: "testAddr",
 	})
 
-	subscriptions = append(subscriptions, models.Notification{
+	subscriptions = append(subscriptions, models.NotificationSubscription{
 		Coin:    61,
 		Address: "testAddr2",
 	})
 
-	subscriptions = append(subscriptions, models.Notification{
+	subscriptions = append(subscriptions, models.NotificationSubscription{
 		Coin:    62,
 		Address: "testAddr3",
 	})
@@ -78,18 +78,18 @@ func TestDb_AddSubscriptions(t *testing.T) {
 func TestDb_AddSubscriptionsWithRewrite(t *testing.T) {
 	setup.CleanupPgContainer(database.Gorm)
 
-	var subscriptions []models.Notification
-	subscriptions = append(subscriptions, models.Notification{
+	var subscriptions []models.NotificationSubscription
+	subscriptions = append(subscriptions, models.NotificationSubscription{
 		Coin:    60,
 		Address: "testAddr",
 	})
 
-	subscriptions = append(subscriptions, models.Notification{
+	subscriptions = append(subscriptions, models.NotificationSubscription{
 		Coin:    714,
 		Address: "testAddr",
 	})
 
-	subscriptions = append(subscriptions, models.Notification{
+	subscriptions = append(subscriptions, models.NotificationSubscription{
 		Coin:    144,
 		Address: "testAddr",
 	})
@@ -117,17 +117,17 @@ func TestDb_AddSubscriptionsWithRewrite(t *testing.T) {
 	assert.Equal(t, subscriptions[2].Coin, subs144[0].Coin)
 	assert.Equal(t, subscriptions[2].Address, subs144[0].Address)
 
-	subscriptions = append(subscriptions, models.Notification{
+	subscriptions = append(subscriptions, models.NotificationSubscription{
 		Coin:    60,
 		Address: "testAddr2",
 	})
 
-	subscriptions = append(subscriptions, models.Notification{
+	subscriptions = append(subscriptions, models.NotificationSubscription{
 		Coin:    714,
 		Address: "testAddr2",
 	})
 
-	subscriptions = append(subscriptions, models.Notification{
+	subscriptions = append(subscriptions, models.NotificationSubscription{
 		Coin:    144,
 		Address: "testAddr2",
 	})
@@ -220,19 +220,19 @@ func TestDb_FindSubscriptions(t *testing.T) {
 
 func TestDb_DeleteSubscriptions(t *testing.T) {
 	setup.CleanupPgContainer(database.Gorm)
-	var subscriptions []models.Notification
+	var subscriptions []models.NotificationSubscription
 
-	subscriptions = append(subscriptions, models.Notification{
+	subscriptions = append(subscriptions, models.NotificationSubscription{
 		Coin:    60,
 		Address: "testAddr",
 	})
 
-	subscriptions = append(subscriptions, models.Notification{
+	subscriptions = append(subscriptions, models.NotificationSubscription{
 		Coin:    714,
 		Address: "testAddr2",
 	})
 
-	subscriptions = append(subscriptions, models.Notification{
+	subscriptions = append(subscriptions, models.NotificationSubscription{
 		Coin:    144,
 		Address: "testAddr3",
 	})
@@ -260,7 +260,7 @@ func TestDb_DeleteSubscriptions(t *testing.T) {
 	assert.Equal(t, subscriptions[2].Coin, subs144[0].Coin)
 	assert.Equal(t, subscriptions[2].Address, subs144[0].Address)
 
-	subsToDel := []models.Notification{subscriptions[0]}
+	subsToDel := []models.NotificationSubscription{subscriptions[0]}
 
 	assert.Nil(t, database.DeleteSubscriptions(subsToDel, context.Background()))
 
@@ -285,19 +285,19 @@ func TestDb_DeleteSubscriptions(t *testing.T) {
 
 func TestDeleteAll(t *testing.T) {
 	setup.CleanupPgContainer(database.Gorm)
-	var subscriptions []models.Notification
+	var subscriptions []models.NotificationSubscription
 
-	subscriptions = append(subscriptions, models.Notification{
+	subscriptions = append(subscriptions, models.NotificationSubscription{
 		Coin:    60,
 		Address: "testAddr",
 	})
 
-	subscriptions = append(subscriptions, models.Notification{
+	subscriptions = append(subscriptions, models.NotificationSubscription{
 		Coin:    714,
 		Address: "testAddr2",
 	})
 
-	subscriptions = append(subscriptions, models.Notification{
+	subscriptions = append(subscriptions, models.NotificationSubscription{
 		Coin:    144,
 		Address: "testAddr3",
 	})
@@ -318,10 +318,10 @@ func TestDeleteAll(t *testing.T) {
 
 func TestDb_DuplicateEntries(t *testing.T) {
 	setup.CleanupPgContainer(database.Gorm)
-	var subscriptions []models.Notification
+	var subscriptions []models.NotificationSubscription
 
 	for i := 0; i < 10; i++ {
-		subscriptions = append(subscriptions, models.Notification{
+		subscriptions = append(subscriptions, models.NotificationSubscription{
 			Coin:    60,
 			Address: "testAddr",
 		})
@@ -338,8 +338,8 @@ func TestDb_DuplicateEntries(t *testing.T) {
 
 func TestDb_CreateDeleteCreate(t *testing.T) {
 	setup.CleanupPgContainer(database.Gorm)
-	var subscriptions []models.Notification
-	subscriptions = append(subscriptions, models.Notification{
+	var subscriptions []models.NotificationSubscription
+	subscriptions = append(subscriptions, models.NotificationSubscription{
 		Coin:    60,
 		Address: "testAddr",
 	})
@@ -366,8 +366,8 @@ func TestDb_CreateDeleteCreate(t *testing.T) {
 
 func TestDb_UpdatedAt(t *testing.T) {
 	setup.CleanupPgContainer(database.Gorm)
-	var subscriptions []models.Notification
-	subscriptions = append(subscriptions, models.Notification{
+	var subscriptions []models.NotificationSubscription
+	subscriptions = append(subscriptions, models.NotificationSubscription{
 		Coin:    60,
 		Address: "testAddr",
 	})
@@ -379,12 +379,12 @@ func TestDb_UpdatedAt(t *testing.T) {
 
 	time.Sleep(time.Second)
 
-	var existingSub models.Notification
-	assert.False(t, database.Gorm.Where(models.Notification{Address: "testAddr"}).First(&existingSub).RecordNotFound())
+	var existingSub models.NotificationSubscription
+	assert.False(t, database.Gorm.Where(models.NotificationSubscription{Address: "testAddr"}).First(&existingSub).RecordNotFound())
 	assert.Greater(t, time.Now().Unix(), existingSub.CreatedAt.Unix())
 	assert.Greater(t, existingSub.CreatedAt.Unix(), time.Now().Unix()-120)
 
-	subscriptions = append(subscriptions, models.Notification{
+	subscriptions = append(subscriptions, models.NotificationSubscription{
 		Coin:    714,
 		Address: "newtestAddr",
 	})
@@ -393,15 +393,15 @@ func TestDb_UpdatedAt(t *testing.T) {
 
 	time.Sleep(time.Second)
 
-	var existingSub2 models.Notification
-	assert.False(t, database.Gorm.Where(models.Notification{Address: "testAddr"}).First(&existingSub2).RecordNotFound())
+	var existingSub2 models.NotificationSubscription
+	assert.False(t, database.Gorm.Where(models.NotificationSubscription{Address: "testAddr"}).First(&existingSub2).RecordNotFound())
 
 	assert.Greater(t, time.Now().Unix(), existingSub2.CreatedAt.Unix())
 	assert.Greater(t, existingSub2.CreatedAt.Unix(), time.Now().Unix()-120)
 	assert.GreaterOrEqual(t, existingSub2.CreatedAt.Unix(), existingSub.CreatedAt.Unix())
 }
 
-func containSub(sub models.Notification, list []models.Notification) bool {
+func containSub(sub models.NotificationSubscription, list []models.NotificationSubscription) bool {
 	for _, s := range list {
 		if sub.Address == s.Address && sub.Coin == s.Coin {
 			return true

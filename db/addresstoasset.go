@@ -7,6 +7,32 @@ import (
 	"go.elastic.co/apm/module/apmgorm"
 )
 
+func (i Instance) GetSubscribedAddresses(ctx context.Context, addresses []string) ([]models.Address, error) {
+	db := apmgorm.WithContext(ctx, i.Gorm)
+
+	addressesSubQuery := db.
+		Table("addresses").
+		Select("id").
+		Where("address in (?)", addresses).
+		QueryExpr()
+
+	var assetSubs []models.AssetSubscription
+	err := db.
+		Preload("Address").
+		Where("address_id in (?)", addressesSubQuery).
+		Find(&assetSubs).
+		Error
+	if err != nil {
+		return nil, err
+	}
+
+	var result []models.Address
+	for _, a := range assetSubs {
+		result = append(result, a.Address)
+	}
+	return result, nil
+}
+
 func (i Instance) GetAssetsMapByAddresses(addresses []string, ctx context.Context) (map[string][]string, error) {
 	db := apmgorm.WithContext(ctx, i.Gorm)
 
@@ -35,12 +61,6 @@ func (i Instance) GetAssetsMapByAddresses(addresses []string, ctx context.Contex
 	for _, a := range associations {
 		assets := result[a.Address.Address]
 		result[a.Address.Address] = append(assets, a.Asset.AssetID)
-	}
-	for _, a := range addressesFromDB {
-		_, ok := result[a.Address]
-		if !ok {
-			result[a.Address] = []string{""}
-		}
 	}
 	return result, nil
 }

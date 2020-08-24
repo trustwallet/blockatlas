@@ -17,11 +17,11 @@ func TestToSubscriptionData(t *testing.T) {
 		Address: "B",
 	}
 
-	expectedModel := models.Notification{
+	expectedModel := models.NotificationSubscription{
 		Coin:    60,
 		Address: "A",
 	}
-	expectedModel1 := models.Notification{
+	expectedModel1 := models.NotificationSubscription{
 		Coin:    60,
 		Address: "B",
 	}

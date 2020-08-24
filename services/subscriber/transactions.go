@@ -55,10 +55,10 @@ func RunTransactionsSubscriber(database *db.Instance, delivery amqp.Delivery) {
 	}
 }
 
-func ToSubscriptionData(sub []blockatlas.Subscription) []models.Notification {
-	data := make([]models.Notification, 0, len(sub))
+func ToSubscriptionData(sub []blockatlas.Subscription) []models.NotificationSubscription {
+	data := make([]models.NotificationSubscription, 0, len(sub))
 	for _, s := range sub {
-		data = append(data, models.Notification{Coin: s.Coin, Address: s.Address})
+		data = append(data, models.NotificationSubscription{Coin: s.Coin, Address: s.Address})
 	}
 	return data
 }

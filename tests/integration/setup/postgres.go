@@ -24,7 +24,7 @@ var (
 	}
 
 	tables = []interface{}{
-		&models.Notification{},
+		&models.NotificationSubscription{},
 		&models.Tracker{},
 		&models.AddressToAssetAssociation{},
 		&models.Asset{},
