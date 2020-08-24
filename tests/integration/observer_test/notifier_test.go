@@ -8,7 +8,6 @@ import (
 	"github.com/streadway/amqp"
 	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas/coin"
-	"github.com/trustwallet/blockatlas/db/models"
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/services/notifier"
@@ -44,7 +43,7 @@ var (
 func TestNotifier(t *testing.T) {
 	setup.CleanupPgContainer(database.Gorm)
 
-	err := database.AddSubscriptions([]models.NotificationSubscription{{Coin: 714, Address: "tbnb1ttyn4csghfgyxreu7lmdu3lcplhqhxtzced45a"}}, context.Background())
+	err := database.AddSubscriptionsForNotifications([]string{"714_tbnb1ttyn4csghfgyxreu7lmdu3lcplhqhxtzced45a"}, context.Background())
 	assert.Nil(t, err)
 
 	err = produceTxs(txs)

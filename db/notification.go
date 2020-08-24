@@ -74,14 +74,19 @@ func (i *Instance) DeleteSubscriptionsForNotifications(addresses []string, ctx c
 	}
 	db := apmgorm.WithContext(ctx, i.Gorm)
 
-	var notificationsSubscriptions []models.NotificationSubscription
-	for _, a := range addresses {
-		ma := models.Address{Address: a}
-		notificationsSubscriptions = append(notificationsSubscriptions, models.NotificationSubscription{Address: ma})
-	}
+	//var notificationsSubscriptions []models.NotificationSubscription
+	//for _, a := range addresses {
+	//	ma := models.Address{Address: a}
+	//	notificationsSubscriptions = append(notificationsSubscriptions, models.NotificationSubscription{Address: ma})
+	//}
+
+	addressSubQuery := db.Table("addresses").
+		Select("id").
+		Where("address in (?)", addresses).
+		QueryExpr()
 
 	return db.
-		Where("address in (?)", addresses).
+		Where("address_id in (?)", addressSubQuery).
 		Delete(&models.NotificationSubscription{}).
 		Error
 }

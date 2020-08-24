@@ -5,10 +5,10 @@ import (
 	"encoding/json"
 	"github.com/streadway/amqp"
 	"github.com/trustwallet/blockatlas/db"
-	"github.com/trustwallet/blockatlas/db/models"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"go.elastic.co/apm"
+	"strconv"
 )
 
 const (
@@ -55,10 +55,12 @@ func RunTransactionsSubscriber(database *db.Instance, delivery amqp.Delivery) {
 	}
 }
 
-func ToSubscriptionData(sub []blockatlas.Subscription) []models.NotificationSubscription {
-	data := make([]models.NotificationSubscription, 0, len(sub))
+func ToSubscriptionData(sub []blockatlas.Subscription) []string {
+	data := make([]string, 0, len(sub))
 	for _, s := range sub {
-		data = append(data, models.NotificationSubscription{Coin: s.Coin, Address: s.Address})
+		coinStr := strconv.FormatUint(uint64(s.Coin), 10)
+		address := coinStr + "_" + s.Address
+		data = append(data, address)
 	}
 	return data
 }
