@@ -9,6 +9,8 @@ import (
 	"go.elastic.co/apm"
 )
 
+const Tokens Subscriber = "tokens"
+
 func RunTokensSubscriber(database *db.Instance, delivery amqp.Delivery) {
 	tx := apm.DefaultTracer.StartTransaction("RunTokensSubscriber", "app")
 	defer tx.End()

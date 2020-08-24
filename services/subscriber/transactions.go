@@ -12,6 +12,7 @@ import (
 )
 
 const (
+	Notifications      Subscriber                       = "notifications"
 	AddSubscription    blockatlas.SubscriptionOperation = "AddSubscription"
 	DeleteSubscription blockatlas.SubscriptionOperation = "DeleteSubscription"
 	UpdateSubscription blockatlas.SubscriptionOperation = "UpdateSubscription"

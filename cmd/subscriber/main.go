@@ -56,11 +56,11 @@ func main() {
 	}
 	ctx, cancel := context.WithCancel(context.Background())
 
-	subscriberType := viper.GetString("subscriber")
+	subscriberType := subscriber.Subscriber(viper.GetString("subscriber"))
 	switch subscriberType {
-	case "tokens":
+	case subscriber.Tokens:
 		go mq.TokensRegistration.RunConsumerWithCancelAndDbConn(subscriber.RunTokensSubscriber, database, ctx)
-	case "notifications":
+	case subscriber.Notifications:
 		go mq.Subscriptions.RunConsumerWithCancelAndDbConn(subscriber.RunTransactionsSubscriber, database, ctx)
 	default:
 		logger.Fatal("bad subscriber: " + subscriberType)

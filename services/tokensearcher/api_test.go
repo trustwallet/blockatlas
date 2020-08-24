@@ -63,7 +63,7 @@ func Test_getAssetsForAddressesFromNodes(t *testing.T) {
 	addresses := make(map[uint][]string)
 	addresses[0] = []string{"A", "B", "C"}
 	addresses[60] = []string{"X", "Y", "Z"}
-	result := getAssetsForAddressesFromNodes(addresses, apis)
+	result := getAssetsByAddressFromNodes(addresses, apis)
 	assert.NotNil(t, result)
 }
 
