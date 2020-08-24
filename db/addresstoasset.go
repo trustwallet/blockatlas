@@ -20,8 +20,7 @@ func (i Instance) GetSubscribedAddresses(ctx context.Context, addresses []string
 	err := db.
 		Preload("Address").
 		Where("address_id in (?)", addressesSubQuery).
-		Find(&assetSubs).
-		Error
+		Find(&assetSubs).Error
 	if err != nil {
 		return nil, err
 	}
@@ -79,7 +78,6 @@ func (i *Instance) GetAssociationsByAddresses(addresses []string, ctx context.Co
 		Preload("Asset").
 		Where("address_id in (?)", addressesSubQuery).
 		Find(&result).Error
-
 	return result, err
 }
 
@@ -118,7 +116,6 @@ func (i *Instance) AddAssociationsForAddress(address string, assets []string, ct
 				AssetID:   asset.ID,
 			})
 		}
-
 		return BulkInsert(db.Set("gorm:insert_option", "ON CONFLICT DO NOTHING"), result)
 	})
 }
@@ -176,7 +173,6 @@ func (i *Instance) UpdateAssociationsForExistingAddresses(associations map[strin
 				result = append(result, r)
 			}
 		}
-
 		return BulkInsert(db.Set("gorm:insert_option", "ON CONFLICT DO NOTHING"), result)
 	})
 }

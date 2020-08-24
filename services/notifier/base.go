@@ -5,6 +5,7 @@ import (
 	"github.com/streadway/amqp"
 	"github.com/trustwallet/blockatlas/db"
 	"github.com/trustwallet/blockatlas/pkg/logger"
+	"strconv"
 
 	"go.elastic.co/apm"
 )
@@ -35,18 +36,21 @@ func RunNotifier(database *db.Instance, delivery amqp.Delivery) {
 	}
 
 	addresses := ToUniqueAddresses(allAddresses)
+	for i := range addresses {
+		addresses[i] = strconv.Itoa(int(txs[0].Coin)) + "_" + addresses[i]
+	}
 
 	if len(txs) < 1 {
 		return
 	}
-	subscriptionsDataList, err := database.GetSubscriptionsForNotification(txs[0].Coin, addresses, ctx)
+	subscriptionsDataList, err := database.GetSubscriptionsForNotification(addresses, ctx)
 	if err != nil || len(subscriptionsDataList) == 0 {
 		return
 	}
 
 	notifications := make([]TransactionNotification, 0)
 	for _, sub := range subscriptionsDataList {
-		notificationsForAddress := buildNotificationsByAddress(sub.Address, txs, ctx)
+		notificationsForAddress := buildNotificationsByAddress(sub.Address.Address, txs, ctx)
 		notifications = append(notifications, notificationsForAddress...)
 	}
 
