@@ -64,7 +64,7 @@ func (i *Instance) AddSubscriptionsForNotifications(addresses []string, ctx cont
 				AddressID: a.ID,
 			})
 		}
-		return BulkInsert(db.Set("gorm:insert_option", "ON CONFLICT DO NOTHING"), result)
+		return BulkInsert(db.Set("gorm:insert_option", "ON CONFLICT (address_id) DO UPDATE SET deleted_at = null"), result)
 	})
 }
 
@@ -73,12 +73,6 @@ func (i *Instance) DeleteSubscriptionsForNotifications(addresses []string, ctx c
 		return errors.E("Empty subscriptions")
 	}
 	db := apmgorm.WithContext(ctx, i.Gorm)
-
-	//var notificationsSubscriptions []models.NotificationSubscription
-	//for _, a := range addresses {
-	//	ma := models.Address{Address: a}
-	//	notificationsSubscriptions = append(notificationsSubscriptions, models.NotificationSubscription{Address: ma})
-	//}
 
 	addressSubQuery := db.Table("addresses").
 		Select("id").
