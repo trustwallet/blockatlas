@@ -100,7 +100,7 @@ func GetTokensV3(c *gin.Context, apis map[uint]blockatlas.TokensAPI) {
 	}
 
 	result := tokensResult{
-		Result: make(map[uint]blockatlas.TokenPage, 0),
+		Result: make(map[uint]blockatlas.TokenPage),
 		mu:     sync.Mutex{},
 	}
 	var wg sync.WaitGroup
