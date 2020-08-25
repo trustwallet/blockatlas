@@ -95,6 +95,9 @@ func RegisterBatchAPI(router gin.IRouter) {
 	router.POST("/v2/tokens", func(c *gin.Context) {
 		endpoint.GetTokens(c, platform.TokensAPIs)
 	})
+	router.POST("/v3/tokens", func(c *gin.Context) {
+		endpoint.GetTokensV3(c, platform.TokensAPIs)
+	})
 }
 
 func RegisterDomainAPI(router gin.IRouter) {
