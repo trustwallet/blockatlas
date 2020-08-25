@@ -11,11 +11,6 @@ import (
 
 type (
 	tokensResult struct {
-		Result map[uint]blockatlas.TokenPage
-		mu     sync.Mutex
-	}
-
-	tokensResultLegacy struct {
 		Result blockatlas.TokenPage
 		mu     sync.Mutex
 	}
@@ -62,7 +57,7 @@ func GetTokens(c *gin.Context, apis map[uint]blockatlas.TokensAPI) {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
-	result := tokensResultLegacy{
+	result := tokensResult{
 		Result: make(blockatlas.TokenPage, 0),
 		mu:     sync.Mutex{},
 	}
@@ -83,7 +78,7 @@ func GetTokens(c *gin.Context, apis map[uint]blockatlas.TokensAPI) {
 	c.JSON(http.StatusOK, blockatlas.ResultsResponse{Total: len(result.Result), Results: &result.Result})
 }
 
-func getTokens(tokenAPI blockatlas.TokensAPI, addresses []string, data *tokensResultLegacy, wg *sync.WaitGroup) {
+func getTokens(tokenAPI blockatlas.TokensAPI, addresses []string, data *tokensResult, wg *sync.WaitGroup) {
 	var (
 		tokenPagesChan = make(chan blockatlas.TokenPage, len(addresses))
 		wgLocal        sync.WaitGroup
