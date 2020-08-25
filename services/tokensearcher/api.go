@@ -30,21 +30,41 @@ func Init(database *db.Instance, apis map[uint]blockatlas.TokensAPI, queue mq.Qu
 
 func (i Instance) HandleTokensRequest(request Request, ctx context.Context) (AssetsByAddress, error) {
 	addresses := getAddressesFromRequest(request)
-	dbAssetsMap, err := i.database.GetAssetsMapByAddresses(addresses, ctx)
+
+	subscribedAddresses, err := getSubscribedAddresses(i.database, addresses, ctx)
 	if err != nil {
 		return nil, err
 	}
-	assetsByAddress := make(AssetsByAddress)
-	addressesByCoin := getAddressesToRegisterByCoin(dbAssetsMap, addresses)
-	if len(addressesByCoin) == 0 {
-		assetsByAddress = getAssetsByAddressFromNodes(addressesByCoin, i.apis)
-		err = publishNewAddressesToQueue(i.queue, assetsByAddress)
+	unsubscribedAddresses := getUnsubscribedAddresses(subscribedAddresses, addresses)
+
+	assetsFromDB, err := i.database.GetAssetsMapByAddresses(subscribedAddresses, ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	assetsFromNodes := make(AssetsByAddress)
+	if len(unsubscribedAddresses) == 0 {
+		assetsFromNodes = getAssetsByAddressFromNodes(unsubscribedAddresses, i.apis)
+		err = publishNewAddressesToQueue(i.queue, assetsFromNodes)
 		if err != nil {
 			logger.Error(err)
 		}
 	}
 
-	return getAssetsToResponse(dbAssetsMap, assetsByAddress, addresses), nil
+	return getAssetsToResponse(assetsFromDB, assetsFromNodes, addresses), nil
+}
+
+func getSubscribedAddresses(database *db.Instance, addresses []string, ctx context.Context) ([]string, error) {
+	subscribedAddressesModel, err := database.GetSubscribedAddressesForAssets(ctx, addresses)
+	if err != nil {
+		return nil, err
+	}
+
+	subscribedAddresses := make([]string, 0, len(subscribedAddressesModel))
+	for _, a := range subscribedAddressesModel {
+		subscribedAddresses = append(subscribedAddresses, a.Address)
+	}
+	return subscribedAddresses, nil
 }
 
 func getAddressesFromRequest(request Request) []string {
@@ -55,6 +75,26 @@ func getAddressesFromRequest(request Request) []string {
 		}
 	}
 	return addresses
+}
+
+func getUnsubscribedAddresses(subscribed []string, all []string) AddressesByCoin {
+	addressesByCoin := make(AddressesByCoin)
+	subscribedMap := make(map[string]bool)
+	for _, a := range subscribed {
+		subscribedMap[a] = true
+	}
+	for _, address := range all {
+		_, ok := subscribedMap[address]
+		if !ok {
+			a, coinID, ok := getCoinIDFromAddress(address)
+			if !ok {
+				continue
+			}
+			currentAddresses := addressesByCoin[coinID]
+			addressesByCoin[coinID] = append(currentAddresses, a)
+		}
+	}
+	return addressesByCoin
 }
 
 func getAddressesToRegisterByCoin(assetsByAddresses AssetsByAddress, addresses []string) AddressesByCoin {

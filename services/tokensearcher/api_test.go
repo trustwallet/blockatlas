@@ -15,6 +15,12 @@ func Test_getAddressesFromRequest(t *testing.T) {
 	assert.Equal(t, []string{"60_1", "60_2", "60_3"}, r)
 }
 
+func Test_getUnsubscribedAddresses(t *testing.T) {
+	r := getUnsubscribedAddresses([]string{"60_1"}, []string{"60_1", "714_2", "714_22", "118_3"})
+	assert.Equal(t, []string{"2", "22"}, r[714])
+	assert.Equal(t, []string{"3"}, r[118])
+}
+
 func Test_getAddressesToRegisterByCoin(t *testing.T) {
 	addressFromDB := make(map[string][]string)
 	addressFromDB["60_a"] = []string{"1", "2", "3"}

@@ -38,6 +38,7 @@ func New(uri, env string) (*Instance, error) {
 		&models.Tracker{},
 		&models.AddressToAssetAssociation{},
 		&models.Asset{},
+		&models.AssetSubscription{},
 		&models.Address{},
 	)
 

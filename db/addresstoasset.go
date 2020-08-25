@@ -7,7 +7,7 @@ import (
 	"go.elastic.co/apm/module/apmgorm"
 )
 
-func (i Instance) GetSubscribedAddresses(ctx context.Context, addresses []string) ([]models.Address, error) {
+func (i Instance) GetSubscribedAddressesForAssets(ctx context.Context, addresses []string) ([]models.Address, error) {
 	db := apmgorm.WithContext(ctx, i.Gorm)
 
 	addressesSubQuery := db.
@@ -112,6 +112,12 @@ func (i *Instance) AddAssociationsForAddress(address string, assets []string, ct
 			return err
 		}
 
+		assetsSub := models.AssetSubscription{AddressID: dbAddress.ID}
+		err = db.Set("gorm:insert_option", "ON CONFLICT DO NOTHING").FirstOrCreate(&assetsSub).Error
+		if err != nil {
+			return err
+		}
+
 		result := make([]models.AddressToAssetAssociation, 0, len(dbAssets))
 		for _, asset := range dbAssets {
 			result = append(result, models.AddressToAssetAssociation{
@@ -163,10 +169,20 @@ func (i *Instance) UpdateAssociationsForExistingAddresses(associations map[strin
 			return err
 		}
 
+		var addressSubs []models.AssetSubscription
+		for _, a := range dbAddresses {
+			sub := models.AssetSubscription{AddressID: a.ID}
+			addressSubs = append(addressSubs, sub)
+		}
+
+		err = BulkInsert(db.Set("gorm:insert_option", "ON CONFLICT DO NOTHING"), addressSubs)
+		if err != nil {
+			return err
+		}
+
 		addressesMap := makeMapAddress(dbAddresses)
 
 		var result []models.AddressToAssetAssociation
-
 		for address, assets := range associations {
 			for _, asset := range assets {
 				r := models.AddressToAssetAssociation{
