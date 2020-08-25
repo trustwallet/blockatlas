@@ -80,7 +80,7 @@ func GetTokens(c *gin.Context, apis map[uint]blockatlas.TokensAPI) {
 		go getTokens(api, addresses, &result, &wg)
 	}
 	wg.Wait()
-	c.JSON(http.StatusOK, blockatlas.ResultsResponse{Total: len(result.Result), Results: &result})
+	c.JSON(http.StatusOK, blockatlas.ResultsResponse{Total: len(result.Result), Results: &result.Result})
 }
 
 // @Description Get tokens
