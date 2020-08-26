@@ -109,7 +109,7 @@ func (c *Client) GetValidators() (validators ValidatorsResponse, err error) {
 		"status": {"bonded"},
 	}
 	result := new(ValidatorsResponse)
-	resp, err := req.Get(c.url+"/v1/staking/validators", query)
+	resp, err := req.Get(c.url+"/api/v1/staking/validators", query)
 	if err != nil {
 		return *result, err
 	}
@@ -123,7 +123,7 @@ func (c *Client) GetValidators() (validators ValidatorsResponse, err error) {
 }
 
 func (c *Client) GetDelegations(chainID string, address string) (delegations []Delegation, err error) {
-	path := fmt.Sprintf("/v1/staking/chains/%s/delegators/%s/delegations", chainID, address)
+	path := fmt.Sprintf("/api/v1/staking/chains/%s/delegators/%s/delegations", chainID, address)
 	resp, err := req.Get(c.url + path)
 	if err != nil {
 		return []Delegation{}, err
