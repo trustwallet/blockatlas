@@ -117,7 +117,7 @@ func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, e
 			return nil, err
 		}
 	*/
-	if (delegations == nil || len(delegations) == 0) && (unbondingDelegations == nil || len(unbondingDelegations) == 0) {
+	if len(delegations) == 0 && len(unbondingDelegations) == 0 {
 		return results, nil
 	}
 	//validators, err := assets.GetValidatorsMap(p)
