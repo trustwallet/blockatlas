@@ -25,42 +25,42 @@ const (
 func createMockedAPI() http.Handler {
 	r := http.NewServeMux()
 
-	r.HandleFunc("/v1/node-info", func(w http.ResponseWriter, r *http.Request) {
+	r.HandleFunc("/api/v1/node-info", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		if _, err := fmt.Fprint(w, mockedNodeInfo); err != nil {
 			panic(err)
 		}
 	})
 
-	r.HandleFunc("/v2/transactions-in-block/104867508", func(w http.ResponseWriter, r *http.Request) {
+	r.HandleFunc("/api/v2/transactions-in-block/104867508", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		if _, err := fmt.Fprint(w, mockedBlockResponse); err != nil {
 			panic(err)
 		}
 	})
 
-	r.HandleFunc("/v2/transactions-in-block/105529271", func(w http.ResponseWriter, r *http.Request) {
+	r.HandleFunc("/api/v2/transactions-in-block/105529271", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		if _, err := fmt.Fprint(w, wantedBlockResponseMulti); err != nil {
 			panic(err)
 		}
 	})
 
-	r.HandleFunc("/v1/tokens", func(w http.ResponseWriter, r *http.Request) {
+	r.HandleFunc("/api/v1/tokens", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		if _, err := fmt.Fprint(w, wantedTokensResponse); err != nil {
 			panic(err)
 		}
 	})
 
-	r.HandleFunc("/v1/account/bnb1w7puzjxu05ktc5zvpnzkndt6tyl720nsutzvpg", func(w http.ResponseWriter, r *http.Request) {
+	r.HandleFunc("/api/v1/account/bnb1w7puzjxu05ktc5zvpnzkndt6tyl720nsutzvpg", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		if _, err := fmt.Fprint(w, wantedAccountMetaResponse); err != nil {
 			panic(err)
 		}
 	})
 
-	r.HandleFunc("/v1/transactions", func(w http.ResponseWriter, r *http.Request) {
+	r.HandleFunc("/api/v1/transactions", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		var (
 			address = r.URL.Query().Get("address")

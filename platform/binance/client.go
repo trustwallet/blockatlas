@@ -22,7 +22,7 @@ func InitClient(url string) Client {
 }
 
 func (c Client) FetchLatestBlockNumber() (int64, error) {
-	resp, err := req.Get(c.url+"/v1/node-info", nil)
+	resp, err := req.Get(c.url+"/api/v1/node-info", nil)
 	if err != nil {
 		return 0, err
 	}
@@ -36,7 +36,7 @@ func (c Client) FetchLatestBlockNumber() (int64, error) {
 }
 
 func (c Client) FetchTransactionsInBlock(blockNumber int64) (TransactionsInBlockResponse, error) {
-	resp, err := req.Get(c.url+fmt.Sprintf("/v2/transactions-in-block/%d", blockNumber), nil)
+	resp, err := req.Get(c.url+fmt.Sprintf("/api/v2/transactions-in-block/%d", blockNumber), nil)
 	if err != nil {
 		return TransactionsInBlockResponse{}, err
 	}
@@ -53,7 +53,7 @@ func (c Client) FetchTransactionsByAddressAndTokenID(address, tokenID string) ([
 	startTime := strconv.Itoa(int(time.Now().AddDate(0, -3, 0).Unix() * 1000))
 	limit := strconv.Itoa(blockatlas.TxPerPage)
 	params := url.Values{"address": {address}, "txAsset": {tokenID}, "startTime": {startTime}, "limit": {limit}}
-	resp, err := req.Get(c.url+"/v1/transactions", params)
+	resp, err := req.Get(c.url+"/api/v1/transactions", params)
 	if err != nil {
 		return nil, err
 	}
@@ -67,7 +67,7 @@ func (c Client) FetchTransactionsByAddressAndTokenID(address, tokenID string) ([
 }
 
 func (c Client) FetchAccountMeta(address string) (AccountMeta, error) {
-	resp, err := req.Get(c.url+fmt.Sprintf("/v1/account/%s", address), nil)
+	resp, err := req.Get(c.url+fmt.Sprintf("/api/v1/account/%s", address), nil)
 	if err != nil {
 		return AccountMeta{}, err
 	}
@@ -86,7 +86,7 @@ func (c Client) FetchTokens() (Tokens, error) {
 		return cachedResult.(Tokens), nil
 	}
 	query := url.Values{"limit": {tokensLimit}}
-	resp, err := req.Get(c.url+"/v1/tokens", query)
+	resp, err := req.Get(c.url+"/api/v1/tokens", query)
 	if err != nil {
 		return nil, err
 	}
