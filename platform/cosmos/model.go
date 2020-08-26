@@ -171,15 +171,15 @@ type Delegations struct {
 type Delegation struct {
 	DelegatorAddress string `json:"delegator_address"`
 	ValidatorAddress string `json:"validator_address"`
-	Shares           string `json:"shares,omitempty"`
+	Balance          string `json:"balance,omitempty"`
 }
 
 func (d *Delegation) Value() string {
-	shares := strings.Split(d.Shares, ".")
+	shares := strings.Split(d.Balance, ".")
 	if len(shares) > 0 {
 		return shares[0]
 	}
-	return d.Shares
+	return d.Balance
 }
 
 type UnbondingDelegations struct {
