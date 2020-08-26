@@ -5,13 +5,14 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"go.elastic.co/apm/module/apmhttp"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
 	"time"
+
+	"go.elastic.co/apm/module/apmhttp"
 
 	"github.com/trustwallet/blockatlas/pkg/errors"
 )
@@ -109,7 +110,9 @@ func (r *Request) Execute(method string, url string, body io.Reader, result inte
 	if err != nil {
 		return errors.E(err, errors.TypePlatformRequest)
 	}
-
+	if res.StatusCode != 200 {
+		return errors.E(fmt.Sprintf("Status code: %v", res.StatusCode), errors.TypePlatformRequest)
+	}
 	err = r.ErrorHandler(res, url)
 	if err != nil {
 		return errors.E(err, errors.TypePlatformError)

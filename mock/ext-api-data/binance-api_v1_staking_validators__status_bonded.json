@@ -1,0 +1,10 @@
+{
+  "total": "1",
+  "validators": [
+    {
+      "validator": "bnb18cy9pjf3ym239w5qec0kkeuktyywx8wpq3jt0c",
+      "valName": "BinanceTestValidator1",
+      "status": 2
+    }
+  ]
+}

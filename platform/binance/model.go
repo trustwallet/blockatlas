@@ -102,15 +102,40 @@ type (
 		TotalSupply    string `json:"total_supply"`
 	}
 
+	Validator struct {
+		Status  int    `json:"status"`
+		Address string `json:"validator"`
+		ValName string `json:"valName"`
+	}
+
+	Validators struct {
+		Result []Validator `json:"result"`
+	}
+
+	ValidatorsResponse struct {
+		Total      string
+		Validators []Validator
+	}
+
 	Delegation struct {
-		Value     string `json:"amount"`
-		Delegator string `json:"delegator"`
-		Validator string `json:"validator"`
+		Value            string `json:"amount"`
+		DelegatorAddress string `json:"delegator"`
+		ValidatorAddress string `json:"validator"`
 	}
 
 	DelegationsResponse struct {
 		Delegations []Delegation `json:"delegations"`
 		Total       int          `json:"total"`
+	}
+
+	UnbondingDelegationEntry struct {
+		Balance        string `json:"balance"`
+		CompletionTime string `json:"completion_time"`
+	}
+
+	UnbondingDelegation struct {
+		Delegation
+		Entries []UnbondingDelegationEntry
 	}
 )
 

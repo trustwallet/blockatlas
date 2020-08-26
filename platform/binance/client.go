@@ -85,18 +85,40 @@ func (c Client) FetchTokens() (Tokens, error) {
 	if ok {
 		return cachedResult.(Tokens), nil
 	}
-	result := new(Tokens)
 	query := url.Values{"limit": {tokensLimit}}
 	resp, err := req.Get(c.url+"/v1/tokens", query)
 	if err != nil {
 		return nil, err
 	}
+	result := new(Tokens)
 	if err := resp.ToJSON(&result); err != nil {
 		logger.Error("URL: " + resp.Request().URL.String())
 		logger.Error("Status code: " + resp.Response().Status)
 		return nil, err
 	}
 	c.Cache.Set("tokens", *result, cache.DefaultExpiration)
+	return *result, nil
+}
+
+func (c *Client) GetValidators() (validators ValidatorsResponse, err error) {
+	cachedResult, ok := c.Cache.Get("validators")
+	if ok {
+		return cachedResult.(ValidatorsResponse), nil
+	}
+	query := url.Values{
+		"status": {"bonded"},
+	}
+	result := new(ValidatorsResponse)
+	resp, err := req.Get(c.url+"/v1/staking/validators", query)
+	if err != nil {
+		return *result, err
+	}
+	if err := resp.ToJSON(&result); err != nil {
+		logger.Error("URL: " + resp.Request().URL.String())
+		logger.Error("Status code: " + resp.Response().Status)
+		return *result, err
+	}
+	c.Cache.Set("validators", *result, cache.DefaultExpiration)
 	return *result, nil
 }
 
@@ -112,6 +134,5 @@ func (c *Client) GetDelegations(chainID string, address string) (delegations []D
 		logger.Error("Status code: " + resp.Response().Status)
 		return []Delegation{}, err
 	}
-	fmt.Println(result)
 	return result.Delegations, nil
 }

@@ -29,6 +29,14 @@
   mockURL: /mock/binance-api/v1/tokens?limit=1000
   method: GET
   extURL: https://dex.binance.org/api/v1/tokens?limit=1000&offset=0
+- file: mock/ext-api-data/binance-api_v1_staking_validators__status_bonded.json
+  mockURL: /mock/binance-api/v1/staking/validators?status=bonded
+  method: GET
+  extURL: https://testnet-api.binance.org/v1/staking/chains/0/validators
+- file: mock/ext-api-data/binance-api_v1_staking_chains_0_delegators_bnb1jeu6gscugy6l2wyatxthkh2hmer4hzevgcmf0q_delegations.json
+  mockURL: /mock/binance-api/v1/staking/chains/0/delegators/bnb1jeu6gscugy6l2wyatxthkh2hmer4hzevgcmf0q/delegations
+  method: GET
+  extURL: https://testnet-api.binance.org/v1/staking/chains/0/delegators/bnb1jeu6gscugy6l2wyatxthkh2hmer4hzevgcmf0q/delegations
 - file: mock/ext-api-data/bitcoin-api_v2_address_bc1qrfr44n2j4czd5c9txwlnw0yj2h82x9566fglqj__details_txs.json
   mockURL: /mock/bitcoin-api/v2/address/bc1qrfr44n2j4czd5c9txwlnw0yj2h82x9566fglqj?details=txs
   method: GET
@@ -505,7 +513,3 @@
   extURL: https://<eth-rpc>
   reqFile: mock/ext-api-data/eth-rpc__eth_call_data_0x3b3b57dea538cd174de170e8062c97c25c40a7ceb56aca81b12e6f5afc46f5a429999aa4.request_json
   reqField: data
-- file: mock/ext-api-data/binance-api_v1_staking_chains_0_delegators_bnb13mjfgll6sad6ucdnlf4ww5mm2l5uhdxrsu633p_delegations.json
-  mockURL: /mock/binance-api/v1/staking/chains/0/delegators/bnb13mjfgll6sad6ucdnlf4ww5mm2l5uhdxrsu633p/delegations
-  method: GET
-  extURL: https://testnet-api.binance.org/v1/staking/chains/0/delegators/bnb13mjfgll6sad6ucdnlf4ww5mm2l5uhdxrsu633p/delegations

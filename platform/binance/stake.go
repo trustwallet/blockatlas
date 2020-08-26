@@ -1,18 +1,39 @@
 package binance
 
 import (
+	"time"
+
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
-	"github.com/trustwallet/blockatlas/services/assets"
+	//"github.com/trustwallet/blockatlas/services/assets"
 )
 
 const (
-	lockTime      = 1814400 // in seconds (21 days)
-	minimumAmount = "1"
+	chainID            = "0"     // TODO
+	dummyLockTime      = 1814400 // in seconds (21 days)
+	dummyMinimumAmount = "1"
+	dummyMaxAPR        = 0.2
 )
 
+func GetValidatorsMapMock(api blockatlas.StakeAPI) (blockatlas.ValidatorMap, error) {
+	result := blockatlas.ValidatorMap{}
+	result["bnb18cy9pjf3ym239w5qec0kkeuktyywx8wpq3jt0c"] = blockatlas.StakeValidator{
+		ID:     "bnb18cy9pjf3ym239w5qec0kkeuktyywx8wpq3jt0c",
+		Status: true,
+		Info:   blockatlas.StakeValidatorInfo{Name: "DummyBinanceTestValidator"},
+		Details: blockatlas.StakingDetails{
+			Reward:        blockatlas.StakingReward{Annual: dummyMaxAPR},
+			LockTime:      dummyLockTime,
+			MinimumAmount: dummyMinimumAmount,
+			Type:          blockatlas.DelegationTypeDelegate,
+		},
+	}
+	return result, nil
+}
+
 func (p *Platform) GetActiveValidators() (blockatlas.StakeValidators, error) {
-	validators, err := assets.GetValidatorsMap(p)
+	//validators, err := assets.GetValidatorsMap(p)
+	validators, err := GetValidatorsMapMock(p) // TODO
 	if err != nil {
 		return nil, err
 	}
@@ -25,17 +46,16 @@ func (p *Platform) GetActiveValidators() (blockatlas.StakeValidators, error) {
 
 func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
 	results := make(blockatlas.ValidatorPage, 0)
+	validators, err := p.client.GetValidators()
+	if err != nil {
+		return nil, err
+	}
 	// TODO
 	/*
-		validators, err := p.client.GetValidators()
-		if err != nil {
-			return nil, err
-		}
 		pool, err := p.client.GetPool()
 		if err != nil {
 			return nil, err
 		}
-
 		inflation, err := p.client.GetInflation()
 		if err != nil {
 			return nil, err
@@ -44,11 +64,10 @@ func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
 		if err != nil {
 			return nil, errors.E("error to parse inflationValue to float", errors.TypePlatformUnmarshal)
 		}
-
-		for _, validator := range validators.Result {
-			results = append(results, normalizeValidator(validator, pool.Pool, inflationValue))
-		}
 	*/
+	for _, validator := range validators.Validators {
+		results = append(results, normalizeValidator(validator))
+	}
 
 	return results, nil
 }
@@ -56,14 +75,15 @@ func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
 func (p *Platform) GetDetails() blockatlas.StakingDetails {
 	return blockatlas.StakingDetails{
 		Reward: blockatlas.StakingReward{
-			Annual: p.GetMaxAPR(),
+			Annual: dummyMaxAPR,
 		},
-		MinimumAmount: minimumAmount,
-		LockTime:      lockTime,
+		MinimumAmount: dummyMinimumAmount,
+		LockTime:      dummyLockTime,
 		Type:          blockatlas.DelegationTypeDelegate,
 	}
 }
 
+/*
 func (p *Platform) GetMaxAPR() float64 {
 	validators, err := p.GetValidators()
 	if err != nil {
@@ -81,65 +101,60 @@ func (p *Platform) GetMaxAPR() float64 {
 
 	return max
 }
+*/
 
 func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, error) {
 	results := make(blockatlas.DelegationsPage, 0)
-	const chainID = "0" // TODO
 	delegations, err := p.client.GetDelegations(chainID, address)
 	if err != nil {
 		return nil, err
 	}
 	// TODO
+	unbondingDelegations := []UnbondingDelegation{}
 	/*
 		unbondingDelegations, err := p.client.GetUnbondingDelegations(address)
 		if err != nil {
 			return nil, err
 		}
-		if delegations.List == nil && unbondingDelegations.List == nil {
 	*/
-	if delegations == nil {
+	if (delegations == nil || len(delegations) == 0) && (unbondingDelegations == nil || len(unbondingDelegations) == 0) {
 		return results, nil
 	}
-	/*
-		validators, err := assets.GetValidatorsMap(p)
-		if err != nil {
-			return nil, err
-		}
-	*/
-	results = append(results, NormalizeDelegations(delegations)...)
-	//results = append(results, NormalizeUnbondingDelegations(unbondingDelegations.List, validators)...)
+	//validators, err := assets.GetValidatorsMap(p)
+	validators, err := GetValidatorsMapMock(p) // TODO
+	if err != nil {
+		return nil, err
+	}
+	results = append(results, NormalizeDelegations(delegations, validators)...)
+	results = append(results, NormalizeUnbondingDelegations(unbondingDelegations, validators)...)
 
 	return results, nil
 }
 
 func (p *Platform) UndelegatedBalance(address string) (string, error) {
-	/*
-		account, err := p.client.GetAccount(address)
-		if err != nil {
-			return "0", err
+	accountMeta, err := p.client.FetchAccountMeta(address)
+	if err != nil {
+		return "0", err
+	}
+	for _, coin := range accountMeta.Balances {
+		if coin.Symbol == "BNB" {
+			return coin.Free, nil
 		}
-		for _, coin := range account.Account.Value.Coins {
-			if coin.Denom == p.Denom() {
-				return coin.Amount, nil
-			}
-		}
-	*/
+	}
 	return "0", nil
 }
 
-func NormalizeDelegations(delegations []Delegation /*, validators blockatlas.ValidatorMap*/) []blockatlas.Delegation {
+func NormalizeDelegations(delegations []Delegation, validators blockatlas.ValidatorMap) []blockatlas.Delegation {
 	results := make([]blockatlas.Delegation, 0)
 	for _, v := range delegations {
-		/*
-			validator, ok := validators[v.ValidatorAddress]
-			if !ok {
-				logger.Warn("Validator not found", logger.Params{"address": v.ValidatorAddress, "platform": "binance", "delegation": v.DelegatorAddress})
-				validator = getUnknownValidator(v.ValidatorAddress)
+		validator, ok := validators[v.ValidatorAddress]
+		if !ok {
+			logger.Warn("Validator not found", logger.Params{"address": v.ValidatorAddress, "platform": "binance", "delegation": v.DelegatorAddress})
+			validator = getUnknownValidator(v.ValidatorAddress)
 
-			}
-		*/
+		}
 		delegation := blockatlas.Delegation{
-			Delegator: blockatlas.StakeValidator{v.Delegator, true, blockatlas.StakeValidatorInfo{}, blockatlas.StakingDetails{}},
+			Delegator: validator,
 			Value:     v.Value,
 			Status:    blockatlas.DelegationStatusActive,
 		}
@@ -148,16 +163,15 @@ func NormalizeDelegations(delegations []Delegation /*, validators blockatlas.Val
 	return results
 }
 
-/*
 func NormalizeUnbondingDelegations(delegations []UnbondingDelegation, validators blockatlas.ValidatorMap) []blockatlas.Delegation {
 	results := make([]blockatlas.Delegation, 0)
 	for _, v := range delegations {
+		validator, ok := validators[v.ValidatorAddress]
+		if !ok {
+			logger.Warn("Validator not found", logger.Params{"address": v.ValidatorAddress, "platform": "binance", "delegation": v.DelegatorAddress})
+			validator = getUnknownValidator(v.ValidatorAddress)
+		}
 		for _, entry := range v.Entries {
-			validator, ok := validators[v.ValidatorAddress]
-			if !ok {
-				logger.Warn("Validator not found", logger.Params{"address": v.ValidatorAddress, "platform": "binance", "delegation": v.DelegatorAddress})
-				validator = getUnknownValidator(v.ValidatorAddress)
-			}
 			t, _ := time.Parse(time.RFC3339, entry.CompletionTime)
 			delegation := blockatlas.Delegation{
 				Delegator: validator,
@@ -173,20 +187,23 @@ func NormalizeUnbondingDelegations(delegations []UnbondingDelegation, validators
 	return results
 }
 
-func normalizeValidator(v Validator, p Pool, inflation float64) (validator blockatlas.Validator) {
-	reward := CalculateAnnualReward(p, inflation, v)
+//func normalizeValidator(v Validator, p Pool, inflation float64) (validator blockatlas.Validator) {
+func normalizeValidator(v Validator) (validator blockatlas.Validator) {
+	//reward := CalculateAnnualReward(p, inflation, v)
+	reward := dummyMaxAPR // TODO
 	return blockatlas.Validator{
 		Status: v.Status == 2,
 		ID:     v.Address,
 		Details: blockatlas.StakingDetails{
 			Reward:        blockatlas.StakingReward{Annual: reward},
-			MinimumAmount: minimumAmount,
-			LockTime:      lockTime,
+			MinimumAmount: dummyMinimumAmount,
+			LockTime:      dummyLockTime,
 			Type:          blockatlas.DelegationTypeDelegate,
 		},
 	}
 }
 
+/*
 func CalculateAnnualReward(p Pool, inflation float64, validator Validator) float64 {
 	notBondedTokens, err := strconv.ParseFloat(p.NotBondedTokens, 32)
 	if err != nil {
@@ -205,6 +222,7 @@ func CalculateAnnualReward(p Pool, inflation float64, validator Validator) float
 	result := (notBondedTokens + bondedTokens) / bondedTokens * inflation
 	return (result - (result * commission)) * 100
 }
+*/
 
 func getUnknownValidator(address string) blockatlas.StakeValidator {
 	return blockatlas.StakeValidator{
@@ -218,10 +236,9 @@ func getUnknownValidator(address string) blockatlas.StakeValidator {
 			Reward: blockatlas.StakingReward{
 				Annual: 0,
 			},
-			LockTime:      lockTime,
-			MinimumAmount: minimumAmount,
+			LockTime:      dummyLockTime,
+			MinimumAmount: dummyMinimumAmount,
 			Type:          blockatlas.DelegationTypeDelegate,
 		},
 	}
 }
-*/
