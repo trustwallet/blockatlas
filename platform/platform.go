@@ -2,6 +2,7 @@ package platform
 
 import (
 	"fmt"
+	"github.com/trustwallet/blockatlas/platform/kava"
 
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/coin"
@@ -84,7 +85,7 @@ func getAllHandlers() blockatlas.Platforms {
 		coin.Stellar().Handle:      stellar.Init(coin.XLM, GetApiVar(coin.XLM)),
 		coin.Kin().Handle:          stellar.Init(coin.KIN, GetApiVar(coin.KIN)),
 		coin.Cosmos().Handle:       cosmos.Init(coin.ATOM, GetApiVar(coin.ATOM)),
-		coin.Kava().Handle:         cosmos.Init(coin.KAVA, GetApiVar(coin.KAVA)),
+		coin.Kava().Handle:         kava.Init(coin.KAVA, GetApiVar(coin.KAVA)),
 		coin.Bitcoin().Handle:      bitcoin.Init(coin.BTC, GetApiVar(coin.BTC)),
 		coin.Litecoin().Handle:     bitcoin.Init(coin.LTC, GetApiVar(coin.LTC)),
 		coin.Bitcoincash().Handle:  bitcoin.Init(coin.BCH, GetApiVar(coin.BCH)),
