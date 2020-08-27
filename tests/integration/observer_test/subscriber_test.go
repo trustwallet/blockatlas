@@ -13,7 +13,6 @@ import (
 	"io/ioutil"
 	"path/filepath"
 	"runtime"
-	"strconv"
 	"testing"
 	"time"
 )
@@ -57,10 +56,9 @@ func TestSubscriberAddSubscription(t *testing.T) {
 	}
 
 	for _, wanted := range wantedEvents {
-		coinStr := strconv.FormatUint(uint64(wanted.Coin), 10)
-		result, err := database.GetSubscriptionsForNotifications([]string{coinStr + "_" + wanted.Address}, context.Background())
+		result, err := database.GetSubscriptionsForNotifications([]string{wanted.Address}, context.Background())
 		assert.Nil(t, err)
-		assert.Equal(t, result[0].Address, wanted.Address)
+		assert.Equal(t, result[0].Address.Address, wanted.Address)
 	}
 }
 
@@ -118,8 +116,7 @@ func TestSubscriber_UpdateSubscription(t *testing.T) {
 	}
 
 	for _, wanted := range wantedEvents {
-		coinStr := strconv.FormatUint(uint64(wanted.Coin), 10)
-		result, err := database.GetSubscriptionsForNotifications([]string{coinStr + "_" + wanted.Address}, context.Background())
+		result, err := database.GetSubscriptionsForNotifications([]string{wanted.Address}, context.Background())
 		assert.Nil(t, err)
 		assert.Len(t, result, 1)
 	}

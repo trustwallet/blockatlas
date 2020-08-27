@@ -5,17 +5,19 @@ import (
 	"encoding/json"
 	"github.com/trustwallet/blockatlas/db"
 	"github.com/trustwallet/blockatlas/mq"
+	"github.com/trustwallet/blockatlas/pkg/address"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
-	"strconv"
-	"strings"
 	"sync"
 )
 
 type (
 	AddressesByCoin map[uint][]string
 	AssetsByAddress map[string][]string
-	Request         map[string][]string
+	Request         struct {
+		AddressesByCoin map[string][]string
+		From            uint
+	}
 )
 
 type Instance struct {
@@ -69,7 +71,7 @@ func getSubscribedAddresses(database *db.Instance, addresses []string, ctx conte
 
 func getAddressesFromRequest(request Request) []string {
 	var addresses []string
-	for coinID, requestAddresses := range request {
+	for coinID, requestAddresses := range request.AddressesByCoin {
 		for _, a := range requestAddresses {
 			addresses = append(addresses, coinID+"_"+a)
 		}
@@ -83,15 +85,15 @@ func getUnsubscribedAddresses(subscribed []string, all []string) AddressesByCoin
 	for _, a := range subscribed {
 		subscribedMap[a] = true
 	}
-	for _, address := range all {
-		_, ok := subscribedMap[address]
+	for _, a := range all {
+		_, ok := subscribedMap[a]
 		if !ok {
-			a, coinID, ok := getCoinIDFromAddress(address)
+			ua, coinID, ok := address.UnprefixedAddress(a)
 			if !ok {
 				continue
 			}
 			currentAddresses := addressesByCoin[coinID]
-			addressesByCoin[coinID] = append(currentAddresses, a)
+			addressesByCoin[coinID] = append(currentAddresses, ua)
 		}
 	}
 	return addressesByCoin
@@ -103,15 +105,15 @@ func getAddressesToRegisterByCoin(assetsByAddresses AssetsByAddress, addresses [
 	for _, a := range addresses {
 		addressesFromRequestMap[a] = true
 	}
-	for _, address := range addresses {
-		_, ok := assetsByAddresses[address]
+	for _, a := range addresses {
+		_, ok := assetsByAddresses[a]
 		if !ok {
-			a, coinID, ok := getCoinIDFromAddress(address)
+			ua, coinID, ok := address.UnprefixedAddress(a)
 			if !ok {
 				continue
 			}
 			currentAddresses := addressesByCoin[coinID]
-			addressesByCoin[coinID] = append(currentAddresses, a)
+			addressesByCoin[coinID] = append(currentAddresses, ua)
 		}
 	}
 	return addressesByCoin
@@ -157,18 +159,6 @@ func publishNewAddressesToQueue(queue mq.Queue, message AssetsByAddress) error {
 		return err
 	}
 	return queue.Publish(body)
-}
-
-func getCoinIDFromAddress(address string) (string, uint, bool) {
-	result := strings.Split(address, "_")
-	if len(result) != 2 {
-		return "", 0, false
-	}
-	id, err := strconv.Atoi(result[0])
-	if err != nil {
-		return "", 0, false
-	}
-	return result[1], uint(id), true
 }
 
 func getAssetsToResponse(dbAssetsMap, nodesAssetsMap AssetsByAddress, addresses []string) map[string][]string {

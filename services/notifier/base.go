@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/streadway/amqp"
 	"github.com/trustwallet/blockatlas/db"
+	"github.com/trustwallet/blockatlas/pkg/address"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"strconv"
 
@@ -50,7 +51,11 @@ func RunNotifier(database *db.Instance, delivery amqp.Delivery) {
 
 	notifications := make([]TransactionNotification, 0)
 	for _, sub := range subscriptionsDataList {
-		notificationsForAddress := buildNotificationsByAddress(sub.Address.Address, txs, ctx)
+		ua, _, ok := address.UnprefixedAddress(sub.Address.Address)
+		if !ok {
+			continue
+		}
+		notificationsForAddress := buildNotificationsByAddress(ua, txs, ctx)
 		notifications = append(notifications, notificationsForAddress...)
 	}
 

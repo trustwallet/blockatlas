@@ -9,8 +9,11 @@ import (
 )
 
 func Test_getAddressesFromRequest(t *testing.T) {
-	request := make(map[string][]string)
-	request["60"] = []string{"1", "2", "3"}
+	request := Request{
+		AddressesByCoin: make(map[string][]string),
+		From:            0,
+	}
+	request.AddressesByCoin["60"] = []string{"1", "2", "3"}
 	r := getAddressesFromRequest(request)
 	assert.Equal(t, []string{"60_1", "60_2", "60_3"}, r)
 }
@@ -32,13 +35,6 @@ func Test_getAddressesToRegisterByCoin(t *testing.T) {
 	c, ok := result[118]
 	assert.True(t, ok)
 	assert.Equal(t, []string{"c"}, c)
-}
-
-func Test_getCoinIDFromAddress(t *testing.T) {
-	address, id, ok := getCoinIDFromAddress("60_a")
-	assert.Equal(t, "a", address)
-	assert.Equal(t, uint(60), id)
-	assert.True(t, ok)
 }
 
 func Test_getAssetsToResponse(t *testing.T) {
