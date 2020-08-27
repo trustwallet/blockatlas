@@ -116,7 +116,7 @@ func getTokens(tokenAPI blockatlas.TokensAPI, addresses []string) blockatlas.Tok
 }
 
 func GetTokensByAddressIndexer(c *gin.Context, instance tokensearcher.Instance) {
-	var query map[string][]string
+	var query tokensearcher.Request
 	if err := c.Bind(&query); err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, errorResponse(err))
 		return
