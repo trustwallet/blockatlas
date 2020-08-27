@@ -10,6 +10,13 @@ import (
 	"time"
 )
 
+type (
+	tokensResult struct {
+		Result blockatlas.TokenPage
+		mu     sync.Mutex
+	}
+)
+
 // @Summary Get Tokens
 // @ID tokens
 // @Description Get tokens from the address
@@ -51,7 +58,11 @@ func GetTokens(c *gin.Context, apis map[uint]blockatlas.TokensAPI) {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
-	result := make(blockatlas.TokenPage, 0)
+	result := tokensResult{
+		Result: make(blockatlas.TokenPage, 0),
+		mu:     sync.Mutex{},
+	}
+	var wg sync.WaitGroup
 	for coinStr, addresses := range query {
 		coinNum, err := strconv.ParseUint(coinStr, 10, 32)
 		if err != nil {
@@ -61,23 +72,22 @@ func GetTokens(c *gin.Context, apis map[uint]blockatlas.TokensAPI) {
 		if !ok {
 			continue
 		}
-
-		tokens := getTokens(api, addresses)
-		result = append(result, tokens...)
+		wg.Add(1)
+		go getTokens(api, addresses, &result, &wg)
 	}
-	c.JSON(http.StatusOK, blockatlas.ResultsResponse{Total: len(result), Results: &result})
+	wg.Wait()
+	c.JSON(http.StatusOK, blockatlas.ResultsResponse{Total: len(result.Result), Results: &result.Result})
 }
 
-func getTokens(tokenAPI blockatlas.TokensAPI, addresses []string) blockatlas.TokenPage {
+func getTokens(tokenAPI blockatlas.TokensAPI, addresses []string, data *tokensResult, wg *sync.WaitGroup) {
 	var (
 		tokenPagesChan = make(chan blockatlas.TokenPage, len(addresses))
-		wg             sync.WaitGroup
-		result         blockatlas.TokenPage
+		wgLocal        sync.WaitGroup
 		timeout        = time.Second * 3
 	)
-
+	defer wg.Done()
 	for _, address := range addresses {
-		wg.Add(1)
+		wgLocal.Add(1)
 		go func(address string, wg *sync.WaitGroup) {
 			defer wg.Done()
 
@@ -103,16 +113,16 @@ func getTokens(tokenAPI blockatlas.TokensAPI, addresses []string) blockatlas.Tok
 			case p := <-pageChan:
 				tokenPagesChan <- p
 			}
-		}(address, &wg)
+		}(address, &wgLocal)
 	}
-	wg.Wait()
+	wgLocal.Wait()
 	close(tokenPagesChan)
-
+	data.mu.Lock()
 	for page := range tokenPagesChan {
-		result = append(result, page...)
+		r := data.Result
+		data.Result = append(r, page...)
 	}
-
-	return result
+	data.mu.Unlock()
 }
 
 func GetTokensByAddressIndexer(c *gin.Context, instance tokensearcher.Instance) {

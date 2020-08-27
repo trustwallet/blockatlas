@@ -84,6 +84,12 @@
         "expectedTxId": "0x85aaf834470dd858dc2f60c7bd535ddf08c3fcfef9456f43676462950a355b78"
     },
     {
+        "handler": "binance",
+        "address": "bnb1z35wusfv8twfele77vddclka9z84ugywug48gn",
+        "expectedTxNum": 1,
+        "expectedTxId": "0CE23D9F143F7FAF192BB55F33C8FCBC1095D98410A750F63777987685E2C154"
+    },
+    {
         "handler": "tezos",
         "address": "tz1foWxaV3VQyWqFbWTERS6YDJjPT6C7jPp8",
         "expectedTxNum": 2,
