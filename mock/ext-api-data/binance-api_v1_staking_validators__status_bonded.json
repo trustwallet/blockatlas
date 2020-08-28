@@ -1,10 +1,45 @@
 {
-  "total": "1",
+  "total": 170,
   "validators": [
     {
       "validator": "bnb18cy9pjf3ym239w5qec0kkeuktyywx8wpq3jt0c",
       "valName": "BinanceTestValidator1",
-      "status": 2
+      "commissionRate": 0.75000000,
+      "votingPower": 573302.01000000,
+      "status": 0,
+      "votingPowerProportion": 0.1216
+    },
+    {
+      "validator": "bva1pnww8kx30sz4xfcqvn8wjhrn796nf4dq77hcpa",
+      "valName": "Binance-Fuji",
+      "commissionRate": 0.75000000,
+      "votingPower": 573302.01000000,
+      "status": 0,
+      "votingPowerProportion": 0.1216
+    },
+    {
+      "validator": "bva1wlxpuycavhvjzq27l6qzv07uf6cymgj7wcrf74",
+      "valName": "Binance-Kita",
+      "commissionRate": 0.75000000,
+      "votingPower": 570754.00000000,
+      "status": 0,
+      "votingPowerProportion": 0.1211
+    },
+    {
+      "validator": "bva10npy5809y303f227g4leqw7vs3s6ep5ul26sq2",
+      "valName": "Binance-Seoraksan",
+      "commissionRate": 0.75000000,
+      "votingPower": 476579.49000000,
+      "status": 0,
+      "votingPowerProportion": 0.1011
+    },
+    {
+      "validator": "bva1p7s26ervsmv3w83k5696glautc9sm5rchz5f5e",
+      "valName": "Binance-Ararat",
+      "commissionRate": 0.75000000,
+      "votingPower": 473474.00000000,
+      "status": 0,
+      "votingPowerProportion": 0.1004
     }
   ]
 }

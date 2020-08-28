@@ -32,7 +32,7 @@
 - file: mock/ext-api-data/binance-api_v1_staking_validators__status_bonded.json
   mockURL: /mock/binance-api/api/v1/staking/validators?status=bonded
   method: GET
-  extURL: https://testnet-api.binance.org/v1/staking/chains/0/validators
+  extURL: https://testnet-api.binance.org/v1/staking/chains/chapel/validators?limit=25&offset=0
 - file: mock/ext-api-data/binance-api_v1_staking_chains_0_delegators_bnb1jeu6gscugy6l2wyatxthkh2hmer4hzevgcmf0q_delegations.json
   mockURL: /mock/binance-api/api/v1/staking/chains/0/delegators/bnb1jeu6gscugy6l2wyatxthkh2hmer4hzevgcmf0q/delegations
   method: GET
