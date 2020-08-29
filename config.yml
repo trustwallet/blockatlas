@@ -225,3 +225,7 @@ near:
 
 elrond:
   api: https://api.elrond.com
+
+# bsc:
+  # api: <node url>
+  # blockbook_api: <blockbook url>

@@ -6,12 +6,13 @@
 package main
 
 import (
-	"gopkg.in/yaml.v2"
 	"html/template"
 	"log"
 	"os"
 	"strings"
 	"time"
+
+	"gopkg.in/yaml.v2"
 )
 
 const (
@@ -32,6 +33,7 @@ type Coin struct {
 	ID               uint
 	Handle           string
 	Symbol           string
+	PreferedSymbol   string
 	Name             string
 	Decimals         uint
 	BlockTime        int
@@ -45,16 +47,27 @@ func (c *Coin) String() string {
 
 const (
 {{- range .Coins }}
+{{- if .PreferedSymbol}}
+	{{ .PreferedSymbol }} = {{ .ID }}
+{{- else}}
 	{{ .Symbol }} = {{ .ID }}
+{{- end}}
 {{- end }}
 )
 
 var Coins = map[uint]Coin{
 {{- range .Coins }}
+{{- if .PreferedSymbol }}
+	{{ .PreferedSymbol }}: {
+{{- else }}
 	{{ .Symbol }}: {
+{{- end }}
 		ID:               {{.ID}},
 		Handle:           "{{.Handle}}",
 		Symbol:           "{{.Symbol}}",
+{{- if .PreferedSymbol }}
+		PreferedSymbol:   "{{.PreferedSymbol}}",
+{{- end }}
 		Name:             "{{.Name}}",
 		Decimals:         {{.Decimals}},
 		BlockTime:        {{.BlockTime}},
@@ -65,8 +78,12 @@ var Coins = map[uint]Coin{
 }
 
 {{- range .Coins }}
-func {{ .Handle.Upper }}() Coin {
+func {{ .Handle.Capitalize }}() Coin {
+{{- if .PreferedSymbol }}
+	return Coins[{{ .PreferedSymbol }}]
+{{- else }}
 	return Coins[{{ .Symbol }}]
+{{- end}}
 }
 
 {{- end }}
@@ -76,7 +93,7 @@ func {{ .Handle.Upper }}() Coin {
 
 type Handle string
 
-func (h Handle) Upper() string {
+func (h Handle) Capitalize() string {
 	return strings.Title(string(h))
 }
 
@@ -84,6 +101,7 @@ type Coin struct {
 	ID               uint   `yaml:"id"`
 	Handle           Handle `yaml:"handle"`
 	Symbol           string `yaml:"symbol"`
+	PreferedSymbol   string `yaml:"preferedSymbol,omitempty"`
 	Name             string `yaml:"name"`
 	Decimals         uint   `yaml:"decimals"`
 	BlockTime        int    `yaml:"blockTime"`
