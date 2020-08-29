@@ -3,10 +3,11 @@ package nebulas
 import (
 	"bytes"
 	"encoding/json"
+	"testing"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"testing"
 )
 
 const transferSrc = `
@@ -32,7 +33,7 @@ const transferSrc = `
 
 var transferDst = blockatlas.Tx{
 	ID:       "96bd280d60447b7dbcdb3fa76a99856e0422a76304e9d01d0c87e1dfceb6d952",
-	Coin:     coin.NAS,
+	Coin:     coin.NEBULAS,
 	From:     "n1Yv9xJJcH4UjoJPVDGdUCL2CxK29asFuyV",
 	To:       "n1TFrmLUDTe5ggQaWJiXHSqNSRzKYdaV6hQ",
 	Fee:      "400000000000000",

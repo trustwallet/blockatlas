@@ -18,5 +18,5 @@ func Init(api, explorerApi string) *Platform {
 }
 
 func (p *Platform) Coin() coin.Coin {
-	return coin.Coins[coin.TRX]
+	return coin.Coins[coin.TRON]
 }

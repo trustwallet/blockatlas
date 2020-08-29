@@ -2,10 +2,11 @@ package aeternity
 
 import (
 	"encoding/base64"
+	"strings"
+
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/numbers"
-	"strings"
 )
 
 func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
@@ -27,7 +28,7 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 
 func NormalizeTx(srcTx *Transaction) (blockatlas.Tx, error) {
 	txValue := srcTx.TxValue
-	decimals := coin.Coins[coin.AE].Decimals
+	decimals := coin.Coins[coin.AETERNITY].Decimals
 	amountFloat, err := txValue.Amount.Float64()
 	if err != nil {
 		return blockatlas.Tx{}, err
@@ -35,7 +36,7 @@ func NormalizeTx(srcTx *Transaction) (blockatlas.Tx, error) {
 	amount := numbers.Float64toString(amountFloat)
 	return blockatlas.Tx{
 		ID:       srcTx.Hash,
-		Coin:     coin.AE,
+		Coin:     coin.AETERNITY,
 		From:     txValue.Sender,
 		To:       txValue.Recipient,
 		Fee:      blockatlas.Amount(txValue.Fee),
@@ -46,7 +47,7 @@ func NormalizeTx(srcTx *Transaction) (blockatlas.Tx, error) {
 		Sequence: txValue.Nonce,
 		Meta: blockatlas.Transfer{
 			Value:    blockatlas.Amount(amount),
-			Symbol:   coin.Coins[coin.AE].Symbol,
+			Symbol:   coin.Coins[coin.AETERNITY].Symbol,
 			Decimals: decimals,
 		},
 	}, nil

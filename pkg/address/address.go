@@ -3,12 +3,13 @@ package address
 import (
 	"crypto/sha256"
 	"encoding/hex"
+	"strings"
+
 	"github.com/mr-tron/base58"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"golang.org/x/crypto/sha3"
-	"strings"
 )
 
 const prefixBitcoinCash = "bitcoincash:"
@@ -92,9 +93,9 @@ func EIP55ChecksumWanchain(address string) string {
 
 func ToEIP55ByCoinID(str string, coinID uint) string {
 	switch coinID {
-	case coin.ETH, coin.POA, coin.ETC, coin.TOMO, coin.CLO, coin.TT, coin.GO:
+	case coin.ETHEREUM, coin.POA, coin.CLASSIC, coin.TOMOCHAIN, coin.CALLISTO, coin.THUNDERTOKEN, coin.GOCHAIN:
 		return EIP55Checksum(str)
-	case coin.WAN:
+	case coin.WANCHAIN:
 		return EIP55ChecksumWanchain(str)
 	default:
 		return str
@@ -107,9 +108,9 @@ func removePrefix(address string) string {
 
 func FormatAddress(address string, coinID uint) string {
 	switch coinID {
-	case coin.ETH, coin.POA, coin.ETC, coin.TOMO, coin.CLO, coin.TT, coin.GO, coin.WAN:
+	case coin.ETHEREUM, coin.POA, coin.CLASSIC, coin.TOMOCHAIN, coin.CALLISTO, coin.THUNDERTOKEN, coin.GOCHAIN, coin.WANCHAIN:
 		return ToEIP55ByCoinID(address, coinID)
-	case coin.BCH:
+	case coin.BITCOINCASH:
 		return removePrefix(address)
 	default:
 		return address

@@ -3,8 +3,9 @@ package zilliqa
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"testing"
+
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 
 	"github.com/trustwallet/blockatlas/coin"
 )
@@ -26,7 +27,7 @@ const transferTransaction = `
 
 var transferDst = blockatlas.Tx{
 	ID:       "0xd44413c79e7518152f3b05ef1edff8ef59afd06119b16d09c8bc72e94fed7843",
-	Coin:     coin.ZIL,
+	Coin:     coin.ZILLIQA,
 	From:     "0x88af5ba10796d9091d6893eed4db23ef0bbbca37",
 	To:       "0x7fccacf066a5f26ee3affc2ed1fa9810deaa632c",
 	Fee:      "1000000000",

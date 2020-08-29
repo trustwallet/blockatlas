@@ -1,9 +1,10 @@
 package iotex
 
 import (
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"strconv"
 	"time"
+
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 
 	"github.com/trustwallet/blockatlas/coin"
 )
@@ -66,7 +67,7 @@ func Normalize(trx *ActionInfo) *blockatlas.Tx {
 
 	return &blockatlas.Tx{
 		ID:       trx.ActHash,
-		Coin:     coin.IOTX,
+		Coin:     coin.IOTEX,
 		From:     trx.Sender,
 		To:       trx.Action.Core.Transfer.Recipient,
 		Fee:      blockatlas.Amount(trx.GasFee),
@@ -77,8 +78,8 @@ func Normalize(trx *ActionInfo) *blockatlas.Tx {
 		Type:     blockatlas.TxTransfer,
 		Meta: blockatlas.Transfer{
 			Value:    trx.Action.Core.Transfer.Amount,
-			Symbol:   coin.Coins[coin.IOTX].Symbol,
-			Decimals: coin.Coins[coin.IOTX].Decimals,
+			Symbol:   coin.Coins[coin.IOTEX].Symbol,
+			Decimals: coin.Coins[coin.IOTEX].Decimals,
 		},
 	}
 }

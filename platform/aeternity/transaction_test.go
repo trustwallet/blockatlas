@@ -2,10 +2,11 @@ package aeternity
 
 import (
 	"encoding/json"
+	"testing"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"testing"
 )
 
 const transferTransaction = `
@@ -32,7 +33,7 @@ const transferTransaction = `
 
 var transferDst = blockatlas.Tx{
 	ID:       "th_oJfBC6KZKaKsL4WXTq1ZtFiSE8Wp2PQYEnwyZqtudyHcU3Qg6",
-	Coin:     coin.AE,
+	Coin:     coin.AETERNITY,
 	From:     "ak_nv5B93FPzRHrGNmMdTDfGdd5xGZvep3MVSpJqzcQmMp59bBCv",
 	To:       "ak_ZWrS6xGhzxBasKmMbVSACfRioWqPyM5jNqMpBQ5ngP75RS6pS",
 	Fee:      "20500000000000",

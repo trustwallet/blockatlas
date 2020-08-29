@@ -1,10 +1,11 @@
 package nimiq
 
 import (
-	"github.com/trustwallet/blockatlas/coin"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"sort"
 	"time"
+
+	"github.com/trustwallet/blockatlas/coin"
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 )
 
 func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
@@ -24,7 +25,7 @@ func NormalizeTx(srcTx *Tx) blockatlas.Tx {
 	}
 	return blockatlas.Tx{
 		ID:    srcTx.Hash,
-		Coin:  coin.NIM,
+		Coin:  coin.NIMIQ,
 		Date:  date,
 		From:  srcTx.FromAddress,
 		To:    srcTx.ToAddress,
@@ -32,8 +33,8 @@ func NormalizeTx(srcTx *Tx) blockatlas.Tx {
 		Block: srcTx.BlockNumber,
 		Meta: blockatlas.Transfer{
 			Value:    srcTx.Value,
-			Symbol:   coin.Coins[coin.NIM].Symbol,
-			Decimals: coin.Coins[coin.NIM].Decimals,
+			Symbol:   coin.Coins[coin.NIMIQ].Symbol,
+			Decimals: coin.Coins[coin.NIMIQ].Decimals,
 		},
 	}
 }

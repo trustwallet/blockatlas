@@ -6,12 +6,13 @@
 package main
 
 import (
-	"gopkg.in/yaml.v2"
 	"html/template"
 	"log"
 	"os"
 	"strings"
 	"time"
+
+	"gopkg.in/yaml.v2"
 )
 
 const (
@@ -45,13 +46,13 @@ func (c *Coin) String() string {
 
 const (
 {{- range .Coins }}
-	{{ .Symbol }} = {{ .ID }}
+	{{ .Handle.Upper }} = {{ .ID }}
 {{- end }}
 )
 
 var Coins = map[uint]Coin{
 {{- range .Coins }}
-	{{ .Symbol }}: {
+	{{ .Handle.Upper }}: {
 		ID:               {{.ID}},
 		Handle:           "{{.Handle}}",
 		Symbol:           "{{.Symbol}}",
@@ -65,8 +66,8 @@ var Coins = map[uint]Coin{
 }
 
 {{- range .Coins }}
-func {{ .Handle.Upper }}() Coin {
-	return Coins[{{ .Symbol }}]
+func {{ .Handle.Capitalise }}() Coin {
+	return Coins[{{ .Handle.Upper }}]
 }
 
 {{- end }}
@@ -76,8 +77,12 @@ func {{ .Handle.Upper }}() Coin {
 
 type Handle string
 
-func (h Handle) Upper() string {
+func (h Handle) Capitalise() string {
 	return strings.Title(string(h))
+}
+
+func (h Handle) Upper() string {
+	return strings.ToUpper(string(h))
 }
 
 type Coin struct {

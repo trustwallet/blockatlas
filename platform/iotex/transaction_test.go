@@ -2,8 +2,9 @@ package iotex
 
 import (
 	"encoding/json"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"testing"
+
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 
 	"github.com/stretchr/testify/assert"
 
@@ -98,7 +99,7 @@ const (
 var expected = []*blockatlas.Tx{
 	{
 		ID:       "109b75cb688a5347268cbf11b20fa90fd0a14e92a42ba735c046bbf1a6e66ad7",
-		Coin:     coin.IOTX,
+		Coin:     coin.IOTEX,
 		From:     "io1mwekae7qqwlr23220k5n9z3fmjxz72tuchra3m",
 		To:       "io1mwekae7qqwlr23220k5n9z3fmjxz72tuchra3m",
 		Fee:      blockatlas.Amount("10000000000000000"),

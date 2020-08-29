@@ -27,7 +27,7 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 func Normalize(srcTx *Tx) (tx blockatlas.Tx) {
 	tx = blockatlas.Tx{
 		ID:       srcTx.Hash,
-		Coin:     coin.ZIL,
+		Coin:     coin.ZILLIQA,
 		Date:     srcTx.Timestamp / 1000,
 		From:     srcTx.From,
 		To:       srcTx.To,
@@ -36,8 +36,8 @@ func Normalize(srcTx *Tx) (tx blockatlas.Tx) {
 		Sequence: srcTx.NonceValue(),
 		Meta: blockatlas.Transfer{
 			Value:    blockatlas.Amount(srcTx.Value),
-			Symbol:   coin.Coins[coin.ZIL].Symbol,
-			Decimals: coin.Coins[coin.ZIL].Decimals,
+			Symbol:   coin.Coins[coin.ZILLIQA].Symbol,
+			Decimals: coin.Coins[coin.ZILLIQA].Decimals,
 		},
 	}
 	if !srcTx.ReceiptSuccess {

@@ -39,7 +39,7 @@ func NormalizeTx(srcTx Transaction, address string) (blockatlas.Tx, bool) {
 
 	tx = blockatlas.Tx{
 		Block:  srcTx.Height,
-		Coin:   coin.XTZ,
+		Coin:   coin.TEZOS,
 		Date:   srcTx.BlockTimestamp(),
 		Error:  srcTx.ErrorMsg(),
 		Fee:    blockatlas.Amount(numbers.DecimalExp(numbers.Float64toString(srcTx.Fee), 6)),
@@ -72,8 +72,8 @@ func NormalizeTx(srcTx Transaction, address string) (blockatlas.Tx, bool) {
 	case blockatlas.TxTransfer:
 		tx.Meta = blockatlas.Transfer{
 			Value:    value,
-			Symbol:   coin.Coins[coin.XTZ].Symbol,
-			Decimals: coin.Coins[coin.XTZ].Decimals,
+			Symbol:   coin.Coins[coin.TEZOS].Symbol,
+			Decimals: coin.Coins[coin.TEZOS].Decimals,
 		}
 	default:
 		return blockatlas.Tx{}, false

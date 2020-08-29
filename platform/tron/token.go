@@ -1,11 +1,12 @@
 package tron
 
 import (
+	"sync"
+	"time"
+
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
-	"sync"
-	"time"
 )
 
 func (p *Platform) GetTokenListByAddress(address string) (blockatlas.TokenPage, error) {
@@ -82,7 +83,7 @@ func NormalizeToken(info AssetInfo) blockatlas.Token {
 		Name:     info.Name,
 		Symbol:   info.Symbol,
 		TokenID:  info.ID,
-		Coin:     coin.TRX,
+		Coin:     coin.TRON,
 		Decimals: info.Decimals,
 		Type:     blockatlas.TokenTypeTRC10,
 	}

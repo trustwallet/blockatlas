@@ -50,7 +50,7 @@ func (p *Platform) Lookup(coins []uint64, name string) ([]blockatlas.Resolved, e
 func (p *Platform) addressForCoin(resovler string, node []byte, coinID uint64) (string, error) {
 	result, err := p.ens.Addr(resovler, node, coinID)
 	if err != nil {
-		if coinID == coin.ETH {
+		if coinID == coin.ETHEREUM {
 			// user may not set multi coin address
 			result, err := p.lookupLegacyETH(resovler, node)
 			if err != nil {

@@ -2,11 +2,12 @@ package ethereum
 
 import (
 	"encoding/json"
+	"testing"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/platform/ethereum/collection"
-	"testing"
 )
 
 const collectionsOwnerV4 = "0x0875BCab22dE3d02402bc38aEe4104e1239374a7"
@@ -272,7 +273,7 @@ func TestNormalizeCollectionV4(t *testing.T) {
 	var collections []collection.Collection
 	err := json.Unmarshal([]byte(collectionsSrcV4), &collections)
 	assert.Nil(t, err)
-	page := NormalizeCollections(collections, coin.ETH, collectionsOwnerV4)
+	page := NormalizeCollections(collections, coin.ETHEREUM, collectionsOwnerV4)
 	assert.Equal(t, 3, len(page), "collections could not be normalized")
 	expected := blockatlas.CollectionPage{collection1DstV4, collection2DstV4, collection3DstV4}
 	assert.Equal(t, page, expected, "collections don't equal")
@@ -324,7 +325,7 @@ func TestNormalizeCollectibleV4(t *testing.T) {
 	var collectibles []collection.Collectible
 	err := json.Unmarshal([]byte(collectibleSrcV4), &collectibles)
 	assert.Nil(t, err)
-	page := NormalizeCollectiblePage(collectibles, coin.ETH)
+	page := NormalizeCollectiblePage(collectibles, coin.ETHEREUM)
 	assert.Equal(t, len(page), 1, "collectible could not be normalized")
 	expected := blockatlas.CollectiblePage{collectibleDstV4}
 	assert.Equal(t, page, expected, "collectible don't equal")

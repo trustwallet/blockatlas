@@ -9,7 +9,7 @@ import (
 )
 
 func TestNormalizeTransfer(t *testing.T) {
-	platform := Platform{CoinIndex: coin.KSM}
+	platform := Platform{CoinIndex: coin.KUSAMA}
 	type args struct {
 		srcTx *Transfer
 	}
@@ -89,7 +89,7 @@ func TestNormalizeTransfer(t *testing.T) {
 }
 
 func TestNormalizeExtrinsic(t *testing.T) {
-	platform := Platform{CoinIndex: coin.KSM}
+	platform := Platform{CoinIndex: coin.KUSAMA}
 	type args struct {
 		srcTx *Extrinsic
 	}
@@ -191,7 +191,7 @@ func TestNormalizeExtrinsic(t *testing.T) {
 }
 
 func TestNormalizeAddress(t *testing.T) {
-	platform := Platform{CoinIndex: coin.KSM}
+	platform := Platform{CoinIndex: coin.KUSAMA}
 	type args struct {
 		valueRaw string
 	}

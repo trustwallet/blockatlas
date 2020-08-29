@@ -35,7 +35,7 @@ func Normalize(tx Transaction) (result blockatlas.Tx, ok bool) {
 
 	return blockatlas.Tx{
 		ID:     tx.Hash,
-		Coin:   coin.ALGO,
+		Coin:   coin.ALGORAND,
 		From:   tx.From,
 		To:     tx.Payment.To,
 		Fee:    blockatlas.Amount(strconv.Itoa(int(tx.Fee))),
@@ -45,8 +45,8 @@ func Normalize(tx Transaction) (result blockatlas.Tx, ok bool) {
 		Type:   blockatlas.TxTransfer,
 		Meta: blockatlas.Transfer{
 			Value:    blockatlas.Amount(strconv.Itoa(int(tx.Payment.Amount))),
-			Symbol:   coin.Coins[coin.ALGO].Symbol,
-			Decimals: coin.Coins[coin.ALGO].Decimals,
+			Symbol:   coin.Coins[coin.ALGORAND].Symbol,
+			Decimals: coin.Coins[coin.ALGORAND].Decimals,
 		},
 	}, true
 }

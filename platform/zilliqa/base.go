@@ -22,5 +22,5 @@ func Init(api, apiKey, rpc, udClient string) *Platform {
 }
 
 func (p *Platform) Coin() coin.Coin {
-	return coin.Coins[coin.ZIL]
+	return coin.Coins[coin.ZILLIQA]
 }

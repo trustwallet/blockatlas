@@ -45,7 +45,7 @@ func NormalizeTx(srcTx Transaction) blockatlas.Tx {
 	}
 	return blockatlas.Tx{
 		ID:       srcTx.Hash,
-		Coin:     coin.NAS,
+		Coin:     coin.NEBULAS,
 		From:     srcTx.From.Hash,
 		To:       srcTx.To.Hash,
 		Fee:      blockatlas.Amount(srcTx.TxFee),
@@ -55,8 +55,8 @@ func NormalizeTx(srcTx Transaction) blockatlas.Tx {
 		Sequence: srcTx.Nonce,
 		Meta: blockatlas.Transfer{
 			Value:    blockatlas.Amount(srcTx.Value),
-			Symbol:   coin.Coins[coin.NAS].Symbol,
-			Decimals: coin.Coins[coin.NAS].Decimals,
+			Symbol:   coin.Coins[coin.NEBULAS].Symbol,
+			Decimals: coin.Coins[coin.NEBULAS].Decimals,
 		},
 	}
 }

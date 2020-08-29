@@ -3,9 +3,10 @@ package icon
 import (
 	"bytes"
 	"encoding/json"
+	"testing"
+
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"testing"
 )
 
 const basicSrc = `
@@ -27,7 +28,7 @@ const basicSrc = `
 
 var basicDst = blockatlas.Tx{
 	ID:    "0x34b8b6ec3a52710c24074f5e298f4a9c67bb61a0a1dde20e695efaeb30ff3754",
-	Coin:  coin.ICX,
+	Coin:  coin.ICON,
 	From:  "hx1b8959dd5c57d2c502e22ee0a887d33baec09091",
 	To:    "cx334db6519871cb2bfd154cec0905ced4ea142de1",
 	Fee:   "1747600000000000",

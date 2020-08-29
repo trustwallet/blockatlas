@@ -1,16 +1,17 @@
 package blockatlas
 
 import (
+	"sort"
+	"testing"
+
 	mapset "github.com/deckarep/golang-set"
 	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas/coin"
-	"sort"
-	"testing"
 )
 
 var transferDst1 = Tx{
 	ID:     "1681EE543FB4B5A628EF21D746E031F018E226D127044A4F9BA5EE2542A44555",
-	Coin:   coin.BNB,
+	Coin:   coin.BINANCE,
 	From:   "tbnb1fhr04azuhcj0dulm7ka40y0cqjlafwae9k9gk2",
 	To:     "tbnb1sylyjw032eajr9cyllp26n04300qzzre38qyv5",
 	Fee:    "125000",
@@ -27,7 +28,7 @@ var transferDst1 = Tx{
 
 var nativeTransferDst1 = Tx{
 	ID:     "95CF63FAA27579A9B6AF84EF8B2DFEAC29627479E9C98E7F5AE4535E213FA4C9",
-	Coin:   coin.BNB,
+	Coin:   coin.BINANCE,
 	From:   "tbnb1ttyn4csghfgyxreu7lmdu3lcplhqhxtzced45a",
 	To:     "tbnb12hlquylu78cjylk5zshxpdj6hf3t0tahwjt3ex",
 	Fee:    "125000",
@@ -47,7 +48,7 @@ var nativeTransferDst1 = Tx{
 
 var utxoTransferDst1 = Tx{
 	ID:   "zpub6ruK9k6YGm8BRHWvTiQcrEPnFkuRDJhR7mPYzV2LDvjpLa5CuGgrhCYVZjMGcLcFqv9b2WvsFtY2Gb3xq8NVq8qhk9veozrA2W9QaWtihrC",
-	Coin: coin.BTC,
+	Coin: coin.BITCOIN,
 	Inputs: []TxOutput{
 		{
 			Address: "bc1qhn03cww757mnnlpkdvvfkaydxqygm86nvkm92h",
@@ -77,7 +78,7 @@ var utxoTransferDst1 = Tx{
 
 var utxoTransferDst2 = Tx{
 	ID:   "zpub6ruK9k6YGm8BRHWvTiQcrEPnFkuRDJhR7mPYzV2LDvjpLa5CuGgrhCYVZjMGcLcFqv9b2WvsFtY2Gb3xq8NVq8qhk9veozrA2W9QaWtihrC",
-	Coin: coin.BTC,
+	Coin: coin.BITCOIN,
 	Inputs: []TxOutput{
 		{
 			Address: "bc1q6e8sdxlgc7ekqkqyevtrx8wshfv7sg66z3z6ce",
@@ -361,14 +362,14 @@ func TestInferDirection(t *testing.T) {
 			btcInputs1,
 			btcOutputs1,
 			DirectionOutgoing,
-			coin.BTC,
+			coin.BITCOIN,
 		},
 		{
 			btcSet,
 			btcInputs2,
 			btcOutputs2,
 			DirectionIncoming,
-			coin.BTC,
+			coin.BITCOIN,
 		},
 		{
 			dogeSet,

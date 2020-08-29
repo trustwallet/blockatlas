@@ -1,12 +1,13 @@
 package ontology
 
 import (
+	"sync"
+
 	"github.com/trustwallet/blockatlas/coin"
 	blockatlas "github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/pkg/numbers"
-	"sync"
 )
 
 func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
@@ -38,7 +39,7 @@ func Normalize(srcTx *Tx, assetName AssetType) (tx blockatlas.Tx, ok bool) {
 	}
 	tx = blockatlas.Tx{
 		ID:     srcTx.Hash,
-		Coin:   coin.ONT,
+		Coin:   coin.ONTOLOGY,
 		Fee:    blockatlas.Amount(fee),
 		Date:   srcTx.Time,
 		Block:  srcTx.Height,

@@ -61,7 +61,7 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 			Txs: []blockatlas.Tx{
 				{
 					ID:     "95CF63FAA27579A9B6AF84EF8B2DFEAC29627479E9C98E7F5AE4535E213FA4C9",
-					Coin:   coin.BNB,
+					Coin:   coin.BINANCE,
 					From:   "tbnb1ttyn4csghfgyxreu7lmdu3lcplhqhxtzced45a",
 					To:     "tbnb12hlquylu78cjylk5zshxpdj6hf3t0tahwjt3ex",
 					Fee:    "125000",

@@ -1,11 +1,12 @@
 package harmony
 
 import (
+	"strconv"
+
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/numbers"
-	"strconv"
 )
 
 const Annual = 10
@@ -68,7 +69,7 @@ func NormalizeTx(trx *Transaction) (tx blockatlas.Tx, b bool, err error) {
 
 	return blockatlas.Tx{
 		ID:       trx.Hash,
-		Coin:     coin.ONE,
+		Coin:     coin.HARMONY,
 		From:     trx.From,
 		To:       trx.To,
 		Fee:      blockatlas.Amount(literalFee),
@@ -79,8 +80,8 @@ func NormalizeTx(trx *Transaction) (tx blockatlas.Tx, b bool, err error) {
 		Block:    block,
 		Meta: blockatlas.Transfer{
 			Value:    blockatlas.Amount(literalValue),
-			Symbol:   coin.Coins[coin.ONE].Symbol,
-			Decimals: coin.Coins[coin.ONE].Decimals,
+			Symbol:   coin.Coins[coin.HARMONY].Symbol,
+			Decimals: coin.Coins[coin.HARMONY].Decimals,
 		},
 	}, true, nil
 }

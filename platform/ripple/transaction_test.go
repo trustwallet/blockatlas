@@ -2,9 +2,10 @@ package ripple
 
 import (
 	"encoding/json"
+	"testing"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"testing"
 
 	"github.com/trustwallet/blockatlas/coin"
 )
@@ -45,7 +46,7 @@ const paymentSrc = `
 
 var paymentDst = blockatlas.Tx{
 	ID:     "40279A3DE51148BD41409DADF29DE8DCCD50F5AEE30840827B2C4C81C4E36505",
-	Coin:   coin.XRP,
+	Coin:   coin.RIPPLE,
 	From:   "rGSxFjoqmWz54PycrgQBQ5dB6e7TUpMxzq",
 	To:     "rMQ98K56yXJbDGv49ZSmW51sLn94Xe1mu1",
 	Fee:    "3115",
@@ -102,7 +103,7 @@ const paymentSrc2 = `
 
 var paymentDst2 = blockatlas.Tx{
 	ID:     "3D8512E02414EF5A6BC00281D945735E85DED9EF739B1DCA9EABE04D9EEC72C1",
-	Coin:   coin.XRP,
+	Coin:   coin.RIPPLE,
 	From:   "raz97dHvnyBcnYTbXGYxhV8bGyr1aPrE5w",
 	To:     "rna8qC8Y9uLd2vzYtSEa1AJcdD3896zQ9S",
 	Fee:    "120",
@@ -192,7 +193,7 @@ const failedPayment = `
 
 var failedPaymentDst = blockatlas.Tx{
 	ID:     "B9086F7EB895E943C4DDA9F1B582E6E7DE35F4FB91AD13C50AB74F854DC0EBE0",
-	Coin:   coin.XRP,
+	Coin:   coin.RIPPLE,
 	From:   "rJb5KsHsDHF1YS5B5DU6QCkH5NsPaKQTcy",
 	To:     "rfHj5CuhajwdrzW2C8Y7EDXbx1QMiD5SXP",
 	Fee:    "100000",

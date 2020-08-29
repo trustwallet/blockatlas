@@ -1,10 +1,11 @@
 package ripple
 
 import (
-	"github.com/trustwallet/blockatlas/coin"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"strconv"
 	"time"
+
+	"github.com/trustwallet/blockatlas/coin"
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 )
 
 func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
@@ -60,7 +61,7 @@ func NormalizeTx(srcTx *Tx) (blockatlas.Tx, bool) {
 
 	result := blockatlas.Tx{
 		ID:     srcTx.Hash,
-		Coin:   coin.XRP,
+		Coin:   coin.RIPPLE,
 		Date:   unix,
 		From:   srcTx.Payment.Account,
 		To:     srcTx.Payment.Destination,
@@ -69,8 +70,8 @@ func NormalizeTx(srcTx *Tx) (blockatlas.Tx, bool) {
 		Status: status,
 		Meta: blockatlas.Transfer{
 			Value:    blockatlas.Amount(v),
-			Symbol:   coin.Coins[coin.XRP].Symbol,
-			Decimals: coin.Coins[coin.XRP].Decimals,
+			Symbol:   coin.Coins[coin.RIPPLE].Symbol,
+			Decimals: coin.Coins[coin.RIPPLE].Decimals,
 		},
 	}
 	if srcTx.Payment.DestinationTag > 0 {

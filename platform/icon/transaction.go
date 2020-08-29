@@ -1,12 +1,13 @@
 package icon
 
 import (
+	"time"
+
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/pkg/numbers"
-	"time"
 )
 
 func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
@@ -40,7 +41,7 @@ func Normalize(trx *Tx) (tx blockatlas.Tx, b bool) {
 
 	return blockatlas.Tx{
 		ID:     trx.TxHash,
-		Coin:   coin.ICX,
+		Coin:   coin.ICON,
 		From:   trx.FromAddr,
 		To:     trx.ToAddr,
 		Fee:    blockatlas.Amount(fee),
@@ -50,8 +51,8 @@ func Normalize(trx *Tx) (tx blockatlas.Tx, b bool) {
 		Block:  trx.Height,
 		Meta: blockatlas.Transfer{
 			Value:    blockatlas.Amount(value),
-			Symbol:   coin.Coins[coin.ICX].Symbol,
-			Decimals: coin.Coins[coin.ICX].Decimals,
+			Symbol:   coin.Coins[coin.ICON].Symbol,
+			Decimals: coin.Coins[coin.ICON].Decimals,
 		},
 	}, true
 }

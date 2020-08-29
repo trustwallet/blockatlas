@@ -1,9 +1,10 @@
 package address
 
 import (
+	"testing"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas/coin"
-	"testing"
 )
 
 func TestEIP55Checksum(t *testing.T) {
@@ -97,18 +98,18 @@ func TestToEIP55ByCoinID(t *testing.T) {
 			name, address, expectedAddress string
 			coinID                         uint
 		}{
-			{"Ethereum", addr1, addr1EIP55, coin.ETH},
-			{"Ethereum Classic", addr1, addr1EIP55, coin.ETC},
+			{"Ethereum", addr1, addr1EIP55, coin.ETHEREUM},
+			{"Ethereum Classic", addr1, addr1EIP55, coin.CLASSIC},
 			{"POA", addr1, addr1EIP55, coin.POA},
-			{"Callisto", addr1, addr1EIP55, coin.CLO},
-			{"Tomochain", addr1, addr1EIP55, coin.TOMO},
-			{"Thunder", addr1, addr1EIP55, coin.TT},
-			{"Thunder", addr1, addr1EIP55, coin.TT},
-			{"GoChain", addr1, addr1EIP55, coin.GO},
-			{"Wanchain 1", wanAddrLowercase, wanAddrEIP55ChecksumWanchain, coin.WAN},
-			{"Wanchain 2", wanAddrEIP55Checksum, wanAddrEIP55ChecksumWanchain, coin.WAN},
-			{"Non Ethereum like chain 1", "", "", coin.TRX},
-			{"Non Ethereum like chain 2", addr1, addr1, coin.BNB},
+			{"Callisto", addr1, addr1EIP55, coin.CALLISTO},
+			{"Tomochain", addr1, addr1EIP55, coin.TOMOCHAIN},
+			{"Thunder", addr1, addr1EIP55, coin.THUNDERTOKEN},
+			{"Thunder", addr1, addr1EIP55, coin.THUNDERTOKEN},
+			{"GoChain", addr1, addr1EIP55, coin.GOCHAIN},
+			{"Wanchain 1", wanAddrLowercase, wanAddrEIP55ChecksumWanchain, coin.WANCHAIN},
+			{"Wanchain 2", wanAddrEIP55Checksum, wanAddrEIP55ChecksumWanchain, coin.WANCHAIN},
+			{"Non Ethereum like chain 1", "", "", coin.TRON},
+			{"Non Ethereum like chain 2", addr1, addr1, coin.BINANCE},
 		}
 	)
 
@@ -131,21 +132,21 @@ func TestFormatAddress(t *testing.T) {
 			name, address, expectedAddress string
 			coinID                         uint
 		}{
-			{"Ethereum", addr1, addr1EIP55, coin.ETH},
-			{"Ethereum Classic", addr1, addr1EIP55, coin.ETC},
+			{"Ethereum", addr1, addr1EIP55, coin.ETHEREUM},
+			{"Ethereum Classic", addr1, addr1EIP55, coin.CLASSIC},
 			{"POA", addr1, addr1EIP55, coin.POA},
-			{"Callisto", addr1, addr1EIP55, coin.CLO},
-			{"Tomochain", addr1, addr1EIP55, coin.TOMO},
-			{"Thunder", addr1, addr1EIP55, coin.TT},
-			{"Thunder", addr1, addr1EIP55, coin.TT},
-			{"GoChain", addr1, addr1EIP55, coin.GO},
-			{"Wanchain 1", wanAddrLowercase, wanAddrEIP55ChecksumWanchain, coin.WAN},
-			{"Wanchain 2", wanAddrEIP55Checksum, wanAddrEIP55ChecksumWanchain, coin.WAN},
-			{"Non Ethereum like chain 1", "", "", coin.TRX},
-			{"Non Ethereum like chain 2", addr1, addr1, coin.BNB},
-			{"Bitcoin cash case with prefix", "bitcoincash:qzzhnrz43k86r3shen9se96uqeu5mxe0msa2auy85w", "qzzhnrz43k86r3shen9se96uqeu5mxe0msa2auy85w", coin.BCH},
-			{"Bitcoin cash case without prefix", "qr5q38d4g02u976jtl7s2ygsewlpaaaylsp2jm6wpf", "qr5q38d4g02u976jtl7s2ygsewlpaaaylsp2jm6wpf", coin.BCH},
-			{"Bitcoin cash case without prefix", "qr5q38d4g02u976jtl7s2ygsewlpaaaylsp2jm6wpf", "qr5q38d4g02u976jtl7s2ygsewlpaaaylsp2jm6wpf", coin.BTC},
+			{"Callisto", addr1, addr1EIP55, coin.CALLISTO},
+			{"Tomochain", addr1, addr1EIP55, coin.TOMOCHAIN},
+			{"Thunder", addr1, addr1EIP55, coin.THUNDERTOKEN},
+			{"Thunder", addr1, addr1EIP55, coin.THUNDERTOKEN},
+			{"GoChain", addr1, addr1EIP55, coin.GOCHAIN},
+			{"Wanchain 1", wanAddrLowercase, wanAddrEIP55ChecksumWanchain, coin.WANCHAIN},
+			{"Wanchain 2", wanAddrEIP55Checksum, wanAddrEIP55ChecksumWanchain, coin.WANCHAIN},
+			{"Non Ethereum like chain 1", "", "", coin.TRON},
+			{"Non Ethereum like chain 2", addr1, addr1, coin.BINANCE},
+			{"Bitcoin cash case with prefix", "bitcoincash:qzzhnrz43k86r3shen9se96uqeu5mxe0msa2auy85w", "qzzhnrz43k86r3shen9se96uqeu5mxe0msa2auy85w", coin.BITCOINCASH},
+			{"Bitcoin cash case without prefix", "qr5q38d4g02u976jtl7s2ygsewlpaaaylsp2jm6wpf", "qr5q38d4g02u976jtl7s2ygsewlpaaaylsp2jm6wpf", coin.BITCOINCASH},
+			{"Bitcoin cash case without prefix", "qr5q38d4g02u976jtl7s2ygsewlpaaaylsp2jm6wpf", "qr5q38d4g02u976jtl7s2ygsewlpaaaylsp2jm6wpf", coin.BITCOIN},
 		}
 	)
 

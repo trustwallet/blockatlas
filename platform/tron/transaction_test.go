@@ -2,11 +2,12 @@ package tron
 
 import (
 	"encoding/json"
+	"net/http/httptest"
+	"testing"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"net/http/httptest"
-	"testing"
 )
 
 const transferSrc = `
@@ -54,7 +55,7 @@ const tokenTransferSrc = `
 
 var transferDst = blockatlas.Tx{
 	ID:     "24a10f7a503e78adc0d7e380b68005531b09e16b9e3f7b524e33f40985d287df",
-	Coin:   coin.TRX,
+	Coin:   coin.TRON,
 	From:   "TMuA6YqfCeX8EhbfYEg5y7S4DqzSJireY9",
 	To:     "TAUN6FwrnwwmaEqYcckffC7wYmbaS6cBiX",
 	Fee:    "0", // TODO
@@ -70,7 +71,7 @@ var transferDst = blockatlas.Tx{
 
 var tokenTransferDst = blockatlas.Tx{
 	ID:     "24a10f7a503e78adc0d7e380b68005531b09e16b9e3f7b524e33f40985d287df",
-	Coin:   coin.TRX,
+	Coin:   coin.TRON,
 	From:   "TMuA6YqfCeX8EhbfYEg5y7S4DqzSJireY9",
 	To:     "TAUN6FwrnwwmaEqYcckffC7wYmbaS6cBiX",
 	Fee:    "0", // TODO

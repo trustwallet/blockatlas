@@ -1,12 +1,13 @@
 package tron
 
 import (
+	"strconv"
+
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/address"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
-	"strconv"
 )
 
 func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
@@ -110,7 +111,7 @@ func normalizeTRC20Transactions(transactions TRC20Transactions) blockatlas.Txs {
 	for _, rawTx := range transactions.Data {
 		tx := blockatlas.Tx{
 			ID:     rawTx.TransactionID,
-			Coin:   coin.TRX,
+			Coin:   coin.TRON,
 			Date:   rawTx.BlockTimestamp / 1000,
 			From:   rawTx.From,
 			To:     rawTx.To,
@@ -158,7 +159,7 @@ func normalize(srcTx Tx) (*blockatlas.Tx, error) {
 
 	return &blockatlas.Tx{
 		ID:     srcTx.ID,
-		Coin:   coin.TRX,
+		Coin:   coin.TRON,
 		Date:   srcTx.BlockTime / 1000,
 		From:   from,
 		To:     to,
@@ -167,8 +168,8 @@ func normalize(srcTx Tx) (*blockatlas.Tx, error) {
 		Status: blockatlas.StatusCompleted,
 		Meta: blockatlas.Transfer{
 			Value:    transfer.Amount,
-			Symbol:   coin.Coins[coin.TRX].Symbol,
-			Decimals: coin.Coins[coin.TRX].Decimals,
+			Symbol:   coin.Coins[coin.TRON].Symbol,
+			Decimals: coin.Coins[coin.TRON].Decimals,
 		},
 	}, nil
 }

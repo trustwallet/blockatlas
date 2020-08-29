@@ -16,5 +16,5 @@ func Init(api string) *Platform {
 }
 
 func (p *Platform) Coin() coin.Coin {
-	return coin.Coins[coin.NIM]
+	return coin.Coins[coin.NIMIQ]
 }
