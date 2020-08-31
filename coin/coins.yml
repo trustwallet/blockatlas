@@ -396,3 +396,12 @@
   decimals: 18
   blockTime: 6000
   sampleAddress: 'erd12tqtt5zcg6vpw65y4hkanvt49kzq695sr3ctuszjy92xw0ppzcssy2xd5r'
+
+- id: 10000714
+  symbol: BNB
+  preferedSymbol: BSC
+  handle: bsc
+  name: 'Binance Smart Chain'
+  decimals: 18
+  blockTime: 3000
+  sampleAddress: '0x3efb67b34a9b69b54d4027e044954f483dc31678'
