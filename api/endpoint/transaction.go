@@ -171,6 +171,14 @@ func filterTransactionsByToken(token string, txs blockatlas.TxPage) blockatlas.T
 			if strings.EqualFold(tx.Meta.(*blockatlas.NativeTokenTransfer).TokenID, token) {
 				result = append(result, tx)
 			}
+		case blockatlas.AnyAction:
+			if strings.EqualFold(tx.Meta.(blockatlas.AnyAction).TokenID, token) {
+				result = append(result, tx)
+			}
+		case *blockatlas.AnyAction:
+			if strings.EqualFold(tx.Meta.(*blockatlas.AnyAction).TokenID, token) {
+				result = append(result, tx)
+			}
 		default:
 			continue
 		}

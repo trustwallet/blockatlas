@@ -1,4 +1,4 @@
-package cosmos
+package kava
 
 import (
 	"encoding/json"
@@ -41,7 +41,10 @@ const delegationsSrc = `
     "delegator_address": "cosmos135qla4294zxarqhhgxsx0sw56yssa3z0f78pm0",
     "validator_address": "cosmosvaloper1qwl879nx9t6kef4supyazayf7vjhennyh568ys",
     "shares": "109999.000001746056062372",
-    "balance": "109999.000001746056062372"
+ 	"balance": {
+        "denom": "ukava",
+        "amount": "109999"
+      }
   }
 ]`
 

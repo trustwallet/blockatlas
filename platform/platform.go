@@ -2,6 +2,7 @@ package platform
 
 import (
 	"fmt"
+	"github.com/trustwallet/blockatlas/platform/kava"
 
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/coin"
@@ -77,13 +78,14 @@ func getAllHandlers() blockatlas.Platforms {
 		coin.Aeternity().Handle:    aeternity.Init(GetApiVar(coin.AE)),
 		coin.Solana().Handle:       solana.Init(GetApiVar(coin.SOL)),
 		coin.Tezos().Handle:        tezos.Init(GetApiVar(coin.XTZ), GetRpcVar(coin.XTZ)),
-		coin.Binance().Handle:      binance.Init(GetApiVar(coin.BNB), GetVar("binance.explorer")),
+		coin.Binance().Handle:      binance.Init(GetApiVar(coin.BNB)),
 		coin.Zilliqa().Handle:      zilliqa.Init(GetApiVar(coin.ZIL), GetVar("zilliqa.key"), GetRpcVar(coin.ZIL), GetVar("zilliqa.lookup")),
 		coin.Kusama().Handle:       polkadot.Init(coin.KSM, GetApiVar(coin.KSM)),
+		coin.Polkadot().Handle:     polkadot.Init(coin.DOT, GetApiVar(coin.DOT)),
 		coin.Stellar().Handle:      stellar.Init(coin.XLM, GetApiVar(coin.XLM)),
 		coin.Kin().Handle:          stellar.Init(coin.KIN, GetApiVar(coin.KIN)),
 		coin.Cosmos().Handle:       cosmos.Init(coin.ATOM, GetApiVar(coin.ATOM)),
-		coin.Kava().Handle:         cosmos.Init(coin.KAVA, GetApiVar(coin.KAVA)),
+		coin.Kava().Handle:         kava.Init(coin.KAVA, GetApiVar(coin.KAVA)),
 		coin.Bitcoin().Handle:      bitcoin.Init(coin.BTC, GetApiVar(coin.BTC)),
 		coin.Litecoin().Handle:     bitcoin.Init(coin.LTC, GetApiVar(coin.LTC)),
 		coin.Bitcoincash().Handle:  bitcoin.Init(coin.BCH, GetApiVar(coin.BCH)),

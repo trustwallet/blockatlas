@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/numbers"
 	"strings"
 )
 
@@ -15,30 +16,40 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 
 	var txs []blockatlas.Tx
 	for _, srcTx := range addressTxs {
-		txs = append(txs, NormalizeTx(&srcTx))
+		tx, err := NormalizeTx(&srcTx)
+		if err != nil {
+			continue
+		}
+		txs = append(txs, tx)
 	}
 	return txs, nil
 }
 
-func NormalizeTx(srcTx *Transaction) blockatlas.Tx {
+func NormalizeTx(srcTx *Transaction) (blockatlas.Tx, error) {
 	txValue := srcTx.TxValue
+	decimals := coin.Coins[coin.AE].Decimals
+	amountFloat, err := txValue.Amount.Float64()
+	if err != nil {
+		return blockatlas.Tx{}, err
+	}
+	amount := numbers.Float64toString(amountFloat)
 	return blockatlas.Tx{
 		ID:       srcTx.Hash,
 		Coin:     coin.AE,
 		From:     txValue.Sender,
 		To:       txValue.Recipient,
 		Fee:      blockatlas.Amount(txValue.Fee),
-		Date:     int64(srcTx.Timestamp) / 1000,
+		Date:     srcTx.Timestamp / 1000,
 		Block:    srcTx.BlockHeight,
 		Memo:     getPayload(txValue.Payload),
 		Status:   blockatlas.StatusCompleted,
 		Sequence: txValue.Nonce,
 		Meta: blockatlas.Transfer{
-			Value:    blockatlas.Amount(txValue.Amount),
+			Value:    blockatlas.Amount(amount),
 			Symbol:   coin.Coins[coin.AE].Symbol,
-			Decimals: coin.Coins[coin.AE].Decimals,
+			Decimals: decimals,
 		},
-	}
+	}, nil
 }
 
 func getPayload(encodedPayload string) string {

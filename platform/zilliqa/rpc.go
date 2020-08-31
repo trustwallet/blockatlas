@@ -1,11 +1,11 @@
 package zilliqa
 
 import (
+	"github.com/imroc/req"
 	"strconv"
 
 	"github.com/mitchellh/mapstructure"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/pkg/errors"
 )
 
 type RpcClient struct {
@@ -24,24 +24,21 @@ func (c *RpcClient) GetTx(hash string) (tx TxRPC, err error) {
 
 func (c *RpcClient) GetBlockByNumber(number int64) ([]string, error) {
 	strNumber := strconv.FormatInt(number, 10)
-	req := &blockatlas.RpcRequest{
+	requestBody := &blockatlas.RpcRequest{
 		JsonRpc: blockatlas.JsonRpcVersion,
 		Method:  "GetTransactionsForTxBlock",
 		Params:  []string{strNumber},
 		Id:      number,
 	}
-	var resp *BlockTxRpc
-	err := c.Post(&resp, "", req)
+	resp, err := req.Post(c.BaseUrl, req.BodyJSON(requestBody))
 	if err != nil {
 		return nil, err
 	}
-	if resp.Error != nil && resp.Error.Code != -1 {
-		return nil, errors.E("RPC Call error", errors.Params{
-			"method":        "GetTransactionsForTxBlock",
-			"error_code":    resp.Error.Code,
-			"error_message": resp.Error.Message})
+	var result HashesResponse
+	if err = resp.ToJSON(&result); err != nil {
+		return nil, err
 	}
-	return resp.Result.txs(), nil
+	return result.Txs(), nil
 }
 
 func (c *RpcClient) GetTxInBlock(number int64) ([]Tx, error) {

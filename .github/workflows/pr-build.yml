@@ -1,4 +1,4 @@
-name: PRBuild
+name: Build
 
 on:
   pull_request:
@@ -9,35 +9,6 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
-       - name: Set up Go 1.x
-         uses: actions/setup-go@v2
-         with:
-           go-version: ^1.13
-         id: go
-
-       - name: Check out code into the Go module directory
-         uses: actions/checkout@v2
-         with:
-          ref: ${{ github.head_ref }}
-
-       - name: Get short commit hash
-         id: hash
-         run: echo "::set-output name=sha7::$(echo $(git rev-parse --short HEAD) | cut -c1-7)"
-
-       - name: Show short hash
-         run: |
-           echo ${{ steps.hash.outputs.sha7 }}
-
-       - name: Get dependencies
-         run: |
-           go get -v -t -d ./...
-
-       - name: Swagger
-         run: make swag
-
-       - name: Build
-         run: make go-build
-
        - name: Check user permission
          id: check
          uses: scherermichael-oss/action-has-permission@master
@@ -46,6 +17,42 @@ jobs:
          env:
            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                 
+       - name: Set up Go 1.x
+         if: steps.check.outputs.has-permission
+         uses: actions/setup-go@v2
+         with:
+           go-version: ^1.13
+         id: go
+
+       - name: Check out code into the Go module directory
+         if: steps.check.outputs.has-permission
+         uses: actions/checkout@v2
+         with:
+          ref: ${{ github.head_ref }}
+
+       - name: Get short commit hash
+         if: steps.check.outputs.has-permission
+         id: hash
+         run: echo "::set-output name=sha7::$(echo $(git rev-parse --short HEAD) | cut -c1-7)"
+
+       - name: Show short hash
+         if: steps.check.outputs.has-permission
+         run: |
+           echo ${{ steps.hash.outputs.sha7 }}
+
+       - name: Get dependencies
+         if: steps.check.outputs.has-permission
+         run: |
+           go get -v -t -d ./...
+
+       - name: Swagger
+         if: steps.check.outputs.has-permission
+         run: make swag
+
+       - name: Build
+         if: steps.check.outputs.has-permission
+         run: make go-build
+
        - name: Login to DockerHub Registry
          if: steps.check.outputs.has-permission
          run: echo ${{ secrets.REGISTRY_PASSWORD }} | docker login -u ${{ secrets.REGISTRY_USERNAME }} --password-stdin

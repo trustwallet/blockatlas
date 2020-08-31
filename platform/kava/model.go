@@ -1,4 +1,4 @@
-package cosmos
+package kava
 
 import (
 	"encoding/json"
@@ -171,15 +171,19 @@ type Delegations struct {
 type Delegation struct {
 	DelegatorAddress string `json:"delegator_address"`
 	ValidatorAddress string `json:"validator_address"`
-	Balance          string `json:"balance,omitempty"`
+	Shares           string `json:"shares"`
+	Balance          struct {
+		Denom  string `json:"denom"`
+		Amount string `json:"amount"`
+	} `json:"balance"`
 }
 
 func (d *Delegation) Value() string {
-	shares := strings.Split(d.Balance, ".")
+	shares := strings.Split(d.Balance.Amount, ".")
 	if len(shares) > 0 {
 		return shares[0]
 	}
-	return d.Balance
+	return d.Balance.Amount
 }
 
 type UnbondingDelegations struct {
@@ -208,7 +212,7 @@ type Pool struct {
 
 // Block - top object of get las block request
 type Block struct {
-	Meta BlockMeta `json:"block_meta"`
+	Meta BlockMeta `json:"block"`
 }
 
 //BlockMeta - "Block" sub object

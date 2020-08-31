@@ -5,6 +5,7 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"sync"
+	"time"
 )
 
 func (p *Platform) GetTokenListByAddress(address string) (blockatlas.TokenPage, error) {
@@ -53,9 +54,10 @@ func (p *Platform) getTokens(ids []string) chan blockatlas.Token {
 		wg.Add(1)
 		go func(i string, c chan blockatlas.Token) {
 			defer wg.Done()
+			time.Sleep(time.Millisecond)
 			err := p.getTokensChannel(i, c)
 			if err != nil {
-				logger.Error(err)
+				logger.Error("TRON getTokens token: " + i)
 			}
 		}(id, tkChan)
 	}
