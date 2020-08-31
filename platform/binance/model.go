@@ -113,7 +113,7 @@ type (
 	}
 
 	ValidatorsResponse struct {
-		Total      string
+		Total      int
 		Validators []Validator
 	}
 

@@ -5,7 +5,7 @@ import (
 
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
-	//"github.com/trustwallet/blockatlas/services/assets"
+	"github.com/trustwallet/blockatlas/services/assets"
 )
 
 const (
@@ -15,25 +15,8 @@ const (
 	dummyMaxAPR        = 0.2
 )
 
-func GetValidatorsMapMock(api blockatlas.StakeAPI) (blockatlas.ValidatorMap, error) {
-	result := blockatlas.ValidatorMap{}
-	result["bnb18cy9pjf3ym239w5qec0kkeuktyywx8wpq3jt0c"] = blockatlas.StakeValidator{
-		ID:     "bnb18cy9pjf3ym239w5qec0kkeuktyywx8wpq3jt0c",
-		Status: true,
-		Info:   blockatlas.StakeValidatorInfo{Name: "DummyBinanceTestValidator"},
-		Details: blockatlas.StakingDetails{
-			Reward:        blockatlas.StakingReward{Annual: dummyMaxAPR},
-			LockTime:      dummyLockTime,
-			MinimumAmount: dummyMinimumAmount,
-			Type:          blockatlas.DelegationTypeDelegate,
-		},
-	}
-	return result, nil
-}
-
 func (p *Platform) GetActiveValidators() (blockatlas.StakeValidators, error) {
-	//validators, err := assets.GetValidatorsMap(p)
-	validators, err := GetValidatorsMapMock(p) // TODO
+	validators, err := assets.GetValidatorsMap(p)
 	if err != nil {
 		return nil, err
 	}
@@ -120,8 +103,7 @@ func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, e
 	if len(delegations) == 0 && len(unbondingDelegations) == 0 {
 		return results, nil
 	}
-	//validators, err := assets.GetValidatorsMap(p)
-	validators, err := GetValidatorsMapMock(p) // TODO
+	validators, err := assets.GetValidatorsMap(p)
 	if err != nil {
 		return nil, err
 	}
