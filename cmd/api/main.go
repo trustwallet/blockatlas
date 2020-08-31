@@ -25,6 +25,7 @@ var (
 	engine         *gin.Engine
 	database       *db.Instance
 	t              tokensearcher.Instance
+	restAPI        string
 )
 
 func init() {
@@ -33,39 +34,43 @@ func init() {
 	internal.InitConfig(confPath)
 	logger.InitLogger()
 
+	restAPI = viper.GetString("rest_api")
 	engine = internal.InitEngine(viper.GetString("gin.mode"))
-	pgUri := viper.GetString("postgres.uri")
 
-	var err error
-	database, err = db.New(pgUri, prod)
-	if err != nil {
-		logger.Fatal(err)
+	if restAPI == "tokens" || restAPI == "all" {
+		pgUri := viper.GetString("postgres.uri")
+
+		var err error
+		database, err = db.New(pgUri, prod)
+		if err != nil {
+			logger.Fatal(err)
+		}
+
+		mqHost := viper.GetString("observer.rabbitmq.uri")
+		prefetchCount := viper.GetInt("observer.rabbitmq.consumer.prefetch_count")
+		internal.InitRabbitMQ(mqHost, prefetchCount)
+		if err := mq.TokensRegistration.Declare(); err != nil {
+			logger.Fatal(err)
+		}
+		t = tokensearcher.Init(database, platform.TokensAPIs, mq.TokensRegistration)
+
+		go db.RestoreConnectionWorker(database, time.Second*10, pgUri)
+		go mq.FatalWorker(time.Second * 10)
 	}
-
-	mqHost := viper.GetString("observer.rabbitmq.uri")
-	prefetchCount := viper.GetInt("observer.rabbitmq.consumer.prefetch_count")
-	internal.InitRabbitMQ(mqHost, prefetchCount)
-
 	platform.Init(viper.GetStringSlice("platform"))
-
-	if err := mq.TokensRegistration.Declare(); err != nil {
-		logger.Fatal(err)
-	}
-	t = tokensearcher.Init(database, platform.TokensAPIs, mq.TokensRegistration)
-
-	go db.RestoreConnectionWorker(database, time.Second*10, pgUri)
-	go mq.FatalWorker(time.Second * 10)
 }
 
 func main() {
-	switch viper.GetString("rest_api") {
+	switch restAPI {
 	case "swagger":
 		api.SetupSwaggerAPI(engine)
 	case "platform":
 		api.SetupPlatformAPI(engine)
-	default:
-		api.SetupSwaggerAPI(engine)
+	case "tokens":
 		api.SetupTokensIndexAPI(engine, t)
+	default:
+		api.SetupTokensIndexAPI(engine, t)
+		api.SetupSwaggerAPI(engine)
 		api.SetupPlatformAPI(engine)
 	}
 	internal.SetupGracefulShutdown(port, engine)
