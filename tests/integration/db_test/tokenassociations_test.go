@@ -41,7 +41,7 @@ func Test_GetSubscribedAddressesForAssets(t *testing.T) {
 
 	m, err := database.GetSubscribedAddressesForAssets(context.Background(), []string{"a", "b"})
 	assert.Nil(t, err)
-	assert.Equal(t, 1, len(m))
+	assert.Equal(t, 2, len(m))
 }
 
 func Test_AddNewAssociationForAddress(t *testing.T) {
