@@ -10,6 +10,7 @@ API := api
 NOTIFIER := notifier
 PARSER := parser
 SUBSCRIBER := subscriber
+SEARCHER := searcher
 COIN_FILE := coin/coins.yml
 COIN_GO_FILE := coin/coins.go
 GEN_COIN_FILE := coin/gen.go
@@ -42,6 +43,7 @@ STDERR := /tmp/.$(PROJECT_NAME)-stderr.txt
 
 # PID file will keep the process id of the server
 PID_API := /tmp/.$(PROJECT_NAME).$(API).pid
+PID_SEARCHER := /tmp/.$(PROJECT_NAME).$(SEARCHER).pid
 PID_NOTIFIER := /tmp/.$(PROJECT_NAME).$(NOTIFIER).pid
 PID_PARSER := /tmp/.$(PROJECT_NAME).$(PARSER).pid
 PID_SUBSCRIBER := /tmp/.$(PROJECT_NAME).$(SUBSCRIBER).pid
@@ -54,52 +56,60 @@ install: go-get
 
 ## start: Start API, Observer and Sync in development mode.
 start:
-	@bash -c "$(MAKE) clean compile start-api start-parser start-notifier start-subscriber"
+	@bash -c "$(MAKE) clean compile start-api start-parser start-notifier start-subscriber start-searcher"
 
 ## start-api: Start platform api in development mode.
 start-api: stop
 	@echo "  >  Starting $(PROJECT_NAME)"
 	@-$(GOBIN)/$(API)/api -c $(CONFIG_FILE) 2>&1 & echo $$! > $(PID_API)
-	@cat $(PID_API) | sed "/^/s/^/  \>  API PID: /"
+	@cat $(PID_API) | sed "/^/s/^/  \>  Api PID: /"
 	@echo "  >  Error log: $(STDERR)"
 
 # start-platform-api-mock: Start API.  Similar to start-platform-api, but uses config file with mock URLs, and port 8437.
 start-api-mock: stop start-mockserver
 	@echo "  >  Starting $(PROJECT_NAME) API"
 	@-$(GOBIN)/$(API)/api -p 8437 -c $(CONFIG_MOCK_FILE) 2>&1 & echo $$! > $(PID_API)
-	@cat $(PID_API) | sed "/^/s/^/  \>  API PID: /"
+	@cat $(PID_API) | sed "/^/s/^/  \>  Mock PID: /"
 	@echo "  >  Error log: $(STDERR)"
 
 ## start-observer-parser: Start observer-parser in development mode.
 start-parser: stop
 	@echo "  >  Starting $(PROJECT_NAME)"
 	@-$(GOBIN)/$(PARSER)/parser -c $(CONFIG_FILE) 2>&1 & echo $$! > $(PID_PARSER)
-	@cat $(PID_PARSER) | sed "/^/s/^/  \>  Sync PID: /"
+	@cat $(PID_PARSER) | sed "/^/s/^/  \>  Parser PID: /"
 	@echo "  >  Error log: $(STDERR)"
 
 ## start-observer-notifier: Start observer-notifier in development mode.
 start-notifier: stop
 	@echo "  >  Starting $(PROJECT_NAME)"
 	@-$(GOBIN)/$(NOTIFIER)/notifier -c $(CONFIG_FILE) 2>&1 & echo $$! > $(PID_NOTIFIER)
-	@cat $(PID_NOTIFIER) | sed "/^/s/^/  \>  Sync PID: /"
+	@cat $(PID_NOTIFIER) | sed "/^/s/^/  \>  Notifier PID: /"
 	@echo "  >  Error log: $(STDERR)"
 
 ## start-observer-subscriber: Start observer-subscriber in development mode.
 start-subscriber: stop
 	@echo "  >  Starting $(PROJECT_NAME)"
 	@-$(GOBIN)/$(SUBSCRIBER)/subscriber -c $(CONFIG_FILE) 2>&1 & echo $$! > $(PID_SUBSCRIBER)
-	@cat $(PID_SUBSCRIBER) | sed "/^/s/^/  \>  Sync PID: /"
+	@cat $(PID_SUBSCRIBER) | sed "/^/s/^/  \>  Subscriber PID: /"
+	@echo "  >  Error log: $(STDERR)"
+
+## start-api: Start searcher in development mode.
+start-searcher: stop
+	@echo "  >  Starting $(PROJECT_NAME)"
+	@-$(GOBIN)/$(SEARCHER)/searcher -c $(CONFIG_FILE) 2>&1 & echo $$! > $(PID_SEARCHER)
+	@cat $(PID_SEARCHER) | sed "/^/s/^/  \>  Searcher PID: /"
 	@echo "  >  Error log: $(STDERR)"
 
 ## stop: Stop development mode.
 stop:
-	@-touch $(PID_API) $(PID_NOTIFIER) $(PID_PARSER) $(PID_SUBSCRIBER) $(PID_MOCKSERVER)
+	@-touch $(PID_API) $(PID_NOTIFIER) $(PID_PARSER) $(PID_SUBSCRIBER) $(PID_MOCKSERVER) $(PID_SEARCHER)
 	@-kill `cat $(PID_API)` 2> /dev/null || true
 	@-kill `cat $(PID_NOTIFIER)` 2> /dev/null || true
 	@-kill `cat $(PID_PARSER)` 2> /dev/null || true
 	@-kill `cat $(PID_SUBSCRIBER)` 2> /dev/null || true
 	@-kill `cat $(PID_MOCKSERVER)` 2> /dev/null || true
-	@-rm $(PID_API) $(PID_NOTIFIER) $(PID_PARSER) $(PID_SUBSCRIBER) $(PID_MOCKSERVER)
+	@-kill `cat $(PID_SEARCHER)` 2> /dev/null || true
+	@-rm $(PID_API) $(PID_NOTIFIER) $(PID_PARSER) $(PID_SUBSCRIBER) $(PID_MOCKSERVER) $(PID_SEARCHER)
 
 stop-mockserver:
 	@-touch $(PID_MOCKSERVER)
@@ -219,7 +229,7 @@ endif
 
 go-compile: go-get go-build
 
-go-build: go-build-api go-build-notifier go-build-parser go-build-subscriber
+go-build: go-build-api go-build-notifier go-build-parser go-build-subscriber go-build-searcher
 
 docker-shutdown:
 	@echo "  >  Shutdown docker containers..."
@@ -246,6 +256,10 @@ go-build-parser:
 go-build-subscriber:
 	@echo "  >  Building subscriber binary..."
 	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(SUBSCRIBER)/subscriber ./cmd/$(SUBSCRIBER)
+
+go-build-searcher:
+	@echo "  >  Building searcher binary..."
+	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(SEARCHER)/searcher ./cmd/$(SEARCHER)
 
 go-generate:
 	@echo "  >  Generating dependency files..."
