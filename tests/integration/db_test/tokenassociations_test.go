@@ -8,6 +8,7 @@ import (
 	"github.com/trustwallet/blockatlas/tests/integration/setup"
 	"sort"
 	"testing"
+	"time"
 )
 
 func Test_GetAssetsMapByAddresses(t *testing.T) {
@@ -26,6 +27,28 @@ func Test_GetAssetsMapByAddresses(t *testing.T) {
 	wantedMap := make(map[string][]string)
 	wantedMap["a"] = assets
 	assert.Equal(t, wantedMap, m)
+}
+
+func Test_GetAssetsMapByAddressesFromTime(t *testing.T) {
+	setup.CleanupPgContainer(database.Gorm)
+
+	assets := []string{"aa", "bbb", "cccc"}
+
+	err := database.AddAssociationsForAddress("a", assets, context.Background())
+	assert.Nil(t, err)
+
+	err = database.AddAssociationsForAddress("b", nil, context.Background())
+	assert.Nil(t, err)
+	tm := time.Now().Unix() - 100
+	m, err := database.GetAssetsMapByAddressesFromTime([]string{"a", "b"}, time.Unix(tm, 0), context.Background())
+	assert.Nil(t, err)
+	wantedMap := make(map[string][]string)
+	wantedMap["a"] = assets
+	assert.Equal(t, wantedMap, m)
+
+	m, err = database.GetAssetsMapByAddressesFromTime([]string{"a", "b"}, time.Unix(tm+101, 0), context.Background())
+	assert.Nil(t, err)
+	assert.Equal(t, 0, len(m))
 }
 
 func Test_GetSubscribedAddressesForAssets(t *testing.T) {

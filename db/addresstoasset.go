@@ -5,6 +5,7 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/trustwallet/blockatlas/db/models"
 	"go.elastic.co/apm/module/apmgorm"
+	"time"
 )
 
 func (i Instance) GetSubscribedAddressesForAssets(ctx context.Context, addresses []string) ([]models.Address, error) {
@@ -66,6 +67,40 @@ func (i Instance) GetAssetsMapByAddresses(addresses []string, ctx context.Contex
 	return result, nil
 }
 
+func (i Instance) GetAssetsMapByAddressesFromTime(addresses []string, from time.Time, ctx context.Context) (map[string][]string, error) {
+	db := apmgorm.WithContext(ctx, i.Gorm)
+
+	var addressesFromDB []models.Address
+	err := db.Where("address in (?)", addresses).Find(&addressesFromDB).Error
+	if err != nil {
+		return nil, err
+	}
+
+	addressesIDs := make([]uint, 0, len(addressesFromDB))
+	for _, a := range addressesFromDB {
+		addressesIDs = append(addressesIDs, a.ID)
+	}
+
+	var associations []models.AddressToAssetAssociation
+	err = db.
+		Preload("Address").
+		Preload("Asset").
+		Where("address_id in (?)", addressesIDs).
+		Where("updated_at > ?", from).
+		Find(&associations).
+		Error
+	if err != nil {
+		return nil, err
+	}
+
+	result := make(map[string][]string)
+	for _, a := range associations {
+		assets := result[a.Address.Address]
+		result[a.Address.Address] = append(assets, a.Asset.AssetID)
+	}
+	return result, nil
+}
+
 func (i *Instance) GetAssociationsByAddresses(addresses []string, ctx context.Context) ([]models.AddressToAssetAssociation, error) {
 	db := apmgorm.WithContext(ctx, i.Gorm)
 
@@ -79,6 +114,25 @@ func (i *Instance) GetAssociationsByAddresses(addresses []string, ctx context.Co
 		Preload("Address").
 		Preload("Asset").
 		Where("address_id in (?)", addressesSubQuery).
+		Find(&result).
+		Error
+	return result, err
+}
+
+func (i *Instance) GetAssociationsByAddressesFromTime(addresses []string, from time.Time, ctx context.Context) ([]models.AddressToAssetAssociation, error) {
+	db := apmgorm.WithContext(ctx, i.Gorm)
+
+	addressesSubQuery := db.Table("addresses").
+		Select("id").
+		Where("address in (?)", addresses).
+		QueryExpr()
+
+	var result []models.AddressToAssetAssociation
+	err := db.
+		Preload("Address").
+		Preload("Asset").
+		Where("address_id in (?)", addressesSubQuery).
+		Where("updated_at > ?", from).
 		Find(&result).
 		Error
 	return result, err

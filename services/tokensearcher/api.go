@@ -9,6 +9,7 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"sync"
+	"time"
 )
 
 type (
@@ -39,7 +40,10 @@ func (i Instance) HandleTokensRequest(request Request, ctx context.Context) (Ass
 	}
 	unsubscribedAddresses := getUnsubscribedAddresses(subscribedAddresses, addresses)
 
-	assetsFromDB, err := i.database.GetAssetsMapByAddresses(subscribedAddresses, ctx)
+	assetsFromDB, err := i.database.GetAssetsMapByAddressesFromTime(
+		subscribedAddresses,
+		time.Unix(int64(request.From), 0),
+		ctx)
 	if err != nil {
 		return nil, err
 	}
