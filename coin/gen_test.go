@@ -2,12 +2,13 @@ package coin
 
 import (
 	"fmt"
-	"github.com/stretchr/testify/assert"
-	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"os"
 	"strings"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
+	"gopkg.in/yaml.v2"
 )
 
 const (
@@ -19,6 +20,7 @@ type TestCoin struct {
 	ID               uint   `yaml:"id"`
 	Handle           string `yaml:"handle"`
 	Symbol           string `yaml:"symbol"`
+	PreferedSymbol   string `yaml:"preferedSymbol,omitempty"`
 	Name             string `yaml:"name"`
 	Decimals         uint   `yaml:"decimals"`
 	BlockTime        int    `yaml:"blockTime"`
@@ -69,8 +71,14 @@ func TestCoinFile(t *testing.T) {
 		s := strings.Title(want.Handle)
 		method := fmt.Sprintf("func %s() Coin", s)
 		assert.True(t, strings.Contains(code, method), "Coin method not found")
-		enum := fmt.Sprintf("%s = %d", want.Symbol, want.ID)
+		var enum string
+		if want.PreferedSymbol != "" {
+			enum = fmt.Sprintf("%s = %d", want.PreferedSymbol, want.ID)
+		} else {
+			enum = fmt.Sprintf("%s = %d", want.Symbol, want.ID)
+		}
 		assert.True(t, strings.Contains(code, enum), "Coin enum not found")
+
 	}
 }
 
