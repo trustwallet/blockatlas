@@ -33,21 +33,6 @@ func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
 	if err != nil {
 		return nil, err
 	}
-	// TODO
-	/*
-		pool, err := p.client.GetPool()
-		if err != nil {
-			return nil, err
-		}
-		inflation, err := p.client.GetInflation()
-		if err != nil {
-			return nil, err
-		}
-		inflationValue, err := strconv.ParseFloat(inflation.Result, 32)
-		if err != nil {
-			return nil, errors.E("error to parse inflationValue to float", errors.TypePlatformUnmarshal)
-		}
-	*/
 	for _, validator := range validators.Validators {
 		results = append(results, normalizeValidator(validator))
 	}
@@ -65,26 +50,6 @@ func (p *Platform) GetDetails() blockatlas.StakingDetails {
 		Type:          blockatlas.DelegationTypeDelegate,
 	}
 }
-
-/*
-func (p *Platform) GetMaxAPR() float64 {
-	validators, err := p.GetValidators()
-	if err != nil {
-		logger.Error("GetMaxAPR", logger.Params{"details": err, "platform": p.Coin().Symbol})
-		return blockatlas.DefaultAnnualReward
-	}
-
-	var max = 0.0
-	for _, e := range validators {
-		v := e.Details.Reward.Annual
-		if v > max {
-			max = v
-		}
-	}
-
-	return max
-}
-*/
 
 func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, error) {
 	results := make(blockatlas.DelegationsPage, 0)
@@ -171,7 +136,6 @@ func NormalizeUnbondingDelegations(delegations []UnbondingDelegation, validators
 
 //func normalizeValidator(v Validator, p Pool, inflation float64) (validator blockatlas.Validator) {
 func normalizeValidator(v Validator) (validator blockatlas.Validator) {
-	//reward := CalculateAnnualReward(p, inflation, v)
 	reward := dummyMaxAPR // TODO
 	return blockatlas.Validator{
 		Status: v.Status == 2,
@@ -184,27 +148,6 @@ func normalizeValidator(v Validator) (validator blockatlas.Validator) {
 		},
 	}
 }
-
-/*
-func CalculateAnnualReward(p Pool, inflation float64, validator Validator) float64 {
-	notBondedTokens, err := strconv.ParseFloat(p.NotBondedTokens, 32)
-	if err != nil {
-		return 0
-	}
-
-	bondedTokens, err := strconv.ParseFloat(p.BondedTokens, 32)
-	if err != nil {
-		return 0
-	}
-
-	commission, err := strconv.ParseFloat(validator.Commission.Commision.Rate, 32)
-	if err != nil {
-		return 0
-	}
-	result := (notBondedTokens + bondedTokens) / bondedTokens * inflation
-	return (result - (result * commission)) * 100
-}
-*/
 
 func getUnknownValidator(address string) blockatlas.StakeValidator {
 	return blockatlas.StakeValidator{
