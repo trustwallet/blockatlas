@@ -227,5 +227,5 @@ elrond:
   api: https://api.elrond.com
 
 # bsc:
-  # api: <node url>
-  # blockbook_api: <blockbook url>
+  # api: <blockbook api>
+  # rpc: <rpc>
