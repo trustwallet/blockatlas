@@ -128,7 +128,7 @@ func getTokens(tokenAPI blockatlas.TokensAPI, addresses []string, data *tokensRe
 func GetTokensByAddressIndexer(c *gin.Context, instance tokensearcher.Instance) {
 	var query tokensearcher.Request
 	if err := c.Bind(&query); err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, errorResponse(err))
+		c.AbortWithStatusJSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
 	result, err := instance.HandleTokensRequest(query, c.Request.Context())

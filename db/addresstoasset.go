@@ -37,14 +37,14 @@ func (i Instance) GetSubscribedAddressesForAssets(ctx context.Context, addresses
 func (i Instance) GetAssetsMapByAddresses(addresses []string, ctx context.Context) (map[string][]string, error) {
 	db := apmgorm.WithContext(ctx, i.Gorm)
 
-	var addressesFromDB []models.Address
-	err := db.Where("address in (?)", addresses).Find(&addressesFromDB).Error
+	var dbAddresses []models.Address
+	err := db.Where("address in (?)", addresses).Find(&dbAddresses).Error
 	if err != nil {
 		return nil, err
 	}
 
-	addressesIDs := make([]uint, 0, len(addressesFromDB))
-	for _, a := range addressesFromDB {
+	addressesIDs := make([]uint, 0, len(dbAddresses))
+	for _, a := range dbAddresses {
 		addressesIDs = append(addressesIDs, a.ID)
 	}
 
@@ -70,14 +70,14 @@ func (i Instance) GetAssetsMapByAddresses(addresses []string, ctx context.Contex
 func (i Instance) GetAssetsMapByAddressesFromTime(addresses []string, from time.Time, ctx context.Context) (map[string][]string, error) {
 	db := apmgorm.WithContext(ctx, i.Gorm)
 
-	var addressesFromDB []models.Address
-	err := db.Where("address in (?)", addresses).Find(&addressesFromDB).Error
+	var dbAddresses []models.Address
+	err := db.Where("address in (?)", addresses).Find(&dbAddresses).Error
 	if err != nil {
 		return nil, err
 	}
 
-	addressesIDs := make([]uint, 0, len(addressesFromDB))
-	for _, a := range addressesFromDB {
+	addressesIDs := make([]uint, 0, len(dbAddresses))
+	for _, a := range dbAddresses {
 		addressesIDs = append(addressesIDs, a.ID)
 	}
 

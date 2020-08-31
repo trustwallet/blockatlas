@@ -52,19 +52,19 @@ func (i *Instance) AddSubscriptionsForNotifications(addresses []string, ctx cont
 			return err
 		}
 
-		var addressesFromDB []models.Address
-		err = db.Where("address in (?)", uniqueAddresses).Find(&addressesFromDB).Error
+		var dbAddresses []models.Address
+		err = db.Where("address in (?)", uniqueAddresses).Find(&dbAddresses).Error
 		if err != nil {
 			return err
 		}
 
-		result := make([]models.NotificationSubscription, 0, len(addressesFromDB))
-		for _, a := range addressesFromDB {
+		result := make([]models.NotificationSubscription, 0, len(dbAddresses))
+		for _, a := range dbAddresses {
 			result = append(result, models.NotificationSubscription{
 				AddressID: a.ID,
 			})
 		}
-		return BulkInsert(db.Set("gorm:insert_option", "ON CONFLICT (address_id) DO UPDATE SET deleted_at = null"), result)
+		return BulkInsert(db.Set("gorm:insert_option", "ON CONFLICT (address_id) DO UPDATE SET deleted_at = null, updated_at = now()"), result)
 	})
 }
 
