@@ -7,6 +7,7 @@ import (
 	"github.com/trustwallet/blockatlas/db"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"go.elastic.co/apm"
+	"strconv"
 )
 
 const Tokens Subscriber = "tokens"
@@ -29,7 +30,7 @@ func RunTokensSubscriber(database *db.Instance, delivery amqp.Delivery) {
 			logger.Error("Failed to AddAssociationsForAddress: " + err.Error())
 		}
 	}
-
+	logger.Info("Subscribed " + strconv.Itoa(len(event)))
 	if err := delivery.Ack(false); err != nil {
 		logger.Fatal(err, err)
 	}

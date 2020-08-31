@@ -15,8 +15,8 @@ type (
 	AddressesByCoin map[uint][]string
 	AssetsByAddress map[string][]string
 	Request         struct {
-		AddressesByCoin map[string][]string
-		From            uint
+		AddressesByCoin map[string][]string `json:"addresses"`
+		From            uint                `json:"from"`
 	}
 )
 
@@ -45,7 +45,7 @@ func (i Instance) HandleTokensRequest(request Request, ctx context.Context) (Ass
 	}
 
 	assetsFromNodes := make(AssetsByAddress)
-	if len(unsubscribedAddresses) == 0 {
+	if len(unsubscribedAddresses) != 0 {
 		assetsFromNodes = getAssetsByAddressFromNodes(unsubscribedAddresses, i.apis)
 		err = publishNewAddressesToQueue(i.queue, assetsFromNodes)
 		if err != nil {

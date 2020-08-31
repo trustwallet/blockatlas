@@ -113,7 +113,7 @@ func (i *Instance) AddAssociationsForAddress(address string, assets []string, ct
 		}
 
 		assetsSub := models.AssetSubscription{AddressID: dbAddress.ID}
-		err = db.Set("gorm:insert_option", "ON CONFLICT DO NOTHING").FirstOrCreate(&assetsSub).Error
+		err = db.Set("gorm:insert_option", "ON CONFLICT DO NOTHING").Create(&assetsSub).Error
 		if err != nil {
 			return err
 		}
