@@ -39,27 +39,19 @@ func (i Instance) GetSubscribedAddressesForAssets(ctx context.Context, addresses
 func (i Instance) GetAssetsMapByAddresses(addresses []string, ctx context.Context) (map[string][]string, error) {
 	db := apmgorm.WithContext(ctx, i.Gorm)
 
-	var dbAddresses []models.Address
-	err := db.Where("address in (?)", addresses).
-		Find(&dbAddresses).
+	addressesSubQuery := db.Table("addresses").
+		Select("id").
+		Where("address in (?)", addresses).
 		Limit(len(addresses)).
-		Error
-	if err != nil {
-		return nil, err
-	}
-
-	addressesIDs := make([]uint, 0, len(dbAddresses))
-	for _, a := range dbAddresses {
-		addressesIDs = append(addressesIDs, a.ID)
-	}
+		QueryExpr()
 
 	var associations []models.AddressToAssetAssociation
-	err = db.
+	err := db.
 		Preload("Address").
 		Preload("Asset").
-		Where("address_id in (?)", addressesIDs).
+		Where("address_id in (?)", addressesSubQuery).
 		Find(&associations).
-		Limit(len(addressesIDs)).
+		Limit(len(addresses)).
 		Error
 	if err != nil {
 		return nil, err
@@ -76,28 +68,20 @@ func (i Instance) GetAssetsMapByAddresses(addresses []string, ctx context.Contex
 func (i Instance) GetAssetsMapByAddressesFromTime(addresses []string, from time.Time, ctx context.Context) (map[string][]string, error) {
 	db := apmgorm.WithContext(ctx, i.Gorm)
 
-	var dbAddresses []models.Address
-	err := db.Where("address in (?)", addresses).
-		Find(&dbAddresses).
+	addressesSubQuery := db.Table("addresses").
+		Select("id").
+		Where("address in (?)", addresses).
 		Limit(len(addresses)).
-		Error
-	if err != nil {
-		return nil, err
-	}
-
-	addressesIDs := make([]uint, 0, len(dbAddresses))
-	for _, a := range dbAddresses {
-		addressesIDs = append(addressesIDs, a.ID)
-	}
+		QueryExpr()
 
 	var associations []models.AddressToAssetAssociation
-	err = db.
+	err := db.
 		Preload("Address").
 		Preload("Asset").
-		Where("address_id in (?)", addressesIDs).
+		Where("address_id in (?)", addressesSubQuery).
 		Where("updated_at > ?", from).
 		Find(&associations).
-		Limit(len(addressesIDs)).
+		Limit(len(addresses)).
 		Error
 	if err != nil {
 		return nil, err
