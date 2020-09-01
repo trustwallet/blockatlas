@@ -69,7 +69,9 @@ start-api: stop
 start-api-mock: stop start-mockserver
 	@echo "  >  Starting $(PROJECT_NAME) API"
 	@-$(GOBIN)/$(API)/api -p 8437 -c $(CONFIG_MOCK_FILE) 2>&1 & echo $$! > $(PID_API)
-	@cat $(PID_API) | sed "/^/s/^/  \>  Mock PID: /"
+	@cat $(PID_API) | sed "/^/s/^/  \>  Api PID: /"
+	# give some time to the service to initialize
+	@sleep 1
 	@echo "  >  Error log: $(STDERR)"
 
 ## start-observer-parser: Start observer-parser in development mode.
