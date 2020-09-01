@@ -25,7 +25,7 @@ require (
 	github.com/swaggo/swag v1.6.7
 	github.com/t-tiger/gorm-bulk-insert v1.3.0
 	github.com/trustwallet/ens-coincodec v1.0.6
-	github.com/trustwallet/watchmarket v1.1.0
+	github.com/trustwallet/watchmarket v1.1.1
 	go.elastic.co/apm v1.8.0
 	go.elastic.co/apm/module/apmgin v1.8.0
 	go.elastic.co/apm/module/apmgorm v1.8.0
