@@ -1,19 +1,19 @@
 package models
 
 import (
-	"github.com/jinzhu/gorm"
+	"time"
 )
 
 type (
 	NotificationSubscription struct {
-		gorm.Model
-		Address   Address `gorm:"ForeignKey:AddressID; not null"`
-		AddressID uint    `gorm:"unique" sql:"index"`
+		DeletedAt *time.Time `sql:"index"`
+		Address   Address    `gorm:"ForeignKey:AddressID; not null"`
+		AddressID uint       `gorm:"unique_index"`
 	}
 
 	AssetSubscription struct {
-		gorm.Model
-		Address   Address `gorm:"ForeignKey:AddressID; not null"`
-		AddressID uint    `gorm:"unique" sql:"index"`
+		DeletedAt *time.Time `sql:"index"`
+		Address   Address    `gorm:"ForeignKey:AddressID; not null"`
+		AddressID uint       `gorm:"unique_index"`
 	}
 )

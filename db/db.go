@@ -16,7 +16,7 @@ type Instance struct {
 	Gorm *gorm.DB
 }
 
-const batchCount = 3000
+const batchCount = 1000
 
 func New(uri, env string) (*Instance, error) {
 	var (

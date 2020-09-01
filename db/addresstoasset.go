@@ -15,6 +15,7 @@ func (i Instance) GetSubscribedAddressesForAssets(ctx context.Context, addresses
 		Table("addresses").
 		Select("id").
 		Where("address in (?)", addresses).
+		Limit(len(addresses)).
 		QueryExpr()
 
 	var assetSubs []models.AssetSubscription
@@ -22,6 +23,7 @@ func (i Instance) GetSubscribedAddressesForAssets(ctx context.Context, addresses
 		Preload("Address").
 		Where("address_id in (?)", addressesSubQuery).
 		Find(&assetSubs).
+		Limit(len(addresses)).
 		Error
 	if err != nil {
 		return nil, err
@@ -38,7 +40,10 @@ func (i Instance) GetAssetsMapByAddresses(addresses []string, ctx context.Contex
 	db := apmgorm.WithContext(ctx, i.Gorm)
 
 	var dbAddresses []models.Address
-	err := db.Where("address in (?)", addresses).Find(&dbAddresses).Error
+	err := db.Where("address in (?)", addresses).
+		Find(&dbAddresses).
+		Limit(len(addresses)).
+		Error
 	if err != nil {
 		return nil, err
 	}
@@ -54,6 +59,7 @@ func (i Instance) GetAssetsMapByAddresses(addresses []string, ctx context.Contex
 		Preload("Asset").
 		Where("address_id in (?)", addressesIDs).
 		Find(&associations).
+		Limit(len(addressesIDs)).
 		Error
 	if err != nil {
 		return nil, err
@@ -71,7 +77,10 @@ func (i Instance) GetAssetsMapByAddressesFromTime(addresses []string, from time.
 	db := apmgorm.WithContext(ctx, i.Gorm)
 
 	var dbAddresses []models.Address
-	err := db.Where("address in (?)", addresses).Find(&dbAddresses).Error
+	err := db.Where("address in (?)", addresses).
+		Find(&dbAddresses).
+		Limit(len(addresses)).
+		Error
 	if err != nil {
 		return nil, err
 	}
@@ -88,6 +97,7 @@ func (i Instance) GetAssetsMapByAddressesFromTime(addresses []string, from time.
 		Where("address_id in (?)", addressesIDs).
 		Where("updated_at > ?", from).
 		Find(&associations).
+		Limit(len(addressesIDs)).
 		Error
 	if err != nil {
 		return nil, err
@@ -107,6 +117,7 @@ func (i *Instance) GetAssociationsByAddresses(addresses []string, ctx context.Co
 	addressesSubQuery := db.Table("addresses").
 		Select("id").
 		Where("address in (?)", addresses).
+		Limit(len(addresses)).
 		QueryExpr()
 
 	var result []models.AddressToAssetAssociation
@@ -115,6 +126,7 @@ func (i *Instance) GetAssociationsByAddresses(addresses []string, ctx context.Co
 		Preload("Asset").
 		Where("address_id in (?)", addressesSubQuery).
 		Find(&result).
+		Limit(len(addresses)).
 		Error
 	return result, err
 }
@@ -125,6 +137,7 @@ func (i *Instance) GetAssociationsByAddressesFromTime(addresses []string, from t
 	addressesSubQuery := db.Table("addresses").
 		Select("id").
 		Where("address in (?)", addresses).
+		Limit(len(addresses)).
 		QueryExpr()
 
 	var result []models.AddressToAssetAssociation
@@ -134,6 +147,7 @@ func (i *Instance) GetAssociationsByAddressesFromTime(addresses []string, from t
 		Where("address_id in (?)", addressesSubQuery).
 		Where("updated_at > ?", from).
 		Find(&result).
+		Limit(len(addresses)).
 		Error
 	return result, err
 }
@@ -206,7 +220,10 @@ func (i *Instance) UpdateAssociationsForExistingAddresses(associations map[strin
 		}
 
 		var dbAssets []models.Asset
-		err = db.Where("asset_id in (?)", uniqueAssets).Find(&dbAssets).Error
+		err = db.Where("asset_id in (?)", uniqueAssets).
+			Find(&dbAssets).
+			Limit(len(uniqueAssets)).
+			Error
 		if err != nil {
 			return err
 		}
@@ -219,7 +236,10 @@ func (i *Instance) UpdateAssociationsForExistingAddresses(associations map[strin
 		}
 
 		var dbAddresses []models.Address
-		if err := db.Where("address in (?)", addresses).Find(&dbAddresses).Error; err != nil {
+		if err := db.Where("address in (?)", addresses).
+			Find(&dbAddresses).
+			Limit(len(addresses)).
+			Error; err != nil {
 			return err
 		}
 
