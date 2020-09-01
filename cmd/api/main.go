@@ -36,6 +36,7 @@ func init() {
 
 	restAPI = viper.GetString("rest_api")
 	engine = internal.InitEngine(viper.GetString("gin.mode"))
+	platform.Init(viper.GetStringSlice("platform"))
 
 	if restAPI == "tokens" || restAPI == "all" {
 		pgUri := viper.GetString("postgres.uri")
@@ -57,7 +58,6 @@ func init() {
 		go db.RestoreConnectionWorker(database, time.Second*10, pgUri)
 		go mq.FatalWorker(time.Second * 10)
 	}
-	platform.Init(viper.GetStringSlice("platform"))
 }
 
 func main() {
