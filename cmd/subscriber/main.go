@@ -8,7 +8,7 @@ import (
 	"github.com/trustwallet/blockatlas/internal"
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/logger"
-	"github.com/trustwallet/blockatlas/services/observer/subscriber"
+	"github.com/trustwallet/blockatlas/services/subscriber"
 	"time"
 )
 
@@ -51,9 +51,20 @@ func main() {
 	if err := mq.Subscriptions.Declare(); err != nil {
 		logger.Fatal(err)
 	}
+	if err := mq.TokensRegistration.Declare(); err != nil {
+		logger.Fatal(err)
+	}
 	ctx, cancel := context.WithCancel(context.Background())
 
-	go mq.Subscriptions.RunConsumerWithCancelAndDbConn(subscriber.RunSubscriber, database, ctx)
+	subscriberType := subscriber.Subscriber(viper.GetString("subscriber"))
+	switch subscriberType {
+	case subscriber.Tokens:
+		go mq.TokensRegistration.RunConsumerWithCancelAndDbConn(subscriber.RunTokensSubscriber, database, ctx)
+	case subscriber.Notifications:
+		go mq.Subscriptions.RunConsumerWithCancelAndDbConn(subscriber.RunTransactionsSubscriber, database, ctx)
+	default:
+		logger.Fatal("bad subscriber: " + subscriberType)
+	}
 
 	internal.SetupGracefulShutdownForObserver(cancel)
 }

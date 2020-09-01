@@ -269,6 +269,29 @@ func (t *Tx) GetAddresses() []string {
 	}
 }
 
+func (t *Tx) TokenID() (string, bool) {
+	var tokenID string
+	switch t.Meta.(type) {
+	case Transfer, *Transfer, CollectibleTransfer, *CollectibleTransfer, ContractCall, *ContractCall, MultiCurrencyTransfer, *MultiCurrencyTransfer:
+		return "", false
+	case NativeTokenTransfer:
+		tokenID = t.Meta.(NativeTokenTransfer).TokenID
+	case *NativeTokenTransfer:
+		tokenID = t.Meta.(*NativeTokenTransfer).TokenID
+	case TokenTransfer:
+		tokenID = t.Meta.(TokenTransfer).TokenID
+	case *TokenTransfer:
+		tokenID = t.Meta.(*TokenTransfer).TokenID
+	case AnyAction:
+		tokenID = t.Meta.(AnyAction).TokenID
+	case *AnyAction:
+		tokenID = t.Meta.(*AnyAction).TokenID
+	default:
+		return "", false
+	}
+	return tokenID, true
+}
+
 func (t *Tx) GetTransactionDirection(address string) Direction {
 	if t.Direction != "" {
 		return t.Direction

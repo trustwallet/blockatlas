@@ -57,7 +57,7 @@ func (p *Platform) getTokens(ids []string) chan blockatlas.Token {
 			time.Sleep(time.Millisecond)
 			err := p.getTokensChannel(i, c)
 			if err != nil {
-				logger.Error("TRON getTokens token: " + i)
+				logger.Error("tron getTokens: " + i)
 			}
 		}(id, tkChan)
 	}
@@ -69,7 +69,6 @@ func (p *Platform) getTokens(ids []string) chan blockatlas.Token {
 func (p *Platform) getTokensChannel(id string, tkChan chan blockatlas.Token) error {
 	info, err := p.client.fetchTokenInfo(id)
 	if err != nil || len(info.Data) == 0 {
-		logger.Error(err, "fetchTokenInfo: invalid token")
 		return err
 	}
 	asset := NormalizeToken(info.Data[0])

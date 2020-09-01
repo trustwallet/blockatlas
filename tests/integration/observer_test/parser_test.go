@@ -11,7 +11,7 @@ import (
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
-	"github.com/trustwallet/blockatlas/services/observer/parser"
+	"github.com/trustwallet/blockatlas/services/parser"
 	"github.com/trustwallet/blockatlas/tests/integration/setup"
 	"testing"
 	"time"
@@ -27,7 +27,7 @@ func TestParserFetchAndPublishBlock_NormalCase(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	params.Ctx = ctx
-	params.Queue = mq.RawTransactions
+	params.Queue = []mq.Queue{mq.RawTransactions}
 
 	go parser.RunParser(params)
 

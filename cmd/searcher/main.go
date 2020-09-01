@@ -8,6 +8,7 @@ import (
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/services/notifier"
+	"github.com/trustwallet/blockatlas/services/tokensearcher"
 	"time"
 )
 
@@ -67,7 +68,7 @@ func main() {
 
 	ctx, cancel := context.WithCancel(context.Background())
 
-	go mq.RawTransactions.RunConsumerWithCancelAndDbConn(notifier.RunNotifier, database, ctx)
+	go mq.TokensRegistration.RunConsumerWithCancelAndDbConn(tokensearcher.Run, database, ctx)
 
 	internal.SetupGracefulShutdownForObserver(cancel)
 }

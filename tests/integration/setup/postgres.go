@@ -24,8 +24,12 @@ var (
 	}
 
 	tables = []interface{}{
-		&models.Subscription{},
+		&models.AssetSubscription{},
+		&models.NotificationSubscription{},
 		&models.Tracker{},
+		&models.AddressToAssetAssociation{},
+		&models.Asset{},
+		&models.Address{},
 	}
 
 	uri string

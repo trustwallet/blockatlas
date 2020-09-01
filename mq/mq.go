@@ -22,9 +22,10 @@ type (
 )
 
 const (
-	TxNotifications Queue = "txNotifications"
-	Subscriptions   Queue = "subscriptions"
-	RawTransactions Queue = "rawTransactions"
+	TxNotifications    Queue = "txNotifications"
+	Subscriptions      Queue = "subscriptions"
+	RawTransactions    Queue = "rawTransactions"
+	TokensRegistration Queue = "tokensRegistration"
 )
 
 func Init(uri string) (err error) {
