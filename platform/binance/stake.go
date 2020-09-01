@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	chainID            = "0"     // TODO
+	chainID            = "bsc"
 	dummyLockTime      = 1814400 // in seconds (21 days)
 	dummyMinimumAmount = "1"
 	dummyMaxAPR        = 0.2

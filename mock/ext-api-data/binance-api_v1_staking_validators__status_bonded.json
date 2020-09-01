@@ -1,45 +1,173 @@
 {
-  "total": 170,
+  "total": 21,
   "validators": [
     {
-      "validator": "bnb18cy9pjf3ym239w5qec0kkeuktyywx8wpq3jt0c",
-      "valName": "BinanceTestValidator1",
-      "commissionRate": 0.75000000,
-      "votingPower": 573302.01000000,
+      "validator": "bva1gzxs5s08ll6kqt6mh867ktrtc38asy90sc2cpw",
+      "valName": "sigm8",
+      "commissionRate": 0.25000000,
+      "votingPower": 50000.00000000,
       "status": 0,
-      "votingPowerProportion": 0.1216
+      "votingPowerProportion": 0.0667
     },
     {
-      "validator": "bva1pnww8kx30sz4xfcqvn8wjhrn796nf4dq77hcpa",
-      "valName": "Binance-Fuji",
-      "commissionRate": 0.75000000,
-      "votingPower": 573302.01000000,
+      "validator": "bva1fjtft76yv69d9e00ey9a5ud0aa23z6yu4m2jch",
+      "valName": "namelix",
+      "commissionRate": 0.25000000,
+      "votingPower": 50000.00000000,
       "status": 0,
-      "votingPowerProportion": 0.1216
+      "votingPowerProportion": 0.0667
     },
     {
-      "validator": "bva1wlxpuycavhvjzq27l6qzv07uf6cymgj7wcrf74",
-      "valName": "Binance-Kita",
-      "commissionRate": 0.75000000,
-      "votingPower": 570754.00000000,
+      "validator": "bva16kujlngdxq4pvyf87gpzx2x7ya4lgsz96j0aqt",
+      "valName": "pexmons",
+      "commissionRate": 0.25000000,
+      "votingPower": 50000.00000000,
       "status": 0,
-      "votingPowerProportion": 0.1211
+      "votingPowerProportion": 0.0667
     },
     {
-      "validator": "bva10npy5809y303f227g4leqw7vs3s6ep5ul26sq2",
-      "valName": "Binance-Seoraksan",
-      "commissionRate": 0.75000000,
-      "votingPower": 476579.49000000,
+      "validator": "bva1tgkn6jc5cutkj7465pq9vlxutvdc0e9mgwvle4",
+      "valName": "nariox",
+      "commissionRate": 0.25000000,
+      "votingPower": 50000.00000000,
       "status": 0,
-      "votingPowerProportion": 0.1011
+      "votingPowerProportion": 0.0667
     },
     {
-      "validator": "bva1p7s26ervsmv3w83k5696glautc9sm5rchz5f5e",
-      "valName": "Binance-Ararat",
-      "commissionRate": 0.75000000,
-      "votingPower": 473474.00000000,
+      "validator": "bva1363hmhxgsqgrasm7wk7tvrs08kj6uu3qh2s8h9",
+      "valName": "tiollo",
+      "commissionRate": 0.25000000,
+      "votingPower": 50000.00000000,
       "status": 0,
-      "votingPowerProportion": 0.1004
+      "votingPowerProportion": 0.0667
+    },
+    {
+      "validator": "bva1k0y54ne3j6d6n67kzglpnmf7merr2jmqekptuy",
+      "valName": "raptas",
+      "commissionRate": 0.25000000,
+      "votingPower": 50000.00000000,
+      "status": 0,
+      "votingPowerProportion": 0.0667
+    },
+    {
+      "validator": "bva1g7tau7znz8z2r7070eyhy5szhsn4znw8yuvgzr",
+      "valName": "nozti",
+      "commissionRate": 0.25000000,
+      "votingPower": 50000.00000000,
+      "status": 0,
+      "votingPowerProportion": 0.0667
+    },
+    {
+      "validator": "bva16av8zgzpjwlt7m8khwdl69ge0hx865lzq7wu80",
+      "valName": "coinlix",
+      "commissionRate": 0.25000000,
+      "votingPower": 50000.00000000,
+      "status": 0,
+      "votingPowerProportion": 0.0667
+    },
+    {
+      "validator": "bva1ah8tgrjj5zes0rt5y6gc6m3zr5zwayt6nzaghh",
+      "valName": "raptoken",
+      "commissionRate": 0.25000000,
+      "votingPower": 50000.00000000,
+      "status": 0,
+      "votingPowerProportion": 0.0667
+    },
+    {
+      "validator": "bva1ftj5ln8jtcfsp4kwqeaa78zg8ald0wq8ghytvs",
+      "valName": "glorin",
+      "commissionRate": 0.25000000,
+      "votingPower": 50000.00000000,
+      "status": 0,
+      "votingPowerProportion": 0.0667
+    },
+    {
+      "validator": "bva1ghewcuxuunp4g0xj6yznnk6j2ccgxxhtf6h0r2",
+      "valName": "Seoraksan",
+      "commissionRate": 0.25000000,
+      "votingPower": 50000.00000000,
+      "status": 0,
+      "votingPowerProportion": 0.0667
+    },
+    {
+      "validator": "bva18w9m90ksmcnsw6rd2kwpd74m4l5agkc68su3et",
+      "valName": "defibit",
+      "commissionRate": 0.25000000,
+      "votingPower": 20000.00000000,
+      "status": 0,
+      "votingPowerProportion": 0.0267
+    },
+    {
+      "validator": "bva1krd023w6ptjs388fgkw7futq4fmzkscrmr0hg5",
+      "valName": "leapbnb",
+      "commissionRate": 0.25000000,
+      "votingPower": 20000.00000000,
+      "status": 0,
+      "votingPowerProportion": 0.0267
+    },
+    {
+      "validator": "bva1yck3fkt2ltedev80skwjdmtfftv2lvpzfwmzfl",
+      "valName": "ciscox",
+      "commissionRate": 0.25000000,
+      "votingPower": 20000.00000000,
+      "status": 0,
+      "votingPowerProportion": 0.0267
+    },
+    {
+      "validator": "bva1jdv73wa8u9wya5zgwj3tgddeuwc432f8ex0j74",
+      "valName": "Everest",
+      "commissionRate": 0.25000000,
+      "votingPower": 20000.00000000,
+      "status": 0,
+      "votingPowerProportion": 0.0267
+    },
+    {
+      "validator": "bva1r57gcwpa7f0slcef7z8jl7m50e2vmc854wnf7l",
+      "valName": "Ararat",
+      "commissionRate": 0.25000000,
+      "votingPower": 20000.00000000,
+      "status": 0,
+      "votingPowerProportion": 0.0267
+    },
+    {
+      "validator": "bva1suaqs5xg2g9f9zdldjupdtkc2u25uwxt6nqmnh",
+      "valName": "stakepulse",
+      "commissionRate": 0.25000000,
+      "votingPower": 20000.00000000,
+      "status": 0,
+      "votingPowerProportion": 0.0267
+    },
+    {
+      "validator": "bva1nwyq37v4f02wu7zkc2rsynn8y7hh97ura39qyf",
+      "valName": "piececoin",
+      "commissionRate": 0.25000000,
+      "votingPower": 20000.00000000,
+      "status": 0,
+      "votingPowerProportion": 0.0267
+    },
+    {
+      "validator": "bva1wlrgdtdu2fs2555ed3qdg3e74ayhdtmavy3pg2",
+      "valName": "Kita",
+      "commissionRate": 0.25000000,
+      "votingPower": 20000.00000000,
+      "status": 0,
+      "votingPowerProportion": 0.0267
+    },
+    {
+      "validator": "bva18wgcs0k0glcmaxreweyeydu9mudtsftcxpkt4n",
+      "valName": "fuji",
+      "commissionRate": 0.25000000,
+      "votingPower": 20000.00000000,
+      "status": 0,
+      "votingPowerProportion": 0.0267
+    },
+    {
+      "validator": "bva10qf0ywh8j4s7m96xtv0xg3x9hukdkrhp0ml4ft",
+      "valName": "Aconcagua",
+      "commissionRate": 0.25000000,
+      "votingPower": 20000.00000000,
+      "status": 0,
+      "votingPowerProportion": 0.0267
     }
   ]
 }
