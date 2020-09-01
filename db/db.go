@@ -1,17 +1,22 @@
 package db
 
 import (
+	"errors"
 	"github.com/jinzhu/gorm"
+	gormbulk "github.com/t-tiger/gorm-bulk-insert"
 	"github.com/trustwallet/blockatlas/db/models"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"go.elastic.co/apm/module/apmgorm"
 	_ "go.elastic.co/apm/module/apmgorm/dialects/postgres"
+	"reflect"
 	"time"
 )
 
 type Instance struct {
 	Gorm *gorm.DB
 }
+
+const batchCount = 3000
 
 func New(uri, env string) (*Instance, error) {
 	var (
@@ -29,8 +34,12 @@ func New(uri, env string) (*Instance, error) {
 	}
 
 	g.AutoMigrate(
-		&models.Subscription{},
+		&models.NotificationSubscription{},
 		&models.Tracker{},
+		&models.AddressToAssetAssociation{},
+		&models.Asset{},
+		&models.AssetSubscription{},
+		&models.Address{},
 	)
 
 	i := &Instance{Gorm: g}
@@ -58,4 +67,51 @@ func RestoreConnectionWorker(database *Instance, timeout time.Duration, uri stri
 		}
 		time.Sleep(timeout)
 	}
+}
+
+// Example:
+// postgres.BulkInsert(DBWrite, []models.User{...})
+func BulkInsert(db *gorm.DB, dbModels interface{}) error {
+	interfaceSlice, err := getInterfaceSlice(dbModels)
+	if err != nil {
+		return err
+	}
+	batchList := getInterfaceSliceBatch(interfaceSlice, batchCount)
+	for _, batch := range batchList {
+		err := gormbulk.BulkInsert(db, batch, len(batch))
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func getInterfaceSliceBatch(values []interface{}, sizeUint uint) [][]interface{} {
+	size := int(sizeUint)
+	resultLength := (len(values) + size - 1) / size
+	result := make([][]interface{}, resultLength)
+	lo, hi := 0, size
+	for i := range result {
+		if hi > len(values) {
+			hi = len(values)
+		}
+		result[i] = values[lo:hi:hi]
+		lo, hi = hi, hi+size
+	}
+	return result
+}
+
+func getInterfaceSlice(slice interface{}) ([]interface{}, error) {
+	s := reflect.ValueOf(slice)
+	if s.Kind() != reflect.Slice {
+		return nil, errors.New("InterfaceSlice() given a non-slice type")
+	}
+
+	ret := make([]interface{}, s.Len())
+
+	for i := 0; i < s.Len(); i++ {
+		ret[i] = s.Index(i).Interface()
+	}
+
+	return ret, nil
 }

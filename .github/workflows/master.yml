@@ -112,15 +112,18 @@ jobs:
            PARSER_IMAGE: ${{ secrets.REGISTRY }}:parser-${{ steps.hash.outputs.sha7 }}
            OBSERVER_SUBSCRIBER_IMAGE: ${{ secrets.REGISTRY }}:subscriber-${{ steps.hash.outputs.sha7 }}
            OBSERVER_NOTIFIER_IMAGE: ${{ secrets.REGISTRY }}:notifier-${{ steps.hash.outputs.sha7 }}
+           SEARCHER_IMAGE: ${{ secrets.REGISTRY }}:searcher-${{ steps.hash.outputs.sha7 }}
          run: |
            docker build --build-arg SERVICE=api/api -f Dockerfile.runner -t $API_IMAGE .
            docker build --build-arg SERVICE=parser/parser -f Dockerfile.runner -t $PARSER_IMAGE .
            docker build --build-arg SERVICE=subscriber/subscriber -f Dockerfile.runner -t $OBSERVER_SUBSCRIBER_IMAGE .
            docker build --build-arg SERVICE=notifier/notifier -f Dockerfile.runner -t $OBSERVER_NOTIFIER_IMAGE .
+           docker build --build-arg SERVICE=searcher/searcher -f Dockerfile.runner -t $SEARCHER_IMAGE .
            docker push $API_IMAGE
            docker push $PARSER_IMAGE
            docker push $OBSERVER_SUBSCRIBER_IMAGE
            docker push $OBSERVER_NOTIFIER_IMAGE
+           docker push $SEARCHER_IMAGE
 
   deploy:
     name: CD

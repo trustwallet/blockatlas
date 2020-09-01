@@ -9,7 +9,7 @@ import (
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/platform"
-	"github.com/trustwallet/blockatlas/services/observer/parser"
+	"github.com/trustwallet/blockatlas/services/parser"
 	"os"
 	"os/signal"
 	"sync"
@@ -107,7 +107,7 @@ func main() {
 		params := parser.Params{
 			Ctx:                   ctx,
 			Api:                   api,
-			Queue:                 mq.RawTransactions,
+			Queue:                 []mq.Queue{mq.RawTransactions, mq.TokensRegistration},
 			ParsingBlocksInterval: pollInterval,
 			FetchBlocksTimeout:    fetchBlocksInterval,
 			BacklogCount:          backlogCount,

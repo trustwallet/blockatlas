@@ -4,7 +4,9 @@ import (
 	"context"
 	"github.com/streadway/amqp"
 	"github.com/trustwallet/blockatlas/db"
+	"github.com/trustwallet/blockatlas/pkg/address"
 	"github.com/trustwallet/blockatlas/pkg/logger"
+	"strconv"
 
 	"go.elastic.co/apm"
 )
@@ -24,7 +26,7 @@ func RunNotifier(database *db.Instance, delivery amqp.Delivery) {
 		}
 	}()
 
-	txs, err := getTransactionsFromDelivery(delivery, ctx)
+	txs, err := GetTransactionsFromDelivery(delivery, ctx)
 	if err != nil {
 		logger.Error("failed to get transactions", err)
 	}
@@ -34,19 +36,26 @@ func RunNotifier(database *db.Instance, delivery amqp.Delivery) {
 		allAddresses = append(allAddresses, tx.GetAddresses()...)
 	}
 
-	addresses := toUniqueAddresses(allAddresses)
+	addresses := ToUniqueAddresses(allAddresses)
+	for i := range addresses {
+		addresses[i] = strconv.Itoa(int(txs[0].Coin)) + "_" + addresses[i]
+	}
 
 	if len(txs) < 1 {
 		return
 	}
-	subscriptionsDataList, err := database.GetSubscriptions(txs[0].Coin, addresses, ctx)
+	subscriptionsDataList, err := database.GetSubscriptionsForNotifications(addresses, ctx)
 	if err != nil || len(subscriptionsDataList) == 0 {
 		return
 	}
 
 	notifications := make([]TransactionNotification, 0)
 	for _, sub := range subscriptionsDataList {
-		notificationsForAddress := buildNotificationsByAddress(sub.Address, txs, ctx)
+		ua, _, ok := address.UnprefixedAddress(sub.Address.Address)
+		if !ok {
+			continue
+		}
+		notificationsForAddress := buildNotificationsByAddress(ua, txs, ctx)
 		notifications = append(notifications, notificationsForAddress...)
 	}
 

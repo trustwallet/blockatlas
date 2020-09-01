@@ -44,7 +44,7 @@ func buildNotificationsByAddress(address string, txs blockatlas.Txs, ctx context
 	return result
 }
 
-func toUniqueAddresses(addresses []string) []string {
+func ToUniqueAddresses(addresses []string) []string {
 	keys := make(map[string]bool)
 	var list []string
 	for _, entry := range addresses {
@@ -81,7 +81,7 @@ func findTransactionsByAddress(txs blockatlas.Txs, address string) []blockatlas.
 
 func containsAddress(tx blockatlas.Tx, address string) bool {
 	allAddresses := tx.GetAddresses()
-	txAddresses := toUniqueAddresses(allAddresses)
+	txAddresses := ToUniqueAddresses(allAddresses)
 	for _, a := range txAddresses {
 		if a == address {
 			return true
