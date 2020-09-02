@@ -61,7 +61,7 @@ func (i Instance) GetAssetsMapByAddresses(addresses []string, ctx context.Contex
 	result := make(map[string][]string)
 	for _, a := range associations {
 		assets := result[a.Address.Address]
-		result[a.Address.Address] = append(assets, a.Asset.AssetID)
+		result[a.Address.Address] = append(assets, a.Asset.Asset)
 	}
 	return result, nil
 }
@@ -91,7 +91,7 @@ func (i Instance) GetAssetsMapByAddressesFromTime(addresses []string, from time.
 	result := make(map[string][]string)
 	for _, a := range associations {
 		assets := result[a.Address.Address]
-		result[a.Address.Address] = append(assets, a.Asset.AssetID)
+		result[a.Address.Address] = append(assets, a.Asset.Asset)
 	}
 	return result, nil
 }
@@ -144,7 +144,7 @@ func (i *Instance) AddAssociationsForAddress(address string, assets []string, ct
 		uniqueAssetsModel := make([]models.Asset, 0, len(uniqueAssets))
 		for _, l := range uniqueAssets {
 			uniqueAssetsModel = append(uniqueAssetsModel, models.Asset{
-				AssetID: l,
+				Asset: l,
 			})
 		}
 
@@ -154,7 +154,7 @@ func (i *Instance) AddAssociationsForAddress(address string, assets []string, ct
 		}
 
 		var dbAssets []models.Asset
-		err = db.Where("asset_id in (?)", uniqueAssets).Find(&dbAssets).Error
+		err = db.Where("asset in (?)", uniqueAssets).Find(&dbAssets).Error
 		if err != nil {
 			return err
 		}
@@ -198,7 +198,7 @@ func (i *Instance) UpdateAssociationsForExistingAddresses(associations map[strin
 		uniqueAssetsModel := make([]models.Asset, 0, len(uniqueAssets))
 		for _, l := range uniqueAssets {
 			uniqueAssetsModel = append(uniqueAssetsModel, models.Asset{
-				AssetID: l,
+				Asset: l,
 			})
 		}
 
@@ -208,7 +208,7 @@ func (i *Instance) UpdateAssociationsForExistingAddresses(associations map[strin
 		}
 
 		var dbAssets []models.Asset
-		err = db.Where("asset_id in (?)", uniqueAssets).
+		err = db.Where("asset in (?)", uniqueAssets).
 			Find(&dbAssets).
 			Limit(len(uniqueAssets)).
 			Error
@@ -261,7 +261,7 @@ func (i *Instance) UpdateAssociationsForExistingAddresses(associations map[strin
 func makeMapAssets(addresses []models.Asset) map[string]uint {
 	result := make(map[string]uint)
 	for _, a := range addresses {
-		result[a.AssetID] = a.ID
+		result[a.Asset] = a.ID
 	}
 	return result
 }

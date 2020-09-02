@@ -47,6 +47,16 @@ func runPgContainerAndInitConnection() (*db.Instance, error) {
 	}); err != nil {
 		return nil, err
 	}
+	dbConn.Gorm.Table("address_to_asset_associations").
+		AddForeignKey("address_id", "addresses(id)", "RESTRICT", "RESTRICT").
+		AddForeignKey("asset_id", "assets(id)", "RESTRICT", "RESTRICT")
+
+	dbConn.Gorm.Table("notification_subscriptions").
+		AddForeignKey("address_id", "addresses(id)", "RESTRICT", "RESTRICT")
+
+	dbConn.Gorm.Table("asset_subscriptions").
+		AddForeignKey("address_id", "addresses(id)", "RESTRICT", "RESTRICT")
+
 	autoMigrate(dbConn.Gorm)
 	return dbConn, nil
 }
