@@ -62,7 +62,7 @@ func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, e
 	if err != nil {
 		return nil, err
 	}
-	if len(delegations) == 0 && len(unbondingDelegations) == 0 {
+	if len(delegations)+len(unbondingDelegations) == 0 {
 		return results, nil
 	}
 	validators, err := assets.GetValidatorsMap(p)
@@ -129,7 +129,6 @@ func NormalizeUnbondingDelegations(delegations []UnbondingDelegation, validators
 	return results
 }
 
-//func normalizeValidator(v Validator, p Pool, inflation float64) (validator blockatlas.Validator) {
 func normalizeValidator(v Validator) (validator blockatlas.Validator) {
 	reward := dummyAPR // TODO
 	return blockatlas.Validator{

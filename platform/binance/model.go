@@ -108,10 +108,6 @@ type (
 		ValName string `json:"valName"`
 	}
 
-	Validators struct {
-		Result []Validator `json:"result"`
-	}
-
 	ValidatorsResponse struct {
 		Total      int
 		Validators []Validator
