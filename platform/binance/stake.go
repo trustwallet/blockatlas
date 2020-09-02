@@ -81,7 +81,7 @@ func (p *Platform) UndelegatedBalance(address string) (string, error) {
 		return "0", err
 	}
 	for _, coin := range accountMeta.Balances {
-		if coin.Symbol == "BNB" {
+		if coin.Symbol == coin.Binance().Symbol {
 			return coin.Free, nil
 		}
 	}
