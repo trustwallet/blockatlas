@@ -28,6 +28,7 @@ func init() {
 	logger.InitLogger()
 
 	mqHost := viper.GetString("observer.rabbitmq.uri")
+	logMode := viper.GetBool("postgres.log")
 	prefetchCount := viper.GetInt("observer.rabbitmq.consumer.prefetch_count")
 	maxPushNotificationsBatchLimit := viper.GetUint("observer.push_notifications_batch_limit")
 	pgUri := viper.GetString("postgres.uri")
@@ -43,7 +44,7 @@ func init() {
 	}
 
 	var err error
-	database, err = db.New(pgUri, prod)
+	database, err = db.New(pgUri, prod, logMode)
 	if err != nil {
 		logger.Fatal(err)
 	}

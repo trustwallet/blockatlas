@@ -32,7 +32,7 @@ func init() {
 	prefetchCount := viper.GetInt("observer.rabbitmq.consumer.prefetch_count")
 	maxPushNotificationsBatchLimit := viper.GetUint("observer.push_notifications_batch_limit")
 	pgUri := viper.GetString("postgres.uri")
-
+	logMode := viper.GetBool("postgres.log")
 	internal.InitRabbitMQ(mqHost, prefetchCount)
 
 	if err := mq.RawTransactions.Declare(); err != nil {
@@ -44,7 +44,7 @@ func init() {
 	}
 
 	var err error
-	database, err = db.New(pgUri, prod)
+	database, err = db.New(pgUri, prod, logMode)
 	if err != nil {
 		logger.Fatal(err)
 	}

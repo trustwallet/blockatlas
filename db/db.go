@@ -18,7 +18,7 @@ type Instance struct {
 
 const batchCount = 1000
 
-func New(uri, env string) (*Instance, error) {
+func New(uri, env string, mode bool) (*Instance, error) {
 	var (
 		g   *gorm.DB
 		err error
@@ -41,6 +41,17 @@ func New(uri, env string) (*Instance, error) {
 		&models.AssetSubscription{},
 		&models.Address{},
 	)
+	g.Table("address_to_asset_associations").
+		AddForeignKey("address_id", "addresses(id)", "RESTRICT", "RESTRICT").
+		AddForeignKey("asset_id", "assets(id)", "RESTRICT", "RESTRICT")
+
+	g.Table("notification_subscriptions").
+		AddForeignKey("address_id", "addresses(id)", "RESTRICT", "RESTRICT")
+
+	g.Table("asset_subscriptions").
+		AddForeignKey("address_id", "addresses(id)", "RESTRICT", "RESTRICT")
+
+	g.LogMode(mode)
 
 	i := &Instance{Gorm: g}
 

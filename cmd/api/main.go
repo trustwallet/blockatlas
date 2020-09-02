@@ -35,6 +35,7 @@ func init() {
 	logger.InitLogger()
 
 	restAPI = viper.GetString("rest_api")
+	logMode := viper.GetBool("postgres.log")
 	engine = internal.InitEngine(viper.GetString("gin.mode"))
 	platform.Init(viper.GetStringSlice("platform"))
 
@@ -42,7 +43,7 @@ func init() {
 		pgUri := viper.GetString("postgres.uri")
 
 		var err error
-		database, err = db.New(pgUri, prod)
+		database, err = db.New(pgUri, prod, logMode)
 		if err != nil {
 			logger.Fatal(err)
 		}

@@ -52,6 +52,7 @@ func init() {
 	}
 
 	pgUri := viper.GetString("postgres.uri")
+	logMode := viper.GetBool("postgres.log")
 
 	txsBatchLimit = viper.GetUint("observer.txs_batch_limit")
 	backlogTime = viper.GetDuration("observer.backlog")
@@ -63,7 +64,7 @@ func init() {
 		logger.Fatal("minimum block polling interval cannot be greater or equal than maximum")
 	}
 	var err error
-	database, err = db.New(pgUri, prod)
+	database, err = db.New(pgUri, prod, logMode)
 	if err != nil {
 		logger.Fatal(err)
 	}
