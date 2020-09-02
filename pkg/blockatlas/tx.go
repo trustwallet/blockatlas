@@ -376,3 +376,28 @@ func InferValue(tx *Tx, direction Direction, addressSet mapset.Set) Amount {
 	}
 	return value
 }
+
+func GetEthereumTokenTypeByIndex(coinIndex uint) TokenType {
+	var tokenType TokenType
+	switch coinIndex {
+	case coin.Ethereum().ID:
+		tokenType = TokenTypeERC20
+	case coin.Classic().ID:
+		tokenType = TokenTypeETC20
+	case coin.Poa().ID:
+		tokenType = TokenTypePOA20
+	case coin.Callisto().ID:
+		tokenType = TokenTypeCLO20
+	case coin.Wanchain().ID:
+		tokenType = TokenTypeWAN20
+	case coin.Thundertoken().ID:
+		tokenType = TokenTypeTT20
+	case coin.Gochain().ID:
+		tokenType = TokenTypeGO20
+	case coin.Bsc().ID:
+		tokenType = TokenTypeBEP20
+	default:
+		tokenType = "unknown"
+	}
+	return tokenType
+}
