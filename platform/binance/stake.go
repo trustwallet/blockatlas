@@ -1,6 +1,7 @@
 package binance
 
 import (
+	"strconv"
 	"time"
 
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
@@ -98,7 +99,7 @@ func NormalizeDelegations(delegations []Delegation, validators blockatlas.Valida
 		}
 		delegation := blockatlas.Delegation{
 			Delegator: validator,
-			Value:     v.Value,
+			Value:     strconv.FormatFloat(v.Value, 'f', 8, 64),
 			Status:    blockatlas.DelegationStatusActive,
 		}
 		results = append(results, delegation)
@@ -117,7 +118,7 @@ func NormalizeUnbondingDelegations(delegations []UnbondingDelegation, validators
 		t, _ := time.Parse(time.RFC3339, v.CompleteTime)
 		delegation := blockatlas.Delegation{
 			Delegator: validator,
-			Value:     v.Balance,
+			Value:     strconv.FormatFloat(v.Balance, 'f', 8, 64),
 			Status:    blockatlas.DelegationStatusPending,
 			Metadata: blockatlas.DelegationMetaDataPending{
 				AvailableDate: uint(t.Unix()),

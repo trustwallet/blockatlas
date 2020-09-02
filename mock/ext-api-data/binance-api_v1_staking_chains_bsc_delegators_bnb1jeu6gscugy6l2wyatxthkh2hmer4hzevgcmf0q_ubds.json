@@ -1,14 +1,15 @@
 {
+    "total": 1,
     "unbondingDelegations": [
         {
-            "balance": "2000",
-            "completeTime": "",
-            "completeHeight": 123000,
             "delegator": "bnb1jeu6gscugy6l2wyatxthkh2hmer4hzevgcmf0q",
-            "denom": "1",
-            "initialBalance": "1000",
-            "validator": "bva1r57gcwpa7f0slcef7z8jl7m50e2vmc854wnf7l"
+            "validator": "bva1r57gcwpa7f0slcef7z8jl7m50e2vmc854wnf7l",
+            "creationHeight": 2153437,
+            "initialBalance": 12539.00000000,
+            "balance": 12539.00000000,
+            "denom": "BNB",
+            "completeHeight": 2159728,
+            "completeTime": "2020-08-22T07:55:19.000+00:00"
         }
-    ],
-    "total": 1
+    ]
 }

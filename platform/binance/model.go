@@ -118,9 +118,9 @@ type (
 	}
 
 	Delegation struct {
-		Value            string `json:"amount"`
-		DelegatorAddress string `json:"delegator"`
-		ValidatorAddress string `json:"validator"`
+		Value            float64 `json:"amount"`
+		DelegatorAddress string  `json:"delegator"`
+		ValidatorAddress string  `json:"validator"`
 	}
 
 	DelegationsResponse struct {
@@ -129,13 +129,13 @@ type (
 	}
 
 	UnbondingDelegation struct {
-		Balance        string `json:"balance"`
-		CompleteTime   string `json:"completeTime"`
-		CompleteHeight int    `json:"completeHeight"`
-		Delegator      string `json:"delegator"`
-		Denom          string `json:"denom"`
-		InitialBalance string `json:"initialBalance"`
-		Validator      string `json:"validator"`
+		Balance        float64 `json:"balance"`
+		CompleteTime   string  `json:"completeTime"`
+		CompleteHeight int     `json:"completeHeight"`
+		Delegator      string  `json:"delegator"`
+		Denom          string  `json:"denom"`
+		InitialBalance float64 `json:"initialBalance"`
+		Validator      string  `json:"validator"`
 	}
 
 	UnbondingDelegationResponse struct {

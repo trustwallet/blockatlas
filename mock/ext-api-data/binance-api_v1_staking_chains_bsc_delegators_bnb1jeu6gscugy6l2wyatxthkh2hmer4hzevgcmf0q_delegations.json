@@ -1,10 +1,45 @@
 {
+    "total": 5,
     "delegations": [
         {
-            "amount": "1000",
             "delegator": "bnb1jeu6gscugy6l2wyatxthkh2hmer4hzevgcmf0q",
-            "validator": "bva1r57gcwpa7f0slcef7z8jl7m50e2vmc854wnf7l"
+            "validator": "bva1r57gcwpa7f0slcef7z8jl7m50e2vmc854wnf7l",
+            "amount": 200.00000000,
+            "initialTime": "2020-08-27T22:55:23.000+00:00",
+            "validatorName": "Ararat",
+            "validatorStatus": 0
+        },
+        {
+            "delegator": "bnb1jeu6gscugy6l2wyatxthkh2hmer4hzevgcmf0q",
+            "validator": "bva1e4j8fvutdueghedjqjyfpstqysszjvcm2a50nm",
+            "amount": 21.13000000,
+            "initialTime": "2020-08-23T16:01:21.000+00:00",
+            "validatorName": "Vallenheim",
+            "validatorStatus": 2
+        },
+        {
+            "delegator": "bnb1jeu6gscugy6l2wyatxthkh2hmer4hzevgcmf0q",
+            "validator": "bva1xusrcc8ehns9jalnrxqtqrknmk8pvqx334gj3v",
+            "amount": 160.00000000,
+            "initialTime": "2020-08-26T04:16:44.000+00:00",
+            "validatorName": "generousity",
+            "validatorStatus": 2
+        },
+        {
+            "delegator": "bnb1jeu6gscugy6l2wyatxthkh2hmer4hzevgcmf0q",
+            "validator": "bva16myf933ceqnfnr4lam7pnmwkfenely7g02yurt",
+            "amount": 80.00000000,
+            "initialTime": "2020-08-26T04:17:00.000+00:00",
+            "validatorName": "AnkrValidator",
+            "validatorStatus": 0
+        },
+        {
+            "delegator": "bnb1jeu6gscugy6l2wyatxthkh2hmer4hzevgcmf0q",
+            "validator": "bva16nwsuwgqzwaxljufw7u4zt3vqs6l6fxjwlv4sn",
+            "amount": 100.00000000,
+            "initialTime": "2020-08-26T04:18:11.000+00:00",
+            "validatorName": "PIRATE-BOX!",
+            "validatorStatus": 0
         }
-    ],
-    "total": 1
+    ]
 }
