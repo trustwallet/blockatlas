@@ -9,7 +9,7 @@ import (
 )
 
 func (i Instance) GetSubscribedAddressesForAssets(ctx context.Context, addresses []string) ([]models.Address, error) {
-	db := apmgorm.WithContext(ctx, i.Gorm)
+	db := apmgorm.WithContext(ctx, i.GormRead)
 
 	addressesSubQuery := db.
 		Table("addresses").
@@ -38,7 +38,7 @@ func (i Instance) GetSubscribedAddressesForAssets(ctx context.Context, addresses
 }
 
 func (i Instance) GetAssetsMapByAddresses(addresses []string, ctx context.Context) (map[string][]string, error) {
-	db := apmgorm.WithContext(ctx, i.Gorm)
+	db := apmgorm.WithContext(ctx, i.GormRead)
 
 	addressesSubQuery := db.Table("addresses").
 		Select("id").
@@ -67,7 +67,7 @@ func (i Instance) GetAssetsMapByAddresses(addresses []string, ctx context.Contex
 }
 
 func (i Instance) GetAssetsMapByAddressesFromTime(addresses []string, from time.Time, ctx context.Context) (map[string][]string, error) {
-	db := apmgorm.WithContext(ctx, i.Gorm)
+	db := apmgorm.WithContext(ctx, i.GormRead)
 
 	addressesSubQuery := db.Table("addresses").
 		Select("id").
@@ -97,7 +97,7 @@ func (i Instance) GetAssetsMapByAddressesFromTime(addresses []string, from time.
 }
 
 func (i *Instance) GetAssociationsByAddresses(addresses []string, ctx context.Context) ([]models.AddressToAssetAssociation, error) {
-	db := apmgorm.WithContext(ctx, i.Gorm)
+	db := apmgorm.WithContext(ctx, i.GormRead)
 
 	addressesSubQuery := db.Table("addresses").
 		Select("id").
@@ -117,7 +117,7 @@ func (i *Instance) GetAssociationsByAddresses(addresses []string, ctx context.Co
 }
 
 func (i *Instance) GetAssociationsByAddressesFromTime(addresses []string, from time.Time, ctx context.Context) ([]models.AddressToAssetAssociation, error) {
-	db := apmgorm.WithContext(ctx, i.Gorm)
+	db := apmgorm.WithContext(ctx, i.GormRead)
 
 	addressesSubQuery := db.Table("addresses").
 		Select("id").

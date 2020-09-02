@@ -12,7 +12,7 @@ func (i *Instance) GetSubscriptionsForNotifications(addresses []string, ctx cont
 	if len(addresses) == 0 {
 		return nil, errors.E("Empty addresses")
 	}
-	db := apmgorm.WithContext(ctx, i.Gorm)
+	db := apmgorm.WithContext(ctx, i.GormRead)
 
 	addressesSubQuery := db.
 		Table("addresses").
