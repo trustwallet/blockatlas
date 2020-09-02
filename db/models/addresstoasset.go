@@ -9,8 +9,8 @@ type AddressToAssetAssociation struct {
 	DeletedAt *time.Time `sql:"index"`
 
 	Address   Address `gorm:"ForeignKey:AddressID; not null"`
-	AddressID uint    `gorm:"primary_key; auto_increment:false"`
+	AddressID uint    `gorm:"index:idx_address" sql:"unique_index:idx_aa"`
 
 	Asset   Asset `gorm:"ForeignKey:AssetID; not null"`
-	AssetID uint  `gorm:"primary_key; auto_increment:false"`
+	AssetID uint  `gorm:"index:idx_asset" sql:"unique_index:idx_aa"`
 }

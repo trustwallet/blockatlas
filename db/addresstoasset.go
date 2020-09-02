@@ -79,7 +79,7 @@ func (i Instance) GetAssetsMapByAddressesFromTime(addresses []string, from time.
 		Preload("Address").
 		Preload("Asset").
 		Where("address_id in (?)", addressesSubQuery).
-		Where("updated_at > ?", from).
+		Where("created_at > ?", from).
 		Find(&associations).
 		Limit(len(addresses)).
 		Error
@@ -129,7 +129,7 @@ func (i *Instance) GetAssociationsByAddressesFromTime(addresses []string, from t
 		Preload("Address").
 		Preload("Asset").
 		Where("address_id in (?)", addressesSubQuery).
-		Where("updated_at > ?", from).
+		Where("created_at > ?", from).
 		Find(&result).
 		Limit(len(addresses)).
 		Error
