@@ -565,3 +565,36 @@ func TestTx_TokenID(t *testing.T) {
 	assert.True(t, ok3)
 
 }
+
+func TestGetEthereumTokenTypeByIndex(t *testing.T) {
+	type args struct {
+		coinIndex uint
+	}
+	tests := []struct {
+		name string
+		args args
+		want TokenType
+	}{
+		{
+			"Ethereum",
+			args{
+				coinIndex: coin.Ethereum().ID,
+			},
+			TokenTypeERC20,
+		},
+		{
+			"Smart Chain",
+			args{
+				coinIndex: coin.Bsc().ID,
+			},
+			TokenTypeBEP20,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := GetEthereumTokenTypeByIndex(tt.args.coinIndex); got != tt.want {
+				t.Errorf("GetEthereumTokenTypeByIndex() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
