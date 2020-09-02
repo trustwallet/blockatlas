@@ -51,6 +51,27 @@ func New(uri, env string, mode bool) (*Instance, error) {
 	g.Table("asset_subscriptions").
 		AddForeignKey("address_id", "addresses(id)", "RESTRICT", "RESTRICT")
 
+	g.Table("addresses").
+		DropColumn("created_at").
+		DropColumn("updated_at").
+		DropColumn("deleted_at")
+
+	g.Table("assets").
+		DropColumn("created_at").
+		DropColumn("updated_at").
+		DropColumn("deleted_at")
+
+	g.Table("notification_subscriptions").
+		DropColumn("created_at").
+		DropColumn("updated_at")
+
+	g.Table("asset_subscriptions").
+		DropColumn("created_at").
+		DropColumn("updated_at")
+
+	g.Table("address_to_asset_associations").
+		DropColumn("updated_at")
+
 	g.LogMode(mode)
 
 	i := &Instance{Gorm: g}
