@@ -30,6 +30,8 @@ func GetTokenTypeByIndex(coinIndex uint) blockatlas.TokenType {
 		tokenType = blockatlas.TokenTypeTT20
 	case coin.Gochain().ID:
 		tokenType = blockatlas.TokenTypeGO20
+	case coin.Bsc().ID:
+		tokenType = blockatlas.TokenTypeBEP20
 	default:
 		tokenType = "unknown"
 	}
