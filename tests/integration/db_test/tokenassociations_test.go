@@ -111,7 +111,7 @@ func Test_UpdateAssociationsForExistingAddresses(t *testing.T) {
 	assert.Nil(t, err)
 
 	assetsForA := []string{"aa", "bbb", "cccc"}
-	assetsForB := []string{"as", "bbb", "cccc"}
+	assetsForB := []string{"bbb", "cccc"}
 
 	updateMap := make(map[string][]string)
 	updateMap["A"] = assetsForA
@@ -146,7 +146,7 @@ func Test_UpdateAssociationsForExistingAddresses(t *testing.T) {
 	for _, a := range associationsB {
 		assetIDsFromDBB = append(assetIDsFromDBB, a.Asset.AssetID)
 	}
-	assetsB := []string{"as", "bbb", "cccc", "f"}
+	assetsB := []string{"bbb", "cccc", "f"}
 
 	sort.Slice(assetsB, func(i, j int) bool {
 		return len(assetsB[i]) > len(assetsB[j])
@@ -165,7 +165,7 @@ func Test_UpdateAssociationsForExistingAddresses(t *testing.T) {
 	for _, a := range associationsAB {
 		assetIDsFromDBAB = append(assetIDsFromDBAB, a.Asset.AssetID)
 	}
-	assetsAB := []string{"cccc", "cccc", "bbb", "bbb", "aa", "as", "f", "f"}
+	assetsAB := []string{"cccc", "cccc", "bbb", "bbb", "aa", "f", "f"}
 
 	sort.Slice(assetsAB, func(i, j int) bool {
 		return len(assetsAB[i]) > len(assetsAB[j])

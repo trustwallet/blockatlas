@@ -29,6 +29,7 @@ func init() {
 	logger.InitLogger()
 
 	pgUri := viper.GetString("postgres.uri")
+	logMode := viper.GetBool("postgres.log")
 
 	mqHost := viper.GetString("observer.rabbitmq.uri")
 	prefetchCount := viper.GetInt("observer.rabbitmq.consumer.prefetch_count")
@@ -36,7 +37,7 @@ func init() {
 	internal.InitRabbitMQ(mqHost, prefetchCount)
 
 	var err error
-	database, err = db.New(pgUri, prod)
+	database, err = db.New(pgUri, prod, logMode)
 	if err != nil {
 		logger.Fatal(err)
 	}

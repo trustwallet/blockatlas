@@ -42,13 +42,12 @@ func runPgContainerAndInitConnection() (*db.Instance, error) {
 		err    error
 	)
 	if err := pool.Retry(func() error {
-		dbConn, err = db.New(uri, "test")
+		dbConn, err = db.New(uri, "test", false)
 		return err
 	}); err != nil {
 		return nil, err
 	}
 	autoMigrate(dbConn.Gorm)
-
 	return dbConn, nil
 }
 

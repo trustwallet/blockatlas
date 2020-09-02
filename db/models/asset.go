@@ -1,8 +1,6 @@
 package models
 
-import "github.com/jinzhu/gorm"
-
 type Asset struct {
-	gorm.Model
+	ID      uint   `gorm:"primary_key"`
 	AssetID string `gorm:"type:varchar(128); unique_index"`
 }
