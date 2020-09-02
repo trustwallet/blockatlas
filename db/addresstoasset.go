@@ -20,6 +20,7 @@ func (i Instance) GetSubscribedAddressesForAssets(ctx context.Context, addresses
 
 	var assetSubs []models.AssetSubscription
 	err := db.
+		Set("gorm:insert_option", "ON CONFLICT (address_id) DO UPDATE SET deleted_at = null").
 		Preload("Address").
 		Where("address_id in (?)", addressesSubQuery).
 		Find(&assetSubs).
@@ -165,7 +166,7 @@ func (i *Instance) AddAssociationsForAddress(address string, assets []string, ct
 		}
 
 		assetsSub := models.AssetSubscription{AddressID: dbAddress.ID}
-		err = db.Set("gorm:insert_option", "ON CONFLICT DO NOTHING").Create(&assetsSub).Error
+		err = db.Set("gorm:insert_option", "ON CONFLICT (address_id) DO UPDATE SET deleted_at = null").Create(&assetsSub).Error
 		if err != nil {
 			return err
 		}
@@ -233,7 +234,7 @@ func (i *Instance) UpdateAssociationsForExistingAddresses(associations map[strin
 			addressSubs = append(addressSubs, sub)
 		}
 
-		err = BulkInsert(db.Set("gorm:insert_option", "ON CONFLICT DO NOTHING"), addressSubs)
+		err = BulkInsert(db.Set("gorm:insert_option", "ON CONFLICT (address_id) DO UPDATE SET deleted_at = null"), addressSubs)
 		if err != nil {
 			return err
 		}

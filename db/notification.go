@@ -69,7 +69,7 @@ func (i *Instance) AddSubscriptionsForNotifications(addresses []string, ctx cont
 				AddressID: a.ID,
 			})
 		}
-		return BulkInsert(db.Set("gorm:insert_option", "ON CONFLICT DO NOTHING"), result)
+		return BulkInsert(db.Set("gorm:insert_option", "ON CONFLICT (address_id) DO UPDATE SET deleted_at = null"), result)
 	})
 }
 
