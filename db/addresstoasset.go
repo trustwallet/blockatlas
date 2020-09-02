@@ -160,7 +160,10 @@ func (i *Instance) AddAssociationsForAddress(address string, assets []string, ct
 		}
 
 		dbAddress := models.Address{Address: address}
-		err = db.Where("address = ?", address).FirstOrCreate(&dbAddress).Error
+		err = db.Set("gorm:insert_option", "ON CONFLICT DO NOTHING").
+			Where("address = ?", address).
+			FirstOrCreate(&dbAddress).
+			Error
 		if err != nil {
 			return err
 		}
