@@ -589,6 +589,13 @@ func TestGetEthereumTokenTypeByIndex(t *testing.T) {
 			},
 			TokenTypeBEP20,
 		},
+		{
+			"Default Name",
+			args{
+				coinIndex: coin.Bitcoin().ID,
+			},
+			TokenTypeERC20,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

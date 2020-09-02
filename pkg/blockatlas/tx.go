@@ -397,7 +397,7 @@ func GetEthereumTokenTypeByIndex(coinIndex uint) TokenType {
 	case coin.Bsc().ID:
 		tokenType = TokenTypeBEP20
 	default:
-		tokenType = "unknown"
+		tokenType = TokenTypeERC20
 	}
 	return tokenType
 }
