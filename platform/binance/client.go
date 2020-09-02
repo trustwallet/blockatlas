@@ -136,3 +136,18 @@ func (c *Client) GetDelegations(chainID string, address string) (delegations []D
 	}
 	return result.Delegations, nil
 }
+
+func (c *Client) GetUnbondingDelegations(chainID string, address string) (delegations []UnbondingDelegation, err error) {
+	path := fmt.Sprintf("/api/v1/staking/chains/%s/delegators/%s/ubds", chainID, address)
+	resp, err := req.Get(c.url + path)
+	if err != nil {
+		return []UnbondingDelegation{}, err
+	}
+	var result UnbondingDelegationResponse
+	if err := resp.ToJSON(&result); err != nil {
+		logger.Error("URL: " + resp.Request().URL.String())
+		logger.Error("Status code: " + resp.Response().Status)
+		return []UnbondingDelegation{}, err
+	}
+	return result.UnbondingDelegations, nil
+}

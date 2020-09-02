@@ -128,14 +128,19 @@ type (
 		Total       int          `json:"total"`
 	}
 
-	UnbondingDelegationEntry struct {
+	UnbondingDelegation struct {
 		Balance        string `json:"balance"`
-		CompletionTime string `json:"completion_time"`
+		CompleteTime   string `json:"completeTime"`
+		CompleteHeight int    `json:"completeHeight"`
+		Delegator      string `json:"delegator"`
+		Denom          string `json:"denom"`
+		InitialBalance string `json:"initialBalance"`
+		Validator      string `json:"validator"`
 	}
 
-	UnbondingDelegation struct {
-		Delegation
-		Entries []UnbondingDelegationEntry
+	UnbondingDelegationResponse struct {
+		UnbondingDelegations []UnbondingDelegation `json:"unbondingDelegations"`
+		Total                int                   `json:"total"`
 	}
 )
 

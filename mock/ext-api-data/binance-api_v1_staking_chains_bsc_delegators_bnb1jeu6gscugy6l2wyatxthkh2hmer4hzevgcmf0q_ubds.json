@@ -1,0 +1,14 @@
+{
+    "unbondingDelegations": [
+        {
+            "balance": "2000",
+            "completeTime": "",
+            "completeHeight": 123000,
+            "delegator": "bnb1jeu6gscugy6l2wyatxthkh2hmer4hzevgcmf0q",
+            "denom": "1",
+            "initialBalance": "1000",
+            "validator": "bva1r57gcwpa7f0slcef7z8jl7m50e2vmc854wnf7l"
+        }
+    ],
+    "total": 1
+}

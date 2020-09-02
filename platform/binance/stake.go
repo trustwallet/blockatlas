@@ -57,14 +57,10 @@ func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, e
 	if err != nil {
 		return nil, err
 	}
-	// TODO
-	unbondingDelegations := []UnbondingDelegation{}
-	/*
-		unbondingDelegations, err := p.client.GetUnbondingDelegations(address)
-		if err != nil {
-			return nil, err
-		}
-	*/
+	unbondingDelegations, err := p.client.GetUnbondingDelegations(chainID, address)
+	if err != nil {
+		return nil, err
+	}
 	if len(delegations) == 0 && len(unbondingDelegations) == 0 {
 		return results, nil
 	}
@@ -113,23 +109,21 @@ func NormalizeDelegations(delegations []Delegation, validators blockatlas.Valida
 func NormalizeUnbondingDelegations(delegations []UnbondingDelegation, validators blockatlas.ValidatorMap) []blockatlas.Delegation {
 	results := make([]blockatlas.Delegation, 0)
 	for _, v := range delegations {
-		validator, ok := validators[v.ValidatorAddress]
+		validator, ok := validators[v.Validator]
 		if !ok {
-			logger.Warn("Validator not found", logger.Params{"address": v.ValidatorAddress, "platform": "binance", "delegation": v.DelegatorAddress})
-			validator = getUnknownValidator(v.ValidatorAddress)
+			logger.Warn("Validator not found", logger.Params{"address": v.Validator, "platform": "binance", "delegation": v.Delegator})
+			validator = getUnknownValidator(v.Validator)
 		}
-		for _, entry := range v.Entries {
-			t, _ := time.Parse(time.RFC3339, entry.CompletionTime)
-			delegation := blockatlas.Delegation{
-				Delegator: validator,
-				Value:     entry.Balance,
-				Status:    blockatlas.DelegationStatusPending,
-				Metadata: blockatlas.DelegationMetaDataPending{
-					AvailableDate: uint(t.Unix()),
-				},
-			}
-			results = append(results, delegation)
+		t, _ := time.Parse(time.RFC3339, v.CompleteTime)
+		delegation := blockatlas.Delegation{
+			Delegator: validator,
+			Value:     v.Balance,
+			Status:    blockatlas.DelegationStatusPending,
+			Metadata: blockatlas.DelegationMetaDataPending{
+				AvailableDate: uint(t.Unix()),
+			},
 		}
+		results = append(results, delegation)
 	}
 	return results
 }
