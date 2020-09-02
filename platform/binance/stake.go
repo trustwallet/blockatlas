@@ -10,10 +10,10 @@ import (
 )
 
 const (
-	chainID            = "bsc"
-	dummyLockTime      = 1814400 // in seconds (21 days)
-	dummyMinimumAmount = "1"
-	dummyMaxAPR        = 0.2
+	chainID       = "bsc"
+	lockTime      = 86400 // in seconds
+	minimumAmount = "0.0001"
+	dummyAPR      = 0.2 // TODO
 )
 
 func (p *Platform) GetActiveValidators() (blockatlas.StakeValidators, error) {
@@ -44,10 +44,10 @@ func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
 func (p *Platform) GetDetails() blockatlas.StakingDetails {
 	return blockatlas.StakingDetails{
 		Reward: blockatlas.StakingReward{
-			Annual: dummyMaxAPR,
+			Annual: dummyAPR,
 		},
-		MinimumAmount: dummyMinimumAmount,
-		LockTime:      dummyLockTime,
+		MinimumAmount: minimumAmount,
+		LockTime:      lockTime,
 		Type:          blockatlas.DelegationTypeDelegate,
 	}
 }
@@ -131,14 +131,14 @@ func NormalizeUnbondingDelegations(delegations []UnbondingDelegation, validators
 
 //func normalizeValidator(v Validator, p Pool, inflation float64) (validator blockatlas.Validator) {
 func normalizeValidator(v Validator) (validator blockatlas.Validator) {
-	reward := dummyMaxAPR // TODO
+	reward := dummyAPR // TODO
 	return blockatlas.Validator{
 		Status: v.Status == 2,
 		ID:     v.Address,
 		Details: blockatlas.StakingDetails{
 			Reward:        blockatlas.StakingReward{Annual: reward},
-			MinimumAmount: dummyMinimumAmount,
-			LockTime:      dummyLockTime,
+			MinimumAmount: minimumAmount,
+			LockTime:      lockTime,
 			Type:          blockatlas.DelegationTypeDelegate,
 		},
 	}
@@ -156,8 +156,8 @@ func getUnknownValidator(address string) blockatlas.StakeValidator {
 			Reward: blockatlas.StakingReward{
 				Annual: 0,
 			},
-			LockTime:      dummyLockTime,
-			MinimumAmount: dummyMinimumAmount,
+			LockTime:      lockTime,
+			MinimumAmount: minimumAmount,
 			Type:          blockatlas.DelegationTypeDelegate,
 		},
 	}
