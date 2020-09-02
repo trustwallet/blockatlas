@@ -4,6 +4,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/services/assets"
@@ -80,9 +81,9 @@ func (p *Platform) UndelegatedBalance(address string) (string, error) {
 	if err != nil {
 		return "0", err
 	}
-	for _, coin := range accountMeta.Balances {
-		if coin.Symbol == coin.Binance().Symbol {
-			return coin.Free, nil
+	for _, token := range accountMeta.Balances {
+		if token.Symbol == coin.Binance().Symbol {
+			return token.Free, nil
 		}
 	}
 	return "0", nil
