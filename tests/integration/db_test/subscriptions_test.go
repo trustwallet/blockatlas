@@ -5,12 +5,10 @@ package db_test
 import (
 	"context"
 	"github.com/stretchr/testify/assert"
-	"github.com/trustwallet/blockatlas/db/models"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/services/subscriber"
 	"github.com/trustwallet/blockatlas/tests/integration/setup"
 	"testing"
-	"time"
 )
 
 func TestDb_AddSubscriptionsBulk(t *testing.T) {
@@ -198,36 +196,4 @@ func TestDb_CreateDeleteCreate(t *testing.T) {
 	subs3, err := database.GetSubscriptionsForNotifications([]string{"60_testAddr"}, context.Background())
 	assert.Nil(t, err)
 	assert.Equal(t, 1, len(subs3))
-}
-
-func TestDb_UpdatedAt(t *testing.T) {
-	setup.CleanupPgContainer(database.Gorm)
-	var subscriptions []blockatlas.Subscription
-	subscriptions = append(subscriptions, blockatlas.Subscription{
-		Coin:    60,
-		Address: "testAddr",
-	})
-
-	assert.Nil(t, database.AddSubscriptionsForNotifications(subscriber.ToSubscriptionData(subscriptions), context.Background()))
-	subs, err := database.GetSubscriptionsForNotifications([]string{"60_testAddr"}, context.Background())
-	assert.Nil(t, err)
-	assert.Equal(t, 1, len(subs))
-
-	var existingSub models.NotificationSubscription
-	var existingAddr models.Address
-
-	assert.False(t, database.Gorm.Where("address = ?", "60_testAddr").First(&existingAddr).RecordNotFound())
-	assert.False(t, database.Gorm.Where("address_id = ?", existingAddr.ID).First(&existingSub).RecordNotFound())
-	assert.Greater(t, existingSub.UpdatedAt.Unix(), time.Now().Unix()-120)
-
-	subscriptions = append(subscriptions, blockatlas.Subscription{
-		Coin:    714,
-		Address: "newtestAddr",
-	})
-
-	assert.Nil(t, database.AddSubscriptionsForNotifications(subscriber.ToSubscriptionData(subscriptions), context.Background()))
-
-	var existingSub2 models.NotificationSubscription
-	assert.False(t, database.Gorm.Where("address_id = ?", existingSub.ID).First(&existingSub2).RecordNotFound())
-	assert.Greater(t, existingSub2.UpdatedAt.Unix(), time.Now().Unix()-120)
 }

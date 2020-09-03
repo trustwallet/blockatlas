@@ -35,14 +35,16 @@ func init() {
 	logger.InitLogger()
 
 	restAPI = viper.GetString("rest_api")
+	logMode := viper.GetBool("postgres.log")
 	engine = internal.InitEngine(viper.GetString("gin.mode"))
 	platform.Init(viper.GetStringSlice("platform"))
 
 	if restAPI == "tokens" || restAPI == "all" {
 		pgUri := viper.GetString("postgres.uri")
+		pgReadUri := viper.GetString("postgres.read_uri")
 
 		var err error
-		database, err = db.New(pgUri, prod)
+		database, err = db.New(pgUri, pgReadUri, prod, logMode)
 		if err != nil {
 			logger.Fatal(err)
 		}

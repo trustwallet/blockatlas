@@ -8,6 +8,7 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/address"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
+	"strconv"
 	"sync"
 	"time"
 )
@@ -38,8 +39,10 @@ func (i Instance) HandleTokensRequest(request Request, ctx context.Context) (Ass
 	if err != nil {
 		return nil, err
 	}
+	logger.Info("subscribedAddresses " + strconv.Itoa(len(subscribedAddresses)))
 	unsubscribedAddresses := getUnsubscribedAddresses(subscribedAddresses, addresses)
 
+	logger.Info("unsubscribedAddresses " + strconv.Itoa(len(unsubscribedAddresses)))
 	assetsFromDB, err := i.database.GetAssetsMapByAddressesFromTime(
 		subscribedAddresses,
 		time.Unix(int64(request.From), 0),
@@ -48,6 +51,7 @@ func (i Instance) HandleTokensRequest(request Request, ctx context.Context) (Ass
 		return nil, err
 	}
 
+	logger.Info("assetsFromDB " + strconv.Itoa(len(assetsFromDB)))
 	assetsFromNodes := make(AssetsByAddress)
 	if len(unsubscribedAddresses) != 0 {
 		assetsFromNodes = getAssetsByAddressFromNodes(unsubscribedAddresses, i.apis)
@@ -158,7 +162,9 @@ func fetchAssetsByAddresses(tokenAPI blockatlas.TokensAPI, addresses []string, r
 }
 
 func publishNewAddressesToQueue(queue mq.Queue, message AssetsByAddress) error {
+	logger.Info("Published to queue")
 	body, err := json.Marshal(message)
+	logger.Info(string(body))
 	if err != nil {
 		return err
 	}

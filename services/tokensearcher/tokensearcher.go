@@ -39,8 +39,11 @@ func Run(database *db.Instance, delivery amqp.Delivery) {
 		logger.Error(err)
 		return
 	}
+	logger.Info("associationsFromTransactions " + strconv.Itoa(len(associationsFromTransactions)))
 
 	associationsToAdd := associationsToAdd(fromModelToAssociation(associationsFromTransactions), assetsMap(txs, coinID))
+
+	logger.Info("associationsToAdd " + strconv.Itoa(len(associationsToAdd)))
 	err = database.UpdateAssociationsForExistingAddresses(associationsToAdd, ctx)
 	if err != nil {
 		logger.Error(err)

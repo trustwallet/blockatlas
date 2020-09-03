@@ -18,7 +18,7 @@ func TestHeightBlockMap_SetHeight(t *testing.T) {
 			`INSERT INTO "trackers" ("updated_at","coin","height") VALUES ($1,$2,$3) ON CONFLICT (coin) DO UPDATE SET height = excluded.height, updated_at = excluded.updated_at RETURNING "trackers"."coin"`)).WithArgs(sqlmock.AnyArg(), "bitcoin", 1).WillReturnRows(sqlmock.NewRows([]string{"id"}).
 		AddRow("id"))
 	mock.ExpectCommit()
-	i := Instance{Gorm: db}
+	i := Instance{Gorm: db, GormRead: db}
 
 	assert.Nil(t, i.SetLastParsedBlockNumber("bitcoin", 1, context.Background()))
 }
@@ -32,7 +32,7 @@ func TestHeightBlockMap_GetHeight(t *testing.T) {
 			`INSERT INTO "trackers" ("updated_at","coin","height") VALUES ($1,$2,$3) ON CONFLICT (coin) DO UPDATE SET height = excluded.height, updated_at = excluded.updated_at RETURNING "trackers"."coin"`)).WithArgs(sqlmock.AnyArg(), "bitcoin", 1).WillReturnRows(sqlmock.NewRows([]string{"id"}).
 		AddRow("id"))
 	mock.ExpectCommit()
-	i := Instance{Gorm: db}
+	i := Instance{Gorm: db, GormRead: db}
 
 	assert.Nil(t, i.SetLastParsedBlockNumber("bitcoin", 1, context.Background()))
 	block, err := i.GetLastParsedBlockNumber("bitcoin", context.Background())

@@ -13,20 +13,32 @@ import (
 )
 
 type Instance struct {
-	Gorm *gorm.DB
+	Gorm     *gorm.DB
+	GormRead *gorm.DB
 }
 
-const batchCount = 3000
+const batchCount = 1000
 
-func New(uri, env string) (*Instance, error) {
+func New(uri, readURI, env string, mode bool) (*Instance, error) {
 	var (
 		g   *gorm.DB
+		rg  *gorm.DB
 		err error
 	)
 	if env == "prod" {
 		g, err = apmgorm.Open("postgres", uri)
 	} else {
 		g, err = gorm.Open("postgres", uri)
+	}
+
+	if err != nil {
+		return nil, err
+	}
+
+	if env == "prod" {
+		rg, err = apmgorm.Open("postgres", readURI)
+	} else {
+		rg, err = gorm.Open("postgres", readURI)
 	}
 
 	if err != nil {
@@ -41,8 +53,20 @@ func New(uri, env string) (*Instance, error) {
 		&models.AssetSubscription{},
 		&models.Address{},
 	)
+	g.Table("address_to_asset_associations").
+		AddForeignKey("address_id", "addresses(id)", "RESTRICT", "RESTRICT").
+		AddForeignKey("asset_id", "assets(id)", "RESTRICT", "RESTRICT")
 
-	i := &Instance{Gorm: g}
+	g.Table("notification_subscriptions").
+		AddForeignKey("address_id", "addresses(id)", "RESTRICT", "RESTRICT")
+
+	g.Table("asset_subscriptions").
+		AddForeignKey("address_id", "addresses(id)", "RESTRICT", "RESTRICT")
+
+	g.LogMode(mode)
+	rg.LogMode(mode)
+
+	i := &Instance{Gorm: g, GormRead: rg}
 
 	return i, nil
 }

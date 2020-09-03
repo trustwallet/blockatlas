@@ -37,7 +37,7 @@ func (i *Instance) GetLastParsedBlockNumber(coin string, ctx context.Context) (i
 		return height, nil
 	}
 	var tracker models.Tracker
-	g := apmgorm.WithContext(ctx, i.Gorm)
+	g := apmgorm.WithContext(ctx, i.GormRead)
 	if err := g.Where(models.Tracker{Coin: coin}).Find(&tracker).Error; err != nil {
 		return 0, nil
 	}
