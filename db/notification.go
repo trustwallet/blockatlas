@@ -17,8 +17,9 @@ func (i *Instance) GetSubscriptionsForNotifications(addresses []string, ctx cont
 	var subscriptionsDataList []models.NotificationSubscription
 	err := db.Preload("Address").
 		Joins("left join addresses a on a.id = address_id").
+		Where("address in (?)", addresses).
 		Find(&subscriptionsDataList).
-		Where("address = (?)", addresses).Error
+		Error
 	if err != nil {
 		return nil, err
 	}
