@@ -14,18 +14,11 @@ func (i *Instance) GetSubscriptionsForNotifications(addresses []string, ctx cont
 	}
 	db := apmgorm.WithContext(ctx, i.Gorm)
 
-	addressesSubQuery := db.
-		Table("addresses").
-		Select("id").
-		Where("address in (?)", addresses).
-		QueryExpr()
-
 	var subscriptionsDataList []models.NotificationSubscription
-	err := db.
-		Preload("Address").
-		Where("address_id in (?)", addressesSubQuery).
+	err := db.Preload("Address").
+		Joins("left join addresses a on a.id = address_id").
 		Find(&subscriptionsDataList).
-		Error
+		Where("address = (?)", addresses).Error
 	if err != nil {
 		return nil, err
 	}
