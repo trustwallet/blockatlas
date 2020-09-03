@@ -52,6 +52,8 @@ func init() {
 	}
 
 	pgUri := viper.GetString("postgres.uri")
+	pgReadUri := viper.GetString("postgres.read_uri")
+
 	logMode := viper.GetBool("postgres.log")
 
 	txsBatchLimit = viper.GetUint("observer.txs_batch_limit")
@@ -64,7 +66,7 @@ func init() {
 		logger.Fatal("minimum block polling interval cannot be greater or equal than maximum")
 	}
 	var err error
-	database, err = db.New(pgUri, prod, logMode)
+	database, err = db.New(pgUri, pgReadUri, prod, logMode)
 	if err != nil {
 		logger.Fatal(err)
 	}
@@ -108,7 +110,7 @@ func main() {
 		params := parser.Params{
 			Ctx:                   ctx,
 			Api:                   api,
-			Queue:                 []mq.Queue{mq.RawTransactions, mq.TokensRegistration},
+			Queue:                 []mq.Queue{mq.RawTransactions, mq.RawTransactionsSearcher},
 			ParsingBlocksInterval: pollInterval,
 			FetchBlocksTimeout:    fetchBlocksInterval,
 			BacklogCount:          backlogCount,

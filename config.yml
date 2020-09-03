@@ -9,7 +9,7 @@ gin:
 # If all - run all platforms in one binary. You can pick specific coin handle to run binary only with specific coin
 # Example: ethereum
 # You can see all the coin handles at coins/coins.yml file
-platform: [all]
+platform: [ all ]
 
 # Can be platform or swagger, or tokens, or all
 rest_api: all
@@ -40,6 +40,7 @@ observer:
 
 postgres:
   uri: postgresql://user:pass@localhost/my_db?sslmode=disable
+  read_uri: postgresql://user:pass@localhost/my_db?sslmode=disable
   log: false
 
 # [BNB] Binance DEX: https://www.binance.org/
@@ -230,6 +231,6 @@ near:
 elrond:
   api: https://api.elrond.com
 
-# bsc:
+  # bsc:
   # api: <blockbook api>
   # rpc: <rpc>

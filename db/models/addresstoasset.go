@@ -5,12 +5,12 @@ import (
 )
 
 type AddressToAssetAssociation struct {
-	CreatedAt time.Time
+	CreatedAt time.Time  `sql:"index"`
 	DeletedAt *time.Time `sql:"index"`
 
 	Address   Address `gorm:"ForeignKey:AddressID; not null"`
-	AddressID uint    `gorm:"index:idx_address" sql:"unique_index:idx_aa"`
+	AddressID uint    `gorm:"primary_key; auto_increment:false" sql:"index"`
 
 	Asset   Asset `gorm:"ForeignKey:AssetID; not null"`
-	AssetID uint  `gorm:"index:idx_asset" sql:"unique_index:idx_aa"`
+	AssetID uint  `gorm:"primary_key; auto_increment:false" sql:"index"`
 }

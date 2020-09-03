@@ -79,7 +79,7 @@ func Test_AddNewAssociationForAddress(t *testing.T) {
 
 	var assetIDsFromDB []string
 	for _, a := range associations {
-		assetIDsFromDB = append(assetIDsFromDB, a.Asset.AssetID)
+		assetIDsFromDB = append(assetIDsFromDB, a.Asset.Asset)
 	}
 
 	sort.Slice(assets, func(i, j int) bool {
@@ -125,7 +125,7 @@ func Test_UpdateAssociationsForExistingAddresses(t *testing.T) {
 
 	var assetIDsFromDBA []string
 	for _, a := range associationsA {
-		assetIDsFromDBA = append(assetIDsFromDBA, a.Asset.AssetID)
+		assetIDsFromDBA = append(assetIDsFromDBA, a.Asset.Asset)
 	}
 	assetsA := []string{"aa", "bbb", "cccc", "f"}
 
@@ -144,7 +144,7 @@ func Test_UpdateAssociationsForExistingAddresses(t *testing.T) {
 
 	var assetIDsFromDBB []string
 	for _, a := range associationsB {
-		assetIDsFromDBB = append(assetIDsFromDBB, a.Asset.AssetID)
+		assetIDsFromDBB = append(assetIDsFromDBB, a.Asset.Asset)
 	}
 	assetsB := []string{"bbb", "cccc", "f"}
 
@@ -163,7 +163,7 @@ func Test_UpdateAssociationsForExistingAddresses(t *testing.T) {
 
 	var assetIDsFromDBAB []string
 	for _, a := range associationsAB {
-		assetIDsFromDBAB = append(assetIDsFromDBAB, a.Asset.AssetID)
+		assetIDsFromDBAB = append(assetIDsFromDBAB, a.Asset.Asset)
 	}
 	assetsAB := []string{"cccc", "cccc", "bbb", "bbb", "aa", "f", "f"}
 
