@@ -50,7 +50,7 @@ func TestPlatform_NormalizeDelegations(t *testing.T) {
 			Type:          blockatlas.DelegationTypeDelegate,
 		},
 	}
-	validators := make(blockatlas.ValidatorMap, 0)
+	validators := make(blockatlas.ValidatorMap)
 	validators[validator.ID] = validator
 	result := NormalizeDelegations(delegations, validators)
 	assert.NotNil(t, result)
