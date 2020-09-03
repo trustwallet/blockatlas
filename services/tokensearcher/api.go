@@ -54,6 +54,8 @@ func (i Instance) HandleTokensRequest(request Request, ctx context.Context) (Ass
 	logger.Info("assetsFromDB " + strconv.Itoa(len(assetsFromDB)))
 	assetsFromNodes := make(AssetsByAddress)
 	if len(unsubscribedAddresses) != 0 {
+		logger.Info("request")
+		logger.Info(request)
 		assetsFromNodes = getAssetsByAddressFromNodes(unsubscribedAddresses, i.apis)
 		err = publishNewAddressesToQueue(i.queue, assetsFromNodes)
 		if err != nil {
