@@ -110,7 +110,7 @@ func main() {
 		params := parser.Params{
 			Ctx:                   ctx,
 			Api:                   api,
-			Queue:                 []mq.Queue{mq.RawTransactions, mq.TokensRegistration},
+			Queue:                 []mq.Queue{mq.RawTransactions, mq.RawTransactionsSearcher},
 			ParsingBlocksInterval: pollInterval,
 			FetchBlocksTimeout:    fetchBlocksInterval,
 			BacklogCount:          backlogCount,

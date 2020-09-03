@@ -36,11 +36,7 @@ func init() {
 	logMode := viper.GetBool("postgres.log")
 	internal.InitRabbitMQ(mqHost, prefetchCount)
 
-	if err := mq.RawTransactions.Declare(); err != nil {
-		logger.Fatal(err)
-	}
-
-	if err := mq.TxNotifications.Declare(); err != nil {
+	if err := mq.RawTransactionsSearcher.Declare(); err != nil {
 		logger.Fatal(err)
 	}
 
@@ -69,7 +65,7 @@ func main() {
 
 	ctx, cancel := context.WithCancel(context.Background())
 
-	go mq.TokensRegistration.RunConsumerWithCancelAndDbConn(tokensearcher.Run, database, ctx)
+	go mq.RawTransactionsSearcher.RunConsumerWithCancelAndDbConn(tokensearcher.Run, database, ctx)
 
 	internal.SetupGracefulShutdownForObserver(cancel)
 }
