@@ -394,6 +394,8 @@ func GetEthereumTokenTypeByIndex(coinIndex uint) TokenType {
 		tokenType = TokenTypeTT20
 	case coin.Gochain().ID:
 		tokenType = TokenTypeGO20
+	case coin.Tomochain().ID:
+		tokenType = TokenTypeTRC20
 	case coin.Bsc().ID:
 		tokenType = TokenTypeBEP20
 	default:
