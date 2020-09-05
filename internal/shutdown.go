@@ -42,11 +42,10 @@ func SetupGracefulShutdown(ctx context.Context, port string, engine *gin.Engine)
 	logger.Info("Waiting for all jobs to stop")
 }
 
-func SetupGracefulShutdownForObserver(cancel context.CancelFunc) {
+func SetupGracefulShutdownForObserver() {
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
-	cancel()
 	logger.Info("Shutdown ...")
 	time.Sleep(time.Second * 5)
 	logger.Info("Exiting  gracefully")

@@ -2,21 +2,20 @@ package db
 
 import (
 	"context"
-	"github.com/jinzhu/gorm"
 	"github.com/trustwallet/blockatlas/db/models"
-	"go.elastic.co/apm/module/apmgorm"
+	"gorm.io/gorm"
 	"time"
 )
 
 func (i Instance) GetSubscribedAddressesForAssets(ctx context.Context, addresses []string) ([]models.Address, error) {
-	db := apmgorm.WithContext(ctx, i.GormRead)
+	db := i.Gorm
 
-	addressesSubQuery := db.
+	addressesSubQuery := i.Gorm.
 		Table("addresses").
 		Select("id").
 		Where("address in (?)", addresses).
-		Limit(len(addresses)).
-		QueryExpr()
+		Limit(len(addresses))
+		//todo: QueryExpr()
 
 	var assetSubs []models.AssetSubscription
 	err := db.
@@ -38,13 +37,13 @@ func (i Instance) GetSubscribedAddressesForAssets(ctx context.Context, addresses
 }
 
 func (i Instance) GetAssetsMapByAddresses(addresses []string, ctx context.Context) (map[string][]string, error) {
-	db := apmgorm.WithContext(ctx, i.GormRead)
+	db := i.Gorm.WithContext(ctx)
 
 	addressesSubQuery := db.Table("addresses").
 		Select("id").
 		Where("address in (?)", addresses).
-		Limit(len(addresses)).
-		QueryExpr()
+		Limit(len(addresses))
+		//todo: QueryExpr()
 
 	var associations []models.AddressToAssetAssociation
 	err := db.
@@ -67,13 +66,13 @@ func (i Instance) GetAssetsMapByAddresses(addresses []string, ctx context.Contex
 }
 
 func (i Instance) GetAssetsMapByAddressesFromTime(addresses []string, from time.Time, ctx context.Context) (map[string][]string, error) {
-	db := apmgorm.WithContext(ctx, i.GormRead)
+	db := i.Gorm.WithContext(ctx)
 
 	addressesSubQuery := db.Table("addresses").
 		Select("id").
 		Where("address in (?)", addresses).
-		Limit(len(addresses)).
-		QueryExpr()
+		Limit(len(addresses))
+		//todo: QueryExpr()
 
 	var associations []models.AddressToAssetAssociation
 	err := db.
@@ -97,13 +96,13 @@ func (i Instance) GetAssetsMapByAddressesFromTime(addresses []string, from time.
 }
 
 func (i *Instance) GetAssociationsByAddresses(addresses []string, ctx context.Context) ([]models.AddressToAssetAssociation, error) {
-	db := apmgorm.WithContext(ctx, i.GormRead)
+	db := i.Gorm.WithContext(ctx)
 
 	addressesSubQuery := db.Table("addresses").
 		Select("id").
 		Where("address in (?)", addresses).
-		Limit(len(addresses)).
-		QueryExpr()
+		Limit(len(addresses))
+		// todo: QueryExpr()
 
 	var result []models.AddressToAssetAssociation
 	err := db.
@@ -117,13 +116,13 @@ func (i *Instance) GetAssociationsByAddresses(addresses []string, ctx context.Co
 }
 
 func (i *Instance) GetAssociationsByAddressesFromTime(addresses []string, from time.Time, ctx context.Context) ([]models.AddressToAssetAssociation, error) {
-	db := apmgorm.WithContext(ctx, i.GormRead)
+	db := i.Gorm.WithContext(ctx)
 
 	addressesSubQuery := db.Table("addresses").
 		Select("id").
 		Where("address in (?)", addresses).
-		Limit(len(addresses)).
-		QueryExpr()
+		Limit(len(addresses))
+		//todo :QueryExpr()
 
 	var result []models.AddressToAssetAssociation
 	err := db.
@@ -138,7 +137,7 @@ func (i *Instance) GetAssociationsByAddressesFromTime(addresses []string, from t
 }
 
 func (i *Instance) AddAssociationsForAddress(address string, assets []string, ctx context.Context) error {
-	db := apmgorm.WithContext(ctx, i.Gorm)
+	db := i.Gorm.WithContext(ctx)
 	return db.Transaction(func(tx *gorm.DB) error {
 		uniqueAssets := getUniqueStrings(assets)
 		uniqueAssetsModel := make([]models.Asset, 0, len(uniqueAssets))
@@ -186,7 +185,7 @@ func (i *Instance) AddAssociationsForAddress(address string, assets []string, ct
 }
 
 func (i *Instance) UpdateAssociationsForExistingAddresses(associations map[string][]string, ctx context.Context) error {
-	db := apmgorm.WithContext(ctx, i.Gorm)
+	db := i.Gorm.WithContext(ctx)
 	return db.Transaction(func(tx *gorm.DB) error {
 		var assets []string
 

@@ -3,36 +3,48 @@ package db
 import (
 	"context"
 	"github.com/DATA-DOG/go-sqlmock"
-	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
+	"log"
 	"regexp"
 	"testing"
 )
 
 func TestHeightBlockMap_SetHeight(t *testing.T) {
 	db, mock := setupDB(t)
-	defer db.Close()
+	baseDB, err := db.DB()
+	if err != nil {
+		log.Fatal(err)
+	}
 	mock.ExpectBegin()
 	mock.ExpectQuery(
 		regexp.QuoteMeta(
 			`INSERT INTO "trackers" ("updated_at","coin","height") VALUES ($1,$2,$3) ON CONFLICT (coin) DO UPDATE SET height = excluded.height, updated_at = excluded.updated_at RETURNING "trackers"."coin"`)).WithArgs(sqlmock.AnyArg(), "bitcoin", 1).WillReturnRows(sqlmock.NewRows([]string{"id"}).
 		AddRow("id"))
 	mock.ExpectCommit()
-	i := Instance{Gorm: db, GormRead: db}
+	i := Instance{Gorm: db}
 
 	assert.Nil(t, i.SetLastParsedBlockNumber("bitcoin", 1, context.Background()))
+	if err = baseDB.Close(); err != nil {
+		log.Fatal(err)
+	}
 }
 
 func TestHeightBlockMap_GetHeight(t *testing.T) {
 	db, mock := setupDB(t)
-	defer db.Close()
+	baseDB, err := db.DB()
+	if err != nil {
+		log.Fatal(err)
+	}
 	mock.ExpectBegin()
 	mock.ExpectQuery(
 		regexp.QuoteMeta(
 			`INSERT INTO "trackers" ("updated_at","coin","height") VALUES ($1,$2,$3) ON CONFLICT (coin) DO UPDATE SET height = excluded.height, updated_at = excluded.updated_at RETURNING "trackers"."coin"`)).WithArgs(sqlmock.AnyArg(), "bitcoin", 1).WillReturnRows(sqlmock.NewRows([]string{"id"}).
 		AddRow("id"))
 	mock.ExpectCommit()
-	i := Instance{Gorm: db, GormRead: db}
+	i := Instance{Gorm: db}
 
 	assert.Nil(t, i.SetLastParsedBlockNumber("bitcoin", 1, context.Background()))
 	block, err := i.GetLastParsedBlockNumber("bitcoin", context.Background())
@@ -48,6 +60,9 @@ func TestHeightBlockMap_GetHeight(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, int64(1), b)
 
+	if err = baseDB.Close(); err != nil {
+		log.Fatal(err)
+	}
 }
 
 func setupDB(t *testing.T) (*gorm.DB, sqlmock.Sqlmock) {
@@ -55,11 +70,15 @@ func setupDB(t *testing.T) (*gorm.DB, sqlmock.Sqlmock) {
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when sqlmock", err)
 	}
-
-	d, err := gorm.Open("postgres", db)
+	dialector := postgres.New(postgres.Config{
+		Conn: db,
+	})
+	d, err := gorm.Open(dialector, &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Silent),
+	})
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}
-	d.LogMode(true)
+
 	return d, mock
 }

@@ -10,7 +10,6 @@ require (
 	github.com/deckarep/golang-set v1.7.1
 	github.com/gin-gonic/gin v1.6.3
 	github.com/imroc/req v0.3.0
-	github.com/jinzhu/gorm v1.9.16
 	github.com/mitchellh/mapstructure v1.3.3
 	github.com/mr-tron/base58 v1.2.0
 	github.com/ory/dockertest v3.3.5+incompatible

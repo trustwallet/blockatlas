@@ -18,8 +18,8 @@ const (
 )
 
 var (
-	confPath string
-	database *db.Instance
+	confPath, pgURI string
+	database        *db.Instance
 )
 
 func init() {
@@ -31,8 +31,8 @@ func init() {
 	mqHost := viper.GetString("observer.rabbitmq.uri")
 	prefetchCount := viper.GetInt("observer.rabbitmq.consumer.prefetch_count")
 	maxPushNotificationsBatchLimit := viper.GetUint("observer.push_notifications_batch_limit")
-	pgUri := viper.GetString("postgres.uri")
-	pgReadUri := viper.GetString("postgres.read_uri")
+	pgURI = viper.GetString("postgres.uri")
+	//pgReadUri := viper.GetString("postgres.read_uri")
 	logMode := viper.GetBool("postgres.log")
 	internal.InitRabbitMQ(mqHost, prefetchCount)
 
@@ -41,7 +41,7 @@ func init() {
 	}
 
 	var err error
-	database, err = db.New(pgUri, pgReadUri, prod, logMode)
+	database, err = db.New(pgURI, logMode)
 	if err != nil {
 		logger.Fatal(err)
 	}
@@ -54,9 +54,6 @@ func init() {
 
 	logger.Info("maxPushNotificationsBatchLimit ", logger.Params{"limit": maxPushNotificationsBatchLimit})
 
-	go mq.FatalWorker(time.Second * 10)
-	go db.RestoreConnectionWorker(database, time.Second*10, pgUri)
-
 	time.Sleep(time.Millisecond)
 }
 
@@ -66,6 +63,9 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	go mq.RawTransactionsSearcher.RunConsumerWithCancelAndDbConn(tokensearcher.Run, database, ctx)
+	go mq.FatalWorker(time.Second * 10)
+	go database.RestoreConnectionWorker(ctx, time.Second*10, pgURI)
 
-	internal.SetupGracefulShutdownForObserver(cancel)
+	internal.SetupGracefulShutdownForObserver()
+	cancel()
 }

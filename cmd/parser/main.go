@@ -23,7 +23,7 @@ const (
 )
 
 var (
-	confPath                                                   string
+	confPath, pgURI                                            string
 	backlogTime, minInterval, maxInterval, fetchBlocksInterval time.Duration
 	maxBackLogBlocks                                           int64
 	txsBatchLimit                                              uint
@@ -51,8 +51,8 @@ func init() {
 		logger.Fatal("No APIs to observe")
 	}
 
-	pgUri := viper.GetString("postgres.uri")
-	pgReadUri := viper.GetString("postgres.read_uri")
+	pgURI = viper.GetString("postgres.uri")
+	//	pgReadUri := viper.GetString("postgres.read_uri")
 
 	logMode := viper.GetBool("postgres.log")
 
@@ -66,13 +66,11 @@ func init() {
 		logger.Fatal("minimum block polling interval cannot be greater or equal than maximum")
 	}
 	var err error
-	database, err = db.New(pgUri, pgReadUri, prod, logMode)
+	database, err = db.New(pgURI, logMode)
 	if err != nil {
 		logger.Fatal(err)
 	}
 
-	go mq.FatalWorker(time.Second * 10)
-	go db.RestoreConnectionWorker(database, time.Second*10, pgUri)
 	time.Sleep(time.Millisecond)
 }
 
@@ -83,6 +81,11 @@ func main() {
 		coinCancel  = make(map[string]context.CancelFunc)
 		stopChannel = make(chan<- struct{}, len(platform.BlockAPIs))
 	)
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+
+	go mq.FatalWorker(time.Second * 10)
+	go database.RestoreConnectionWorker(ctx, time.Second*10, pgURI)
 
 	wg.Add(len(platform.BlockAPIs))
 	for _, api := range platform.BlockAPIs {
@@ -138,6 +141,7 @@ func main() {
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
+	cancel()
 	logger.Info("Shutdown parser ...")
 	for coin, cancel := range coinCancel {
 		logger.Info(fmt.Sprintf("Starting to stop %s parser...", coin))

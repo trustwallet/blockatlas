@@ -3,12 +3,11 @@ package db
 import (
 	"context"
 	"errors"
-	gormbulk "github.com/t-tiger/gorm-bulk-insert"
 	"github.com/trustwallet/blockatlas/db/models"
 	"github.com/trustwallet/blockatlas/pkg/logger"
-	"go.elastic.co/apm/module/apmgorm"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	gormlogger "gorm.io/gorm/logger"
 	"reflect"
 	"time"
 )
@@ -19,17 +18,12 @@ type Instance struct {
 
 const batchCount = 1000
 
-func New(uri, env string) (*Instance, error) {
-	var (
-		g   *gorm.DB
-		err error
-	)
-	if env == "prod" {
-		g, err = apmgorm.Open("postgres", uri)
-	} else {
-		g, err = gorm.Open(postgres.Open(uri), &gorm.Config{})
+func New(uri string, logMode bool) (*Instance, error) {
+	cfg := &gorm.Config{}
+	if logMode {
+		cfg.Logger.LogMode(gormlogger.Silent)
 	}
-
+	g, err := gorm.Open(postgres.Open(uri), cfg)
 	if err != nil {
 		return nil, err
 	}
@@ -88,17 +82,17 @@ func (i *Instance) restoreConnection(uri string) error {
 // Example:
 // postgres.BulkInsert(DBWrite, []models.User{...})
 func BulkInsert(db *gorm.DB, dbModels interface{}) error {
-	interfaceSlice, err := getInterfaceSlice(dbModels)
-	if err != nil {
-		return err
-	}
-	batchList := getInterfaceSliceBatch(interfaceSlice, batchCount)
-	for _, batch := range batchList {
-		err := gormbulk.BulkInsert(db, batch, len(batch))
-		if err != nil {
-			return err
-		}
-	}
+	//interfaceSlice, err := getInterfaceSlice(dbModels)
+	//if err != nil {
+	//	return err
+	//}
+	//batchList := getInterfaceSliceBatch(interfaceSlice, batchCount)
+	//for _, batch := range batchList {
+	//	err := gormbulk.BulkInsert(db, batch, len(batch))
+	//	if err != nil {
+	//		return err
+	//	}
+	//}
 	return nil
 }
 

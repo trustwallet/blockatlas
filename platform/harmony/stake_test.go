@@ -102,7 +102,7 @@ func TestNormalizeValidator(t *testing.T) {
 
 	var apr float64
 	var err error
-	if apr, err = strconv.ParseFloat(v.Lifetime.Apr,64); err != nil {
+	if apr, err = strconv.ParseFloat(v.Lifetime.Apr, 64); err != nil {
 		apr = 0
 	}
 
@@ -152,21 +152,20 @@ func TestNormalizeDelegations(t *testing.T) {
 func TestHexToInt(t *testing.T) {
 	result, _ := hexToInt("0x604800")
 
-	assert.Equal(t,uint64(6309888), result)
+	assert.Equal(t, uint64(6309888), result)
 }
 
 func TestGetDetails(t *testing.T) {
 	var expected = blockatlas.StakingDetails{
-			Reward:        blockatlas.StakingReward{Annual: 10},
-			LockTime:      lockTime,
-			MinimumAmount: "1000",
-			Type:          blockatlas.DelegationTypeDelegate,
-		}
+		Reward:        blockatlas.StakingReward{Annual: 10},
+		LockTime:      lockTime,
+		MinimumAmount: "1000",
+		Type:          blockatlas.DelegationTypeDelegate,
+	}
 
 	result := getDetails(10)
-	assert.Equal(t,expected, result)
+	assert.Equal(t, expected, result)
 }
-
 
 func TestGetValidators(t *testing.T) {
 	var c Client
@@ -180,14 +179,14 @@ func TestGetValidators(t *testing.T) {
 			Info: ValidatorInfo{
 				Address: "one1pdv9lrdwl0rg5vglh4xtyrv3wjk3wsqket7zxy",
 			},
-			Active: true,
+			Active:   true,
 			Lifetime: LifetimeInfo{Apr: "10"},
 		},
 	}
 
-	rpcCallStub = func (c *Client, result interface{}, method string, params interface{}) error {
+	rpcCallStub = func(c *Client, result interface{}, method string, params interface{}) error {
 		jsonData, _ := json.Marshal(validators)
-		 _ = json.Unmarshal(jsonData, result)
+		_ = json.Unmarshal(jsonData, result)
 		return nil
 	}
 
@@ -216,13 +215,13 @@ func TestGetDelegation(t *testing.T) {
 			Info: ValidatorInfo{
 				Address: "one1a0au0p33zrns49h3qw7prn02s4wphu0ggcqrhm",
 			},
-			Active: true,
+			Active:   true,
 			Lifetime: LifetimeInfo{Apr: "10"},
 		},
 	}
 
-	rpcCallStub = func (c *Client, result interface{}, method string, params interface{}) error {
-		if (method == "hmy_getAllValidatorInformation") {
+	rpcCallStub = func(c *Client, result interface{}, method string, params interface{}) error {
+		if method == "hmy_getAllValidatorInformation" {
 			jsonData, _ := json.Marshal(validators)
 			_ = json.Unmarshal(jsonData, result)
 		} else {
@@ -236,7 +235,6 @@ func TestGetDelegation(t *testing.T) {
 	assert.Equal(t, delegations[0].DelegatorAddress, result[0].Delegator.ID)
 }
 
-
 func TestGeBalance(t *testing.T) {
 	var c Client
 
@@ -246,12 +244,12 @@ func TestGeBalance(t *testing.T) {
 
 	var balance = "0x100"
 
-	rpcCallStub = func (c *Client, result interface{}, method string, params interface{}) error {
+	rpcCallStub = func(c *Client, result interface{}, method string, params interface{}) error {
 		jsonData, _ := json.Marshal(balance)
 		_ = json.Unmarshal(jsonData, result)
 		return nil
 	}
 
 	result, _ := p.UndelegatedBalance("one1pdv9lrdwl0rg5vglh4xtyrv3wjk3wsqket7zxy")
-	assert.Equal(t, "256",result)
+	assert.Equal(t, "256", result)
 }

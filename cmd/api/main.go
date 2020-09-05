@@ -18,11 +18,11 @@ import (
 const (
 	defaultPort       = "8420"
 	defaultConfigPath = "../../config.yml"
-	prod              = "prod"
+	// prod              = "prod"
 )
 
 var (
-	port, confPath, pgUri string
+	port, confPath, pgURI string
 	engine                *gin.Engine
 	database              *db.Instance
 	t                     tokensearcher.Instance
@@ -40,10 +40,10 @@ func init() {
 	platform.Init(viper.GetStringSlice("platform"))
 
 	if restAPI == "tokens" || restAPI == "all" {
-		pgUri = viper.GetString("postgres.uri")
+		pgURI = viper.GetString("postgres.uri")
 
 		var err error
-		database, err = db.New(pgUri, prod)
+		database, err = db.New(pgURI, false)
 		if err != nil {
 			logger.Fatal(err)
 		}
@@ -74,7 +74,7 @@ func main() {
 		api.SetupPlatformAPI(engine)
 	}
 
-	go database.RestoreConnectionWorker(ctx, time.Second*10, pgUri)
+	go database.RestoreConnectionWorker(ctx, time.Second*10, pgURI)
 	go mq.FatalWorker(time.Second * 10)
 
 	internal.SetupGracefulShutdown(ctx, port, engine)
