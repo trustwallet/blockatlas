@@ -5,6 +5,7 @@ import (
 )
 
 type AddressToAssetAssociation struct {
+	// todo: default timestamp
 	CreatedAt time.Time  `sql:"index"`
 	DeletedAt *time.Time `sql:"index"`
 

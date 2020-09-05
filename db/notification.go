@@ -15,7 +15,7 @@ func (i *Instance) GetSubscriptionsForNotifications(addresses []string, ctx cont
 	db := i.Gorm.WithContext(ctx)
 
 	var subscriptionsDataList []models.NotificationSubscription
-	err := db.Joins("Address").Find(&subscriptionsDataList, "address in (?)", addresses).Error
+	err := db.Joins("Address").Find(&subscriptionsDataList, "address in (?)", addresses).Distinct().Error
 	if err != nil {
 		return nil, err
 	}
@@ -42,7 +42,7 @@ func (i *Instance) AddSubscriptionsForNotifications(addresses []string, ctx cont
 		}
 
 		var dbAddresses []models.Address
-		err = db.Where("address in (?)", uniqueAddresses).Find(&dbAddresses).Limit(len(uniqueAddressesModel)).Error
+		err = db.Where("address in (?)", uniqueAddresses).Find(&dbAddresses).Distinct().Error
 		if err != nil {
 			return err
 		}
@@ -68,16 +68,6 @@ func (i *Instance) DeleteSubscriptionsForNotifications(addresses []string, ctx c
 	if len(addresses) == 0 {
 		return errors.E("Empty subscriptions")
 	}
-	db := i.Gorm.WithContext(ctx)
-
-	addressSubQuery := db.Table("addresses").
-		Select("id").
-		Where("address in (?)", addresses).
-		Limit(len(addresses))
-		// todo: QueryExpr()
-
-	return db.Where("address_id in (?)", addressSubQuery).
-		Delete(&models.NotificationSubscription{}).
-		Limit(len(addresses)).
-		Error
+	q := `DELETE FROM notification_subscriptions ns USING addresses a where ns.address_id = a.id AND a.address IN (?);`
+	return i.Gorm.WithContext(ctx).Exec(q, addresses).Error
 }

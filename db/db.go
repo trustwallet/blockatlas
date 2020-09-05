@@ -45,6 +45,9 @@ func New(uri string, logMode bool) (*Instance, error) {
 		&models.AssetSubscription{},
 		&models.Address{},
 	)
+	if err != nil {
+		return nil, err
+	}
 
 	i := &Instance{Gorm: g}
 
