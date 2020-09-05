@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/api"
@@ -21,11 +22,12 @@ const (
 )
 
 var (
-	port, confPath string
-	engine         *gin.Engine
-	database       *db.Instance
-	t              tokensearcher.Instance
-	restAPI        string
+	ctx                   context.Context
+	port, confPath, pgUri string
+	engine                *gin.Engine
+	database              *db.Instance
+	t                     tokensearcher.Instance
+	restAPI               string
 )
 
 func init() {
@@ -39,7 +41,7 @@ func init() {
 	platform.Init(viper.GetStringSlice("platform"))
 
 	if restAPI == "tokens" || restAPI == "all" {
-		pgUri := viper.GetString("postgres.uri")
+		pgUri = viper.GetString("postgres.uri")
 
 		var err error
 		database, err = db.New(pgUri, prod)
@@ -54,13 +56,12 @@ func init() {
 			logger.Fatal(err)
 		}
 		t = tokensearcher.Init(database, platform.TokensAPIs, mq.TokensRegistration)
-
-		go db.RestoreConnectionWorker(database, time.Second*10, pgUri)
-		go mq.FatalWorker(time.Second * 10)
 	}
 }
 
 func main() {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+
 	switch restAPI {
 	case "swagger":
 		api.SetupSwaggerAPI(engine)
@@ -73,5 +74,10 @@ func main() {
 		api.SetupSwaggerAPI(engine)
 		api.SetupPlatformAPI(engine)
 	}
-	internal.SetupGracefulShutdown(port, engine)
+
+	go database.RestoreConnectionWorker(ctx, time.Second*10, pgUri)
+	go mq.FatalWorker(time.Second * 10)
+
+	internal.SetupGracefulShutdown(ctx, port, engine)
+	cancel()
 }

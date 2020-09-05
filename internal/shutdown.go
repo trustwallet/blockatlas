@@ -11,14 +11,12 @@ import (
 	"time"
 )
 
-func SetupGracefulShutdown(port string, engine *gin.Engine) {
+func SetupGracefulShutdown(ctx context.Context, port string, engine *gin.Engine) {
 	server := &http.Server{
 		Addr:    ":" + port,
 		Handler: engine,
 	}
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 
-	defer cancel()
 	defer func() {
 		if err := server.Shutdown(ctx); err != nil {
 			logger.Fatal("Server Shutdown: ", err)

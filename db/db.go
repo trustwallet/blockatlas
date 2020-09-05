@@ -1,13 +1,14 @@
 package db
 
 import (
+	"context"
 	"errors"
-	"github.com/jinzhu/gorm"
 	gormbulk "github.com/t-tiger/gorm-bulk-insert"
 	"github.com/trustwallet/blockatlas/db/models"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"go.elastic.co/apm/module/apmgorm"
-	_ "go.elastic.co/apm/module/apmgorm/dialects/postgres"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 	"reflect"
 	"time"
 )
@@ -26,14 +27,14 @@ func New(uri, env string) (*Instance, error) {
 	if env == "prod" {
 		g, err = apmgorm.Open("postgres", uri)
 	} else {
-		g, err = gorm.Open("postgres", uri)
+		g, err = gorm.Open(postgres.Open(uri), &gorm.Config{})
 	}
 
 	if err != nil {
 		return nil, err
 	}
 
-	g.AutoMigrate(
+	err = g.AutoMigrate(
 		&models.NotificationSubscription{},
 		&models.Tracker{},
 		&models.AddressToAssetAssociation{},
@@ -41,32 +42,50 @@ func New(uri, env string) (*Instance, error) {
 		&models.AssetSubscription{},
 		&models.Address{},
 	)
+	if err != nil {
+		return nil, err
+	}
 
 	i := &Instance{Gorm: g}
 
 	return i, nil
 }
 
-func RestoreConnectionWorker(database *Instance, timeout time.Duration, uri string) {
+func (i *Instance) RestoreConnectionWorker(ctx context.Context, timeout time.Duration, uri string) {
 	logger.Info("Run PG RestoreConnectionWorker")
-	for {
-		if err := database.Gorm.DB().Ping(); err != nil {
-			for {
-				logger.Warn("PG is not available now")
-				logger.Warn("Trying to connect to PG...")
-				database.Gorm, err = gorm.Open("postgres", uri)
-				if err != nil {
-					logger.Warn("PG is still unavailable:", err.Error())
-					time.Sleep(timeout)
-					continue
-				} else {
-					logger.Info("PG connection restored")
-					break
-				}
-			}
-		}
-		time.Sleep(timeout)
+	t := time.NewTicker(timeout)
+
+	if err := i.restoreConnection(uri); err != nil {
+		logger.Warn("PG is still unavailable:", err)
 	}
+
+	select {
+	case <-ctx.Done():
+		logger.Info("Ctx.Done RestoreConnectionWorker exit")
+		return
+	case <-t.C:
+		if err := i.restoreConnection(uri); err != nil {
+			logger.Warn("PG is still unavailable:", err)
+		}
+	}
+}
+
+func (i *Instance) restoreConnection(uri string) error {
+	db, err := i.Gorm.DB()
+	if err != nil {
+		return err
+	}
+
+	if err = db.Ping(); err != nil {
+		logger.Warn("PG is not available now")
+		logger.Warn("Trying to connect to PG...")
+		i.Gorm, err = gorm.Open(postgres.Open(uri), &gorm.Config{})
+		if err != nil {
+			return err
+		}
+		logger.Info("PG connection restored")
+	}
+	return nil
 }
 
 // Example:
