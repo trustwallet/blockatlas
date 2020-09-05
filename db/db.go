@@ -17,7 +17,7 @@ type Instance struct {
 	Gorm *gorm.DB
 }
 
-const batchCount = 3000
+const batchCount = 1000
 
 func New(uri, env string) (*Instance, error) {
 	var (
@@ -42,9 +42,6 @@ func New(uri, env string) (*Instance, error) {
 		&models.AssetSubscription{},
 		&models.Address{},
 	)
-	if err != nil {
-		return nil, err
-	}
 
 	i := &Instance{Gorm: g}
 

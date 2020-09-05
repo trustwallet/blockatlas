@@ -56,7 +56,7 @@ func fromModelToAssociation(associations []models.AddressToAssetAssociation) map
 	result := make(map[string][]string)
 	for _, a := range associations {
 		m := result[a.Address.Address]
-		result[a.Address.Address] = append(m, a.Asset.AssetID)
+		result[a.Address.Address] = append(m, a.Asset.Asset)
 	}
 	return result
 }

@@ -46,7 +46,10 @@ func (i *Instance) AddSubscriptionsForNotifications(addresses []string, ctx cont
 		}
 
 		var dbAddresses []models.Address
-		err = db.Where("address in (?)", uniqueAddresses).Find(&dbAddresses).Error
+		err = db.Where("address in (?)", uniqueAddresses).
+			Find(&dbAddresses).
+			Limit(len(uniqueAddressesModel)).
+			Error
 		if err != nil {
 			return err
 		}
@@ -57,7 +60,7 @@ func (i *Instance) AddSubscriptionsForNotifications(addresses []string, ctx cont
 				AddressID: a.ID,
 			})
 		}
-		return BulkInsert(db.Set("gorm:insert_option", "ON CONFLICT (address_id) DO UPDATE SET deleted_at = null, updated_at = now()"), result)
+		return BulkInsert(db.Set("gorm:insert_option", "ON CONFLICT (address_id) DO UPDATE SET deleted_at = null"), result)
 	})
 }
 
@@ -70,10 +73,11 @@ func (i *Instance) DeleteSubscriptionsForNotifications(addresses []string, ctx c
 	addressSubQuery := db.Table("addresses").
 		Select("id").
 		Where("address in (?)", addresses).
+		Limit(len(addresses)).
 		QueryExpr()
 
-	return db.
-		Where("address_id in (?)", addressSubQuery).
+	return db.Where("address_id in (?)", addressSubQuery).
 		Delete(&models.NotificationSubscription{}).
+		Limit(len(addresses)).
 		Error
 }

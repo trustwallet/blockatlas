@@ -1,7 +1,6 @@
 package trustray
 
 import (
-	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 )
 
@@ -13,32 +12,9 @@ func (c *Client) GetTokenList(address string, coinIndex uint) (blockatlas.TokenP
 	return NormalizeTokens(account.Docs, coinIndex), nil
 }
 
-func GetTokenTypeByIndex(coinIndex uint) blockatlas.TokenType {
-	var tokenType blockatlas.TokenType
-	switch coinIndex {
-	case coin.Ethereum().ID:
-		tokenType = blockatlas.TokenTypeERC20
-	case coin.Classic().ID:
-		tokenType = blockatlas.TokenTypeETC20
-	case coin.Poa().ID:
-		tokenType = blockatlas.TokenTypePOA20
-	case coin.Callisto().ID:
-		tokenType = blockatlas.TokenTypeCLO20
-	case coin.Wanchain().ID:
-		tokenType = blockatlas.TokenTypeWAN20
-	case coin.Thundertoken().ID:
-		tokenType = blockatlas.TokenTypeTT20
-	case coin.Gochain().ID:
-		tokenType = blockatlas.TokenTypeGO20
-	default:
-		tokenType = "unknown"
-	}
-	return tokenType
-}
-
 // NormalizeToken converts a Ethereum token into the generic model
 func NormalizeToken(srcToken *Contract, coinIndex uint) blockatlas.Token {
-	tokenType := GetTokenTypeByIndex(coinIndex)
+	tokenType := blockatlas.GetEthereumTokenTypeByIndex(coinIndex)
 
 	return blockatlas.Token{
 		Name:     srcToken.Name,

@@ -86,12 +86,12 @@ func Test_newAssociationsForAddress(t *testing.T) {
 
 func Test_fromModelToAssociation(t *testing.T) {
 	a := []models.AddressToAssetAssociation{
-		{Address: models.Address{Address: "A"}, Asset: models.Asset{AssetID: "1"}},
-		{Address: models.Address{Address: "A"}, Asset: models.Asset{AssetID: "2"}},
-		{Address: models.Address{Address: "A"}, Asset: models.Asset{AssetID: "3"}},
-		{Address: models.Address{Address: "B"}, Asset: models.Asset{AssetID: "2"}},
-		{Address: models.Address{Address: "B"}, Asset: models.Asset{AssetID: "3"}},
-		{Address: models.Address{Address: "B"}, Asset: models.Asset{AssetID: "4"}},
+		{Address: models.Address{Address: "A"}, Asset: models.Asset{Asset: "1"}},
+		{Address: models.Address{Address: "A"}, Asset: models.Asset{Asset: "2"}},
+		{Address: models.Address{Address: "A"}, Asset: models.Asset{Asset: "3"}},
+		{Address: models.Address{Address: "B"}, Asset: models.Asset{Asset: "2"}},
+		{Address: models.Address{Address: "B"}, Asset: models.Asset{Asset: "3"}},
+		{Address: models.Address{Address: "B"}, Asset: models.Asset{Asset: "4"}},
 	}
 
 	result := fromModelToAssociation(a)
