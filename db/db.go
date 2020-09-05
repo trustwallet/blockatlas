@@ -8,6 +8,8 @@ import (
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	gormlogger "gorm.io/gorm/logger"
+	"log"
+	"os"
 	"reflect"
 	"time"
 )
@@ -21,7 +23,14 @@ const batchCount = 1000
 func New(uri string, logMode bool) (*Instance, error) {
 	cfg := &gorm.Config{}
 	if logMode {
-		cfg.Logger.LogMode(gormlogger.Silent)
+		cfg.Logger = gormlogger.New(
+			log.New(os.Stdout, "\r\n", log.LstdFlags),
+			gormlogger.Config{
+				SlowThreshold: time.Second,
+				LogLevel:      gormlogger.Info,
+				Colorful:      false,
+			},
+		)
 	}
 	g, err := gorm.Open(postgres.Open(uri), cfg)
 	if err != nil {
@@ -82,6 +91,7 @@ func (i *Instance) restoreConnection(uri string) error {
 // Example:
 // postgres.BulkInsert(DBWrite, []models.User{...})
 func BulkInsert(db *gorm.DB, dbModels interface{}) error {
+
 	//interfaceSlice, err := getInterfaceSlice(dbModels)
 	//if err != nil {
 	//	return err

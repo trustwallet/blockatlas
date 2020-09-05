@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/trustwallet/blockatlas/db/models"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 	"time"
 )
 
@@ -147,28 +148,33 @@ func (i *Instance) AddAssociationsForAddress(address string, assets []string, ct
 			})
 		}
 
-		err := BulkInsert(db.Set("gorm:insert_option", "ON CONFLICT DO NOTHING"), uniqueAssetsModel)
+		err := db.Clauses(clause.OnConflict{DoNothing: true}).Create(&uniqueAssetsModel).Error
 		if err != nil {
 			return err
 		}
 
 		var dbAssets []models.Asset
-		err = db.Where("asset in (?)", uniqueAssets).Find(&dbAssets).Error
-		if err != nil {
+		if err = db.Where("asset in (?)", uniqueAssets).Find(&dbAssets).Error; err != nil {
 			return err
 		}
 
 		dbAddress := models.Address{Address: address}
-		err = db.Set("gorm:insert_option", "ON CONFLICT DO NOTHING").
-			Where("address = ?", address).
-			FirstOrCreate(&dbAddress).
-			Error
+		err = db.Clauses(clause.OnConflict{DoNothing: true}).Where("address = ?", address).FirstOrCreate(&dbAddress).Error
 		if err != nil {
 			return err
 		}
 
 		assetsSub := models.AssetSubscription{AddressID: dbAddress.ID}
-		err = db.Set("gorm:insert_option", "ON CONFLICT (address_id) DO UPDATE SET deleted_at = null").Create(&assetsSub).Error
+		err = db.Clauses(clause.OnConflict{
+			Columns: []clause.Column{
+				{
+					Name: "address_id",
+				},
+			},
+			DoUpdates: clause.Assignments(map[string]interface{}{
+				"deleted_at": nil,
+			}),
+		}).Create(&assetsSub).Error
 		if err != nil {
 			return err
 		}
@@ -180,7 +186,7 @@ func (i *Instance) AddAssociationsForAddress(address string, assets []string, ct
 				AssetID:   asset.ID,
 			})
 		}
-		return BulkInsert(db.Set("gorm:insert_option", "ON CONFLICT DO NOTHING"), result)
+		return db.Clauses(clause.OnConflict{DoNothing: true}).Create(&result).Error
 	})
 }
 
@@ -274,11 +280,11 @@ func makeMapAddress(addresses []models.Address) map[string]uint {
 }
 
 func getUniqueStrings(values []string) []string {
-	keys := make(map[string]bool)
+	keys := make(map[string]struct{})
 	var list []string
 	for _, entry := range values {
 		if _, value := keys[entry]; !value {
-			keys[entry] = true
+			keys[entry] = struct{}{}
 			list = append(list, entry)
 		}
 	}

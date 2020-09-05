@@ -5,6 +5,7 @@ import (
 	"github.com/trustwallet/blockatlas/db/models"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 func (i *Instance) GetSubscriptionsForNotifications(addresses []string, ctx context.Context) ([]models.NotificationSubscription, error) {
@@ -26,7 +27,6 @@ func (i *Instance) AddSubscriptionsForNotifications(addresses []string, ctx cont
 		return errors.E("Empty subscriptions")
 	}
 	db := i.Gorm.WithContext(ctx)
-
 	return db.Transaction(func(tx *gorm.DB) error {
 		uniqueAddresses := getUniqueStrings(addresses)
 		uniqueAddressesModel := make([]models.Address, 0, len(uniqueAddresses))
@@ -36,27 +36,31 @@ func (i *Instance) AddSubscriptionsForNotifications(addresses []string, ctx cont
 			})
 		}
 
-		err := BulkInsert(db.Set("gorm:insert_option", "ON CONFLICT DO NOTHING"), uniqueAddressesModel)
+		err := db.Clauses(clause.OnConflict{DoNothing: true}).Create(&uniqueAddressesModel).Error
 		if err != nil {
 			return err
 		}
 
 		var dbAddresses []models.Address
-		err = db.Where("address in (?)", uniqueAddresses).
-			Find(&dbAddresses).
-			Limit(len(uniqueAddressesModel)).
-			Error
+		err = db.Where("address in (?)", uniqueAddresses).Find(&dbAddresses).Limit(len(uniqueAddressesModel)).Error
 		if err != nil {
 			return err
 		}
 
 		result := make([]models.NotificationSubscription, 0, len(dbAddresses))
 		for _, a := range dbAddresses {
-			result = append(result, models.NotificationSubscription{
-				AddressID: a.ID,
-			})
+			result = append(result, models.NotificationSubscription{AddressID: a.ID})
 		}
-		return BulkInsert(db.Set("gorm:insert_option", "ON CONFLICT (address_id) DO UPDATE SET deleted_at = null"), result)
+		return db.Clauses(clause.OnConflict{
+			Columns: []clause.Column{
+				{
+					Name: "address_id",
+				},
+			},
+			DoUpdates: clause.Assignments(map[string]interface{}{
+				"deleted_at": nil,
+			}),
+		}).Create(&result).Error
 	})
 }
 
