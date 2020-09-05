@@ -22,7 +22,6 @@ const (
 )
 
 var (
-	ctx                   context.Context
 	port, confPath, pgUri string
 	engine                *gin.Engine
 	database              *db.Instance
