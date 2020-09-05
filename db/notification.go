@@ -2,10 +2,10 @@ package db
 
 import (
 	"context"
-	"github.com/jinzhu/gorm"
 	"github.com/trustwallet/blockatlas/db/models"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"go.elastic.co/apm/module/apmgorm"
+	"gorm.io/gorm"
 )
 
 func (i *Instance) GetSubscriptionsForNotifications(addresses []string, ctx context.Context) ([]models.NotificationSubscription, error) {
