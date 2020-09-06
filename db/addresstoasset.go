@@ -9,23 +9,19 @@ import (
 )
 
 func (i Instance) GetSubscribedAddressesForAssets(ctx context.Context, addresses []string) ([]models.Address, error) {
-	db := i.Gorm
-
-	addressesSubQuery := i.Gorm.
-		Table("addresses").
-		Select("id").
-		Where("address in (?)", addresses).
-		Limit(len(addresses))
-		//todo: QueryExpr()
+	db := i.Gorm.WithContext(ctx)
 
 	var assetSubs []models.AssetSubscription
-	err := db.
-		Set("gorm:insert_option", "ON CONFLICT (address_id) DO UPDATE SET deleted_at = null").
-		Preload("Address").
-		Where("address_id in (?)", addressesSubQuery).
-		Find(&assetSubs).
-		Limit(len(addresses)).
-		Error
+	err := db.Clauses(clause.OnConflict{
+		Columns: []clause.Column{
+			{
+				Name: "address_id",
+			},
+		},
+		DoUpdates: clause.Assignments(map[string]interface{}{
+			"deleted_at": nil,
+		}),
+	}).Joins("Address").Find(&assetSubs, "address in (?)", addresses).Error
 	if err != nil {
 		return nil, err
 	}
@@ -39,21 +35,26 @@ func (i Instance) GetSubscribedAddressesForAssets(ctx context.Context, addresses
 
 func (i Instance) GetAssetsMapByAddresses(addresses []string, ctx context.Context) (map[string][]string, error) {
 	db := i.Gorm.WithContext(ctx)
-
-	addressesSubQuery := db.Table("addresses").
-		Select("id").
-		Where("address in (?)", addresses).
-		Limit(len(addresses))
-		//todo: QueryExpr()
-
+	//
+	//addressesSubQuery := db.Table("addresses").
+	//	Select("id").
+	//	Where("address in (?)", addresses).
+	//	Limit(len(addresses))
+	//	//todo: QueryExpr()
+	//
 	var associations []models.AddressToAssetAssociation
-	err := db.
-		Preload("Address").
-		Preload("Asset").
-		Where("address_id in (?)", addressesSubQuery).
-		Find(&associations).
-		Limit(len(addresses)).
-		Error
+	//err := db.
+	//	Preload("Address").
+	//	Preload("Asset").
+	//	Where("address_id in (?)", addressesSubQuery).
+	//	Find(&associations).
+	//	Limit(len(addresses)).
+	//	Error
+	//if err != nil {
+	//	return nil, err
+	//}
+
+	err := db.Joins("Address").Joins("Asset").Find(&associations, "address in (?)", addresses).Error
 	if err != nil {
 		return nil, err
 	}
@@ -69,21 +70,23 @@ func (i Instance) GetAssetsMapByAddresses(addresses []string, ctx context.Contex
 func (i Instance) GetAssetsMapByAddressesFromTime(addresses []string, from time.Time, ctx context.Context) (map[string][]string, error) {
 	db := i.Gorm.WithContext(ctx)
 
-	addressesSubQuery := db.Table("addresses").
-		Select("id").
-		Where("address in (?)", addresses).
-		Limit(len(addresses))
-		//todo: QueryExpr()
+	//addressesSubQuery := db.Table("addresses").
+	//	Select("id").
+	//	Where("address in (?)", addresses).
+	//	Limit(len(addresses))
+	//	//todo: QueryExpr()
 
 	var associations []models.AddressToAssetAssociation
-	err := db.
-		Preload("Address").
-		Preload("Asset").
-		Where("address_id in (?)", addressesSubQuery).
-		Where("created_at > ?", from).
-		Find(&associations).
-		Limit(len(addresses)).
-		Error
+	err := db.Joins("Address").Joins("Asset").Find(&associations, "created_at > ?", from).Where("address in (?)", addresses).Error
+
+	//err := db.
+	//	Preload("Address").
+	//	Preload("Asset").
+	//	Where("address_id in (?)", addressesSubQuery).
+	//	Where("created_at > ?", from).
+	//	Find(&associations).
+	//	Limit(len(addresses)).
+	//	Error
 	if err != nil {
 		return nil, err
 	}
@@ -153,11 +156,6 @@ func (i *Instance) AddAssociationsForAddress(address string, assets []string, ct
 			return err
 		}
 
-		var dbAssets []models.Asset
-		if err = db.Where("asset in (?)", uniqueAssets).Find(&dbAssets).Error; err != nil {
-			return err
-		}
-
 		dbAddress := models.Address{Address: address}
 		err = db.Clauses(clause.OnConflict{DoNothing: true}).Where("address = ?", address).FirstOrCreate(&dbAddress).Error
 		if err != nil {
@@ -179,8 +177,8 @@ func (i *Instance) AddAssociationsForAddress(address string, assets []string, ct
 			return err
 		}
 
-		result := make([]models.AddressToAssetAssociation, 0, len(dbAssets))
-		for _, asset := range dbAssets {
+		result := make([]models.AddressToAssetAssociation, 0, len(uniqueAssetsModel))
+		for _, asset := range uniqueAssetsModel {
 			result = append(result, models.AddressToAssetAssociation{
 				AddressID: dbAddress.ID,
 				AssetID:   asset.ID,
