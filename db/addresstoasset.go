@@ -40,7 +40,7 @@ func (i Instance) GetAssetsMapByAddresses(addresses []string, ctx context.Contex
 func (i Instance) GetAssetsMapByAddressesFromTime(addresses []string, from time.Time, ctx context.Context) (map[string][]string, error) {
 	db := i.Gorm.WithContext(ctx)
 	var associations []models.AddressToAssetAssociation
-	err := db.Joins("Address", "address in (?)", addresses).Joins("Asset").Find(&associations, "created_at > ?", from).Error //	Error
+	err := db.Joins("Address", "address in (?)", addresses).Joins("Asset").Find(&associations, "created_at > ?", from).Error
 	if err != nil {
 		return nil, err
 	}
@@ -55,22 +55,11 @@ func (i Instance) GetAssetsMapByAddressesFromTime(addresses []string, from time.
 
 func (i *Instance) GetAssociationsByAddresses(addresses []string, ctx context.Context) ([]models.AddressToAssetAssociation, error) {
 	db := i.Gorm.WithContext(ctx)
-
-	addressesSubQuery := db.Table("addresses").
-		Select("id").
-		Where("address in (?)", addresses).
-		Limit(len(addresses))
-		// todo: QueryExpr()
-
 	var result []models.AddressToAssetAssociation
-	err := db.
-		Preload("Address").
-		Preload("Asset").
-		Where("address_id in (?)", addressesSubQuery).
-		Find(&result).
-		Limit(len(addresses)).
-		Error
-	return result, err
+	if err := db.Joins("Address", "address in (?)", addresses).Joins("Asset").Find(&result).Error; err != nil {
+		return nil, err
+	}
+	return result, nil
 }
 
 func (i *Instance) GetAssociationsByAddressesFromTime(addresses []string, from time.Time, ctx context.Context) ([]models.AddressToAssetAssociation, error) {
