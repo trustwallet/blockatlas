@@ -12,10 +12,10 @@ func (i *Instance) GetSubscriptionsForNotifications(addresses []string, ctx cont
 	if len(addresses) == 0 {
 		return nil, errors.E("Empty addresses")
 	}
-	db := i.Gorm.WithContext(ctx)
 
+	db := i.Gorm.WithContext(ctx)
 	var subscriptionsDataList []models.NotificationSubscription
-	err := db.Joins("Address").Find(&subscriptionsDataList, "address in (?)", addresses).Distinct().Error
+	err := db.Joins("Address", "address in (?)", addresses).Limit(len(addresses)).Find(&subscriptionsDataList).Error
 	if err != nil {
 		return nil, err
 	}

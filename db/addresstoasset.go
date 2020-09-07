@@ -14,7 +14,8 @@ func (i Instance) GetSubscribedAddressesForAssets(ctx context.Context, addresses
 	err := db.Model(&models.AssetSubscription{}).
 		Select("id", "address").
 		Joins("LEFT JOIN addresses a ON a.address in (?)", addresses).
-		Scan(&result).Error
+		Scan(&result).
+		Limit(len(addresses)).Error
 	if err != nil {
 		return nil, err
 	}
@@ -23,27 +24,8 @@ func (i Instance) GetSubscribedAddressesForAssets(ctx context.Context, addresses
 
 func (i Instance) GetAssetsMapByAddresses(addresses []string, ctx context.Context) (map[string][]string, error) {
 	db := i.Gorm.WithContext(ctx)
-	//
-	//addressesSubQuery := db.Table("addresses").
-	//	Select("id").
-	//	Where("address in (?)", addresses).
-	//	Limit(len(addresses))
-	//	//todo: QueryExpr()
-	//
 	var associations []models.AddressToAssetAssociation
-	//err := db.
-	//	Preload("Address").
-	//	Preload("Asset").
-	//	Where("address_id in (?)", addressesSubQuery).
-	//	Find(&associations).
-	//	Limit(len(addresses)).
-	//	Error
-	//if err != nil {
-	//	return nil, err
-	//}
-
-	err := db.Joins("Address").Joins("Asset").Find(&associations, "address in (?)", addresses).Error
-	if err != nil {
+	if err := db.Joins("Address", "address in (?)", addresses).Joins("Asset").Find(&associations).Error; err != nil {
 		return nil, err
 	}
 
@@ -57,24 +39,8 @@ func (i Instance) GetAssetsMapByAddresses(addresses []string, ctx context.Contex
 
 func (i Instance) GetAssetsMapByAddressesFromTime(addresses []string, from time.Time, ctx context.Context) (map[string][]string, error) {
 	db := i.Gorm.WithContext(ctx)
-
-	//addressesSubQuery := db.Table("addresses").
-	//	Select("id").
-	//	Where("address in (?)", addresses).
-	//	Limit(len(addresses))
-	//	//todo: QueryExpr()
-
 	var associations []models.AddressToAssetAssociation
-	err := db.Joins("Address").Joins("Asset").Find(&associations, "created_at > ?", from).Where("address in (?)", addresses).Error
-
-	//err := db.
-	//	Preload("Address").
-	//	Preload("Asset").
-	//	Where("address_id in (?)", addressesSubQuery).
-	//	Where("created_at > ?", from).
-	//	Find(&associations).
-	//	Limit(len(addresses)).
-	//	Error
+	err := db.Joins("Address", "address in (?)", addresses).Joins("Asset").Find(&associations, "created_at > ?", from).Error //	Error
 	if err != nil {
 		return nil, err
 	}
