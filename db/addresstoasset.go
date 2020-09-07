@@ -10,16 +10,13 @@ import (
 
 func (i Instance) GetSubscribedAddressesForAssets(ctx context.Context, addresses []string) ([]models.Address, error) {
 	db := i.Gorm.WithContext(ctx)
-
-	var assetSubs []models.AssetSubscription
-
-	if err := db.Joins("INNER JOIN addresses a ON a.id = address_id").Find(&assetSubs, "address in (?)", addresses).Error; err != nil {
-		return nil, err
-	}
-
 	var result []models.Address
-	for _, a := range assetSubs {
-		result = append(result, a.Address)
+	err := db.Model(&models.AssetSubscription{}).
+		Select("id", "address").
+		Joins("LEFT JOIN addresses a ON a.address in (?)", addresses).
+		Scan(&result).Error
+	if err != nil {
+		return nil, err
 	}
 	return result, nil
 }
