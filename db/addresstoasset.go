@@ -12,17 +12,8 @@ func (i Instance) GetSubscribedAddressesForAssets(ctx context.Context, addresses
 	db := i.Gorm.WithContext(ctx)
 
 	var assetSubs []models.AssetSubscription
-	err := db.Clauses(clause.OnConflict{
-		Columns: []clause.Column{
-			{
-				Name: "address_id",
-			},
-		},
-		DoUpdates: clause.Assignments(map[string]interface{}{
-			"deleted_at": nil,
-		}),
-	}).Joins("Address").Find(&assetSubs, "address in (?)", addresses).Error
-	if err != nil {
+
+	if err := db.Joins("INNER JOIN addresses a ON a.id = address_id").Find(&assetSubs, "address in (?)", addresses).Error; err != nil {
 		return nil, err
 	}
 
@@ -151,14 +142,17 @@ func (i *Instance) AddAssociationsForAddress(address string, assets []string, ct
 			})
 		}
 
-		err := db.Clauses(clause.OnConflict{DoNothing: true}).Create(&uniqueAssetsModel).Error
-		if err != nil {
-			return err
-		}
-
+		var err error
 		dbAddress := models.Address{Address: address}
 		err = db.Clauses(clause.OnConflict{DoNothing: true}).Where("address = ?", address).FirstOrCreate(&dbAddress).Error
 		if err != nil {
+			return err
+		}
+		if len(assets) == 0 && assets == nil {
+			return nil
+		}
+
+		if err = db.Clauses(clause.OnConflict{DoNothing: true}).Create(&uniqueAssetsModel).Error; err != nil {
 			return err
 		}
 
