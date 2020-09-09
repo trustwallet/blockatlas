@@ -399,9 +399,18 @@
 
 - id: 10000714
   symbol: BNB
-  preferedSymbol: BSC
+  preferedSymbol: BSCLegacy
   handle: bsc
   name: 'Binance Smart Chain'
   decimals: 18
   blockTime: 3000
-  sampleAddress: '0x3efb67b34a9b69b54d4027e044954f483dc31678'
+  sampleAddress: '0x35552c16704d214347f29Fa77f77DA6d75d7C752'
+
+- id: 20000714
+  symbol: BNB
+  preferedSymbol: BSC
+  handle: smartchain
+  name: 'Binance Smart Chain'
+  decimals: 18
+  blockTime: 3000
+  sampleAddress: '0x35552c16704d214347f29Fa77f77DA6d75d7C752'
