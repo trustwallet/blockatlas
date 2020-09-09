@@ -397,10 +397,19 @@
   blockTime: 6000
   sampleAddress: 'erd12tqtt5zcg6vpw65y4hkanvt49kzq695sr3ctuszjy92xw0ppzcssy2xd5r'
 
+- id: 10000714
+  symbol: BNB
+  preferedSymbol: BSCLegacy
+  handle: bsc
+  name: 'Binance Smart Chain'
+  decimals: 18
+  blockTime: 3000
+  sampleAddress: '0x35552c16704d214347f29Fa77f77DA6d75d7C752'
+
 - id: 20000714
   symbol: BNB
   preferedSymbol: BSC
-  handle: bsc
+  handle: smartchain
   name: 'Binance Smart Chain'
   decimals: 18
   blockTime: 3000
