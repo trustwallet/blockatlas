@@ -24,6 +24,7 @@ const (
 	TokenTypeETC20 TokenType = "ETC20"
 	TokenTypePOA20 TokenType = "POA20"
 	TokenTypeTRC20 TokenType = "TRC20"
+	TokenTypeTRC21 TokenType = "TRC21"
 	TokenTypeCLO20 TokenType = "CLO20"
 	TokenTypeGO20  TokenType = "G020"
 	TokenTypeWAN20 TokenType = "WAN20"
@@ -395,7 +396,7 @@ func GetEthereumTokenTypeByIndex(coinIndex uint) TokenType {
 	case coin.Gochain().ID:
 		tokenType = TokenTypeGO20
 	case coin.Tomochain().ID:
-		tokenType = TokenTypeTRC20
+		tokenType = TokenTypeTRC21
 	case coin.Bsc().ID, coin.Smartchain().ID:
 		tokenType = TokenTypeBEP20
 	default:
