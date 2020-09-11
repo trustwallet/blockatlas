@@ -2,7 +2,6 @@ package db
 
 import (
 	"context"
-	"errors"
 	"github.com/trustwallet/blockatlas/db/models"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"gorm.io/driver/postgres"
@@ -10,15 +9,12 @@ import (
 	gormlogger "gorm.io/gorm/logger"
 	"log"
 	"os"
-	"reflect"
 	"time"
 )
 
 type Instance struct {
 	Gorm *gorm.DB
 }
-
-const batchCount = 1000
 
 func New(uri string, logMode bool) (*Instance, error) {
 	cfg := &gorm.Config{}
@@ -89,52 +85,4 @@ func (i *Instance) restoreConnection(uri string) error {
 		logger.Info("PG connection restored")
 	}
 	return nil
-}
-
-// Example:
-// postgres.BulkInsert(DBWrite, []models.User{...})
-func BulkInsert(db *gorm.DB, dbModels interface{}) error {
-
-	//interfaceSlice, err := getInterfaceSlice(dbModels)
-	//if err != nil {
-	//	return err
-	//}
-	//batchList := getInterfaceSliceBatch(interfaceSlice, batchCount)
-	//for _, batch := range batchList {
-	//	err := gormbulk.BulkInsert(db, batch, len(batch))
-	//	if err != nil {
-	//		return err
-	//	}
-	//}
-	return nil
-}
-
-func getInterfaceSliceBatch(values []interface{}, sizeUint uint) [][]interface{} {
-	size := int(sizeUint)
-	resultLength := (len(values) + size - 1) / size
-	result := make([][]interface{}, resultLength)
-	lo, hi := 0, size
-	for i := range result {
-		if hi > len(values) {
-			hi = len(values)
-		}
-		result[i] = values[lo:hi:hi]
-		lo, hi = hi, hi+size
-	}
-	return result
-}
-
-func getInterfaceSlice(slice interface{}) ([]interface{}, error) {
-	s := reflect.ValueOf(slice)
-	if s.Kind() != reflect.Slice {
-		return nil, errors.New("InterfaceSlice() given a non-slice type")
-	}
-
-	ret := make([]interface{}, s.Len())
-
-	for i := 0; i < s.Len(); i++ {
-		ret[i] = s.Index(i).Interface()
-	}
-
-	return ret, nil
 }
