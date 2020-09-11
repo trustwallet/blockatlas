@@ -414,3 +414,12 @@
   decimals: 18
   blockTime: 3000
   sampleAddress: '0x35552c16704d214347f29Fa77f77DA6d75d7C752'
+  
+   - id: 23190923
+  symbol: BZAR
+  handle: Bitcoinrand
+  name: Bitcoinrand
+  decimals: 8
+  blockTime: 120
+  sampleAddress: 'RRGKdzVXb1b6UPyEnABTA8CBhYSjcniFgP'
+
