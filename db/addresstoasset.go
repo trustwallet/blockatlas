@@ -62,7 +62,6 @@ func (i *Instance) GetAssociationsByAddresses(addresses []string, ctx context.Co
 	return result, nil
 }
 
-// todo: do not used
 func (i *Instance) GetAssociationsByAddressesFromTime(addresses []string, from time.Time, ctx context.Context) ([]models.AddressToAssetAssociation, error) {
 	db := i.Gorm.WithContext(ctx)
 	var result []models.AddressToAssetAssociation

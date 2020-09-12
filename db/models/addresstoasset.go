@@ -5,9 +5,8 @@ import (
 )
 
 type AddressToAssetAssociation struct {
-	// todo: default timestamp
 	CreatedAt time.Time  `gorm:"index:,"`
-	DeletedAt *time.Time `gorm:"index:,"`
+	DeletedAt *time.Time `gorm:"index:,; default:NULL"`
 
 	Address   Address `gorm:"ForeignKey:AddressID; not null"`
 	AddressID uint    `gorm:"primary_key; autoIncrement:false; index:,"`

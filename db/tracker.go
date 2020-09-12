@@ -3,6 +3,7 @@ package db
 import (
 	"context"
 	"github.com/trustwallet/blockatlas/db/models"
+	"gorm.io/gorm/clause"
 	"sync"
 )
 
@@ -50,8 +51,15 @@ func (i *Instance) SetLastParsedBlockNumber(coin string, num int64, ctx context.
 		Height: num,
 	}
 	db := i.Gorm.WithContext(ctx)
-	return db.Set("gorm:insert_option",
-		"ON CONFLICT (coin) DO UPDATE SET height = excluded.height, updated_at = excluded.updated_at").
-		Where(models.Tracker{Coin: coin}).
-		Create(&tracker).Error
+	return db.Clauses(clause.OnConflict{
+		Columns: []clause.Column{
+			{
+				Name: "coin",
+			},
+		},
+		DoUpdates: clause.Assignments(map[string]interface{}{
+			"height":     "excluded.height",
+			"updated_at": "excluded.updated_at",
+		}),
+	}).Create(&tracker).Error
 }

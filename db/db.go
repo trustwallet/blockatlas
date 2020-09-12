@@ -28,12 +28,12 @@ func New(uri string, logMode bool) (*Instance, error) {
 			},
 		)
 	}
-	g, err := gorm.Open(postgres.Open(uri), cfg)
+	db, err := gorm.Open(postgres.Open(uri), cfg)
 	if err != nil {
 		return nil, err
 	}
 
-	err = g.AutoMigrate(
+	err = db.AutoMigrate(
 		&models.NotificationSubscription{},
 		&models.Tracker{},
 		&models.AddressToAssetAssociation{},
@@ -45,7 +45,7 @@ func New(uri string, logMode bool) (*Instance, error) {
 		return nil, err
 	}
 
-	i := &Instance{Gorm: g}
+	i := &Instance{Gorm: db}
 
 	return i, nil
 }
