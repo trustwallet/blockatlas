@@ -14,7 +14,6 @@ import (
 
 const (
 	defaultConfigPath = "../../config.yml"
-	prod              = "prod"
 )
 
 var (
@@ -32,7 +31,6 @@ func init() {
 	prefetchCount := viper.GetInt("observer.rabbitmq.consumer.prefetch_count")
 	maxPushNotificationsBatchLimit := viper.GetUint("observer.push_notifications_batch_limit")
 	pgURI = viper.GetString("postgres.uri")
-	//pgReadUri := viper.GetString("postgres.read_uri")
 	logMode := viper.GetBool("postgres.log")
 	internal.InitRabbitMQ(mqHost, prefetchCount)
 

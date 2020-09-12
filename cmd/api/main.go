@@ -18,7 +18,6 @@ import (
 const (
 	defaultPort       = "8420"
 	defaultConfigPath = "../../config.yml"
-	// prod              = "prod"
 )
 
 var (
@@ -36,6 +35,7 @@ func init() {
 	logger.InitLogger()
 
 	restAPI = viper.GetString("rest_api")
+	logMode := viper.GetBool("postgres.log")
 	engine = internal.InitEngine(viper.GetString("gin.mode"))
 	platform.Init(viper.GetStringSlice("platform"))
 
@@ -43,7 +43,7 @@ func init() {
 		pgURI = viper.GetString("postgres.uri")
 
 		var err error
-		database, err = db.New(pgURI, false)
+		database, err = db.New(pgURI, logMode)
 		if err != nil {
 			logger.Fatal(err)
 		}

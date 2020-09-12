@@ -13,7 +13,6 @@ import (
 
 const (
 	defaultConfigPath = "../../config.yml"
-	prod              = "prod"
 )
 
 var (
@@ -32,7 +31,6 @@ func init() {
 	prefetchCount := viper.GetInt("observer.rabbitmq.consumer.prefetch_count")
 	maxPushNotificationsBatchLimit := viper.GetUint("observer.push_notifications_batch_limit")
 	pgUri = viper.GetString("postgres.uri")
-	// pgReadUri = viper.GetString("postgres.read_uri")
 
 	internal.InitRabbitMQ(mqHost, prefetchCount)
 
@@ -66,9 +64,9 @@ func main() {
 
 	ctx, cancel := context.WithCancel(context.Background())
 
+	go database.RestoreConnectionWorker(ctx, time.Second*10, pgUri)
 	go mq.RawTransactions.RunConsumerWithCancelAndDbConn(notifier.RunNotifier, database, ctx)
 	go mq.FatalWorker(time.Second * 10)
-	go database.RestoreConnectionWorker(ctx, time.Second*10, pgUri)
 
 	internal.SetupGracefulShutdownForObserver()
 	cancel()

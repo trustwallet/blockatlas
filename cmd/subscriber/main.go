@@ -14,7 +14,6 @@ import (
 
 const (
 	defaultConfigPath = "../../config.yml"
-	prod              = "prod"
 )
 
 var (
@@ -29,7 +28,6 @@ func init() {
 	logger.InitLogger()
 
 	pgURI = viper.GetString("postgres.uri")
-	//pgReadUri := viper.GetString("postgres.read_uri")
 	logMode := viper.GetBool("postgres.log")
 
 	mqHost := viper.GetString("observer.rabbitmq.uri")
