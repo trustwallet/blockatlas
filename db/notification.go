@@ -42,8 +42,7 @@ func (i *Instance) AddSubscriptionsForNotifications(addresses []string, ctx cont
 		}
 
 		var dbAddresses []models.Address
-		err = db.Where("address in (?)", uniqueAddresses).Find(&dbAddresses).Distinct().Error
-		if err != nil {
+		if err = db.Find(&dbAddresses, "address in (?)", uniqueAddresses).Error; err != nil {
 			return err
 		}
 
