@@ -585,7 +585,7 @@ func TestGetEthereumTokenTypeByIndex(t *testing.T) {
 		{
 			"Smart Chain",
 			args{
-				coinIndex: coin.Bsc().ID,
+				coinIndex: coin.Smartchain().ID,
 			},
 			TokenTypeBEP20,
 		},
