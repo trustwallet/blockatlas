@@ -18,6 +18,7 @@ func TestHeightBlockMap_SetHeight(t *testing.T) {
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer baseDB.Close()
 	mock.ExpectBegin()
 	mock.ExpectQuery(
 		regexp.QuoteMeta(
@@ -27,9 +28,6 @@ func TestHeightBlockMap_SetHeight(t *testing.T) {
 	i := Instance{Gorm: db}
 
 	assert.Nil(t, i.SetLastParsedBlockNumber("bitcoin", 1, context.Background()))
-	if err = baseDB.Close(); err != nil {
-		log.Fatal(err)
-	}
 }
 
 func TestHeightBlockMap_GetHeight(t *testing.T) {
