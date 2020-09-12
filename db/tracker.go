@@ -38,7 +38,7 @@ func (i *Instance) GetLastParsedBlockNumber(coin string, ctx context.Context) (i
 	}
 	var tracker models.Tracker
 	db := i.Gorm.WithContext(ctx)
-	if err := db.Where(models.Tracker{Coin: coin}).Find(&tracker).Error; err != nil {
+	if err := db.Find(&tracker, "coin = ?", coin).Error; err != nil {
 		return 0, nil
 	}
 	return tracker.Height, nil
@@ -57,9 +57,6 @@ func (i *Instance) SetLastParsedBlockNumber(coin string, num int64, ctx context.
 				Name: "coin",
 			},
 		},
-		DoUpdates: clause.Assignments(map[string]interface{}{
-			"height":     "excluded.height",
-			"updated_at": "excluded.updated_at",
-		}),
+		DoUpdates: clause.AssignmentColumns([]string{"height", "updated_at"}),
 	}).Create(&tracker).Error
 }
