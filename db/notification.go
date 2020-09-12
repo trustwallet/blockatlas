@@ -15,7 +15,7 @@ func (i *Instance) GetSubscriptionsForNotifications(addresses []string, ctx cont
 
 	db := i.Gorm.WithContext(ctx)
 	var subscriptionsDataList []models.NotificationSubscription
-	err := db.Joins("Address", "address in (?)", addresses).Limit(len(addresses)).Find(&subscriptionsDataList).Error
+	err := db.Joins("Address").Limit(len(addresses)).Find(&subscriptionsDataList, "address in (?)", addresses).Error
 	if err != nil {
 		return nil, err
 	}
