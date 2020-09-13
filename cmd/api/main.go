@@ -50,6 +50,8 @@ func init() {
 		if err != nil {
 			logger.Fatal(err)
 		}
+		go database.RestoreConnectionWorker(ctx, time.Second*10, pgURI)
+		go mq.FatalWorker(time.Second * 10)
 
 		mqHost := viper.GetString("observer.rabbitmq.uri")
 		prefetchCount := viper.GetInt("observer.rabbitmq.consumer.prefetch_count")
@@ -75,8 +77,6 @@ func main() {
 		api.SetupPlatformAPI(engine)
 	}
 
-	go database.RestoreConnectionWorker(ctx, time.Second*10, pgURI)
-	go mq.FatalWorker(time.Second * 10)
 	internal.SetupGracefulShutdown(ctx, port, engine)
 	cancel()
 }
