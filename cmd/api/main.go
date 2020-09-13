@@ -21,6 +21,8 @@ const (
 )
 
 var (
+	ctx                   context.Context
+	cancel                context.CancelFunc
 	port, confPath, pgURI string
 	engine                *gin.Engine
 	database              *db.Instance
@@ -30,6 +32,7 @@ var (
 
 func init() {
 	port, confPath = internal.ParseArgs(defaultPort, defaultConfigPath)
+	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
 
 	internal.InitConfig(confPath)
 	logger.InitLogger()
@@ -47,6 +50,8 @@ func init() {
 		if err != nil {
 			logger.Fatal(err)
 		}
+		go database.RestoreConnectionWorker(ctx, time.Second*10, pgURI)
+		go mq.FatalWorker(time.Second * 10)
 
 		mqHost := viper.GetString("observer.rabbitmq.uri")
 		prefetchCount := viper.GetInt("observer.rabbitmq.consumer.prefetch_count")
@@ -59,8 +64,6 @@ func init() {
 }
 
 func main() {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-
 	switch restAPI {
 	case "swagger":
 		api.SetupSwaggerAPI(engine)
@@ -73,9 +76,6 @@ func main() {
 		api.SetupSwaggerAPI(engine)
 		api.SetupPlatformAPI(engine)
 	}
-
-	go database.RestoreConnectionWorker(ctx, time.Second*10, pgURI)
-	go mq.FatalWorker(time.Second * 10)
 
 	internal.SetupGracefulShutdown(ctx, port, engine)
 	cancel()
