@@ -21,13 +21,13 @@ const (
 )
 
 var (
-	ctx                   context.Context
-	cancel                context.CancelFunc
-	port, confPath, pgURI string
-	engine                *gin.Engine
-	database              *db.Instance
-	t                     tokensearcher.Instance
-	restAPI               string
+	ctx            context.Context
+	cancel         context.CancelFunc
+	port, confPath string
+	engine         *gin.Engine
+	database       *db.Instance
+	t              tokensearcher.Instance
+	restAPI        string
 )
 
 func init() {
@@ -43,10 +43,11 @@ func init() {
 	platform.Init(viper.GetStringSlice("platform"))
 
 	if restAPI == "tokens" || restAPI == "all" {
-		pgURI = viper.GetString("postgres.uri")
+		pgURI := viper.GetString("postgres.uri")
+		pgReadUri := viper.GetString("postgres.read_uri")
 
 		var err error
-		database, err = db.New(pgURI, logMode)
+		database, err = db.New(pgURI, pgReadUri, logMode)
 		if err != nil {
 			logger.Fatal(err)
 		}

@@ -17,29 +17,33 @@ const (
 )
 
 var (
-	confPath, pgURI string
-	database        *db.Instance
+	ctx      context.Context
+	cancel   context.CancelFunc
+	confPath string
+	database *db.Instance
 )
 
 func init() {
+	ctx, cancel = context.WithCancel(context.Background())
 	_, confPath = internal.ParseArgs("", defaultConfigPath)
 
 	internal.InitConfig(confPath)
 	logger.InitLogger()
-
-	pgURI = viper.GetString("postgres.uri")
-	logMode := viper.GetBool("postgres.log")
 
 	mqHost := viper.GetString("observer.rabbitmq.uri")
 	prefetchCount := viper.GetInt("observer.rabbitmq.consumer.prefetch_count")
 
 	internal.InitRabbitMQ(mqHost, prefetchCount)
 
+	pgURI := viper.GetString("postgres.uri")
+	pgReadUri := viper.GetString("postgres.read_uri")
+	logMode := viper.GetBool("postgres.log")
 	var err error
-	database, err = db.New(pgURI, logMode)
+	database, err = db.New(pgURI, pgReadUri, logMode)
 	if err != nil {
 		logger.Fatal(err)
 	}
+	go database.RestoreConnectionWorker(ctx, time.Second*10, pgURI)
 
 	time.Sleep(time.Millisecond)
 }
@@ -52,7 +56,6 @@ func main() {
 	if err := mq.TokensRegistration.Declare(); err != nil {
 		logger.Fatal(err)
 	}
-	ctx, cancel := context.WithCancel(context.Background())
 
 	subscriberType := subscriber.Subscriber(viper.GetString("subscriber"))
 	switch subscriberType {
@@ -65,7 +68,6 @@ func main() {
 	}
 
 	go mq.FatalWorker(time.Second * 10)
-	go database.RestoreConnectionWorker(ctx, time.Second*10, pgURI)
 
 	internal.SetupGracefulShutdownForObserver()
 	cancel()

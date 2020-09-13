@@ -7,6 +7,7 @@ import (
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	gormlogger "gorm.io/gorm/logger"
+	"gorm.io/plugin/dbresolver"
 	"log"
 	"os"
 	"time"
@@ -16,7 +17,7 @@ type Instance struct {
 	Gorm *gorm.DB
 }
 
-func New(uri string, logMode bool) (*Instance, error) {
+func New(uri, readUri string, logMode bool) (*Instance, error) {
 	cfg := &gorm.Config{}
 	if logMode {
 		cfg.Logger = gormlogger.New(
@@ -29,6 +30,15 @@ func New(uri string, logMode bool) (*Instance, error) {
 		)
 	}
 	db, err := gorm.Open(postgres.Open(uri), cfg)
+	if err != nil {
+		return nil, err
+	}
+
+	err = db.Use(dbresolver.Register(dbresolver.Config{
+		Replicas: []gorm.Dialector{
+			postgres.Open(readUri),
+		},
+	}))
 	if err != nil {
 		return nil, err
 	}

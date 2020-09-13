@@ -22,7 +22,9 @@ const (
 )
 
 var (
-	confPath, pgURI                                            string
+	ctx                                                        context.Context
+	cancel                                                     context.CancelFunc
+	confPath                                                   string
 	backlogTime, minInterval, maxInterval, fetchBlocksInterval time.Duration
 	maxBackLogBlocks                                           int64
 	txsBatchLimit                                              uint
@@ -30,6 +32,7 @@ var (
 )
 
 func init() {
+	ctx, cancel = context.WithCancel(context.Background())
 	_, confPath = internal.ParseArgs("", defaultConfigPath)
 
 	internal.InitConfig(confPath)
@@ -50,9 +53,6 @@ func init() {
 		logger.Fatal("No APIs to observe")
 	}
 
-	pgURI = viper.GetString("postgres.uri")
-	logMode := viper.GetBool("postgres.log")
-
 	txsBatchLimit = viper.GetUint("observer.txs_batch_limit")
 	backlogTime = viper.GetDuration("observer.backlog")
 	minInterval = viper.GetDuration("observer.block_poll.min")
@@ -62,11 +62,16 @@ func init() {
 	if minInterval >= maxInterval {
 		logger.Fatal("minimum block polling interval cannot be greater or equal than maximum")
 	}
+
+	pgURI := viper.GetString("postgres.uri")
+	pgReadUri := viper.GetString("postgres.read_uri")
+	logMode := viper.GetBool("postgres.log")
 	var err error
-	database, err = db.New(pgURI, logMode)
+	database, err = db.New(pgURI, pgReadUri, logMode)
 	if err != nil {
 		logger.Fatal(err)
 	}
+	go database.RestoreConnectionWorker(ctx, time.Second*10, pgURI)
 
 	time.Sleep(time.Millisecond)
 }
@@ -79,10 +84,7 @@ func main() {
 		stopChannel = make(chan<- struct{}, len(platform.BlockAPIs))
 	)
 
-	ctx, cancel := context.WithCancel(context.Background())
-
 	go mq.FatalWorker(time.Second * 10)
-	go database.RestoreConnectionWorker(ctx, time.Second*10, pgURI)
 
 	wg.Add(len(platform.BlockAPIs))
 	for _, api := range platform.BlockAPIs {
