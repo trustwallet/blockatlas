@@ -67,8 +67,6 @@ func (i *Instance) DeleteSubscriptionsForNotifications(addresses []string, ctx c
 	if len(addresses) == 0 {
 		return errors.E("Empty subscriptions")
 	}
-	//q := `DELETE FROM notification_subscriptions ns USING addresses a where ns.address_id = a.id AND a.address IN (?);`
-	db := i.Gorm.WithContext(ctx)
-	return db.Delete(&models.NotificationSubscription{}, "address in (?)", addresses).Error
-	//return i.Gorm.WithContext(ctx).Exec(q, addresses).Error
+	q := `DELETE FROM notification_subscriptions ns USING addresses a where ns.address_id = a.id AND a.address IN (?);`
+	return i.Gorm.WithContext(ctx).Exec(q, addresses).Error
 }
