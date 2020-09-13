@@ -79,7 +79,7 @@ func main() {
 		stopChannel = make(chan<- struct{}, len(platform.BlockAPIs))
 	)
 
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+	ctx, cancel := context.WithCancel(context.Background())
 
 	go mq.FatalWorker(time.Second * 10)
 	go database.RestoreConnectionWorker(ctx, time.Second*10, pgURI)
@@ -102,8 +102,6 @@ func main() {
 		if txsBatchLimit < parser.MinTxsBatchLimit {
 			txsBatchLimit = parser.MinTxsBatchLimit
 		}
-
-		ctx, cancel := context.WithCancel(context.Background())
 
 		coinCancel[coin.Handle] = cancel
 
