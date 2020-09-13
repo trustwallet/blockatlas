@@ -38,6 +38,9 @@ func (i Instance) GetAssetsMapByAddresses(addresses []string, ctx context.Contex
 }
 
 func (i Instance) GetAssetsMapByAddressesFromTime(addresses []string, from time.Time, ctx context.Context) (map[string][]string, error) {
+	if len(addresses) == 0 {
+		return map[string][]string{}, nil
+	}
 	db := i.Gorm.WithContext(ctx)
 	var associations []models.AddressToAssetAssociation
 	err := db.Joins("Address").Where("address in (?)", addresses).Joins("Asset").Find(&associations, "created_at > ?", from).Error
