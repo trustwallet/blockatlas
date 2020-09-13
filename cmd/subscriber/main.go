@@ -52,7 +52,7 @@ func main() {
 	if err := mq.TokensRegistration.Declare(); err != nil {
 		logger.Fatal(err)
 	}
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+	ctx, cancel := context.WithCancel(context.Background())
 
 	subscriberType := subscriber.Subscriber(viper.GetString("subscriber"))
 	switch subscriberType {
