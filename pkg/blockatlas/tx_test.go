@@ -521,3 +521,87 @@ func TestTxs_SortByDate(t *testing.T) {
 	})
 	assert.True(t, isSorted)
 }
+
+func TestTx_TokenID(t *testing.T) {
+	tx1 := Tx{
+		Coin: 60,
+		From: "A",
+		To:   "B",
+		Meta: NativeTokenTransfer{
+			TokenID: "ABC",
+			From:    "A",
+			To:      "C",
+		},
+	}
+
+	tx2 := Tx{
+		Coin: 60,
+		From: "D",
+		To:   "V",
+		Meta: TokenTransfer{
+			TokenID: "EFG",
+			From:    "D",
+			To:      "F",
+		},
+	}
+
+	tx3 := Tx{
+		Coin: 60,
+		From: "Q",
+		To:   "L",
+		Meta: AnyAction{
+			TokenID: "HIJ",
+		},
+	}
+
+	token1, ok1 := tx1.TokenID()
+	assert.True(t, ok1)
+	assert.Equal(t, token1, "ABC")
+	token2, ok2 := tx2.TokenID()
+	assert.True(t, ok2)
+	assert.Equal(t, token2, "EFG")
+	token3, ok3 := tx3.TokenID()
+	assert.Equal(t, token3, "HIJ")
+	assert.True(t, ok3)
+
+}
+
+func TestGetEthereumTokenTypeByIndex(t *testing.T) {
+	type args struct {
+		coinIndex uint
+	}
+	tests := []struct {
+		name string
+		args args
+		want TokenType
+	}{
+		{
+			"Ethereum",
+			args{
+				coinIndex: coin.Ethereum().ID,
+			},
+			TokenTypeERC20,
+		},
+		{
+			"Smart Chain",
+			args{
+				coinIndex: coin.Smartchain().ID,
+			},
+			TokenTypeBEP20,
+		},
+		{
+			"Default Name",
+			args{
+				coinIndex: coin.Bitcoin().ID,
+			},
+			TokenTypeERC20,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := GetEthereumTokenTypeByIndex(tt.args.coinIndex); got != tt.want {
+				t.Errorf("GetEthereumTokenTypeByIndex() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

@@ -3,6 +3,7 @@ package endpoint
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/services/tokensearcher"
 	"net/http"
 	"strconv"
 	"sync"
@@ -122,4 +123,18 @@ func getTokens(tokenAPI blockatlas.TokensAPI, addresses []string, data *tokensRe
 		data.Result = append(r, page...)
 	}
 	data.mu.Unlock()
+}
+
+func GetTokensByAddressIndexer(c *gin.Context, instance tokensearcher.Instance) {
+	var query tokensearcher.Request
+	if err := c.Bind(&query); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
+	result, err := instance.HandleTokensRequest(query, c.Request.Context())
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+	c.JSON(http.StatusOK, result)
 }

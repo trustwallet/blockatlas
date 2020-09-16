@@ -8,6 +8,7 @@ import (
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/services/notifier"
+	"github.com/trustwallet/blockatlas/services/tokensearcher"
 	"time"
 )
 
@@ -28,19 +29,14 @@ func init() {
 	logger.InitLogger()
 
 	mqHost := viper.GetString("observer.rabbitmq.uri")
-	logMode := viper.GetBool("postgres.log")
 	prefetchCount := viper.GetInt("observer.rabbitmq.consumer.prefetch_count")
 	maxPushNotificationsBatchLimit := viper.GetUint("observer.push_notifications_batch_limit")
 	pgUri := viper.GetString("postgres.uri")
 	pgReadUri := viper.GetString("postgres.read_uri")
-
+	logMode := viper.GetBool("postgres.log")
 	internal.InitRabbitMQ(mqHost, prefetchCount)
 
-	if err := mq.RawTransactions.Declare(); err != nil {
-		logger.Fatal(err)
-	}
-
-	if err := mq.TxNotifications.Declare(); err != nil {
+	if err := mq.RawTransactionsSearcher.Declare(); err != nil {
 		logger.Fatal(err)
 	}
 
@@ -69,7 +65,7 @@ func main() {
 
 	ctx, cancel := context.WithCancel(context.Background())
 
-	go mq.RawTransactions.RunConsumerWithCancelAndDbConn(notifier.RunNotifier, database, ctx)
+	go mq.RawTransactionsSearcher.RunConsumerWithCancelAndDbConn(tokensearcher.Run, database, ctx)
 
 	internal.SetupGracefulShutdownForObserver(cancel)
 }

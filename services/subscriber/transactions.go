@@ -5,20 +5,21 @@ import (
 	"encoding/json"
 	"github.com/streadway/amqp"
 	"github.com/trustwallet/blockatlas/db"
-	"github.com/trustwallet/blockatlas/db/models"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"go.elastic.co/apm"
+	"strconv"
 )
 
 const (
+	Notifications      Subscriber                       = "notifications"
 	AddSubscription    blockatlas.SubscriptionOperation = "AddSubscription"
 	DeleteSubscription blockatlas.SubscriptionOperation = "DeleteSubscription"
 	UpdateSubscription blockatlas.SubscriptionOperation = "UpdateSubscription"
 )
 
-func RunSubscriber(database *db.Instance, delivery amqp.Delivery) {
-	tx := apm.DefaultTracer.StartTransaction("RunSubscriber", "app")
+func RunTransactionsSubscriber(database *db.Instance, delivery amqp.Delivery) {
+	tx := apm.DefaultTracer.StartTransaction("RunTransactionsSubscriber", "app")
 	defer tx.End()
 
 	ctx := apm.ContextWithTransaction(context.Background(), tx)
@@ -35,13 +36,13 @@ func RunSubscriber(database *db.Instance, delivery amqp.Delivery) {
 
 	switch event.Operation {
 	case AddSubscription, UpdateSubscription:
-		err = database.AddSubscriptions(ToSubscriptionData(subscriptions), ctx)
+		err = database.AddSubscriptionsForNotifications(ToSubscriptionData(subscriptions), ctx)
 		if err != nil {
 			logger.Error(err, params)
 		}
 		logger.Info("Added", params)
 	case DeleteSubscription:
-		err := database.DeleteSubscriptions(ToSubscriptionData(subscriptions), ctx)
+		err := database.DeleteSubscriptionsForNotifications(ToSubscriptionData(subscriptions), ctx)
 		if err != nil {
 			logger.Error(err, params)
 		}
@@ -54,10 +55,12 @@ func RunSubscriber(database *db.Instance, delivery amqp.Delivery) {
 	}
 }
 
-func ToSubscriptionData(sub []blockatlas.Subscription) []models.Subscription {
-	data := make([]models.Subscription, 0, len(sub))
+func ToSubscriptionData(sub []blockatlas.Subscription) []string {
+	data := make([]string, 0, len(sub))
 	for _, s := range sub {
-		data = append(data, models.Subscription{Coin: s.Coin, Address: s.Address})
+		coinStr := strconv.FormatUint(uint64(s.Coin), 10)
+		address := coinStr + "_" + s.Address
+		data = append(data, address)
 	}
 	return data
 }

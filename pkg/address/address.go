@@ -8,6 +8,7 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"golang.org/x/crypto/sha3"
+	"strconv"
 	"strings"
 )
 
@@ -114,4 +115,21 @@ func FormatAddress(address string, coinID uint) string {
 	default:
 		return address
 	}
+}
+
+func PrefixedAddress(coinID uint, address string) string {
+	return strconv.Itoa(int(coinID)) + "_" + address
+}
+
+func UnprefixedAddress(address string) (string, uint, bool) {
+	result := strings.Split(address, "_")
+	if len(result) != 2 {
+		return "", 0, false
+	}
+	id, err := strconv.Atoi(result[0])
+	if err != nil {
+		return "", 0, false
+	}
+	return result[1], uint(id), true
+
 }

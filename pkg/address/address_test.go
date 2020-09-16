@@ -156,3 +156,15 @@ func TestFormatAddress(t *testing.T) {
 		}
 	})
 }
+
+func TestUnprefixedAddress(t *testing.T) {
+	address, id, ok := UnprefixedAddress("60_a")
+	assert.Equal(t, "a", address)
+	assert.Equal(t, uint(60), id)
+	assert.True(t, ok)
+}
+
+func TestPrefixedAddress(t *testing.T) {
+	address := PrefixedAddress(60, "a")
+	assert.Equal(t, "60_a", address)
+}

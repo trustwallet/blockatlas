@@ -1,11 +1,17 @@
 package models
 
-import (
-	"time"
-)
+import "time"
 
-type Subscription struct {
-	CreatedAt time.Time  `gorm:"default:CURRENT_TIMESTAMP"`
-	Coin      uint       `gorm:"primary_key; column:coin; auto_increment:false" sql:"index"`
-	Address   string     `gorm:"primary_key; column:address; type:varchar(128)" sql:"index"`
-}
+type (
+	NotificationSubscription struct {
+		DeletedAt *time.Time `sql:"index"`
+		Address   Address    `gorm:"ForeignKey:AddressID; not null"`
+		AddressID uint       `gorm:"primary_key; auto_increment:false"`
+	}
+
+	AssetSubscription struct {
+		DeletedAt *time.Time `sql:"index"`
+		Address   Address    `gorm:"ForeignKey:AddressID; not null"`
+		AddressID uint       `gorm:"primary_key; auto_increment:false"`
+	}
+)

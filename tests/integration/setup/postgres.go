@@ -24,8 +24,12 @@ var (
 	}
 
 	tables = []interface{}{
-		&models.Subscription{},
+		&models.AssetSubscription{},
+		&models.NotificationSubscription{},
 		&models.Tracker{},
+		&models.AddressToAssetAssociation{},
+		&models.Asset{},
+		&models.Address{},
 	}
 
 	uri string
@@ -38,13 +42,22 @@ func runPgContainerAndInitConnection() (*db.Instance, error) {
 		err    error
 	)
 	if err := pool.Retry(func() error {
-		dbConn, err = db.New(uri, "test")
+		dbConn, err = db.New(uri, uri, "test", false)
 		return err
 	}); err != nil {
 		return nil, err
 	}
-	autoMigrate(dbConn.Gorm)
+	dbConn.Gorm.Table("address_to_asset_associations").
+		AddForeignKey("address_id", "addresses(id)", "RESTRICT", "RESTRICT").
+		AddForeignKey("asset_id", "assets(id)", "RESTRICT", "RESTRICT")
 
+	dbConn.Gorm.Table("notification_subscriptions").
+		AddForeignKey("address_id", "addresses(id)", "RESTRICT", "RESTRICT")
+
+	dbConn.Gorm.Table("asset_subscriptions").
+		AddForeignKey("address_id", "addresses(id)", "RESTRICT", "RESTRICT")
+
+	autoMigrate(dbConn.Gorm)
 	return dbConn, nil
 }
 

@@ -8,11 +8,10 @@ import (
 	"github.com/streadway/amqp"
 	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas/coin"
-	"github.com/trustwallet/blockatlas/db/models"
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/services/observer/notifier"
-	"github.com/trustwallet/blockatlas/services/observer/parser"
+	"github.com/trustwallet/blockatlas/services/notifier"
+	"github.com/trustwallet/blockatlas/services/parser"
 	"github.com/trustwallet/blockatlas/tests/integration/setup"
 	"go.uber.org/atomic"
 	"testing"
@@ -25,7 +24,7 @@ var (
 
 func TestFullFlow(t *testing.T) {
 	setup.CleanupPgContainer(database.Gorm)
-	err := database.AddSubscriptions([]models.Subscription{{Coin: 60, Address: "testAddress"}}, context.Background())
+	err := database.AddSubscriptionsForNotifications([]string{"60_testAddress"}, context.Background())
 	assert.Nil(t, err)
 
 	ctx, cancel := context.WithCancel(context.Background())
@@ -35,7 +34,7 @@ func TestFullFlow(t *testing.T) {
 	params := setupParserFull(stopChan)
 	params.Database = database
 	params.Ctx = ctx
-	params.Queue = mq.RawTransactions
+	params.Queue = []mq.Queue{mq.RawTransactions}
 
 	go parser.RunParser(params)
 	time.Sleep(time.Second * 2)

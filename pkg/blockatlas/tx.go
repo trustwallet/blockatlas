@@ -19,10 +19,12 @@ const (
 	TokenTypeERC20 TokenType = "ERC20"
 	TokenTypeBEP2  TokenType = "BEP2"
 	TokenTypeBEP8  TokenType = "BEP8"
+	TokenTypeBEP20 TokenType = "BEP20"
 	TokenTypeTRC10 TokenType = "TRC10"
 	TokenTypeETC20 TokenType = "ETC20"
 	TokenTypePOA20 TokenType = "POA20"
 	TokenTypeTRC20 TokenType = "TRC20"
+	TokenTypeTRC21 TokenType = "TRC21"
 	TokenTypeCLO20 TokenType = "CLO20"
 	TokenTypeGO20  TokenType = "G020"
 	TokenTypeWAN20 TokenType = "WAN20"
@@ -269,6 +271,29 @@ func (t *Tx) GetAddresses() []string {
 	}
 }
 
+func (t *Tx) TokenID() (string, bool) {
+	var tokenID string
+	switch t.Meta.(type) {
+	case Transfer, *Transfer, CollectibleTransfer, *CollectibleTransfer, ContractCall, *ContractCall, MultiCurrencyTransfer, *MultiCurrencyTransfer:
+		return "", false
+	case NativeTokenTransfer:
+		tokenID = t.Meta.(NativeTokenTransfer).TokenID
+	case *NativeTokenTransfer:
+		tokenID = t.Meta.(*NativeTokenTransfer).TokenID
+	case TokenTransfer:
+		tokenID = t.Meta.(TokenTransfer).TokenID
+	case *TokenTransfer:
+		tokenID = t.Meta.(*TokenTransfer).TokenID
+	case AnyAction:
+		tokenID = t.Meta.(AnyAction).TokenID
+	case *AnyAction:
+		tokenID = t.Meta.(*AnyAction).TokenID
+	default:
+		return "", false
+	}
+	return tokenID, true
+}
+
 func (t *Tx) GetTransactionDirection(address string) Direction {
 	if t.Direction != "" {
 		return t.Direction
@@ -351,4 +376,31 @@ func InferValue(tx *Tx, direction Direction, addressSet mapset.Set) Amount {
 		value = amount
 	}
 	return value
+}
+
+func GetEthereumTokenTypeByIndex(coinIndex uint) TokenType {
+	var tokenType TokenType
+	switch coinIndex {
+	case coin.Ethereum().ID:
+		tokenType = TokenTypeERC20
+	case coin.Classic().ID:
+		tokenType = TokenTypeETC20
+	case coin.Poa().ID:
+		tokenType = TokenTypePOA20
+	case coin.Callisto().ID:
+		tokenType = TokenTypeCLO20
+	case coin.Wanchain().ID:
+		tokenType = TokenTypeWAN20
+	case coin.Thundertoken().ID:
+		tokenType = TokenTypeTT20
+	case coin.Gochain().ID:
+		tokenType = TokenTypeGO20
+	case coin.Tomochain().ID:
+		tokenType = TokenTypeTRC21
+	case coin.Bsc().ID, coin.Smartchain().ID:
+		tokenType = TokenTypeBEP20
+	default:
+		tokenType = TokenTypeERC20
+	}
+	return tokenType
 }
