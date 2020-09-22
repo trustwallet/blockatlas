@@ -28,7 +28,7 @@ require (
 	go.elastic.co/apm/module/apmhttp v1.8.0
 	go.elastic.co/apm/module/apmlogrus v1.8.0
 	go.uber.org/atomic v1.7.0
-	golang.org/x/crypto v0.0.0-20200510223506-06a226fb4e37
+	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9
 	golang.org/x/net v0.0.0-20200506145744-7e3656a0809f
 	gopkg.in/yaml.v2 v2.3.0
 	gorm.io/driver/postgres v1.0.0
