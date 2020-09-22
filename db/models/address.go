@@ -1,7 +1,7 @@
 package models
 
 type Address struct {
-	ID      uint   `gorm:"primary_key"`
+	ID      uint   `gorm:"primary_key; type:int4;"`
 	Address string `gorm:"type:varchar(128); uniqueIndex"`
 }
 
