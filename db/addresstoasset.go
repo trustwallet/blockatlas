@@ -14,7 +14,7 @@ func (i Instance) GetSubscribedAddressesForAssets(ctx context.Context, addresses
 	err := db.Model(&models.AssetSubscription{}).
 		Select("id", "address").
 		Joins("LEFT JOIN addresses a ON a.id = address_id").
-		Where("a.address in (?)", addresses).
+		Where("address in (?)", addresses).
 		Scan(&result).
 		Limit(len(addresses)).Error
 	if err != nil {
@@ -93,17 +93,18 @@ func (i *Instance) AddAssociationsForAddress(address string, assets []string, ct
 		if err != nil {
 			return err
 		}
-		if len(assets) == 0 {
-			return nil
-		}
 
-		if err = db.Clauses(clause.OnConflict{DoNothing: true}).Create(&uniqueAssetsModel).Error; err != nil {
-			return err
+		if len(uniqueAssetsModel) > 0 {
+			if err = db.Clauses(clause.OnConflict{DoNothing: true}).Create(&uniqueAssetsModel).Error; err != nil {
+				return err
+			}
 		}
 
 		var dbAssets []models.Asset
-		if err = db.Find(&dbAssets, "asset in (?)", uniqueAssets).Error; err != nil {
-			return err
+		if len(uniqueAssets) > 0 {
+			if err = db.Where("asset in (?)", uniqueAssets).Find(&dbAssets).Error; err != nil {
+				return err
+			}
 		}
 
 		assetsSub := models.AssetSubscription{AddressID: dbAddress.ID}
@@ -128,7 +129,10 @@ func (i *Instance) AddAssociationsForAddress(address string, assets []string, ct
 				AssetID:   asset.ID,
 			})
 		}
-		return db.Clauses(clause.OnConflict{DoNothing: true}).Create(&result).Error
+		if len(result) > 0 {
+			return db.Clauses(clause.OnConflict{DoNothing: true}).Create(&result).Error
+		}
+		return nil
 	})
 }
 
