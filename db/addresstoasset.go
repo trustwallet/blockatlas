@@ -13,7 +13,8 @@ func (i Instance) GetSubscribedAddressesForAssets(ctx context.Context, addresses
 	var result []models.Address
 	err := db.Model(&models.AssetSubscription{}).
 		Select("id", "address").
-		Joins("LEFT JOIN addresses a ON a.address in (?)", addresses).
+		Joins("LEFT JOIN addresses a ON a.id = address_id").
+		Where("a.address in (?)", addresses).
 		Scan(&result).
 		Limit(len(addresses)).Error
 	if err != nil {
