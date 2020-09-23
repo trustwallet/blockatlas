@@ -99,7 +99,7 @@ func TestNormalizeTx1(t *testing.T) {
 			}
 			got := NormalizeTx(&srcTx)
 			// special handling for current date, if around now, replace with special value
-			if math.Abs(float64(got.Date - now)) < 30 {
+			if math.Abs(float64(got.Date-now)) < 30 {
 				got.Date = 666666
 			}
 			assert.Equal(t, tt.want, got)

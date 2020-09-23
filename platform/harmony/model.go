@@ -28,17 +28,17 @@ type BlockInfo struct {
 }
 
 type ValidatorInfo struct {
-	Address string  `json:"address"`
+	Address string `json:"address"`
 }
 
 type LifetimeInfo struct {
-	Apr     string `json:"apr"`
+	Apr string `json:"apr"`
 }
 
 type Validator struct {
-	Info      ValidatorInfo    `json:"validator"`
-	Active    bool             `json:"currently-in-committee"`
-	Lifetime  LifetimeInfo      `json:"lifetime"`
+	Info     ValidatorInfo `json:"validator"`
+	Active   bool          `json:"currently-in-committee"`
+	Lifetime LifetimeInfo  `json:"lifetime"`
 }
 
 type Validators struct {
@@ -46,9 +46,9 @@ type Validators struct {
 }
 
 type Delegation struct {
-	DelegatorAddress string   `json:"delegator_address"`
-	ValidatorAddress string   `json:"validator_address"`
-	Amount           float64  `json:"amount"`
+	DelegatorAddress string  `json:"delegator_address"`
+	ValidatorAddress string  `json:"validator_address"`
+	Amount           float64 `json:"amount"`
 }
 
 type Delegations struct {
