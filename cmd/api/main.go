@@ -52,7 +52,6 @@ func init() {
 			logger.Fatal(err)
 		}
 		go database.RestoreConnectionWorker(ctx, time.Second*10, pgURI)
-		go mq.FatalWorker(time.Second * 10)
 
 		mqHost := viper.GetString("observer.rabbitmq.uri")
 		prefetchCount := viper.GetInt("observer.rabbitmq.consumer.prefetch_count")
@@ -61,6 +60,8 @@ func init() {
 			logger.Fatal(err)
 		}
 		t = tokensearcher.Init(database, platform.TokensAPIs, mq.TokensRegistration)
+
+		go mq.FatalWorker(time.Second * 10)
 	}
 }
 
