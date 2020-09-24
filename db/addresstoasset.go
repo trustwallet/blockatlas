@@ -150,6 +150,10 @@ func (i *Instance) UpdateAssociationsForExistingAddresses(associations map[strin
 			uniqueAssetsModel = append(uniqueAssetsModel, models.Asset{Asset: l})
 		}
 
+		if len(uniqueAssetsModel) == 0 {
+			return nil
+		}
+
 		if err := db.Clauses(clause.OnConflict{DoNothing: true}).Create(&uniqueAssetsModel).Error; err != nil {
 			return err
 		}
