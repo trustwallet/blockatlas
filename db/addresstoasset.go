@@ -151,10 +151,11 @@ func (i *Instance) UpdateAssociationsForExistingAddresses(associations map[strin
 
 		uniqueAssets := getUniqueStrings(assets)
 		uniqueAssetsModel := make([]models.Asset, 0, len(uniqueAssets))
+		logger.Info("uniqueAssetsModel")
 		for _, l := range uniqueAssets {
+			logger.Info("uniqueAssets", logger.Params{"asset": l})
 			uniqueAssetsModel = append(uniqueAssetsModel, models.Asset{Asset: l})
 		}
-		logger.Info("----------------------------------------", logger.Params{"uniqueAssetsModel": uniqueAssetsModel}, uniqueAssetsModel, "----------------------------------------")
 		if err := db.Clauses(clause.OnConflict{DoNothing: true}).Create(&uniqueAssetsModel).Error; err != nil {
 			return err
 		}
