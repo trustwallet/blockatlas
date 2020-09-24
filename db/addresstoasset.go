@@ -150,15 +150,20 @@ func (i *Instance) UpdateAssociationsForExistingAddresses(associations map[strin
 			uniqueAssetsModel = append(uniqueAssetsModel, models.Asset{Asset: l})
 		}
 
-		if len(uniqueAssetsModel) == 0 {
-			return nil
-		}
-
 		if err := db.Clauses(clause.OnConflict{DoNothing: true}).Create(&uniqueAssetsModel).Error; err != nil {
 			return err
 		}
 
-		assetsMap := makeMapAssets(uniqueAssetsModel)
+		var dbAssets []models.Asset
+		err := db.Where("asset in (?)", uniqueAssets).
+			Find(&dbAssets).
+			Limit(len(uniqueAssets)).
+			Error
+		if err != nil {
+			return err
+		}
+
+		assetsMap := makeMapAssets(dbAssets)
 
 		addresses := make([]string, 0, len(associations))
 		for k := range associations {
@@ -176,7 +181,7 @@ func (i *Instance) UpdateAssociationsForExistingAddresses(associations map[strin
 			addressSubs = append(addressSubs, sub)
 		}
 
-		err := db.Clauses(clause.OnConflict{
+		err = db.Clauses(clause.OnConflict{
 			Columns: []clause.Column{
 				{
 					Name: "address_id",
