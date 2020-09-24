@@ -3,7 +3,6 @@ package db
 import (
 	"context"
 	"github.com/trustwallet/blockatlas/db/models"
-	"github.com/trustwallet/blockatlas/pkg/logger"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 	"time"
@@ -151,9 +150,7 @@ func (i *Instance) UpdateAssociationsForExistingAddresses(associations map[strin
 
 		uniqueAssets := getUniqueStrings(assets)
 		uniqueAssetsModel := make([]models.Asset, 0, len(uniqueAssets))
-		logger.Info("uniqueAssetsModel")
 		for _, l := range uniqueAssets {
-			logger.Info("uniqueAssets", logger.Params{"asset": l})
 			uniqueAssetsModel = append(uniqueAssetsModel, models.Asset{Asset: l})
 		}
 		if err := db.Clauses(clause.OnConflict{DoNothing: true}).Create(&uniqueAssetsModel).Error; err != nil {
