@@ -144,6 +144,10 @@ func (i *Instance) UpdateAssociationsForExistingAddresses(associations map[strin
 			assets = append(assets, v...)
 		}
 
+		if len(assets) == 0 {
+			return nil
+		}
+
 		uniqueAssets := getUniqueStrings(assets)
 		uniqueAssetsModel := make([]models.Asset, 0, len(uniqueAssets))
 		for _, l := range uniqueAssets {
