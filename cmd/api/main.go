@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/api"
@@ -17,10 +18,11 @@ import (
 const (
 	defaultPort       = "8420"
 	defaultConfigPath = "../../config.yml"
-	prod              = "prod"
 )
 
 var (
+	ctx            context.Context
+	cancel         context.CancelFunc
 	port, confPath string
 	engine         *gin.Engine
 	database       *db.Instance
@@ -30,6 +32,7 @@ var (
 
 func init() {
 	port, confPath = internal.ParseArgs(defaultPort, defaultConfigPath)
+	ctx, cancel = context.WithCancel(context.Background())
 
 	internal.InitConfig(confPath)
 	logger.InitLogger()
@@ -40,14 +43,15 @@ func init() {
 	platform.Init(viper.GetStringSlice("platform"))
 
 	if restAPI == "tokens" || restAPI == "all" {
-		pgUri := viper.GetString("postgres.uri")
+		pgURI := viper.GetString("postgres.uri")
 		pgReadUri := viper.GetString("postgres.read_uri")
 
 		var err error
-		database, err = db.New(pgUri, pgReadUri, prod, logMode)
+		database, err = db.New(pgURI, pgReadUri, logMode)
 		if err != nil {
 			logger.Fatal(err)
 		}
+		go database.RestoreConnectionWorker(ctx, time.Second*10, pgURI)
 
 		mqHost := viper.GetString("observer.rabbitmq.uri")
 		prefetchCount := viper.GetInt("observer.rabbitmq.consumer.prefetch_count")
@@ -57,7 +61,6 @@ func init() {
 		}
 		t = tokensearcher.Init(database, platform.TokensAPIs, mq.TokensRegistration)
 
-		go db.RestoreConnectionWorker(database, time.Second*10, pgUri)
 		go mq.FatalWorker(time.Second * 10)
 	}
 }
@@ -75,5 +78,7 @@ func main() {
 		api.SetupSwaggerAPI(engine)
 		api.SetupPlatformAPI(engine)
 	}
-	internal.SetupGracefulShutdown(port, engine)
+
+	internal.SetupGracefulShutdown(ctx, port, engine)
+	cancel()
 }

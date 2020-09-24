@@ -3,7 +3,7 @@ package db
 import (
 	"context"
 	"github.com/trustwallet/blockatlas/db/models"
-	"go.elastic.co/apm/module/apmgorm"
+	"gorm.io/gorm/clause"
 	"sync"
 )
 
@@ -37,8 +37,8 @@ func (i *Instance) GetLastParsedBlockNumber(coin string, ctx context.Context) (i
 		return height, nil
 	}
 	var tracker models.Tracker
-	g := apmgorm.WithContext(ctx, i.GormRead)
-	if err := g.Where(models.Tracker{Coin: coin}).Find(&tracker).Error; err != nil {
+	db := i.Gorm.WithContext(ctx)
+	if err := db.Find(&tracker, "coin = ?", coin).Error; err != nil {
 		return 0, nil
 	}
 	return tracker.Height, nil
@@ -50,9 +50,13 @@ func (i *Instance) SetLastParsedBlockNumber(coin string, num int64, ctx context.
 		Coin:   coin,
 		Height: num,
 	}
-	g := apmgorm.WithContext(ctx, i.Gorm)
-	return g.
-		Set("gorm:insert_option", "ON CONFLICT (coin) DO UPDATE SET height = excluded.height, updated_at = excluded.updated_at").
-		Where(models.Tracker{Coin: coin}).
-		Create(&tracker).Error
+	db := i.Gorm.WithContext(ctx)
+	return db.Clauses(clause.OnConflict{
+		Columns: []clause.Column{
+			{
+				Name: "coin",
+			},
+		},
+		DoUpdates: clause.AssignmentColumns([]string{"height", "updated_at"}),
+	}).Create(&tracker).Error
 }
