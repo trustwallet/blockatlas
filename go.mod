@@ -31,7 +31,7 @@ require (
 	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9
 	golang.org/x/net v0.0.0-20200506145744-7e3656a0809f
 	gopkg.in/yaml.v2 v2.3.0
-	gorm.io/driver/postgres v1.0.0
-	gorm.io/gorm v1.20.0
+	gorm.io/driver/postgres v1.0.1
+	gorm.io/gorm v1.20.1
 	gorm.io/plugin/dbresolver v1.0.0
 )
