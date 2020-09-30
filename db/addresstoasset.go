@@ -203,9 +203,17 @@ func (i *Instance) UpdateAssociationsForExistingAddresses(associations map[strin
 		var result []models.AddressToAssetAssociation
 		for address, assets := range associations {
 			for _, asset := range assets {
+				addressID, ok := addressesMap[address]
+				if !ok {
+					continue
+				}
+				assetID, ok := assetsMap[asset]
+				if !ok {
+					continue
+				}
 				r := models.AddressToAssetAssociation{
-					AddressID: addressesMap[address],
-					AssetID:   assetsMap[asset],
+					AddressID: addressID,
+					AssetID:   assetID,
 				}
 				result = append(result, r)
 			}
