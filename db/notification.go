@@ -36,13 +36,13 @@ func (i *Instance) AddSubscriptionsForNotifications(addresses []string, ctx cont
 			})
 		}
 
-		err := db.Clauses(clause.OnConflict{DoNothing: true}).Create(&uniqueAddressesModel).Error
+		err := tx.Clauses(clause.OnConflict{DoNothing: true}).Create(&uniqueAddressesModel).Error
 		if err != nil {
 			return err
 		}
 
 		var dbAddresses []models.Address
-		if err = db.Find(&dbAddresses, "address in (?)", uniqueAddresses).Error; err != nil {
+		if err = tx.Find(&dbAddresses, "address in (?)", uniqueAddresses).Error; err != nil {
 			return err
 		}
 
@@ -50,7 +50,7 @@ func (i *Instance) AddSubscriptionsForNotifications(addresses []string, ctx cont
 		for _, a := range dbAddresses {
 			result = append(result, models.NotificationSubscription{AddressID: a.ID})
 		}
-		return db.Clauses(clause.OnConflict{
+		return tx.Clauses(clause.OnConflict{
 			Columns: []clause.Column{
 				{
 					Name: "address_id",

@@ -89,26 +89,26 @@ func (i *Instance) AddAssociationsForAddress(address string, assets []string, ct
 
 		var err error
 		dbAddress := models.Address{Address: address}
-		err = db.Clauses(clause.OnConflict{DoNothing: true}).FirstOrCreate(&dbAddress, "address = ?", address).Error
+		err = tx.Clauses(clause.OnConflict{DoNothing: true}).FirstOrCreate(&dbAddress, "address = ?", address).Error
 		if err != nil {
 			return err
 		}
 
 		if len(uniqueAssetsModel) > 0 {
-			if err = db.Clauses(clause.OnConflict{DoNothing: true}).Create(&uniqueAssetsModel).Error; err != nil {
+			if err = tx.Clauses(clause.OnConflict{DoNothing: true}).Create(&uniqueAssetsModel).Error; err != nil {
 				return err
 			}
 		}
 
 		var dbAssets []models.Asset
 		if len(uniqueAssets) > 0 {
-			if err = db.Where("asset in (?)", uniqueAssets).Find(&dbAssets).Error; err != nil {
+			if err = tx.Where("asset in (?)", uniqueAssets).Find(&dbAssets).Error; err != nil {
 				return err
 			}
 		}
 
 		assetsSub := models.AssetSubscription{AddressID: dbAddress.ID}
-		err = db.Clauses(clause.OnConflict{
+		err = tx.Clauses(clause.OnConflict{
 			Columns: []clause.Column{
 				{
 					Name: "address_id",
@@ -130,7 +130,7 @@ func (i *Instance) AddAssociationsForAddress(address string, assets []string, ct
 			})
 		}
 		if len(result) > 0 {
-			return db.Clauses(clause.OnConflict{DoNothing: true}).Create(&result).Error
+			return tx.Clauses(clause.OnConflict{DoNothing: true}).Create(&result).Error
 		}
 		return nil
 	})
@@ -153,12 +153,12 @@ func (i *Instance) UpdateAssociationsForExistingAddresses(associations map[strin
 		for _, l := range uniqueAssets {
 			uniqueAssetsModel = append(uniqueAssetsModel, models.Asset{Asset: l})
 		}
-		if err := db.Clauses(clause.OnConflict{DoNothing: true}).Create(&uniqueAssetsModel).Error; err != nil {
+		if err := tx.Clauses(clause.OnConflict{DoNothing: true}).Create(&uniqueAssetsModel).Error; err != nil {
 			return err
 		}
 
 		var dbAssets []models.Asset
-		err := db.Where("asset in (?)", uniqueAssets).
+		err := tx.Where("asset in (?)", uniqueAssets).
 			Find(&dbAssets).
 			Limit(len(uniqueAssets)).
 			Error
@@ -174,7 +174,7 @@ func (i *Instance) UpdateAssociationsForExistingAddresses(associations map[strin
 		}
 
 		var dbAddresses []models.Address
-		if err := db.Find(&dbAddresses, "address in (?)", addresses).Limit(len(addresses)).Error; err != nil {
+		if err := tx.Find(&dbAddresses, "address in (?)", addresses).Limit(len(addresses)).Error; err != nil {
 			return err
 		}
 
@@ -184,7 +184,7 @@ func (i *Instance) UpdateAssociationsForExistingAddresses(associations map[strin
 			addressSubs = append(addressSubs, sub)
 		}
 
-		err = db.Clauses(clause.OnConflict{
+		err = tx.Clauses(clause.OnConflict{
 			Columns: []clause.Column{
 				{
 					Name: "address_id",
@@ -204,11 +204,11 @@ func (i *Instance) UpdateAssociationsForExistingAddresses(associations map[strin
 		for address, assets := range associations {
 			for _, asset := range assets {
 				addressID, ok := addressesMap[address]
-				if !ok {
+				if !ok || addressID == 0 {
 					continue
 				}
 				assetID, ok := assetsMap[asset]
-				if !ok {
+				if !ok || assetID == 0 {
 					continue
 				}
 				r := models.AddressToAssetAssociation{
@@ -218,7 +218,7 @@ func (i *Instance) UpdateAssociationsForExistingAddresses(associations map[strin
 				result = append(result, r)
 			}
 		}
-		return db.Clauses(clause.OnConflict{DoNothing: true}).Create(&result).Error
+		return tx.Clauses(clause.OnConflict{DoNothing: true}).Create(&result).Error
 	})
 }
 
