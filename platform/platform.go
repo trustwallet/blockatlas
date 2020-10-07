@@ -112,7 +112,7 @@ func getAllHandlers() blockatlas.Platforms {
 		coin.Smartchain().Handle:   ethereum.InitWithBlockbook(coin.BSC, GetApiVar(coin.BSC), GetRpcVar(coin.BSC)),
 		coin.Ethereum().Handle:     ethereum.InitWitCollection(coin.ETH, GetApiVar(coin.ETH), GetRpcVar(coin.ETH), GetVar("ethereum.blockbook_api"), GetVar("ethereum.collections_api"), GetVar("ethereum.collections_api_key")),
 		coin.Near().Handle:         near.Init(GetApiVar(coin.NEAR)),
-		coin.Elrond().Handle:       elrond.Init(coin.ERD, GetApiVar(coin.ERD)),
+		coin.Elrond().Handle:       elrond.Init(coin.EGLD, GetApiVar(coin.EGLD)),
 	}
 }
 

@@ -390,7 +390,7 @@
   sampleAddress: 'NEAR6Y66fCzeKqWiwxoPox5oGeDN9VhNCu7CEQ9M86iniqoN9vg2X'
 
 - id: 508
-  symbol: ERD
+  symbol: EGLD
   handle: elrond
   name: Elrond
   decimals: 18
