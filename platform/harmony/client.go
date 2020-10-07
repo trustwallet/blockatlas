@@ -43,7 +43,6 @@ func (c *Client) GetBlockByNumber(num int64) (info BlockInfo, err error) {
 	return
 }
 
-
 func (c *Client) GetValidators() (validators Validators, err error) {
 	err = rpcCallStub(c, &validators.Validators, "hmy_getAllValidatorInformation", []interface{}{-1})
 
@@ -86,6 +85,6 @@ func hexToInt(hex string) (uint64, error) {
 }
 
 // rpcCallStub is can be overwritten by the unit test
-var rpcCallStub = func (c *Client, result interface{}, method string, params interface{}) error {
+var rpcCallStub = func(c *Client, result interface{}, method string, params interface{}) error {
 	return c.RpcCall(result, method, params)
 }

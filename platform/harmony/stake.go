@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	lockTime  = 604800 // in seconds (7 epochs or 7 days)
+	lockTime = 604800 // in seconds (7 epochs or 7 days)
 )
 
 func (p *Platform) GetActiveValidators() (blockatlas.StakeValidators, error) {

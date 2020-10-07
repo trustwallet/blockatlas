@@ -227,4 +227,3 @@ func TestNormalize(t *testing.T) {
 		}
 	})
 }
-
