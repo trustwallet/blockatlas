@@ -404,3 +404,11 @@ func GetEthereumTokenTypeByIndex(coinIndex uint) TokenType {
 	}
 	return tokenType
 }
+
+func GetTokenType(t string) (string, bool) {
+	switch t {
+	case "ETH":
+		return string(TokenTypeERC20), true
+	}
+	return "", false
+}
