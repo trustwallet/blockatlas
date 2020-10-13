@@ -12,5 +12,5 @@ type AddressToAssetAssociation struct {
 	AddressID uint    `gorm:"primaryKey; autoIncrement:false; index:,"`
 
 	Asset   Asset `gorm:"ForeignKey:AssetID; not null"`
-	AssetID uint  `gorm:"primaryKey; autoIncrement:false; uniqueIndex"`
+	AssetID uint  `gorm:"primaryKey; autoIncrement:false; index:,"`
 }
