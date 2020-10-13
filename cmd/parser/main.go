@@ -49,6 +49,10 @@ func init() {
 		logger.Fatal(err)
 	}
 
+	if err := mq.RawTransactionsTokenIndexer.Declare(); err != nil {
+		logger.Fatal(err)
+	}
+
 	if len(platform.BlockAPIs) == 0 {
 		logger.Fatal("No APIs to observe")
 	}

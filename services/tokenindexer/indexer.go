@@ -2,66 +2,60 @@ package tokenindexer
 
 import (
 	"context"
-	"encoding/json"
+
 	"github.com/streadway/amqp"
+	"go.elastic.co/apm"
+
 	"github.com/trustwallet/blockatlas/db"
-	"github.com/trustwallet/blockatlas/db/models"
-	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
-	"go.elastic.co/apm"
+	"github.com/trustwallet/blockatlas/services/notifier"
 )
 
-type Params struct {
-	Ctx      context.Context
-	Queue    mq.Queue
-	Database *db.Instance
-}
-
-func RunTokenIndexer(params Params) {
+func RunTokenIndexer(database *db.Instance, delivery amqp.Delivery) {
 	tx := apm.DefaultTracer.StartTransaction("RunTokenIndexer", "app")
 	defer tx.End()
 	ctx := apm.ContextWithTransaction(context.Background(), tx)
 
-	for v := range params.Queue.GetMessageChannel() {
-		if err := getOrCreateTokenTypes(ctx, params.Database, v); err != nil {
-			logger.Warn("tokenindexer.getOrCreateTokenTypes: err: ", err)
-		}
-	}
-}
-
-func getOrCreateTokenTypes(ctx context.Context, db *db.Instance, v amqp.Delivery) error {
-	parsedTokenTypes, err := parseMessage(v.Body)
+	txs, err := notifier.GetTransactionsFromDelivery(delivery, ctx)
 	if err != nil {
-		return err
+		logger.Error("failed to get transactions", err)
+		return
 	}
-	return db.CreateTokenType(ctx, parsedTokenTypes)
+	if len(txs) == 0 {
+		return
+	}
+
+	types := getTokenTypes(txs)
+	if len(types) == 0 {
+		return
+	}
+
+	if err = database.CreateTokenTypes(ctx, types); err != nil {
+		logger.Error("failed to create token types", err)
+	}
 }
 
-func parseMessage(body []byte) ([]models.TokenType, error) {
-	var txs blockatlas.Txs
-	if err := json.Unmarshal(body, &txs); err != nil {
-		return nil, err
-	}
-
-	tokenTypes := make([]models.TokenType, 0, len(txs))
+func getTokenTypes(txs blockatlas.Txs) []string {
+	var types []string
 	for _, tx := range txs {
-		if tx.Type == blockatlas.TxTokenTransfer {
-			tokenMeta, ok := tx.Meta.(blockatlas.TokenTransfer)
+		var tokenType string
+		switch tx.Type {
+		case blockatlas.TxTokenTransfer:
+			tokenMeta, ok := tx.Meta.(*blockatlas.TokenTransfer)
 			if !ok {
 				continue
 			}
 
-			if tokenMeta.Name == "" || tokenMeta.Symbol == "" {
+			tokenType, ok = blockatlas.GetTokenType(tokenMeta.Symbol)
+			if !ok {
 				continue
 			}
-			tokenTypes = append(tokenTypes, models.TokenType{
-				Type:     tokenMeta.TokenID,
-				Decimals: tokenMeta.Decimals,
-				Name:     tokenMeta.Name,
-				Symbol:   tokenMeta.Symbol,
-			})
+
+		default:
+			continue
 		}
+		types = append(types, tokenType)
 	}
-	return tokenTypes, nil
+	return types
 }
