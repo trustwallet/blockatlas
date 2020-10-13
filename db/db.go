@@ -46,10 +46,11 @@ func New(uri, readUri string, logMode bool) (*Instance, error) {
 	err = db.AutoMigrate(
 		&models.NotificationSubscription{},
 		&models.Tracker{},
-		&models.AddressToAssetAssociation{},
+		&models.TokenType{},
 		&models.Asset{},
 		&models.AssetSubscription{},
 		&models.Address{},
+		&models.AddressToAssetAssociation{},
 	)
 	if err != nil {
 		return nil, err
