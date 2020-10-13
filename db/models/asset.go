@@ -1,9 +1,12 @@
 package models
 
 type Asset struct {
-	ID    uint   `gorm:"primary_key"`
+	ID    uint   `gorm:"primary_key; uniqueIndex"`
 	Asset string `gorm:"type:varchar(128); uniqueIndex"`
-
-	TokenTypeID uint      `gorm:"primary_key; autoIncrement:false; index:,"`
-	TokenType   TokenType `gorm:"ForeignKey:TokenTypeID; not null"`
+	//Decimals uint   `gorm:"int(4)"`
+	//Name     string `gorm:"type:varchar(128)"`
+	//Symbol   string `gorm:"type:varchar(128)"`
+	//
+	//TokenTypeID uint      `gorm:"primary_key; autoIncrement:false; index:,"`
+	//TokenType   TokenType `gorm:"foreignKey:TokenTypeID; not null"`
 }
