@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/api"
@@ -43,9 +42,8 @@ func init() {
 	logMode := viper.GetBool("postgres.log")
 	engine = internal.InitEngine(viper.GetString("gin.mode"))
 	platform.Init(viper.GetStringSlice("platform"))
-
 	spamfilter.SpamList = viper.GetStringSlice("spam_words")
-	fmt.Println(spamfilter.SpamList)
+
 	if restAPI == "tokens" || restAPI == "all" {
 		pgURI := viper.GetString("postgres.uri")
 		pgReadUri := viper.GetString("postgres.read_uri")
