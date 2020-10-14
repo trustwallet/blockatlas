@@ -1,13 +1,13 @@
 package endpoint
 
 import (
-	"github.com/trustwallet/blockatlas/services/spamfilter"
 	"net/http"
 	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
+	"github.com/trustwallet/blockatlas/services/spamfilter"
 )
 
 // @Summary Get Transactions
