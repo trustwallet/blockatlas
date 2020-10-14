@@ -19,10 +19,5 @@ func ContainsSpam(name string) bool {
 
 func isURL(host string) bool {
 	var URLRegex = `[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)`
-	var re = regexp.MustCompile(URLRegex)
-
-	if re.MatchString(host) {
-		return true
-	}
-	return false
+	return regexp.MustCompile(URLRegex).MatchString(host)
 }
