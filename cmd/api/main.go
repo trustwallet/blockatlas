@@ -11,6 +11,7 @@ import (
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/platform"
+	"github.com/trustwallet/blockatlas/services/spamfilter"
 	"github.com/trustwallet/blockatlas/services/tokensearcher"
 	"time"
 )
@@ -41,6 +42,7 @@ func init() {
 	logMode := viper.GetBool("postgres.log")
 	engine = internal.InitEngine(viper.GetString("gin.mode"))
 	platform.Init(viper.GetStringSlice("platform"))
+	spamfilter.SpamList = viper.GetStringSlice("spam_words")
 
 	if restAPI == "tokens" || restAPI == "all" {
 		pgURI := viper.GetString("postgres.uri")

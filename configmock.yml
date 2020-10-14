@@ -16,6 +16,8 @@ platform: all
 # Can be platform or swagger, or tokens, or all
 rest_api: platform
 
+spam_words: [ "airdrop","www", "http" ]
+
 # The transaction watcher
 observer:
   backlog: 3h

@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
+	"github.com/trustwallet/blockatlas/services/spamfilter"
 )
 
 // @Summary Get Transactions
@@ -83,6 +84,7 @@ func GetTransactionsHistory(c *gin.Context, txAPI blockatlas.TxAPI, tokenTxAPI b
 		page = append(page, tx)
 	}
 
+	page = filterTransactionsByMemo(page)
 	if token != "" {
 		page = filterTransactionsByToken(token, page)
 	}
@@ -90,6 +92,7 @@ func GetTransactionsHistory(c *gin.Context, txAPI blockatlas.TxAPI, tokenTxAPI b
 	if len(page) > blockatlas.TxPerPage {
 		page = page[0:blockatlas.TxPerPage]
 	}
+
 	c.JSON(http.StatusOK, &page)
 }
 
@@ -144,11 +147,23 @@ func GetTransactionsByXpub(c *gin.Context, api blockatlas.TxUtxoAPI) {
 		filteredTxs = blockatlas.Txs(txs).FilterUniqueID().SortByDate()
 		page        = blockatlas.TxPage(filteredTxs)
 	)
-
+	page = filterTransactionsByMemo(page)
 	if len(page) > blockatlas.TxPerPage {
 		page = page[0:blockatlas.TxPerPage]
 	}
+
 	c.JSON(http.StatusOK, &page)
+}
+
+func filterTransactionsByMemo(txs blockatlas.TxPage) blockatlas.TxPage {
+	result := make(blockatlas.TxPage, 0)
+	for _, tx := range txs {
+		if spamfilter.ContainsSpam(tx.Memo) {
+			tx.Memo = ""
+		}
+		result = append(result, tx)
+	}
+	return result
 }
 
 func filterTransactionsByToken(token string, txs blockatlas.TxPage) blockatlas.TxPage {
