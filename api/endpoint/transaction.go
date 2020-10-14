@@ -1,6 +1,7 @@
 package endpoint
 
 import (
+	"github.com/trustwallet/blockatlas/services/spamfilter"
 	"net/http"
 	"strings"
 
@@ -90,6 +91,12 @@ func GetTransactionsHistory(c *gin.Context, txAPI blockatlas.TxAPI, tokenTxAPI b
 	if len(page) > blockatlas.TxPerPage {
 		page = page[0:blockatlas.TxPerPage]
 	}
+
+	for _, tx := range page {
+		if spamfilter.ContainsSpam(tx.Memo) {
+			tx.Memo = ""
+		}
+	}
 	c.JSON(http.StatusOK, &page)
 }
 
@@ -147,6 +154,11 @@ func GetTransactionsByXpub(c *gin.Context, api blockatlas.TxUtxoAPI) {
 
 	if len(page) > blockatlas.TxPerPage {
 		page = page[0:blockatlas.TxPerPage]
+	}
+	for _, tx := range page {
+		if spamfilter.ContainsSpam(tx.Memo) {
+			tx.Memo = ""
+		}
 	}
 	c.JSON(http.StatusOK, &page)
 }
