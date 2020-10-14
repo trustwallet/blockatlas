@@ -34,13 +34,13 @@ func Init(database *db.Instance, apis map[uint]blockatlas.TokensAPI, queue mq.Qu
 
 func (i Instance) HandleTokensRequest(request Request, ctx context.Context) (AssetsByAddress, error) {
 	addresses := getAddressesFromRequest(request)
+	if len(addresses) == 0 {
+		return nil, nil
+	}
 
 	subscribedAddresses, err := getSubscribedAddresses(i.database, addresses, ctx)
 	if err != nil {
 		return nil, err
-	}
-	if len(subscribedAddresses) == 0 {
-		return nil, nil
 	}
 	logger.Info("subscribedAddresses " + strconv.Itoa(len(subscribedAddresses)))
 	unsubscribedAddresses := getUnsubscribedAddresses(subscribedAddresses, addresses)

@@ -9,9 +9,6 @@ import (
 )
 
 func (i Instance) GetSubscribedAddressesForAssets(ctx context.Context, addresses []string) ([]models.Address, error) {
-	if len(addresses) == 0 {
-		return nil, nil
-	}
 	db := i.Gorm.WithContext(ctx)
 	var result []models.Address
 	err := db.Model(&models.AssetSubscription{}).
