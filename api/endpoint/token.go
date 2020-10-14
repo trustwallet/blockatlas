@@ -136,5 +136,9 @@ func GetTokensByAddressIndexer(c *gin.Context, instance tokensearcher.Instance) 
 		c.AbortWithStatusJSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
+	if result == nil {
+		c.Status(http.StatusBadGateway)
+		return
+	}
 	c.JSON(http.StatusOK, result)
 }

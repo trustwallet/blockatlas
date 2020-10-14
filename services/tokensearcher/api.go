@@ -39,6 +39,9 @@ func (i Instance) HandleTokensRequest(request Request, ctx context.Context) (Ass
 	if err != nil {
 		return nil, err
 	}
+	if len(subscribedAddresses) == 0 {
+		return nil, nil
+	}
 	logger.Info("subscribedAddresses " + strconv.Itoa(len(subscribedAddresses)))
 	unsubscribedAddresses := getUnsubscribedAddresses(subscribedAddresses, addresses)
 
