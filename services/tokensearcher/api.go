@@ -34,6 +34,9 @@ func Init(database *db.Instance, apis map[uint]blockatlas.TokensAPI, queue mq.Qu
 
 func (i Instance) HandleTokensRequest(request Request, ctx context.Context) (AssetsByAddress, error) {
 	addresses := getAddressesFromRequest(request)
+	if len(addresses) == 0 {
+		return nil, nil
+	}
 
 	subscribedAddresses, err := getSubscribedAddresses(i.database, addresses, ctx)
 	if err != nil {
