@@ -92,12 +92,7 @@ func GetTransactionsHistory(c *gin.Context, txAPI blockatlas.TxAPI, tokenTxAPI b
 		page = page[0:blockatlas.TxPerPage]
 	}
 
-	for _, tx := range page {
-		if spamfilter.ContainsSpam(tx.Memo) {
-			tx.Memo = ""
-		}
-	}
-	c.JSON(http.StatusOK, &page)
+	c.JSON(http.StatusOK, filterTransactionsByMemo(page))
 }
 
 // @Summary Get Transactions by XPUB
@@ -155,12 +150,19 @@ func GetTransactionsByXpub(c *gin.Context, api blockatlas.TxUtxoAPI) {
 	if len(page) > blockatlas.TxPerPage {
 		page = page[0:blockatlas.TxPerPage]
 	}
-	for _, tx := range page {
+
+	c.JSON(http.StatusOK, filterTransactionsByMemo(page))
+}
+
+func filterTransactionsByMemo(txs blockatlas.TxPage) blockatlas.TxPage {
+	result := make(blockatlas.TxPage, 0)
+	for _, tx := range txs {
 		if spamfilter.ContainsSpam(tx.Memo) {
 			tx.Memo = ""
 		}
+		result = append(result, tx)
 	}
-	c.JSON(http.StatusOK, &page)
+	return result
 }
 
 func filterTransactionsByToken(token string, txs blockatlas.TxPage) blockatlas.TxPage {

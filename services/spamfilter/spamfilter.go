@@ -10,7 +10,7 @@ var SpamList []string
 func ContainsSpam(name string) bool {
 	lowerCaseName := strings.ToLower(name)
 	for _, word := range SpamList {
-		if strings.Contains(lowerCaseName, word) || isURL(word) {
+		if strings.Contains(lowerCaseName, word) || isURL(lowerCaseName) {
 			return true
 		}
 	}
