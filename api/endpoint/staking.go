@@ -31,7 +31,7 @@ type (
 )
 
 // @Summary Get Multiple Stake Delegations
-// @ID batch_delegations
+// @ID staking_v2_batch
 // @Description Get Stake Delegations for multiple coins
 // @Accept json
 // @Produce json
@@ -67,7 +67,7 @@ func GetStakeDelegationsWithAllInfoForBatch(c *gin.Context, apis map[string]bloc
 }
 
 // @Summary Get Multiple Stake Delegations
-// @ID batch_delegations
+// @ID staking_v2
 // @Description Get Stake Delegations for multiple coins
 // @Accept json
 // @Produce json
@@ -99,7 +99,7 @@ func GetStakeInfoForBatch(c *gin.Context, apis map[string]blockatlas.StakeAPI) {
 }
 
 // @Summary Get staking info by coin ID
-// @ID batch_info
+// @ID staking_v3
 // @Description Get staking info by coin ID
 // @Produce json
 // @Tags Staking
@@ -144,7 +144,7 @@ func GetStakeInfoForCoins(c *gin.Context, apis map[string]blockatlas.StakeAPI) {
 }
 
 // @Summary Get Validators
-// @ID validators
+// @ID validators_v2
 // @Description Get validators from the address
 // @Accept json
 // @Produce json

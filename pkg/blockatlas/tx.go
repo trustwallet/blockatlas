@@ -4,7 +4,9 @@ import (
 	mapset "github.com/deckarep/golang-set"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/numbers"
+	"github.com/trustwallet/blockatlas/services/spamfilter"
 	"sort"
+	"strings"
 )
 
 const (
@@ -222,6 +224,52 @@ func (t Txs) FilterUniqueID() Txs {
 		}
 	}
 	return list
+}
+
+func (txs TxPage) FilterTransactionsByMemo() TxPage {
+	result := make(TxPage, 0)
+	for _, tx := range txs {
+		if spamfilter.ContainsSpam(tx.Memo) {
+			tx.Memo = ""
+		}
+		result = append(result, tx)
+	}
+	return result
+}
+
+func (txs TxPage) FilterTransactionsByToken(token string) TxPage {
+	result := make(TxPage, 0)
+	for _, tx := range txs {
+		switch tx.Meta.(type) {
+		case TokenTransfer:
+			if strings.EqualFold(tx.Meta.(TokenTransfer).TokenID, token) {
+				result = append(result, tx)
+			}
+		case *TokenTransfer:
+			if strings.EqualFold(tx.Meta.(*TokenTransfer).TokenID, token) {
+				result = append(result, tx)
+			}
+		case NativeTokenTransfer:
+			if strings.EqualFold(tx.Meta.(NativeTokenTransfer).TokenID, token) {
+				result = append(result, tx)
+			}
+		case *NativeTokenTransfer:
+			if strings.EqualFold(tx.Meta.(*NativeTokenTransfer).TokenID, token) {
+				result = append(result, tx)
+			}
+		case AnyAction:
+			if strings.EqualFold(tx.Meta.(AnyAction).TokenID, token) {
+				result = append(result, tx)
+			}
+		case *AnyAction:
+			if strings.EqualFold(tx.Meta.(*AnyAction).TokenID, token) {
+				result = append(result, tx)
+			}
+		default:
+			continue
+		}
+	}
+	return result
 }
 
 func (t Txs) SortByDate() Txs {

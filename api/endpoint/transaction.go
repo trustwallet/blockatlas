@@ -1,13 +1,10 @@
 package endpoint
 
 import (
-	"net/http"
-	"strings"
-
 	"github.com/gin-gonic/gin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
-	"github.com/trustwallet/blockatlas/services/spamfilter"
+	"net/http"
 )
 
 // @Summary Get Transactions
@@ -84,9 +81,9 @@ func GetTransactionsHistory(c *gin.Context, txAPI blockatlas.TxAPI, tokenTxAPI b
 		page = append(page, tx)
 	}
 
-	page = filterTransactionsByMemo(page)
+	page = page.FilterTransactionsByMemo()
 	if token != "" {
-		page = filterTransactionsByToken(token, page)
+		page = page.FilterTransactionsByToken(token)
 	}
 
 	if len(page) > blockatlas.TxPerPage {
@@ -147,56 +144,10 @@ func GetTransactionsByXpub(c *gin.Context, api blockatlas.TxUtxoAPI) {
 		filteredTxs = blockatlas.Txs(txs).FilterUniqueID().SortByDate()
 		page        = blockatlas.TxPage(filteredTxs)
 	)
-	page = filterTransactionsByMemo(page)
+	page = page.FilterTransactionsByMemo()
 	if len(page) > blockatlas.TxPerPage {
 		page = page[0:blockatlas.TxPerPage]
 	}
 
 	c.JSON(http.StatusOK, &page)
-}
-
-func filterTransactionsByMemo(txs blockatlas.TxPage) blockatlas.TxPage {
-	result := make(blockatlas.TxPage, 0)
-	for _, tx := range txs {
-		if spamfilter.ContainsSpam(tx.Memo) {
-			tx.Memo = ""
-		}
-		result = append(result, tx)
-	}
-	return result
-}
-
-func filterTransactionsByToken(token string, txs blockatlas.TxPage) blockatlas.TxPage {
-	result := make(blockatlas.TxPage, 0)
-	for _, tx := range txs {
-		switch tx.Meta.(type) {
-		case blockatlas.TokenTransfer:
-			if strings.EqualFold(tx.Meta.(blockatlas.TokenTransfer).TokenID, token) {
-				result = append(result, tx)
-			}
-		case *blockatlas.TokenTransfer:
-			if strings.EqualFold(tx.Meta.(*blockatlas.TokenTransfer).TokenID, token) {
-				result = append(result, tx)
-			}
-		case blockatlas.NativeTokenTransfer:
-			if strings.EqualFold(tx.Meta.(blockatlas.NativeTokenTransfer).TokenID, token) {
-				result = append(result, tx)
-			}
-		case *blockatlas.NativeTokenTransfer:
-			if strings.EqualFold(tx.Meta.(*blockatlas.NativeTokenTransfer).TokenID, token) {
-				result = append(result, tx)
-			}
-		case blockatlas.AnyAction:
-			if strings.EqualFold(tx.Meta.(blockatlas.AnyAction).TokenID, token) {
-				result = append(result, tx)
-			}
-		case *blockatlas.AnyAction:
-			if strings.EqualFold(tx.Meta.(*blockatlas.AnyAction).TokenID, token) {
-				result = append(result, tx)
-			}
-		default:
-			continue
-		}
-	}
-	return result
 }
