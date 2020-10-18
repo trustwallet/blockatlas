@@ -10,7 +10,7 @@ import (
 )
 
 // @Summary Lookup .eth / .zil addresses
-// @ID lookup
+// @ID lookup_v1
 // @Description Lookup ENS/ZNS to find registered addresses
 // @Produce json
 // @Tags Naming
@@ -40,7 +40,7 @@ func GetAddressByCoinAndDomain(c *gin.Context) {
 }
 
 // @Summary Lookup .eth / .zil addresses
-// @ID lookup
+// @ID lookup_v2
 // @Description Lookup ENS/ZNS to find registered addresses for multiple coins
 // @Produce json
 // @Tags Naming
