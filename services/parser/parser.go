@@ -95,6 +95,8 @@ func parse(params Params) {
 	}
 
 	txs := ConvertToBatch(blocks, ctx)
+	txs = blockatlas.Txs(blockatlas.TxPage(txs).FilterTransactionsByMemo())
+
 	PublishTransactionsBatch(params, txs, ctx)
 
 	logger.Info("End of parse step")

@@ -5,12 +5,20 @@ import (
 	"strings"
 )
 
-var SpamList []string
+const URLRegex = `[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)`
+
+var (
+	SpamList       []string
+	compiledRegexp = regexp.MustCompile(URLRegex)
+)
 
 func ContainsSpam(name string) bool {
+	if isURL(name) {
+		return true
+	}
 	lowerCaseName := strings.ToLower(name)
 	for _, word := range SpamList {
-		if strings.Contains(lowerCaseName, word) || isURL(lowerCaseName) {
+		if strings.Contains(lowerCaseName, word) {
 			return true
 		}
 	}
@@ -18,6 +26,5 @@ func ContainsSpam(name string) bool {
 }
 
 func isURL(host string) bool {
-	var URLRegex = `[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)`
-	return regexp.MustCompile(URLRegex).MatchString(host)
+	return compiledRegexp.MatchString(host)
 }
