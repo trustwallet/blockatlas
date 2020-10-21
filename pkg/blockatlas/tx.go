@@ -1,15 +1,15 @@
 package blockatlas
 
 import (
+	"fmt"
 	mapset "github.com/deckarep/golang-set"
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/db/models"
 	"github.com/trustwallet/blockatlas/pkg/numbers"
+	"github.com/trustwallet/blockatlas/services/spamfilter"
 	"github.com/trustwallet/watchmarket/pkg/watchmarket"
 	"sort"
 	"strconv"
-	"github.com/trustwallet/blockatlas/services/spamfilter"
-	"sort"
 	"strings"
 )
 
@@ -525,6 +525,9 @@ func (t Tx) AssetModel() (models.Asset, bool) {
 	}
 	if asset.Asset == "" {
 		return models.Asset{}, false
+	}
+	if asset.Type == string(TokenTypeTRC20) {
+		fmt.Println(1)
 	}
 	return asset, true
 }

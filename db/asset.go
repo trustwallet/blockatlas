@@ -17,6 +17,9 @@ func (i *Instance) AddNewAssets(assets []models.Asset, ctx context.Context) erro
 	if err != nil {
 		return err
 	}
+	if len(existingAssets) == 0 {
+		return i.Gorm.Clauses(clause.OnConflict{DoNothing: true}).Create(&uniqueAssets).Error
+	}
 	allAssetsMap := make(map[string]models.Asset)
 	for _, ua := range uniqueAssets {
 		allAssetsMap[ua.Asset] = ua
@@ -26,10 +29,10 @@ func (i *Instance) AddNewAssets(assets []models.Asset, ctx context.Context) erro
 		existingAssetsMap[ea.Asset] = ea
 	}
 	var newAssets []models.Asset
-	for k := range allAssetsMap {
-		a, ok := existingAssetsMap[k]
-		if !ok {
-			newAssets = append(newAssets, a)
+	for k, v := range allAssetsMap {
+		_, ok := existingAssetsMap[k]
+		if !ok && v.Asset != "" {
+			newAssets = append(newAssets, v)
 		}
 	}
 	if len(newAssets) == 0 {

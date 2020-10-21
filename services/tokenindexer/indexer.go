@@ -19,6 +19,9 @@ func RunTokenIndexer(database *db.Instance, delivery amqp.Delivery) {
 	txs, err := notifier.GetTransactionsFromDelivery(delivery, ctx)
 	if err != nil {
 		logger.Error("failed to get transactions", err)
+		if err := delivery.Ack(false); err != nil {
+			logger.Error(err)
+		}
 		return
 	}
 	if len(txs) == 0 {
@@ -31,6 +34,9 @@ func RunTokenIndexer(database *db.Instance, delivery amqp.Delivery) {
 		logger.Error("failed to add assets", err)
 		return
 	}
+	if err := delivery.Ack(false); err != nil {
+		logger.Error(err)
+	}
 }
 
 func GetAssetsFromTransactions(txs []blockatlas.Tx) []models.Asset {
@@ -38,6 +44,9 @@ func GetAssetsFromTransactions(txs []blockatlas.Tx) []models.Asset {
 	for _, tx := range txs {
 		a, ok := tx.AssetModel()
 		if !ok {
+			continue
+		}
+		if a.Asset == "" {
 			continue
 		}
 		result = append(result, a)
