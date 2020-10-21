@@ -14,6 +14,8 @@ platform: [ all ]
 # Can be platform or swagger, or tokens, or all
 rest_api: all
 
+spam_words: [ "airdrop","www", "http" ]
+
 # Can be tokens or notifications
 subscriber: tokens
 
