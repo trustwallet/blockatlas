@@ -3,8 +3,11 @@ package blockatlas
 import (
 	mapset "github.com/deckarep/golang-set"
 	"github.com/trustwallet/blockatlas/coin"
+	"github.com/trustwallet/blockatlas/db/models"
 	"github.com/trustwallet/blockatlas/pkg/numbers"
+	watchmarket "github.com/trustwallet/watchmarket/pkg/watchmarket"
 	"sort"
+	"strconv"
 )
 
 const (
@@ -405,10 +408,93 @@ func GetEthereumTokenTypeByIndex(coinIndex uint) TokenType {
 	return tokenType
 }
 
-func GetTokenType(t string) (string, bool) {
-	switch t {
-	case "ETH":
-		return string(TokenTypeERC20), true
+func (t Tx) AssetModel() (models.Asset, bool) {
+	var asset models.Asset
+	switch t.Meta.(type) {
+	case TokenTransfer:
+		asset.Asset = watchmarket.BuildID(t.Coin, t.Meta.(TokenTransfer).TokenID)
+		asset.Decimals = t.Meta.(TokenTransfer).Decimals
+		asset.Name = t.Meta.(TokenTransfer).Name
+		asset.Symbol = t.Meta.(TokenTransfer).Symbol
+		tp, ok := GetTokenType(t.Coin, t.Meta.(TokenTransfer).TokenID)
+		if !ok {
+			return models.Asset{}, false
+		}
+		asset.Type = tp
+	case *TokenTransfer:
+		asset.Asset = watchmarket.BuildID(t.Coin, t.Meta.(*TokenTransfer).TokenID)
+		asset.Decimals = t.Meta.(*TokenTransfer).Decimals
+		asset.Name = t.Meta.(*TokenTransfer).Name
+		asset.Symbol = t.Meta.(*TokenTransfer).Symbol
+		tp, ok := GetTokenType(t.Coin, t.Meta.(*TokenTransfer).TokenID)
+		if !ok {
+			return models.Asset{}, false
+		}
+		asset.Type = tp
+	case NativeTokenTransfer:
+		asset.Asset = watchmarket.BuildID(t.Coin, t.Meta.(NativeTokenTransfer).TokenID)
+		asset.Decimals = t.Meta.(NativeTokenTransfer).Decimals
+		asset.Name = t.Meta.(NativeTokenTransfer).Name
+		asset.Symbol = t.Meta.(NativeTokenTransfer).Symbol
+		tp, ok := GetTokenType(t.Coin, t.Meta.(NativeTokenTransfer).TokenID)
+		if !ok {
+			return models.Asset{}, false
+		}
+		asset.Type = tp
+	case *NativeTokenTransfer:
+		asset.Asset = watchmarket.BuildID(t.Coin, t.Meta.(*NativeTokenTransfer).TokenID)
+		asset.Decimals = t.Meta.(*NativeTokenTransfer).Decimals
+		asset.Name = t.Meta.(*NativeTokenTransfer).Name
+		asset.Symbol = t.Meta.(*NativeTokenTransfer).Symbol
+		tp, ok := GetTokenType(t.Coin, t.Meta.(*NativeTokenTransfer).TokenID)
+		if !ok {
+			return models.Asset{}, false
+		}
+		asset.Type = tp
+	case AnyAction:
+		asset.Asset = watchmarket.BuildID(t.Coin, t.Meta.(AnyAction).TokenID)
+		asset.Decimals = t.Meta.(AnyAction).Decimals
+		asset.Name = t.Meta.(AnyAction).Name
+		asset.Symbol = t.Meta.(AnyAction).Symbol
+		tp, ok := GetTokenType(t.Coin, t.Meta.(AnyAction).TokenID)
+		if !ok {
+			return models.Asset{}, false
+		}
+		asset.Type = tp
+	case *AnyAction:
+		asset.Asset = watchmarket.BuildID(t.Coin, t.Meta.(*AnyAction).TokenID)
+		asset.Decimals = t.Meta.(*AnyAction).Decimals
+		asset.Name = t.Meta.(*AnyAction).Name
+		asset.Symbol = t.Meta.(*AnyAction).Symbol
+		tp, ok := GetTokenType(t.Coin, t.Meta.(*AnyAction).TokenID)
+		if !ok {
+			return models.Asset{}, false
+		}
+		asset.Type = tp
+	default:
+		return models.Asset{}, false
 	}
-	return "", false
+	if asset.Asset == "" {
+		return models.Asset{}, false
+	}
+	return asset, true
+}
+
+func GetTokenType(c uint, tokenID string) (string, bool) {
+	switch c {
+	case coin.Ethereum().ID:
+		return string(TokenTypeERC20), true
+	case coin.Tron().ID:
+		_, err := strconv.Atoi(tokenID)
+		if err != nil {
+			return string(TokenTypeTRC20), true
+		}
+		return string(TokenTypeTRC10), true
+	case coin.Smartchain().ID:
+		return string(TokenTypeBEP20), true
+	case coin.Binance().ID:
+		return string(TokenTypeBEP2), true
+	default:
+		return "", false
+	}
 }

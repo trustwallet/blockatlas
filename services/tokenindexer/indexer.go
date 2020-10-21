@@ -2,14 +2,13 @@ package tokenindexer
 
 import (
 	"context"
-
 	"github.com/streadway/amqp"
-	"go.elastic.co/apm"
-
 	"github.com/trustwallet/blockatlas/db"
+	"github.com/trustwallet/blockatlas/db/models"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/services/notifier"
+	"go.elastic.co/apm"
 )
 
 func RunTokenIndexer(database *db.Instance, delivery amqp.Delivery) {
@@ -26,36 +25,22 @@ func RunTokenIndexer(database *db.Instance, delivery amqp.Delivery) {
 		return
 	}
 
-	types := getTokenTypes(txs)
-	if len(types) == 0 {
+	assets := GetAssetsFromTransactions(txs)
+	err = database.AddNewAssets(assets, ctx)
+	if err != nil {
+		logger.Error("failed to add assets", err)
 		return
-	}
-
-	if err = database.CreateTokenTypes(ctx, types); err != nil {
-		logger.Error("failed to create token types", err)
 	}
 }
 
-func getTokenTypes(txs blockatlas.Txs) []string {
-	var types []string
+func GetAssetsFromTransactions(txs []blockatlas.Tx) []models.Asset {
+	var result []models.Asset
 	for _, tx := range txs {
-		var tokenType string
-		switch tx.Type {
-		case blockatlas.TxTokenTransfer:
-			tokenMeta, ok := tx.Meta.(*blockatlas.TokenTransfer)
-			if !ok {
-				continue
-			}
-
-			tokenType, ok = blockatlas.GetTokenType(tokenMeta.Symbol)
-			if !ok {
-				continue
-			}
-
-		default:
+		a, ok := tx.AssetModel()
+		if !ok {
 			continue
 		}
-		types = append(types, tokenType)
+		result = append(result, a)
 	}
-	return types
+	return result
 }

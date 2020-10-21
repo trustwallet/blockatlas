@@ -38,9 +38,9 @@ func (i Instance) GetAssetsMapByAddresses(addresses []string, ctx context.Contex
 	return result, nil
 }
 
-func (i Instance) GetAssetsMapByAddressesFromTime(addresses []string, from time.Time, ctx context.Context) (map[string][]string, error) {
+func (i Instance) GetAssetsMapByAddressesFromTime(addresses []string, from time.Time, ctx context.Context) (map[string][]models.Asset, error) {
 	if len(addresses) == 0 {
-		return map[string][]string{}, nil
+		return map[string][]models.Asset{}, nil
 	}
 	db := i.Gorm.WithContext(ctx)
 	var associations []models.AddressToAssetAssociation
@@ -49,10 +49,10 @@ func (i Instance) GetAssetsMapByAddressesFromTime(addresses []string, from time.
 		return nil, err
 	}
 
-	result := make(map[string][]string)
+	result := make(map[string][]models.Asset)
 	for _, a := range associations {
 		assets := result[a.Address.Address]
-		result[a.Address.Address] = append(assets, a.Asset.Asset)
+		result[a.Address.Address] = append(assets, a.Asset)
 	}
 	return result, nil
 }
@@ -76,14 +76,14 @@ func (i *Instance) GetAssociationsByAddressesFromTime(addresses []string, from t
 	return result, nil
 }
 
-func (i *Instance) AddAssociationsForAddress(address string, assets []string, ctx context.Context) error {
+func (i *Instance) AddAssociationsForAddress(address string, assets []models.Asset, ctx context.Context) error {
 	db := i.Gorm.WithContext(ctx)
 	return db.Transaction(func(tx *gorm.DB) error {
-		uniqueAssets := getUniqueStrings(assets)
+		uniqueAssets := getUniqueAssets(assets)
 		uniqueAssetsModel := make([]models.Asset, 0, len(uniqueAssets))
 		for _, l := range uniqueAssets {
 			uniqueAssetsModel = append(uniqueAssetsModel, models.Asset{
-				Asset: l,
+				Asset: l.Asset,
 			})
 		}
 
@@ -102,7 +102,10 @@ func (i *Instance) AddAssociationsForAddress(address string, assets []string, ct
 
 		var dbAssets []models.Asset
 		if len(uniqueAssets) > 0 {
-			if err = tx.Where("asset in (?)", uniqueAssets).Find(&dbAssets).Error; err != nil {
+			err = tx.
+				Where("asset in (?)", models.AssetIDs(uniqueAssets)).
+				Find(&dbAssets).Error
+			if err != nil {
 				return err
 			}
 		}
@@ -136,10 +139,10 @@ func (i *Instance) AddAssociationsForAddress(address string, assets []string, ct
 	})
 }
 
-func (i *Instance) UpdateAssociationsForExistingAddresses(associations map[string][]string, ctx context.Context) error {
+func (i *Instance) UpdateAssociationsForExistingAddresses(associations map[string][]models.Asset, ctx context.Context) error {
 	db := i.Gorm.WithContext(ctx)
 	return db.Transaction(func(tx *gorm.DB) error {
-		assets := make([]string, 0, len(associations))
+		assets := make([]models.Asset, 0, len(associations))
 		for _, v := range associations {
 			assets = append(assets, v...)
 		}
@@ -148,17 +151,18 @@ func (i *Instance) UpdateAssociationsForExistingAddresses(associations map[strin
 			return nil
 		}
 
-		uniqueAssets := getUniqueStrings(assets)
+		uniqueAssets := getUniqueAssets(assets)
 		uniqueAssetsModel := make([]models.Asset, 0, len(uniqueAssets))
 		for _, l := range uniqueAssets {
-			uniqueAssetsModel = append(uniqueAssetsModel, models.Asset{Asset: l})
+			uniqueAssetsModel = append(uniqueAssetsModel, models.Asset{Asset: l.Asset})
 		}
 		if err := tx.Clauses(clause.OnConflict{DoNothing: true}).Create(&uniqueAssetsModel).Error; err != nil {
 			return err
 		}
 
 		var dbAssets []models.Asset
-		err := tx.Where("asset in (?)", uniqueAssets).
+		err := tx.
+			Where("asset in (?)", models.AssetIDs(uniqueAssets)).
 			Find(&dbAssets).
 			Limit(len(uniqueAssets)).
 			Error
@@ -207,7 +211,7 @@ func (i *Instance) UpdateAssociationsForExistingAddresses(associations map[strin
 				if !ok || addressID == 0 {
 					continue
 				}
-				assetID, ok := assetsMap[asset]
+				assetID, ok := assetsMap[asset.Asset]
 				if !ok || assetID == 0 {
 					continue
 				}
@@ -244,6 +248,18 @@ func getUniqueStrings(values []string) []string {
 	for _, entry := range values {
 		if _, value := keys[entry]; !value {
 			keys[entry] = struct{}{}
+			list = append(list, entry)
+		}
+	}
+	return list
+}
+
+func getUniqueAssets(values []models.Asset) []models.Asset {
+	keys := make(map[string]struct{})
+	var list []models.Asset
+	for _, entry := range values {
+		if _, value := keys[entry.Asset]; !value {
+			keys[entry.Asset] = struct{}{}
 			list = append(list, entry)
 		}
 	}

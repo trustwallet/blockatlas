@@ -605,3 +605,64 @@ func TestGetEthereumTokenTypeByIndex(t *testing.T) {
 		})
 	}
 }
+
+func TestTokenType(t *testing.T) {
+	type testStruct struct {
+		Name       string
+		ID         uint
+		TokenID    string
+		WantedType string
+		WantedOk   bool
+	}
+	tests := []testStruct{
+		{
+			Name:       "Tron TRC20",
+			ID:         coin.Tron().ID,
+			TokenID:    "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+			WantedType: string(TokenTypeTRC20),
+			WantedOk:   true,
+		},
+		{
+			Name:       "Tron TRC10",
+			ID:         coin.Tron().ID,
+			TokenID:    "1002000",
+			WantedType: string(TokenTypeTRC10),
+			WantedOk:   true,
+		},
+		{
+			Name:       "Ethereum ERC20",
+			ID:         coin.Ethereum().ID,
+			TokenID:    "dai",
+			WantedType: string(TokenTypeERC20),
+			WantedOk:   true,
+		},
+		{
+			Name:       "Binance BEP20",
+			ID:         coin.Smartchain().ID,
+			TokenID:    "busd",
+			WantedType: string(TokenTypeBEP20),
+			WantedOk:   true,
+		},
+		{
+			Name:       "Binance BEP10",
+			ID:         coin.Binance().ID,
+			TokenID:    "busd",
+			WantedType: string(TokenTypeBEP2),
+			WantedOk:   true,
+		},
+		{
+			Name:       "Wrong",
+			ID:         coin.Bitcoin().ID,
+			TokenID:    "busd",
+			WantedType: "",
+			WantedOk:   false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.Name, func(t *testing.T) {
+			expectedType, expectedOk := GetTokenType(tt.ID, tt.TokenID)
+			assert.Equal(t, tt.WantedType, expectedType)
+			assert.Equal(t, tt.WantedOk, expectedOk)
+		})
+	}
+}
