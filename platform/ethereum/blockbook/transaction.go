@@ -3,9 +3,9 @@ package blockbook
 import (
 	"strings"
 
-	"github.com/trustwallet/blockatlas/coin"
 	Address "github.com/trustwallet/blockatlas/pkg/address"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/golibs/coin"
 )
 
 func (c *Client) GetTransactions(address string, coinIndex uint) (blockatlas.TxPage, error) {

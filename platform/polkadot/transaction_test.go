@@ -4,8 +4,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/golibs/coin"
 )
 
 func TestNormalizeTransfer(t *testing.T) {

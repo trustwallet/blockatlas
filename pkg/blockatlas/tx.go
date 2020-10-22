@@ -3,11 +3,11 @@ package blockatlas
 import (
 	"fmt"
 	mapset "github.com/deckarep/golang-set"
-	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/db/models"
 	"github.com/trustwallet/blockatlas/pkg/numbers"
 	"github.com/trustwallet/blockatlas/services/spamfilter"
 	"github.com/trustwallet/watchmarket/pkg/watchmarket"
+	"github.com/trustwallet/golibs/coin"
 	"sort"
 	"strconv"
 	"strings"

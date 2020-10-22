@@ -3,10 +3,10 @@ package platform
 import (
 	"fmt"
 
+	"github.com/trustwallet/blockatlas/platform/filecoin"
 	"github.com/trustwallet/blockatlas/platform/kava"
 
 	"github.com/spf13/viper"
-	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/platform/aeternity"
 	"github.com/trustwallet/blockatlas/platform/aion"
@@ -35,6 +35,7 @@ import (
 	"github.com/trustwallet/blockatlas/platform/vechain"
 	"github.com/trustwallet/blockatlas/platform/waves"
 	"github.com/trustwallet/blockatlas/platform/zilliqa"
+	"github.com/trustwallet/golibs/coin"
 )
 
 const (
@@ -113,6 +114,7 @@ func getAllHandlers() blockatlas.Platforms {
 		coin.Ethereum().Handle:     ethereum.InitWitCollection(coin.ETH, GetApiVar(coin.ETH), GetRpcVar(coin.ETH), GetVar("ethereum.blockbook_api"), GetVar("ethereum.collections_api"), GetVar("ethereum.collections_api_key")),
 		coin.Near().Handle:         near.Init(GetApiVar(coin.NEAR)),
 		coin.Elrond().Handle:       elrond.Init(coin.ERD, GetApiVar(coin.ERD)),
+		coin.Filecoin().Handle:     filecoin.Init(GetApiVar(coin.FIL)),
 	}
 }
 

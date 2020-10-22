@@ -1,7 +1,7 @@
 package binance
 
 import (
-	"github.com/trustwallet/blockatlas/coin"
+	"github.com/trustwallet/golibs/coin"
 )
 
 type Platform struct {

@@ -3,9 +3,9 @@ package ethereum
 import (
 	"encoding/json"
 	"github.com/stretchr/testify/assert"
-	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/platform/ethereum/collection"
+	"github.com/trustwallet/golibs/coin"
 	"testing"
 )
 

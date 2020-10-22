@@ -1,13 +1,13 @@
 package ethereum
 
 import (
-	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/pkg/naming"
 	"github.com/trustwallet/blockatlas/platform/ethereum/ens"
 	"github.com/trustwallet/ens-coincodec"
+	"github.com/trustwallet/golibs/coin"
 )
 
 func (p *Platform) CanHandle(name string) bool {
