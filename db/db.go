@@ -17,6 +17,10 @@ type Instance struct {
 	Gorm *gorm.DB
 }
 
+// By gorm-bulk-insert author:
+// "Depending on the number of variables included, 2000 to 3000 is recommended."
+const batchCount = 3000
+
 func New(uri, readUri string, logMode bool) (*Instance, error) {
 	cfg := &gorm.Config{}
 	if logMode {
