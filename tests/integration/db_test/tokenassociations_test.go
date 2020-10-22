@@ -5,6 +5,7 @@ package db_test
 import (
 	"context"
 	"github.com/stretchr/testify/assert"
+	"github.com/trustwallet/blockatlas/db/models"
 	"github.com/trustwallet/blockatlas/tests/integration/setup"
 	"sort"
 	"testing"
@@ -14,7 +15,7 @@ import (
 func Test_GetAssetsMapByAddresses(t *testing.T) {
 	setup.CleanupPgContainer(database.Gorm)
 
-	assets := []string{"aa", "bbb", "cccc"}
+	assets := []models.Asset{{Asset: "aa"}, {Asset: "bbb"}, {Asset: "cccc"}}
 
 	err := database.AddAssociationsForAddress("a", assets, context.Background())
 	assert.Nil(t, err)
@@ -24,15 +25,20 @@ func Test_GetAssetsMapByAddresses(t *testing.T) {
 
 	m, err := database.GetAssetsMapByAddresses([]string{"a", "b"}, context.Background())
 	assert.Nil(t, err)
-	wantedMap := make(map[string][]string)
+	wantedMap := make(map[string][]models.Asset)
 	wantedMap["a"] = assets
-	assert.Equal(t, wantedMap, m)
+	for i, a := range m {
+		for ii, aa := range a {
+			assert.Equal(t, wantedMap[i][ii].Asset, aa.Asset)
+		}
+	}
+
 }
 
 func Test_GetAssetsMapByAddressesFromTime(t *testing.T) {
 	setup.CleanupPgContainer(database.Gorm)
 
-	assets := []string{"aa", "bbb", "cccc"}
+	assets := []models.Asset{{Asset: "aa"}, {Asset: "bbb"}, {Asset: "cccc"}}
 
 	err := database.AddAssociationsForAddress("a", assets, context.Background())
 	assert.Nil(t, err)
@@ -42,9 +48,14 @@ func Test_GetAssetsMapByAddressesFromTime(t *testing.T) {
 	tm := time.Now().Unix() - 100
 	m, err := database.GetAssetsMapByAddressesFromTime([]string{"a", "b"}, time.Unix(tm, 0), context.Background())
 	assert.Nil(t, err)
-	wantedMap := make(map[string][]string)
+	wantedMap := make(map[string][]models.Asset)
 	wantedMap["a"] = assets
-	assert.Equal(t, wantedMap, m)
+
+	for i, a := range m {
+		for ii, aa := range a {
+			assert.Equal(t, wantedMap[i][ii].Asset, aa.Asset)
+		}
+	}
 
 	m, err = database.GetAssetsMapByAddressesFromTime([]string{"a", "b"}, time.Unix(tm+101, 0), context.Background())
 	assert.Nil(t, err)
@@ -54,7 +65,7 @@ func Test_GetAssetsMapByAddressesFromTime(t *testing.T) {
 func Test_GetSubscribedAddressesForAssets(t *testing.T) {
 	setup.CleanupPgContainer(database.Gorm)
 
-	assets := []string{"aa", "bbb", "cccc"}
+	assets := []models.Asset{{Asset: "aa"}, {Asset: "bbb"}, {Asset: "cccc"}}
 
 	err := database.AddAssociationsForAddress("a", assets, context.Background())
 	assert.Nil(t, err)
@@ -69,7 +80,7 @@ func Test_GetSubscribedAddressesForAssets(t *testing.T) {
 
 func Test_AddNewAssociationForAddress(t *testing.T) {
 	setup.CleanupPgContainer(database.Gorm)
-	assets := []string{"aa", "bbb", "cccc"}
+	assets := []models.Asset{{Asset: "aa"}, {Asset: "bbb"}, {Asset: "cccc"}}
 
 	err := database.AddAssociationsForAddress("a", assets, context.Background())
 	assert.Nil(t, err)
@@ -77,20 +88,22 @@ func Test_AddNewAssociationForAddress(t *testing.T) {
 	associations, err := database.GetAssociationsByAddresses([]string{"a"}, context.Background())
 	assert.Nil(t, err)
 
-	var assetIDsFromDB []string
+	var assetIDsFromDB []models.Asset
 	for _, a := range associations {
-		assetIDsFromDB = append(assetIDsFromDB, a.Asset.Asset)
+		assetIDsFromDB = append(assetIDsFromDB, a.Asset)
 	}
 
 	sort.Slice(assets, func(i, j int) bool {
-		return len(assets[i]) > len(assets[j])
+		return len(assets[i].Asset) > len(assets[j].Asset)
 	})
 
 	sort.Slice(assetIDsFromDB, func(i, j int) bool {
-		return len(assetIDsFromDB[i]) > len(assetIDsFromDB[j])
+		return len(assetIDsFromDB[i].Asset) > len(assetIDsFromDB[j].Asset)
 	})
 
-	assert.Equal(t, assetIDsFromDB, assets)
+	for i, a := range assets {
+		assert.Equal(t, assetIDsFromDB[i].Asset, a.Asset)
+	}
 
 	err = database.AddAssociationsForAddress("b", nil, context.Background())
 	assert.Nil(t, err)
@@ -102,7 +115,7 @@ func Test_AddNewAssociationForAddress(t *testing.T) {
 
 func Test_UpdateAssociationsForExistingAddresses(t *testing.T) {
 	setup.CleanupPgContainer(database.Gorm)
-	assets := []string{"f"}
+	assets := []models.Asset{{Asset: "f"}}
 
 	err := database.AddAssociationsForAddress("A", assets, context.Background())
 	assert.Nil(t, err)
@@ -110,10 +123,10 @@ func Test_UpdateAssociationsForExistingAddresses(t *testing.T) {
 	err = database.AddAssociationsForAddress("B", assets, context.Background())
 	assert.Nil(t, err)
 
-	assetsForA := []string{"aa", "bbb", "cccc"}
-	assetsForB := []string{"bbb", "cccc"}
+	assetsForA := []models.Asset{{Asset: "aa"}, {Asset: "bbb"}, {Asset: "cccc"}}
+	assetsForB := []models.Asset{{Asset: "bbb"}, {Asset: "cccc"}}
 
-	updateMap := make(map[string][]string)
+	updateMap := make(map[string][]models.Asset)
 	updateMap["A"] = assetsForA
 	updateMap["B"] = assetsForB
 
@@ -123,57 +136,63 @@ func Test_UpdateAssociationsForExistingAddresses(t *testing.T) {
 	associationsA, err := database.GetAssociationsByAddresses([]string{"A"}, context.Background())
 	assert.Nil(t, err)
 
-	var assetIDsFromDBA []string
+	var assetIDsFromDBA []models.Asset
 	for _, a := range associationsA {
-		assetIDsFromDBA = append(assetIDsFromDBA, a.Asset.Asset)
+		assetIDsFromDBA = append(assetIDsFromDBA, a.Asset)
 	}
-	assetsA := []string{"aa", "bbb", "cccc", "f"}
+	assetsA := []models.Asset{{Asset: "aa"}, {Asset: "bbb"}, {Asset: "cccc"}, {Asset: "f"}}
 
 	sort.Slice(assetsA, func(i, j int) bool {
-		return len(assetsA[i]) > len(assetsA[j])
+		return len(assetsA[i].Asset) > len(assetsA[j].Asset)
 	})
 
 	sort.Slice(assetIDsFromDBA, func(i, j int) bool {
-		return len(assetIDsFromDBA[i]) > len(assetIDsFromDBA[j])
+		return len(assetIDsFromDBA[i].Asset) > len(assetIDsFromDBA[j].Asset)
 	})
 
-	assert.Equal(t, assetIDsFromDBA, assetsA)
+	for i, a := range assetsA {
+		assert.Equal(t, assetIDsFromDBA[i].Asset, a.Asset)
+	}
 
 	associationsB, err := database.GetAssociationsByAddresses([]string{"B"}, context.Background())
 	assert.Nil(t, err)
 
-	var assetIDsFromDBB []string
+	var assetIDsFromDBB []models.Asset
 	for _, a := range associationsB {
-		assetIDsFromDBB = append(assetIDsFromDBB, a.Asset.Asset)
+		assetIDsFromDBB = append(assetIDsFromDBB, a.Asset)
 	}
-	assetsB := []string{"bbb", "cccc", "f"}
+	assetsB := []models.Asset{{Asset: "bbb"}, {Asset: "cccc"}, {Asset: "f"}}
 
 	sort.Slice(assetsB, func(i, j int) bool {
-		return len(assetsB[i]) > len(assetsB[j])
+		return len(assetsB[i].Asset) > len(assetsB[j].Asset)
 	})
 
 	sort.Slice(assetIDsFromDBB, func(i, j int) bool {
-		return len(assetIDsFromDBB[i]) > len(assetIDsFromDBB[j])
+		return len(assetIDsFromDBB[i].Asset) > len(assetIDsFromDBB[j].Asset)
 	})
 
-	assert.Equal(t, assetIDsFromDBB, assetsB)
+	for i, a := range assetsB {
+		assert.Equal(t, assetIDsFromDBB[i].Asset, a.Asset)
+	}
 
 	associationsAB, err := database.GetAssociationsByAddresses([]string{"A", "B"}, context.Background())
 	assert.Nil(t, err)
 
-	var assetIDsFromDBAB []string
+	var assetIDsFromDBAB []models.Asset
 	for _, a := range associationsAB {
-		assetIDsFromDBAB = append(assetIDsFromDBAB, a.Asset.Asset)
+		assetIDsFromDBAB = append(assetIDsFromDBAB, a.Asset)
 	}
-	assetsAB := []string{"cccc", "cccc", "bbb", "bbb", "aa", "f", "f"}
+	assetsAB := []models.Asset{{Asset: "cccc"}, {Asset: "cccc"}, {Asset: "bbb"}, {Asset: "bbb"}, {Asset: "aa"}, {Asset: "f"}, {Asset: "f"}}
 
 	sort.Slice(assetsAB, func(i, j int) bool {
-		return len(assetsAB[i]) > len(assetsAB[j])
+		return len(assetsAB[i].Asset) > len(assetsAB[j].Asset)
 	})
 
 	sort.Slice(assetIDsFromDBAB, func(i, j int) bool {
-		return len(assetIDsFromDBAB[i]) > len(assetIDsFromDBAB[j])
+		return len(assetIDsFromDBAB[i].Asset) > len(assetIDsFromDBAB[j].Asset)
 	})
 
-	assert.Equal(t, assetIDsFromDBAB, assetsAB)
+	for i, a := range assetsAB {
+		assert.Equal(t, assetIDsFromDBAB[i].Asset, a.Asset)
+	}
 }

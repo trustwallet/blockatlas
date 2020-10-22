@@ -23,17 +23,17 @@ func (i Instance) GetSubscribedAddressesForAssets(ctx context.Context, addresses
 	return result, nil
 }
 
-func (i Instance) GetAssetsMapByAddresses(addresses []string, ctx context.Context) (map[string][]string, error) {
+func (i Instance) GetAssetsMapByAddresses(addresses []string, ctx context.Context) (map[string][]models.Asset, error) {
 	db := i.Gorm.WithContext(ctx)
 	var associations []models.AddressToAssetAssociation
 	if err := db.Joins("Address").Joins("Asset").Find(&associations, "address in (?)", addresses).Error; err != nil {
 		return nil, err
 	}
 
-	result := make(map[string][]string)
+	result := make(map[string][]models.Asset)
 	for _, a := range associations {
 		assets := result[a.Address.Address]
-		result[a.Address.Address] = append(assets, a.Asset.Asset)
+		result[a.Address.Address] = append(assets, a.Asset)
 	}
 	return result, nil
 }
@@ -44,7 +44,7 @@ func (i Instance) GetAssetsMapByAddressesFromTime(addresses []string, from time.
 	}
 	db := i.Gorm.WithContext(ctx)
 	var associations []models.AddressToAssetAssociation
-	err := db.Joins("Address").Where("address in (?)", addresses).Joins("Asset").Find(&associations, "created_at > ?", from).Error
+	err := db.Joins("Address").Where("address in (?)", addresses).Joins("Asset").Find(&associations, "address_to_asset_associations.created_at > ?", from).Error
 	if err != nil {
 		return nil, err
 	}
