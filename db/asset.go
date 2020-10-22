@@ -53,12 +53,9 @@ func (i *Instance) GetAssetsByIDs(ids []string, ctx context.Context) ([]models.A
 	return dbAssets, nil
 }
 
-func (i *Instance) GetAssetsByIDsFrom(ids []string, from time.Time, ctx context.Context) ([]models.Asset, error) {
-	if len(ids) == 0 {
-		return nil, nil
-	}
+func (i *Instance) GetAssetsFrom(from time.Time, ctx context.Context) ([]models.Asset, error) {
 	var dbAssets []models.Asset
-	if err := i.Gorm.Where("asset in (?)", ids).Find(&dbAssets, "created_at > ?", from).Error; err != nil {
+	if err := i.Gorm.Find(&dbAssets, "created_at > ?", from).Error; err != nil {
 		return nil, err
 	}
 	return dbAssets, nil
