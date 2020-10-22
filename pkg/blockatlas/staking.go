@@ -1,6 +1,6 @@
 package blockatlas
 
-import "github.com/trustwallet/blockatlas/coin"
+import "github.com/trustwallet/golibs/coin"
 
 const (
 	DelegationStatusActive  DelegationStatus = "active"

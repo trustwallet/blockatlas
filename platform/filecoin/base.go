@@ -1,4 +1,4 @@
-package algorand
+package filecoin
 
 import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
@@ -10,11 +10,12 @@ type Platform struct {
 }
 
 func Init(api string) *Platform {
-	return &Platform{
+	p := &Platform{
 		client: Client{blockatlas.InitClient(api)},
 	}
+	return p
 }
 
 func (p *Platform) Coin() coin.Coin {
-	return coin.Coins[coin.ALGO]
+	return coin.Coins[coin.FIL]
 }

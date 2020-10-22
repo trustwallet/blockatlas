@@ -22,13 +22,14 @@ require (
 	github.com/swaggo/gin-swagger v1.2.0
 	github.com/swaggo/swag v1.6.7
 	github.com/trustwallet/ens-coincodec v1.0.6
+	github.com/trustwallet/golibs v0.0.8
 	github.com/trustwallet/watchmarket v1.1.1
 	go.elastic.co/apm v1.8.0
 	go.elastic.co/apm/module/apmgin v1.8.0
 	go.elastic.co/apm/module/apmhttp v1.8.0
 	go.elastic.co/apm/module/apmlogrus v1.8.0
 	go.uber.org/atomic v1.7.0
-	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9
+	golang.org/x/crypto v0.0.0-20201016220609-9e8e0b390897
 	golang.org/x/net v0.0.0-20200506145744-7e3656a0809f
 	gopkg.in/yaml.v2 v2.3.0
 	gorm.io/driver/postgres v1.0.0

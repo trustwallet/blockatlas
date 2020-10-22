@@ -1,9 +1,9 @@
 package stellar
 
 import (
-	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/numbers"
+	"github.com/trustwallet/golibs/coin"
 	"time"
 )
 
