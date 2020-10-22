@@ -131,7 +131,7 @@ func ConsumerToTestTransactionsFull(delivery amqp.Delivery, t *testing.T, cancel
 			Date:      1555117625,
 			Block:     7928667,
 			Status:    blockatlas.StatusCompleted,
-			Memo:      "test",
+			Memo:      "",
 			Meta:      &memo,
 		},
 	}, notifications[0])
