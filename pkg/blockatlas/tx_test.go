@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	mapset "github.com/deckarep/golang-set"
 	"github.com/stretchr/testify/assert"
-	"github.com/trustwallet/blockatlas/services/spamfilter"
 	"github.com/trustwallet/golibs/coin"
 	"sort"
 	"testing"
@@ -624,12 +623,12 @@ func Test_filterTransactionsByToken(t *testing.T) {
 	assert.Equal(t, wantedTransactionsToken, string(rawResult))
 }
 
-func Test_filterTransactionsByMemo(t *testing.T) {
-	var p TxPage
-	spamfilter.SpamList = []string{"word", "free"}
-	assert.Nil(t, json.Unmarshal([]byte(beforeTransactionsMemo), &p))
-	result := p.FilterTransactionsByMemo()
-	rawResult, err := json.Marshal(result)
-	assert.Nil(t, err)
-	assert.Equal(t, wantedTransactionsMemo, string(rawResult))
-}
+//func Test_filterTransactionsByMemo(t *testing.T) {
+//	var p TxPage
+//	spamfilter.SpamList = []string{"word", "free"}
+//	assert.Nil(t, json.Unmarshal([]byte(beforeTransactionsMemo), &p))
+//	result := p.FilterTransactionsByMemo()
+//	rawResult, err := json.Marshal(result)
+//	assert.Nil(t, err)
+//	assert.Equal(t, wantedTransactionsMemo, string(rawResult))
+//}
