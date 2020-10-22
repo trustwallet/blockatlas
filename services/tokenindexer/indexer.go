@@ -14,6 +14,11 @@ import (
 func RunTokenIndexer(database *db.Instance, delivery amqp.Delivery) {
 	tx := apm.DefaultTracer.StartTransaction("RunTokenIndexer", "app")
 	defer tx.End()
+	defer func() {
+		if err := delivery.Ack(false); err != nil {
+			logger.Error(err)
+		}
+	}()
 	ctx := apm.ContextWithTransaction(context.Background(), tx)
 
 	txs, err := notifier.GetTransactionsFromDelivery(delivery, ctx)
@@ -33,9 +38,6 @@ func RunTokenIndexer(database *db.Instance, delivery amqp.Delivery) {
 	if err != nil {
 		logger.Error("failed to add assets", err)
 		return
-	}
-	if err := delivery.Ack(false); err != nil {
-		logger.Error(err)
 	}
 }
 

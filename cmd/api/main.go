@@ -63,6 +63,10 @@ func init() {
 		if err := mq.TokensRegistration.Declare(); err != nil {
 			logger.Fatal(err)
 		}
+		if err := mq.RawTransactionsTokenIndexer.Declare(); err != nil {
+			logger.Fatal(err)
+		}
+
 		ts = tokensearcher.Init(database, platform.TokensAPIs, mq.TokensRegistration)
 		ti = tokenindexer.Init(database)
 

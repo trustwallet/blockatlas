@@ -50,6 +50,9 @@ func init() {
 func main() {
 	defer mq.Close()
 
+	if err := mq.RawTransactionsTokenIndexer.Declare(); err != nil {
+		logger.Fatal(err)
+	}
 	go mq.RawTransactionsTokenIndexer.RunConsumerWithCancelAndDbConn(tokenindexer.RunTokenIndexer, database, ctx)
 	go mq.FatalWorker(time.Second * 10)
 
