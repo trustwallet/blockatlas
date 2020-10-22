@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/trustwallet/blockatlas/coin"
+	"github.com/trustwallet/golibs/coin"
 )
 
 func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {

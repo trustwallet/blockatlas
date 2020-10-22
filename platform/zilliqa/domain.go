@@ -1,9 +1,9 @@
 package zilliqa
 
 import (
-	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/naming"
+	"github.com/trustwallet/golibs/coin"
 )
 
 type ZNSResponse struct {

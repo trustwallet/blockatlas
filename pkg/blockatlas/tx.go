@@ -2,9 +2,9 @@ package blockatlas
 
 import (
 	mapset "github.com/deckarep/golang-set"
-	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/numbers"
 	"github.com/trustwallet/blockatlas/services/spamfilter"
+	"github.com/trustwallet/golibs/coin"
 	"sort"
 	"strings"
 )

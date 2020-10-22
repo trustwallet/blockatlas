@@ -233,6 +233,8 @@ near:
 elrond:
   api: https://api.elrond.com
 
+filecoin:
+  api: https://api.filscan.io:8700/rpc/v1
   # bsc:
   # api: <blockbook api>
   # rpc: <rpc>

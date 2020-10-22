@@ -518,6 +518,8 @@ github.com/tmc/grpc-websocket-proxy v0.0.0-20190109142713-0ad062ec5ee5/go.mod h1
 github.com/trustwallet/blockatlas v1.1.7-0.20200831100332-b573ace18512/go.mod h1:rq6APqrT+vR58h+WWrCyadT80QDKmDEJvHDllWSUwnM=
 github.com/trustwallet/ens-coincodec v1.0.6 h1:ZPvFDJwvv4s+XCnUM7pzub8wYHy37tyJBNtKvgx9FDs=
 github.com/trustwallet/ens-coincodec v1.0.6/go.mod h1:hTZCauB3S2Gt9M3FiRNva+xpLJXFqLyODKFF+UvH1lw=
+github.com/trustwallet/golibs v0.0.8 h1:eviuHKqIXDs+DGgWNHF/gNTrV6jmJTfYYEHVbCeniWE=
+github.com/trustwallet/golibs v0.0.8/go.mod h1:QB6tQe5tvZOAPmvpeaveFwCQpTqdelSgO6UlMZN30Co=
 github.com/trustwallet/watchmarket v1.1.1 h1:gErSfLLDhEblFqvW8V3RyzRqq4R6MCYEDWjO6j5uJfE=
 github.com/trustwallet/watchmarket v1.1.1/go.mod h1:DvqzLzxXOaZajbkryVZcNgBS4yibZhk3rCc41ZSJEBs=
 github.com/ugorji/go v1.1.4/go.mod h1:uQMGLiO92mf5W77hV/PUCpI3pbzQx3CRekS0kk+RGrc=
@@ -590,6 +592,8 @@ golang.org/x/crypto v0.0.0-20200510223506-06a226fb4e37 h1:cg5LA/zNPRzIXIWSCxQW10
 golang.org/x/crypto v0.0.0-20200510223506-06a226fb4e37/go.mod h1:LzIPMQfyMNhhGPhUkYOs5KpL4U8rLKemX1yGLhDgUto=
 golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9 h1:psW17arqaxU48Z5kZ0CQnkZWQJsqcURM6tKiBApRjXI=
 golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9/go.mod h1:LzIPMQfyMNhhGPhUkYOs5KpL4U8rLKemX1yGLhDgUto=
+golang.org/x/crypto v0.0.0-20201016220609-9e8e0b390897 h1:pLI5jrR7OSLijeIDcmRxNmw2api+jEfxLoykJVice/E=
+golang.org/x/crypto v0.0.0-20201016220609-9e8e0b390897/go.mod h1:LzIPMQfyMNhhGPhUkYOs5KpL4U8rLKemX1yGLhDgUto=
 golang.org/x/exp v0.0.0-20190121172915-509febef88a4/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
 golang.org/x/exp v0.0.0-20190306152737-a1d7652674e8/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
 golang.org/x/exp v0.0.0-20190510132918-efd6b22b2522/go.mod h1:ZjyILWgesfNpC6sMxTJOJm9Kp84zZh5NQWvqDGG3Qr8=
