@@ -4,6 +4,7 @@ import (
 	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
+	"strings"
 	"sync"
 	"time"
 )
@@ -36,7 +37,7 @@ func (p *Platform) GetTokenListByAddress(address string) (blockatlas.TokenPage, 
 	for _, t := range trc20Tokens {
 		tokenPage = append(tokenPage, blockatlas.Token{
 			Name:     t.Name,
-			Symbol:   t.Symbol,
+			Symbol:   strings.ToUpper(t.Symbol),
 			Decimals: uint(t.Decimals),
 			TokenID:  t.ContractAddress,
 			Coin:     coin.Tron().ID,
@@ -79,7 +80,7 @@ func (p *Platform) getTokensChannel(id string, tkChan chan blockatlas.Token) err
 func NormalizeToken(info AssetInfo) blockatlas.Token {
 	return blockatlas.Token{
 		Name:     info.Name,
-		Symbol:   info.Symbol,
+		Symbol:   strings.ToUpper(info.Symbol),
 		TokenID:  info.ID,
 		Coin:     coin.TRX,
 		Decimals: info.Decimals,

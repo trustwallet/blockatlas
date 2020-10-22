@@ -80,12 +80,6 @@ func (i *Instance) AddAssociationsForAddress(address string, assets []models.Ass
 	db := i.Gorm.WithContext(ctx)
 	return db.Transaction(func(tx *gorm.DB) error {
 		uniqueAssets := getUniqueAssets(assets)
-		uniqueAssetsModel := make([]models.Asset, 0, len(uniqueAssets))
-		for _, l := range uniqueAssets {
-			uniqueAssetsModel = append(uniqueAssetsModel, models.Asset{
-				Asset: l.Asset,
-			})
-		}
 
 		var err error
 		dbAddress := models.Address{Address: address}
@@ -94,8 +88,8 @@ func (i *Instance) AddAssociationsForAddress(address string, assets []models.Ass
 			return err
 		}
 
-		if len(uniqueAssetsModel) > 0 {
-			if err = tx.Clauses(clause.OnConflict{DoNothing: true}).Create(&uniqueAssetsModel).Error; err != nil {
+		if len(uniqueAssets) > 0 {
+			if err = tx.Clauses(clause.OnConflict{DoNothing: true}).Create(&uniqueAssets).Error; err != nil {
 				return err
 			}
 		}
