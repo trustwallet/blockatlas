@@ -63,7 +63,9 @@ func Normalize(trx *ActionInfo) *blockatlas.Tx {
 	if err != nil {
 		return nil
 	}
-
+	if trx.GasFee == "" {
+		trx.GasFee = "0"
+	}
 	return &blockatlas.Tx{
 		ID:       trx.ActHash,
 		Coin:     coin.IOTX,
