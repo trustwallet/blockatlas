@@ -12,6 +12,7 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/platform"
 	"github.com/trustwallet/blockatlas/services/spamfilter"
+	"github.com/trustwallet/blockatlas/services/tokenindexer"
 	"github.com/trustwallet/blockatlas/services/tokensearcher"
 	"time"
 )
@@ -27,7 +28,8 @@ var (
 	port, confPath string
 	engine         *gin.Engine
 	database       *db.Instance
-	t              tokensearcher.Instance
+	ts             tokensearcher.Instance
+	ti             tokenindexer.Instance
 	restAPI        string
 )
 
@@ -61,7 +63,12 @@ func init() {
 		if err := mq.TokensRegistration.Declare(); err != nil {
 			logger.Fatal(err)
 		}
-		t = tokensearcher.Init(database, platform.TokensAPIs, mq.TokensRegistration)
+		if err := mq.RawTransactionsTokenIndexer.Declare(); err != nil {
+			logger.Fatal(err)
+		}
+
+		ts = tokensearcher.Init(database, platform.TokensAPIs, mq.TokensRegistration)
+		ti = tokenindexer.Init(database)
 
 		go mq.FatalWorker(time.Second * 10)
 	}
@@ -74,9 +81,10 @@ func main() {
 	case "platform":
 		api.SetupPlatformAPI(engine)
 	case "tokens":
-		api.SetupTokensIndexAPI(engine, t)
+		api.SetupTokensSearcherAPI(engine, ts)
 	default:
-		api.SetupTokensIndexAPI(engine, t)
+		api.SetupTokensIndexAPI(engine, ti)
+		api.SetupTokensSearcherAPI(engine, ts)
 		api.SetupSwaggerAPI(engine)
 		api.SetupPlatformAPI(engine)
 	}

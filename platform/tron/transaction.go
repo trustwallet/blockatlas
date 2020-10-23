@@ -7,6 +7,7 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/golibs/coin"
 	"strconv"
+	"strings"
 )
 
 func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
@@ -67,7 +68,7 @@ func addTokenMeta(tx *blockatlas.Tx, srcTx Tx, tokenInfo AssetInfo) {
 	transfer := srcTx.Data.Contracts[0].Parameter.Value
 	tx.Meta = blockatlas.TokenTransfer{
 		Name:     tokenInfo.Name,
-		Symbol:   tokenInfo.Symbol,
+		Symbol:   strings.ToUpper(tokenInfo.Symbol),
 		TokenID:  tokenInfo.ID,
 		Decimals: tokenInfo.Decimals,
 		Value:    transfer.Amount,

@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"github.com/trustwallet/blockatlas/db"
+	"github.com/trustwallet/blockatlas/db/models"
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/address"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
@@ -15,7 +16,7 @@ import (
 
 type (
 	AddressesByCoin map[uint][]string
-	AssetsByAddress map[string][]string
+	AssetsByAddress map[string][]models.Asset
 	Request         struct {
 		AddressesByCoin map[string][]string `json:"addresses"`
 		From            uint                `json:"from"`
@@ -32,7 +33,7 @@ func Init(database *db.Instance, apis map[uint]blockatlas.TokensAPI, queue mq.Qu
 	return Instance{database: database, apis: apis, queue: queue}
 }
 
-func (i Instance) HandleTokensRequest(request Request, ctx context.Context) (AssetsByAddress, error) {
+func (i Instance) HandleTokensRequest(request Request, ctx context.Context) (map[string][]string, error) {
 	addresses := getAddressesFromRequest(request)
 	if len(addresses) == 0 {
 		return nil, nil
@@ -183,10 +184,10 @@ func getAssetsToResponse(dbAssetsMap, nodesAssetsMap AssetsByAddress, addresses 
 			if !ok {
 				continue
 			}
-			result[address] = nodesAssets
+			result[address] = models.AssetIDs(nodesAssets)
 			continue
 		}
-		result[address] = dbAddresses
+		result[address] = models.AssetIDs(dbAddresses)
 	}
 	return result
 }
