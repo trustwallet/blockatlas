@@ -49,6 +49,10 @@ func init() {
 		logger.Fatal(err)
 	}
 
+	if err := mq.RawTransactionsTokenIndexer.Declare(); err != nil {
+		logger.Fatal(err)
+	}
+
 	if len(platform.BlockAPIs) == 0 {
 		logger.Fatal("No APIs to observe")
 	}
@@ -108,9 +112,13 @@ func main() {
 		coinCancel[coin.Handle] = cancel
 
 		params := parser.Params{
-			Ctx:                   ctx,
-			Api:                   api,
-			Queue:                 []mq.Queue{mq.RawTransactions, mq.RawTransactionsSearcher},
+			Ctx: ctx,
+			Api: api,
+			Queue: []mq.Queue{
+				mq.RawTransactions,
+				mq.RawTransactionsSearcher,
+				mq.RawTransactionsTokenIndexer,
+			},
 			ParsingBlocksInterval: pollInterval,
 			FetchBlocksTimeout:    fetchBlocksInterval,
 			BacklogCount:          backlogCount,

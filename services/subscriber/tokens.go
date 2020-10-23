@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"github.com/streadway/amqp"
 	"github.com/trustwallet/blockatlas/db"
+	"github.com/trustwallet/blockatlas/db/models"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"go.elastic.co/apm"
 	"strconv"
@@ -18,7 +19,7 @@ func RunTokensSubscriber(database *db.Instance, delivery amqp.Delivery) {
 
 	ctx := apm.ContextWithTransaction(context.Background(), tx)
 	logger.Info("body " + string(delivery.Body))
-	event := make(map[string][]string)
+	event := make(map[string][]models.Asset)
 	if err := json.Unmarshal(delivery.Body, &event); err != nil {
 		if err := delivery.Ack(false); err != nil {
 			logger.Fatal(err, err)

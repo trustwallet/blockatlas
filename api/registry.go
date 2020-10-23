@@ -8,6 +8,7 @@ import (
 	"github.com/trustwallet/blockatlas/api/middleware"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/platform"
+	"github.com/trustwallet/blockatlas/services/tokenindexer"
 	"github.com/trustwallet/blockatlas/services/tokensearcher"
 	"time"
 )
@@ -108,8 +109,14 @@ func RegisterBasicAPI(router gin.IRouter) {
 	router.GET("/metrics", ginprom.PromHandler(promhttp.Handler()))
 }
 
-func RegisterTokensIndexAPI(router gin.IRouter, instance tokensearcher.Instance) {
+func RegisterTokensSearcherAPI(router gin.IRouter, instance tokensearcher.Instance) {
 	router.POST("/v3/tokens", func(c *gin.Context) {
 		endpoint.GetTokensByAddressIndexer(c, instance)
+	})
+}
+
+func RegisterTokensIndexAPI(router gin.IRouter, instance tokenindexer.Instance) {
+	router.POST("/v3/tokens/new", func(c *gin.Context) {
+		endpoint.GetNewTokens(c, instance)
 	})
 }

@@ -148,6 +148,7 @@ func normalizeTransferTransaction(t Tx) blockatlas.Tx {
 			Decimals: coin.Binance().Decimals,
 			From:     t.FromAddr.(string),
 			Symbol:   getTokenSymbolFromID(t.TxAsset),
+			Name:     getTokenSymbolFromID(t.TxAsset),
 			To:       t.ToAddr.(string),
 			TokenID:  t.TxAsset,
 			Value:    normalizeAmount(t.Value),
@@ -183,6 +184,7 @@ func normalizeMultiTransferTransaction(t Tx) []blockatlas.Tx {
 			tx.Type = blockatlas.TxNativeTokenTransfer
 			tx.Meta = blockatlas.NativeTokenTransfer{
 				Decimals: coin.Binance().Decimals,
+				Name:     getTokenSymbolFromID(subTx.TxAsset),
 				From:     subTx.FromAddr,
 				Symbol:   getTokenSymbolFromID(subTx.TxAsset),
 				To:       subTx.ToAddr,
