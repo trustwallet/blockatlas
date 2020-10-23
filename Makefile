@@ -11,6 +11,7 @@ NOTIFIER := notifier
 PARSER := parser
 SUBSCRIBER := subscriber
 SEARCHER := searcher
+INDEXER := tokenindexer
 COIN_FILE := coin/coins.yml
 COIN_GO_FILE := coin/coins.go
 GEN_COIN_FILE := coin/gen.go
@@ -229,7 +230,7 @@ endif
 
 go-compile: go-get go-build
 
-go-build: go-build-api go-build-notifier go-build-parser go-build-subscriber go-build-searcher
+go-build: go-build-api go-build-notifier go-build-parser go-build-subscriber go-build-searcher go-build-indexer
 
 docker-shutdown:
 	@echo "  >  Shutdown docker containers..."
@@ -260,6 +261,10 @@ go-build-subscriber:
 go-build-searcher:
 	@echo "  >  Building searcher binary..."
 	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(SEARCHER)/searcher ./cmd/$(SEARCHER)
+
+go-build-indexer:
+	@echo "  >  Building indexer binary..."
+	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(INDEXER)/tokenindexer ./cmd/$(INDEXER)
 
 go-generate:
 	@echo "  >  Generating dependency files..."
