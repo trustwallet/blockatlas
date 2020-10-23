@@ -5,6 +5,7 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 	"time"
+	"unicode/utf8"
 
 	"github.com/trustwallet/blockatlas/db/models"
 )
@@ -15,6 +16,7 @@ func (i *Instance) AddNewAssets(assets []models.Asset, ctx context.Context) erro
 		return nil
 	}
 	uniqueAssets := getUniqueAssets(assets)
+	uniqueAssets = filterAssets(uniqueAssets)
 	existingAssets, err := i.GetAssetsByIDs(models.AssetIDs(uniqueAssets), ctx)
 	if err != nil {
 		return err
@@ -54,23 +56,9 @@ func (i *Instance) AddNewAssets(assets []models.Asset, ctx context.Context) erro
 	})
 }
 
-func assetsBatch(values []models.Asset, sizeUint uint) [][]models.Asset {
-	size := int(sizeUint)
-	resultLength := (len(values) + size - 1) / size
-	result := make([][]models.Asset, resultLength)
-	lo, hi := 0, size
-	for i := range result {
-		if hi > len(values) {
-			hi = len(values)
-		}
-		result[i] = values[lo:hi:hi]
-		lo, hi = hi, hi+size
-	}
-	return result
-}
-
 func (i *Instance) GetAssetsByIDs(ids []string, ctx context.Context) ([]models.Asset, error) {
 	db := i.Gorm.WithContext(ctx)
+	// todo: look why nil and len 0 make db calls rn
 	if len(ids) == 0 {
 		return nil, nil
 	}
@@ -88,4 +76,32 @@ func (i *Instance) GetAssetsFrom(from time.Time, ctx context.Context) ([]models.
 		return nil, err
 	}
 	return dbAssets, nil
+}
+
+func assetsBatch(values []models.Asset, sizeUint uint) [][]models.Asset {
+	size := int(sizeUint)
+	resultLength := (len(values) + size - 1) / size
+	result := make([][]models.Asset, resultLength)
+	lo, hi := 0, size
+	for i := range result {
+		if hi > len(values) {
+			hi = len(values)
+		}
+		result[i] = values[lo:hi:hi]
+		lo, hi = hi, hi+size
+	}
+	return result
+}
+
+func filterAssets(values []models.Asset) []models.Asset {
+	result := make([]models.Asset, 0, len(values))
+	for _, v := range values {
+		if utf8.ValidString(v.Asset) &&
+			utf8.ValidString(v.Type) &&
+			utf8.ValidString(v.Symbol) &&
+			utf8.ValidString(v.Name) {
+			result = append(result, v)
+		}
+	}
+	return result
 }
