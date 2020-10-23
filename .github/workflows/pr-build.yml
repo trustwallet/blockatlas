@@ -72,7 +72,7 @@ jobs:
            docker build --build-arg SERVICE=subscriber/subscriber -f Dockerfile.runner -t $OBSERVER_SUBSCRIBER_IMAGE .
            docker build --build-arg SERVICE=notifier/notifier -f Dockerfile.runner -t $OBSERVER_NOTIFIER_IMAGE .
            docker build --build-arg SERVICE=searcher/searcher -f Dockerfile.runner -t $SEARCHER_IMAGE .
-           docker build --build-arg SERVICE=tokenindexer/tokenindexer -f Dockerfile.runner -t $INDEXER_IMAGE .
+           docker build --build-arg SERVICE=indexer/indexer -f Dockerfile.runner -t $INDEXER_IMAGE .
            docker push $API_IMAGE
            docker push $PARSER_IMAGE
            docker push $OBSERVER_SUBSCRIBER_IMAGE
