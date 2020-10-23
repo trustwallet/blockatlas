@@ -233,9 +233,8 @@ func (t Txs) FilterUniqueID() Txs {
 func (txs TxPage) FilterTransactionsByMemo() TxPage {
 	result := make(TxPage, 0)
 	for _, tx := range txs {
-		if spamfilter.ContainsSpam(tx.Memo) {
-			tx.Memo = ""
-		}
+		//TODO. Temporary disable memo
+		tx.Memo = ""
 		result = append(result, tx)
 	}
 	return result
