@@ -684,12 +684,51 @@ func Test_filterTransactionsByToken(t *testing.T) {
 	assert.Equal(t, wantedTransactionsToken, string(rawResult))
 }
 
-//func Test_filterTransactionsByMemo(t *testing.T) {
-//	var p TxPage
-//	spamfilter.SpamList = []string{"word", "free"}
-//	assert.Nil(t, json.Unmarshal([]byte(beforeTransactionsMemo), &p))
-//	result := p.FilterTransactionsByMemo()
-//	rawResult, err := json.Marshal(result)
-//	assert.Nil(t, err)
-//	assert.Equal(t, wantedTransactionsMemo, string(rawResult))
-//}
+func Test_filterTransactionsByMemo(t *testing.T) {
+	p := TxPage{
+		{
+			Memo: "123",
+		},
+		{
+			Memo: "test",
+		},
+	}
+
+	result := p.FilterTransactionsByMemo()
+	assert.Equal(t, "123", result[0].Memo)
+	assert.Equal(t, "", result[1].Memo)
+}
+
+func Test_isMemoAllowed(t *testing.T) {
+	type args struct {
+		memo string
+	}
+	tests := []struct {
+		name string
+		args args
+		want bool
+	}{
+		{
+			"Numeric memo",
+			args{memo: "123"},
+			true,
+		},
+		{
+			"Numeric memo",
+			args{memo: "12356172321321"},
+			true,
+		},
+		{
+			"Numeric memo",
+			args{memo: "test"},
+			false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := isMemoAllowed(tt.args.memo); got != tt.want {
+				t.Errorf("isMemoAllowed() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
