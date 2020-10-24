@@ -231,11 +231,18 @@ func (t Txs) FilterUniqueID() Txs {
 func (txs TxPage) FilterTransactionsByMemo() TxPage {
 	result := make(TxPage, 0)
 	for _, tx := range txs {
-		//TODO. Temporary disable memo
-		tx.Memo = ""
+		if !AllowMemo(tx.Memo) {
+			tx.Memo = ""
+		}
 		result = append(result, tx)
 	}
 	return result
+}
+
+func AllowMemo(memo string) bool {
+	// only allows numeric values
+	_, err := strconv.ParseFloat(memo, 64)
+	return err == nil
 }
 
 func (txs TxPage) FilterTransactionsByToken(token string) TxPage {
