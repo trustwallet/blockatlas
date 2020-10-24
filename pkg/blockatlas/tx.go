@@ -231,7 +231,7 @@ func (t Txs) FilterUniqueID() Txs {
 func (txs TxPage) FilterTransactionsByMemo() TxPage {
 	result := make(TxPage, 0)
 	for _, tx := range txs {
-		if !isMemoAllowed(tx.Memo) {
+		if !AllowMemo(tx.Memo) {
 			tx.Memo = ""
 		}
 		result = append(result, tx)
@@ -239,7 +239,7 @@ func (txs TxPage) FilterTransactionsByMemo() TxPage {
 	return result
 }
 
-func isMemoAllowed(memo string) bool {
+func AllowMemo(memo string) bool {
 	// only allows numeric values
 	_, err := strconv.ParseFloat(memo, 64)
 	return err == nil

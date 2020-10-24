@@ -699,7 +699,7 @@ func Test_filterTransactionsByMemo(t *testing.T) {
 	assert.Equal(t, "", result[1].Memo)
 }
 
-func Test_isMemoAllowed(t *testing.T) {
+func Test_AllowMemo(t *testing.T) {
 	type args struct {
 		memo string
 	}
@@ -726,7 +726,7 @@ func Test_isMemoAllowed(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := isMemoAllowed(tt.args.memo); got != tt.want {
+			if got := AllowMemo(tt.args.memo); got != tt.want {
 				t.Errorf("isMemoAllowed() = %v, want %v", got, tt.want)
 			}
 		})
