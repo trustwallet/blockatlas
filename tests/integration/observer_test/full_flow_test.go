@@ -83,7 +83,7 @@ func (p *PlatformFullFlow) GetBlockByNumber(num int64) (*blockatlas.Block, error
 					Date:   1555117625,
 					Block:  7928667,
 					Status: blockatlas.StatusCompleted,
-					Memo:   "test",
+					Memo:   "123",
 					Meta: blockatlas.NativeTokenTransfer{
 						TokenID:  "YLC-D8B",
 						Symbol:   "YLC",
