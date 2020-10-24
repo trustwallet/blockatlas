@@ -5,6 +5,7 @@ import (
 	mapset "github.com/deckarep/golang-set"
 	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/golibs/coin"
+	"reflect"
 	"sort"
 	"testing"
 )
@@ -684,21 +685,6 @@ func Test_filterTransactionsByToken(t *testing.T) {
 	assert.Equal(t, wantedTransactionsToken, string(rawResult))
 }
 
-func Test_filterTransactionsByMemo(t *testing.T) {
-	p := TxPage{
-		{
-			Memo: "123",
-		},
-		{
-			Memo: "test",
-		},
-	}
-
-	result := p.FilterTransactionsByMemo()
-	assert.Equal(t, "123", result[0].Memo)
-	assert.Equal(t, "", result[1].Memo)
-}
-
 func Test_AllowMemo(t *testing.T) {
 	type args struct {
 		memo string
@@ -728,6 +714,48 @@ func Test_AllowMemo(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := AllowMemo(tt.args.memo); got != tt.want {
 				t.Errorf("isMemoAllowed() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestTxPage_FilterTransactionsByMemo(t *testing.T) {
+	tests := []struct {
+		name string
+		txs  TxPage
+		want TxPage
+	}{
+		{
+			name: "Allow memo",
+			txs: TxPage{
+				{
+					Memo: "123",
+				},
+			},
+			want: TxPage{
+				{
+					Memo: "123",
+				},
+			},
+		},
+		{
+			name: "Disallow memo",
+			txs: TxPage{
+				{
+					Memo: "test",
+				},
+			},
+			want: TxPage{
+				{
+					Memo: "",
+				},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := tt.txs.FilterTransactionsByMemo(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("FilterTransactionsByMemo() = %v, want %v", got, tt.want)
 			}
 		})
 	}
