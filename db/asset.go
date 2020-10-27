@@ -2,6 +2,8 @@ package db
 
 import (
 	"context"
+	"encoding/json"
+	gocache "github.com/patrickmn/go-cache"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 	"time"
@@ -17,7 +19,19 @@ func (i *Instance) AddNewAssets(assets []models.Asset, ctx context.Context) erro
 	}
 	uniqueAssets := getUniqueAssets(assets)
 	uniqueAssets = filterAssets(uniqueAssets)
-	existingAssets, err := i.GetAssetsByIDs(models.AssetIDs(uniqueAssets), ctx)
+
+	var notInMemoryAssets []models.Asset
+	for _, a := range uniqueAssets {
+		_, err := i.MemoryGet(a.Asset, ctx)
+		if err == nil {
+			notInMemoryAssets = append(notInMemoryAssets, a)
+		}
+	}
+	if len(notInMemoryAssets) == 0 {
+		return nil
+	}
+
+	existingAssets, err := i.GetAssetsByIDs(models.AssetIDs(notInMemoryAssets), ctx)
 	if err != nil {
 		return err
 	}
@@ -43,6 +57,17 @@ func (i *Instance) AddNewAssets(assets []models.Asset, ctx context.Context) erro
 		return nil
 	}
 
+	for _, a := range newAssets {
+		raw, err := json.Marshal(a)
+		if err != nil {
+			continue
+		}
+		err = i.MemorySet(a.Asset, raw, gocache.NoExpiration, ctx)
+		if err != nil {
+			continue
+		}
+	}
+
 	assetsBatch := assetsBatch(newAssets, batchCount)
 
 	return db.Transaction(func(tx *gorm.DB) error {
@@ -62,10 +87,35 @@ func (i *Instance) GetAssetsByIDs(ids []string, ctx context.Context) ([]models.A
 	if len(ids) == 0 {
 		return nil, nil
 	}
+	var assetsFromMemory []models.Asset
+	for _, id := range ids {
+		rawAsset, err := i.MemoryGet(id, ctx)
+		if err == nil {
+			continue
+		}
+		var a models.Asset
+		if err = json.Unmarshal(rawAsset, &a); err == nil {
+			continue
+		}
+		assetsFromMemory = append(assetsFromMemory, a)
+	}
+	if len(assetsFromMemory) == len(ids) {
+		return assetsFromMemory, nil
+	}
+	var assetsIDsNotInMemory []string
+	for _, memoryId := range models.AssetIDs(assetsFromMemory) {
+		for _, id := range ids {
+			if id == memoryId {
+				assetsIDsNotInMemory = append(assetsIDsNotInMemory, id)
+			}
+		}
+	}
+
 	var dbAssets []models.Asset
-	if err := db.Where("asset in (?)", ids).Find(&dbAssets).Error; err != nil {
+	if err := db.Where("asset in (?)", ids).Find(&assetsIDsNotInMemory).Error; err != nil {
 		return nil, err
 	}
+	dbAssets = append(dbAssets, assetsFromMemory...)
 	return dbAssets, nil
 }
 
