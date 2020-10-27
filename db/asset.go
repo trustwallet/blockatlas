@@ -134,7 +134,7 @@ func filterAssets(values []models.Asset) []models.Asset {
 			utf8.ValidString(v.Name)
 		valuesAreNotEmpty := v.Asset != "" &&
 			v.Type != "" && v.Symbol != "" &&
-			v.Name == "" && v.Decimals != 0
+			v.Name != "" && v.Decimals != 0
 		if valuesAreAtUTF8 && valuesAreNotEmpty {
 			result = append(result, v)
 		}
