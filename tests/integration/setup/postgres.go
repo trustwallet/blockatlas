@@ -12,7 +12,7 @@ import (
 const (
 	pgUser = "user"
 	pgPass = "pass"
-	pgDB   = "my_db"
+	pgDB   = "blockatlas"
 )
 
 var (

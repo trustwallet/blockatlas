@@ -19,7 +19,7 @@ DOCKER_LOCAL_DB_IMAGE_NAME := test_db
 DOCKER_LOCAL_MQ_IMAGE_NAME := mq
 DOCKER_LOCAL_DB_USER :=user
 DOCKER_LOCAL_DB_PASS :=pass
-DOCKER_LOCAL_DB := my_db
+DOCKER_LOCAL_DB := blockatlas
 
 # Go related variables.
 GOBASE := $(shell pwd)

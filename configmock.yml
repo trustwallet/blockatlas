@@ -35,8 +35,8 @@ observer:
       prefetch_count: 10
 
 postgres:
-  uri: postgresql://user:pass@localhost/my_db?sslmode=disable
-  read_uri: postgresql://user:pass@localhost/my_db?sslmode=disable
+  uri: postgresql://user:pass@localhost/blockatlas?sslmode=disable
+  read_uri: postgresql://user:pass@localhost/blockatlas?sslmode=disable
   log: false
 
 # [BNB] Binance DEX: https://wallet.binance.org
