@@ -2,10 +2,14 @@ package db
 
 import (
 	"context"
-	"gorm.io/gorm"
-	"gorm.io/gorm/clause"
+	"encoding/json"
 	"time"
 	"unicode/utf8"
+
+	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
+
+	gocache "github.com/patrickmn/go-cache"
 
 	"github.com/trustwallet/blockatlas/db/models"
 )
@@ -17,15 +21,28 @@ func (i *Instance) AddNewAssets(assets []models.Asset, ctx context.Context) erro
 	}
 	uniqueAssets := getUniqueAssets(assets)
 	uniqueAssets = filterAssets(uniqueAssets)
-	existingAssets, err := i.GetAssetsByIDs(models.AssetIDs(uniqueAssets), ctx)
+
+	var notInMemoryAssets []models.Asset
+	for _, a := range uniqueAssets {
+		_, err := i.MemoryGet(a.Asset, ctx)
+		if err != nil {
+			notInMemoryAssets = append(notInMemoryAssets, a)
+		}
+	}
+	if len(notInMemoryAssets) == 0 {
+		return nil
+	}
+
+	existingAssets, err := i.GetAssetsByIDs(models.AssetIDs(notInMemoryAssets), ctx)
 	if err != nil {
 		return err
 	}
 	if len(existingAssets) == 0 {
-		return db.Clauses(clause.OnConflict{DoNothing: true}).Create(&uniqueAssets).Error
+		i.addToMemory(notInMemoryAssets, ctx)
+		return db.Clauses(clause.OnConflict{DoNothing: true}).Create(&notInMemoryAssets).Error
 	}
 	allAssetsMap := make(map[string]models.Asset)
-	for _, ua := range uniqueAssets {
+	for _, ua := range notInMemoryAssets {
 		allAssetsMap[ua.Asset] = ua
 	}
 	existingAssetsMap := make(map[string]models.Asset)
@@ -42,6 +59,7 @@ func (i *Instance) AddNewAssets(assets []models.Asset, ctx context.Context) erro
 	if len(newAssets) == 0 {
 		return nil
 	}
+	i.addToMemory(newAssets, ctx)
 
 	assetsBatch := assetsBatch(newAssets, batchCount)
 
@@ -56,12 +74,26 @@ func (i *Instance) AddNewAssets(assets []models.Asset, ctx context.Context) erro
 	})
 }
 
+func (i *Instance) addToMemory(newAssets []models.Asset, ctx context.Context) {
+	for _, a := range newAssets {
+		raw, err := json.Marshal(a)
+		if err != nil {
+			continue
+		}
+		err = i.MemorySet(a.Asset, raw, gocache.NoExpiration, ctx)
+		if err != nil {
+			continue
+		}
+	}
+}
+
 func (i *Instance) GetAssetsByIDs(ids []string, ctx context.Context) ([]models.Asset, error) {
 	db := i.Gorm.WithContext(ctx)
 	// todo: look why nil and len 0 make db calls rn
 	if len(ids) == 0 {
 		return nil, nil
 	}
+
 	var dbAssets []models.Asset
 	if err := db.Where("asset in (?)", ids).Find(&dbAssets).Error; err != nil {
 		return nil, err
@@ -96,10 +128,14 @@ func assetsBatch(values []models.Asset, sizeUint uint) [][]models.Asset {
 func filterAssets(values []models.Asset) []models.Asset {
 	result := make([]models.Asset, 0, len(values))
 	for _, v := range values {
-		if utf8.ValidString(v.Asset) &&
+		valuesAreAtUTF8 := utf8.ValidString(v.Asset) &&
 			utf8.ValidString(v.Type) &&
 			utf8.ValidString(v.Symbol) &&
-			utf8.ValidString(v.Name) {
+			utf8.ValidString(v.Name)
+		valuesAreNotEmpty := v.Asset != "" &&
+			v.Type != "" && v.Symbol != "" &&
+			v.Name != "" && v.Decimals != 0
+		if valuesAreAtUTF8 && valuesAreNotEmpty {
 			result = append(result, v)
 		}
 	}

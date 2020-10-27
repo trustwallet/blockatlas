@@ -2,19 +2,26 @@ package db
 
 import (
 	"context"
-	"github.com/trustwallet/blockatlas/db/models"
-	"github.com/trustwallet/blockatlas/pkg/logger"
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
-	gormlogger "gorm.io/gorm/logger"
-	"gorm.io/plugin/dbresolver"
+	"errors"
 	"log"
 	"os"
 	"time"
+
+	"github.com/trustwallet/blockatlas/db/models"
+	"github.com/trustwallet/blockatlas/pkg/logger"
+
+	gocache "github.com/patrickmn/go-cache"
+
+	gormlogger "gorm.io/gorm/logger"
+
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
+	"gorm.io/plugin/dbresolver"
 )
 
 type Instance struct {
-	Gorm *gorm.DB
+	Gorm        *gorm.DB
+	MemoryCache *gocache.Cache
 }
 
 // By gorm-bulk-insert author:
@@ -58,8 +65,8 @@ func New(uri, readUri string, logMode bool) (*Instance, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	i := &Instance{Gorm: db}
+	mc := gocache.New(gocache.NoExpiration, gocache.NoExpiration)
+	i := &Instance{Gorm: db, MemoryCache: mc}
 
 	return i, nil
 }
@@ -99,4 +106,17 @@ func (i *Instance) restoreConnection(uri string) error {
 		logger.Info("PG connection restored")
 	}
 	return nil
+}
+
+func (i *Instance) MemorySet(key string, data []byte, exp time.Duration, ctx context.Context) error {
+	i.MemoryCache.Set(key, data, exp)
+	return nil
+}
+
+func (i *Instance) MemoryGet(key string, ctx context.Context) ([]byte, error) {
+	res, ok := i.MemoryCache.Get(key)
+	if !ok {
+		return nil, errors.New("not found")
+	}
+	return res.([]byte), nil
 }

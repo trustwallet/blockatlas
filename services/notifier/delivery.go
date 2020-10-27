@@ -17,14 +17,9 @@ func GetTransactionsFromDelivery(delivery amqp.Delivery, ctx context.Context) (b
 	span, _ := apm.StartSpan(ctx, "GetTransactionsFromDelivery", "app")
 	defer span.End()
 
-	logger.Info("--------------------------------------------")
-	logger.Info("Unmarshal: ")
-	logger.Info(delivery.Body)
 	if err := json.Unmarshal(delivery.Body, &txs); err != nil {
 		return nil, err
 	}
-	logger.Info("Done")
-	logger.Info("--------------------------------------------")
 
 	logger.Info("Consumed", logger.Params{"txs": len(txs), "coin": txs[0].Coin})
 

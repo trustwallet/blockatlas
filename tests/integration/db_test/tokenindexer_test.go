@@ -4,13 +4,62 @@ package db_test
 
 import (
 	"context"
+	gocache "github.com/patrickmn/go-cache"
 	assert "github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas/db/models"
+	"github.com/trustwallet/blockatlas/pkg/logger"
+	"github.com/trustwallet/blockatlas/tests/integration/setup"
 	"sort"
 	"testing"
 )
 
+func Test_AddNewAssets_Simple(t *testing.T) {
+	a := []models.Asset{
+		{
+			Asset:    "c714_a",
+			Decimals: 18,
+			Name:     "A",
+			Symbol:   "ABC",
+			Type:     "BEP20",
+		},
+		{
+			Asset:    "c714_b",
+			Decimals: 18,
+			Name:     "B",
+			Symbol:   "BCD",
+			Type:     "BEP20",
+		},
+	}
+	err := database.AddNewAssets(a, context.Background())
+	assert.Nil(t, err)
+	assets, err := database.GetAssetsByIDs([]string{"c714_b", "c714_a"}, context.Background())
+	assert.Nil(t, err)
+	assert.NotNil(t, assets)
+	a = append(a, models.Asset{
+		Asset:    "c714_d",
+		Decimals: 18,
+		Name:     "D",
+		Symbol:   "DTS",
+		Type:     "BEP20",
+	})
+	err = database.AddNewAssets(a, context.Background())
+	assert.Nil(t, err)
+	err = database.AddNewAssets([]models.Asset{{
+		Asset:    "c714_p",
+		Decimals: 0,
+		Name:     "D",
+		Symbol:   "DTS",
+		Type:     "BEP20",
+	}}, context.Background())
+	assert.Nil(t, err)
+	assets, err = database.GetAssetsByIDs([]string{"c714_p"}, context.Background())
+	assert.Nil(t, err)
+	assert.Equal(t, 0, len(assets))
+}
+
 func Test_AddNewAssets(t *testing.T) {
+	setup.CleanupPgContainer(database.Gorm)
+	database.MemoryCache = gocache.New(gocache.NoExpiration, gocache.NoExpiration)
 	type testsStruct struct {
 		Name         string
 		Assets       []models.Asset
@@ -24,15 +73,15 @@ func Test_AddNewAssets(t *testing.T) {
 			Assets: []models.Asset{
 				{
 					Asset:    "c714_a",
-					Decimals: 18,
+					Decimals: 15,
 					Name:     "A",
 					Symbol:   "ABC",
 					Type:     "BEP20",
 				},
 				{
 					Asset:    "c714_b",
-					Decimals: 18,
-					Name:     "B",
+					Decimals: 16,
+					Name:     "BB",
 					Symbol:   "BCD",
 					Type:     "BEP20",
 				},
@@ -42,15 +91,15 @@ func Test_AddNewAssets(t *testing.T) {
 			WantedAssets: []models.Asset{
 				{
 					Asset:    "c714_a",
-					Decimals: 18,
+					Decimals: 15,
 					Name:     "A",
 					Symbol:   "ABC",
 					Type:     "BEP20",
 				},
 				{
 					Asset:    "c714_b",
-					Decimals: 18,
-					Name:     "B",
+					Decimals: 16,
+					Name:     "BB",
 					Symbol:   "BCD",
 					Type:     "BEP20",
 				},
@@ -61,15 +110,15 @@ func Test_AddNewAssets(t *testing.T) {
 			Assets: []models.Asset{
 				{
 					Asset:    "c714_c",
-					Decimals: 18,
-					Name:     "C",
+					Decimals: 17,
+					Name:     "CCC",
 					Symbol:   "FFF",
 					Type:     "ERC20",
 				},
 				{
 					Asset:    "c714_d",
 					Decimals: 18,
-					Name:     "D",
+					Name:     "DDDD",
 					Symbol:   "RRR",
 					Type:     "TRC20",
 				},
@@ -79,29 +128,29 @@ func Test_AddNewAssets(t *testing.T) {
 			WantedAssets: []models.Asset{
 				{
 					Asset:    "c714_a",
-					Decimals: 18,
+					Decimals: 15,
 					Name:     "A",
 					Symbol:   "ABC",
 					Type:     "BEP20",
 				},
 				{
 					Asset:    "c714_b",
-					Decimals: 18,
-					Name:     "B",
+					Decimals: 16,
+					Name:     "BB",
 					Symbol:   "BCD",
 					Type:     "BEP20",
 				},
 				{
 					Asset:    "c714_c",
-					Decimals: 18,
-					Name:     "C",
+					Decimals: 17,
+					Name:     "CCC",
 					Symbol:   "FFF",
 					Type:     "ERC20",
 				},
 				{
 					Asset:    "c714_d",
 					Decimals: 18,
-					Name:     "D",
+					Name:     "DDDD",
 					Symbol:   "RRR",
 					Type:     "TRC20",
 				},
@@ -116,11 +165,14 @@ func Test_AddNewAssets(t *testing.T) {
 			assets, err := database.GetAssetsByIDs(tt.AssetsIDs, context.Background())
 			assert.Nil(t, err)
 			sort.Slice(tt.WantedAssets, func(i, j int) bool {
-				return tt.WantedAssets[i].Asset > tt.WantedAssets[j].Asset
+				return len(tt.WantedAssets[i].Name) > len(tt.WantedAssets[j].Name)
 			})
 			sort.Slice(assets, func(i, j int) bool {
-				return assets[i].Asset > assets[j].Asset
+				return len(assets[i].Name) > len(assets[j].Name)
 			})
+			logger.Info(tt.WantedAssets)
+			logger.Info("----------------------")
+			logger.Info(assets)
 			for i, a := range assets {
 				assert.Equal(t, tt.WantedAssets[i].Asset, a.Asset)
 				assert.Equal(t, tt.WantedAssets[i].Name, a.Name)
