@@ -1,6 +1,8 @@
 package api
 
 import (
+	"time"
+
 	"github.com/chenjiandongx/ginprom"
 	"github.com/gin-gonic/gin"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -10,7 +12,6 @@ import (
 	"github.com/trustwallet/blockatlas/platform"
 	"github.com/trustwallet/blockatlas/services/tokenindexer"
 	"github.com/trustwallet/blockatlas/services/tokensearcher"
-	"time"
 )
 
 func RegisterTransactionsAPI(router gin.IRouter, api blockatlas.Platform) {
@@ -36,6 +37,13 @@ func RegisterTransactionsAPI(router gin.IRouter, api blockatlas.Platform) {
 		})
 		router.GET("/v2/"+handle+"/transactions/:address", func(c *gin.Context) {
 			endpoint.GetTransactionsHistory(c, txAPI, tokenTxAPI)
+		})
+	}
+
+	blockAPI, okBlockAPI := api.(blockatlas.BlockAPI)
+	if okBlockAPI {
+		router.GET("/v2/"+handle+"/block/:block", func(c *gin.Context) {
+			endpoint.GetBlock(c, blockAPI)
 		})
 	}
 }

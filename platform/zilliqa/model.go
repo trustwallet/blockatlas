@@ -105,7 +105,7 @@ func (t *TxRPC) toTx(header BlockHeader) *Tx {
 		To:             EncodeKeyHashToAddress(to),
 		Value:          t.Amount,
 		Fee:            fee.String(),
-		Timestamp:      int64(timestamp / 1_000_000),
+		Timestamp:      int64(timestamp / 1000),
 		Signature:      t.Signature,
 		Nonce:          t.Nonce,
 		ReceiptSuccess: t.Receipt.Success,
