@@ -93,33 +93,6 @@ func (i *Instance) GetAssetsByIDs(ids []string, ctx context.Context) ([]models.A
 	if len(ids) == 0 {
 		return nil, nil
 	}
-	//var assetsFromMemory []models.Asset
-	//for _, id := range ids {
-	//	rawAsset, err := i.MemoryGet(id, ctx)
-	//	if err != nil {
-	//		continue
-	//	}
-	//	var a models.Asset
-	//	if err = json.Unmarshal(rawAsset, &a); err != nil {
-	//		continue
-	//	}
-	//	assetsFromMemory = append(assetsFromMemory, a)
-	//}
-	//if len(assetsFromMemory) == len(ids) {
-	//	return assetsFromMemory, nil
-	//}
-	//var assetsIDsNotInMemory []string
-	//for _, memoryId := range ids {
-	//	for _, id := range models.AssetIDs(assetsFromMemory) {
-	//		if id == memoryId {
-	//			continue
-	//		}
-	//	}
-	//	assetsIDsNotInMemory = append(assetsIDsNotInMemory, memoryId)
-	//}
-	//if len(assetsIDsNotInMemory) == 0 {
-	//	return assetsFromMemory, nil
-	//}
 
 	var dbAssets []models.Asset
 	if err := db.Where("asset in (?)", ids).Find(&dbAssets).Error; err != nil {
@@ -155,10 +128,14 @@ func assetsBatch(values []models.Asset, sizeUint uint) [][]models.Asset {
 func filterAssets(values []models.Asset) []models.Asset {
 	result := make([]models.Asset, 0, len(values))
 	for _, v := range values {
-		if utf8.ValidString(v.Asset) &&
+		valuesAreAtUTF8 := utf8.ValidString(v.Asset) &&
 			utf8.ValidString(v.Type) &&
 			utf8.ValidString(v.Symbol) &&
-			utf8.ValidString(v.Name) {
+			utf8.ValidString(v.Name)
+		valuesAreNotEmpty := v.Asset != "" &&
+			v.Type != "" && v.Symbol != "" &&
+			v.Name == "" && v.Decimals != 0
+		if valuesAreAtUTF8 && valuesAreNotEmpty {
 			result = append(result, v)
 		}
 	}

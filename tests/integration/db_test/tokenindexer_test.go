@@ -41,6 +41,17 @@ func Test_AddNewAssets_Simple(t *testing.T) {
 	})
 	err = database.AddNewAssets(a, context.Background())
 	assert.Nil(t, err)
+	err = database.AddNewAssets([]models.Asset{{
+		Asset:    "c714_p",
+		Decimals: 0,
+		Name:     "D",
+		Symbol:   "DTS",
+		Type:     "BEP20",
+	}}, context.Background())
+	assert.Nil(t, err)
+	assets, err = database.GetAssetsByIDs([]string{"c714_p"}, context.Background())
+	assert.Nil(t, err)
+	assert.Equal(t, 0, len(assets))
 }
 
 func Test_AddNewAssets(t *testing.T) {
@@ -57,14 +68,14 @@ func Test_AddNewAssets(t *testing.T) {
 			Assets: []models.Asset{
 				{
 					Asset:    "c714_a",
-					Decimals: 18,
+					Decimals: 15,
 					Name:     "A",
 					Symbol:   "ABC",
 					Type:     "BEP20",
 				},
 				{
 					Asset:    "c714_b",
-					Decimals: 18,
+					Decimals: 16,
 					Name:     "B",
 					Symbol:   "BCD",
 					Type:     "BEP20",
@@ -75,14 +86,14 @@ func Test_AddNewAssets(t *testing.T) {
 			WantedAssets: []models.Asset{
 				{
 					Asset:    "c714_a",
-					Decimals: 18,
+					Decimals: 15,
 					Name:     "A",
 					Symbol:   "ABC",
 					Type:     "BEP20",
 				},
 				{
 					Asset:    "c714_b",
-					Decimals: 18,
+					Decimals: 16,
 					Name:     "B",
 					Symbol:   "BCD",
 					Type:     "BEP20",
@@ -94,7 +105,7 @@ func Test_AddNewAssets(t *testing.T) {
 			Assets: []models.Asset{
 				{
 					Asset:    "c714_c",
-					Decimals: 18,
+					Decimals: 17,
 					Name:     "C",
 					Symbol:   "FFF",
 					Type:     "ERC20",
@@ -112,21 +123,21 @@ func Test_AddNewAssets(t *testing.T) {
 			WantedAssets: []models.Asset{
 				{
 					Asset:    "c714_a",
-					Decimals: 18,
+					Decimals: 15,
 					Name:     "A",
 					Symbol:   "ABC",
 					Type:     "BEP20",
 				},
 				{
 					Asset:    "c714_b",
-					Decimals: 18,
+					Decimals: 16,
 					Name:     "B",
 					Symbol:   "BCD",
 					Type:     "BEP20",
 				},
 				{
 					Asset:    "c714_c",
-					Decimals: 18,
+					Decimals: 17,
 					Name:     "C",
 					Symbol:   "FFF",
 					Type:     "ERC20",
@@ -149,10 +160,10 @@ func Test_AddNewAssets(t *testing.T) {
 			assets, err := database.GetAssetsByIDs(tt.AssetsIDs, context.Background())
 			assert.Nil(t, err)
 			sort.Slice(tt.WantedAssets, func(i, j int) bool {
-				return tt.WantedAssets[i].Asset > tt.WantedAssets[j].Asset
+				return tt.WantedAssets[i].Decimals > tt.WantedAssets[j].Decimals
 			})
 			sort.Slice(assets, func(i, j int) bool {
-				return assets[i].Asset > assets[j].Asset
+				return assets[i].Decimals > assets[j].Decimals
 			})
 			for i, a := range assets {
 				assert.Equal(t, tt.WantedAssets[i].Asset, a.Asset)
