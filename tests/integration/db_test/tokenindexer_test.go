@@ -4,8 +4,11 @@ package db_test
 
 import (
 	"context"
+	gocache "github.com/patrickmn/go-cache"
 	assert "github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas/db/models"
+	"github.com/trustwallet/blockatlas/pkg/logger"
+	"github.com/trustwallet/blockatlas/tests/integration/setup"
 	"sort"
 	"testing"
 )
@@ -55,6 +58,8 @@ func Test_AddNewAssets_Simple(t *testing.T) {
 }
 
 func Test_AddNewAssets(t *testing.T) {
+	setup.CleanupPgContainer(database.Gorm)
+	database.MemoryCache = gocache.New(gocache.NoExpiration, gocache.NoExpiration)
 	type testsStruct struct {
 		Name         string
 		Assets       []models.Asset
@@ -76,7 +81,7 @@ func Test_AddNewAssets(t *testing.T) {
 				{
 					Asset:    "c714_b",
 					Decimals: 16,
-					Name:     "B",
+					Name:     "BB",
 					Symbol:   "BCD",
 					Type:     "BEP20",
 				},
@@ -94,7 +99,7 @@ func Test_AddNewAssets(t *testing.T) {
 				{
 					Asset:    "c714_b",
 					Decimals: 16,
-					Name:     "B",
+					Name:     "BB",
 					Symbol:   "BCD",
 					Type:     "BEP20",
 				},
@@ -106,14 +111,14 @@ func Test_AddNewAssets(t *testing.T) {
 				{
 					Asset:    "c714_c",
 					Decimals: 17,
-					Name:     "C",
+					Name:     "CCC",
 					Symbol:   "FFF",
 					Type:     "ERC20",
 				},
 				{
 					Asset:    "c714_d",
 					Decimals: 18,
-					Name:     "D",
+					Name:     "DDDD",
 					Symbol:   "RRR",
 					Type:     "TRC20",
 				},
@@ -131,21 +136,21 @@ func Test_AddNewAssets(t *testing.T) {
 				{
 					Asset:    "c714_b",
 					Decimals: 16,
-					Name:     "B",
+					Name:     "BB",
 					Symbol:   "BCD",
 					Type:     "BEP20",
 				},
 				{
 					Asset:    "c714_c",
 					Decimals: 17,
-					Name:     "C",
+					Name:     "CCC",
 					Symbol:   "FFF",
 					Type:     "ERC20",
 				},
 				{
 					Asset:    "c714_d",
 					Decimals: 18,
-					Name:     "D",
+					Name:     "DDDD",
 					Symbol:   "RRR",
 					Type:     "TRC20",
 				},
@@ -160,11 +165,14 @@ func Test_AddNewAssets(t *testing.T) {
 			assets, err := database.GetAssetsByIDs(tt.AssetsIDs, context.Background())
 			assert.Nil(t, err)
 			sort.Slice(tt.WantedAssets, func(i, j int) bool {
-				return tt.WantedAssets[i].Decimals > tt.WantedAssets[j].Decimals
+				return len(tt.WantedAssets[i].Name) > len(tt.WantedAssets[j].Name)
 			})
 			sort.Slice(assets, func(i, j int) bool {
-				return assets[i].Decimals > assets[j].Decimals
+				return len(assets[i].Name) > len(assets[j].Name)
 			})
+			logger.Info(tt.WantedAssets)
+			logger.Info("----------------------")
+			logger.Info(assets)
 			for i, a := range assets {
 				assert.Equal(t, tt.WantedAssets[i].Asset, a.Asset)
 				assert.Equal(t, tt.WantedAssets[i].Name, a.Name)
