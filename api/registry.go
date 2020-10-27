@@ -40,9 +40,8 @@ func RegisterTransactionsAPI(router gin.IRouter, api blockatlas.Platform) {
 		})
 	}
 
-	blockAPI, okBlockAPI := api.(blockatlas.BlockAPI)
-	if okBlockAPI {
-		router.GET("/v2/"+handle+"/block/:block", func(c *gin.Context) {
+	if blockAPI, ok := api.(blockatlas.BlockAPI); ok {
+		router.GET("/v2/"+handle+"/blocks/:block", func(c *gin.Context) {
 			endpoint.GetBlock(c, blockAPI)
 		})
 	}

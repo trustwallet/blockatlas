@@ -20,7 +20,8 @@ import (
 // @Failure 500 {object} ErrorResponse
 // @Router /v2/{coin}/blocks/{block} [get]
 func GetBlock(c *gin.Context, blockAPI blockatlas.BlockAPI) {
-	blockNumber, err := strconv.ParseUint(c.Param("block"), 10, 32)
+	blockString := c.Param("block")
+	blockNumber, err := strconv.ParseUint(blockString, 10, 32)
 
 	if blockNumber <= 1 {
 		c.AbortWithStatusJSON(http.StatusBadRequest, errorResponse(errors.New("invalid block number")))
