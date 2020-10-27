@@ -3,11 +3,13 @@ package db
 import (
 	"context"
 	"encoding/json"
-	gocache "github.com/patrickmn/go-cache"
-	"gorm.io/gorm"
-	"gorm.io/gorm/clause"
 	"time"
 	"unicode/utf8"
+
+	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
+
+	gocache "github.com/patrickmn/go-cache"
 
 	"github.com/trustwallet/blockatlas/db/models"
 )
@@ -23,7 +25,7 @@ func (i *Instance) AddNewAssets(assets []models.Asset, ctx context.Context) erro
 	var notInMemoryAssets []models.Asset
 	for _, a := range uniqueAssets {
 		_, err := i.MemoryGet(a.Asset, ctx)
-		if err == nil {
+		if err != nil {
 			notInMemoryAssets = append(notInMemoryAssets, a)
 		}
 	}
@@ -36,10 +38,11 @@ func (i *Instance) AddNewAssets(assets []models.Asset, ctx context.Context) erro
 		return err
 	}
 	if len(existingAssets) == 0 {
-		return db.Clauses(clause.OnConflict{DoNothing: true}).Create(&uniqueAssets).Error
+		i.addToMemory(notInMemoryAssets, ctx)
+		return db.Clauses(clause.OnConflict{DoNothing: true}).Create(&notInMemoryAssets).Error
 	}
 	allAssetsMap := make(map[string]models.Asset)
-	for _, ua := range uniqueAssets {
+	for _, ua := range notInMemoryAssets {
 		allAssetsMap[ua.Asset] = ua
 	}
 	existingAssetsMap := make(map[string]models.Asset)
@@ -56,17 +59,7 @@ func (i *Instance) AddNewAssets(assets []models.Asset, ctx context.Context) erro
 	if len(newAssets) == 0 {
 		return nil
 	}
-
-	for _, a := range newAssets {
-		raw, err := json.Marshal(a)
-		if err != nil {
-			continue
-		}
-		err = i.MemorySet(a.Asset, raw, gocache.NoExpiration, ctx)
-		if err != nil {
-			continue
-		}
-	}
+	i.addToMemory(newAssets, ctx)
 
 	assetsBatch := assetsBatch(newAssets, batchCount)
 
@@ -81,41 +74,57 @@ func (i *Instance) AddNewAssets(assets []models.Asset, ctx context.Context) erro
 	})
 }
 
+func (i *Instance) addToMemory(newAssets []models.Asset, ctx context.Context) {
+	for _, a := range newAssets {
+		raw, err := json.Marshal(a)
+		if err != nil {
+			continue
+		}
+		err = i.MemorySet(a.Asset, raw, gocache.NoExpiration, ctx)
+		if err != nil {
+			continue
+		}
+	}
+}
+
 func (i *Instance) GetAssetsByIDs(ids []string, ctx context.Context) ([]models.Asset, error) {
 	db := i.Gorm.WithContext(ctx)
 	// todo: look why nil and len 0 make db calls rn
 	if len(ids) == 0 {
 		return nil, nil
 	}
-	var assetsFromMemory []models.Asset
-	for _, id := range ids {
-		rawAsset, err := i.MemoryGet(id, ctx)
-		if err == nil {
-			continue
-		}
-		var a models.Asset
-		if err = json.Unmarshal(rawAsset, &a); err == nil {
-			continue
-		}
-		assetsFromMemory = append(assetsFromMemory, a)
-	}
-	if len(assetsFromMemory) == len(ids) {
-		return assetsFromMemory, nil
-	}
-	var assetsIDsNotInMemory []string
-	for _, memoryId := range models.AssetIDs(assetsFromMemory) {
-		for _, id := range ids {
-			if id == memoryId {
-				assetsIDsNotInMemory = append(assetsIDsNotInMemory, id)
-			}
-		}
-	}
+	//var assetsFromMemory []models.Asset
+	//for _, id := range ids {
+	//	rawAsset, err := i.MemoryGet(id, ctx)
+	//	if err != nil {
+	//		continue
+	//	}
+	//	var a models.Asset
+	//	if err = json.Unmarshal(rawAsset, &a); err != nil {
+	//		continue
+	//	}
+	//	assetsFromMemory = append(assetsFromMemory, a)
+	//}
+	//if len(assetsFromMemory) == len(ids) {
+	//	return assetsFromMemory, nil
+	//}
+	//var assetsIDsNotInMemory []string
+	//for _, memoryId := range ids {
+	//	for _, id := range models.AssetIDs(assetsFromMemory) {
+	//		if id == memoryId {
+	//			continue
+	//		}
+	//	}
+	//	assetsIDsNotInMemory = append(assetsIDsNotInMemory, memoryId)
+	//}
+	//if len(assetsIDsNotInMemory) == 0 {
+	//	return assetsFromMemory, nil
+	//}
 
 	var dbAssets []models.Asset
-	if err := db.Where("asset in (?)", ids).Find(&assetsIDsNotInMemory).Error; err != nil {
+	if err := db.Where("asset in (?)", ids).Find(&dbAssets).Error; err != nil {
 		return nil, err
 	}
-	dbAssets = append(dbAssets, assetsFromMemory...)
 	return dbAssets, nil
 }
 

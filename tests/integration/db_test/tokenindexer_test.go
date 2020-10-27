@@ -10,6 +10,39 @@ import (
 	"testing"
 )
 
+func Test_AddNewAssets_Simple(t *testing.T) {
+	a := []models.Asset{
+		{
+			Asset:    "c714_a",
+			Decimals: 18,
+			Name:     "A",
+			Symbol:   "ABC",
+			Type:     "BEP20",
+		},
+		{
+			Asset:    "c714_b",
+			Decimals: 18,
+			Name:     "B",
+			Symbol:   "BCD",
+			Type:     "BEP20",
+		},
+	}
+	err := database.AddNewAssets(a, context.Background())
+	assert.Nil(t, err)
+	assets, err := database.GetAssetsByIDs([]string{"c714_b", "c714_a"}, context.Background())
+	assert.Nil(t, err)
+	assert.NotNil(t, assets)
+	a = append(a, models.Asset{
+		Asset:    "c714_d",
+		Decimals: 18,
+		Name:     "D",
+		Symbol:   "DTS",
+		Type:     "BEP20",
+	})
+	err = database.AddNewAssets(a, context.Background())
+	assert.Nil(t, err)
+}
+
 func Test_AddNewAssets(t *testing.T) {
 	type testsStruct struct {
 		Name         string
