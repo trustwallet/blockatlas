@@ -60,6 +60,7 @@ func Test_AddNewAssets_Simple(t *testing.T) {
 
 func Test_GetAssetsFrom_Simple(t *testing.T) {
 	setup.CleanupPgContainer(database.Gorm)
+	database.MemoryCache = gocache.New(gocache.NoExpiration, gocache.NoExpiration)
 	a := []models.Asset{
 		{
 			Asset:    "c714_a",
