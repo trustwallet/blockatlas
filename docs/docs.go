@@ -19,6 +19,7 @@ var doc = `{
         "description": "{{.Description}}",
         "title": "{{.Title}}",
         "contact": {},
+        "license": {},
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
@@ -45,10 +46,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/api_endpoint.AddressBatchRequest"
-                            }
+                            "$ref": "#/definitions/endpoint.AddressesRequest"
                         }
                     }
                 ],
@@ -56,10 +54,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/blockatlas.DelegationResponse"
-                            }
+                            "$ref": "#/definitions/blockatlas.DelegationsBatchPage"
                         }
                     }
                 }
@@ -86,10 +81,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/api_endpoint.AddressBatchRequest"
-                            }
+                            "$ref": "#/definitions/endpoint.AddressesRequest"
                         }
                     }
                 ],
@@ -97,10 +89,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/blockatlas.DelegationResponse"
-                            }
+                            "$ref": "#/definitions/blockatlas.DelegationsBatchPage"
                         }
                     }
                 }
@@ -178,7 +167,7 @@ var doc = `{
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github.com_trustwallet_blockatlas_api_endpoint.ErrorResponse"
+                            "$ref": "#/definitions/endpoint.ErrorResponse"
                         }
                     }
                 }
@@ -226,7 +215,7 @@ var doc = `{
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/api_endpoint.ErrorResponse"
+                            "$ref": "#/definitions/endpoint.ErrorResponse"
                         }
                     }
                 }
@@ -266,7 +255,7 @@ var doc = `{
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/api_endpoint.ErrorResponse"
+                            "$ref": "#/definitions/endpoint.ErrorResponse"
                         }
                     }
                 }
@@ -308,16 +297,13 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/blockatlas.Collection"
-                            }
+                            "$ref": "#/definitions/blockatlas.CollectionPage"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github.com_trustwallet_blockatlas_api_endpoint.ErrorResponse"
+                            "$ref": "#/definitions/endpoint.ErrorResponse"
                         }
                     }
                 }
@@ -359,7 +345,7 @@ var doc = `{
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github.com_trustwallet_blockatlas_api_endpoint.ErrorResponse"
+                            "$ref": "#/definitions/endpoint.ErrorResponse"
                         }
                     }
                 }
@@ -401,7 +387,7 @@ var doc = `{
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github.com_trustwallet_blockatlas_api_endpoint.ErrorResponse"
+                            "$ref": "#/definitions/endpoint.ErrorResponse"
                         }
                     }
                 }
@@ -433,17 +419,53 @@ var doc = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "type": "array",
-                                "items": {
-                                    "$ref": "#/definitions/blockatlas.DelegationResponse"
-                                }
+                                "$ref": "#/definitions/blockatlas.DelegationsBatchPage"
                             }
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/api_endpoint.ErrorResponse"
+                            "$ref": "#/definitions/endpoint.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v3/tokens/new": {
+            "get": {
+                "description": "Get new tokens",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Transactions"
+                ],
+                "summary": "Get list of new tokens by coin from specific unix timstamp",
+                "operationId": "tokens_new_v3",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "unix timestamp",
+                        "name": "from",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "coin like 60",
+                        "name": "coin",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/tokenindexer.Response"
                         }
                     }
                 }
@@ -529,16 +551,13 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/blockatlas.Collection"
-                            }
+                            "$ref": "#/definitions/blockatlas.CollectionPage"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github.com_trustwallet_blockatlas_api_endpoint.ErrorResponse"
+                            "$ref": "#/definitions/endpoint.ErrorResponse"
                         }
                     }
                 }
@@ -546,33 +565,6 @@ var doc = `{
         }
     },
     "definitions": {
-        "api_endpoint.AddressBatchRequest": {
-            "type": "object",
-            "properties": {
-                "address": {
-                    "type": "string"
-                },
-                "coin": {
-                    "type": "integer"
-                }
-            }
-        },
-        "api_endpoint.ErrorDetails": {
-            "type": "object",
-            "properties": {
-                "message": {
-                    "type": "string"
-                }
-            }
-        },
-        "api_endpoint.ErrorResponse": {
-            "type": "object",
-            "properties": {
-                "error": {
-                    "$ref": "#/definitions/api_endpoint.ErrorDetails"
-                }
-            }
-        },
         "blockatlas.Collection": {
             "type": "object",
             "properties": {
@@ -602,10 +594,17 @@ var doc = `{
                 }
             }
         },
+        "blockatlas.CollectionPage": {
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/blockatlas.Collection"
+            }
+        },
         "blockatlas.Delegation": {
             "type": "object",
             "properties": {
                 "delegator": {
+                    "type": "object",
                     "$ref": "#/definitions/blockatlas.StakeValidator"
                 },
                 "metadata": {
@@ -629,17 +628,29 @@ var doc = `{
                     "type": "string"
                 },
                 "coin": {
+                    "type": "object",
                     "$ref": "#/definitions/coin.ExternalCoin"
                 },
                 "delegations": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/blockatlas.Delegation"
-                    }
+                    "type": "object",
+                    "$ref": "#/definitions/blockatlas.DelegationsPage"
                 },
                 "details": {
+                    "type": "object",
                     "$ref": "#/definitions/blockatlas.StakingDetails"
                 }
+            }
+        },
+        "blockatlas.DelegationsBatchPage": {
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/blockatlas.DelegationResponse"
+            }
+        },
+        "blockatlas.DelegationsPage": {
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/blockatlas.Delegation"
             }
         },
         "blockatlas.DocsResponse": {
@@ -665,12 +676,14 @@ var doc = `{
             "type": "object",
             "properties": {
                 "details": {
+                    "type": "object",
                     "$ref": "#/definitions/blockatlas.StakingDetails"
                 },
                 "id": {
                     "type": "string"
                 },
                 "info": {
+                    "type": "object",
                     "$ref": "#/definitions/blockatlas.StakeValidatorInfo"
                 },
                 "status": {
@@ -705,6 +718,7 @@ var doc = `{
                     "type": "string"
                 },
                 "reward": {
+                    "type": "object",
                     "$ref": "#/definitions/blockatlas.StakingReward"
                 },
                 "type": {
@@ -737,7 +751,7 @@ var doc = `{
                 }
             }
         },
-        "github.com_trustwallet_blockatlas_api_endpoint.AddressBatchRequest": {
+        "endpoint.AddressBatchRequest": {
             "type": "object",
             "properties": {
                 "address": {
@@ -748,7 +762,13 @@ var doc = `{
                 }
             }
         },
-        "github.com_trustwallet_blockatlas_api_endpoint.ErrorDetails": {
+        "endpoint.AddressesRequest": {
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/endpoint.AddressBatchRequest"
+            }
+        },
+        "endpoint.ErrorDetails": {
             "type": "object",
             "properties": {
                 "message": {
@@ -756,11 +776,43 @@ var doc = `{
                 }
             }
         },
-        "github.com_trustwallet_blockatlas_api_endpoint.ErrorResponse": {
+        "endpoint.ErrorResponse": {
             "type": "object",
             "properties": {
                 "error": {
-                    "$ref": "#/definitions/github.com_trustwallet_blockatlas_api_endpoint.ErrorDetails"
+                    "type": "object",
+                    "$ref": "#/definitions/endpoint.ErrorDetails"
+                }
+            }
+        },
+        "tokenindexer.Asset": {
+            "type": "object",
+            "properties": {
+                "asset": {
+                    "type": "string"
+                },
+                "decimals": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "symbol": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "tokenindexer.Response": {
+            "type": "object",
+            "properties": {
+                "assets": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/tokenindexer.Asset"
+                    }
                 }
             }
         }
