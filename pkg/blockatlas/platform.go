@@ -57,11 +57,6 @@ type (
 		GetCollectibles(owner, collectibleID string) (CollectiblePage, error)
 	}
 
-	NamingServiceAPI interface {
-		CanHandle(name string) bool
-		Lookup(coins []uint64, name string) ([]Resolved, error)
-	}
-
 	Platforms map[string]Platform
 
 	CollectionsAPIs map[uint]CollectionsAPI

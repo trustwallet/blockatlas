@@ -19,98 +19,11 @@ var doc = `{
         "description": "{{.Description}}",
         "title": "{{.Title}}",
         "contact": {},
-        "license": {},
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/ns/lookup": {
-            "get": {
-                "description": "Lookup ENS/ZNS to find registered addresses",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Naming"
-                ],
-                "summary": "Lookup .eth / .zil addresses",
-                "operationId": "lookup",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "string name",
-                        "name": "name",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "string coin",
-                        "name": "coin",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/blockatlas.Resolved"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/endpoint.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/v2/ns/lookup": {
-            "get": {
-                "description": "Lookup ENS/ZNS to find registered addresses for multiple coins",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Naming"
-                ],
-                "summary": "Lookup .eth / .zil addresses",
-                "operationId": "lookup",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "string name",
-                        "name": "name",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "List of coins",
-                        "name": "coins",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/blockatlas.Resolved"
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/endpoint.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
         "/v2/staking/delegations": {
             "post": {
                 "description": "Get Stake Delegations for multiple coins",
@@ -124,7 +37,7 @@ var doc = `{
                     "Staking"
                 ],
                 "summary": "Get Multiple Stake Delegations",
-                "operationId": "batch_delegations",
+                "operationId": "staking_v2_batch",
                 "parameters": [
                     {
                         "description": "Validators addresses and coins",
@@ -132,7 +45,10 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/endpoint.AddressesRequest"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/api_endpoint.AddressBatchRequest"
+                            }
                         }
                     }
                 ],
@@ -140,7 +56,10 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/blockatlas.DelegationsBatchPage"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/blockatlas.DelegationResponse"
+                            }
                         }
                     }
                 }
@@ -159,7 +78,7 @@ var doc = `{
                     "Staking"
                 ],
                 "summary": "Get Multiple Stake Delegations",
-                "operationId": "batch_delegations",
+                "operationId": "staking_v2",
                 "parameters": [
                     {
                         "description": "Validators addresses and coins",
@@ -167,7 +86,10 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/endpoint.AddressesRequest"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/api_endpoint.AddressBatchRequest"
+                            }
                         }
                     }
                 ],
@@ -175,7 +97,10 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/blockatlas.DelegationsBatchPage"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/blockatlas.DelegationResponse"
+                            }
                         }
                     }
                 }
@@ -212,6 +137,48 @@ var doc = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/blockatlas.ResultsResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v2/{coin}/blocks/{block}": {
+            "get": {
+                "description": "Get Block information",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Transactions"
+                ],
+                "summary": "Get Block",
+                "operationId": "block_v2",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "zilliqa",
+                        "description": "the coin name",
+                        "name": "coin",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "default": "850321",
+                        "description": "the query address",
+                        "name": "address",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github.com_trustwallet_blockatlas_api_endpoint.ErrorResponse"
                         }
                     }
                 }
@@ -259,7 +226,7 @@ var doc = `{
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/endpoint.ErrorResponse"
+                            "$ref": "#/definitions/api_endpoint.ErrorResponse"
                         }
                     }
                 }
@@ -278,7 +245,7 @@ var doc = `{
                     "Staking"
                 ],
                 "summary": "Get Validators",
-                "operationId": "validators",
+                "operationId": "validators_v2",
                 "parameters": [
                     {
                         "type": "string",
@@ -299,7 +266,7 @@ var doc = `{
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/endpoint.ErrorResponse"
+                            "$ref": "#/definitions/api_endpoint.ErrorResponse"
                         }
                     }
                 }
@@ -341,13 +308,16 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/blockatlas.CollectionPage"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/blockatlas.Collection"
+                            }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/endpoint.ErrorResponse"
+                            "$ref": "#/definitions/github.com_trustwallet_blockatlas_api_endpoint.ErrorResponse"
                         }
                     }
                 }
@@ -389,7 +359,7 @@ var doc = `{
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/endpoint.ErrorResponse"
+                            "$ref": "#/definitions/github.com_trustwallet_blockatlas_api_endpoint.ErrorResponse"
                         }
                     }
                 }
@@ -431,7 +401,7 @@ var doc = `{
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/endpoint.ErrorResponse"
+                            "$ref": "#/definitions/github.com_trustwallet_blockatlas_api_endpoint.ErrorResponse"
                         }
                     }
                 }
@@ -447,7 +417,7 @@ var doc = `{
                     "Staking"
                 ],
                 "summary": "Get staking info by coin ID",
-                "operationId": "batch_info",
+                "operationId": "staking_v3",
                 "parameters": [
                     {
                         "type": "string",
@@ -463,14 +433,17 @@ var doc = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/blockatlas.DelegationsBatchPage"
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/definitions/blockatlas.DelegationResponse"
+                                }
                             }
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/endpoint.ErrorResponse"
+                            "$ref": "#/definitions/api_endpoint.ErrorResponse"
                         }
                     }
                 }
@@ -556,13 +529,16 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/blockatlas.CollectionPage"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/blockatlas.Collection"
+                            }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/endpoint.ErrorResponse"
+                            "$ref": "#/definitions/github.com_trustwallet_blockatlas_api_endpoint.ErrorResponse"
                         }
                     }
                 }
@@ -570,6 +546,33 @@ var doc = `{
         }
     },
     "definitions": {
+        "api_endpoint.AddressBatchRequest": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "coin": {
+                    "type": "integer"
+                }
+            }
+        },
+        "api_endpoint.ErrorDetails": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "api_endpoint.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "$ref": "#/definitions/api_endpoint.ErrorDetails"
+                }
+            }
+        },
         "blockatlas.Collection": {
             "type": "object",
             "properties": {
@@ -599,17 +602,10 @@ var doc = `{
                 }
             }
         },
-        "blockatlas.CollectionPage": {
-            "type": "array",
-            "items": {
-                "$ref": "#/definitions/blockatlas.Collection"
-            }
-        },
         "blockatlas.Delegation": {
             "type": "object",
             "properties": {
                 "delegator": {
-                    "type": "object",
                     "$ref": "#/definitions/blockatlas.StakeValidator"
                 },
                 "metadata": {
@@ -633,29 +629,17 @@ var doc = `{
                     "type": "string"
                 },
                 "coin": {
-                    "type": "object",
                     "$ref": "#/definitions/coin.ExternalCoin"
                 },
                 "delegations": {
-                    "type": "object",
-                    "$ref": "#/definitions/blockatlas.DelegationsPage"
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/blockatlas.Delegation"
+                    }
                 },
                 "details": {
-                    "type": "object",
                     "$ref": "#/definitions/blockatlas.StakingDetails"
                 }
-            }
-        },
-        "blockatlas.DelegationsBatchPage": {
-            "type": "array",
-            "items": {
-                "$ref": "#/definitions/blockatlas.DelegationResponse"
-            }
-        },
-        "blockatlas.DelegationsPage": {
-            "type": "array",
-            "items": {
-                "$ref": "#/definitions/blockatlas.Delegation"
             }
         },
         "blockatlas.DocsResponse": {
@@ -663,17 +647,6 @@ var doc = `{
             "properties": {
                 "docs": {
                     "type": "object"
-                }
-            }
-        },
-        "blockatlas.Resolved": {
-            "type": "object",
-            "properties": {
-                "coin": {
-                    "type": "integer"
-                },
-                "result": {
-                    "type": "string"
                 }
             }
         },
@@ -692,14 +665,12 @@ var doc = `{
             "type": "object",
             "properties": {
                 "details": {
-                    "type": "object",
                     "$ref": "#/definitions/blockatlas.StakingDetails"
                 },
                 "id": {
                     "type": "string"
                 },
                 "info": {
-                    "type": "object",
                     "$ref": "#/definitions/blockatlas.StakeValidatorInfo"
                 },
                 "status": {
@@ -734,7 +705,6 @@ var doc = `{
                     "type": "string"
                 },
                 "reward": {
-                    "type": "object",
                     "$ref": "#/definitions/blockatlas.StakingReward"
                 },
                 "type": {
@@ -767,7 +737,7 @@ var doc = `{
                 }
             }
         },
-        "endpoint.AddressBatchRequest": {
+        "github.com_trustwallet_blockatlas_api_endpoint.AddressBatchRequest": {
             "type": "object",
             "properties": {
                 "address": {
@@ -778,13 +748,7 @@ var doc = `{
                 }
             }
         },
-        "endpoint.AddressesRequest": {
-            "type": "array",
-            "items": {
-                "$ref": "#/definitions/endpoint.AddressBatchRequest"
-            }
-        },
-        "endpoint.ErrorDetails": {
+        "github.com_trustwallet_blockatlas_api_endpoint.ErrorDetails": {
             "type": "object",
             "properties": {
                 "message": {
@@ -792,12 +756,11 @@ var doc = `{
                 }
             }
         },
-        "endpoint.ErrorResponse": {
+        "github.com_trustwallet_blockatlas_api_endpoint.ErrorResponse": {
             "type": "object",
             "properties": {
                 "error": {
-                    "type": "object",
-                    "$ref": "#/definitions/endpoint.ErrorDetails"
+                    "$ref": "#/definitions/github.com_trustwallet_blockatlas_api_endpoint.ErrorDetails"
                 }
             }
         }

@@ -81,7 +81,7 @@ func getAllHandlers() blockatlas.Platforms {
 		coin.Solana().Handle:       solana.Init(GetApiVar(coin.SOL)),
 		coin.Tezos().Handle:        tezos.Init(GetApiVar(coin.XTZ), GetRpcVar(coin.XTZ)),
 		coin.Binance().Handle:      binance.Init(GetApiVar(coin.BNB)),
-		coin.Zilliqa().Handle:      zilliqa.Init(GetApiVar(coin.ZIL), GetVar("zilliqa.key"), GetRpcVar(coin.ZIL), GetVar("zilliqa.lookup")),
+		coin.Zilliqa().Handle:      zilliqa.Init(GetApiVar(coin.ZIL), GetVar("zilliqa.key"), GetRpcVar(coin.ZIL)),
 		coin.Kusama().Handle:       polkadot.Init(coin.KSM, GetApiVar(coin.KSM)),
 		coin.Polkadot().Handle:     polkadot.Init(coin.DOT, GetApiVar(coin.DOT)),
 		coin.Stellar().Handle:      stellar.Init(coin.XLM, GetApiVar(coin.XLM)),
@@ -111,7 +111,7 @@ func getAllHandlers() blockatlas.Platforms {
 		coin.Tomochain().Handle:    ethereum.Init(coin.TOMO, GetApiVar(coin.TOMO), GetRpcVar(coin.TOMO)),
 		coin.Bsc().Handle:          ethereum.InitWithBlockbook(coin.BSCLegacy, GetApiVar(coin.BSCLegacy), GetRpcVar(coin.BSCLegacy)),
 		coin.Smartchain().Handle:   ethereum.InitWithBlockbook(coin.BSC, GetApiVar(coin.BSC), GetRpcVar(coin.BSC)),
-		coin.Ethereum().Handle:     ethereum.InitWitCollection(coin.ETH, GetApiVar(coin.ETH), GetRpcVar(coin.ETH), GetVar("ethereum.blockbook_api"), GetVar("ethereum.collections_api"), GetVar("ethereum.collections_api_key")),
+		coin.Ethereum().Handle:     ethereum.InitWitCollection(coin.ETH, GetRpcVar(coin.ETH), GetVar("ethereum.blockbook_api"), GetVar("ethereum.collections_api"), GetVar("ethereum.collections_api_key")),
 		coin.Near().Handle:         near.Init(GetApiVar(coin.NEAR)),
 		coin.Elrond().Handle:       elrond.Init(coin.ERD, GetApiVar(coin.ERD)),
 		coin.Filecoin().Handle:     filecoin.Init(GetApiVar(coin.FIL)),
@@ -120,14 +120,6 @@ func getAllHandlers() blockatlas.Platforms {
 
 func getCollectionsHandlers() blockatlas.CollectionsAPIs {
 	return blockatlas.CollectionsAPIs{
-		coin.ETH: ethereum.InitWitCollection(coin.ETH, GetApiVar(coin.ETH), GetRpcVar(coin.ETH), GetVar("ethereum.blockbook_api"), GetVar("ethereum.collections_api"), GetVar("ethereum.collections_api_key")),
-	}
-}
-
-func getNamingHandlers() map[uint]blockatlas.NamingServiceAPI {
-	return map[uint]blockatlas.NamingServiceAPI{
-		coin.ETH: ethereum.Init(coin.ETH, GetApiVar(coin.ETH), GetRpcVar(coin.ETH)),
-		coin.FIO: fio.Init(GetApiVar(coin.FIO)),
-		coin.ZIL: zilliqa.Init(GetApiVar(coin.ZIL), GetVar("zilliqa.key"), GetRpcVar(coin.ZIL), GetVar("zilliqa.lookup")),
+		coin.ETH: ethereum.InitWitCollection(coin.ETH, GetRpcVar(coin.ETH), GetVar("ethereum.blockbook_api"), GetVar("ethereum.collections_api"), GetVar("ethereum.collections_api_key")),
 	}
 }

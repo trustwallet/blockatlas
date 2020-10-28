@@ -100,11 +100,6 @@ func RegisterBatchAPI(router gin.IRouter) {
 	})
 }
 
-func RegisterDomainAPI(router gin.IRouter) {
-	router.GET("/ns/lookup", endpoint.GetAddressByCoinAndDomain)
-	router.GET("/v2/ns/lookup", endpoint.GetAddressByCoinAndDomainBatch)
-}
-
 func RegisterBasicAPI(router gin.IRouter) {
 	router.GET("/", endpoint.GetStatus)
 	router.GET("/metrics", ginprom.PromHandler(promhttp.Handler()))
