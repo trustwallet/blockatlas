@@ -23,7 +23,7 @@ func GetBlock(c *gin.Context, blockAPI blockatlas.BlockAPI) {
 	blockString := c.Param("block")
 	blockNumber, err := strconv.ParseUint(blockString, 10, 32)
 
-	if err != nil || blockNumber <= 1 {
+	if err != nil || blockNumber < 1 {
 		c.AbortWithStatusJSON(http.StatusBadRequest, errorResponse(errors.New("invalid block number")))
 		return
 	}
