@@ -25,6 +25,7 @@ func (nr *NodesResponse) UpdateAssetsByAddress(tokens blockatlas.TokenPage, coin
 				Name:     t.Name,
 				Symbol:   t.Symbol,
 				Type:     string(t.Type),
+				ID:       t.Coin,
 			},
 		)
 	}
