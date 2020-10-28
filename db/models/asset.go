@@ -11,6 +11,7 @@ type Asset struct {
 	Name     string `gorm:"type:varchar(128)"`
 	Symbol   string `gorm:"type:varchar(128)"`
 	Type     string `gorm:"type:varchar(12)"`
+	Coin     uint
 }
 
 func AssetIDs(assets []Asset) []string {

@@ -112,7 +112,7 @@ func RegisterTokensSearcherAPI(router gin.IRouter, instance tokensearcher.Instan
 }
 
 func RegisterTokensIndexAPI(router gin.IRouter, instance tokenindexer.Instance) {
-	router.POST("/v3/tokens/new", func(c *gin.Context) {
+	router.GET("/v3/tokens/new", func(c *gin.Context) {
 		endpoint.GetNewTokens(c, instance)
 	})
 }

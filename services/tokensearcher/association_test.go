@@ -40,12 +40,12 @@ func Test_assetsMap(t *testing.T) {
 	}
 
 	result := assetsMap(blockatlas.Txs{tx1, tx2, tx3}, "60")
-	assert.Equal(t, result["60_A"], []models.Asset{{Asset: "c60_tABC", Type: "ERC20"}})
-	assert.Equal(t, result["60_C"], []models.Asset{{Asset: "c60_tABC", Type: "ERC20"}})
-	assert.Equal(t, result["60_D"], []models.Asset{{Asset: "c60_tEFG", Type: "ERC20"}})
-	assert.Equal(t, result["60_F"], []models.Asset{{Asset: "c60_tEFG", Type: "ERC20"}})
-	assert.Equal(t, result["60_Q"], []models.Asset{{Asset: "c60_tHIJ", Type: "ERC20"}})
-	assert.Equal(t, result["60_L"], []models.Asset{{Asset: "c60_tHIJ", Type: "ERC20"}})
+	assert.Equal(t, result["60_A"], []models.Asset{{Asset: "c60_tABC", Type: "ERC20", Coin: 60}})
+	assert.Equal(t, result["60_C"], []models.Asset{{Asset: "c60_tABC", Type: "ERC20", Coin: 60}})
+	assert.Equal(t, result["60_D"], []models.Asset{{Asset: "c60_tEFG", Type: "ERC20", Coin: 60}})
+	assert.Equal(t, result["60_F"], []models.Asset{{Asset: "c60_tEFG", Type: "ERC20", Coin: 60}})
+	assert.Equal(t, result["60_Q"], []models.Asset{{Asset: "c60_tHIJ", Type: "ERC20", Coin: 60}})
+	assert.Equal(t, result["60_L"], []models.Asset{{Asset: "c60_tHIJ", Type: "ERC20", Coin: 60}})
 }
 
 func Test_associationsToAdd(t *testing.T) {

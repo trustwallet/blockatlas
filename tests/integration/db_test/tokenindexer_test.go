@@ -11,6 +11,7 @@ import (
 	"github.com/trustwallet/blockatlas/tests/integration/setup"
 	"sort"
 	"testing"
+	"time"
 )
 
 func Test_AddNewAssets_Simple(t *testing.T) {
@@ -55,6 +56,37 @@ func Test_AddNewAssets_Simple(t *testing.T) {
 	assets, err = database.GetAssetsByIDs([]string{"c714_p"}, context.Background())
 	assert.Nil(t, err)
 	assert.Equal(t, 0, len(assets))
+}
+
+func Test_GetAssetsFrom_Simple(t *testing.T) {
+	setup.CleanupPgContainer(database.Gorm)
+	database.MemoryCache = gocache.New(gocache.NoExpiration, gocache.NoExpiration)
+	a := []models.Asset{
+		{
+			Asset:    "c714_a",
+			Coin:     714,
+			Decimals: 18,
+			Name:     "A",
+			Symbol:   "ABC",
+			Type:     "BEP20",
+		},
+		{
+			Asset:    "c714_b",
+			Decimals: 18,
+			Coin:     60,
+			Name:     "B",
+			Symbol:   "BCD",
+			Type:     "BEP20",
+		},
+	}
+	err := database.AddNewAssets(a, context.Background())
+	assert.Nil(t, err)
+	assets, err := database.GetAssetsFrom(time.Unix(0, 0), -1, context.Background())
+	assert.Nil(t, err)
+	assert.NotNil(t, assets)
+	assets, err = database.GetAssetsFrom(time.Unix(0, 0), 60, context.Background())
+	assert.Nil(t, err)
+	assert.Equal(t, 1, len(assets))
 }
 
 func Test_AddNewAssets(t *testing.T) {
