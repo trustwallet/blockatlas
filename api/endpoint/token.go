@@ -140,6 +140,16 @@ func GetTokensByAddressIndexer(c *gin.Context, instance tokensearcher.Instance) 
 	c.JSON(http.StatusOK, result)
 }
 
+// @Description Get new tokens
+// @ID tokens_new_v3
+// @Summary Get list of new tokens by coin from specific unix timstamp
+// @Accept json
+// @Produce json
+// @Tags Transactions
+// @Param from query int true "unix timestamp"
+// @Param coin query int false "coin like 60"
+// @Success 200 {object} tokenindexer.Response
+// @Router /v3/tokens/new [get]
 func GetNewTokens(c *gin.Context, instance tokenindexer.Instance) {
 	var request tokenindexer.Request
 	fromRaw := c.Query("from")
