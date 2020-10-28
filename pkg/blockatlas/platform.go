@@ -55,9 +55,6 @@ type (
 		Platform
 		GetCollections(owner string) (CollectionPage, error)
 		GetCollectibles(owner, collectibleID string) (CollectiblePage, error)
-
-		GetCollectionsV3(owner string) (CollectionPageV3, error)
-		GetCollectiblesV3(owner, collectibleID string) (CollectiblePageV3, error)
 	}
 
 	NamingServiceAPI interface {

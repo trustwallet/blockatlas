@@ -2,10 +2,11 @@ package blockatlas
 
 import (
 	"encoding/json"
-	"github.com/trustwallet/blockatlas/pkg/errors"
-	"github.com/trustwallet/blockatlas/pkg/numbers"
 	"regexp"
 	"strings"
+
+	"github.com/trustwallet/blockatlas/pkg/errors"
+	"github.com/trustwallet/blockatlas/pkg/numbers"
 )
 
 var matchNumber = regexp.MustCompile(`^\d+(\.\d+)?$`)
@@ -160,38 +161,6 @@ func (r CollectiblePage) MarshalJSON() ([]byte, error) {
 	page.Docs = []Collectible(r)
 	if page.Docs == nil {
 		page.Docs = make([]Collectible, 0)
-	}
-	page.Total = len(page.Docs)
-	page.Status = true
-	return json.Marshal(page)
-}
-
-// MarshalJSON returns a wrapped list of collections in JSON
-func (r CollectionPageV3) MarshalJSON() ([]byte, error) {
-	var page struct {
-		Total  int            `json:"total"`
-		Docs   []CollectionV3 `json:"docs"`
-		Status bool           `json:"status"`
-	}
-	page.Docs = []CollectionV3(r)
-	if page.Docs == nil {
-		page.Docs = make([]CollectionV3, 0)
-	}
-	page.Total = len(page.Docs)
-	page.Status = true
-	return json.Marshal(page)
-}
-
-// MarshalJSON returns a wrapped list of collectibles in JSON
-func (r CollectiblePageV3) MarshalJSON() ([]byte, error) {
-	var page struct {
-		Total  int             `json:"total"`
-		Docs   []CollectibleV3 `json:"docs"`
-		Status bool            `json:"status"`
-	}
-	page.Docs = []CollectibleV3(r)
-	if page.Docs == nil {
-		page.Docs = make([]CollectibleV3, 0)
 	}
 	page.Total = len(page.Docs)
 	page.Status = true
