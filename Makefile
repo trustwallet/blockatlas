@@ -222,7 +222,6 @@ ifeq (,$(test))
 	@bash -c "$(MAKE) newman-run test=token host=$(host)"
 	@bash -c "$(MAKE) newman-run test=staking host=$(host)"
 	@bash -c "$(MAKE) newman-run test=collection host=$(host)"
-	@bash -c "$(MAKE) newman-run test=domain host=$(host)"
 	@bash -c "$(MAKE) newman-run test=healthcheck host=$(host)"
 else
 	@bash -c "$(MAKE) newman-run test=$(test) host=$(host)"
