@@ -2,6 +2,7 @@ package platform
 
 import (
 	"fmt"
+
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
@@ -22,9 +23,6 @@ var (
 
 	// CollectionsAPIs contain platforms which collections services
 	CollectionsAPIs blockatlas.CollectionsAPIs
-
-	// NamingAPIs contain platforms which support naming services
-	NamingAPIs map[uint]blockatlas.NamingServiceAPI
 )
 
 func getActivePlatforms(handles []string) []blockatlas.Platform {
@@ -90,5 +88,4 @@ func Init(platformHandles []string) {
 	}
 
 	CollectionsAPIs = getCollectionsHandlers()
-	NamingAPIs = getNamingHandlers()
 }

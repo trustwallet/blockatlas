@@ -1,4 +1,21 @@
 definitions:
+  api_endpoint.AddressBatchRequest:
+    properties:
+      address:
+        type: string
+      coin:
+        type: integer
+    type: object
+  api_endpoint.ErrorDetails:
+    properties:
+      message:
+        type: string
+    type: object
+  api_endpoint.ErrorResponse:
+    properties:
+      error:
+        $ref: '#/definitions/api_endpoint.ErrorDetails'
+    type: object
   blockatlas.Collection:
     properties:
       address:
@@ -18,15 +35,10 @@ definitions:
       total:
         type: integer
     type: object
-  blockatlas.CollectionPage:
-    items:
-      $ref: '#/definitions/blockatlas.Collection'
-    type: array
   blockatlas.Delegation:
     properties:
       delegator:
         $ref: '#/definitions/blockatlas.StakeValidator'
-        type: object
       metadata:
         type: object
       status:
@@ -42,33 +54,17 @@ definitions:
         type: string
       coin:
         $ref: '#/definitions/coin.ExternalCoin'
-        type: object
       delegations:
-        $ref: '#/definitions/blockatlas.DelegationsPage'
-        type: object
+        items:
+          $ref: '#/definitions/blockatlas.Delegation'
+        type: array
       details:
         $ref: '#/definitions/blockatlas.StakingDetails'
-        type: object
     type: object
-  blockatlas.DelegationsBatchPage:
-    items:
-      $ref: '#/definitions/blockatlas.DelegationResponse'
-    type: array
-  blockatlas.DelegationsPage:
-    items:
-      $ref: '#/definitions/blockatlas.Delegation'
-    type: array
   blockatlas.DocsResponse:
     properties:
       docs:
         type: object
-    type: object
-  blockatlas.Resolved:
-    properties:
-      coin:
-        type: integer
-      result:
-        type: string
     type: object
   blockatlas.ResultsResponse:
     properties:
@@ -81,12 +77,10 @@ definitions:
     properties:
       details:
         $ref: '#/definitions/blockatlas.StakingDetails'
-        type: object
       id:
         type: string
       info:
         $ref: '#/definitions/blockatlas.StakeValidatorInfo'
-        type: object
       status:
         type: boolean
     type: object
@@ -109,7 +103,6 @@ definitions:
         type: string
       reward:
         $ref: '#/definitions/blockatlas.StakingReward'
-        type: object
       type:
         type: string
     type: object
@@ -129,59 +122,55 @@ definitions:
       symbol:
         type: string
     type: object
-  endpoint.AddressBatchRequest:
+  github.com_trustwallet_blockatlas_api_endpoint.AddressBatchRequest:
     properties:
       address:
         type: string
       coin:
         type: integer
     type: object
-  endpoint.AddressesRequest:
-    items:
-      $ref: '#/definitions/endpoint.AddressBatchRequest'
-    type: array
-  endpoint.ErrorDetails:
+  github.com_trustwallet_blockatlas_api_endpoint.ErrorDetails:
     properties:
       message:
         type: string
     type: object
-  endpoint.ErrorResponse:
+  github.com_trustwallet_blockatlas_api_endpoint.ErrorResponse:
     properties:
       error:
-        $ref: '#/definitions/endpoint.ErrorDetails'
-        type: object
+        $ref: '#/definitions/github.com_trustwallet_blockatlas_api_endpoint.ErrorDetails'
     type: object
 info:
   contact: {}
-  license: {}
 paths:
-  /ns/lookup:
+  /v2/{coin}/blocks/{block}:
     get:
-      description: Lookup ENS/ZNS to find registered addresses
-      operationId: lookup
+      consumes:
+      - application/json
+      description: Get Block information
+      operationId: block_v2
       parameters:
-      - description: string name
-        in: query
-        name: name
-        type: string
-      - description: string coin
-        in: query
+      - default: zilliqa
+        description: the coin name
+        in: path
         name: coin
+        required: true
+        type: string
+      - default: "850321"
+        description: the query address
+        in: path
+        name: address
+        required: true
         type: string
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/blockatlas.Resolved'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/endpoint.ErrorResponse'
-      summary: Lookup .eth / .zil addresses
+            $ref: '#/definitions/github.com_trustwallet_blockatlas_api_endpoint.ErrorResponse'
+      summary: Get Block
       tags:
-      - Naming
+      - Transactions
   /v2/{coin}/staking/delegations/{address}:
     get:
       consumes:
@@ -211,7 +200,7 @@ paths:
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/endpoint.ErrorResponse'
+            $ref: '#/definitions/api_endpoint.ErrorResponse'
       summary: Get Stake Delegations
       tags:
       - Staking
@@ -220,7 +209,7 @@ paths:
       consumes:
       - application/json
       description: Get validators from the address
-      operationId: validators
+      operationId: validators_v2
       parameters:
       - default: cosmos
         description: the coin name
@@ -238,7 +227,7 @@ paths:
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/endpoint.ErrorResponse'
+            $ref: '#/definitions/api_endpoint.ErrorResponse'
       summary: Get Validators
       tags:
       - Staking
@@ -267,11 +256,13 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/blockatlas.CollectionPage'
+            items:
+              $ref: '#/definitions/blockatlas.Collection'
+            type: array
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/endpoint.ErrorResponse'
+            $ref: '#/definitions/github.com_trustwallet_blockatlas_api_endpoint.ErrorResponse'
       summary: Get Tokens
       tags:
       - Transactions
@@ -300,7 +291,7 @@ paths:
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/endpoint.ErrorResponse'
+            $ref: '#/definitions/github.com_trustwallet_blockatlas_api_endpoint.ErrorResponse'
       summary: Get Transactions
       tags:
       - Transactions
@@ -329,24 +320,25 @@ paths:
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/endpoint.ErrorResponse'
+            $ref: '#/definitions/github.com_trustwallet_blockatlas_api_endpoint.ErrorResponse'
       summary: Get Transactions by XPUB
       tags:
       - Transactions
-  /v2/ns/lookup:
-    get:
-      description: Lookup ENS/ZNS to find registered addresses for multiple coins
-      operationId: lookup
+  /v2/staking/delegations:
+    post:
+      consumes:
+      - application/json
+      description: Get Stake Delegations for multiple coins
+      operationId: staking_v2_batch
       parameters:
-      - description: string name
-        in: query
-        name: name
-        type: string
-      - description: List of coins
-        in: query
-        name: coins
+      - description: Validators addresses and coins
+        in: body
+        name: delegations
         required: true
-        type: string
+        schema:
+          items:
+            $ref: '#/definitions/api_endpoint.AddressBatchRequest'
+          type: array
       produces:
       - application/json
       responses:
@@ -354,35 +346,8 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/blockatlas.Resolved'
+              $ref: '#/definitions/blockatlas.DelegationResponse'
             type: array
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/endpoint.ErrorResponse'
-      summary: Lookup .eth / .zil addresses
-      tags:
-      - Naming
-  /v2/staking/delegations:
-    post:
-      consumes:
-      - application/json
-      description: Get Stake Delegations for multiple coins
-      operationId: batch_delegations
-      parameters:
-      - description: Validators addresses and coins
-        in: body
-        name: delegations
-        required: true
-        schema:
-          $ref: '#/definitions/endpoint.AddressesRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/blockatlas.DelegationsBatchPage'
       summary: Get Multiple Stake Delegations
       tags:
       - Staking
@@ -391,21 +356,25 @@ paths:
       consumes:
       - application/json
       description: Get Stake Delegations for multiple coins
-      operationId: batch_delegations
+      operationId: staking_v2
       parameters:
       - description: Validators addresses and coins
         in: body
         name: delegations
         required: true
         schema:
-          $ref: '#/definitions/endpoint.AddressesRequest'
+          items:
+            $ref: '#/definitions/api_endpoint.AddressBatchRequest'
+          type: array
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/blockatlas.DelegationsBatchPage'
+            items:
+              $ref: '#/definitions/blockatlas.DelegationResponse'
+            type: array
       summary: Get Multiple Stake Delegations
       tags:
       - Staking
@@ -436,7 +405,7 @@ paths:
   /v3/staking/list:
     get:
       description: Get staking info by coin ID
-      operationId: batch_info
+      operationId: staking_v3
       parameters:
       - description: List of coins
         in: query
@@ -450,12 +419,14 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/blockatlas.DelegationsBatchPage'
+              items:
+                $ref: '#/definitions/blockatlas.DelegationResponse'
+              type: array
             type: array
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/endpoint.ErrorResponse'
+            $ref: '#/definitions/api_endpoint.ErrorResponse'
       summary: Get staking info by coin ID
       tags:
       - Staking
@@ -490,11 +461,13 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/blockatlas.CollectionPage'
+            items:
+              $ref: '#/definitions/blockatlas.Collection'
+            type: array
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/endpoint.ErrorResponse'
+            $ref: '#/definitions/github.com_trustwallet_blockatlas_api_endpoint.ErrorResponse'
       summary: Get Collection
       tags:
       - Collections

@@ -15,8 +15,3 @@ func (c *Client) GetTxsOfAddress(address string) (tx []Tx, err error) {
 	err = c.Get(&tx, path, nil)
 	return
 }
-
-func (c *Client) LookupName(name string) (response ZNSResponse, err error) {
-	err = c.Get(&response, "/"+name, nil)
-	return
-}
