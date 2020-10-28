@@ -46,7 +46,7 @@ The observer API watches the chain for new transactions and generates notificati
 Currently Block Atlas is under active development and is not well documented. If you still want to run it on your own or help to contribute, **please** pay attention that currently integration, nemwan, functional tests are not working locally without all endpoints. We are fixing that issue and soon you will be able to test all the stuff locally
 
 Blockatlas allows to:
-- Get information about transactions, tokens, staking details, collectibles, crypto domains for supported coins.
+- Get information about transactions, tokens, staking details, collectibles for supported coins.
 - Subscribe for price notifications via Rabbit MQ
 
 Platform API is independent service and can work with the specific blockchain only (like Bitcoin, Ethereum, etc)

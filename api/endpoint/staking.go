@@ -1,14 +1,17 @@
 package endpoint
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/pkg/errors"
-	"github.com/trustwallet/golibs/coin"
 	"net/http"
 	"sort"
 	"strconv"
 	"strings"
+
+	"github.com/trustwallet/blockatlas/pkg/numbers"
+
+	"github.com/gin-gonic/gin"
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/pkg/errors"
+	"github.com/trustwallet/golibs/coin"
 )
 
 type (
@@ -116,7 +119,7 @@ func GetStakeInfoForCoins(c *gin.Context, apis map[string]blockatlas.StakeAPI) {
 
 	coinsRaw := strings.Split(coinsRequest, ",")
 
-	coins, err := sliceAtoi(coinsRaw)
+	coins, err := numbers.SliceAtoi(coinsRaw)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, errorResponse(err))
 		return

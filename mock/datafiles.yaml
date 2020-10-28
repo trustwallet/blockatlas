@@ -337,14 +337,6 @@
   mockURL: /mock/tron-api/wallet/listwitnesses
   method: GET
   extURL: https://api.trongrid.io/wallet/listwitnesses
-- file: mock/ext-api-data/unstoppabledomains_api_v1__dpantani.zil.json
-  mockURL: /mock/unstoppabledomains/api/v1/dpantani.zil
-  method: GET
-  extURL: https://unstoppabledomains.com/api/v1/dpantani.zil
-- file: mock/ext-api-data/unstoppabledomains_api_v1__dpantani.crypto.json
-  mockURL: /mock/unstoppabledomains/api/v1/dpantani.crypto
-  method: GET
-  extURL: https://unstoppabledomains.com/api/v1/dpantani.crypto
 - file: mock/ext-api-data/vechain-api_blocks_best.json
   mockURL: /mock/vechain-api/blocks/best
   method: GET

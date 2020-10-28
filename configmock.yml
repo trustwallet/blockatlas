@@ -135,7 +135,6 @@ zilliqa:
   api: http://localhost:3347/mock/zilliqa-api
   # key: YOUR_API_KEY
   rpc: https://api.zilliqa.com
-  lookup: http://localhost:3347/mock/unstoppabledomains/api/v1
 
 #[IoTeX] IoTeX: https://iotex.io
 iotex:
