@@ -3,6 +3,12 @@ package main
 import (
 	"context"
 	"fmt"
+	"os"
+	"os/signal"
+	"sync"
+	"syscall"
+	"time"
+
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/db"
 	"github.com/trustwallet/blockatlas/internal"
@@ -10,11 +16,6 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/platform"
 	"github.com/trustwallet/blockatlas/services/parser"
-	"os"
-	"os/signal"
-	"sync"
-	"syscall"
-	"time"
 )
 
 const (
@@ -38,7 +39,7 @@ func init() {
 	internal.InitConfig(confPath)
 	logger.InitLogger()
 
-	mqHost := viper.GetString("observer.rabbitmq.uri")
+	mqHost := viper.GetString("observer.rabbitmq.url")
 	prefetchCount := viper.GetInt("observer.rabbitmq.consumer.prefetch_count")
 	platformHandles := viper.GetStringSlice("platform")
 
@@ -67,8 +68,8 @@ func init() {
 		logger.Fatal("minimum block polling interval cannot be greater or equal than maximum")
 	}
 
-	pgURI := viper.GetString("postgres.uri")
-	pgReadUri := viper.GetString("postgres.read_uri")
+	pgURI := viper.GetString("postgres.url")
+	pgReadUri := viper.GetString("postgres.read.url")
 	logMode := viper.GetBool("postgres.log")
 	var err error
 	database, err = db.New(pgURI, pgReadUri, logMode)
