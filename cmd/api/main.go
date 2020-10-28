@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/api"
@@ -14,7 +16,6 @@ import (
 	"github.com/trustwallet/blockatlas/services/spamfilter"
 	"github.com/trustwallet/blockatlas/services/tokenindexer"
 	"github.com/trustwallet/blockatlas/services/tokensearcher"
-	"time"
 )
 
 const (
@@ -47,8 +48,8 @@ func init() {
 	spamfilter.SpamList = viper.GetStringSlice("spam_words")
 
 	if restAPI == "tokens" || restAPI == "all" {
-		pgURI := viper.GetString("postgres.uri")
-		pgReadUri := viper.GetString("postgres.read_uri")
+		pgURI := viper.GetString("postgres.url")
+		pgReadUri := viper.GetString("postgres.read.url")
 
 		var err error
 		database, err = db.New(pgURI, pgReadUri, logMode)
@@ -57,7 +58,7 @@ func init() {
 		}
 		go database.RestoreConnectionWorker(ctx, time.Second*10, pgURI)
 
-		mqHost := viper.GetString("observer.rabbitmq.uri")
+		mqHost := viper.GetString("observer.rabbitmq.url")
 		prefetchCount := viper.GetInt("observer.rabbitmq.consumer.prefetch_count")
 		internal.InitRabbitMQ(mqHost, prefetchCount)
 		if err := mq.TokensRegistration.Declare(); err != nil {

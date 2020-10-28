@@ -36,13 +36,14 @@ observer:
     min: 3s
     max: 30s
   rabbitmq:
-    uri: amqp://localhost:5672
+    url: amqp://localhost:5672
     consumer:
       prefetch_count: 10
 
 postgres:
-  uri: postgresql://user:pass@localhost/blockatlas?sslmode=disable
-  read_uri: postgresql://user:pass@localhost/blockatlas?sslmode=disable
+  url: postgresql://user:pass@localhost/blockatlas?sslmode=disable
+  read:
+    url: postgresql://user:pass@localhost/blockatlas?sslmode=disable
   log: false
 
 # [BNB] Binance DEX: https://www.binance.org/

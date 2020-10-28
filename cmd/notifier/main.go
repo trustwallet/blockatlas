@@ -2,13 +2,14 @@ package main
 
 import (
 	"context"
+	"time"
+
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/db"
 	"github.com/trustwallet/blockatlas/internal"
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/services/notifier"
-	"time"
 )
 
 const (
@@ -16,8 +17,8 @@ const (
 )
 
 var (
-	ctx context.Context
-	cancel context.CancelFunc
+	ctx      context.Context
+	cancel   context.CancelFunc
 	confPath string
 	database *db.Instance
 )
@@ -29,7 +30,7 @@ func init() {
 	internal.InitConfig(confPath)
 	logger.InitLogger()
 
-	mqHost := viper.GetString("observer.rabbitmq.uri")
+	mqHost := viper.GetString("observer.rabbitmq.url")
 	logMode := viper.GetBool("postgres.log")
 	prefetchCount := viper.GetInt("observer.rabbitmq.consumer.prefetch_count")
 	maxPushNotificationsBatchLimit := viper.GetUint("observer.push_notifications_batch_limit")
@@ -44,8 +45,8 @@ func init() {
 		logger.Fatal(err)
 	}
 
-	pgUri := viper.GetString("postgres.uri")
-	pgReadUri := viper.GetString("postgres.read_uri")
+	pgUri := viper.GetString("postgres.url")
+	pgReadUri := viper.GetString("postgres.read.url")
 	var err error
 	database, err = db.New(pgUri, pgReadUri, logMode)
 	if err != nil {

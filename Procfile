@@ -1,1 +1,1 @@
-web: bin/api -c $HOME/config.yml -p $PORT
+web: ATLAS_POSTGRES_READ_URL=$ATLAS_POSTGRES_URL bin/api -c $HOME/config.yml -p $PORT

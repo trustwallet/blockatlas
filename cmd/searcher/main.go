@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"time"
+
 	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/db"
 	"github.com/trustwallet/blockatlas/internal"
@@ -9,7 +11,6 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/services/notifier"
 	"github.com/trustwallet/blockatlas/services/tokensearcher"
-	"time"
 )
 
 const (
@@ -30,7 +31,7 @@ func init() {
 	internal.InitConfig(confPath)
 	logger.InitLogger()
 
-	mqHost := viper.GetString("observer.rabbitmq.uri")
+	mqHost := viper.GetString("observer.rabbitmq.url")
 	prefetchCount := viper.GetInt("observer.rabbitmq.consumer.prefetch_count")
 	maxPushNotificationsBatchLimit := viper.GetUint("observer.push_notifications_batch_limit")
 	internal.InitRabbitMQ(mqHost, prefetchCount)
@@ -39,8 +40,8 @@ func init() {
 		logger.Fatal(err)
 	}
 
-	pgURI := viper.GetString("postgres.uri")
-	pgReadUri := viper.GetString("postgres.read_uri")
+	pgURI := viper.GetString("postgres.url")
+	pgReadUri := viper.GetString("postgres.read.url")
 	logMode := viper.GetBool("postgres.log")
 	var err error
 	database, err = db.New(pgURI, pgReadUri, logMode)
