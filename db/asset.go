@@ -101,12 +101,19 @@ func (i *Instance) GetAssetsByIDs(ids []string, ctx context.Context) ([]models.A
 	return dbAssets, nil
 }
 
-func (i *Instance) GetAssetsFrom(from time.Time, ctx context.Context) ([]models.Asset, error) {
+func (i *Instance) GetAssetsFrom(from time.Time, coin int, ctx context.Context) ([]models.Asset, error) {
 	db := i.Gorm.WithContext(ctx)
 	var dbAssets []models.Asset
-	if err := db.Find(&dbAssets, "created_at > ?", from).Error; err != nil {
-		return nil, err
+	if coin == -1 {
+		if err := db.Find(&dbAssets, "created_at > ?", from).Error; err != nil {
+			return nil, err
+		}
+	} else {
+		if err := db.Find(&dbAssets, "created_at > ? and coin = ?", from, coin).Error; err != nil {
+			return nil, err
+		}
 	}
+
 	return dbAssets, nil
 }
 

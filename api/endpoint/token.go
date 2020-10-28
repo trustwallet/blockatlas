@@ -141,12 +141,24 @@ func GetTokensByAddressIndexer(c *gin.Context, instance tokensearcher.Instance) 
 }
 
 func GetNewTokens(c *gin.Context, instance tokenindexer.Instance) {
-	var query tokenindexer.Request
-	if err := c.Bind(&query); err != nil {
+	var request tokenindexer.Request
+	fromRaw := c.Query("from")
+	coinRaw := c.DefaultQuery("coin", "-1")
+
+	from, err := strconv.Atoi(fromRaw)
+	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, errorResponse(err))
-		return
 	}
-	resp, err := instance.HandleNewTokensRequest(query, c.Request.Context())
+
+	coin, err := strconv.Atoi(coinRaw)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, errorResponse(err))
+	}
+
+	request.Coin = coin
+	request.From = int64(from)
+
+	resp, err := instance.HandleNewTokensRequest(request, c.Request.Context())
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, errorResponse(err))
 		return

@@ -17,7 +17,7 @@ func Init(database *db.Instance) Instance {
 
 func (i Instance) HandleNewTokensRequest(r Request, ctx context.Context) (Response, error) {
 	from := time.Unix(r.From, 0)
-	result, err := i.database.GetAssetsFrom(from, ctx)
+	result, err := i.database.GetAssetsFrom(from, r.Coin, ctx)
 	if err != nil {
 		return Response{}, err
 	}

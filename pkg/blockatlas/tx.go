@@ -530,6 +530,7 @@ func (t Tx) AssetModel() (models.Asset, bool) {
 	if asset.Asset == "" {
 		return models.Asset{}, false
 	}
+	asset.Coin = t.Coin
 	return asset, true
 }
 

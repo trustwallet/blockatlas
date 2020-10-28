@@ -2,6 +2,7 @@ package tokenindexer
 
 type Request struct {
 	From int64
+	Coin int
 }
 
 type Response struct {
