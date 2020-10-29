@@ -2,9 +2,9 @@ package main
 
 import (
 	"context"
+	"github.com/trustwallet/blockatlas/config"
 	"time"
 
-	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/db"
 	_ "github.com/trustwallet/blockatlas/docs"
 	"github.com/trustwallet/blockatlas/internal"
@@ -31,20 +31,18 @@ func init() {
 	internal.InitConfig(confPath)
 	logger.InitLogger()
 
-	mqHost := viper.GetString("observer.rabbitmq.url")
-	prefetchCount := viper.GetInt("observer.rabbitmq.consumer.prefetch_count")
+	internal.InitRabbitMQ(
+		config.Default.Observer.Rabbitmq.URL,
+		config.Default.Observer.Rabbitmq.Consumer.PrefetchCount,
+	)
 
-	internal.InitRabbitMQ(mqHost, prefetchCount)
-
-	pgURI := viper.GetString("postgres.url")
-	pgReadUri := viper.GetString("postgres.read.url")
-	logMode := viper.GetBool("postgres.log")
 	var err error
-	database, err = db.New(pgURI, pgReadUri, logMode)
+	database, err = db.New(config.Default.Postgres.URL, config.Default.Postgres.Read.URL,
+		config.Default.Postgres.Log)
 	if err != nil {
 		logger.Fatal(err)
 	}
-	go database.RestoreConnectionWorker(ctx, time.Second*10, pgURI)
+	go database.RestoreConnectionWorker(ctx, time.Second*10, config.Default.Postgres.URL)
 
 	time.Sleep(time.Millisecond)
 }
@@ -58,7 +56,7 @@ func main() {
 		logger.Fatal(err)
 	}
 
-	subscriberType := subscriber.Subscriber(viper.GetString("subscriber"))
+	subscriberType := subscriber.Subscriber(config.Default.Subscriber)
 	switch subscriberType {
 	case subscriber.Tokens:
 		go mq.TokensRegistration.RunConsumerWithCancelAndDbConn(subscriber.RunTokensSubscriber, database, ctx)

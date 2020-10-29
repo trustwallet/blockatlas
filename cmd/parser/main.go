@@ -3,13 +3,14 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/trustwallet/blockatlas/config"
+	"github.com/trustwallet/blockatlas/services/spamfilter"
 	"os"
 	"os/signal"
 	"sync"
 	"syscall"
 	"time"
 
-	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/db"
 	"github.com/trustwallet/blockatlas/internal"
 	"github.com/trustwallet/blockatlas/mq"
@@ -39,12 +40,14 @@ func init() {
 	internal.InitConfig(confPath)
 	logger.InitLogger()
 
-	mqHost := viper.GetString("observer.rabbitmq.url")
-	prefetchCount := viper.GetInt("observer.rabbitmq.consumer.prefetch_count")
-	platformHandles := viper.GetStringSlice("platform")
 
-	internal.InitRabbitMQ(mqHost, prefetchCount)
-	platform.Init(platformHandles)
+	internal.InitRabbitMQ(
+		config.Default.Observer.Rabbitmq.URL,
+		config.Default.Observer.Rabbitmq.Consumer.PrefetchCount,
+	)
+
+	platform.Init(config.Default.Platform)
+	spamfilter.SpamList = config.Default.SpamWords
 
 	if err := mq.RawTransactions.Declare(); err != nil {
 		logger.Fatal(err)
@@ -58,25 +61,17 @@ func init() {
 		logger.Fatal("No APIs to observe")
 	}
 
-	txsBatchLimit = viper.GetUint("observer.txs_batch_limit")
-	backlogTime = viper.GetDuration("observer.backlog")
-	minInterval = viper.GetDuration("observer.block_poll.min")
-	maxInterval = viper.GetDuration("observer.block_poll.max")
-	fetchBlocksInterval = viper.GetDuration("observer.fetch_blocks_interval")
-	maxBackLogBlocks = viper.GetInt64("observer.backlog_max_blocks")
 	if minInterval >= maxInterval {
 		logger.Fatal("minimum block polling interval cannot be greater or equal than maximum")
 	}
 
-	pgURI := viper.GetString("postgres.url")
-	pgReadUri := viper.GetString("postgres.read.url")
-	logMode := viper.GetBool("postgres.log")
 	var err error
-	database, err = db.New(pgURI, pgReadUri, logMode)
+	database, err = db.New(config.Default.Postgres.URL, config.Default.Postgres.Read.URL,
+		config.Default.Postgres.Log)
 	if err != nil {
 		logger.Fatal(err)
 	}
-	go database.RestoreConnectionWorker(ctx, time.Second*10, pgURI)
+	go database.RestoreConnectionWorker(ctx, time.Second*10, config.Default.Postgres.URL)
 
 	time.Sleep(time.Millisecond)
 }

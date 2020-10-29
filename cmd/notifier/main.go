@@ -2,9 +2,9 @@ package main
 
 import (
 	"context"
+	"github.com/trustwallet/blockatlas/config"
 	"time"
 
-	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/db"
 	"github.com/trustwallet/blockatlas/internal"
 	"github.com/trustwallet/blockatlas/mq"
@@ -30,12 +30,10 @@ func init() {
 	internal.InitConfig(confPath)
 	logger.InitLogger()
 
-	mqHost := viper.GetString("observer.rabbitmq.url")
-	logMode := viper.GetBool("postgres.log")
-	prefetchCount := viper.GetInt("observer.rabbitmq.consumer.prefetch_count")
-	maxPushNotificationsBatchLimit := viper.GetUint("observer.push_notifications_batch_limit")
-
-	internal.InitRabbitMQ(mqHost, prefetchCount)
+	internal.InitRabbitMQ(
+		config.Default.Observer.Rabbitmq.URL,
+		config.Default.Observer.Rabbitmq.Consumer.PrefetchCount,
+	)
 
 	if err := mq.RawTransactions.Declare(); err != nil {
 		logger.Fatal(err)
@@ -45,22 +43,23 @@ func init() {
 		logger.Fatal(err)
 	}
 
-	pgUri := viper.GetString("postgres.url")
-	pgReadUri := viper.GetString("postgres.read.url")
 	var err error
-	database, err = db.New(pgUri, pgReadUri, logMode)
+	database, err = db.New(config.Default.Postgres.URL, config.Default.Postgres.Read.URL,
+		config.Default.Postgres.Log)
 	if err != nil {
 		logger.Fatal(err)
 	}
-	go database.RestoreConnectionWorker(ctx, time.Second*10, pgUri)
+	go database.RestoreConnectionWorker(ctx, time.Second*10, config.Default.Postgres.URL)
 
-	if maxPushNotificationsBatchLimit == 0 {
+	limit := config.Default.Observer.PushNotificationsBatchLimit
+	if limit == 0 {
 		notifier.MaxPushNotificationsBatchLimit = notifier.DefaultPushNotificationsBatchLimit
 	} else {
-		notifier.MaxPushNotificationsBatchLimit = maxPushNotificationsBatchLimit
+		notifier.MaxPushNotificationsBatchLimit = uint(limit)
 	}
 
-	logger.Info("maxPushNotificationsBatchLimit ", logger.Params{"limit": maxPushNotificationsBatchLimit})
+	logger.Info("maxPushNotificationsBatchLimit ",
+		logger.Params{"limit": notifier.MaxPushNotificationsBatchLimit})
 
 	time.Sleep(time.Millisecond)
 }

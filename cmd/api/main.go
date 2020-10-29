@@ -47,7 +47,8 @@ func init() {
 
 	if restAPI == "tokens" || restAPI == "all" {
 		var err error
-		database, err = db.New(config.Default.Postgres.URL, config.Default.Postgres.Read.URL, config.Default.Postgres.Log)
+		database, err = db.New(config.Default.Postgres.URL, config.Default.Postgres.Read.URL,
+			config.Default.Postgres.Log)
 		if err != nil {
 			logger.Fatal(err)
 		}
