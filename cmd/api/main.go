@@ -43,32 +43,30 @@ func init() {
 	platform.Init(config.Default.Platform)
 	spamfilter.SpamList = config.Default.SpamWords
 
-	if config.Default.OnlyPlatforms {
-		var err error
-		database, err = db.New(config.Default.Postgres.URL, config.Default.Postgres.Read.URL,
-			config.Default.Postgres.Log)
-		if err != nil {
-			logger.Fatal(err)
-		}
-		go database.RestoreConnectionWorker(ctx, time.Second*10, config.Default.Postgres.URL)
-
-		internal.InitRabbitMQ(
-			config.Default.Observer.Rabbitmq.URL,
-			config.Default.Observer.Rabbitmq.Consumer.PrefetchCount,
-		)
-
-		if err := mq.TokensRegistration.Declare(); err != nil {
-			logger.Fatal(err)
-		}
-		if err := mq.RawTransactionsTokenIndexer.Declare(); err != nil {
-			logger.Fatal(err)
-		}
-
-		ts = tokensearcher.Init(database, platform.TokensAPIs, mq.TokensRegistration)
-		ti = tokenindexer.Init(database)
-
-		go mq.FatalWorker(time.Second * 10)
+	var err error
+	database, err = db.New(config.Default.Postgres.URL, config.Default.Postgres.Read.URL,
+		config.Default.Postgres.Log)
+	if err != nil {
+		logger.Fatal(err)
 	}
+	go database.RestoreConnectionWorker(ctx, time.Second*10, config.Default.Postgres.URL)
+
+	internal.InitRabbitMQ(
+		config.Default.Observer.Rabbitmq.URL,
+		config.Default.Observer.Rabbitmq.Consumer.PrefetchCount,
+	)
+
+	if err := mq.TokensRegistration.Declare(); err != nil {
+		logger.Fatal(err)
+	}
+	if err := mq.RawTransactionsTokenIndexer.Declare(); err != nil {
+		logger.Fatal(err)
+	}
+
+	ts = tokensearcher.Init(database, platform.TokensAPIs, mq.TokensRegistration)
+	ti = tokenindexer.Init(database)
+
+	go mq.FatalWorker(time.Second * 10)
 }
 
 func main() {

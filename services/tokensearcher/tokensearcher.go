@@ -10,12 +10,14 @@ import (
 	"strconv"
 )
 
+const TokenSearcher = "TokenSearcher"
+
 func Run(database *db.Instance, delivery amqp.Delivery) {
 	tx := apm.DefaultTracer.StartTransaction("RunNotifier", "app")
 	defer tx.End()
 	ctx := apm.ContextWithTransaction(context.Background(), tx)
 
-	txs, err := notifier.GetTransactionsFromDelivery(delivery, ctx)
+	txs, err := notifier.GetTransactionsFromDelivery(delivery, TokenSearcher, ctx)
 	if err != nil {
 		logger.Error("failed to get transactions", err)
 		if err := delivery.Ack(false); err != nil {
@@ -39,11 +41,11 @@ func Run(database *db.Instance, delivery amqp.Delivery) {
 		logger.Error(err)
 		return
 	}
-	logger.Info("associationsFromTransactions " + strconv.Itoa(len(associationsFromTransactions)))
+	logger.Info("AssociationsFromTransactions "+strconv.Itoa(len(associationsFromTransactions)), logger.Params{"service": TokenSearcher})
 
 	associationsToAdd := associationsToAdd(fromModelToAssociation(associationsFromTransactions), assetsMap(txs, coinID))
 
-	logger.Info("associationsToAdd " + strconv.Itoa(len(associationsToAdd)))
+	logger.Info("AssociationsToAdd "+strconv.Itoa(len(associationsToAdd)), logger.Params{"service": TokenSearcher})
 	err = database.UpdateAssociationsForExistingAddresses(associationsToAdd, ctx)
 	if err != nil {
 		logger.Error(err)
@@ -53,4 +55,5 @@ func Run(database *db.Instance, delivery amqp.Delivery) {
 	if err := delivery.Ack(false); err != nil {
 		logger.Error(err)
 	}
+	logger.Info("------------------------------------------------------------")
 }

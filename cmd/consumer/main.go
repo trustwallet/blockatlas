@@ -3,13 +3,16 @@ package main
 import (
 	"context"
 	"github.com/trustwallet/blockatlas/config"
+	"github.com/trustwallet/blockatlas/services/notifier"
+	"github.com/trustwallet/blockatlas/services/subscriber"
+	"github.com/trustwallet/blockatlas/services/tokensearcher"
 	"time"
 
 	"github.com/trustwallet/blockatlas/db"
 	"github.com/trustwallet/blockatlas/internal"
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/logger"
-	"github.com/trustwallet/blockatlas/services/notifier"
+	"github.com/trustwallet/blockatlas/services/tokenindexer"
 )
 
 const (
@@ -34,14 +37,6 @@ func init() {
 		config.Default.Observer.Rabbitmq.Consumer.PrefetchCount,
 	)
 
-	if err := mq.RawTransactions.Declare(); err != nil {
-		logger.Fatal(err)
-	}
-
-	if err := mq.TxNotifications.Declare(); err != nil {
-		logger.Fatal(err)
-	}
-
 	var err error
 	database, err = db.New(config.Default.Postgres.URL, config.Default.Postgres.Read.URL,
 		config.Default.Postgres.Log)
@@ -50,23 +45,37 @@ func init() {
 	}
 	go database.RestoreConnectionWorker(ctx, time.Second*10, config.Default.Postgres.URL)
 
-	limit := config.Default.Observer.PushNotificationsBatchLimit
-	if limit == 0 {
-		notifier.MaxPushNotificationsBatchLimit = notifier.DefaultPushNotificationsBatchLimit
-	} else {
-		notifier.MaxPushNotificationsBatchLimit = uint(limit)
-	}
-
-	logger.Info("maxPushNotificationsBatchLimit ",
-		logger.Params{"limit": notifier.MaxPushNotificationsBatchLimit})
-
 	time.Sleep(time.Millisecond)
 }
 
 func main() {
 	defer mq.Close()
 
+	if err := mq.RawTransactionsTokenIndexer.Declare(); err != nil {
+		logger.Fatal(err)
+	}
+	if err := mq.RawTransactions.Declare(); err != nil {
+		logger.Fatal(err)
+	}
+	if err := mq.TxNotifications.Declare(); err != nil {
+		logger.Fatal(err)
+	}
+	if err := mq.RawTransactionsSearcher.Declare(); err != nil {
+		logger.Fatal(err)
+	}
+	if err := mq.Subscriptions.Declare(); err != nil {
+		logger.Fatal(err)
+	}
+	if err := mq.TokensRegistration.Declare(); err != nil {
+		logger.Fatal(err)
+	}
+
+	go mq.RawTransactionsTokenIndexer.RunConsumerWithCancelAndDbConn(tokenindexer.RunTokenIndexer, database, ctx)
 	go mq.RawTransactions.RunConsumerWithCancelAndDbConn(notifier.RunNotifier, database, ctx)
+	go mq.RawTransactionsSearcher.RunConsumerWithCancelAndDbConn(tokensearcher.Run, database, ctx)
+	go mq.Subscriptions.RunConsumerWithCancelAndDbConn(subscriber.RunTransactionsSubscriber, database, ctx)
+	go mq.TokensRegistration.RunConsumerWithCancelAndDbConn(subscriber.RunTokensSubscriber, database, ctx)
+
 	go mq.FatalWorker(time.Second * 10)
 
 	internal.SetupGracefulShutdownForObserver()

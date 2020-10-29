@@ -13,12 +13,11 @@ type Configuration struct {
 		Mode         string `mapstructure:"mode"`
 		ReverseProxy bool   `mapstructure:"reverse_proxy"`
 	} `mapstructure:"gin"`
-	Platform      []string `mapstructure:"platform"`
-	RestAPI       string   `mapstructure:"rest_api"`
-	SpamWords     []string `mapstructure:"spam_words"`
-	Subscriber    string   `mapstructure:"subscriber"`
-	OnlyPlatforms bool     `mapstructure:"only_platforms"`
-	Observer      struct {
+	Platform   []string `mapstructure:"platform"`
+	RestAPI    string   `mapstructure:"rest_api"`
+	SpamWords  []string `mapstructure:"spam_words"`
+	Subscriber string   `mapstructure:"subscriber"`
+	Observer   struct {
 		Backlog                     time.Duration `mapstructure:"backlog"`
 		FetchBlocksInterval         time.Duration `mapstructure:"fetch_blocks_interval"`
 		BacklogMaxBlocks            int64         `mapstructure:"backlog_max_blocks"`

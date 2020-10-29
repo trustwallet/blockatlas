@@ -11,21 +11,23 @@ import (
 	"go.elastic.co/apm"
 )
 
+const TokenIndexer = "TokenIndexer"
+
 func RunTokenIndexer(database *db.Instance, delivery amqp.Delivery) {
 	tx := apm.DefaultTracer.StartTransaction("RunTokenIndexer", "app")
 	defer tx.End()
 	defer func() {
 		if err := delivery.Ack(false); err != nil {
-			logger.Error(err)
+			logger.Error(err, logger.Params{"service": TokenIndexer})
 		}
 	}()
 	ctx := apm.ContextWithTransaction(context.Background(), tx)
 
-	txs, err := notifier.GetTransactionsFromDelivery(delivery, ctx)
+	txs, err := notifier.GetTransactionsFromDelivery(delivery, TokenIndexer, ctx)
 	if err != nil {
-		logger.Error("failed to get transactions", err)
+		logger.Error("failed to get transactions", err, logger.Params{"service": TokenIndexer})
 		if err := delivery.Ack(false); err != nil {
-			logger.Error(err)
+			logger.Error(err, logger.Params{"service": TokenIndexer})
 		}
 		return
 	}
@@ -36,9 +38,10 @@ func RunTokenIndexer(database *db.Instance, delivery amqp.Delivery) {
 	assets := GetAssetsFromTransactions(txs)
 	err = database.AddNewAssets(assets, ctx)
 	if err != nil {
-		logger.Error("failed to add assets", err)
+		logger.Error("failed to add assets", err, logger.Params{"service": TokenIndexer})
 		return
 	}
+	logger.Info("------------------------------------------------------------")
 }
 
 func GetAssetsFromTransactions(txs []blockatlas.Tx) []models.Asset {

@@ -1,19 +1,11 @@
 # Gin is the web framework
 gin:
-  # Possible values: "debug", "release"
-  login: admin
-  pass: pass
   mode: release
-  # App running behind a reverse proxy?
-  # If set, HTTP Forwarded headers will be respected
-  reverse_proxy: false
 
 # If all - run all platforms in one binary. You can pick specific coin handle to run binary only with specific coin
 # Example: ethereum
 # You can see all the coin handles at coins/coins.yml file
 platform: all
-
-only_platforms: true
 
 spam_words: [ "airdrop","www", "http" ]
 
