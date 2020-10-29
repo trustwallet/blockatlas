@@ -96,7 +96,7 @@ func getAllHandlers() blockatlas.Platforms {
 		coin.Tomochain().Handle:    ethereum.Init(coin.TOMO, config.Default.Tomochain.API, config.Default.Tomochain.RPC),
 		coin.Bsc().Handle:          ethereum.InitWithBlockbook(coin.BSCLegacy, config.Default.BSC.API, config.Default.BSC.RPC),
 		coin.Smartchain().Handle:   ethereum.InitWithBlockbook(coin.BSC, config.Default.Smartchain.API, config.Default.Smartchain.RPC),
-		coin.Ethereum().Handle:     ethereum.InitWithCollection(coin.ETH, config.Default.Ethereum.API, config.Default.Ethereum.BlockbookAPI, config.Default.Ethereum.CollectionsAPI, config.Default.Ethereum.CollectionsKey),
+		coin.Ethereum().Handle:     ethereum.InitWithCollection(coin.ETH, config.Default.Ethereum.RPC, config.Default.Ethereum.BlockbookAPI, config.Default.Ethereum.CollectionsAPI, config.Default.Ethereum.CollectionsKey),
 		coin.Near().Handle:         near.Init(config.Default.Near.API),
 		coin.Elrond().Handle:       elrond.Init(coin.ERD, config.Default.Elrond.API),
 		coin.Filecoin().Handle:     filecoin.Init(config.Default.Filecoin.API),
@@ -105,6 +105,6 @@ func getAllHandlers() blockatlas.Platforms {
 
 func getCollectionsHandlers() blockatlas.CollectionsAPIs {
 	return blockatlas.CollectionsAPIs{
-		coin.ETH: ethereum.InitWithCollection(coin.ETH, config.Default.Ethereum.API, config.Default.Ethereum.BlockbookAPI, config.Default.Ethereum.CollectionsAPI, config.Default.Ethereum.CollectionsKey),
+		coin.ETH: ethereum.InitWithCollection(coin.ETH, config.Default.Ethereum.RPC, config.Default.Ethereum.BlockbookAPI, config.Default.Ethereum.CollectionsAPI, config.Default.Ethereum.CollectionsKey),
 	}
 }

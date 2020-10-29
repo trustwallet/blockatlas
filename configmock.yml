@@ -66,7 +66,7 @@ tezos:
   api: http://localhost:3347/mock/tezos-api
   rpc: https://mainnet.tezos.org.ua
 
-# [ETH] Ethereum: https://ethereum.org (Trust-Ray API)
+# [ETH] Ethereum: https://ethereum.org
 ethereum:
   api: http://localhost:3347/mock/eth-api
   blockbook_api: http://localhost:3347/mock/eth-blockbook-api
