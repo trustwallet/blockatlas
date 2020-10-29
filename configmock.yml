@@ -13,8 +13,7 @@ gin:
 # You can see all the coin handles at coins/coins.yml file
 platform: all
 
-# Can be platform or swagger, or tokens, or all
-rest_api: platform
+only_platforms: true
 
 spam_words: [ "airdrop","www", "http" ]
 

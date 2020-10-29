@@ -11,6 +11,10 @@ gin:
 # You can see all the coin handles at coins/coins.yml file
 platform: [ all ]
 
+# todo: remove mock test, use unit test instead
+# temp for mock tests, will be removed
+only_platforms: false
+
 spam_words: [ "airdrop","www", "http" ]
 
 # Can be tokens or notifications
