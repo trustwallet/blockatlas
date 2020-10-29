@@ -9,214 +9,214 @@ import (
 
 type Configuration struct {
 	Gin struct {
-		Mode         string `json:"mode"`
-		ReverseProxy bool   `json:"reverse_proxy"`
-	} `json:"gin"`
-	Platform   []string `json:"platform"`
-	RestAPI    string   `json:"rest_api"`
-	SpamWords  []string `json:"spam_words"`
-	Subscriber string   `json:"subscriber"`
+		Mode         string `mapstructure:"mode"`
+		ReverseProxy bool   `mapstructure:"reverse_proxy"`
+	} `mapstructure:"gin"`
+	Platform   []string `mapstructure:"platform"`
+	RestAPI    string   `mapstructure:"rest_api"`
+	SpamWords  []string `mapstructure:"spam_words"`
+	Subscriber string   `mapstructure:"subscriber"`
 	Observer   struct {
-		Backlog                     string `json:"backlog"`
-		FetchBlocksInterval         string `json:"fetch_blocks_interval"`
-		BacklogMaxBlocks            int    `json:"backlog_max_blocks"`
-		TxsBatchLimit               int    `json:"txs_batch_limit"`
-		PushNotificationsBatchLimit int    `json:"push_notifications_batch_limit"`
+		Backlog                     string `mapstructure:"backlog"`
+		FetchBlocksInterval         string `mapstructure:"fetch_blocks_interval"`
+		BacklogMaxBlocks            int    `mapstructure:"backlog_max_blocks"`
+		TxsBatchLimit               int    `mapstructure:"txs_batch_limit"`
+		PushNotificationsBatchLimit int    `mapstructure:"push_notifications_batch_limit"`
 		BlockPoll                   struct {
-			Min string `json:"min"`
-			Max string `json:"max"`
-		} `json:"block_poll"`
+			Min string `mapstructure:"min"`
+			Max string `mapstructure:"max"`
+		} `mapstructure:"block_poll"`
 		Rabbitmq struct {
-			URL      string `json:"url"`
+			URL      string `mapstructure:"url"`
 			Consumer struct {
-				PrefetchCount int `json:"prefetch_count"`
-			} `json:"consumer"`
-		} `json:"rabbitmq"`
-	} `json:"observer"`
+				PrefetchCount int `mapstructure:"prefetch_count"`
+			} `mapstructure:"consumer"`
+		} `mapstructure:"rabbitmq"`
+	} `mapstructure:"observer"`
 	Postgres struct {
-		URL  string `json:"url"`
+		URL  string `mapstructure:"url"`
 		Read struct {
-			URL string `json:"url"`
-		} `json:"read"`
-		Log bool `json:"log"`
-	} `json:"postgres"`
-	Binance struct {
-		API      string `json:"api"`
-		Explorer string `json:"explorer"`
-	} `json:"binance"`
-	Ripple struct {
-		API string `json:"api"`
-	} `json:"ripple"`
-	Stellar struct {
-		API string `json:"api"`
-	} `json:"stellar"`
-	Kin struct {
-		API string `json:"api"`
-	} `json:"kin"`
-	Nimiq struct {
-		API string `json:"api"`
-	} `json:"nimiq"`
-	Tezos struct {
-		API string `json:"api"`
-		RPC string `json:"rpc"`
-	} `json:"tezos"`
-	Thundertoken struct {
-		API string `json:"api"`
-		RPC string `json:"rpc"`
-	} `json:"thundertoken"`
-	Gochain struct {
-		API string `json:"api"`
-		RPC string `json:"rpc"`
-	} `json:"gochain"`
-	Classic struct {
-		API string `json:"api"`
-		RPC string `json:"rpc"`
-	} `json:"classic"`
-	Smartchain struct {
-		API string `json:"api"`
-		RPC string `json:"rpc"`
-	} `json:"smartchain"`
-	BSC struct {
-		API string `json:"api"`
-		RPC string `json:"rpc"`
-	} `json:"bsc"`
-	Poa struct {
-		API string `json:"api"`
-		RPC string `json:"rpc"`
-	} `json:"poa"`
-	Callisto struct {
-		API string `json:"api"`
-		RPC string `json:"rpc"`
-	} `json:"callisto"`
-	Wanchain struct {
-		API string `json:"api"`
-		RPC string `json:"rpc"`
-	} `json:"wanchain"`
-	Tomochain struct {
-		API string `json:"api"`
-		RPC string `json:"rpc"`
-	} `json:"tomochain"`
+			URL string `mapstructure:"url"`
+		} `mapstructure:"read"`
+		Log bool `mapstructure:"log"`
+	} `mapstructure:"postgres"`
 	Ethereum struct {
-		API            string `json:"api"`
-		BlockbookAPI   string `json:"blockbook_api"`
-		CollectionsAPI string `json:"collections_api"`
-		CollectionsKey string `json:"collections_api_key"`
-		RPC            string `json:"rpc"`
-	} `json:"ethereum"`
+		API            string `mapstructure:"api"`
+		BlockbookAPI   string `mapstructure:"blockbook_api"`
+		CollectionsAPI string `mapstructure:"collections_api"`
+		CollectionsKey string `mapstructure:"collections_api_key"`
+		RPC            string `mapstructure:"rpc"`
+	} `mapstructure:"ethereum"`
+	Binance struct {
+		API      string `mapstructure:"api"`
+		Explorer string `mapstructure:"explorer"`
+	} `mapstructure:"binance"`
+	Ripple struct {
+		API string `mapstructure:"api"`
+	} `mapstructure:"ripple"`
+	Stellar struct {
+		API string `mapstructure:"api"`
+	} `mapstructure:"stellar"`
+	Kin struct {
+		API string `mapstructure:"api"`
+	} `mapstructure:"kin"`
+	Nimiq struct {
+		API string `mapstructure:"api"`
+	} `mapstructure:"nimiq"`
+	Tezos struct {
+		API string `mapstructure:"api"`
+		RPC string `mapstructure:"rpc"`
+	} `mapstructure:"tezos"`
+	Thundertoken struct {
+		API string `mapstructure:"api"`
+		RPC string `mapstructure:"rpc"`
+	} `mapstructure:"thundertoken"`
+	Gochain struct {
+		API string `mapstructure:"api"`
+		RPC string `mapstructure:"rpc"`
+	} `mapstructure:"gochain"`
+	Classic struct {
+		API string `mapstructure:"api"`
+		RPC string `mapstructure:"rpc"`
+	} `mapstructure:"classic"`
+	Smartchain struct {
+		API string `mapstructure:"api"`
+		RPC string `mapstructure:"rpc"`
+	} `mapstructure:"smartchain"`
+	BSC struct {
+		API string `mapstructure:"api"`
+		RPC string `mapstructure:"rpc"`
+	} `mapstructure:"bsc"`
+	Poa struct {
+		API string `mapstructure:"api"`
+		RPC string `mapstructure:"rpc"`
+	} `mapstructure:"poa"`
+	Callisto struct {
+		API string `mapstructure:"api"`
+		RPC string `mapstructure:"rpc"`
+	} `mapstructure:"callisto"`
+	Wanchain struct {
+		API string `mapstructure:"api"`
+		RPC string `mapstructure:"rpc"`
+	} `mapstructure:"wanchain"`
+	Tomochain struct {
+		API string `mapstructure:"api"`
+		RPC string `mapstructure:"rpc"`
+	} `mapstructure:"tomochain"`
 	Aion struct {
-		API string `json:"api"`
-	} `json:"aion"`
+		API string `mapstructure:"api"`
+	} `mapstructure:"aion"`
 	Icon struct {
-		API string `json:"api"`
-	} `json:"icon"`
+		API string `mapstructure:"api"`
+	} `mapstructure:"icon"`
 	Tron struct {
-		API      string `json:"api"`
-		Explorer string `json:"explorer"`
-	} `json:"tron"`
+		API      string `mapstructure:"api"`
+		Explorer string `mapstructure:"explorer"`
+	} `mapstructure:"tron"`
 	Vechain struct {
-		API string `json:"api"`
-	} `json:"vechain"`
+		API string `mapstructure:"api"`
+	} `mapstructure:"vechain"`
 	Theta struct {
-		API string `json:"api"`
-	} `json:"theta"`
+		API string `mapstructure:"api"`
+	} `mapstructure:"theta"`
 	Cosmos struct {
-		API string `json:"api"`
-	} `json:"cosmos"`
+		API string `mapstructure:"api"`
+	} `mapstructure:"cosmos"`
 	Ontology struct {
-		API string `json:"api"`
-	} `json:"ontology"`
+		API string `mapstructure:"api"`
+	} `mapstructure:"ontology"`
 	Zilliqa struct {
-		API string `json:"api"`
-		RPC string `json:"rpc"`
-		Key string `json:"key"`
-	} `json:"zilliqa"`
+		API string `mapstructure:"api"`
+		RPC string `mapstructure:"rpc"`
+		Key string `mapstructure:"key"`
+	} `mapstructure:"zilliqa"`
 	Iotex struct {
-		API string `json:"api"`
-	} `json:"iotex"`
+		API string `mapstructure:"api"`
+	} `mapstructure:"iotex"`
 	Waves struct {
-		API string `json:"api"`
-	} `json:"waves"`
+		API string `mapstructure:"api"`
+	} `mapstructure:"waves"`
 	Aeternity struct {
-		API string `json:"api"`
-	} `json:"aeternity"`
+		API string `mapstructure:"api"`
+	} `mapstructure:"aeternity"`
 	Nebulas struct {
-		API string `json:"api"`
-	} `json:"nebulas"`
+		API string `mapstructure:"api"`
+	} `mapstructure:"nebulas"`
 	Fio struct {
-		API string `json:"api"`
-	} `json:"fio"`
+		API string `mapstructure:"api"`
+	} `mapstructure:"fio"`
 	Bitcoin struct {
-		API string `json:"api"`
-	} `json:"bitcoin"`
+		API string `mapstructure:"api"`
+	} `mapstructure:"bitcoin"`
 	Litecoin struct {
-		API string `json:"api"`
-	} `json:"litecoin"`
+		API string `mapstructure:"api"`
+	} `mapstructure:"litecoin"`
 	Bitcoincash struct {
-		API string `json:"api"`
-	} `json:"bitcoincash"`
+		API string `mapstructure:"api"`
+	} `mapstructure:"bitcoincash"`
 	Doge struct {
-		API string `json:"api"`
-	} `json:"doge"`
+		API string `mapstructure:"api"`
+	} `mapstructure:"doge"`
 	Dash struct {
-		API string `json:"api"`
-	} `json:"dash"`
+		API string `mapstructure:"api"`
+	} `mapstructure:"dash"`
 	Zcoin struct {
-		API string `json:"api"`
-	} `json:"zcoin"`
+		API string `mapstructure:"api"`
+	} `mapstructure:"zcoin"`
 	Zcash struct {
-		API string `json:"api"`
-	} `json:"zcash"`
+		API string `mapstructure:"api"`
+	} `mapstructure:"zcash"`
 	Zelcash struct {
-		API string `json:"api"`
-	} `json:"zelcash"`
+		API string `mapstructure:"api"`
+	} `mapstructure:"zelcash"`
 	Viacoin struct {
-		API string `json:"api"`
-	} `json:"viacoin"`
+		API string `mapstructure:"api"`
+	} `mapstructure:"viacoin"`
 	Qtum struct {
-		API string `json:"api"`
-	} `json:"qtum"`
+		API string `mapstructure:"api"`
+	} `mapstructure:"qtum"`
 	Groestlcoin struct {
-		API string `json:"api"`
-	} `json:"groestlcoin"`
+		API string `mapstructure:"api"`
+	} `mapstructure:"groestlcoin"`
 	Ravencoin struct {
-		API string `json:"api"`
-	} `json:"ravencoin"`
+		API string `mapstructure:"api"`
+	} `mapstructure:"ravencoin"`
 	Decred struct {
-		API string `json:"api"`
-	} `json:"decred"`
+		API string `mapstructure:"api"`
+	} `mapstructure:"decred"`
 	Algorand struct {
-		API string `json:"api"`
-	} `json:"algorand"`
+		API string `mapstructure:"api"`
+	} `mapstructure:"algorand"`
 	Nano struct {
-		API string `json:"api"`
-	} `json:"nano"`
+		API string `mapstructure:"api"`
+	} `mapstructure:"nano"`
 	Digibyte struct {
-		API string `json:"api"`
-	} `json:"digibyte"`
+		API string `mapstructure:"api"`
+	} `mapstructure:"digibyte"`
 	Harmony struct {
-		API string `json:"api"`
-	} `json:"harmony"`
+		API string `mapstructure:"api"`
+	} `mapstructure:"harmony"`
 	Kava struct {
-		API string `json:"api"`
-	} `json:"kava"`
+		API string `mapstructure:"api"`
+	} `mapstructure:"kava"`
 	Kusama struct {
-		API string `json:"api"`
-	} `json:"kusama"`
+		API string `mapstructure:"api"`
+	} `mapstructure:"kusama"`
 	Polkadot struct {
-		API string `json:"api"`
-	} `json:"polkadot"`
+		API string `mapstructure:"api"`
+	} `mapstructure:"polkadot"`
 	Solana struct {
-		API string `json:"api"`
-	} `json:"solana"`
+		API string `mapstructure:"api"`
+	} `mapstructure:"solana"`
 	Near struct {
-		API string `json:"api"`
-	} `json:"near"`
+		API string `mapstructure:"api"`
+	} `mapstructure:"near"`
 	Elrond struct {
-		API string `json:"api"`
-	} `json:"elrond"`
+		API string `mapstructure:"api"`
+	} `mapstructure:"elrond"`
 	Filecoin struct {
-		API string `json:"api"`
-	} `json:"filecoin"`
+		API string `mapstructure:"api"`
+	} `mapstructure:"filecoin"`
 }
 
 var Default Configuration
@@ -261,7 +261,7 @@ func bindEnvs(iface interface{}, parts ...string) {
 	for i := 0; i < ift.NumField(); i++ {
 		v := ifv.Field(i)
 		t := ift.Field(i)
-		tv, ok := t.Tag.Lookup("json")
+		tv, ok := t.Tag.Lookup("mapstructure")
 		if !ok {
 			continue
 		}
