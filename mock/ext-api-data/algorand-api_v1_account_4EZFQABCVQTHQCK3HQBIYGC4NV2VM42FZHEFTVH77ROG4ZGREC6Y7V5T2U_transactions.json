@@ -1,0 +1,23 @@
+{
+    "transactions": [
+        {
+            "type": "pay",
+            "tx": "JZTKP6RRFGUDOZ7DQIR26DQWRDYZVYG2G3WDE4WLBJ77AMAEBFBA",
+            "from": "5TSQNIL54GB545B3WLC6OVH653SHAELMHU6MSVNGTUNMOEHAMWG7EC3AA4",
+            "fee": 1000,
+            "first-round": 5478300,
+            "last-round": 5478749,
+            "noteb64": "sHLxsLBrP3o=",
+            "round": 5478346,
+            "payment": {
+                "to": "4EZFQABCVQTHQCK3HQBIYGC4NV2VM42FZHEFTVH77ROG4ZGREC6Y7V5T2U",
+                "amount": 1,
+                "torewards": 2052177,
+                "closerewards": 0
+            },
+            "fromrewards": 0,
+            "genesisID": "mainnet-v1.0",
+            "genesishashb64": "wGHE2Pwdvd7S12BL5FaOP20EGYesN73ktiC1qzkkit8="
+        }
+    ]
+}

@@ -1,0 +1,11 @@
+{
+	"jsonrpc": "2.0",
+	"method": "hmy_getTransactionsHistory",
+	"params": [
+		{
+			"address": "one1e4mr7tp0a76wnhv9xd0wzentdjnjnsh3fwzgfv",
+			"fullTx": true
+		}
+	],
+	"id": 1
+}

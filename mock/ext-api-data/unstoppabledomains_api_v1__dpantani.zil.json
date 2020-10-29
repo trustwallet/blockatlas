@@ -1,0 +1,23 @@
+{
+	"addresses": {
+		"BCH": "qzpjlfnzudeu83krv0yk0r2kys67qptj6ys6eg6dms",
+		"BNB": "bnb1h4vyuuytu4rm86ust29wwlevt95du52383cctm",
+		"BTC": "bc1qd7eystu9xl53hkyxm4kyg7h5yk4p436sqx6f27",
+		"ETH": "0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB",
+		"LTC": "ltc1qz6nd472gx5gl3urfeldkrhg3h83c8tp2m7m6sd",
+		"XRP": "rUvXBttEXhdwaKjEM2MxbtswHU6AMhUTgJ",
+		"ZIL": "zil1vdntvlk47j9kh9a85klqcd9rvgze06ruhmna64",
+		"DOGE": "DP9VmQyDMyB1TWwgXkyRpBa7rTfPYgMvjy"
+	},
+	"whois": {},
+	"ipfs": {
+		"html": "QmUG2riiUkALEGB3AzgsJtN5KbgFcVb3p8qvc96gcsfzHo",
+		"redirect_domain": "https://abbfe6z95qov3d40hf6j30g7auo7afhp.mypinata.cloud/ipfs/QmUG2riiUkALEGB3AzgsJtN5KbgFcVb3p8qvc96gcsfzHo"
+	},
+	"gundb": {},
+	"meta": {
+		"owner": "0xe4da405976f315ab91ff9a43a51972cc94739aa8",
+		"type": "ZNS",
+		"ttl": 0
+	}
+}

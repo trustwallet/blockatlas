@@ -57,6 +57,9 @@ jobs:
       - name: Integration Test
         run: make integration
 
+      - name: Mock Test
+        run: make newman-mocked
+
   build:
     name: Build
     runs-on: ubuntu-latest

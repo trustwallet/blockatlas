@@ -1,0 +1,5 @@
+{
+  fio_address: 'name@somefiodomain',
+  token_code: 'ETH',
+  chain_code: 'ETH'
+}
