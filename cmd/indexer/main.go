@@ -2,9 +2,9 @@ package main
 
 import (
 	"context"
+	"github.com/trustwallet/blockatlas/config"
 	"time"
 
-	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/db"
 	"github.com/trustwallet/blockatlas/internal"
 	"github.com/trustwallet/blockatlas/mq"
@@ -19,31 +19,28 @@ const (
 var (
 	ctx      context.Context
 	cancel   context.CancelFunc
-	confPath string
 	database *db.Instance
 )
 
 func init() {
 	ctx, cancel = context.WithCancel(context.Background())
-	_, confPath = internal.ParseArgs("", defaultConfigPath)
+	_, confPath := internal.ParseArgs("", defaultConfigPath)
 
 	internal.InitConfig(confPath)
 	logger.InitLogger()
 
-	mqHost := viper.GetString("observer.rabbitmq.url")
-	logMode := viper.GetBool("postgres.log")
-	prefetchCount := viper.GetInt("observer.rabbitmq.consumer.prefetch_count")
+	internal.InitRabbitMQ(
+		config.Default.Observer.Rabbitmq.URL,
+		config.Default.Observer.Rabbitmq.Consumer.PrefetchCount,
+	)
 
-	internal.InitRabbitMQ(mqHost, prefetchCount)
-
-	pgUri := viper.GetString("postgres.url")
-	pgReadUri := viper.GetString("postgres.read.url")
 	var err error
-	database, err = db.New(pgUri, pgReadUri, logMode)
+	database, err = db.New(config.Default.Postgres.URL, config.Default.Postgres.Read.URL,
+		config.Default.Postgres.Log)
 	if err != nil {
 		logger.Fatal(err)
 	}
-	go database.RestoreConnectionWorker(ctx, time.Second*10, pgUri)
+	go database.RestoreConnectionWorker(ctx, time.Second*10, config.Default.Postgres.URL)
 
 	time.Sleep(time.Millisecond)
 }

@@ -26,7 +26,7 @@ observer:
   # Amount of time between fetching blocks concurrently
   fetch_blocks_interval: 1ms
   # Don't request more than N blocks at once
-  backlog_max_blocks: 20
+  backlog_max_blocks: 100
   # Limit amount of transactions in batch
   txs_batch_limit: 3000
   # Limit of push notifications in batch
@@ -52,8 +52,8 @@ binance:
   explorer: https://explorer.binance.org
 
 # [NIM] Nimiq: https://nimiq.com
-#nimiq:
-#  api: http://localhost:8648
+nimiq:
+  api: http://localhost:8648
 
 # [XRP] Ripple: https://ripple.com
 ripple:
@@ -74,39 +74,39 @@ tezos:
 
 # [ETH] Ethereum: https://ethereum.org
 ethereum:
-  api: https://localhost:4567 #(Trust-Ray API)
   blockbook_api: https://eth1.trezor.io
+  api: https://localhost:4567 #(Trust-Ray API)
   collections_api: https://api.opensea.io
   #  collections_api_key: [opensea_api_key]
   rpc: https://main-rpc.linkpool.io
 
 # [ETC] Ethereum Classic: https://ethereumclassic.org (Trust-Ray API)
-# classic:
-#   api: https://localhost:4567
+classic:
+  api: https://localhost:4567
 
 # [POA] POA Network: https://poa.network (Trust-Ray API)
-# poa:
-#   api: https://localhost:4567
+poa:
+  api: https://localhost:4567
 
 # [CLO] Callisto Network: https://callisto.network (Trust-Ray API)
-# callisto:
-#   api: https://localhost:4567
+callisto:
+  api: https://localhost:4567
 
 # [GO] GoChain: https://gochain.io (Trust-Ray API)
-# gochain:
-#   api: https://localhost:4567
+gochain:
+  api: https://localhost:4567
 
 # [WAN] Wanchain: https://wanchain.org (Trust-Ray API)
-# wanchain:
-#   api: https://localhost:4567
+wanchain:
+  api: https://localhost:4567
 
 # [TOMO] TomoChain: https://tomochain.com (Trust-Ray API)
-# tomochain:
-#   api: https://localhost:4567
+tomochain:
+  api: https://localhost:4567
 
 # [TT] ThunderCore: https://www.thundercore.com (Trust-Ray API)
-# thundertoken:
-#   api: https://localhost:4567
+thundertoken:
+  api: https://localhost:4567
 
 # [AION] Aion: https://aion.network
 aion:
