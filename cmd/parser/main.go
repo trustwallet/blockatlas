@@ -24,22 +24,17 @@ const (
 )
 
 var (
-	ctx                                                        context.Context
-	cancel                                                     context.CancelFunc
-	confPath                                                   string
-	backlogTime, minInterval, maxInterval, fetchBlocksInterval time.Duration
-	maxBackLogBlocks                                           int64
-	txsBatchLimit                                              uint
-	database                                                   *db.Instance
+	ctx      context.Context
+	cancel   context.CancelFunc
+	database *db.Instance
 )
 
 func init() {
 	ctx, cancel = context.WithCancel(context.Background())
-	_, confPath = internal.ParseArgs("", defaultConfigPath)
+	_, confPath := internal.ParseArgs("", defaultConfigPath)
 
 	internal.InitConfig(confPath)
 	logger.InitLogger()
-
 
 	internal.InitRabbitMQ(
 		config.Default.Observer.Rabbitmq.URL,
@@ -61,10 +56,6 @@ func init() {
 		logger.Fatal("No APIs to observe")
 	}
 
-	if minInterval >= maxInterval {
-		logger.Fatal("minimum block polling interval cannot be greater or equal than maximum")
-	}
-
 	var err error
 	database, err = db.New(config.Default.Postgres.URL, config.Default.Postgres.Read.URL,
 		config.Default.Postgres.Log)
@@ -83,6 +74,12 @@ func main() {
 		coinCancel  = make(map[string]context.CancelFunc)
 		stopChannel = make(chan<- struct{}, len(platform.BlockAPIs))
 	)
+	txsBatchLimit := config.Default.Observer.TxsBatchLimit
+	backlogTime := config.Default.Observer.Backlog
+	minInterval := config.Default.Observer.BlockPoll.Min
+	maxInterval := config.Default.Observer.BlockPoll.Max
+	fetchBlocksInterval := config.Default.Observer.FetchBlocksInterval
+	maxBackLogBlocks := config.Default.Observer.BacklogMaxBlocks
 
 	go mq.FatalWorker(time.Second * 10)
 

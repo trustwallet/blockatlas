@@ -26,7 +26,7 @@ observer:
   # Amount of time between fetching blocks concurrently
   fetch_blocks_interval: 1ms
   # Don't request more than N blocks at once
-  backlog_max_blocks: 20
+  backlog_max_blocks: 100
   # Limit amount of transactions in batch
   txs_batch_limit: 3000
   # Limit of push notifications in batch

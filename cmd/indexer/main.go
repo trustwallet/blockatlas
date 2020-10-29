@@ -19,13 +19,12 @@ const (
 var (
 	ctx      context.Context
 	cancel   context.CancelFunc
-	confPath string
 	database *db.Instance
 )
 
 func init() {
 	ctx, cancel = context.WithCancel(context.Background())
-	_, confPath = internal.ParseArgs("", defaultConfigPath)
+	_, confPath := internal.ParseArgs("", defaultConfigPath)
 
 	internal.InitConfig(confPath)
 	logger.InitLogger()

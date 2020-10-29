@@ -5,6 +5,7 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/logger"
 	"reflect"
 	"strings"
+	"time"
 )
 
 type Configuration struct {
@@ -17,14 +18,14 @@ type Configuration struct {
 	SpamWords  []string `mapstructure:"spam_words"`
 	Subscriber string   `mapstructure:"subscriber"`
 	Observer   struct {
-		Backlog                     string `mapstructure:"backlog"`
-		FetchBlocksInterval         string `mapstructure:"fetch_blocks_interval"`
-		BacklogMaxBlocks            int    `mapstructure:"backlog_max_blocks"`
-		TxsBatchLimit               int    `mapstructure:"txs_batch_limit"`
-		PushNotificationsBatchLimit int    `mapstructure:"push_notifications_batch_limit"`
+		Backlog                     time.Duration `mapstructure:"backlog"`
+		FetchBlocksInterval         time.Duration `mapstructure:"fetch_blocks_interval"`
+		BacklogMaxBlocks            int64         `mapstructure:"backlog_max_blocks"`
+		TxsBatchLimit               uint          `mapstructure:"txs_batch_limit"`
+		PushNotificationsBatchLimit int           `mapstructure:"push_notifications_batch_limit"`
 		BlockPoll                   struct {
-			Min string `mapstructure:"min"`
-			Max string `mapstructure:"max"`
+			Min time.Duration `mapstructure:"min"`
+			Max time.Duration `mapstructure:"max"`
 		} `mapstructure:"block_poll"`
 		Rabbitmq struct {
 			URL      string `mapstructure:"url"`
