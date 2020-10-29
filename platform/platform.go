@@ -47,7 +47,7 @@ func GetHandle(coinId uint) string {
 
 func getAllHandlers() blockatlas.Platforms {
 	return blockatlas.Platforms{
-		coin.Fio().Handle:          fio.Init(config.Default.Filecoin.API),
+		coin.Fio().Handle:          fio.Init(config.Default.Fio.API),
 		coin.Aion().Handle:         aion.Init(config.Default.Aion.API),
 		coin.Icon().Handle:         icon.Init(config.Default.Icon.API),
 		coin.Tron().Handle:         tron.Init(config.Default.Tron.API, config.Default.Tron.Explorer),
@@ -87,7 +87,7 @@ func getAllHandlers() blockatlas.Platforms {
 		coin.Dash().Handle:         bitcoin.Init(coin.DASH, config.Default.Dash.API),
 		coin.Doge().Handle:         bitcoin.Init(coin.DOGE, config.Default.Doge.API),
 		coin.Qtum().Handle:         bitcoin.Init(coin.QTUM, config.Default.Qtum.API),
-		coin.Gochain().Handle:      ethereum.Init(coin.GO, config.Default.Go.API, config.Default.Go.RPC),
+		coin.Gochain().Handle:      ethereum.Init(coin.GO, config.Default.Gochain.API, config.Default.Gochain.RPC),
 		coin.Thundertoken().Handle: ethereum.Init(coin.TT, config.Default.Thundertoken.API, config.Default.Thundertoken.RPC),
 		coin.Classic().Handle:      ethereum.Init(coin.ETC, config.Default.Classic.API, config.Default.Classic.RPC),
 		coin.Poa().Handle:          ethereum.Init(coin.POA, config.Default.Poa.API, config.Default.Poa.RPC),
@@ -96,7 +96,7 @@ func getAllHandlers() blockatlas.Platforms {
 		coin.Tomochain().Handle:    ethereum.Init(coin.TOMO, config.Default.Tomochain.API, config.Default.Tomochain.RPC),
 		coin.Bsc().Handle:          ethereum.InitWithBlockbook(coin.BSCLegacy, config.Default.BSC.API, config.Default.BSC.RPC),
 		coin.Smartchain().Handle:   ethereum.InitWithBlockbook(coin.BSC, config.Default.Smartchain.API, config.Default.Smartchain.RPC),
-		coin.Ethereum().Handle:     ethereum.InitWitCollection(coin.ETH, config.Default.Ethereum.API, config.Default.Ethereum.BlockbookAPI, config.Default.Ethereum.CollectionsAPI, config.Default.Ethereum.CollectionsKey),
+		coin.Ethereum().Handle:     ethereum.InitWithCollection(coin.ETH, config.Default.Ethereum.API, config.Default.Ethereum.BlockbookAPI, config.Default.Ethereum.CollectionsAPI, config.Default.Ethereum.CollectionsKey),
 		coin.Near().Handle:         near.Init(config.Default.Near.API),
 		coin.Elrond().Handle:       elrond.Init(coin.ERD, config.Default.Elrond.API),
 		coin.Filecoin().Handle:     filecoin.Init(config.Default.Filecoin.API),
@@ -105,6 +105,6 @@ func getAllHandlers() blockatlas.Platforms {
 
 func getCollectionsHandlers() blockatlas.CollectionsAPIs {
 	return blockatlas.CollectionsAPIs{
-		coin.ETH: ethereum.InitWitCollection(coin.ETH, config.Default.Ethereum.API, config.Default.Ethereum.BlockbookAPI, config.Default.Ethereum.CollectionsAPI, config.Default.Ethereum.CollectionsKey),
+		coin.ETH: ethereum.InitWithCollection(coin.ETH, config.Default.Ethereum.API, config.Default.Ethereum.BlockbookAPI, config.Default.Ethereum.CollectionsAPI, config.Default.Ethereum.CollectionsKey),
 	}
 }

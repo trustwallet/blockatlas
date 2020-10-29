@@ -31,7 +31,7 @@ func InitWithBlockbook(coinType uint, blockbookApi, rpc string) *Platform {
 	}
 }
 
-func InitWitCollection(coinType uint, rpc, blockbookApi, collectionApi, collectionKey string) *Platform {
+func InitWithCollection(coinType uint, rpc, blockbookApi, collectionApi, collectionKey string) *Platform {
 	platform := InitWithBlockbook(coinType, blockbookApi, rpc)
 	platform.collectible = collection.Client{Request: blockatlas.InitClient(collectionApi)}
 	platform.collectible.Headers["X-API-KEY"] = collectionKey

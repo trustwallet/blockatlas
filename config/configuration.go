@@ -64,10 +64,10 @@ type Configuration struct {
 		API string `json:"api"`
 		RPC string `json:"rpc"`
 	} `json:"thundertoken"`
-	Go struct {
+	Gochain struct {
 		API string `json:"api"`
 		RPC string `json:"rpc"`
-	} `json:"go"`
+	} `json:"gochain"`
 	Classic struct {
 		API string `json:"api"`
 		RPC string `json:"rpc"`
@@ -79,7 +79,7 @@ type Configuration struct {
 	BSC struct {
 		API string `json:"api"`
 		RPC string `json:"rpc"`
-	} `json:"smartchain"`
+	} `json:"bsc"`
 	Poa struct {
 		API string `json:"api"`
 		RPC string `json:"rpc"`
