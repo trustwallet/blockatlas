@@ -2,10 +2,10 @@ package main
 
 import (
 	"context"
+	"github.com/trustwallet/blockatlas/config"
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/api"
 	"github.com/trustwallet/blockatlas/db"
 	_ "github.com/trustwallet/blockatlas/docs"
@@ -41,26 +41,23 @@ func init() {
 	internal.InitConfig(confPath)
 	logger.InitLogger()
 
-	restAPI = viper.GetString("rest_api")
-	logMode := viper.GetBool("postgres.log")
-	engine = internal.InitEngine(viper.GetString("gin.mode"))
-	platform.Init(viper.GetStringSlice("platform"))
-	spamfilter.SpamList = viper.GetStringSlice("spam_words")
+	engine = internal.InitEngine(config.Default.Gin.Mode)
+	platform.Init(config.Default.Platform)
+	spamfilter.SpamList = config.Default.SpamWords
 
 	if restAPI == "tokens" || restAPI == "all" {
-		pgURI := viper.GetString("postgres.url")
-		pgReadUri := viper.GetString("postgres.read.url")
-
 		var err error
-		database, err = db.New(pgURI, pgReadUri, logMode)
+		database, err = db.New(config.Default.Postgres.URL, config.Default.Postgres.Read.URL, config.Default.Postgres.Log)
 		if err != nil {
 			logger.Fatal(err)
 		}
-		go database.RestoreConnectionWorker(ctx, time.Second*10, pgURI)
+		go database.RestoreConnectionWorker(ctx, time.Second*10, config.Default.Postgres.URL)
 
-		mqHost := viper.GetString("observer.rabbitmq.url")
-		prefetchCount := viper.GetInt("observer.rabbitmq.consumer.prefetch_count")
-		internal.InitRabbitMQ(mqHost, prefetchCount)
+		internal.InitRabbitMQ(
+			config.Default.Observer.Rabbitmq.URL,
+			config.Default.Observer.Rabbitmq.Consumer.PrefetchCount,
+		)
+
 		if err := mq.TokensRegistration.Declare(); err != nil {
 			logger.Fatal(err)
 		}
