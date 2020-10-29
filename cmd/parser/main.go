@@ -3,13 +3,14 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/trustwallet/blockatlas/config"
+	"github.com/trustwallet/blockatlas/services/spamfilter"
 	"os"
 	"os/signal"
 	"sync"
 	"syscall"
 	"time"
 
-	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/db"
 	"github.com/trustwallet/blockatlas/internal"
 	"github.com/trustwallet/blockatlas/mq"
@@ -23,28 +24,25 @@ const (
 )
 
 var (
-	ctx                                                        context.Context
-	cancel                                                     context.CancelFunc
-	confPath                                                   string
-	backlogTime, minInterval, maxInterval, fetchBlocksInterval time.Duration
-	maxBackLogBlocks                                           int64
-	txsBatchLimit                                              uint
-	database                                                   *db.Instance
+	ctx      context.Context
+	cancel   context.CancelFunc
+	database *db.Instance
 )
 
 func init() {
 	ctx, cancel = context.WithCancel(context.Background())
-	_, confPath = internal.ParseArgs("", defaultConfigPath)
+	_, confPath := internal.ParseArgs("", defaultConfigPath)
 
 	internal.InitConfig(confPath)
 	logger.InitLogger()
 
-	mqHost := viper.GetString("observer.rabbitmq.url")
-	prefetchCount := viper.GetInt("observer.rabbitmq.consumer.prefetch_count")
-	platformHandles := viper.GetStringSlice("platform")
+	internal.InitRabbitMQ(
+		config.Default.Observer.Rabbitmq.URL,
+		config.Default.Observer.Rabbitmq.Consumer.PrefetchCount,
+	)
 
-	internal.InitRabbitMQ(mqHost, prefetchCount)
-	platform.Init(platformHandles)
+	platform.Init(config.Default.Platform)
+	spamfilter.SpamList = config.Default.SpamWords
 
 	if err := mq.RawTransactions.Declare(); err != nil {
 		logger.Fatal(err)
@@ -58,25 +56,13 @@ func init() {
 		logger.Fatal("No APIs to observe")
 	}
 
-	txsBatchLimit = viper.GetUint("observer.txs_batch_limit")
-	backlogTime = viper.GetDuration("observer.backlog")
-	minInterval = viper.GetDuration("observer.block_poll.min")
-	maxInterval = viper.GetDuration("observer.block_poll.max")
-	fetchBlocksInterval = viper.GetDuration("observer.fetch_blocks_interval")
-	maxBackLogBlocks = viper.GetInt64("observer.backlog_max_blocks")
-	if minInterval >= maxInterval {
-		logger.Fatal("minimum block polling interval cannot be greater or equal than maximum")
-	}
-
-	pgURI := viper.GetString("postgres.url")
-	pgReadUri := viper.GetString("postgres.read.url")
-	logMode := viper.GetBool("postgres.log")
 	var err error
-	database, err = db.New(pgURI, pgReadUri, logMode)
+	database, err = db.New(config.Default.Postgres.URL, config.Default.Postgres.Read.URL,
+		config.Default.Postgres.Log)
 	if err != nil {
 		logger.Fatal(err)
 	}
-	go database.RestoreConnectionWorker(ctx, time.Second*10, pgURI)
+	go database.RestoreConnectionWorker(ctx, time.Second*10, config.Default.Postgres.URL)
 
 	time.Sleep(time.Millisecond)
 }
@@ -88,6 +74,12 @@ func main() {
 		coinCancel  = make(map[string]context.CancelFunc)
 		stopChannel = make(chan<- struct{}, len(platform.BlockAPIs))
 	)
+	txsBatchLimit := config.Default.Observer.TxsBatchLimit
+	backlogTime := config.Default.Observer.Backlog
+	minInterval := config.Default.Observer.BlockPoll.Min
+	maxInterval := config.Default.Observer.BlockPoll.Max
+	fetchBlocksInterval := config.Default.Observer.FetchBlocksInterval
+	maxBackLogBlocks := config.Default.Observer.BacklogMaxBlocks
 
 	go mq.FatalWorker(time.Second * 10)
 

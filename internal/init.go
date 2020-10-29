@@ -36,7 +36,7 @@ func InitConfig(confPath string) {
 		logger.Fatal(err)
 	}
 
-	config.LoadConfig(confPath)
+	config.Init(confPath)
 }
 
 func InitEngine(ginMode string) *gin.Engine {

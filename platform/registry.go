@@ -1,9 +1,6 @@
 package platform
 
 import (
-	"fmt"
-
-	"github.com/spf13/viper"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 )
@@ -58,14 +55,6 @@ func Init(platformHandles []string) {
 
 	for _, platform := range platformList {
 		handle := platform.Coin().Handle
-		apiURL := fmt.Sprintf("%s.api", handle)
-
-		if !viper.IsSet(apiURL) {
-			continue
-		}
-		if viper.GetString(apiURL) == "" {
-			continue
-		}
 
 		p := logger.Params{
 			"platform": handle,
