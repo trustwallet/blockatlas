@@ -11,6 +11,8 @@ import (
 	"strconv"
 )
 
+type Subscriber string
+
 const (
 	Notifications      Subscriber                       = "notifications"
 	AddSubscription    blockatlas.SubscriptionOperation = "AddSubscription"

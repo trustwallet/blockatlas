@@ -18,7 +18,6 @@ func RunTokensSubscriber(database *db.Instance, delivery amqp.Delivery) {
 	defer tx.End()
 
 	ctx := apm.ContextWithTransaction(context.Background(), tx)
-	logger.Info("body " + string(delivery.Body))
 	event := make(map[string][]models.Asset)
 	if err := json.Unmarshal(delivery.Body, &event); err != nil {
 		if err := delivery.Ack(false); err != nil {
