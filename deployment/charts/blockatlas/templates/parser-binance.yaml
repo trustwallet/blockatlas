@@ -35,7 +35,7 @@ spec:
         - name: OBSERVER_BLOCK_POLL_MIN
           value: 5s
         - name: OBSERVER_BACKLOG_MAX_BLOCKS
-          value: 300
+          value: "300"
         - name: OBSERVER_BACKLOG
           value: 10h
         envFrom:
