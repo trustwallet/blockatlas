@@ -1,5 +1,6 @@
 # scaling
-apiReplicaCount: 3
+apiReplicaCount: 5
+consumerReplicaCount: 5
 
 image:
   repository: repositoryToReplace
