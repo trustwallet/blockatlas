@@ -50,6 +50,3 @@ jobs:
 
       - name: Integration Test
         run: make integration
-
-      - name: Mock Test
-        run: make newman-mocked

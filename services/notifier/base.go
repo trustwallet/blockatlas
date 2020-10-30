@@ -11,7 +11,11 @@ import (
 	"go.elastic.co/apm"
 )
 
-const DefaultPushNotificationsBatchLimit = 50
+const (
+	DefaultPushNotificationsBatchLimit = 50
+
+	Notifier = "Notifier"
+)
 
 var MaxPushNotificationsBatchLimit uint = DefaultPushNotificationsBatchLimit
 
@@ -26,7 +30,7 @@ func RunNotifier(database *db.Instance, delivery amqp.Delivery) {
 		}
 	}()
 
-	txs, err := GetTransactionsFromDelivery(delivery, ctx)
+	txs, err := GetTransactionsFromDelivery(delivery, Notifier, ctx)
 	if err != nil {
 		logger.Error("failed to get transactions", err)
 	}
@@ -64,4 +68,5 @@ func RunNotifier(database *db.Instance, delivery amqp.Delivery) {
 	for _, batch := range batches {
 		publishNotificationBatch(batch, ctx)
 	}
+	logger.Info("------------------------------------------------------------")
 }

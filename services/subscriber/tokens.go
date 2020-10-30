@@ -18,7 +18,6 @@ func RunTokensSubscriber(database *db.Instance, delivery amqp.Delivery) {
 	defer tx.End()
 
 	ctx := apm.ContextWithTransaction(context.Background(), tx)
-	logger.Info("body " + string(delivery.Body))
 	event := make(map[string][]models.Asset)
 	if err := json.Unmarshal(delivery.Body, &event); err != nil {
 		if err := delivery.Ack(false); err != nil {
@@ -31,8 +30,9 @@ func RunTokensSubscriber(database *db.Instance, delivery amqp.Delivery) {
 			logger.Error("Failed to AddAssociationsForAddress: " + err.Error())
 		}
 	}
-	logger.Info("Subscribed " + strconv.Itoa(len(event)))
+	logger.Info("Subscribed "+strconv.Itoa(len(event)), logger.Params{"service": Tokens})
 	if err := delivery.Ack(false); err != nil {
 		logger.Fatal(err, err)
 	}
+	logger.Info("------------------------------------------------------------")
 }

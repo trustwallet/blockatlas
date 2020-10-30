@@ -56,11 +56,8 @@ func RunParser(params Params) {
 			return
 		default:
 			parse(params)
-			logger.Info("Sleep ...", logger.Params{"interval": params.ParsingBlocksInterval.String()})
 			time.Sleep(params.ParsingBlocksInterval)
-			logger.Info("Leaving select")
 		}
-		logger.Info("Going to the next  cycle... ")
 		logger.Info("------------------------------------------------------------")
 	}
 }

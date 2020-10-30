@@ -1,0 +1,95 @@
+{{- if .Values.rabbitmq.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rabbitmq
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: rabbitmq
+    chart: {{ template "blockatlas.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: rabbitmq
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+    type: RollingUpdate
+  template:
+    metadata:
+    {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      labels:
+        name: rabbitmq
+    spec:
+      containers:
+      - env:
+        - name: RABBITMQ_DEFAULT_PASS
+          value: lV7zO3lD
+        - name: RABBITMQ_DEFAULT_USER
+          value: user
+        - name: RABBITMQ_ERLANG_COOKIE
+          value: someStrongCookie
+        image: rabbitmq:3-management
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        name: rabbitmq
+        ports:
+        - containerPort: 5672
+          name: rabbitmq
+          protocol: TCP
+        - containerPort: 15672
+          name: ui
+          protocol: TCP
+        resources:
+            {{- toYaml .Values.rabbitmqResources | nindent 12 }}
+        securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+        stdin: true
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        tty: true
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      restartPolicy: Always
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rabbitmq
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "blockatlas.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: 5672
+      protocol: TCP
+      name: rabbitmq
+    - port: 15672
+      protocol: TCP
+      name: ui
+  selector:
+      name: rabbitmq
+{{- end }}

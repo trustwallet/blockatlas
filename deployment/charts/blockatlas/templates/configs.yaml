@@ -1,0 +1,13 @@
+{{- if .Values.config.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: configs
+  namespace: {{ .Release.Namespace }}
+data:
+  {{- range $k, $v := .Values.configs }}
+  {{- range $kk, $vv := $v }}
+    {{ $kk }}: {{ $vv | quote }}
+  {{- end }}
+  {{- end }}
+{{- end }}

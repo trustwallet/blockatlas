@@ -7,11 +7,8 @@ BUILD := $(shell git rev-parse --short HEAD)
 DATETIME := $(shell date +"%Y.%m.%d-%H:%M:%S")
 PROJECT_NAME := $(shell basename "$(PWD)")
 API := api
-NOTIFIER := notifier
+CONSUMER := consumer
 PARSER := parser
-SUBSCRIBER := subscriber
-SEARCHER := searcher
-INDEXER := indexer
 COIN_FILE := coin/coins.yml
 COIN_GO_FILE := coin/coins.go
 GEN_COIN_FILE := coin/gen.go
@@ -44,11 +41,8 @@ STDERR := /tmp/.$(PROJECT_NAME)-stderr.txt
 
 # PID file will keep the process id of the server
 PID_API := /tmp/.$(PROJECT_NAME).$(API).pid
-PID_SEARCHER := /tmp/.$(PROJECT_NAME).$(SEARCHER).pid
-PID_INDEXER := /tmp/.$(PROJECT_NAME).$(INDEXER).pid
-PID_NOTIFIER := /tmp/.$(PROJECT_NAME).$(NOTIFIER).pid
+PID_CONSUMER := /tmp/.$(PROJECT_NAME).$(CONSUMER).pid
 PID_PARSER := /tmp/.$(PROJECT_NAME).$(PARSER).pid
-PID_SUBSCRIBER := /tmp/.$(PROJECT_NAME).$(SUBSCRIBER).pid
 PID_MOCKSERVER := /tmp/.$(PROJECT_NAME).mockserver.pid
 # Make is verbose in Linux. Make it silent.
 MAKEFLAGS += --silent
@@ -58,7 +52,7 @@ install: go-get
 
 ## start: Start API, Observer and Sync in development mode.
 start:
-	@bash -c "$(MAKE) clean compile start-api start-parser start-notifier start-subscriber start-searcher"
+	@bash -c "$(MAKE) clean compile start-api start-parser start-consumer"
 
 ## start-api: Start platform api in development mode.
 start-api: stop
@@ -81,45 +75,20 @@ start-parser: stop
 	@cat $(PID_PARSER) | sed "/^/s/^/  \>  Parser PID: /"
 	@echo "  >  Error log: $(STDERR)"
 
-## start-notifier: Start observer-notifier in development mode.
-start-notifier: stop
+## start-consumer: Start observer-consumer in development mode.
+start-consumer: stop
 	@echo "  >  Starting $(PROJECT_NAME)"
-	@-$(GOBIN)/$(NOTIFIER)/notifier -c $(CONFIG_FILE) 2>&1 & echo $$! > $(PID_NOTIFIER)
-	@cat $(PID_NOTIFIER) | sed "/^/s/^/  \>  Notifier PID: /"
-	@echo "  >  Error log: $(STDERR)"
-
-## start-subscriber: Start observer-subscriber in development mode.
-start-subscriber: stop
-	@echo "  >  Starting $(PROJECT_NAME)"
-	@-$(GOBIN)/$(SUBSCRIBER)/subscriber -c $(CONFIG_FILE) 2>&1 & echo $$! > $(PID_SUBSCRIBER)
-	@cat $(PID_SUBSCRIBER) | sed "/^/s/^/  \>  Subscriber PID: /"
-	@echo "  >  Error log: $(STDERR)"
-
-## start-searcher: Start searcher in development mode.
-start-searcher: stop
-	@echo "  >  Starting $(PROJECT_NAME)"
-	@-$(GOBIN)/$(SEARCHER)/searcher -c $(CONFIG_FILE) 2>&1 & echo $$! > $(PID_SEARCHER)
-	@cat $(PID_SEARCHER) | sed "/^/s/^/  \>  Searcher PID: /"
-	@echo "  >  Error log: $(STDERR)"
-
-## start-indexer: Start indexer in development mode.
-start-indexer: stop
-	@echo "  >  Starting $(PROJECT_NAME)"
-	@-$(GOBIN)/$(INDEXER)/indexer -c $(CONFIG_FILE) 2>&1 & echo $$! > $(PID_INDEXER)
-	@cat $(PID_INDEXER) | sed "/^/s/^/  \>  Indexer PID: /"
+	@-$(GOBIN)/$(CONSUMER)/consumer -c $(CONFIG_FILE) 2>&1 & echo $$! > $(PID_CONSUMER)
+	@cat $(PID_CONSUMER) | sed "/^/s/^/  \>  consumer PID: /"
 	@echo "  >  Error log: $(STDERR)"
 
 ## stop: Stop development mode.
 stop:
-	@-touch $(PID_API) $(PID_NOTIFIER) $(PID_PARSER) $(PID_SUBSCRIBER) $(PID_MOCKSERVER) $(PID_SEARCHER)
+	@-touch $(PID_API) $(PID_CONSUMER) $(PID_PARSER)
 	@-kill `cat $(PID_API)` 2> /dev/null || true
-	@-kill `cat $(PID_NOTIFIER)` 2> /dev/null || true
+	@-kill `cat $(PID_CONSUMER)` 2> /dev/null || true
 	@-kill `cat $(PID_PARSER)` 2> /dev/null || true
-	@-kill `cat $(PID_SUBSCRIBER)` 2> /dev/null || true
-	@-kill `cat $(PID_MOCKSERVER)` 2> /dev/null || true
-	@-kill `cat $(PID_SEARCHER)` 2> /dev/null || true
-	@-kill `cat $(PID_INDEXER)` 2> /dev/null || true
-	@-rm $(PID_API) $(PID_NOTIFIER) $(PID_PARSER) $(PID_SUBSCRIBER) $(PID_INDEXER) $(PID_MOCKSERVER) $(PID_SEARCHER)
+	@-rm $(PID_API) $(PID_CONSUMER) $(PID_PARSER)
 
 stop-mockserver:
 	@-touch $(PID_MOCKSERVER)
@@ -237,7 +206,7 @@ endif
 
 go-compile: go-get go-build
 
-go-build: go-build-api go-build-notifier go-build-parser go-build-subscriber go-build-searcher go-build-indexer
+go-build: go-build-api go-build-consumer go-build-parser
 
 docker-shutdown:
 	@echo "  >  Shutdown docker containers..."
@@ -253,25 +222,13 @@ go-build-api:
 	@echo "  >  Building api binary..."
 	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(API)/api ./cmd/$(API)
 
-go-build-notifier:
-	@echo "  >  Building notifier binary..."
-	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(NOTIFIER)/notifier ./cmd/$(NOTIFIER)
+go-build-consumer:
+	@echo "  >  Building consumer binary..."
+	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(CONSUMER)/consumer ./cmd/$(CONSUMER)
 
 go-build-parser:
 	@echo "  >  Building parser binary..."
 	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(PARSER)/parser ./cmd/$(PARSER)
-
-go-build-subscriber:
-	@echo "  >  Building subscriber binary..."
-	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(SUBSCRIBER)/subscriber ./cmd/$(SUBSCRIBER)
-
-go-build-searcher:
-	@echo "  >  Building searcher binary..."
-	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(SEARCHER)/searcher ./cmd/$(SEARCHER)
-
-go-build-indexer:
-	@echo "  >  Building indexer binary..."
-	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/$(INDEXER)/indexer ./cmd/$(INDEXER)
 
 go-generate:
 	@echo "  >  Generating dependency files..."

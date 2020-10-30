@@ -11,6 +11,8 @@ import (
 	"strconv"
 )
 
+type Subscriber string
+
 const (
 	Notifications      Subscriber                       = "notifications"
 	AddSubscription    blockatlas.SubscriptionOperation = "AddSubscription"
@@ -32,7 +34,7 @@ func RunTransactionsSubscriber(database *db.Instance, delivery amqp.Delivery) {
 	}
 
 	subscriptions := event.ParseSubscriptions(event.Subscriptions)
-	params := logger.Params{"operation": event.Operation, "subscriptions_len": len(subscriptions)}
+	params := logger.Params{"service": Notifications, "operation": event.Operation, "subscriptions_len": len(subscriptions)}
 
 	switch event.Operation {
 	case AddSubscription, UpdateSubscription:

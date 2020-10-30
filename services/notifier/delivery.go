@@ -11,7 +11,7 @@ import (
 	"go.elastic.co/apm"
 )
 
-func GetTransactionsFromDelivery(delivery amqp.Delivery, ctx context.Context) (blockatlas.Txs, error) {
+func GetTransactionsFromDelivery(delivery amqp.Delivery, service string, ctx context.Context) (blockatlas.Txs, error) {
 	var txs blockatlas.Txs
 
 	span, _ := apm.StartSpan(ctx, "GetTransactionsFromDelivery", "app")
@@ -21,7 +21,7 @@ func GetTransactionsFromDelivery(delivery amqp.Delivery, ctx context.Context) (b
 		return nil, err
 	}
 
-	logger.Info("Consumed", logger.Params{"txs": len(txs), "coin": txs[0].Coin})
+	logger.Info("Consumed", logger.Params{"service": service, "txs": len(txs), "coin": txs[0].Coin})
 
 	if len(txs) == 0 {
 		return nil, errors.E("empty txs list")
@@ -44,5 +44,5 @@ func publishNotificationBatch(batch []TransactionNotification, ctx context.Conte
 		logger.Fatal(err)
 	}
 
-	logger.Info("Txs batch dispatched", logger.Params{"txs": len(batch)})
+	logger.Info("Txs batch dispatched", logger.Params{"service": Notifier, "txs": len(batch)})
 }

@@ -3,16 +3,12 @@ package db
 import (
 	"context"
 	"errors"
-	"log"
-	"os"
 	"time"
 
 	"github.com/trustwallet/blockatlas/db/models"
 	"github.com/trustwallet/blockatlas/pkg/logger"
 
 	gocache "github.com/patrickmn/go-cache"
-
-	gormlogger "gorm.io/gorm/logger"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -30,16 +26,7 @@ const batchCount = 3000
 
 func New(uri, readUri string, logMode bool) (*Instance, error) {
 	cfg := &gorm.Config{}
-	if logMode {
-		cfg.Logger = gormlogger.New(
-			log.New(os.Stdout, "\r\n", log.LstdFlags),
-			gormlogger.Config{
-				SlowThreshold: time.Second,
-				LogLevel:      gormlogger.Info,
-				Colorful:      false,
-			},
-		)
-	}
+
 	db, err := gorm.Open(postgres.Open(uri), cfg)
 	if err != nil {
 		return nil, err
