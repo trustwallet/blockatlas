@@ -21,3 +21,117 @@ apiResources:
   requests:
     cpu: 200m
     memory: 300Mi
+
+consumerResources:
+  limits:
+    cpu: 300m
+    memory: 400Mi
+  requests:
+    cpu: 300m
+    memory: 400Mi
+
+parserBinanceResources: 
+  limits:
+    cpu: 30m
+    memory: 120Mi
+  requests:
+    cpu: 10m
+    memory: 120Mi
+parserBitcoinResources:
+  limits:
+    cpu: 30m
+    memory: 120Mi
+  requests:
+    cpu: 10m
+    memory: 120Mi
+parserBscResources:
+  limits:
+    cpu: 30m
+    memory: 120Mi
+  requests:
+    cpu: 10m
+    memory: 120Mi
+parserClassicResources:
+  limits:
+    cpu: 30m
+    memory: 120Mi
+  requests:
+    cpu: 10m
+    memory: 120Mi
+parserCosmosResources:
+  limits:
+    cpu: 30m
+    memory: 120Mi
+  requests:
+    cpu: 10m
+    memory: 120Mi
+parserDogeResources:
+  limits:
+    cpu: 30m
+    memory: 120Mi
+  requests:
+    cpu: 10m
+    memory: 120Mi
+parserEthereumResources:
+  limits:
+    cpu: 30m
+    memory: 120Mi
+  requests:
+    cpu: 10m
+    memory: 120Mi
+parserKavaResources:
+  limits:
+    cpu: 30m
+    memory: 120Mi
+  requests:
+    cpu: 10m
+    memory: 120Mi
+parserLitecoinResources:
+  limits:
+    cpu: 30m
+    memory: 120Mi
+  requests:
+    cpu: 10m
+    memory: 120Mi
+parserRippleResources:
+  limits:
+    cpu: 30m
+    memory: 120Mi
+  requests:
+    cpu: 10m
+    memory: 120Mi
+parserOtherResources:
+  limits:
+    cpu: 30m
+    memory: 120Mi
+  requests:
+    cpu: 10m
+    memory: 120Mi
+parserSmartchainResources:
+  limits:
+    cpu: 30m
+    memory: 120Mi
+  requests:
+    cpu: 10m
+    memory: 120Mi
+parserStellarResources:
+  limits:
+    cpu: 30m
+    memory: 120Mi
+  requests:
+    cpu: 10m
+    memory: 120Mi
+parserTezosResources:
+  limits:
+    cpu: 30m
+    memory: 120Mi
+  requests:
+    cpu: 10m
+    memory: 120Mi
+parserTronResources:
+  limits:
+    cpu: 30m
+    memory: 120Mi
+  requests:
+    cpu: 10m
+    memory: 120Mi

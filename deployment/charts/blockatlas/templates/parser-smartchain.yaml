@@ -41,7 +41,7 @@ spec:
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         name: parser-smartchain
         resources:
-            {{- toYaml .Values.parserRippleResources | nindent 12 }}
+            {{- toYaml .Values.parserSmartchainResources | nindent 12 }}
         securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
         stdin: true
