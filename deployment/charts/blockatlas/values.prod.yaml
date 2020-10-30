@@ -1,0 +1,23 @@
+# scaling
+apiReplicaCount: 3
+
+image:
+  repository: repositoryToReplace
+  tag: tagToReplace
+
+posgtres:
+  enabled: false
+rabbitmq:
+  enabled: false
+config:
+  enabled: false
+secret:
+  enabled: false
+
+apiResources:
+  limits:
+    cpu: 200m
+    memory: 300Mi
+  requests:
+    cpu: 200m
+    memory: 300Mi
