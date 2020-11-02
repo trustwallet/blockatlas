@@ -189,7 +189,7 @@ func fetchBlock(api blockatlas.BlockAPI, num int64, blocksChan chan<- blockatlas
 	defer span.End()
 	block, err := getBlockByNumberWithRetry(5, time.Second*5, api.GetBlockByNumber, num, api.Coin().Symbol, ctx)
 	if err != nil {
-		return errors.New(fmt.Sprintf("%d", num))
+		return fmt.Errorf("%d", num)
 	}
 	blocksChan <- *block
 	return nil
@@ -207,12 +207,13 @@ func SaveLastParsedBlock(params Params, blocks []blockatlas.Block, ctx context.C
 		return blocks[i].Number < blocks[j].Number
 	})
 	if len(blocks)-1 < 0 {
-		return errors.New(fmt.Sprintf("Cannot get last block number for %s", params.Api.Coin().Handle))
+		return fmt.Errorf("cannot get last block number for %s", params.Api.Coin().Handle)
 	}
 
 	lastBlockNumber := blocks[len(blocks)-1].Number
 	if lastBlockNumber <= 0 {
-		return errors.New(fmt.Sprintf("Parser of %s failed to save last block, lastBlockNumber <= 0", params.Api.Coin().Handle))
+		return fmt.Errorf("parser of %s failed to save last block, lastBlockNumber <= 0",
+			params.Api.Coin().Handle)
 	}
 	err := params.Database.SetLastParsedBlockNumber(params.Api.Coin().Handle, lastBlockNumber, ctx)
 	if err != nil {
