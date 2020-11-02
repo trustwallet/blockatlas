@@ -1,9 +1,9 @@
 package endpoint
 
 import (
+	"errors"
 	"github.com/gin-gonic/gin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/pkg/errors"
 	"net/http"
 )
 
@@ -39,7 +39,7 @@ func GetTransactionsHistory(c *gin.Context, txAPI blockatlas.TxAPI, tokenTxAPI b
 	default:
 		c.AbortWithStatusJSON(
 			http.StatusInternalServerError,
-			errorResponse(errors.E("Failed to find api for that coin")),
+			errorResponse(errors.New("Failed to find api for that coin")),
 		)
 		return
 	}

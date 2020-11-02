@@ -1,8 +1,8 @@
 package config
 
 import (
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
-	"github.com/trustwallet/blockatlas/pkg/logger"
 	"reflect"
 	"strings"
 	"time"
@@ -235,23 +235,23 @@ func Init(confPath string) {
 	if confPath == "" {
 		err := viper.ReadInConfig()
 		if err != nil {
-			logger.Panic(err, "Fatal error reading default config")
+			log.Panic(err, "Fatal error reading default config")
 		} else {
-			logger.Info("Viper using default config", logger.Params{"config": viper.ConfigFileUsed()})
+			log.WithFields(log.Fields{"config": viper.ConfigFileUsed()}).Info("Viper using default config")
 		}
 	} else {
 		viper.SetConfigFile(confPath)
 		err := viper.ReadInConfig()
 		if err != nil {
-			logger.Panic(err, "Fatal error reading supplied config")
+			log.Panic(err, "Fatal error reading supplied config")
 		} else {
-			logger.Info("Viper using supplied config", logger.Params{"config": viper.ConfigFileUsed()})
+			log.WithFields(log.Fields{"config": viper.ConfigFileUsed()}).Info("Viper using supplied config")
 		}
 	}
 
 	bindEnvs(c)
 	if err := viper.Unmarshal(&c); err != nil {
-		logger.Panic(err, "Error Unmarshal Viper Config File")
+		log.Panic(err, "Error Unmarshal Viper Config File")
 	}
 	Default = c
 }
@@ -271,7 +271,7 @@ func bindEnvs(iface interface{}, parts ...string) {
 			bindEnvs(v.Interface(), append(parts, tv)...)
 		default:
 			if err := viper.BindEnv(strings.Join(append(parts, tv), ".")); err != nil {
-				logger.Fatal(err)
+				log.Fatal(err)
 			}
 		}
 	}

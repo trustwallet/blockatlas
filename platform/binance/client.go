@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"github.com/imroc/req"
 	"github.com/patrickmn/go-cache"
+	log "github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/pkg/logger"
 	"net/url"
 	"strconv"
 	"time"
@@ -27,8 +27,8 @@ func (c Client) FetchLatestBlockNumber() (int64, error) {
 	}
 	var result NodeInfoResponse
 	if err := resp.ToJSON(&result); err != nil {
-		logger.Error("URL: " + resp.Request().URL.String())
-		logger.Error("Status code: " + resp.Response().Status)
+		log.Error("URL: " + resp.Request().URL.String())
+		log.Error("Status code: " + resp.Response().Status)
 		return 0, err
 	}
 	return int64(result.SyncInfo.LatestBlockHeight), nil
@@ -41,8 +41,8 @@ func (c Client) FetchTransactionsInBlock(blockNumber int64) (TransactionsInBlock
 	}
 	var result TransactionsInBlockResponse
 	if err := resp.ToJSON(&result); err != nil {
-		logger.Error("URL: " + resp.Request().URL.String())
-		logger.Error("Status code: " + resp.Response().Status)
+		log.Error("URL: " + resp.Request().URL.String())
+		log.Error("Status code: " + resp.Response().Status)
 		return TransactionsInBlockResponse{}, err
 	}
 	return result, nil
@@ -58,8 +58,8 @@ func (c Client) FetchTransactionsByAddressAndTokenID(address, tokenID string) ([
 	}
 	var result TransactionsInBlockResponse
 	if err := resp.ToJSON(&result); err != nil {
-		logger.Error("URL: " + resp.Request().URL.String())
-		logger.Error("Status code: " + resp.Response().Status)
+		log.Error("URL: " + resp.Request().URL.String())
+		log.Error("Status code: " + resp.Response().Status)
 		return nil, err
 	}
 	return result.Tx, nil
@@ -72,8 +72,8 @@ func (c Client) FetchAccountMeta(address string) (AccountMeta, error) {
 	}
 	var result AccountMeta
 	if err := resp.ToJSON(&result); err != nil {
-		logger.Error("URL: " + resp.Request().URL.String())
-		logger.Error("Status code: " + resp.Response().Status)
+		log.Error("URL: " + resp.Request().URL.String())
+		log.Error("Status code: " + resp.Response().Status)
 		return AccountMeta{}, err
 	}
 	return result, nil
@@ -91,8 +91,8 @@ func (c Client) FetchTokens() (Tokens, error) {
 		return nil, err
 	}
 	if err := resp.ToJSON(&result); err != nil {
-		logger.Error("URL: " + resp.Request().URL.String())
-		logger.Error("Status code: " + resp.Response().Status)
+		log.Error("URL: " + resp.Request().URL.String())
+		log.Error("Status code: " + resp.Response().Status)
 		return nil, err
 	}
 	c.Cache.Set("tokens", *result, cache.DefaultExpiration)

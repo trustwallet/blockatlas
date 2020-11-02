@@ -11,10 +11,10 @@ import (
 	"syscall"
 	"time"
 
+	log "github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas/db"
 	"github.com/trustwallet/blockatlas/internal"
 	"github.com/trustwallet/blockatlas/mq"
-	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/platform"
 	"github.com/trustwallet/blockatlas/services/parser"
 )
@@ -34,7 +34,6 @@ func init() {
 	_, confPath := internal.ParseArgs("", defaultConfigPath)
 
 	internal.InitConfig(confPath)
-	logger.InitLogger()
 
 	internal.InitRabbitMQ(
 		config.Default.Observer.Rabbitmq.URL,
@@ -45,22 +44,22 @@ func init() {
 	spamfilter.SpamList = config.Default.SpamWords
 
 	if err := mq.RawTransactions.Declare(); err != nil {
-		logger.Fatal(err)
+		log.Fatal(err)
 	}
 
 	if err := mq.RawTransactionsTokenIndexer.Declare(); err != nil {
-		logger.Fatal(err)
+		log.Fatal(err)
 	}
 
 	if len(platform.BlockAPIs) == 0 {
-		logger.Fatal("No APIs to observe")
+		log.Fatal("No APIs to observe")
 	}
 
 	var err error
 	database, err = db.New(config.Default.Postgres.URL, config.Default.Postgres.Read.URL,
 		config.Default.Postgres.Log)
 	if err != nil {
-		logger.Fatal(err)
+		log.Fatal(err)
 	}
 	go database.RestoreConnectionWorker(ctx, time.Second*10, config.Default.Postgres.URL)
 
@@ -92,7 +91,7 @@ func main() {
 		var backlogCount int
 		if coin.BlockTime == 0 {
 			backlogCount = 50
-			logger.Warn("Unknown block time", logger.Params{"coin": coin.Handle})
+			log.WithFields(log.Fields{"coin": coin.Handle}).Warn("Unknown block time")
 		} else {
 			backlogCount = int(backlogTime / pollInterval)
 		}
@@ -123,13 +122,13 @@ func main() {
 
 		go parser.RunParser(params)
 
-		logger.Info("Parser params", logger.Params{
+		log.WithFields(log.Fields{
 			"interval":                 pollInterval,
 			"backlog":                  backlogCount,
 			"Max backlog":              maxBackLogBlocks,
 			"Txs Batch limit":          txsBatchLimit,
 			"Fetching blocks interval": fetchBlocksInterval,
-		})
+		}).Info("Parser params")
 
 		wg.Done()
 	}
@@ -140,17 +139,17 @@ func main() {
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
 	cancel()
-	logger.Info("Shutdown parser ...")
+	log.Info("Shutdown parser ...")
 	for coin, cancel := range coinCancel {
-		logger.Info(fmt.Sprintf("Starting to stop %s parser...", coin))
+		log.Info(fmt.Sprintf("Starting to stop %s parser...", coin))
 		cancel()
 	}
 	for {
 		if len(stopChannel) == len(platform.BlockAPIs) {
-			logger.Info("All parsers are stopped")
+			log.Info("All parsers are stopped")
 			break
 		}
 	}
 
-	logger.Info("Exiting gracefully")
+	log.Info("Exiting gracefully")
 }

@@ -7,11 +7,11 @@ import (
 	"encoding/json"
 	"github.com/streadway/amqp"
 	"github.com/stretchr/testify/assert"
-	"github.com/trustwallet/golibs/coin"
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/services/notifier"
 	"github.com/trustwallet/blockatlas/tests/integration/setup"
+	"github.com/trustwallet/golibs/coin"
 	"testing"
 	"time"
 )

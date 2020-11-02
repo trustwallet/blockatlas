@@ -2,9 +2,9 @@ package mq
 
 import (
 	"context"
+	log "github.com/sirupsen/logrus"
 	"github.com/streadway/amqp"
 	"github.com/trustwallet/blockatlas/db"
-	"github.com/trustwallet/blockatlas/pkg/logger"
 	"time"
 )
 
@@ -42,12 +42,12 @@ func Init(uri string) (err error) {
 func Close() {
 	err := amqpChan.Close()
 	if err != nil {
-		logger.Error(err)
+		log.Error(err)
 	}
 
 	err = conn.Close()
 	if err != nil {
-		logger.Error(err)
+		log.Error(err)
 	}
 }
 
@@ -72,7 +72,7 @@ func RunConsumerForChannelWithCancelAndDbConn(consumer ConsumerWithDbConn, messa
 	for {
 		select {
 		case <-ctx.Done():
-			logger.Info("Consumer stopped")
+			log.Info("Consumer stopped")
 			return
 		case message := <-messageChannel:
 			if message.Body == nil {
@@ -94,7 +94,7 @@ func (q Queue) GetMessageChannel() MessageChannel {
 		nil,
 	)
 	if err != nil {
-		logger.Fatal("MQ issue " + err.Error())
+		log.Fatal("MQ issue " + err.Error())
 	}
 
 	err = amqpChan.Qos(
@@ -103,7 +103,7 @@ func (q Queue) GetMessageChannel() MessageChannel {
 		true,
 	)
 	if err != nil {
-		logger.Fatal("No qos limit ", err)
+		log.Fatal("No qos limit ", err)
 	}
 
 	return messageChannel
@@ -121,7 +121,7 @@ func (q Queue) RunConsumerWithCancel(consumer Consumer, ctx context.Context) {
 	for {
 		select {
 		case <-ctx.Done():
-			logger.Info("Consumer stopped")
+			log.Info("Consumer stopped")
 			return
 		case message := <-messageChannel:
 			if message.Body == nil {
@@ -137,7 +137,7 @@ func (q Queue) RunConsumerWithCancelAndDbConn(consumer ConsumerWithDbConn, datab
 	for {
 		select {
 		case <-ctx.Done():
-			logger.Info("Consumer stopped")
+			log.Info("Consumer stopped")
 			return
 		case message := <-messageChannel:
 			if message.Body == nil {
@@ -149,23 +149,23 @@ func (q Queue) RunConsumerWithCancelAndDbConn(consumer ConsumerWithDbConn, datab
 }
 
 func RestoreConnectionWorker(uri string, queue Queue, timeout time.Duration) {
-	logger.Info("Run MQ RestoreConnectionWorker")
+	log.Info("Run MQ RestoreConnectionWorker")
 	for {
 		if conn.IsClosed() {
 			for {
-				logger.Warn("MQ is not available now")
-				logger.Warn("Trying to connect to MQ...")
+				log.Warn("MQ is not available now")
+				log.Warn("Trying to connect to MQ...")
 				if err := Init(uri); err != nil {
-					logger.Warn("MQ is still unavailable")
+					log.Warn("MQ is still unavailable")
 					time.Sleep(timeout)
 					continue
 				}
 				if err := queue.Declare(); err != nil {
-					logger.Warn("Can't declare queues:", queue)
+					log.Warn("Can't declare queues:", queue)
 					time.Sleep(timeout)
 					continue
 				} else {
-					logger.Info("MQ connection restored")
+					log.Info("MQ connection restored")
 					break
 				}
 			}
@@ -175,10 +175,10 @@ func RestoreConnectionWorker(uri string, queue Queue, timeout time.Duration) {
 }
 
 func FatalWorker(timeout time.Duration) {
-	logger.Info("Run MQ FatalWorker")
+	log.Info("Run MQ FatalWorker")
 	for {
 		if conn.IsClosed() {
-			logger.Fatal("MQ is not available now")
+			log.Fatal("MQ is not available now")
 		}
 		time.Sleep(timeout)
 	}

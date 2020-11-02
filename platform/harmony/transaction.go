@@ -2,7 +2,6 @@ package harmony
 
 import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/numbers"
 	"github.com/trustwallet/golibs/coin"
 	"strconv"
@@ -30,40 +29,38 @@ func NormalizeTxs(txs []Transaction) blockatlas.TxPage {
 	return normalizeTxs
 }
 
-func GetNormalizationError(err error) error {
-	return errors.E(err, errors.TypePlatformNormalize, errors.Params{"method": "Harmony_NormalizeTx"})
-}
+
 
 func NormalizeTx(trx *Transaction) (tx blockatlas.Tx, b bool, err error) {
 	gasPrice, err := hexToInt(trx.GasPrice)
 	if err != nil {
-		return blockatlas.Tx{}, false, GetNormalizationError(err)
+		return blockatlas.Tx{}, false, err
 	}
 	gas, err := hexToInt(trx.Gas)
 	if err != nil {
-		return blockatlas.Tx{}, false, GetNormalizationError(err)
+		return blockatlas.Tx{}, false, err
 	}
 	fee := gas * gasPrice
 	literalFee := strconv.Itoa(int(fee))
 
 	literalValue, err := numbers.HexToDecimal(trx.Value)
 	if err != nil {
-		return blockatlas.Tx{}, false, GetNormalizationError(err)
+		return blockatlas.Tx{}, false, err
 	}
 
 	block, err := hexToInt(trx.BlockNumber)
 	if err != nil {
-		return blockatlas.Tx{}, false, GetNormalizationError(err)
+		return blockatlas.Tx{}, false, err
 	}
 
 	nonce, err := hexToInt(trx.Nonce)
 	if err != nil {
-		return blockatlas.Tx{}, false, GetNormalizationError(err)
+		return blockatlas.Tx{}, false, err
 	}
 
 	timestamp, err := hexToInt(trx.Timestamp)
 	if err != nil {
-		return blockatlas.Tx{}, false, GetNormalizationError(err)
+		return blockatlas.Tx{}, false, err
 	}
 
 	return blockatlas.Tx{

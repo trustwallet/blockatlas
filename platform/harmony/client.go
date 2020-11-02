@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strconv"
 
+	log "github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/pkg/numbers"
 )
 
@@ -47,7 +47,7 @@ func (c *Client) GetValidators() (validators Validators, err error) {
 	err = rpcCallStub(c, &validators.Validators, "hmy_getAllValidatorInformation", []interface{}{-1})
 
 	if err != nil {
-		logger.Error(err, "Harmony: Failed to get all validator addresses")
+		log.Error(err, "Harmony: Failed to get all validator addresses")
 	}
 
 	return
@@ -57,7 +57,7 @@ func (c *Client) GetDelegations(address string) (delegations Delegations, err er
 	err = rpcCallStub(c, &delegations.List, "hmy_getDelegationsByDelegator", []interface{}{address})
 
 	if err != nil {
-		logger.Error(err, "Harmony: Failed to get delegations for address")
+		log.Error(err, "Harmony: Failed to get delegations for address")
 	}
 	return
 }

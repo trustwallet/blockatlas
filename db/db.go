@@ -5,8 +5,8 @@ import (
 	"errors"
 	"time"
 
+	log "github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas/db/models"
-	"github.com/trustwallet/blockatlas/pkg/logger"
 
 	gocache "github.com/patrickmn/go-cache"
 
@@ -59,20 +59,20 @@ func New(uri, readUri string, logMode bool) (*Instance, error) {
 }
 
 func (i *Instance) RestoreConnectionWorker(ctx context.Context, timeout time.Duration, uri string) {
-	logger.Info("Run PG RestoreConnectionWorker")
+	log.Info("Run PG RestoreConnectionWorker")
 	t := time.NewTicker(timeout)
 
 	if err := i.restoreConnection(uri); err != nil {
-		logger.Warn("PG is still unavailable:", err)
+		log.Warn("PG is still unavailable:", err)
 	}
 
 	select {
 	case <-ctx.Done():
-		logger.Info("Ctx.Done RestoreConnectionWorker exit")
+		log.Info("Ctx.Done RestoreConnectionWorker exit")
 		return
 	case <-t.C:
 		if err := i.restoreConnection(uri); err != nil {
-			logger.Warn("PG is still unavailable:", err)
+			log.Warn("PG is still unavailable:", err)
 		}
 	}
 }
@@ -84,13 +84,13 @@ func (i *Instance) restoreConnection(uri string) error {
 	}
 
 	if err = db.Ping(); err != nil {
-		logger.Warn("PG is not available now")
-		logger.Warn("Trying to connect to PG...")
+		log.Warn("PG is not available now")
+		log.Warn("Trying to connect to PG...")
 		i.Gorm, err = gorm.Open(postgres.Open(uri), &gorm.Config{})
 		if err != nil {
 			return err
 		}
-		logger.Info("PG connection restored")
+		log.Info("PG connection restored")
 	}
 	return nil
 }

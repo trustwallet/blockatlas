@@ -2,9 +2,9 @@ package tokensearcher
 
 import (
 	"context"
+	log "github.com/sirupsen/logrus"
 	"github.com/streadway/amqp"
 	"github.com/trustwallet/blockatlas/db"
-	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/services/notifier"
 	"go.elastic.co/apm"
 	"strconv"
@@ -19,9 +19,9 @@ func Run(database *db.Instance, delivery amqp.Delivery) {
 
 	txs, err := notifier.GetTransactionsFromDelivery(delivery, TokenSearcher, ctx)
 	if err != nil {
-		logger.Error("failed to get transactions", err)
+		log.Error("failed to get transactions", err)
 		if err := delivery.Ack(false); err != nil {
-			logger.Error(err)
+			log.Error(err)
 		}
 	}
 	if len(txs) == 0 {
@@ -38,22 +38,24 @@ func Run(database *db.Instance, delivery amqp.Delivery) {
 
 	associationsFromTransactions, err := database.GetAssociationsByAddresses(notifier.ToUniqueAddresses(addresses), ctx)
 	if err != nil {
-		logger.Error(err)
+		log.Error(err)
 		return
 	}
-	logger.Info("AssociationsFromTransactions "+strconv.Itoa(len(associationsFromTransactions)), logger.Params{"service": TokenSearcher})
+	log.WithFields(log.Fields{"service": TokenSearcher}).
+		Info("AssociationsFromTransactions " + strconv.Itoa(len(associationsFromTransactions)))
 
 	associationsToAdd := associationsToAdd(fromModelToAssociation(associationsFromTransactions), assetsMap(txs, coinID))
 
-	logger.Info("AssociationsToAdd "+strconv.Itoa(len(associationsToAdd)), logger.Params{"service": TokenSearcher})
+	log.WithFields(log.Fields{"service": TokenSearcher}).
+		Info("AssociationsToAdd " + strconv.Itoa(len(associationsToAdd)))
 	err = database.UpdateAssociationsForExistingAddresses(associationsToAdd, ctx)
 	if err != nil {
-		logger.Error(err)
+		log.Error(err)
 		return
 	}
 
 	if err := delivery.Ack(false); err != nil {
-		logger.Error(err)
+		log.Error(err)
 	}
-	logger.Info("------------------------------------------------------------")
+	log.Info("------------------------------------------------------------")
 }

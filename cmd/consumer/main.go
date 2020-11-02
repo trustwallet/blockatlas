@@ -8,10 +8,10 @@ import (
 	"github.com/trustwallet/blockatlas/services/tokensearcher"
 	"time"
 
+	log "github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas/db"
 	"github.com/trustwallet/blockatlas/internal"
 	"github.com/trustwallet/blockatlas/mq"
-	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/services/tokenindexer"
 )
 
@@ -30,7 +30,6 @@ func init() {
 	_, confPath := internal.ParseArgs("", defaultConfigPath)
 
 	internal.InitConfig(confPath)
-	logger.InitLogger()
 
 	internal.InitRabbitMQ(
 		config.Default.Observer.Rabbitmq.URL,
@@ -41,7 +40,7 @@ func init() {
 	database, err = db.New(config.Default.Postgres.URL, config.Default.Postgres.Read.URL,
 		config.Default.Postgres.Log)
 	if err != nil {
-		logger.Fatal(err)
+		log.Fatal(err)
 	}
 	go database.RestoreConnectionWorker(ctx, time.Second*10, config.Default.Postgres.URL)
 
@@ -52,22 +51,22 @@ func main() {
 	defer mq.Close()
 
 	if err := mq.RawTransactionsTokenIndexer.Declare(); err != nil {
-		logger.Fatal(err)
+		log.Fatal(err)
 	}
 	if err := mq.RawTransactions.Declare(); err != nil {
-		logger.Fatal(err)
+		log.Fatal(err)
 	}
 	if err := mq.TxNotifications.Declare(); err != nil {
-		logger.Fatal(err)
+		log.Fatal(err)
 	}
 	if err := mq.RawTransactionsSearcher.Declare(); err != nil {
-		logger.Fatal(err)
+		log.Fatal(err)
 	}
 	if err := mq.Subscriptions.Declare(); err != nil {
-		logger.Fatal(err)
+		log.Fatal(err)
 	}
 	if err := mq.TokensRegistration.Declare(); err != nil {
-		logger.Fatal(err)
+		log.Fatal(err)
 	}
 
 	go mq.RawTransactionsTokenIndexer.RunConsumerWithCancelAndDbConn(tokenindexer.RunTokenIndexer, database, ctx)

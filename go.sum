@@ -522,6 +522,8 @@ github.com/trustwallet/ens-coincodec v1.0.6 h1:ZPvFDJwvv4s+XCnUM7pzub8wYHy37tyJB
 github.com/trustwallet/ens-coincodec v1.0.6/go.mod h1:hTZCauB3S2Gt9M3FiRNva+xpLJXFqLyODKFF+UvH1lw=
 github.com/trustwallet/golibs v0.0.8 h1:eviuHKqIXDs+DGgWNHF/gNTrV6jmJTfYYEHVbCeniWE=
 github.com/trustwallet/golibs v0.0.8/go.mod h1:QB6tQe5tvZOAPmvpeaveFwCQpTqdelSgO6UlMZN30Co=
+github.com/trustwallet/golibs v0.0.9 h1:AyupOF1LZyMaZdkwnG3hxSwb5pqW2yZR7EI4hLoBrI8=
+github.com/trustwallet/golibs v0.0.9/go.mod h1:QB6tQe5tvZOAPmvpeaveFwCQpTqdelSgO6UlMZN30Co=
 github.com/trustwallet/watchmarket v1.1.1 h1:gErSfLLDhEblFqvW8V3RyzRqq4R6MCYEDWjO6j5uJfE=
 github.com/trustwallet/watchmarket v1.1.1/go.mod h1:DvqzLzxXOaZajbkryVZcNgBS4yibZhk3rCc41ZSJEBs=
 github.com/ugorji/go v1.1.4/go.mod h1:uQMGLiO92mf5W77hV/PUCpI3pbzQx3CRekS0kk+RGrc=

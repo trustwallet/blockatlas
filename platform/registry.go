@@ -1,8 +1,8 @@
 package platform
 
 import (
+	log "github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/pkg/logger"
 )
 
 var (
@@ -24,12 +24,13 @@ var (
 
 func getActivePlatforms(handles []string) []blockatlas.Platform {
 	if len(handles) == 0 {
-		logger.Fatal("Please, use ATLAS_PLATFORM handle with non-empty value, see more at Readme. Example: all", logger.Params{"ATLAS_PLATFORM": handles})
+		log.WithFields(log.Fields{"ATLAS_PLATFORM": handles}).
+			Fatal("Please, use ATLAS_PLATFORM handle with non-empty value, see more at Readme. Example: all")
 		return nil
 	}
 
 	allPlatforms := getAllHandlers()
-	logger.Info("Platform API setup with: ", logger.Params{"handles": handles})
+	log.WithFields(log.Fields{"handles": handles}).Info("Platform API setup with")
 
 	platforms := make([]blockatlas.Platform, 0, len(handles))
 
@@ -56,13 +57,13 @@ func Init(platformHandles []string) {
 	for _, platform := range platformList {
 		handle := platform.Coin().Handle
 
-		p := logger.Params{
+		p := log.Fields{
 			"platform": handle,
 			"coin":     platform.Coin(),
 		}
 
 		if _, exists := Platforms[handle]; exists {
-			logger.Fatal("Duplicate handle", p)
+			log.WithFields(p).Fatal("Duplicate handle")
 		}
 		Platforms[handle] = platform
 		if blockAPI, ok := platform.(blockatlas.BlockAPI); ok {

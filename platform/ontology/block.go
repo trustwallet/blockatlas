@@ -1,17 +1,17 @@
 package ontology
 
 import (
+	"errors"
 	blockatlas "github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/pkg/errors"
 )
 
 func (p *Platform) CurrentBlockNumber() (int64, error) {
 	block, err := p.client.CurrentBlockNumber()
 	if err != nil {
-		return 0, errors.E(err, "CurrentBlockNumber")
+		return 0, err
 	}
 	if len(block.Result.Records) == 0 {
-		return 0, errors.E("invalid block height result")
+		return 0, errors.New("invalid block height result")
 	}
 	return block.Result.Records[0].Height, nil
 }
