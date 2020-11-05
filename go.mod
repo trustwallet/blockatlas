@@ -24,12 +24,11 @@ require (
 	github.com/stretchr/testify v1.6.1
 	github.com/swaggo/gin-swagger v1.2.0
 	github.com/swaggo/swag v1.6.7
-	github.com/trustwallet/golibs v0.0.8
+	github.com/trustwallet/golibs v0.0.9
 	github.com/trustwallet/watchmarket v1.1.1
 	go.elastic.co/apm v1.8.0
 	go.elastic.co/apm/module/apmgin v1.8.0
 	go.elastic.co/apm/module/apmhttp v1.8.0
-	go.elastic.co/apm/module/apmlogrus v1.8.0
 	go.uber.org/atomic v1.7.0
 	golang.org/x/crypto v0.0.0-20201016220609-9e8e0b390897
 	gopkg.in/yaml.v2 v2.3.0

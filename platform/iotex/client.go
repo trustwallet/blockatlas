@@ -2,9 +2,8 @@ package iotex
 
 import (
 	"fmt"
+	log "github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/pkg/errors"
-	"github.com/trustwallet/blockatlas/pkg/logger"
 	"net/url"
 	"strconv"
 )
@@ -21,7 +20,7 @@ func (c *Client) GetLatestBlock() (int64, error) {
 	}
 	b, err := strconv.ParseInt(chainMeta.Height, 10, 64)
 	if err != nil {
-		return 0, errors.E(err, "ParseInt failed", errors.TypePlatformUnmarshal)
+		return 0, err
 	}
 	return b, nil
 }
@@ -44,7 +43,7 @@ func (c *Client) GetTxsOfAddress(address string, start int64) (*Response, error)
 	})
 
 	if err != nil {
-		logger.Error(err, "IOTEX: Failed to get transactions for address", logger.Params{"address": address})
+		log.WithFields(log.Fields{"address": address}).Error(err, "IOTEX: Failed to get transactions for address")
 		return nil, blockatlas.ErrSourceConn
 	}
 	return &response, err

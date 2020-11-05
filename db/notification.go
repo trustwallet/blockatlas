@@ -2,15 +2,15 @@ package db
 
 import (
 	"context"
+	"errors"
 	"github.com/trustwallet/blockatlas/db/models"
-	"github.com/trustwallet/blockatlas/pkg/errors"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
 
 func (i *Instance) GetSubscriptionsForNotifications(addresses []string, ctx context.Context) ([]models.NotificationSubscription, error) {
 	if len(addresses) == 0 {
-		return nil, errors.E("Empty addresses")
+		return nil, errors.New("Empty addresses")
 	}
 
 	db := i.Gorm.WithContext(ctx)
@@ -24,7 +24,7 @@ func (i *Instance) GetSubscriptionsForNotifications(addresses []string, ctx cont
 
 func (i *Instance) AddSubscriptionsForNotifications(addresses []string, ctx context.Context) error {
 	if len(addresses) == 0 {
-		return errors.E("Empty subscriptions")
+		return errors.New("Empty subscriptions")
 	}
 	db := i.Gorm.WithContext(ctx)
 	return db.Transaction(func(tx *gorm.DB) error {
@@ -65,7 +65,7 @@ func (i *Instance) AddSubscriptionsForNotifications(addresses []string, ctx cont
 
 func (i *Instance) DeleteSubscriptionsForNotifications(addresses []string, ctx context.Context) error {
 	if len(addresses) == 0 {
-		return errors.E("Empty subscriptions")
+		return errors.New("Empty subscriptions")
 	}
 	q := `DELETE FROM notification_subscriptions ns USING addresses a where ns.address_id = a.id AND a.address IN (?);`
 	return i.Gorm.WithContext(ctx).Exec(q, addresses).Error

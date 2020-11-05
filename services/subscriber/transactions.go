@@ -3,10 +3,10 @@ package subscriber
 import (
 	"context"
 	"encoding/json"
+	log "github.com/sirupsen/logrus"
 	"github.com/streadway/amqp"
 	"github.com/trustwallet/blockatlas/db"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/pkg/logger"
 	"go.elastic.co/apm"
 	"strconv"
 )
@@ -30,30 +30,53 @@ func RunTransactionsSubscriber(database *db.Instance, delivery amqp.Delivery) {
 	err := json.Unmarshal(delivery.Body, &event)
 	if err != nil {
 		errAck := delivery.Ack(false)
-		logger.Fatal(err, errAck)
+		log.Fatal(err, errAck)
 	}
 
 	subscriptions := event.ParseSubscriptions(event.Subscriptions)
-	params := logger.Params{"service": Notifications, "operation": event.Operation, "subscriptions_len": len(subscriptions)}
-
 	switch event.Operation {
 	case AddSubscription, UpdateSubscription:
 		err = database.AddSubscriptionsForNotifications(ToSubscriptionData(subscriptions), ctx)
 		if err != nil {
-			logger.Error(err, params)
+			log.WithFields(
+				log.Fields{"service": Notifications,
+					"operation":         event.Operation,
+					"subscriptions_len": len(subscriptions),
+				},
+			).Error(err)
 		}
-		logger.Info("Added", params)
+		log.WithFields(
+			log.Fields{"service": Notifications,
+				"operation":         event.Operation,
+				"subscriptions_len": len(subscriptions),
+			},
+		).Info("Added")
 	case DeleteSubscription:
 		err := database.DeleteSubscriptionsForNotifications(ToSubscriptionData(subscriptions), ctx)
 		if err != nil {
-			logger.Error(err, params)
+			log.WithFields(
+				log.Fields{"service": Notifications,
+					"operation":         event.Operation,
+					"subscriptions_len": len(subscriptions),
+				},
+			).Error(err)
 		}
-		logger.Info("Deleted", params)
+		log.WithFields(
+			log.Fields{"service": Notifications,
+				"operation":         event.Operation,
+				"subscriptions_len": len(subscriptions),
+			},
+		).Info("Added")
 	}
 
 	err = delivery.Ack(false)
 	if err != nil {
-		logger.Error(err, params)
+		log.WithFields(
+			log.Fields{"service": Notifications,
+				"operation":         event.Operation,
+				"subscriptions_len": len(subscriptions),
+			},
+		).Error(err)
 	}
 }
 

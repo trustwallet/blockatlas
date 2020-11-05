@@ -4,7 +4,7 @@ import (
 	"github.com/trustwallet/blockatlas/db/models"
 	"github.com/trustwallet/blockatlas/pkg/address"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/watchmarket/pkg/watchmarket"
+	"github.com/trustwallet/golibs/asset"
 	"sync"
 )
 
@@ -20,7 +20,7 @@ func (nr *NodesResponse) UpdateAssetsByAddress(tokens blockatlas.TokenPage, coin
 		r := nr.AssetsByAddress[key]
 		nr.AssetsByAddress[key] = append(r,
 			models.Asset{
-				Asset:    watchmarket.BuildID(t.Coin, t.TokenID),
+				Asset:    asset.BuildID(t.Coin, t.TokenID),
 				Decimals: t.Decimals,
 				Name:     t.Name,
 				Symbol:   t.Symbol,

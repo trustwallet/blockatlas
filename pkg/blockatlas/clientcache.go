@@ -5,9 +5,9 @@ import (
 	"crypto/sha1"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"github.com/patrickmn/go-cache"
-	"github.com/trustwallet/blockatlas/pkg/errors"
-	"github.com/trustwallet/blockatlas/pkg/logger"
+	log "github.com/sirupsen/logrus"
 	"net/url"
 	"strings"
 	"sync"
@@ -99,7 +99,7 @@ func (mc *memCache) setCache(key string, value interface{}, duration time.Durati
 	defer mc.RUnlock()
 	b, err := json.Marshal(value)
 	if err != nil {
-		logger.Error(errors.E(err, "client cache cannot marshal cache object"))
+		log.Error(errors.New(err.Error() + " client cache cannot marshal cache object"))
 		return
 	}
 	memoryCache.cache.Set(key, b, duration)
@@ -108,15 +108,15 @@ func (mc *memCache) setCache(key string, value interface{}, duration time.Durati
 func (mc *memCache) getCache(key string, value interface{}) error {
 	c, ok := mc.cache.Get(key)
 	if !ok {
-		return errors.E("validator cache: invalid cache key")
+		return errors.New("validator cache: invalid cache key")
 	}
 	r, ok := c.([]byte)
 	if !ok {
-		return errors.E("validator cache: failed to cast cache to bytes")
+		return errors.New("validator cache: failed to cast cache to bytes")
 	}
 	err := json.Unmarshal(r, value)
 	if err != nil {
-		return errors.E(err, "not found")
+		return errors.New(err.Error() + " not found")
 	}
 	return nil
 }

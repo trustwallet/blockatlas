@@ -4,8 +4,8 @@ import (
 	mapset "github.com/deckarep/golang-set"
 	"github.com/trustwallet/blockatlas/db/models"
 	"github.com/trustwallet/blockatlas/pkg/numbers"
+	"github.com/trustwallet/golibs/asset"
 	"github.com/trustwallet/golibs/coin"
-	"github.com/trustwallet/watchmarket/pkg/watchmarket"
 	"sort"
 	"strconv"
 	"strings"
@@ -462,76 +462,76 @@ func GetEthereumTokenTypeByIndex(coinIndex uint) TokenType {
 }
 
 func (t Tx) AssetModel() (models.Asset, bool) {
-	var asset models.Asset
+	var a models.Asset
 	switch t.Meta.(type) {
 	case TokenTransfer:
-		asset.Asset = watchmarket.BuildID(t.Coin, t.Meta.(TokenTransfer).TokenID)
-		asset.Decimals = t.Meta.(TokenTransfer).Decimals
-		asset.Name = t.Meta.(TokenTransfer).Name
-		asset.Symbol = t.Meta.(TokenTransfer).Symbol
+		a.Asset = asset.BuildID(t.Coin, t.Meta.(TokenTransfer).TokenID)
+		a.Decimals = t.Meta.(TokenTransfer).Decimals
+		a.Name = t.Meta.(TokenTransfer).Name
+		a.Symbol = t.Meta.(TokenTransfer).Symbol
 		tp, ok := GetTokenType(t.Coin, t.Meta.(TokenTransfer).TokenID)
 		if !ok {
 			return models.Asset{}, false
 		}
-		asset.Type = tp
+		a.Type = tp
 	case *TokenTransfer:
-		asset.Asset = watchmarket.BuildID(t.Coin, t.Meta.(*TokenTransfer).TokenID)
-		asset.Decimals = t.Meta.(*TokenTransfer).Decimals
-		asset.Name = t.Meta.(*TokenTransfer).Name
-		asset.Symbol = t.Meta.(*TokenTransfer).Symbol
+		a.Asset = asset.BuildID(t.Coin, t.Meta.(*TokenTransfer).TokenID)
+		a.Decimals = t.Meta.(*TokenTransfer).Decimals
+		a.Name = t.Meta.(*TokenTransfer).Name
+		a.Symbol = t.Meta.(*TokenTransfer).Symbol
 		tp, ok := GetTokenType(t.Coin, t.Meta.(*TokenTransfer).TokenID)
 		if !ok {
 			return models.Asset{}, false
 		}
-		asset.Type = tp
+		a.Type = tp
 	case NativeTokenTransfer:
-		asset.Asset = watchmarket.BuildID(t.Coin, t.Meta.(NativeTokenTransfer).TokenID)
-		asset.Decimals = t.Meta.(NativeTokenTransfer).Decimals
-		asset.Name = t.Meta.(NativeTokenTransfer).Name
-		asset.Symbol = t.Meta.(NativeTokenTransfer).Symbol
+		a.Asset = asset.BuildID(t.Coin, t.Meta.(NativeTokenTransfer).TokenID)
+		a.Decimals = t.Meta.(NativeTokenTransfer).Decimals
+		a.Name = t.Meta.(NativeTokenTransfer).Name
+		a.Symbol = t.Meta.(NativeTokenTransfer).Symbol
 		tp, ok := GetTokenType(t.Coin, t.Meta.(NativeTokenTransfer).TokenID)
 		if !ok {
 			return models.Asset{}, false
 		}
-		asset.Type = tp
+		a.Type = tp
 	case *NativeTokenTransfer:
-		asset.Asset = watchmarket.BuildID(t.Coin, t.Meta.(*NativeTokenTransfer).TokenID)
-		asset.Decimals = t.Meta.(*NativeTokenTransfer).Decimals
-		asset.Name = t.Meta.(*NativeTokenTransfer).Name
-		asset.Symbol = t.Meta.(*NativeTokenTransfer).Symbol
+		a.Asset = asset.BuildID(t.Coin, t.Meta.(*NativeTokenTransfer).TokenID)
+		a.Decimals = t.Meta.(*NativeTokenTransfer).Decimals
+		a.Name = t.Meta.(*NativeTokenTransfer).Name
+		a.Symbol = t.Meta.(*NativeTokenTransfer).Symbol
 		tp, ok := GetTokenType(t.Coin, t.Meta.(*NativeTokenTransfer).TokenID)
 		if !ok {
 			return models.Asset{}, false
 		}
-		asset.Type = tp
+		a.Type = tp
 	case AnyAction:
-		asset.Asset = watchmarket.BuildID(t.Coin, t.Meta.(AnyAction).TokenID)
-		asset.Decimals = t.Meta.(AnyAction).Decimals
-		asset.Name = t.Meta.(AnyAction).Name
-		asset.Symbol = t.Meta.(AnyAction).Symbol
+		a.Asset = asset.BuildID(t.Coin, t.Meta.(AnyAction).TokenID)
+		a.Decimals = t.Meta.(AnyAction).Decimals
+		a.Name = t.Meta.(AnyAction).Name
+		a.Symbol = t.Meta.(AnyAction).Symbol
 		tp, ok := GetTokenType(t.Coin, t.Meta.(AnyAction).TokenID)
 		if !ok {
 			return models.Asset{}, false
 		}
-		asset.Type = tp
+		a.Type = tp
 	case *AnyAction:
-		asset.Asset = watchmarket.BuildID(t.Coin, t.Meta.(*AnyAction).TokenID)
-		asset.Decimals = t.Meta.(*AnyAction).Decimals
-		asset.Name = t.Meta.(*AnyAction).Name
-		asset.Symbol = t.Meta.(*AnyAction).Symbol
+		a.Asset = asset.BuildID(t.Coin, t.Meta.(*AnyAction).TokenID)
+		a.Decimals = t.Meta.(*AnyAction).Decimals
+		a.Name = t.Meta.(*AnyAction).Name
+		a.Symbol = t.Meta.(*AnyAction).Symbol
 		tp, ok := GetTokenType(t.Coin, t.Meta.(*AnyAction).TokenID)
 		if !ok {
 			return models.Asset{}, false
 		}
-		asset.Type = tp
+		a.Type = tp
 	default:
 		return models.Asset{}, false
 	}
-	if asset.Asset == "" {
+	if a.Asset == "" {
 		return models.Asset{}, false
 	}
-	asset.Coin = t.Coin
-	return asset, true
+	a.Coin = t.Coin
+	return a, true
 }
 
 func GetTokenType(c uint, tokenID string) (string, bool) {

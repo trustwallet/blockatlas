@@ -8,9 +8,9 @@ import (
 
 	"github.com/trustwallet/blockatlas/pkg/numbers"
 
+	"errors"
 	"github.com/gin-gonic/gin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/golibs/coin"
 )
 
@@ -113,7 +113,7 @@ func GetStakeInfoForBatch(c *gin.Context, apis map[string]blockatlas.StakeAPI) {
 func GetStakeInfoForCoins(c *gin.Context, apis map[string]blockatlas.StakeAPI) {
 	coinsRequest := c.Query("coins")
 	if coinsRequest == "" {
-		c.AbortWithStatusJSON(http.StatusBadRequest, errorResponse(errors.E("empty coins list")))
+		c.AbortWithStatusJSON(http.StatusBadRequest, errorResponse(errors.New("empty coins list")))
 		return
 	}
 
@@ -192,7 +192,7 @@ func getDelegationResponse(api blockatlas.StakeAPI, address string) (blockatlas.
 		return blockatlas.DelegationResponse{
 			StakingResponse: getStakingResponse(api),
 			Address:         address,
-		}, errors.E("Unable to fetch delegations list", err)
+		}, err
 	}
 	balance, err := api.UndelegatedBalance(address)
 	if err != nil {
@@ -200,7 +200,7 @@ func getDelegationResponse(api blockatlas.StakeAPI, address string) (blockatlas.
 			Delegations:     delegations,
 			Address:         address,
 			StakingResponse: getStakingResponse(api),
-		}, errors.E("Unable to fetch undelegated balance", err)
+		}, err
 	}
 	return blockatlas.DelegationResponse{
 		Balance:         balance,

@@ -1,10 +1,10 @@
 package tron
 
 import (
+	log "github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/pkg/logger"
-	"strings"
 	"github.com/trustwallet/golibs/coin"
+	"strings"
 	"sync"
 	"time"
 )
@@ -31,7 +31,7 @@ func (p *Platform) GetTokenListByAddress(address string) (blockatlas.TokenPage, 
 
 	trc20Tokens, err := p.explorerClient.fetchAllTRC20Tokens(address)
 	if err != nil {
-		logger.Error("Explorer error" + err.Error())
+		log.Error("Explorer error" + err.Error())
 	}
 
 	for _, t := range trc20Tokens {
@@ -58,7 +58,7 @@ func (p *Platform) getTokens(ids []string) chan blockatlas.Token {
 			time.Sleep(time.Millisecond)
 			err := p.getTokensChannel(i, c)
 			if err != nil {
-				logger.Error("tron getTokens: " + i)
+				log.Error("tron getTokens: " + i)
 			}
 		}(id, tkChan)
 	}

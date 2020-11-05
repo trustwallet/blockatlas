@@ -3,12 +3,12 @@ package tokensearcher
 import (
 	"context"
 	"encoding/json"
+	log "github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas/db"
 	"github.com/trustwallet/blockatlas/db/models"
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/address"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/pkg/logger"
 	"strconv"
 	"sync"
 	"time"
@@ -43,10 +43,10 @@ func (i Instance) HandleTokensRequest(request Request, ctx context.Context) (map
 	if err != nil {
 		return nil, err
 	}
-	logger.Info("subscribedAddresses " + strconv.Itoa(len(subscribedAddresses)))
+	log.Info("subscribedAddresses " + strconv.Itoa(len(subscribedAddresses)))
 	unsubscribedAddresses := getUnsubscribedAddresses(subscribedAddresses, addresses)
 
-	logger.Info("unsubscribedAddresses " + strconv.Itoa(len(unsubscribedAddresses)))
+	log.Info("unsubscribedAddresses " + strconv.Itoa(len(unsubscribedAddresses)))
 	assetsFromDB, err := i.database.GetAssetsMapByAddressesFromTime(
 		subscribedAddresses,
 		time.Unix(int64(request.From), 0),
@@ -55,13 +55,13 @@ func (i Instance) HandleTokensRequest(request Request, ctx context.Context) (map
 		return nil, err
 	}
 
-	logger.Info("assetsFromDB " + strconv.Itoa(len(assetsFromDB)))
+	log.Info("assetsFromDB " + strconv.Itoa(len(assetsFromDB)))
 	assetsFromNodes := make(AssetsByAddress)
 	if len(unsubscribedAddresses) != 0 {
 		assetsFromNodes = getAssetsByAddressFromNodes(unsubscribedAddresses, i.apis)
 		err = publishNewAddressesToQueue(i.queue, assetsFromNodes)
 		if err != nil {
-			logger.Error(err)
+			log.Error(err)
 		}
 	}
 
@@ -156,7 +156,7 @@ func fetchAssetsByAddresses(tokenAPI blockatlas.TokensAPI, addresses []string, r
 			defer tWg.Done()
 			tokens, err := tokenAPI.GetTokenListByAddress(address)
 			if err != nil {
-				logger.Error("Chain: " + tokenAPI.Coin().Handle + " Address: " + address)
+				log.Error("Chain: " + tokenAPI.Coin().Handle + " Address: " + address)
 				return
 			}
 			result.UpdateAssetsByAddress(tokens, int(tokenAPI.Coin().ID), address)
@@ -166,9 +166,9 @@ func fetchAssetsByAddresses(tokenAPI blockatlas.TokensAPI, addresses []string, r
 }
 
 func publishNewAddressesToQueue(queue mq.Queue, message AssetsByAddress) error {
-	logger.Info("Published to queue")
+	log.Info("Published to queue")
 	body, err := json.Marshal(message)
-	logger.Info(string(body))
+	log.Info(string(body))
 	if err != nil {
 		return err
 	}

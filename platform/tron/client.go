@@ -3,7 +3,6 @@ package tron
 import (
 	"fmt"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/pkg/errors"
 	"net/url"
 	"time"
 )
@@ -28,7 +27,7 @@ func (c *Client) fetchBlockByNumber(num int64) (Block, error) {
 	var blocks Blocks
 	err := c.Post(&blocks, "wallet/getblockbylimitnext", BlockRequest{StartNum: num, EndNum: num + 1})
 	if err != nil || blocks.Blocks == nil || len(blocks.Blocks) == 0 {
-		return Block{}, errors.E(err, "block not found", errors.Params{"block": num})
+		return Block{}, err
 	}
 	return blocks.Blocks[0], nil
 }

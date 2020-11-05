@@ -1,9 +1,8 @@
 package harmony
 
 import (
+	log "github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/pkg/errors"
-	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/services/assets"
 	"math/big"
 	"strconv"
@@ -51,7 +50,7 @@ func (p *Platform) GetDetails() blockatlas.StakingDetails {
 func (p *Platform) GetMaxAPR() float64 {
 	validators, err := p.client.GetValidators()
 	if err != nil {
-		logger.Error("GetMaxAPR", logger.Params{"details": err, "platform": p.Coin().Symbol})
+		log.WithFields(log.Fields{"details": err, "platform": p.Coin().Symbol}).Error("GetMaxAPR")
 		return Annual
 	}
 
@@ -97,7 +96,9 @@ func NormalizeDelegations(delegations []Delegation, validators blockatlas.Valida
 	for _, v := range delegations {
 		validator, ok := validators[v.ValidatorAddress]
 		if !ok {
-			logger.Error(errors.E("Validator not found", errors.Params{"address": v.ValidatorAddress, "platform": "harmony", "delegation": v.DelegatorAddress}))
+			log.WithFields(
+				log.Fields{"address": v.ValidatorAddress, "platform": "harmony", "delegation": v.DelegatorAddress},
+			).Error("Validator not found")
 			continue
 		}
 

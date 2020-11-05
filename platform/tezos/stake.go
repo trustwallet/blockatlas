@@ -1,8 +1,8 @@
 package tezos
 
 import (
+	log "github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/services/assets"
 )
 
@@ -29,7 +29,7 @@ func (p *Platform) GetActiveValidators() (blockatlas.StakeValidators, error) {
 func (p *Platform) isValidatorActive(id string) bool {
 	res, err := p.rpcClient.fetchValidatorActivityInfo(id)
 	if err != nil {
-		logger.Error("Tezos activity validator " + err.Error())
+		log.Error("Tezos activity validator " + err.Error())
 		return false
 	}
 	return !res.Deactivated
@@ -54,7 +54,7 @@ func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, e
 func NormalizeDelegation(account Account, validators blockatlas.ValidatorMap) (blockatlas.DelegationsPage, error) {
 	validator, ok := validators[account.Delegate]
 	if !ok {
-		logger.Warn("Validator not found", logger.Params{"platform": "tezos", "delegation": account.Delegate})
+		log.WithFields(log.Fields{"platform": "tezos", "delegation": account.Delegate}).Warn("Validator not found")
 		validator = getUnknownValidator(account.Delegate)
 	}
 	return blockatlas.DelegationsPage{

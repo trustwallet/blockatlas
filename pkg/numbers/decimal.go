@@ -1,7 +1,7 @@
 package numbers
 
 import (
-	"github.com/trustwallet/blockatlas/pkg/errors"
+	"errors"
 	"math/big"
 	"strings"
 	"unicode"
@@ -19,11 +19,11 @@ func DecimalToSatoshis(dec string) (string, error) {
 		out = strings.TrimLeft(out[:l-1], "0") + out[l-1:l]
 	}
 	if len(out) == 0 {
-		return "", errors.E("Invalid empty input", errors.Params{"dec": dec, "dec_trimmed": out})
+		return "", errors.New("Invalid empty input")
 	}
 	for _, c := range out {
 		if !unicode.IsNumber(c) {
-			return "", errors.E("not a number", errors.Params{"dec": dec, "c": c})
+			return "", errors.New("not a number")
 		}
 	}
 	return out, nil
@@ -72,7 +72,7 @@ func DecimalExp(dec string, exp int) string {
 func HexToDecimal(hex string) (string, error) {
 	var i big.Int
 	if _, ok := i.SetString(hex, 0); !ok {
-		return "", errors.E("invalid hex", errors.Params{"hex": hex})
+		return "", errors.New("invalid hex")
 	}
 	return i.String(), nil
 }

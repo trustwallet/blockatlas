@@ -5,7 +5,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/trustwallet/blockatlas/pkg/errors"
+	"errors"
 	"github.com/trustwallet/blockatlas/pkg/numbers"
 )
 
@@ -46,7 +46,7 @@ func (t *Tx) UnmarshalJSON(data []byte) error {
 	case TxAnyAction:
 		t.Meta = new(AnyAction)
 	default:
-		return errors.E("unsupported tx type", errors.Params{"type": t.Type})
+		return errors.New("unsupported tx type")
 	}
 
 	err := json.Unmarshal(raw, t.Meta)
@@ -78,7 +78,7 @@ func (t *Tx) MarshalJSON() ([]byte, error) {
 	case AnyAction, *AnyAction:
 		t.Type = TxAnyAction
 	default:
-		return nil, errors.E("unsupported tx metadata", errors.Params{"meta": t.Meta})
+		return nil, errors.New("unsupported tx metadata")
 	}
 
 	// Set status to completed by default
@@ -100,7 +100,7 @@ func (a *Amount) UnmarshalJSON(data []byte) error {
 	}
 	str := string(n)
 	if !matchNumber.MatchString(str) {
-		return errors.E("not a regular decimal number", errors.Params{"str": str})
+		return errors.New("not a regular decimal number")
 	}
 	if strings.ContainsRune(str, '.') {
 		str, _ = numbers.DecimalToSatoshis(str)

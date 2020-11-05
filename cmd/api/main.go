@@ -3,13 +3,13 @@ package main
 import (
 	"context"
 	"github.com/gin-gonic/gin"
+	log "github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas/api"
 	"github.com/trustwallet/blockatlas/config"
 	"github.com/trustwallet/blockatlas/db"
 	_ "github.com/trustwallet/blockatlas/docs"
 	"github.com/trustwallet/blockatlas/internal"
 	"github.com/trustwallet/blockatlas/mq"
-	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/platform"
 	"github.com/trustwallet/blockatlas/services/spamfilter"
 	"github.com/trustwallet/blockatlas/services/tokenindexer"
@@ -37,7 +37,6 @@ func init() {
 	ctx, cancel = context.WithCancel(context.Background())
 
 	internal.InitConfig(confPath)
-	logger.InitLogger()
 
 	engine = internal.InitEngine(config.Default.Gin.Mode)
 	platform.Init(config.Default.Platform)
@@ -47,7 +46,7 @@ func init() {
 	database, err = db.New(config.Default.Postgres.URL, config.Default.Postgres.Read.URL,
 		config.Default.Postgres.Log)
 	if err != nil {
-		logger.Fatal(err)
+		log.Fatal(err)
 	}
 	go database.RestoreConnectionWorker(ctx, time.Second*10, config.Default.Postgres.URL)
 
@@ -57,10 +56,10 @@ func init() {
 	)
 
 	if err := mq.TokensRegistration.Declare(); err != nil {
-		logger.Fatal(err)
+		log.Fatal(err)
 	}
 	if err := mq.RawTransactionsTokenIndexer.Declare(); err != nil {
-		logger.Fatal(err)
+		log.Fatal(err)
 	}
 
 	ts = tokensearcher.Init(database, platform.TokensAPIs, mq.TokensRegistration)

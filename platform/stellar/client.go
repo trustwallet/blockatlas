@@ -1,9 +1,9 @@
 package stellar
 
 import (
+	"errors"
 	"fmt"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/pkg/errors"
 	"net/url"
 )
 
@@ -39,7 +39,7 @@ func (c *Client) CurrentBlockNumber() (int64, error) {
 	}
 
 	if len(ledgers.Embedded.Records) == 0 {
-		return 0, errors.E("CurrentBlockNumber: Records is empty", errors.TypePlatformUnmarshal)
+		return 0, errors.New("CurrentBlockNumber: Records is empty")
 	}
 	return ledgers.Embedded.Records[0].Sequence, nil
 }

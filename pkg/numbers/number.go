@@ -1,8 +1,8 @@
 package numbers
 
 import (
+	"errors"
 	"github.com/shopspring/decimal"
-	"github.com/trustwallet/blockatlas/pkg/errors"
 	"math"
 	"math/big"
 	"strconv"
@@ -78,7 +78,7 @@ func SliceAtoi(sa []string) ([]int, error) {
 	for _, a := range sa {
 		i, err := strconv.Atoi(a)
 		if err != nil {
-			return si, errors.E(err, "SliceAtoi error", errors.Params{"sa": sa})
+			return si, errors.New(err.Error() + " SliceAtoi error")
 		}
 		si = append(si, i)
 	}

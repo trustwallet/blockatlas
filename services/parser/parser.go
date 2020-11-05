@@ -3,16 +3,16 @@ package parser
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/trustwallet/blockatlas/db"
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/pkg/numbers"
 	"go.elastic.co/apm"
 	"sync/atomic"
 
-	"github.com/trustwallet/blockatlas/pkg/logger"
+	log "github.com/sirupsen/logrus"
 	"math/rand"
 	"sort"
 	"sync"
@@ -47,18 +47,18 @@ type (
 const MinTxsBatchLimit = 500
 
 func RunParser(params Params) {
-	logger.Info("------------------------------------------------------------")
+	log.Info("------------------------------------------------------------")
 	for {
 		select {
 		case <-params.Ctx.Done():
-			logger.Info(fmt.Sprintf("Parser of %s stopped parsing blocks", params.Api.Coin().Handle))
+			log.Info(fmt.Sprintf("Parser of %s stopped parsing blocks", params.Api.Coin().Handle))
 			params.StopChannel <- struct{}{}
 			return
 		default:
 			parse(params)
 			time.Sleep(params.ParsingBlocksInterval)
 		}
-		logger.Info("------------------------------------------------------------")
+		log.Info("------------------------------------------------------------")
 	}
 }
 
@@ -77,7 +77,7 @@ func parse(params Params) {
 
 	lastParsedBlock, currentBlock, err := GetBlocksIntervalToFetch(params, ctx)
 	if err != nil || lastParsedBlock > currentBlock {
-		logger.Error(err, logger.Params{"coin": params.Api.Coin().Handle})
+		log.WithFields(log.Fields{"coin": params.Api.Coin().Handle}).Error(err)
 		time.Sleep(params.ParsingBlocksInterval)
 		return
 	}
@@ -86,7 +86,7 @@ func parse(params Params) {
 
 	err = SaveLastParsedBlock(params, blocks, ctx)
 	if err != nil {
-		logger.Error(err, logger.Params{"coin": params.Api.Coin().Handle})
+		log.WithFields(log.Fields{"coin": params.Api.Coin().Handle}).Error(err)
 		time.Sleep(params.ParsingBlocksInterval)
 		return
 	}
@@ -96,7 +96,7 @@ func parse(params Params) {
 
 	PublishTransactionsBatch(params, txs, ctx)
 
-	logger.Info("End of parse step")
+	log.Info("End of parse step")
 }
 
 func GetBlocksIntervalToFetch(params Params, ctx context.Context) (int64, int64, error) {
@@ -105,12 +105,12 @@ func GetBlocksIntervalToFetch(params Params, ctx context.Context) (int64, int64,
 
 	lastParsedBlock, err := params.Database.GetLastParsedBlockNumber(params.Api.Coin().Handle, ctx)
 	if err != nil {
-		return 0, 0, errors.E(err, "Polling failed: tracker didn't return last known block number")
+		return 0, 0, errors.New(err.Error() + " Polling failed: tracker didn't return last known block number")
 	}
 	currentBlock, err := params.Api.CurrentBlockNumber()
 	currentBlock -= params.Api.Coin().MinConfirmations
 	if err != nil {
-		return 0, 0, errors.E(err, "Polling failed: source didn't return chain head number")
+		return 0, 0, errors.New(err.Error() + "Polling failed: source didn't return chain head number")
 	}
 
 	if currentBlock-lastParsedBlock > int64(params.BacklogCount) {
@@ -128,13 +128,14 @@ func FetchBlocks(params Params, lastParsedBlock, currentBlock int64, ctx context
 	defer span.End()
 
 	if lastParsedBlock == currentBlock {
-		logger.Info("No new blocks", logger.Params{"last": lastParsedBlock, "coin": params.Api.Coin().ID, "time": time.Now().Unix()})
+		log.WithFields(log.Fields{"last": lastParsedBlock, "coin": params.Api.Coin().ID, "time": time.Now().Unix()}).
+			Info("No new blocks")
 		return nil
 	}
 
 	blocksCount := currentBlock - lastParsedBlock
 	if blocksCount < 0 {
-		logger.Error("Current block is 0", logger.Params{"coin": params.Api.Coin().Handle})
+		log.WithFields(log.Fields{"coin": params.Api.Coin().Handle}).Error("Current block is 0")
 		return nil
 	}
 
@@ -170,7 +171,7 @@ func FetchBlocks(params Params, lastParsedBlock, currentBlock int64, ctx context
 		for err := range errorsChan {
 			errorsList = append(errorsList, err)
 		}
-		logger.Error("Fetch blocks errors", logger.Params{"count": len(errorsList), "blocks": errorsList})
+		log.WithFields(log.Fields{"count": len(errorsList), "blocks": errorsList}).Error("Fetch blocks errors")
 	}
 
 	blocksList := make([]blockatlas.Block, 0, len(blocksChan))
@@ -178,7 +179,8 @@ func FetchBlocks(params Params, lastParsedBlock, currentBlock int64, ctx context
 		blocksList = append(blocksList, block)
 	}
 
-	logger.Info("Fetched blocks batch", logger.Params{"from": lastParsedBlock, "to": currentBlock, "total": totalCount})
+	log.WithFields(log.Fields{"from": lastParsedBlock, "to": currentBlock, "total": totalCount}).
+		Info("Fetched blocks batch")
 	return blocksList
 }
 
@@ -187,7 +189,7 @@ func fetchBlock(api blockatlas.BlockAPI, num int64, blocksChan chan<- blockatlas
 	defer span.End()
 	block, err := getBlockByNumberWithRetry(5, time.Second*5, api.GetBlockByNumber, num, api.Coin().Symbol, ctx)
 	if err != nil {
-		return errors.E(fmt.Sprintf("%d", num))
+		return fmt.Errorf("%d", num)
 	}
 	blocksChan <- *block
 	return nil
@@ -205,19 +207,21 @@ func SaveLastParsedBlock(params Params, blocks []blockatlas.Block, ctx context.C
 		return blocks[i].Number < blocks[j].Number
 	})
 	if len(blocks)-1 < 0 {
-		return errors.E(fmt.Sprintf("Cannot get last block number for %s", params.Api.Coin().Handle))
+		return fmt.Errorf("cannot get last block number for %s", params.Api.Coin().Handle)
 	}
 
 	lastBlockNumber := blocks[len(blocks)-1].Number
 	if lastBlockNumber <= 0 {
-		return errors.E(fmt.Sprintf("Parser of %s failed to save last block, lastBlockNumber <= 0", params.Api.Coin().Handle))
+		return fmt.Errorf("parser of %s failed to save last block, lastBlockNumber <= 0",
+			params.Api.Coin().Handle)
 	}
 	err := params.Database.SetLastParsedBlockNumber(params.Api.Coin().Handle, lastBlockNumber, ctx)
 	if err != nil {
 		return err
 	}
 
-	logger.Info(err, "Save last parsed block", logger.Params{"block": lastBlockNumber, "coin": params.Api.Coin().Handle})
+	log.WithFields(log.Fields{"block": lastBlockNumber, "coin": params.Api.Coin().Handle}).
+		Info(err, "Save last parsed block")
 	return nil
 }
 
@@ -243,11 +247,13 @@ func ConvertToBatch(blocks []blockatlas.Block, ctx context.Context) blockatlas.T
 	wg.Wait()
 
 	if len(txsBatch.Txs) == 0 {
-		logger.Info("Blocks converted to transactions batch, there is no transactions", logger.Params{"blocks": len(blocks)})
+		log.WithFields(log.Fields{"blocks": len(blocks)}).
+			Info("Blocks converted to transactions batch, there is no transactions")
 		return nil
 	}
 
-	logger.Info("Blocks converted to transactions batch", logger.Params{"blocks": len(blocks), "txs": len(txsBatch.Txs)})
+	log.WithFields(log.Fields{"blocks": len(blocks), "txs": len(txsBatch.Txs)}).
+		Info("Blocks converted to transactions batch")
 	return txsBatch.Txs
 }
 
@@ -265,7 +271,7 @@ func PublishTransactionsBatch(params Params, txs blockatlas.Txs, ctx context.Con
 		publish(params, batch, ctx)
 	}
 
-	logger.Info("Published transactions batch", logger.Params{"txs": len(txs), "batchCount": len(batches)})
+	log.WithFields(log.Fields{"txs": len(txs), "batchCount": len(batches)}).Info("Published transactions batch")
 }
 
 func getTxsBatches(txs blockatlas.Txs, sizeUint uint, ctx context.Context) []blockatlas.Txs {
@@ -292,13 +298,13 @@ func publish(params Params, txs blockatlas.Txs, ctx context.Context) {
 
 	body, err := json.Marshal(txs)
 	if err != nil {
-		logger.Error(err, logger.Params{"coin": params.Api.Coin().Handle})
+		log.WithFields(log.Fields{"coin": params.Api.Coin().Handle}).Error(err)
 		return
 	}
 	for _, q := range params.Queue {
 		err = q.Publish(body)
 		if err != nil {
-			logger.Error(err, logger.Params{"coin": params.Api.Coin().Handle})
+			log.WithFields(log.Fields{"coin": params.Api.Coin().Handle}).Error(err)
 			return
 		}
 	}
@@ -318,9 +324,8 @@ func getBlockByNumberWithRetry(attempts int, sleep time.Duration, getBlockByNumb
 			jitter := time.Duration(rand.Int63n(int64(sleep)))
 			sleep = sleep + jitter/2
 
-			logger.Info("retry GetBlockByNumber",
-				logger.Params{"number": n, "attempts": attempts, "sleep": sleep.String(), "symbol": symbol},
-			)
+			log.WithFields(log.Fields{"number": n, "attempts": attempts, "sleep": sleep.String(), "symbol": symbol}).
+				Info("retry GetBlockByNumber")
 
 			time.Sleep(sleep)
 			return getBlockByNumberWithRetry(attempts, sleep*2, getBlockByNumber, n, symbol, ctx)

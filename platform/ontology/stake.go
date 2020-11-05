@@ -2,7 +2,6 @@ package ontology
 
 import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/pkg/errors"
 	"github.com/trustwallet/blockatlas/services/assets"
 )
 
@@ -39,7 +38,7 @@ func (p *Platform) UndelegatedBalance(address string) (string, error) {
 	}
 	balance := acc.Result.getBalance(AssetONT)
 	if balance == nil {
-		return "0", errors.E("Invalid asset balance", errors.Params{"asset": AssetONT})
+		return "0", err
 	}
 	return balance.Balance, nil
 }

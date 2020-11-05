@@ -2,9 +2,8 @@ package cosmos
 
 import (
 	"fmt"
+	log "github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/pkg/errors"
-	"github.com/trustwallet/blockatlas/pkg/logger"
 	"net/url"
 	"strconv"
 	"time"
@@ -52,7 +51,7 @@ func (c *Client) CurrentBlockNumber() (num int64, err error) {
 
 	num, err = strconv.ParseInt(block.Meta.Header.Height, 10, 64)
 	if err != nil {
-		return num, errors.E("error to ParseInt", errors.TypePlatformUnmarshal)
+		return num, err
 	}
 
 	return
@@ -71,7 +70,7 @@ func (c *Client) GetDelegations(address string) (delegations Delegations, err er
 	path := fmt.Sprintf("staking/delegators/%s/delegations", address)
 	err = c.Get(&delegations, path, nil)
 	if err != nil {
-		logger.Error(err, "Cosmos: Failed to get delegations for address")
+		log.Error(err, "Cosmos: Failed to get delegations for address")
 	}
 	return
 }
@@ -80,7 +79,7 @@ func (c *Client) GetUnbondingDelegations(address string) (delegations UnbondingD
 	path := fmt.Sprintf("staking/delegators/%s/unbonding_delegations", address)
 	err = c.Get(&delegations, path, nil)
 	if err != nil {
-		logger.Error(err, "Cosmos: Failed to get unbonding delegations for address")
+		log.Error(err, "Cosmos: Failed to get unbonding delegations for address")
 	}
 	return
 }
