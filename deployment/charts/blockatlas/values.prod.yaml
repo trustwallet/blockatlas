@@ -17,11 +17,11 @@ secret:
 
 apiResources:
   limits:
-    cpu: 200m
-    memory: 300Mi
+    cpu: 300m
+    memory: 400Mi
   requests:
-    cpu: 200m
-    memory: 300Mi
+    cpu: 300m
+    memory: 400Mi
 
 consumerResources:
   limits:
