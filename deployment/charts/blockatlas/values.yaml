@@ -46,22 +46,8 @@ ingress:
 apiResources: {}
 postgresResources: {}
 rabbitmqResources: {}
-parserBinanceResources: {}
 consumerResources: {}
-parserBitcoinResources: {}
-parserBscResources: {}
-parserClassicResources: {}
-parserCosmosResources: {}
-parserDogeResources: {}
-parserEthereumResources: {}
-parserKavaResources: {}
-parserLitecoinResources: {}
-parserRippleResources: {}
-parserOtherResources: {}
-parserSmartchainResources: {}
-parserStellarResources: {}
-parserTezosResources: {}
-parserTronResources: {}
+parserResources: {}
 
 nodeSelector: {}
 tolerations: []
