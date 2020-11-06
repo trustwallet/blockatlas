@@ -78,11 +78,11 @@ func main() {
 	//pprof.StartCPUProfile(f)
 	//defer pprof.StopCPUProfile()
 
-	go mq.RawTransactionsTokenIndexer.RunConsumerWithCancelAndDbConn(tokenindexer.RunTokenIndexer, database, true, ctx)
-	go mq.RawTransactions.RunConsumerWithCancelAndDbConn(notifier.RunNotifier, database, true, ctx)
-	go mq.RawTransactionsSearcher.RunConsumerWithCancelAndDbConn(tokensearcher.Run, database, true, ctx)
-	go mq.Subscriptions.RunConsumerWithCancelAndDbConn(subscriber.RunTransactionsSubscriber, database, false, ctx)
-	go mq.TokensRegistration.RunConsumerWithCancelAndDbConn(subscriber.RunTokensSubscriber, database, true, ctx)
+	go mq.RawTransactionsTokenIndexer.RunConsumerWithCancelAndDbConnConcurrent(tokenindexer.RunTokenIndexer, database, ctx)
+	go mq.RawTransactions.RunConsumerWithCancelAndDbConnConcurrent(notifier.RunNotifier, database, ctx)
+	go mq.RawTransactionsSearcher.RunConsumerWithCancelAndDbConnConcurrent(tokensearcher.Run, database, ctx)
+	go mq.Subscriptions.RunConsumerWithCancelAndDbConn(subscriber.RunTransactionsSubscriber, database, ctx)
+	go mq.TokensRegistration.RunConsumerWithCancelAndDbConnConcurrent(subscriber.RunTokensSubscriber, database, ctx)
 
 	go mq.FatalWorker(time.Second * 10)
 

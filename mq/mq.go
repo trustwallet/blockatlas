@@ -137,7 +137,7 @@ func (q Queue) RunConsumerWithCancel(consumer Consumer, ctx context.Context) {
 	}
 }
 
-func (q Queue) RunConsumerWithCancelAndDbConn(consumer ConsumerWithDbConn, database *db.Instance, concurrent bool, ctx context.Context) {
+func (q Queue) RunConsumerWithCancelAndDbConn(consumer ConsumerWithDbConn, database *db.Instance, ctx context.Context) {
 	messageChannel := q.GetMessageChannel()
 	for {
 		select {
@@ -148,13 +148,23 @@ func (q Queue) RunConsumerWithCancelAndDbConn(consumer ConsumerWithDbConn, datab
 			if message.Body == nil {
 				continue
 			}
-			if concurrent {
-				go consumer(database, message)
-			} else {
-				log.Info("Prepare to read message")
-				consumer(database, message)
-				log.Info("Finish read message")
+			consumer(database, message)
+		}
+	}
+}
+
+func (q Queue) RunConsumerWithCancelAndDbConnConcurrent(consumer ConsumerWithDbConn, database *db.Instance, ctx context.Context) {
+	messageChannel := q.GetMessageChannel()
+	for {
+		select {
+		case <-ctx.Done():
+			log.Info("Consumer stopped")
+			return
+		case message := <-messageChannel:
+			if message.Body == nil {
+				continue
 			}
+			go consumer(database, message)
 		}
 	}
 }
