@@ -169,32 +169,6 @@ func (q Queue) RunConsumerWithCancelAndDbConnConcurrent(consumer ConsumerWithDbC
 	}
 }
 
-func RestoreConnectionWorker(uri string, queue Queue, timeout time.Duration) {
-	log.Info("Run MQ RestoreConnectionWorker")
-	for {
-		if conn.IsClosed() {
-			for {
-				log.Warn("MQ is not available now")
-				log.Warn("Trying to connect to MQ...")
-				if err := Init(uri); err != nil {
-					log.Warn("MQ is still unavailable")
-					time.Sleep(timeout)
-					continue
-				}
-				if err := queue.Declare(); err != nil {
-					log.Warn("Can't declare queues:", queue)
-					time.Sleep(timeout)
-					continue
-				} else {
-					log.Info("MQ connection restored")
-					break
-				}
-			}
-		}
-		time.Sleep(timeout)
-	}
-}
-
 func FatalWorker(timeout time.Duration) {
 	log.Info("Run MQ FatalWorker")
 	for {
