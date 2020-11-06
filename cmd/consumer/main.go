@@ -3,9 +3,7 @@ package main
 import (
 	"context"
 	"github.com/trustwallet/blockatlas/config"
-	"github.com/trustwallet/blockatlas/services/notifier"
 	"github.com/trustwallet/blockatlas/services/subscriber"
-	"github.com/trustwallet/blockatlas/services/tokensearcher"
 	"time"
 
 	log "github.com/sirupsen/logrus"
@@ -69,10 +67,10 @@ func main() {
 	}
 
 	//go mq.RawTransactionsTokenIndexer.RunConsumerWithCancelAndDbConn(tokenindexer.RunTokenIndexer, database, ctx)
-	go mq.RawTransactions.RunConsumerWithCancelAndDbConn(notifier.RunNotifier, database, ctx)
-	go mq.RawTransactionsSearcher.RunConsumerWithCancelAndDbConn(tokensearcher.Run, database, ctx)
+	//go mq.RawTransactions.RunConsumerWithCancelAndDbConn(notifier.RunNotifier, database, ctx)
+	//go mq.RawTransactionsSearcher.RunConsumerWithCancelAndDbConn(tokensearcher.Run, database, ctx)
 	go mq.Subscriptions.RunConsumerWithCancelAndDbConn(subscriber.RunTransactionsSubscriber, database, ctx)
-	go mq.TokensRegistration.RunConsumerWithCancelAndDbConn(subscriber.RunTokensSubscriber, database, ctx)
+	//go mq.TokensRegistration.RunConsumerWithCancelAndDbConn(subscriber.RunTokensSubscriber, database, ctx)
 
 	go mq.FatalWorker(time.Second * 10)
 
