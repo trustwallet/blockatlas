@@ -151,7 +151,9 @@ func (q Queue) RunConsumerWithCancelAndDbConn(consumer ConsumerWithDbConn, datab
 			if concurrent {
 				go consumer(database, message)
 			} else {
+				log.Info("Prepare to read message")
 				consumer(database, message)
+				log.Info("Finish read message")
 			}
 		}
 	}
