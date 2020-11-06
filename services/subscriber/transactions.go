@@ -29,8 +29,7 @@ func RunTransactionsSubscriber(database *db.Instance, delivery amqp.Delivery) {
 	var event blockatlas.SubscriptionEvent
 	err := json.Unmarshal(delivery.Body, &event)
 	if err != nil {
-		errAck := delivery.Ack(false)
-		log.Fatal(err, errAck)
+		return
 	}
 
 	subscriptions := event.ParseSubscriptions(event.Subscriptions)
@@ -69,15 +68,17 @@ func RunTransactionsSubscriber(database *db.Instance, delivery amqp.Delivery) {
 		).Info("Added")
 	}
 
-	err = delivery.Ack(false)
-	if err != nil {
-		log.WithFields(
-			log.Fields{"service": Notifications,
-				"operation":         event.Operation,
-				"subscriptions_len": len(subscriptions),
-			},
-		).Error(err)
-	}
+	defer func() {
+		err = delivery.Ack(false)
+		if err != nil {
+			log.WithFields(
+				log.Fields{"service": Notifications,
+					"operation":         event.Operation,
+					"subscriptions_len": len(subscriptions),
+				},
+			).Error(err)
+		}
+	}()
 }
 
 func ToSubscriptionData(sub []blockatlas.Subscription) []string {
