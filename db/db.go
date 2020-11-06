@@ -3,6 +3,7 @@ package db
 import (
 	"context"
 	"errors"
+	"gorm.io/gorm/logger"
 	"time"
 
 	log "github.com/sirupsen/logrus"
@@ -25,7 +26,7 @@ type Instance struct {
 const batchCount = 3000
 
 func New(uri, readUri string, logMode bool) (*Instance, error) {
-	cfg := &gorm.Config{}
+	cfg := &gorm.Config{Logger: logger.Default.LogMode(logger.Silent)}
 
 	db, err := gorm.Open(postgres.Open(uri), cfg)
 	if err != nil {

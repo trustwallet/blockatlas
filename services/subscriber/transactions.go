@@ -18,6 +18,8 @@ const (
 	AddSubscription    blockatlas.SubscriptionOperation = "AddSubscription"
 	DeleteSubscription blockatlas.SubscriptionOperation = "DeleteSubscription"
 	UpdateSubscription blockatlas.SubscriptionOperation = "UpdateSubscription"
+
+	batchLimit uint = 3000
 )
 
 func RunTransactionsSubscriber(database *db.Instance, delivery amqp.Delivery) {
@@ -29,22 +31,26 @@ func RunTransactionsSubscriber(database *db.Instance, delivery amqp.Delivery) {
 	var event blockatlas.SubscriptionEvent
 	err := json.Unmarshal(delivery.Body, &event)
 	if err != nil {
-		errAck := delivery.Ack(false)
-		log.Fatal(err, errAck)
+		return
 	}
 
 	subscriptions := event.ParseSubscriptions(event.Subscriptions)
 	switch event.Operation {
 	case AddSubscription, UpdateSubscription:
-		err = database.AddSubscriptionsForNotifications(ToSubscriptionData(subscriptions), ctx)
-		if err != nil {
-			log.WithFields(
-				log.Fields{"service": Notifications,
-					"operation":         event.Operation,
-					"subscriptions_len": len(subscriptions),
-				},
-			).Error(err)
+		allSubs := ToSubscriptionData(subscriptions)
+		batchedSubs := toBatch(allSubs, batchLimit)
+		for _, subs := range batchedSubs {
+			err := database.AddSubscriptionsForNotifications(subs, ctx)
+			if err != nil {
+				log.WithFields(
+					log.Fields{"service": Notifications,
+						"operation":         event.Operation,
+						"subscriptions_len": len(subscriptions),
+					},
+				).Error(err)
+			}
 		}
+
 		log.WithFields(
 			log.Fields{"service": Notifications,
 				"operation":         event.Operation,
@@ -52,14 +58,18 @@ func RunTransactionsSubscriber(database *db.Instance, delivery amqp.Delivery) {
 			},
 		).Info("Added")
 	case DeleteSubscription:
-		err := database.DeleteSubscriptionsForNotifications(ToSubscriptionData(subscriptions), ctx)
-		if err != nil {
-			log.WithFields(
-				log.Fields{"service": Notifications,
-					"operation":         event.Operation,
-					"subscriptions_len": len(subscriptions),
-				},
-			).Error(err)
+		allSubs := ToSubscriptionData(subscriptions)
+		batchedSubs := toBatch(allSubs, batchLimit)
+		for _, subs := range batchedSubs {
+			err := database.DeleteSubscriptionsForNotifications(subs, ctx)
+			if err != nil {
+				log.WithFields(
+					log.Fields{"service": Notifications,
+						"operation":         event.Operation,
+						"subscriptions_len": len(subscriptions),
+					},
+				).Error(err)
+			}
 		}
 		log.WithFields(
 			log.Fields{"service": Notifications,
@@ -69,15 +79,17 @@ func RunTransactionsSubscriber(database *db.Instance, delivery amqp.Delivery) {
 		).Info("Added")
 	}
 
-	err = delivery.Ack(false)
-	if err != nil {
-		log.WithFields(
-			log.Fields{"service": Notifications,
-				"operation":         event.Operation,
-				"subscriptions_len": len(subscriptions),
-			},
-		).Error(err)
-	}
+	defer func() {
+		err = delivery.Ack(false)
+		if err != nil {
+			log.WithFields(
+				log.Fields{"service": Notifications,
+					"operation":         event.Operation,
+					"subscriptions_len": len(subscriptions),
+				},
+			).Error(err)
+		}
+	}()
 }
 
 func ToSubscriptionData(sub []blockatlas.Subscription) []string {
@@ -88,4 +100,19 @@ func ToSubscriptionData(sub []blockatlas.Subscription) []string {
 		data = append(data, address)
 	}
 	return data
+}
+
+func toBatch(subs []string, sizeUint uint) [][]string {
+	size := int(sizeUint)
+	resultLength := (len(subs) + size - 1) / size
+	result := make([][]string, resultLength)
+	lo, hi := 0, size
+	for i := range result {
+		if hi > len(subs) {
+			hi = len(subs)
+		}
+		result[i] = subs[lo:hi:hi]
+		lo, hi = hi, hi+size
+	}
+	return result
 }

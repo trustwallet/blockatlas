@@ -39,7 +39,8 @@ func TestFullFlow(t *testing.T) {
 	go parser.RunParser(params)
 	time.Sleep(time.Second * 2)
 
-	go mq.RunConsumerForChannelWithCancelAndDbConn(notifier.RunNotifier, rawTransactionsChannel, database, ctx)
+	go mq.RunConsumerForChannelWithCancelAndDbConn(notifier.RunNotifier, rawTransactionsChannel, database, true,
+		ctx)
 	time.Sleep(time.Second * 5)
 
 	for i := 0; i < 11; i++ {

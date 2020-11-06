@@ -68,7 +68,7 @@ func (q Queue) Publish(body []byte) error {
 	})
 }
 
-func RunConsumerForChannelWithCancelAndDbConn(consumer ConsumerWithDbConn, messageChannel MessageChannel, database *db.Instance, ctx context.Context) {
+func RunConsumerForChannelWithCancelAndDbConn(consumer ConsumerWithDbConn, messageChannel MessageChannel, database *db.Instance, concurrent bool, ctx context.Context) {
 	for {
 		select {
 		case <-ctx.Done():
@@ -78,7 +78,12 @@ func RunConsumerForChannelWithCancelAndDbConn(consumer ConsumerWithDbConn, messa
 			if message.Body == nil {
 				continue
 			}
-			go consumer(database, message)
+			if concurrent {
+				go consumer(database, message)
+			} else {
+				consumer(database, message)
+			}
+
 		}
 	}
 }
@@ -143,34 +148,24 @@ func (q Queue) RunConsumerWithCancelAndDbConn(consumer ConsumerWithDbConn, datab
 			if message.Body == nil {
 				continue
 			}
-			go consumer(database, message)
+			consumer(database, message)
 		}
 	}
 }
 
-func RestoreConnectionWorker(uri string, queue Queue, timeout time.Duration) {
-	log.Info("Run MQ RestoreConnectionWorker")
+func (q Queue) RunConsumerWithCancelAndDbConnConcurrent(consumer ConsumerWithDbConn, database *db.Instance, ctx context.Context) {
+	messageChannel := q.GetMessageChannel()
 	for {
-		if conn.IsClosed() {
-			for {
-				log.Warn("MQ is not available now")
-				log.Warn("Trying to connect to MQ...")
-				if err := Init(uri); err != nil {
-					log.Warn("MQ is still unavailable")
-					time.Sleep(timeout)
-					continue
-				}
-				if err := queue.Declare(); err != nil {
-					log.Warn("Can't declare queues:", queue)
-					time.Sleep(timeout)
-					continue
-				} else {
-					log.Info("MQ connection restored")
-					break
-				}
+		select {
+		case <-ctx.Done():
+			log.Info("Consumer stopped")
+			return
+		case message := <-messageChannel:
+			if message.Body == nil {
+				continue
 			}
+			go consumer(database, message)
 		}
-		time.Sleep(timeout)
 	}
 }
 
