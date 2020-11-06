@@ -58,14 +58,18 @@ func RunTransactionsSubscriber(database *db.Instance, delivery amqp.Delivery) {
 			},
 		).Info("Added")
 	case DeleteSubscription:
-		err := database.DeleteSubscriptionsForNotifications(ToSubscriptionData(subscriptions), ctx)
-		if err != nil {
-			log.WithFields(
-				log.Fields{"service": Notifications,
-					"operation":         event.Operation,
-					"subscriptions_len": len(subscriptions),
-				},
-			).Error(err)
+		allSubs := ToSubscriptionData(subscriptions)
+		batchedSubs := toBatch(allSubs, batchLimit)
+		for _, subs := range batchedSubs {
+			err := database.DeleteSubscriptionsForNotifications(subs, ctx)
+			if err != nil {
+				log.WithFields(
+					log.Fields{"service": Notifications,
+						"operation":         event.Operation,
+						"subscriptions_len": len(subscriptions),
+					},
+				).Error(err)
+			}
 		}
 		log.WithFields(
 			log.Fields{"service": Notifications,
