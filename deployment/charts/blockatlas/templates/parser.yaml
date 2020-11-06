@@ -1,10 +1,10 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: parser-ripple
+  name: parser
   namespace: {{ .Release.Namespace }}
   labels:
-    app: parser-ripple
+    app: parser
     chart: {{ template "blockatlas.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
@@ -28,8 +28,14 @@ spec:
       - env:
         - name: ELASTIC_APM_SERVICE_NAME
           value: blockatlas-parser
+        - name: OBSERVER_BACKLOG_MAX_BLOCKS
+          value: "50"
+        - name: OBSERVER_BLOCK_POLL_MIN
+          value: 7s
+        - name: OBSERVER_FETCH_BLOCKS_INTERVAL
+          value: 100ms
         - name: PLATFORM
-          value: ripple
+          value: all
         envFrom:
         - secretRef:
             name: secrets
@@ -39,9 +45,9 @@ spec:
             optional: false
         image: "{{ .Values.image.repository }}:parser-{{ .Values.image.tag }}"
         imagePullPolicy: {{ .Values.image.pullPolicy }}
-        name: parser-ripple
+        name: parser
         resources:
-            {{- toYaml .Values.parserRippleResources | nindent 12 }}
+            {{- toYaml .Values.parserResources | nindent 12 }}
         securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
         stdin: true
