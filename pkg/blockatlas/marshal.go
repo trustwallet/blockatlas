@@ -6,7 +6,8 @@ import (
 	"strings"
 
 	"errors"
-	"github.com/trustwallet/blockatlas/pkg/numbers"
+
+	"github.com/trustwallet/golibs/numbers"
 )
 
 var matchNumber = regexp.MustCompile(`^\d+(\.\d+)?$`)

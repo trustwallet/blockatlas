@@ -5,8 +5,8 @@ import (
 
 	mapset "github.com/deckarep/golang-set"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/pkg/numbers"
 	"github.com/trustwallet/golibs/coin"
+	"github.com/trustwallet/golibs/numbers"
 )
 
 func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {

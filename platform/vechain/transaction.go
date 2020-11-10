@@ -2,12 +2,13 @@ package vechain
 
 import (
 	"errors"
+	"strconv"
+	"sync"
+
 	log "github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas/pkg/address"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/pkg/numbers"
-	"strconv"
-	"sync"
+	"github.com/trustwallet/golibs/numbers"
 )
 
 func (p *Platform) GetTokenTxsByAddress(address, token string) (blockatlas.TxPage, error) {

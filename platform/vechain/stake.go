@@ -2,8 +2,8 @@ package vechain
 
 import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/pkg/numbers"
 	"github.com/trustwallet/blockatlas/services/assets"
+	"github.com/trustwallet/golibs/numbers"
 )
 
 const (
