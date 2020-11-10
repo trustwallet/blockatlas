@@ -1,10 +1,11 @@
 package harmony
 
 import (
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/pkg/numbers"
-	"github.com/trustwallet/golibs/coin"
 	"strconv"
+
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/golibs/coin"
+	"github.com/trustwallet/golibs/numbers"
 )
 
 const Annual = 10
@@ -28,8 +29,6 @@ func NormalizeTxs(txs []Transaction) blockatlas.TxPage {
 	}
 	return normalizeTxs
 }
-
-
 
 func NormalizeTx(trx *Transaction) (tx blockatlas.Tx, b bool, err error) {
 	gasPrice, err := hexToInt(trx.GasPrice)

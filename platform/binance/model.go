@@ -1,12 +1,13 @@
 package binance
 
 import (
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/pkg/numbers"
-	"github.com/trustwallet/golibs/coin"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/golibs/coin"
+	"github.com/trustwallet/golibs/numbers"
 )
 
 const (

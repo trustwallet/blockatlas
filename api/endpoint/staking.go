@@ -6,9 +6,10 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/trustwallet/blockatlas/pkg/numbers"
+	"github.com/trustwallet/golibs/numbers"
 
 	"errors"
+
 	"github.com/gin-gonic/gin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/coin"
