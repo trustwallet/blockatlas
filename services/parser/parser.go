@@ -130,7 +130,7 @@ func FetchBlocks(params Params, lastParsedBlock, currentBlock int64, ctx context
 	defer span.End()
 
 	if lastParsedBlock == currentBlock {
-		log.WithFields(log.Fields{"last": lastParsedBlock, "coin": params.Api.Coin().ID, "time": time.Now().Unix()}).
+		log.WithFields(log.Fields{"last": lastParsedBlock, "coin": params.Api.Coin().Handle, "time": time.Now().Unix()}).
 			Info("No new blocks")
 		return nil
 	}

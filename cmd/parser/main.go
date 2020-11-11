@@ -3,13 +3,14 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/trustwallet/blockatlas/config"
-	"github.com/trustwallet/blockatlas/services/spamfilter"
 	"os"
 	"os/signal"
 	"sync"
 	"syscall"
 	"time"
+
+	"github.com/trustwallet/blockatlas/config"
+	"github.com/trustwallet/blockatlas/services/spamfilter"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas/db"
@@ -123,6 +124,7 @@ func main() {
 		go parser.RunParser(params)
 
 		log.WithFields(log.Fields{
+			"coin":                     api.Coin().Handle,
 			"interval":                 pollInterval,
 			"backlog":                  backlogCount,
 			"Max backlog":              maxBackLogBlocks,

@@ -4,6 +4,9 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+
+	"github.com/trustwallet/golibs/coin"
+
 	log "github.com/sirupsen/logrus"
 	"github.com/streadway/amqp"
 	"github.com/trustwallet/blockatlas/mq"
@@ -21,11 +24,12 @@ func GetTransactionsFromDelivery(delivery amqp.Delivery, service string, ctx con
 		return nil, err
 	}
 
-	log.WithFields(log.Fields{"service": service, "txs": len(txs), "coin": txs[0].Coin}).Info("Consumed")
-
 	if len(txs) == 0 {
 		return nil, errors.New("empty txs list")
 	}
+
+	log.WithFields(log.Fields{"service": service, "txs": len(txs), "coin": coin.Coins[txs[0].Coin].Handle}).Info("Consumed")
+
 	return txs, nil
 }
 
