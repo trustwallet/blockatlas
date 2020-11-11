@@ -223,7 +223,7 @@ func SaveLastParsedBlock(params Params, blocks []blockatlas.Block, ctx context.C
 	}
 
 	log.WithFields(log.Fields{"block": lastBlockNumber, "coin": params.Api.Coin().Handle}).
-		Info("Save last parsed block. Error: ", err)
+		Info("Save last parsed block.")
 	return nil
 }
 
