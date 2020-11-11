@@ -249,13 +249,9 @@ func ConvertToBatch(blocks []blockatlas.Block, ctx context.Context) blockatlas.T
 	wg.Wait()
 
 	if len(txsBatch.Txs) == 0 {
-		log.WithFields(log.Fields{"blocks": len(blocks)}).
-			Info("Blocks converted to transactions batch, there is no transactions")
 		return nil
 	}
 
-	log.WithFields(log.Fields{"blocks": len(blocks), "txs": len(txsBatch.Txs)}).
-		Info("Blocks converted to transactions batch")
 	return txsBatch.Txs
 }
 
