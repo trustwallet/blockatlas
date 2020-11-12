@@ -2,10 +2,11 @@ package mq
 
 import (
 	"context"
+	"time"
+
 	log "github.com/sirupsen/logrus"
 	"github.com/streadway/amqp"
 	"github.com/trustwallet/blockatlas/db"
-	"time"
 )
 
 var (
@@ -165,6 +166,22 @@ func (q Queue) RunConsumerWithCancelAndDbConnConcurrent(consumer ConsumerWithDbC
 				continue
 			}
 			go consumer(database, message)
+		}
+	}
+}
+
+func (q Queue) RunSyncConsumerWithCancelAndDbConnConcurrent(consumer ConsumerWithDbConn, database *db.Instance, ctx context.Context) {
+	messageChannel := q.GetMessageChannel()
+	for {
+		select {
+		case <-ctx.Done():
+			log.Info("Consumer stopped")
+			return
+		case message := <-messageChannel:
+			if message.Body == nil {
+				continue
+			}
+			consumer(database, message)
 		}
 	}
 }
