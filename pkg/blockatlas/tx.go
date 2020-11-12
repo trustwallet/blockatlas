@@ -217,10 +217,10 @@ type (
 	Txs []Tx
 )
 
-func (t Txs) FilterUniqueID() Txs {
+func (txs Txs) FilterUniqueID() Txs {
 	keys := make(map[string]bool)
 	list := make(Txs, 0)
-	for _, entry := range t {
+	for _, entry := range txs {
 		if _, value := keys[entry.ID]; !value {
 			keys[entry.ID] = true
 			list = append(list, entry)
@@ -236,6 +236,18 @@ func (txs TxPage) FilterTransactionsByMemo() TxPage {
 			tx.Memo = ""
 		}
 		result = append(result, tx)
+	}
+	return result
+}
+
+func (txs Txs) FilterTransactionsByType(types []TransactionType) Txs {
+	result := make(Txs, 0)
+	for _, tx := range txs {
+		for _, t := range types {
+			if tx.Type == t {
+				result = append(result, tx)
+			}
+		}
 	}
 	return result
 }
@@ -281,11 +293,11 @@ func (txs TxPage) FilterTransactionsByToken(token string) TxPage {
 	return result
 }
 
-func (t Txs) SortByDate() Txs {
-	sort.Slice(t, func(i, j int) bool {
-		return t[i].Date > t[j].Date
+func (txs Txs) SortByDate() Txs {
+	sort.Slice(txs, func(i, j int) bool {
+		return txs[i].Date > txs[j].Date
 	})
-	return t
+	return txs
 }
 
 func (t *Tx) GetUtxoAddresses() (addresses []string) {

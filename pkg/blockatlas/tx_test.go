@@ -2,12 +2,13 @@ package blockatlas
 
 import (
 	"encoding/json"
-	mapset "github.com/deckarep/golang-set"
-	"github.com/stretchr/testify/assert"
-	"github.com/trustwallet/golibs/coin"
 	"reflect"
 	"sort"
 	"testing"
+
+	mapset "github.com/deckarep/golang-set"
+	"github.com/stretchr/testify/assert"
+	"github.com/trustwallet/golibs/coin"
 )
 
 var transferDst1 = Tx{
@@ -756,6 +757,42 @@ func TestTxPage_FilterTransactionsByMemo(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := tt.txs.FilterTransactionsByMemo(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("FilterTransactionsByMemo() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestTxs_FilterTransactionsByType(t *testing.T) {
+	type args struct {
+		types []TransactionType
+	}
+	tests := []struct {
+		name string
+		txs  Txs
+		args args
+		want Txs
+	}{
+		{
+			"Token Transfers",
+			Txs{
+				Tx{Type: TxTransfer},
+				Tx{Type: TxContractCall},
+				Tx{Type: TxNativeTokenTransfer},
+				Tx{Type: TxTokenTransfer},
+			},
+			args{
+				[]TransactionType{TxNativeTokenTransfer, TxTokenTransfer},
+			},
+			Txs{
+				Tx{Type: TxNativeTokenTransfer},
+				Tx{Type: TxTokenTransfer},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := tt.txs.FilterTransactionsByType(tt.args.types); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("FilterTransactionsByType() = %v, want %v", got, tt.want)
 			}
 		})
 	}

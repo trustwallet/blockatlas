@@ -309,10 +309,24 @@ func publish(params Params, txs blockatlas.Txs, ctx context.Context) {
 	}
 
 	// Notify token transfers queue, if conforms to TokensAPI protocol
-	// Improve by only including/filtering token transfer.
+	tokenTransfers := txs.FilterTransactionsByType([]blockatlas.TransactionType{
+		blockatlas.TxTokenTransfer,
+		blockatlas.TxNativeTokenTransfer,
+	})
+
+	if len(tokenTransfers) == 0 {
+		return
+	}
+
+	tokenTransfersBody, err := json.Marshal(tokenTransfers)
+	if err != nil {
+		log.WithFields(log.Fields{"coin": params.Api.Coin().Handle}).Error(err)
+		return
+	}
+
 	if _, ok := params.Api.(blockatlas.TokensAPI); ok {
 		for _, q := range params.TokenTransactionsQueue {
-			err = q.Publish(body)
+			err = q.Publish(tokenTransfersBody)
 			if err != nil {
 				log.WithFields(log.Fields{"coin": params.Api.Coin().Handle}).Error(err)
 				return
