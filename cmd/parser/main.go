@@ -105,10 +105,10 @@ func main() {
 		coinCancel[coin.Handle] = cancel
 
 		params := parser.Params{
-			Ctx: ctx,
-			Api: api,
-			Queue: []mq.Queue{
-				mq.RawTransactions,
+			Ctx:               ctx,
+			Api:               api,
+			TransactionsQueue: mq.RawTransactions,
+			TokenTransactionsQueue: []mq.Queue{
 				mq.RawTransactionsSearcher,
 				mq.RawTransactionsTokenIndexer,
 			},

@@ -2,12 +2,14 @@ package main
 
 import (
 	"context"
-	"github.com/trustwallet/blockatlas/config"
+	"time"
+
 	"github.com/trustwallet/blockatlas/services/notifier"
+
+	"github.com/trustwallet/blockatlas/config"
 	"github.com/trustwallet/blockatlas/services/subscriber"
 	"github.com/trustwallet/blockatlas/services/tokenindexer"
 	"github.com/trustwallet/blockatlas/services/tokensearcher"
-	"time"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas/db"
@@ -69,9 +71,11 @@ func main() {
 		log.Fatal(err)
 	}
 
-	go mq.RawTransactionsTokenIndexer.RunConsumerWithCancelAndDbConnConcurrent(tokenindexer.RunTokenIndexer, database, ctx)
 	go mq.RawTransactions.RunConsumerWithCancelAndDbConnConcurrent(notifier.RunNotifier, database, ctx)
+
+	go mq.RawTransactionsTokenIndexer.RunConsumerWithCancelAndDbConnConcurrent(tokenindexer.RunTokenIndexer, database, ctx)
 	go mq.RawTransactionsSearcher.RunConsumerWithCancelAndDbConnConcurrent(tokensearcher.Run, database, ctx)
+
 	go mq.Subscriptions.RunConsumerWithCancelAndDbConnConcurrent(subscriber.RunTransactionsSubscriber, database, ctx)
 	go mq.TokensRegistration.RunConsumerWithCancelAndDbConnConcurrent(subscriber.RunTokensSubscriber, database, ctx)
 

@@ -25,7 +25,8 @@ type (
 	Params struct {
 		Ctx                                       context.Context
 		Api                                       blockatlas.BlockAPI
-		Queue                                     []mq.Queue
+		TransactionsQueue                         mq.Queue
+		TokenTransactionsQueue                    []mq.Queue
 		ParsingBlocksInterval, FetchBlocksTimeout time.Duration
 		BacklogCount                              int
 		MaxBacklogBlocks                          int64
@@ -299,11 +300,23 @@ func publish(params Params, txs blockatlas.Txs, ctx context.Context) {
 		log.WithFields(log.Fields{"coin": params.Api.Coin().Handle}).Error(err)
 		return
 	}
-	for _, q := range params.Queue {
-		err = q.Publish(body)
-		if err != nil {
-			log.WithFields(log.Fields{"coin": params.Api.Coin().Handle}).Error(err)
-			return
+
+	// Notify transactions queue
+	err = params.TransactionsQueue.Publish(body)
+	if err != nil {
+		log.WithFields(log.Fields{"coin": params.Api.Coin().Handle}).Error(err)
+		return
+	}
+
+	// Notify token transfers queue, if conforms to TokensAPI protocol
+	// Improve by only including/filtering token transfer.
+	if _, ok := params.Api.(blockatlas.TokensAPI); ok {
+		for _, q := range params.TokenTransactionsQueue {
+			err = q.Publish(body)
+			if err != nil {
+				log.WithFields(log.Fields{"coin": params.Api.Coin().Handle}).Error(err)
+				return
+			}
 		}
 	}
 }
