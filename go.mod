@@ -46,8 +46,8 @@ require (
 	golang.org/x/net v0.0.0-20200506145744-7e3656a0809f // indirect
 	golang.org/x/tools v0.0.0-20200513175351-0951661448da // indirect
 	gopkg.in/yaml.v2 v2.3.0
-	gorm.io/driver/postgres v1.0.0
-	gorm.io/gorm v1.20.0
+	gorm.io/driver/postgres v1.0.5
+	gorm.io/gorm v1.20.6
 	gorm.io/plugin/dbresolver v1.0.0
 	gotest.tools v2.2.0+incompatible // indirect
 	howett.net/plist v0.0.0-20200419221736-3b63eb3a43b5 // indirect
