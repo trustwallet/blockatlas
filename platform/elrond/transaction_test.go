@@ -56,6 +56,36 @@ const txTransferSrc3 = `
 	"fee": "5000"
 }`
 
+const txTransferSrc4 = `
+{
+	"hash":"30d404cc7a42b0158b95f6adfbf9a517627d60f6c7e497c1442dfdb6460285df",
+	"nonce":19,
+	"round":200,
+	"value":"2",
+	"receiver":"erd1v0ce6rapup6rwma5sltyv05xhp33u543nex75a7j39vsz9m6squq6mxm7y",
+	"sender":"erd10yagg2vme2jns9zqf9xn8kl86fkc6dr063vnuj0mz2kk2jw0qwuqmfmaw0",
+	"data":"bla bla bla",
+	"signature":"",
+	"timestamp":1588757256,
+	"status":"pending",
+	"fee": "5000"
+}`
+
+const txTransferSrc5 = `
+{
+	"hash":"30d404cc7a42b0158b95f6adfbf9a517627d60f6c7e497c1442dfdb6460285df",
+	"nonce":19,
+	"round":200,
+	"value":"2",
+	"receiver":"erd1v0ce6rapup6rwma5sltyv05xhp33u543nex75a7j39vsz9m6squq6mxm7y",
+	"sender":"erd10yagg2vme2jns9zqf9xn8kl86fkc6dr063vnuj0mz2kk2jw0qwuqmfmaw0",
+	"data":"bla bla bla",
+	"signature":"",
+	"timestamp":1588757256,
+	"status":"success",
+	"fee": "5000"
+}`
+
 var txTransfer1Normalized = blockatlas.Tx{
 	ID:       "30d404cc7a42b0158b95f6adfbf9a517627d60f6c7e497c1442dfdb6460285df",
 	Coin:     coin.ERD,
@@ -110,6 +140,42 @@ var txTransfer3Normalized = blockatlas.Tx{
 	Direction: blockatlas.DirectionOutgoing,
 }
 
+var txTransfer4Normalized = blockatlas.Tx{
+	ID:       "30d404cc7a42b0158b95f6adfbf9a517627d60f6c7e497c1442dfdb6460285df",
+	Coin:     coin.ERD,
+	Date:     int64(1588757256),
+	From:     "erd10yagg2vme2jns9zqf9xn8kl86fkc6dr063vnuj0mz2kk2jw0qwuqmfmaw0",
+	To:       "erd1v0ce6rapup6rwma5sltyv05xhp33u543nex75a7j39vsz9m6squq6mxm7y",
+	Fee:      "5000",
+	Status:   blockatlas.StatusPending,
+	Memo:     "bla bla bla",
+	Sequence: 19,
+	Meta: blockatlas.Transfer{
+		Value:    "2",
+		Symbol:   coin.Elrond().Symbol,
+		Decimals: coin.Elrond().Decimals,
+	},
+	Direction: blockatlas.DirectionOutgoing,
+}
+
+var txTransfer5Normalized = blockatlas.Tx{
+	ID:       "30d404cc7a42b0158b95f6adfbf9a517627d60f6c7e497c1442dfdb6460285df",
+	Coin:     coin.ERD,
+	Date:     int64(1588757256),
+	From:     "erd10yagg2vme2jns9zqf9xn8kl86fkc6dr063vnuj0mz2kk2jw0qwuqmfmaw0",
+	To:       "erd1v0ce6rapup6rwma5sltyv05xhp33u543nex75a7j39vsz9m6squq6mxm7y",
+	Fee:      "5000",
+	Status:   blockatlas.StatusCompleted,
+	Memo:     "bla bla bla",
+	Sequence: 19,
+	Meta: blockatlas.Transfer{
+		Value:    "2",
+		Symbol:   coin.Elrond().Symbol,
+		Decimals: coin.Elrond().Decimals,
+	},
+	Direction: blockatlas.DirectionOutgoing,
+}
+
 type test struct {
 	name        string
 	apiResponse string
@@ -133,6 +199,18 @@ func TestNormalize(t *testing.T) {
 		name:        "transferNotExecuted",
 		apiResponse: txTransferSrc3,
 		expected:    &txTransfer3Normalized,
+	})
+
+	testNormalize(t, &test{
+		name:        "transferPendingNewStatus",
+		apiResponse: txTransferSrc4,
+		expected:    &txTransfer4Normalized,
+	})
+
+	testNormalize(t, &test{
+		name:        "transferSuccessNewStatus",
+		apiResponse: txTransferSrc5,
+		expected:    &txTransfer5Normalized,
 	})
 }
 
