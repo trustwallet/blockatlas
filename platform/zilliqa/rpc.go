@@ -1,8 +1,9 @@
 package zilliqa
 
 import (
-	"github.com/imroc/req"
 	"strconv"
+
+	"github.com/imroc/req"
 
 	"github.com/mitchellh/mapstructure"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
@@ -22,7 +23,7 @@ func (c *RpcClient) GetTx(hash string) (tx TxRPC, err error) {
 	return
 }
 
-func (c *RpcClient) GetBlockByNumber(number int64) ([]string, error) {
+func (c *RpcClient) GetTransactionsHashesInBlock(number int64) ([]string, error) {
 	strNumber := strconv.FormatInt(number, 10)
 	requestBody := &blockatlas.RpcRequest{
 		JsonRpc: blockatlas.JsonRpcVersion,
@@ -43,8 +44,13 @@ func (c *RpcClient) GetBlockByNumber(number int64) ([]string, error) {
 
 func (c *RpcClient) GetTxInBlock(number int64) ([]Tx, error) {
 	txs := make([]Tx, 0)
-	hashes, err := c.GetBlockByNumber(number)
+	hashes, err := c.GetTransactionsHashesInBlock(number)
 	if err != nil || len(hashes) == 0 {
+		return txs, err
+	}
+
+	block, err := c.GetBlock(number)
+	if err != nil {
 		return txs, err
 	}
 
@@ -64,9 +70,14 @@ func (c *RpcClient) GetTxInBlock(number int64) ([]Tx, error) {
 		if mapstructure.Decode(result.Result, &txRPC) != nil {
 			continue
 		}
-		if tx := txRPC.toTx(); tx != nil {
+		if tx := txRPC.toTx(block.Header); tx != nil {
 			txs = append(txs, *tx)
 		}
 	}
 	return txs, nil
+}
+
+func (c *RpcClient) GetBlock(number int64) (block Block, err error) {
+	err = c.RpcCall(&block, "GetTxBlock", []string{strconv.FormatInt(number, 10)})
+	return
 }

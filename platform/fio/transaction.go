@@ -8,8 +8,8 @@ import (
 	"strings"
 	"time"
 
+	"errors"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/pkg/errors"
 )
 
 func (p *Platform) GetTxsByAddress(address string) (page blockatlas.TxPage, err error) {
@@ -46,16 +46,16 @@ func (p *Platform) Normalize(action *Action, account string) (blockatlas.Tx, err
 		// convert to action-specific data
 		dataJSON, err := json.Marshal(action.ActionTrace.Act.Data)
 		if err != nil {
-			return blockatlas.Tx{}, errors.E("Unparseable Data field")
+			return blockatlas.Tx{}, errors.New("Unparseable Data field")
 		}
 		switch action.ActionTrace.Act.Name {
 		case "transfer":
 			var actionData ActionDataTransfer
 			if json.Unmarshal(dataJSON, &actionData) != nil {
-				return blockatlas.Tx{}, errors.E("Unparseable Data field")
+				return blockatlas.Tx{}, errors.New("Unparseable Data field")
 			}
 			if actionData.Memo == "FIO API fees. Thank you." {
-				return blockatlas.Tx{}, errors.E("Skip meaningless hardcoded fee action")
+				return blockatlas.Tx{}, errors.New("Skip meaningless hardcoded fee action")
 			}
 			from = actionData.From
 			to = actionData.To
@@ -69,7 +69,7 @@ func (p *Platform) Normalize(action *Action, account string) (blockatlas.Tx, err
 		case "trnsfiopubky":
 			var actionData ActionDataTrnsfiopubky
 			if json.Unmarshal(dataJSON, &actionData) != nil {
-				return blockatlas.Tx{}, errors.E("Unparseable Data field")
+				return blockatlas.Tx{}, errors.New("Unparseable Data field")
 			}
 			from = actionData.Actor
 			to = actorFromPublicKeyOrActor(actionData.PayeePublicKey)
@@ -99,7 +99,7 @@ func (p *Platform) Normalize(action *Action, account string) (blockatlas.Tx, err
 		tx.Direction = tx.GetTransactionDirection(account)
 		return tx, nil
 	}
-	return blockatlas.Tx{}, errors.E("Unknown action")
+	return blockatlas.Tx{}, errors.New("Unknown action")
 }
 
 func unique(txs []blockatlas.Tx) []blockatlas.Tx {

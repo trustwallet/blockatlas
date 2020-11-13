@@ -1,0 +1,8 @@
+image:
+  repository: trust/blockatlas
+  tag: local
+
+secrets:
+  - OBSERVER_RABBITMQ_URL: amqp://user:lV7zO3lD@rabbitmq:5672
+  - POSTGRES_URL: postgresql://user:pass@postgres/blockatlas?sslmode=disable
+  - POSTGRES_READ_URL: postgresql://user:pass@postgres/blockatlas?sslmode=disable

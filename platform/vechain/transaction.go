@@ -1,13 +1,14 @@
 package vechain
 
 import (
-	"github.com/trustwallet/blockatlas/pkg/address"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/pkg/errors"
-	"github.com/trustwallet/blockatlas/pkg/logger"
-	"github.com/trustwallet/blockatlas/pkg/numbers"
+	"errors"
 	"strconv"
 	"sync"
+
+	log "github.com/sirupsen/logrus"
+	"github.com/trustwallet/blockatlas/pkg/address"
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/golibs/numbers"
 )
 
 func (p *Platform) GetTokenTxsByAddress(address, token string) (blockatlas.TxPage, error) {
@@ -44,7 +45,7 @@ func (p *Platform) getTransactionsByIDs(ids []string) chan blockatlas.TxPage {
 			defer wg.Done()
 			err := p.getTransactionChannel(i, c)
 			if err != nil {
-				logger.Error(err)
+				log.Error(err)
 			}
 		}(id, txChan)
 	}
@@ -56,20 +57,17 @@ func (p *Platform) getTransactionsByIDs(ids []string) chan blockatlas.TxPage {
 func (p *Platform) getTransactionChannel(id string, txChan chan blockatlas.TxPage) error {
 	srcTx, err := p.client.GetTransactionByID(id)
 	if err != nil {
-		return errors.E(err, "Failed to get tx", errors.TypePlatformUnmarshal,
-			errors.Params{"id": id})
+		return err
 	}
 
 	receipt, err := p.client.GetTransactionReceiptByID(id)
 	if err != nil {
-		return errors.E(err, "Failed to get tx id receipt", errors.TypePlatformUnmarshal,
-			errors.Params{"id": id})
+		return err
 	}
 
 	txs, err := p.NormalizeTokenTransaction(srcTx, receipt)
 	if err != nil {
-		return errors.E(err, "Failed to NormalizeBlockTransactions tx", errors.TypePlatformUnmarshal,
-			errors.Params{"tx": srcTx})
+		return err
 	}
 	txChan <- txs
 	return nil
@@ -77,7 +75,7 @@ func (p *Platform) getTransactionChannel(id string, txChan chan blockatlas.TxPag
 
 func (p *Platform) NormalizeTokenTransaction(srcTx Tx, receipt TxReceipt) (blockatlas.TxPage, error) {
 	if receipt.Outputs == nil || len(receipt.Outputs) == 0 {
-		return blockatlas.TxPage{}, errors.E("NormalizeBlockTransaction: Clauses not found", errors.Params{"tx": srcTx})
+		return blockatlas.TxPage{}, errors.New("NormalizeBlockTransaction: Clauses not found")
 	}
 
 	fee, err := numbers.HexToDecimal(receipt.Paid)
@@ -215,7 +213,7 @@ func getTokenTransactionDirectory(originSender, topicsFrom, topicsTo string) (di
 	if originSender == topicsTo && originSender != topicsFrom {
 		return blockatlas.DirectionOutgoing, nil
 	}
-	return "", errors.E("Unknown direction")
+	return "", errors.New("Unknown direction")
 }
 
 func getTransferDirectory(sender, recipient, addr string) (dir blockatlas.Direction, err error) {
@@ -228,5 +226,5 @@ func getTransferDirectory(sender, recipient, addr string) (dir blockatlas.Direct
 	if recipient == addr && sender != addr {
 		return blockatlas.DirectionIncoming, nil
 	}
-	return "", errors.E("Unknown direction")
+	return "", errors.New("Unknown direction")
 }

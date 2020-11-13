@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/trustwallet/blockatlas/coin"
+	"github.com/trustwallet/golibs/coin"
 )
 
 func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
@@ -63,7 +63,9 @@ func Normalize(trx *ActionInfo) *blockatlas.Tx {
 	if err != nil {
 		return nil
 	}
-
+	if trx.GasFee == "" {
+		trx.GasFee = "0"
+	}
 	return &blockatlas.Tx{
 		ID:       trx.ActHash,
 		Coin:     coin.IOTX,

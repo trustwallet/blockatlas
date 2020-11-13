@@ -4,9 +4,8 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"github.com/mr-tron/base58"
-	"github.com/trustwallet/blockatlas/coin"
-	"github.com/trustwallet/blockatlas/pkg/errors"
-	"github.com/trustwallet/blockatlas/pkg/logger"
+	log "github.com/sirupsen/logrus"
+	"github.com/trustwallet/golibs/coin"
 	"golang.org/x/crypto/sha3"
 	"strconv"
 	"strings"
@@ -28,7 +27,7 @@ func EIP55Checksum(unchecksummed string) string {
 	sha := sha3.NewLegacyKeccak256()
 	_, err := sha.Write(v)
 	if err != nil {
-		logger.Error(err)
+		log.Error(err)
 	}
 	hash := sha.Sum(nil)
 
@@ -53,8 +52,7 @@ func EIP55Checksum(unchecksummed string) string {
 func HexToAddress(hexAddr string) (b58 string, err error) {
 	bytes, err := hex.DecodeString(hexAddr)
 	if err != nil {
-		return "", errors.E(err, errors.TypePlatformUnmarshal,
-			errors.Params{"hexAddr": hexAddr})
+		return "", err
 	}
 	var checksum [32]byte
 	checksum = sha256.Sum256(bytes)
@@ -72,7 +70,7 @@ func EIP55ChecksumWanchain(address string) string {
 	sha := sha3.NewLegacyKeccak256()
 	_, err := sha.Write(v)
 	if err != nil {
-		logger.Error(err)
+		log.Error(err)
 	}
 	hash := sha.Sum(nil)
 

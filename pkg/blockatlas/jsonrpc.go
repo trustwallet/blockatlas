@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 
-	"github.com/trustwallet/blockatlas/pkg/errors"
+	"errors"
 )
 
 var (
@@ -41,12 +41,12 @@ type (
 func (r *RpcResponse) GetObject(toType interface{}) error {
 	js, err := json.Marshal(r.Result)
 	if err != nil {
-		return errors.E(err, "json-rpc GetObject Marshal error", errors.Params{"obj": toType})
+		return err
 	}
 
 	err = json.Unmarshal(js, toType)
 	if err != nil {
-		return errors.E(err, "json-rpc GetObject Unmarshal error", errors.Params{"obj": toType, "string": string(js)})
+		return err
 	}
 	return nil
 }
@@ -60,10 +60,7 @@ func (r *Request) RpcCall(result interface{}, method string, params interface{})
 		return err
 	}
 	if resp.Error != nil {
-		return errors.E("RPC Call error", errors.Params{
-			"method":        method,
-			"error_code":    resp.Error.Code,
-			"error_message": resp.Error.Message})
+		return errors.New("RPC Call error")
 	}
 	return resp.GetObject(result)
 }
@@ -77,10 +74,7 @@ func (r *Request) RpcCallWithContext(result interface{}, method string, params i
 		return err
 	}
 	if resp.Error != nil {
-		return errors.E("RPC Call error", errors.Params{
-			"method":        method,
-			"error_code":    resp.Error.Code,
-			"error_message": resp.Error.Message})
+		return errors.New("RPC Call error")
 	}
 	return resp.GetObject(result)
 }

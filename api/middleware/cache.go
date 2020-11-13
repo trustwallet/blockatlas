@@ -5,11 +5,11 @@ import (
 	"crypto/sha1"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/patrickmn/go-cache"
-	"github.com/trustwallet/blockatlas/pkg/errors"
-	"github.com/trustwallet/blockatlas/pkg/logger"
+	log "github.com/sirupsen/logrus"
 	"io/ioutil"
 	"net/http"
 	"sync"
@@ -76,7 +76,7 @@ func (w *cachedWriter) Write(data []byte) (int, error) {
 	}
 	b, err := json.Marshal(val)
 	if err != nil {
-		return 0, errors.E("validator cache: failed to marshal cache object")
+		return 0, errors.New("validator cache: failed to marshal cache object")
 	}
 	memoryCache.cache.Set(w.key, b, w.expire)
 	return ret, nil
@@ -85,10 +85,10 @@ func (w *cachedWriter) Write(data []byte) (int, error) {
 func (w *cachedWriter) WriteString(data string) (n int, err error) {
 	ret, err := w.ResponseWriter.WriteString(data)
 	if err != nil {
-		return 0, errors.E(err, "fail to cache write string", errors.Params{"data": data})
+		return 0, errors.New(err.Error() + " fail to cache write string")
 	}
 	if w.Status() != 200 {
-		return 0, errors.E("WriteString: invalid cache status", errors.Params{"data": data})
+		return 0, errors.New("WriteString: invalid cache status")
 	}
 	val := cacheResponse{
 		w.Status(),
@@ -97,7 +97,7 @@ func (w *cachedWriter) WriteString(data string) (n int, err error) {
 	}
 	b, err := json.Marshal(val)
 	if err != nil {
-		return 0, errors.E("validator cache: failed to marshal cache object")
+		return 0, errors.New("validator cache: failed to marshal cache object")
 	}
 	memoryCache.setCache(w.key, b, w.expire)
 	return ret, err
@@ -112,7 +112,7 @@ func (mc *memCache) deleteCache(key string) {
 func (mc *memCache) setCache(k string, x interface{}, d time.Duration) {
 	b, err := json.Marshal(x)
 	if err != nil {
-		logger.Error(errors.E(err, "client cache cannot marshal cache object"))
+		log.Error(errors.New(err.Error() + "client cache cannot marshal cache object"))
 		return
 	}
 	mc.RLock()
@@ -128,11 +128,11 @@ func (mc *memCache) getCache(key string) (cacheResponse, error) {
 	}
 	r, ok := c.([]byte)
 	if !ok {
-		return result, errors.E("validator cache: failed to cast cache to bytes")
+		return result, errors.New("validator cache: failed to cast cache to bytes")
 	}
 	err := json.Unmarshal(r, &result)
 	if err != nil {
-		return result, errors.E(err, "not found")
+		return result, errors.New(err.Error() + " not found")
 	}
 	return result, nil
 }
@@ -181,7 +181,7 @@ func CacheMiddleware(expiration time.Duration, handle gin.HandlerFunc) gin.Handl
 		_, err = c.Writer.Write(mc.Data)
 		if err != nil {
 			memoryCache.deleteCache(key)
-			logger.Error(err, "cannot write data", mc)
+			log.Error(err, "cannot write data", mc)
 		}
 	}
 }

@@ -3,9 +3,10 @@ package subscriber
 import (
 	"context"
 	"encoding/json"
+	log "github.com/sirupsen/logrus"
 	"github.com/streadway/amqp"
 	"github.com/trustwallet/blockatlas/db"
-	"github.com/trustwallet/blockatlas/pkg/logger"
+	"github.com/trustwallet/blockatlas/db/models"
 	"go.elastic.co/apm"
 	"strconv"
 )
@@ -17,21 +18,21 @@ func RunTokensSubscriber(database *db.Instance, delivery amqp.Delivery) {
 	defer tx.End()
 
 	ctx := apm.ContextWithTransaction(context.Background(), tx)
-	logger.Info("body " + string(delivery.Body))
-	event := make(map[string][]string)
+	event := make(map[string][]models.Asset)
 	if err := json.Unmarshal(delivery.Body, &event); err != nil {
 		if err := delivery.Ack(false); err != nil {
-			logger.Fatal(err, err)
+			log.Fatal(err, err)
 		}
 	}
 
 	for address, assets := range event {
 		if err := database.AddAssociationsForAddress(address, assets, ctx); err != nil {
-			logger.Error("Failed to AddAssociationsForAddress: " + err.Error())
+			log.Error("Failed to AddAssociationsForAddress: " + err.Error())
 		}
 	}
-	logger.Info("Subscribed " + strconv.Itoa(len(event)))
+	log.WithFields(log.Fields{"service": Tokens}).Info("Subscribed " + strconv.Itoa(len(event)))
 	if err := delivery.Ack(false); err != nil {
-		logger.Fatal(err, err)
+		log.Fatal(err, err)
 	}
+	log.Info("------------------------------------------------------------")
 }

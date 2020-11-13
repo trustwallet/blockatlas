@@ -1,10 +1,11 @@
 package endpoint
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"net/http"
 	"strconv"
+
+	"github.com/gin-gonic/gin"
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 )
 
 // @Summary Get Collection
@@ -56,53 +57,6 @@ func GetCollectionCategoriesFromList(c *gin.Context, apis blockatlas.Collections
 		}
 		for _, address := range addresses {
 			collections, err := p.GetCollections(address)
-			if err != nil {
-				continue
-			}
-			batch = append(batch, collections...)
-		}
-	}
-	c.JSON(http.StatusOK, &batch)
-}
-
-func GetCollectiblesForOwnerV3(c *gin.Context, api blockatlas.CollectionsAPI) {
-	collections, err := api.GetCollectionsV3(c.Param("owner"))
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, errorResponse(err))
-		return
-	}
-
-	c.JSON(http.StatusOK, &collections)
-}
-
-func GetCollectiblesForSpecificCollectionAndOwnerV3(c *gin.Context, api blockatlas.CollectionsAPI) {
-	collectibles, err := api.GetCollectiblesV3(c.Param("owner"), c.Param("collection_id"))
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, errorResponse(err))
-		return
-	}
-	c.JSON(http.StatusOK, &collectibles)
-}
-
-func GetCollectionCategoriesFromListV3(c *gin.Context, apis blockatlas.CollectionsAPIs) {
-	var reqs map[string][]string
-	if err := c.BindJSON(&reqs); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, errorResponse(err))
-		return
-	}
-
-	batch := make(blockatlas.CollectionPageV3, 0)
-	for key, addresses := range reqs {
-		coinId, err := strconv.Atoi(key)
-		if err != nil {
-			continue
-		}
-		p, ok := apis[uint(coinId)]
-		if !ok {
-			continue
-		}
-		for _, address := range addresses {
-			collections, err := p.GetCollectionsV3(address)
 			if err != nil {
 				continue
 			}

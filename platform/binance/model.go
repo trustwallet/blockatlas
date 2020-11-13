@@ -1,12 +1,13 @@
 package binance
 
 import (
-	"github.com/trustwallet/blockatlas/coin"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/pkg/numbers"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/golibs/coin"
+	"github.com/trustwallet/golibs/numbers"
 )
 
 const (
@@ -148,6 +149,7 @@ func normalizeTransferTransaction(t Tx) blockatlas.Tx {
 			Decimals: coin.Binance().Decimals,
 			From:     t.FromAddr.(string),
 			Symbol:   getTokenSymbolFromID(t.TxAsset),
+			Name:     getTokenSymbolFromID(t.TxAsset),
 			To:       t.ToAddr.(string),
 			TokenID:  t.TxAsset,
 			Value:    normalizeAmount(t.Value),
@@ -183,6 +185,7 @@ func normalizeMultiTransferTransaction(t Tx) []blockatlas.Tx {
 			tx.Type = blockatlas.TxNativeTokenTransfer
 			tx.Meta = blockatlas.NativeTokenTransfer{
 				Decimals: coin.Binance().Decimals,
+				Name:     getTokenSymbolFromID(subTx.TxAsset),
 				From:     subTx.FromAddr,
 				Symbol:   getTokenSymbolFromID(subTx.TxAsset),
 				To:       subTx.ToAddr,

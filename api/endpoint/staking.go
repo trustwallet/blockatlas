@@ -1,14 +1,18 @@
 package endpoint
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/trustwallet/blockatlas/coin"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/pkg/errors"
 	"net/http"
 	"sort"
 	"strconv"
 	"strings"
+
+	"github.com/trustwallet/golibs/numbers"
+
+	"errors"
+
+	"github.com/gin-gonic/gin"
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/golibs/coin"
 )
 
 type (
@@ -31,7 +35,7 @@ type (
 )
 
 // @Summary Get Multiple Stake Delegations
-// @ID batch_delegations
+// @ID staking_v2_batch
 // @Description Get Stake Delegations for multiple coins
 // @Accept json
 // @Produce json
@@ -67,7 +71,7 @@ func GetStakeDelegationsWithAllInfoForBatch(c *gin.Context, apis map[string]bloc
 }
 
 // @Summary Get Multiple Stake Delegations
-// @ID batch_delegations
+// @ID staking_v2
 // @Description Get Stake Delegations for multiple coins
 // @Accept json
 // @Produce json
@@ -99,7 +103,7 @@ func GetStakeInfoForBatch(c *gin.Context, apis map[string]blockatlas.StakeAPI) {
 }
 
 // @Summary Get staking info by coin ID
-// @ID batch_info
+// @ID staking_v3
 // @Description Get staking info by coin ID
 // @Produce json
 // @Tags Staking
@@ -110,13 +114,13 @@ func GetStakeInfoForBatch(c *gin.Context, apis map[string]blockatlas.StakeAPI) {
 func GetStakeInfoForCoins(c *gin.Context, apis map[string]blockatlas.StakeAPI) {
 	coinsRequest := c.Query("coins")
 	if coinsRequest == "" {
-		c.AbortWithStatusJSON(http.StatusBadRequest, errorResponse(errors.E("empty coins list")))
+		c.AbortWithStatusJSON(http.StatusBadRequest, errorResponse(errors.New("empty coins list")))
 		return
 	}
 
 	coinsRaw := strings.Split(coinsRequest, ",")
 
-	coins, err := sliceAtoi(coinsRaw)
+	coins, err := numbers.SliceAtoi(coinsRaw)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, errorResponse(err))
 		return
@@ -144,7 +148,7 @@ func GetStakeInfoForCoins(c *gin.Context, apis map[string]blockatlas.StakeAPI) {
 }
 
 // @Summary Get Validators
-// @ID validators
+// @ID validators_v2
 // @Description Get validators from the address
 // @Accept json
 // @Produce json
@@ -189,7 +193,7 @@ func getDelegationResponse(api blockatlas.StakeAPI, address string) (blockatlas.
 		return blockatlas.DelegationResponse{
 			StakingResponse: getStakingResponse(api),
 			Address:         address,
-		}, errors.E("Unable to fetch delegations list", err)
+		}, err
 	}
 	balance, err := api.UndelegatedBalance(address)
 	if err != nil {
@@ -197,7 +201,7 @@ func getDelegationResponse(api blockatlas.StakeAPI, address string) (blockatlas.
 			Delegations:     delegations,
 			Address:         address,
 			StakingResponse: getStakingResponse(api),
-		}, errors.E("Unable to fetch undelegated balance", err)
+		}, err
 	}
 	return blockatlas.DelegationResponse{
 		Balance:         balance,

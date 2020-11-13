@@ -1,12 +1,12 @@
 package icon
 
 import (
-	"github.com/trustwallet/blockatlas/coin"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/pkg/errors"
-	"github.com/trustwallet/blockatlas/pkg/logger"
-	"github.com/trustwallet/blockatlas/pkg/numbers"
 	"time"
+
+	log "github.com/sirupsen/logrus"
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/golibs/coin"
+	"github.com/trustwallet/golibs/numbers"
 )
 
 func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
@@ -31,8 +31,7 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 func Normalize(trx *Tx) (tx blockatlas.Tx, b bool) {
 	date, err := time.Parse("2006-01-02T15:04:05.999Z0700", trx.CreateDate)
 	if err != nil {
-		err = errors.E(err, errors.TypePlatformUnmarshal)
-		logger.Error(err)
+		log.Error(err)
 		return tx, false
 	}
 	fee := numbers.DecimalExp(string(trx.Fee), 18)

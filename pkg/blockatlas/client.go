@@ -12,8 +12,6 @@ import (
 	"net/url"
 	"strings"
 	"time"
-
-	"github.com/trustwallet/blockatlas/pkg/errors"
 )
 
 type Request struct {
@@ -96,7 +94,7 @@ func (r *Request) PostWithContext(result interface{}, path string, body interfac
 func (r *Request) Execute(method string, url string, body io.Reader, result interface{}, ctx context.Context) error {
 	req, err := http.NewRequest(method, url, body)
 	if err != nil {
-		return errors.E(err, errors.TypePlatformRequest)
+		return err
 	}
 
 	for key, value := range r.Headers {
@@ -107,21 +105,21 @@ func (r *Request) Execute(method string, url string, body io.Reader, result inte
 
 	res, err := c.Do(req.WithContext(ctx))
 	if err != nil {
-		return errors.E(err, errors.TypePlatformRequest)
+		return err
 	}
 
 	err = r.ErrorHandler(res, url)
 	if err != nil {
-		return errors.E(err, errors.TypePlatformError)
+		return err
 	}
 	defer res.Body.Close()
 	b, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		return errors.E(err, errors.TypePlatformUnmarshal)
+		return err
 	}
 	err = json.Unmarshal(b, result)
 	if err != nil {
-		return errors.E(err, errors.TypePlatformUnmarshal)
+		return err
 	}
 	return err
 }

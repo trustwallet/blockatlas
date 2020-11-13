@@ -1,9 +1,10 @@
 package tokensearcher
 
 import (
+	"github.com/trustwallet/blockatlas/db/models"
 	"github.com/trustwallet/blockatlas/pkg/address"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/watchmarket/pkg/watchmarket"
+	"github.com/trustwallet/golibs/asset"
 	"sync"
 )
 
@@ -17,7 +18,16 @@ func (nr *NodesResponse) UpdateAssetsByAddress(tokens blockatlas.TokenPage, coin
 	for _, t := range tokens {
 		key := address.PrefixedAddress(uint(coin), a)
 		r := nr.AssetsByAddress[key]
-		nr.AssetsByAddress[key] = append(r, watchmarket.BuildID(t.Coin, t.TokenID))
+		nr.AssetsByAddress[key] = append(r,
+			models.Asset{
+				Asset:    asset.BuildID(t.Coin, t.TokenID),
+				Decimals: t.Decimals,
+				Name:     t.Name,
+				Symbol:   t.Symbol,
+				Type:     string(t.Type),
+				ID:       t.Coin,
+			},
+		)
 	}
 	nr.Unlock()
 }

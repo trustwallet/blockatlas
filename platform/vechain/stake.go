@@ -2,9 +2,8 @@ package vechain
 
 import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/pkg/errors"
-	"github.com/trustwallet/blockatlas/pkg/numbers"
 	"github.com/trustwallet/blockatlas/services/assets"
+	"github.com/trustwallet/golibs/numbers"
 )
 
 const (
@@ -40,7 +39,7 @@ func (p *Platform) UndelegatedBalance(address string) (string, error) {
 	}
 	balance, err := numbers.HexToDecimal(acc.Balance)
 	if err != nil {
-		return "0", errors.E("Invalid asset balance", errors.Params{"balance": acc.Balance})
+		return "0", err
 	}
 	return balance, nil
 }

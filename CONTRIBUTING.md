@@ -52,12 +52,12 @@ E is a convenience function for creating errors quickly:
 `func E(args ...interface{}) *Error`
 
 Usage: 
- - Wrap a generic error: `errors.E(err)`
- - Wrap error with message: `errors.E(err, "new message to append")`
- - Annotate error with type: `errors.E(err, errors.TypePlatformRequest)`
+ - Wrap a generic error: `errors.New(err)`
+ - Wrap error with message: `errors.New(err, "new message to append")`
+ - Annotate error with type: `errors.New(err, errors.TypePlatformRequest)`
  - Error with type and metadata:
 ```
-errors.E(err, errors.TypePlatformRequest, errors.Params{
+errors.New(err, errors.TypePlatformRequest, errors.Params{
     "coin":   "Ethereum",
     "method": "CurrentBlockNumber",
 })
@@ -75,29 +75,29 @@ Use the package `pkg/logger` for logging.
 The order of function parameters is arbitrary when using the logger functions.
 Examples:
 
- - Log message: `logger.Info("Loading Observer API")`
- - Log message with params: `logger.Info("Running application", logger.Params{"bind": bind})`
- - Fatal with error: `logger.Fatal("Application failed", err)`
- - Create a simple error log: `logger.Error(err)`
- - Create an error log with a message: `logger.Error("Failed to initialize API", err)`
+ - Log message: `log.Info("Loading Observer API")`
+ - Log message with params: `log.Info("Running application", log.Params{"bind": bind})`
+ - Fatal with error: `log.Fatal("Application failed", err)`
+ - Create a simple error log: `log.Error(err)`
+ - Create an error log with a message: `log.Error("Failed to initialize API", err)`
  - Create an error log, with error, message, and params:
 ```
-p := logger.Params{
+p := log.Params{
 	"platform": handle,
 	"coin":     platform.Coin(),
 }
 err := platform.Init()
 if err != nil {
-	logger.Error("Failed to initialize API", err, p)
+	log.Error("Failed to initialize API", err, p)
 }
 ```
  - Debug log:
-   `logger.Debug("Loading Observer API")`
+   `log.Debug("Loading Observer API")`
    or 
-   `logger.Debug("Loading Observer API", logger.Params{"bind": bind})`
+   `log.Debug("Loading Observer API", log.Params{"bind": bind})`
  - Warning log:
-   `logger.Warn("Warning", err)`
+   `log.Warn("Warning", err)`
    or 
-   `logger.Warn(err, "Warning")`
+   `log.Warn(err, "Warning")`
    or 
-   `logger.Warn("Warning", err, logger.Params{"bind": bind})`
+   `log.Warn("Warning", err, log.Params{"bind": bind})`

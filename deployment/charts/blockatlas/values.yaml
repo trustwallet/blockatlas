@@ -1,0 +1,61 @@
+# scaling
+apiReplicaCount: 1
+consumerReplicaCount: 1
+
+image:
+  repository: repositoryToReplace
+  pullPolicy: IfNotPresent
+  tag: tagToReplace
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+# Enable postgres-test deployment. If disabled - provide external postgres connection string.
+posgtres:
+  enabled: true
+# Enable rabbitmq-test deployment. If disabled - provide external rabbitmq connection string.
+rabbitmq:
+  enabled: true
+# Enable ConfigMap deployment generation. Disable if you need to manually create the ConfigMap later.
+config:
+  enabled: true
+# Enable Secret deployment generation. Disable if you need to manually create the Secret later.
+secret:
+  enabled: true
+
+service:
+  type: ClusterIP
+
+ingress:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+  enabled: false
+  swaggerHost: nginx-swagger.local
+  proxyHost: nginx-proxy.local
+
+# Resources request/limit example
+# someResources:
+#   limits:
+#     cpu: 100m
+#     memory: 128Mi
+#   requests:
+#     cpu: 100m
+#     memory: 128Mi
+
+apiResources: {}
+postgresResources: {}
+rabbitmqResources: {}
+consumerResources: {}
+parserResources: {}
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+podAnnotations: {}
+podSecurityContext: {}
+securityContext: {}
+
+configs: []
+secrets: []

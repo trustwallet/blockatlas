@@ -1,8 +1,8 @@
 package bitcoin
 
 import (
+	log "github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/pkg/logger"
 	"sync"
 )
 
@@ -27,7 +27,7 @@ func (p *Platform) GetAllBlockPages(total, num int64) []Transaction {
 			defer wg.Done()
 			block, err := p.client.GetTransactionsByBlock(num, page)
 			if err != nil {
-				logger.Error("GetTransactionsByBlockChan", err, logger.Params{"number": num, "page": page})
+				log.WithFields(log.Fields{"number": num, "page": page}).Error("GetTransactionsByBlockChan", err)
 				return
 			}
 			out <- block

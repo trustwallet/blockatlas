@@ -1,0 +1,25 @@
+{{- if .Values.ingress.enabled -}}
+{{- if semverCompare ">=1.14-0" .Capabilities.KubeVersion.GitVersion -}}
+apiVersion: networking.k8s.io/v1beta1
+{{- else -}}
+apiVersion: extensions/v1beta1
+{{- end }}
+kind: Ingress
+metadata:
+  name: api
+  namespace: {{ .Release.Namespace }}
+  labels:
+    chart: {{ template "blockatlas.chart" . }}
+  {{- with .Values.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  rules:
+    - host: {{ .Values.ingress.proxyHost | quote }}
+      http:
+        paths:
+          - blockatlas:
+              serviceName: api
+              servicePort: 8420
+{{- end }}

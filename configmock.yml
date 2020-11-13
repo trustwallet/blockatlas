@@ -1,20 +1,13 @@
 # Gin is the web framework
 gin:
-  # Possible values: "debug", "release"
-  login: admin
-  pass: pass
   mode: release
-  # App running behind a reverse proxy?
-  # If set, HTTP Forwarded headers will be respected
-  reverse_proxy: false
 
 # If all - run all platforms in one binary. You can pick specific coin handle to run binary only with specific coin
 # Example: ethereum
 # You can see all the coin handles at coins/coins.yml file
 platform: all
 
-# Can be platform or swagger, or tokens, or all
-rest_api: platform
+spam_words: [ "airdrop","www", "http" ]
 
 # The transaction watcher
 observer:
@@ -33,8 +26,8 @@ observer:
       prefetch_count: 10
 
 postgres:
-  uri: postgresql://user:pass@localhost/my_db?sslmode=disable
-  read_uri: postgresql://user:pass@localhost/my_db?sslmode=disable
+  uri: postgresql://user:pass@localhost/blockatlas?sslmode=disable
+  read_uri: postgresql://user:pass@localhost/blockatlas?sslmode=disable
   log: false
 
 # [BNB] Binance DEX: https://wallet.binance.org
@@ -64,7 +57,7 @@ tezos:
   api: http://localhost:3347/mock/tezos-api
   rpc: https://mainnet.tezos.org.ua
 
-# [ETH] Ethereum: https://ethereum.org (Trust-Ray API)
+# [ETH] Ethereum: https://ethereum.org
 ethereum:
   api: http://localhost:3347/mock/eth-api
   blockbook_api: http://localhost:3347/mock/eth-blockbook-api
@@ -133,7 +126,6 @@ zilliqa:
   api: http://localhost:3347/mock/zilliqa-api
   # key: YOUR_API_KEY
   rpc: https://api.zilliqa.com
-  lookup: http://localhost:3347/mock/unstoppabledomains/api/v1
 
 #[IoTeX] IoTeX: https://iotex.io
 iotex:

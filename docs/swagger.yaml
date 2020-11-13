@@ -63,13 +63,6 @@ definitions:
       docs:
         type: object
     type: object
-  blockatlas.Resolved:
-    properties:
-      coin:
-        type: integer
-      result:
-        type: string
-    type: object
   blockatlas.ResultsResponse:
     properties:
       docs:
@@ -151,37 +144,59 @@ definitions:
         $ref: '#/definitions/endpoint.ErrorDetails'
         type: object
     type: object
+  tokenindexer.Asset:
+    properties:
+      asset:
+        type: string
+      decimals:
+        type: integer
+      name:
+        type: string
+      symbol:
+        type: string
+      type:
+        type: string
+    type: object
+  tokenindexer.Response:
+    properties:
+      assets:
+        items:
+          $ref: '#/definitions/tokenindexer.Asset'
+        type: array
+    type: object
 info:
   contact: {}
   license: {}
 paths:
-  /ns/lookup:
+  /v2/{coin}/blocks/{block}:
     get:
-      description: Lookup ENS/ZNS to find registered addresses
-      operationId: lookup
+      consumes:
+      - application/json
+      description: Get Block information
+      operationId: block_v2
       parameters:
-      - description: string name
-        in: query
-        name: name
-        type: string
-      - description: string coin
-        in: query
+      - default: zilliqa
+        description: the coin name
+        in: path
         name: coin
+        required: true
+        type: string
+      - default: "850321"
+        description: the query address
+        in: path
+        name: address
+        required: true
         type: string
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/blockatlas.Resolved'
         "500":
           description: Internal Server Error
           schema:
             $ref: '#/definitions/endpoint.ErrorResponse'
-      summary: Lookup .eth / .zil addresses
+      summary: Get Block
       tags:
-      - Naming
+      - Transactions
   /v2/{coin}/staking/delegations/{address}:
     get:
       consumes:
@@ -220,7 +235,7 @@ paths:
       consumes:
       - application/json
       description: Get validators from the address
-      operationId: validators
+      operationId: validators_v2
       parameters:
       - default: cosmos
         description: the coin name
@@ -333,42 +348,12 @@ paths:
       summary: Get Transactions by XPUB
       tags:
       - Transactions
-  /v2/ns/lookup:
-    get:
-      description: Lookup ENS/ZNS to find registered addresses for multiple coins
-      operationId: lookup
-      parameters:
-      - description: string name
-        in: query
-        name: name
-        type: string
-      - description: List of coins
-        in: query
-        name: coins
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/blockatlas.Resolved'
-            type: array
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/endpoint.ErrorResponse'
-      summary: Lookup .eth / .zil addresses
-      tags:
-      - Naming
   /v2/staking/delegations:
     post:
       consumes:
       - application/json
       description: Get Stake Delegations for multiple coins
-      operationId: batch_delegations
+      operationId: staking_v2_batch
       parameters:
       - description: Validators addresses and coins
         in: body
@@ -391,7 +376,7 @@ paths:
       consumes:
       - application/json
       description: Get Stake Delegations for multiple coins
-      operationId: batch_delegations
+      operationId: staking_v2
       parameters:
       - description: Validators addresses and coins
         in: body
@@ -436,7 +421,7 @@ paths:
   /v3/staking/list:
     get:
       description: Get staking info by coin ID
-      operationId: batch_info
+      operationId: staking_v3
       parameters:
       - description: List of coins
         in: query
@@ -459,6 +444,32 @@ paths:
       summary: Get staking info by coin ID
       tags:
       - Staking
+  /v3/tokens/new:
+    get:
+      consumes:
+      - application/json
+      description: Get new tokens
+      operationId: tokens_new_v3
+      parameters:
+      - description: unix timestamp
+        in: query
+        name: from
+        required: true
+        type: integer
+      - description: coin like 60
+        in: query
+        name: coin
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/tokenindexer.Response'
+      summary: Get list of new tokens by coin from specific unix timstamp
+      tags:
+      - Transactions
   /v4/{coin}/collections/{owner}/collection/{collection_id}:
     get:
       consumes:

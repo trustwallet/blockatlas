@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: parser
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: parser
+    chart: {{ template "blockatlas.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "blockatlas.selectorLabels" . | nindent 6 }}
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+    {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      labels:
+        {{- include "blockatlas.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - env:
+        - name: ELASTIC_APM_SERVICE_NAME
+          value: blockatlas-parser
+        - name: OBSERVER_BACKLOG_MAX_BLOCKS
+          value: "50"
+        - name: OBSERVER_BLOCK_POLL_MIN
+          value: 7s
+        - name: OBSERVER_FETCH_BLOCKS_INTERVAL
+          value: 100ms
+        - name: PLATFORM
+          value: all
+        envFrom:
+        - secretRef:
+            name: secrets
+            optional: false
+        - configMapRef:
+            name: configs
+            optional: false
+        image: "{{ .Values.image.repository }}:parser-{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        name: parser
+        resources:
+            {{- toYaml .Values.parserResources | nindent 12 }}
+        securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+        stdin: true
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        tty: true
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      restartPolicy: Always
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

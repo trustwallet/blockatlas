@@ -31,6 +31,7 @@ func TestTxRPC_toTx(t *testing.T) {
 		To:             "zil1vxdqe9ck4metep92l4lw2mju9t6wvge9zwkyyl",
 		Value:          "1380000000000",
 		Fee:            "1000000000",
+		Timestamp:      1603831144458,
 		Signature:      "0xF165643EA12514F62297854CE14F2C4EEFE0E19670A6A64E3C497E19442D0B36A91A8790FE320EC48DDCD3E212F0863955FB6AF5436422461916319D5133886D",
 		Nonce:          "16109",
 		ReceiptSuccess: true,
@@ -43,7 +44,9 @@ func TestTxRPC_toTx(t *testing.T) {
 		return
 	}
 
-	if got := txRPC.toTx(); !reflect.DeepEqual(*got, tx) {
+	header := BlockHeader{Number: "185343", Timestamp: "1603831144458128"}
+
+	if got := txRPC.toTx(header); !reflect.DeepEqual(*got, tx) {
 		t.Errorf("TxRPC.toTx() = %v, want %v", *got, tx)
 	}
 }

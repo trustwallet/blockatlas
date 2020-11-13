@@ -2,16 +2,20 @@ package notifier
 
 import (
 	"context"
+	log "github.com/sirupsen/logrus"
 	"github.com/streadway/amqp"
 	"github.com/trustwallet/blockatlas/db"
 	"github.com/trustwallet/blockatlas/pkg/address"
-	"github.com/trustwallet/blockatlas/pkg/logger"
 	"strconv"
 
 	"go.elastic.co/apm"
 )
 
-const DefaultPushNotificationsBatchLimit = 50
+const (
+	DefaultPushNotificationsBatchLimit = 50
+
+	Notifier = "Notifier"
+)
 
 var MaxPushNotificationsBatchLimit uint = DefaultPushNotificationsBatchLimit
 
@@ -22,13 +26,13 @@ func RunNotifier(database *db.Instance, delivery amqp.Delivery) {
 
 	defer func() {
 		if err := delivery.Ack(false); err != nil {
-			logger.Error(err)
+			log.Error(err)
 		}
 	}()
 
-	txs, err := GetTransactionsFromDelivery(delivery, ctx)
+	txs, err := GetTransactionsFromDelivery(delivery, Notifier, ctx)
 	if err != nil {
-		logger.Error("failed to get transactions", err)
+		log.Error("failed to get transactions", err)
 	}
 
 	allAddresses := make([]string, 0)
@@ -64,4 +68,5 @@ func RunNotifier(database *db.Instance, delivery amqp.Delivery) {
 	for _, batch := range batches {
 		publishNotificationBatch(batch, ctx)
 	}
+	log.Info("------------------------------------------------------------")
 }

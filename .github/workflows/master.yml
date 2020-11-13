@@ -57,91 +57,82 @@ jobs:
       - name: Integration Test
         run: make integration
 
-      - name: Mock Test
-        run: make newman-mocked
-
   build:
     name: Build
     runs-on: ubuntu-latest
     steps:
-       - name: Set up Go 1.x
-         uses: actions/setup-go@v2
-         with:
-           go-version: ^1.13
-         id: go
+      - name: Set up Go 1.x
+        uses: actions/setup-go@v2
+        with:
+          go-version: ^1.13
+        id: go
 
-       - name: Check out code into the Go module directory
-         uses: actions/checkout@v2
-         with:
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v2
+        with:
           ref: ${{ github.head_ref }}
 
-       - name: Get short commit hash
-         id: hash
-         run: echo "::set-output name=sha7::$(echo $(git rev-parse --short HEAD) | cut -c1-7)"
+      - name: Get short commit hash
+        id: hash
+        run: echo "::set-output name=sha7::$(echo $(git rev-parse --short HEAD) | cut -c1-7)"
 
-       - name: Show short hash
-         run: |
-           echo ${{ steps.hash.outputs.sha7 }}
+      - name: Show short hash
+        run: |
+          echo ${{ steps.hash.outputs.sha7 }}
 
-       - name: Get dependencies
-         run: |
-           go get -v -t -d ./...
+      - name: Get dependencies
+        run: |
+          go get -v -t -d ./...
 
-       - name: Swagger
-         run: make swag
+      - name: Swagger
+        run: make swag
 
-       - name: Build
-         run: make go-build
-         
-       - name: Check user permission
-         id: check_for_build
-         uses: scherermichael-oss/action-has-permission@master
-         with:
-           required-permission: write
-         env:
-           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-       
-       - name: Login to DockerHub Registry
-         if: steps.check_for_build.outputs.has-permission
-         run: echo ${{ secrets.REGISTRY_PASSWORD }} | docker login -u ${{ secrets.REGISTRY_USERNAME }} --password-stdin
+      - name: Build
+        run: make go-build
 
-       - name: Docker Build & Push Release Images
-         if: steps.check_for_build.outputs.has-permission
-         env:
-           API_IMAGE: ${{ secrets.REGISTRY }}:api-${{ steps.hash.outputs.sha7 }}
-           PARSER_IMAGE: ${{ secrets.REGISTRY }}:parser-${{ steps.hash.outputs.sha7 }}
-           OBSERVER_SUBSCRIBER_IMAGE: ${{ secrets.REGISTRY }}:subscriber-${{ steps.hash.outputs.sha7 }}
-           OBSERVER_NOTIFIER_IMAGE: ${{ secrets.REGISTRY }}:notifier-${{ steps.hash.outputs.sha7 }}
-           SEARCHER_IMAGE: ${{ secrets.REGISTRY }}:searcher-${{ steps.hash.outputs.sha7 }}
-         run: |
-           docker build --build-arg SERVICE=api/api -f Dockerfile.runner -t $API_IMAGE .
-           docker build --build-arg SERVICE=parser/parser -f Dockerfile.runner -t $PARSER_IMAGE .
-           docker build --build-arg SERVICE=subscriber/subscriber -f Dockerfile.runner -t $OBSERVER_SUBSCRIBER_IMAGE .
-           docker build --build-arg SERVICE=notifier/notifier -f Dockerfile.runner -t $OBSERVER_NOTIFIER_IMAGE .
-           docker build --build-arg SERVICE=searcher/searcher -f Dockerfile.runner -t $SEARCHER_IMAGE .
-           docker push $API_IMAGE
-           docker push $PARSER_IMAGE
-           docker push $OBSERVER_SUBSCRIBER_IMAGE
-           docker push $OBSERVER_NOTIFIER_IMAGE
-           docker push $SEARCHER_IMAGE
+      - name: Check user permission
+        id: check_for_build
+        uses: scherermichael-oss/action-has-permission@master
+        with:
+          required-permission: write
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Login to DockerHub Registry
+        if: steps.check_for_build.outputs.has-permission
+        run: echo ${{ secrets.REGISTRY_PASSWORD }} | docker login -u ${{ secrets.REGISTRY_USERNAME }} --password-stdin
+
+      - name: Docker Build & Push Release Images
+        if: steps.check_for_build.outputs.has-permission
+        env:
+          API_IMAGE: ${{ secrets.REGISTRY }}:api-${{ steps.hash.outputs.sha7 }}
+          PARSER_IMAGE: ${{ secrets.REGISTRY }}:parser-${{ steps.hash.outputs.sha7 }}
+          CONSUMER_IMAGE: ${{ secrets.REGISTRY }}:consumer-${{ steps.hash.outputs.sha7 }}
+        run: |
+          docker build --build-arg SERVICE=api/api -f Dockerfile.runner -t $API_IMAGE .
+          docker build --build-arg SERVICE=parser/parser -f Dockerfile.runner -t $PARSER_IMAGE .
+          docker build --build-arg SERVICE=consumer/consumer -f Dockerfile.runner -t $CONSUMER_IMAGE .
+          docker push $API_IMAGE
+          docker push $PARSER_IMAGE
+          docker push $CONSUMER_IMAGE
 
   deploy:
     name: CD
     runs-on: ubuntu-latest
-    needs: [test, integration, build]
+    needs: [ test, integration, build ]
     steps:
-       - name: Check user permission
-         id: check_for_deploy
-         uses: scherermichael-oss/action-has-permission@master
-         with:
-           required-permission: write
-         env:
-           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-       
-       - name: CD Trigger
-         if: github.ref == 'refs/heads/master' && steps.check_for_deploy.outputs.has-permission
-         uses: Azure/pipelines@releases/v1
-         with:
-           azure-devops-project-url: 'https://dev.azure.com/TrustWallet/Trust%20BlockAtlas'
-           azure-pipeline-name: 'AutomaticCD'
-           azure-devops-token: '${{ secrets.AZURE_DEVOPS_TOKEN }}'
+      - name: Check user permission
+        id: check_for_deploy
+        uses: scherermichael-oss/action-has-permission@master
+        with:
+          required-permission: write
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: CD Trigger
+        if: github.ref == 'refs/heads/master' && steps.check_for_deploy.outputs.has-permission
+        uses: Azure/pipelines@releases/v1
+        with:
+          azure-devops-project-url: 'https://dev.azure.com/TrustWallet/Trust%20BlockAtlas'
+          azure-pipeline-name: 'AutomaticCD'
+          azure-devops-token: '${{ secrets.AZURE_DEVOPS_TOKEN }}'

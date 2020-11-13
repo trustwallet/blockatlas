@@ -1,0 +1,40 @@
+# scaling
+apiReplicaCount: 5
+consumerReplicaCount: 5
+
+image:
+  repository: repositoryToReplace
+  tag: tagToReplace
+
+posgtres:
+  enabled: false
+rabbitmq:
+  enabled: false
+config:
+  enabled: false
+secret:
+  enabled: false
+
+apiResources:
+  limits:
+    cpu: 300m
+    memory: 400Mi
+  requests:
+    cpu: 300m
+    memory: 400Mi
+
+consumerResources:
+  limits:
+    cpu: 300m
+    memory: 400Mi
+  requests:
+    cpu: 300m
+    memory: 400Mi
+
+parserResources: 
+  limits:
+    cpu: 300m
+    memory: 1000Mi
+  requests:
+    cpu: 300m
+    memory: 1000Mi

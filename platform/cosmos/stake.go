@@ -1,11 +1,10 @@
 package cosmos
 
 import (
-	"github.com/trustwallet/blockatlas/coin"
+	log "github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/pkg/errors"
-	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/services/assets"
+	"github.com/trustwallet/golibs/coin"
 	"strconv"
 	"time"
 )
@@ -44,7 +43,7 @@ func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
 	}
 	inflationValue, err := strconv.ParseFloat(inflation.Result, 32)
 	if err != nil {
-		return nil, errors.E("error to parse inflationValue to float", errors.TypePlatformUnmarshal)
+		return nil, err
 	}
 
 	for _, validator := range validators.Result {
@@ -68,7 +67,7 @@ func (p *Platform) GetDetails() blockatlas.StakingDetails {
 func (p *Platform) GetMaxAPR() float64 {
 	validators, err := p.GetValidators()
 	if err != nil {
-		logger.Error("GetMaxAPR", logger.Params{"details": err, "platform": p.Coin().Symbol})
+		log.WithFields(log.Fields{"details": err, "platform": p.Coin().Symbol}).Error("GetMaxAPR")
 		return blockatlas.DefaultAnnualReward
 	}
 
@@ -111,9 +110,9 @@ func (p *Platform) UndelegatedBalance(address string) (string, error) {
 	if err != nil {
 		return "0", err
 	}
-	for _, coin := range account.Account.Value.Coins {
-		if coin.Denom == p.Denom() {
-			return coin.Amount, nil
+	for _, c := range account.Account.Value.Coins {
+		if c.Denom == p.Denom() {
+			return c.Amount, nil
 		}
 	}
 	return "0", nil
@@ -124,7 +123,9 @@ func NormalizeDelegations(delegations []Delegation, validators blockatlas.Valida
 	for _, v := range delegations {
 		validator, ok := validators[v.ValidatorAddress]
 		if !ok {
-			logger.Warn("Validator not found", logger.Params{"address": v.ValidatorAddress, "platform": "cosmos", "delegation": v.DelegatorAddress})
+			log.WithFields(
+				log.Fields{"address": v.ValidatorAddress, "platform": "cosmos", "delegation": v.DelegatorAddress},
+			).Warn("Validator not found")
 			validator = getUnknownValidator(v.ValidatorAddress)
 
 		}
@@ -144,7 +145,9 @@ func NormalizeUnbondingDelegations(delegations []UnbondingDelegation, validators
 		for _, entry := range v.Entries {
 			validator, ok := validators[v.ValidatorAddress]
 			if !ok {
-				logger.Warn("Validator not found", logger.Params{"address": v.ValidatorAddress, "platform": "cosmos", "delegation": v.DelegatorAddress})
+				log.WithFields(
+					log.Fields{"address": v.ValidatorAddress, "platform": "cosmos", "delegation": v.DelegatorAddress},
+				).Warn("Validator not found")
 				validator = getUnknownValidator(v.ValidatorAddress)
 			}
 			t, _ := time.Parse(time.RFC3339, entry.CompletionTime)

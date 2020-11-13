@@ -4,8 +4,9 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"github.com/trustwallet/blockatlas/pkg/numbers"
 	"strings"
+
+	"github.com/trustwallet/golibs/numbers"
 
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 )

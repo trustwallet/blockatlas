@@ -3,15 +3,15 @@ package notifier
 import (
 	"context"
 	"encoding/json"
+	"errors"
+	log "github.com/sirupsen/logrus"
 	"github.com/streadway/amqp"
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/pkg/errors"
-	"github.com/trustwallet/blockatlas/pkg/logger"
 	"go.elastic.co/apm"
 )
 
-func GetTransactionsFromDelivery(delivery amqp.Delivery, ctx context.Context) (blockatlas.Txs, error) {
+func GetTransactionsFromDelivery(delivery amqp.Delivery, service string, ctx context.Context) (blockatlas.Txs, error) {
 	var txs blockatlas.Txs
 
 	span, _ := apm.StartSpan(ctx, "GetTransactionsFromDelivery", "app")
@@ -21,10 +21,10 @@ func GetTransactionsFromDelivery(delivery amqp.Delivery, ctx context.Context) (b
 		return nil, err
 	}
 
-	logger.Info("Consumed", logger.Params{"txs": len(txs), "coin": txs[0].Coin})
+	log.WithFields(log.Fields{"service": service, "txs": len(txs), "coin": txs[0].Coin}).Info("Consumed")
 
 	if len(txs) == 0 {
-		return nil, errors.E("empty txs list")
+		return nil, errors.New("empty txs list")
 	}
 	return txs, nil
 }
@@ -35,14 +35,12 @@ func publishNotificationBatch(batch []TransactionNotification, ctx context.Conte
 
 	raw, err := json.Marshal(batch)
 	if err != nil {
-		err = errors.E(err, " failed to dispatch event")
-		logger.Fatal(err)
+		log.Fatal(err)
 	}
 	err = mq.TxNotifications.Publish(raw)
 	if err != nil {
-		err = errors.E(err, " failed to dispatch event")
-		logger.Fatal(err)
+		log.Fatal(err)
 	}
 
-	logger.Info("Txs batch dispatched", logger.Params{"txs": len(batch)})
+	log.WithFields(log.Fields{"service": Notifier, "txs": len(batch)}).Info("Txs batch dispatched")
 }

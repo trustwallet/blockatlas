@@ -1,0 +1,26 @@
+{
+  "name": "blockatlas",
+  "buildpacks":[
+    {
+      "url":"heroku/go"
+    }
+  ],
+  "addons": [
+    "heroku-postgresql:hobby-dev",
+    "cloudamqp"
+  ],
+  "environments": {
+    "review": {
+      "addons": [
+        {
+          "plan":"heroku-postgresql:hobby-dev",
+          "as":"ATLAS_POSTGRES"
+        },
+        {
+          "plan":"cloudamqp:lemur",
+          "as":"ATLAS_OBSERVER_RABBITMQ"
+        }
+      ]
+    }
+  }
+}

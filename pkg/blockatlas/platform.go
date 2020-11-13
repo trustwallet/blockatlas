@@ -1,7 +1,7 @@
 package blockatlas
 
 import (
-	"github.com/trustwallet/blockatlas/coin"
+	"github.com/trustwallet/golibs/coin"
 )
 
 type (
@@ -55,14 +55,6 @@ type (
 		Platform
 		GetCollections(owner string) (CollectionPage, error)
 		GetCollectibles(owner, collectibleID string) (CollectiblePage, error)
-
-		GetCollectionsV3(owner string) (CollectionPageV3, error)
-		GetCollectiblesV3(owner, collectibleID string) (CollectiblePageV3, error)
-	}
-
-	NamingServiceAPI interface {
-		CanHandle(name string) bool
-		Lookup(coins []uint64, name string) ([]Resolved, error)
 	}
 
 	Platforms map[string]Platform

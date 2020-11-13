@@ -70,16 +70,25 @@ type TxRPC struct {
 	Version      string    `json:"version"`
 }
 
-func (t *TxRPC) toTx() *Tx {
+func (t *TxRPC) toTx(header BlockHeader) *Tx {
+	// t.recipient is not parsed correctly. Empty strings.
+
 	to, err := hex.DecodeString(t.ToAddr)
 	if err != nil {
 		return nil
 	}
-	height, err := strconv.ParseUint(t.Receipt.EpochNum, 10, 64)
+
+	timestamp, err := strconv.ParseUint(header.Timestamp, 10, 64)
+	if err != nil {
+		timestamp = 0
+	}
+
+	height, err := strconv.ParseUint(header.Number, 10, 64)
 	if err != nil {
 		height = 0
 	}
-	gasLimt, ok := new(big.Int).SetString(t.GasLimit, 10)
+
+	gasLimit, ok := new(big.Int).SetString(t.GasLimit, 10)
 	if !ok {
 		return nil
 	}
@@ -87,7 +96,7 @@ func (t *TxRPC) toTx() *Tx {
 	if !ok {
 		return nil
 	}
-	fee := new(big.Int).Mul(gasLimt, gasPrice)
+	fee := new(big.Int).Mul(gasLimit, gasPrice)
 
 	return &Tx{
 		Hash:           "0x" + t.ID,
@@ -96,6 +105,7 @@ func (t *TxRPC) toTx() *Tx {
 		To:             EncodeKeyHashToAddress(to),
 		Value:          t.Amount,
 		Fee:            fee.String(),
+		Timestamp:      int64(timestamp / 1000),
 		Signature:      t.Signature,
 		Nonce:          t.Nonce,
 		ReceiptSuccess: t.Receipt.Success,
@@ -121,4 +131,13 @@ func (h HashesResponse) Txs() []string {
 		result = append(result, subRes...)
 	}
 	return result
+}
+
+type Block struct {
+	Header BlockHeader `json:"header"`
+}
+
+type BlockHeader struct {
+	Number    string `json:"BlockNum"`
+	Timestamp string `json:"Timestamp"`
 }

@@ -3,8 +3,9 @@ package tokensearcher
 import (
 	"errors"
 	"github.com/stretchr/testify/assert"
-	"github.com/trustwallet/blockatlas/coin"
+	"github.com/trustwallet/blockatlas/db/models"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/golibs/coin"
 	"testing"
 )
 
@@ -25,9 +26,9 @@ func Test_getUnsubscribedAddresses(t *testing.T) {
 }
 
 func Test_getAddressesToRegisterByCoin(t *testing.T) {
-	addressFromDB := make(map[string][]string)
-	addressFromDB["60_a"] = []string{"1", "2", "3"}
-	addressFromDB["714_b"] = []string{"1", "3"}
+	addressFromDB := make(map[string][]models.Asset)
+	addressFromDB["60_a"] = []models.Asset{{Asset: "1"}, {Asset: "2"}, {Asset: "3"}}
+	addressFromDB["714_b"] = []models.Asset{{Asset: "1"}, {Asset: "3"}}
 
 	addressesFromRequest := []string{"60_a", "714_b", "118_c"}
 	result := getAddressesToRegisterByCoin(addressFromDB, addressesFromRequest)
@@ -38,12 +39,12 @@ func Test_getAddressesToRegisterByCoin(t *testing.T) {
 }
 
 func Test_getAssetsToResponse(t *testing.T) {
-	addressFromDB := make(map[string][]string)
-	addressFromDB["60_a"] = []string{"1", "2", "3"}
-	addressFromDB["714_b"] = []string{"1", "3"}
+	addressFromDB := make(map[string][]models.Asset)
+	addressFromDB["60_a"] = []models.Asset{{Asset: "1"}, {Asset: "2"}, {Asset: "3"}}
+	addressFromDB["714_b"] = []models.Asset{{Asset: "1"}, {Asset: "3"}}
 
-	addressFromNodes := make(map[string][]string)
-	addressFromNodes["118_c"] = []string{"1", "2", "3"}
+	addressFromNodes := make(map[string][]models.Asset)
+	addressFromNodes["118_c"] = []models.Asset{{Asset: "1"}, {Asset: "2"}, {Asset: "3"}}
 
 	addressesFromRequest := []string{"60_a", "714_b", "118_c"}
 

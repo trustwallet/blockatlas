@@ -2,20 +2,13 @@
 gin:
   # Possible values: "debug", "release"
   mode: release
-  # App running behind a reverse proxy?
-  # If set, HTTP Forwarded headers will be respected
-  reverse_proxy: false
 
 # If all - run all platforms in one binary. You can pick specific coin handle to run binary only with specific coin
 # Example: ethereum
 # You can see all the coin handles at coins/coins.yml file
 platform: [ all ]
 
-# Can be platform or swagger, or tokens, or all
-rest_api: all
-
-# Can be tokens or notifications
-subscriber: tokens
+spam_words: [ "airdrop","www", "http" ]
 
 # The transaction watcher
 observer:
@@ -24,7 +17,7 @@ observer:
   # Amount of time between fetching blocks concurrently
   fetch_blocks_interval: 1ms
   # Don't request more than N blocks at once
-  backlog_max_blocks: 200
+  backlog_max_blocks: 100
   # Limit amount of transactions in batch
   txs_batch_limit: 3000
   # Limit of push notifications in batch
@@ -34,13 +27,14 @@ observer:
     min: 3s
     max: 30s
   rabbitmq:
-    uri: amqp://localhost:5672
+    url: amqp://localhost:5672
     consumer:
       prefetch_count: 10
 
 postgres:
-  uri: postgresql://user:pass@localhost/my_db?sslmode=disable
-  read_uri: postgresql://user:pass@localhost/my_db?sslmode=disable
+  url: postgresql://user:pass@localhost/blockatlas?sslmode=disable
+  read:
+    url: postgresql://user:pass@localhost/blockatlas?sslmode=disable
   log: false
 
 # [BNB] Binance DEX: https://www.binance.org/
@@ -49,8 +43,8 @@ binance:
   explorer: https://explorer.binance.org
 
 # [NIM] Nimiq: https://nimiq.com
-#nimiq:
-#  api: http://localhost:8648
+nimiq:
+  api: http://localhost:8648
 
 # [XRP] Ripple: https://ripple.com
 ripple:
@@ -71,39 +65,39 @@ tezos:
 
 # [ETH] Ethereum: https://ethereum.org
 ethereum:
-  api: https://localhost:4567 #(Trust-Ray API)
   blockbook_api: https://eth1.trezor.io
+  api: https://localhost:4567 #(Trust-Ray API)
   collections_api: https://api.opensea.io
   #  collections_api_key: [opensea_api_key]
   rpc: https://main-rpc.linkpool.io
 
 # [ETC] Ethereum Classic: https://ethereumclassic.org (Trust-Ray API)
-# classic:
-#   api: https://localhost:4567
+classic:
+  api: https://localhost:4567
 
 # [POA] POA Network: https://poa.network (Trust-Ray API)
-# poa:
-#   api: https://localhost:4567
+poa:
+  api: https://localhost:4567
 
 # [CLO] Callisto Network: https://callisto.network (Trust-Ray API)
-# callisto:
-#   api: https://localhost:4567
+callisto:
+  api: https://localhost:4567
 
 # [GO] GoChain: https://gochain.io (Trust-Ray API)
-# gochain:
-#   api: https://localhost:4567
+gochain:
+  api: https://localhost:4567
 
 # [WAN] Wanchain: https://wanchain.org (Trust-Ray API)
-# wanchain:
-#   api: https://localhost:4567
+wanchain:
+  api: https://localhost:4567
 
 # [TOMO] TomoChain: https://tomochain.com (Trust-Ray API)
-# tomochain:
-#   api: https://localhost:4567
+tomochain:
+  api: https://localhost:4567
 
 # [TT] ThunderCore: https://www.thundercore.com (Trust-Ray API)
-# thundertoken:
-#   api: https://localhost:4567
+thundertoken:
+  api: https://localhost:4567
 
 # [AION] Aion: https://aion.network
 aion:
@@ -139,7 +133,6 @@ zilliqa:
   api: https://api.viewblock.io/v1/zilliqa
   # key: YOUR_API_KEY
   rpc: https://api.zilliqa.com
-  lookup: https://unstoppabledomains.com/api/v1
 
 #[IoTeX] IoTeX: https://iotex.io
 iotex:
@@ -231,6 +224,8 @@ near:
 elrond:
   api: https://api.elrond.com
 
+filecoin:
+  api: https://api.filscan.io:8700/rpc/v1
   # bsc:
   # api: <blockbook api>
   # rpc: <rpc>

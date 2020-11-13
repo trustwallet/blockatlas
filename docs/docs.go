@@ -25,92 +25,6 @@ var doc = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/ns/lookup": {
-            "get": {
-                "description": "Lookup ENS/ZNS to find registered addresses",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Naming"
-                ],
-                "summary": "Lookup .eth / .zil addresses",
-                "operationId": "lookup",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "string name",
-                        "name": "name",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "string coin",
-                        "name": "coin",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/blockatlas.Resolved"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/endpoint.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/v2/ns/lookup": {
-            "get": {
-                "description": "Lookup ENS/ZNS to find registered addresses for multiple coins",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Naming"
-                ],
-                "summary": "Lookup .eth / .zil addresses",
-                "operationId": "lookup",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "string name",
-                        "name": "name",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "List of coins",
-                        "name": "coins",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/blockatlas.Resolved"
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/endpoint.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
         "/v2/staking/delegations": {
             "post": {
                 "description": "Get Stake Delegations for multiple coins",
@@ -124,7 +38,7 @@ var doc = `{
                     "Staking"
                 ],
                 "summary": "Get Multiple Stake Delegations",
-                "operationId": "batch_delegations",
+                "operationId": "staking_v2_batch",
                 "parameters": [
                     {
                         "description": "Validators addresses and coins",
@@ -159,7 +73,7 @@ var doc = `{
                     "Staking"
                 ],
                 "summary": "Get Multiple Stake Delegations",
-                "operationId": "batch_delegations",
+                "operationId": "staking_v2",
                 "parameters": [
                     {
                         "description": "Validators addresses and coins",
@@ -212,6 +126,48 @@ var doc = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/blockatlas.ResultsResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v2/{coin}/blocks/{block}": {
+            "get": {
+                "description": "Get Block information",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Transactions"
+                ],
+                "summary": "Get Block",
+                "operationId": "block_v2",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "zilliqa",
+                        "description": "the coin name",
+                        "name": "coin",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "default": "850321",
+                        "description": "the query address",
+                        "name": "address",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/endpoint.ErrorResponse"
                         }
                     }
                 }
@@ -278,7 +234,7 @@ var doc = `{
                     "Staking"
                 ],
                 "summary": "Get Validators",
-                "operationId": "validators",
+                "operationId": "validators_v2",
                 "parameters": [
                     {
                         "type": "string",
@@ -447,7 +403,7 @@ var doc = `{
                     "Staking"
                 ],
                 "summary": "Get staking info by coin ID",
-                "operationId": "batch_info",
+                "operationId": "staking_v3",
                 "parameters": [
                     {
                         "type": "string",
@@ -471,6 +427,45 @@ var doc = `{
                         "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/endpoint.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v3/tokens/new": {
+            "get": {
+                "description": "Get new tokens",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Transactions"
+                ],
+                "summary": "Get list of new tokens by coin from specific unix timstamp",
+                "operationId": "tokens_new_v3",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "unix timestamp",
+                        "name": "from",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "coin like 60",
+                        "name": "coin",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/tokenindexer.Response"
                         }
                     }
                 }
@@ -666,17 +661,6 @@ var doc = `{
                 }
             }
         },
-        "blockatlas.Resolved": {
-            "type": "object",
-            "properties": {
-                "coin": {
-                    "type": "integer"
-                },
-                "result": {
-                    "type": "string"
-                }
-            }
-        },
         "blockatlas.ResultsResponse": {
             "type": "object",
             "properties": {
@@ -798,6 +782,37 @@ var doc = `{
                 "error": {
                     "type": "object",
                     "$ref": "#/definitions/endpoint.ErrorDetails"
+                }
+            }
+        },
+        "tokenindexer.Asset": {
+            "type": "object",
+            "properties": {
+                "asset": {
+                    "type": "string"
+                },
+                "decimals": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "symbol": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "tokenindexer.Response": {
+            "type": "object",
+            "properties": {
+                "assets": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/tokenindexer.Asset"
+                    }
                 }
             }
         }

@@ -5,8 +5,8 @@ import (
 	"encoding/binary"
 	"fmt"
 	"github.com/btcsuite/btcutil/base58"
+	log "github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/services/assets"
 	"strconv"
 )
@@ -133,7 +133,7 @@ func NormalizeDelegations(stakeAccounts []StakeData, validators blockatlas.Valid
 		votePubkey := base58.Encode(stakeState.VoterPubkey[:])
 		validator, ok := validators[votePubkey]
 		if !ok {
-			logger.Debug(fmt.Sprintf("Unpublished solana validator: %s", votePubkey))
+			log.Debug(fmt.Sprintf("Unpublished solana validator: %s", votePubkey))
 			continue
 		}
 		status := blockatlas.DelegationStatusPending

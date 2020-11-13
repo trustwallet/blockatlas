@@ -1,8 +1,8 @@
 package fio
 
 import (
+	"errors"
 	"github.com/btcsuite/btcutil/base58"
-	"github.com/trustwallet/blockatlas/pkg/errors"
 )
 
 func actorFromPublicKeyOrActor(addressOrActor string) string {
@@ -35,11 +35,11 @@ func actorFromPublicKeyBytes(pkBytes []byte) string {
 
 func bytesFromPublicKeyString(address string) ([]byte, error) {
 	if address[:3] != "FIO" {
-		return nil, errors.E("Invalid FIO public key prefix")
+		return nil, errors.New("Invalid FIO public key prefix")
 	}
 	array := base58.Decode(address[3:])
 	if len(array) != 37 {
-		return nil, errors.E("Invalid FIO public key length")
+		return nil, errors.New("Invalid FIO public key length")
 	}
 	return array, nil
 }

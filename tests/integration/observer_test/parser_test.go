@@ -5,14 +5,14 @@ package observer_test
 import (
 	"context"
 	"encoding/json"
+	log "github.com/sirupsen/logrus"
 	"github.com/streadway/amqp"
 	"github.com/stretchr/testify/assert"
-	"github.com/trustwallet/blockatlas/coin"
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/services/parser"
 	"github.com/trustwallet/blockatlas/tests/integration/setup"
+	"github.com/trustwallet/golibs/coin"
 	"testing"
 	"time"
 )
@@ -68,7 +68,7 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 					Date:   1555117625,
 					Block:  7928667,
 					Status: blockatlas.StatusCompleted,
-					Memo:   "test",
+					Memo:   "google.com",
 					Meta: blockatlas.NativeTokenTransfer{
 						TokenID:  "YLC-D8B",
 						Symbol:   "YLC",
@@ -87,12 +87,12 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 func ConsumerToTestAmountOfBlocks(delivery amqp.Delivery, t *testing.T, cancelFunc context.CancelFunc) {
 	var txs blockatlas.Txs
 	if err := json.Unmarshal(delivery.Body, &txs); err != nil {
-		logger.Error(err)
+		log.Error(err)
 		return
 	}
 	err := delivery.Ack(false)
 	if err != nil {
-		logger.Error(err)
+		log.Error(err)
 	}
 
 	assert.Equal(t, len(txs), 50)

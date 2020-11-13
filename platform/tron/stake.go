@@ -1,9 +1,9 @@
 package tron
 
 import (
+	log "github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas/pkg/address"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/pkg/logger"
 	"github.com/trustwallet/blockatlas/services/assets"
 	"strconv"
 	"time"
@@ -98,7 +98,7 @@ func NormalizeDelegations(data *AccountData, validators blockatlas.ValidatorMap)
 	for _, v := range data.Votes {
 		validator, ok := validators[v.VoteAddress]
 		if !ok {
-			logger.Warn("Validator not found", logger.Params{"address": v.VoteAddress, "platform": "tron"})
+			log.WithFields(log.Fields{"address": v.VoteAddress, "platform": "tron"}).Warn("Validator not found")
 			continue
 		}
 		delegation := blockatlas.Delegation{

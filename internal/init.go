@@ -3,10 +3,10 @@ package internal
 import (
 	"flag"
 	"github.com/gin-gonic/gin"
+	log "github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas/api/middleware"
 	"github.com/trustwallet/blockatlas/config"
 	"github.com/trustwallet/blockatlas/mq"
-	"github.com/trustwallet/blockatlas/pkg/logger"
 	"go.elastic.co/apm/module/apmgin"
 
 	"path/filepath"
@@ -33,10 +33,10 @@ func ParseArgs(defaultPort, defaultConfigPath string) (string, string) {
 func InitConfig(confPath string) {
 	confPath, err := filepath.Abs(confPath)
 	if err != nil {
-		logger.Fatal(err)
+		log.Fatal(err)
 	}
 
-	config.LoadConfig(confPath)
+	config.Init(confPath)
 }
 
 func InitEngine(ginMode string) *gin.Engine {
@@ -54,7 +54,7 @@ func InitEngine(ginMode string) *gin.Engine {
 func InitRabbitMQ(rabbitURI string, prefetchCount int) {
 	err := mq.Init(rabbitURI)
 	if err != nil {
-		logger.Fatal("Failed to init Rabbit MQ", logger.Params{"uri": rabbitURI})
+		log.WithFields(log.Fields{"uri": rabbitURI}).Fatal("Failed to init Rabbit MQ")
 	}
 	mq.PrefetchCount = prefetchCount
 }
