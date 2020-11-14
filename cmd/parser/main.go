@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/trustwallet/blockatlas/config"
-	"github.com/trustwallet/blockatlas/services/spamfilter"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas/db"
@@ -42,7 +41,6 @@ func init() {
 	)
 
 	platform.Init(config.Default.Platform)
-	spamfilter.SpamList = config.Default.SpamWords
 
 	if err := mq.RawTransactions.Declare(); err != nil {
 		log.Fatal(err)

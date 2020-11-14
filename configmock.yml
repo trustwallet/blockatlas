@@ -7,8 +7,6 @@ gin:
 # You can see all the coin handles at coins/coins.yml file
 platform: all
 
-spam_words: [ "airdrop","www", "http" ]
-
 # The transaction watcher
 observer:
   backlog: 3h

@@ -3,13 +3,14 @@ package parser
 import (
 	"context"
 	"errors"
+	"sync"
+	"testing"
+	"time"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/coin"
-	"sync"
-	"testing"
-	"time"
 )
 
 var (
@@ -44,16 +45,17 @@ var (
 
 func TestFetchBlocks(t *testing.T) {
 	params := Params{
-		Ctx:                   nil,
-		Api:                   getMockedBlockAPI(),
-		Queue:                 []mq.Queue{""},
-		ParsingBlocksInterval: 0,
-		FetchBlocksTimeout:    0,
-		BacklogCount:          0,
-		MaxBacklogBlocks:      0,
-		StopChannel:           nil,
-		TxBatchLimit:          0,
-		Database:              nil,
+		Ctx:                    nil,
+		Api:                    getMockedBlockAPI(),
+		TransactionsQueue:      "",
+		TokenTransactionsQueue: []mq.Queue{""},
+		ParsingBlocksInterval:  0,
+		FetchBlocksTimeout:     0,
+		BacklogCount:           0,
+		MaxBacklogBlocks:       0,
+		StopChannel:            nil,
+		TxBatchLimit:           0,
+		Database:               nil,
 	}
 	blocks := FetchBlocks(params, 0, 100, context.Background())
 	assert.Equal(t, len(blocks), 100)
@@ -64,7 +66,7 @@ func TestParser_ConvertToBatch(t *testing.T) {
 	txs := ConvertToBatch(blocks, context.Background())
 	assert.Equal(t, 4, len(txs))
 
-	empty := []blockatlas.Block{}
+	var empty []blockatlas.Block
 	txsEmpty := ConvertToBatch(empty, context.Background())
 	assert.Equal(t, 0, len(txsEmpty))
 }

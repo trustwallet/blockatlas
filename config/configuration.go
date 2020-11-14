@@ -1,11 +1,12 @@
 package config
 
 import (
-	log "github.com/sirupsen/logrus"
-	"github.com/spf13/viper"
 	"reflect"
 	"strings"
 	"time"
+
+	log "github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 )
 
 type Configuration struct {
@@ -15,7 +16,6 @@ type Configuration struct {
 	} `mapstructure:"gin"`
 	Platform   []string `mapstructure:"platform"`
 	RestAPI    string   `mapstructure:"rest_api"`
-	SpamWords  []string `mapstructure:"spam_words"`
 	Subscriber string   `mapstructure:"subscriber"`
 	Observer   struct {
 		Backlog                     time.Duration `mapstructure:"backlog"`

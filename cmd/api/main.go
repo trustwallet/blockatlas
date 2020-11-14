@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"time"
+
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas/api"
@@ -11,10 +13,8 @@ import (
 	"github.com/trustwallet/blockatlas/internal"
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/platform"
-	"github.com/trustwallet/blockatlas/services/spamfilter"
 	"github.com/trustwallet/blockatlas/services/tokenindexer"
 	"github.com/trustwallet/blockatlas/services/tokensearcher"
-	"time"
 )
 
 const (
@@ -40,7 +40,6 @@ func init() {
 
 	engine = internal.InitEngine(config.Default.Gin.Mode)
 	platform.Init(config.Default.Platform)
-	spamfilter.SpamList = config.Default.SpamWords
 
 	var err error
 	database, err = db.New(config.Default.Postgres.URL, config.Default.Postgres.Read.URL,
