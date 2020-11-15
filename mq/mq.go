@@ -106,7 +106,7 @@ func (q Queue) GetMessageChannel() MessageChannel {
 		nil,
 	)
 	if err != nil {
-		log.Fatal("MQ issue " + err.Error())
+		log.Fatal("GetMessageChannel MQ issue "+err.Error(), string(q))
 	}
 
 	err = amqpChan.Qos(
