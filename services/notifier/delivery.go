@@ -39,11 +39,11 @@ func publishNotificationBatch(batch []TransactionNotification, ctx context.Conte
 
 	raw, err := json.Marshal(batch)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("publishNotificationBatch marshal: ", err)
 	}
 	err = mq.TxNotifications.Publish(raw)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("publishNotificationBatch publish:", err)
 	}
 
 	log.WithFields(log.Fields{"service": Notifier, "txs": len(batch)}).Info("Txs batch dispatched")

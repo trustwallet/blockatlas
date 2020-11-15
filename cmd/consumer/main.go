@@ -42,7 +42,7 @@ func init() {
 	database, err = db.New(config.Default.Postgres.URL, config.Default.Postgres.Read.URL,
 		config.Default.Postgres.Log)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Postgres init: ", err)
 	}
 	go database.RestoreConnectionWorker(ctx, time.Second*10, config.Default.Postgres.URL)
 
@@ -53,22 +53,22 @@ func main() {
 	defer mq.Close()
 
 	if err := mq.RawTransactionsTokenIndexer.Declare(); err != nil {
-		log.Fatal(err)
+		log.Fatal("Declare RawTransactionsTokenIndexer: ", err)
 	}
 	if err := mq.RawTransactions.Declare(); err != nil {
-		log.Fatal(err)
+		log.Fatal("Declare RawTransactions: ", err)
 	}
 	if err := mq.TxNotifications.Declare(); err != nil {
-		log.Fatal(err)
+		log.Fatal("Declare TxNotifications: ", err)
 	}
 	if err := mq.RawTransactionsSearcher.Declare(); err != nil {
-		log.Fatal(err)
+		log.Fatal("Declare RawTransactionsSearcher: ", err)
 	}
 	if err := mq.Subscriptions.Declare(); err != nil {
-		log.Fatal(err)
+		log.Fatal("Declare Subscriptions: ", err)
 	}
 	if err := mq.TokensRegistration.Declare(); err != nil {
-		log.Fatal(err)
+		log.Fatal("Declare TokensRegistration: ", err)
 	}
 
 	go mq.RawTransactions.RunConsumerWithCancelAndDbConnConcurrent(notifier.RunNotifier, database, ctx)
