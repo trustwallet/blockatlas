@@ -49,8 +49,8 @@ type Configuration struct {
 		RPC            string `mapstructure:"rpc"`
 	} `mapstructure:"ethereum"`
 	Binance struct {
-		API      string `mapstructure:"api"`
-		Explorer string `mapstructure:"explorer"`
+		API string `mapstructure:"api"`
+		Key string `mapstructure:"key"`
 	} `mapstructure:"binance"`
 	Ripple struct {
 		API string `mapstructure:"api"`
