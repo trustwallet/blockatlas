@@ -34,7 +34,7 @@ func normalizeBlockResponses(num uint64, responses []BlockMessageResponse) *bloc
 	var result blockatlas.Block
 	result.Number = int64(num)
 	for _, resp := range responses {
-		for _, msg := range resp.BlsMessages {
+		for _, msg := range resp.SecpkMessages {
 			tx := normalizeBlockTx(num, msg)
 			result.Txs = append(result.Txs, tx)
 		}
@@ -42,18 +42,18 @@ func normalizeBlockResponses(num uint64, responses []BlockMessageResponse) *bloc
 	return &result
 }
 
-func normalizeBlockTx(num uint64, msg BlsMessage) blockatlas.Tx {
+func normalizeBlockTx(num uint64, msg SecpkMessage) blockatlas.Tx {
 	return blockatlas.Tx{
 		Coin:     coin.Filecoin().ID,
-		From:     msg.From,
-		To:       msg.To,
-		Fee:      blockatlas.Amount(msg.GasFeeCap),
+		From:     msg.Message.From,
+		To:       msg.Message.To,
+		Fee:      "0",
 		Block:    num,
 		Status:   blockatlas.StatusCompleted,
-		Sequence: uint64(msg.Nonce),
+		Sequence: uint64(msg.Message.Nonce),
 		Type:     blockatlas.TxTransfer,
 		Meta: blockatlas.Transfer{
-			Value:    blockatlas.Amount(msg.Value),
+			Value:    blockatlas.Amount(msg.Message.Value),
 			Symbol:   coin.Filecoin().Symbol,
 			Decimals: coin.Filecoin().Decimals,
 		},
