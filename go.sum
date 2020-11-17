@@ -17,8 +17,6 @@ github.com/Azure/go-ansiterm v0.0.0-20170929234023-d6e3b3328b78/go.mod h1:LmzpDX
 github.com/BurntSushi/toml v0.3.1 h1:WXkYYl6Yr3qBf1K79EBnL4mak0OimBfB0XUf9Vl28OQ=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym/WlBOVXweHU+Q+/VP0lqqI8lqeDx9IjBqo=
-github.com/DeanThompson/ginpprof v0.0.0-20190408063150-3be636683586 h1:vDSj8WQZoe+dhK9JVwkSEBwtmcJw5rJ7l1L0Yik8Ku0=
-github.com/DeanThompson/ginpprof v0.0.0-20190408063150-3be636683586/go.mod h1:kMi/fSDAgvjo9TYfYwYeQ2vkyj+VTR/tB6u/Tjh39t0=
 github.com/KyleBanks/depth v1.2.1 h1:5h8fQADFrWtarTdtDudMmGsC7GPbOAu6RVB3ffsVFHc=
 github.com/KyleBanks/depth v1.2.1/go.mod h1:jzSb9d0L43HxTQfT+oSA1EEp2q+ne2uh6XgeJcm8brE=
 github.com/Microsoft/go-winio v0.4.14 h1:+hMXMk01us9KgxGb7ftKQt2Xpf5hH/yky+TDA+qxleU=
@@ -463,10 +461,8 @@ github.com/swaggo/swag v1.5.1/go.mod h1:1Bl9F/ZBpVWh22nY0zmYyASPO1lI/zIwRDrpZU+t
 github.com/swaggo/swag v1.6.7 h1:e8GC2xDllJZr3omJkm9YfmK0Y56+rMO3cg0JBKNz09s=
 github.com/swaggo/swag v1.6.7/go.mod h1:xDhTyuFIujYiN3DKWC/H/83xcfHp+UE/IzWWampG7Zc=
 github.com/tmc/grpc-websocket-proxy v0.0.0-20190109142713-0ad062ec5ee5/go.mod h1:ncp9v5uamzpCO7NfCPTXjqaC+bZgJeR0sMTm6dMHP7U=
-github.com/trustwallet/golibs v0.0.9 h1:AyupOF1LZyMaZdkwnG3hxSwb5pqW2yZR7EI4hLoBrI8=
-github.com/trustwallet/golibs v0.0.9/go.mod h1:QB6tQe5tvZOAPmvpeaveFwCQpTqdelSgO6UlMZN30Co=
-github.com/trustwallet/golibs v0.0.10 h1:56fXXYwTdBpEfK4QLXYmvD9dkZBM7mfhdutZT5VRtNw=
-github.com/trustwallet/golibs v0.0.10/go.mod h1:V12maYRnpDX6saytwYLtUpO8I6lXgc36pguByRq0T54=
+github.com/trustwallet/golibs v0.0.13 h1:25XKd76pQr4i6UNoyJYGtrogpN9/YzNNwYzXoxh3h68=
+github.com/trustwallet/golibs v0.0.13/go.mod h1:j+Tip4aaW3mu+81S1a+UJ8fSnKzLeJyBueApnCXXRMg=
 github.com/ugorji/go v1.1.4/go.mod h1:uQMGLiO92mf5W77hV/PUCpI3pbzQx3CRekS0kk+RGrc=
 github.com/ugorji/go v1.1.5-pre/go.mod h1:FwP/aQVg39TXzItUBMwnWp9T9gPQnXw4Poh4/oBQZ/0=
 github.com/ugorji/go v1.1.7 h1:/68gy2h+1mWMrwZFeD1kQialdSzAb432dtpeJ42ovdo=
