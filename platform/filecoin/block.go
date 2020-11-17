@@ -44,9 +44,10 @@ func normalizeBlockResponses(num, timestamp uint64, responses []BlockMessageResp
 
 func normalizeBlockTx(num, timestamp uint64, msg SecpkMessage) blockatlas.Tx {
 	return blockatlas.Tx{
-		Coin:     coin.Filecoin().ID,
-		From:     msg.Message.From,
-		To:       msg.Message.To,
+		Coin: coin.Filecoin().ID,
+		From: msg.Message.From,
+		To:   msg.Message.To,
+		// todo: use StateGetReceipt + https://documenter.getpostman.com/view/4872192/SWLh5mUd?version=latest
 		Fee:      "0",
 		Block:    num,
 		Date:     int64(timestamp),
