@@ -42,7 +42,6 @@ func TestPlatform_GetBlockByNumber(t *testing.T) {
 		err := json.NewDecoder(r.Body).Decode(&p)
 		if err != nil {
 			panic(err)
-			return
 		}
 
 		resp, ok := p["method"]
@@ -76,7 +75,7 @@ func TestPlatform_GetBlockByNumber(t *testing.T) {
 
 	p := Init(server.URL)
 	block, err := p.GetBlockByNumber(243590)
-
+	assert.Nil(t, err)
 	raw, err := json.Marshal(block)
 	assert.Nil(t, err)
 	assert.Equal(t, wantedResponse, string(raw))
