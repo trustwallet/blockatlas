@@ -4,6 +4,9 @@ type ChainHeadResponse struct {
 	Cids []struct {
 		Cid string `json:"/"`
 	} `json:"Cids"`
+	Blocks []struct {
+		Timestamp int `json:"Timestamp"`
+	}
 	Height int `json:"Height"`
 }
 
@@ -32,4 +35,11 @@ func (c ChainHeadResponse) getCids() []string {
 		result = append(result, cid.Cid)
 	}
 	return result
+}
+
+func (c ChainHeadResponse) getTimestamp() int64 {
+	if len(c.Blocks) == 0 {
+		return 0
+	}
+	return int64(c.Blocks[0].Timestamp)
 }
