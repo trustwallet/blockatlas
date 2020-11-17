@@ -3,7 +3,7 @@ package parser
 import (
 	"context"
 	"errors"
-	"sync"
+	"reflect"
 	"testing"
 	"time"
 
@@ -59,32 +59,6 @@ func TestFetchBlocks(t *testing.T) {
 	}
 	blocks := FetchBlocks(params, 0, 100, context.Background())
 	assert.Equal(t, len(blocks), 100)
-}
-
-func TestParser_ConvertToBatch(t *testing.T) {
-	blocks := []blockatlas.Block{block, block, block, block}
-	txs := ConvertToBatch(blocks, context.Background())
-	assert.Equal(t, 4, len(txs))
-
-	var empty []blockatlas.Block
-	txsEmpty := ConvertToBatch(empty, context.Background())
-	assert.Equal(t, 0, len(txsEmpty))
-}
-
-func TestParser_add(t *testing.T) {
-	blocks := []blockatlas.Block{block, block, block, block}
-	txs := ConvertToBatch(blocks, context.Background())
-
-	batch := transactionsBatch{
-		Mutex: sync.Mutex{},
-		Txs:   txs,
-	}
-
-	batch.fillBatch(txs, context.Background())
-	assert.Equal(t, 8, len(batch.Txs))
-
-	batch.fillBatch(nil, context.Background())
-	assert.Equal(t, 8, len(batch.Txs))
 }
 
 func TestParser_getBlockByNumberWithRetry(t *testing.T) {
@@ -221,6 +195,37 @@ func TestGetInterval(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got := GetInterval(tt.args.blockTime, tt.args.minInterval, tt.args.maxInterval)
 			assert.EqualValues(t, tt.want, got)
+		})
+	}
+}
+
+func TestConvertToBatch(t *testing.T) {
+	type args struct {
+		blocks []blockatlas.Block
+		ctx    context.Context
+	}
+	tests := []struct {
+		name string
+		args args
+		want blockatlas.Txs
+	}{
+		{
+			"Convert to batch",
+			args{
+				[]blockatlas.Block{
+					block,
+					block,
+				},
+				context.Background(),
+			},
+			append(block.Txs, block.Txs...),
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := ConvertToBatch(tt.args.blocks, tt.args.ctx); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("ConvertToBatch() = %v, want %v", got, tt.want)
+			}
 		})
 	}
 }

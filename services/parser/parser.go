@@ -235,25 +235,13 @@ func ConvertToBatch(blocks []blockatlas.Block, ctx context.Context) blockatlas.T
 		return nil
 	}
 
-	var (
-		txsBatch transactionsBatch
-		wg       sync.WaitGroup
-	)
+	var txs []blockatlas.Tx
 
 	for _, block := range blocks {
-		wg.Add(1)
-		go func(block blockatlas.Block, wg *sync.WaitGroup) {
-			defer wg.Done()
-			txsBatch.fillBatch(block.Txs, ctx)
-		}(block, &wg)
-	}
-	wg.Wait()
-
-	if len(txsBatch.Txs) == 0 {
-		return nil
+		txs = append(txs, block.Txs...)
 	}
 
-	return txsBatch.Txs
+	return txs
 }
 
 func PublishTransactionsBatch(params Params, txs blockatlas.Txs, ctx context.Context) {
@@ -357,15 +345,4 @@ func getBlockByNumberWithRetry(attempts int, sleep time.Duration, getBlockByNumb
 		}
 	}
 	return r, err
-}
-
-func (t *transactionsBatch) fillBatch(transactions []blockatlas.Tx, ctx context.Context) {
-	span, _ := apm.StartSpan(ctx, "fillBatch", "app")
-	defer span.End()
-	t.Lock()
-	defer t.Unlock()
-	if len(transactions) == 0 {
-		return
-	}
-	t.Txs = append(t.Txs, transactions...)
 }
