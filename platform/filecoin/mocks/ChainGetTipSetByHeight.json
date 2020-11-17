@@ -1,0 +1,202 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "Cids": [
+      {
+        "/": "bafy2bzaceca6n6sqyyfexclyo3yeinj3ihamd5whfpxnss6pzmdxs6obqh5mc"
+      },
+      {
+        "/": "bafy2bzacedi6lyer3xf4axumo2mgtwa52qw5kmtzt5ken3w6oo2hdhg63szoa"
+      },
+      {
+        "/": "bafy2bzaceb3ppcax237vxf5vwq5uckmwz2x2z3k2zfnqbjcaudrg3byzcipyi"
+      }
+    ],
+    "Blocks": [
+      {
+        "Miner": "f033130",
+        "Ticket": {
+          "VRFProof": "g0ei5BNIAWjWn24m22fh8iXY59stLoNr9TjP8aQyDbnEez87t+PLOjTcIKg18GcFDRuenomxVbdyXEn0XrhaeZ2G01cmUfveYDJG4CcIfuzX6Sh0FWiZYIhNOOoyPIiV"
+        },
+        "ElectionProof": {
+          "WinCount": 1,
+          "VRFProof": "kTVIw/UGXzREwqiKFFTw/wkyg9yAc24A9YS5cK5tpt0F3Mmv45ezP6tjzu/OP1f4EUmuK4Z2KXLa6SganAX4RB6ueMELzgCsUvAJJaWbHeoeXG2HxZXixW8mA/wLopeD"
+        },
+        "BeaconEntries": [
+          {
+            "Round": 339434,
+            "Data": "kxqziKg0KKpF6BO/4+ONq0PuxWNE9yAYc8163CKzKmIW+IFUdFFfkxK/UYNpvtL/FGWYOIRmOq1l5jIwJ+yXtw+65cbNUdfXO5NbRws4HY6DsiN8stpuXIuujO237yup"
+          }
+        ],
+        "WinPoStProof": [
+          {
+            "PoStProof": 3,
+            "ProofBytes": "qvj6xfDBYRDVI3YtfJxbMu17XI9pGpnd3Cx4zL6IZSafx2suJiEr0ZGVa2SO+TMzonqKAvSjSOwxrgPI45jeZy9nRYOO4VOPo5H3jGz/OwDcz1hRB2ldQLn9hWyyyaWECbUD77uhnxhR0VXFPpO7YSo/eS4h0phLY/x7PAlJE46B1ozdOuDNCx8HmJDmcfolhmX5qqtWKAyoPeBtfwhnSMZ1CS+wjMZBC8jo4M8HI2gtjQCZqlp3n3pKSlwEFwOE"
+          }
+        ],
+        "Parents": [
+          {
+            "/": "bafy2bzaceb2oioogn5spogg5qd3s77h6y5nl65yg2ihtwsy7gz5ya5js2psfw"
+          },
+          {
+            "/": "bafy2bzacecgvr4vq4owqyb2kosfohcz2tsjopa7iprikdruhqh6eacd5maopi"
+          },
+          {
+            "/": "bafy2bzacecuyfvfsdbjydw6z2ymswcrnzcopetgwkz3ja6r252mrc3bidkgvy"
+          },
+          {
+            "/": "bafy2bzacecpovgb6stxmpjagtyjnxbor375afxztmgr5z62b5dwlivwh4jq4q"
+          },
+          {
+            "/": "bafy2bzacecplfcf3jpirxua4szvhbh3youjyec5u2ifeeha764lmsmqorl7rc"
+          }
+        ],
+        "ParentWeight": "5085326167",
+        "Height": 243590,
+        "ParentStateRoot": {
+          "/": "bafy2bzacedizpvzsmkr7lv5bl5zpp5y4fuyb5nz7dgdycbi4hbopiyiu534qe"
+        },
+        "ParentMessageReceipts": {
+          "/": "bafy2bzacebsijpga2dovhvvkctky3zncdkhlfp2673hpbnc2vz7pd6r2agbgm"
+        },
+        "Messages": {
+          "/": "bafy2bzacedpgiddoj7tht6yafgen3br7ozllj7ysghnzfxp6jae7l4v3a37eq"
+        },
+        "BLSAggregate": {
+          "Type": 2,
+          "Data": "sctdQjn/f+NJGpMocEeElSkB1dR/9rb9TC8PF/IdqzqUWcjXrP8NgHsMtfUsJU1GEczsyWRX59axHy/Y7Roub2/o06WwfbMIb2jjKsMNr37+PeiR5rdqTZZTd3fL6uT7"
+        },
+        "Timestamp": 1605614100,
+        "BlockSig": {
+          "Type": 2,
+          "Data": "koyrqh5EW89wU9TMKls7li0g+cZkmT2vgRuixgYDQuGOc+LvZbrACtdDPE3E9wIlDXu+l8YgWy3kP9eKqycxU7EptytrUCHTTOzB4TsJU82MQYsQe8wx/pmiUqo4g5NQ"
+        },
+        "ForkSignaling": 0,
+        "ParentBaseFee": "957593361"
+      },
+      {
+        "Miner": "f024563",
+        "Ticket": {
+          "VRFProof": "g5h6RT/d4RRi59X3Baio+e8Xv4XRIGSNiv6IaOFfKUxRfXgdKACLkEpKaSFfy320EyU3iVZlHj0ZDOhGdAJuguO3jKUTr2eAYSAJkbs4Ii1vR2+Vl5s3Se/ke8biyOAm"
+        },
+        "ElectionProof": {
+          "WinCount": 1,
+          "VRFProof": "hKIZ8H1FJNZKj+1o95+MHpqg7U8r/8g/9WmDJXCfxjXv5ccNbZDkJRyzJF8eq72vEw+Z/HJ1AvLg4ZELa0JJuTacSdXd/p46k2Uvp8ksIuOuTGUYvTeARKNyqyzBSB/a"
+        },
+        "BeaconEntries": [
+          {
+            "Round": 339434,
+            "Data": "kxqziKg0KKpF6BO/4+ONq0PuxWNE9yAYc8163CKzKmIW+IFUdFFfkxK/UYNpvtL/FGWYOIRmOq1l5jIwJ+yXtw+65cbNUdfXO5NbRws4HY6DsiN8stpuXIuujO237yup"
+          }
+        ],
+        "WinPoStProof": [
+          {
+            "PoStProof": 3,
+            "ProofBytes": "l0cnzfcm5mNz7D/G4SDcKlp1p5h5JD04Zm/LQCnIoJMTWZoPwl5WH81Gs16wWOQPtJv7GTYuXal7M1sgvDwidXleqm1Yf8HGvjLdzkd/7YNmNibsHCDI0VC+UDjK/Kr4ALtPyhii5p0MFRKer1y+NkQNbnh64ZUz42h+Q1lI1WVSqMIbJULGlJg+/RYjdgMkmKvY82e6sf0T0n7694QMXbo15rzSmEhkF+2qmj7qHBfNjjMgCMLDZ7A4uFmf/EH9"
+          }
+        ],
+        "Parents": [
+          {
+            "/": "bafy2bzaceb2oioogn5spogg5qd3s77h6y5nl65yg2ihtwsy7gz5ya5js2psfw"
+          },
+          {
+            "/": "bafy2bzacecgvr4vq4owqyb2kosfohcz2tsjopa7iprikdruhqh6eacd5maopi"
+          },
+          {
+            "/": "bafy2bzacecuyfvfsdbjydw6z2ymswcrnzcopetgwkz3ja6r252mrc3bidkgvy"
+          },
+          {
+            "/": "bafy2bzacecpovgb6stxmpjagtyjnxbor375afxztmgr5z62b5dwlivwh4jq4q"
+          },
+          {
+            "/": "bafy2bzacecplfcf3jpirxua4szvhbh3youjyec5u2ifeeha764lmsmqorl7rc"
+          }
+        ],
+        "ParentWeight": "5085326167",
+        "Height": 243590,
+        "ParentStateRoot": {
+          "/": "bafy2bzacedizpvzsmkr7lv5bl5zpp5y4fuyb5nz7dgdycbi4hbopiyiu534qe"
+        },
+        "ParentMessageReceipts": {
+          "/": "bafy2bzacebsijpga2dovhvvkctky3zncdkhlfp2673hpbnc2vz7pd6r2agbgm"
+        },
+        "Messages": {
+          "/": "bafy2bzaceaute5p2f6muqyzaqarupxt3k3jb2wpzswnamnv2zkramjrkdcz26"
+        },
+        "BLSAggregate": {
+          "Type": 2,
+          "Data": "uFZuhqr7pj08swYQiPCZDmiJnJBDsCxKmw1FSWYLgUBvkwPpwtSFaHj+W3o+hNYWEcZBf8spX5VArHaIt7B7W3CV2XUQlwzhptbX1K3mNfkCPiGMwB65owT/xh9O/cf7"
+        },
+        "Timestamp": 1605614100,
+        "BlockSig": {
+          "Type": 2,
+          "Data": "kf6f9VTCnPX9rTzWDab8aF0OSGFfmVqH6xyL1zssyU7PwINIjQn58sP31E1sfSGfFmRmKGfv0GBa1XP9EfBZcyj7miTEe7fCLTIYaS3ZvtFLnHSmylJHSGp6H00fIzwv"
+        },
+        "ForkSignaling": 0,
+        "ParentBaseFee": "957593361"
+      },
+      {
+        "Miner": "f02490",
+        "Ticket": {
+          "VRFProof": "pUa1oaYhxCGlbJ5kRtV4gSh1q+ed39VKc6J45GGLa2G4ZpHDkB3YP3z7u95aq+YHCIa6WutJhSgTjCmgtS7R9shibMpgMAnq4V7V2pMe07gWKZ0DUAAIM/D7sM4XCTRv"
+        },
+        "ElectionProof": {
+          "WinCount": 1,
+          "VRFProof": "k6UQkvSHV6sWXPKUB7KEQRh7m6n6cAIogKbVjBQHaR6e0ok3JA3tcVFh7jUX7ERpBsYoJonN4ctCIXT82B6iSwisa+yiX8/X2nKGVbmB1oaWB86jOZQc+lqUkefJrB/C"
+        },
+        "BeaconEntries": [
+          {
+            "Round": 339434,
+            "Data": "kxqziKg0KKpF6BO/4+ONq0PuxWNE9yAYc8163CKzKmIW+IFUdFFfkxK/UYNpvtL/FGWYOIRmOq1l5jIwJ+yXtw+65cbNUdfXO5NbRws4HY6DsiN8stpuXIuujO237yup"
+          }
+        ],
+        "WinPoStProof": [
+          {
+            "PoStProof": 3,
+            "ProofBytes": "tCFxee4dl0/JELevW8wRY3ygztrR9Q3hlKu3Ehxi43WF1nKF2OxUFJgAyDRlr3DvgbttMAgQ9Sa9RUU6xZBIe6ZTs27GcNiVq99rqPgcYPMv1GFNfpz5lAJLvAODeBLhA04EcDbL9zmkfTN6nkMgKv6FSP1C2ghHB33A+qRXwVQ/WmiEb2g5rvC2X36Z9U+0kyR7ZO7Tr3/5R1J20Mlzt9gtDLyTwIlaa6xu4YzxRwcJi1461OpcOHoie/xhphk4"
+          }
+        ],
+        "Parents": [
+          {
+            "/": "bafy2bzaceb2oioogn5spogg5qd3s77h6y5nl65yg2ihtwsy7gz5ya5js2psfw"
+          },
+          {
+            "/": "bafy2bzacecgvr4vq4owqyb2kosfohcz2tsjopa7iprikdruhqh6eacd5maopi"
+          },
+          {
+            "/": "bafy2bzacecuyfvfsdbjydw6z2ymswcrnzcopetgwkz3ja6r252mrc3bidkgvy"
+          },
+          {
+            "/": "bafy2bzacecpovgb6stxmpjagtyjnxbor375afxztmgr5z62b5dwlivwh4jq4q"
+          },
+          {
+            "/": "bafy2bzacecplfcf3jpirxua4szvhbh3youjyec5u2ifeeha764lmsmqorl7rc"
+          }
+        ],
+        "ParentWeight": "5085326167",
+        "Height": 243590,
+        "ParentStateRoot": {
+          "/": "bafy2bzacedizpvzsmkr7lv5bl5zpp5y4fuyb5nz7dgdycbi4hbopiyiu534qe"
+        },
+        "ParentMessageReceipts": {
+          "/": "bafy2bzacebsijpga2dovhvvkctky3zncdkhlfp2673hpbnc2vz7pd6r2agbgm"
+        },
+        "Messages": {
+          "/": "bafy2bzaceaz4aw5fdtispsrpmvjckzzpcc675kpdqsl4l7khlsd2w6gpvc36i"
+        },
+        "BLSAggregate": {
+          "Type": 2,
+          "Data": "rdcE8jas3aeVtdZN9GMINJTvLeugBr6nD0+dVBblkk4jznyYhJJR9hA56Vi722AqGKDdFLoE/vonGKwhP51QMgv0Gcg95vOgaVtSOZyBQ4ODfy9uXVaAOtm0koZZTH7T"
+        },
+        "Timestamp": 1605614100,
+        "BlockSig": {
+          "Type": 2,
+          "Data": "rTn6iXHp97b5w2ktP/0EXc5esfePPcjDnh7DVMEVkjUZ62SHrYSfGlsWrzkdtY0IBITY0p3w1j2+xZ7dC5gJ863H0nM0bI6edPkuwnsPe6PcTZ2jVmWg8iHiCGnSXnK6"
+        },
+        "ForkSignaling": 0,
+        "ParentBaseFee": "957593361"
+      }
+    ],
+    "Height": 243590
+  }
+}

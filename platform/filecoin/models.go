@@ -6,3 +6,28 @@ type ChainHeadResponse struct {
 	} `json:"Cids"`
 	Height int `json:"Height"`
 }
+
+type BlockMessageResponse struct {
+	BlsMessages []BlsMessage `json:"BlsMessages"`
+}
+
+type BlsMessage struct {
+	Version    int    `json:"Version"`
+	To         string `json:"To"`
+	From       string `json:"From"`
+	Nonce      int    `json:"Nonce"`
+	Value      string `json:"Value"`
+	GasLimit   int    `json:"GasLimit"`
+	GasFeeCap  string `json:"GasFeeCap"`
+	GasPremium string `json:"GasPremium"`
+	Method     int    `json:"Method"`
+	Params     string `json:"Params"`
+}
+
+func (c ChainHeadResponse) getCids() []string {
+	result := make([]string, 0, len(c.Cids))
+	for _, cid := range c.Cids {
+		result = append(result, cid.Cid)
+	}
+	return result
+}

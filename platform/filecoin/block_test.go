@@ -29,3 +29,10 @@ func TestPlatform_CurrentBlockNumber(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, int64(243590), block)
 }
+
+func TestPlatform_GetBlockByNumber(t *testing.T) {
+	p := Init("https://api.filscan.io:8700/rpc/v1")
+	block, err := p.GetBlockByNumber(243590)
+	assert.Nil(t, err)
+	assert.NotNil(t, block)
+}
