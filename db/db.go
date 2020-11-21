@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"gorm.io/gorm/logger"
+	"sync"
 	"time"
 
 	log "github.com/sirupsen/logrus"
@@ -17,6 +18,7 @@ import (
 )
 
 type Instance struct {
+	mu          sync.Mutex
 	Gorm        *gorm.DB
 	MemoryCache *gocache.Cache
 }
@@ -61,20 +63,12 @@ func New(uri, readUri string, logMode bool) (*Instance, error) {
 
 func (i *Instance) RestoreConnectionWorker(ctx context.Context, timeout time.Duration, uri string) {
 	log.Info("Run PG RestoreConnectionWorker")
-	t := time.NewTicker(timeout)
 
-	if err := i.restoreConnection(uri); err != nil {
-		log.Warn("PG is still unavailable:", err)
-	}
-
-	select {
-	case <-ctx.Done():
-		log.Info("Ctx.Done RestoreConnectionWorker exit")
-		return
-	case <-t.C:
+	for {
 		if err := i.restoreConnection(uri); err != nil {
-			log.Warn("PG is still unavailable:", err)
+			log.Error("PG is not available now")
 		}
+		time.Sleep(timeout)
 	}
 }
 
@@ -83,6 +77,8 @@ func (i *Instance) restoreConnection(uri string) error {
 	if err != nil {
 		return err
 	}
+
+	log.Info("Run restoreConnection")
 
 	if err = db.Ping(); err != nil {
 		log.Warn("PG is not available now")
