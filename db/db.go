@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"gorm.io/gorm/logger"
-	"sync"
 	"time"
 
 	log "github.com/sirupsen/logrus"
@@ -18,7 +17,6 @@ import (
 )
 
 type Instance struct {
-	mu          sync.Mutex
 	Gorm        *gorm.DB
 	MemoryCache *gocache.Cache
 }
