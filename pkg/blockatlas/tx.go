@@ -54,7 +54,6 @@ type (
 	// Types of transaction statuses
 	Direction       string
 	Status          string
-	TokenType       string
 	TransactionType string
 	KeyType         string
 	KeyTitle        string
