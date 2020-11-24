@@ -5,6 +5,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/coin"
+	"github.com/trustwallet/golibs/tokentype"
 	"net/http/httptest"
 	"testing"
 )
@@ -165,10 +166,10 @@ func Test_getTokenType(t *testing.T) {
 	tests := []struct {
 		name  string
 		token string
-		want  blockatlas.TokenType
+		want  tokentype.Type
 	}{
-		{"default trc20", "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t", blockatlas.TokenTypeTRC20},
-		{"default trc10", "1002001", blockatlas.TokenTypeTRC10},
+		{"default trc20", "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t", tokentype.TRC20},
+		{"default trc10", "1002001", tokentype.TRC10},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
