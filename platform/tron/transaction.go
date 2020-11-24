@@ -6,6 +6,7 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/address"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/coin"
+	"github.com/trustwallet/golibs/tokentype"
 	"strconv"
 	"strings"
 )
@@ -38,13 +39,13 @@ func (p *Platform) GetTokenTxsByAddress(address, token string) (blockatlas.TxPag
 	tokenType := getTokenType(token)
 
 	switch tokenType {
-	case blockatlas.TokenTypeTRC10:
+	case tokentype.TRC10:
 		txs, err := p.fetchTransactionsForTRC10Tokens(address, token)
 		if err != nil {
 			return nil, err
 		}
 		return txs, nil
-	case blockatlas.TokenTypeTRC20:
+	case tokentype.TRC20:
 		trc20Transactions, err := p.client.fetchTRC20Transactions(address)
 		if err != nil {
 			return nil, err
@@ -55,12 +56,12 @@ func (p *Platform) GetTokenTxsByAddress(address, token string) (blockatlas.TxPag
 	}
 }
 
-func getTokenType(token string) blockatlas.TokenType {
+func getTokenType(token string) tokentype.Type {
 	_, err := strconv.Atoi(token)
 	if err != nil {
-		return blockatlas.TokenTypeTRC20
+		return tokentype.TRC20
 	} else {
-		return blockatlas.TokenTypeTRC10
+		return tokentype.TRC10
 	}
 }
 

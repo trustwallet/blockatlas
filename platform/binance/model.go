@@ -1,6 +1,7 @@
 package binance
 
 import (
+	"github.com/trustwallet/golibs/tokentype"
 	"strconv"
 	"strings"
 	"time"
@@ -274,7 +275,7 @@ func normalizeToken(srcToken TokenBalance, tokens Tokens) (blockatlas.Token, boo
 		TokenID:  token.Symbol,
 		Coin:     coin.Binance().ID,
 		Decimals: coin.Binance().Decimals,
-		Type:     blockatlas.TokenTypeBEP2,
+		Type:     tokentype.BEP2,
 	}
 
 	return result, true

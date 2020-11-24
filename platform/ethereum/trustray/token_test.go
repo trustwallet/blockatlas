@@ -3,6 +3,7 @@ package trustray
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/trustwallet/golibs/tokentype"
 	"testing"
 
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
@@ -40,7 +41,7 @@ func TestNormalizeToken(t *testing.T) {
 				Decimals: 18,
 				TokenID:  "0xa14839c9837657EFcDE754EbEAF5cbECDd801B2A",
 				Coin:     coin.ETH,
-				Type:     blockatlas.TokenTypeERC20,
+				Type:     tokentype.ERC20,
 			},
 		},
 		{"classic etc20",
@@ -52,7 +53,7 @@ func TestNormalizeToken(t *testing.T) {
 				Decimals: 18,
 				TokenID:  "0xa14839c9837657EFcDE754EbEAF5cbECDd801B2A",
 				Coin:     coin.ETC,
-				Type:     blockatlas.TokenTypeETC20,
+				Type:     tokentype.ETC20,
 			},
 		},
 		{"gochain go20",
@@ -64,7 +65,7 @@ func TestNormalizeToken(t *testing.T) {
 				Decimals: 18,
 				TokenID:  "0xa14839c9837657EFcDE754EbEAF5cbECDd801B2A",
 				Coin:     coin.GO,
-				Type:     blockatlas.TokenTypeGO20,
+				Type:     tokentype.GO20,
 			},
 		},
 		{"thudertoken tt20",
@@ -76,7 +77,7 @@ func TestNormalizeToken(t *testing.T) {
 				Decimals: 18,
 				TokenID:  "0xa14839c9837657EFcDE754EbEAF5cbECDd801B2A",
 				Coin:     coin.TT,
-				Type:     blockatlas.TokenTypeTT20,
+				Type:     tokentype.TT20,
 			},
 		},
 		{"wanchain wan20",
@@ -88,7 +89,7 @@ func TestNormalizeToken(t *testing.T) {
 				Decimals: 18,
 				TokenID:  "0xa14839c9837657EFcDE754EbEAF5cbECDd801B2A",
 				Coin:     coin.WAN,
-				Type:     blockatlas.TokenTypeWAN20,
+				Type:     tokentype.WAN20,
 			},
 		},
 		{"poa poa20",
@@ -100,7 +101,7 @@ func TestNormalizeToken(t *testing.T) {
 				Decimals: 18,
 				TokenID:  "0xa14839c9837657EFcDE754EbEAF5cbECDd801B2A",
 				Coin:     coin.POA,
-				Type:     blockatlas.TokenTypePOA20,
+				Type:     tokentype.POA20,
 			},
 		},
 		{"callisto clo20",
@@ -112,7 +113,7 @@ func TestNormalizeToken(t *testing.T) {
 				Decimals: 18,
 				TokenID:  "0xa14839c9837657EFcDE754EbEAF5cbECDd801B2A",
 				Coin:     coin.CLO,
-				Type:     blockatlas.TokenTypeCLO20,
+				Type:     tokentype.CLO20,
 			},
 		},
 		{"unknown",
@@ -124,7 +125,7 @@ func TestNormalizeToken(t *testing.T) {
 				Decimals: 18,
 				TokenID:  "0xa14839c9837657EFcDE754EbEAF5cbECDd801B2A",
 				Coin:     1999,
-				Type:     blockatlas.TokenTypeERC20,
+				Type:     tokentype.ERC20,
 			},
 		},
 	}

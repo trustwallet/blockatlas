@@ -2,6 +2,7 @@ package trustray
 
 import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/golibs/tokentype"
 )
 
 func (c *Client) GetTokenList(address string, coinIndex uint) (blockatlas.TokenPage, error) {
@@ -14,7 +15,7 @@ func (c *Client) GetTokenList(address string, coinIndex uint) (blockatlas.TokenP
 
 // NormalizeToken converts a Ethereum token into the generic model
 func NormalizeToken(srcToken *Contract, coinIndex uint) blockatlas.Token {
-	tokenType := blockatlas.GetEthereumTokenTypeByIndex(coinIndex)
+	tokenType := tokentype.GetEthereumTokenTypeByIndex(coinIndex)
 
 	return blockatlas.Token{
 		Name:     srcToken.Name,
