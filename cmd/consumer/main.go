@@ -52,23 +52,20 @@ func init() {
 func main() {
 	defer mq.Close()
 
-	if err := mq.RawTransactionsTokenIndexer.Declare(); err != nil {
-		log.Fatal("Declare RawTransactionsTokenIndexer: ", err)
+	queues := []mq.Queue{
+		mq.TxNotifications,
+		mq.RawTransactionsTokenIndexer,
+		mq.RawTransactions,
+		mq.RawTransactionsSearcher,
+		mq.Subscriptions,
+		mq.TokensRegistration,
 	}
-	if err := mq.RawTransactions.Declare(); err != nil {
-		log.Fatal("Declare RawTransactions: ", err)
-	}
-	if err := mq.TxNotifications.Declare(); err != nil {
-		log.Fatal("Declare TxNotifications: ", err)
-	}
-	if err := mq.RawTransactionsSearcher.Declare(); err != nil {
-		log.Fatal("Declare RawTransactionsSearcher: ", err)
-	}
-	if err := mq.Subscriptions.Declare(); err != nil {
-		log.Fatal("Declare Subscriptions: ", err)
-	}
-	if err := mq.TokensRegistration.Declare(); err != nil {
-		log.Fatal("Declare TokensRegistration: ", err)
+
+	for _, queue := range queues {
+		err := queue.Declare()
+		if err != nil {
+			log.Fatal("Declare ", queue, err)
+		}
 	}
 
 	go mq.RawTransactions.RunConsumerWithCancelAndDbConn(notifier.RunNotifier, database, ctx)
