@@ -12,9 +12,9 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 }
 
 // NormalizeTx converts an slice of Elrond transaction info a slice of generic model transaction
-func NormalizeTxs(srcTxs []Transaction, address string) (txs []blockatlas.Tx) {
+func NormalizeTxs(srcTxs []Transaction, address string, block Block) (txs []blockatlas.Tx) {
 	for _, srcTx := range srcTxs {
-		tx, ok := NormalizeTx(srcTx, address)
+		tx, ok := NormalizeTx(srcTx, address, block)
 		if !ok {
 			continue
 		}
@@ -24,14 +24,15 @@ func NormalizeTxs(srcTxs []Transaction, address string) (txs []blockatlas.Tx) {
 }
 
 // NormalizeTx converts an Elrond transaction into the generic model
-func NormalizeTx(srcTx Transaction, address string) (tx blockatlas.Tx, ok bool) {
+func NormalizeTx(srcTx Transaction, address string, block Block) (tx blockatlas.Tx, ok bool) {
 	tx = blockatlas.Tx{
 		ID:       srcTx.Hash,
 		Coin:     coin.Elrond().ID,
-		Date:     int64(srcTx.Timestamp),
+		Date:     int64(srcTx.TxTimestamp(block.Round)),
+		Block:    block.Nonce,
 		From:     srcTx.Sender,
 		To:       srcTx.Receiver,
-		Fee:      blockatlas.Amount(srcTx.Fee),
+		Fee:      srcTx.TxFee(),
 		Status:   srcTx.TxStatus(),
 		Sequence: srcTx.Nonce,
 		Memo:     srcTx.Data,

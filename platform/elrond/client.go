@@ -28,14 +28,14 @@ func (c *Client) CurrentBlockNumber() (num int64, err error) {
 func (c *Client) GetBlockByNumber(height int64) (*blockatlas.Block, error) {
 	var blockRes BlockResponse
 
-	path := fmt.Sprintf("block/%s/%d", metachainID, uint64(height))
+	path := fmt.Sprintf("hyperblock/by-nonce/%d", uint64(height))
 	err := c.getResponse(&blockRes, path, nil)
 	if err != nil {
 		return nil, err
 	}
 
 	block := blockRes.Block
-	txs := NormalizeTxs(block.Transactions, "")
+	txs := NormalizeTxs(block.Transactions, "", blockRes.Block)
 
 	return &blockatlas.Block{
 		Number: int64(block.Nonce),
@@ -54,7 +54,7 @@ func (c *Client) GetTxsOfAddress(address string) (blockatlas.TxPage, error) {
 		return nil, err
 	}
 
-	txs := NormalizeTxs(txPage.Transactions, address)
+	txs := NormalizeTxs(txPage.Transactions, address, Block{})
 
 	return txs, nil
 }
