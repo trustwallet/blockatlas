@@ -174,7 +174,7 @@ func FetchBlocks(params Params, lastParsedBlock, currentBlock int64, ctx context
 		for err := range errorsChan {
 			errorsList = append(errorsList, err)
 		}
-		log.WithFields(log.Fields{"count": len(errorsList), "blocks": errorsList}).Error("Fetch blocks errors")
+		log.WithFields(log.Fields{"coin": params.Api.Coin().Handle, "count": len(errorsList), "blocks": errorsList}).Error("Fetch blocks errors")
 	}
 
 	blocksList := make([]blockatlas.Block, 0, len(blocksChan))
