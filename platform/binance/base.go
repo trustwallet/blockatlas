@@ -8,9 +8,9 @@ type Platform struct {
 	client Client
 }
 
-func Init(api string) *Platform {
+func Init(api, apiKey string) *Platform {
 	p := Platform{
-		client: InitClient(api),
+		client: InitClient(api, apiKey),
 	}
 	return &p
 }

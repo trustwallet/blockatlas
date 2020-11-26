@@ -25,7 +25,8 @@ type (
 	Params struct {
 		Ctx                                       context.Context
 		Api                                       blockatlas.BlockAPI
-		Queue                                     []mq.Queue
+		TransactionsQueue                         mq.Queue
+		TokenTransactionsQueue                    []mq.Queue
 		ParsingBlocksInterval, FetchBlocksTimeout time.Duration
 		BacklogCount                              int
 		MaxBacklogBlocks                          int64
@@ -38,11 +39,6 @@ type (
 
 	stop struct {
 		error
-	}
-
-	transactionsBatch struct {
-		sync.Mutex
-		blockatlas.Txs
 	}
 )
 
@@ -79,7 +75,7 @@ func parse(params Params) {
 
 	lastParsedBlock, currentBlock, err := GetBlocksIntervalToFetch(params, ctx)
 	if err != nil || lastParsedBlock > currentBlock {
-		log.WithFields(log.Fields{"coin": params.Api.Coin().Handle}).Error(err)
+		log.WithFields(log.Fields{"operation": "fetch GetBlocksIntervalToFetch", "coin": params.Api.Coin().Handle}).Error(err)
 		time.Sleep(params.ParsingBlocksInterval)
 		return
 	}
@@ -88,17 +84,17 @@ func parse(params Params) {
 
 	err = SaveLastParsedBlock(params, blocks, ctx)
 	if err != nil {
-		log.WithFields(log.Fields{"coin": params.Api.Coin().Handle}).Error(err)
+		log.WithFields(log.Fields{"operation": "run SaveLastParsedBlock", "coin": params.Api.Coin().Handle}).Error(err)
 		time.Sleep(params.ParsingBlocksInterval)
 		return
 	}
 
-	txs := ConvertToBatch(blocks, ctx)
+	txs := ConvertToBatch(blocks)
 	txs = blockatlas.Txs(blockatlas.TxPage(txs).FilterTransactionsByMemo())
 
 	PublishTransactionsBatch(params, txs, ctx)
 
-	log.Info("End of parse step")
+	log.WithFields(log.Fields{"coin": params.Api.Coin().Handle}).Info("End of parse step")
 }
 
 func GetBlocksIntervalToFetch(params Params, ctx context.Context) (int64, int64, error) {
@@ -130,7 +126,7 @@ func FetchBlocks(params Params, lastParsedBlock, currentBlock int64, ctx context
 	defer span.End()
 
 	if lastParsedBlock == currentBlock {
-		log.WithFields(log.Fields{"last": lastParsedBlock, "coin": params.Api.Coin().ID, "time": time.Now().Unix()}).
+		log.WithFields(log.Fields{"last": lastParsedBlock, "coin": params.Api.Coin().Handle, "time": time.Now().Unix()}).
 			Info("No new blocks")
 		return nil
 	}
@@ -173,7 +169,7 @@ func FetchBlocks(params Params, lastParsedBlock, currentBlock int64, ctx context
 		for err := range errorsChan {
 			errorsList = append(errorsList, err)
 		}
-		log.WithFields(log.Fields{"count": len(errorsList), "blocks": errorsList}).Error("Fetch blocks errors")
+		log.WithFields(log.Fields{"coin": params.Api.Coin().Handle, "count": len(errorsList), "blocks": errorsList}).Error("Fetch blocks errors")
 	}
 
 	blocksList := make([]blockatlas.Block, 0, len(blocksChan))
@@ -181,7 +177,7 @@ func FetchBlocks(params Params, lastParsedBlock, currentBlock int64, ctx context
 		blocksList = append(blocksList, block)
 	}
 
-	log.WithFields(log.Fields{"from": lastParsedBlock, "to": currentBlock, "total": totalCount}).
+	log.WithFields(log.Fields{"from": lastParsedBlock, "to": currentBlock, "total": totalCount, "coin": params.Api.Coin().Handle}).
 		Info("Fetched blocks batch")
 	return blocksList
 }
@@ -227,36 +223,18 @@ func SaveLastParsedBlock(params Params, blocks []blockatlas.Block, ctx context.C
 	return nil
 }
 
-func ConvertToBatch(blocks []blockatlas.Block, ctx context.Context) blockatlas.Txs {
-	span, ctx := apm.StartSpan(ctx, "ConvertToBatch", "app")
-	defer span.End()
+func ConvertToBatch(blocks []blockatlas.Block) blockatlas.Txs {
 	if len(blocks) == 0 {
 		return nil
 	}
 
-	var (
-		txsBatch transactionsBatch
-		wg       sync.WaitGroup
-	)
+	var txs []blockatlas.Tx
 
 	for _, block := range blocks {
-		wg.Add(1)
-		go func(block blockatlas.Block, wg *sync.WaitGroup) {
-			defer wg.Done()
-			txsBatch.fillBatch(block.Txs, ctx)
-		}(block, &wg)
-	}
-	wg.Wait()
-
-	if len(txsBatch.Txs) == 0 {
-		log.WithFields(log.Fields{"blocks": len(blocks)}).
-			Info("Blocks converted to transactions batch, there is no transactions")
-		return nil
+		txs = append(txs, block.Txs...)
 	}
 
-	log.WithFields(log.Fields{"blocks": len(blocks), "txs": len(txsBatch.Txs)}).
-		Info("Blocks converted to transactions batch")
-	return txsBatch.Txs
+	return txs
 }
 
 func PublishTransactionsBatch(params Params, txs blockatlas.Txs, ctx context.Context) {
@@ -300,14 +278,40 @@ func publish(params Params, txs blockatlas.Txs, ctx context.Context) {
 
 	body, err := json.Marshal(txs)
 	if err != nil {
-		log.WithFields(log.Fields{"coin": params.Api.Coin().Handle}).Error(err)
+		log.WithFields(log.Fields{"operation": "publish marshal", "coin": params.Api.Coin().Handle}).Error(err)
 		return
 	}
-	for _, q := range params.Queue {
-		err = q.Publish(body)
-		if err != nil {
-			log.WithFields(log.Fields{"coin": params.Api.Coin().Handle}).Error(err)
-			return
+
+	// Notify transactions queue
+	err = params.TransactionsQueue.Publish(body)
+	if err != nil {
+		log.WithFields(log.Fields{"operation": "publish transactionsQueue", "coin": params.Api.Coin().Handle}).Error(err)
+		return
+	}
+
+	// Notify token transfers queue, if conforms to TokensAPI protocol
+	tokenTransfers := txs.FilterTransactionsByType([]blockatlas.TransactionType{
+		blockatlas.TxTokenTransfer,
+		blockatlas.TxNativeTokenTransfer,
+	})
+
+	if len(tokenTransfers) == 0 {
+		return
+	}
+
+	tokenTransfersBody, err := json.Marshal(tokenTransfers)
+	if err != nil {
+		log.WithFields(log.Fields{"operation": "marshal tokenTransfers", "coin": params.Api.Coin().Handle}).Error(err)
+		return
+	}
+
+	if _, ok := params.Api.(blockatlas.TokensAPI); ok {
+		for _, q := range params.TokenTransactionsQueue {
+			err = q.Publish(tokenTransfersBody)
+			if err != nil {
+				log.WithFields(log.Fields{"coin": params.Api.Coin().Handle}).Error(err)
+				return
+			}
 		}
 	}
 }
@@ -327,22 +331,11 @@ func getBlockByNumberWithRetry(attempts int, sleep time.Duration, getBlockByNumb
 			sleep = sleep + jitter/2
 
 			log.WithFields(log.Fields{"number": n, "attempts": attempts, "sleep": sleep.String(), "symbol": symbol}).
-				Info("retry GetBlockByNumber")
+				Warn("retry GetBlockByNumber")
 
 			time.Sleep(sleep)
 			return getBlockByNumberWithRetry(attempts, sleep*2, getBlockByNumber, n, symbol, ctx)
 		}
 	}
 	return r, err
-}
-
-func (t *transactionsBatch) fillBatch(transactions []blockatlas.Tx, ctx context.Context) {
-	span, _ := apm.StartSpan(ctx, "fillBatch", "app")
-	defer span.End()
-	t.Lock()
-	defer t.Unlock()
-	if len(transactions) == 0 {
-		return
-	}
-	t.Txs = append(t.Txs, transactions...)
 }

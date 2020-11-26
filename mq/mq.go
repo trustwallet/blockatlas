@@ -2,10 +2,11 @@ package mq
 
 import (
 	"context"
+	"time"
+
 	log "github.com/sirupsen/logrus"
 	"github.com/streadway/amqp"
 	"github.com/trustwallet/blockatlas/db"
-	"time"
 )
 
 var (
@@ -22,12 +23,18 @@ type (
 )
 
 const (
-	TxNotifications             Queue = "txNotifications"
-	Subscriptions               Queue = "subscriptions"
-	RawTransactions             Queue = "rawTransactions"
-	RawTransactionsSearcher     Queue = "rawTransactionsSearcher"
+	// End consumer of published transactions. Not consumed on blockatlas
+	TxNotifications Queue = "txNotifications"
+	// Address:coin subscriptions
+	Subscriptions Queue = "subscriptions"
+	// Transactions to process, if match subscriptions, pushed to TxNotifications
+	RawTransactions Queue = "rawTransactions"
+	// Token indexer for finding asset association with an address
+	RawTransactionsSearcher Queue = "rawTransactionsSearcher"
+	// Token indexer for finding new assets
 	RawTransactionsTokenIndexer Queue = "rawTransactionsTokenIndexer"
-	TokensRegistration          Queue = "tokensRegistration"
+	// Register new addresses to observers for token transfers
+	TokensRegistration Queue = "tokensRegistration"
 )
 
 func Init(uri string) (err error) {
@@ -99,7 +106,7 @@ func (q Queue) GetMessageChannel() MessageChannel {
 		nil,
 	)
 	if err != nil {
-		log.Fatal("MQ issue " + err.Error())
+		log.Fatal("GetMessageChannel MQ issue "+err.Error(), string(q))
 	}
 
 	err = amqpChan.Qos(
