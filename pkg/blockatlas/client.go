@@ -121,7 +121,7 @@ func (r *Request) Execute(method string, url string, body io.Reader, result inte
 	}
 	err = json.Unmarshal(b, result)
 	if err != nil {
-		log.WithFields(log.Fields{"host": res.Request.Host, "query": res.Request.URL.RawQuery, "status": res.Status}).Error("Unmarshal request", err)
+		log.WithFields(log.Fields{"host": res.Request.Host, "query": res.Request.URL.RawQuery, "path": res.Request.URL.Path, "status": res.Status}).Error("Unmarshal request", err)
 		return err
 	}
 	return err
