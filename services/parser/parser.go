@@ -75,7 +75,7 @@ func parse(params Params) {
 
 	lastParsedBlock, currentBlock, err := GetBlocksIntervalToFetch(params, ctx)
 	if err != nil || lastParsedBlock > currentBlock {
-		log.WithFields(log.Fields{"operation": "fetch GetBlocksIntervalToFetch", "coin": params.Api.Coin().Handle}).Error(err)
+		log.WithFields(log.Fields{"operation": "fetch GetBlocksIntervalToFetch", "lastParsedBlock": lastParsedBlock, "currentBlock": currentBlock, "coin": params.Api.Coin().Handle}).Error(err)
 		time.Sleep(params.ParsingBlocksInterval)
 		return
 	}

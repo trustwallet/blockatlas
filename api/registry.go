@@ -3,9 +3,7 @@ package api
 import (
 	"time"
 
-	"github.com/chenjiandongx/ginprom"
 	"github.com/gin-gonic/gin"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/trustwallet/blockatlas/api/endpoint"
 	"github.com/trustwallet/blockatlas/api/middleware"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
@@ -102,7 +100,6 @@ func RegisterBatchAPI(router gin.IRouter) {
 
 func RegisterBasicAPI(router gin.IRouter) {
 	router.GET("/", endpoint.GetStatus)
-	router.GET("/metrics", ginprom.PromHandler(promhttp.Handler()))
 }
 
 func RegisterTokensSearcherAPI(router gin.IRouter, instance tokensearcher.Instance) {

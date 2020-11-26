@@ -1,24 +1,19 @@
 package middleware
 
 import (
-	"github.com/chenjiandongx/ginprom"
-	"github.com/gin-gonic/gin"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
-	"github.com/stretchr/testify/assert"
-	"net/http"
 	"testing"
 )
 
-func TestPrometheus(t *testing.T) {
-	router := gin.New()
-	router.Use(Prometheus())
-	router.GET("/metrics", ginprom.PromHandler(promhttp.Handler()))
-
-	w1 := performRequest("GET", "/metrics", router)
-
-	assert.Equal(t, http.StatusOK, w1.Code)
-	assert.NotNil(t, w1.Body.String())
-}
+//func TestPrometheus(t *testing.T) {
+//	router := gin.New()
+//	router.Use(Prometheus())
+//	router.GET("/metrics", ginprom.PromHandler(promhttp.Handler()))
+//
+//	w1 := performRequest("GET", "/metrics", router)
+//
+//	assert.Equal(t, http.StatusOK, w1.Code)
+//	assert.NotNil(t, w1.Body.String())
+//}
 
 func Test_removeAddress(t *testing.T) {
 	tests := []struct {
