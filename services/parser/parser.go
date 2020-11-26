@@ -75,7 +75,7 @@ func parse(params Params) {
 
 	lastParsedBlock, currentBlock, err := GetBlocksIntervalToFetch(params, ctx)
 	if err != nil || lastParsedBlock > currentBlock {
-		log.WithFields(log.Fields{"coin": params.Api.Coin().Handle}).Error(err)
+		log.WithFields(log.Fields{"operation": "fetch GetBlocksIntervalToFetch", "coin": params.Api.Coin().Handle}).Error(err)
 		time.Sleep(params.ParsingBlocksInterval)
 		return
 	}
@@ -84,7 +84,7 @@ func parse(params Params) {
 
 	err = SaveLastParsedBlock(params, blocks, ctx)
 	if err != nil {
-		log.WithFields(log.Fields{"coin": params.Api.Coin().Handle}).Error(err)
+		log.WithFields(log.Fields{"operation": "run SaveLastParsedBlock", "coin": params.Api.Coin().Handle}).Error(err)
 		time.Sleep(params.ParsingBlocksInterval)
 		return
 	}
@@ -278,14 +278,14 @@ func publish(params Params, txs blockatlas.Txs, ctx context.Context) {
 
 	body, err := json.Marshal(txs)
 	if err != nil {
-		log.WithFields(log.Fields{"coin": params.Api.Coin().Handle}).Error(err)
+		log.WithFields(log.Fields{"operation": "publish marshal", "coin": params.Api.Coin().Handle}).Error(err)
 		return
 	}
 
 	// Notify transactions queue
 	err = params.TransactionsQueue.Publish(body)
 	if err != nil {
-		log.WithFields(log.Fields{"coin": params.Api.Coin().Handle}).Error(err)
+		log.WithFields(log.Fields{"operation": "publish transactionsQueue", "coin": params.Api.Coin().Handle}).Error(err)
 		return
 	}
 
@@ -301,7 +301,7 @@ func publish(params Params, txs blockatlas.Txs, ctx context.Context) {
 
 	tokenTransfersBody, err := json.Marshal(tokenTransfers)
 	if err != nil {
-		log.WithFields(log.Fields{"coin": params.Api.Coin().Handle}).Error(err)
+		log.WithFields(log.Fields{"operation": "marshal tokenTransfers", "coin": params.Api.Coin().Handle}).Error(err)
 		return
 	}
 
