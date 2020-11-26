@@ -2,6 +2,7 @@ package blockbook
 
 import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/golibs/tokentype"
 )
 
 func (c *Client) GetTokenList(address string, coinIndex uint) (blockatlas.TokenPage, error) {
@@ -31,6 +32,6 @@ func NormalizeToken(srcToken *Token, coinIndex uint) blockatlas.Token {
 		TokenID:  srcToken.Contract,
 		Coin:     coinIndex,
 		Decimals: srcToken.Decimals,
-		Type:     blockatlas.GetEthereumTokenTypeByIndex(coinIndex),
+		Type:     tokentype.GetEthereumTokenTypeByIndex(coinIndex),
 	}
 }

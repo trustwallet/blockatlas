@@ -1,6 +1,7 @@
 package blockatlas
 
 import (
+	"github.com/trustwallet/golibs/tokentype"
 	"sort"
 	"strconv"
 	"strings"
@@ -20,20 +21,6 @@ const (
 	DirectionOutgoing Direction = "outgoing"
 	DirectionIncoming Direction = "incoming"
 	DirectionSelf     Direction = "yourself"
-
-	TokenTypeERC20 TokenType = "ERC20"
-	TokenTypeBEP2  TokenType = "BEP2"
-	TokenTypeBEP8  TokenType = "BEP8"
-	TokenTypeBEP20 TokenType = "BEP20"
-	TokenTypeTRC10 TokenType = "TRC10"
-	TokenTypeETC20 TokenType = "ETC20"
-	TokenTypePOA20 TokenType = "POA20"
-	TokenTypeTRC20 TokenType = "TRC20"
-	TokenTypeTRC21 TokenType = "TRC21"
-	TokenTypeCLO20 TokenType = "CLO20"
-	TokenTypeGO20  TokenType = "G020"
-	TokenTypeWAN20 TokenType = "WAN20"
-	TokenTypeTT20  TokenType = "TT20"
 
 	TxTransfer              TransactionType = "transfer"
 	TxNativeTokenTransfer   TransactionType = "native_token_transfer"
@@ -67,7 +54,6 @@ type (
 	// Types of transaction statuses
 	Direction       string
 	Status          string
-	TokenType       string
 	TransactionType string
 	KeyType         string
 	KeyTitle        string
@@ -206,12 +192,12 @@ type (
 	// Token describes the non-native tokens.
 	// Examples: ERC-20, TRC-20, BEP-2
 	Token struct {
-		Name     string    `json:"name"`
-		Symbol   string    `json:"symbol"`
-		Decimals uint      `json:"decimals"`
-		TokenID  string    `json:"token_id"`
-		Coin     uint      `json:"coin"`
-		Type     TokenType `json:"type"`
+		Name     string         `json:"name"`
+		Symbol   string         `json:"symbol"`
+		Decimals uint           `json:"decimals"`
+		TokenID  string         `json:"token_id"`
+		Coin     uint           `json:"coin"`
+		Type     tokentype.Type `json:"type"`
 	}
 
 	Txs []Tx
@@ -447,33 +433,6 @@ func InferValue(tx *Tx, direction Direction, addressSet mapset.Set) Amount {
 	return value
 }
 
-func GetEthereumTokenTypeByIndex(coinIndex uint) TokenType {
-	var tokenType TokenType
-	switch coinIndex {
-	case coin.Ethereum().ID:
-		tokenType = TokenTypeERC20
-	case coin.Classic().ID:
-		tokenType = TokenTypeETC20
-	case coin.Poa().ID:
-		tokenType = TokenTypePOA20
-	case coin.Callisto().ID:
-		tokenType = TokenTypeCLO20
-	case coin.Wanchain().ID:
-		tokenType = TokenTypeWAN20
-	case coin.Thundertoken().ID:
-		tokenType = TokenTypeTT20
-	case coin.Gochain().ID:
-		tokenType = TokenTypeGO20
-	case coin.Tomochain().ID:
-		tokenType = TokenTypeTRC21
-	case coin.Bsc().ID, coin.Smartchain().ID:
-		tokenType = TokenTypeBEP20
-	default:
-		tokenType = TokenTypeERC20
-	}
-	return tokenType
-}
-
 func (t Tx) AssetModel() (models.Asset, bool) {
 	var a models.Asset
 	switch t.Meta.(type) {
@@ -550,17 +509,17 @@ func (t Tx) AssetModel() (models.Asset, bool) {
 func GetTokenType(c uint, tokenID string) (string, bool) {
 	switch c {
 	case coin.Ethereum().ID:
-		return string(TokenTypeERC20), true
+		return string(tokentype.ERC20), true
 	case coin.Tron().ID:
 		_, err := strconv.Atoi(tokenID)
 		if err != nil {
-			return string(TokenTypeTRC20), true
+			return string(tokentype.TRC20), true
 		}
-		return string(TokenTypeTRC10), true
+		return string(tokentype.TRC10), true
 	case coin.Smartchain().ID:
-		return string(TokenTypeBEP20), true
+		return string(tokentype.BEP20), true
 	case coin.Binance().ID:
-		return string(TokenTypeBEP2), true
+		return string(tokentype.BEP2), true
 	default:
 		return "", false
 	}

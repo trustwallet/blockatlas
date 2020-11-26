@@ -4,6 +4,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/coin"
+	"github.com/trustwallet/golibs/tokentype"
 	"strings"
 	"sync"
 	"time"
@@ -41,7 +42,7 @@ func (p *Platform) GetTokenListByAddress(address string) (blockatlas.TokenPage, 
 			Decimals: uint(t.Decimals),
 			TokenID:  t.ContractAddress,
 			Coin:     coin.Tron().ID,
-			Type:     blockatlas.TokenTypeTRC20,
+			Type:     tokentype.TRC20,
 		})
 	}
 
@@ -84,6 +85,6 @@ func NormalizeToken(info AssetInfo) blockatlas.Token {
 		TokenID:  info.ID,
 		Coin:     coin.TRX,
 		Decimals: info.Decimals,
-		Type:     blockatlas.TokenTypeTRC10,
+		Type:     tokentype.TRC10,
 	}
 }
