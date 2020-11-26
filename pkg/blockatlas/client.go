@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	log "github.com/sirupsen/logrus"
 	"go.elastic.co/apm/module/apmhttp"
 	"io"
 	"io/ioutil"
@@ -107,6 +108,7 @@ func (r *Request) Execute(method string, url string, body io.Reader, result inte
 	if err != nil {
 		return err
 	}
+	log.WithFields(log.Fields{"query": res.Request.URL.RawQuery, "host": res.Request.Host, "status": res.Status}).Error("Execute Get request", err)
 
 	err = r.ErrorHandler(res, url)
 	if err != nil {
