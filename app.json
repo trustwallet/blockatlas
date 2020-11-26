@@ -17,10 +17,6 @@
           "as":"POSTGRES"
         },
         {
-          "plan":"heroku-postgresql:hobby-dev",
-          "as":"POSTGRES_READ"
-        },
-        {
           "plan":"cloudamqp:lemur",
           "as":"OBSERVER_RABBITMQ"
         }
