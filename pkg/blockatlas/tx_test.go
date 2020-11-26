@@ -10,10 +10,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/golibs/coin"
 	"github.com/trustwallet/golibs/tokentype"
-
-	mapset "github.com/deckarep/golang-set"
-	"github.com/stretchr/testify/assert"
-	"github.com/trustwallet/golibs/coin"
 )
 
 var transferDst1 = Tx{
