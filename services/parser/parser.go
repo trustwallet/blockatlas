@@ -40,11 +40,6 @@ type (
 	stop struct {
 		error
 	}
-
-	transactionsBatch struct {
-		sync.Mutex
-		blockatlas.Txs
-	}
 )
 
 const MinTxsBatchLimit = 500
@@ -94,7 +89,7 @@ func parse(params Params) {
 		return
 	}
 
-	txs := ConvertToBatch(blocks, ctx)
+	txs := ConvertToBatch(blocks)
 	txs = blockatlas.Txs(blockatlas.TxPage(txs).FilterTransactionsByMemo())
 
 	PublishTransactionsBatch(params, txs, ctx)
@@ -228,9 +223,7 @@ func SaveLastParsedBlock(params Params, blocks []blockatlas.Block, ctx context.C
 	return nil
 }
 
-func ConvertToBatch(blocks []blockatlas.Block, ctx context.Context) blockatlas.Txs {
-	span, ctx := apm.StartSpan(ctx, "ConvertToBatch", "app")
-	defer span.End()
+func ConvertToBatch(blocks []blockatlas.Block) blockatlas.Txs {
 	if len(blocks) == 0 {
 		return nil
 	}

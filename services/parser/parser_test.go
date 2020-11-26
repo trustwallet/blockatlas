@@ -202,7 +202,6 @@ func TestGetInterval(t *testing.T) {
 func TestConvertToBatch(t *testing.T) {
 	type args struct {
 		blocks []blockatlas.Block
-		ctx    context.Context
 	}
 	tests := []struct {
 		name string
@@ -216,14 +215,13 @@ func TestConvertToBatch(t *testing.T) {
 					block,
 					block,
 				},
-				context.Background(),
 			},
 			append(block.Txs, block.Txs...),
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := ConvertToBatch(tt.args.blocks, tt.args.ctx); !reflect.DeepEqual(got, tt.want) {
+			if got := ConvertToBatch(tt.args.blocks); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("ConvertToBatch() = %v, want %v", got, tt.want)
 			}
 		})
