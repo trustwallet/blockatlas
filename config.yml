@@ -8,8 +8,6 @@ gin:
 # You can see all the coin handles at coins/coins.yml file
 platform: [ all ]
 
-spam_words: [ "airdrop","www", "http" ]
-
 # The transaction watcher
 observer:
   # Don't request blocks older than this
@@ -40,7 +38,7 @@ postgres:
 # [BNB] Binance DEX: https://www.binance.org/
 binance:
   api: https://dex.binance.org
-  explorer: https://explorer.binance.org
+  # key: ""
 
 # [NIM] Nimiq: https://nimiq.com
 nimiq:
@@ -207,7 +205,7 @@ harmony:
   api: https://api.s0.t.hmny.io
 
 kava:
-  api: https://data.kava.io
+  api: https://kava.data.kava.io
 
 kusama:
   api: https://kusama.subscan.io/api

@@ -65,7 +65,7 @@ func getAllHandlers() blockatlas.Platforms {
 		coin.Aeternity().Handle:    aeternity.Init(config.Default.Aeternity.API),
 		coin.Solana().Handle:       solana.Init(config.Default.Solana.API),
 		coin.Tezos().Handle:        tezos.Init(config.Default.Tezos.API, config.Default.Tezos.RPC),
-		coin.Binance().Handle:      binance.Init(config.Default.Binance.API),
+		coin.Binance().Handle:      binance.Init(config.Default.Binance.API, config.Default.Binance.Key),
 		coin.Zilliqa().Handle:      zilliqa.Init(config.Default.Zilliqa.API, config.Default.Zilliqa.Key, config.Default.Zilliqa.RPC),
 		coin.Kusama().Handle:       polkadot.Init(coin.KSM, config.Default.Kusama.API),
 		coin.Polkadot().Handle:     polkadot.Init(coin.DOT, config.Default.Polkadot.API),

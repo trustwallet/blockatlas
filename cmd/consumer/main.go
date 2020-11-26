@@ -2,12 +2,14 @@ package main
 
 import (
 	"context"
-	"github.com/trustwallet/blockatlas/config"
+	"time"
+
 	"github.com/trustwallet/blockatlas/services/notifier"
+
+	"github.com/trustwallet/blockatlas/config"
 	"github.com/trustwallet/blockatlas/services/subscriber"
 	"github.com/trustwallet/blockatlas/services/tokenindexer"
 	"github.com/trustwallet/blockatlas/services/tokensearcher"
-	"time"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas/db"
@@ -40,7 +42,7 @@ func init() {
 	database, err = db.New(config.Default.Postgres.URL, config.Default.Postgres.Read.URL,
 		config.Default.Postgres.Log)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Postgres init: ", err)
 	}
 	go database.RestoreConnectionWorker(ctx, time.Second*10, config.Default.Postgres.URL)
 
@@ -50,30 +52,29 @@ func init() {
 func main() {
 	defer mq.Close()
 
-	if err := mq.RawTransactionsTokenIndexer.Declare(); err != nil {
-		log.Fatal(err)
-	}
-	if err := mq.RawTransactions.Declare(); err != nil {
-		log.Fatal(err)
-	}
-	if err := mq.TxNotifications.Declare(); err != nil {
-		log.Fatal(err)
-	}
-	if err := mq.RawTransactionsSearcher.Declare(); err != nil {
-		log.Fatal(err)
-	}
-	if err := mq.Subscriptions.Declare(); err != nil {
-		log.Fatal(err)
-	}
-	if err := mq.TokensRegistration.Declare(); err != nil {
-		log.Fatal(err)
+	queues := []mq.Queue{
+		mq.TxNotifications,
+		mq.RawTransactionsTokenIndexer,
+		mq.RawTransactions,
+		mq.RawTransactionsSearcher,
+		mq.Subscriptions,
+		mq.TokensRegistration,
 	}
 
-	go mq.RawTransactionsTokenIndexer.RunConsumerWithCancelAndDbConnConcurrent(tokenindexer.RunTokenIndexer, database, ctx)
-	go mq.RawTransactions.RunConsumerWithCancelAndDbConnConcurrent(notifier.RunNotifier, database, ctx)
-	go mq.RawTransactionsSearcher.RunConsumerWithCancelAndDbConnConcurrent(tokensearcher.Run, database, ctx)
-	go mq.Subscriptions.RunConsumerWithCancelAndDbConnConcurrent(subscriber.RunTransactionsSubscriber, database, ctx)
-	go mq.TokensRegistration.RunConsumerWithCancelAndDbConnConcurrent(subscriber.RunTokensSubscriber, database, ctx)
+	for _, queue := range queues {
+		err := queue.Declare()
+		if err != nil {
+			log.Fatal("Declare ", queue, err)
+		}
+	}
+
+	go mq.RawTransactions.RunConsumerWithCancelAndDbConn(notifier.RunNotifier, database, ctx)
+
+	go mq.RawTransactionsTokenIndexer.RunConsumerWithCancelAndDbConn(tokenindexer.RunTokenIndexer, database, ctx)
+	go mq.RawTransactionsSearcher.RunConsumerWithCancelAndDbConn(tokensearcher.Run, database, ctx)
+
+	go mq.Subscriptions.RunConsumerWithCancelAndDbConn(subscriber.RunTransactionsSubscriber, database, ctx)
+	go mq.TokensRegistration.RunConsumerWithCancelAndDbConn(subscriber.RunTokensSubscriber, database, ctx)
 
 	go mq.FatalWorker(time.Second * 10)
 

@@ -1,1 +1,3 @@
-web: ATLAS_POSTGRES_READ_URL=$ATLAS_POSTGRES_URL bin/api -c $HOME/config.yml -p $PORT
+web: bin/api -c $HOME/config.yml -p $PORT
+consumer: bin/consumer -c $HOME/config.yml
+parser: bin/parser -c $HOME/config.yml
