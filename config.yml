@@ -222,7 +222,7 @@ near:
   api: https://staging-rpc.nearprotocol.com
 
 elrond:
-  api: https://api.elrond.com
+  api: https://gateway.elrond.com
 
 filecoin:
   api: https://api.filscan.io:8700/rpc/v1

@@ -53,7 +53,9 @@ const txTransferSrc3 = `
 	"signature":"",
 	"timestamp":1588757256,
 	"status":"Not executed",
-	"fee": "5000"
+	"fee": "0",
+	"gasPrice": 5,
+    "gasLimit": 1000
 }`
 
 const txTransferSrc4 = `

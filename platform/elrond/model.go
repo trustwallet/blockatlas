@@ -2,6 +2,7 @@ package elrond
 
 import (
 	"encoding/json"
+	"math/big"
 	"time"
 
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
@@ -24,7 +25,7 @@ type StatusDetails struct {
 }
 
 type BlockResponse struct {
-	Block Block `json:"block"`
+	Block Block `json:"hyperblock"`
 }
 
 type Block struct {
@@ -38,6 +39,7 @@ type TransactionsPage struct {
 }
 
 type Transaction struct {
+	Type      string        `json:"type"`
 	Hash      string        `json:"hash"`
 	Nonce     uint64        `json:"nonce"`
 	Value     string        `json:"value"`
@@ -47,6 +49,19 @@ type Transaction struct {
 	Timestamp time.Duration `json:"timestamp"`
 	Status    string        `json:"status"`
 	Fee       string        `json:"fee"`
+	GasPrice  uint64        `json:"gasPrice,omitempty"`
+	GasLimit  uint64        `json:"gasLimit,omitempty"`
+}
+
+func (tx *Transaction) TxFee() blockatlas.Amount {
+	if tx.Fee != "0" && tx.Fee != "" {
+		return blockatlas.Amount(tx.Fee)
+	}
+
+	txFee := big.NewInt(0).SetUint64(tx.GasPrice)
+	txFee = txFee.Mul(txFee, big.NewInt(0).SetUint64(tx.GasLimit))
+
+	return blockatlas.Amount(txFee.String())
 }
 
 func (tx *Transaction) TxStatus() blockatlas.Status {

@@ -28,7 +28,7 @@ func (c *Client) CurrentBlockNumber() (num int64, err error) {
 func (c *Client) GetBlockByNumber(height int64) (*blockatlas.Block, error) {
 	var blockRes BlockResponse
 
-	path := fmt.Sprintf("block/%s/%d", metachainID, uint64(height))
+	path := fmt.Sprintf("hyperblock/by-nonce/%d", uint64(height))
 	err := c.getResponse(&blockRes, path, nil)
 	if err != nil {
 		return nil, err
