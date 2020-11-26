@@ -5,7 +5,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	log "github.com/sirupsen/logrus"
 	"go.elastic.co/apm/module/apmhttp"
 	"io"
 	"io/ioutil"
