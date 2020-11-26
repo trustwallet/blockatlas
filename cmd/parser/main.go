@@ -3,13 +3,13 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/trustwallet/blockatlas/config"
-	"github.com/trustwallet/blockatlas/services/spamfilter"
 	"os"
 	"os/signal"
 	"sync"
 	"syscall"
 	"time"
+
+	"github.com/trustwallet/blockatlas/config"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas/db"
@@ -41,7 +41,6 @@ func init() {
 	)
 
 	platform.Init(config.Default.Platform)
-	spamfilter.SpamList = config.Default.SpamWords
 
 	if err := mq.RawTransactions.Declare(); err != nil {
 		log.Fatal(err)
@@ -104,10 +103,10 @@ func main() {
 		coinCancel[coin.Handle] = cancel
 
 		params := parser.Params{
-			Ctx: ctx,
-			Api: api,
-			Queue: []mq.Queue{
-				mq.RawTransactions,
+			Ctx:               ctx,
+			Api:               api,
+			TransactionsQueue: mq.RawTransactions,
+			TokenTransactionsQueue: []mq.Queue{
 				mq.RawTransactionsSearcher,
 				mq.RawTransactionsTokenIndexer,
 			},
@@ -123,6 +122,7 @@ func main() {
 		go parser.RunParser(params)
 
 		log.WithFields(log.Fields{
+			"coin":                     api.Coin().Handle,
 			"interval":                 pollInterval,
 			"backlog":                  backlogCount,
 			"Max backlog":              maxBackLogBlocks,

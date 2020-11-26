@@ -34,7 +34,7 @@ func TestFullFlow(t *testing.T) {
 	params := setupParserFull(stopChan)
 	params.Database = database
 	params.Ctx = ctx
-	params.Queue = []mq.Queue{mq.RawTransactions}
+	params.TransactionsQueue = mq.RawTransactions
 
 	go parser.RunParser(params)
 	time.Sleep(time.Second * 2)

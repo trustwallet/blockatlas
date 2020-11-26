@@ -3,12 +3,13 @@
 package observer_test
 
 import (
-	"github.com/trustwallet/blockatlas/db"
-	"github.com/trustwallet/blockatlas/mq"
-	"github.com/trustwallet/blockatlas/tests/integration/setup"
 	"log"
 	"os"
 	"testing"
+
+	"github.com/trustwallet/blockatlas/db"
+	"github.com/trustwallet/blockatlas/mq"
+	"github.com/trustwallet/blockatlas/tests/integration/setup"
 )
 
 var (
