@@ -59,7 +59,7 @@ func (p *Platform) getTokens(ids []string) chan blockatlas.Token {
 			time.Sleep(time.Millisecond)
 			err := p.getTokensChannel(i, c)
 			if err != nil {
-				log.Error("tron getTokens: " + i)
+				log.WithFields(log.Fields{"token": i, "coin": coin.Tron().Handle}).Error("getTokens", err)
 			}
 		}(id, tkChan)
 	}
