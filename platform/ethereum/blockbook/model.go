@@ -1,9 +1,8 @@
 package blockbook
 
 import (
+	"github.com/trustwallet/golibs/tokentype"
 	"math/big"
-
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 )
 
 type Page struct {
@@ -58,12 +57,12 @@ type TokenTransfer struct {
 
 // Token contains info about tokens held by an address
 type Token struct {
-	Balance  string               `json:"balance,omitempty"`
-	Contract string               `json:"contract"`
-	Decimals uint                 `json:"decimals"`
-	Name     string               `json:"name"`
-	Symbol   string               `json:"symbol"`
-	Type     blockatlas.TokenType `json:"type"`
+	Balance  string         `json:"balance,omitempty"`
+	Contract string         `json:"contract"`
+	Decimals uint           `json:"decimals"`
+	Name     string         `json:"name"`
+	Symbol   string         `json:"symbol"`
+	Type     tokentype.Type `json:"type"`
 }
 
 // EthereumSpecific contains ethereum specific transaction data
