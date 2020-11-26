@@ -26,6 +26,9 @@ func TestMain(m *testing.M) {
 	if err := mq.Subscriptions.Declare(); err != nil {
 		log.Fatal(err)
 	}
+	if err := mq.TxNotifications.Declare(); err != nil {
+		log.Fatal(err)
+	}
 	rawTransactionsChannel = mq.RawTransactions.GetMessageChannel()
 	subscriptionChannel = mq.Subscriptions.GetMessageChannel()
 	transactionsChannel = mq.TxNotifications.GetMessageChannel()
