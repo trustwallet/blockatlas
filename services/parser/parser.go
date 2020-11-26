@@ -331,7 +331,7 @@ func getBlockByNumberWithRetry(attempts int, sleep time.Duration, getBlockByNumb
 			sleep = sleep + jitter/2
 
 			log.WithFields(log.Fields{"number": n, "attempts": attempts, "sleep": sleep.String(), "symbol": symbol}).
-				Info("retry GetBlockByNumber")
+				Warn("retry GetBlockByNumber")
 
 			time.Sleep(sleep)
 			return getBlockByNumberWithRetry(attempts, sleep*2, getBlockByNumber, n, symbol, ctx)
