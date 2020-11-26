@@ -156,7 +156,7 @@ func fetchAssetsByAddresses(tokenAPI blockatlas.TokensAPI, addresses []string, r
 			defer tWg.Done()
 			tokens, err := tokenAPI.GetTokenListByAddress(address)
 			if err != nil {
-				log.WithFields(log.Fields{"coin": tokenAPI.Coin().Handle}).Error("Fetch GetTokenListByAddress", err)
+				log.WithFields(log.Fields{"coin": tokenAPI.Coin().Handle, "address": address}).Error("Fetch GetTokenListByAddress", err)
 				return
 			}
 			result.UpdateAssetsByAddress(tokens, int(tokenAPI.Coin().ID), address)
