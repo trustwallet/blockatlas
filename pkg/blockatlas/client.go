@@ -106,9 +106,9 @@ func (r *Request) Execute(method string, url string, body io.Reader, result inte
 
 	res, err := c.Do(req.WithContext(ctx))
 	if err != nil {
+		log.WithFields(log.Fields{"query": res.Request.URL.RawQuery, "host": res.Request.Host, "status": res.Status}).Error("Execute Get request", err)
 		return err
 	}
-	log.WithFields(log.Fields{"query": res.Request.URL.RawQuery, "host": res.Request.Host, "status": res.Status}).Error("Execute Get request", err)
 
 	err = r.ErrorHandler(res, url)
 	if err != nil {
@@ -121,6 +121,7 @@ func (r *Request) Execute(method string, url string, body io.Reader, result inte
 	}
 	err = json.Unmarshal(b, result)
 	if err != nil {
+		log.WithFields(log.Fields{"body": res.Body, "host": res.Request.Host, "status": res.Status}).Error("Unmarshal request", err)
 		return err
 	}
 	return err
