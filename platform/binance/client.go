@@ -83,8 +83,6 @@ func (c Client) FetchAccountMeta(address string) (AccountMeta, error) {
 	}
 	var result AccountMeta
 	if err := resp.ToJSON(&result); err != nil {
-		log.Error("URL: " + resp.Request().URL.String())
-		log.Error("Status code: " + resp.Response().Status)
 		return AccountMeta{}, err
 	}
 	return result, nil

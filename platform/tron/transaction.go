@@ -70,7 +70,7 @@ func addTokenMeta(tx *blockatlas.Tx, srcTx Tx, tokenInfo AssetInfo) {
 	tx.Meta = blockatlas.TokenTransfer{
 		Name:     tokenInfo.Name,
 		Symbol:   strings.ToUpper(tokenInfo.Symbol),
-		TokenID:  tokenInfo.ID,
+		TokenID:  strconv.Itoa(int(tokenInfo.ID)),
 		Decimals: tokenInfo.Decimals,
 		Value:    transfer.Amount,
 		From:     tx.From,
