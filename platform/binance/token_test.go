@@ -2,15 +2,16 @@ package binance
 
 import (
 	"encoding/json"
-	"github.com/stretchr/testify/assert"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestPlatform_GetTokenListByAddress(t *testing.T) {
 	server := httptest.NewServer(createMockedAPI())
 	defer server.Close()
-	p := Init(server.URL)
+	p := Init(server.URL, "")
 
 	tokens, err := p.GetTokenListByAddress("bnb1w7puzjxu05ktc5zvpnzkndt6tyl720nsutzvpg")
 	assert.Nil(t, err)

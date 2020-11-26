@@ -5,7 +5,6 @@ package db_test
 import (
 	"context"
 	gocache "github.com/patrickmn/go-cache"
-	log "github.com/sirupsen/logrus"
 	assert "github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas/db/models"
 	"github.com/trustwallet/blockatlas/tests/integration/setup"
@@ -202,9 +201,6 @@ func Test_AddNewAssets(t *testing.T) {
 			sort.Slice(assets, func(i, j int) bool {
 				return len(assets[i].Name) > len(assets[j].Name)
 			})
-			log.Info(tt.WantedAssets)
-			log.Info("----------------------")
-			log.Info(assets)
 			for i, a := range assets {
 				assert.Equal(t, tt.WantedAssets[i].Asset, a.Asset)
 				assert.Equal(t, tt.WantedAssets[i].Name, a.Name)
