@@ -14,11 +14,15 @@
       "addons": [
         {
           "plan":"heroku-postgresql:hobby-dev",
-          "as":"ATLAS_POSTGRES"
+          "as":"POSTGRES"
+        },
+        {
+          "plan":"heroku-postgresql:hobby-dev",
+          "as":"POSTGRES_READ"
         },
         {
           "plan":"cloudamqp:lemur",
-          "as":"ATLAS_OBSERVER_RABBITMQ"
+          "as":"OBSERVER_RABBITMQ"
         }
       ]
     }
