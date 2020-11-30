@@ -1,4 +1,4 @@
-Chain|API,Transaction list,Block parsing,Staking ,Token list,Collectiable
+Chain\API,Transaction list,Block parsing,Staking ,Token list,Collectiable
 Bitcoin,✅,✅,,,
 Ethereum,✅,✅,,✅,✅
 ICON,✅,,,,
@@ -26,5 +26,4 @@ Harmony,✅,✅,✅,,
 Ontology,✅,✅,,,
 Tezos,✅,✅,✅,,
 Nebulas,✅,,,,
-Wanchain,✅,,,,
 Waves,✅,✅,,,
