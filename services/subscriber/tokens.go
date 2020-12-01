@@ -20,7 +20,7 @@ func RunTokensSubscriber(database *db.Instance, delivery amqp.Delivery) {
 	event := make(map[string][]models.Asset)
 	if err := json.Unmarshal(delivery.Body, &event); err != nil {
 		if err := delivery.Ack(false); err != nil {
-			log.Fatal(err, err)
+			log.WithFields(log.Fields{"service": Tokens}).Error(err)
 		}
 	}
 
@@ -31,7 +31,7 @@ func RunTokensSubscriber(database *db.Instance, delivery amqp.Delivery) {
 	}
 	log.WithFields(log.Fields{"service": Tokens, "count": len(event)}).Info("Subscribed")
 	if err := delivery.Ack(false); err != nil {
-		log.Fatal(err, err)
+		log.WithFields(log.Fields{"service": Tokens}).Error(err)
 	}
 	log.Info("------------------------------------------------------------")
 }

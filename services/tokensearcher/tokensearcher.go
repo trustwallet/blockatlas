@@ -21,7 +21,7 @@ func Run(database *db.Instance, delivery amqp.Delivery) {
 	if err != nil {
 		log.Error("failed to get transactions", err)
 		if err := delivery.Ack(false); err != nil {
-			log.Error(err)
+			log.WithFields(log.Fields{"service": TokenSearcher}).Error(err)
 		}
 	}
 	if len(txs) == 0 {
@@ -55,7 +55,7 @@ func Run(database *db.Instance, delivery amqp.Delivery) {
 	}
 
 	if err := delivery.Ack(false); err != nil {
-		log.Error(err)
+		log.WithFields(log.Fields{"service": TokenSearcher}).Error(err)
 	}
 	log.Info("------------------------------------------------------------")
 }
