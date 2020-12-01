@@ -45,7 +45,6 @@ func InitEngine(ginMode string) *gin.Engine {
 	engine.Use(middleware.CORSMiddleware())
 	engine.Use(apmgin.Middleware(engine))
 	engine.Use(gin.Logger())
-	engine.Use(middleware.Prometheus())
 	engine.OPTIONS("/*path", middleware.CORSMiddleware())
 
 	return engine

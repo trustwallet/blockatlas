@@ -93,7 +93,7 @@ type (
 	AssetInfo struct {
 		Name     string `json:"name"`
 		Symbol   string `json:"abbr"`
-		ID       string `json:"id"`
+		ID       uint   `json:"id"`
 		Decimals uint   `json:"precision"`
 	}
 

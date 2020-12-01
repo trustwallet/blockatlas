@@ -89,7 +89,7 @@ var tokenTransferDst = blockatlas.Tx{
 	},
 }
 
-var assetInfo = AssetInfo{Name: "BitTorrent", Symbol: "BTT", Decimals: 6, ID: "1002000"}
+var assetInfo = AssetInfo{Name: "BitTorrent", Symbol: "BTT", Decimals: 6, ID: 1002000}
 
 type test struct {
 	name        string
