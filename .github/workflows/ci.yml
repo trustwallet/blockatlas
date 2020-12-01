@@ -24,11 +24,11 @@ jobs:
         run: |
           go get -v -t -d ./...
 
-      - name: Lint
-        run: make lint
-
       - name: Unit Test
         run: make test
+
+      - name: Lint
+        run: make lint
 
       - name: Upload coverage
         run: bash <(curl -s https://codecov.io/bash) -f coverage.txt
