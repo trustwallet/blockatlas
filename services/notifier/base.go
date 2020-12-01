@@ -26,7 +26,7 @@ func RunNotifier(database *db.Instance, delivery amqp.Delivery) {
 
 	defer func() {
 		if err := delivery.Ack(false); err != nil {
-			log.Error(err)
+			log.WithFields(log.Fields{"service": Notifier}).Error(err)
 		}
 	}()
 
