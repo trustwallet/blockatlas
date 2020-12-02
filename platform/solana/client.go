@@ -37,8 +37,7 @@ func (c *Client) GetMinimumBalanceForRentExemption() (minimumBalance uint64, err
 	return
 }
 
-func (c *Client) GetTransactions(address string) ([]ConfirmedTransaction, error) {
-	// get tx list
+func (c *Client) GetTransactionList(address string) ([]ConfirmedSignature, error) {
 	var signatures []ConfirmedSignature
 	params := []interface{}{
 		address,
@@ -48,6 +47,12 @@ func (c *Client) GetTransactions(address string) ([]ConfirmedTransaction, error)
 	if err != nil {
 		return nil, err
 	}
+	return signatures, nil
+}
+
+func (c *Client) GetTransactions(address string) ([]ConfirmedTransaction, error) {
+	// get tx list
+	signatures, err := c.GetTransactionList(address)
 
 	// build batch request
 	requests := make(blockatlas.RpcRequests, 0)

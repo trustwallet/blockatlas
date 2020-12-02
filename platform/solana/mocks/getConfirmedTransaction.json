@@ -128,5 +128,110 @@
           }
         },
         "id": 1
+      },
+      {
+        "jsonrpc": "2.0",
+        "result": {
+          "meta": {
+            "err": {
+              "InstructionError": [
+                0,
+                {
+                  "Custom": 0
+                }
+              ]
+            },
+            "fee": 5000,
+            "innerInstructions": [],
+            "logMessages": [
+              "Program Vote111111111111111111111111111111111111111 invoke [1]",
+              "Program Vote111111111111111111111111111111111111111 failed: custom program error: 0x0"
+            ],
+            "postBalances": [
+              478775796520,
+              26858640,
+              1,
+              1,
+              1
+            ],
+            "preBalances": [
+              478775801520,
+              26858640,
+              1,
+              1,
+              1
+            ],
+            "status": {
+              "Err": {
+                "InstructionError": [
+                  0,
+                  {
+                    "Custom": 0
+                  }
+                ]
+              }
+            }
+          },
+          "slot": 52838310,
+          "transaction": {
+            "message": {
+              "accountKeys": [
+                {
+                  "pubkey": "D32cBNvo9qmMyMSJzWqDPQ3ujYFuW9HHNjVkwxspezQr",
+                  "signer": true,
+                  "writable": true
+                },
+                {
+                  "pubkey": "YT7i3TkDv9GpbQ5qEkL7dvb3fAXSuNKwCotw2MjrWxZ",
+                  "signer": false,
+                  "writable": true
+                },
+                {
+                  "pubkey": "SysvarS1otHashes111111111111111111111111111",
+                  "signer": false,
+                  "writable": false
+                },
+                {
+                  "pubkey": "SysvarC1ock11111111111111111111111111111111",
+                  "signer": false,
+                  "writable": false
+                },
+                {
+                  "pubkey": "Vote111111111111111111111111111111111111111",
+                  "signer": false,
+                  "writable": false
+                }
+              ],
+              "instructions": [
+                {
+                  "parsed": {
+                    "info": {
+                      "clockSysvar": "SysvarC1ock11111111111111111111111111111111",
+                      "slotHashesSysvar": "SysvarS1otHashes111111111111111111111111111",
+                      "vote": {
+                        "hash": "A9Jg1smbeMVyssPKbeK3pAkMDfLkKgAfRMK5aFELJDsZ",
+                        "slots": [
+                          52838301,
+                          52838302
+                        ],
+                        "timestamp": 1606944861
+                      },
+                      "voteAccount": "YT7i3TkDv9GpbQ5qEkL7dvb3fAXSuNKwCotw2MjrWxZ",
+                      "voteAuthority": "D32cBNvo9qmMyMSJzWqDPQ3ujYFuW9HHNjVkwxspezQr"
+                    },
+                    "type": "vote"
+                  },
+                  "program": "vote",
+                  "programId": "Vote111111111111111111111111111111111111111"
+                }
+              ],
+              "recentBlockhash": "3e9FDUaHg4t1KPsi8F4tf63Kxn5H5XU7BkQnVRmxjUKA"
+            },
+            "signatures": [
+              "29ku1FzyNHgx5BZ811uj82EEnZNG6JbPuCQJvy5zuXnBfy2zgAdUubpfwEz2CfojFzxuzghms6qq9afzrzSnavdD"
+            ]
+          }
+        },
+        "id": 1
       }
   ]

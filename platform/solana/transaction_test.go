@@ -71,3 +71,11 @@ func TestPlatform_GetTxsByAddress(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, wanted, string(raw))
 }
+
+func TestPlatform_EstimateTimestamp(t *testing.T) {
+	assert.Equal(t, int64(1606944859), EstimateTimestamp(52838300))
+	assert.Equal(t, int64(1588062639), EstimateTimestamp(5632752))
+	assert.Equal(t, int64(1588026961), EstimateTimestamp(5543556))
+	assert.Equal(t, int64(1586007052), EstimateTimestamp(493784))
+	assert.Equal(t, int64(1585809539), EstimateTimestamp(0))
+}

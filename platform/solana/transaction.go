@@ -53,6 +53,7 @@ func (p *Platform) NormalizeTx(tx ConfirmedTransaction, address string) (normali
 		From:      from,
 		To:        instruction.Parsed.Info.Destination,
 		Fee:       blockatlas.Amount(strconv.FormatUint(tx.Meta.Fee, 10)),
+		Date:      EstimateTimestamp(tx.Slot),
 		Block:     tx.Slot,
 		Status:    status,
 		Type:      blockatlas.TxTransfer,
@@ -65,4 +66,14 @@ func (p *Platform) NormalizeTx(tx ConfirmedTransaction, address string) (normali
 	}
 
 	return normalized, nil
+}
+
+func EstimateTimestamp(slot uint64) int64 {
+	var (
+		blockTime  uint64 = 400 //ms
+		sampleSlot uint64 = 52838300
+		sampleTs   uint64 = 1606944859 * 1000
+	)
+	offset := (slot - sampleSlot) * blockTime
+	return int64((sampleTs + offset) / 1000)
 }
