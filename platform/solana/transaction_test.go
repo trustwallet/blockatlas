@@ -28,7 +28,10 @@ func TestPlatform_GetTxsByAddress(t *testing.T) {
 		var response string
 
 		buf := new(bytes.Buffer)
-		buf.ReadFrom(req.Body)
+		_, err := buf.ReadFrom(req.Body)
+		if err != nil {
+			panic(err)
+		}
 		requestBody := buf.String()
 
 		if err := json.Unmarshal([]byte(requestBody), &r); err == nil {
