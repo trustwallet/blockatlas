@@ -53,6 +53,9 @@ func (c *Client) GetTransactionList(address string) ([]ConfirmedSignature, error
 func (c *Client) GetTransactions(address string) ([]ConfirmedTransaction, error) {
 	// get tx list
 	signatures, err := c.GetTransactionList(address)
+	if err != nil {
+		return nil, err
+	}
 
 	// build batch request
 	requests := make(blockatlas.RpcRequests, 0)
