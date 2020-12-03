@@ -2,12 +2,11 @@ package solana
 
 import (
 	"bytes"
-	"fmt"
-	"testing"
-
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
@@ -72,10 +71,43 @@ func TestPlatform_GetTxsByAddress(t *testing.T) {
 	assert.Equal(t, wanted, string(raw))
 }
 
-func TestPlatform_EstimateTimestamp(t *testing.T) {
-	assert.Equal(t, int64(1606944859), EstimateTimestamp(52838300))
-	assert.Equal(t, int64(1588062639), EstimateTimestamp(5632752))
-	assert.Equal(t, int64(1588026961), EstimateTimestamp(5543556))
-	assert.Equal(t, int64(1586007052), EstimateTimestamp(493784))
-	assert.Equal(t, int64(1585809539), EstimateTimestamp(0))
+func TestEstimateTimestamp(t *testing.T) {
+	tests := []struct {
+		name string
+		slot uint64
+		want int64
+	}{
+		{
+			name: "Test 0",
+			slot: 0,
+			want: 1585809539,
+		},
+		{
+			name: "Test sample slot",
+			slot: 52838300,
+			want: 1606944859,
+		},
+		{
+			name: "Test nomral 1",
+			slot: 5632752,
+			want: 1588062639,
+		},
+		{
+			name: "Test normal 2",
+			slot: 5543556,
+			want: 1588026961,
+		},
+		{
+			name: "Test normal 3",
+			slot: 493784,
+			want: 1586007052,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := EstimateTimestamp(tt.slot); got != tt.want {
+				t.Errorf("EstimateTimestamp() = %v, want %v", got, tt.want)
+			}
+		})
+	}
 }
