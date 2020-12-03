@@ -20,7 +20,6 @@ type Configuration struct {
 	Observer   struct {
 		Backlog                     time.Duration `mapstructure:"backlog"`
 		FetchBlocksInterval         time.Duration `mapstructure:"fetch_blocks_interval"`
-		BacklogMaxBlocks            int64         `mapstructure:"backlog_max_blocks"`
 		TxsBatchLimit               uint          `mapstructure:"txs_batch_limit"`
 		PushNotificationsBatchLimit int           `mapstructure:"push_notifications_batch_limit"`
 		BlockPoll                   struct {

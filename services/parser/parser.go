@@ -29,7 +29,7 @@ type (
 		TokenTransactionsQueue                    []mq.Queue
 		ParsingBlocksInterval, FetchBlocksTimeout time.Duration
 		BacklogCount                              int
-		MaxBacklogBlocks                          int64
+		BlocksPerRound                            int64
 		StopChannel                               chan<- struct{}
 		TxBatchLimit                              uint
 		Database                                  *db.Instance
@@ -42,7 +42,12 @@ type (
 	}
 )
 
-const MinTxsBatchLimit = 500
+const (
+	MinTxsBatchLimit = 500
+
+	MinBlocksPerRound     = 5
+	DefaultBlocksPerRound = 10
+)
 
 func RunParser(params Params) {
 	log.Info("------------------------------------------------------------")
@@ -65,6 +70,18 @@ func GetInterval(value int, minInterval, maxInterval time.Duration) time.Duratio
 	pMin := numbers.Max(minInterval.Nanoseconds(), interval.Nanoseconds())
 	pMax := numbers.Min(int(maxInterval.Nanoseconds()), int(pMin))
 	return time.Duration(pMax)
+}
+
+func GetBlocksByRound(blockTime int, parsingBlocksInterval time.Duration) int64 {
+	if blockTime > 0 {
+		result := int64(blockTime) / parsingBlocksInterval.Milliseconds()
+		if result < MinBlocksPerRound {
+			result += MinBlocksPerRound
+		}
+		return result
+	} else {
+		return DefaultBlocksPerRound
+	}
 }
 
 func parse(params Params) {
@@ -115,10 +132,12 @@ func GetBlocksIntervalToFetch(params Params, ctx context.Context) (int64, int64,
 		lastParsedBlock = currentBlock - int64(params.BacklogCount)
 	}
 
-	if currentBlock-lastParsedBlock > params.MaxBacklogBlocks {
-		lastParsedBlock = currentBlock - params.MaxBacklogBlocks
+	nextParsedBlock := lastParsedBlock + params.BlocksPerRound
+	if nextParsedBlock > currentBlock {
+		nextParsedBlock = currentBlock
 	}
-	return lastParsedBlock, currentBlock, nil
+
+	return lastParsedBlock, nextParsedBlock, nil
 }
 
 func FetchBlocks(params Params, lastParsedBlock, currentBlock int64, ctx context.Context) []blockatlas.Block {

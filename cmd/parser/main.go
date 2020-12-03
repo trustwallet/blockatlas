@@ -77,7 +77,6 @@ func main() {
 	minInterval := config.Default.Observer.BlockPoll.Min
 	maxInterval := config.Default.Observer.BlockPoll.Max
 	fetchBlocksInterval := config.Default.Observer.FetchBlocksInterval
-	maxBackLogBlocks := config.Default.Observer.BacklogMaxBlocks
 
 	go mq.FatalWorker(time.Second * 10)
 
@@ -113,10 +112,10 @@ func main() {
 			ParsingBlocksInterval: pollInterval,
 			FetchBlocksTimeout:    fetchBlocksInterval,
 			BacklogCount:          backlogCount,
-			MaxBacklogBlocks:      maxBackLogBlocks,
 			StopChannel:           stopChannel,
 			TxBatchLimit:          txsBatchLimit,
 			Database:              database,
+			BlocksPerRound: parser.GetBlocksByRound(coin.BlockTime, pollInterval),
 		}
 
 		go parser.RunParser(params)
@@ -125,7 +124,6 @@ func main() {
 			"coin":                     api.Coin().Handle,
 			"interval":                 pollInterval,
 			"backlog":                  backlogCount,
-			"Max backlog":              maxBackLogBlocks,
 			"Txs Batch limit":          txsBatchLimit,
 			"Fetching blocks interval": fetchBlocksInterval,
 		}).Info("Parser params")
