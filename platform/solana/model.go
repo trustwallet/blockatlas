@@ -73,7 +73,7 @@ type EpochInfo struct {
 type ConfirmedSignature struct {
 	Memo      string `json:"memo"`
 	Signature string `json:"signature"`
-	Slot      int    `json:"slot"`
+	Slot      uint64 `json:"slot"`
 }
 
 type ConfirmedTransaction struct {
