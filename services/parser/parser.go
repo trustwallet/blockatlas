@@ -45,7 +45,6 @@ type (
 const (
 	MinTxsBatchLimit = 500
 
-	MinBlocksPerRound     = 5
 	DefaultBlocksPerRound = 10
 )
 
@@ -72,14 +71,19 @@ func GetInterval(value int, minInterval, maxInterval time.Duration) time.Duratio
 	return time.Duration(pMax)
 }
 
-func GetBlocksByRound(blockTime int, parsingBlocksInterval time.Duration) int64 {
-	if blockTime > 0 {
-		result := int64(blockTime) / parsingBlocksInterval.Milliseconds()
-		if result < MinBlocksPerRound {
-			result += MinBlocksPerRound
-		}
-		return result
-	} else {
+func GetBlocksByRound(blockTime int) int64 {
+	switch {
+	case blockTime < 4000:
+		return 12
+	case blockTime >= 4000 && blockTime > 8000:
+		return 10
+	case blockTime >= 8000 && blockTime > 12000:
+		return 8
+	case blockTime >= 12000 && blockTime > 16000:
+		return 6
+	case blockTime >= 16000:
+		return 4
+	default:
 		return DefaultBlocksPerRound
 	}
 }

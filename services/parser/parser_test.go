@@ -52,7 +52,6 @@ func TestFetchBlocks(t *testing.T) {
 		ParsingBlocksInterval:  0,
 		FetchBlocksTimeout:     0,
 		BacklogCount:           0,
-		MaxBacklogBlocks:       0,
 		StopChannel:            nil,
 		TxBatchLimit:           0,
 		Database:               nil,

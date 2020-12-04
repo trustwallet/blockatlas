@@ -115,7 +115,7 @@ func main() {
 			StopChannel:           stopChannel,
 			TxBatchLimit:          txsBatchLimit,
 			Database:              database,
-			BlocksPerRound: parser.GetBlocksByRound(coin.BlockTime, pollInterval),
+			BlocksPerRound: parser.GetBlocksByRound(coin.BlockTime),
 		}
 
 		go parser.RunParser(params)
