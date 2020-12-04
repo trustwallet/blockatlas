@@ -16,7 +16,6 @@ require (
 	github.com/docker/go-connections v0.4.0 // indirect
 	github.com/docker/go-units v0.4.0 // indirect
 	github.com/gin-gonic/gin v1.6.3
-	github.com/golang/protobuf v1.4.3 // indirect
 	github.com/gotestyourself/gotestyourself v2.2.0+incompatible // indirect
 	github.com/imroc/req v0.3.0
 	github.com/mitchellh/mapstructure v1.4.0
@@ -25,10 +24,6 @@ require (
 	github.com/opencontainers/runc v1.0.0-rc9 // indirect
 	github.com/ory/dockertest v3.3.5+incompatible
 	github.com/patrickmn/go-cache v2.1.0+incompatible
-	github.com/pkg/errors v0.9.1 // indirect
-	github.com/prometheus/client_golang v1.8.0
-	github.com/prometheus/common v0.14.0 // indirect
-	github.com/prometheus/procfs v0.2.0 // indirect
 	github.com/sirupsen/logrus v1.7.0
 	github.com/spf13/viper v1.7.1
 	github.com/streadway/amqp v1.0.0

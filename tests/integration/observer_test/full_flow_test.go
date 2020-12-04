@@ -32,6 +32,7 @@ func TestFullFlow(t *testing.T) {
 	stopChan := make(chan struct{}, 1)
 
 	params := setupParserFull(stopChan)
+	params.BlocksPerRound = parser.DefaultBlocksPerRound
 	params.Database = database
 	params.Ctx = ctx
 	params.TransactionsQueue = mq.RawTransactions

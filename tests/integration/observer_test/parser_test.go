@@ -113,5 +113,6 @@ func setupParser(stopChan chan struct{}) parser.Params {
 		BacklogCount:          backlogCount,
 		TxBatchLimit:          100,
 		StopChannel:           stopChan,
+		BlocksPerRound: 50,
 	}
 }
