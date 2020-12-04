@@ -76,8 +76,6 @@ func (i *Instance) restoreConnection(uri string) error {
 		return err
 	}
 
-	log.Info("Run restoreConnection")
-
 	if err = db.Ping(); err != nil {
 		log.Warn("PG is not available now")
 		log.Warn("Trying to connect to PG...")

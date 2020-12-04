@@ -23,16 +23,16 @@ import (
 
 type (
 	Params struct {
-		Ctx                                       context.Context
-		Api                                       blockatlas.BlockAPI
-		TransactionsQueue                         mq.Queue
-		TokenTransactionsQueue                    []mq.Queue
-		ParsingBlocksInterval, FetchBlocksTimeout time.Duration
-		BacklogCount                              int
-		BlocksPerRound                            int64
-		StopChannel                               chan<- struct{}
-		TxBatchLimit                              uint
-		Database                                  *db.Instance
+		Ctx                                                              context.Context
+		Api                                                              blockatlas.BlockAPI
+		TransactionsQueue                                                mq.Queue
+		TokenTransactionsQueue                                           []mq.Queue
+		ParsingBlocksInterval, FetchBlocksTimeout, CurrentBlocksInterval time.Duration
+		BacklogCount                                                     int
+		BlocksPerRound                                                   int64
+		StopChannel                                                      chan<- struct{}
+		TxBatchLimit                                                     uint
+		Database                                                         *db.Instance
 	}
 
 	GetBlockByNumber func(num int64) (*blockatlas.Block, error)
@@ -45,7 +45,7 @@ type (
 const (
 	MinTxsBatchLimit = 500
 
-	DefaultBlocksPerRound = 10
+	DefaultBlocksPerRound = 20
 )
 
 func RunParser(params Params) {
@@ -74,15 +74,15 @@ func GetInterval(value int, minInterval, maxInterval time.Duration) time.Duratio
 func GetBlocksByRound(blockTime int) int64 {
 	switch {
 	case blockTime < 4000:
+		return 25
+	case blockTime >= 4000 && blockTime < 8000:
+		return 18
+	case blockTime >= 8000 && blockTime < 12000:
 		return 12
-	case blockTime >= 4000 && blockTime > 8000:
+	case blockTime >= 12000 && blockTime < 16000:
 		return 10
-	case blockTime >= 8000 && blockTime > 12000:
-		return 8
-	case blockTime >= 12000 && blockTime > 16000:
-		return 6
 	case blockTime >= 16000:
-		return 4
+		return 8
 	default:
 		return DefaultBlocksPerRound
 	}
@@ -140,6 +140,12 @@ func GetBlocksIntervalToFetch(params Params, ctx context.Context) (int64, int64,
 	if nextParsedBlock > currentBlock {
 		nextParsedBlock = currentBlock
 	}
+	log.WithFields(
+		log.Fields{
+			"current":   currentBlock,
+			"lag":       currentBlock - nextParsedBlock,
+			"per round": params.BlocksPerRound,
+		}).Info("Blocks info")
 
 	return lastParsedBlock, nextParsedBlock, nil
 }
