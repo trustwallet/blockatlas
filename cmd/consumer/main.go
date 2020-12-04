@@ -2,19 +2,18 @@ package main
 
 import (
 	"context"
+	"github.com/trustwallet/blockatlas/services/subscriber"
+	"github.com/trustwallet/blockatlas/services/tokenindexer"
+	"github.com/trustwallet/blockatlas/services/tokensearcher"
 	"time"
 
 	"github.com/trustwallet/blockatlas/services/notifier"
 
-	"github.com/trustwallet/blockatlas/config"
-	"github.com/trustwallet/blockatlas/services/subscriber"
-	"github.com/trustwallet/blockatlas/services/tokenindexer"
-	"github.com/trustwallet/blockatlas/services/tokensearcher"
-
 	log "github.com/sirupsen/logrus"
+	"github.com/trustwallet/blockatlas/config"
 	"github.com/trustwallet/blockatlas/db"
 	"github.com/trustwallet/blockatlas/internal"
-	"github.com/trustwallet/blockatlas/mq"
+	"github.com/trustwallet/blockatlas/new_mq"
 )
 
 const (
@@ -25,6 +24,7 @@ var (
 	ctx      context.Context
 	cancel   context.CancelFunc
 	database *db.Instance
+	mqClient *new_mq.Client
 )
 
 func init() {
@@ -32,13 +32,16 @@ func init() {
 	_, confPath := internal.ParseArgs("", defaultConfigPath)
 
 	internal.InitConfig(confPath)
-
-	internal.InitRabbitMQ(
+	var err error
+	mqClient, err = new_mq.New(
 		config.Default.Observer.Rabbitmq.URL,
 		config.Default.Observer.Rabbitmq.Consumer.PrefetchCount,
+		ctx,
 	)
+	if err != nil {
+		log.Fatal("MQ init: ", err)
+	}
 
-	var err error
 	database, err = db.New(config.Default.Postgres.URL, config.Default.Postgres.Read.URL,
 		config.Default.Postgres.Log)
 	if err != nil {
@@ -50,33 +53,13 @@ func init() {
 }
 
 func main() {
-	defer mq.Close()
+	defer mqClient.Close()
 
-	queues := []mq.Queue{
-		mq.TxNotifications,
-		mq.RawTransactionsTokenIndexer,
-		mq.RawTransactions,
-		mq.RawTransactionsSearcher,
-		mq.Subscriptions,
-		mq.TokensRegistration,
-	}
-
-	for _, queue := range queues {
-		err := queue.Declare()
-		if err != nil {
-			log.Fatal("Declare ", queue, err)
-		}
-	}
-
-	go mq.RawTransactions.RunConsumerWithCancelAndDbConn(notifier.RunNotifier, database, ctx)
-
-	go mq.RawTransactionsTokenIndexer.RunConsumerWithCancelAndDbConn(tokenindexer.RunTokenIndexer, database, ctx)
-	go mq.RawTransactionsSearcher.RunConsumerWithCancelAndDbConn(tokensearcher.Run, database, ctx)
-
-	go mq.Subscriptions.RunConsumerWithCancelAndDbConn(subscriber.RunTransactionsSubscriber, database, ctx)
-	go mq.TokensRegistration.RunConsumerWithCancelAndDbConn(subscriber.RunTokensSubscriber, database, ctx)
-
-	go mq.FatalWorker(time.Second * 10)
+	mqClient.AddStream(&notifier.NotifierConsumer{Database: database})
+	mqClient.AddStream(&tokenindexer.TokenIndexerConsumer{Database: database})
+	mqClient.AddStream(&tokensearcher.TokenSearcherConsumer{Database: database})
+	mqClient.AddStream(&subscriber.TransactionSubscriberConsumer{Database: database})
+	mqClient.AddStream(&subscriber.TokenSubscriberConsumer{Database: database})
 
 	internal.SetupGracefulShutdownForObserver()
 	cancel()

@@ -5,10 +5,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/trustwallet/blockatlas/new_mq"
 	"sync/atomic"
 
 	"github.com/trustwallet/blockatlas/db"
-	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/numbers"
 	"go.elastic.co/apm"
@@ -25,14 +25,15 @@ type (
 	Params struct {
 		Ctx                                       context.Context
 		Api                                       blockatlas.BlockAPI
-		TransactionsQueue                         mq.Queue
-		TokenTransactionsQueue                    []mq.Queue
+		TransactionsQueue                         new_mq.Queue
+		TokenTransactionsQueue                    []new_mq.Queue
 		ParsingBlocksInterval, FetchBlocksTimeout time.Duration
 		BacklogCount                              int
 		MaxBacklogBlocks                          int64
 		StopChannel                               chan<- struct{}
 		TxBatchLimit                              uint
 		Database                                  *db.Instance
+		MQClient                                  *new_mq.Client
 	}
 
 	GetBlockByNumber func(num int64) (*blockatlas.Block, error)
@@ -283,7 +284,7 @@ func publish(params Params, txs blockatlas.Txs, ctx context.Context) {
 	}
 
 	// Notify transactions queue
-	err = params.TransactionsQueue.Publish(body)
+	err = params.MQClient.Push(params.TransactionsQueue, body)
 	if err != nil {
 		log.WithFields(log.Fields{"operation": "publish transactionsQueue", "coin": params.Api.Coin().Handle}).Error(err)
 		return
@@ -307,7 +308,7 @@ func publish(params Params, txs blockatlas.Txs, ctx context.Context) {
 
 	if _, ok := params.Api.(blockatlas.TokensAPI); ok {
 		for _, q := range params.TokenTransactionsQueue {
-			err = q.Publish(tokenTransfersBody)
+			err := params.MQClient.Push(q, tokenTransfersBody)
 			if err != nil {
 				log.WithFields(log.Fields{"coin": params.Api.Coin().Handle}).Error(err)
 				return

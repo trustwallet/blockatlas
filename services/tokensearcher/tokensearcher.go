@@ -5,12 +5,25 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/streadway/amqp"
 	"github.com/trustwallet/blockatlas/db"
+	"github.com/trustwallet/blockatlas/new_mq"
 	"github.com/trustwallet/blockatlas/services/notifier"
 	"go.elastic.co/apm"
 	"strconv"
 )
 
 const TokenSearcher = "TokenSearcher"
+
+type TokenSearcherConsumer struct {
+	Database *db.Instance
+}
+
+func (cons *TokenSearcherConsumer) GetQueue() string {
+	return string(new_mq.RawTransactionsSearcher)
+}
+
+func (cons *TokenSearcherConsumer) Callback(msg amqp.Delivery) {
+	Run(cons.Database, msg)
+}
 
 func Run(database *db.Instance, delivery amqp.Delivery) {
 	tx := apm.DefaultTracer.StartTransaction("RunNotifier", "app")

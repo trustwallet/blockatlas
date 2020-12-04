@@ -3,6 +3,9 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/trustwallet/blockatlas/new_mq"
+	"github.com/trustwallet/blockatlas/services/notifier"
+	"github.com/trustwallet/blockatlas/services/tokensearcher"
 	"os"
 	"os/signal"
 	"sync"
@@ -14,7 +17,6 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas/db"
 	"github.com/trustwallet/blockatlas/internal"
-	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/platform"
 	"github.com/trustwallet/blockatlas/services/parser"
 )
@@ -27,6 +29,7 @@ var (
 	ctx      context.Context
 	cancel   context.CancelFunc
 	database *db.Instance
+	mqClient *new_mq.Client
 )
 
 func init() {
@@ -35,21 +38,22 @@ func init() {
 
 	internal.InitConfig(confPath)
 
-	internal.InitRabbitMQ(
+	mqClient, _ = new_mq.New(
 		config.Default.Observer.Rabbitmq.URL,
 		config.Default.Observer.Rabbitmq.Consumer.PrefetchCount,
+		ctx,
 	)
-
+	mqClient.AddPublish(&notifier.NotifierConsumer{
+		Database: database,
+		MQClient: mqClient,
+	})
+	mqClient.AddPublish(&tokensearcher.TokenSearcherConsumer{
+		Database: database,
+	})
+	mqClient.AddPublish(&tokensearcher.TokenSearcherConsumer{
+		Database: database,
+	})
 	platform.Init(config.Default.Platform)
-
-	if err := mq.RawTransactions.Declare(); err != nil {
-		log.Fatal(err)
-	}
-
-	if err := mq.RawTransactionsTokenIndexer.Declare(); err != nil {
-		log.Fatal(err)
-	}
-
 	if len(platform.BlockAPIs) == 0 {
 		log.Fatal("No APIs to observe")
 	}
@@ -66,7 +70,7 @@ func init() {
 }
 
 func main() {
-	defer mq.Close()
+	defer mqClient.Close()
 	var (
 		wg          sync.WaitGroup
 		coinCancel  = make(map[string]context.CancelFunc)
@@ -78,8 +82,6 @@ func main() {
 	maxInterval := config.Default.Observer.BlockPoll.Max
 	fetchBlocksInterval := config.Default.Observer.FetchBlocksInterval
 	maxBackLogBlocks := config.Default.Observer.BacklogMaxBlocks
-
-	go mq.FatalWorker(time.Second * 10)
 
 	wg.Add(len(platform.BlockAPIs))
 	for _, api := range platform.BlockAPIs {
@@ -105,10 +107,10 @@ func main() {
 		params := parser.Params{
 			Ctx:               ctx,
 			Api:               api,
-			TransactionsQueue: mq.RawTransactions,
-			TokenTransactionsQueue: []mq.Queue{
-				mq.RawTransactionsSearcher,
-				mq.RawTransactionsTokenIndexer,
+			TransactionsQueue: new_mq.RawTransactions,
+			TokenTransactionsQueue: []new_mq.Queue{
+				new_mq.RawTransactionsSearcher,
+				new_mq.RawTransactionsTokenIndexer,
 			},
 			ParsingBlocksInterval: pollInterval,
 			FetchBlocksTimeout:    fetchBlocksInterval,
@@ -117,6 +119,7 @@ func main() {
 			StopChannel:           stopChannel,
 			TxBatchLimit:          txsBatchLimit,
 			Database:              database,
+			MQClient:              mqClient,
 		}
 
 		go parser.RunParser(params)

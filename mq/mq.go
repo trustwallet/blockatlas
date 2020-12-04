@@ -58,10 +58,6 @@ func Close() {
 	}
 }
 
-func (mc MessageChannel) GetMessage() amqp.Delivery {
-	return <-mc
-}
-
 func (q Queue) Declare() error {
 	_, err := amqpChan.QueueDeclare(string(q), true, false, false, false, nil)
 	return err
@@ -73,26 +69,6 @@ func (q Queue) Publish(body []byte) error {
 		ContentType:  "text/plain",
 		Body:         body,
 	})
-}
-
-func RunConsumerForChannelWithCancelAndDbConn(consumer ConsumerWithDbConn, messageChannel MessageChannel, database *db.Instance, concurrent bool, ctx context.Context) {
-	for {
-		select {
-		case <-ctx.Done():
-			log.Info("Consumer stopped")
-			return
-		case message := <-messageChannel:
-			if message.Body == nil {
-				continue
-			}
-			if concurrent {
-				go consumer(database, message)
-			} else {
-				consumer(database, message)
-			}
-
-		}
-	}
 }
 
 func (q Queue) GetMessageChannel() MessageChannel {
@@ -121,29 +97,6 @@ func (q Queue) GetMessageChannel() MessageChannel {
 	return messageChannel
 }
 
-func (q Queue) RunConsumer(consumer Consumer) {
-	messageChannel := q.GetMessageChannel()
-	for data := range messageChannel {
-		go consumer(data)
-	}
-}
-
-func (q Queue) RunConsumerWithCancel(consumer Consumer, ctx context.Context) {
-	messageChannel := q.GetMessageChannel()
-	for {
-		select {
-		case <-ctx.Done():
-			log.Info("Consumer stopped")
-			return
-		case message := <-messageChannel:
-			if message.Body == nil {
-				continue
-			}
-			go consumer(message)
-		}
-	}
-}
-
 func (q Queue) RunConsumerWithCancelAndDbConn(consumer ConsumerWithDbConn, database *db.Instance, ctx context.Context) {
 	messageChannel := q.GetMessageChannel()
 	for {
@@ -156,22 +109,6 @@ func (q Queue) RunConsumerWithCancelAndDbConn(consumer ConsumerWithDbConn, datab
 				continue
 			}
 			consumer(database, message)
-		}
-	}
-}
-
-func (q Queue) RunConsumerWithCancelAndDbConnConcurrent(consumer ConsumerWithDbConn, database *db.Instance, ctx context.Context) {
-	messageChannel := q.GetMessageChannel()
-	for {
-		select {
-		case <-ctx.Done():
-			log.Info("Consumer stopped")
-			return
-		case message := <-messageChannel:
-			if message.Body == nil {
-				continue
-			}
-			go consumer(database, message)
 		}
 	}
 }

@@ -7,10 +7,23 @@ import (
 	"github.com/streadway/amqp"
 	"github.com/trustwallet/blockatlas/db"
 	"github.com/trustwallet/blockatlas/db/models"
+	"github.com/trustwallet/blockatlas/new_mq"
 	"go.elastic.co/apm"
 )
 
 const Tokens Subscriber = "tokens"
+
+type TokenSubscriberConsumer struct {
+	Database *db.Instance
+}
+
+func (cons *TokenSubscriberConsumer) GetQueue() string {
+	return string(new_mq.TokensRegistration)
+}
+
+func (cons *TokenSubscriberConsumer) Callback(msg amqp.Delivery) {
+	RunTokensSubscriber(cons.Database, msg)
+}
 
 func RunTokensSubscriber(database *db.Instance, delivery amqp.Delivery) {
 	tx := apm.DefaultTracer.StartTransaction("RunTokensSubscriber", "app")

@@ -6,6 +6,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/streadway/amqp"
 	"github.com/trustwallet/blockatlas/db"
+	"github.com/trustwallet/blockatlas/new_mq"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"go.elastic.co/apm"
 	"strconv"
@@ -21,6 +22,18 @@ const (
 
 	batchLimit uint = 3000
 )
+
+type TransactionSubscriberConsumer struct {
+	Database *db.Instance
+}
+
+func (cons *TransactionSubscriberConsumer) GetQueue() string {
+	return string(new_mq.Subscriptions)
+}
+
+func (cons *TransactionSubscriberConsumer) Callback(msg amqp.Delivery) {
+	RunTransactionsSubscriber(cons.Database, msg)
+}
 
 func RunTransactionsSubscriber(database *db.Instance, delivery amqp.Delivery) {
 	tx := apm.DefaultTracer.StartTransaction("RunTransactionsSubscriber", "app")

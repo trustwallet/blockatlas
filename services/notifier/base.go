@@ -2,10 +2,15 @@ package notifier
 
 import (
 	"context"
+	"encoding/json"
+	"errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/streadway/amqp"
 	"github.com/trustwallet/blockatlas/db"
+	"github.com/trustwallet/blockatlas/new_mq"
 	"github.com/trustwallet/blockatlas/pkg/address"
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/golibs/coin"
 	"strconv"
 
 	"go.elastic.co/apm"
@@ -13,42 +18,47 @@ import (
 
 const (
 	DefaultPushNotificationsBatchLimit = 50
-
-	Notifier = "Notifier"
+	Notifier                           = "Notifier"
 )
 
 var MaxPushNotificationsBatchLimit uint = DefaultPushNotificationsBatchLimit
 
-func RunNotifier(database *db.Instance, delivery amqp.Delivery) {
+type NotifierConsumer struct {
+	Database *db.Instance
+	MQClient *new_mq.Client
+}
+
+func (c *NotifierConsumer) GetQueue() string {
+	return string(new_mq.RawTransactions)
+}
+
+func (c *NotifierConsumer) Callback(msg amqp.Delivery) {
 	tx := apm.DefaultTracer.StartTransaction("RunNotifier", "app")
 	defer tx.End()
 	ctx := apm.ContextWithTransaction(context.Background(), tx)
 
 	defer func() {
-		if err := delivery.Ack(false); err != nil {
+		if err := msg.Ack(false); err != nil {
 			log.Error(err)
 		}
 	}()
 
-	txs, err := GetTransactionsFromDelivery(delivery, Notifier, ctx)
+	txs, err := GetTransactionsFromDelivery(msg, Notifier, ctx)
 	if err != nil {
 		log.Error("failed to get transactions", err)
 	}
-
+	if len(txs) < 1 {
+		return
+	}
 	allAddresses := make([]string, 0)
 	for _, tx := range txs {
 		allAddresses = append(allAddresses, tx.GetAddresses()...)
 	}
-
 	addresses := ToUniqueAddresses(allAddresses)
 	for i := range addresses {
 		addresses[i] = strconv.Itoa(int(txs[0].Coin)) + "_" + addresses[i]
 	}
-
-	if len(txs) < 1 {
-		return
-	}
-	subscriptionsDataList, err := database.GetSubscriptionsForNotifications(addresses, ctx)
+	subscriptionsDataList, err := c.Database.GetSubscriptionsForNotifications(addresses, ctx)
 	if err != nil || len(subscriptionsDataList) == 0 {
 		return
 	}
@@ -66,7 +76,38 @@ func RunNotifier(database *db.Instance, delivery amqp.Delivery) {
 	batches := getNotificationBatches(notifications, MaxPushNotificationsBatchLimit, ctx)
 
 	for _, batch := range batches {
-		publishNotificationBatch(batch, ctx)
+		publishNotificationBatch(c.MQClient, batch, ctx)
 	}
 	log.Info("------------------------------------------------------------")
+}
+
+func GetTransactionsFromDelivery(delivery amqp.Delivery, service string, ctx context.Context) (blockatlas.Txs, error) {
+	span, _ := apm.StartSpan(ctx, "GetTransactionsFromDelivery", "app")
+	defer span.End()
+
+	var txs blockatlas.Txs
+	if err := json.Unmarshal(delivery.Body, &txs); err != nil {
+		return nil, err
+	}
+	if len(txs) == 0 {
+		return nil, errors.New("empty txs list")
+	}
+	log.WithFields(log.Fields{"service": service, "txs": len(txs), "coin": coin.Coins[txs[0].Coin].Handle}).Info("Consumed")
+	return txs, nil
+}
+
+func publishNotificationBatch(mqClient *new_mq.Client, batch []TransactionNotification, ctx context.Context) {
+	span, _ := apm.StartSpan(ctx, "getNotificationBatches", "app")
+	defer span.End()
+
+	raw, err := json.Marshal(batch)
+	if err != nil {
+		log.Fatal("publishNotificationBatch marshal: ", err)
+	}
+
+	err = mqClient.Push(new_mq.TxNotifications, raw)
+	if err != nil {
+		log.Fatal("publishNotificationBatch publish:", err)
+	}
+	log.WithFields(log.Fields{"service": Notifier, "txs": len(batch)}).Info("Txs batch dispatched")
 }

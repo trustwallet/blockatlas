@@ -6,12 +6,25 @@ import (
 	"github.com/streadway/amqp"
 	"github.com/trustwallet/blockatlas/db"
 	"github.com/trustwallet/blockatlas/db/models"
+	"github.com/trustwallet/blockatlas/new_mq"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/services/notifier"
 	"go.elastic.co/apm"
 )
 
 const TokenIndexer = "TokenIndexer"
+
+type TokenIndexerConsumer struct {
+	Database *db.Instance
+}
+
+func (cons *TokenIndexerConsumer) GetQueue() string {
+	return string(new_mq.RawTransactionsTokenIndexer)
+}
+
+func (cons *TokenIndexerConsumer) Callback(msg amqp.Delivery) {
+	RunTokenIndexer(cons.Database, msg)
+}
 
 func RunTokenIndexer(database *db.Instance, delivery amqp.Delivery) {
 	tx := apm.DefaultTracer.StartTransaction("RunTokenIndexer", "app")
