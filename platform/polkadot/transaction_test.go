@@ -89,9 +89,9 @@ func TestNormalizeTransfer(t *testing.T) {
 }
 
 func TestNormalizeExtrinsic(t *testing.T) {
-	platform := Platform{CoinIndex: coin.KSM}
 	type args struct {
-		srcTx *Extrinsic
+		platform Platform
+		srcTx    *Extrinsic
 	}
 	tests := []struct {
 		name   string
@@ -99,29 +99,32 @@ func TestNormalizeExtrinsic(t *testing.T) {
 		wantTx *blockatlas.Tx
 	}{
 		{
-			name: "Transfer",
+			name: "Transfer KSM",
 			args: args{
+				platform: Platform{CoinIndex: coin.KSM},
 				srcTx: &Extrinsic{
 					Timestamp:          1577176992,
 					BlockNumber:        360298,
 					CallModuleFunction: "transfer",
 					CallModule:         "balances",
-					Params:             "[{\"name\":\"dest\",\"type\":\"Address\",\"value\":\"CtwdfrhECFs3FpvCGoiE4hwRC4UsSiM8WL899HjRdQbfYZY\",\"valueRaw\":\"ff0e33fdfb980e4499e5c3576e742a563b6a4fc0f6f598b1917fd7a6fe393ffc72\"},{\"name\":\"value\",\"type\":\"Compact\\u003cBalance\\u003e\",\"value\":10000000000,\"valueRaw\":\"0700e40b5402\"}]",
+					Params:             "[{\"name\":\"dest\",\"type\":\"Address\",\"value\":\"0e33fdfb980e4499e5c3576e742a563b6a4fc0f6f598b1917fd7a6fe393ffc72\",\"value_raw\":\"\"},{\"name\":\"value\",\"type\":\"Compact\\u003cBalance\\u003e\",\"value\":\"10000000000\",\"value_raw\":\"\"}]",
 					AccountId:          "HKtMPUSoTC8Hts2uqcQVzPAuPRpecBt4XJ5Q1AT1GM3tp2r",
 					Nonce:              0,
 					Hash:               "0x20cfbba19817e4b7a61e718d269de47e7067a24860fa978c2a8ead4c96a827c4",
 					Success:            true,
+					Fee:                "100000000",
 				},
 			},
 			wantTx: &blockatlas.Tx{
-				ID:     "0x20cfbba19817e4b7a61e718d269de47e7067a24860fa978c2a8ead4c96a827c4",
-				Coin:   434,
-				Date:   1577176992,
-				From:   "HKtMPUSoTC8Hts2uqcQVzPAuPRpecBt4XJ5Q1AT1GM3tp2r",
-				To:     "CtwdfrhECFs3FpvCGoiE4hwRC4UsSiM8WL899HjRdQbfYZY",
-				Block:  360298,
-				Status: "completed",
-				Fee:    "100000000",
+				ID:       "0x20cfbba19817e4b7a61e718d269de47e7067a24860fa978c2a8ead4c96a827c4",
+				Coin:     434,
+				Date:     1577176992,
+				From:     "HKtMPUSoTC8Hts2uqcQVzPAuPRpecBt4XJ5Q1AT1GM3tp2r",
+				To:       "CtwdfrhECFs3FpvCGoiE4hwRC4UsSiM8WL899HjRdQbfYZY",
+				Fee:      "100000000",
+				Block:    360298,
+				Status:   "completed",
+				Sequence: 0,
 				Meta: blockatlas.Transfer{
 					Value:    blockatlas.Amount("10000000000"),
 					Symbol:   "KSM",
@@ -130,8 +133,43 @@ func TestNormalizeExtrinsic(t *testing.T) {
 			},
 		},
 		{
+			name: "Transfer DOT",
+			args: args{
+				platform: Platform{CoinIndex: coin.DOT},
+				srcTx: &Extrinsic{
+					Timestamp:          1607035338,
+					BlockNumber:        2742892,
+					CallModuleFunction: "transfer",
+					CallModule:         "balances",
+					Params:             "[{\"name\":\"dest\",\"type\":\"Address\",\"value\":\"deb1bb215d2188d0934e803473f02b61b7990ffaea63a533a9917d5707f74d35\",\"value_raw\":\"\"},{\"name\":\"value\",\"type\":\"Compact\\u003cBalance\\u003e\",\"value\":\"16694000000\",\"value_raw\":\"\"}]",
+					AccountId:          "13VELdVkrHf1UUH6TRYSuofJAHykL3MAw3sXG9HGR8YpgrBH",
+					Nonce:              1,
+					Hash:               "0x17f92e09994e6885007bfdf4a0a5026f667e69ae94547c5c89b03d647541025e",
+					Success:            true,
+					Fee:                "153000000",
+				},
+			},
+			wantTx: &blockatlas.Tx{
+				ID:       "0x17f92e09994e6885007bfdf4a0a5026f667e69ae94547c5c89b03d647541025e",
+				Coin:     354,
+				Date:     1607035338,
+				From:     "13VELdVkrHf1UUH6TRYSuofJAHykL3MAw3sXG9HGR8YpgrBH",
+				To:       "162zRoDpEXQVCpPgJcoMMKZK6P8M9Ntu4myZ9ZBbDz6mqBzt",
+				Fee:      "153000000",
+				Block:    2742892,
+				Status:   "completed",
+				Sequence: 1,
+				Meta: blockatlas.Transfer{
+					Value:    blockatlas.Amount("16694000000"),
+					Symbol:   "DOT",
+					Decimals: 10,
+				},
+			},
+		},
+		{
 			name: "Bond",
 			args: args{
+				platform: Platform{CoinIndex: coin.KSM},
 				srcTx: &Extrinsic{
 					Timestamp:          1577712822,
 					BlockNumber:        447444,
@@ -149,6 +187,7 @@ func TestNormalizeExtrinsic(t *testing.T) {
 		{
 			name: "Error Params",
 			args: args{
+				platform: Platform{CoinIndex: coin.KSM},
 				srcTx: &Extrinsic{
 					Timestamp:          1577712822,
 					BlockNumber:        447444,
@@ -166,6 +205,7 @@ func TestNormalizeExtrinsic(t *testing.T) {
 		{
 			name: "set_heads",
 			args: args{
+				platform: Platform{CoinIndex: coin.KSM},
 				srcTx: &Extrinsic{
 					Timestamp:          1577712822,
 					BlockNumber:        447444,
@@ -183,7 +223,7 @@ func TestNormalizeExtrinsic(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if gotTx := platform.NormalizeExtrinsic(tt.args.srcTx); !reflect.DeepEqual(gotTx, tt.wantTx) {
+			if gotTx := tt.args.platform.NormalizeExtrinsic(tt.args.srcTx); !reflect.DeepEqual(gotTx, tt.wantTx) {
 				t.Errorf("Normalize() = %v\n Want = %v", gotTx, tt.wantTx)
 			}
 		})
@@ -191,9 +231,10 @@ func TestNormalizeExtrinsic(t *testing.T) {
 }
 
 func TestNormalizeAddress(t *testing.T) {
-	platform := Platform{CoinIndex: coin.KSM}
+
 	type args struct {
-		valueRaw string
+		platform Platform
+		value    string
 	}
 	tests := []struct {
 		name        string
@@ -203,21 +244,31 @@ func TestNormalizeAddress(t *testing.T) {
 		{
 			name: "KSM address 1",
 			args: args{
-				valueRaw: "ffe8e1b8de72651640e302b62dad1f643ec8b65a3647a7409b2896634db599ed60",
+				platform: Platform{CoinIndex: coin.KSM},
+				value:    "e8e1b8de72651640e302b62dad1f643ec8b65a3647a7409b2896634db599ed60",
 			},
 			wantAddress: "HqfgRXDgCQcV8KAuTAPGuA1r91iEzinmmNBPkR9kiKhifJq",
 		},
 		{
 			name: "KSM address 2",
 			args: args{
-				valueRaw: "ffe0b3fcccfe0283cc0f8c105c68b5690aab8c5c1692a868e55eaca836c8779085",
+				platform: Platform{CoinIndex: coin.KSM},
+				value:    "e0b3fcccfe0283cc0f8c105c68b5690aab8c5c1692a868e55eaca836c8779085",
 			},
 			wantAddress: "HewiDTQv92L2bVtkziZC8ASxrFUxr6ajQ62RXAnwQ8FDVmg",
+		},
+		{
+			name: "DOT address",
+			args: args{
+				platform: Platform{CoinIndex: coin.DOT},
+				value:    "e0b3fcccfe0283cc0f8c105c68b5690aab8c5c1692a868e55eaca836c8779085",
+			},
+			wantAddress: "165dCENc9ZGsiUgxwvxWSKdbfsxtrUqYMWymC9tC1gwGfATj",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if address := platform.NormalizeAddress(tt.args.valueRaw); address != tt.wantAddress {
+			if address := tt.args.platform.NormalizeAddress(tt.args.value); address != tt.wantAddress {
 				t.Errorf("Normalize() = %v\n Want = %v", address, tt.wantAddress)
 			}
 		})

@@ -3,7 +3,6 @@ package polkadot
 import (
 	"encoding/hex"
 	"encoding/json"
-	"fmt"
 	"strings"
 
 	"github.com/trustwallet/golibs/numbers"
@@ -74,54 +73,44 @@ func (p *Platform) NormalizeExtrinsic(srcTx *Extrinsic) *blockatlas.Tx {
 		return nil
 	}
 
-	var status blockatlas.Status
+	// only supports balances::transfer
+	if srcTx.CallModule != ModuleBalances || srcTx.CallModuleFunction != ModuleFunctionTransfer {
+		return nil
+	}
+
+	// check data types
+	if len(datas) < 2 || datas[0].Type != "Address" || datas[1].Type != "Compact<Balance>" {
+		return nil
+	}
+
+	to := p.NormalizeAddress(datas[0].Value)
+	if len(to) == 0 {
+		return nil
+	}
+
+	status := blockatlas.StatusCompleted
 	if !srcTx.Success {
 		status = blockatlas.StatusError
-	} else {
-		status = blockatlas.StatusCompleted
 	}
 
 	result := blockatlas.Tx{
 		ID:       srcTx.Hash,
 		Coin:     p.Coin().ID,
+		From:     srcTx.AccountId,
+		To:       to,
+		Fee:      blockatlas.Amount(srcTx.Fee),
 		Date:     int64(srcTx.Timestamp),
 		Block:    srcTx.BlockNumber,
 		Status:   status,
 		Sequence: srcTx.Nonce,
-	}
 
-	if len(datas) < 2 {
-		return nil
-	}
-
-	value := "0"
-	to := ""
-	for _, data := range datas {
-		vf, ok := data.Value.(float64)
-		if ok {
-			value = fmt.Sprintf("%.0f", vf)
-			continue
-		}
-		toAddr := p.NormalizeAddress(data.ValueRaw)
-		if len(toAddr) > 0 {
-			to = toAddr
-		}
-	}
-	decimals := p.Coin().Decimals
-	if srcTx.CallModule == ModuleBalances &&
-		srcTx.CallModuleFunction == ModuleFunctionTransfer {
-		result.From = srcTx.AccountId
-		result.To = to
-		result.Fee = blockatlas.Amount(FeeTransfer)
-		result.Meta = blockatlas.Transfer{
-			Value:    blockatlas.Amount(value),
+		Meta: blockatlas.Transfer{
+			Value:    blockatlas.Amount(datas[1].Value),
 			Symbol:   p.Coin().Symbol,
-			Decimals: decimals,
-		}
-	} else {
-		// not supported yet
-		return nil
+			Decimals: p.Coin().Decimals,
+		},
 	}
+
 	return &result
 }
 
@@ -131,7 +120,7 @@ func (p *Platform) NormalizeAddress(valueRaw string) string {
 		return ""
 	}
 	if network, ok := NetworkByteMap[p.Coin().Symbol]; ok && len(bytes) > 0 {
-		return PublicKeyToAddress(bytes[1:], network)
+		return PublicKeyToAddress(bytes[:], network)
 	}
 	return ""
 }
