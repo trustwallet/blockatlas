@@ -207,9 +207,6 @@ harmony:
 kava:
   api: https://kava.data.kava.io
 
-kusama:
-  api: https://kusama.subscan.io/api
-
 polkadot:
   api: https://polkadot.subscan.io/api
 
