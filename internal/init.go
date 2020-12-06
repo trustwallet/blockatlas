@@ -4,7 +4,8 @@ import (
 	"flag"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
-	"github.com/trustwallet/blockatlas/api/middleware"
+
+	"github.com/gin-contrib/cors"
 	"github.com/trustwallet/blockatlas/config"
 	"github.com/trustwallet/blockatlas/mq"
 	"go.elastic.co/apm/module/apmgin"
@@ -42,10 +43,11 @@ func InitConfig(confPath string) {
 func InitEngine(ginMode string) *gin.Engine {
 	gin.SetMode(ginMode)
 	engine := gin.New()
-	engine.Use(middleware.CORSMiddleware())
+
+	engine.Use(cors.Default())
+
 	engine.Use(apmgin.Middleware(engine))
 	engine.Use(gin.Logger())
-	engine.OPTIONS("/*path", middleware.CORSMiddleware())
 
 	return engine
 }

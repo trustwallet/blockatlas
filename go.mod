@@ -15,6 +15,7 @@ require (
 	github.com/deckarep/golang-set v1.7.1
 	github.com/docker/go-connections v0.4.0 // indirect
 	github.com/docker/go-units v0.4.0 // indirect
+	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-gonic/gin v1.6.3
 	github.com/gotestyourself/gotestyourself v2.2.0+incompatible // indirect
 	github.com/imroc/req v0.3.0
