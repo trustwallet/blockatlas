@@ -13,7 +13,6 @@ import (
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"gorm.io/plugin/dbresolver"
 )
 
 type Instance struct {
@@ -25,19 +24,15 @@ type Instance struct {
 // "Depending on the number of variables included, 2000 to 3000 is recommended."
 const batchCount = 3000
 
-func New(uri, readUri string, logMode bool) (*Instance, error) {
-	cfg := &gorm.Config{Logger: logger.Default.LogMode(logger.Silent)}
-
-	db, err := gorm.Open(postgres.Open(uri), cfg)
-	if err != nil {
-		return nil, err
+func New(url string, log bool) (*Instance, error) {
+	var logMode logger.LogLevel
+	if log {
+		logMode = logger.Info
 	}
 
-	err = db.Use(dbresolver.Register(dbresolver.Config{
-		Replicas: []gorm.Dialector{
-			postgres.Open(readUri),
-		},
-	}))
+	cfg := &gorm.Config{Logger: logger.Default.LogMode(logMode)}
+
+	db, err := gorm.Open(postgres.Open(url), cfg)
 	if err != nil {
 		return nil, err
 	}

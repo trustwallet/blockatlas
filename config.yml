@@ -31,8 +31,6 @@ observer:
 
 postgres:
   url: postgresql://user:pass@localhost/blockatlas?sslmode=disable
-  read:
-    url: postgresql://user:pass@localhost/blockatlas?sslmode=disable
   log: false
 
 # [BNB] Binance DEX: https://www.binance.org/
