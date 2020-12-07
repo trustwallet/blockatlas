@@ -54,7 +54,7 @@ type Stream struct {
 
 type Consumer interface {
 	GetQueue() string
-	Callback(msg amqp.Delivery)
+	Callback(msg amqp.Delivery) error
 }
 
 func New(uri string, prefetchCount int, ctx context.Context) (client *Client, err error) {
@@ -175,6 +175,7 @@ func (c *Client) run() {
 
 func (c *Client) Push(queue Queue, data []byte) error {
 	if !c.isConnected {
+		// TODO: Is should wait connect to RabbitMQ or not?
 		return errors.New("failed to push push: not connected")
 	}
 	for {
@@ -188,7 +189,6 @@ func (c *Client) Push(queue Queue, data []byte) error {
 		}
 		select {
 		case confirm := <-c.notifyConfirm:
-			// TODO: Two different Ack on read and write
 			if confirm.Ack {
 				return nil
 			}
@@ -256,8 +256,9 @@ func (s *Stream) Connect(cancelCtx context.Context) {
 }
 
 func (s *Stream) delivery(msg amqp.Delivery) {
-	defer ack(s.consumer.GetQueue(), msg)
-	s.consumer.Callback(msg)
+	if s.consumer.Callback(msg) == nil {
+		ack(s.consumer.GetQueue(), msg)
+	}
 }
 
 func ack(queue string, msg amqp.Delivery) {
