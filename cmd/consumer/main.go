@@ -13,7 +13,7 @@ import (
 	"github.com/trustwallet/blockatlas/config"
 	"github.com/trustwallet/blockatlas/db"
 	"github.com/trustwallet/blockatlas/internal"
-	"github.com/trustwallet/blockatlas/new_mq"
+	"github.com/trustwallet/blockatlas/mq"
 )
 
 const (

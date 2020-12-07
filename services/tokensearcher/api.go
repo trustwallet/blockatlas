@@ -26,11 +26,12 @@ type (
 type Instance struct {
 	database *db.Instance
 	apis     map[uint]blockatlas.TokensAPI
-	queue    mq.Queue
+	mqClient *new_mq.Client
+	queue    new_mq.Queue
 }
 
-func Init(database *db.Instance, apis map[uint]blockatlas.TokensAPI, queue mq.Queue) Instance {
-	return Instance{database: database, apis: apis, queue: queue}
+func Init(database *db.Instance, apis map[uint]blockatlas.TokensAPI, mqClient *new_mq.Client, queue new_mq.Queue) Instance {
+	return Instance{database: database, apis: apis, mqClient: mqClient, queue: queue}
 }
 
 func (i Instance) HandleTokensRequest(request Request, ctx context.Context) (map[string][]string, error) {
@@ -59,7 +60,7 @@ func (i Instance) HandleTokensRequest(request Request, ctx context.Context) (map
 	assetsFromNodes := make(AssetsByAddress)
 	if len(unsubscribedAddresses) != 0 {
 		assetsFromNodes = getAssetsByAddressFromNodes(unsubscribedAddresses, i.apis)
-		err = publishNewAddressesToQueue(i.queue, assetsFromNodes)
+		err = i.publishNewAddressesToQueue(assetsFromNodes)
 		if err != nil {
 			log.Error(err)
 		}
@@ -165,29 +166,29 @@ func fetchAssetsByAddresses(tokenAPI blockatlas.TokensAPI, addresses []string, r
 	tWg.Wait()
 }
 
-func publishNewAddressesToQueue(queue mq.Queue, message AssetsByAddress) error {
+func (i *Instance) publishNewAddressesToQueue(message AssetsByAddress) error {
 	log.Info("Published to queue")
 	body, err := json.Marshal(message)
 	log.Info(string(body))
 	if err != nil {
 		return err
 	}
-	return queue.Publish(body)
+	return i.mqClient.Push(i.queue, body)
 }
 
-func getAssetsToResponse(dbAssetsMap, nodesAssetsMap AssetsByAddress, addresses []string) map[string][]string {
+func getAssetsToResponse(dbAssetsMap, nodesAssetsMap AssetsByAddress, assetAddresses []string) map[string][]string {
 	result := make(map[string][]string)
-	for _, address := range addresses {
-		dbAddresses, ok := dbAssetsMap[address]
+	for _, assetAddress := range assetAddresses {
+		dbAddresses, ok := dbAssetsMap[assetAddress]
 		if !ok {
-			nodesAssets, ok := nodesAssetsMap[address]
+			nodesAssets, ok := nodesAssetsMap[assetAddress]
 			if !ok {
 				continue
 			}
-			result[address] = models.AssetIDs(nodesAssets)
+			result[assetAddress] = models.AssetIDs(nodesAssets)
 			continue
 		}
-		result[address] = models.AssetIDs(dbAddresses)
+		result[assetAddress] = models.AssetIDs(dbAddresses)
 	}
 	return result
 }

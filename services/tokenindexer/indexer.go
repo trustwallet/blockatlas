@@ -6,7 +6,7 @@ import (
 	"github.com/streadway/amqp"
 	"github.com/trustwallet/blockatlas/db"
 	"github.com/trustwallet/blockatlas/db/models"
-	"github.com/trustwallet/blockatlas/new_mq"
+	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/services/notifier"
 	"go.elastic.co/apm"
@@ -18,43 +18,32 @@ type TokenIndexerConsumer struct {
 	Database *db.Instance
 }
 
-func (cons *TokenIndexerConsumer) GetQueue() string {
+func (c *TokenIndexerConsumer) GetQueue() string {
 	return string(new_mq.RawTransactionsTokenIndexer)
 }
 
-func (cons *TokenIndexerConsumer) Callback(msg amqp.Delivery) {
-	RunTokenIndexer(cons.Database, msg)
-}
-
-func RunTokenIndexer(database *db.Instance, delivery amqp.Delivery) {
+func (c *TokenIndexerConsumer) Callback(msg amqp.Delivery) error {
 	tx := apm.DefaultTracer.StartTransaction("RunTokenIndexer", "app")
 	defer tx.End()
-	defer func() {
-		if err := delivery.Ack(false); err != nil {
-			log.WithFields(log.Fields{"service": TokenIndexer}).Error(err)
-		}
-	}()
 	ctx := apm.ContextWithTransaction(context.Background(), tx)
 
-	txs, err := notifier.GetTransactionsFromDelivery(delivery, TokenIndexer, ctx)
+	txs, err := notifier.GetTransactionsFromDelivery(msg, TokenIndexer, ctx)
 	if err != nil {
 		log.WithFields(log.Fields{"service": TokenIndexer}).Error("failed to get transactions", err)
-		if err := delivery.Ack(false); err != nil {
-			log.WithFields(log.Fields{"service": TokenIndexer}).Error(err)
-		}
-		return
+		return err
 	}
 	if len(txs) == 0 {
-		return
+		return nil
 	}
 
 	assets := GetAssetsFromTransactions(txs)
-	err = database.AddNewAssets(assets, ctx)
+	err = c.Database.AddNewAssets(assets, ctx)
 	if err != nil {
 		log.WithFields(log.Fields{"service": TokenIndexer}).Error("failed to add assets", err)
-		return
+		return err
 	}
 	log.Info("------------------------------------------------------------")
+	return nil
 }
 
 func GetAssetsFromTransactions(txs []blockatlas.Tx) []models.Asset {

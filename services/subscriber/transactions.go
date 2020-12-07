@@ -6,7 +6,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/streadway/amqp"
 	"github.com/trustwallet/blockatlas/db"
-	"github.com/trustwallet/blockatlas/new_mq"
+	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"go.elastic.co/apm"
 	"strconv"
@@ -27,24 +27,20 @@ type TransactionSubscriberConsumer struct {
 	Database *db.Instance
 }
 
-func (cons *TransactionSubscriberConsumer) GetQueue() string {
+func (c *TransactionSubscriberConsumer) GetQueue() string {
 	return string(new_mq.Subscriptions)
 }
 
-func (cons *TransactionSubscriberConsumer) Callback(msg amqp.Delivery) {
-	RunTransactionsSubscriber(cons.Database, msg)
-}
-
-func RunTransactionsSubscriber(database *db.Instance, delivery amqp.Delivery) {
+func (c *TransactionSubscriberConsumer) Callback(msg amqp.Delivery) error {
 	tx := apm.DefaultTracer.StartTransaction("RunTransactionsSubscriber", "app")
 	defer tx.End()
 
 	ctx := apm.ContextWithTransaction(context.Background(), tx)
 
 	var event blockatlas.SubscriptionEvent
-	err := json.Unmarshal(delivery.Body, &event)
+	err := json.Unmarshal(msg.Body, &event)
 	if err != nil {
-		return
+		return err
 	}
 
 	subscriptions := event.ParseSubscriptions(event.Subscriptions)
@@ -53,7 +49,7 @@ func RunTransactionsSubscriber(database *db.Instance, delivery amqp.Delivery) {
 		allSubs := ToSubscriptionData(subscriptions)
 		batchedSubs := toBatch(allSubs, batchLimit)
 		for _, subs := range batchedSubs {
-			err := database.AddSubscriptionsForNotifications(subs, ctx)
+			err := c.Database.AddSubscriptionsForNotifications(subs, ctx)
 			if err != nil {
 				log.WithFields(
 					log.Fields{"service": Notifications,
@@ -74,7 +70,7 @@ func RunTransactionsSubscriber(database *db.Instance, delivery amqp.Delivery) {
 		allSubs := ToSubscriptionData(subscriptions)
 		batchedSubs := toBatch(allSubs, batchLimit)
 		for _, subs := range batchedSubs {
-			err := database.DeleteSubscriptionsForNotifications(subs, ctx)
+			err := c.Database.DeleteSubscriptionsForNotifications(subs, ctx)
 			if err != nil {
 				log.WithFields(
 					log.Fields{"service": Notifications,
@@ -91,18 +87,7 @@ func RunTransactionsSubscriber(database *db.Instance, delivery amqp.Delivery) {
 			},
 		).Info("Added")
 	}
-
-	defer func() {
-		err = delivery.Ack(false)
-		if err != nil {
-			log.WithFields(
-				log.Fields{"service": Notifications,
-					"operation":         event.Operation,
-					"subscriptions_len": len(subscriptions),
-				},
-			).Error(err)
-		}
-	}()
+	return nil
 }
 
 func ToSubscriptionData(sub []blockatlas.Subscription) []string {

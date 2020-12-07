@@ -7,7 +7,7 @@ import (
 	"github.com/streadway/amqp"
 	"github.com/trustwallet/blockatlas/db"
 	"github.com/trustwallet/blockatlas/db/models"
-	"github.com/trustwallet/blockatlas/new_mq"
+	"github.com/trustwallet/blockatlas/mq"
 	"go.elastic.co/apm"
 )
 
@@ -17,34 +17,27 @@ type TokenSubscriberConsumer struct {
 	Database *db.Instance
 }
 
-func (cons *TokenSubscriberConsumer) GetQueue() string {
+func (c *TokenSubscriberConsumer) GetQueue() string {
 	return string(new_mq.TokensRegistration)
 }
 
-func (cons *TokenSubscriberConsumer) Callback(msg amqp.Delivery) {
-	RunTokensSubscriber(cons.Database, msg)
-}
-
-func RunTokensSubscriber(database *db.Instance, delivery amqp.Delivery) {
+func (c *TokenSubscriberConsumer) Callback(msg amqp.Delivery) error {
 	tx := apm.DefaultTracer.StartTransaction("RunTokensSubscriber", "app")
 	defer tx.End()
 
 	ctx := apm.ContextWithTransaction(context.Background(), tx)
 	event := make(map[string][]models.Asset)
-	if err := json.Unmarshal(delivery.Body, &event); err != nil {
-		if err := delivery.Ack(false); err != nil {
-			log.Fatal(err, err)
-		}
+	if err := json.Unmarshal(msg.Body, &event); err != nil {
+		return err
 	}
 
 	for address, assets := range event {
-		if err := database.AddAssociationsForAddress(address, assets, ctx); err != nil {
+		if err := c.Database.AddAssociationsForAddress(address, assets, ctx); err != nil {
 			log.Error("Failed to AddAssociationsForAddress: " + err.Error())
+			return err
 		}
 	}
 	log.WithFields(log.Fields{"service": Tokens, "count": len(event)}).Info("Subscribed")
-	if err := delivery.Ack(false); err != nil {
-		log.Fatal(err, err)
-	}
 	log.Info("------------------------------------------------------------")
+	return nil
 }

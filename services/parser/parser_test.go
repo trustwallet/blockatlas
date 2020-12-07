@@ -3,12 +3,12 @@ package parser
 import (
 	"context"
 	"errors"
+	"github.com/trustwallet/blockatlas/mq"
 	"reflect"
 	"testing"
 	"time"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/coin"
 )
@@ -48,7 +48,7 @@ func TestFetchBlocks(t *testing.T) {
 		Ctx:                    nil,
 		Api:                    getMockedBlockAPI(),
 		TransactionsQueue:      "",
-		TokenTransactionsQueue: []mq.Queue{""},
+		TokenTransactionsQueue: []new_mq.Queue{""},
 		ParsingBlocksInterval:  0,
 		FetchBlocksTimeout:     0,
 		BacklogCount:           0,

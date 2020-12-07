@@ -5,7 +5,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/streadway/amqp"
 	"github.com/trustwallet/blockatlas/db"
-	"github.com/trustwallet/blockatlas/new_mq"
+	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/services/notifier"
 	"go.elastic.co/apm"
 	"strconv"
@@ -17,28 +17,22 @@ type TokenSearcherConsumer struct {
 	Database *db.Instance
 }
 
-func (cons *TokenSearcherConsumer) GetQueue() string {
+func (c *TokenSearcherConsumer) GetQueue() string {
 	return string(new_mq.RawTransactionsSearcher)
 }
 
-func (cons *TokenSearcherConsumer) Callback(msg amqp.Delivery) {
-	Run(cons.Database, msg)
-}
-
-func Run(database *db.Instance, delivery amqp.Delivery) {
+func (c *TokenSearcherConsumer) Callback(msg amqp.Delivery) error {
 	tx := apm.DefaultTracer.StartTransaction("RunNotifier", "app")
 	defer tx.End()
 	ctx := apm.ContextWithTransaction(context.Background(), tx)
 
-	txs, err := notifier.GetTransactionsFromDelivery(delivery, TokenSearcher, ctx)
+	txs, err := notifier.GetTransactionsFromDelivery(msg, TokenSearcher, ctx)
 	if err != nil {
 		log.Error("failed to get transactions", err)
-		if err := delivery.Ack(false); err != nil {
-			log.Error(err)
-		}
+		return err
 	}
 	if len(txs) == 0 {
-		return
+		return nil
 	}
 	coinID := strconv.Itoa(int(txs[0].Coin))
 	var addresses []string
@@ -49,10 +43,10 @@ func Run(database *db.Instance, delivery amqp.Delivery) {
 		addresses[i] = coinID + "_" + addresses[i]
 	}
 
-	associationsFromTransactions, err := database.GetAssociationsByAddresses(notifier.ToUniqueAddresses(addresses), ctx)
+	associationsFromTransactions, err := c.Database.GetAssociationsByAddresses(notifier.ToUniqueAddresses(addresses), ctx)
 	if err != nil {
 		log.Error(err)
-		return
+		return err
 	}
 	log.WithFields(log.Fields{"service": TokenSearcher}).
 		Info("AssociationsFromTransactions " + strconv.Itoa(len(associationsFromTransactions)))
@@ -61,14 +55,11 @@ func Run(database *db.Instance, delivery amqp.Delivery) {
 
 	log.WithFields(log.Fields{"service": TokenSearcher}).
 		Info("AssociationsToAdd " + strconv.Itoa(len(associationsToAdd)))
-	err = database.UpdateAssociationsForExistingAddresses(associationsToAdd, ctx)
+	err = c.Database.UpdateAssociationsForExistingAddresses(associationsToAdd, ctx)
 	if err != nil {
 		log.Error(err)
-		return
-	}
-
-	if err := delivery.Ack(false); err != nil {
-		log.Error(err)
+		return err
 	}
 	log.Info("------------------------------------------------------------")
+	return nil
 }

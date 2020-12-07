@@ -6,7 +6,6 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas/api/middleware"
 	"github.com/trustwallet/blockatlas/config"
-	"github.com/trustwallet/blockatlas/mq"
 	"go.elastic.co/apm/module/apmgin"
 
 	"path/filepath"
@@ -49,12 +48,4 @@ func InitEngine(ginMode string) *gin.Engine {
 	engine.OPTIONS("/*path", middleware.CORSMiddleware())
 
 	return engine
-}
-
-func InitRabbitMQ(rabbitURI string, prefetchCount int) {
-	err := mq.Init(rabbitURI)
-	if err != nil {
-		log.WithFields(log.Fields{"uri": rabbitURI}).Fatal("Failed to init Rabbit MQ")
-	}
-	mq.PrefetchCount = prefetchCount
 }

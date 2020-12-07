@@ -9,6 +9,7 @@ import (
 
 var (
 	mqResource *dockertest.Resource
+	mqClient   *new_mq.Client
 )
 
 func runMQContainer() error {
@@ -24,7 +25,8 @@ func runMQContainer() error {
 	}
 
 	if err = pool.Retry(func() error {
-		return mq.Init(fmt.Sprintf("amqp://localhost:%s", mqResource.GetPort("5672/tcp")))
+		mqClient, err = new_mq.New(fmt.Sprintf("amqp://localhost:%s", mqResource.GetPort("5672/tcp")), 1, nil)
+		return err
 	}); err != nil {
 		return err
 	}
@@ -32,6 +34,6 @@ func runMQContainer() error {
 }
 
 func stopMQContainer() error {
-	mq.Close()
+	mqClient.Close()
 	return mqResource.Close()
 }

@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"github.com/trustwallet/blockatlas/mq"
+	"github.com/trustwallet/blockatlas/services/subscriber"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -11,7 +13,6 @@ import (
 	"github.com/trustwallet/blockatlas/db"
 	_ "github.com/trustwallet/blockatlas/docs"
 	"github.com/trustwallet/blockatlas/internal"
-	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/platform"
 	"github.com/trustwallet/blockatlas/services/tokenindexer"
 	"github.com/trustwallet/blockatlas/services/tokensearcher"
@@ -30,6 +31,7 @@ var (
 	database       *db.Instance
 	ts             tokensearcher.Instance
 	ti             tokenindexer.Instance
+	mqClient       *new_mq.Client
 )
 
 func init() {
@@ -49,22 +51,26 @@ func init() {
 	}
 	go database.RestoreConnectionWorker(ctx, time.Second*10, config.Default.Postgres.URL)
 
-	internal.InitRabbitMQ(
+	mqClient, _ = new_mq.New(
 		config.Default.Observer.Rabbitmq.URL,
 		config.Default.Observer.Rabbitmq.Consumer.PrefetchCount,
+		ctx,
 	)
+	mqClient.AddPublish(&subscriber.TokenSubscriberConsumer{
+		Database: database,
+	})
+	mqClient.AddPublish(&subscriber.TokenSubscriberConsumer{
+		Database: database,
+	})
+	mqClient.AddPublish(&subscriber.TokenSubscriberConsumer{
+		Database: database,
+	})
+	mqClient.AddPublish(&tokenindexer.TokenIndexerConsumer{
+		Database: database,
+	})
 
-	if err := mq.TokensRegistration.Declare(); err != nil {
-		log.Fatal(err)
-	}
-	if err := mq.RawTransactionsTokenIndexer.Declare(); err != nil {
-		log.Fatal(err)
-	}
-
-	ts = tokensearcher.Init(database, platform.TokensAPIs, mq.TokensRegistration)
+	ts = tokensearcher.Init(database, platform.TokensAPIs, mqClient, new_mq.TokensRegistration)
 	ti = tokenindexer.Init(database)
-
-	go mq.FatalWorker(time.Second * 10)
 }
 
 func main() {

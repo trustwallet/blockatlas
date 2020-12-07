@@ -7,7 +7,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/streadway/amqp"
 	"github.com/trustwallet/blockatlas/db"
-	"github.com/trustwallet/blockatlas/new_mq"
+	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/address"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/coin"
@@ -32,23 +32,16 @@ func (c *NotifierConsumer) GetQueue() string {
 	return string(new_mq.RawTransactions)
 }
 
-func (c *NotifierConsumer) Callback(msg amqp.Delivery) {
+func (c *NotifierConsumer) Callback(msg amqp.Delivery) error {
 	tx := apm.DefaultTracer.StartTransaction("RunNotifier", "app")
 	defer tx.End()
 	ctx := apm.ContextWithTransaction(context.Background(), tx)
-
-	defer func() {
-		if err := msg.Ack(false); err != nil {
-			log.Error(err)
-		}
-	}()
-
 	txs, err := GetTransactionsFromDelivery(msg, Notifier, ctx)
 	if err != nil {
 		log.Error("failed to get transactions", err)
 	}
 	if len(txs) < 1 {
-		return
+		return nil
 	}
 	allAddresses := make([]string, 0)
 	for _, tx := range txs {
@@ -60,7 +53,7 @@ func (c *NotifierConsumer) Callback(msg amqp.Delivery) {
 	}
 	subscriptionsDataList, err := c.Database.GetSubscriptionsForNotifications(addresses, ctx)
 	if err != nil || len(subscriptionsDataList) == 0 {
-		return
+		return nil
 	}
 
 	notifications := make([]TransactionNotification, 0)
@@ -79,6 +72,7 @@ func (c *NotifierConsumer) Callback(msg amqp.Delivery) {
 		publishNotificationBatch(c.MQClient, batch, ctx)
 	}
 	log.Info("------------------------------------------------------------")
+	return nil
 }
 
 func GetTransactionsFromDelivery(delivery amqp.Delivery, service string, ctx context.Context) (blockatlas.Txs, error) {
