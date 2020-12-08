@@ -215,6 +215,9 @@ type Configuration struct {
 	Filecoin struct {
 		API string `mapstructure:"api"`
 	} `mapstructure:"filecoin"`
+	Sentry struct {
+		DSN string `mapstructure:"dsn"`
+	} `mapstructure:"sentry"`
 }
 
 var Default Configuration
