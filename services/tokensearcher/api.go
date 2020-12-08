@@ -3,15 +3,16 @@ package tokensearcher
 import (
 	"context"
 	"encoding/json"
+	"strconv"
+	"sync"
+	"time"
+
 	log "github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas/db"
 	"github.com/trustwallet/blockatlas/db/models"
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/address"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"strconv"
-	"sync"
-	"time"
 )
 
 type (
@@ -156,7 +157,11 @@ func fetchAssetsByAddresses(tokenAPI blockatlas.TokensAPI, addresses []string, r
 			defer tWg.Done()
 			tokens, err := tokenAPI.GetTokenListByAddress(address)
 			if err != nil {
-				log.WithFields(log.Fields{"coin": tokenAPI.Coin().Handle, "address": address}).Error("Fetch GetTokenListByAddress", err)
+				log.WithFields(log.Fields{
+					"coin":    tokenAPI.Coin().Handle,
+					"address": address,
+					"error":   err,
+				}).Error("Fetch GetTokenListByAddress for: ", tokenAPI.Coin().Handle)
 				return
 			}
 			result.UpdateAssetsByAddress(tokens, int(tokenAPI.Coin().ID), address)
