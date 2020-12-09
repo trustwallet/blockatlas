@@ -11,6 +11,7 @@ require (
 	github.com/Nvveen/Gotty v0.0.0-20120604004816-cd527374f1e5 // indirect
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751
 	github.com/btcsuite/btcutil v1.0.2
+	github.com/cenkalti/backoff v2.2.1+incompatible // indirect
 	github.com/containerd/continuity v0.0.0-20201204194424-b0f312dbb49a // indirect
 	github.com/deckarep/golang-set v1.7.1
 	github.com/docker/go-connections v0.4.0 // indirect
@@ -32,7 +33,7 @@ require (
 	github.com/swaggo/gin-swagger v1.3.0
 	github.com/swaggo/swag v1.6.9
 	github.com/trustwallet/golibs v0.0.17
-	github.com/trustwallet/golibs-networking v0.0.3
+	github.com/trustwallet/golibs-networking v0.0.5
 	go.elastic.co/apm v1.9.0
 	go.elastic.co/apm/module/apmgin v1.9.0
 	go.elastic.co/apm/module/apmhttp v1.9.0
