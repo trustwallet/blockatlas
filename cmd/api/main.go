@@ -4,6 +4,8 @@ import (
 	"context"
 	"time"
 
+	"github.com/trustwallet/golibs-networking/middleware"
+
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas/api"
@@ -35,13 +37,18 @@ var (
 func init() {
 	port, confPath = internal.ParseArgs(defaultPort, defaultConfigPath)
 	ctx, cancel = context.WithCancel(context.Background())
+	var err error
 
 	internal.InitConfig(confPath)
+
+	err = middleware.SetupSentry(config.Default.Sentry.DSN)
+	if err != nil {
+		log.Error(err)
+	}
 
 	engine = internal.InitEngine(config.Default.Gin.Mode)
 	platform.Init(config.Default.Platform)
 
-	var err error
 	database, err = db.New(config.Default.Postgres.URL, config.Default.Postgres.Log)
 	if err != nil {
 		log.Fatal(err)

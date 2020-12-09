@@ -222,3 +222,6 @@ filecoin:
   # bsc:
   # api: <blockbook api>
   # rpc: <rpc>
+
+sentry:
+  dsn: ""
