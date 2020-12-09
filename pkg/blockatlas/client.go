@@ -5,7 +5,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"go.elastic.co/apm/module/apmhttp"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -101,9 +100,7 @@ func (r *Request) Execute(method string, url string, body io.Reader, result inte
 		req.Header.Set(key, value)
 	}
 
-	c := apmhttp.WrapClient(r.HttpClient)
-
-	res, err := c.Do(req.WithContext(ctx))
+	res, err := r.HttpClient.Do(req)
 	if err != nil {
 		return err
 	}

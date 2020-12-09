@@ -1,14 +1,12 @@
 package notifier
 
 import (
-	"context"
+	"strconv"
+
 	log "github.com/sirupsen/logrus"
 	"github.com/streadway/amqp"
 	"github.com/trustwallet/blockatlas/db"
 	"github.com/trustwallet/blockatlas/pkg/address"
-	"strconv"
-
-	"go.elastic.co/apm"
 )
 
 const (
@@ -20,17 +18,13 @@ const (
 var MaxPushNotificationsBatchLimit uint = DefaultPushNotificationsBatchLimit
 
 func RunNotifier(database *db.Instance, delivery amqp.Delivery) {
-	tx := apm.DefaultTracer.StartTransaction("RunNotifier", "app")
-	defer tx.End()
-	ctx := apm.ContextWithTransaction(context.Background(), tx)
-
 	defer func() {
 		if err := delivery.Ack(false); err != nil {
 			log.WithFields(log.Fields{"service": Notifier}).Error(err)
 		}
 	}()
 
-	txs, err := GetTransactionsFromDelivery(delivery, Notifier, ctx)
+	txs, err := GetTransactionsFromDelivery(delivery, Notifier)
 	if err != nil {
 		log.Error("failed to get transactions", err)
 	}
@@ -48,7 +42,7 @@ func RunNotifier(database *db.Instance, delivery amqp.Delivery) {
 	if len(txs) < 1 {
 		return
 	}
-	subscriptionsDataList, err := database.GetSubscriptionsForNotifications(addresses, ctx)
+	subscriptionsDataList, err := database.GetSubscriptionsForNotifications(addresses)
 	if err != nil || len(subscriptionsDataList) == 0 {
 		return
 	}
@@ -59,14 +53,14 @@ func RunNotifier(database *db.Instance, delivery amqp.Delivery) {
 		if !ok {
 			continue
 		}
-		notificationsForAddress := buildNotificationsByAddress(ua, txs, ctx)
+		notificationsForAddress := buildNotificationsByAddress(ua, txs)
 		notifications = append(notifications, notificationsForAddress...)
 	}
 
-	batches := getNotificationBatches(notifications, MaxPushNotificationsBatchLimit, ctx)
+	batches := getNotificationBatches(notifications, MaxPushNotificationsBatchLimit)
 
 	for _, batch := range batches {
-		publishNotificationBatch(batch, ctx)
+		publishNotificationBatch(batch)
 	}
 	log.Info("------------------------------------------------------------")
 }

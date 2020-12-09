@@ -5,6 +5,9 @@ package observer_test
 import (
 	"context"
 	"encoding/json"
+	"testing"
+	"time"
+
 	"github.com/streadway/amqp"
 	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas/mq"
@@ -14,8 +17,6 @@ import (
 	"github.com/trustwallet/blockatlas/tests/integration/setup"
 	"github.com/trustwallet/golibs/coin"
 	"go.uber.org/atomic"
-	"testing"
-	"time"
 )
 
 var (
@@ -24,7 +25,7 @@ var (
 
 func TestFullFlow(t *testing.T) {
 	setup.CleanupPgContainer(database.Gorm)
-	err := database.AddSubscriptionsForNotifications([]string{"60_testAddress"}, context.Background())
+	err := database.AddSubscriptionsForNotifications([]string{"60_testAddress"})
 	assert.Nil(t, err)
 
 	ctx, cancel := context.WithCancel(context.Background())
