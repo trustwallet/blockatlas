@@ -1,10 +1,10 @@
 package tokenindexer
 
 import (
-	"context"
+	"time"
+
 	"github.com/trustwallet/blockatlas/db"
 	"github.com/trustwallet/blockatlas/db/models"
-	"time"
 )
 
 type Instance struct {
@@ -15,9 +15,9 @@ func Init(database *db.Instance) Instance {
 	return Instance{database: database}
 }
 
-func (i Instance) HandleNewTokensRequest(r Request, ctx context.Context) (Response, error) {
+func (i Instance) HandleNewTokensRequest(r Request) (Response, error) {
 	from := time.Unix(r.From, 0)
-	result, err := i.database.GetAssetsFrom(from, r.Coin, ctx)
+	result, err := i.database.GetAssetsFrom(from, r.Coin)
 	if err != nil {
 		return Response{}, err
 	}

@@ -53,7 +53,7 @@ func init() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	go database.RestoreConnectionWorker(ctx, time.Second*10, config.Default.Postgres.URL)
+	go database.RestoreConnectionWorker(time.Second*10, config.Default.Postgres.URL)
 
 	internal.InitRabbitMQ(
 		config.Default.Observer.Rabbitmq.URL,

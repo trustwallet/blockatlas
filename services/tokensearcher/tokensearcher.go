@@ -1,23 +1,18 @@
 package tokensearcher
 
 import (
-	"context"
+	"strconv"
+
 	log "github.com/sirupsen/logrus"
 	"github.com/streadway/amqp"
 	"github.com/trustwallet/blockatlas/db"
 	"github.com/trustwallet/blockatlas/services/notifier"
-	"go.elastic.co/apm"
-	"strconv"
 )
 
 const TokenSearcher = "TokenSearcher"
 
 func Run(database *db.Instance, delivery amqp.Delivery) {
-	tx := apm.DefaultTracer.StartTransaction("RunNotifier", "app")
-	defer tx.End()
-	ctx := apm.ContextWithTransaction(context.Background(), tx)
-
-	txs, err := notifier.GetTransactionsFromDelivery(delivery, TokenSearcher, ctx)
+	txs, err := notifier.GetTransactionsFromDelivery(delivery, TokenSearcher)
 	if err != nil {
 		log.Error("failed to get transactions", err)
 		if err := delivery.Ack(false); err != nil {
@@ -36,7 +31,7 @@ func Run(database *db.Instance, delivery amqp.Delivery) {
 		addresses[i] = coinID + "_" + addresses[i]
 	}
 
-	associationsFromTransactions, err := database.GetAssociationsByAddresses(notifier.ToUniqueAddresses(addresses), ctx)
+	associationsFromTransactions, err := database.GetAssociationsByAddresses(notifier.ToUniqueAddresses(addresses))
 	if err != nil {
 		log.Error(err)
 		return
@@ -48,7 +43,7 @@ func Run(database *db.Instance, delivery amqp.Delivery) {
 
 	log.WithFields(log.Fields{"service": TokenSearcher}).
 		Info("AssociationsToAdd " + strconv.Itoa(len(associationsToAdd)))
-	err = database.UpdateAssociationsForExistingAddresses(associationsToAdd, ctx)
+	err = database.UpdateAssociationsForExistingAddresses(associationsToAdd)
 	if err != nil {
 		log.Error(err)
 		return

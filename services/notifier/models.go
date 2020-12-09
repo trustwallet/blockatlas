@@ -1,9 +1,7 @@
 package notifier
 
 import (
-	"context"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"go.elastic.co/apm"
 )
 
 type TransactionNotification struct {
@@ -11,9 +9,7 @@ type TransactionNotification struct {
 	Result blockatlas.Tx              `json:"result"`
 }
 
-func getNotificationBatches(notifications []TransactionNotification, sizeUint uint, ctx context.Context) [][]TransactionNotification {
-	span, _ := apm.StartSpan(ctx, "getNotificationBatches", "app")
-	defer span.End()
+func getNotificationBatches(notifications []TransactionNotification, sizeUint uint) [][]TransactionNotification {
 	size := int(sizeUint)
 	resultLength := (len(notifications) + size - 1) / size
 	result := make([][]TransactionNotification, resultLength)
@@ -28,10 +24,7 @@ func getNotificationBatches(notifications []TransactionNotification, sizeUint ui
 	return result
 }
 
-func buildNotificationsByAddress(address string, txs blockatlas.Txs, ctx context.Context) []TransactionNotification {
-	span, _ := apm.StartSpan(ctx, "buildNotification", "app")
-	defer span.End()
-
+func buildNotificationsByAddress(address string, txs blockatlas.Txs) []TransactionNotification {
 	transactionsByAddress := toUniqueTransactions(findTransactionsByAddress(txs, address))
 
 	result := make([]TransactionNotification, 0, len(transactionsByAddress))

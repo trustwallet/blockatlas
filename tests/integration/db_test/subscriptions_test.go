@@ -3,12 +3,12 @@
 package db_test
 
 import (
-	"context"
+	"testing"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/services/subscriber"
 	"github.com/trustwallet/blockatlas/tests/integration/setup"
-	"testing"
 )
 
 func TestDb_AddSubscriptionsBulk(t *testing.T) {
@@ -19,9 +19,9 @@ func TestDb_AddSubscriptionsBulk(t *testing.T) {
 		subscriptions = append(subscriptions, "testAddrtestAddrtestAddrtestAddrtestAddrtestAddrtestAddrtestAddrtestAddrtestAddr")
 	}
 
-	assert.Nil(t, database.AddSubscriptionsForNotifications(subscriptions, context.Background()))
+	assert.Nil(t, database.AddSubscriptionsForNotifications(subscriptions))
 	for i := 0; i < 100; i++ {
-		s, err := database.GetSubscriptionsForNotifications([]string{"testAddrtestAddrtestAddrtestAddrtestAddrtestAddrtestAddrtestAddrtestAddrtestAddr"}, context.Background())
+		s, err := database.GetSubscriptionsForNotifications([]string{"testAddrtestAddrtestAddrtestAddrtestAddrtestAddrtestAddrtestAddrtestAddrtestAddr"})
 		assert.Nil(t, err)
 		assert.NotNil(t, s)
 	}
@@ -30,21 +30,21 @@ func TestDb_AddSubscriptionsBulk(t *testing.T) {
 func TestDb_AddSubscriptions(t *testing.T) {
 	setup.CleanupPgContainer(database.Gorm)
 
-	assert.Nil(t, database.AddSubscriptionsForNotifications([]string{"60_testAddr", "60_testAddr2", "60_testAddr3"}, context.Background()))
+	assert.Nil(t, database.AddSubscriptionsForNotifications([]string{"60_testAddr", "60_testAddr2", "60_testAddr3"}))
 
-	subs, err := database.GetSubscriptionsForNotifications([]string{"60_testAddr"}, context.Background())
+	subs, err := database.GetSubscriptionsForNotifications([]string{"60_testAddr"})
 	assert.Nil(t, err)
 	assert.NotNil(t, subs)
 	assert.Equal(t, 1, len(subs))
 	assert.Equal(t, "60_testAddr", subs[0].Address.Address)
 
-	subs, err = database.GetSubscriptionsForNotifications([]string{"60_testAddr2"}, context.Background())
+	subs, err = database.GetSubscriptionsForNotifications([]string{"60_testAddr2"})
 	assert.Nil(t, err)
 	assert.NotNil(t, subs)
 	assert.Equal(t, 1, len(subs))
 	assert.Equal(t, "60_testAddr2", subs[0].Address.Address)
 
-	subs, err = database.GetSubscriptionsForNotifications([]string{"60_testAddr3"}, context.Background())
+	subs, err = database.GetSubscriptionsForNotifications([]string{"60_testAddr3"})
 	assert.Nil(t, err)
 	assert.NotNil(t, subs)
 	assert.Equal(t, 1, len(subs))
@@ -81,32 +81,32 @@ func TestDb_FindSubscriptions(t *testing.T) {
 		Address: "ETCAddress",
 	})
 
-	assert.Nil(t, database.AddSubscriptionsForNotifications(subscriber.ToSubscriptionData(subscriptionsA), context.Background()))
+	assert.Nil(t, database.AddSubscriptionsForNotifications(subscriber.ToSubscriptionData(subscriptionsA)))
 
 	var subscriptionsB []blockatlas.Subscription
 
 	for _, sub := range subscriptionsA {
 		subscriptionsB = append(subscriptionsB, sub)
 	}
-	assert.Nil(t, database.AddSubscriptionsForNotifications(subscriber.ToSubscriptionData(subscriptionsB), context.Background()))
+	assert.Nil(t, database.AddSubscriptionsForNotifications(subscriber.ToSubscriptionData(subscriptionsB)))
 
-	returnedSubs, err := database.GetSubscriptionsForNotifications([]string{"60_etherAddress"}, context.Background())
+	returnedSubs, err := database.GetSubscriptionsForNotifications([]string{"60_etherAddress"})
 	assert.Nil(t, err)
 	assert.Equal(t, 1, len(returnedSubs))
 
-	returnedSubs, err = database.GetSubscriptionsForNotifications([]string{"714_binanceAddress"}, context.Background())
+	returnedSubs, err = database.GetSubscriptionsForNotifications([]string{"714_binanceAddress"})
 	assert.Nil(t, err)
 	assert.Equal(t, 1, len(returnedSubs))
 
-	returnedSubs, err = database.GetSubscriptionsForNotifications([]string{"144_XLMAddress"}, context.Background())
+	returnedSubs, err = database.GetSubscriptionsForNotifications([]string{"144_XLMAddress"})
 	assert.Nil(t, err)
 	assert.Equal(t, 1, len(returnedSubs))
 
-	returnedSubs, err = database.GetSubscriptionsForNotifications([]string{"148_AtomAddress"}, context.Background())
+	returnedSubs, err = database.GetSubscriptionsForNotifications([]string{"148_AtomAddress"})
 	assert.Nil(t, err)
 	assert.Equal(t, 1, len(returnedSubs))
 
-	returnedSubs, err = database.GetSubscriptionsForNotifications([]string{"61_ETCAddress"}, context.Background())
+	returnedSubs, err = database.GetSubscriptionsForNotifications([]string{"61_ETCAddress"})
 	assert.Nil(t, err)
 	assert.Equal(t, 1, len(returnedSubs))
 }
@@ -119,36 +119,36 @@ func TestDb_DeleteSubscriptions(t *testing.T) {
 		"144_testAddr3",
 	}
 
-	assert.Nil(t, database.AddSubscriptionsForNotifications(subscriptions, context.Background()))
+	assert.Nil(t, database.AddSubscriptionsForNotifications(subscriptions))
 
-	subs60, err := database.GetSubscriptionsForNotifications([]string{"60_testAddr"}, context.Background())
+	subs60, err := database.GetSubscriptionsForNotifications([]string{"60_testAddr"})
 	assert.Nil(t, err)
 	assert.NotNil(t, subs60)
 	assert.Equal(t, 1, len(subs60))
 
-	subs714, err := database.GetSubscriptionsForNotifications([]string{"714_testAddr2"}, context.Background())
+	subs714, err := database.GetSubscriptionsForNotifications([]string{"714_testAddr2"})
 	assert.Nil(t, err)
 	assert.NotNil(t, subs714)
 	assert.Equal(t, 1, len(subs714))
 
-	subs144, err := database.GetSubscriptionsForNotifications([]string{"144_testAddr3"}, context.Background())
+	subs144, err := database.GetSubscriptionsForNotifications([]string{"144_testAddr3"})
 	assert.Nil(t, err)
 	assert.NotNil(t, subs144)
 	assert.Equal(t, 1, len(subs144))
 
-	assert.Nil(t, database.DeleteSubscriptionsForNotifications([]string{subscriptions[0]}, context.Background()))
+	assert.Nil(t, database.DeleteSubscriptionsForNotifications([]string{subscriptions[0]}))
 
-	subs714N2, err := database.GetSubscriptionsForNotifications([]string{"714_testAddr2"}, context.Background())
+	subs714N2, err := database.GetSubscriptionsForNotifications([]string{"714_testAddr2"})
 	assert.Nil(t, err)
 	assert.NotNil(t, subs714N2)
 	assert.Equal(t, 1, len(subs714N2))
 
-	subs144N2, err := database.GetSubscriptionsForNotifications([]string{"144_testAddr3"}, context.Background())
+	subs144N2, err := database.GetSubscriptionsForNotifications([]string{"144_testAddr3"})
 	assert.Nil(t, err)
 	assert.NotNil(t, subs144N2)
 	assert.Equal(t, 1, len(subs144N2))
 
-	subs60N2, err := database.GetSubscriptionsForNotifications([]string{"60_testAddr"}, context.Background())
+	subs60N2, err := database.GetSubscriptionsForNotifications([]string{"60_testAddr"})
 	assert.Nil(t, err)
 	assert.Len(t, subs60N2, 0)
 }
@@ -164,9 +164,9 @@ func TestDb_DuplicateEntries(t *testing.T) {
 		})
 	}
 
-	assert.Nil(t, database.AddSubscriptionsForNotifications(subscriber.ToSubscriptionData(subscriptions), context.Background()))
+	assert.Nil(t, database.AddSubscriptionsForNotifications(subscriber.ToSubscriptionData(subscriptions)))
 
-	subs, err := database.GetSubscriptionsForNotifications([]string{"60_testAddr"}, context.Background())
+	subs, err := database.GetSubscriptionsForNotifications([]string{"60_testAddr"})
 	assert.Nil(t, err)
 	assert.NotNil(t, subs)
 	assert.Equal(t, 1, len(subs))
@@ -180,20 +180,20 @@ func TestDb_CreateDeleteCreate(t *testing.T) {
 		Address: "testAddr",
 	})
 
-	assert.Nil(t, database.AddSubscriptionsForNotifications(subscriber.ToSubscriptionData(subscriptions), context.Background()))
-	subs, err := database.GetSubscriptionsForNotifications([]string{"60_testAddr"}, context.Background())
+	assert.Nil(t, database.AddSubscriptionsForNotifications(subscriber.ToSubscriptionData(subscriptions)))
+	subs, err := database.GetSubscriptionsForNotifications([]string{"60_testAddr"})
 	assert.Nil(t, err)
 	assert.Equal(t, 1, len(subs))
 
-	assert.Nil(t, database.DeleteSubscriptionsForNotifications([]string{"60_testAddr"}, context.Background()))
+	assert.Nil(t, database.DeleteSubscriptionsForNotifications([]string{"60_testAddr"}))
 
-	subs2, err := database.GetSubscriptionsForNotifications([]string{"60_testAddr"}, context.Background())
+	subs2, err := database.GetSubscriptionsForNotifications([]string{"60_testAddr"})
 	assert.Nil(t, err)
 	assert.Equal(t, 0, len(subs2))
 
-	assert.Nil(t, database.AddSubscriptionsForNotifications(subscriber.ToSubscriptionData(subscriptions), context.Background()))
+	assert.Nil(t, database.AddSubscriptionsForNotifications(subscriber.ToSubscriptionData(subscriptions)))
 
-	subs3, err := database.GetSubscriptionsForNotifications([]string{"60_testAddr"}, context.Background())
+	subs3, err := database.GetSubscriptionsForNotifications([]string{"60_testAddr"})
 	assert.Nil(t, err)
 	assert.Equal(t, 1, len(subs3))
 }

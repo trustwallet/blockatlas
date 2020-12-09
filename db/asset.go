@@ -1,7 +1,6 @@
 package db
 
 import (
-	"context"
 	"encoding/json"
 	"time"
 	"unicode/utf8"
@@ -14,8 +13,7 @@ import (
 	"github.com/trustwallet/blockatlas/db/models"
 )
 
-func (i *Instance) AddNewAssets(assets []models.Asset, ctx context.Context) error {
-	db := i.Gorm.WithContext(ctx)
+func (i *Instance) AddNewAssets(assets []models.Asset) error {
 	if len(assets) == 0 {
 		return nil
 	}
@@ -24,7 +22,7 @@ func (i *Instance) AddNewAssets(assets []models.Asset, ctx context.Context) erro
 
 	var notInMemoryAssets []models.Asset
 	for _, a := range uniqueAssets {
-		_, err := i.MemoryGet(a.Asset, ctx)
+		_, err := i.MemoryGet(a.Asset)
 		if err != nil {
 			notInMemoryAssets = append(notInMemoryAssets, a)
 		}
@@ -33,13 +31,13 @@ func (i *Instance) AddNewAssets(assets []models.Asset, ctx context.Context) erro
 		return nil
 	}
 
-	existingAssets, err := i.GetAssetsByIDs(models.AssetIDs(notInMemoryAssets), ctx)
+	existingAssets, err := i.GetAssetsByIDs(models.AssetIDs(notInMemoryAssets))
 	if err != nil {
 		return err
 	}
 	if len(existingAssets) == 0 {
-		i.addToMemory(notInMemoryAssets, ctx)
-		return db.Clauses(clause.OnConflict{DoNothing: true}).Create(&notInMemoryAssets).Error
+		i.addToMemory(notInMemoryAssets)
+		return i.Gorm.Clauses(clause.OnConflict{DoNothing: true}).Create(&notInMemoryAssets).Error
 	}
 	allAssetsMap := make(map[string]models.Asset)
 	for _, ua := range notInMemoryAssets {
@@ -59,11 +57,11 @@ func (i *Instance) AddNewAssets(assets []models.Asset, ctx context.Context) erro
 	if len(newAssets) == 0 {
 		return nil
 	}
-	i.addToMemory(newAssets, ctx)
+	i.addToMemory(newAssets)
 
 	assetsBatch := assetsBatch(newAssets, batchCount)
 
-	return db.Transaction(func(tx *gorm.DB) error {
+	return i.Gorm.Transaction(func(tx *gorm.DB) error {
 		for _, na := range assetsBatch {
 			err := tx.Clauses(clause.OnConflict{DoNothing: true}).Create(&na).Error
 			if err != nil {
@@ -74,42 +72,42 @@ func (i *Instance) AddNewAssets(assets []models.Asset, ctx context.Context) erro
 	})
 }
 
-func (i *Instance) addToMemory(newAssets []models.Asset, ctx context.Context) {
+func (i *Instance) addToMemory(newAssets []models.Asset) {
 	for _, a := range newAssets {
 		raw, err := json.Marshal(a)
 		if err != nil {
 			continue
 		}
-		err = i.MemorySet(a.Asset, raw, gocache.NoExpiration, ctx)
+		err = i.MemorySet(a.Asset, raw, gocache.NoExpiration)
 		if err != nil {
 			continue
 		}
 	}
 }
 
-func (i *Instance) GetAssetsByIDs(ids []string, ctx context.Context) ([]models.Asset, error) {
-	db := i.Gorm.WithContext(ctx)
-	// todo: look why nil and len 0 make db calls rn
+func (i *Instance) GetAssetsByIDs(ids []string) ([]models.Asset, error) {
+	//TODO: look why nil and len 0 make db calls rn
 	if len(ids) == 0 {
 		return nil, nil
 	}
 
 	var dbAssets []models.Asset
-	if err := db.Where("asset in (?)", ids).Find(&dbAssets).Error; err != nil {
+	if err := i.Gorm.
+		Where("asset in (?)", ids).
+		Find(&dbAssets).Error; err != nil {
 		return nil, err
 	}
 	return dbAssets, nil
 }
 
-func (i *Instance) GetAssetsFrom(from time.Time, coin int, ctx context.Context) ([]models.Asset, error) {
-	db := i.Gorm.WithContext(ctx)
+func (i *Instance) GetAssetsFrom(from time.Time, coin int) ([]models.Asset, error) {
 	var dbAssets []models.Asset
 	if coin == -1 {
-		if err := db.Find(&dbAssets, "created_at > ?", from).Error; err != nil {
+		if err := i.Gorm.Find(&dbAssets, "created_at > ?", from).Error; err != nil {
 			return nil, err
 		}
 	} else {
-		if err := db.Find(&dbAssets, "created_at > ? and coin = ?", from, coin).Error; err != nil {
+		if err := i.Gorm.Find(&dbAssets, "created_at > ? and coin = ?", from, coin).Error; err != nil {
 			return nil, err
 		}
 	}

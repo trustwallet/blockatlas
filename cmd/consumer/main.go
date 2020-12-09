@@ -43,7 +43,7 @@ func init() {
 	if err != nil {
 		log.Fatal("Postgres init: ", err)
 	}
-	go database.RestoreConnectionWorker(ctx, time.Second*10, config.Default.Postgres.URL)
+	go database.RestoreConnectionWorker(time.Second*10, config.Default.Postgres.URL)
 
 	time.Sleep(time.Millisecond)
 }

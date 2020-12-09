@@ -1,10 +1,10 @@
 package db
 
 import (
-	"context"
 	"errors"
-	"gorm.io/gorm/logger"
 	"time"
+
+	"gorm.io/gorm/logger"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas/db/models"
@@ -54,7 +54,7 @@ func New(url string, log bool) (*Instance, error) {
 	return i, nil
 }
 
-func (i *Instance) RestoreConnectionWorker(ctx context.Context, timeout time.Duration, uri string) {
+func (i *Instance) RestoreConnectionWorker(timeout time.Duration, uri string) {
 	log.Info("Run PG RestoreConnectionWorker")
 
 	for {
@@ -85,12 +85,12 @@ func (i *Instance) restoreConnection(uri string) error {
 	return nil
 }
 
-func (i *Instance) MemorySet(key string, data []byte, exp time.Duration, ctx context.Context) error {
+func (i *Instance) MemorySet(key string, data []byte, exp time.Duration) error {
 	i.MemoryCache.Set(key, data, exp)
 	return nil
 }
 
-func (i *Instance) MemoryGet(key string, ctx context.Context) ([]byte, error) {
+func (i *Instance) MemoryGet(key string) ([]byte, error) {
 	res, ok := i.MemoryCache.Get(key)
 	if !ok {
 		return nil, errors.New("not found")

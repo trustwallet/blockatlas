@@ -1,7 +1,6 @@
 package notifier
 
 import (
-	"context"
 	"encoding/json"
 	"errors"
 
@@ -11,14 +10,10 @@ import (
 	"github.com/streadway/amqp"
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"go.elastic.co/apm"
 )
 
-func GetTransactionsFromDelivery(delivery amqp.Delivery, service string, ctx context.Context) (blockatlas.Txs, error) {
+func GetTransactionsFromDelivery(delivery amqp.Delivery, service string) (blockatlas.Txs, error) {
 	var txs blockatlas.Txs
-
-	span, _ := apm.StartSpan(ctx, "GetTransactionsFromDelivery", "app")
-	defer span.End()
 
 	if err := json.Unmarshal(delivery.Body, &txs); err != nil {
 		return nil, err
@@ -33,10 +28,7 @@ func GetTransactionsFromDelivery(delivery amqp.Delivery, service string, ctx con
 	return txs, nil
 }
 
-func publishNotificationBatch(batch []TransactionNotification, ctx context.Context) {
-	span, _ := apm.StartSpan(ctx, "getNotificationBatches", "app")
-	defer span.End()
-
+func publishNotificationBatch(batch []TransactionNotification) {
 	raw, err := json.Marshal(batch)
 	if err != nil {
 		log.Fatal("publishNotificationBatch marshal: ", err)
