@@ -1,13 +1,11 @@
 package tokensearcher
 
 import (
-	"context"
 	log "github.com/sirupsen/logrus"
 	"github.com/streadway/amqp"
 	"github.com/trustwallet/blockatlas/db"
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/services/notifier"
-	"go.elastic.co/apm"
 	"strconv"
 )
 
@@ -22,11 +20,7 @@ func (c *TokenSearcherConsumer) GetQueue() string {
 }
 
 func (c *TokenSearcherConsumer) Callback(msg amqp.Delivery) error {
-	tx := apm.DefaultTracer.StartTransaction("RunNotifier", "app")
-	defer tx.End()
-	ctx := apm.ContextWithTransaction(context.Background(), tx)
-
-	txs, err := notifier.GetTransactionsFromDelivery(msg, TokenSearcher, ctx)
+	txs, err := notifier.GetTransactionsFromDelivery(msg, TokenSearcher)
 	if err != nil {
 		log.Error("failed to get transactions", err)
 		return err
@@ -43,7 +37,7 @@ func (c *TokenSearcherConsumer) Callback(msg amqp.Delivery) error {
 		addresses[i] = coinID + "_" + addresses[i]
 	}
 
-	associationsFromTransactions, err := c.Database.GetAssociationsByAddresses(notifier.ToUniqueAddresses(addresses), ctx)
+	associationsFromTransactions, err := c.Database.GetAssociationsByAddresses(notifier.ToUniqueAddresses(addresses))
 	if err != nil {
 		log.Error(err)
 		return err
@@ -55,7 +49,7 @@ func (c *TokenSearcherConsumer) Callback(msg amqp.Delivery) error {
 
 	log.WithFields(log.Fields{"service": TokenSearcher}).
 		Info("AssociationsToAdd " + strconv.Itoa(len(associationsToAdd)))
-	err = c.Database.UpdateAssociationsForExistingAddresses(associationsToAdd, ctx)
+	err = c.Database.UpdateAssociationsForExistingAddresses(associationsToAdd)
 	if err != nil {
 		log.Error(err)
 		return err

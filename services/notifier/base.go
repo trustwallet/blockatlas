@@ -1,10 +1,8 @@
 package notifier
 
 import (
-	"context"
 	"encoding/json"
 	"errors"
-	"strconv"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/streadway/amqp"
@@ -14,8 +12,6 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/coin"
 	"strconv"
-
-	"go.elastic.co/apm"
 )
 
 const (
@@ -35,10 +31,7 @@ func (c *NotifierConsumer) GetQueue() string {
 }
 
 func (c *NotifierConsumer) Callback(msg amqp.Delivery) error {
-	tx := apm.DefaultTracer.StartTransaction("RunNotifier", "app")
-	defer tx.End()
-	ctx := apm.ContextWithTransaction(context.Background(), tx)
-	txs, err := GetTransactionsFromDelivery(msg, Notifier, ctx)
+	txs, err := GetTransactionsFromDelivery(msg, Notifier)
 	if err != nil {
 		log.Error("failed to get transactions", err)
 	}
@@ -53,7 +46,7 @@ func (c *NotifierConsumer) Callback(msg amqp.Delivery) error {
 	for i := range addresses {
 		addresses[i] = strconv.Itoa(int(txs[0].Coin)) + "_" + addresses[i]
 	}
-	subscriptionsDataList, err := c.Database.GetSubscriptionsForNotifications(addresses, ctx)
+	subscriptionsDataList, err := c.Database.GetSubscriptionsForNotifications(addresses)
 	if err != nil || len(subscriptionsDataList) == 0 {
 		return nil
 	}
@@ -71,16 +64,13 @@ func (c *NotifierConsumer) Callback(msg amqp.Delivery) error {
 	batches := getNotificationBatches(notifications, MaxPushNotificationsBatchLimit)
 
 	for _, batch := range batches {
-		publishNotificationBatch(c.MQClient, batch, ctx)
+		publishNotificationBatch(c.MQClient, batch)
 	}
 	log.Info("------------------------------------------------------------")
 	return nil
 }
 
-func GetTransactionsFromDelivery(delivery amqp.Delivery, service string, ctx context.Context) (blockatlas.Txs, error) {
-	span, _ := apm.StartSpan(ctx, "GetTransactionsFromDelivery", "app")
-	defer span.End()
-
+func GetTransactionsFromDelivery(delivery amqp.Delivery, service string) (blockatlas.Txs, error) {
 	var txs blockatlas.Txs
 	if err := json.Unmarshal(delivery.Body, &txs); err != nil {
 		return nil, err
@@ -92,10 +82,7 @@ func GetTransactionsFromDelivery(delivery amqp.Delivery, service string, ctx con
 	return txs, nil
 }
 
-func publishNotificationBatch(mqClient *new_mq.Client, batch []TransactionNotification, ctx context.Context) {
-	span, _ := apm.StartSpan(ctx, "getNotificationBatches", "app")
-	defer span.End()
-
+func publishNotificationBatch(mqClient *new_mq.Client, batch []TransactionNotification) {
 	raw, err := json.Marshal(batch)
 	if err != nil {
 		log.Fatal("publishNotificationBatch marshal: ", err)

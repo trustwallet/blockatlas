@@ -21,11 +21,7 @@ func (c *TokenIndexerConsumer) GetQueue() string {
 }
 
 func (c *TokenIndexerConsumer) Callback(msg amqp.Delivery) error {
-	tx := apm.DefaultTracer.StartTransaction("RunTokenIndexer", "app")
-	defer tx.End()
-	ctx := apm.ContextWithTransaction(context.Background(), tx)
-
-	txs, err := notifier.GetTransactionsFromDelivery(msg, TokenIndexer, ctx)
+	txs, err := notifier.GetTransactionsFromDelivery(msg, TokenIndexer)
 	if err != nil {
 		log.WithFields(log.Fields{"service": TokenIndexer}).Error("failed to get transactions", err)
 		return err
@@ -35,7 +31,7 @@ func (c *TokenIndexerConsumer) Callback(msg amqp.Delivery) error {
 	}
 
 	assets := GetAssetsFromTransactions(txs)
-	err = c.Database.AddNewAssets(assets, ctx)
+	err = c.Database.AddNewAssets(assets)
 	if err != nil {
 		log.WithFields(log.Fields{"service": TokenIndexer}).Error("failed to add assets", err)
 		return err

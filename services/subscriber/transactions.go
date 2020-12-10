@@ -1,14 +1,12 @@
 package subscriber
 
 import (
-	"context"
 	"encoding/json"
 	log "github.com/sirupsen/logrus"
 	"github.com/streadway/amqp"
 	"github.com/trustwallet/blockatlas/db"
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"go.elastic.co/apm"
 	"strconv"
 )
 
@@ -32,11 +30,6 @@ func (c *TransactionSubscriberConsumer) GetQueue() string {
 }
 
 func (c *TransactionSubscriberConsumer) Callback(msg amqp.Delivery) error {
-	tx := apm.DefaultTracer.StartTransaction("RunTransactionsSubscriber", "app")
-	defer tx.End()
-
-	ctx := apm.ContextWithTransaction(context.Background(), tx)
-
 	var event blockatlas.SubscriptionEvent
 	err := json.Unmarshal(msg.Body, &event)
 	if err != nil {
@@ -49,7 +42,7 @@ func (c *TransactionSubscriberConsumer) Callback(msg amqp.Delivery) error {
 		allSubs := ToSubscriptionData(subscriptions)
 		batchedSubs := toBatch(allSubs, batchLimit)
 		for _, subs := range batchedSubs {
-			err := c.Database.AddSubscriptionsForNotifications(subs, ctx)
+			err := c.Database.AddSubscriptionsForNotifications(subs)
 			if err != nil {
 				log.WithFields(
 					log.Fields{"service": Notifications,
@@ -70,7 +63,7 @@ func (c *TransactionSubscriberConsumer) Callback(msg amqp.Delivery) error {
 		allSubs := ToSubscriptionData(subscriptions)
 		batchedSubs := toBatch(allSubs, batchLimit)
 		for _, subs := range batchedSubs {
-			err := c.Database.DeleteSubscriptionsForNotifications(subs, ctx)
+			err := c.Database.DeleteSubscriptionsForNotifications(subs)
 			if err != nil {
 				log.WithFields(
 					log.Fields{"service": Notifications,
