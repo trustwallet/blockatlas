@@ -249,7 +249,10 @@ go-test:
 	@echo "  >  Running unit tests"
 	GOBIN=$(GOBIN) go test -cover -race -coverprofile=coverage.txt -covermode=atomic -v ./...
 
-go-integration:
+go-dockertest-install:
+	GOBIN=$(GOBIN) go get -u github.com/ory/dockertest/v3
+
+go-integration: go-dockertest-install
 	@echo "  >  Running integration tests"
 	GOBIN=$(GOBIN) TEST_CONFIG=$(CONFIG_FILE) go test -race -tags=integration -v ./tests/integration/...
 
@@ -270,8 +273,10 @@ go-vet:
 	GOBIN=$(GOBIN) go vet ./...
 
 go-lint-install:
+ifeq (,$(wildcard test -f bin/golangci-lint))
 	@echo "  >  Installing golint"
 	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s
+endif
 
 go-lint:
 	@echo "  >  Running golint"

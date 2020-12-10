@@ -35,11 +35,8 @@ type Configuration struct {
 		} `mapstructure:"rabbitmq"`
 	} `mapstructure:"observer"`
 	Postgres struct {
-		URL  string `mapstructure:"url"`
-		Read struct {
-			URL string `mapstructure:"url"`
-		} `mapstructure:"read"`
-		Log bool `mapstructure:"log"`
+		URL string `mapstructure:"url"`
+		Log bool   `mapstructure:"log"`
 	} `mapstructure:"postgres"`
 	Ethereum struct {
 		API            string `mapstructure:"api"`
@@ -218,6 +215,9 @@ type Configuration struct {
 	Filecoin struct {
 		API string `mapstructure:"api"`
 	} `mapstructure:"filecoin"`
+	Sentry struct {
+		DSN string `mapstructure:"dsn"`
+	} `mapstructure:"sentry"`
 }
 
 var Default Configuration

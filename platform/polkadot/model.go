@@ -30,13 +30,13 @@ type Extrinsic struct {
 	Nonce              uint64 `json:"nonce"`
 	Hash               string `json:"extrinsic_hash"`
 	Success            bool   `json:"success"`
+	Fee                string `json:"fee"`
 }
 
 type CallData struct {
-	Name     string      `json:"name"`
-	Type     string      `json:"type"`
-	Value    interface{} `json:"value"`
-	ValueRaw string      `json:"valueRaw"`
+	Name  string `json:"name"`
+	Type  string `json:"type"`
+	Value string `json:"value"`
 }
 
 type TransfersRequest struct {

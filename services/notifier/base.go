@@ -4,6 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"strconv"
+
 	log "github.com/sirupsen/logrus"
 	"github.com/streadway/amqp"
 	"github.com/trustwallet/blockatlas/db"
@@ -62,11 +64,11 @@ func (c *NotifierConsumer) Callback(msg amqp.Delivery) error {
 		if !ok {
 			continue
 		}
-		notificationsForAddress := buildNotificationsByAddress(ua, txs, ctx)
+		notificationsForAddress := buildNotificationsByAddress(ua, txs)
 		notifications = append(notifications, notificationsForAddress...)
 	}
 
-	batches := getNotificationBatches(notifications, MaxPushNotificationsBatchLimit, ctx)
+	batches := getNotificationBatches(notifications, MaxPushNotificationsBatchLimit)
 
 	for _, batch := range batches {
 		publishNotificationBatch(c.MQClient, batch, ctx)

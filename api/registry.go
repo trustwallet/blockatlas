@@ -5,11 +5,11 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/trustwallet/blockatlas/api/endpoint"
-	"github.com/trustwallet/blockatlas/api/middleware"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/platform"
 	"github.com/trustwallet/blockatlas/services/tokenindexer"
 	"github.com/trustwallet/blockatlas/services/tokensearcher"
+	"github.com/trustwallet/golibs/middleware"
 )
 
 func RegisterTransactionsAPI(router gin.IRouter, api blockatlas.Platform) {

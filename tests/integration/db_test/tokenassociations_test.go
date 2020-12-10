@@ -3,13 +3,13 @@
 package db_test
 
 import (
-	"context"
-	"github.com/stretchr/testify/assert"
-	"github.com/trustwallet/blockatlas/db/models"
-	"github.com/trustwallet/blockatlas/tests/integration/setup"
 	"sort"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/trustwallet/blockatlas/db/models"
+	"github.com/trustwallet/blockatlas/tests/integration/setup"
 )
 
 func Test_GetAssetsMapByAddresses(t *testing.T) {
@@ -17,13 +17,13 @@ func Test_GetAssetsMapByAddresses(t *testing.T) {
 
 	assets := []models.Asset{{Asset: "aa"}, {Asset: "bbb"}, {Asset: "cccc"}}
 
-	err := database.AddAssociationsForAddress("a", assets, context.Background())
+	err := database.AddAssociationsForAddress("a", assets)
 	assert.Nil(t, err)
 
-	err = database.AddAssociationsForAddress("b", nil, context.Background())
+	err = database.AddAssociationsForAddress("b", nil)
 	assert.Nil(t, err)
 
-	m, err := database.GetAssetsMapByAddresses([]string{"a", "b"}, context.Background())
+	m, err := database.GetAssetsMapByAddresses([]string{"a", "b"})
 	assert.Nil(t, err)
 	wantedMap := make(map[string][]models.Asset)
 	wantedMap["a"] = assets
@@ -40,13 +40,13 @@ func Test_GetAssetsMapByAddressesFromTime(t *testing.T) {
 
 	assets := []models.Asset{{Asset: "aa"}, {Asset: "bbb"}, {Asset: "cccc"}}
 
-	err := database.AddAssociationsForAddress("a", assets, context.Background())
+	err := database.AddAssociationsForAddress("a", assets)
 	assert.Nil(t, err)
 
-	err = database.AddAssociationsForAddress("b", nil, context.Background())
+	err = database.AddAssociationsForAddress("b", nil)
 	assert.Nil(t, err)
 	tm := time.Now().Unix() - 100
-	m, err := database.GetAssetsMapByAddressesFromTime([]string{"a", "b"}, time.Unix(tm, 0), context.Background())
+	m, err := database.GetAssetsMapByAddressesFromTime([]string{"a", "b"}, time.Unix(tm, 0))
 	assert.Nil(t, err)
 	wantedMap := make(map[string][]models.Asset)
 	wantedMap["a"] = assets
@@ -57,7 +57,7 @@ func Test_GetAssetsMapByAddressesFromTime(t *testing.T) {
 		}
 	}
 
-	m, err = database.GetAssetsMapByAddressesFromTime([]string{"a", "b"}, time.Unix(tm+101, 0), context.Background())
+	m, err = database.GetAssetsMapByAddressesFromTime([]string{"a", "b"}, time.Unix(tm+101, 0))
 	assert.Nil(t, err)
 	assert.Equal(t, 0, len(m))
 }
@@ -67,13 +67,13 @@ func Test_GetSubscribedAddressesForAssets(t *testing.T) {
 
 	assets := []models.Asset{{Asset: "aa"}, {Asset: "bbb"}, {Asset: "cccc"}}
 
-	err := database.AddAssociationsForAddress("a", assets, context.Background())
+	err := database.AddAssociationsForAddress("a", assets)
 	assert.Nil(t, err)
 
-	err = database.AddAssociationsForAddress("b", nil, context.Background())
+	err = database.AddAssociationsForAddress("b", nil)
 	assert.Nil(t, err)
 
-	m, err := database.GetSubscribedAddressesForAssets(context.Background(), []string{"a", "b"})
+	m, err := database.GetSubscribedAddressesForAssets([]string{"a", "b"})
 	assert.Nil(t, err)
 	assert.Equal(t, 2, len(m))
 }
@@ -82,10 +82,10 @@ func Test_AddNewAssociationForAddress(t *testing.T) {
 	setup.CleanupPgContainer(database.Gorm)
 	assets := []models.Asset{{Asset: "aa"}, {Asset: "bbb"}, {Asset: "cccc"}}
 
-	err := database.AddAssociationsForAddress("a", assets, context.Background())
+	err := database.AddAssociationsForAddress("a", assets)
 	assert.Nil(t, err)
 
-	associations, err := database.GetAssociationsByAddresses([]string{"a"}, context.Background())
+	associations, err := database.GetAssociationsByAddresses([]string{"a"})
 	assert.Nil(t, err)
 
 	var assetIDsFromDB []models.Asset
@@ -105,10 +105,10 @@ func Test_AddNewAssociationForAddress(t *testing.T) {
 		assert.Equal(t, assetIDsFromDB[i].Asset, a.Asset)
 	}
 
-	err = database.AddAssociationsForAddress("b", nil, context.Background())
+	err = database.AddAssociationsForAddress("b", nil)
 	assert.Nil(t, err)
 
-	associations2, err := database.GetAssociationsByAddresses([]string{"b"}, context.Background())
+	associations2, err := database.GetAssociationsByAddresses([]string{"b"})
 	assert.Nil(t, err)
 	assert.NotNil(t, associations2)
 }
@@ -117,10 +117,10 @@ func Test_UpdateAssociationsForExistingAddresses(t *testing.T) {
 	setup.CleanupPgContainer(database.Gorm)
 	assets := []models.Asset{{Asset: "f"}}
 
-	err := database.AddAssociationsForAddress("A", assets, context.Background())
+	err := database.AddAssociationsForAddress("A", assets)
 	assert.Nil(t, err)
 
-	err = database.AddAssociationsForAddress("B", assets, context.Background())
+	err = database.AddAssociationsForAddress("B", assets)
 	assert.Nil(t, err)
 
 	assetsForA := []models.Asset{{Asset: "aa"}, {Asset: "bbb"}, {Asset: "cccc"}}
@@ -130,10 +130,10 @@ func Test_UpdateAssociationsForExistingAddresses(t *testing.T) {
 	updateMap["A"] = assetsForA
 	updateMap["B"] = assetsForB
 
-	err = database.UpdateAssociationsForExistingAddresses(updateMap, context.Background())
+	err = database.UpdateAssociationsForExistingAddresses(updateMap)
 	assert.Nil(t, err)
 
-	associationsA, err := database.GetAssociationsByAddresses([]string{"A"}, context.Background())
+	associationsA, err := database.GetAssociationsByAddresses([]string{"A"})
 	assert.Nil(t, err)
 
 	var assetIDsFromDBA []models.Asset
@@ -154,7 +154,7 @@ func Test_UpdateAssociationsForExistingAddresses(t *testing.T) {
 		assert.Equal(t, assetIDsFromDBA[i].Asset, a.Asset)
 	}
 
-	associationsB, err := database.GetAssociationsByAddresses([]string{"B"}, context.Background())
+	associationsB, err := database.GetAssociationsByAddresses([]string{"B"})
 	assert.Nil(t, err)
 
 	var assetIDsFromDBB []models.Asset
@@ -175,7 +175,7 @@ func Test_UpdateAssociationsForExistingAddresses(t *testing.T) {
 		assert.Equal(t, assetIDsFromDBB[i].Asset, a.Asset)
 	}
 
-	associationsAB, err := database.GetAssociationsByAddresses([]string{"A", "B"}, context.Background())
+	associationsAB, err := database.GetAssociationsByAddresses([]string{"A", "B"})
 	assert.Nil(t, err)
 
 	var assetIDsFromDBAB []models.Asset

@@ -5,6 +5,7 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/coin"
 	"github.com/trustwallet/golibs/tokentype"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -59,7 +60,7 @@ func (p *Platform) getTokens(ids []string) chan blockatlas.Token {
 			time.Sleep(time.Millisecond)
 			err := p.getTokensChannel(i, c)
 			if err != nil {
-				log.Error("tron getTokens: " + i)
+				log.WithFields(log.Fields{"token": i, "coin": coin.Tron().Handle}).Error("getTokens", err)
 			}
 		}(id, tkChan)
 	}
@@ -82,7 +83,7 @@ func NormalizeToken(info AssetInfo) blockatlas.Token {
 	return blockatlas.Token{
 		Name:     info.Name,
 		Symbol:   strings.ToUpper(info.Symbol),
-		TokenID:  info.ID,
+		TokenID:  strconv.Itoa(int(info.ID)),
 		Coin:     coin.TRX,
 		Decimals: info.Decimals,
 		Type:     tokentype.TRC10,

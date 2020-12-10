@@ -1,10 +1,10 @@
 package db
 
 import (
-	"context"
+	"sync"
+
 	"github.com/trustwallet/blockatlas/db/models"
 	"gorm.io/gorm/clause"
-	"sync"
 )
 
 var memoryCache heightBlockMap
@@ -31,27 +31,26 @@ func (hbm *heightBlockMap) GetHeight(coin string) (int64, bool) {
 	return b, ok
 }
 
-func (i *Instance) GetLastParsedBlockNumber(coin string, ctx context.Context) (int64, error) {
+func (i *Instance) GetLastParsedBlockNumber(coin string) (int64, error) {
 	height, ok := memoryCache.GetHeight(coin)
 	if ok {
 		return height, nil
 	}
 	var tracker models.Tracker
-	db := i.Gorm.WithContext(ctx)
-	if err := db.Find(&tracker, "coin = ?", coin).Error; err != nil {
+	if err := i.Gorm.
+		Find(&tracker, "coin = ?", coin).Error; err != nil {
 		return 0, nil
 	}
 	return tracker.Height, nil
 }
 
-func (i *Instance) SetLastParsedBlockNumber(coin string, num int64, ctx context.Context) error {
+func (i *Instance) SetLastParsedBlockNumber(coin string, num int64) error {
 	memoryCache.SetHeight(coin, num)
 	tracker := models.Tracker{
 		Coin:   coin,
 		Height: num,
 	}
-	db := i.Gorm.WithContext(ctx)
-	return db.Clauses(clause.OnConflict{
+	return i.Gorm.Clauses(clause.OnConflict{
 		Columns: []clause.Column{
 			{
 				Name: "coin",

@@ -1,12 +1,12 @@
 package notifier
 
 import (
-	"context"
+	"sort"
+	"testing"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/coin"
-	"sort"
-	"testing"
 )
 
 var (
@@ -137,7 +137,7 @@ func Test_findTransactionsByAddress(t *testing.T) {
 }
 
 func Test_buildNotificationsByAddress(t *testing.T) {
-	notifications := buildNotificationsByAddress("tbnb1ttyn4csghfgyxreu7lmdu3lcplhqhxtzced45a", []blockatlas.Tx{nativeTokenTransfer, tokenTransfer}, context.Background())
+	notifications := buildNotificationsByAddress("tbnb1ttyn4csghfgyxreu7lmdu3lcplhqhxtzced45a", []blockatlas.Tx{nativeTokenTransfer, tokenTransfer})
 	sort.Slice(notifications, func(i, j int) bool {
 		return notifications[i].Action < notifications[j].Action
 	})

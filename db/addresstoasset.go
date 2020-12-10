@@ -1,17 +1,16 @@
 package db
 
 import (
-	"context"
+	"time"
+
 	"github.com/trustwallet/blockatlas/db/models"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
-	"time"
 )
 
-func (i Instance) GetSubscribedAddressesForAssets(ctx context.Context, addresses []string) ([]models.Address, error) {
-	db := i.Gorm.WithContext(ctx)
+func (i Instance) GetSubscribedAddressesForAssets(addresses []string) ([]models.Address, error) {
 	var result []models.Address
-	err := db.Model(&models.AssetSubscription{}).
+	err := i.Gorm.Model(&models.AssetSubscription{}).
 		Select("id", "address").
 		Joins("LEFT JOIN addresses a ON a.id = address_id").
 		Where("address in (?)", addresses).
@@ -23,10 +22,11 @@ func (i Instance) GetSubscribedAddressesForAssets(ctx context.Context, addresses
 	return result, nil
 }
 
-func (i Instance) GetAssetsMapByAddresses(addresses []string, ctx context.Context) (map[string][]models.Asset, error) {
-	db := i.Gorm.WithContext(ctx)
+func (i Instance) GetAssetsMapByAddresses(addresses []string) (map[string][]models.Asset, error) {
 	var associations []models.AddressToAssetAssociation
-	if err := db.Joins("Address").Joins("Asset").Find(&associations, "address in (?)", addresses).Error; err != nil {
+	if err := i.Gorm.Joins("Address").
+		Joins("Asset").
+		Find(&associations, "address in (?)", addresses).Error; err != nil {
 		return nil, err
 	}
 
@@ -38,13 +38,16 @@ func (i Instance) GetAssetsMapByAddresses(addresses []string, ctx context.Contex
 	return result, nil
 }
 
-func (i Instance) GetAssetsMapByAddressesFromTime(addresses []string, from time.Time, ctx context.Context) (map[string][]models.Asset, error) {
+func (i Instance) GetAssetsMapByAddressesFromTime(addresses []string, from time.Time) (map[string][]models.Asset, error) {
 	if len(addresses) == 0 {
 		return map[string][]models.Asset{}, nil
 	}
-	db := i.Gorm.WithContext(ctx)
 	var associations []models.AddressToAssetAssociation
-	err := db.Joins("Address").Where("address in (?)", addresses).Joins("Asset").Find(&associations, "address_to_asset_associations.created_at > ?", from).Error
+	err := i.Gorm.
+		Joins("Address").
+		Where("address in (?)", addresses).
+		Joins("Asset").
+		Find(&associations, "address_to_asset_associations.created_at > ?", from).Error
 	if err != nil {
 		return nil, err
 	}
@@ -57,28 +60,28 @@ func (i Instance) GetAssetsMapByAddressesFromTime(addresses []string, from time.
 	return result, nil
 }
 
-func (i *Instance) GetAssociationsByAddresses(addresses []string, ctx context.Context) ([]models.AddressToAssetAssociation, error) {
-	db := i.Gorm.WithContext(ctx)
+func (i *Instance) GetAssociationsByAddresses(addresses []string) ([]models.AddressToAssetAssociation, error) {
 	var result []models.AddressToAssetAssociation
-	if err := db.Joins("Address").Joins("Asset").Find(&result, "address in (?)", addresses).Error; err != nil {
+	if err := i.Gorm.
+		Joins("Address").
+		Joins("Asset").
+		Find(&result, "address in (?)", addresses).Error; err != nil {
 		return nil, err
 	}
 	return result, nil
 }
 
-func (i *Instance) GetAssociationsByAddressesFromTime(addresses []string, from time.Time, ctx context.Context) ([]models.AddressToAssetAssociation, error) {
-	db := i.Gorm.WithContext(ctx)
+func (i *Instance) GetAssociationsByAddressesFromTime(addresses []string, from time.Time) ([]models.AddressToAssetAssociation, error) {
 	var result []models.AddressToAssetAssociation
-	err := db.Joins("Address").Where("address in (?)", addresses).Joins("Asset").Find(&result, "created_at > ?", from).Error
+	err := i.Gorm.Joins("Address").Where("address in (?)", addresses).Joins("Asset").Find(&result, "created_at > ?", from).Error
 	if err != nil {
 		return nil, err
 	}
 	return result, nil
 }
 
-func (i *Instance) AddAssociationsForAddress(address string, assets []models.Asset, ctx context.Context) error {
-	db := i.Gorm.WithContext(ctx)
-	return db.Transaction(func(tx *gorm.DB) error {
+func (i *Instance) AddAssociationsForAddress(address string, assets []models.Asset) error {
+	return i.Gorm.Transaction(func(tx *gorm.DB) error {
 		uniqueAssets := getUniqueAssets(assets)
 
 		var err error
@@ -133,9 +136,8 @@ func (i *Instance) AddAssociationsForAddress(address string, assets []models.Ass
 	})
 }
 
-func (i *Instance) UpdateAssociationsForExistingAddresses(associations map[string][]models.Asset, ctx context.Context) error {
-	db := i.Gorm.WithContext(ctx)
-	return db.Transaction(func(tx *gorm.DB) error {
+func (i *Instance) UpdateAssociationsForExistingAddresses(associations map[string][]models.Asset) error {
+	return i.Gorm.Transaction(func(tx *gorm.DB) error {
 		assets := make([]models.Asset, 0, len(associations))
 		for _, v := range associations {
 			assets = append(assets, v...)

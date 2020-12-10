@@ -1,17 +1,17 @@
 package tokensearcher
 
 import (
-	"context"
 	"encoding/json"
+	"strconv"
+	"sync"
+	"time"
+
 	log "github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas/db"
 	"github.com/trustwallet/blockatlas/db/models"
 	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/address"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"strconv"
-	"sync"
-	"time"
 )
 
 type (
@@ -34,13 +34,13 @@ func Init(database *db.Instance, apis map[uint]blockatlas.TokensAPI, mqClient *n
 	return Instance{database: database, apis: apis, mqClient: mqClient, queue: queue}
 }
 
-func (i Instance) HandleTokensRequest(request Request, ctx context.Context) (map[string][]string, error) {
+func (i Instance) HandleTokensRequest(request Request) (map[string][]string, error) {
 	addresses := getAddressesFromRequest(request)
 	if len(addresses) == 0 {
 		return nil, nil
 	}
 
-	subscribedAddresses, err := getSubscribedAddresses(i.database, addresses, ctx)
+	subscribedAddresses, err := getSubscribedAddresses(i.database, addresses)
 	if err != nil {
 		return nil, err
 	}
@@ -48,10 +48,7 @@ func (i Instance) HandleTokensRequest(request Request, ctx context.Context) (map
 	unsubscribedAddresses := getUnsubscribedAddresses(subscribedAddresses, addresses)
 
 	log.Info("unsubscribedAddresses " + strconv.Itoa(len(unsubscribedAddresses)))
-	assetsFromDB, err := i.database.GetAssetsMapByAddressesFromTime(
-		subscribedAddresses,
-		time.Unix(int64(request.From), 0),
-		ctx)
+	assetsFromDB, err := i.database.GetAssetsMapByAddressesFromTime(subscribedAddresses, time.Unix(int64(request.From), 0))
 	if err != nil {
 		return nil, err
 	}
@@ -69,8 +66,8 @@ func (i Instance) HandleTokensRequest(request Request, ctx context.Context) (map
 	return getAssetsToResponse(assetsFromDB, assetsFromNodes, addresses), nil
 }
 
-func getSubscribedAddresses(database *db.Instance, addresses []string, ctx context.Context) ([]string, error) {
-	subscribedAddressesModel, err := database.GetSubscribedAddressesForAssets(ctx, addresses)
+func getSubscribedAddresses(database *db.Instance, addresses []string) ([]string, error) {
+	subscribedAddressesModel, err := database.GetSubscribedAddressesForAssets(addresses)
 	if err != nil {
 		return nil, err
 	}
@@ -157,7 +154,11 @@ func fetchAssetsByAddresses(tokenAPI blockatlas.TokensAPI, addresses []string, r
 			defer tWg.Done()
 			tokens, err := tokenAPI.GetTokenListByAddress(address)
 			if err != nil {
-				log.Error("Chain: " + tokenAPI.Coin().Handle + " Address: " + address)
+				log.WithFields(log.Fields{
+					"coin":    tokenAPI.Coin().Handle,
+					"address": address,
+					"error":   err,
+				}).Error("Fetch GetTokenListByAddress for: ", tokenAPI.Coin().Handle)
 				return
 			}
 			result.UpdateAssetsByAddress(tokens, int(tokenAPI.Coin().ID), address)
