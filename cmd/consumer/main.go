@@ -35,7 +35,7 @@ func init() {
 
 	internal.InitRabbitMQ(
 		config.Default.Observer.Rabbitmq.URL,
-		config.Default.Observer.Rabbitmq.Consumer.PrefetchCount,
+		config.Default.Observer.Rabbitmq.PrefetchCount,
 	)
 
 	var err error

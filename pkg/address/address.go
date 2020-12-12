@@ -3,12 +3,13 @@ package address
 import (
 	"crypto/sha256"
 	"encoding/hex"
+	"strconv"
+	"strings"
+
 	"github.com/mr-tron/base58"
 	log "github.com/sirupsen/logrus"
 	"github.com/trustwallet/golibs/coin"
 	"golang.org/x/crypto/sha3"
-	"strconv"
-	"strings"
 )
 
 const prefixBitcoinCash = "bitcoincash:"

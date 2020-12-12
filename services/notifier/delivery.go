@@ -2,9 +2,6 @@ package notifier
 
 import (
 	"encoding/json"
-	"errors"
-
-	"github.com/trustwallet/golibs/coin"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/streadway/amqp"
@@ -13,30 +10,26 @@ import (
 )
 
 func GetTransactionsFromDelivery(delivery amqp.Delivery, service string) (blockatlas.Txs, error) {
-	var txs blockatlas.Txs
+	var transactions blockatlas.Txs
 
-	if err := json.Unmarshal(delivery.Body, &txs); err != nil {
+	if err := json.Unmarshal(delivery.Body, &transactions); err != nil {
 		return nil, err
 	}
 
-	if len(txs) == 0 {
-		return nil, errors.New("empty txs list")
-	}
+	log.WithFields(log.Fields{"service": service, "notifications": len(transactions)}).Info("Consumed")
 
-	log.WithFields(log.Fields{"service": service, "txs": len(txs), "coin": coin.Coins[txs[0].Coin].Handle}).Info("Consumed")
-
-	return txs, nil
+	return transactions, nil
 }
 
-func publishNotificationBatch(batch []TransactionNotification) {
-	raw, err := json.Marshal(batch)
+func publishNotifications(notifications []TransactionNotification) {
+	raw, err := json.Marshal(notifications)
 	if err != nil {
-		log.Fatal("publishNotificationBatch marshal: ", err)
+		log.Fatal("publishNotifications marshal: ", err)
 	}
 	err = mq.TxNotifications.Publish(raw)
 	if err != nil {
-		log.Fatal("publishNotificationBatch publish:", err)
+		log.Fatal("publishNotifications publish:", err)
 	}
 
-	log.WithFields(log.Fields{"service": Notifier, "txs": len(batch)}).Info("Txs batch dispatched")
+	log.WithFields(log.Fields{"service": Notifier, "notifications": len(notifications)}).Info("Notifications sent")
 }

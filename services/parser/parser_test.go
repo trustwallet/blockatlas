@@ -2,7 +2,6 @@ package parser
 
 import (
 	"errors"
-	"reflect"
 	"testing"
 	"time"
 
@@ -53,7 +52,6 @@ func TestFetchBlocks(t *testing.T) {
 		BacklogCount:           0,
 		MaxBacklogBlocks:       0,
 		StopChannel:            nil,
-		TxBatchLimit:           0,
 		Database:               nil,
 	}
 	blocks := FetchBlocks(params, 0, 100)
@@ -116,41 +114,6 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 	return &blockatlas.Block{}, nil
 }
 
-func TestGetTxBatches(t *testing.T) {
-	txs := make(blockatlas.Txs, 10000)
-	batches := getTxsBatches(txs, 1000)
-	assert.Len(t, batches, 10)
-	batches = getTxsBatches(txs, 100)
-	assert.Len(t, batches, 100)
-	batches = getTxsBatches(txs, 500)
-	assert.Len(t, batches, 20)
-
-	txs = make(blockatlas.Txs, 3800)
-	batches = getTxsBatches(txs, 100)
-	assert.Len(t, batches, 38)
-	batches = getTxsBatches(txs, 1000)
-	assert.Len(t, batches, 4)
-
-	txs = make(blockatlas.Txs, 5000)
-	batches = getTxsBatches(txs, 10000)
-	assert.Len(t, batches, 1)
-
-	txs = make(blockatlas.Txs, 0)
-	batches = getTxsBatches(txs, 100)
-	assert.Len(t, batches, 0)
-
-	txs = make(blockatlas.Txs, 0)
-	batches = getTxsBatches(txs, 100)
-	assert.Len(t, batches, 0)
-
-	batches = getTxsBatches(nil, 100)
-	assert.Len(t, batches, 0)
-
-	txs = make(blockatlas.Txs, 1000000)
-	batches = getTxsBatches(txs, 5000)
-	assert.Len(t, batches, 200)
-}
-
 func TestGetInterval(t *testing.T) {
 	min, _ := time.ParseDuration("2s")
 	max, _ := time.ParseDuration("30s")
@@ -194,35 +157,6 @@ func TestGetInterval(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got := GetInterval(tt.args.blockTime, tt.args.minInterval, tt.args.maxInterval)
 			assert.EqualValues(t, tt.want, got)
-		})
-	}
-}
-
-func TestConvertToBatch(t *testing.T) {
-	type args struct {
-		blocks []blockatlas.Block
-	}
-	tests := []struct {
-		name string
-		args args
-		want blockatlas.Txs
-	}{
-		{
-			"Convert to batch",
-			args{
-				[]blockatlas.Block{
-					block,
-					block,
-				},
-			},
-			append(block.Txs, block.Txs...),
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := ConvertToBatch(tt.args.blocks); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("ConvertToBatch() = %v, want %v", got, tt.want)
-			}
 		})
 	}
 }

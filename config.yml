@@ -16,18 +16,13 @@ observer:
   fetch_blocks_interval: 1ms
   # Don't request more than N blocks at once
   backlog_max_blocks: 100
-  # Limit amount of transactions in batch
-  txs_batch_limit: 3000
-  # Limit of push notifications in batch
-  push_notifications_batch_limit: 50
   # Block polling interval
   block_poll:
     min: 3s
     max: 30s
   rabbitmq:
     url: amqp://localhost:5672
-    consumer:
-      prefetch_count: 10
+    prefetch_count: 10
 
 postgres:
   url: postgresql://user:pass@localhost/blockatlas?sslmode=disable

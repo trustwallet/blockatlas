@@ -157,7 +157,6 @@ func setupParserFull(stopChan chan<- struct{}) parser.Params {
 		ParsingBlocksInterval: pollInterval,
 		BacklogCount:          backlogCount,
 		MaxBacklogBlocks:      int64(maxBatchBlocksAmount),
-		TxBatchLimit:          100,
 		StopChannel:           stopChan,
 	}
 }
