@@ -29,7 +29,7 @@ type Client struct {
 }
 
 func New(uri string, prefetchCount int, ctx context.Context) (client pubsub.Client) {
-	client = Client{
+	client = &Client{
 		uri:           uri,
 		ctx:           ctx,
 		alive:         atomic.NewBool(false),
@@ -40,7 +40,7 @@ func New(uri string, prefetchCount int, ctx context.Context) (client pubsub.Clie
 	return client
 }
 
-func (c Client) Connect() error {
+func (c *Client) Connect() error {
 	conn, err := amqp.Dial(c.uri)
 	if err != nil {
 		log.Error("Client.connect MQ Dial issue " + err.Error())
@@ -55,17 +55,19 @@ func (c Client) Connect() error {
 	if err != nil {
 		log.Error("Client.connect MQ Channel issue " + err.Error())
 	}
+	log.Debug("Interface: ", c)
 	c.conn = conn
 	c.channel = ch
 	c.notifyClose = make(chan *amqp.Error)
 	c.notifyConfirm = make(chan amqp.Confirmation)
 	c.channel.NotifyClose(c.notifyClose)
 	c.channel.NotifyPublish(c.notifyConfirm)
-	c.isConnected.Swap(false)
+	c.isConnected.Store(true)
 	return nil
 }
 
-func (c Client) Run() error {
+func (c *Client) Run() error {
+	log.Debug("Interface: ", c)
 	if c.conn == nil {
 		return errors.New("connect firstly")
 	}
@@ -82,15 +84,14 @@ func (c Client) Run() error {
 	return nil
 }
 
-func (c Client) IsConnected() bool {
+func (c *Client) IsConnected() bool {
 	return c.isConnected.Load()
 }
 
-func (c Client) AddStream(consumer *pubsub.Consumer, isWriteOnly bool) error {
-	var client pubsub.Client = c
-	var stream pubsub.Stream = Stream{
+func (c *Client) AddStream(consumer *pubsub.Consumer, isWriteOnly bool) error {
+	var stream pubsub.Stream = &Stream{
 		consumer:    consumer,
-		client:      &client,
+		client:      c,
 		isConnected: atomic.NewBool(false),
 		isWriteOnly: isWriteOnly,
 		channel:     c.channel,
@@ -100,11 +101,13 @@ func (c Client) AddStream(consumer *pubsub.Consumer, isWriteOnly bool) error {
 	return nil
 }
 
-func (c Client) Push(queue string, data []byte) error {
+func (c *Client) Push(queue string, data []byte) error {
 	if !c.isConnected.Load() {
 		// TODO: Is should wait connect to RabbitMQ or not?
 		return errors.New("failed to push push: not connected")
 	}
+
+	//todo Add stream waiting
 	for {
 		err := c.PushUnsafe(queue, data)
 		if err != nil {
@@ -124,7 +127,7 @@ func (c Client) Push(queue string, data []byte) error {
 	}
 }
 
-func (c Client) PushUnsafe(queue string, data []byte) error {
+func (c *Client) PushUnsafe(queue string, data []byte) error {
 	if !c.isConnected.Load() {
 		return pubsub.ErrDisconnected
 	}
@@ -140,7 +143,7 @@ func (c Client) PushUnsafe(queue string, data []byte) error {
 	)
 }
 
-func (c Client) Close() error {
+func (c *Client) Close() error {
 	err := c.channel.Close()
 	if err != nil {
 		return errors.New("Client.Close MQ issue " + err.Error())
@@ -153,7 +156,7 @@ func (c Client) Close() error {
 	return nil
 }
 
-func (c Client) handleReconnect() {
+func (c *Client) handleReconnect() {
 	for c.alive.Load() {
 		log.Debug("Try connect after alive")
 		c.isConnected.Store(false)

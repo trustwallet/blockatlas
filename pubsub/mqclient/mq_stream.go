@@ -11,22 +11,22 @@ import (
 
 type Stream struct {
 	consumer    *pubsub.Consumer
-	client      *pubsub.Client
+	client      pubsub.Client
 	channel     *amqp.Channel
 	isConnected *atomic.Bool
 	isWriteOnly bool
 }
 
-func (s Stream) Connect(cancelCtx context.Context) {
+func (s *Stream) Connect(cancelCtx context.Context) {
 	s.isConnected.Store(true)
 	for {
-		if (*s.client).IsConnected() {
+		if s.client.IsConnected() {
 			break
 		}
 		time.Sleep(1 * time.Second)
 	}
 	s.declareQueue()
-	if !s.isWriteOnly {
+	if s.isWriteOnly {
 		return
 	}
 	messageChannel, err := s.channel.Consume(
@@ -58,19 +58,19 @@ func (s Stream) Connect(cancelCtx context.Context) {
 		}
 	}
 }
-func (s Stream) GetConsumer() *pubsub.Consumer {
+func (s *Stream) GetConsumer() *pubsub.Consumer {
 	return s.consumer
 }
 
-func (s Stream) GetClient() *pubsub.Client {
-	return s.client
+func (s *Stream) GetClient() *pubsub.Client {
+	return &s.client
 }
 
-func (s Stream) IsConnected() bool {
+func (s *Stream) IsConnected() bool {
 	return s.isConnected.Load()
 }
 
-func (s Stream) IsWriteOnly() bool {
+func (s *Stream) IsWriteOnly() bool {
 	return s.isWriteOnly
 }
 
