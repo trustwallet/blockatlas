@@ -11,7 +11,7 @@ var (
 )
 
 type Client interface {
-	Connect(uri string) error
+	Connect() error
 	Run() error
 	IsConnected() bool
 	AddStream(consumer *Consumer, isWriteOnly bool) error

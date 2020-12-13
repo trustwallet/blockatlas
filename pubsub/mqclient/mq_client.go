@@ -1,4 +1,4 @@
-package mq
+package mqclient
 
 import (
 	"context"
@@ -6,6 +6,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/streadway/amqp"
 	"github.com/trustwallet/blockatlas/pubsub"
+	"go.uber.org/atomic"
 	"time"
 )
 
@@ -23,23 +24,24 @@ type Client struct {
 	ctx           context.Context
 	notifyClose   chan *amqp.Error
 	notifyConfirm chan amqp.Confirmation
-	isConnected   bool
-	alive         bool
+	isConnected   *atomic.Bool
+	alive         *atomic.Bool
 }
 
 func New(uri string, prefetchCount int, ctx context.Context) (client pubsub.Client) {
 	client = Client{
 		uri:           uri,
 		ctx:           ctx,
-		alive:         true,
+		alive:         atomic.NewBool(false),
+		isConnected:   atomic.NewBool(false),
 		prefetchCount: prefetchCount,
 		streams:       []*pubsub.Stream{},
 	}
 	return client
 }
 
-func (c Client) Connect(uri string) error {
-	conn, err := amqp.Dial(uri)
+func (c Client) Connect() error {
+	conn, err := amqp.Dial(c.uri)
 	if err != nil {
 		log.Error("Client.connect MQ Dial issue " + err.Error())
 		return err
@@ -59,7 +61,7 @@ func (c Client) Connect(uri string) error {
 	c.notifyConfirm = make(chan amqp.Confirmation)
 	c.channel.NotifyClose(c.notifyClose)
 	c.channel.NotifyPublish(c.notifyConfirm)
-	c.isConnected = true
+	c.isConnected.Swap(false)
 	return nil
 }
 
@@ -81,7 +83,7 @@ func (c Client) Run() error {
 }
 
 func (c Client) IsConnected() bool {
-	return c.isConnected
+	return c.isConnected.Load()
 }
 
 func (c Client) AddStream(consumer *pubsub.Consumer, isWriteOnly bool) error {
@@ -89,7 +91,7 @@ func (c Client) AddStream(consumer *pubsub.Consumer, isWriteOnly bool) error {
 	var stream pubsub.Stream = Stream{
 		consumer:    consumer,
 		client:      &client,
-		isConnected: false,
+		isConnected: atomic.NewBool(false),
 		isWriteOnly: isWriteOnly,
 		channel:     c.channel,
 	}
@@ -99,7 +101,7 @@ func (c Client) AddStream(consumer *pubsub.Consumer, isWriteOnly bool) error {
 }
 
 func (c Client) Push(queue string, data []byte) error {
-	if !c.isConnected {
+	if !c.isConnected.Load() {
 		// TODO: Is should wait connect to RabbitMQ or not?
 		return errors.New("failed to push push: not connected")
 	}
@@ -123,7 +125,7 @@ func (c Client) Push(queue string, data []byte) error {
 }
 
 func (c Client) PushUnsafe(queue string, data []byte) error {
-	if !c.isConnected {
+	if !c.isConnected.Load() {
 		return pubsub.ErrDisconnected
 	}
 	return c.channel.Publish(
@@ -152,12 +154,12 @@ func (c Client) Close() error {
 }
 
 func (c Client) handleReconnect() {
-	for c.alive {
+	for c.alive.Load() {
 		log.Debug("Try connect after alive")
-		c.isConnected = false
-		for c.Connect(c.uri) != nil {
+		c.isConnected.Store(false)
+		for c.Connect() != nil {
 			log.Debug("Try connect")
-			if !c.alive {
+			if !c.alive.Load() {
 				return
 			}
 			select {

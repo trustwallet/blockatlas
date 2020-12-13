@@ -1,10 +1,11 @@
-package mq
+package mqclient
 
 import (
 	"context"
 	log "github.com/sirupsen/logrus"
 	"github.com/streadway/amqp"
 	"github.com/trustwallet/blockatlas/pubsub"
+	"go.uber.org/atomic"
 	"time"
 )
 
@@ -12,12 +13,12 @@ type Stream struct {
 	consumer    *pubsub.Consumer
 	client      *pubsub.Client
 	channel     *amqp.Channel
-	isConnected bool
+	isConnected *atomic.Bool
 	isWriteOnly bool
 }
 
 func (s Stream) Connect(cancelCtx context.Context) {
-	s.isConnected = true
+	s.isConnected.Store(true)
 	for {
 		if (*s.client).IsConnected() {
 			break
@@ -38,7 +39,7 @@ func (s Stream) Connect(cancelCtx context.Context) {
 		nil,
 	)
 	if err != nil {
-		s.isConnected = false
+		s.isConnected.Store(false)
 		log.Fatal("GetMessageChannel MQ issue "+err.Error(), (*s.consumer).GetQueue())
 	}
 	for {
@@ -48,7 +49,7 @@ func (s Stream) Connect(cancelCtx context.Context) {
 			return
 		case msg, ok := <-messageChannel:
 			if !ok {
-				s.isConnected = false
+				s.isConnected.Store(false)
 				return
 			}
 			if msg.Body != nil {
@@ -66,7 +67,7 @@ func (s Stream) GetClient() *pubsub.Client {
 }
 
 func (s Stream) IsConnected() bool {
-	return s.isConnected
+	return s.isConnected.Load()
 }
 
 func (s Stream) IsWriteOnly() bool {
