@@ -410,10 +410,6 @@ github.com/swaggo/swag v1.5.1/go.mod h1:1Bl9F/ZBpVWh22nY0zmYyASPO1lI/zIwRDrpZU+t
 github.com/swaggo/swag v1.7.0 h1:5bCA/MTLQoIqDXXyHfOpMeDvL9j68OY/udlK4pQoo4E=
 github.com/swaggo/swag v1.7.0/go.mod h1:BdPIL73gvS9NBsdi7M1JOxLvlbfvNRaBP8m6WT6Aajo=
 github.com/tmc/grpc-websocket-proxy v0.0.0-20190109142713-0ad062ec5ee5/go.mod h1:ncp9v5uamzpCO7NfCPTXjqaC+bZgJeR0sMTm6dMHP7U=
-github.com/trustwallet/golibs v0.0.18 h1:FfLeSeCkZUMr4uNwSA5oWsV4FnTCicesCZOMn5SnzL0=
-github.com/trustwallet/golibs v0.0.18/go.mod h1:OF0QTvtLg9qWRYrL7ch7j9ZhCLVga0MHTZ1tlJGaf88=
-github.com/trustwallet/golibs v0.0.20 h1:Y7eW7W8nzsp+2yer1YnYDG1u+/yLCgrMxjvbEekwPC0=
-github.com/trustwallet/golibs v0.0.20/go.mod h1:OF0QTvtLg9qWRYrL7ch7j9ZhCLVga0MHTZ1tlJGaf88=
 github.com/trustwallet/golibs v0.0.21 h1:gUPra/RHK+06bM39jrtoNCz1IZWWWcnjXDtYE9+B2vs=
 github.com/trustwallet/golibs v0.0.21/go.mod h1:OF0QTvtLg9qWRYrL7ch7j9ZhCLVga0MHTZ1tlJGaf88=
 github.com/ugorji/go v1.1.4/go.mod h1:uQMGLiO92mf5W77hV/PUCpI3pbzQx3CRekS0kk+RGrc=
