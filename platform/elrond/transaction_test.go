@@ -105,7 +105,7 @@ const txTransferSrc6 = `
 
 var txTransfer1Normalized = blockatlas.Tx{
 	ID:       "30d404cc7a42b0158b95f6adfbf9a517627d60f6c7e497c1442dfdb6460285df",
-	Coin:     coin.ERD,
+	Coin:     coin.EGLD,
 	Date:     int64(1587715632),
 	From:     "metachain",
 	To:       "erd10yagg2vme2jns9zqf9xn8kl86fkc6dr063vnuj0mz2kk2jw0qwuqmfmaw0",
@@ -123,7 +123,7 @@ var txTransfer1Normalized = blockatlas.Tx{
 
 var txTransfer2Normalized = blockatlas.Tx{
 	ID:       "30d404cc7a42b0158b95f6adfbf9a517627d60f6c7e497c1442dfdb6460285df",
-	Coin:     coin.ERD,
+	Coin:     coin.EGLD,
 	Date:     int64(1588757256),
 	From:     "erd10yagg2vme2jns9zqf9xn8kl86fkc6dr063vnuj0mz2kk2jw0qwuqmfmaw0",
 	To:       "erd10yagg2vme2jns9zqf9xn8kl86fkc6dr063vnuj0mz2kk2jw0qwuqmfmaw0",
@@ -141,7 +141,7 @@ var txTransfer2Normalized = blockatlas.Tx{
 
 var txTransfer3Normalized = blockatlas.Tx{
 	ID:       "30d404cc7a42b0158b95f6adfbf9a517627d60f6c7e497c1442dfdb6460285df",
-	Coin:     coin.ERD,
+	Coin:     coin.EGLD,
 	Date:     int64(1588757256),
 	From:     "erd10yagg2vme2jns9zqf9xn8kl86fkc6dr063vnuj0mz2kk2jw0qwuqmfmaw0",
 	To:       "erd1v0ce6rapup6rwma5sltyv05xhp33u543nex75a7j39vsz9m6squq6mxm7y",
@@ -159,7 +159,7 @@ var txTransfer3Normalized = blockatlas.Tx{
 
 var txTransfer4Normalized = blockatlas.Tx{
 	ID:       "30d404cc7a42b0158b95f6adfbf9a517627d60f6c7e497c1442dfdb6460285df",
-	Coin:     coin.ERD,
+	Coin:     coin.EGLD,
 	Date:     int64(1588757256),
 	From:     "erd10yagg2vme2jns9zqf9xn8kl86fkc6dr063vnuj0mz2kk2jw0qwuqmfmaw0",
 	To:       "erd1v0ce6rapup6rwma5sltyv05xhp33u543nex75a7j39vsz9m6squq6mxm7y",
@@ -177,7 +177,7 @@ var txTransfer4Normalized = blockatlas.Tx{
 
 var txTransfer5Normalized = blockatlas.Tx{
 	ID:       "30d404cc7a42b0158b95f6adfbf9a517627d60f6c7e497c1442dfdb6460285df",
-	Coin:     coin.ERD,
+	Coin:     coin.EGLD,
 	Date:     int64(1588757256),
 	From:     "erd10yagg2vme2jns9zqf9xn8kl86fkc6dr063vnuj0mz2kk2jw0qwuqmfmaw0",
 	To:       "erd1v0ce6rapup6rwma5sltyv05xhp33u543nex75a7j39vsz9m6squq6mxm7y",
@@ -195,7 +195,7 @@ var txTransfer5Normalized = blockatlas.Tx{
 
 var txTransfer6Normalized = blockatlas.Tx{
 	ID:       "30d404cc7a42b0158b95f6adfbf9a517627d60f6c7e497c1442dfdb6460285df",
-	Coin:     coin.ERD,
+	Coin:     coin.EGLD,
 	From:     "erd10yagg2vme2jns9zqf9xn8kl86fkc6dr063vnuj0mz2kk2jw0qwuqmfmaw0",
 	To:       "erd1v0ce6rapup6rwma5sltyv05xhp33u543nex75a7j39vsz9m6squq6mxm7y",
 	Fee:      "5000",
