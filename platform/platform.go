@@ -76,7 +76,7 @@ func getAllHandlers() blockatlas.Platforms {
 		coin.Litecoin().Handle:     bitcoin.Init(coin.LTC, config.Default.Litecoin.API),
 		coin.Bitcoincash().Handle:  bitcoin.Init(coin.BCH, config.Default.Bitcoincash.API),
 		coin.Zcash().Handle:        bitcoin.Init(coin.ZEC, config.Default.Zcash.API),
-		coin.Zcoin().Handle:        bitcoin.Init(coin.XZC, config.Default.Zcoin.API),
+		coin.Zcoin().Handle:        bitcoin.Init(coin.FIRO, config.Default.Zcoin.API),
 		coin.Viacoin().Handle:      bitcoin.Init(coin.VIA, config.Default.Viacoin.API),
 		coin.Ravencoin().Handle:    bitcoin.Init(coin.RVN, config.Default.Ravencoin.API),
 		coin.Groestlcoin().Handle:  bitcoin.Init(coin.GRS, config.Default.Groestlcoin.API),
@@ -97,7 +97,7 @@ func getAllHandlers() blockatlas.Platforms {
 		coin.Smartchain().Handle:   ethereum.InitWithBlockbook(coin.BSC, config.Default.Smartchain.API, config.Default.Smartchain.RPC),
 		coin.Ethereum().Handle:     ethereum.InitWithCollection(coin.ETH, config.Default.Ethereum.RPC, config.Default.Ethereum.BlockbookAPI, config.Default.Ethereum.CollectionsAPI, config.Default.Ethereum.CollectionsKey),
 		coin.Near().Handle:         near.Init(config.Default.Near.API),
-		coin.Elrond().Handle:       elrond.Init(coin.ERD, config.Default.Elrond.API),
+		coin.Elrond().Handle:       elrond.Init(coin.EGLD, config.Default.Elrond.API),
 		coin.Filecoin().Handle:     filecoin.Init(config.Default.Filecoin.API),
 	}
 }
