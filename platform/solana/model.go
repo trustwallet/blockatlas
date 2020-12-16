@@ -69,3 +69,45 @@ type EpochInfo struct {
 	SlotIndex    uint64 `json:"slotIndex"`
 	SlotsInEpoch uint64 `json:"slotsInEpoch"`
 }
+
+type ConfirmedSignature struct {
+	Memo      string `json:"memo"`
+	Signature string `json:"signature"`
+	Slot      uint64 `json:"slot"`
+}
+
+type ConfirmedTransaction struct {
+	Meta        Meta        `json:"meta"`
+	Slot        uint64      `json:"slot"`
+	Transaction Transaction `json:"transaction"`
+}
+
+type Meta struct {
+	Err interface{} `json:"err"`
+	Fee uint64      `json:"fee"`
+}
+
+type Info struct {
+	Destination string `json:"destination"`
+	Lamports    uint64 `json:"lamports"`
+	Source      string `json:"source"`
+}
+
+type Parsed struct {
+	Info Info   `json:"info"`
+	Type string `json:"type"`
+}
+
+type Instructions struct {
+	Parsed  Parsed `json:"parsed"`
+	Program string `json:"program"`
+}
+
+type Message struct {
+	Instructions []Instructions `json:"instructions"`
+}
+
+type Transaction struct {
+	Message    Message  `json:"message"`
+	Signatures []string `json:"signatures"`
+}

@@ -5,6 +5,9 @@ package observer_test
 import (
 	"context"
 	"encoding/json"
+	"testing"
+	"time"
+
 	"github.com/streadway/amqp"
 	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas/mq"
@@ -12,8 +15,6 @@ import (
 	"github.com/trustwallet/blockatlas/services/notifier"
 	"github.com/trustwallet/blockatlas/tests/integration/setup"
 	"github.com/trustwallet/golibs/coin"
-	"testing"
-	"time"
 )
 
 var (
@@ -43,7 +44,7 @@ var (
 func TestNotifier(t *testing.T) {
 	setup.CleanupPgContainer(database.Gorm)
 
-	err := database.AddSubscriptionsForNotifications([]string{"714_tbnb1ttyn4csghfgyxreu7lmdu3lcplhqhxtzced45a"}, context.Background())
+	err := database.AddSubscriptionsForNotifications([]string{"714_tbnb1ttyn4csghfgyxreu7lmdu3lcplhqhxtzced45a"})
 	assert.Nil(t, err)
 
 	err = produceTxs(txs)

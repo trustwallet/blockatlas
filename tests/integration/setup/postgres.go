@@ -32,7 +32,7 @@ var (
 		&models.Address{},
 	}
 
-	uri string
+	url string
 )
 
 func runPgContainerAndInitConnection() (*db.Instance, error) {
@@ -42,7 +42,7 @@ func runPgContainerAndInitConnection() (*db.Instance, error) {
 		err    error
 	)
 	err = pool.Retry(func() error {
-		dbConn, err = db.New(uri, uri, false)
+		dbConn, err = db.New(url, false)
 		return err
 	})
 	if err != nil {
@@ -81,7 +81,7 @@ func runPgContainer() *dockertest.Pool {
 		log.Fatalf("Could not start resource: %s", err)
 	}
 
-	uri = fmt.Sprintf("postgres://%s:%s@localhost:%s/%s?sslmode=disable",
+	url = fmt.Sprintf("postgres://%s:%s@localhost:%s/%s?sslmode=disable",
 		pgUser, pgPass, pgResource.GetPort("5432/tcp"), pgDB,
 	)
 	return pool

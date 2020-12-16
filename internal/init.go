@@ -2,12 +2,13 @@ package internal
 
 import (
 	"flag"
+
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
-	"github.com/trustwallet/blockatlas/api/middleware"
+
+	"github.com/gin-contrib/cors"
 	"github.com/trustwallet/blockatlas/config"
 	"github.com/trustwallet/blockatlas/mq"
-	"go.elastic.co/apm/module/apmgin"
 
 	"path/filepath"
 	"time"
@@ -42,11 +43,9 @@ func InitConfig(confPath string) {
 func InitEngine(ginMode string) *gin.Engine {
 	gin.SetMode(ginMode)
 	engine := gin.New()
-	engine.Use(middleware.CORSMiddleware())
-	engine.Use(apmgin.Middleware(engine))
+
+	engine.Use(cors.Default())
 	engine.Use(gin.Logger())
-	engine.Use(middleware.Prometheus())
-	engine.OPTIONS("/*path", middleware.CORSMiddleware())
 
 	return engine
 }

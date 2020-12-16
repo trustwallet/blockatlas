@@ -52,8 +52,10 @@ const txTransferSrc3 = `
 	"data":"test",
 	"signature":"",
 	"timestamp":1588757256,
-	"status":"Not executed",
-	"fee": "5000"
+	"status":"Fail",
+	"fee": "0",
+	"gasPrice": 5,
+    "gasLimit": 1000
 }`
 
 const txTransferSrc4 = `
@@ -86,9 +88,24 @@ const txTransferSrc5 = `
 	"fee": "5000"
 }`
 
+const txTransferSrc6 = `
+{
+	"hash":"30d404cc7a42b0158b95f6adfbf9a517627d60f6c7e497c1442dfdb6460285df",
+	"nonce":25,
+	"value":"2",
+	"receiver":"erd1v0ce6rapup6rwma5sltyv05xhp33u543nex75a7j39vsz9m6squq6mxm7y",
+	"sender":"erd10yagg2vme2jns9zqf9xn8kl86fkc6dr063vnuj0mz2kk2jw0qwuqmfmaw0",
+	"data":"test",
+	"signature":"",
+	"status":"success",
+	"fee": "0",
+	"gasPrice": 5,
+    "gasLimit": 1000
+}`
+
 var txTransfer1Normalized = blockatlas.Tx{
 	ID:       "30d404cc7a42b0158b95f6adfbf9a517627d60f6c7e497c1442dfdb6460285df",
-	Coin:     coin.ERD,
+	Coin:     coin.EGLD,
 	Date:     int64(1587715632),
 	From:     "metachain",
 	To:       "erd10yagg2vme2jns9zqf9xn8kl86fkc6dr063vnuj0mz2kk2jw0qwuqmfmaw0",
@@ -106,7 +123,7 @@ var txTransfer1Normalized = blockatlas.Tx{
 
 var txTransfer2Normalized = blockatlas.Tx{
 	ID:       "30d404cc7a42b0158b95f6adfbf9a517627d60f6c7e497c1442dfdb6460285df",
-	Coin:     coin.ERD,
+	Coin:     coin.EGLD,
 	Date:     int64(1588757256),
 	From:     "erd10yagg2vme2jns9zqf9xn8kl86fkc6dr063vnuj0mz2kk2jw0qwuqmfmaw0",
 	To:       "erd10yagg2vme2jns9zqf9xn8kl86fkc6dr063vnuj0mz2kk2jw0qwuqmfmaw0",
@@ -124,7 +141,7 @@ var txTransfer2Normalized = blockatlas.Tx{
 
 var txTransfer3Normalized = blockatlas.Tx{
 	ID:       "30d404cc7a42b0158b95f6adfbf9a517627d60f6c7e497c1442dfdb6460285df",
-	Coin:     coin.ERD,
+	Coin:     coin.EGLD,
 	Date:     int64(1588757256),
 	From:     "erd10yagg2vme2jns9zqf9xn8kl86fkc6dr063vnuj0mz2kk2jw0qwuqmfmaw0",
 	To:       "erd1v0ce6rapup6rwma5sltyv05xhp33u543nex75a7j39vsz9m6squq6mxm7y",
@@ -142,7 +159,7 @@ var txTransfer3Normalized = blockatlas.Tx{
 
 var txTransfer4Normalized = blockatlas.Tx{
 	ID:       "30d404cc7a42b0158b95f6adfbf9a517627d60f6c7e497c1442dfdb6460285df",
-	Coin:     coin.ERD,
+	Coin:     coin.EGLD,
 	Date:     int64(1588757256),
 	From:     "erd10yagg2vme2jns9zqf9xn8kl86fkc6dr063vnuj0mz2kk2jw0qwuqmfmaw0",
 	To:       "erd1v0ce6rapup6rwma5sltyv05xhp33u543nex75a7j39vsz9m6squq6mxm7y",
@@ -160,7 +177,7 @@ var txTransfer4Normalized = blockatlas.Tx{
 
 var txTransfer5Normalized = blockatlas.Tx{
 	ID:       "30d404cc7a42b0158b95f6adfbf9a517627d60f6c7e497c1442dfdb6460285df",
-	Coin:     coin.ERD,
+	Coin:     coin.EGLD,
 	Date:     int64(1588757256),
 	From:     "erd10yagg2vme2jns9zqf9xn8kl86fkc6dr063vnuj0mz2kk2jw0qwuqmfmaw0",
 	To:       "erd1v0ce6rapup6rwma5sltyv05xhp33u543nex75a7j39vsz9m6squq6mxm7y",
@@ -168,6 +185,25 @@ var txTransfer5Normalized = blockatlas.Tx{
 	Status:   blockatlas.StatusCompleted,
 	Memo:     "test",
 	Sequence: 19,
+	Meta: blockatlas.Transfer{
+		Value:    "2",
+		Symbol:   coin.Elrond().Symbol,
+		Decimals: coin.Elrond().Decimals,
+	},
+	Direction: blockatlas.DirectionOutgoing,
+}
+
+var txTransfer6Normalized = blockatlas.Tx{
+	ID:       "30d404cc7a42b0158b95f6adfbf9a517627d60f6c7e497c1442dfdb6460285df",
+	Coin:     coin.EGLD,
+	From:     "erd10yagg2vme2jns9zqf9xn8kl86fkc6dr063vnuj0mz2kk2jw0qwuqmfmaw0",
+	To:       "erd1v0ce6rapup6rwma5sltyv05xhp33u543nex75a7j39vsz9m6squq6mxm7y",
+	Fee:      "5000",
+	Status:   blockatlas.StatusCompleted,
+	Memo:     "test",
+	Sequence: 25,
+	Block:    620,
+	Date:     1596121554,
 	Meta: blockatlas.Transfer{
 		Value:    "2",
 		Symbol:   coin.Elrond().Symbol,
@@ -222,7 +258,7 @@ func TestNormalizeTxs(t *testing.T) {
 	_ = json.Unmarshal([]byte(txTransferSrc1), &tx3)
 
 	txs := []Transaction{tx1, tx2, tx3}
-	normalizedTxs := NormalizeTxs(txs, userAddress)
+	normalizedTxs := NormalizeTxs(txs, userAddress, Block{})
 	require.Equal(t, len(txs), len(normalizedTxs))
 }
 
@@ -234,7 +270,7 @@ func testNormalize(t *testing.T, _test *test) {
 		return
 	}
 
-	normalizedTx, ok := NormalizeTx(tx, tx.Sender)
+	normalizedTx, ok := NormalizeTx(tx, tx.Sender, Block{})
 	require.True(t, ok, _test.name+": cannot normalize tx")
 
 	resJSON, err := json.Marshal(&normalizedTx)
@@ -244,4 +280,19 @@ func testNormalize(t *testing.T, _test *test) {
 	require.Nil(t, err)
 
 	require.Equal(t, string(dstJSON), string(resJSON))
+}
+
+func TestNormalizeTxsFromHyperblock(t *testing.T) {
+	var tx Transaction
+
+	_ = json.Unmarshal([]byte(txTransferSrc6), &tx)
+	txs := []Transaction{tx}
+
+	normalizedTxs := NormalizeTxs(txs, userAddress, Block{
+		Nonce: 620,
+		Round: 659,
+	})
+	require.Equal(t, len(txs), len(normalizedTxs))
+
+	require.Equal(t, []blockatlas.Tx{txTransfer6Normalized}, normalizedTxs)
 }

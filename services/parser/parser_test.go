@@ -1,7 +1,6 @@
 package parser
 
 import (
-	"context"
 	"errors"
 	"reflect"
 	"testing"
@@ -57,12 +56,12 @@ func TestFetchBlocks(t *testing.T) {
 		TxBatchLimit:           0,
 		Database:               nil,
 	}
-	blocks := FetchBlocks(params, 0, 100, context.Background())
+	blocks := FetchBlocks(params, 0, 100)
 	assert.Equal(t, len(blocks), 100)
 }
 
 func TestParser_getBlockByNumberWithRetry(t *testing.T) {
-	block, err := getBlockByNumberWithRetry(3, time.Millisecond*1, getBlock, 1, "", context.Background())
+	block, err := getBlockByNumberWithRetry(3, time.Millisecond*1, getBlock, 1, "")
 	if err != nil {
 		t.Error(err)
 	}
@@ -74,7 +73,7 @@ func TestParser_getBlockByNumberWithRetry(t *testing.T) {
 
 func TestParser_getBlockByNumberWithRetry_Error(t *testing.T) {
 	now := time.Now()
-	block, err := getBlockByNumberWithRetry(2, time.Millisecond*2, getBlock, 0, "", context.Background())
+	block, err := getBlockByNumberWithRetry(2, time.Millisecond*2, getBlock, 0, "")
 	elapsed := time.Since(now)
 	if err == nil {
 		t.Error("getBlockByNumberWithRetry method need fail")
@@ -119,36 +118,36 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 
 func TestGetTxBatches(t *testing.T) {
 	txs := make(blockatlas.Txs, 10000)
-	batches := getTxsBatches(txs, 1000, context.Background())
+	batches := getTxsBatches(txs, 1000)
 	assert.Len(t, batches, 10)
-	batches = getTxsBatches(txs, 100, context.Background())
+	batches = getTxsBatches(txs, 100)
 	assert.Len(t, batches, 100)
-	batches = getTxsBatches(txs, 500, context.Background())
+	batches = getTxsBatches(txs, 500)
 	assert.Len(t, batches, 20)
 
 	txs = make(blockatlas.Txs, 3800)
-	batches = getTxsBatches(txs, 100, context.Background())
+	batches = getTxsBatches(txs, 100)
 	assert.Len(t, batches, 38)
-	batches = getTxsBatches(txs, 1000, context.Background())
+	batches = getTxsBatches(txs, 1000)
 	assert.Len(t, batches, 4)
 
 	txs = make(blockatlas.Txs, 5000)
-	batches = getTxsBatches(txs, 10000, context.Background())
+	batches = getTxsBatches(txs, 10000)
 	assert.Len(t, batches, 1)
 
 	txs = make(blockatlas.Txs, 0)
-	batches = getTxsBatches(txs, 100, context.Background())
+	batches = getTxsBatches(txs, 100)
 	assert.Len(t, batches, 0)
 
 	txs = make(blockatlas.Txs, 0)
-	batches = getTxsBatches(txs, 100, context.Background())
+	batches = getTxsBatches(txs, 100)
 	assert.Len(t, batches, 0)
 
-	batches = getTxsBatches(nil, 100, context.Background())
+	batches = getTxsBatches(nil, 100)
 	assert.Len(t, batches, 0)
 
 	txs = make(blockatlas.Txs, 1000000)
-	batches = getTxsBatches(txs, 5000, context.Background())
+	batches = getTxsBatches(txs, 5000)
 	assert.Len(t, batches, 200)
 }
 

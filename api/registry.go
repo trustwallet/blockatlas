@@ -3,15 +3,13 @@ package api
 import (
 	"time"
 
-	"github.com/chenjiandongx/ginprom"
 	"github.com/gin-gonic/gin"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/trustwallet/blockatlas/api/endpoint"
-	"github.com/trustwallet/blockatlas/api/middleware"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/platform"
 	"github.com/trustwallet/blockatlas/services/tokenindexer"
 	"github.com/trustwallet/blockatlas/services/tokensearcher"
+	"github.com/trustwallet/golibs/network/middleware"
 )
 
 func RegisterTransactionsAPI(router gin.IRouter, api blockatlas.Platform) {
@@ -102,7 +100,6 @@ func RegisterBatchAPI(router gin.IRouter) {
 
 func RegisterBasicAPI(router gin.IRouter) {
 	router.GET("/", endpoint.GetStatus)
-	router.GET("/metrics", ginprom.PromHandler(promhttp.Handler()))
 }
 
 func RegisterTokensSearcherAPI(router gin.IRouter, instance tokensearcher.Instance) {

@@ -2,8 +2,9 @@ package solana
 
 import (
 	"encoding/json"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"testing"
+
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -37,7 +38,7 @@ const currentValidators = `
 ]`
 
 var expectedValidators = []blockatlas.Validator{
-	blockatlas.Validator{
+	{
 		Status: true,
 		ID:     "2Afu38M1KaSfDBpjZjnJb9BSWP6YkBkoPiBfnFedD7JW",
 		Details: blockatlas.StakingDetails{
@@ -47,7 +48,7 @@ var expectedValidators = []blockatlas.Validator{
 			Type:          blockatlas.DelegationTypeDelegate,
 		},
 	},
-	blockatlas.Validator{
+	{
 		Status: true,
 		ID:     "5CgQubGD1uwodwCe5UXDADbC69SiqXR8qq6pDMSm7ut5",
 		Details: blockatlas.StakingDetails{

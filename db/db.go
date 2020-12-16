@@ -1,10 +1,10 @@
 package db
 
 import (
-	"context"
 	"errors"
-	"gorm.io/gorm/logger"
 	"time"
+
+	"gorm.io/gorm/logger"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas/db/models"
@@ -13,7 +13,6 @@ import (
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"gorm.io/plugin/dbresolver"
 )
 
 type Instance struct {
@@ -25,19 +24,15 @@ type Instance struct {
 // "Depending on the number of variables included, 2000 to 3000 is recommended."
 const batchCount = 3000
 
-func New(uri, readUri string, logMode bool) (*Instance, error) {
-	cfg := &gorm.Config{Logger: logger.Default.LogMode(logger.Silent)}
-
-	db, err := gorm.Open(postgres.Open(uri), cfg)
-	if err != nil {
-		return nil, err
+func New(url string, log bool) (*Instance, error) {
+	var logMode logger.LogLevel
+	if log {
+		logMode = logger.Info
 	}
 
-	err = db.Use(dbresolver.Register(dbresolver.Config{
-		Replicas: []gorm.Dialector{
-			postgres.Open(readUri),
-		},
-	}))
+	cfg := &gorm.Config{Logger: logger.Default.LogMode(logMode)}
+
+	db, err := gorm.Open(postgres.Open(url), cfg)
 	if err != nil {
 		return nil, err
 	}
@@ -59,7 +54,7 @@ func New(uri, readUri string, logMode bool) (*Instance, error) {
 	return i, nil
 }
 
-func (i *Instance) RestoreConnectionWorker(ctx context.Context, timeout time.Duration, uri string) {
+func (i *Instance) RestoreConnectionWorker(timeout time.Duration, uri string) {
 	log.Info("Run PG RestoreConnectionWorker")
 
 	for {
@@ -90,12 +85,12 @@ func (i *Instance) restoreConnection(uri string) error {
 	return nil
 }
 
-func (i *Instance) MemorySet(key string, data []byte, exp time.Duration, ctx context.Context) error {
+func (i *Instance) MemorySet(key string, data []byte, exp time.Duration) error {
 	i.MemoryCache.Set(key, data, exp)
 	return nil
 }
 
-func (i *Instance) MemoryGet(key string, ctx context.Context) ([]byte, error) {
+func (i *Instance) MemoryGet(key string) ([]byte, error) {
 	res, ok := i.MemoryCache.Get(key)
 	if !ok {
 		return nil, errors.New("not found")

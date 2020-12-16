@@ -3,14 +3,14 @@
 package db_test
 
 import (
-	"context"
+	"sort"
+	"testing"
+	"time"
+
 	gocache "github.com/patrickmn/go-cache"
 	assert "github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas/db/models"
 	"github.com/trustwallet/blockatlas/tests/integration/setup"
-	"sort"
-	"testing"
-	"time"
 )
 
 func Test_AddNewAssets_Simple(t *testing.T) {
@@ -30,9 +30,9 @@ func Test_AddNewAssets_Simple(t *testing.T) {
 			Type:     "BEP20",
 		},
 	}
-	err := database.AddNewAssets(a, context.Background())
+	err := database.AddNewAssets(a)
 	assert.Nil(t, err)
-	assets, err := database.GetAssetsByIDs([]string{"c714_b", "c714_a"}, context.Background())
+	assets, err := database.GetAssetsByIDs([]string{"c714_b", "c714_a"})
 	assert.Nil(t, err)
 	assert.NotNil(t, assets)
 	a = append(a, models.Asset{
@@ -42,7 +42,7 @@ func Test_AddNewAssets_Simple(t *testing.T) {
 		Symbol:   "DTS",
 		Type:     "BEP20",
 	})
-	err = database.AddNewAssets(a, context.Background())
+	err = database.AddNewAssets(a)
 	assert.Nil(t, err)
 	err = database.AddNewAssets([]models.Asset{{
 		Asset:    "c714_p",
@@ -50,9 +50,9 @@ func Test_AddNewAssets_Simple(t *testing.T) {
 		Name:     "D",
 		Symbol:   "DTS",
 		Type:     "BEP20",
-	}}, context.Background())
+	}})
 	assert.Nil(t, err)
-	assets, err = database.GetAssetsByIDs([]string{"c714_p"}, context.Background())
+	assets, err = database.GetAssetsByIDs([]string{"c714_p"})
 	assert.Nil(t, err)
 	assert.Equal(t, 0, len(assets))
 }
@@ -78,12 +78,12 @@ func Test_GetAssetsFrom_Simple(t *testing.T) {
 			Type:     "BEP20",
 		},
 	}
-	err := database.AddNewAssets(a, context.Background())
+	err := database.AddNewAssets(a)
 	assert.Nil(t, err)
-	assets, err := database.GetAssetsFrom(time.Unix(0, 0), -1, context.Background())
+	assets, err := database.GetAssetsFrom(time.Unix(0, 0), -1)
 	assert.Nil(t, err)
 	assert.NotNil(t, assets)
-	assets, err = database.GetAssetsFrom(time.Unix(0, 0), 60, context.Background())
+	assets, err = database.GetAssetsFrom(time.Unix(0, 0), 60)
 	assert.Nil(t, err)
 	assert.Equal(t, 1, len(assets))
 }
@@ -191,9 +191,9 @@ func Test_AddNewAssets(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			err := database.AddNewAssets(tt.Assets, context.Background())
+			err := database.AddNewAssets(tt.Assets)
 			assert.Equal(t, tt.WantedErr, err)
-			assets, err := database.GetAssetsByIDs(tt.AssetsIDs, context.Background())
+			assets, err := database.GetAssetsByIDs(tt.AssetsIDs)
 			assert.Nil(t, err)
 			sort.Slice(tt.WantedAssets, func(i, j int) bool {
 				return len(tt.WantedAssets[i].Name) > len(tt.WantedAssets[j].Name)

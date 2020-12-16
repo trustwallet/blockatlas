@@ -31,8 +31,6 @@ observer:
 
 postgres:
   url: postgresql://user:pass@localhost/blockatlas?sslmode=disable
-  read:
-    url: postgresql://user:pass@localhost/blockatlas?sslmode=disable
   log: false
 
 # [BNB] Binance DEX: https://www.binance.org/
@@ -207,9 +205,6 @@ harmony:
 kava:
   api: https://kava.data.kava.io
 
-kusama:
-  api: https://kusama.subscan.io/api
-
 polkadot:
   api: https://polkadot.subscan.io/api
 
@@ -220,10 +215,13 @@ near:
   api: https://staging-rpc.nearprotocol.com
 
 elrond:
-  api: https://api.elrond.com
+  api: https://gateway.elrond.com
 
 filecoin:
   api: https://api.filscan.io:8700/rpc/v1
   # bsc:
   # api: <blockbook api>
   # rpc: <rpc>
+
+sentry:
+  dsn: ""

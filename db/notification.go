@@ -1,33 +1,31 @@
 package db
 
 import (
-	"context"
 	"errors"
+
 	"github.com/trustwallet/blockatlas/db/models"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
 
-func (i *Instance) GetSubscriptionsForNotifications(addresses []string, ctx context.Context) ([]models.NotificationSubscription, error) {
+func (i *Instance) GetSubscriptionsForNotifications(addresses []string) ([]models.NotificationSubscription, error) {
 	if len(addresses) == 0 {
 		return nil, errors.New("Empty addresses")
 	}
 
-	db := i.Gorm.WithContext(ctx)
 	var subscriptionsDataList []models.NotificationSubscription
-	err := db.Joins("Address").Limit(len(addresses)).Find(&subscriptionsDataList, "address in (?)", addresses).Error
+	err := i.Gorm.Joins("Address").Limit(len(addresses)).Find(&subscriptionsDataList, "address in (?)", addresses).Error
 	if err != nil {
 		return nil, err
 	}
 	return subscriptionsDataList, nil
 }
 
-func (i *Instance) AddSubscriptionsForNotifications(addresses []string, ctx context.Context) error {
+func (i *Instance) AddSubscriptionsForNotifications(addresses []string) error {
 	if len(addresses) == 0 {
 		return errors.New("Empty subscriptions")
 	}
-	db := i.Gorm.WithContext(ctx)
-	return db.Transaction(func(tx *gorm.DB) error {
+	return i.Gorm.Transaction(func(tx *gorm.DB) error {
 		uniqueAddresses := getUniqueStrings(addresses)
 		uniqueAddressesModel := make([]models.Address, 0, len(uniqueAddresses))
 		for _, a := range uniqueAddresses {
@@ -63,10 +61,10 @@ func (i *Instance) AddSubscriptionsForNotifications(addresses []string, ctx cont
 	})
 }
 
-func (i *Instance) DeleteSubscriptionsForNotifications(addresses []string, ctx context.Context) error {
+func (i *Instance) DeleteSubscriptionsForNotifications(addresses []string) error {
 	if len(addresses) == 0 {
 		return errors.New("Empty subscriptions")
 	}
 	q := `DELETE FROM notification_subscriptions ns USING addresses a where ns.address_id = a.id AND a.address IN (?);`
-	return i.Gorm.WithContext(ctx).Exec(q, addresses).Error
+	return i.Gorm.Exec(q, addresses).Error
 }
