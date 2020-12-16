@@ -36,8 +36,8 @@ require (
 	github.com/stretchr/testify v1.6.1
 	github.com/swaggo/gin-swagger v1.3.0
 	github.com/swaggo/swag v1.7.0
-	github.com/trustwallet/golibs v0.0.23
-	github.com/trustwallet/golibs/network v0.0.0-20201215012452-c5d526fed5df
+	github.com/trustwallet/golibs v0.0.25-0.20201216132800-3747f10bb8cd
+	github.com/trustwallet/golibs/network v0.0.0-20201216013232-f564db1c6ecd
 	go.uber.org/atomic v1.7.0
 	golang.org/x/crypto v0.0.0-20201124201722-c8d3bf9c5392
 	golang.org/x/net v0.0.0-20201216054612-986b41b23924 // indirect
