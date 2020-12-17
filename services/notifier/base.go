@@ -52,6 +52,10 @@ func RunNotifier(database *db.Instance, delivery amqp.Delivery) {
 		notificationsForAddress := buildNotificationsByAddress(ua, txs)
 		notifications = append(notifications, notificationsForAddress...)
 	}
-	publishNotifications(notifications)
+	err = publishNotifications(notifications)
+	if err != nil {
+		log.WithFields(log.Fields{"service": Notifier}).Error(err)
+	}
+
 	log.Info("------------------------------------------------------------")
 }

@@ -21,15 +21,20 @@ func GetTransactionsFromDelivery(delivery amqp.Delivery, service string) (blocka
 	return transactions, nil
 }
 
-func publishNotifications(notifications []TransactionNotification) {
-	raw, err := json.Marshal(notifications)
-	if err != nil {
-		log.Fatal("publishNotifications marshal: ", err)
-	}
-	err = mq.TxNotifications.Publish(raw)
-	if err != nil {
-		log.Fatal("publishNotifications publish:", err)
+func publishNotifications(notifications []TransactionNotification) error {
+	for _, notification := range notifications {
+		raw, err := json.Marshal(notification)
+		if err != nil {
+			return err
+		}
+		//Use use Tx() / Commit() to provide consistency
+		err = mq.TxNotifications.Publish(raw)
+		if err != nil {
+			return err
+		}
 	}
 
-	log.WithFields(log.Fields{"service": Notifier, "notifications": len(notifications)}).Info("Notifications sent")
+	log.WithFields(log.Fields{"service": Notifier, "notifications": len(notifications)}).Info("Notifications send")
+
+	return nil
 }

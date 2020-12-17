@@ -60,8 +60,8 @@ func TestNotifier(t *testing.T) {
 }
 
 func ConsumerToTestTransactions(delivery amqp.Delivery, t *testing.T) {
-	var notifications []notifier.TransactionNotification
-	if err := json.Unmarshal(delivery.Body, &notifications); err != nil {
+	var notification notifier.TransactionNotification
+	if err := json.Unmarshal(delivery.Body, &notification); err != nil {
 		assert.Nil(t, err)
 		return
 	}
@@ -96,7 +96,7 @@ func ConsumerToTestTransactions(delivery amqp.Delivery, t *testing.T) {
 			Memo:      "test",
 			Meta:      &memo,
 		},
-	}, notifications[0])
+	}, notifications)
 
 	return
 }

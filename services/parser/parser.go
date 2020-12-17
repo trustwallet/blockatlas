@@ -89,7 +89,7 @@ func parse(params Params) {
 	publish(params, txs)
 
 	log.WithFields(log.Fields{
-		"txs": len(txs),
+		"transactions": len(txs),
 	}).Info("Published transactions")
 
 	log.WithFields(log.Fields{"coin": params.Api.Coin().Handle}).Info("End of parse step")
