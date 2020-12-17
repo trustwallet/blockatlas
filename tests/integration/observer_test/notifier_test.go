@@ -96,7 +96,7 @@ func ConsumerToTestTransactions(delivery amqp.Delivery, t *testing.T) {
 			Memo:      "test",
 			Meta:      &memo,
 		},
-	}, notifications)
+	}, notification)
 
 	return
 }
