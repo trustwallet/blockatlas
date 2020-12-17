@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/trustwallet/golibs/middleware"
+	"github.com/trustwallet/golibs/network/middleware"
 
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"

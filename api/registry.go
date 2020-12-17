@@ -9,7 +9,7 @@ import (
 	"github.com/trustwallet/blockatlas/platform"
 	"github.com/trustwallet/blockatlas/services/tokenindexer"
 	"github.com/trustwallet/blockatlas/services/tokensearcher"
-	"github.com/trustwallet/golibs/middleware"
+	"github.com/trustwallet/golibs/network/middleware"
 )
 
 func RegisterTransactionsAPI(router gin.IRouter, api blockatlas.Platform) {
