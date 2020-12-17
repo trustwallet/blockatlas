@@ -10,14 +10,7 @@ type EthereumClient interface {
 	GetBlockByNumber(num int64, coinIndex uint) (*types.Block, error)
 }
 
-func (p *Platform) GetTokenListByAddress(address string) ([]string, error) {
-	return p.client.GetTokenList(address, p.CoinIndex)
-}
-
-func (p *Platform) CurrentBlockNumber() (int64, error) {
-	return p.client.GetCurrentBlockNumber()
-}
-
-func (p *Platform) GetBlockByNumber(num int64) (*types.Block, error) {
-	return p.client.GetBlockByNumber(num, p.CoinIndex)
+type CollectibleClient interface {
+	GetCollections(owner string, coinIndex uint) (types.CollectionPage, error)
+	GetCollectibles(owner, collectionID string, coinIndex uint) (types.CollectiblePage, error)
 }

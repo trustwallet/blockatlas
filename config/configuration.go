@@ -68,12 +68,14 @@ type Configuration struct {
 		RPC string `mapstructure:"rpc"`
 	} `mapstructure:"classic"`
 	Smartchain struct {
-		API string `mapstructure:"api"`
-		RPC string `mapstructure:"rpc"`
+		API            string `mapstructure:"api"`
+		RPC            string `mapstructure:"rpc"`
+		CollectionsAPI string `mapstructure:"collections_api"`
 	} `mapstructure:"smartchain"`
 	BSC struct {
-		API string `mapstructure:"api"`
-		RPC string `mapstructure:"rpc"`
+		API            string `mapstructure:"api"`
+		RPC            string `mapstructure:"rpc"`
+		CollectionsAPI string `mapstructure:"collections_api"`
 	} `mapstructure:"bsc"`
 	Poa struct {
 		API string `mapstructure:"api"`

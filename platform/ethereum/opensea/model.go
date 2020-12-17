@@ -1,4 +1,4 @@
-package collection
+package opensea
 
 import (
 	"math/big"

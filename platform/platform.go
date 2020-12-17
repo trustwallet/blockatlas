@@ -92,9 +92,9 @@ func getAllHandlers() blockatlas.Platforms {
 		coin.Callisto().Handle:     ethereum.Init(coin.CLO, config.Default.Callisto.API, config.Default.Callisto.RPC),
 		coin.Wanchain().Handle:     ethereum.Init(coin.WAN, config.Default.Wanchain.API, config.Default.Wanchain.RPC),
 		coin.Tomochain().Handle:    ethereum.Init(coin.TOMO, config.Default.Tomochain.API, config.Default.Tomochain.RPC),
-		coin.Bsc().Handle:          ethereum.InitWithBlockbook(coin.BSCLegacy, config.Default.BSC.API, config.Default.BSC.RPC),
-		coin.Smartchain().Handle:   ethereum.InitWithBlockbook(coin.BSC, config.Default.Smartchain.API, config.Default.Smartchain.RPC),
-		coin.Ethereum().Handle:     ethereum.InitWithCollection(coin.ETH, config.Default.Ethereum.RPC, config.Default.Ethereum.BlockbookAPI, config.Default.Ethereum.CollectionsAPI, config.Default.Ethereum.CollectionsKey),
+		coin.Bsc().Handle:          ethereum.InitWithBounce(coin.BSCLegacy, config.Default.BSC.API, config.Default.BSC.RPC, config.Default.BSC.CollectionsAPI),
+		coin.Smartchain().Handle:   ethereum.InitWithBounce(coin.BSC, config.Default.Smartchain.API, config.Default.Smartchain.RPC, config.Default.Smartchain.CollectionsAPI),
+		coin.Ethereum().Handle:     ethereum.InitWithOpenSea(coin.ETH, config.Default.Ethereum.RPC, config.Default.Ethereum.BlockbookAPI, config.Default.Ethereum.CollectionsAPI, config.Default.Ethereum.CollectionsKey),
 		coin.Near().Handle:         near.Init(config.Default.Near.API),
 		coin.Elrond().Handle:       elrond.Init(coin.EGLD, config.Default.Elrond.API),
 		coin.Filecoin().Handle:     filecoin.Init(config.Default.Filecoin.API, config.Default.Filecoin.Explorer),
@@ -103,6 +103,7 @@ func getAllHandlers() blockatlas.Platforms {
 
 func getCollectionsHandlers() blockatlas.CollectionsAPIs {
 	return blockatlas.CollectionsAPIs{
-		coin.ETH: ethereum.InitWithCollection(coin.ETH, config.Default.Ethereum.RPC, config.Default.Ethereum.BlockbookAPI, config.Default.Ethereum.CollectionsAPI, config.Default.Ethereum.CollectionsKey),
+		coin.ETH: ethereum.InitWithOpenSea(coin.ETH, config.Default.Ethereum.RPC, config.Default.Ethereum.BlockbookAPI, config.Default.Ethereum.CollectionsAPI, config.Default.Ethereum.CollectionsKey),
+		coin.BSC: ethereum.InitWithBounce(coin.BSC, config.Default.Smartchain.API, config.Default.Smartchain.RPC, config.Default.Smartchain.CollectionsAPI),
 	}
 }
