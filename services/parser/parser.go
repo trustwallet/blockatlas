@@ -88,7 +88,9 @@ func parse(params Params) {
 
 	publish(params, txs)
 
-	log.WithFields(log.Fields{"txs": len(txs)}).Info("Published transactions")
+	log.WithFields(log.Fields{
+		"txs": len(txs),
+	}).Info("Published transactions")
 
 	log.WithFields(log.Fields{"coin": params.Api.Coin().Handle}).Info("End of parse step")
 }
@@ -116,8 +118,10 @@ func GetBlocksIntervalToFetch(params Params) (int64, int64, error) {
 
 func FetchBlocks(params Params, lastParsedBlock, currentBlock int64) []blockatlas.Block {
 	if lastParsedBlock == currentBlock {
-		log.WithFields(log.Fields{"block": lastParsedBlock, "coin": params.Api.Coin().Handle, "time": time.Now().Unix()}).
-			Info("No new blocks")
+		log.WithFields(log.Fields{
+			"block": lastParsedBlock,
+			"coin":  params.Api.Coin().Handle,
+		}).Info("No new blocks")
 		return nil
 	}
 
@@ -209,8 +213,8 @@ func SaveLastParsedBlock(params Params, blocks []blockatlas.Block) error {
 
 	log.WithFields(log.Fields{
 		"block": lastBlockNumber,
-		"coin":  params.Api.Coin().Handle},
-	).Info("Save last parsed block")
+		"coin":  params.Api.Coin().Handle,
+	}).Info("Save last parsed block")
 
 	return nil
 }
