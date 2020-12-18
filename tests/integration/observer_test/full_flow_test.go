@@ -102,8 +102,8 @@ func (p *PlatformFullFlow) GetBlockByNumber(num int64) (*blockatlas.Block, error
 }
 
 func ConsumerToTestTransactionsFull(delivery amqp.Delivery, t *testing.T, cancel context.CancelFunc, counter int) {
-	var notifications []notifier.TransactionNotification
-	if err := json.Unmarshal(delivery.Body, &notifications); err != nil {
+	var notification notifier.TransactionNotification
+	if err := json.Unmarshal(delivery.Body, &notification); err != nil {
 		assert.Nil(t, err)
 		return
 	}
@@ -136,7 +136,7 @@ func ConsumerToTestTransactionsFull(delivery amqp.Delivery, t *testing.T, cancel
 			Memo:      "123",
 			Meta:      &memo,
 		},
-	}, notifications[0])
+	}, notification)
 
 	if counter == 10 {
 		cancel()
@@ -157,7 +157,6 @@ func setupParserFull(stopChan chan<- struct{}) parser.Params {
 		ParsingBlocksInterval: pollInterval,
 		BacklogCount:          backlogCount,
 		MaxBacklogBlocks:      int64(maxBatchBlocksAmount),
-		TxBatchLimit:          100,
 		StopChannel:           stopChan,
 	}
 }

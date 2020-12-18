@@ -5,6 +5,9 @@ package observer_test
 import (
 	"context"
 	"encoding/json"
+	"testing"
+	"time"
+
 	log "github.com/sirupsen/logrus"
 	"github.com/streadway/amqp"
 	"github.com/stretchr/testify/assert"
@@ -13,8 +16,6 @@ import (
 	"github.com/trustwallet/blockatlas/services/parser"
 	"github.com/trustwallet/blockatlas/tests/integration/setup"
 	"github.com/trustwallet/golibs/coin"
-	"testing"
-	"time"
 )
 
 func TestParserFetchAndPublishBlock_NormalCase(t *testing.T) {
@@ -113,7 +114,6 @@ func setupParser(stopChan chan struct{}) parser.Params {
 		ParsingBlocksInterval: pollInterval,
 		BacklogCount:          backlogCount,
 		MaxBacklogBlocks:      int64(maxBatchBlocksAmount),
-		TxBatchLimit:          100,
 		StopChannel:           stopChan,
 	}
 }

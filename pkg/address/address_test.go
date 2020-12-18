@@ -1,33 +1,11 @@
 package address
 
 import (
+	"testing"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/golibs/coin"
-	"testing"
 )
-
-func TestEIP55Checksum(t *testing.T) {
-	tests := []struct {
-		name          string
-		unchecksummed string
-		want          string
-	}{
-		{"test checksum 1", "checktest", "0xChecKTeSt"},
-		{"test checksum 2", "trustwallet", "0xtrUstWaLlET"},
-		{"test checksum number", "16345785d8a0000", "0x16345785d8A0000"},
-		{"test checksum hex", "fffdefefed", "0xFfFDEfeFeD"},
-		{"test checksum 3", "0x0000000000000000003731342d4f4e452d354639", "0x0000000000000000003731342d4f4E452d354639"},
-		{"test checksum 4", "0000000000000000003731342d4f4e452d354639", "0x0000000000000000003731342d4f4E452d354639"},
-		{"test checksum Ethereum address", "0x84a0d77c693adabe0ebc48f88b3ffff010577051", "0x84A0d77c693aDAbE0ebc48F88b3fFFF010577051"},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := EIP55Checksum(tt.unchecksummed); got != tt.want {
-				t.Errorf("EIP55Checksum() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
 
 func TestEIP55ChecksumWanchain(t *testing.T) {
 	var (

@@ -37,7 +37,7 @@ func init() {
 
 	internal.InitRabbitMQ(
 		config.Default.Observer.Rabbitmq.URL,
-		config.Default.Observer.Rabbitmq.Consumer.PrefetchCount,
+		config.Default.Observer.Rabbitmq.PrefetchCount,
 	)
 
 	platform.Init(config.Default.Platform)
@@ -71,7 +71,6 @@ func main() {
 		coinCancel  = make(map[string]context.CancelFunc)
 		stopChannel = make(chan<- struct{}, len(platform.BlockAPIs))
 	)
-	txsBatchLimit := config.Default.Observer.TxsBatchLimit
 	backlogTime := config.Default.Observer.Backlog
 	minInterval := config.Default.Observer.BlockPoll.Min
 	maxInterval := config.Default.Observer.BlockPoll.Max
@@ -94,11 +93,6 @@ func main() {
 			backlogCount = int(backlogTime / pollInterval)
 		}
 
-		// do not allow
-		if txsBatchLimit < parser.MinTxsBatchLimit {
-			txsBatchLimit = parser.MinTxsBatchLimit
-		}
-
 		coinCancel[coin.Handle] = cancel
 
 		params := parser.Params{
@@ -114,7 +108,6 @@ func main() {
 			BacklogCount:          backlogCount,
 			MaxBacklogBlocks:      maxBackLogBlocks,
 			StopChannel:           stopChannel,
-			TxBatchLimit:          txsBatchLimit,
 			Database:              database,
 		}
 
@@ -125,7 +118,6 @@ func main() {
 			"interval":                 pollInterval,
 			"backlog":                  backlogCount,
 			"Max backlog":              maxBackLogBlocks,
-			"Txs Batch limit":          txsBatchLimit,
 			"Fetching blocks interval": fetchBlocksInterval,
 		}).Info("Parser params")
 

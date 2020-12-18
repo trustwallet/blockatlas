@@ -11,27 +11,21 @@ import (
 
 type Configuration struct {
 	Gin struct {
-		Mode         string `mapstructure:"mode"`
-		ReverseProxy bool   `mapstructure:"reverse_proxy"`
+		Mode string `mapstructure:"mode"`
 	} `mapstructure:"gin"`
-	Platform   []string `mapstructure:"platform"`
-	RestAPI    string   `mapstructure:"rest_api"`
-	Subscriber string   `mapstructure:"subscriber"`
-	Observer   struct {
-		Backlog                     time.Duration `mapstructure:"backlog"`
-		FetchBlocksInterval         time.Duration `mapstructure:"fetch_blocks_interval"`
-		BacklogMaxBlocks            int64         `mapstructure:"backlog_max_blocks"`
-		TxsBatchLimit               uint          `mapstructure:"txs_batch_limit"`
-		PushNotificationsBatchLimit int           `mapstructure:"push_notifications_batch_limit"`
-		BlockPoll                   struct {
+	Platform []string `mapstructure:"platform"`
+	RestAPI  string   `mapstructure:"rest_api"`
+	Observer struct {
+		Backlog             time.Duration `mapstructure:"backlog"`
+		FetchBlocksInterval time.Duration `mapstructure:"fetch_blocks_interval"`
+		BacklogMaxBlocks    int64         `mapstructure:"backlog_max_blocks"`
+		BlockPoll           struct {
 			Min time.Duration `mapstructure:"min"`
 			Max time.Duration `mapstructure:"max"`
 		} `mapstructure:"block_poll"`
 		Rabbitmq struct {
-			URL      string `mapstructure:"url"`
-			Consumer struct {
-				PrefetchCount int `mapstructure:"prefetch_count"`
-			} `mapstructure:"consumer"`
+			URL           string `mapstructure:"url"`
+			PrefetchCount int    `mapstructure:"prefetch_count"`
 		} `mapstructure:"rabbitmq"`
 	} `mapstructure:"observer"`
 	Postgres struct {

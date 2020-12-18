@@ -10,12 +10,8 @@ import (
 )
 
 const (
-	DefaultPushNotificationsBatchLimit = 50
-
 	Notifier = "Notifier"
 )
-
-var MaxPushNotificationsBatchLimit uint = DefaultPushNotificationsBatchLimit
 
 func RunNotifier(database *db.Instance, delivery amqp.Delivery) {
 	defer func() {
@@ -39,7 +35,7 @@ func RunNotifier(database *db.Instance, delivery amqp.Delivery) {
 		addresses[i] = strconv.Itoa(int(txs[0].Coin)) + "_" + addresses[i]
 	}
 
-	if len(txs) < 1 {
+	if len(txs) == 0 {
 		return
 	}
 	subscriptionsDataList, err := database.GetSubscriptionsForNotifications(addresses)
@@ -56,11 +52,10 @@ func RunNotifier(database *db.Instance, delivery amqp.Delivery) {
 		notificationsForAddress := buildNotificationsByAddress(ua, txs)
 		notifications = append(notifications, notificationsForAddress...)
 	}
-
-	batches := getNotificationBatches(notifications, MaxPushNotificationsBatchLimit)
-
-	for _, batch := range batches {
-		publishNotificationBatch(batch)
+	err = publishNotifications(notifications)
+	if err != nil {
+		log.WithFields(log.Fields{"service": Notifier}).Error(err)
 	}
+
 	log.Info("------------------------------------------------------------")
 }

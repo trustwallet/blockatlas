@@ -57,7 +57,7 @@ func init() {
 
 	internal.InitRabbitMQ(
 		config.Default.Observer.Rabbitmq.URL,
-		config.Default.Observer.Rabbitmq.Consumer.PrefetchCount,
+		config.Default.Observer.Rabbitmq.PrefetchCount,
 	)
 
 	if err := mq.TokensRegistration.Declare(); err != nil {

@@ -19,10 +19,11 @@ require (
 	github.com/docker/go-units v0.4.0 // indirect
 	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-gonic/gin v1.6.3
+	github.com/google/go-cmp v0.4.0 // indirect
 	github.com/gotestyourself/gotestyourself v2.2.0+incompatible // indirect
 	github.com/imroc/req v0.3.0
 	github.com/mitchellh/mapstructure v1.4.0
-	github.com/moby/term v0.0.0-20201110203204-bea5bbe245bf // indirect
+	github.com/moby/term v0.0.0-20201216013528-df9cb8a40635 // indirect
 	github.com/mr-tron/base58 v1.2.0
 	github.com/opencontainers/image-spec v1.0.1 // indirect
 	github.com/opencontainers/runc v1.0.0-rc9 // indirect
@@ -39,8 +40,8 @@ require (
 	github.com/trustwallet/golibs/network v0.0.0-20201215012452-c5d526fed5df
 	go.uber.org/atomic v1.7.0
 	golang.org/x/crypto v0.0.0-20201124201722-c8d3bf9c5392
-	golang.org/x/net v0.0.0-20201209123823-ac852fbbde11 // indirect
-	golang.org/x/sys v0.0.0-20201211090839-8ad439b19e0f // indirect
+	golang.org/x/net v0.0.0-20201216054612-986b41b23924 // indirect
+	golang.org/x/sys v0.0.0-20201214210602-f9fddec55a1e // indirect
 	gopkg.in/yaml.v2 v2.4.0
 	gorm.io/driver/postgres v1.0.5
 	gorm.io/gorm v1.20.8

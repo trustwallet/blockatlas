@@ -9,21 +9,6 @@ type TransactionNotification struct {
 	Result blockatlas.Tx              `json:"result"`
 }
 
-func getNotificationBatches(notifications []TransactionNotification, sizeUint uint) [][]TransactionNotification {
-	size := int(sizeUint)
-	resultLength := (len(notifications) + size - 1) / size
-	result := make([][]TransactionNotification, resultLength)
-	lo, hi := 0, size
-	for i := range result {
-		if hi > len(notifications) {
-			hi = len(notifications)
-		}
-		result[i] = notifications[lo:hi:hi]
-		lo, hi = hi, hi+size
-	}
-	return result
-}
-
 func buildNotificationsByAddress(address string, txs blockatlas.Txs) []TransactionNotification {
 	transactionsByAddress := toUniqueTransactions(findTransactionsByAddress(txs, address))
 
