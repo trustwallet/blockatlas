@@ -2,6 +2,7 @@ package kava
 
 import (
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 
@@ -10,7 +11,13 @@ import (
 	"github.com/trustwallet/golibs/numbers"
 )
 
+const KAVADenom = "ukava"
+
 func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
+	return p.GetTokenTxsByAddress(address, KAVADenom)
+}
+
+func (p *Platform) GetTokenTxsByAddress(address, token string) (blockatlas.TxPage, error) {
 	tagsList := []string{"transfer.recipient", "message.sender"}
 	var wg sync.WaitGroup
 	out := make(chan []Tx, len(tagsList))
@@ -49,9 +56,20 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 	close(out)
 	srcTxs := make([]Tx, 0)
 	for r := range out {
-		srcTxs = append(srcTxs, r...)
+		filteredTxs := p.FilterTxsByDenom(r, token)
+		srcTxs = append(srcTxs, filteredTxs...)
 	}
 	return p.NormalizeTxs(srcTxs), nil
+}
+
+func (p *Platform) FilterTxsByDenom(txs []Tx, denom string) []Tx {
+	filteredTxs := make([]Tx, 0)
+	for _, tx := range txs {
+		if tx.Data.Contents.Message[0].Value.(MessageValueTransfer).Amount[0].Denom == denom {
+			filteredTxs = append(filteredTxs, tx)
+		}
+	}
+	return filteredTxs
 }
 
 // NormalizeTxs converts multiple Cosmos transactions
@@ -143,6 +161,26 @@ func (p *Platform) fillTransfer(tx *blockatlas.Tx, transfer MessageValueTransfer
 		Value:    blockatlas.Amount(value),
 		Symbol:   p.Coin().Symbol,
 		Decimals: p.Coin().Decimals,
+	}
+	switch {
+	case transfer.Amount[0].Denom == KAVADenom:
+		tx.Type = blockatlas.TxTransfer
+		tx.Meta = blockatlas.Transfer{
+			Value:    blockatlas.Amount(value),
+			Symbol:   p.Coin().Symbol,
+			Decimals: p.Coin().Decimals,
+		}
+	default:
+		tx.Type = blockatlas.TxNativeTokenTransfer
+		tx.Meta = blockatlas.NativeTokenTransfer{
+			Decimals: p.Coin().Decimals,
+			From:     tx.From,
+			Symbol:   strings.ToUpper(transfer.Amount[0].Denom),
+			Name:     transfer.Amount[0].Denom,
+			To:       tx.To,
+			TokenID:  transfer.Amount[0].Denom,
+			Value:    blockatlas.Amount(value),
+		}
 	}
 }
 

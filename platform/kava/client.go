@@ -14,7 +14,7 @@ type Client struct {
 	blockatlas.Request
 }
 
-// GetAddrTxs - get all ATOM transactions for a given address
+// GetAddrTxs - get all KAVA transactions for a given address
 func (c *Client) GetAddrTxs(address, tag string, page int) (txs TxPage, err error) {
 	query := url.Values{
 		tag:     {address},

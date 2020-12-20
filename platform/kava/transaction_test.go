@@ -48,7 +48,7 @@ const transferSrc = `
             "to_address": "cosmos1nynns8ex9fq6sjjfj8k79ymkdz4sqth06xexae",
             "amount": [
               {
-                "denom": "uatom",
+                "denom": "ukava",
                 "amount": "2271999999"
               }
             ]
@@ -58,7 +58,7 @@ const transferSrc = `
       "fee": {
         "amount": [
           {
-            "denom": "uatom",
+            "denom": "ukava",
             "amount": "1"
           }
         ],
@@ -118,7 +118,7 @@ const transferSrcKava = `
             "to_address": "kava1z89utvygweg5l56fsk8ak7t6hh88fd0agl98n0",
             "amount": [
               {
-                "denom": "uatom",
+                "denom": "ukava",
                 "amount": "2271999999"
               }
             ]
@@ -128,7 +128,7 @@ const transferSrcKava = `
       "fee": {
         "amount": [
           {
-            "denom": "uatom",
+            "denom": "ukava",
             "amount": "1"
           }
         ],
@@ -147,6 +147,97 @@ const transferSrcKava = `
     }
   },
   "timestamp": "2019-05-04T17:57:57Z"
+}`
+
+const transferSrcKavaToken = `
+{
+    "height": "645538",
+    "txhash": "514D43780335A1C516850FEE5692F59E9A9DF1D8D986FC62AC434BEB58EDB8E2",
+    "raw_log": "[{\"msg_index\":0,\"log\":\"\",\"events\":[{\"type\":\"message\",\"attributes\":[{\"key\":\"action\",\"value\":\"send\"},{\"key\":\"sender\",\"value\":\"kava1ys70jvnajkv88529ys6urjcyle3k2j9r24g6a7\"},{\"key\":\"module\",\"value\":\"bank\"}]},{\"type\":\"transfer\",\"attributes\":[{\"key\":\"recipient\",\"value\":\"kava1wj2swfmeakxdrlqemvpzx2a4ljux9l4xq6qmcn\"},{\"key\":\"sender\",\"value\":\"kava1ys70jvnajkv88529ys6urjcyle3k2j9r24g6a7\"},{\"key\":\"amount\",\"value\":\"10000000000hard\"}]}]}]",
+    "logs": [
+    {
+        "msg_index": 0,
+        "log": "",
+        "events": [
+        {
+            "type": "message",
+            "attributes": [
+            {
+                "key": "action",
+                "value": "send"
+            },
+            {
+                "key": "sender",
+                "value": "kava1ys70jvnajkv88529ys6urjcyle3k2j9r24g6a7"
+            },
+            {
+                "key": "module",
+                "value": "bank"
+            }
+            ]
+        },
+        {
+            "type": "transfer",
+            "attributes": [
+            {
+                "key": "recipient",
+                "value": "kava1wj2swfmeakxdrlqemvpzx2a4ljux9l4xq6qmcn"
+            },
+            {
+                "key": "sender",
+                "value": "kava1ys70jvnajkv88529ys6urjcyle3k2j9r24g6a7"
+            },
+            {
+                "key": "amount",
+                "value": "10000000000hard"
+            }
+            ]
+        }
+        ]
+    }
+    ],
+    "gas_wanted": "200000",
+    "gas_used": "74794",
+    "tx": {
+    "type": "cosmos-sdk/StdTx",
+    "value": {
+    "msg": [
+    {
+        "type": "cosmos-sdk/MsgSend",
+        "value": {
+        "from_address": "kava1ys70jvnajkv88529ys6urjcyle3k2j9r24g6a7",
+        "to_address": "kava1wj2swfmeakxdrlqemvpzx2a4ljux9l4xq6qmcn",
+        "amount": [
+        {
+            "denom": "hard",
+            "amount": "10000000000"
+        }
+        ]
+    }
+    }
+    ],
+    "fee": {
+    "amount": [
+    {
+        "denom": "ukava",
+        "amount": "30"
+    }
+    ],
+    "gas": "200000"
+},
+    "signatures": [
+    {
+        "pub_key": {
+        "type": "tendermint/PubKeySecp256k1",
+        "value": "A/Uf73aHoxZXS7SvKweW4Ijo723YDLuhwhir6JSmVmWe"
+    },
+        "signature": "Cuse3VunNLXi19GxASZD0fFMWeelEKe8DnC7nIYyS6FGqXzN+KP9hAdct7g9jczGT+4emVsQtiLvuM9Racrnyg=="
+    }
+    ],
+    "memo": ""
+}
+},
+    "timestamp": "2020-12-19T10:49:24Z"
 }`
 
 const failedTransferSrc = `
@@ -168,7 +259,7 @@ const failedTransferSrc = `
             "to_address": "cosmos1za4pu5gxm80fg6sx0956f88l2sx7jfg2vf7nlc",
             "amount": [
               {
-                "denom": "uatom",
+                "denom": "ukava",
                 "amount": "100000"
               }
             ]
@@ -178,7 +269,7 @@ const failedTransferSrc = `
       "fee": {
         "amount": [
           {
-            "denom": "uatom",
+            "denom": "ukava",
             "amount": "2000"
           }
         ],
@@ -237,7 +328,7 @@ const delegateSrc = `
                   "delegator_address":"cosmos1237l0vauhw78qtwq045jd24ay4urpec6r3xfn3",
                   "validator_address":"cosmosvaloper12w6tynmjzq4l8zdla3v4x0jt8lt4rcz5gk7zg2",
                   "amount":{  
-                     "denom":"uatom",
+                     "denom":"ukava",
                      "amount":"49920"
                   }
                }
@@ -246,7 +337,7 @@ const delegateSrc = `
          "fee":{  
             "amount":[  
                {  
-                  "denom":"uatom",
+                  "denom":"ukava",
                   "amount":"5000"
                }
             ],
@@ -310,7 +401,7 @@ const unDelegateSrc = `
                   "delegator_address":"cosmos137rrp4p8n0nqcft0mwc62tdnyhhzf80knv5t94",
                   "validator_address":"cosmosvaloper1te8nxpc2myjfrhaty0dnzdhs5ahdh5agzuym9v",
                   "amount":{  
-                     "denom":"uatom",
+                     "denom":"ukava",
                      "amount":"5100000000"
                   }
                }
@@ -319,7 +410,7 @@ const unDelegateSrc = `
          "fee":{  
             "amount":[  
                {  
-                  "denom":"uatom",
+                  "denom":"ukava",
                   "amount":"5000"
                }
             ],
@@ -375,7 +466,7 @@ const claimRewardSrc1 = `
       "fee": {
         "amount": [
           {
-            "denom": "uatom",
+            "denom": "ukava",
             "amount": "1000"
           }
         ],
@@ -400,7 +491,7 @@ const claimRewardSrc1 = `
       "attributes": [
         {
           "key": "amount",
-          "value": "1138uatom"
+          "value": "1138ukava"
         },
         {
           "key": "validator",
@@ -408,7 +499,7 @@ const claimRewardSrc1 = `
         },
         {
           "key": "amount",
-          "value": "40612uatom"
+          "value": "40612ukava"
         },
         {
           "key": "validator",
@@ -416,7 +507,7 @@ const claimRewardSrc1 = `
         },
         {
           "key": "amount",
-          "value": "954uatom"
+          "value": "954ukava"
         },
         {
           "key": "validator",
@@ -424,7 +515,7 @@ const claimRewardSrc1 = `
         },
         {
           "key": "amount",
-          "value": "43574uatom"
+          "value": "43574ukava"
         },
         {
           "key": "amount"
@@ -457,7 +548,7 @@ const claimRewardSrc2 = `
             "delegator_address": "cosmos1y6yvdel7zys8x60gz9067fjpcpygsn62ae9x46",
             "validator_address": "cosmosvaloper12w6tynmjzq4l8zdla3v4x0jt8lt4rcz5gk7zg2",
             "amount": {
-              "denom": "uatom",
+              "denom": "ukava",
               "amount": "2692326"
             }
           }
@@ -466,7 +557,7 @@ const claimRewardSrc2 = `
       "fee": {
         "amount": [
           {
-            "denom": "uatom",
+            "denom": "ukava",
             "amount": "0"
           }
         ],
@@ -512,7 +603,7 @@ const claimRewardSrc2 = `
         },
         {
           "key": "amount",
-          "value": "2692701uatom"
+          "value": "2692701ukava"
         }
       ]
     },
@@ -521,7 +612,7 @@ const claimRewardSrc2 = `
       "attributes": [
         {
           "key": "amount",
-          "value": "2692701uatom"
+          "value": "2692701ukava"
         },
         {
           "key": "validator",
@@ -563,6 +654,27 @@ var transferDstKava = blockatlas.Tx{
 		Value:    "2271999999",
 		Symbol:   coin.Kava().Symbol,
 		Decimals: 6,
+	},
+}
+
+var transferDstKavaToken = blockatlas.Tx{
+	ID:     "514D43780335A1C516850FEE5692F59E9A9DF1D8D986FC62AC434BEB58EDB8E2",
+	Coin:   coin.KAVA,
+	From:   "kava1ys70jvnajkv88529ys6urjcyle3k2j9r24g6a7",
+	To:     "kava1wj2swfmeakxdrlqemvpzx2a4ljux9l4xq6qmcn",
+	Fee:    "30",
+	Date:   1608374964,
+	Block:  645538,
+	Status: blockatlas.StatusCompleted,
+	Type:   blockatlas.TxNativeTokenTransfer,
+	Meta: blockatlas.NativeTokenTransfer{
+		Value:    "10000000000",
+		Symbol:   "HARD",
+		Decimals: 6,
+		From:     "kava1ys70jvnajkv88529ys6urjcyle3k2j9r24g6a7",
+		To:       "kava1wj2swfmeakxdrlqemvpzx2a4ljux9l4xq6qmcn",
+		TokenID:  "hard",
+		Name:     "hard",
 	},
 }
 
@@ -728,6 +840,12 @@ func TestNormalize(t *testing.T) {
 			kava,
 			transferSrcKava,
 			transferDstKava,
+		},
+		{
+			"test kava transfer token tx",
+			kava,
+			transferSrcKavaToken,
+			transferDstKavaToken,
 		},
 	}
 	for _, tt := range tests {
