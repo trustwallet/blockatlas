@@ -11,10 +11,10 @@ import (
 	"github.com/trustwallet/golibs/numbers"
 )
 
-const KAVADenom = "ukava"
+const kavaDenom = "ukava"
 
 func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
-	return p.GetTokenTxsByAddress(address, KAVADenom)
+	return p.GetTokenTxsByAddress(address, kavaDenom)
 }
 
 func (p *Platform) GetTokenTxsByAddress(address, token string) (blockatlas.TxPage, error) {
@@ -65,7 +65,11 @@ func (p *Platform) GetTokenTxsByAddress(address, token string) (blockatlas.TxPag
 func (p *Platform) FilterTxsByDenom(txs []Tx, denom string) []Tx {
 	filteredTxs := make([]Tx, 0)
 	for _, tx := range txs {
-		if tx.Data.Contents.Message[0].Value.(MessageValueTransfer).Amount[0].Denom == denom {
+		messages := tx.Data.Contents.Message
+		if len(messages) == 0 {
+			continue
+		}
+		if messages[0].Value.(MessageValueTransfer).Amount[0].Denom == denom {
 			filteredTxs = append(filteredTxs, tx)
 		}
 	}
@@ -150,7 +154,8 @@ func (p *Platform) fillTransfer(tx *blockatlas.Tx, transfer MessageValueTransfer
 	if len(transfer.Amount) == 0 {
 		return
 	}
-	value, err := numbers.DecimalToSatoshis(transfer.Amount[0].Quantity)
+	amount := transfer.Amount[0]
+	value, err := numbers.DecimalToSatoshis(amount.Quantity)
 	if err != nil {
 		return
 	}
@@ -163,7 +168,7 @@ func (p *Platform) fillTransfer(tx *blockatlas.Tx, transfer MessageValueTransfer
 		Decimals: p.Coin().Decimals,
 	}
 	switch {
-	case transfer.Amount[0].Denom == KAVADenom:
+	case amount.Denom == kavaDenom:
 		tx.Type = blockatlas.TxTransfer
 		tx.Meta = blockatlas.Transfer{
 			Value:    blockatlas.Amount(value),
@@ -175,10 +180,10 @@ func (p *Platform) fillTransfer(tx *blockatlas.Tx, transfer MessageValueTransfer
 		tx.Meta = blockatlas.NativeTokenTransfer{
 			Decimals: p.Coin().Decimals,
 			From:     tx.From,
-			Symbol:   strings.ToUpper(transfer.Amount[0].Denom),
-			Name:     transfer.Amount[0].Denom,
+			Symbol:   strings.ToUpper(amount.Denom),
+			Name:     amount.Denom,
 			To:       tx.To,
-			TokenID:  transfer.Amount[0].Denom,
+			TokenID:  amount.Denom,
 			Value:    blockatlas.Amount(value),
 		}
 	}
