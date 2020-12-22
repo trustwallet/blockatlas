@@ -69,7 +69,6 @@ func getAllHandlers() blockatlas.Platforms {
 		coin.Zilliqa().Handle:      zilliqa.Init(config.Default.Zilliqa.API, config.Default.Zilliqa.Key, config.Default.Zilliqa.RPC),
 		coin.Polkadot().Handle:     polkadot.Init(coin.DOT, config.Default.Polkadot.API),
 		coin.Stellar().Handle:      stellar.Init(coin.XLM, config.Default.Stellar.API),
-		coin.Kin().Handle:          stellar.Init(coin.KIN, config.Default.Kin.API),
 		coin.Cosmos().Handle:       cosmos.Init(coin.ATOM, config.Default.Cosmos.API),
 		coin.Kava().Handle:         kava.Init(coin.KAVA, config.Default.Kava.API),
 		coin.Bitcoin().Handle:      bitcoin.Init(coin.BTC, config.Default.Bitcoin.API),

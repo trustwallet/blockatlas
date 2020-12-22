@@ -45,10 +45,6 @@ ripple:
 stellar:
   api: https://horizon.stellar.org
 
-# [KIN] Kin: https://www.kin.org
-kin:
-  api: https://horizon-block-explorer.kininfrastructure.com
-
 # [XTZ] Tezos: https://tezos.com
 tezos:
   api: https://api.tzstats.com/explorer # https://tzstats.com/docs/api/index.html#introduction
