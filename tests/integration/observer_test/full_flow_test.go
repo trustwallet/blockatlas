@@ -102,8 +102,8 @@ func (p *PlatformFullFlow) GetBlockByNumber(num int64) (*blockatlas.Block, error
 }
 
 func ConsumerToTestTransactionsFull(delivery amqp.Delivery, t *testing.T, cancel context.CancelFunc, counter int) {
-	var notification notifier.TransactionNotification
-	if err := json.Unmarshal(delivery.Body, &notification); err != nil {
+	var notifications []notifier.TransactionNotification
+	if err := json.Unmarshal(delivery.Body, &notifications); err != nil {
 		assert.Nil(t, err)
 		return
 	}
@@ -136,7 +136,7 @@ func ConsumerToTestTransactionsFull(delivery amqp.Delivery, t *testing.T, cancel
 			Memo:      "123",
 			Meta:      &memo,
 		},
-	}, notification)
+	}, notifications[0])
 
 	if counter == 10 {
 		cancel()

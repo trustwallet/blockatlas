@@ -49,9 +49,6 @@ type Configuration struct {
 	Stellar struct {
 		API string `mapstructure:"api"`
 	} `mapstructure:"stellar"`
-	Kin struct {
-		API string `mapstructure:"api"`
-	} `mapstructure:"kin"`
 	Nimiq struct {
 		API string `mapstructure:"api"`
 	} `mapstructure:"nimiq"`
