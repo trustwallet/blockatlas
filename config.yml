@@ -210,6 +210,7 @@ elrond:
 
 filecoin:
   api: https://api.filscan.io:8700/rpc/v1
+  explorer: https://filfox.info/api
   # bsc:
   # api: <blockbook api>
   # rpc: <rpc>
