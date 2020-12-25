@@ -13,7 +13,7 @@ type Client struct {
 }
 
 func (c Client) GetMessagesByAddress(address string, pageSize int) (res Response, err error) {
-	path := fmt.Sprintf("/v1/address/%s/messages", address)
+	path := fmt.Sprintf("/api/v1/address/%s/messages", address)
 	query := url.Values{"pageSize": {strconv.Itoa(pageSize)}}
 	err = c.Get(&res, path, query)
 	if err != nil {
