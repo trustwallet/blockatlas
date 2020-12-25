@@ -5,6 +5,8 @@ import (
 	"github.com/trustwallet/blockatlas/platform/filecoin/explorer"
 )
 
+const messageMethod = "Send"
+
 func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 	res, err := p.client.getMessagesByAddress(address, blockatlas.TxPerPage)
 	if err != nil {
@@ -12,6 +14,10 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 	}
 	normalized := make([]blockatlas.Tx, 0)
 	for _, message := range res.Messages {
+		// skip non transfer messages
+		if message.Method != messageMethod {
+			continue
+		}
 		normalized = append(normalized, p.NormalizeMessage(message, address))
 	}
 
