@@ -3,11 +3,12 @@ package filecoin
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/stretchr/testify/assert"
-	"github.com/trustwallet/golibs/mock"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/trustwallet/golibs/mock"
 )
 
 func TestPlatform_CurrentBlockNumber(t *testing.T) {
@@ -25,7 +26,7 @@ func TestPlatform_CurrentBlockNumber(t *testing.T) {
 	server := httptest.NewServer(mock.CreateMockedAPI(data))
 	defer server.Close()
 
-	p := Init(server.URL)
+	p := Init(server.URL, "")
 	block, err := p.CurrentBlockNumber()
 	assert.Nil(t, err)
 	assert.Equal(t, int64(243590), block)
@@ -73,7 +74,7 @@ func TestPlatform_GetBlockByNumber(t *testing.T) {
 	server := httptest.NewServer(mock.CreateMockedAPI(data))
 	defer server.Close()
 
-	p := Init(server.URL)
+	p := Init(server.URL, "")
 	block, err := p.GetBlockByNumber(243590)
 	assert.Nil(t, err)
 	raw, err := json.Marshal(block)
