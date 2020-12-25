@@ -97,7 +97,7 @@ func getAllHandlers() blockatlas.Platforms {
 		coin.Ethereum().Handle:     ethereum.InitWithCollection(coin.ETH, config.Default.Ethereum.RPC, config.Default.Ethereum.BlockbookAPI, config.Default.Ethereum.CollectionsAPI, config.Default.Ethereum.CollectionsKey),
 		coin.Near().Handle:         near.Init(config.Default.Near.API),
 		coin.Elrond().Handle:       elrond.Init(coin.EGLD, config.Default.Elrond.API),
-		coin.Filecoin().Handle:     filecoin.Init(config.Default.Filecoin.API),
+		coin.Filecoin().Handle:     filecoin.Init(config.Default.Filecoin.API, config.Default.Filecoin.Explorer),
 	}
 }
 

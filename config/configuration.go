@@ -204,7 +204,8 @@ type Configuration struct {
 		API string `mapstructure:"api"`
 	} `mapstructure:"elrond"`
 	Filecoin struct {
-		API string `mapstructure:"api"`
+		API      string `mapstructure:"api"`
+		Explorer string `mapstructure:"explorer"`
 	} `mapstructure:"filecoin"`
 	Sentry struct {
 		DSN string `mapstructure:"dsn"`

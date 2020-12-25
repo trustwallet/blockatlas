@@ -7,7 +7,7 @@ import (
 )
 
 func (p *Platform) CurrentBlockNumber() (int64, error) {
-	response, err := p.client.getBlockHeight()
+	response, err := p.client.GetBlockHeight()
 	if err != nil {
 		return 0, err
 	}
@@ -15,13 +15,13 @@ func (p *Platform) CurrentBlockNumber() (int64, error) {
 }
 
 func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
-	chainHeadResponse, err := p.client.getTipSetByHeight(num)
+	chainHeadResponse, err := p.client.GetTipSetByHeight(num)
 	if err != nil {
 		return nil, err
 	}
 	blockResponses := make([]rpc.BlockMessageResponse, 0, len(chainHeadResponse.GetCids()))
 	for _, cid := range chainHeadResponse.GetCids() {
-		blockResponse, err := p.client.getBlockMessage(cid)
+		blockResponse, err := p.client.GetBlockMessage(cid)
 		if err != nil {
 			return nil, err
 		}

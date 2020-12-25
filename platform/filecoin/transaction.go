@@ -8,7 +8,7 @@ import (
 const messageMethod = "Send"
 
 func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
-	res, err := p.client.getMessagesByAddress(address, blockatlas.TxPerPage)
+	res, err := p.explorer.GetMessagesByAddress(address, blockatlas.TxPerPage)
 	if err != nil {
 		return nil, err
 	}
