@@ -22,4 +22,4 @@ Please follow this checklist:
  - [ ] `config.go`: Add default config
 
 If you have any questions, contact us at
-https://t.me/walletcore or @terorie / @vikmeup on Telegram.
+https://t.me/walletcore or @hewigovens / @vikmeup on Telegram.
