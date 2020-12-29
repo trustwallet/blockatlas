@@ -51,8 +51,9 @@ type Configuration struct {
 		API string `mapstructure:"api"`
 	} `mapstructure:"nimiq"`
 	Tezos struct {
-		API string `mapstructure:"api"`
-		RPC string `mapstructure:"rpc"`
+		API   string `mapstructure:"api"`
+		RPC   string `mapstructure:"rpc"`
+		Baker string `mapstructure:"baker"`
 	} `mapstructure:"tezos"`
 	Thundertoken struct {
 		API string `mapstructure:"api"`

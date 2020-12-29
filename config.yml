@@ -50,6 +50,7 @@ stellar:
 tezos:
   api: https://api.tzstats.com/explorer # https://tzstats.com/docs/api/index.html#introduction
   rpc: https://mainnet-tezos.giganode.io
+  baker: https://api.baking-bad.org
 
 # [ETH] Ethereum: https://ethereum.org
 ethereum:

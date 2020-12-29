@@ -2,8 +2,9 @@ package tezos
 
 import (
 	"fmt"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"time"
+
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 )
 
 const (
@@ -53,6 +54,18 @@ type (
 
 	ActivityValidatorInfo struct {
 		Deactivated bool `json:"deactivated"`
+	}
+
+	Baker struct {
+		Address           string  `json:"address"`
+		Name              string  `json:"name"`
+		Logo              string  `json:"logo"`
+		FreeSpace         float64 `json:"freeSpace"`
+		Fee               float64 `json:"fee"`
+		MinDelegation     uint64  `json:"minDelegation"`
+		OpenForDelegation bool    `json:"openForDelegation"`
+		EstimatedRoi      float64 `json:"estimatedRoi"`
+		ServiceHealth     string  `json:"serviceHealth"`
 	}
 )
 
