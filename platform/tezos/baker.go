@@ -2,6 +2,7 @@ package tezos
 
 import (
 	"fmt"
+	"math"
 	"strconv"
 
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
@@ -37,7 +38,7 @@ func NormalizeStakeValidators(bakers []Baker) (validators blockatlas.StakeValida
 			},
 			Details: blockatlas.StakingDetails{
 				Reward: blockatlas.StakingReward{
-					Annual: baker.EstimatedRoi,
+					Annual: math.Round(baker.EstimatedRoi*10000) / 100,
 				},
 				LockTime:      LockTime,
 				MinimumAmount: blockatlas.Amount(strconv.FormatUint(baker.MinDelegation, 10)),

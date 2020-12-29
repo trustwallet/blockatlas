@@ -3,11 +3,12 @@ package tezos
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/stretchr/testify/assert"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 )
 
 const accountSrc = `
@@ -80,7 +81,7 @@ func TestPlatform_isValidatorActive(t *testing.T) {
 	server := httptest.NewServer(createMockedAPI())
 	defer server.Close()
 
-	p := Init(server.URL, server.URL)
+	p := Init(server.URL, server.URL, server.URL)
 	assert.True(t, p.isValidatorActive("tz1V3yg82mcrPJbegqVCPn6bC8w1CSTRp3f8"))
 }
 
