@@ -18,7 +18,7 @@ func GetValidatorsMap(api blockatlas.StakeAPI) (blockatlas.ValidatorMap, error) 
 }
 
 func getValidators(api blockatlas.StakeAPI) (AssetValidators, blockatlas.ValidatorPage, error) {
-	assetsValidators, err := fetchValidatorsInfo(api.Coin())
+	assetsValidators, err := GetchValidatorsInfo(api.Coin())
 	if err != nil {
 		return nil, nil, err
 	}
@@ -32,7 +32,7 @@ func getValidators(api blockatlas.StakeAPI) (AssetValidators, blockatlas.Validat
 
 func normalizeValidators(assetsValidators AssetValidators, rpcValidators []blockatlas.Validator, coin coin.Coin) blockatlas.StakeValidators {
 	results := make(blockatlas.StakeValidators, 0)
-	assetsMap := assetsValidators.toMap()
+	assetsMap := assetsValidators.ToMap()
 	for _, v := range rpcValidators {
 		asset, ok := assetsMap[v.ID]
 		if !ok {
