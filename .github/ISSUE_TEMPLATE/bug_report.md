@@ -1,18 +1,11 @@
 ---
 name: Bug report
-about: Create a report to help us improve
+about: Report a bug
 title: ''
-labels: 'Type: Bug'
+labels: 'Bug'
 assignees: ''
 
 ---
-
-<!-- < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < ☺ 
-v                 ✰  Thanks for opening an issue! ✰                    v
-v    Before smashing the submit button please review the template.     v
-v               Don't forget to set the priority label.                v
-v       Please also ensure that this is not a duplicate issue :)       v  
-☺ > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > >  -->
 
 ## Summary of Bug
 
@@ -38,6 +31,3 @@ ____
 ```
 {}
 ```
-
-
-
