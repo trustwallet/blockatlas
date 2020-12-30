@@ -3,8 +3,8 @@ package blockbook
 import (
 	"strings"
 
-	Address "github.com/trustwallet/blockatlas/pkg/address"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	Address "github.com/trustwallet/golibs/address"
 	"github.com/trustwallet/golibs/coin"
 )
 
@@ -24,12 +24,17 @@ func (c *Client) GetTokenTxs(address, token string, coinIndex uint) (blockatlas.
 	return NormalizePage(page, address, token, coinIndex), nil
 }
 
-func NormalizePage(srcPage *Page, address, token string, coinIndex uint) blockatlas.TxPage {
-	var txs []blockatlas.Tx
-	normalizedAddr := Address.EIP55Checksum(address)
+func NormalizePage(srcPage *Page, address, token string, coinIndex uint) (txs blockatlas.TxPage) {
+	normalizedAddr, err := Address.EIP55Checksum(address)
+	if err != nil {
+		return
+	}
 	var normalizedToken string
 	if token != "" {
-		normalizedToken = Address.EIP55Checksum(token)
+		normalizedToken, err = Address.EIP55Checksum(token)
+		if err != nil {
+			return
+		}
 	}
 	for _, srcTx := range srcPage.Transactions {
 		tx := normalizeTxWithAddress(&srcTx, normalizedAddr, normalizedToken, coinIndex)

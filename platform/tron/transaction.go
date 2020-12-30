@@ -2,13 +2,13 @@ package tron
 
 import (
 	"errors"
+	"strconv"
+	"strings"
+
 	log "github.com/sirupsen/logrus"
-	"github.com/trustwallet/blockatlas/pkg/address"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/coin"
 	"github.com/trustwallet/golibs/tokentype"
-	"strconv"
-	"strings"
 )
 
 func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
@@ -143,11 +143,11 @@ func normalize(srcTx Tx) (*blockatlas.Tx, error) {
 	}
 
 	transfer := contract.Parameter.Value
-	from, err := address.HexToAddress(transfer.OwnerAddress)
+	from, err := HexToAddress(transfer.OwnerAddress)
 	if err != nil {
 		return nil, err
 	}
-	to, err := address.HexToAddress(transfer.ToAddress)
+	to, err := HexToAddress(transfer.ToAddress)
 	if err != nil {
 		return nil, err
 	}

@@ -6,8 +6,8 @@ import (
 	"sync"
 
 	log "github.com/sirupsen/logrus"
-	"github.com/trustwallet/blockatlas/pkg/address"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/golibs/address"
 	"github.com/trustwallet/golibs/numbers"
 )
 
@@ -93,10 +93,23 @@ func (p *Platform) NormalizeTokenTransaction(srcTx Tx, receipt TxReceipt) (block
 		if err != nil {
 			continue
 		}
-		originSender := address.EIP55Checksum(blockatlas.GetValidParameter(srcTx.Origin, srcTx.Meta.TxOrigin))
-		originReceiver := address.EIP55Checksum(event.Address)
-		topicsFrom := address.EIP55Checksum(getRecipientAddress(event.Topics[1]))
-		topicsTo := address.EIP55Checksum(getRecipientAddress(event.Topics[2]))
+
+		originSender, err := address.EIP55Checksum(blockatlas.GetValidParameter(srcTx.Origin, srcTx.Meta.TxOrigin))
+		if err != nil {
+			continue
+		}
+		originReceiver, err := address.EIP55Checksum(event.Address)
+		if err != nil {
+			continue
+		}
+		topicsFrom, err := address.EIP55Checksum(getRecipientAddress(event.Topics[1]))
+		if err != nil {
+			continue
+		}
+		topicsTo, err := address.EIP55Checksum(getRecipientAddress(event.Topics[2]))
+		if err != nil {
+			continue
+		}
 
 		direction, err := getTokenTransactionDirectory(originSender, topicsFrom, topicsTo)
 		if err != nil {
@@ -154,16 +167,25 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 	return txs, nil
 }
 
-func (p *Platform) NormalizeTransaction(srcTx LogTransfer, trxId Tx, addr string) (blockatlas.Tx, error) {
+func (p *Platform) NormalizeTransaction(srcTx LogTransfer, trxId Tx, addr string) (tx blockatlas.Tx, err error) {
 	value, err := numbers.HexToDecimal(srcTx.Amount)
 	if err != nil {
-		return blockatlas.Tx{}, err
+		return
 	}
 
 	fee := strconv.Itoa(trxId.Gas)
-	sender := address.EIP55Checksum(srcTx.Sender)
-	recipient := address.EIP55Checksum(srcTx.Recipient)
-	addrChecksum := address.EIP55Checksum(addr)
+	sender, err := address.EIP55Checksum(srcTx.Sender)
+	if err != nil {
+		return
+	}
+	recipient, err := address.EIP55Checksum(srcTx.Recipient)
+	if err != nil {
+		return
+	}
+	addrChecksum, err := address.EIP55Checksum(addr)
+	if err != nil {
+		return
+	}
 
 	directory, err := getTransferDirectory(sender, recipient, addrChecksum)
 	if err != nil {
