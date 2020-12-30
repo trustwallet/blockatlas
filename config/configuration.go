@@ -209,6 +209,10 @@ type Configuration struct {
 	Sentry struct {
 		DSN string `mapstructure:"dsn"`
 	} `mapstructure:"sentry"`
+	Consumer struct {
+		Service string `mapstructure:"service"`
+		Workers int    `mapstructure:"workers"`
+	} `mapstructure:"consumer"`
 }
 
 var Default Configuration

@@ -13,10 +13,8 @@ import (
 	"github.com/trustwallet/blockatlas/db"
 	_ "github.com/trustwallet/blockatlas/docs"
 	"github.com/trustwallet/blockatlas/internal"
-	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/platform"
 	"github.com/trustwallet/blockatlas/services/tokenindexer"
-	"github.com/trustwallet/blockatlas/services/tokensearcher"
 )
 
 const (
@@ -30,8 +28,7 @@ var (
 	port, confPath string
 	engine         *gin.Engine
 	database       *db.Instance
-	ts             tokensearcher.Instance
-	ti             tokenindexer.Instance
+	tokenIndexer   tokenindexer.Instance
 )
 
 func init() {
@@ -55,27 +52,11 @@ func init() {
 	}
 	go database.RestoreConnectionWorker(time.Second*10, config.Default.Postgres.URL)
 
-	internal.InitRabbitMQ(
-		config.Default.Observer.Rabbitmq.URL,
-		config.Default.Observer.Rabbitmq.PrefetchCount,
-	)
-
-	if err := mq.TokensRegistration.Declare(); err != nil {
-		log.Fatal(err)
-	}
-	if err := mq.RawTransactionsTokenIndexer.Declare(); err != nil {
-		log.Fatal(err)
-	}
-
-	ts = tokensearcher.Init(database, platform.TokensAPIs, mq.TokensRegistration)
-	ti = tokenindexer.Init(database)
-
-	go mq.FatalWorker(time.Second * 10)
+	tokenIndexer = tokenindexer.Init(database)
 }
 
 func main() {
-	api.SetupTokensIndexAPI(engine, ti)
-	api.SetupTokensSearcherAPI(engine, ts)
+	api.SetupTokensIndexAPI(engine, tokenIndexer)
 	api.SetupSwaggerAPI(engine)
 	api.SetupPlatformAPI(engine)
 

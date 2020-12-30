@@ -10,11 +10,12 @@ import (
 
 	"github.com/streadway/amqp"
 	"github.com/stretchr/testify/assert"
-	"github.com/trustwallet/blockatlas/mq"
+	"github.com/trustwallet/blockatlas/internal"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/services/notifier"
 	"github.com/trustwallet/blockatlas/tests/integration/setup"
 	"github.com/trustwallet/golibs/coin"
+	"github.com/trustwallet/golibs/network/mq"
 )
 
 var (
@@ -106,5 +107,5 @@ func produceTxs(txs blockatlas.Txs) error {
 	if err != nil {
 		return err
 	}
-	return mq.RawTransactions.Publish(body)
+	return internal.RawTransactions.Publish(body)
 }

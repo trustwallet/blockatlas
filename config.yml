@@ -28,6 +28,10 @@ postgres:
   url: postgresql://user:pass@localhost/blockatlas?sslmode=disable
   log: false
 
+consumer:
+  service: ""
+  workers: 8
+
 # [BNB] Binance DEX: https://www.binance.org/
 binance:
   api: https://dex.binance.org

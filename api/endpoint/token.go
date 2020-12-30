@@ -9,7 +9,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/services/tokenindexer"
-	"github.com/trustwallet/blockatlas/services/tokensearcher"
 )
 
 type (
@@ -127,13 +126,13 @@ func getTokens(tokenAPI blockatlas.TokensAPI, addresses []string, data *tokensRe
 	data.mu.Unlock()
 }
 
-func GetTokensByAddressIndexer(c *gin.Context, instance tokensearcher.Instance) {
-	var query tokensearcher.Request
+func GetTokensByAddressV3(c *gin.Context, instance tokenindexer.Instance) {
+	var query tokenindexer.GetTokensByAddressRequest
 	if err := c.Bind(&query); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
-	result, err := instance.HandleTokensRequest(query)
+	result, err := instance.GetTokensByAddress(query)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, errorResponse(err))
 		return

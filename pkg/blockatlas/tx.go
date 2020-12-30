@@ -1,10 +1,11 @@
 package blockatlas
 
 import (
-	"github.com/trustwallet/golibs/tokentype"
 	"sort"
 	"strconv"
 	"strings"
+
+	"github.com/trustwallet/golibs/tokentype"
 
 	mapset "github.com/deckarep/golang-set"
 	"github.com/trustwallet/blockatlas/db/models"
@@ -203,6 +204,10 @@ type (
 	Txs []Tx
 )
 
+func (t Token) AssetId() string {
+	return asset.BuildID(t.Coin, t.TokenID)
+}
+
 func (txs Txs) FilterUniqueID() Txs {
 	keys := make(map[string]bool)
 	list := make(Txs, 0)
@@ -337,8 +342,6 @@ func (t *Tx) TokenID() (string, bool) {
 		tokenID = t.Meta.(*NativeTokenTransfer).TokenID
 	case TokenTransfer:
 		tokenID = t.Meta.(TokenTransfer).TokenID
-	case *TokenTransfer:
-		tokenID = t.Meta.(*TokenTransfer).TokenID
 	case AnyAction:
 		tokenID = t.Meta.(AnyAction).TokenID
 	case *AnyAction:

@@ -10,12 +10,13 @@ import (
 
 	"github.com/streadway/amqp"
 	"github.com/stretchr/testify/assert"
-	"github.com/trustwallet/blockatlas/mq"
+	"github.com/trustwallet/blockatlas/internal"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/services/notifier"
 	"github.com/trustwallet/blockatlas/services/parser"
 	"github.com/trustwallet/blockatlas/tests/integration/setup"
 	"github.com/trustwallet/golibs/coin"
+	"github.com/trustwallet/golibs/network/mq"
 	"go.uber.org/atomic"
 )
 
@@ -35,7 +36,7 @@ func TestFullFlow(t *testing.T) {
 	params := setupParserFull(stopChan)
 	params.Database = database
 	params.Ctx = ctx
-	params.TransactionsQueue = mq.RawTransactions
+	params.TransactionsQueue = internal.RawTransactions
 
 	go parser.RunParser(params)
 	time.Sleep(time.Second * 2)

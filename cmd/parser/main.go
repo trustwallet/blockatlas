@@ -14,9 +14,9 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas/db"
 	"github.com/trustwallet/blockatlas/internal"
-	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/platform"
 	"github.com/trustwallet/blockatlas/services/parser"
+	"github.com/trustwallet/golibs/network/mq"
 )
 
 const (
@@ -35,18 +35,11 @@ func init() {
 
 	internal.InitConfig(confPath)
 
-	internal.InitRabbitMQ(
-		config.Default.Observer.Rabbitmq.URL,
-		config.Default.Observer.Rabbitmq.PrefetchCount,
-	)
+	internal.InitRabbitMQ(config.Default.Observer.Rabbitmq.URL)
 
 	platform.Init(config.Default.Platform)
 
-	if err := mq.RawTransactions.Declare(); err != nil {
-		log.Fatal(err)
-	}
-
-	if err := mq.RawTransactionsTokenIndexer.Declare(); err != nil {
+	if err := internal.RawTransactionsExchange.Declare("topic"); err != nil {
 		log.Fatal(err)
 	}
 
@@ -96,13 +89,9 @@ func main() {
 		coinCancel[coin.Handle] = cancel
 
 		params := parser.Params{
-			Ctx:               ctx,
-			Api:               api,
-			TransactionsQueue: mq.RawTransactions,
-			TokenTransactionsQueue: []mq.Queue{
-				mq.RawTransactionsSearcher,
-				mq.RawTransactionsTokenIndexer,
-			},
+			Ctx:                   ctx,
+			Api:                   api,
+			TransactionsExchange:  internal.RawTransactionsExchange,
 			ParsingBlocksInterval: pollInterval,
 			FetchBlocksTimeout:    fetchBlocksInterval,
 			BacklogCount:          backlogCount,

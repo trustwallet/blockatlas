@@ -8,7 +8,6 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/platform"
 	"github.com/trustwallet/blockatlas/services/tokenindexer"
-	"github.com/trustwallet/blockatlas/services/tokensearcher"
 	"github.com/trustwallet/golibs/network/middleware"
 )
 
@@ -102,14 +101,11 @@ func RegisterBasicAPI(router gin.IRouter) {
 	router.GET("/", endpoint.GetStatus)
 }
 
-func RegisterTokensSearcherAPI(router gin.IRouter, instance tokensearcher.Instance) {
-	router.POST("/v3/tokens", func(c *gin.Context) {
-		endpoint.GetTokensByAddressIndexer(c, instance)
-	})
-}
-
 func RegisterTokensIndexAPI(router gin.IRouter, instance tokenindexer.Instance) {
 	router.GET("/v3/tokens/new", func(c *gin.Context) {
 		endpoint.GetNewTokens(c, instance)
+	})
+	router.POST("/v3/tokens", func(c *gin.Context) {
+		endpoint.GetTokensByAddressV3(c, instance)
 	})
 }

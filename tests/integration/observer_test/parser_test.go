@@ -11,7 +11,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/streadway/amqp"
 	"github.com/stretchr/testify/assert"
-	"github.com/trustwallet/blockatlas/mq"
+	"github.com/trustwallet/blockatlas/internal"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/services/parser"
 	"github.com/trustwallet/blockatlas/tests/integration/setup"
@@ -28,7 +28,7 @@ func TestParserFetchAndPublishBlock_NormalCase(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	params.Ctx = ctx
-	params.TransactionsQueue = mq.RawTransactions
+	params.TransactionsQueue = internal.RawTransactions
 
 	go parser.RunParser(params)
 

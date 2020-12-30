@@ -13,8 +13,8 @@ import (
 	"time"
 
 	"github.com/trustwallet/blockatlas/db"
-	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/golibs/network/mq"
 	"github.com/trustwallet/golibs/numbers"
 
 	log "github.com/sirupsen/logrus"
@@ -24,8 +24,7 @@ type (
 	Params struct {
 		Ctx                                       context.Context
 		Api                                       blockatlas.BlockAPI
-		TransactionsQueue                         mq.Queue
-		TokenTransactionsQueue                    []mq.Queue
+		TransactionsExchange                      mq.Exchange
 		ParsingBlocksInterval, FetchBlocksTimeout time.Duration
 		BacklogCount                              int
 		MaxBacklogBlocks                          int64
@@ -233,36 +232,10 @@ func publish(params Params, txs blockatlas.Txs) {
 	}
 
 	// Notify transactions queue
-	err = params.TransactionsQueue.Publish(body)
+	err = params.TransactionsExchange.Publish(body)
 	if err != nil {
 		log.WithFields(log.Fields{"operation": "publish transactionsQueue", "coin": params.Api.Coin().Handle}).Error(err)
 		return
-	}
-
-	// Notify token transfers queue, if conforms to TokensAPI protocol
-	tokenTransfers := txs.FilterTransactionsByType([]blockatlas.TransactionType{
-		blockatlas.TxTokenTransfer,
-		blockatlas.TxNativeTokenTransfer,
-	})
-
-	if len(tokenTransfers) == 0 {
-		return
-	}
-
-	tokenTransfersBody, err := json.Marshal(tokenTransfers)
-	if err != nil {
-		log.WithFields(log.Fields{"operation": "marshal tokenTransfers", "coin": params.Api.Coin().Handle}).Error(err)
-		return
-	}
-
-	if _, ok := params.Api.(blockatlas.TokensAPI); ok {
-		for _, q := range params.TokenTransactionsQueue {
-			err = q.Publish(tokenTransfersBody)
-			if err != nil {
-				log.WithFields(log.Fields{"coin": params.Api.Coin().Handle}).Error(err)
-				return
-			}
-		}
 	}
 }
 

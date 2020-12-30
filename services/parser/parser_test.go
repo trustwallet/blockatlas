@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/coin"
 )
@@ -17,16 +16,15 @@ var (
 
 func TestFetchBlocks(t *testing.T) {
 	params := Params{
-		Ctx:                    nil,
-		Api:                    getMockedBlockAPI(),
-		TransactionsQueue:      "",
-		TokenTransactionsQueue: []mq.Queue{""},
-		ParsingBlocksInterval:  0,
-		FetchBlocksTimeout:     0,
-		BacklogCount:           0,
-		MaxBacklogBlocks:       0,
-		StopChannel:            nil,
-		Database:               nil,
+		Ctx:                   nil,
+		Api:                   getMockedBlockAPI(),
+		TransactionsExchange:  "",
+		ParsingBlocksInterval: 0,
+		FetchBlocksTimeout:    0,
+		BacklogCount:          0,
+		MaxBacklogBlocks:      0,
+		StopChannel:           nil,
+		Database:              nil,
 	}
 	blocks := FetchBlocks(params, 0, 100)
 	assert.Equal(t, len(blocks), 100)

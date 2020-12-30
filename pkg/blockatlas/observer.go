@@ -21,12 +21,15 @@ type (
 		Height int64  `json:"height"`
 		Error  string `json:"error,omitempty"`
 	}
-
-	Observer struct {
-		Status  bool   `json:"status"`
-		Message string `json:"message"`
-	}
 )
+
+func (v *Subscription) AddressID() string {
+	return GetAddressID(strconv.Itoa(int(v.Coin)), v.Address)
+}
+
+func GetAddressID(coin, address string) string {
+	return coin + "_" + address
+}
 
 func (e *SubscriptionEvent) ParseSubscriptions(s Subscriptions) []Subscription {
 	subs := make([]Subscription, 0)

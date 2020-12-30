@@ -38,12 +38,10 @@ func New(url string, log bool) (*Instance, error) {
 	}
 
 	err = db.AutoMigrate(
-		&models.NotificationSubscription{},
 		&models.Tracker{},
 		&models.Asset{},
-		&models.AssetSubscription{},
-		&models.Address{},
-		&models.AddressToAssetAssociation{},
+		&models.Subscription{},
+		&models.SubscriptionsAssetAssociation{},
 	)
 	if err != nil {
 		return nil, err
@@ -70,8 +68,6 @@ func (i *Instance) restoreConnection(uri string) error {
 	if err != nil {
 		return err
 	}
-
-	log.Info("Run restoreConnection")
 
 	if err = db.Ping(); err != nil {
 		log.Warn("PG is not available now")

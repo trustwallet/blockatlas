@@ -59,10 +59,8 @@ func (i *Instance) AddNewAssets(assets []models.Asset) error {
 	}
 	i.addToMemory(newAssets)
 
-	assetsBatch := assetsBatch(newAssets, batchCount)
-
 	return i.Gorm.Transaction(func(tx *gorm.DB) error {
-		for _, na := range assetsBatch {
+		for _, na := range newAssets {
 			err := tx.Clauses(clause.OnConflict{DoNothing: true}).Create(&na).Error
 			if err != nil {
 				return err
@@ -100,6 +98,20 @@ func (i *Instance) GetAssetsByIDs(ids []string) ([]models.Asset, error) {
 	return dbAssets, nil
 }
 
+func (i *Instance) GetSubscriptionsByAddressIDs(ids []string, from time.Time) ([]models.SubscriptionsAssetAssociation, error) {
+	var associations []models.SubscriptionsAssetAssociation
+	if err := i.Gorm.
+		Joins("join subscriptions on subscriptions.id = subscriptions_asset_associations.subscription_id", ids).
+		Preload("Subscription").
+		Preload("Asset").
+		Where("subscriptions.address in (?)", ids).
+		Where("subscriptions_asset_associations.created_at > ?", from).
+		Find(&associations).Error; err != nil {
+		return nil, err
+	}
+	return associations, nil
+}
+
 func (i *Instance) GetAssetsFrom(from time.Time, coin int) ([]models.Asset, error) {
 	var dbAssets []models.Asset
 	if coin == -1 {
@@ -113,21 +125,6 @@ func (i *Instance) GetAssetsFrom(from time.Time, coin int) ([]models.Asset, erro
 	}
 
 	return dbAssets, nil
-}
-
-func assetsBatch(values []models.Asset, sizeUint uint) [][]models.Asset {
-	size := int(sizeUint)
-	resultLength := (len(values) + size - 1) / size
-	result := make([][]models.Asset, resultLength)
-	lo, hi := 0, size
-	for i := range result {
-		if hi > len(values) {
-			hi = len(values)
-		}
-		result[i] = values[lo:hi:hi]
-		lo, hi = hi, hi+size
-	}
-	return result
 }
 
 func filterAssets(values []models.Asset) []models.Asset {
@@ -145,4 +142,16 @@ func filterAssets(values []models.Asset) []models.Asset {
 		}
 	}
 	return result
+}
+
+func getUniqueAssets(values []models.Asset) []models.Asset {
+	keys := make(map[string]struct{})
+	var list []models.Asset
+	for _, entry := range values {
+		if _, value := keys[entry.Asset]; !value {
+			keys[entry.Asset] = struct{}{}
+			list = append(list, entry)
+		}
+	}
+	return list
 }

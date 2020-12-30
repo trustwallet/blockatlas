@@ -8,8 +8,9 @@ import (
 	"testing"
 
 	"github.com/trustwallet/blockatlas/db"
-	"github.com/trustwallet/blockatlas/mq"
+	"github.com/trustwallet/blockatlas/internal"
 	"github.com/trustwallet/blockatlas/tests/integration/setup"
+	"github.com/trustwallet/golibs/network/mq"
 )
 
 var (
@@ -20,18 +21,18 @@ var (
 func TestMain(m *testing.M) {
 	database = setup.RunPgContainer()
 	setup.RunMQContainer()
-	if err := mq.RawTransactions.Declare(); err != nil {
+	if err := internal.RawTransactions.Declare(); err != nil {
 		log.Fatal(err)
 	}
-	if err := mq.TxNotifications.Declare(); err != nil {
+	if err := internal.TxNotifications.Declare(); err != nil {
 		log.Fatal(err)
 	}
-	if err := mq.Subscriptions.Declare(); err != nil {
+	if err := internal.Subscriptions.Declare(); err != nil {
 		log.Fatal(err)
 	}
-	rawTransactionsChannel = mq.RawTransactions.GetMessageChannel()
-	subscriptionChannel = mq.Subscriptions.GetMessageChannel()
-	transactionsChannel = mq.TxNotifications.GetMessageChannel()
+	rawTransactionsChannel = internal.RawTransactions.GetMessageChannel()
+	subscriptionChannel = internal.Subscriptions.GetMessageChannel()
+	transactionsChannel = internal.TxNotifications.GetMessageChannel()
 
 	code := m.Run()
 

@@ -12,10 +12,11 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/trustwallet/blockatlas/mq"
+	"github.com/trustwallet/blockatlas/internal"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/services/subscriber"
 	"github.com/trustwallet/blockatlas/tests/integration/setup"
+	"github.com/trustwallet/golibs/network/mq"
 )
 
 func TestSubscriberAddSubscription(t *testing.T) {
@@ -46,7 +47,7 @@ func TestSubscriberAddSubscription(t *testing.T) {
 		body, err := json.Marshal(event)
 		assert.Nil(t, err)
 
-		err = mq.Subscriptions.Publish(body)
+		err = internal.Subscriptions.Publish(body)
 		assert.Nil(t, err)
 
 		ctx, cancel := context.WithCancel(context.Background())
@@ -106,7 +107,7 @@ func TestSubscriber_UpdateSubscription(t *testing.T) {
 		body, err := json.Marshal(event)
 		assert.Nil(t, err)
 
-		err = mq.Subscriptions.Publish(body)
+		err = internal.Subscriptions.Publish(body)
 		assert.Nil(t, err)
 
 		ctx, cancel := context.WithCancel(context.Background())
