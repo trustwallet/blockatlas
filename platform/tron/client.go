@@ -2,18 +2,19 @@ package tron
 
 import (
 	"fmt"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"net/url"
 	"time"
+
+	"github.com/trustwallet/golibs/client"
 )
 
 type (
 	Client struct {
-		blockatlas.Request
+		client.Request
 	}
 
 	ExplorerClient struct {
-		blockatlas.Request
+		client.Request
 	}
 )
 

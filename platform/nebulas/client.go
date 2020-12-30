@@ -1,15 +1,16 @@
 package nebulas
 
 import (
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"net/url"
 	"strconv"
+
+	"github.com/trustwallet/golibs/client"
 )
 
 const TxTypeBinary = "binary"
 
 type Client struct {
-	blockatlas.Request
+	client.Request
 }
 
 func (c *Client) GetTxs(address string, page int) ([]Transaction, error) {

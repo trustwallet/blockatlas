@@ -1,12 +1,10 @@
 package fio
 
-import (
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-)
+import "github.com/trustwallet/golibs/client"
 
 // Client for FIO API
 type Client struct {
-	blockatlas.Request
+	client.Request
 }
 
 func (c *Client) getTransactions(account string) (actions []Action, error error) {
