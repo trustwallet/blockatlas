@@ -1,4 +1,4 @@
-package filecoin
+package rpc
 
 import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
@@ -8,7 +8,7 @@ type Client struct {
 	blockatlas.Request
 }
 
-func (c Client) getBlockHeight() (ChainHeadResponse, error) {
+func (c Client) GetBlockHeight() (ChainHeadResponse, error) {
 	var result ChainHeadResponse
 	err := c.RpcCall(&result, "Filecoin.ChainHead", nil)
 	if err != nil {
@@ -17,7 +17,7 @@ func (c Client) getBlockHeight() (ChainHeadResponse, error) {
 	return result, nil
 }
 
-func (c Client) getTipSetByHeight(height int64) (ChainHeadResponse, error) {
+func (c Client) GetTipSetByHeight(height int64) (ChainHeadResponse, error) {
 	var result ChainHeadResponse
 	params := []interface{}{
 		height, nil,
@@ -29,7 +29,7 @@ func (c Client) getTipSetByHeight(height int64) (ChainHeadResponse, error) {
 	return result, nil
 }
 
-func (c Client) getBlockMessage(cid string) (BlockMessageResponse, error) {
+func (c Client) GetBlockMessage(cid string) (BlockMessageResponse, error) {
 	var result BlockMessageResponse
 	params := []interface{}{
 		map[string]interface{}{

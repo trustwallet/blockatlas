@@ -2,6 +2,7 @@ package kava
 
 import (
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 
@@ -10,7 +11,13 @@ import (
 	"github.com/trustwallet/golibs/numbers"
 )
 
+const kavaDenom = "ukava"
+
 func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
+	return p.GetTokenTxsByAddress(address, kavaDenom)
+}
+
+func (p *Platform) GetTokenTxsByAddress(address, token string) (blockatlas.TxPage, error) {
 	tagsList := []string{"transfer.recipient", "message.sender"}
 	var wg sync.WaitGroup
 	out := make(chan []Tx, len(tagsList))
@@ -49,9 +56,24 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 	close(out)
 	srcTxs := make([]Tx, 0)
 	for r := range out {
-		srcTxs = append(srcTxs, r...)
+		filteredTxs := p.FilterTxsByDenom(r, token)
+		srcTxs = append(srcTxs, filteredTxs...)
 	}
 	return p.NormalizeTxs(srcTxs), nil
+}
+
+func (p *Platform) FilterTxsByDenom(txs []Tx, denom string) []Tx {
+	filteredTxs := make([]Tx, 0)
+	for _, tx := range txs {
+		messages := tx.Data.Contents.Message
+		if len(messages) == 0 {
+			continue
+		}
+		if messages[0].Value.(MessageValueTransfer).Amount[0].Denom == denom {
+			filteredTxs = append(filteredTxs, tx)
+		}
+	}
+	return filteredTxs
 }
 
 // NormalizeTxs converts multiple Cosmos transactions
@@ -132,7 +154,8 @@ func (p *Platform) fillTransfer(tx *blockatlas.Tx, transfer MessageValueTransfer
 	if len(transfer.Amount) == 0 {
 		return
 	}
-	value, err := numbers.DecimalToSatoshis(transfer.Amount[0].Quantity)
+	amount := transfer.Amount[0]
+	value, err := numbers.DecimalToSatoshis(amount.Quantity)
 	if err != nil {
 		return
 	}
@@ -143,6 +166,26 @@ func (p *Platform) fillTransfer(tx *blockatlas.Tx, transfer MessageValueTransfer
 		Value:    blockatlas.Amount(value),
 		Symbol:   p.Coin().Symbol,
 		Decimals: p.Coin().Decimals,
+	}
+	switch {
+	case amount.Denom == kavaDenom:
+		tx.Type = blockatlas.TxTransfer
+		tx.Meta = blockatlas.Transfer{
+			Value:    blockatlas.Amount(value),
+			Symbol:   p.Coin().Symbol,
+			Decimals: p.Coin().Decimals,
+		}
+	default:
+		tx.Type = blockatlas.TxNativeTokenTransfer
+		tx.Meta = blockatlas.NativeTokenTransfer{
+			Decimals: p.Coin().Decimals,
+			From:     tx.From,
+			Symbol:   strings.ToUpper(amount.Denom),
+			Name:     amount.Denom,
+			To:       tx.To,
+			TokenID:  amount.Denom,
+			Value:    blockatlas.Amount(value),
+		}
 	}
 }
 
