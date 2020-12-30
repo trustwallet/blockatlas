@@ -20,10 +20,6 @@ type Instance struct {
 	MemoryCache *gocache.Cache
 }
 
-// By gorm-bulk-insert author:
-// "Depending on the number of variables included, 2000 to 3000 is recommended."
-const batchCount = 3000
-
 func New(url string, log bool) (*Instance, error) {
 	var logMode logger.LogLevel
 	if log {

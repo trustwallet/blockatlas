@@ -62,9 +62,7 @@ func calculateSubscriptionAssetAssociations(database *db.Instance, addressAssets
 	for addressId, assets := range addressAssetsMap {
 		addressIds = append(addressIds, addressId)
 
-		for _, assetId := range assets {
-			assetIds = append(assetIds, assetId)
-		}
+		assetIds = append(assetIds, assets...)
 	}
 
 	if len(addressIds) == 0 || len(assetIds) == 0 {
