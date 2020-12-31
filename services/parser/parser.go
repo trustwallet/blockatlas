@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strconv"
 	"sync/atomic"
 
 	"math/rand"
@@ -62,7 +63,10 @@ func GetInterval(value int, minInterval, maxInterval time.Duration) time.Duratio
 func parse(params Params) {
 	lastParsedBlock, currentBlock, err := GetBlocksIntervalToFetch(params)
 	if err != nil || lastParsedBlock > currentBlock {
-		log.WithFields(log.Fields{"operation": "fetch GetBlocksIntervalToFetch", "lastParsedBlock": lastParsedBlock, "currentBlock": currentBlock, "coin": params.Api.Coin().Handle}).Error(err)
+		log.WithFields(log.Fields{
+			"operation": "fetch GetBlocksIntervalToFetch",
+			"coin":      params.Api.Coin().Handle,
+		}).Error(err)
 		time.Sleep(params.ParsingBlocksInterval)
 		return
 	}
@@ -102,10 +106,10 @@ func GetBlocksIntervalToFetch(params Params) (int64, int64, error) {
 		return 0, 0, errors.New(err.Error() + " Polling failed: tracker didn't return last known block number")
 	}
 	currentBlock, err := params.Api.CurrentBlockNumber()
-	currentBlock -= params.Api.Coin().MinConfirmations
 	if err != nil {
-		return 0, 0, errors.New(err.Error() + "Polling failed: source didn't return chain head number")
+		return 0, 0, errors.New(err.Error() + "Polling failed: source didn't return chain head number. lastParsedBlock: " + strconv.Itoa(int(lastParsedBlock)))
 	}
+	currentBlock -= params.Api.Coin().MinConfirmations
 
 	return GetNextBlocksToParse(lastParsedBlock, currentBlock, params.MaxBlocks)
 }
