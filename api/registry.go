@@ -92,9 +92,6 @@ func RegisterBatchAPI(router gin.IRouter) {
 	router.POST("/v4/collectibles/categories", func(c *gin.Context) {
 		endpoint.GetCollectionCategoriesFromList(c, platform.CollectionsAPIs)
 	})
-	router.POST("/v2/tokens", func(c *gin.Context) {
-		endpoint.GetTokens(c, platform.TokensAPIs)
-	})
 }
 
 func RegisterBasicAPI(router gin.IRouter) {
