@@ -22,12 +22,10 @@ import (
 
 type (
 	Params struct {
-		Ctx                                       context.Context
 		Api                                       blockatlas.BlockAPI
 		TransactionsExchange                      mq.Exchange
 		ParsingBlocksInterval, FetchBlocksTimeout time.Duration
-		BacklogCount                              int
-		MaxBacklogBlocks                          int64
+		MaxBlocks                                 int64
 		StopChannel                               chan<- struct{}
 		Database                                  *db.Instance
 	}
@@ -39,17 +37,16 @@ type (
 	}
 )
 
-func RunParser(params Params) {
+func RunParser(params Params, ctx context.Context) {
 	log.Info("------------------------------------------------------------")
 	for {
 		select {
-		case <-params.Ctx.Done():
+		case <-ctx.Done():
 			log.Info(fmt.Sprintf("Parser of %s stopped parsing blocks", params.Api.Coin().Handle))
 			params.StopChannel <- struct{}{}
 			return
 		default:
 			parse(params)
-			time.Sleep(params.ParsingBlocksInterval)
 		}
 		log.Info("------------------------------------------------------------")
 	}
@@ -70,7 +67,11 @@ func parse(params Params) {
 		return
 	}
 
-	blocks := FetchBlocks(params, lastParsedBlock, currentBlock)
+	blocks, err := FetchBlocks(params, lastParsedBlock, currentBlock)
+	if err != nil {
+		time.Sleep(params.ParsingBlocksInterval)
+		return
+	}
 
 	err = SaveLastParsedBlock(params, blocks)
 	if err != nil {
@@ -106,29 +107,40 @@ func GetBlocksIntervalToFetch(params Params) (int64, int64, error) {
 		return 0, 0, errors.New(err.Error() + "Polling failed: source didn't return chain head number")
 	}
 
-	if currentBlock-lastParsedBlock > int64(params.BacklogCount) {
-		lastParsedBlock = currentBlock - int64(params.BacklogCount)
-	}
-
-	if currentBlock-lastParsedBlock > params.MaxBacklogBlocks {
-		lastParsedBlock = currentBlock - params.MaxBacklogBlocks
-	}
-	return lastParsedBlock, currentBlock, nil
+	return GetNextBlocksToParse(lastParsedBlock, currentBlock, params.MaxBlocks)
 }
 
-func FetchBlocks(params Params, lastParsedBlock, currentBlock int64) []blockatlas.Block {
+func GetNextBlocksToParse(lastParsedBlock int64, currentBlock int64, maxBlocks int64) (int64, int64, error) {
+	if lastParsedBlock == currentBlock {
+		return lastParsedBlock, currentBlock, nil
+	}
+	if lastParsedBlock > currentBlock {
+		return lastParsedBlock, lastParsedBlock, nil
+	}
+
+	var endParseBlock = currentBlock
+	var nextBlock = lastParsedBlock + 1
+
+	if currentBlock-lastParsedBlock > maxBlocks {
+		endParseBlock = nextBlock + maxBlocks
+	}
+
+	return nextBlock, endParseBlock, nil
+}
+
+func FetchBlocks(params Params, lastParsedBlock, currentBlock int64) ([]blockatlas.Block, error) {
 	if lastParsedBlock == currentBlock {
 		log.WithFields(log.Fields{
 			"block": lastParsedBlock,
 			"coin":  params.Api.Coin().Handle,
 		}).Info("No new blocks")
-		return nil
+		return nil, errors.New("no new blocks")
 	}
 
 	blocksCount := currentBlock - lastParsedBlock
 	if blocksCount < 0 {
 		log.WithFields(log.Fields{"coin": params.Api.Coin().Handle}).Error("Current block is 0")
-		return nil
+		return nil, errors.New("current block is 0")
 	}
 
 	var (
@@ -138,7 +150,7 @@ func FetchBlocks(params Params, lastParsedBlock, currentBlock int64) []blockatla
 		wg         sync.WaitGroup
 	)
 
-	for i := lastParsedBlock + 1; i <= currentBlock; i++ {
+	for i := lastParsedBlock; i <= currentBlock-1; i++ {
 		wg.Add(1)
 		time.Sleep(params.FetchBlocksTimeout)
 		go func(i int64, wg *sync.WaitGroup) {
@@ -178,7 +190,7 @@ func FetchBlocks(params Params, lastParsedBlock, currentBlock int64) []blockatla
 		"coin":  params.Api.Coin().Handle},
 	).Info("Fetched blocks batch")
 
-	return blocksList
+	return blocksList, nil
 }
 
 func fetchBlock(api blockatlas.BlockAPI, num int64, blocksChan chan<- blockatlas.Block) error {

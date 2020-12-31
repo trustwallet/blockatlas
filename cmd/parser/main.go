@@ -64,50 +64,37 @@ func main() {
 		coinCancel  = make(map[string]context.CancelFunc)
 		stopChannel = make(chan<- struct{}, len(platform.BlockAPIs))
 	)
-	backlogTime := config.Default.Observer.Backlog
 	minInterval := config.Default.Observer.BlockPoll.Min
 	maxInterval := config.Default.Observer.BlockPoll.Max
-	fetchBlocksInterval := config.Default.Observer.FetchBlocksInterval
-	maxBackLogBlocks := config.Default.Observer.BacklogMaxBlocks
+	fetchBlocksTimeout := config.Default.Observer.FetchBlocksInterval
+	maxBlocks := config.Default.Observer.BlockPoll.MaxBlocks
 
 	go mq.FatalWorker(time.Second * 10)
 
 	wg.Add(len(platform.BlockAPIs))
 	for _, api := range platform.BlockAPIs {
-		time.Sleep(time.Millisecond * 5)
 		coin := api.Coin()
 		pollInterval := parser.GetInterval(coin.BlockTime, minInterval, maxInterval)
-
-		var backlogCount int
-		if coin.BlockTime == 0 {
-			backlogCount = 50
-			log.WithFields(log.Fields{"coin": coin.Handle}).Warn("Unknown block time")
-		} else {
-			backlogCount = int(backlogTime / pollInterval)
-		}
 
 		coinCancel[coin.Handle] = cancel
 
 		params := parser.Params{
-			Ctx:                   ctx,
 			Api:                   api,
 			TransactionsExchange:  internal.RawTransactionsExchange,
 			ParsingBlocksInterval: pollInterval,
-			FetchBlocksTimeout:    fetchBlocksInterval,
-			BacklogCount:          backlogCount,
-			MaxBacklogBlocks:      maxBackLogBlocks,
+			FetchBlocksTimeout:    fetchBlocksTimeout,
+			MaxBlocks:             maxBlocks,
 			StopChannel:           stopChannel,
 			Database:              database,
 		}
 
-		go parser.RunParser(params)
+		go parser.RunParser(params, ctx)
 
 		log.WithFields(log.Fields{
-			"coin":                     api.Coin().Handle,
-			"interval":                 pollInterval,
-			"backlog":                  backlogCount,
-			"Max backlog":              maxBackLogBlocks,
-			"Fetching blocks interval": fetchBlocksInterval,
+			"coin":                 api.Coin().Handle,
+			"interval":             pollInterval,
+			"max blocks":           maxBlocks,
+			"fetch blocks timeout": fetchBlocksTimeout,
 		}).Info("Parser params")
 
 		wg.Done()

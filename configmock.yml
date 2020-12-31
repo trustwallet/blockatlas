@@ -9,15 +9,11 @@ platform: all
 
 # The transaction watcher
 observer:
-  backlog: 3h
-  # Don't request more than N blocks at once
-  backlog_max_blocks: 200
-  # Max connections to open to API
-  stream_conns: 16
   # Block polling interval
   block_poll:
     min: 3s
     max: 30s
+    max_blocks: 15
   rabbitmq:
     uri: amqp://rabbit:5672
     consumer:

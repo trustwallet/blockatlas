@@ -103,17 +103,14 @@ func ConsumerToTestAmountOfBlocks(delivery amqp.Delivery, t *testing.T, cancelFu
 func setupParser(stopChan chan struct{}) parser.Params {
 	minTime := time.Second
 	maxTime := time.Second * 2
-	maxBatchBlocksAmount := 100
+	maxBlocks := 100
 
 	pollInterval := parser.GetInterval(0, minTime, maxTime)
-
-	backlogCount := 50
 
 	return parser.Params{
 		Api:                   getMockedBlockAPI(),
 		ParsingBlocksInterval: pollInterval,
-		BacklogCount:          backlogCount,
-		MaxBacklogBlocks:      int64(maxBatchBlocksAmount),
+		MaxBlocks:             int64(maxBlocks),
 		StopChannel:           stopChan,
 	}
 }

@@ -147,17 +147,14 @@ func ConsumerToTestTransactionsFull(delivery amqp.Delivery, t *testing.T, cancel
 func setupParserFull(stopChan chan<- struct{}) parser.Params {
 	minTime := time.Second
 	maxTime := time.Second * 2
-	maxBatchBlocksAmount := 1
+	maxBlocks := 1
 
 	pollInterval := parser.GetInterval(0, minTime, maxTime)
-
-	backlogCount := 1
 
 	return parser.Params{
 		Api:                   getMockedBlockAPIFull(),
 		ParsingBlocksInterval: pollInterval,
-		BacklogCount:          backlogCount,
-		MaxBacklogBlocks:      int64(maxBatchBlocksAmount),
+		MaxBlocks:             int64(maxBlock),
 		StopChannel:           stopChan,
 	}
 }

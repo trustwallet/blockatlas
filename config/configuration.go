@@ -16,16 +16,14 @@ type Configuration struct {
 	Platform []string `mapstructure:"platform"`
 	RestAPI  string   `mapstructure:"rest_api"`
 	Observer struct {
-		Backlog             time.Duration `mapstructure:"backlog"`
 		FetchBlocksInterval time.Duration `mapstructure:"fetch_blocks_interval"`
-		BacklogMaxBlocks    int64         `mapstructure:"backlog_max_blocks"`
 		BlockPoll           struct {
-			Min time.Duration `mapstructure:"min"`
-			Max time.Duration `mapstructure:"max"`
+			Min       time.Duration `mapstructure:"min"`
+			Max       time.Duration `mapstructure:"max"`
+			MaxBlocks int64         `mapstructure:"max_blocks"`
 		} `mapstructure:"block_poll"`
 		Rabbitmq struct {
-			URL           string `mapstructure:"url"`
-			PrefetchCount int    `mapstructure:"prefetch_count"`
+			URL string `mapstructure:"url"`
 		} `mapstructure:"rabbitmq"`
 	} `mapstructure:"observer"`
 	Postgres struct {

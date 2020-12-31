@@ -16,18 +16,17 @@ var (
 
 func TestFetchBlocks(t *testing.T) {
 	params := Params{
-		Ctx:                   nil,
 		Api:                   getMockedBlockAPI(),
 		TransactionsExchange:  "",
 		ParsingBlocksInterval: 0,
 		FetchBlocksTimeout:    0,
-		BacklogCount:          0,
-		MaxBacklogBlocks:      0,
+		MaxBlocks:             0,
 		StopChannel:           nil,
 		Database:              nil,
 	}
-	blocks := FetchBlocks(params, 0, 100)
+	blocks, err := FetchBlocks(params, 0, 100)
 	assert.Equal(t, len(blocks), 100)
+	assert.Nil(t, err)
 }
 
 func TestParser_getBlockByNumberWithRetry(t *testing.T) {
@@ -129,6 +128,81 @@ func TestGetInterval(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got := GetInterval(tt.args.blockTime, tt.args.minInterval, tt.args.maxInterval)
 			assert.EqualValues(t, tt.want, got)
+		})
+	}
+}
+
+func TestGetNextBlocksToParse(t *testing.T) {
+	type args struct {
+		lastParsedBlock int64
+		currentBlock    int64
+		maxBlocks       int64
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    int64
+		want1   int64
+		wantErr bool
+	}{
+		{
+			"Test behind blocks",
+			args{
+				lastParsedBlock: 10,
+				currentBlock:    25,
+				maxBlocks:       3,
+			},
+			11,
+			14,
+			false,
+		},
+		{
+			"Test when only 1 block to parse",
+			args{
+				lastParsedBlock: 10,
+				currentBlock:    12,
+				maxBlocks:       5,
+			},
+			11,
+			12,
+			false,
+		},
+		{
+			"Test same block",
+			args{
+				lastParsedBlock: 10,
+				currentBlock:    10,
+				maxBlocks:       3,
+			},
+			10,
+			10,
+			false,
+		},
+		{
+			"Last parsed block ahead",
+			args{
+				lastParsedBlock: 15,
+				currentBlock:    10,
+				maxBlocks:       3,
+			},
+			15,
+			15,
+			false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, got1, err := GetNextBlocksToParse(tt.args.lastParsedBlock, tt.args.currentBlock, tt.args.maxBlocks)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("GetNextBlocksToParse() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if got != tt.want {
+				t.Errorf("GetNextBlocksToParse() got = %v, want %v", got, tt.want)
+			}
+			if got1 != tt.want1 {
+				t.Errorf("GetNextBlocksToParse() got1 = %v, want %v", got1, tt.want1)
+			}
 		})
 	}
 }
