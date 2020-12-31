@@ -28,15 +28,6 @@ func (i *Instance) GetSubscriptions(addresses []string) ([]models.Subscription, 
 	return subscriptions, nil
 }
 
-func (i *Instance) GetSubscription(address string) (models.Subscription, error) {
-	var subscription models.Subscription
-	err := i.Gorm.First(&subscription, "address = ?", address).Error
-	if err != nil {
-		return subscription, err
-	}
-	return subscription, nil
-}
-
 func (i *Instance) DeleteSubscriptions(addresses []string) error {
 	subscriptions, err := i.GetSubscriptions(addresses)
 	if err != nil {
@@ -50,22 +41,13 @@ func (i *Instance) DeleteSubscriptions(addresses []string) error {
 		subscriptionsIds = append(subscriptionsIds, subscription.ID)
 	}
 	if err = i.Gorm.
-		Where("subscription_id in ?", subscriptionsIds).
+		Where("subscription_id in (?)", subscriptionsIds).
 		Delete(&models.SubscriptionsAssetAssociation{}).Error; err != nil {
 		return err
 	}
 	return i.Gorm.
-		Where("id in ?", subscriptionsIds).
+		Where("id in (?)", subscriptionsIds).
 		Delete(&models.Subscription{}).Error
-}
-
-func (i *Instance) GetAsset(assetId string) (models.Asset, error) {
-	var asset models.Asset
-	err := i.Gorm.First(&asset, "asset = ?", assetId).Error
-	if err != nil {
-		return asset, err
-	}
-	return asset, nil
 }
 
 func (i *Instance) CreateSubscriptionsAssets(associations []models.SubscriptionsAssetAssociation) error {

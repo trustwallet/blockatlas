@@ -13,6 +13,45 @@ import (
 	"github.com/trustwallet/blockatlas/db/models"
 )
 
+func (i *Instance) GetAsset(assetId string) (models.Asset, error) {
+	var asset models.Asset
+	err := i.Gorm.
+		First(&asset, "asset = ?", assetId).Error
+	if err != nil {
+		return asset, err
+	}
+	return asset, nil
+}
+
+func (i *Instance) GetAssetsByIDs(ids []string) ([]models.Asset, error) {
+	//TODO: look why nil and len 0 make db calls rn
+	if len(ids) == 0 {
+		return nil, nil
+	}
+
+	var dbAssets []models.Asset
+	if err := i.Gorm.
+		Where("asset in (?)", ids).
+		Find(&dbAssets).Error; err != nil {
+		return nil, err
+	}
+	return dbAssets, nil
+}
+
+func (i *Instance) GetSubscriptionsByAddressIDs(ids []string, from time.Time) ([]models.SubscriptionsAssetAssociation, error) {
+	var associations []models.SubscriptionsAssetAssociation
+	if err := i.Gorm.
+		Joins("join subscriptions on subscriptions.id = subscriptions_asset_associations.subscription_id", ids).
+		Preload("Subscription").
+		Preload("Asset").
+		Where("subscriptions.address in (?)", ids).
+		Where("subscriptions_asset_associations.created_at > ?", from).
+		Find(&associations).Error; err != nil {
+		return nil, err
+	}
+	return associations, nil
+}
+
 func (i *Instance) AddNewAssets(assets []models.Asset) error {
 	if len(assets) == 0 {
 		return nil
@@ -83,47 +122,13 @@ func (i *Instance) addToMemory(newAssets []models.Asset) {
 	}
 }
 
-func (i *Instance) GetAssetsByIDs(ids []string) ([]models.Asset, error) {
-	//TODO: look why nil and len 0 make db calls rn
-	if len(ids) == 0 {
-		return nil, nil
-	}
-
+func (i *Instance) GetAssetsFrom(from time.Time) ([]models.Asset, error) {
 	var dbAssets []models.Asset
 	if err := i.Gorm.
-		Where("asset in (?)", ids).
-		Find(&dbAssets).Error; err != nil {
+		Find(&dbAssets, "created_at > ?", from).
+		Limit(10000).Error; err != nil {
 		return nil, err
 	}
-	return dbAssets, nil
-}
-
-func (i *Instance) GetSubscriptionsByAddressIDs(ids []string, from time.Time) ([]models.SubscriptionsAssetAssociation, error) {
-	var associations []models.SubscriptionsAssetAssociation
-	if err := i.Gorm.
-		Joins("join subscriptions on subscriptions.id = subscriptions_asset_associations.subscription_id", ids).
-		Preload("Subscription").
-		Preload("Asset").
-		Where("subscriptions.address in (?)", ids).
-		Where("subscriptions_asset_associations.created_at > ?", from).
-		Find(&associations).Error; err != nil {
-		return nil, err
-	}
-	return associations, nil
-}
-
-func (i *Instance) GetAssetsFrom(from time.Time, coin int) ([]models.Asset, error) {
-	var dbAssets []models.Asset
-	if coin == -1 {
-		if err := i.Gorm.Find(&dbAssets, "created_at > ?", from).Error; err != nil {
-			return nil, err
-		}
-	} else {
-		if err := i.Gorm.Find(&dbAssets, "created_at > ? and coin = ?", from, coin).Error; err != nil {
-			return nil, err
-		}
-	}
-
 	return dbAssets, nil
 }
 

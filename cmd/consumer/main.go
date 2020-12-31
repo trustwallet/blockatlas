@@ -88,7 +88,7 @@ func main() {
 		go internal.RawTokens.RunConsumer(internal.ConsumerDatabase{Database: database, Delivery: tokenindexer.RunTokenIndexer}, workers, ctx)
 	}
 
-	mq.FatalWorker(time.Second * 10)
+	go mq.FatalWorker(time.Second * 10)
 
 	internal.SetupGracefulShutdownForObserver()
 	cancel()

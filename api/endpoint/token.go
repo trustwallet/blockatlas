@@ -147,25 +147,17 @@ func GetTokensByAddressV3(c *gin.Context, instance tokenindexer.Instance) {
 // @Produce json
 // @Tags Transactions
 // @Param from query int true "unix timestamp"
-// @Param coin query int false "coin like 60"
 // @Success 200 {object} tokenindexer.Response
 // @Router /v3/tokens/new [get]
 func GetNewTokens(c *gin.Context, instance tokenindexer.Instance) {
 	var request tokenindexer.Request
 	fromRaw := c.Query("from")
-	coinRaw := c.DefaultQuery("coin", "-1")
 
 	from, err := strconv.Atoi(fromRaw)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, errorResponse(err))
+		return
 	}
-
-	coin, err := strconv.Atoi(coinRaw)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, errorResponse(err))
-	}
-
-	request.Coin = coin
 	request.From = int64(from)
 
 	resp, err := instance.HandleNewTokensRequest(request)
