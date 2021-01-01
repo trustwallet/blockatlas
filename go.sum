@@ -417,6 +417,7 @@ github.com/swaggo/swag v1.7.0/go.mod h1:BdPIL73gvS9NBsdi7M1JOxLvlbfvNRaBP8m6WT6A
 github.com/tmc/grpc-websocket-proxy v0.0.0-20190109142713-0ad062ec5ee5/go.mod h1:ncp9v5uamzpCO7NfCPTXjqaC+bZgJeR0sMTm6dMHP7U=
 github.com/trustwallet/golibs v0.0.26 h1:8Cfym03kkkvQkzdp7ZBPIX0583jmL5d0x910psyHbpM=
 github.com/trustwallet/golibs v0.0.26/go.mod h1:Vi63TTS0yRAPwFIIKe7tw1yTgd71RACQqgZpUcWTv04=
+github.com/trustwallet/golibs v0.0.27/go.mod h1:otCh9cT8r7VlojZv5zACgUpUyAhNrd5kD5YRV6xW9Iw=
 github.com/trustwallet/golibs/network v0.0.0-20201216013232-f564db1c6ecd h1:7G8l+qBLmLu45AClEbBs1puJS0j2TSvpjFztQTxg1YI=
 github.com/trustwallet/golibs/network v0.0.0-20201216013232-f564db1c6ecd/go.mod h1:klL63JlvgRSc+vpAd5TsTsyqR75+N2mPYd1PCg/+jBo=
 github.com/ugorji/go v1.1.4/go.mod h1:uQMGLiO92mf5W77hV/PUCpI3pbzQx3CRekS0kk+RGrc=
