@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"errors"
+
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 )
 
@@ -54,8 +55,8 @@ func (p *Platform) Normalize(action *Action, account string) (blockatlas.Tx, err
 			if json.Unmarshal(dataJSON, &actionData) != nil {
 				return blockatlas.Tx{}, errors.New("Unparseable Data field")
 			}
-			if actionData.Memo == "FIO API fees. Thank you." {
-				return blockatlas.Tx{}, errors.New("Skip meaningless hardcoded fee action")
+			if actionData.To == "fio.treasury" {
+				return blockatlas.Tx{}, errors.New("Skip tx sent to treasury, usually fee")
 			}
 			from = actionData.From
 			to = actionData.To
