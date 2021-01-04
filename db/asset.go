@@ -3,7 +3,6 @@ package db
 import (
 	"encoding/json"
 	"time"
-	"unicode/utf8"
 
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
@@ -56,8 +55,8 @@ func (i *Instance) AddNewAssets(assets []models.Asset) error {
 	if len(assets) == 0 {
 		return nil
 	}
+
 	uniqueAssets := getUniqueAssets(assets)
-	uniqueAssets = filterAssets(uniqueAssets)
 
 	var notInMemoryAssets []models.Asset
 	for _, a := range uniqueAssets {
@@ -132,29 +131,12 @@ func (i *Instance) GetAssetsFrom(from time.Time) ([]models.Asset, error) {
 	return dbAssets, nil
 }
 
-func filterAssets(values []models.Asset) []models.Asset {
-	result := make([]models.Asset, 0, len(values))
-	for _, v := range values {
-		valuesAreAtUTF8 := utf8.ValidString(v.Asset) &&
-			utf8.ValidString(v.Type) &&
-			utf8.ValidString(v.Symbol) &&
-			utf8.ValidString(v.Name)
-		valuesAreNotEmpty := v.Asset != "" &&
-			v.Type != "" && v.Symbol != "" &&
-			v.Name != "" && v.Decimals != 0
-		if valuesAreAtUTF8 && valuesAreNotEmpty {
-			result = append(result, v)
-		}
-	}
-	return result
-}
-
 func getUniqueAssets(values []models.Asset) []models.Asset {
-	keys := make(map[string]struct{})
+	keys := make(map[string]bool)
 	var list []models.Asset
 	for _, entry := range values {
 		if _, value := keys[entry.Asset]; !value {
-			keys[entry.Asset] = struct{}{}
+			keys[entry.Asset] = true
 			list = append(list, entry)
 		}
 	}

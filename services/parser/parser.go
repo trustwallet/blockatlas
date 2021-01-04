@@ -182,9 +182,9 @@ func FetchBlocks(params Params, lastParsedBlock, currentBlock int64) ([]blockatl
 		log.WithFields(log.Fields{"coin": params.Api.Coin().Handle, "count": len(errorsList), "blocks": errorsList}).Error("Fetch blocks errors")
 	}
 
-	blocksList := make([]blockatlas.Block, 0, len(blocksChan))
+	blocks := make([]blockatlas.Block, 0, len(blocksChan))
 	for block := range blocksChan {
-		blocksList = append(blocksList, block)
+		blocks = append(blocks, block)
 	}
 
 	log.WithFields(log.Fields{
@@ -194,7 +194,7 @@ func FetchBlocks(params Params, lastParsedBlock, currentBlock int64) ([]blockatl
 		"coin":  params.Api.Coin().Handle},
 	).Info("Fetched blocks batch")
 
-	return blocksList, nil
+	return blocks, nil
 }
 
 func fetchBlock(api blockatlas.BlockAPI, num int64, blocksChan chan<- blockatlas.Block) error {

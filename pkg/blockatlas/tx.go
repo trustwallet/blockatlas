@@ -502,10 +502,12 @@ func (t Tx) AssetModel() (models.Asset, bool) {
 	default:
 		return models.Asset{}, false
 	}
-	if a.Asset == "" {
+	a.Coin = t.Coin
+
+	if a.IsValid() != nil {
 		return models.Asset{}, false
 	}
-	a.Coin = t.Coin
+
 	return a, true
 }
 

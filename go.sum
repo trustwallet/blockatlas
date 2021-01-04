@@ -417,6 +417,12 @@ github.com/trustwallet/golibs v0.0.26 h1:8Cfym03kkkvQkzdp7ZBPIX0583jmL5d0x910psy
 github.com/trustwallet/golibs v0.0.26/go.mod h1:Vi63TTS0yRAPwFIIKe7tw1yTgd71RACQqgZpUcWTv04=
 github.com/trustwallet/golibs/network v0.0.0-20201230050918-14143fadb599 h1:FFfIqpBTRr3j0UDxqdAghhf/nQ+mdAjVSUS+evrlLX4=
 github.com/trustwallet/golibs/network v0.0.0-20201230050918-14143fadb599/go.mod h1:RMMyjp4qUcVhWidjE+XYzQgOtSXuhIKSB5pnLCA3WqY=
+github.com/trustwallet/golibs/network v0.0.0-20210104211257-93dbcade3020 h1:qCdSiwsTl3298l5AgRwwnX71ZjrtXs1G2alJ9rGjGlE=
+github.com/trustwallet/golibs/network v0.0.0-20210104211257-93dbcade3020/go.mod h1:RMMyjp4qUcVhWidjE+XYzQgOtSXuhIKSB5pnLCA3WqY=
+github.com/trustwallet/golibs/network v0.0.0-20210104211641-8220d564ec5b h1:ByEWkqd8282NByRkpfeamYC93evnKXl7KTARE2fXEGw=
+github.com/trustwallet/golibs/network v0.0.0-20210104211641-8220d564ec5b/go.mod h1:RMMyjp4qUcVhWidjE+XYzQgOtSXuhIKSB5pnLCA3WqY=
+github.com/trustwallet/golibs/network v0.0.0-20210104213645-d89799a54570 h1:48um24W0y2fOt2wkUqIf7to3nxTPycdOMRNBXLvGm8s=
+github.com/trustwallet/golibs/network v0.0.0-20210104213645-d89799a54570/go.mod h1:RMMyjp4qUcVhWidjE+XYzQgOtSXuhIKSB5pnLCA3WqY=
 github.com/ugorji/go v1.1.4/go.mod h1:uQMGLiO92mf5W77hV/PUCpI3pbzQx3CRekS0kk+RGrc=
 github.com/ugorji/go v1.1.7/go.mod h1:kZn38zHttfInRq0xu/PH0az30d+z6vm202qpg1oXVMw=
 github.com/ugorji/go v1.1.13 h1:nB3O5kBSQGjEQAcfe1aLUYuxmXdFKmYgBZhY32rQb6Q=
