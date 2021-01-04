@@ -13,6 +13,13 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 )
 
+const (
+	contractToken        = "fio.token"
+	contractTreasury     = "fio.treasury"
+	actionTransfer       = "transfer"
+	actionTransferPubkey = "trnsfiopubky"
+)
+
 func (p *Platform) GetTxsByAddress(address string) (page blockatlas.TxPage, err error) {
 	// take actor from address
 	account := actorFromPublicKeyOrActor(address)
@@ -42,15 +49,15 @@ func (p *Platform) Normalize(action *Action, account string) (blockatlas.Tx, err
 	)
 	const dateFormat string = "2006-01-02T15:04:05"
 
-	if action.ActionTrace.Act.Account == "fio.token" &&
-		(action.ActionTrace.Act.Name == "transfer" || action.ActionTrace.Act.Name == "trnsfiopubky") {
+	if action.ActionTrace.Act.Account == contractToken &&
+		(action.ActionTrace.Act.Name == actionTransfer || action.ActionTrace.Act.Name == actionTransferPubkey) {
 		// convert to action-specific data
 		dataJSON, err := json.Marshal(action.ActionTrace.Act.Data)
 		if err != nil {
 			return blockatlas.Tx{}, errors.New("Unparseable Data field")
 		}
 		switch action.ActionTrace.Act.Name {
-		case "transfer":
+		case actionTransfer:
 			var actionData ActionDataTransfer
 			if json.Unmarshal(dataJSON, &actionData) != nil {
 				return blockatlas.Tx{}, errors.New("Unparseable Data field")
@@ -67,7 +74,7 @@ func (p *Platform) Normalize(action *Action, account string) (blockatlas.Tx, err
 			// fee unknown
 			memo = actionData.Memo
 			sequence = action.ActionSeq
-		case "trnsfiopubky":
+		case actionTransferPubkey:
 			var actionData ActionDataTrnsfiopubky
 			if json.Unmarshal(dataJSON, &actionData) != nil {
 				return blockatlas.Tx{}, errors.New("Unparseable Data field")
