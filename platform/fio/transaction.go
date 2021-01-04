@@ -62,7 +62,7 @@ func (p *Platform) Normalize(action *Action, account string) (blockatlas.Tx, err
 			if json.Unmarshal(dataJSON, &actionData) != nil {
 				return blockatlas.Tx{}, errors.New("Unparseable Data field")
 			}
-			if actionData.To == "fio.treasury" {
+			if actionData.To == contractTreasury {
 				return blockatlas.Tx{}, errors.New("Skip tx sent to treasury, usually fee")
 			}
 			from = actionData.From
