@@ -341,6 +341,7 @@ github.com/patrickmn/go-cache v2.1.0+incompatible/go.mod h1:3Qf8kWWT7OJRJbdiICTK
 github.com/pelletier/go-toml v1.2.0 h1:T5zMGML61Wp+FlcbWjRDT7yAxhJNAiPPLOFECq181zc=
 github.com/pelletier/go-toml v1.2.0/go.mod h1:5z9KED0ma1S8pY6P1sdut58dfprrGBbd/94hg7ilaic=
 github.com/pkg/errors v0.8.0/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
+github.com/pkg/errors v0.8.1 h1:iURUrRGxPUNPdy5/HRSm+Yj6okJ6UtLINN0Q9M4+h3I=
 github.com/pkg/errors v0.8.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
 github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
 github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
@@ -414,10 +415,10 @@ github.com/swaggo/swag v1.5.1/go.mod h1:1Bl9F/ZBpVWh22nY0zmYyASPO1lI/zIwRDrpZU+t
 github.com/swaggo/swag v1.7.0 h1:5bCA/MTLQoIqDXXyHfOpMeDvL9j68OY/udlK4pQoo4E=
 github.com/swaggo/swag v1.7.0/go.mod h1:BdPIL73gvS9NBsdi7M1JOxLvlbfvNRaBP8m6WT6Aajo=
 github.com/tmc/grpc-websocket-proxy v0.0.0-20190109142713-0ad062ec5ee5/go.mod h1:ncp9v5uamzpCO7NfCPTXjqaC+bZgJeR0sMTm6dMHP7U=
-github.com/trustwallet/golibs v0.0.26 h1:8Cfym03kkkvQkzdp7ZBPIX0583jmL5d0x910psyHbpM=
-github.com/trustwallet/golibs v0.0.26/go.mod h1:Vi63TTS0yRAPwFIIKe7tw1yTgd71RACQqgZpUcWTv04=
-github.com/trustwallet/golibs/network v0.0.0-20210105062859-04e821673147 h1:Ll8rCpI8ldt2wre2bI94+vLUkHnIMZUwsUYnjpDcT+8=
-github.com/trustwallet/golibs/network v0.0.0-20210105062859-04e821673147/go.mod h1:RMMyjp4qUcVhWidjE+XYzQgOtSXuhIKSB5pnLCA3WqY=
+github.com/trustwallet/golibs v0.0.28 h1:EesgBxbSY9NXR6IarAnLU/XH7srnidF1hnkX0eLDti4=
+github.com/trustwallet/golibs v0.0.28/go.mod h1:otCh9cT8r7VlojZv5zACgUpUyAhNrd5kD5YRV6xW9Iw=
+github.com/trustwallet/golibs/network v0.0.0-20210105080443-03598d944b08 h1:6MVjdC1zYVwiytclgHLxS6ojdYiM7gfVqMSDkjuulS4=
+github.com/trustwallet/golibs/network v0.0.0-20210105080443-03598d944b08/go.mod h1:RMMyjp4qUcVhWidjE+XYzQgOtSXuhIKSB5pnLCA3WqY=
 github.com/ugorji/go v1.1.4/go.mod h1:uQMGLiO92mf5W77hV/PUCpI3pbzQx3CRekS0kk+RGrc=
 github.com/ugorji/go v1.1.7/go.mod h1:kZn38zHttfInRq0xu/PH0az30d+z6vm202qpg1oXVMw=
 github.com/ugorji/go v1.1.13 h1:nB3O5kBSQGjEQAcfe1aLUYuxmXdFKmYgBZhY32rQb6Q=
