@@ -1,7 +1,7 @@
 package ripple
 
 import (
-	"github.com/trustwallet/golibs/client"
+	"github.com/trustwallet/blockatlas/internal"
 	"github.com/trustwallet/golibs/coin"
 )
 
@@ -11,7 +11,7 @@ type Platform struct {
 
 func Init(api string) *Platform {
 	return &Platform{
-		client: Client{client.InitClient(api)},
+		client: Client{internal.InitClient(api)},
 	}
 }
 

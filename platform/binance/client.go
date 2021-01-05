@@ -6,6 +6,8 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/trustwallet/blockatlas/internal"
+
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/client"
 )
@@ -15,16 +17,14 @@ type Client struct {
 }
 
 func InitClient(url, apiKey string) Client {
-	c := Client{
-		client.InitClient(url),
-	}
+	c := Client{internal.InitClient(url)}
 	c.Headers["apikey"] = apiKey
 	return c
 }
 
 func (c Client) FetchLatestBlockNumber() (int64, error) {
 	var result NodeInfoResponse
-	err := c.Get(&result, "/api/v1/node-info", nil)
+	err := c.Get(&result, "api/v1/node-info", nil)
 	if err != nil {
 		return 0, err
 	}
@@ -33,7 +33,7 @@ func (c Client) FetchLatestBlockNumber() (int64, error) {
 
 func (c Client) FetchTransactionsInBlock(blockNumber int64) (TransactionsInBlockResponse, error) {
 	var result TransactionsInBlockResponse
-	err := c.Get(&result, fmt.Sprintf("/api/v2/transactions-in-block/%d", blockNumber), nil)
+	err := c.Get(&result, fmt.Sprintf("api/v2/transactions-in-block/%d", blockNumber), nil)
 	if err != nil {
 		return TransactionsInBlockResponse{}, err
 	}
@@ -45,7 +45,7 @@ func (c Client) FetchTransactionsByAddressAndTokenID(address, tokenID string) ([
 	startTime := strconv.Itoa(int(time.Now().AddDate(0, -3, 0).Unix() * 1000))
 	limit := strconv.Itoa(blockatlas.TxPerPage)
 	params := url.Values{"address": {address}, "txAsset": {tokenID}, "startTime": {startTime}, "limit": {limit}}
-	err := c.Get(&result, "/api/v1/transactions", params)
+	err := c.Get(&result, "api/v1/transactions", params)
 	if err != nil {
 		return nil, err
 	}
@@ -54,7 +54,7 @@ func (c Client) FetchTransactionsByAddressAndTokenID(address, tokenID string) ([
 
 func (c Client) FetchAccountMeta(address string) (AccountMeta, error) {
 	var result AccountMeta
-	err := c.Get(&result, fmt.Sprintf("/api/v1/account/%s", address), nil)
+	err := c.Get(&result, fmt.Sprintf("api/v1/account/%s", address), nil)
 	if err != nil {
 		return AccountMeta{}, err
 	}
@@ -64,7 +64,7 @@ func (c Client) FetchAccountMeta(address string) (AccountMeta, error) {
 func (c Client) FetchTokens() (Tokens, error) {
 	var result Tokens
 	query := url.Values{"limit": {tokensLimit}}
-	err := c.GetWithCache(&result, "/api/v1/tokens", query, 5*time.Minute)
+	err := c.GetWithCache(&result, "api/v1/tokens", query, 5*time.Minute)
 	if err != nil {
 		return nil, err
 	}

@@ -1,7 +1,7 @@
 package zilliqa
 
 import (
-	"github.com/trustwallet/golibs/client"
+	"github.com/trustwallet/blockatlas/internal"
 	"github.com/trustwallet/golibs/coin"
 )
 
@@ -12,8 +12,8 @@ type Platform struct {
 
 func Init(api, apiKey, rpc string) *Platform {
 	p := &Platform{
-		client:    Client{client.InitClient(api)},
-		rpcClient: RpcClient{client.InitClient(rpc)},
+		client:    Client{internal.InitClient(api)},
+		rpcClient: RpcClient{internal.InitClient(rpc)},
 	}
 	p.client.Headers["X-APIKEY"] = apiKey
 	return p

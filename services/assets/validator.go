@@ -69,5 +69,5 @@ func calculateAnnual(annual float64, commission float64) float64 {
 }
 
 func getImage(c coin.Coin, ID string) string {
-	return AssetsURL + c.Handle + "/validators/assets/" + ID + "/logo.png"
+	return URL + c.Handle + "/validators/assets/" + ID + "/logo.png"
 }
