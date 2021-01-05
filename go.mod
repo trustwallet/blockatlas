@@ -24,7 +24,7 @@ require (
 	github.com/swaggo/gin-swagger v1.3.0
 	github.com/swaggo/swag v1.7.0
 	github.com/trustwallet/golibs v0.0.26
-	github.com/trustwallet/golibs/network v0.0.0-20210104232605-ad31e67e25d2
+	github.com/trustwallet/golibs/network v0.0.0-20210105041738-9bc894a4eb36
 	go.uber.org/atomic v1.7.0
 	golang.org/x/crypto v0.0.0-20201124201722-c8d3bf9c5392
 	golang.org/x/net v0.0.0-20201224014010-6772e930b67b // indirect
