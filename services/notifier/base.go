@@ -64,10 +64,13 @@ func UnprefixedAddress(address string) (string, uint, bool) {
 	if len(result) != 2 {
 		return "", 0, false
 	}
+	addr := result[1]
+	if len(addr) == 0 {
+		return "", 0, false
+	}
 	id, err := strconv.Atoi(result[0])
 	if err != nil {
 		return "", 0, false
 	}
-	return result[1], uint(id), true
-
+	return addr, uint(id), true
 }
