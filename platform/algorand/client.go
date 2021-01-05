@@ -2,6 +2,7 @@ package algorand
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 )
@@ -23,11 +24,16 @@ func InitClient(url, apiKey string) Client {
 
 func (c *Client) GetLatestBlock() (int64, error) {
 	var status Status
-	err := c.Get(&status, "v1/status", nil)
+	err := c.Get(&status, "health", nil)
 	if err != nil {
 		return 0, err
 	}
-	return status.LastRound, nil
+	block, err := strconv.Atoi(status.Block)
+	if err != nil {
+		return 0, err
+	}
+
+	return int64(block), nil
 }
 
 func (c *Client) GetTxsInBlock(number int64) ([]Transaction, error) {

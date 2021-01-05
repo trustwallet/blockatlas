@@ -41,5 +41,5 @@ type TransactionPayment struct {
 }
 
 type Status struct {
-	LastRound int64 `json:"lastRound"`
+	Block string `json:"message"`
 }
