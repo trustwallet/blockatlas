@@ -61,7 +61,7 @@ func getAllHandlers() blockatlas.Platforms {
 		coin.Vechain().Handle:      vechain.Init(config.Default.Vechain.API),
 		coin.Nebulas().Handle:      nebulas.Init(config.Default.Nebulas.API),
 		coin.Ontology().Handle:     ontology.Init(config.Default.Ontology.API),
-		coin.Algorand().Handle:     algorand.Init(config.Default.Algorand.API),
+		coin.Algorand().Handle:     algorand.Init(config.Default.Algorand.API, config.Default.Algorand.Key),
 		coin.Aeternity().Handle:    aeternity.Init(config.Default.Aeternity.API),
 		coin.Solana().Handle:       solana.Init(config.Default.Solana.API),
 		coin.Tezos().Handle:        tezos.Init(config.Default.Tezos.API, config.Default.Tezos.RPC),

@@ -184,6 +184,7 @@ decred:
 
 algorand:
   api: https://mainnet-algorand.api.purestake.io/ps1
+  key: ""
 
 nano:
   api: https://nanoverse.io/api/node

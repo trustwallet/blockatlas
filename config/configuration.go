@@ -173,6 +173,7 @@ type Configuration struct {
 	} `mapstructure:"decred"`
 	Algorand struct {
 		API string `mapstructure:"api"`
+		Key string `mapstructure:"key"`
 	} `mapstructure:"algorand"`
 	Nano struct {
 		API string `mapstructure:"api"`

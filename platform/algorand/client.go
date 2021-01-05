@@ -11,12 +11,13 @@ type Client struct {
 	blockatlas.Request
 }
 
-func InitClient(baseUrl string) Client {
+func InitClient(url, apiKey string) Client {
 	return Client{
 		Request: blockatlas.Request{
 			HttpClient:   blockatlas.DefaultClient,
 			ErrorHandler: blockatlas.DefaultErrorHandler,
-			BaseUrl:      baseUrl,
+			Headers:      map[string]string{"X-Indexer-API-Token": apiKey},
+			BaseUrl:      url,
 		},
 	}
 }
@@ -30,28 +31,14 @@ func (c *Client) GetLatestBlock() (int64, error) {
 	return status.LastRound, nil
 }
 
-func (c *Client) GetBlock(number int64) (BlockResponse, error) {
-	path := fmt.Sprintf("v1/block/%d", number)
+func (c *Client) GetTxsInBlock(number int64) ([]Transaction, error) {
+	path := fmt.Sprintf("v2/blocks/%d", number)
 	var resp BlockResponse
 	err := c.Get(&resp, path, nil)
 	if err != nil {
-		return resp, err
+		return []Transaction{}, err
 	}
-
-	normalizedTxs := make([]Transaction, 0)
-	//TODO: Read GetTxsOfAddress explanation
-	for _, t := range resp.Transactions.Transactions {
-		normalized := normalizeTx(&t, resp)
-		normalizedTxs = append(normalizedTxs, *normalized)
-	}
-	resp.Transactions.Transactions = normalizedTxs
-
-	return resp, nil
-}
-
-func (c *Client) GetTxsInBlock(number int64) ([]Transaction, error) {
-	block, err := c.GetBlock(number)
-	return block.Transactions.Transactions, err
+	return resp.Transactions, err
 }
 
 func (c *Client) GetAccount(address string) (account *Account, err error) {
@@ -76,17 +63,8 @@ func (c *Client) GetTxsOfAddress(address string) ([]Transaction, error) {
 	txs := response.Transactions[:numbers.Min(6, len(response.Transactions))]
 
 	for _, t := range txs {
-		block, err := c.GetBlock(int64(t.Round))
-		if err == nil {
-			normalizeTx(&t, block)
-			results = append(results, t)
-		}
+		results = append(results, t)
 	}
 
 	return results, err
-}
-
-func normalizeTx(transaction *Transaction, block BlockResponse) *Transaction {
-	transaction.Timestamp = block.Timestamp
-	return transaction
 }
