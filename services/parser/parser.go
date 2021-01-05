@@ -130,14 +130,14 @@ func GetNextBlocksToParse(lastParsedBlock int64, currentBlock int64, maxBlocks i
 		endParseBlock = nextBlock + maxBlocks
 	}
 
-	return nextBlock, endParseBlock, nil
+	return nextBlock, endParseBlock + 1, nil
 }
 
 func FetchBlocks(params Params, lastParsedBlock, currentBlock int64) ([]blockatlas.Block, error) {
 	if lastParsedBlock == currentBlock {
 		log.WithFields(log.Fields{
-			"block": lastParsedBlock,
-			"coin":  params.Api.Coin().Handle,
+			"current_block": lastParsedBlock,
+			"coin":          params.Api.Coin().Handle,
 		}).Info("No new blocks")
 		return nil, errors.New("no new blocks")
 	}
@@ -190,7 +190,7 @@ func FetchBlocks(params Params, lastParsedBlock, currentBlock int64) ([]blockatl
 
 	log.WithFields(log.Fields{
 		"from":  lastParsedBlock,
-		"to":    currentBlock,
+		"to":    currentBlock - 1,
 		"total": totalCount,
 		"coin":  params.Api.Coin().Handle},
 	).Info("Fetched blocks batch")

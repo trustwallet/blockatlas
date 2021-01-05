@@ -153,18 +153,18 @@ func TestGetNextBlocksToParse(t *testing.T) {
 				maxBlocks:       3,
 			},
 			11,
-			14,
+			15,
 			false,
 		},
 		{
 			"Test when only 1 block to parse",
 			args{
 				lastParsedBlock: 10,
-				currentBlock:    12,
+				currentBlock:    13,
 				maxBlocks:       5,
 			},
 			11,
-			12,
+			14,
 			false,
 		},
 		{
@@ -183,6 +183,17 @@ func TestGetNextBlocksToParse(t *testing.T) {
 			args{
 				lastParsedBlock: 15,
 				currentBlock:    10,
+				maxBlocks:       3,
+			},
+			15,
+			15,
+			false,
+		},
+		{
+			"Parse last block",
+			args{
+				lastParsedBlock: 15,
+				currentBlock:    15,
 				maxBlocks:       3,
 			},
 			15,
