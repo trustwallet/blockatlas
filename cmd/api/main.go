@@ -38,8 +38,7 @@ func init() {
 
 	internal.InitConfig(confPath)
 
-	err = middleware.SetupSentry(config.Default.Sentry.DSN)
-	if err != nil {
+	if err := middleware.SetupSentry(config.Default.Sentry.DSN); err != nil {
 		log.Error(err)
 	}
 

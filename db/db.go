@@ -4,12 +4,12 @@ import (
 	"errors"
 	"time"
 
-	"gorm.io/gorm/logger"
-
-	log "github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas/db/models"
 
+	"gorm.io/gorm/logger"
+
 	gocache "github.com/patrickmn/go-cache"
+	log "github.com/sirupsen/logrus"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -33,19 +33,19 @@ func New(url string, log bool) (*Instance, error) {
 		return nil, err
 	}
 
-	err = db.AutoMigrate(
+	mc := gocache.New(gocache.NoExpiration, gocache.NoExpiration)
+	i := &Instance{Gorm: db, MemoryCache: mc}
+
+	return i, nil
+}
+
+func Setup(db *gorm.DB) error {
+	return db.AutoMigrate(
 		&models.Tracker{},
 		&models.Asset{},
 		&models.Subscription{},
 		&models.SubscriptionsAssetAssociation{},
 	)
-	if err != nil {
-		return nil, err
-	}
-	mc := gocache.New(gocache.NoExpiration, gocache.NoExpiration)
-	i := &Instance{Gorm: db, MemoryCache: mc}
-
-	return i, nil
 }
 
 func (i *Instance) RestoreConnectionWorker(timeout time.Duration, uri string) {

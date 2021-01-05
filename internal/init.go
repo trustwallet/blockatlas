@@ -50,9 +50,9 @@ func InitEngine(ginMode string) *gin.Engine {
 	return engine
 }
 
-func InitRabbitMQ(rabbitURI string) {
-	err := mq.Init(rabbitURI)
+func InitMQ(url string) {
+	err := mq.Init(url)
 	if err != nil {
-		log.WithFields(log.Fields{"uri": rabbitURI}).Fatal("Failed to init Rabbit MQ")
+		log.Fatal("Failed to init Rabbit MQ", err)
 	}
 }

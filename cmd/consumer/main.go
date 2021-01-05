@@ -4,6 +4,8 @@ import (
 	"context"
 	"time"
 
+	"github.com/trustwallet/golibs/network/middleware"
+
 	"github.com/trustwallet/blockatlas/platform"
 
 	"github.com/trustwallet/golibs/network/mq"
@@ -39,7 +41,11 @@ func init() {
 	_, confPath := internal.ParseArgs("", defaultConfigPath)
 
 	internal.InitConfig(confPath)
-	internal.InitRabbitMQ(config.Default.Observer.Rabbitmq.URL)
+
+	if err := middleware.SetupSentry(config.Default.Sentry.DSN); err != nil {
+		log.Error(err)
+	}
+	internal.InitMQ(config.Default.Observer.Rabbitmq.URL)
 
 	var err error
 	database, err = db.New(config.Default.Postgres.URL, config.Default.Postgres.Log)
@@ -49,43 +55,27 @@ func init() {
 	go database.RestoreConnectionWorker(time.Second*10, config.Default.Postgres.URL)
 
 	tokenindexer.Init(database)
-
-	time.Sleep(time.Millisecond)
 }
 
 func main() {
 	defer mq.Close()
 
-	queues := getQueues(config.Default.Consumer.Service)
-	for _, queue := range queues {
-		err := queue.Declare()
-		if err != nil {
-			log.Fatal("Queue declare: ", queue, err)
-		}
-	}
-
-	err := internal.RawTransactionsExchange.Bind([]mq.Queue{internal.RawTokens, internal.RawTransactions})
-	if err != nil {
-		log.Error("Exchange bind: ", err)
-	}
-
 	// RunTokenIndexerSubscribe requires to fetch data from token apis. Improve later
-	platform.Init([]string{"all"})
+	platform.Init(config.Default.Platform)
 
-	workers := config.Default.Consumer.Workers
+	options := mq.ConsumerOptions{Workers: config.Default.Consumer.Workers}
 
 	switch config.Default.Consumer.Service {
 	case transactions:
-		go internal.RawTransactions.RunConsumer(internal.ConsumerDatabase{Database: database, Delivery: notifier.RunNotifier}, workers, ctx)
+		setupTransactionsConsumer(options, ctx)
 	case subscriptions:
-		go internal.Subscriptions.RunConsumer(internal.ConsumerDatabase{Database: database, Delivery: subscriber.RunSubscriber}, workers, ctx)
-		go internal.SubscriptionsTokens.RunConsumer(tokenindexer.ConsumerIndexer{Database: database, TokensAPIs: platform.TokensAPIs, Delivery: tokenindexer.RunTokenIndexerSubscribe}, workers, ctx)
+		setupSubscriptionsConsumer(options, ctx)
 	case tokens:
-		go internal.RawTokens.RunConsumer(internal.ConsumerDatabase{Database: database, Delivery: tokenindexer.RunTokenIndexer}, workers, ctx)
+		setupTokensConsumer(options, ctx)
 	default:
-		go internal.RawTransactions.RunConsumer(internal.ConsumerDatabase{Database: database, Delivery: notifier.RunNotifier}, workers, ctx)
-		go internal.Subscriptions.RunConsumer(internal.ConsumerDatabase{Database: database, Delivery: subscriber.RunSubscriber}, workers, ctx)
-		go internal.RawTokens.RunConsumer(internal.ConsumerDatabase{Database: database, Delivery: tokenindexer.RunTokenIndexer}, workers, ctx)
+		setupTransactionsConsumer(options, ctx)
+		setupSubscriptionsConsumer(options, ctx)
+		setupTokensConsumer(options, ctx)
 	}
 
 	go mq.FatalWorker(time.Second * 10)
@@ -94,30 +84,15 @@ func main() {
 	cancel()
 }
 
-func getQueues(service string) []mq.Queue {
-	switch service {
-	case transactions:
-		return []mq.Queue{
-			internal.TxNotifications,
-			internal.RawTransactions,
-		}
-	case tokens:
-		return []mq.Queue{
-			internal.RawTokens,
-		}
-	case subscriptions:
-		return []mq.Queue{
-			internal.Subscriptions,
-			internal.SubscriptionsTokens,
-		}
-	default:
-		return []mq.Queue{
-			internal.TxNotifications,
-			internal.RawTransactions,
-			internal.Subscriptions,
-			internal.SubscriptionsTokens,
-			internal.RawTokens,
-			internal.Subscriptions,
-		}
-	}
+func setupTransactionsConsumer(options mq.ConsumerOptions, ctx context.Context) {
+	go internal.RawTransactions.RunConsumer(internal.ConsumerDatabase{Database: database, Delivery: notifier.RunNotifier}, options, ctx)
+}
+
+func setupSubscriptionsConsumer(options mq.ConsumerOptions, ctx context.Context) {
+	go internal.Subscriptions.RunConsumer(internal.ConsumerDatabase{Database: database, Delivery: subscriber.RunSubscriber}, options, ctx)
+	go internal.SubscriptionsTokens.RunConsumer(tokenindexer.ConsumerIndexer{Database: database, TokensAPIs: platform.TokensAPIs, Delivery: tokenindexer.RunTokenIndexerSubscribe}, options, ctx)
+}
+
+func setupTokensConsumer(options mq.ConsumerOptions, ctx context.Context) {
+	go internal.RawTokens.RunConsumer(internal.ConsumerDatabase{Database: database, Delivery: tokenindexer.RunTokenIndexer}, options, ctx)
 }

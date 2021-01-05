@@ -9,6 +9,8 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/trustwallet/golibs/network/middleware"
+
 	"github.com/trustwallet/blockatlas/config"
 
 	log "github.com/sirupsen/logrus"
@@ -35,13 +37,12 @@ func init() {
 
 	internal.InitConfig(confPath)
 
-	internal.InitRabbitMQ(config.Default.Observer.Rabbitmq.URL)
-
-	platform.Init(config.Default.Platform)
-
-	if err := internal.RawTransactionsExchange.Declare("topic"); err != nil {
-		log.Fatal(err)
+	if err := middleware.SetupSentry(config.Default.Sentry.DSN); err != nil {
+		log.Error(err)
 	}
+
+	internal.InitMQ(config.Default.Observer.Rabbitmq.URL)
+	platform.Init(config.Default.Platform)
 
 	if len(platform.BlockAPIs) == 0 {
 		log.Fatal("No APIs to observe")
