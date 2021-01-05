@@ -2,40 +2,44 @@ package algorand
 
 import (
 	"encoding/json"
+	"testing"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/coin"
-	"testing"
 )
 
 const (
 	transfer = `
 {
-  "transactions":[
-     {
-        "type":"pay",
-        "tx":"C2LK3CGBPIGERLPFUXE6INSBJGHOXU7YZMEGELWMVSBASFJYOOQQ",
-        "from":"5TSQNIL54GB545B3WLC6OVH653SHAELMHU6MSVNGTUNMOEHAMWG7EC3AA4",
-        "fee":1000,
-        "first-round":2031300,
-        "last-round":2031749,
-        "noteb64":"6OZ0TFd0HPw=",
-        "round":2031351,
-        "poolerror":"",
-        "payment":{
-           "to":"4EZFQABCVQTHQCK3HQBIYGC4NV2VM42FZHEFTVH77ROG4ZGREC6Y7V5T2U",
-           "close":"",
-           "closeamount":0,
-           "amount":1,
-           "torewards":3237690,
-           "closerewards":0
-        },
-        "fromrewards":0,
-        "genesisID":"mainnet-v1.0",
-        "genesishashb64":"wGHE2Pwdvd7S12BL5FaOP20EGYesN73ktiC1qzkkit8=",
-        "group":"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
-     }
-  ]
+   "transactions":[
+      {
+         "close-rewards":0,
+         "closing-amount":0,
+         "confirmed-round":2031351,
+         "fee":1000,
+         "first-valid":2031300,
+         "genesis-hash":"wGHE2Pwdvd7S12BL5FaOP20EGYesN73ktiC1qzkkit8=",
+         "genesis-id":"mainnet-v1.0",
+         "id":"C2LK3CGBPIGERLPFUXE6INSBJGHOXU7YZMEGELWMVSBASFJYOOQQ",
+         "intra-round-offset":57,
+         "last-valid":2031749,
+         "note":"6OZ0TFd0HPw=",
+         "payment-transaction":{
+            "amount":1,
+            "close-amount":0,
+            "receiver":"4EZFQABCVQTHQCK3HQBIYGC4NV2VM42FZHEFTVH77ROG4ZGREC6Y7V5T2U"
+         },
+         "receiver-rewards":3237690,
+         "round-time":1569123058,
+         "sender":"5TSQNIL54GB545B3WLC6OVH653SHAELMHU6MSVNGTUNMOEHAMWG7EC3AA4",
+         "sender-rewards":0,
+         "signature":{
+            "sig":"J1G/vapWXJJjuFcsUPut9ffHrFnXsg1GRQlLyqhTOC0V78zCw3OIAYgeg6k/xiX5NDLLrgy4aYF1hhsEXGZ2Dg=="
+         },
+         "tx-type":"pay"
+      }
+   ]
 }
 `
 )
@@ -47,7 +51,7 @@ var expected = []*blockatlas.Tx{
 		From:   "5TSQNIL54GB545B3WLC6OVH653SHAELMHU6MSVNGTUNMOEHAMWG7EC3AA4",
 		To:     "4EZFQABCVQTHQCK3HQBIYGC4NV2VM42FZHEFTVH77ROG4ZGREC6Y7V5T2U",
 		Fee:    blockatlas.Amount("1000"),
-		Date:   0,
+		Date:   1569123058,
 		Block:  2031351,
 		Status: blockatlas.StatusCompleted,
 		Type:   blockatlas.TxTransfer,

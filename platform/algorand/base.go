@@ -1,7 +1,6 @@
 package algorand
 
 import (
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/coin"
 )
 
@@ -9,9 +8,9 @@ type Platform struct {
 	client Client
 }
 
-func Init(api string) *Platform {
+func Init(api, apiKey string) *Platform {
 	return &Platform{
-		client: Client{blockatlas.InitClient(api)},
+		client: InitClient(api, apiKey),
 	}
 }
 

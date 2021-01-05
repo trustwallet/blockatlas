@@ -183,7 +183,8 @@ decred:
   api: https://blockbook.decred.org:9161
 
 algorand:
-  api: https://mainnet-algorand.api.purestake.io/ps1
+  api: https://api.algoexplorer.io/idx2
+  key: ""
 
 nano:
   api: https://nanoverse.io/api/node
