@@ -3,9 +3,10 @@ package notifier
 import (
 	"encoding/json"
 
+	"github.com/trustwallet/blockatlas/internal"
+
 	log "github.com/sirupsen/logrus"
 	"github.com/streadway/amqp"
-	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 )
 
@@ -26,7 +27,7 @@ func publishNotifications(notifications []TransactionNotification) error {
 	if err != nil {
 		return err
 	}
-	err = mq.TxNotifications.Publish(raw)
+	err = internal.TxNotifications.Publish(raw)
 	if err != nil {
 		return err
 	}

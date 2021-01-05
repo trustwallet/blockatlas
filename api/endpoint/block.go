@@ -31,7 +31,7 @@ func GetBlock(c *gin.Context, blockAPI blockatlas.BlockAPI) {
 	block, err := blockAPI.GetBlockByNumber(int64(blockNumber))
 
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, errorResponse(errors.New("block number not found")))
+		c.AbortWithStatusJSON(http.StatusNotFound, errorResponse(errors.New("block number not found")))
 		return
 	}
 

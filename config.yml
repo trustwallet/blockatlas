@@ -10,23 +10,24 @@ platform: [ all ]
 
 # The transaction watcher
 observer:
-  # Don't request blocks older than this
-  backlog: 3h
   # Amount of time between fetching blocks concurrently
   fetch_blocks_interval: 1ms
-  # Don't request more than N blocks at once
-  backlog_max_blocks: 100
   # Block polling interval
   block_poll:
     min: 3s
     max: 30s
+    # Don't request more than N blocks at once
+    max_blocks: 15
   rabbitmq:
     url: amqp://localhost:5672
-    prefetch_count: 10
 
 postgres:
   url: postgresql://user:pass@localhost/blockatlas?sslmode=disable
   log: false
+
+consumer:
+  service: ""
+  workers: 8
 
 # [BNB] Binance DEX: https://www.binance.org/
 binance:

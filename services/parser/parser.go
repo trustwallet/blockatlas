@@ -5,7 +5,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strconv"
 	"sync/atomic"
+
+	"github.com/getsentry/raven-go"
 
 	"math/rand"
 	"sort"
@@ -13,8 +16,8 @@ import (
 	"time"
 
 	"github.com/trustwallet/blockatlas/db"
-	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/golibs/network/mq"
 	"github.com/trustwallet/golibs/numbers"
 
 	log "github.com/sirupsen/logrus"
@@ -22,13 +25,10 @@ import (
 
 type (
 	Params struct {
-		Ctx                                       context.Context
 		Api                                       blockatlas.BlockAPI
-		TransactionsQueue                         mq.Queue
-		TokenTransactionsQueue                    []mq.Queue
+		TransactionsExchange                      mq.Exchange
 		ParsingBlocksInterval, FetchBlocksTimeout time.Duration
-		BacklogCount                              int
-		MaxBacklogBlocks                          int64
+		MaxBlocks                                 int64
 		StopChannel                               chan<- struct{}
 		Database                                  *db.Instance
 	}
@@ -40,17 +40,16 @@ type (
 	}
 )
 
-func RunParser(params Params) {
+func RunParser(params Params, ctx context.Context) {
 	log.Info("------------------------------------------------------------")
 	for {
 		select {
-		case <-params.Ctx.Done():
+		case <-ctx.Done():
 			log.Info(fmt.Sprintf("Parser of %s stopped parsing blocks", params.Api.Coin().Handle))
 			params.StopChannel <- struct{}{}
 			return
 		default:
 			parse(params)
-			time.Sleep(params.ParsingBlocksInterval)
 		}
 		log.Info("------------------------------------------------------------")
 	}
@@ -66,12 +65,20 @@ func GetInterval(value int, minInterval, maxInterval time.Duration) time.Duratio
 func parse(params Params) {
 	lastParsedBlock, currentBlock, err := GetBlocksIntervalToFetch(params)
 	if err != nil || lastParsedBlock > currentBlock {
-		log.WithFields(log.Fields{"operation": "fetch GetBlocksIntervalToFetch", "lastParsedBlock": lastParsedBlock, "currentBlock": currentBlock, "coin": params.Api.Coin().Handle}).Error(err)
+		log.WithFields(log.Fields{
+			"operation": "fetch GetBlocksIntervalToFetch",
+			"coin":      params.Api.Coin().Handle,
+			"tags":      raven.Tags{{Key: "coin", Value: params.Api.Coin().Handle}},
+		}).Error(err)
 		time.Sleep(params.ParsingBlocksInterval)
 		return
 	}
 
-	blocks := FetchBlocks(params, lastParsedBlock, currentBlock)
+	blocks, err := FetchBlocks(params, lastParsedBlock, currentBlock)
+	if err != nil {
+		time.Sleep(params.ParsingBlocksInterval)
+		return
+	}
 
 	err = SaveLastParsedBlock(params, blocks)
 	if err != nil {
@@ -89,6 +96,7 @@ func parse(params Params) {
 	publish(params, txs)
 
 	log.WithFields(log.Fields{
+		"coin":         params.Api.Coin().Handle,
 		"transactions": len(txs),
 	}).Info("Published transactions")
 
@@ -101,34 +109,45 @@ func GetBlocksIntervalToFetch(params Params) (int64, int64, error) {
 		return 0, 0, errors.New(err.Error() + " Polling failed: tracker didn't return last known block number")
 	}
 	currentBlock, err := params.Api.CurrentBlockNumber()
-	currentBlock -= params.Api.Coin().MinConfirmations
 	if err != nil {
-		return 0, 0, errors.New(err.Error() + "Polling failed: source didn't return chain head number")
+		return 0, 0, errors.New(err.Error() + "Polling failed: source didn't return chain head number. lastParsedBlock: " + strconv.Itoa(int(lastParsedBlock)))
 	}
+	currentBlock -= params.Api.Coin().MinConfirmations
 
-	if currentBlock-lastParsedBlock > int64(params.BacklogCount) {
-		lastParsedBlock = currentBlock - int64(params.BacklogCount)
-	}
-
-	if currentBlock-lastParsedBlock > params.MaxBacklogBlocks {
-		lastParsedBlock = currentBlock - params.MaxBacklogBlocks
-	}
-	return lastParsedBlock, currentBlock, nil
+	return GetNextBlocksToParse(lastParsedBlock, currentBlock, params.MaxBlocks)
 }
 
-func FetchBlocks(params Params, lastParsedBlock, currentBlock int64) []blockatlas.Block {
+func GetNextBlocksToParse(lastParsedBlock int64, currentBlock int64, maxBlocks int64) (int64, int64, error) {
+	if lastParsedBlock == currentBlock {
+		return lastParsedBlock, currentBlock, nil
+	}
+	if lastParsedBlock > currentBlock {
+		return lastParsedBlock, lastParsedBlock, nil
+	}
+
+	var endParseBlock = currentBlock
+	var nextBlock = lastParsedBlock + 1
+
+	if currentBlock-lastParsedBlock > maxBlocks {
+		endParseBlock = nextBlock + maxBlocks
+	}
+
+	return nextBlock, endParseBlock + 1, nil
+}
+
+func FetchBlocks(params Params, lastParsedBlock, currentBlock int64) ([]blockatlas.Block, error) {
 	if lastParsedBlock == currentBlock {
 		log.WithFields(log.Fields{
-			"block": lastParsedBlock,
-			"coin":  params.Api.Coin().Handle,
+			"current_block": lastParsedBlock,
+			"coin":          params.Api.Coin().Handle,
 		}).Info("No new blocks")
-		return nil
+		return nil, errors.New("no new blocks")
 	}
 
 	blocksCount := currentBlock - lastParsedBlock
 	if blocksCount < 0 {
 		log.WithFields(log.Fields{"coin": params.Api.Coin().Handle}).Error("Current block is 0")
-		return nil
+		return nil, errors.New("current block is 0")
 	}
 
 	var (
@@ -138,7 +157,7 @@ func FetchBlocks(params Params, lastParsedBlock, currentBlock int64) []blockatla
 		wg         sync.WaitGroup
 	)
 
-	for i := lastParsedBlock + 1; i <= currentBlock; i++ {
+	for i := lastParsedBlock; i <= currentBlock-1; i++ {
 		wg.Add(1)
 		time.Sleep(params.FetchBlocksTimeout)
 		go func(i int64, wg *sync.WaitGroup) {
@@ -166,19 +185,19 @@ func FetchBlocks(params Params, lastParsedBlock, currentBlock int64) []blockatla
 		log.WithFields(log.Fields{"coin": params.Api.Coin().Handle, "count": len(errorsList), "blocks": errorsList}).Error("Fetch blocks errors")
 	}
 
-	blocksList := make([]blockatlas.Block, 0, len(blocksChan))
+	blocks := make([]blockatlas.Block, 0, len(blocksChan))
 	for block := range blocksChan {
-		blocksList = append(blocksList, block)
+		blocks = append(blocks, block)
 	}
 
 	log.WithFields(log.Fields{
 		"from":  lastParsedBlock,
-		"to":    currentBlock,
+		"to":    currentBlock - 1,
 		"total": totalCount,
 		"coin":  params.Api.Coin().Handle},
 	).Info("Fetched blocks batch")
 
-	return blocksList
+	return blocks, nil
 }
 
 func fetchBlock(api blockatlas.BlockAPI, num int64, blocksChan chan<- blockatlas.Block) error {
@@ -232,36 +251,10 @@ func publish(params Params, txs blockatlas.Txs) {
 	}
 
 	// Notify transactions queue
-	err = params.TransactionsQueue.Publish(body)
+	err = params.TransactionsExchange.Publish(body)
 	if err != nil {
 		log.WithFields(log.Fields{"operation": "publish transactionsQueue", "coin": params.Api.Coin().Handle}).Error(err)
 		return
-	}
-
-	// Notify token transfers queue, if conforms to TokensAPI protocol
-	tokenTransfers := txs.FilterTransactionsByType([]blockatlas.TransactionType{
-		blockatlas.TxTokenTransfer,
-		blockatlas.TxNativeTokenTransfer,
-	})
-
-	if len(tokenTransfers) == 0 {
-		return
-	}
-
-	tokenTransfersBody, err := json.Marshal(tokenTransfers)
-	if err != nil {
-		log.WithFields(log.Fields{"operation": "marshal tokenTransfers", "coin": params.Api.Coin().Handle}).Error(err)
-		return
-	}
-
-	if _, ok := params.Api.(blockatlas.TokensAPI); ok {
-		for _, q := range params.TokenTransactionsQueue {
-			err = q.Publish(tokenTransfersBody)
-			if err != nil {
-				log.WithFields(log.Fields{"coin": params.Api.Coin().Handle}).Error(err)
-				return
-			}
-		}
 	}
 }
 

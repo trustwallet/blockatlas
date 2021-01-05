@@ -13,13 +13,7 @@ const (
 	Notifier = "Notifier"
 )
 
-func RunNotifier(database *db.Instance, delivery amqp.Delivery) {
-	defer func() {
-		if err := delivery.Ack(false); err != nil {
-			log.WithFields(log.Fields{"service": Notifier}).Error(err)
-		}
-	}()
-
+func RunNotifier(database *db.Instance, delivery amqp.Delivery) error {
 	txs, err := GetTransactionsFromDelivery(delivery, Notifier)
 	if err != nil {
 		log.Error("failed to get transactions", err)
@@ -36,26 +30,31 @@ func RunNotifier(database *db.Instance, delivery amqp.Delivery) {
 	}
 
 	if len(txs) == 0 {
-		return
+		return nil
 	}
-	subscriptionsDataList, err := database.GetSubscriptionsForNotifications(addresses)
-	if err != nil || len(subscriptionsDataList) == 0 {
-		return
+	subscriptions, err := database.GetSubscriptions(addresses)
+	if err != nil {
+		return nil
 	}
 
 	notifications := make([]TransactionNotification, 0)
-	for _, sub := range subscriptionsDataList {
-		ua, _, ok := address.UnprefixedAddress(sub.Address.Address)
+	for _, sub := range subscriptions {
+		ua, _, ok := address.UnprefixedAddress(sub.Address)
 		if !ok {
 			continue
 		}
 		notificationsForAddress := buildNotificationsByAddress(ua, txs)
 		notifications = append(notifications, notificationsForAddress...)
 	}
+
+	if len(notifications) == 0 {
+		return nil
+	}
+
 	err = publishNotifications(notifications)
 	if err != nil {
 		log.WithFields(log.Fields{"service": Notifier}).Error(err)
 	}
 
-	log.Info("------------------------------------------------------------")
+	return nil
 }

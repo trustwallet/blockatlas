@@ -1,17 +1,23 @@
 package models
 
-import "time"
+import (
+	"time"
+)
 
 type (
-	NotificationSubscription struct {
-		DeletedAt *time.Time `gorm:"default:NULL; index"`
-		Address   Address    `gorm:"ForeignKey:AddressID; not null"`
-		AddressID uint       `gorm:"primary_key; autoIncrement:false"`
+	// Subscription for address and asset associations
+	Subscription struct {
+		ID        uint `gorm:"primaryKey;"`
+		CreatedAt time.Time
+		Address   string `gorm:"uniqueIndex:idx_address; type:varchar(128); not null;"`
 	}
 
-	AssetSubscription struct {
-		DeletedAt *time.Time `gorm:"default:NULL; index"`
-		Address   Address    `gorm:"ForeignKey:AddressID; not null"`
-		AddressID uint       `gorm:"primary_key; autoIncrement:false"`
+	SubscriptionsAssetAssociation struct {
+		CreatedAt      time.Time    `gorm:"index;"`
+		Subscription   Subscription `gorm:"ForeignKey:SubscriptionId; not null"`
+		SubscriptionId uint         `gorm:"primary_key; autoIncrement:false; index"`
+
+		Asset   Asset `gorm:"ForeignKey:AssetId; not null"`
+		AssetId uint  `gorm:"primary_key; autoIncrement:false; index"`
 	}
 )

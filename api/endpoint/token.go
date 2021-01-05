@@ -3,20 +3,10 @@ package endpoint
 import (
 	"net/http"
 	"strconv"
-	"sync"
-	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/services/tokenindexer"
-	"github.com/trustwallet/blockatlas/services/tokensearcher"
-)
-
-type (
-	tokensResult struct {
-		Result blockatlas.TokenPage
-		mu     sync.Mutex
-	}
 )
 
 // @Summary Get Tokens
@@ -45,95 +35,13 @@ func GetTokensByAddress(c *gin.Context, tokenAPI blockatlas.TokensAPI) {
 	c.JSON(http.StatusOK, blockatlas.DocsResponse{Docs: &result})
 }
 
-// @Description Get tokens
-// @ID tokens_v3
-// @Summary Get list of tokens by map: coin -> [addresses]
-// @Accept json
-// @Produce json
-// @Tags Transactions
-// @Param data body string true "Payload" default({"60": ["0xb3624367b1ab37daef42e1a3a2ced012359659b0"]})
-// @Success 200 {object} blockatlas.ResultsResponse
-// @Router /v2/tokens [post]
-func GetTokens(c *gin.Context, apis map[uint]blockatlas.TokensAPI) {
-	var query map[string][]string
-	if err := c.Bind(&query); err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, errorResponse(err))
-		return
-	}
-	result := tokensResult{
-		Result: make(blockatlas.TokenPage, 0),
-		mu:     sync.Mutex{},
-	}
-	var wg sync.WaitGroup
-	for coinStr, addresses := range query {
-		coinNum, err := strconv.ParseUint(coinStr, 10, 32)
-		if err != nil {
-			continue
-		}
-		api, ok := apis[uint(coinNum)]
-		if !ok {
-			continue
-		}
-		wg.Add(1)
-		go getTokens(api, addresses, &result, &wg)
-	}
-	wg.Wait()
-	c.JSON(http.StatusOK, blockatlas.ResultsResponse{Total: len(result.Result), Results: &result.Result})
-}
-
-func getTokens(tokenAPI blockatlas.TokensAPI, addresses []string, data *tokensResult, wg *sync.WaitGroup) {
-	var (
-		tokenPagesChan = make(chan blockatlas.TokenPage, len(addresses))
-		wgLocal        sync.WaitGroup
-		timeout        = time.Second * 3
-	)
-	defer wg.Done()
-	for _, address := range addresses {
-		wgLocal.Add(1)
-		go func(address string, wg *sync.WaitGroup) {
-			defer wg.Done()
-
-			stopChan := make(chan struct{})
-			pageChan := make(chan blockatlas.TokenPage)
-
-			go func() {
-				defer close(stopChan)
-				defer close(pageChan)
-				tokenPage, err := tokenAPI.GetTokenListByAddress(address)
-				if err != nil {
-					stopChan <- struct{}{}
-					return
-				}
-				pageChan <- tokenPage
-			}()
-
-			select {
-			case <-time.After(timeout):
-				return
-			case <-stopChan:
-				return
-			case p := <-pageChan:
-				tokenPagesChan <- p
-			}
-		}(address, &wgLocal)
-	}
-	wgLocal.Wait()
-	close(tokenPagesChan)
-	data.mu.Lock()
-	for page := range tokenPagesChan {
-		r := data.Result
-		data.Result = append(r, page...)
-	}
-	data.mu.Unlock()
-}
-
-func GetTokensByAddressIndexer(c *gin.Context, instance tokensearcher.Instance) {
-	var query tokensearcher.Request
+func GetTokensByAddressV3(c *gin.Context, instance tokenindexer.Instance) {
+	var query tokenindexer.GetTokensByAddressRequest
 	if err := c.Bind(&query); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
-	result, err := instance.HandleTokensRequest(query)
+	result, err := instance.GetTokensByAddress(query)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, errorResponse(err))
 		return
@@ -148,25 +56,17 @@ func GetTokensByAddressIndexer(c *gin.Context, instance tokensearcher.Instance) 
 // @Produce json
 // @Tags Transactions
 // @Param from query int true "unix timestamp"
-// @Param coin query int false "coin like 60"
 // @Success 200 {object} tokenindexer.Response
 // @Router /v3/tokens/new [get]
 func GetNewTokens(c *gin.Context, instance tokenindexer.Instance) {
 	var request tokenindexer.Request
 	fromRaw := c.Query("from")
-	coinRaw := c.DefaultQuery("coin", "-1")
 
 	from, err := strconv.Atoi(fromRaw)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, errorResponse(err))
+		return
 	}
-
-	coin, err := strconv.Atoi(coinRaw)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, errorResponse(err))
-	}
-
-	request.Coin = coin
 	request.From = int64(from)
 
 	resp, err := instance.HandleNewTokensRequest(request)

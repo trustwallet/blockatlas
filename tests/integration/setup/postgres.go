@@ -2,11 +2,12 @@ package setup
 
 import (
 	"fmt"
+	"log"
+
 	"github.com/ory/dockertest"
 	"github.com/trustwallet/blockatlas/db"
 	"github.com/trustwallet/blockatlas/db/models"
 	"gorm.io/gorm"
-	"log"
 )
 
 const (
@@ -24,12 +25,10 @@ var (
 	}
 
 	tables = []interface{}{
-		&models.AssetSubscription{},
-		&models.NotificationSubscription{},
 		&models.Tracker{},
-		&models.AddressToAssetAssociation{},
 		&models.Asset{},
-		&models.Address{},
+		&models.Subscription{},
+		&models.SubscriptionsAssetAssociation{},
 	}
 
 	url string

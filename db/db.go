@@ -4,12 +4,12 @@ import (
 	"errors"
 	"time"
 
-	"gorm.io/gorm/logger"
-
-	log "github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas/db/models"
 
+	"gorm.io/gorm/logger"
+
 	gocache "github.com/patrickmn/go-cache"
+	log "github.com/sirupsen/logrus"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -19,10 +19,6 @@ type Instance struct {
 	Gorm        *gorm.DB
 	MemoryCache *gocache.Cache
 }
-
-// By gorm-bulk-insert author:
-// "Depending on the number of variables included, 2000 to 3000 is recommended."
-const batchCount = 3000
 
 func New(url string, log bool) (*Instance, error) {
 	var logMode logger.LogLevel
@@ -37,21 +33,19 @@ func New(url string, log bool) (*Instance, error) {
 		return nil, err
 	}
 
-	err = db.AutoMigrate(
-		&models.NotificationSubscription{},
-		&models.Tracker{},
-		&models.Asset{},
-		&models.AssetSubscription{},
-		&models.Address{},
-		&models.AddressToAssetAssociation{},
-	)
-	if err != nil {
-		return nil, err
-	}
 	mc := gocache.New(gocache.NoExpiration, gocache.NoExpiration)
 	i := &Instance{Gorm: db, MemoryCache: mc}
 
 	return i, nil
+}
+
+func Setup(db *gorm.DB) error {
+	return db.AutoMigrate(
+		&models.Tracker{},
+		&models.Asset{},
+		&models.Subscription{},
+		&models.SubscriptionsAssetAssociation{},
+	)
 }
 
 func (i *Instance) RestoreConnectionWorker(timeout time.Duration, uri string) {
@@ -70,8 +64,6 @@ func (i *Instance) restoreConnection(uri string) error {
 	if err != nil {
 		return err
 	}
-
-	log.Info("Run restoreConnection")
 
 	if err = db.Ping(); err != nil {
 		log.Warn("PG is not available now")

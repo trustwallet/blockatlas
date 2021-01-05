@@ -75,7 +75,7 @@ func (p *Platform) getTransactionChannel(id string, txChan chan blockatlas.TxPag
 
 func (p *Platform) NormalizeTokenTransaction(srcTx Tx, receipt TxReceipt) (blockatlas.TxPage, error) {
 	if receipt.Outputs == nil || len(receipt.Outputs) == 0 {
-		return blockatlas.TxPage{}, errors.New("NormalizeBlockTransaction: Clauses not found")
+		return blockatlas.TxPage{}, errors.New("NormalizeBlockTransaction: Clauses not found: " + srcTx.Id)
 	}
 
 	fee, err := numbers.HexToDecimal(receipt.Paid)
