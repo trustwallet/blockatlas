@@ -80,7 +80,8 @@ func main() {
 
 	go mq.FatalWorker(time.Second * 10)
 
-	internal.SetupGracefulShutdownForObserver()
+	middleware.SetupGracefulShutdown(time.Second * 5)
+
 	cancel()
 }
 

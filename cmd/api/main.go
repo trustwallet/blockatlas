@@ -4,6 +4,8 @@ import (
 	"context"
 	"time"
 
+	golibsGin "github.com/trustwallet/golibs/network/gin"
+
 	"github.com/trustwallet/golibs/network/middleware"
 
 	"github.com/gin-gonic/gin"
@@ -59,6 +61,6 @@ func main() {
 	api.SetupSwaggerAPI(engine)
 	api.SetupPlatformAPI(engine)
 
-	internal.SetupGracefulShutdown(ctx, port, engine)
+	golibsGin.SetupGracefulShutdown(ctx, port, engine)
 	cancel()
 }
