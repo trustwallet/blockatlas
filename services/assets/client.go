@@ -1,9 +1,10 @@
 package assets
 
 import (
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/golibs/coin"
 	"time"
+
+	"github.com/trustwallet/golibs/client"
+	"github.com/trustwallet/golibs/coin"
 )
 
 const (
@@ -12,7 +13,7 @@ const (
 
 func fetchValidatorsInfo(coin coin.Coin) (AssetValidators, error) {
 	var results AssetValidators
-	request := blockatlas.InitClient(AssetsURL + coin.Handle)
+	request := client.InitClient(AssetsURL + coin.Handle)
 	err := request.GetWithCache(&results, "validators/list.json", nil, time.Hour*1)
 	if err != nil {
 		return nil, err

@@ -1,13 +1,13 @@
 package solana
 
 import (
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/golibs/client"
 )
 
 const stakeProgramId = "Stake11111111111111111111111111111111111111"
 
 type Client struct {
-	blockatlas.Request
+	client.Request
 }
 
 func (c *Client) GetCurrentVoteAccounts() (validators []VoteAccount, err error) {
@@ -58,9 +58,9 @@ func (c *Client) GetTransactions(address string) ([]ConfirmedTransaction, error)
 	}
 
 	// build batch request
-	requests := make(blockatlas.RpcRequests, 0)
+	requests := make(client.RpcRequests, 0)
 	for _, sig := range signatures {
-		requests = append(requests, &blockatlas.RpcRequest{
+		requests = append(requests, &client.RpcRequest{
 			Method: "getConfirmedTransaction",
 			Params: []string{
 				sig.Signature,

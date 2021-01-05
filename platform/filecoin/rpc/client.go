@@ -1,11 +1,9 @@
 package rpc
 
-import (
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-)
+import "github.com/trustwallet/golibs/client"
 
 type Client struct {
-	blockatlas.Request
+	client.Request
 }
 
 func (c Client) GetBlockHeight() (ChainHeadResponse, error) {

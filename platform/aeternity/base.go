@@ -1,7 +1,7 @@
 package aeternity
 
 import (
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/golibs/client"
 	"github.com/trustwallet/golibs/coin"
 )
 
@@ -11,7 +11,7 @@ type Platform struct {
 
 func Init(api string) *Platform {
 	return &Platform{
-		client: Client{blockatlas.InitClient(api)},
+		client: Client{client.InitClient(api)},
 	}
 }
 

@@ -2,11 +2,12 @@ package waves
 
 import (
 	"fmt"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+
+	"github.com/trustwallet/golibs/client"
 )
 
 type Client struct {
-	blockatlas.Request
+	client.Request
 }
 
 func (c *Client) GetTxs(address string, limit int) ([]Transaction, error) {

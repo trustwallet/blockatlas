@@ -2,12 +2,13 @@ package theta
 
 import (
 	"fmt"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"net/url"
+
+	"github.com/trustwallet/golibs/client"
 )
 
 type Client struct {
-	blockatlas.Request
+	client.Request
 }
 
 func (c *Client) FetchAddressTransactions(address string) ([]Tx, error) {

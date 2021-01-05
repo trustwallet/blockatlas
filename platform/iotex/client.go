@@ -2,14 +2,16 @@ package iotex
 
 import (
 	"fmt"
-	log "github.com/sirupsen/logrus"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"net/url"
 	"strconv"
+
+	log "github.com/sirupsen/logrus"
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/golibs/client"
 )
 
 type Client struct {
-	blockatlas.Request
+	client.Request
 }
 
 func (c *Client) GetLatestBlock() (int64, error) {

@@ -9,7 +9,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/golibs/client"
 	"github.com/trustwallet/golibs/mock"
 )
 
@@ -22,8 +22,8 @@ func TestPlatform_GetTxsByAddress(t *testing.T) {
 	data["/"] = func(w http.ResponseWriter, req *http.Request) {
 		w.WriteHeader(http.StatusOK)
 
-		var r blockatlas.RpcRequest
-		var rs []blockatlas.RpcRequest
+		var r client.RpcRequest
+		var rs []client.RpcRequest
 		var response string
 
 		buf := new(bytes.Buffer)

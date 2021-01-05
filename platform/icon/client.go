@@ -1,13 +1,15 @@
 package icon
 
 import (
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"net/url"
 	"strconv"
+
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/golibs/client"
 )
 
 type Client struct {
-	blockatlas.Request
+	client.Request
 }
 
 func (c *Client) GetAddressTransactions(address string) ([]Tx, error) {

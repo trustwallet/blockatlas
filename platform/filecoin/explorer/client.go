@@ -5,11 +5,11 @@ import (
 	"net/url"
 	"strconv"
 
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/golibs/client"
 )
 
 type Client struct {
-	blockatlas.Request
+	client.Request
 }
 
 func (c Client) GetMessagesByAddress(address string, pageSize int) (res Response, err error) {

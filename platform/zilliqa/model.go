@@ -5,7 +5,7 @@ import (
 	"math/big"
 	"strconv"
 
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/golibs/client"
 )
 
 type BlockTxs [][]string
@@ -113,10 +113,10 @@ func (t *TxRPC) toTx(header BlockHeader) *Tx {
 }
 
 type BlockTxRpc struct {
-	JsonRpc string               `json:"jsonrpc"`
-	Error   *blockatlas.RpcError `json:"error,omitempty"`
-	Result  BlockTxs             `json:"result,omitempty"`
-	Id      string               `json:"id,omitempty"`
+	JsonRpc string           `json:"jsonrpc"`
+	Error   *client.RpcError `json:"error,omitempty"`
+	Result  BlockTxs         `json:"result,omitempty"`
+	Id      string           `json:"id,omitempty"`
 }
 
 type HashesResponse struct {

@@ -3,8 +3,8 @@ package trustray
 import (
 	"math/big"
 
-	"github.com/trustwallet/blockatlas/pkg/address"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/golibs/address"
 	"github.com/trustwallet/golibs/coin"
 )
 
@@ -70,10 +70,14 @@ func AppendTxs(in []blockatlas.Tx, srcTx *Doc, coinIndex uint) (out []blockatlas
 	// Token transfer transaction
 	if op.Type == blockatlas.TxTokenTransfer && op.Contract != nil {
 		tokenTx := baseTx
+		tokenId, err := address.ToEIP55ByCoinID(op.Contract.Address, coinIndex)
+		if err != nil {
+			return
+		}
 		tokenTx.Meta = blockatlas.TokenTransfer{
 			Name:     op.Contract.Name,
 			Symbol:   op.Contract.Symbol,
-			TokenID:  address.ToEIP55ByCoinID(op.Contract.Address, coinIndex),
+			TokenID:  tokenId,
 			Decimals: op.Contract.Decimals,
 			Value:    blockatlas.Amount(op.Value),
 			From:     op.From,
@@ -99,13 +103,20 @@ func extractBase(srcTx *Doc, coinIndex uint) (base blockatlas.Tx, ok bool) {
 	}
 
 	fee := calcFee(srcTx.GasPrice, srcTx.GasUsed)
-
+	from, err := address.ToEIP55ByCoinID(srcTx.From, coinIndex)
+	if err != nil {
+		return base, false
+	}
+	to, err := address.ToEIP55ByCoinID(srcTx.To, coinIndex)
+	if err != nil {
+		return base, false
+	}
 	base = blockatlas.Tx{
 		ID:       srcTx.ID,
 		Coin:     coinIndex,
 		Fee:      blockatlas.Amount(fee),
-		From:     address.ToEIP55ByCoinID(srcTx.From, coinIndex),
-		To:       address.ToEIP55ByCoinID(srcTx.To, coinIndex),
+		From:     from,
+		To:       to,
 		Date:     srcTx.Timestamp,
 		Block:    srcTx.BlockNumber,
 		Status:   status,

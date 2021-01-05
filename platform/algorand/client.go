@@ -5,17 +5,18 @@ import (
 	"strconv"
 
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/golibs/client"
 )
 
 type Client struct {
-	blockatlas.Request
+	client.Request
 }
 
 func InitClient(url, apiKey string) Client {
 	return Client{
-		Request: blockatlas.Request{
-			HttpClient:   blockatlas.DefaultClient,
-			ErrorHandler: blockatlas.DefaultErrorHandler,
+		Request: client.Request{
+			HttpClient:   client.DefaultClient,
+			ErrorHandler: client.DefaultErrorHandler,
 			Headers:      map[string]string{"X-Indexer-API-Token": apiKey},
 			BaseUrl:      url,
 		},

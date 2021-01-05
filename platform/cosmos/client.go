@@ -2,16 +2,17 @@ package cosmos
 
 import (
 	"fmt"
-	log "github.com/sirupsen/logrus"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"net/url"
 	"strconv"
 	"time"
+
+	log "github.com/sirupsen/logrus"
+	"github.com/trustwallet/golibs/client"
 )
 
 // Client - the HTTP client
 type Client struct {
-	blockatlas.Request
+	client.Request
 }
 
 // GetAddrTxs - get all ATOM transactions for a given address

@@ -1,7 +1,7 @@
 package tezos
 
 import (
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/golibs/client"
 	"github.com/trustwallet/golibs/coin"
 )
 
@@ -12,8 +12,8 @@ type Platform struct {
 
 func Init(api, rpc string) *Platform {
 	p := &Platform{
-		client:    Client{blockatlas.InitClient(api)},
-		rpcClient: RpcClient{blockatlas.InitClient(rpc)},
+		client:    Client{client.InitClient(api)},
+		rpcClient: RpcClient{client.InitClient(rpc)},
 	}
 	p.client.SetTimeout(35)
 	return p

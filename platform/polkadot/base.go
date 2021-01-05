@@ -1,7 +1,7 @@
 package polkadot
 
 import (
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/golibs/client"
 	"github.com/trustwallet/golibs/coin"
 )
 
@@ -13,7 +13,7 @@ type Platform struct {
 func Init(coin uint, api string) *Platform {
 	return &Platform{
 		CoinIndex: coin,
-		client:    Client{blockatlas.InitJSONClient(api)},
+		client:    Client{client.InitJSONClient(api)},
 	}
 }
 

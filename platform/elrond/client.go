@@ -6,10 +6,11 @@ import (
 	"net/url"
 
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/golibs/client"
 )
 
 type Client struct {
-	blockatlas.Request
+	client.Request
 }
 
 func (c *Client) CurrentBlockNumber() (num int64, err error) {

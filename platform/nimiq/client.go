@@ -1,12 +1,14 @@
 package nimiq
 
 import (
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"strconv"
+
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/golibs/client"
 )
 
 type Client struct {
-	blockatlas.Request
+	client.Request
 }
 
 func (c *Client) GetTxsOfAddress(address string) (tx []Tx, err error) {
