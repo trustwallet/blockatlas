@@ -8,6 +8,8 @@ import (
 	"strconv"
 	"sync/atomic"
 
+	"github.com/getsentry/raven-go"
+
 	"math/rand"
 	"sort"
 	"sync"
@@ -66,7 +68,7 @@ func parse(params Params) {
 		log.WithFields(log.Fields{
 			"operation": "fetch GetBlocksIntervalToFetch",
 			"coin":      params.Api.Coin().Handle,
-			"tags":      log.Fields{"coin": params.Api.Coin().Handle},
+			"tags":      raven.Tags{{Key: "coin", Value: params.Api.Coin().Handle}},
 		}).Error(err)
 		time.Sleep(params.ParsingBlocksInterval)
 		return
