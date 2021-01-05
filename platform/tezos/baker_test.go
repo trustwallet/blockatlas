@@ -5,18 +5,25 @@ import (
 	"testing"
 
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/services/assets"
 )
 
 func TestNormalizeStakeValidators(t *testing.T) {
 	tests := []struct {
 		name      string
+		av        assets.AssetValidator
 		baker     Baker
 		validator blockatlas.StakeValidator
 	}{
 		{
 			name: "Test normalize negative free space",
+			av: assets.AssetValidator{
+				ID:          "tz1fJHFn6sWEd3NnBPngACuw2dggTv6nQZ7g",
+				Name:        "Baking Team from assets",
+				Description: "Baking team is full",
+				Website:     "https://mytezosbaker.com/bakingteam",
+			},
 			baker: Baker{
-
 				Address:           "tz1fJHFn6sWEd3NnBPngACuw2dggTv6nQZ7g",
 				Name:              "Baking Team",
 				Logo:              "https://services.tzkt.io/v1/avatars/tz1fJHFn6sWEd3NnBPngACuw2dggTv6nQZ7g",
@@ -31,8 +38,10 @@ func TestNormalizeStakeValidators(t *testing.T) {
 				ID:     "tz1fJHFn6sWEd3NnBPngACuw2dggTv6nQZ7g",
 				Status: false,
 				Info: blockatlas.StakeValidatorInfo{
-					Name:  "Baking Team",
-					Image: "https://services.tzkt.io/v1/avatars/tz1fJHFn6sWEd3NnBPngACuw2dggTv6nQZ7g",
+					Name:        "Baking Team from assets",
+					Description: "Baking team is full",
+					Website:     "https://mytezosbaker.com/bakingteam",
+					Image:       "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/tezos/validators/assets/tz1fJHFn6sWEd3NnBPngACuw2dggTv6nQZ7g/logo.png",
 				},
 				Details: blockatlas.StakingDetails{
 					Reward: blockatlas.StakingReward{
@@ -45,6 +54,12 @@ func TestNormalizeStakeValidators(t *testing.T) {
 		},
 		{
 			name: "Test normalize negative free space",
+			av: assets.AssetValidator{
+				ID:          "tz1gcna2xxZj2eNp1LaMyAhVJ49mEFj4FH26",
+				Name:        "Exaion Baker",
+				Description: "Exaion is first French corporate to participate in the Tezos ecosystem as a corporate baker.",
+				Website:     "https://www.edf.fr/en/the-edf-group",
+			},
 			baker: Baker{
 				Address:           "tz1gcna2xxZj2eNp1LaMyAhVJ49mEFj4FH26",
 				Name:              "Exaion Baker",
@@ -60,8 +75,10 @@ func TestNormalizeStakeValidators(t *testing.T) {
 				ID:     "tz1gcna2xxZj2eNp1LaMyAhVJ49mEFj4FH26",
 				Status: true,
 				Info: blockatlas.StakeValidatorInfo{
-					Name:  "Exaion Baker",
-					Image: "https://services.tzkt.io/v1/avatars/tz1gcna2xxZj2eNp1LaMyAhVJ49mEFj4FH26",
+					Name:        "Exaion Baker",
+					Image:       "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/tezos/validators/assets/tz1gcna2xxZj2eNp1LaMyAhVJ49mEFj4FH26/logo.png",
+					Description: "Exaion is first French corporate to participate in the Tezos ecosystem as a corporate baker.",
+					Website:     "https://www.edf.fr/en/the-edf-group",
 				},
 				Details: blockatlas.StakingDetails{
 					Reward: blockatlas.StakingReward{
@@ -74,6 +91,12 @@ func TestNormalizeStakeValidators(t *testing.T) {
 		},
 		{
 			name: "Test",
+			av: assets.AssetValidator{
+				ID:          "tz1dbfppLAAxXZNtf2SDps7rch3qfUznKSoK",
+				Name:        "Coinhouse",
+				Description: "The reliable and safe way to invest in cryptocurrencies",
+				Website:     "https://www.coinhouse.com/",
+			},
 			baker: Baker{
 				Address:           "tz1dbfppLAAxXZNtf2SDps7rch3qfUznKSoK",
 				Name:              "Coinhouse",
@@ -89,8 +112,10 @@ func TestNormalizeStakeValidators(t *testing.T) {
 				ID:     "tz1dbfppLAAxXZNtf2SDps7rch3qfUznKSoK",
 				Status: false,
 				Info: blockatlas.StakeValidatorInfo{
-					Name:  "Coinhouse",
-					Image: "https://services.tzkt.io/v1/avatars/tz1dbfppLAAxXZNtf2SDps7rch3qfUznKSoK",
+					Name:        "Coinhouse",
+					Image:       "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/tezos/validators/assets/tz1dbfppLAAxXZNtf2SDps7rch3qfUznKSoK/logo.png",
+					Description: "The reliable and safe way to invest in cryptocurrencies",
+					Website:     "https://www.coinhouse.com/",
 				},
 				Details: blockatlas.StakingDetails{
 					Reward: blockatlas.StakingReward{
@@ -104,7 +129,7 @@ func TestNormalizeStakeValidators(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if gotValidator := NormalizeStakeValidator(tt.baker); !reflect.DeepEqual(gotValidator, tt.validator) {
+			if gotValidator := NormalizeStakeValidator(tt.baker, tt.av); !reflect.DeepEqual(gotValidator, tt.validator) {
 				t.Errorf("NormalizeStakeValidators() = %v, want %v", gotValidator, tt.validator)
 			}
 		})

@@ -58,7 +58,7 @@ func normalizeValidator(rpcValidator blockatlas.Validator, assetValidator AssetV
 		Info: blockatlas.StakeValidatorInfo{
 			Name:        assetValidator.Name,
 			Description: assetValidator.Description,
-			Image:       getImage(coin, rpcValidator.ID),
+			Image:       GetImageURL(coin, rpcValidator.ID),
 			Website:     assetValidator.Website,
 		},
 		Details: details,

@@ -25,14 +25,14 @@ func (c *BakerClient) GetBakers() (validators blockatlas.StakeValidators, err er
 	}
 	validatorMap := assetsValidators.ToMap()
 	for _, baker := range bakers {
-		if _, ok := validatorMap[baker.Address]; ok {
-			validators = append(validators, NormalizeStakeValidator(baker))
+		if av, ok := validatorMap[baker.Address]; ok {
+			validators = append(validators, NormalizeStakeValidator(baker, av))
 		}
 	}
 	return
 }
 
-func NormalizeStakeValidator(baker Baker) blockatlas.StakeValidator {
+func NormalizeStakeValidator(baker Baker, assetValidator assets.AssetValidator) blockatlas.StakeValidator {
 	status := true
 	if baker.FreeSpace < 0 || baker.ServiceHealth != "active" || !baker.OpenForDelegation {
 		status = false
@@ -42,8 +42,10 @@ func NormalizeStakeValidator(baker Baker) blockatlas.StakeValidator {
 		ID:     baker.Address,
 		Status: status,
 		Info: blockatlas.StakeValidatorInfo{
-			Name:  baker.Name,
-			Image: baker.Logo,
+			Name:        assetValidator.Name,
+			Description: assetValidator.Description,
+			Website:     assetValidator.Website,
+			Image:       assets.GetImageURL(coin.Tezos(), baker.Address),
 		},
 		Details: blockatlas.StakingDetails{
 			Reward: blockatlas.StakingReward{
