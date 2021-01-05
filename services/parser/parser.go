@@ -66,6 +66,7 @@ func parse(params Params) {
 		log.WithFields(log.Fields{
 			"operation": "fetch GetBlocksIntervalToFetch",
 			"coin":      params.Api.Coin().Handle,
+			"tags":      log.Fields{"coin": params.Api.Coin().Handle},
 		}).Error(err)
 		time.Sleep(params.ParsingBlocksInterval)
 		return
