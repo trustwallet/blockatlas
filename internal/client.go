@@ -16,7 +16,8 @@ type Client struct {
 }
 
 var errorHandler = func(res *http.Response, uri string) error {
-	if res.StatusCode == http.StatusOK {
+	//Improve ways to identify if worth logging the error
+	if res.StatusCode == http.StatusOK || res.StatusCode == http.StatusNotFound {
 		return nil
 	}
 	log.WithFields(log.Fields{
