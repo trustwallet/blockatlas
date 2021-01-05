@@ -6,11 +6,12 @@ import (
 
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/services/assets"
+	"github.com/trustwallet/golibs/client"
 	"github.com/trustwallet/golibs/coin"
 )
 
 type BakerClient struct {
-	blockatlas.Request
+	client.Request
 }
 
 func (c *BakerClient) GetBakers() (validators blockatlas.StakeValidators, err error) {
