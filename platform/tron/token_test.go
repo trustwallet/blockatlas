@@ -3,12 +3,13 @@ package tron
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/stretchr/testify/assert"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"net/http"
 	"net/http/httptest"
 	"sort"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 )
 
 var tokenDst = blockatlas.Token{

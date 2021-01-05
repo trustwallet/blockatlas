@@ -3,8 +3,6 @@ package zilliqa
 import (
 	"strconv"
 
-	"github.com/imroc/req"
-
 	"github.com/mitchellh/mapstructure"
 	"github.com/trustwallet/golibs/client"
 )
@@ -31,12 +29,9 @@ func (c *RpcClient) GetTransactionsHashesInBlock(number int64) ([]string, error)
 		Params:  []string{strNumber},
 		Id:      number,
 	}
-	resp, err := req.Post(c.BaseUrl, req.BodyJSON(requestBody))
-	if err != nil {
-		return nil, err
-	}
 	var result HashesResponse
-	if err = resp.ToJSON(&result); err != nil {
+	err := c.Post(&result, "/", requestBody)
+	if err != nil {
 		return nil, err
 	}
 	return result.Txs(), nil
