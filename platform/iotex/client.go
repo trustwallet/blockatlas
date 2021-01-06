@@ -5,7 +5,6 @@ import (
 	"net/url"
 	"strconv"
 
-	log "github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/client"
 )
@@ -45,7 +44,6 @@ func (c *Client) GetTxsOfAddress(address string, start int64) (*Response, error)
 	})
 
 	if err != nil {
-		log.WithFields(log.Fields{"address": address}).Error(err, "IOTEX: Failed to get transactions for address")
 		return nil, blockatlas.ErrSourceConn
 	}
 	return &response, err

@@ -4,7 +4,6 @@ import (
 	"errors"
 	"sync"
 
-	log "github.com/sirupsen/logrus"
 	blockatlas "github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/coin"
 	"github.com/trustwallet/golibs/numbers"
@@ -17,10 +16,6 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 func (p *Platform) GetTokenTxsByAddress(address string, token string) (blockatlas.TxPage, error) {
 	srcTxs, err := p.client.GetTxsOfAddress(address)
 	if err != nil {
-		log.WithFields(log.Fields{
-			"address": address,
-			"token":   token,
-		}).Error(err, "Ontology: Failed to get transactions for address and token")
 		return blockatlas.TxPage{}, err
 	}
 	txPage := normalizeTxs(srcTxs.Result, AssetType(token))

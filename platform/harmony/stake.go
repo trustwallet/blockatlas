@@ -1,11 +1,12 @@
 package harmony
 
 import (
+	"math/big"
+	"strconv"
+
 	log "github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/services/assets"
-	"math/big"
-	"strconv"
 )
 
 const (
@@ -50,7 +51,6 @@ func (p *Platform) GetDetails() blockatlas.StakingDetails {
 func (p *Platform) GetMaxAPR() float64 {
 	validators, err := p.client.GetValidators()
 	if err != nil {
-		log.WithFields(log.Fields{"details": err, "platform": p.Coin().Symbol}).Error("GetMaxAPR")
 		return Annual
 	}
 

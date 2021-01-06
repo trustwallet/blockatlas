@@ -5,7 +5,6 @@ import (
 	"sync"
 	"time"
 
-	log "github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/numbers"
 )
@@ -21,7 +20,6 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 			page := 1
 			txs, err := p.client.GetAddrTxs(addr, tag, page)
 			if err != nil {
-				log.WithFields(log.Fields{"address": tag, "tag": tag}).Error("GetAddrTxs", err)
 				return
 			}
 			// Condition when no more pages to paginate
@@ -32,14 +30,12 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 
 			totalPages, err := strconv.Atoi(txs.PageTotal)
 			if err != nil {
-				log.WithFields(log.Fields{"totalPages": totalPages}).Error("GetAddrTxs", err)
 				return
 			}
 			// gaia does support sort option, paginate to get latest transactions by passing total pages page
 			// https://github.com/cosmos/gaia/blob/f61b391aee5d04364d2b5539692bbb187ad9b946/docs/resources/gaiacli.md#query-transactions
 			txs2, err := p.client.GetAddrTxs(addr, tag, totalPages)
 			if err != nil {
-				log.WithFields(log.Fields{"address": tag, "tag": tag}).Error("GetAddrTxs", err)
 				return
 			}
 			out <- txs2.Txs

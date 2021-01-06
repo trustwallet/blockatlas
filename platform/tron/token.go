@@ -1,14 +1,14 @@
 package tron
 
 import (
+	"strconv"
+	"strings"
+	"sync"
+
 	log "github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/coin"
 	"github.com/trustwallet/golibs/tokentype"
-	"strconv"
-	"strings"
-	"sync"
-	"time"
 )
 
 func (p *Platform) GetTokenListByAddress(address string) (blockatlas.TokenPage, error) {
@@ -57,11 +57,7 @@ func (p *Platform) getTokens(ids []string) chan blockatlas.Token {
 		wg.Add(1)
 		go func(i string, c chan blockatlas.Token) {
 			defer wg.Done()
-			time.Sleep(time.Millisecond)
-			err := p.getTokensChannel(i, c)
-			if err != nil {
-				log.WithFields(log.Fields{"token": i, "coin": coin.Tron().Handle}).Error("getTokens", err)
-			}
+			p.getTokensChannel(i, c)
 		}(id, tkChan)
 	}
 	wg.Wait()
