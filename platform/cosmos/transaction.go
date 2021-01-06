@@ -25,7 +25,7 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 				return
 			}
 			// Condition when no more pages to paginate
-			if txs.PageTotal == "1" {
+			if txs.PageTotal == "1" || txs.PageTotal == "0" {
 				out <- txs.Txs
 				return
 			}

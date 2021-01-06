@@ -32,7 +32,7 @@ func (p *Platform) GetTokenTxsByAddress(address, token string) (blockatlas.TxPag
 				return
 			}
 			// Condition when no more pages to paginate
-			if txs.PageTotal == "1" {
+			if txs.PageTotal == "1" || txs.PageTotal == "0" {
 				out <- txs.Txs
 				return
 			}
