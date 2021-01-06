@@ -3,11 +3,16 @@ package tezos
 import (
 	"math"
 	"strconv"
+	"time"
 
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/services/assets"
 	"github.com/trustwallet/golibs/client"
 	"github.com/trustwallet/golibs/coin"
+)
+
+const (
+	cacheTime = 1 * time.Hour
 )
 
 type BakerClient struct {
@@ -16,7 +21,7 @@ type BakerClient struct {
 
 func (c *BakerClient) GetBakers() (validators blockatlas.StakeValidators, err error) {
 	var bakers []Baker
-	err = c.Get(&bakers, "v2/bakers", nil)
+	err = c.GetWithCache(&bakers, "v2/bakers", nil, cacheTime)
 	if err != nil {
 		return
 	}
