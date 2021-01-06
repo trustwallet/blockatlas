@@ -18,7 +18,7 @@ func GetValidatorsMap(api blockatlas.StakeAPI) (blockatlas.ValidatorMap, error) 
 }
 
 func getValidators(api blockatlas.StakeAPI) (AssetValidators, blockatlas.ValidatorPage, error) {
-	assetsValidators, err := fetchValidatorsInfo(api.Coin())
+	assetsValidators, err := GetchValidatorsInfo(api.Coin())
 	if err != nil {
 		return nil, nil, err
 	}
@@ -32,7 +32,7 @@ func getValidators(api blockatlas.StakeAPI) (AssetValidators, blockatlas.Validat
 
 func normalizeValidators(assetsValidators AssetValidators, rpcValidators []blockatlas.Validator, coin coin.Coin) blockatlas.StakeValidators {
 	results := make(blockatlas.StakeValidators, 0)
-	assetsMap := assetsValidators.toMap()
+	assetsMap := assetsValidators.ToMap()
 	for _, v := range rpcValidators {
 		asset, ok := assetsMap[v.ID]
 		if !ok {
@@ -58,7 +58,7 @@ func normalizeValidator(rpcValidator blockatlas.Validator, assetValidator AssetV
 		Info: blockatlas.StakeValidatorInfo{
 			Name:        assetValidator.Name,
 			Description: assetValidator.Description,
-			Image:       getImage(coin, rpcValidator.ID),
+			Image:       GetImageURL(coin, rpcValidator.ID),
 			Website:     assetValidator.Website,
 		},
 		Details: details,
@@ -68,6 +68,6 @@ func calculateAnnual(annual float64, commission float64) float64 {
 	return (annual * (100 - commission)) / 100
 }
 
-func getImage(c coin.Coin, ID string) string {
+func GetImageURL(c coin.Coin, ID string) string {
 	return URL + c.Handle + "/validators/assets/" + ID + "/logo.png"
 }

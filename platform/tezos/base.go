@@ -6,14 +6,16 @@ import (
 )
 
 type Platform struct {
-	client    Client
-	rpcClient RpcClient
+	client      Client
+	rpcClient   RpcClient
+	bakerClient BakerClient
 }
 
-func Init(api, rpc string) *Platform {
+func Init(api, rpc, baker string) *Platform {
 	p := &Platform{
-		client:    Client{internal.InitClient(api)},
-		rpcClient: RpcClient{internal.InitClient(rpc)},
+		client:      Client{internal.InitClient(api)},
+		rpcClient:   RpcClient{internal.InitClient(rpc)},
+		bakerClient: BakerClient{internal.InitClient(baker)},
 	}
 	p.client.SetTimeout(35)
 	return p

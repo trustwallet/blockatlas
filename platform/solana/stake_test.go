@@ -152,7 +152,7 @@ var stakeValidator = blockatlas.StakeValidator{
 	Info: blockatlas.StakeValidatorInfo{
 		Name:        "Certus One",
 		Description: "Stake and earn rewards with the most secure and stable validator. Winner of the Game of Stakes. Operated by Certus One Inc. By delegating, you confirm that you are aware of the risk of slashing and that Certus One Inc is not liable for any potential damages to your investment.",
-		Image:       "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/solana/validators/assets/2Afu38M1KaSfDBpjZjnJb9BSWP6YkBkoPiBfnFedD7JW/logo.png",
+		Image:       "https://assets.trustwalletapp.com/blockchains/solana/validators/assets/2Afu38M1KaSfDBpjZjnJb9BSWP6YkBkoPiBfnFedD7JW/logo.png",
 		Website:     "https://certus.one",
 	},
 	Details: getDetails(),

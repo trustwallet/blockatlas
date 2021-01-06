@@ -9,10 +9,10 @@ import (
 )
 
 const (
-	URL = "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/"
+	URL = "https://assets.trustwalletapp.com/blockchains/"
 )
 
-func fetchValidatorsInfo(coin coin.Coin) (AssetValidators, error) {
+func GetchValidatorsInfo(coin coin.Coin) (AssetValidators, error) {
 	var results AssetValidators
 	request := internal.InitClient(URL + coin.Handle)
 	err := request.GetWithCache(&results, "validators/list.json", nil, time.Hour*1)

@@ -1,10 +1,11 @@
 package assets
 
 import (
+	"testing"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/coin"
-	"testing"
 )
 
 var (
@@ -76,7 +77,7 @@ var (
 		Info: blockatlas.StakeValidatorInfo{
 			Name:        "🐠stake.fish",
 			Description: "Leading validator for Proof of Stake blockchains.",
-			Image:       getImage(tezosCoin, "test1"),
+			Image:       GetImageURL(tezosCoin, "test1"),
 			Website:     "https://stake.fish/",
 		},
 		Details: blockatlas.StakingDetails{
@@ -88,7 +89,7 @@ var (
 		Info: blockatlas.StakeValidatorInfo{
 			Name:        "Spider",
 			Description: "yo",
-			Image:       getImage(cosmosCoin, "test1"),
+			Image:       GetImageURL(cosmosCoin, "test1"),
 			Website:     "https://tw.com",
 		},
 		Details: blockatlas.StakingDetails{
@@ -100,7 +101,7 @@ var (
 		Info: blockatlas.StakeValidatorInfo{
 			Name:        "Spider",
 			Description: "yo",
-			Image:       getImage(cosmosCoin, "test1"),
+			Image:       GetImageURL(cosmosCoin, "test1"),
 			Website:     "https://tw.com",
 		},
 		Details: blockatlas.StakingDetails{
@@ -112,7 +113,7 @@ var (
 		Info: blockatlas.StakeValidatorInfo{
 			Name:        "Man",
 			Description: "lo",
-			Image:       getImage(cosmosCoin, "test2"),
+			Image:       GetImageURL(cosmosCoin, "test2"),
 			Website:     "https://tw.com",
 		},
 		Details: blockatlas.StakingDetails{
@@ -122,8 +123,8 @@ var (
 )
 
 func TestGetImage(t *testing.T) {
-	image := getImage(cosmosCoin, "TGzz8gjYiYRqpfmDwnLxfgPuLVNmpCswVp")
-	expected := "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/cosmos/validators/assets/TGzz8gjYiYRqpfmDwnLxfgPuLVNmpCswVp/logo.png"
+	image := GetImageURL(cosmosCoin, "TGzz8gjYiYRqpfmDwnLxfgPuLVNmpCswVp")
+	expected := "https://assets.trustwalletapp.com/blockchains/cosmos/validators/assets/TGzz8gjYiYRqpfmDwnLxfgPuLVNmpCswVp/logo.png"
 	assert.Equal(t, expected, image)
 }
 
