@@ -41,7 +41,7 @@ func TestNormalizeStakeValidators(t *testing.T) {
 					Name:        "Baking Team from assets",
 					Description: "Baking team is full",
 					Website:     "https://mytezosbaker.com/bakingteam",
-					Image:       "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/tezos/validators/assets/tz1fJHFn6sWEd3NnBPngACuw2dggTv6nQZ7g/logo.png",
+					Image:       "https://assets.trustwalletapp.com/blockchains/tezos/validators/assets/tz1fJHFn6sWEd3NnBPngACuw2dggTv6nQZ7g/logo.png",
 				},
 				Details: blockatlas.StakingDetails{
 					Reward: blockatlas.StakingReward{
@@ -76,7 +76,7 @@ func TestNormalizeStakeValidators(t *testing.T) {
 				Status: true,
 				Info: blockatlas.StakeValidatorInfo{
 					Name:        "Exaion Baker",
-					Image:       "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/tezos/validators/assets/tz1gcna2xxZj2eNp1LaMyAhVJ49mEFj4FH26/logo.png",
+					Image:       "https://assets.trustwalletapp.com/blockchains/tezos/validators/assets/tz1gcna2xxZj2eNp1LaMyAhVJ49mEFj4FH26/logo.png",
 					Description: "Exaion is first French corporate to participate in the Tezos ecosystem as a corporate baker.",
 					Website:     "https://www.edf.fr/en/the-edf-group",
 				},
@@ -113,7 +113,7 @@ func TestNormalizeStakeValidators(t *testing.T) {
 				Status: false,
 				Info: blockatlas.StakeValidatorInfo{
 					Name:        "Coinhouse",
-					Image:       "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/tezos/validators/assets/tz1dbfppLAAxXZNtf2SDps7rch3qfUznKSoK/logo.png",
+					Image:       "https://assets.trustwalletapp.com/blockchains/tezos/validators/assets/tz1dbfppLAAxXZNtf2SDps7rch3qfUznKSoK/logo.png",
 					Description: "The reliable and safe way to invest in cryptocurrencies",
 					Website:     "https://www.coinhouse.com/",
 				},

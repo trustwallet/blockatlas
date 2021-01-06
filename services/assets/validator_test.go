@@ -124,7 +124,7 @@ var (
 
 func TestGetImage(t *testing.T) {
 	image := GetImageURL(cosmosCoin, "TGzz8gjYiYRqpfmDwnLxfgPuLVNmpCswVp")
-	expected := "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/cosmos/validators/assets/TGzz8gjYiYRqpfmDwnLxfgPuLVNmpCswVp/logo.png"
+	expected := "https://assets.trustwalletapp.com/blockchains/cosmos/validators/assets/TGzz8gjYiYRqpfmDwnLxfgPuLVNmpCswVp/logo.png"
 	assert.Equal(t, expected, image)
 }
 

@@ -2,10 +2,11 @@ package harmony
 
 import (
 	"encoding/json"
-	"github.com/stretchr/testify/assert"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"strconv"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 )
 
 const validatorSrc = `
@@ -116,7 +117,7 @@ var validator1 = blockatlas.StakeValidator{
 	Info: blockatlas.StakeValidatorInfo{
 		Name:        "Harmony One",
 		Description: "Stake and earn rewards with the most secure and stable validator. Operated by Harmony One Inc.",
-		Image:       "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/harmony/validators/assets/one1pdv9lrdwl0rg5vglh4xtyrv3wjk3wsqket7zxy/logo.png",
+		Image:       "https://assets.trustwalletapp.com/blockchains/harmony/validators/assets/one1pdv9lrdwl0rg5vglh4xtyrv3wjk3wsqket7zxy/logo.png",
 		Website:     "https://harmony.one",
 	},
 	Details: blockatlas.StakingDetails{

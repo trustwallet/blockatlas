@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	URL = "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/"
+	URL = "https://assets.trustwalletapp.com/blockchains/"
 )
 
 func GetchValidatorsInfo(coin coin.Coin) (AssetValidators, error) {

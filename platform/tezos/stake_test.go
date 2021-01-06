@@ -39,7 +39,7 @@ var stakeValidator = blockatlas.StakeValidator{
 	Info: blockatlas.StakeValidatorInfo{
 		Name:        "stake.fish",
 		Description: "Leading validator for Proof of Stake blockchains. Stake your cryptocurrencies with us. We know validating.",
-		Image:       "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/tezos/validators/assets/tz2fcnbrerxtattnx6iimr1uj5jsdxvdhm93/logo.png",
+		Image:       "https://assets.trustwalletapp.com/blockchains/tezos/validators/assets/tz2fcnbrerxtattnx6iimr1uj5jsdxvdhm93/logo.png",
 		Website:     "https://stake.fish/",
 	},
 	Details: getDetails(),

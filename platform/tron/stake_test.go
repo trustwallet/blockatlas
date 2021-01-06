@@ -2,9 +2,10 @@ package tron
 
 import (
 	"encoding/json"
+	"testing"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"testing"
 )
 
 func TestNormalizeValidator(t *testing.T) {
@@ -74,7 +75,7 @@ var validator1 = blockatlas.StakeValidator{
 	Info: blockatlas.StakeValidatorInfo{
 		Name:        "Sesameseed",
 		Description: "Sesameseed is a blockchain community providing fair and transparent representation in delegated governance by rewarding Voters for their participation on Tron and Ontology.",
-		Image:       "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/tron/validators/assets/tgzz8gjyiyrqpfmdwnlxfgpulvnmpcswvp/logo.png",
+		Image:       "https://assets.trustwalletapp.com/blockchains/tron/validators/assets/tgzz8gjyiyrqpfmdwnlxfgpulvnmpcswvp/logo.png",
 		Website:     "https://www.sesameseed.org",
 	},
 	Details: blockatlas.StakingDetails{
@@ -92,7 +93,7 @@ var validator2 = blockatlas.StakeValidator{
 	Info: blockatlas.StakeValidatorInfo{
 		Name:        "InfStones",
 		Description: "World's leading cloud infrastructure and staking as a service provicer for blockchains. Supernodes on EOS, TRON, VeChain, Ontology, LOOM, IOST and many other chains.",
-		Image:       "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/tron/validators/assets/tpmgfspxlqgom8skutrbhcdkthjrhfbgkw/logo.png",
+		Image:       "https://assets.trustwalletapp.com/blockchains/tron/validators/assets/tpmgfspxlqgom8skutrbhcdkthjrhfbgkw/logo.png",
 		Website:     "https://infstones.io/",
 	},
 	Details: blockatlas.StakingDetails{
