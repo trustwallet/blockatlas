@@ -39,6 +39,8 @@ func NormalizeStakeValidator(baker Baker, assetValidator assets.AssetValidator) 
 		status = false
 	}
 
+	amount := uint64(math.Ceil(baker.MinDelegation))
+
 	return blockatlas.StakeValidator{
 		ID:     baker.Address,
 		Status: status,
@@ -53,7 +55,7 @@ func NormalizeStakeValidator(baker Baker, assetValidator assets.AssetValidator) 
 				Annual: math.Round(baker.EstimatedRoi*10000) / 100,
 			},
 			LockTime:      LockTime,
-			MinimumAmount: blockatlas.Amount(strconv.FormatUint(baker.MinDelegation, 10)),
+			MinimumAmount: blockatlas.Amount(strconv.FormatUint(amount, 10)),
 			Type:          blockatlas.DelegationTypeDelegate,
 		},
 	}

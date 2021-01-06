@@ -103,7 +103,7 @@ func TestNormalizeStakeValidators(t *testing.T) {
 				Logo:              "https://services.tzkt.io/v1/avatars/tz1dbfppLAAxXZNtf2SDps7rch3qfUznKSoK",
 				FreeSpace:         91005.65305700002,
 				Fee:               0.08,
-				MinDelegation:     0,
+				MinDelegation:     0.1,
 				OpenForDelegation: false,
 				EstimatedRoi:      0.056598,
 				ServiceHealth:     "active",
@@ -121,7 +121,7 @@ func TestNormalizeStakeValidators(t *testing.T) {
 					Reward: blockatlas.StakingReward{
 						Annual: 5.66,
 					},
-					MinimumAmount: "0",
+					MinimumAmount: "1",
 					Type:          "delegate",
 				},
 			},

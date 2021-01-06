@@ -62,7 +62,7 @@ type (
 		Logo              string  `json:"logo"`
 		FreeSpace         float64 `json:"freeSpace"`
 		Fee               float64 `json:"fee"`
-		MinDelegation     uint64  `json:"minDelegation"`
+		MinDelegation     float64 `json:"minDelegation"`
 		OpenForDelegation bool    `json:"openForDelegation"`
 		EstimatedRoi      float64 `json:"estimatedRoi"`
 		ServiceHealth     string  `json:"serviceHealth"`
