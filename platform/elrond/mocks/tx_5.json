@@ -1,0 +1,13 @@
+{
+  "hash": "30d404cc7a42b0158b95f6adfbf9a517627d60f6c7e497c1442dfdb6460285df",
+  "nonce": 19,
+  "round": 200,
+  "value": "2",
+  "receiver": "erd1v0ce6rapup6rwma5sltyv05xhp33u543nex75a7j39vsz9m6squq6mxm7y",
+  "sender": "erd10yagg2vme2jns9zqf9xn8kl86fkc6dr063vnuj0mz2kk2jw0qwuqmfmaw0",
+  "data": "test",
+  "signature": "",
+  "timestamp": 1588757256,
+  "status": "success",
+  "fee": "5000"
+}

@@ -1,0 +1,66 @@
+{
+  "height": "1258202",
+  "txhash": "11078091D1D5BD84F4275B6CEE02170428944DB0E8EEC37E980551435F6D04C7",
+  "raw_log": "[{\"msg_index\":\"0\",\"success\":true,\"log\":\"\"}]",
+  "logs": [
+    {
+      "msg_index": "0",
+      "success": true,
+      "log": ""
+    }
+  ],
+  "gas_wanted": "200000",
+  "gas_used": "103206",
+  "tags": [
+    {
+      "key": "action",
+      "value": "delegate"
+    },
+    {
+      "key": "delegator",
+      "value": "cosmos1237l0vauhw78qtwq045jd24ay4urpec6r3xfn3"
+    },
+    {
+      "key": "destination-validator",
+      "value": "cosmosvaloper12w6tynmjzq4l8zdla3v4x0jt8lt4rcz5gk7zg2"
+    }
+  ],
+  "tx": {
+    "type": "auth/StdTx",
+    "value": {
+      "msg": [
+        {
+          "type": "cosmos-sdk/MsgDelegate",
+          "value": {
+            "delegator_address": "cosmos1237l0vauhw78qtwq045jd24ay4urpec6r3xfn3",
+            "validator_address": "cosmosvaloper12w6tynmjzq4l8zdla3v4x0jt8lt4rcz5gk7zg2",
+            "amount": {
+              "denom": "uatom",
+              "amount": "49920"
+            }
+          }
+        }
+      ],
+      "fee": {
+        "amount": [
+          {
+            "denom": "uatom",
+            "amount": "5000"
+          }
+        ],
+        "gas": "200000"
+      },
+      "signatures": [
+        {
+          "pub_key": {
+            "type": "tendermint/PubKeySecp256k1",
+            "value": "AsZL4GaIEGW6ogh1rEasxHtmirpeBnycLz4VR0rSVr9p"
+          },
+          "signature": "w6sNVzTSsE32ERbBdYYySSp6nj+4xNODuq5GKRVb8q04jMHUbx9AhuZeAhYrkvdkzOl3bD7vRYGx9P1V6yHj0A=="
+        }
+      ],
+      "memo": ""
+    }
+  },
+  "timestamp": "2019-08-01T04:10:16Z"
+}

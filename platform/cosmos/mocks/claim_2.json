@@ -1,0 +1,96 @@
+{
+  "height": "54561",
+  "txhash": "082BA88EC055A7C343A353297EAC104CE87C659E0DDD84621C9AC3C284232800",
+  "gas_wanted": "300000",
+  "gas_used": "156772",
+  "tx": {
+    "type": "cosmos-sdk/StdTx",
+    "value": {
+      "msg": [
+        {
+          "type": "cosmos-sdk/MsgWithdrawDelegationReward",
+          "value": {
+            "delegator_address": "cosmos1y6yvdel7zys8x60gz9067fjpcpygsn62ae9x46",
+            "validator_address": "cosmosvaloper12w6tynmjzq4l8zdla3v4x0jt8lt4rcz5gk7zg2"
+          }
+        },
+        {
+          "type": "cosmos-sdk/MsgDelegate",
+          "value": {
+            "delegator_address": "cosmos1y6yvdel7zys8x60gz9067fjpcpygsn62ae9x46",
+            "validator_address": "cosmosvaloper12w6tynmjzq4l8zdla3v4x0jt8lt4rcz5gk7zg2",
+            "amount": {
+              "denom": "uatom",
+              "amount": "2692326"
+            }
+          }
+        }
+      ],
+      "fee": {
+        "amount": [
+          {
+            "denom": "uatom",
+            "amount": "0"
+          }
+        ],
+        "gas": "300000"
+      },
+      "memo": "复投"
+    }
+  },
+  "timestamp": "2019-12-16T02:21:03Z",
+  "events": [
+    {
+      "type": "delegate",
+      "attributes": [
+        {
+          "key": "validator",
+          "value": "cosmosvaloper12w6tynmjzq4l8zdla3v4x0jt8lt4rcz5gk7zg2"
+        },
+        {
+          "key": "amount",
+          "value": "2692326"
+        }
+      ]
+    },
+    {
+      "type": "message",
+      "attributes": [
+        {
+          "key": "sender",
+          "value": "cosmos1jv65s3grqf6v6jl3dp4t6c9t9rk99cd88lyufl"
+        },
+        {
+          "key": "module",
+          "value": "distribution"
+        }
+      ]
+    },
+    {
+      "type": "transfer",
+      "attributes": [
+        {
+          "key": "recipient",
+          "value": "cosmos1y6yvdel7zys8x60gz9067fjpcpygsn62ae9x46"
+        },
+        {
+          "key": "amount",
+          "value": "2692701uatom"
+        }
+      ]
+    },
+    {
+      "type": "withdraw_rewards",
+      "attributes": [
+        {
+          "key": "amount",
+          "value": "2692701uatom"
+        },
+        {
+          "key": "validator",
+          "value": "cosmosvaloper12w6tynmjzq4l8zdla3v4x0jt8lt4rcz5gk7zg2"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "hash": "3D8512E02414EF5A6BC00281D945735E85DED9EF739B1DCA9EABE04D9EEC72C1",
+  "ledger_index": 49163909,
+  "date": "2019-08-06T17:58:01+00:00",
+  "tx": {
+    "TransactionType": "Payment",
+    "Flags": 2147614720,
+    "Sequence": 115,
+    "DestinationTag": 0,
+    "LastLedgerSequence": 49163911,
+    "Amount": "1000000000",
+    "Fee": "120",
+    "SendMax": {
+      "value": "0.001",
+      "currency": "USD",
+      "issuer": "rhub8VRN55s94qWKDv6jmDy1pUykJzF3wq"
+    },
+    "SigningPubKey": "030E4853E7D0B0E2D3C1233EADCB1B1C35DE75AD4AECD94AC534B3057537753B94",
+    "TxnSignature": "3045022100EBBDDB5D2F59472463CA03429DDDED4F06648FF097662697CCFF3C5C9C36091202205367A18FE65F767D6C6D256B2F7058BBA3C5D35655AD881A94EFC4BA2C2422DF",
+    "Account": "raz97dHvnyBcnYTbXGYxhV8bGyr1aPrE5w",
+    "Destination": "rna8qC8Y9uLd2vzYtSEa1AJcdD3896zQ9S",
+    "Memos": [
+      {
+        "Memo": {
+          "MemoType": "636C69656E74",
+          "MemoData": "726D2D312E322E34"
+        }
+      }
+    ]
+  },
+  "meta": {
+    "TransactionIndex": 24,
+    "DeliveredAmount": "3100",
+    "TransactionResult": "tesSUCCESS",
+    "delivered_amount": "3100"
+  }
+}

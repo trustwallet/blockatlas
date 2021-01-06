@@ -33,6 +33,7 @@ func Normalize(srcTx *Tx) (tx blockatlas.Tx) {
 		To:       srcTx.To,
 		Fee:      blockatlas.Amount(srcTx.Fee),
 		Block:    srcTx.BlockHeight,
+		Status:   blockatlas.StatusCompleted,
 		Sequence: srcTx.NonceValue(),
 		Meta: blockatlas.Transfer{
 			Value:    blockatlas.Amount(srcTx.Value),

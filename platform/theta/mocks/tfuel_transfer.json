@@ -1,0 +1,33 @@
+{
+  "hash": "0x558cb5ec877119c2c84a677277efb5b3059adb830c6e74971b3dbe93221b7132",
+  "type": 2,
+  "data": {
+    "fee": {
+      "thetawei": "0",
+      "tfuelwei": "2000000000000"
+    },
+    "inputs": [
+      {
+        "address": "0x0a7d7141e9abe5d1c760cffa1129c6eb94f35a2a",
+        "coins": {
+          "thetawei": "0",
+          "tfuelwei": "44326000000000000"
+        },
+        "sequence": "44"
+      }
+    ],
+    "outputs": [
+      {
+        "address": "0xac0eeb6ee3e32e2c74e14ac74155063e4f4f981f",
+        "coins": {
+          "thetawei": "0",
+          "tfuelwei": "44324000000000000"
+        }
+      }
+    ]
+  },
+  "number": 7785266,
+  "block_height": "700327",
+  "timestamp": "1557136821",
+  "status": "finalized"
+}

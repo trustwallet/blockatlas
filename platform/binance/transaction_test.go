@@ -16,7 +16,7 @@ func TestPlatform_GetTxsByAddress(t *testing.T) {
 	assert.Nil(t, err)
 	res, err := json.Marshal(txs)
 	assert.Nil(t, err)
-	assert.Equal(t, wantedTxs, string(res))
+	assert.JSONEq(t, wantedTxs, string(res))
 }
 
 func TestPlatform_GetTokenTxsByAddress(t *testing.T) {
@@ -28,5 +28,4 @@ func TestPlatform_GetTokenTxsByAddress(t *testing.T) {
 	res, err := json.Marshal(txs)
 	assert.Nil(t, err)
 	assert.Len(t, res, 2)
-	//assert.Equal(t, wantedTxsAva, string(res))
 }

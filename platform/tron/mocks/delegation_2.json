@@ -1,0 +1,15 @@
+{
+  "address": "419241920da7d6bb487a33a6df3838e3d208f0b251",
+  "frozen": [
+    {
+      "expire_time": 1569465251000,
+      "frozen_balance": "5000000"
+    }
+  ],
+  "votes": [
+    {
+      "vote_address": "TPMGfspxLQGom8sKutrbHcDKtHjRHFbGKw",
+      "vote_count": 5
+    }
+  ]
+}

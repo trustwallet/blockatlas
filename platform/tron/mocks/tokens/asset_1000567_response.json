@@ -1,0 +1,20 @@
+{
+  "success": true,
+  "meta": { "at": 1592754347268, "page_size": 1 },
+  "data": [
+    {
+      "id": 1000567,
+      "abbr": "os",
+      "description": "Open Decentralized Search Engine",
+      "frozen_supply": [{ "frozen_amount": 74000000000, "frozen_days": 3652 }],
+      "name": "OtonamiS",
+      "num": 100,
+      "total_supply": 99000000000,
+      "trx_num": 1000000,
+      "url": "https://OtonamiS.com",
+      "owner_address": "413cea69143b5a5b1ff15d847a7e30e3bffa6a2247",
+      "start_time": 1534773969000,
+      "end_time": 1566280800000
+    }
+  ]
+}

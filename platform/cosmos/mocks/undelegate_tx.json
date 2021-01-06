@@ -1,0 +1,71 @@
+{
+  "height": "1257037",
+  "txhash": "A1EC36741FEF681F4A77B8F6032AD081100EE5ECB4CC76AEAC2174BC6B871CFE",
+  "data": "0C0889ECF7EA0510FB9D8CAD03",
+  "raw_log": "[{\"msg_index\":\"0\",\"success\":true,\"log\":\"\"}]",
+  "logs": [
+    {
+      "msg_index": "0",
+      "success": true,
+      "log": ""
+    }
+  ],
+  "gas_wanted": "200000",
+  "gas_used": "107804",
+  "tags": [
+    {
+      "key": "action",
+      "value": "begin_unbonding"
+    },
+    {
+      "key": "delegator",
+      "value": "cosmos137rrp4p8n0nqcft0mwc62tdnyhhzf80knv5t94"
+    },
+    {
+      "key": "source-validator",
+      "value": "cosmosvaloper1te8nxpc2myjfrhaty0dnzdhs5ahdh5agzuym9v"
+    },
+    {
+      "key": "end-time",
+      "value": "2019-08-22T01:55:21Z"
+    }
+  ],
+  "tx": {
+    "type": "auth/StdTx",
+    "value": {
+      "msg": [
+        {
+          "type": "cosmos-sdk/MsgUndelegate",
+          "value": {
+            "delegator_address": "cosmos137rrp4p8n0nqcft0mwc62tdnyhhzf80knv5t94",
+            "validator_address": "cosmosvaloper1te8nxpc2myjfrhaty0dnzdhs5ahdh5agzuym9v",
+            "amount": {
+              "denom": "uatom",
+              "amount": "5100000000"
+            }
+          }
+        }
+      ],
+      "fee": {
+        "amount": [
+          {
+            "denom": "uatom",
+            "amount": "5000"
+          }
+        ],
+        "gas": "200000"
+      },
+      "signatures": [
+        {
+          "pub_key": {
+            "type": "tendermint/PubKeySecp256k1",
+            "value": "A+tPzMXCW7vxmW5VN9Q/CO+fxnEXYlSMOklDVgaFutQD"
+          },
+          "signature": "rh25A/RTm8TUTUGOGhufqxn9vLFef/04xEKMJLUD5QhBVabRADvEgAP1J842XTDtVBS0SpVD/MrPduqRp0nNzg=="
+        }
+      ],
+      "memo": ""
+    }
+  },
+  "timestamp": "2019-08-01T01:55:21Z"
+}

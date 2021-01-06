@@ -43,6 +43,7 @@ func Normalize(srcTx *Tx, assetName AssetType) (tx blockatlas.Tx, ok bool) {
 		Date:   srcTx.Time,
 		Block:  srcTx.Height,
 		Status: status,
+		Memo:   "",
 	}
 
 	switch assetName {

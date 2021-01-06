@@ -1,9 +1,10 @@
 package iotex
 
 import (
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"strconv"
 	"time"
+
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 
 	"github.com/trustwallet/golibs/coin"
 )

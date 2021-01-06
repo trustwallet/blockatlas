@@ -1,11 +1,12 @@
 package trustray
 
 import (
-	"bytes"
 	"encoding/json"
+	"testing"
+
+	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/coin"
-	"testing"
 )
 
 const tokenTransferSrc = `
@@ -218,12 +219,7 @@ func TestNormalize(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			if !bytes.Equal(resJSON, dstJSON) {
-				println("\n", "Test failed ", tt.name)
-				println("resJSON", string(resJSON))
-				println("dstJSON", string(dstJSON))
-				t.Error(tt.name + ": tx don't equal")
-			}
+			assert.JSONEq(t, string(resJSON), string(dstJSON))
 		}
 	})
 }

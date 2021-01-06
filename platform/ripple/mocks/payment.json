@@ -1,0 +1,31 @@
+{
+  "hash": "40279A3DE51148BD41409DADF29DE8DCCD50F5AEE30840827B2C4C81C4E36505",
+  "ledger_index": 34698103,
+  "date": "2017-12-01T22:45:30+00:00",
+  "tx": {
+    "TransactionType": "Payment",
+    "Flags": 2147483648,
+    "Sequence": 21,
+    "LastLedgerSequence": 34698105,
+    "DestinationTag": 2500,
+    "Amount": "100000000",
+    "Fee": "3115",
+    "SigningPubKey": "03807050F9E271B2E49B0FF658362EF37DBFDD31435E610B6E11C52879DF8A9907",
+    "TxnSignature": "3045022100D14057AA2A868F54FC7CA2E44C8310D9A944446580EAA45936A75CFFDD00425602205CCBFACB55AB0F5B02659F1EBE619FC04DE75B0227C8EB148DC6D08CABBAB072",
+    "Account": "rGSxFjoqmWz54PycrgQBQ5dB6e7TUpMxzq",
+    "Destination": "rMQ98K56yXJbDGv49ZSmW51sLn94Xe1mu1",
+    "Memos": [
+      {
+        "Memo": {
+          "MemoType": "636C69656E74",
+          "MemoFormat": "7274312E342E332D31332D6735383261336135"
+        }
+      }
+    ]
+  },
+  "meta": {
+    "TransactionIndex": 20,
+    "TransactionResult": "tesSUCCESS",
+    "delivered_amount": "100000000"
+  }
+}

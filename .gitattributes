@@ -1,1 +1,2 @@
 mock/ext-api-dyson/* linguist-vendored
+*.json linguist-vendored

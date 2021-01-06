@@ -2,8 +2,9 @@ package fio
 
 import (
 	"encoding/hex"
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestActorFromPublicKey(t *testing.T) {

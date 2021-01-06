@@ -1,0 +1,57 @@
+{
+  "node_info": {
+    "protocol_version": { "p2p": 7, "block": 10, "app": 0 },
+    "id": "46ba46d5b6fcb61b7839881a75b081123297f7cf",
+    "listen_addr": "10.212.32.84:27146",
+    "network": "Binance-Chain-Tigris",
+    "version": "0.32.3",
+    "channels": "3640202122233038",
+    "moniker": "Ararat",
+    "other": { "tx_index": "on", "rpc_address": "tcp://0.0.0.0:27147" }
+  },
+  "sync_info": {
+    "latest_block_hash": "507BB016F306906569F12883617A4231AB51DAF5FA5004C8F70B17CDF73A8B40",
+    "latest_app_hash": "A96FA3DB1FAC12D325845FFEE679EC52CB944BE4B343BC016CE4707FA63EE2BE",
+    "latest_block_height": 104867535,
+    "latest_block_time": "2020-08-03T16:32:29.834625465Z",
+    "catching_up": false
+  },
+  "validator_info": {
+    "address": "B7707D9F593C62E85BB9E1A2366D12A97CD5DFF2",
+    "pub_key": [
+      113,
+      242,
+      215,
+      184,
+      236,
+      28,
+      139,
+      153,
+      166,
+      83,
+      66,
+      155,
+      1,
+      24,
+      205,
+      32,
+      31,
+      121,
+      79,
+      64,
+      157,
+      15,
+      234,
+      77,
+      101,
+      177,
+      182,
+      98,
+      242,
+      176,
+      0,
+      99
+    ],
+    "voting_power": 1000000000000
+  }
+}
