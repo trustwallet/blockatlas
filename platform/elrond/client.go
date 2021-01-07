@@ -40,7 +40,6 @@ func (c *Client) GetBlockByNumber(height int64) (*blockatlas.Block, error) {
 
 	return &blockatlas.Block{
 		Number: int64(block.Nonce),
-		ID:     block.Hash,
 		Txs:    txs,
 	}, nil
 }

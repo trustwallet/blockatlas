@@ -19,21 +19,21 @@ func (s *EthereumSpecific) GetStatus() (blockatlas.Status, string) {
 	}
 }
 
-func (t *Transaction) FromAddress() string {
-	if len(t.Vin) > 0 && len(t.Vin[0].Addresses) > 0 {
-		return t.Vin[0].Addresses[0]
+func (transaction *Transaction) FromAddress() string {
+	if len(transaction.Vin) > 0 && len(transaction.Vin[0].Addresses) > 0 {
+		return transaction.Vin[0].Addresses[0]
 	}
 	return ""
 }
 
-func (t *Transaction) GetFee() string {
-	status, _ := t.EthereumSpecific.GetStatus()
+func (transaction *Transaction) GetFee() string {
+	status, _ := transaction.EthereumSpecific.GetStatus()
 	if status != blockatlas.StatusPending {
-		return t.Fees
+		return transaction.Fees
 	}
 
-	gasLimit := t.EthereumSpecific.GasLimit
-	gasPrice, ok := new(big.Int).SetString(t.EthereumSpecific.GasPrice, 10)
+	gasLimit := transaction.EthereumSpecific.GasLimit
+	gasPrice, ok := new(big.Int).SetString(transaction.EthereumSpecific.GasPrice, 10)
 	if gasLimit == nil || !ok {
 		return "0"
 	}
@@ -41,9 +41,9 @@ func (t *Transaction) GetFee() string {
 	return fee.String()
 }
 
-func (t *Transaction) ToAddress() string {
-	if len(t.Vout) > 0 && len(t.Vout[0].Addresses) > 0 {
-		return t.Vout[0].Addresses[0]
+func (transaction *Transaction) ToAddress() string {
+	if len(transaction.Vout) > 0 && len(transaction.Vout[0].Addresses) > 0 {
+		return transaction.Vout[0].Addresses[0]
 	}
 	return ""
 }

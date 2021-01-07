@@ -6,6 +6,8 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/trustwallet/blockatlas/platform/ethereum/blockbook"
+
 	mapset "github.com/deckarep/golang-set"
 	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
@@ -239,7 +241,7 @@ func TestNormalizeTransfer(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		var transaction Transaction
+		var transaction blockbook.Transaction
 
 		rErr := json.Unmarshal([]byte(test.RawTx), &transaction)
 		if rErr != nil {
@@ -273,15 +275,15 @@ func TestNormalizeTransfer(t *testing.T) {
 
 func TestTransactionStatus(t *testing.T) {
 	tests := []struct {
-		Tx       Transaction
+		Tx       blockbook.Transaction
 		Expected blockatlas.Status
 	}{
-		{Transaction{Confirmations: 0}, blockatlas.StatusPending},
-		{Transaction{Confirmations: 1}, blockatlas.StatusCompleted},
+		{blockbook.Transaction{Confirmations: 0}, blockatlas.StatusPending},
+		{blockbook.Transaction{Confirmations: 1}, blockatlas.StatusCompleted},
 	}
 
 	for _, test := range tests {
-		assert.Equal(t, test.Expected, test.Tx.getStatus())
+		assert.Equal(t, test.Expected, test.Tx.GetStatus())
 	}
 }
 
@@ -367,7 +369,7 @@ func TestParseOutputs(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		var outputs []Output
+		var outputs []blockbook.Output
 		_ = json.Unmarshal([]byte(tt.outputs), &outputs)
 		want := parseOutputs(outputs)
 		t.Run(tt.name, func(t *testing.T) {

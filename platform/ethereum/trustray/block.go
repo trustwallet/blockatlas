@@ -1,8 +1,6 @@
 package trustray
 
 import (
-	"strconv"
-
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 )
 
@@ -17,7 +15,6 @@ func (c *Client) GetBlockByNumber(num int64, coinIndex uint) (*blockatlas.Block,
 	}
 	return &blockatlas.Block{
 		Number: num,
-		ID:     strconv.FormatInt(num, 10),
 		Txs:    txs,
 	}, nil
 }

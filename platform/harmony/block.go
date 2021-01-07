@@ -23,7 +23,6 @@ func (p *Platform) NormalizeBlock(block *BlockInfo) blockatlas.Block {
 		return blockatlas.Block{}
 	}
 	return blockatlas.Block{
-		ID:     block.Hash,
 		Number: int64(blockNumber),
 		Txs:    NormalizeTxs(block.Transactions),
 	}

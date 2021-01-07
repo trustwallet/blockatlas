@@ -21,7 +21,6 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 func NormalizeBlock(srcBlock *Block) blockatlas.Block {
 	return blockatlas.Block{
 		Number: srcBlock.Number,
-		ID:     srcBlock.Hash,
 		Txs:    NormalizeTxs(srcBlock.Txs),
 	}
 }

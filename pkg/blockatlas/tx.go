@@ -60,9 +60,8 @@ type (
 	KeyTitle        string
 
 	Block struct {
-		Number int64  `json:"number"`
-		ID     string `json:"id,omitempty"`
-		Txs    []Tx   `json:"txs"`
+		Number int64 `json:"number"`
+		Txs    []Tx  `json:"txs"`
 	}
 
 	// TxPage is a page of transactions

@@ -24,7 +24,7 @@ func (c *Client) GetTokenTxs(address, token string, coinIndex uint) (blockatlas.
 	return NormalizePage(page, address, token, coinIndex), nil
 }
 
-func NormalizePage(srcPage *Page, address, token string, coinIndex uint) (txs blockatlas.TxPage) {
+func NormalizePage(srcPage TransactionsList, address, token string, coinIndex uint) (txs blockatlas.TxPage) {
 	normalizedAddr, err := Address.EIP55Checksum(address)
 	if err != nil {
 		return
@@ -46,7 +46,7 @@ func NormalizePage(srcPage *Page, address, token string, coinIndex uint) (txs bl
 func normalizeTx(srcTx *Transaction, coinIndex uint) blockatlas.Tx {
 	status, errReason := srcTx.EthereumSpecific.GetStatus()
 	normalized := blockatlas.Tx{
-		ID:       srcTx.TxID,
+		ID:       srcTx.ID,
 		Coin:     coinIndex,
 		From:     srcTx.FromAddress(),
 		To:       srcTx.ToAddress(),
