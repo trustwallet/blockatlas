@@ -196,7 +196,7 @@ func FetchBlocks(params Params, lastParsedBlock, currentBlock int64) ([]blockatl
 			"tags": raven.Tags{
 				{Key: "coin", Value: params.Api.Coin().Handle},
 			},
-		}).Error("Fetch blocks errors")
+		}).Error("Fetch Blocks Errors")
 
 		return []blockatlas.Block{}, fmt.Errorf("unable to fetch blocks: %d: %d", lastParsedBlock, currentBlock)
 	}
