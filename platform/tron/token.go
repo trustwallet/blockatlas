@@ -57,7 +57,7 @@ func (p *Platform) getTokens(ids []string) chan blockatlas.Token {
 		wg.Add(1)
 		go func(i string, c chan blockatlas.Token) {
 			defer wg.Done()
-			p.getTokensChannel(i, c)
+			_ = p.getTokensChannel(i, c)
 		}(id, tkChan)
 	}
 	wg.Wait()
