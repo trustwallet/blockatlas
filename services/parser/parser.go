@@ -82,7 +82,14 @@ func parse(params Params) {
 
 	err = SaveLastParsedBlock(params, blocks)
 	if err != nil {
-		log.WithFields(log.Fields{"operation": "run SaveLastParsedBlock", "coin": params.Api.Coin().Handle}).Error(err)
+		log.WithFields(log.Fields{
+			"operation":       "run SaveLastParsedBlock",
+			"coin":            params.Api.Coin().Handle,
+			"blocks":          blocks,
+			"lastParsedBlock": lastParsedBlock,
+			"currentBlock":    currentBlock,
+			"tags":            raven.Tags{{Key: "coin", Value: params.Api.Coin().Handle}},
+		}).Error(err)
 		time.Sleep(params.ParsingBlocksInterval)
 		return
 	}
@@ -189,7 +196,16 @@ func FetchBlocks(params Params, lastParsedBlock, currentBlock int64) ([]blockatl
 		for err := range errorsChan {
 			errorsList = append(errorsList, err)
 		}
-		log.WithFields(log.Fields{"coin": params.Api.Coin().Handle, "count": len(errorsList), "blocks": errorsList}).Error("Fetch blocks errors")
+		log.WithFields(log.Fields{
+			"coin":   params.Api.Coin().Handle,
+			"count":  len(errorsList),
+			"blocks": errorsList,
+			"tags": raven.Tags{
+				{Key: "coin", Value: params.Api.Coin().Handle},
+			},
+		}).Error("Fetch Blocks Errors")
+
+		return []blockatlas.Block{}, fmt.Errorf("unable to fetch blocks: %d: %d", lastParsedBlock, currentBlock)
 	}
 
 	blocks := make([]blockatlas.Block, 0, len(blocksChan))

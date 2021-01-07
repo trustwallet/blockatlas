@@ -20,7 +20,6 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 	}
 	return &blockatlas.Block{
 		Number: num,
-		ID:     block.Id,
 		Txs:    txs,
 	}, nil
 }

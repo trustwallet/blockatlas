@@ -9,7 +9,7 @@ type (
 	Subscription struct {
 		ID        uint `gorm:"primaryKey;"`
 		CreatedAt time.Time
-		Address   string `gorm:"uniqueIndex:idx_address; type:varchar(128); not null;"`
+		Address   string `gorm:"uniqueIndex:idx_address; type:varchar(256); not null;"`
 	}
 
 	SubscriptionsAssetAssociation struct {

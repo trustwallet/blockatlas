@@ -3,6 +3,8 @@ package bitcoin
 import (
 	"sort"
 
+	"github.com/trustwallet/blockatlas/platform/bitcoin/blockbook"
+
 	mapset "github.com/deckarep/golang-set"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/coin"
@@ -46,7 +48,7 @@ func (p *Platform) getTxsByXpub(xpub string) ([]blockatlas.Tx, error) {
 }
 
 func (p *Platform) getTxsByAddress(address string) ([]blockatlas.Tx, error) {
-	sourceTxs, err := p.client.GetTransactions(address)
+	sourceTxs, err := p.client.GetTxs(address)
 	if err != nil {
 		return []blockatlas.Tx{}, err
 	}
@@ -56,7 +58,7 @@ func (p *Platform) getTxsByAddress(address string) ([]blockatlas.Tx, error) {
 	return txs, nil
 }
 
-func normalizeTxs(sourceTxs TransactionsList, coinIndex uint, addressSet mapset.Set) []blockatlas.Tx {
+func normalizeTxs(sourceTxs blockbook.TransactionsList, coinIndex uint, addressSet mapset.Set) []blockatlas.Tx {
 	var txs []blockatlas.Tx
 	for _, transaction := range sourceTxs.TransactionList() {
 		if tx, ok := normalizeTransfer(transaction, coinIndex, addressSet); ok {
@@ -66,7 +68,7 @@ func normalizeTxs(sourceTxs TransactionsList, coinIndex uint, addressSet mapset.
 	return txs
 }
 
-func normalizeTransfer(transaction Transaction, coinIndex uint, addressSet mapset.Set) (tx blockatlas.Tx, ok bool) {
+func normalizeTransfer(transaction blockbook.Transaction, coinIndex uint, addressSet mapset.Set) (tx blockatlas.Tx, ok bool) {
 	tx = normalizeTransaction(transaction, coinIndex)
 	direction := blockatlas.InferDirection(&tx, addressSet)
 	value := blockatlas.InferValue(&tx, direction, addressSet)
@@ -81,7 +83,7 @@ func normalizeTransfer(transaction Transaction, coinIndex uint, addressSet mapse
 	return tx, true
 }
 
-func normalizeTransaction(tx Transaction, coinIndex uint) blockatlas.Tx {
+func normalizeTransaction(tx blockbook.Transaction, coinIndex uint) blockatlas.Tx {
 	inputs := parseOutputs(tx.Vin)
 	outputs := parseOutputs(tx.Vout)
 	from := ""
@@ -104,10 +106,10 @@ func normalizeTransaction(tx Transaction, coinIndex uint) blockatlas.Tx {
 		Inputs:   inputs,
 		Outputs:  outputs,
 		Fee:      fees,
-		Date:     int64(tx.BlockTime),
+		Date:     tx.BlockTime,
 		Type:     blockatlas.TxTransfer,
 		Block:    tx.GetBlockHeight(),
-		Status:   tx.getStatus(),
+		Status:   tx.GetStatus(),
 		Sequence: 0,
 		Meta: blockatlas.Transfer{
 			Value:    amount,
@@ -117,7 +119,7 @@ func normalizeTransaction(tx Transaction, coinIndex uint) blockatlas.Tx {
 	}
 }
 
-func parseOutputs(outputs []Output) (addresses []blockatlas.TxOutput) {
+func parseOutputs(outputs []blockbook.Output) (addresses []blockatlas.TxOutput) {
 	set := make(map[string]*blockatlas.TxOutput)
 	var ordered []string
 	for _, output := range outputs {
@@ -139,11 +141,4 @@ func parseOutputs(outputs []Output) (addresses []blockatlas.TxOutput) {
 		addresses = append(addresses, *set[val])
 	}
 	return addresses
-}
-
-func (transaction *Transaction) getStatus() blockatlas.Status {
-	if transaction.Confirmations == 0 {
-		return blockatlas.StatusPending
-	}
-	return blockatlas.StatusCompleted
 }

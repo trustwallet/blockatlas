@@ -365,14 +365,14 @@ func TestNormalizePage(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		var page Page
+		var page TransactionsList
 		var txPage blockatlas.TxPage
 		err := json.Unmarshal([]byte(tt.args.srcPage), &page)
 		assert.Nil(t, err)
 		err = json.Unmarshal([]byte(tt.want), &txPage)
 		assert.Nil(t, err)
 		t.Run(tt.name, func(t *testing.T) {
-			got := NormalizePage(&page, tt.args.address, tt.args.token, tt.args.coinIndex)
+			got := NormalizePage(page, tt.args.address, tt.args.token, tt.args.coinIndex)
 			gotJson, err := json.Marshal(got)
 			assert.Nil(t, err)
 			gotTxPage, err := json.Marshal(txPage)

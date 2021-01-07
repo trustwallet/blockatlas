@@ -18,7 +18,6 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 }
 func (p *Platform) NormalizeBlock(block *Block) blockatlas.Block {
 	return blockatlas.Block{
-		ID:     block.Ledger.Id,
 		Number: block.Ledger.Sequence,
 		Txs:    p.NormalizePayments(block.Payments),
 	}
