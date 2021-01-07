@@ -189,7 +189,14 @@ func FetchBlocks(params Params, lastParsedBlock, currentBlock int64) ([]blockatl
 		for err := range errorsChan {
 			errorsList = append(errorsList, err)
 		}
-		log.WithFields(log.Fields{"coin": params.Api.Coin().Handle, "count": len(errorsList), "blocks": errorsList}).Error("Fetch blocks errors")
+		log.WithFields(log.Fields{
+			"coin":   params.Api.Coin().Handle,
+			"count":  len(errorsList),
+			"blocks": errorsList,
+			"tags": raven.Tags{
+				{Key: "coin", Value: params.Api.Coin().Handle},
+			},
+		}).Error("Fetch blocks errors")
 
 		return []blockatlas.Block{}, fmt.Errorf("unable to fetch blocks: %d: %d", lastParsedBlock, currentBlock)
 	}
