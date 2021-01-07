@@ -2,7 +2,7 @@ package bitcoin
 
 import (
 	"github.com/trustwallet/blockatlas/internal"
-	"github.com/trustwallet/blockatlas/platform/ethereum/blockbook"
+	"github.com/trustwallet/blockatlas/platform/binance/blockbook"
 	"github.com/trustwallet/golibs/coin"
 )
 

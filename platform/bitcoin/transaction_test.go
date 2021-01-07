@@ -6,7 +6,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/trustwallet/blockatlas/platform/ethereum/blockbook"
+	"github.com/trustwallet/blockatlas/platform/binance/blockbook"
 
 	mapset "github.com/deckarep/golang-set"
 	"github.com/stretchr/testify/assert"

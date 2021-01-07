@@ -2,7 +2,7 @@ package ethereum
 
 import (
 	"github.com/trustwallet/blockatlas/internal"
-	"github.com/trustwallet/blockatlas/platform/ethereum/blockbook"
+	"github.com/trustwallet/blockatlas/platform/binance/blockbook"
 	"github.com/trustwallet/blockatlas/platform/ethereum/collection"
 	"github.com/trustwallet/blockatlas/platform/ethereum/trustray"
 	"github.com/trustwallet/golibs/coin"
