@@ -83,10 +83,12 @@ func parse(params Params) {
 	err = SaveLastParsedBlock(params, blocks)
 	if err != nil {
 		log.WithFields(log.Fields{
-			"operation": "run SaveLastParsedBlock",
-			"coin":      params.Api.Coin().Handle,
-			"blocks":    blocks,
-			"tags":      raven.Tags{{Key: "coin", Value: params.Api.Coin().Handle}},
+			"operation":       "run SaveLastParsedBlock",
+			"coin":            params.Api.Coin().Handle,
+			"blocks":          blocks,
+			"lastParsedBlock": lastParsedBlock,
+			"currentBlock":    currentBlock,
+			"tags":            raven.Tags{{Key: "coin", Value: params.Api.Coin().Handle}},
 		}).Error(err)
 		time.Sleep(params.ParsingBlocksInterval)
 		return
