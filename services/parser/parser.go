@@ -93,7 +93,14 @@ func parse(params Params) {
 	}
 	txs = blockatlas.TxPage(txs).FilterTransactionsByMemo()
 
-	publish(params, txs)
+	err = publish(params, txs)
+	if err != nil {
+		log.WithFields(log.Fields{
+			"coin":         params.Api.Coin().Handle,
+			"transactions": len(txs),
+			"error":        err,
+		}).Info("Publish Error")
+	}
 
 	log.WithFields(log.Fields{
 		"coin":         params.Api.Coin().Handle,
@@ -238,24 +245,18 @@ func SaveLastParsedBlock(params Params, blocks []blockatlas.Block) error {
 	return nil
 }
 
-func publish(params Params, txs blockatlas.Txs) {
+func publish(params Params, txs blockatlas.Txs) error {
 
 	if len(txs) == 0 {
-		return
+		return nil
 	}
 
 	body, err := json.Marshal(txs)
 	if err != nil {
 		log.WithFields(log.Fields{"operation": "publish marshal", "coin": params.Api.Coin().Handle}).Error(err)
-		return
+		return err
 	}
-
-	// Notify transactions queue
-	err = params.TransactionsExchange.Publish(body)
-	if err != nil {
-		log.WithFields(log.Fields{"operation": "publish transactionsQueue", "coin": params.Api.Coin().Handle}).Error(err)
-		return
-	}
+	return params.TransactionsExchange.Publish(body)
 }
 
 func getBlockByNumberWithRetry(attempts int, sleep time.Duration, getBlockByNumber GetBlockByNumber, n int64, symbol string) (*blockatlas.Block, error) {

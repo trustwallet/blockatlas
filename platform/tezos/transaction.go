@@ -1,7 +1,6 @@
 package tezos
 
 import (
-	log "github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/coin"
 	"github.com/trustwallet/golibs/numbers"
@@ -11,7 +10,6 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 	txTypes := []string{TxTypeTransaction, TxTypeDelegation}
 	txs, err := p.client.GetTxsOfAddress(address, txTypes)
 	if err != nil {
-		log.WithFields(log.Fields{"txType": txTypes, "addr": address}).Error("GetAddrTxs", err)
 		return nil, err
 	}
 

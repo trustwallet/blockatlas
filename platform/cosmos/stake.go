@@ -1,12 +1,13 @@
 package cosmos
 
 import (
+	"strconv"
+	"time"
+
 	log "github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/services/assets"
 	"github.com/trustwallet/golibs/coin"
-	"strconv"
-	"time"
 )
 
 const (
@@ -67,7 +68,6 @@ func (p *Platform) GetDetails() blockatlas.StakingDetails {
 func (p *Platform) GetMaxAPR() float64 {
 	validators, err := p.GetValidators()
 	if err != nil {
-		log.WithFields(log.Fields{"details": err, "platform": p.Coin().Symbol}).Error("GetMaxAPR")
 		return blockatlas.DefaultAnnualReward
 	}
 

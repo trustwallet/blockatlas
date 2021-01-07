@@ -5,9 +5,7 @@ import (
 	"strconv"
 
 	"github.com/getsentry/raven-go"
-
 	log "github.com/sirupsen/logrus"
-
 	"github.com/trustwallet/golibs/client"
 )
 
@@ -16,18 +14,18 @@ type Client struct {
 }
 
 var errorHandler = func(res *http.Response, uri string) error {
+	statusCode := res.StatusCode
 	//Improve ways to identify if worth logging the error
-	if res.StatusCode == http.StatusOK || res.StatusCode == http.StatusNotFound {
-		return nil
+	if statusCode != http.StatusOK && statusCode != http.StatusNotFound {
+		log.WithFields(log.Fields{
+			"tags": raven.Tags{
+				{Key: "status_code", Value: strconv.Itoa(res.StatusCode)},
+				{Key: "host", Value: res.Request.Host},
+				{Key: "url", Value: uri},
+			},
+			"fingerprint": []string{"client_errors"},
+		}).Error("Client Errors")
 	}
-	log.WithFields(log.Fields{
-		"tags": raven.Tags{
-			{Key: "status_code", Value: strconv.Itoa(res.StatusCode)},
-			{Key: "host", Value: res.Request.Host},
-			{Key: "url", Value: uri},
-		},
-		"fingerprint": []string{"client_errors"},
-	}).Error("Client Errors")
 
 	return nil
 }
