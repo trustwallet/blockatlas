@@ -32,7 +32,7 @@ func RunSubscriber(database *db.Instance, delivery amqp.Delivery) error {
 	case AddSubscription:
 		err := database.CreateSubscriptions(subscriptions)
 		if err != nil {
-			log.WithFields(log.Fields{"service": Notifications, "operation": event.Operation, "subscriptions": len(subscriptions)}).Error(err)
+			log.WithFields(log.Fields{"service": Notifications, "operation": event.Operation, "subscriptions": subscriptions}).Error(err)
 			return err
 		}
 		log.WithFields(log.Fields{"service": Notifications, "operation": event.Operation, "subscriptions": len(subscriptions)}).Info("Add subscriptions")
