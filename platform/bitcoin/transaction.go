@@ -3,7 +3,7 @@ package bitcoin
 import (
 	"sort"
 
-	"github.com/trustwallet/blockatlas/platform/binance/blockbook"
+	"github.com/trustwallet/blockatlas/platform/bitcoin/blockbook"
 
 	mapset "github.com/deckarep/golang-set"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
