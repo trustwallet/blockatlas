@@ -1,0 +1,19 @@
+{
+  "number": 104867508,
+  "txs": [
+    {
+      "id": "9B87D17581F2AC73D2999EDE56535E50D9D4DB75150A92A90122190F77D47755",
+      "coin": 714,
+      "from": "bnb1c4czpzvn0ttdcpnv3cy2858l2m9frxdfgk4jr0",
+      "to": "bnb1g2ukzn702napq3levm54m2z3p2gam7upern9aq",
+      "fee": "37500",
+      "date": 1596472337,
+      "block": 104867508,
+      "status": "completed",
+      "sequence": 6,
+      "type": "transfer",
+      "memo": "",
+      "metadata": { "value": "24481570", "symbol": "BNB", "decimals": 8 }
+    }
+  ]
+}

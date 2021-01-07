@@ -6,47 +6,47 @@ import (
 
 func TestMatchQueryParams(t *testing.T) {
 	tests := [][]string{
-		[]string{
+		{
 			"a=1&b=20",
 			"a=1&b=20",
 			"true",
 		},
-		[]string{
+		{
 			"a=1&b=20",
 			"a=1&b=20&c=3",
 			"true",
 		},
-		[]string{
+		{
 			"a=1&b=20",
 			"b=20&a=1",
 			"true",
 		},
-		[]string{
+		{
 			"a=1&b=20",
 			"a=1&b=500",
 			"false",
 		},
-		[]string{
+		{
 			"a=1&b=20",
 			"a=123&b=20",
 			"false",
 		},
-		[]string{
+		{
 			"a=1&b=20",
 			"a=1",
 			"false",
 		},
-		[]string{
+		{
 			"a=1&b=20",
 			"b=20",
 			"false",
 		},
-		[]string{
+		{
 			"",
 			"c=500",
 			"true",
 		},
-		[]string{
+		{
 			"",
 			"",
 			"true",

@@ -1,0 +1,98 @@
+[
+  {
+    "name": "FomoThreeD",
+    "symbol": "FOM",
+    "decimals": 0,
+    "token_id": "1000542",
+    "coin": 195,
+    "type": "TRC10"
+  },
+  {
+    "name": "OtonamiS",
+    "symbol": "OS",
+    "decimals": 0,
+    "token_id": "1000567",
+    "coin": 195,
+    "type": "TRC10"
+  },
+  {
+    "name": "JUST GOV",
+    "symbol": "JST",
+    "decimals": 18,
+    "token_id": "TCFLL5dx5ZJdKnWuesXxi1VPwjLVmWZZy9",
+    "coin": 195,
+    "type": "TRC20"
+  },
+  {
+    "name": "Enme Token",
+    "symbol": "EME",
+    "decimals": 6,
+    "token_id": "TCRhVHPv6efvXgogNMhiunAMXFKcMmv2pF",
+    "coin": 195,
+    "type": "TRC20"
+  },
+  {
+    "name": "BeeHive",
+    "symbol": "BEE",
+    "decimals": 8,
+    "token_id": "TG7Z1ptC7nRkaniDVRhHSyLycaroaS5PdK",
+    "coin": 195,
+    "type": "TRC20"
+  },
+  {
+    "name": "Mono Token",
+    "symbol": "MONO",
+    "decimals": 18,
+    "token_id": "TLKyLt4MXuvvdFvUUc3Zma4rZyj2t87Mak",
+    "coin": 195,
+    "type": "TRC20"
+  },
+  {
+    "name": "WINK",
+    "symbol": "WIN",
+    "decimals": 6,
+    "token_id": "TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
+    "coin": 195,
+    "type": "TRC20"
+  },
+  {
+    "name": "PYRO Network",
+    "symbol": "PYRO",
+    "decimals": 6,
+    "token_id": "TMCMPzmosnQ8UAYW1zcBwjLTxDq8ce4Y5e",
+    "coin": 195,
+    "type": "TRC20"
+  },
+  {
+    "name": "NoleCoin",
+    "symbol": "NOLE",
+    "decimals": 6,
+    "token_id": "TPt8DTDBZYfJ9fuyRjdWJr4PP68tRfptLG",
+    "coin": 195,
+    "type": "TRC20"
+  },
+  {
+    "name": "Tether USD",
+    "symbol": "USDT",
+    "decimals": 6,
+    "token_id": "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+    "coin": 195,
+    "type": "TRC20"
+  },
+  {
+    "name": "Wuhan Fried Bats",
+    "symbol": "WUHAN",
+    "decimals": 4,
+    "token_id": "TSzjFRf8bQ46kRndWaHYKSq1P5HzRJfPvr",
+    "coin": 195,
+    "type": "TRC20"
+  },
+  {
+    "name": "HelGro",
+    "symbol": "HGRO",
+    "decimals": 6,
+    "token_id": "TTvVC9jv5AfDdHuGeCMcQg6QftmNnfQiVm",
+    "coin": 195,
+    "type": "TRC20"
+  }
+]

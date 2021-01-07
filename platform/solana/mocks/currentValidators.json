@@ -1,0 +1,38 @@
+[
+  {
+    "activatedStake": 3733867423940,
+    "commission": 100,
+    "epochCredits": [
+      [70, 524224, 516032],
+      [71, 532416, 524224],
+      [72, 540608, 532416],
+      [73, 548800, 540608],
+      [74, 556992, 548800],
+      [75, 565184, 556992],
+      [76, 573376, 565184],
+      [77, 581568, 573376],
+      [78, 589760, 581568],
+      [79, 597952, 589760],
+      [80, 601055, 597952]
+    ],
+    "epochVoteAccount": true,
+    "lastVote": 601085,
+    "nodePubkey": "boot1Z6jb15CLqpaMTn2CxktktwZpRAVAgHZEW6SxQ7",
+    "rootSlot": 601054,
+    "votePubkey": "2Afu38M1KaSfDBpjZjnJb9BSWP6YkBkoPiBfnFedD7JW"
+  },
+  {
+    "activatedStake": 10540011934,
+    "commission": 100,
+    "epochCredits": [
+      [78, 4760, 0],
+      [79, 12952, 4760],
+      [80, 16055, 12952]
+    ],
+    "epochVoteAccount": true,
+    "lastVote": 601085,
+    "nodePubkey": "B52Da5MCyTcyVJEsR9RUnbf715YuBAJMxCEEPzyZXgvY",
+    "rootSlot": 601054,
+    "votePubkey": "5CgQubGD1uwodwCe5UXDADbC69SiqXR8qq6pDMSm7ut5"
+  }
+]

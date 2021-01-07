@@ -1,0 +1,59 @@
+{
+  "blockHeight": 105529271,
+  "tx": [
+    {
+      "txHash": "432FF828B1DC1C4DAF13A51B6AE7ADD9932B7FC6526C28F7FE9C905F95472820",
+      "blockHeight": 105529271,
+      "txType": "CANCEL_ORDER",
+      "timeStamp": "2020-08-06T20:38:46.583Z",
+      "fromAddr": "bnb1z35wusfv8twfele77vddclka9z84ugywug48gn",
+      "toAddr": null,
+      "value": null,
+      "txAsset": null,
+      "txFee": null,
+      "code": 0,
+      "data": "{\"orderData\":{\"orderId\":\"1468EE412C3ADC9CFF3EF31ADC7EDD288F5E208E-11315084\"}}",
+      "memo": "",
+      "source": 0,
+      "sequence": 11317170
+    },
+    {
+      "txHash": "CC7C3EF1407373FDA74B005E64683AB5865126DE93A5FAF755FF5CC948992067",
+      "blockHeight": 105529271,
+      "txType": "TRANSFER",
+      "timeStamp": "2020-08-06T20:38:46.583Z",
+      "fromAddr": null,
+      "toAddr": null,
+      "value": null,
+      "txAsset": null,
+      "txFee": null,
+      "code": 0,
+      "data": null,
+      "memo": "0",
+      "source": 1,
+      "sequence": 2300,
+      "subTransactions": [
+        {
+          "txHash": "CC7C3EF1407373FDA74B005E64683AB5865126DE93A5FAF755FF5CC948992067",
+          "blockHeight": 105529271,
+          "txType": "TRANSFER",
+          "fromAddr": "bnb15qced76xere38hmmpe644u5kd8v4lzl9gsex9w",
+          "toAddr": "bnb15qced76xere38hmmpe644u5kd8v4lzl9gsex9w",
+          "txAsset": "BNB",
+          "txFee": "0.00060000",
+          "value": "0.00000001"
+        },
+        {
+          "txHash": "CC7C3EF1407373FDA74B005E64683AB5865126DE93A5FAF755FF5CC948992067",
+          "blockHeight": 105529271,
+          "txType": "TRANSFER",
+          "fromAddr": "bnb1t38ccns9var4ac4yj2ylmu99r9ecmggr8ye5e5",
+          "toAddr": "bnb136ns6lfw4zs5hg4n85vdthaad7hq5m4gtkgf23",
+          "txAsset": "BNB",
+          "txFee": null,
+          "value": "0.39421249"
+        }
+      ]
+    }
+  ]
+}

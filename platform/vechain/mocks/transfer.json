@@ -1,0 +1,13 @@
+{
+  "sender": "0xb5e883349e68ab59307d1604555ac890fac47128",
+  "recipient": "0x2c7a8d5cce0d5e6a8a31233b7dc3dae9aae4b405",
+  "amount": "0x12b1815d00738000",
+  "meta": {
+    "blockID": "0x004313a4bd4286e821b684cc1749deb3df12fa2a8114435fbd35baa155e82016",
+    "blockNumber": 4395940,
+    "blockTimestamp": 1574410670,
+    "txID": "0x702edd54bd4e13e0012798cc8b2dfa52f7150173945103d203fae26b8e3d2ed7",
+    "txOrigin": "0xb5e883349e68ab59307d1604555ac890fac47128",
+    "clauseIndex": 0
+  }
+}

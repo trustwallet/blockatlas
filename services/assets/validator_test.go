@@ -22,6 +22,7 @@ var (
 			Status: true,
 		},
 	}
+
 	assets1 = []AssetValidator{
 		{
 			ID:          "test1",
@@ -38,6 +39,7 @@ var (
 			Status:      ValidatorStatus{Disabled: true},
 		},
 	}
+
 	assets2 = []AssetValidator{
 		{
 			ID:          "test1",
@@ -72,6 +74,7 @@ var (
 			Staking:     StakingInfo{MinDelegation: 10},
 		},
 	}
+
 	expectTezosVal1 = blockatlas.StakeValidator{
 		ID: "test1", Status: true,
 		Info: blockatlas.StakeValidatorInfo{
@@ -84,6 +87,7 @@ var (
 			MinimumAmount: blockatlas.Amount("10"),
 		},
 	}
+
 	expectedCosmosStakeValidator = blockatlas.StakeValidator{
 		ID: "test1", Status: true,
 		Info: blockatlas.StakeValidatorInfo{
@@ -96,6 +100,7 @@ var (
 			MinimumAmount: blockatlas.Amount("0"),
 		},
 	}
+
 	expectedCosmosStakeValidatorDisabled1 = blockatlas.StakeValidator{
 		ID: "test1", Status: false,
 		Info: blockatlas.StakeValidatorInfo{
@@ -108,6 +113,7 @@ var (
 			MinimumAmount: blockatlas.Amount("0"),
 		},
 	}
+
 	expectedCosmosStakeValidatorDisabled2 = blockatlas.StakeValidator{
 		ID: "test2", Status: false,
 		Info: blockatlas.StakeValidatorInfo{

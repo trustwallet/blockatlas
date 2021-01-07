@@ -1,9 +1,10 @@
 package tezos
 
 import (
+	"testing"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"testing"
 )
 
 var (

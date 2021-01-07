@@ -2,9 +2,10 @@ package kava
 
 import (
 	"encoding/json"
+	"testing"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"testing"
 
 	"github.com/trustwallet/golibs/coin"
 )

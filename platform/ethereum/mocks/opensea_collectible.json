@@ -1,0 +1,24 @@
+[
+  {
+    "token_id": "54277541829991970107421667568590323026590803461896874578610080514640537714688",
+    "image_url": "https://storage.opensea.io/0xfaafdc07907ff5120a76b34b731b278c38d6043c/54277541829991970107421667568590323026590803461896874578610080514640537714688-1564858806.png",
+    "image_preview_url": "https://storage.opensea.io/0xfaafdc07907ff5120a76b34b731b278c38d6043c-preview/54277541829991970107421667568590323026590803461896874578610080514640537714688-1564858807.png",
+    "name": "Rustbits",
+    "description": "Rustbits are the main token of use within the Age of Rust game universe. You need Rustbits to not only play Age of Rust, but also to purchase in-game cryptoitems as well. Rustbits are radioactive rust scraped off of hulls of abandoned ships that are in orbit around a hidden planet, which is also a gas giant. The planet is so radioactive, it damages ships and kills anyone that gets close to it. Getting bits of rust off of ships is highly rare and prized.",
+    "external_link": "",
+    "asset_contract": {
+      "address": "0xfaafdc07907ff5120a76b34b731b278c38d6043c",
+      "name": "Enjin",
+      "external_link": null,
+      "nft_version": null,
+      "schema_name": "ERC1155",
+      "display_data": {}
+    },
+    "collection": {
+      "slug": "age-of-rust",
+      "name": "Age of Rust",
+      "external_url": "https://opensea.io/"
+    },
+    "permalink": "https://opensea.io/assets/0xfaafdc07907ff5120a76b34b731b278c38d6043c/54277541829991970107421667568590323026590803461896874578610080514640537714688"
+  }
+]

@@ -1,0 +1,8 @@
+{
+  "hash": "3D8512E02414EF5A6BC00281D945735E85DED9EF739B1DCA9EABE04D9EEC72C1",
+  "ledger_index": 49163909,
+  "date": "2019-08-06T17:58:01+00:00",
+  "tx": {
+    "TransactionType": "SetRegularKey"
+  }
+}

@@ -1,10 +1,11 @@
 package trustray
 
 import (
-	"bytes"
 	"encoding/json"
-	"github.com/trustwallet/golibs/tokentype"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/trustwallet/golibs/tokentype"
 
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/coin"
@@ -160,9 +161,5 @@ func testNormalizeToken(t *testing.T, _test *testToken) {
 		t.Fatal(err)
 	}
 
-	if !bytes.Equal(resJSON, dstJSON) {
-		println(string(resJSON))
-		println(string(dstJSON))
-		t.Error("token: token don't equal")
-	}
+	assert.JSONEq(t, string(resJSON), string(dstJSON))
 }

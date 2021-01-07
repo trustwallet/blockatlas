@@ -55,6 +55,7 @@ func normalizeBlockTx(num, timestamp uint64, msg rpc.SecpkMessage) blockatlas.Tx
 		Status:   blockatlas.StatusCompleted,
 		Sequence: uint64(msg.Message.Nonce),
 		Type:     blockatlas.TxTransfer,
+		Memo:     "",
 		Meta: blockatlas.Transfer{
 			Value:    blockatlas.Amount(msg.Message.Value),
 			Symbol:   coin.Filecoin().Symbol,

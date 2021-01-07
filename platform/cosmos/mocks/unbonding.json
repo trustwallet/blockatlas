@@ -1,0 +1,14 @@
+[
+  {
+    "delegator_address": "cosmos135qla4294zxarqhhgxsx0sw56yssa3z0f78pm0",
+    "validator_address": "cosmosvaloper1qwl879nx9t6kef4supyazayf7vjhennyh568ys",
+    "entries": [
+      {
+        "creation_height": "0",
+        "completion_time": "2020-01-01T06:54:18.441436491Z",
+        "initial_balance": "109999",
+        "balance": "109999"
+      }
+    ]
+  }
+]

@@ -1,0 +1,34 @@
+{
+  "hash": "1D849E3A0041357EE373C7E17C9564F890047475492D9530B5F20A3BD6D95822",
+  "ledger_index": 49841027,
+  "date": "2019-09-06T01:48:32+00:00",
+  "tx": {
+    "TransactionType": "Payment",
+    "Flags": 2147942400,
+    "Sequence": 292765,
+    "LastLedgerSequence": 49841035,
+    "Amount": {
+      "value": "100000",
+      "currency": "ETH",
+      "issuer": "rJavT3eWaX9FubZFHtCvymJ6ZhSgJdMyNx"
+    },
+    "Fee": "162",
+    "SendMax": "100000000000",
+    "Account": "r4NT6UfELQyoS689VLye22B3SfgvpM3nHY",
+    "Destination": "rJavT3eWaX9FubZFHtCvymJ6ZhSgJdMyNx"
+  },
+  "meta": {
+    "TransactionIndex": 16,
+    "DeliveredAmount": {
+      "value": "533.92",
+      "currency": "ETH",
+      "issuer": "rJavT3eWaX9FubZFHtCvymJ6ZhSgJdMyNx"
+    },
+    "TransactionResult": "tesSUCCESS",
+    "delivered_amount": {
+      "value": "533.92",
+      "currency": "ETH",
+      "issuer": "rJavT3eWaX9FubZFHtCvymJ6ZhSgJdMyNx"
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "txHash": "0x34b8b6ec3a52710c24074f5e298f4a9c67bb61a0a1dde20e695efaeb30ff3754",
+  "height": 357832,
+  "createDate": "2019-04-16T06:36:34.000+0000",
+  "fromAddr": "hx1b8959dd5c57d2c502e22ee0a887d33baec09091",
+  "toAddr": "cx334db6519871cb2bfd154cec0905ced4ea142de1",
+  "txType": "1",
+  "dataType": "call",
+  "amount": "0.00347",
+  "fee": "0.0017476",
+  "state": 1,
+  "targetContractAddr": "cx334db6519871cb2bfd154cec0905ced4ea142de1",
+  "id": 730841
+}
