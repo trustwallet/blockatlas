@@ -31,7 +31,7 @@ func (c *Client) GetCurrentBlock() (int64, error) {
 
 func (c *Client) GetBlockByNumber(num int64, txType []string) ([]Transaction, error) {
 	var blockOps ExplorerAccount
-	path := fmt.Sprintf("account/%d/op", num)
+	path := fmt.Sprintf("block/%d/op", num)
 	types := strings.Join(txType, ",")
 
 	err := c.Get(&blockOps, path, url.Values{
