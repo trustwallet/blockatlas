@@ -64,12 +64,18 @@ func GetInterval(value int, minInterval, maxInterval time.Duration) time.Duratio
 
 func parse(params Params) {
 	lastParsedBlock, currentBlock, err := GetBlocksIntervalToFetch(params)
-	if err != nil || lastParsedBlock > currentBlock {
+	if err != nil {
 		log.WithFields(log.Fields{
-			"operation": "fetch GetBlocksIntervalToFetch",
-			"coin":      params.Api.Coin().Handle,
-			"tags":      raven.Tags{{Key: "coin", Value: params.Api.Coin().Handle}},
-		}).Error(err)
+			"coin":            params.Api.Coin().Handle,
+			"lastParsedBlock": lastParsedBlock,
+			"currentBlock":    currentBlock,
+			"tags":            raven.Tags{{Key: "coin", Value: params.Api.Coin().Handle}},
+		}).Error("Fetch Blocks Interval")
+		time.Sleep(params.ParsingBlocksInterval)
+		return
+	}
+
+	if lastParsedBlock > currentBlock {
 		time.Sleep(params.ParsingBlocksInterval)
 		return
 	}
