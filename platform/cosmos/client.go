@@ -6,7 +6,6 @@ import (
 	"strconv"
 	"time"
 
-	log "github.com/sirupsen/logrus"
 	"github.com/trustwallet/golibs/client"
 )
 
@@ -71,7 +70,7 @@ func (c *Client) GetDelegations(address string) (delegations Delegations, err er
 	path := fmt.Sprintf("staking/delegators/%s/delegations", address)
 	err = c.Get(&delegations, path, nil)
 	if err != nil {
-		log.Error(err, "Cosmos: Failed to get delegations for address")
+		return delegations, err
 	}
 	return
 }
@@ -80,7 +79,7 @@ func (c *Client) GetUnbondingDelegations(address string) (delegations UnbondingD
 	path := fmt.Sprintf("staking/delegators/%s/unbonding_delegations", address)
 	err = c.Get(&delegations, path, nil)
 	if err != nil {
-		log.Error(err, "Cosmos: Failed to get unbonding delegations for address")
+		return delegations, err
 	}
 	return
 }
