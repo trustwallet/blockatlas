@@ -56,7 +56,7 @@ func (i *Instance) CreateSubscriptionsAssets(associations []models.Subscriptions
 	if len(associations) == 0 {
 		return nil
 	}
-	return i.Gorm.
-		Clauses(clause.OnConflict{DoNothing: true}).
-		Create(&associations).Error
+	return i.Gorm.Transaction(func(tx *gorm.DB) error {
+		return tx.Clauses(clause.OnConflict{DoNothing: true}).Create(&associations).Error
+	})
 }
