@@ -16,11 +16,6 @@ type (
 		Coin    uint   `json:"coin"`
 		Address string `json:"address"`
 	}
-
-	CoinStatus struct {
-		Height int64  `json:"height"`
-		Error  string `json:"error,omitempty"`
-	}
 )
 
 func (v *Subscription) AddressID() string {
