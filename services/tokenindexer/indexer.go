@@ -19,7 +19,7 @@ const (
 func RunTokenIndexer(database *db.Instance, delivery amqp.Delivery) error {
 	txs, err := notifier.GetTransactionsFromDelivery(delivery, TokenIndexer)
 	if err != nil {
-		log.WithFields(log.Fields{"service": TokenIndexer}).Error("failed to get transactions", err)
+		log.WithFields(log.Fields{"service": TokenIndexer, "txs": txs}).Error("failed to get transactions: ", err)
 		return err
 	}
 	txs = txs.FilterTransactionsByType([]blockatlas.TransactionType{
