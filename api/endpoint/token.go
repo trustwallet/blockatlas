@@ -1,6 +1,7 @@
 package endpoint
 
 import (
+	"errors"
 	"net/http"
 	"strconv"
 
@@ -64,12 +65,12 @@ func GetNewTokens(c *gin.Context, instance tokenindexer.Instance) {
 
 	from, err := strconv.Atoi(fromRaw)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, errorResponse(err))
+		c.AbortWithStatusJSON(http.StatusBadRequest, errorResponse(errors.New("invalid from param")))
 		return
 	}
 	request.From = int64(from)
 
-	resp, err := instance.HandleNewTokensRequest(request)
+	resp, err := instance.GetNewTokensRequest(request)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, errorResponse(err))
 		return

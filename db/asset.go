@@ -124,8 +124,10 @@ func (i *Instance) addToMemory(newAssets []models.Asset) {
 func (i *Instance) GetAssetsFrom(from time.Time) ([]models.Asset, error) {
 	var dbAssets []models.Asset
 	if err := i.Gorm.
-		Find(&dbAssets, "created_at > ?", from).
-		Limit(10000).Error; err != nil {
+		Where("created_at > ?", from).
+		Order("created_at desc").
+		Limit(1000).
+		Find(&dbAssets).Error; err != nil {
 		return nil, err
 	}
 	return dbAssets, nil
