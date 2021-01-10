@@ -14,8 +14,7 @@ import (
 
 func (i *Instance) GetAsset(assetId string) (models.Asset, error) {
 	var asset models.Asset
-	err := i.Gorm.
-		First(&asset, "asset = ?", assetId).Error
+	err := i.Gorm.First(&asset, "asset = ?", assetId).Error
 	if err != nil {
 		return asset, err
 	}
@@ -75,7 +74,9 @@ func (i *Instance) AddNewAssets(assets []models.Asset) error {
 	}
 	if len(existingAssets) == 0 {
 		i.addToMemory(notInMemoryAssets)
-		return i.Gorm.Clauses(clause.OnConflict{DoNothing: true}).Create(&notInMemoryAssets).Error
+		return i.Gorm.Transaction(func(tx *gorm.DB) error {
+			return tx.Clauses(clause.OnConflict{DoNothing: true}).Create(&notInMemoryAssets).Error
+		})
 	}
 	allAssetsMap := make(map[string]models.Asset)
 	for _, ua := range notInMemoryAssets {
@@ -98,13 +99,7 @@ func (i *Instance) AddNewAssets(assets []models.Asset) error {
 	i.addToMemory(newAssets)
 
 	return i.Gorm.Transaction(func(tx *gorm.DB) error {
-		for _, na := range newAssets {
-			err := tx.Clauses(clause.OnConflict{DoNothing: true}).Create(&na).Error
-			if err != nil {
-				return err
-			}
-		}
-		return nil
+		return tx.Clauses(clause.OnConflict{DoNothing: true}).Create(&newAssets).Error
 	})
 }
 
