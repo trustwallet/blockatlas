@@ -11,9 +11,9 @@ import (
 )
 
 var (
-	validatorSrc, _            = mock.JsonFromFilePathToString("mocks/" + "validator.json")
-	delegationsSrc, _          = mock.JsonFromFilePathToString("mocks/" + "delegation.json")
-	unbondingDelegationsSrc, _ = mock.JsonFromFilePathToString("mocks/" + "unbonding.json")
+	validatorSrc, _            = mock.JsonStringFromFilePath("mocks/" + "validator.json")
+	delegationsSrc, _          = mock.JsonStringFromFilePath("mocks/" + "delegation.json")
+	unbondingDelegationsSrc, _ = mock.JsonStringFromFilePath("mocks/" + "unbonding.json")
 	stakingPool                = Pool{"1222", "200"}
 	cosmosValidator            = Validator{Commission: CosmosCommission{CosmosCommissionRates{Rate: "0.4"}}}
 	inflation                  = 0.7

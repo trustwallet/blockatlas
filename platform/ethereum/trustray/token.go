@@ -1,11 +1,11 @@
 package trustray
 
 import (
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/tokentype"
+	"github.com/trustwallet/golibs/txtype"
 )
 
-func (c *Client) GetTokenList(address string, coinIndex uint) (blockatlas.TokenPage, error) {
+func (c *Client) GetTokenList(address string, coinIndex uint) (txtype.TokenPage, error) {
 	account, err := c.GetTokens(address)
 	if err != nil {
 		return nil, err
@@ -14,10 +14,10 @@ func (c *Client) GetTokenList(address string, coinIndex uint) (blockatlas.TokenP
 }
 
 // NormalizeToken converts a Ethereum token into the generic model
-func NormalizeToken(srcToken *Contract, coinIndex uint) blockatlas.Token {
+func NormalizeToken(srcToken *Contract, coinIndex uint) txtype.Token {
 	tokenType := tokentype.GetEthereumTokenTypeByIndex(coinIndex)
 
-	return blockatlas.Token{
+	return txtype.Token{
 		Name:     srcToken.Name,
 		Symbol:   srcToken.Symbol,
 		TokenID:  srcToken.Address,
@@ -28,8 +28,8 @@ func NormalizeToken(srcToken *Contract, coinIndex uint) blockatlas.Token {
 }
 
 // NormalizeTxs converts multiple Ethereum tokens
-func NormalizeTokens(srcTokens []Contract, coinIndex uint) []blockatlas.Token {
-	tokenPage := make([]blockatlas.Token, 0)
+func NormalizeTokens(srcTokens []Contract, coinIndex uint) []txtype.Token {
+	tokenPage := make([]txtype.Token, 0)
 	for _, srcToken := range srcTokens {
 		token := NormalizeToken(&srcToken, coinIndex)
 		tokenPage = append(tokenPage, token)

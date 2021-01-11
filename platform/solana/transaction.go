@@ -4,11 +4,11 @@ import (
 	"errors"
 	"strconv"
 
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/golibs/txtype"
 )
 
-func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
-	results := make(blockatlas.TxPage, 0)
+func (p *Platform) GetTxsByAddress(address string) (txtype.TxPage, error) {
+	results := make(txtype.TxPage, 0)
 	txs, err := p.client.GetTransactions(address)
 	if err != nil {
 		return results, err
@@ -21,7 +21,7 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 	return results, nil
 }
 
-func (p *Platform) NormalizeTx(tx ConfirmedTransaction, address string) (normalized blockatlas.Tx, err error) {
+func (p *Platform) NormalizeTx(tx ConfirmedTransaction, address string) (normalized txtype.Tx, err error) {
 
 	// only check first instruction
 	if len(tx.Transaction.Message.Instructions) != 1 || len(tx.Transaction.Signatures) != 1 {
@@ -36,30 +36,30 @@ func (p *Platform) NormalizeTx(tx ConfirmedTransaction, address string) (normali
 
 	// tx direction
 	from := instruction.Parsed.Info.Source
-	direction := blockatlas.DirectionIncoming
+	direction := txtype.DirectionIncoming
 	if address == from {
-		direction = blockatlas.DirectionOutgoing
+		direction = txtype.DirectionOutgoing
 	}
 
 	// tx status
-	status := blockatlas.StatusCompleted
+	status := txtype.StatusCompleted
 	if tx.Meta.Err != nil {
-		status = blockatlas.StatusError
+		status = txtype.StatusError
 	}
 
-	normalized = blockatlas.Tx{
+	normalized = txtype.Tx{
 		ID:        tx.Transaction.Signatures[0],
 		Coin:      p.Coin().ID,
 		From:      from,
 		To:        instruction.Parsed.Info.Destination,
-		Fee:       blockatlas.Amount(strconv.FormatUint(tx.Meta.Fee, 10)),
+		Fee:       txtype.Amount(strconv.FormatUint(tx.Meta.Fee, 10)),
 		Date:      EstimateTimestamp(tx.Slot),
 		Block:     tx.Slot,
 		Status:    status,
-		Type:      blockatlas.TxTransfer,
+		Type:      txtype.TxTransfer,
 		Direction: direction,
-		Meta: blockatlas.Transfer{
-			Value:    blockatlas.Amount(strconv.FormatUint(instruction.Parsed.Info.Lamports, 10)),
+		Meta: txtype.Transfer{
+			Value:    txtype.Amount(strconv.FormatUint(instruction.Parsed.Info.Lamports, 10)),
 			Symbol:   p.Coin().Symbol,
 			Decimals: p.Coin().Decimals,
 		},

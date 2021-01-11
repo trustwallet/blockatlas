@@ -4,8 +4,8 @@ import (
 	"net/url"
 	"strconv"
 
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/client"
+	"github.com/trustwallet/golibs/txtype"
 )
 
 type Client struct {
@@ -15,7 +15,7 @@ type Client struct {
 func (c *Client) GetAddressTransactions(address string) ([]Tx, error) {
 	query := url.Values{
 		"address": {address},
-		"count":   {strconv.Itoa(blockatlas.TxPerPage)},
+		"count":   {strconv.Itoa(txtype.TxPerPage)},
 	}
 	var res Response
 	err := c.Get(&res, "address/txList", query)

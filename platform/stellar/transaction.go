@@ -3,12 +3,12 @@ package stellar
 import (
 	"time"
 
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/coin"
 	"github.com/trustwallet/golibs/numbers"
+	"github.com/trustwallet/golibs/txtype"
 )
 
-func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
+func (p *Platform) GetTxsByAddress(address string) (txtype.TxPage, error) {
 	payments, err := p.client.GetTxsOfAddress(address)
 	if err != nil {
 		return nil, err
@@ -17,8 +17,8 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 	return p.NormalizePayments(payments), nil
 }
 
-func (p *Platform) NormalizePayments(payments []Payment) []blockatlas.Tx {
-	txs := make([]blockatlas.Tx, 0, len(payments))
+func (p *Platform) NormalizePayments(payments []Payment) []txtype.Tx {
+	txs := make([]txtype.Tx, 0, len(payments))
 	for _, payment := range payments {
 		if tx, ok := Normalize(&payment, p.CoinIndex); ok {
 			txs = append(txs, tx)
@@ -28,7 +28,7 @@ func (p *Platform) NormalizePayments(payments []Payment) []blockatlas.Tx {
 }
 
 // Normalize converts a Stellar-based transaction into the generic model
-func Normalize(payment *Payment, nativeCoinIndex uint) (tx blockatlas.Tx, ok bool) {
+func Normalize(payment *Payment, nativeCoinIndex uint) (tx txtype.Tx, ok bool) {
 	switch payment.Type {
 	case PaymentType:
 		if payment.AssetType != Native {
@@ -58,7 +58,7 @@ func Normalize(payment *Payment, nativeCoinIndex uint) (tx blockatlas.Tx, ok boo
 	if err != nil {
 		return tx, false
 	}
-	return blockatlas.Tx{
+	return txtype.Tx{
 		ID:    payment.TransactionHash,
 		Coin:  nativeCoinIndex,
 		From:  from,
@@ -67,8 +67,8 @@ func Normalize(payment *Payment, nativeCoinIndex uint) (tx blockatlas.Tx, ok boo
 		Date:  date.Unix(),
 		Memo:  payment.Transaction.Memo,
 		Block: payment.Transaction.Ledger,
-		Meta: blockatlas.Transfer{
-			Value:    blockatlas.Amount(value),
+		Meta: txtype.Transfer{
+			Value:    txtype.Amount(value),
 			Symbol:   coin.Coins[nativeCoinIndex].Symbol,
 			Decimals: coin.Coins[nativeCoinIndex].Decimals,
 		},

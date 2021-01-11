@@ -1,13 +1,13 @@
 package waves
 
 import (
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"strconv"
 
 	"github.com/trustwallet/golibs/coin"
+	"github.com/trustwallet/golibs/txtype"
 )
 
-func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
+func (p *Platform) GetTxsByAddress(address string) (txtype.TxPage, error) {
 	addressTxs, err := p.client.GetTxs(address, 25)
 	if err != nil {
 		return nil, err
@@ -18,10 +18,10 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 	return txs, nil
 }
 
-func NormalizeTxs(srcTxs []Transaction) (txs []blockatlas.Tx) {
+func NormalizeTxs(srcTxs []Transaction) (txs []txtype.Tx) {
 	for _, srcTx := range srcTxs {
 		tx, ok := NormalizeTx(&srcTx)
-		if !ok || len(txs) >= blockatlas.TxPerPage {
+		if !ok || len(txs) >= txtype.TxPerPage {
 			continue
 		}
 		txs = append(txs, tx)
@@ -29,22 +29,22 @@ func NormalizeTxs(srcTxs []Transaction) (txs []blockatlas.Tx) {
 	return
 }
 
-func NormalizeTx(srcTx *Transaction) (tx blockatlas.Tx, ok bool) {
-	var result blockatlas.Tx
+func NormalizeTx(srcTx *Transaction) (tx txtype.Tx, ok bool) {
+	var result txtype.Tx
 
 	if srcTx.Type == 4 && len(srcTx.AssetId) == 0 {
-		result = blockatlas.Tx{
+		result = txtype.Tx{
 			ID:     srcTx.Id,
 			Coin:   coin.WAVES,
 			From:   srcTx.Sender,
 			To:     srcTx.Recipient,
-			Fee:    blockatlas.Amount(strconv.Itoa(int(srcTx.Fee))),
+			Fee:    txtype.Amount(strconv.Itoa(int(srcTx.Fee))),
 			Date:   int64(srcTx.Timestamp) / 1000,
 			Block:  srcTx.Block,
 			Memo:   srcTx.Attachment,
-			Status: blockatlas.StatusCompleted,
-			Meta: blockatlas.Transfer{
-				Value:    blockatlas.Amount(strconv.Itoa(int(srcTx.Amount))),
+			Status: txtype.StatusCompleted,
+			Meta: txtype.Transfer{
+				Value:    txtype.Amount(strconv.Itoa(int(srcTx.Amount))),
 				Symbol:   coin.Coins[coin.WAVES].Symbol,
 				Decimals: coin.Coins[coin.WAVES].Decimals,
 			},

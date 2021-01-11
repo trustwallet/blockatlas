@@ -2,9 +2,11 @@ package endpoint
 
 import (
 	"errors"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"net/http"
+	"github.com/trustwallet/golibs/txtype"
 )
 
 // @Summary Get Transactions
@@ -27,7 +29,7 @@ func GetTransactionsHistory(c *gin.Context, txAPI blockatlas.TxAPI, tokenTxAPI b
 	token := c.Query("token")
 
 	var (
-		txs []blockatlas.Tx
+		txs []txtype.Tx
 		err error
 	)
 
@@ -73,8 +75,8 @@ func GetTransactionsHistory(c *gin.Context, txAPI blockatlas.TxAPI, tokenTxAPI b
 		}
 	}
 	var (
-		page        = make(blockatlas.TxPage, 0)
-		filteredTxs = blockatlas.Txs(txs).FilterUniqueID().SortByDate()
+		page        = make(txtype.TxPage, 0)
+		filteredTxs = txtype.Txs(txs).FilterUniqueID().SortByDate()
 	)
 	for _, tx := range filteredTxs {
 		tx.Direction = tx.GetTransactionDirection(address)
@@ -86,8 +88,8 @@ func GetTransactionsHistory(c *gin.Context, txAPI blockatlas.TxAPI, tokenTxAPI b
 		page = page.FilterTransactionsByToken(token)
 	}
 
-	if len(page) > blockatlas.TxPerPage {
-		page = page[0:blockatlas.TxPerPage]
+	if len(page) > txtype.TxPerPage {
+		page = page[0:txtype.TxPerPage]
 	}
 
 	c.JSON(http.StatusOK, &page)
@@ -141,12 +143,12 @@ func GetTransactionsByXpub(c *gin.Context, api blockatlas.TxUtxoAPI) {
 		}
 	}
 	var (
-		filteredTxs = blockatlas.Txs(txs).FilterUniqueID().SortByDate()
-		page        = blockatlas.TxPage(filteredTxs)
+		filteredTxs = txtype.Txs(txs).FilterUniqueID().SortByDate()
+		page        = txtype.TxPage(filteredTxs)
 	)
 	page = page.FilterTransactionsByMemo()
-	if len(page) > blockatlas.TxPerPage {
-		page = page[0:blockatlas.TxPerPage]
+	if len(page) > txtype.TxPerPage {
+		page = page[0:txtype.TxPerPage]
 	}
 
 	c.JSON(http.StatusOK, &page)

@@ -5,8 +5,8 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/coin"
+	"github.com/trustwallet/golibs/txtype"
 )
 
 const tokenTransferSrc = `
@@ -114,7 +114,7 @@ var (
 	addr2     = "0xaA4D790076f1Bf7511a0A0AC498C89e13e1eFE17"
 	contract1 = "0xf3586684107CE0859c44aa2b2E0fB8cd8731a15a"
 )
-var tokenTransferDst = blockatlas.Tx{
+var tokenTransferDst = txtype.Tx{
 	ID:       "0x7777854580f273df61e0162e1a41b3e1e05ab8b9f553036fa9329a90dd7e9ab2",
 	Coin:     coin.ETH,
 	From:     addr1,
@@ -123,8 +123,8 @@ var tokenTransferDst = blockatlas.Tx{
 	Date:     1554248437,
 	Block:    7491945,
 	Sequence: 88,
-	Status:   blockatlas.StatusCompleted,
-	Meta: blockatlas.TokenTransfer{
+	Status:   txtype.StatusCompleted,
+	Meta: txtype.TokenTransfer{
 		Name:     "KaratBank Coin",
 		Symbol:   "KBC",
 		TokenID:  contract1,
@@ -135,7 +135,7 @@ var tokenTransferDst = blockatlas.Tx{
 	},
 }
 
-var contractCallDst = blockatlas.Tx{
+var contractCallDst = txtype.Tx{
 	ID:       "0x34ab0028a9aa794d5cc12887e7b813cec17889948276b301028f24a408da6da4",
 	Coin:     coin.ETH,
 	From:     "0xc9a16a82c284EFC3cB0fE8C891ab85d6EBa0EeFB",
@@ -144,14 +144,14 @@ var contractCallDst = blockatlas.Tx{
 	Date:     1554661737,
 	Block:    7522627,
 	Sequence: 534,
-	Status:   blockatlas.StatusCompleted,
-	Meta: blockatlas.ContractCall{
+	Status:   txtype.StatusCompleted,
+	Meta: txtype.ContractCall{
 		Input: "0xfffdefefed",
 		Value: "1800000000000000000",
 	},
 }
 
-var transferDst = blockatlas.Tx{
+var transferDst = txtype.Tx{
 	ID:       "0x77f8a3b2203933493d103a1637de814b4853410b1fb2981c4d2cff4d7a3071ab",
 	Coin:     coin.ETH,
 	From:     "0xf5AeA47E57c058881B31EE8fcE1002C409188F06",
@@ -160,15 +160,15 @@ var transferDst = blockatlas.Tx{
 	Date:     1554663642,
 	Block:    7522781,
 	Sequence: 88,
-	Status:   blockatlas.StatusCompleted,
-	Meta: blockatlas.Transfer{
+	Status:   txtype.StatusCompleted,
+	Meta: txtype.Transfer{
 		Value:    "1999895000000000000",
 		Symbol:   "ETH",
 		Decimals: 18,
 	},
 }
 
-var failedDst = blockatlas.Tx{
+var failedDst = txtype.Tx{
 	ID:       "0x8dfe7e859f7bdcea4e6f4ada18567d96a51c3aa29e618ef09b80ae99385e191e",
 	Coin:     coin.ETH,
 	From:     "0x4b55af7cE28A113D794F9A9940fe1506f37aA619",
@@ -177,9 +177,9 @@ var failedDst = blockatlas.Tx{
 	Date:     1554662399,
 	Block:    7522678,
 	Sequence: 1,
-	Status:   blockatlas.StatusError,
+	Status:   txtype.StatusError,
 	Error:    "Error",
-	Meta: blockatlas.Transfer{
+	Meta: txtype.Transfer{
 		Value:    "59859820000000000",
 		Symbol:   "ETH",
 		Decimals: 18,
@@ -191,7 +191,7 @@ func TestNormalize(t *testing.T) {
 		doc   Doc
 		tests = []struct {
 			name, apiResponse string
-			expected          *blockatlas.Tx
+			expected          *txtype.Tx
 		}{
 			{"transfer", transferSrc, &transferDst},
 			{"token transfer", tokenTransferSrc, &tokenTransferDst},
@@ -214,7 +214,7 @@ func TestNormalize(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			dstJSON, err := json.Marshal([]blockatlas.Tx{*tt.expected})
+			dstJSON, err := json.Marshal([]txtype.Tx{*tt.expected})
 			if err != nil {
 				t.Fatal(err)
 			}

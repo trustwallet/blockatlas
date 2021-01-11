@@ -5,53 +5,53 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/coin"
 	"github.com/trustwallet/golibs/mock"
+	"github.com/trustwallet/golibs/txtype"
 )
 
 var (
-	transferSrc, _    = mock.JsonFromFilePathToString("mocks/" + "transfer.json")
-	trxId, _          = mock.JsonFromFilePathToString("mocks/" + "tx_id.json")
-	transferLogSrc, _ = mock.JsonFromFilePathToString("mocks/" + "transfer_log.json")
-	trxReceipt, _     = mock.JsonFromFilePathToString("mocks/" + "transfer_receipt.json")
+	transferSrc, _    = mock.JsonStringFromFilePath("mocks/" + "transfer.json")
+	trxId, _          = mock.JsonStringFromFilePath("mocks/" + "tx_id.json")
+	transferLogSrc, _ = mock.JsonStringFromFilePath("mocks/" + "transfer_log.json")
+	trxReceipt, _     = mock.JsonStringFromFilePath("mocks/" + "transfer_receipt.json")
 
-	expectedTransfer = blockatlas.Tx{
+	expectedTransfer = txtype.Tx{
 		ID:        "0x702edd54bd4e13e0012798cc8b2dfa52f7150173945103d203fae26b8e3d2ed7",
 		Coin:      coin.VET,
 		From:      "0xB5e883349e68aB59307d1604555AC890fAC47128",
 		To:        "0x2c7A8d5ccE0d5E6a8a31233B7Dc3DAE9AaE4b405",
 		Date:      1574410670,
-		Type:      blockatlas.TxTransfer,
-		Fee:       blockatlas.Amount("21000"),
-		Status:    blockatlas.StatusCompleted,
+		Type:      txtype.TxTransfer,
+		Fee:       txtype.Amount("21000"),
+		Status:    txtype.StatusCompleted,
 		Block:     4395940,
-		Direction: blockatlas.DirectionOutgoing,
-		Meta: blockatlas.Transfer{
-			Value:    blockatlas.Amount("1347000000000000000"),
+		Direction: txtype.DirectionOutgoing,
+		Meta: txtype.Transfer{
+			Value:    txtype.Amount("1347000000000000000"),
 			Decimals: 18,
 			Symbol:   "VET",
 		},
 	}
-	expectedTransferLog = blockatlas.TxPage{
+	expectedTransferLog = txtype.TxPage{
 		{
 			ID:        "0x42f5eba46ddcc458243c753545a3faa849502d078efbc5b74baddea9e6ea5b04",
 			Coin:      coin.VET,
 			From:      "0x2c7A8d5ccE0d5E6a8a31233B7Dc3DAE9AaE4b405",
 			To:        "0x0000000000000000000000000000456E65726779",
 			Date:      1574278180,
-			Type:      blockatlas.TxTokenTransfer,
-			Fee:       blockatlas.Amount("36582000000000000000"),
-			Status:    blockatlas.StatusCompleted,
+			Type:      txtype.TxTokenTransfer,
+			Fee:       txtype.Amount("36582000000000000000"),
+			Status:    txtype.StatusCompleted,
 			Block:     4382764,
-			Direction: blockatlas.DirectionIncoming,
-			Meta: blockatlas.TokenTransfer{
+			Direction: txtype.DirectionIncoming,
+			Meta: txtype.TokenTransfer{
 				Name:     gasTokenName,
 				Symbol:   gasTokenSymbol,
 				TokenID:  "0x0000000000000000000000000000456E65726779",
 				From:     "0x2c7A8d5ccE0d5E6a8a31233B7Dc3DAE9AaE4b405",
 				To:       "0xB5e883349e68aB59307d1604555AC890fAC47128",
-				Value:    blockatlas.Amount("68000000000000000000"),
+				Value:    txtype.Amount("68000000000000000000"),
 				Decimals: 18,
 			},
 		},
@@ -64,7 +64,7 @@ func TestNormalizeTransaction(t *testing.T) {
 		addr     string
 		txData   string
 		txId     string
-		expected blockatlas.Tx
+		expected txtype.Tx
 	}{
 		{"Test normalize VET transfer transaction", "0xb5e883349e68ab59307d1604555ac890fac47128", transferSrc, trxId, expectedTransfer},
 	}
@@ -94,7 +94,7 @@ func TestNormalizeTokenTransaction(t *testing.T) {
 		name      string
 		txData    string
 		txReceipt string
-		expected  blockatlas.TxPage
+		expected  txtype.TxPage
 	}{
 		{"Normalize VIP180 token transfer", transferLogSrc, trxReceipt, expectedTransferLog},
 	}
@@ -170,12 +170,12 @@ func Test_getTokenTransactionDirectory(t *testing.T) {
 		originSender string
 		topicsFrom   string
 		topicsTo     string
-		expected     blockatlas.Direction
+		expected     txtype.Direction
 		expectErr    bool
 	}{
-		{"Self direction", addr1, addr1, addr1, blockatlas.DirectionSelf, false},
-		{"In direction", addr1, addr1, addr2, blockatlas.DirectionIncoming, false},
-		{"Out direction", addr1, addr2, addr1, blockatlas.DirectionOutgoing, false},
+		{"Self direction", addr1, addr1, addr1, txtype.DirectionSelf, false},
+		{"In direction", addr1, addr1, addr2, txtype.DirectionIncoming, false},
+		{"Out direction", addr1, addr2, addr1, txtype.DirectionOutgoing, false},
 		{"Unknown direction", addr1, addr2, addr2, "", true},
 	}
 
@@ -198,13 +198,13 @@ func Test_getTransferDirectory(t *testing.T) {
 		sender    string
 		recipient string
 		address   string
-		expected  blockatlas.Direction
+		expected  txtype.Direction
 		expectErr bool
 	}{
-		{"Self direction for addr1", addr1, addr1, addr1, blockatlas.DirectionSelf, false},
-		{"Self direction for addr2", addr2, addr2, addr2, blockatlas.DirectionSelf, false},
-		{"Out direction", addr1, addr2, addr1, blockatlas.DirectionOutgoing, false},
-		{"In direction", addr1, addr2, addr2, blockatlas.DirectionIncoming, false},
+		{"Self direction for addr1", addr1, addr1, addr1, txtype.DirectionSelf, false},
+		{"Self direction for addr2", addr2, addr2, addr2, txtype.DirectionSelf, false},
+		{"Out direction", addr1, addr2, addr1, txtype.DirectionOutgoing, false},
+		{"In direction", addr1, addr2, addr2, txtype.DirectionIncoming, false},
 	}
 
 	for _, tt := range tests {

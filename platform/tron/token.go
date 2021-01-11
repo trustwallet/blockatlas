@@ -6,17 +6,17 @@ import (
 	"sync"
 
 	log "github.com/sirupsen/logrus"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/coin"
 	"github.com/trustwallet/golibs/tokentype"
+	"github.com/trustwallet/golibs/txtype"
 )
 
-func (p *Platform) GetTokenListByAddress(address string) (blockatlas.TokenPage, error) {
+func (p *Platform) GetTokenListByAddress(address string) (txtype.TokenPage, error) {
 	tokens, err := p.client.fetchAccount(address)
 	if err != nil {
 		return nil, err
 	}
-	tokenPage := make(blockatlas.TokenPage, 0)
+	tokenPage := make(txtype.TokenPage, 0)
 	if len(tokens.Data) == 0 {
 		return tokenPage, nil
 	}
@@ -37,7 +37,7 @@ func (p *Platform) GetTokenListByAddress(address string) (blockatlas.TokenPage, 
 	}
 
 	for _, t := range trc20Tokens {
-		tokenPage = append(tokenPage, blockatlas.Token{
+		tokenPage = append(tokenPage, txtype.Token{
 			Name:     t.Name,
 			Symbol:   strings.ToUpper(t.Symbol),
 			Decimals: uint(t.Decimals),
@@ -50,12 +50,12 @@ func (p *Platform) GetTokenListByAddress(address string) (blockatlas.TokenPage, 
 	return tokenPage, nil
 }
 
-func (p *Platform) getTokens(ids []string) chan blockatlas.Token {
-	tkChan := make(chan blockatlas.Token, len(ids))
+func (p *Platform) getTokens(ids []string) chan txtype.Token {
+	tkChan := make(chan txtype.Token, len(ids))
 	var wg sync.WaitGroup
 	for _, id := range ids {
 		wg.Add(1)
-		go func(i string, c chan blockatlas.Token) {
+		go func(i string, c chan txtype.Token) {
 			defer wg.Done()
 			_ = p.getTokensChannel(i, c)
 		}(id, tkChan)
@@ -65,7 +65,7 @@ func (p *Platform) getTokens(ids []string) chan blockatlas.Token {
 	return tkChan
 }
 
-func (p *Platform) getTokensChannel(id string, tkChan chan blockatlas.Token) error {
+func (p *Platform) getTokensChannel(id string, tkChan chan txtype.Token) error {
 	info, err := p.client.fetchTokenInfo(id)
 	if err != nil || len(info.Data) == 0 {
 		return err
@@ -75,8 +75,8 @@ func (p *Platform) getTokensChannel(id string, tkChan chan blockatlas.Token) err
 	return nil
 }
 
-func NormalizeToken(info AssetInfo) blockatlas.Token {
-	return blockatlas.Token{
+func NormalizeToken(info AssetInfo) txtype.Token {
+	return txtype.Token{
 		Name:     info.Name,
 		Symbol:   strings.ToUpper(info.Symbol),
 		TokenID:  strconv.Itoa(int(info.ID)),

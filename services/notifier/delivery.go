@@ -4,14 +4,14 @@ import (
 	"encoding/json"
 
 	"github.com/trustwallet/blockatlas/internal"
+	"github.com/trustwallet/golibs/txtype"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/streadway/amqp"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 )
 
-func GetTransactionsFromDelivery(delivery amqp.Delivery, service string) (blockatlas.Txs, error) {
-	var transactions blockatlas.Txs
+func GetTransactionsFromDelivery(delivery amqp.Delivery, service string) (txtype.Txs, error) {
+	var transactions txtype.Txs
 
 	if err := json.Unmarshal(delivery.Body, &transactions); err != nil {
 		return nil, err

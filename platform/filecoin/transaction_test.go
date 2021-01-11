@@ -4,8 +4,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/platform/filecoin/explorer"
+	"github.com/trustwallet/golibs/txtype"
 )
 
 func TestPlatform_NormalizeMessage(t *testing.T) {
@@ -16,7 +16,7 @@ func TestPlatform_NormalizeMessage(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want blockatlas.Tx
+		want txtype.Tx
 	}{
 		{
 			name: "Test transfer",
@@ -36,7 +36,7 @@ func TestPlatform_NormalizeMessage(t *testing.T) {
 				},
 				address: "f16hhfi2xkkmpsi4c5mmgwbkgk5wslfcaflefsqpy",
 			},
-			want: blockatlas.Tx{
+			want: txtype.Tx{
 				ID:        "bafy2bzacectkidmsel5gn5qamrqhcgqgqefhdzlqukry3rc2ase4yqdbxazqi",
 				Coin:      461,
 				From:      "f1mdseaz4gkbz2cq2kf4q3xqbws5ongyt7vdbvzoa",
@@ -47,7 +47,7 @@ func TestPlatform_NormalizeMessage(t *testing.T) {
 				Sequence:  6,
 				Type:      "transfer",
 				Direction: "incoming",
-				Meta: blockatlas.Transfer{
+				Meta: txtype.Transfer{
 					Value:    "298040241318833792",
 					Symbol:   "FIL",
 					Decimals: 18,
@@ -72,7 +72,7 @@ func TestPlatform_NormalizeMessage(t *testing.T) {
 				},
 				address: "f16hhfi2xkkmpsi4c5mmgwbkgk5wslfcaflefsqpy",
 			},
-			want: blockatlas.Tx{
+			want: txtype.Tx{
 				ID:        "bafy2bzacebgbszawdnrl7flgrb2ixt4f6lsb4jjqywv3bsekplpsiswexepha",
 				Coin:      461,
 				From:      "f16hhfi2xkkmpsi4c5mmgwbkgk5wslfcaflefsqpy",
@@ -83,7 +83,7 @@ func TestPlatform_NormalizeMessage(t *testing.T) {
 				Sequence:  23,
 				Type:      "transfer",
 				Direction: "outgoing",
-				Meta: blockatlas.Transfer{
+				Meta: txtype.Transfer{
 					Value:    "1000000000000000",
 					Symbol:   "FIL",
 					Decimals: 18,

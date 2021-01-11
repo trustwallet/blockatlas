@@ -8,8 +8,8 @@ import (
 
 	"github.com/trustwallet/blockatlas/internal"
 
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/client"
+	"github.com/trustwallet/golibs/txtype"
 )
 
 type Client struct {
@@ -43,7 +43,7 @@ func (c Client) FetchTransactionsInBlock(blockNumber int64) (TransactionsInBlock
 func (c Client) FetchTransactionsByAddressAndTokenID(address, tokenID string) ([]Tx, error) {
 	var result TransactionsInBlockResponse
 	startTime := strconv.Itoa(int(time.Now().AddDate(0, -3, 0).Unix() * 1000))
-	limit := strconv.Itoa(blockatlas.TxPerPage)
+	limit := strconv.Itoa(txtype.TxPerPage)
 	params := url.Values{"address": {address}, "txAsset": {tokenID}, "startTime": {startTime}, "limit": {limit}}
 	err := c.Get(&result, "api/v1/transactions", params)
 	if err != nil {

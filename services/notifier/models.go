@@ -1,15 +1,15 @@
 package notifier
 
 import (
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/golibs/txtype"
 )
 
 type TransactionNotification struct {
-	Action blockatlas.TransactionType `json:"action"`
-	Result blockatlas.Tx              `json:"result"`
+	Action txtype.TransactionType `json:"action"`
+	Result txtype.Tx              `json:"result"`
 }
 
-func buildNotificationsByAddress(address string, txs blockatlas.Txs) []TransactionNotification {
+func buildNotificationsByAddress(address string, txs txtype.Txs) []TransactionNotification {
 	transactionsByAddress := toUniqueTransactions(findTransactionsByAddress(txs, address))
 
 	result := make([]TransactionNotification, 0, len(transactionsByAddress))
@@ -34,9 +34,9 @@ func ToUniqueAddresses(addresses []string) []string {
 	return list
 }
 
-func toUniqueTransactions(txs []blockatlas.Tx) []blockatlas.Tx {
+func toUniqueTransactions(txs []txtype.Tx) []txtype.Tx {
 	keys := make(map[string]bool)
-	var list []blockatlas.Tx
+	var list []txtype.Tx
 	for _, entry := range txs {
 		key := entry.ID + string(entry.Direction)
 		if _, value := keys[key]; !value {
@@ -47,8 +47,8 @@ func toUniqueTransactions(txs []blockatlas.Tx) []blockatlas.Tx {
 	return list
 }
 
-func findTransactionsByAddress(txs blockatlas.Txs, address string) []blockatlas.Tx {
-	result := make([]blockatlas.Tx, 0)
+func findTransactionsByAddress(txs txtype.Txs, address string) []txtype.Tx {
+	result := make([]txtype.Tx, 0)
 	for _, tx := range txs {
 		if containsAddress(tx, address) {
 			result = append(result, tx)
@@ -57,7 +57,7 @@ func findTransactionsByAddress(txs blockatlas.Txs, address string) []blockatlas.
 	return result
 }
 
-func containsAddress(tx blockatlas.Tx, address string) bool {
+func containsAddress(tx txtype.Tx, address string) bool {
 	allAddresses := tx.GetAddresses()
 	txAddresses := ToUniqueAddresses(allAddresses)
 	for _, a := range txAddresses {

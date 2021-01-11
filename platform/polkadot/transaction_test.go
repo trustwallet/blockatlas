@@ -4,8 +4,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/coin"
+	"github.com/trustwallet/golibs/txtype"
 )
 
 func TestNormalizeTransfer(t *testing.T) {
@@ -16,7 +16,7 @@ func TestNormalizeTransfer(t *testing.T) {
 	tests := []struct {
 		name   string
 		args   args
-		wantTx blockatlas.Tx
+		wantTx txtype.Tx
 	}{
 		{
 			name: "Receive 1",
@@ -32,7 +32,7 @@ func TestNormalizeTransfer(t *testing.T) {
 					Success:     true,
 				},
 			},
-			wantTx: blockatlas.Tx{
+			wantTx: txtype.Tx{
 				ID:     "0x20cfbba19817e4b7a61e718d269de47e7067a24860fa978c2a8ead4c96a827c4",
 				Coin:   434,
 				Date:   1577176992,
@@ -41,8 +41,8 @@ func TestNormalizeTransfer(t *testing.T) {
 				Block:  360298,
 				Status: "completed",
 				Fee:    "100000000",
-				Meta: blockatlas.Transfer{
-					Value:    blockatlas.Amount("10000000000"),
+				Meta: txtype.Transfer{
+					Value:    txtype.Amount("10000000000"),
 					Symbol:   "KSM",
 					Decimals: 12,
 				},
@@ -62,7 +62,7 @@ func TestNormalizeTransfer(t *testing.T) {
 					Success:     true,
 				},
 			},
-			wantTx: blockatlas.Tx{
+			wantTx: txtype.Tx{
 				ID:     "0xe0be47f6ce0e62a218f197dd68599989376ee7e951d54c3c6146e2c5c5eacd1f",
 				Coin:   434,
 				Date:   1575525432,
@@ -71,8 +71,8 @@ func TestNormalizeTransfer(t *testing.T) {
 				Block:  90672,
 				Status: "completed",
 				Fee:    "100000000",
-				Meta: blockatlas.Transfer{
-					Value:    blockatlas.Amount("210000000000000"),
+				Meta: txtype.Transfer{
+					Value:    txtype.Amount("210000000000000"),
 					Symbol:   "KSM",
 					Decimals: 12,
 				},
@@ -96,7 +96,7 @@ func TestNormalizeExtrinsic(t *testing.T) {
 	tests := []struct {
 		name   string
 		args   args
-		wantTx *blockatlas.Tx
+		wantTx *txtype.Tx
 	}{
 		{
 			name: "Transfer KSM",
@@ -115,7 +115,7 @@ func TestNormalizeExtrinsic(t *testing.T) {
 					Fee:                "100000000",
 				},
 			},
-			wantTx: &blockatlas.Tx{
+			wantTx: &txtype.Tx{
 				ID:       "0x20cfbba19817e4b7a61e718d269de47e7067a24860fa978c2a8ead4c96a827c4",
 				Coin:     434,
 				Date:     1577176992,
@@ -125,8 +125,8 @@ func TestNormalizeExtrinsic(t *testing.T) {
 				Block:    360298,
 				Status:   "completed",
 				Sequence: 0,
-				Meta: blockatlas.Transfer{
-					Value:    blockatlas.Amount("10000000000"),
+				Meta: txtype.Transfer{
+					Value:    txtype.Amount("10000000000"),
 					Symbol:   "KSM",
 					Decimals: 12,
 				},
@@ -149,7 +149,7 @@ func TestNormalizeExtrinsic(t *testing.T) {
 					Fee:                "153000000",
 				},
 			},
-			wantTx: &blockatlas.Tx{
+			wantTx: &txtype.Tx{
 				ID:       "0x17f92e09994e6885007bfdf4a0a5026f667e69ae94547c5c89b03d647541025e",
 				Coin:     354,
 				Date:     1607035338,
@@ -159,8 +159,8 @@ func TestNormalizeExtrinsic(t *testing.T) {
 				Block:    2742892,
 				Status:   "completed",
 				Sequence: 1,
-				Meta: blockatlas.Transfer{
-					Value:    blockatlas.Amount("16694000000"),
+				Meta: txtype.Transfer{
+					Value:    txtype.Amount("16694000000"),
 					Symbol:   "DOT",
 					Decimals: 10,
 				},

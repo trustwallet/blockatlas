@@ -3,12 +3,12 @@ package trustray
 import (
 	"math/big"
 
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/address"
 	"github.com/trustwallet/golibs/coin"
+	"github.com/trustwallet/golibs/txtype"
 )
 
-func (c *Client) GetTransactions(address string, coinIndex uint) (blockatlas.TxPage, error) {
+func (c *Client) GetTransactions(address string, coinIndex uint) (txtype.TxPage, error) {
 	page, err := c.GetTxs(address)
 	if err != nil {
 		return nil, err
@@ -16,7 +16,7 @@ func (c *Client) GetTransactions(address string, coinIndex uint) (blockatlas.TxP
 	return normalizePage(page, address, coinIndex), nil
 }
 
-func (c *Client) GetTokenTxs(address, token string, coinIndex uint) (blockatlas.TxPage, error) {
+func (c *Client) GetTokenTxs(address, token string, coinIndex uint) (txtype.TxPage, error) {
 	page, err := c.GetTxsWithContract(address, token)
 	if err != nil {
 		return nil, err
@@ -24,8 +24,8 @@ func (c *Client) GetTokenTxs(address, token string, coinIndex uint) (blockatlas.
 	return normalizePage(page, address, coinIndex), nil
 }
 
-func normalizePage(srcPage *Page, address string, coinIndex uint) blockatlas.TxPage {
-	var txs []blockatlas.Tx
+func normalizePage(srcPage *Page, address string, coinIndex uint) txtype.TxPage {
+	var txs []txtype.Tx
 	for i, srcTx := range srcPage.Docs {
 		txs = AppendTxs(txs, &srcTx, coinIndex)
 		txs[i].Direction = txs[i].GetTransactionDirection(address)
@@ -33,7 +33,7 @@ func normalizePage(srcPage *Page, address string, coinIndex uint) blockatlas.TxP
 	return txs
 }
 
-func AppendTxs(in []blockatlas.Tx, srcTx *Doc, coinIndex uint) (out []blockatlas.Tx) {
+func AppendTxs(in []txtype.Tx, srcTx *Doc, coinIndex uint) (out []txtype.Tx) {
 	out = in
 	baseTx, ok := extractBase(srcTx, coinIndex)
 	if !ok {
@@ -43,8 +43,8 @@ func AppendTxs(in []blockatlas.Tx, srcTx *Doc, coinIndex uint) (out []blockatlas
 	// Native ETH transaction
 	if len(srcTx.Ops) == 0 && srcTx.Input == "0x" {
 		transferTx := baseTx
-		transferTx.Meta = blockatlas.Transfer{
-			Value:    blockatlas.Amount(srcTx.Value),
+		transferTx.Meta = txtype.Transfer{
+			Value:    txtype.Amount(srcTx.Value),
 			Symbol:   coin.Coins[coinIndex].Symbol,
 			Decimals: coin.Coins[coinIndex].Decimals,
 		}
@@ -55,7 +55,7 @@ func AppendTxs(in []blockatlas.Tx, srcTx *Doc, coinIndex uint) (out []blockatlas
 	// Smart Contract Call
 	if len(srcTx.Ops) == 0 && srcTx.Input != "0x" {
 		contractTx := baseTx
-		contractTx.Meta = blockatlas.ContractCall{
+		contractTx.Meta = txtype.ContractCall{
 			Input: srcTx.Input,
 			Value: srcTx.Value,
 		}
@@ -68,18 +68,18 @@ func AppendTxs(in []blockatlas.Tx, srcTx *Doc, coinIndex uint) (out []blockatlas
 	}
 	op := &srcTx.Ops[0]
 	// Token transfer transaction
-	if op.Type == blockatlas.TxTokenTransfer && op.Contract != nil {
+	if op.Type == txtype.TxTokenTransfer && op.Contract != nil {
 		tokenTx := baseTx
 		tokenId, err := address.ToEIP55ByCoinID(op.Contract.Address, coinIndex)
 		if err != nil {
 			return
 		}
-		tokenTx.Meta = blockatlas.TokenTransfer{
+		tokenTx.Meta = txtype.TokenTransfer{
 			Name:     op.Contract.Name,
 			Symbol:   op.Contract.Symbol,
 			TokenID:  tokenId,
 			Decimals: op.Contract.Decimals,
-			Value:    blockatlas.Amount(op.Value),
+			Value:    txtype.Amount(op.Value),
 			From:     op.From,
 			To:       op.To,
 		}
@@ -89,16 +89,16 @@ func AppendTxs(in []blockatlas.Tx, srcTx *Doc, coinIndex uint) (out []blockatlas
 	return
 }
 
-func extractBase(srcTx *Doc, coinIndex uint) (base blockatlas.Tx, ok bool) {
+func extractBase(srcTx *Doc, coinIndex uint) (base txtype.Tx, ok bool) {
 	var (
-		status    blockatlas.Status
+		status    txtype.Status
 		errReason string
 	)
 
 	if srcTx.Error == "" {
-		status = blockatlas.StatusCompleted
+		status = txtype.StatusCompleted
 	} else {
-		status = blockatlas.StatusError
+		status = txtype.StatusError
 		errReason = srcTx.Error
 	}
 
@@ -111,10 +111,10 @@ func extractBase(srcTx *Doc, coinIndex uint) (base blockatlas.Tx, ok bool) {
 	if err != nil {
 		return base, false
 	}
-	base = blockatlas.Tx{
+	base = txtype.Tx{
 		ID:       srcTx.ID,
 		Coin:     coinIndex,
-		Fee:      blockatlas.Amount(fee),
+		Fee:      txtype.Amount(fee),
 		From:     from,
 		To:       to,
 		Date:     srcTx.Timestamp,

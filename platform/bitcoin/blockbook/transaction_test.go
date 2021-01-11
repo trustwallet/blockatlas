@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/golibs/txtype"
 )
 
 func TestNormalizePage(t *testing.T) {
@@ -366,7 +366,7 @@ func TestNormalizePage(t *testing.T) {
 	}
 	for _, tt := range tests {
 		var page TransactionsList
-		var txPage blockatlas.TxPage
+		var txPage txtype.TxPage
 		err := json.Unmarshal([]byte(tt.args.srcPage), &page)
 		assert.Nil(t, err)
 		err = json.Unmarshal([]byte(tt.want), &txPage)

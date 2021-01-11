@@ -4,9 +4,8 @@ import (
 	"encoding/json"
 	"math/big"
 
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-
 	"github.com/trustwallet/golibs/tokentype"
+	"github.com/trustwallet/golibs/txtype"
 )
 
 type NodeInfo struct {
@@ -98,11 +97,11 @@ func (transaction Transaction) Amount() string {
 	return transaction.Value
 }
 
-func (transaction Transaction) GetStatus() blockatlas.Status {
+func (transaction Transaction) GetStatus() txtype.Status {
 	if transaction.Confirmations == 0 {
-		return blockatlas.StatusPending
+		return txtype.StatusPending
 	}
-	return blockatlas.StatusCompleted
+	return txtype.StatusCompleted
 }
 
 func (transaction Transaction) GetBlockHeight() uint64 {

@@ -10,8 +10,8 @@ import (
 )
 
 var (
-	delegationsSrc1, _ = mock.JsonFromFilePathToString("mocks/" + "delegation.json")
-	delegationsSrc2, _ = mock.JsonFromFilePathToString("mocks/" + "delegation_2.json")
+	delegationsSrc1, _ = mock.JsonStringFromFilePath("mocks/" + "delegation.json")
+	delegationsSrc2, _ = mock.JsonStringFromFilePath("mocks/" + "delegation_2.json")
 
 	validator1 = blockatlas.StakeValidator{
 		ID:     "TGzz8gjYiYRqpfmDwnLxfgPuLVNmpCswVp",

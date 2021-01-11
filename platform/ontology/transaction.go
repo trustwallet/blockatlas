@@ -4,37 +4,37 @@ import (
 	"errors"
 	"sync"
 
-	blockatlas "github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/coin"
 	"github.com/trustwallet/golibs/numbers"
+	"github.com/trustwallet/golibs/txtype"
 )
 
-func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
+func (p *Platform) GetTxsByAddress(address string) (txtype.TxPage, error) {
 	return p.GetTokenTxsByAddress(address, string(AssetONT))
 }
 
-func (p *Platform) GetTokenTxsByAddress(address string, token string) (blockatlas.TxPage, error) {
+func (p *Platform) GetTokenTxsByAddress(address string, token string) (txtype.TxPage, error) {
 	srcTxs, err := p.client.GetTxsOfAddress(address)
 	if err != nil {
-		return blockatlas.TxPage{}, err
+		return txtype.TxPage{}, err
 	}
 	txPage := normalizeTxs(srcTxs.Result, AssetType(token))
 	return txPage, nil
 }
 
-func Normalize(srcTx *Tx, assetName AssetType) (tx blockatlas.Tx, ok bool) {
+func Normalize(srcTx *Tx, assetName AssetType) (tx txtype.Tx, ok bool) {
 	if len(srcTx.getTransfers()) < 1 {
 		return tx, false
 	}
 	fee := numbers.DecimalExp(srcTx.Fee, ONGDecimals)
-	status := blockatlas.StatusCompleted
+	status := txtype.StatusCompleted
 	if srcTx.ConfirmFlag != 1 {
-		status = blockatlas.StatusError
+		status = txtype.StatusError
 	}
-	tx = blockatlas.Tx{
+	tx = txtype.Tx{
 		ID:     srcTx.Hash,
 		Coin:   coin.ONT,
-		Fee:    blockatlas.Amount(fee),
+		Fee:    txtype.Amount(fee),
 		Date:   srcTx.Time,
 		Block:  srcTx.Height,
 		Status: status,
@@ -50,23 +50,23 @@ func Normalize(srcTx *Tx, assetName AssetType) (tx blockatlas.Tx, ok bool) {
 	return tx, false
 }
 
-func normalizeONT(tx blockatlas.Tx, transfers Transfers) (blockatlas.Tx, bool) {
+func normalizeONT(tx txtype.Tx, transfers Transfers) (txtype.Tx, bool) {
 	transfer := transfers.getTransfer(AssetONT)
 	if transfer == nil {
 		return tx, false
 	}
 	tx.From = transfer.FromAddress
 	tx.To = transfer.ToAddress
-	tx.Type = blockatlas.TxTransfer
-	tx.Meta = blockatlas.Transfer{
-		Value:    blockatlas.Amount(transfer.Amount),
+	tx.Type = txtype.TxTransfer
+	tx.Meta = txtype.Transfer{
+		Value:    txtype.Amount(transfer.Amount),
 		Symbol:   coin.Ontology().Symbol,
 		Decimals: coin.Ontology().Decimals,
 	}
 	return tx, true
 }
 
-func normalizeONG(tx blockatlas.Tx, transfers Transfers) (blockatlas.Tx, bool) {
+func normalizeONG(tx txtype.Tx, transfers Transfers) (txtype.Tx, bool) {
 	transfer := transfers.getTransfer(AssetONG)
 	if transfer == nil {
 		return tx, false
@@ -77,26 +77,26 @@ func normalizeONG(tx blockatlas.Tx, transfers Transfers) (blockatlas.Tx, bool) {
 	tx.To = to
 	value := numbers.DecimalExp(transfer.Amount, ONGDecimals)
 	if transfers.isClaimReward() {
-		tx.Type = blockatlas.TxAnyAction
-		tx.Meta = blockatlas.AnyAction{
+		tx.Type = txtype.TxAnyAction
+		tx.Meta = txtype.AnyAction{
 			Coin:     coin.Ontology().ID,
 			Name:     "Ontology Gas",
 			Symbol:   "ONG",
 			TokenID:  string(AssetONG),
 			Decimals: ONGDecimals,
-			Value:    blockatlas.Amount(value),
-			Title:    blockatlas.AnyActionClaimRewards,
-			Key:      blockatlas.KeyStakeClaimRewards,
+			Value:    txtype.Amount(value),
+			Title:    txtype.AnyActionClaimRewards,
+			Key:      txtype.KeyStakeClaimRewards,
 		}
 		return tx, true
 	}
-	tx.Type = blockatlas.TxNativeTokenTransfer
-	tx.Meta = blockatlas.NativeTokenTransfer{
+	tx.Type = txtype.TxNativeTokenTransfer
+	tx.Meta = txtype.NativeTokenTransfer{
 		Name:     "Ontology Gas",
 		Symbol:   "ONG",
 		TokenID:  string(AssetONG),
 		Decimals: ONGDecimals,
-		Value:    blockatlas.Amount(value),
+		Value:    txtype.Amount(value),
 		From:     from,
 		To:       to,
 	}
@@ -130,8 +130,8 @@ func (p *Platform) getTxDetails(srcTx []Tx) ([]Tx, error) {
 	return txsOntV2, nil
 }
 
-func normalizeTxs(srcTxs []Tx, assetType AssetType) blockatlas.TxPage {
-	var txs blockatlas.TxPage
+func normalizeTxs(srcTxs []Tx, assetType AssetType) txtype.TxPage {
+	var txs txtype.TxPage
 	for _, srcTx := range srcTxs {
 		transfer := srcTx.getTransfers().getTransfer(assetType)
 		if transfer == nil {

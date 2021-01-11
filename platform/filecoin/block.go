@@ -1,9 +1,9 @@
 package filecoin
 
 import (
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/platform/filecoin/rpc"
 	"github.com/trustwallet/golibs/coin"
+	"github.com/trustwallet/golibs/txtype"
 )
 
 func (p *Platform) CurrentBlockNumber() (int64, error) {
@@ -14,7 +14,7 @@ func (p *Platform) CurrentBlockNumber() (int64, error) {
 	return int64(response.Height), nil
 }
 
-func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
+func (p *Platform) GetBlockByNumber(num int64) (*txtype.Block, error) {
 	chainHeadResponse, err := p.client.GetTipSetByHeight(num)
 	if err != nil {
 		return nil, err
@@ -31,8 +31,8 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 	return normalizeBlockResponses(uint64(chainHeadResponse.Height), uint64(chainHeadResponse.GetTimestamp()), blockResponses), nil
 }
 
-func normalizeBlockResponses(num, timestamp uint64, responses []rpc.BlockMessageResponse) *blockatlas.Block {
-	var result blockatlas.Block
+func normalizeBlockResponses(num, timestamp uint64, responses []rpc.BlockMessageResponse) *txtype.Block {
+	var result txtype.Block
 	result.Number = int64(num)
 	for _, resp := range responses {
 		for _, msg := range resp.SecpkMessages {
@@ -43,8 +43,8 @@ func normalizeBlockResponses(num, timestamp uint64, responses []rpc.BlockMessage
 	return &result
 }
 
-func normalizeBlockTx(num, timestamp uint64, msg rpc.SecpkMessage) blockatlas.Tx {
-	return blockatlas.Tx{
+func normalizeBlockTx(num, timestamp uint64, msg rpc.SecpkMessage) txtype.Tx {
+	return txtype.Tx{
 		Coin: coin.Filecoin().ID,
 		From: msg.Message.From,
 		To:   msg.Message.To,
@@ -52,12 +52,12 @@ func normalizeBlockTx(num, timestamp uint64, msg rpc.SecpkMessage) blockatlas.Tx
 		Fee:      "0",
 		Block:    num,
 		Date:     int64(timestamp),
-		Status:   blockatlas.StatusCompleted,
+		Status:   txtype.StatusCompleted,
 		Sequence: uint64(msg.Message.Nonce),
-		Type:     blockatlas.TxTransfer,
+		Type:     txtype.TxTransfer,
 		Memo:     "",
-		Meta: blockatlas.Transfer{
-			Value:    blockatlas.Amount(msg.Message.Value),
+		Meta: txtype.Transfer{
+			Value:    txtype.Amount(msg.Message.Value),
 			Symbol:   coin.Filecoin().Symbol,
 			Decimals: coin.Filecoin().Decimals,
 		},

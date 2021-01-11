@@ -9,15 +9,15 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/coin"
 	"github.com/trustwallet/golibs/mock"
+	"github.com/trustwallet/golibs/txtype"
 )
 
 var (
-	basicSrc, _   = mock.JsonFromFilePathToString("mocks/" + "tx.json")
-	pendingSrc, _ = mock.JsonFromFilePathToString("mocks/" + "pending_tx.json")
-	basicDst      = blockatlas.Tx{
+	basicSrc, _   = mock.JsonStringFromFilePath("mocks/" + "tx.json")
+	pendingSrc, _ = mock.JsonStringFromFilePath("mocks/" + "pending_tx.json")
+	basicDst      = txtype.Tx{
 		ID:    "8b219949f4c1dfe9e7a9cdc5dbbc507e40dc16f44a1a5182ed6125c9a6891a50",
 		Coin:  coin.NIM,
 		From:  "NQ69 9A4A MB83 HXDQ 4J46 BH5R 4JFF QMA9 C3GN",
@@ -25,13 +25,13 @@ var (
 		Fee:   "138",
 		Date:  1538924505,
 		Block: 252575,
-		Meta: blockatlas.Transfer{
+		Meta: txtype.Transfer{
 			Value:    "10000000000000",
 			Symbol:   "NIM",
 			Decimals: 5,
 		},
 	}
-	pendingDst = blockatlas.Tx{
+	pendingDst = txtype.Tx{
 		ID:    "79719d16f3f347cc98c35cd7a9af708cdce97de578b5135c5ae4393fd7920d61",
 		Coin:  coin.NIM,
 		From:  "NQ74 SJ0Q 49T1 4XQL KABH 1RUC 8DPT 9F0U 9P0B",
@@ -39,7 +39,7 @@ var (
 		Fee:   "300",
 		Date:  666666, // special placholder value
 		Block: 0,
-		Meta: blockatlas.Transfer{
+		Meta: txtype.Transfer{
 			Value:    "100000",
 			Symbol:   "NIM",
 			Decimals: 5,
@@ -52,7 +52,7 @@ func TestNormalizeTx1(t *testing.T) {
 	tests := []struct {
 		name  string
 		srcTx string
-		want  blockatlas.Tx
+		want  txtype.Tx
 	}{
 		{"test transaction", basicSrc, basicDst},
 		{"test pending transaction", pendingSrc, pendingDst},
@@ -78,7 +78,7 @@ func TestNormalizeTx1(t *testing.T) {
 
 func TestNormalizeTxs_Ordering(t *testing.T) {
 	var srcTxs []Tx
-	_ = mock.ParseJsonFromFilePath("mocks/getTransactionsByAddress_50.json", &srcTxs)
+	_ = mock.JsonModelFromFilePath("mocks/getTransactionsByAddress_50.json", &srcTxs)
 	txs := NormalizeTxs(srcTxs)
 	if len(txs) != 4 {
 		t.Fatalf("Unexpected count: %d", len(txs))

@@ -1,12 +1,12 @@
 package zilliqa
 
 import (
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/coin"
+	"github.com/trustwallet/golibs/txtype"
 )
 
-func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
-	var normalized []blockatlas.Tx
+func (p *Platform) GetTxsByAddress(address string) (txtype.TxPage, error) {
+	var normalized []txtype.Tx
 	txs, err := p.client.GetTxsOfAddress(address)
 
 	if err != nil {
@@ -15,7 +15,7 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 
 	for _, srcTx := range txs {
 		tx := Normalize(&srcTx)
-		if len(normalized) >= blockatlas.TxPerPage {
+		if len(normalized) >= txtype.TxPerPage {
 			break
 		}
 		normalized = append(normalized, tx)
@@ -24,25 +24,25 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 	return normalized, nil
 }
 
-func Normalize(srcTx *Tx) (tx blockatlas.Tx) {
-	tx = blockatlas.Tx{
+func Normalize(srcTx *Tx) (tx txtype.Tx) {
+	tx = txtype.Tx{
 		ID:       srcTx.Hash,
 		Coin:     coin.ZIL,
 		Date:     srcTx.Timestamp / 1000,
 		From:     srcTx.From,
 		To:       srcTx.To,
-		Fee:      blockatlas.Amount(srcTx.Fee),
+		Fee:      txtype.Amount(srcTx.Fee),
 		Block:    srcTx.BlockHeight,
-		Status:   blockatlas.StatusCompleted,
+		Status:   txtype.StatusCompleted,
 		Sequence: srcTx.NonceValue(),
-		Meta: blockatlas.Transfer{
-			Value:    blockatlas.Amount(srcTx.Value),
+		Meta: txtype.Transfer{
+			Value:    txtype.Amount(srcTx.Value),
 			Symbol:   coin.Coins[coin.ZIL].Symbol,
 			Decimals: coin.Coins[coin.ZIL].Decimals,
 		},
 	}
 	if !srcTx.ReceiptSuccess {
-		tx.Status = blockatlas.StatusError
+		tx.Status = txtype.StatusError
 	}
 	return tx
 }

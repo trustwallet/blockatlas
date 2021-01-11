@@ -6,6 +6,7 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/coin"
 	"github.com/trustwallet/golibs/numbers"
+	"github.com/trustwallet/golibs/txtype"
 )
 
 func GetValidatorsMap(api blockatlas.StakeAPI) (blockatlas.ValidatorMap, error) {
@@ -49,7 +50,7 @@ func normalizeValidators(assetsValidators AssetValidators, rpcValidators []block
 
 func normalizeValidator(rpcValidator blockatlas.Validator, assetValidator AssetValidator, coin coin.Coin) blockatlas.StakeValidator {
 	details := rpcValidator.Details
-	details.MinimumAmount = blockatlas.Amount(numbers.Float64toString(assetValidator.Staking.MinDelegation))
+	details.MinimumAmount = txtype.Amount(numbers.Float64toString(assetValidator.Staking.MinDelegation))
 	details.Reward.Annual = calculateAnnual(details.Reward.Annual, assetValidator.Payout.Commission)
 
 	return blockatlas.StakeValidator{

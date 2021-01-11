@@ -6,17 +6,17 @@ import (
 	"sync"
 	"time"
 
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/numbers"
+	"github.com/trustwallet/golibs/txtype"
 )
 
 const kavaDenom = "ukava"
 
-func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
+func (p *Platform) GetTxsByAddress(address string) (txtype.TxPage, error) {
 	return p.GetTokenTxsByAddress(address, kavaDenom)
 }
 
-func (p *Platform) GetTokenTxsByAddress(address, token string) (blockatlas.TxPage, error) {
+func (p *Platform) GetTokenTxsByAddress(address, token string) (txtype.TxPage, error) {
 	tagsList := []string{"transfer.recipient", "message.sender"}
 	var wg sync.WaitGroup
 	out := make(chan []Tx, len(tagsList))
@@ -73,9 +73,9 @@ func (p *Platform) FilterTxsByDenom(txs []Tx, denom string) []Tx {
 }
 
 // NormalizeTxs converts multiple Cosmos transactions
-func (p *Platform) NormalizeTxs(srcTxs []Tx) blockatlas.TxPage {
+func (p *Platform) NormalizeTxs(srcTxs []Tx) txtype.TxPage {
 	txMap := make(map[string]bool)
-	txs := make(blockatlas.TxPage, 0)
+	txs := make(txtype.TxPage, 0)
 	for _, srcTx := range srcTxs {
 		_, ok := txMap[srcTx.ID]
 		if ok {
@@ -91,14 +91,14 @@ func (p *Platform) NormalizeTxs(srcTxs []Tx) blockatlas.TxPage {
 }
 
 // Normalize converts an Cosmos transaction into the generic model
-func (p *Platform) Normalize(srcTx *Tx) (tx blockatlas.Tx, ok bool) {
+func (p *Platform) Normalize(srcTx *Tx) (tx txtype.Tx, ok bool) {
 	date, err := time.Parse("2006-01-02T15:04:05Z", srcTx.Date)
 	if err != nil {
-		return blockatlas.Tx{}, false
+		return txtype.Tx{}, false
 	}
 	block, err := strconv.ParseUint(srcTx.Block, 10, 64)
 	if err != nil {
-		return blockatlas.Tx{}, false
+		return txtype.Tx{}, false
 	}
 	// Sometimes fees can be null objects (in the case of no fees e.g. F044F91441C460EDCD90E0063A65356676B7B20684D94C731CF4FAB204035B41)
 	fee := "0"
@@ -107,23 +107,23 @@ func (p *Platform) Normalize(srcTx *Tx) (tx blockatlas.Tx, ok bool) {
 		if len(qty) > 0 && qty != fee {
 			fee, err = numbers.DecimalToSatoshis(srcTx.Data.Contents.Fee.FeeAmount[0].Quantity)
 			if err != nil {
-				return blockatlas.Tx{}, false
+				return txtype.Tx{}, false
 			}
 		}
 	}
 
-	status := blockatlas.StatusCompleted
+	status := txtype.StatusCompleted
 	// https://github.com/cosmos/cosmos-sdk/blob/95ddc242ad024ca78a359a13122dade6f14fd676/types/errors/errors.go#L19
 	if srcTx.Code > 0 {
-		status = blockatlas.StatusError
+		status = txtype.StatusError
 	}
 
-	tx = blockatlas.Tx{
+	tx = txtype.Tx{
 		ID:     srcTx.ID,
 		Coin:   p.Coin().ID,
 		Date:   date.Unix(),
 		Status: status,
-		Fee:    blockatlas.Amount(fee),
+		Fee:    txtype.Amount(fee),
 		Block:  block,
 		Memo:   srcTx.Data.Contents.Memo,
 	}
@@ -146,7 +146,7 @@ func (p *Platform) Normalize(srcTx *Tx) (tx blockatlas.Tx, ok bool) {
 	return tx, false
 }
 
-func (p *Platform) fillTransfer(tx *blockatlas.Tx, transfer MessageValueTransfer) {
+func (p *Platform) fillTransfer(tx *txtype.Tx, transfer MessageValueTransfer) {
 	if len(transfer.Amount) == 0 {
 		return
 	}
@@ -157,35 +157,35 @@ func (p *Platform) fillTransfer(tx *blockatlas.Tx, transfer MessageValueTransfer
 	}
 	tx.From = transfer.FromAddr
 	tx.To = transfer.ToAddr
-	tx.Type = blockatlas.TxTransfer
-	tx.Meta = blockatlas.Transfer{
-		Value:    blockatlas.Amount(value),
+	tx.Type = txtype.TxTransfer
+	tx.Meta = txtype.Transfer{
+		Value:    txtype.Amount(value),
 		Symbol:   p.Coin().Symbol,
 		Decimals: p.Coin().Decimals,
 	}
 	switch {
 	case amount.Denom == kavaDenom:
-		tx.Type = blockatlas.TxTransfer
-		tx.Meta = blockatlas.Transfer{
-			Value:    blockatlas.Amount(value),
+		tx.Type = txtype.TxTransfer
+		tx.Meta = txtype.Transfer{
+			Value:    txtype.Amount(value),
 			Symbol:   p.Coin().Symbol,
 			Decimals: p.Coin().Decimals,
 		}
 	default:
-		tx.Type = blockatlas.TxNativeTokenTransfer
-		tx.Meta = blockatlas.NativeTokenTransfer{
+		tx.Type = txtype.TxNativeTokenTransfer
+		tx.Meta = txtype.NativeTokenTransfer{
 			Decimals: p.Coin().Decimals,
 			From:     tx.From,
 			Symbol:   strings.ToUpper(amount.Denom),
 			Name:     amount.Denom,
 			To:       tx.To,
 			TokenID:  amount.Denom,
-			Value:    blockatlas.Amount(value),
+			Value:    txtype.Amount(value),
 		}
 	}
 }
 
-func (p *Platform) fillDelegate(tx *blockatlas.Tx, delegate MessageValueDelegate, events Events, msgType TxType) {
+func (p *Platform) fillDelegate(tx *txtype.Tx, delegate MessageValueDelegate, events Events, msgType TxType) {
 	value := ""
 	if len(delegate.Amount.Quantity) > 0 {
 		var err error
@@ -196,30 +196,30 @@ func (p *Platform) fillDelegate(tx *blockatlas.Tx, delegate MessageValueDelegate
 	}
 	tx.From = delegate.DelegatorAddr
 	tx.To = delegate.ValidatorAddr
-	tx.Type = blockatlas.TxAnyAction
+	tx.Type = txtype.TxAnyAction
 
-	key := blockatlas.KeyStakeDelegate
-	title := blockatlas.KeyTitle("")
+	key := txtype.KeyStakeDelegate
+	title := txtype.KeyTitle("")
 	switch msgType {
 	case MsgDelegate:
-		tx.Direction = blockatlas.DirectionOutgoing
-		title = blockatlas.AnyActionDelegation
+		tx.Direction = txtype.DirectionOutgoing
+		title = txtype.AnyActionDelegation
 	case MsgUndelegate:
-		tx.Direction = blockatlas.DirectionIncoming
-		title = blockatlas.AnyActionUndelegation
+		tx.Direction = txtype.DirectionIncoming
+		title = txtype.AnyActionUndelegation
 	case MsgWithdrawDelegationReward:
-		tx.Direction = blockatlas.DirectionIncoming
-		title = blockatlas.AnyActionClaimRewards
-		key = blockatlas.KeyStakeClaimRewards
+		tx.Direction = txtype.DirectionIncoming
+		title = txtype.AnyActionClaimRewards
+		key = txtype.KeyStakeClaimRewards
 		value = events.GetWithdrawRewardValue()
 	}
-	tx.Meta = blockatlas.AnyAction{
+	tx.Meta = txtype.AnyAction{
 		Coin:     p.Coin().ID,
 		Title:    title,
 		Key:      key,
 		Name:     p.Coin().Name,
 		Symbol:   p.Coin().Symbol,
 		Decimals: p.Coin().Decimals,
-		Value:    blockatlas.Amount(value),
+		Value:    txtype.Amount(value),
 	}
 }

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/golibs/txtype"
 )
 
 const (
@@ -69,12 +69,12 @@ type (
 	}
 )
 
-func (t *Transaction) Status() blockatlas.Status {
+func (t *Transaction) Status() txtype.Status {
 	switch t.Stat {
 	case TxStatusApplied:
-		return blockatlas.StatusCompleted
+		return txtype.StatusCompleted
 	default:
-		return blockatlas.StatusError
+		return txtype.StatusError
 	}
 }
 
@@ -86,14 +86,14 @@ func (t *Transaction) ErrorMsg() string {
 	}
 }
 
-func (t *Transaction) Title(address string) (blockatlas.KeyTitle, bool) {
+func (t *Transaction) Title(address string) (txtype.KeyTitle, bool) {
 	if t.Type == TxTypeDelegation {
 		if address == t.Sender && t.Delegate != "" && t.Receiver == "" {
-			return blockatlas.AnyActionDelegation, true
+			return txtype.AnyActionDelegation, true
 		}
 
 		if address == t.Sender && t.Delegate == "" && t.Receiver != "" {
-			return blockatlas.AnyActionUndelegation, true
+			return txtype.AnyActionUndelegation, true
 		}
 	}
 
@@ -109,26 +109,26 @@ func (t *Transaction) BlockTimestamp() int64 {
 	return unix
 }
 
-func (t *Transaction) TransferType() (blockatlas.TransactionType, bool) {
+func (t *Transaction) TransferType() (txtype.TransactionType, bool) {
 	switch t.Type {
 	case TxTypeTransaction:
-		return blockatlas.TxTransfer, true
+		return txtype.TxTransfer, true
 	case TxTypeDelegation:
-		return blockatlas.TxAnyAction, true
+		return txtype.TxAnyAction, true
 	default:
 		return "unsupported type", false
 	}
 }
 
-func (t *Transaction) Direction(address string) blockatlas.Direction {
+func (t *Transaction) Direction(address string) txtype.Direction {
 	if t.Sender == address && t.Receiver == address {
-		return blockatlas.DirectionSelf
+		return txtype.DirectionSelf
 	}
 	if t.Sender == address && t.Receiver != address {
-		return blockatlas.DirectionOutgoing
+		return txtype.DirectionOutgoing
 	}
 
-	return blockatlas.DirectionIncoming
+	return txtype.DirectionIncoming
 }
 
 func (t *Transaction) GetReceiver() string {

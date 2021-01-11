@@ -11,19 +11,20 @@ import (
 
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/mock"
+	"github.com/trustwallet/golibs/txtype"
 )
 
 var (
-	accountSrc, _          = mock.JsonFromFilePathToString("mocks/" + "account.json")
-	validatorSrc, _        = mock.JsonFromFilePathToString("mocks/" + "validator.json")
-	mockedTezosResponse, _ = mock.JsonFromFilePathToString("mocks/" + "delegation_response.json")
+	accountSrc, _          = mock.JsonStringFromFilePath("mocks/" + "account.json")
+	validatorSrc, _        = mock.JsonStringFromFilePath("mocks/" + "validator.json")
+	mockedTezosResponse, _ = mock.JsonStringFromFilePath("mocks/" + "delegation_response.json")
 
 	validator = blockatlas.Validator{
 		Status: true,
 		ID:     "tz2TSvNTh2epDMhZHrw73nV9piBX7kLZ9K9m",
 		Details: blockatlas.StakingDetails{
 			Reward:        blockatlas.StakingReward{Annual: Annual},
-			MinimumAmount: blockatlas.Amount("0"),
+			MinimumAmount: txtype.Amount("0"),
 			Type:          blockatlas.DelegationTypeDelegate,
 		},
 	}

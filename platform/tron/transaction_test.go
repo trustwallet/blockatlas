@@ -6,19 +6,19 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/coin"
 	"github.com/trustwallet/golibs/mock"
 	"github.com/trustwallet/golibs/tokentype"
+	"github.com/trustwallet/golibs/txtype"
 )
 
 var (
-	transferSrc, _                 = mock.JsonFromFilePathToString("mocks/" + "transfer.json")
-	tokenTransferSrc, _            = mock.JsonFromFilePathToString("mocks/" + "token_transfer.json")
-	wantedTransactionsWithToken, _ = mock.JsonFromFilePathToString("mocks/" + "token_txs_response.json")
-	wantedTransactionsOnly, _      = mock.JsonFromFilePathToString("mocks/" + "txs_response.json")
+	transferSrc, _                 = mock.JsonStringFromFilePath("mocks/" + "transfer.json")
+	tokenTransferSrc, _            = mock.JsonStringFromFilePath("mocks/" + "token_transfer.json")
+	wantedTransactionsWithToken, _ = mock.JsonStringFromFilePath("mocks/" + "token_txs_response.json")
+	wantedTransactionsOnly, _      = mock.JsonStringFromFilePath("mocks/" + "txs_response.json")
 
-	transferDst = blockatlas.Tx{
+	transferDst = txtype.Tx{
 		ID:     "24a10f7a503e78adc0d7e380b68005531b09e16b9e3f7b524e33f40985d287df",
 		Coin:   coin.TRX,
 		From:   "TMuA6YqfCeX8EhbfYEg5y7S4DqzSJireY9",
@@ -26,15 +26,15 @@ var (
 		Fee:    "0", // TODO
 		Date:   1564797900,
 		Block:  0, // TODO
-		Status: blockatlas.StatusCompleted,
-		Meta: blockatlas.Transfer{
+		Status: txtype.StatusCompleted,
+		Meta: txtype.Transfer{
 			Value:    "100666888000000",
 			Symbol:   "TRX",
 			Decimals: 6,
 		},
 	}
 
-	tokenTransferDst = blockatlas.Tx{
+	tokenTransferDst = txtype.Tx{
 		ID:     "24a10f7a503e78adc0d7e380b68005531b09e16b9e3f7b524e33f40985d287df",
 		Coin:   coin.TRX,
 		From:   "TMuA6YqfCeX8EhbfYEg5y7S4DqzSJireY9",
@@ -42,8 +42,8 @@ var (
 		Fee:    "0", // TODO
 		Date:   1564797900,
 		Block:  0, // TODO
-		Status: blockatlas.StatusCompleted,
-		Meta: blockatlas.TokenTransfer{
+		Status: txtype.StatusCompleted,
+		Meta: txtype.TokenTransfer{
 			Name:     "BitTorrent",
 			Symbol:   "BTT",
 			TokenID:  "1002000",
@@ -60,7 +60,7 @@ var (
 type test struct {
 	name        string
 	apiResponse string
-	expected    *blockatlas.Tx
+	expected    *txtype.Tx
 }
 
 func TestNormalizeTokenTransfer(t *testing.T) {

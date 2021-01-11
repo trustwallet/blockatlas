@@ -4,9 +4,9 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/coin"
 	"github.com/trustwallet/golibs/mock"
+	"github.com/trustwallet/golibs/txtype"
 )
 
 func TestNormalizeTx(t *testing.T) {
@@ -16,7 +16,7 @@ func TestNormalizeTx(t *testing.T) {
 	tests := []struct {
 		name   string
 		args   args
-		wantTx blockatlas.Tx
+		wantTx txtype.Tx
 		wantOk bool
 	}{
 		{
@@ -24,7 +24,7 @@ func TestNormalizeTx(t *testing.T) {
 			args: args{
 				srcTx: "transfer.json",
 			},
-			wantTx: blockatlas.Tx{
+			wantTx: txtype.Tx{
 				ID:     "0xaf3c2f5087fc3332154dc9d11c27e312f30ff829dbc5436aec8cc4342c7dc384",
 				Coin:   coin.AION,
 				From:   "0xa07981da70ce919e1db5f051c3c386eb526e6ce8b9e2bfd56e3f3d754b0a17f3",
@@ -32,8 +32,8 @@ func TestNormalizeTx(t *testing.T) {
 				Fee:    "21000",
 				Date:   1554862228,
 				Block:  2880919,
-				Status: blockatlas.StatusCompleted,
-				Meta: blockatlas.Transfer{
+				Status: txtype.StatusCompleted,
+				Meta: txtype.Transfer{
 					Value:    "11903810405853733000",
 					Symbol:   "AION",
 					Decimals: 18,
@@ -45,7 +45,7 @@ func TestNormalizeTx(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			var srcTx Tx
-			_ = mock.ParseJsonFromFilePath("mocks/"+tt.args.srcTx, &srcTx)
+			_ = mock.JsonModelFromFilePath("mocks/"+tt.args.srcTx, &srcTx)
 			gotTx, gotOk := NormalizeTx(&srcTx)
 			if !reflect.DeepEqual(gotTx, tt.wantTx) {
 				t.Errorf("NormalizeTx() gotTx = %v, want %v", gotTx, tt.wantTx)

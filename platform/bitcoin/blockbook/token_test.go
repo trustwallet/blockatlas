@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/golibs/txtype"
 )
 
 func TestNormalizeToken(t *testing.T) {
@@ -15,7 +15,7 @@ func TestNormalizeToken(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want []blockatlas.Token
+		want []txtype.Token
 	}{
 		{
 			name: "Should normalize and return token with balance",
@@ -27,7 +27,7 @@ func TestNormalizeToken(t *testing.T) {
 				Symbol:   "USDC",
 				Decimals: 6},
 				coinIndex: 60},
-			want: []blockatlas.Token{
+			want: []txtype.Token{
 				{
 					Type:    "ERC20",
 					Name:    "USD//C",
@@ -44,7 +44,7 @@ func TestNormalizeToken(t *testing.T) {
 				Symbol:   "USDC",
 				Decimals: 6},
 				coinIndex: 60},
-			want: []blockatlas.Token{},
+			want: []txtype.Token{},
 		}, {
 			name: "Should not return token with zero balance",
 			args: args{srcToken: Token{
@@ -55,7 +55,7 @@ func TestNormalizeToken(t *testing.T) {
 				Symbol:   "USDC",
 				Decimals: 6},
 				coinIndex: 60},
-			want: []blockatlas.Token{},
+			want: []txtype.Token{},
 		},
 	}
 	for _, tt := range tests {

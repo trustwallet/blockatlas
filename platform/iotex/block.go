@@ -1,15 +1,15 @@
 package iotex
 
 import (
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/golibs/txtype"
 )
 
 func (p *Platform) CurrentBlockNumber() (int64, error) {
 	return p.client.GetLatestBlock()
 }
 
-func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
-	var normalized []blockatlas.Tx
+func (p *Platform) GetBlockByNumber(num int64) (*txtype.Block, error) {
+	var normalized []txtype.Tx
 	txs, err := p.client.GetTxsInBlock(num)
 	if err != nil {
 		return nil, err
@@ -22,7 +22,7 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 		}
 	}
 
-	return &blockatlas.Block{
+	return &txtype.Block{
 		Number: num,
 		Txs:    normalized,
 	}, nil

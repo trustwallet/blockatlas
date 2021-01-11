@@ -4,6 +4,9 @@ import (
 	"errors"
 	"time"
 	"unicode/utf8"
+
+	"github.com/trustwallet/golibs/asset"
+	"github.com/trustwallet/golibs/txtype"
 )
 
 type Asset struct {
@@ -16,6 +19,81 @@ type Asset struct {
 	Symbol   string `gorm:"type:varchar(128)"`
 	Type     string `gorm:"type:varchar(12)"`
 	Coin     uint
+}
+
+func AssetFrom(t txtype.Tx) (Asset, bool) {
+	var a Asset
+	switch t.Meta.(type) {
+	case txtype.TokenTransfer:
+		a.Asset = asset.BuildID(t.Coin, t.Meta.(txtype.TokenTransfer).TokenID)
+		a.Decimals = t.Meta.(txtype.TokenTransfer).Decimals
+		a.Name = t.Meta.(txtype.TokenTransfer).Name
+		a.Symbol = t.Meta.(txtype.TokenTransfer).Symbol
+		tp, ok := txtype.GetTokenType(t.Coin, t.Meta.(txtype.TokenTransfer).TokenID)
+		if !ok {
+			return Asset{}, false
+		}
+		a.Type = tp
+	case *txtype.TokenTransfer:
+		a.Asset = asset.BuildID(t.Coin, t.Meta.(*txtype.TokenTransfer).TokenID)
+		a.Decimals = t.Meta.(*txtype.TokenTransfer).Decimals
+		a.Name = t.Meta.(*txtype.TokenTransfer).Name
+		a.Symbol = t.Meta.(*txtype.TokenTransfer).Symbol
+		tp, ok := txtype.GetTokenType(t.Coin, t.Meta.(*txtype.TokenTransfer).TokenID)
+		if !ok {
+			return Asset{}, false
+		}
+		a.Type = tp
+	case txtype.NativeTokenTransfer:
+		a.Asset = asset.BuildID(t.Coin, t.Meta.(txtype.NativeTokenTransfer).TokenID)
+		a.Decimals = t.Meta.(txtype.NativeTokenTransfer).Decimals
+		a.Name = t.Meta.(txtype.NativeTokenTransfer).Name
+		a.Symbol = t.Meta.(txtype.NativeTokenTransfer).Symbol
+		tp, ok := txtype.GetTokenType(t.Coin, t.Meta.(txtype.NativeTokenTransfer).TokenID)
+		if !ok {
+			return Asset{}, false
+		}
+		a.Type = tp
+	case *txtype.NativeTokenTransfer:
+		a.Asset = asset.BuildID(t.Coin, t.Meta.(*txtype.NativeTokenTransfer).TokenID)
+		a.Decimals = t.Meta.(*txtype.NativeTokenTransfer).Decimals
+		a.Name = t.Meta.(*txtype.NativeTokenTransfer).Name
+		a.Symbol = t.Meta.(*txtype.NativeTokenTransfer).Symbol
+		tp, ok := txtype.GetTokenType(t.Coin, t.Meta.(*txtype.NativeTokenTransfer).TokenID)
+		if !ok {
+			return Asset{}, false
+		}
+		a.Type = tp
+	case txtype.AnyAction:
+		a.Asset = asset.BuildID(t.Coin, t.Meta.(txtype.AnyAction).TokenID)
+		a.Decimals = t.Meta.(txtype.AnyAction).Decimals
+		a.Name = t.Meta.(txtype.AnyAction).Name
+		a.Symbol = t.Meta.(txtype.AnyAction).Symbol
+		tp, ok := txtype.GetTokenType(t.Coin, t.Meta.(txtype.AnyAction).TokenID)
+		if !ok {
+			return Asset{}, false
+		}
+		a.Type = tp
+	case *txtype.AnyAction:
+		a.Asset = asset.BuildID(t.Coin, t.Meta.(*txtype.AnyAction).TokenID)
+		a.Decimals = t.Meta.(*txtype.AnyAction).Decimals
+		a.Name = t.Meta.(*txtype.AnyAction).Name
+		a.Symbol = t.Meta.(*txtype.AnyAction).Symbol
+		tp, ok := txtype.GetTokenType(t.Coin, t.Meta.(*txtype.AnyAction).TokenID)
+		if !ok {
+			return Asset{}, false
+		}
+		a.Type = tp
+	default:
+		return Asset{}, false
+	}
+	a.Coin = t.Coin
+
+	if a.IsValid() != nil {
+		return Asset{}, false
+	}
+
+	return a, true
 }
 
 func (asset *Asset) IsValid() error {

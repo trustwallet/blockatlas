@@ -4,13 +4,12 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-
 	"github.com/trustwallet/golibs/coin"
+	"github.com/trustwallet/golibs/txtype"
 )
 
-func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
-	txs := make([]blockatlas.Tx, 0)
+func (p *Platform) GetTxsByAddress(address string) (txtype.TxPage, error) {
+	txs := make([]txtype.Tx, 0)
 	var start int64
 
 	totalTrx, err := p.client.GetAddressTotalTransactions(address)
@@ -18,8 +17,8 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 		return nil, err
 	}
 
-	if totalTrx >= blockatlas.TxPerPage {
-		start = totalTrx - blockatlas.TxPerPage
+	if totalTrx >= txtype.TxPerPage {
+		start = totalTrx - txtype.TxPerPage
 	}
 
 	actions, err := p.client.GetTxsOfAddress(address, start)
@@ -38,7 +37,7 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 }
 
 // Normalize converts an Iotex transaction into the generic model
-func Normalize(trx *ActionInfo) *blockatlas.Tx {
+func Normalize(trx *ActionInfo) *txtype.Tx {
 	if trx.Action == nil {
 		return nil
 	}
@@ -67,18 +66,18 @@ func Normalize(trx *ActionInfo) *blockatlas.Tx {
 	if trx.GasFee == "" {
 		trx.GasFee = "0"
 	}
-	return &blockatlas.Tx{
+	return &txtype.Tx{
 		ID:       trx.ActHash,
 		Coin:     coin.IOTX,
 		From:     trx.Sender,
 		To:       trx.Action.Core.Transfer.Recipient,
-		Fee:      blockatlas.Amount(trx.GasFee),
+		Fee:      txtype.Amount(trx.GasFee),
 		Date:     date.Unix(),
 		Block:    uint64(height),
-		Status:   blockatlas.StatusCompleted,
+		Status:   txtype.StatusCompleted,
 		Sequence: uint64(nonce),
-		Type:     blockatlas.TxTransfer,
-		Meta: blockatlas.Transfer{
+		Type:     txtype.TxTransfer,
+		Meta: txtype.Transfer{
 			Value:    trx.Action.Core.Transfer.Amount,
 			Symbol:   coin.Coins[coin.IOTX].Symbol,
 			Decimals: coin.Coins[coin.IOTX].Decimals,

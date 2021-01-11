@@ -2,6 +2,7 @@ package blockatlas
 
 import (
 	"github.com/trustwallet/golibs/coin"
+	"github.com/trustwallet/golibs/txtype"
 )
 
 type (
@@ -14,31 +15,31 @@ type (
 	BlockAPI interface {
 		Platform
 		CurrentBlockNumber() (int64, error)
-		GetBlockByNumber(num int64) (*Block, error)
+		GetBlockByNumber(num int64) (*txtype.Block, error)
 	}
 
 	// TxAPI provides transaction lookups based on address
 	TxAPI interface {
 		Platform
-		GetTxsByAddress(address string) (TxPage, error)
+		GetTxsByAddress(address string) (txtype.TxPage, error)
 	}
 
 	// TokenTxAPI provides token transaction lookups
 	TokenTxAPI interface {
 		Platform
-		GetTokenTxsByAddress(address, token string) (TxPage, error)
+		GetTokenTxsByAddress(address, token string) (txtype.TxPage, error)
 	}
 
 	// TxUtxoAPI provides transaction lookup based on address and XPUB (Bitcoin-style)
 	TxUtxoAPI interface {
 		TxAPI
-		GetTxsByXpub(xpub string) (TxPage, error)
+		GetTxsByXpub(xpub string) (txtype.TxPage, error)
 	}
 
 	// TokensAPI provides token lookups
 	TokensAPI interface {
 		Platform
-		GetTokenListByAddress(address string) (TokenPage, error)
+		GetTokenListByAddress(address string) (txtype.TokenPage, error)
 	}
 
 	// StakingAPI provides staking information
@@ -53,8 +54,8 @@ type (
 
 	CollectionsAPI interface {
 		Platform
-		GetCollections(owner string) (CollectionPage, error)
-		GetCollectibles(owner, collectibleID string) (CollectiblePage, error)
+		GetCollections(owner string) (txtype.CollectionPage, error)
+		GetCollectibles(owner, collectibleID string) (txtype.CollectiblePage, error)
 	}
 
 	Platforms map[string]Platform

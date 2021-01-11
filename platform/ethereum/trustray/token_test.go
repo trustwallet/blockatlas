@@ -6,8 +6,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/golibs/tokentype"
+	"github.com/trustwallet/golibs/txtype"
 
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/coin"
 )
 
@@ -21,7 +21,7 @@ const tokenSrc = `
 
 type testToken struct {
 	apiResponse string
-	expected    *blockatlas.Token
+	expected    *txtype.Token
 	coin        int
 }
 
@@ -30,13 +30,13 @@ func TestNormalizeToken(t *testing.T) {
 		name     string
 		tokenRaw string
 		coin     int
-		want     blockatlas.Token
+		want     txtype.Token
 	}{
 		{
 			"ethereum erc20",
 			tokenSrc,
 			coin.ETH,
-			blockatlas.Token{
+			txtype.Token{
 				Name:     "FusChain",
 				Symbol:   "FUS",
 				Decimals: 18,
@@ -48,7 +48,7 @@ func TestNormalizeToken(t *testing.T) {
 		{"classic etc20",
 			tokenSrc,
 			coin.ETC,
-			blockatlas.Token{
+			txtype.Token{
 				Name:     "FusChain",
 				Symbol:   "FUS",
 				Decimals: 18,
@@ -60,7 +60,7 @@ func TestNormalizeToken(t *testing.T) {
 		{"gochain go20",
 			tokenSrc,
 			coin.GO,
-			blockatlas.Token{
+			txtype.Token{
 				Name:     "FusChain",
 				Symbol:   "FUS",
 				Decimals: 18,
@@ -72,7 +72,7 @@ func TestNormalizeToken(t *testing.T) {
 		{"thudertoken tt20",
 			tokenSrc,
 			coin.TT,
-			blockatlas.Token{
+			txtype.Token{
 				Name:     "FusChain",
 				Symbol:   "FUS",
 				Decimals: 18,
@@ -84,7 +84,7 @@ func TestNormalizeToken(t *testing.T) {
 		{"wanchain wan20",
 			tokenSrc,
 			coin.WAN,
-			blockatlas.Token{
+			txtype.Token{
 				Name:     "FusChain",
 				Symbol:   "FUS",
 				Decimals: 18,
@@ -96,7 +96,7 @@ func TestNormalizeToken(t *testing.T) {
 		{"poa poa20",
 			tokenSrc,
 			coin.POA,
-			blockatlas.Token{
+			txtype.Token{
 				Name:     "FusChain",
 				Symbol:   "FUS",
 				Decimals: 18,
@@ -108,7 +108,7 @@ func TestNormalizeToken(t *testing.T) {
 		{"callisto clo20",
 			tokenSrc,
 			coin.CLO,
-			blockatlas.Token{
+			txtype.Token{
 				Name:     "FusChain",
 				Symbol:   "FUS",
 				Decimals: 18,
@@ -120,7 +120,7 @@ func TestNormalizeToken(t *testing.T) {
 		{"unknown",
 			tokenSrc,
 			1999,
-			blockatlas.Token{
+			txtype.Token{
 				Name:     "FusChain",
 				Symbol:   "FUS",
 				Decimals: 18,

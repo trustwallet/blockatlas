@@ -6,8 +6,7 @@ import (
 	"strings"
 
 	"github.com/trustwallet/golibs/numbers"
-
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/golibs/txtype"
 )
 
 var NetworkByteMap = map[string]byte{
@@ -15,13 +14,13 @@ var NetworkByteMap = map[string]byte{
 	"KSM": 0x02,
 }
 
-func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
+func (p *Platform) GetTxsByAddress(address string) (txtype.TxPage, error) {
 	transfers, err := p.client.GetTransfersOfAddress(address)
 	if err != nil {
 		return nil, err
 	}
 
-	txs := make([]blockatlas.Tx, 0)
+	txs := make([]txtype.Tx, 0)
 	for _, srcTx := range transfers {
 		tx := p.NormalizeTransfer(&srcTx)
 		txs = append(txs, tx)
@@ -30,24 +29,24 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 	return txs, nil
 }
 
-func (p *Platform) NormalizeTransfer(srcTx *Transfer) blockatlas.Tx {
+func (p *Platform) NormalizeTransfer(srcTx *Transfer) txtype.Tx {
 	decimals := p.Coin().Decimals
 	amount := strings.Split(numbers.DecimalExp(srcTx.Amount, int(decimals)), ".")[0]
-	status := blockatlas.StatusCompleted
+	status := txtype.StatusCompleted
 	if !srcTx.Success {
-		status = blockatlas.StatusError
+		status = txtype.StatusError
 	}
-	result := blockatlas.Tx{
+	result := txtype.Tx{
 		ID:     srcTx.Hash,
 		Coin:   p.Coin().ID,
 		Date:   int64(srcTx.Timestamp),
 		From:   srcTx.From,
 		To:     srcTx.To,
-		Fee:    blockatlas.Amount(FeeTransfer), // API will return fee later
+		Fee:    txtype.Amount(FeeTransfer), // API will return fee later
 		Block:  srcTx.BlockNumber,
 		Status: status,
-		Meta: blockatlas.Transfer{
-			Value:    blockatlas.Amount(amount),
+		Meta: txtype.Transfer{
+			Value:    txtype.Amount(amount),
 			Symbol:   p.Coin().Symbol,
 			Decimals: decimals,
 		},
@@ -55,8 +54,8 @@ func (p *Platform) NormalizeTransfer(srcTx *Transfer) blockatlas.Tx {
 	return result
 }
 
-func (p *Platform) NormalizeExtrinsics(extrinsics []Extrinsic) []blockatlas.Tx {
-	txs := make([]blockatlas.Tx, 0)
+func (p *Platform) NormalizeExtrinsics(extrinsics []Extrinsic) []txtype.Tx {
+	txs := make([]txtype.Tx, 0)
 	for _, srcTx := range extrinsics {
 		tx := p.NormalizeExtrinsic(&srcTx)
 		if tx != nil {
@@ -66,7 +65,7 @@ func (p *Platform) NormalizeExtrinsics(extrinsics []Extrinsic) []blockatlas.Tx {
 	return txs
 }
 
-func (p *Platform) NormalizeExtrinsic(srcTx *Extrinsic) *blockatlas.Tx {
+func (p *Platform) NormalizeExtrinsic(srcTx *Extrinsic) *txtype.Tx {
 	var datas []CallData
 	err := json.Unmarshal([]byte(srcTx.Params), &datas)
 	if err != nil {
@@ -88,24 +87,24 @@ func (p *Platform) NormalizeExtrinsic(srcTx *Extrinsic) *blockatlas.Tx {
 		return nil
 	}
 
-	status := blockatlas.StatusCompleted
+	status := txtype.StatusCompleted
 	if !srcTx.Success {
-		status = blockatlas.StatusError
+		status = txtype.StatusError
 	}
 
-	result := blockatlas.Tx{
+	result := txtype.Tx{
 		ID:       srcTx.Hash,
 		Coin:     p.Coin().ID,
 		From:     srcTx.AccountId,
 		To:       to,
-		Fee:      blockatlas.Amount(srcTx.Fee),
+		Fee:      txtype.Amount(srcTx.Fee),
 		Date:     int64(srcTx.Timestamp),
 		Block:    srcTx.BlockNumber,
 		Status:   status,
 		Sequence: srcTx.Nonce,
 
-		Meta: blockatlas.Transfer{
-			Value:    blockatlas.Amount(datas[1].Value),
+		Meta: txtype.Transfer{
+			Value:    txtype.Amount(datas[1].Value),
 			Symbol:   p.Coin().Symbol,
 			Decimals: p.Coin().Decimals,
 		},
