@@ -7,9 +7,8 @@ import (
 type (
 	// Subscription for address and asset associations
 	Subscription struct {
-		ID        uint `gorm:"primaryKey;"`
-		CreatedAt time.Time
-		Address   string `gorm:"uniqueIndex:idx_address; type:varchar(256); not null;"`
+		ID      uint   `gorm:"primaryKey;"`
+		Address string `gorm:"type:varchar(256); not null;"`
 	}
 
 	SubscriptionsAssetAssociation struct {
