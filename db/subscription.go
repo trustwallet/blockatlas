@@ -10,17 +10,18 @@ func (i *Instance) CreateSubscriptions(addresses []blockatlas.Subscription) erro
 	if len(addresses) == 0 {
 		return nil
 	}
-	result := make([]models.Subscription, 0)
+	// remove duplicates
+	addressIds := make(map[string]bool)
 	for _, address := range addresses {
-		result = append(result, models.Subscription{Address: address.AddressID()})
+		addressIds[address.AddressID()] = true
+	}
+	result := make([]models.Subscription, 0)
+	for addressId, _ := range addressIds {
+		result = append(result, models.Subscription{Address: addressId})
 	}
 
 	return i.Gorm.Clauses(clause.OnConflict{
-		Columns: []clause.Column{
-			{
-				Name: "address",
-			},
-		},
+		Columns:   []clause.Column{{Name: "address"}},
 		DoUpdates: clause.AssignmentColumns([]string{"address"}),
 	}).Create(&result).Error
 }
