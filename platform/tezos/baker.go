@@ -9,7 +9,7 @@ import (
 	"github.com/trustwallet/blockatlas/services/assets"
 	"github.com/trustwallet/golibs/client"
 	"github.com/trustwallet/golibs/coin"
-	"github.com/trustwallet/golibs/txtype"
+	"github.com/trustwallet/golibs/types"
 )
 
 const (
@@ -61,7 +61,7 @@ func NormalizeStakeValidator(baker Baker, assetValidator assets.AssetValidator) 
 				Annual: math.Round(baker.EstimatedRoi*10000) / 100,
 			},
 			LockTime:      LockTime,
-			MinimumAmount: txtype.Amount(strconv.FormatUint(amount, 10)),
+			MinimumAmount: types.Amount(strconv.FormatUint(amount, 10)),
 			Type:          blockatlas.DelegationTypeDelegate,
 		},
 	}

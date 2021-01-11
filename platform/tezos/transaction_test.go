@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/trustwallet/golibs/txtype"
+	"github.com/trustwallet/golibs/types"
 )
 
 var (
@@ -22,7 +22,7 @@ var (
 		//Errors: {{ID: "proto.005-PsBabyM1.delegate.unchanged"}, Kind: "temporary"}
 	}
 
-	normalizedTezosTransfer = txtype.Tx{
+	normalizedTezosTransfer = types.Tx{
 		ID:        "op6GzJ3a3wGJTu4KuD2WNCVJdwEU5WKDXV6EyjsBYMEjyPQWozF",
 		Coin:      1729,
 		From:      addr1,
@@ -34,7 +34,7 @@ var (
 		Type:      "transfer",
 		Direction: "yourself",
 		Memo:      "",
-		Meta: txtype.Transfer{
+		Meta: types.Transfer{
 			Value:    "1",
 			Symbol:   "XTZ",
 			Decimals: 6,
@@ -46,7 +46,7 @@ func TestNormalizeTx(t *testing.T) {
 	tests := []struct {
 		name    string
 		in      Transaction
-		out     txtype.Tx
+		out     types.Tx
 		address string
 	}{
 		{"Normalize XTZ transfer", tezosTransfer, normalizedTezosTransfer, addr1},

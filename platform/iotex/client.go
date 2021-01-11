@@ -7,7 +7,7 @@ import (
 
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/client"
-	"github.com/trustwallet/golibs/txtype"
+	"github.com/trustwallet/golibs/types"
 )
 
 type Client struct {
@@ -41,7 +41,7 @@ func (c *Client) GetTxsOfAddress(address string, start int64) (*Response, error)
 	var response Response
 	err := c.Get(&response, "actions/addr/"+address, url.Values{
 		"start": {strconv.FormatInt(start, 10)},
-		"count": {strconv.Itoa(txtype.TxPerPage)},
+		"count": {strconv.Itoa(types.TxPerPage)},
 	})
 
 	if err != nil {

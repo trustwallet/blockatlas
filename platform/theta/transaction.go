@@ -6,21 +6,21 @@ import (
 	"strings"
 
 	"github.com/trustwallet/golibs/coin"
-	"github.com/trustwallet/golibs/txtype"
+	"github.com/trustwallet/golibs/types"
 )
 
-func (p *Platform) GetTxsByAddress(address string) (txtype.TxPage, error) {
+func (p *Platform) GetTxsByAddress(address string) (types.TxPage, error) {
 	// Endpoint supports queries without token query parameter
 	return p.GetTokenTxsByAddress(address, "")
 }
 
-func (p *Platform) GetTokenTxsByAddress(address, token string) (txtype.TxPage, error) {
+func (p *Platform) GetTokenTxsByAddress(address, token string) (types.TxPage, error) {
 	trx, err := p.client.FetchAddressTransactions(address)
 	if err != nil {
 		return nil, err
 	}
 
-	var txs []txtype.Tx
+	var txs []types.Tx
 	for _, tr := range trx {
 		if tr.Type != SendTransaction {
 			continue
@@ -35,14 +35,14 @@ func (p *Platform) GetTokenTxsByAddress(address, token string) (txtype.TxPage, e
 	return txs, nil
 }
 
-func Normalize(trx *Tx, address, token string) (tx txtype.Tx, ok bool) {
+func Normalize(trx *Tx, address, token string) (tx types.Tx, ok bool) {
 	time, _ := strconv.ParseInt(trx.Timestamp, 10, 64)
 	block, _ := strconv.ParseUint(trx.BlockHeight, 10, 64)
 
-	tx = txtype.Tx{
+	tx = types.Tx{
 		ID:       trx.Hash,
 		Coin:     coin.THETA,
-		Fee:      txtype.Amount(trx.Data.Fee.Tfuelwei),
+		Fee:      types.Amount(trx.Data.Fee.Tfuelwei),
 		Date:     time,
 		Block:    block,
 		Sequence: block,
@@ -69,9 +69,9 @@ func Normalize(trx *Tx, address, token string) (tx txtype.Tx, ok bool) {
 		tx.To = output.Address
 		tx.Sequence = sequence
 		tx.Direction = direction
-		tx.Type = txtype.TxTransfer
-		tx.Meta = txtype.Transfer{
-			Value:    txtype.Amount(output.Coins.Thetawei),
+		tx.Type = types.TxTransfer
+		tx.Meta = types.Transfer{
+			Value:    types.Amount(output.Coins.Thetawei),
 			Symbol:   coin.Coins[coin.THETA].Symbol,
 			Decimals: coin.Coins[coin.THETA].Decimals,
 		}
@@ -92,13 +92,13 @@ func Normalize(trx *Tx, address, token string) (tx txtype.Tx, ok bool) {
 		tx.To = to
 		tx.Sequence = sequence
 		tx.Direction = direction
-		tx.Type = txtype.TxNativeTokenTransfer
-		tx.Meta = txtype.NativeTokenTransfer{
+		tx.Type = types.TxNativeTokenTransfer
+		tx.Meta = types.NativeTokenTransfer{
 			Name:     "Theta Fuel",
 			Symbol:   "TFUEL",
 			TokenID:  "tfuel",
 			Decimals: 18,
-			Value:    txtype.Amount(output.Coins.Tfuelwei),
+			Value:    types.Amount(output.Coins.Tfuelwei),
 			From:     from,
 			To:       to,
 		}
@@ -110,18 +110,18 @@ func Normalize(trx *Tx, address, token string) (tx txtype.Tx, ok bool) {
 }
 
 // Get transaction direction
-func getDirection(a string, inputs Input, outputs Output) (dir txtype.Direction, err error) {
+func getDirection(a string, inputs Input, outputs Output) (dir types.Direction, err error) {
 	address := strings.ToLower(a)
 	inAddr := inputs.Address
 	outAddr := outputs.Address
 
 	switch {
 	case inAddr == address && outAddr == address:
-		return txtype.DirectionSelf, nil
+		return types.DirectionSelf, nil
 	case inAddr == address && outAddr != address:
-		return txtype.DirectionOutgoing, nil
+		return types.DirectionOutgoing, nil
 	case inAddr != address && outAddr == address:
-		return txtype.DirectionIncoming, nil
+		return types.DirectionIncoming, nil
 	}
 
 	return "", fmt.Errorf("direction unknown")

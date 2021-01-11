@@ -18,7 +18,7 @@ definitions:
       total:
         type: integer
     type: object
-  txtype.CollectionPage:
+  types.CollectionPage:
     items:
       $ref: '#/definitions/blockatlas.Collection'
     type: array
@@ -282,7 +282,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/txtype.CollectionPage'
+            $ref: '#/definitions/types.CollectionPage'
         "500":
           description: Internal Server Error
           schema:
@@ -501,7 +501,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/txtype.CollectionPage'
+            $ref: '#/definitions/types.CollectionPage'
         "500":
           description: Internal Server Error
           schema:

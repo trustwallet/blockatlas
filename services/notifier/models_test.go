@@ -6,11 +6,11 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/golibs/coin"
-	"github.com/trustwallet/golibs/txtype"
+	"github.com/trustwallet/golibs/types"
 )
 
 var (
-	nativeTokenTransfer = txtype.Tx{
+	nativeTokenTransfer = types.Tx{
 		ID:     "95CF63FAA27579A9B6AF84EF8B2DFEAC29627479E9C98E7F5AE4535E213FA4C9",
 		Coin:   coin.BNB,
 		From:   "tbnb1ttyn4csghfgyxreu7lmdu3lcplhqhxtzced45a",
@@ -18,9 +18,9 @@ var (
 		Fee:    "125000",
 		Date:   1555117625,
 		Block:  7928667,
-		Status: txtype.StatusCompleted,
+		Status: types.StatusCompleted,
 		Memo:   "test",
-		Meta: txtype.NativeTokenTransfer{
+		Meta: types.NativeTokenTransfer{
 			TokenID:  "YLC-D8B",
 			Symbol:   "YLC",
 			Value:    "210572645",
@@ -29,7 +29,7 @@ var (
 			To:       "tbnb12hlquylu78cjylk5zshxpdj6hf3t0tahwjt3ex",
 		},
 	}
-	tokenTransfer = txtype.Tx{
+	tokenTransfer = types.Tx{
 		ID:       "0xbcd1a43e796de4035e5e2991d8db332958e36031d54cb1d3a08d2cb790e338c4",
 		Coin:     60,
 		From:     "0x08777CB1e80F45642752662B04886Df2d271E049",
@@ -40,7 +40,7 @@ var (
 		Status:   "completed",
 		Sequence: 149,
 		Type:     "token_transfer",
-		Meta: txtype.TokenTransfer{
+		Meta: types.TokenTransfer{
 			Name:     "Kyber Network Crystal",
 			Symbol:   "KNC",
 			TokenID:  "0xdd974D5C2e2928deA5F71b9825b8b646686BD200",
@@ -50,7 +50,7 @@ var (
 			To:       "0x38d45371993eEc84f38FEDf93C646aA2D2267CEA",
 		},
 	}
-	transfer = txtype.Tx{
+	transfer = types.Tx{
 		ID:     "1681EE543FB4B5A628EF21D746E031F018E226D127044A4F9BA5EE2542A44556",
 		Coin:   coin.BNB,
 		From:   "tbnb1fhr04azuhcj0dulm7ka40y0cqjlafwae9k9gk2",
@@ -58,18 +58,18 @@ var (
 		Fee:    "125000",
 		Date:   1555049867,
 		Block:  7761368,
-		Status: txtype.StatusCompleted,
+		Status: types.StatusCompleted,
 		Memo:   "test",
-		Meta: txtype.Transfer{
+		Meta: types.Transfer{
 			Value:    "10000000000000",
 			Decimals: 8,
 			Symbol:   "BNB",
 		},
 	}
-	utxoTransfer = txtype.Tx{
+	utxoTransfer = types.Tx{
 		ID:   "zpub6ruK9k6YGm8BRHWvTiQcrEPnFkuRDJhR7mPYzV2LDvjpLa5CuGgrhCYVZjMGcLcFqv9b2WvsFtY2Gb3xq8NVq8qhk9veozrA2W9QaWtihrC",
 		Coin: coin.BTC,
-		Inputs: []txtype.TxOutput{
+		Inputs: []types.TxOutput{
 			{
 				Address: "bc1qhn03cww757mnnlpkdvvfkaydxqygm86nvkm92h",
 				Value:   "1",
@@ -83,7 +83,7 @@ var (
 				Value:   "1",
 			},
 		},
-		Outputs: []txtype.TxOutput{
+		Outputs: []types.TxOutput{
 			{
 				Address: "bc1qjcslq88cht8llqmh3aqshjx9we9msv386jvxl6",
 				Value:   "3",
@@ -94,9 +94,9 @@ var (
 		Fee:    "125000",
 		Date:   1555117625,
 		Block:  592400,
-		Status: txtype.StatusCompleted,
+		Status: types.StatusCompleted,
 		Memo:   "test",
-		Meta: txtype.Transfer{
+		Meta: types.Transfer{
 			Value:    "10000000000000",
 			Decimals: 8,
 			Symbol:   "BNB",
@@ -126,21 +126,21 @@ func Test_containsAddress(t *testing.T) {
 }
 
 func Test_findTransactionsByAddress(t *testing.T) {
-	res := findTransactionsByAddress([]txtype.Tx{nativeTokenTransfer, tokenTransfer}, "tbnb1ttyn4csghfgyxreu7lmdu3lcplhqhxtzced45a")
+	res := findTransactionsByAddress([]types.Tx{nativeTokenTransfer, tokenTransfer}, "tbnb1ttyn4csghfgyxreu7lmdu3lcplhqhxtzced45a")
 	sort.Slice(res, func(i, j int) bool {
 		return res[i].ID < res[j].ID
 	})
-	assert.Equal(t, []txtype.Tx{nativeTokenTransfer}, res)
+	assert.Equal(t, []types.Tx{nativeTokenTransfer}, res)
 
-	resFail := findTransactionsByAddress([]txtype.Tx{nativeTokenTransfer, tokenTransfer}, "tbnb1ttyn4csghfgyxreu7lmdu3lcplhqhxtzced")
-	assert.Equal(t, []txtype.Tx{}, resFail)
+	resFail := findTransactionsByAddress([]types.Tx{nativeTokenTransfer, tokenTransfer}, "tbnb1ttyn4csghfgyxreu7lmdu3lcplhqhxtzced")
+	assert.Equal(t, []types.Tx{}, resFail)
 }
 
 func Test_buildNotificationsByAddress(t *testing.T) {
-	notifications := buildNotificationsByAddress("tbnb1ttyn4csghfgyxreu7lmdu3lcplhqhxtzced45a", []txtype.Tx{nativeTokenTransfer, tokenTransfer})
+	notifications := buildNotificationsByAddress("tbnb1ttyn4csghfgyxreu7lmdu3lcplhqhxtzced45a", []types.Tx{nativeTokenTransfer, tokenTransfer})
 	sort.Slice(notifications, func(i, j int) bool {
 		return notifications[i].Action < notifications[j].Action
 	})
-	nativeTokenTransfer.Direction = txtype.DirectionOutgoing
+	nativeTokenTransfer.Direction = types.DirectionOutgoing
 	assert.Equal(t, nativeTokenTransfer, notifications[0].Result)
 }

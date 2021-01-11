@@ -3,7 +3,7 @@ package iotex
 import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/services/assets"
-	"github.com/trustwallet/golibs/txtype"
+	"github.com/trustwallet/golibs/types"
 )
 
 func (p *Platform) GetActiveValidators() (blockatlas.StakeValidators, error) {
@@ -29,7 +29,7 @@ func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, e
 func (p *Platform) GetDetails() blockatlas.StakingDetails {
 	return blockatlas.StakingDetails{
 		Reward:        blockatlas.StakingReward{Annual: 0},
-		MinimumAmount: txtype.Amount("100000000000000000000"),
+		MinimumAmount: types.Amount("100000000000000000000"),
 		LockTime:      259200,
 		Type:          blockatlas.DelegationTypeDelegate,
 	}

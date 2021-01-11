@@ -6,7 +6,7 @@ import (
 
 	"github.com/trustwallet/golibs/coin"
 	"github.com/trustwallet/golibs/mock"
-	"github.com/trustwallet/golibs/txtype"
+	"github.com/trustwallet/golibs/types"
 )
 
 func TestNormalizeTx(t *testing.T) {
@@ -16,7 +16,7 @@ func TestNormalizeTx(t *testing.T) {
 	tests := []struct {
 		name   string
 		args   args
-		wantTx txtype.Tx
+		wantTx types.Tx
 		ok     bool
 	}{
 		{
@@ -24,7 +24,7 @@ func TestNormalizeTx(t *testing.T) {
 			args: args{
 				filename: "payment.json",
 			},
-			wantTx: txtype.Tx{
+			wantTx: types.Tx{
 				ID:     "40279A3DE51148BD41409DADF29DE8DCCD50F5AEE30840827B2C4C81C4E36505",
 				Coin:   coin.XRP,
 				From:   "rGSxFjoqmWz54PycrgQBQ5dB6e7TUpMxzq",
@@ -33,8 +33,8 @@ func TestNormalizeTx(t *testing.T) {
 				Date:   1512168330,
 				Block:  34698103,
 				Memo:   "2500",
-				Status: txtype.StatusCompleted,
-				Meta: txtype.Transfer{
+				Status: types.StatusCompleted,
+				Meta: types.Transfer{
 					Value:    "100000000",
 					Symbol:   "XRP",
 					Decimals: 6,
@@ -47,7 +47,7 @@ func TestNormalizeTx(t *testing.T) {
 			args: args{
 				filename: "payment_2.json",
 			},
-			wantTx: txtype.Tx{
+			wantTx: types.Tx{
 				ID:     "3D8512E02414EF5A6BC00281D945735E85DED9EF739B1DCA9EABE04D9EEC72C1",
 				Coin:   coin.XRP,
 				From:   "raz97dHvnyBcnYTbXGYxhV8bGyr1aPrE5w",
@@ -56,8 +56,8 @@ func TestNormalizeTx(t *testing.T) {
 				Date:   1565114281,
 				Block:  49163909,
 				Memo:   "",
-				Status: txtype.StatusCompleted,
-				Meta: txtype.Transfer{
+				Status: types.StatusCompleted,
+				Meta: types.Transfer{
 					Value:    "3100",
 					Symbol:   "XRP",
 					Decimals: 6,
@@ -70,7 +70,7 @@ func TestNormalizeTx(t *testing.T) {
 			args: args{
 				filename: "payment_failed.json",
 			},
-			wantTx: txtype.Tx{
+			wantTx: types.Tx{
 				ID:     "B9086F7EB895E943C4DDA9F1B582E6E7DE35F4FB91AD13C50AB74F854DC0EBE0",
 				Coin:   coin.XRP,
 				From:   "rJb5KsHsDHF1YS5B5DU6QCkH5NsPaKQTcy",
@@ -79,8 +79,8 @@ func TestNormalizeTx(t *testing.T) {
 				Date:   1581590872,
 				Block:  53401154,
 				Memo:   "",
-				Status: txtype.StatusError,
-				Meta: txtype.Transfer{
+				Status: types.StatusError,
+				Meta: types.Transfer{
 					Value:    "24999750000",
 					Symbol:   "XRP",
 					Decimals: 6,
@@ -93,7 +93,7 @@ func TestNormalizeTx(t *testing.T) {
 			args: args{
 				filename: "payment_3.json",
 			},
-			wantTx: txtype.Tx{},
+			wantTx: types.Tx{},
 			ok:     false,
 		},
 		{
@@ -101,7 +101,7 @@ func TestNormalizeTx(t *testing.T) {
 			args: args{
 				filename: "payment_4.json",
 			},
-			wantTx: txtype.Tx{},
+			wantTx: types.Tx{},
 			ok:     false,
 		},
 	}

@@ -7,14 +7,14 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/golibs/coin"
 	"github.com/trustwallet/golibs/mock"
-	"github.com/trustwallet/golibs/txtype"
+	"github.com/trustwallet/golibs/types"
 )
 
 var (
 	thetaTransfer, _ = mock.JsonStringFromFilePath("mocks/" + "theta_transfer.json")
 	tFuelTransfer, _ = mock.JsonStringFromFilePath("mocks/" + "tfuel_transfer.json")
 
-	expectedTransferTrx = txtype.Tx{
+	expectedTransferTrx = types.Tx{
 		ID:        "0x413d8423fd1e6df99fc57f425dfd58c791c877657b364c62c15905ade5114a70",
 		Coin:      coin.THETA,
 		From:      "0xac0eeb6ee3e32e2c74e14ac74155063e4f4f981f",
@@ -22,30 +22,30 @@ var (
 		Fee:       "2000000000000",
 		Date:      1557136781,
 		Type:      "transfer",
-		Status:    txtype.StatusCompleted,
+		Status:    types.StatusCompleted,
 		Block:     700321,
 		Sequence:  43,
-		Direction: txtype.DirectionOutgoing,
-		Meta: txtype.Transfer{
+		Direction: types.DirectionOutgoing,
+		Meta: types.Transfer{
 			Value:    "4000000000000000000",
 			Symbol:   "THETA",
 			Decimals: 18,
 		},
 	}
 
-	expectedTfuelTransfer = txtype.Tx{
+	expectedTfuelTransfer = types.Tx{
 		ID:        "0x558cb5ec877119c2c84a677277efb5b3059adb830c6e74971b3dbe93221b7132",
 		Coin:      coin.THETA,
 		From:      "0x0a7d7141e9abe5d1c760cffa1129c6eb94f35a2a",
 		To:        "0xac0eeb6ee3e32e2c74e14ac74155063e4f4f981f",
 		Fee:       "2000000000000",
 		Date:      1557136821,
-		Type:      txtype.TxNativeTokenTransfer,
-		Status:    txtype.StatusCompleted,
+		Type:      types.TxNativeTokenTransfer,
+		Status:    types.StatusCompleted,
 		Sequence:  44,
 		Block:     700327,
-		Direction: txtype.DirectionIncoming,
-		Meta: txtype.NativeTokenTransfer{
+		Direction: types.DirectionIncoming,
+		Meta: types.NativeTokenTransfer{
 			Name:     "Theta Fuel",
 			Symbol:   "TFUEL",
 			TokenID:  "tfuel",
@@ -62,7 +62,7 @@ func TestNormalize(t *testing.T) {
 		Transaction string
 		Address     string
 		Token       string
-		Expected    txtype.Tx
+		Expected    types.Tx
 	}{
 		{thetaTransfer, "0xac0eeb6ee3e32e2c74e14ac74155063e4f4f981f", "", expectedTransferTrx},
 		{tFuelTransfer, "0xac0eeb6ee3e32e2c74e14ac74155063e4f4f981f", "tfuel", expectedTfuelTransfer},
@@ -76,7 +76,7 @@ func TestNormalize(t *testing.T) {
 			t.Fatal("THETA: Can't unmarshal transaction", tErr)
 		}
 
-		var readyTx txtype.Tx
+		var readyTx types.Tx
 		normTx, ok := Normalize(&trx, test.Address, test.Token)
 		if !ok {
 			t.Fatal("THETA: Can't normalize transaction", readyTx)
@@ -104,13 +104,13 @@ func TestGetDirection(t *testing.T) {
 
 	tests := []struct {
 		address     string
-		expectedDir txtype.Direction
+		expectedDir types.Direction
 		trxInput    Input
 		trxOutput   Output
 	}{
-		{address: addrChecksum, expectedDir: txtype.DirectionSelf, trxInput: Input{Address: addr}, trxOutput: Output{Address: addr}},
-		{address: addrChecksum, expectedDir: txtype.DirectionOutgoing, trxInput: Input{Address: addr}, trxOutput: Output{Address: otherAddr}},
-		{address: addrChecksum, expectedDir: txtype.DirectionIncoming, trxInput: Input{Address: otherAddr}, trxOutput: Output{Address: addr}},
+		{address: addrChecksum, expectedDir: types.DirectionSelf, trxInput: Input{Address: addr}, trxOutput: Output{Address: addr}},
+		{address: addrChecksum, expectedDir: types.DirectionOutgoing, trxInput: Input{Address: addr}, trxOutput: Output{Address: otherAddr}},
+		{address: addrChecksum, expectedDir: types.DirectionIncoming, trxInput: Input{Address: otherAddr}, trxOutput: Output{Address: addr}},
 	}
 
 	for _, test := range tests {

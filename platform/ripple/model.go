@@ -1,6 +1,6 @@
 package ripple
 
-import "github.com/trustwallet/golibs/txtype"
+import "github.com/trustwallet/golibs/types"
 
 type TransactionType string
 type TransactionResult string
@@ -31,7 +31,7 @@ type Payment struct {
 	TransactionType TransactionType `json:"TransactionType"`
 	Flags           uint64          `json:"Flags"`
 	Sequence        uint64          `json:"Sequence"`
-	Fee             txtype.Amount   `json:"Fee"`
+	Fee             types.Amount    `json:"Fee"`
 	SigningPubKey   string          `json:"SigningPubKey"`
 	TxnSignature    string          `json:"TxnSignature"`
 	Account         string          `json:"Account"`

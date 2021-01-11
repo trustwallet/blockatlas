@@ -2,7 +2,7 @@ package blockatlas
 
 import (
 	"github.com/trustwallet/golibs/coin"
-	"github.com/trustwallet/golibs/txtype"
+	"github.com/trustwallet/golibs/types"
 )
 
 const (
@@ -34,7 +34,7 @@ type (
 	StakingDetails struct {
 		Reward        StakingReward  `json:"reward"`
 		LockTime      int            `json:"locktime"`
-		MinimumAmount txtype.Amount  `json:"minimum_amount"`
+		MinimumAmount types.Amount   `json:"minimum_amount"`
 		Type          DelegationType `json:"type"`
 	}
 

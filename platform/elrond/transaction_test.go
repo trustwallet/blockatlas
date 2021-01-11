@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/trustwallet/golibs/coin"
 	"github.com/trustwallet/golibs/mock"
-	"github.com/trustwallet/golibs/txtype"
+	"github.com/trustwallet/golibs/types"
 )
 
 var (
@@ -19,120 +19,120 @@ var (
 	txTransferSrc5, _ = mock.JsonStringFromFilePath("mocks/tx_5.json")
 	txTransferSrc6, _ = mock.JsonStringFromFilePath("mocks/tx_6.json")
 
-	txTransfer1Normalized = txtype.Tx{
+	txTransfer1Normalized = types.Tx{
 		ID:       "30d404cc7a42b0158b95f6adfbf9a517627d60f6c7e497c1442dfdb6460285df",
 		Coin:     coin.EGLD,
 		Date:     int64(1587715632),
 		From:     "metachain",
 		To:       "erd10yagg2vme2jns9zqf9xn8kl86fkc6dr063vnuj0mz2kk2jw0qwuqmfmaw0",
 		Fee:      "1000",
-		Status:   txtype.StatusCompleted,
+		Status:   types.StatusCompleted,
 		Memo:     "ok",
 		Sequence: 0,
-		Meta: txtype.Transfer{
+		Meta: types.Transfer{
 			Value:    "82516976060558456822",
 			Symbol:   coin.Elrond().Symbol,
 			Decimals: coin.Elrond().Decimals,
 		},
-		Direction: txtype.DirectionOutgoing,
+		Direction: types.DirectionOutgoing,
 	}
 
-	txTransfer2Normalized = txtype.Tx{
+	txTransfer2Normalized = types.Tx{
 		ID:       "30d404cc7a42b0158b95f6adfbf9a517627d60f6c7e497c1442dfdb6460285df",
 		Coin:     coin.EGLD,
 		Date:     int64(1588757256),
 		From:     "erd10yagg2vme2jns9zqf9xn8kl86fkc6dr063vnuj0mz2kk2jw0qwuqmfmaw0",
 		To:       "erd10yagg2vme2jns9zqf9xn8kl86fkc6dr063vnuj0mz2kk2jw0qwuqmfmaw0",
 		Fee:      "1500",
-		Status:   txtype.StatusPending,
+		Status:   types.StatusPending,
 		Memo:     "money",
 		Sequence: 1,
-		Meta: txtype.Transfer{
+		Meta: types.Transfer{
 			Value:    "2000",
 			Symbol:   coin.Elrond().Symbol,
 			Decimals: coin.Elrond().Decimals,
 		},
-		Direction: txtype.DirectionSelf,
+		Direction: types.DirectionSelf,
 	}
 
-	txTransfer3Normalized = txtype.Tx{
+	txTransfer3Normalized = types.Tx{
 		ID:       "30d404cc7a42b0158b95f6adfbf9a517627d60f6c7e497c1442dfdb6460285df",
 		Coin:     coin.EGLD,
 		Date:     int64(1588757256),
 		From:     "erd10yagg2vme2jns9zqf9xn8kl86fkc6dr063vnuj0mz2kk2jw0qwuqmfmaw0",
 		To:       "erd1v0ce6rapup6rwma5sltyv05xhp33u543nex75a7j39vsz9m6squq6mxm7y",
 		Fee:      "5000",
-		Status:   txtype.StatusError,
+		Status:   types.StatusError,
 		Memo:     "test",
 		Sequence: 19,
-		Meta: txtype.Transfer{
+		Meta: types.Transfer{
 			Value:    "2",
 			Symbol:   coin.Elrond().Symbol,
 			Decimals: coin.Elrond().Decimals,
 		},
-		Direction: txtype.DirectionOutgoing,
+		Direction: types.DirectionOutgoing,
 	}
 
-	txTransfer4Normalized = txtype.Tx{
+	txTransfer4Normalized = types.Tx{
 		ID:       "30d404cc7a42b0158b95f6adfbf9a517627d60f6c7e497c1442dfdb6460285df",
 		Coin:     coin.EGLD,
 		Date:     int64(1588757256),
 		From:     "erd10yagg2vme2jns9zqf9xn8kl86fkc6dr063vnuj0mz2kk2jw0qwuqmfmaw0",
 		To:       "erd1v0ce6rapup6rwma5sltyv05xhp33u543nex75a7j39vsz9m6squq6mxm7y",
 		Fee:      "5000",
-		Status:   txtype.StatusPending,
+		Status:   types.StatusPending,
 		Memo:     "test",
 		Sequence: 19,
-		Meta: txtype.Transfer{
+		Meta: types.Transfer{
 			Value:    "2",
 			Symbol:   coin.Elrond().Symbol,
 			Decimals: coin.Elrond().Decimals,
 		},
-		Direction: txtype.DirectionOutgoing,
+		Direction: types.DirectionOutgoing,
 	}
 
-	txTransfer5Normalized = txtype.Tx{
+	txTransfer5Normalized = types.Tx{
 		ID:       "30d404cc7a42b0158b95f6adfbf9a517627d60f6c7e497c1442dfdb6460285df",
 		Coin:     coin.EGLD,
 		Date:     int64(1588757256),
 		From:     "erd10yagg2vme2jns9zqf9xn8kl86fkc6dr063vnuj0mz2kk2jw0qwuqmfmaw0",
 		To:       "erd1v0ce6rapup6rwma5sltyv05xhp33u543nex75a7j39vsz9m6squq6mxm7y",
 		Fee:      "5000",
-		Status:   txtype.StatusCompleted,
+		Status:   types.StatusCompleted,
 		Memo:     "test",
 		Sequence: 19,
-		Meta: txtype.Transfer{
+		Meta: types.Transfer{
 			Value:    "2",
 			Symbol:   coin.Elrond().Symbol,
 			Decimals: coin.Elrond().Decimals,
 		},
-		Direction: txtype.DirectionOutgoing,
+		Direction: types.DirectionOutgoing,
 	}
 
-	txTransfer6Normalized = txtype.Tx{
+	txTransfer6Normalized = types.Tx{
 		ID:       "30d404cc7a42b0158b95f6adfbf9a517627d60f6c7e497c1442dfdb6460285df",
 		Coin:     coin.EGLD,
 		From:     "erd10yagg2vme2jns9zqf9xn8kl86fkc6dr063vnuj0mz2kk2jw0qwuqmfmaw0",
 		To:       "erd1v0ce6rapup6rwma5sltyv05xhp33u543nex75a7j39vsz9m6squq6mxm7y",
 		Fee:      "5000",
-		Status:   txtype.StatusCompleted,
+		Status:   types.StatusCompleted,
 		Memo:     "test",
 		Sequence: 25,
 		Block:    620,
 		Date:     1596121554,
-		Meta: txtype.Transfer{
+		Meta: types.Transfer{
 			Value:    "2",
 			Symbol:   coin.Elrond().Symbol,
 			Decimals: coin.Elrond().Decimals,
 		},
-		Direction: txtype.DirectionOutgoing,
+		Direction: types.DirectionOutgoing,
 	}
 )
 
 type test struct {
 	name        string
 	apiResponse string
-	expected    *txtype.Tx
+	expected    *types.Tx
 }
 
 func TestNormalize(t *testing.T) {
@@ -211,5 +211,5 @@ func TestNormalizeTxsFromHyperblock(t *testing.T) {
 	})
 	require.Equal(t, len(txs), len(normalizedTxs))
 
-	require.Equal(t, []txtype.Tx{txTransfer6Normalized}, normalizedTxs)
+	require.Equal(t, []types.Tx{txTransfer6Normalized}, normalizedTxs)
 }

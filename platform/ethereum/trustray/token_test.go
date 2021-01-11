@@ -5,8 +5,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/trustwallet/golibs/tokentype"
-	"github.com/trustwallet/golibs/txtype"
+	"github.com/trustwallet/golibs/types"
 
 	"github.com/trustwallet/golibs/coin"
 )
@@ -21,7 +20,7 @@ const tokenSrc = `
 
 type testToken struct {
 	apiResponse string
-	expected    *txtype.Token
+	expected    *types.Token
 	coin        int
 }
 
@@ -30,103 +29,103 @@ func TestNormalizeToken(t *testing.T) {
 		name     string
 		tokenRaw string
 		coin     int
-		want     txtype.Token
+		want     types.Token
 	}{
 		{
 			"ethereum erc20",
 			tokenSrc,
 			coin.ETH,
-			txtype.Token{
+			types.Token{
 				Name:     "FusChain",
 				Symbol:   "FUS",
 				Decimals: 18,
 				TokenID:  "0xa14839c9837657EFcDE754EbEAF5cbECDd801B2A",
 				Coin:     coin.ETH,
-				Type:     tokentype.ERC20,
+				Type:     types.ERC20,
 			},
 		},
 		{"classic etc20",
 			tokenSrc,
 			coin.ETC,
-			txtype.Token{
+			types.Token{
 				Name:     "FusChain",
 				Symbol:   "FUS",
 				Decimals: 18,
 				TokenID:  "0xa14839c9837657EFcDE754EbEAF5cbECDd801B2A",
 				Coin:     coin.ETC,
-				Type:     tokentype.ETC20,
+				Type:     types.ETC20,
 			},
 		},
 		{"gochain go20",
 			tokenSrc,
 			coin.GO,
-			txtype.Token{
+			types.Token{
 				Name:     "FusChain",
 				Symbol:   "FUS",
 				Decimals: 18,
 				TokenID:  "0xa14839c9837657EFcDE754EbEAF5cbECDd801B2A",
 				Coin:     coin.GO,
-				Type:     tokentype.GO20,
+				Type:     types.GO20,
 			},
 		},
 		{"thudertoken tt20",
 			tokenSrc,
 			coin.TT,
-			txtype.Token{
+			types.Token{
 				Name:     "FusChain",
 				Symbol:   "FUS",
 				Decimals: 18,
 				TokenID:  "0xa14839c9837657EFcDE754EbEAF5cbECDd801B2A",
 				Coin:     coin.TT,
-				Type:     tokentype.TT20,
+				Type:     types.TT20,
 			},
 		},
 		{"wanchain wan20",
 			tokenSrc,
 			coin.WAN,
-			txtype.Token{
+			types.Token{
 				Name:     "FusChain",
 				Symbol:   "FUS",
 				Decimals: 18,
 				TokenID:  "0xa14839c9837657EFcDE754EbEAF5cbECDd801B2A",
 				Coin:     coin.WAN,
-				Type:     tokentype.WAN20,
+				Type:     types.WAN20,
 			},
 		},
 		{"poa poa20",
 			tokenSrc,
 			coin.POA,
-			txtype.Token{
+			types.Token{
 				Name:     "FusChain",
 				Symbol:   "FUS",
 				Decimals: 18,
 				TokenID:  "0xa14839c9837657EFcDE754EbEAF5cbECDd801B2A",
 				Coin:     coin.POA,
-				Type:     tokentype.POA20,
+				Type:     types.POA20,
 			},
 		},
 		{"callisto clo20",
 			tokenSrc,
 			coin.CLO,
-			txtype.Token{
+			types.Token{
 				Name:     "FusChain",
 				Symbol:   "FUS",
 				Decimals: 18,
 				TokenID:  "0xa14839c9837657EFcDE754EbEAF5cbECDd801B2A",
 				Coin:     coin.CLO,
-				Type:     tokentype.CLO20,
+				Type:     types.CLO20,
 			},
 		},
 		{"unknown",
 			tokenSrc,
 			1999,
-			txtype.Token{
+			types.Token{
 				Name:     "FusChain",
 				Symbol:   "FUS",
 				Decimals: 18,
 				TokenID:  "0xa14839c9837657EFcDE754EbEAF5cbECDd801B2A",
 				Coin:     1999,
-				Type:     tokentype.ERC20,
+				Type:     types.ERC20,
 			},
 		},
 	}

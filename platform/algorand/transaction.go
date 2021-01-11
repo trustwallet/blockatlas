@@ -4,10 +4,10 @@ import (
 	"strconv"
 
 	"github.com/trustwallet/golibs/coin"
-	"github.com/trustwallet/golibs/txtype"
+	"github.com/trustwallet/golibs/types"
 )
 
-func (p *Platform) GetTxsByAddress(address string) (txtype.TxPage, error) {
+func (p *Platform) GetTxsByAddress(address string) (types.TxPage, error) {
 	txs, err := p.client.GetTxsOfAddress(address)
 	if err != nil {
 		return nil, err
@@ -15,8 +15,8 @@ func (p *Platform) GetTxsByAddress(address string) (txtype.TxPage, error) {
 	return NormalizeTxs(txs), nil
 }
 
-func NormalizeTxs(txs []Transaction) []txtype.Tx {
-	result := make([]txtype.Tx, 0)
+func NormalizeTxs(txs []Transaction) []types.Tx {
+	result := make([]types.Tx, 0)
 
 	for _, tx := range txs {
 		if normalized, ok := Normalize(tx); ok {
@@ -27,24 +27,24 @@ func NormalizeTxs(txs []Transaction) []txtype.Tx {
 	return result
 }
 
-func Normalize(tx Transaction) (result txtype.Tx, ok bool) {
+func Normalize(tx Transaction) (result types.Tx, ok bool) {
 
 	if tx.Type != TransactionTypePay {
 		return result, false
 	}
 
-	return txtype.Tx{
+	return types.Tx{
 		ID:     tx.Hash,
 		Coin:   coin.ALGO,
 		From:   tx.From,
 		To:     tx.Payment.Receiver,
-		Fee:    txtype.Amount(strconv.Itoa(int(tx.Fee))),
+		Fee:    types.Amount(strconv.Itoa(int(tx.Fee))),
 		Date:   int64(tx.Timestamp),
 		Block:  tx.Round,
-		Status: txtype.StatusCompleted,
-		Type:   txtype.TxTransfer,
-		Meta: txtype.Transfer{
-			Value:    txtype.Amount(strconv.Itoa(int(tx.Payment.Amount))),
+		Status: types.StatusCompleted,
+		Type:   types.TxTransfer,
+		Meta: types.Transfer{
+			Value:    types.Amount(strconv.Itoa(int(tx.Payment.Amount))),
 			Symbol:   coin.Coins[coin.ALGO].Symbol,
 			Decimals: coin.Coins[coin.ALGO].Decimals,
 		},

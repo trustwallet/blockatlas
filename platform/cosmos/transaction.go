@@ -6,10 +6,10 @@ import (
 	"time"
 
 	"github.com/trustwallet/golibs/numbers"
-	"github.com/trustwallet/golibs/txtype"
+	"github.com/trustwallet/golibs/types"
 )
 
-func (p *Platform) GetTxsByAddress(address string) (txtype.TxPage, error) {
+func (p *Platform) GetTxsByAddress(address string) (types.TxPage, error) {
 	tagsList := []string{"transfer.recipient", "message.sender"}
 	var wg sync.WaitGroup
 	out := make(chan []Tx, len(tagsList))
@@ -51,9 +51,9 @@ func (p *Platform) GetTxsByAddress(address string) (txtype.TxPage, error) {
 }
 
 // NormalizeTxs converts multiple Cosmos transactions
-func (p *Platform) NormalizeTxs(srcTxs []Tx) txtype.TxPage {
+func (p *Platform) NormalizeTxs(srcTxs []Tx) types.TxPage {
 	txMap := make(map[string]bool)
-	txs := make(txtype.TxPage, 0)
+	txs := make(types.TxPage, 0)
 	for _, srcTx := range srcTxs {
 		_, ok := txMap[srcTx.ID]
 		if ok {
@@ -69,14 +69,14 @@ func (p *Platform) NormalizeTxs(srcTxs []Tx) txtype.TxPage {
 }
 
 // Normalize converts an Cosmos transaction into the generic model
-func (p *Platform) Normalize(srcTx *Tx) (tx txtype.Tx, ok bool) {
+func (p *Platform) Normalize(srcTx *Tx) (tx types.Tx, ok bool) {
 	date, err := time.Parse("2006-01-02T15:04:05Z", srcTx.Date)
 	if err != nil {
-		return txtype.Tx{}, false
+		return types.Tx{}, false
 	}
 	block, err := strconv.ParseUint(srcTx.Block, 10, 64)
 	if err != nil {
-		return txtype.Tx{}, false
+		return types.Tx{}, false
 	}
 	// Sometimes fees can be null objects (in the case of no fees e.g. F044F91441C460EDCD90E0063A65356676B7B20684D94C731CF4FAB204035B41)
 	fee := "0"
@@ -85,23 +85,23 @@ func (p *Platform) Normalize(srcTx *Tx) (tx txtype.Tx, ok bool) {
 		if len(qty) > 0 && qty != fee {
 			fee, err = numbers.DecimalToSatoshis(srcTx.Data.Contents.Fee.FeeAmount[0].Quantity)
 			if err != nil {
-				return txtype.Tx{}, false
+				return types.Tx{}, false
 			}
 		}
 	}
 
-	status := txtype.StatusCompleted
+	status := types.StatusCompleted
 	// https://github.com/cosmos/cosmos-sdk/blob/95ddc242ad024ca78a359a13122dade6f14fd676/types/errors/errors.go#L19
 	if srcTx.Code > 0 {
-		status = txtype.StatusError
+		status = types.StatusError
 	}
 
-	tx = txtype.Tx{
+	tx = types.Tx{
 		ID:     srcTx.ID,
 		Coin:   p.Coin().ID,
 		Date:   date.Unix(),
 		Status: status,
-		Fee:    txtype.Amount(fee),
+		Fee:    types.Amount(fee),
 		Block:  block,
 		Memo:   srcTx.Data.Contents.Memo,
 	}
@@ -124,7 +124,7 @@ func (p *Platform) Normalize(srcTx *Tx) (tx txtype.Tx, ok bool) {
 	return tx, false
 }
 
-func (p *Platform) fillTransfer(tx *txtype.Tx, transfer MessageValueTransfer) {
+func (p *Platform) fillTransfer(tx *types.Tx, transfer MessageValueTransfer) {
 	if len(transfer.Amount) == 0 {
 		return
 	}
@@ -134,15 +134,15 @@ func (p *Platform) fillTransfer(tx *txtype.Tx, transfer MessageValueTransfer) {
 	}
 	tx.From = transfer.FromAddr
 	tx.To = transfer.ToAddr
-	tx.Type = txtype.TxTransfer
-	tx.Meta = txtype.Transfer{
-		Value:    txtype.Amount(value),
+	tx.Type = types.TxTransfer
+	tx.Meta = types.Transfer{
+		Value:    types.Amount(value),
 		Symbol:   p.Coin().Symbol,
 		Decimals: p.Coin().Decimals,
 	}
 }
 
-func (p *Platform) fillDelegate(tx *txtype.Tx, delegate MessageValueDelegate, events Events, msgType TxType) {
+func (p *Platform) fillDelegate(tx *types.Tx, delegate MessageValueDelegate, events Events, msgType TxType) {
 	value := ""
 	if len(delegate.Amount.Quantity) > 0 {
 		var err error
@@ -153,30 +153,30 @@ func (p *Platform) fillDelegate(tx *txtype.Tx, delegate MessageValueDelegate, ev
 	}
 	tx.From = delegate.DelegatorAddr
 	tx.To = delegate.ValidatorAddr
-	tx.Type = txtype.TxAnyAction
+	tx.Type = types.TxAnyAction
 
-	key := txtype.KeyStakeDelegate
-	title := txtype.KeyTitle("")
+	key := types.KeyStakeDelegate
+	title := types.KeyTitle("")
 	switch msgType {
 	case MsgDelegate:
-		tx.Direction = txtype.DirectionOutgoing
-		title = txtype.AnyActionDelegation
+		tx.Direction = types.DirectionOutgoing
+		title = types.AnyActionDelegation
 	case MsgUndelegate:
-		tx.Direction = txtype.DirectionIncoming
-		title = txtype.AnyActionUndelegation
+		tx.Direction = types.DirectionIncoming
+		title = types.AnyActionUndelegation
 	case MsgWithdrawDelegationReward:
-		tx.Direction = txtype.DirectionIncoming
-		title = txtype.AnyActionClaimRewards
-		key = txtype.KeyStakeClaimRewards
+		tx.Direction = types.DirectionIncoming
+		title = types.AnyActionClaimRewards
+		key = types.KeyStakeClaimRewards
 		value = events.GetWithdrawRewardValue()
 	}
-	tx.Meta = txtype.AnyAction{
+	tx.Meta = types.AnyAction{
 		Coin:     p.Coin().ID,
 		Title:    title,
 		Key:      key,
 		Name:     p.Coin().Name,
 		Symbol:   p.Coin().Symbol,
 		Decimals: p.Coin().Decimals,
-		Value:    txtype.Amount(value),
+		Value:    types.Amount(value),
 	}
 }

@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/golibs/coin"
 	"github.com/trustwallet/golibs/mock"
-	"github.com/trustwallet/golibs/txtype"
+	"github.com/trustwallet/golibs/types"
 )
 
 var (
@@ -19,18 +19,18 @@ var (
 	incomingTx, _ = mock.JsonStringFromFilePath("mocks/" + "incoming_tx.json")
 	pendingTx, _  = mock.JsonStringFromFilePath("mocks/" + "pending_tx.json")
 
-	expectedOutgoingTx = txtype.Tx{
+	expectedOutgoingTx = types.Tx{
 		ID:   "df63ddab7d4eed2fb6cb40d4d0519e7e5ac7cf5ad556b2edbd45963ea1a2931c",
 		Coin: coin.BTC,
 		From: "3QJmV3qfvL9SuYo34YihAf3sRCW3qSinyC",
 		To:   "3FjBW1KL9L8aYtdKzJ8FhCNxmXB7dXDRw4",
-		Inputs: []txtype.TxOutput{
+		Inputs: []types.TxOutput{
 			{
 				Address: "3QJmV3qfvL9SuYo34YihAf3sRCW3qSinyC",
 				Value:   "777200",
 			},
 		},
-		Outputs: []txtype.TxOutput{
+		Outputs: []types.TxOutput{
 			{
 				Address: "3FjBW1KL9L8aYtdKzJ8FhCNxmXB7dXDRw4",
 				Value:   "677012",
@@ -39,29 +39,29 @@ var (
 		Fee:       "100188",
 		Date:      1562945790,
 		Type:      "transfer",
-		Status:    txtype.StatusCompleted,
+		Status:    types.StatusCompleted,
 		Block:     585094,
 		Sequence:  0,
-		Direction: txtype.DirectionSelf,
-		Meta: txtype.Transfer{
+		Direction: types.DirectionSelf,
+		Meta: types.Transfer{
 			Value:    "677012",
 			Symbol:   "BTC",
 			Decimals: 8,
 		},
 	}
 
-	expectedIncomingTx = txtype.Tx{
+	expectedIncomingTx = types.Tx{
 		ID:   "a2d70bee124510c476f159fa83cdb34d663fc6020c81aad19b238601d679fed7",
 		Coin: coin.ZEC,
 		From: "t1T7cLkvDVScjw95WguoAZbbT8mrdqVtpiD",
 		To:   "t1U4xs3qMxc2TL8wwYufmBngA5mewLHRwhM",
-		Inputs: []txtype.TxOutput{
+		Inputs: []types.TxOutput{
 			{
 				Address: "t1T7cLkvDVScjw95WguoAZbbT8mrdqVtpiD",
 				Value:   "387582",
 			},
 		},
-		Outputs: []txtype.TxOutput{
+		Outputs: []types.TxOutput{
 			{
 				Address: "t1U4xs3qMxc2TL8wwYufmBngA5mewLHRwhM",
 				Value:   "200997",
@@ -74,29 +74,29 @@ var (
 		Fee:       "226",
 		Date:      1549793065,
 		Type:      "transfer",
-		Status:    txtype.StatusCompleted,
+		Status:    types.StatusCompleted,
 		Block:     479017,
 		Sequence:  0,
-		Direction: txtype.DirectionIncoming,
-		Meta: txtype.Transfer{
+		Direction: types.DirectionIncoming,
+		Meta: types.Transfer{
 			Value:    "200997",
 			Symbol:   "ZEC",
 			Decimals: 8,
 		},
 	}
 
-	expectedPendingTx = txtype.Tx{
+	expectedPendingTx = types.Tx{
 		ID:   "a2d70bee124510c476f159fa83cdb34d663fc6020c81aad19b238601d679fed7",
 		Coin: coin.ZEC,
 		From: "t1T7cLkvDVScjw95WguoAZbbT8mrdqVtpiD",
 		To:   "t1U4xs3qMxc2TL8wwYufmBngA5mewLHRwhM",
-		Inputs: []txtype.TxOutput{
+		Inputs: []types.TxOutput{
 			{
 				Address: "t1T7cLkvDVScjw95WguoAZbbT8mrdqVtpiD",
 				Value:   "387582",
 			},
 		},
-		Outputs: []txtype.TxOutput{
+		Outputs: []types.TxOutput{
 			{
 				Address: "t1U4xs3qMxc2TL8wwYufmBngA5mewLHRwhM",
 				Value:   "200997",
@@ -109,11 +109,11 @@ var (
 		Fee:       "226",
 		Date:      1549793065,
 		Type:      "transfer",
-		Status:    txtype.StatusCompleted,
+		Status:    types.StatusCompleted,
 		Block:     0,
 		Sequence:  0,
-		Direction: txtype.DirectionIncoming,
-		Meta: txtype.Transfer{
+		Direction: types.DirectionIncoming,
+		Meta: types.Transfer{
 			Value:    "200997",
 			Symbol:   "ZEC",
 			Decimals: 8,
@@ -134,7 +134,7 @@ func TestNormalizeTransfer(t *testing.T) {
 
 	tests := []struct {
 		RawTx      string
-		Expected   txtype.Tx
+		Expected   types.Tx
 		AddressSet mapset.Set
 	}{
 		{outgoingTx, expectedOutgoingTx, outgoingTxSet},
@@ -150,7 +150,7 @@ func TestNormalizeTransfer(t *testing.T) {
 			t.Fatal(rErr)
 		}
 
-		var readyTx txtype.Tx
+		var readyTx types.Tx
 		normTx, ok := normalizeTransfer(transaction, test.Expected.Coin, test.AddressSet)
 		if !ok {
 			t.Fatal("Bitcoin: Can't normalize transaction", readyTx)
@@ -174,10 +174,10 @@ func TestNormalizeTransfer(t *testing.T) {
 func TestTransactionStatus(t *testing.T) {
 	tests := []struct {
 		Tx       blockbook.Transaction
-		Expected txtype.Status
+		Expected types.Status
 	}{
-		{blockbook.Transaction{Confirmations: 0}, txtype.StatusPending},
-		{blockbook.Transaction{Confirmations: 1}, txtype.StatusCompleted},
+		{blockbook.Transaction{Confirmations: 0}, types.StatusPending},
+		{blockbook.Transaction{Confirmations: 1}, types.StatusCompleted},
 	}
 
 	for _, test := range tests {
@@ -189,7 +189,7 @@ func TestParseOutputs(t *testing.T) {
 	tests := []struct {
 		name    string
 		outputs string
-		want    []txtype.TxOutput
+		want    []types.TxOutput
 	}{
 		{
 			name: "Test Doge inputs from 0xb02977b96e5c65fd807e28230375c1267ded1de7c2c43292bf36552283bc5696",
@@ -226,7 +226,7 @@ func TestParseOutputs(t *testing.T) {
 				"value": "500000000",
 				"hex": "473044022047cad0afd2aa4ff9b3fc45a6afb40b9745c1b39499a96df803f899d189f3822c0220267464d2954de54825717b93e3597a0915c71aecf1215ed33021bef376813b9a012103565519e77659aae844889ae12609309f85a8d22bf815c4daa418e457c7cb01eb"
 			}]`,
-			want: []txtype.TxOutput{
+			want: []types.TxOutput{
 				{
 					Address: "DPoYGk1wGQ3uWs5G3exd9WKvVyu8weKYVA",
 					Value:   "1010000000",
@@ -254,7 +254,7 @@ func TestParseOutputs(t *testing.T) {
 				],
 				"isAddress": true
 			}]`,
-			want: []txtype.TxOutput{
+			want: []types.TxOutput{
 				{
 					Address: "DRryKEukopEDv7cm6Y1Li6232VHEjnXptA",
 					Value:   "1000000000",

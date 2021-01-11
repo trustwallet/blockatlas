@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/trustwallet/golibs/txtype"
+	"github.com/trustwallet/golibs/types"
 )
 
 const (
@@ -69,12 +69,12 @@ type (
 	}
 )
 
-func (t *Transaction) Status() txtype.Status {
+func (t *Transaction) Status() types.Status {
 	switch t.Stat {
 	case TxStatusApplied:
-		return txtype.StatusCompleted
+		return types.StatusCompleted
 	default:
-		return txtype.StatusError
+		return types.StatusError
 	}
 }
 
@@ -86,14 +86,14 @@ func (t *Transaction) ErrorMsg() string {
 	}
 }
 
-func (t *Transaction) Title(address string) (txtype.KeyTitle, bool) {
+func (t *Transaction) Title(address string) (types.KeyTitle, bool) {
 	if t.Type == TxTypeDelegation {
 		if address == t.Sender && t.Delegate != "" && t.Receiver == "" {
-			return txtype.AnyActionDelegation, true
+			return types.AnyActionDelegation, true
 		}
 
 		if address == t.Sender && t.Delegate == "" && t.Receiver != "" {
-			return txtype.AnyActionUndelegation, true
+			return types.AnyActionUndelegation, true
 		}
 	}
 
@@ -109,26 +109,26 @@ func (t *Transaction) BlockTimestamp() int64 {
 	return unix
 }
 
-func (t *Transaction) TransferType() (txtype.TransactionType, bool) {
+func (t *Transaction) TransferType() (types.TransactionType, bool) {
 	switch t.Type {
 	case TxTypeTransaction:
-		return txtype.TxTransfer, true
+		return types.TxTransfer, true
 	case TxTypeDelegation:
-		return txtype.TxAnyAction, true
+		return types.TxAnyAction, true
 	default:
 		return "unsupported type", false
 	}
 }
 
-func (t *Transaction) Direction(address string) txtype.Direction {
+func (t *Transaction) Direction(address string) types.Direction {
 	if t.Sender == address && t.Receiver == address {
-		return txtype.DirectionSelf
+		return types.DirectionSelf
 	}
 	if t.Sender == address && t.Receiver != address {
-		return txtype.DirectionOutgoing
+		return types.DirectionOutgoing
 	}
 
-	return txtype.DirectionIncoming
+	return types.DirectionIncoming
 }
 
 func (t *Transaction) GetReceiver() string {

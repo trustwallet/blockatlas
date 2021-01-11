@@ -7,7 +7,7 @@ import (
 	"sync"
 
 	"github.com/trustwallet/golibs/client"
-	"github.com/trustwallet/golibs/txtype"
+	"github.com/trustwallet/golibs/types"
 )
 
 type Client struct {
@@ -48,11 +48,11 @@ func (c *Client) GetAllTransactionsByBlockNumber(num int64) ([]Transaction, erro
 }
 
 func (c *Client) GetTxs(address string) (TransactionsList, error) {
-	return c.getTransactionsForContract(address, "", txtype.TxPerPage)
+	return c.getTransactionsForContract(address, "", types.TxPerPage)
 }
 
 func (c *Client) GetTxsWithContract(address, contract string) (TransactionsList, error) {
-	return c.getTransactionsForContract(address, contract, txtype.TxPerPage)
+	return c.getTransactionsForContract(address, contract, types.TxPerPage)
 }
 
 func (c *Client) GetTransactionsByBlockNumber(number int64, page int64) (block TransactionsList, err error) {
@@ -78,7 +78,7 @@ func (c *Client) getTransactionsForContract(address, contract string, limit int)
 func (c *Client) GetTransactionsByXpub(xpub string) (transactions TransactionsList, err error) {
 	path := fmt.Sprintf("api/v2/xpub/%s", xpub)
 	args := url.Values{
-		"pageSize": {strconv.Itoa(txtype.TxPerPage)},
+		"pageSize": {strconv.Itoa(types.TxPerPage)},
 		"details":  {"txs"},
 		"tokens":   {"derived"},
 	}
@@ -89,7 +89,7 @@ func (c *Client) GetTransactionsByXpub(xpub string) (transactions TransactionsLi
 func (c *Client) GetAddressesFromXpub(xpub string) (tokens []Token, err error) {
 	path := fmt.Sprintf("api/v2/xpub/%s", xpub)
 	args := url.Values{
-		"pageSize": {strconv.Itoa(txtype.TxPerPage)},
+		"pageSize": {strconv.Itoa(types.TxPerPage)},
 		"details":  {"txs"},
 		"tokens":   {"derived"},
 	}

@@ -4,11 +4,11 @@ import (
 	"encoding/json"
 	"strconv"
 
-	"github.com/trustwallet/golibs/txtype"
+	"github.com/trustwallet/golibs/types"
 )
 
-func (p *Platform) GetTxsByAddress(address string) (txtype.TxPage, error) {
-	normalized := make([]txtype.Tx, 0)
+func (p *Platform) GetTxsByAddress(address string) (types.TxPage, error) {
+	normalized := make([]types.Tx, 0)
 	history, err := p.client.GetAccountHistory(address)
 	if err != nil {
 		return normalized, err
@@ -34,7 +34,7 @@ func (p *Platform) GetTxsByAddress(address string) (txtype.TxPage, error) {
 	return normalized, nil
 }
 
-func (p *Platform) Normalize(srcTx *Transaction, account string) (txtype.Tx, error) {
+func (p *Platform) Normalize(srcTx *Transaction, account string) (types.Tx, error) {
 	var from string
 	var to string
 
@@ -46,20 +46,20 @@ func (p *Platform) Normalize(srcTx *Transaction, account string) (txtype.Tx, err
 		to = account
 	}
 
-	status := txtype.StatusCompleted
+	status := types.StatusCompleted
 	height, err := strconv.ParseUint(srcTx.Height, 10, 64)
 	if err != nil {
-		return txtype.Tx{}, err
+		return types.Tx{}, err
 	}
 	if height == 0 {
-		status = txtype.StatusPending
+		status = types.StatusPending
 	}
 	timestamp, err := strconv.ParseInt(srcTx.LocalTimestamp, 10, 64)
 	if err != nil {
-		return txtype.Tx{}, err
+		return types.Tx{}, err
 	}
 
-	tx := txtype.Tx{
+	tx := types.Tx{
 		ID:     srcTx.Hash,
 		Coin:   p.Coin().ID,
 		Date:   timestamp,
@@ -68,8 +68,8 @@ func (p *Platform) Normalize(srcTx *Transaction, account string) (txtype.Tx, err
 		Block:  height,
 		Status: status,
 		Fee:    "0",
-		Meta: txtype.Transfer{
-			Value:    txtype.Amount(srcTx.Amount),
+		Meta: types.Transfer{
+			Value:    types.Amount(srcTx.Amount),
 			Symbol:   p.Coin().Symbol,
 			Decimals: p.Coin().Decimals,
 		},

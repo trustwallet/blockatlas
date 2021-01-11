@@ -3,7 +3,7 @@ package ontology
 import (
 	"errors"
 
-	"github.com/trustwallet/golibs/txtype"
+	"github.com/trustwallet/golibs/types"
 )
 
 func (p *Platform) CurrentBlockNumber() (int64, error) {
@@ -17,7 +17,7 @@ func (p *Platform) CurrentBlockNumber() (int64, error) {
 	return block.Result.Records[0].Height, nil
 }
 
-func (p *Platform) GetBlockByNumber(num int64) (*txtype.Block, error) {
+func (p *Platform) GetBlockByNumber(num int64) (*types.Block, error) {
 	blockOnt, err := p.client.GetBlockByNumber(num)
 	if err != nil {
 		return nil, err
@@ -27,7 +27,7 @@ func (p *Platform) GetBlockByNumber(num int64) (*txtype.Block, error) {
 		return nil, err
 	}
 	txs := normalizeTxs(txsRaw, AssetAll)
-	return &txtype.Block{
+	return &types.Block{
 		Number: num,
 		Txs:    txs,
 	}, nil

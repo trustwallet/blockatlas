@@ -8,7 +8,7 @@ import (
 	"github.com/trustwallet/blockatlas/db"
 	"github.com/trustwallet/blockatlas/db/models"
 	"github.com/trustwallet/blockatlas/services/notifier"
-	"github.com/trustwallet/golibs/txtype"
+	"github.com/trustwallet/golibs/types"
 )
 
 const (
@@ -22,9 +22,9 @@ func RunTokenIndexer(database *db.Instance, delivery amqp.Delivery) error {
 		log.WithFields(log.Fields{"service": TokenIndexer, "txs": txs}).Error("failed to get transactions: ", err)
 		return err
 	}
-	txs = txs.FilterTransactionsByType([]txtype.TransactionType{
-		txtype.TxTokenTransfer,
-		txtype.TxNativeTokenTransfer,
+	txs = txs.FilterTransactionsByType([]types.TransactionType{
+		types.TxTokenTransfer,
+		types.TxNativeTokenTransfer,
 	})
 
 	if len(txs) == 0 {
@@ -111,7 +111,7 @@ func calculateSubscriptionAssetAssociations(database *db.Instance, addressAssets
 	return associations, nil
 }
 
-func GetAssetsFromTransactions(txs []txtype.Tx) []models.Asset {
+func GetAssetsFromTransactions(txs []types.Tx) []models.Asset {
 	var assets []models.Asset
 	for _, tx := range txs {
 		asset, ok := models.AssetFrom(tx)
@@ -123,7 +123,7 @@ func GetAssetsFromTransactions(txs []txtype.Tx) []models.Asset {
 	return assets
 }
 
-func assetsMap(txs txtype.Txs) map[string][]string {
+func assetsMap(txs types.Txs) map[string][]string {
 	result := make(map[string][]string)
 	for _, tx := range txs {
 		prefix := strconv.Itoa(int(tx.Coin)) + "_"

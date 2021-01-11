@@ -4,11 +4,11 @@ import (
 	"errors"
 	"strconv"
 
-	"github.com/trustwallet/golibs/txtype"
+	"github.com/trustwallet/golibs/types"
 )
 
-func (p *Platform) GetTxsByAddress(address string) (txtype.TxPage, error) {
-	results := make(txtype.TxPage, 0)
+func (p *Platform) GetTxsByAddress(address string) (types.TxPage, error) {
+	results := make(types.TxPage, 0)
 	txs, err := p.client.GetTransactions(address)
 	if err != nil {
 		return results, err
@@ -21,7 +21,7 @@ func (p *Platform) GetTxsByAddress(address string) (txtype.TxPage, error) {
 	return results, nil
 }
 
-func (p *Platform) NormalizeTx(tx ConfirmedTransaction, address string) (normalized txtype.Tx, err error) {
+func (p *Platform) NormalizeTx(tx ConfirmedTransaction, address string) (normalized types.Tx, err error) {
 
 	// only check first instruction
 	if len(tx.Transaction.Message.Instructions) != 1 || len(tx.Transaction.Signatures) != 1 {
@@ -36,30 +36,30 @@ func (p *Platform) NormalizeTx(tx ConfirmedTransaction, address string) (normali
 
 	// tx direction
 	from := instruction.Parsed.Info.Source
-	direction := txtype.DirectionIncoming
+	direction := types.DirectionIncoming
 	if address == from {
-		direction = txtype.DirectionOutgoing
+		direction = types.DirectionOutgoing
 	}
 
 	// tx status
-	status := txtype.StatusCompleted
+	status := types.StatusCompleted
 	if tx.Meta.Err != nil {
-		status = txtype.StatusError
+		status = types.StatusError
 	}
 
-	normalized = txtype.Tx{
+	normalized = types.Tx{
 		ID:        tx.Transaction.Signatures[0],
 		Coin:      p.Coin().ID,
 		From:      from,
 		To:        instruction.Parsed.Info.Destination,
-		Fee:       txtype.Amount(strconv.FormatUint(tx.Meta.Fee, 10)),
+		Fee:       types.Amount(strconv.FormatUint(tx.Meta.Fee, 10)),
 		Date:      EstimateTimestamp(tx.Slot),
 		Block:     tx.Slot,
 		Status:    status,
-		Type:      txtype.TxTransfer,
+		Type:      types.TxTransfer,
 		Direction: direction,
-		Meta: txtype.Transfer{
-			Value:    txtype.Amount(strconv.FormatUint(instruction.Parsed.Info.Lamports, 10)),
+		Meta: types.Transfer{
+			Value:    types.Amount(strconv.FormatUint(instruction.Parsed.Info.Lamports, 10)),
 			Symbol:   p.Coin().Symbol,
 			Decimals: p.Coin().Decimals,
 		},

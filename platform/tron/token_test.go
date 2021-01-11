@@ -10,11 +10,11 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/golibs/mock"
-	"github.com/trustwallet/golibs/txtype"
+	"github.com/trustwallet/golibs/types"
 )
 
 var (
-	tokenDst = txtype.Token{
+	tokenDst = types.Token{
 		Name:     "Test",
 		Symbol:   "TST",
 		Decimals: 8,

@@ -5,7 +5,7 @@ import (
 	"strconv"
 
 	"github.com/trustwallet/golibs/client"
-	"github.com/trustwallet/golibs/txtype"
+	"github.com/trustwallet/golibs/types"
 )
 
 type Client struct {
@@ -15,7 +15,7 @@ type Client struct {
 func (c *Client) GetAddressTransactions(address string) ([]Tx, error) {
 	query := url.Values{
 		"address": {address},
-		"count":   {strconv.Itoa(txtype.TxPerPage)},
+		"count":   {strconv.Itoa(types.TxPerPage)},
 	}
 	var res Response
 	err := c.Get(&res, "address/txList", query)

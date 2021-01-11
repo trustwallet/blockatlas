@@ -6,14 +6,14 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/golibs/mock"
-	"github.com/trustwallet/golibs/txtype"
+	"github.com/trustwallet/golibs/types"
 )
 
 var (
 	transferV1, _   = mock.JsonStringFromFilePath("mocks/" + "transfer.json")
 	differentTxs, _ = mock.JsonStringFromFilePath("mocks/" + "different_txs.json")
 
-	transferV1Obj = txtype.Tx{
+	transferV1Obj = types.Tx{
 		ID:     "7QoQc9qMUBCfY4QV35mgBsT8eTXybvGkM2HTumtAvBUL",
 		Coin:   5741564,
 		From:   "3PLrCnhKyX5iFbGDxbqqMvea5VAqxMcinPW",
@@ -21,16 +21,16 @@ var (
 		Fee:    "100000",
 		Date:   1561048131,
 		Block:  1580410,
-		Status: txtype.StatusCompleted,
+		Status: types.StatusCompleted,
 		Memo:   "",
-		Meta: txtype.Transfer{
-			Value:    txtype.Amount("9481600000"),
+		Meta: types.Transfer{
+			Value:    types.Amount("9481600000"),
 			Symbol:   "WAVES",
 			Decimals: 8,
 		},
 	}
 
-	differentTxsObj = txtype.Tx{
+	differentTxsObj = types.Tx{
 		ID:     "52GG9U2e6foYRKp5vAzsTQ86aDAABfRJ7synz7ohBp19",
 		Coin:   5741564,
 		From:   "3NBVqYXrapgJP9atQccdBPAgJPwHDKkh6A8",
@@ -39,9 +39,9 @@ var (
 		Date:   1479313236,
 		Block:  7782,
 		Memo:   "string",
-		Status: txtype.StatusCompleted,
-		Meta: txtype.Transfer{
-			Value:    txtype.Amount("100000"),
+		Status: types.StatusCompleted,
+		Meta: types.Transfer{
+			Value:    types.Amount("100000"),
 			Symbol:   "WAVES",
 			Decimals: 8,
 		},
@@ -51,13 +51,13 @@ var (
 type txParseTest struct {
 	name        string
 	apiResponse string
-	expected    *txtype.Tx
+	expected    *types.Tx
 }
 
 type txFilterTest struct {
 	name        string
 	apiResponse string
-	expected    txtype.Tx
+	expected    types.Tx
 }
 
 func TestNormalize(t *testing.T) {
@@ -103,7 +103,7 @@ func testFilterTxs(t *testing.T, _test *txFilterTest) {
 		t.Error(err)
 		return
 	}
-	var res txtype.Tx
+	var res types.Tx
 	for _, tx := range txs[0] {
 		if tx.Type == 4 {
 			n, ok := NormalizeTx(&tx)

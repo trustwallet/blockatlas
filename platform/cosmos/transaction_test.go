@@ -8,7 +8,7 @@ import (
 
 	"github.com/trustwallet/golibs/coin"
 	"github.com/trustwallet/golibs/mock"
-	"github.com/trustwallet/golibs/txtype"
+	"github.com/trustwallet/golibs/types"
 )
 
 var (
@@ -20,7 +20,7 @@ var (
 	claimRewardSrc1, _   = mock.JsonStringFromFilePath("mocks/" + "claim_1.json")
 	claimRewardSrc2, _   = mock.JsonStringFromFilePath("mocks/" + "claim_2.json")
 
-	transferDst = txtype.Tx{
+	transferDst = types.Tx{
 		ID:     "E19B011D20D862DA0BEA7F24E3BC6DFF666EE6E044FCD9BD95B073478086DBB6",
 		Coin:   coin.ATOM,
 		From:   "cosmos1rw62phusuv9vzraezr55k0vsqssvz6ed52zyrl",
@@ -28,16 +28,16 @@ var (
 		Fee:    "1",
 		Date:   1556992677,
 		Block:  151980,
-		Status: txtype.StatusCompleted,
-		Type:   txtype.TxTransfer,
-		Meta: txtype.Transfer{
+		Status: types.StatusCompleted,
+		Type:   types.TxTransfer,
+		Meta: types.Transfer{
 			Value:    "2271999999",
 			Symbol:   coin.Cosmos().Symbol,
 			Decimals: 6,
 		},
 	}
 
-	transferDstKava = txtype.Tx{
+	transferDstKava = types.Tx{
 		ID:     "E19B011D20D862DA0BEA7F24E3BC6DFF666EE6E044FCD9BD95B073478086DBB6",
 		Coin:   coin.KAVA,
 		From:   "kava17wcggpjx007uc09s8y4hwrj8f228mlwe0n0upn",
@@ -45,16 +45,16 @@ var (
 		Fee:    "1",
 		Date:   1556992677,
 		Block:  151980,
-		Status: txtype.StatusCompleted,
-		Type:   txtype.TxTransfer,
-		Meta: txtype.Transfer{
+		Status: types.StatusCompleted,
+		Type:   types.TxTransfer,
+		Meta: types.Transfer{
 			Value:    "2271999999",
 			Symbol:   coin.Kava().Symbol,
 			Decimals: 6,
 		},
 	}
 
-	delegateDst = txtype.Tx{
+	delegateDst = types.Tx{
 		ID:        "11078091D1D5BD84F4275B6CEE02170428944DB0E8EEC37E980551435F6D04C7",
 		Coin:      coin.ATOM,
 		From:      "cosmos1237l0vauhw78qtwq045jd24ay4urpec6r3xfn3",
@@ -62,13 +62,13 @@ var (
 		Fee:       "5000",
 		Date:      1564632616,
 		Block:     1258202,
-		Status:    txtype.StatusCompleted,
-		Type:      txtype.TxAnyAction,
-		Direction: txtype.DirectionOutgoing,
-		Meta: txtype.AnyAction{
+		Status:    types.StatusCompleted,
+		Type:      types.TxAnyAction,
+		Direction: types.DirectionOutgoing,
+		Meta: types.AnyAction{
 			Coin:     coin.ATOM,
-			Title:    txtype.AnyActionDelegation,
-			Key:      txtype.KeyStakeDelegate,
+			Title:    types.AnyActionDelegation,
+			Key:      types.KeyStakeDelegate,
 			Name:     coin.Cosmos().Name,
 			Symbol:   coin.Coins[coin.ATOM].Symbol,
 			Decimals: coin.Coins[coin.ATOM].Decimals,
@@ -76,7 +76,7 @@ var (
 		},
 	}
 
-	unDelegateDst = txtype.Tx{
+	unDelegateDst = types.Tx{
 		ID:        "A1EC36741FEF681F4A77B8F6032AD081100EE5ECB4CC76AEAC2174BC6B871CFE",
 		Coin:      coin.ATOM,
 		From:      "cosmos137rrp4p8n0nqcft0mwc62tdnyhhzf80knv5t94",
@@ -84,13 +84,13 @@ var (
 		Fee:       "5000",
 		Date:      1564624521,
 		Block:     1257037,
-		Status:    txtype.StatusCompleted,
-		Type:      txtype.TxAnyAction,
-		Direction: txtype.DirectionIncoming,
-		Meta: txtype.AnyAction{
+		Status:    types.StatusCompleted,
+		Type:      types.TxAnyAction,
+		Direction: types.DirectionIncoming,
+		Meta: types.AnyAction{
 			Coin:     coin.ATOM,
-			Title:    txtype.AnyActionUndelegation,
-			Key:      txtype.KeyStakeDelegate,
+			Title:    types.AnyActionUndelegation,
+			Key:      types.KeyStakeDelegate,
 			Name:     coin.Cosmos().Name,
 			Symbol:   coin.Coins[coin.ATOM].Symbol,
 			Decimals: coin.Coins[coin.ATOM].Decimals,
@@ -98,7 +98,7 @@ var (
 		},
 	}
 
-	claimRewardDst2 = txtype.Tx{
+	claimRewardDst2 = types.Tx{
 		ID:        "082BA88EC055A7C343A353297EAC104CE87C659E0DDD84621C9AC3C284232800",
 		Coin:      coin.ATOM,
 		From:      "cosmos1y6yvdel7zys8x60gz9067fjpcpygsn62ae9x46",
@@ -106,14 +106,14 @@ var (
 		Fee:       "0",
 		Date:      1576462863,
 		Block:     54561,
-		Status:    txtype.StatusCompleted,
-		Type:      txtype.TxAnyAction,
-		Direction: txtype.DirectionIncoming,
+		Status:    types.StatusCompleted,
+		Type:      types.TxAnyAction,
+		Direction: types.DirectionIncoming,
 		Memo:      "复投",
-		Meta: txtype.AnyAction{
+		Meta: types.AnyAction{
 			Coin:     coin.ATOM,
-			Title:    txtype.AnyActionClaimRewards,
-			Key:      txtype.KeyStakeClaimRewards,
+			Title:    types.AnyActionClaimRewards,
+			Key:      types.KeyStakeClaimRewards,
 			Name:     coin.Cosmos().Name,
 			Symbol:   coin.Coins[coin.ATOM].Symbol,
 			Decimals: coin.Coins[coin.ATOM].Decimals,
@@ -121,7 +121,7 @@ var (
 		},
 	}
 
-	claimRewardDst1 = txtype.Tx{
+	claimRewardDst1 = types.Tx{
 		ID:        "C382DCFDC30E2DA294421DAEAD5862F118592A7B000EE91F6BEF8452A1F525D7",
 		Coin:      coin.ATOM,
 		From:      "cosmos1cxehfdhfm96ljpktdxsj0k6xp9gtuheghwgqug",
@@ -129,14 +129,14 @@ var (
 		Fee:       "1000",
 		Date:      1576638273,
 		Block:     79678,
-		Status:    txtype.StatusCompleted,
-		Type:      txtype.TxAnyAction,
-		Direction: txtype.DirectionIncoming,
+		Status:    types.StatusCompleted,
+		Type:      types.TxAnyAction,
+		Direction: types.DirectionIncoming,
 		Memo:      "",
-		Meta: txtype.AnyAction{
+		Meta: types.AnyAction{
 			Coin:     coin.ATOM,
-			Title:    txtype.AnyActionClaimRewards,
-			Key:      txtype.KeyStakeClaimRewards,
+			Title:    types.AnyActionClaimRewards,
+			Key:      types.KeyStakeClaimRewards,
 			Name:     coin.Cosmos().Name,
 			Symbol:   coin.Coins[coin.ATOM].Symbol,
 			Decimals: coin.Coins[coin.ATOM].Decimals,
@@ -144,7 +144,7 @@ var (
 		},
 	}
 
-	failedTransferDst = txtype.Tx{
+	failedTransferDst = types.Tx{
 		ID:     "5E78C65A8C1A6C8239EBBBBF2E42020E6ADBA8037EDEA83BF88E1A9159CF13B8",
 		Coin:   coin.ATOM,
 		From:   "cosmos1shpfyt7psrff2ux7nznxvj6f7gq59fcqng5mku",
@@ -152,10 +152,10 @@ var (
 		Fee:    "2000",
 		Date:   1576120902,
 		Block:  5552,
-		Status: txtype.StatusError,
-		Type:   txtype.TxTransfer,
+		Status: types.StatusError,
+		Type:   types.TxTransfer,
 		Memo:   "UniCoins registration rewards",
-		Meta: txtype.Transfer{
+		Meta: types.Transfer{
 			Value:    "100000",
 			Symbol:   coin.Cosmos().Symbol,
 			Decimals: 6,
@@ -167,7 +167,7 @@ type test struct {
 	name     string
 	platform Platform
 	Data     string
-	want     txtype.Tx
+	want     types.Tx
 }
 
 func TestNormalize(t *testing.T) {

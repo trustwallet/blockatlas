@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/coin"
-	"github.com/trustwallet/golibs/txtype"
+	"github.com/trustwallet/golibs/types"
 )
 
 var (
@@ -58,11 +58,11 @@ func TestParser_getBlockByNumberWithRetry_Error(t *testing.T) {
 	}
 }
 
-func getBlock(num int64) (*txtype.Block, error) {
+func getBlock(num int64) (*types.Block, error) {
 	if num == 0 {
 		return nil, errors.New("test")
 	}
-	return &txtype.Block{}, nil
+	return &types.Block{}, nil
 }
 
 func getMockedBlockAPI() blockatlas.BlockAPI {
@@ -82,8 +82,8 @@ func (p *Platform) Coin() coin.Coin {
 	return coin.Coins[p.CoinIndex]
 }
 
-func (p *Platform) GetBlockByNumber(num int64) (*txtype.Block, error) {
-	return &txtype.Block{}, nil
+func (p *Platform) GetBlockByNumber(num int64) (*types.Block, error) {
+	return &types.Block{}, nil
 }
 
 func TestGetInterval(t *testing.T) {

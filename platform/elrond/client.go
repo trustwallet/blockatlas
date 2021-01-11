@@ -6,7 +6,7 @@ import (
 	"net/url"
 
 	"github.com/trustwallet/golibs/client"
-	"github.com/trustwallet/golibs/txtype"
+	"github.com/trustwallet/golibs/types"
 )
 
 type Client struct {
@@ -26,7 +26,7 @@ func (c *Client) CurrentBlockNumber() (num int64, err error) {
 	return int64(latestNonce), nil
 }
 
-func (c *Client) GetBlockByNumber(height int64) (*txtype.Block, error) {
+func (c *Client) GetBlockByNumber(height int64) (*types.Block, error) {
 	var blockRes BlockResponse
 
 	path := fmt.Sprintf("hyperblock/by-nonce/%d", uint64(height))
@@ -38,13 +38,13 @@ func (c *Client) GetBlockByNumber(height int64) (*txtype.Block, error) {
 	block := blockRes.Block
 	txs := NormalizeTxs(block.Transactions, "", blockRes.Block)
 
-	return &txtype.Block{
+	return &types.Block{
 		Number: int64(block.Nonce),
 		Txs:    txs,
 	}, nil
 }
 
-func (c *Client) GetTxsOfAddress(address string) (txtype.TxPage, error) {
+func (c *Client) GetTxsOfAddress(address string) (types.TxPage, error) {
 	var txPage TransactionsPage
 	// TODO: enable pagination of Elrond transactions in the future.
 	// TODO: currently Elrond only fetches the most recent 20 transactions.

@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/golibs/coin"
 	"github.com/trustwallet/golibs/mock"
-	"github.com/trustwallet/golibs/txtype"
+	"github.com/trustwallet/golibs/types"
 )
 
 var (
@@ -16,7 +16,7 @@ var (
 	srcRewardTransfer, _ = mock.JsonStringFromFilePath("mocks/transfer_rewards.json")
 	srcFeeTransfer, _    = mock.JsonStringFromFilePath("mocks/transfer_fee.json")
 
-	dstOntTransfer = txtype.Tx{
+	dstOntTransfer = types.Tx{
 		ID:     "ea0e5d8e389cb96760887094194ca359ac998b2f607be470a576861b91e2bf52",
 		Coin:   coin.ONT,
 		From:   "ARFXGXSmgFT2h9EiS4D5fen127Lzi48Eij",
@@ -24,25 +24,25 @@ var (
 		Fee:    "10000000",
 		Date:   1578903628,
 		Type:   "transfer",
-		Status: txtype.StatusCompleted,
+		Status: types.StatusCompleted,
 		Block:  7571132,
-		Meta: txtype.Transfer{
+		Meta: types.Transfer{
 			Value:    "5",
 			Symbol:   "ONT",
 			Decimals: 0,
 		},
 	}
-	dstOngTransfer = txtype.Tx{
+	dstOngTransfer = types.Tx{
 		ID:     "e5946ba02f56e17c3709db2bc91f43f76ee3a359006586024daa5c4ad8c54e78",
 		Coin:   coin.ONT,
 		From:   "ASLbwuar3ZTbUbLPnCgjGUw2WHhMfvJJtx",
 		To:     "ARFXGXSmgFT2h9EiS4D5fen127Lzi48Eij",
 		Fee:    "10000000",
 		Date:   1577631515,
-		Type:   txtype.TxNativeTokenTransfer,
-		Status: txtype.StatusCompleted,
+		Type:   types.TxNativeTokenTransfer,
+		Status: types.StatusCompleted,
 		Block:  7457989,
-		Meta: txtype.NativeTokenTransfer{
+		Meta: types.NativeTokenTransfer{
 			Name:     "Ontology Gas",
 			Symbol:   "ONG",
 			TokenID:  "ong",
@@ -52,25 +52,25 @@ var (
 			To:       "ARFXGXSmgFT2h9EiS4D5fen127Lzi48Eij",
 		},
 	}
-	dstRewardTransfer = txtype.Tx{
+	dstRewardTransfer = types.Tx{
 		ID:     "d7554dcdf01f394b9107ff598df6d84e4c3b00ccf1e720b8c09abf085cbe4987",
 		Coin:   coin.ONT,
 		From:   "AFmseVrdL9f9oyCzZefL9tG6UbvhUMqNMV",
 		To:     "ARFXGXSmgFT2h9EiS4D5fen127Lzi48Eij",
 		Fee:    "10000000",
 		Date:   1579699532,
-		Type:   txtype.TxAnyAction,
-		Status: txtype.StatusCompleted,
+		Type:   types.TxAnyAction,
+		Status: types.StatusCompleted,
 		Block:  7644328,
-		Meta: txtype.AnyAction{
+		Meta: types.AnyAction{
 			Coin:     coin.Ontology().ID,
 			Name:     "Ontology Gas",
 			Symbol:   "ONG",
 			TokenID:  "ong",
 			Decimals: 9,
 			Value:    "35344040",
-			Title:    txtype.AnyActionClaimRewards,
-			Key:      txtype.KeyStakeClaimRewards,
+			Title:    types.AnyActionClaimRewards,
+			Key:      types.KeyStakeClaimRewards,
 		},
 	}
 )
@@ -80,13 +80,13 @@ func TestNormalize(t *testing.T) {
 		name        string
 		Transaction string
 		AssetName   AssetType
-		Expected    txtype.Tx
+		Expected    types.Tx
 		wantErr     bool
 	}{
 		{"normalize ont", srcOntTransfer, AssetONT, dstOntTransfer, false},
 		{"normalize ong", srcOngTransfer, AssetONG, dstOngTransfer, false},
 		{"normalize claim reward", srcRewardTransfer, AssetONG, dstRewardTransfer, false},
-		{"normalize fee", srcFeeTransfer, AssetONG, txtype.Tx{}, true},
+		{"normalize fee", srcFeeTransfer, AssetONG, types.Tx{}, true},
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
@@ -197,7 +197,7 @@ var (
 
 func TestNormalizeBlock(t *testing.T) {
 	block := normalizeTxs([]Tx{ontTxResp1.Result, ontTxResp2.Result, ontTxResp3.Result}, AssetAll)
-	var want txtype.TxPage
+	var want types.TxPage
 	_ = mock.JsonModelFromFilePath("mocks/block_response.json", &want)
 	lhs, _ := json.Marshal(block)
 	rhs, _ := json.Marshal(want)

@@ -11,7 +11,7 @@ import (
 
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/mock"
-	"github.com/trustwallet/golibs/txtype"
+	"github.com/trustwallet/golibs/types"
 )
 
 var (
@@ -24,7 +24,7 @@ var (
 		ID:     "tz2TSvNTh2epDMhZHrw73nV9piBX7kLZ9K9m",
 		Details: blockatlas.StakingDetails{
 			Reward:        blockatlas.StakingReward{Annual: Annual},
-			MinimumAmount: txtype.Amount("0"),
+			MinimumAmount: types.Amount("0"),
 			Type:          blockatlas.DelegationTypeDelegate,
 		},
 	}

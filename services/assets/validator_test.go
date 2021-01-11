@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/coin"
-	"github.com/trustwallet/golibs/txtype"
+	"github.com/trustwallet/golibs/types"
 )
 
 var (
@@ -85,7 +85,7 @@ var (
 			Website:     "https://stake.fish/",
 		},
 		Details: blockatlas.StakingDetails{
-			MinimumAmount: txtype.Amount("10"),
+			MinimumAmount: types.Amount("10"),
 		},
 	}
 
@@ -98,7 +98,7 @@ var (
 			Website:     "https://tw.com",
 		},
 		Details: blockatlas.StakingDetails{
-			MinimumAmount: txtype.Amount("0"),
+			MinimumAmount: types.Amount("0"),
 		},
 	}
 
@@ -111,7 +111,7 @@ var (
 			Website:     "https://tw.com",
 		},
 		Details: blockatlas.StakingDetails{
-			MinimumAmount: txtype.Amount("0"),
+			MinimumAmount: types.Amount("0"),
 		},
 	}
 
@@ -124,7 +124,7 @@ var (
 			Website:     "https://tw.com",
 		},
 		Details: blockatlas.StakingDetails{
-			MinimumAmount: txtype.Amount("0"),
+			MinimumAmount: types.Amount("0"),
 		},
 	}
 )

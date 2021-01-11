@@ -2,17 +2,17 @@ package filecoin
 
 import (
 	"github.com/trustwallet/blockatlas/platform/filecoin/explorer"
-	"github.com/trustwallet/golibs/txtype"
+	"github.com/trustwallet/golibs/types"
 )
 
 const messageMethod = "Send"
 
-func (p *Platform) GetTxsByAddress(address string) (txtype.TxPage, error) {
-	res, err := p.explorer.GetMessagesByAddress(address, txtype.TxPerPage)
+func (p *Platform) GetTxsByAddress(address string) (types.TxPage, error) {
+	res, err := p.explorer.GetMessagesByAddress(address, types.TxPerPage)
 	if err != nil {
 		return nil, err
 	}
-	normalized := make([]txtype.Tx, 0)
+	normalized := make([]types.Tx, 0)
 	for _, message := range res.Messages {
 		// skip non transfer messages
 		if message.Method != messageMethod {
@@ -24,16 +24,16 @@ func (p *Platform) GetTxsByAddress(address string) (txtype.TxPage, error) {
 	return normalized, nil
 }
 
-func (p *Platform) NormalizeMessage(message explorer.Message, address string) txtype.Tx {
-	status := txtype.StatusCompleted
+func (p *Platform) NormalizeMessage(message explorer.Message, address string) types.Tx {
+	status := types.StatusCompleted
 	if message.Receipt.ExitCode != 0 {
-		status = txtype.StatusError
+		status = types.StatusError
 	}
-	direction := txtype.DirectionOutgoing
+	direction := types.DirectionOutgoing
 	if message.From != address {
-		direction = txtype.DirectionIncoming
+		direction = types.DirectionIncoming
 	}
-	return txtype.Tx{
+	return types.Tx{
 		ID:        message.Cid,
 		Coin:      p.Coin().ID,
 		From:      message.From,
@@ -42,10 +42,10 @@ func (p *Platform) NormalizeMessage(message explorer.Message, address string) tx
 		Block:     message.Height,
 		Status:    status,
 		Sequence:  message.Nonce,
-		Type:      txtype.TxTransfer,
+		Type:      types.TxTransfer,
 		Direction: direction,
-		Meta: txtype.Transfer{
-			Value:    txtype.Amount(message.Value),
+		Meta: types.Transfer{
+			Value:    types.Amount(message.Value),
 			Symbol:   p.Coin().Symbol,
 			Decimals: p.Coin().Decimals,
 		},

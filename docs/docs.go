@@ -297,7 +297,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/txtype.CollectionPage"
+                            "$ref": "#/definitions/types.CollectionPage"
                         }
                     },
                     "500": {
@@ -551,7 +551,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/txtype.CollectionPage"
+                            "$ref": "#/definitions/types.CollectionPage"
                         }
                     },
                     "500": {
@@ -594,7 +594,7 @@ var doc = `{
                 }
             }
         },
-        "txtype.CollectionPage": {
+        "types.CollectionPage": {
             "type": "array",
             "items": {
                 "$ref": "#/definitions/blockatlas.Collection"

@@ -5,8 +5,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/trustwallet/golibs/tokentype"
-	"github.com/trustwallet/golibs/txtype"
+	"github.com/trustwallet/golibs/types"
 
 	"github.com/trustwallet/golibs/coin"
 	"github.com/trustwallet/golibs/numbers"
@@ -105,18 +104,18 @@ type (
 	}
 )
 
-func normalizeBlock(response TransactionsInBlockResponse) txtype.Block {
-	result := txtype.Block{
+func normalizeBlock(response TransactionsInBlockResponse) types.Block {
+	result := types.Block{
 		Number: int64(response.BlockHeight),
 	}
 	result.Txs = normalizeTransactions(response.Tx)
 	return result
 }
 
-func normalizeTransactions(txs []Tx) []txtype.Tx {
-	totalTxs := make([]txtype.Tx, 0, len(txs))
+func normalizeTransactions(txs []Tx) []types.Tx {
+	totalTxs := make([]types.Tx, 0, len(txs))
 	for _, t := range txs {
-		var txs []txtype.Tx
+		var txs []types.Tx
 		switch t.TxType {
 		case CancelOrder, NewOrder:
 			//txs = append(txs, normalizeOrderTransaction(t))
@@ -133,21 +132,21 @@ func normalizeTransactions(txs []Tx) []txtype.Tx {
 	return totalTxs
 }
 
-func normalizeTransferTransaction(t Tx) txtype.Tx {
+func normalizeTransferTransaction(t Tx) types.Tx {
 	tx := normalizeBaseOfTransaction(t)
 	tx.To = t.ToAddr.(string)
 	tx.From = t.FromAddr.(string)
 	switch {
 	case t.TxAsset == BNBAsset:
-		tx.Type = txtype.TxTransfer
-		tx.Meta = txtype.Transfer{
+		tx.Type = types.TxTransfer
+		tx.Meta = types.Transfer{
 			Value:    normalizeAmount(t.Value),
 			Symbol:   coin.Binance().Symbol,
 			Decimals: coin.Binance().Decimals,
 		}
 	case t.TxAsset != "":
-		tx.Type = txtype.TxNativeTokenTransfer
-		tx.Meta = txtype.NativeTokenTransfer{
+		tx.Type = types.TxNativeTokenTransfer
+		tx.Meta = types.NativeTokenTransfer{
 			Decimals: coin.Binance().Decimals,
 			From:     t.FromAddr.(string),
 			Symbol:   getTokenSymbolFromID(t.TxAsset),
@@ -160,10 +159,10 @@ func normalizeTransferTransaction(t Tx) txtype.Tx {
 	return tx
 }
 
-func normalizeMultiTransferTransaction(t Tx) []txtype.Tx {
-	txs := make([]txtype.Tx, 0, len(t.SubTransactions))
+func normalizeMultiTransferTransaction(t Tx) []types.Tx {
+	txs := make([]types.Tx, 0, len(t.SubTransactions))
 	for _, subTx := range t.SubTransactions {
-		tx := txtype.Tx{
+		tx := types.Tx{
 			ID:       subTx.TxHash,
 			Coin:     coin.Binance().ID,
 			From:     subTx.FromAddr,
@@ -171,21 +170,21 @@ func normalizeMultiTransferTransaction(t Tx) []txtype.Tx {
 			Fee:      normalizeFee(subTx.TxFee),
 			Date:     t.TimeStamp.Unix(),
 			Block:    uint64(t.BlockHeight),
-			Status:   txtype.StatusCompleted,
+			Status:   types.StatusCompleted,
 			Sequence: uint64(t.Sequence),
 			Memo:     t.Memo,
 		}
 		switch {
 		case subTx.TxAsset == BNBAsset:
-			tx.Type = txtype.TxTransfer
-			tx.Meta = txtype.Transfer{
+			tx.Type = types.TxTransfer
+			tx.Meta = types.Transfer{
 				Value:    normalizeAmount(subTx.Value),
 				Symbol:   coin.Binance().Symbol,
 				Decimals: coin.Binance().Decimals,
 			}
 		case subTx.TxAsset != "":
-			tx.Type = txtype.TxNativeTokenTransfer
-			tx.Meta = txtype.NativeTokenTransfer{
+			tx.Type = types.TxNativeTokenTransfer
+			tx.Meta = types.NativeTokenTransfer{
 				Decimals: coin.Binance().Decimals,
 				Name:     getTokenSymbolFromID(subTx.TxAsset),
 				From:     subTx.FromAddr,
@@ -202,53 +201,22 @@ func normalizeMultiTransferTransaction(t Tx) []txtype.Tx {
 	return txs
 }
 
-func normalizeBaseOfTransaction(t Tx) txtype.Tx {
-	return txtype.Tx{
+func normalizeBaseOfTransaction(t Tx) types.Tx {
+	return types.Tx{
 		ID:       t.TxHash,
 		Coin:     coin.Binance().ID,
 		From:     t.FromAddr.(string),
 		Fee:      normalizeFee(t.TxFee),
 		Date:     t.TimeStamp.Unix(),
 		Block:    uint64(t.BlockHeight),
-		Status:   txtype.StatusCompleted,
+		Status:   types.StatusCompleted,
 		Sequence: uint64(t.Sequence),
 		Memo:     t.Memo,
 	}
 }
 
-//func normalizeOrderTransaction(t Tx) txtype.Tx {
-//	tx := normalizeBaseOfTransaction(t)
-//	tx.Type = txtype.TxAnyAction
-//	meta := txtype.AnyAction{
-//		Coin:     coin.Binance().ID,
-//		Decimals: coin.Binance().Decimals,
-//	}
-//
-//	data, err := getTransactionData(t.Data)
-//	if err == nil {
-//		base, _ := getTokenIDsFromPair(data.OrderData.Symbol)
-//		meta.TokenID = base
-//		meta.Value = txtype.Amount(numbers.FromDecimalExp(data.OrderData.Quantity, int(coin.Binance().Decimals)))
-//		meta.Name = data.OrderData.Side
-//		meta.Symbol = getTokenSymbolFromID(base)
-//	}
-//	switch t.TxType {
-//	case CancelOrder:
-//		meta.Title = blockatlas.KeyTitleCancelOrder
-//		meta.Key = blockatlas.KeyCancelOrder
-//		meta.Value = "0"
-//	case NewOrder:
-//		meta.Title = blockatlas.KeyTitlePlaceOrder
-//		meta.Key = blockatlas.KeyPlaceOrder
-//	}
-//
-//	tx.Meta = meta
-//	tx.Direction = txtype.DirectionOutgoing
-//	return tx
-//}
-
-func normalizeTokens(srcBalance []TokenBalance, tokens Tokens) []txtype.Token {
-	tokensList := make([]txtype.Token, 0, len(srcBalance))
+func normalizeTokens(srcBalance []TokenBalance, tokens Tokens) []types.Token {
+	tokensList := make([]types.Token, 0, len(srcBalance))
 	for _, srcToken := range srcBalance {
 		token, ok := normalizeToken(srcToken, tokens)
 		if !ok {
@@ -259,8 +227,8 @@ func normalizeTokens(srcBalance []TokenBalance, tokens Tokens) []txtype.Token {
 	return tokensList
 }
 
-func normalizeToken(srcToken TokenBalance, tokens Tokens) (txtype.Token, bool) {
-	var result txtype.Token
+func normalizeToken(srcToken TokenBalance, tokens Tokens) (types.Token, bool) {
+	var result types.Token
 	if srcToken.isAllZeroBalance() {
 		return result, false
 	}
@@ -270,13 +238,13 @@ func normalizeToken(srcToken TokenBalance, tokens Tokens) (txtype.Token, bool) {
 		return result, false
 	}
 
-	result = txtype.Token{
+	result = types.Token{
 		Name:     token.Name,
 		Symbol:   token.OriginalSymbol,
 		TokenID:  token.Symbol,
 		Coin:     coin.Binance().ID,
 		Decimals: coin.Binance().Decimals,
-		Type:     tokentype.BEP2,
+		Type:     types.BEP2,
 	}
 
 	return result, true
@@ -304,15 +272,15 @@ func getTokenSymbolFromID(tokenID string) string {
 	return tokenID
 }
 
-func normalizeAmount(amount string) txtype.Amount {
+func normalizeAmount(amount string) types.Amount {
 	val := numbers.DecimalExp(amount, int(coin.Binance().Decimals))
-	return txtype.Amount(val)
+	return types.Amount(val)
 }
 
-func normalizeFee(amount string) txtype.Amount {
+func normalizeFee(amount string) types.Amount {
 	a, err := numbers.StringNumberToFloat64(amount)
 	if a != 0 && err == nil {
-		return txtype.Amount(numbers.DecimalExp(amount, int(coin.Binance().Decimals)))
+		return types.Amount(numbers.DecimalExp(amount, int(coin.Binance().Decimals)))
 	} else {
 		return "0"
 	}

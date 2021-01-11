@@ -5,10 +5,10 @@ import (
 
 	Address "github.com/trustwallet/golibs/address"
 	"github.com/trustwallet/golibs/coin"
-	"github.com/trustwallet/golibs/txtype"
+	"github.com/trustwallet/golibs/types"
 )
 
-func (c *Client) GetTransactions(address string, coinIndex uint) (txtype.TxPage, error) {
+func (c *Client) GetTransactions(address string, coinIndex uint) (types.TxPage, error) {
 	page, err := c.GetTxs(address)
 	if err != nil {
 		return nil, err
@@ -16,7 +16,7 @@ func (c *Client) GetTransactions(address string, coinIndex uint) (txtype.TxPage,
 	return NormalizePage(page, address, "", coinIndex), nil
 }
 
-func (c *Client) GetTokenTxs(address, token string, coinIndex uint) (txtype.TxPage, error) {
+func (c *Client) GetTokenTxs(address, token string, coinIndex uint) (types.TxPage, error) {
 	page, err := c.GetTxsWithContract(address, token)
 	if err != nil {
 		return nil, err
@@ -24,7 +24,7 @@ func (c *Client) GetTokenTxs(address, token string, coinIndex uint) (txtype.TxPa
 	return NormalizePage(page, address, token, coinIndex), nil
 }
 
-func NormalizePage(srcPage TransactionsList, address, token string, coinIndex uint) (txs txtype.TxPage) {
+func NormalizePage(srcPage TransactionsList, address, token string, coinIndex uint) (txs types.TxPage) {
 	normalizedAddr, err := Address.EIP55Checksum(address)
 	if err != nil {
 		return
@@ -43,14 +43,14 @@ func NormalizePage(srcPage TransactionsList, address, token string, coinIndex ui
 	return txs
 }
 
-func normalizeTx(srcTx *Transaction, coinIndex uint) txtype.Tx {
+func normalizeTx(srcTx *Transaction, coinIndex uint) types.Tx {
 	status, errReason := srcTx.EthereumSpecific.GetStatus()
-	normalized := txtype.Tx{
+	normalized := types.Tx{
 		ID:       srcTx.ID,
 		Coin:     coinIndex,
 		From:     srcTx.FromAddress(),
 		To:       srcTx.ToAddress(),
-		Fee:      txtype.Amount(srcTx.GetFee()),
+		Fee:      types.Amount(srcTx.GetFee()),
 		Date:     srcTx.BlockTime,
 		Block:    normalizeBlockHeight(srcTx.BlockHeight),
 		Status:   status,
@@ -61,7 +61,7 @@ func normalizeTx(srcTx *Transaction, coinIndex uint) txtype.Tx {
 	return normalized
 }
 
-func normalizeTxWithAddress(srcTx *Transaction, address, token string, coinIndex uint) txtype.Tx {
+func normalizeTxWithAddress(srcTx *Transaction, address, token string, coinIndex uint) types.Tx {
 	normalized := normalizeTx(srcTx, coinIndex)
 	normalized.Direction = GetDirection(address, normalized.From, normalized.To)
 	fillMetaWithAddress(&normalized, srcTx, address, token, coinIndex)
@@ -75,27 +75,27 @@ func normalizeBlockHeight(height int64) uint64 {
 	return uint64(height)
 }
 
-func fillMeta(final *txtype.Tx, tx *Transaction, coinIndex uint) {
+func fillMeta(final *types.Tx, tx *Transaction, coinIndex uint) {
 	if ok := fillTokenTransfer(final, tx, coinIndex); !ok {
 		fillTransferOrContract(final, tx, coinIndex)
 	}
 }
 
-func fillMetaWithAddress(final *txtype.Tx, tx *Transaction, address, token string, coinIndex uint) {
+func fillMetaWithAddress(final *types.Tx, tx *Transaction, address, token string, coinIndex uint) {
 	if ok := fillTokenTransferWithAddress(final, tx, address, token, coinIndex); !ok {
 		fillTransferOrContract(final, tx, coinIndex)
 	}
 }
 
-func fillTokenTransfer(final *txtype.Tx, tx *Transaction, coinIndex uint) bool {
+func fillTokenTransfer(final *types.Tx, tx *Transaction, coinIndex uint) bool {
 	if len(tx.TokenTransfers) == 1 {
 		transfer := tx.TokenTransfers[0]
-		final.Meta = txtype.TokenTransfer{
+		final.Meta = types.TokenTransfer{
 			Name:     transfer.Name,
 			Symbol:   transfer.Symbol,
 			TokenID:  transfer.Token,
 			Decimals: transfer.Decimals,
-			Value:    txtype.Amount(transfer.Value),
+			Value:    types.Amount(transfer.Value),
 			From:     transfer.From,
 			To:       transfer.To,
 		}
@@ -104,7 +104,7 @@ func fillTokenTransfer(final *txtype.Tx, tx *Transaction, coinIndex uint) bool {
 	return false
 }
 
-func fillTokenTransferWithAddress(final *txtype.Tx, tx *Transaction, address, token string, coinIndex uint) bool {
+func fillTokenTransferWithAddress(final *types.Tx, tx *Transaction, address, token string, coinIndex uint) bool {
 	if len(tx.TokenTransfers) == 1 {
 		transfer := tx.TokenTransfers[0]
 		if transfer.To == address || transfer.From == address {
@@ -115,17 +115,17 @@ func fillTokenTransferWithAddress(final *txtype.Tx, tx *Transaction, address, to
 				}
 			}
 			direction := GetDirection(address, transfer.From, transfer.To)
-			metadata := txtype.TokenTransfer{
+			metadata := types.TokenTransfer{
 				Name:     transfer.Name,
 				Symbol:   transfer.Symbol,
 				TokenID:  transfer.Token,
 				Decimals: transfer.Decimals,
-				Value:    txtype.Amount(transfer.Value),
+				Value:    types.Amount(transfer.Value),
 			}
-			if direction == txtype.DirectionSelf {
+			if direction == types.DirectionSelf {
 				metadata.From = address
 				metadata.To = address
-			} else if direction == txtype.DirectionOutgoing {
+			} else if direction == types.DirectionOutgoing {
 				metadata.From = address
 				metadata.To = transfer.To
 			} else {
@@ -140,11 +140,11 @@ func fillTokenTransferWithAddress(final *txtype.Tx, tx *Transaction, address, to
 	return false
 }
 
-func fillTransferOrContract(final *txtype.Tx, tx *Transaction, coinIndex uint) {
+func fillTransferOrContract(final *types.Tx, tx *Transaction, coinIndex uint) {
 	gasUsed := tx.EthereumSpecific.GasUsed
 	if gasUsed != nil && gasUsed.Int64() == 21000 {
-		final.Meta = txtype.Transfer{
-			Value:    txtype.Amount(tx.Value),
+		final.Meta = types.Transfer{
+			Value:    types.Amount(tx.Value),
 			Symbol:   coin.Coins[coinIndex].Symbol,
 			Decimals: coin.Coins[coinIndex].Decimals,
 		}
@@ -153,19 +153,19 @@ func fillTransferOrContract(final *txtype.Tx, tx *Transaction, coinIndex uint) {
 	data := tx.EthereumSpecific.Data
 	if data == "" {
 		// old node doesn't have data field
-		final.Meta = txtype.ContractCall{
+		final.Meta = types.ContractCall{
 			Input: "0x",
 			Value: tx.Value,
 		}
 	} else {
 		if len(strings.TrimPrefix(data, "0x")) > 0 {
-			final.Meta = txtype.ContractCall{
+			final.Meta = types.ContractCall{
 				Input: data,
 				Value: tx.Value,
 			}
 		} else {
-			final.Meta = txtype.Transfer{
-				Value:    txtype.Amount(tx.Value),
+			final.Meta = types.Transfer{
+				Value:    types.Amount(tx.Value),
 				Symbol:   coin.Coins[coinIndex].Symbol,
 				Decimals: coin.Coins[coinIndex].Decimals,
 			}

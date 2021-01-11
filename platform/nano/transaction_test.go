@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/trustwallet/golibs/txtype"
+	"github.com/trustwallet/golibs/types"
 )
 
 func TestNormalize(t *testing.T) {
@@ -16,7 +16,7 @@ func TestNormalize(t *testing.T) {
 	tests := []struct {
 		name   string
 		args   args
-		wantTx txtype.Tx
+		wantTx types.Tx
 	}{
 		{
 			name: "Send",
@@ -31,7 +31,7 @@ func TestNormalize(t *testing.T) {
 				},
 				account: "nano_3ifzdoxn7keh7tn8zuwty1yr8k5pmaxoq6jpp3jidbjbfnz6hyanh89x6rwj",
 			},
-			wantTx: txtype.Tx{
+			wantTx: types.Tx{
 				ID:     "455C1A3E14E2A645EE4DFA120820614DE3A9876BA2673D0D38494396F3650227",
 				Coin:   165,
 				Date:   1573006938,
@@ -40,8 +40,8 @@ func TestNormalize(t *testing.T) {
 				Block:  4,
 				Status: "completed",
 				Fee:    "0",
-				Meta: txtype.Transfer{
-					Value:    txtype.Amount("45000000000000000000000000000"),
+				Meta: types.Transfer{
+					Value:    types.Amount("45000000000000000000000000000"),
 					Symbol:   "NANO",
 					Decimals: 30,
 				},
@@ -60,7 +60,7 @@ func TestNormalize(t *testing.T) {
 				},
 				account: "nano_3ifzdoxn7keh7tn8zuwty1yr8k5pmaxoq6jpp3jidbjbfnz6hyanh89x6rwj",
 			},
-			wantTx: txtype.Tx{
+			wantTx: types.Tx{
 				ID:     "5D6B19DE75D8C1BAF7D91FBDA71AFC5F0FED68D483DEC5A51F0767A2384D0DE2",
 				Coin:   165,
 				Date:   1570862429,
@@ -69,8 +69,8 @@ func TestNormalize(t *testing.T) {
 				Block:  1,
 				Status: "completed",
 				Fee:    "0",
-				Meta: txtype.Transfer{
-					Value:    txtype.Amount("90000000000000000000000000000"),
+				Meta: types.Transfer{
+					Value:    types.Amount("90000000000000000000000000000"),
 					Symbol:   "NANO",
 					Decimals: 30,
 				},

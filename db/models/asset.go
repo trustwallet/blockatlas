@@ -6,7 +6,7 @@ import (
 	"unicode/utf8"
 
 	"github.com/trustwallet/golibs/asset"
-	"github.com/trustwallet/golibs/txtype"
+	"github.com/trustwallet/golibs/types"
 )
 
 type Asset struct {
@@ -21,26 +21,26 @@ type Asset struct {
 	Coin     uint
 }
 
-func AssetFrom(t txtype.Tx) (a Asset, ok bool) {
+func AssetFrom(t types.Tx) (a Asset, ok bool) {
 	a.Coin = t.Coin
 	switch t.Meta.(type) {
-	case txtype.TokenTransfer:
-		transfer := t.Meta.(txtype.TokenTransfer)
+	case types.TokenTransfer:
+		transfer := t.Meta.(types.TokenTransfer)
 		a, ok = assetFromTokenTransfer(&t, &transfer)
-	case *txtype.TokenTransfer:
-		transfer := t.Meta.(*txtype.TokenTransfer)
+	case *types.TokenTransfer:
+		transfer := t.Meta.(*types.TokenTransfer)
 		a, ok = assetFromTokenTransfer(&t, transfer)
-	case txtype.NativeTokenTransfer:
-		transfer := t.Meta.(txtype.NativeTokenTransfer)
+	case types.NativeTokenTransfer:
+		transfer := t.Meta.(types.NativeTokenTransfer)
 		a, ok = assetFromNativeTokenTransfer(&t, &transfer)
-	case *txtype.NativeTokenTransfer:
-		transfer := t.Meta.(*txtype.NativeTokenTransfer)
+	case *types.NativeTokenTransfer:
+		transfer := t.Meta.(*types.NativeTokenTransfer)
 		a, ok = assetFromNativeTokenTransfer(&t, transfer)
-	case txtype.AnyAction:
-		action := t.Meta.(txtype.AnyAction)
+	case types.AnyAction:
+		action := t.Meta.(types.AnyAction)
 		a, ok = assetFromAnyAction(&t, &action)
-	case *txtype.AnyAction:
-		action := t.Meta.(*txtype.AnyAction)
+	case *types.AnyAction:
+		action := t.Meta.(*types.AnyAction)
 		a, ok = assetFromAnyAction(&t, action)
 	default:
 		break
@@ -52,8 +52,8 @@ func AssetFrom(t txtype.Tx) (a Asset, ok bool) {
 	return
 }
 
-func assetFromTokenTransfer(t *txtype.Tx, transfer *txtype.TokenTransfer) (a Asset, ok bool) {
-	tp, ok := txtype.GetTokenType(t.Coin, transfer.TokenID)
+func assetFromTokenTransfer(t *types.Tx, transfer *types.TokenTransfer) (a Asset, ok bool) {
+	tp, ok := types.GetTokenType(t.Coin, transfer.TokenID)
 	if !ok {
 		return
 	}
@@ -65,8 +65,8 @@ func assetFromTokenTransfer(t *txtype.Tx, transfer *txtype.TokenTransfer) (a Ass
 	return
 }
 
-func assetFromNativeTokenTransfer(t *txtype.Tx, transfer *txtype.NativeTokenTransfer) (a Asset, ok bool) {
-	tp, ok := txtype.GetTokenType(t.Coin, transfer.TokenID)
+func assetFromNativeTokenTransfer(t *types.Tx, transfer *types.NativeTokenTransfer) (a Asset, ok bool) {
+	tp, ok := types.GetTokenType(t.Coin, transfer.TokenID)
 	if !ok {
 		return
 	}
@@ -78,8 +78,8 @@ func assetFromNativeTokenTransfer(t *txtype.Tx, transfer *txtype.NativeTokenTran
 	return
 }
 
-func assetFromAnyAction(t *txtype.Tx, action *txtype.AnyAction) (a Asset, ok bool) {
-	tp, ok := txtype.GetTokenType(t.Coin, action.TokenID)
+func assetFromAnyAction(t *types.Tx, action *types.AnyAction) (a Asset, ok bool) {
+	tp, ok := types.GetTokenType(t.Coin, action.TokenID)
 	if !ok {
 		return
 	}

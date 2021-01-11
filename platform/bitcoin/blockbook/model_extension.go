@@ -3,19 +3,19 @@ package blockbook
 import (
 	"math/big"
 
-	"github.com/trustwallet/golibs/txtype"
+	"github.com/trustwallet/golibs/types"
 )
 
-func (s *EthereumSpecific) GetStatus() (txtype.Status, string) {
+func (s *EthereumSpecific) GetStatus() (types.Status, string) {
 	switch s.Status {
 	case -1:
-		return txtype.StatusPending, ""
+		return types.StatusPending, ""
 	case 0:
-		return txtype.StatusError, "Error"
+		return types.StatusError, "Error"
 	case 1:
-		return txtype.StatusCompleted, ""
+		return types.StatusCompleted, ""
 	default:
-		return txtype.StatusError, "Unable to define transaction status"
+		return types.StatusError, "Unable to define transaction status"
 	}
 }
 
@@ -28,7 +28,7 @@ func (transaction *Transaction) FromAddress() string {
 
 func (transaction *Transaction) GetFee() string {
 	status, _ := transaction.EthereumSpecific.GetStatus()
-	if status != txtype.StatusPending {
+	if status != types.StatusPending {
 		return transaction.Fees
 	}
 
@@ -48,12 +48,12 @@ func (transaction *Transaction) ToAddress() string {
 	return ""
 }
 
-func GetDirection(address, from, to string) txtype.Direction {
+func GetDirection(address, from, to string) types.Direction {
 	if address == from && address == to {
-		return txtype.DirectionSelf
+		return types.DirectionSelf
 	}
 	if address == from {
-		return txtype.DirectionOutgoing
+		return types.DirectionOutgoing
 	}
-	return txtype.DirectionIncoming
+	return types.DirectionIncoming
 }

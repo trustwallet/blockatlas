@@ -1,6 +1,6 @@
 package tron
 
-import "github.com/trustwallet/golibs/txtype"
+import "github.com/trustwallet/golibs/types"
 
 type (
 	BlockRequest struct {
@@ -52,10 +52,10 @@ type (
 	}
 
 	TransferValue struct {
-		Amount       txtype.Amount `json:"amount"`
-		OwnerAddress string        `json:"owner_address"`
-		ToAddress    string        `json:"to_address"`
-		AssetName    string        `json:"asset_name,omitempty"`
+		Amount       types.Amount `json:"amount"`
+		OwnerAddress string       `json:"owner_address"`
+		ToAddress    string       `json:"to_address"`
+		AssetName    string       `json:"asset_name,omitempty"`
 	}
 
 	Account struct {

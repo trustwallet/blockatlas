@@ -1,17 +1,15 @@
 package cosmos
 
-import (
-	"github.com/trustwallet/golibs/txtype"
-)
+import "github.com/trustwallet/golibs/types"
 
-func (p *Platform) GetBlockByNumber(num int64) (*txtype.Block, error) {
+func (p *Platform) GetBlockByNumber(num int64) (*types.Block, error) {
 	srcTxs, err := p.client.GetBlockByNumber(num)
 	if err != nil {
 		return nil, err
 	}
 
 	txs := p.NormalizeTxs(srcTxs.Txs)
-	return &txtype.Block{
+	return &types.Block{
 		Number: num,
 		Txs:    txs,
 	}, nil

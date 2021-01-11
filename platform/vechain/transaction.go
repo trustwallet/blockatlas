@@ -9,10 +9,10 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/address"
 	"github.com/trustwallet/golibs/numbers"
-	"github.com/trustwallet/golibs/txtype"
+	"github.com/trustwallet/golibs/types"
 )
 
-func (p *Platform) GetTokenTxsByAddress(address, token string) (txtype.TxPage, error) {
+func (p *Platform) GetTokenTxsByAddress(address, token string) (types.TxPage, error) {
 	if token != gasTokenAddress {
 		return nil, nil
 	}
@@ -30,19 +30,19 @@ func (p *Platform) GetTokenTxsByAddress(address, token string) (txtype.TxPage, e
 	}
 
 	cTxs := p.getTransactionsByIDs(eventsIDs)
-	txs := make(txtype.TxPage, 0)
+	txs := make(types.TxPage, 0)
 	for t := range cTxs {
 		txs = append(txs, t...)
 	}
 	return txs, nil
 }
 
-func (p *Platform) getTransactionsByIDs(ids []string) chan txtype.TxPage {
-	txChan := make(chan txtype.TxPage, len(ids))
+func (p *Platform) getTransactionsByIDs(ids []string) chan types.TxPage {
+	txChan := make(chan types.TxPage, len(ids))
 	var wg sync.WaitGroup
 	for _, id := range ids {
 		wg.Add(1)
-		go func(i string, c chan txtype.TxPage) {
+		go func(i string, c chan types.TxPage) {
 			defer wg.Done()
 			err := p.getTransactionChannel(i, c)
 			if err != nil {
@@ -55,7 +55,7 @@ func (p *Platform) getTransactionsByIDs(ids []string) chan txtype.TxPage {
 	return txChan
 }
 
-func (p *Platform) getTransactionChannel(id string, txChan chan txtype.TxPage) error {
+func (p *Platform) getTransactionChannel(id string, txChan chan types.TxPage) error {
 	srcTx, err := p.client.GetTransactionByID(id)
 	if err != nil {
 		return err
@@ -74,17 +74,17 @@ func (p *Platform) getTransactionChannel(id string, txChan chan txtype.TxPage) e
 	return nil
 }
 
-func (p *Platform) NormalizeTokenTransaction(srcTx Tx, receipt TxReceipt) (txtype.TxPage, error) {
+func (p *Platform) NormalizeTokenTransaction(srcTx Tx, receipt TxReceipt) (types.TxPage, error) {
 	if receipt.Outputs == nil || len(receipt.Outputs) == 0 {
-		return txtype.TxPage{}, errors.New("NormalizeBlockTransaction: Clauses not found: " + srcTx.Id)
+		return types.TxPage{}, errors.New("NormalizeBlockTransaction: Clauses not found: " + srcTx.Id)
 	}
 
 	fee, err := numbers.HexToDecimal(receipt.Paid)
 	if err != nil {
-		return txtype.TxPage{}, err
+		return types.TxPage{}, err
 	}
 
-	txs := make(txtype.TxPage, 0)
+	txs := make(types.TxPage, 0)
 	for _, output := range receipt.Outputs {
 		if len(output.Events) == 0 || len(output.Events[0].Topics) < 3 {
 			continue
@@ -117,22 +117,22 @@ func (p *Platform) NormalizeTokenTransaction(srcTx Tx, receipt TxReceipt) (txtyp
 			continue
 		}
 
-		txs = append(txs, txtype.Tx{
+		txs = append(txs, types.Tx{
 			ID:        srcTx.Id,
 			Coin:      p.Coin().ID,
 			From:      originSender,
 			To:        originReceiver,
-			Fee:       txtype.Amount(fee),
+			Fee:       types.Amount(fee),
 			Date:      srcTx.Meta.BlockTimestamp,
-			Type:      txtype.TxTokenTransfer,
+			Type:      types.TxTokenTransfer,
 			Block:     srcTx.Meta.BlockNumber,
-			Status:    txtype.StatusCompleted,
+			Status:    types.StatusCompleted,
 			Direction: direction,
-			Meta: txtype.TokenTransfer{
+			Meta: types.TokenTransfer{
 				// the only supported Token on VeChain is its Gas token
 				Name:     gasTokenName,
 				TokenID:  originReceiver,
-				Value:    txtype.Amount(value),
+				Value:    types.Amount(value),
 				Symbol:   gasTokenSymbol,
 				Decimals: gasTokenDecimals,
 				From:     originSender,
@@ -143,7 +143,7 @@ func (p *Platform) NormalizeTokenTransaction(srcTx Tx, receipt TxReceipt) (txtyp
 	return txs, nil
 }
 
-func (p *Platform) GetTxsByAddress(address string) (txtype.TxPage, error) {
+func (p *Platform) GetTxsByAddress(address string) (types.TxPage, error) {
 	headBlock, err := p.CurrentBlockNumber()
 	if err != nil {
 		return nil, err
@@ -153,7 +153,7 @@ func (p *Platform) GetTxsByAddress(address string) (txtype.TxPage, error) {
 		return nil, err
 	}
 
-	txs := make(txtype.TxPage, 0)
+	txs := make(types.TxPage, 0)
 	for _, t := range transfers {
 		trxId, err := p.client.GetTransactionByID(t.Meta.TxId)
 		if err != nil {
@@ -168,7 +168,7 @@ func (p *Platform) GetTxsByAddress(address string) (txtype.TxPage, error) {
 	return txs, nil
 }
 
-func (p *Platform) NormalizeTransaction(srcTx LogTransfer, trxId Tx, addr string) (tx txtype.Tx, err error) {
+func (p *Platform) NormalizeTransaction(srcTx LogTransfer, trxId Tx, addr string) (tx types.Tx, err error) {
 	value, err := numbers.HexToDecimal(srcTx.Amount)
 	if err != nil {
 		return
@@ -190,22 +190,22 @@ func (p *Platform) NormalizeTransaction(srcTx LogTransfer, trxId Tx, addr string
 
 	directory, err := getTransferDirectory(sender, recipient, addrChecksum)
 	if err != nil {
-		return txtype.Tx{}, err
+		return types.Tx{}, err
 	}
 
-	return txtype.Tx{
+	return types.Tx{
 		ID:        srcTx.Meta.TxId,
 		Coin:      p.Coin().ID,
 		From:      sender,
 		To:        recipient,
-		Fee:       txtype.Amount(fee),
+		Fee:       types.Amount(fee),
 		Date:      srcTx.Meta.BlockTimestamp,
-		Type:      txtype.TxTransfer,
+		Type:      types.TxTransfer,
 		Block:     srcTx.Meta.BlockNumber,
 		Direction: directory,
-		Status:    txtype.StatusCompleted,
-		Meta: txtype.Transfer{
-			Value:    txtype.Amount(value),
+		Status:    types.StatusCompleted,
+		Meta: types.Transfer{
+			Value:    types.Amount(value),
 			Symbol:   p.Coin().Symbol,
 			Decimals: p.Coin().Decimals,
 		},
@@ -226,28 +226,28 @@ func getRecipientAddress(hex string) string {
 	return "0x" + hex[len(hex)-40:]
 }
 
-func getTokenTransactionDirectory(originSender, topicsFrom, topicsTo string) (dir txtype.Direction, err error) {
+func getTokenTransactionDirectory(originSender, topicsFrom, topicsTo string) (dir types.Direction, err error) {
 	if originSender == topicsFrom && originSender == topicsTo {
-		return txtype.DirectionSelf, nil
+		return types.DirectionSelf, nil
 	}
 	if originSender == topicsFrom && originSender != topicsTo {
-		return txtype.DirectionIncoming, nil
+		return types.DirectionIncoming, nil
 	}
 	if originSender == topicsTo && originSender != topicsFrom {
-		return txtype.DirectionOutgoing, nil
+		return types.DirectionOutgoing, nil
 	}
 	return "", errors.New("Unknown direction")
 }
 
-func getTransferDirectory(sender, recipient, addr string) (dir txtype.Direction, err error) {
+func getTransferDirectory(sender, recipient, addr string) (dir types.Direction, err error) {
 	if sender == addr && recipient == addr {
-		return txtype.DirectionSelf, nil
+		return types.DirectionSelf, nil
 	}
 	if sender == addr && recipient != addr {
-		return txtype.DirectionOutgoing, nil
+		return types.DirectionOutgoing, nil
 	}
 	if recipient == addr && sender != addr {
-		return txtype.DirectionIncoming, nil
+		return types.DirectionIncoming, nil
 	}
 	return "", errors.New("Unknown direction")
 }

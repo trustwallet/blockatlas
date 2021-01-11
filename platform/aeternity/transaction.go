@@ -6,16 +6,16 @@ import (
 
 	"github.com/trustwallet/golibs/coin"
 	"github.com/trustwallet/golibs/numbers"
-	"github.com/trustwallet/golibs/txtype"
+	"github.com/trustwallet/golibs/types"
 )
 
-func (p *Platform) GetTxsByAddress(address string) (txtype.TxPage, error) {
-	addressTxs, err := p.client.GetTxs(address, txtype.TxPerPage)
+func (p *Platform) GetTxsByAddress(address string) (types.TxPage, error) {
+	addressTxs, err := p.client.GetTxs(address, types.TxPerPage)
 	if err != nil {
 		return nil, err
 	}
 
-	var txs []txtype.Tx
+	var txs []types.Tx
 	for _, srcTx := range addressTxs {
 		tx, err := NormalizeTx(&srcTx)
 		if err != nil {
@@ -26,27 +26,27 @@ func (p *Platform) GetTxsByAddress(address string) (txtype.TxPage, error) {
 	return txs, nil
 }
 
-func NormalizeTx(srcTx *Transaction) (txtype.Tx, error) {
+func NormalizeTx(srcTx *Transaction) (types.Tx, error) {
 	txValue := srcTx.TxValue
 	decimals := coin.Coins[coin.AE].Decimals
 	amountFloat, err := txValue.Amount.Float64()
 	if err != nil {
-		return txtype.Tx{}, err
+		return types.Tx{}, err
 	}
 	amount := numbers.Float64toString(amountFloat)
-	return txtype.Tx{
+	return types.Tx{
 		ID:       srcTx.Hash,
 		Coin:     coin.AE,
 		From:     txValue.Sender,
 		To:       txValue.Recipient,
-		Fee:      txtype.Amount(txValue.Fee),
+		Fee:      types.Amount(txValue.Fee),
 		Date:     srcTx.Timestamp / 1000,
 		Block:    srcTx.BlockHeight,
 		Memo:     getPayload(txValue.Payload),
-		Status:   txtype.StatusCompleted,
+		Status:   types.StatusCompleted,
 		Sequence: txValue.Nonce,
-		Meta: txtype.Transfer{
-			Value:    txtype.Amount(amount),
+		Meta: types.Transfer{
+			Value:    types.Amount(amount),
 			Symbol:   coin.Coins[coin.AE].Symbol,
 			Decimals: decimals,
 		},

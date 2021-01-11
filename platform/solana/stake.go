@@ -10,7 +10,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/services/assets"
-	"github.com/trustwallet/golibs/txtype"
+	"github.com/trustwallet/golibs/types"
 )
 
 func arrayOfPubkey(pubkey string) [32]byte {
@@ -70,7 +70,7 @@ func normalizeValidator(v VoteAccount, minimumBalance uint64) (validator blockat
 		ID:     v.VotePubkey,
 		Details: blockatlas.StakingDetails{
 			Reward:        blockatlas.StakingReward{Annual: 0},
-			MinimumAmount: txtype.Amount(minimumAmount),
+			MinimumAmount: types.Amount(minimumAmount),
 			LockTime:      0,
 			Type:          blockatlas.DelegationTypeDelegate,
 		},

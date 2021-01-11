@@ -6,7 +6,7 @@ import (
 
 	"github.com/trustwallet/golibs/coin"
 	"github.com/trustwallet/golibs/mock"
-	"github.com/trustwallet/golibs/txtype"
+	"github.com/trustwallet/golibs/types"
 )
 
 func TestNormalizeTx(t *testing.T) {
@@ -16,14 +16,14 @@ func TestNormalizeTx(t *testing.T) {
 	tests := []struct {
 		name   string
 		args   args
-		wantTx txtype.Tx
+		wantTx types.Tx
 	}{
 		{
 			name: "Test normalize transaction",
 			args: args{
 				filename: "transfer.json",
 			},
-			wantTx: txtype.Tx{
+			wantTx: types.Tx{
 				ID:       "96bd280d60447b7dbcdb3fa76a99856e0422a76304e9d01d0c87e1dfceb6d952",
 				Coin:     coin.NAS,
 				From:     "n1Yv9xJJcH4UjoJPVDGdUCL2CxK29asFuyV",
@@ -32,8 +32,8 @@ func TestNormalizeTx(t *testing.T) {
 				Sequence: 7,
 				Date:     1565213205,
 				Block:    2848548,
-				Status:   txtype.StatusCompleted,
-				Meta: txtype.Transfer{
+				Status:   types.StatusCompleted,
+				Meta: types.Transfer{
 					Value:    "500000000000000000",
 					Symbol:   "NAS",
 					Decimals: 18,

@@ -4,10 +4,10 @@ import (
 	"strconv"
 
 	"github.com/trustwallet/golibs/coin"
-	"github.com/trustwallet/golibs/txtype"
+	"github.com/trustwallet/golibs/types"
 )
 
-func (p *Platform) GetTxsByAddress(address string) (txtype.TxPage, error) {
+func (p *Platform) GetTxsByAddress(address string) (types.TxPage, error) {
 	addressTxs, err := p.client.GetTxs(address, 25)
 	if err != nil {
 		return nil, err
@@ -18,10 +18,10 @@ func (p *Platform) GetTxsByAddress(address string) (txtype.TxPage, error) {
 	return txs, nil
 }
 
-func NormalizeTxs(srcTxs []Transaction) (txs []txtype.Tx) {
+func NormalizeTxs(srcTxs []Transaction) (txs []types.Tx) {
 	for _, srcTx := range srcTxs {
 		tx, ok := NormalizeTx(&srcTx)
-		if !ok || len(txs) >= txtype.TxPerPage {
+		if !ok || len(txs) >= types.TxPerPage {
 			continue
 		}
 		txs = append(txs, tx)
@@ -29,22 +29,22 @@ func NormalizeTxs(srcTxs []Transaction) (txs []txtype.Tx) {
 	return
 }
 
-func NormalizeTx(srcTx *Transaction) (tx txtype.Tx, ok bool) {
-	var result txtype.Tx
+func NormalizeTx(srcTx *Transaction) (tx types.Tx, ok bool) {
+	var result types.Tx
 
 	if srcTx.Type == 4 && len(srcTx.AssetId) == 0 {
-		result = txtype.Tx{
+		result = types.Tx{
 			ID:     srcTx.Id,
 			Coin:   coin.WAVES,
 			From:   srcTx.Sender,
 			To:     srcTx.Recipient,
-			Fee:    txtype.Amount(strconv.Itoa(int(srcTx.Fee))),
+			Fee:    types.Amount(strconv.Itoa(int(srcTx.Fee))),
 			Date:   int64(srcTx.Timestamp) / 1000,
 			Block:  srcTx.Block,
 			Memo:   srcTx.Attachment,
-			Status: txtype.StatusCompleted,
-			Meta: txtype.Transfer{
-				Value:    txtype.Amount(strconv.Itoa(int(srcTx.Amount))),
+			Status: types.StatusCompleted,
+			Meta: types.Transfer{
+				Value:    types.Amount(strconv.Itoa(int(srcTx.Amount))),
 				Symbol:   coin.Coins[coin.WAVES].Symbol,
 				Decimals: coin.Coins[coin.WAVES].Decimals,
 			},

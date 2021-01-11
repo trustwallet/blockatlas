@@ -7,7 +7,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/services/assets"
-	"github.com/trustwallet/golibs/txtype"
+	"github.com/trustwallet/golibs/types"
 )
 
 const Annual = 0.74
@@ -46,7 +46,7 @@ func (p *Platform) GetDetails() blockatlas.StakingDetails {
 func getDetails() blockatlas.StakingDetails {
 	return blockatlas.StakingDetails{
 		Reward:        blockatlas.StakingReward{Annual: Annual},
-		MinimumAmount: txtype.Amount("1000000"),
+		MinimumAmount: types.Amount("1000000"),
 		LockTime:      259200,
 		Type:          blockatlas.DelegationTypeDelegate,
 	}

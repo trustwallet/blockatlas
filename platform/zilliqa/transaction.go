@@ -2,11 +2,11 @@ package zilliqa
 
 import (
 	"github.com/trustwallet/golibs/coin"
-	"github.com/trustwallet/golibs/txtype"
+	"github.com/trustwallet/golibs/types"
 )
 
-func (p *Platform) GetTxsByAddress(address string) (txtype.TxPage, error) {
-	var normalized []txtype.Tx
+func (p *Platform) GetTxsByAddress(address string) (types.TxPage, error) {
+	var normalized []types.Tx
 	txs, err := p.client.GetTxsOfAddress(address)
 
 	if err != nil {
@@ -15,7 +15,7 @@ func (p *Platform) GetTxsByAddress(address string) (txtype.TxPage, error) {
 
 	for _, srcTx := range txs {
 		tx := Normalize(&srcTx)
-		if len(normalized) >= txtype.TxPerPage {
+		if len(normalized) >= types.TxPerPage {
 			break
 		}
 		normalized = append(normalized, tx)
@@ -24,25 +24,25 @@ func (p *Platform) GetTxsByAddress(address string) (txtype.TxPage, error) {
 	return normalized, nil
 }
 
-func Normalize(srcTx *Tx) (tx txtype.Tx) {
-	tx = txtype.Tx{
+func Normalize(srcTx *Tx) (tx types.Tx) {
+	tx = types.Tx{
 		ID:       srcTx.Hash,
 		Coin:     coin.ZIL,
 		Date:     srcTx.Timestamp / 1000,
 		From:     srcTx.From,
 		To:       srcTx.To,
-		Fee:      txtype.Amount(srcTx.Fee),
+		Fee:      types.Amount(srcTx.Fee),
 		Block:    srcTx.BlockHeight,
-		Status:   txtype.StatusCompleted,
+		Status:   types.StatusCompleted,
 		Sequence: srcTx.NonceValue(),
-		Meta: txtype.Transfer{
-			Value:    txtype.Amount(srcTx.Value),
+		Meta: types.Transfer{
+			Value:    types.Amount(srcTx.Value),
 			Symbol:   coin.Coins[coin.ZIL].Symbol,
 			Decimals: coin.Coins[coin.ZIL].Decimals,
 		},
 	}
 	if !srcTx.ReceiptSuccess {
-		tx.Status = txtype.StatusError
+		tx.Status = types.StatusError
 	}
 	return tx
 }

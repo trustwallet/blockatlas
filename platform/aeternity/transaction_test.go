@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/golibs/coin"
 	"github.com/trustwallet/golibs/mock"
-	"github.com/trustwallet/golibs/txtype"
+	"github.com/trustwallet/golibs/types"
 )
 
 func TestNormalizeTx(t *testing.T) {
@@ -17,7 +17,7 @@ func TestNormalizeTx(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		wantTx  txtype.Tx
+		wantTx  types.Tx
 		wantErr bool
 	}{
 		{
@@ -25,7 +25,7 @@ func TestNormalizeTx(t *testing.T) {
 			args: args{
 				filename: "transfer.json",
 			},
-			wantTx: txtype.Tx{
+			wantTx: types.Tx{
 				ID:       "th_oJfBC6KZKaKsL4WXTq1ZtFiSE8Wp2PQYEnwyZqtudyHcU3Qg6",
 				Coin:     coin.AE,
 				From:     "ak_nv5B93FPzRHrGNmMdTDfGdd5xGZvep3MVSpJqzcQmMp59bBCv",
@@ -33,10 +33,10 @@ func TestNormalizeTx(t *testing.T) {
 				Fee:      "20500000000000",
 				Date:     1563848658,
 				Block:    113579,
-				Status:   txtype.StatusCompleted,
+				Status:   types.StatusCompleted,
 				Memo:     "Hello, Miner! /Yours Beepool./",
 				Sequence: 251291,
-				Meta: txtype.Transfer{
+				Meta: types.Transfer{
 					Value:    "252550000000000000000",
 					Symbol:   "AE",
 					Decimals: 18,
