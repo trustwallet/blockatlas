@@ -21,79 +21,73 @@ type Asset struct {
 	Coin     uint
 }
 
-func AssetFrom(t txtype.Tx) (Asset, bool) {
-	var a Asset
+func AssetFrom(t txtype.Tx) (a Asset, ok bool) {
+	a.Coin = t.Coin
 	switch t.Meta.(type) {
 	case txtype.TokenTransfer:
-		a.Asset = asset.BuildID(t.Coin, t.Meta.(txtype.TokenTransfer).TokenID)
-		a.Decimals = t.Meta.(txtype.TokenTransfer).Decimals
-		a.Name = t.Meta.(txtype.TokenTransfer).Name
-		a.Symbol = t.Meta.(txtype.TokenTransfer).Symbol
-		tp, ok := txtype.GetTokenType(t.Coin, t.Meta.(txtype.TokenTransfer).TokenID)
-		if !ok {
-			return Asset{}, false
-		}
-		a.Type = tp
+		transfer := t.Meta.(txtype.TokenTransfer)
+		a, ok = assetFromTokenTransfer(&t, &transfer)
 	case *txtype.TokenTransfer:
-		a.Asset = asset.BuildID(t.Coin, t.Meta.(*txtype.TokenTransfer).TokenID)
-		a.Decimals = t.Meta.(*txtype.TokenTransfer).Decimals
-		a.Name = t.Meta.(*txtype.TokenTransfer).Name
-		a.Symbol = t.Meta.(*txtype.TokenTransfer).Symbol
-		tp, ok := txtype.GetTokenType(t.Coin, t.Meta.(*txtype.TokenTransfer).TokenID)
-		if !ok {
-			return Asset{}, false
-		}
-		a.Type = tp
+		transfer := t.Meta.(*txtype.TokenTransfer)
+		a, ok = assetFromTokenTransfer(&t, transfer)
 	case txtype.NativeTokenTransfer:
-		a.Asset = asset.BuildID(t.Coin, t.Meta.(txtype.NativeTokenTransfer).TokenID)
-		a.Decimals = t.Meta.(txtype.NativeTokenTransfer).Decimals
-		a.Name = t.Meta.(txtype.NativeTokenTransfer).Name
-		a.Symbol = t.Meta.(txtype.NativeTokenTransfer).Symbol
-		tp, ok := txtype.GetTokenType(t.Coin, t.Meta.(txtype.NativeTokenTransfer).TokenID)
-		if !ok {
-			return Asset{}, false
-		}
-		a.Type = tp
+		transfer := t.Meta.(txtype.NativeTokenTransfer)
+		a, ok = assetFromNativeTokenTransfer(&t, &transfer)
 	case *txtype.NativeTokenTransfer:
-		a.Asset = asset.BuildID(t.Coin, t.Meta.(*txtype.NativeTokenTransfer).TokenID)
-		a.Decimals = t.Meta.(*txtype.NativeTokenTransfer).Decimals
-		a.Name = t.Meta.(*txtype.NativeTokenTransfer).Name
-		a.Symbol = t.Meta.(*txtype.NativeTokenTransfer).Symbol
-		tp, ok := txtype.GetTokenType(t.Coin, t.Meta.(*txtype.NativeTokenTransfer).TokenID)
-		if !ok {
-			return Asset{}, false
-		}
-		a.Type = tp
+		transfer := t.Meta.(*txtype.NativeTokenTransfer)
+		a, ok = assetFromNativeTokenTransfer(&t, transfer)
 	case txtype.AnyAction:
-		a.Asset = asset.BuildID(t.Coin, t.Meta.(txtype.AnyAction).TokenID)
-		a.Decimals = t.Meta.(txtype.AnyAction).Decimals
-		a.Name = t.Meta.(txtype.AnyAction).Name
-		a.Symbol = t.Meta.(txtype.AnyAction).Symbol
-		tp, ok := txtype.GetTokenType(t.Coin, t.Meta.(txtype.AnyAction).TokenID)
-		if !ok {
-			return Asset{}, false
-		}
-		a.Type = tp
+		action := t.Meta.(txtype.AnyAction)
+		a, ok = assetFromAnyAction(&t, &action)
 	case *txtype.AnyAction:
-		a.Asset = asset.BuildID(t.Coin, t.Meta.(*txtype.AnyAction).TokenID)
-		a.Decimals = t.Meta.(*txtype.AnyAction).Decimals
-		a.Name = t.Meta.(*txtype.AnyAction).Name
-		a.Symbol = t.Meta.(*txtype.AnyAction).Symbol
-		tp, ok := txtype.GetTokenType(t.Coin, t.Meta.(*txtype.AnyAction).TokenID)
-		if !ok {
-			return Asset{}, false
-		}
-		a.Type = tp
+		action := t.Meta.(*txtype.AnyAction)
+		a, ok = assetFromAnyAction(&t, action)
 	default:
-		return Asset{}, false
-	}
-	a.Coin = t.Coin
-
-	if a.IsValid() != nil {
-		return Asset{}, false
+		break
 	}
 
-	return a, true
+	if !ok || a.IsValid() != nil {
+		return Asset{}, false
+	}
+	return
+}
+
+func assetFromTokenTransfer(t *txtype.Tx, transfer *txtype.TokenTransfer) (a Asset, ok bool) {
+	tp, ok := txtype.GetTokenType(t.Coin, transfer.TokenID)
+	if !ok {
+		return
+	}
+	a.Asset = asset.BuildID(t.Coin, transfer.TokenID)
+	a.Decimals = transfer.Decimals
+	a.Name = transfer.Name
+	a.Symbol = transfer.Symbol
+	a.Type = tp
+	return
+}
+
+func assetFromNativeTokenTransfer(t *txtype.Tx, transfer *txtype.NativeTokenTransfer) (a Asset, ok bool) {
+	tp, ok := txtype.GetTokenType(t.Coin, transfer.TokenID)
+	if !ok {
+		return
+	}
+	a.Asset = asset.BuildID(t.Coin, transfer.TokenID)
+	a.Decimals = transfer.Decimals
+	a.Name = transfer.Name
+	a.Symbol = transfer.Symbol
+	a.Type = tp
+	return
+}
+
+func assetFromAnyAction(t *txtype.Tx, action *txtype.AnyAction) (a Asset, ok bool) {
+	tp, ok := txtype.GetTokenType(t.Coin, action.TokenID)
+	if !ok {
+		return
+	}
+	a.Asset = asset.BuildID(t.Coin, action.TokenID)
+	a.Decimals = action.Decimals
+	a.Name = action.Name
+	a.Symbol = action.Symbol
+	a.Type = tp
 }
 
 func (asset *Asset) IsValid() error {
