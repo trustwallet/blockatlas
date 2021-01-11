@@ -90,8 +90,7 @@ func setupTransactionsConsumer(options mq.ConsumerOptions, ctx context.Context) 
 }
 
 func setupSubscriptionsConsumer(options mq.ConsumerOptions, ctx context.Context) {
-	optionsSubscriptions := mq.ConsumerOptions{Workers: 1}
-	go internal.Subscriptions.RunConsumer(internal.ConsumerDatabase{Database: database, Delivery: subscriber.RunSubscriber}, optionsSubscriptions, ctx)
+	go internal.Subscriptions.RunConsumer(internal.ConsumerDatabase{Database: database, Delivery: subscriber.RunSubscriber}, options, ctx)
 	go internal.SubscriptionsTokens.RunConsumer(tokenindexer.ConsumerIndexer{Database: database, TokensAPIs: platform.TokensAPIs, Delivery: tokenindexer.RunTokenIndexerSubscribe}, options, ctx)
 }
 
