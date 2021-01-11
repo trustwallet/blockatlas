@@ -5,10 +5,9 @@ import (
 )
 
 type (
-	// Subscription for address and asset associations
 	Subscription struct {
 		ID      uint   `gorm:"primaryKey;"`
-		Address string `gorm:"type:varchar(256); not null;"`
+		Address string `gorm:"uniqueIndex; type:varchar(256); not null;"`
 	}
 
 	SubscriptionsAssetAssociation struct {

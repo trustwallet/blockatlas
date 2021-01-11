@@ -3,7 +3,6 @@ package db
 import (
 	"github.com/trustwallet/blockatlas/db/models"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
 
@@ -16,15 +15,12 @@ func (i *Instance) CreateSubscriptions(addresses []blockatlas.Subscription) erro
 		result = append(result, models.Subscription{Address: address.AddressID()})
 	}
 
-	return i.Gorm.Transaction(func(tx *gorm.DB) error {
-		return tx.Clauses(clause.OnConflict{DoNothing: true}).Create(&result).Error
-	})
+	return i.Gorm.Clauses(clause.OnConflict{DoNothing: true}).Create(&result).Error
 }
 
 func (i *Instance) GetSubscriptions(addresses []string) ([]models.Subscription, error) {
 	var subscriptions []models.Subscription
 	err := i.Gorm.
-		Clauses(clause.Locking{Strength: "UPDATE"}).
 		Find(&subscriptions, "address in ?", addresses).Error
 	if err != nil {
 		return nil, err
