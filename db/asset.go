@@ -4,8 +4,6 @@ import (
 	"encoding/json"
 	"time"
 
-	"gorm.io/gorm"
-
 	"gorm.io/gorm/clause"
 
 	gocache "github.com/patrickmn/go-cache"
@@ -75,9 +73,7 @@ func (i *Instance) AddNewAssets(assets []models.Asset) error {
 	}
 	if len(existingAssets) == 0 {
 		i.addToMemory(notInMemoryAssets)
-		return i.Gorm.Transaction(func(tx *gorm.DB) error {
-			return tx.Clauses(clause.OnConflict{DoNothing: true}).Create(&notInMemoryAssets).Error
-		})
+		return i.Gorm.Clauses(clause.OnConflict{DoNothing: true}).Create(&notInMemoryAssets).Error
 	}
 	allAssetsMap := make(map[string]models.Asset)
 	for _, ua := range notInMemoryAssets {
@@ -99,9 +95,7 @@ func (i *Instance) AddNewAssets(assets []models.Asset) error {
 	}
 	i.addToMemory(newAssets)
 
-	return i.Gorm.Transaction(func(tx *gorm.DB) error {
-		return tx.Clauses(clause.OnConflict{DoNothing: true}).Create(&newAssets).Error
-	})
+	return i.Gorm.Clauses(clause.OnConflict{DoNothing: true}).Create(&newAssets).Error
 }
 
 func (i *Instance) addToMemory(newAssets []models.Asset) {
