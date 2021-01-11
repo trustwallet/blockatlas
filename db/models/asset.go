@@ -88,6 +88,7 @@ func assetFromAnyAction(t *txtype.Tx, action *txtype.AnyAction) (a Asset, ok boo
 	a.Name = action.Name
 	a.Symbol = action.Symbol
 	a.Type = tp
+	return
 }
 
 func (asset *Asset) IsValid() error {
