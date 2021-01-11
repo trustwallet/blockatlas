@@ -65,12 +65,6 @@ func GetInterval(value int, minInterval, maxInterval time.Duration) time.Duratio
 func parse(params Params) {
 	lastParsedBlock, currentBlock, err := GetBlocksIntervalToFetch(params)
 	if err != nil {
-		log.WithFields(log.Fields{
-			"coin":            params.Api.Coin().Handle,
-			"lastParsedBlock": lastParsedBlock,
-			"currentBlock":    currentBlock,
-			"tags":            raven.Tags{{Key: "coin", Value: params.Api.Coin().Handle}},
-		}).Error("Fetch Blocks Interval")
 		time.Sleep(params.ParsingBlocksInterval)
 		return
 	}
@@ -252,7 +246,7 @@ func SaveLastParsedBlock(params Params, blocks []blockatlas.Block) error {
 
 	lastBlockNumber := blocks[len(blocks)-1].Number
 	if lastBlockNumber <= 0 {
-		return fmt.Errorf("parser of %s failed to save last block, lastBlockNumber <= 0", params.Api.Coin().Handle)
+		return fmt.Errorf("parser of %s failed to save last block, lastBlockNumber <= 0: %d", params.Api.Coin().Handle, lastBlockNumber)
 	}
 	err := params.Database.SetLastParsedBlockNumber(params.Api.Coin().Handle, lastBlockNumber)
 	if err != nil {

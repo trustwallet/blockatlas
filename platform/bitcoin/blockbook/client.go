@@ -1,6 +1,7 @@
 package blockbook
 
 import (
+	"errors"
 	"fmt"
 	"net/url"
 	"strconv"
@@ -23,6 +24,11 @@ func (c *Client) GetCurrentBlockNumber() (int64, error) {
 	if err != nil {
 		return 0, err
 	}
+	// If not in sync, latest block might not be available yet.
+	if !nodeInfo.Blockbook.InSync {
+		return 0, errors.New("not in sync to get current block number")
+	}
+
 	return nodeInfo.Blockbook.BestHeight, nil
 }
 

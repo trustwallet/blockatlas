@@ -15,6 +15,7 @@ type NodeInfo struct {
 
 type Blockbook struct {
 	BestHeight int64 `json:"bestHeight"`
+	InSync     bool  `json:"inSync"`
 }
 
 type TokenTransfer struct {
