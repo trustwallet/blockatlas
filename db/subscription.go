@@ -23,7 +23,9 @@ func (i *Instance) CreateSubscriptions(addresses []blockatlas.Subscription) erro
 
 func (i *Instance) GetSubscriptions(addresses []string) ([]models.Subscription, error) {
 	var subscriptions []models.Subscription
-	err := i.Gorm.Find(&subscriptions, "address in (?)", addresses).Error
+	err := i.Gorm.
+		Clauses(clause.Locking{Strength: "UPDATE NOWAIT"}).
+		Find(&subscriptions, "address in ?", addresses).Error
 	if err != nil {
 		return nil, err
 	}
