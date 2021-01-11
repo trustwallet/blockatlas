@@ -74,16 +74,47 @@ func (p *Platform) getTransactionChannel(id string, txChan chan blockatlas.TxPag
 }
 
 func (p *Platform) NormalizeTokenTransaction(srcTx Tx, receipt TxReceipt) (blockatlas.TxPage, error) {
-	if receipt.Outputs == nil || len(receipt.Outputs) == 0 {
-		return blockatlas.TxPage{}, errors.New("NormalizeBlockTransaction: Clauses not found: " + srcTx.Id)
-	}
+	txs := make(blockatlas.TxPage, 0)
 
 	fee, err := numbers.HexToDecimal(receipt.Paid)
 	if err != nil {
-		return blockatlas.TxPage{}, err
+		return txs, err
 	}
 
-	txs := make(blockatlas.TxPage, 0)
+	originSender, err := address.EIP55Checksum(blockatlas.GetValidParameter(srcTx.Origin, srcTx.Meta.TxOrigin))
+	if err != nil {
+		return txs, err
+	}
+
+	if receipt.Reverted {
+		var to string
+		if len(srcTx.Clauses) > 0 {
+			to = srcTx.Clauses[0].To
+			if checksumTo, err := address.EIP55Checksum(to); err == nil {
+				to = checksumTo
+			}
+		} else {
+			return txs, errors.New("NormalizeBlockTransaction: srcTx.Clauses not found: " + srcTx.Id)
+		}
+
+		txs = append(txs, blockatlas.Tx{
+			ID:     srcTx.Id,
+			Coin:   p.Coin().ID,
+			From:   originSender,
+			To:     to,
+			Fee:    blockatlas.Amount(fee),
+			Date:   srcTx.Meta.BlockTimestamp,
+			Type:   blockatlas.TxTokenTransfer,
+			Block:  srcTx.Meta.BlockNumber,
+			Status: blockatlas.StatusError,
+		})
+		return txs, nil
+	}
+
+	if receipt.Outputs == nil || len(receipt.Outputs) == 0 {
+		return blockatlas.TxPage{}, errors.New("NormalizeBlockTransaction: receipt.Outputs not found: " + srcTx.Id)
+	}
+
 	for _, output := range receipt.Outputs {
 		if len(output.Events) == 0 || len(output.Events[0].Topics) < 3 {
 			continue
@@ -94,10 +125,6 @@ func (p *Platform) NormalizeTokenTransaction(srcTx Tx, receipt TxReceipt) (block
 			continue
 		}
 
-		originSender, err := address.EIP55Checksum(blockatlas.GetValidParameter(srcTx.Origin, srcTx.Meta.TxOrigin))
-		if err != nil {
-			continue
-		}
 		originReceiver, err := address.EIP55Checksum(event.Address)
 		if err != nil {
 			continue
