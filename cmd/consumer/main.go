@@ -64,17 +64,18 @@ func main() {
 	platform.Init(config.Default.Platform)
 
 	options := mq.ConsumerOptions{Workers: config.Default.Consumer.Workers}
+	subscriberOptions := mq.ConsumerOptions{Workers: 1}
 
 	switch config.Default.Consumer.Service {
 	case transactions:
 		setupTransactionsConsumer(options, ctx)
 	case subscriptions:
-		setupSubscriptionsConsumer(options, ctx)
+		setupSubscriptionsConsumer(subscriberOptions, ctx)
 	case tokens:
 		setupTokensConsumer(options, ctx)
 	default:
 		setupTransactionsConsumer(options, ctx)
-		setupSubscriptionsConsumer(options, ctx)
+		setupSubscriptionsConsumer(subscriberOptions, ctx)
 		setupTokensConsumer(options, ctx)
 	}
 
@@ -91,7 +92,7 @@ func setupTransactionsConsumer(options mq.ConsumerOptions, ctx context.Context) 
 
 func setupSubscriptionsConsumer(options mq.ConsumerOptions, ctx context.Context) {
 	go internal.Subscriptions.RunConsumer(internal.ConsumerDatabase{Database: database, Delivery: subscriber.RunSubscriber}, options, ctx)
-	//go internal.SubscriptionsTokens.RunConsumer(tokenindexer.ConsumerIndexer{Database: database, TokensAPIs: platform.TokensAPIs, Delivery: tokenindexer.RunTokenIndexerSubscribe}, options, ctx)
+	go internal.SubscriptionsTokens.RunConsumer(tokenindexer.ConsumerIndexer{Database: database, TokensAPIs: platform.TokensAPIs, Delivery: tokenindexer.RunTokenIndexerSubscribe}, options, ctx)
 }
 
 func setupTokensConsumer(options mq.ConsumerOptions, ctx context.Context) {
