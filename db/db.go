@@ -26,7 +26,7 @@ func New(url string, log bool) (*Instance, error) {
 		logMode = logger.Info
 	}
 
-	cfg := &gorm.Config{Logger: logger.Default.LogMode(logMode)}
+	cfg := &gorm.Config{Logger: logger.Default.LogMode(logMode), SkipDefaultTransaction: true}
 
 	db, err := gorm.Open(postgres.Open(url), cfg)
 	if err != nil {
