@@ -23,7 +23,7 @@ func (i *Instance) CreateSubscriptions(addresses []blockatlas.Subscription) erro
 	return i.Gorm.Clauses(clause.OnConflict{
 		Columns:   []clause.Column{{Name: "address"}},
 		DoUpdates: clause.AssignmentColumns([]string{"address"}),
-	}).Create(&result).Error
+	}).CreateInBatches(&result, 1).Error
 }
 
 func (i *Instance) GetSubscriptions(addresses []string) ([]models.Subscription, error) {
