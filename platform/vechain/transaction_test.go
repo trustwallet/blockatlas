@@ -11,51 +11,12 @@ import (
 )
 
 var (
-	transferSrc, _    = mock.JsonStringFromFilePath("mocks/" + "transfer.json")
-	trxId, _          = mock.JsonStringFromFilePath("mocks/" + "tx_id.json")
-	transferLogSrc, _ = mock.JsonStringFromFilePath("mocks/" + "transfer_log.json")
-	trxReceipt, _     = mock.JsonStringFromFilePath("mocks/" + "transfer_receipt.json")
-
-	expectedTransfer = types.Tx{
-		ID:        "0x702edd54bd4e13e0012798cc8b2dfa52f7150173945103d203fae26b8e3d2ed7",
-		Coin:      coin.VET,
-		From:      "0xB5e883349e68aB59307d1604555AC890fAC47128",
-		To:        "0x2c7A8d5ccE0d5E6a8a31233B7Dc3DAE9AaE4b405",
-		Date:      1574410670,
-		Type:      types.TxTransfer,
-		Fee:       types.Amount("21000"),
-		Status:    types.StatusCompleted,
-		Block:     4395940,
-		Direction: types.DirectionOutgoing,
-		Meta: types.Transfer{
-			Value:    types.Amount("1347000000000000000"),
-			Decimals: 18,
-			Symbol:   "VET",
-		},
-	}
-	expectedTransferLog = types.TxPage{
-		{
-			ID:        "0x42f5eba46ddcc458243c753545a3faa849502d078efbc5b74baddea9e6ea5b04",
-			Coin:      coin.VET,
-			From:      "0x2c7A8d5ccE0d5E6a8a31233B7Dc3DAE9AaE4b405",
-			To:        "0x0000000000000000000000000000456E65726779",
-			Date:      1574278180,
-			Type:      types.TxTokenTransfer,
-			Fee:       types.Amount("36582000000000000000"),
-			Status:    types.StatusCompleted,
-			Block:     4382764,
-			Direction: types.DirectionIncoming,
-			Meta: types.TokenTransfer{
-				Name:     gasTokenName,
-				Symbol:   gasTokenSymbol,
-				TokenID:  "0x0000000000000000000000000000456E65726779",
-				From:     "0x2c7A8d5ccE0d5E6a8a31233B7Dc3DAE9AaE4b405",
-				To:       "0xB5e883349e68aB59307d1604555AC890fAC47128",
-				Value:    types.Amount("68000000000000000000"),
-				Decimals: 18,
-			},
-		},
-	}
+	transferSrc, _     = mock.JsonStringFromFilePath("mocks/transfer.json")
+	trxId, _           = mock.JsonStringFromFilePath("mocks/tx_id.json")
+	transferLogSrc, _  = mock.JsonStringFromFilePath("mocks/transfer_log.json")
+	trxReceipt, _      = mock.JsonStringFromFilePath("mocks/transfer_receipt.json")
+	revertedTx, _      = mock.JsonStringFromFilePath("mocks/reverted_tx.json")
+	revertedReceipt, _ = mock.JsonStringFromFilePath("mocks/reverted_receipt.json")
 )
 
 func TestNormalizeTransaction(t *testing.T) {
@@ -66,7 +27,23 @@ func TestNormalizeTransaction(t *testing.T) {
 		txId     string
 		expected types.Tx
 	}{
-		{"Test normalize VET transfer transaction", "0xb5e883349e68ab59307d1604555ac890fac47128", transferSrc, trxId, expectedTransfer},
+		{"Test normalize VET transfer transaction", "0xb5e883349e68ab59307d1604555ac890fac47128", transferSrc, trxId, types.Tx{
+			ID:        "0x702edd54bd4e13e0012798cc8b2dfa52f7150173945103d203fae26b8e3d2ed7",
+			Coin:      coin.VET,
+			From:      "0xB5e883349e68aB59307d1604555AC890fAC47128",
+			To:        "0x2c7A8d5ccE0d5E6a8a31233B7Dc3DAE9AaE4b405",
+			Date:      1574410670,
+			Type:      types.TxTransfer,
+			Fee:       types.Amount("21000"),
+			Status:    types.StatusCompleted,
+			Block:     4395940,
+			Direction: types.DirectionOutgoing,
+			Meta: types.Transfer{
+				Value:    types.Amount("1347000000000000000"),
+				Decimals: 18,
+				Symbol:   "VET",
+			},
+		}},
 	}
 
 	platform := Platform{}
@@ -96,7 +73,42 @@ func TestNormalizeTokenTransaction(t *testing.T) {
 		txReceipt string
 		expected  types.TxPage
 	}{
-		{"Normalize VIP180 token transfer", transferLogSrc, trxReceipt, expectedTransferLog},
+		{"Normalize VIP180 token transfer", transferLogSrc, trxReceipt, types.TxPage{
+			{
+				ID:        "0x42f5eba46ddcc458243c753545a3faa849502d078efbc5b74baddea9e6ea5b04",
+				Coin:      coin.VET,
+				From:      "0x2c7A8d5ccE0d5E6a8a31233B7Dc3DAE9AaE4b405",
+				To:        "0x0000000000000000000000000000456E65726779",
+				Date:      1574278180,
+				Type:      types.TxTokenTransfer,
+				Fee:       types.Amount("36582000000000000000"),
+				Status:    types.StatusCompleted,
+				Block:     4382764,
+				Direction: types.DirectionIncoming,
+				Meta: types.TokenTransfer{
+					Name:     gasTokenName,
+					Symbol:   gasTokenSymbol,
+					TokenID:  "0x0000000000000000000000000000456E65726779",
+					From:     "0x2c7A8d5ccE0d5E6a8a31233B7Dc3DAE9AaE4b405",
+					To:       "0xB5e883349e68aB59307d1604555AC890fAC47128",
+					Value:    types.Amount("68000000000000000000"),
+					Decimals: 18,
+				},
+			},
+		}},
+		{"Normalize reverted token transfer", revertedTx, revertedReceipt, types.TxPage{
+			{
+				ID:     "0x7fae32a743e42eaec54642e2a5742a185299f5b4bedaf12c60f65705661de932",
+				Coin:   coin.VET,
+				From:   "0x7cFFB7632252Bae3766734d61F148f0Ea78Fc08C",
+				To:     "0xf8e1fAa0367298b55F57Ed17F7a2FF3F5F1D1628",
+				Date:   1610326580,
+				Type:   types.TxTokenTransfer,
+				Fee:    types.Amount("82618000000000000000"),
+				Status: types.StatusError,
+				Block:  7982675,
+			},
+		}},
 	}
 
 	platform := Platform{}

@@ -1,0 +1,15 @@
+{
+  "gasUsed": 82618,
+  "gasPayer": "0x7cffb7632252bae3766734d61f148f0ea78fc08c",
+  "paid": "0x47a8e194565390000",
+  "reward": "0x157f76dfb37f78000",
+  "reverted": true,
+  "meta": {
+    "blockID": "0x0079ce53965d837f959154813e163ce4d89f51421bdd540f3facb454929ab7fe",
+    "blockNumber": 7982675,
+    "blockTimestamp": 1610326580,
+    "txID": "0x7fae32a743e42eaec54642e2a5742a185299f5b4bedaf12c60f65705661de932",
+    "txOrigin": "0x7cffb7632252bae3766734d61f148f0ea78fc08c"
+  },
+  "outputs": []
+}
