@@ -20,13 +20,12 @@ func (i *Instance) CreateSubscriptions(addresses []blockatlas.Subscription) erro
 		result = append(result, models.Subscription{Address: addressId})
 	}
 
-	return i.Gorm.Clauses(clause.OnConflict{DoNothing: true}).CreateInBatches(&result, 50).Error
+	return i.Gorm.Clauses(clause.OnConflict{DoNothing: true}).Create(&result).Error
 }
 
 func (i *Instance) GetSubscriptions(addresses []string) ([]models.Subscription, error) {
 	var subscriptions []models.Subscription
-	err := i.Gorm.
-		Find(&subscriptions, "address in ?", addresses).Error
+	err := i.Gorm.Find(&subscriptions, "address in ?", addresses).Error
 	if err != nil {
 		return nil, err
 	}
