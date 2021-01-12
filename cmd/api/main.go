@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"time"
 
 	golibsGin "github.com/trustwallet/golibs/network/gin"
 
@@ -51,7 +50,6 @@ func init() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	go database.RestoreConnectionWorker(time.Second*10, config.Default.Postgres.URL)
 
 	tokenIndexer = tokenindexer.Init(database)
 }
