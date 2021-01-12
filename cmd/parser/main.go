@@ -53,9 +53,6 @@ func init() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	go database.RestoreConnectionWorker(time.Second*10, config.Default.Postgres.URL)
-
-	time.Sleep(time.Millisecond)
 }
 
 func main() {

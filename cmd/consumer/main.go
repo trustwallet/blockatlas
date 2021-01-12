@@ -52,7 +52,6 @@ func init() {
 	if err != nil {
 		log.Fatal("Postgres init: ", err)
 	}
-	go database.RestoreConnectionWorker(time.Second*10, config.Default.Postgres.URL)
 
 	tokenindexer.Init(database)
 }

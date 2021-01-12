@@ -9,8 +9,6 @@ import (
 	"gorm.io/gorm/logger"
 
 	gocache "github.com/patrickmn/go-cache"
-	log "github.com/sirupsen/logrus"
-
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -46,35 +44,6 @@ func Setup(db *gorm.DB) error {
 		&models.Subscription{},
 		&models.SubscriptionsAssetAssociation{},
 	)
-}
-
-func (i *Instance) RestoreConnectionWorker(timeout time.Duration, uri string) {
-	log.Info("Run PG RestoreConnectionWorker")
-
-	for {
-		if err := i.restoreConnection(uri); err != nil {
-			log.Error("PG is not available now")
-		}
-		time.Sleep(timeout)
-	}
-}
-
-func (i *Instance) restoreConnection(uri string) error {
-	db, err := i.Gorm.DB()
-	if err != nil {
-		return err
-	}
-
-	if err = db.Ping(); err != nil {
-		log.Warn("PG is not available now")
-		log.Warn("Trying to connect to PG...")
-		i.Gorm, err = gorm.Open(postgres.Open(uri), &gorm.Config{})
-		if err != nil {
-			return err
-		}
-		log.Info("PG connection restored")
-	}
-	return nil
 }
 
 func (i *Instance) MemorySet(key string, data []byte, exp time.Duration) error {
