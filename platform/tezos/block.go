@@ -2,6 +2,7 @@ package tezos
 
 import (
 	"encoding/json"
+	"errors"
 
 	"github.com/trustwallet/golibs/coin"
 	"github.com/trustwallet/golibs/types"
@@ -27,7 +28,7 @@ func NormalizeRpcBlock(block RpcBlock) (*types.Block, error) {
 	for _, ops := range block.Operations {
 		for _, op := range ops {
 			for _, content := range op.Contents {
-				if tx, err := mapTransaction(content); err == nil && tx.Kind == TxTypeTransaction {
+				if tx, err := mapTransaction(content); err == nil {
 					if normalized, err := NormalizeRpcTransaction(tx, block.Header); err == nil {
 						normalized.ID = op.Hash
 						txs = append(txs, normalized)
@@ -41,6 +42,41 @@ func NormalizeRpcBlock(block RpcBlock) (*types.Block, error) {
 }
 
 func NormalizeRpcTransaction(tx RpcTransaction, header RpcBlockHeader) (types.Tx, error) {
+	coin := coin.Tezos()
+
+	var metadata interface{}
+	var to string
+	var txType types.TransactionType
+	switch tx.Kind {
+	case TxTypeTransaction:
+		to = tx.Destination
+		txType = types.TxTransfer
+		metadata = types.Transfer{
+			Value:    types.Amount(tx.Amount),
+			Symbol:   coin.Symbol,
+			Decimals: coin.Decimals,
+		}
+	case TxTypeDelegation:
+		var title types.KeyTitle
+		if len(tx.Delegate) == 0 {
+			title = types.AnyActionUndelegation
+		} else {
+			title = types.AnyActionDelegation
+			to = tx.Delegate
+		}
+		txType = types.TxAnyAction
+		metadata = types.AnyAction{
+			Coin:     coin.ID,
+			Title:    title,
+			Key:      types.KeyStakeDelegate,
+			Name:     coin.Name,
+			Symbol:   coin.Symbol,
+			Decimals: coin.Decimals,
+		}
+	default:
+		return types.Tx{}, errors.New("not supported operation kind: " + tx.Kind)
+	}
+
 	date, err := timefmt.Parse(header.Timestamp, "%Y-%m-%dT%H:%M:%SZ")
 	if err != nil {
 		return types.Tx{}, err
@@ -53,21 +89,16 @@ func NormalizeRpcTransaction(tx RpcTransaction, header RpcBlockHeader) (types.Tx
 		status = types.StatusError
 	}
 
-	coin := coin.Tezos()
 	return types.Tx{
 		Coin:   coin.ID,
 		From:   tx.Source,
-		To:     tx.Destination,
+		To:     to,
 		Fee:    types.Amount(tx.Fee),
 		Date:   date.Unix(),
 		Block:  uint64(header.Level),
 		Status: status,
-		Type:   types.TxTransfer,
-		Meta: types.Transfer{
-			Value:    types.Amount(tx.Amount),
-			Symbol:   coin.Symbol,
-			Decimals: coin.Decimals,
-		},
+		Type:   txType,
+		Meta:   metadata,
 	}, nil
 }
 

@@ -17,8 +17,9 @@ type RpcTransaction struct {
 	Counter      string      `json:"counter"`
 	GasLimit     string      `json:"gas_limit"`
 	StorageLimit string      `json:"storage_limit"`
-	Amount       string      `json:"amount"`
-	Destination  string      `json:"destination"`
+	Amount       string      `json:"amount,omitempty"`
+	Destination  string      `json:"destination,omitempty"`
+	Delegate     string      `json:"delegate,omitempty"`
 	Metadata     RpcMetadata `json:"metadata"`
 }
 
