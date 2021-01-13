@@ -277,7 +277,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/blockatlas.CollectionPage"
+                            "$ref": "#/definitions/types.CollectionPage"
                         }
                     },
                     "500": {
@@ -531,7 +531,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/blockatlas.CollectionPage"
+                            "$ref": "#/definitions/types.CollectionPage"
                         }
                     },
                     "500": {
@@ -574,7 +574,7 @@
                 }
             }
         },
-        "blockatlas.CollectionPage": {
+        "types.CollectionPage": {
             "type": "array",
             "items": {
                 "$ref": "#/definitions/blockatlas.Collection"

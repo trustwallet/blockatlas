@@ -5,18 +5,18 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/coin"
 	"github.com/trustwallet/golibs/mock"
+	"github.com/trustwallet/golibs/types"
 )
 
 var (
-	srcOntTransfer, _    = mock.JsonFromFilePathToString("mocks/transfer_ont.json")
-	srcOngTransfer, _    = mock.JsonFromFilePathToString("mocks/transfer_ong.json")
-	srcRewardTransfer, _ = mock.JsonFromFilePathToString("mocks/transfer_rewards.json")
-	srcFeeTransfer, _    = mock.JsonFromFilePathToString("mocks/transfer_fee.json")
+	srcOntTransfer, _    = mock.JsonStringFromFilePath("mocks/transfer_ont.json")
+	srcOngTransfer, _    = mock.JsonStringFromFilePath("mocks/transfer_ong.json")
+	srcRewardTransfer, _ = mock.JsonStringFromFilePath("mocks/transfer_rewards.json")
+	srcFeeTransfer, _    = mock.JsonStringFromFilePath("mocks/transfer_fee.json")
 
-	dstOntTransfer = blockatlas.Tx{
+	dstOntTransfer = types.Tx{
 		ID:     "ea0e5d8e389cb96760887094194ca359ac998b2f607be470a576861b91e2bf52",
 		Coin:   coin.ONT,
 		From:   "ARFXGXSmgFT2h9EiS4D5fen127Lzi48Eij",
@@ -24,25 +24,25 @@ var (
 		Fee:    "10000000",
 		Date:   1578903628,
 		Type:   "transfer",
-		Status: blockatlas.StatusCompleted,
+		Status: types.StatusCompleted,
 		Block:  7571132,
-		Meta: blockatlas.Transfer{
+		Meta: types.Transfer{
 			Value:    "5",
 			Symbol:   "ONT",
 			Decimals: 0,
 		},
 	}
-	dstOngTransfer = blockatlas.Tx{
+	dstOngTransfer = types.Tx{
 		ID:     "e5946ba02f56e17c3709db2bc91f43f76ee3a359006586024daa5c4ad8c54e78",
 		Coin:   coin.ONT,
 		From:   "ASLbwuar3ZTbUbLPnCgjGUw2WHhMfvJJtx",
 		To:     "ARFXGXSmgFT2h9EiS4D5fen127Lzi48Eij",
 		Fee:    "10000000",
 		Date:   1577631515,
-		Type:   blockatlas.TxNativeTokenTransfer,
-		Status: blockatlas.StatusCompleted,
+		Type:   types.TxNativeTokenTransfer,
+		Status: types.StatusCompleted,
 		Block:  7457989,
-		Meta: blockatlas.NativeTokenTransfer{
+		Meta: types.NativeTokenTransfer{
 			Name:     "Ontology Gas",
 			Symbol:   "ONG",
 			TokenID:  "ong",
@@ -52,25 +52,25 @@ var (
 			To:       "ARFXGXSmgFT2h9EiS4D5fen127Lzi48Eij",
 		},
 	}
-	dstRewardTransfer = blockatlas.Tx{
+	dstRewardTransfer = types.Tx{
 		ID:     "d7554dcdf01f394b9107ff598df6d84e4c3b00ccf1e720b8c09abf085cbe4987",
 		Coin:   coin.ONT,
 		From:   "AFmseVrdL9f9oyCzZefL9tG6UbvhUMqNMV",
 		To:     "ARFXGXSmgFT2h9EiS4D5fen127Lzi48Eij",
 		Fee:    "10000000",
 		Date:   1579699532,
-		Type:   blockatlas.TxAnyAction,
-		Status: blockatlas.StatusCompleted,
+		Type:   types.TxAnyAction,
+		Status: types.StatusCompleted,
 		Block:  7644328,
-		Meta: blockatlas.AnyAction{
+		Meta: types.AnyAction{
 			Coin:     coin.Ontology().ID,
 			Name:     "Ontology Gas",
 			Symbol:   "ONG",
 			TokenID:  "ong",
 			Decimals: 9,
 			Value:    "35344040",
-			Title:    blockatlas.AnyActionClaimRewards,
-			Key:      blockatlas.KeyStakeClaimRewards,
+			Title:    types.AnyActionClaimRewards,
+			Key:      types.KeyStakeClaimRewards,
 		},
 	}
 )
@@ -80,13 +80,13 @@ func TestNormalize(t *testing.T) {
 		name        string
 		Transaction string
 		AssetName   AssetType
-		Expected    blockatlas.Tx
+		Expected    types.Tx
 		wantErr     bool
 	}{
 		{"normalize ont", srcOntTransfer, AssetONT, dstOntTransfer, false},
 		{"normalize ong", srcOngTransfer, AssetONG, dstOngTransfer, false},
 		{"normalize claim reward", srcRewardTransfer, AssetONG, dstRewardTransfer, false},
-		{"normalize fee", srcFeeTransfer, AssetONG, blockatlas.Tx{}, true},
+		{"normalize fee", srcFeeTransfer, AssetONG, types.Tx{}, true},
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
@@ -197,8 +197,8 @@ var (
 
 func TestNormalizeBlock(t *testing.T) {
 	block := normalizeTxs([]Tx{ontTxResp1.Result, ontTxResp2.Result, ontTxResp3.Result}, AssetAll)
-	var want blockatlas.TxPage
-	_ = mock.ParseJsonFromFilePath("mocks/block_response.json", &want)
+	var want types.TxPage
+	_ = mock.JsonModelFromFilePath("mocks/block_response.json", &want)
 	lhs, _ := json.Marshal(block)
 	rhs, _ := json.Marshal(want)
 	assert.JSONEq(t, string(lhs), string(rhs))

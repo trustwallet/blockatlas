@@ -1,19 +1,20 @@
 package ripple
 
 import (
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/golibs/coin"
 	"strconv"
 	"time"
+
+	"github.com/trustwallet/golibs/coin"
+	"github.com/trustwallet/golibs/types"
 )
 
-func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
+func (p *Platform) GetTxsByAddress(address string) (types.TxPage, error) {
 	s, err := p.client.GetTxsOfAddress(address)
 	if err != nil {
 		return nil, err
 	}
 
-	txs := make([]blockatlas.Tx, 0)
+	txs := make([]types.Tx, 0)
 	for _, srcTx := range s {
 		tx, ok := NormalizeTx(&srcTx)
 		if !ok {
@@ -25,10 +26,10 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 	return txs, nil
 }
 
-func NormalizeTxs(srcTxs []Tx) (txs []blockatlas.Tx) {
+func NormalizeTxs(srcTxs []Tx) (txs []types.Tx) {
 	for _, srcTx := range srcTxs {
 		tx, ok := NormalizeTx(&srcTx)
-		if !ok || len(txs) >= blockatlas.TxPerPage {
+		if !ok || len(txs) >= types.TxPerPage {
 			continue
 		}
 		txs = append(txs, tx)
@@ -37,7 +38,7 @@ func NormalizeTxs(srcTxs []Tx) (txs []blockatlas.Tx) {
 }
 
 // Normalize converts a Ripple transaction into the generic model
-func NormalizeTx(srcTx *Tx) (blockatlas.Tx, bool) {
+func NormalizeTx(srcTx *Tx) (types.Tx, bool) {
 	unix := int64(0)
 	date, err := time.Parse("2006-01-02T15:04:05-07:00", srcTx.Date)
 	if err == nil {
@@ -46,19 +47,19 @@ func NormalizeTx(srcTx *Tx) (blockatlas.Tx, bool) {
 
 	v, vok := srcTx.Meta.DeliveredAmount.(string)
 	if !vok || len(v) == 0 {
-		return blockatlas.Tx{}, false
+		return types.Tx{}, false
 	}
 
 	if srcTx.Payment.TransactionType != transactionPayment {
-		return blockatlas.Tx{}, false
+		return types.Tx{}, false
 	}
 
-	status := blockatlas.StatusCompleted
+	status := types.StatusCompleted
 	if srcTx.Meta.TransactionResult != transactionResultSuccess {
-		status = blockatlas.StatusError
+		status = types.StatusError
 	}
 
-	result := blockatlas.Tx{
+	result := types.Tx{
 		ID:     srcTx.Hash,
 		Coin:   coin.XRP,
 		Date:   unix,
@@ -67,8 +68,8 @@ func NormalizeTx(srcTx *Tx) (blockatlas.Tx, bool) {
 		Fee:    srcTx.Payment.Fee,
 		Block:  srcTx.LedgerIndex,
 		Status: status,
-		Meta: blockatlas.Transfer{
-			Value:    blockatlas.Amount(v),
+		Meta: types.Transfer{
+			Value:    types.Amount(v),
 			Symbol:   coin.Coins[coin.XRP].Symbol,
 			Decimals: coin.Coins[coin.XRP].Decimals,
 		},

@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/services/tokenindexer"
+	"github.com/trustwallet/golibs/types"
 )
 
 // @Summary Get Tokens
@@ -18,13 +19,13 @@ import (
 // @Tags Transactions
 // @Param coin path string true "the coin name" default(ethereum)
 // @Param address path string true "the query address" default(0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB)
-// @Success 200 {object} blockatlas.CollectionPage
+// @Success 200 {object} types.CollectionPage
 // @Failure 500 {object} ErrorResponse
 // @Router /v2/{coin}/tokens/{address} [get]
 func GetTokensByAddress(c *gin.Context, tokenAPI blockatlas.TokensAPI) {
 	address := c.Param("address")
 	if address == "" {
-		c.JSON(http.StatusOK, blockatlas.TxPage{})
+		c.JSON(http.StatusOK, types.TxPage{})
 		return
 	}
 

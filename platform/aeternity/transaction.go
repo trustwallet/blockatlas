@@ -4,18 +4,18 @@ import (
 	"encoding/base64"
 	"strings"
 
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/coin"
 	"github.com/trustwallet/golibs/numbers"
+	"github.com/trustwallet/golibs/types"
 )
 
-func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
-	addressTxs, err := p.client.GetTxs(address, blockatlas.TxPerPage)
+func (p *Platform) GetTxsByAddress(address string) (types.TxPage, error) {
+	addressTxs, err := p.client.GetTxs(address, types.TxPerPage)
 	if err != nil {
 		return nil, err
 	}
 
-	var txs []blockatlas.Tx
+	var txs []types.Tx
 	for _, srcTx := range addressTxs {
 		tx, err := NormalizeTx(&srcTx)
 		if err != nil {
@@ -26,27 +26,27 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 	return txs, nil
 }
 
-func NormalizeTx(srcTx *Transaction) (blockatlas.Tx, error) {
+func NormalizeTx(srcTx *Transaction) (types.Tx, error) {
 	txValue := srcTx.TxValue
 	decimals := coin.Coins[coin.AE].Decimals
 	amountFloat, err := txValue.Amount.Float64()
 	if err != nil {
-		return blockatlas.Tx{}, err
+		return types.Tx{}, err
 	}
 	amount := numbers.Float64toString(amountFloat)
-	return blockatlas.Tx{
+	return types.Tx{
 		ID:       srcTx.Hash,
 		Coin:     coin.AE,
 		From:     txValue.Sender,
 		To:       txValue.Recipient,
-		Fee:      blockatlas.Amount(txValue.Fee),
+		Fee:      types.Amount(txValue.Fee),
 		Date:     srcTx.Timestamp / 1000,
 		Block:    srcTx.BlockHeight,
 		Memo:     getPayload(txValue.Payload),
-		Status:   blockatlas.StatusCompleted,
+		Status:   types.StatusCompleted,
 		Sequence: txValue.Nonce,
-		Meta: blockatlas.Transfer{
-			Value:    blockatlas.Amount(amount),
+		Meta: types.Transfer{
+			Value:    types.Amount(amount),
 			Symbol:   coin.Coins[coin.AE].Symbol,
 			Decimals: decimals,
 		},

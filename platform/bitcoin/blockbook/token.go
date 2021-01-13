@@ -1,11 +1,10 @@
 package blockbook
 
 import (
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/golibs/tokentype"
+	"github.com/trustwallet/golibs/types"
 )
 
-func (c *Client) GetTokenList(address string, coinIndex uint) (blockatlas.TokenPage, error) {
+func (c *Client) GetTokenList(address string, coinIndex uint) (types.TokenPage, error) {
 	tokens, err := c.GetTokens(address)
 	if err != nil {
 		return nil, err
@@ -13,8 +12,8 @@ func (c *Client) GetTokenList(address string, coinIndex uint) (blockatlas.TokenP
 	return NormalizeTokens(tokens, coinIndex), nil
 }
 
-func NormalizeTokens(srcTokens []Token, coinIndex uint) []blockatlas.Token {
-	tokenPage := make([]blockatlas.Token, 0, len(srcTokens))
+func NormalizeTokens(srcTokens []Token, coinIndex uint) []types.Token {
+	tokenPage := make([]types.Token, 0, len(srcTokens))
 	for _, srcToken := range srcTokens {
 		if srcToken.Balance == "0" || srcToken.Balance == "" {
 			continue
@@ -25,13 +24,13 @@ func NormalizeTokens(srcTokens []Token, coinIndex uint) []blockatlas.Token {
 	return tokenPage
 }
 
-func NormalizeToken(srcToken *Token, coinIndex uint) blockatlas.Token {
-	return blockatlas.Token{
+func NormalizeToken(srcToken *Token, coinIndex uint) types.Token {
+	return types.Token{
 		Name:     srcToken.Name,
 		Symbol:   srcToken.Symbol,
 		TokenID:  srcToken.Contract,
 		Coin:     coinIndex,
 		Decimals: srcToken.Decimals,
-		Type:     tokentype.GetEthereumTokenTypeByIndex(coinIndex),
+		Type:     types.GetEthereumTokenTypeByIndex(coinIndex),
 	}
 }

@@ -5,18 +5,18 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/platform/ethereum/collection"
 	"github.com/trustwallet/golibs/coin"
 	"github.com/trustwallet/golibs/mock"
+	"github.com/trustwallet/golibs/types"
 )
 
 var (
 	collectionsOwnerV4  = "0x0875BCab22dE3d02402bc38aEe4104e1239374a7"
-	collectionsSrcV4, _ = mock.JsonFromFilePathToString("mocks/opensea_collections.json")
-	collectibleSrcV4, _ = mock.JsonFromFilePathToString("mocks/opensea_collectible.json")
+	collectionsSrcV4, _ = mock.JsonStringFromFilePath("mocks/opensea_collections.json")
+	collectibleSrcV4, _ = mock.JsonStringFromFilePath("mocks/opensea_collectible.json")
 
-	collection1DstV4 = blockatlas.Collection{
+	collection1DstV4 = types.Collection{
 		Name:         "CryptoKitties",
 		ImageUrl:     "https://storage.opensea.io/0x06012c8cf97bead5deae237070f9587f8e7a266d-featured-1556588705.png",
 		Description:  "CryptoKitties is a game centered around breedable, collectible, and oh-so-adorable creatures we call CryptoKitties! Each cat is one-of-a-kind and 100% owned by you; it cannot be replicated, taken away, or destroyed.",
@@ -27,7 +27,7 @@ var (
 		Coin:         60,
 	}
 
-	collection2DstV4 = blockatlas.Collection{
+	collection2DstV4 = types.Collection{
 		Name:         "Age of Rust",
 		ImageUrl:     "https://storage.opensea.io/age-of-rust-1561960816.jpg",
 		Description:  "Year 4424: The search begins for new life on the other side of the galaxy. Explore abandoned space stations, mysterious caverns, and ruins on far away worlds in order to unlock puzzles and secrets! Beware the rogue machines!",
@@ -38,7 +38,7 @@ var (
 		Coin:         60,
 	}
 
-	collection3DstV4 = blockatlas.Collection{
+	collection3DstV4 = types.Collection{
 		Name:         "Gods Unchained",
 		ImageUrl:     "https://lh3.googleusercontent.com/yArciVdcDv3O2R-O8XCxx3YEYZdzpiCMdossjUgv0kpLIluUQ1bYN_dyEk5xcvBEOgeq0zNIoWOh7TL9DvUEv--OLQ=s60",
 		Description:  "Gods Unchained is a free-to-play, turn-based competitive trading card game in which cards can be bought and sold on the OpenSea marketplace. Players use their collection to build decks of cards, and select a God to play with at the start of each match. The goal of the game is to reduce your opponent's life to zero. Each deck contains exactly 30 cards. On OpenSea, cards can be sold for a fixed price, auctioned, or sold in bundles.",
@@ -49,7 +49,7 @@ var (
 		Coin:         60,
 	}
 
-	collectibleDstV4 = blockatlas.Collectible{
+	collectibleDstV4 = types.Collectible{
 		ID:              "0xfaafdc07907ff5120a76b34b731b278c38d6043c-54277541829991970107421667568590323026590803461896874578610080514640537714688",
 		CollectionID:    "age-of-rust",
 		TokenID:         "54277541829991970107421667568590323026590803461896874578610080514640537714688",
@@ -71,7 +71,7 @@ func TestNormalizeCollectionV4(t *testing.T) {
 	assert.Nil(t, err)
 	page := NormalizeCollections(collections, coin.ETH, collectionsOwnerV4)
 	assert.Equal(t, 3, len(page), "collections could not be normalized")
-	expected := blockatlas.CollectionPage{collection1DstV4, collection2DstV4, collection3DstV4}
+	expected := types.CollectionPage{collection1DstV4, collection2DstV4, collection3DstV4}
 	assert.Equal(t, page, expected, "collections don't equal")
 }
 
@@ -81,6 +81,6 @@ func TestNormalizeCollectibleV4(t *testing.T) {
 	assert.Nil(t, err)
 	page := NormalizeCollectiblePage(collectibles, coin.ETH)
 	assert.Equal(t, len(page), 1, "collectible could not be normalized")
-	expected := blockatlas.CollectiblePage{collectibleDstV4}
+	expected := types.CollectiblePage{collectibleDstV4}
 	assert.Equal(t, page, expected, "collectible don't equal")
 }

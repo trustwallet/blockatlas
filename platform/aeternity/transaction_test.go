@@ -5,9 +5,9 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/coin"
 	"github.com/trustwallet/golibs/mock"
+	"github.com/trustwallet/golibs/types"
 )
 
 func TestNormalizeTx(t *testing.T) {
@@ -17,7 +17,7 @@ func TestNormalizeTx(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		wantTx  blockatlas.Tx
+		wantTx  types.Tx
 		wantErr bool
 	}{
 		{
@@ -25,7 +25,7 @@ func TestNormalizeTx(t *testing.T) {
 			args: args{
 				filename: "transfer.json",
 			},
-			wantTx: blockatlas.Tx{
+			wantTx: types.Tx{
 				ID:       "th_oJfBC6KZKaKsL4WXTq1ZtFiSE8Wp2PQYEnwyZqtudyHcU3Qg6",
 				Coin:     coin.AE,
 				From:     "ak_nv5B93FPzRHrGNmMdTDfGdd5xGZvep3MVSpJqzcQmMp59bBCv",
@@ -33,10 +33,10 @@ func TestNormalizeTx(t *testing.T) {
 				Fee:      "20500000000000",
 				Date:     1563848658,
 				Block:    113579,
-				Status:   blockatlas.StatusCompleted,
+				Status:   types.StatusCompleted,
 				Memo:     "Hello, Miner! /Yours Beepool./",
 				Sequence: 251291,
-				Meta: blockatlas.Transfer{
+				Meta: types.Transfer{
 					Value:    "252550000000000000000",
 					Symbol:   "AE",
 					Decimals: 18,
@@ -48,7 +48,7 @@ func TestNormalizeTx(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			var srcTx Transaction
-			_ = mock.ParseJsonFromFilePath("mocks/"+tt.args.filename, &srcTx)
+			_ = mock.JsonModelFromFilePath("mocks/"+tt.args.filename, &srcTx)
 			gotTx, err := NormalizeTx(&srcTx)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("NormalizeTx() error = %v, wantErr %v", err, tt.wantErr)

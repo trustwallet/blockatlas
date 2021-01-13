@@ -4,11 +4,13 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
+	"strconv"
+
 	"github.com/btcsuite/btcutil/base58"
 	log "github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/services/assets"
-	"strconv"
+	"github.com/trustwallet/golibs/types"
 )
 
 func arrayOfPubkey(pubkey string) [32]byte {
@@ -68,7 +70,7 @@ func normalizeValidator(v VoteAccount, minimumBalance uint64) (validator blockat
 		ID:     v.VotePubkey,
 		Details: blockatlas.StakingDetails{
 			Reward:        blockatlas.StakingReward{Annual: 0},
-			MinimumAmount: blockatlas.Amount(minimumAmount),
+			MinimumAmount: types.Amount(minimumAmount),
 			LockTime:      0,
 			Type:          blockatlas.DelegationTypeDelegate,
 		},

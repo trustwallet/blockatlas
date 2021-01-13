@@ -6,18 +6,17 @@ import (
 	"strings"
 
 	log "github.com/sirupsen/logrus"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/coin"
-	"github.com/trustwallet/golibs/tokentype"
+	"github.com/trustwallet/golibs/types"
 )
 
-func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
+func (p *Platform) GetTxsByAddress(address string) (types.TxPage, error) {
 	Txs, err := p.client.fetchTxsOfAddress(address, "")
 	if err != nil && len(Txs) == 0 {
 		return nil, err
 	}
 
-	txs := make(blockatlas.TxPage, 0)
+	txs := make(types.TxPage, 0)
 	for _, srcTx := range Txs {
 		tx, err := normalize(srcTx)
 		if err != nil {
@@ -34,40 +33,40 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 	return txs, nil
 }
 
-func (p *Platform) GetTokenTxsByAddress(address, token string) (blockatlas.TxPage, error) {
+func (p *Platform) GetTokenTxsByAddress(address, token string) (types.TxPage, error) {
 	unknownTokenType := errors.New("unknownTokenType")
 	tokenType := getTokenType(token)
 
 	switch tokenType {
-	case tokentype.TRC10:
+	case types.TRC10:
 		txs, err := p.fetchTransactionsForTRC10Tokens(address, token)
 		if err != nil {
 			return nil, err
 		}
 		return txs, nil
-	case tokentype.TRC20:
+	case types.TRC20:
 		trc20Transactions, err := p.client.fetchTRC20Transactions(address)
 		if err != nil {
 			return nil, err
 		}
-		return blockatlas.TxPage(normalizeTRC20Transactions(trc20Transactions)), nil
+		return types.TxPage(normalizeTRC20Transactions(trc20Transactions)), nil
 	default:
 		return nil, unknownTokenType
 	}
 }
 
-func getTokenType(token string) tokentype.Type {
+func getTokenType(token string) types.TokenType {
 	_, err := strconv.Atoi(token)
 	if err != nil {
-		return tokentype.TRC20
+		return types.TRC20
 	} else {
-		return tokentype.TRC10
+		return types.TRC10
 	}
 }
 
-func addTokenMeta(tx *blockatlas.Tx, srcTx Tx, tokenInfo AssetInfo) {
+func addTokenMeta(tx *types.Tx, srcTx Tx, tokenInfo AssetInfo) {
 	transfer := srcTx.Data.Contracts[0].Parameter.Value
-	tx.Meta = blockatlas.TokenTransfer{
+	tx.Meta = types.TokenTransfer{
 		Name:     tokenInfo.Name,
 		Symbol:   strings.ToUpper(tokenInfo.Symbol),
 		TokenID:  strconv.Itoa(int(tokenInfo.ID)),
@@ -78,8 +77,8 @@ func addTokenMeta(tx *blockatlas.Tx, srcTx Tx, tokenInfo AssetInfo) {
 	}
 }
 
-func (p *Platform) fetchTransactionsForTRC10Tokens(address, token string) (blockatlas.TxPage, error) {
-	txs := make(blockatlas.TxPage, 0)
+func (p *Platform) fetchTransactionsForTRC10Tokens(address, token string) (types.TxPage, error) {
+	txs := make(types.TxPage, 0)
 
 	tokenTxs, err := p.client.fetchTxsOfAddress(address, token)
 	if err != nil {
@@ -105,10 +104,10 @@ func (p *Platform) fetchTransactionsForTRC10Tokens(address, token string) (block
 	return txs, nil
 }
 
-func normalizeTRC20Transactions(transactions TRC20Transactions) blockatlas.Txs {
-	txs := make(blockatlas.Txs, 0, len(transactions.Data))
+func normalizeTRC20Transactions(transactions TRC20Transactions) types.Txs {
+	txs := make(types.Txs, 0, len(transactions.Data))
 	for _, rawTx := range transactions.Data {
-		tx := blockatlas.Tx{
+		tx := types.Tx{
 			ID:     rawTx.TransactionID,
 			Coin:   coin.TRX,
 			Date:   rawTx.BlockTimestamp / 1000,
@@ -116,13 +115,13 @@ func normalizeTRC20Transactions(transactions TRC20Transactions) blockatlas.Txs {
 			To:     rawTx.To,
 			Fee:    "0",
 			Block:  0,
-			Status: blockatlas.StatusCompleted,
-			Meta: blockatlas.TokenTransfer{
+			Status: types.StatusCompleted,
+			Meta: types.TokenTransfer{
 				Name:     rawTx.TokenInfo.Name,
 				Symbol:   rawTx.TokenInfo.Symbol,
 				TokenID:  rawTx.TokenInfo.Address,
 				Decimals: uint(rawTx.TokenInfo.Decimals),
-				Value:    blockatlas.Amount(rawTx.Value),
+				Value:    types.Amount(rawTx.Value),
 				From:     rawTx.From,
 				To:       rawTx.To,
 			},
@@ -132,7 +131,7 @@ func normalizeTRC20Transactions(transactions TRC20Transactions) blockatlas.Txs {
 	return txs
 }
 
-func normalize(srcTx Tx) (*blockatlas.Tx, error) {
+func normalize(srcTx Tx) (*types.Tx, error) {
 	if len(srcTx.Data.Contracts) == 0 {
 		return nil, errors.New("no contracts")
 	}
@@ -152,7 +151,7 @@ func normalize(srcTx Tx) (*blockatlas.Tx, error) {
 		return nil, err
 	}
 
-	return &blockatlas.Tx{
+	return &types.Tx{
 		ID:     srcTx.ID,
 		Coin:   coin.TRX,
 		Date:   srcTx.BlockTime / 1000,
@@ -160,8 +159,8 @@ func normalize(srcTx Tx) (*blockatlas.Tx, error) {
 		To:     to,
 		Fee:    "0",
 		Block:  0,
-		Status: blockatlas.StatusCompleted,
-		Meta: blockatlas.Transfer{
+		Status: types.StatusCompleted,
+		Meta: types.Transfer{
 			Value:    transfer.Amount,
 			Symbol:   coin.Coins[coin.TRX].Symbol,
 			Decimals: coin.Coins[coin.TRX].Decimals,

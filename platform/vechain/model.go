@@ -55,8 +55,9 @@ type Tx struct {
 }
 
 type TxReceipt struct {
-	Paid    string   `json:"paid"`
-	Outputs []Output `json:"outputs"`
+	Reverted bool     `json:"reverted"`
+	Paid     string   `json:"paid"`
+	Outputs  []Output `json:"outputs"`
 }
 
 type Output struct {

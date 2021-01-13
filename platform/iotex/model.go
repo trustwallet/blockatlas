@@ -1,8 +1,6 @@
 package iotex
 
-import (
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-)
+import "github.com/trustwallet/golibs/types"
 
 type Response struct {
 	ActionInfo []*ActionInfo `json:"actionInfo"`
@@ -39,8 +37,8 @@ type ActionCore struct {
 }
 
 type Transfer struct {
-	Amount    blockatlas.Amount `json:"amount"`
-	Recipient string            `json:"recipient"`
+	Amount    types.Amount `json:"amount"`
+	Recipient string       `json:"recipient"`
 }
 
 type ChainMeta struct {

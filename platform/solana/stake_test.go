@@ -6,19 +6,20 @@ import (
 
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/mock"
+	"github.com/trustwallet/golibs/types"
 
 	"github.com/stretchr/testify/assert"
 )
 
 var (
-	currentValidators, _ = mock.JsonFromFilePathToString("mocks/" + "currentValidators.json")
+	currentValidators, _ = mock.JsonStringFromFilePath("mocks/" + "currentValidators.json")
 	expectedValidators   = []blockatlas.Validator{
 		{
 			Status: true,
 			ID:     "2Afu38M1KaSfDBpjZjnJb9BSWP6YkBkoPiBfnFedD7JW",
 			Details: blockatlas.StakingDetails{
 				Reward:        blockatlas.StakingReward{Annual: 0},
-				MinimumAmount: blockatlas.Amount("2282881"),
+				MinimumAmount: types.Amount("2282881"),
 				LockTime:      0,
 				Type:          blockatlas.DelegationTypeDelegate,
 			},
@@ -28,7 +29,7 @@ var (
 			ID:     "5CgQubGD1uwodwCe5UXDADbC69SiqXR8qq6pDMSm7ut5",
 			Details: blockatlas.StakingDetails{
 				Reward:        blockatlas.StakingReward{Annual: 0},
-				MinimumAmount: blockatlas.Amount("2282881"),
+				MinimumAmount: types.Amount("2282881"),
 				LockTime:      0,
 				Type:          blockatlas.DelegationTypeDelegate,
 			},

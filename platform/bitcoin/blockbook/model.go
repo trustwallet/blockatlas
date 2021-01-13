@@ -4,9 +4,7 @@ import (
 	"encoding/json"
 	"math/big"
 
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-
-	"github.com/trustwallet/golibs/tokentype"
+	"github.com/trustwallet/golibs/types"
 )
 
 type NodeInfo struct {
@@ -31,12 +29,12 @@ type TokenTransfer struct {
 
 // Token contains info about tokens held by an address
 type Token struct {
-	Balance  string         `json:"balance,omitempty"`
-	Contract string         `json:"contract"`
-	Decimals uint           `json:"decimals"`
-	Name     string         `json:"name"`
-	Symbol   string         `json:"symbol"`
-	Type     tokentype.Type `json:"type"`
+	Balance  string          `json:"balance,omitempty"`
+	Contract string          `json:"contract"`
+	Decimals uint            `json:"decimals"`
+	Name     string          `json:"name"`
+	Symbol   string          `json:"symbol"`
+	Type     types.TokenType `json:"type"`
 }
 
 // EthereumSpecific contains ethereum specific transaction data
@@ -99,11 +97,11 @@ func (transaction Transaction) Amount() string {
 	return transaction.Value
 }
 
-func (transaction Transaction) GetStatus() blockatlas.Status {
+func (transaction Transaction) GetStatus() types.Status {
 	if transaction.Confirmations == 0 {
-		return blockatlas.StatusPending
+		return types.StatusPending
 	}
-	return blockatlas.StatusCompleted
+	return types.StatusCompleted
 }
 
 func (transaction Transaction) GetBlockHeight() uint64 {

@@ -1,8 +1,6 @@
 package binance
 
-import (
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-)
+import "github.com/trustwallet/golibs/types"
 
 func (p *Platform) CurrentBlockNumber() (int64, error) {
 	block, err := p.client.FetchLatestBlockNumber()
@@ -12,7 +10,7 @@ func (p *Platform) CurrentBlockNumber() (int64, error) {
 	return block, nil
 }
 
-func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
+func (p *Platform) GetBlockByNumber(num int64) (*types.Block, error) {
 	transactionInBlockResponse, err := p.client.FetchTransactionsInBlock(num)
 	if err != nil {
 		return nil, err

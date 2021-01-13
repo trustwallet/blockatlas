@@ -4,11 +4,11 @@ import (
 	"encoding/json"
 	"strconv"
 
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/golibs/types"
 )
 
-func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
-	normalized := make([]blockatlas.Tx, 0)
+func (p *Platform) GetTxsByAddress(address string) (types.TxPage, error) {
+	normalized := make([]types.Tx, 0)
 	history, err := p.client.GetAccountHistory(address)
 	if err != nil {
 		return normalized, err
@@ -34,7 +34,7 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 	return normalized, nil
 }
 
-func (p *Platform) Normalize(srcTx *Transaction, account string) (blockatlas.Tx, error) {
+func (p *Platform) Normalize(srcTx *Transaction, account string) (types.Tx, error) {
 	var from string
 	var to string
 
@@ -46,20 +46,20 @@ func (p *Platform) Normalize(srcTx *Transaction, account string) (blockatlas.Tx,
 		to = account
 	}
 
-	status := blockatlas.StatusCompleted
+	status := types.StatusCompleted
 	height, err := strconv.ParseUint(srcTx.Height, 10, 64)
 	if err != nil {
-		return blockatlas.Tx{}, err
+		return types.Tx{}, err
 	}
 	if height == 0 {
-		status = blockatlas.StatusPending
+		status = types.StatusPending
 	}
 	timestamp, err := strconv.ParseInt(srcTx.LocalTimestamp, 10, 64)
 	if err != nil {
-		return blockatlas.Tx{}, err
+		return types.Tx{}, err
 	}
 
-	tx := blockatlas.Tx{
+	tx := types.Tx{
 		ID:     srcTx.Hash,
 		Coin:   p.Coin().ID,
 		Date:   timestamp,
@@ -68,8 +68,8 @@ func (p *Platform) Normalize(srcTx *Transaction, account string) (blockatlas.Tx,
 		Block:  height,
 		Status: status,
 		Fee:    "0",
-		Meta: blockatlas.Transfer{
-			Value:    blockatlas.Amount(srcTx.Amount),
+		Meta: types.Transfer{
+			Value:    types.Amount(srcTx.Amount),
 			Symbol:   p.Coin().Symbol,
 			Decimals: p.Coin().Decimals,
 		},

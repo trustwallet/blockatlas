@@ -19,6 +19,7 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/network/mq"
 	"github.com/trustwallet/golibs/numbers"
+	"github.com/trustwallet/golibs/types"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -33,7 +34,7 @@ type (
 		Database                                  *db.Instance
 	}
 
-	GetBlockByNumber func(num int64) (*blockatlas.Block, error)
+	GetBlockByNumber func(num int64) (*types.Block, error)
 
 	stop struct {
 		error
@@ -94,11 +95,11 @@ func parse(params Params) {
 		return
 	}
 
-	var txs []blockatlas.Tx
+	var txs []types.Tx
 	for _, block := range blocks {
 		txs = append(txs, block.Txs...)
 	}
-	txs = blockatlas.TxPage(txs).FilterTransactionsByMemo()
+	txs = types.TxPage(txs).FilterTransactionsByMemo()
 
 	err = publish(params, txs)
 	if err != nil {
@@ -149,7 +150,7 @@ func GetNextBlocksToParse(lastParsedBlock int64, currentBlock int64, maxBlocks i
 	return nextBlock, endParseBlock + 1, nil
 }
 
-func FetchBlocks(params Params, lastParsedBlock, currentBlock int64) ([]blockatlas.Block, error) {
+func FetchBlocks(params Params, lastParsedBlock, currentBlock int64) ([]types.Block, error) {
 	if lastParsedBlock == currentBlock {
 		log.WithFields(log.Fields{
 			"current_block": lastParsedBlock,
@@ -165,7 +166,7 @@ func FetchBlocks(params Params, lastParsedBlock, currentBlock int64) ([]blockatl
 	}
 
 	var (
-		blocksChan = make(chan blockatlas.Block, blocksCount)
+		blocksChan = make(chan types.Block, blocksCount)
 		errorsChan = make(chan error, blocksCount)
 		totalCount int32
 		wg         sync.WaitGroup
@@ -205,10 +206,10 @@ func FetchBlocks(params Params, lastParsedBlock, currentBlock int64) ([]blockatl
 			},
 		}).Error("Fetch Blocks Errors")
 
-		return []blockatlas.Block{}, fmt.Errorf("unable to fetch blocks: %d: %d", lastParsedBlock, currentBlock)
+		return []types.Block{}, fmt.Errorf("unable to fetch blocks: %d: %d", lastParsedBlock, currentBlock)
 	}
 
-	blocks := make([]blockatlas.Block, 0, len(blocksChan))
+	blocks := make([]types.Block, 0, len(blocksChan))
 	for block := range blocksChan {
 		blocks = append(blocks, block)
 	}
@@ -223,7 +224,7 @@ func FetchBlocks(params Params, lastParsedBlock, currentBlock int64) ([]blockatl
 	return blocks, nil
 }
 
-func fetchBlock(api blockatlas.BlockAPI, num int64, blocksChan chan<- blockatlas.Block) error {
+func fetchBlock(api blockatlas.BlockAPI, num int64, blocksChan chan<- types.Block) error {
 	block, err := getBlockByNumberWithRetry(5, time.Second*5, api.GetBlockByNumber, num, api.Coin().Symbol)
 	if err != nil {
 		return fmt.Errorf("%d", num)
@@ -232,7 +233,7 @@ func fetchBlock(api blockatlas.BlockAPI, num int64, blocksChan chan<- blockatlas
 	return nil
 }
 
-func SaveLastParsedBlock(params Params, blocks []blockatlas.Block) error {
+func SaveLastParsedBlock(params Params, blocks []types.Block) error {
 	if len(blocks) == 0 {
 		return nil
 	}
@@ -261,7 +262,7 @@ func SaveLastParsedBlock(params Params, blocks []blockatlas.Block) error {
 	return nil
 }
 
-func publish(params Params, txs blockatlas.Txs) error {
+func publish(params Params, txs types.Txs) error {
 
 	if len(txs) == 0 {
 		return nil
@@ -275,7 +276,7 @@ func publish(params Params, txs blockatlas.Txs) error {
 	return params.TransactionsExchange.Publish(body)
 }
 
-func getBlockByNumberWithRetry(attempts int, sleep time.Duration, getBlockByNumber GetBlockByNumber, n int64, symbol string) (*blockatlas.Block, error) {
+func getBlockByNumberWithRetry(attempts int, sleep time.Duration, getBlockByNumber GetBlockByNumber, n int64, symbol string) (*types.Block, error) {
 	r, err := getBlockByNumber(n)
 	if err != nil {
 		if s, ok := err.(stop); ok {

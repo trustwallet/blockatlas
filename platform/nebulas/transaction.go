@@ -1,11 +1,11 @@
 package nebulas
 
 import (
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/coin"
+	"github.com/trustwallet/golibs/types"
 )
 
-func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
+func (p *Platform) GetTxsByAddress(address string) (types.TxPage, error) {
 	txs, err := p.client.GetTxs(address, 1)
 	if err != nil {
 		return nil, err
@@ -18,43 +18,43 @@ func (p *Platform) CurrentBlockNumber() (int64, error) {
 	return p.client.GetLatestBlock()
 }
 
-func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
+func (p *Platform) GetBlockByNumber(num int64) (*types.Block, error) {
 	txs, err := p.client.GetBlockByNumber(num)
 	if err != nil {
 		return nil, err
 	}
 
-	return &blockatlas.Block{
+	return &types.Block{
 		Number: num,
 		Txs:    NormalizeTxs(txs),
 	}, nil
 }
 
-func NormalizeTxs(txs []Transaction) []blockatlas.Tx {
-	normalizeTxs := make([]blockatlas.Tx, 0)
+func NormalizeTxs(txs []Transaction) []types.Tx {
+	normalizeTxs := make([]types.Tx, 0)
 	for _, srcTx := range txs {
 		normalizeTxs = append(normalizeTxs, NormalizeTx(srcTx))
 	}
 	return normalizeTxs
 }
 
-func NormalizeTx(srcTx Transaction) blockatlas.Tx {
-	var status = blockatlas.StatusCompleted
+func NormalizeTx(srcTx Transaction) types.Tx {
+	var status = types.StatusCompleted
 	if srcTx.Status == 0 {
-		status = blockatlas.StatusError
+		status = types.StatusError
 	}
-	return blockatlas.Tx{
+	return types.Tx{
 		ID:       srcTx.Hash,
 		Coin:     coin.NAS,
 		From:     srcTx.From.Hash,
 		To:       srcTx.To.Hash,
-		Fee:      blockatlas.Amount(srcTx.TxFee),
+		Fee:      types.Amount(srcTx.TxFee),
 		Date:     int64(srcTx.Timestamp) / 1000,
 		Block:    srcTx.Block.Height,
 		Status:   status,
 		Sequence: srcTx.Nonce,
-		Meta: blockatlas.Transfer{
-			Value:    blockatlas.Amount(srcTx.Value),
+		Meta: types.Transfer{
+			Value:    types.Amount(srcTx.Value),
 			Symbol:   coin.Coins[coin.NAS].Symbol,
 			Decimals: coin.Coins[coin.NAS].Decimals,
 		},

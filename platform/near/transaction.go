@@ -1,10 +1,8 @@
 package near
 
-import (
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-)
+import "github.com/trustwallet/golibs/types"
 
-func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
-	normalized := make([]blockatlas.Tx, 0)
+func (p *Platform) GetTxsByAddress(address string) (types.TxPage, error) {
+	normalized := make([]types.Tx, 0)
 	return normalized, nil
 }

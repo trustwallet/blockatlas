@@ -1,18 +1,18 @@
 package elrond
 
 import (
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/coin"
+	"github.com/trustwallet/golibs/types"
 )
 
 const metachainID = "4294967295"
 
-func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
+func (p *Platform) GetTxsByAddress(address string) (types.TxPage, error) {
 	return p.client.GetTxsOfAddress(address)
 }
 
 // NormalizeTx converts an slice of Elrond transaction info a slice of generic model transaction
-func NormalizeTxs(srcTxs []Transaction, address string, block Block) (txs []blockatlas.Tx) {
+func NormalizeTxs(srcTxs []Transaction, address string, block Block) (txs []types.Tx) {
 	for _, srcTx := range srcTxs {
 		tx, ok := NormalizeTx(srcTx, address, block)
 		if !ok {
@@ -24,8 +24,8 @@ func NormalizeTxs(srcTxs []Transaction, address string, block Block) (txs []bloc
 }
 
 // NormalizeTx converts an Elrond transaction into the generic model
-func NormalizeTx(srcTx Transaction, address string, block Block) (tx blockatlas.Tx, ok bool) {
-	tx = blockatlas.Tx{
+func NormalizeTx(srcTx Transaction, address string, block Block) (tx types.Tx, ok bool) {
+	tx = types.Tx{
 		ID:       srcTx.Hash,
 		Coin:     coin.Elrond().ID,
 		Date:     int64(srcTx.TxTimestamp(block.Round)),
@@ -36,8 +36,8 @@ func NormalizeTx(srcTx Transaction, address string, block Block) (tx blockatlas.
 		Status:   srcTx.TxStatus(),
 		Sequence: srcTx.Nonce,
 		Memo:     srcTx.Data,
-		Meta: blockatlas.Transfer{
-			Value:    blockatlas.Amount(srcTx.Value),
+		Meta: types.Transfer{
+			Value:    types.Amount(srcTx.Value),
 			Symbol:   coin.Elrond().Symbol,
 			Decimals: coin.Elrond().Decimals,
 		},

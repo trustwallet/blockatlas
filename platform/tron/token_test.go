@@ -9,12 +9,12 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/mock"
+	"github.com/trustwallet/golibs/types"
 )
 
 var (
-	tokenDst = blockatlas.Token{
+	tokenDst = types.Token{
 		Name:     "Test",
 		Symbol:   "TST",
 		Decimals: 8,
@@ -46,15 +46,15 @@ func TestPlatform_GetTokenListByAddress(t *testing.T) {
 }
 
 var (
-	wantedTokensResponse, _               = mock.JsonFromFilePathToString("mocks/tokens/tokens_response.json")
-	mockedAccountsTransactionsResponse, _ = mock.JsonFromFilePathToString("mocks/tokens/accounts_txs_response.json")
-	mockedTrc20Response, _                = mock.JsonFromFilePathToString("mocks/tokens/trc20_response.json")
-	mockedTransactionsTrc20Response, _    = mock.JsonFromFilePathToString("mocks/tokens/txs_trc20_response.json")
-	mockedTransactionsEmptyResponse, _    = mock.JsonFromFilePathToString("mocks/tokens/txs_empty_response.json")
-	mockedAsset1000542Response, _         = mock.JsonFromFilePathToString("mocks/tokens/asset_1000542_response.json")
-	mockedAsset1000567Response, _         = mock.JsonFromFilePathToString("mocks/tokens/asset_1000567_response.json")
-	mockedAssetTR7NHResponse, _           = mock.JsonFromFilePathToString("mocks/tokens/asset_tr7nh_response.json")
-	mockedAccountsResponse, _             = mock.JsonFromFilePathToString("mocks/tokens/accounts_response.json")
+	wantedTokensResponse, _               = mock.JsonStringFromFilePath("mocks/tokens/tokens_response.json")
+	mockedAccountsTransactionsResponse, _ = mock.JsonStringFromFilePath("mocks/tokens/accounts_txs_response.json")
+	mockedTrc20Response, _                = mock.JsonStringFromFilePath("mocks/tokens/trc20_response.json")
+	mockedTransactionsTrc20Response, _    = mock.JsonStringFromFilePath("mocks/tokens/txs_trc20_response.json")
+	mockedTransactionsEmptyResponse, _    = mock.JsonStringFromFilePath("mocks/tokens/txs_empty_response.json")
+	mockedAsset1000542Response, _         = mock.JsonStringFromFilePath("mocks/tokens/asset_1000542_response.json")
+	mockedAsset1000567Response, _         = mock.JsonStringFromFilePath("mocks/tokens/asset_1000567_response.json")
+	mockedAssetTR7NHResponse, _           = mock.JsonStringFromFilePath("mocks/tokens/asset_tr7nh_response.json")
+	mockedAccountsResponse, _             = mock.JsonStringFromFilePath("mocks/tokens/accounts_response.json")
 )
 
 func createMockedAPI() http.Handler {

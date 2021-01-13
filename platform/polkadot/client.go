@@ -3,8 +3,8 @@ package polkadot
 import (
 	"strconv"
 
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/client"
+	"github.com/trustwallet/golibs/types"
 )
 
 type Client struct {
@@ -13,7 +13,7 @@ type Client struct {
 
 func (c *Client) GetTransfersOfAddress(address string) ([]Transfer, error) {
 	var res SubscanResponse
-	err := c.Post(&res, "scan/transfers", TransfersRequest{Address: address, Row: blockatlas.TxPerPage})
+	err := c.Post(&res, "scan/transfers", TransfersRequest{Address: address, Row: types.TxPerPage})
 	if err != nil {
 		return nil, err
 	}
@@ -22,7 +22,7 @@ func (c *Client) GetTransfersOfAddress(address string) ([]Transfer, error) {
 
 func (c *Client) GetExtrinsicsOfAddress(address string) ([]Extrinsic, error) {
 	var res SubscanResponse
-	err := c.Post(&res, "scan/extrinsics", TransfersRequest{Address: address, Row: blockatlas.TxPerPage})
+	err := c.Post(&res, "scan/extrinsics", TransfersRequest{Address: address, Row: types.TxPerPage})
 	if err != nil {
 		return nil, err
 	}

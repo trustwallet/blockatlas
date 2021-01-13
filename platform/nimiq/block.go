@@ -1,14 +1,12 @@
 package nimiq
 
-import (
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-)
+import "github.com/trustwallet/golibs/types"
 
 func (p *Platform) CurrentBlockNumber() (int64, error) {
 	return p.client.CurrentBlockNumber()
 }
 
-func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
+func (p *Platform) GetBlockByNumber(num int64) (*types.Block, error) {
 	srcBlock, err := p.client.GetBlockByNumber(num)
 	if err != nil {
 		return nil, err
@@ -18,8 +16,8 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 }
 
 // NormalizeBlock converts a Nimiq block into the generic model
-func NormalizeBlock(srcBlock *Block) blockatlas.Block {
-	return blockatlas.Block{
+func NormalizeBlock(srcBlock *Block) types.Block {
+	return types.Block{
 		Number: srcBlock.Number,
 		Txs:    NormalizeTxs(srcBlock.Txs),
 	}

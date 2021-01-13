@@ -12,7 +12,7 @@ require (
 	github.com/getsentry/raven-go v0.2.0
 	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-gonic/gin v1.6.3
-	github.com/mitchellh/mapstructure v1.4.0
+	github.com/mitchellh/mapstructure v1.4.1
 	github.com/mr-tron/base58 v1.2.0
 	github.com/opencontainers/runc v1.0.0-rc9 // indirect
 	github.com/ory/dockertest v3.3.5+incompatible
@@ -23,8 +23,8 @@ require (
 	github.com/stretchr/testify v1.6.1
 	github.com/swaggo/gin-swagger v1.3.0
 	github.com/swaggo/swag v1.7.0
-	github.com/trustwallet/golibs v0.0.30
-	github.com/trustwallet/golibs/network v0.0.0-20210113211855-a51cc05cdb16
+	github.com/trustwallet/golibs v0.0.31
+	github.com/trustwallet/golibs/network v0.0.0-20210112030915-7e676f1ce53b
 	golang.org/x/crypto v0.0.0-20201124201722-c8d3bf9c5392
 	golang.org/x/net v0.0.0-20201224014010-6772e930b67b // indirect
 	golang.org/x/sys v0.0.0-20210105210732-16f7687f5001 // indirect

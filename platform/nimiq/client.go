@@ -3,8 +3,8 @@ package nimiq
 import (
 	"strconv"
 
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/client"
+	"github.com/trustwallet/golibs/types"
 )
 
 type Client struct {
@@ -12,7 +12,7 @@ type Client struct {
 }
 
 func (c *Client) GetTxsOfAddress(address string) (tx []Tx, err error) {
-	err = c.RpcCall(&tx, "getTransactionsByAddress", []string{address, strconv.Itoa(blockatlas.TxPerPage)})
+	err = c.RpcCall(&tx, "getTransactionsByAddress", []string{address, strconv.Itoa(types.TxPerPage)})
 	return
 }
 

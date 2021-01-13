@@ -4,9 +4,9 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/coin"
 	"github.com/trustwallet/golibs/mock"
+	"github.com/trustwallet/golibs/types"
 )
 
 func TestNormalizeTx(t *testing.T) {
@@ -16,7 +16,7 @@ func TestNormalizeTx(t *testing.T) {
 	tests := []struct {
 		name   string
 		args   args
-		wantTx blockatlas.Tx
+		wantTx types.Tx
 		ok     bool
 	}{
 		{
@@ -24,7 +24,7 @@ func TestNormalizeTx(t *testing.T) {
 			args: args{
 				filename: "transfer.json",
 			},
-			wantTx: blockatlas.Tx{
+			wantTx: types.Tx{
 				ID:     "0x34b8b6ec3a52710c24074f5e298f4a9c67bb61a0a1dde20e695efaeb30ff3754",
 				Coin:   coin.ICX,
 				From:   "hx1b8959dd5c57d2c502e22ee0a887d33baec09091",
@@ -34,7 +34,7 @@ func TestNormalizeTx(t *testing.T) {
 				Block:  357832,
 				Status: "completed",
 				Type:   "transfer",
-				Meta: blockatlas.Transfer{
+				Meta: types.Transfer{
 					Value:    "3470000000000000",
 					Symbol:   "ICX",
 					Decimals: 18,
@@ -46,7 +46,7 @@ func TestNormalizeTx(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			var srcTx Tx
-			_ = mock.ParseJsonFromFilePath("mocks/"+tt.args.filename, &srcTx)
+			_ = mock.JsonModelFromFilePath("mocks/"+tt.args.filename, &srcTx)
 			gotTx, ok := Normalize(&srcTx)
 			if ok != tt.ok {
 				t.Errorf("Normalize() ok = %v, wantOk %v", ok, tt.ok)
