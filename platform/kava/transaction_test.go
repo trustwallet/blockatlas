@@ -794,6 +794,13 @@ type test struct {
 	want     types.Tx
 }
 
+type filterTest struct {
+	name     string
+	platform Platform
+	Data     []string
+	want     []types.Tx
+}
+
 func TestNormalize(t *testing.T) {
 
 	cosmos := Platform{CoinIndex: coin.ATOM}
@@ -852,6 +859,46 @@ func TestNormalize(t *testing.T) {
 	for _, tt := range tests {
 		testNormalize(t, tt)
 	}
+}
+
+func TestFilterByDenom(t *testing.T) {
+
+	kava := Platform{CoinIndex: coin.KAVA}
+
+	test := filterTest{
+		"test transfer tx",
+		kava,
+		[]string{
+			transferSrc,
+			delegateSrc,
+			unDelegateSrc,
+			claimRewardSrc1,
+			claimRewardSrc2,
+			failedTransferSrc,
+			transferSrcKava,
+			transferSrcKavaToken,
+		},
+		[]types.Tx{transferDstKavaToken},
+	}
+
+	testFilter(t, test)
+}
+
+func testFilter(t *testing.T, test filterTest) {
+	t.Run(test.name, func(t *testing.T) {
+		srcTxs := make([]Tx, 0)
+		for _, tx := range test.Data {
+			var srcTx Tx
+			err := json.Unmarshal([]byte(tx), &srcTx)
+			assert.Nil(t, err)
+			srcTxs = append(srcTxs, srcTx)
+		}
+		tx := test.platform.FilterTxsByDenom(srcTxs, "hard")
+		assert.Equal(t, len(test.want), len(tx), "length: filtered to expected 1 tx")
+		normalized, ok := test.platform.Normalize(&tx[0])
+		assert.True(t, ok)
+		assert.Equal(t, test.want[0], normalized, "denom: filtered txs are equal")
+	})
 }
 
 func testNormalize(t *testing.T, tt test) {

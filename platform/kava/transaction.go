@@ -65,7 +65,14 @@ func (p *Platform) FilterTxsByDenom(txs []Tx, denom string) []Tx {
 		if len(messages) == 0 {
 			continue
 		}
-		if messages[0].Value.(MessageValueTransfer).Amount[0].Denom == denom {
+		var amount Amount
+		switch messages[0].Value.(type) {
+		case MessageValueTransfer:
+			amount = messages[0].Value.(MessageValueTransfer).Amount[0]
+		case MessageValueDelegate:
+			amount = messages[0].Value.(MessageValueDelegate).Amount
+		}
+		if amount.Denom == denom {
 			filteredTxs = append(filteredTxs, tx)
 		}
 	}
