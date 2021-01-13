@@ -5,9 +5,9 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 
 	"github.com/trustwallet/golibs/coin"
+	"github.com/trustwallet/golibs/types"
 )
 
 const transferSrc = `
@@ -624,7 +624,7 @@ const claimRewardSrc2 = `
   ]
 }`
 
-var transferDst = blockatlas.Tx{
+var transferDst = types.Tx{
 	ID:     "E19B011D20D862DA0BEA7F24E3BC6DFF666EE6E044FCD9BD95B073478086DBB6",
 	Coin:   coin.ATOM,
 	From:   "cosmos1rw62phusuv9vzraezr55k0vsqssvz6ed52zyrl",
@@ -632,16 +632,16 @@ var transferDst = blockatlas.Tx{
 	Fee:    "1",
 	Date:   1556992677,
 	Block:  151980,
-	Status: blockatlas.StatusCompleted,
-	Type:   blockatlas.TxTransfer,
-	Meta: blockatlas.Transfer{
+	Status: types.StatusCompleted,
+	Type:   types.TxTransfer,
+	Meta: types.Transfer{
 		Value:    "2271999999",
 		Symbol:   coin.Cosmos().Symbol,
 		Decimals: 6,
 	},
 }
 
-var transferDstKava = blockatlas.Tx{
+var transferDstKava = types.Tx{
 	ID:     "E19B011D20D862DA0BEA7F24E3BC6DFF666EE6E044FCD9BD95B073478086DBB6",
 	Coin:   coin.KAVA,
 	From:   "kava17wcggpjx007uc09s8y4hwrj8f228mlwe0n0upn",
@@ -649,16 +649,16 @@ var transferDstKava = blockatlas.Tx{
 	Fee:    "1",
 	Date:   1556992677,
 	Block:  151980,
-	Status: blockatlas.StatusCompleted,
-	Type:   blockatlas.TxTransfer,
-	Meta: blockatlas.Transfer{
+	Status: types.StatusCompleted,
+	Type:   types.TxTransfer,
+	Meta: types.Transfer{
 		Value:    "2271999999",
 		Symbol:   coin.Kava().Symbol,
 		Decimals: 6,
 	},
 }
 
-var transferDstKavaToken = blockatlas.Tx{
+var transferDstKavaToken = types.Tx{
 	ID:     "514D43780335A1C516850FEE5692F59E9A9DF1D8D986FC62AC434BEB58EDB8E2",
 	Coin:   coin.KAVA,
 	From:   "kava1ys70jvnajkv88529ys6urjcyle3k2j9r24g6a7",
@@ -666,9 +666,9 @@ var transferDstKavaToken = blockatlas.Tx{
 	Fee:    "30",
 	Date:   1608374964,
 	Block:  645538,
-	Status: blockatlas.StatusCompleted,
-	Type:   blockatlas.TxNativeTokenTransfer,
-	Meta: blockatlas.NativeTokenTransfer{
+	Status: types.StatusCompleted,
+	Type:   types.TxNativeTokenTransfer,
+	Meta: types.NativeTokenTransfer{
 		Value:    "10000000000",
 		Symbol:   "HARD",
 		Decimals: 6,
@@ -679,7 +679,7 @@ var transferDstKavaToken = blockatlas.Tx{
 	},
 }
 
-var delegateDst = blockatlas.Tx{
+var delegateDst = types.Tx{
 	ID:        "11078091D1D5BD84F4275B6CEE02170428944DB0E8EEC37E980551435F6D04C7",
 	Coin:      coin.ATOM,
 	From:      "cosmos1237l0vauhw78qtwq045jd24ay4urpec6r3xfn3",
@@ -687,13 +687,13 @@ var delegateDst = blockatlas.Tx{
 	Fee:       "5000",
 	Date:      1564632616,
 	Block:     1258202,
-	Status:    blockatlas.StatusCompleted,
-	Type:      blockatlas.TxAnyAction,
-	Direction: blockatlas.DirectionOutgoing,
-	Meta: blockatlas.AnyAction{
+	Status:    types.StatusCompleted,
+	Type:      types.TxAnyAction,
+	Direction: types.DirectionOutgoing,
+	Meta: types.AnyAction{
 		Coin:     coin.ATOM,
-		Title:    blockatlas.AnyActionDelegation,
-		Key:      blockatlas.KeyStakeDelegate,
+		Title:    types.AnyActionDelegation,
+		Key:      types.KeyStakeDelegate,
 		Name:     coin.Cosmos().Name,
 		Symbol:   coin.Coins[coin.ATOM].Symbol,
 		Decimals: coin.Coins[coin.ATOM].Decimals,
@@ -701,7 +701,7 @@ var delegateDst = blockatlas.Tx{
 	},
 }
 
-var unDelegateDst = blockatlas.Tx{
+var unDelegateDst = types.Tx{
 	ID:        "A1EC36741FEF681F4A77B8F6032AD081100EE5ECB4CC76AEAC2174BC6B871CFE",
 	Coin:      coin.ATOM,
 	From:      "cosmos137rrp4p8n0nqcft0mwc62tdnyhhzf80knv5t94",
@@ -709,13 +709,13 @@ var unDelegateDst = blockatlas.Tx{
 	Fee:       "5000",
 	Date:      1564624521,
 	Block:     1257037,
-	Status:    blockatlas.StatusCompleted,
-	Type:      blockatlas.TxAnyAction,
-	Direction: blockatlas.DirectionIncoming,
-	Meta: blockatlas.AnyAction{
+	Status:    types.StatusCompleted,
+	Type:      types.TxAnyAction,
+	Direction: types.DirectionIncoming,
+	Meta: types.AnyAction{
 		Coin:     coin.ATOM,
-		Title:    blockatlas.AnyActionUndelegation,
-		Key:      blockatlas.KeyStakeDelegate,
+		Title:    types.AnyActionUndelegation,
+		Key:      types.KeyStakeDelegate,
 		Name:     coin.Cosmos().Name,
 		Symbol:   coin.Coins[coin.ATOM].Symbol,
 		Decimals: coin.Coins[coin.ATOM].Decimals,
@@ -723,7 +723,7 @@ var unDelegateDst = blockatlas.Tx{
 	},
 }
 
-var claimRewardDst2 = blockatlas.Tx{
+var claimRewardDst2 = types.Tx{
 	ID:        "082BA88EC055A7C343A353297EAC104CE87C659E0DDD84621C9AC3C284232800",
 	Coin:      coin.ATOM,
 	From:      "cosmos1y6yvdel7zys8x60gz9067fjpcpygsn62ae9x46",
@@ -731,14 +731,14 @@ var claimRewardDst2 = blockatlas.Tx{
 	Fee:       "0",
 	Date:      1576462863,
 	Block:     54561,
-	Status:    blockatlas.StatusCompleted,
-	Type:      blockatlas.TxAnyAction,
-	Direction: blockatlas.DirectionIncoming,
+	Status:    types.StatusCompleted,
+	Type:      types.TxAnyAction,
+	Direction: types.DirectionIncoming,
 	Memo:      "复投",
-	Meta: blockatlas.AnyAction{
+	Meta: types.AnyAction{
 		Coin:     coin.ATOM,
-		Title:    blockatlas.AnyActionClaimRewards,
-		Key:      blockatlas.KeyStakeClaimRewards,
+		Title:    types.AnyActionClaimRewards,
+		Key:      types.KeyStakeClaimRewards,
 		Name:     coin.Cosmos().Name,
 		Symbol:   coin.Coins[coin.ATOM].Symbol,
 		Decimals: coin.Coins[coin.ATOM].Decimals,
@@ -746,7 +746,7 @@ var claimRewardDst2 = blockatlas.Tx{
 	},
 }
 
-var claimRewardDst1 = blockatlas.Tx{
+var claimRewardDst1 = types.Tx{
 	ID:        "C382DCFDC30E2DA294421DAEAD5862F118592A7B000EE91F6BEF8452A1F525D7",
 	Coin:      coin.ATOM,
 	From:      "cosmos1cxehfdhfm96ljpktdxsj0k6xp9gtuheghwgqug",
@@ -754,14 +754,14 @@ var claimRewardDst1 = blockatlas.Tx{
 	Fee:       "1000",
 	Date:      1576638273,
 	Block:     79678,
-	Status:    blockatlas.StatusCompleted,
-	Type:      blockatlas.TxAnyAction,
-	Direction: blockatlas.DirectionIncoming,
+	Status:    types.StatusCompleted,
+	Type:      types.TxAnyAction,
+	Direction: types.DirectionIncoming,
 	Memo:      "",
-	Meta: blockatlas.AnyAction{
+	Meta: types.AnyAction{
 		Coin:     coin.ATOM,
-		Title:    blockatlas.AnyActionClaimRewards,
-		Key:      blockatlas.KeyStakeClaimRewards,
+		Title:    types.AnyActionClaimRewards,
+		Key:      types.KeyStakeClaimRewards,
 		Name:     coin.Cosmos().Name,
 		Symbol:   coin.Coins[coin.ATOM].Symbol,
 		Decimals: coin.Coins[coin.ATOM].Decimals,
@@ -769,7 +769,7 @@ var claimRewardDst1 = blockatlas.Tx{
 	},
 }
 
-var failedTransferDst = blockatlas.Tx{
+var failedTransferDst = types.Tx{
 	ID:     "5E78C65A8C1A6C8239EBBBBF2E42020E6ADBA8037EDEA83BF88E1A9159CF13B8",
 	Coin:   coin.ATOM,
 	From:   "cosmos1shpfyt7psrff2ux7nznxvj6f7gq59fcqng5mku",
@@ -777,10 +777,10 @@ var failedTransferDst = blockatlas.Tx{
 	Fee:    "2000",
 	Date:   1576120902,
 	Block:  5552,
-	Status: blockatlas.StatusError,
-	Type:   blockatlas.TxTransfer,
+	Status: types.StatusError,
+	Type:   types.TxTransfer,
 	Memo:   "UniCoins registration rewards",
-	Meta: blockatlas.Transfer{
+	Meta: types.Transfer{
 		Value:    "100000",
 		Symbol:   coin.Cosmos().Symbol,
 		Decimals: 6,
@@ -791,7 +791,7 @@ type test struct {
 	name     string
 	platform Platform
 	Data     string
-	want     blockatlas.Tx
+	want     types.Tx
 }
 
 func TestNormalize(t *testing.T) {

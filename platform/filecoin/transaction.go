@@ -1,18 +1,18 @@
 package filecoin
 
 import (
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/platform/filecoin/explorer"
+	"github.com/trustwallet/golibs/types"
 )
 
 const messageMethod = "Send"
 
-func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
-	res, err := p.explorer.GetMessagesByAddress(address, blockatlas.TxPerPage)
+func (p *Platform) GetTxsByAddress(address string) (types.TxPage, error) {
+	res, err := p.explorer.GetMessagesByAddress(address, types.TxPerPage)
 	if err != nil {
 		return nil, err
 	}
-	normalized := make([]blockatlas.Tx, 0)
+	normalized := make([]types.Tx, 0)
 	for _, message := range res.Messages {
 		// skip non transfer messages
 		if message.Method != messageMethod {
@@ -24,16 +24,16 @@ func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
 	return normalized, nil
 }
 
-func (p *Platform) NormalizeMessage(message explorer.Message, address string) blockatlas.Tx {
-	status := blockatlas.StatusCompleted
+func (p *Platform) NormalizeMessage(message explorer.Message, address string) types.Tx {
+	status := types.StatusCompleted
 	if message.Receipt.ExitCode != 0 {
-		status = blockatlas.StatusError
+		status = types.StatusError
 	}
-	direction := blockatlas.DirectionOutgoing
+	direction := types.DirectionOutgoing
 	if message.From != address {
-		direction = blockatlas.DirectionIncoming
+		direction = types.DirectionIncoming
 	}
-	return blockatlas.Tx{
+	return types.Tx{
 		ID:        message.Cid,
 		Coin:      p.Coin().ID,
 		From:      message.From,
@@ -42,10 +42,10 @@ func (p *Platform) NormalizeMessage(message explorer.Message, address string) bl
 		Block:     message.Height,
 		Status:    status,
 		Sequence:  message.Nonce,
-		Type:      blockatlas.TxTransfer,
+		Type:      types.TxTransfer,
 		Direction: direction,
-		Meta: blockatlas.Transfer{
-			Value:    blockatlas.Amount(message.Value),
+		Meta: types.Transfer{
+			Value:    types.Amount(message.Value),
 			Symbol:   p.Coin().Symbol,
 			Decimals: p.Coin().Decimals,
 		},

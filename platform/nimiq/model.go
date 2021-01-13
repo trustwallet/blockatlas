@@ -2,20 +2,21 @@ package nimiq
 
 import (
 	"encoding/json"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+
+	"github.com/trustwallet/golibs/types"
 )
 
 type Tx struct {
-	Hash          string            `json:"hash"`
-	BlockHash     string            `json:"blockHash"`
-	BlockNumber   uint64            `json:"blockNumber"`
-	Timestamp     json.Number       `json:"timestamp"`
-	Confirmations int               `json:"confirmations"`
-	TxIndex       int               `json:"transactionIndex"`
-	FromAddress   string            `json:"fromAddress"`
-	ToAddress     string            `json:"toAddress"`
-	Value         blockatlas.Amount `json:"value"`
-	Fee           blockatlas.Amount `json:"fee"`
+	Hash          string       `json:"hash"`
+	BlockHash     string       `json:"blockHash"`
+	BlockNumber   uint64       `json:"blockNumber"`
+	Timestamp     json.Number  `json:"timestamp"`
+	Confirmations int          `json:"confirmations"`
+	TxIndex       int          `json:"transactionIndex"`
+	FromAddress   string       `json:"fromAddress"`
+	ToAddress     string       `json:"toAddress"`
+	Value         types.Amount `json:"value"`
+	Fee           types.Amount `json:"fee"`
 }
 
 type Block struct {

@@ -12,7 +12,7 @@ import (
 )
 
 func TestPlatform_CurrentBlockNumber(t *testing.T) {
-	chainHead, err := mock.JsonFromFilePathToString("mocks/ChainHead.json")
+	chainHead, err := mock.JsonStringFromFilePath("mocks/ChainHead.json")
 	assert.Nil(t, err)
 
 	data := make(map[string]func(http.ResponseWriter, *http.Request))
@@ -53,13 +53,13 @@ func TestPlatform_GetBlockByNumber(t *testing.T) {
 
 		switch resp {
 		case "Filecoin.ChainGetTipSetByHeight":
-			chainHead, err := mock.JsonFromFilePathToString("mocks/ChainGetTipSetByHeight.json")
+			chainHead, err := mock.JsonStringFromFilePath("mocks/ChainGetTipSetByHeight.json")
 			if err != nil {
 				panic(err)
 			}
 			d = chainHead
 		case "Filecoin.ChainGetBlockMessages":
-			blockMsg, err := mock.JsonFromFilePathToString("mocks/ChainGetBlockMessages.json")
+			blockMsg, err := mock.JsonStringFromFilePath("mocks/ChainGetBlockMessages.json")
 			if err != nil {
 				panic(err)
 			}
@@ -79,7 +79,7 @@ func TestPlatform_GetBlockByNumber(t *testing.T) {
 	assert.Nil(t, err)
 
 	blockJson, _ := json.Marshal(block)
-	wanted, _ := mock.JsonFromFilePathToString("mocks/response.json")
+	wanted, _ := mock.JsonStringFromFilePath("mocks/response.json")
 
 	assert.JSONEq(t, string(blockJson), wanted)
 }

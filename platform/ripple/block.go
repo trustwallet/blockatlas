@@ -1,17 +1,15 @@
 package ripple
 
-import (
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-)
+import "github.com/trustwallet/golibs/types"
 
 func (p *Platform) CurrentBlockNumber() (int64, error) {
 	return p.client.GetCurrentBlock()
 }
 
-func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
+func (p *Platform) GetBlockByNumber(num int64) (*types.Block, error) {
 	if srcBlock, err := p.client.GetBlockByNumber(num); err == nil {
 		txs := NormalizeTxs(srcBlock)
-		return &blockatlas.Block{
+		return &types.Block{
 			Number: num,
 			Txs:    txs,
 		}, nil

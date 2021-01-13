@@ -11,8 +11,8 @@ import (
 )
 
 var (
-	validatorSrc, _   = mock.JsonFromFilePathToString("mocks/" + "validator.json")
-	delegationsSrc, _ = mock.JsonFromFilePathToString("mocks/" + "delegation.json")
+	validatorSrc, _   = mock.JsonStringFromFilePath("mocks/" + "validator.json")
+	delegationsSrc, _ = mock.JsonStringFromFilePath("mocks/" + "delegation.json")
 	validatorMap      = blockatlas.ValidatorMap{
 		"one1pdv9lrdwl0rg5vglh4xtyrv3wjk3wsqket7zxy": validator1,
 	}

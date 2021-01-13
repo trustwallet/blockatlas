@@ -5,134 +5,134 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/coin"
 	"github.com/trustwallet/golibs/mock"
+	"github.com/trustwallet/golibs/types"
 )
 
 var (
 	userAddress       = `erd10yagg2vme2jns9zqf9xn8kl86fkc6dr063vnuj0mz2kk2jw0qwuqmfmaw0`
-	txTransferSrc1, _ = mock.JsonFromFilePathToString("mocks/tx.json")
-	txTransferSrc2, _ = mock.JsonFromFilePathToString("mocks/tx_2.json")
-	txTransferSrc3, _ = mock.JsonFromFilePathToString("mocks/tx_3.json")
-	txTransferSrc4, _ = mock.JsonFromFilePathToString("mocks/tx_4.json")
-	txTransferSrc5, _ = mock.JsonFromFilePathToString("mocks/tx_5.json")
-	txTransferSrc6, _ = mock.JsonFromFilePathToString("mocks/tx_6.json")
+	txTransferSrc1, _ = mock.JsonStringFromFilePath("mocks/tx.json")
+	txTransferSrc2, _ = mock.JsonStringFromFilePath("mocks/tx_2.json")
+	txTransferSrc3, _ = mock.JsonStringFromFilePath("mocks/tx_3.json")
+	txTransferSrc4, _ = mock.JsonStringFromFilePath("mocks/tx_4.json")
+	txTransferSrc5, _ = mock.JsonStringFromFilePath("mocks/tx_5.json")
+	txTransferSrc6, _ = mock.JsonStringFromFilePath("mocks/tx_6.json")
 
-	txTransfer1Normalized = blockatlas.Tx{
+	txTransfer1Normalized = types.Tx{
 		ID:       "30d404cc7a42b0158b95f6adfbf9a517627d60f6c7e497c1442dfdb6460285df",
 		Coin:     coin.EGLD,
 		Date:     int64(1587715632),
 		From:     "metachain",
 		To:       "erd10yagg2vme2jns9zqf9xn8kl86fkc6dr063vnuj0mz2kk2jw0qwuqmfmaw0",
 		Fee:      "1000",
-		Status:   blockatlas.StatusCompleted,
+		Status:   types.StatusCompleted,
 		Memo:     "ok",
 		Sequence: 0,
-		Meta: blockatlas.Transfer{
+		Meta: types.Transfer{
 			Value:    "82516976060558456822",
 			Symbol:   coin.Elrond().Symbol,
 			Decimals: coin.Elrond().Decimals,
 		},
-		Direction: blockatlas.DirectionOutgoing,
+		Direction: types.DirectionOutgoing,
 	}
 
-	txTransfer2Normalized = blockatlas.Tx{
+	txTransfer2Normalized = types.Tx{
 		ID:       "30d404cc7a42b0158b95f6adfbf9a517627d60f6c7e497c1442dfdb6460285df",
 		Coin:     coin.EGLD,
 		Date:     int64(1588757256),
 		From:     "erd10yagg2vme2jns9zqf9xn8kl86fkc6dr063vnuj0mz2kk2jw0qwuqmfmaw0",
 		To:       "erd10yagg2vme2jns9zqf9xn8kl86fkc6dr063vnuj0mz2kk2jw0qwuqmfmaw0",
 		Fee:      "1500",
-		Status:   blockatlas.StatusPending,
+		Status:   types.StatusPending,
 		Memo:     "money",
 		Sequence: 1,
-		Meta: blockatlas.Transfer{
+		Meta: types.Transfer{
 			Value:    "2000",
 			Symbol:   coin.Elrond().Symbol,
 			Decimals: coin.Elrond().Decimals,
 		},
-		Direction: blockatlas.DirectionSelf,
+		Direction: types.DirectionSelf,
 	}
 
-	txTransfer3Normalized = blockatlas.Tx{
+	txTransfer3Normalized = types.Tx{
 		ID:       "30d404cc7a42b0158b95f6adfbf9a517627d60f6c7e497c1442dfdb6460285df",
 		Coin:     coin.EGLD,
 		Date:     int64(1588757256),
 		From:     "erd10yagg2vme2jns9zqf9xn8kl86fkc6dr063vnuj0mz2kk2jw0qwuqmfmaw0",
 		To:       "erd1v0ce6rapup6rwma5sltyv05xhp33u543nex75a7j39vsz9m6squq6mxm7y",
 		Fee:      "5000",
-		Status:   blockatlas.StatusError,
+		Status:   types.StatusError,
 		Memo:     "test",
 		Sequence: 19,
-		Meta: blockatlas.Transfer{
+		Meta: types.Transfer{
 			Value:    "2",
 			Symbol:   coin.Elrond().Symbol,
 			Decimals: coin.Elrond().Decimals,
 		},
-		Direction: blockatlas.DirectionOutgoing,
+		Direction: types.DirectionOutgoing,
 	}
 
-	txTransfer4Normalized = blockatlas.Tx{
+	txTransfer4Normalized = types.Tx{
 		ID:       "30d404cc7a42b0158b95f6adfbf9a517627d60f6c7e497c1442dfdb6460285df",
 		Coin:     coin.EGLD,
 		Date:     int64(1588757256),
 		From:     "erd10yagg2vme2jns9zqf9xn8kl86fkc6dr063vnuj0mz2kk2jw0qwuqmfmaw0",
 		To:       "erd1v0ce6rapup6rwma5sltyv05xhp33u543nex75a7j39vsz9m6squq6mxm7y",
 		Fee:      "5000",
-		Status:   blockatlas.StatusPending,
+		Status:   types.StatusPending,
 		Memo:     "test",
 		Sequence: 19,
-		Meta: blockatlas.Transfer{
+		Meta: types.Transfer{
 			Value:    "2",
 			Symbol:   coin.Elrond().Symbol,
 			Decimals: coin.Elrond().Decimals,
 		},
-		Direction: blockatlas.DirectionOutgoing,
+		Direction: types.DirectionOutgoing,
 	}
 
-	txTransfer5Normalized = blockatlas.Tx{
+	txTransfer5Normalized = types.Tx{
 		ID:       "30d404cc7a42b0158b95f6adfbf9a517627d60f6c7e497c1442dfdb6460285df",
 		Coin:     coin.EGLD,
 		Date:     int64(1588757256),
 		From:     "erd10yagg2vme2jns9zqf9xn8kl86fkc6dr063vnuj0mz2kk2jw0qwuqmfmaw0",
 		To:       "erd1v0ce6rapup6rwma5sltyv05xhp33u543nex75a7j39vsz9m6squq6mxm7y",
 		Fee:      "5000",
-		Status:   blockatlas.StatusCompleted,
+		Status:   types.StatusCompleted,
 		Memo:     "test",
 		Sequence: 19,
-		Meta: blockatlas.Transfer{
+		Meta: types.Transfer{
 			Value:    "2",
 			Symbol:   coin.Elrond().Symbol,
 			Decimals: coin.Elrond().Decimals,
 		},
-		Direction: blockatlas.DirectionOutgoing,
+		Direction: types.DirectionOutgoing,
 	}
 
-	txTransfer6Normalized = blockatlas.Tx{
+	txTransfer6Normalized = types.Tx{
 		ID:       "30d404cc7a42b0158b95f6adfbf9a517627d60f6c7e497c1442dfdb6460285df",
 		Coin:     coin.EGLD,
 		From:     "erd10yagg2vme2jns9zqf9xn8kl86fkc6dr063vnuj0mz2kk2jw0qwuqmfmaw0",
 		To:       "erd1v0ce6rapup6rwma5sltyv05xhp33u543nex75a7j39vsz9m6squq6mxm7y",
 		Fee:      "5000",
-		Status:   blockatlas.StatusCompleted,
+		Status:   types.StatusCompleted,
 		Memo:     "test",
 		Sequence: 25,
 		Block:    620,
 		Date:     1596121554,
-		Meta: blockatlas.Transfer{
+		Meta: types.Transfer{
 			Value:    "2",
 			Symbol:   coin.Elrond().Symbol,
 			Decimals: coin.Elrond().Decimals,
 		},
-		Direction: blockatlas.DirectionOutgoing,
+		Direction: types.DirectionOutgoing,
 	}
 )
 
 type test struct {
 	name        string
 	apiResponse string
-	expected    *blockatlas.Tx
+	expected    *types.Tx
 }
 
 func TestNormalize(t *testing.T) {
@@ -211,5 +211,5 @@ func TestNormalizeTxsFromHyperblock(t *testing.T) {
 	})
 	require.Equal(t, len(txs), len(normalizedTxs))
 
-	require.Equal(t, []blockatlas.Tx{txTransfer6Normalized}, normalizedTxs)
+	require.Equal(t, []types.Tx{txTransfer6Normalized}, normalizedTxs)
 }

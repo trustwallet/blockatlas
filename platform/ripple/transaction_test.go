@@ -4,10 +4,9 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-
 	"github.com/trustwallet/golibs/coin"
 	"github.com/trustwallet/golibs/mock"
+	"github.com/trustwallet/golibs/types"
 )
 
 func TestNormalizeTx(t *testing.T) {
@@ -17,7 +16,7 @@ func TestNormalizeTx(t *testing.T) {
 	tests := []struct {
 		name   string
 		args   args
-		wantTx blockatlas.Tx
+		wantTx types.Tx
 		ok     bool
 	}{
 		{
@@ -25,7 +24,7 @@ func TestNormalizeTx(t *testing.T) {
 			args: args{
 				filename: "payment.json",
 			},
-			wantTx: blockatlas.Tx{
+			wantTx: types.Tx{
 				ID:     "40279A3DE51148BD41409DADF29DE8DCCD50F5AEE30840827B2C4C81C4E36505",
 				Coin:   coin.XRP,
 				From:   "rGSxFjoqmWz54PycrgQBQ5dB6e7TUpMxzq",
@@ -34,8 +33,8 @@ func TestNormalizeTx(t *testing.T) {
 				Date:   1512168330,
 				Block:  34698103,
 				Memo:   "2500",
-				Status: blockatlas.StatusCompleted,
-				Meta: blockatlas.Transfer{
+				Status: types.StatusCompleted,
+				Meta: types.Transfer{
 					Value:    "100000000",
 					Symbol:   "XRP",
 					Decimals: 6,
@@ -48,7 +47,7 @@ func TestNormalizeTx(t *testing.T) {
 			args: args{
 				filename: "payment_2.json",
 			},
-			wantTx: blockatlas.Tx{
+			wantTx: types.Tx{
 				ID:     "3D8512E02414EF5A6BC00281D945735E85DED9EF739B1DCA9EABE04D9EEC72C1",
 				Coin:   coin.XRP,
 				From:   "raz97dHvnyBcnYTbXGYxhV8bGyr1aPrE5w",
@@ -57,8 +56,8 @@ func TestNormalizeTx(t *testing.T) {
 				Date:   1565114281,
 				Block:  49163909,
 				Memo:   "",
-				Status: blockatlas.StatusCompleted,
-				Meta: blockatlas.Transfer{
+				Status: types.StatusCompleted,
+				Meta: types.Transfer{
 					Value:    "3100",
 					Symbol:   "XRP",
 					Decimals: 6,
@@ -71,7 +70,7 @@ func TestNormalizeTx(t *testing.T) {
 			args: args{
 				filename: "payment_failed.json",
 			},
-			wantTx: blockatlas.Tx{
+			wantTx: types.Tx{
 				ID:     "B9086F7EB895E943C4DDA9F1B582E6E7DE35F4FB91AD13C50AB74F854DC0EBE0",
 				Coin:   coin.XRP,
 				From:   "rJb5KsHsDHF1YS5B5DU6QCkH5NsPaKQTcy",
@@ -80,8 +79,8 @@ func TestNormalizeTx(t *testing.T) {
 				Date:   1581590872,
 				Block:  53401154,
 				Memo:   "",
-				Status: blockatlas.StatusError,
-				Meta: blockatlas.Transfer{
+				Status: types.StatusError,
+				Meta: types.Transfer{
 					Value:    "24999750000",
 					Symbol:   "XRP",
 					Decimals: 6,
@@ -94,7 +93,7 @@ func TestNormalizeTx(t *testing.T) {
 			args: args{
 				filename: "payment_3.json",
 			},
-			wantTx: blockatlas.Tx{},
+			wantTx: types.Tx{},
 			ok:     false,
 		},
 		{
@@ -102,14 +101,14 @@ func TestNormalizeTx(t *testing.T) {
 			args: args{
 				filename: "payment_4.json",
 			},
-			wantTx: blockatlas.Tx{},
+			wantTx: types.Tx{},
 			ok:     false,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			var srcTx Tx
-			_ = mock.ParseJsonFromFilePath("mocks/"+tt.args.filename, &srcTx)
+			_ = mock.JsonModelFromFilePath("mocks/"+tt.args.filename, &srcTx)
 			gotTx, err := NormalizeTx(&srcTx)
 			if err != tt.ok {
 				t.Errorf("NormalizeTx() error = %v, ok %v", err, tt.ok)

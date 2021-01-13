@@ -3,7 +3,7 @@ package zilliqa
 import (
 	"strconv"
 
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/golibs/types"
 )
 
 func (p *Platform) CurrentBlockNumber() (int64, error) {
@@ -19,8 +19,8 @@ func (p *Platform) CurrentBlockNumber() (int64, error) {
 	return block, nil
 }
 
-func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
-	var normalized []blockatlas.Tx
+func (p *Platform) GetBlockByNumber(num int64) (*types.Block, error) {
+	var normalized []types.Tx
 	txs, err := p.rpcClient.GetTxInBlock(num)
 	if err != nil {
 		return nil, err
@@ -31,7 +31,7 @@ func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
 		normalized = append(normalized, tx)
 	}
 
-	block := blockatlas.Block{
+	block := types.Block{
 		Number: num,
 		Txs:    normalized,
 	}

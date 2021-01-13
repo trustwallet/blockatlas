@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/golibs/types"
 )
 
 const (
@@ -69,12 +69,12 @@ type (
 	}
 )
 
-func (t *Transaction) Status() blockatlas.Status {
+func (t *Transaction) Status() types.Status {
 	switch t.Stat {
 	case TxStatusApplied:
-		return blockatlas.StatusCompleted
+		return types.StatusCompleted
 	default:
-		return blockatlas.StatusError
+		return types.StatusError
 	}
 }
 
@@ -86,14 +86,14 @@ func (t *Transaction) ErrorMsg() string {
 	}
 }
 
-func (t *Transaction) Title(address string) (blockatlas.KeyTitle, bool) {
+func (t *Transaction) Title(address string) (types.KeyTitle, bool) {
 	if t.Type == TxTypeDelegation {
 		if address == t.Sender && t.Delegate != "" && t.Receiver == "" {
-			return blockatlas.AnyActionDelegation, true
+			return types.AnyActionDelegation, true
 		}
 
 		if address == t.Sender && t.Delegate == "" && t.Receiver != "" {
-			return blockatlas.AnyActionUndelegation, true
+			return types.AnyActionUndelegation, true
 		}
 	}
 
@@ -109,26 +109,26 @@ func (t *Transaction) BlockTimestamp() int64 {
 	return unix
 }
 
-func (t *Transaction) TransferType() (blockatlas.TransactionType, bool) {
+func (t *Transaction) TransferType() (types.TransactionType, bool) {
 	switch t.Type {
 	case TxTypeTransaction:
-		return blockatlas.TxTransfer, true
+		return types.TxTransfer, true
 	case TxTypeDelegation:
-		return blockatlas.TxAnyAction, true
+		return types.TxAnyAction, true
 	default:
 		return "unsupported type", false
 	}
 }
 
-func (t *Transaction) Direction(address string) blockatlas.Direction {
+func (t *Transaction) Direction(address string) types.Direction {
 	if t.Sender == address && t.Receiver == address {
-		return blockatlas.DirectionSelf
+		return types.DirectionSelf
 	}
 	if t.Sender == address && t.Receiver != address {
-		return blockatlas.DirectionOutgoing
+		return types.DirectionOutgoing
 	}
 
-	return blockatlas.DirectionIncoming
+	return types.DirectionIncoming
 }
 
 func (t *Transaction) GetReceiver() string {

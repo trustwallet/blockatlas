@@ -1,8 +1,6 @@
 package trustray
 
-import (
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-)
+import "github.com/trustwallet/golibs/types"
 
 type Page struct {
 	Total uint  `json:"total"`
@@ -33,13 +31,13 @@ type Doc struct {
 }
 
 type Op struct {
-	TxID     string                     `json:"transactionId"`
-	Contract *Contract                  `json:"contract"`
-	From     string                     `json:"from"`
-	To       string                     `json:"to"`
-	Type     blockatlas.TransactionType `json:"type"`
-	Value    string                     `json:"value"`
-	Coin     uint                       `json:"coin"`
+	TxID     string                `json:"transactionId"`
+	Contract *Contract             `json:"contract"`
+	From     string                `json:"from"`
+	To       string                `json:"to"`
+	Type     types.TransactionType `json:"type"`
+	Value    string                `json:"value"`
+	Coin     uint                  `json:"coin"`
 }
 
 type Contract struct {

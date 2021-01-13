@@ -8,17 +8,17 @@ import (
 )
 
 var (
-	wantedBlockNoOrders, _       = mock.JsonFromFilePathToString("mocks/block_no_orders.json")
-	wantedTxs, _                 = mock.JsonFromFilePathToString("mocks/txs.json")
-	wantedTokens, _              = mock.JsonFromFilePathToString("mocks/tokens.json")
-	wantedBlockMultiNoOrders, _  = mock.JsonFromFilePathToString("mocks/block_multi_no_orders.json")
-	wantedTxsResponse, _         = mock.JsonFromFilePathToString("mocks/txs_response.json")
-	wantedAccountMetaResponse, _ = mock.JsonFromFilePathToString("mocks/account_meta_response.json")
-	wantedTokensResponse, _      = mock.JsonFromFilePathToString("mocks/tokens_response.json")
-	wantedTxsResponseAva, _      = mock.JsonFromFilePathToString("mocks/txs_ava_response.json")
-	wantedBlockResponseMulti, _  = mock.JsonFromFilePathToString("mocks/block_multi_response.json")
-	mockedBlockResponse, _       = mock.JsonFromFilePathToString("mocks/block_response.json")
-	mockedNodeInfo, _            = mock.JsonFromFilePathToString("mocks/node_info.json")
+	wantedBlockNoOrders, _       = mock.JsonStringFromFilePath("mocks/block_no_orders.json")
+	wantedTxs, _                 = mock.JsonStringFromFilePath("mocks/txs.json")
+	wantedTokens, _              = mock.JsonStringFromFilePath("mocks/tokens.json")
+	wantedBlockMultiNoOrders, _  = mock.JsonStringFromFilePath("mocks/block_multi_no_orders.json")
+	wantedTxsResponse, _         = mock.JsonStringFromFilePath("mocks/txs_response.json")
+	wantedAccountMetaResponse, _ = mock.JsonStringFromFilePath("mocks/account_meta_response.json")
+	wantedTokensResponse, _      = mock.JsonStringFromFilePath("mocks/tokens_response.json")
+	wantedTxsResponseAva, _      = mock.JsonStringFromFilePath("mocks/txs_ava_response.json")
+	wantedBlockResponseMulti, _  = mock.JsonStringFromFilePath("mocks/block_multi_response.json")
+	mockedBlockResponse, _       = mock.JsonStringFromFilePath("mocks/block_response.json")
+	mockedNodeInfo, _            = mock.JsonStringFromFilePath("mocks/node_info.json")
 )
 
 func createMockedAPI() http.Handler {
