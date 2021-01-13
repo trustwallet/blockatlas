@@ -1,6 +1,7 @@
 package bounce
 
 import (
+	"fmt"
 	"strconv"
 
 	"github.com/trustwallet/golibs/types"
@@ -28,8 +29,15 @@ func (c *Client) GetCollectibles(owner, collectionID string, coinIndex uint) (ty
 }
 
 func (c *Client) NormalizeCollections(collections []Collection, coinIndex uint, owner string) (types.CollectionPage, error) {
-	page := make(types.CollectionPage, len(collections))
+	page := make(types.CollectionPage, 0)
+	category := map[string]bool{}
 	for _, cl := range collections {
+
+		// existed category
+		if _, ok := category[cl.ContractAddr]; ok {
+			continue
+		}
+
 		total, err := strconv.Atoi(cl.Balance)
 		if err != nil {
 			continue
@@ -38,21 +46,28 @@ func (c *Client) NormalizeCollections(collections []Collection, coinIndex uint, 
 		if len(cl.TokenURI) == 0 {
 			continue
 		}
-		info, err := c.fetchTokenURI(cl.TokenURI)
+		info, err := fetchTokenURI(cl.TokenURI)
 		if err != nil {
 			return nil, err
 		}
+
+		// skip empty name/image
+		if len(info.Name) == 0 || len(info.Image) == 0 {
+			continue
+		}
+
 		page = append(page, types.Collection{
 			Id:           cl.ContractAddr,
-			Name:         info.Properties.Name.Description,
-			ImageUrl:     info.Properties.Image.Description,
-			Description:  info.Properties.Description.Description,
+			Name:         info.Name,
+			ImageUrl:     normalizeImageUrl(info.Image),
+			Description:  info.Description,
 			ExternalLink: cl.TokenURI,
 			Total:        total,
 			Address:      owner,
 			Coin:         coinIndex,
 			Type:         "ERC" + cl.TokenType,
 		})
+		category[cl.ContractAddr] = true
 	}
 	return page, nil
 }
@@ -61,29 +76,25 @@ func (c *Client) NormalizeCollectibles(collectibles []Collectible, coinIndex uin
 	if len(collectibles) == 0 {
 		return types.CollectiblePage{}, nil
 	}
-	page := make(types.CollectiblePage, len(collectibles))
-	info, err := c.fetchTokenURI(collectibles[0].TokenURI)
+	page := make(types.CollectiblePage, 0)
+	info, err := fetchTokenURI(collectibles[0].TokenURI)
 	if err != nil {
 		return nil, err
 	}
 	for _, c := range collectibles {
 		page = append(page, types.Collectible{
-			ID:              genId(c.ID),
+			ID:              fmt.Sprintf("%s-%d", c.ContractAddr, c.TokenID),
 			CollectionID:    c.ContractAddr,
 			TokenID:         strconv.Itoa(c.TokenID),
 			ContractAddress: c.ContractAddr,
-			ImageUrl:        info.Properties.Image.Description,
+			ImageUrl:        normalizeImageUrl(info.Image),
 			ExternalLink:    c.TokenURI,
-			Type:            "ERC721",
-			Description:     info.Properties.Description.Description,
+			Type:            string(types.ERC721),
+			Description:     info.Description,
 			Coin:            coinIndex,
-			Name:            info.Properties.Name.Description,
+			Name:            info.Name,
 			Version:         "3.0",
 		})
 	}
 	return page, nil
-}
-
-func genId(id int) string {
-	return "bounce-" + strconv.Itoa(id)
 }

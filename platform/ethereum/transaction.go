@@ -10,6 +10,6 @@ func (p *Platform) GetTokenTxsByAddress(address string, token string) (types.TxP
 	return p.client.GetTokenTxs(address, token, p.CoinIndex)
 }
 
-func (p *Platform) GetTokenListByAddress(address string) (types.TokenPage, error) {
+func (p *Platform) GetTokenListByAddress(address string) ([]string, error) {
 	return p.client.GetTokenList(address, p.CoinIndex)
 }

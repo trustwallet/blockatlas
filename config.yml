@@ -214,9 +214,11 @@ elrond:
 filecoin:
   api: https://api.filscan.io:8700/rpc/v1
   explorer: https://filfox.info
-  # bsc:
-  # api: <blockbook api>
-  # rpc: <rpc>
+
+# smartchain:
+#   api: <blockbook api>
+#   rpc: https://bsc-dataseed.nariox.org
+#   collections_api: https://nftview.bounce.finance
 
 sentry:
   dsn: ""

@@ -6,7 +6,6 @@ type Response struct {
 }
 
 type Collectible struct {
-	ID           int    `json:"ID"`
 	ContractAddr string `json:"contract_addr"`
 	TokenID      int    `json:"token_id"`
 	OwnerAddr    string `json:"owner_addr"`
@@ -43,28 +42,7 @@ type CollectionResponse struct {
 }
 
 type CollectionInfo struct {
-	Title      string     `json:"title"`
-	Type       string     `json:"type"`
-	Properties Properties `json:"properties"`
-}
-
-type CollectionName struct {
-	Type        string `json:"type"`
+	Name        string `json:"name"`
 	Description string `json:"description"`
-}
-
-type CollectionDescription struct {
-	Type        string `json:"type"`
-	Description string `json:"description"`
-}
-
-type CollectionImage struct {
-	Type        string `json:"type"`
-	Description string `json:"description"`
-}
-
-type Properties struct {
-	Name        CollectionName        `json:"name"`
-	Description CollectionDescription `json:"description"`
-	Image       CollectionImage       `json:"image"`
+	Image       string `json:"image"`
 }
