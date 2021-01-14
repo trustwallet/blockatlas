@@ -37,13 +37,6 @@ var (
 	subscriptionsTokens = "subscriptions_tokens"
 )
 
-const (
-	consumerTransactionsTag        = "consumer-transactions"
-	consumerSubscriptionsTag       = "consumer-subscriptions"
-	consumerSubscriptionsTokensTag = "consumer-subscriptions-tokens"
-	consumerTokenIndexerTag        = "consumer-token-indexer"
-)
-
 func init() {
 	ctx, cancel = context.WithCancel(context.Background())
 	_, confPath := internal.ParseArgs("", defaultConfigPath)
@@ -101,7 +94,7 @@ func setupTransactionsConsumer(options mq.ConsumerOptions, ctx context.Context) 
 	go internal.RawTransactions.RunConsumer(internal.ConsumerDatabase{
 		Database: database,
 		Delivery: notifier.RunNotifier,
-		Tag:      consumerTransactionsTag,
+		Tag:      transactions,
 	}, options, ctx)
 }
 
@@ -109,7 +102,7 @@ func setupSubscriptionsConsumer(options mq.ConsumerOptions, ctx context.Context)
 	go internal.Subscriptions.RunConsumer(internal.ConsumerDatabase{
 		Database: database,
 		Delivery: subscriber.RunSubscriber,
-		Tag:      consumerSubscriptionsTag,
+		Tag:      subscriptions,
 	}, options, ctx)
 }
 
@@ -118,7 +111,7 @@ func setupSubscriptionsTokens(options mq.ConsumerOptions, ctx context.Context) {
 		Database:   database,
 		TokensAPIs: platform.TokensAPIs,
 		Delivery:   tokenindexer.RunTokenIndexerSubscribe,
-		Tag:        consumerSubscriptionsTokensTag,
+		Tag:        subscriptionsTokens,
 	}, options, ctx)
 }
 
@@ -126,6 +119,6 @@ func setupTokensConsumer(options mq.ConsumerOptions, ctx context.Context) {
 	go internal.RawTokens.RunConsumer(internal.ConsumerDatabase{
 		Database: database,
 		Delivery: tokenindexer.RunTokenIndexer,
-		Tag:      consumerTokenIndexerTag,
+		Tag:      tokens,
 	}, options, ctx)
 }
