@@ -44,10 +44,6 @@ type (
 		Kind string `json:"kind"`
 	}
 
-	Status struct {
-		Indexed int64 `json:"indexed"`
-	}
-
 	Validator struct {
 		Address string `json:"pkh"`
 	}
