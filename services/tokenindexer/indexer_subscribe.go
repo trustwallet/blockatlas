@@ -33,6 +33,8 @@ func RunTokenIndexerSubscribe(database *db.Instance, apis map[uint]blockatlas.To
 		return err
 	}
 
+	log.WithFields(log.Fields{"service": TokenIndexer, "event": event.Operation, "subscriptions": len(event.Subscriptions)}).Info("Processing")
+
 	subscriptions := event.ParseSubscriptions(event.Subscriptions)
 	switch event.Operation {
 	case subscriber.AddSubscription:
