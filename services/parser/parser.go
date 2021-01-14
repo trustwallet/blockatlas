@@ -262,15 +262,15 @@ func SaveLastParsedBlock(params Params, blocks []types.Block) error {
 	return nil
 }
 
-func publish(params Params, txs types.Txs) error {
+func publish(params Params, transactions types.Txs) error {
 
-	if len(txs) == 0 {
+	if len(transactions) == 0 {
 		return nil
 	}
 
-	body, err := json.Marshal(txs)
+	body, err := json.Marshal(transactions)
 	if err != nil {
-		log.WithFields(log.Fields{"operation": "publish marshal", "coin": params.Api.Coin().Handle}).Error(err)
+		log.WithFields(log.Fields{"operation": "publish marshal", "transactions": transactions, "coin": params.Api.Coin().Handle}).Error(err)
 		return err
 	}
 	return params.TransactionsExchange.Publish(body)
