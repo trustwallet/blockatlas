@@ -73,13 +73,13 @@ func main() {
 	case subscriptions:
 		setupSubscriptionsConsumer(subscriptionsOptions, ctx)
 	case subscriptionsTokens:
-		setupSubscriptionsTokens(options, ctx)
+		setupSubscriptionsTokensConsumer(options, ctx)
 	case tokens:
 		setupTokensConsumer(options, ctx)
 	default:
 		setupTransactionsConsumer(options, ctx)
 		setupSubscriptionsConsumer(subscriptionsOptions, ctx)
-		setupSubscriptionsTokens(options, ctx)
+		setupSubscriptionsTokensConsumer(options, ctx)
 		setupTokensConsumer(options, ctx)
 	}
 
@@ -106,7 +106,7 @@ func setupSubscriptionsConsumer(options mq.ConsumerOptions, ctx context.Context)
 	}, options, ctx)
 }
 
-func setupSubscriptionsTokens(options mq.ConsumerOptions, ctx context.Context) {
+func setupSubscriptionsTokensConsumer(options mq.ConsumerOptions, ctx context.Context) {
 	go internal.SubscriptionsTokens.RunConsumer(tokenindexer.ConsumerIndexer{
 		Database:   database,
 		TokensAPIs: platform.TokensAPIs,
