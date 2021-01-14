@@ -20,7 +20,7 @@ var errorHandler = func(res *http.Response, uri string) error {
 		log.WithFields(log.Fields{
 			"tags": raven.Tags{
 				{Key: "status_code", Value: strconv.Itoa(res.StatusCode)},
-				{Key: "host", Value: res.Request.Host},
+				{Key: "host", Value: res.Request.URL.Host},
 				{Key: "url", Value: uri},
 			},
 			"fingerprint": []string{"client_errors"},

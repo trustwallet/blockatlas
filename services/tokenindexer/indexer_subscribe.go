@@ -51,7 +51,7 @@ func RunTokenIndexerSubscribe(database *db.Instance, apis map[uint]blockatlas.To
 		return CreateAssociations(database, addressAssetsMap)
 	case subscriber.DeleteSubscription:
 		//No action is needed
-		break
+		return nil
 	}
 
 	return nil

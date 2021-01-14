@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"time"
 
-	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 
 	gocache "github.com/patrickmn/go-cache"
@@ -14,8 +13,7 @@ import (
 
 func (i *Instance) GetAsset(assetId string) (models.Asset, error) {
 	var asset models.Asset
-	err := i.Gorm.
-		First(&asset, "asset = ?", assetId).Error
+	err := i.Gorm.First(&asset, "asset = ?", assetId).Error
 	if err != nil {
 		return asset, err
 	}
@@ -97,15 +95,7 @@ func (i *Instance) AddNewAssets(assets []models.Asset) error {
 	}
 	i.addToMemory(newAssets)
 
-	return i.Gorm.Transaction(func(tx *gorm.DB) error {
-		for _, na := range newAssets {
-			err := tx.Clauses(clause.OnConflict{DoNothing: true}).Create(&na).Error
-			if err != nil {
-				return err
-			}
-		}
-		return nil
-	})
+	return i.Gorm.Clauses(clause.OnConflict{DoNothing: true}).Create(&newAssets).Error
 }
 
 func (i *Instance) addToMemory(newAssets []models.Asset) {
@@ -124,8 +114,10 @@ func (i *Instance) addToMemory(newAssets []models.Asset) {
 func (i *Instance) GetAssetsFrom(from time.Time) ([]models.Asset, error) {
 	var dbAssets []models.Asset
 	if err := i.Gorm.
-		Find(&dbAssets, "created_at > ?", from).
-		Limit(10000).Error; err != nil {
+		Where("created_at > ?", from).
+		Order("created_at desc").
+		Limit(1000).
+		Find(&dbAssets).Error; err != nil {
 		return nil, err
 	}
 	return dbAssets, nil

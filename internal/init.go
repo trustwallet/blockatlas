@@ -3,6 +3,8 @@ package internal
 import (
 	"flag"
 
+	"github.com/trustwallet/golibs/network/middleware"
+
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 
@@ -45,7 +47,7 @@ func InitEngine(ginMode string) *gin.Engine {
 	engine := gin.New()
 
 	engine.Use(cors.Default())
-	engine.Use(gin.Logger())
+	engine.Use(middleware.Logger())
 
 	return engine
 }

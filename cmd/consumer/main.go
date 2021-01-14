@@ -52,7 +52,6 @@ func init() {
 	if err != nil {
 		log.Fatal("Postgres init: ", err)
 	}
-	go database.RestoreConnectionWorker(time.Second*10, config.Default.Postgres.URL)
 
 	tokenindexer.Init(database)
 }
@@ -63,7 +62,7 @@ func main() {
 	// RunTokenIndexerSubscribe requires to fetch data from token apis. Improve later
 	platform.Init(config.Default.Platform)
 
-	options := mq.ConsumerOptions{Workers: config.Default.Consumer.Workers}
+	options := mq.InitDefaultConsumerOptions(config.Default.Consumer.Workers)
 
 	switch config.Default.Consumer.Service {
 	case transactions:
@@ -90,7 +89,9 @@ func setupTransactionsConsumer(options mq.ConsumerOptions, ctx context.Context) 
 }
 
 func setupSubscriptionsConsumer(options mq.ConsumerOptions, ctx context.Context) {
-	go internal.Subscriptions.RunConsumer(internal.ConsumerDatabase{Database: database, Delivery: subscriber.RunSubscriber}, options, ctx)
+	// Special case options to avoid unknown deadlock on insert
+	subscriptionsOptions := mq.InitDefaultConsumerOptions(1)
+	go internal.Subscriptions.RunConsumer(internal.ConsumerDatabase{Database: database, Delivery: subscriber.RunSubscriber}, subscriptionsOptions, ctx)
 	go internal.SubscriptionsTokens.RunConsumer(tokenindexer.ConsumerIndexer{Database: database, TokensAPIs: platform.TokensAPIs, Delivery: tokenindexer.RunTokenIndexerSubscribe}, options, ctx)
 }
 

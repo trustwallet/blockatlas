@@ -3,7 +3,6 @@ package db
 import (
 	"github.com/trustwallet/blockatlas/db/models"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
 
@@ -11,19 +10,22 @@ func (i *Instance) CreateSubscriptions(addresses []blockatlas.Subscription) erro
 	if len(addresses) == 0 {
 		return nil
 	}
-	result := make([]models.Subscription, 0)
+	// remove duplicates
+	addressIds := make(map[string]bool)
 	for _, address := range addresses {
-		result = append(result, models.Subscription{Address: address.AddressID()})
+		addressIds[address.AddressID()] = true
+	}
+	result := make([]models.Subscription, 0)
+	for addressId := range addressIds {
+		result = append(result, models.Subscription{Address: addressId})
 	}
 
-	return i.Gorm.Transaction(func(tx *gorm.DB) error {
-		return tx.Clauses(clause.OnConflict{DoNothing: true}).Create(&result).Error
-	})
+	return i.Gorm.Clauses(clause.OnConflict{DoNothing: true}).Create(&result).Error
 }
 
 func (i *Instance) GetSubscriptions(addresses []string) ([]models.Subscription, error) {
 	var subscriptions []models.Subscription
-	err := i.Gorm.Find(&subscriptions, "address in (?)", addresses).Error
+	err := i.Gorm.Find(&subscriptions, "address in ?", addresses).Error
 	if err != nil {
 		return nil, err
 	}
@@ -56,7 +58,5 @@ func (i *Instance) CreateSubscriptionsAssets(associations []models.Subscriptions
 	if len(associations) == 0 {
 		return nil
 	}
-	return i.Gorm.
-		Clauses(clause.OnConflict{DoNothing: true}).
-		Create(&associations).Error
+	return i.Gorm.Clauses(clause.OnConflict{DoNothing: true}).Create(&associations).Error
 }
