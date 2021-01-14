@@ -16,7 +16,7 @@ func (i *Instance) CreateSubscriptions(addresses []blockatlas.Subscription) erro
 		addressIds[address.AddressID()] = true
 	}
 	result := make([]models.Subscription, 0)
-	for addressId, _ := range addressIds {
+	for addressId := range addressIds {
 		result = append(result, models.Subscription{Address: addressId})
 	}
 
