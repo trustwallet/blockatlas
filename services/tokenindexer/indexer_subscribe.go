@@ -14,10 +14,15 @@ type ConsumerIndexer struct {
 	Database   *db.Instance
 	TokensAPIs map[uint]blockatlas.TokensAPI
 	Delivery   func(*db.Instance, map[uint]blockatlas.TokensAPI, amqp.Delivery) error
+	Tag        string
 }
 
 func (c ConsumerIndexer) Callback(msg amqp.Delivery) error {
 	return c.Delivery(c.Database, c.TokensAPIs, msg)
+}
+
+func (c ConsumerIndexer) ConsumerTag() string {
+	return c.Tag
 }
 
 func RunTokenIndexerSubscribe(database *db.Instance, apis map[uint]blockatlas.TokensAPI, delivery amqp.Delivery) error {

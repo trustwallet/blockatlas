@@ -36,6 +36,13 @@ var (
 	subscriptions = "subscriptions"
 )
 
+const (
+	consumerTransactionsTag        = "consumer-transactions"
+	consumerSubscriptionsTag       = "consumer-subscriptions"
+	consumerSubscriptionsTokensTag = "consumer-subscriptions-tokens"
+	consumerTokenIndexerTag        = "consumer-token-indexer"
+)
+
 func init() {
 	ctx, cancel = context.WithCancel(context.Background())
 	_, confPath := internal.ParseArgs("", defaultConfigPath)
@@ -85,16 +92,34 @@ func main() {
 }
 
 func setupTransactionsConsumer(options mq.ConsumerOptions, ctx context.Context) {
-	go internal.RawTransactions.RunConsumer(internal.ConsumerDatabase{Database: database, Delivery: notifier.RunNotifier}, options, ctx)
+	go internal.RawTransactions.RunConsumer(internal.ConsumerDatabase{
+		Database: database,
+		Delivery: notifier.RunNotifier,
+		Tag:      consumerTransactionsTag,
+	}, options, ctx)
 }
 
 func setupSubscriptionsConsumer(options mq.ConsumerOptions, ctx context.Context) {
 	// Special case options to avoid unknown deadlock on insert
 	subscriptionsOptions := mq.InitDefaultConsumerOptions(1)
-	go internal.Subscriptions.RunConsumer(internal.ConsumerDatabase{Database: database, Delivery: subscriber.RunSubscriber}, subscriptionsOptions, ctx)
-	go internal.SubscriptionsTokens.RunConsumer(tokenindexer.ConsumerIndexer{Database: database, TokensAPIs: platform.TokensAPIs, Delivery: tokenindexer.RunTokenIndexerSubscribe}, options, ctx)
+	go internal.Subscriptions.RunConsumer(internal.ConsumerDatabase{
+		Database: database,
+		Delivery: subscriber.RunSubscriber,
+		Tag:      consumerSubscriptionsTag,
+	}, subscriptionsOptions, ctx)
+
+	go internal.SubscriptionsTokens.RunConsumer(tokenindexer.ConsumerIndexer{
+		Database:   database,
+		TokensAPIs: platform.TokensAPIs,
+		Delivery:   tokenindexer.RunTokenIndexerSubscribe,
+		Tag:        consumerSubscriptionsTokensTag,
+	}, options, ctx)
 }
 
 func setupTokensConsumer(options mq.ConsumerOptions, ctx context.Context) {
-	go internal.RawTokens.RunConsumer(internal.ConsumerDatabase{Database: database, Delivery: tokenindexer.RunTokenIndexer}, options, ctx)
+	go internal.RawTokens.RunConsumer(internal.ConsumerDatabase{
+		Database: database,
+		Delivery: tokenindexer.RunTokenIndexer,
+		Tag:      consumerTokenIndexerTag,
+	}, options, ctx)
 }
