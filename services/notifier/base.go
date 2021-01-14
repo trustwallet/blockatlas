@@ -14,23 +14,23 @@ const (
 )
 
 func RunNotifier(database *db.Instance, delivery amqp.Delivery) error {
-	txs, err := GetTransactionsFromDelivery(delivery, Notifier)
+	transactions, err := GetTransactionsFromDelivery(delivery, Notifier)
 	if err != nil {
-		log.WithFields(log.Fields{"service": Notifier, "txs": txs}).Error("failed to get transactions: ", err)
+		log.WithFields(log.Fields{"service": Notifier, "body": delivery.Body}).Error("failed to get transactions: ", err)
 		return err
 	}
 
 	allAddresses := make([]string, 0)
-	for _, tx := range txs {
+	for _, tx := range transactions {
 		allAddresses = append(allAddresses, tx.GetAddresses()...)
 	}
 
 	addresses := ToUniqueAddresses(allAddresses)
 	for i := range addresses {
-		addresses[i] = strconv.Itoa(int(txs[0].Coin)) + "_" + addresses[i]
+		addresses[i] = strconv.Itoa(int(transactions[0].Coin)) + "_" + addresses[i]
 	}
 
-	if len(txs) == 0 {
+	if len(transactions) == 0 {
 		return nil
 	}
 	subscriptions, err := database.GetSubscriptions(addresses)
@@ -44,7 +44,7 @@ func RunNotifier(database *db.Instance, delivery amqp.Delivery) error {
 		if !ok {
 			continue
 		}
-		notificationsForAddress := buildNotificationsByAddress(ua, txs)
+		notificationsForAddress := buildNotificationsByAddress(ua, transactions)
 		notifications = append(notifications, notificationsForAddress...)
 	}
 

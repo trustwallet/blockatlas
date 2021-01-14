@@ -17,23 +17,23 @@ const (
 )
 
 func RunTokenIndexer(database *db.Instance, delivery amqp.Delivery) error {
-	txs, err := notifier.GetTransactionsFromDelivery(delivery, TokenIndexer)
+	transactions, err := notifier.GetTransactionsFromDelivery(delivery, TokenIndexer)
 	if err != nil {
-		log.WithFields(log.Fields{"service": TokenIndexer, "txs": txs}).Error("failed to get transactions: ", err)
+		log.WithFields(log.Fields{"service": TokenIndexer, "body": delivery.Body}).Error("failed to get transactions: ", err)
 		return err
 	}
-	txs = txs.FilterTransactionsByType([]types.TransactionType{
+	transactions = transactions.FilterTransactionsByType([]types.TransactionType{
 		types.TxTokenTransfer,
 		types.TxNativeTokenTransfer,
 	})
 
-	if len(txs) == 0 {
+	if len(transactions) == 0 {
 		return nil
 	}
 
 	// Add new assets to db
 
-	assets := GetAssetsFromTransactions(txs)
+	assets := GetAssetsFromTransactions(transactions)
 	err = database.AddNewAssets(assets)
 	if err != nil {
 		log.WithFields(log.Fields{"service": TokenIndexer}).Error("Failed to add new assets", err)
@@ -41,7 +41,7 @@ func RunTokenIndexer(database *db.Instance, delivery amqp.Delivery) error {
 	}
 
 	// Add asset <> address association
-	addressAssetsMap := assetsMap(txs)
+	addressAssetsMap := assetsMap(transactions)
 
 	return CreateAssociations(database, addressAssetsMap)
 }

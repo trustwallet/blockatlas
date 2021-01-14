@@ -14,9 +14,6 @@ func GetTransactionsFromDelivery(delivery amqp.Delivery, service string) (types.
 	var transactions types.Txs
 
 	if err := json.Unmarshal(delivery.Body, &transactions); err != nil {
-
-		log.WithFields(log.Fields{"service": service, "body": string(delivery.Body)}).Error("GetTransactionsFromDelivery")
-
 		return nil, err
 	}
 
