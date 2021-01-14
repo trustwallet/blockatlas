@@ -31,9 +31,10 @@ var (
 	cancel   context.CancelFunc
 	database *db.Instance
 
-	transactions  = "transactions"
-	tokens        = "tokens"
-	subscriptions = "subscriptions"
+	transactions        = "transactions"
+	tokens              = "tokens"
+	subscriptions       = "subscriptions"
+	subscriptionsTokens = "subscriptions_tokens"
 )
 
 const (
@@ -70,17 +71,22 @@ func main() {
 	platform.Init(config.Default.Platform)
 
 	options := mq.InitDefaultConsumerOptions(config.Default.Consumer.Workers)
+	// Special case options to avoid unknown deadlock on insert
+	subscriptionsOptions := mq.InitDefaultConsumerOptions(1)
 
 	switch config.Default.Consumer.Service {
 	case transactions:
 		setupTransactionsConsumer(options, ctx)
 	case subscriptions:
-		setupSubscriptionsConsumer(options, ctx)
+		setupSubscriptionsConsumer(subscriptionsOptions, ctx)
+	case subscriptionsTokens:
+		setupSubscriptionsTokens(options, ctx)
 	case tokens:
 		setupTokensConsumer(options, ctx)
 	default:
 		setupTransactionsConsumer(options, ctx)
-		setupSubscriptionsConsumer(options, ctx)
+		setupSubscriptionsConsumer(subscriptionsOptions, ctx)
+		setupSubscriptionsTokens(options, ctx)
 		setupTokensConsumer(options, ctx)
 	}
 
@@ -100,14 +106,14 @@ func setupTransactionsConsumer(options mq.ConsumerOptions, ctx context.Context) 
 }
 
 func setupSubscriptionsConsumer(options mq.ConsumerOptions, ctx context.Context) {
-	// Special case options to avoid unknown deadlock on insert
-	subscriptionsOptions := mq.InitDefaultConsumerOptions(1)
 	go internal.Subscriptions.RunConsumer(internal.ConsumerDatabase{
 		Database: database,
 		Delivery: subscriber.RunSubscriber,
 		Tag:      consumerSubscriptionsTag,
-	}, subscriptionsOptions, ctx)
+	}, options, ctx)
+}
 
+func setupSubscriptionsTokens(options mq.ConsumerOptions, ctx context.Context) {
 	go internal.SubscriptionsTokens.RunConsumer(tokenindexer.ConsumerIndexer{
 		Database:   database,
 		TokensAPIs: platform.TokensAPIs,
