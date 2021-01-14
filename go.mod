@@ -12,6 +12,7 @@ require (
 	github.com/getsentry/raven-go v0.2.0
 	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-gonic/gin v1.6.3
+	github.com/itchyny/timefmt-go v0.1.1
 	github.com/mitchellh/mapstructure v1.4.1
 	github.com/mr-tron/base58 v1.2.0
 	github.com/opencontainers/runc v1.0.0-rc9 // indirect
@@ -20,7 +21,7 @@ require (
 	github.com/sirupsen/logrus v1.7.0
 	github.com/spf13/viper v1.7.1
 	github.com/streadway/amqp v1.0.0
-	github.com/stretchr/testify v1.6.1
+	github.com/stretchr/testify v1.7.0
 	github.com/swaggo/gin-swagger v1.3.0
 	github.com/swaggo/swag v1.7.0
 	github.com/trustwallet/golibs v0.0.32
