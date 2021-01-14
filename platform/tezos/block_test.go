@@ -11,6 +11,7 @@ import (
 
 func TestNormalizeRpcBlock(t *testing.T) {
 	type args struct {
+		balance  string
 		filename string
 	}
 	tests := []struct {
@@ -22,6 +23,7 @@ func TestNormalizeRpcBlock(t *testing.T) {
 		{
 			name: "Test normalize block 1292516",
 			args: args{
+				balance:  "123456",
 				filename: "rpc_block_1292516.json",
 			},
 			want: &types.Block{
@@ -64,7 +66,7 @@ func TestNormalizeRpcBlock(t *testing.T) {
 							Name:     "Tezos",
 							Symbol:   "XTZ",
 							Decimals: 6,
-							Value:    "0",
+							Value:    "123456",
 						},
 					},
 					{
@@ -104,7 +106,7 @@ func TestNormalizeRpcBlock(t *testing.T) {
 							Name:     "Tezos",
 							Symbol:   "XTZ",
 							Decimals: 6,
-							Value:    "0",
+							Value:    "123456",
 						},
 					},
 					{
@@ -132,9 +134,10 @@ func TestNormalizeRpcBlock(t *testing.T) {
 	}
 	for _, tt := range tests {
 		var block RpcBlock
+		rpcClient := RpcClientMock{Balance: tt.args.balance}
 		_ = mock.JsonModelFromFilePath("mocks/"+tt.args.filename, &block)
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := NormalizeRpcBlock(block)
+			got, err := NormalizeRpcBlock(block, &rpcClient)
 			fmt.Println(got)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("NormalizeRpcBlock() error = %v, wantErr %v", err, tt.wantErr)
