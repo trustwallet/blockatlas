@@ -11,6 +11,8 @@ import (
 )
 
 func (p *Platform) GetTokenListByAddress(address string) (types.TokenPage, error) {
+	return make(types.TokenPage, 0), nil
+
 	tokens, err := p.client.fetchAccount(address)
 	if err != nil {
 		return nil, err
