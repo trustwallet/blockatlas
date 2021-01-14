@@ -72,6 +72,7 @@ func NormalizeRpcTransaction(tx RpcTransaction, header RpcBlockHeader) (types.Tx
 			Name:     coin.Name,
 			Symbol:   coin.Symbol,
 			Decimals: coin.Decimals,
+			Value:    "0",
 		}
 	default:
 		return types.Tx{}, errors.New("not supported operation kind: " + tx.Kind)

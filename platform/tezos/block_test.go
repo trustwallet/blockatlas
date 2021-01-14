@@ -64,6 +64,7 @@ func TestNormalizeRpcBlock(t *testing.T) {
 							Name:     "Tezos",
 							Symbol:   "XTZ",
 							Decimals: 6,
+							Value:    "0",
 						},
 					},
 					{
@@ -103,6 +104,7 @@ func TestNormalizeRpcBlock(t *testing.T) {
 							Name:     "Tezos",
 							Symbol:   "XTZ",
 							Decimals: 6,
+							Value:    "0",
 						},
 					},
 					{
