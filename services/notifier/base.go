@@ -17,7 +17,7 @@ func RunNotifier(database *db.Instance, delivery amqp.Delivery) error {
 	transactions, err := GetTransactionsFromDelivery(delivery, Notifier)
 	if err != nil {
 		log.WithFields(log.Fields{"service": Notifier, "body": string(delivery.Body)}).Error("failed to get transactions: ", err)
-		return err
+		return nil
 	}
 
 	allAddresses := make([]string, 0)
