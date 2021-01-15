@@ -20,6 +20,10 @@ type (
 		Delegate string `json:"delegate"`
 	}
 
+	AccountBalance struct {
+		Balance string `json:"balance"`
+	}
+
 	ExplorerAccount struct {
 		Transactions []Transaction `json:"ops"`
 	}

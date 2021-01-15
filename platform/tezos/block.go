@@ -2,7 +2,7 @@ package tezos
 
 import (
 	"encoding/json"
-	"errors"
+	"fmt"
 
 	"github.com/trustwallet/golibs/coin"
 	"github.com/trustwallet/golibs/types"
@@ -20,10 +20,10 @@ func (p *Platform) GetBlockByNumber(num int64) (*types.Block, error) {
 		return nil, err
 	}
 
-	return NormalizeRpcBlock(block)
+	return ProcessRpcBlock(block, &p.rpcClient)
 }
 
-func NormalizeRpcBlock(block RpcBlock) (*types.Block, error) {
+func ProcessRpcBlock(block RpcBlock, rpcClient IRpcClient) (*types.Block, error) {
 	txs := []types.Tx{}
 
 	for _, ops := range block.Operations {
@@ -33,7 +33,17 @@ func NormalizeRpcBlock(block RpcBlock) (*types.Block, error) {
 					if !(tx.Kind == TxTypeDelegation || tx.Kind == TxTypeTransaction) {
 						continue
 					}
-					normalized, err := NormalizeRpcTransaction(tx, block.Header)
+
+					balance := tx.Amount
+					if len(balance) == 0 {
+						account, err := rpcClient.GetAccountBalanceAtBlock(tx.Source, block.Header.Level)
+						if err != nil {
+							return nil, err
+						}
+						balance = account.Balance
+					}
+
+					normalized, err := NormalizeRpcTransaction(tx, block.Header, balance)
 					if err != nil {
 						return nil, err
 					}
@@ -47,42 +57,19 @@ func NormalizeRpcBlock(block RpcBlock) (*types.Block, error) {
 	return &types.Block{Number: block.Header.Level, Txs: txs}, nil
 }
 
-func NormalizeRpcTransaction(tx RpcTransaction, header RpcBlockHeader) (types.Tx, error) {
-	coin := coin.Tezos()
+func NormalizeRpcTransaction(tx RpcTransaction, header RpcBlockHeader, balance string) (types.Tx, error) {
 
-	var metadata interface{}
 	var to string
 	var txType types.TransactionType
 	switch tx.Kind {
 	case TxTypeTransaction:
 		to = tx.Destination
 		txType = types.TxTransfer
-		metadata = types.Transfer{
-			Value:    types.Amount(tx.Amount),
-			Symbol:   coin.Symbol,
-			Decimals: coin.Decimals,
-		}
 	case TxTypeDelegation:
-		var title types.KeyTitle
-		if len(tx.Delegate) == 0 {
-			title = types.AnyActionUndelegation
-		} else {
-			title = types.AnyActionDelegation
-			to = tx.Delegate
-		}
+		to = tx.Delegate
 		txType = types.TxAnyAction
-
-		metadata = types.AnyAction{
-			Coin:     coin.ID,
-			Title:    title,
-			Key:      types.KeyStakeDelegate,
-			Name:     coin.Name,
-			Symbol:   coin.Symbol,
-			Decimals: coin.Decimals,
-			Value:    "0",
-		}
 	default:
-		return types.Tx{}, errors.New("not supported operation kind: " + tx.Kind)
+		return types.Tx{}, fmt.Errorf("not supported operation kind: %s", tx.Kind)
 	}
 
 	date, err := timefmt.Parse(header.Timestamp, "%Y-%m-%dT%H:%M:%SZ")
@@ -90,15 +77,18 @@ func NormalizeRpcTransaction(tx RpcTransaction, header RpcBlockHeader) (types.Tx
 		return types.Tx{}, err
 	}
 
-	var status types.Status
-	if tx.Metadata.OperationResult.Status == TxStatusApplied {
-		status = types.StatusCompleted
-	} else {
+	metadata, err := mapMetadat(tx, balance)
+	if err != nil {
+		return types.Tx{}, err
+	}
+
+	status := types.StatusCompleted
+	if tx.Metadata.OperationResult.Status != TxStatusApplied {
 		status = types.StatusError
 	}
 
 	return types.Tx{
-		Coin:   coin.ID,
+		Coin:   coin.Tezos().ID,
 		From:   tx.Source,
 		To:     to,
 		Fee:    types.Amount(tx.Fee),
@@ -108,6 +98,38 @@ func NormalizeRpcTransaction(tx RpcTransaction, header RpcBlockHeader) (types.Tx
 		Type:   txType,
 		Meta:   metadata,
 	}, nil
+}
+
+func mapMetadat(tx RpcTransaction, balance string) (interface{}, error) {
+	coin := coin.Tezos()
+
+	switch tx.Kind {
+	case TxTypeTransaction:
+		return types.Transfer{
+			Value:    types.Amount(balance),
+			Symbol:   coin.Symbol,
+			Decimals: coin.Decimals,
+		}, nil
+	case TxTypeDelegation:
+		var title types.KeyTitle
+		if len(tx.Delegate) == 0 {
+			title = types.AnyActionUndelegation
+		} else {
+			title = types.AnyActionDelegation
+		}
+
+		return types.AnyAction{
+			Coin:     coin.ID,
+			Title:    title,
+			Key:      types.KeyStakeDelegate,
+			Name:     coin.Name,
+			Symbol:   coin.Symbol,
+			Decimals: coin.Decimals,
+			Value:    types.Amount(balance),
+		}, nil
+	default:
+		return nil, fmt.Errorf("not supported metadata for kind: %s", tx.Kind)
+	}
 }
 
 func mapTransaction(content interface{}) (RpcTransaction, error) {

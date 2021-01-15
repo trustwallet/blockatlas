@@ -9,7 +9,7 @@ import (
 )
 
 type IRpcClient interface {
-	GetAccountAtBlock(address string, block int64) (account Account, err error)
+	GetAccountBalanceAtBlock(address string, block int64) (account AccountBalance, err error)
 }
 
 type RpcClient struct {
@@ -47,10 +47,11 @@ func (c *RpcClient) GetPeriodType() (periodType PeriodType, err error) {
 }
 
 func (c *RpcClient) GetAccount(address string) (account Account, err error) {
-	return c.GetAccountAtBlock(address, 0)
+	err = c.Get(&account, "chains/main/blocks/head/context/contracts/"+address, nil)
+	return
 }
 
-func (c *RpcClient) GetAccountAtBlock(address string, block int64) (account Account, err error) {
+func (c *RpcClient) GetAccountBalanceAtBlock(address string, block int64) (account AccountBalance, err error) {
 	var head string
 	if block == 0 {
 		head = "head"
