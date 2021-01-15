@@ -23,8 +23,8 @@ func RunSubscriber(database *db.Instance, delivery amqp.Delivery) error {
 	var event blockatlas.SubscriptionEvent
 	err := json.Unmarshal(delivery.Body, &event)
 	if err != nil {
-		log.WithFields(log.Fields{"service": Notifications, "body": string(delivery.Body)}).Error(err)
-		return err
+		log.WithFields(log.Fields{"service": Notifications, "body": string(delivery.Body), "error": err}).Error("Unable to unmarshal MQ Message")
+		return nil
 	}
 
 	subscriptions := event.ParseSubscriptions(event.Subscriptions)
