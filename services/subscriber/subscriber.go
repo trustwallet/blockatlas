@@ -23,7 +23,7 @@ func RunSubscriber(database *db.Instance, delivery amqp.Delivery) error {
 	var event blockatlas.SubscriptionEvent
 	err := json.Unmarshal(delivery.Body, &event)
 	if err != nil {
-		log.WithFields(log.Fields{"service": Notifications, "body": delivery.Body}).Error(err)
+		log.WithFields(log.Fields{"service": Notifications, "body": string(delivery.Body)}).Error(err)
 		return err
 	}
 

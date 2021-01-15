@@ -29,7 +29,7 @@ func RunTokenIndexerSubscribe(database *db.Instance, apis map[uint]blockatlas.To
 	var event blockatlas.SubscriptionEvent
 	err := json.Unmarshal(delivery.Body, &event)
 	if err != nil {
-		log.WithFields(log.Fields{"service": SubscriptionsTokenIndexer, "body": delivery.Body}).Error(err)
+		log.WithFields(log.Fields{"service": SubscriptionsTokenIndexer, "body": string(delivery.Body)}).Error(err)
 		return err
 	}
 
