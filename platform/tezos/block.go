@@ -30,10 +30,15 @@ func NormalizeRpcBlock(block RpcBlock, rpcClient IRpcClient) (*types.Block, erro
 		for _, op := range ops {
 			for _, content := range op.Contents {
 				if tx, err := mapTransaction(content); err == nil {
-					if normalized, err := NormalizeRpcTransaction(tx, block.Header, rpcClient); err == nil {
-						normalized.ID = op.Hash
-						txs = append(txs, normalized)
+					if !(tx.Kind == TxTypeDelegation || tx.Kind == TxTypeTransaction) {
+						continue
 					}
+					normalized, err := NormalizeRpcTransaction(tx, block.Header, rpcClient)
+					if err != nil {
+						return nil, err
+					}
+					normalized.ID = op.Hash
+					txs = append(txs, normalized)
 				}
 			}
 		}
@@ -66,11 +71,10 @@ func NormalizeRpcTransaction(tx RpcTransaction, header RpcBlockHeader, rpcClient
 			to = tx.Delegate
 		}
 		txType = types.TxAnyAction
-		value := "0"
 
 		account, err := rpcClient.GetAccountAtBlock(tx.Source, header.Level)
-		if err == nil {
-			value = account.Balance
+		if err != nil {
+			return types.Tx{}, errors.New("fetch balance failed: " + tx.Source)
 		}
 
 		metadata = types.AnyAction{
@@ -80,7 +84,7 @@ func NormalizeRpcTransaction(tx RpcTransaction, header RpcBlockHeader, rpcClient
 			Name:     coin.Name,
 			Symbol:   coin.Symbol,
 			Decimals: coin.Decimals,
-			Value:    types.Amount(value),
+			Value:    types.Amount(account.Balance),
 		}
 	default:
 		return types.Tx{}, errors.New("not supported operation kind: " + tx.Kind)
