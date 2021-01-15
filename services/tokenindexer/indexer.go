@@ -20,7 +20,7 @@ func RunTokenIndexer(database *db.Instance, delivery amqp.Delivery) error {
 	transactions, err := notifier.GetTransactionsFromDelivery(delivery, TokenIndexer)
 	if err != nil {
 		log.WithFields(log.Fields{"service": TokenIndexer, "body": string(delivery.Body)}).Error("failed to get transactions: ", err)
-		return err
+		return nil
 	}
 	transactions = transactions.FilterTransactionsByType([]types.TransactionType{
 		types.TxTokenTransfer,
