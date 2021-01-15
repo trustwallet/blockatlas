@@ -20,10 +20,10 @@ func (p *Platform) GetBlockByNumber(num int64) (*types.Block, error) {
 		return nil, err
 	}
 
-	return NormalizeRpcBlock(block, &p.rpcClient)
+	return NormalizeRpcBlock(block)
 }
 
-func NormalizeRpcBlock(block RpcBlock, rpcClient IRpcClient) (*types.Block, error) {
+func NormalizeRpcBlock(block RpcBlock) (*types.Block, error) {
 	txs := []types.Tx{}
 
 	for _, ops := range block.Operations {
@@ -33,7 +33,7 @@ func NormalizeRpcBlock(block RpcBlock, rpcClient IRpcClient) (*types.Block, erro
 					if !(tx.Kind == TxTypeDelegation || tx.Kind == TxTypeTransaction) {
 						continue
 					}
-					normalized, err := NormalizeRpcTransaction(tx, block.Header, rpcClient)
+					normalized, err := NormalizeRpcTransaction(tx, block.Header)
 					if err != nil {
 						return nil, err
 					}
@@ -47,7 +47,7 @@ func NormalizeRpcBlock(block RpcBlock, rpcClient IRpcClient) (*types.Block, erro
 	return &types.Block{Number: block.Header.Level, Txs: txs}, nil
 }
 
-func NormalizeRpcTransaction(tx RpcTransaction, header RpcBlockHeader, rpcClient IRpcClient) (types.Tx, error) {
+func NormalizeRpcTransaction(tx RpcTransaction, header RpcBlockHeader) (types.Tx, error) {
 	coin := coin.Tezos()
 
 	var metadata interface{}
@@ -72,11 +72,6 @@ func NormalizeRpcTransaction(tx RpcTransaction, header RpcBlockHeader, rpcClient
 		}
 		txType = types.TxAnyAction
 
-		account, err := rpcClient.GetAccountAtBlock(tx.Source, header.Level)
-		if err != nil {
-			return types.Tx{}, errors.New("fetch balance failed: " + tx.Source)
-		}
-
 		metadata = types.AnyAction{
 			Coin:     coin.ID,
 			Title:    title,
@@ -84,7 +79,7 @@ func NormalizeRpcTransaction(tx RpcTransaction, header RpcBlockHeader, rpcClient
 			Name:     coin.Name,
 			Symbol:   coin.Symbol,
 			Decimals: coin.Decimals,
-			Value:    types.Amount(account.Balance),
+			Value:    "0",
 		}
 	default:
 		return types.Tx{}, errors.New("not supported operation kind: " + tx.Kind)
