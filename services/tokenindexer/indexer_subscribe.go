@@ -2,6 +2,7 @@ package tokenindexer
 
 import (
 	"encoding/json"
+	"time"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/streadway/amqp"
@@ -32,6 +33,7 @@ func RunTokenIndexerSubscribe(database *db.Instance, apis map[uint]blockatlas.To
 		log.WithFields(log.Fields{"service": SubscriptionsTokenIndexer, "body": string(delivery.Body), "error": err}).Error("Unable to unmarshal MQ Message")
 		return nil
 	}
+	start := time.Now()
 
 	log.WithFields(log.Fields{"service": TokenIndexer, "event": event.Operation, "subscriptions": len(event.Subscriptions)}).Info("Processing")
 
@@ -55,11 +57,16 @@ func RunTokenIndexerSubscribe(database *db.Instance, apis map[uint]blockatlas.To
 			}
 			addressAssetsMap[coinAddress.AddressID()] = assetIds
 		}
-		return CreateAssociations(database, addressAssetsMap)
+		err = CreateAssociations(database, addressAssetsMap)
+		if err != nil {
+			return err
+		}
 	case subscriber.DeleteSubscription:
 		//No action is needed
 		return nil
 	}
+
+	log.WithFields(log.Fields{"service": TokenIndexer, "event": event.Operation, "subscriptions": len(event.Subscriptions), "duration": time.Since(start)}).Info("Processing complete")
 
 	return nil
 }
