@@ -3,10 +3,9 @@ package tokenindexer
 import (
 	"time"
 
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-
 	"github.com/trustwallet/blockatlas/db"
 	"github.com/trustwallet/blockatlas/db/models"
+	"github.com/trustwallet/golibs/types"
 )
 
 type Instance struct {
@@ -31,7 +30,7 @@ func (i Instance) GetTokensByAddress(r GetTokensByAddressRequest) (GetTokensByAd
 
 	for coin, coins := range r.AddressesByCoin {
 		for _, address := range coins {
-			list = append(list, blockatlas.GetAddressID(coin, address))
+			list = append(list, types.GetAddressID(coin, address))
 		}
 	}
 	from := time.Unix(int64(r.From), 0)

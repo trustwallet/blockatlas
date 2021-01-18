@@ -8,19 +8,19 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/streadway/amqp"
 	"github.com/trustwallet/blockatlas/db"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/golibs/types"
 )
 
 type Subscriber string
 
 const (
-	Notifications      Subscriber                       = "notifications"
-	AddSubscription    blockatlas.SubscriptionOperation = "AddSubscription"
-	DeleteSubscription blockatlas.SubscriptionOperation = "DeleteSubscription"
+	Notifications      Subscriber                  = "notifications"
+	AddSubscription    types.SubscriptionOperation = "AddSubscription"
+	DeleteSubscription types.SubscriptionOperation = "DeleteSubscription"
 )
 
 func RunSubscriber(database *db.Instance, delivery amqp.Delivery) error {
-	var event blockatlas.SubscriptionEvent
+	var event types.SubscriptionEvent
 	err := json.Unmarshal(delivery.Body, &event)
 	if err != nil {
 		log.WithFields(log.Fields{"service": Notifications, "body": string(delivery.Body), "error": err}).Error("Unable to unmarshal MQ Message")

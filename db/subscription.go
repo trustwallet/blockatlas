@@ -2,11 +2,11 @@ package db
 
 import (
 	"github.com/trustwallet/blockatlas/db/models"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/golibs/types"
 	"gorm.io/gorm/clause"
 )
 
-func (i *Instance) CreateSubscriptions(addresses []blockatlas.Subscription) error {
+func (i *Instance) CreateSubscriptions(addresses []types.Subscription) error {
 	if len(addresses) == 0 {
 		return nil
 	}
