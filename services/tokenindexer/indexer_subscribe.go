@@ -8,6 +8,7 @@ import (
 	"github.com/trustwallet/blockatlas/db"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/services/subscriber"
+	"github.com/trustwallet/golibs/types"
 )
 
 type ConsumerIndexer struct {
@@ -21,7 +22,7 @@ func (c ConsumerIndexer) Callback(msg amqp.Delivery) error {
 }
 
 func RunTokenIndexerSubscribe(database *db.Instance, apis map[uint]blockatlas.TokensAPI, delivery amqp.Delivery) error {
-	var event blockatlas.SubscriptionEvent
+	var event types.SubscriptionEvent
 	err := json.Unmarshal(delivery.Body, &event)
 	if err != nil {
 		log.WithFields(log.Fields{"service": SubscriptionsTokenIndexer, "event": event}).Error(err)
