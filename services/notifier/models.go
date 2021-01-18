@@ -2,19 +2,14 @@ package notifier
 
 import "github.com/trustwallet/golibs/types"
 
-type TransactionNotification struct {
-	Action types.TransactionType `json:"action"`
-	Result types.Tx              `json:"result"`
-}
-
-func buildNotificationsByAddress(address string, txs types.Txs) []TransactionNotification {
+func buildNotificationsByAddress(address string, txs types.Txs) []types.TransactionNotification {
 	transactionsByAddress := toUniqueTransactions(findTransactionsByAddress(txs, address))
 
-	result := make([]TransactionNotification, 0, len(transactionsByAddress))
+	result := make([]types.TransactionNotification, 0, len(transactionsByAddress))
 	for _, tx := range transactionsByAddress {
 		tx.Direction = tx.GetTransactionDirection(address)
 		tx.InferUtxoValue(address, tx.Coin)
-		result = append(result, TransactionNotification{Action: tx.Type, Result: tx})
+		result = append(result, types.TransactionNotification{Action: tx.Type, Result: tx})
 	}
 
 	return result

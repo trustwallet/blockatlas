@@ -7,7 +7,6 @@ import (
 	"github.com/streadway/amqp"
 	"github.com/trustwallet/blockatlas/db"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/services/subscriber"
 	"github.com/trustwallet/golibs/types"
 )
 
@@ -38,7 +37,7 @@ func RunTokenIndexerSubscribe(database *db.Instance, apis map[uint]blockatlas.To
 
 	subscriptions := event.ParseSubscriptions(event.Subscriptions)
 	switch event.Operation {
-	case subscriber.AddSubscription:
+	case types.AddSubscription:
 		addressAssetsMap := map[string][]string{}
 
 		for _, coinAddress := range subscriptions {
@@ -57,7 +56,7 @@ func RunTokenIndexerSubscribe(database *db.Instance, apis map[uint]blockatlas.To
 			addressAssetsMap[coinAddress.AddressID()] = assetIds
 		}
 		return CreateAssociations(database, addressAssetsMap)
-	case subscriber.DeleteSubscription:
+	case types.DeleteSubscription:
 		//No action is needed
 		return nil
 	}

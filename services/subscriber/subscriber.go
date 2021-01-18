@@ -11,32 +11,24 @@ import (
 	"github.com/trustwallet/golibs/types"
 )
 
-type Subscriber string
-
-const (
-	Notifications      Subscriber                  = "notifications"
-	AddSubscription    types.SubscriptionOperation = "AddSubscription"
-	DeleteSubscription types.SubscriptionOperation = "DeleteSubscription"
-)
-
 func RunSubscriber(database *db.Instance, delivery amqp.Delivery) error {
 	var event types.SubscriptionEvent
 	err := json.Unmarshal(delivery.Body, &event)
 	if err != nil {
-		log.WithFields(log.Fields{"service": Notifications, "body": string(delivery.Body), "error": err}).Error("Unable to unmarshal MQ Message")
+		log.WithFields(log.Fields{"service": types.Notifications, "body": string(delivery.Body), "error": err}).Error("Unable to unmarshal MQ Message")
 		return nil
 	}
 
 	subscriptions := event.ParseSubscriptions(event.Subscriptions)
 	switch event.Operation {
-	case AddSubscription:
+	case types.AddSubscription:
 		err := database.CreateSubscriptions(subscriptions)
 		if err != nil {
-			log.WithFields(log.Fields{"service": Notifications, "operation": event.Operation, "subscriptions": subscriptions}).Error(err)
+			log.WithFields(log.Fields{"service": types.Notifications, "operation": event.Operation, "subscriptions": subscriptions}).Error(err)
 			return err
 		}
-		log.WithFields(log.Fields{"service": Notifications, "operation": event.Operation, "subscriptions": len(subscriptions)}).Info("Add subscriptions")
-	case DeleteSubscription:
+		log.WithFields(log.Fields{"service": types.Notifications, "operation": event.Operation, "subscriptions": len(subscriptions)}).Info("Add subscriptions")
+	case types.DeleteSubscription:
 		subscriptionsIds := make([]string, 0)
 		for _, subscription := range subscriptions {
 			subscriptionsIds = append(subscriptionsIds, subscription.AddressID())

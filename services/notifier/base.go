@@ -7,6 +7,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/streadway/amqp"
 	"github.com/trustwallet/blockatlas/db"
+	"github.com/trustwallet/golibs/types"
 )
 
 const (
@@ -38,7 +39,7 @@ func RunNotifier(database *db.Instance, delivery amqp.Delivery) error {
 		return nil
 	}
 
-	notifications := make([]TransactionNotification, 0)
+	notifications := make([]types.TransactionNotification, 0)
 	for _, sub := range subscriptions {
 		ua, _, ok := UnprefixedAddress(sub.Address)
 		if !ok {
