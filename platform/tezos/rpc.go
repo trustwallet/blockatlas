@@ -2,12 +2,13 @@ package tezos
 
 import (
 	"fmt"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"time"
+
+	"github.com/trustwallet/golibs/client"
 )
 
 type RpcClient struct {
-	blockatlas.Request
+	client.Request
 }
 
 type PeriodType string
@@ -15,6 +16,20 @@ type PeriodType string
 const (
 	TestingPeriodType PeriodType = "testing"
 )
+
+func (c *RpcClient) GetBlockHead() (int64, error) {
+	var head RpcBlockHeader
+	err := c.Get(&head, "chains/main/blocks/head/header", nil)
+	if err != nil {
+		return 0, err
+	}
+	return int64(head.Level), nil
+}
+
+func (c *RpcClient) GetBlockByNumber(num int64) (block RpcBlock, err error) {
+	err = c.Get(&block, fmt.Sprintf("chains/main/blocks/%d", num), nil)
+	return
+}
 
 func (c *RpcClient) GetValidators(blockID string) (validators []Validator, err error) {
 	err = c.Get(&validators, fmt.Sprintf("chains/main/blocks/%s/votes/listings", blockID), nil)

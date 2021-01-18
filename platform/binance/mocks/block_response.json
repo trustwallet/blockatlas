@@ -1,0 +1,54 @@
+{
+  "blockHeight": 104867508,
+  "tx": [
+    {
+      "txHash": "4CD5BAA433BABA63D862141A4A2F9235B0BA5CBAB8114C93A0556ECA4EC7A68A",
+      "blockHeight": 104867508,
+      "txType": "CANCEL_ORDER",
+      "timeStamp": "2020-08-03T16:32:17.963Z",
+      "fromAddr": "bnb1l83kstts7lt9dpgawzechnrgjq54dql36dyspc",
+      "toAddr": null,
+      "value": null,
+      "txAsset": null,
+      "txFee": null,
+      "code": 0,
+      "data": "{\"orderData\":{\"symbol\":\"AVA-645_BUSD-BD1\",\"orderType\":\"LIMIT\",\"side\":\"SELL\",\"price\":\"1.94064\",\"quantity\":\"40\",\"timeInForce\":\"GTE\",\"orderId\":\"F9E3682D70F7D656851D70B38BCC6890295683F1-1023254\"}}",
+      "memo": "",
+      "source": 0,
+      "sequence": 1023322
+    },
+    {
+      "txHash": "9B87D17581F2AC73D2999EDE56535E50D9D4DB75150A92A90122190F77D47755",
+      "blockHeight": 104867508,
+      "txType": "TRANSFER",
+      "timeStamp": "2020-08-03T16:32:17.963Z",
+      "fromAddr": "bnb1c4czpzvn0ttdcpnv3cy2858l2m9frxdfgk4jr0",
+      "toAddr": "bnb1g2ukzn702napq3levm54m2z3p2gam7upern9aq",
+      "value": "0.24481570",
+      "txAsset": "BNB",
+      "txFee": "0.00037500",
+      "code": 0,
+      "data": null,
+      "memo": "",
+      "source": 0,
+      "sequence": 6
+    },
+    {
+      "txHash": "5C0580AC983C1CF36F1656D9E8B062CD0578839BEFC839EFD6720FF315B45EEB",
+      "blockHeight": 104867508,
+      "txType": "NEW_ORDER",
+      "timeStamp": "2020-08-03T16:32:17.963Z",
+      "fromAddr": "bnb1w7puzjxu05ktc5zvpnzkndt6tyl720nsutzvpg",
+      "toAddr": null,
+      "value": "169.20330000",
+      "txAsset": "AVA-645",
+      "txFee": "0.00000000",
+      "orderId": "7783C148DC7D2CBC504C0CC569B57A593FE53E70-1509155",
+      "code": 0,
+      "data": "{\"orderData\":{\"symbol\":\"AVA-645_BUSD-BD1\",\"orderType\":\"LIMIT\",\"side\":\"BUY\",\"price\":\"1.61146\",\"quantity\":\"105\",\"timeInForce\":\"GTE\",\"orderId\":\"7783C148DC7D2CBC504C0CC569B57A593FE53E70-1509155\"}}",
+      "memo": "",
+      "source": 0,
+      "sequence": 1509154
+    }
+  ]
+}

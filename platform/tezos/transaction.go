@@ -1,24 +1,22 @@
 package tezos
 
 import (
-	log "github.com/sirupsen/logrus"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/coin"
 	"github.com/trustwallet/golibs/numbers"
+	"github.com/trustwallet/golibs/types"
 )
 
-func (p *Platform) GetTxsByAddress(address string) (blockatlas.TxPage, error) {
+func (p *Platform) GetTxsByAddress(address string) (types.TxPage, error) {
 	txTypes := []string{TxTypeTransaction, TxTypeDelegation}
 	txs, err := p.client.GetTxsOfAddress(address, txTypes)
 	if err != nil {
-		log.WithFields(log.Fields{"txType": txTypes, "addr": address}).Error("GetAddrTxs", err)
 		return nil, err
 	}
 
 	return NormalizeTxs(txs.Transactions, address), nil
 }
 
-func NormalizeTxs(srcTxs []Transaction, address string) (txs []blockatlas.Tx) {
+func NormalizeTxs(srcTxs []Transaction, address string) (txs []types.Tx) {
 	for _, srcTx := range srcTxs {
 		tx, ok := NormalizeTx(srcTx, address)
 		if !ok {
@@ -30,19 +28,19 @@ func NormalizeTxs(srcTxs []Transaction, address string) (txs []blockatlas.Tx) {
 }
 
 // NormalizeTx converts a Tezos transaction into the generic model
-func NormalizeTx(srcTx Transaction, address string) (blockatlas.Tx, bool) {
-	var tx blockatlas.Tx
+func NormalizeTx(srcTx Transaction, address string) (types.Tx, bool) {
+	var tx types.Tx
 	tt, ok := srcTx.TransferType()
 	if !ok {
 		return tx, false
 	}
 
-	tx = blockatlas.Tx{
+	tx = types.Tx{
 		Block:  srcTx.Height,
 		Coin:   coin.XTZ,
 		Date:   srcTx.BlockTimestamp(),
 		Error:  srcTx.ErrorMsg(),
-		Fee:    blockatlas.Amount(numbers.DecimalExp(numbers.Float64toString(srcTx.Fee), 6)),
+		Fee:    types.Amount(numbers.DecimalExp(numbers.Float64toString(srcTx.Fee), 6)),
 		From:   srcTx.Sender,
 		ID:     srcTx.Hash,
 		Status: srcTx.Status(),
@@ -53,30 +51,30 @@ func NormalizeTx(srcTx Transaction, address string) (blockatlas.Tx, bool) {
 		tx.Direction = srcTx.Direction(address)
 	}
 
-	value := blockatlas.Amount(numbers.DecimalExp(numbers.Float64toString(srcTx.Volume), 6))
+	value := types.Amount(numbers.DecimalExp(numbers.Float64toString(srcTx.Volume), 6))
 	switch tt {
-	case blockatlas.TxAnyAction:
+	case types.TxAnyAction:
 		title, ok := srcTx.Title(address)
 		if !ok {
 			return tx, false
 		}
-		tx.Meta = blockatlas.AnyAction{
+		tx.Meta = types.AnyAction{
 			Coin:     coin.Tezos().ID,
 			Title:    title,
-			Key:      blockatlas.KeyStakeDelegate,
+			Key:      types.KeyStakeDelegate,
 			Name:     coin.Tezos().Name,
 			Symbol:   coin.Tezos().Symbol,
 			Decimals: coin.Tezos().Decimals,
 			Value:    value,
 		}
-	case blockatlas.TxTransfer:
-		tx.Meta = blockatlas.Transfer{
+	case types.TxTransfer:
+		tx.Meta = types.Transfer{
 			Value:    value,
 			Symbol:   coin.Coins[coin.XTZ].Symbol,
 			Decimals: coin.Coins[coin.XTZ].Decimals,
 		}
 	default:
-		return blockatlas.Tx{}, false
+		return types.Tx{}, false
 	}
 	return tx, true
 }

@@ -1,8 +1,9 @@
 package assets
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestAssetValidators_toMap(t *testing.T) {
@@ -17,7 +18,7 @@ func TestAssetValidators_toMap(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := tt.av.toMap()
+			got := tt.av.ToMap()
 			assert.Equal(t, tt.want, got)
 		})
 	}

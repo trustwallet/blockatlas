@@ -3,14 +3,12 @@ package zilliqa
 import (
 	"strconv"
 
-	"github.com/imroc/req"
-
 	"github.com/mitchellh/mapstructure"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/golibs/client"
 )
 
 type RpcClient struct {
-	blockatlas.Request
+	client.Request
 }
 
 func (c *RpcClient) GetBlockchainInfo() (info *ChainInfo, err error) {
@@ -25,18 +23,15 @@ func (c *RpcClient) GetTx(hash string) (tx TxRPC, err error) {
 
 func (c *RpcClient) GetTransactionsHashesInBlock(number int64) ([]string, error) {
 	strNumber := strconv.FormatInt(number, 10)
-	requestBody := &blockatlas.RpcRequest{
-		JsonRpc: blockatlas.JsonRpcVersion,
+	requestBody := &client.RpcRequest{
+		JsonRpc: client.JsonRpcVersion,
 		Method:  "GetTransactionsForTxBlock",
 		Params:  []string{strNumber},
 		Id:      number,
 	}
-	resp, err := req.Post(c.BaseUrl, req.BodyJSON(requestBody))
-	if err != nil {
-		return nil, err
-	}
 	var result HashesResponse
-	if err = resp.ToJSON(&result); err != nil {
+	err := c.Post(&result, "/", requestBody)
+	if err != nil {
 		return nil, err
 	}
 	return result.Txs(), nil
@@ -54,9 +49,9 @@ func (c *RpcClient) GetTxInBlock(number int64) ([]Tx, error) {
 		return txs, err
 	}
 
-	var requests blockatlas.RpcRequests
+	var requests client.RpcRequests
 	for _, hash := range hashes {
-		requests = append(requests, &blockatlas.RpcRequest{
+		requests = append(requests, &client.RpcRequest{
 			Method: "GetTransaction",
 			Params: []string{hash},
 		})

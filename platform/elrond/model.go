@@ -5,7 +5,7 @@ import (
 	"math/big"
 	"time"
 
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/golibs/types"
 )
 
 const roundDurationInSeconds = 6
@@ -56,9 +56,9 @@ type Transaction struct {
 	GasLimit  uint64        `json:"gasLimit,omitempty"`
 }
 
-func (tx *Transaction) TxFee() blockatlas.Amount {
+func (tx *Transaction) TxFee() types.Amount {
 	if tx.Fee != "0" && tx.Fee != "" {
-		return blockatlas.Amount(tx.Fee)
+		return types.Amount(tx.Fee)
 	}
 
 	// Hyperblocks API V1 does not provide the transaction fees (nor "gasUsed"). Hyperblocks API V2 will provide this information, as well.
@@ -68,28 +68,28 @@ func (tx *Transaction) TxFee() blockatlas.Amount {
 	txFee := big.NewInt(0).SetUint64(tx.GasPrice)
 	txFee = txFee.Mul(txFee, big.NewInt(0).SetUint64(tx.GasLimit))
 
-	return blockatlas.Amount(txFee.String())
+	return types.Amount(txFee.String())
 }
 
-func (tx *Transaction) TxStatus() blockatlas.Status {
+func (tx *Transaction) TxStatus() types.Status {
 	switch tx.Status {
 	case "Success", "success":
-		return blockatlas.StatusCompleted
+		return types.StatusCompleted
 	case "Pending", "pending":
-		return blockatlas.StatusPending
+		return types.StatusPending
 	default:
-		return blockatlas.StatusError
+		return types.StatusError
 	}
 }
 
-func (tx *Transaction) Direction(address string) blockatlas.Direction {
+func (tx *Transaction) Direction(address string) types.Direction {
 	switch {
 	case tx.Sender == address && tx.Receiver == address:
-		return blockatlas.DirectionSelf
+		return types.DirectionSelf
 	case tx.Sender == address && tx.Receiver != address:
-		return blockatlas.DirectionOutgoing
+		return types.DirectionOutgoing
 	default:
-		return blockatlas.DirectionIncoming
+		return types.DirectionIncoming
 	}
 }
 

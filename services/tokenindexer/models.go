@@ -1,9 +1,17 @@
 package tokenindexer
 
-type Request struct {
-	From int64
-	Coin int
-}
+type (
+	Request struct {
+		From int64
+	}
+
+	GetTokensByAddressRequest struct {
+		AddressesByCoin map[string][]string `json:"addresses"`
+		From            uint                `json:"from"`
+	}
+
+	GetTokensByAddressResponse []string
+)
 
 type Response struct {
 	Assets []Asset `json:"assets"`

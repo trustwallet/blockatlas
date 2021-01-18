@@ -1,12 +1,13 @@
 package tron
 
 import (
-	log "github.com/sirupsen/logrus"
-	"github.com/trustwallet/blockatlas/pkg/address"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/services/assets"
 	"strconv"
 	"time"
+
+	log "github.com/sirupsen/logrus"
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/services/assets"
+	"github.com/trustwallet/golibs/types"
 )
 
 const Annual = 0.74
@@ -45,7 +46,7 @@ func (p *Platform) GetDetails() blockatlas.StakingDetails {
 func getDetails() blockatlas.StakingDetails {
 	return blockatlas.StakingDetails{
 		Reward:        blockatlas.StakingReward{Annual: Annual},
-		MinimumAmount: blockatlas.Amount("1000000"),
+		MinimumAmount: types.Amount("1000000"),
 		LockTime:      259200,
 		Type:          blockatlas.DelegationTypeDelegate,
 	}
@@ -81,7 +82,7 @@ func (p *Platform) UndelegatedBalance(address string) (string, error) {
 }
 
 func normalizeValidator(v Validator) (validator blockatlas.Validator, ok bool) {
-	a, err := address.HexToAddress(v.Address)
+	a, err := HexToAddress(v.Address)
 	if err != nil {
 		return validator, false
 	}

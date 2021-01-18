@@ -1,0 +1,48 @@
+{
+  "height": "5552",
+  "txhash": "5E78C65A8C1A6C8239EBBBBF2E42020E6ADBA8037EDEA83BF88E1A9159CF13B8",
+  "code": 12,
+  "raw_log": "{\"codespace\":\"sdk\",\"code\":12,\"message\":\"out of gas in location: WritePerByte; gasWanted: 40000, gasUsed: 40480\"}",
+  "gas_wanted": "40000",
+  "gas_used": "40480",
+  "tx": {
+    "type": "cosmos-sdk/StdTx",
+    "value": {
+      "msg": [
+        {
+          "type": "cosmos-sdk/MsgSend",
+          "value": {
+            "from_address": "cosmos1shpfyt7psrff2ux7nznxvj6f7gq59fcqng5mku",
+            "to_address": "cosmos1za4pu5gxm80fg6sx0956f88l2sx7jfg2vf7nlc",
+            "amount": [
+              {
+                "denom": "uatom",
+                "amount": "100000"
+              }
+            ]
+          }
+        }
+      ],
+      "fee": {
+        "amount": [
+          {
+            "denom": "uatom",
+            "amount": "2000"
+          }
+        ],
+        "gas": "40000"
+      },
+      "signatures": [
+        {
+          "pub_key": {
+            "type": "tendermint/PubKeySecp256k1",
+            "value": "A0IDIokqw01U2YcdylvqD/sJHW5w9puS5vZWSf2GUaqL"
+          },
+          "signature": "1Kwp4dBZUbVV6Fk8AFcmNfSqi7MXFfqyLvHexFZXoqcKh+sNuezry89RhDAWgSMNLyaK20hI2XcUyks+Vo4QEQ=="
+        }
+      ],
+      "memo": "UniCoins registration rewards"
+    }
+  },
+  "timestamp": "2019-12-12T03:21:42Z"
+}

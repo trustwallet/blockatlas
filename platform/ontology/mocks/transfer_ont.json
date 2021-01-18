@@ -1,0 +1,25 @@
+{
+  "tx_hash": "ea0e5d8e389cb96760887094194ca359ac998b2f607be470a576861b91e2bf52",
+  "tx_type": 209,
+  "tx_time": 1578903628,
+  "block_height": 7571132,
+  "fee": "0.01",
+  "block_index": 1,
+  "confirm_flag": 1,
+  "transfers": [
+    {
+      "amount": "5",
+      "from_address": "ARFXGXSmgFT2h9EiS4D5fen127Lzi48Eij",
+      "to_address": "ARFXGXSmgFT2h9EiS4D5fen127Lzi48Eij",
+      "asset_name": "ont",
+      "contract_hash": "0100000000000000000000000000000000000000"
+    },
+    {
+      "amount": "0.01",
+      "from_address": "ARFXGXSmgFT2h9EiS4D5fen127Lzi48Eij",
+      "to_address": "AFmseVrdL9f9oyCzZefL9tG6UbviEH9ugK",
+      "asset_name": "ong",
+      "contract_hash": "0200000000000000000000000000000000000000"
+    }
+  ]
+}

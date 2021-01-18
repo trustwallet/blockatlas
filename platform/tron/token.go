@@ -1,22 +1,21 @@
 package tron
 
 import (
-	log "github.com/sirupsen/logrus"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/golibs/coin"
-	"github.com/trustwallet/golibs/tokentype"
 	"strconv"
 	"strings"
 	"sync"
-	"time"
+
+	log "github.com/sirupsen/logrus"
+	"github.com/trustwallet/golibs/coin"
+	"github.com/trustwallet/golibs/types"
 )
 
-func (p *Platform) GetTokenListByAddress(address string) (blockatlas.TokenPage, error) {
+func (p *Platform) GetTokenListByAddress(address string) (types.TokenPage, error) {
 	tokens, err := p.client.fetchAccount(address)
 	if err != nil {
 		return nil, err
 	}
-	tokenPage := make(blockatlas.TokenPage, 0)
+	tokenPage := make(types.TokenPage, 0)
 	if len(tokens.Data) == 0 {
 		return tokenPage, nil
 	}
@@ -37,31 +36,27 @@ func (p *Platform) GetTokenListByAddress(address string) (blockatlas.TokenPage, 
 	}
 
 	for _, t := range trc20Tokens {
-		tokenPage = append(tokenPage, blockatlas.Token{
+		tokenPage = append(tokenPage, types.Token{
 			Name:     t.Name,
 			Symbol:   strings.ToUpper(t.Symbol),
 			Decimals: uint(t.Decimals),
 			TokenID:  t.ContractAddress,
 			Coin:     coin.Tron().ID,
-			Type:     tokentype.TRC20,
+			Type:     types.TRC20,
 		})
 	}
 
 	return tokenPage, nil
 }
 
-func (p *Platform) getTokens(ids []string) chan blockatlas.Token {
-	tkChan := make(chan blockatlas.Token, len(ids))
+func (p *Platform) getTokens(ids []string) chan types.Token {
+	tkChan := make(chan types.Token, len(ids))
 	var wg sync.WaitGroup
 	for _, id := range ids {
 		wg.Add(1)
-		go func(i string, c chan blockatlas.Token) {
+		go func(i string, c chan types.Token) {
 			defer wg.Done()
-			time.Sleep(time.Millisecond)
-			err := p.getTokensChannel(i, c)
-			if err != nil {
-				log.WithFields(log.Fields{"token": i, "coin": coin.Tron().Handle}).Error("getTokens", err)
-			}
+			_ = p.getTokensChannel(i, c)
 		}(id, tkChan)
 	}
 	wg.Wait()
@@ -69,7 +64,7 @@ func (p *Platform) getTokens(ids []string) chan blockatlas.Token {
 	return tkChan
 }
 
-func (p *Platform) getTokensChannel(id string, tkChan chan blockatlas.Token) error {
+func (p *Platform) getTokensChannel(id string, tkChan chan types.Token) error {
 	info, err := p.client.fetchTokenInfo(id)
 	if err != nil || len(info.Data) == 0 {
 		return err
@@ -79,13 +74,13 @@ func (p *Platform) getTokensChannel(id string, tkChan chan blockatlas.Token) err
 	return nil
 }
 
-func NormalizeToken(info AssetInfo) blockatlas.Token {
-	return blockatlas.Token{
+func NormalizeToken(info AssetInfo) types.Token {
+	return types.Token{
 		Name:     info.Name,
 		Symbol:   strings.ToUpper(info.Symbol),
 		TokenID:  strconv.Itoa(int(info.ID)),
 		Coin:     coin.TRX,
 		Decimals: info.Decimals,
-		Type:     tokentype.TRC10,
+		Type:     types.TRC10,
 	}
 }

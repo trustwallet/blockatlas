@@ -7,7 +7,6 @@ import (
 	_ "github.com/trustwallet/blockatlas/docs"
 	"github.com/trustwallet/blockatlas/platform"
 	"github.com/trustwallet/blockatlas/services/tokenindexer"
-	"github.com/trustwallet/blockatlas/services/tokensearcher"
 )
 
 func SetupPlatformAPI(router gin.IRouter) {
@@ -25,13 +24,10 @@ func SetupPlatformAPI(router gin.IRouter) {
 	RegisterBasicAPI(router)
 }
 
-func SetupTokensSearcherAPI(router gin.IRouter, instance tokensearcher.Instance) {
-	RegisterTokensSearcherAPI(router, instance)
-}
-
 func SetupTokensIndexAPI(router gin.IRouter, instance tokenindexer.Instance) {
 	RegisterTokensIndexAPI(router, instance)
 }
+
 func SetupSwaggerAPI(router gin.IRouter) {
 	router.GET("swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 }

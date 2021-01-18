@@ -5,12 +5,12 @@ import (
 	"strconv"
 
 	log "github.com/sirupsen/logrus"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/golibs/client"
 	"github.com/trustwallet/golibs/numbers"
 )
 
 type Client struct {
-	blockatlas.Request
+	client.Request
 }
 
 func (c *Client) GetTxsOfAddress(address string) (txPage *TxResult, err error) {

@@ -2,11 +2,12 @@ package kava
 
 import (
 	"encoding/json"
-	"github.com/stretchr/testify/assert"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+
 	"github.com/trustwallet/golibs/coin"
+	"github.com/trustwallet/golibs/types"
 )
 
 const transferSrc = `
@@ -48,7 +49,7 @@ const transferSrc = `
             "to_address": "cosmos1nynns8ex9fq6sjjfj8k79ymkdz4sqth06xexae",
             "amount": [
               {
-                "denom": "uatom",
+                "denom": "ukava",
                 "amount": "2271999999"
               }
             ]
@@ -58,7 +59,7 @@ const transferSrc = `
       "fee": {
         "amount": [
           {
-            "denom": "uatom",
+            "denom": "ukava",
             "amount": "1"
           }
         ],
@@ -118,7 +119,7 @@ const transferSrcKava = `
             "to_address": "kava1z89utvygweg5l56fsk8ak7t6hh88fd0agl98n0",
             "amount": [
               {
-                "denom": "uatom",
+                "denom": "ukava",
                 "amount": "2271999999"
               }
             ]
@@ -128,7 +129,7 @@ const transferSrcKava = `
       "fee": {
         "amount": [
           {
-            "denom": "uatom",
+            "denom": "ukava",
             "amount": "1"
           }
         ],
@@ -147,6 +148,97 @@ const transferSrcKava = `
     }
   },
   "timestamp": "2019-05-04T17:57:57Z"
+}`
+
+const transferSrcKavaToken = `
+{
+    "height": "645538",
+    "txhash": "514D43780335A1C516850FEE5692F59E9A9DF1D8D986FC62AC434BEB58EDB8E2",
+    "raw_log": "[{\"msg_index\":0,\"log\":\"\",\"events\":[{\"type\":\"message\",\"attributes\":[{\"key\":\"action\",\"value\":\"send\"},{\"key\":\"sender\",\"value\":\"kava1ys70jvnajkv88529ys6urjcyle3k2j9r24g6a7\"},{\"key\":\"module\",\"value\":\"bank\"}]},{\"type\":\"transfer\",\"attributes\":[{\"key\":\"recipient\",\"value\":\"kava1wj2swfmeakxdrlqemvpzx2a4ljux9l4xq6qmcn\"},{\"key\":\"sender\",\"value\":\"kava1ys70jvnajkv88529ys6urjcyle3k2j9r24g6a7\"},{\"key\":\"amount\",\"value\":\"10000000000hard\"}]}]}]",
+    "logs": [
+    {
+        "msg_index": 0,
+        "log": "",
+        "events": [
+        {
+            "type": "message",
+            "attributes": [
+            {
+                "key": "action",
+                "value": "send"
+            },
+            {
+                "key": "sender",
+                "value": "kava1ys70jvnajkv88529ys6urjcyle3k2j9r24g6a7"
+            },
+            {
+                "key": "module",
+                "value": "bank"
+            }
+            ]
+        },
+        {
+            "type": "transfer",
+            "attributes": [
+            {
+                "key": "recipient",
+                "value": "kava1wj2swfmeakxdrlqemvpzx2a4ljux9l4xq6qmcn"
+            },
+            {
+                "key": "sender",
+                "value": "kava1ys70jvnajkv88529ys6urjcyle3k2j9r24g6a7"
+            },
+            {
+                "key": "amount",
+                "value": "10000000000hard"
+            }
+            ]
+        }
+        ]
+    }
+    ],
+    "gas_wanted": "200000",
+    "gas_used": "74794",
+    "tx": {
+    "type": "cosmos-sdk/StdTx",
+    "value": {
+    "msg": [
+    {
+        "type": "cosmos-sdk/MsgSend",
+        "value": {
+        "from_address": "kava1ys70jvnajkv88529ys6urjcyle3k2j9r24g6a7",
+        "to_address": "kava1wj2swfmeakxdrlqemvpzx2a4ljux9l4xq6qmcn",
+        "amount": [
+        {
+            "denom": "hard",
+            "amount": "10000000000"
+        }
+        ]
+    }
+    }
+    ],
+    "fee": {
+    "amount": [
+    {
+        "denom": "ukava",
+        "amount": "30"
+    }
+    ],
+    "gas": "200000"
+},
+    "signatures": [
+    {
+        "pub_key": {
+        "type": "tendermint/PubKeySecp256k1",
+        "value": "A/Uf73aHoxZXS7SvKweW4Ijo723YDLuhwhir6JSmVmWe"
+    },
+        "signature": "Cuse3VunNLXi19GxASZD0fFMWeelEKe8DnC7nIYyS6FGqXzN+KP9hAdct7g9jczGT+4emVsQtiLvuM9Racrnyg=="
+    }
+    ],
+    "memo": ""
+}
+},
+    "timestamp": "2020-12-19T10:49:24Z"
 }`
 
 const failedTransferSrc = `
@@ -168,7 +260,7 @@ const failedTransferSrc = `
             "to_address": "cosmos1za4pu5gxm80fg6sx0956f88l2sx7jfg2vf7nlc",
             "amount": [
               {
-                "denom": "uatom",
+                "denom": "ukava",
                 "amount": "100000"
               }
             ]
@@ -178,7 +270,7 @@ const failedTransferSrc = `
       "fee": {
         "amount": [
           {
-            "denom": "uatom",
+            "denom": "ukava",
             "amount": "2000"
           }
         ],
@@ -237,7 +329,7 @@ const delegateSrc = `
                   "delegator_address":"cosmos1237l0vauhw78qtwq045jd24ay4urpec6r3xfn3",
                   "validator_address":"cosmosvaloper12w6tynmjzq4l8zdla3v4x0jt8lt4rcz5gk7zg2",
                   "amount":{  
-                     "denom":"uatom",
+                     "denom":"ukava",
                      "amount":"49920"
                   }
                }
@@ -246,7 +338,7 @@ const delegateSrc = `
          "fee":{  
             "amount":[  
                {  
-                  "denom":"uatom",
+                  "denom":"ukava",
                   "amount":"5000"
                }
             ],
@@ -310,7 +402,7 @@ const unDelegateSrc = `
                   "delegator_address":"cosmos137rrp4p8n0nqcft0mwc62tdnyhhzf80knv5t94",
                   "validator_address":"cosmosvaloper1te8nxpc2myjfrhaty0dnzdhs5ahdh5agzuym9v",
                   "amount":{  
-                     "denom":"uatom",
+                     "denom":"ukava",
                      "amount":"5100000000"
                   }
                }
@@ -319,7 +411,7 @@ const unDelegateSrc = `
          "fee":{  
             "amount":[  
                {  
-                  "denom":"uatom",
+                  "denom":"ukava",
                   "amount":"5000"
                }
             ],
@@ -375,7 +467,7 @@ const claimRewardSrc1 = `
       "fee": {
         "amount": [
           {
-            "denom": "uatom",
+            "denom": "ukava",
             "amount": "1000"
           }
         ],
@@ -400,7 +492,7 @@ const claimRewardSrc1 = `
       "attributes": [
         {
           "key": "amount",
-          "value": "1138uatom"
+          "value": "1138ukava"
         },
         {
           "key": "validator",
@@ -408,7 +500,7 @@ const claimRewardSrc1 = `
         },
         {
           "key": "amount",
-          "value": "40612uatom"
+          "value": "40612ukava"
         },
         {
           "key": "validator",
@@ -416,7 +508,7 @@ const claimRewardSrc1 = `
         },
         {
           "key": "amount",
-          "value": "954uatom"
+          "value": "954ukava"
         },
         {
           "key": "validator",
@@ -424,7 +516,7 @@ const claimRewardSrc1 = `
         },
         {
           "key": "amount",
-          "value": "43574uatom"
+          "value": "43574ukava"
         },
         {
           "key": "amount"
@@ -457,7 +549,7 @@ const claimRewardSrc2 = `
             "delegator_address": "cosmos1y6yvdel7zys8x60gz9067fjpcpygsn62ae9x46",
             "validator_address": "cosmosvaloper12w6tynmjzq4l8zdla3v4x0jt8lt4rcz5gk7zg2",
             "amount": {
-              "denom": "uatom",
+              "denom": "ukava",
               "amount": "2692326"
             }
           }
@@ -466,7 +558,7 @@ const claimRewardSrc2 = `
       "fee": {
         "amount": [
           {
-            "denom": "uatom",
+            "denom": "ukava",
             "amount": "0"
           }
         ],
@@ -512,7 +604,7 @@ const claimRewardSrc2 = `
         },
         {
           "key": "amount",
-          "value": "2692701uatom"
+          "value": "2692701ukava"
         }
       ]
     },
@@ -521,7 +613,7 @@ const claimRewardSrc2 = `
       "attributes": [
         {
           "key": "amount",
-          "value": "2692701uatom"
+          "value": "2692701ukava"
         },
         {
           "key": "validator",
@@ -532,7 +624,7 @@ const claimRewardSrc2 = `
   ]
 }`
 
-var transferDst = blockatlas.Tx{
+var transferDst = types.Tx{
 	ID:     "E19B011D20D862DA0BEA7F24E3BC6DFF666EE6E044FCD9BD95B073478086DBB6",
 	Coin:   coin.ATOM,
 	From:   "cosmos1rw62phusuv9vzraezr55k0vsqssvz6ed52zyrl",
@@ -540,16 +632,16 @@ var transferDst = blockatlas.Tx{
 	Fee:    "1",
 	Date:   1556992677,
 	Block:  151980,
-	Status: blockatlas.StatusCompleted,
-	Type:   blockatlas.TxTransfer,
-	Meta: blockatlas.Transfer{
+	Status: types.StatusCompleted,
+	Type:   types.TxTransfer,
+	Meta: types.Transfer{
 		Value:    "2271999999",
 		Symbol:   coin.Cosmos().Symbol,
 		Decimals: 6,
 	},
 }
 
-var transferDstKava = blockatlas.Tx{
+var transferDstKava = types.Tx{
 	ID:     "E19B011D20D862DA0BEA7F24E3BC6DFF666EE6E044FCD9BD95B073478086DBB6",
 	Coin:   coin.KAVA,
 	From:   "kava17wcggpjx007uc09s8y4hwrj8f228mlwe0n0upn",
@@ -557,16 +649,37 @@ var transferDstKava = blockatlas.Tx{
 	Fee:    "1",
 	Date:   1556992677,
 	Block:  151980,
-	Status: blockatlas.StatusCompleted,
-	Type:   blockatlas.TxTransfer,
-	Meta: blockatlas.Transfer{
+	Status: types.StatusCompleted,
+	Type:   types.TxTransfer,
+	Meta: types.Transfer{
 		Value:    "2271999999",
 		Symbol:   coin.Kava().Symbol,
 		Decimals: 6,
 	},
 }
 
-var delegateDst = blockatlas.Tx{
+var transferDstKavaToken = types.Tx{
+	ID:     "514D43780335A1C516850FEE5692F59E9A9DF1D8D986FC62AC434BEB58EDB8E2",
+	Coin:   coin.KAVA,
+	From:   "kava1ys70jvnajkv88529ys6urjcyle3k2j9r24g6a7",
+	To:     "kava1wj2swfmeakxdrlqemvpzx2a4ljux9l4xq6qmcn",
+	Fee:    "30",
+	Date:   1608374964,
+	Block:  645538,
+	Status: types.StatusCompleted,
+	Type:   types.TxNativeTokenTransfer,
+	Meta: types.NativeTokenTransfer{
+		Value:    "10000000000",
+		Symbol:   "HARD",
+		Decimals: 6,
+		From:     "kava1ys70jvnajkv88529ys6urjcyle3k2j9r24g6a7",
+		To:       "kava1wj2swfmeakxdrlqemvpzx2a4ljux9l4xq6qmcn",
+		TokenID:  "hard",
+		Name:     "hard",
+	},
+}
+
+var delegateDst = types.Tx{
 	ID:        "11078091D1D5BD84F4275B6CEE02170428944DB0E8EEC37E980551435F6D04C7",
 	Coin:      coin.ATOM,
 	From:      "cosmos1237l0vauhw78qtwq045jd24ay4urpec6r3xfn3",
@@ -574,13 +687,13 @@ var delegateDst = blockatlas.Tx{
 	Fee:       "5000",
 	Date:      1564632616,
 	Block:     1258202,
-	Status:    blockatlas.StatusCompleted,
-	Type:      blockatlas.TxAnyAction,
-	Direction: blockatlas.DirectionOutgoing,
-	Meta: blockatlas.AnyAction{
+	Status:    types.StatusCompleted,
+	Type:      types.TxAnyAction,
+	Direction: types.DirectionOutgoing,
+	Meta: types.AnyAction{
 		Coin:     coin.ATOM,
-		Title:    blockatlas.AnyActionDelegation,
-		Key:      blockatlas.KeyStakeDelegate,
+		Title:    types.AnyActionDelegation,
+		Key:      types.KeyStakeDelegate,
 		Name:     coin.Cosmos().Name,
 		Symbol:   coin.Coins[coin.ATOM].Symbol,
 		Decimals: coin.Coins[coin.ATOM].Decimals,
@@ -588,7 +701,7 @@ var delegateDst = blockatlas.Tx{
 	},
 }
 
-var unDelegateDst = blockatlas.Tx{
+var unDelegateDst = types.Tx{
 	ID:        "A1EC36741FEF681F4A77B8F6032AD081100EE5ECB4CC76AEAC2174BC6B871CFE",
 	Coin:      coin.ATOM,
 	From:      "cosmos137rrp4p8n0nqcft0mwc62tdnyhhzf80knv5t94",
@@ -596,13 +709,13 @@ var unDelegateDst = blockatlas.Tx{
 	Fee:       "5000",
 	Date:      1564624521,
 	Block:     1257037,
-	Status:    blockatlas.StatusCompleted,
-	Type:      blockatlas.TxAnyAction,
-	Direction: blockatlas.DirectionIncoming,
-	Meta: blockatlas.AnyAction{
+	Status:    types.StatusCompleted,
+	Type:      types.TxAnyAction,
+	Direction: types.DirectionIncoming,
+	Meta: types.AnyAction{
 		Coin:     coin.ATOM,
-		Title:    blockatlas.AnyActionUndelegation,
-		Key:      blockatlas.KeyStakeDelegate,
+		Title:    types.AnyActionUndelegation,
+		Key:      types.KeyStakeDelegate,
 		Name:     coin.Cosmos().Name,
 		Symbol:   coin.Coins[coin.ATOM].Symbol,
 		Decimals: coin.Coins[coin.ATOM].Decimals,
@@ -610,7 +723,7 @@ var unDelegateDst = blockatlas.Tx{
 	},
 }
 
-var claimRewardDst2 = blockatlas.Tx{
+var claimRewardDst2 = types.Tx{
 	ID:        "082BA88EC055A7C343A353297EAC104CE87C659E0DDD84621C9AC3C284232800",
 	Coin:      coin.ATOM,
 	From:      "cosmos1y6yvdel7zys8x60gz9067fjpcpygsn62ae9x46",
@@ -618,14 +731,14 @@ var claimRewardDst2 = blockatlas.Tx{
 	Fee:       "0",
 	Date:      1576462863,
 	Block:     54561,
-	Status:    blockatlas.StatusCompleted,
-	Type:      blockatlas.TxAnyAction,
-	Direction: blockatlas.DirectionIncoming,
+	Status:    types.StatusCompleted,
+	Type:      types.TxAnyAction,
+	Direction: types.DirectionIncoming,
 	Memo:      "复投",
-	Meta: blockatlas.AnyAction{
+	Meta: types.AnyAction{
 		Coin:     coin.ATOM,
-		Title:    blockatlas.AnyActionClaimRewards,
-		Key:      blockatlas.KeyStakeClaimRewards,
+		Title:    types.AnyActionClaimRewards,
+		Key:      types.KeyStakeClaimRewards,
 		Name:     coin.Cosmos().Name,
 		Symbol:   coin.Coins[coin.ATOM].Symbol,
 		Decimals: coin.Coins[coin.ATOM].Decimals,
@@ -633,7 +746,7 @@ var claimRewardDst2 = blockatlas.Tx{
 	},
 }
 
-var claimRewardDst1 = blockatlas.Tx{
+var claimRewardDst1 = types.Tx{
 	ID:        "C382DCFDC30E2DA294421DAEAD5862F118592A7B000EE91F6BEF8452A1F525D7",
 	Coin:      coin.ATOM,
 	From:      "cosmos1cxehfdhfm96ljpktdxsj0k6xp9gtuheghwgqug",
@@ -641,14 +754,14 @@ var claimRewardDst1 = blockatlas.Tx{
 	Fee:       "1000",
 	Date:      1576638273,
 	Block:     79678,
-	Status:    blockatlas.StatusCompleted,
-	Type:      blockatlas.TxAnyAction,
-	Direction: blockatlas.DirectionIncoming,
+	Status:    types.StatusCompleted,
+	Type:      types.TxAnyAction,
+	Direction: types.DirectionIncoming,
 	Memo:      "",
-	Meta: blockatlas.AnyAction{
+	Meta: types.AnyAction{
 		Coin:     coin.ATOM,
-		Title:    blockatlas.AnyActionClaimRewards,
-		Key:      blockatlas.KeyStakeClaimRewards,
+		Title:    types.AnyActionClaimRewards,
+		Key:      types.KeyStakeClaimRewards,
 		Name:     coin.Cosmos().Name,
 		Symbol:   coin.Coins[coin.ATOM].Symbol,
 		Decimals: coin.Coins[coin.ATOM].Decimals,
@@ -656,7 +769,7 @@ var claimRewardDst1 = blockatlas.Tx{
 	},
 }
 
-var failedTransferDst = blockatlas.Tx{
+var failedTransferDst = types.Tx{
 	ID:     "5E78C65A8C1A6C8239EBBBBF2E42020E6ADBA8037EDEA83BF88E1A9159CF13B8",
 	Coin:   coin.ATOM,
 	From:   "cosmos1shpfyt7psrff2ux7nznxvj6f7gq59fcqng5mku",
@@ -664,10 +777,10 @@ var failedTransferDst = blockatlas.Tx{
 	Fee:    "2000",
 	Date:   1576120902,
 	Block:  5552,
-	Status: blockatlas.StatusError,
-	Type:   blockatlas.TxTransfer,
+	Status: types.StatusError,
+	Type:   types.TxTransfer,
 	Memo:   "UniCoins registration rewards",
-	Meta: blockatlas.Transfer{
+	Meta: types.Transfer{
 		Value:    "100000",
 		Symbol:   coin.Cosmos().Symbol,
 		Decimals: 6,
@@ -678,7 +791,14 @@ type test struct {
 	name     string
 	platform Platform
 	Data     string
-	want     blockatlas.Tx
+	want     types.Tx
+}
+
+type filterTest struct {
+	name     string
+	platform Platform
+	Data     []string
+	want     []types.Tx
 }
 
 func TestNormalize(t *testing.T) {
@@ -729,10 +849,56 @@ func TestNormalize(t *testing.T) {
 			transferSrcKava,
 			transferDstKava,
 		},
+		{
+			"test kava transfer token tx",
+			kava,
+			transferSrcKavaToken,
+			transferDstKavaToken,
+		},
 	}
 	for _, tt := range tests {
 		testNormalize(t, tt)
 	}
+}
+
+func TestFilterByDenom(t *testing.T) {
+
+	kava := Platform{CoinIndex: coin.KAVA}
+
+	test := filterTest{
+		"test transfer tx",
+		kava,
+		[]string{
+			transferSrc,
+			delegateSrc,
+			unDelegateSrc,
+			claimRewardSrc1,
+			claimRewardSrc2,
+			failedTransferSrc,
+			transferSrcKava,
+			transferSrcKavaToken,
+		},
+		[]types.Tx{transferDstKavaToken},
+	}
+
+	testFilter(t, test)
+}
+
+func testFilter(t *testing.T, test filterTest) {
+	t.Run(test.name, func(t *testing.T) {
+		srcTxs := make([]Tx, 0)
+		for _, tx := range test.Data {
+			var srcTx Tx
+			err := json.Unmarshal([]byte(tx), &srcTx)
+			assert.Nil(t, err)
+			srcTxs = append(srcTxs, srcTx)
+		}
+		tx := test.platform.FilterTxsByDenom(srcTxs, "hard")
+		assert.Equal(t, len(test.want), len(tx), "length: filtered to expected 1 tx")
+		normalized, ok := test.platform.Normalize(&tx[0])
+		assert.True(t, ok)
+		assert.Equal(t, test.want[0], normalized, "denom: filtered txs are equal")
+	})
 }
 
 func testNormalize(t *testing.T, tt test) {

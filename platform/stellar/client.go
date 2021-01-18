@@ -3,12 +3,13 @@ package stellar
 import (
 	"errors"
 	"fmt"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"net/url"
+
+	"github.com/trustwallet/golibs/client"
 )
 
 type Client struct {
-	blockatlas.Request
+	client.Request
 }
 
 func (c *Client) GetTxsOfAddress(address string) ([]Payment, error) {

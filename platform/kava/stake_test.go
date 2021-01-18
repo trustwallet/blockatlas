@@ -2,8 +2,9 @@ package kava
 
 import (
 	"encoding/json"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"testing"
+
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -98,7 +99,7 @@ var validator1 = blockatlas.StakeValidator{
 	Info: blockatlas.StakeValidatorInfo{
 		Name:        "Certus One",
 		Description: "Stake and earn rewards with the most secure and stable validator. Winner of the Game of Stakes. Operated by Certus One Inc. By delegating, you confirm that you are aware of the risk of slashing and that Certus One Inc is not liable for any potential damages to your investment.",
-		Image:       "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/cosmos/validators/assets/cosmosvaloper1qwl879nx9t6kef4supyazayf7vjhennyh568ys/logo.png",
+		Image:       "https://assets.trustwalletapp.com/blockchains/cosmos/validators/assets/cosmosvaloper1qwl879nx9t6kef4supyazayf7vjhennyh568ys/logo.png",
 		Website:     "https://certus.one",
 	},
 	Details: blockatlas.StakingDetails{

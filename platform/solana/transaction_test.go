@@ -9,12 +9,12 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/golibs/client"
 	"github.com/trustwallet/golibs/mock"
 )
 
 func TestPlatform_GetTxsByAddress(t *testing.T) {
-	wanted, err := mock.JsonFromFilePathToString("mocks/GetTxsByAddress.json")
+	wanted, err := mock.JsonStringFromFilePath("mocks/GetTxsByAddress.json")
 	if err != nil {
 		panic(err)
 	}
@@ -22,8 +22,8 @@ func TestPlatform_GetTxsByAddress(t *testing.T) {
 	data["/"] = func(w http.ResponseWriter, req *http.Request) {
 		w.WriteHeader(http.StatusOK)
 
-		var r blockatlas.RpcRequest
-		var rs []blockatlas.RpcRequest
+		var r client.RpcRequest
+		var rs []client.RpcRequest
 		var response string
 
 		buf := new(bytes.Buffer)
@@ -36,7 +36,7 @@ func TestPlatform_GetTxsByAddress(t *testing.T) {
 		if err := json.Unmarshal([]byte(requestBody), &r); err == nil {
 			switch r.Method {
 			case "getConfirmedSignaturesForAddress2":
-				signatures, err := mock.JsonFromFilePathToString("mocks/getConfirmedSignaturesForAddress2.json")
+				signatures, err := mock.JsonStringFromFilePath("mocks/getConfirmedSignaturesForAddress2.json")
 				if err != nil {
 					panic(err)
 				}
@@ -45,7 +45,7 @@ func TestPlatform_GetTxsByAddress(t *testing.T) {
 		} else if err := json.Unmarshal([]byte(requestBody), &rs); err == nil {
 			switch rs[0].Method {
 			case "getConfirmedTransaction":
-				signatures, err := mock.JsonFromFilePathToString("mocks/getConfirmedTransaction.json")
+				signatures, err := mock.JsonStringFromFilePath("mocks/getConfirmedTransaction.json")
 				if err != nil {
 					panic(err)
 				}

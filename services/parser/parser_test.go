@@ -2,62 +2,32 @@ package parser
 
 import (
 	"errors"
-	"reflect"
 	"testing"
 	"time"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/trustwallet/blockatlas/mq"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/coin"
+	"github.com/trustwallet/golibs/types"
 )
 
 var (
 	wantedMockedNumber int64
-
-	block = blockatlas.Block{
-		Number: 110,
-		ID:     "",
-		Txs: []blockatlas.Tx{
-			{
-				ID:     "95CF63FAA27579A9B6AF84EF8B2DFEAC29627479E9C98E7F5AE4535E213FA4C9",
-				Coin:   coin.BNB,
-				From:   "tbnb1ttyn4csghfgyxreu7lmdu3lcplhqhxtzced45a",
-				To:     "tbnb12hlquylu78cjylk5zshxpdj6hf3t0tahwjt3ex",
-				Fee:    "125000",
-				Date:   1555117625,
-				Block:  7928667,
-				Status: blockatlas.StatusCompleted,
-				Memo:   "test",
-				Meta: blockatlas.NativeTokenTransfer{
-					TokenID:  "YLC-D8B",
-					Symbol:   "YLC",
-					Value:    "210572645",
-					Decimals: 8,
-					From:     "tbnb1ttyn4csghfgyxreu7lmdu3lcplhqhxtzced45a",
-					To:       "tbnb12hlquylu78cjylk5zshxpdj6hf3t0tahwjt3ex",
-				},
-			},
-		},
-	}
 )
 
 func TestFetchBlocks(t *testing.T) {
 	params := Params{
-		Ctx:                    nil,
-		Api:                    getMockedBlockAPI(),
-		TransactionsQueue:      "",
-		TokenTransactionsQueue: []mq.Queue{""},
-		ParsingBlocksInterval:  0,
-		FetchBlocksTimeout:     0,
-		BacklogCount:           0,
-		MaxBacklogBlocks:       0,
-		StopChannel:            nil,
-		TxBatchLimit:           0,
-		Database:               nil,
+		Api:                   getMockedBlockAPI(),
+		TransactionsExchange:  "",
+		ParsingBlocksInterval: 0,
+		FetchBlocksTimeout:    0,
+		MaxBlocks:             0,
+		StopChannel:           nil,
+		Database:              nil,
 	}
-	blocks := FetchBlocks(params, 0, 100)
+	blocks, err := FetchBlocks(params, 0, 100)
 	assert.Equal(t, len(blocks), 100)
+	assert.Nil(t, err)
 }
 
 func TestParser_getBlockByNumberWithRetry(t *testing.T) {
@@ -88,11 +58,11 @@ func TestParser_getBlockByNumberWithRetry_Error(t *testing.T) {
 	}
 }
 
-func getBlock(num int64) (*blockatlas.Block, error) {
+func getBlock(num int64) (*types.Block, error) {
 	if num == 0 {
 		return nil, errors.New("test")
 	}
-	return &blockatlas.Block{}, nil
+	return &types.Block{}, nil
 }
 
 func getMockedBlockAPI() blockatlas.BlockAPI {
@@ -112,43 +82,8 @@ func (p *Platform) Coin() coin.Coin {
 	return coin.Coins[p.CoinIndex]
 }
 
-func (p *Platform) GetBlockByNumber(num int64) (*blockatlas.Block, error) {
-	return &blockatlas.Block{}, nil
-}
-
-func TestGetTxBatches(t *testing.T) {
-	txs := make(blockatlas.Txs, 10000)
-	batches := getTxsBatches(txs, 1000)
-	assert.Len(t, batches, 10)
-	batches = getTxsBatches(txs, 100)
-	assert.Len(t, batches, 100)
-	batches = getTxsBatches(txs, 500)
-	assert.Len(t, batches, 20)
-
-	txs = make(blockatlas.Txs, 3800)
-	batches = getTxsBatches(txs, 100)
-	assert.Len(t, batches, 38)
-	batches = getTxsBatches(txs, 1000)
-	assert.Len(t, batches, 4)
-
-	txs = make(blockatlas.Txs, 5000)
-	batches = getTxsBatches(txs, 10000)
-	assert.Len(t, batches, 1)
-
-	txs = make(blockatlas.Txs, 0)
-	batches = getTxsBatches(txs, 100)
-	assert.Len(t, batches, 0)
-
-	txs = make(blockatlas.Txs, 0)
-	batches = getTxsBatches(txs, 100)
-	assert.Len(t, batches, 0)
-
-	batches = getTxsBatches(nil, 100)
-	assert.Len(t, batches, 0)
-
-	txs = make(blockatlas.Txs, 1000000)
-	batches = getTxsBatches(txs, 5000)
-	assert.Len(t, batches, 200)
+func (p *Platform) GetBlockByNumber(num int64) (*types.Block, error) {
+	return &types.Block{}, nil
 }
 
 func TestGetInterval(t *testing.T) {
@@ -198,30 +133,87 @@ func TestGetInterval(t *testing.T) {
 	}
 }
 
-func TestConvertToBatch(t *testing.T) {
+func TestGetNextBlocksToParse(t *testing.T) {
 	type args struct {
-		blocks []blockatlas.Block
+		lastParsedBlock int64
+		currentBlock    int64
+		maxBlocks       int64
 	}
 	tests := []struct {
-		name string
-		args args
-		want blockatlas.Txs
+		name    string
+		args    args
+		want    int64
+		want1   int64
+		wantErr bool
 	}{
 		{
-			"Convert to batch",
+			"Test behind blocks",
 			args{
-				[]blockatlas.Block{
-					block,
-					block,
-				},
+				lastParsedBlock: 10,
+				currentBlock:    25,
+				maxBlocks:       3,
 			},
-			append(block.Txs, block.Txs...),
+			11,
+			15,
+			false,
+		},
+		{
+			"Test when only 1 block to parse",
+			args{
+				lastParsedBlock: 10,
+				currentBlock:    13,
+				maxBlocks:       5,
+			},
+			11,
+			14,
+			false,
+		},
+		{
+			"Test same block",
+			args{
+				lastParsedBlock: 10,
+				currentBlock:    10,
+				maxBlocks:       3,
+			},
+			10,
+			10,
+			false,
+		},
+		{
+			"Last parsed block ahead",
+			args{
+				lastParsedBlock: 15,
+				currentBlock:    10,
+				maxBlocks:       3,
+			},
+			15,
+			15,
+			false,
+		},
+		{
+			"Parse last block",
+			args{
+				lastParsedBlock: 15,
+				currentBlock:    15,
+				maxBlocks:       3,
+			},
+			15,
+			15,
+			false,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := ConvertToBatch(tt.args.blocks); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("ConvertToBatch() = %v, want %v", got, tt.want)
+			got, got1, err := GetNextBlocksToParse(tt.args.lastParsedBlock, tt.args.currentBlock, tt.args.maxBlocks)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("GetNextBlocksToParse() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if got != tt.want {
+				t.Errorf("GetNextBlocksToParse() got = %v, want %v", got, tt.want)
+			}
+			if got1 != tt.want1 {
+				t.Errorf("GetNextBlocksToParse() got1 = %v, want %v", got1, tt.want1)
 			}
 		})
 	}

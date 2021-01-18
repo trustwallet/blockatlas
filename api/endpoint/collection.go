@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/golibs/types"
 )
 
 // @Summary Get Collection
@@ -17,7 +18,7 @@ import (
 // @Param coin path string true "the coin name" default(ethereum)
 // @Param owner path string true "the query address" default(0x0875BCab22dE3d02402bc38aEe4104e1239374a7)
 // @Param collection_id path string true "the query collection" default(0x06012c8cf97bead5deae237070f9587f8e7a266d)
-// @Success 200 {object} blockatlas.CollectionPage
+// @Success 200 {object} types.CollectionPage
 // @Failure 500 {object} ErrorResponse
 // @Router /v4/{coin}/collections/{owner}/collection/{collection_id} [get]
 func GetCollectiblesForSpecificCollectionAndOwner(c *gin.Context, api blockatlas.CollectionsAPI) {
@@ -45,7 +46,7 @@ func GetCollectionCategoriesFromList(c *gin.Context, apis blockatlas.Collections
 		return
 	}
 
-	batch := make(blockatlas.CollectionPage, 0)
+	batch := make(types.CollectionPage, 0)
 	for key, addresses := range reqs {
 		coinId, err := strconv.Atoi(key)
 		if err != nil {

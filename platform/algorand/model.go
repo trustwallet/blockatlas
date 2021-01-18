@@ -21,29 +21,25 @@ type TransactionsResponse struct {
 }
 
 type BlockResponse struct {
-	Timestamp    uint64            `json:"timestamp"`
-	Transactions BlockTransactions `json:"txns"`
-}
-
-type BlockTransactions struct {
+	Timestamp    uint64        `json:"timestamp"`
 	Transactions []Transaction `json:"transactions"`
 }
 
 type Transaction struct {
-	Type      TransactionType    `json:"type"`
-	Hash      string             `json:"tx"`
-	From      string             `json:"from"`
+	Type      TransactionType    `json:"tx-type"`
+	Hash      string             `json:"id"`
+	From      string             `json:"sender"`
 	Fee       uint64             `json:"fee"`
-	Round     uint64             `json:"round"`
-	Payment   TransactionPayment `json:"payment"`
-	Timestamp uint64             `json:"timestamp,omitempty"`
+	Round     uint64             `json:"confirmed-round"`
+	Payment   TransactionPayment `json:"payment-transaction"`
+	Timestamp uint64             `json:"round-time"`
 }
 
 type TransactionPayment struct {
-	To     string `json:"to"`
-	Amount uint64 `json:"amount"`
+	Receiver string `json:"receiver"`
+	Amount   uint64 `json:"amount"`
 }
 
 type Status struct {
-	LastRound int64 `json:"lastRound"`
+	Block string `json:"message"`
 }

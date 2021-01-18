@@ -2,9 +2,10 @@ package setup
 
 import (
 	"fmt"
-	"github.com/ory/dockertest"
-	"github.com/trustwallet/blockatlas/mq"
 	"log"
+
+	"github.com/ory/dockertest"
+	"github.com/trustwallet/golibs/network/mq"
 )
 
 var (

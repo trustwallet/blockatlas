@@ -1,16 +1,18 @@
 package nimiq
 
 import (
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"strconv"
+
+	"github.com/trustwallet/golibs/client"
+	"github.com/trustwallet/golibs/types"
 )
 
 type Client struct {
-	blockatlas.Request
+	client.Request
 }
 
 func (c *Client) GetTxsOfAddress(address string) (tx []Tx, err error) {
-	err = c.RpcCall(&tx, "getTransactionsByAddress", []string{address, strconv.Itoa(blockatlas.TxPerPage)})
+	err = c.RpcCall(&tx, "getTransactionsByAddress", []string{address, strconv.Itoa(types.TxPerPage)})
 	return
 }
 

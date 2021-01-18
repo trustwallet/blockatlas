@@ -1,0 +1,33 @@
+{
+  "number": 105529271,
+  "txs": [
+    {
+      "id": "CC7C3EF1407373FDA74B005E64683AB5865126DE93A5FAF755FF5CC948992067",
+      "coin": 714,
+      "from": "bnb15qced76xere38hmmpe644u5kd8v4lzl9gsex9w",
+      "to": "bnb15qced76xere38hmmpe644u5kd8v4lzl9gsex9w",
+      "fee": "60000",
+      "date": 1596746326,
+      "block": 105529271,
+      "status": "completed",
+      "sequence": 2300,
+      "type": "transfer",
+      "memo": "0",
+      "metadata": { "value": "1", "symbol": "BNB", "decimals": 8 }
+    },
+    {
+      "id": "CC7C3EF1407373FDA74B005E64683AB5865126DE93A5FAF755FF5CC948992067",
+      "coin": 714,
+      "from": "bnb1t38ccns9var4ac4yj2ylmu99r9ecmggr8ye5e5",
+      "to": "bnb136ns6lfw4zs5hg4n85vdthaad7hq5m4gtkgf23",
+      "fee": "0",
+      "date": 1596746326,
+      "block": 105529271,
+      "status": "completed",
+      "sequence": 2300,
+      "type": "transfer",
+      "memo": "0",
+      "metadata": { "value": "39421249", "symbol": "BNB", "decimals": 8 }
+    }
+  ]
+}

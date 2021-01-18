@@ -28,7 +28,7 @@ type (
 	}
 )
 
-func (av AssetValidators) toMap() AssetValidatorMap {
+func (av AssetValidators) ToMap() AssetValidatorMap {
 	validators := make(AssetValidatorMap)
 	for _, v := range av {
 		validators[v.ID] = v

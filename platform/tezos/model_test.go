@@ -1,9 +1,10 @@
 package tezos
 
 import (
-	"github.com/stretchr/testify/assert"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/trustwallet/golibs/types"
 )
 
 var (
@@ -15,12 +16,12 @@ func TestTransaction_Status(t *testing.T) {
 	testStatus := []struct {
 		name string
 		in   Transaction
-		out  blockatlas.Status
+		out  types.Status
 	}{
-		{"Status completed", Transaction{Stat: "applied"}, blockatlas.StatusCompleted},
-		{"Status error", Transaction{Stat: "failed"}, blockatlas.StatusError},
-		{"Status error", Transaction{Stat: ""}, blockatlas.StatusError},
-		{"Status error", Transaction{Stat: "something else"}, blockatlas.StatusError},
+		{"Status completed", Transaction{Stat: "applied"}, types.StatusCompleted},
+		{"Status error", Transaction{Stat: "failed"}, types.StatusError},
+		{"Status error", Transaction{Stat: ""}, types.StatusError},
+		{"Status error", Transaction{Stat: "something else"}, types.StatusError},
 	}
 
 	for _, tt := range testStatus {
@@ -48,10 +49,10 @@ func TestTransaction_Status(t *testing.T) {
 		name    string
 		address string
 		in      Transaction
-		out     blockatlas.KeyTitle
+		out     types.KeyTitle
 	}{
-		{"Delegation title", addr1, Transaction{Sender: addr1, Delegate: addr2, Receiver: "", Type: TxTypeDelegation}, blockatlas.AnyActionDelegation},
-		{"Undelegation title", addr1, Transaction{Sender: addr1, Delegate: "", Receiver: addr2, Type: TxTypeDelegation}, blockatlas.AnyActionUndelegation},
+		{"Delegation title", addr1, Transaction{Sender: addr1, Delegate: addr2, Receiver: "", Type: TxTypeDelegation}, types.AnyActionDelegation},
+		{"Undelegation title", addr1, Transaction{Sender: addr1, Delegate: "", Receiver: addr2, Type: TxTypeDelegation}, types.AnyActionUndelegation},
 		{"Unsupported title", addr1, Transaction{Sender: addr1, Delegate: addr1, Receiver: addr1}, "unsupported title"},
 		{"Unsupported title", addr1, Transaction{Sender: addr1, Delegate: addr2, Receiver: addr1}, "unsupported title"},
 		{"Unsupported title", addr1, Transaction{Sender: addr1, Delegate: addr1, Receiver: addr2}, "unsupported title"},
@@ -82,10 +83,10 @@ func TestTransaction_Status(t *testing.T) {
 	testsTransferType := []struct {
 		name string
 		in   Transaction
-		out  blockatlas.TransactionType
+		out  types.TransactionType
 	}{
-		{"Type should be transaction", Transaction{Type: "transaction"}, blockatlas.TxTransfer},
-		{"Type should be delegation", Transaction{Type: "delegation"}, blockatlas.TxAnyAction},
+		{"Type should be transaction", Transaction{Type: "transaction"}, types.TxTransfer},
+		{"Type should be delegation", Transaction{Type: "delegation"}, types.TxAnyAction},
 		{"Type unsupported", Transaction{Type: "bake"}, "unsupported type"},
 	}
 
@@ -99,12 +100,12 @@ func TestTransaction_Status(t *testing.T) {
 	testsDirection := []struct {
 		name    string
 		in      Transaction
-		out     blockatlas.Direction
+		out     types.Direction
 		address string
 	}{
-		{"Direction self", Transaction{Sender: addr1, Receiver: addr1}, blockatlas.DirectionSelf, addr1},
-		{"Direction outgoing", Transaction{Sender: addr1, Receiver: addr2}, blockatlas.DirectionOutgoing, addr1},
-		{"Direction incoming", Transaction{Sender: addr2, Receiver: addr1}, blockatlas.DirectionIncoming, addr1},
+		{"Direction self", Transaction{Sender: addr1, Receiver: addr1}, types.DirectionSelf, addr1},
+		{"Direction outgoing", Transaction{Sender: addr1, Receiver: addr2}, types.DirectionOutgoing, addr1},
+		{"Direction incoming", Transaction{Sender: addr2, Receiver: addr1}, types.DirectionIncoming, addr1},
 	}
 
 	for _, tt := range testsDirection {
@@ -116,7 +117,7 @@ func TestTransaction_Status(t *testing.T) {
 	testsNormalize := []struct {
 		name    string
 		in      Transaction
-		out     blockatlas.Tx
+		out     types.Tx
 		address string
 	}{
 		{"Normalize XTZ transfer", tezosTransfer, normalizedTezosTransfer, addr1},

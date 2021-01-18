@@ -11,27 +11,19 @@ import (
 
 type Configuration struct {
 	Gin struct {
-		Mode         string `mapstructure:"mode"`
-		ReverseProxy bool   `mapstructure:"reverse_proxy"`
+		Mode string `mapstructure:"mode"`
 	} `mapstructure:"gin"`
-	Platform   []string `mapstructure:"platform"`
-	RestAPI    string   `mapstructure:"rest_api"`
-	Subscriber string   `mapstructure:"subscriber"`
-	Observer   struct {
-		Backlog                     time.Duration `mapstructure:"backlog"`
-		FetchBlocksInterval         time.Duration `mapstructure:"fetch_blocks_interval"`
-		BacklogMaxBlocks            int64         `mapstructure:"backlog_max_blocks"`
-		TxsBatchLimit               uint          `mapstructure:"txs_batch_limit"`
-		PushNotificationsBatchLimit int           `mapstructure:"push_notifications_batch_limit"`
-		BlockPoll                   struct {
-			Min time.Duration `mapstructure:"min"`
-			Max time.Duration `mapstructure:"max"`
+	Platform []string `mapstructure:"platform"`
+	RestAPI  string   `mapstructure:"rest_api"`
+	Observer struct {
+		FetchBlocksInterval time.Duration `mapstructure:"fetch_blocks_interval"`
+		BlockPoll           struct {
+			Min       time.Duration `mapstructure:"min"`
+			Max       time.Duration `mapstructure:"max"`
+			MaxBlocks int64         `mapstructure:"max_blocks"`
 		} `mapstructure:"block_poll"`
 		Rabbitmq struct {
-			URL      string `mapstructure:"url"`
-			Consumer struct {
-				PrefetchCount int `mapstructure:"prefetch_count"`
-			} `mapstructure:"consumer"`
+			URL string `mapstructure:"url"`
 		} `mapstructure:"rabbitmq"`
 	} `mapstructure:"observer"`
 	Postgres struct {
@@ -55,15 +47,13 @@ type Configuration struct {
 	Stellar struct {
 		API string `mapstructure:"api"`
 	} `mapstructure:"stellar"`
-	Kin struct {
-		API string `mapstructure:"api"`
-	} `mapstructure:"kin"`
 	Nimiq struct {
 		API string `mapstructure:"api"`
 	} `mapstructure:"nimiq"`
 	Tezos struct {
-		API string `mapstructure:"api"`
-		RPC string `mapstructure:"rpc"`
+		API   string `mapstructure:"api"`
+		RPC   string `mapstructure:"rpc"`
+		Baker string `mapstructure:"baker"`
 	} `mapstructure:"tezos"`
 	Thundertoken struct {
 		API string `mapstructure:"api"`
@@ -184,6 +174,7 @@ type Configuration struct {
 	} `mapstructure:"decred"`
 	Algorand struct {
 		API string `mapstructure:"api"`
+		Key string `mapstructure:"key"`
 	} `mapstructure:"algorand"`
 	Nano struct {
 		API string `mapstructure:"api"`
@@ -213,11 +204,16 @@ type Configuration struct {
 		API string `mapstructure:"api"`
 	} `mapstructure:"elrond"`
 	Filecoin struct {
-		API string `mapstructure:"api"`
+		API      string `mapstructure:"api"`
+		Explorer string `mapstructure:"explorer"`
 	} `mapstructure:"filecoin"`
 	Sentry struct {
 		DSN string `mapstructure:"dsn"`
 	} `mapstructure:"sentry"`
+	Consumer struct {
+		Service string `mapstructure:"service"`
+		Workers int    `mapstructure:"workers"`
+	} `mapstructure:"consumer"`
 }
 
 var Default Configuration

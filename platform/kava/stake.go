@@ -70,7 +70,6 @@ func (p *Platform) GetDetails() blockatlas.StakingDetails {
 func (p *Platform) GetMaxAPR() float64 {
 	validators, err := p.GetValidators()
 	if err != nil {
-		log.WithFields(log.Fields{"details": err, "platform": p.Coin().Symbol}).Error("GetMaxAPR")
 		return blockatlas.DefaultAnnualReward
 	}
 

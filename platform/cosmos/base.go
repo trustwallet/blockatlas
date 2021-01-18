@@ -1,7 +1,7 @@
 package cosmos
 
 import (
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/internal"
 	"github.com/trustwallet/golibs/coin"
 )
 
@@ -13,7 +13,7 @@ type Platform struct {
 func Init(coin uint, api string) *Platform {
 	return &Platform{
 		CoinIndex: coin,
-		client:    Client{blockatlas.InitClient(api)},
+		client:    Client{internal.InitClient(api)},
 	}
 }
 

@@ -1,17 +1,11 @@
 ---
 name: Feature request
-about: Suggest an idea for this project
+about: Suggest new feature
 title: ''
-labels: 'Type: New Feature'
+labels: 'New Feature'
 assignees: ''
 
 ---
-
-<!-- < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < ☺ 
-v            ✰  Thanks for opening an feature request! ✰               v
-v    Before smashing the submit button please review the template.     v
-v               Don't forget to set the priority label.                v
-☺ > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > >  -->
 
 ## Summary
 

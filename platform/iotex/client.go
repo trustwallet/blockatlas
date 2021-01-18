@@ -2,14 +2,16 @@ package iotex
 
 import (
 	"fmt"
-	log "github.com/sirupsen/logrus"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"net/url"
 	"strconv"
+
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/golibs/client"
+	"github.com/trustwallet/golibs/types"
 )
 
 type Client struct {
-	blockatlas.Request
+	client.Request
 }
 
 func (c *Client) GetLatestBlock() (int64, error) {
@@ -39,11 +41,10 @@ func (c *Client) GetTxsOfAddress(address string, start int64) (*Response, error)
 	var response Response
 	err := c.Get(&response, "actions/addr/"+address, url.Values{
 		"start": {strconv.FormatInt(start, 10)},
-		"count": {strconv.Itoa(blockatlas.TxPerPage)},
+		"count": {strconv.Itoa(types.TxPerPage)},
 	})
 
 	if err != nil {
-		log.WithFields(log.Fields{"address": address}).Error(err, "IOTEX: Failed to get transactions for address")
 		return nil, blockatlas.ErrSourceConn
 	}
 	return &response, err

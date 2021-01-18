@@ -2,8 +2,9 @@ package tezos
 
 import (
 	"fmt"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"time"
+
+	"github.com/trustwallet/golibs/types"
 )
 
 const (
@@ -43,10 +44,6 @@ type (
 		Kind string `json:"kind"`
 	}
 
-	Status struct {
-		Indexed int64 `json:"indexed"`
-	}
-
 	Validator struct {
 		Address string `json:"pkh"`
 	}
@@ -54,14 +51,26 @@ type (
 	ActivityValidatorInfo struct {
 		Deactivated bool `json:"deactivated"`
 	}
+
+	Baker struct {
+		Address           string  `json:"address"`
+		Name              string  `json:"name"`
+		Logo              string  `json:"logo"`
+		FreeSpace         float64 `json:"freeSpace"`
+		Fee               float64 `json:"fee"`
+		MinDelegation     float64 `json:"minDelegation"`
+		OpenForDelegation bool    `json:"openForDelegation"`
+		EstimatedRoi      float64 `json:"estimatedRoi"`
+		ServiceHealth     string  `json:"serviceHealth"`
+	}
 )
 
-func (t *Transaction) Status() blockatlas.Status {
+func (t *Transaction) Status() types.Status {
 	switch t.Stat {
 	case TxStatusApplied:
-		return blockatlas.StatusCompleted
+		return types.StatusCompleted
 	default:
-		return blockatlas.StatusError
+		return types.StatusError
 	}
 }
 
@@ -73,14 +82,14 @@ func (t *Transaction) ErrorMsg() string {
 	}
 }
 
-func (t *Transaction) Title(address string) (blockatlas.KeyTitle, bool) {
+func (t *Transaction) Title(address string) (types.KeyTitle, bool) {
 	if t.Type == TxTypeDelegation {
 		if address == t.Sender && t.Delegate != "" && t.Receiver == "" {
-			return blockatlas.AnyActionDelegation, true
+			return types.AnyActionDelegation, true
 		}
 
 		if address == t.Sender && t.Delegate == "" && t.Receiver != "" {
-			return blockatlas.AnyActionUndelegation, true
+			return types.AnyActionUndelegation, true
 		}
 	}
 
@@ -96,26 +105,26 @@ func (t *Transaction) BlockTimestamp() int64 {
 	return unix
 }
 
-func (t *Transaction) TransferType() (blockatlas.TransactionType, bool) {
+func (t *Transaction) TransferType() (types.TransactionType, bool) {
 	switch t.Type {
 	case TxTypeTransaction:
-		return blockatlas.TxTransfer, true
+		return types.TxTransfer, true
 	case TxTypeDelegation:
-		return blockatlas.TxAnyAction, true
+		return types.TxAnyAction, true
 	default:
 		return "unsupported type", false
 	}
 }
 
-func (t *Transaction) Direction(address string) blockatlas.Direction {
+func (t *Transaction) Direction(address string) types.Direction {
 	if t.Sender == address && t.Receiver == address {
-		return blockatlas.DirectionSelf
+		return types.DirectionSelf
 	}
 	if t.Sender == address && t.Receiver != address {
-		return blockatlas.DirectionOutgoing
+		return types.DirectionOutgoing
 	}
 
-	return blockatlas.DirectionIncoming
+	return types.DirectionIncoming
 }
 
 func (t *Transaction) GetReceiver() string {

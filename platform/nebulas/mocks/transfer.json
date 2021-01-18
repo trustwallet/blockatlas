@@ -1,0 +1,19 @@
+{
+  "hash": "96bd280d60447b7dbcdb3fa76a99856e0422a76304e9d01d0c87e1dfceb6d952",
+  "block": {
+    "height": 2848548
+  },
+  "from": {
+    "hash": "n1Yv9xJJcH4UjoJPVDGdUCL2CxK29asFuyV"
+  },
+  "to": {
+    "hash": "n1TFrmLUDTe5ggQaWJiXHSqNSRzKYdaV6hQ"
+  },
+  "value": "500000000000000000",
+  "nonce": 7,
+  "status": 1,
+  "timestamp": 1565213205000,
+  "type": "binary",
+  "currentTimestamp": 1565361175536,
+  "txFee": "400000000000000"
+}

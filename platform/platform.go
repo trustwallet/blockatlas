@@ -61,15 +61,14 @@ func getAllHandlers() blockatlas.Platforms {
 		coin.Vechain().Handle:      vechain.Init(config.Default.Vechain.API),
 		coin.Nebulas().Handle:      nebulas.Init(config.Default.Nebulas.API),
 		coin.Ontology().Handle:     ontology.Init(config.Default.Ontology.API),
-		coin.Algorand().Handle:     algorand.Init(config.Default.Algorand.API),
+		coin.Algorand().Handle:     algorand.Init(config.Default.Algorand.API, config.Default.Algorand.Key),
 		coin.Aeternity().Handle:    aeternity.Init(config.Default.Aeternity.API),
 		coin.Solana().Handle:       solana.Init(config.Default.Solana.API),
-		coin.Tezos().Handle:        tezos.Init(config.Default.Tezos.API, config.Default.Tezos.RPC),
+		coin.Tezos().Handle:        tezos.Init(config.Default.Tezos.API, config.Default.Tezos.RPC, config.Default.Tezos.Baker),
 		coin.Binance().Handle:      binance.Init(config.Default.Binance.API, config.Default.Binance.Key),
 		coin.Zilliqa().Handle:      zilliqa.Init(config.Default.Zilliqa.API, config.Default.Zilliqa.Key, config.Default.Zilliqa.RPC),
 		coin.Polkadot().Handle:     polkadot.Init(coin.DOT, config.Default.Polkadot.API),
 		coin.Stellar().Handle:      stellar.Init(coin.XLM, config.Default.Stellar.API),
-		coin.Kin().Handle:          stellar.Init(coin.KIN, config.Default.Kin.API),
 		coin.Cosmos().Handle:       cosmos.Init(coin.ATOM, config.Default.Cosmos.API),
 		coin.Kava().Handle:         kava.Init(coin.KAVA, config.Default.Kava.API),
 		coin.Bitcoin().Handle:      bitcoin.Init(coin.BTC, config.Default.Bitcoin.API),
@@ -98,7 +97,7 @@ func getAllHandlers() blockatlas.Platforms {
 		coin.Ethereum().Handle:     ethereum.InitWithCollection(coin.ETH, config.Default.Ethereum.RPC, config.Default.Ethereum.BlockbookAPI, config.Default.Ethereum.CollectionsAPI, config.Default.Ethereum.CollectionsKey),
 		coin.Near().Handle:         near.Init(config.Default.Near.API),
 		coin.Elrond().Handle:       elrond.Init(coin.EGLD, config.Default.Elrond.API),
-		coin.Filecoin().Handle:     filecoin.Init(config.Default.Filecoin.API),
+		coin.Filecoin().Handle:     filecoin.Init(config.Default.Filecoin.API, config.Default.Filecoin.Explorer),
 	}
 }
 

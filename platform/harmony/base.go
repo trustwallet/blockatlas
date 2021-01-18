@@ -1,7 +1,7 @@
 package harmony
 
 import (
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/internal"
 	"github.com/trustwallet/golibs/coin"
 )
 
@@ -11,7 +11,7 @@ type Platform struct {
 
 func Init(api string) *Platform {
 	p := &Platform{
-		client: Client{blockatlas.InitJSONClient(api)},
+		client: Client{internal.InitJSONClient(api)},
 	}
 	return p
 }

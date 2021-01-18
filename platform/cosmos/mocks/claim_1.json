@@ -1,0 +1,92 @@
+{
+  "height": "79678",
+  "txhash": "C382DCFDC30E2DA294421DAEAD5862F118592A7B000EE91F6BEF8452A1F525D7",
+  "gas_wanted": "1600000",
+  "gas_used": "492252",
+  "tx": {
+    "type": "cosmos-sdk/StdTx",
+    "value": {
+      "msg": [
+        {
+          "type": "cosmos-sdk/MsgWithdrawDelegationReward",
+          "value": {
+            "delegator_address": "cosmos1cxehfdhfm96ljpktdxsj0k6xp9gtuheghwgqug",
+            "validator_address": "cosmosvaloper1ptyzewnns2kn37ewtmv6ppsvhdnmeapvtfc9y5"
+          }
+        },
+        {
+          "type": "cosmos-sdk/MsgWithdrawDelegationReward",
+          "value": {
+            "delegator_address": "cosmos1cxehfdhfm96ljpktdxsj0k6xp9gtuheghwgqug",
+            "validator_address": "cosmosvaloper1fhr7e04ct0zslmkzqt9smakg3sxrdve6ulclj2"
+          }
+        },
+        {
+          "type": "cosmos-sdk/MsgWithdrawDelegationReward",
+          "value": {
+            "delegator_address": "cosmos1cxehfdhfm96ljpktdxsj0k6xp9gtuheghwgqug",
+            "validator_address": "cosmosvaloper1we6knm8qartmmh2r0qfpsz6pq0s7emv3e0meuw"
+          }
+        }
+      ],
+      "fee": {
+        "amount": [
+          {
+            "denom": "uatom",
+            "amount": "1000"
+          }
+        ],
+        "gas": "1600000"
+      },
+      "memo": ""
+    }
+  },
+  "timestamp": "2019-12-18T03:04:33Z",
+  "events": [
+    {
+      "type": "transfer",
+      "attributes": [
+        {
+          "key": "recipient",
+          "value": "cosmos1cxehfdhfm96ljpktdxsj0k6xp9gtuheghwgqug"
+        }
+      ]
+    },
+    {
+      "type": "withdraw_rewards",
+      "attributes": [
+        {
+          "key": "amount",
+          "value": "1138uatom"
+        },
+        {
+          "key": "validator",
+          "value": "cosmosvaloper1ptyzewnns2kn37ewtmv6ppsvhdnmeapvtfc9y5"
+        },
+        {
+          "key": "amount",
+          "value": "40612uatom"
+        },
+        {
+          "key": "validator",
+          "value": "cosmosvaloper1fhr7e04ct0zslmkzqt9smakg3sxrdve6ulclj2"
+        },
+        {
+          "key": "amount",
+          "value": "954uatom"
+        },
+        {
+          "key": "validator",
+          "value": "cosmosvaloper1we6knm8qartmmh2r0qfpsz6pq0s7emv3e0meuw"
+        },
+        {
+          "key": "amount",
+          "value": "43574uatom"
+        },
+        {
+          "key": "amount"
+        }
+      ]
+    }
+  ]
+}

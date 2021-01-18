@@ -1,7 +1,7 @@
 package tron
 
 import (
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/blockatlas/internal"
 	"github.com/trustwallet/golibs/coin"
 )
 
@@ -12,8 +12,8 @@ type Platform struct {
 
 func Init(api, explorerApi string) *Platform {
 	return &Platform{
-		client:         Client{blockatlas.InitClient(api)},
-		explorerClient: ExplorerClient{blockatlas.InitClient(explorerApi)},
+		client:         Client{internal.InitClient(api)},
+		explorerClient: ExplorerClient{internal.InitClient(explorerApi)},
 	}
 }
 

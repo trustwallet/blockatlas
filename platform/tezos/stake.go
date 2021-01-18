@@ -3,7 +3,6 @@ package tezos
 import (
 	log "github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/services/assets"
 )
 
 const (
@@ -13,7 +12,7 @@ const (
 )
 
 func (p *Platform) GetActiveValidators() (blockatlas.StakeValidators, error) {
-	validators, err := assets.GetValidatorsMap(p)
+	validators, err := p.bakerClient.GetBakers()
 	if err != nil {
 		return nil, err
 	}
@@ -44,11 +43,11 @@ func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, e
 		return make(blockatlas.DelegationsPage, 0), nil
 	}
 
-	validators, err := assets.GetValidatorsMap(p)
+	validators, err := p.bakerClient.GetBakers()
 	if err != nil {
 		return nil, err
 	}
-	return NormalizeDelegation(account, validators)
+	return NormalizeDelegation(account, validators.ToMap())
 }
 
 func NormalizeDelegation(account Account, validators blockatlas.ValidatorMap) (blockatlas.DelegationsPage, error) {

@@ -2,12 +2,13 @@ package vechain
 
 import (
 	"fmt"
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"strings"
+
+	"github.com/trustwallet/golibs/client"
 )
 
 type Client struct {
-	blockatlas.Request
+	client.Request
 }
 
 func (c *Client) GetCurrentBlock() (int64, error) {
