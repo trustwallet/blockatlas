@@ -1,0 +1,31 @@
+{
+  "gasUsed": 36518,
+  "gasPayer": "0xe99399dd211ef54c301a5d1aa813471d92122ea8",
+  "paid": "0x1fac9ff84f3b70000",
+  "reward": "0x980966417c508000",
+  "reverted": false,
+  "meta": {
+    "blockID": "0x007ac4bc8090b67c3e3c395e5e986226eab3a8619250807cf32b0c247f6d513c",
+    "blockNumber": 8045756,
+    "blockTimestamp": 1610958570,
+    "txID": "0x0677f91de4787d295087acec0a7ba317b0019fbf296fed630fdb5afbfca97a58",
+    "txOrigin": "0xe99399dd211ef54c301a5d1aa813471d92122ea8"
+  },
+  "outputs": [
+    {
+      "contractAddress": null,
+      "events": [
+        {
+          "address": "0x0000000000000000000000000000456e65726779",
+          "topics": [
+            "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+            "0x000000000000000000000000e99399dd211ef54c301a5d1aa813471d92122ea8",
+            "0x000000000000000000000000b5e883349e68ab59307d1604555ac890fac47128"
+          ],
+          "data": "0x0000000000000000000000000000000000000000000000006124fee993bc0000"
+        }
+      ],
+      "transfers": []
+    }
+  ]
+}
