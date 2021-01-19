@@ -37,7 +37,7 @@ func GetCollectiblesForSpecificCollectionAndOwner(c *gin.Context, api blockatlas
 // @Produce json
 // @Tags Collections
 // @Param data body string true "Payload" default({"60": ["0xb3624367b1ab37daef42e1a3a2ced012359659b0"]})
-// @Success 200 {object} blockatlas.DocsResponse
+// @Success 200 {object} blockatlas.ResultsResponse
 // @Router /v4/collectibles/categories [post]
 func GetCollectionCategoriesFromList(c *gin.Context, apis blockatlas.CollectionsAPIs) {
 	var reqs map[string][]string
