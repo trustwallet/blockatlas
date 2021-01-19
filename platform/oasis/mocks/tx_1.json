@@ -1,0 +1,39 @@
+{
+  "ID": 159,
+  "CreatedAt": "2021-01-04T19:02:32.010924+01:00",
+  "UpdatedAt": "2021-01-04T19:02:32.010924+01:00",
+  "DeletedAt": {
+    "Time": "0001-01-01T00:00:00Z",
+    "Valid": false
+  },
+  "height": 702480,
+  "nonce": 0,
+  "timestamp": 1605718103,
+  "success": true,
+  "Metadata": {
+    "tx_hash": "7DYN6sCpXcHuOqomRoRp63mzOinTnSJEqIX+dMtrJWQ=",
+    "from": "oasis1qz9re9hc0k9qxrhvww7x9zrfv8x8jpr4kcr2twr2",
+    "to": "oasis1qp29h8ykmxet46eqzw0wennrmmy4al3xzv37m3ca"
+  },
+  "fee": {
+    "amount": "0",
+    "gas": 10000
+  },
+  "method": "staking.Transfer",
+  "results": {
+    "error": {},
+    "events": [
+      {
+        "staking": {
+          "height": 702480,
+          "tx_hash": "7DYN6sCpXcHuOqomRoRp63mzOinTnSJEqIX+dMtrJWQ=",
+          "transfer": {
+            "from": "oasis1qz9re9hc0k9qxrhvww7x9zrfv8x8jpr4kcr2twr2",
+            "to": "oasis1qp29h8ykmxet46eqzw0wennrmmy4al3xzv37m3ca",
+            "amount": "1000000000"
+          }
+        }
+      }
+    ]
+  }
+}

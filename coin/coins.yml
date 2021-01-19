@@ -1,0 +1,425 @@
+- id: 60
+  symbol: ETH
+  handle: ethereum
+  name: Ethereum
+  decimals: 18
+  blockTime: 10000
+  sampleAddress: '0xfc10cab6a50a1ab10c56983c80cc82afc6559cf1'
+
+- id: 61
+  symbol: ETC
+  handle: classic
+  name: Ethereum Classic
+  decimals: 18
+  blockTime: 30000
+  sampleAddress: '0xf3524415b6D873205B4c3Cda783527b2aC4daAA9'
+
+- id: 74
+  symbol: ICX
+  handle: icon
+  name: ICON
+  decimals: 18
+  sampleAddress: 'hxee691e7bccc4eb11fee922896e9f51490e62b12e'
+
+- id: 118
+  symbol: ATOM
+  handle: cosmos
+  name: Cosmos
+  decimals: 6
+  blockTime: 5000
+  sampleAddress: 'cosmos1rw62phusuv9vzraezr55k0vsqssvz6ed52zyrl'
+
+- id: 144
+  symbol: XRP
+  handle: ripple
+  name: Ripple
+  decimals: 6
+  blockTime: 5000
+  sampleAddress: 'rMQ98K56yXJbDGv49ZSmW51sLn94Xe1mu1'
+
+- id: 148
+  symbol: XLM
+  handle: stellar
+  name: Stellar
+  decimals: 7
+  blockTime: 5000
+  sampleAddress: 'GDKIJJIKXLOM2NRMPNQZUUYK24ZPVFC6426GZAEP3KUK6KEJLACCWNMX'
+
+- id: 178
+  symbol: POA
+  handle: poa
+  name: Poa
+  decimals: 18
+  blockTime: 30000
+  sampleAddress: '0x1fddEc96688e0538A316C64dcFd211c491ECf0d8'
+
+- id: 195
+  symbol: TRX
+  handle: tron
+  name: Tron
+  decimals: 6
+  blockTime: 10000
+  sampleAddress: 'TMuA6YqfCeX8EhbfYEg5y7S4DqzSJireY9'
+
+- id: 235
+  symbol: FIO
+  handle: fio
+  name: FIO
+  decimals: 9
+  sampleAddress: 'FIO5J2xdfWygeNdHZNZRzRws8YGbVxjUXtp4eP8KoGkGKoLFQ7CaU'
+
+- id: 242
+  symbol: NIM
+  handle: nimiq
+  name: Nimiq
+  decimals: 5
+  blockTime: 60000
+  sampleAddress: 'NQ86 2H8F YGU5 RM77 QSN9 LYLH C56A CYYR 0MLA'
+
+- id: 304
+  symbol: IOTX
+  handle: iotex
+  name: IoTeX
+  decimals: 18
+  blockTime: 10000
+  sampleAddress: 'io1mwekae7qqwlr23220k5n9z3fmjxz72tuchra3m'
+
+- id: 313
+  symbol: ZIL
+  handle: zilliqa
+  name: Zilliqa
+  decimals: 12
+  blockTime: 30000
+  minConfirmations: 1
+  sampleAddress: 'zil1anrjcsj2ntklaa3arq4w3s6gw4l4hqrycs9egy'
+
+- id: 425
+  symbol: AION
+  handle: aion
+  name: Aion
+  decimals: 18
+  blockTime: 10000
+  sampleAddress: '0xa07981da70ce919e1db5f051c3c386eb526e6ce8b9e2bfd56e3f3d754b0a17f3'
+
+- id: 457
+  symbol: AE
+  handle: aeternity
+  name: Aeternity
+  decimals: 18
+  blockTime: 6000
+  sampleAddress: 'ak_2p5878zbFhxnrm7meL7TmqwtvBaqcBddyp5eGzZbovZ5FeVfcw'
+
+- id: 459
+  symbol: KAVA
+  handle: kava
+  name: Kava
+  decimals: 6
+  blockTime: 5000
+  sampleAddress: 'kava13fxkk4730cqglgdv7w0mdelyx07myyq7h2nd3x'
+
+- id: 500
+  symbol: THETA
+  handle: theta
+  name: Theta
+  decimals: 18
+  sampleAddress: '0xac0eeb6ee3e32e2c74e14ac74155063e4f4f981f'
+
+- id: 714
+  symbol: BNB
+  handle: binance
+  name: BNB
+  decimals: 8
+  blockTime: 4000
+  minConfirmations: 2
+  sampleAddress: 'tbnb1fhr04azuhcj0dulm7ka40y0cqjlafwae9k9gk2'
+
+- id: 818
+  symbol: VET
+  handle: vechain
+  name: VeChain Token
+  decimals: 18
+  blockTime: 20000
+  sampleAddress: '0xB5e883349e68aB59307d1604555AC890fAC47128'
+
+- id: 820
+  symbol: CLO
+  handle: callisto
+  name: Callisto
+  decimals: 18
+  blockTime: 10000
+  sampleAddress: '0x39ec1c88a7a7c1a575e8c8f42eff7630d9278179'
+
+- id: 889
+  symbol: TOMO
+  handle: tomochain
+  name: TOMO
+  blockTime: 4000
+  decimals: 18
+  sampleAddress: '0x7daa83030e3086477b79b6e757ca8608899fe783'
+
+- id: 1001
+  symbol: TT
+  handle: thundertoken
+  name: ThunderCore
+  decimals: 18
+  blockTime: 10000
+  sampleAddress: '0x0ad80a408eac4f17ba0a9de8a12d8736f60700c3'
+
+- id: 1024
+  symbol: ONT
+  handle: ontology
+  name: Ontology
+  decimals: 0
+  blockTime: 10000
+  sampleAddress: 'AUyL4TZ1zFEcSKDJrjFnD7vsq5iFZMZqT7'
+
+- id: 1729
+  symbol: XTZ
+  handle: tezos
+  name: Tezos
+  decimals: 6
+  blockTime: 20000
+  sampleAddress: 'tz1WCd2jm4uSt4vntk4vSuUWoZQGhLcDuR9q'
+
+- id: 2017
+  symbol: KIN
+  handle: kin
+  name: Kin
+  decimals: 5
+  blockTime: 5000
+  sampleAddress: 'GBHKUZ7C2SZ5N3X2S7O6TT6LNUWSEA2BXMSR5GTTSR6VZARSVAXIQNGH'
+
+- id: 2718
+  symbol: NAS
+  handle: nebulas
+  name: Nebulas
+  decimals: 18
+  blockTime: 30000
+  sampleAddress: 'n1RCYwrpLMpSpUCQ8QUDzGRg6B2PnY8R94a'
+
+- id: 6060
+  symbol: GO
+  handle: gochain
+  name: GoChain GO
+  decimals: 18
+  blockTime: 20000
+  sampleAddress: '0x76c2F81716A8D198a00502Ae9a59126418899FDe'
+
+- id: 5718350
+  symbol: WAN
+  handle: wanchain
+  name: Wanchain
+  decimals: 18
+  blockTime: 30000
+  sampleAddress: '0x36cEdc3A9d969306AF4F7CA2b83ABBf74095914d'
+
+- id: 5741564
+  symbol: WAVES
+  handle: waves
+  name: WAVES
+  decimals: 8
+  blockTime: 30000
+  minConfirmations: 1
+  sampleAddress: '3P7wz6TXienpw3BHe8eHUEuZWb6WE58kgnQ'
+
+- id: 0
+  symbol: BTC
+  handle: bitcoin
+  name: Bitcoin
+  decimals: 8
+  blockTime: 600000
+  sampleAddress: 'bc1quvuarfksewfeuevuc6tn0kfyptgjvwsvrprk9d'
+
+- id: 2
+  symbol: LTC
+  handle: litecoin
+  name: Litecoin
+  decimals: 8
+  blockTime: 150000
+  sampleAddress: 'ltc1qhd8fxxp2dx3vsmpac43z6ev0kllm4n53t5sk0u'
+
+- id: 3
+  symbol: DOGE
+  handle: doge
+  name: Dogecoin
+  decimals: 8
+  blockTime: 60000
+  sampleAddress: 'DJRFZNg8jkUtjcpo2zJd92FUAzwRjitw6f'
+
+- id: 5
+  symbol: DASH
+  handle: dash
+  name: Dash
+  decimals: 8
+  blockTime: 180000
+  sampleAddress: 'XqHiz8EXYbTAtBEYs4pWTHh7ipEDQcNQeT'
+
+- id: 14
+  symbol: VIA
+  handle: viacoin
+  name: Viacoin
+  decimals: 8
+  blockTime: 15000
+  sampleAddress: 'via1qnmsgjd6cvfprnszdgmyg9kewtjfgqflz67wwhc'
+
+- id: 17
+  symbol: GRS
+  handle: groestlcoin
+  name: Groestlcoin
+  decimals: 8
+  blockTime: 60000
+  sampleAddress: 'grs1qexwmshts5pdpeqglkl39zyl6693tmfwp0cue4j'
+
+- id: 133
+  symbol: ZEC
+  handle: zcash
+  name: Zcash
+  decimals: 8
+  blockTime: 150000
+  sampleAddress: 't1YYnByMzdGhQv3W3rnjHMrJs6HH4Y231gy'
+
+- id: 136
+  symbol: XZC
+  handle: zcoin
+  name: Zcoin
+  decimals: 8
+  blockTime: 300000
+  sampleAddress: 'aEd5XFChyXobvEics2ppAqgK3Bgusjxtik'
+
+- id: 145
+  symbol: BCH
+  handle: bitcoincash
+  name: Bitcoin Cash
+  decimals: 8
+  blockTime: 600000
+  sampleAddress: 'bitcoincash:qq07l6rr5lsdm3m80qxw80ku2ex0tj76vvsxpvmgme'
+
+- id: 175
+  symbol: RVN
+  handle: ravencoin
+  name: Raven
+  decimals: 8
+  blockTime: 60000
+  sampleAddress: 'RGkwvrUors8DtmhKy5bddFwRCTZaunjpvo'
+
+- id: 2301
+  symbol: QTUM
+  handle: qtum
+  name: Qtum
+  decimals: 8
+  blockTime: 60000
+  sampleAddress: 'QhceuaTdeCZtcxmVc6yyEDEJ7Riu5gWFoF'
+
+- id: 19167
+  symbol: ZEL
+  handle: zelcash
+  name: Zelcash
+  decimals: 8
+  blockTime: 120000
+  sampleAddress: 't1UKbRPzL4WN8Rs8aZ8RNiWoD2ftCMHKGUf'
+
+- id: 42
+  symbol: DCR
+  handle: decred
+  name: Decred
+  decimals: 8
+  blockTime: 300000
+  sampleAddress: 'DsTxPUVFxXeNgu5fzozr4mTR4tqqMaKcvpY'
+
+- id: 283
+  symbol: ALGO
+  handle: algorand
+  name: Algorand
+  decimals: 6
+  blockTime: 20000
+  sampleAddress: '4EZFQABCVQTHQCK3HQBIYGC4NV2VM42FZHEFTVH77ROG4ZGREC6Y7V5T2U'
+
+- id: 165
+  symbol: NANO
+  handle: nano
+  name: Nano
+  decimals: 30
+  sampleAddress: 'nano_1trqphog5noig7z888asnjejcie8z1iopxyepcjdo1atps8whxiuwd51ehbw'
+
+- id: 20
+  symbol: DGB
+  handle: digibyte
+  name: DigiByte
+  decimals: 8
+  blockTime: 15000
+  sampleAddress: 'D8NBg12kfW8uLjzCv7LYnPYCNhqvVtHaMQ'
+
+- id: 1023
+  symbol: ONE
+  handle: harmony
+  name: Harmony
+  decimals: 18
+  blockTime: 5000
+  sampleAddress: 'one1syjs6cnfwd9fgrhng03dyzs07suwtywwreczmk'
+
+- id: 434
+  symbol: KSM
+  handle: kusama
+  name: Kusama
+  decimals: 12
+  blockTime: 6000
+  sampleAddress: 'HewiDTQv92L2bVtkziZC8ASxrFUxr6ajQ62RXAnwQ8FDVmg'
+
+- id: 354
+  symbol: DOT
+  handle: polkadot
+  name: Polkadot
+  decimals: 10
+  blockTime: 6000
+  sampleAddress: '13SkL2uACPqBzpKBh3d2n5msYNFB2QapA5vEDeKeLjG2LS3Y'
+
+- id: 501
+  symbol: SOL
+  handle: solana
+  name: Solana
+  decimals: 9
+  blockTime: 500
+  sampleAddress: 'boot1Z6jb15CLqpaMTn2CxktktwZpRAVAgHZEW6SxQ7'
+
+- id: 397
+  symbol: NEAR
+  handle: near
+  name: NEAR
+  decimals: 18
+  blockTime: 2000
+  sampleAddress: 'NEAR6Y66fCzeKqWiwxoPox5oGeDN9VhNCu7CEQ9M86iniqoN9vg2X'
+
+- id: 508
+  symbol: ERD
+  handle: elrond
+  name: Elrond
+  decimals: 18
+  blockTime: 6000
+  sampleAddress: 'erd12tqtt5zcg6vpw65y4hkanvt49kzq695sr3ctuszjy92xw0ppzcssy2xd5r'
+
+- id: 10000714
+  symbol: BNB
+  preferedSymbol: BSCLegacy
+  handle: bsc
+  name: 'Binance Smart Chain'
+  decimals: 18
+  blockTime: 3000
+  sampleAddress: '0x35552c16704d214347f29Fa77f77DA6d75d7C752'
+
+- id: 20000714
+  symbol: BNB
+  preferedSymbol: BSC
+  handle: smartchain
+  name: 'Binance Smart Chain'
+  decimals: 18
+  blockTime: 3000
+  sampleAddress: '0x35552c16704d214347f29Fa77f77DA6d75d7C752'
+
+- id: 474
+  symbol: ROSE
+  preferedSymbol: ROSE
+  handle: oasis
+  name: Oasis
+  decimals: 9
+  blockTime: 6000
+  sampleAddress: 'oasis1qphdkldpttpsj2j3l9sde9h26cwpfwqwwuhvruyu'

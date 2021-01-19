@@ -213,6 +213,9 @@ elrond:
 filecoin:
   api: https://api.filscan.io:8700/rpc/v1
   explorer: https://filfox.info
+  
+oasis:
+  api: http://localhost:9000
 
 smartchain:
   api: ""
