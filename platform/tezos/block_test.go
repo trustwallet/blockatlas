@@ -11,7 +11,6 @@ import (
 
 func TestProcessRpcBlock(t *testing.T) {
 	type args struct {
-		balance  string
 		filename string
 	}
 	tests := []struct {

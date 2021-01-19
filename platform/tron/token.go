@@ -20,7 +20,7 @@ func (p *Platform) GetTokenListByAddress(address string) ([]string, error) {
 		tokenIds = append(assetIds, v.Key)
 	}
 	for _, trc20Tokens := range data.Trc20 {
-		for key, _ := range trc20Tokens {
+		for key := range trc20Tokens {
 			tokenIds = append(tokenIds, key)
 		}
 	}
