@@ -67,7 +67,7 @@ func GetStakeDelegationsWithAllInfoForBatch(c *gin.Context, apis map[string]bloc
 		delegation.Delegations = sortDelegations(delegation.Delegations)
 		batch = append(batch, delegation)
 	}
-	c.JSON(http.StatusOK, blockatlas.DocsResponse{Docs: &batch})
+	c.JSON(http.StatusOK, blockatlas.ResultsResponse{Results: &batch})
 }
 
 // @Summary Get Multiple Stake Delegations
@@ -99,7 +99,7 @@ func GetStakeInfoForBatch(c *gin.Context, apis map[string]blockatlas.StakeAPI) {
 		staking := getStakingResponse(p)
 		batch = append(batch, staking)
 	}
-	c.JSON(http.StatusOK, blockatlas.DocsResponse{Docs: &batch})
+	c.JSON(http.StatusOK, blockatlas.ResultsResponse{Results: &batch})
 }
 
 // @Summary Get staking info by coin ID
@@ -144,7 +144,7 @@ func GetStakeInfoForCoins(c *gin.Context, apis map[string]blockatlas.StakeAPI) {
 		staking := getStakingResponse(p)
 		batch = append(batch, staking)
 	}
-	c.JSON(http.StatusOK, blockatlas.DocsResponse{Docs: &batch})
+	c.JSON(http.StatusOK, blockatlas.ResultsResponse{Results: &batch})
 }
 
 // @Summary Get Validators
@@ -154,7 +154,7 @@ func GetStakeInfoForCoins(c *gin.Context, apis map[string]blockatlas.StakeAPI) {
 // @Produce json
 // @Tags Staking
 // @Param coin path string true "the coin name" default(cosmos)
-// @Success 200 {object} blockatlas.DocsResponse
+// @Success 200 {object} blockatlas.ResultsResponse
 // @Failure 500 {object} ErrorResponse
 // @Router /v2/{coin}/staking/validators [get]
 func GetValidators(c *gin.Context, api blockatlas.StakeAPI) {
@@ -163,7 +163,7 @@ func GetValidators(c *gin.Context, api blockatlas.StakeAPI) {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
-	c.JSON(http.StatusOK, blockatlas.DocsResponse{Docs: &results})
+	c.JSON(http.StatusOK, blockatlas.ResultsResponse{Results: &results})
 }
 
 // @Summary Get Stake Delegations
