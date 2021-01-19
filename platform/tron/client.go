@@ -47,7 +47,7 @@ func (c *GridClient) fetchTxsOfAddress(address, token string) ([]Tx, error) {
 
 func (c *GridClient) fetchAccount(address string) (accounts *Account, err error) {
 	path := fmt.Sprintf("v1/accounts/%s", address)
-	err = c.GetWithCache(&accounts, path, nil, time.Minute*1)
+	err = c.GetWithCache(&accounts, path, nil, time.Second*1)
 	return
 }
 
