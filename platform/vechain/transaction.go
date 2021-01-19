@@ -34,6 +34,12 @@ func (p *Platform) GetTokenTxsByAddress(address, token string) (types.TxPage, er
 	for t := range cTxs {
 		txs = append(txs, t...)
 	}
+
+	// NormalizeTokenTransaction won't set tx direction anymore, set it here
+	for _, tx := range txs {
+		updateTransactionDirection(&tx, address)
+	}
+
 	return txs, nil
 }
 
@@ -130,31 +136,22 @@ func (p *Platform) NormalizeTokenTransaction(srcTx Tx, receipt TxReceipt) (types
 		if err != nil {
 			continue
 		}
-		topicsFrom, err := address.EIP55Checksum(getRecipientAddress(event.Topics[1]))
-		if err != nil {
-			continue
-		}
+
 		topicsTo, err := address.EIP55Checksum(getRecipientAddress(event.Topics[2]))
 		if err != nil {
 			continue
 		}
 
-		direction, err := getTokenTransactionDirectory(originSender, topicsFrom, topicsTo)
-		if err != nil {
-			continue
-		}
-
 		txs = append(txs, types.Tx{
-			ID:        srcTx.Id,
-			Coin:      p.Coin().ID,
-			From:      originSender,
-			To:        originReceiver,
-			Fee:       types.Amount(fee),
-			Date:      srcTx.Meta.BlockTimestamp,
-			Type:      types.TxTokenTransfer,
-			Block:     srcTx.Meta.BlockNumber,
-			Status:    types.StatusCompleted,
-			Direction: direction,
+			ID:     srcTx.Id,
+			Coin:   p.Coin().ID,
+			From:   originSender,
+			To:     originReceiver,
+			Fee:    types.Amount(fee),
+			Date:   srcTx.Meta.BlockTimestamp,
+			Type:   types.TxTokenTransfer,
+			Block:  srcTx.Meta.BlockNumber,
+			Status: types.StatusCompleted,
 			Meta: types.TokenTransfer{
 				// the only supported Token on VeChain is its Gas token
 				Name:     gasTokenName,
@@ -215,7 +212,7 @@ func (p *Platform) NormalizeTransaction(srcTx LogTransfer, trxId Tx, addr string
 		return
 	}
 
-	directory, err := getTransferDirectory(sender, recipient, addrChecksum)
+	direction, err := getTransactionDirection(sender, recipient, addrChecksum)
 	if err != nil {
 		return types.Tx{}, err
 	}
@@ -229,7 +226,7 @@ func (p *Platform) NormalizeTransaction(srcTx LogTransfer, trxId Tx, addr string
 		Date:      srcTx.Meta.BlockTimestamp,
 		Type:      types.TxTransfer,
 		Block:     srcTx.Meta.BlockNumber,
-		Direction: directory,
+		Direction: direction,
 		Status:    types.StatusCompleted,
 		Meta: types.Transfer{
 			Value:    types.Amount(value),
@@ -253,28 +250,28 @@ func getRecipientAddress(hex string) string {
 	return "0x" + hex[len(hex)-40:]
 }
 
-func getTokenTransactionDirectory(originSender, topicsFrom, topicsTo string) (dir types.Direction, err error) {
-	if originSender == topicsFrom && originSender == topicsTo {
-		return types.DirectionSelf, nil
+func updateTransactionDirection(tx *types.Tx, addr string) {
+	meta, ok := tx.Meta.(types.TokenTransfer)
+	if !ok {
+		return
 	}
-	if originSender == topicsFrom && originSender != topicsTo {
-		return types.DirectionIncoming, nil
+	direction, err := getTransactionDirection(tx.From, meta.To, addr)
+	if err != nil {
+		return
 	}
-	if originSender == topicsTo && originSender != topicsFrom {
-		return types.DirectionOutgoing, nil
-	}
-	return "", errors.New("Unknown direction")
+	tx.Direction = direction
 }
 
-func getTransferDirectory(sender, recipient, addr string) (dir types.Direction, err error) {
+func getTransactionDirection(sender, recipient, addr string) (types.Direction, error) {
+	if sender != addr && recipient != addr {
+		return "", errors.New("Unknown direction")
+	}
 	if sender == addr && recipient == addr {
 		return types.DirectionSelf, nil
 	}
-	if sender == addr && recipient != addr {
+	if sender == addr {
 		return types.DirectionOutgoing, nil
-	}
-	if recipient == addr && sender != addr {
+	} else {
 		return types.DirectionIncoming, nil
 	}
-	return "", errors.New("Unknown direction")
 }
