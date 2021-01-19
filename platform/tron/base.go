@@ -6,14 +6,14 @@ import (
 )
 
 type Platform struct {
-	client         Client
-	explorerClient ExplorerClient
+	client     Client
+	gridClient GridClient
 }
 
-func Init(api, explorerApi string) *Platform {
+func Init(api, gridApi string) *Platform {
 	return &Platform{
-		client:         Client{internal.InitClient(api)},
-		explorerClient: ExplorerClient{internal.InitClient(explorerApi)},
+		client:     Client{internal.InitClient(api)},
+		gridClient: GridClient{internal.InitClient(api)},
 	}
 }
 

@@ -3,8 +3,6 @@ package blockbook
 import (
 	"reflect"
 	"testing"
-
-	"github.com/trustwallet/golibs/types"
 )
 
 func TestNormalizeToken(t *testing.T) {
@@ -15,7 +13,7 @@ func TestNormalizeToken(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want []types.Token
+		want []string
 	}{
 		{
 			name: "Should normalize and return token with balance",
@@ -27,12 +25,7 @@ func TestNormalizeToken(t *testing.T) {
 				Symbol:   "USDC",
 				Decimals: 6},
 				coinIndex: 60},
-			want: []types.Token{
-				{
-					Type:    "ERC20",
-					Name:    "USD//C",
-					TokenID: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
-					Symbol:  "USDC", Decimals: 6, Coin: 60}},
+			want: []string{"c60_t0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"},
 		},
 		{
 			name: "Should not return token with zero balance",
@@ -44,7 +37,7 @@ func TestNormalizeToken(t *testing.T) {
 				Symbol:   "USDC",
 				Decimals: 6},
 				coinIndex: 60},
-			want: []types.Token{},
+			want: []string{},
 		}, {
 			name: "Should not return token with zero balance",
 			args: args{srcToken: Token{
@@ -55,7 +48,7 @@ func TestNormalizeToken(t *testing.T) {
 				Symbol:   "USDC",
 				Decimals: 6},
 				coinIndex: 60},
-			want: []types.Token{},
+			want: []string{},
 		},
 	}
 	for _, tt := range tests {

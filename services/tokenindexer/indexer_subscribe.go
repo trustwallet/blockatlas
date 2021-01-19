@@ -45,13 +45,9 @@ func RunTokenIndexerSubscribe(database *db.Instance, apis map[uint]blockatlas.To
 			if !ok {
 				continue
 			}
-			assets, err := api.GetTokenListByAddress(coinAddress.Address)
+			assetIds, err := api.GetTokenListByAddress(coinAddress.Address)
 			if err != nil {
 				continue
-			}
-			assetIds := make([]string, 0)
-			for _, asset := range assets {
-				assetIds = append(assetIds, asset.AssetId())
 			}
 			addressAssetsMap[coinAddress.AddressID()] = assetIds
 		}

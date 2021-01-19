@@ -11,7 +11,7 @@ import (
 )
 
 func (p *Platform) GetTxsByAddress(address string) (types.TxPage, error) {
-	Txs, err := p.client.fetchTxsOfAddress(address, "")
+	Txs, err := p.gridClient.fetchTxsOfAddress(address, "")
 	if err != nil && len(Txs) == 0 {
 		return nil, err
 	}
@@ -80,12 +80,12 @@ func addTokenMeta(tx *types.Tx, srcTx Tx, tokenInfo AssetInfo) {
 func (p *Platform) fetchTransactionsForTRC10Tokens(address, token string) (types.TxPage, error) {
 	txs := make(types.TxPage, 0)
 
-	tokenTxs, err := p.client.fetchTxsOfAddress(address, token)
+	tokenTxs, err := p.gridClient.fetchTxsOfAddress(address, token)
 	if err != nil {
 		return nil, err
 	}
 
-	info, err := p.client.fetchTokenInfo(token)
+	info, err := p.gridClient.fetchTokenInfo(token)
 	if err != nil {
 		return nil, err
 	}
