@@ -19,7 +19,7 @@ import (
 // @Tags Transactions
 // @Param coin path string true "the coin name" default(ethereum)
 // @Param address path string true "the query address" default(0x5574Cd97432cEd0D7Caf58ac3c4fEDB2061C98fB)
-// @Success 200 {object} types.CollectionPage
+// @Success 200 {object} []string
 // @Failure 500 {object} ErrorResponse
 // @Router /v2/{coin}/tokens/{address} [get]
 func GetTokensByAddress(c *gin.Context, tokenAPI blockatlas.TokensAPI) {
@@ -34,7 +34,7 @@ func GetTokensByAddress(c *gin.Context, tokenAPI blockatlas.TokensAPI) {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
-	c.JSON(http.StatusOK, blockatlas.DocsResponse{Docs: &result})
+	c.JSON(http.StatusOK, result)
 }
 
 func GetTokensByAddressV3(c *gin.Context, instance tokenindexer.Instance) {
