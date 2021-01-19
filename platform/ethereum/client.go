@@ -5,12 +5,12 @@ import "github.com/trustwallet/golibs/types"
 type EthereumClient interface {
 	GetTransactions(address string, coinIndex uint) (types.TxPage, error)
 	GetTokenTxs(address, token string, coinIndex uint) (types.TxPage, error)
-	GetTokenList(address string, coinIndex uint) (types.TokenPage, error)
+	GetTokenList(address string, coinIndex uint) ([]string, error)
 	GetCurrentBlockNumber() (int64, error)
 	GetBlockByNumber(num int64, coinIndex uint) (*types.Block, error)
 }
 
-func (p *Platform) GetTokenListByAddress(address string) (types.TokenPage, error) {
+func (p *Platform) GetTokenListByAddress(address string) ([]string, error) {
 	return p.client.GetTokenList(address, p.CoinIndex)
 }
 

@@ -215,16 +215,16 @@ func normalizeBaseOfTransaction(t Tx) types.Tx {
 	}
 }
 
-func normalizeTokens(srcBalance []TokenBalance, tokens Tokens) []types.Token {
-	tokensList := make([]types.Token, 0, len(srcBalance))
+func normalizeTokens(srcBalance []TokenBalance, tokens Tokens) []string {
+	assetIds := make([]string, 0)
 	for _, srcToken := range srcBalance {
 		token, ok := normalizeToken(srcToken, tokens)
 		if !ok {
 			continue
 		}
-		tokensList = append(tokensList, token)
+		assetIds = append(assetIds, token.AssetId())
 	}
-	return tokensList
+	return assetIds
 }
 
 func normalizeToken(srcToken TokenBalance, tokens Tokens) (types.Token, bool) {

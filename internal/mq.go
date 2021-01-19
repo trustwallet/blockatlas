@@ -22,8 +22,13 @@ const (
 type ConsumerDatabase struct {
 	Database *db.Instance
 	Delivery func(*db.Instance, amqp.Delivery) error
+	Tag      string
 }
 
 func (c ConsumerDatabase) Callback(msg amqp.Delivery) error {
 	return c.Delivery(c.Database, msg)
+}
+
+func (c ConsumerDatabase) ConsumerTag() string {
+	return c.Tag
 }

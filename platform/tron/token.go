@@ -1,86 +1,32 @@
 package tron
 
 import (
-	"strconv"
-	"strings"
-	"sync"
-
-	log "github.com/sirupsen/logrus"
-	"github.com/trustwallet/golibs/coin"
-	"github.com/trustwallet/golibs/types"
+	"github.com/trustwallet/golibs/asset"
 )
 
-func (p *Platform) GetTokenListByAddress(address string) (types.TokenPage, error) {
-	tokens, err := p.client.fetchAccount(address)
+func (p *Platform) GetTokenListByAddress(address string) ([]string, error) {
+	assetIds := make([]string, 0)
+	tokens, err := p.gridClient.fetchAccount(address)
 	if err != nil {
-		return nil, err
+		return assetIds, err
 	}
-	tokenPage := make(types.TokenPage, 0)
 	if len(tokens.Data) == 0 {
-		return tokenPage, nil
+		return assetIds, nil
 	}
+	data := tokens.Data[0]
 
 	var tokenIds []string
-	for _, v := range tokens.Data[0].AssetsV2 {
-		tokenIds = append(tokenIds, v.Key)
+	for _, v := range data.AssetsV2 {
+		tokenIds = append(assetIds, v.Key)
+	}
+	for _, trc20Tokens := range data.Trc20 {
+		for key := range trc20Tokens {
+			tokenIds = append(tokenIds, key)
+		}
+	}
+	for _, tokenId := range tokenIds {
+		assetIds = append(assetIds, asset.BuildID(p.Coin().ID, tokenId))
 	}
 
-	tokensChan := p.getTokens(tokenIds)
-	for info := range tokensChan {
-		tokenPage = append(tokenPage, info)
-	}
-
-	trc20Tokens, err := p.explorerClient.fetchAllTRC20Tokens(address)
-	if err != nil {
-		log.Error("Explorer error" + err.Error())
-	}
-
-	for _, t := range trc20Tokens {
-		tokenPage = append(tokenPage, types.Token{
-			Name:     t.Name,
-			Symbol:   strings.ToUpper(t.Symbol),
-			Decimals: uint(t.Decimals),
-			TokenID:  t.ContractAddress,
-			Coin:     coin.Tron().ID,
-			Type:     types.TRC20,
-		})
-	}
-
-	return tokenPage, nil
-}
-
-func (p *Platform) getTokens(ids []string) chan types.Token {
-	tkChan := make(chan types.Token, len(ids))
-	var wg sync.WaitGroup
-	for _, id := range ids {
-		wg.Add(1)
-		go func(i string, c chan types.Token) {
-			defer wg.Done()
-			_ = p.getTokensChannel(i, c)
-		}(id, tkChan)
-	}
-	wg.Wait()
-	close(tkChan)
-	return tkChan
-}
-
-func (p *Platform) getTokensChannel(id string, tkChan chan types.Token) error {
-	info, err := p.client.fetchTokenInfo(id)
-	if err != nil || len(info.Data) == 0 {
-		return err
-	}
-	asset := NormalizeToken(info.Data[0])
-	tkChan <- asset
-	return nil
-}
-
-func NormalizeToken(info AssetInfo) types.Token {
-	return types.Token{
-		Name:     info.Name,
-		Symbol:   strings.ToUpper(info.Symbol),
-		TokenID:  strconv.Itoa(int(info.ID)),
-		Coin:     coin.TRX,
-		Decimals: info.Decimals,
-		Type:     types.TRC10,
-	}
+	return assetIds, nil
 }

@@ -22,7 +22,7 @@ func GetTransactionsFromDelivery(delivery amqp.Delivery, service string) (types.
 	return transactions, nil
 }
 
-func publishNotifications(notifications []TransactionNotification) error {
+func publishNotifications(notifications []types.TransactionNotification) error {
 	raw, err := json.Marshal(notifications)
 	if err != nil {
 		return err

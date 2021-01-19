@@ -10,25 +10,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/trustwallet/golibs/mock"
-	"github.com/trustwallet/golibs/types"
 )
-
-var (
-	tokenDst = types.Token{
-		Name:     "Test",
-		Symbol:   "TST",
-		Decimals: 8,
-		TokenID:  "1",
-		Coin:     195,
-		Type:     "TRC10",
-	}
-)
-
-func TestNormalizeToken(t *testing.T) {
-	asset := AssetInfo{Name: "Test", Symbol: "TST", ID: 1, Decimals: 8}
-	actual := NormalizeToken(asset)
-	assert.Equal(t, tokenDst, actual)
-}
 
 func TestPlatform_GetTokenListByAddress(t *testing.T) {
 	server := httptest.NewServer(createMockedAPI())
@@ -38,7 +20,7 @@ func TestPlatform_GetTokenListByAddress(t *testing.T) {
 	res, err := p.GetTokenListByAddress("TM1zzNDZD2DPASbKcgdVoTYhfmYgtfwx9R")
 	assert.Nil(t, err)
 	sort.Slice(res, func(i, j int) bool {
-		return res[i].TokenID < res[j].TokenID
+		return res[i] < res[j]
 	})
 	rawRes, err := json.Marshal(res)
 	assert.Nil(t, err)
