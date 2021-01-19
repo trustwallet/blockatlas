@@ -1,40 +1,19 @@
 package internal
 
 import (
-	"net/http"
-	"strconv"
-
-	"github.com/getsentry/raven-go"
-	log "github.com/sirupsen/logrus"
 	"github.com/trustwallet/golibs/client"
+	"github.com/trustwallet/golibs/network/middleware"
 )
 
 type Client struct {
 	client.Request
 }
 
-var errorHandler = func(res *http.Response, uri string) error {
-	statusCode := res.StatusCode
-	//Improve ways to identify if worth logging the error
-	if statusCode != http.StatusOK && statusCode != http.StatusNotFound {
-		log.WithFields(log.Fields{
-			"tags": raven.Tags{
-				{Key: "status_code", Value: strconv.Itoa(res.StatusCode)},
-				{Key: "host", Value: res.Request.URL.Host},
-				{Key: "url", Value: uri},
-			},
-			"fingerprint": []string{"client_errors"},
-		}).Error("Client Errors")
-	}
-
-	return nil
-}
-
 func InitClient(url string) client.Request {
 	return client.Request{
 		Headers:      map[string]string{},
 		HttpClient:   client.DefaultClient,
-		ErrorHandler: errorHandler,
+		ErrorHandler: middleware.SentryErrorHandler,
 		BaseUrl:      url,
 	}
 }
@@ -47,7 +26,7 @@ func InitJSONClient(baseUrl string) client.Request {
 	return client.Request{
 		Headers:      headers,
 		HttpClient:   client.DefaultClient,
-		ErrorHandler: errorHandler,
+		ErrorHandler: middleware.SentryErrorHandler,
 		BaseUrl:      baseUrl,
 	}
 }
