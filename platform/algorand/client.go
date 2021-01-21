@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strconv"
 
+	"github.com/trustwallet/golibs/network/middleware"
+
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/client"
 )
@@ -13,14 +15,9 @@ type Client struct {
 }
 
 func InitClient(url, apiKey string) Client {
-	return Client{
-		Request: client.Request{
-			HttpClient:   client.DefaultClient,
-			ErrorHandler: client.DefaultErrorHandler,
-			Headers:      map[string]string{"X-Indexer-API-Token": apiKey},
-			BaseUrl:      url,
-		},
-	}
+	request := client.InitClient(url, middleware.SentryErrorHandler)
+	request.Headers = map[string]string{"X-Indexer-API-Token": apiKey}
+	return Client{request}
 }
 
 func (c *Client) GetLatestBlock() (int64, error) {

@@ -1,10 +1,11 @@
 package filecoin
 
 import (
-	"github.com/trustwallet/blockatlas/internal"
 	"github.com/trustwallet/blockatlas/platform/filecoin/explorer"
 	"github.com/trustwallet/blockatlas/platform/filecoin/rpc"
+	"github.com/trustwallet/golibs/client"
 	"github.com/trustwallet/golibs/coin"
+	"github.com/trustwallet/golibs/network/middleware"
 )
 
 type Platform struct {
@@ -14,8 +15,8 @@ type Platform struct {
 
 func Init(api, explorerApi string) *Platform {
 	p := &Platform{
-		client:   rpc.Client{Request: internal.InitClient(api)},
-		explorer: explorer.Client{Request: internal.InitClient(explorerApi)},
+		client:   rpc.Client{Request: client.InitClient(api, middleware.SentryErrorHandler)},
+		explorer: explorer.Client{Request: client.InitClient(explorerApi, middleware.SentryErrorHandler)},
 	}
 	return p
 }

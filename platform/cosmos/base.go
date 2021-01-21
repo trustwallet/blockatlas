@@ -1,8 +1,9 @@
 package cosmos
 
 import (
-	"github.com/trustwallet/blockatlas/internal"
+	"github.com/trustwallet/golibs/client"
 	"github.com/trustwallet/golibs/coin"
+	"github.com/trustwallet/golibs/network/middleware"
 )
 
 type Platform struct {
@@ -13,7 +14,7 @@ type Platform struct {
 func Init(coin uint, api string) *Platform {
 	return &Platform{
 		CoinIndex: coin,
-		client:    Client{internal.InitClient(api)},
+		client:    Client{client.InitClient(api, middleware.SentryErrorHandler)},
 	}
 }
 
