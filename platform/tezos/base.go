@@ -1,8 +1,9 @@
 package tezos
 
 import (
-	"github.com/trustwallet/blockatlas/internal"
+	"github.com/trustwallet/golibs/client"
 	"github.com/trustwallet/golibs/coin"
+	"github.com/trustwallet/golibs/network/middleware"
 )
 
 type Platform struct {
@@ -13,9 +14,9 @@ type Platform struct {
 
 func Init(api, rpc, baker string) *Platform {
 	p := &Platform{
-		client:      Client{internal.InitClient(api)},
-		rpcClient:   RpcClient{internal.InitClient(rpc)},
-		bakerClient: BakerClient{internal.InitClient(baker)},
+		client:      Client{client.InitClient(api, middleware.SentryErrorHandler)},
+		rpcClient:   RpcClient{client.InitClient(rpc, middleware.SentryErrorHandler)},
+		bakerClient: BakerClient{client.InitClient(baker, middleware.SentryErrorHandler)},
 	}
 	p.client.SetTimeout(35)
 	return p

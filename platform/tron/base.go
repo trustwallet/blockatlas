@@ -1,8 +1,9 @@
 package tron
 
 import (
-	"github.com/trustwallet/blockatlas/internal"
+	"github.com/trustwallet/golibs/client"
 	"github.com/trustwallet/golibs/coin"
+	"github.com/trustwallet/golibs/network/middleware"
 )
 
 type Platform struct {
@@ -12,8 +13,8 @@ type Platform struct {
 
 func Init(api, gridApi string) *Platform {
 	return &Platform{
-		client:     Client{internal.InitClient(api)},
-		gridClient: GridClient{internal.InitClient(api)},
+		client:     Client{client.InitClient(api, middleware.SentryErrorHandler)},
+		gridClient: GridClient{client.InitClient(api, middleware.SentryErrorHandler)},
 	}
 }
 

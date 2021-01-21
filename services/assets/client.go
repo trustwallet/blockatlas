@@ -3,8 +3,9 @@ package assets
 import (
 	"time"
 
-	"github.com/trustwallet/blockatlas/internal"
+	"github.com/trustwallet/golibs/network/middleware"
 
+	"github.com/trustwallet/golibs/client"
 	"github.com/trustwallet/golibs/coin"
 )
 
@@ -14,7 +15,7 @@ const (
 
 func GetchValidatorsInfo(coin coin.Coin) (AssetValidators, error) {
 	var results AssetValidators
-	request := internal.InitClient(URL + coin.Handle)
+	request := client.InitClient(URL+coin.Handle, middleware.SentryErrorHandler)
 	err := request.GetWithCache(&results, "validators/list.json", nil, time.Hour*1)
 	if err != nil {
 		return nil, err

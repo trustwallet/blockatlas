@@ -1,9 +1,10 @@
 package bitcoin
 
 import (
-	"github.com/trustwallet/blockatlas/internal"
 	"github.com/trustwallet/blockatlas/platform/bitcoin/blockbook"
+	"github.com/trustwallet/golibs/client"
 	"github.com/trustwallet/golibs/coin"
+	"github.com/trustwallet/golibs/network/middleware"
 )
 
 type Platform struct {
@@ -14,7 +15,7 @@ type Platform struct {
 func Init(coin uint, api string) *Platform {
 	return &Platform{
 		CoinIndex: coin,
-		client:    blockbook.Client{Request: internal.InitClient(api)},
+		client:    blockbook.Client{Request: client.InitClient(api, middleware.SentryErrorHandler)},
 	}
 }
 
