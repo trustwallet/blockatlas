@@ -7,8 +7,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/trustwallet/blockatlas/internal"
 	"github.com/trustwallet/golibs/client"
+	"github.com/trustwallet/golibs/network/middleware"
 )
 
 const (
@@ -21,7 +21,7 @@ type Client struct {
 }
 
 func InitClient(url string) *Client {
-	c := Client{internal.InitClient(url)}
+	c := Client{client.InitClient(url, middleware.SentryErrorHandler)}
 	return &c
 }
 
@@ -61,9 +61,9 @@ func fetchTokenURI(uri string) (info CollectionInfo, err error) {
 
 	var c client.Request
 	if strings.HasPrefix(url.Scheme, httpScheme) {
-		c = client.InitClient(uri)
+		c = client.InitClient(uri, middleware.SentryErrorHandler)
 	} else if strings.HasPrefix(url.Scheme, ipfsScheme) {
-		c = client.InitClient(ipfsGatewayUrl(url))
+		c = client.InitClient(ipfsGatewayUrl(url), middleware.SentryErrorHandler)
 	} else {
 		return info, errors.New("not supported url scheme: " + url.Scheme)
 	}

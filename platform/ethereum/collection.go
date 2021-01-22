@@ -1,6 +1,8 @@
 package ethereum
 
-import "github.com/trustwallet/golibs/types"
+import (
+	"github.com/trustwallet/golibs/types"
+)
 
 func (p *Platform) GetCollections(owner string) (types.CollectionPage, error) {
 	return p.collectible.GetCollections(owner, p.CoinIndex)

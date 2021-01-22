@@ -1,8 +1,7 @@
 package opensea
 
 import (
-	"strings"
-
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/types"
 )
 
@@ -59,9 +58,8 @@ func NormalizeCollectiblePage(collectibles []Collectible, coinIndex uint) (page 
 }
 
 func NormalizeCollectible(c Collectible, coinIndex uint) types.Collectible {
-	id := strings.Join([]string{c.AssetContract.Address, c.TokenId}, "-")
 	return types.Collectible{
-		ID:              id,
+		ID:              blockatlas.GenCollectibleId(c.AssetContract.Address, c.TokenId),
 		CollectionID:    c.Collection.Slug,
 		TokenID:         c.TokenId,
 		ContractAddress: c.AssetContract.Address,

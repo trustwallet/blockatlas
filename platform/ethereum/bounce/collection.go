@@ -1,14 +1,15 @@
 package bounce
 
 import (
-	"fmt"
 	"strconv"
 
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/types"
 )
 
 var (
 	bscChainId = 56
+	nftVersion = "3.0" // opensea nft_version compatible
 )
 
 func (c *Client) GetCollections(owner string, coinIndex uint) (types.CollectionPage, error) {
@@ -46,6 +47,7 @@ func (c *Client) NormalizeCollections(collections []Collection, coinIndex uint, 
 		if len(cl.TokenURI) == 0 {
 			continue
 		}
+
 		info, err := fetchTokenURI(cl.TokenURI)
 		if err != nil {
 			return nil, err
@@ -82,10 +84,11 @@ func (c *Client) NormalizeCollectibles(collectibles []Collectible, coinIndex uin
 		return nil, err
 	}
 	for _, c := range collectibles {
+		tokenId := strconv.Itoa(c.TokenID)
 		page = append(page, types.Collectible{
-			ID:              fmt.Sprintf("%s-%d", c.ContractAddr, c.TokenID),
+			ID:              blockatlas.GenCollectibleId(c.ContractAddr, tokenId),
 			CollectionID:    c.ContractAddr,
-			TokenID:         strconv.Itoa(c.TokenID),
+			TokenID:         tokenId,
 			ContractAddress: c.ContractAddr,
 			ImageUrl:        normalizeImageUrl(info.Image),
 			ExternalLink:    c.TokenURI,
@@ -93,7 +96,7 @@ func (c *Client) NormalizeCollectibles(collectibles []Collectible, coinIndex uin
 			Description:     info.Description,
 			Coin:            coinIndex,
 			Name:            info.Name,
-			Version:         "3.0",
+			Version:         nftVersion,
 		})
 	}
 	return page, nil
