@@ -1,11 +1,10 @@
-package ethereum
+package opensea
 
 import (
 	"encoding/json"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/trustwallet/blockatlas/platform/ethereum/collection"
 	"github.com/trustwallet/golibs/coin"
 	"github.com/trustwallet/golibs/mock"
 	"github.com/trustwallet/golibs/types"
@@ -66,7 +65,7 @@ var (
 )
 
 func TestNormalizeCollectionV4(t *testing.T) {
-	var collections []collection.Collection
+	var collections []Collection
 	err := json.Unmarshal([]byte(collectionsSrcV4), &collections)
 	assert.Nil(t, err)
 	page := NormalizeCollections(collections, coin.ETH, collectionsOwnerV4)
@@ -76,7 +75,7 @@ func TestNormalizeCollectionV4(t *testing.T) {
 }
 
 func TestNormalizeCollectibleV4(t *testing.T) {
-	var collectibles []collection.Collectible
+	var collectibles []Collectible
 	err := json.Unmarshal([]byte(collectibleSrcV4), &collectibles)
 	assert.Nil(t, err)
 	page := NormalizeCollectiblePage(collectibles, coin.ETH)
