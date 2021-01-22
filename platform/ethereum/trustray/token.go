@@ -4,7 +4,7 @@ import (
 	"github.com/trustwallet/golibs/types"
 )
 
-func (c *Client) GetTokenList(address string, coinIndex uint) ([]string, error) {
+func (c *Client) GetTokenList(address string, coinIndex uint) ([]types.Token, error) {
 	account, err := c.GetTokens(address)
 	if err != nil {
 		return nil, err
@@ -27,11 +27,11 @@ func NormalizeToken(srcToken *Contract, coinIndex uint) types.Token {
 }
 
 // NormalizeTxs converts multiple Ethereum tokens
-func NormalizeTokens(srcTokens []Contract, coinIndex uint) []string {
-	assetIds := make([]string, 0)
+func NormalizeTokens(srcTokens []Contract, coinIndex uint) []types.Token {
+	assets := make([]types.Token, 0)
 	for _, srcToken := range srcTokens {
 		token := NormalizeToken(&srcToken, coinIndex)
-		assetIds = append(assetIds, token.AssetId())
+		assets = append(assets, token)
 	}
-	return assetIds
+	return assets
 }

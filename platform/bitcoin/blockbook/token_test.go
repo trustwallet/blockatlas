@@ -3,6 +3,8 @@ package blockbook
 import (
 	"reflect"
 	"testing"
+
+	"github.com/trustwallet/golibs/types"
 )
 
 func TestNormalizeToken(t *testing.T) {
@@ -13,42 +15,53 @@ func TestNormalizeToken(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want []string
+		want []types.Token
 	}{
 		{
 			name: "Should normalize and return token with balance",
 			args: args{srcToken: Token{
 				Balance:  "100",
 				Type:     "ERC20",
-				Name:     "USD//C",
+				Name:     "USD Coin",
 				Contract: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
 				Symbol:   "USDC",
 				Decimals: 6},
 				coinIndex: 60},
-			want: []string{"c60_t0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"},
+			want: []types.Token{
+				{
+					Type:     "ERC20",
+					Name:     "USD Coin",
+					TokenID:  "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+					Symbol:   "USDC",
+					Decimals: 6,
+					Coin:     60,
+				},
+			},
 		},
 		{
 			name: "Should not return token with zero balance",
 			args: args{srcToken: Token{
 				Balance:  "0",
 				Type:     "ERC20",
-				Name:     "USD//C",
+				Name:     "USD Coin",
 				Contract: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
 				Symbol:   "USDC",
 				Decimals: 6},
-				coinIndex: 60},
-			want: []string{},
+				coinIndex: 60,
+			},
+			want: []types.Token{},
 		}, {
 			name: "Should not return token with zero balance",
 			args: args{srcToken: Token{
 				Balance:  "",
 				Type:     "ERC20",
-				Name:     "USD//C",
+				Name:     "USD Coin",
 				Contract: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
 				Symbol:   "USDC",
 				Decimals: 6},
-				coinIndex: 60},
-			want: []string{},
+				coinIndex: 60,
+			},
+			want: []types.Token{},
 		},
 	}
 	for _, tt := range tests {

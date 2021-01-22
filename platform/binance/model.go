@@ -215,14 +215,12 @@ func normalizeBaseOfTransaction(t Tx) types.Tx {
 	}
 }
 
-func normalizeTokens(srcBalance []TokenBalance, tokens Tokens) []string {
-	assetIds := make([]string, 0)
+func normalizeTokens(srcBalance []TokenBalance, tokens Tokens) []types.Token {
+	assetIds := make([]types.Token, 0)
 	for _, srcToken := range srcBalance {
-		token, ok := normalizeToken(srcToken, tokens)
-		if !ok {
-			continue
+		if token, ok := normalizeToken(srcToken, tokens); ok {
+			assetIds = append(assetIds, token)
 		}
-		assetIds = append(assetIds, token.AssetId())
 	}
 	return assetIds
 }
@@ -249,20 +247,6 @@ func normalizeToken(srcToken TokenBalance, tokens Tokens) (types.Token, bool) {
 
 	return result, true
 }
-
-//func getTransactionData(rawOrderData string) (TransactionData, error) {
-//	var result TransactionData
-//	err := json.Unmarshal([]byte(rawOrderData), &result)
-//	return result, err
-//}
-//
-//func getTokenIDsFromPair(pair string) (string, string) {
-//	result := strings.Split(pair, "_")
-//	if len(result) == 1 || len(result) == 0 {
-//		return pair, pair
-//	}
-//	return result[0], result[1]
-//}
 
 func getTokenSymbolFromID(tokenID string) string {
 	s := strings.Split(tokenID, "-")
