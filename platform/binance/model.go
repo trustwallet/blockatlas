@@ -248,20 +248,6 @@ func normalizeToken(srcToken TokenBalance, tokens Tokens) (types.Token, bool) {
 	return result, true
 }
 
-//func getTransactionData(rawOrderData string) (TransactionData, error) {
-//	var result TransactionData
-//	err := json.Unmarshal([]byte(rawOrderData), &result)
-//	return result, err
-//}
-//
-//func getTokenIDsFromPair(pair string) (string, string) {
-//	result := strings.Split(pair, "_")
-//	if len(result) == 1 || len(result) == 0 {
-//		return pair, pair
-//	}
-//	return result[0], result[1]
-//}
-
 func getTokenSymbolFromID(tokenID string) string {
 	s := strings.Split(tokenID, "-")
 	if len(s) > 1 {
