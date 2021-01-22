@@ -27,6 +27,7 @@ postgres:
 
 consumer:
   service: ""
+  prefetch: 8
   workers: 8
 
 # [BNB] Binance DEX: https://www.binance.org/

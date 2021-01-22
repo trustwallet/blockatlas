@@ -64,6 +64,7 @@ func main() {
 	platform.Init(config.Default.Platform)
 
 	options := mq.InitDefaultConsumerOptions(config.Default.Consumer.Workers)
+	options.PrefetchLimit = config.Default.Consumer.Prefetch
 	// Special case options to avoid unknown deadlock on insert
 	subscriptionsOptions := mq.InitDefaultConsumerOptions(1)
 

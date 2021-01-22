@@ -214,8 +214,9 @@ type Configuration struct {
 		DSN string `mapstructure:"dsn"`
 	} `mapstructure:"sentry"`
 	Consumer struct {
-		Service string `mapstructure:"service"`
-		Workers int    `mapstructure:"workers"`
+		Service  string `mapstructure:"service"`
+		Prefetch int    `mapstructure:"prefetch"`
+		Workers  int    `mapstructure:"workers"`
 	} `mapstructure:"consumer"`
 }
 
