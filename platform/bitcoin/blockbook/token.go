@@ -13,7 +13,7 @@ func (c *Client) GetTokenList(address string, coinIndex uint) ([]types.Token, er
 }
 
 func NormalizeTokens(tokens []Token, coinIndex uint) []types.Token {
-	assets := make([]types.Token, 0, len(tokens))
+	assets := make([]types.Token, 0)
 	for _, srcToken := range tokens {
 		if srcToken.Balance == "0" || srcToken.Balance == "" {
 			continue
