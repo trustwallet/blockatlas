@@ -5,8 +5,8 @@ import (
 	"github.com/trustwallet/golibs/types"
 )
 
-func (p *Platform) GetTokenListByAddress(address string) (types.TokenPage, error) {
-	return types.TokenPage{}, nil
+func (p *Platform) GetTokenListByAddress(address string) ([]types.Token, error) {
+	return []types.Token{}, nil
 }
 
 func (p *Platform) GetTokenListIdsByAddress(address string) ([]string, error) {

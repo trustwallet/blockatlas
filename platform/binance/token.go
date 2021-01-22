@@ -1,11 +1,10 @@
 package binance
 
 import (
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/types"
 )
 
-func (p *Platform) GetTokenListByAddress(address string) (types.TokenPage, error) {
+func (p *Platform) GetTokenListByAddress(address string) ([]types.Token, error) {
 	account, err := p.client.FetchAccountMeta(address)
 	if err != nil || len(account.Balances) == 0 {
 		return nil, nil
@@ -22,5 +21,5 @@ func (p *Platform) GetTokenListIdsByAddress(address string) ([]string, error) {
 	if err != nil {
 		return []string{}, err
 	}
-	return blockatlas.GetAssetsIds(assets), nil
+	return types.GetAssetsIds(assets), nil
 }

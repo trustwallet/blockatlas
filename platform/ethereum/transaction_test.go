@@ -55,8 +55,8 @@ func (c Client) GetTokenTxs(address, token string, coinIndex uint) (types.TxPage
 	return txs, nil
 }
 
-func (c Client) GetTokenList(address string, coinIndex uint) (types.TokenPage, error) {
-	return types.TokenPage{}, nil
+func (c Client) GetTokenList(address string, coinIndex uint) ([]types.Token, error) {
+	return []types.Token{}, nil
 }
 
 func (c Client) GetCurrentBlockNumber() (int64, error) {

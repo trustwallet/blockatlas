@@ -1,7 +1,6 @@
 package ethereum
 
 import (
-	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/types"
 )
 
@@ -13,7 +12,7 @@ func (p *Platform) GetTokenTxsByAddress(address string, token string) (types.TxP
 	return p.client.GetTokenTxs(address, token, p.CoinIndex)
 }
 
-func (p *Platform) GetTokenListByAddress(address string) (types.TokenPage, error) {
+func (p *Platform) GetTokenListByAddress(address string) ([]types.Token, error) {
 	return p.client.GetTokenList(address, p.CoinIndex)
 }
 
@@ -22,5 +21,5 @@ func (p *Platform) GetTokenListIdsByAddress(address string) ([]string, error) {
 	if err != nil {
 		return []string{}, err
 	}
-	return blockatlas.GetAssetsIds(assets), nil
+	return types.GetAssetsIds(assets), nil
 }

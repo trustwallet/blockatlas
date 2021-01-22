@@ -4,7 +4,7 @@ import (
 	"github.com/trustwallet/golibs/types"
 )
 
-func (c *Client) GetTokenList(address string, coinIndex uint) (types.TokenPage, error) {
+func (c *Client) GetTokenList(address string, coinIndex uint) ([]types.Token, error) {
 	tokens, err := c.GetTokens(address)
 	if err != nil {
 		return nil, err
@@ -13,7 +13,7 @@ func (c *Client) GetTokenList(address string, coinIndex uint) (types.TokenPage, 
 }
 
 func NormalizeTokens(tokens []Token, coinIndex uint) []types.Token {
-	assets := make(types.TokenPage, 0, len(tokens))
+	assets := make([]types.Token, 0, len(tokens))
 	for _, srcToken := range tokens {
 		if srcToken.Balance == "0" || srcToken.Balance == "" {
 			continue

@@ -39,7 +39,7 @@ type (
 	// TokensAPI provides token lookups
 	TokensAPI interface {
 		Platform
-		GetTokenListByAddress(address string) (types.TokenPage, error)
+		GetTokenListByAddress(address string) ([]types.Token, error)
 		GetTokenListIdsByAddress(address string) ([]string, error)
 	}
 
