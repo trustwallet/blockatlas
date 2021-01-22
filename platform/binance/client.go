@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/trustwallet/blockatlas/internal"
+	"github.com/trustwallet/golibs/network/middleware"
 
 	"github.com/trustwallet/golibs/client"
 	"github.com/trustwallet/golibs/types"
@@ -17,7 +17,7 @@ type Client struct {
 }
 
 func InitClient(url, apiKey string) Client {
-	c := Client{internal.InitClient(url)}
+	c := Client{client.InitClient(url, middleware.SentryErrorHandler)}
 	c.Headers["apikey"] = apiKey
 	return c
 }

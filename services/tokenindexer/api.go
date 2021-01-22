@@ -7,6 +7,7 @@ import (
 
 	"github.com/trustwallet/blockatlas/db"
 	"github.com/trustwallet/blockatlas/db/models"
+	"github.com/trustwallet/golibs/types"
 )
 
 type Instance struct {
@@ -17,11 +18,11 @@ func Init(database *db.Instance) Instance {
 	return Instance{database: database}
 }
 
-func (i Instance) GetNewTokensRequest(r Request) (Response, error) {
+func (i Instance) GetNewTokensRequest(r Request) (blockatlas.ResultsResponse, error) {
 	from := time.Unix(r.From, 0)
 	result, err := i.database.GetAssetsFrom(from)
 	if err != nil {
-		return Response{}, err
+		return blockatlas.ResultsResponse{}, err
 	}
 	return normalize(result), nil
 }
@@ -31,7 +32,7 @@ func (i Instance) GetTokensByAddress(r GetTokensByAddressRequest) (GetTokensByAd
 
 	for coin, coins := range r.AddressesByCoin {
 		for _, address := range coins {
-			list = append(list, blockatlas.GetAddressID(coin, address))
+			list = append(list, types.GetAddressID(coin, address))
 		}
 	}
 	from := time.Unix(int64(r.From), 0)
@@ -49,17 +50,17 @@ func (i Instance) GetTokensByAddress(r GetTokensByAddressRequest) (GetTokensByAd
 	return assetIds, nil
 }
 
-func normalize(dbAssets []models.Asset) Response {
-	var result []Asset
+func normalize(dbAssets []models.Asset) blockatlas.ResultsResponse {
+	var result []types.Asset
 	for _, a := range dbAssets {
-		asset := Asset{
-			Asset:    a.Asset,
+		asset := types.Asset{
+			Id:       a.Asset,
 			Name:     a.Name,
 			Symbol:   a.Symbol,
-			Type:     a.Type,
+			Type:     types.TokenType(a.Type),
 			Decimals: a.Decimals,
 		}
 		result = append(result, asset)
 	}
-	return Response{Assets: result}
+	return blockatlas.ResultsResponse{Results: result}
 }

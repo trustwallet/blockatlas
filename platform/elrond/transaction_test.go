@@ -11,13 +11,14 @@ import (
 )
 
 var (
-	userAddress       = `erd10yagg2vme2jns9zqf9xn8kl86fkc6dr063vnuj0mz2kk2jw0qwuqmfmaw0`
-	txTransferSrc1, _ = mock.JsonStringFromFilePath("mocks/tx.json")
-	txTransferSrc2, _ = mock.JsonStringFromFilePath("mocks/tx_2.json")
-	txTransferSrc3, _ = mock.JsonStringFromFilePath("mocks/tx_3.json")
-	txTransferSrc4, _ = mock.JsonStringFromFilePath("mocks/tx_4.json")
-	txTransferSrc5, _ = mock.JsonStringFromFilePath("mocks/tx_5.json")
-	txTransferSrc6, _ = mock.JsonStringFromFilePath("mocks/tx_6.json")
+	userAddress         = `erd10yagg2vme2jns9zqf9xn8kl86fkc6dr063vnuj0mz2kk2jw0qwuqmfmaw0`
+	txTransferSrc1, _   = mock.JsonStringFromFilePath("mocks/tx.json")
+	txTransferSrc2, _   = mock.JsonStringFromFilePath("mocks/tx_2.json")
+	txTransferSrc3, _   = mock.JsonStringFromFilePath("mocks/tx_3.json")
+	txTransferSrc4, _   = mock.JsonStringFromFilePath("mocks/tx_4.json")
+	txTransferSrc5, _   = mock.JsonStringFromFilePath("mocks/tx_5.json")
+	txTransferSrc6, _   = mock.JsonStringFromFilePath("mocks/tx_6.json")
+	scrNegativeValue, _ = mock.JsonStringFromFilePath("mocks/scr_negative_value.json")
 
 	txTransfer1Normalized = types.Tx{
 		ID:       "30d404cc7a42b0158b95f6adfbf9a517627d60f6c7e497c1442dfdb6460285df",
@@ -168,15 +169,16 @@ func TestNormalize(t *testing.T) {
 }
 
 func TestNormalizeTxs(t *testing.T) {
-	var tx1, tx2, tx3 Transaction
+	var tx1, tx2, tx3, scrNegative Transaction
 
 	_ = json.Unmarshal([]byte(txTransferSrc1), &tx1)
 	_ = json.Unmarshal([]byte(txTransferSrc1), &tx2)
 	_ = json.Unmarshal([]byte(txTransferSrc1), &tx3)
+	_ = json.Unmarshal([]byte(scrNegativeValue), &scrNegative)
 
-	txs := []Transaction{tx1, tx2, tx3}
+	txs := []Transaction{tx1, tx2, tx3, scrNegative}
 	normalizedTxs := NormalizeTxs(txs, userAddress, Block{})
-	require.Equal(t, len(txs), len(normalizedTxs))
+	require.Equal(t, len(txs)-1, len(normalizedTxs))
 }
 
 func testNormalize(t *testing.T, _test *test) {

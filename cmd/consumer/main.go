@@ -31,9 +31,10 @@ var (
 	cancel   context.CancelFunc
 	database *db.Instance
 
-	transactions  = "transactions"
-	tokens        = "tokens"
-	subscriptions = "subscriptions"
+	transactions        = "transactions"
+	tokens              = "tokens"
+	subscriptions       = "subscriptions"
+	subscriptionsTokens = "subscriptions_tokens"
 )
 
 func init() {
@@ -63,17 +64,22 @@ func main() {
 	platform.Init(config.Default.Platform)
 
 	options := mq.InitDefaultConsumerOptions(config.Default.Consumer.Workers)
+	// Special case options to avoid unknown deadlock on insert
+	subscriptionsOptions := mq.InitDefaultConsumerOptions(1)
 
 	switch config.Default.Consumer.Service {
 	case transactions:
 		setupTransactionsConsumer(options, ctx)
 	case subscriptions:
-		setupSubscriptionsConsumer(options, ctx)
+		setupSubscriptionsConsumer(subscriptionsOptions, ctx)
+	case subscriptionsTokens:
+		setupSubscriptionsTokensConsumer(options, ctx)
 	case tokens:
 		setupTokensConsumer(options, ctx)
 	default:
 		setupTransactionsConsumer(options, ctx)
-		setupSubscriptionsConsumer(options, ctx)
+		setupSubscriptionsConsumer(subscriptionsOptions, ctx)
+		setupSubscriptionsTokensConsumer(options, ctx)
 		setupTokensConsumer(options, ctx)
 	}
 
@@ -85,16 +91,34 @@ func main() {
 }
 
 func setupTransactionsConsumer(options mq.ConsumerOptions, ctx context.Context) {
-	go internal.RawTransactions.RunConsumer(internal.ConsumerDatabase{Database: database, Delivery: notifier.RunNotifier}, options, ctx)
+	go internal.RawTransactions.RunConsumer(internal.ConsumerDatabase{
+		Database: database,
+		Delivery: notifier.RunNotifier,
+		Tag:      transactions,
+	}, options, ctx)
 }
 
 func setupSubscriptionsConsumer(options mq.ConsumerOptions, ctx context.Context) {
-	// Special case options to avoid unknown deadlock on insert
-	subscriptionsOptions := mq.InitDefaultConsumerOptions(1)
-	go internal.Subscriptions.RunConsumer(internal.ConsumerDatabase{Database: database, Delivery: subscriber.RunSubscriber}, subscriptionsOptions, ctx)
-	go internal.SubscriptionsTokens.RunConsumer(tokenindexer.ConsumerIndexer{Database: database, TokensAPIs: platform.TokensAPIs, Delivery: tokenindexer.RunTokenIndexerSubscribe}, options, ctx)
+	go internal.Subscriptions.RunConsumer(internal.ConsumerDatabase{
+		Database: database,
+		Delivery: subscriber.RunSubscriber,
+		Tag:      subscriptions,
+	}, options, ctx)
+}
+
+func setupSubscriptionsTokensConsumer(options mq.ConsumerOptions, ctx context.Context) {
+	go internal.SubscriptionsTokens.RunConsumer(tokenindexer.ConsumerIndexer{
+		Database:   database,
+		TokensAPIs: platform.TokensAPIs,
+		Delivery:   tokenindexer.RunTokenIndexerSubscribe,
+		Tag:        subscriptionsTokens,
+	}, options, ctx)
 }
 
 func setupTokensConsumer(options mq.ConsumerOptions, ctx context.Context) {
-	go internal.RawTokens.RunConsumer(internal.ConsumerDatabase{Database: database, Delivery: tokenindexer.RunTokenIndexer}, options, ctx)
+	go internal.RawTokens.RunConsumer(internal.ConsumerDatabase{
+		Database: database,
+		Delivery: tokenindexer.RunTokenIndexer,
+		Tag:      tokens,
+	}, options, ctx)
 }

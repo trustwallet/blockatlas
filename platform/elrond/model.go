@@ -3,6 +3,7 @@ package elrond
 import (
 	"encoding/json"
 	"math/big"
+	"strings"
 	"time"
 
 	"github.com/trustwallet/golibs/types"
@@ -91,6 +92,10 @@ func (tx *Transaction) Direction(address string) types.Direction {
 	default:
 		return types.DirectionIncoming
 	}
+}
+
+func (tx *Transaction) HasNegativeValue() bool {
+	return strings.HasPrefix(tx.Value, "-")
 }
 
 func (tx *Transaction) TxTimestamp(blockRound uint64) time.Duration {

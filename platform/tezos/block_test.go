@@ -9,7 +9,7 @@ import (
 	"github.com/trustwallet/golibs/types"
 )
 
-func TestNormalizeRpcBlock(t *testing.T) {
+func TestProcessRpcBlock(t *testing.T) {
 	type args struct {
 		filename string
 	}
@@ -64,6 +64,7 @@ func TestNormalizeRpcBlock(t *testing.T) {
 							Name:     "Tezos",
 							Symbol:   "XTZ",
 							Decimals: 6,
+							Value:    "163965",
 						},
 					},
 					{
@@ -103,6 +104,7 @@ func TestNormalizeRpcBlock(t *testing.T) {
 							Name:     "Tezos",
 							Symbol:   "XTZ",
 							Decimals: 6,
+							Value:    "163965",
 						},
 					},
 					{
@@ -131,15 +133,16 @@ func TestNormalizeRpcBlock(t *testing.T) {
 	for _, tt := range tests {
 		var block RpcBlock
 		_ = mock.JsonModelFromFilePath("mocks/"+tt.args.filename, &block)
+		rpcClient := &RpcClientMock{Balance: "163965"}
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := NormalizeRpcBlock(block)
+			got, err := ProcessRpcBlock(block, rpcClient)
 			fmt.Println(got)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("NormalizeRpcBlock() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("ProcessRpcBlock() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("NormalizeRpcBlock() = %v, \nwant %v", got, tt.want)
+				t.Errorf("ProcessRpcBlock() = %v, \nwant %v", got, tt.want)
 			}
 		})
 	}

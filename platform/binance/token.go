@@ -1,8 +1,6 @@
 package binance
 
-import "github.com/trustwallet/golibs/types"
-
-func (p *Platform) GetTokenListByAddress(address string) (types.TokenPage, error) {
+func (p *Platform) GetTokenListByAddress(address string) ([]string, error) {
 	account, err := p.client.FetchAccountMeta(address)
 	if err != nil || len(account.Balances) == 0 {
 		return nil, nil

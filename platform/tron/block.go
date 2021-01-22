@@ -57,7 +57,7 @@ func (p *Platform) NormalizeBlockChannel(srcTx Tx, txChan chan types.Tx) {
 	if len(transfer.AssetName) > 0 {
 		assetName, err := hex.DecodeString(transfer.AssetName[:])
 		if err == nil {
-			info, err := p.client.fetchTokenInfo(string(assetName))
+			info, err := p.gridClient.fetchTokenInfo(string(assetName))
 			if err == nil && len(info.Data) > 0 {
 				addTokenMeta(tx, srcTx, info.Data[0])
 			}

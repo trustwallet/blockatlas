@@ -25,6 +25,10 @@ func NormalizeTxs(srcTxs []Transaction, address string, block Block) (txs []type
 
 // NormalizeTx converts an Elrond transaction into the generic model
 func NormalizeTx(srcTx Transaction, address string, block Block) (tx types.Tx, ok bool) {
+	if srcTx.HasNegativeValue() {
+		return types.Tx{}, false
+	}
+
 	tx = types.Tx{
 		ID:       srcTx.Hash,
 		Coin:     coin.Elrond().ID,

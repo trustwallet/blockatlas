@@ -7,6 +7,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/streadway/amqp"
 	"github.com/trustwallet/blockatlas/db"
+	"github.com/trustwallet/golibs/types"
 )
 
 const (
@@ -14,23 +15,23 @@ const (
 )
 
 func RunNotifier(database *db.Instance, delivery amqp.Delivery) error {
-	txs, err := GetTransactionsFromDelivery(delivery, Notifier)
+	transactions, err := GetTransactionsFromDelivery(delivery, Notifier)
 	if err != nil {
-		log.WithFields(log.Fields{"service": Notifier, "txs": txs}).Error("failed to get transactions: ", err)
-		return err
+		log.WithFields(log.Fields{"service": Notifier, "body": string(delivery.Body), "error": err}).Error("Unable to unmarshal MQ Message")
+		return nil
 	}
 
 	allAddresses := make([]string, 0)
-	for _, tx := range txs {
+	for _, tx := range transactions {
 		allAddresses = append(allAddresses, tx.GetAddresses()...)
 	}
 
 	addresses := ToUniqueAddresses(allAddresses)
 	for i := range addresses {
-		addresses[i] = strconv.Itoa(int(txs[0].Coin)) + "_" + addresses[i]
+		addresses[i] = strconv.Itoa(int(transactions[0].Coin)) + "_" + addresses[i]
 	}
 
-	if len(txs) == 0 {
+	if len(transactions) == 0 {
 		return nil
 	}
 	subscriptions, err := database.GetSubscriptions(addresses)
@@ -38,13 +39,13 @@ func RunNotifier(database *db.Instance, delivery amqp.Delivery) error {
 		return nil
 	}
 
-	notifications := make([]TransactionNotification, 0)
+	notifications := make([]types.TransactionNotification, 0)
 	for _, sub := range subscriptions {
 		ua, _, ok := UnprefixedAddress(sub.Address)
 		if !ok {
 			continue
 		}
-		notificationsForAddress := buildNotificationsByAddress(ua, txs)
+		notificationsForAddress := buildNotificationsByAddress(ua, transactions)
 		notifications = append(notifications, notificationsForAddress...)
 	}
 

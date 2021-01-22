@@ -1,25 +1,27 @@
 package ethereum
 
 import (
-	"github.com/trustwallet/blockatlas/internal"
 	"github.com/trustwallet/blockatlas/platform/bitcoin/blockbook"
-	"github.com/trustwallet/blockatlas/platform/ethereum/collection"
+	"github.com/trustwallet/blockatlas/platform/ethereum/bounce"
+	"github.com/trustwallet/blockatlas/platform/ethereum/opensea"
 	"github.com/trustwallet/blockatlas/platform/ethereum/trustray"
+	"github.com/trustwallet/golibs/client"
 	"github.com/trustwallet/golibs/coin"
+	"github.com/trustwallet/golibs/network/middleware"
 )
 
 type Platform struct {
 	CoinIndex   uint
 	RpcURL      string
 	client      EthereumClient
-	collectible collection.Client
+	collectible CollectibleClient
 }
 
 func Init(coinType uint, api, rpc string) *Platform {
 	return &Platform{
 		CoinIndex: coinType,
 		RpcURL:    rpc,
-		client:    &trustray.Client{Request: internal.InitClient(api)},
+		client:    &trustray.Client{Request: client.InitClient(api, middleware.SentryErrorHandler)},
 	}
 }
 
@@ -27,14 +29,19 @@ func InitWithBlockbook(coinType uint, blockbookApi, rpc string) *Platform {
 	return &Platform{
 		CoinIndex: coinType,
 		RpcURL:    rpc,
-		client:    &blockbook.Client{Request: internal.InitClient(blockbookApi)},
+		client:    &blockbook.Client{Request: client.InitClient(blockbookApi, middleware.SentryErrorHandler)},
 	}
 }
 
-func InitWithCollection(coinType uint, rpc, blockbookApi, collectionApi, collectionKey string) *Platform {
+func InitWithOpenSea(coinType uint, rpc, blockbookApi, collectionApi, collectionKey string) *Platform {
 	platform := InitWithBlockbook(coinType, blockbookApi, rpc)
-	platform.collectible = collection.Client{Request: internal.InitClient(collectionApi)}
-	platform.collectible.Headers["X-API-KEY"] = collectionKey
+	platform.collectible = opensea.InitClient(collectionApi, collectionKey)
+	return platform
+}
+
+func InitWithBounce(coinType uint, rpc, blockbookApi, collectionApi string) *Platform {
+	platform := InitWithBlockbook(coinType, blockbookApi, rpc)
+	platform.collectible = bounce.InitClient(collectionApi)
 	return platform
 }
 

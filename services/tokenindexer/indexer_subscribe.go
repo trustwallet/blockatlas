@@ -7,30 +7,37 @@ import (
 	"github.com/streadway/amqp"
 	"github.com/trustwallet/blockatlas/db"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/services/subscriber"
+	"github.com/trustwallet/golibs/types"
 )
 
 type ConsumerIndexer struct {
 	Database   *db.Instance
 	TokensAPIs map[uint]blockatlas.TokensAPI
 	Delivery   func(*db.Instance, map[uint]blockatlas.TokensAPI, amqp.Delivery) error
+	Tag        string
 }
 
 func (c ConsumerIndexer) Callback(msg amqp.Delivery) error {
 	return c.Delivery(c.Database, c.TokensAPIs, msg)
 }
 
+func (c ConsumerIndexer) ConsumerTag() string {
+	return c.Tag
+}
+
 func RunTokenIndexerSubscribe(database *db.Instance, apis map[uint]blockatlas.TokensAPI, delivery amqp.Delivery) error {
-	var event blockatlas.SubscriptionEvent
+	var event types.SubscriptionEvent
 	err := json.Unmarshal(delivery.Body, &event)
 	if err != nil {
-		log.WithFields(log.Fields{"service": SubscriptionsTokenIndexer, "event": event}).Error(err)
-		return err
+		log.WithFields(log.Fields{"service": SubscriptionsTokenIndexer, "body": string(delivery.Body), "error": err}).Error("Unable to unmarshal MQ Message")
+		return nil
 	}
+
+	log.WithFields(log.Fields{"service": TokenIndexer, "event": event.Operation, "subscriptions": len(event.Subscriptions)}).Info("Processing")
 
 	subscriptions := event.ParseSubscriptions(event.Subscriptions)
 	switch event.Operation {
-	case subscriber.AddSubscription:
+	case types.AddSubscription:
 		addressAssetsMap := map[string][]string{}
 
 		for _, coinAddress := range subscriptions {
@@ -38,18 +45,14 @@ func RunTokenIndexerSubscribe(database *db.Instance, apis map[uint]blockatlas.To
 			if !ok {
 				continue
 			}
-			assets, err := api.GetTokenListByAddress(coinAddress.Address)
+			assetIds, err := api.GetTokenListByAddress(coinAddress.Address)
 			if err != nil {
 				continue
-			}
-			assetIds := make([]string, 0)
-			for _, asset := range assets {
-				assetIds = append(assetIds, asset.AssetId())
 			}
 			addressAssetsMap[coinAddress.AddressID()] = assetIds
 		}
 		return CreateAssociations(database, addressAssetsMap)
-	case subscriber.DeleteSubscription:
+	case types.DeleteSubscription:
 		//No action is needed
 		return nil
 	}

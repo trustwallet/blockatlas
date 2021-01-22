@@ -10,16 +10,12 @@ import (
 	"github.com/trustwallet/golibs/types"
 )
 
-var (
-	transferSrc, _     = mock.JsonStringFromFilePath("mocks/transfer.json")
-	trxId, _           = mock.JsonStringFromFilePath("mocks/tx_id.json")
-	transferLogSrc, _  = mock.JsonStringFromFilePath("mocks/transfer_log.json")
-	trxReceipt, _      = mock.JsonStringFromFilePath("mocks/transfer_receipt.json")
-	revertedTx, _      = mock.JsonStringFromFilePath("mocks/reverted_tx.json")
-	revertedReceipt, _ = mock.JsonStringFromFilePath("mocks/reverted_receipt.json")
-)
-
 func TestNormalizeTransaction(t *testing.T) {
+	var (
+		transferSrc, _ = mock.JsonStringFromFilePath("mocks/transfer.json")
+		trxId, _       = mock.JsonStringFromFilePath("mocks/tx_id.json")
+	)
+
 	tests := []struct {
 		name     string
 		addr     string
@@ -68,35 +64,59 @@ func TestNormalizeTransaction(t *testing.T) {
 
 func TestNormalizeTokenTransaction(t *testing.T) {
 	tests := []struct {
-		name      string
-		txData    string
-		txReceipt string
-		expected  types.TxPage
+		name        string
+		txFile      string
+		receiptFile string
+		address     string
+		expected    types.TxPage
 	}{
-		{"Normalize VIP180 token transfer", transferLogSrc, trxReceipt, types.TxPage{
+		{"Normalize outgoing VTHO tx", "outgoing_vtho_tx.json", "outgoing_vtho_receipt.json", "0xe99399dd211eF54c301A5d1AA813471d92122eA8", types.TxPage{
 			{
-				ID:        "0x42f5eba46ddcc458243c753545a3faa849502d078efbc5b74baddea9e6ea5b04",
+				ID:        "0x0677f91de4787d295087acec0a7ba317b0019fbf296fed630fdb5afbfca97a58",
 				Coin:      coin.VET,
-				From:      "0x2c7A8d5ccE0d5E6a8a31233B7Dc3DAE9AaE4b405",
+				From:      "0xe99399dd211eF54c301A5d1AA813471d92122eA8",
 				To:        "0x0000000000000000000000000000456E65726779",
-				Date:      1574278180,
+				Date:      1610958570,
+				Type:      types.TxTokenTransfer,
+				Fee:       types.Amount("36518000000000000000"),
+				Status:    types.StatusCompleted,
+				Block:     8045756,
+				Direction: types.DirectionOutgoing,
+				Meta: types.TokenTransfer{
+					Name:     gasTokenName,
+					Symbol:   gasTokenSymbol,
+					TokenID:  "0x0000000000000000000000000000456E65726779",
+					From:     "0xe99399dd211eF54c301A5d1AA813471d92122eA8",
+					To:       "0xB5e883349e68aB59307d1604555AC890fAC47128",
+					Value:    types.Amount("7000000000000000000"),
+					Decimals: 18,
+				},
+			},
+		}},
+		{"Normalize incoming VTHO tx", "incoming_vtho_tx.json", "incoming_vtho_receipt.json", "0xe99399dd211eF54c301A5d1AA813471d92122eA8", types.TxPage{
+			{
+				ID:        "0xb356fa7b3a371f1518a5f9bc51e951d0dac2ef04d58b532c7ca50a52aa5cddb4",
+				Coin:      coin.VET,
+				From:      "0xB5e883349e68aB59307d1604555AC890fAC47128",
+				To:        "0x0000000000000000000000000000456E65726779",
+				Date:      1610958460,
 				Type:      types.TxTokenTransfer,
 				Fee:       types.Amount("36582000000000000000"),
 				Status:    types.StatusCompleted,
-				Block:     4382764,
+				Block:     8045745,
 				Direction: types.DirectionIncoming,
 				Meta: types.TokenTransfer{
 					Name:     gasTokenName,
 					Symbol:   gasTokenSymbol,
 					TokenID:  "0x0000000000000000000000000000456E65726779",
-					From:     "0x2c7A8d5ccE0d5E6a8a31233B7Dc3DAE9AaE4b405",
-					To:       "0xB5e883349e68aB59307d1604555AC890fAC47128",
-					Value:    types.Amount("68000000000000000000"),
+					From:     "0xB5e883349e68aB59307d1604555AC890fAC47128",
+					To:       "0xe99399dd211eF54c301A5d1AA813471d92122eA8",
+					Value:    types.Amount("1000000000000000000000"),
 					Decimals: 18,
 				},
 			},
 		}},
-		{"Normalize reverted token transfer", revertedTx, revertedReceipt, types.TxPage{
+		{"Normalize reverted token transfer", "reverted_tx.json", "reverted_receipt.json", "0x7cFFB7632252Bae3766734d61F148f0Ea78Fc08C", types.TxPage{
 			{
 				ID:     "0x7fae32a743e42eaec54642e2a5742a185299f5b4bedaf12c60f65705661de932",
 				Coin:   coin.VET,
@@ -116,15 +136,17 @@ func TestNormalizeTokenTransaction(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			var tx Tx
-			err := json.Unmarshal([]byte(tt.txData), &tx)
+			err := mock.JsonModelFromFilePath("mocks/"+tt.txFile, &tx)
 			assert.Nil(t, err)
 
 			var receipt TxReceipt
-			errR := json.Unmarshal([]byte(tt.txReceipt), &receipt)
-			assert.Nil(t, errR)
+			err = mock.JsonModelFromFilePath("mocks/"+tt.receiptFile, &receipt)
+			assert.Nil(t, err)
 
 			actual, err := platform.NormalizeTokenTransaction(tx, receipt)
 			assert.Nil(t, err)
+
+			updateTransactionDirection(&actual[0], tt.address)
 
 			assert.Equal(t, len(actual), 1, "tx could not be normalized")
 			assert.Equal(t, tt.expected, actual, "tx don't equal")
@@ -174,35 +196,7 @@ func Test_getRecipientAddress(t *testing.T) {
 	}
 }
 
-func Test_getTokenTransactionDirectory(t *testing.T) {
-	addr1 := "0xb5e883349e68ab59307d1604555ac890fac47128"
-	addr2 := "0eec2bbedbb8b18357dab0b753cd1893bb832284"
-	tests := []struct {
-		name         string
-		originSender string
-		topicsFrom   string
-		topicsTo     string
-		expected     types.Direction
-		expectErr    bool
-	}{
-		{"Self direction", addr1, addr1, addr1, types.DirectionSelf, false},
-		{"In direction", addr1, addr1, addr2, types.DirectionIncoming, false},
-		{"Out direction", addr1, addr2, addr1, types.DirectionOutgoing, false},
-		{"Unknown direction", addr1, addr2, addr2, "", true},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			actual, err := getTokenTransactionDirectory(tt.originSender, tt.topicsFrom, tt.topicsTo)
-			if tt.expectErr {
-				assert.NotNil(t, err)
-			}
-			assert.Equal(t, tt.expected, actual)
-		})
-	}
-}
-
-func Test_getTransferDirectory(t *testing.T) {
+func Test_getTransactionDirection(t *testing.T) {
 	addr1 := "0xb5e883349e68ab59307d1604555ac890fac47128"
 	addr2 := "0eec2bbedbb8b18357dab0b753cd1893bb832284"
 	tests := []struct {
@@ -221,7 +215,7 @@ func Test_getTransferDirectory(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			actual, err := getTransferDirectory(tt.sender, tt.recipient, tt.address)
+			actual, err := getTransactionDirection(tt.sender, tt.recipient, tt.address)
 			if tt.expectErr {
 				assert.NotNil(t, err)
 			}
