@@ -218,11 +218,9 @@ func normalizeBaseOfTransaction(t Tx) types.Tx {
 func normalizeTokens(srcBalance []TokenBalance, tokens Tokens) types.TokenPage {
 	assetIds := make(types.TokenPage, 0)
 	for _, srcToken := range srcBalance {
-		token, ok := normalizeToken(srcToken, tokens)
-		if !ok {
-			continue
+		if token, ok := normalizeToken(srcToken, tokens); ok {
+			assetIds = append(assetIds, token)
 		}
-		assetIds = append(assetIds, token)
 	}
 	return assetIds
 }
