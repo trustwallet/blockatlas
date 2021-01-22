@@ -17,7 +17,7 @@ func TestPlatform_GetTokenListByAddress(t *testing.T) {
 	defer server.Close()
 
 	p := Init(server.URL, server.URL)
-	res, err := p.GetTokenListByAddress("TM1zzNDZD2DPASbKcgdVoTYhfmYgtfwx9R")
+	res, err := p.GetTokenListIdsByAddress("TM1zzNDZD2DPASbKcgdVoTYhfmYgtfwx9R")
 	assert.Nil(t, err)
 	sort.Slice(res, func(i, j int) bool {
 		return res[i] < res[j]
