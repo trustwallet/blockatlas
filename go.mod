@@ -27,8 +27,8 @@ require (
 	github.com/trustwallet/golibs v0.0.41
 	github.com/trustwallet/golibs/network v0.0.0-20210122201441-617190ec568d
 	golang.org/x/crypto v0.0.0-20201124201722-c8d3bf9c5392
-	golang.org/x/net v0.0.0-20201224014010-6772e930b67b // indirect
-	golang.org/x/sys v0.0.0-20210105210732-16f7687f5001 // indirect
+	golang.org/x/net v0.0.0-20210119194325-5f4716e94777 // indirect
+	golang.org/x/sys v0.0.0-20210123231150-1d476976d117 // indirect
 	gopkg.in/yaml.v2 v2.4.0
 	gorm.io/driver/postgres v1.0.6
 	gorm.io/gorm v1.20.11

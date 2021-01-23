@@ -16,11 +16,11 @@ func TestDb_SetBlock(t *testing.T) {
 
 	block, err := database.GetLastParsedBlockNumber("ethereum")
 	assert.Nil(t, err)
-	assert.Equal(t, block, int64(0))
+	assert.Equal(t, block.Height, int64(0))
 
 	assert.Nil(t, database.SetLastParsedBlockNumber("ethereum", 110))
 
 	newBlock, err := database.GetLastParsedBlockNumber("ethereum")
 	assert.Nil(t, err)
-	assert.Equal(t, newBlock, int64(110))
+	assert.Equal(t, newBlock.Height, int64(110))
 }
