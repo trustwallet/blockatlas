@@ -9,13 +9,19 @@ import (
 )
 
 var (
-	workerBlockParsing = prometheus.NewCounterVec(
-		prometheus.CounterOpts{
+	nameSpace = "blockatlas"
+
+	workerBlockParsing = prometheus.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Namespace: nameSpace,
 			Subsystem: "worker",
 			Name:      "block_parsing",
 			Help:      "Last parsed block",
 		},
-		[]string{"coin", "priority"},
+		[]string{
+			"coin",
+			"priority",
+		},
 	)
 )
 
@@ -27,7 +33,8 @@ func setupUpdateTrackerMetrics(db *db.Instance) {
 				continue
 			}
 			for _, tracker := range trackers {
-				workerBlockParsing.With(prometheus.Labels{"coin": tracker.Coin, "priority": tracker.Priority}).Add(float64(tracker.Height))
+				labels := prometheus.Labels{"coin": tracker.Coin, "priority": tracker.Priority}
+				workerBlockParsing.With(labels).Set(float64(tracker.Height))
 			}
 			time.Sleep(1 * time.Second)
 		}
@@ -35,8 +42,10 @@ func setupUpdateTrackerMetrics(db *db.Instance) {
 }
 
 func Setup(db *db.Instance) {
-	setupUpdateTrackerMetrics(db)
-
 	prometheus.DefaultRegisterer.Unregister(prometheus.NewGoCollector())
 	prometheus.DefaultRegisterer.Unregister(prometheus.NewProcessCollector(prometheus.ProcessCollectorOpts{}))
+
+	prometheus.MustRegister(workerBlockParsing)
+
+	setupUpdateTrackerMetrics(db)
 }
