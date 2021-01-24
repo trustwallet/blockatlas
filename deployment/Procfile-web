@@ -1,0 +1,2 @@
+release: bin/setup -c $HOME/config.yml
+web: bin/api -c $HOME/config.yml -p $PORT

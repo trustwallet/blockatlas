@@ -1,0 +1,2 @@
+release: bin/setup -c $HOME/config.yml
+parser: bin/parser -c $HOME/config.yml
