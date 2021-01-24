@@ -104,6 +104,5 @@ func getAllHandlers() blockatlas.Platforms {
 func getCollectionsHandlers() blockatlas.CollectionsAPIs {
 	return blockatlas.CollectionsAPIs{
 		coin.ETH: ethereum.InitWithOpenSea(coin.ETH, config.Default.Ethereum.RPC, config.Default.Ethereum.BlockbookAPI, config.Default.Ethereum.CollectionsAPI, config.Default.Ethereum.CollectionsKey),
-		coin.BSC: ethereum.InitWithBounce(coin.BSC, config.Default.Smartchain.RPC, config.Default.Smartchain.API, config.Default.Smartchain.CollectionsAPI),
 	}
 }
