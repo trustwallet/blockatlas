@@ -16,7 +16,7 @@ var (
 
 	createDst = types.Tx{
 		ID:    "8b96cf3a660b85ef80b5a84c032cacdb93bb139cfe7e929b974ea9eaa0d29141",
-		Coin:  coin.XLM,
+		Coin:  coin.STELLAR,
 		From:  "GBEZOC5U4TVH7ZY5N3FLYHTCZSI6VFGTULG7PBITLF5ZEBPJXFT46YZM",
 		To:    "GDKIJJIKXLOM2NRMPNQZUUYK24ZPVFC6426GZAEP3KUK6KEJLACCWNMX",
 		Fee:   "100",
@@ -31,7 +31,7 @@ var (
 
 	transferDst = types.Tx{
 		ID:    "a596dc910bae20b5bbe64aa7aa3f42acbd55769b98307878f5ad095e994bc9cf",
-		Coin:  coin.XLM,
+		Coin:  coin.STELLAR,
 		From:  "GDKIJJIKXLOM2NRMPNQZUUYK24ZPVFC6426GZAEP3KUK6KEJLACCWNMX",
 		To:    "GAX3BRBNB5WTJ2GNEFFH7A4CZKT2FORYABDDBZR5FIIT3P7FLS2EFOZZ",
 		Fee:   "100",
@@ -72,7 +72,7 @@ func testNormalize(t *testing.T, _test *test) {
 		t.Error(err)
 		return
 	}
-	tx, ok := Normalize(&payment, coin.XLM)
+	tx, ok := Normalize(&payment, coin.STELLAR)
 	if !ok {
 		t.Errorf("%s: tx could not be normalized", _test.name)
 	}

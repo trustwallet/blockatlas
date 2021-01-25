@@ -21,7 +21,7 @@ var (
 
 	expectedOutgoingTx = types.Tx{
 		ID:   "df63ddab7d4eed2fb6cb40d4d0519e7e5ac7cf5ad556b2edbd45963ea1a2931c",
-		Coin: coin.BTC,
+		Coin: coin.BITCOIN,
 		From: "3QJmV3qfvL9SuYo34YihAf3sRCW3qSinyC",
 		To:   "3FjBW1KL9L8aYtdKzJ8FhCNxmXB7dXDRw4",
 		Inputs: []types.TxOutput{
@@ -52,7 +52,7 @@ var (
 
 	expectedIncomingTx = types.Tx{
 		ID:   "a2d70bee124510c476f159fa83cdb34d663fc6020c81aad19b238601d679fed7",
-		Coin: coin.ZEC,
+		Coin: coin.ZCASH,
 		From: "t1T7cLkvDVScjw95WguoAZbbT8mrdqVtpiD",
 		To:   "t1U4xs3qMxc2TL8wwYufmBngA5mewLHRwhM",
 		Inputs: []types.TxOutput{
@@ -87,7 +87,7 @@ var (
 
 	expectedPendingTx = types.Tx{
 		ID:   "a2d70bee124510c476f159fa83cdb34d663fc6020c81aad19b238601d679fed7",
-		Coin: coin.ZEC,
+		Coin: coin.ZCASH,
 		From: "t1T7cLkvDVScjw95WguoAZbbT8mrdqVtpiD",
 		To:   "t1U4xs3qMxc2TL8wwYufmBngA5mewLHRwhM",
 		Inputs: []types.TxOutput{

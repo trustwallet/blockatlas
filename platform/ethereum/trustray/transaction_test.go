@@ -116,7 +116,7 @@ var (
 )
 var tokenTransferDst = types.Tx{
 	ID:       "0x7777854580f273df61e0162e1a41b3e1e05ab8b9f553036fa9329a90dd7e9ab2",
-	Coin:     coin.ETH,
+	Coin:     coin.ETHEREUM,
 	From:     addr1,
 	To:       contract1,
 	Fee:      "358254913291776",
@@ -137,7 +137,7 @@ var tokenTransferDst = types.Tx{
 
 var contractCallDst = types.Tx{
 	ID:       "0x34ab0028a9aa794d5cc12887e7b813cec17889948276b301028f24a408da6da4",
-	Coin:     coin.ETH,
+	Coin:     coin.ETHEREUM,
 	From:     "0xc9a16a82c284EFC3cB0fE8C891ab85d6EBa0EeFB",
 	To:       "0xc67f9C909C4d185E4A5d21D642c27D05A145a76c",
 	Fee:      "42680000000000",
@@ -153,7 +153,7 @@ var contractCallDst = types.Tx{
 
 var transferDst = types.Tx{
 	ID:       "0x77f8a3b2203933493d103a1637de814b4853410b1fb2981c4d2cff4d7a3071ab",
-	Coin:     coin.ETH,
+	Coin:     coin.ETHEREUM,
 	From:     "0xf5AeA47E57c058881B31EE8fcE1002C409188F06",
 	To:       "0x0Ae933A89D9E249D0873cfc7CA022fCB3F1280Ce",
 	Fee:      "105000000000000",
@@ -170,7 +170,7 @@ var transferDst = types.Tx{
 
 var failedDst = types.Tx{
 	ID:       "0x8dfe7e859f7bdcea4e6f4ada18567d96a51c3aa29e618ef09b80ae99385e191e",
-	Coin:     coin.ETH,
+	Coin:     coin.ETHEREUM,
 	From:     "0x4b55af7cE28A113D794F9A9940fe1506f37aA619",
 	To:       "0xE65f787c8561A4b15771111bb427274deDfe85D7",
 	Fee:      "63000000000000",
@@ -207,7 +207,7 @@ func TestNormalize(t *testing.T) {
 				t.Error(err)
 				return
 			}
-			res := AppendTxs(nil, &doc, coin.ETH)
+			res := AppendTxs(nil, &doc, coin.ETHEREUM)
 
 			resJSON, err := json.Marshal(res)
 			if err != nil {

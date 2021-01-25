@@ -37,7 +37,7 @@ func NormalizeTx(srcTx Transaction, address string) (types.Tx, bool) {
 
 	tx = types.Tx{
 		Block:  srcTx.Height,
-		Coin:   coin.XTZ,
+		Coin:   coin.TEZOS,
 		Date:   srcTx.BlockTimestamp(),
 		Error:  srcTx.ErrorMsg(),
 		Fee:    types.Amount(numbers.DecimalExp(numbers.Float64toString(srcTx.Fee), 6)),
@@ -70,8 +70,8 @@ func NormalizeTx(srcTx Transaction, address string) (types.Tx, bool) {
 	case types.TxTransfer:
 		tx.Meta = types.Transfer{
 			Value:    value,
-			Symbol:   coin.Coins[coin.XTZ].Symbol,
-			Decimals: coin.Coins[coin.XTZ].Decimals,
+			Symbol:   coin.Tezos().Symbol,
+			Decimals: coin.Tezos().Decimals,
 		}
 	default:
 		return types.Tx{}, false

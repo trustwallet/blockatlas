@@ -25,7 +25,7 @@ func TestNormalizeTransaction(t *testing.T) {
 	}{
 		{"Test normalize VET transfer transaction", "0xb5e883349e68ab59307d1604555ac890fac47128", transferSrc, trxId, types.Tx{
 			ID:        "0x702edd54bd4e13e0012798cc8b2dfa52f7150173945103d203fae26b8e3d2ed7",
-			Coin:      coin.VET,
+			Coin:      coin.VECHAIN,
 			From:      "0xB5e883349e68aB59307d1604555AC890fAC47128",
 			To:        "0x2c7A8d5ccE0d5E6a8a31233B7Dc3DAE9AaE4b405",
 			Date:      1574410670,
@@ -73,7 +73,7 @@ func TestNormalizeTokenTransaction(t *testing.T) {
 		{"Normalize outgoing VTHO tx", "outgoing_vtho_tx.json", "outgoing_vtho_receipt.json", "0xe99399dd211eF54c301A5d1AA813471d92122eA8", types.TxPage{
 			{
 				ID:        "0x0677f91de4787d295087acec0a7ba317b0019fbf296fed630fdb5afbfca97a58",
-				Coin:      coin.VET,
+				Coin:      coin.VECHAIN,
 				From:      "0xe99399dd211eF54c301A5d1AA813471d92122eA8",
 				To:        "0x0000000000000000000000000000456E65726779",
 				Date:      1610958570,
@@ -96,7 +96,7 @@ func TestNormalizeTokenTransaction(t *testing.T) {
 		{"Normalize incoming VTHO tx", "incoming_vtho_tx.json", "incoming_vtho_receipt.json", "0xe99399dd211eF54c301A5d1AA813471d92122eA8", types.TxPage{
 			{
 				ID:        "0xb356fa7b3a371f1518a5f9bc51e951d0dac2ef04d58b532c7ca50a52aa5cddb4",
-				Coin:      coin.VET,
+				Coin:      coin.VECHAIN,
 				From:      "0xB5e883349e68aB59307d1604555AC890fAC47128",
 				To:        "0x0000000000000000000000000000456E65726779",
 				Date:      1610958460,
@@ -119,7 +119,7 @@ func TestNormalizeTokenTransaction(t *testing.T) {
 		{"Normalize reverted token transfer", "reverted_tx.json", "reverted_receipt.json", "0x7cFFB7632252Bae3766734d61F148f0Ea78Fc08C", types.TxPage{
 			{
 				ID:     "0x7fae32a743e42eaec54642e2a5742a185299f5b4bedaf12c60f65705661de932",
-				Coin:   coin.VET,
+				Coin:   coin.VECHAIN,
 				From:   "0x7cFFB7632252Bae3766734d61F148f0Ea78Fc08C",
 				To:     "0xf8e1fAa0367298b55F57Ed17F7a2FF3F5F1D1628",
 				Date:   1610326580,

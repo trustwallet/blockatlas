@@ -39,7 +39,7 @@ func Normalize(trx *Tx) (tx types.Tx, b bool) {
 
 	return types.Tx{
 		ID:     trx.TxHash,
-		Coin:   coin.ICX,
+		Coin:   coin.ICON,
 		From:   trx.FromAddr,
 		To:     trx.ToAddr,
 		Fee:    types.Amount(fee),
@@ -49,8 +49,8 @@ func Normalize(trx *Tx) (tx types.Tx, b bool) {
 		Block:  trx.Height,
 		Meta: types.Transfer{
 			Value:    types.Amount(value),
-			Symbol:   coin.Coins[coin.ICX].Symbol,
-			Decimals: coin.Coins[coin.ICX].Decimals,
+			Symbol:   coin.Icon().Symbol,
+			Decimals: coin.Icon().Decimals,
 		},
 	}, true
 }

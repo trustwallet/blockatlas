@@ -15,5 +15,5 @@ func Init(api, apiKey string) *Platform {
 }
 
 func (p *Platform) Coin() coin.Coin {
-	return coin.Coins[coin.ALGO]
+	return coin.Algorand()
 }

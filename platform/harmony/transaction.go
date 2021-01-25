@@ -64,7 +64,7 @@ func NormalizeTx(trx *Transaction) (tx types.Tx, b bool, err error) {
 
 	return types.Tx{
 		ID:       trx.Hash,
-		Coin:     coin.ONE,
+		Coin:     coin.HARMONY,
 		From:     trx.From,
 		To:       trx.To,
 		Fee:      types.Amount(literalFee),
@@ -75,8 +75,8 @@ func NormalizeTx(trx *Transaction) (tx types.Tx, b bool, err error) {
 		Block:    block,
 		Meta: types.Transfer{
 			Value:    types.Amount(literalValue),
-			Symbol:   coin.Coins[coin.ONE].Symbol,
-			Decimals: coin.Coins[coin.ONE].Decimals,
+			Symbol:   coin.Harmony().Symbol,
+			Decimals: coin.Harmony().Decimals,
 		},
 	}, true, nil
 }

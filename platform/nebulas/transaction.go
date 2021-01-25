@@ -45,7 +45,7 @@ func NormalizeTx(srcTx Transaction) types.Tx {
 	}
 	return types.Tx{
 		ID:       srcTx.Hash,
-		Coin:     coin.NAS,
+		Coin:     coin.NEBULAS,
 		From:     srcTx.From.Hash,
 		To:       srcTx.To.Hash,
 		Fee:      types.Amount(srcTx.TxFee),
@@ -55,8 +55,8 @@ func NormalizeTx(srcTx Transaction) types.Tx {
 		Sequence: srcTx.Nonce,
 		Meta: types.Transfer{
 			Value:    types.Amount(srcTx.Value),
-			Symbol:   coin.Coins[coin.NAS].Symbol,
-			Decimals: coin.Coins[coin.NAS].Decimals,
+			Symbol:   coin.Nebulas().Symbol,
+			Decimals: coin.Nebulas().Decimals,
 		},
 	}
 }

@@ -109,7 +109,7 @@ func normalizeTRC20Transactions(transactions TRC20Transactions) types.Txs {
 	for _, rawTx := range transactions.Data {
 		tx := types.Tx{
 			ID:     rawTx.TransactionID,
-			Coin:   coin.TRX,
+			Coin:   coin.TRON,
 			Date:   rawTx.BlockTimestamp / 1000,
 			From:   rawTx.From,
 			To:     rawTx.To,
@@ -153,7 +153,7 @@ func normalize(srcTx Tx) (*types.Tx, error) {
 
 	return &types.Tx{
 		ID:     srcTx.ID,
-		Coin:   coin.TRX,
+		Coin:   coin.TRON,
 		Date:   srcTx.BlockTime / 1000,
 		From:   from,
 		To:     to,
@@ -162,8 +162,8 @@ func normalize(srcTx Tx) (*types.Tx, error) {
 		Status: types.StatusCompleted,
 		Meta: types.Transfer{
 			Value:    transfer.Amount,
-			Symbol:   coin.Coins[coin.TRX].Symbol,
-			Decimals: coin.Coins[coin.TRX].Decimals,
+			Symbol:   coin.Tron().Symbol,
+			Decimals: coin.Tron().Decimals,
 		},
 	}, nil
 }

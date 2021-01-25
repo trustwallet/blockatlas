@@ -28,7 +28,7 @@ func (p *Platform) GetTxsByAddress(address string) (types.TxPage, error) {
 
 func NormalizeTx(srcTx *Transaction) (types.Tx, error) {
 	txValue := srcTx.TxValue
-	decimals := coin.Coins[coin.AE].Decimals
+	decimals := coin.Aeternity().Decimals
 	amountFloat, err := txValue.Amount.Float64()
 	if err != nil {
 		return types.Tx{}, err
@@ -36,7 +36,7 @@ func NormalizeTx(srcTx *Transaction) (types.Tx, error) {
 	amount := numbers.Float64toString(amountFloat)
 	return types.Tx{
 		ID:       srcTx.Hash,
-		Coin:     coin.AE,
+		Coin:     coin.AETERNITY,
 		From:     txValue.Sender,
 		To:       txValue.Recipient,
 		Fee:      types.Amount(txValue.Fee),
@@ -47,7 +47,7 @@ func NormalizeTx(srcTx *Transaction) (types.Tx, error) {
 		Sequence: txValue.Nonce,
 		Meta: types.Transfer{
 			Value:    types.Amount(amount),
-			Symbol:   coin.Coins[coin.AE].Symbol,
+			Symbol:   coin.Aeternity().Symbol,
 			Decimals: decimals,
 		},
 	}, nil

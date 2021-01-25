@@ -33,7 +33,7 @@ func Normalize(srcTx *Tx, assetName AssetType) (tx types.Tx, ok bool) {
 	}
 	tx = types.Tx{
 		ID:     srcTx.Hash,
-		Coin:   coin.ONT,
+		Coin:   coin.ONTOLOGY,
 		Fee:    types.Amount(fee),
 		Date:   srcTx.Time,
 		Block:  srcTx.Height,
