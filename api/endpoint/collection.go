@@ -65,7 +65,7 @@ func GetCollectionCategoriesFromList(c *gin.Context, apis blockatlas.Collections
 	}
 
 	batch := make(types.CollectionPage, 0)
-	for coinId := range coinIds {
+	for _, coinId := range coinIds {
 		p, ok := apis[uint(coinId)]
 		if !ok {
 			continue

@@ -216,10 +216,10 @@ filecoin:
   api: https://api.filscan.io:8700/rpc/v1
   explorer: https://filfox.info
 
-# smartchain:
-#   api: <blockbook api>
-#   rpc: https://bsc-dataseed.nariox.org
-#   collections_api: https://nftview.bounce.finance
+smartchain:
+  api: <blockbook api>
+  rpc: https://bsc-dataseed.binance.org
+  collections_api: https://nftview.bounce.finance:10001
 
 sentry:
   dsn: ""
