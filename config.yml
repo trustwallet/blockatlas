@@ -217,7 +217,7 @@ filecoin:
 
 smartchain:
   api: <blockbook api>
-  collections_api: https://nftview.bounce.finance:10001
+  collections_api: https://nftview.bounce.finance
 
 sentry:
   dsn: ""
