@@ -35,7 +35,7 @@ func Normalize(tx Transaction) (result types.Tx, ok bool) {
 
 	return types.Tx{
 		ID:     tx.Hash,
-		Coin:   coin.ALGO,
+		Coin:   coin.ALGORAND,
 		From:   tx.From,
 		To:     tx.Payment.Receiver,
 		Fee:    types.Amount(strconv.Itoa(int(tx.Fee))),
@@ -45,8 +45,8 @@ func Normalize(tx Transaction) (result types.Tx, ok bool) {
 		Type:   types.TxTransfer,
 		Meta: types.Transfer{
 			Value:    types.Amount(strconv.Itoa(int(tx.Payment.Amount))),
-			Symbol:   coin.Coins[coin.ALGO].Symbol,
-			Decimals: coin.Coins[coin.ALGO].Decimals,
+			Symbol:   coin.Algorand().Symbol,
+			Decimals: coin.Algorand().Decimals,
 		},
 	}, true
 }

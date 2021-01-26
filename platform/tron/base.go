@@ -19,5 +19,5 @@ func Init(api, gridApi string) *Platform {
 }
 
 func (p *Platform) Coin() coin.Coin {
-	return coin.Coins[coin.TRX]
+	return coin.Tron()
 }

@@ -25,7 +25,7 @@ func NormalizeTx(srcTx *Tx) types.Tx {
 	}
 	return types.Tx{
 		ID:    srcTx.Hash,
-		Coin:  coin.NIM,
+		Coin:  coin.NIMIQ,
 		Date:  date,
 		From:  srcTx.FromAddress,
 		To:    srcTx.ToAddress,
@@ -33,8 +33,8 @@ func NormalizeTx(srcTx *Tx) types.Tx {
 		Block: srcTx.BlockNumber,
 		Meta: types.Transfer{
 			Value:    srcTx.Value,
-			Symbol:   coin.Coins[coin.NIM].Symbol,
-			Decimals: coin.Coins[coin.NIM].Decimals,
+			Symbol:   coin.Nimiq().Symbol,
+			Decimals: coin.Nimiq().Decimals,
 		},
 	}
 }

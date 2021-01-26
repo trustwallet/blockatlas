@@ -19,7 +19,7 @@ var (
 	pendingSrc, _ = mock.JsonStringFromFilePath("mocks/" + "pending_tx.json")
 	basicDst      = types.Tx{
 		ID:    "8b219949f4c1dfe9e7a9cdc5dbbc507e40dc16f44a1a5182ed6125c9a6891a50",
-		Coin:  coin.NIM,
+		Coin:  coin.NIMIQ,
 		From:  "NQ69 9A4A MB83 HXDQ 4J46 BH5R 4JFF QMA9 C3GN",
 		To:    "NQ15 MLJN 23YB 8FBM 61TN 7LYG 2212 LVBG 4V19",
 		Fee:   "138",
@@ -33,7 +33,7 @@ var (
 	}
 	pendingDst = types.Tx{
 		ID:    "79719d16f3f347cc98c35cd7a9af708cdce97de578b5135c5ae4393fd7920d61",
-		Coin:  coin.NIM,
+		Coin:  coin.NIMIQ,
 		From:  "NQ74 SJ0Q 49T1 4XQL KABH 1RUC 8DPT 9F0U 9P0B",
 		To:    "NQ97 18BJ 33YV QGHQ BV2K 56V4 12CH J8TD S9S3",
 		Fee:   "300",

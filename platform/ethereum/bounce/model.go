@@ -1,15 +1,14 @@
 package bounce
 
 type Response struct {
-	CodeStatus int    `json:"codeStatus"`
-	Msg        string `json:"msg"`
+	Code int    `json:"code"`
+	Msg  string `json:"msg"`
 }
 
 type Collectible struct {
 	ContractAddr string `json:"contract_addr"`
-	TokenID      int    `json:"token_id"`
+	TokenID      string `json:"token_id"`
 	OwnerAddr    string `json:"owner_addr"`
-	ChainID      int    `json:"chain_id"`
 	TokenURI     string `json:"token_uri"`
 }
 
@@ -25,15 +24,14 @@ type CollectibleResponse struct {
 type Collection struct {
 	ContractAddr string `json:"contract_addr"`
 	TokenType    string `json:"token_type"`
-	TokenID      int    `json:"token_id"`
+	TokenID      string `json:"token_id"`
 	OwnerAddr    string `json:"owner_addr"`
-	ChainID      int    `json:"chain_id"`
 	Balance      string `json:"balance"`
 	TokenURI     string `json:"token_uri"`
 }
 
 type CollectionList struct {
-	Collections []Collection `json:"nfts"`
+	Collections []Collection `json:"nfts721"`
 }
 
 type CollectionResponse struct {

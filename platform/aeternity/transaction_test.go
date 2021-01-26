@@ -27,7 +27,7 @@ func TestNormalizeTx(t *testing.T) {
 			},
 			wantTx: types.Tx{
 				ID:       "th_oJfBC6KZKaKsL4WXTq1ZtFiSE8Wp2PQYEnwyZqtudyHcU3Qg6",
-				Coin:     coin.AE,
+				Coin:     coin.AETERNITY,
 				From:     "ak_nv5B93FPzRHrGNmMdTDfGdd5xGZvep3MVSpJqzcQmMp59bBCv",
 				To:       "ak_ZWrS6xGhzxBasKmMbVSACfRioWqPyM5jNqMpBQ5ngP75RS6pS",
 				Fee:      "20500000000000",

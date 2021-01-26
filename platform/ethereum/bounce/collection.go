@@ -8,12 +8,11 @@ import (
 )
 
 var (
-	bscChainId = 56
 	nftVersion = "3.0" // opensea nft_version compatible
 )
 
 func (c *Client) GetCollections(owner string, coinIndex uint) (types.CollectionPage, error) {
-	collections, err := c.getCollections(owner, bscChainId)
+	collections, err := c.getCollections(owner)
 	if err != nil {
 		return nil, err
 	}
@@ -22,7 +21,7 @@ func (c *Client) GetCollections(owner string, coinIndex uint) (types.CollectionP
 }
 
 func (c *Client) GetCollectibles(owner, collectionID string, coinIndex uint) (types.CollectiblePage, error) {
-	collectibles, err := c.getCollectibles(owner, collectionID, bscChainId)
+	collectibles, err := c.getCollectibles(owner, collectionID)
 	if err != nil {
 		return nil, err
 	}
@@ -61,9 +60,9 @@ func (c *Client) NormalizeCollections(collections []Collection, coinIndex uint, 
 		page = append(page, types.Collection{
 			Id:           cl.ContractAddr,
 			Name:         info.Name,
-			ImageUrl:     normalizeImageUrl(info.Image),
+			ImageUrl:     normalizeUrl(info.Image),
 			Description:  info.Description,
-			ExternalLink: cl.TokenURI,
+			ExternalLink: normalizeUrl(cl.TokenURI),
 			Total:        total,
 			Address:      owner,
 			Coin:         coinIndex,
@@ -84,14 +83,13 @@ func (c *Client) NormalizeCollectibles(collectibles []Collectible, coinIndex uin
 		return nil, err
 	}
 	for _, c := range collectibles {
-		tokenId := strconv.Itoa(c.TokenID)
 		page = append(page, types.Collectible{
-			ID:              blockatlas.GenCollectibleId(c.ContractAddr, tokenId),
+			ID:              blockatlas.GenCollectibleId(c.ContractAddr, c.TokenID),
 			CollectionID:    c.ContractAddr,
-			TokenID:         tokenId,
+			TokenID:         c.TokenID,
 			ContractAddress: c.ContractAddr,
-			ImageUrl:        normalizeImageUrl(info.Image),
-			ExternalLink:    c.TokenURI,
+			ImageUrl:        normalizeUrl(info.Image),
+			ExternalLink:    normalizeUrl(c.TokenURI),
 			Type:            string(types.ERC721),
 			Description:     info.Description,
 			Coin:            coinIndex,

@@ -21,5 +21,5 @@ func Init(api, apiKey, rpc string) *Platform {
 }
 
 func (p *Platform) Coin() coin.Coin {
-	return coin.Coins[coin.ZIL]
+	return coin.Zilliqa()
 }

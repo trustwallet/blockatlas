@@ -18,7 +18,7 @@ var (
 
 	dstOntTransfer = types.Tx{
 		ID:     "ea0e5d8e389cb96760887094194ca359ac998b2f607be470a576861b91e2bf52",
-		Coin:   coin.ONT,
+		Coin:   coin.ONTOLOGY,
 		From:   "ARFXGXSmgFT2h9EiS4D5fen127Lzi48Eij",
 		To:     "ARFXGXSmgFT2h9EiS4D5fen127Lzi48Eij",
 		Fee:    "10000000",
@@ -34,7 +34,7 @@ var (
 	}
 	dstOngTransfer = types.Tx{
 		ID:     "e5946ba02f56e17c3709db2bc91f43f76ee3a359006586024daa5c4ad8c54e78",
-		Coin:   coin.ONT,
+		Coin:   coin.ONTOLOGY,
 		From:   "ASLbwuar3ZTbUbLPnCgjGUw2WHhMfvJJtx",
 		To:     "ARFXGXSmgFT2h9EiS4D5fen127Lzi48Eij",
 		Fee:    "10000000",
@@ -54,7 +54,7 @@ var (
 	}
 	dstRewardTransfer = types.Tx{
 		ID:     "d7554dcdf01f394b9107ff598df6d84e4c3b00ccf1e720b8c09abf085cbe4987",
-		Coin:   coin.ONT,
+		Coin:   coin.ONTOLOGY,
 		From:   "AFmseVrdL9f9oyCzZefL9tG6UbvhUMqNMV",
 		To:     "ARFXGXSmgFT2h9EiS4D5fen127Lzi48Eij",
 		Fee:    "10000000",

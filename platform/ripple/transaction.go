@@ -61,7 +61,7 @@ func NormalizeTx(srcTx *Tx) (types.Tx, bool) {
 
 	result := types.Tx{
 		ID:     srcTx.Hash,
-		Coin:   coin.XRP,
+		Coin:   coin.RIPPLE,
 		Date:   unix,
 		From:   srcTx.Payment.Account,
 		To:     srcTx.Payment.Destination,
@@ -70,8 +70,8 @@ func NormalizeTx(srcTx *Tx) (types.Tx, bool) {
 		Status: status,
 		Meta: types.Transfer{
 			Value:    types.Amount(v),
-			Symbol:   coin.Coins[coin.XRP].Symbol,
-			Decimals: coin.Coins[coin.XRP].Decimals,
+			Symbol:   coin.Coins[coin.RIPPLE].Symbol,
+			Decimals: coin.Coins[coin.RIPPLE].Decimals,
 		},
 	}
 	if srcTx.Payment.DestinationTag > 0 {

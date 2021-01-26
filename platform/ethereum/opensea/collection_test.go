@@ -68,7 +68,7 @@ func TestNormalizeCollectionV4(t *testing.T) {
 	var collections []Collection
 	err := json.Unmarshal([]byte(collectionsSrcV4), &collections)
 	assert.Nil(t, err)
-	page := NormalizeCollections(collections, coin.ETH, collectionsOwnerV4)
+	page := NormalizeCollections(collections, coin.ETHEREUM, collectionsOwnerV4)
 	assert.Equal(t, 3, len(page), "collections could not be normalized")
 	expected := types.CollectionPage{collection1DstV4, collection2DstV4, collection3DstV4}
 	assert.Equal(t, page, expected, "collections don't equal")
@@ -78,7 +78,7 @@ func TestNormalizeCollectibleV4(t *testing.T) {
 	var collectibles []Collectible
 	err := json.Unmarshal([]byte(collectibleSrcV4), &collectibles)
 	assert.Nil(t, err)
-	page := NormalizeCollectiblePage(collectibles, coin.ETH)
+	page := NormalizeCollectiblePage(collectibles, coin.ETHEREUM)
 	assert.Equal(t, len(page), 1, "collectible could not be normalized")
 	expected := types.CollectiblePage{collectibleDstV4}
 	assert.Equal(t, page, expected, "collectible don't equal")

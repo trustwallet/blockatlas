@@ -23,5 +23,5 @@ func Init(api, rpc, baker string) *Platform {
 }
 
 func (p *Platform) Coin() coin.Coin {
-	return coin.Coins[coin.XTZ]
+	return coin.Tezos()
 }
