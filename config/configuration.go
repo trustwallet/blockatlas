@@ -35,7 +35,6 @@ type Configuration struct {
 		BlockbookAPI   string `mapstructure:"blockbook_api"`
 		CollectionsAPI string `mapstructure:"collections_api"`
 		CollectionsKey string `mapstructure:"collections_api_key"`
-		RPC            string `mapstructure:"rpc"`
 	} `mapstructure:"ethereum"`
 	Binance struct {
 		API string `mapstructure:"api"`
@@ -69,14 +68,8 @@ type Configuration struct {
 	} `mapstructure:"classic"`
 	Smartchain struct {
 		API            string `mapstructure:"api"`
-		RPC            string `mapstructure:"rpc"`
 		CollectionsAPI string `mapstructure:"collections_api"`
 	} `mapstructure:"smartchain"`
-	BSC struct {
-		API            string `mapstructure:"api"`
-		RPC            string `mapstructure:"rpc"`
-		CollectionsAPI string `mapstructure:"collections_api"`
-	} `mapstructure:"bsc"`
 	Poa struct {
 		API string `mapstructure:"api"`
 		RPC string `mapstructure:"rpc"`

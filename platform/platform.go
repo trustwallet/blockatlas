@@ -85,15 +85,15 @@ func getAllHandlers() blockatlas.Platforms {
 		coin.Dash().Handle:         bitcoin.Init(coin.DASH, config.Default.Dash.API),
 		coin.Doge().Handle:         bitcoin.Init(coin.DOGE, config.Default.Doge.API),
 		coin.Qtum().Handle:         bitcoin.Init(coin.QTUM, config.Default.Qtum.API),
-		coin.Gochain().Handle:      ethereum.Init(coin.GOCHAIN, config.Default.Gochain.API, config.Default.Gochain.RPC),
-		coin.Thundertoken().Handle: ethereum.Init(coin.THUNDERTOKEN, config.Default.Thundertoken.API, config.Default.Thundertoken.RPC),
-		coin.Classic().Handle:      ethereum.Init(coin.CLASSIC, config.Default.Classic.API, config.Default.Classic.RPC),
-		coin.Poa().Handle:          ethereum.Init(coin.POA, config.Default.Poa.API, config.Default.Poa.RPC),
-		coin.Callisto().Handle:     ethereum.Init(coin.CALLISTO, config.Default.Callisto.API, config.Default.Callisto.RPC),
-		coin.Wanchain().Handle:     ethereum.Init(coin.WANCHAIN, config.Default.Wanchain.API, config.Default.Wanchain.RPC),
-		coin.Tomochain().Handle:    ethereum.Init(coin.TOMOCHAIN, config.Default.Tomochain.API, config.Default.Tomochain.RPC),
-		coin.Smartchain().Handle:   ethereum.InitWithBounce(coin.SMARTCHAIN, config.Default.Smartchain.RPC, config.Default.Smartchain.API, config.Default.Smartchain.CollectionsAPI),
-		coin.Ethereum().Handle:     ethereum.InitWithOpenSea(coin.ETHEREUM, config.Default.Ethereum.RPC, config.Default.Ethereum.BlockbookAPI, config.Default.Ethereum.CollectionsAPI, config.Default.Ethereum.CollectionsKey),
+		coin.Gochain().Handle:      ethereum.InitTrustRay(coin.GOCHAIN, config.Default.Gochain.API),
+		coin.Thundertoken().Handle: ethereum.InitTrustRay(coin.THUNDERTOKEN, config.Default.Thundertoken.API),
+		coin.Classic().Handle:      ethereum.InitTrustRay(coin.CLASSIC, config.Default.Classic.API),
+		coin.Poa().Handle:          ethereum.InitTrustRay(coin.POA, config.Default.Poa.API),
+		coin.Callisto().Handle:     ethereum.InitTrustRay(coin.CALLISTO, config.Default.Callisto.API),
+		coin.Wanchain().Handle:     ethereum.InitTrustRay(coin.WANCHAIN, config.Default.Wanchain.API),
+		coin.Tomochain().Handle:    ethereum.InitTrustRay(coin.TOMOCHAIN, config.Default.Tomochain.API),
+		coin.Smartchain().Handle:   ethereum.InitWithBounce(coin.SMARTCHAIN, config.Default.Smartchain.API, config.Default.Smartchain.CollectionsAPI),
+		coin.Ethereum().Handle:     ethereum.InitWithOpenSea(coin.ETHEREUM, config.Default.Ethereum.BlockbookAPI, config.Default.Ethereum.CollectionsAPI, config.Default.Ethereum.CollectionsKey),
 		coin.Near().Handle:         near.Init(config.Default.Near.API),
 		coin.Elrond().Handle:       elrond.Init(coin.ELROND, config.Default.Elrond.API),
 		coin.Filecoin().Handle:     filecoin.Init(config.Default.Filecoin.API, config.Default.Filecoin.Explorer),
@@ -102,7 +102,7 @@ func getAllHandlers() blockatlas.Platforms {
 
 func getCollectionsHandlers() blockatlas.CollectionsAPIs {
 	return blockatlas.CollectionsAPIs{
-		coin.ETHEREUM:   ethereum.InitWithOpenSea(coin.ETHEREUM, config.Default.Ethereum.RPC, config.Default.Ethereum.BlockbookAPI, config.Default.Ethereum.CollectionsAPI, config.Default.Ethereum.CollectionsKey),
-		coin.SMARTCHAIN: ethereum.InitWithBounce(coin.SMARTCHAIN, config.Default.Smartchain.RPC, config.Default.Smartchain.API, config.Default.Smartchain.CollectionsAPI),
+		coin.ETHEREUM:   ethereum.InitWithOpenSea(coin.ETHEREUM, config.Default.Ethereum.BlockbookAPI, config.Default.Ethereum.CollectionsAPI, config.Default.Ethereum.CollectionsKey),
+		coin.SMARTCHAIN: ethereum.InitWithBounce(coin.SMARTCHAIN, config.Default.Smartchain.API, config.Default.Smartchain.CollectionsAPI),
 	}
 }

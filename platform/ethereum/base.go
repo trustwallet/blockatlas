@@ -12,35 +12,32 @@ import (
 
 type Platform struct {
 	CoinIndex   uint
-	RpcURL      string
 	client      EthereumClient
 	collectible CollectibleClient
 }
 
-func Init(coinType uint, api, rpc string) *Platform {
+func InitTrustRay(coinType uint, api string) *Platform {
 	return &Platform{
 		CoinIndex: coinType,
-		RpcURL:    rpc,
 		client:    &trustray.Client{Request: client.InitClient(api, middleware.SentryErrorHandler)},
 	}
 }
 
-func InitWithBlockbook(coinType uint, blockbookApi, rpc string) *Platform {
+func InitWithBlockbook(coinType uint, blockbookApi string) *Platform {
 	return &Platform{
 		CoinIndex: coinType,
-		RpcURL:    rpc,
 		client:    &blockbook.Client{Request: client.InitClient(blockbookApi, middleware.SentryErrorHandler)},
 	}
 }
 
-func InitWithOpenSea(coinType uint, rpc, blockbookApi, collectionApi, collectionKey string) *Platform {
-	platform := InitWithBlockbook(coinType, blockbookApi, rpc)
+func InitWithOpenSea(coinType uint, blockbookApi, collectionApi, collectionKey string) *Platform {
+	platform := InitWithBlockbook(coinType, blockbookApi)
 	platform.collectible = opensea.InitClient(collectionApi, collectionKey)
 	return platform
 }
 
-func InitWithBounce(coinType uint, rpc, blockbookApi, collectionApi string) *Platform {
-	platform := InitWithBlockbook(coinType, blockbookApi, rpc)
+func InitWithBounce(coinType uint, blockbookApi, collectionApi string) *Platform {
+	platform := InitWithBlockbook(coinType, blockbookApi)
 	platform.collectible = bounce.InitClient(collectionApi)
 	return platform
 }

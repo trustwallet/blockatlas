@@ -59,7 +59,6 @@ ethereum:
   api: https://localhost:4567 #(Trust-Ray API)
   collections_api: https://api.opensea.io
   #  collections_api_key: [opensea_api_key]
-  rpc: https://main-rpc.linkpool.io
 
 # [ETC] Ethereum Classic: https://ethereumclassic.org (Trust-Ray API)
 classic:
@@ -218,7 +217,6 @@ filecoin:
 
 smartchain:
   api: <blockbook api>
-  rpc: https://bsc-dataseed.binance.org
   collections_api: https://nftview.bounce.finance:10001
 
 sentry:
