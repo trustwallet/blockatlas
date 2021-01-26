@@ -81,5 +81,8 @@ func normalizeUrl(uri string) string {
 }
 
 func ipfsGatewayUrl(url *url.URL) string {
-	return fmt.Sprintf("https://ipfs.io/ipfs/%s%s", url.Host, url.Path)
+	components := strings.TrimPrefix(url.String(), ipfsScheme+"://")
+	components = strings.TrimPrefix(components, "/")
+	components = strings.TrimPrefix(components, "ipfs/")
+	return fmt.Sprintf("https://ipfs.io/ipfs/%s", components)
 }
