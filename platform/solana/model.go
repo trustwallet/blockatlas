@@ -38,6 +38,10 @@ type KeyedAccount struct {
 	Pubkey  string  `json:"pubkey"`
 }
 
+type KeyedAccountValue struct {
+	Value []KeyedAccount `json:"value"`
+}
+
 type RpcAccount struct {
 	Context RpcContext `json:"context"`
 	Account Account    `json:"value"`

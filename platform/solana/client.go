@@ -50,6 +50,15 @@ func (c *Client) GetTransactionList(address string) ([]ConfirmedSignature, error
 	return signatures, nil
 }
 
+func (c *Client) GetTokenAccountsByOwner(owner, token string) (value KeyedAccountValue, err error) {
+	params := []interface{}{
+		owner,
+		map[string]interface{}{"mint": token},
+	}
+	err = c.RpcCall(&value, "getTokenAccountsByOwner", params)
+	return
+}
+
 func (c *Client) GetTransactions(address string) ([]ConfirmedTransaction, error) {
 	// get tx list
 	signatures, err := c.GetTransactionList(address)
