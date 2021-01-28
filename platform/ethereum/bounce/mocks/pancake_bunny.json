@@ -1,0 +1,21 @@
+{
+  "id": 48963,
+  "contract_addr": "0xDf7952B35f24aCF7fC0487D01c8d5690a60DBa07",
+  "contract_name": "Pancake Bunnies",
+  "token_type": "721",
+  "token_id": "409",
+  "owner_addr": "0x7d8bf18c7ce84b3e175b339c4ca93aed1dd166f1",
+  "balance": "1",
+  "token_uri": "ipfs://QmYu9WwPNKNSZQiTCDfRk7aCR472GURavR9M1qosDmqpev/swapsies.json",
+  "name": null,
+  "description": null,
+  "image": null,
+  "metadata": {
+    "attributes": {
+      "bunnyId": "0"
+    },
+    "description": "These bunnies love nothing more than swapping pancakes. Especially on BSC.",
+    "image": "ipfs://QmXdHqg3nywpNJWDevJQPtkz93vpfoHcZWQovFz2nmtPf5/swapsies.png",
+    "name": "Swapsies"
+  }
+}
