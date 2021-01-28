@@ -1,0 +1,22 @@
+{
+  "id": 63039,
+  "contract_addr": "0x5Bc94e9347F3b9Be8415bDfd24af16666704E44f",
+  "contract_name": "",
+  "token_type": "721",
+  "token_id": "450",
+  "owner_addr": "0x7d8bf18C7cE84b3E175b339c4Ca93aEd1dD166F1",
+  "balance": "1",
+  "token_uri": "https://www.bakeryswap.org/api/v1/artworks/fb4576253e3d45cebf0ac4c8df8f1743",
+  "name": null,
+  "description": null,
+  "image": null,
+  "metadata": {
+    "description": "Animal Series",
+    "image": "https://d3ggs2vjn5heyw.cloudfront.net/static/nfts/artworks/d9dc679ec0614eb78b479aed21694305.jpg",
+    "name": "Hungry",
+    "properties": {
+      "artist": "srnArt",
+      "public_profile_link": "https://twitter.com/srn_art?s=09"
+    }
+  }
+}

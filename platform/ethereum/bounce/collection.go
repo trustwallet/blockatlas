@@ -16,7 +16,7 @@ func (c *Client) GetCollections(owner string, coinIndex uint) (types.CollectionP
 	if err != nil {
 		return nil, err
 	}
-	return c.NormalizeCollections(collections, coinIndex, owner)
+	return c.processCollections(collections, coinIndex, owner)
 
 }
 
@@ -25,10 +25,10 @@ func (c *Client) GetCollectibles(owner, collectionID string, coinIndex uint) (ty
 	if err != nil {
 		return nil, err
 	}
-	return c.NormalizeCollectibles(collectibles, coinIndex)
+	return c.processCollectibles(collectibles, coinIndex)
 }
 
-func (c *Client) NormalizeCollections(collections []Collection, coinIndex uint, owner string) (types.CollectionPage, error) {
+func (c *Client) processCollections(collections []Collection, coinIndex uint, owner string) (types.CollectionPage, error) {
 	page := make(types.CollectionPage, 0)
 	category := map[string]bool{}
 	for _, cl := range collections {
@@ -73,7 +73,7 @@ func (c *Client) NormalizeCollections(collections []Collection, coinIndex uint, 
 	return page, nil
 }
 
-func (c *Client) NormalizeCollectibles(collectibles []Collectible, coinIndex uint) (types.CollectiblePage, error) {
+func (c *Client) processCollectibles(collectibles []Collectible, coinIndex uint) (types.CollectiblePage, error) {
 	if len(collectibles) == 0 {
 		return types.CollectiblePage{}, nil
 	}
@@ -83,19 +83,29 @@ func (c *Client) NormalizeCollectibles(collectibles []Collectible, coinIndex uin
 		return nil, err
 	}
 	for _, c := range collectibles {
-		page = append(page, types.Collectible{
-			ID:              blockatlas.GenCollectibleId(c.ContractAddr, c.TokenID),
-			CollectionID:    c.ContractAddr,
-			TokenID:         c.TokenID,
-			ContractAddress: c.ContractAddr,
-			ImageUrl:        normalizeUrl(info.Image),
-			ExternalLink:    normalizeUrl(c.TokenURI),
-			Type:            string(types.ERC721),
-			Description:     info.Description,
-			Coin:            coinIndex,
-			Name:            info.Name,
-			Version:         nftVersion,
-		})
+		normalized := normalizeCollectible(c, coinIndex, info)
+		page = append(page, normalized)
 	}
 	return page, nil
+}
+
+func normalizeCollectible(c Collectible, coinIndex uint, info CollectionInfo) types.Collectible {
+	category := c.ContractName
+	if len(category) == 0 {
+		category = info.Name
+	}
+	return types.Collectible{
+		ID:              blockatlas.GenCollectibleId(c.ContractAddr, c.TokenID),
+		CollectionID:    c.ContractAddr,
+		TokenID:         c.TokenID,
+		ContractAddress: c.ContractAddr,
+		Category:        category,
+		ImageUrl:        normalizeUrl(info.Image),
+		ExternalLink:    normalizeUrl(c.TokenURI),
+		Type:            string(types.ERC721),
+		Description:     info.Description,
+		Coin:            coinIndex,
+		Name:            info.Name,
+		Version:         nftVersion,
+	}
 }

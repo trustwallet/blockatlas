@@ -7,6 +7,7 @@ type Response struct {
 
 type Collectible struct {
 	ContractAddr string `json:"contract_addr"`
+	ContractName string `json:"contract_name,omitempty"`
 	TokenID      string `json:"token_id"`
 	OwnerAddr    string `json:"owner_addr"`
 	TokenURI     string `json:"token_uri"`
