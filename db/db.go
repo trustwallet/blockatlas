@@ -43,6 +43,7 @@ func Setup(db *gorm.DB) error {
 		&models.Asset{},
 		&models.Subscription{},
 		&models.SubscriptionsAssetAssociation{},
+		&models.Transaction{},
 	)
 }
 

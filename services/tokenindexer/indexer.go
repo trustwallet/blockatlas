@@ -1,13 +1,17 @@
 package tokenindexer
 
 import (
+	"encoding/json"
 	"strconv"
+	"time"
 
+	"github.com/jinzhu/gorm/dialects/postgres"
 	log "github.com/sirupsen/logrus"
 	"github.com/streadway/amqp"
 	"github.com/trustwallet/blockatlas/db"
 	"github.com/trustwallet/blockatlas/db/models"
 	"github.com/trustwallet/blockatlas/services/notifier"
+	"github.com/trustwallet/golibs/asset"
 	"github.com/trustwallet/golibs/types"
 )
 
@@ -44,7 +48,19 @@ func RunTokenIndexer(database *db.Instance, delivery amqp.Delivery) error {
 	// Add asset <> address association
 	addressAssetsMap := assetsMap(assetsTxs)
 
-	return CreateAssociations(database, addressAssetsMap)
+	err = CreateAssociations(database, addressAssetsMap)
+	if err != nil {
+		log.WithFields(log.Fields{"service": TokenIndexer}).Error("Failed to create associations", err)
+		return err
+	}
+
+	txs := transactionsFrom(transactions)
+
+	if len(txs) == 0 {
+		return nil
+	}
+	// Add txs to db
+	return CreateTransactions(database, txs)
 }
 
 func CreateAssociations(database *db.Instance, addressAssetsMap map[string][]string) error {
@@ -137,4 +153,38 @@ func assetsMap(txs types.Txs) map[string][]string {
 		}
 	}
 	return result
+}
+
+func CreateTransactions(database *db.Instance, txs []models.Transaction) error {
+	return database.CreateTransactions(txs)
+}
+
+func transactionsFrom(txs []types.Tx) []models.Transaction {
+	results := make([]models.Transaction, 0)
+	for _, tx := range txs {
+		metadata, err := json.Marshal(tx.Meta)
+		if err != nil {
+			// log this error
+			continue
+		}
+		assetId := asset.BuildID(tx.Coin, "")
+		model := models.Transaction{
+			ID:         tx.ID,
+			Coin:       tx.Coin,
+			From:       tx.From,
+			To:         tx.To,
+			AssetID:    assetId,
+			Fee:        string(tx.Fee),
+			FeeAssetID: assetId,
+			Block:      tx.Block,
+			Sequence:   tx.Sequence,
+			Status:     string(tx.Status),
+			Memo:       tx.Memo,
+			Metadata:   postgres.Jsonb{RawMessage: metadata},
+			Date:       time.Unix(tx.Date, 0),
+			Type:       string(tx.Type),
+		}
+		results = append(results, model)
+	}
+	return results
 }
