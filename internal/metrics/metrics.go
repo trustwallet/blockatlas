@@ -9,11 +9,11 @@ import (
 )
 
 var (
-	nameSpace = "blockatlas"
+	namespace = "blockatlas"
 
 	workerBlockParsing = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
-			Namespace: nameSpace,
+			Namespace: namespace,
 			Subsystem: "worker",
 			Name:      "block_parsing",
 			Help:      "Last parsed block",
