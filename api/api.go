@@ -5,6 +5,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
+	"github.com/trustwallet/blockatlas/config"
 	_ "github.com/trustwallet/blockatlas/docs"
 	"github.com/trustwallet/blockatlas/platform"
 	"github.com/trustwallet/blockatlas/services/tokenindexer"
@@ -34,5 +35,5 @@ func SetupSwaggerAPI(router gin.IRouter) {
 }
 
 func SetupMetrics(router gin.IRouter) {
-	router.GET("metrics", gin.WrapH(promhttp.Handler()))
+	router.GET(config.Default.Metrics.Path, gin.WrapH(promhttp.Handler()))
 }

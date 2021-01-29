@@ -223,3 +223,6 @@ filecoin:
 
 sentry:
   dsn: ""
+
+metrics:
+  path: metrics
