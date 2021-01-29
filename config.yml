@@ -221,3 +221,6 @@ smartchain:
 
 sentry:
   dsn: ""
+
+metrics:
+  path: metrics

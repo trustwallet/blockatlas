@@ -206,6 +206,9 @@ type Configuration struct {
 	Sentry struct {
 		DSN string `mapstructure:"dsn"`
 	} `mapstructure:"sentry"`
+	Metrics struct {
+		Path string `mapstructure:"path"`
+	} `mapstructure:"metrics"`
 	Consumer struct {
 		Service  string `mapstructure:"service"`
 		Prefetch int    `mapstructure:"prefetch"`

@@ -2,8 +2,10 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
+	"github.com/trustwallet/blockatlas/config"
 	_ "github.com/trustwallet/blockatlas/docs"
 	"github.com/trustwallet/blockatlas/platform"
 	"github.com/trustwallet/blockatlas/services/tokenindexer"
@@ -30,4 +32,8 @@ func SetupTokensIndexAPI(router gin.IRouter, instance tokenindexer.Instance) {
 
 func SetupSwaggerAPI(router gin.IRouter) {
 	router.GET("swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+}
+
+func SetupMetrics(router gin.IRouter) {
+	router.GET(config.Default.Metrics.Path, gin.WrapH(promhttp.Handler()))
 }
