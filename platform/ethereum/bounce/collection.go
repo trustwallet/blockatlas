@@ -30,23 +30,29 @@ func (c *Client) GetCollectibles(owner, collectionID string, coinIndex uint) (ty
 
 func (c *Client) processCollections(collections []Collection, coinIndex uint, owner string) (types.CollectionPage, error) {
 	page := make(types.CollectionPage, 0)
-	category := map[string]bool{}
+	categories := map[string]*types.Collection{}
+
 	for _, cl := range collections {
 
-		// existed category
-		if _, ok := category[cl.ContractAddr]; ok {
-			continue
-		}
-
+		// skip invalid balance
 		total, err := strconv.Atoi(cl.Balance)
 		if err != nil {
 			continue
 		}
+
+		// udpate existed balance
+		existed, ok := categories[cl.ContractAddr]
+		if ok {
+			existed.Total = existed.Total + total
+			continue
+		}
+
 		// skip empty info token
 		if len(cl.TokenURI) == 0 {
 			continue
 		}
 
+		// fetch token info
 		info, err := fetchTokenURI(cl.TokenURI)
 		if err != nil {
 			return nil, err
@@ -58,11 +64,11 @@ func (c *Client) processCollections(collections []Collection, coinIndex uint, ow
 		}
 
 		contractName := cl.ContractName
-		if len(category) == 0 {
+		if len(contractName) == 0 {
 			contractName = info.Name
 		}
 
-		page = append(page, types.Collection{
+		categories[cl.ContractAddr] = &types.Collection{
 			Id:           cl.ContractAddr,
 			Name:         contractName,
 			ImageUrl:     normalizeUrl(info.Image),
@@ -72,8 +78,11 @@ func (c *Client) processCollections(collections []Collection, coinIndex uint, ow
 			Address:      owner,
 			Coin:         coinIndex,
 			Type:         "ERC" + cl.TokenType,
-		})
-		category[cl.ContractAddr] = true
+		}
+	}
+
+	for _, c := range categories {
+		page = append(page, *c)
 	}
 	return page, nil
 }
