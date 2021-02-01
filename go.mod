@@ -31,6 +31,6 @@ require (
 	golang.org/x/net v0.0.0-20210119194325-5f4716e94777 // indirect
 	golang.org/x/sys v0.0.0-20210123231150-1d476976d117 // indirect
 	gopkg.in/yaml.v2 v2.4.0
-	gorm.io/driver/postgres v1.0.7
+	gorm.io/driver/postgres v1.0.8
 	gorm.io/gorm v1.20.12
 )
