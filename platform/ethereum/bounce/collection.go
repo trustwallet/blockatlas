@@ -92,11 +92,11 @@ func (c *Client) processCollectibles(collectibles []Collectible, coinIndex uint)
 		return types.CollectiblePage{}, nil
 	}
 	page := make(types.CollectiblePage, 0)
-	info, err := fetchTokenURI(collectibles[0].TokenURI)
-	if err != nil {
-		return nil, err
-	}
 	for _, c := range collectibles {
+		info, err := fetchTokenURI(c.TokenURI)
+		if err != nil {
+			return nil, err
+		}
 		normalized := normalizeCollectible(c, coinIndex, info)
 		page = append(page, normalized)
 	}

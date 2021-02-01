@@ -2,6 +2,7 @@ package vechain
 
 import (
 	"encoding/json"
+	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -69,9 +70,14 @@ func TestNormalizeTokenTransaction(t *testing.T) {
 		receiptFile string
 		address     string
 		expected    types.TxPage
+		wantErr     error
 	}{
-		{"Normalize outgoing VTHO tx", "outgoing_vtho_tx.json", "outgoing_vtho_receipt.json", "0xe99399dd211eF54c301A5d1AA813471d92122eA8", types.TxPage{
-			{
+		{
+			name:        "Normalize outgoing VTHO tx",
+			txFile:      "outgoing_vtho_tx.json",
+			receiptFile: "outgoing_vtho_receipt.json",
+			address:     "0xe99399dd211eF54c301A5d1AA813471d92122eA8",
+			expected: types.TxPage{{
 				ID:        "0x0677f91de4787d295087acec0a7ba317b0019fbf296fed630fdb5afbfca97a58",
 				Coin:      coin.VECHAIN,
 				From:      "0xe99399dd211eF54c301A5d1AA813471d92122eA8",
@@ -91,10 +97,15 @@ func TestNormalizeTokenTransaction(t *testing.T) {
 					Value:    types.Amount("7000000000000000000"),
 					Decimals: 18,
 				},
-			},
-		}},
-		{"Normalize incoming VTHO tx", "incoming_vtho_tx.json", "incoming_vtho_receipt.json", "0xe99399dd211eF54c301A5d1AA813471d92122eA8", types.TxPage{
-			{
+			}},
+			wantErr: nil,
+		},
+		{
+			name:        "Normalize incoming VTHO tx",
+			txFile:      "incoming_vtho_tx.json",
+			receiptFile: "incoming_vtho_receipt.json",
+			address:     "0xe99399dd211eF54c301A5d1AA813471d92122eA8",
+			expected: types.TxPage{{
 				ID:        "0xb356fa7b3a371f1518a5f9bc51e951d0dac2ef04d58b532c7ca50a52aa5cddb4",
 				Coin:      coin.VECHAIN,
 				From:      "0xB5e883349e68aB59307d1604555AC890fAC47128",
@@ -114,24 +125,18 @@ func TestNormalizeTokenTransaction(t *testing.T) {
 					Value:    types.Amount("1000000000000000000000"),
 					Decimals: 18,
 				},
-			},
-		}},
-		{"Normalize reverted token transfer", "reverted_tx.json", "reverted_receipt.json", "0x7cFFB7632252Bae3766734d61F148f0Ea78Fc08C", types.TxPage{
-			{
-				ID:     "0x7fae32a743e42eaec54642e2a5742a185299f5b4bedaf12c60f65705661de932",
-				Coin:   coin.VECHAIN,
-				From:   "0x7cFFB7632252Bae3766734d61F148f0Ea78Fc08C",
-				To:     "0xf8e1fAa0367298b55F57Ed17F7a2FF3F5F1D1628",
-				Date:   1610326580,
-				Type:   types.TxTokenTransfer,
-				Fee:    types.Amount("82618000000000000000"),
-				Status: types.StatusError,
-				Block:  7982675,
-			},
-		}},
+			}},
+			wantErr: nil,
+		},
+		{
+			name:        "Normalize reverted token transfer",
+			txFile:      "reverted_tx.json",
+			receiptFile: "reverted_receipt.json",
+			address:     "0x7cFFB7632252Bae3766734d61F148f0Ea78Fc08C",
+			expected:    types.TxPage{},
+			wantErr:     errors.New("not supported token: 0xf8e1fAa0367298b55F57Ed17F7a2FF3F5F1D1628"),
+		},
 	}
-
-	platform := Platform{}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -143,13 +148,14 @@ func TestNormalizeTokenTransaction(t *testing.T) {
 			err = mock.JsonModelFromFilePath("mocks/"+tt.receiptFile, &receipt)
 			assert.Nil(t, err)
 
-			actual, err := platform.NormalizeTokenTransaction(tx, receipt)
-			assert.Nil(t, err)
+			actual, err := NormalizeTokenTransaction(tx, receipt)
+			assert.Equal(t, err, tt.wantErr)
 
-			updateTransactionDirection(&actual[0], tt.address)
-
-			assert.Equal(t, len(actual), 1, "tx could not be normalized")
-			assert.Equal(t, tt.expected, actual, "tx don't equal")
+			if len(actual) != 0 {
+				updateTransactionDirection(&actual[0], tt.address)
+				assert.Equal(t, len(actual), 1, "tx could not be normalized")
+				assert.Equal(t, tt.expected, actual, "tx don't equal")
+			}
 		})
 	}
 }
