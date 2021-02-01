@@ -6,8 +6,10 @@ import (
 	"sync"
 
 	log "github.com/sirupsen/logrus"
+
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/address"
+	"github.com/trustwallet/golibs/coin"
 	"github.com/trustwallet/golibs/numbers"
 	"github.com/trustwallet/golibs/types"
 )
@@ -72,7 +74,7 @@ func (p *Platform) getTransactionChannel(id string, txChan chan types.TxPage) er
 		return err
 	}
 
-	txs, err := p.NormalizeTokenTransaction(srcTx, receipt)
+	txs, err := NormalizeTokenTransaction(srcTx, receipt)
 	if err != nil {
 		return err
 	}
@@ -80,7 +82,79 @@ func (p *Platform) getTransactionChannel(id string, txChan chan types.TxPage) er
 	return nil
 }
 
-func (p *Platform) NormalizeTokenTransaction(srcTx Tx, receipt TxReceipt) (types.TxPage, error) {
+func NormalizeTokenTransaction(srcTx Tx, receipt TxReceipt) (types.TxPage, error) {
+	// the only supported Token on VeChain is its Gas token
+	if receipt.Reverted {
+		return normalizeRevertedTokenTransaction(srcTx, receipt)
+	}
+
+	txs := make(types.TxPage, 0)
+
+	if receipt.Outputs == nil || len(receipt.Outputs) == 0 {
+		return types.TxPage{}, errors.New("NormalizeBlockTransaction: receipt.Outputs not found: " + srcTx.Id)
+	}
+
+	for _, output := range receipt.Outputs {
+		if len(output.Events) == 0 || len(output.Events[0].Topics) < 3 {
+			continue
+		}
+
+		fee, err := numbers.HexToDecimal(receipt.Paid)
+		if err != nil {
+			return txs, err
+		}
+
+		originSender, err := address.EIP55Checksum(blockatlas.GetValidParameter(srcTx.Origin, srcTx.Meta.TxOrigin))
+		if err != nil {
+			return txs, err
+		}
+
+		event := output.Events[0]
+
+		value, err := numbers.HexToDecimal(event.Data)
+		if err != nil {
+			continue
+		}
+
+		originReceiver, err := address.EIP55Checksum(event.Address)
+		if err != nil {
+			continue
+		}
+
+		if originReceiver != gasTokenAddress {
+			continue
+		}
+
+		topicsTo, err := address.EIP55Checksum(getRecipientAddress(event.Topics[2]))
+		if err != nil {
+			continue
+		}
+
+		txs = append(txs, types.Tx{
+			ID:     srcTx.Id,
+			Coin:   coin.VECHAIN,
+			From:   originSender,
+			To:     originReceiver,
+			Fee:    types.Amount(fee),
+			Date:   srcTx.Meta.BlockTimestamp,
+			Type:   types.TxTokenTransfer,
+			Block:  srcTx.Meta.BlockNumber,
+			Status: types.StatusCompleted,
+			Meta: types.TokenTransfer{
+				Name:     gasTokenName,
+				TokenID:  originReceiver,
+				Value:    types.Amount(value),
+				Symbol:   gasTokenSymbol,
+				Decimals: gasTokenDecimals,
+				From:     originSender,
+				To:       topicsTo,
+			},
+		})
+	}
+	return txs, nil
+}
+
+func normalizeRevertedTokenTransaction(srcTx Tx, receipt TxReceipt) (types.TxPage, error) {
 	txs := make(types.TxPage, 0)
 
 	fee, err := numbers.HexToDecimal(receipt.Paid)
@@ -93,77 +167,40 @@ func (p *Platform) NormalizeTokenTransaction(srcTx Tx, receipt TxReceipt) (types
 		return txs, err
 	}
 
-	if receipt.Reverted {
-		var to string
-		if len(srcTx.Clauses) > 0 {
-			to = srcTx.Clauses[0].To
-			if checksumTo, err := address.EIP55Checksum(to); err == nil {
-				to = checksumTo
-			}
-		} else {
-			return txs, errors.New("NormalizeBlockTransaction: srcTx.Clauses not found: " + srcTx.Id)
+	var to string
+	if len(srcTx.Clauses) > 0 {
+		to = srcTx.Clauses[0].To
+		if checksumTo, err := address.EIP55Checksum(to); err == nil {
+			to = checksumTo
 		}
+	} else {
+		return txs, errors.New("NormalizeBlockTransaction: srcTx.Clauses not found: " + srcTx.Id)
+	}
 
-		txs = append(txs, types.Tx{
-			ID:     srcTx.Id,
-			Coin:   p.Coin().ID,
-			From:   originSender,
-			To:     to,
-			Fee:    types.Amount(fee),
-			Date:   srcTx.Meta.BlockTimestamp,
-			Type:   types.TxTokenTransfer,
-			Block:  srcTx.Meta.BlockNumber,
-			Status: types.StatusError,
-		})
+	if to != gasTokenAddress {
 		return txs, nil
 	}
 
-	if receipt.Outputs == nil || len(receipt.Outputs) == 0 {
-		return types.TxPage{}, errors.New("NormalizeBlockTransaction: receipt.Outputs not found: " + srcTx.Id)
-	}
-
-	for _, output := range receipt.Outputs {
-		if len(output.Events) == 0 || len(output.Events[0].Topics) < 3 {
-			continue
-		}
-		event := output.Events[0]
-		value, err := numbers.HexToDecimal(event.Data)
-		if err != nil {
-			continue
-		}
-
-		originReceiver, err := address.EIP55Checksum(event.Address)
-		if err != nil {
-			continue
-		}
-
-		topicsTo, err := address.EIP55Checksum(getRecipientAddress(event.Topics[2]))
-		if err != nil {
-			continue
-		}
-
-		txs = append(txs, types.Tx{
-			ID:     srcTx.Id,
-			Coin:   p.Coin().ID,
-			From:   originSender,
-			To:     originReceiver,
-			Fee:    types.Amount(fee),
-			Date:   srcTx.Meta.BlockTimestamp,
-			Type:   types.TxTokenTransfer,
-			Block:  srcTx.Meta.BlockNumber,
-			Status: types.StatusCompleted,
-			Meta: types.TokenTransfer{
-				// the only supported Token on VeChain is its Gas token
-				Name:     gasTokenName,
-				TokenID:  originReceiver,
-				Value:    types.Amount(value),
-				Symbol:   gasTokenSymbol,
-				Decimals: gasTokenDecimals,
-				From:     originSender,
-				To:       topicsTo,
-			},
-		})
-	}
+	txs = append(txs, types.Tx{
+		ID:     srcTx.Id,
+		Coin:   coin.VECHAIN,
+		From:   originSender,
+		To:     to,
+		Fee:    types.Amount(fee),
+		Date:   srcTx.Meta.BlockTimestamp,
+		Type:   types.TxTokenTransfer,
+		Block:  srcTx.Meta.BlockNumber,
+		Status: types.StatusError,
+		Meta: types.TokenTransfer{
+			Name:     gasTokenName,
+			TokenID:  gasTokenAddress,
+			Value:    "0",
+			Symbol:   gasTokenSymbol,
+			Decimals: gasTokenDecimals,
+			From:     originSender,
+			To:       to,
+		},
+	})
 	return txs, nil
 }
 
