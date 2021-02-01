@@ -24,6 +24,7 @@ type CollectibleResponse struct {
 
 type Collection struct {
 	ContractAddr string `json:"contract_addr"`
+	ContractName string `json:"contract_name,omitempty"`
 	TokenType    string `json:"token_type"`
 	TokenID      string `json:"token_id"`
 	OwnerAddr    string `json:"owner_addr"`
