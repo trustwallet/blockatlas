@@ -178,7 +178,7 @@ func normalizeRevertedTokenTransaction(srcTx Tx, receipt TxReceipt) (types.TxPag
 	}
 
 	if to != gasTokenAddress {
-		return txs, errors.New("not supported token: " + to)
+		return txs, nil
 	}
 
 	txs = append(txs, types.Tx{
