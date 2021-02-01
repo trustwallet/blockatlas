@@ -2,7 +2,6 @@ package vechain
 
 import (
 	"encoding/json"
-	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -134,7 +133,7 @@ func TestNormalizeTokenTransaction(t *testing.T) {
 			receiptFile: "reverted_receipt.json",
 			address:     "0x7cFFB7632252Bae3766734d61F148f0Ea78Fc08C",
 			expected:    types.TxPage{},
-			wantErr:     errors.New("not supported token: 0xf8e1fAa0367298b55F57Ed17F7a2FF3F5F1D1628"),
+			wantErr:     nil,
 		},
 	}
 
@@ -153,9 +152,8 @@ func TestNormalizeTokenTransaction(t *testing.T) {
 
 			if len(actual) != 0 {
 				updateTransactionDirection(&actual[0], tt.address)
-				assert.Equal(t, len(actual), 1, "tx could not be normalized")
-				assert.Equal(t, tt.expected, actual, "tx don't equal")
 			}
+			assert.Equal(t, tt.expected, actual, "tx don't equal")
 		})
 	}
 }
