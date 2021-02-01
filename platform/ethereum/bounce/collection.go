@@ -57,9 +57,14 @@ func (c *Client) processCollections(collections []Collection, coinIndex uint, ow
 			continue
 		}
 
+		contractName := cl.ContractName
+		if len(category) == 0 {
+			contractName = info.Name
+		}
+
 		page = append(page, types.Collection{
 			Id:           cl.ContractAddr,
-			Name:         info.Name,
+			Name:         contractName,
 			ImageUrl:     normalizeUrl(info.Image),
 			Description:  info.Description,
 			ExternalLink: normalizeUrl(cl.TokenURI),
