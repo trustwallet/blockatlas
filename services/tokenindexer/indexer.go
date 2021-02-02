@@ -26,12 +26,10 @@ func RunTokenIndexer(database *db.Instance, delivery amqp.Delivery) error {
 	assetsTxs := make(types.Txs, 0)
 
 	filtered := transactions.FilterTransactionsByType([]types.TransactionType{
+		types.TxContractCall, // to get Token Transfers
 		types.TxTokenTransfer,
 		types.TxNativeTokenTransfer,
 	})
-	assetsTxs = append(assetsTxs, filtered...)
-
-	filtered = transactions.FilterTransactionsByTokenTransfersInContract()
 	assetsTxs = append(assetsTxs, filtered...)
 
 	if len(assetsTxs) == 0 {
