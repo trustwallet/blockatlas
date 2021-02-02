@@ -116,9 +116,6 @@ func GetAssetsFromTransactions(txs []types.Tx) []models.Asset {
 	var result []models.Asset
 	for _, tx := range txs {
 		assets := models.AssetsFrom(tx)
-		if len(assets) == 0 {
-			continue
-		}
 		result = append(result, assets...)
 	}
 	return result
