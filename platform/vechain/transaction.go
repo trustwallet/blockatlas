@@ -54,7 +54,9 @@ func (p *Platform) getTransactionsByIDs(ids []string) chan types.TxPage {
 			defer wg.Done()
 			err := p.getTransactionChannel(i, c)
 			if err != nil {
-				log.Error(err)
+				log.WithFields(log.Fields{
+					"hash": i,
+				}).Error("Vechain Tx error")
 			}
 		}(id, txChan)
 	}
