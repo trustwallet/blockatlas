@@ -46,16 +46,17 @@ func NormalizePage(srcPage TransactionsList, address, token string, coinIndex ui
 func normalizeTx(srcTx *Transaction, coinIndex uint) types.Tx {
 	status, errReason := srcTx.EthereumSpecific.GetStatus()
 	normalized := types.Tx{
-		ID:       srcTx.ID,
-		Coin:     coinIndex,
-		From:     srcTx.FromAddress(),
-		To:       srcTx.ToAddress(),
-		Fee:      types.Amount(srcTx.GetFee()),
-		Date:     srcTx.BlockTime,
-		Block:    normalizeBlockHeight(srcTx.BlockHeight),
-		Status:   status,
-		Error:    errReason,
-		Sequence: srcTx.EthereumSpecific.Nonce,
+		ID:             srcTx.ID,
+		Coin:           coinIndex,
+		From:           srcTx.FromAddress(),
+		To:             srcTx.ToAddress(),
+		Fee:            types.Amount(srcTx.GetFee()),
+		Date:           srcTx.BlockTime,
+		Block:          normalizeBlockHeight(srcTx.BlockHeight),
+		Status:         status,
+		Error:          errReason,
+		Sequence:       srcTx.EthereumSpecific.Nonce,
+		TokenTransfers: normalizeTokenTransfers(srcTx.TokenTransfers),
 	}
 	fillMeta(&normalized, srcTx, coinIndex)
 	return normalized
@@ -73,6 +74,22 @@ func normalizeBlockHeight(height int64) uint64 {
 		return uint64(0)
 	}
 	return uint64(height)
+}
+
+func normalizeTokenTransfers(tokenTransfers []TokenTransfer) []types.TokenTransfer {
+	result := make([]types.TokenTransfer, 0)
+	for _, transfer := range tokenTransfers {
+		result = append(result, types.TokenTransfer{
+			Name:     transfer.Name,
+			Symbol:   transfer.Symbol,
+			TokenID:  transfer.Token,
+			Decimals: transfer.Decimals,
+			Value:    types.Amount(transfer.Value),
+			From:     transfer.From,
+			To:       transfer.To,
+		})
+	}
+	return result
 }
 
 func fillMeta(final *types.Tx, tx *Transaction, coinIndex uint) {
@@ -99,6 +116,7 @@ func fillTokenTransfer(final *types.Tx, tx *Transaction, coinIndex uint) bool {
 			From:     transfer.From,
 			To:       transfer.To,
 		}
+		final.TokenTransfers = []types.TokenTransfer{}
 		return true
 	}
 	return false
@@ -134,6 +152,7 @@ func fillTokenTransferWithAddress(final *types.Tx, tx *Transaction, address, tok
 			}
 			final.Direction = direction
 			final.Meta = metadata
+			final.TokenTransfers = []types.TokenTransfer{}
 			return true
 		}
 	}
