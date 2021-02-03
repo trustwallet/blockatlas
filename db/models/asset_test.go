@@ -99,7 +99,7 @@ func TestAssetsFrom(t *testing.T) {
 					TokenID:  "TWT2-123",
 					Decimals: 18,
 					Value:    "0",
-					From:     "0x123",
+					From:     "0x2",
 					To:       "0x123",
 				},
 			}},

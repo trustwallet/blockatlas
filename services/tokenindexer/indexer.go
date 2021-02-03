@@ -127,9 +127,6 @@ func assetsMap(txs types.Txs) map[string][]string {
 		prefix := strconv.Itoa(int(tx.Coin)) + "_"
 		addresses := tx.GetAddresses()
 		assets := models.AssetsFrom(tx)
-		if len(assets) == 0 {
-			continue
-		}
 
 		for _, asset := range assets {
 			for _, address := range addresses {

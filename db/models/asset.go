@@ -48,8 +48,13 @@ func AssetsFrom(t types.Tx) (assets []Asset) {
 	}
 
 	for _, transfer := range t.TokenTransfers {
-		if asset, ok := AssetFromTokenTransfer(&t, transfer); ok {
-			assets = append(assets, asset)
+		//Improve this later. Making cure we only include assets associated with current addresses
+		for _, address := range t.GetAddresses() {
+			if address == transfer.To || address == transfer.From {
+				if asset, ok := AssetFromTokenTransfer(&t, transfer); ok {
+					assets = append(assets, asset)
+				}
+			}
 		}
 	}
 
