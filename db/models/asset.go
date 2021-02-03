@@ -21,38 +21,61 @@ type Asset struct {
 	Coin     uint
 }
 
-func AssetFrom(t types.Tx) (a Asset, ok bool) {
-	a.Coin = t.Coin
+func AssetsFrom(t types.Tx) (assets []Asset) {
 	switch t.Meta.(type) {
 	case types.TokenTransfer:
 		transfer := t.Meta.(types.TokenTransfer)
-		a, ok = assetFromTokenTransfer(&t, &transfer)
+		if asset, ok := AssetFromTokenTransfer(&t, transfer); ok {
+			assets = append(assets, asset)
+		}
 	case *types.TokenTransfer:
 		transfer := t.Meta.(*types.TokenTransfer)
-		a, ok = assetFromTokenTransfer(&t, transfer)
+		if asset, ok := AssetFromTokenTransfer(&t, *transfer); ok {
+			assets = append(assets, asset)
+		}
 	case types.NativeTokenTransfer:
 		transfer := t.Meta.(types.NativeTokenTransfer)
-		a, ok = assetFromNativeTokenTransfer(&t, &transfer)
+		if asset, ok := AssetFromNativeTokenTransfer(&t, &transfer); ok {
+			assets = append(assets, asset)
+		}
 	case *types.NativeTokenTransfer:
 		transfer := t.Meta.(*types.NativeTokenTransfer)
-		a, ok = assetFromNativeTokenTransfer(&t, transfer)
-	case types.AnyAction:
-		action := t.Meta.(types.AnyAction)
-		a, ok = assetFromAnyAction(&t, &action)
-	case *types.AnyAction:
-		action := t.Meta.(*types.AnyAction)
-		a, ok = assetFromAnyAction(&t, action)
+		if asset, ok := AssetFromNativeTokenTransfer(&t, transfer); ok {
+			assets = append(assets, asset)
+		}
 	default:
 		break
 	}
 
-	if !ok || a.IsValid() != nil {
-		return Asset{}, false
+	for _, transfer := range t.TokenTransfers {
+		//Improve this later. Making cure we only include assets associated with current addresses
+		for _, address := range t.GetAddresses() {
+			if address == transfer.To || address == transfer.From {
+				if asset, ok := AssetFromTokenTransfer(&t, transfer); ok {
+					assets = append(assets, asset)
+				}
+			}
+		}
 	}
+
 	return
 }
 
-func assetFromTokenTransfer(t *types.Tx, transfer *types.TokenTransfer) (a Asset, ok bool) {
+func AssetFromTokenTransfer(t *types.Tx, transfer types.TokenTransfer) (a Asset, ok bool) {
+	tp, ok := types.GetTokenType(t.Coin, transfer.TokenID)
+	if !ok {
+		return a, ok
+	}
+	a.Asset = asset.BuildID(t.Coin, transfer.TokenID)
+	a.Decimals = transfer.Decimals
+	a.Name = transfer.Name
+	a.Symbol = transfer.Symbol
+	a.Type = tp
+	a.Coin = t.Coin
+	return a, a.IsValid() == nil
+}
+
+func AssetFromNativeTokenTransfer(t *types.Tx, transfer *types.NativeTokenTransfer) (a Asset, ok bool) {
 	tp, ok := types.GetTokenType(t.Coin, transfer.TokenID)
 	if !ok {
 		return
@@ -62,33 +85,8 @@ func assetFromTokenTransfer(t *types.Tx, transfer *types.TokenTransfer) (a Asset
 	a.Name = transfer.Name
 	a.Symbol = transfer.Symbol
 	a.Type = tp
-	return
-}
-
-func assetFromNativeTokenTransfer(t *types.Tx, transfer *types.NativeTokenTransfer) (a Asset, ok bool) {
-	tp, ok := types.GetTokenType(t.Coin, transfer.TokenID)
-	if !ok {
-		return
-	}
-	a.Asset = asset.BuildID(t.Coin, transfer.TokenID)
-	a.Decimals = transfer.Decimals
-	a.Name = transfer.Name
-	a.Symbol = transfer.Symbol
-	a.Type = tp
-	return
-}
-
-func assetFromAnyAction(t *types.Tx, action *types.AnyAction) (a Asset, ok bool) {
-	tp, ok := types.GetTokenType(t.Coin, action.TokenID)
-	if !ok {
-		return
-	}
-	a.Asset = asset.BuildID(t.Coin, action.TokenID)
-	a.Decimals = action.Decimals
-	a.Name = action.Name
-	a.Symbol = action.Symbol
-	a.Type = tp
-	return
+	a.Coin = t.Coin
+	return a, a.IsValid() == nil
 }
 
 func (asset *Asset) IsValid() error {
