@@ -3,7 +3,7 @@ package oasis
 type Block struct {
 	Height    int64  `json:"height"`
 	Hash      string `json:"hash"`
-	Timestamp int64  `json:"time"`
+	Timestamp int64  `json:"timestamp"`
 }
 
 type BlockRequest struct {

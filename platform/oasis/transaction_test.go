@@ -13,30 +13,28 @@ func TestNormalizeTx(t *testing.T) {
 		name     string
 		filename string
 		wantTx   types.Tx
-		ok       bool
 	}{
 		{
 			name:     "Test normalize successful transaction without fee",
 			filename: "tx_without_fee.json",
 			wantTx: types.Tx{
-				ID:     "7DYN6sCpXcHuOqomRoRp63mzOinTnSJEqIX+dMtrJWQ=",
-				Coin:   coin.ROSE,
-				From:   "oasis1qz9re9hc0k9qxrhvww7x9zrfv8x8jpr4kcr2twr2",
-				To:     "oasis1qp29h8ykmxet46eqzw0wennrmmy4al3xzv37m3ca",
-				Fee:    "0",
-				Date:   1605718103,
-				Block:  702480,
-				Memo:   "",
-				// TODO: check if add status field
-				//Status: types.StatusCompleted,
-				// TODO: check if hardcode
+				ID:       "a49afb8055ef3bbb4fca1e162886ab32b71c5a0d49555793342971237b031972",
+				Coin:     coin.OASIS,
+				From:     "oasis1qpcgnf84hnvvfvzup542rhc8kjyvqf4aqqlj5kqh",
+				To:       "oasis1qz9re9hc0k9qxrhvww7x9zrfv8x8jpr4kcr2twr2",
+				Fee:      "0",
+				Date:     1610472221000,
+				Block:    1502238,
+				Status:   types.StatusCompleted,
+				Error:    "",
+				Sequence: 5,
+				Memo:     "",
 				Meta: types.Transfer{
-					Value:    "0",
+					Value:    "170000000000",
 					Symbol:   "ROSE",
 					Decimals: 9,
 				},
 			},
-			ok: true,
 		},
 		{
 			name:     "Test normalize successful transaction with fee",
@@ -59,7 +57,6 @@ func TestNormalizeTx(t *testing.T) {
 					Decimals: 9,
 				},
 			},
-			ok: true,
 		},
 		{
 			name:     "Test normalize transaction with error",
@@ -82,12 +79,10 @@ func TestNormalizeTx(t *testing.T) {
 					Decimals: 9,
 				},
 			},
-			ok: true,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			// TODO: add error cases on Normalize fn
 			var srcTx Transaction
 
 			err := mock.JsonModelFromFilePath("mocks/"+tt.filename, &srcTx)

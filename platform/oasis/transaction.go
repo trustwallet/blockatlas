@@ -34,7 +34,7 @@ func NormalizeTx(srcTx Transaction) types.Tx {
 
 	nTx := types.Tx{
 		ID:       srcTx.Hash,
-		Coin:     coin.ROSE,
+		Coin:     coin.OASIS,
 		From:     srcTx.From,
 		To:       srcTx.To,
 		Fee:      types.Amount(srcTx.Fee),
