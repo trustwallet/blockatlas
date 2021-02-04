@@ -48,7 +48,7 @@ func AssetsFrom(t types.Tx) (assets []Asset) {
 	}
 
 	for _, transfer := range t.TokenTransfers {
-		//Improve this later. Making cure we only include assets associated with current addresses
+		//Improve this later. Making sure we only include assets associated with current addresses
 		for _, address := range t.GetAddresses() {
 			if address == transfer.To || address == transfer.From {
 				if asset, ok := AssetFromTokenTransfer(&t, transfer); ok {

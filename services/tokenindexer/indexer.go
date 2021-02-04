@@ -27,6 +27,14 @@ func RunTokenIndexer(database *db.Instance, delivery amqp.Delivery) error {
 		return nil
 	}
 
+	txs := transactionsFrom(transactions)
+	// Add txs to db
+	err = CreateTransactions(database, txs)
+	if err != nil {
+		log.WithFields(log.Fields{"service": TokenIndexer}).Error("Failed to save parsed txs to database", err)
+		return err
+	}
+
 	assetsTxs := transactions.FilterTransactionsByType([]types.TransactionType{
 		types.TxContractCall,
 		types.TxTokenTransfer,
@@ -48,19 +56,7 @@ func RunTokenIndexer(database *db.Instance, delivery amqp.Delivery) error {
 	// Add asset <> address association
 	addressAssetsMap := assetsMap(assetsTxs)
 
-	err = CreateAssociations(database, addressAssetsMap)
-	if err != nil {
-		log.WithFields(log.Fields{"service": TokenIndexer}).Error("Failed to create associations", err)
-		return err
-	}
-
-	txs := transactionsFrom(transactions)
-
-	if len(txs) == 0 {
-		return nil
-	}
-	// Add txs to db
-	return CreateTransactions(database, txs)
+	return CreateAssociations(database, addressAssetsMap)
 }
 
 func CreateAssociations(database *db.Instance, addressAssetsMap map[string][]string) error {
@@ -156,6 +152,9 @@ func assetsMap(txs types.Txs) map[string][]string {
 }
 
 func CreateTransactions(database *db.Instance, txs []models.Transaction) error {
+	if len(txs) == 0 {
+		return nil
+	}
 	return database.CreateTransactions(txs)
 }
 
