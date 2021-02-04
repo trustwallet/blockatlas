@@ -215,7 +215,7 @@ filecoin:
   explorer: https://filfox.info
   
 oasis:
-  api: http://localhost:9000
+  api: http://localhost:8080
 
 smartchain:
   api: ""

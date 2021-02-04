@@ -11,7 +11,7 @@ type Client struct {
 func (c *Client) GetCurrentBlock() (int64, error) {
 	var blk int64
 
-	err := c.Get(&blk, "block", nil)
+	err := c.Post(&blk, "block/tip", nil)
 	if err != nil {
 		return 0, err
 	}
