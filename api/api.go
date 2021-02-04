@@ -6,14 +6,15 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
 	"github.com/trustwallet/blockatlas/config"
+	"github.com/trustwallet/blockatlas/db"
 	_ "github.com/trustwallet/blockatlas/docs"
 	"github.com/trustwallet/blockatlas/platform"
 	"github.com/trustwallet/blockatlas/services/tokenindexer"
 )
 
-func SetupPlatformAPI(router gin.IRouter) {
+func SetupPlatformAPI(router gin.IRouter, database *db.Instance) {
 	for _, api := range platform.Platforms {
-		RegisterTransactionsAPI(router, api)
+		RegisterTransactionsAPI(router, api, database)
 		RegisterTokensAPI(router, api)
 		RegisterStakeAPI(router, api)
 		RegisterBlockAPI(router, api)

@@ -1,17 +1,19 @@
 package api
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/trustwallet/blockatlas/api/endpoint"
+	"github.com/trustwallet/blockatlas/db"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/platform"
 	"github.com/trustwallet/blockatlas/services/tokenindexer"
 	"github.com/trustwallet/golibs/network/middleware"
 )
 
-func RegisterTransactionsAPI(router gin.IRouter, api blockatlas.Platform) {
+func RegisterTransactionsAPI(router gin.IRouter, api blockatlas.Platform, database *db.Instance) {
 	handle := api.Coin().Handle
 	txUtxoAPI, ok := api.(blockatlas.TxUtxoAPI)
 	if ok {
@@ -34,6 +36,13 @@ func RegisterTransactionsAPI(router gin.IRouter, api blockatlas.Platform) {
 		})
 		router.GET("/v2/"+handle+"/transactions/:address", func(c *gin.Context) {
 			endpoint.GetTransactionsHistory(c, txAPI, tokenTxAPI)
+		})
+	}
+
+	txsAPI, ok := api.(blockatlas.TransactionsAPI)
+	if ok {
+		router.GET(fmt.Sprintf("%s/v1/transactions/:account", handle), func(c *gin.Context) {
+			endpoint.GetTransactionsByAccount(c, txsAPI, database)
 		})
 	}
 }

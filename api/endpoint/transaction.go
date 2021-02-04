@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/trustwallet/blockatlas/db"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/types"
 )
@@ -92,6 +93,65 @@ func GetTransactionsHistory(c *gin.Context, txAPI blockatlas.TxAPI, tokenTxAPI b
 		result[i].Direction = t.GetTransactionDirection(address)
 	}
 	c.JSON(http.StatusOK, types.NewTxPage(result))
+}
+
+func GetTransactionsByAccount(c *gin.Context, txsAPI blockatlas.TransactionsAPI, database *db.Instance) {
+	account := c.Param("account")
+	if account == "" {
+		c.AbortWithStatusJSON(http.StatusBadRequest, errorResponse(blockatlas.ErrInvalidAddr))
+		return
+	}
+	token := c.Query("token")
+
+	txs, err := txsAPI.GetTransactionsByAccount(account, token, database)
+
+	if err != nil {
+		switch err {
+		case blockatlas.ErrInvalidAddr:
+			c.AbortWithStatusJSON(
+				http.StatusBadRequest,
+				errorResponse(blockatlas.ErrInvalidAddr),
+			)
+			return
+		case blockatlas.ErrNotFound:
+			c.AbortWithStatusJSON(
+				http.StatusNotFound,
+				errorResponse(blockatlas.ErrNotFound),
+			)
+			return
+		case blockatlas.ErrSourceConn:
+			c.AbortWithStatusJSON(
+				http.StatusServiceUnavailable,
+				errorResponse(blockatlas.ErrSourceConn),
+			)
+			return
+		default:
+			c.AbortWithStatusJSON(
+				http.StatusInternalServerError,
+				errorResponse(err),
+			)
+			return
+		}
+	}
+	var (
+		page        = make(types.TxPage, 0)
+		filteredTxs = types.Txs(txs).FilterUniqueID().SortByDate()
+	)
+	for _, tx := range filteredTxs {
+		tx.Direction = tx.GetTransactionDirection(account)
+		page = append(page, tx)
+	}
+
+	page = page.FilterTransactionsByMemo()
+	if token != "" {
+		page = page.FilterTransactionsByToken(token)
+	}
+
+	if len(page) > types.TxPerPage {
+		page = page[0:types.TxPerPage]
+	}
+
+	c.JSON(http.StatusOK, &page)
 }
 
 // @Summary Get Transactions by XPUB

@@ -1,6 +1,7 @@
 package blockatlas
 
 import (
+	"github.com/trustwallet/blockatlas/db"
 	"github.com/trustwallet/golibs/coin"
 	"github.com/trustwallet/golibs/types"
 )
@@ -16,6 +17,12 @@ type (
 		Platform
 		CurrentBlockNumber() (int64, error)
 		GetBlockByNumber(num int64) (*types.Block, error)
+	}
+
+	// TransactionAPI provides indexed transactions from database
+	TransactionsAPI interface {
+		Platform
+		GetTransactionsByAccount(account, token string, database *db.Instance) (types.TxPage, error)
 	}
 
 	// TxAPI provides transaction lookups based on address

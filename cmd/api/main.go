@@ -61,7 +61,7 @@ func init() {
 func main() {
 	api.SetupTokensIndexAPI(engine, tokenIndexer)
 	api.SetupSwaggerAPI(engine)
-	api.SetupPlatformAPI(engine)
+	api.SetupPlatformAPI(engine, database)
 	api.SetupMetrics(engine)
 
 	golibsGin.SetupGracefulShutdown(ctx, port, engine)
