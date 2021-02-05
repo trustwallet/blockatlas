@@ -1,6 +1,7 @@
 package zilliqa
 
 import (
+	"github.com/trustwallet/blockatlas/platform/zilliqa/viewblock"
 	"github.com/trustwallet/golibs/coin"
 	"github.com/trustwallet/golibs/types"
 )
@@ -24,7 +25,7 @@ func (p *Platform) GetTxsByAddress(address string) (types.TxPage, error) {
 	return normalized, nil
 }
 
-func Normalize(srcTx *Tx) (tx types.Tx) {
+func Normalize(srcTx *viewblock.Tx) (tx types.Tx) {
 	tx = types.Tx{
 		ID:       srcTx.Hash,
 		Coin:     coin.ZILLIQA,

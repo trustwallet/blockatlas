@@ -1,27 +1,32 @@
-package zilliqa
+package rpc
 
 import (
 	"strconv"
 
 	"github.com/mitchellh/mapstructure"
 	"github.com/trustwallet/golibs/client"
+	"github.com/trustwallet/golibs/network/middleware"
 )
 
-type RpcClient struct {
+type Client struct {
 	client.Request
 }
 
-func (c *RpcClient) GetBlockchainInfo() (info *ChainInfo, err error) {
+func InitClient(url string) Client {
+	return Client{client.InitClient(url, middleware.SentryErrorHandler)}
+}
+
+func (c *Client) GetBlockchainInfo() (info *ChainInfo, err error) {
 	err = c.RpcCall(&info, "GetBlockchainInfo", nil)
 	return
 }
 
-func (c *RpcClient) GetTx(hash string) (tx TxRPC, err error) {
+func (c *Client) GetTx(hash string) (tx RPC, err error) {
 	err = c.RpcCall(&tx, "GetTransaction", []string{hash})
 	return
 }
 
-func (c *RpcClient) GetTransactionsHashesInBlock(number int64) ([]string, error) {
+func (c *Client) GetTransactionsHashesInBlock(number int64) ([]string, error) {
 	strNumber := strconv.FormatInt(number, 10)
 	requestBody := &client.RpcRequest{
 		JsonRpc: client.JsonRpcVersion,
@@ -37,16 +42,15 @@ func (c *RpcClient) GetTransactionsHashesInBlock(number int64) ([]string, error)
 	return result.Txs(), nil
 }
 
-func (c *RpcClient) GetTxInBlock(number int64) ([]Tx, error) {
-	txs := make([]Tx, 0)
+func (c *Client) GetTxInBlock(number int64) (header BlockHeader, txs []RPC, err error) {
 	hashes, err := c.GetTransactionsHashesInBlock(number)
-	if err != nil || len(hashes) == 0 {
-		return txs, err
+	if err != nil {
+		return
 	}
 
 	block, err := c.GetBlock(number)
 	if err != nil {
-		return txs, err
+		return
 	}
 
 	var requests client.RpcRequests
@@ -58,21 +62,19 @@ func (c *RpcClient) GetTxInBlock(number int64) ([]Tx, error) {
 	}
 	responses, err := c.RpcBatchCall(requests)
 	if err != nil {
-		return nil, err
+		return
 	}
 	for _, result := range responses {
-		var txRPC TxRPC
+		var txRPC RPC
 		if mapstructure.Decode(result.Result, &txRPC) != nil {
 			continue
 		}
-		if tx := txRPC.toTx(block.Header); tx != nil {
-			txs = append(txs, *tx)
-		}
+		txs = append(txs, txRPC)
 	}
-	return txs, nil
+	return block.Header, txs, nil
 }
 
-func (c *RpcClient) GetBlock(number int64) (block Block, err error) {
+func (c *Client) GetBlock(number int64) (block Block, err error) {
 	err = c.RpcCall(&block, "GetTxBlock", []string{strconv.FormatInt(number, 10)})
 	return
 }
