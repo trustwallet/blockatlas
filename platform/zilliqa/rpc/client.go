@@ -54,7 +54,7 @@ func (c *Client) GetTxInBlock(number int64) (header BlockHeader, txs []Tx, err e
 	}
 
 	// Avoid 413 Payload Too Large
-	requests := makeBatchRequests(hashes, 1000)
+	requests := makeBatchRequests(hashes, 500)
 
 	var responses []client.RpcResponse
 	for _, reqs := range requests {
