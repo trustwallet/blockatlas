@@ -9,7 +9,7 @@ import (
 	"github.com/trustwallet/blockatlas/platform/zilliqa/viewblock"
 )
 
-func TxFromRpc(t rpc.RPC, header rpc.BlockHeader) *viewblock.Tx {
+func TxFromRpc(t rpc.Tx, header rpc.BlockHeader) *viewblock.Tx {
 	// t.recipient is not parsed correctly. Empty strings.
 
 	to, err := hex.DecodeString(t.ToAddr)

@@ -22,7 +22,7 @@ type Receipt struct {
 	Success       bool   `json:"success"`
 }
 
-type RPC struct {
+type Tx struct {
 	ID           string  `json:"ID"`
 	Amount       string  `json:"amount"`
 	GasLimit     string  `json:"gasLimit"`

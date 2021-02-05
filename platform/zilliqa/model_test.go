@@ -40,7 +40,7 @@ func TestTxRPC_toTx(t *testing.T) {
 		ReceiptSuccess: true,
 	}
 
-	var txRPC rpc.RPC
+	var txRPC rpc.Tx
 	err := json.Unmarshal([]byte(transaction), &txRPC)
 	if err != nil {
 		t.Error(err)

@@ -21,7 +21,7 @@ func (c *Client) GetBlockchainInfo() (info *ChainInfo, err error) {
 	return
 }
 
-func (c *Client) GetTx(hash string) (tx RPC, err error) {
+func (c *Client) GetTx(hash string) (tx Tx, err error) {
 	err = c.RpcCall(&tx, "GetTransaction", []string{hash})
 	return
 }
@@ -42,7 +42,7 @@ func (c *Client) GetTransactionsHashesInBlock(number int64) ([]string, error) {
 	return result.Txs(), nil
 }
 
-func (c *Client) GetTxInBlock(number int64) (header BlockHeader, txs []RPC, err error) {
+func (c *Client) GetTxInBlock(number int64) (header BlockHeader, txs []Tx, err error) {
 	hashes, err := c.GetTransactionsHashesInBlock(number)
 	if err != nil {
 		return
@@ -53,28 +53,63 @@ func (c *Client) GetTxInBlock(number int64) (header BlockHeader, txs []RPC, err 
 		return
 	}
 
-	var requests client.RpcRequests
-	for _, hash := range hashes {
-		requests = append(requests, &client.RpcRequest{
-			Method: "GetTransaction",
-			Params: []string{hash},
-		})
+	// Avoid 413 Payload Too Large
+	requests := makeBatchRequests(hashes, 1000)
+
+	var responses []client.RpcResponse
+	for _, reqs := range requests {
+		resps, e := c.RpcBatchCall(reqs)
+		if e != nil {
+			err = e
+			return
+		}
+		responses = append(responses, resps...)
 	}
-	responses, err := c.RpcBatchCall(requests)
-	if err != nil {
-		return
-	}
+
 	for _, result := range responses {
-		var txRPC RPC
-		if mapstructure.Decode(result.Result, &txRPC) != nil {
+		var tx Tx
+		if mapstructure.Decode(result.Result, &tx) != nil {
 			continue
 		}
-		txs = append(txs, txRPC)
+		txs = append(txs, tx)
 	}
+
 	return block.Header, txs, nil
 }
 
 func (c *Client) GetBlock(number int64) (block Block, err error) {
 	err = c.RpcCall(&block, "GetTxBlock", []string{strconv.FormatInt(number, 10)})
+	return
+}
+
+func makeBatchRequests(hashes []string, batchSize int) (requests []client.RpcRequests) {
+	batches := makeBatches(hashes, batchSize)
+
+	for _, batch := range batches {
+		var reqs client.RpcRequests
+		for _, hash := range batch {
+			reqs = append(reqs, &client.RpcRequest{
+				Method: "GetTransaction",
+				Params: []string{hash},
+			})
+		}
+		requests = append(requests, reqs)
+	}
+	return
+}
+
+func makeBatches(hashes []string, batchSize int) (batches [][]string) {
+	batch := make([]string, 0)
+	size := 0
+	for _, hash := range hashes {
+		if size >= batchSize {
+			batches = append(batches, batch)
+			size = 0
+			batch = make([]string, 0)
+		}
+		size = size + 1
+		batch = append(batch, hash)
+	}
+	batches = append(batches, batch)
 	return
 }
