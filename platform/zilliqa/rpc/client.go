@@ -26,6 +26,11 @@ func (c *Client) GetTx(hash string) (tx Tx, err error) {
 	return
 }
 
+func (c *Client) GetBlock(number int64) (block Block, err error) {
+	err = c.RpcCall(&block, "GetTxBlock", []string{strconv.FormatInt(number, 10)})
+	return
+}
+
 func (c *Client) GetTransactionsHashesInBlock(number int64) ([]string, error) {
 	strNumber := strconv.FormatInt(number, 10)
 	requestBody := &client.RpcRequest{
@@ -44,7 +49,7 @@ func (c *Client) GetTransactionsHashesInBlock(number int64) ([]string, error) {
 
 func (c *Client) GetTxInBlock(number int64) (header BlockHeader, txs []Tx, err error) {
 	hashes, err := c.GetTransactionsHashesInBlock(number)
-	if err != nil {
+	if err != nil || len(hashes) == 0 {
 		return
 	}
 
@@ -54,7 +59,11 @@ func (c *Client) GetTxInBlock(number int64) (header BlockHeader, txs []Tx, err e
 	}
 
 	// Avoid 413 Payload Too Large
-	requests := makeBatchRequests(hashes, 500)
+	elements := make([]interface{}, len(hashes))
+	for i := range elements {
+		elements[i] = hashes[i]
+	}
+	requests := client.MakeBatchRequests(elements, 500, mapHash)
 
 	var responses []client.RpcResponse
 	for _, reqs := range requests {
@@ -77,39 +86,10 @@ func (c *Client) GetTxInBlock(number int64) (header BlockHeader, txs []Tx, err e
 	return block.Header, txs, nil
 }
 
-func (c *Client) GetBlock(number int64) (block Block, err error) {
-	err = c.RpcCall(&block, "GetTxBlock", []string{strconv.FormatInt(number, 10)})
-	return
-}
-
-func makeBatchRequests(hashes []string, batchSize int) (requests []client.RpcRequests) {
-	batches := makeBatches(hashes, batchSize)
-
-	for _, batch := range batches {
-		var reqs client.RpcRequests
-		for _, hash := range batch {
-			reqs = append(reqs, &client.RpcRequest{
-				Method: "GetTransaction",
-				Params: []string{hash},
-			})
-		}
-		requests = append(requests, reqs)
+func mapHash(hash interface{}) client.RpcRequest {
+	array := []interface{}{hash}
+	return client.RpcRequest{
+		Method: "GetTransaction",
+		Params: array,
 	}
-	return
-}
-
-func makeBatches(hashes []string, batchSize int) (batches [][]string) {
-	batch := make([]string, 0)
-	size := 0
-	for _, hash := range hashes {
-		if size >= batchSize {
-			batches = append(batches, batch)
-			size = 0
-			batch = make([]string, 0)
-		}
-		size = size + 1
-		batch = append(batch, hash)
-	}
-	batches = append(batches, batch)
-	return
 }
