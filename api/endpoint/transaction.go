@@ -103,53 +103,24 @@ func GetTransactionsByAccount(c *gin.Context, txsAPI blockatlas.TransactionsAPI,
 	}
 	token := c.Query("token")
 
-	txs, err := txsAPI.GetTransactionsByAccount(account, token, database)
+	txs, err := txsAPI.GetTransactionsByAccount(account, token, int(types.TxPerPage), database)
 
 	if err != nil {
-		switch err {
-		case blockatlas.ErrInvalidAddr:
-			c.AbortWithStatusJSON(
-				http.StatusBadRequest,
-				errorResponse(blockatlas.ErrInvalidAddr),
-			)
-			return
-		case blockatlas.ErrNotFound:
-			c.AbortWithStatusJSON(
-				http.StatusNotFound,
-				errorResponse(blockatlas.ErrNotFound),
-			)
-			return
-		case blockatlas.ErrSourceConn:
-			c.AbortWithStatusJSON(
-				http.StatusServiceUnavailable,
-				errorResponse(blockatlas.ErrSourceConn),
-			)
-			return
-		default:
-			c.AbortWithStatusJSON(
-				http.StatusInternalServerError,
-				errorResponse(err),
-			)
-			return
-		}
+		c.AbortWithStatusJSON(
+			http.StatusInternalServerError,
+			errorResponse(err),
+		)
+		return
 	}
-	var (
-		page        = make(types.TxPage, 0)
-		filteredTxs = types.Txs(txs).FilterUniqueID().SortByDate()
-	)
-	for _, tx := range filteredTxs {
+
+	page := make(types.TxPage, 0)
+
+	for _, tx := range txs {
 		tx.Direction = tx.GetTransactionDirection(account)
 		page = append(page, tx)
 	}
 
 	page = page.FilterTransactionsByMemo()
-	if token != "" {
-		page = page.FilterTransactionsByToken(token)
-	}
-
-	if len(page) > types.TxPerPage {
-		page = page[0:types.TxPerPage]
-	}
 
 	c.JSON(http.StatusOK, &page)
 }

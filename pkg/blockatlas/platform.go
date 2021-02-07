@@ -22,7 +22,7 @@ type (
 	// TransactionAPI provides indexed transactions from database
 	TransactionsAPI interface {
 		Platform
-		GetTransactionsByAccount(account, token string, database *db.Instance) (types.TxPage, error)
+		GetTransactionsByAccount(account, token string, limit int, database *db.Instance) (types.TxPage, error)
 	}
 
 	// TxAPI provides transaction lookups based on address

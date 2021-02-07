@@ -14,8 +14,8 @@ type Transaction struct {
 	ID         string `gorm:"primary_key; autoIncrement:false; index"`
 	Coin       uint   `gorm:"primary_key; autoIncrement:false; index"`
 	AssetID    string
-	From       string
-	To         string
+	From       string `gorm:"index"`
+	To         string `gorm:"index"`
 	FeeAssetID string
 	Fee        string
 	Date       time.Time
@@ -84,4 +84,33 @@ func ToTxPage(txs []Transaction) (types.TxPage, error) {
 		page = append(page, t)
 	}
 	return page, nil
+}
+
+func NormalizeTransactions(txs []types.Tx) ([]Transaction, error) {
+	results := make([]Transaction, 0)
+	for _, tx := range txs {
+		metadata, err := json.Marshal(tx.Meta)
+		if err != nil {
+			return nil, err
+		}
+		assetId := asset.BuildID(tx.Coin, "")
+		model := Transaction{
+			ID:         tx.ID,
+			Coin:       tx.Coin,
+			From:       tx.From,
+			To:         tx.To,
+			AssetID:    assetId,
+			Fee:        string(tx.Fee),
+			FeeAssetID: assetId,
+			Block:      tx.Block,
+			Sequence:   tx.Sequence,
+			Status:     string(tx.Status),
+			Memo:       tx.Memo,
+			Metadata:   postgres.Jsonb{RawMessage: metadata},
+			Date:       time.Unix(tx.Date, 0),
+			Type:       string(tx.Type),
+		}
+		results = append(results, model)
+	}
+	return results, nil
 }
