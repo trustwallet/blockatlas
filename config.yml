@@ -206,7 +206,7 @@ solana:
   api: https://api.mainnet-beta.solana.com
 
 near:
-  api: https://staging-rpc.nearprotocol.com
+  api: https://rpc.mainnet.near.org
 
 elrond:
   api: https://gateway.elrond.com
