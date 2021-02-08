@@ -4,6 +4,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/trustwallet/blockatlas/platform/zilliqa/viewblock"
 	"github.com/trustwallet/golibs/coin"
 	"github.com/trustwallet/golibs/mock"
 	"github.com/trustwallet/golibs/types"
@@ -45,7 +46,7 @@ func TestNormalizeTx(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			var srcTx Tx
+			var srcTx viewblock.Tx
 			_ = mock.JsonModelFromFilePath("mocks/"+tt.args.filename, &srcTx)
 			gotTx := Normalize(&srcTx)
 			if !reflect.DeepEqual(gotTx, tt.wantTx) {

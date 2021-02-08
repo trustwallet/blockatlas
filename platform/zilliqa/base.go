@@ -1,22 +1,21 @@
 package zilliqa
 
 import (
-	"github.com/trustwallet/golibs/client"
+	"github.com/trustwallet/blockatlas/platform/zilliqa/rpc"
+	"github.com/trustwallet/blockatlas/platform/zilliqa/viewblock"
 	"github.com/trustwallet/golibs/coin"
-	"github.com/trustwallet/golibs/network/middleware"
 )
 
 type Platform struct {
-	client    Client
-	rpcClient RpcClient
+	client    viewblock.Client
+	rpcClient rpc.Client
 }
 
-func Init(api, apiKey, rpc string) *Platform {
+func Init(api, apiKey, rpcUrl string) *Platform {
 	p := &Platform{
-		client:    Client{client.InitClient(api, middleware.SentryErrorHandler)},
-		rpcClient: RpcClient{client.InitClient(rpc, middleware.SentryErrorHandler)},
+		client:    viewblock.InitClient(api, apiKey),
+		rpcClient: rpc.InitClient(rpcUrl),
 	}
-	p.client.Headers["X-APIKEY"] = apiKey
 	return p
 }
 
