@@ -1,0 +1,44 @@
+{
+  "author": "dokiacapital.poolv1.near",
+  "header": {
+    "chunk_hash": "EBPzsMhnv7aiup59ixWJe55FDVhPV8qfTmJJYUrtLxDa",
+    "prev_block_hash": "FSDWQfYySuRbW7tRX1QKtphj3jZ6q8wGPyLCNzb6xiDd",
+    "outcome_root": "11111111111111111111111111111111",
+    "prev_state_root": "HNDta5RswH82MR6bvmNPqsnwyam86acfHFGrcuUd8EBt",
+    "encoded_merkle_root": "5JpgyZ7LzUDT587zKQmy38hUN7oAtebCate9zBvDqHK6",
+    "encoded_length": 250,
+    "height_created": 29444831,
+    "height_included": 29444831,
+    "shard_id": 0,
+    "gas_used": 0,
+    "gas_limit": 1000000000000000,
+    "rent_paid": "0",
+    "validator_reward": "0",
+    "balance_burnt": "0",
+    "outgoing_receipts_root": "H4Rd6SGeEBTbxkitsCdzfu9xL9HtZ2eHoPCQXUeZ6bW4",
+    "tx_root": "7fCahUJFbLB3oZECFBdL39KUmZak7WGf2ruwSGCCFMMG",
+    "validator_proposals": [],
+    "signature": "ed25519:E4EFQW7tMQAtVRLywh4jtJhu7Lcz8QzK8BNXydFnubzPiN8SDLbrjLYoy3jfceH6qjHvWebXgarLf2os79z6krE"
+  },
+  "transactions": [
+    {
+      "signer_id": "nfendowment07.near",
+      "public_key": "ed25519:CpwMLog6WH4Mb6JpPfA1HCQzUT2Zn4g3i1MNxtuuDuMz",
+      "nonce": 5,
+      "receiver_id": "nfendowment07.near",
+      "actions": [
+        {
+          "FunctionCall": {
+            "method_name": "confirm",
+            "args": "eyJyZXF1ZXN0X2lkIjoxfQ==",
+            "gas": 300000000000000,
+            "deposit": "0"
+          }
+        }
+      ],
+      "signature": "ed25519:2rXvVZgprAaTGcbqWzZVjirjMdqZQGtMbG4a2A3b4vtHf1NLkCSqPBbnqnkMosGuabCkPEEs8qPdKq5SBuzxS6dp",
+      "hash": "6Si15TYqgzp8f8ZVDTeM1KwxieaSNtcKk3h48AeCfP3G"
+    }
+  ],
+  "receipts": []
+}

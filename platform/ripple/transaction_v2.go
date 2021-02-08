@@ -6,10 +6,10 @@ import (
 	"github.com/trustwallet/golibs/types"
 )
 
-func (p *Platform) GetTransactionsByAccount(account, token string, limit int, database *db.Instance) (page types.TxPage, err error) {
+func (p *Platform) GetTransactionsByAccount(account, token string, limit int, database *db.Instance) (page types.Txs, err error) {
 	txs, err := database.GetTransactionsByAccount(account, p.Coin().ID, limit)
 	if err != nil {
 		return
 	}
-	return models.ToTxPage(txs)
+	return models.ToTxs(txs)
 }

@@ -1,16 +1,16 @@
-package ripple
+package near
 
 import "github.com/trustwallet/golibs/types"
 
 func (p *Platform) CurrentBlockNumber() (int64, error) {
-	return p.client.GetCurrentBlock()
+	return p.client.GetLasteBlock()
 }
 
 func (p *Platform) GetBlockByNumber(num int64) (*types.Block, error) {
-	srcBlock, err := p.client.GetBlockByNumber(num)
+	chunk, err := p.client.GetTxsInBlock(num)
 	if err != nil {
 		return nil, err
 	}
-	txs := NormalizeTxs(srcBlock)
-	return &types.Block{Number: num, Txs: txs}, nil
+	normalized := NormalizeChunk(chunk)
+	return &types.Block{Number: num, Txs: normalized}, nil
 }

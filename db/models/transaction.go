@@ -74,16 +74,16 @@ func (tx Transaction) ToTx() (result types.Tx, err error) {
 	return
 }
 
-func ToTxPage(txs []Transaction) (types.TxPage, error) {
-	page := make(types.TxPage, 0)
+func ToTxs(txs []Transaction) (types.Txs, error) {
+	result := make(types.Txs, 0)
 	for _, tx := range txs {
 		t, err := tx.ToTx()
 		if err != nil {
-			return types.TxPage{}, err
+			return types.Txs{}, err
 		}
-		page = append(page, t)
+		result = append(result, t)
 	}
-	return page, nil
+	return result, nil
 }
 
 func NormalizeTransactions(txs []types.Tx) ([]Transaction, error) {

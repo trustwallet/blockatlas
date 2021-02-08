@@ -1,0 +1,41 @@
+{
+  "author": "astro-stakers.poolv1.near",
+  "header": {
+    "chunk_hash": "EjxdYT6gZA2JcN3GeEwPF8QDswsd6EsqZzb2goeBrmrG",
+    "prev_block_hash": "AqL3U3cm3ZFnbx7V1Mc9pUPedb71gFaRvUbZnGBDrUfp",
+    "outcome_root": "7UYmU3Hqf62fEZDae2LqYHFSYPTKUTECDJStGogZndJW",
+    "prev_state_root": "6Lzwt9WUB2uN7vF9Q2nrxKrYZ1PywZ44HQ8oPCTRVdnz",
+    "encoded_merkle_root": "4Z2dR24o4htn5pHvy4SZ3vugFWMHUYbNjEPR4YkFUsWF",
+    "encoded_length": 249,
+    "height_created": 29445373,
+    "height_included": 29445373,
+    "shard_id": 0,
+    "gas_used": 0,
+    "gas_limit": 1000000000000000,
+    "rent_paid": "0",
+    "validator_reward": "0",
+    "balance_burnt": "0",
+    "outgoing_receipts_root": "H4Rd6SGeEBTbxkitsCdzfu9xL9HtZ2eHoPCQXUeZ6bW4",
+    "tx_root": "CArPD4gKoyGffCiAGQcUa5wtdfXV3Yzt22zREqcVckrQ",
+    "validator_proposals": [],
+    "signature": "ed25519:2thkwQHAWRGxwMg3kK22Wwz5jcYkMvAoixWiUL3VFtrZVaL2mfpSWkmVaMPREuGZt2bUuEVJXSNhc3Qk6aHRSWfp"
+  },
+  "transactions": [
+    {
+      "signer_id": "a7e956ffba0f7a1905445d107de74e32e8e84b31c6171caae381e6a1613e1b50",
+      "public_key": "ed25519:CJTTF5zLoTPmybiaTFnT53ymLbBHQzx2zS4o78rXz7rw",
+      "nonce": 8,
+      "receiver_id": "hewig.near",
+      "actions": [
+        {
+          "Transfer": {
+            "deposit": "100000000000000000000000"
+          }
+        }
+      ],
+      "signature": "ed25519:67eDadqqf1mnBcgswcaCq4j2dpunm1UrEe31jQ1JfMSHAaw8oQBV8uyQb9E5tsMTpHvshAtVUDSV6ErbmZ6EQMas",
+      "hash": "HnFPnVX9xpF8AGmkDqV7iNPfMN14pifmgTRjvkLuCmoM"
+    }
+  ],
+  "receipts": []
+}

@@ -11,9 +11,7 @@ type Platform struct {
 }
 
 func Init(api string) *Platform {
-	p := &Platform{
-		client: Client{client.InitClient(api, middleware.SentryErrorHandler)},
-	}
+	p := &Platform{client: Client{client.InitJSONClient(api, middleware.SentryErrorHandler)}}
 	return p
 }
 

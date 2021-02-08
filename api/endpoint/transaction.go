@@ -86,7 +86,7 @@ func GetTransactionsHistory(c *gin.Context, txAPI blockatlas.TxAPI, tokenTxAPI b
 		filteredTxs = filteredTxs[0:types.TxPerPage]
 	}
 
-	// modify in loop
+	// set direction by address
 	result := make(types.Txs, len(filteredTxs))
 	for i, t := range filteredTxs {
 		result[i] = t
@@ -113,16 +113,15 @@ func GetTransactionsByAccount(c *gin.Context, txsAPI blockatlas.TransactionsAPI,
 		return
 	}
 
-	page := make(types.TxPage, 0)
+	txs = txs.FilterTransactionsByMemo()
 
-	for _, tx := range txs {
-		tx.Direction = tx.GetTransactionDirection(account)
-		page = append(page, tx)
+	// set direction
+	result := make(types.Txs, len(txs))
+	for i, t := range txs {
+		result[i] = t
+		result[i].Direction = t.GetTransactionDirection(account)
 	}
-
-	page = page.FilterTransactionsByMemo()
-
-	c.JSON(http.StatusOK, &page)
+	c.JSON(http.StatusOK, types.NewTxPage(result))
 }
 
 // @Summary Get Transactions by XPUB
