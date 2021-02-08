@@ -5,8 +5,6 @@ import (
 	"strconv"
 	"sync"
 
-	log "github.com/sirupsen/logrus"
-
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/address"
 	"github.com/trustwallet/golibs/coin"
@@ -52,12 +50,7 @@ func (p *Platform) getTransactionsByIDs(ids []string) chan types.TxPage {
 		wg.Add(1)
 		go func(i string, c chan types.TxPage) {
 			defer wg.Done()
-			err := p.getTransactionChannel(i, c)
-			if err != nil {
-				log.WithFields(log.Fields{
-					"hash": i,
-				}).Error("Vechain Tx error")
-			}
+			_ = p.getTransactionChannel(i, c)
 		}(id, txChan)
 	}
 	wg.Wait()
