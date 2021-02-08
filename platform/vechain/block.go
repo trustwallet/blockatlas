@@ -11,13 +11,11 @@ func (p *Platform) GetBlockByNumber(num int64) (*types.Block, error) {
 	if err != nil {
 		return nil, err
 	}
-	cTxs := p.getTransactionsByIDs(block.Transactions)
-	txs := make(types.TxPage, 0)
-	for t := range cTxs {
-		txs = append(txs, t...)
+
+	txs, err := p.getTransactionsByIDs(block.Transactions)
+	if err != nil {
+		return nil, err
 	}
-	return &types.Block{
-		Number: num,
-		Txs:    txs,
-	}, nil
+
+	return &types.Block{Number: num, Txs: txs}, nil
 }

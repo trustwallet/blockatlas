@@ -3,7 +3,6 @@ package vechain
 import (
 	"errors"
 	"strconv"
-	"sync"
 
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/address"
@@ -12,27 +11,29 @@ import (
 	"github.com/trustwallet/golibs/types"
 )
 
-func (p *Platform) GetTokenTxsByAddress(address, token string) (types.TxPage, error) {
+func (p *Platform) GetTokenTxsByAddress(address, token string) (page types.TxPage, err error) {
 	if token != gasTokenAddress {
-		return nil, nil
+		return
 	}
-	curBlock, err := p.CurrentBlockNumber()
+
+	blockNumber, err := p.CurrentBlockNumber()
 	if err != nil {
-		return nil, err
+		return
 	}
-	events, err := p.client.GetLogsEvent(address, token, curBlock)
+
+	events, err := p.client.GetLogsEvent(address, token, blockNumber)
 	if err != nil {
-		return nil, err
+		return
 	}
+
 	eventsIDs := make([]string, 0)
 	for _, event := range events {
 		eventsIDs = append(eventsIDs, event.Meta.TxId)
 	}
 
-	cTxs := p.getTransactionsByIDs(eventsIDs)
-	txs := make(types.TxPage, 0)
-	for t := range cTxs {
-		txs = append(txs, t...)
+	txs, err := p.getTransactionsByIDs(eventsIDs)
+	if err != nil {
+		return
 	}
 
 	// NormalizeTokenTransaction won't set tx direction anymore, set it here
@@ -43,38 +44,26 @@ func (p *Platform) GetTokenTxsByAddress(address, token string) (types.TxPage, er
 	return txs, nil
 }
 
-func (p *Platform) getTransactionsByIDs(ids []string) chan types.TxPage {
-	txChan := make(chan types.TxPage, len(ids))
-	var wg sync.WaitGroup
+func (p *Platform) getTransactionsByIDs(ids []string) (types.TxPage, error) {
+	page := types.TxPage{}
 	for _, id := range ids {
-		wg.Add(1)
-		go func(i string, c chan types.TxPage) {
-			defer wg.Done()
-			_ = p.getTransactionChannel(i, c)
-		}(id, txChan)
-	}
-	wg.Wait()
-	close(txChan)
-	return txChan
-}
+		tx, err := p.client.GetTransactionByID(id)
+		if err != nil {
+			return nil, err
+		}
 
-func (p *Platform) getTransactionChannel(id string, txChan chan types.TxPage) error {
-	srcTx, err := p.client.GetTransactionByID(id)
-	if err != nil {
-		return err
-	}
+		receipt, err := p.client.GetTransactionReceiptByID(id)
+		if err != nil {
+			return page, err
+		}
 
-	receipt, err := p.client.GetTransactionReceiptByID(id)
-	if err != nil {
-		return err
+		txs, err := NormalizeTokenTransaction(tx, receipt)
+		if err != nil {
+			return page, err
+		}
+		page = append(page, txs...)
 	}
-
-	txs, err := NormalizeTokenTransaction(srcTx, receipt)
-	if err != nil {
-		return err
-	}
-	txChan <- txs
-	return nil
+	return page, nil
 }
 
 func NormalizeTokenTransaction(srcTx Tx, receipt TxReceipt) (types.TxPage, error) {
