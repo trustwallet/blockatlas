@@ -4,7 +4,6 @@ import (
 	"github.com/trustwallet/blockatlas/platform/bitcoin/blockbook"
 	"github.com/trustwallet/blockatlas/platform/ethereum/bounce"
 	"github.com/trustwallet/blockatlas/platform/ethereum/opensea"
-	"github.com/trustwallet/blockatlas/platform/ethereum/trustray"
 	"github.com/trustwallet/golibs/client"
 	"github.com/trustwallet/golibs/coin"
 	"github.com/trustwallet/golibs/network/middleware"
@@ -14,13 +13,6 @@ type Platform struct {
 	CoinIndex   uint
 	client      EthereumClient
 	collectible CollectibleClient
-}
-
-func InitTrustRay(coinType uint, api string) *Platform {
-	return &Platform{
-		CoinIndex: coinType,
-		client:    &trustray.Client{Request: client.InitClient(api, middleware.SentryErrorHandler)},
-	}
 }
 
 func InitWithBlockbook(coinType uint, blockbookApi string) *Platform {
