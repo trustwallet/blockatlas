@@ -55,8 +55,7 @@ tezos:
 
 # [ETH] Ethereum: https://ethereum.org
 ethereum:
-  blockbook_api: https://eth1.trezor.io
-  api: https://localhost:4567 #(Trust-Ray API)
+  api: https://eth1.trezor.io
   collections_api: https://api.opensea.io
   #  collections_api_key: [opensea_api_key]
 
@@ -64,27 +63,27 @@ ethereum:
 classic:
   api: https://localhost:4567
 
-# [POA] POA Network: https://poa.network (Trust-Ray API)
+# [POA] POA Network: https://poa.network
 poa:
   api: https://localhost:4567
 
-# [CLO] Callisto Network: https://callisto.network (Trust-Ray API)
+# [CLO] Callisto Network: https://callisto.network
 callisto:
   api: https://localhost:4567
 
-# [GO] GoChain: https://gochain.io (Trust-Ray API)
+# [GO] GoChain: https://gochain.io
 gochain:
   api: https://localhost:4567
 
-# [WAN] Wanchain: https://wanchain.org (Trust-Ray API)
+# [WAN] Wanchain: https://wanchain.org
 wanchain:
   api: https://localhost:4567
 
-# [TOMO] TomoChain: https://tomochain.com (Trust-Ray API)
+# [TOMO] TomoChain: https://tomochain.com
 tomochain:
   api: https://localhost:4567
 
-# [TT] ThunderCore: https://www.thundercore.com (Trust-Ray API)
+# [TT] ThunderCore: https://www.thundercore.com
 thundertoken:
   api: https://localhost:4567
 
@@ -216,7 +215,7 @@ filecoin:
   explorer: https://filfox.info
 
 smartchain:
-  api: <blockbook api>
+  api: ""
   collections_api: https://nftview.bounce.finance
 
 sentry:

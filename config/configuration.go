@@ -32,7 +32,6 @@ type Configuration struct {
 	} `mapstructure:"postgres"`
 	Ethereum struct {
 		API            string `mapstructure:"api"`
-		BlockbookAPI   string `mapstructure:"blockbook_api"`
 		CollectionsAPI string `mapstructure:"collections_api"`
 		CollectionsKey string `mapstructure:"collections_api_key"`
 	} `mapstructure:"ethereum"`
