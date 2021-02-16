@@ -25,11 +25,10 @@ func (p *Platform) GetTxsByAddress(address string) (types.TxPage, error) {
 		return results, err
 	}
 	for _, tx := range txs {
-		timestamp := tx.BlockTime
-		if timestamp == 0 {
-			timestamp = EstimateTimestamp(tx.Slot)
+		if tx.BlockTime == 0 {
+			continue
 		}
-		if normalized, err := p.NormalizeTx(tx, tx.Slot, timestamp); err == nil {
+		if normalized, err := p.NormalizeTx(tx, tx.Slot, tx.BlockTime); err == nil {
 			if address == normalized.From {
 				normalized.Direction = types.DirectionOutgoing
 			} else {
@@ -97,14 +96,4 @@ func (p *Platform) NormalizeTx(tx ConfirmedTransaction, slot uint64, timestamp i
 		err = fmt.Errorf("not supported type: %s", parsed.Type)
 	}
 	return
-}
-
-func EstimateTimestamp(slot uint64) int64 {
-	var (
-		blockTime  uint64 = 400 //ms
-		sampleSlot uint64 = 52838300
-		sampleTs   uint64 = 1606944859 * 1000
-	)
-	offset := (slot - sampleSlot) * blockTime
-	return int64((sampleTs + offset) / 1000)
 }

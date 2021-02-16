@@ -12,14 +12,14 @@ func (p *Platform) GetBlockByNumber(num int64) (*types.Block, error) {
 		return nil, err
 	}
 
-	page := make(types.TxPage, 0)
+	txs := make([]types.Tx, 0)
 	for _, tx := range block.Transactions {
 		normalized, err := p.NormalizeTx(tx, uint64(num), block.BlockTime)
 		if err != nil {
 			continue
 		}
-		page = append(page, normalized)
+		txs = append(txs, normalized)
 	}
 
-	return &types.Block{Number: num, Txs: page}, nil
+	return &types.Block{Number: num, Txs: txs}, nil
 }
