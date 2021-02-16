@@ -13,8 +13,9 @@ const (
 	programSystem = "system"
 	programToken  = "spl-token"
 
-	instructionTransfer        = "transfer"
-	instructionTransferChecked = "transferChecked"
+	instructionTransfer = "transfer"
+	// will support instructionTransferChecked later
+	// instructionTransferChecked = "transferChecked"
 )
 
 func (p *Platform) GetTxsByAddress(address string) (types.TxPage, error) {
@@ -93,7 +94,6 @@ func (p *Platform) NormalizeTx(tx ConfirmedTransaction, slot uint64, timestamp i
 			}
 		}
 	default:
-		// will support instructionTransferChecked later
 		err = fmt.Errorf("not supported type: %s", parsed.Type)
 	}
 	return
