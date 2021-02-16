@@ -1,6 +1,13 @@
 package solana
 
-import "github.com/trustwallet/golibs/types"
+import (
+	"github.com/trustwallet/golibs/client"
+	"github.com/trustwallet/golibs/types"
+)
+
+const (
+	errorSkipped = -32009
+)
 
 func (p *Platform) CurrentBlockNumber() (int64, error) {
 	return p.client.GetLasteBlock()
@@ -9,6 +16,11 @@ func (p *Platform) CurrentBlockNumber() (int64, error) {
 func (p *Platform) GetBlockByNumber(num int64) (*types.Block, error) {
 	block, err := p.client.GetTransactionsInBlock(num)
 	if err != nil {
+		// solana might skip some block which makes block number is not consecutive
+		rpcError, ok := err.(*client.RpcError)
+		if ok && rpcError.Code == errorSkipped {
+			return &types.Block{Number: num, Txs: []types.Tx{}}, nil
+		}
 		return nil, err
 	}
 
