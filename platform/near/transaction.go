@@ -41,7 +41,7 @@ func NormalizeChunk(chunk ChunkDetail) types.Txs {
 			From:     tx.SignerID,
 			To:       tx.ReceiverID,
 			Fee:      "0",
-			Date:     int64(chunk.Header.Timestamp),
+			Date:     int64(chunk.Header.Timestamp / 1000),
 			Block:    chunk.Header.Height,
 			Status:   types.StatusCompleted,
 			Sequence: uint64(tx.Nonce),
