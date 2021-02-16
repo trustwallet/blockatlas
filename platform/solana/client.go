@@ -10,6 +10,15 @@ type Client struct {
 	client.Request
 }
 
+func (c *Client) GetLasteBlock() (int64, error) {
+	var epoch EpochInfo
+	err := c.RpcCall(&epoch, "getEpochInfo", []string{})
+	if err != nil {
+		return 0, err
+	}
+	return int64(epoch.BlockHeight), nil
+}
+
 func (c *Client) GetCurrentVoteAccounts() (validators []VoteAccount, err error) {
 	var v VoteAccounts
 	err = c.RpcCall(&v, "getVoteAccounts", []string{})
@@ -37,7 +46,7 @@ func (c *Client) GetMinimumBalanceForRentExemption() (minimumBalance uint64, err
 	return
 }
 
-func (c *Client) GetTransactionList(address string) ([]ConfirmedSignature, error) {
+func (c *Client) GetTransactionsByAddress(address string) ([]ConfirmedTransaction, error) {
 	var signatures []ConfirmedSignature
 	params := []interface{}{
 		address,
@@ -47,16 +56,11 @@ func (c *Client) GetTransactionList(address string) ([]ConfirmedSignature, error
 	if err != nil {
 		return nil, err
 	}
-	return signatures, nil
+
+	return c.GetTransactionSignatures(signatures)
 }
 
-func (c *Client) GetTransactions(address string) ([]ConfirmedTransaction, error) {
-	// get tx list
-	signatures, err := c.GetTransactionList(address)
-	if err != nil {
-		return nil, err
-	}
-
+func (c *Client) GetTransactionSignatures(signatures []ConfirmedSignature) ([]ConfirmedTransaction, error) {
 	// build batch request
 	requests := make(client.RpcRequests, 0)
 	for _, sig := range signatures {
@@ -82,4 +86,10 @@ func (c *Client) GetTransactions(address string) ([]ConfirmedTransaction, error)
 		}
 	}
 	return txs, nil
+
+}
+
+func (c *Client) GetTransactionsInBlock(num int64) (block Block, err error) {
+	err = c.RpcCall(&block, "getConfirmedBlock", []interface{}{num, "jsonParsed"})
+	return
 }

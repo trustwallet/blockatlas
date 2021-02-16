@@ -65,9 +65,14 @@ type StakeData struct {
 
 type EpochInfo struct {
 	AbsoluteSlot uint64 `json:"absoluteSlot"`
+	BlockHeight  uint64 `json:"blockHeight"`
 	Epoch        uint64 `json:"epoch"`
 	SlotIndex    uint64 `json:"slotIndex"`
 	SlotsInEpoch uint64 `json:"slotsInEpoch"`
+}
+type Block struct {
+	BlockTime    int64                  `json:"blockTime"`
+	Transactions []ConfirmedTransaction `json:"transactions"`
 }
 
 type ConfirmedSignature struct {
@@ -78,7 +83,8 @@ type ConfirmedSignature struct {
 
 type ConfirmedTransaction struct {
 	Meta        Meta        `json:"meta"`
-	Slot        uint64      `json:"slot"`
+	BlockTime   int64       `json:"blockTime,omitempty"`
+	Slot        uint64      `json:"slot,omitempty"`
 	Transaction Transaction `json:"transaction"`
 }
 
@@ -87,24 +93,36 @@ type Meta struct {
 	Fee uint64      `json:"fee"`
 }
 
-type Info struct {
+type TransferInfo struct {
 	Destination string `json:"destination"`
 	Lamports    uint64 `json:"lamports"`
 	Source      string `json:"source"`
 }
 
 type Parsed struct {
-	Info Info   `json:"info"`
-	Type string `json:"type"`
+	Info interface{} `json:"info"`
+	Type string      `json:"type"`
 }
 
-type Instructions struct {
-	Parsed  Parsed `json:"parsed"`
-	Program string `json:"program"`
+type TokenTransferInfo struct {
+	Destination string      `json:"destination"`
+	Mint        string      `json:"mint"`
+	Source      string      `json:"source"`
+	TokenAmount TokenAmount `json:"tokenAmount"`
+}
+
+type TokenAmount struct {
+	Amount   string `json:"amount"`
+	Decimals uint   `json:"decimals"`
+}
+
+type Instruction struct {
+	Parsed  interface{} `json:"parsed"`
+	Program string      `json:"program"`
 }
 
 type Message struct {
-	Instructions []Instructions `json:"instructions"`
+	Instructions []Instruction `json:"instructions"`
 }
 
 type Transaction struct {
