@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"errors"
 
+	"github.com/trustwallet/blockatlas/db"
+	"github.com/trustwallet/blockatlas/db/models"
 	"github.com/trustwallet/golibs/coin"
 	"github.com/trustwallet/golibs/types"
 )
@@ -11,6 +13,14 @@ import (
 func (p *Platform) GetTxsByAddress(address string) (types.Txs, error) {
 	normalized := make(types.Txs, 0)
 	return normalized, nil
+}
+
+func (p *Platform) GetTransactionsByAccount(account, token string, limit int, database *db.Instance) (page types.Txs, err error) {
+	txs, err := database.GetTransactionsByAccount(account, p.Coin().ID, limit)
+	if err != nil {
+		return
+	}
+	return models.ToTxs(txs)
 }
 
 func NormalizeChunk(chunk ChunkDetail) types.Txs {
