@@ -29,11 +29,7 @@ func (p *Platform) GetTxsByAddress(address string) (types.TxPage, error) {
 			continue
 		}
 		if normalized, err := p.NormalizeTx(tx, tx.Slot, tx.BlockTime); err == nil {
-			if address == normalized.From {
-				normalized.Direction = types.DirectionOutgoing
-			} else {
-				normalized.Direction = types.DirectionIncoming
-			}
+			normalized.Direction = normalized.GetTransactionDirection(address)
 			results = append(results, normalized)
 		}
 	}
