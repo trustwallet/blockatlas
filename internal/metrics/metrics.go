@@ -22,6 +22,7 @@ var (
 		[]string{
 			"coin",
 			"priority",
+			"enabled",
 		},
 	)
 )
