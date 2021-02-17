@@ -68,46 +68,5 @@ func TestPlatform_GetTxsByAddress(t *testing.T) {
 	assert.Nil(t, err)
 	raw, err := json.Marshal(txs)
 	assert.Nil(t, err)
-	assert.Equal(t, wanted, string(raw))
-}
-
-func TestEstimateTimestamp(t *testing.T) {
-	tests := []struct {
-		name string
-		slot uint64
-		want int64
-	}{
-		{
-			name: "Test 0",
-			slot: 0,
-			want: 1585809539,
-		},
-		{
-			name: "Test sample slot",
-			slot: 52838300,
-			want: 1606944859,
-		},
-		{
-			name: "Test nomral 1",
-			slot: 5632752,
-			want: 1588062639,
-		},
-		{
-			name: "Test normal 2",
-			slot: 5543556,
-			want: 1588026961,
-		},
-		{
-			name: "Test normal 3",
-			slot: 493784,
-			want: 1586007052,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := EstimateTimestamp(tt.slot); got != tt.want {
-				t.Errorf("EstimateTimestamp() = %v, want %v", got, tt.want)
-			}
-		})
-	}
+	assert.JSONEq(t, wanted, string(raw))
 }
