@@ -1,6 +1,7 @@
 package metrics
 
 import (
+	"strconv"
 	"time"
 
 	"github.com/trustwallet/blockatlas/db"
@@ -33,7 +34,7 @@ func setupUpdateTrackerMetrics(db *db.Instance) {
 				continue
 			}
 			for _, tracker := range trackers {
-				labels := prometheus.Labels{"coin": tracker.Coin, "priority": tracker.Priority}
+				labels := prometheus.Labels{"coin": tracker.Coin, "priority": tracker.Priority, "enabled": strconv.FormatBool(tracker.Enabled)}
 				workerBlockParsing.With(labels).Set(float64(tracker.Height))
 			}
 			time.Sleep(1 * time.Second)
