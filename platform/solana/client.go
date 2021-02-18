@@ -37,6 +37,13 @@ func (c *Client) GetTransactionsByAddress(address string) ([]ConfirmedTransactio
 }
 
 func (c *Client) GetTransactionSignatures(signatures []ConfirmedSignature) ([]ConfirmedTransaction, error) {
+	var txs []ConfirmedTransaction
+
+	// check empty
+	if len(signatures) == 0 {
+		return txs, nil
+	}
+
 	// build batch request
 	requests := make(client.RpcRequests, 0)
 	for _, sig := range signatures {
@@ -48,7 +55,7 @@ func (c *Client) GetTransactionSignatures(signatures []ConfirmedSignature) ([]Co
 			},
 		})
 	}
-	var txs []ConfirmedTransaction
+
 	responses, err := c.RpcBatchCall(requests)
 	if err != nil {
 		return txs, err
@@ -62,7 +69,6 @@ func (c *Client) GetTransactionSignatures(signatures []ConfirmedSignature) ([]Co
 		}
 	}
 	return txs, nil
-
 }
 
 func (c *Client) GetTransactionsInBlock(num int64) (block Block, err error) {
