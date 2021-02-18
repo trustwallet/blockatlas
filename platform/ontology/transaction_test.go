@@ -197,7 +197,7 @@ var (
 
 func TestNormalizeBlock(t *testing.T) {
 	block := normalizeTxs([]Tx{ontTxResp1.Result, ontTxResp2.Result, ontTxResp3.Result}, AssetAll)
-	var want types.TxPage
+	var want types.Txs
 	_ = mock.JsonModelFromFilePath("mocks/block_response.json", &want)
 	lhs, _ := json.Marshal(block)
 	rhs, _ := json.Marshal(want)
