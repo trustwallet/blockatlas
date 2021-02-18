@@ -3,6 +3,7 @@ package fio
 import (
 	"encoding/json"
 	"fmt"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -35,6 +36,7 @@ func (p *Platform) GetTxsByAddress(address string) (page types.Txs, err error) {
 		txs = append(txs, tx)
 	}
 	txs = unique(txs)
+	sort.Sort(txs)
 	return txs, nil
 }
 
