@@ -107,11 +107,11 @@ func parse(params Params) {
 		return
 	}
 
-	var txs []types.Tx
+	var txs types.Txs
 	for _, block := range blocks {
 		txs = append(txs, block.Txs...)
 	}
-	txs = types.TxPage(txs).FilterTransactionsByMemo()
+	txs = txs.FilterTransactionsByMemo()
 
 	err = publish(params, txs)
 	if err != nil {

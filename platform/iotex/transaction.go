@@ -8,8 +8,8 @@ import (
 	"github.com/trustwallet/golibs/types"
 )
 
-func (p *Platform) GetTxsByAddress(address string) (types.TxPage, error) {
-	txs := make([]types.Tx, 0)
+func (p *Platform) GetTxsByAddress(address string) (types.Txs, error) {
+	txs := make(types.Txs, 0)
 	var start int64
 
 	totalTrx, err := p.client.GetAddressTotalTransactions(address)

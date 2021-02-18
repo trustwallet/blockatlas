@@ -25,7 +25,7 @@ import (
 func GetTokensByAddress(c *gin.Context, tokenAPI blockatlas.TokensAPI) {
 	address := c.Param("address")
 	if address == "" {
-		c.JSON(http.StatusOK, types.TxPage{})
+		c.JSON(http.StatusOK, types.EmptyTxPage)
 		return
 	}
 
@@ -40,7 +40,7 @@ func GetTokensByAddress(c *gin.Context, tokenAPI blockatlas.TokensAPI) {
 func GetTokensIdsByAddress(c *gin.Context, tokenAPI blockatlas.TokensAPI) {
 	address := c.Param("address")
 	if address == "" {
-		c.JSON(http.StatusOK, types.TxPage{})
+		c.JSON(http.StatusOK, types.EmptyTxPage)
 		return
 	}
 

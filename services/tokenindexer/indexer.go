@@ -112,7 +112,7 @@ func calculateSubscriptionAssetAssociations(database *db.Instance, addressAssets
 	return associations, nil
 }
 
-func GetAssetsFromTransactions(txs []types.Tx) []models.Asset {
+func GetAssetsFromTransactions(txs types.Txs) []models.Asset {
 	var result []models.Asset
 	for _, tx := range txs {
 		assets := models.AssetsFrom(tx)

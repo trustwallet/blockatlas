@@ -11,7 +11,7 @@ func (p *Platform) GetBlockByNumber(num int64) (*types.Block, error) {
 	if err != nil {
 		return nil, err
 	}
-	var normalized []types.Tx
+	var normalized types.Txs
 	for _, tx := range block {
 		normalized = append(normalized, normalizeTransaction(tx, p.CoinIndex))
 	}

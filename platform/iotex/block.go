@@ -7,7 +7,7 @@ func (p *Platform) CurrentBlockNumber() (int64, error) {
 }
 
 func (p *Platform) GetBlockByNumber(num int64) (*types.Block, error) {
-	var normalized []types.Tx
+	var normalized types.Txs
 	txs, err := p.client.GetTxsInBlock(num)
 	if err != nil {
 		return nil, err

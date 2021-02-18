@@ -9,13 +9,13 @@ import (
 	"github.com/trustwallet/golibs/types"
 )
 
-func (p *Platform) GetTxsByAddress(address string) (types.TxPage, error) {
+func (p *Platform) GetTxsByAddress(address string) (types.Txs, error) {
 	trxs, err := p.client.GetAddressTransactions(address)
 	if err != nil {
 		return nil, err
 	}
 
-	nTrxs := make([]types.Tx, 0)
+	nTrxs := make(types.Txs, 0)
 	for _, trx := range trxs {
 		nTrx, ok := Normalize(&trx)
 		if !ok {

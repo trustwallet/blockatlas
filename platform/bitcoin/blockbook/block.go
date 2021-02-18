@@ -7,7 +7,7 @@ func (c *Client) GetBlockByNumber(num int64, coinIndex uint) (*types.Block, erro
 	if err != nil {
 		return nil, err
 	}
-	txs := make([]types.Tx, 0)
+	txs := make(types.Txs, 0)
 	for _, srcTx := range block {
 		txs = append(txs, normalizeTx(&srcTx, coinIndex))
 	}

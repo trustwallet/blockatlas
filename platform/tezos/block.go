@@ -24,7 +24,7 @@ func (p *Platform) GetBlockByNumber(num int64) (*types.Block, error) {
 }
 
 func ProcessRpcBlock(block RpcBlock, rpcClient IRpcClient) (*types.Block, error) {
-	txs := []types.Tx{}
+	txs := types.Txs{}
 
 	for _, ops := range block.Operations {
 		for _, op := range ops {

@@ -7,12 +7,12 @@ import (
 
 const metachainID = "4294967295"
 
-func (p *Platform) GetTxsByAddress(address string) (types.TxPage, error) {
+func (p *Platform) GetTxsByAddress(address string) (types.Txs, error) {
 	return p.client.GetTxsOfAddress(address)
 }
 
 // NormalizeTx converts an slice of Elrond transaction info a slice of generic model transaction
-func NormalizeTxs(srcTxs []Transaction, address string, block Block) (txs []types.Tx) {
+func NormalizeTxs(srcTxs []Transaction, address string, block Block) (txs types.Txs) {
 	for _, srcTx := range srcTxs {
 		tx, ok := NormalizeTx(srcTx, address, block)
 		if !ok {

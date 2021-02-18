@@ -12,11 +12,11 @@ import (
 
 const kavaDenom = "ukava"
 
-func (p *Platform) GetTxsByAddress(address string) (types.TxPage, error) {
+func (p *Platform) GetTxsByAddress(address string) (types.Txs, error) {
 	return p.GetTokenTxsByAddress(address, kavaDenom)
 }
 
-func (p *Platform) GetTokenTxsByAddress(address, token string) (types.TxPage, error) {
+func (p *Platform) GetTokenTxsByAddress(address, token string) (types.Txs, error) {
 	tagsList := []string{"transfer.recipient", "message.sender"}
 	var wg sync.WaitGroup
 	out := make(chan []Tx, len(tagsList))
@@ -80,9 +80,9 @@ func (p *Platform) FilterTxsByDenom(txs []Tx, denom string) []Tx {
 }
 
 // NormalizeTxs converts multiple Cosmos transactions
-func (p *Platform) NormalizeTxs(srcTxs []Tx) types.TxPage {
+func (p *Platform) NormalizeTxs(srcTxs []Tx) types.Txs {
 	txMap := make(map[string]bool)
-	txs := make(types.TxPage, 0)
+	txs := make(types.Txs, 0)
 	for _, srcTx := range srcTxs {
 		_, ok := txMap[srcTx.ID]
 		if ok {

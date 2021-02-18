@@ -6,8 +6,8 @@ import (
 	"github.com/trustwallet/golibs/types"
 )
 
-func (p *Platform) GetTxsByAddress(address string) (types.TxPage, error) {
-	var normalized []types.Tx
+func (p *Platform) GetTxsByAddress(address string) (types.Txs, error) {
+	var normalized types.Txs
 	txs, err := p.client.GetTxsOfAddress(address)
 
 	if err != nil {

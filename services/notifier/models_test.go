@@ -126,18 +126,18 @@ func Test_containsAddress(t *testing.T) {
 }
 
 func Test_findTransactionsByAddress(t *testing.T) {
-	res := findTransactionsByAddress([]types.Tx{nativeTokenTransfer, tokenTransfer}, "tbnb1ttyn4csghfgyxreu7lmdu3lcplhqhxtzced45a")
+	res := findTransactionsByAddress(types.Txs{nativeTokenTransfer, tokenTransfer}, "tbnb1ttyn4csghfgyxreu7lmdu3lcplhqhxtzced45a")
 	sort.Slice(res, func(i, j int) bool {
 		return res[i].ID < res[j].ID
 	})
-	assert.Equal(t, []types.Tx{nativeTokenTransfer}, res)
+	assert.Equal(t, types.Txs{nativeTokenTransfer}, res)
 
-	resFail := findTransactionsByAddress([]types.Tx{nativeTokenTransfer, tokenTransfer}, "tbnb1ttyn4csghfgyxreu7lmdu3lcplhqhxtzced")
-	assert.Equal(t, []types.Tx{}, resFail)
+	resFail := findTransactionsByAddress(types.Txs{nativeTokenTransfer, tokenTransfer}, "tbnb1ttyn4csghfgyxreu7lmdu3lcplhqhxtzced")
+	assert.Equal(t, types.Txs{}, resFail)
 }
 
 func Test_buildNotificationsByAddress(t *testing.T) {
-	notifications := buildNotificationsByAddress("tbnb1ttyn4csghfgyxreu7lmdu3lcplhqhxtzced45a", []types.Tx{nativeTokenTransfer, tokenTransfer})
+	notifications := buildNotificationsByAddress("tbnb1ttyn4csghfgyxreu7lmdu3lcplhqhxtzced45a", types.Txs{nativeTokenTransfer, tokenTransfer})
 	sort.Slice(notifications, func(i, j int) bool {
 		return notifications[i].Action < notifications[j].Action
 	})

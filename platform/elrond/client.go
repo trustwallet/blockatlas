@@ -44,7 +44,7 @@ func (c *Client) GetBlockByNumber(height int64) (*types.Block, error) {
 	}, nil
 }
 
-func (c *Client) GetTxsOfAddress(address string) (types.TxPage, error) {
+func (c *Client) GetTxsOfAddress(address string) (types.Txs, error) {
 	var txPage TransactionsPage
 	// TODO: enable pagination of Elrond transactions in the future.
 	// TODO: currently Elrond only fetches the most recent 20 transactions.

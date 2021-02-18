@@ -14,13 +14,13 @@ var NetworkByteMap = map[string]byte{
 	"KSM": 0x02,
 }
 
-func (p *Platform) GetTxsByAddress(address string) (types.TxPage, error) {
+func (p *Platform) GetTxsByAddress(address string) (types.Txs, error) {
 	transfers, err := p.client.GetTransfersOfAddress(address)
 	if err != nil {
 		return nil, err
 	}
 
-	txs := make([]types.Tx, 0)
+	txs := make(types.Txs, 0)
 	for _, srcTx := range transfers {
 		tx := p.NormalizeTransfer(&srcTx)
 		txs = append(txs, tx)
@@ -54,8 +54,8 @@ func (p *Platform) NormalizeTransfer(srcTx *Transfer) types.Tx {
 	return result
 }
 
-func (p *Platform) NormalizeExtrinsics(extrinsics []Extrinsic) []types.Tx {
-	txs := make([]types.Tx, 0)
+func (p *Platform) NormalizeExtrinsics(extrinsics []Extrinsic) types.Txs {
+	txs := make(types.Txs, 0)
 	for _, srcTx := range extrinsics {
 		tx := p.NormalizeExtrinsic(&srcTx)
 		if tx != nil {

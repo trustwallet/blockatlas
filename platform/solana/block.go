@@ -19,12 +19,12 @@ func (p *Platform) GetBlockByNumber(num int64) (*types.Block, error) {
 		// solana might skip some block which makes block number is not consecutive
 		rpcError, ok := err.(*client.RpcError)
 		if ok && rpcError.Code == errorSkipped {
-			return &types.Block{Number: num, Txs: []types.Tx{}}, nil
+			return &types.Block{Number: num, Txs: types.Txs{}}, nil
 		}
 		return nil, err
 	}
 
-	txs := make([]types.Tx, 0)
+	txs := make(types.Txs, 0)
 	for _, tx := range block.Transactions {
 		normalized, err := p.NormalizeTx(tx, uint64(num), block.BlockTime)
 		if err != nil {
