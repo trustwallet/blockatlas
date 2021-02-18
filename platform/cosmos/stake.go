@@ -118,20 +118,20 @@ func (p *Platform) UndelegatedBalance(address string) (string, error) {
 	return "0", nil
 }
 
-func NormalizeDelegations(delegations []Delegation, validators blockatlas.ValidatorMap) []blockatlas.Delegation {
+func NormalizeDelegations(delegations []DelegationValue, validators blockatlas.ValidatorMap) []blockatlas.Delegation {
 	results := make([]blockatlas.Delegation, 0)
 	for _, v := range delegations {
-		validator, ok := validators[v.ValidatorAddress]
+		validator, ok := validators[v.Delegation.ValidatorAddress]
 		if !ok {
 			log.WithFields(
-				log.Fields{"address": v.ValidatorAddress, "platform": "cosmos", "delegation": v.DelegatorAddress},
+				log.Fields{"address": v.Delegation.ValidatorAddress, "platform": "cosmos", "delegation": v.Delegation.DelegatorAddress},
 			).Warn("Validator not found")
-			validator = getUnknownValidator(v.ValidatorAddress)
+			validator = getUnknownValidator(v.Delegation.ValidatorAddress)
 
 		}
 		delegation := blockatlas.Delegation{
 			Delegator: validator,
-			Value:     v.Value(),
+			Value:     v.Delegation.Value(),
 			Status:    blockatlas.DelegationStatusActive,
 		}
 		results = append(results, delegation)
