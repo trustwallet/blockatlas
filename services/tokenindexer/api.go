@@ -35,6 +35,9 @@ func (i Instance) GetTokensByAddress(r GetTokensByAddressRequest) (GetTokensByAd
 			list = append(list, types.GetAddressID(coin, address))
 		}
 	}
+	if len(list) > 100 {
+		return GetTokensByAddressResponse{}, nil
+	}
 	from := time.Unix(int64(r.From), 0)
 	associations, err := i.database.GetSubscriptionsByAddressIDs(list, from)
 	if err != nil {

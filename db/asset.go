@@ -43,6 +43,7 @@ func (i *Instance) GetSubscriptionsByAddressIDs(ids []string, from time.Time) ([
 		Preload("Asset").
 		Where("subscriptions.address in (?)", ids).
 		Where("subscriptions_asset_associations.created_at > ?", from).
+		Limit(250).
 		Find(&associations).Error; err != nil {
 		return nil, err
 	}
