@@ -215,7 +215,7 @@ filecoin:
   explorer: https://filfox.info
   
 oasis:
-  api: http://localhost:8080
+  api: https://oasis.atlas.zondax.ch
 
 smartchain:
   api: ""
