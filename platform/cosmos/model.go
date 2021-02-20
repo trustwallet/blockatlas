@@ -165,21 +165,25 @@ type Inflation struct {
 }
 
 type Delegations struct {
-	List []Delegation `json:"result"`
+	List []DelegationValue `json:"result"`
+}
+
+type DelegationValue struct {
+	Delegation Delegation `json:"delegation"`
 }
 
 type Delegation struct {
 	DelegatorAddress string `json:"delegator_address"`
 	ValidatorAddress string `json:"validator_address"`
-	Balance          string `json:"balance,omitempty"`
+	Shares           string `json:"shares"`
 }
 
 func (d *Delegation) Value() string {
-	shares := strings.Split(d.Balance, ".")
+	shares := strings.Split(d.Shares, ".")
 	if len(shares) > 0 {
 		return shares[0]
 	}
-	return d.Balance
+	return d.Shares
 }
 
 type UnbondingDelegations struct {

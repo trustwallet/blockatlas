@@ -30,7 +30,7 @@ func (c *Client) GetAddrTxs(address, tag string, page int) (txs TxPage, err erro
 
 func (c *Client) GetValidators() (validators Validators, err error) {
 	query := url.Values{
-		"status": {"bonded"},
+		"status": {"BOND_STATUS_BONDED"},
 	}
 	err = c.GetWithCache(&validators, "staking/validators", query, time.Minute*10)
 	return
