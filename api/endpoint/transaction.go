@@ -29,7 +29,7 @@ func GetTransactionsHistory(c *gin.Context, txAPI blockatlas.TxAPI, tokenTxAPI b
 	token := c.Query("token")
 
 	var (
-		txs []types.Tx
+		txs types.Txs
 		err error
 	)
 
@@ -74,25 +74,23 @@ func GetTransactionsHistory(c *gin.Context, txAPI blockatlas.TxAPI, tokenTxAPI b
 			return
 		}
 	}
-	var (
-		page        = make(types.TxPage, 0)
-		filteredTxs = types.Txs(txs).FilterUniqueID().SortByDate()
-	)
+
+	filteredTxs := txs.FilterUniqueID().SortByDate()
+
 	for _, tx := range filteredTxs {
 		tx.Direction = tx.GetTransactionDirection(address)
-		page = append(page, tx)
 	}
 
-	page = page.FilterTransactionsByMemo()
+	filteredTxs = filteredTxs.FilterTransactionsByMemo()
 	if token != "" {
-		page = page.FilterTransactionsByToken(token)
+		filteredTxs = filteredTxs.FilterTransactionsByToken(token)
 	}
 
-	if len(page) > types.TxPerPage {
-		page = page[0:types.TxPerPage]
+	if len(filteredTxs) > types.TxPerPage {
+		filteredTxs = filteredTxs[0:types.TxPerPage]
 	}
 
-	c.JSON(http.StatusOK, &page)
+	c.JSON(http.StatusOK, types.NewTxPage(filteredTxs))
 }
 
 // @Summary Get Transactions by XPUB
@@ -142,14 +140,13 @@ func GetTransactionsByXpub(c *gin.Context, api blockatlas.TxUtxoAPI) {
 			return
 		}
 	}
-	var (
-		filteredTxs = types.Txs(txs).FilterUniqueID().SortByDate()
-		page        = types.TxPage(filteredTxs)
-	)
-	page = page.FilterTransactionsByMemo()
-	if len(page) > types.TxPerPage {
-		page = page[0:types.TxPerPage]
+
+	filteredTxs := txs.FilterUniqueID().SortByDate()
+	filteredTxs = filteredTxs.FilterTransactionsByMemo()
+
+	if len(filteredTxs) > types.TxPerPage {
+		filteredTxs = filteredTxs[0:types.TxPerPage]
 	}
 
-	c.JSON(http.StatusOK, &page)
+	c.JSON(http.StatusOK, types.NewTxPage(filteredTxs))
 }

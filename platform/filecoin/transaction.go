@@ -7,12 +7,12 @@ import (
 
 const messageMethod = "Send"
 
-func (p *Platform) GetTxsByAddress(address string) (types.TxPage, error) {
+func (p *Platform) GetTxsByAddress(address string) (types.Txs, error) {
 	res, err := p.explorer.GetMessagesByAddress(address, types.TxPerPage)
 	if err != nil {
 		return nil, err
 	}
-	normalized := make([]types.Tx, 0)
+	normalized := make(types.Txs, 0)
 	for _, message := range res.Messages {
 		// skip non transfer messages
 		if message.Method != messageMethod {

@@ -11,7 +11,7 @@ import (
 	"github.com/trustwallet/golibs/types"
 )
 
-func (p *Platform) GetTokenTxsByAddress(address, token string) (page types.TxPage, err error) {
+func (p *Platform) GetTokenTxsByAddress(address, token string) (page types.Txs, err error) {
 	if token != gasTokenAddress {
 		return
 	}
@@ -44,8 +44,8 @@ func (p *Platform) GetTokenTxsByAddress(address, token string) (page types.TxPag
 	return txs, nil
 }
 
-func (p *Platform) getTransactionsByIDs(ids []string) (types.TxPage, error) {
-	page := types.TxPage{}
+func (p *Platform) getTransactionsByIDs(ids []string) (types.Txs, error) {
+	page := types.Txs{}
 	for _, id := range ids {
 		tx, err := p.client.GetTransactionByID(id)
 		if err != nil {
@@ -66,16 +66,16 @@ func (p *Platform) getTransactionsByIDs(ids []string) (types.TxPage, error) {
 	return page, nil
 }
 
-func NormalizeTokenTransaction(srcTx Tx, receipt TxReceipt) (types.TxPage, error) {
+func NormalizeTokenTransaction(srcTx Tx, receipt TxReceipt) (types.Txs, error) {
 	// the only supported Token on VeChain is its Gas token
 	if receipt.Reverted {
 		return normalizeRevertedTokenTransaction(srcTx, receipt)
 	}
 
-	txs := make(types.TxPage, 0)
+	txs := make(types.Txs, 0)
 
 	if receipt.Outputs == nil || len(receipt.Outputs) == 0 {
-		return types.TxPage{}, errors.New("NormalizeBlockTransaction: receipt.Outputs not found: " + srcTx.Id)
+		return types.Txs{}, errors.New("NormalizeBlockTransaction: receipt.Outputs not found: " + srcTx.Id)
 	}
 
 	for _, output := range receipt.Outputs {
@@ -138,8 +138,8 @@ func NormalizeTokenTransaction(srcTx Tx, receipt TxReceipt) (types.TxPage, error
 	return txs, nil
 }
 
-func normalizeRevertedTokenTransaction(srcTx Tx, receipt TxReceipt) (types.TxPage, error) {
-	txs := make(types.TxPage, 0)
+func normalizeRevertedTokenTransaction(srcTx Tx, receipt TxReceipt) (types.Txs, error) {
+	txs := make(types.Txs, 0)
 
 	fee, err := numbers.HexToDecimal(receipt.Paid)
 	if err != nil {
@@ -188,7 +188,7 @@ func normalizeRevertedTokenTransaction(srcTx Tx, receipt TxReceipt) (types.TxPag
 	return txs, nil
 }
 
-func (p *Platform) GetTxsByAddress(address string) (types.TxPage, error) {
+func (p *Platform) GetTxsByAddress(address string) (types.Txs, error) {
 	headBlock, err := p.CurrentBlockNumber()
 	if err != nil {
 		return nil, err
@@ -198,7 +198,7 @@ func (p *Platform) GetTxsByAddress(address string) (types.TxPage, error) {
 		return nil, err
 	}
 
-	txs := make(types.TxPage, 0)
+	txs := make(types.Txs, 0)
 	for _, t := range transfers {
 		trxId, err := p.client.GetTransactionByID(t.Meta.TxId)
 		if err != nil {

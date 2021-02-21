@@ -8,7 +8,7 @@ import (
 	"github.com/trustwallet/golibs/types"
 )
 
-func (p *Platform) GetTxsByAddress(address string) (types.TxPage, error) {
+func (p *Platform) GetTxsByAddress(address string) (types.Txs, error) {
 	if srcTxs, err := p.client.GetTxsOfAddress(address, types.TxPerPage); err == nil {
 		return NormalizeTxs(srcTxs.Content), err
 	} else {
@@ -43,8 +43,8 @@ func NormalizeTx(srcTx *Tx) (tx types.Tx, ok bool) {
 }
 
 // NormalizeTxs converts multiple Aion transactions
-func NormalizeTxs(srcTxs []Tx) []types.Tx {
-	var txs []types.Tx
+func NormalizeTxs(srcTxs []Tx) types.Txs {
+	var txs types.Txs
 	for _, srcTx := range srcTxs {
 		tx, ok := NormalizeTx(&srcTx)
 		if ok {

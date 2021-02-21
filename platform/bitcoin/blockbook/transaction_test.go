@@ -14,7 +14,7 @@ var (
 	want, _    = mock.JsonStringFromFilePath("mocks/expected_txs.json")
 )
 
-func TestNormalizePage(t *testing.T) {
+func TestNormalizeTxs(t *testing.T) {
 	type args struct {
 		srcPage   string
 		address   string
@@ -39,18 +39,18 @@ func TestNormalizePage(t *testing.T) {
 	}
 	for _, tt := range tests {
 		var page TransactionsList
-		var txPage types.TxPage
+		var txs types.Txs
 		err := json.Unmarshal([]byte(tt.args.srcPage), &page)
 		assert.Nil(t, err)
-		err = json.Unmarshal([]byte(tt.want), &txPage)
+		err = json.Unmarshal([]byte(tt.want), &txs)
 		assert.Nil(t, err)
 		t.Run(tt.name, func(t *testing.T) {
 			got := NormalizePage(page, tt.args.address, tt.args.token, tt.args.coinIndex)
 			gotJson, err := json.Marshal(got)
 			assert.Nil(t, err)
-			wantTxPage, err := json.Marshal(txPage)
+			wantTxs, err := json.Marshal(txs)
 			assert.Nil(t, err)
-			assert.JSONEq(t, string(gotJson), string(wantTxPage))
+			assert.JSONEq(t, string(gotJson), string(wantTxs))
 		})
 	}
 }

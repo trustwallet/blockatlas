@@ -10,13 +10,13 @@ import (
 	"github.com/trustwallet/golibs/types"
 )
 
-func (p *Platform) GetTxsByAddress(address string) (types.TxPage, error) {
+func (p *Platform) GetTxsByAddress(address string) (types.Txs, error) {
 	Txs, err := p.gridClient.fetchTxsOfAddress(address, "")
 	if err != nil && len(Txs) == 0 {
 		return nil, err
 	}
 
-	txs := make(types.TxPage, 0)
+	txs := make(types.Txs, 0)
 	for _, srcTx := range Txs {
 		tx, err := normalize(srcTx)
 		if err != nil {
@@ -33,7 +33,7 @@ func (p *Platform) GetTxsByAddress(address string) (types.TxPage, error) {
 	return txs, nil
 }
 
-func (p *Platform) GetTokenTxsByAddress(address, token string) (types.TxPage, error) {
+func (p *Platform) GetTokenTxsByAddress(address, token string) (types.Txs, error) {
 	unknownTokenType := errors.New("unknownTokenType")
 	tokenType := getTokenType(token)
 
@@ -49,7 +49,7 @@ func (p *Platform) GetTokenTxsByAddress(address, token string) (types.TxPage, er
 		if err != nil {
 			return nil, err
 		}
-		return types.TxPage(normalizeTRC20Transactions(trc20Transactions)), nil
+		return normalizeTRC20Transactions(trc20Transactions), nil
 	default:
 		return nil, unknownTokenType
 	}
@@ -77,8 +77,8 @@ func addTokenMeta(tx *types.Tx, srcTx Tx, tokenInfo AssetInfo) {
 	}
 }
 
-func (p *Platform) fetchTransactionsForTRC10Tokens(address, token string) (types.TxPage, error) {
-	txs := make(types.TxPage, 0)
+func (p *Platform) fetchTransactionsForTRC10Tokens(address, token string) (types.Txs, error) {
+	txs := make(types.Txs, 0)
 
 	tokenTxs, err := p.gridClient.fetchTxsOfAddress(address, token)
 	if err != nil {

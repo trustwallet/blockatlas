@@ -18,8 +18,8 @@ const (
 	// instructionTransferChecked = "transferChecked"
 )
 
-func (p *Platform) GetTxsByAddress(address string) (types.TxPage, error) {
-	results := make(types.TxPage, 0)
+func (p *Platform) GetTxsByAddress(address string) (types.Txs, error) {
+	results := make(types.Txs, 0)
 	txs, err := p.client.GetTransactionsByAddress(address)
 	if err != nil {
 		return results, err

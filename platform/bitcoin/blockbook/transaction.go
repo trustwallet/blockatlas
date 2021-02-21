@@ -8,7 +8,7 @@ import (
 	"github.com/trustwallet/golibs/types"
 )
 
-func (c *Client) GetTransactions(address string, coinIndex uint) (types.TxPage, error) {
+func (c *Client) GetTransactions(address string, coinIndex uint) (types.Txs, error) {
 	page, err := c.GetTxs(address)
 	if err != nil {
 		return nil, err
@@ -16,7 +16,7 @@ func (c *Client) GetTransactions(address string, coinIndex uint) (types.TxPage, 
 	return NormalizePage(page, address, "", coinIndex), nil
 }
 
-func (c *Client) GetTokenTxs(address, token string, coinIndex uint) (types.TxPage, error) {
+func (c *Client) GetTokenTxs(address, token string, coinIndex uint) (types.Txs, error) {
 	page, err := c.GetTxsWithContract(address, token)
 	if err != nil {
 		return nil, err
@@ -24,7 +24,7 @@ func (c *Client) GetTokenTxs(address, token string, coinIndex uint) (types.TxPag
 	return NormalizePage(page, address, token, coinIndex), nil
 }
 
-func NormalizePage(srcPage TransactionsList, address, token string, coinIndex uint) (txs types.TxPage) {
+func NormalizePage(srcPage TransactionsList, address, token string, coinIndex uint) (txs types.Txs) {
 	normalizedAddr, err := Address.EIP55Checksum(address)
 	if err != nil {
 		return

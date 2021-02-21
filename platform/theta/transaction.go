@@ -9,18 +9,18 @@ import (
 	"github.com/trustwallet/golibs/types"
 )
 
-func (p *Platform) GetTxsByAddress(address string) (types.TxPage, error) {
+func (p *Platform) GetTxsByAddress(address string) (types.Txs, error) {
 	// Endpoint supports queries without token query parameter
 	return p.GetTokenTxsByAddress(address, "")
 }
 
-func (p *Platform) GetTokenTxsByAddress(address, token string) (types.TxPage, error) {
+func (p *Platform) GetTokenTxsByAddress(address, token string) (types.Txs, error) {
 	trx, err := p.client.FetchAddressTransactions(address)
 	if err != nil {
 		return nil, err
 	}
 
-	var txs []types.Tx
+	var txs types.Txs
 	for _, tr := range trx {
 		if tr.Type != SendTransaction {
 			continue

@@ -21,19 +21,19 @@ type (
 	// TxAPI provides transaction lookups based on address
 	TxAPI interface {
 		Platform
-		GetTxsByAddress(address string) (types.TxPage, error)
+		GetTxsByAddress(address string) (types.Txs, error)
 	}
 
 	// TokenTxAPI provides token transaction lookups
 	TokenTxAPI interface {
 		Platform
-		GetTokenTxsByAddress(address, token string) (types.TxPage, error)
+		GetTokenTxsByAddress(address, token string) (types.Txs, error)
 	}
 
 	// TxUtxoAPI provides transaction lookup based on address and XPUB (Bitcoin-style)
 	TxUtxoAPI interface {
 		TxAPI
-		GetTxsByXpub(xpub string) (types.TxPage, error)
+		GetTxsByXpub(xpub string) (types.Txs, error)
 	}
 
 	// TokensAPI provides token lookups

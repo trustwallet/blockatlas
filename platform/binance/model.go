@@ -112,10 +112,10 @@ func normalizeBlock(response TransactionsInBlockResponse) types.Block {
 	return result
 }
 
-func normalizeTransactions(txs []Tx) []types.Tx {
-	totalTxs := make([]types.Tx, 0, len(txs))
+func normalizeTransactions(txs []Tx) types.Txs {
+	totalTxs := make(types.Txs, 0, len(txs))
 	for _, t := range txs {
-		var txs []types.Tx
+		var txs types.Txs
 		switch t.TxType {
 		case CancelOrder, NewOrder:
 			//txs = append(txs, normalizeOrderTransaction(t))
@@ -159,8 +159,8 @@ func normalizeTransferTransaction(t Tx) types.Tx {
 	return tx
 }
 
-func normalizeMultiTransferTransaction(t Tx) []types.Tx {
-	txs := make([]types.Tx, 0, len(t.SubTransactions))
+func normalizeMultiTransferTransaction(t Tx) types.Txs {
+	txs := make(types.Txs, 0, len(t.SubTransactions))
 	for _, subTx := range t.SubTransactions {
 		tx := types.Tx{
 			ID:       subTx.TxHash,

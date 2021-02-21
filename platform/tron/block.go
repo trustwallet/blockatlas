@@ -18,7 +18,7 @@ func (p *Platform) GetBlockByNumber(num int64) (*types.Block, error) {
 	}
 
 	txsChan := p.NormalizeBlockTxs(block.Txs)
-	txs := make(types.TxPage, 0)
+	txs := make(types.Txs, 0)
 	for cTxs := range txsChan {
 		txs = append(txs, cTxs)
 	}

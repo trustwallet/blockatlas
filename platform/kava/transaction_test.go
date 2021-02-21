@@ -798,7 +798,7 @@ type filterTest struct {
 	name     string
 	platform Platform
 	Data     []string
-	want     []types.Tx
+	want     types.Txs
 }
 
 func TestNormalize(t *testing.T) {
@@ -878,7 +878,7 @@ func TestFilterByDenom(t *testing.T) {
 			transferSrcKava,
 			transferSrcKavaToken,
 		},
-		[]types.Tx{transferDstKavaToken},
+		types.Txs{transferDstKavaToken},
 	}
 
 	testFilter(t, test)

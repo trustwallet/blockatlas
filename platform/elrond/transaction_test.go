@@ -213,5 +213,5 @@ func TestNormalizeTxsFromHyperblock(t *testing.T) {
 	})
 	require.Equal(t, len(txs), len(normalizedTxs))
 
-	require.Equal(t, []types.Tx{txTransfer6Normalized}, normalizedTxs)
+	require.Equal(t, types.Txs{txTransfer6Normalized}, normalizedTxs)
 }

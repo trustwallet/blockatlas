@@ -68,7 +68,7 @@ func TestNormalizeTokenTransaction(t *testing.T) {
 		txFile      string
 		receiptFile string
 		address     string
-		expected    types.TxPage
+		expected    types.Txs
 		wantErr     error
 	}{
 		{
@@ -76,7 +76,7 @@ func TestNormalizeTokenTransaction(t *testing.T) {
 			txFile:      "outgoing_vtho_tx.json",
 			receiptFile: "outgoing_vtho_receipt.json",
 			address:     "0xe99399dd211eF54c301A5d1AA813471d92122eA8",
-			expected: types.TxPage{{
+			expected: types.Txs{{
 				ID:        "0x0677f91de4787d295087acec0a7ba317b0019fbf296fed630fdb5afbfca97a58",
 				Coin:      coin.VECHAIN,
 				From:      "0xe99399dd211eF54c301A5d1AA813471d92122eA8",
@@ -104,7 +104,7 @@ func TestNormalizeTokenTransaction(t *testing.T) {
 			txFile:      "incoming_vtho_tx.json",
 			receiptFile: "incoming_vtho_receipt.json",
 			address:     "0xe99399dd211eF54c301A5d1AA813471d92122eA8",
-			expected: types.TxPage{{
+			expected: types.Txs{{
 				ID:        "0xb356fa7b3a371f1518a5f9bc51e951d0dac2ef04d58b532c7ca50a52aa5cddb4",
 				Coin:      coin.VECHAIN,
 				From:      "0xB5e883349e68aB59307d1604555AC890fAC47128",
@@ -132,7 +132,7 @@ func TestNormalizeTokenTransaction(t *testing.T) {
 			txFile:      "reverted_tx.json",
 			receiptFile: "reverted_receipt.json",
 			address:     "0x7cFFB7632252Bae3766734d61F148f0Ea78Fc08C",
-			expected:    types.TxPage{},
+			expected:    types.Txs{},
 			wantErr:     nil,
 		},
 	}
