@@ -39,56 +39,60 @@
     }
   },
   "timestamp": "2019-12-16T02:21:03Z",
-  "events": [
+  "logs": [
     {
-      "type": "delegate",
-      "attributes": [
+      "events": [
         {
-          "key": "validator",
-          "value": "cosmosvaloper12w6tynmjzq4l8zdla3v4x0jt8lt4rcz5gk7zg2"
+          "type": "delegate",
+          "attributes": [
+            {
+              "key": "validator",
+              "value": "cosmosvaloper12w6tynmjzq4l8zdla3v4x0jt8lt4rcz5gk7zg2"
+            },
+            {
+              "key": "amount",
+              "value": "2692326"
+            }
+          ]
         },
         {
-          "key": "amount",
-          "value": "2692326"
-        }
-      ]
-    },
-    {
-      "type": "message",
-      "attributes": [
-        {
-          "key": "sender",
-          "value": "cosmos1jv65s3grqf6v6jl3dp4t6c9t9rk99cd88lyufl"
+          "type": "message",
+          "attributes": [
+            {
+              "key": "sender",
+              "value": "cosmos1jv65s3grqf6v6jl3dp4t6c9t9rk99cd88lyufl"
+            },
+            {
+              "key": "module",
+              "value": "distribution"
+            }
+          ]
         },
         {
-          "key": "module",
-          "value": "distribution"
-        }
-      ]
-    },
-    {
-      "type": "transfer",
-      "attributes": [
-        {
-          "key": "recipient",
-          "value": "cosmos1y6yvdel7zys8x60gz9067fjpcpygsn62ae9x46"
+          "type": "transfer",
+          "attributes": [
+            {
+              "key": "recipient",
+              "value": "cosmos1y6yvdel7zys8x60gz9067fjpcpygsn62ae9x46"
+            },
+            {
+              "key": "amount",
+              "value": "2692701uatom"
+            }
+          ]
         },
         {
-          "key": "amount",
-          "value": "2692701uatom"
-        }
-      ]
-    },
-    {
-      "type": "withdraw_rewards",
-      "attributes": [
-        {
-          "key": "amount",
-          "value": "2692701uatom"
-        },
-        {
-          "key": "validator",
-          "value": "cosmosvaloper12w6tynmjzq4l8zdla3v4x0jt8lt4rcz5gk7zg2"
+          "type": "withdraw_rewards",
+          "attributes": [
+            {
+              "key": "amount",
+              "value": "2692701uatom"
+            },
+            {
+              "key": "validator",
+              "value": "cosmosvaloper12w6tynmjzq4l8zdla3v4x0jt8lt4rcz5gk7zg2"
+            }
+          ]
         }
       ]
     }
