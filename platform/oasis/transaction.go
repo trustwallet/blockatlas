@@ -5,7 +5,7 @@ import (
 	"github.com/trustwallet/golibs/types"
 )
 
-func (p *Platform) GetTxsByAddress(address string) (types.TxPage, error) {
+func (p *Platform) GetTxsByAddress(address string) (types.Txs, error) {
 	txs, err := p.client.GetTrxOfAddress(address)
 	if err != nil {
 		return nil, err
@@ -14,8 +14,8 @@ func (p *Platform) GetTxsByAddress(address string) (types.TxPage, error) {
 	return NormalizeTxs(*txs), nil
 }
 
-func NormalizeTxs(srcTxs []Transaction) types.TxPage {
-	var txs types.TxPage
+func NormalizeTxs(srcTxs []Transaction) types.Txs {
+	var txs types.Txs
 	for _, srcTx := range srcTxs {
 		tx := NormalizeTx(srcTx)
 		txs = append(txs, tx)
