@@ -76,11 +76,6 @@ func GetTransactionsHistory(c *gin.Context, txAPI blockatlas.TxAPI, tokenTxAPI b
 	}
 
 	filteredTxs := txs.FilterUniqueID().SortByDate()
-
-	for _, tx := range filteredTxs {
-		tx.Direction = tx.GetTransactionDirection(address)
-	}
-
 	filteredTxs = filteredTxs.FilterTransactionsByMemo()
 	if token != "" {
 		filteredTxs = filteredTxs.FilterTransactionsByToken(token)
@@ -90,7 +85,13 @@ func GetTransactionsHistory(c *gin.Context, txAPI blockatlas.TxAPI, tokenTxAPI b
 		filteredTxs = filteredTxs[0:types.TxPerPage]
 	}
 
-	c.JSON(http.StatusOK, types.NewTxPage(filteredTxs))
+	// modify in loop
+	result := make(types.Txs, len(filteredTxs))
+	for i, t := range filteredTxs {
+		result[i] = t
+		result[i].Direction = t.GetTransactionDirection(address)
+	}
+	c.JSON(http.StatusOK, types.NewTxPage(result))
 }
 
 // @Summary Get Transactions by XPUB

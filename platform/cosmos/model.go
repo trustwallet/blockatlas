@@ -39,12 +39,12 @@ const (
 
 // Tx - Base transaction object. Always returned as part of an array
 type Tx struct {
-	Block  string `json:"height"`
-	Code   int    `json:"code"`
-	Date   string `json:"timestamp"`
-	ID     string `json:"txhash"`
-	Data   Data   `json:"tx"`
-	Events Events `json:"events"`
+	Block string `json:"height"`
+	Code  int    `json:"code"`
+	Date  string `json:"timestamp"`
+	ID    string `json:"txhash"`
+	Data  Data   `json:"tx"`
+	Logs  Logs   `json:"logs"`
 }
 
 type TxPage struct {
@@ -58,13 +58,19 @@ type Event struct {
 	Attributes Attributes `json:"Attributes"`
 }
 
-type Events []*Event
+type Events struct {
+	Events []Event `json:"events"`
+}
 
-func (e Events) GetWithdrawRewardValue() string {
+type Logs []*Events
+
+func (l Logs) GetWithdrawRewardValue() string {
 	result := int64(0)
-	for _, att := range e {
-		if att.Type == EventWithdrawRewards {
-			result += att.Attributes.GetWithdrawRewardValue()
+	for _, log := range l {
+		for _, att := range log.Events {
+			if att.Type == EventWithdrawRewards {
+				result += att.Attributes.GetWithdrawRewardValue()
+			}
 		}
 	}
 	return strconv.FormatInt(result, 10)

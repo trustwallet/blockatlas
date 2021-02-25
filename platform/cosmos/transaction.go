@@ -118,7 +118,7 @@ func (p *Platform) Normalize(srcTx *Tx) (tx types.Tx, ok bool) {
 		return tx, true
 	case MessageValueDelegate:
 		delegate := msg.Value.(MessageValueDelegate)
-		p.fillDelegate(&tx, delegate, srcTx.Events, msg.Type)
+		p.fillDelegate(&tx, delegate, srcTx.Logs, msg.Type)
 		return tx, true
 	}
 	return tx, false
@@ -142,7 +142,7 @@ func (p *Platform) fillTransfer(tx *types.Tx, transfer MessageValueTransfer) {
 	}
 }
 
-func (p *Platform) fillDelegate(tx *types.Tx, delegate MessageValueDelegate, events Events, msgType TxType) {
+func (p *Platform) fillDelegate(tx *types.Tx, delegate MessageValueDelegate, logs Logs, msgType TxType) {
 	value := ""
 	if len(delegate.Amount.Quantity) > 0 {
 		var err error
@@ -168,7 +168,7 @@ func (p *Platform) fillDelegate(tx *types.Tx, delegate MessageValueDelegate, eve
 		tx.Direction = types.DirectionIncoming
 		title = types.AnyActionClaimRewards
 		key = types.KeyStakeClaimRewards
-		value = events.GetWithdrawRewardValue()
+		value = logs.GetWithdrawRewardValue()
 	}
 	tx.Meta = types.AnyAction{
 		Coin:     p.Coin().ID,
