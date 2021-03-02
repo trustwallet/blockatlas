@@ -28,7 +28,7 @@ func (c *ClientError) Error() string {
 
 func (c *Client) GetCurrentBlockNumber() (int64, error) {
 	var nodeInfo NodeInfo
-	err := c.Get(&nodeInfo, "api", nil)
+	err := c.Get(&nodeInfo, "api/v2", nil)
 	if err != nil {
 		return 0, err
 	}
