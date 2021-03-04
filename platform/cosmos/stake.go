@@ -70,16 +70,7 @@ func (p *Platform) GetMaxAPR() float64 {
 	if err != nil {
 		return blockatlas.DefaultAnnualReward
 	}
-
-	var max = 0.0
-	for _, e := range validators {
-		v := e.Details.Reward.Annual
-		if v > max {
-			max = v
-		}
-	}
-
-	return max
+	return validators.GetMaxAPR()
 }
 
 func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, error) {

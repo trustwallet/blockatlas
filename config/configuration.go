@@ -36,8 +36,9 @@ type Configuration struct {
 		CollectionsKey string `mapstructure:"collections_api_key"`
 	} `mapstructure:"ethereum"`
 	Binance struct {
-		API string `mapstructure:"api"`
-		Key string `mapstructure:"key"`
+		API        string `mapstructure:"api"`
+		Key        string `mapstructure:"key"`
+		StakingAPI string `mapstructure:"staking_api"`
 	} `mapstructure:"binance"`
 	Ripple struct {
 		API string `mapstructure:"api"`

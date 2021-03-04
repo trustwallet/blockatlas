@@ -33,7 +33,8 @@ consumer:
 # [BNB] Binance DEX: https://www.binance.org/
 binance:
   api: https://dex.binance.org
-  # key: ""
+  key: ""
+  staking_api: "https://api.binance.org"
 
 # [NIM] Nimiq: https://nimiq.com
 nimiq:

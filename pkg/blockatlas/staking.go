@@ -89,3 +89,14 @@ func (sv StakeValidators) ToMap() ValidatorMap {
 	}
 	return validators
 }
+
+func (vp ValidatorPage) GetMaxAPR() float64 {
+	var max = 0.0
+	for _, e := range vp {
+		v := e.Details.Reward.Annual
+		if v > max {
+			max = v
+		}
+	}
+	return max
+}
