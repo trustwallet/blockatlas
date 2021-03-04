@@ -27,10 +27,13 @@ func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
 }
 
 func (p *Platform) GetDetails() blockatlas.StakingDetails {
+	apr := blockatlas.DefaultAnnualReward
+	validators, err := p.GetValidators()
+	if err == nil {
+		apr = blockatlas.FindHightestAPR(validators)
+	}
 	return blockatlas.StakingDetails{
-		Reward: blockatlas.StakingReward{
-			Annual: p.getMaxAPR(),
-		},
+		Reward:        blockatlas.StakingReward{Annual: apr},
 		MinimumAmount: minimumAmount,
 		LockTime:      lockTime,
 		Type:          blockatlas.DelegationTypeDelegate,
@@ -45,16 +48,7 @@ func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, e
 	return blockatlas.DelegationsPage{}, nil
 }
 
-func (p *Platform) getMaxAPR() float64 {
-	validators, err := p.GetValidators()
-	if err != nil {
-		return blockatlas.DefaultAnnualReward
-	}
-
-	return validators.GetMaxAPR()
-}
-
-func normalizeValidator(v staking.Validator) (validator blockatlas.Validator) {
+func normalizeValidator(v staking.Validator) blockatlas.Validator {
 	return blockatlas.Validator{
 		Status: v.Status == 0,
 		ID:     v.Validator,

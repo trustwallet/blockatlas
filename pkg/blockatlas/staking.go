@@ -12,7 +12,7 @@ const (
 	DelegationTypeAuto     DelegationType = "auto"
 	DelegationTypeDelegate DelegationType = "delegate"
 
-	DefaultAnnualReward = 0
+	DefaultAnnualReward = 0.0
 )
 
 type (
@@ -82,21 +82,20 @@ type (
 	}
 )
 
-func (sv StakeValidators) ToMap() ValidatorMap {
+func (s StakeValidators) ToMap() ValidatorMap {
 	validators := make(ValidatorMap)
-	for _, v := range sv {
+	for _, v := range s {
 		validators[v.ID] = v
 	}
 	return validators
 }
 
-func (vp ValidatorPage) GetMaxAPR() float64 {
-	var max = 0.0
-	for _, e := range vp {
-		v := e.Details.Reward.Annual
-		if v > max {
-			max = v
+func FindHightestAPR(validators []Validator) float64 {
+	var apr = 0.0
+	for _, v := range validators {
+		if apr < v.Details.Reward.Annual {
+			apr = v.Details.Reward.Annual
 		}
 	}
-	return max
+	return apr
 }
