@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strconv"
 
-	log "github.com/sirupsen/logrus"
 	"github.com/trustwallet/golibs/client"
 	"github.com/trustwallet/golibs/numbers"
 )
@@ -40,25 +39,6 @@ func (c *Client) CurrentBlockNumber() (int64, error) {
 func (c *Client) GetBlockByNumber(num int64) (info BlockInfo, err error) {
 	n := fmt.Sprintf("0x%x", num)
 	err = c.RpcCall(&info, "hmy_getBlockByNumber", []interface{}{n, true})
-	return
-}
-
-func (c *Client) GetValidators() (validators Validators, err error) {
-	err = rpcCallStub(c, &validators.Validators, "hmy_getAllValidatorInformation", []interface{}{-1})
-
-	if err != nil {
-		log.Error(err, "Harmony: Failed to get all validator addresses")
-	}
-
-	return
-}
-
-func (c *Client) GetDelegations(address string) (delegations Delegations, err error) {
-	err = rpcCallStub(c, &delegations.List, "hmy_getDelegationsByDelegator", []interface{}{address})
-
-	if err != nil {
-		log.Error(err, "Harmony: Failed to get delegations for address")
-	}
 	return
 }
 
