@@ -33,7 +33,7 @@ func (p *Platform) GetDetails() blockatlas.StakingDetails {
 		apr = blockatlas.FindHightestAPR(validators)
 	}
 	return blockatlas.StakingDetails{
-		Reward:        blockatlas.StakingReward{Annual: apr},
+		Reward:        blockatlas.StakingReward{Annual: apr * 100},
 		MinimumAmount: minimumAmount,
 		LockTime:      lockTime,
 		Type:          blockatlas.DelegationTypeDelegate,
