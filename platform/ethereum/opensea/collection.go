@@ -72,5 +72,6 @@ func NormalizeCollectible(c Collectible, coinIndex uint) types.Collectible {
 		Description:     c.Description,
 		Coin:            coinIndex,
 		Version:         c.AssetContract.Version,
+		TransferFee:     c.TransferFee,
 	}
 }

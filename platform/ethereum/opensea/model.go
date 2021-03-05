@@ -43,6 +43,7 @@ type Collectible struct {
 	Permalink       string                 `json:"permalink"`
 	Description     string                 `json:"description"`
 	Collection      CollectibleCollections `json:"collection"`
+	TransferFee     string                 `json:"transfer_fee,omitempty"`
 }
 
 type CollectibleCollections struct {
