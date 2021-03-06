@@ -26,7 +26,7 @@ func (c *BakerClient) GetBakers() (validators blockatlas.StakeValidators, err er
 	if err != nil {
 		return
 	}
-	assetsValidators, err := assets.GetchValidatorsInfo(coin.Tezos())
+	assetsValidators, err := assets.GetValidatorsInfo(coin.Tezos())
 	if err != nil {
 		return
 	}

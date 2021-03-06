@@ -19,7 +19,7 @@ func GetValidatorsMap(api blockatlas.StakeAPI) (blockatlas.ValidatorMap, error) 
 }
 
 func getValidators(api blockatlas.StakeAPI) (AssetValidators, blockatlas.ValidatorPage, error) {
-	assetsValidators, err := GetchValidatorsInfo(api.Coin())
+	assetsValidators, err := GetValidatorsInfo(api.Coin())
 	if err != nil {
 		return nil, nil, err
 	}
