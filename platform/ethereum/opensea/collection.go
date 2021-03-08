@@ -2,6 +2,8 @@ package opensea
 
 import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/golibs/asset"
+	"github.com/trustwallet/golibs/coin"
 	"github.com/trustwallet/golibs/types"
 )
 
@@ -58,7 +60,7 @@ func NormalizeCollectiblePage(collectibles []Collectible, coinIndex uint) (page 
 }
 
 func NormalizeCollectible(c Collectible, coinIndex uint) types.Collectible {
-	return types.Collectible{
+	collectible := types.Collectible{
 		ID:              blockatlas.GenCollectibleId(c.AssetContract.Address, c.TokenId),
 		CollectionID:    c.Collection.Slug,
 		TokenID:         c.TokenId,
@@ -72,6 +74,12 @@ func NormalizeCollectible(c Collectible, coinIndex uint) types.Collectible {
 		Description:     c.Description,
 		Coin:            coinIndex,
 		Version:         c.AssetContract.Version,
-		TransferFee:     c.TransferFee,
 	}
+	if c.FeeToken != nil {
+		collectible.TransferFee = &types.CollectibleTransferFee{
+			Asset:  asset.BuildID(coin.ETHEREUM, c.FeeToken.Address),
+			Amount: c.TransferFee,
+		}
+	}
+	return collectible
 }
