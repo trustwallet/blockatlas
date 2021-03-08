@@ -154,7 +154,7 @@ func NormalizeUnbondingDelegations(delegations []UnbondingDelegation, validators
 func normalizeValidator(v Validator, p Pool, inflation float64) (validator blockatlas.Validator) {
 	reward := CalculateAnnualReward(p, inflation, v)
 	return blockatlas.Validator{
-		Status: v.Status == 2,
+		Status: v.Status == 3,
 		ID:     v.Address,
 		Details: blockatlas.StakingDetails{
 			Reward:        blockatlas.StakingReward{Annual: reward},
