@@ -51,7 +51,7 @@ func (i Instance) GetTokensByAddress(r GetTokensByAddressRequest) (GetTokensByAd
 }
 
 func normalize(dbAssets []models.Asset) blockatlas.ResultsResponse {
-	var result []types.Asset
+	result := make([]types.Asset, 0)
 	for _, a := range dbAssets {
 		asset := types.Asset{
 			Id:       a.Asset,
