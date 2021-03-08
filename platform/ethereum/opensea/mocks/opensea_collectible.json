@@ -19,6 +19,17 @@
       "name": "Age of Rust",
       "external_url": "https://opensea.io/"
     },
-    "permalink": "https://opensea.io/assets/0xfaafdc07907ff5120a76b34b731b278c38d6043c/54277541829991970107421667568590323026590803461896874578610080514640537714688"
+    "permalink": "https://opensea.io/assets/0xfaafdc07907ff5120a76b34b731b278c38d6043c/54277541829991970107421667568590323026590803461896874578610080514640537714688",
+    "transfer_fee_payment_token": {
+      "id": 18,
+      "symbol": "ENJ",
+      "address": "0xf629cbd94d3791c9250152bd8dfbdf380e2a3b9c",
+      "image_url": "https://lh3.googleusercontent.com/l9kffrrCmJQ4rmUONIKoV2tx1cQr3ejM2oKhtg08njtUo11tCCwmvTVgA2wD3akBIoMTdepIwrc62e105rRtmin6",
+      "name": "Enjin Token",
+      "decimals": 18,
+      "eth_price": "0.000950396392036",
+      "usd_price": "1.610000000000000098"
+    },
+    "transfer_fee": "0"
   }
 ]

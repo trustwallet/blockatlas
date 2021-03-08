@@ -61,6 +61,10 @@ var (
 		Description:     "Rustbits are the main token of use within the Age of Rust game universe. You need Rustbits to not only play Age of Rust, but also to purchase in-game cryptoitems as well. Rustbits are radioactive rust scraped off of hulls of abandoned ships that are in orbit around a hidden planet, which is also a gas giant. The planet is so radioactive, it damages ships and kills anyone that gets close to it. Getting bits of rust off of ships is highly rare and prized.",
 		Coin:            60,
 		Name:            "Rustbits",
+		TransferFee: &types.CollectibleTransferFee{
+			Asset:  "c60_t0xf629cbd94d3791c9250152bd8dfbdf380e2a3b9c",
+			Amount: "0",
+		},
 	}
 )
 
