@@ -197,7 +197,7 @@ harmony:
   api: https://api.s0.t.hmny.io
 
 kava:
-  api: https://kava.data.kava.io
+  api: https://api.kava.io
 
 polkadot:
   api: https://polkadot.subscan.io/api

@@ -25,6 +25,10 @@ type PrimaryAssetContract struct {
 	Url         string      `json:"external_link"`
 }
 
+type TransferFeeToken struct {
+	Address string `json:"address"`
+}
+
 type DisplayData struct {
 	Images []string `json:"images"`
 }
@@ -43,6 +47,10 @@ type Collectible struct {
 	Permalink       string                 `json:"permalink"`
 	Description     string                 `json:"description"`
 	Collection      CollectibleCollections `json:"collection"`
+
+	// only available for ERC1155
+	FeeToken    *TransferFeeToken `json:"transfer_fee_payment_token,omitempty"`
+	TransferFee string            `json:"transfer_fee,omitempty"`
 }
 
 type CollectibleCollections struct {
