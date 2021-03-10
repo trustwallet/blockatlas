@@ -26,9 +26,7 @@ func TestNormalizeTx(t *testing.T) {
 				Date:     1610472221000,
 				Block:    1502238,
 				Status:   types.StatusCompleted,
-				Error:    "",
 				Sequence: 5,
-				Memo:     "",
 				Meta: types.Transfer{
 					Value:    "170000000000",
 					Symbol:   "ROSE",
@@ -48,9 +46,7 @@ func TestNormalizeTx(t *testing.T) {
 				Date:     1605717688000,
 				Block:    702410,
 				Status:   types.StatusCompleted,
-				Error:    "",
 				Sequence: 1,
-				Memo:     "",
 				Meta: types.Transfer{
 					Value:    "1000000000",
 					Symbol:   "ROSE",
@@ -72,7 +68,6 @@ func TestNormalizeTx(t *testing.T) {
 				Status:   types.StatusError,
 				Error:    "insufficient balance",
 				Sequence: 1,
-				Memo:     "",
 				Meta: types.Transfer{
 					Value:    "10",
 					Symbol:   "ROSE",
