@@ -90,6 +90,7 @@ func calculateSubscriptionAssetAssociations(database *db.Instance, addressAssets
 		subscriptionsMap[subscription.Address] = subscription
 	}
 
+	uniqueMap := map[string]bool{}
 	for addressId, assets := range addressAssetsMap {
 		subscription, ok := subscriptionsMap[addressId]
 		if !ok {
@@ -101,11 +102,15 @@ func calculateSubscriptionAssetAssociations(database *db.Instance, addressAssets
 			if !ok {
 				continue
 			}
-			association := models.SubscriptionsAssetAssociation{
-				SubscriptionId: subscription.ID,
-				AssetId:        asset.ID,
+			subscriptionKey := strconv.Itoa(int(asset.ID)) + "_" + strconv.Itoa(int(subscription.ID))
+			if _, ok := uniqueMap[subscriptionKey]; !ok {
+				association := models.SubscriptionsAssetAssociation{
+					SubscriptionId: subscription.ID,
+					AssetId:        asset.ID,
+				}
+				associations = append(associations, association)
+				uniqueMap[subscriptionKey] = true
 			}
-			associations = append(associations, association)
 		}
 	}
 
