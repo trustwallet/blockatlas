@@ -58,5 +58,9 @@ func (i *Instance) CreateSubscriptionsAssets(associations []models.Subscriptions
 	if len(associations) == 0 {
 		return nil
 	}
-	return i.Gorm.Clauses(clause.OnConflict{DoNothing: true}).Create(&associations).Error
+	return i.Gorm.Clauses(
+		clause.OnConflict{
+			Columns:   []clause.Column{{Name: "asset_id"}, {Name: "subscription_id"}},
+			DoUpdates: clause.AssignmentColumns([]string{"updated_at"})},
+	).Create(&associations).Error
 }
