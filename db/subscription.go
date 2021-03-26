@@ -60,7 +60,7 @@ func (i *Instance) CreateSubscriptionsAssets(associations []models.Subscriptions
 	}
 	return i.Gorm.Clauses(
 		clause.OnConflict{
-			Columns:   []clause.Column{{Name: "asset_id"}, {Name: "subscription_id"}},
-			DoUpdates: clause.AssignmentColumns([]string{"updated_at"})},
+			OnConstraint: "subscriptions_asset_associations_pkey",
+			DoUpdates:    clause.AssignmentColumns([]string{"updated_at"})},
 	).Create(&associations).Error
 }
