@@ -42,7 +42,7 @@ func (i *Instance) GetSubscriptionsByAddressIDs(ids []string, from time.Time) ([
 		Preload("Subscription").
 		Preload("Asset").
 		Where("subscriptions.address in (?)", ids).
-		Where("subscriptions_asset_associations.created_at > ?", from).
+		Where("subscriptions_asset_associations.updated_at > ?", from).
 		Find(&associations).Error; err != nil {
 		return nil, err
 	}
