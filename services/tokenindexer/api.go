@@ -44,9 +44,6 @@ func (i Instance) GetTokensByAddress(r GetTokensByAddressRequest) (GetTokensByAd
 	assetIds := make([]GetTokensAsset, 0)
 
 	for _, association := range associations {
-		if association.UpdatedAt.IsZero() {
-			association.UpdatedAt = association.CreatedAt
-		}
 		assetIds = append(assetIds, GetTokensAsset{
 			AssetId:   association.Asset.Asset,
 			CreatedAt: association.CreatedAt.Unix(),
