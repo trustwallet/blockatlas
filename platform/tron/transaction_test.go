@@ -62,26 +62,6 @@ type test struct {
 	expected    *types.Tx
 }
 
-func TestNormalizeTokenTransfer(t *testing.T) {
-	testNormalizeTokenTransfer(t, &test{
-		name:        "token transfer",
-		apiResponse: tokenTransferSrc,
-		expected:    &tokenTransferDst,
-	})
-}
-
-func testNormalizeTokenTransfer(t *testing.T, _test *test) {
-	var srcTx Tx
-	err := json.Unmarshal([]byte(_test.apiResponse), &srcTx)
-	assert.NoError(t, err)
-	assert.NotNil(t, srcTx)
-	res, err := normalize(srcTx)
-	assert.NoError(t, err)
-	assert.NotNil(t, res)
-	addTokenMeta(res, srcTx, assetInfo)
-	assert.Equal(t, _test.expected, res)
-}
-
 func TestNormalize(t *testing.T) {
 	testNormalize(t, &test{
 		name:        "transfer",
