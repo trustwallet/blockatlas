@@ -56,12 +56,6 @@ func (c *Client) fetchAccountVotes(address string) (account *AccountData, err er
 	return
 }
 
-func (c *GridClient) fetchTokenInfo(id string) (asset Asset, err error) {
-	path := fmt.Sprintf("v1/assets/%s", id)
-	err = c.GetWithCache(&asset, path, nil, time.Hour*24)
-	return
-}
-
 func (c *Client) fetchValidators() (validators Validators, err error) {
 	err = c.GetWithCache(&validators, "wallet/listwitnesses", nil, time.Hour*1)
 	return

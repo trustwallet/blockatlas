@@ -13,7 +13,6 @@ import (
 
 var (
 	transferSrc, _                 = mock.JsonStringFromFilePath("mocks/" + "transfer.json")
-	tokenTransferSrc, _            = mock.JsonStringFromFilePath("mocks/" + "token_transfer.json")
 	wantedTransactionsWithToken, _ = mock.JsonStringFromFilePath("mocks/" + "token_txs_response.json")
 	wantedTransactionsOnly, _      = mock.JsonStringFromFilePath("mocks/" + "txs_response.json")
 
@@ -32,28 +31,6 @@ var (
 			Decimals: 6,
 		},
 	}
-
-	tokenTransferDst = types.Tx{
-		ID:     "24a10f7a503e78adc0d7e380b68005531b09e16b9e3f7b524e33f40985d287df",
-		Coin:   coin.TRON,
-		From:   "TMuA6YqfCeX8EhbfYEg5y7S4DqzSJireY9",
-		To:     "TAUN6FwrnwwmaEqYcckffC7wYmbaS6cBiX",
-		Fee:    "0", // TODO
-		Date:   1564797900,
-		Block:  0, // TODO
-		Status: types.StatusCompleted,
-		Meta: types.TokenTransfer{
-			Name:     "BitTorrent",
-			Symbol:   "BTT",
-			TokenID:  "1002000",
-			Decimals: 6,
-			Value:    "2776267",
-			From:     "TMuA6YqfCeX8EhbfYEg5y7S4DqzSJireY9",
-			To:       "TAUN6FwrnwwmaEqYcckffC7wYmbaS6cBiX",
-		},
-	}
-
-	assetInfo = AssetInfo{Name: "BitTorrent", Symbol: "BTT", Decimals: 6, ID: 1002000}
 )
 
 type test struct {
