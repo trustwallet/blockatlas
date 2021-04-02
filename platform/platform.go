@@ -50,7 +50,7 @@ func getAllHandlers() blockatlas.Platforms {
 		coin.Fio().Handle:          fio.Init(config.Default.Fio.API),
 		coin.Aion().Handle:         aion.Init(config.Default.Aion.API),
 		coin.Icon().Handle:         icon.Init(config.Default.Icon.API),
-		coin.Tron().Handle:         tron.Init(config.Default.Tron.API, config.Default.Tron.Grid),
+		coin.Tron().Handle:         tron.Init(config.Default.Tron.API, config.Default.Tron.Key),
 		coin.Nano().Handle:         nano.Init(config.Default.Nano.API),
 		coin.Nimiq().Handle:        nimiq.Init(config.Default.Nimiq.API),
 		coin.Iotex().Handle:        iotex.Init(config.Default.Iotex.API),

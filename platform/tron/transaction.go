@@ -9,7 +9,7 @@ import (
 )
 
 func (p *Platform) GetTxsByAddress(address string) (types.Txs, error) {
-	Txs, err := p.gridClient.fetchTxsOfAddress(address, "")
+	Txs, err := p.client.fetchTxsOfAddress(address, "")
 	if err != nil && len(Txs) == 0 {
 		return nil, err
 	}
