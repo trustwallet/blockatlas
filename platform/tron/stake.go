@@ -70,7 +70,7 @@ func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, e
 }
 
 func (p *Platform) UndelegatedBalance(address string) (string, error) {
-	account, err := p.gridClient.fetchAccount(address)
+	account, err := p.client.fetchAccount(address)
 	if err != nil {
 		return "0", err
 	}

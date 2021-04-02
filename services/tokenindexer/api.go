@@ -41,10 +41,14 @@ func (i Instance) GetTokensByAddress(r GetTokensByAddressRequest) (GetTokensByAd
 		return GetTokensByAddressResponse{}, err
 	}
 
-	assetIds := make([]string, 0)
+	assetIds := make([]GetTokensAsset, 0)
 
 	for _, association := range associations {
-		assetIds = append(assetIds, association.Asset.Asset)
+		assetIds = append(assetIds, GetTokensAsset{
+			AssetId:   association.Asset.Asset,
+			CreatedAt: association.CreatedAt.Unix(),
+			UpdatedAt: association.UpdatedAt.Unix(),
+		})
 	}
 
 	return assetIds, nil

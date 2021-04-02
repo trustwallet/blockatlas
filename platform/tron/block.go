@@ -1,9 +1,6 @@
 package tron
 
 import (
-	"encoding/hex"
-	"sync"
-
 	"github.com/trustwallet/golibs/types"
 )
 
@@ -17,11 +14,7 @@ func (p *Platform) GetBlockByNumber(num int64) (*types.Block, error) {
 		return nil, err
 	}
 
-	txsChan := p.NormalizeBlockTxs(block.Txs)
-	txs := make(types.Txs, 0)
-	for cTxs := range txsChan {
-		txs = append(txs, cTxs)
-	}
+	txs := p.NormalizeBlockTxs(block.Txs)
 
 	return &types.Block{
 		Number: num,
@@ -29,39 +22,12 @@ func (p *Platform) GetBlockByNumber(num int64) (*types.Block, error) {
 	}, nil
 }
 
-func (p *Platform) NormalizeBlockTxs(srcTxs []Tx) chan types.Tx {
-	txChan := make(chan types.Tx, len(srcTxs))
-	var wg sync.WaitGroup
+func (p *Platform) NormalizeBlockTxs(srcTxs []Tx) []types.Tx {
+	txs := make([]types.Tx, 0)
 	for _, srcTx := range srcTxs {
-		wg.Add(1)
-		go func(s Tx, c chan types.Tx) {
-			defer wg.Done()
-			p.NormalizeBlockChannel(s, c)
-		}(srcTx, txChan)
-	}
-	wg.Wait()
-	close(txChan)
-	return txChan
-}
-
-func (p *Platform) NormalizeBlockChannel(srcTx Tx, txChan chan types.Tx) {
-	if len(srcTx.Data.Contracts) == 0 {
-		return
-	}
-
-	tx, err := normalize(srcTx)
-	if err != nil {
-		return
-	}
-	transfer := srcTx.Data.Contracts[0].Parameter.Value
-	if len(transfer.AssetName) > 0 {
-		assetName, err := hex.DecodeString(transfer.AssetName[:])
-		if err == nil {
-			info, err := p.gridClient.fetchTokenInfo(string(assetName))
-			if err == nil && len(info.Data) > 0 {
-				addTokenMeta(tx, srcTx, info.Data[0])
-			}
+		if tx, err := normalize(srcTx); err == nil {
+			txs = append(txs, *tx)
 		}
 	}
-	txChan <- *tx
+	return txs
 }

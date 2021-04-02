@@ -11,7 +11,7 @@ func (p *Platform) GetTokenListByAddress(address string) ([]types.Token, error) 
 
 func (p *Platform) GetTokenListIdsByAddress(address string) ([]string, error) {
 	assetIds := make([]string, 0)
-	tokens, err := p.gridClient.fetchAccount(address)
+	tokens, err := p.client.fetchAccount(address)
 	if err != nil {
 		return assetIds, err
 	}

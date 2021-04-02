@@ -93,9 +93,8 @@ type Configuration struct {
 		API string `mapstructure:"api"`
 	} `mapstructure:"icon"`
 	Tron struct {
-		API      string `mapstructure:"api"`
-		Grid     string `mapstructure:"grid"`
-		Explorer string `mapstructure:"explorer"`
+		API string `mapstructure:"api"`
+		Key string `mapstructure:"key"`
 	} `mapstructure:"tron"`
 	Vechain struct {
 		API string `mapstructure:"api"`

@@ -105,7 +105,7 @@ func RegisterTokensIndexAPI(router gin.IRouter, instance tokenindexer.Instance) 
 	router.GET("/v3/tokens/new", func(c *gin.Context) {
 		endpoint.GetNewTokens(c, instance)
 	})
-	router.POST("/v3/tokens", func(c *gin.Context) {
+	router.POST("/v1/assets/associations", func(c *gin.Context) {
 		endpoint.GetTokensByAddressV3(c, instance)
 	})
 }

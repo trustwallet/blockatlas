@@ -10,5 +10,11 @@ type (
 		From            uint                `json:"from"`
 	}
 
-	GetTokensByAddressResponse []string
+	GetTokensAsset struct {
+		AssetId   string `json:"asset_id"`
+		CreatedAt int64  `json:"created_at"`
+		UpdatedAt int64  `json:"updated_at"`
+	}
+
+	GetTokensByAddressResponse []GetTokensAsset
 )

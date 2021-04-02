@@ -9,9 +9,6 @@ import (
 )
 
 type (
-	GridClient struct {
-		client.Request
-	}
 	Client struct {
 		client.Request
 	}
@@ -32,7 +29,7 @@ func (c *Client) fetchBlockByNumber(num int64) (Block, error) {
 	return blocks.Blocks[0], nil
 }
 
-func (c *GridClient) fetchTxsOfAddress(address, token string) ([]Tx, error) {
+func (c *Client) fetchTxsOfAddress(address, token string) ([]Tx, error) {
 	path := fmt.Sprintf("v1/accounts/%s/transactions", url.PathEscape(address))
 
 	var txs Page
@@ -45,7 +42,7 @@ func (c *GridClient) fetchTxsOfAddress(address, token string) ([]Tx, error) {
 	return txs.Txs, err
 }
 
-func (c *GridClient) fetchAccount(address string) (accounts *Account, err error) {
+func (c *Client) fetchAccount(address string) (accounts *Account, err error) {
 	path := fmt.Sprintf("v1/accounts/%s", address)
 	err = c.GetWithCache(&accounts, path, nil, time.Second*1)
 	return
@@ -53,12 +50,6 @@ func (c *GridClient) fetchAccount(address string) (accounts *Account, err error)
 
 func (c *Client) fetchAccountVotes(address string) (account *AccountData, err error) {
 	err = c.Post(&account, "wallet/getaccount", VotesRequest{Address: address, Visible: true})
-	return
-}
-
-func (c *GridClient) fetchTokenInfo(id string) (asset Asset, err error) {
-	path := fmt.Sprintf("v1/assets/%s", id)
-	err = c.GetWithCache(&asset, path, nil, time.Hour*24)
 	return
 }
 
