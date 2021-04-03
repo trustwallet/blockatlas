@@ -101,6 +101,7 @@ type Configuration struct {
 	} `mapstructure:"vechain"`
 	Theta struct {
 		API string `mapstructure:"api"`
+		Key string `mapstructure:"key"`
 	} `mapstructure:"theta"`
 	Cosmos struct {
 		API string `mapstructure:"api"`

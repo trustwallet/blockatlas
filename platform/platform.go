@@ -54,7 +54,7 @@ func getAllHandlers() blockatlas.Platforms {
 		coin.Nano().Handle:         nano.Init(config.Default.Nano.API),
 		coin.Nimiq().Handle:        nimiq.Init(config.Default.Nimiq.API),
 		coin.Iotex().Handle:        iotex.Init(config.Default.Iotex.API),
-		coin.Theta().Handle:        theta.Init(config.Default.Theta.API),
+		coin.Theta().Handle:        theta.Init(config.Default.Theta.API, config.Default.Theta.Key),
 		coin.Waves().Handle:        waves.Init(config.Default.Waves.API),
 		coin.Ripple().Handle:       ripple.Init(config.Default.Ripple.API),
 		coin.Harmony().Handle:      harmony.Init(config.Default.Harmony.API),
