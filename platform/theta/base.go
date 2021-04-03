@@ -14,7 +14,7 @@ func Init(api, key string) *Platform {
 	request := client.InitClient(api, middleware.SentryErrorHandler)
 	request.Headers = map[string]string{"x-api-token": key}
 	return &Platform{
-		client: Client{client.InitClient(api, middleware.SentryErrorHandler)},
+		client: Client{request},
 	}
 }
 
