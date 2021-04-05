@@ -210,17 +210,14 @@ type Pool struct {
 	BondedTokens    string `json:"bonded_tokens"`
 }
 
-// Block - top object of get las block request
-type Block struct {
-	Meta BlockMeta `json:"block"`
+type LasteBlock struct {
+	Block Block `json:"block"`
 }
 
-//BlockMeta - "Block" sub object
-type BlockMeta struct {
+type Block struct {
 	Header BlockHeader `json:"header"`
 }
 
-//BlockHeader - "BlockMeta" sub object, height
 type BlockHeader struct {
 	Height string `json:"height"`
 }
