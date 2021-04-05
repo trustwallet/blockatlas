@@ -215,10 +215,10 @@ type LasteBlock struct {
 }
 
 type Block struct {
-	Header Header `json:"header"`
+	Header BlockHeader `json:"header"`
 }
 
-type Header struct {
+type BlockHeader struct {
 	Height string `json:"height"`
 }
 
