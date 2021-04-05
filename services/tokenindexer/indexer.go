@@ -37,7 +37,7 @@ func RunTokenIndexer(database *db.Instance, delivery amqp.Delivery) error {
 	assets := GetAssetsFromTransactions(assetsTxs)
 	err = database.AddNewAssets(assets)
 	if err != nil {
-		log.WithFields(log.Fields{"service": TokenIndexer}).Error("Failed to add new assets", err)
+		log.WithFields(log.Fields{"service": TokenIndexer, "assets": assets}).Error("Failed to add new assets", err)
 		return err
 	}
 

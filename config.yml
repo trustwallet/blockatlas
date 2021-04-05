@@ -108,6 +108,7 @@ vechain:
 # [THETA] THETA: https://www.thetatoken.org/
 theta:
   api: https://explorer.thetatoken.org:9000/api
+  key: ""
 
 # [ATOM] Cosmos: https://cosmos.network/
 cosmos:

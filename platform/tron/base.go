@@ -12,7 +12,8 @@ type Platform struct {
 
 func Init(api, apiKey string) *Platform {
 	request := client.InitClient(api, middleware.SentryErrorHandler)
-	request.Headers = map[string]string{"TRON-PRO-API-KEY": apiKey}
+	//TODO: Add when ready
+	//request.Headers = map[string]string{"TRON-PRO-API-KEY": apiKey}
 	return &Platform{
 		client: Client{request},
 	}
