@@ -9,7 +9,7 @@ import (
 )
 
 func TestNormalizeTransfer(t *testing.T) {
-	platform := Platform{CoinIndex: coin.KSM}
+	platform := Platform{CoinIndex: coin.KUSAMA}
 	type args struct {
 		srcTx *Transfer
 	}
@@ -101,7 +101,7 @@ func TestNormalizeExtrinsic(t *testing.T) {
 		{
 			name: "Transfer KSM",
 			args: args{
-				platform: Platform{CoinIndex: coin.KSM},
+				platform: Platform{CoinIndex: coin.KUSAMA},
 				srcTx: &Extrinsic{
 					Timestamp:          1577176992,
 					BlockNumber:        360298,
@@ -135,7 +135,7 @@ func TestNormalizeExtrinsic(t *testing.T) {
 		{
 			name: "Transfer DOT",
 			args: args{
-				platform: Platform{CoinIndex: coin.DOT},
+				platform: Platform{CoinIndex: coin.POLKADOT},
 				srcTx: &Extrinsic{
 					Timestamp:          1607035338,
 					BlockNumber:        2742892,
@@ -169,7 +169,7 @@ func TestNormalizeExtrinsic(t *testing.T) {
 		{
 			name: "Bond",
 			args: args{
-				platform: Platform{CoinIndex: coin.KSM},
+				platform: Platform{CoinIndex: coin.KUSAMA},
 				srcTx: &Extrinsic{
 					Timestamp:          1577712822,
 					BlockNumber:        447444,
@@ -187,7 +187,7 @@ func TestNormalizeExtrinsic(t *testing.T) {
 		{
 			name: "Error Params",
 			args: args{
-				platform: Platform{CoinIndex: coin.KSM},
+				platform: Platform{CoinIndex: coin.KUSAMA},
 				srcTx: &Extrinsic{
 					Timestamp:          1577712822,
 					BlockNumber:        447444,
@@ -205,7 +205,7 @@ func TestNormalizeExtrinsic(t *testing.T) {
 		{
 			name: "set_heads",
 			args: args{
-				platform: Platform{CoinIndex: coin.KSM},
+				platform: Platform{CoinIndex: coin.KUSAMA},
 				srcTx: &Extrinsic{
 					Timestamp:          1577712822,
 					BlockNumber:        447444,
@@ -244,7 +244,7 @@ func TestNormalizeAddress(t *testing.T) {
 		{
 			name: "KSM address 1",
 			args: args{
-				platform: Platform{CoinIndex: coin.KSM},
+				platform: Platform{CoinIndex: coin.KUSAMA},
 				value:    "e8e1b8de72651640e302b62dad1f643ec8b65a3647a7409b2896634db599ed60",
 			},
 			wantAddress: "HqfgRXDgCQcV8KAuTAPGuA1r91iEzinmmNBPkR9kiKhifJq",
@@ -252,7 +252,7 @@ func TestNormalizeAddress(t *testing.T) {
 		{
 			name: "KSM address 2",
 			args: args{
-				platform: Platform{CoinIndex: coin.KSM},
+				platform: Platform{CoinIndex: coin.KUSAMA},
 				value:    "e0b3fcccfe0283cc0f8c105c68b5690aab8c5c1692a868e55eaca836c8779085",
 			},
 			wantAddress: "HewiDTQv92L2bVtkziZC8ASxrFUxr6ajQ62RXAnwQ8FDVmg",
@@ -260,7 +260,7 @@ func TestNormalizeAddress(t *testing.T) {
 		{
 			name: "DOT address",
 			args: args{
-				platform: Platform{CoinIndex: coin.DOT},
+				platform: Platform{CoinIndex: coin.POLKADOT},
 				value:    "e0b3fcccfe0283cc0f8c105c68b5690aab8c5c1692a868e55eaca836c8779085",
 			},
 			wantAddress: "165dCENc9ZGsiUgxwvxWSKdbfsxtrUqYMWymC9tC1gwGfATj",

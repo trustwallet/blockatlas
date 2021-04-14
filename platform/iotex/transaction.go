@@ -8,8 +8,8 @@ import (
 	"github.com/trustwallet/golibs/types"
 )
 
-func (p *Platform) GetTxsByAddress(address string) (types.TxPage, error) {
-	txs := make([]types.Tx, 0)
+func (p *Platform) GetTxsByAddress(address string) (types.Txs, error) {
+	txs := make(types.Txs, 0)
 	var start int64
 
 	totalTrx, err := p.client.GetAddressTotalTransactions(address)
@@ -68,7 +68,7 @@ func Normalize(trx *ActionInfo) *types.Tx {
 	}
 	return &types.Tx{
 		ID:       trx.ActHash,
-		Coin:     coin.IOTX,
+		Coin:     coin.IOTEX,
 		From:     trx.Sender,
 		To:       trx.Action.Core.Transfer.Recipient,
 		Fee:      types.Amount(trx.GasFee),
@@ -79,8 +79,8 @@ func Normalize(trx *ActionInfo) *types.Tx {
 		Type:     types.TxTransfer,
 		Meta: types.Transfer{
 			Value:    trx.Action.Core.Transfer.Amount,
-			Symbol:   coin.Coins[coin.IOTX].Symbol,
-			Decimals: coin.Coins[coin.IOTX].Decimals,
+			Symbol:   coin.Iotex().Symbol,
+			Decimals: coin.Iotex().Decimals,
 		},
 	}
 }

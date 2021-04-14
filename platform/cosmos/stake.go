@@ -55,31 +55,17 @@ func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
 }
 
 func (p *Platform) GetDetails() blockatlas.StakingDetails {
+	apr := blockatlas.DefaultAnnualReward
+	validators, err := p.GetValidators()
+	if err == nil {
+		apr = blockatlas.FindHightestAPR(validators)
+	}
 	return blockatlas.StakingDetails{
-		Reward: blockatlas.StakingReward{
-			Annual: p.GetMaxAPR(),
-		},
+		Reward:        blockatlas.StakingReward{Annual: apr},
 		MinimumAmount: minimumAmount,
 		LockTime:      lockTime,
 		Type:          blockatlas.DelegationTypeDelegate,
 	}
-}
-
-func (p *Platform) GetMaxAPR() float64 {
-	validators, err := p.GetValidators()
-	if err != nil {
-		return blockatlas.DefaultAnnualReward
-	}
-
-	var max = 0.0
-	for _, e := range validators {
-		v := e.Details.Reward.Annual
-		if v > max {
-			max = v
-		}
-	}
-
-	return max
 }
 
 func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, error) {
@@ -118,20 +104,20 @@ func (p *Platform) UndelegatedBalance(address string) (string, error) {
 	return "0", nil
 }
 
-func NormalizeDelegations(delegations []Delegation, validators blockatlas.ValidatorMap) []blockatlas.Delegation {
+func NormalizeDelegations(delegations []DelegationValue, validators blockatlas.ValidatorMap) []blockatlas.Delegation {
 	results := make([]blockatlas.Delegation, 0)
 	for _, v := range delegations {
-		validator, ok := validators[v.ValidatorAddress]
+		validator, ok := validators[v.Delegation.ValidatorAddress]
 		if !ok {
 			log.WithFields(
-				log.Fields{"address": v.ValidatorAddress, "platform": "cosmos", "delegation": v.DelegatorAddress},
+				log.Fields{"address": v.Delegation.ValidatorAddress, "platform": "cosmos", "delegation": v.Delegation.DelegatorAddress},
 			).Warn("Validator not found")
-			validator = getUnknownValidator(v.ValidatorAddress)
+			validator = getUnknownValidator(v.Delegation.ValidatorAddress)
 
 		}
 		delegation := blockatlas.Delegation{
 			Delegator: validator,
-			Value:     v.Value(),
+			Value:     v.Delegation.Value(),
 			Status:    blockatlas.DelegationStatusActive,
 		}
 		results = append(results, delegation)
@@ -168,7 +154,7 @@ func NormalizeUnbondingDelegations(delegations []UnbondingDelegation, validators
 func normalizeValidator(v Validator, p Pool, inflation float64) (validator blockatlas.Validator) {
 	reward := CalculateAnnualReward(p, inflation, v)
 	return blockatlas.Validator{
-		Status: v.Status == 2,
+		Status: v.Status == 3,
 		ID:     v.Address,
 		Details: blockatlas.StakingDetails{
 			Reward:        blockatlas.StakingReward{Annual: reward},

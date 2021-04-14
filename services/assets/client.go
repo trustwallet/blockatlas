@@ -13,7 +13,7 @@ const (
 	URL = "https://assets.trustwalletapp.com/blockchains/"
 )
 
-func GetchValidatorsInfo(coin coin.Coin) (AssetValidators, error) {
+func GetValidatorsInfo(coin coin.Coin) (AssetValidators, error) {
 	var results AssetValidators
 	request := client.InitClient(URL+coin.Handle, middleware.SentryErrorHandler)
 	err := request.GetWithCache(&results, "validators/list.json", nil, time.Hour*1)

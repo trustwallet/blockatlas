@@ -56,6 +56,9 @@ func RegisterTokensAPI(router gin.IRouter, api blockatlas.Platform) {
 	router.GET("/v2/"+handle+"/tokens/:address", func(c *gin.Context) {
 		endpoint.GetTokensByAddress(c, tokenAPI)
 	})
+	router.GET("/v2/"+handle+"/tokens/:address/ids", func(c *gin.Context) {
+		endpoint.GetTokensIdsByAddress(c, tokenAPI)
+	})
 }
 
 func RegisterStakeAPI(router gin.IRouter, api blockatlas.Platform) {
@@ -102,7 +105,7 @@ func RegisterTokensIndexAPI(router gin.IRouter, instance tokenindexer.Instance) 
 	router.GET("/v3/tokens/new", func(c *gin.Context) {
 		endpoint.GetNewTokens(c, instance)
 	})
-	router.POST("/v3/tokens", func(c *gin.Context) {
+	router.POST("/v1/assets/associations", func(c *gin.Context) {
 		endpoint.GetTokensByAddressV3(c, instance)
 	})
 }

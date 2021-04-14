@@ -1,0 +1,5 @@
+release: bin/setup -c $HOME/config.yml
+transactions: CONSUMER_SERVICE=transactions bin/consumer -c $HOME/config.yml
+subscriptions: CONSUMER_SERVICE=subscriptions bin/consumer -c $HOME/config.yml
+subscriptions_tokens: CONSUMER_SERVICE=subscriptions_tokens bin/consumer -c $HOME/config.yml
+tokens: CONSUMER_SERVICE=tokens bin/consumer -c $HOME/config.yml

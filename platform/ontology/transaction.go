@@ -9,14 +9,14 @@ import (
 	"github.com/trustwallet/golibs/types"
 )
 
-func (p *Platform) GetTxsByAddress(address string) (types.TxPage, error) {
+func (p *Platform) GetTxsByAddress(address string) (types.Txs, error) {
 	return p.GetTokenTxsByAddress(address, string(AssetONT))
 }
 
-func (p *Platform) GetTokenTxsByAddress(address string, token string) (types.TxPage, error) {
+func (p *Platform) GetTokenTxsByAddress(address string, token string) (types.Txs, error) {
 	srcTxs, err := p.client.GetTxsOfAddress(address)
 	if err != nil {
-		return types.TxPage{}, err
+		return types.Txs{}, err
 	}
 	txPage := normalizeTxs(srcTxs.Result, AssetType(token))
 	return txPage, nil
@@ -33,7 +33,7 @@ func Normalize(srcTx *Tx, assetName AssetType) (tx types.Tx, ok bool) {
 	}
 	tx = types.Tx{
 		ID:     srcTx.Hash,
-		Coin:   coin.ONT,
+		Coin:   coin.ONTOLOGY,
 		Fee:    types.Amount(fee),
 		Date:   srcTx.Time,
 		Block:  srcTx.Height,
@@ -130,8 +130,8 @@ func (p *Platform) getTxDetails(srcTx []Tx) ([]Tx, error) {
 	return txsOntV2, nil
 }
 
-func normalizeTxs(srcTxs []Tx, assetType AssetType) types.TxPage {
-	var txs types.TxPage
+func normalizeTxs(srcTxs []Tx, assetType AssetType) types.Txs {
+	txs := make(types.Txs, 0)
 	for _, srcTx := range srcTxs {
 		transfer := srcTx.getTransfers().getTransfer(assetType)
 		if transfer == nil {

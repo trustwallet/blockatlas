@@ -28,7 +28,3 @@ type ConsumerDatabase struct {
 func (c ConsumerDatabase) Callback(msg amqp.Delivery) error {
 	return c.Delivery(c.Database, msg)
 }
-
-func (c ConsumerDatabase) ConsumerTag() string {
-	return c.Tag
-}

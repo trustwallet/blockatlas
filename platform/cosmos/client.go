@@ -30,7 +30,7 @@ func (c *Client) GetAddrTxs(address, tag string, page int) (txs TxPage, err erro
 
 func (c *Client) GetValidators() (validators Validators, err error) {
 	query := url.Values{
-		"status": {"bonded"},
+		"status": {"BOND_STATUS_BONDED"},
 	}
 	err = c.GetWithCache(&validators, "staking/validators", query, time.Minute*10)
 	return
@@ -42,14 +42,14 @@ func (c *Client) GetBlockByNumber(num int64) (txs TxPage, err error) {
 }
 
 func (c *Client) CurrentBlockNumber() (num int64, err error) {
-	var block Block
-	err = c.Get(&block, "blocks/latest", nil)
+	var latest LasteBlock
+	err = c.Get(&latest, "blocks/latest", nil)
 
 	if err != nil {
 		return num, err
 	}
 
-	num, err = strconv.ParseInt(block.Meta.Header.Height, 10, 64)
+	num, err = strconv.ParseInt(latest.Block.Header.Height, 10, 64)
 	if err != nil {
 		return num, err
 	}

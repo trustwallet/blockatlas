@@ -21,10 +21,6 @@ func (c ConsumerIndexer) Callback(msg amqp.Delivery) error {
 	return c.Delivery(c.Database, c.TokensAPIs, msg)
 }
 
-func (c ConsumerIndexer) ConsumerTag() string {
-	return c.Tag
-}
-
 func RunTokenIndexerSubscribe(database *db.Instance, apis map[uint]blockatlas.TokensAPI, delivery amqp.Delivery) error {
 	var event types.SubscriptionEvent
 	err := json.Unmarshal(delivery.Body, &event)
@@ -45,7 +41,7 @@ func RunTokenIndexerSubscribe(database *db.Instance, apis map[uint]blockatlas.To
 			if !ok {
 				continue
 			}
-			assetIds, err := api.GetTokenListByAddress(coinAddress.Address)
+			assetIds, err := api.GetTokenListIdsByAddress(coinAddress.Address)
 			if err != nil {
 				continue
 			}

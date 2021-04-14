@@ -8,13 +8,13 @@ import (
 	"github.com/trustwallet/golibs/types"
 )
 
-func (p *Platform) GetTxsByAddress(address string) (types.TxPage, error) {
+func (p *Platform) GetTxsByAddress(address string) (types.Txs, error) {
 	s, err := p.client.GetTxsOfAddress(address)
 	if err != nil {
 		return nil, err
 	}
 
-	txs := make([]types.Tx, 0)
+	txs := make(types.Txs, 0)
 	for _, srcTx := range s {
 		tx, ok := NormalizeTx(&srcTx)
 		if !ok {
@@ -26,7 +26,7 @@ func (p *Platform) GetTxsByAddress(address string) (types.TxPage, error) {
 	return txs, nil
 }
 
-func NormalizeTxs(srcTxs []Tx) (txs []types.Tx) {
+func NormalizeTxs(srcTxs []Tx) (txs types.Txs) {
 	for _, srcTx := range srcTxs {
 		tx, ok := NormalizeTx(&srcTx)
 		if !ok || len(txs) >= types.TxPerPage {
@@ -61,7 +61,7 @@ func NormalizeTx(srcTx *Tx) (types.Tx, bool) {
 
 	result := types.Tx{
 		ID:     srcTx.Hash,
-		Coin:   coin.XRP,
+		Coin:   coin.RIPPLE,
 		Date:   unix,
 		From:   srcTx.Payment.Account,
 		To:     srcTx.Payment.Destination,
@@ -70,8 +70,8 @@ func NormalizeTx(srcTx *Tx) (types.Tx, bool) {
 		Status: status,
 		Meta: types.Transfer{
 			Value:    types.Amount(v),
-			Symbol:   coin.Coins[coin.XRP].Symbol,
-			Decimals: coin.Coins[coin.XRP].Decimals,
+			Symbol:   coin.Coins[coin.RIPPLE].Symbol,
+			Decimals: coin.Coins[coin.RIPPLE].Decimals,
 		},
 	}
 	if srcTx.Payment.DestinationTag > 0 {

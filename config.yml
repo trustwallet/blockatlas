@@ -27,12 +27,14 @@ postgres:
 
 consumer:
   service: ""
+  prefetch: 8
   workers: 8
 
 # [BNB] Binance DEX: https://www.binance.org/
 binance:
   api: https://dex.binance.org
-  # key: ""
+  key: ""
+  staking_api: "https://api.binance.org"
 
 # [NIM] Nimiq: https://nimiq.com
 nimiq:
@@ -54,37 +56,35 @@ tezos:
 
 # [ETH] Ethereum: https://ethereum.org
 ethereum:
-  blockbook_api: https://eth1.trezor.io
-  api: https://localhost:4567 #(Trust-Ray API)
+  api: https://eth1.trezor.io
   collections_api: https://api.opensea.io
   #  collections_api_key: [opensea_api_key]
-  rpc: https://main-rpc.linkpool.io
 
 # [ETC] Ethereum Classic: https://ethereumclassic.org (Trust-Ray API)
 classic:
   api: https://localhost:4567
 
-# [POA] POA Network: https://poa.network (Trust-Ray API)
+# [POA] POA Network: https://poa.network
 poa:
   api: https://localhost:4567
 
-# [CLO] Callisto Network: https://callisto.network (Trust-Ray API)
+# [CLO] Callisto Network: https://callisto.network
 callisto:
   api: https://localhost:4567
 
-# [GO] GoChain: https://gochain.io (Trust-Ray API)
+# [GO] GoChain: https://gochain.io
 gochain:
   api: https://localhost:4567
 
-# [WAN] Wanchain: https://wanchain.org (Trust-Ray API)
+# [WAN] Wanchain: https://wanchain.org
 wanchain:
   api: https://localhost:4567
 
-# [TOMO] TomoChain: https://tomochain.com (Trust-Ray API)
+# [TOMO] TomoChain: https://tomochain.com
 tomochain:
   api: https://localhost:4567
 
-# [TT] ThunderCore: https://www.thundercore.com (Trust-Ray API)
+# [TT] ThunderCore: https://www.thundercore.com
 thundertoken:
   api: https://localhost:4567
 
@@ -99,7 +99,7 @@ icon:
 # [TRX] Tron: https://tron.network/
 tron:
   api: https://api.trongrid.io
-  grid: https://api.trongrid.io # trongrid api
+  key: ""
 
 # [VET] VeChain: https://www.vechain.org
 vechain:
@@ -108,6 +108,7 @@ vechain:
 # [THETA] THETA: https://www.thetatoken.org/
 theta:
   api: https://explorer.thetatoken.org:9000/api
+  key: ""
 
 # [ATOM] Cosmos: https://cosmos.network/
 cosmos:
@@ -197,7 +198,7 @@ harmony:
   api: https://api.s0.t.hmny.io
 
 kava:
-  api: https://kava.data.kava.io
+  api: https://api.kava.io
 
 polkadot:
   api: https://polkadot.subscan.io/api
@@ -215,10 +216,12 @@ filecoin:
   api: https://api.filscan.io:8700/rpc/v1
   explorer: https://filfox.info
 
-# smartchain:
-#   api: <blockbook api>
-#   rpc: https://bsc-dataseed.nariox.org
-#   collections_api: https://nftview.bounce.finance
+smartchain:
+  api: ""
+  collections_api: https://nftview.bounce.finance
 
 sentry:
   dsn: ""
+
+metrics:
+  path: metrics

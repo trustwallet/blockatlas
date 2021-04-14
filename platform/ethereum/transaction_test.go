@@ -16,7 +16,7 @@ var (
 		From: "A",
 		To:   "B",
 	}
-	page = types.TxPage([]types.Tx{tx})
+	page = types.Txs{tx}
 	c    Client
 )
 
@@ -43,20 +43,20 @@ func TestPlatform_GetTxsByAddress(t *testing.T) {
 	assert.Equal(t, page, resp)
 }
 
-func (c Client) GetTransactions(address string, coinIndex uint) (types.TxPage, error) {
-	txs := make([]types.Tx, 0)
+func (c Client) GetTransactions(address string, coinIndex uint) (types.Txs, error) {
+	txs := make(types.Txs, 0)
 	txs = append(txs, tx)
 	return txs, nil
 }
 
-func (c Client) GetTokenTxs(address, token string, coinIndex uint) (types.TxPage, error) {
-	txs := make([]types.Tx, 0)
+func (c Client) GetTokenTxs(address, token string, coinIndex uint) (types.Txs, error) {
+	txs := make(types.Txs, 0)
 	txs = append(txs, tx)
 	return txs, nil
 }
 
-func (c Client) GetTokenList(address string, coinIndex uint) ([]string, error) {
-	return []string{}, nil
+func (c Client) GetTokenList(address string, coinIndex uint) ([]types.Token, error) {
+	return []types.Token{}, nil
 }
 
 func (c Client) GetCurrentBlockNumber() (int64, error) {

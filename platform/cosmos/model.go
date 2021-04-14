@@ -39,12 +39,12 @@ const (
 
 // Tx - Base transaction object. Always returned as part of an array
 type Tx struct {
-	Block  string `json:"height"`
-	Code   int    `json:"code"`
-	Date   string `json:"timestamp"`
-	ID     string `json:"txhash"`
-	Data   Data   `json:"tx"`
-	Events Events `json:"events"`
+	Block string `json:"height"`
+	Code  int    `json:"code"`
+	Date  string `json:"timestamp"`
+	ID    string `json:"txhash"`
+	Data  Data   `json:"tx"`
+	Logs  Logs   `json:"logs"`
 }
 
 type TxPage struct {
@@ -58,13 +58,19 @@ type Event struct {
 	Attributes Attributes `json:"Attributes"`
 }
 
-type Events []*Event
+type Events struct {
+	Events []Event `json:"events"`
+}
 
-func (e Events) GetWithdrawRewardValue() string {
+type Logs []*Events
+
+func (l Logs) GetWithdrawRewardValue() string {
 	result := int64(0)
-	for _, att := range e {
-		if att.Type == EventWithdrawRewards {
-			result += att.Attributes.GetWithdrawRewardValue()
+	for _, log := range l {
+		for _, att := range log.Events {
+			if att.Type == EventWithdrawRewards {
+				result += att.Attributes.GetWithdrawRewardValue()
+			}
 		}
 	}
 	return strconv.FormatInt(result, 10)
@@ -165,21 +171,25 @@ type Inflation struct {
 }
 
 type Delegations struct {
-	List []Delegation `json:"result"`
+	List []DelegationValue `json:"result"`
+}
+
+type DelegationValue struct {
+	Delegation Delegation `json:"delegation"`
 }
 
 type Delegation struct {
 	DelegatorAddress string `json:"delegator_address"`
 	ValidatorAddress string `json:"validator_address"`
-	Balance          string `json:"balance,omitempty"`
+	Shares           string `json:"shares"`
 }
 
 func (d *Delegation) Value() string {
-	shares := strings.Split(d.Balance, ".")
+	shares := strings.Split(d.Shares, ".")
 	if len(shares) > 0 {
 		return shares[0]
 	}
-	return d.Balance
+	return d.Shares
 }
 
 type UnbondingDelegations struct {
@@ -206,17 +216,14 @@ type Pool struct {
 	BondedTokens    string `json:"bonded_tokens"`
 }
 
-// Block - top object of get las block request
-type Block struct {
-	Meta BlockMeta `json:"block_meta"`
+type LasteBlock struct {
+	Block Block `json:"block"`
 }
 
-//BlockMeta - "Block" sub object
-type BlockMeta struct {
+type Block struct {
 	Header BlockHeader `json:"header"`
 }
 
-//BlockHeader - "BlockMeta" sub object, height
 type BlockHeader struct {
 	Height string `json:"height"`
 }

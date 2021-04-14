@@ -11,31 +11,29 @@ import (
 	"github.com/trustwallet/golibs/types"
 )
 
-func (p *Platform) GetTxsByAddress(address string) (types.TxPage, error) {
+func (p *Platform) GetTxsByAddress(address string) (types.Txs, error) {
 	txs, err := p.getTxsByAddress(address)
 	if err != nil {
 		return nil, err
 	}
-	txPage := types.TxPage(txs)
-	sort.Sort(txPage)
-	return txPage, nil
+	sort.Sort(txs)
+	return txs, nil
 }
 
-func (p *Platform) GetTxsByXpub(xpub string) (types.TxPage, error) {
+func (p *Platform) GetTxsByXpub(xpub string) (types.Txs, error) {
 	txs, err := p.getTxsByXpub(xpub)
 	if err != nil {
 		return nil, err
 	}
-	txPage := types.TxPage(txs)
-	sort.Sort(txPage)
-	return txPage, nil
+	sort.Sort(txs)
+	return txs, nil
 }
 
-func (p *Platform) getTxsByXpub(xpub string) ([]types.Tx, error) {
+func (p *Platform) getTxsByXpub(xpub string) (types.Txs, error) {
 	sourceTxs, err := p.client.GetTransactionsByXpub(xpub)
 
 	if err != nil {
-		return []types.Tx{}, err
+		return types.Txs{}, err
 	}
 
 	addressSet := mapset.NewSet()
@@ -47,10 +45,10 @@ func (p *Platform) getTxsByXpub(xpub string) ([]types.Tx, error) {
 	return txs, nil
 }
 
-func (p *Platform) getTxsByAddress(address string) ([]types.Tx, error) {
+func (p *Platform) getTxsByAddress(address string) (types.Txs, error) {
 	sourceTxs, err := p.client.GetTxs(address)
 	if err != nil {
-		return []types.Tx{}, err
+		return types.Txs{}, err
 	}
 	addressSet := mapset.NewSet()
 	addressSet.Add(address)
@@ -58,8 +56,8 @@ func (p *Platform) getTxsByAddress(address string) ([]types.Tx, error) {
 	return txs, nil
 }
 
-func normalizeTxs(sourceTxs blockbook.TransactionsList, coinIndex uint, addressSet mapset.Set) []types.Tx {
-	var txs []types.Tx
+func normalizeTxs(sourceTxs blockbook.TransactionsList, coinIndex uint, addressSet mapset.Set) types.Txs {
+	var txs types.Txs
 	for _, transaction := range sourceTxs.TransactionList() {
 		if tx, ok := normalizeTransfer(transaction, coinIndex, addressSet); ok {
 			txs = append(txs, tx)

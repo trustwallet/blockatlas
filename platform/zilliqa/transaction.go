@@ -1,12 +1,13 @@
 package zilliqa
 
 import (
+	"github.com/trustwallet/blockatlas/platform/zilliqa/viewblock"
 	"github.com/trustwallet/golibs/coin"
 	"github.com/trustwallet/golibs/types"
 )
 
-func (p *Platform) GetTxsByAddress(address string) (types.TxPage, error) {
-	var normalized []types.Tx
+func (p *Platform) GetTxsByAddress(address string) (types.Txs, error) {
+	var normalized types.Txs
 	txs, err := p.client.GetTxsOfAddress(address)
 
 	if err != nil {
@@ -24,10 +25,10 @@ func (p *Platform) GetTxsByAddress(address string) (types.TxPage, error) {
 	return normalized, nil
 }
 
-func Normalize(srcTx *Tx) (tx types.Tx) {
+func Normalize(srcTx *viewblock.Tx) (tx types.Tx) {
 	tx = types.Tx{
 		ID:       srcTx.Hash,
-		Coin:     coin.ZIL,
+		Coin:     coin.ZILLIQA,
 		Date:     srcTx.Timestamp / 1000,
 		From:     srcTx.From,
 		To:       srcTx.To,
@@ -37,8 +38,8 @@ func Normalize(srcTx *Tx) (tx types.Tx) {
 		Sequence: srcTx.NonceValue(),
 		Meta: types.Transfer{
 			Value:    types.Amount(srcTx.Value),
-			Symbol:   coin.Coins[coin.ZIL].Symbol,
-			Decimals: coin.Coins[coin.ZIL].Decimals,
+			Symbol:   coin.Zilliqa().Symbol,
+			Decimals: coin.Zilliqa().Decimals,
 		},
 	}
 	if !srcTx.ReceiptSuccess {

@@ -8,6 +8,8 @@ import (
 	"strconv"
 	"sync/atomic"
 
+	"github.com/trustwallet/blockatlas/db/models"
+
 	"github.com/getsentry/raven-go"
 
 	"math/rand"
@@ -64,7 +66,17 @@ func GetInterval(value int, minInterval, maxInterval time.Duration) time.Duratio
 }
 
 func parse(params Params) {
-	lastParsedBlock, currentBlock, err := GetBlocksIntervalToFetch(params)
+	coinTracker, err := params.Database.GetLastParsedBlockNumber(params.Api.Coin().Handle)
+	if err != nil {
+		time.Sleep(params.ParsingBlocksInterval)
+		return
+	}
+	if !coinTracker.Enabled {
+		time.Sleep(params.ParsingBlocksInterval)
+		return
+	}
+
+	lastParsedBlock, currentBlock, err := GetBlocksIntervalToFetch(params, coinTracker)
 	if err != nil {
 		time.Sleep(params.ParsingBlocksInterval)
 		return
@@ -95,11 +107,11 @@ func parse(params Params) {
 		return
 	}
 
-	var txs []types.Tx
+	var txs types.Txs
 	for _, block := range blocks {
 		txs = append(txs, block.Txs...)
 	}
-	txs = types.TxPage(txs).FilterTransactionsByMemo()
+	txs = txs.FilterTransactionsByMemo()
 
 	err = publish(params, txs)
 	if err != nil {
@@ -118,11 +130,8 @@ func parse(params Params) {
 	log.WithFields(log.Fields{"coin": params.Api.Coin().Handle}).Info("End of parse step")
 }
 
-func GetBlocksIntervalToFetch(params Params) (int64, int64, error) {
-	lastParsedBlock, err := params.Database.GetLastParsedBlockNumber(params.Api.Coin().Handle)
-	if err != nil {
-		return 0, 0, errors.New(err.Error() + " Polling failed: tracker didn't return last known block number")
-	}
+func GetBlocksIntervalToFetch(params Params, tracker models.Tracker) (int64, int64, error) {
+	lastParsedBlock := tracker.Height
 	currentBlock, err := params.Api.CurrentBlockNumber()
 	if err != nil {
 		return 0, 0, errors.New(err.Error() + "Polling failed: source didn't return chain head number. lastParsedBlock: " + strconv.Itoa(int(lastParsedBlock)))

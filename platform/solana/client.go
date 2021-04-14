@@ -4,27 +4,17 @@ import (
 	"github.com/trustwallet/golibs/client"
 )
 
-const stakeProgramId = "Stake11111111111111111111111111111111111111"
-
 type Client struct {
 	client.Request
 }
 
-func (c *Client) GetCurrentVoteAccounts() (validators []VoteAccount, err error) {
-	var v VoteAccounts
-	err = c.RpcCall(&v, "getVoteAccounts", []string{})
-	return v.Current, err
-}
-
-func (c *Client) GetStakeAccounts() (accounts []KeyedAccount, err error) {
-	err = c.RpcCall(&accounts, "getProgramAccounts", []string{stakeProgramId})
-	return
-}
-
-func (c *Client) GetAccount(pubkey string) (account Account, err error) {
-	var r RpcAccount
-	err = c.RpcCall(&r, "getAccountInfo", []string{pubkey})
-	return r.Account, err
+func (c *Client) GetLasteBlock() (int64, error) {
+	var epoch EpochInfo
+	err := c.RpcCall(&epoch, "getEpochInfo", []string{})
+	if err != nil {
+		return 0, err
+	}
+	return int64(epoch.BlockHeight), nil
 }
 
 func (c *Client) GetEpochInfo() (epochInfo EpochInfo, err error) {
@@ -32,12 +22,7 @@ func (c *Client) GetEpochInfo() (epochInfo EpochInfo, err error) {
 	return
 }
 
-func (c *Client) GetMinimumBalanceForRentExemption() (minimumBalance uint64, err error) {
-	err = c.RpcCall(&minimumBalance, "getMinimumBalanceForRentExemption", []uint64{4008})
-	return
-}
-
-func (c *Client) GetTransactionList(address string) ([]ConfirmedSignature, error) {
+func (c *Client) GetTransactionsByAddress(address string) ([]ConfirmedTransaction, error) {
 	var signatures []ConfirmedSignature
 	params := []interface{}{
 		address,
@@ -47,14 +32,16 @@ func (c *Client) GetTransactionList(address string) ([]ConfirmedSignature, error
 	if err != nil {
 		return nil, err
 	}
-	return signatures, nil
+
+	return c.GetTransactionSignatures(signatures)
 }
 
-func (c *Client) GetTransactions(address string) ([]ConfirmedTransaction, error) {
-	// get tx list
-	signatures, err := c.GetTransactionList(address)
-	if err != nil {
-		return nil, err
+func (c *Client) GetTransactionSignatures(signatures []ConfirmedSignature) ([]ConfirmedTransaction, error) {
+	var txs []ConfirmedTransaction
+
+	// check empty
+	if len(signatures) == 0 {
+		return txs, nil
 	}
 
 	// build batch request
@@ -68,7 +55,7 @@ func (c *Client) GetTransactions(address string) ([]ConfirmedTransaction, error)
 			},
 		})
 	}
-	var txs []ConfirmedTransaction
+
 	responses, err := c.RpcBatchCall(requests)
 	if err != nil {
 		return txs, err
@@ -82,4 +69,9 @@ func (c *Client) GetTransactions(address string) ([]ConfirmedTransaction, error)
 		}
 	}
 	return txs, nil
+}
+
+func (c *Client) GetTransactionsInBlock(num int64) (block Block, err error) {
+	err = c.RpcCall(&block, "getConfirmedBlock", []interface{}{num, "jsonParsed"})
+	return
 }

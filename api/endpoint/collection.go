@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
+	"github.com/trustwallet/golibs/coin"
 	"github.com/trustwallet/golibs/types"
 )
 
@@ -46,16 +47,30 @@ func GetCollectionCategoriesFromList(c *gin.Context, apis blockatlas.Collections
 		return
 	}
 
-	batch := make(types.CollectionPage, 0)
-	for key, addresses := range reqs {
-		coinId, err := strconv.Atoi(key)
+	reqIds := []int{}
+	coinIds := []int{}
+	for k := range reqs {
+		coinId, err := strconv.Atoi(k)
 		if err != nil {
 			continue
 		}
+		reqIds = append(reqIds, coinId)
+	}
+
+	// old iOS client requests all accounts
+	if len(reqIds) > 2 {
+		coinIds = append(coinIds, coin.ETHEREUM)
+	} else {
+		coinIds = reqIds
+	}
+
+	batch := make(types.CollectionPage, 0)
+	for _, coinId := range coinIds {
 		p, ok := apis[uint(coinId)]
 		if !ok {
 			continue
 		}
+		addresses := reqs[strconv.Itoa(coinId)]
 		for _, address := range addresses {
 			collections, err := p.GetCollections(address)
 			if err != nil {

@@ -2,43 +2,61 @@ package solana
 
 import (
 	"errors"
+	"fmt"
 	"strconv"
 
+	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/golibs/types"
 )
 
-func (p *Platform) GetTxsByAddress(address string) (types.TxPage, error) {
-	results := make(types.TxPage, 0)
-	txs, err := p.client.GetTransactions(address)
+const (
+	programSystem = "system"
+	programToken  = "spl-token"
+
+	instructionTransfer = "transfer"
+	// will support instructionTransferChecked later
+	// instructionTransferChecked = "transferChecked"
+)
+
+func (p *Platform) GetTxsByAddress(address string) (types.Txs, error) {
+	results := make(types.Txs, 0)
+	txs, err := p.client.GetTransactionsByAddress(address)
 	if err != nil {
 		return results, err
 	}
 	for _, tx := range txs {
-		if normalized, err := p.NormalizeTx(tx, address); err == nil {
+		if tx.BlockTime == 0 {
+			continue
+		}
+		if normalized, err := p.NormalizeTx(tx, tx.Slot, tx.BlockTime); err == nil {
+			normalized.Direction = normalized.GetTransactionDirection(address)
 			results = append(results, normalized)
 		}
 	}
 	return results, nil
 }
 
-func (p *Platform) NormalizeTx(tx ConfirmedTransaction, address string) (normalized types.Tx, err error) {
+func (p *Platform) NormalizeTx(tx ConfirmedTransaction, slot uint64, timestamp int64) (normalized types.Tx, err error) {
 
 	// only check first instruction
 	if len(tx.Transaction.Message.Instructions) != 1 || len(tx.Transaction.Signatures) != 1 {
-		return normalized, errors.New("not supported")
+		err = errors.New("not supported instructions/signatures count")
+		return
 	}
 
-	// only supports transfer type now
+	// only supports transfer and token transfer
 	instruction := tx.Transaction.Message.Instructions[0]
-	if instruction.Parsed.Type != "transfer" {
-		return normalized, errors.New("not supported type other than transfer")
+
+	if instruction.Program != programSystem && instruction.Program != programToken {
+		err = fmt.Errorf("not supported program: %s", instruction.Program)
+		return
 	}
 
-	// tx direction
-	from := instruction.Parsed.Info.Source
-	direction := types.DirectionIncoming
-	if address == from {
-		direction = types.DirectionOutgoing
+	var parsed Parsed
+	err = blockatlas.MapJsonObject(instruction.Parsed, &parsed)
+
+	if err != nil {
+		return
 	}
 
 	// tx status
@@ -48,32 +66,30 @@ func (p *Platform) NormalizeTx(tx ConfirmedTransaction, address string) (normali
 	}
 
 	normalized = types.Tx{
-		ID:        tx.Transaction.Signatures[0],
-		Coin:      p.Coin().ID,
-		From:      from,
-		To:        instruction.Parsed.Info.Destination,
-		Fee:       types.Amount(strconv.FormatUint(tx.Meta.Fee, 10)),
-		Date:      EstimateTimestamp(tx.Slot),
-		Block:     tx.Slot,
-		Status:    status,
-		Type:      types.TxTransfer,
-		Direction: direction,
-		Meta: types.Transfer{
-			Value:    types.Amount(strconv.FormatUint(instruction.Parsed.Info.Lamports, 10)),
-			Symbol:   p.Coin().Symbol,
-			Decimals: p.Coin().Decimals,
-		},
+		ID:     tx.Transaction.Signatures[0],
+		Coin:   p.Coin().ID,
+		Fee:    types.Amount(strconv.FormatUint(tx.Meta.Fee, 10)),
+		Date:   timestamp,
+		Block:  slot,
+		Status: status,
 	}
 
-	return normalized, nil
-}
-
-func EstimateTimestamp(slot uint64) int64 {
-	var (
-		blockTime  uint64 = 400 //ms
-		sampleSlot uint64 = 52838300
-		sampleTs   uint64 = 1606944859 * 1000
-	)
-	offset := (slot - sampleSlot) * blockTime
-	return int64((sampleTs + offset) / 1000)
+	switch parsed.Type {
+	case instructionTransfer:
+		var transfer TransferInfo
+		err = blockatlas.MapJsonObject(parsed.Info, &transfer)
+		if err == nil {
+			normalized.From = transfer.Source
+			normalized.To = transfer.Destination
+			normalized.Type = types.TxTransfer
+			normalized.Meta = types.Transfer{
+				Value:    types.Amount(strconv.FormatUint(transfer.Lamports, 10)),
+				Symbol:   p.Coin().Symbol,
+				Decimals: p.Coin().Decimals,
+			}
+		}
+	default:
+		err = fmt.Errorf("not supported type: %s", parsed.Type)
+	}
+	return
 }

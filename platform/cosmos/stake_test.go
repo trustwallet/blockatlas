@@ -62,7 +62,7 @@ func TestCalculateAnnualReward(t *testing.T) {
 }
 
 func TestNormalizeDelegations(t *testing.T) {
-	var delegations []Delegation
+	var delegations []DelegationValue
 	err := json.Unmarshal([]byte(delegationsSrc), &delegations)
 	assert.NoError(t, err)
 	assert.NotNil(t, delegations)

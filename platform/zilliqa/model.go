@@ -5,72 +5,11 @@ import (
 	"math/big"
 	"strconv"
 
-	"github.com/trustwallet/golibs/client"
+	"github.com/trustwallet/blockatlas/platform/zilliqa/rpc"
+	"github.com/trustwallet/blockatlas/platform/zilliqa/viewblock"
 )
 
-type BlockTxs [][]string
-
-func (b BlockTxs) txs() []string {
-	txs := make([]string, 0)
-	for _, ids := range b {
-		txs = append(txs, ids...)
-	}
-	return txs
-}
-
-type Tx struct {
-	Hash           string      `json:"hash"`
-	BlockHeight    uint64      `json:"blockHeight"`
-	From           string      `json:"from"`
-	To             string      `json:"to"`
-	Value          string      `json:"value"`
-	Fee            string      `json:"fee"`
-	Timestamp      int64       `json:"timestamp"`
-	Signature      string      `json:"signature"`
-	Nonce          interface{} `json:"nonce"`
-	ReceiptSuccess bool        `json:"receiptSuccess"`
-}
-
-func (tx Tx) NonceValue() uint64 {
-	switch n := tx.Nonce.(type) {
-	case string:
-		r, err := strconv.Atoi(n)
-		if err != nil {
-			break
-		}
-		return uint64(r)
-	case int:
-		return uint64(n)
-	case float64:
-		return uint64(n)
-	}
-	return 0
-}
-
-type ChainInfo struct {
-	NumTxBlocks string `json:"NumTxBlocks"`
-}
-
-type TxReceipt struct {
-	CumulativeGas string `json:"cumulative_gas"`
-	EpochNum      string `json:"epoch_num"`
-	Success       bool   `json:"success"`
-}
-
-type TxRPC struct {
-	ID           string    `json:"ID"`
-	Amount       string    `json:"amount"`
-	GasLimit     string    `json:"gasLimit"`
-	GasPrice     string    `json:"gasPrice"`
-	Nonce        string    `json:"nonce"`
-	Receipt      TxReceipt `json:"receipt"`
-	SenderPubKey string    `json:"senderPubKey"`
-	Signature    string    `json:"signature"`
-	ToAddr       string    `json:"toAddr"`
-	Version      string    `json:"version"`
-}
-
-func (t *TxRPC) toTx(header BlockHeader) *Tx {
+func TxFromRpc(t rpc.Tx, header rpc.BlockHeader) *viewblock.Tx {
 	// t.recipient is not parsed correctly. Empty strings.
 
 	to, err := hex.DecodeString(t.ToAddr)
@@ -98,7 +37,7 @@ func (t *TxRPC) toTx(header BlockHeader) *Tx {
 	}
 	fee := new(big.Int).Mul(gasLimit, gasPrice)
 
-	return &Tx{
+	return &viewblock.Tx{
 		Hash:           "0x" + t.ID,
 		BlockHeight:    height,
 		From:           EncodePublicKeyToAddress(t.SenderPubKey),
@@ -110,34 +49,4 @@ func (t *TxRPC) toTx(header BlockHeader) *Tx {
 		Nonce:          t.Nonce,
 		ReceiptSuccess: t.Receipt.Success,
 	}
-}
-
-type BlockTxRpc struct {
-	JsonRpc string           `json:"jsonrpc"`
-	Error   *client.RpcError `json:"error,omitempty"`
-	Result  BlockTxs         `json:"result,omitempty"`
-	Id      string           `json:"id,omitempty"`
-}
-
-type HashesResponse struct {
-	ID      int        `json:"id"`
-	Jsonrpc string     `json:"jsonrpc"`
-	Result  [][]string `json:"result"`
-}
-
-func (h HashesResponse) Txs() []string {
-	var result []string
-	for _, subRes := range h.Result {
-		result = append(result, subRes...)
-	}
-	return result
-}
-
-type Block struct {
-	Header BlockHeader `json:"header"`
-}
-
-type BlockHeader struct {
-	Number    string `json:"BlockNum"`
-	Timestamp string `json:"Timestamp"`
 }

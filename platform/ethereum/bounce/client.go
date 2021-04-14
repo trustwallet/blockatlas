@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"net/url"
-	"strconv"
 	"strings"
 
 	"github.com/trustwallet/golibs/client"
@@ -25,28 +24,26 @@ func InitClient(url string) *Client {
 	return &c
 }
 
-func (c Client) getCollections(owner string, chainId int) ([]Collection, error) {
+func (c Client) getCollections(owner string) ([]Collection, error) {
 	query := url.Values{
-		"address":  {owner},
-		"chain_id": {strconv.Itoa(chainId)},
+		"user_address": {owner},
 	}
 	var resp CollectionResponse
-	err := c.Get(&resp, "nft", query)
+	err := c.Get(&resp, "/v2/bsc/nft", query)
 	if err != nil {
 		return nil, err
 	}
 	return resp.Data.Collections, nil
 }
 
-func (c Client) getCollectibles(owner string, collectionID string, chainId int) ([]Collectible, error) {
+func (c Client) getCollectibles(owner string, collectionID string) ([]Collectible, error) {
 	query := url.Values{
-		"user_addr":     {owner},
-		"contract_addr": {collectionID},
-		"chain_id":      {strconv.Itoa(chainId)},
+		"user_address":     {owner},
+		"contract_address": {collectionID},
 	}
 
 	var resp CollectibleResponse
-	err := c.Get(&resp, "erc721", query)
+	err := c.Get(&resp, "/v2/bsc/erc721", query)
 	if err != nil {
 		return nil, err
 	}
@@ -72,7 +69,7 @@ func fetchTokenURI(uri string) (info CollectionInfo, err error) {
 	return
 }
 
-func normalizeImageUrl(uri string) string {
+func normalizeUrl(uri string) string {
 	url, err := url.Parse(uri)
 	if err != nil {
 		return uri
@@ -84,5 +81,8 @@ func normalizeImageUrl(uri string) string {
 }
 
 func ipfsGatewayUrl(url *url.URL) string {
-	return fmt.Sprintf("https://ipfs.io/ipfs/%s%s", url.Host, url.Path)
+	components := strings.TrimPrefix(url.String(), ipfsScheme+"://")
+	components = strings.TrimPrefix(components, "/")
+	components = strings.TrimPrefix(components, "ipfs/")
+	return fmt.Sprintf("https://ipfs.io/ipfs/%s", components)
 }

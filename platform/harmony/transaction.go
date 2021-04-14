@@ -10,20 +10,20 @@ import (
 
 const Annual = 10
 
-func (p *Platform) GetTxsByAddress(address string) (types.TxPage, error) {
+func (p *Platform) GetTxsByAddress(address string) (types.Txs, error) {
 	result, err := p.client.GetTxsOfAddress(address)
 	if err != nil {
-		return types.TxPage{}, err
+		return types.Txs{}, err
 	}
 	return NormalizeTxs(result.Transactions), err
 }
 
-func NormalizeTxs(txs []Transaction) types.TxPage {
-	normalizeTxs := make([]types.Tx, 0)
+func NormalizeTxs(txs []Transaction) types.Txs {
+	normalizeTxs := make(types.Txs, 0)
 	for _, srcTx := range txs {
 		normalized, isCorrect, err := NormalizeTx(&srcTx)
 		if !isCorrect || err != nil {
-			return []types.Tx{}
+			return types.Txs{}
 		}
 		normalizeTxs = append(normalizeTxs, normalized)
 	}
@@ -64,7 +64,7 @@ func NormalizeTx(trx *Transaction) (tx types.Tx, b bool, err error) {
 
 	return types.Tx{
 		ID:       trx.Hash,
-		Coin:     coin.ONE,
+		Coin:     coin.HARMONY,
 		From:     trx.From,
 		To:       trx.To,
 		Fee:      types.Amount(literalFee),
@@ -75,8 +75,8 @@ func NormalizeTx(trx *Transaction) (tx types.Tx, b bool, err error) {
 		Block:    block,
 		Meta: types.Transfer{
 			Value:    types.Amount(literalValue),
-			Symbol:   coin.Coins[coin.ONE].Symbol,
-			Decimals: coin.Coins[coin.ONE].Decimals,
+			Symbol:   coin.Harmony().Symbol,
+			Decimals: coin.Harmony().Decimals,
 		},
 	}, true, nil
 }

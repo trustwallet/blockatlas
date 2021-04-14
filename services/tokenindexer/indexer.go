@@ -22,26 +22,27 @@ func RunTokenIndexer(database *db.Instance, delivery amqp.Delivery) error {
 		log.WithFields(log.Fields{"service": TokenIndexer, "body": string(delivery.Body), "error": err}).Error("Unable to unmarshal MQ Message")
 		return nil
 	}
-	transactions = transactions.FilterTransactionsByType([]types.TransactionType{
+
+	assetsTxs := transactions.FilterTransactionsByType([]types.TransactionType{
+		types.TxContractCall,
 		types.TxTokenTransfer,
 		types.TxNativeTokenTransfer,
 	})
 
-	if len(transactions) == 0 {
+	if len(assetsTxs) == 0 {
 		return nil
 	}
 
 	// Add new assets to db
-
-	assets := GetAssetsFromTransactions(transactions)
+	assets := GetAssetsFromTransactions(assetsTxs)
 	err = database.AddNewAssets(assets)
 	if err != nil {
-		log.WithFields(log.Fields{"service": TokenIndexer}).Error("Failed to add new assets", err)
+		log.WithFields(log.Fields{"service": TokenIndexer, "assets": assets}).Error("Failed to add new assets", err)
 		return err
 	}
 
 	// Add asset <> address association
-	addressAssetsMap := assetsMap(transactions)
+	addressAssetsMap := assetsMap(assetsTxs)
 
 	return CreateAssociations(database, addressAssetsMap)
 }
@@ -89,6 +90,7 @@ func calculateSubscriptionAssetAssociations(database *db.Instance, addressAssets
 		subscriptionsMap[subscription.Address] = subscription
 	}
 
+	uniqueMap := map[string]bool{}
 	for addressId, assets := range addressAssetsMap {
 		subscription, ok := subscriptionsMap[addressId]
 		if !ok {
@@ -100,27 +102,28 @@ func calculateSubscriptionAssetAssociations(database *db.Instance, addressAssets
 			if !ok {
 				continue
 			}
-			association := models.SubscriptionsAssetAssociation{
-				SubscriptionId: subscription.ID,
-				AssetId:        asset.ID,
+			subscriptionKey := strconv.Itoa(int(asset.ID)) + "_" + strconv.Itoa(int(subscription.ID))
+			if _, ok := uniqueMap[subscriptionKey]; !ok {
+				association := models.SubscriptionsAssetAssociation{
+					SubscriptionId: subscription.ID,
+					AssetId:        asset.ID,
+				}
+				associations = append(associations, association)
+				uniqueMap[subscriptionKey] = true
 			}
-			associations = append(associations, association)
 		}
 	}
 
 	return associations, nil
 }
 
-func GetAssetsFromTransactions(txs []types.Tx) []models.Asset {
-	var assets []models.Asset
+func GetAssetsFromTransactions(txs types.Txs) []models.Asset {
+	var result []models.Asset
 	for _, tx := range txs {
-		asset, ok := models.AssetFrom(tx)
-		if !ok {
-			continue
-		}
-		assets = append(assets, asset)
+		assets := models.AssetsFrom(tx)
+		result = append(result, assets...)
 	}
-	return assets
+	return result
 }
 
 func assetsMap(txs types.Txs) map[string][]string {
@@ -128,13 +131,14 @@ func assetsMap(txs types.Txs) map[string][]string {
 	for _, tx := range txs {
 		prefix := strconv.Itoa(int(tx.Coin)) + "_"
 		addresses := tx.GetAddresses()
-		asset, ok := models.AssetFrom(tx)
-		if !ok {
-			continue
-		}
-		for _, address := range addresses {
-			assetIDs := result[prefix+address]
-			result[prefix+address] = append(assetIDs, asset.Asset)
+		assets := models.AssetsFrom(tx)
+
+		for _, asset := range assets {
+			for _, address := range addresses {
+				assetId := prefix + address
+				assetIDs := result[assetId]
+				result[assetId] = append(assetIDs, asset.Asset)
+			}
 		}
 	}
 	return result

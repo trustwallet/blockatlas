@@ -4,6 +4,9 @@ import (
 	"encoding/json"
 	"reflect"
 	"testing"
+
+	"github.com/trustwallet/blockatlas/platform/zilliqa/rpc"
+	"github.com/trustwallet/blockatlas/platform/zilliqa/viewblock"
 )
 
 const transaction = `{
@@ -24,7 +27,7 @@ const transaction = `{
 }`
 
 func TestTxRPC_toTx(t *testing.T) {
-	tx := Tx{
+	tx := viewblock.Tx{
 		Hash:           "0xf73cf0a229a3d71e1a5c2ac4acbab598c706e64882a2e7c5ed6e406ce69fc16c",
 		BlockHeight:    185343,
 		From:           "zil1jrpjd8pjuv50cfkfr7eu6yrm3rn5u8rulqhqpz",
@@ -37,61 +40,16 @@ func TestTxRPC_toTx(t *testing.T) {
 		ReceiptSuccess: true,
 	}
 
-	var txRPC TxRPC
+	var txRPC rpc.Tx
 	err := json.Unmarshal([]byte(transaction), &txRPC)
 	if err != nil {
 		t.Error(err)
 		return
 	}
 
-	header := BlockHeader{Number: "185343", Timestamp: "1603831144458128"}
+	header := rpc.BlockHeader{Number: "185343", Timestamp: "1603831144458128"}
 
-	if got := txRPC.toTx(header); !reflect.DeepEqual(*got, tx) {
+	if got := TxFromRpc(txRPC, header); !reflect.DeepEqual(*got, tx) {
 		t.Errorf("TxRPC.toTx() = %v, want %v", *got, tx)
-	}
-}
-
-func TestTx_NonceValue(t *testing.T) {
-	tests := []struct {
-		name  string
-		nonce interface{}
-		want  uint64
-	}{
-		{"test int", 0, 0},
-		{"test float", 3.4, 3},
-		{"test string", "33", 33},
-		{"test error string", "test", 0},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			tx := Tx{
-				Nonce: tt.nonce,
-			}
-			if got := tx.NonceValue(); got != tt.want {
-				t.Errorf("NonceValue() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestBlockTxs_txs(t *testing.T) {
-	tests := []struct {
-		name string
-		b    BlockTxs
-		want []string
-	}{
-		{"test 1 tx", BlockTxs{{"tx1"}, {}}, []string{"tx1"}},
-		{"test 2 txs  1", BlockTxs{{"tx1"}, {"tx2"}}, []string{"tx1", "tx2"}},
-		{"test 2 txs 2", BlockTxs{{"tx1", "tx2"}}, []string{"tx1", "tx2"}},
-		{"test 3 txs 1", BlockTxs{{"tx1", "tx2"}, {"tx3"}}, []string{"tx1", "tx2", "tx3"}},
-		{"test 3 txs 2", BlockTxs{{"tx1"}, {"tx2"}, {"tx3"}}, []string{"tx1", "tx2", "tx3"}},
-		{"test 4 txs", BlockTxs{{"tx1", "tx2"}, {"tx3"}, {"tx4"}}, []string{"tx1", "tx2", "tx3", "tx4"}},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.b.txs(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("txs() = %v, want %v", got, tt.want)
-			}
-		})
 	}
 }

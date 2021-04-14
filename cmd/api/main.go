@@ -3,6 +3,8 @@ package main
 import (
 	"context"
 
+	"github.com/trustwallet/blockatlas/internal/metrics"
+
 	golibsGin "github.com/trustwallet/golibs/network/gin"
 
 	"github.com/trustwallet/golibs/network/middleware"
@@ -51,6 +53,8 @@ func init() {
 		log.Fatal(err)
 	}
 
+	metrics.Setup(database)
+
 	tokenIndexer = tokenindexer.Init(database)
 }
 
@@ -58,6 +62,7 @@ func main() {
 	api.SetupTokensIndexAPI(engine, tokenIndexer)
 	api.SetupSwaggerAPI(engine)
 	api.SetupPlatformAPI(engine)
+	api.SetupMetrics(engine)
 
 	golibsGin.SetupGracefulShutdown(ctx, port, engine)
 	cancel()

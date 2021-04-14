@@ -5,7 +5,7 @@ import (
 	"github.com/trustwallet/golibs/types"
 )
 
-func (p *Platform) GetTxsByAddress(address string) (types.TxPage, error) {
+func (p *Platform) GetTxsByAddress(address string) (types.Txs, error) {
 	txs, err := p.client.GetTxs(address, 1)
 	if err != nil {
 		return nil, err
@@ -30,8 +30,8 @@ func (p *Platform) GetBlockByNumber(num int64) (*types.Block, error) {
 	}, nil
 }
 
-func NormalizeTxs(txs []Transaction) []types.Tx {
-	normalizeTxs := make([]types.Tx, 0)
+func NormalizeTxs(txs []Transaction) types.Txs {
+	normalizeTxs := make(types.Txs, 0)
 	for _, srcTx := range txs {
 		normalizeTxs = append(normalizeTxs, NormalizeTx(srcTx))
 	}
@@ -45,7 +45,7 @@ func NormalizeTx(srcTx Transaction) types.Tx {
 	}
 	return types.Tx{
 		ID:       srcTx.Hash,
-		Coin:     coin.NAS,
+		Coin:     coin.NEBULAS,
 		From:     srcTx.From.Hash,
 		To:       srcTx.To.Hash,
 		Fee:      types.Amount(srcTx.TxFee),
@@ -55,8 +55,8 @@ func NormalizeTx(srcTx Transaction) types.Tx {
 		Sequence: srcTx.Nonce,
 		Meta: types.Transfer{
 			Value:    types.Amount(srcTx.Value),
-			Symbol:   coin.Coins[coin.NAS].Symbol,
-			Decimals: coin.Coins[coin.NAS].Decimals,
+			Symbol:   coin.Nebulas().Symbol,
+			Decimals: coin.Nebulas().Decimals,
 		},
 	}
 }

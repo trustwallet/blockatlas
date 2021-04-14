@@ -26,7 +26,7 @@ func TestProcessRpcBlock(t *testing.T) {
 			},
 			want: &types.Block{
 				Number: 1292516,
-				Txs: []types.Tx{
+				Txs: types.Txs{
 					{
 						ID:       "oo25sEdAT3YDb83WNdMSxRv4E6V2Rt6Jc8msgTio7R4FBnAiFmj",
 						Coin:     1729,

@@ -12,7 +12,7 @@ import (
 var (
 	nativeTokenTransfer = types.Tx{
 		ID:     "95CF63FAA27579A9B6AF84EF8B2DFEAC29627479E9C98E7F5AE4535E213FA4C9",
-		Coin:   coin.BNB,
+		Coin:   coin.BINANCE,
 		From:   "tbnb1ttyn4csghfgyxreu7lmdu3lcplhqhxtzced45a",
 		To:     "tbnb12hlquylu78cjylk5zshxpdj6hf3t0tahwjt3ex",
 		Fee:    "125000",
@@ -52,7 +52,7 @@ var (
 	}
 	transfer = types.Tx{
 		ID:     "1681EE543FB4B5A628EF21D746E031F018E226D127044A4F9BA5EE2542A44556",
-		Coin:   coin.BNB,
+		Coin:   coin.BINANCE,
 		From:   "tbnb1fhr04azuhcj0dulm7ka40y0cqjlafwae9k9gk2",
 		To:     "tbnb1fhr04azuhcj0dulm7ka40y0cqjlafwae9k9gk2",
 		Fee:    "125000",
@@ -68,7 +68,7 @@ var (
 	}
 	utxoTransfer = types.Tx{
 		ID:   "zpub6ruK9k6YGm8BRHWvTiQcrEPnFkuRDJhR7mPYzV2LDvjpLa5CuGgrhCYVZjMGcLcFqv9b2WvsFtY2Gb3xq8NVq8qhk9veozrA2W9QaWtihrC",
-		Coin: coin.BTC,
+		Coin: coin.BITCOIN,
 		Inputs: []types.TxOutput{
 			{
 				Address: "bc1qhn03cww757mnnlpkdvvfkaydxqygm86nvkm92h",
@@ -126,18 +126,18 @@ func Test_containsAddress(t *testing.T) {
 }
 
 func Test_findTransactionsByAddress(t *testing.T) {
-	res := findTransactionsByAddress([]types.Tx{nativeTokenTransfer, tokenTransfer}, "tbnb1ttyn4csghfgyxreu7lmdu3lcplhqhxtzced45a")
+	res := findTransactionsByAddress(types.Txs{nativeTokenTransfer, tokenTransfer}, "tbnb1ttyn4csghfgyxreu7lmdu3lcplhqhxtzced45a")
 	sort.Slice(res, func(i, j int) bool {
 		return res[i].ID < res[j].ID
 	})
-	assert.Equal(t, []types.Tx{nativeTokenTransfer}, res)
+	assert.Equal(t, types.Txs{nativeTokenTransfer}, res)
 
-	resFail := findTransactionsByAddress([]types.Tx{nativeTokenTransfer, tokenTransfer}, "tbnb1ttyn4csghfgyxreu7lmdu3lcplhqhxtzced")
-	assert.Equal(t, []types.Tx{}, resFail)
+	resFail := findTransactionsByAddress(types.Txs{nativeTokenTransfer, tokenTransfer}, "tbnb1ttyn4csghfgyxreu7lmdu3lcplhqhxtzced")
+	assert.Equal(t, types.Txs{}, resFail)
 }
 
 func Test_buildNotificationsByAddress(t *testing.T) {
-	notifications := buildNotificationsByAddress("tbnb1ttyn4csghfgyxreu7lmdu3lcplhqhxtzced45a", []types.Tx{nativeTokenTransfer, tokenTransfer})
+	notifications := buildNotificationsByAddress("tbnb1ttyn4csghfgyxreu7lmdu3lcplhqhxtzced45a", types.Txs{nativeTokenTransfer, tokenTransfer})
 	sort.Slice(notifications, func(i, j int) bool {
 		return notifications[i].Action < notifications[j].Action
 	})

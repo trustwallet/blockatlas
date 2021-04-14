@@ -8,7 +8,7 @@ import (
 	"github.com/trustwallet/golibs/types"
 )
 
-func (p *Platform) GetTxsByAddress(address string) (types.TxPage, error) {
+func (p *Platform) GetTxsByAddress(address string) (types.Txs, error) {
 	srcTxs, err := p.client.GetTxsOfAddress(address)
 	if err != nil {
 		return nil, err
@@ -25,7 +25,7 @@ func NormalizeTx(srcTx *Tx) types.Tx {
 	}
 	return types.Tx{
 		ID:    srcTx.Hash,
-		Coin:  coin.NIM,
+		Coin:  coin.NIMIQ,
 		Date:  date,
 		From:  srcTx.FromAddress,
 		To:    srcTx.ToAddress,
@@ -33,21 +33,21 @@ func NormalizeTx(srcTx *Tx) types.Tx {
 		Block: srcTx.BlockNumber,
 		Meta: types.Transfer{
 			Value:    srcTx.Value,
-			Symbol:   coin.Coins[coin.NIM].Symbol,
-			Decimals: coin.Coins[coin.NIM].Decimals,
+			Symbol:   coin.Nimiq().Symbol,
+			Decimals: coin.Nimiq().Decimals,
 		},
 	}
 }
 
 // NormalizeTxs converts multiple Nimiq transactions
-func NormalizeTxs(srcTxs []Tx) []types.Tx {
+func NormalizeTxs(srcTxs []Tx) types.Txs {
 	sort.SliceStable(srcTxs, func(i, j int) bool {
 		return srcTxs[i].BlockNumber > srcTxs[j].BlockNumber
 	})
 	if len(srcTxs) > types.TxPerPage {
 		srcTxs = srcTxs[:types.TxPerPage]
 	}
-	txs := make([]types.Tx, len(srcTxs))
+	txs := make(types.Txs, len(srcTxs))
 	for i, srcTx := range srcTxs {
 		txs[i] = NormalizeTx(&srcTx)
 	}

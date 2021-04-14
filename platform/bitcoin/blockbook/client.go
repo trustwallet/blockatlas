@@ -1,6 +1,7 @@
 package blockbook
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"net/url"
@@ -15,11 +16,19 @@ type Client struct {
 	client.Request
 }
 
+type ClientError struct {
+	Err string `json:"error"`
+}
+
+func (c *ClientError) Error() string {
+	return c.Err
+}
+
 // Block
 
 func (c *Client) GetCurrentBlockNumber() (int64, error) {
 	var nodeInfo NodeInfo
-	err := c.Get(&nodeInfo, "api", nil)
+	err := c.Get(&nodeInfo, "api/v2", nil)
 	if err != nil {
 		return 0, err
 	}
@@ -46,6 +55,14 @@ func (c *Client) GetAllTransactionsByBlockNumber(num int64) ([]Transaction, erro
 	page := int64(1)
 	block, err := c.GetTransactionsByBlockNumber(num, page)
 	if err != nil {
+		httpError, ok := err.(*client.HttpError)
+		if ok {
+			var clientError ClientError
+			err2 := json.Unmarshal(httpError.Body, &clientError)
+			if err2 == nil {
+				return nil, &clientError
+			}
+		}
 		return nil, err
 	}
 	txPages := c.getAllBlockPages(block.TotalPages, num)

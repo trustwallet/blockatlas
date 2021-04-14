@@ -4,6 +4,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/trustwallet/blockatlas/platform/zilliqa/viewblock"
 	"github.com/trustwallet/golibs/coin"
 	"github.com/trustwallet/golibs/mock"
 	"github.com/trustwallet/golibs/types"
@@ -26,7 +27,7 @@ func TestNormalizeTx(t *testing.T) {
 			},
 			wantTx: types.Tx{
 				ID:       "0xd44413c79e7518152f3b05ef1edff8ef59afd06119b16d09c8bc72e94fed7843",
-				Coin:     coin.ZIL,
+				Coin:     coin.ZILLIQA,
 				From:     "0x88af5ba10796d9091d6893eed4db23ef0bbbca37",
 				To:       "0x7fccacf066a5f26ee3affc2ed1fa9810deaa632c",
 				Fee:      "1000000000",
@@ -45,7 +46,7 @@ func TestNormalizeTx(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			var srcTx Tx
+			var srcTx viewblock.Tx
 			_ = mock.JsonModelFromFilePath("mocks/"+tt.args.filename, &srcTx)
 			gotTx := Normalize(&srcTx)
 			if !reflect.DeepEqual(gotTx, tt.wantTx) {

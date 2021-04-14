@@ -32,14 +32,13 @@ type Configuration struct {
 	} `mapstructure:"postgres"`
 	Ethereum struct {
 		API            string `mapstructure:"api"`
-		BlockbookAPI   string `mapstructure:"blockbook_api"`
 		CollectionsAPI string `mapstructure:"collections_api"`
 		CollectionsKey string `mapstructure:"collections_api_key"`
-		RPC            string `mapstructure:"rpc"`
 	} `mapstructure:"ethereum"`
 	Binance struct {
-		API string `mapstructure:"api"`
-		Key string `mapstructure:"key"`
+		API        string `mapstructure:"api"`
+		Key        string `mapstructure:"key"`
+		StakingAPI string `mapstructure:"staking_api"`
 	} `mapstructure:"binance"`
 	Ripple struct {
 		API string `mapstructure:"api"`
@@ -69,14 +68,8 @@ type Configuration struct {
 	} `mapstructure:"classic"`
 	Smartchain struct {
 		API            string `mapstructure:"api"`
-		RPC            string `mapstructure:"rpc"`
 		CollectionsAPI string `mapstructure:"collections_api"`
 	} `mapstructure:"smartchain"`
-	BSC struct {
-		API            string `mapstructure:"api"`
-		RPC            string `mapstructure:"rpc"`
-		CollectionsAPI string `mapstructure:"collections_api"`
-	} `mapstructure:"bsc"`
 	Poa struct {
 		API string `mapstructure:"api"`
 		RPC string `mapstructure:"rpc"`
@@ -100,15 +93,15 @@ type Configuration struct {
 		API string `mapstructure:"api"`
 	} `mapstructure:"icon"`
 	Tron struct {
-		API      string `mapstructure:"api"`
-		Grid     string `mapstructure:"grid"`
-		Explorer string `mapstructure:"explorer"`
+		API string `mapstructure:"api"`
+		Key string `mapstructure:"key"`
 	} `mapstructure:"tron"`
 	Vechain struct {
 		API string `mapstructure:"api"`
 	} `mapstructure:"vechain"`
 	Theta struct {
 		API string `mapstructure:"api"`
+		Key string `mapstructure:"key"`
 	} `mapstructure:"theta"`
 	Cosmos struct {
 		API string `mapstructure:"api"`
@@ -213,9 +206,13 @@ type Configuration struct {
 	Sentry struct {
 		DSN string `mapstructure:"dsn"`
 	} `mapstructure:"sentry"`
+	Metrics struct {
+		Path string `mapstructure:"path"`
+	} `mapstructure:"metrics"`
 	Consumer struct {
-		Service string `mapstructure:"service"`
-		Workers int    `mapstructure:"workers"`
+		Service  string `mapstructure:"service"`
+		Prefetch int    `mapstructure:"prefetch"`
+		Workers  int    `mapstructure:"workers"`
 	} `mapstructure:"consumer"`
 }
 

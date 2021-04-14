@@ -20,14 +20,14 @@ const (
 	actionTransferPubkey = "trnsfiopubky"
 )
 
-func (p *Platform) GetTxsByAddress(address string) (page types.TxPage, err error) {
+func (p *Platform) GetTxsByAddress(address string) (page types.Txs, err error) {
 	// take actor from address
 	account := actorFromPublicKeyOrActor(address)
 	actions, err := p.client.getTransactions(account)
 	if err != nil {
 		return nil, err
 	}
-	txs := make([]types.Tx, 0)
+	txs := make(types.Txs, 0)
 	for _, a := range actions {
 		tx, err := p.Normalize(&a, account)
 		if err != nil {
@@ -36,9 +36,8 @@ func (p *Platform) GetTxsByAddress(address string) (page types.TxPage, err error
 		txs = append(txs, tx)
 	}
 	txs = unique(txs)
-	txPage := types.TxPage(txs)
-	sort.Sort(txPage)
-	return txPage, nil
+	sort.Sort(txs)
+	return txs, nil
 }
 
 func (p *Platform) Normalize(action *Action, account string) (types.Tx, error) {
@@ -110,9 +109,9 @@ func (p *Platform) Normalize(action *Action, account string) (types.Tx, error) {
 	return types.Tx{}, errors.New("Unknown action")
 }
 
-func unique(txs []types.Tx) []types.Tx {
+func unique(txs types.Txs) types.Txs {
 	set := make(map[string]struct{})
-	var result []types.Tx
+	var result types.Txs
 	for _, tx := range txs {
 		id := fmt.Sprintf("%s-%d", tx.ID, tx.Sequence)
 		if _, ok := set[id]; ok {

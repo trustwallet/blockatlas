@@ -25,11 +25,26 @@ import (
 func GetTokensByAddress(c *gin.Context, tokenAPI blockatlas.TokensAPI) {
 	address := c.Param("address")
 	if address == "" {
-		c.JSON(http.StatusOK, types.TxPage{})
+		c.JSON(http.StatusOK, []types.Token{})
 		return
 	}
 
 	result, err := tokenAPI.GetTokenListByAddress(address)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+	c.JSON(http.StatusOK, result)
+}
+
+func GetTokensIdsByAddress(c *gin.Context, tokenAPI blockatlas.TokensAPI) {
+	address := c.Param("address")
+	if address == "" {
+		c.JSON(http.StatusOK, []string{})
+		return
+	}
+
+	result, err := tokenAPI.GetTokenListIdsByAddress(address)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, errorResponse(err))
 		return

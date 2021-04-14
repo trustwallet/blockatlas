@@ -20,9 +20,12 @@ var (
 	claimRewardSrc1, _   = mock.JsonStringFromFilePath("mocks/" + "claim_1.json")
 	claimRewardSrc2, _   = mock.JsonStringFromFilePath("mocks/" + "claim_2.json")
 
+	atom = coin.Cosmos()
+	kava = coin.Kava()
+
 	transferDst = types.Tx{
 		ID:     "E19B011D20D862DA0BEA7F24E3BC6DFF666EE6E044FCD9BD95B073478086DBB6",
-		Coin:   coin.ATOM,
+		Coin:   atom.ID,
 		From:   "cosmos1rw62phusuv9vzraezr55k0vsqssvz6ed52zyrl",
 		To:     "cosmos1nynns8ex9fq6sjjfj8k79ymkdz4sqth06xexae",
 		Fee:    "1",
@@ -39,7 +42,7 @@ var (
 
 	transferDstKava = types.Tx{
 		ID:     "E19B011D20D862DA0BEA7F24E3BC6DFF666EE6E044FCD9BD95B073478086DBB6",
-		Coin:   coin.KAVA,
+		Coin:   kava.ID,
 		From:   "kava17wcggpjx007uc09s8y4hwrj8f228mlwe0n0upn",
 		To:     "kava1z89utvygweg5l56fsk8ak7t6hh88fd0agl98n0",
 		Fee:    "1",
@@ -49,14 +52,14 @@ var (
 		Type:   types.TxTransfer,
 		Meta: types.Transfer{
 			Value:    "2271999999",
-			Symbol:   coin.Kava().Symbol,
+			Symbol:   kava.Symbol,
 			Decimals: 6,
 		},
 	}
 
 	delegateDst = types.Tx{
 		ID:        "11078091D1D5BD84F4275B6CEE02170428944DB0E8EEC37E980551435F6D04C7",
-		Coin:      coin.ATOM,
+		Coin:      atom.ID,
 		From:      "cosmos1237l0vauhw78qtwq045jd24ay4urpec6r3xfn3",
 		To:        "cosmosvaloper12w6tynmjzq4l8zdla3v4x0jt8lt4rcz5gk7zg2",
 		Fee:       "5000",
@@ -66,19 +69,19 @@ var (
 		Type:      types.TxAnyAction,
 		Direction: types.DirectionOutgoing,
 		Meta: types.AnyAction{
-			Coin:     coin.ATOM,
+			Coin:     atom.ID,
 			Title:    types.AnyActionDelegation,
 			Key:      types.KeyStakeDelegate,
-			Name:     coin.Cosmos().Name,
-			Symbol:   coin.Coins[coin.ATOM].Symbol,
-			Decimals: coin.Coins[coin.ATOM].Decimals,
+			Name:     atom.Name,
+			Symbol:   atom.Symbol,
+			Decimals: atom.Decimals,
 			Value:    "49920",
 		},
 	}
 
 	unDelegateDst = types.Tx{
 		ID:        "A1EC36741FEF681F4A77B8F6032AD081100EE5ECB4CC76AEAC2174BC6B871CFE",
-		Coin:      coin.ATOM,
+		Coin:      atom.ID,
 		From:      "cosmos137rrp4p8n0nqcft0mwc62tdnyhhzf80knv5t94",
 		To:        "cosmosvaloper1te8nxpc2myjfrhaty0dnzdhs5ahdh5agzuym9v",
 		Fee:       "5000",
@@ -88,19 +91,19 @@ var (
 		Type:      types.TxAnyAction,
 		Direction: types.DirectionIncoming,
 		Meta: types.AnyAction{
-			Coin:     coin.ATOM,
+			Coin:     atom.ID,
 			Title:    types.AnyActionUndelegation,
 			Key:      types.KeyStakeDelegate,
-			Name:     coin.Cosmos().Name,
-			Symbol:   coin.Coins[coin.ATOM].Symbol,
-			Decimals: coin.Coins[coin.ATOM].Decimals,
+			Name:     atom.Name,
+			Symbol:   atom.Symbol,
+			Decimals: atom.Decimals,
 			Value:    "5100000000",
 		},
 	}
 
 	claimRewardDst2 = types.Tx{
 		ID:        "082BA88EC055A7C343A353297EAC104CE87C659E0DDD84621C9AC3C284232800",
-		Coin:      coin.ATOM,
+		Coin:      atom.ID,
 		From:      "cosmos1y6yvdel7zys8x60gz9067fjpcpygsn62ae9x46",
 		To:        "cosmosvaloper12w6tynmjzq4l8zdla3v4x0jt8lt4rcz5gk7zg2",
 		Fee:       "0",
@@ -111,19 +114,19 @@ var (
 		Direction: types.DirectionIncoming,
 		Memo:      "复投",
 		Meta: types.AnyAction{
-			Coin:     coin.ATOM,
+			Coin:     atom.ID,
 			Title:    types.AnyActionClaimRewards,
 			Key:      types.KeyStakeClaimRewards,
-			Name:     coin.Cosmos().Name,
-			Symbol:   coin.Coins[coin.ATOM].Symbol,
-			Decimals: coin.Coins[coin.ATOM].Decimals,
+			Name:     atom.Name,
+			Symbol:   atom.Symbol,
+			Decimals: atom.Decimals,
 			Value:    "2692701",
 		},
 	}
 
 	claimRewardDst1 = types.Tx{
 		ID:        "C382DCFDC30E2DA294421DAEAD5862F118592A7B000EE91F6BEF8452A1F525D7",
-		Coin:      coin.ATOM,
+		Coin:      atom.ID,
 		From:      "cosmos1cxehfdhfm96ljpktdxsj0k6xp9gtuheghwgqug",
 		To:        "cosmosvaloper1ptyzewnns2kn37ewtmv6ppsvhdnmeapvtfc9y5",
 		Fee:       "1000",
@@ -134,19 +137,19 @@ var (
 		Direction: types.DirectionIncoming,
 		Memo:      "",
 		Meta: types.AnyAction{
-			Coin:     coin.ATOM,
+			Coin:     atom.ID,
 			Title:    types.AnyActionClaimRewards,
 			Key:      types.KeyStakeClaimRewards,
-			Name:     coin.Cosmos().Name,
-			Symbol:   coin.Coins[coin.ATOM].Symbol,
-			Decimals: coin.Coins[coin.ATOM].Decimals,
+			Name:     atom.Name,
+			Symbol:   atom.Symbol,
+			Decimals: atom.Decimals,
 			Value:    "86278",
 		},
 	}
 
 	failedTransferDst = types.Tx{
 		ID:     "5E78C65A8C1A6C8239EBBBBF2E42020E6ADBA8037EDEA83BF88E1A9159CF13B8",
-		Coin:   coin.ATOM,
+		Coin:   atom.ID,
 		From:   "cosmos1shpfyt7psrff2ux7nznxvj6f7gq59fcqng5mku",
 		To:     "cosmos1za4pu5gxm80fg6sx0956f88l2sx7jfg2vf7nlc",
 		Fee:    "2000",
@@ -172,7 +175,7 @@ type test struct {
 
 func TestNormalize(t *testing.T) {
 
-	cosmos := Platform{CoinIndex: coin.ATOM}
+	cosmos := Platform{CoinIndex: atom.ID}
 	kava := Platform{CoinIndex: coin.KAVA}
 
 	tests := []test{

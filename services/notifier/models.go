@@ -27,9 +27,9 @@ func ToUniqueAddresses(addresses []string) []string {
 	return list
 }
 
-func toUniqueTransactions(txs []types.Tx) []types.Tx {
+func toUniqueTransactions(txs types.Txs) types.Txs {
 	keys := make(map[string]bool)
-	var list []types.Tx
+	var list types.Txs
 	for _, entry := range txs {
 		key := entry.ID + string(entry.Direction)
 		if _, value := keys[key]; !value {
@@ -40,8 +40,8 @@ func toUniqueTransactions(txs []types.Tx) []types.Tx {
 	return list
 }
 
-func findTransactionsByAddress(txs types.Txs, address string) []types.Tx {
-	result := make([]types.Tx, 0)
+func findTransactionsByAddress(txs types.Txs, address string) types.Txs {
+	result := make(types.Txs, 0)
 	for _, tx := range txs {
 		if containsAddress(tx, address) {
 			result = append(result, tx)

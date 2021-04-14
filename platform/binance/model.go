@@ -112,10 +112,10 @@ func normalizeBlock(response TransactionsInBlockResponse) types.Block {
 	return result
 }
 
-func normalizeTransactions(txs []Tx) []types.Tx {
-	totalTxs := make([]types.Tx, 0, len(txs))
+func normalizeTransactions(txs []Tx) types.Txs {
+	totalTxs := make(types.Txs, 0, len(txs))
 	for _, t := range txs {
-		var txs []types.Tx
+		var txs types.Txs
 		switch t.TxType {
 		case CancelOrder, NewOrder:
 			//txs = append(txs, normalizeOrderTransaction(t))
@@ -159,8 +159,8 @@ func normalizeTransferTransaction(t Tx) types.Tx {
 	return tx
 }
 
-func normalizeMultiTransferTransaction(t Tx) []types.Tx {
-	txs := make([]types.Tx, 0, len(t.SubTransactions))
+func normalizeMultiTransferTransaction(t Tx) types.Txs {
+	txs := make(types.Txs, 0, len(t.SubTransactions))
 	for _, subTx := range t.SubTransactions {
 		tx := types.Tx{
 			ID:       subTx.TxHash,
@@ -215,14 +215,12 @@ func normalizeBaseOfTransaction(t Tx) types.Tx {
 	}
 }
 
-func normalizeTokens(srcBalance []TokenBalance, tokens Tokens) []string {
-	assetIds := make([]string, 0)
+func normalizeTokens(srcBalance []TokenBalance, tokens Tokens) []types.Token {
+	assetIds := make([]types.Token, 0)
 	for _, srcToken := range srcBalance {
-		token, ok := normalizeToken(srcToken, tokens)
-		if !ok {
-			continue
+		if token, ok := normalizeToken(srcToken, tokens); ok {
+			assetIds = append(assetIds, token)
 		}
-		assetIds = append(assetIds, token.AssetId())
 	}
 	return assetIds
 }
@@ -249,20 +247,6 @@ func normalizeToken(srcToken TokenBalance, tokens Tokens) (types.Token, bool) {
 
 	return result, true
 }
-
-//func getTransactionData(rawOrderData string) (TransactionData, error) {
-//	var result TransactionData
-//	err := json.Unmarshal([]byte(rawOrderData), &result)
-//	return result, err
-//}
-//
-//func getTokenIDsFromPair(pair string) (string, string) {
-//	result := strings.Split(pair, "_")
-//	if len(result) == 1 || len(result) == 0 {
-//		return pair, pair
-//	}
-//	return result[0], result[1]
-//}
 
 func getTokenSymbolFromID(tokenID string) string {
 	s := strings.Split(tokenID, "-")

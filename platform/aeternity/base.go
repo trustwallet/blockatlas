@@ -17,5 +17,5 @@ func Init(api string) *Platform {
 }
 
 func (p *Platform) Coin() coin.Coin {
-	return coin.Coins[coin.AE]
+	return coin.Aeternity()
 }
