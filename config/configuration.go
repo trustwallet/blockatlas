@@ -203,6 +203,9 @@ type Configuration struct {
 		API      string `mapstructure:"api"`
 		Explorer string `mapstructure:"explorer"`
 	} `mapstructure:"filecoin"`
+	Oasis struct {
+		API string `mapstructure:"api"`
+	} `mapstructure:"oasis"`
 	Sentry struct {
 		DSN string `mapstructure:"dsn"`
 	} `mapstructure:"sentry"`

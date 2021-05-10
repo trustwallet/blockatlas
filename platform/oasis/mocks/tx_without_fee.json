@@ -1,0 +1,11 @@
+{
+  "tx_hash": "a49afb8055ef3bbb4fca1e162886ab32b71c5a0d49555793342971237b031972",
+  "from": "oasis1qpcgnf84hnvvfvzup542rhc8kjyvqf4aqqlj5kqh",
+  "to": "oasis1qz9re9hc0k9qxrhvww7x9zrfv8x8jpr4kcr2twr2",
+  "amount": "170000000000",
+  "fee": "0",
+  "date": 1610472221000,
+  "block": 1502238,
+  "success": true,
+  "sequence": 5
+}

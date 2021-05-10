@@ -2,6 +2,7 @@ package platform
 
 import (
 	"github.com/trustwallet/blockatlas/config"
+	"github.com/trustwallet/blockatlas/platform/oasis"
 
 	"github.com/trustwallet/blockatlas/platform/filecoin"
 	"github.com/trustwallet/blockatlas/platform/kava"
@@ -97,6 +98,7 @@ func getAllHandlers() blockatlas.Platforms {
 		coin.Near().Handle:         near.Init(config.Default.Near.API),
 		coin.Elrond().Handle:       elrond.Init(coin.ELROND, config.Default.Elrond.API),
 		coin.Filecoin().Handle:     filecoin.Init(config.Default.Filecoin.API, config.Default.Filecoin.Explorer),
+		coin.Oasis().Handle:        oasis.Init(config.Default.Oasis.API),
 	}
 }
 

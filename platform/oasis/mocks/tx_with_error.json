@@ -1,0 +1,12 @@
+{
+  "tx_hash": "6df10a2d114739ee6007fbd2ae0905b2ae81be6fc1d8ff6c5a9f404923263b84",
+  "from": "oasis1qrmp3lmcuvxhr9dq90mrrxe2yxzwfqw9xcvqujpu",
+  "to": "oasis1qqnv3peudzvekhulf8v3ht29z4cthkhy7gkxmph5",
+  "amount": "10",
+  "fee": "10",
+  "date": 1605774037000,
+  "block": 712027,
+  "success": false,
+  "error_message": "insufficient balance",
+  "sequence": 1
+}
