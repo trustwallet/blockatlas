@@ -10,6 +10,10 @@ type BlockRequest struct {
 	BlockIdentifier int64 `json:"block_identifier"`
 }
 
+type ValidatorsRequest struct {
+	Height int64 `json:"height"`
+}
+
 type Transaction struct {
 	Hash     string `json:"tx_hash"`
 	From     string `json:"from"`
@@ -21,6 +25,11 @@ type Transaction struct {
 	Success  bool   `json:"success"`
 	ErrorMsg string `json:"error_message,omitempty"`
 	Sequence uint64 `json:"sequence"`
+}
+
+type Validator struct {
+	ID          string `json:"id"`
+	VotingPower int64  `json:"voting_power"`
 }
 
 type TransactionsByAddressRequest struct {

@@ -40,3 +40,14 @@ func (c *Client) GetTrxOfAddress(address string) (*[]Transaction, error) {
 
 	return &txs, nil
 }
+
+func (c *Client) GetValidators(num int64) (*[]Validator, error) {
+	var validators []Validator
+
+	err := c.Post(&validators, "/validators", ValidatorsRequest{Height: num})
+	if err != nil {
+		return nil, err
+	}
+
+	return &validators, nil
+}
