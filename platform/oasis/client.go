@@ -41,13 +41,35 @@ func (c *Client) GetTrxOfAddress(address string) (*[]Transaction, error) {
 	return &txs, nil
 }
 
-func (c *Client) GetValidators(num int64) (*[]Validator, error) {
+func (c *Client) GetValidators() (*[]Validator, error) {
 	var validators []Validator
 
-	err := c.Post(&validators, "/validators", ValidatorsRequest{Height: num})
+	err := c.Post(&validators, "/validators", nil)
 	if err != nil {
 		return nil, err
 	}
 
 	return &validators, nil
+}
+
+func (c *Client) GetDelegationsFor( address string) (*DelegationsFor, error) {
+	var data DelegationsFor
+
+	err := c.Post(&data, "/delegations", DelegationsForRequest{Owner: address})
+	if err != nil {
+		return nil, err
+	}
+
+	return &data, nil
+}
+
+func (c *Client) GetUnbondingDelegationsFor( address string) (*DebondingDelegationsFor, error) {
+	var data DebondingDelegationsFor
+
+	err := c.Post(&data, "/delegations/debonding", DebondingDelegationsForRequest{Owner: address})
+	if err != nil {
+		return nil, err
+	}
+
+	return &data, nil
 }

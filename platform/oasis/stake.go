@@ -3,6 +3,7 @@ package oasis
 import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/services/assets"
+	"time"
 )
 
 // FIXME We have to check these values are correct
@@ -26,8 +27,7 @@ func (p *Platform) GetActiveValidators() (blockatlas.StakeValidators, error) {
 func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
 	results := make(blockatlas.ValidatorPage, 0)
 
-	// FIXME  Get the correct height to make the GetValidators request
-	validators, err := p.client.GetValidators(1000)
+	validators, err := p.client.GetValidators()
 	if err != nil {
 		return nil, err
 	}
@@ -53,6 +53,45 @@ func (p *Platform) GetDetails() blockatlas.StakingDetails {
 	}
 }
 
+func (p *Platform) UndelegatedBalance(address string) (string, error) {
+	var amount int64 = 0;
+	delegations, err := p.client.GetDelegationsFor(address)
+	if err != nil {
+		return "0", err
+	}
+
+	for _, v := range delegations.List {
+		amount += v.Shares.Int64()
+	}
+
+	return string(amount), nil
+}
+
+func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, error) {
+	results := make(blockatlas.DelegationsPage, 0)
+	delegations, err := p.client.GetDelegationsFor(address)
+	if err != nil {
+		return nil, err
+	}
+	unbondingDelegations, err := p.client.GetUnbondingDelegationsFor(address)
+	if err != nil {
+		return nil, err
+	}
+
+	if delegations.List == nil && unbondingDelegations.List == nil {
+		return results, nil
+	}
+	validators, err := assets.GetValidatorsMap(p)
+	if err != nil {
+		return nil, err
+	}
+
+	results = append(results, NormalizeDelegations(delegations.List, validators)...)
+	results = append(results, NormalizeUnbondingDelegations(unbondingDelegations.List, validators)...)
+
+	return results, nil
+}
+
 func normalizeValidator(v Validator) (validator blockatlas.Validator) {
 	reward := 123545.2 // FIXME Get the correct reward value
 	return blockatlas.Validator{
@@ -65,4 +104,51 @@ func normalizeValidator(v Validator) (validator blockatlas.Validator) {
 			Type:          blockatlas.DelegationTypeDelegate,
 		},
 	}
+}
+
+func NormalizeDelegations(delegations map[string]Delegation, validators blockatlas.ValidatorMap) []blockatlas.Delegation {
+	results := make([]blockatlas.Delegation, 0)
+	for _, v := range delegations {
+		validator, ok := validators[v.Delegation.ValidatorAddress]
+		if !ok {
+			log.WithFields(
+				log.Fields{"address": v.Delegation.ValidatorAddress, "platform": "cosmos", "delegation": v.Delegation.DelegatorAddress},
+			).Warn("Validator not found")
+			validator = getUnknownValidator(v.Delegation.ValidatorAddress)
+
+		}
+		delegation := blockatlas.Delegation{
+			Delegator: validator,
+			Value:     v.Delegation.Value(),
+			Status:    blockatlas.DelegationStatusActive,
+		}
+		results = append(results, delegation)
+	}
+	return results
+}
+
+func NormalizeUnbondingDelegations(delegations map[string][]DebondingDelegation, validators blockatlas.ValidatorMap) []blockatlas.Delegation {
+	results := make([]blockatlas.Delegation, 0)
+	for _, v := range delegations {
+		for _, entry := range v.Entries {
+			validator, ok := validators[v.ValidatorAddress]
+			if !ok {
+				log.WithFields(
+					log.Fields{"address": v.ValidatorAddress, "platform": "cosmos", "delegation": v.DelegatorAddress},
+				).Warn("Validator not found")
+				validator = getUnknownValidator(v.ValidatorAddress)
+			}
+			t, _ := time.Parse(time.RFC3339, entry.CompletionTime)
+			delegation := blockatlas.Delegation{
+				Delegator: validator,
+				Value:     entry.Balance,
+				Status:    blockatlas.DelegationStatusPending,
+				Metadata: blockatlas.DelegationMetaDataPending{
+					AvailableDate: uint(t.Unix()),
+				},
+			}
+			results = append(results, delegation)
+		}
+	}
+	return results
 }

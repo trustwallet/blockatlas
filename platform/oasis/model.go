@@ -1,5 +1,7 @@
 package oasis
 
+import "math/big"
+
 type Block struct {
 	Height    int64  `json:"height"`
 	Hash      string `json:"hash"`
@@ -10,8 +12,11 @@ type BlockRequest struct {
 	BlockIdentifier int64 `json:"block_identifier"`
 }
 
-type ValidatorsRequest struct {
-	Height int64 `json:"height"`
+type DelegationsForRequest struct {
+	Owner string `json:"owner"`
+}
+type DebondingDelegationsForRequest struct {
+	Owner string `json:"owner"`
 }
 
 type Transaction struct {
@@ -30,6 +35,25 @@ type Transaction struct {
 type Validator struct {
 	ID          string `json:"id"`
 	VotingPower int64  `json:"voting_power"`
+}
+
+type DelegationsFor struct {
+	List map[string]Delegation `json:"delegations"`
+}
+
+type DebondingDelegationsFor struct {
+	List map[string][]DebondingDelegation `json:"debonding_delegations"`
+}
+
+// Delegation is a delegation descriptor.
+type Delegation struct {
+	Shares big.Int `json:"shares"`
+}
+
+// DebondingDelegation is a debonding delegation descriptor.
+type DebondingDelegation struct {
+	Shares        big.Int `json:"shares"`
+	DebondEndTime beacon.EpochTime  `json:"debond_end"`
 }
 
 type TransactionsByAddressRequest struct {
