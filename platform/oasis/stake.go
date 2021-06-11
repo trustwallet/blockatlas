@@ -1,6 +1,7 @@
 package oasis
 
 import (
+	log "github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/services/assets"
 	"time"
@@ -108,18 +109,18 @@ func normalizeValidator(v Validator) (validator blockatlas.Validator) {
 
 func NormalizeDelegations(delegations map[string]Delegation, validators blockatlas.ValidatorMap) []blockatlas.Delegation {
 	results := make([]blockatlas.Delegation, 0)
-	for _, v := range delegations {
-		validator, ok := validators[v.Delegation.ValidatorAddress]
+	for k, v := range delegations {
+		validator, ok := validators[k]
 		if !ok {
 			log.WithFields(
-				log.Fields{"address": v.Delegation.ValidatorAddress, "platform": "cosmos", "delegation": v.Delegation.DelegatorAddress},
+				log.Fields{"address": k, "platform": "cosmos", "delegation": k}, // FIXME check where to find the required addresses (ValidatorAddress and DelegationAddress)
 			).Warn("Validator not found")
-			validator = getUnknownValidator(v.Delegation.ValidatorAddress)
+			validator = getUnknownValidator(k)
 
 		}
 		delegation := blockatlas.Delegation{
 			Delegator: validator,
-			Value:     v.Delegation.Value(),
+			Value:     v.Shares.String(),
 			Status:    blockatlas.DelegationStatusActive,
 		}
 		results = append(results, delegation)
@@ -129,19 +130,19 @@ func NormalizeDelegations(delegations map[string]Delegation, validators blockatl
 
 func NormalizeUnbondingDelegations(delegations map[string][]DebondingDelegation, validators blockatlas.ValidatorMap) []blockatlas.Delegation {
 	results := make([]blockatlas.Delegation, 0)
-	for _, v := range delegations {
-		for _, entry := range v.Entries {
-			validator, ok := validators[v.ValidatorAddress]
+	for k, v := range delegations {
+		for _, entry := range v {
+			validator, ok := validators[k]
 			if !ok {
 				log.WithFields(
-					log.Fields{"address": v.ValidatorAddress, "platform": "cosmos", "delegation": v.DelegatorAddress},
+					log.Fields{"address": k, "platform": "cosmos", "delegation": k}, // FIXME check where to find the required addresses (ValidatorAddress and DelegationAddress)
 				).Warn("Validator not found")
-				validator = getUnknownValidator(v.ValidatorAddress)
+				validator = getUnknownValidator(k)
 			}
-			t, _ := time.Parse(time.RFC3339, entry.CompletionTime)
+			t, _ := time.Parse(time.RFC3339, string(entry.DebondEndTime)) // FIXME check if we convert the date from epoch to RFC3339 correctly
 			delegation := blockatlas.Delegation{
 				Delegator: validator,
-				Value:     entry.Balance,
+				Value:     entry.Shares.String(),
 				Status:    blockatlas.DelegationStatusPending,
 				Metadata: blockatlas.DelegationMetaDataPending{
 					AvailableDate: uint(t.Unix()),
@@ -151,4 +152,23 @@ func NormalizeUnbondingDelegations(delegations map[string][]DebondingDelegation,
 		}
 	}
 	return results
+}
+
+func getUnknownValidator(address string) blockatlas.StakeValidator {
+	return blockatlas.StakeValidator{
+		ID:     address,
+		Status: false,
+		Info: blockatlas.StakeValidatorInfo{
+			Name:        "Decommissioned",
+			Description: "Decommissioned",
+		},
+		Details: blockatlas.StakingDetails{
+			Reward: blockatlas.StakingReward{
+				Annual: 0,
+			},
+			LockTime:      lockTime,
+			MinimumAmount: minimumAmount,
+			Type:          blockatlas.DelegationTypeDelegate,
+		},
+	}
 }

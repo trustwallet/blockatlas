@@ -53,7 +53,7 @@ type Delegation struct {
 // DebondingDelegation is a debonding delegation descriptor.
 type DebondingDelegation struct {
 	Shares        big.Int `json:"shares"`
-	DebondEndTime beacon.EpochTime  `json:"debond_end"`
+	DebondEndTime uint64  `json:"debond_end"`
 }
 
 type TransactionsByAddressRequest struct {
