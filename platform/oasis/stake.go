@@ -1,6 +1,7 @@
 package oasis
 
 import (
+	"fmt"
 	log "github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/services/assets"
@@ -55,7 +56,7 @@ func (p *Platform) GetDetails() blockatlas.StakingDetails {
 }
 
 func (p *Platform) UndelegatedBalance(address string) (string, error) {
-	var amount int64 = 0;
+	var amount int64 = 0
 	delegations, err := p.client.GetDelegationsFor(address)
 	if err != nil {
 		return "0", err
@@ -65,7 +66,7 @@ func (p *Platform) UndelegatedBalance(address string) (string, error) {
 		amount += v.Shares.Int64()
 	}
 
-	return string(amount), nil
+	return fmt.Sprintf("%d",amount), nil
 }
 
 func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, error) {
@@ -74,12 +75,12 @@ func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, e
 	if err != nil {
 		return nil, err
 	}
-	unbondingDelegations, err := p.client.GetUnbondingDelegationsFor(address)
+	debondingDelegations, err := p.client.GetUnbondingDelegationsFor(address)
 	if err != nil {
 		return nil, err
 	}
 
-	if delegations.List == nil && unbondingDelegations.List == nil {
+	if delegations.List == nil && debondingDelegations.List == nil {
 		return results, nil
 	}
 	validators, err := assets.GetValidatorsMap(p)
@@ -88,7 +89,7 @@ func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, e
 	}
 
 	results = append(results, NormalizeDelegations(delegations.List, validators)...)
-	results = append(results, NormalizeUnbondingDelegations(unbondingDelegations.List, validators)...)
+	results = append(results, NormalizeUnbondingDelegations(debondingDelegations.List, validators)...)
 
 	return results, nil
 }
@@ -139,7 +140,7 @@ func NormalizeUnbondingDelegations(delegations map[string][]DebondingDelegation,
 				).Warn("Validator not found")
 				validator = getUnknownValidator(k)
 			}
-			t, _ := time.Parse(time.RFC3339, string(entry.DebondEndTime)) // FIXME check if we convert the date from epoch to RFC3339 correctly
+			t, _ := time.Parse(time.RFC3339, fmt.Sprintf("%d",entry.DebondEndTime)) // FIXME check if we convert the date from epoch to RFC3339 correctly
 			delegation := blockatlas.Delegation{
 				Delegator: validator,
 				Value:     entry.Shares.String(),

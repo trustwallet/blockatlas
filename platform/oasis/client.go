@@ -52,7 +52,7 @@ func (c *Client) GetValidators() (*[]Validator, error) {
 	return &validators, nil
 }
 
-func (c *Client) GetDelegationsFor( address string) (*DelegationsFor, error) {
+func (c *Client) GetDelegationsFor(address string) (*DelegationsFor, error) {
 	var data DelegationsFor
 
 	err := c.Post(&data, "/delegations", DelegationsForRequest{Owner: address})
@@ -63,7 +63,7 @@ func (c *Client) GetDelegationsFor( address string) (*DelegationsFor, error) {
 	return &data, nil
 }
 
-func (c *Client) GetUnbondingDelegationsFor( address string) (*DebondingDelegationsFor, error) {
+func (c *Client) GetUnbondingDelegationsFor(address string) (*DebondingDelegationsFor, error) {
 	var data DebondingDelegationsFor
 
 	err := c.Post(&data, "/delegations/debonding", DebondingDelegationsForRequest{Owner: address})
