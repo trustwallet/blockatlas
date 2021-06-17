@@ -52,6 +52,17 @@ func (c *Client) GetValidators() (*[]Validator, error) {
 	return &validators, nil
 }
 
+func (c *Client) GetConsensusParams() (*ConsensusParams, error) {
+	var consensusParams ConsensusParams
+
+	err := c.Post(&consensusParams, "/consensus/params", nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return &consensusParams, nil
+}
+
 func (c *Client) GetDelegationsFor(address string) (*DelegationsFor, error) {
 	var data DelegationsFor
 

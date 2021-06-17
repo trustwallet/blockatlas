@@ -5,13 +5,9 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/services/assets"
+	"github.com/trustwallet/golibs/types"
+	"strconv"
 	"time"
-)
-
-// FIXME We have to check these values are correct
-const (
-	lockTime      = 1814400 // in seconds (21 days)
-	minimumAmount = "1"
 )
 
 func (p *Platform) GetActiveValidators() (blockatlas.StakeValidators, error) {
@@ -33,9 +29,13 @@ func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
 	if err != nil {
 		return nil, err
 	}
+	consensusParams, err := p.client.GetConsensusParams()
+	if err != nil {
+		return nil, err
+	}
 
 	for _, validator := range *validators {
-		results = append(results, normalizeValidator(validator))
+		results = append(results, normalizeValidator(validator, *consensusParams))
 	}
 
 	return results, nil
@@ -43,10 +43,17 @@ func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
 
 func (p *Platform) GetDetails() blockatlas.StakingDetails {
 	apr := blockatlas.DefaultAnnualReward
+	minimumAmount := types.Amount("-")
+	lockTime := 0
+
 	validators, err := p.GetValidators()
+	consensusParams, err := p.client.GetConsensusParams()
 	if err == nil {
 		apr = blockatlas.FindHightestAPR(validators)
+		minimumAmount = types.Amount(strconv.Itoa(int(consensusParams.MinDelegationAmount)))
+		lockTime = int(consensusParams.DebondingInterval)
 	}
+
 	return blockatlas.StakingDetails{
 		Reward:        blockatlas.StakingReward{Annual: apr},
 		MinimumAmount: minimumAmount,
@@ -66,7 +73,7 @@ func (p *Platform) UndelegatedBalance(address string) (string, error) {
 		amount += v.Shares.Int64()
 	}
 
-	return fmt.Sprintf("%d",amount), nil
+	return fmt.Sprintf("%d", amount), nil
 }
 
 func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, error) {
@@ -94,15 +101,15 @@ func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, e
 	return results, nil
 }
 
-func normalizeValidator(v Validator) (validator blockatlas.Validator) {
-	reward := 123545.2 // FIXME Get the correct reward value
+func normalizeValidator(v Validator, consensusParams ConsensusParams) (validator blockatlas.Validator) {
 	return blockatlas.Validator{
-		Status: true, // FIXME Check where to find the status
-		ID:     v.ID, // FIXME Check if the public address we rcv is the address we need to pass
+		Status: true,
+		ID:     v.ID,
+
 		Details: blockatlas.StakingDetails{
-			Reward:        blockatlas.StakingReward{Annual: reward},
-			MinimumAmount: minimumAmount,
-			LockTime:      lockTime,
+			Reward:        blockatlas.StakingReward{Annual: v.EffectiveAnnualReward},
+			MinimumAmount: types.Amount(strconv.Itoa(int(consensusParams.MinDelegationAmount))),
+			LockTime:      int(consensusParams.DebondingInterval),
 			Type:          blockatlas.DelegationTypeDelegate,
 		},
 	}
@@ -140,7 +147,7 @@ func NormalizeUnbondingDelegations(delegations map[string][]DebondingDelegation,
 				).Warn("Validator not found")
 				validator = getUnknownValidator(k)
 			}
-			t, _ := time.Parse(time.RFC3339, fmt.Sprintf("%d",entry.DebondEndTime)) // FIXME check if we convert the date from epoch to RFC3339 correctly
+			t, _ := time.Parse(time.RFC3339, fmt.Sprintf("%d", entry.DebondEndTime)) // FIXME check if we convert the date from epoch to RFC3339 correctly
 			delegation := blockatlas.Delegation{
 				Delegator: validator,
 				Value:     entry.Shares.String(),
@@ -167,8 +174,8 @@ func getUnknownValidator(address string) blockatlas.StakeValidator {
 			Reward: blockatlas.StakingReward{
 				Annual: 0,
 			},
-			LockTime:      lockTime,
-			MinimumAmount: minimumAmount,
+			LockTime:      0,                // FIXME
+			MinimumAmount: types.Amount(""), // FIXME
 			Type:          blockatlas.DelegationTypeDelegate,
 		},
 	}

@@ -35,6 +35,12 @@ type Transaction struct {
 type Validator struct {
 	ID          string `json:"id"`
 	VotingPower int64  `json:"voting_power"`
+	EffectiveAnnualReward float64 `json:"effective_annual_reward"`
+}
+
+type ConsensusParams struct {
+	DebondingInterval                 uint64                    `json:"debonding_interval"`
+	MinDelegationAmount               uint64                   `json:"min_delegation"`
 }
 
 type DelegationsFor struct {
