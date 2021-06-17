@@ -33,14 +33,23 @@ type Transaction struct {
 }
 
 type Validator struct {
-	ID          string `json:"id"`
-	VotingPower int64  `json:"voting_power"`
+	ID                    string  `json:"id"`
+	VotingPower           int64   `json:"voting_power"`
+	Name                  string  `json:"name"`
+	URL                   string  `json:"url"`
+	Email                 string  `json:"email"`
+	Keybase               string  `json:"keybase"`
+	Twitter               string  `json:"twitter"`
 	EffectiveAnnualReward float64 `json:"effective_annual_reward"`
 }
 
+type Validators struct {
+	Validators []Validator `json:"validators"`
+}
+
 type ConsensusParams struct {
-	DebondingInterval                 uint64                    `json:"debonding_interval"`
-	MinDelegationAmount               uint64                   `json:"min_delegation"`
+	DebondingInterval   uint64 `json:"debonding_interval"`
+	MinDelegationAmount string `json:"min_delegation"`
 }
 
 type DelegationsFor struct {

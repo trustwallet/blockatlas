@@ -41,8 +41,8 @@ func (c *Client) GetTrxOfAddress(address string) (*[]Transaction, error) {
 	return &txs, nil
 }
 
-func (c *Client) GetValidators() (*[]Validator, error) {
-	var validators []Validator
+func (c *Client) GetValidators() (*Validators, error) {
+	var validators Validators
 
 	err := c.Post(&validators, "/validators", nil)
 	if err != nil {

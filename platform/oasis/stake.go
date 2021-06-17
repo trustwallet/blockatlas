@@ -6,19 +6,24 @@ import (
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
 	"github.com/trustwallet/blockatlas/services/assets"
 	"github.com/trustwallet/golibs/types"
-	"strconv"
 	"time"
 )
 
 func (p *Platform) GetActiveValidators() (blockatlas.StakeValidators, error) {
-	validators, err := assets.GetValidatorsMap(p)
+	validators, err := p.client.GetValidators()
 	if err != nil {
 		return nil, err
 	}
-	result := make(blockatlas.StakeValidators, 0, len(validators))
-	for _, v := range validators {
-		result = append(result, v)
+	consensusParams, err := p.client.GetConsensusParams()
+	if err != nil {
+		return nil, err
 	}
+
+	result := make(blockatlas.StakeValidators, 0)
+	for _, validator := range validators.Validators {
+		result = append(result, normalizeActiveValidator(validator, *consensusParams))
+	}
+
 	return result, nil
 }
 
@@ -34,7 +39,7 @@ func (p *Platform) GetValidators() (blockatlas.ValidatorPage, error) {
 		return nil, err
 	}
 
-	for _, validator := range *validators {
+	for _, validator := range validators.Validators {
 		results = append(results, normalizeValidator(validator, *consensusParams))
 	}
 
@@ -50,7 +55,7 @@ func (p *Platform) GetDetails() blockatlas.StakingDetails {
 	consensusParams, err := p.client.GetConsensusParams()
 	if err == nil {
 		apr = blockatlas.FindHightestAPR(validators)
-		minimumAmount = types.Amount(strconv.Itoa(int(consensusParams.MinDelegationAmount)))
+		minimumAmount = types.Amount(consensusParams.MinDelegationAmount)
 		lockTime = int(consensusParams.DebondingInterval)
 	}
 
@@ -108,7 +113,24 @@ func normalizeValidator(v Validator, consensusParams ConsensusParams) (validator
 
 		Details: blockatlas.StakingDetails{
 			Reward:        blockatlas.StakingReward{Annual: v.EffectiveAnnualReward},
-			MinimumAmount: types.Amount(strconv.Itoa(int(consensusParams.MinDelegationAmount))),
+			MinimumAmount: types.Amount(consensusParams.MinDelegationAmount),
+			LockTime:      int(consensusParams.DebondingInterval),
+			Type:          blockatlas.DelegationTypeDelegate,
+		},
+	}
+}
+
+func normalizeActiveValidator(v Validator, consensusParams ConsensusParams) (validator blockatlas.StakeValidator) {
+	return blockatlas.StakeValidator{
+		Status: true,
+		ID:     v.ID,
+		Info: blockatlas.StakeValidatorInfo{
+			Name:    v.Name,
+			Website: v.URL,
+		},
+		Details: blockatlas.StakingDetails{
+			Reward:        blockatlas.StakingReward{Annual: v.EffectiveAnnualReward},
+			MinimumAmount: types.Amount(consensusParams.MinDelegationAmount),
 			LockTime:      int(consensusParams.DebondingInterval),
 			Type:          blockatlas.DelegationTypeDelegate,
 		},
