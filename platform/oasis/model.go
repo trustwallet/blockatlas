@@ -62,7 +62,7 @@ type DebondingDelegationsFor struct {
 
 // Delegation is a delegation descriptor.
 type Delegation struct {
-	Shares big.Int `json:"shares"`
+	Shares string `json:"shares"`
 }
 
 // DebondingDelegation is a debonding delegation descriptor.

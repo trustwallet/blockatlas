@@ -4,8 +4,8 @@ import (
 	"fmt"
 	log "github.com/sirupsen/logrus"
 	"github.com/trustwallet/blockatlas/pkg/blockatlas"
-	"github.com/trustwallet/blockatlas/services/assets"
 	"github.com/trustwallet/golibs/types"
+	"strconv"
 	"time"
 )
 
@@ -75,7 +75,11 @@ func (p *Platform) UndelegatedBalance(address string) (string, error) {
 	}
 
 	for _, v := range delegations.List {
-		amount += v.Shares.Int64()
+		amountTmp, err := strconv.ParseInt(v.Shares, 10, 64)
+		if err != nil {
+			return "0", err
+		}
+		amount += amountTmp
 	}
 
 	return fmt.Sprintf("%d", amount), nil
@@ -95,7 +99,7 @@ func (p *Platform) GetDelegations(address string) (blockatlas.DelegationsPage, e
 	if delegations.List == nil && debondingDelegations.List == nil {
 		return results, nil
 	}
-	validators, err := assets.GetValidatorsMap(p)
+	validators, err := p.GetActiveValidators()
 	if err != nil {
 		return nil, err
 	}
@@ -137,10 +141,15 @@ func normalizeActiveValidator(v Validator, consensusParams ConsensusParams) (val
 	}
 }
 
-func NormalizeDelegations(delegations map[string]Delegation, validators blockatlas.ValidatorMap) []blockatlas.Delegation {
+func NormalizeDelegations(delegations map[string]Delegation, validators []blockatlas.StakeValidator) []blockatlas.Delegation {
+	validatorsMap := make(map[string]blockatlas.StakeValidator)
+	for _, v := range validators {
+		validatorsMap[v.ID] = v
+	}
+
 	results := make([]blockatlas.Delegation, 0)
 	for k, v := range delegations {
-		validator, ok := validators[k]
+		validator, ok := validatorsMap[k]
 		if !ok {
 			log.WithFields(
 				log.Fields{"address": k, "platform": "cosmos", "delegation": k}, // FIXME check where to find the required addresses (ValidatorAddress and DelegationAddress)
@@ -150,7 +159,7 @@ func NormalizeDelegations(delegations map[string]Delegation, validators blockatl
 		}
 		delegation := blockatlas.Delegation{
 			Delegator: validator,
-			Value:     v.Shares.String(),
+			Value:     v.Shares,
 			Status:    blockatlas.DelegationStatusActive,
 		}
 		results = append(results, delegation)
@@ -158,11 +167,15 @@ func NormalizeDelegations(delegations map[string]Delegation, validators blockatl
 	return results
 }
 
-func NormalizeUnbondingDelegations(delegations map[string][]DebondingDelegation, validators blockatlas.ValidatorMap) []blockatlas.Delegation {
+func NormalizeUnbondingDelegations(delegations map[string][]DebondingDelegation, validators []blockatlas.StakeValidator) []blockatlas.Delegation {
+	validatorsMap := make(map[string]blockatlas.StakeValidator)
+	for _, v := range validators {
+		validatorsMap[v.ID] = v
+	}
 	results := make([]blockatlas.Delegation, 0)
 	for k, v := range delegations {
 		for _, entry := range v {
-			validator, ok := validators[k]
+			validator, ok := validatorsMap[k]
 			if !ok {
 				log.WithFields(
 					log.Fields{"address": k, "platform": "cosmos", "delegation": k}, // FIXME check where to find the required addresses (ValidatorAddress and DelegationAddress)
