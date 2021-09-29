@@ -1,5 +1,7 @@
 package harmony
 
+import "math/big"
+
 type TxResponse struct {
 	Result TxResult `json:"result"`
 }
@@ -25,4 +27,32 @@ type BlockInfo struct {
 	Hash         string        `json:"hash"`
 	Number       string        `json:"number"`
 	Transactions []Transaction `json:"transactions"`
+}
+
+type ValidatorInfo struct {
+	Address string `json:"address"`
+}
+
+type LifetimeInfo struct {
+	Apr string `json:"apr"`
+}
+
+type Validator struct {
+	Info     ValidatorInfo `json:"validator"`
+	Active   bool          `json:"currently-in-committee"`
+	Lifetime LifetimeInfo  `json:"lifetime"`
+}
+
+type Validators struct {
+	Validators []Validator `json:"result"`
+}
+
+type Delegation struct {
+	DelegatorAddress string   `json:"delegator_address"`
+	ValidatorAddress string   `json:"validator_address"`
+	Amount           *big.Int `json:"amount"`
+}
+
+type Delegations struct {
+	List []Delegation `json:"result"`
 }

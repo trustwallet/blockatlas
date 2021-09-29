@@ -56,6 +56,16 @@ func (c *Client) GetBalance(address string) (string, error) {
 	return balance, nil
 }
 
+func (c *Client) fetchValidators() (validators Validators, err error) {
+	err = rpcCallStub(c, &validators.Validators, "hmy_getAllValidatorInformation", []interface{}{-1})
+	return
+}
+
+func (c *Client) fetchDelegations(address string) (delegations Delegations, err error) {
+	err = rpcCallStub(c, &delegations.List, "hmy_getDelegationsByDelegator", []interface{}{address})
+	return
+}
+
 func hexToInt(hex string) (uint64, error) {
 	nonceStr, err := numbers.HexToDecimal(hex)
 	if err != nil {
