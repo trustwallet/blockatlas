@@ -26,7 +26,7 @@ func (p *Platform) GetDetails() blockatlas.StakingDetails {
 		apr = blockatlas.FindHightestAPR(validators)
 	}
 	return blockatlas.StakingDetails{
-		Reward:        blockatlas.StakingReward{Annual: apr * 100},
+		Reward:        blockatlas.StakingReward{Annual: apr},
 		MinimumAmount: minimumAmount,
 		LockTime:      lockTime,
 		Type:          blockatlas.DelegationTypeDelegate,
@@ -78,7 +78,7 @@ func normalizeValidator(v Validator, apr float64) (validator blockatlas.Validato
 		Status: v.Active,
 		ID:     v.Info.Address,
 		Details: blockatlas.StakingDetails{
-			Reward:        blockatlas.StakingReward{Annual: apr * 100},
+			Reward:        blockatlas.StakingReward{Annual: apr},
 			MinimumAmount: minimumAmount,
 			LockTime:      lockTime,
 			Type:          blockatlas.DelegationTypeDelegate,
