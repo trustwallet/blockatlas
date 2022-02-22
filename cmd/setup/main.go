@@ -54,7 +54,6 @@ func main() {
 		internal.Subscriptions,
 		internal.SubscriptionsTokens,
 		internal.RawTokens,
-		internal.Subscriptions,
 	}
 	for _, queue := range queues {
 		if err := queue.Declare(); err != nil {
