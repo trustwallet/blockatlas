@@ -1,17 +1,18 @@
 # Block Atlas by Trust Wallet
 
+THIS REPO IS NO LONGER MAINTAINED
+
+---
+
 ![Go Version](https://img.shields.io/github/go-mod/go-version/TrustWallet/blockatlas)
-![CI](https://github.com/trustwallet/blockatlas/workflows/CI/badge.svg)
 [![codecov](https://codecov.io/gh/trustwallet/blockatlas/branch/master/graph/badge.svg)](https://codecov.io/gh/trustwallet/blockatlas)
 [![Go Report Card](https://goreportcard.com/badge/trustwallet/blockatlas)](https://goreportcard.com/report/TrustWallet/blockatlas)
-[![Dependabot Status](https://api.dependabot.com/badges/status?host=github&repo=trustwallet/blockatlas)](https://dependabot.com)
 
 > BlockAtlas is a clean explorer API and transaction observer for cryptocurrencies.
 
 BlockAtlas connects to nodes or explorer APIs of the supported coins and maps transaction data,
 account transaction history into a generic, easy to work with JSON format.
-It is in production use at the [Trust Wallet app](https://trustwallet.com/), 
-the official cryptocurrency wallet of Binance. Also is in production at the [BUTTON Wallet](https://buttonwallet.com), Telegram based non-custodial wallet.
+
 The observer API watches the chain for new transactions and generates notifications by guids.
 
 #### Supported Coins
@@ -19,10 +20,6 @@ The observer API watches the chain for new transactions and generates notificati
 Block Atlas supports more than 25 blockchains: Bitcoin, Ethereum, Binance Chain etc, The full feature matrix is [here](docs/features.csv).
 
 ## Architecture
-
-#### NOTE
-
-Currently Block Atlas is under active development and is not well documented. If you still want to run it on your own or help to contribute, **please** pay attention that currently integration, nemwan, functional tests are not working locally without all endpoints. We are fixing that issue and soon you will be able to test all the stuff locally
 
 Blockatlas allows to:
 
@@ -216,15 +213,3 @@ swagger serve docs/swagger.yaml
 -   After creating a new route, add comments to your API source code, [See Declarative Comments Format](https://swaggo.github.io/swaggo.io/declarative_comments_format/).
 
 -   Run `$ make go-gen-docs` in root folder.
-
-## Contributing
-
-If you'd like to add support for a new blockchain, feel free to file a pull request.
-Note that most tokens that run on top of other chains are already supported and
-don't require code changes (e.g. ERC-20).
-
-The best way to submit feedback and report bugs is to open a GitHub issue.
-Please be sure to include your operating system, version number, and
-[steps](https://gist.github.com/nrollr/eb24336b8fb8e7ba5630) to reproduce reported bugs.
-
-More resources for developers are in [CONTRIBUTING.md](CONTRIBUTING.md).
